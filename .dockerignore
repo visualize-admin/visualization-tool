@@ -1,0 +1,4 @@
+.git
+.next
+*Dockerfile*
+node_modules

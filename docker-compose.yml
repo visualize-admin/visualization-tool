@@ -1,0 +1,11 @@
+# Only used for dev atm!
+version: "3"
+services:
+  nextjs:
+    image: "node:12"
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./:/usr/src/app"
+    working_dir: "/usr/src/app"
+    command: "yarn dev"
