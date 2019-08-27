@@ -1,17 +1,16 @@
 {
   "name": "visualization-tool",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "git@gitlab.ldbar.ch:interactivethings/visualization-tool.git",
   "author": "Jeremy Stucki <jeremy@interactivethings.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next ./app",
-    "start": "micro"
+    "build": "next build ./app",
+    "start": "next start ./app"
   },
   "dependencies": {
-    "micro": "^9.3.4",
     "next": "^9.0.5",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
