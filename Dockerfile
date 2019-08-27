@@ -8,6 +8,7 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 ENV NODE_ENV production
+ENV PORT 3000
 
 COPY ./ ./
 RUN yarn build

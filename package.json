@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next ./app",
     "build": "next build ./app",
-    "start": "next start ./app"
+    "start": "next start ./app -p $PORT"
   },
   "dependencies": {
     "next": "^9.0.5",
