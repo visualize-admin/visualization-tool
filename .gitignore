@@ -2,3 +2,6 @@
 .next
 .DS_Store
 *.log
+
+/app/locales/_build
+/app/locales/**/*.js

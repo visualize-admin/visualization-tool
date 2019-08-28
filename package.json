@@ -7,17 +7,24 @@
   "private": true,
   "scripts": {
     "dev": "next ./app",
-    "build": "next build ./app",
+    "build": "lingui compile && next build ./app",
     "start": "next start ./app -p $PORT"
   },
   "dependencies": {
+    "@lingui/react": "^2.8.3",
     "next": "^9.0.5",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
   },
   "devDependencies": {
+    "@lingui/cli": "^2.8.3",
+    "@lingui/macro": "^2.8.3",
+    "@types/lingui__core": "^2.7.0",
+    "@types/lingui__macro": "^2.7.3",
+    "@types/lingui__react": "^2.8.0",
     "@types/node": "^12.7.2",
     "@types/react": "^16.9.2",
+    "babel-plugin-macros": "^2.6.1",
     "prettier": "^1.18.2",
     "typescript": "^3.5.3"
   }

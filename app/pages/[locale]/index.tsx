@@ -1,12 +1,15 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { Trans } from "@lingui/macro";
 
 const Page = () => {
   const { query } = useRouter();
 
-  console.log(query.foo);
-
-  return <div>Hello, world</div>;
+  return (
+    <div>
+      <Trans>Hallo Welt!</Trans>
+    </div>
+  );
 };
 
 export default Page;
