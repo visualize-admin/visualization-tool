@@ -16,14 +16,12 @@ class MyApp extends App<{ locale: string; statusCode: void | number }> {
     let statusCode = undefined;
 
     // Redirect to default locale index page if locale is not found
-    if (asPath === "/") {
-      if (res) {
+    if (res) {
+      if (asPath === "/") {
         res.writeHead(302, { Location: `/${defaultLocale}` });
         res.end();
-      }
-    } else if (query.locale && !locales.includes(query.locale as any)) {
-      console.log("is this error?", pathname);
-      if (res) {
+      } else if (query.locale && !locales.includes(query.locale as any)) {
+        console.log("is this error?", pathname);
         res.statusCode = 404;
         statusCode = 404;
       }
