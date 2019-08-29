@@ -1,15 +1,22 @@
 stages:
+  - lint
   - build
 
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
-before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+lint:
+  image: node:12
+  stage: lint
+  script:
+    - yarn --frozen-lockfile
+    - yarn locales:compile
+    - yarn lint
 
 build:
   image: docker.io/docker:stable
   stage: build
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
