@@ -1,0 +1,52 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "tsc",
+      "type": "shell",
+      "command": "yarn tsc --watch --noEmit -p ./app",
+      "options": {
+        "shell": {
+          "executable": "nix-shell",
+          "args": ["--run"]
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "base": "$tsc-watch",
+        "owner": "typescript",
+        "applyTo": "allDocuments"
+      },
+      "presentation": {
+        "group": "dev"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "yarn-dev",
+      "type": "shell",
+      "command": "yarn dev",
+      "options": {
+        "shell": {
+          "executable": "nix-shell",
+          "args": ["--run"]
+        }
+      },
+      "presentation": {
+        "group": "dev"
+      }
+    },
+    {
+      "label": "dev",
+      "dependsOn": ["yarn-dev", "tsc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
