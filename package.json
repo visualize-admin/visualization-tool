@@ -8,7 +8,10 @@
   "scripts": {
     "dev": "next ./app",
     "build": "lingui compile && next build ./app",
-    "start": "next start ./app -p $PORT"
+    "start": "next start ./app -p $PORT",
+    "lint": "tsc --noEmit -p ./app",
+    "locales:extract": "lingui extract",
+    "locales:compile": "lingui compile"
   },
   "dependencies": {
     "@lingui/react": "^2.8.3",
