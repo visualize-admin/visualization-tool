@@ -1,35 +1,77 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { Trans } from "@lingui/macro";
-import { LocalizedLink, CurrentPageLink } from "../../components/links";
+import { LocalizedLink } from "../../components/links";
 import { LanguageMenu } from "../../components/language-menu";
+import {
+  DataCubeProvider,
+  useDataSets,
+  useDataSetMetadata
+} from "../../domain/data-cube";
+import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
+import { useLocale } from "../../lib/use-locale";
+import { Literal } from "rdf-js";
 
-const save = () => {
-  fetch("/api/save", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message: "Hello" })
-  })
-    .then(res => res.json())
-    .then(json => console.log(json.answer));
+const DSMeta = ({ dataset }: { dataset: DataSet }) => {
+  const locale = useLocale();
+  const meta = useDataSetMetadata(dataset);
+
+  return meta.state === "loaded" ? (
+    <>
+      <h3>Measures</h3>
+      <ul>
+        {meta.data.measures
+          .filter(d => (d.label as Literal).language === locale) // FIXME: we shouldn't filter here …
+          .map(dim => (
+            <li key={dim.iri.value}>
+              {dim.label.value} <pre>{JSON.stringify(dim, null, 2)}</pre>
+            </li>
+          ))}
+      </ul>
+      <h3>Dimensions</h3>
+      <ul>
+        {meta.data.dimensions
+          .filter(d => (d.label as Literal).language === locale) // FIXME: we shouldn't filter here …
+          .map(dim => (
+            <li key={dim.iri.value}>
+              {dim.label.value} <pre>{JSON.stringify(dim, null, 2)}</pre>
+            </li>
+          ))}
+      </ul>
+    </>
+  ) : null;
+};
+
+const DSInfo = () => {
+  const datasets = useDataSets();
+
+  console.log(datasets);
+
+  return (
+    <div>
+      {datasets.state === "pending"
+        ? "loading …"
+        : datasets.state === "loaded"
+        ? datasets.data.map(d => {
+            return (
+              <div key={d.iri}>
+                <h2>{d.label}</h2>
+                <div>{d.graphIri.value}</div>
+                <DSMeta dataset={d} />
+              </div>
+            );
+          })
+        : "Hwoops"}
+    </div>
+  );
 };
 
 const Page = () => {
   return (
     <div>
-      <LanguageMenu />
-      <Trans>Hallo Welt!</Trans>
-      <button onClick={save}>Save</button>
-      <LocalizedLink href="/[locale]/foo">
-        <a>Foo</a>
-      </LocalizedLink>
-      <LocalizedLink
-        href={{ pathname: "/[locale]/foo", query: { foo: "bar" } }}
-      >
-        <a>Foo</a>
-      </LocalizedLink>
+      <DataCubeProvider endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query">
+        <LanguageMenu />
+        <DSInfo />
+      </DataCubeProvider>
     </div>
   );
 };
