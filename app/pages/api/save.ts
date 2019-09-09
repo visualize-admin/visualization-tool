@@ -2,9 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { query } from "../../lib/db";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { headers, method } = req;
-
-  console.log(headers);
+  const { method } = req;
 
   switch (method) {
     case "POST":
