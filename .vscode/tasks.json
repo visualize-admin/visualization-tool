@@ -27,22 +27,16 @@
       }
     },
     {
-      "label": "yarn-dev",
+      "label": "dev-server",
       "type": "shell",
-      "command": "yarn dev",
-      "options": {
-        "shell": {
-          "executable": "nix-shell",
-          "args": ["--run"]
-        }
-      },
+      "command": "docker-compose up",
       "presentation": {
         "group": "dev"
       }
     },
     {
       "label": "dev",
-      "dependsOn": ["yarn-dev", "tsc"],
+      "dependsOn": ["dev-server", "tsc"],
       "group": {
         "kind": "build",
         "isDefault": true

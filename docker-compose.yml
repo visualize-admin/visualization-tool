@@ -9,3 +9,12 @@ services:
       - "./:/usr/src/app"
     working_dir: "/usr/src/app"
     command: "yarn dev"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgres://postgres@db:5432/template1"
+    restart: "always"
+  db:
+    image: "postgres:11"
+    ports:
+      - "5432:5432"

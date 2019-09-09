@@ -1,14 +1,19 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { query } from "../../lib/db";
 
-export default (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { headers, method } = req;
 
   console.log(headers);
 
   switch (method) {
     case "POST":
-      console.log(req.body.message);
-      res.status(200).json({ answer: `You said "${req.body.message}".` });
+      const result = await query(`SELECT * from config`);
+
+      res.status(200).json({
+        answer: `You said "${req.body.message}".`,
+        result: result.rows
+      });
       break;
     default:
       res.setHeader("Allow", ["POST"]);
