@@ -1,19 +1,20 @@
 # Only used for dev atm!
 version: "3"
 services:
-  nextjs:
-    image: "node:12"
-    ports:
-      - "3000:3000"
-    volumes:
-      - "./:/usr/src/app"
-    working_dir: "/usr/src/app"
-    command: "yarn dev"
-    depends_on:
-      - db
-    environment:
-      DATABASE_URL: "postgres://postgres@db:5432/template1"
-    restart: "always"
+  ## Running in Docker slows down development a lot, so this is only kept for reference here.
+  # nextjs:
+  #   image: "node:12"
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - "./:/usr/src/app:delegated"
+  #   working_dir: "/usr/src/app"
+  #   command: ["sh", "-c", "yarn && yarn dev"]
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     DATABASE_URL: "postgres://postgres@db:5432/template1"
+  #   restart: "always"
   db:
     image: "postgres:11"
     ports:

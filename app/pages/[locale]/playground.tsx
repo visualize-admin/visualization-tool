@@ -11,7 +11,7 @@ const save = () => {
     body: JSON.stringify({ message: "Hello" })
   })
     .then(res => res.json())
-    .then(json => console.log(json.answer));
+    .then(json => console.log(json));
 };
 
 export default () => {

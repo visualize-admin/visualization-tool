@@ -2,9 +2,15 @@
 
 ## Development Environment
 
-To start the development environment, you need a Docker runtime, e.g. [Docker Desktop](https://www.docker.com/products/docker-desktop).
+To start the development environment, you need a Docker runtime, e.g. [Docker Desktop](https://www.docker.com/products/docker-desktop) and [Nix](https://nixos.org).
 
-Then, run:
+### App
+
+```sh
+yarn dev
+```
+
+### PostgreSQL DB
 
 ```sh
 docker-compose up
