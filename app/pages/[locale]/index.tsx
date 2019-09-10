@@ -55,7 +55,7 @@ const DSInfo = () => {
             return (
               <div key={d.iri}>
                 <h2>{d.label}</h2>
-                <div>{d.graphIri.value}</div>
+                <div>{d.graphIri ? d.graphIri.value : ""}</div>
                 <DSMeta dataset={d} />
               </div>
             );

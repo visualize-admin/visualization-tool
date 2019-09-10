@@ -10,7 +10,8 @@ export const LocalizedLink = ({
   ...rest
 }: LinkProps & { children: React.ReactNode }) => {
   const locale = useLocale();
-  const pathname = typeof href === "string" ? href : href.pathname;
+  const pathname =
+    typeof href === "string" ? href : href.pathname ? href.pathname : "";
   const query = typeof href === "string" ? undefined : href.query;
   const search = qs.stringify(query as qs.ParsedUrlQueryInput);
   const localizedAs = as
