@@ -18,6 +18,16 @@ docker-compose up
 
 In [Visual Studio Code](https://code.visualstudio.com/), you also can run the **default build task** (CMD-SHIFT-B) to start TypeScript alongside Docker (you'll need [Nix](https://nixos.org) for that to work).
 
+#### Setting up the Database
+
+To set up the database, run
+
+```sh
+./script/db-setup.sh
+```
+
+This will re-create a DB and table structure. _Beware that currently this will wipe all data_.
+
 ## Docker Deployment
 
 To pull the latest image from the GitLab registry, run:

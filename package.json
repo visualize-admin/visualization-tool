@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "DATABASE_URL=postgres://postgres@localhost:5432/template1 next ./app",
+    "dev": "DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool next ./app",
     "build": "lingui compile && next build ./app",
     "start": "next start ./app -p $PORT",
     "lint": "tsc --noEmit -p ./app",
