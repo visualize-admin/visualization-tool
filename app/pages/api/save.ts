@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       res.status(200).json({
         answer: `You said "${req.body.message}".`,
-        result: result.rows
+        result: result ? result.rows : []
       });
       break;
     default:
