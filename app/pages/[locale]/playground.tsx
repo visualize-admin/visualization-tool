@@ -3,7 +3,7 @@ import { Trans } from "@lingui/macro";
 import { LocalizedLink } from "../../components/links";
 
 const save = () => {
-  fetch("/api/save", {
+  fetch("/api/config", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

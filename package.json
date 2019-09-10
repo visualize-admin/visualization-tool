@@ -16,6 +16,7 @@
   "dependencies": {
     "@lingui/react": "^2.8.3",
     "@zazuko/query-rdf-data-cube": "^0.0.2",
+    "nanoid": "^2.1.0",
     "next": "^9.0.5",
     "pg": "^7.12.1",
     "react": "^16.9.0",
@@ -27,6 +28,7 @@
     "@types/lingui__core": "^2.7.0",
     "@types/lingui__macro": "^2.7.3",
     "@types/lingui__react": "^2.8.0",
+    "@types/nanoid": "^2.0.0",
     "@types/node": "^12.7.2",
     "@types/pg": "^7.11.1",
     "@types/react": "^16.9.2",
