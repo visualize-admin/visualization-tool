@@ -1,15 +1,13 @@
+import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
+import { Literal } from "rdf-js";
 import React from "react";
-import { Trans } from "@lingui/macro";
-import { LocalizedLink } from "../../components/links";
-import { LanguageMenu } from "../../components/language-menu";
+import { AppLayout } from "../../components/layout";
 import {
   DataCubeProvider,
-  useDataSets,
-  useDataSetMetadata
+  useDataSetMetadata,
+  useDataSets
 } from "../../domain/data-cube";
-import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
 import { useLocale } from "../../lib/use-locale";
-import { Literal } from "rdf-js";
 
 const DSMeta = ({ dataset }: { dataset: DataSet }) => {
   const locale = useLocale();
@@ -69,8 +67,9 @@ const Page = () => {
   return (
     <div>
       <DataCubeProvider endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query">
-        <LanguageMenu />
-        <DSInfo />
+        <AppLayout>
+          <DSInfo />
+        </AppLayout>
       </DataCubeProvider>
     </div>
   );
