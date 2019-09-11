@@ -1024,6 +1024,13 @@
   dependencies:
     "@rdfjs/data-model" "^1.1.0"
 
+"@rebass/forms@^4.0.5":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@rebass/forms/-/forms-4.0.5.tgz#4e0523796ab96db40dfb457988e97062b6f2f6dd"
+  integrity sha512-eX/zCcA3iuBNb6MzPnO/0g4v/23CkfM0JZpgEo1PI5EjqtwNRa4SudUEhZpr8EG4Go6TIwavLr5bBbSBv51DaQ==
+  dependencies:
+    reflexbox "^4.0.5"
+
 "@rebass/preset@^4.0.5":
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/@rebass/preset/-/preset-4.0.5.tgz#f4fb9bec85efa1eb658b92fc64fbb4250d0af2fb"
