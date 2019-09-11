@@ -26,6 +26,7 @@ export const CurrentPageLink = ({
   ...rest
 }: {
   locale: string;
+  passHref?: boolean;
   children: React.ReactNode;
 }) => {
   const { pathname, query } = useRouter();

@@ -1,5 +1,5 @@
-import { LanguageMenu } from "../../components/language-menu";
 import { Trans } from "@lingui/macro";
+import { AppLayout } from "../../components/layout";
 import { LocalizedLink } from "../../components/links";
 
 const save = () => {
@@ -16,8 +16,7 @@ const save = () => {
 
 export default () => {
   return (
-    <>
-      <LanguageMenu />
+    <AppLayout>
       <Trans>Hallo Welt!</Trans>
       <button onClick={save}>Save</button>
       <LocalizedLink href="/[locale]/foo">
@@ -28,6 +27,6 @@ export default () => {
       >
         <a>Foo</a>
       </LocalizedLink>
-    </>
+    </AppLayout>
   );
 };
