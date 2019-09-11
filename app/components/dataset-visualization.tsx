@@ -5,7 +5,7 @@ import {
 import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
 import React from "react";
 import { useObservations } from "../domain/data-cube";
-import { Bars } from "./charts/Bars";
+import { Bars } from "./charts/bars";
 
 export const DSVisualization = ({
   dataset,
