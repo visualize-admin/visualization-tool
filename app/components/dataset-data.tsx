@@ -25,7 +25,7 @@ export const DSData = ({
 }) => {
   const locale = useLocale();
   const meta = useDataSetMetadata(dataset);
-  const data = useDataSetData({ dataset, dimensions, measures });
+  const data = useObservations({ dataset, dimensions, measures });
   console.log(data.data);
   return data.state === "loaded" ? (
     <>
