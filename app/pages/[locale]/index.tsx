@@ -8,6 +8,7 @@ import {
   useDataSets
 } from "../../domain/data-cube";
 import { useLocale } from "../../lib/use-locale";
+import { DSControls } from "../../components/dataset-controls";
 
 const DSMeta = ({ dataset }: { dataset: DataSet }) => {
   const locale = useLocale();
@@ -17,23 +18,19 @@ const DSMeta = ({ dataset }: { dataset: DataSet }) => {
     <>
       <h3>Measures</h3>
       <ul>
-        {meta.data.measures
-          .filter(d => (d.label as Literal).language === locale) // FIXME: we shouldn't filter here …
-          .map(dim => (
-            <li key={dim.iri.value}>
-              {dim.label.value} <pre>{JSON.stringify(dim, null, 2)}</pre>
-            </li>
-          ))}
+        {meta.data.measures.map(dim => (
+          <li key={dim.iri.value}>
+            {dim.label.value} <pre>{JSON.stringify(dim, null, 2)}</pre>
+          </li>
+        ))}
       </ul>
       <h3>Dimensions</h3>
       <ul>
-        {meta.data.dimensions
-          .filter(d => (d.label as Literal).language === locale) // FIXME: we shouldn't filter here …
-          .map(dim => (
-            <li key={dim.iri.value}>
-              {dim.label.value} <pre>{JSON.stringify(dim, null, 2)}</pre>
-            </li>
-          ))}
+        {meta.data.dimensions.map(dim => (
+          <li key={dim.iri.value}>
+            {dim.label.value} <pre>{JSON.stringify(dim, null, 2)}</pre>
+          </li>
+        ))}
       </ul>
     </>
   ) : null;
@@ -42,22 +39,25 @@ const DSMeta = ({ dataset }: { dataset: DataSet }) => {
 const DSInfo = () => {
   const datasets = useDataSets();
 
-  console.log(datasets);
-
   return (
     <div>
       {datasets.state === "pending"
         ? "loading …"
         : datasets.state === "loaded"
-        ? datasets.data.map(d => {
-            return (
-              <div key={d.iri}>
-                <h2>{d.label}</h2>
-                <div>{d.graphIri ? d.graphIri.value : ""}</div>
-                <DSMeta dataset={d} />
-              </div>
-            );
-          })
+        ? datasets.data
+            .filter(
+              d => d.iri === "http://environment.data.admin.ch/ubd/28/qb/ubd28"
+            )
+            .map(d => {
+              return (
+                <div key={d.iri}>
+                  <h2>{d.label}</h2>
+                  <div>{d.graphIri ? d.graphIri.value : ""}</div>
+
+                  <DSControls dataset={d} />
+                </div>
+              );
+            })
         : "Hwoops"}
     </div>
   );
@@ -66,7 +66,7 @@ const DSInfo = () => {
 const Page = () => {
   return (
     <div>
-      <DataCubeProvider endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query">
+      <DataCubeProvider endpoint="https://ld.stadt-zuerich.ch/query">
         <AppLayout>
           <DSInfo />
         </AppLayout>

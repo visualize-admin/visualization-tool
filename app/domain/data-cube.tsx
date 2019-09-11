@@ -1,5 +1,5 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import {
+import Component, {
   Attribute,
   Dimension,
   Measure
@@ -58,4 +58,39 @@ export const useDataSetMetadata = (dataSet: DataSet) => {
   }, [dataSet]);
 
   return useRemoteData(fetchMeta);
+};
+
+const formatData = ({ data, dimension }: { data: any; dimension: string }) => {
+  return data.map((d: any) => ({
+    [dimension]: d[dimension].label.value,
+    measure: d.measure.value.value
+  }));
+};
+
+export const useObservations = ({
+  dataset,
+  dimensions,
+  dimension,
+  measures
+}: {
+  dataset: DataSet;
+  dimensions: Dimension[];
+  dimension: string;
+  measures: Measure[];
+}) => {
+  const fetchData = useCallback(async () => {
+    const query = dataset
+      .query()
+      .select({
+        measure: measures[0],
+        [dimension]: dimensions.find(dim => dim.label.value === dimension)! // FIXME: make sure it exists & remove !
+      })
+      .limit(10000);
+    const data = await query.execute();
+    return {
+      results: formatData({ data, dimension })
+    };
+  }, [dataset, dimensions, dimension]);
+
+  return useRemoteData(fetchData);
 };
