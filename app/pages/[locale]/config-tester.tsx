@@ -81,7 +81,7 @@ export default () => {
 
       {savedConfig && (
         <Box m={2} bg="secondary" color="white" p={2}>
-          <Trans id="test-form-success">Konfiguration gespeichert unter</Trans>
+          <Trans id="test-form-success">Konfiguration gespeichert unter</Trans>{" "}
           <LocalizedLink href={`/[locale]/config?key=${savedConfig.key}`} passHref>
             <Link
               color="white"

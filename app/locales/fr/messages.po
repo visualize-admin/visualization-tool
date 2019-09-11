@@ -19,11 +19,11 @@ msgstr ""
 
 #: app/pages/[locale]/config-tester.tsx:69
 msgid "test-form-save"
-msgstr "Sauvegarder"
+msgstr "Enregistrer"
 
 #: app/pages/[locale]/config-tester.tsx:77
 msgid "test-form-success"
-msgstr "Sauvegardé la configuration"
+msgstr "Configuration enregistrée"
 
 #: app/pages/[locale]/config-tester.tsx:45
 #: app/pages/[locale]/config-tester.tsx:51
