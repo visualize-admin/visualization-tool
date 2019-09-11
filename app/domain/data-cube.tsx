@@ -60,7 +60,7 @@ export const useDataSetMetadata = (dataSet: DataSet) => {
   return useRemoteData(fetchMeta);
 };
 
-export const useDataSetData = ({
+export const useObservations = ({
   dataset,
   dimensions,
   measures

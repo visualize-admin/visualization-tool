@@ -6,7 +6,7 @@ import {
   DataCubeProvider,
   useDataSetMetadata,
   useDataSets,
-  useDataSetData
+  useObservations
 } from "../domain/data-cube";
 import { useLocale } from "../lib/use-locale";
 import {
