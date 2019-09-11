@@ -59,3 +59,28 @@ export const useDataSetMetadata = (dataSet: DataSet) => {
 
   return useRemoteData(fetchMeta);
 };
+
+export const useDataSetData = ({
+  dataset,
+  dimensions,
+  measures
+}: {
+  dataset: DataSet;
+  dimensions: Dimension[];
+  measures: Measure[];
+}) => {
+  const fetchData = useCallback(async () => {
+    const query = dataset
+      .query()
+      .select({
+        measure: measures[0]
+      })
+      .limit(10);
+
+    return {
+      results: await query.execute()
+    };
+  }, [dataset]);
+
+  return useRemoteData(fetchData);
+};
