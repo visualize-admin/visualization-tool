@@ -70,7 +70,7 @@ export default () => {
                 </Box>
                 <Box p={2}>
                   <Button type="submit" disabled={isSubmitting}>
-                    <Trans>Speichern</Trans>
+                    <Trans id="test-form-save">Speichern</Trans>
                   </Button>
                 </Box>
               </Box>

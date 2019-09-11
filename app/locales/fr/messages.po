@@ -16,3 +16,18 @@ msgstr ""
 #: app/pages/[locale]/index.tsx:8
 #~ msgid "Hallo Welt!"
 #~ msgstr "Bonjour le monde!"
+
+#: app/pages/[locale]/config-tester.tsx:69
+msgid "test-form-save"
+msgstr "Sauvegarder"
+
+#: app/pages/[locale]/config-tester.tsx:77
+msgid "test-form-success"
+msgstr "Sauvegardé la configuration"
+
+#: app/pages/[locale]/config-tester.tsx:45
+#: app/pages/[locale]/config-tester.tsx:51
+#: app/pages/[locale]/config-tester.tsx:57
+#: app/pages/[locale]/config-tester.tsx:63
+msgid "test-form-title"
+msgstr "Titre"
