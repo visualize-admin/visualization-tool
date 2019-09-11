@@ -19,3 +19,7 @@ services:
     image: "postgres:11"
     ports:
       - "5432:5432"
+    volumes:
+      - "./db:/usr/src/db"
+    environment:
+      POSTGRES_DB: "visualization_tool"
