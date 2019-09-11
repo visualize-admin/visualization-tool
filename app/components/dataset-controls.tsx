@@ -7,9 +7,9 @@ import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
 import React, { useState } from "react";
 import { useDataSetMetadata, useObservations } from "../domain/data-cube";
 import { useLocale } from "../lib/use-locale";
-import { DSChart } from "./dataset-chart";
+import { DSVisualization } from "./dataset-visualization";
 
-export const DSObservations = ({ dataset }: { dataset: DataSet }) => {
+export const DSControls = ({ dataset }: { dataset: DataSet }) => {
   const [selectedDimension, updateDimension] = useState("");
   const locale = useLocale();
   const meta = useDataSetMetadata(dataset);
@@ -36,7 +36,7 @@ export const DSObservations = ({ dataset }: { dataset: DataSet }) => {
         </Label>
       ))}
 
-      <DSChart
+      <DSVisualization
         dataset={dataset}
         dimensions={meta.data.dimensions}
         dimension={selectedDimension}
