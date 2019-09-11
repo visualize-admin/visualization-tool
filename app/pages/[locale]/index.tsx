@@ -8,6 +8,7 @@ import {
   useDataSets
 } from "../../domain/data-cube";
 import { useLocale } from "../../lib/use-locale";
+import { DSData } from "../../components/dataset-data";
 
 const DSMeta = ({ dataset }: { dataset: DataSet }) => {
   const locale = useLocale();
@@ -35,6 +36,11 @@ const DSMeta = ({ dataset }: { dataset: DataSet }) => {
             </li>
           ))}
       </ul>
+      <DSData
+        dataset={dataset}
+        dimensions={meta.data.dimensions}
+        measures={meta.data.measures}
+      />
     </>
   ) : null;
 };
@@ -42,22 +48,24 @@ const DSMeta = ({ dataset }: { dataset: DataSet }) => {
 const DSInfo = () => {
   const datasets = useDataSets();
 
-  console.log(datasets);
-
   return (
     <div>
       {datasets.state === "pending"
         ? "loading …"
         : datasets.state === "loaded"
-        ? datasets.data.map(d => {
-            return (
-              <div key={d.iri}>
-                <h2>{d.label}</h2>
-                <div>{d.graphIri ? d.graphIri.value : ""}</div>
-                <DSMeta dataset={d} />
-              </div>
-            );
-          })
+        ? datasets.data
+            .filter(
+              d => d.iri === "http://environment.data.admin.ch/ubd/28/qb/ubd28"
+            )
+            .map(d => {
+              return (
+                <div key={d.iri}>
+                  <h2>{d.label}</h2>
+                  <div>{d.graphIri ? d.graphIri.value : ""}</div>
+                  <DSMeta dataset={d} />
+                </div>
+              );
+            })
         : "Hwoops"}
     </div>
   );
@@ -66,7 +74,7 @@ const DSInfo = () => {
 const Page = () => {
   return (
     <div>
-      <DataCubeProvider endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query">
+      <DataCubeProvider endpoint="https://ld.stadt-zuerich.ch/query">
         <AppLayout>
           <DSInfo />
         </AppLayout>
