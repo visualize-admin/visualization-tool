@@ -19,6 +19,8 @@
     "@rebass/preset": "^4.0.5",
     "@zazuko/query-rdf-data-cube": "^0.0.2",
     "emotion-theming": "^10.0.17",
+    "formik": "^1.5.8",
+    "isomorphic-unfetch": "^3.0.0",
     "nanoid": "^2.1.0",
     "next": "^9.0.5",
     "pg": "^7.12.1",
