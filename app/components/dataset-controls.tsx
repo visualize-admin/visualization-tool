@@ -1,15 +1,11 @@
 import { Label, Radio } from "@rebass/forms";
-import {
-  Dimension,
-  Measure
-} from "@zazuko/query-rdf-data-cube/dist/node/components";
-import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
+import { Dimension, Measure, DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { useState } from "react";
 import { useDataSetMetadata, useObservations } from "../domain/data-cube";
 import { useLocale } from "../lib/use-locale";
 import { DSVisualization } from "./dataset-visualization";
 
-export const DSControls = ({ dataset }: { dataset: DataSet }) => {
+export const DSControls = ({ dataset }: { dataset: DataCube }) => {
   const [selectedDimension, updateDimension] = useState("");
   const locale = useLocale();
   const meta = useDataSetMetadata(dataset);
@@ -21,18 +17,18 @@ export const DSControls = ({ dataset }: { dataset: DataSet }) => {
       {meta.data.dimensions.map(dim => (
         <Label
           key={dim.iri.value}
-          htmlFor={dim.label.value}
+          htmlFor={dim.labels.values}
           width={[1 / 2, 1 / 4]}
           p={2}
         >
           <Radio
-            id={dim.label.value}
-            name={dim.label.value}
-            value={dim.label.value}
-            checked={dim.label.value === selectedDimension}
-            onClick={() => updateDimension(dim.label.value)}
+            id={dim.labels.values}
+            name={dim.labels.values}
+            value={dim.labels.values}
+            checked={false} //dim.labels.values === selectedDimension}
+            onClick={() => updateDimension("dim.labels.values")}
           />
-          {dim.label.value}
+          {dim.labels.values}
         </Label>
       ))}
 

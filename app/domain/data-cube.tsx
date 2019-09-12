@@ -1,10 +1,10 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import Component, {
+import {
+  DataCubeEntryPoint,
+  DataCube,
   Attribute,
   Dimension,
   Measure
-} from "@zazuko/query-rdf-data-cube/dist/node/components";
-import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
+} from "@zazuko/query-rdf-data-cube";
 import {
   createContext,
   ReactNode,
@@ -33,13 +33,14 @@ export const DataCubeProvider = ({
 const useDataCube = () => {
   const endpoint = useContext(DataCubeContext);
   return useMemo(() => {
-    return new DataCube(endpoint);
+    return new DataCubeEntryPoint(endpoint);
   }, [endpoint]);
 };
 
 export const useDataSets = () => {
-  const cube = useDataCube();
-  const fetchCb = useCallback(() => cube.datasets(), [cube]);
+  const entryPoint = useDataCube();
+  console.log({ entryPoint });
+  const fetchCb = useCallback(() => entryPoint.dataCubes(), [entryPoint]);
   return useRemoteData(fetchCb);
 };
 
@@ -48,7 +49,7 @@ interface Metadata {
   attributes: Attribute[];
   measures: Measure[];
 }
-export const useDataSetMetadata = (dataSet: DataSet) => {
+export const useDataSetMetadata = (dataSet: DataCube) => {
   const fetchMeta = useCallback(async () => {
     return {
       dimensions: await dataSet.dimensions(),
@@ -73,7 +74,7 @@ export const useObservations = ({
   dimension,
   measures
 }: {
-  dataset: DataSet;
+  dataset: DataCube;
   dimensions: Dimension[];
   dimension: string;
   measures: Measure[];
@@ -81,10 +82,10 @@ export const useObservations = ({
   const fetchData = useCallback(async () => {
     const query = dataset
       .query()
-      .select({
-        measure: measures[0],
-        [dimension]: dimensions.find(dim => dim.label.value === dimension)! // FIXME: make sure it exists & remove !
-      })
+      // .select({
+      //   measure: measures[0]
+      //   // [dimension]: dimensions //.find(dim => dim.labels.values === dimension)! // FIXME: make sure it exists & remove !
+      // })
       .limit(10000);
     const data = await query.execute();
     return {

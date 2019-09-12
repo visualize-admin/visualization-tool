@@ -1,8 +1,4 @@
-import {
-  Dimension,
-  Measure
-} from "@zazuko/query-rdf-data-cube/dist/node/components";
-import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
+import { Dimension, Measure, DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { useObservations } from "../domain/data-cube";
 import { Bars } from "./charts/bars";
@@ -13,7 +9,7 @@ export const DSVisualization = ({
   dimension,
   measures
 }: {
-  dataset: DataSet;
+  dataset: DataCube;
   dimensions: Dimension[];
   dimension: string;
   measures: Measure[];
