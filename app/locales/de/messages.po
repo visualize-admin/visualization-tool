@@ -13,21 +13,25 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/pages/[locale]/index.tsx:8
-#~ msgid "Hallo Welt!"
-#~ msgstr "Hallo Welt!"
+#: app/pages/[locale]/playground.tsx:17
+msgid "Hallo Welt!"
+msgstr "Hallo Welt!"
 
-#: app/pages/[locale]/config-tester.tsx:69
+#: app/pages/[locale]/config-tester.tsx:28
+msgid "no id"
+msgstr ""
+
+#: app/pages/[locale]/config-tester.tsx:70
 msgid "test-form-save"
 msgstr "Speichern"
 
-#: app/pages/[locale]/config-tester.tsx:77
+#: app/pages/[locale]/config-tester.tsx:78
 msgid "test-form-success"
 msgstr "Konfiguration gespeichert"
 
-#: app/pages/[locale]/config-tester.tsx:45
-#: app/pages/[locale]/config-tester.tsx:51
-#: app/pages/[locale]/config-tester.tsx:57
-#: app/pages/[locale]/config-tester.tsx:63
+#: app/pages/[locale]/config-tester.tsx:46
+#: app/pages/[locale]/config-tester.tsx:52
+#: app/pages/[locale]/config-tester.tsx:58
+#: app/pages/[locale]/config-tester.tsx:64
 msgid "test-form-title"
 msgstr "Titel"
