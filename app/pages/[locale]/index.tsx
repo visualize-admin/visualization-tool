@@ -40,7 +40,7 @@ const DSMeta = ({ dataset }: { dataset: DataCube }) => {
 
 const DSInfo = () => {
   const locale = useLocale();
-  const datasets = useDataSets({ locale });
+  const datasets = useDataSets();
   const [datasetIri, selectDataset] = useState(undefined);
 
   return (

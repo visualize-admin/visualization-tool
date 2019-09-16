@@ -15,6 +15,7 @@ import {
   useCallback
 } from "react";
 import { useRemoteData } from "../lib/remote-data";
+import { useLocale } from "../lib/use-locale";
 
 const DataCubeContext = createContext<string>("");
 
@@ -30,15 +31,16 @@ export const DataCubeProvider = ({
   </DataCubeContext.Provider>
 );
 
-const useDataCubeEntryPoint = ({ locale }: { locale: string }) => {
+const useDataCubeEntryPoint = () => {
   const endpoint = useContext(DataCubeContext);
+  const locale = useLocale();
   return useMemo(() => {
     return new DataCubeEntryPoint(endpoint, { languages: [locale] });
-  }, [endpoint]);
+  }, [endpoint, locale]);
 };
 
-export const useDataSets = ({ locale }: { locale: string }) => {
-  const entryPoint = useDataCubeEntryPoint({ locale });
+export const useDataSets = () => {
+  const entryPoint = useDataCubeEntryPoint();
   const fetchCb = useCallback(() => entryPoint.dataCubes(), [entryPoint]);
   return useRemoteData(fetchCb);
 };
