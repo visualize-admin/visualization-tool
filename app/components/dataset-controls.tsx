@@ -28,7 +28,7 @@ export const DSControls = ({ dataset }: { dataset: DataCube }) => {
             checked={dim.iri.value === selectedDimension}
             onClick={() => updateDimension(dim.iri.value)}
           />
-          {dim.iri.value}
+          {dim.labels[0].value}
         </Label>
       ))}
 
