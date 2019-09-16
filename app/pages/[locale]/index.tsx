@@ -20,7 +20,6 @@ const DSMeta = ({ dataset }: { dataset: DataCube }) => {
       <ul>
         {meta.data.measures.map(dim => (
           <li key={dim.iri.value}>
-            {/* {dim.label.value} */}
             <pre>{JSON.stringify(dim, null, 2)}</pre>
           </li>
         ))}
@@ -29,7 +28,6 @@ const DSMeta = ({ dataset }: { dataset: DataCube }) => {
       <ul>
         {meta.data.dimensions.map(dim => (
           <li key={dim.iri.value}>
-            {/* {dim.label.value}  */}
             <pre>{JSON.stringify(dim, null, 2)}</pre>
           </li>
         ))}
@@ -40,24 +38,21 @@ const DSMeta = ({ dataset }: { dataset: DataCube }) => {
 
 const DSInfo = () => {
   const datasets = useDataSets();
-  console.log(datasets);
+
   return (
     <div>
       {datasets.state === "pending"
         ? "loading …"
         : datasets.state === "loaded"
         ? datasets.data
-            // .filter(
-            //   d => d.iri === "http://environment.data.admin.ch/ubd/28/qb/ubd28"
-            // )
+            .filter(
+              d => d.iri === "http://environment.data.admin.ch/ubd/28/qb/ubd28"
+            )
             .map(d => {
               return (
                 <div key={d.iri}>
-                  <h2>{d.labels}</h2>
-                  {/* <div>{d.graphIri ? d.graphIri : ""}</div> */}
-
                   {/* <DSMeta dataset={d} /> */}
-                  {/* <DSControls dataset={d} /> */}
+                  <DSControls dataset={d} />
                 </div>
               );
             })
@@ -70,8 +65,8 @@ const Page = () => {
   return (
     <div>
       <DataCubeProvider
-        endpoint="https://trifid-lindas.test.cluster.ldbar.ch/sparql"
-        // endpoint="https://ld.stadt-zuerich.ch/sparql"
+        // endpoint="https://trifid-lindas.test.cluster.ldbar.ch/sparql"
+        endpoint="https://ld.stadt-zuerich.ch/query"
       >
         <AppLayout>
           <DSInfo />

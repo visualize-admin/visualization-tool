@@ -30,7 +30,7 @@ export const DataCubeProvider = ({
   </DataCubeContext.Provider>
 );
 
-const useDataCube = () => {
+const useDataCubeEntryPoint = () => {
   const endpoint = useContext(DataCubeContext);
   return useMemo(() => {
     return new DataCubeEntryPoint(endpoint);
@@ -38,8 +38,7 @@ const useDataCube = () => {
 };
 
 export const useDataSets = () => {
-  const entryPoint = useDataCube();
-  console.log({ entryPoint });
+  const entryPoint = useDataCubeEntryPoint();
   const fetchCb = useCallback(() => entryPoint.dataCubes(), [entryPoint]);
   return useRemoteData(fetchCb);
 };
@@ -61,9 +60,15 @@ export const useDataSetMetadata = (dataSet: DataCube) => {
   return useRemoteData(fetchMeta);
 };
 
-const formatData = ({ data, dimension }: { data: any; dimension: string }) => {
+const formatData = ({
+  data,
+  selectedDimension
+}: {
+  data: any;
+  selectedDimension: string;
+}) => {
   return data.map((d: any) => ({
-    [dimension]: d[dimension].label.value,
+    selectedDimension: d.selectedDimension.value.value,
     measure: d.measure.value.value
   }));
 };
@@ -71,27 +76,29 @@ const formatData = ({ data, dimension }: { data: any; dimension: string }) => {
 export const useObservations = ({
   dataset,
   dimensions,
-  dimension,
+  selectedDimension,
   measures
 }: {
   dataset: DataCube;
   dimensions: Dimension[];
-  dimension: string;
+  selectedDimension: string;
   measures: Measure[];
 }) => {
   const fetchData = useCallback(async () => {
     const query = dataset
       .query()
-      // .select({
-      //   measure: measures[0]
-      //   // [dimension]: dimensions //.find(dim => dim.labels.values === dimension)! // FIXME: make sure it exists & remove !
-      // })
+      .select({
+        measure: measures[0],
+        selectedDimension: dimensions.find(
+          dim => dim.iri.value === selectedDimension
+        )! // FIXME: make sure it exists & remove !
+      })
       .limit(10000);
     const data = await query.execute();
     return {
-      results: formatData({ data, dimension })
+      results: formatData({ data, selectedDimension })
     };
-  }, [dataset, dimensions, dimension]);
+  }, [dataset, dimensions, selectedDimension]);
 
   return useRemoteData(fetchData);
 };

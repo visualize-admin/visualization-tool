@@ -18,24 +18,24 @@ export const DSControls = ({ dataset }: { dataset: DataCube }) => {
         <Label
           key={dim.iri.value}
           htmlFor={dim.labels.values}
-          width={[1 / 2, 1 / 4]}
+          width={[1]}
           p={2}
         >
           <Radio
-            id={dim.labels.values}
-            name={dim.labels.values}
-            value={dim.labels.values}
-            checked={false} //dim.labels.values === selectedDimension}
-            onClick={() => updateDimension("dim.labels.values")}
+            id={dim.iri.value}
+            name={dim.iri.value}
+            value={dim.iri.value}
+            checked={dim.iri.value === selectedDimension}
+            onClick={() => updateDimension(dim.iri.value)}
           />
-          {dim.labels.values}
+          {dim.iri.value}
         </Label>
       ))}
 
       <DSVisualization
         dataset={dataset}
         dimensions={meta.data.dimensions}
-        dimension={selectedDimension}
+        selectedDimension={selectedDimension}
         measures={meta.data.measures}
       />
     </>

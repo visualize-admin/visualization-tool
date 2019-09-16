@@ -6,16 +6,21 @@ import { Bars } from "./charts/bars";
 export const DSVisualization = ({
   dataset,
   dimensions,
-  dimension,
+  selectedDimension,
   measures
 }: {
   dataset: DataCube;
   dimensions: Dimension[];
-  dimension: string;
+  selectedDimension: string;
   measures: Measure[];
 }) => {
-  const data = useObservations({ dataset, dimensions, dimension, measures });
-  console.log(data);
+  const data = useObservations({
+    dataset,
+    dimensions,
+    selectedDimension,
+    measures
+  });
+
   return data.state === "loaded" ? (
     <>
       <h3>Visualization</h3>
@@ -23,10 +28,10 @@ export const DSVisualization = ({
       <Bars
         data={data.data.results}
         width={500}
-        xField={dimension}
+        xField={"selectedDimension"}
         yField={"measure"}
-        groupByField={dimension}
-        groupByFieldLabel={dimension}
+        groupByField={"selectedDimension"}
+        groupByFieldLabel={"selectedDimension"}
         aggregateFunction={"sum"}
       />
       <pre>{JSON.stringify(data.data.results, null, 2)}</pre>
