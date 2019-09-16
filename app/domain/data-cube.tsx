@@ -68,7 +68,7 @@ const formatData = ({
   selectedDimension: string;
 }) => {
   return data.map((d: any) => ({
-    selectedDimension: d.selectedDimension.value.value,
+    selectedDimension: d.selectedDimension.label.value,
     measure: d.measure.value.value
   }));
 };
@@ -95,6 +95,7 @@ export const useObservations = ({
       })
       .limit(10000);
     const data = await query.execute();
+
     return {
       results: formatData({ data, selectedDimension })
     };
