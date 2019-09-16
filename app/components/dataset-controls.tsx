@@ -15,18 +15,13 @@ export const DSControls = ({ dataset }: { dataset: DataCube }) => {
       <h3>Dimensions</h3>
 
       {meta.data.dimensions.map(dim => (
-        <Label
-          key={dim.iri.value}
-          htmlFor={dim.labels.values}
-          width={[1]}
-          p={2}
-        >
+        <Label key={dim.iri.value} width={[1]} p={2}>
           <Radio
             id={dim.iri.value}
             name={dim.iri.value}
             value={dim.iri.value}
             checked={dim.iri.value === selectedDimension}
-            onClick={() => updateDimension(dim.iri.value)}
+            onChange={() => updateDimension(dim.iri.value)}
           />
           {dim.labels[0].value}
         </Label>
