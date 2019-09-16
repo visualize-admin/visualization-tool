@@ -1,10 +1,10 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import Component, {
+import {
+  DataCubeEntryPoint,
+  DataCube,
   Attribute,
   Dimension,
   Measure
-} from "@zazuko/query-rdf-data-cube/dist/node/components";
-import DataSet from "@zazuko/query-rdf-data-cube/dist/node/dataset";
+} from "@zazuko/query-rdf-data-cube";
 import {
   createContext,
   ReactNode,
@@ -15,6 +15,7 @@ import {
   useCallback
 } from "react";
 import { useRemoteData } from "../lib/remote-data";
+import { useLocale } from "../lib/use-locale";
 
 const DataCubeContext = createContext<string>("");
 
@@ -30,16 +31,17 @@ export const DataCubeProvider = ({
   </DataCubeContext.Provider>
 );
 
-const useDataCube = () => {
+const useDataCubeEntryPoint = () => {
   const endpoint = useContext(DataCubeContext);
+  const locale = useLocale();
   return useMemo(() => {
-    return new DataCube(endpoint);
-  }, [endpoint]);
+    return new DataCubeEntryPoint(endpoint, { languages: [locale] });
+  }, [endpoint, locale]);
 };
 
 export const useDataSets = () => {
-  const cube = useDataCube();
-  const fetchCb = useCallback(() => cube.datasets(), [cube]);
+  const entryPoint = useDataCubeEntryPoint();
+  const fetchCb = useCallback(() => entryPoint.dataCubes(), [entryPoint]);
   return useRemoteData(fetchCb);
 };
 
@@ -48,7 +50,7 @@ interface Metadata {
   attributes: Attribute[];
   measures: Measure[];
 }
-export const useDataSetMetadata = (dataSet: DataSet) => {
+export const useDataSetMetadata = (dataSet: DataCube) => {
   const fetchMeta = useCallback(async () => {
     return {
       dimensions: await dataSet.dimensions(),
@@ -60,9 +62,15 @@ export const useDataSetMetadata = (dataSet: DataSet) => {
   return useRemoteData(fetchMeta);
 };
 
-const formatData = ({ data, dimension }: { data: any; dimension: string }) => {
+const formatData = ({
+  data,
+  selectedDimension
+}: {
+  data: any;
+  selectedDimension: string;
+}) => {
   return data.map((d: any) => ({
-    [dimension]: d[dimension].label.value,
+    selectedDimension: d.selectedDimension.label.value,
     measure: d.measure.value.value
   }));
 };
@@ -70,12 +78,12 @@ const formatData = ({ data, dimension }: { data: any; dimension: string }) => {
 export const useObservations = ({
   dataset,
   dimensions,
-  dimension,
+  selectedDimension,
   measures
 }: {
-  dataset: DataSet;
+  dataset: DataCube;
   dimensions: Dimension[];
-  dimension: string;
+  selectedDimension: string;
   measures: Measure[];
 }) => {
   const fetchData = useCallback(async () => {
@@ -83,14 +91,17 @@ export const useObservations = ({
       .query()
       .select({
         measure: measures[0],
-        [dimension]: dimensions.find(dim => dim.label.value === dimension)! // FIXME: make sure it exists & remove !
+        selectedDimension: dimensions.find(
+          dim => dim.iri.value === selectedDimension
+        )! // FIXME: make sure it exists & remove !
       })
       .limit(10000);
     const data = await query.execute();
+
     return {
-      results: formatData({ data, dimension })
+      results: formatData({ data, selectedDimension })
     };
-  }, [dataset, dimensions, dimension]);
+  }, [dataset, dimensions, selectedDimension]);
 
   return useRemoteData(fetchData);
 };
