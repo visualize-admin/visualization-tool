@@ -1,7 +1,10 @@
 {
   "localeDir": "app/locales/",
-  "srcPathDirs": ["app/pages/"],
+  "srcPathDirs": ["app/"],
   "srcPathIgnorePatterns": ["/node_modules/", "/.next/"],
   "format": "po",
-  "compileNamespace": "es"
+  "compileNamespace": "es",
+  "extractBabelOptions": {
+    "configFile": "./app/babel.config.js"
+  }
 }

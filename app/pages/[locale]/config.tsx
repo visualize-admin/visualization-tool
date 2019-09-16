@@ -20,9 +20,11 @@ const Page: NextPage<{ config: { key: string; data: any } | undefined }> = ({
   );
 };
 
-Page.getInitialProps = async ({ req, query }) => {
+Page.getInitialProps = async ({ req, query, res }) => {
+
+  const uri = res ? `http://localhost:${process.env.PORT || 3000}/api/config/${query.key}` : `/api/config/${query.key}`;
   const config = await fetch(
-    `http://localhost:3000/api/config/${query.key}`
+    uri
   ).then(res => res.json());
   if (config && config.data) {
     return { config };
