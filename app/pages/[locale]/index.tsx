@@ -1,6 +1,6 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { Literal } from "rdf-js";
-import React from "react";
+import React, { useState } from "react";
 import { AppLayout } from "../../components/layout";
 import {
   DataCubeProvider,
@@ -9,6 +9,8 @@ import {
 } from "../../domain/data-cube";
 import { useLocale } from "../../lib/use-locale";
 import { DSControls } from "../../components/dataset-controls";
+import { Box } from "rebass";
+import { Label, Select } from "@rebass/forms";
 
 const DSMeta = ({ dataset }: { dataset: DataCube }) => {
   const locale = useLocale();
@@ -39,26 +41,67 @@ const DSMeta = ({ dataset }: { dataset: DataCube }) => {
 const DSInfo = () => {
   const locale = useLocale();
   const datasets = useDataSets({ locale });
+  const [datasetIri, selectDataset] = useState(undefined);
 
   return (
-    <div>
-      {datasets.state === "pending"
-        ? "loading …"
-        : datasets.state === "loaded"
-        ? datasets.data
-            .filter(
-              d => d.iri === "http://environment.data.admin.ch/ubd/28/qb/ubd28"
-            )
-            .map(d => {
-              return (
-                <div key={d.iri}>
-                  {/* <DSMeta dataset={d} /> */}
-                  <DSControls dataset={d} />
-                </div>
-              );
-            })
-        : "Hwoops"}
-    </div>
+    <>
+      <div>
+        {datasets.state === "pending" ? (
+          "loading …"
+        ) : datasets.state === "loaded" ? (
+          <>
+            <DSSelect
+              datasets={datasets.data}
+              selectDataset={selectDataset}
+            ></DSSelect>
+            {datasetIri && (
+              <>
+                {datasets.data
+                  .filter(d => d.iri === datasetIri)
+                  .map(d => {
+                    return (
+                      <div key={d.iri}>
+                        <DSControls dataset={d} />
+                      </div>
+                    );
+                  })}
+              </>
+            )}
+          </>
+        ) : (
+          "Hwoops"
+        )}
+      </div>
+    </>
+  );
+};
+
+const DSSelect = ({
+  datasets,
+  selectDataset
+}: {
+  datasets: DataCube[];
+  selectDataset: any;
+}) => {
+  const update = (e: any) => selectDataset(e.currentTarget.value);
+  return (
+    <Box>
+      <Label htmlFor="dataset-select">
+        <h3>Select a dataset</h3>
+      </Label>
+      <Select
+        id="dataset-select"
+        name="dataset-select"
+        defaultValue=""
+        onChange={update}
+      >
+        {datasets.map(dataset => (
+          <option key={dataset.iri} value={dataset.iri}>
+            {dataset.iri}
+          </option>
+        ))}
+      </Select>
+    </Box>
   );
 };
 
@@ -66,8 +109,8 @@ const Page = () => {
   return (
     <div>
       <DataCubeProvider
-        // endpoint="https://trifid-lindas.test.cluster.ldbar.ch/sparql"
-        endpoint="https://ld.stadt-zuerich.ch/query"
+        endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query"
+        // endpoint="https://ld.stadt-zuerich.ch/query"
       >
         <AppLayout>
           <DSInfo />
