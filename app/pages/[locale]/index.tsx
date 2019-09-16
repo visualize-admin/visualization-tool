@@ -37,7 +37,8 @@ const DSMeta = ({ dataset }: { dataset: DataCube }) => {
 };
 
 const DSInfo = () => {
-  const datasets = useDataSets();
+  const locale = useLocale();
+  const datasets = useDataSets({ locale });
 
   return (
     <div>

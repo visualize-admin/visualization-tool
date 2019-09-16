@@ -30,15 +30,15 @@ export const DataCubeProvider = ({
   </DataCubeContext.Provider>
 );
 
-const useDataCubeEntryPoint = () => {
+const useDataCubeEntryPoint = ({ locale }: { locale: string }) => {
   const endpoint = useContext(DataCubeContext);
   return useMemo(() => {
-    return new DataCubeEntryPoint(endpoint);
+    return new DataCubeEntryPoint(endpoint, { languages: [locale] });
   }, [endpoint]);
 };
 
-export const useDataSets = () => {
-  const entryPoint = useDataCubeEntryPoint();
+export const useDataSets = ({ locale }: { locale: string }) => {
+  const entryPoint = useDataCubeEntryPoint({ locale });
   const fetchCb = useCallback(() => entryPoint.dataCubes(), [entryPoint]);
   return useRemoteData(fetchCb);
 };
