@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useDataSetMetadata, useObservations } from "../domain/data-cube";
 import { useLocale } from "../lib/use-locale";
 import { DSVisualization } from "./dataset-visualization";
+import { DSDimensionSelect } from "./dataset-dimension-select";
 
 export const DSControls = ({ dataset }: { dataset: DataCube }) => {
   const [selectedDimension, updateDimension] = useState("");
@@ -13,19 +14,11 @@ export const DSControls = ({ dataset }: { dataset: DataCube }) => {
   return meta.state === "loaded" ? (
     <>
       <h3>Dimensions</h3>
-
-      {meta.data.dimensions.map(dim => (
-        <Label key={dim.iri.value} width={[1]} p={2}>
-          <Radio
-            id={dim.iri.value}
-            name={dim.iri.value}
-            value={dim.iri.value}
-            checked={dim.iri.value === selectedDimension}
-            onChange={() => updateDimension(dim.iri.value)}
-          />
-          {dim.labels[0].value}
-        </Label>
-      ))}
+      <DSDimensionSelect
+        dimensions={meta.data.dimensions}
+        selectedDimension={selectedDimension}
+        updateDimension={updateDimension}
+      />
 
       <DSVisualization
         dataset={dataset}
