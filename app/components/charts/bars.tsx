@@ -112,7 +112,7 @@ export const Bars = ({
             fill: { scale: "color", field: groupByField }
           },
           hover: {
-            fill: { value: "blue" }
+            fill: { value: "grey" }
           }
         }
       },
