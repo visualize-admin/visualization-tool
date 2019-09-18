@@ -29,6 +29,7 @@ type AppStateAction =
   | { type: "SELECT_CHART"; value: number };
 
 const LOCALSTORAGE_PREFIX = "vizualize-app-state";
+const getLocalStorageKey = (chartId:string) => `${LOCALSTORAGE_PREFIX}:${chartId}`
 
 const uninitializedState: AppState = {
   state: "UNINITIALIZED",
@@ -62,14 +63,14 @@ const reducer: Reducer<AppState, AppStateAction> = (draft, action) => {
   }
 };
 
-export const useAppState = () => {
+export const useAppState = ({chartId}: {chartId:string}) => {
   const [state, dispatch] = useImmerReducer(reducer, uninitializedState);
 
   // Re-initialize state on page load
   useEffect(() => {
     let stateToInitialize = initialState;
     try {
-      const storedState = window.localStorage.getItem(LOCALSTORAGE_PREFIX);
+      const storedState = window.localStorage.getItem(getLocalStorageKey(chartId));
       if (storedState) {
         // TODO: validate that stored state is actually a valid AppState (with io-ts)
         stateToInitialize = JSON.parse(storedState);
@@ -78,18 +79,18 @@ export const useAppState = () => {
     } finally {
       dispatch({ type: "INITIALIZE", value: stateToInitialize });
     }
-  }, [dispatch]);
+  }, [dispatch, chartId]);
 
   // Store current state in localstorage
   useEffect(() => {
     try {
       if (state.state !== "UNINITIALIZED") {
-        window.localStorage.setItem(LOCALSTORAGE_PREFIX, JSON.stringify(state));
+        window.localStorage.setItem(getLocalStorageKey(chartId), JSON.stringify(state));
       }
     } catch (e) {
       console.error(e);
     }
-  }, [state]);
+  }, [state, chartId]);
 
   return [state, dispatch] as const;
 };

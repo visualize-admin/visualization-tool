@@ -5,9 +5,10 @@ import { Input } from "@rebass/forms";
 import { SyntheticEvent } from "react";
 
 export default () => {
-  const [state, dispatch] = useAppState();
+  const [state, dispatch] = useAppState({chartId: "playground"});
   return (
     <AppLayout>
+    {/* <Button onClick={dispatch({type: "NEW"})}>Create new chart</Button> */}
       {state.state !== "UNINITIALIZED" && (
         <>
           <h1>Current State</h1>
