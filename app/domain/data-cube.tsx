@@ -1,18 +1,16 @@
 import {
-  DataCubeEntryPoint,
-  DataCube,
   Attribute,
+  DataCube,
+  DataCubeEntryPoint,
   Dimension,
   Measure
 } from "@zazuko/query-rdf-data-cube";
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useCallback
+  useMemo
 } from "react";
 import { useRemoteData } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
@@ -62,46 +60,32 @@ export const useDataSetMetadata = (dataSet: DataCube) => {
   return useRemoteData(fetchMeta);
 };
 
-const formatData = ({
-  data,
-  selectedDimension
-}: {
-  data: any;
-  selectedDimension: string;
-}) => {
-  return data.map((d: any) => ({
-    selectedDimension: d.selectedDimension.label.value,
-    measure: d.measure.value.value
-  }));
-};
-
 export const useObservations = ({
   dataset,
-  dimensions,
-  selectedDimension,
-  measures
+  namedSelection
 }: {
   dataset: DataCube;
-  dimensions: Dimension[];
-  selectedDimension: string;
-  measures: Measure[];
+  namedSelection: any;
 }) => {
   const fetchData = useCallback(async () => {
     const query = dataset
       .query()
-      .select({
-        measure: measures[0],
-        selectedDimension: dimensions.find(
-          dim => dim.iri.value === selectedDimension
-        )! // FIXME: make sure it exists & remove !
-      })
+      .select(namedSelection)
       .limit(10000);
     const data = await query.execute();
-
     return {
-      results: formatData({ data, selectedDimension })
+      results: data // await query.execute()
     };
-  }, [dataset, dimensions, selectedDimension]);
+  }, [dataset, namedSelection]);
 
   return useRemoteData(fetchData);
+};
+
+export const formatData = ({ data }: { data: any }) => {
+  return data.map((d: any) => {
+    return Object.keys(d).reduce((obj: any, key) => {
+      obj[key] = (d as any)[key].value.value;
+      return obj;
+    }, {});
+  });
 };
