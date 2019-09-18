@@ -26,7 +26,7 @@ const Cockpit = ({
   const [chartType, updateChartType] = useState("bar" as ChartType);
   const [dimensionFilter, addDimensionFilter] = useState({}); // {dimension: dimensionValue[]}
 
-  const [xAxisField, updateXAxisField] = useState(dimensions[0]);
+  const [xField, updateXField] = useState(dimensions[0]);
   const [heightField, updateHeightField] = useState(measures[0]);
 
   const observations = useObservations({
@@ -34,35 +34,39 @@ const Cockpit = ({
     namedSelection
   });
 
-  return observations.state === "loaded" ? (
-    <>
-      <ChartTypeSelector
-        chartType={chartType}
-        updateChartType={updateChartType}
-      />
-      <Flex>
-        <Box width={1 / 3} px={2}>
-          <DSDimensionSelect
-            dimensions={dimensions}
-            selectedDimension={xAxisField}
-            updateDimension={updateXAxisField}
-          />
-          <DSFilter
+  if (observations.state === "loaded") {
+    return (
+      <>
+        <ChartTypeSelector
+          chartType={chartType}
+          updateChartType={updateChartType}
+        />
+        <Flex>
+          <Box width={1 / 3} px={2}>
+            <DSDimensionSelect
+              dimensions={dimensions}
+              selectedDimension={xField}
+              updateDimension={updateXField}
+            />
+            {/* <DSFilter
             observations={observations.data}
             namedDimensions={namedDimensions}
-          />
-        </Box>
-        <Box width={1 / 3} px={2}>
-          <ChartBars
-            observations={observations.data.results}
-            xAxisField={xAxisField}
-            heightField={heightField}
-            aggregationFunction={"sum"}
-          />
-        </Box>
-      </Flex>
-    </>
-  ) : null;
+          /> */}
+          </Box>
+          <Box width={1 / 3} px={2}>
+            <ChartBars
+              observations={observations.data.results}
+              xField={xField}
+              heightField={heightField}
+              aggregationFunction={"sum"}
+            />
+          </Box>
+        </Flex>
+      </>
+    );
+  } else {
+    return <div>Loading data...</div>;
+  }
 };
 
 export const DSControls = ({ dataset }: { dataset: DataCube }) => {
@@ -76,8 +80,6 @@ export const DSControls = ({ dataset }: { dataset: DataCube }) => {
       measure: meta.data.measures[0],
       ...Object.fromEntries(namedDimensions)
     };
-    console.log({ namedDimensions });
-    console.log({ namedSelection });
 
     return (
       <>
