@@ -81,8 +81,8 @@ export const useObservations = ({
   return useRemoteData(fetchData);
 };
 
-export const formatData = ({ data }: { data: any }) => {
-  return data.map((d: any) => {
+export const formatData = ({ observations }: { observations: any }) => {
+  return observations.map((d: any) => {
     return Object.keys(d).reduce((obj: any, key) => {
       obj[key] = (d as any)[key].value.value;
       return obj;
