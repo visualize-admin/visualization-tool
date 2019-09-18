@@ -1,39 +1,38 @@
 import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { Bars } from "./charts-generic/bars";
+import { formatDataForBarCHart } from "../domain/data-cube";
 
 export const ChartBars = ({
   observations,
-  xAxisField,
+  xField,
   heightField,
   aggregationFunction
 }: {
   observations: any[];
-  xAxisField: Dimension;
+  xField: Dimension;
   heightField: Dimension;
   aggregationFunction: "sum";
 }) => {
-  // const data = useObservations({
-  //   dataset,
-  //   dimensions,
-  //   selectedDimension: xAxis,
-  //   measures
-  // });
-  return <div></div>;
-  // return data.state === "loaded" ? (
-  //   <>
-  //     <h3>Bars</h3>
+  const formattedData = formatDataForBarCHart({
+    observations,
+    xField,
+    heightField
+  });
 
-  //     <Bars
-  //       data={data.data.results}
-  //       width={500}
-  //       xField={"selectedDimension"}
-  //       yField={"measure"}
-  //       groupByField={"selectedDimension"}
-  //       groupByFieldLabel={"selectedDimension"}
-  //       aggregateFunction={"sum"}
-  //     />
-  //     <pre>{JSON.stringify(data.data.results, null, 2)}</pre>
-  //   </>
-  // ) : null;
+  return (
+    <>
+      <h3>Bars</h3>
+      <Bars
+        data={formattedData}
+        width={500}
+        xField={xField.labels[0].value}
+        heightField={"measure"}
+        groupBy={xField.labels[0].value}
+        groupByLabel={xField.labels[0].value}
+        aggregateFunction={"sum"}
+      />
+      {/* <pre>{JSON.stringify(observations, null, 2)}</pre> */}
+    </>
+  );
 };
