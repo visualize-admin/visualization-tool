@@ -1,32 +1,31 @@
-import { Trans } from "@lingui/macro";
 import { AppLayout } from "../../components/layout";
-import { LocalizedLink } from "../../components/links";
-
-const save = () => {
-  fetch("/api/config", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message: "Hello" })
-  })
-    .then(res => res.json())
-    .then(json => console.log(json));
-};
+import { Button } from "rebass";
+import { useAppState } from "../../domain/app-state";
+import { Input } from "@rebass/forms";
+import { SyntheticEvent } from "react";
 
 export default () => {
+  const [state, dispatch] = useAppState();
   return (
     <AppLayout>
-      <Trans>Hallo Welt!</Trans>
-      <button onClick={save}>Save</button>
-      <LocalizedLink href="/[locale]/foo">
-        <a>Foo</a>
-      </LocalizedLink>
-      <LocalizedLink
-        href={{ pathname: "/[locale]/foo", query: { foo: "bar" } }}
-      >
-        <a>Foo</a>
-      </LocalizedLink>
+      {state.state !== "UNINITIALIZED" && (
+        <>
+          <h1>Current State</h1>
+          <div>{JSON.stringify(state)}</div>
+          <Input
+            type="text"
+            value={state.selectedDataSet || ""}
+            onChange={(e: SyntheticEvent<HTMLInputElement>) =>
+              dispatch({ type: "SELECT_DATASET", value: e.currentTarget.value })
+            }
+          ></Input>
+          <Button
+            onClick={() => dispatch({ type: "SELECT_DATASET", value: "hello" })}
+          >
+            TOGGLE
+          </Button>
+        </>
+      )}
     </AppLayout>
   );
 };
