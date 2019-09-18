@@ -168,6 +168,7 @@ const BarsChart = ({ spec }: { spec: any }) => {
       }
     };
     createView();
+    // return clean-up function
   }, [spec]);
 
   return <div ref={ref} />;
