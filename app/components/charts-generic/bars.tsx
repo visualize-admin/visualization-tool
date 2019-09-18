@@ -5,18 +5,18 @@ interface Props {
   data: any;
   width: number;
   xField: string;
-  yField: string;
-  groupByField: string;
-  groupByFieldLabel: string;
+  heightField: string;
+  groupBy: string;
+  groupByLabel: string;
   aggregateFunction: "sum"; // AggregateFunction;
 }
 export const Bars = ({
   data,
   width,
   xField,
-  yField,
-  groupByField,
-  groupByFieldLabel,
+  heightField,
+  groupBy,
+  groupByLabel,
   aggregateFunction
 }: Props) => {
   const spec: vega.Spec = {
@@ -33,15 +33,15 @@ export const Bars = ({
         transform: [
           {
             type: "aggregate",
-            groupby: [xField, groupByField],
-            fields: [yField],
+            groupby: [xField, groupBy],
+            fields: [heightField],
             ops: [aggregateFunction],
             as: ["sum"]
           },
           {
             type: "stack",
             groupby: [xField],
-            sort: { field: groupByField },
+            sort: { field: groupBy },
             field: "sum"
           }
         ]
@@ -81,7 +81,7 @@ export const Bars = ({
         range: "category",
         domain: {
           data: "table",
-          field: groupByField
+          field: groupBy
         }
       }
     ],
@@ -109,7 +109,7 @@ export const Bars = ({
             y2: { scale: "y", field: "y1" }
           },
           update: {
-            fill: { scale: "color", field: groupByField }
+            fill: { scale: "color", field: groupBy }
           },
           hover: {
             fill: { value: "grey" }
@@ -128,7 +128,7 @@ export const Bars = ({
             x: { scale: "x", signal: `tooltip.${xField}`, band: 0.5 },
             y: { scale: "y", signal: "tooltip.y1", offset: -2 },
             text: {
-              signal: `tooltip.sum ? tooltip.${groupByField} + " " +format(tooltip.sum, '.2~r') : ''`
+              signal: `tooltip.sum ? tooltip.${groupBy} + " " +format(tooltip.sum, '.2~r') : ''`
             },
             fillOpacity: [{ test: "datum === tooltip", value: 0 }, { value: 1 }]
           }
@@ -138,7 +138,7 @@ export const Bars = ({
     legends: [
       {
         fill: "color",
-        title: groupByFieldLabel,
+        title: groupByLabel,
         orient: "bottom",
         direction: "vertical",
         columns: 3
