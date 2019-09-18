@@ -1,29 +1,30 @@
 import { Dimension, Measure, DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { useObservations } from "../domain/data-cube";
-import { Bars } from "./charts/bars";
+import { Bars } from "./charts-generic/bars";
 
-export const DSVisualization = ({
+export const DSBars = ({
   dataset,
   dimensions,
-  selectedDimension,
+  xAxis,
   measures
 }: {
   dataset: DataCube;
   dimensions: Dimension[];
-  selectedDimension: string;
+  xAxis: string;
+  aggregationFunction: "sum";
   measures: Measure[];
 }) => {
   const data = useObservations({
     dataset,
     dimensions,
-    selectedDimension,
+    selectedDimension: xAxis,
     measures
   });
 
   return data.state === "loaded" ? (
     <>
-      <h3>Visualization</h3>
+      <h3>Bars</h3>
 
       <Bars
         data={data.data.results}
