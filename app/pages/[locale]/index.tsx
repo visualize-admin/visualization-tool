@@ -13,7 +13,6 @@ import { Box } from "rebass";
 import { Label, Select } from "@rebass/forms";
 
 const DSMeta = ({ dataset }: { dataset: DataCube }) => {
-  const locale = useLocale();
   const meta = useDataSetMetadata(dataset);
 
   return meta.state === "loaded" ? (
@@ -39,7 +38,6 @@ const DSMeta = ({ dataset }: { dataset: DataCube }) => {
 };
 
 const DSInfo = () => {
-  const locale = useLocale();
   const datasets = useDataSets();
   const [datasetIri, selectDataset] = useState(undefined);
 
