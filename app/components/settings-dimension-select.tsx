@@ -8,8 +8,8 @@ export const DSDimensionSelect = ({
   updateDimension
 }: {
   dimensions: Dimension[];
-  selectedDimension: string;
-  updateDimension: (dimension: string) => void;
+  selectedDimension: Dimension;
+  updateDimension: (dimension: Dimension) => void;
 }) => {
   return (
     <>
@@ -20,8 +20,8 @@ export const DSDimensionSelect = ({
             id={dim.iri.value}
             name={dim.iri.value}
             value={dim.iri.value}
-            checked={dim.iri.value === selectedDimension}
-            onChange={() => updateDimension(dim.iri.value)}
+            checked={dim.iri === selectedDimension.iri}
+            onChange={() => updateDimension(dim)}
           />
           {dim.labels[0].value}
         </Label>
