@@ -3,17 +3,19 @@ import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 
 export const DSDimensionSelect = ({
+  label = "Dimensions",
   dimensions,
   selectedDimension,
   updateDimension
 }: {
+  label?: string;
   dimensions: Dimension[];
   selectedDimension: Dimension;
   updateDimension: (dimension: Dimension) => void;
 }) => {
   return (
     <>
-      <h3>Dimensions</h3>
+      <h3>{label}</h3>
       {dimensions.map(dim => (
         <Label key={dim.iri.value} width={[1]} p={2}>
           <Radio
