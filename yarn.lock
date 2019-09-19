@@ -1179,6 +1179,11 @@
     "@types/lingui__core" "*"
     "@types/react" "*"
 
+"@types/lodash@^4.14.138":
+  version "4.14.138"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.138.tgz#34f52640d7358230308344e579c15b378d91989e"
+  integrity sha512-A4uJgHz4hakwNBdHNPdxOTkYmXNgmUAKLbXZ7PKGslgeV0Mb8P3BlbYfPovExek1qnod4pDfRbxuzcVs3dlFLg==
+
 "@types/nanoid@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/nanoid/-/nanoid-2.0.0.tgz#b59002c475e6dfcc26e67ba563ff61b512e5ebf8"

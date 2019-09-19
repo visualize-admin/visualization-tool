@@ -1,10 +1,17 @@
-import { useEffect } from "react";
+import {
+  useEffect,
+  createContext,
+  Dispatch,
+  useContext,
+  ReactNode
+} from "react";
 import { Reducer, useImmerReducer } from "use-immer";
 import { Immutable } from "immer";
+import set from "lodash/set";
 
 type ChartConfig = any;
 
-type AppState = Immutable<
+export type AppState = Immutable<
   | {
       state: "INITIAL";
     }
@@ -26,7 +33,10 @@ type AppStateAction =
   | { type: "INITIALIZED"; value: AppState }
   | { type: "DATASET_SELECTED"; value: string }
   | { type: "CHART_TYPE_SELECTED"; value: string }
-  | { type: "CHART_CONFIG_CHANGED"; value: ChartConfig };
+  | {
+      type: "CHART_CONFIG_CHANGED";
+      value: { path: string | string[]; value: any };
+    };
 
 const LOCALSTORAGE_PREFIX = "vizualize-app-state";
 const getLocalStorageKey = (chartId: string) =>
@@ -60,13 +70,38 @@ const reducer: Reducer<AppState, AppStateAction> = (draft, action) => {
         draft.chartType = action.value;
       }
       return draft;
+    case "CHART_CONFIG_CHANGED":
+      draft.state = "IN_PROGRESS";
+      if (draft.state === "IN_PROGRESS") {
+        set(draft, action.value.path, action.value.value);
+      }
+      return draft;
     default:
       return;
   }
 };
 
+const AppStateContext = createContext<
+  [AppState, Dispatch<AppStateAction>] | undefined
+>(undefined);
+
+export const AppStateProvider = ({ children }: { children: ReactNode }) => {
+  const stateAndDispatch = useImmerReducer(reducer, initialState);
+  return (
+    <AppStateContext.Provider value={stateAndDispatch}>
+      {children}
+    </AppStateContext.Provider>
+  );
+};
+
 export const useAppState = ({ chartId }: { chartId: string }) => {
-  const [state, dispatch] = useImmerReducer(reducer, initialState);
+  const ctx = useContext(AppStateContext);
+
+  if (ctx === undefined) {
+    throw Error("You need an <AppStateProvider> to useAppState");
+  }
+
+  const [state, dispatch] = ctx;
 
   // Re-initialize state on page load
   useEffect(() => {

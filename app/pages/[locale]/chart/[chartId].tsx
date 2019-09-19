@@ -3,9 +3,10 @@ import { useRouter } from "next/router";
 import React, { SyntheticEvent } from "react";
 import { LocalizedLink } from "../../../components/links";
 import { AppLayout } from "../../../components/layout";
-import { useAppState } from "../../../domain/app-state";
+import { useAppState, AppStateProvider } from "../../../domain/app-state";
 import { Input } from "@rebass/forms";
 import { Button, Box } from "rebass";
+import { useField } from "../../../domain/config-form";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -15,47 +16,57 @@ const useChartId = () => {
   return chartId;
 };
 
-const Page: NextPage = () => {
-  const chartId = useChartId();
+const Form = ({ chartId }: { chartId: string }) => {
   const [state, dispatch] = useAppState({ chartId });
 
-  return (
-    <AppLayout>
-      <div>
-        
-        <LocalizedLink href={"/[locale]/chart/new"} passHref>
-          <a>New chart!</a>
-        </LocalizedLink>
+  const field0 = useField({
+    chartId,
+    path: "dataSet"
+  });
+  const field1 = useField({
+    chartId,
+    path: "chartConfig.foo"
+  });
 
-        <Box my={3} p={2}>
-          {state.state !== "INITIAL" && (
-            <>
-              Input something:
-              <Input
-                type="text"
-                value={state.dataSet || ""}
-                onChange={(e: SyntheticEvent<HTMLInputElement>) =>
-                  dispatch({
-                    type: "DATASET_SELECTED",
-                    value: e.currentTarget.value
-                  })
-                }
-              ></Input>
-              {/* <Button
+  return (
+    <>
+      <Box my={3} p={2}>
+        {state.state !== "INITIAL" && (
+          <>
+            Input something:
+            <Input type="text" {...field0}></Input>
+            <Input type="text" {...field1}></Input>
+            {/* <Button
                 onClick={() =>
                   dispatch({ type: "DATASET_SELECTED", value: "hello" })
                 }
               >
                 TOGGLE
               </Button> */}
-            </>
-          )}
-        </Box>
-        <Box my={3} p={2} bg="muted">
-          <pre>{chartId}</pre>
-          <pre>{JSON.stringify(state, null, 2)}</pre>
-        </Box>
-      </div>
+          </>
+        )}
+      </Box>
+      <Box my={3} p={2} bg="muted">
+        <pre>{chartId}</pre>
+        <pre>{JSON.stringify(state, null, 2)}</pre>
+      </Box>
+    </>
+  );
+};
+
+const Page: NextPage = () => {
+  const chartId = useChartId();
+
+  return (
+    <AppLayout>
+      <AppStateProvider key={chartId}>
+        <div>
+          <LocalizedLink href={"/[locale]/chart/new"} passHref>
+            <a>New chart!</a>
+          </LocalizedLink>
+          <Form chartId={chartId} />
+        </div>
+      </AppStateProvider>
     </AppLayout>
   );
 };
