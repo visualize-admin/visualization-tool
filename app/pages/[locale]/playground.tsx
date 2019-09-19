@@ -9,19 +9,19 @@ export default () => {
   return (
     <AppLayout>
     {/* <Button onClick={dispatch({type: "NEW"})}>Create new chart</Button> */}
-      {state.state !== "UNINITIALIZED" && (
+      {state.state !== "INITIAL" && (
         <>
           <h1>Current State</h1>
           <div>{JSON.stringify(state)}</div>
           <Input
             type="text"
-            value={state.selectedDataSet || ""}
+            value={state.dataSet || ""}
             onChange={(e: SyntheticEvent<HTMLInputElement>) =>
-              dispatch({ type: "SELECT_DATASET", value: e.currentTarget.value })
+              dispatch({ type: "DATASET_SELECTED", value: e.currentTarget.value })
             }
           ></Input>
           <Button
-            onClick={() => dispatch({ type: "SELECT_DATASET", value: "hello" })}
+            onClick={() => dispatch({ type: "DATASET_SELECTED", value: "hello" })}
           >
             TOGGLE
           </Button>

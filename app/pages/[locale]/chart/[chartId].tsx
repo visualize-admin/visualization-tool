@@ -28,22 +28,22 @@ const Page: NextPage = () => {
         </LocalizedLink>
 
         <Box my={3} p={2}>
-          {state.state !== "UNINITIALIZED" && (
+          {state.state !== "INITIAL" && (
             <>
               Input something:
               <Input
                 type="text"
-                value={state.selectedDataSet || ""}
+                value={state.dataSet || ""}
                 onChange={(e: SyntheticEvent<HTMLInputElement>) =>
                   dispatch({
-                    type: "SELECT_DATASET",
+                    type: "DATASET_SELECTED",
                     value: e.currentTarget.value
                   })
                 }
               ></Input>
               {/* <Button
                 onClick={() =>
-                  dispatch({ type: "SELECT_DATASET", value: "hello" })
+                  dispatch({ type: "DATASET_SELECTED", value: "hello" })
                 }
               >
                 TOGGLE
