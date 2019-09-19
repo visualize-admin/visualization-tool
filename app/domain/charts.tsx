@@ -8,6 +8,7 @@ export const formatData = ({ observations }: { observations: any }) => {
     }, {});
   });
 };
+
 export const formatDataForBarChart = ({
   observations,
   xField,
@@ -28,20 +29,23 @@ export const formatDataForBarChart = ({
     }, {});
   });
 };
+
 export const formatDataForLineChart = ({
   observations,
   xField,
+  groupByField,
   heightField
 }: {
   observations: any;
   xField: Dimension;
+  groupByField: Dimension;
   heightField: Dimension;
 }) => {
   return observations.map((d: any) => {
     return Object.keys(d).reduce((obj: any, key) => {
-      if (key === xField.labels[0].value) {
+      if (key === groupByField.labels[0].value) {
         obj[key] = (d as any)[key].label.value;
-      } else if (key === "measure") {
+      } else if (key === "measure" || key === xField.labels[0].value) {
         obj[key] = +(d as any)[key].value.value;
       }
       return obj;
