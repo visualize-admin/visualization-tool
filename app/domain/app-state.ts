@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
+import { Immutable } from "immer";
 
-type AppState =
+type AppState = Immutable<
   | {
       state: "UNINITIALIZED";
       selectedDataSet: undefined;
@@ -21,7 +22,8 @@ type AppState =
       state: "CONFIGURE_CHART";
       selectedDataSet: string;
       selectedChartType: string;
-    };
+    }
+>;
 
 type AppStateAction =
   | { type: "INITIALIZE"; value: AppState }
