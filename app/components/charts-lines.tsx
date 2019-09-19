@@ -25,7 +25,7 @@ export const ChartLines = ({
   console.log({ formattedData });
   return (
     <>
-      <h3>Bars</h3>
+      <h3>Lines</h3>
       <Lines
         data={formattedData}
         width={500}
