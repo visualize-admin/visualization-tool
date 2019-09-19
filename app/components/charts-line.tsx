@@ -1,9 +1,9 @@
 import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
-import { Bars } from "./charts-generic/bars";
-import { formatDataForBarCHart } from "../domain/data-cube";
+import { formatDataForLineChart } from "../domain";
+import { Lines } from "./charts-generic/lines";
 
-export const ChartBars = ({
+export const ChartLines = ({
   observations,
   xField,
   heightField,
@@ -14,7 +14,7 @@ export const ChartBars = ({
   heightField: Dimension;
   aggregationFunction: "sum";
 }) => {
-  const formattedData = formatDataForBarCHart({
+  const formattedData = formatDataForLineChart({
     observations,
     xField,
     heightField
@@ -23,16 +23,15 @@ export const ChartBars = ({
   return (
     <>
       <h3>Bars</h3>
-      <Bars
+      <Lines
         data={formattedData}
         width={500}
         xField={xField.labels[0].value}
-        heightField={"measure"}
+        yField={"measure"}
         groupBy={xField.labels[0].value}
         groupByLabel={xField.labels[0].value}
         aggregateFunction={"sum"}
       />
-      {/* <pre>{JSON.stringify(observations, null, 2)}</pre> */}
     </>
   );
 };

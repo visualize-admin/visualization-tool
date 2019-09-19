@@ -2,13 +2,10 @@ import { Dimension, Measure, DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { useState } from "react";
 import { useDataSetMetadata, useObservations } from "../domain/data-cube";
 
-// import { DSBars } from "./chart-bars";
-import { DSDimensionSelect } from "./settings-dimension-select";
-import { DSFilter } from "./settings-dimension-filter";
 import { ChartTypeSelector } from "./settings-chart-type-selector";
 import { ChartType } from "../types";
-import { Flex, Box } from "rebass";
-import { ChartBars } from "./chart-bars";
+import { ChartBarState } from "./charts-bars-state";
+import { ChartLineState } from "./charts-lines-state";
 
 const Cockpit = ({
   dataset,
@@ -24,10 +21,6 @@ const Cockpit = ({
   namedSelection: any;
 }) => {
   const [chartType, updateChartType] = useState("bar" as ChartType);
-  const [dimensionFilter, addDimensionFilter] = useState({}); // {dimension: dimensionValue[]}
-
-  const [xField, updateXField] = useState(dimensions[0]);
-  const [heightField, updateHeightField] = useState(measures[0]);
 
   const observations = useObservations({
     dataset,
@@ -41,27 +34,20 @@ const Cockpit = ({
           chartType={chartType}
           updateChartType={updateChartType}
         />
-        <Flex>
-          <Box width={1 / 3} px={2}>
-            <DSDimensionSelect
-              dimensions={dimensions}
-              selectedDimension={xField}
-              updateDimension={updateXField}
-            />
-            {/* <DSFilter
-            observations={observations.data}
-            namedDimensions={namedDimensions}
-          /> */}
-          </Box>
-          <Box width={1 / 3} px={2}>
-            <ChartBars
-              observations={observations.data.results}
-              xField={xField}
-              heightField={heightField}
-              aggregationFunction={"sum"}
-            />
-          </Box>
-        </Flex>
+        {chartType === "bar" && (
+          <ChartBarState
+            dimensions={dimensions}
+            measures={measures}
+            observations={observations.data.results}
+          />
+        )}
+        {chartType === "line" && (
+          <ChartLineState
+            dimensions={dimensions}
+            measures={measures}
+            observations={observations.data.results}
+          />
+        )}
       </>
     );
   } else {
