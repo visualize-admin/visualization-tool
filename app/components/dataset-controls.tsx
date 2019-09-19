@@ -6,6 +6,7 @@ import { ChartTypeSelector } from "./settings-chart-type-selector";
 import { ChartType } from "../types";
 import { ChartBarState } from "./charts-bars-state";
 import { ChartLineState } from "./charts-lines-state";
+import { ChartAreaState } from "./charts-areas-state";
 
 const Cockpit = ({
   dataset,
@@ -43,6 +44,13 @@ const Cockpit = ({
         )}
         {chartType === "line" && (
           <ChartLineState
+            dimensions={dimensions}
+            measures={measures}
+            observations={observations.data.results}
+          />
+        )}
+        {chartType === "area" && (
+          <ChartAreaState
             dimensions={dimensions}
             measures={measures}
             observations={observations.data.results}
