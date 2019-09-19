@@ -71,7 +71,7 @@ export const useObservations = ({
     const query = dataset
       .query()
       .select(namedSelection)
-      .limit(10000);
+      .limit(100000);
     const data = await query.execute();
     return {
       results: data // await query.execute()
@@ -80,3 +80,92 @@ export const useObservations = ({
 
   return useRemoteData(fetchData);
 };
+
+/**
+ * @fixme use metadata to filter time dimension!
+ */
+export const getTimeDimensions = ({
+  dimensions
+}: {
+  dimensions: Dimension[];
+}) => dimensions.filter(dim => dim.labels[0].value === "Jahr");
+/**
+ * @fixme use metadata to filter time dimension!
+ */
+export const getCategoricalDimensions = ({
+  dimensions
+}: {
+  dimensions: Dimension[];
+}) => dimensions.filter(dim => dim.labels[0].value !== "Jahr");
+
+// const observation = {
+//   Holzartengruppe: {
+//     value: { value: "http://example.org/pflanzungen/property/1/0" },
+//     label: {
+//       value: "Holzartengruppe - Total",
+//       datatype: {
+//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+//       },
+//       language: "de"
+//     }
+//   },
+//   Jahr: {
+//     value: {
+//       value: "1975",
+//       datatype: { value: "http://www.w3.org/2001/XMLSchema#gYear" },
+//       language: ""
+//     },
+//     label: {
+//       value: "",
+//       datatype: { value: "http://www.w3.org/2001/XMLSchema#string" },
+//       language: ""
+//     }
+//   },
+//   Variable: {
+//     value: { value: "http://example.org/pflanzungen/property/0/0" },
+//     label: {
+//       value: "Anzahl Pflanzungen",
+//       datatype: {
+//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+//       },
+//       language: "de"
+//     }
+//   },
+//   Eigentümertyp: {
+//     value: { value: "http://example.org/pflanzungen/property/2/0" },
+//     label: {
+//       value: "Eigentümertyp - Total",
+//       datatype: {
+//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+//       },
+//       language: "de"
+//     }
+//   },
+//   Forstzone: {
+//     label: {
+//       value: "Schweiz",
+//       datatype: {
+//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+//       },
+//       language: "de"
+//     },
+//     value: { value: "http://example.org/pflanzungen/property/4/0" }
+//   },
+//   Kanton: {
+//     label: {
+//       value: "Schweiz",
+//       datatype: {
+//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+//       },
+//       language: "de"
+//     },
+//     value: { value: "http://example.org/pflanzungen/property/3/0" }
+//   },
+//   measure: {
+//     value: {
+//       value: "14987.125",
+//       datatype: { value: "http://www.w3.org/2001/XMLSchema#decimal" },
+//       language: ""
+//     }
+//   }
+// };
