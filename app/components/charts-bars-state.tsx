@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Box, Flex } from "rebass";
 import { ChartBars } from "./charts-bars";
 import { DSDimensionSelect } from "./settings-dimension-select";
+import { getCategoricalDimensions } from "../domain";
 
 export const ChartBarState = ({
   dimensions,
@@ -16,13 +17,14 @@ export const ChartBarState = ({
   const [dimensionFilter, addDimensionFilter] = useState({}); // {dimension: dimensionValue[]}
   const [xField, updateXField] = useState(dimensions[0]);
   const [heightField, updateHeightField] = useState(measures[0]);
-  // const [barChartState, updateBarChartState] = useState({});
+
+  const categoricalDimensions = getCategoricalDimensions({ dimensions });
 
   return (
     <Flex>
       <Box width={1 / 3} px={2}>
         <DSDimensionSelect
-          dimensions={dimensions}
+          dimensions={categoricalDimensions}
           selectedDimension={xField}
           updateDimension={updateXField}
         />
