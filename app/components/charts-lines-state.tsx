@@ -1,9 +1,8 @@
 import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import React, { useState } from "react";
 import { Box, Flex } from "rebass";
-
-import { ChartLines } from "./charts-line";
-// import { DSBars } from "./chart-bars";
+import { getTimeDimensions, getCategoricalDimensions } from "../domain";
+import { ChartLines } from "./charts-lines";
 import { DSDimensionSelect } from "./settings-dimension-select";
 
 export const ChartLineState = ({
@@ -15,17 +14,28 @@ export const ChartLineState = ({
   measures: Measure[];
   observations: any;
 }) => {
-  const [dimensionFilter, addDimensionFilter] = useState({}); // {dimension: dimensionValue[]}
-  const [xField, updateXField] = useState(dimensions[0]);
+  const [groupByField, updateGroupByField] = useState(
+    getCategoricalDimensions({ dimensions })[0]
+  );
+  const [xField, updateXField] = useState(getTimeDimensions({ dimensions })[0]);
   const [heightField, updateHeightField] = useState(measures[0]);
 
+  const timeDimensions = getTimeDimensions({ dimensions });
+  const categoricalDimensions = getCategoricalDimensions({ dimensions });
   return (
     <Flex>
       <Box width={1 / 3} px={2}>
         <DSDimensionSelect
-          dimensions={dimensions}
+          label={"Time dimensions"}
+          dimensions={timeDimensions}
           selectedDimension={xField}
           updateDimension={updateXField}
+        />
+        <DSDimensionSelect
+          label={"Categorical dimensions"}
+          dimensions={categoricalDimensions}
+          selectedDimension={groupByField}
+          updateDimension={updateGroupByField}
         />
         {/* <DSFilter
             observations={observations.data}
@@ -36,6 +46,7 @@ export const ChartLineState = ({
         <ChartLines
           observations={observations}
           xField={xField}
+          groupByField={groupByField}
           heightField={heightField}
           aggregationFunction={"sum"}
         />
