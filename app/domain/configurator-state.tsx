@@ -60,7 +60,7 @@ const emptyState: ConfiguratorState = {
   state: "IN_PROGRESS",
   dataSet: undefined,
   chartType: undefined,
-  chartConfig: {}
+  chartConfig: { title: {} }
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
@@ -169,6 +169,7 @@ export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
     try {
       switch (state.state) {
         case "IN_PROGRESS":
+        case "PUBLISHED":
           // Store current state in localstorage
           window.localStorage.setItem(
             getLocalStorageKey(chartId),

@@ -2,7 +2,7 @@ import { Checkbox, Input, Label, Radio } from "@rebass/forms";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import { Box, Button } from "rebass";
+import { Box, Button, Link } from "rebass";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { useField } from "../../../domain/config-form";
@@ -10,6 +10,7 @@ import {
   ConfiguratorStateProvider,
   useConfiguratorState
 } from "../../../domain/configurator-state";
+import { Trans } from "@lingui/macro";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -69,10 +70,26 @@ const Form = ({ chartId }: { chartId: string }) => {
           <>
             Input something:
             <Field chartId={chartId} path={"dataSet"} label="Dataset" />
-            <Field chartId={chartId} path={"chartConfig.title.de"} label="Title de" />
-            <Field chartId={chartId} path={"chartConfig.title.fr"} label="Title fr" />
-            <Field chartId={chartId} path={"chartConfig.title.it"} label="Title it" />
-            <Field chartId={chartId} path={"chartConfig.title.en"} label="Title en" />
+            <Field
+              chartId={chartId}
+              path={"chartConfig.title.de"}
+              label="Title de"
+            />
+            <Field
+              chartId={chartId}
+              path={"chartConfig.title.fr"}
+              label="Title fr"
+            />
+            <Field
+              chartId={chartId}
+              path={"chartConfig.title.it"}
+              label="Title it"
+            />
+            <Field
+              chartId={chartId}
+              path={"chartConfig.title.en"}
+              label="Title en"
+            />
             <Field
               type="radio"
               chartId={chartId}
@@ -103,6 +120,25 @@ const Form = ({ chartId }: { chartId: string }) => {
               Publish
             </Button>
           </>
+        )}
+
+        {state.state === "PUBLISHED" && (
+          <Box m={2} bg="secondary" color="white" p={2}>
+            <Trans id="test-form-success">
+              Konfiguration gespeichert unter
+            </Trans>{" "}
+            <LocalizedLink
+              href={`/[locale]/config?key=${state.configKey}`}
+              passHref
+            >
+              <Link
+                color="white"
+                sx={{ textDecoration: "underline", cursor: "pointer" }}
+              >
+                {state.configKey}
+              </Link>
+            </LocalizedLink>
+          </Box>
         )}
       </Box>
       <Box my={3} p={2} bg="muted">
