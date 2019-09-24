@@ -4,7 +4,7 @@ import React, { SyntheticEvent } from "react";
 import { LocalizedLink } from "../../../components/links";
 import { AppLayout } from "../../../components/layout";
 import { useAppState, AppStateProvider } from "../../../domain/app-state";
-import { Input } from "@rebass/forms";
+import { Input, Radio, Label, Checkbox } from "@rebass/forms";
 import { Button, Box } from "rebass";
 import { useField } from "../../../domain/config-form";
 
@@ -16,12 +16,48 @@ const useChartId = () => {
   return chartId;
 };
 
-const Form = ({ chartId }: { chartId: string }) => {
-  const [state, dispatch] = useAppState({ chartId });
-
+const Field = ({
+  chartId,
+  label,
+  path,
+  type,
+  value,
+  ...props
+}: {
+  chartId: string;
+  label: string;
+  path: string;
+  type?: "text" | "checkbox" | "radio";
+  value?: string;
+}) => {
   const field = useField({
-    chartId
+    chartId,
+    path,
+    type,
+    value
   });
+
+  return type === "radio" ? (
+    <Label>
+      <Radio {...field}></Radio>
+      {label}
+    </Label>
+  ) : type === "checkbox" ? (
+    <Label>
+      <Checkbox {...field}></Checkbox>
+      {label}
+    </Label>
+  ) : (
+    <>
+      {" "}
+      <Label>{label}</Label>
+      <Input {...field}></Input>
+    </>
+  );
+};
+
+const Form = ({ chartId }: { chartId: string }) => {
+  const [state] = useAppState({ chartId });
 
   return (
     <>
@@ -29,8 +65,35 @@ const Form = ({ chartId }: { chartId: string }) => {
         {state.state !== "INITIAL" && (
           <>
             Input something:
-            <Input type="text" {...field("dataSet")}></Input>
-            <Input type="text" {...field("chartConfig.foo")}></Input>
+            <Field chartId={chartId} path={"dataSet"} label="Dataset" />
+            <Field chartId={chartId} path={"chartConfig.foo"} label="Foo" />
+            <Field chartId={chartId} path={"chartConfig.bar"} label="Bar" />
+            <Field
+              type="radio"
+              chartId={chartId}
+              path={"chartConfig.radio"}
+              label="One"
+              value="one"
+            />
+            <Field
+              type="radio"
+              chartId={chartId}
+              path={"chartConfig.radio"}
+              label="Two"
+              value="two"
+            />
+            <Field
+              type="checkbox"
+              chartId={chartId}
+              path={"chartConfig.checkbox.checkers"}
+              label="Checkers"
+            />
+            <Field
+              type="checkbox"
+              chartId={chartId}
+              path={"chartConfig.checkbox.checkors"}
+              label="Checkors"
+            />
             {/* <Button
                 onClick={() =>
                   dispatch({ type: "DATASET_SELECTED", value: "hello" })

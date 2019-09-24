@@ -7,25 +7,46 @@ import { useAppState } from "./app-state";
 //   onChange: [];
 // }
 
-type FieldProps = (
-  path: string
-) => Pick<InputHTMLAttributes<HTMLInputElement>, "onChange" | "name" | "value">;
+type FieldProps = Pick<
+  InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "name" | "value" | "checked" | "type"
+>;
 
-export const useField = ({ chartId }: { chartId: string }): FieldProps => {
+export const useField = ({
+  chartId,
+  path,
+  type = "text",
+  value
+}: {
+  chartId: string;
+  path: string;
+  type?: "text" | "checkbox" | "radio";
+  value?: string;
+}): FieldProps => {
   const [state, dispatch] = useAppState({ chartId });
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    e =>
+    e => {
       dispatch({
         type: "CHART_CONFIG_CHANGED",
-        value: { path: e.currentTarget.name, value: e.currentTarget.value }
-      }),
-    [dispatch]
+        value: { path, value: type=== "checkbox" ? e.currentTarget.checked : e.currentTarget.value }
+      });
+    },
+    [dispatch, path, type]
   );
 
-  return (path: string) => ({
+
+  const stateValue = state.state === "IN_PROGRESS" ? get(state, path, "") : "";
+
+  const checked = type === "radio"  ? stateValue === value : type==="checkbox" ? stateValue : undefined;
+
+  return {
     name: path,
-    value: state.state === "IN_PROGRESS" ? get(state, path, "") : "",
+    value: value
+      ? value
+      : stateValue,
+    type,
+    checked,
     onChange
-  });
+  };
 };
