@@ -29,22 +29,32 @@ export const useField = ({
     e => {
       dispatch({
         type: "CHART_CONFIG_CHANGED",
-        value: { path, value: type=== "checkbox" ? e.currentTarget.checked : e.currentTarget.value }
+        value: {
+          path,
+          value:
+            type === "checkbox"
+              ? e.currentTarget.checked
+                ? true
+                : undefined
+              : e.currentTarget.value
+        }
       });
     },
     [dispatch, path, type]
   );
 
-
   const stateValue = state.state === "IN_PROGRESS" ? get(state, path, "") : "";
 
-  const checked = type === "radio"  ? stateValue === value : type==="checkbox" ? stateValue : undefined;
+  const checked =
+    type === "radio"
+      ? stateValue === value
+      : type === "checkbox"
+      ? stateValue
+      : undefined;
 
   return {
     name: path,
-    value: value
-      ? value
-      : stateValue,
+    value: value ? value : stateValue,
     type,
     checked,
     onChange
