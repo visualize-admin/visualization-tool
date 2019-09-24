@@ -22,9 +22,16 @@ export type ConfiguratorState = Immutable<
       chartConfig: ChartConfig;
     }
   | {
+      state: "PUBLISHING";
+      dataSet: string;
+      chartType: string;
+      chartConfig: ChartConfig;
+    }
+  | {
       state: "PUBLISHED";
       dataSet: string;
       chartType: string;
+      configKey: string;
       chartConfig: ChartConfig;
     }
 >;
@@ -37,7 +44,9 @@ type ConfiguratorStateAction =
       type: "CHART_CONFIG_CHANGED";
       value: { path: string | string[]; value: any };
     }
-  | { type: "PUBLISHED" };
+  | { type: "PUBLISH" }
+  | { type: "PUBLISH_FAILED" }
+  | { type: "PUBLISHED"; value: string };
 
 const LOCALSTORAGE_PREFIX = "vizualize-app-state";
 const getLocalStorageKey = (chartId: string) =>
@@ -80,8 +89,18 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         set(draft, action.value.path, action.value.value);
       }
       return draft;
+    case "PUBLISH":
+      draft.state = "PUBLISHING";
+      return draft;
+    case "PUBLISH_FAILED":
+      // Recover by going back to In-progress state
+      draft.state = "IN_PROGRESS";
+      return draft;
     case "PUBLISHED":
       draft.state = "PUBLISHED";
+      if (draft.state === "PUBLISHED") {
+        draft.configKey = action.value;
+      }
       return draft;
     default:
       return;
@@ -103,6 +122,19 @@ export const ConfiguratorStateProvider = ({
       {children}
     </ConfiguratorStateContext.Provider>
   );
+};
+
+type ReturnVal = {
+  key: string;
+};
+const save = async (values: any): Promise<ReturnVal> => {
+  return fetch("/api/config", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(values)
+  }).then(res => res.json());
 };
 
 export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
@@ -133,19 +165,32 @@ export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
     }
   }, [dispatch, chartId]);
 
-  // Store current state in localstorage
   useEffect(() => {
     try {
-      if (state.state !== "INITIAL") {
-        window.localStorage.setItem(
-          getLocalStorageKey(chartId),
-          JSON.stringify(state)
-        );
+      switch (state.state) {
+        case "IN_PROGRESS":
+          // Store current state in localstorage
+          window.localStorage.setItem(
+            getLocalStorageKey(chartId),
+            JSON.stringify(state)
+          );
+          return;
+        case "PUBLISHING":
+          (async () => {
+            try {
+              const result = await save(state.chartConfig);
+              dispatch({ type: "PUBLISHED", value: result.key });
+            } catch (e) {
+              console.error(e);
+              dispatch({ type: "PUBLISH_FAILED" });
+            }
+          })();
+          return;
       }
     } catch (e) {
       console.error(e);
     }
-  }, [state, chartId]);
+  }, [state, dispatch, chartId]);
 
   return [state, dispatch] as const;
 };

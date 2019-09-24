@@ -6,7 +6,10 @@ import { Box, Button } from "rebass";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { useField } from "../../../domain/config-form";
-import { ConfiguratorStateProvider, useConfiguratorState } from "../../../domain/configurator-state";
+import {
+  ConfiguratorStateProvider,
+  useConfiguratorState
+} from "../../../domain/configurator-state";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -66,8 +69,10 @@ const Form = ({ chartId }: { chartId: string }) => {
           <>
             Input something:
             <Field chartId={chartId} path={"dataSet"} label="Dataset" />
-            <Field chartId={chartId} path={"chartConfig.foo"} label="Foo" />
-            <Field chartId={chartId} path={"chartConfig.bar"} label="Bar" />
+            <Field chartId={chartId} path={"chartConfig.title.de"} label="Title de" />
+            <Field chartId={chartId} path={"chartConfig.title.fr"} label="Title fr" />
+            <Field chartId={chartId} path={"chartConfig.title.it"} label="Title it" />
+            <Field chartId={chartId} path={"chartConfig.title.en"} label="Title en" />
             <Field
               type="radio"
               chartId={chartId}
@@ -94,7 +99,7 @@ const Form = ({ chartId }: { chartId: string }) => {
               path={"chartConfig.fruit.apples"}
               label="Apples"
             />
-            <Button onClick={() => dispatch({ type: "PUBLISHED" })}>
+            <Button onClick={() => dispatch({ type: "PUBLISH" })}>
               Publish
             </Button>
           </>
