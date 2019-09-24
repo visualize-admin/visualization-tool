@@ -1,6 +1,6 @@
 import get from "lodash/get";
 import { InputHTMLAttributes, useCallback, ChangeEvent } from "react";
-import { useAppState } from "./app-state";
+import { useConfiguratorState } from "./configurator-state";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -23,7 +23,7 @@ export const useField = ({
   type?: "text" | "checkbox" | "radio";
   value?: string;
 }): FieldProps => {
-  const [state, dispatch] = useAppState({ chartId });
+  const [state, dispatch] = useConfiguratorState({ chartId });
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {

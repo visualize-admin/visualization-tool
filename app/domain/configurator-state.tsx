@@ -11,7 +11,7 @@ import set from "lodash/set";
 
 type ChartConfig = any;
 
-export type AppState = Immutable<
+export type ConfiguratorState = Immutable<
   | {
       state: "INITIAL";
     }
@@ -29,31 +29,35 @@ export type AppState = Immutable<
     }
 >;
 
-type AppStateAction =
-  | { type: "INITIALIZED"; value: AppState }
+type ConfiguratorStateAction =
+  | { type: "INITIALIZED"; value: ConfiguratorState }
   | { type: "DATASET_SELECTED"; value: string }
   | { type: "CHART_TYPE_SELECTED"; value: string }
   | {
       type: "CHART_CONFIG_CHANGED";
       value: { path: string | string[]; value: any };
-    };
+    }
+  | { type: "PUBLISHED" };
 
 const LOCALSTORAGE_PREFIX = "vizualize-app-state";
 const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
-const initialState: AppState = {
+const initialState: ConfiguratorState = {
   state: "INITIAL"
 };
 
-const emptyState: AppState = {
+const emptyState: ConfiguratorState = {
   state: "IN_PROGRESS",
   dataSet: undefined,
   chartType: undefined,
   chartConfig: {}
 };
 
-const reducer: Reducer<AppState, AppStateAction> = (draft, action) => {
+const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
+  draft,
+  action
+) => {
   switch (action.type) {
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
@@ -76,29 +80,38 @@ const reducer: Reducer<AppState, AppStateAction> = (draft, action) => {
         set(draft, action.value.path, action.value.value);
       }
       return draft;
+    case "PUBLISHED":
+      draft.state = "PUBLISHED";
+      return draft;
     default:
       return;
   }
 };
 
-const AppStateContext = createContext<
-  [AppState, Dispatch<AppStateAction>] | undefined
+const ConfiguratorStateContext = createContext<
+  [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
-export const AppStateProvider = ({ children }: { children: ReactNode }) => {
+export const ConfiguratorStateProvider = ({
+  children
+}: {
+  children: ReactNode;
+}) => {
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   return (
-    <AppStateContext.Provider value={stateAndDispatch}>
+    <ConfiguratorStateContext.Provider value={stateAndDispatch}>
       {children}
-    </AppStateContext.Provider>
+    </ConfiguratorStateContext.Provider>
   );
 };
 
-export const useAppState = ({ chartId }: { chartId: string }) => {
-  const ctx = useContext(AppStateContext);
+export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
+  const ctx = useContext(ConfiguratorStateContext);
 
   if (ctx === undefined) {
-    throw Error("You need an <AppStateProvider> to useAppState");
+    throw Error(
+      "You need an <ConfiguratorStateProvider> to useConfiguratorState"
+    );
   }
 
   const [state, dispatch] = ctx;
@@ -111,7 +124,7 @@ export const useAppState = ({ chartId }: { chartId: string }) => {
         getLocalStorageKey(chartId)
       );
       if (storedState) {
-        // TODO: validate that stored state is actually a valid AppState (with io-ts)
+        // TODO: validate that stored state is actually a valid ConfiguratorState (with io-ts)
         stateToInitialize = JSON.parse(storedState);
       }
     } catch {

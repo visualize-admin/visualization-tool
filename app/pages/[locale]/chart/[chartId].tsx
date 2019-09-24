@@ -1,12 +1,12 @@
+import { Checkbox, Input, Label, Radio } from "@rebass/forms";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { SyntheticEvent } from "react";
-import { LocalizedLink } from "../../../components/links";
+import React from "react";
+import { Box, Button } from "rebass";
 import { AppLayout } from "../../../components/layout";
-import { useAppState, AppStateProvider } from "../../../domain/app-state";
-import { Input, Radio, Label, Checkbox } from "@rebass/forms";
-import { Button, Box } from "rebass";
+import { LocalizedLink } from "../../../components/links";
 import { useField } from "../../../domain/config-form";
+import { ConfiguratorStateProvider, useConfiguratorState } from "../../../domain/configurator-state";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -57,12 +57,12 @@ const Field = ({
 };
 
 const Form = ({ chartId }: { chartId: string }) => {
-  const [state] = useAppState({ chartId });
+  const [state, dispatch] = useConfiguratorState({ chartId });
 
   return (
     <>
       <Box my={3} p={2}>
-        {state.state !== "INITIAL" && (
+        {state.state === "IN_PROGRESS" && (
           <>
             Input something:
             <Field chartId={chartId} path={"dataSet"} label="Dataset" />
@@ -94,14 +94,9 @@ const Form = ({ chartId }: { chartId: string }) => {
               path={"chartConfig.fruit.apples"}
               label="Apples"
             />
-           
-            {/* <Button
-                onClick={() =>
-                  dispatch({ type: "DATASET_SELECTED", value: "hello" })
-                }
-              >
-                TOGGLE
-              </Button> */}
+            <Button onClick={() => dispatch({ type: "PUBLISHED" })}>
+              Publish
+            </Button>
           </>
         )}
       </Box>
@@ -118,14 +113,14 @@ const Page: NextPage = () => {
 
   return (
     <AppLayout>
-      <AppStateProvider key={chartId}>
+      <ConfiguratorStateProvider key={chartId}>
         <div>
           <LocalizedLink href={"/[locale]/chart/new"} passHref>
             <a>New chart!</a>
           </LocalizedLink>
           <Form chartId={chartId} />
         </div>
-      </AppStateProvider>
+      </ConfiguratorStateProvider>
     </AppLayout>
   );
 };
