@@ -19,13 +19,8 @@ const useChartId = () => {
 const Form = ({ chartId }: { chartId: string }) => {
   const [state, dispatch] = useAppState({ chartId });
 
-  const field0 = useField({
-    chartId,
-    path: "dataSet"
-  });
-  const field1 = useField({
-    chartId,
-    path: "chartConfig.foo"
+  const field = useField({
+    chartId
   });
 
   return (
@@ -34,8 +29,8 @@ const Form = ({ chartId }: { chartId: string }) => {
         {state.state !== "INITIAL" && (
           <>
             Input something:
-            <Input type="text" {...field0}></Input>
-            <Input type="text" {...field1}></Input>
+            <Input type="text" {...field("dataSet")}></Input>
+            <Input type="text" {...field("chartConfig.foo")}></Input>
             {/* <Button
                 onClick={() =>
                   dispatch({ type: "DATASET_SELECTED", value: "hello" })

@@ -1,5 +1,5 @@
 import get from "lodash/get";
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, useCallback, ChangeEvent } from "react";
 import { useAppState } from "./app-state";
 
 // interface FieldProps {
@@ -7,27 +7,25 @@ import { useAppState } from "./app-state";
 //   onChange: [];
 // }
 
-type FieldProps = Pick<
-  InputHTMLAttributes<HTMLInputElement>,
-  "onChange" | "name" | "value"
->;
+type FieldProps = (
+  path: string
+) => Pick<InputHTMLAttributes<HTMLInputElement>, "onChange" | "name" | "value">;
 
-export const useField = ({
-  chartId,
-  path
-}: {
-  chartId: string;
-  path: string;
-}): FieldProps => {
+export const useField = ({ chartId }: { chartId: string }): FieldProps => {
   const [state, dispatch] = useAppState({ chartId });
 
-  return {
-    name: path,
-    value: state.state === "IN_PROGRESS" ? get(state, path, "") : "",
-    onChange: e =>
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e =>
       dispatch({
         type: "CHART_CONFIG_CHANGED",
-        value: { path, value: e.currentTarget.value }
-      })
-  };
+        value: { path: e.currentTarget.name, value: e.currentTarget.value }
+      }),
+    [dispatch]
+  );
+
+  return (path: string) => ({
+    name: path,
+    value: state.state === "IN_PROGRESS" ? get(state, path, "") : "",
+    onChange
+  });
 };
