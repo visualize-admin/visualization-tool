@@ -85,15 +85,16 @@ const Form = ({ chartId }: { chartId: string }) => {
             <Field
               type="checkbox"
               chartId={chartId}
-              path={"chartConfig.checkbox.checkers"}
-              label="Checkers"
+              path={"chartConfig.fruit.bananas"}
+              label="Bananas"
             />
             <Field
               type="checkbox"
               chartId={chartId}
-              path={"chartConfig.checkbox.checkors"}
-              label="Checkors"
+              path={"chartConfig.fruit.apples"}
+              label="Apples"
             />
+           
             {/* <Button
                 onClick={() =>
                   dispatch({ type: "DATASET_SELECTED", value: "hello" })
