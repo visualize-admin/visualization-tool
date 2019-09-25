@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Box, Flex } from "rebass";
 import { getTimeDimensions, getCategoricalDimensions } from "../domain";
 import { ChartAreas } from "./charts-areas";
-import { DSDimensionSelect } from "./settings-dimension-select";
+import { SettingsDimensionSelect } from "./settings-dimension-select";
 
 export const ChartAreaState = ({
   dimensions,
@@ -25,13 +25,13 @@ export const ChartAreaState = ({
   return (
     <Flex>
       <Box width={1 / 3} px={2}>
-        <DSDimensionSelect
+        <SettingsDimensionSelect
           label={"Time dimensions"}
           dimensions={timeDimensions}
           selectedDimension={xField}
           updateDimension={updateXField}
         />
-        <DSDimensionSelect
+        <SettingsDimensionSelect
           label={"Categorical dimensions"}
           dimensions={categoricalDimensions}
           selectedDimension={groupByField}

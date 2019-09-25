@@ -2,7 +2,7 @@ import { Label, Radio } from "@rebass/forms";
 import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 
-export const DSDimensionSelect = ({
+export const SettingsDimensionSelect = ({
   label = "Dimensions",
   dimensions,
   selectedDimension,
@@ -17,7 +17,7 @@ export const DSDimensionSelect = ({
     <>
       <h3>{label}</h3>
       {dimensions.map(dim => (
-        <Label key={dim.iri.value} width={[1]} p={2}>
+        <Label key={dim.iri.value} width={[1]} p={1} m={0}>
           <Radio
             id={dim.iri.value}
             name={dim.iri.value}
