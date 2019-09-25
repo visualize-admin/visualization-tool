@@ -1480,10 +1480,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zazuko/query-rdf-data-cube@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@zazuko/query-rdf-data-cube/-/query-rdf-data-cube-0.0.10.tgz#50751e041d7731b5087f6f65aa38c695d5b4fa6a"
-  integrity sha512-1zmqLQIFvP6pYu9C8Bpr667OVYludMv4LXx+hp+MewpD0gtnV4d03uZPbsyvM2cKVCYY/b7ZOFVLagUReK1kQw==
+"@zazuko/query-rdf-data-cube@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@zazuko/query-rdf-data-cube/-/query-rdf-data-cube-0.0.11.tgz#993acfeb92037acf8f24c7f66df63694368f6e52"
+  integrity sha512-EvdqCWnzBkOUzRYdgZH3F3ClKA8mpdQKEDfQVh/rJs5V6TYIz2CoPvuAleJEoOC89TJ2RHR9SJXJJAoF8sw8uQ==
   dependencies:
     "@rdfjs/data-model" "^1.1.2"
     "@rdfjs/namespace" "^1.1.0"
@@ -4609,9 +4609,9 @@ mute-stream@0.0.7:
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
 
 n3@^1.0.4:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/n3/-/n3-1.2.0.tgz#4d04e953007438f8e39635e13562dcfa66fb1e9b"
-  integrity sha512-3VZD31lRyG2JoAa7imyhAIUZbqaZk4FSsa5QenNjUhNNJKomMLcwuhAOyl+i/suT7UB2H16Ta/7tSUP+Hkq/EQ==
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/n3/-/n3-1.2.1.tgz#8350b68527e5d0768dc0f0bb6e4531b7f4f8bb2f"
+  integrity sha512-5va8zsh02owDul7+5bj35cGOzWU7DeJHwQK3F8NDKtiYqPgWcFTg/zLxJs1JeRF2n6j5PI/eR9DCokS7nLrevA==
 
 nan@^2.12.1:
   version "2.14.0"
