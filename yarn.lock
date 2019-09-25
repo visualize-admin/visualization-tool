@@ -1179,6 +1179,11 @@
     "@types/lingui__core" "*"
     "@types/react" "*"
 
+"@types/lodash@^4.14.138":
+  version "4.14.138"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.138.tgz#34f52640d7358230308344e579c15b378d91989e"
+  integrity sha512-A4uJgHz4hakwNBdHNPdxOTkYmXNgmUAKLbXZ7PKGslgeV0Mb8P3BlbYfPovExek1qnod4pDfRbxuzcVs3dlFLg==
+
 "@types/nanoid@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/nanoid/-/nanoid-2.0.0.tgz#b59002c475e6dfcc26e67ba563ff61b512e5ebf8"
@@ -3736,6 +3741,11 @@ ignore@^4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
+
+immer@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-4.0.0.tgz#2f3d6b9228e86e06c0194f6d2c76bcabab394dde"
+  integrity sha512-374/m+biF/6Z24jiqR/u49SH095oIgYr/qLiQnR88svojs5RNJh/h9i0Qq0pqhgUon3Txx8PgUWH+obRy6jbKw==
 
 import-fresh@^2.0.0:
   version "2.0.0"
@@ -6628,6 +6638,11 @@ url@0.11.0, url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-immer@^0.3.3:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/use-immer/-/use-immer-0.3.4.tgz#a6ba73fd88ab08cdc2af8092e2f1ccfa84583af1"
+  integrity sha512-prWakGqnPstb6bnSWa50S4t+f/O4wQ13MK9JNu2+F7DQKyOXyEy4TUh/B53RHhpEyN417OBQQJNRjM6cClbWxQ==
 
 use@^3.1.0:
   version "3.1.1"
