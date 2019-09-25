@@ -169,3 +169,15 @@ export const getCategoricalDimensions = ({
 //     }
 //   }
 // };
+export const useDimensionValues = ({
+  dataset,
+  dimension
+}: {
+  dataset: DataCube;
+  dimension: Dimension;
+}) => {
+  const fetchData = useCallback(async () => {
+    return await dataset.componentValues(dimension);
+  }, [dataset, dimension]);
+  return useRemoteData(fetchData);
+};
