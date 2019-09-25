@@ -65,7 +65,31 @@ export const useObservations = ({
   namedSelection
 }: {
   dataset: DataCube;
-  namedSelection: any;
+  namedSelection: Record<string, Dimension>;
+  // namedSelection: (string | Dimension)[][];
+}) => {
+  const fetchData = useCallback(async () => {
+    const query = dataset
+      .query()
+      .select(namedSelection)
+      .limit(10000);
+    const data = await query.execute();
+    return {
+      results: data // await query.execute()
+    };
+  }, [dataset, namedSelection]);
+
+  return useRemoteData(fetchData);
+};
+
+export const useFilteredObservations = ({
+  dataset,
+  namedSelection,
+  filters
+}: {
+  dataset: DataCube;
+  namedSelection: Record<string, Dimension>;
+  filters: Map<Dimension, string[]>;
 }) => {
   const fetchData = useCallback(async () => {
     const query = dataset
@@ -74,7 +98,7 @@ export const useObservations = ({
       .limit(100000);
     const data = await query.execute();
     return {
-      results: data // await query.execute()
+      results: data
     };
   }, [dataset, namedSelection]);
 
@@ -124,77 +148,6 @@ export const getDimensionLabel = ({
   return dimension.labels[0].value;
 };
 
-// const observation = {
-//   Holzartengruppe: {
-//     value: { value: "http://example.org/pflanzungen/property/1/0" },
-//     label: {
-//       value: "Holzartengruppe - Total",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     }
-//   },
-//   Jahr: {
-//     value: {
-//       value: "1975",
-//       datatype: { value: "http://www.w3.org/2001/XMLSchema#gYear" },
-//       language: ""
-//     },
-//     label: {
-//       value: "",
-//       datatype: { value: "http://www.w3.org/2001/XMLSchema#string" },
-//       language: ""
-//     }
-//   },
-//   Variable: {
-//     value: { value: "http://example.org/pflanzungen/property/0/0" },
-//     label: {
-//       value: "Anzahl Pflanzungen",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     }
-//   },
-//   Eigentümertyp: {
-//     value: { value: "http://example.org/pflanzungen/property/2/0" },
-//     label: {
-//       value: "Eigentümertyp - Total",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     }
-//   },
-//   Forstzone: {
-//     label: {
-//       value: "Schweiz",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     },
-//     value: { value: "http://example.org/pflanzungen/property/4/0" }
-//   },
-//   Kanton: {
-//     label: {
-//       value: "Schweiz",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     },
-//     value: { value: "http://example.org/pflanzungen/property/3/0" }
-//   },
-//   measure: {
-//     value: {
-//       value: "14987.125",
-//       datatype: { value: "http://www.w3.org/2001/XMLSchema#decimal" },
-//       language: ""
-//     }
-//   }
-// };
 export const useDimensionValues = ({
   dataset,
   dimension
