@@ -90,13 +90,39 @@ export const getTimeDimensions = ({
   dimensions: Dimension[];
 }) => dimensions.filter(dim => dim.labels[0].value === "Jahr");
 /**
- * @fixme use metadata to filter time dimension!
+ * @fixme use metadata to filter categorical dimension!
  */
 export const getCategoricalDimensions = ({
   dimensions
 }: {
   dimensions: Dimension[];
-}) => dimensions.filter(dim => dim.labels[0].value !== "Jahr");
+}) =>
+  dimensions.filter(
+    dim => dim.labels[0].value !== "Jahr" && dim.labels[0].value !== "Variable"
+  );
+/**
+ * @fixme This is not correct, problem in the RDF vocabulary
+ */
+export const getMeasuresDimensions = ({
+  dimensions
+}: {
+  dimensions: Dimension[];
+}) => dimensions.filter(dim => dim.labels[0].value === "Variable");
+
+export const getDimensionIri = ({
+  dimension
+}: {
+  dimension: Dimension;
+}): Dimension["iri"]["value"] => {
+  return dimension.iri.value;
+};
+export const getDimensionLabel = ({
+  dimension
+}: {
+  dimension: Dimension;
+}): string => {
+  return dimension.labels[0].value;
+};
 
 // const observation = {
 //   Holzartengruppe: {
