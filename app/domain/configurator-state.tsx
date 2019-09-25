@@ -17,7 +17,7 @@ export type ConfiguratorState = Immutable<
     }
   | {
       state: "CONFIGURING_CHART";
-      dataSet: string | undefined;
+      dataSet: string;
       chartType: string | undefined;
       chartConfig: ChartConfig;
     }
