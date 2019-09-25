@@ -1,10 +1,10 @@
-import nanoid from "nanoid";
 import { pool } from "../lib/db";
+import { createChartId } from "./chart-id";
 
 export const createConfig = async (data: any): Promise<{ key: string }> => {
   const result = await pool.query<{ key: string }>(
     `INSERT INTO config(key, data) VALUES ($1, $2) RETURNING key`,
-    [nanoid(12), data]
+    [createChartId(), data]
   );
 
   if (result.rows.length < 1) {
