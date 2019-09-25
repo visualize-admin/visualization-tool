@@ -60,3 +60,39 @@ export const useField = ({
     onChange
   };
 };
+
+export const useDatasetSelectorField = ({
+  chartId,
+  path,
+  value,
+  type = "radio"
+}: {
+  chartId: string;
+  path: string;
+  value?: string;
+  type: "radio";
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState({ chartId });
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e => {
+      dispatch({
+        type: "DATASET_SELECTED",
+        value: e.currentTarget.value
+      });
+    },
+    [dispatch]
+  );
+
+  const stateValue =
+    state.state === "CONFIGURING_CHART" ? get(state, path, "") : "";
+
+  const checked = stateValue === value;
+
+  return {
+    name: path,
+    value: value ? value : stateValue,
+    checked,
+    onChange
+  };
+};
