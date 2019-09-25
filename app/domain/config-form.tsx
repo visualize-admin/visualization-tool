@@ -43,7 +43,8 @@ export const useField = ({
     [dispatch, path, type]
   );
 
-  const stateValue = state.state === "IN_PROGRESS" ? get(state, path, "") : "";
+  const stateValue =
+    state.state === "CONFIGURING_CHART" ? get(state, path, "") : "";
 
   const checked =
     type === "radio"

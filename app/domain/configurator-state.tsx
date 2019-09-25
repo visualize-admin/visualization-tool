@@ -16,6 +16,12 @@ export type ConfiguratorState = Immutable<
       state: "INITIAL";
     }
   | {
+      state: "CONFIGURING_CHART";
+      dataSet: string | undefined;
+      chartType: string | undefined;
+      chartConfig: ChartConfig;
+    }
+  | {
       state: "IN_PROGRESS";
       dataSet: string | undefined;
       chartType: string | undefined;
@@ -36,10 +42,13 @@ export type ConfiguratorState = Immutable<
     }
 >;
 
-type ConfiguratorStateAction =
+export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
   | { type: "DATASET_SELECTED"; value: string }
-  | { type: "CHART_TYPE_SELECTED"; value: string }
+  | {
+      type: "CHART_TYPE_CHANGED";
+      value: { path: string | string[]; value: any };
+    }
   | {
       type: "CHART_CONFIG_CHANGED";
       value: { path: string | string[]; value: any };
@@ -72,20 +81,21 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       // Never restore from an UNINITIALIZED state
       return action.value.state === "INITIAL" ? emptyState : action.value;
     case "DATASET_SELECTED":
-      draft.state = "IN_PROGRESS";
-      if (draft.state === "IN_PROGRESS") {
+      draft.state = "CONFIGURING_CHART";
+      if (draft.state === "CONFIGURING_CHART") {
         draft.dataSet = action.value;
       }
       return draft;
-    case "CHART_TYPE_SELECTED":
-      draft.state = "IN_PROGRESS";
-      if (draft.state === "IN_PROGRESS") {
-        draft.chartType = action.value;
+    case "CHART_TYPE_CHANGED":
+      draft.state = "CONFIGURING_CHART";
+      if (draft.state === "CONFIGURING_CHART") {
+        set(draft, action.value.path, action.value.value);
       }
       return draft;
+
     case "CHART_CONFIG_CHANGED":
-      draft.state = "IN_PROGRESS";
-      if (draft.state === "IN_PROGRESS") {
+      draft.state = "CONFIGURING_CHART";
+      if (draft.state === "CONFIGURING_CHART") {
         set(draft, action.value.path, action.value.value);
       }
       return draft;
@@ -169,6 +179,7 @@ export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
     try {
       switch (state.state) {
         case "IN_PROGRESS":
+        case "CONFIGURING_CHART":
         case "PUBLISHED":
           // Store current state in localstorage
           window.localStorage.setItem(
