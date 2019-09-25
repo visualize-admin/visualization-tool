@@ -7,7 +7,6 @@ import {
   useDataSetMetadata,
   useDataSets
 } from "../../domain/data-cube";
-import { useLocale } from "../../lib/use-locale";
 import { DSControls } from "../../components/dataset-controls";
 import { Box } from "rebass";
 import { Label, Select } from "@rebass/forms";
@@ -39,7 +38,9 @@ const DSMeta = ({ dataset }: { dataset: DataCube }) => {
 
 const DSInfo = () => {
   const datasets = useDataSets();
-  const [datasetIri, selectDataset] = useState(undefined);
+  const [datasetIri, selectDataset] = useState(
+    "http://example.org/anzahl-forstbetriebe/dataset"
+  );
 
   return (
     <>
