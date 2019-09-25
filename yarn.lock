@@ -6640,9 +6640,9 @@ url@0.11.0, url@^0.11.0:
     querystring "0.2.0"
 
 use-immer@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/use-immer/-/use-immer-0.3.3.tgz#870479127f6050a62c321cf2cb6182e154a1786a"
-  integrity sha512-BYRzcmbdY3wEBz0BZ1NHL15TzAAYmWJq/qj53xhmtgQ2w1/lNI3dxW6j33H0bR1Ycc4NYal0pwPj+107sgC4DQ==
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/use-immer/-/use-immer-0.3.4.tgz#a6ba73fd88ab08cdc2af8092e2f1ccfa84583af1"
+  integrity sha512-prWakGqnPstb6bnSWa50S4t+f/O4wQ13MK9JNu2+F7DQKyOXyEy4TUh/B53RHhpEyN417OBQQJNRjM6cClbWxQ==
 
 use@^3.1.0:
   version "3.1.1"
