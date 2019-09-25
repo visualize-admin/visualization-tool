@@ -1,28 +1,30 @@
-import { Label } from "@rebass/forms";
-import { Dimension } from "@zazuko/query-rdf-data-cube";
+import { Label, Radio } from "@rebass/forms";
+import { Dimension, DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { Box, Flex } from "rebass";
+import { getDimensionLabel, useDimensionValues } from "../domain";
+import { Loader } from "./Loader";
 
-export const DSFilter = ({
-  observations,
-  namedDimensions
+export const SettingsDimensionFilter = ({
+  dataset,
+  dimensions,
+  filters,
+  updateFilters
 }: {
-  observations: { results: any[] };
-  namedDimensions: (string | Dimension)[][];
+  dataset: DataCube;
+  dimensions: Dimension[];
+  filters: Map<Dimension, string[]>;
+  updateFilters: (x: any) => void;
 }) => {
   return (
     <>
       <h3>Filter Dimension</h3>
-      {namedDimensions.map(dim => {
+      {dimensions.map(dimension => {
         return (
           <Flex mx={-2} mb={3}>
             <Box width={1 / 3} px={2}>
-              <Label htmlFor={`select-${dim[0]}`}>{dim[0]}</Label>
-              {/* <Select id={`select-${dim[0]}`} name={`select-${dim[0]}`}>
-                {dimensionValues.map((dv: any) => (
-                  <option>{dv}</option>
-                ))}
-              </Select> */}
+              <h4>{getDimensionLabel({ dimension })}</h4>
+              <DimensionValues dataset={dataset} dimension={dimension} />
             </Box>
           </Flex>
         );
@@ -31,74 +33,44 @@ export const DSFilter = ({
   );
 };
 
-// const example = {
-//   Holzartengruppe: {
-//     value: { value: "http://example.org/pflanzungen/property/1/0" },
-//     label: {
-//       value: "Holzartengruppe - Total",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     }
-//   },
-//   Jahr: {
-//     value: {
-//       value: "1975",
-//       datatype: { value: "http://www.w3.org/2001/XMLSchema#gYear" },
-//       language: ""
-//     },
-//     label: {
-//       value: "",
-//       datatype: { value: "http://www.w3.org/2001/XMLSchema#string" },
-//       language: ""
-//     }
-//   },
-//   Variable: {
-//     value: { value: "http://example.org/pflanzungen/property/0/0" },
-//     label: {
-//       value: "Anzahl Pflanzungen",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     }
-//   },
-//   Eigentümertyp: {
-//     value: { value: "http://example.org/pflanzungen/property/2/0" },
-//     label: {
-//       value: "Eigentümertyp - Total",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     }
-//   },
-//   Forstzone: {
-//     label: {
-//       value: "Schweiz",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     },
-//     value: { value: "http://example.org/pflanzungen/property/4/0" }
-//   },
-//   Kanton: {
-//     label: {
-//       value: "Schweiz",
-//       datatype: {
-//         value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
-//       },
-//       language: "de"
-//     },
-//     value: { value: "http://example.org/pflanzungen/property/3/0" }
-//   },
-//   measure: {
-//     value: {
-//       value: "14987.125",
-//       datatype: { value: "http://www.w3.org/2001/XMLSchema#decimal" },
-//       language: ""
-//     }
-//   }
-// };
+const DimensionValues = ({
+  dataset,
+  dimension
+}: {
+  dataset: DataCube;
+  dimension: Dimension;
+}) => {
+  const dimensionValues = useDimensionValues({ dataset, dimension });
+  console.log({ dimensionValues });
+
+  if (dimensionValues.state === "loaded") {
+    return (
+      <>
+        {dimensionValues.data.map(dv => {
+          return (
+            <Label key={dv.value.value} width={[1]} p={1} m={0}>
+              <Radio
+                id={dv.value.value}
+                name={dv.value.value}
+                value={dv.value.value}
+                // checked={
+                //   dv.value.value ===
+                //   filters.find((f: any) => f.dimension === dimensionLabel)
+                // }
+                // onChange={() =>
+                //   setFilters({
+                //     dimension,
+                //     dimensionValue: dv.value.value
+                //   })
+                // }
+              />
+              {dv.label.value}
+            </Label>
+          );
+        })}
+      </>
+    );
+  } else {
+    return <Loader body={"dimension values loading"} />;
+  }
+};

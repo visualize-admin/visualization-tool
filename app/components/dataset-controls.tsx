@@ -12,22 +12,18 @@ const Cockpit = ({
   dataset,
   dimensions,
   measures,
-  namedDimensions,
   namedSelection
 }: {
   dataset: DataCube;
   dimensions: Dimension[];
   measures: Measure[];
-  namedDimensions: (string | Dimension)[][];
   namedSelection: any;
 }) => {
-  const [chartType, updateChartType] = useState("bar" as ChartType);
-
+  const [chartType, updateChartType] = useState("line" as ChartType);
   const observations = useObservations({
     dataset,
     namedSelection
   });
-
   if (observations.state === "loaded") {
     return (
       <>
@@ -44,9 +40,10 @@ const Cockpit = ({
         )}
         {chartType === "line" && (
           <ChartLineState
+            dataset={dataset}
+            namedSelection={namedSelection}
             dimensions={dimensions}
             measures={measures}
-            observations={observations.data.results}
           />
         )}
         {chartType === "area" && (
@@ -67,24 +64,23 @@ export const DSControls = ({ dataset }: { dataset: DataCube }) => {
   const meta = useDataSetMetadata(dataset);
   if (meta.state === "loaded") {
     const namedDimensions = meta.data.dimensions.map(dim => {
+      // const key = dim.iri.value;
       const key = dim.labels[0].value;
       return [key, dim];
     });
+
     const namedSelection = {
       measure: meta.data.measures[0],
       ...Object.fromEntries(namedDimensions)
     };
 
     return (
-      <>
-        <Cockpit
-          dataset={dataset}
-          dimensions={meta.data.dimensions}
-          measures={meta.data.measures}
-          namedDimensions={namedDimensions}
-          namedSelection={namedSelection}
-        />
-      </>
+      <Cockpit
+        dataset={dataset}
+        dimensions={meta.data.dimensions}
+        measures={meta.data.measures}
+        namedSelection={namedSelection}
+      />
     );
   } else {
     return <div>Loading metadata</div>;
