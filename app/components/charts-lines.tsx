@@ -28,10 +28,10 @@ export const ChartLines = ({
       <Lines
         data={formattedData}
         width={500}
-        xField={xField}
+        xField={"xField"}
         yField={"measure"}
-        groupBy={groupByField}
-        groupByLabel={groupByField}
+        groupBy={"groupByField"}
+        groupByLabel={"groupByField"}
         aggregateFunction={"sum"}
       />
     </>

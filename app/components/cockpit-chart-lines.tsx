@@ -43,7 +43,7 @@ export const CockpitChartLines = ({
                 chartId={chartId}
                 path={"chartConfig.x"}
                 label={td.labels[0].value}
-                value={td.iri.value.split("/").slice(-1)[0]}
+                value={td.iri.value}
               />
             ))}
             <h5>Y Axis (Values)</h5>
@@ -54,7 +54,7 @@ export const CockpitChartLines = ({
                 chartId={chartId}
                 path={"chartConfig.height"}
                 label={md.labels[0].value}
-                value={md.iri.value.split("/").slice(-1)[0]}
+                value={md.iri.value}
               />
             ))}
             <h5>Color (Categories)</h5>
@@ -65,7 +65,7 @@ export const CockpitChartLines = ({
                 chartId={chartId}
                 path={"chartConfig.color"}
                 label={cd.labels[0].value}
-                value={cd.iri.value.split("/").slice(-1)[0]}
+                value={cd.iri.value}
               />
             ))}
           </Box>

@@ -99,27 +99,26 @@ export const useFilteredObservations = ({
   groupByField: string;
   filters?: Map<Dimension, string[]>;
 }) => {
-  const xDimension = dimensions.filter(
-    dim => dim.iri.value.split("/").slice(-1)[0] === xField
-  )[0];
-  const groupByDimension = dimensions.filter(
-    dim => dim.iri.value.split("/").slice(-1)[0] === groupByField
-  )[0];
+  const xDimension = dimensions.find(dim => dim.iri.value === xField);
+  const groupByDimension = dimensions.find(
+    dim => dim.iri.value === groupByField
+  );
 
   const fetchData = useCallback(async () => {
     const query = dataset
       .query()
       .select({
-        [xField]: xDimension,
+        xField: xDimension!,
         measure: measures[0],
-        [groupByField]: groupByDimension
+        groupByField: groupByDimension!
       })
+      // .filter()
       .limit(100000);
     const data = await query.execute();
     return {
       results: data
     };
-  }, [dataset, groupByDimension, groupByField, measures, xDimension, xField]);
+  }, [dataset, groupByDimension, measures, xDimension]);
 
   return useRemoteData(fetchData);
 };

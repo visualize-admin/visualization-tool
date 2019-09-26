@@ -30,6 +30,7 @@ export const formatDataForBarChart = ({
   });
 };
 
+//TODO: replace generic names by actual labels
 export const formatDataForLineChart = ({
   observations,
   xField,
