@@ -37,15 +37,16 @@ export const formatDataForLineChart = ({
   heightField
 }: {
   observations: any;
-  xField: Dimension;
-  groupByField: Dimension;
-  heightField: Dimension;
+  xField: string;
+  groupByField: string;
+  heightField: string;
 }) => {
+  console.log({ observations });
   return observations.map((d: any) => {
     return Object.keys(d).reduce((obj: any, key) => {
-      if (key === groupByField.labels[0].value) {
-        obj[key] = (d as any)[key].label.value;
-      } else if (key === "measure" || key === xField.labels[0].value) {
+      if (key === groupByField) {
+        obj[key] = (d as any)[key].value.value;
+      } else if (key === "measure" || key === xField) {
         obj[key] = +(d as any)[key].value.value;
       }
       return obj;
