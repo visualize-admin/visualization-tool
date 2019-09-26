@@ -84,23 +84,42 @@ export const useObservations = ({
 
 export const useFilteredObservations = ({
   dataset,
-  namedSelection,
+  dimensions,
+  measures,
+  xField,
+  heightField,
+  groupByField,
   filters
 }: {
   dataset: DataCube;
-  namedSelection: Record<string, Dimension>;
-  filters: Map<Dimension, string[]>;
+  dimensions: Dimension[];
+  measures: Measure[];
+  xField: string;
+  heightField: string;
+  groupByField: string;
+  filters?: Map<Dimension, string[]>;
 }) => {
+  const xDimension = dimensions.filter(
+    dim => dim.iri.value.split("/").slice(-1)[0] === xField
+  )[0];
+  const groupByDimension = dimensions.filter(
+    dim => dim.iri.value.split("/").slice(-1)[0] === groupByField
+  )[0];
+
   const fetchData = useCallback(async () => {
     const query = dataset
       .query()
-      .select(namedSelection)
+      .select({
+        [xField]: xDimension,
+        measure: measures[0],
+        [groupByField]: groupByDimension
+      })
       .limit(100000);
     const data = await query.execute();
     return {
       results: data
     };
-  }, [dataset, namedSelection]);
+  }, [dataset, groupByDimension, groupByField, measures, xDimension, xField]);
 
   return useRemoteData(fetchData);
 };
