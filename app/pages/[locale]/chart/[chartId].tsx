@@ -1,16 +1,19 @@
-import { Checkbox, Input, Label, Radio } from "@rebass/forms";
+import { Trans } from "@lingui/macro";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import { Box, Button, Link } from "rebass";
+import { DatasetSelectorField, Field } from "../../../components/field";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
-import { useField } from "../../../domain/config-form";
+import { Loader } from "../../../components/Loader";
+import { DataCubeProvider, useDataSets } from "../../../domain";
 import {
   ConfiguratorStateProvider,
   useConfiguratorState
 } from "../../../domain/configurator-state";
-import { Trans } from "@lingui/macro";
+import { CockpitChartLines } from "../../../components/cockpit-chart-lines";
+import { DataCube } from "@zazuko/query-rdf-data-cube";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -20,57 +23,74 @@ const useChartId = () => {
   return chartId;
 };
 
-const Field = ({
-  chartId,
-  label,
-  path,
-  type,
-  value,
-  ...props
+const DatasetSelector = ({
+  datasets,
+  chartId
 }: {
+  datasets: DataCube[];
   chartId: string;
-  label: string;
-  path: string;
-  type?: "text" | "checkbox" | "radio";
-  value?: string;
 }) => {
-  const field = useField({
-    chartId,
-    path,
-    type,
-    value
-  });
-
-  return type === "radio" ? (
-    <Label>
-      <Radio {...field}></Radio>
-      {label}
-    </Label>
-  ) : type === "checkbox" ? (
-    <Label>
-      <Checkbox {...field}></Checkbox>
-      {label}
-    </Label>
-  ) : (
-    <>
-      {" "}
-      <Label>{label}</Label>
-      <Input {...field}></Input>
-    </>
+  return (
+    <Box mb={3}>
+      <h4>Select a dataset:</h4>
+      {datasets.map(d => (
+        <DatasetSelectorField
+          key={d.iri}
+          type="radio"
+          chartId={chartId}
+          path={"dataSet"}
+          label={d.labels[0].value}
+          value={d.iri}
+        />
+      ))}
+    </Box>
   );
 };
 
 const Form = ({ chartId }: { chartId: string }) => {
+  const datasets = useDataSets();
   const [state, dispatch] = useConfiguratorState({ chartId });
 
-  return (
-    <>
-      <Box my={3} p={2}>
-        {state.state === "IN_PROGRESS" && (
-          <>
-            Input something:
-            <Field chartId={chartId} path={"dataSet"} label="Dataset" />
-            <Field
+  if (datasets.state === "loaded") {
+    return (
+      <>
+        <Box my={3} p={2}>
+          <DatasetSelector datasets={datasets.data} chartId={chartId} />
+
+          {state.state === "CONFIGURING_CHART" && (
+            <>
+              <h4>Select a chart type:</h4>
+
+              <Field
+                type="radio"
+                chartId={chartId}
+                path={"chartType"}
+                label="Bar"
+                value="bar"
+              />
+              <Field
+                type="radio"
+                chartId={chartId}
+                path={"chartType"}
+                label="Line"
+                value="line"
+              />
+              <Field
+                type="radio"
+                chartId={chartId}
+                path={"chartType"}
+                label="Area"
+                value="area"
+              />
+              <Field
+                type="radio"
+                chartId={chartId}
+                path={"chartType"}
+                label="Scatterplot"
+                value="scatterplot"
+              />
+
+              {/* <Field
               chartId={chartId}
               path={"chartConfig.title.de"}
               label="Title de"
@@ -89,80 +109,73 @@ const Form = ({ chartId }: { chartId: string }) => {
               chartId={chartId}
               path={"chartConfig.title.en"}
               label="Title en"
-            />
-            <Field
-              type="radio"
-              chartId={chartId}
-              path={"chartConfig.radio"}
-              label="One"
-              value="one"
-            />
-            <Field
-              type="radio"
-              chartId={chartId}
-              path={"chartConfig.radio"}
-              label="Two"
-              value="two"
-            />
-            <Field
-              type="checkbox"
-              chartId={chartId}
-              path={"chartConfig.fruit.bananas"}
-              label="Bananas"
-            />
-            <Field
-              type="checkbox"
-              chartId={chartId}
-              path={"chartConfig.fruit.apples"}
-              label="Apples"
-            />
-            <Button onClick={() => dispatch({ type: "PUBLISH" })}>
-              Publish
-            </Button>
-          </>
-        )}
+            /> */}
+              {state.chartType === "line" && state.dataSet && (
+                <>
+                  <h4>Configurate line chart</h4>
+                  <CockpitChartLines
+                    dataset={
+                      datasets.data.filter(d => d.iri === state.dataSet)[0]
+                    }
+                    chartId={chartId}
+                  />
 
-        {state.state === "PUBLISHED" && (
-          <Box m={2} bg="secondary" color="white" p={2}>
-            <Trans id="test-form-success">
-              Konfiguration gespeichert unter
-            </Trans>{" "}
-            <LocalizedLink
-              href={`/[locale]/config?key=${state.configKey}`}
-              passHref
-            >
-              <Link
-                color="white"
-                sx={{ textDecoration: "underline", cursor: "pointer" }}
+                  <Button onClick={() => dispatch({ type: "PUBLISH" })}>
+                    Publish
+                  </Button>
+                </>
+              )}
+            </>
+          )}
+          {state.state === "PUBLISHED" && (
+            <Box m={2} bg="secondary" color="white" p={2}>
+              <Trans id="test-form-success">
+                Konfiguration gespeichert unter
+              </Trans>
+              <LocalizedLink
+                href={`/[locale]/config?key=${state.configKey}`}
+                passHref
               >
-                {state.configKey}
-              </Link>
-            </LocalizedLink>
-          </Box>
-        )}
-      </Box>
-      <Box my={3} p={2} bg="muted">
-        <pre>{chartId}</pre>
-        <pre>{JSON.stringify(state, null, 2)}</pre>
-      </Box>
-    </>
-  );
+                <Link
+                  color="white"
+                  sx={{ textDecoration: "underline", cursor: "pointer" }}
+                >
+                  {state.configKey}
+                </Link>
+              </LocalizedLink>
+            </Box>
+          )}
+        </Box>
+        <Box my={3} p={2} bg="muted">
+          <pre>{chartId}</pre>
+          <pre>{JSON.stringify(state, null, 2)}</pre>
+        </Box>
+      </>
+    );
+  } else {
+    return <Loader body="loading datasets list" />;
+  }
 };
 
 const Page: NextPage = () => {
   const chartId = useChartId();
 
   return (
-    <AppLayout>
-      <ConfiguratorStateProvider key={chartId}>
-        <div>
-          <LocalizedLink href={"/[locale]/chart/new"} passHref>
-            <a>New chart!</a>
-          </LocalizedLink>
-          <Form chartId={chartId} />
-        </div>
-      </ConfiguratorStateProvider>
-    </AppLayout>
+    <DataCubeProvider
+      // endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query"
+      endpoint="https://ld.stadt-zuerich.ch/query"
+    >
+      <AppLayout>
+        <ConfiguratorStateProvider key={chartId}>
+          <div>
+            <LocalizedLink href={"/[locale]/chart/new"} passHref>
+              <a>New chart!</a>
+            </LocalizedLink>
+            <Form chartId={chartId} />
+          </div>
+        </ConfiguratorStateProvider>
+      </AppLayout>
+    </DataCubeProvider>
   );
 };
 
