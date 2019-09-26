@@ -9,34 +9,46 @@ import { Reducer, useImmerReducer } from "use-immer";
 import { Immutable } from "immer";
 import set from "lodash/set";
 
-type ChartConfig = any;
+// type ChartConfig = {
+//   chartType: "none"
+// } | {
+//   chartType: "line";
+//   xField?: string;
+//   groupByField?: string;
+// } | {
+//   chartType: "bar";
+//   xField?: string;
+//   groupByField?: string;
+//   // ETC
+// };
+
+type ChartConfig = {
+  chartType: "none"|"line"|"bar";
+  [key:string]:any;
+}
 
 export type ConfiguratorState = Immutable<
-  | {
-      state: "INITIAL";
-    }
-  | {
-      state: "CONFIGURING_CHART";
-      dataSet: string;
-      chartType: string | undefined;
-      chartConfig: ChartConfig;
-    }
-  | {
-      state: "IN_PROGRESS";
-      dataSet: string | undefined;
-      chartType: string | undefined;
-      chartConfig: ChartConfig;
-    }
-  | {
-      state: "PUBLISHING";
-      dataSet: string;
-      chartType: string;
-      chartConfig: ChartConfig;
-    }
-  | {
-      state: "PUBLISHED";
-      dataSet: string;
-      chartType: string;
+| {
+  state: "INITIAL";
+}
+| {
+  state: "SELECTING_DATASET";
+  chartConfig: ChartConfig;
+
+}
+| {
+  state: "CONFIGURING_CHART";
+  dataSet: string ;
+  chartConfig: ChartConfig;
+}
+| {
+  state: "PUBLISHING";
+  dataSet: string ;
+  chartConfig: ChartConfig;
+}
+| {
+  state: "PUBLISHED";
+  dataSet: string ;
       configKey: string;
       chartConfig: ChartConfig;
     }
@@ -66,10 +78,8 @@ const initialState: ConfiguratorState = {
 };
 
 const emptyState: ConfiguratorState = {
-  state: "IN_PROGRESS",
-  dataSet: undefined,
-  chartType: undefined,
-  chartConfig: { title: {} }
+  state: "SELECTING_DATASET",
+  chartConfig:{chartType:"none"}
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
@@ -89,14 +99,14 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_TYPE_CHANGED":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
-        set(draft, action.value.path, action.value.value);
+        draft.chartConfig = action.value.value === "line" ? {chartType:"line"} : {chartType: "bar"};
       }
       return draft;
 
     case "CHART_CONFIG_CHANGED":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
-        set(draft, action.value.path, action.value.value);
+        set(draft.chartConfig, action.value.path, action.value.value);
       }
       return draft;
     case "PUBLISH":
@@ -104,7 +114,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
     case "PUBLISH_FAILED":
       // Recover by going back to In-progress state
-      draft.state = "IN_PROGRESS";
+      draft.state = "CONFIGURING_CHART";
       return draft;
     case "PUBLISHED":
       draft.state = "PUBLISHED";
@@ -178,7 +188,6 @@ export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
   useEffect(() => {
     try {
       switch (state.state) {
-        case "IN_PROGRESS":
         case "CONFIGURING_CHART":
         case "PUBLISHED":
           // Store current state in localstorage

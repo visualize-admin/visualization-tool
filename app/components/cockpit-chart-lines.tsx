@@ -41,7 +41,7 @@ export const CockpitChartLines = ({
                 key={td.iri.value}
                 type="radio"
                 chartId={chartId}
-                path={"chartConfig.x"}
+                path={"x"}
                 label={td.labels[0].value}
                 value={td.iri.value}
               />
@@ -52,7 +52,7 @@ export const CockpitChartLines = ({
                 key={md.iri.value}
                 type="radio"
                 chartId={chartId}
-                path={"chartConfig.height"}
+                path={"height"}
                 label={md.labels[0].value}
                 value={md.iri.value}
               />
@@ -63,7 +63,7 @@ export const CockpitChartLines = ({
                 key={cd.iri.value}
                 type="radio"
                 chartId={chartId}
-                path={"chartConfig.color"}
+                path={"color"}
                 label={cd.labels[0].value}
                 value={cd.iri.value}
               />

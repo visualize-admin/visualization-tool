@@ -110,7 +110,7 @@ const Form = ({ chartId }: { chartId: string }) => {
               path={"chartConfig.title.en"}
               label="Title en"
             /> */}
-              {state.chartType === "line" && state.dataSet && (
+              {state.chartConfig.chartType === "line" && state.dataSet && (
                 <>
                   <h4>Configurate line chart</h4>
                   <CockpitChartLines
@@ -162,8 +162,8 @@ const Page: NextPage = () => {
 
   return (
     <DataCubeProvider
-      // endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query"
-      endpoint="https://ld.stadt-zuerich.ch/query"
+      endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query"
+      // endpoint="https://ld.stadt-zuerich.ch/query"
     >
       <AppLayout>
         <ConfiguratorStateProvider key={chartId}>

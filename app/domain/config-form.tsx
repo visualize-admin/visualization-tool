@@ -44,7 +44,7 @@ export const useField = ({
   );
 
   const stateValue =
-    state.state === "CONFIGURING_CHART" ? get(state, path, "") : "";
+    state.state === "CONFIGURING_CHART" ? get(state.chartConfig, path, "") : "";
 
   const checked =
     type === "radio"
