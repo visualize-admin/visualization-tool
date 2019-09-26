@@ -6,7 +6,7 @@ import {
   useDimensionValues
 } from "../domain";
 import { Field } from "./field";
-import { Loader } from "./Loader";
+import { Loader } from "./loader";
 
 export const Filters = ({
   chartId,

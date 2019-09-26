@@ -6,7 +6,7 @@ import { Box, Button, Link } from "rebass";
 import { DatasetSelectorField, Field } from "../../../components/field";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
-import { Loader } from "../../../components/Loader";
+import { Loader } from "../../../components/loader";
 import { DataCubeProvider, useDataSets } from "../../../domain";
 import {
   ConfiguratorStateProvider,
