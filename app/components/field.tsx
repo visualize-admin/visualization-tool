@@ -1,7 +1,6 @@
 import { Checkbox, Input, Label, Radio } from "@rebass/forms";
 import React from "react";
-import { useField, useDatasetSelectorField } from "../domain/config-form";
-import { DataCube } from "@zazuko/query-rdf-data-cube";
+import { useDatasetSelectorField, useField } from "../domain/config-form";
 
 export const Field = ({
   chartId,

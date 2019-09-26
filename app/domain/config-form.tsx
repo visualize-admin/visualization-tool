@@ -1,5 +1,5 @@
 import get from "lodash/get";
-import { InputHTMLAttributes, useCallback, ChangeEvent } from "react";
+import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
 import { useConfiguratorState } from "./configurator-state";
 
 // interface FieldProps {
