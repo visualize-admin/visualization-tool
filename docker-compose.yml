@@ -20,6 +20,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - "./db:/usr/src/db"
+      - "./db-scripts:/usr/src/db-scripts"
     environment:
       POSTGRES_DB: "visualization_tool"
