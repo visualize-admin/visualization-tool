@@ -1,4 +1,3 @@
-import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { formatDataForLineChart } from "../domain";
 import { Lines } from "./charts-generic/lines";
@@ -11,9 +10,9 @@ export const ChartLines = ({
   aggregationFunction
 }: {
   observations: any[];
-  xField: Dimension;
-  groupByField: Dimension;
-  heightField: Dimension;
+  xField: string;
+  groupByField: string;
+  heightField: string;
   aggregationFunction: "sum";
 }) => {
   const formattedData = formatDataForLineChart({
@@ -29,10 +28,10 @@ export const ChartLines = ({
       <Lines
         data={formattedData}
         width={500}
-        xField={xField.labels[0].value}
+        xField={xField}
         yField={"measure"}
-        groupBy={groupByField.labels[0].value}
-        groupByLabel={groupByField.labels[0].value}
+        groupBy={groupByField}
+        groupByLabel={groupByField}
         aggregateFunction={"sum"}
       />
     </>
