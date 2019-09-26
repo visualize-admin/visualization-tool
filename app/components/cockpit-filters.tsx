@@ -22,14 +22,14 @@ export const Filters = ({
       <h3>Filter Dimension</h3>
       {dimensions.map(dimension => {
         return (
-          <>
+          <div key={getDimensionIri({ dimension })}>
             <h5>{getDimensionLabel({ dimension })}</h5>
             <DimensionValues
               chartId={chartId}
               dataset={dataset}
               dimension={dimension}
             />
-          </>
+          </div>
         );
       })}
     </>
@@ -54,6 +54,7 @@ const DimensionValues = ({
         {dimensionValues.data.map(dv => {
           return (
             <Field
+              key={dv.value.value}
               type="checkbox"
               chartId={chartId}
               path={`filters["${dimensionIri}"]["${dv.value.value}"]`}
