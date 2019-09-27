@@ -23,32 +23,31 @@ import set from "lodash/set";
 // };
 
 type ChartConfig = {
-  chartType: "none"|"line"|"bar";
-  [key:string]:any;
-}
+  chartType: "none" | "line" | "bar" | "area" | "scatterplot";
+  [key: string]: any;
+};
 
 export type ConfiguratorState = Immutable<
-| {
-  state: "INITIAL";
-}
-| {
-  state: "SELECTING_DATASET";
-  chartConfig: ChartConfig;
-
-}
-| {
-  state: "CONFIGURING_CHART";
-  dataSet: string ;
-  chartConfig: ChartConfig;
-}
-| {
-  state: "PUBLISHING";
-  dataSet: string ;
-  chartConfig: ChartConfig;
-}
-| {
-  state: "PUBLISHED";
-  dataSet: string ;
+  | {
+      state: "INITIAL";
+    }
+  | {
+      state: "SELECTING_DATASET";
+      chartConfig: ChartConfig;
+    }
+  | {
+      state: "CONFIGURING_CHART";
+      dataSet: string;
+      chartConfig: ChartConfig;
+    }
+  | {
+      state: "PUBLISHING";
+      dataSet: string;
+      chartConfig: ChartConfig;
+    }
+  | {
+      state: "PUBLISHED";
+      dataSet: string;
       configKey: string;
       chartConfig: ChartConfig;
     }
@@ -79,7 +78,7 @@ const initialState: ConfiguratorState = {
 
 const emptyState: ConfiguratorState = {
   state: "SELECTING_DATASET",
-  chartConfig:{chartType:"none"}
+  chartConfig: { chartType: "none" }
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
@@ -99,7 +98,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_TYPE_CHANGED":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
-        draft.chartConfig = action.value.value === "line" ? {chartType:"line"} : {chartType: "bar"};
+        draft.chartConfig =
+          action.value.value === "line"
+            ? { chartType: "line" }
+            : { chartType: "bar" };
       }
       return draft;
 
