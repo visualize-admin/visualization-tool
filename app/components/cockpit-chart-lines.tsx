@@ -128,6 +128,7 @@ const Visualization = ({
     return (
       <ChartLines
         observations={observations.data.results}
+        dimensions={dimensions}
         xField={xField}
         groupByField={groupByField}
         heightField={heightField}

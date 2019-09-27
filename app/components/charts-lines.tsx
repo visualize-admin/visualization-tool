@@ -1,15 +1,18 @@
 import React from "react";
-import { formatDataForLineChart } from "../domain";
+import { formatDataForLineChart, getDimensionLabelFromIri } from "../domain";
 import { Lines } from "./charts-generic/lines";
+import { Dimension } from "@zazuko/query-rdf-data-cube";
 
 export const ChartLines = ({
   observations,
+  dimensions,
   xField,
   groupByField,
   heightField,
   aggregationFunction
 }: {
   observations: any[];
+  dimensions: Dimension[];
   xField: string;
   groupByField: string;
   heightField: string;
@@ -17,10 +20,12 @@ export const ChartLines = ({
 }) => {
   const formattedData = formatDataForLineChart({
     observations,
+    dimensions,
     xField,
     groupByField,
     heightField
   });
+  console.log({ observations });
   console.log({ formattedData });
   return (
     <>
@@ -28,10 +33,19 @@ export const ChartLines = ({
       <Lines
         data={formattedData}
         width={500}
-        xField={"xField"}
-        yField={"measure"}
-        groupBy={"groupByField"}
-        groupByLabel={"groupByField"}
+        xField={getDimensionLabelFromIri({ dimensionIri: xField, dimensions })}
+        yField={getDimensionLabelFromIri({
+          dimensionIri: heightField,
+          dimensions
+        })}
+        groupBy={getDimensionLabelFromIri({
+          dimensionIri: groupByField,
+          dimensions
+        })}
+        groupByLabel={getDimensionLabelFromIri({
+          dimensionIri: groupByField,
+          dimensions
+        })}
         aggregateFunction={"sum"}
       />
     </>
