@@ -54,11 +54,16 @@ const Form = ({ chartId }: { chartId: string }) => {
   if (datasets.state === "loaded") {
     return (
       <>
-        <Box width={1} my={3} p={2} bg="muted">
-          <DatasetSelector datasets={datasets.data} chartId={chartId} />
-        </Box>
+        {state.state === "SELECTING_DATASET" && (
+          <Box width={1} my={3} p={2} bg="muted">
+            <DatasetSelector datasets={datasets.data} chartId={chartId} />
+          </Box>
+        )}
         {state.state === "CONFIGURING_CHART" && (
           <>
+            <Box width={1} my={3} p={2} bg="muted">
+              {state.dataSet}
+            </Box>
             <Box width={1} my={3} p={2} bg="muted">
               <h4>Charttyp auswählen</h4>
               <Field

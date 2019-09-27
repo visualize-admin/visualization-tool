@@ -93,6 +93,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
         draft.dataSet = action.value;
+        draft.chartConfig = { chartType: "none" };
       }
       return draft;
     case "CHART_TYPE_CHANGED":
