@@ -12,6 +12,7 @@ import { useConfiguratorState } from "../domain/configurator-state";
 import { Box, Flex } from "rebass";
 import { ChartLines } from "./charts-lines";
 import { Filters } from "./cockpit-filters";
+import { Loader } from "./loader";
 
 export const CockpitChartLines = ({
   chartId,
@@ -93,7 +94,7 @@ export const CockpitChartLines = ({
       </>
     );
   } else {
-    return <div>Loading metadata</div>;
+    return <Loader body="Loading metadata"></Loader>;
   }
 };
 
@@ -136,6 +137,6 @@ const Visualization = ({
       />
     );
   } else {
-    return <div>Updating data...</div>;
+    return <Loader body="Updating data..." />;
   }
 };

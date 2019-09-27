@@ -17,8 +17,8 @@ export const formatDataForLineChart = ({
   return observations.map((d: any) => {
     return {
       // FIXME: this is not robust, time value ("Jahr") and measure
-      // are nested in dim.value.value,
-      // whereas categorical value is under dim.label.value.
+      // are nested in dim.VALUE.value,
+      // whereas categorical value is under dim.LABEL.value.
       [getDimensionLabelFromIri({ dimensionIri: xField, dimensions })]: d.xField
         .value.value,
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d

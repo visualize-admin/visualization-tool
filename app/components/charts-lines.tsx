@@ -26,26 +26,23 @@ export const ChartLines = ({
     heightField
   });
   return (
-    <>
-      <h3>Lines</h3>
-      <Lines
-        data={formattedData}
-        width={500}
-        xField={getDimensionLabelFromIri({ dimensionIri: xField, dimensions })}
-        yField={getDimensionLabelFromIri({
-          dimensionIri: heightField,
-          dimensions
-        })}
-        groupBy={getDimensionLabelFromIri({
-          dimensionIri: groupByField,
-          dimensions
-        })}
-        groupByLabel={getDimensionLabelFromIri({
-          dimensionIri: groupByField,
-          dimensions
-        })}
-        aggregateFunction={aggregationFunction}
-      />
-    </>
+    <Lines
+      data={formattedData}
+      width={500}
+      xField={getDimensionLabelFromIri({ dimensionIri: xField, dimensions })}
+      yField={getDimensionLabelFromIri({
+        dimensionIri: heightField,
+        dimensions
+      })}
+      groupBy={getDimensionLabelFromIri({
+        dimensionIri: groupByField,
+        dimensions
+      })}
+      groupByLabel={getDimensionLabelFromIri({
+        dimensionIri: groupByField,
+        dimensions
+      })}
+      aggregateFunction={aggregationFunction}
+    />
   );
 };
