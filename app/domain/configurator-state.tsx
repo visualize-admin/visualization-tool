@@ -27,6 +27,12 @@ export type ChartConfig = {
   [key: string]: any;
 };
 
+type ConfiguratorStatePublishing = {
+  state: "PUBLISHING";
+  dataSet: string;
+  chartConfig: ChartConfig;
+};
+
 export type ConfiguratorState = Immutable<
   | {
       state: "INITIAL";
@@ -40,11 +46,7 @@ export type ConfiguratorState = Immutable<
       dataSet: string;
       chartConfig: ChartConfig;
     }
-  | {
-      state: "PUBLISHING";
-      dataSet: string;
-      chartConfig: ChartConfig;
-    }
+  | ConfiguratorStatePublishing
   | {
       state: "PUBLISHED";
       dataSet: string;
@@ -150,13 +152,16 @@ export const ConfiguratorStateProvider = ({
 type ReturnVal = {
   key: string;
 };
-const save = async (values: any): Promise<ReturnVal> => {
+const save = async (state: ConfiguratorStatePublishing): Promise<ReturnVal> => {
   return fetch("/api/config", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(values)
+    body: JSON.stringify({
+      dataSet: state.dataSet,
+      chartConfig: state.chartConfig
+    })
   }).then(res => res.json());
 };
 
@@ -202,7 +207,7 @@ export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
         case "PUBLISHING":
           (async () => {
             try {
-              const result = await save(state.chartConfig);
+              const result = await save(state);
               dispatch({ type: "PUBLISHED", value: result.key });
             } catch (e) {
               console.error(e);

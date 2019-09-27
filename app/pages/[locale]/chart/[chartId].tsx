@@ -132,7 +132,7 @@ const Form = ({ chartId }: { chartId: string }) => {
               Konfiguration gespeichert unter
             </Trans>
             <LocalizedLink
-              href={`/[locale]/config?key=${state.configKey}`}
+              href={`/[locale]/v/${state.configKey}`}
               passHref
             >
               <Link

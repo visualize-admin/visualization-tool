@@ -43,6 +43,26 @@ export const useDataSets = () => {
   return useRemoteData(fetchCb);
 };
 
+export const useDataSetAndMetadata = (iri: string) => {
+  const entryPoint = useDataCubeEntryPoint();
+  const fetchCb = useCallback(async () => {
+    
+    const dataSet = await entryPoint.dataCubeByIri(iri);
+
+    return {
+      dataSet,
+      dimensions: await dataSet.dimensions(),
+      attributes: await dataSet.attributes(),
+      measures: await dataSet.measures()
+    }
+  
+  }, [
+    entryPoint,
+    iri
+  ]);
+  return useRemoteData(fetchCb);
+};
+
 interface Metadata {
   dimensions: Dimension[];
   attributes: Attribute[];
