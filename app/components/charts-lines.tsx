@@ -25,8 +25,6 @@ export const ChartLines = ({
     groupByField,
     heightField
   });
-  console.log({ observations });
-  console.log({ formattedData });
   return (
     <>
       <h3>Lines</h3>
@@ -46,7 +44,7 @@ export const ChartLines = ({
           dimensionIri: groupByField,
           dimensions
         })}
-        aggregateFunction={"sum"}
+        aggregateFunction={aggregationFunction}
       />
     </>
   );
