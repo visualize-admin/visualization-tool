@@ -22,7 +22,7 @@ import set from "lodash/set";
 //   // ETC
 // };
 
-type ChartConfig = {
+export type ChartConfig = {
   chartType: "none" | "line" | "bar" | "area" | "scatterplot";
   [key: string]: any;
 };

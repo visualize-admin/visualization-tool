@@ -1,8 +1,10 @@
 import { Trans } from "@lingui/macro";
+import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import { Box, Button, Link } from "rebass";
+import { Cockpit } from "../../../components/cockpit";
 import { DatasetSelectorField, Field } from "../../../components/field";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
@@ -12,10 +14,6 @@ import {
   ConfiguratorStateProvider,
   useConfiguratorState
 } from "../../../domain/configurator-state";
-import { CockpitChartLines } from "../../../components/cockpit-chart-lines";
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import { CockpitChartBars } from "../../../components/cockpit-chart-bars";
-import { CockpitChartAreas } from "../../../components/cockpit-chart-areas";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -34,7 +32,7 @@ const DatasetSelector = ({
 }) => {
   return (
     <Box mb={3}>
-      <h4>Select a dataset:</h4>
+      <h4>Datensatz auswählen: </h4>
       {datasets.map(d => (
         <DatasetSelectorField
           key={d.iri}
@@ -56,13 +54,13 @@ const Form = ({ chartId }: { chartId: string }) => {
   if (datasets.state === "loaded") {
     return (
       <>
-        <Box my={3} p={2}>
+        <Box width={1} my={3} p={2} bg="muted">
           <DatasetSelector datasets={datasets.data} chartId={chartId} />
-
-          {state.state === "CONFIGURING_CHART" && (
-            <>
-              <h4>Select a chart type:</h4>
-
+        </Box>
+        {state.state === "CONFIGURING_CHART" && (
+          <>
+            <Box width={1} my={3} p={2} bg="muted">
+              <h4>Charttyp auswählen</h4>
               <Field
                 type="radio"
                 chartId={chartId}
@@ -91,8 +89,9 @@ const Form = ({ chartId }: { chartId: string }) => {
                 label="Scatterplot"
                 value="scatterplot"
               />
+            </Box>
 
-              {/* <Field
+            {/* <Field
               chartId={chartId}
               path={"chartConfig.title.de"}
               label="Title de"
@@ -112,52 +111,35 @@ const Form = ({ chartId }: { chartId: string }) => {
               path={"chartConfig.title.en"}
               label="Title en"
             /> */}
-              {state.chartConfig.chartType === "bar" && state.dataSet && (
-                <CockpitChartBars
-                  dataset={
-                    datasets.data.filter(d => d.iri === state.dataSet)[0]
-                  }
-                  chartId={chartId}
-                />
-              )}
-              {state.chartConfig.chartType === "line" && state.dataSet && (
-                <CockpitChartLines
-                  dataset={
-                    datasets.data.filter(d => d.iri === state.dataSet)[0]
-                  }
-                  chartId={chartId}
-                />
-              )}
-              {state.chartConfig.chartType === "area" && state.dataSet && (
-                <CockpitChartAreas
-                  dataset={
-                    datasets.data.filter(d => d.iri === state.dataSet)[0]
-                  }
-                  chartId={chartId}
-                />
-              )}
-            </>
-          )}
-          <Button onClick={() => dispatch({ type: "PUBLISH" })}>Publish</Button>
-          {state.state === "PUBLISHED" && (
-            <Box m={2} bg="secondary" color="white" p={2}>
-              <Trans id="test-form-success">
-                Konfiguration gespeichert unter
-              </Trans>
-              <LocalizedLink
-                href={`/[locale]/config?key=${state.configKey}`}
-                passHref
+            {state.dataSet && state.chartConfig.chartType && (
+              <Cockpit
+                chartType={state.chartConfig.chartType}
+                dataset={datasets.data.filter(d => d.iri === state.dataSet)[0]}
+                chartId={chartId}
+              />
+            )}
+          </>
+        )}
+        <Button onClick={() => dispatch({ type: "PUBLISH" })}>Publish</Button>
+        {state.state === "PUBLISHED" && (
+          <Box m={2} bg="secondary" color="white" p={2}>
+            <Trans id="test-form-success">
+              Konfiguration gespeichert unter
+            </Trans>
+            <LocalizedLink
+              href={`/[locale]/config?key=${state.configKey}`}
+              passHref
+            >
+              <Link
+                color="white"
+                sx={{ textDecoration: "underline", cursor: "pointer" }}
               >
-                <Link
-                  color="white"
-                  sx={{ textDecoration: "underline", cursor: "pointer" }}
-                >
-                  {state.configKey}
-                </Link>
-              </LocalizedLink>
-            </Box>
-          )}
-        </Box>
+                {state.configKey}
+              </Link>
+            </LocalizedLink>
+          </Box>
+        )}
+
         <Box my={3} p={2} bg="muted">
           <pre>{chartId}</pre>
           <pre>{JSON.stringify(state, null, 2)}</pre>

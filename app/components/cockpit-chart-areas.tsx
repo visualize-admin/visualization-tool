@@ -1,104 +1,61 @@
 import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import React from "react";
-import { Box, Flex } from "rebass";
-import { useConfiguratorState } from "../domain/configurator-state";
-import {
-  getCategoricalDimensions,
-  getMeasuresDimensions,
-  getTimeDimensions,
-  useDataSetMetadata,
-  useObservations
-} from "../domain/data-cube";
+import { useObservations } from "../domain/data-cube";
 import { ChartAreas } from "./charts-areas";
-import { Filters } from "./cockpit-filters";
 import { Field } from "./field";
 import { Loader } from "./loader";
 
-export const CockpitChartAreas = ({
+export const ChartAreasControls = ({
   chartId,
-  dataset
+  timeDimensions,
+  categoricalDimensions,
+  measuresDimensions
 }: {
   chartId: string;
-  dataset: DataCube;
+  timeDimensions: Dimension[];
+  categoricalDimensions: Dimension[];
+  measuresDimensions: Dimension[];
 }) => {
-  const [state, dispatch] = useConfiguratorState({ chartId });
-
-  const meta = useDataSetMetadata(dataset);
-
-  if (meta.state === "loaded") {
-    const { dimensions, measures } = meta.data;
-
-    const timeDimensions = getTimeDimensions({ dimensions });
-    const categoricalDimensions = getCategoricalDimensions({ dimensions });
-    const measuresDimensions = getMeasuresDimensions({ dimensions });
-
-    return (
-      <>
-        <Flex>
-          <Box width={1 / 3} px={2}>
-            <h5>X Axis (Time)</h5>
-            {timeDimensions.map(td => (
-              <Field
-                key={td.iri.value}
-                type="radio"
-                chartId={chartId}
-                path={"x"}
-                label={td.labels[0].value}
-                value={td.iri.value}
-              />
-            ))}
-            <h5>Y Axis (Values)</h5>
-            {measuresDimensions.map(md => (
-              <Field
-                key={md.iri.value}
-                type="radio"
-                chartId={chartId}
-                path={"height"}
-                label={md.labels[0].value}
-                value={md.iri.value}
-              />
-            ))}
-            <h5>Color (Categories)</h5>
-            {categoricalDimensions.map(cd => (
-              <Field
-                key={cd.iri.value}
-                type="radio"
-                chartId={chartId}
-                path={"color"}
-                label={cd.labels[0].value}
-                value={cd.iri.value}
-              />
-            ))}
-          </Box>
-          <Box width={1 / 3} px={2}>
-            <Filters
-              chartId={chartId}
-              dataset={dataset}
-              dimensions={categoricalDimensions}
-            />
-          </Box>
-        </Flex>
-        {state.state === "CONFIGURING_CHART" && (
-          <Box width={1 / 3} px={2}>
-            <Visualization
-              dataset={dataset}
-              dimensions={dimensions}
-              measures={measures}
-              // filters={"filters"}
-              xField={state.chartConfig.x}
-              groupByField={state.chartConfig.color}
-              heightField={state.chartConfig.height}
-            />
-          </Box>
-        )}
-      </>
-    );
-  } else {
-    return <Loader body="Loading metadata"></Loader>;
-  }
+  return (
+    <>
+      <h5>X Axis (Time)</h5>
+      {timeDimensions.map(td => (
+        <Field
+          key={td.iri.value}
+          type="radio"
+          chartId={chartId}
+          path={"x"}
+          label={td.labels[0].value}
+          value={td.iri.value}
+        />
+      ))}
+      <h5>Y Axis (Values)</h5>
+      {measuresDimensions.map(md => (
+        <Field
+          key={md.iri.value}
+          type="radio"
+          chartId={chartId}
+          path={"height"}
+          label={md.labels[0].value}
+          value={md.iri.value}
+        />
+      ))}
+      <h5>Color (Categories)</h5>
+      {categoricalDimensions.map(cd => (
+        <Field
+          key={cd.iri.value}
+          type="radio"
+          chartId={chartId}
+          path={"color"}
+          label={cd.labels[0].value}
+          value={cd.iri.value}
+        />
+      ))}
+    </>
+  );
 };
 
-const Visualization = ({
+export const ChartAreasVisualization = ({
   dataset,
   dimensions,
   measures,
