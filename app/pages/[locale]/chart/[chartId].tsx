@@ -14,6 +14,7 @@ import {
 } from "../../../domain/configurator-state";
 import { CockpitChartLines } from "../../../components/cockpit-chart-lines";
 import { DataCube } from "@zazuko/query-rdf-data-cube";
+import { CockpitChartBars } from "../../../components/cockpit-chart-bars";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -110,23 +111,33 @@ const Form = ({ chartId }: { chartId: string }) => {
               path={"chartConfig.title.en"}
               label="Title en"
             /> */}
-              {state.chartConfig.chartType === "line" && state.dataSet && (
-                <>
-                  <h4>Configurate line chart</h4>
-                  <CockpitChartLines
-                    dataset={
-                      datasets.data.filter(d => d.iri === state.dataSet)[0]
-                    }
-                    chartId={chartId}
-                  />
-
-                  <Button onClick={() => dispatch({ type: "PUBLISH" })}>
-                    Publish
-                  </Button>
-                </>
+              {state.chartConfig.chartType === "bar" && state.dataSet && (
+                <CockpitChartBars
+                  dataset={
+                    datasets.data.filter(d => d.iri === state.dataSet)[0]
+                  }
+                  chartId={chartId}
+                />
               )}
+              {state.chartConfig.chartType === "line" && state.dataSet && (
+                <CockpitChartLines
+                  dataset={
+                    datasets.data.filter(d => d.iri === state.dataSet)[0]
+                  }
+                  chartId={chartId}
+                />
+              )}
+              {/* {state.chartConfig.chartType === "area" && state.dataSet && (
+                <CockpitChartLines
+                  dataset={
+                    datasets.data.filter(d => d.iri === state.dataSet)[0]
+                  }
+                  chartId={chartId}
+                />
+              )} */}
             </>
           )}
+          <Button onClick={() => dispatch({ type: "PUBLISH" })}>Publish</Button>
           {state.state === "PUBLISHED" && (
             <Box m={2} bg="secondary" color="white" p={2}>
               <Trans id="test-form-success">

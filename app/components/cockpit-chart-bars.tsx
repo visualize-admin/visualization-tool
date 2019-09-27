@@ -1,0 +1,143 @@
+import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
+import React from "react";
+import {
+  getCategoricalDimensions,
+  getMeasuresDimensions,
+  getTimeDimensions,
+  useDataSetMetadata,
+  useObservations
+} from "../domain/data-cube";
+import { Field } from "./field";
+import { useConfiguratorState } from "../domain/configurator-state";
+import { Box, Flex } from "rebass";
+import { Filters } from "./cockpit-filters";
+import { Loader } from "./loader";
+import { ChartBars } from "./charts-bars";
+
+export const CockpitChartBars = ({
+  chartId,
+  dataset
+}: {
+  chartId: string;
+  dataset: DataCube;
+}) => {
+  const [state, dispatch] = useConfiguratorState({ chartId });
+
+  const meta = useDataSetMetadata(dataset);
+
+  if (meta.state === "loaded") {
+    const { dimensions, measures } = meta.data;
+
+    const timeDimensions = getTimeDimensions({ dimensions });
+    const categoricalDimensions = getCategoricalDimensions({ dimensions });
+    const measuresDimensions = getMeasuresDimensions({ dimensions });
+
+    return (
+      <>
+        <Flex>
+          <Box width={1 / 3} px={2}>
+            <h5>X Axis (Categories)</h5>
+            {categoricalDimensions.map(cd => (
+              <Field
+                key={cd.iri.value}
+                type="radio"
+                chartId={chartId}
+                path={"x"}
+                label={cd.labels[0].value}
+                value={cd.iri.value}
+              />
+            ))}
+
+            <h5>Y Axis (Values)</h5>
+            {measuresDimensions.map(md => (
+              <Field
+                key={md.iri.value}
+                type="radio"
+                chartId={chartId}
+                path={"height"}
+                label={md.labels[0].value}
+                value={md.iri.value}
+              />
+            ))}
+            <h5>Color (Categories)</h5>
+            {categoricalDimensions.map(cd => (
+              <Field
+                key={cd.iri.value}
+                type="radio"
+                chartId={chartId}
+                path={"color"}
+                label={cd.labels[0].value}
+                value={cd.iri.value}
+              />
+            ))}
+          </Box>
+          <Box width={1 / 3} px={2}>
+            <Filters
+              chartId={chartId}
+              dataset={dataset}
+              dimensions={categoricalDimensions}
+            />
+          </Box>
+        </Flex>
+        {state.state === "CONFIGURING_CHART" && (
+          <Box width={1 / 3} px={2}>
+            <Visualization
+              dataset={dataset}
+              dimensions={dimensions}
+              measures={measures}
+              // filters={"filters"}
+              xField={state.chartConfig.x}
+              groupByField={state.chartConfig.color}
+              heightField={state.chartConfig.height}
+            />
+          </Box>
+        )}
+      </>
+    );
+  } else {
+    return <Loader body="Loading metadata"></Loader>;
+  }
+};
+
+const Visualization = ({
+  dataset,
+  dimensions,
+  measures,
+  filters,
+  xField,
+  groupByField,
+  heightField
+}: {
+  dataset: DataCube;
+  dimensions: Dimension[];
+  measures: Measure[];
+  filters?: Map<Dimension, string[]>;
+  xField: string;
+  groupByField: string;
+  heightField: string;
+}) => {
+  const observations = useObservations({
+    dataset,
+    measures,
+    dimensions,
+    xField,
+    heightField,
+    groupByField,
+    filters
+  });
+
+  if (observations.state === "loaded") {
+    return (
+      <ChartBars
+        observations={observations.data.results}
+        dimensions={dimensions}
+        xField={xField}
+        groupByField={groupByField}
+        heightField={heightField}
+        aggregationFunction={"sum"}
+      />
+    );
+  } else {
+    return <Loader body="Updating data..." />;
+  }
+};
