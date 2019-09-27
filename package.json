@@ -14,10 +14,14 @@
     "locales:compile": "lingui compile"
   },
   "dependencies": {
+    "@babel/standalone": "^7.6.2",
     "@lingui/react": "^2.8.3",
+    "@mdx-js/react": "^1.5.0",
+    "@next/mdx": "^9.0.6",
     "@rebass/forms": "^4.0.5",
     "@rebass/preset": "^4.0.5",
     "@zazuko/query-rdf-data-cube": "^0.1.0",
+    "catalog": "^4.0.1-canary.2",
     "emotion-theming": "^10.0.17",
     "formik": "^1.5.8",
     "fp-ts": "^2.0.5",
@@ -37,6 +41,7 @@
   "devDependencies": {
     "@lingui/cli": "^2.8.3",
     "@lingui/macro": "^2.8.3",
+    "@mdx-js/loader": "^1.5.0",
     "@types/lingui__core": "^2.7.0",
     "@types/lingui__macro": "^2.7.3",
     "@types/lingui__react": "^2.8.0",
