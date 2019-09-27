@@ -5,7 +5,7 @@ import {
   getMeasuresDimensions,
   getTimeDimensions,
   useDataSetMetadata,
-  useFilteredObservations
+  useObservations
 } from "../domain/data-cube";
 import { Field } from "./field";
 import { useConfiguratorState } from "../domain/configurator-state";
@@ -114,7 +114,7 @@ const Visualization = ({
   groupByField: string;
   heightField: string;
 }) => {
-  const observations = useFilteredObservations({
+  const observations = useObservations({
     dataset,
     measures,
     dimensions,

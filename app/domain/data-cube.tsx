@@ -62,28 +62,6 @@ export const useDataSetMetadata = (dataSet: DataCube) => {
 
 export const useObservations = ({
   dataset,
-  namedSelection
-}: {
-  dataset: DataCube;
-  namedSelection: Record<string, Dimension>;
-  // namedSelection: (string | Dimension)[][];
-}) => {
-  const fetchData = useCallback(async () => {
-    const query = dataset
-      .query()
-      .select(namedSelection)
-      .limit(10000);
-    const data = await query.execute();
-    return {
-      results: data // await query.execute()
-    };
-  }, [dataset, namedSelection]);
-
-  return useRemoteData(fetchData);
-};
-
-export const useFilteredObservations = ({
-  dataset,
   dimensions,
   measures,
   xField,
