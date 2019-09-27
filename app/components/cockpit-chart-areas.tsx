@@ -67,7 +67,7 @@ export const ChartAreasVisualization = ({
   dataset: DataCube;
   dimensions: Dimension[];
   measures: Measure[];
-  filters?: Map<Dimension, string[]>;
+  filters?: any;
   xField: string;
   groupByField: string;
   heightField: string;
