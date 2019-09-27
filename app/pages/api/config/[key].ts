@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getConfig } from "../../../domain/config";
+import { getConfig } from "../../../db/config";
 
+/**
+ * Endpoint to read configuration from
+ */
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 

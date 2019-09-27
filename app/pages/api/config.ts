@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createConfig } from "../../domain/config";
+import { createConfig } from "../../db/config";
+
+/**
+ * Endpoint to write configuration to.
+ */
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 
