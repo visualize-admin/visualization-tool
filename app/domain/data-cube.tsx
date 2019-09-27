@@ -75,7 +75,7 @@ export const useObservations = ({
   xField: string;
   heightField: string;
   groupByField: string;
-  filters?: Map<Dimension, string[]>;
+  filters?: Record<string, Record<string, boolean>>;
 }) => {
   const xDimension = dimensions.find(dim => dim.iri.value === xField);
   const groupByDimension = dimensions.find(
@@ -83,20 +83,40 @@ export const useObservations = ({
   );
 
   const fetchData = useCallback(async () => {
-    const query = dataset
+    const constructedFilters = filters
+      ? Object.entries(filters).flatMap(([dim, values]) => {
+          const selectedValues = Object.entries(values).flatMap(
+            ([value, selected]) => (selected ? [value] : [])
+          );
+          return selectedValues.length === 1
+            ? [new Dimension({ iri: dim }).equals(selectedValues[0])]
+            : selectedValues.length > 0
+            ? [new Dimension({ iri: dim }).in(selectedValues)]
+            : [];
+        })
+      : [];
+
+    // FIXME: figure out why only two filters work at the same time
+    console.log(constructedFilters);
+
+    let query = dataset
       .query()
       .select({
         xField: xDimension!,
         measure: measures[0],
         groupByField: groupByDimension!
       })
-      // .filter()
       .limit(100000);
+
+    for (const f of constructedFilters) {
+      query = query.filter(f);
+    }
+
     const data = await query.execute();
     return {
       results: data
     };
-  }, [dataset, groupByDimension, measures, xDimension]);
+  }, [dataset, groupByDimension, measures, xDimension, filters]);
 
   return useRemoteData(fetchData);
 };
