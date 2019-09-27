@@ -17,7 +17,7 @@
     "@lingui/react": "^2.8.3",
     "@rebass/forms": "^4.0.5",
     "@rebass/preset": "^4.0.5",
-    "@zazuko/query-rdf-data-cube": "^0.0.10",
+    "@zazuko/query-rdf-data-cube": "^0.1.0",
     "emotion-theming": "^10.0.17",
     "formik": "^1.5.8",
     "immer": "^4.0.0",

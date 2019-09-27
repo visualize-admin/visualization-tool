@@ -1,18 +1,16 @@
 import {
-  DataCubeEntryPoint,
-  DataCube,
   Attribute,
+  DataCube,
+  DataCubeEntryPoint,
   Dimension,
   Measure
 } from "@zazuko/query-rdf-data-cube";
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useCallback
+  useMemo
 } from "react";
 import { useRemoteData } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
@@ -62,46 +60,130 @@ export const useDataSetMetadata = (dataSet: DataCube) => {
   return useRemoteData(fetchMeta);
 };
 
-const formatData = ({
-  data,
-  selectedDimension
-}: {
-  data: any;
-  selectedDimension: string;
-}) => {
-  return data.map((d: any) => ({
-    selectedDimension: d.selectedDimension.label.value,
-    measure: d.measure.value.value
-  }));
-};
-
 export const useObservations = ({
   dataset,
   dimensions,
-  selectedDimension,
-  measures
+  measures,
+  xField,
+  heightField,
+  groupByField,
+  filters
 }: {
   dataset: DataCube;
   dimensions: Dimension[];
-  selectedDimension: string;
   measures: Measure[];
+  xField: string;
+  heightField: string;
+  groupByField: string;
+  filters?: Record<string, Record<string, boolean>>;
 }) => {
+  const xDimension = dimensions.find(dim => dim.iri.value === xField);
+  const groupByDimension = dimensions.find(
+    dim => dim.iri.value === groupByField
+  );
+
   const fetchData = useCallback(async () => {
-    const query = dataset
+    const constructedFilters = filters
+      ? Object.entries(filters).flatMap(([dim, values]) => {
+          const selectedValues = Object.entries(values).flatMap(
+            ([value, selected]) => (selected ? [value] : [])
+          );
+          return selectedValues.length === 1
+            ? [new Dimension({ iri: dim }).equals(selectedValues[0])]
+            : selectedValues.length > 0
+            ? [new Dimension({ iri: dim }).in(selectedValues)]
+            : [];
+        })
+      : [];
+
+    // FIXME: figure out why only two filters work at the same time
+    console.log(constructedFilters);
+
+    let query = dataset
       .query()
       .select({
+        xField: xDimension!,
         measure: measures[0],
-        selectedDimension: dimensions.find(
-          dim => dim.iri.value === selectedDimension
-        )! // FIXME: make sure it exists & remove !
+        groupByField: groupByDimension!
       })
-      .limit(10000);
+      .limit(100000);
+
+    for (const f of constructedFilters) {
+      query = query.filter(f);
+    }
+
     const data = await query.execute();
-
     return {
-      results: formatData({ data, selectedDimension })
+      results: data
     };
-  }, [dataset, dimensions, selectedDimension]);
+  }, [dataset, groupByDimension, measures, xDimension, filters]);
 
+  return useRemoteData(fetchData);
+};
+
+/**
+ * @fixme use metadata to filter time dimension!
+ */
+export const getTimeDimensions = ({
+  dimensions
+}: {
+  dimensions: Dimension[];
+}) => dimensions.filter(dim => dim.labels[0].value === "Jahr");
+/**
+ * @fixme use metadata to filter categorical dimension!
+ */
+export const getCategoricalDimensions = ({
+  dimensions
+}: {
+  dimensions: Dimension[];
+}) =>
+  dimensions.filter(
+    dim => dim.labels[0].value !== "Jahr" && dim.labels[0].value !== "Variable"
+  );
+/**
+ * @fixme This is not correct, problem in the RDF vocabulary
+ */
+export const getMeasuresDimensions = ({
+  dimensions
+}: {
+  dimensions: Dimension[];
+}) => dimensions.filter(dim => dim.labels[0].value === "Variable");
+
+export const getDimensionIri = ({
+  dimension
+}: {
+  dimension: Dimension;
+}): Dimension["iri"]["value"] => {
+  return dimension.iri.value;
+};
+export const getDimensionLabel = ({
+  dimension
+}: {
+  dimension: Dimension;
+}): string => {
+  return dimension.labels[0].value;
+};
+export const getDimensionLabelFromIri = ({
+  dimensionIri,
+  dimensions
+}: {
+  dimensionIri: string;
+  dimensions: Dimension[];
+}): string => {
+  const dimension = dimensions.find(dim => dim.iri.value === dimensionIri);
+  // FIXME: Is dimensionIri the right thing to return?
+  return dimension ? getDimensionLabel({ dimension }) : dimensionIri;
+};
+
+export const useDimensionValues = ({
+  dataset,
+  dimension
+}: {
+  dataset: DataCube;
+  dimension: Dimension;
+}) => {
+  const fetchData = useCallback(async () => {
+    return await dataset.componentValues(dimension);
+  }, [dataset, dimension]);
   return useRemoteData(fetchData);
 };

@@ -1480,15 +1480,16 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zazuko/query-rdf-data-cube@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@zazuko/query-rdf-data-cube/-/query-rdf-data-cube-0.0.10.tgz#50751e041d7731b5087f6f65aa38c695d5b4fa6a"
-  integrity sha512-1zmqLQIFvP6pYu9C8Bpr667OVYludMv4LXx+hp+MewpD0gtnV4d03uZPbsyvM2cKVCYY/b7ZOFVLagUReK1kQw==
+"@zazuko/query-rdf-data-cube@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@zazuko/query-rdf-data-cube/-/query-rdf-data-cube-0.1.0.tgz#745c790b8fa183847363124145799a10dfe2371c"
+  integrity sha512-7A/ykJV1UZIdYXHLCUZN70mprQomP7i0bCcC5k6Fcty/Ygq/AzbwCaVHucKBAA+CkogpPf7FedVkozeP9tThow==
   dependencies:
     "@rdfjs/data-model" "^1.1.2"
     "@rdfjs/namespace" "^1.1.0"
     clone "^2.1.2"
     node-fetch "^2.6.0"
+    node-slugify "0.0.3"
     sparqljs "^3.0.0-beta.0"
 
 abbrev@1:
@@ -4609,9 +4610,9 @@ mute-stream@0.0.7:
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
 
 n3@^1.0.4:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/n3/-/n3-1.2.0.tgz#4d04e953007438f8e39635e13562dcfa66fb1e9b"
-  integrity sha512-3VZD31lRyG2JoAa7imyhAIUZbqaZk4FSsa5QenNjUhNNJKomMLcwuhAOyl+i/suT7UB2H16Ta/7tSUP+Hkq/EQ==
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/n3/-/n3-1.2.1.tgz#8350b68527e5d0768dc0f0bb6e4531b7f4f8bb2f"
+  integrity sha512-5va8zsh02owDul7+5bj35cGOzWU7DeJHwQK3F8NDKtiYqPgWcFTg/zLxJs1JeRF2n6j5PI/eR9DCokS7nLrevA==
 
 nan@^2.12.1:
   version "2.14.0"
@@ -4806,6 +4807,11 @@ node-releases@^1.1.29:
   integrity sha512-VhVknkitq8dqtWoluagsGPn3dxTvN9fwgR59fV3D7sLBHe0JfDramsMI8n8mY//ccq/Kkrf8ZRHRpsyVZ3qw1A==
   dependencies:
     semver "^5.3.0"
+
+node-slugify@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/node-slugify/-/node-slugify-0.0.3.tgz#bcf269153825bbca46bb389921c9efea9500c7d7"
+  integrity sha1-vPJpFTglu8pGuziZIcnv6pUAx9c=
 
 nopt@^4.0.1:
   version "4.0.1"
