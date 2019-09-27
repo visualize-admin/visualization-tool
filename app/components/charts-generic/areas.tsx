@@ -8,7 +8,7 @@ interface VegaSpecs extends vega.Spec {
 interface Props {
   data: any;
   width: number;
-  timeField: string;
+  xField: string;
   yField: string;
   groupBy: string;
   groupByLabel: string;
@@ -18,7 +18,7 @@ interface Props {
 export const Areas = ({
   data,
   width,
-  timeField,
+  xField,
   yField,
   groupBy,
   groupByLabel,
@@ -40,12 +40,12 @@ export const Areas = ({
         transform: [
           {
             type: "aggregate",
-            groupby: [timeField, groupBy],
+            groupby: [xField, groupBy],
             fields: [yField],
             ops: ["sum"],
             as: ["sumByTime"]
           },
-          { type: "stack", field: "sumByTime", groupby: [timeField] }
+          { type: "stack", field: "sumByTime", groupby: [xField] }
         ]
       }
     ],
@@ -57,7 +57,7 @@ export const Areas = ({
         range: "width",
         domain: {
           data: "table",
-          field: timeField
+          field: xField
         }
       },
       {
@@ -110,7 +110,7 @@ export const Areas = ({
             from: { data: "series" },
             encode: {
               enter: {
-                x: { scale: "x", field: timeField },
+                x: { scale: "x", field: xField },
                 y: { scale: "y", field: "y0" },
                 y2: { scale: "y", field: "y1" },
                 fill: { scale: "color", field: groupBy }

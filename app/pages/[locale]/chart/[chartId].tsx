@@ -15,6 +15,7 @@ import {
 import { CockpitChartLines } from "../../../components/cockpit-chart-lines";
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { CockpitChartBars } from "../../../components/cockpit-chart-bars";
+import { CockpitChartAreas } from "../../../components/cockpit-chart-areas";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -127,14 +128,14 @@ const Form = ({ chartId }: { chartId: string }) => {
                   chartId={chartId}
                 />
               )}
-              {/* {state.chartConfig.chartType === "area" && state.dataSet && (
-                <CockpitChartLines
+              {state.chartConfig.chartType === "area" && state.dataSet && (
+                <CockpitChartAreas
                   dataset={
                     datasets.data.filter(d => d.iri === state.dataSet)[0]
                   }
                   chartId={chartId}
                 />
-              )} */}
+              )}
             </>
           )}
           <Button onClick={() => dispatch({ type: "PUBLISH" })}>Publish</Button>
