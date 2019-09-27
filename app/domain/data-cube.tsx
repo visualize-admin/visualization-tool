@@ -143,6 +143,17 @@ export const getDimensionLabel = ({
 }): string => {
   return dimension.labels[0].value;
 };
+export const getDimensionLabelFromIri = ({
+  dimensionIri,
+  dimensions
+}: {
+  dimensionIri: string;
+  dimensions: Dimension[];
+}): string => {
+  const dimension = dimensions.find(dim => dim.iri.value === dimensionIri);
+  // FIXME: Is dimensionIri the right thing to return?
+  return dimension ? getDimensionLabel({ dimension }) : dimensionIri;
+};
 
 export const useDimensionValues = ({
   dataset,
