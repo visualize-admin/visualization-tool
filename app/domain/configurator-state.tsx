@@ -6,54 +6,14 @@ import {
   ReactNode
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
-import { Immutable } from "immer";
 import set from "lodash/set";
 
-// type ChartConfig = {
-//   chartType: "none"
-// } | {
-//   chartType: "line";
-//   xField?: string;
-//   groupByField?: string;
-// } | {
-//   chartType: "bar";
-//   xField?: string;
-//   groupByField?: string;
-//   // ETC
-// };
+import {
+  isValidConfiguratorState,
+  ConfiguratorState,
+  ConfiguratorStatePublishing
+} from "./config-types";
 
-export type ChartConfig = {
-  chartType: "none" | "line" | "bar" | "area" | "scatterplot";
-  [key: string]: any;
-};
-
-type ConfiguratorStatePublishing = {
-  state: "PUBLISHING";
-  dataSet: string;
-  chartConfig: ChartConfig;
-};
-
-export type ConfiguratorState = Immutable<
-  | {
-      state: "INITIAL";
-    }
-  | {
-      state: "SELECTING_DATASET";
-      chartConfig: ChartConfig;
-    }
-  | {
-      state: "CONFIGURING_CHART";
-      dataSet: string;
-      chartConfig: ChartConfig;
-    }
-  | ConfiguratorStatePublishing
-  | {
-      state: "PUBLISHED";
-      dataSet: string;
-      configKey: string;
-      chartConfig: ChartConfig;
-    }
->;
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -80,7 +40,7 @@ const initialState: ConfiguratorState = {
 
 const emptyState: ConfiguratorState = {
   state: "SELECTING_DATASET",
-  chartConfig: { chartType: "none" }
+  chartConfig: { chartType: "none", filters: {} }
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
@@ -95,7 +55,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
         draft.dataSet = action.value;
-        draft.chartConfig = { chartType: "none" };
+        draft.chartConfig = { chartType: "none", filters: {} };
       }
       return draft;
     case "CHART_TYPE_CHANGED":
@@ -103,8 +63,8 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         draft.chartConfig =
           action.value.value === "line"
-            ? { chartType: "line" }
-            : { chartType: "bar" };
+            ? { chartType: "line", filters: {} }
+            : { chartType: "bar", filters: {} };
       }
       return draft;
 
@@ -178,14 +138,21 @@ export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
 
   // Re-initialize state on page load
   useEffect(() => {
-    let stateToInitialize = initialState;
+    let stateToInitialize: ConfiguratorState = initialState;
     try {
       const storedState = window.localStorage.getItem(
         getLocalStorageKey(chartId)
       );
       if (storedState) {
-        // TODO: validate that stored state is actually a valid ConfiguratorState (with io-ts)
-        stateToInitialize = JSON.parse(storedState);
+        const parsedState = JSON.parse(storedState);
+        if (isValidConfiguratorState(parsedState)) {
+          stateToInitialize = parsedState;
+        } else {
+          console.warn("Attempted to restore invalid state. Removing from localStorage.", parsedState)
+          window.localStorage.removeItem(
+            getLocalStorageKey(chartId)
+          );
+        }
       }
     } catch {
     } finally {

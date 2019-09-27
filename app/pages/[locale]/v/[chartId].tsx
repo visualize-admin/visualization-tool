@@ -5,7 +5,7 @@ import { ChartAreasVisualization } from "../../../components/cockpit-chart-areas
 import { ChartBarsVisualization } from "../../../components/cockpit-chart-bars";
 import { ChartLinesVisualization } from "../../../components/cockpit-chart-lines";
 import { useDataSetAndMetadata, DataCubeProvider } from "../../../domain";
-import { ChartConfig } from "../../../domain/configurator-state";
+import { ChartConfig } from "../../../domain/config-types";
 
 const DisplayChart = ({
   dataSet,
@@ -73,7 +73,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode }) => {
   if (config) {
     const { dataSet, chartConfig } = config.data;
 
-    console.log(config.data)
+    console.log(config.data);
 
     return (
       <DataCubeProvider

@@ -2,7 +2,6 @@ import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { Box, Flex } from "rebass";
 import {
-  ChartConfig,
   useConfiguratorState
 } from "../domain/configurator-state";
 import {
@@ -25,6 +24,7 @@ import {
 } from "./cockpit-chart-lines";
 import { Filters } from "./cockpit-filters";
 import { Loader } from "./loader";
+import { ChartConfig } from "../domain/config-types";
 
 export const Cockpit = ({
   chartType,
