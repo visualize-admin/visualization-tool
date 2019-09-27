@@ -93,6 +93,7 @@ const Form = ({ chartId }: { chartId: string }) => {
                 path={"chartType"}
                 label="Scatterplot"
                 value="scatterplot"
+                disabled
               />
             </Box>
 
@@ -131,10 +132,7 @@ const Form = ({ chartId }: { chartId: string }) => {
             <Trans id="test-form-success">
               Konfiguration gespeichert unter
             </Trans>
-            <LocalizedLink
-              href={`/[locale]/v/${state.configKey}`}
-              passHref
-            >
+            <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>
               <Link
                 color="white"
                 sx={{ textDecoration: "underline", cursor: "pointer" }}

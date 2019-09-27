@@ -8,6 +8,7 @@ export const Field = ({
   path,
   type,
   value,
+  disabled,
   ...props
 }: {
   chartId: string;
@@ -15,6 +16,7 @@ export const Field = ({
   path: string;
   type?: "text" | "checkbox" | "radio";
   value?: string;
+  disabled?: boolean;
 }) => {
   const field = useField({
     chartId,
@@ -25,18 +27,18 @@ export const Field = ({
 
   return type === "radio" ? (
     <Label>
-      <Radio {...field}></Radio>
+      <Radio {...field} disabled={disabled}></Radio>
       {label}
     </Label>
   ) : type === "checkbox" ? (
     <Label>
-      <Checkbox {...field}></Checkbox>
+      <Checkbox {...field} disabled={disabled}></Checkbox>
       {label}
     </Label>
   ) : (
     <>
       <Label>{label}</Label>
-      <Input {...field}></Input>
+      <Input {...field} disabled={disabled}></Input>
     </>
   );
 };
