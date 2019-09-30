@@ -19,7 +19,13 @@ import { useEffect, useState } from "react";
 
 const pages: ConfigPageOrGroup[] = [
   { path: "/", title: "Introduction", content: require("../docs/index.mdx") },
-  { path: "/colors", title: "Colors", content: require("../docs/colors.mdx") }
+  {
+    title: "Materials", pages: [
+    { path: "/colors", title: "Colors", content: require("../docs/colors.mdx") },
+    { path: "/typography", title: "Typography", content: require("../docs/typography.mdx") },
+    { path: "/icons", title: "Icons", content: require("../docs/icons.mdx") },
+    { path: "/layout", title: "Layout", content: require("../docs/layout.mdx") }
+  ]}
 ];
 
 const mdxComponents = {
@@ -74,7 +80,21 @@ export default () => {
 
   return mounted ? (
     <MDXProvider components={mdxComponents}>
-      <Catalog title="Visualization Tool" pages={pages} />
+      <Catalog title="Visualization Tool" 
+        pages={pages}
+        theme={{
+          brandColor: "#333",
+          sidebarColorText: "#333",
+          navBarTextColor: "#333",
+          sidebarColorHeading: "#333",
+          pageHeadingTextColor: "#fff",
+          linkColor: "rgb(255,95,85)",
+          sidebarColorTextActive: "rgb(255,95,85)",
+          background: "#F5F5F5",
+          pageHeadingBackground: "#156896"
+        }}
+        />
+      
     </MDXProvider>
   ) : null;
 };
