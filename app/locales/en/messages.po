@@ -14,18 +14,18 @@ msgstr ""
 "Plural-Forms: \n"
 
 #: app/pages/[locale]/playground.tsx:17
-msgid "Hallo Welt!"
-msgstr "Hello World!"
+#~ msgid "Hallo Welt!"
+#~ msgstr "Hello World!"
 
 #: app/pages/[locale]/config-tester.tsx:28
-msgid "no id"
-msgstr ""
+#~ msgid "no id"
+#~ msgstr ""
 
 #: app/pages/[locale]/config-tester.tsx:70
-msgid "test-form-save"
-msgstr "Save"
+#~ msgid "test-form-save"
+#~ msgstr "Save"
 
-#: app/pages/[locale]/config-tester.tsx:78
+#: app/pages/[locale]/chart/[chartId].tsx:48
 msgid "test-form-success"
 msgstr "Configuration saved"
 
@@ -33,5 +33,5 @@ msgstr "Configuration saved"
 #: app/pages/[locale]/config-tester.tsx:52
 #: app/pages/[locale]/config-tester.tsx:58
 #: app/pages/[locale]/config-tester.tsx:64
-msgid "test-form-title"
-msgstr "Title"
+#~ msgid "test-form-title"
+#~ msgstr "Title"
