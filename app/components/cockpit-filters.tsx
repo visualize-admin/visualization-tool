@@ -19,7 +19,6 @@ export const Filters = ({
 }) => {
   return (
     <>
-      <h3>Filter Dimension</h3>
       {dimensions.map(dimension => {
         return (
           <div key={getDimensionIri({ dimension })}>
