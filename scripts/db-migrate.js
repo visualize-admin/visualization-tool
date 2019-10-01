@@ -14,15 +14,21 @@ pgConfig.port = +pgConfig.port;
 const run = async () => {
   try {
     console.log("[ db-migrate ] Starting DB migration ...");
-    
-    await createDb(pgConfig.database, pgConfig);
 
+    await createDb(pgConfig.database, pgConfig);
+  } catch {
+    // Ignore DB creation errors. If it does not already exist, the following step will fail with a proper error.
+  }
+
+  try {
     await migrate(pgConfig, path.resolve(__dirname, "..", "db-migrations"));
 
     console.log("[ db-migrate ] DB migration complete!");
   } catch (e) {
     // Just log without stack trace
-    console.log("[ db-migrate ] DB migration failed. Please check your DATABASE_URL and if Postgres is running.");
+    console.log(
+      "[ db-migrate ] DB migration failed. Please check your DATABASE_URL and if Postgres is running."
+    );
     console.error(e.message);
     process.exit(1);
   }
@@ -34,4 +40,3 @@ run().catch(e => {
   console.error(e);
   process.exit(1);
 });
-
