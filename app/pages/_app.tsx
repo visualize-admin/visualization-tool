@@ -1,3 +1,5 @@
+import preset from "@rebass/preset";
+import { ThemeProvider } from "emotion-theming";
 import React from "react";
 import App, { AppContext } from "next/app";
 import ErrorPage from "next/error";
@@ -75,8 +77,10 @@ class MyApp extends App<{ locale: string; statusCode: void | number }> {
       <ErrorPage statusCode={statusCode} />
     ) : (
       <I18nProvider language={locale} catalogs={catalogs}>
-        <Global styles={globalCss} />
-        <Component {...pageProps} />
+        <ThemeProvider theme={preset}>
+          <Global styles={globalCss} />
+          <Component {...pageProps} />
+        </ThemeProvider>
       </I18nProvider>
     );
   }
