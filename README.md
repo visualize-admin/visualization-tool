@@ -4,29 +4,45 @@
 
 To start the development environment, you need a Docker runtime, e.g. [Docker Desktop](https://www.docker.com/products/docker-desktop) and [Nix](https://nixos.org).
 
-### App
+### Setting up the dev environment
+
+1. Make sure that Docker is running
+2. Start the Postgres database with `docker-compose up`
+3. Run the setup script:
+
+```sh
+yarn setup:dev
+```
+
+### Dev server
+
+Once the application's set up, you can start the development server with
 
 ```sh
 yarn dev
 ```
 
-### PostgreSQL DB
+> 👉 In [Visual Studio Code](https://code.visualstudio.com/), you also can run the **default build task** (CMD-SHIFT-B) to start the dev server, database server, and TypeScript checker (you'll need [Nix](https://nixos.org) for that to work).
+
+### Postgres database
+
+If the database server is not running, run:
 
 ```sh
 docker-compose up
 ```
 
-In [Visual Studio Code](https://code.visualstudio.com/), you also can run the **default build task** (CMD-SHIFT-B) to start TypeScript alongside Docker (you'll need [Nix](https://nixos.org) for that to work).
+#### Database migrations
 
-#### Setting up the Database
-
-To set up the database, run
+Database migrations are run automatically when the *production* app starts. In *development*, you'll have to run them manually:
 
 ```sh
-./script/db-setup.sh
+yarn db:migrate:dev
 ```
 
-This will re-create a DB and table structure. _Beware that currently this will wipe all data_.
+Migrations are located in `db-migrations/`. Write SQL or JS migrations and follow the naming convention of the existing files `XXXXX-name-of-migration.{sql|js}`. Migrations are _immutable_, you will get an error if you change an already-run migration.
+
+For detailed instructions, please refer to the [postgres-migrations](https://github.com/thomwright/postgres-migrations) documentation.
 
 ## Docker Deployment
 

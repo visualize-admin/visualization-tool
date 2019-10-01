@@ -43,7 +43,7 @@
     {
       "label": "dev-db",
       "type": "shell",
-      "command": "docker-compose up db",
+      "command": "docker-compose up",
       "presentation": {
         "group": "dev"
       }

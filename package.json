@@ -7,11 +7,14 @@
   "private": true,
   "scripts": {
     "dev": "DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool next ./app",
+    "db:migrate:dev": "DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool scripts/db-migrate.js",
+    "db:migrate": "scripts/db-migrate.js",
     "build": "lingui compile && next build ./app",
-    "start": "next start ./app -p $PORT",
+    "start": "yarn db:migrate && next start ./app -p $PORT",
     "lint": "tsc --noEmit -p ./app",
     "locales:extract": "lingui extract",
-    "locales:compile": "lingui compile"
+    "locales:compile": "lingui compile",
+    "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev"
   },
   "dependencies": {
     "@babel/standalone": "^7.6.2",
@@ -32,6 +35,8 @@
     "nanoid": "^2.1.0",
     "next": "^9.0.5",
     "pg": "^7.12.1",
+    "pg-connection-string": "^2.1.0",
+    "postgres-migrations": "^3.0.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "rebass": "^4.0.5",
