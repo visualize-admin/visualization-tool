@@ -1,13 +1,12 @@
-import preset from "@rebass/preset";
+import { css, Global } from "@emotion/core";
+import { I18nProvider } from "@lingui/react";
 import { ThemeProvider } from "emotion-theming";
-import React from "react";
 import App, { AppContext } from "next/app";
 import ErrorPage from "next/error";
-import { locales, defaultLocale, catalogs } from "../locales/locales";
-import { I18nProvider } from "@lingui/react";
-import { css, Global } from "@emotion/core";
+import React from "react";
+import { catalogs, defaultLocale, locales } from "../locales/locales";
+import { theme } from "../materials";
 
-const theme = { ...preset, fontSizes: [12, 14, 16, 20, 24, 32] };
 const globalCss = css`
   @font-face {
     font-family: "FrutigerNeueBold";
