@@ -44,7 +44,42 @@ Migrations are located in `db-migrations/`. Write SQL or JS migrations and follo
 
 For detailed instructions, please refer to the [postgres-migrations](https://github.com/thomwright/postgres-migrations) documentation.
 
-## Docker Deployment
+## Deployment
+
+### Heroku
+
+If a Heroku app is set up (as Git remote `heroku`), deploy with
+
+```sh
+heroku container:push web
+heroku container:release web
+```
+
+For details, see https://devcenter.heroku.com/articles/container-registry-and-runtime
+
+### Abraxas
+
+With your Abraxas credentials ...
+
+1. Log in to https://uvek.abx-ras.ch/
+2. This will prompt to open the F5 VPN client (you can download the client software once logged in). The VPN connection will be opened automatically.
+3. Use [Microsoft Remote Desktop](https://apps.apple.com/us/app/microsoft-remote-desktop-10/id1295203466?mt=12) to log in to the Abraxas Jump Server: 
+   - Remote address: `192.168.99.9`
+   - User: `cmb\<YOUR_USER_NAME>`
+4. Once logged in, you should find yourself on a Windows desktop.
+5. Using PuTTY (a terminal app on the desktop), connect to `cmbs0404.cmb.lan` via SSH. Again, use the same credentials.
+6. Congrats, you are on the Abraxas dev server!
+
+Useful commands to use:
+
+- `cd /appl/run` -> go to the directory containing the `docker-compose.yml`
+- `sudo /usr/local/bin/docker-compose logs web` -> display logs of the `web` service
+- `sudo /usr/local/bin/docker-compose up -d` -> Rebuild services and restart after a configuration change
+- `sudo /usr/local/bin/docker-compose pull web` -> Pull latest web image manually (should not be needed much)
+- etc. (remember to use `sudo` for all Docker commands)
+
+
+### Docker (anywhere)
 
 To pull the latest image from the GitLab registry, run:
 
@@ -56,7 +91,7 @@ docker pull registry.ldbar.ch/interactivethings/visualization-tool:master
 docker run -it registry.ldbar.ch/interactivethings/visualization-tool:master
 ```
 
-Or use `docker-compose`. Simple example `docker-compose.yml`:
+Or use `docker-compose`. Simplified example `docker-compose.yml`:
 
 ```yaml
 version: "3"
@@ -66,4 +101,10 @@ services:
     ports:
       - "80:3000"
     restart: always
+    env:
+      DATABASE_URL=postgres://postgres@db:5432/visualization_tool
+  db:
+    image: "postgres:11"
+    ports:
+      - "5432:5432"
 ```
