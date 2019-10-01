@@ -7,6 +7,7 @@ import { locales, defaultLocale, catalogs } from "../locales/locales";
 import { I18nProvider } from "@lingui/react";
 import { css, Global } from "@emotion/core";
 
+const theme = { ...preset, fontSizes: [12, 14, 16, 20, 24, 32] };
 const globalCss = css`
   @font-face {
     font-family: "FrutigerNeueBold";
@@ -77,7 +78,7 @@ class MyApp extends App<{ locale: string; statusCode: void | number }> {
       <ErrorPage statusCode={statusCode} />
     ) : (
       <I18nProvider language={locale} catalogs={catalogs}>
-        <ThemeProvider theme={preset}>
+        <ThemeProvider theme={theme}>
           <Global styles={globalCss} />
           <Component {...pageProps} />
         </ThemeProvider>
