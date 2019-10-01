@@ -7,7 +7,7 @@ class MyDocument extends Document {
         <Head />
         <body>
           <Main />
-          <script src="/static/ie-check.js"></script>
+          <script noModule src="/static/ie-check.js"></script>
           <NextScript />
         </body>
       </Html>
