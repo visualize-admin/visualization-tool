@@ -118,11 +118,7 @@ const Form = ({ chartId }: { chartId: string }) => {
               label="Title en"
             /> */}
             {state.dataSet && state.chartConfig.chartType && (
-              <Cockpit
-                chartType={state.chartConfig.chartType}
-                dataset={datasets.data.filter(d => d.iri === state.dataSet)[0]}
-                chartId={chartId}
-              />
+              <Cockpit chartId={chartId} dataSetIri={state.dataSet} />
             )}
           </>
         )}
