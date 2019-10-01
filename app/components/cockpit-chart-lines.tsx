@@ -82,7 +82,7 @@ export const ChartLinesControls = ({
 };
 
 export const ChartLinesVisualization = ({
-  dataset,
+  dataSet,
   dimensions,
   measures,
   filters,
@@ -90,7 +90,7 @@ export const ChartLinesVisualization = ({
   groupByField,
   heightField
 }: {
-  dataset: DataCube;
+  dataSet: DataCube;
   dimensions: Dimension[];
   measures: Measure[];
   filters?: any;
@@ -99,7 +99,7 @@ export const ChartLinesVisualization = ({
   heightField: string;
 }) => {
   const observations = useObservations({
-    dataset,
+    dataSet,
     measures,
     dimensions,
     xField,

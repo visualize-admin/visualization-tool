@@ -46,7 +46,6 @@ export const useDataSets = () => {
 export const useDataSetAndMetadata = (iri: string) => {
   const entryPoint = useDataCubeEntryPoint();
   const fetchCb = useCallback(async () => {
-    
     const dataSet = await entryPoint.dataCubeByIri(iri);
 
     return {
@@ -54,12 +53,8 @@ export const useDataSetAndMetadata = (iri: string) => {
       dimensions: await dataSet.dimensions(),
       attributes: await dataSet.attributes(),
       measures: await dataSet.measures()
-    }
-  
-  }, [
-    entryPoint,
-    iri
-  ]);
+    };
+  }, [entryPoint, iri]);
   return useRemoteData(fetchCb);
 };
 
@@ -81,7 +76,7 @@ export const useDataSetMetadata = (dataSet: DataCube) => {
 };
 
 export const useObservations = ({
-  dataset,
+  dataSet,
   dimensions,
   measures,
   xField,
@@ -89,7 +84,7 @@ export const useObservations = ({
   groupByField,
   filters
 }: {
-  dataset: DataCube;
+  dataSet: DataCube;
   dimensions: Dimension[];
   measures: Measure[];
   xField: string;
@@ -119,7 +114,7 @@ export const useObservations = ({
     // FIXME: figure out why only two filters work at the same time
     console.log(constructedFilters);
 
-    let query = dataset
+    let query = dataSet
       .query()
       .select({
         xField: xDimension!,
@@ -136,7 +131,7 @@ export const useObservations = ({
     return {
       results: data
     };
-  }, [dataset, groupByDimension, measures, xDimension, filters]);
+  }, [dataSet, groupByDimension, measures, xDimension, filters]);
 
   return useRemoteData(fetchData);
 };
@@ -196,14 +191,14 @@ export const getDimensionLabelFromIri = ({
 };
 
 export const useDimensionValues = ({
-  dataset,
+  dataSet,
   dimension
 }: {
-  dataset: DataCube;
+  dataSet: DataCube;
   dimension: Dimension;
 }) => {
   const fetchData = useCallback(async () => {
-    return await dataset.componentValues(dimension);
-  }, [dataset, dimension]);
+    return await dataSet.componentValues(dimension);
+  }, [dataSet, dimension]);
   return useRemoteData(fetchData);
 };

@@ -21,7 +21,7 @@ const DisplayChart = ({
     <div>
       {chartConfig.chartType === "bar" && (
         <ChartBarsVisualization
-          dataset={rd.data.dataSet}
+          dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
@@ -32,7 +32,7 @@ const DisplayChart = ({
       )}
       {chartConfig.chartType === "line" && (
         <ChartLinesVisualization
-          dataset={rd.data.dataSet}
+          dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
@@ -43,7 +43,7 @@ const DisplayChart = ({
       )}
       {chartConfig.chartType === "area" && (
         <ChartAreasVisualization
-          dataset={rd.data.dataSet}
+          dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
