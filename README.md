@@ -51,11 +51,12 @@ For detailed instructions, please refer to the [postgres-migrations](https://git
 If a Heroku app is set up (as Git remote `heroku`), deploy with
 
 ```sh
-heroku container:push web
-heroku container:release web
+git push heroku master -f
 ```
 
-For details, see https://devcenter.heroku.com/articles/container-registry-and-runtime
+Build instructions are defined in `heroku.yml`.
+
+For details, see https://devcenter.heroku.com/articles/build-docker-images-heroku-yml
 
 ### Abraxas
 
