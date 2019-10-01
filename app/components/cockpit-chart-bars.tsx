@@ -1,9 +1,10 @@
 import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
-import React from "react";
-import { useObservations } from "../domain/data-cube";
+import React, { useEffect } from "react";
+import { useObservations, getDimensionIri } from "../domain/data-cube";
 import { ChartBars } from "./charts-bars";
 import { Field } from "./field";
 import { Loader } from "./loader";
+import { useConfiguratorState } from "../domain/configurator-state";
 
 export const ChartBarsControls = ({
   chartId,
@@ -16,6 +17,32 @@ export const ChartBarsControls = ({
   categoricalDimensions: Dimension[];
   measuresDimensions: Dimension[];
 }) => {
+  const [state, dispatch] = useConfiguratorState({ chartId });
+
+  useEffect(() => {
+    dispatch({
+      type: "CHART_CONFIG_CHANGED",
+      value: {
+        path: "x",
+        value: getDimensionIri({ dimension: categoricalDimensions[0] })
+      }
+    });
+    dispatch({
+      type: "CHART_CONFIG_CHANGED",
+      value: {
+        path: "height",
+        value: getDimensionIri({ dimension: measuresDimensions[0] })
+      }
+    });
+    dispatch({
+      type: "CHART_CONFIG_CHANGED",
+      value: {
+        path: "color",
+        value: getDimensionIri({ dimension: categoricalDimensions[0] })
+      }
+    });
+  }, [categoricalDimensions, dispatch, measuresDimensions]);
+
   return (
     <>
       <h5>X Axis (Categories)</h5>
