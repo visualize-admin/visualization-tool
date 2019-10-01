@@ -20,12 +20,36 @@ import { useEffect, useState } from "react";
 const pages: ConfigPageOrGroup[] = [
   { path: "/", title: "Introduction", content: require("../docs/index.mdx") },
   {
-    title: "Materials", pages: [
-    { path: "/colors", title: "Colors", content: require("../docs/colors.mdx") },
-    { path: "/typography", title: "Typography", content: require("../docs/typography.mdx") },
-    { path: "/icons", title: "Icons", content: require("../docs/icons.mdx") },
-    { path: "/layout", title: "Layout", content: require("../docs/layout.mdx") }
-  ]}
+    title: "Materials",
+    pages: [
+      {
+        path: "/colors",
+        title: "Colors",
+        content: require("../docs/colors.mdx")
+      },
+      {
+        path: "/typography",
+        title: "Typography",
+        content: require("../docs/typography.mdx")
+      },
+      { path: "/icons", title: "Icons", content: require("../docs/icons.mdx") },
+      {
+        path: "/layout",
+        title: "Layout",
+        content: require("../docs/layout.mdx")
+      }
+    ]
+  },
+  {
+    title: "Components",
+    pages: [
+      {
+        path: "/components/loader",
+        title: "Loader",
+        content: require("../components/loader.docs")
+      }
+    ]
+  }
 ];
 
 const mdxComponents = {
@@ -80,7 +104,8 @@ export default () => {
 
   return mounted ? (
     <MDXProvider components={mdxComponents}>
-      <Catalog title="Visualization Tool" 
+      <Catalog
+        title="Visualization Tool"
         pages={pages}
         theme={{
           brandColor: "#333",
@@ -93,8 +118,7 @@ export default () => {
           background: "#F5F5F5",
           pageHeadingBackground: "#156896"
         }}
-        />
-      
+      />
     </MDXProvider>
   ) : null;
 };
