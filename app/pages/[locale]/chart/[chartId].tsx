@@ -6,16 +6,16 @@ import React from "react";
 import { Box, Button, Link } from "rebass";
 import { Cockpit } from "../../../components/cockpit";
 import {
-  DatasetSelectorField,
-  ChartTypeSelectorField
+  ChartTypeSelectorField,
+  DatasetSelectorField
 } from "../../../components/field";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { Loader } from "../../../components/loader";
 import {
   DataCubeProvider,
-  useDataSets,
-  useDataSetAndMetadata
+  useDataSetAndMetadata,
+  useDataSets
 } from "../../../domain";
 import {
   ConfiguratorStateProvider,

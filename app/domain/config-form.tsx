@@ -1,12 +1,12 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
-import { useConfiguratorState } from "./configurator-state";
 import {
+  getCategoricalDimensions,
   getDimensionIri,
   getMeasuresDimensions,
-  getCategoricalDimensions,
   getTimeDimensions
 } from ".";
+import { useConfiguratorState } from "./configurator-state";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
