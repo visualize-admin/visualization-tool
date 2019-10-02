@@ -107,10 +107,10 @@ export const Areas = ({
                 fill: { scale: "colorScale", field: groupBy }
               },
               update: {
-                fillOpacity: { value: 1 }
+                fillOpacity: { value: 0.9 }
               },
               hover: {
-                fillOpacity: { value: 0.5 }
+                fillOpacity: { value: 1 }
               }
             }
           }

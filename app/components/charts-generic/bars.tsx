@@ -106,10 +106,11 @@ export const Bars = ({
             y2: { scale: "y", field: "y1" }
           },
           update: {
+            fillOpacity: { value: 0.9 },
             fill: { scale: "colorScale", field: groupBy }
           },
           hover: {
-            fill: { value: "grey" }
+            fillOpacity: { value: 1 }
           }
         }
       },
@@ -119,7 +120,8 @@ export const Bars = ({
           enter: {
             align: { value: "center" },
             baseline: { value: "bottom" },
-            fill: { value: "#333" }
+            fill: { value: "#454545" },
+            fontSize: { value: 12 }
           },
           update: {
             x: { scale: "x", signal: `tooltip.${xField}`, band: 0.5 },

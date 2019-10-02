@@ -27,7 +27,7 @@ export const yAxisTheme: vega.Axis = {
   bandPosition: 0.5,
   domain: false,
   grid: true,
-  gridColor: "#dedede",
+  gridColor: "#E5E5E5",
   labelFont: fontFamily,
   labelColor: labelColor,
   labelFontSize: 12,
