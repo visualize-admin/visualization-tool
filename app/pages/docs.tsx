@@ -19,6 +19,8 @@ import { useEffect, useState } from "react";
 
 const pages: ConfigPageOrGroup[] = [
   { path: "/", title: "Introduction", content: require("../docs/index.mdx") },
+  { path: "/branding", title: "Branding", content: require("../docs/branding.mdx") },
+  { path: "/branding", title: "Accessibility", content: require("../docs/accessibility.mdx") },
   {
     title: "Materials",
     pages: [
@@ -32,7 +34,6 @@ const pages: ConfigPageOrGroup[] = [
         title: "Typography",
         content: require("../docs/typography.mdx")
       },
-      { path: "/icons", title: "Icons", content: require("../docs/icons.mdx") },
       {
         path: "/layout",
         title: "Layout",
@@ -40,16 +41,16 @@ const pages: ConfigPageOrGroup[] = [
       }
     ]
   },
-  {
-    title: "Components",
-    pages: [
-      {
-        path: "/components/loader",
-        title: "Loader",
-        content: require("../components/loader.docs")
-      }
-    ]
-  }
+  // {
+  //   title: "Components",
+  //   pages: [
+  //     {
+  //       path: "/components/loader",
+  //       title: "Loader",
+  //       content: require("../components/loader.docs")
+  //     }
+  //   ]
+  // }
 ];
 
 const mdxComponents = {
