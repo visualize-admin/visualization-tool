@@ -174,7 +174,9 @@ export const useChartTypeSelectorField = ({
   );
 
   const stateValue =
-    state.state === "CONFIGURING_CHART" ? get(state, path, "") : "";
+    state.state === "CONFIGURING_CHART"
+      ? get(state, "chartConfig.chartType")
+      : "";
 
   const checked = stateValue === value;
 
