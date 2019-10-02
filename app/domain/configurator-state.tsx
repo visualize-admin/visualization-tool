@@ -22,10 +22,6 @@ export type ConfiguratorStateAction =
       value: { path: string | string[]; value: any };
     }
   | {
-      type: "CHART_CONFIG_INITIALIZED";
-      value: { path: string | string[]; value: any };
-    }
-  | {
       type: "CHART_CONFIG_CHANGED";
       value: { path: string | string[]; value: any };
     }
@@ -61,25 +57,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         draft.chartConfig = { chartType: "none", filters: {} };
       }
       return draft;
+
     case "CHART_TYPE_CHANGED":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
-        draft.chartConfig =
-          action.value.value === "line"
-            ? { chartType: "line", filters: {} }
-            : { chartType: "bar", filters: {} };
-      }
-      return draft;
-
-    case "CHART_CONFIG_INITIALIZED":
-      draft.state = "CONFIGURING_CHART";
-      if (
-        draft.state === "CONFIGURING_CHART" &&
-        // FIXME: use reliable empty configuration check
-        // !isValidConfig(draft.chartConfig)
-        !draft.chartConfig.x &&
-        !draft.chartConfig.height
-      ) {
         set(draft, action.value.path, action.value.value);
       }
       return draft;
@@ -95,7 +76,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       draft.state = "PUBLISHING";
       return draft;
     case "PUBLISH_FAILED":
-      // Recover by going back to In-progress state
+      // Recover by going back to CONFIGURING_CHART state
       draft.state = "CONFIGURING_CHART";
       return draft;
     case "PUBLISHED":

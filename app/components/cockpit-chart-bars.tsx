@@ -1,37 +1,21 @@
 import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
-import React, { useEffect } from "react";
-import { useObservations, getDimensionIri } from "../domain/data-cube";
+import React from "react";
+import { useObservations } from "../domain/data-cube";
 import { ChartBars } from "./charts-bars";
 import { Field } from "./field";
 import { Loader } from "./loader";
-import { useConfiguratorState } from "../domain/configurator-state";
-import { ConfiguratorState, BarConfig } from "../domain/config-types";
 
 export const ChartBarsControls = ({
   chartId,
   timeDimensions,
   categoricalDimensions,
-  measuresDimensions,
-  initialState
+  measuresDimensions
 }: {
   chartId: string;
   timeDimensions: Dimension[];
   categoricalDimensions: Dimension[];
   measuresDimensions: Dimension[];
-  initialState: any; // BarConfig;
 }) => {
-  const [state, dispatch] = useConfiguratorState({ chartId });
-
-  useEffect(() => {
-    dispatch({
-      type: "CHART_CONFIG_INITIALIZED",
-      value: {
-        path: "chartConfig",
-        value: initialState
-      }
-    });
-  }, [categoricalDimensions, dispatch, initialState, measuresDimensions]);
-
   return (
     <>
       <h5>X Axis (Categories)</h5>
