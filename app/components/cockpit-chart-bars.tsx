@@ -20,25 +20,18 @@ export const ChartBarsControls = ({
   const [state, dispatch] = useConfiguratorState({ chartId });
 
   useEffect(() => {
+    const initalState = {
+      chartType: "bar",
+      filters: {},
+      x: getDimensionIri({ dimension: categoricalDimensions[0] }),
+      height: getDimensionIri({ dimension: measuresDimensions[0] }),
+      color: getDimensionIri({ dimension: categoricalDimensions[0] })
+    };
     dispatch({
-      type: "CHART_CONFIG_CHANGED",
+      type: "CHART_CONFIG_INITIALIZED",
       value: {
-        path: "x",
-        value: getDimensionIri({ dimension: categoricalDimensions[0] })
-      }
-    });
-    dispatch({
-      type: "CHART_CONFIG_CHANGED",
-      value: {
-        path: "height",
-        value: getDimensionIri({ dimension: measuresDimensions[0] })
-      }
-    });
-    dispatch({
-      type: "CHART_CONFIG_CHANGED",
-      value: {
-        path: "color",
-        value: getDimensionIri({ dimension: categoricalDimensions[0] })
+        path: "chartConfig",
+        value: initalState
       }
     });
   }, [categoricalDimensions, dispatch, measuresDimensions]);

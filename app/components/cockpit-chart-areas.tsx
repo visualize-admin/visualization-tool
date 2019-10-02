@@ -20,28 +20,21 @@ export const ChartAreasControls = ({
   const [state, dispatch] = useConfiguratorState({ chartId });
 
   useEffect(() => {
+    const initalState = {
+      chartType: "area",
+      filters: {},
+      x: getDimensionIri({ dimension: timeDimensions[0] }),
+      height: getDimensionIri({ dimension: measuresDimensions[0] }),
+      color: getDimensionIri({ dimension: categoricalDimensions[0] })
+    };
     dispatch({
-      type: "CHART_CONFIG_CHANGED",
+      type: "CHART_CONFIG_INITIALIZED",
       value: {
-        path: "x",
-        value: getDimensionIri({ dimension: timeDimensions[0] })
+        path: "chartConfig",
+        value: initalState
       }
     });
-    dispatch({
-      type: "CHART_CONFIG_CHANGED",
-      value: {
-        path: "height",
-        value: getDimensionIri({ dimension: measuresDimensions[0] })
-      }
-    });
-    dispatch({
-      type: "CHART_CONFIG_CHANGED",
-      value: {
-        path: "color",
-        value: getDimensionIri({ dimension: categoricalDimensions[0] })
-      }
-    });
-  }, [timeDimensions, categoricalDimensions, dispatch, measuresDimensions]);
+  }, [categoricalDimensions, dispatch, measuresDimensions, timeDimensions]);
   return (
     <>
       <h5>X Axis (Time)</h5>
