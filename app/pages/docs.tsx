@@ -19,8 +19,16 @@ import { useEffect, useState } from "react";
 
 const pages: ConfigPageOrGroup[] = [
   { path: "/", title: "Introduction", content: require("../docs/index.mdx") },
-  { path: "/branding", title: "Branding", content: require("../docs/branding.mdx") },
-  { path: "/branding", title: "Accessibility", content: require("../docs/accessibility.mdx") },
+  {
+    path: "/branding",
+    title: "Branding",
+    content: require("../docs/branding.mdx")
+  },
+  {
+    path: "/accessibility",
+    title: "Accessibility",
+    content: require("../docs/accessibility.mdx")
+  },
   {
     title: "Materials",
     pages: [
@@ -40,7 +48,7 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/layout.mdx")
       }
     ]
-  },
+  }
   // {
   //   title: "Components",
   //   pages: [

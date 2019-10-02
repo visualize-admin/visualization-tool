@@ -1,0 +1,48 @@
+> We aspire to adhere to the federal guidelines for the design of barrier-free internet services, as described in «[P028 - Richtlinien des Bundes für die Gestaltung von barrierefreien Internetangeboten](https://www.isb.admin.ch/isb/de/home/ikt-vorgaben/prozesse-methoden/p028-richtlinien_bund_gestaltung_barrierefreie_internetangebote.html)». Specifically, we strive for **Level AA** conformance — as specified in the [Web Content Accessibility Guidelines (WCAG) 2.0](https://www.w3.org/TR/WCAG20/) by the W3C Web Accessibility Initiative (WAI).
+
+## Design
+
+In order to successfully meet the necessary requirements in regards to the design of the application, we focus on the following criteria:
+
+
+**Text Alternatives**
+
+- Text alternatives and captions for non-text media (videos, images, visualizations)
+
+
+**Text Contrast (Level AA)**
+
+- Small-scale text and images of small-scale text have a contrast ratio of at least 4.5:1.
+- Large-scale text and images of large-scale text have a contrast ratio of at least 3:1.
+
+**Orientation**
+
+- Content does not restrict its view and operation to a single display orientation, such as portrait or landscape, unless a specific display orientation is essential.
+
+
+**Resize text**
+
+- Except for captions and images of text, text can be resized without assistive technology up to 200 percent without loss of content or functionality.
+
+
+**Labels or Instructions**
+
+- Labels or instructions are provided when content requires user input.
+
+
+**Consistent Identification**
+
+- Components that have the same functionality within a set of web pages are identified consistently.
+
+Furthermore, we explicitly reserve the right to use technologies that are not fully accessible whenever necessary, as long as the content is available in an alternative version (e.g. visualization with a supplemental text transcript or table).
+
+Additionally, we aspire to give all users of the Visualization Tool, as well as the consumers of visualizations created with our tool, the best experience possible regardless of their limitations or disabilities (e.g. people with color blindness).
+
+
+## Keyboard Navigation
+
+We use HTML5 semantics to make all UI elements accessible through keyboard navigation. When semantics are missing, we complement accessibility with the standard [ARIA (Accessible Rich Internet Applications)](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA). For instance, using `tab` moves focus across UI elements, the arrow keys allow navigating within a radio buttons group, the space bar can be used to select a checkbox, etc. This pattern follows [WCAG guidelines](https://www.w3.org/WAI/WCAG21/quickref/) to successfully achieve the AA grading.
+
+## Support for Assistive Technologies
+
+To make data accessible to non sighted users, we add a hidden data table that can be read with a screen reader. Tables on the Web follow a robust standardized pattern to which screen reader users are accustomed. The controls used to filter and configure the datasets control both the charts and the data tables, the experience and access to data is therefore comparable for sighted and non-sighted users.
