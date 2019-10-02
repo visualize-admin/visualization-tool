@@ -78,7 +78,10 @@ export const Lines = ({
         }
       }
     ],
-    axes: [yAxisTheme, { ...xAxisTheme, formatType: "time", format: "%Y" }],
+    axes: [
+      { ...yAxisTheme, formatType: "number", format: "~s" },
+      { ...xAxisTheme, formatType: "time", format: "%Y" }
+    ],
 
     marks: [
       {

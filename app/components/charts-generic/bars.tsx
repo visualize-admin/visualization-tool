@@ -90,7 +90,7 @@ export const Bars = ({
     ],
 
     axes: [
-      yAxisTheme,
+      { ...yAxisTheme, formatType: "number", format: "~s" },
       { ...xAxisTheme, labelAngle: -90, labelAlign: "right", ticks: false }
     ],
 
