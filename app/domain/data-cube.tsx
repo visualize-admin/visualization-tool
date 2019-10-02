@@ -111,9 +111,6 @@ export const useObservations = ({
         })
       : [];
 
-    // FIXME: figure out why only two filters work at the same time
-    console.log(constructedFilters);
-
     let query = dataSet
       .query()
       .select({
