@@ -101,7 +101,7 @@ export const Bars = ({
         encode: {
           enter: {
             x: { scale: "x", field: xField },
-            width: { scale: "x", band: 1 },
+            width: { scale: "x", band: 0.75 },
             y: { scale: "y", field: "y0" },
             y2: { scale: "y", field: "y1" }
           },
@@ -127,7 +127,7 @@ export const Bars = ({
             x: { scale: "x", signal: `tooltip.${xField}`, band: 0.5 },
             y: { scale: "y", signal: "tooltip.y1", offset: -2 },
             text: {
-              signal: `tooltip.sum ? tooltip.${groupBy} + " " +format(tooltip.sum, '.2~r') : ''`
+              signal: `tooltip.sum ? tooltip.${groupBy} + " " +format(tooltip.sum, '~s') : ''`
             },
             fillOpacity: [{ test: "datum === tooltip", value: 0 }, { value: 1 }]
           }
