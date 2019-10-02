@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as vega from "vega";
+import { yAxisTheme, xAxisTheme, legendTheme } from "./chart-styles";
 
 interface VegaSpecs extends vega.Spec {
   data: any;
@@ -72,7 +73,7 @@ export const Areas = ({
         }
       },
       {
-        name: "color",
+        name: "colorScale",
         type: "ordinal",
         range: "category",
         domain: {
@@ -83,15 +84,8 @@ export const Areas = ({
     ],
 
     axes: [
-      {
-        orient: "bottom",
-        scale: "x",
-        format: "%Y"
-      },
-      {
-        orient: "left",
-        scale: "y"
-      }
+      { ...yAxisTheme, formatType: "number", format: "~s" },
+      { ...xAxisTheme, formatType: "time", format: "%Y" }
     ],
 
     marks: [
@@ -113,13 +107,13 @@ export const Areas = ({
                 x: { scale: "x", field: xField },
                 y: { scale: "y", field: "y0" },
                 y2: { scale: "y", field: "y1" },
-                fill: { scale: "color", field: groupBy }
+                fill: { scale: "colorScale", field: groupBy }
               },
               update: {
-                fillOpacity: { value: 1 }
+                fillOpacity: { value: 0.9 }
               },
               hover: {
-                fillOpacity: { value: 0.5 }
+                fillOpacity: { value: 1 }
               }
             }
           }
@@ -129,11 +123,9 @@ export const Areas = ({
 
     legends: [
       {
-        fill: "color",
-        title: groupByLabel,
-        orient: "bottom",
-        direction: "vertical",
-        columns: 3
+        ...legendTheme,
+        fill: "colorScale"
+        // title: groupByLabel
       }
     ]
   };
@@ -154,7 +146,7 @@ const AreasChart = ({ spec }: { spec: vega.Spec }) => {
           hover: true
         });
         await view.runAsync();
-        console.log("data in areas", view.data("table"));
+        // console.log("data in areas", view.data("table"));
       } catch (error) {
         console.log(error);
       }
