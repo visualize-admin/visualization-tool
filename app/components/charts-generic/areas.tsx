@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as vega from "vega";
-import { yAxisTheme, xAxisTheme } from "./chart-styles";
+import { yAxisTheme, xAxisTheme, legendTheme } from "./chart-styles";
 
 interface VegaSpecs extends vega.Spec {
   data: any;
@@ -73,7 +73,7 @@ export const Areas = ({
         }
       },
       {
-        name: "color",
+        name: "colorScale",
         type: "ordinal",
         range: "category",
         domain: {
@@ -104,7 +104,7 @@ export const Areas = ({
                 x: { scale: "x", field: xField },
                 y: { scale: "y", field: "y0" },
                 y2: { scale: "y", field: "y1" },
-                fill: { scale: "color", field: groupBy }
+                fill: { scale: "colorScale", field: groupBy }
               },
               update: {
                 fillOpacity: { value: 1 }
@@ -120,11 +120,9 @@ export const Areas = ({
 
     legends: [
       {
-        fill: "color",
-        title: groupByLabel,
-        orient: "bottom",
-        direction: "vertical",
-        columns: 3
+        ...legendTheme,
+        fill: "colorScale"
+        // title: groupByLabel
       }
     ]
   };

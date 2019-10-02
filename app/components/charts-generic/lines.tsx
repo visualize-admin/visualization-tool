@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as vega from "vega";
 import { Spec } from "vega";
-import { yAxisTheme, xAxisTheme } from "./chart-styles";
+import { yAxisTheme, xAxisTheme, legendTheme } from "./chart-styles";
 
 interface Props {
   data: any;
@@ -69,7 +69,7 @@ export const Lines = ({
         }
       },
       {
-        name: "color",
+        name: "colorScale",
         type: "ordinal",
         range: "category",
         domain: {
@@ -108,7 +108,7 @@ export const Lines = ({
                   field: "byGroup"
                 },
                 stroke: {
-                  scale: "color",
+                  scale: "colorScale",
                   field: groupBy
                 },
 
@@ -129,11 +129,10 @@ export const Lines = ({
     ],
     legends: [
       {
-        fill: "color",
-        title: groupByLabel,
-        orient: "bottom",
-        direction: "vertical",
-        columns: 3
+        ...legendTheme,
+        stroke: "colorScale",
+        symbolType: "stroke"
+        // title: groupByLabel
       }
     ]
   };

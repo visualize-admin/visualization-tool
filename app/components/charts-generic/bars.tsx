@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as vega from "vega";
-import { xAxisTheme, yAxisTheme } from "./chart-styles";
+import { xAxisTheme, yAxisTheme, legendTheme } from "./chart-styles";
 
 interface Props {
   data: any;
@@ -79,7 +79,7 @@ export const Bars = ({
         range: "height"
       },
       {
-        name: "color",
+        name: "colorScale",
         type: "ordinal",
         range: "category",
         domain: {
@@ -89,7 +89,10 @@ export const Bars = ({
       }
     ],
 
-    axes: [yAxisTheme, { ...xAxisTheme, labelAngle: -90, labelAlign: "right", ticks: false }],
+    axes: [
+      yAxisTheme,
+      { ...xAxisTheme, labelAngle: -90, labelAlign: "right", ticks: false }
+    ],
 
     marks: [
       {
@@ -103,7 +106,7 @@ export const Bars = ({
             y2: { scale: "y", field: "y1" }
           },
           update: {
-            fill: { scale: "color", field: groupBy }
+            fill: { scale: "colorScale", field: groupBy }
           },
           hover: {
             fill: { value: "grey" }
@@ -131,11 +134,9 @@ export const Bars = ({
     ],
     legends: [
       {
-        fill: "color",
-        title: groupByLabel,
-        orient: "bottom",
-        direction: "vertical",
-        columns: 3
+        ...legendTheme,
+        fill: "colorScale"
+        // title: groupByLabel
       }
     ]
   };
