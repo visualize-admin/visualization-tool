@@ -20,6 +20,7 @@
     "@babel/standalone": "^7.6.2",
     "@lingui/react": "^2.8.3",
     "@mdx-js/react": "^1.5.0",
+    "@next/bundle-analyzer": "^9.0.7",
     "@next/mdx": "^9.0.6",
     "@rebass/forms": "^4.0.5",
     "@rebass/preset": "^4.0.5",
