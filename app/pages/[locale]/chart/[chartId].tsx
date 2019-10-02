@@ -5,11 +5,18 @@ import { useRouter } from "next/router";
 import React from "react";
 import { Box, Button, Link } from "rebass";
 import { Cockpit } from "../../../components/cockpit";
-import { DatasetSelectorField, Field } from "../../../components/field";
+import {
+  DatasetSelectorField,
+  ChartTypeSelectorField
+} from "../../../components/field";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { Loader } from "../../../components/loader";
-import { DataCubeProvider, useDataSets } from "../../../domain";
+import {
+  DataCubeProvider,
+  useDataSets,
+  useDataSetAndMetadata
+} from "../../../domain";
 import {
   ConfiguratorStateProvider,
   useConfiguratorState
@@ -47,6 +54,36 @@ const DatasetSelector = ({
   );
 };
 
+const ChartTypeSelector = ({
+  chartId,
+  dataSet
+}: {
+  chartId: string;
+  dataSet: string;
+}) => {
+  const meta = useDataSetAndMetadata(dataSet);
+
+  if (meta.state === "loaded") {
+    return (
+      <Box mb={3}>
+        {["bar", "line", "area", "scatterplot"].map(d => (
+          <ChartTypeSelectorField
+            key={d}
+            type="radio"
+            chartId={chartId}
+            path={"chartType"}
+            label={d}
+            value={d}
+            meta={meta}
+          />
+        ))}
+      </Box>
+    );
+  } else {
+    return <div>error loading dataset</div>;
+  }
+};
+
 const Form = ({ chartId }: { chartId: string }) => {
   const datasets = useDataSets();
   const [state, dispatch] = useConfiguratorState({ chartId });
@@ -66,35 +103,7 @@ const Form = ({ chartId }: { chartId: string }) => {
             </Box>
             <Box width={1} my={3} p={2} bg="muted">
               <h4>Charttyp auswählen</h4>
-              <Field
-                type="radio"
-                chartId={chartId}
-                path={"chartType"}
-                label="Bar"
-                value="bar"
-              />
-              <Field
-                type="radio"
-                chartId={chartId}
-                path={"chartType"}
-                label="Line"
-                value="line"
-              />
-              <Field
-                type="radio"
-                chartId={chartId}
-                path={"chartType"}
-                label="Area"
-                value="area"
-              />
-              <Field
-                type="radio"
-                chartId={chartId}
-                path={"chartType"}
-                label="Scatterplot"
-                value="scatterplot"
-                disabled
-              />
+              <ChartTypeSelector chartId={chartId} dataSet={state.dataSet} />
             </Box>
 
             {/* <Field
