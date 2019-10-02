@@ -10,31 +10,32 @@ export const ChartAreasControls = ({
   chartId,
   timeDimensions,
   categoricalDimensions,
-  measuresDimensions
+  measuresDimensions,
+  initialState
 }: {
   chartId: string;
   timeDimensions: Dimension[];
   categoricalDimensions: Dimension[];
   measuresDimensions: Dimension[];
+  initialState: any;
 }) => {
   const [state, dispatch] = useConfiguratorState({ chartId });
 
   useEffect(() => {
-    const initalState = {
-      chartType: "area",
-      filters: {},
-      x: getDimensionIri({ dimension: timeDimensions[0] }),
-      height: getDimensionIri({ dimension: measuresDimensions[0] }),
-      color: getDimensionIri({ dimension: categoricalDimensions[0] })
-    };
     dispatch({
       type: "CHART_CONFIG_INITIALIZED",
       value: {
         path: "chartConfig",
-        value: initalState
+        value: initialState
       }
     });
-  }, [categoricalDimensions, dispatch, measuresDimensions, timeDimensions]);
+  }, [
+    categoricalDimensions,
+    dispatch,
+    initialState,
+    measuresDimensions,
+    timeDimensions
+  ]);
   return (
     <>
       <h5>X Axis (Time)</h5>

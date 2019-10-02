@@ -5,36 +5,32 @@ import { ChartBars } from "./charts-bars";
 import { Field } from "./field";
 import { Loader } from "./loader";
 import { useConfiguratorState } from "../domain/configurator-state";
+import { ConfiguratorState, BarConfig } from "../domain/config-types";
 
 export const ChartBarsControls = ({
   chartId,
   timeDimensions,
   categoricalDimensions,
-  measuresDimensions
+  measuresDimensions,
+  initialState
 }: {
   chartId: string;
   timeDimensions: Dimension[];
   categoricalDimensions: Dimension[];
   measuresDimensions: Dimension[];
+  initialState: any; // BarConfig;
 }) => {
   const [state, dispatch] = useConfiguratorState({ chartId });
 
   useEffect(() => {
-    const initalState = {
-      chartType: "bar",
-      filters: {},
-      x: getDimensionIri({ dimension: categoricalDimensions[0] }),
-      height: getDimensionIri({ dimension: measuresDimensions[0] }),
-      color: getDimensionIri({ dimension: categoricalDimensions[0] })
-    };
     dispatch({
       type: "CHART_CONFIG_INITIALIZED",
       value: {
         path: "chartConfig",
-        value: initalState
+        value: initialState
       }
     });
-  }, [categoricalDimensions, dispatch, measuresDimensions]);
+  }, [categoricalDimensions, dispatch, initialState, measuresDimensions]);
 
   return (
     <>

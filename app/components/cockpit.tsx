@@ -5,7 +5,8 @@ import {
   getCategoricalDimensions,
   getMeasuresDimensions,
   getTimeDimensions,
-  useDataSetAndMetadata
+  useDataSetAndMetadata,
+  getDimensionIri
 } from "../domain/data-cube";
 import {
   ChartAreasControls,
@@ -51,6 +52,15 @@ export const Cockpit = ({
                 timeDimensions={timeDimensions}
                 categoricalDimensions={categoricalDimensions}
                 measuresDimensions={measuresDimensions}
+                initialState={{
+                  chartType: "bar",
+                  filters: {},
+                  x: getDimensionIri({ dimension: categoricalDimensions[0] }),
+                  height: getDimensionIri({ dimension: measuresDimensions[0] }),
+                  color: getDimensionIri({
+                    dimension: categoricalDimensions[0]
+                  })
+                }}
               />
             )}
           {state.state === "CONFIGURING_CHART" &&
@@ -60,6 +70,15 @@ export const Cockpit = ({
                 timeDimensions={timeDimensions}
                 categoricalDimensions={categoricalDimensions}
                 measuresDimensions={measuresDimensions}
+                initialState={{
+                  chartType: "line",
+                  filters: {},
+                  x: getDimensionIri({ dimension: timeDimensions[0] }),
+                  height: getDimensionIri({ dimension: measuresDimensions[0] }),
+                  color: getDimensionIri({
+                    dimension: categoricalDimensions[0]
+                  })
+                }}
               />
             )}
           {state.state === "CONFIGURING_CHART" &&
@@ -69,6 +88,15 @@ export const Cockpit = ({
                 timeDimensions={timeDimensions}
                 categoricalDimensions={categoricalDimensions}
                 measuresDimensions={measuresDimensions}
+                initialState={{
+                  chartType: "area",
+                  filters: {},
+                  x: getDimensionIri({ dimension: timeDimensions[0] }),
+                  height: getDimensionIri({ dimension: measuresDimensions[0] }),
+                  color: getDimensionIri({
+                    dimension: categoricalDimensions[0]
+                  })
+                }}
               />
             )}
         </Box>
