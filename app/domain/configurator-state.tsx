@@ -14,7 +14,6 @@ import {
   ConfiguratorStatePublishing
 } from "./config-types";
 
-
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
   | { type: "DATASET_SELECTED"; value: string }
@@ -58,13 +57,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         draft.chartConfig = { chartType: "none", filters: {} };
       }
       return draft;
+
     case "CHART_TYPE_CHANGED":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
-        draft.chartConfig =
-          action.value.value === "line"
-            ? { chartType: "line", filters: {} }
-            : { chartType: "bar", filters: {} };
+        set(draft, action.value.path, action.value.value);
       }
       return draft;
 
@@ -74,11 +71,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         set(draft.chartConfig, action.value.path, action.value.value);
       }
       return draft;
+
     case "PUBLISH":
       draft.state = "PUBLISHING";
       return draft;
     case "PUBLISH_FAILED":
-      // Recover by going back to In-progress state
+      // Recover by going back to CONFIGURING_CHART state
       draft.state = "CONFIGURING_CHART";
       return draft;
     case "PUBLISHED":
@@ -148,10 +146,11 @@ export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
         if (isValidConfiguratorState(parsedState)) {
           stateToInitialize = parsedState;
         } else {
-          console.warn("Attempted to restore invalid state. Removing from localStorage.", parsedState)
-          window.localStorage.removeItem(
-            getLocalStorageKey(chartId)
+          console.warn(
+            "Attempted to restore invalid state. Removing from localStorage.",
+            parsedState
           );
+          window.localStorage.removeItem(getLocalStorageKey(chartId));
         }
       }
     } catch {

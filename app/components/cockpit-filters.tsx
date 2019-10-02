@@ -10,11 +10,11 @@ import { Loader } from "./loader";
 
 export const Filters = ({
   chartId,
-  dataset,
+  dataSet,
   dimensions
 }: {
   chartId: string;
-  dataset: DataCube;
+  dataSet: DataCube;
   dimensions: Dimension[];
 }) => {
   return (
@@ -25,7 +25,7 @@ export const Filters = ({
             <h5>{getDimensionLabel({ dimension })}</h5>
             <DimensionValues
               chartId={chartId}
-              dataset={dataset}
+              dataSet={dataSet}
               dimension={dimension}
             />
           </div>
@@ -37,14 +37,14 @@ export const Filters = ({
 
 const DimensionValues = ({
   chartId,
-  dataset,
+  dataSet,
   dimension
 }: {
   chartId: string;
-  dataset: DataCube;
+  dataSet: DataCube;
   dimension: Dimension;
 }) => {
-  const dimensionValues = useDimensionValues({ dataset, dimension });
+  const dimensionValues = useDimensionValues({ dataSet, dimension });
   const dimensionIri = getDimensionIri({ dimension });
 
   if (dimensionValues.state === "loaded") {
