@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as vega from "vega";
+import { yAxisTheme, xAxisTheme } from "./chart-styles";
 
 interface VegaSpecs extends vega.Spec {
   data: any;
@@ -82,17 +83,7 @@ export const Areas = ({
       }
     ],
 
-    axes: [
-      {
-        orient: "bottom",
-        scale: "x",
-        format: "%Y"
-      },
-      {
-        orient: "left",
-        scale: "y"
-      }
-    ],
+    axes: [yAxisTheme, { ...xAxisTheme, formatType: "time", format: "%Y" }],
 
     marks: [
       {
@@ -154,7 +145,7 @@ const AreasChart = ({ spec }: { spec: vega.Spec }) => {
           hover: true
         });
         await view.runAsync();
-        console.log("data in areas", view.data("table"));
+        // console.log("data in areas", view.data("table"));
       } catch (error) {
         console.log(error);
       }

@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as vega from "vega";
+import { xAxisTheme, yAxisTheme } from "./chart-styles";
 
 interface Props {
   data: any;
@@ -10,6 +11,7 @@ interface Props {
   groupByLabel: string;
   aggregateFunction: "sum"; // AggregateFunction;
 }
+
 export const Bars = ({
   data,
   width,
@@ -24,6 +26,7 @@ export const Bars = ({
     width: width,
     height: width * 0.5,
     padding: 5,
+
     autosize: { type: "fit-x", contains: "padding" },
 
     data: [
@@ -86,16 +89,7 @@ export const Bars = ({
       }
     ],
 
-    axes: [
-      {
-        orient: "bottom",
-        scale: "x",
-        labelAngle: -90,
-        labelBaseline: "middle",
-        labelAlign: "right"
-      },
-      { orient: "left", scale: "y" }
-    ],
+    axes: [yAxisTheme, { ...xAxisTheme, labelAngle: -90, labelAlign: "right", ticks: false }],
 
     marks: [
       {
