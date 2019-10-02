@@ -17,17 +17,16 @@ import { useLocale } from "../lib/use-locale";
 
 const DataCubeContext = createContext<string>("");
 
-export const DataCubeProvider = ({
-  endpoint,
-  children
-}: {
-  endpoint: string;
-  children?: ReactNode;
-}) => (
-  <DataCubeContext.Provider value={endpoint}>
-    {children}
-  </DataCubeContext.Provider>
-);
+export const DataCubeProvider = ({ children }: { children?: ReactNode }) => {
+  if (!process.env.SPARQL_ENDPOINT) {
+    throw Error("No SPARQL_ENDPOINT set!");
+  }
+  return (
+    <DataCubeContext.Provider value={process.env.SPARQL_ENDPOINT}>
+      {children}
+    </DataCubeContext.Provider>
+  );
+};
 
 const useDataCubeEntryPoint = () => {
   const endpoint = useContext(DataCubeContext);

@@ -159,16 +159,13 @@ const Form = ({ chartId }: { chartId: string }) => {
   }
 };
 
-const Page: NextPage = () => {
+const ChartConfiguratorPage: NextPage = () => {
   const chartId = useChartId();
 
   return (
-    <DataCubeProvider
-      endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query"
-      // endpoint="https://ld.stadt-zuerich.ch/query"
-    >
+    <DataCubeProvider>
       <AppLayout>
-        <ConfiguratorStateProvider key={chartId}>
+        <ConfiguratorStateProvider>
           <div>
             <LocalizedLink href={"/[locale]/chart/new"} passHref>
               <a>New chart!</a>
@@ -181,4 +178,4 @@ const Page: NextPage = () => {
   );
 };
 
-export default Page;
+export default ChartConfiguratorPage;

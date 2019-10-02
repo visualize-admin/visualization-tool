@@ -76,10 +76,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode }) => {
     console.log(config.data);
 
     return (
-      <DataCubeProvider
-        endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query"
-        // endpoint="https://ld.stadt-zuerich.ch/query"
-      >
+      <DataCubeProvider>
         <DisplayChart dataSet={dataSet} chartConfig={chartConfig} />
       </DataCubeProvider>
     );
