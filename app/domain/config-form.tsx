@@ -1,6 +1,12 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
 import { useConfiguratorState } from "./configurator-state";
+import {
+  getDimensionIri,
+  getMeasuresDimensions,
+  getCategoricalDimensions,
+  getTimeDimensions
+} from ".";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -83,6 +89,88 @@ export const useDatasetSelectorField = ({
       });
     },
     [dispatch]
+  );
+
+  const stateValue =
+    state.state === "CONFIGURING_CHART" ? get(state, path, "") : "";
+
+  const checked = stateValue === value;
+
+  return {
+    name: path,
+    value: value ? value : stateValue,
+    checked,
+    onChange
+  };
+};
+
+export const useChartTypeSelectorField = ({
+  chartId,
+  path,
+  value,
+  type = "radio",
+  metaData
+}: {
+  chartId: string;
+  path: string;
+  value?: string;
+  type: "radio";
+  metaData: any;
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState({ chartId });
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e => {
+      const chartType = e.currentTarget.value;
+      const initialState =
+        chartType === "bar"
+          ? {
+              x: getDimensionIri({
+                dimension: getCategoricalDimensions({
+                  dimensions: metaData.dimensions
+                })[0]
+              }),
+              height: getDimensionIri({
+                dimension: getMeasuresDimensions({
+                  dimensions: metaData.dimensions
+                })[0]
+              }),
+              color: getDimensionIri({
+                dimension: getCategoricalDimensions({
+                  dimensions: metaData.dimensions
+                })[0]
+              })
+            }
+          : {
+              x: getDimensionIri({
+                dimension: getTimeDimensions({
+                  dimensions: metaData.dimensions
+                })[0]
+              }),
+              height: getDimensionIri({
+                dimension: getMeasuresDimensions({
+                  dimensions: metaData.dimensions
+                })[0]
+              }),
+              color: getDimensionIri({
+                dimension: getCategoricalDimensions({
+                  dimensions: metaData.dimensions
+                })[0]
+              })
+            };
+      dispatch({
+        type: "CHART_TYPE_CHANGED",
+        value: {
+          path: "chartConfig",
+          value: {
+            chartType,
+            filters: {},
+            ...initialState
+          }
+        }
+      });
+    },
+    [dispatch, metaData]
   );
 
   const stateValue =
