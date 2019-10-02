@@ -1,16 +1,22 @@
+import { Trans } from "@lingui/macro";
 import React from "react";
-import { AppLayout } from "../../components/layout";
-import { DataCubeProvider } from "../../domain/data-cube";
+import { Button } from "rebass";
+import { AppLayout, Center } from "../../components/layout";
 import { LocalizedLink } from "../../components/links";
+import { DataCubeProvider } from "../../domain/data-cube";
 
 const Page = () => {
   return (
     <div>
       <DataCubeProvider endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query">
         <AppLayout>
-          <LocalizedLink href={"/[locale]/chart/new"} passHref>
-            <a>Create a new chart</a>
-          </LocalizedLink>
+          <Center>
+            <LocalizedLink href={"/[locale]/chart/new"} passHref>
+              <Button as="a" variant="primary">
+                <Trans>Neue Grafik erstellen</Trans>
+              </Button>
+            </LocalizedLink>
+          </Center>
         </AppLayout>
       </DataCubeProvider>
     </div>

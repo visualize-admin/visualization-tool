@@ -17,6 +17,10 @@ msgstr ""
 #~ msgid "Hallo Welt!"
 #~ msgstr "Hallo Welt!"
 
+#: app/pages/[locale]/index.tsx:14
+msgid "Neue Grafik erstellen"
+msgstr "Neue Grafik erstellen"
+
 #: app/pages/[locale]/config-tester.tsx:28
 #~ msgid "no id"
 #~ msgstr ""
