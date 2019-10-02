@@ -28,7 +28,7 @@ export const ChartBars = ({
   return (
     <Bars
       data={formattedData}
-      width={500}
+      width={600}
       xField={getDimensionLabelFromIri({ dimensionIri: xField, dimensions })}
       heightField={getDimensionLabelFromIri({
         dimensionIri: heightField,
