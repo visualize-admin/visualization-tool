@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as vega from "vega";
 import { Spec } from "vega";
+import { yAxisTheme, xAxisTheme, legendTheme } from "./chart-styles";
 
 interface Props {
   data: any;
@@ -68,7 +69,7 @@ export const Lines = ({
         }
       },
       {
-        name: "color",
+        name: "colorScale",
         type: "ordinal",
         range: "category",
         domain: {
@@ -77,17 +78,9 @@ export const Lines = ({
         }
       }
     ],
-
     axes: [
-      {
-        orient: "bottom",
-        scale: "x",
-        format: "%Y"
-      },
-      {
-        orient: "left",
-        scale: "y"
-      }
+      { ...yAxisTheme, formatType: "number", format: "~s" },
+      { ...xAxisTheme, formatType: "time", format: "%Y" }
     ],
 
     marks: [
@@ -118,7 +111,7 @@ export const Lines = ({
                   field: "byGroup"
                 },
                 stroke: {
-                  scale: "color",
+                  scale: "colorScale",
                   field: groupBy
                 },
 
@@ -139,11 +132,10 @@ export const Lines = ({
     ],
     legends: [
       {
-        fill: "color",
-        title: groupByLabel,
-        orient: "bottom",
-        direction: "vertical",
-        columns: 3
+        ...legendTheme,
+        stroke: "colorScale",
+        symbolType: "stroke"
+        // title: groupByLabel
       }
     ]
   };
@@ -164,6 +156,7 @@ const LinesChart = ({ spec }: { spec: any }) => {
           hover: true
         });
         await view.runAsync();
+        // console.log("data in lines", view.data("table"));
       } catch (error) {
         console.log(error);
       }

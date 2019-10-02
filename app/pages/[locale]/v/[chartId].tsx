@@ -21,7 +21,7 @@ const DisplayChart = ({
     <div>
       {chartConfig.chartType === "bar" && (
         <ChartBarsVisualization
-          dataset={rd.data.dataSet}
+          dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
@@ -32,7 +32,7 @@ const DisplayChart = ({
       )}
       {chartConfig.chartType === "line" && (
         <ChartLinesVisualization
-          dataset={rd.data.dataSet}
+          dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
@@ -43,7 +43,7 @@ const DisplayChart = ({
       )}
       {chartConfig.chartType === "area" && (
         <ChartAreasVisualization
-          dataset={rd.data.dataSet}
+          dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
@@ -76,10 +76,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode }) => {
     console.log(config.data);
 
     return (
-      <DataCubeProvider
-        endpoint="https://trifid-lindas.test.cluster.ldbar.ch/query"
-        // endpoint="https://ld.stadt-zuerich.ch/query"
-      >
+      <DataCubeProvider>
         <DisplayChart dataSet={dataSet} chartConfig={chartConfig} />
       </DataCubeProvider>
     );

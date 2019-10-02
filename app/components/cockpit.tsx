@@ -1,14 +1,12 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { Box, Flex } from "rebass";
-import {
-  useConfiguratorState
-} from "../domain/configurator-state";
+import { useConfiguratorState } from "../domain/configurator-state";
 import {
   getCategoricalDimensions,
   getMeasuresDimensions,
   getTimeDimensions,
-  useDataSetMetadata
+  useDataSetAndMetadata,
+  getDimensionIri
 } from "../domain/data-cube";
 import {
   ChartAreasControls,
@@ -24,23 +22,20 @@ import {
 } from "./cockpit-chart-lines";
 import { Filters } from "./cockpit-filters";
 import { Loader } from "./loader";
-import { ChartConfig } from "../domain/config-types";
 
 export const Cockpit = ({
-  chartType,
   chartId,
-  dataset
+  dataSetIri
 }: {
-  chartType: ChartConfig["chartType"];
   chartId: string;
-  dataset: DataCube;
+  dataSetIri: string;
 }) => {
   const [state, dispatch] = useConfiguratorState({ chartId });
 
-  const meta = useDataSetMetadata(dataset);
+  const meta = useDataSetAndMetadata(dataSetIri);
 
   if (meta.state === "loaded") {
-    const { dimensions, measures } = meta.data;
+    const { dimensions, measures, dataSet } = meta.data;
 
     const timeDimensions = getTimeDimensions({ dimensions });
     const categoricalDimensions = getCategoricalDimensions({ dimensions });
@@ -82,7 +77,7 @@ export const Cockpit = ({
           {state.state === "CONFIGURING_CHART" &&
             state.chartConfig.chartType === "bar" && (
               <ChartBarsVisualization
-                dataset={dataset}
+                dataSet={dataSet}
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
@@ -94,7 +89,7 @@ export const Cockpit = ({
           {state.state === "CONFIGURING_CHART" &&
             state.chartConfig.chartType === "line" && (
               <ChartLinesVisualization
-                dataset={dataset}
+                dataSet={dataSet}
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
@@ -106,7 +101,7 @@ export const Cockpit = ({
           {state.state === "CONFIGURING_CHART" &&
             state.chartConfig.chartType === "area" && (
               <ChartAreasVisualization
-                dataset={dataset}
+                dataSet={dataSet}
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
@@ -120,7 +115,7 @@ export const Cockpit = ({
           <h4>Filter Daten</h4>
           <Filters
             chartId={chartId}
-            dataset={dataset}
+            dataSet={dataSet}
             dimensions={categoricalDimensions}
           />
         </Box>

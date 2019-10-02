@@ -1,6 +1,10 @@
 import { Checkbox, Input, Label, Radio } from "@rebass/forms";
 import React from "react";
-import { useDatasetSelectorField, useField } from "../domain/config-form";
+import {
+  useChartTypeSelectorField,
+  useDatasetSelectorField,
+  useField
+} from "../domain/config-form";
 
 export const Field = ({
   chartId,
@@ -62,6 +66,37 @@ export const DatasetSelectorField = ({
     path,
     type: "radio",
     value
+  });
+
+  return (
+    <Label>
+      <Radio {...field}></Radio>
+      {label}
+    </Label>
+  );
+};
+export const ChartTypeSelectorField = ({
+  chartId,
+  label,
+  path,
+  type,
+  value,
+  meta,
+  ...props
+}: {
+  chartId: string;
+  label: string;
+  path: string;
+  type?: "text" | "checkbox" | "radio";
+  value: string;
+  meta: any;
+}) => {
+  const field = useChartTypeSelectorField({
+    chartId,
+    path,
+    type: "radio",
+    value,
+    metaData: meta.data
   });
 
   return (

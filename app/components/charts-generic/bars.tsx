@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as vega from "vega";
+import { xAxisTheme, yAxisTheme, legendTheme } from "./chart-styles";
 
 interface Props {
   data: any;
@@ -10,6 +11,7 @@ interface Props {
   groupByLabel: string;
   aggregateFunction: "sum"; // AggregateFunction;
 }
+
 export const Bars = ({
   data,
   width,
@@ -24,6 +26,7 @@ export const Bars = ({
     width: width,
     height: width * 0.5,
     padding: 5,
+
     autosize: { type: "fit-x", contains: "padding" },
 
     data: [
@@ -76,7 +79,7 @@ export const Bars = ({
         range: "height"
       },
       {
-        name: "color",
+        name: "colorScale",
         type: "ordinal",
         range: "category",
         domain: {
@@ -87,14 +90,8 @@ export const Bars = ({
     ],
 
     axes: [
-      {
-        orient: "bottom",
-        scale: "x",
-        labelAngle: -90,
-        labelBaseline: "middle",
-        labelAlign: "right"
-      },
-      { orient: "left", scale: "y" }
+      { ...yAxisTheme, formatType: "number", format: "~s" },
+      { ...xAxisTheme, labelAngle: -90, labelAlign: "right", ticks: false }
     ],
 
     marks: [
@@ -104,15 +101,16 @@ export const Bars = ({
         encode: {
           enter: {
             x: { scale: "x", field: xField },
-            width: { scale: "x", band: 1 },
+            width: { scale: "x", band: 0.75 },
             y: { scale: "y", field: "y0" },
             y2: { scale: "y", field: "y1" }
           },
           update: {
-            fill: { scale: "color", field: groupBy }
+            fillOpacity: { value: 0.9 },
+            fill: { scale: "colorScale", field: groupBy }
           },
           hover: {
-            fill: { value: "grey" }
+            fillOpacity: { value: 1 }
           }
         }
       },
@@ -122,13 +120,14 @@ export const Bars = ({
           enter: {
             align: { value: "center" },
             baseline: { value: "bottom" },
-            fill: { value: "#333" }
+            fill: { value: "#454545" },
+            fontSize: { value: 12 }
           },
           update: {
             x: { scale: "x", signal: `tooltip.${xField}`, band: 0.5 },
             y: { scale: "y", signal: "tooltip.y1", offset: -2 },
             text: {
-              signal: `tooltip.sum ? tooltip.${groupBy} + " " +format(tooltip.sum, '.2~r') : ''`
+              signal: `tooltip.sum ? tooltip.${groupBy} + " " +format(tooltip.sum, '~s') : ''`
             },
             fillOpacity: [{ test: "datum === tooltip", value: 0 }, { value: 1 }]
           }
@@ -137,11 +136,9 @@ export const Bars = ({
     ],
     legends: [
       {
-        fill: "color",
-        title: groupByLabel,
-        orient: "bottom",
-        direction: "vertical",
-        columns: 3
+        ...legendTheme,
+        fill: "colorScale"
+        // title: groupByLabel
       }
     ]
   };

@@ -47,8 +47,10 @@ export const formatDataForLineChart = ({
 }) => {
   return observations.map((d: any) => {
     return {
-      [getDimensionLabelFromIri({ dimensionIri: xField, dimensions })]: d.xField
-        .value.value,
+      [getDimensionLabelFromIri({
+        dimensionIri: xField,
+        dimensions
+      })]: new Date(d.xField.value.value, 1, 1),
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
         .groupByField.label.value,
       [getDimensionLabelFromIri({ dimensionIri: heightField, dimensions })]: +d
@@ -72,8 +74,10 @@ export const formatDataForAreaChart = ({
 }) => {
   return observations.map((d: any) => {
     return {
-      [getDimensionLabelFromIri({ dimensionIri: xField, dimensions })]: d.xField
-        .value.value,
+      [getDimensionLabelFromIri({
+        dimensionIri: xField,
+        dimensions
+      })]: new Date(d.xField.value.value, 1, 1),
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
         .groupByField.label.value,
       [getDimensionLabelFromIri({ dimensionIri: heightField, dimensions })]: +d
