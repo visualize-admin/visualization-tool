@@ -48,15 +48,15 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/layout.mdx")
       }
     ]
-  }, 
+  },
   {
     title: "Design Concept",
     pages: [
-      // {
-      //   path: "/mockups",
-      //   title: "Mockups",
-      //   content: require("../docs/mockups.mdx")
-      // },
+      {
+        path: "/mockups",
+        title: "Mockups",
+        content: require("../docs/mockups")
+      },
       {
         path: "/chart-config",
         title: "Chart-Config",
