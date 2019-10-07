@@ -1,105 +1,172 @@
+# Chart Configuration Interface
+
+<ImageSpecimen
+  plain="true"
+  span={5}
+  src="./static/docs/design/chart-config/flow-general.png"
+  description="[Chart configuration interface](./static/docs/design/chart-config/flow-general.png)"
+/>
+
+## Chart configuration panel (left panel)
+
+- Chart elements: After a user has selected a dataset and a chart type, the configuration tool (left panel) is updated so that the configuration options match the chart elements of the selected chart type. Some parameters are mandatory. For instance, a column chart requires at least two chart elements to be defined: the horizontal axis and the vertical axis. The other parameters are optional.
+- Dataset dimensions: The options available to select for each chart element are based on the dimension types defined in the dataset metadata. For instance, colors of a line chart needs to be defined by a dimension that can create groups (for instance: cantons). The visualization tool tries to select default parameters that should work (for instance, a temporal dimension for the horizontal axis of a line chart). Of course, the user has the power to modify all options.
+- Optional parameters that change the chart type: Depending on the chart type selected, additional options are available for selection and influence the visualization. For instance, defining a data dimension that controls colors in a bar chart will convert the bar chart into a _stacked_ bars chart.
+- Mapping between chart types and dataset dimensions: the visualization is controlled by a decision tree with these options, respectively for each chart type:
+  - → (see tables below)
+
+<TableSpecimen
+  span={4}
+  rows={[
+    {
+      "Chart element": "x-axis",
+      "Dimension type": "categorical time",
+      mandatory: "✅",
+      "Chart extension": "Basic"
+    },
+    {
+      "Chart element": "y-axis",
+      "Dimension type": "number",
+      mandatory: "✅",
+      "Chart extension": "Basic"
+    },
+    {
+      "Chart element": "groups",
+      "Dimension type": "categorical",
+      mandatory: "",
+      "Chart extension": "→ small multiples"
+    },
+    {
+      "Chart element": "color",
+      "Dimension type": "categorical",
+      mandatory: " d",
+      "Chart extension": "→ grouped / stacked bars"
+    }
+  ]}
+/>
+
+- Optional parameters: Other parameters that don’t directly influence the chart type can de defined, again depending on the chart type.
+  - Sorting the data points by a dimension (applies to bar and column charts).
+  - Aggregating data points by sum, average or median (applies to all chart types).
+  - “zooming” by selecting a range of data to be displayed on the chart, for instance, data values from 0 to 50 (applies to all chart types).
+
+## Visualization panel (middle panel)
+
+This panel displays an interactive preview of the data visualization.
+
+## Data filter panel (right panel)
+
+- Filtering data: The right panel is used to filter the data points to display on the chart. For each data dimension, the dimension values are listed with a checkbox to toggle it in or out of the visualization (for instance “Zürich” or “Vaud” are dimension values of the data dimension “Canton”).
+- The interaction between the chart panel (left) and the data panel (right) is still to be defined. For instance, if no aggregating method is selected in the chart configuration panel, only one dimension value per dimension can be displayed. They should therefore be listed with a “radio button” (only one option can be selected) rather than a “checkbox”.
+
 > These mockups illustrate the different configuration options for each of the chart-types available.
 
 ## Bar-Chart
+
 A bar chart encodes quantitative values as the extent of rectangular bars.
 
 <ImageSpecimen
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.1.1_l_configuration_bar-chart.png"
-    description="[Default Bar-Chart](./static/docs/design/chart-config/2.1.1_l_configuration_bar-chart.png)"
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.1.1_l_configuration_bar-chart.png"
+  description="[Default Bar-Chart](./static/docs/design/chart-config/2.1.1_l_configuration_bar-chart.png)"
 />
 
-<ImageSpecimen 
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.1.2_l_configuration_bar-chart_stacked.png"
-    description="[Stacked Bar-Chart](./static/docs/design/chart-config/2.1.2_l_configuration_bar-chart_stacked.png)"
+<ImageSpecimen
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.1.2_l_configuration_bar-chart_stacked.png"
+  description="[Stacked Bar-Chart](./static/docs/design/chart-config/2.1.2_l_configuration_bar-chart_stacked.png)"
 />
 
 ## Column-Chart
+
 The column chart or vertical bar chart is the same as a bar chart only the x-axis and y-axis are switched.
 
 A «stacked» column or bar charts is multiple datasets on top of each other in order to show how the larger category is divided into the smaller categories and their relations to the total amount.
 Basically, they can be divided into two types:
+
 - A stacked column or bar chart displays total value of the bar is all the segment values added together.
 - A normalized (100%) stacked column or bar chart displays part to whole relationship in each group.
 
 <ImageSpecimen
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.2.1_l_configuration_column-chart.png"
-    description="[Default Column-Chart](./static/docs/design/chart-config/2.2.1_l_configuration_column-chart.png)"
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.2.1_l_configuration_column-chart.png"
+  description="[Default Column-Chart](./static/docs/design/chart-config/2.2.1_l_configuration_column-chart.png)"
 />
 
-<ImageSpecimen 
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.2.2_l_configuration_column-chart_stacked.png"
-    description="[Stacked Column-Chart](./static/docs/design/chart-config/2.2.2_l_configuration_column-chart_stacked.png)"
+<ImageSpecimen
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.2.2_l_configuration_column-chart_stacked.png"
+  description="[Stacked Column-Chart](./static/docs/design/chart-config/2.2.2_l_configuration_column-chart_stacked.png)"
 />
 
-<ImageSpecimen 
-    plain="true"
-    src="./static/docs/design/chart-config/2.2.3_l_configuration_column-chart_stacked.png"
-    span={3}
-    description="[Normalized (Percentage) Column-Chart](./static/docs/design/chart-config/2.2.3_l_configuration_column-chart_stacked.png)"
+<ImageSpecimen
+  plain="true"
+  src="./static/docs/design/chart-config/2.2.3_l_configuration_column-chart_stacked.png"
+  span={3}
+  description="[Normalized (Percentage) Column-Chart](./static/docs/design/chart-config/2.2.3_l_configuration_column-chart_stacked.png)"
 />
 
-<ImageSpecimen 
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.2.4_l_configuration_column-chart_grouped.png"
-    description="[Grouped Column-Chart](./static/docs/design/chart-config/2.2.4_l_configuration_column-chart_grouped.png)"
+<ImageSpecimen
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.2.4_l_configuration_column-chart_grouped.png"
+  description="[Grouped Column-Chart](./static/docs/design/chart-config/2.2.4_l_configuration_column-chart_grouped.png)"
 />
 
 ## Line-Chart
+
 A line chart is a type of chart which displays information as a series of data points (e.g. time) connected by a line.
 
 <ImageSpecimen
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.3.1_l_configuration_line-chart.png"
-    description="[Default Line-Chart](./static/docs/design/chart-config/2.3.1_l_configuration_line-chart.png)"
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.3.1_l_configuration_line-chart.png"
+  description="[Default Line-Chart](./static/docs/design/chart-config/2.3.1_l_configuration_line-chart.png)"
 />
 
-<ImageSpecimen 
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.3.2_l_configuration_line-chart_multi-line.png"
-    description="[Multi-Line Chart](./static/docs/design/chart-config/2.3.2_l_configuration_line-chart_multi-line.png)" 
+<ImageSpecimen
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.3.2_l_configuration_line-chart_multi-line.png"
+  description="[Multi-Line Chart](./static/docs/design/chart-config/2.3.2_l_configuration_line-chart_multi-line.png)"
 />
 
 ## Area-Chart
-An area chart or area graph are basically a line chart with the area below the lined filled with colors or textures. Like line graphs area charts are  used to represent the development of quantitative values over a time period. It can also be used to compare two or more categories and is similar to the stacked area chart.
+
+An area chart or area graph are basically a line chart with the area below the lined filled with colors or textures. Like line graphs area charts are used to represent the development of quantitative values over a time period. It can also be used to compare two or more categories and is similar to the stacked area chart.
 
 <ImageSpecimen
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.4.1_l_configuration_area.png"
-    description="[Default Area-Chart](./static/docs/design/chart-config/2.4.1_l_configuration_area.png)"
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.4.1_l_configuration_area.png"
+  description="[Default Area-Chart](./static/docs/design/chart-config/2.4.1_l_configuration_area.png)"
 />
 
-<ImageSpecimen 
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.4.2_l_configuration_area-chart_stacked.png"
-    description="[Stacked Area-Chart](./static/docs/design/chart-config/2.4.2_l_configuration_area-chart_stacked.png)" 
+<ImageSpecimen
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.4.2_l_configuration_area-chart_stacked.png"
+  description="[Stacked Area-Chart](./static/docs/design/chart-config/2.4.2_l_configuration_area-chart_stacked.png)"
 />
 
 ## Scatterplot
+
 A scatter plot uses cartesian coordinates to display values for two variables for a set of data. The data is displayed as a collection of points, each having the value of one variable determining the position on the horizontal axis and the value of the other variable determining the position on the vertical axis.
 
 <ImageSpecimen
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.5.1_l_configuration_scatterplot.png"
-    description="[Default Scatterplot](./static/docs/design/chart-config/2.5.1_l_configuration_scatterplot.png)"
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.5.1_l_configuration_scatterplot.png"
+  description="[Default Scatterplot](./static/docs/design/chart-config/2.5.1_l_configuration_scatterplot.png)"
 />
 
-<ImageSpecimen 
-    plain="true"
-    span={3}
-    src="./static/docs/design/chart-config/2.5.2_l_configuration_scatterplot_grouped.png"
-    description="[Grouped Scatterplot](./static/docs/design/chart-config/2.5.2_l_configuration_scatterplot_grouped.png)" 
+<ImageSpecimen
+  plain="true"
+  span={3}
+  src="./static/docs/design/chart-config/2.5.2_l_configuration_scatterplot_grouped.png"
+  description="[Grouped Scatterplot](./static/docs/design/chart-config/2.5.2_l_configuration_scatterplot_grouped.png)"
 />
