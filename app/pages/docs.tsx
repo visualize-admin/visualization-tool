@@ -60,7 +60,7 @@ const pages: ConfigPageOrGroup[] = [
       {
         path: "/chart-config",
         title: "Chart-Config",
-        content: require("../docs/chart-config.mdx")
+        content: require("../docs/chart-config")
       }
     ]
   }
