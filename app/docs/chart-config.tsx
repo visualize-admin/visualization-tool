@@ -3,16 +3,16 @@ import { ImageSpecimen, markdown, TableSpecimen } from "catalog";
 export default () => markdown`
 
 ## Content
-1. Chart Configuration Interface
-1.1 Chart configuration panel
-1.2 Visualization preview panel
-1.3 Data filter panel
-2. Mockups
-2.1 Bar Chart
-2.2 Column Chart
-2.3 Line Chart
-2.4 Area Chart
-2.5 Scatterplot
+1. [Chart Configuration Interface](#1-chart-configuration-interface)
+1.1 [Chart configuration panel](#11-chart-configuration-panel)
+1.2 [Visualization preview panel](#12-visualization-panel)
+1.3 [Data filter panel](#13-data-filter-panel)
+2. [Mockups](#2-mockups)
+2.1 [Bar Chart](#21-bar-chart)
+2.2 [Column Chart](#22-column-chart)
+2.3 [Line Chart](#23-line-chart)
+2.4 [Area Chart](#24-area-chart)
+2.5 [Scatterplot](#25-scatterplot)
 
 
 # 1. Chart Configuration Interface
