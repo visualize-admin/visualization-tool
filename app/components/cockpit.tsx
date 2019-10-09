@@ -30,7 +30,7 @@ export const Cockpit = ({
   chartId: string;
   dataSetIri: string;
 }) => {
-  const [state, dispatch] = useConfiguratorState({ chartId });
+  const [state, dispatch] = useConfiguratorState();
 
   const meta = useDataSetAndMetadata(dataSetIri);
 

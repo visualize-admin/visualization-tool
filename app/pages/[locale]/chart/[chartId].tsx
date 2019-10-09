@@ -3,12 +3,9 @@ import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import { Box, Button, Link } from "rebass";
+import { Box, Button, Link, Heading, Flex } from "rebass";
 import { Cockpit } from "../../../components/cockpit";
-import {
-  ChartTypeSelectorField,
-  DatasetSelectorField
-} from "../../../components/field";
+import { ChartTypeSelectorField } from "../../../components/field";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { Loader } from "../../../components/loader";
@@ -30,26 +27,46 @@ const useChartId = () => {
   return chartId;
 };
 
-const DatasetSelector = ({
-  datasets,
-  chartId
-}: {
-  datasets: DataCube[];
-  chartId: string;
-}) => {
+const DatasetSelector = ({ datasets }: { datasets: DataCube[] }) => {
+  const [, dispatch] = useConfiguratorState();
+
   return (
-    <Box mb={3}>
-      <h4>Datensatz auswählen: </h4>
+    <Box>
+      <Heading mb={3}>Datensatz auswählen: </Heading>
       {datasets.map(d => (
-        <DatasetSelectorField
+        <Flex
+          py={2}
           key={d.iri}
-          type="radio"
-          chartId={chartId}
-          path={"dataSet"}
-          label={d.labels[0].value}
-          value={d.iri}
-        />
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{
+            borderBottom: "1px solid #ddd",
+            ":first-of-type": { borderTop: "1px solid #ddd" }
+          }}
+        >
+          <Box>{d.labels[0].value}</Box>
+          <Button
+            variant="outline"
+            onClick={() => dispatch({ type: "DATASET_SELECTED", value: d.iri })}
+            fontSize={0}
+          >
+            Auswählen
+          </Button>
+        </Flex>
       ))}
+    </Box>
+  );
+};
+
+const NewChartConfigurator = () => {
+  const datasets = useDataSets();
+  return (
+    <Box width={1} my={3} p={3} bg="muted">
+      {datasets.state === "loaded" ? (
+        <DatasetSelector datasets={datasets.data} />
+      ) : (
+        <Loader body="loading datasets list" />
+      )}
     </Box>
   );
 };
@@ -84,79 +101,50 @@ const ChartTypeSelector = ({
   }
 };
 
-const Form = ({ chartId }: { chartId: string }) => {
-  const datasets = useDataSets();
-  const [state, dispatch] = useConfiguratorState({ chartId });
+const ChartConfigurator = ({ chartId }: { chartId: string }) => {
+  const [state, dispatch] = useConfiguratorState();
 
-  if (datasets.state === "loaded") {
-    return (
-      <>
-        {state.state === "SELECTING_DATASET" && (
-          <Box width={1} my={3} p={2} bg="muted">
-            <DatasetSelector datasets={datasets.data} chartId={chartId} />
-          </Box>
-        )}
-        {state.state === "CONFIGURING_CHART" && (
-          <>
-            <Box width={1} my={3} p={2} bg="muted">
-              {state.dataSet}
-            </Box>
-            <Box width={1} my={3} p={2} bg="muted">
-              <h4>Charttyp auswählen</h4>
-              <ChartTypeSelector chartId={chartId} dataSet={state.dataSet} />
-            </Box>
-
-            {/* <Field
-              chartId={chartId}
-              path={"chartConfig.title.de"}
-              label="Title de"
-            />
-            <Field
-              chartId={chartId}
-              path={"chartConfig.title.fr"}
-              label="Title fr"
-            />
-            <Field
-              chartId={chartId}
-              path={"chartConfig.title.it"}
-              label="Title it"
-            />
-            <Field
-              chartId={chartId}
-              path={"chartConfig.title.en"}
-              label="Title en"
-            /> */}
-            {state.dataSet && state.chartConfig.chartType && (
-              <Cockpit chartId={chartId} dataSetIri={state.dataSet} />
-            )}
-          </>
-        )}
-        <Button onClick={() => dispatch({ type: "PUBLISH" })}>Publish</Button>
-        {state.state === "PUBLISHED" && (
-          <Box m={2} bg="secondary" color="white" p={2}>
-            <Trans id="test-form-success">
-              Konfiguration gespeichert unter
-            </Trans>
-            <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>
-              <Link
-                color="white"
-                sx={{ textDecoration: "underline", cursor: "pointer" }}
-              >
-                {state.configKey}
-              </Link>
-            </LocalizedLink>
-          </Box>
-        )}
-
-        <Box my={3} p={2} bg="muted">
-          <pre>{chartId}</pre>
-          <pre>{JSON.stringify(state, null, 2)}</pre>
-        </Box>
-      </>
-    );
-  } else {
-    return <Loader body="loading datasets list" />;
+  if (chartId === "new") {
+    return <NewChartConfigurator />;
   }
+
+  return (
+    <>
+      {state.state === "CONFIGURING_CHART" && (
+        <>
+          <Box width={1} my={3} p={2} bg="muted">
+            {state.dataSet}
+          </Box>
+          <Box width={1} my={3} p={2} bg="muted">
+            <h4>Charttyp auswählen</h4>
+            <ChartTypeSelector chartId={chartId} dataSet={state.dataSet} />
+          </Box>
+          {state.dataSet && state.chartConfig.chartType && (
+            <Cockpit chartId={chartId} dataSetIri={state.dataSet} />
+          )}
+        </>
+      )}
+      <Button onClick={() => dispatch({ type: "PUBLISH" })}>Publish</Button>
+      {state.state === "PUBLISHED" && (
+        <Box m={2} bg="secondary" color="white" p={2}>
+          <Trans id="test-form-success">Konfiguration gespeichert unter</Trans>
+          <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>
+            <Link
+              color="white"
+              sx={{ textDecoration: "underline", cursor: "pointer" }}
+            >
+              {state.configKey}
+            </Link>
+          </LocalizedLink>
+        </Box>
+      )}
+
+      <Box my={3} p={2} bg="muted">
+        <pre>{chartId}</pre>
+        <pre>{JSON.stringify(state, null, 2)}</pre>
+      </Box>
+    </>
+  );
 };
 
 const ChartConfiguratorPage: NextPage = () => {
@@ -165,13 +153,8 @@ const ChartConfiguratorPage: NextPage = () => {
   return (
     <DataCubeProvider>
       <AppLayout>
-        <ConfiguratorStateProvider>
-          <div>
-            <LocalizedLink href={"/[locale]/chart/new"} passHref>
-              <a>New chart!</a>
-            </LocalizedLink>
-            <Form chartId={chartId} />
-          </div>
+        <ConfiguratorStateProvider chartId={chartId}>
+          <ChartConfigurator chartId={chartId} />
         </ConfiguratorStateProvider>
       </AppLayout>
     </DataCubeProvider>
