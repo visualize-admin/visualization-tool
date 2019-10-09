@@ -6,6 +6,7 @@ import ErrorPage from "next/error";
 import React from "react";
 import { catalogs, defaultLocale, locales } from "../locales/locales";
 import { theme } from "../materials";
+// FIXME: use useTHeme() hook, don't import theme directls
 
 const globalCss = css`
   @font-face {

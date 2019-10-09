@@ -5,8 +5,7 @@ import {
   getCategoricalDimensions,
   getMeasuresDimensions,
   getTimeDimensions,
-  useDataSetAndMetadata,
-  getDimensionIri
+  useDataSetAndMetadata
 } from "../domain/data-cube";
 import {
   ChartAreasControls,
@@ -21,7 +20,7 @@ import {
   ChartLinesVisualization
 } from "./cockpit-chart-lines";
 import { Filters } from "./cockpit-filters";
-import { Loader } from "./loader";
+import { Loading } from "./hint";
 
 export const Cockpit = ({
   chartId,
@@ -122,6 +121,6 @@ export const Cockpit = ({
       </Flex>
     );
   } else {
-    return <Loader body="Loading metadata"></Loader>;
+    return <Loading>Fetching metadata...</Loading>;
   }
 };

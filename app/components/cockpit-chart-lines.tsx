@@ -3,7 +3,7 @@ import React from "react";
 import { useObservations } from "../domain/data-cube";
 import { ChartLines } from "./charts-lines";
 import { Field } from "./field";
-import { Loader } from "./loader";
+import { Loading } from "./hint";
 
 export const ChartLinesControls = ({
   chartId,
@@ -94,6 +94,6 @@ export const ChartLinesVisualization = ({
       />
     );
   } else {
-    return <Loader body="Updating data..." />;
+    return <Loading>Updating data...</Loading>;
   }
 };

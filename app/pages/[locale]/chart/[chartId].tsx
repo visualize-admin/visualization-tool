@@ -8,7 +8,7 @@ import { Cockpit } from "../../../components/cockpit";
 import { ChartTypeSelectorField } from "../../../components/field";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
-import { Loader } from "../../../components/loader";
+import { Loading, Error } from "../../../components/hint";
 import {
   DataCubeProvider,
   useDataSetAndMetadata,
@@ -49,6 +49,7 @@ const DatasetSelector = ({ datasets }: { datasets: DataCube[] }) => {
             variant="outline"
             onClick={() => dispatch({ type: "DATASET_SELECTED", value: d.iri })}
             fontSize={0}
+            sx={{ maxWidth: 200 }}
           >
             Auswählen
           </Button>
@@ -65,7 +66,7 @@ const NewChartConfigurator = () => {
       {datasets.state === "loaded" ? (
         <DatasetSelector datasets={datasets.data} />
       ) : (
-        <Loader body="loading datasets list" />
+        <Loading>loading datasets list</Loading>
       )}
     </Box>
   );
@@ -97,7 +98,7 @@ const ChartTypeSelector = ({
       </Box>
     );
   } else {
-    return <div>error loading dataset</div>;
+    return <Loading>loading datasets list</Loading>;
   }
 };
 

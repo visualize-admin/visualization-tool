@@ -1,4 +1,7 @@
 import * as vega from "vega";
+
+// FIXME: Use hook to get the theme values from ThemeProvider.
+
 const labelColor = "#666666";
 const legendLabelColor = "#454545";
 const fontFamily = "FrutigerNeueRegular, Helvetica, Arial, sans-serif";
@@ -6,7 +9,7 @@ const fontFamily = "FrutigerNeueRegular, Helvetica, Arial, sans-serif";
 export const xAxisTheme: vega.Axis = {
   orient: "bottom",
   scale: "x",
-  bandPosition: 0,
+  bandPosition: 1,
   domain: true,
   domainColor: labelColor,
   domainWidth: 1,
