@@ -13,7 +13,7 @@ import { useConfiguratorState } from "./configurator-state";
 //   onChange: [];
 // }
 
-type FieldProps = Pick<
+export type FieldProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,
   "onChange" | "name" | "value" | "checked" | "type"
 >;

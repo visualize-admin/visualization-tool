@@ -63,17 +63,37 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/chart-config")
       }
     ]
+  },
+  {
+    title: "Components",
+    pages: [
+      {
+        path: "/components/intro",
+        title: "Introduction",
+        content: require("../docs/components")
+      },
+      {
+        path: "/components/button",
+        title: "Button",
+        content: require("../docs/button.docs")
+      },
+      {
+        path: "/components/text",
+        title: "Text",
+        content: require("../docs/text.docs")
+      },
+      {
+        path: "/components/form",
+        title: "Form",
+        content: require("../docs/form.docs")
+      },
+      {
+        path: "/components/hints",
+        title: "Hints",
+        content: require("../docs/hint.docs")
+      }
+    ]
   }
-  // {
-  //   title: "Components",
-  //   pages: [
-  //     {
-  //       path: "/components/loader",
-  //       title: "Loader",
-  //       content: require("../components/loader.docs")
-  //     }
-  //   ]
-  // }
 ];
 
 const mdxComponents = {

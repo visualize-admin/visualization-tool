@@ -1,9 +1,7 @@
-import { Checkbox, Input, Label, Radio } from "@rebass/forms";
+import { Input, Label } from "@rebass/forms";
 import React from "react";
-import {
-  useChartTypeSelectorField,
-  useField
-} from "../domain/config-form";
+import { useChartTypeSelectorField, useField } from "../domain/config-form";
+import { Radio, Checkbox } from "./form";
 
 export const Field = ({
   chartId,
@@ -29,15 +27,9 @@ export const Field = ({
   });
 
   return type === "radio" ? (
-    <Label>
-      <Radio {...field} disabled={disabled}></Radio>
-      {label}
-    </Label>
+    <Radio label={label} disabled={disabled} {...field}></Radio>
   ) : type === "checkbox" ? (
-    <Label>
-      <Checkbox {...field} disabled={disabled}></Checkbox>
-      {label}
-    </Label>
+    <Checkbox label={label} {...field} disabled={false}></Checkbox>
   ) : (
     <>
       <Label>{label}</Label>
@@ -70,10 +62,5 @@ export const ChartTypeSelectorField = ({
     metaData: meta.data
   });
 
-  return (
-    <Label>
-      <Radio {...field}></Radio>
-      {label}
-    </Label>
-  );
+  return <Radio label={label} {...field}></Radio>;
 };

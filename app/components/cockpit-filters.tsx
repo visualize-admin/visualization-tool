@@ -6,7 +6,7 @@ import {
   useDimensionValues
 } from "../domain";
 import { Field } from "./field";
-import { Loader } from "./loader";
+import { Loading } from "./hint";
 
 export const Filters = ({
   chartId,
@@ -65,6 +65,6 @@ const DimensionValues = ({
       </>
     );
   } else {
-    return <Loader body={"dimension values loading"} />;
+    return <Loading>Fetching dimension values...</Loading>;
   }
 };

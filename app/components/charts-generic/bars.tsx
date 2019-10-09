@@ -21,6 +21,7 @@ export const Bars = ({
   groupByLabel,
   aggregateFunction
 }: Props) => {
+  // FIXME: Use hook to get the theme from ThemeProvider.
   const spec: vega.Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
@@ -68,8 +69,8 @@ export const Bars = ({
         type: "band",
         domain: { data: "table", field: xField },
         range: "width",
-        padding: 0.05,
-        paddingOuter: 0,
+        padding: 0.3,
+        paddingOuter: 0.3,
         round: false
       },
       {
@@ -101,7 +102,7 @@ export const Bars = ({
         encode: {
           enter: {
             x: { scale: "x", field: xField },
-            width: { scale: "x", band: 0.75 },
+            width: { scale: "x", band: 1 },
             y: { scale: "y", field: "y0" },
             y2: { scale: "y", field: "y1" }
           },

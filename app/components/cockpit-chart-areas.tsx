@@ -3,7 +3,7 @@ import React from "react";
 import { useObservations } from "../domain/data-cube";
 import { ChartAreas } from "./charts-areas";
 import { Field } from "./field";
-import { Loader } from "./loader";
+import { Loading } from "./hint";
 
 export const ChartAreasControls = ({
   chartId,
@@ -94,6 +94,6 @@ export const ChartAreasVisualization = ({
       />
     );
   } else {
-    return <Loader body="Updating data..." />;
+    return <Loading>Updating data...</Loading>;
   }
 };
