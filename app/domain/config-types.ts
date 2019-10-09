@@ -87,6 +87,7 @@ export const decodeConfig = (config: unknown) => Config.decode(config);
 const ConfiguratorStateInitial = t.type({ state: t.literal("INITIAL") });
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
+  dataSet: t.undefined,
   chartConfig: NoneConfig
 });
 const ConfiguratorStateConfiguringChart = t.intersection([

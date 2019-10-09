@@ -29,7 +29,7 @@ export const useField = ({
   type?: "text" | "checkbox" | "radio";
   value?: string;
 }): FieldProps => {
-  const [state, dispatch] = useConfiguratorState({ chartId });
+  const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
@@ -68,42 +68,6 @@ export const useField = ({
   };
 };
 
-export const useDatasetSelectorField = ({
-  chartId,
-  path,
-  value,
-  type = "radio"
-}: {
-  chartId: string;
-  path: string;
-  value?: string;
-  type: "radio";
-}): FieldProps => {
-  const [state, dispatch] = useConfiguratorState({ chartId });
-
-  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    e => {
-      dispatch({
-        type: "DATASET_SELECTED",
-        value: e.currentTarget.value
-      });
-    },
-    [dispatch]
-  );
-
-  const stateValue =
-    state.state === "CONFIGURING_CHART" ? get(state, path, "") : "";
-
-  const checked = stateValue === value;
-
-  return {
-    name: path,
-    value: value ? value : stateValue,
-    checked,
-    onChange
-  };
-};
-
 export const useChartTypeSelectorField = ({
   chartId,
   path,
@@ -117,7 +81,7 @@ export const useChartTypeSelectorField = ({
   type: "radio";
   metaData: any;
 }): FieldProps => {
-  const [state, dispatch] = useConfiguratorState({ chartId });
+  const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {

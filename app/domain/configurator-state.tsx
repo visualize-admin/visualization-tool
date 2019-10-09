@@ -13,6 +13,8 @@ import {
   ConfiguratorState,
   ConfiguratorStatePublishing
 } from "./config-types";
+import { useRouter } from "next/router";
+import { createChartId } from "./chart-id";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -29,8 +31,8 @@ export type ConfiguratorStateAction =
   | { type: "PUBLISH_FAILED" }
   | { type: "PUBLISHED"; value: string };
 
-const LOCALSTORAGE_PREFIX = "vizualize-app-state";
-const getLocalStorageKey = (chartId: string) =>
+const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
+export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
 const initialState: ConfiguratorState = {
@@ -39,6 +41,7 @@ const initialState: ConfiguratorState = {
 
 const emptyState: ConfiguratorState = {
   state: "SELECTING_DATASET",
+  dataSet: undefined,
   chartConfig: { chartType: "none", filters: {} }
 };
 
@@ -94,12 +97,97 @@ const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
-export const ConfiguratorStateProvider = ({
+const ConfiguratorStateProviderInternal = ({
+  chartId,
   children
 }: {
-  children: ReactNode;
+  key: string;
+  chartId: string;
+  children?: ReactNode;
 }) => {
   const stateAndDispatch = useImmerReducer(reducer, initialState);
+  const [state, dispatch] = stateAndDispatch;
+  const { asPath, push, replace } = useRouter();
+
+  // Re-initialize state on page load
+  useEffect(() => {
+    let stateToInitialize: ConfiguratorState = initialState;
+    try {
+      if (chartId !== "new") {
+        const storedState = window.localStorage.getItem(
+          getLocalStorageKey(chartId)
+        );
+        if (storedState) {
+          const parsedState = JSON.parse(storedState);
+          if (isValidConfiguratorState(parsedState)) {
+            stateToInitialize = parsedState;
+          } else {
+            console.warn(
+              "Attempted to restore invalid state. Removing from localStorage.",
+              parsedState
+            );
+            window.localStorage.removeItem(getLocalStorageKey(chartId));
+          }
+        } else {
+          replace(
+            `/[locale]/chart/[chartId]`,
+            asPath.replace(/\/chart\/.+$/, "/chart/new")
+          );
+        }
+      }
+    } catch {
+    } finally {
+      dispatch({ type: "INITIALIZED", value: stateToInitialize });
+    }
+  }, [dispatch, chartId, replace, asPath]);
+
+  useEffect(() => {
+    try {
+      switch (state.state) {
+        case "CONFIGURING_CHART":
+          if (chartId === "new") {
+            const newChartId = createChartId();
+            // Store current state in localstorage
+            window.localStorage.setItem(
+              getLocalStorageKey(newChartId),
+              JSON.stringify(state)
+            );
+            push(
+              `/[locale]/chart/[chartId]`,
+              (asPath as string).replace(/new$/, newChartId)
+            );
+          } else {
+            // Store current state in localstorage
+            window.localStorage.setItem(
+              getLocalStorageKey(chartId),
+              JSON.stringify(state)
+            );
+          }
+          return;
+        case "PUBLISHED":
+          // Store current state in localstorage
+          window.localStorage.setItem(
+            getLocalStorageKey(chartId),
+            JSON.stringify(state)
+          );
+          return;
+        case "PUBLISHING":
+          (async () => {
+            try {
+              const result = await save(state);
+              dispatch({ type: "PUBLISHED", value: result.key });
+            } catch (e) {
+              console.error(e);
+              dispatch({ type: "PUBLISH_FAILED" });
+            }
+          })();
+          return;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [state, dispatch, chartId, push, asPath]);
+
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>
       {children}
@@ -123,7 +211,22 @@ const save = async (state: ConfiguratorStatePublishing): Promise<ReturnVal> => {
   }).then(res => res.json());
 };
 
-export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
+export const ConfiguratorStateProvider = ({
+  chartId,
+  children
+}: {
+  chartId: string;
+  children?: ReactNode;
+}) => {
+  // Ensure that the state is reset by using the `chartId` as `key`
+  return (
+    <ConfiguratorStateProviderInternal key={chartId} chartId={chartId}>
+      {children}
+    </ConfiguratorStateProviderInternal>
+  );
+};
+
+export const useConfiguratorState = () => {
   const ctx = useContext(ConfiguratorStateContext);
 
   if (ctx === undefined) {
@@ -132,60 +235,5 @@ export const useConfiguratorState = ({ chartId }: { chartId: string }) => {
     );
   }
 
-  const [state, dispatch] = ctx;
-
-  // Re-initialize state on page load
-  useEffect(() => {
-    let stateToInitialize: ConfiguratorState = initialState;
-    try {
-      const storedState = window.localStorage.getItem(
-        getLocalStorageKey(chartId)
-      );
-      if (storedState) {
-        const parsedState = JSON.parse(storedState);
-        if (isValidConfiguratorState(parsedState)) {
-          stateToInitialize = parsedState;
-        } else {
-          console.warn(
-            "Attempted to restore invalid state. Removing from localStorage.",
-            parsedState
-          );
-          window.localStorage.removeItem(getLocalStorageKey(chartId));
-        }
-      }
-    } catch {
-    } finally {
-      dispatch({ type: "INITIALIZED", value: stateToInitialize });
-    }
-  }, [dispatch, chartId]);
-
-  useEffect(() => {
-    try {
-      switch (state.state) {
-        case "CONFIGURING_CHART":
-        case "PUBLISHED":
-          // Store current state in localstorage
-          window.localStorage.setItem(
-            getLocalStorageKey(chartId),
-            JSON.stringify(state)
-          );
-          return;
-        case "PUBLISHING":
-          (async () => {
-            try {
-              const result = await save(state);
-              dispatch({ type: "PUBLISHED", value: result.key });
-            } catch (e) {
-              console.error(e);
-              dispatch({ type: "PUBLISH_FAILED" });
-            }
-          })();
-          return;
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [state, dispatch, chartId]);
-
-  return [state, dispatch] as const;
+  return ctx;
 };
