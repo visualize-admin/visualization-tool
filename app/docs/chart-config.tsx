@@ -18,7 +18,7 @@ export default () => markdown`
 # 1. Chart Configuration Interface
 The configuration interface is divided in 3 panels:
 - The _chart configuration_ panel on the left is used to select chart parameters, the visual encodings of the dataset dimensions.
-- The _visualzation preview_ panel in the midlle offers an interactive preview of the chart being created.
+- The _visualzation preview_ panel in the middle offers an interactive preview of the chart.
 - The _data filtering_ panel on the right allows to filter the data points being displayed on the chart.
 ${(
   <ImageSpecimen
@@ -37,21 +37,17 @@ After a user has selected a dataset and a chart type, the chart configuration pa
 The options available to select for each chart element are based on the dimension types defined in the dataset metadata. For instance, colors of a line chart needs to be defined by a dimension that can create groups (for instance: cantons). The visualization tool tries to select default parameters that should work (for instance, a temporal dimension for the horizontal axis of a line chart). Of course, the user has the power to modify all options.
 
 ### Additional parameters
-Depending on the chart type selected, additional options are available for selection and influence the visualization. Some optional parameter will modify the chart type selected, for instance, defining a data dimension that controls colors in a bar chart will convert the bar chart into a _stacked_ bars chart.
-Other parameters don’t directly influence the chart type, but modify the view of the dataset.
-  - Sorting the data points by a dimension (applies to bar and column charts).
-  - Aggregating data points by sum, average or median (applies to all chart types).
-  - “zooming” by selecting a range of data to be displayed on the chart, for instance, data values from 0 to 50 (applies to all chart types).
+Depending on the chart type selected, additional options are available for selection and influence the visualization. Some optional parameter will modify the chart type selected, for instance, defining a data dimension that controls colors in a bar chart will convert the bar chart into a _stacked_ bars chart. Other parameters don’t directly influence the chart type, but modify the view of the dataset, like sorting the columns of a column chart for instance.
 
 ### Mapping between chart types and dataset dimensions
-For each chart type, whether a chart element is defined or not controls the visualization. In the table below is a non exhaustive list of some of the configuration combinations that we consider.
+Whether a chart element is defined or not controls the visualization. In the table below is a non exhaustive list of some of the configuration combinations that we consider.
 
 ${(
   <TableSpecimen
     span={5}
     rows={[
       {
-        "Chart type": "bar chart",
+        "Chart type": "**bar chart**",
         "x-axis": "category | time",
         "y-axis": "number",
         color: "ø",
@@ -60,7 +56,7 @@ ${(
         label: "ø"
       },
       {
-        "Chart type": "stacked bar chart",
+        "Chart type": "**stacked bar chart**",
         "x-axis": "category | time",
         "y-axis": "number",
         color: "category",
@@ -69,7 +65,7 @@ ${(
         label: "ø"
       },
       {
-        "Chart type": "grouped bar chart",
+        "Chart type": "**grouped bar chart**",
         "x-axis": "category | time",
         "y-axis": "number",
         color: "ø",
@@ -78,7 +74,7 @@ ${(
         label: "ø"
       },
       {
-        "Chart type": "small multiple bar charts",
+        "Chart type": "**small multiple bar charts**",
         "x-axis": "category | time",
         "y-axis": "number",
         color: "category",
@@ -87,7 +83,7 @@ ${(
         label: "ø"
       },
       {
-        "Chart type": "line chart",
+        "Chart type": "**line chart**",
         "x-axis": "time",
         "y-axis": "number",
         color: "ø",
@@ -96,7 +92,7 @@ ${(
         label: "ø"
       },
       {
-        "Chart type": "multi-line chart",
+        "Chart type": "**multi-line chart**",
         "x-axis": "time",
         "y-axis": "number",
         color: "category",
@@ -105,7 +101,7 @@ ${(
         label: "ø"
       },
       {
-        "Chart type": "small multiple line chart",
+        "Chart type": "**small multiple line chart**",
         "x-axis": "time",
         "y-axis": "number",
         color: "category",
@@ -114,7 +110,7 @@ ${(
         label: "ø"
       },
       {
-        "Chart type": "scatterplot",
+        "Chart type": "**scatterplot**",
         "x-axis": "number",
         "y-axis": "number",
         color: "category",
@@ -131,12 +127,8 @@ ${(
 This panel displays an interactive preview of the data visualization.
 
 ## 1.3 Data filter panel
-### Filtering data
-The right panel is used to filter the data points to display on the chart. For each data dimension, the dimension values are listed with a checkbox to toggle it in or out of the visualization (for instance “Zürich” or “Vaud” are dimension values of the data dimension “Canton”).
 
-### Interaction between the chart panel (left) and the data panel (right).
-The interaction between the two panels is still to be defined. For instance, if no aggregating method is selected in the chart configuration panel, only one dimension value per dimension can be displayed. They should therefore be listed with a “radio button” (only one option can be selected) rather than a “checkbox”.
-
+The right panel is used to filter the data points to display on the chart. For each data dimension, the dimension values are listed (“Zürich” or “Vaud” are dimension values of the dimension “Canton” for instance). They can be toggled in or out of the chart.
 
 # 2. Mockups
 > These mockups illustrate the different configuration options for each of the chart-types available.
