@@ -1,10 +1,12 @@
 import { markdown, TableSpecimen } from "catalog";
 import { Text } from "rebass";
-import { theme } from "../materials/theme";
-// FIXME: use useTHeme() hook, don't import theme directls
+import { useTheme } from "../themes/index";
 const pixelSize = 16;
 
-export default () => markdown`
+export default () => {
+  const theme = useTheme();
+
+ return markdown`
 
 > Text elements are based on \`rebass\` \`<Text />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
 
@@ -62,4 +64,5 @@ ${(
     }))}
   ></TableSpecimen>
 )}
-`;
+`
+  };

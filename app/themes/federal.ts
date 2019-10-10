@@ -1,6 +1,21 @@
-export const theme = {
+/**
+ * IMPORTANT: just export JSON-serializable data from this file!
+ * 
+ * It will be loaded in _app.tsx's `getInitialProps()`, which will serialize to JSON.
+ * So references to other modules, functions etc. won't work here.
+ * 
+ * - `globalStyles` should be a plain string (NOT a Emotion `css` template string).
+ * - `theme` should be a plain object, conforming to the `Theme` type.
+ */
+
+import { Theme } from "./index";
+
+/**
+ * Theme conforming to the Swiss Federal CD guidelines
+ */
+export const theme: Theme = {
   breakpoints: ["48em", "62em", "75em"],
-  space: [0, "0.25rem", "0.5rem", "0.75rem", "1rem", "1.5rem", "2rem", "4rem"],
+  space: ["0", "0.25rem", "0.5rem", "0.75rem", "1rem", "1.5rem", "2rem", "4rem"],
   colors: {
     // ch: {
     //   red: "#F7001D",
@@ -267,3 +282,44 @@ export const theme = {
   //   }
   // }
 };
+
+/**
+ * Global styles to load font files or similar things
+ */
+export const globalStyles = `
+  @font-face {
+    font-family: "FrutigerNeueBold";
+    font-style: normal;
+    font-weight: 700;
+    src: url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
+      url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff");
+  }
+  @font-face {
+    font-family: "FrutigerNeueRegular";
+    font-style: normal;
+    font-weight: 400;
+    src: url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
+      url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff");
+  }
+  @font-face {
+    font-family: "FrutigerNeueLight";
+    font-style: normal;
+    font-weight: 300;
+    src: url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
+      url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff");
+  }
+  @font-face {
+    font-family: "FrutigerNeueItalic";
+    font-style: italic;
+    font-weight: 400;
+    src: url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
+      url("/static/fonts/FrutigerNeueW02-It.woff") format("woff");
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: FrutigerNeueRegular, -apple-system, BlinkMacSystemFont,
+      Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+      Segoe UI Symbol;
+  }
+`;
