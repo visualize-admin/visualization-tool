@@ -139,7 +139,7 @@ export const getTimeDimensions = ({
   dimensions
 }: {
   dimensions: Dimension[];
-}) => dimensions.filter(dim => dim.labels[0].value === "Jahr");
+}) => dimensions; //.filter(dim => dim.labels[0].value === "Jahr");
 /**
  * @fixme use metadata to filter categorical dimension!
  */
@@ -147,10 +147,10 @@ export const getCategoricalDimensions = ({
   dimensions
 }: {
   dimensions: Dimension[];
-}) =>
-  dimensions.filter(
-    dim => dim.labels[0].value !== "Jahr" && dim.labels[0].value !== "Variable"
-  );
+}) => dimensions;
+// .filter(
+//   dim => dim.labels[0].value !== "Jahr" && dim.labels[0].value !== "Variable"
+// );
 /**
  * @fixme This is not correct, problem in the RDF vocabulary
  */
@@ -174,6 +174,9 @@ export const getDimensionLabel = ({
 }): string => {
   return dimension.labels[0].value;
 };
+export const getMeasureLabel = ({ measure }: { measure: Measure }): string => {
+  return measure.labels[0].value;
+};
 export const getDimensionLabelFromIri = ({
   dimensionIri,
   dimensions
@@ -185,6 +188,17 @@ export const getDimensionLabelFromIri = ({
   // FIXME: Is dimensionIri the right thing to return?
   return dimension ? getDimensionLabel({ dimension }) : dimensionIri;
 };
+export const getMeasureLabelFromIri = ({
+  measureIri,
+  measures
+}: {
+  measureIri: string;
+  measures: Dimension[];
+}): string => {
+  // const measure = measures.find(dim => dim.iri.value === measureIri);
+  // FIXME: Is measureIri the rig§ht thing to return?
+  return "measure"; //measure ? getMeasureLabel({ measure }) : measureIri;
+};
 
 export const useDimensionValues = ({
   dataSet,
@@ -195,6 +209,18 @@ export const useDimensionValues = ({
 }) => {
   const fetchData = useCallback(async () => {
     return await dataSet.componentValues(dimension);
+  }, [dataSet, dimension]);
+  return useRemoteData(fetchData);
+};
+export const useDimensionMinMax = ({
+  dataSet,
+  dimension
+}: {
+  dataSet: DataCube;
+  dimension: Dimension;
+}) => {
+  const fetchData = useCallback(async () => {
+    return await dataSet.componentMinMax(dimension);
   }, [dataSet, dimension]);
   return useRemoteData(fetchData);
 };

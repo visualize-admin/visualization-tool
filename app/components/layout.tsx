@@ -1,16 +1,11 @@
 import { ReactNode } from "react";
-import { Box, Flex, Heading } from "rebass";
-import { LanguageMenu } from "./language-menu";
+import { Flex } from "rebass";
+import { Header } from "./header";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex flexDirection="column" sx={{ minHeight: "100vh" }}>
-    <Box p={2} bg="muted" color="secondary">
-      <Flex justifyContent="space-between" alignItems="center">
-        <Heading fontSize={3}>Visualize</Heading>
-        <LanguageMenu />
-      </Flex>
-    </Box>
-    <Flex p={2} flex={1} flexDirection="column">
+    <Header />
+    <Flex flex={1} flexDirection="column" bg="muted">
       {children}
     </Flex>
   </Flex>

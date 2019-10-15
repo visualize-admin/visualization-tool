@@ -1,19 +1,15 @@
 import { Trans } from "@lingui/macro";
-import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import { Box, Button, Link, Heading, Flex } from "rebass";
+import { Box, Button, Flex, Link } from "rebass";
 import { Cockpit } from "../../../components/cockpit";
-import { ChartTypeSelectorField } from "../../../components/field";
 import { AppLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
-import { Loading, Error } from "../../../components/hint";
-import {
-  DataCubeProvider,
-  useDataSetAndMetadata,
-  useDataSets
-} from "../../../domain";
+import { ChartTypeSelector } from "../../../components/step-chart-type-selection";
+import { NewChartConfigurator } from "../../../components/step-dataset-selection";
+import { Stepper } from "../../../components/stepper";
+import { DataCubeProvider } from "../../../domain";
 import {
   ConfiguratorStateProvider,
   useConfiguratorState
@@ -27,124 +23,72 @@ const useChartId = () => {
   return chartId;
 };
 
-const DatasetSelector = ({ datasets }: { datasets: DataCube[] }) => {
-  const [, dispatch] = useConfiguratorState();
-
-  return (
-    <Box>
-      <Heading mb={3}>Datensatz auswählen: </Heading>
-      {datasets.map(d => (
-        <Flex
-          py={2}
-          key={d.iri}
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{
-            borderBottom: "1px solid #ddd",
-            ":first-of-type": { borderTop: "1px solid #ddd" }
-          }}
-        >
-          <Box>{d.labels[0].value}</Box>
-          <Button
-            variant="outline"
-            onClick={() => dispatch({ type: "DATASET_SELECTED", value: d.iri })}
-            fontSize={0}
-            sx={{ maxWidth: 200 }}
-          >
-            Auswählen
-          </Button>
-        </Flex>
-      ))}
-    </Box>
-  );
-};
-
-const NewChartConfigurator = () => {
-  const datasets = useDataSets();
-  return (
-    <Box width={1} my={3} p={3} bg="muted">
-      {datasets.state === "loaded" ? (
-        <DatasetSelector datasets={datasets.data} />
-      ) : (
-        <Loading>loading datasets list</Loading>
-      )}
-    </Box>
-  );
-};
-
-const ChartTypeSelector = ({
-  chartId,
-  dataSet
-}: {
-  chartId: string;
-  dataSet: string;
-}) => {
-  const meta = useDataSetAndMetadata(dataSet);
-
-  if (meta.state === "loaded") {
-    return (
-      <Box mb={3}>
-        {["bar", "line", "area", "scatterplot"].map(d => (
-          <ChartTypeSelectorField
-            key={d}
-            type="radio"
-            chartId={chartId}
-            path={"chartType"}
-            label={d}
-            value={d}
-            meta={meta}
-          />
-        ))}
-      </Box>
-    );
-  } else {
-    return <Loading>loading datasets list</Loading>;
-  }
-};
-
 const ChartConfigurator = ({ chartId }: { chartId: string }) => {
+  const [preview, updateDataSetPreview] = React.useState({
+    iri: "",
+    label: ""
+  });
+
   const [state, dispatch] = useConfiguratorState();
 
-  if (chartId === "new") {
-    return <NewChartConfigurator />;
-  }
-
   return (
-    <>
-      {state.state === "CONFIGURING_CHART" && (
-        <>
-          <Box width={1} my={3} p={2} bg="muted">
-            {state.dataSet}
-          </Box>
-          <Box width={1} my={3} p={2} bg="muted">
-            <h4>Charttyp auswählen</h4>
-            <ChartTypeSelector chartId={chartId} dataSet={state.dataSet} />
-          </Box>
-          {state.dataSet && state.chartConfig.chartType && (
-            <Cockpit chartId={chartId} dataSetIri={state.dataSet} />
-          )}
-        </>
-      )}
-      <Button onClick={() => dispatch({ type: "PUBLISH" })}>Publish</Button>
-      {state.state === "PUBLISHED" && (
-        <Box m={2} bg="secondary" color="white" p={2}>
-          <Trans id="test-form-success">Konfiguration gespeichert unter</Trans>
-          <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>
-            <Link
-              color="white"
-              sx={{ textDecoration: "underline", cursor: "pointer" }}
-            >
-              {state.configKey}
-            </Link>
-          </LocalizedLink>
-        </Box>
-      )}
+    <Box bg="muted">
+      <Flex>
+        {chartId === "new" ? (
+          <NewChartConfigurator
+            preview={preview}
+            updateDataSetPreview={updateDataSetPreview}
+          />
+        ) : (
+          <>
+            {state.state === "SELECTING_CHART_TYPE" && (
+              <>
+                {/* Step 2: SELECTING_CHART_TYPE  */}
+                <ChartTypeSelector chartId={chartId} dataSet={state.dataSet} />
+              </>
+            )}
+            {state.state === "CONFIGURING_CHART" && (
+              <>
+                {/* Step 3: CONFIGURING_CHART */}
+                {state.dataSet && state.chartConfig.chartType && (
+                  <Cockpit chartId={chartId} dataSetIri={state.dataSet} />
+                )}
+              </>
+            )}
+            {/* Step 5 */}
+            {state.state === "PUBLISHING" && (
+              <Button onClick={() => dispatch({ type: "PUBLISH" })}>
+                Publish
+              </Button>
+            )}
+            {/* Step 6 */}
+            {state.state === "PUBLISHED" && (
+              <Box m={2} bg="secondary" color="white" p={2}>
+                <Trans id="test-form-success">
+                  Konfiguration gespeichert unter
+                </Trans>
+                <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>
+                  <Link
+                    color="white"
+                    sx={{ textDecoration: "underline", cursor: "pointer" }}
+                  >
+                    {state.configKey}
+                  </Link>
+                </LocalizedLink>
+              </Box>
+            )}
 
-      <Box my={3} p={2} bg="muted">
-        <pre>{chartId}</pre>
-        <pre>{JSON.stringify(state, null, 2)}</pre>
-      </Box>
-    </>
+            {/* NAVIGATION */}
+            {/* <NavigationButtons /> */}
+
+            {/* <Box my={3} p={2} bg="muted">
+              <pre>{chartId}</pre>
+              <pre>{JSON.stringify(state, null, 2)}</pre>
+            </Box> */}
+          </>
+        )}
+      </Flex>
+    </Box>
   );
 };
 
@@ -155,6 +99,7 @@ const ChartConfiguratorPage: NextPage = () => {
     <DataCubeProvider>
       <AppLayout>
         <ConfiguratorStateProvider chartId={chartId}>
+          <Stepper />
           <ChartConfigurator chartId={chartId} />
         </ConfiguratorStateProvider>
       </AppLayout>

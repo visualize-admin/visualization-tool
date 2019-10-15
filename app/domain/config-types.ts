@@ -90,6 +90,13 @@ const ConfiguratorStateSelectingDataSet = t.type({
   dataSet: t.undefined,
   chartConfig: NoneConfig
 });
+
+const ConfiguratorStateSelectingChartType = t.intersection([
+  t.type({
+    state: t.literal("SELECTING_CHART_TYPE")
+  }),
+  Config
+]);
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
     state: t.literal("CONFIGURING_CHART")
@@ -117,6 +124,7 @@ export type ConfiguratorStatePublishing = t.TypeOf<
 const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
+  ConfiguratorStateSelectingChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStatePublishing,
   ConfiguratorStatePublished

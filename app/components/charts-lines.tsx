@@ -1,11 +1,13 @@
 import React from "react";
 import { formatDataForLineChart, getDimensionLabelFromIri } from "../domain";
 import { Lines } from "./charts-generic/lines";
-import { Dimension } from "@zazuko/query-rdf-data-cube";
+import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 
 export const ChartLines = ({
   observations,
   dimensions,
+  measures,
+
   xField,
   groupByField,
   heightField,
@@ -13,6 +15,8 @@ export const ChartLines = ({
 }: {
   observations: any[];
   dimensions: Dimension[];
+  measures: Measure[];
+
   xField: string;
   groupByField: string;
   heightField: string;
@@ -21,6 +25,8 @@ export const ChartLines = ({
   const formattedData = formatDataForLineChart({
     observations,
     dimensions,
+    measures,
+
     xField,
     groupByField,
     heightField
@@ -30,10 +36,11 @@ export const ChartLines = ({
       data={formattedData}
       width={600}
       xField={getDimensionLabelFromIri({ dimensionIri: xField, dimensions })}
-      yField={getDimensionLabelFromIri({
-        dimensionIri: heightField,
-        dimensions
-      })}
+      // yField={getDimensionLabelFromIri({
+      //   dimensionIri: heightField,
+      //   dimensions
+      // })}
+      yField="measure"
       groupBy={getDimensionLabelFromIri({
         dimensionIri: groupByField,
         dimensions

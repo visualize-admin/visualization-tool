@@ -43,7 +43,7 @@ export const ChartAreasControls = ({
       <h5>Color (Categories)</h5>
       {categoricalDimensions.map(cd => (
         <Field
-          key={cd.iri.value}
+          key={`color-${cd.iri.value}`}
           type="radio"
           chartId={chartId}
           path={"color"}
@@ -87,6 +87,7 @@ export const ChartAreasVisualization = ({
       <ChartAreas
         observations={observations.data.results}
         dimensions={dimensions}
+        measures={measures}
         xField={xField}
         groupByField={groupByField}
         heightField={heightField}

@@ -1,4 +1,4 @@
-import { Dimension } from "@zazuko/query-rdf-data-cube";
+import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { formatDataForAreaChart, getDimensionLabelFromIri } from "../domain";
 import { Areas } from "./charts-generic/areas";
@@ -6,6 +6,7 @@ import { Areas } from "./charts-generic/areas";
 export const ChartAreas = ({
   observations,
   dimensions,
+  measures,
   xField,
   groupByField,
   heightField,
@@ -13,6 +14,7 @@ export const ChartAreas = ({
 }: {
   observations: any[];
   dimensions: Dimension[];
+  measures: Measure[];
   xField: string;
   groupByField: string;
   heightField: string;
@@ -21,6 +23,8 @@ export const ChartAreas = ({
   const formattedData = formatDataForAreaChart({
     observations,
     dimensions,
+    measures,
+
     xField,
     groupByField,
     heightField
@@ -30,10 +34,11 @@ export const ChartAreas = ({
       data={formattedData}
       width={600}
       xField={getDimensionLabelFromIri({ dimensionIri: xField, dimensions })}
-      yField={getDimensionLabelFromIri({
-        dimensionIri: heightField,
-        dimensions
-      })}
+      // yField={getDimensionLabelFromIri({
+      //   dimensionIri: heightField,
+      //   dimensions
+      // })}
+      yField="measure"
       groupBy={getDimensionLabelFromIri({
         dimensionIri: groupByField,
         dimensions

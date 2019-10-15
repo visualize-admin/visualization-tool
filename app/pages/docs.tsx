@@ -73,14 +73,24 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/components")
       },
       {
+        path: "/components/action-bar",
+        title: "Action Bar",
+        content: require("../docs/action-bar.docs")
+      },
+      {
         path: "/components/button",
         title: "Button",
         content: require("../docs/button.docs")
       },
       {
-        path: "/components/text",
-        title: "Text",
-        content: require("../docs/text.docs")
+        path: "/components/containers",
+        title: "Containers",
+        content: require("../docs/container.docs")
+      },
+      {
+        path: "/components/controls",
+        title: "Controls",
+        content: require("../docs/controls.docs")
       },
       {
         path: "/components/form",
@@ -88,9 +98,24 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/form.docs")
       },
       {
+        path: "/components/header",
+        title: "Header",
+        content: require("../docs/header.docs")
+      },
+      {
         path: "/components/hints",
         title: "Hints",
         content: require("../docs/hint.docs")
+      },
+      {
+        path: "/components/steps",
+        title: "Stepper",
+        content: require("../docs/steps.docs")
+      },
+      {
+        path: "/components/text",
+        title: "Text",
+        content: require("../docs/text.docs")
       }
     ]
   }
