@@ -1,5 +1,5 @@
-import { Dimension } from "@zazuko/query-rdf-data-cube";
-import { getDimensionLabelFromIri } from "./data-cube";
+import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
+import { getDimensionLabelFromIri, getMeasureLabelFromIri } from "./data-cube";
 
 /**
  * FIXME: These functions are not reliable, time value ("Jahr") and measure
@@ -10,12 +10,14 @@ import { getDimensionLabelFromIri } from "./data-cube";
 export const formatDataForBarChart = ({
   observations,
   dimensions,
+  measures,
   xField,
   groupByField,
   heightField
 }: {
   observations: any;
   dimensions: Dimension[];
+  measures: Measure[];
   xField: string;
   groupByField: string;
   heightField: string;
@@ -26,7 +28,7 @@ export const formatDataForBarChart = ({
         .label.value,
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
         .groupByField.label.value,
-      [getDimensionLabelFromIri({ dimensionIri: heightField, dimensions })]: +d
+      [getMeasureLabelFromIri({ measureIri: heightField, measures })]: +d
         .measure.value.value
     };
   });
@@ -35,12 +37,16 @@ export const formatDataForBarChart = ({
 export const formatDataForLineChart = ({
   observations,
   dimensions,
+  measures,
+
   xField,
   groupByField,
   heightField
 }: {
   observations: any;
   dimensions: Dimension[];
+  measures: Measure[];
+
   xField: string;
   groupByField: string;
   heightField: string;
@@ -53,7 +59,7 @@ export const formatDataForLineChart = ({
       })]: new Date(d.xField.value.value, 1, 1),
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
         .groupByField.label.value,
-      [getDimensionLabelFromIri({ dimensionIri: heightField, dimensions })]: +d
+      [getMeasureLabelFromIri({ measureIri: heightField, measures })]: +d
         .measure.value.value
     };
   });
@@ -62,12 +68,16 @@ export const formatDataForLineChart = ({
 export const formatDataForAreaChart = ({
   observations,
   dimensions,
+  measures,
+
   xField,
   groupByField,
   heightField
 }: {
   observations: any;
   dimensions: Dimension[];
+  measures: Measure[];
+
   xField: string;
   groupByField: string;
   heightField: string;
@@ -80,7 +90,7 @@ export const formatDataForAreaChart = ({
       })]: new Date(d.xField.value.value, 1, 1),
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
         .groupByField.label.value,
-      [getDimensionLabelFromIri({ dimensionIri: heightField, dimensions })]: +d
+      [getMeasureLabelFromIri({ measureIri: heightField, measures })]: +d
         .measure.value.value
     };
   });

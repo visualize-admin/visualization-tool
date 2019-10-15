@@ -2,15 +2,16 @@ import { markdown, ReactSpecimen } from "catalog";
 import { Radio, Checkbox, Select, Input } from "../components/form";
 
 export default () => markdown`
-> Form elements
+> Form elements are used throughout the _Visualization Tool_ whenever user input is needed.
 
 ~~~
-import { Label, Radio } from "rebass"
+import { Radio, Checkbox, Select, Input } from "../components/form";
 
-<Label for="#red">
-  <Radio name="color" id="red" value="red" />
-  Red
-</Label>
+<Radio
+  label={"Scatterplot"}
+  name={"Scatterplot"}
+  value={"Scatterplot"}
+/>
 ~~~
 
 ## Radio button
@@ -72,10 +73,9 @@ ${(
       <Select
         label="Dimension wählen"
         options={[
-          { name: "Nadelholz", value: "Nadelholz" },
-          { name: "Laubholz", value: "Laubholz" }
+          { label: "Nadelholz", value: "Nadelholz" },
+          { label: "Laubholz", value: "Laubholz" }
         ]}
-        onChange={e => console.log(e.currentTarget.value)}
       />
     </ReactSpecimen>
   )}
@@ -84,7 +84,31 @@ ${(
 
   ${(
     <ReactSpecimen span={2}>
-      <Input />
+      <Input label="Title einfügen" />
     </ReactSpecimen>
   )}
+
+  ## Search Field
+
+  TODO
+
+  # For developers
+  ### \`<Field />\`
+  Internally, all form elements rely on the component \`<Field />\`. The html element to render can be defined with the \`type\` props and must be one of \`text\`, \`checkbox\`, \`radio\`, \`input\`, \`select\`.
+
+~~~
+import { Field } from "../components/field";
+
+<Field
+  type="radio"
+  chartId="AHhgGxoZRC"
+  path={"height"}
+  label="variable"
+  value="http://..."
+/>
+~~~
+
+
+  ### \`useField()\`
+  This hook handles form events and dispatches an action to update the application state stored in local storage.
 `;

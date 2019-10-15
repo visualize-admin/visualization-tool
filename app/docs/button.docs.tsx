@@ -38,4 +38,9 @@ import { Button } from "rebass"
       <Button variant="success">Success button</Button>
     </ReactSpecimen>
   )}
+  ${(
+    <ReactSpecimen span={2}>
+      <Button variant="outline">Outline button</Button>
+    </ReactSpecimen>
+  )}
 `;

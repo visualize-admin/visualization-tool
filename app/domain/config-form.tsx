@@ -12,6 +12,7 @@ import { useConfiguratorState } from "./configurator-state";
 //   name: HTMLInputElement["name"]
 //   onChange: [];
 // }
+export type Option = { value: string; label: string };
 
 export type FieldProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,
@@ -26,7 +27,7 @@ export const useField = ({
 }: {
   chartId: string;
   path: string;
-  type?: "text" | "checkbox" | "radio";
+  type?: "text" | "checkbox" | "radio" | "input" | "select";
   value?: string;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
@@ -52,8 +53,9 @@ export const useField = ({
   const stateValue =
     state.state === "CONFIGURING_CHART" ? get(state.chartConfig, path, "") : "";
 
+  // FIXME: checked doesn't work for select menu on reload
   const checked =
-    type === "radio"
+    type === "radio" || "select"
       ? stateValue === value
       : type === "checkbox"
       ? stateValue
@@ -82,7 +84,7 @@ export const useChartTypeSelectorField = ({
   metaData: any;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
-
+  console.log({ metaData });
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
       const chartType = e.currentTarget.value;
@@ -95,9 +97,7 @@ export const useChartTypeSelectorField = ({
                 })[0]
               }),
               height: getDimensionIri({
-                dimension: getMeasuresDimensions({
-                  dimensions: metaData.dimensions
-                })[0]
+                dimension: metaData.measures[0]
               }),
               color: getDimensionIri({
                 dimension: getCategoricalDimensions({
@@ -112,9 +112,7 @@ export const useChartTypeSelectorField = ({
                 })[0]
               }),
               height: getDimensionIri({
-                dimension: getMeasuresDimensions({
-                  dimensions: metaData.dimensions
-                })[0]
+                dimension: metaData.measures[0]
               }),
               color: getDimensionIri({
                 dimension: getCategoricalDimensions({

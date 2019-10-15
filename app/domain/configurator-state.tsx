@@ -20,6 +20,10 @@ export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
   | { type: "DATASET_SELECTED"; value: string }
   | {
+      type: "CHART_TYPE_SELECTED";
+      value: { path: string | string[]; value: any };
+    }
+  | {
       type: "CHART_TYPE_CHANGED";
       value: { path: string | string[]; value: any };
     }
@@ -54,10 +58,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       // Never restore from an UNINITIALIZED state
       return action.value.state === "INITIAL" ? emptyState : action.value;
     case "DATASET_SELECTED":
+      draft.state = "SELECTING_CHART_TYPE";
+      if (draft.state === "SELECTING_CHART_TYPE") {
+        draft.dataSet = action.value;
+        // draft.chartConfig = { chartType: "none", filters: {} };
+      }
+      return draft;
+
+    case "CHART_TYPE_SELECTED":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
-        draft.dataSet = action.value;
-        draft.chartConfig = { chartType: "none", filters: {} };
+        set(draft, action.value.path, action.value.value);
       }
       return draft;
 
@@ -145,6 +156,7 @@ const ConfiguratorStateProviderInternal = ({
     try {
       switch (state.state) {
         case "CONFIGURING_CHART":
+        case "SELECTING_CHART_TYPE":
           if (chartId === "new") {
             const newChartId = createChartId();
             // Store current state in localstorage

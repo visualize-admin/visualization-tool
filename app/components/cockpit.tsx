@@ -38,8 +38,7 @@ export const Cockpit = ({
 
     const timeDimensions = getTimeDimensions({ dimensions });
     const categoricalDimensions = getCategoricalDimensions({ dimensions });
-    const measuresDimensions = getMeasuresDimensions({ dimensions });
-
+    const measuresDimensions = measures; // getMeasuresDimensions({ dimensions });
     return (
       <Flex>
         <Box width={1 / 4} px={2}>

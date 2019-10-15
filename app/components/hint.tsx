@@ -1,15 +1,19 @@
 import * as React from "react";
-import { Box } from "rebass";
+import { Flex, Box } from "rebass";
 
 export const Error = ({ children }: { children: React.ReactNode }) => (
-  <Box
-    // variant={"error"}
-    sx={{ variant: "variants.hint", color: "error", borderColor: "error" }}
-  >
-    {children}
-  </Box>
+  <Flex justifyContent="center" alignItems="center" variant={"error"}>
+    <Box sx={{ width: "100%", height: "100%" }}>{children}</Box>
+  </Flex>
 );
 
+export const Hint = ({ children }: { children: React.ReactNode }) => (
+  <Flex justifyContent="center" alignItems="center" variant={"hint"}>
+    <Box sx={{ width: "100%", height: "100%" }}>{children}</Box>
+  </Flex>
+);
 export const Loading = ({ children }: { children: React.ReactNode }) => (
-  <Box variant={"loading"}>{children}</Box>
+  <Flex justifyContent="center" alignItems="center" variant={"loading"}>
+    <Box sx={{ width: "100%", height: "100%" }}>{children}</Box>
+  </Flex>
 );

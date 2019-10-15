@@ -43,7 +43,7 @@ export const ChartBarsControls = ({
       <h5>Color (Categories)</h5>
       {categoricalDimensions.map(cd => (
         <Field
-          key={cd.iri.value}
+          key={`color-${cd.iri.value}`}
           type="radio"
           chartId={chartId}
           path={"color"}
@@ -83,10 +83,14 @@ export const ChartBarsVisualization = ({
   });
 
   if (observations.state === "loaded") {
+    console.log({ observations });
+    console.log({ dimensions });
+
     return (
       <ChartBars
         observations={observations.data.results}
         dimensions={dimensions}
+        measures={measures}
         xField={xField}
         groupByField={groupByField}
         heightField={heightField}

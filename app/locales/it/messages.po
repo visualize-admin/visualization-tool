@@ -13,11 +13,23 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/components/step-dataset-selection.tsx:17
+msgid "Auswählen"
+msgstr ""
+
+#: app/components/step-dataset-selection.tsx:9
+msgid "Datensatz auswählen"
+msgstr ""
+
+#: app/pages/[locale]/chart/[chartId].tsx:22
+msgid "Datensätze werden herausgeholt"
+msgstr ""
+
 #: app/pages/[locale]/playground.tsx:17
 #~ msgid "Hallo Welt!"
 #~ msgstr "Ciao mondo!"
 
-#: app/pages/[locale]/index.tsx:14
+#: app/pages/[locale]/index.tsx:12
 msgid "Neue Grafik erstellen"
 msgstr ""
 
@@ -29,7 +41,7 @@ msgstr ""
 #~ msgid "test-form-save"
 #~ msgstr "Conservare"
 
-#: app/pages/[locale]/chart/[chartId].tsx:48
+#: app/pages/[locale]/chart/[chartId].tsx:51
 msgid "test-form-success"
 msgstr "Conservato la configurazione"
 

@@ -82,7 +82,7 @@ export const Bars = ({
       {
         name: "colorScale",
         type: "ordinal",
-        range: "category",
+        range: { scheme: "dark2" },
         domain: {
           data: "table",
           field: groupBy
@@ -160,7 +160,7 @@ const BarsChart = ({ spec }: { spec: any }) => {
         });
 
         await view.runAsync();
-        // console.log(view.data("table"));
+        // console.log("vegadata", view.data("table"));
       } catch (error) {
         console.log(error);
       }
