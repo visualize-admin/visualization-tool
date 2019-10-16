@@ -20,12 +20,12 @@ export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
   | { type: "DATASET_SELECTED"; value: string }
   | {
-      type: "CHART_TYPE_SELECTED";
+      type: "CHART_TYPE_PREVIEWED";
       value: { path: string | string[]; value: any };
     }
   | {
-      type: "CHART_TYPE_CHANGED";
-      value: { path: string | string[]; value: any };
+      type: "CHART_TYPE_SELECTED";
+      // value: { path: string | string[]; value: any };
     }
   | {
       type: "CHART_CONFIG_CHANGED";
@@ -61,22 +61,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       draft.state = "SELECTING_CHART_TYPE";
       if (draft.state === "SELECTING_CHART_TYPE") {
         draft.dataSet = action.value;
-        // draft.chartConfig = { chartType: "none", filters: {} };
       }
       return draft;
 
+    case "CHART_TYPE_PREVIEWED":
+      draft.state = "SELECTING_CHART_TYPE";
+      if (draft.state === "SELECTING_CHART_TYPE") {
+        set(draft, action.value.path, action.value.value);
+      }
+      return draft;
     case "CHART_TYPE_SELECTED":
       draft.state = "CONFIGURING_CHART";
-      if (draft.state === "CONFIGURING_CHART") {
-        set(draft, action.value.path, action.value.value);
-      }
-      return draft;
-
-    case "CHART_TYPE_CHANGED":
-      draft.state = "CONFIGURING_CHART";
-      if (draft.state === "CONFIGURING_CHART") {
-        set(draft, action.value.path, action.value.value);
-      }
       return draft;
 
     case "CHART_CONFIG_CHANGED":

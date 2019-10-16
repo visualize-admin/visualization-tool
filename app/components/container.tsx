@@ -20,7 +20,7 @@ export const Container = ({
   </Box>
 );
 
-export const ChartContainer = ({
+export const MiddleContainer = ({
   children
 }: {
   children?: React.ReactNode;
