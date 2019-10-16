@@ -1,31 +1,16 @@
 import * as React from "react";
-import { Box, Text, SxStyleProp } from "rebass";
+import { Box, Text } from "rebass";
 
 export const Container = ({
-  title,
-  sx,
+  side,
   children
 }: {
-  title?: string;
-  sx?: SxStyleProp;
+  side: "left" | "right";
   children?: React.ReactNode;
-}) => (
-  <Box variant="container.root" sx={sx}>
-    {title && (
-      <Box variant="container.header">
-        <Text variant="meta">{title}</Text>
-      </Box>
-    )}
-    {children}
-  </Box>
-);
+}) => <Box variant={`container.${side}`}>{children}</Box>;
 
-export const MiddleContainer = ({
-  children
-}: {
-  children?: React.ReactNode;
-}) => (
-  <Container sx={{ my: 4, mx: 3, width: "638px", minHeight: "350px" }}>
-    {children}
-  </Container>
+export const ContainerTitle = ({ children }: { children: React.ReactNode }) => (
+  <Box variant="container.header">
+    <Text variant="meta">{children}</Text>
+  </Box>
 );

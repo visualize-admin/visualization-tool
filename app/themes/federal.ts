@@ -129,7 +129,9 @@ export const theme: Theme = {
     circle: 99999
   },
   shadows: {
-    primary: "0 2px 4px rgba(0, 0, 0, .5)"
+    primary: "0 2px 4px rgba(0, 0, 0, .5)",
+    rightSide: "0 2px 4px -2px rgba(0, 0, 0, .5)",
+    leftSide: "-2px 2px 4px -2px rgba(0, 0, 0, .5)"
   },
   text: {
     giga: {
@@ -345,10 +347,37 @@ export const theme: Theme = {
     container: {
       root: {
         bg: "monochrome.100",
+        overflow: "scroll"
+      },
+      left: {
+        variant: "variants.container.root",
+        boxShadow: "rightSide",
+        borderRightColor: "monochrome.300",
+        borderRightWidth: "1px",
+        borderRightStyle: "solid",
+        width: "322px",
+        height: "100vh"
+      },
+      middle: {
+        m: 4,
+        width: "100%",
+        maxWidth: "838px",
+        minHeight: "350px"
+      },
+      chart: {
+        variant: "variants.container.root",
         boxShadow: "primary",
-        borderColor: "monochrome.300",
-        borderWidth: "1px",
-        borderStyle: "solid"
+        width: "100%",
+        minHeight: 600
+      },
+      right: {
+        variant: "variants.container.root",
+        boxShadow: "leftSide",
+        borderLeftColor: "monochrome.300",
+        borderLeftWidth: "1px",
+        borderLeftStyle: "solid",
+        width: "322px",
+        height: "100vh"
       },
       header: {
         p: 3,
@@ -388,8 +417,8 @@ export const theme: Theme = {
     hint: {
       width: "100%",
       height: "100%",
-      fontSize: [5, 6, 6],
-      color: "hint"
+      color: "hint",
+      textAlign: "center"
     },
     error: {
       variant: "variants.hint",

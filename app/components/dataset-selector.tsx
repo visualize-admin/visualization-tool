@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import React from "react";
 import { Box, Button, Flex, Text } from "rebass";
 import { useDataSets } from "../domain";
-import { Hint, Loading } from "./hint";
+import { Hint, Loading, DataSetHint } from "./hint";
 
 export interface Preview {
   iri: string;
@@ -78,7 +78,7 @@ export const DataSetPreview = ({
   return (
     <>
       {dataSetPreview.iri ? (
-        <Box p={5}>
+        <Box p={5} sx={{ textAlign: "left", width: "100%" }}>
           <Text variant="heading2" mb={1}>
             {dataSetPreview.label}
           </Text>
@@ -89,7 +89,7 @@ export const DataSetPreview = ({
           <Flex
             variant="heading3"
             my={3}
-            sx={{ height: "350px", bg: "missing" }}
+            sx={{ width: "100%", height: "600px", bg: "missing" }}
             justifyContent="center"
             alignItems="center"
           >
@@ -97,7 +97,7 @@ export const DataSetPreview = ({
           </Flex>
         </Box>
       ) : (
-        <Hint>Datensatz Auswählen</Hint>
+        <DataSetHint />
       )}
     </>
   );
