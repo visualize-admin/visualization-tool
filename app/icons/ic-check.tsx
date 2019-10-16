@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const icCheck = ({ size = 24, color = "currentColor" }) => (
+export const IconIconCheck = ({ size = 24, color = "currentColor" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}

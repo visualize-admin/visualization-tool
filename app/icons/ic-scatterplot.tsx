@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const icScatterplot = ({ size = 48, color = "currentColor" }) => (
+export const IconScatterplot = ({ size = 48, color = "currentColor" }) => (
     <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
