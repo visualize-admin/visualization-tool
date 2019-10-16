@@ -1,5 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Container, ChartContainer } from "../components/container";
+import { Container, MiddleContainer } from "../components/container";
 
 export default () => markdown`
 
@@ -20,9 +20,9 @@ ${(
 ## Chart Container
 ${(
   <ReactSpecimen>
-    <ChartContainer>
+    <MiddleContainer>
       <div style={{ height: 300 }}></div>
-    </ChartContainer>
+    </MiddleContainer>
   </ReactSpecimen>
 )}
 

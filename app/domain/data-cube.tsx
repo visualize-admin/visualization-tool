@@ -95,7 +95,7 @@ export const useObservations = ({
   const groupByDimension = dimensions.find(
     dim => dim.iri.value === groupByField
   );
-
+  const measure = measures.find(m => m.iri.value === heightField);
   const fetchData = useCallback(async () => {
     const constructedFilters = filters
       ? Object.entries(filters).flatMap(([dim, values]) => {
@@ -114,7 +114,7 @@ export const useObservations = ({
       .query()
       .select({
         xField: xDimension!,
-        measure: measures[0],
+        measure: measure!,
         groupByField: groupByDimension!
       })
       .limit(100000);
@@ -127,7 +127,7 @@ export const useObservations = ({
     return {
       results: data
     };
-  }, [dataSet, groupByDimension, measures, xDimension, filters]);
+  }, [filters, dataSet, xDimension, measure, groupByDimension]);
 
   return useRemoteData(fetchData);
 };

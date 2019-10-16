@@ -121,7 +121,7 @@ export const useChartTypeSelectorField = ({
               })
             };
       dispatch({
-        type: "CHART_TYPE_CHANGED",
+        type: "CHART_TYPE_PREVIEWED",
         value: {
           path: "chartConfig",
           value: {

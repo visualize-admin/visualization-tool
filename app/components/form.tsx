@@ -39,7 +39,7 @@ export const Radio = ({
   onChange
 }: { label: string; disabled?: boolean } & FieldProps) => {
   return (
-    <Label htmlFor={name ? `${name}-${value}` : label}>
+    <Label htmlFor={`${name}-${value}`}>
       <RebassRadio
         name={name}
         id={`${name}-${value}`}
