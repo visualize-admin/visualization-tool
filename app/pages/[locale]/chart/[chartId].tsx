@@ -1,26 +1,14 @@
-import { Trans } from "@lingui/macro";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import { Box, Button, Flex, Link } from "rebass";
-import { ChartConfigurator } from "../../../components/chart-configurator";
+import { Box, Flex } from "rebass";
 import { AppLayout } from "../../../components/layout";
-import { LocalizedLink } from "../../../components/links";
-import { ChartTypeSelector } from "../../../components/chart-type-selector";
-import {
-  DataSetList,
-  DataSetPreview
-} from "../../../components/dataset-selector";
+import { PanelLeft } from "../../../components/panel-left";
+import { PanelMiddle } from "../../../components/panel-middle";
+import { PanelRight } from "../../../components/panel-right";
 import { Stepper } from "../../../components/stepper";
 import { DataCubeProvider } from "../../../domain";
-import {
-  ConfiguratorStateProvider,
-  useConfiguratorState
-} from "../../../domain/configurator-state";
-import { Container, MiddleContainer } from "../../../components/container";
-import { ActionBar } from "../../../components/action-bar";
-import { ChartPreview } from "../../../components/chart-preview";
-import { ChartFilters } from "../../../components/chart-filters";
+import { ConfiguratorStateProvider } from "../../../domain/configurator-state";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -37,8 +25,6 @@ const ChartCreator = ({ chartId }: { chartId: string }) => {
     label: ""
   });
 
-  const [state, dispatch] = useConfiguratorState();
-
   return (
     <Box bg="muted">
       {/* <Box my={3} p={2} bg="muted">
@@ -46,129 +32,16 @@ const ChartCreator = ({ chartId }: { chartId: string }) => {
         <pre>{JSON.stringify(state, null, 2)}</pre>
       </Box> */}
 
-      <Flex>
-        {/* LEFT */}
-        <Container
-          title="Datensatz auswählen" // FIXME: change title on step change
-          sx={{ m: 4, width: "322px", alignSelf: "flex-start" }}
-        >
-          {chartId === "new" ? (
-            <DataSetList
-              dataSetPreview={dataSetPreview}
-              updateDataSetPreview={updateDataSetPreview}
-            />
-          ) : (
-            <>
-              {state.state === "SELECTING_CHART_TYPE" && (
-                <ChartTypeSelector chartId={chartId} dataSet={state.dataSet} />
-              )}
-              {state.state === "CONFIGURING_CHART" && (
-                <>
-                  {/* Step 3: CONFIGURING_CHART */}
-                  {state.dataSet && state.chartConfig.chartType && (
-                    <ChartConfigurator
-                      chartId={chartId}
-                      dataSetIri={state.dataSet}
-                    />
-                  )}
-                </>
-              )}
-              {/* Step 5 */}
-              {state.state === "PUBLISHING" && (
-                <Button onClick={() => dispatch({ type: "PUBLISH" })}>
-                  Publish
-                </Button>
-              )}
-              {/* Step 6 */}
-              {state.state === "PUBLISHED" && (
-                <Box m={2} bg="secondary" color="white" p={2}>
-                  <Trans id="test-form-success">
-                    Konfiguration gespeichert unter
-                  </Trans>
-                  <LocalizedLink
-                    href={`/[locale]/v/${state.configKey}`}
-                    passHref
-                  >
-                    <Link
-                      color="white"
-                      sx={{ textDecoration: "underline", cursor: "pointer" }}
-                    >
-                      {state.configKey}
-                    </Link>
-                  </LocalizedLink>
-                </Box>
-              )}
-            </>
-          )}
-        </Container>
+      <Flex justifyContent="space-between" alignItems="flex-start">
+        <PanelLeft
+          chartId={chartId}
+          dataSetPreview={dataSetPreview}
+          updateDataSetPreview={updateDataSetPreview}
+        />
 
-        {/* Middle */}
-        <Box>
-          <MiddleContainer>
-            {chartId === "new" ? (
-              <DataSetPreview dataSetPreview={dataSetPreview} />
-            ) : (
-              <>
-                {(state.state === "SELECTING_CHART_TYPE" ||
-                  state.state === "CONFIGURING_CHART") && (
-                  <ChartPreview chartId={chartId} dataSetIri={state.dataSet} />
-                )}
-              </>
-            )}
-          </MiddleContainer>
+        <PanelMiddle chartId={chartId} dataSetPreview={dataSetPreview} />
 
-          {/* ACTIONS */}
-          <ActionBar>
-            {chartId === "new" ? (
-              <Button
-                variant="primary"
-                onClick={() =>
-                  dispatch({
-                    type: "DATASET_SELECTED",
-                    value: dataSetPreview.iri
-                  })
-                }
-                sx={{ width: "112px", ml: "auto" }}
-                disabled={!dataSetPreview.iri}
-              >
-                <Trans>Weiter</Trans>
-              </Button>
-            ) : (
-              <>
-                {state.state === "SELECTING_CHART_TYPE" && (
-                  <Button
-                    variant="primary"
-                    onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
-                    sx={{ width: "112px", ml: "auto" }}
-                    disabled={state.chartConfig.chartType === "none"}
-                  >
-                    <Trans>Weiter</Trans>
-                  </Button>
-                )}
-                {state.state === "CONFIGURING_CHART" && (
-                  <Button
-                    variant="primary"
-                    onClick={() => dispatch({ type: "PUBLISH" })}
-                    sx={{ width: "112px", ml: "auto" }}
-                    // disabled={state.chartConfig.chartType === "none"}
-                  >
-                    <Trans>Publizieren</Trans>
-                  </Button>
-                )}
-              </>
-            )}
-          </ActionBar>
-        </Box>
-
-        {/* RIGHT */}
-        {state.state === "CONFIGURING_CHART" && (
-          <Container
-            title="Daten Filter" // FIXME: Translate
-            sx={{ m: 4, width: "322px", alignSelf: "flex-start" }}
-          >
-            <ChartFilters chartId={chartId} dataSetIri={state.dataSet} />
-          </Container>
-        )}
+        <PanelRight chartId={chartId} />
       </Flex>
     </Box>
   );
