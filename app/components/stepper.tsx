@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Button, Box, Flex } from "rebass";
+import { Button, Flex } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
-import { IconCheck } from "../icons";
+import { Icon } from "../icons";
 
 export type StepStatus = "past" | "current" | "future";
 type StepState =
@@ -18,7 +18,7 @@ const steps: Array<StepState> = [
 ];
 
 export const Stepper = () => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state] = useConfiguratorState();
 
   return (
     <Flex variant="stepper.root" justifyContent="center">
@@ -49,7 +49,7 @@ export const Step = ({
       alignItems="center"
       sx={{ width: "100%", height: "100%" }}
     >
-      {status === "past" ? <IconCheck /> : stepNumber}
+      {status === "past" ? <Icon name="check" /> : stepNumber}
     </Flex>
   </Button>
 );
