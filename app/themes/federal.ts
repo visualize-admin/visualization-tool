@@ -270,29 +270,18 @@ export const theme: Theme = {
         textAlign: "left",
         py: 2,
         borderRadius: 0,
-        borderLeftWidth: "4px",
-        borderLeftStyle: "solid",
-        borderLeftColor: "transparent",
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "monochrome.300",
         ":hover": {
-          borderRadius: 0,
-          borderLeftColor: "monochrome.500",
           bg: "monochrome.300"
         },
         ":active": {
-          borderLeftColor: "ch.venetianRed",
           bg: "monochrome.300"
         },
         ":focus": {
           bg: "monochrome.300",
           outline: "none"
-        },
-        "&::after": {
-          content: "''",
-          position: "absolute",
-          top: 0,
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "monochrome.300"
         }
       },
       selected: {
