@@ -1,5 +1,7 @@
 import * as t from "io-ts";
 
+export type ChartType = "bar" | "line" | "area" | "scatterplot" | "column";
+
 const Filters = t.record(
   t.string,
   t.record(t.string, t.boolean, "FilterValue"),

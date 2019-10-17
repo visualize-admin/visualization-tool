@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FieldProps } from "../../domain/config-form";
-import { Flex } from "rebass";
+import { Flex, Text } from "rebass";
 import { Icon, IconName } from "../../icons";
 
 export const ChartTypeRadio = ({
@@ -23,7 +23,7 @@ export const ChartTypeRadio = ({
         style={{ display: "none" }}
       />
       <Flex
-        aria-hidden="true"
+        // aria-hidden="true"
         variant="chartTypeRadio"
         sx={{
           m: 2,
@@ -37,7 +37,10 @@ export const ChartTypeRadio = ({
           }
         }}
       >
-        <Icon name={label as IconName} /> {label}
+        <Icon name={label as IconName} />
+        <Text variant="paragraph2" sx={{ color: "monochrome.600" }}>
+          {label}
+        </Text>
       </Flex>
     </label>
   );

@@ -1,8 +1,7 @@
-import { Trans } from "@lingui/macro";
 import React from "react";
-import { ChartFilters } from "./chart-filters";
-import { Container, ContainerTitle } from "./container";
 import { useConfiguratorState } from "../domain/configurator-state";
+import { ChartFilters } from "./chart-filters";
+import { Container } from "./container";
 
 export const PanelRight = ({ chartId }: { chartId: string }) => {
   const [state] = useConfiguratorState();
@@ -11,9 +10,9 @@ export const PanelRight = ({ chartId }: { chartId: string }) => {
     <Container side="right" data-name="panel-right">
       {state.state === "CONFIGURING_CHART" && (
         <>
-          <ContainerTitle>
+          {/* <ContainerTitle>
             <Trans>Daten Filter</Trans>
-          </ContainerTitle>
+          </ContainerTitle> */}
           <ChartFilters chartId={chartId} dataSetIri={state.dataSet} />
         </>
       )}

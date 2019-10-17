@@ -5,14 +5,16 @@ export const ControlList = ({
   label,
   children
 }: {
-  label: string;
+  label?: string;
   children: React.ReactNode;
 }) => {
   return (
     <Box as="section" sx={{ pt: 2 }}>
-      <Text variant="meta" sx={{ pb: 2 }}>
-        {label}
-      </Text>
+      {label && (
+        <Text variant="meta" sx={{ pb: 2 }}>
+          {label}
+        </Text>
+      )}
       {children}
     </Box>
   );

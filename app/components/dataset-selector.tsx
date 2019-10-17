@@ -23,7 +23,7 @@ export const DataSetList = ({
   return (
     <>
       {datasets.state === "loaded" ? (
-        <Flex flexDirection="column">
+        <Box>
           {datasets.data.map(d => (
             <DatasetButton
               key={d.iri}
@@ -33,7 +33,7 @@ export const DataSetList = ({
               handleClick={dataSetPreview => update(dataSetPreview)}
             />
           ))}
-        </Flex>
+        </Box>
       ) : (
         <Loading>
           <Trans>Datensätze werden herausgeholt</Trans>

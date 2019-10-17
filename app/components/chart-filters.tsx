@@ -3,7 +3,7 @@ import React from "react";
 import { Flex } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { useDataSetAndMetadata } from "../domain/data-cube";
-import { Filters } from "./cockpit-filters";
+import { Filters } from "./filters";
 import { Loading } from "./hint";
 
 export const ChartFilters = ({

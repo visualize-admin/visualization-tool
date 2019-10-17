@@ -1,5 +1,5 @@
 import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
-import { getDimensionLabelFromIri, getMeasureLabelFromIri } from "./data-cube";
+import { getDimensionLabelFromIri } from "./data-cube";
 
 /**
  * FIXME: These functions are not reliable, time value ("Jahr") and measure
@@ -28,8 +28,7 @@ export const formatDataForBarChart = ({
         .label.value,
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
         .groupByField.label.value,
-      [getMeasureLabelFromIri({ measureIri: heightField, measures })]: +d
-        .measure.value.value
+      measure: +d.measure.value.value
     };
   });
 };
@@ -59,8 +58,7 @@ export const formatDataForLineChart = ({
       })]: new Date(d.xField.value.value, 1, 1),
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
         .groupByField.label.value,
-      [getMeasureLabelFromIri({ measureIri: heightField, measures })]: +d
-        .measure.value.value
+      measure: +d.measure.value.value
     };
   });
 };
@@ -90,8 +88,7 @@ export const formatDataForAreaChart = ({
       })]: new Date(d.xField.value.value, 1, 1),
       [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
         .groupByField.label.value,
-      [getMeasureLabelFromIri({ measureIri: heightField, measures })]: +d
-        .measure.value.value
+      measure: +d.measure.value.value
     };
   });
 };

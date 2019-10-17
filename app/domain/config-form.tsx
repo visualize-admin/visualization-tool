@@ -3,7 +3,6 @@ import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
 import {
   getCategoricalDimensions,
   getDimensionIri,
-  getMeasuresDimensions,
   getTimeDimensions
 } from ".";
 import { useConfiguratorState } from "./configurator-state";

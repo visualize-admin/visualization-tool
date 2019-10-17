@@ -7,6 +7,7 @@ import {
 } from "../domain";
 import { Field } from "./field";
 import { Loading } from "./hint";
+import { ControlSection, ControlList } from "./chart-controls";
 
 export const Filters = ({
   chartId,
@@ -21,14 +22,18 @@ export const Filters = ({
     <>
       {dimensions.map(dimension => {
         return (
-          <div key={getDimensionIri({ dimension })}>
-            <h5>{getDimensionLabel({ dimension })}</h5>
-            <DimensionValues
-              chartId={chartId}
-              dataSet={dataSet}
-              dimension={dimension}
-            />
-          </div>
+          <ControlSection
+            key={getDimensionIri({ dimension })}
+            title={getDimensionLabel({ dimension })}
+          >
+            <ControlList>
+              <DimensionValues
+                chartId={chartId}
+                dataSet={dataSet}
+                dimension={dimension}
+              />
+            </ControlList>
+          </ControlSection>
         );
       })}
     </>
