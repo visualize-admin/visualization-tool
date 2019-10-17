@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const IconCheck = ({ size = 24, color = "currentColor" }) => (
+export const IconAdd = ({ size = 24, color = "currentColor" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -13,6 +13,6 @@ export const IconCheck = ({ size = 24, color = "currentColor" }) => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <polygon points="5.38751389 11.6050032 4 13.1412927 9.97501884 18.5 20 6.84509869 18.4252098 5.5 9.78310074 15.5471938"></polygon>
+    <polygon points="13 5 13 11 19 11 19 13 13 13 13 19 11 19 11 13 5 13 5 11 11 11 11 5"></polygon>
   </svg>
 );
