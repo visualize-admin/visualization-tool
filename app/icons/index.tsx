@@ -7,10 +7,19 @@ import { IconColumnChart } from "./ic-column-chart";
 import { IconLineChart } from "./ic-line-chart";
 import { IconAreaChart } from "./ic-area-chart";
 import { IconScatterplot } from "./ic-scatterplot";
+import { IconChevronDown } from "./ic-chevron-down";
+import { IconChevronRight } from "./ic-chevron-right";
+import { IconCaretDown } from "./ic-caret-down";
+import { IconCaretRight } from "./ic-caret-right";
+
 
 export const Icons = {
          check: IconCheck,
          add: IconAdd,
+         chevrondown: IconChevronDown,
+         chevronright: IconChevronRight,
+         caretdown: IconCaretDown,
+         caretright: IconCaretRight,
          search: IconSearch,
          bar: IconBarChart,
          column: IconColumnChart,
