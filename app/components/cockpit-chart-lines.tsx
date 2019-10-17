@@ -4,6 +4,7 @@ import { useObservations } from "../domain/data-cube";
 import { ChartLines } from "./charts-lines";
 import { Field } from "./field";
 import { Loading } from "./hint";
+import { ControlList, ControlSection } from "./chart-controls";
 
 export const ChartLinesControls = ({
   chartId,
@@ -18,39 +19,48 @@ export const ChartLinesControls = ({
 }) => {
   return (
     <>
-      <h5>X Axis (Time)</h5>
-      {timeDimensions.map(td => (
-        <Field
-          key={td.iri.value}
-          type="radio"
-          chartId={chartId}
-          path={"x"}
-          label={td.labels[0].value}
-          value={td.iri.value}
-        />
-      ))}
-      <h5>Y Axis (Values)</h5>
-      {measuresDimensions.map(md => (
-        <Field
-          key={md.iri.value}
-          type="radio"
-          chartId={chartId}
-          path={"height"}
-          label={md.labels[0].value}
-          value={md.iri.value}
-        />
-      ))}
-      <h5>Color (Categories)</h5>
-      {categoricalDimensions.map(cd => (
-        <Field
-          key={`color-${cd.iri.value}`}
-          type="radio"
-          chartId={chartId}
-          path={"color"}
-          label={cd.labels[0].value}
-          value={cd.iri.value}
-        />
-      ))}
+      <ControlSection title="Horizontale Achse" note="x-Achse">
+        <ControlList>
+          {timeDimensions.map(td => (
+            <Field
+              key={td.iri.value}
+              type="radio"
+              chartId={chartId}
+              path={"x"}
+              label={td.labels[0].value}
+              value={td.iri.value}
+            />
+          ))}
+        </ControlList>
+      </ControlSection>
+      <ControlSection title="Vertikale Achse" note="y-Achse">
+        <ControlList>
+          {measuresDimensions.map(md => (
+            <Field
+              key={md.iri.value}
+              type="radio"
+              chartId={chartId}
+              path={"height"}
+              label={md.labels[0].value}
+              value={md.iri.value}
+            />
+          ))}
+        </ControlList>
+      </ControlSection>
+      <ControlSection title="Farbe">
+        <ControlList>
+          {categoricalDimensions.map(cd => (
+            <Field
+              key={`color-${cd.iri.value}`}
+              type="radio"
+              chartId={chartId}
+              path={"color"}
+              label={cd.labels[0].value}
+              value={cd.iri.value}
+            />
+          ))}
+        </ControlList>
+      </ControlSection>
     </>
   );
 };

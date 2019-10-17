@@ -93,9 +93,6 @@ export const ChartBarsVisualization = ({
   });
 
   if (observations.state === "loaded") {
-    console.log({ observations });
-    console.log({ dimensions });
-
     return (
       <ChartBars
         observations={observations.data.results}

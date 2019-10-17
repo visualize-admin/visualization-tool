@@ -60,6 +60,7 @@ const DatasetButton = ({
   >
     {selected && (
       <Box
+        aria-hidden="true"
         sx={{
           position: "absolute",
           top: 0,
