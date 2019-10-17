@@ -45,15 +45,10 @@ export const PanelLeft = ({
             <>
               {/* Step 3: CONFIGURING_CHART */}
               {state.dataSet && state.chartConfig.chartType && (
-                <>
-                  <ContainerTitle>
-                    <Trans>Grafik Konfigurieren</Trans>
-                  </ContainerTitle>
-                  <ChartConfigurator
-                    chartId={chartId}
-                    dataSetIri={state.dataSet}
-                  />
-                </>
+                <ChartConfigurator
+                  chartId={chartId}
+                  dataSetIri={state.dataSet}
+                />
               )}
             </>
           )}

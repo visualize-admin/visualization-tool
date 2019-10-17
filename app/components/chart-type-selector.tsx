@@ -4,7 +4,9 @@ import { ChartTypeSelectorField } from "./field";
 import { Loading } from "./hint";
 import { useDataSetAndMetadata } from "../domain";
 import { Trans } from "@lingui/macro";
+import { ChartType } from "../domain/config-types";
 
+const availableChartTypes: ChartType[] = ["bar", "line", "area", "scatterplot"];
 export const ChartTypeSelector = ({
   chartId,
   dataSet
@@ -18,10 +20,16 @@ export const ChartTypeSelector = ({
       <Flex
         width="100%"
         flexWrap="wrap"
-        justifyContent="space-between"
-        alignItems="space-between"
+        justifyContent="space-around"
+        alignItems="center"
+        sx={{
+          "&::after": {
+            content: "''",
+            flex: "auto"
+          }
+        }}
       >
-        {["bar", "line", "area", "scatterplot"].map(d => (
+        {availableChartTypes.map(d => (
           <ChartTypeSelectorField
             key={d}
             type="radio"

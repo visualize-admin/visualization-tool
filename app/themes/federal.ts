@@ -9,7 +9,6 @@
  */
 
 import { Theme } from "./index";
-import { flex, buttonStyle } from "styled-system";
 
 /**
  * Theme conforming to the Swiss Federal CD guidelines
@@ -74,6 +73,7 @@ export const theme: Theme = {
       disabled: "#3c763d"
     },
     muted: "#F5F5F5",
+    focus: "#333333",
     error: "#FF5555",
     hint: "#757575",
     missing: "Bisque"
@@ -260,50 +260,38 @@ export const theme: Theme = {
         bg: "secondary.disabled"
       }
     },
-
-    step: {
-      basic: {
-        width: "32px",
-        height: "32px",
-        mx: 5,
-        borderRadius: "circle",
-        fontSize: 4
-      },
-      past: {
-        variant: "buttons.step.basic",
-        bg: "monochrome.800"
-      },
-      current: {
-        variant: "buttons.step.basic",
-        bg: "ch.venetianRed"
-      },
-      future: {
-        variant: "buttons.step.basic",
-        bg: "monochrome.600"
-      }
-    },
     datasetButton: {
       normal: {
+        position: "relative",
         color: "monochrome.700",
         cursor: "pointer",
         width: "100%",
-        borderRadius: "0px",
-        borderBottomWidth: "1px",
-        borderBottomStyle: "solid",
-        borderBottomColor: "monochrome.300",
         textAlign: "left",
-        borderLeftStyle: "solid",
-        borderLeftWidth: "4px",
-        borderLeftColor: "transparent",
-        marginLeft: "-1px",
         py: 2,
+        borderRadius: 0,
+        borderLeftWidth: "4px",
+        borderLeftStyle: "solid",
+        borderLeftColor: "transparent",
         ":hover": {
+          borderRadius: 0,
           borderLeftColor: "monochrome.500",
           bg: "monochrome.300"
         },
         ":active": {
           borderLeftColor: "ch.venetianRed",
           bg: "monochrome.300"
+        },
+        ":focus": {
+          bg: "monochrome.300",
+          outline: "none"
+        },
+        "&::after": {
+          content: "''",
+          position: "absolute",
+          top:0,
+          borderBottomWidth: "1px",
+          borderBottomStyle: "solid",
+          borderBottomColor: "monochrome.300"
         }
       },
       selected: {
@@ -314,14 +302,25 @@ export const theme: Theme = {
           bg: "monochrome.300"
         }
       }
+    },
+    step: {
+      bg: "transparent",
+      appearance: "none",
+      width: "156px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center"
     }
   },
   // All variants except ^ buttons ^
   variants: {
     header: {
       root: {
-        p: 4,
-        borderBottomWidth: "2px",
+        px: 4,
+        pt: 4,
+        pb: 5,
+        borderBottomWidth: "4px",
         borderBottomStyle: "solid",
         borderBottomColor: "ch.venetianRed",
         color: "monochrome.700"
@@ -337,11 +336,45 @@ export const theme: Theme = {
 
     stepper: {
       root: {
-        py: 5,
+        position: "relative",
+        pt: 2,
         bg: "monochrome.100",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
-        borderBottomColor: "monochrome.500"
+        borderBottomColor: "monochrome.500",
+        overflow: "hidden"
+      },
+      line: {
+        position: "absolute",
+        width: "calc(100% - 156px)", // Remove: 2 * buttons.step.width / 2
+        height: "24px",
+        mt: 2,
+        transform: "translateY(-50%)",
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "monochrome.300",
+        zIndex: 3
+      }
+    },
+    step: {
+      basic: {
+        width: "24px",
+        height: "24px",
+        mb: 1,
+        borderRadius: "circle",
+        fontSize: 4
+      },
+      past: {
+        variant: "variants.step.basic",
+        bg: "monochrome.800"
+      },
+      current: {
+        variant: "variants.step.basic",
+        bg: "ch.venetianRed"
+      },
+      future: {
+        variant: "variants.step.basic",
+        bg: "monochrome.600"
       }
     },
     container: {
@@ -352,7 +385,7 @@ export const theme: Theme = {
       left: {
         variant: "variants.container.root",
         boxShadow: "rightSide",
-        borderRightColor: "monochrome.300",
+        borderRightColor: "monochrome.500",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
         width: "322px",
@@ -361,8 +394,8 @@ export const theme: Theme = {
       middle: {
         m: 4,
         width: "100%",
-        maxWidth: "838px",
-        minHeight: "350px"
+        maxWidth: "824px",
+        minHeight: "384px"
       },
       chart: {
         variant: "variants.container.root",
@@ -373,7 +406,7 @@ export const theme: Theme = {
       right: {
         variant: "variants.container.root",
         boxShadow: "leftSide",
-        borderLeftColor: "monochrome.300",
+        borderLeftColor: "monochrome.500",
         borderLeftWidth: "1px",
         borderLeftStyle: "solid",
         width: "322px",
@@ -382,7 +415,7 @@ export const theme: Theme = {
       header: {
         p: 3,
         bg: "monochrome.100",
-        borderBottomColor: "monochrome.300",
+        borderBottomColor: "monochrome.500",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid"
       }
@@ -409,11 +442,14 @@ export const theme: Theme = {
       bg: "muted"
     },
     chartTypeRadio: {
-      width: "100px",
-      height: "100px",
+      width: "86px",
+      height: "86px",
+      mx: 4,
+      my: 6,
       cursor: "pointer",
       transition: "background-color .2s"
     },
+
     hint: {
       width: "100%",
       height: "100%",

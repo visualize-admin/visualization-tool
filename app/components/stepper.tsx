@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Button, Flex } from "rebass";
+import { Button, Flex, Text, Box } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { Icon } from "../icons";
+import { Trans } from "@lingui/macro";
 
 export type StepStatus = "past" | "current" | "future";
 type StepState =
@@ -22,14 +23,21 @@ export const Stepper = () => {
 
   return (
     <Flex variant="stepper.root" justifyContent="center">
-      {steps.map((step, i) => (
-        <Step
-          key={step}
-          stepNumber={i + 1}
-          stepState={step}
-          status={state.state === step ? "current" : "future"}
-        ></Step>
-      ))}
+      <Flex
+        justifyContent="center"
+        alignItems="flex-start"
+        sx={{ position: "relative" }}
+      >
+        <Box variant="stepper.line" />
+        {steps.map((step, i) => (
+          <Step
+            key={step}
+            stepNumber={i + 1}
+            stepState={step}
+            status={state.state === step ? "current" : "future"}
+          ></Step>
+        ))}
+      </Flex>
     </Flex>
   );
 };
@@ -43,13 +51,81 @@ export const Step = ({
   stepNumber: number;
   status: StepStatus;
 }) => (
-  <Button variant={`step.${status}`}>
+  <Button disabled variant="step">
     <Flex
       justifyContent="center"
       alignItems="center"
-      sx={{ width: "100%", height: "100%" }}
+      px={4}
+      sx={{ height: "100%", bg: "monochrome.100", zIndex: 5 }}
     >
-      {status === "past" ? <Icon name="check" /> : stepNumber}
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+        variant={`step.${status}`}
+      >
+        {status === "past" ? <Icon name="check" /> : stepNumber}
+      </Flex>
     </Flex>
+
+    <StepLabel stepState={stepState} highlight={status === "current"} />
   </Button>
 );
+
+export const StepLabel = ({
+  stepState,
+  highlight
+}: {
+  stepState: StepState;
+  highlight: boolean;
+}) => {
+  switch (stepState) {
+    case "SELECTING_DATASET":
+      return (
+        <Text
+          sx={{
+            color: highlight ? "monochrome.800" : "monochrome.700",
+            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+          }}
+          variant="paragraph2"
+        >
+          <Trans> Datensatz</Trans>
+        </Text>
+      );
+    case "SELECTING_CHART_TYPE":
+      return (
+        <Text
+          sx={{
+            color: highlight ? "monochrome.800" : "monochrome.700",
+            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+          }}
+          variant="paragraph2"
+        >
+          <Trans> Visualisierungs-Typ</Trans>
+        </Text>
+      );
+    case "CONFIGURING_CHART":
+      return (
+        <Text
+          sx={{
+            color: highlight ? "monochrome.800" : "monochrome.700",
+            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+          }}
+          variant="paragraph2"
+        >
+          <Trans> Anpassen</Trans>
+        </Text>
+      );
+    case "PUBLISHING":
+      return (
+        <Text
+          sx={{
+            color: highlight ? "monochrome.800" : "monochrome.700",
+            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+          }}
+          variant="paragraph2"
+        >
+          <Trans> Teilen & Einbetten</Trans>
+        </Text>
+      );
+  }
+};

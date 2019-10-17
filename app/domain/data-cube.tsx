@@ -148,17 +148,6 @@ export const getCategoricalDimensions = ({
 }: {
   dimensions: Dimension[];
 }) => dimensions;
-// .filter(
-//   dim => dim.labels[0].value !== "Jahr" && dim.labels[0].value !== "Variable"
-// );
-/**
- * @fixme This is not correct, problem in the RDF vocabulary
- */
-export const getMeasuresDimensions = ({
-  dimensions
-}: {
-  dimensions: Dimension[];
-}) => dimensions.filter(dim => dim.labels[0].value === "Variable");
 
 export const getDimensionIri = ({
   dimension
@@ -174,9 +163,7 @@ export const getDimensionLabel = ({
 }): string => {
   return dimension.labels[0].value;
 };
-export const getMeasureLabel = ({ measure }: { measure: Measure }): string => {
-  return measure.labels[0].value;
-};
+
 export const getDimensionLabelFromIri = ({
   dimensionIri,
   dimensions
@@ -187,17 +174,6 @@ export const getDimensionLabelFromIri = ({
   const dimension = dimensions.find(dim => dim.iri.value === dimensionIri);
   // FIXME: Is dimensionIri the right thing to return?
   return dimension ? getDimensionLabel({ dimension }) : dimensionIri;
-};
-export const getMeasureLabelFromIri = ({
-  measureIri,
-  measures
-}: {
-  measureIri: string;
-  measures: Dimension[];
-}): string => {
-  // const measure = measures.find(dim => dim.iri.value === measureIri);
-  // FIXME: Is measureIri the rig§ht thing to return?
-  return "measure"; //measure ? getMeasureLabel({ measure }) : measureIri;
 };
 
 export const useDimensionValues = ({
@@ -214,13 +190,18 @@ export const useDimensionValues = ({
 };
 export const useDimensionMinMax = ({
   dataSet,
-  dimension
+  measure
 }: {
   dataSet: DataCube;
-  dimension: Dimension;
+  measure: Measure;
 }) => {
   const fetchData = useCallback(async () => {
-    return await dataSet.componentMinMax(dimension);
-  }, [dataSet, dimension]);
+    return await dataSet.componentMinMax(measure);
+  }, [dataSet, measure]);
   return useRemoteData(fetchData);
+};
+
+// Measure
+export const getMeasureLabel = ({ measure }: { measure: Measure }): string => {
+  return measure.labels[0].value;
 };

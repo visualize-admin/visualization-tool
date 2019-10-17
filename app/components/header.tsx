@@ -8,7 +8,7 @@ export const Logo = () => (
     <Image
       src="/static/logo/BUND_Logo_CH.png"
       alt="logo of the Swiss Confederation"
-      width="224px"
+      width="256px"
       sx={{ pr: 6 }}
     />
     <Text

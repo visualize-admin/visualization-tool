@@ -8,7 +8,7 @@ export const ControlSection = ({
   children
 }: {
   title: string;
-  note: string;
+  note?: string;
   children: React.ReactNode;
 }) => {
   return (
@@ -18,9 +18,11 @@ export const ControlSection = ({
         <Text variant="table" as="h5">
           {title}
         </Text>
-        <Text variant="table" sx={{ fontWeight: "light" }}>
-          {note}
-        </Text>
+        {note && (
+          <Text variant="table" sx={{ fontWeight: "light" }}>
+            {note}
+          </Text>
+        )}
       </Flex>
       <Box variant="controlSectionContent">{children}</Box>
     </Box>

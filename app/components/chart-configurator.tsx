@@ -1,5 +1,6 @@
+import { Trans } from "@lingui/macro";
 import React from "react";
-import { Box, Flex } from "rebass";
+import { Flex } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import {
   getCategoricalDimensions,
@@ -10,7 +11,6 @@ import { ChartAreasControls } from "./cockpit-chart-areas";
 import { ChartBarsControls } from "./cockpit-chart-bars";
 import { ChartLinesControls } from "./cockpit-chart-lines";
 import { Loading } from "./hint";
-import { Trans } from "@lingui/macro";
 
 export const ChartConfigurator = ({
   chartId,
@@ -28,9 +28,9 @@ export const ChartConfigurator = ({
 
     const timeDimensions = getTimeDimensions({ dimensions });
     const categoricalDimensions = getCategoricalDimensions({ dimensions });
-    const measuresDimensions = measures; // getMeasuresDimensions({ dimensions });
+    const measuresDimensions = measures;
     return (
-      <Flex flexDirection="column">
+      <Flex flexDirection="column" bg="muted" sx={{ width: "100%" }}>
         {state.state === "CONFIGURING_CHART" &&
           state.chartConfig.chartType === "bar" && (
             <ChartBarsControls
@@ -68,12 +68,3 @@ export const ChartConfigurator = ({
     );
   }
 };
-
-// <Box width={1 / 4} px={2}>
-//   <h4>Filter Daten</h4>
-//   <Filters
-//     chartId={chartId}
-//     dataSet={dataSet}
-//     dimensions={categoricalDimensions}
-//   />
-// </Box>
