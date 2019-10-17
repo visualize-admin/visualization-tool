@@ -43,6 +43,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/typography.mdx")
       },
       {
+        path: "/iconography",
+        title: "Iconography",
+        content: require("../docs/icons.docs.tsx")
+      },
+      {
         path: "/layout",
         title: "Layout",
         content: require("../docs/layout.mdx")
