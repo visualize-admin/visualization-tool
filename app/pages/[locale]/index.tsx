@@ -9,11 +9,11 @@ const Page = () => {
     <AppLayout>
       <Center>
         <LocalizedLink href={"/[locale]/chart/new"} passHref>
-          <Flex sx={{ m: 2, justifyContent: "center", alignItems: "center" }}>
-            <Button as="a" variant="primary">
-              <Trans>Neue Grafik erstellen</Trans>
-            </Button>
-          </Flex>
+          {/* <Flex sx={{ m: 2, justifyContent: "center", alignItems: "center" }}> */}
+          <Button as="a" variant="primary">
+            <Trans>Neue Grafik erstellen</Trans>
+          </Button>
+          {/* </Flex> */}
         </LocalizedLink>
       </Center>
     </AppLayout>

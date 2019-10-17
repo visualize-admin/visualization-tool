@@ -76,7 +76,7 @@ export const theme: Theme = {
     focus: "#333333",
     error: "#FF5555",
     hint: "#757575",
-    missing: "Bisque"
+    missing: "#EFEFEF"
   },
   fonts: {
     frutigerLight:
@@ -197,6 +197,7 @@ export const theme: Theme = {
       borderRadius: "default",
       width: "100%",
       minWidth: 160,
+      maxWidth: 300,
       p: 3,
       fontFamily: "frutigerRegular",
       fontSize: [3, 3, 3],
@@ -267,31 +268,20 @@ export const theme: Theme = {
         cursor: "pointer",
         width: "100%",
         textAlign: "left",
-        py: 2,
+        py: 3,
         borderRadius: 0,
-        borderLeftWidth: "4px",
-        borderLeftStyle: "solid",
-        borderLeftColor: "transparent",
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "monochrome.300",
         ":hover": {
-          borderRadius: 0,
-          borderLeftColor: "monochrome.500",
           bg: "monochrome.300"
         },
         ":active": {
-          borderLeftColor: "ch.venetianRed",
           bg: "monochrome.300"
         },
         ":focus": {
           bg: "monochrome.300",
           outline: "none"
-        },
-        "&::after": {
-          content: "''",
-          position: "absolute",
-          top:0,
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "monochrome.300"
         }
       },
       selected: {

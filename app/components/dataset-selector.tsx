@@ -58,7 +58,20 @@ const DatasetButton = ({
     variant={selected ? "datasetButton.selected" : "datasetButton.normal"}
     onClick={() => handleClick({ iri: dataSetIri, label: dataSetLabel })}
   >
-    <Text variant="lead" pb={1}>
+    {selected && (
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "4px",
+          height: "calc(100% + 2px)",
+          bg: "ch.venetianRed",
+          marginTop: "-1px"
+        }}
+      ></Box>
+    )}
+    <Text variant="paragraph2" sx={{ fontFamily: "frutigerBold" }} pb={1}>
       {dataSetLabel}
     </Text>
     <Text variant="paragraph2" sx={{ bg: "missing" }}>
