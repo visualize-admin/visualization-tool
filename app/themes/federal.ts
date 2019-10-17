@@ -197,6 +197,7 @@ export const theme: Theme = {
       borderRadius: "default",
       width: "100%",
       minWidth: 160,
+      maxWidth: 300,
       p: 3,
       fontFamily: "frutigerRegular",
       fontSize: [3, 3, 3],
@@ -288,7 +289,7 @@ export const theme: Theme = {
         "&::after": {
           content: "''",
           position: "absolute",
-          top:0,
+          top: 0,
           borderBottomWidth: "1px",
           borderBottomStyle: "solid",
           borderBottomColor: "monochrome.300"
