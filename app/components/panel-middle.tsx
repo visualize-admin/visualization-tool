@@ -53,24 +53,54 @@ export const PanelMiddle = ({
         ) : (
           <>
             {state.state === "SELECTING_CHART_TYPE" && (
-              <Button
-                variant="primary"
-                onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
-                sx={{ width: "112px", ml: "auto" }}
-                disabled={state.chartConfig.chartType === "none"}
-              >
-                <Trans>Weiter</Trans>
-              </Button>
+              <>
+                {/* <Button
+                  variant="primary"
+                  onClick={() =>
+                    dispatch({
+                      type: "INITIALIZED"
+                      // value: state.dataSet
+                    })
+                  }
+                  sx={{ width: "112px", ml: "auto" }}
+                  disabled={false}
+                >
+                  <Trans>Zurück</Trans>
+                </Button> */}
+                <Button
+                  variant="primary"
+                  onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
+                  sx={{ ml: "auto" }}
+                  disabled={state.chartConfig.chartType === "none"}
+                >
+                  <Trans>Weiter</Trans>
+                </Button>
+              </>
             )}
             {state.state === "CONFIGURING_CHART" && (
-              <Button
-                variant="primary"
-                onClick={() => dispatch({ type: "PUBLISH" })}
-                sx={{ width: "112px", ml: "auto" }}
-                // disabled={state.chartConfig.chartType === "none"}
-              >
-                <Trans>Publizieren</Trans>
-              </Button>
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    dispatch({
+                      type: "DATASET_SELECTED",
+                      value: state.dataSet
+                    })
+                  }
+                  sx={{ mr: "auto" }}
+                  disabled={false}
+                >
+                  <Trans>Zurück</Trans>
+                </Button>
+                <Button
+                  variant="success"
+                  onClick={() => dispatch({ type: "PUBLISH" })}
+                  sx={{ ml: "auto" }}
+                  // disabled={state.chartConfig.chartType === "none"}
+                >
+                  <Trans>Publizieren</Trans>
+                </Button>
+              </>
             )}
           </>
         )}

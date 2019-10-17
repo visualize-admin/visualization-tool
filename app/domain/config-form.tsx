@@ -59,7 +59,7 @@ export const useField = ({
       : type === "checkbox"
       ? stateValue
       : undefined;
-
+  // console.log({ type }, { checked }, { stateValue });
   return {
     name: path,
     value: value ? value : stateValue,
@@ -93,7 +93,7 @@ export const useChartTypeSelectorField = ({
               x: getDimensionIri({
                 dimension: getCategoricalDimensions({
                   dimensions: metaData.dimensions
-                })[0]
+                })[1]
               }),
               height: getDimensionIri({
                 dimension: metaData.measures[0]
@@ -101,7 +101,7 @@ export const useChartTypeSelectorField = ({
               color: getDimensionIri({
                 dimension: getCategoricalDimensions({
                   dimensions: metaData.dimensions
-                })[0]
+                })[1]
               })
             }
           : {
@@ -116,7 +116,7 @@ export const useChartTypeSelectorField = ({
               color: getDimensionIri({
                 dimension: getCategoricalDimensions({
                   dimensions: metaData.dimensions
-                })[0]
+                })[1]
               })
             };
       dispatch({
@@ -135,7 +135,8 @@ export const useChartTypeSelectorField = ({
   );
 
   const stateValue =
-    state.state === "CONFIGURING_CHART"
+    state.state === "CONFIGURING_CHART" ||
+    state.state === "SELECTING_CHART_TYPE"
       ? get(state, "chartConfig.chartType")
       : "";
 
