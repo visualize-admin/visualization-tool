@@ -38,7 +38,10 @@ export const ChartTypeRadio = ({
         }}
       >
         <Icon name={label as IconName} />
-        <Text variant="paragraph2" sx={{ color: "monochrome.600" }}>
+        <Text
+          variant="paragraph2"
+          sx={{ color: checked ? "monochrome.100" : "monochrome.600" }}
+        >
           {label}
         </Text>
       </Flex>

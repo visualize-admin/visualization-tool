@@ -410,7 +410,7 @@ export const theme: Theme = {
         borderBottomStyle: "solid"
       }
     },
-    actionBar: { m: 3 },
+    actionBar: { my: 5 },
     label: {
       color: "monochrome.700",
       fontSize: [4, 4, 4],
