@@ -76,7 +76,7 @@ export const theme: Theme = {
     focus: "#333333",
     error: "#FF5555",
     hint: "#757575",
-    missing: "Bisque"
+    missing: "#EFEFEF"
   },
   fonts: {
     frutigerLight:
@@ -268,7 +268,7 @@ export const theme: Theme = {
         cursor: "pointer",
         width: "100%",
         textAlign: "left",
-        py: 2,
+        py: 3,
         borderRadius: 0,
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",

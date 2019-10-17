@@ -71,7 +71,7 @@ const DatasetButton = ({
         }}
       ></Box>
     )}
-    <Text variant="lead" pb={1}>
+    <Text variant="paragraph2" sx={{ fontFamily: "frutigerBold" }} pb={1}>
       {dataSetLabel}
     </Text>
     <Text variant="paragraph2" sx={{ bg: "missing" }}>
