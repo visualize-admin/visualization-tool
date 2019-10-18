@@ -12,21 +12,20 @@ import { IconChevronRight } from "./ic-chevron-right";
 import { IconCaretDown } from "./ic-caret-down";
 import { IconCaretRight } from "./ic-caret-right";
 
-
 export const Icons = {
-         check: IconCheck,
-         add: IconAdd,
-         chevrondown: IconChevronDown,
-         chevronright: IconChevronRight,
-         caretdown: IconCaretDown,
-         caretright: IconCaretRight,
-         search: IconSearch,
-         bar: IconBarChart,
-         column: IconColumnChart,
-         line: IconLineChart,
-         area: IconAreaChart,
-         scatterplot: IconScatterplot
-       };
+  check: IconCheck,
+  add: IconAdd,
+  chevrondown: IconChevronDown,
+  chevronright: IconChevronRight,
+  caretdown: IconCaretDown,
+  caretright: IconCaretRight,
+  search: IconSearch,
+  bar: IconBarChart,
+  column: IconColumnChart,
+  line: IconLineChart,
+  area: IconAreaChart,
+  scatterplot: IconScatterplot
+};
 
 export type IconName = keyof (typeof Icons);
 

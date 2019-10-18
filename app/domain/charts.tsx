@@ -1,5 +1,5 @@
 import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
-import { getDimensionLabelFromIri } from "./data-cube";
+import { getDimensionLabelFromIri, getMeasureLabelFromIri } from "./data-cube";
 
 /**
  * FIXME: These functions are not reliable, time value ("Jahr") and measure
@@ -37,7 +37,34 @@ export const formatDataForLineChart = ({
   observations,
   dimensions,
   measures,
+  xField,
+  groupByField,
+  heightField
+}: {
+  observations: any;
+  dimensions: Dimension[];
+  measures: Measure[];
+  xField: string;
+  groupByField: string;
+  heightField: string;
+}) => {
+  return observations.map((d: any) => {
+    return {
+      [getDimensionLabelFromIri({
+        dimensionIri: xField,
+        dimensions
+      })]: new Date(d.xField.value.value, 1, 1),
+      [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
+        .groupByField.label.value,
+      measure: +d.measure.value.value
+    };
+  });
+};
 
+export const formatDataForAreaChart = ({
+  observations,
+  dimensions,
+  measures,
   xField,
   groupByField,
   heightField
@@ -63,32 +90,28 @@ export const formatDataForLineChart = ({
   });
 };
 
-export const formatDataForAreaChart = ({
+// observations from useObservvations2()
+export const formatDataForScatterplot = ({
   observations,
   dimensions,
   measures,
-
   xField,
-  groupByField,
-  heightField
+  yField
 }: {
   observations: any;
   dimensions: Dimension[];
   measures: Measure[];
-
   xField: string;
-  groupByField: string;
-  heightField: string;
+  yField: string;
 }) => {
   return observations.map((d: any) => {
     return {
-      [getDimensionLabelFromIri({
-        dimensionIri: xField,
-        dimensions
-      })]: new Date(d.xField.value.value, 1, 1),
-      [getDimensionLabelFromIri({ dimensionIri: groupByField, dimensions })]: d
-        .groupByField.label.value,
-      measure: +d.measure.value.value
+      [getMeasureLabelFromIri({
+        measureIri: xField,
+        measures
+      })]: +d.xField.value.value,
+      [getMeasureLabelFromIri({ measureIri: yField, measures })]: +d.yField
+        .value.value
     };
   });
 };

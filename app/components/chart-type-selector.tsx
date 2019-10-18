@@ -22,12 +22,12 @@ export const ChartTypeSelector = ({
         flexWrap="wrap"
         justifyContent="space-around"
         alignItems="center"
-        sx={{
-          "&::after": {
-            content: "''",
-            flex: "auto"
-          }
-        }}
+        // sx={{
+        //   "&::after": {
+        //     content: "''",
+        //     flex: "auto"
+        //   }
+        // }}
       >
         {availableChartTypes.map(d => (
           <ChartTypeSelectorField

@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Box, Button, Flex } from "rebass";
+import { Box, Button } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { ActionBar } from "./action-bar";
 import { ChartPreview } from "./chart-preview";
@@ -17,11 +17,7 @@ export const PanelMiddle = ({
 
   return (
     <Box variant="container.middle" data-name="panel-middle">
-      <Flex
-        variant="container.chart"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Box variant="container.chart">
         {chartId === "new" ? (
           <DataSetPreview dataSetPreview={dataSetPreview} />
         ) : (
@@ -32,7 +28,7 @@ export const PanelMiddle = ({
             )}
           </>
         )}
-      </Flex>
+      </Box>
 
       {/* ACTIONS */}
       <ActionBar>
@@ -105,6 +101,10 @@ export const PanelMiddle = ({
           </>
         )}
       </ActionBar>
+      {/* <Box my={3} p={2} bg="muted">
+        <pre>{chartId}</pre>
+        <pre>{JSON.stringify(state, null, 2)}</pre>
+      </Box> */}
     </Box>
   );
 };

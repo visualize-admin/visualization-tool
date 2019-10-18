@@ -19,14 +19,28 @@ type StyleValueMap = Record<
           | number
           | string[]
           | number[]
-          | Record<string, string | number | string[] | number[]>
+          | Record<
+              string,
+              | string
+              | number
+              | string[]
+              | number[]
+              | Record<
+                  string,
+                  | string
+                  | number
+                  | string[]
+                  | number[]
+                  | Record<string, string | number | string[] | number[]>
+                >
+            >
         >
     >
 >;
 
 /**
  * Adapted from the [System UI Theme Specification](https://system-ui.com/theme/)
- * 
+ *
  * TODO: improve typing to be less generic and more specific to the theme configs that *we* use.
  */
 export interface Theme {
@@ -65,4 +79,3 @@ export const loadTheme = async (theme: string = "federal") => {
 };
 
 export const useTheme = () => useEmotionTheme<Theme>();
-

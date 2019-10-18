@@ -83,15 +83,23 @@ export const useChartTypeSelectorField = ({
   metaData: any;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
-  console.log({ metaData });
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
       const chartType = e.currentTarget.value;
       const initialState =
-        chartType === "bar"
+        chartType === "scatterplot"
           ? {
               x: getDimensionIri({
-                dimension: getCategoricalDimensions({
+                dimension: metaData.measures[0]
+              }),
+              y: getDimensionIri({
+                dimension: metaData.measures[1]
+              })
+            }
+          : chartType === "bar"
+          ? {
+              x: getDimensionIri({
+                dimension: getTimeDimensions({
                   dimensions: metaData.dimensions
                 })[1]
               }),
