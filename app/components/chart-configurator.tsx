@@ -11,6 +11,7 @@ import { ChartAreasControls } from "./cockpit-chart-areas";
 import { ChartBarsControls } from "./cockpit-chart-bars";
 import { ChartLinesControls } from "./cockpit-chart-lines";
 import { Loading } from "./hint";
+import { ChartScatterplotControls } from "./cockpit-chart-scatterplot";
 
 export const ChartConfigurator = ({
   chartId,
@@ -55,6 +56,13 @@ export const ChartConfigurator = ({
               chartId={chartId}
               timeDimensions={timeDimensions}
               categoricalDimensions={categoricalDimensions}
+              measuresDimensions={measuresDimensions}
+            />
+          )}
+        {state.state === "CONFIGURING_CHART" &&
+          state.chartConfig.chartType === "scatterplot" && (
+            <ChartScatterplotControls
+              chartId={chartId}
               measuresDimensions={measuresDimensions}
             />
           )}

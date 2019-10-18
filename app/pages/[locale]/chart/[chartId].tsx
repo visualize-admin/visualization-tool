@@ -27,11 +27,6 @@ const ChartCreator = ({ chartId }: { chartId: string }) => {
 
   return (
     <Box bg="muted">
-      {/* <Box my={3} p={2} bg="muted">
-        <pre>{chartId}</pre>
-        <pre>{JSON.stringify(state, null, 2)}</pre>
-      </Box> */}
-
       <Flex justifyContent="space-between" alignItems="flex-start">
         <PanelLeft
           chartId={chartId}

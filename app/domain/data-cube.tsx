@@ -131,6 +131,53 @@ export const useObservations = ({
 
   return useRemoteData(fetchData);
 };
+export const useObservations2 = ({
+  dataSet,
+  dimensions,
+  measures,
+  fields,
+  filters
+}: {
+  dataSet: DataCube;
+  dimensions: Dimension[];
+  measures: Measure[];
+  fields: any;
+  filters?: Record<string, Record<string, boolean>>;
+}) => {
+  const fetchData = useCallback(async () => {
+    const constructedFilters = filters
+      ? Object.entries(filters).flatMap(([dim, values]) => {
+          const selectedValues = Object.entries(values).flatMap(
+            ([value, selected]) => (selected ? [value] : [])
+          );
+          return selectedValues.length === 1
+            ? [new Dimension({ iri: dim }).equals(selectedValues[0])]
+            : selectedValues.length > 0
+            ? [new Dimension({ iri: dim }).in(selectedValues)]
+            : [];
+        })
+      : [];
+
+    let query = dataSet.query().limit(100000);
+
+    for (const [key, value] of fields) {
+      query = query.select({
+        [key]: measures.find(m => m.iri.value === value)!
+      });
+    }
+    console.log({ constructedFilters });
+    for (const f of constructedFilters) {
+      query = query.filter(f);
+    }
+
+    const data = await query.execute();
+    return {
+      results: data
+    };
+  }, [filters, dataSet, measures, fields]);
+
+  return useRemoteData(fetchData);
+};
 
 /**
  * @fixme use metadata to filter time dimension!
@@ -174,6 +221,17 @@ export const getDimensionLabelFromIri = ({
   const dimension = dimensions.find(dim => dim.iri.value === dimensionIri);
   // FIXME: Is dimensionIri the right thing to return?
   return dimension ? getDimensionLabel({ dimension }) : dimensionIri;
+};
+export const getMeasureLabelFromIri = ({
+  measureIri,
+  measures
+}: {
+  measureIri: string;
+  measures: Measure[];
+}): string => {
+  const measure = measures.find(m => m.iri.value === measureIri);
+  // FIXME: Is measureIri the right thing to return?
+  return measure ? getMeasureLabel({ measure }) : measureIri;
 };
 
 export const useDimensionValues = ({
