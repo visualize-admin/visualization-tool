@@ -268,7 +268,7 @@ export const theme: Theme = {
         cursor: "pointer",
         width: "100%",
         textAlign: "left",
-        py: 3,
+        py: 4,
         borderRadius: 0,
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",

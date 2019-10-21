@@ -74,7 +74,7 @@ export const ChartScatterplotVisualization = ({
     fields,
     filters
   });
-  console.log("observations in cockpit", observations);
+
   if (observations.state === "loaded") {
     return (
       <ChartScatterplot

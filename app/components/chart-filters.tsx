@@ -35,7 +35,7 @@ export const ChartFilters = ({
   } else {
     return (
       <Loading>
-        <Trans>Metadaten werden herausgeholt...</Trans>
+        <Trans>Metadaten werden geladen...</Trans>
       </Loading>
     );
   }

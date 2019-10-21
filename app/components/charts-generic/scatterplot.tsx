@@ -96,7 +96,7 @@ const ScatterplotChart = ({ spec }: { spec: any }) => {
         });
 
         await view.runAsync();
-        console.log("vegadata", view.data("table"));
+        // console.log("vegadata", view.data("table"));
       } catch (error) {
         console.log(error);
       }

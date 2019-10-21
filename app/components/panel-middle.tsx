@@ -4,14 +4,14 @@ import { Box, Button } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { ActionBar } from "./action-bar";
 import { ChartPreview } from "./chart-preview";
-import { DataSetPreview, Preview } from "./dataset-selector";
+import { DataSetPreview } from "./dataset-preview";
 
 export const PanelMiddle = ({
   chartId,
-  dataSetPreview
+  dataSetIri
 }: {
   chartId: string;
-  dataSetPreview: Preview;
+  dataSetIri: string;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -19,7 +19,7 @@ export const PanelMiddle = ({
     <Box variant="container.middle" data-name="panel-middle">
       <Box variant="container.chart">
         {chartId === "new" ? (
-          <DataSetPreview dataSetPreview={dataSetPreview} />
+          <DataSetPreview dataSetIri={dataSetIri} />
         ) : (
           <>
             {(state.state === "SELECTING_CHART_TYPE" ||
@@ -38,11 +38,11 @@ export const PanelMiddle = ({
             onClick={() =>
               dispatch({
                 type: "DATASET_SELECTED",
-                value: dataSetPreview.iri
+                value: dataSetIri
               })
             }
             sx={{ width: "112px", ml: "auto" }}
-            disabled={!dataSetPreview.iri}
+            disabled={!dataSetIri}
           >
             <Trans>Weiter</Trans>
           </Button>

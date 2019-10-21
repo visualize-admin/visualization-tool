@@ -1598,10 +1598,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zazuko/query-rdf-data-cube@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@zazuko/query-rdf-data-cube/-/query-rdf-data-cube-0.1.2.tgz#3560364021fef0831b40cb425ab4d786bc172584"
-  integrity sha512-yIgC8m5ogv9oQGVN79RVN5yHPUwhzFhe/aRdkku45w1oPm+PsVUUBYBkil6bC9e77fDBTJSpcdMrtKU+tlcxAw==
+"@zazuko/query-rdf-data-cube@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@zazuko/query-rdf-data-cube/-/query-rdf-data-cube-0.2.1.tgz#dbb6c232c322fda29b1d95aaab0827a0d2a66a27"
+  integrity sha512-60GvbiP1hDCdGqIVqgvzvwFEl7grWSu+6hjnOVd96ZWTQO5s3ZRc/J+fJ0zMDz++8bOiWXLQ0uzBWKbutswRcQ==
   dependencies:
     "@rdfjs/data-model" "^1.1.2"
     "@rdfjs/namespace" "^1.1.0"
