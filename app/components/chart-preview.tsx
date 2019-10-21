@@ -91,7 +91,7 @@ export const ChartPreview = ({
             color: "monochrome.600",
             alignSelf: "flex-end"
           }}
-        >{`Quelle: ${dataSet.extraMetadata.get("source")!.value}`}</Text>
+        >{`Quelle: ${dataSet.extraMetadata.get("contact")!.value}`}</Text>
       </Flex>
     );
   } else {
