@@ -92,11 +92,8 @@ export const useDataSetAndMetadata = (iri: string) => {
   const fetchCb = useCallback(async () => {
     const dataSet = await entryPoint.dataCubeByIri(iri);
 
-    const metadata = Array.from(dataSet.extraMetadata.entries());
-
     return {
       dataSet,
-      metadata,
       dimensions: await dataSet.dimensions(),
       attributes: await dataSet.attributes(),
       measures: await dataSet.measures()
