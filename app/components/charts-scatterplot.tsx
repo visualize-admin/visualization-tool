@@ -23,7 +23,6 @@ export const ChartScatterplot = ({
     xField,
     yField
   });
-  console.log({ formattedData });
   return (
     <Scatterplot
       data={formattedData}

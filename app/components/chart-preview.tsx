@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Flex, Text } from "rebass";
+import { Flex, Text, Box } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { useDataSetAndMetadata } from "../domain/data-cube";
 import { ChartAreasVisualization } from "./cockpit-chart-areas";
@@ -21,68 +21,83 @@ export const ChartPreview = ({
 
   if (meta.state === "loaded") {
     const { dimensions, measures, dataSet } = meta.data;
+    // console.log(dataSet.extraMetadata);
     return (
-      <Flex p={5} flexDirection="column" justifyContent="space-between">
+      <Flex
+        p={5}
+        flexDirection="column"
+        justifyContent="space-between"
+        sx={{ height: "100%", color: "monochrome.800" }}
+      >
         <Text variant="heading2" mb={2}>
-          {meta.data.dataSet.labels[0].value}
+          {dataSet.labels[0].value}
         </Text>
-        <Flex justifyContent="center" alignItems="center">
-          {/* // FIXME: we shouldn't need this condition because the states must be these */}
-          {(state.state === "SELECTING_CHART_TYPE" ||
-            state.state === "CONFIGURING_CHART") && (
-            <>
-              {state.chartConfig.chartType === "bar" && (
-                <ChartBarsVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
-                  filters={state.chartConfig.filters}
-                  xField={state.chartConfig.x}
-                  groupByField={state.chartConfig.color}
-                  heightField={state.chartConfig.height}
-                />
-              )}
-              {state.chartConfig.chartType === "line" && (
-                <ChartLinesVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
-                  filters={state.chartConfig.filters}
-                  xField={state.chartConfig.x}
-                  groupByField={state.chartConfig.color}
-                  heightField={state.chartConfig.height}
-                />
-              )}
-              {state.chartConfig.chartType === "area" && (
-                <ChartAreasVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
-                  filters={state.chartConfig.filters}
-                  xField={state.chartConfig.x}
-                  groupByField={state.chartConfig.color}
-                  heightField={state.chartConfig.height}
-                />
-              )}
-              {state.chartConfig.chartType === "scatterplot" && (
-                <ChartScatterplotVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
-                  filters={state.chartConfig.filters}
-                  xField={state.chartConfig.x}
-                  yField={state.chartConfig.y}
-                />
-              )}
-            </>
-          )}
-        </Flex>
+        <Text variant="paragraph1" mb={2}>
+          {dataSet.extraMetadata.get("description")!.value}
+        </Text>
+        {/* // FIXME: we shouldn't need this condition because the states must be these */}
+        {(state.state === "SELECTING_CHART_TYPE" ||
+          state.state === "CONFIGURING_CHART") && (
+          <>
+            {state.chartConfig.chartType === "bar" && (
+              <ChartBarsVisualization
+                dataSet={dataSet}
+                dimensions={dimensions}
+                measures={measures}
+                filters={state.chartConfig.filters}
+                xField={state.chartConfig.x}
+                groupByField={state.chartConfig.color}
+                heightField={state.chartConfig.height}
+              />
+            )}
+            {state.chartConfig.chartType === "line" && (
+              <ChartLinesVisualization
+                dataSet={dataSet}
+                dimensions={dimensions}
+                measures={measures}
+                filters={state.chartConfig.filters}
+                xField={state.chartConfig.x}
+                groupByField={state.chartConfig.color}
+                heightField={state.chartConfig.height}
+              />
+            )}
+            {state.chartConfig.chartType === "area" && (
+              <ChartAreasVisualization
+                dataSet={dataSet}
+                dimensions={dimensions}
+                measures={measures}
+                filters={state.chartConfig.filters}
+                xField={state.chartConfig.x}
+                groupByField={state.chartConfig.color}
+                heightField={state.chartConfig.height}
+              />
+            )}
+            {state.chartConfig.chartType === "scatterplot" && (
+              <ChartScatterplotVisualization
+                dataSet={dataSet}
+                dimensions={dimensions}
+                measures={measures}
+                filters={state.chartConfig.filters}
+                xField={state.chartConfig.x}
+                yField={state.chartConfig.y}
+              />
+            )}
+          </>
+        )}
+        <Text
+          variant="meta"
+          mt={4}
+          sx={{
+            color: "monochrome.600",
+            alignSelf: "flex-end"
+          }}
+        >{`Quelle: ${dataSet.extraMetadata.get("source")!.value}`}</Text>
       </Flex>
     );
   } else {
     return (
       <Loading>
-        <Trans>Metadaten werden herausgeholt...</Trans>
+        <Trans>Metadaten werden geladen...</Trans>
       </Loading>
     );
   }

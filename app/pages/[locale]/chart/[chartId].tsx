@@ -34,7 +34,7 @@ const ChartCreator = ({ chartId }: { chartId: string }) => {
           updateDataSetPreview={updateDataSetPreview}
         />
 
-        <PanelMiddle chartId={chartId} dataSetPreview={dataSetPreview} />
+        <PanelMiddle chartId={chartId} dataSetIri={dataSetPreview.iri} />
 
         <PanelRight chartId={chartId} />
       </Flex>

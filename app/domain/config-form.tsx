@@ -93,7 +93,10 @@ export const useChartTypeSelectorField = ({
                 dimension: metaData.measures[0]
               }),
               y: getDimensionIri({
-                dimension: metaData.measures[1]
+                dimension:
+                  metaData.measures.length > 1
+                    ? metaData.measures[1]
+                    : metaData.measures[0]
               })
             }
           : chartType === "bar"

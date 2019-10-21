@@ -32,7 +32,52 @@ const useDataCubeEntryPoint = () => {
   const endpoint = useContext(DataCubeContext);
   const locale = useLocale();
   return useMemo(() => {
-    return new DataCubeEntryPoint(endpoint, { languages: [locale] });
+    return new DataCubeEntryPoint(endpoint, {
+      languages: [locale],
+      extraMetadata: [
+        {
+          variable: "contact",
+          iri: "https://pcaxis.described.at/contact",
+          multilang: true
+        },
+        {
+          variable: "source",
+          iri: "https://pcaxis.described.at/source",
+          multilang: true
+        },
+        {
+          variable: "survey",
+          iri: "https://pcaxis.described.at/survey",
+          multilang: true
+        },
+        {
+          variable: "database",
+          iri: "https://pcaxis.described.at/database",
+          multilang: true
+        },
+        {
+          variable: "unit",
+          iri: "https://pcaxis.described.at/unit",
+          multilang: true
+        },
+        {
+          variable: "note",
+          iri: "https://pcaxis.described.at/note",
+          multilang: true
+        },
+        {
+          variable: "dateCreated",
+          iri: "http://schema.org/dateCreated",
+          multilang: false
+        },
+        { variable: "dateModified", iri: "http://schema.org/dateModified" },
+        {
+          variable: "description",
+          iri: "http://www.w3.org/2000/01/rdf-schema#comment",
+          multilang: true
+        }
+      ]
+    });
   }, [endpoint, locale]);
 };
 
@@ -47,8 +92,11 @@ export const useDataSetAndMetadata = (iri: string) => {
   const fetchCb = useCallback(async () => {
     const dataSet = await entryPoint.dataCubeByIri(iri);
 
+    const metadata = Array.from(dataSet.extraMetadata.entries());
+
     return {
       dataSet,
+      metadata,
       dimensions: await dataSet.dimensions(),
       attributes: await dataSet.attributes(),
       measures: await dataSet.measures()
@@ -165,7 +213,6 @@ export const useObservations2 = ({
         [key]: measures.find(m => m.iri.value === value)!
       });
     }
-    console.log({ constructedFilters });
     for (const f of constructedFilters) {
       query = query.filter(f);
     }

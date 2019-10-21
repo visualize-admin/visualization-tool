@@ -7,7 +7,7 @@ export const IconBarChart = ({ size = 48, color = "currentColor" }) => (
     height={size}
     viewBox="0 0 48 48"
     fill={color}
-    fill-rule="evenodd"
+    fillRule="evenodd"
     stroke="none"
     strokeWidth="1"
     strokeLinecap="round"
