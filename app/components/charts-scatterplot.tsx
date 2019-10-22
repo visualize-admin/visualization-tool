@@ -2,6 +2,7 @@ import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { formatDataForScatterplot, getMeasureLabelFromIri } from "../domain";
 import { Scatterplot } from "./charts-generic/scatterplot";
+import { useResizeObserver } from "../lib/use-resize-observer";
 
 export const ChartScatterplot = ({
   observations,
@@ -16,6 +17,8 @@ export const ChartScatterplot = ({
   xField: string;
   yField: string;
 }) => {
+  const [resizeRef, width] = useResizeObserver();
+
   const formattedData = formatDataForScatterplot({
     observations,
     dimensions,
@@ -24,11 +27,13 @@ export const ChartScatterplot = ({
     yField
   });
   return (
-    <Scatterplot
-      data={formattedData}
-      width={600}
-      xField={getMeasureLabelFromIri({ measureIri: xField, measures })}
-      yField={getMeasureLabelFromIri({ measureIri: yField, measures })}
-    />
+    <div ref={resizeRef}>
+      <Scatterplot
+        data={formattedData}
+        width={width}
+        xField={getMeasureLabelFromIri({ measureIri: xField, measures })}
+        yField={getMeasureLabelFromIri({ measureIri: yField, measures })}
+      />
+    </div>
   );
 };
