@@ -6,7 +6,7 @@ import { useDataSetAndMetadata } from "../domain";
 import { Trans } from "@lingui/macro";
 import { ChartType } from "../domain/config-types";
 
-const availableChartTypes: ChartType[] = ["bar", "line", "area", "scatterplot"];
+const availableChartTypes: ChartType[] = ["column", "line", "area", "scatterplot"];
 export const ChartTypeSelector = ({
   chartId,
   dataSet
