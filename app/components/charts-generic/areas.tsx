@@ -28,7 +28,7 @@ export const Areas = ({
   const spec: VegaSpecs = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width,
-    height: width * 0.5,
+    height: width * 0.4,
     padding: { left: 16, right: 16, top: 64, bottom: 16 },
     autosize: { type: "fit-x", contains: "padding" },
 

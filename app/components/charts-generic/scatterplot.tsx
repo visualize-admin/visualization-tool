@@ -16,7 +16,7 @@ export const Scatterplot = ({ data, width, xField, yField }: Props) => {
   const spec: vega.Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
-    height: width * 0.5,
+    height: width * 0.4,
     padding: 5,
 
     autosize: { type: "fit-x", contains: "padding" },
