@@ -21,7 +21,7 @@ export const DataSetList = ({
   const datasets = useDataSets();
   if (datasets.state === "loaded") {
     return (
-      <Box>
+      <Box sx={{ bg: "monochrome.100" }}>
         {datasets.data.map(d => (
           <DatasetButton
             key={d.iri}

@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Flex, Text, Box } from "rebass";
+import { Flex, Text } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { useDataSetAndMetadata } from "../domain/data-cube";
 import { ChartAreasVisualization } from "./cockpit-chart-areas";
@@ -15,7 +15,7 @@ export const ChartPreview = ({
   chartId: string;
   dataSetIri: string;
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state] = useConfiguratorState();
 
   const meta = useDataSetAndMetadata(dataSetIri);
 
@@ -37,9 +37,10 @@ export const ChartPreview = ({
         </Text>
         {/* // FIXME: we shouldn't need this condition because the states must be these */}
         {(state.state === "SELECTING_CHART_TYPE" ||
-          state.state === "CONFIGURING_CHART") && (
+          state.state === "CONFIGURING_CHART" ||
+          state.state === "PUBLISHED") && (
           <>
-            {state.chartConfig.chartType === "bar" && (
+            {state.chartConfig.chartType === "column" && (
               <ChartBarsVisualization
                 dataSet={dataSet}
                 dimensions={dimensions}

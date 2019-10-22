@@ -70,9 +70,11 @@ export const theme: Theme = {
       base: "#3c763d",
       hover: "#3c763d",
       active: "#3c763d",
-      disabled: "#3c763d"
+      disabled: "#DFF0D8",
+      light: "#DFF0D8"
     },
     muted: "#F5F5F5",
+    blueGrey: "#F9FAFB",
     focus: "#333333",
     error: "#FF5555",
     hint: "#757575",
@@ -263,6 +265,7 @@ export const theme: Theme = {
     },
     datasetButton: {
       normal: {
+        bg: "transparent",
         position: "relative",
         color: "monochrome.700",
         cursor: "pointer",
@@ -369,16 +372,17 @@ export const theme: Theme = {
     },
     container: {
       root: {
-        bg: "monochrome.100",
         overflow: "scroll"
       },
       left: {
+        bg: "blueGrey",
         variant: "variants.container.root",
         boxShadow: "rightSide",
         borderRightColor: "monochrome.500",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
-        width: "322px",
+        minWidth: "20rem",
+        width: "20rem",
         height: "100vh"
       },
       middle: {
@@ -389,17 +393,20 @@ export const theme: Theme = {
       },
       chart: {
         variant: "variants.container.root",
+        bg: "monochrome.100",
         boxShadow: "primary",
         width: "100%",
         minHeight: 600
       },
       right: {
+        bg: "blueGrey",
         variant: "variants.container.root",
         boxShadow: "leftSide",
         borderLeftColor: "monochrome.500",
         borderLeftWidth: "1px",
         borderLeftStyle: "solid",
-        width: "322px",
+        minWidth: "20rem",
+        width: "20rem",
         height: "100vh"
       },
       header: {
@@ -428,8 +435,7 @@ export const theme: Theme = {
       borderStyle: "solid"
     },
     controlSectionContent: {
-      p: 3,
-      bg: "muted"
+      p: 3
     },
     chartTypeRadio: {
       width: "86px",

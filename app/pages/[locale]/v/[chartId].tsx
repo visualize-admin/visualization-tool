@@ -19,7 +19,7 @@ const DisplayChart = ({
 
   return rd.state === "loaded" ? (
     <div>
-      {chartConfig.chartType === "bar" && (
+      {chartConfig.chartType === "column" && (
         <ChartBarsVisualization
           dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}

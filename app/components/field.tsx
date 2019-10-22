@@ -35,7 +35,7 @@ export const Field = ({
   return type === "radio" ? (
     <Radio label={label} disabled={disabled} {...field}></Radio>
   ) : type === "checkbox" ? (
-    <Checkbox label={label} disabled={false} {...field}></Checkbox>
+    <Checkbox label={label} disabled={disabled} {...field}></Checkbox>
   ) : type === "input" ? (
     <Input label={label} {...field} disabled={disabled}></Input>
   ) : (

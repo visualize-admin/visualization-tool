@@ -10,11 +10,15 @@ import { Box } from "rebass";
 import { FieldProps, Option } from "../domain/config-form";
 
 export const Label = ({
+  label,
   htmlFor,
+  disabled,
   smaller = false,
   children
 }: {
+  label?: string;
   htmlFor: string;
+  disabled?: boolean;
   smaller?: boolean;
   children: React.ReactNode;
 }) => (
@@ -22,12 +26,13 @@ export const Label = ({
     htmlFor={htmlFor}
     mb={2}
     sx={{
-      color: "monochrome.700",
+      color: disabled ? "monochrome.500" : "monochrome.700",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
       pb: smaller ? 1 : 0
     }}
   >
     {children}
+    {label && <Box sx={{ maxWidth: "75%", textAlign: "left" }}>{label}</Box>}
   </RebassLabel>
 );
 
@@ -40,7 +45,7 @@ export const Radio = ({
   onChange
 }: { label: string; disabled?: boolean } & FieldProps) => {
   return (
-    <Label htmlFor={`${name}-${value}`}>
+    <Label label={label} htmlFor={`${name}-${value}`}>
       <RebassRadio
         name={name}
         id={`${name}-${value}`}
@@ -50,7 +55,6 @@ export const Radio = ({
         disabled={disabled}
         sx={{ size: 20, color: checked ? "primary.base" : "monochrome.500" }}
       />
-      {label}
     </Label>
   );
 };
@@ -63,17 +67,16 @@ export const Checkbox = ({
   disabled,
   onChange
 }: { label: string; disabled?: boolean } & FieldProps) => (
-  <Label htmlFor={label}>
+  <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
     <RebassCheckbox
       sx={{ size: 20, color: checked ? "primary.base" : "monochrome.500" }}
-      id={label}
+      id={`${name}-${label}`}
       name={name}
       value={value}
       checked={checked}
       disabled={disabled}
       onChange={onChange}
     />
-    {label}
   </Label>
 );
 
