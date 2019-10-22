@@ -1,10 +1,12 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Box, Button } from "rebass";
+import { Box, Button, Link } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { ActionBar } from "./action-bar";
 import { ChartPreview } from "./chart-preview";
 import { DataSetPreview } from "./dataset-preview";
+import { LocalizedLink } from "./links";
+import { Success } from "./hint";
 
 export const PanelMiddle = ({
   chartId,
@@ -17,18 +19,37 @@ export const PanelMiddle = ({
 
   return (
     <Box variant="container.middle" data-name="panel-middle">
-      <Box variant="container.chart">
-        {chartId === "new" ? (
+      {chartId === "new" ? (
+        <Box variant="container.chart">
           <DataSetPreview dataSetIri={dataSetIri} />
-        ) : (
-          <>
-            {(state.state === "SELECTING_CHART_TYPE" ||
-              state.state === "CONFIGURING_CHART") && (
+        </Box>
+      ) : (
+        <>
+          {(state.state === "SELECTING_CHART_TYPE" ||
+            state.state === "CONFIGURING_CHART") && (
+            <Box variant="container.chart">
               <ChartPreview chartId={chartId} dataSetIri={state.dataSet} />
-            )}
-          </>
-        )}
-      </Box>
+            </Box>
+          )}
+          {state.state === "PUBLISHED" && (
+            <>
+              <Success>
+                <LocalizedLink
+                  href={`/[locale]/config?key=${state.configKey}`}
+                  passHref
+                >
+                  <Link sx={{ textDecoration: "underline", cursor: "pointer" }}>
+                    {state.configKey}
+                  </Link>
+                </LocalizedLink>
+              </Success>
+              <Box variant="container.chart">
+                <ChartPreview chartId={chartId} dataSetIri={state.dataSet} />
+              </Box>
+            </>
+          )}
+        </>
+      )}
 
       {/* ACTIONS */}
       <ActionBar>
@@ -50,19 +71,17 @@ export const PanelMiddle = ({
           <>
             {state.state === "SELECTING_CHART_TYPE" && (
               <>
-                {/* <Button
-                  variant="primary"
-                  onClick={() =>
-                    dispatch({
-                      type: "INITIALIZED"
-                      // value: state.dataSet
-                    })
-                  }
-                  sx={{ width: "112px", ml: "auto" }}
-                  disabled={false}
+                <LocalizedLink
+                  href={{
+                    pathname: "/[locale]/chart/[chartId]",
+                    query: { chartId: "new" }
+                  }}
+                  passHref
                 >
-                  <Trans>Zurück</Trans>
-                </Button> */}
+                  <Button as="a" variant="secondary">
+                    <Trans>Zurück</Trans>
+                  </Button>
+                </LocalizedLink>
                 <Button
                   variant="primary"
                   onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
@@ -89,13 +108,36 @@ export const PanelMiddle = ({
                   <Trans>Zurück</Trans>
                 </Button>
                 <Button
-                  variant="success"
+                  variant="primary"
                   onClick={() => dispatch({ type: "PUBLISH" })}
                   sx={{ ml: "auto" }}
                   // disabled={state.chartConfig.chartType === "none"}
                 >
                   <Trans>Publizieren</Trans>
                 </Button>
+              </>
+            )}
+            {state.state === "PUBLISHED" && (
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
+                  sx={{ mr: "auto" }}
+                  disabled
+                >
+                  <Trans>Bearbeiten</Trans>
+                </Button>
+                <LocalizedLink
+                  href={{
+                    pathname: "/[locale]/chart/[chartId]",
+                    query: { chartId: "new" }
+                  }}
+                  passHref
+                >
+                  <Button as="a" variant="outline">
+                    <Trans>Neue Visualisierung</Trans>
+                  </Button>
+                </LocalizedLink>
               </>
             )}
           </>

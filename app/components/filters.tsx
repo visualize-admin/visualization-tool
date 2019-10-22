@@ -51,7 +51,10 @@ const DimensionValues = ({
 }) => {
   const dimensionValues = useDimensionValues({ dataSet, dimension });
   const dimensionIri = getDimensionIri({ dimension });
-
+  // FIXME: workaround time dimension
+  const isTimeDimension = ["Jahr", "Année", "Anno", "Year"].includes(
+    dimension.labels[0].value
+  );
   if (dimensionValues.state === "loaded") {
     return (
       <>
@@ -62,8 +65,9 @@ const DimensionValues = ({
               type="checkbox"
               chartId={chartId}
               path={`filters["${dimensionIri}"]["${dv.value.value}"]`}
-              label={dv.label.value}
+              label={isTimeDimension ? dv.value.value : dv.label.value}
               value={dv.value.value}
+              disabled={isTimeDimension} // FIXME: disable time filter for now because of missing iri
             />
           );
         })}

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Flex, Text, Box } from "rebass";
 import { Trans } from "@lingui/macro";
+import { Icon } from "../icons";
 
 export const Error = ({ children }: { children: React.ReactNode }) => (
   <Flex justifyContent="center" alignItems="center" variant={"error"}>
@@ -40,4 +41,25 @@ export const DataSetHint = () => (
       </Text>
     </Box>
   </Hint>
+);
+
+export const Success = ({ children }: { children: React.ReactNode }) => (
+  <Flex
+    variant={"hint"}
+    mb={4}
+    p={4}
+    color="success.base"
+    bg="success.light"
+    justifyContent="flex-start"
+    alignItems="center"
+  >
+    <Icon name="published" size={56} />
+    <Text variant="heading3" ml={4}>
+      <Trans>
+        Gratulation! Ihre Visualisierung kann jetzt geteilt und eingebettet
+        werden.
+      </Trans>
+    </Text>
+    {children}
+  </Flex>
 );

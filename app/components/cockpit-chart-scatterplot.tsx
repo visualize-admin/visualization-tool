@@ -1,6 +1,6 @@
 import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import React from "react";
-import { useObservations, useObservations2 } from "../domain/data-cube";
+import { useObservations2 } from "../domain/data-cube";
 import { Field } from "./field";
 import { Loading } from "./hint";
 import { ControlSection, ControlList } from "./chart-controls";

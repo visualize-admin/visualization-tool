@@ -9,13 +9,13 @@ type StepState =
   | "SELECTING_DATASET"
   | "SELECTING_CHART_TYPE"
   | "CONFIGURING_CHART"
-  | "PUBLISHING";
+  | "PUBLISHED";
 
 const steps: Array<StepState> = [
   "SELECTING_DATASET",
   "SELECTING_CHART_TYPE",
   "CONFIGURING_CHART",
-  "PUBLISHING"
+  "PUBLISHED"
 ];
 
 export const Stepper = () => {
@@ -115,7 +115,7 @@ export const StepLabel = ({
           <Trans> Anpassen</Trans>
         </Text>
       );
-    case "PUBLISHING":
+    case "PUBLISHED":
       return (
         <Text
           sx={{

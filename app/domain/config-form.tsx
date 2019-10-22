@@ -54,12 +54,12 @@ export const useField = ({
 
   // FIXME: checked doesn't work for select menu on reload
   const checked =
-    type === "radio" || "select"
-      ? stateValue === value
-      : type === "checkbox"
+    type === "checkbox"
       ? stateValue
+      : type === "radio" || "select"
+      ? stateValue === value
       : undefined;
-  // console.log({ type }, { checked }, { stateValue });
+
   return {
     name: path,
     value: value ? value : stateValue,
@@ -99,7 +99,7 @@ export const useChartTypeSelectorField = ({
                     : metaData.measures[0]
               })
             }
-          : chartType === "bar"
+          : chartType === "column"
           ? {
               x: getDimensionIri({
                 dimension: getTimeDimensions({

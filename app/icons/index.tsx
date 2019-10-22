@@ -15,24 +15,23 @@ import { IconDataset } from "./ic-dataset";
 import { IconDatasetPublished } from "./ic-dataset-published";
 import { IconLoading } from "./ic-loading";
 
-
 export const Icons = {
-         check: IconCheck,
-         add: IconAdd,
-         chevrondown: IconChevronDown,
-         chevronright: IconChevronRight,
-         caretdown: IconCaretDown,
-         caretright: IconCaretRight,
-         search: IconSearch,
-         bar: IconBarChart,
-         column: IconColumnChart,
-         line: IconLineChart,
-         area: IconAreaChart,
-         scatterplot: IconScatterplot,
-         dataset: IconDataset,
-         published: IconDatasetPublished,
-         loading: IconLoading
-       };
+  check: IconCheck,
+  add: IconAdd,
+  chevrondown: IconChevronDown,
+  chevronright: IconChevronRight,
+  caretdown: IconCaretDown,
+  caretright: IconCaretRight,
+  search: IconSearch,
+  bar: IconBarChart,
+  column: IconColumnChart,
+  line: IconLineChart,
+  area: IconAreaChart,
+  scatterplot: IconScatterplot,
+  dataset: IconDataset,
+  published: IconDatasetPublished,
+  loading: IconLoading
+};
 
 export type IconName = keyof (typeof Icons);
 

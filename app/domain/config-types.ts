@@ -35,6 +35,13 @@ const BarConfig = t.type(
   },
   "BarConfig"
 );
+const ColumnConfig = t.type(
+  {
+    chartType: t.literal("column"),
+    filters: Filters
+  },
+  "BarConfig"
+);
 export type BarConfig = t.TypeOf<typeof BarConfig>;
 
 const LineConfig = t.type(
@@ -65,7 +72,14 @@ export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 // );
 
 const ChartConfig = t.intersection([
-  t.union([AreaConfig, BarConfig, LineConfig, ScatterPlotConfig, NoneConfig]),
+  t.union([
+    AreaConfig,
+    BarConfig,
+    ColumnConfig,
+    LineConfig,
+    ScatterPlotConfig,
+    NoneConfig
+  ]),
   t.record(t.string, t.any)
 ]);
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;

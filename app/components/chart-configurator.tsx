@@ -31,9 +31,9 @@ export const ChartConfigurator = ({
     const categoricalDimensions = getCategoricalDimensions({ dimensions });
     const measuresDimensions = measures;
     return (
-      <Flex flexDirection="column" bg="muted" sx={{ width: "100%" }}>
+      <Flex flexDirection="column">
         {state.state === "CONFIGURING_CHART" &&
-          state.chartConfig.chartType === "bar" && (
+          state.chartConfig.chartType === "column" && (
             <ChartBarsControls
               chartId={chartId}
               timeDimensions={timeDimensions}

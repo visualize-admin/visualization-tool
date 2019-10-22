@@ -1,12 +1,13 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Box, Button, Link } from "rebass";
+import { Button, Link } from "rebass";
 import { ChartConfigurator } from "./chart-configurator";
 import { ChartTypeSelector } from "./chart-type-selector";
 import { Container, ContainerTitle } from "./container";
 import { DataSetList, Preview } from "./dataset-selector";
 import { LocalizedLink } from "./links";
 import { useConfiguratorState } from "../domain/configurator-state";
+import { ControlSection } from "./chart-controls";
 
 export const PanelLeft = ({
   chartId,
@@ -52,27 +53,17 @@ export const PanelLeft = ({
               )}
             </>
           )}
+
           {/* Step 5 */}
-          {state.state === "PUBLISHING" && (
-            <Button onClick={() => dispatch({ type: "PUBLISH" })}>
-              Publish
-            </Button>
-          )}
-          {/* Step 6 */}
           {state.state === "PUBLISHED" && (
-            <Box m={2} bg="secondary" color="white" p={2}>
-              <Trans id="test-form-success">
-                Konfiguration gespeichert unter
-              </Trans>
+            <ControlSection title="Teilen & einbetten">
+              <Trans id="test-form-success">Grafik URL</Trans>
               <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>
-                <Link
-                  color="white"
-                  sx={{ textDecoration: "underline", cursor: "pointer" }}
-                >
+                <Link sx={{ textDecoration: "underline", cursor: "pointer" }}>
                   {state.configKey}
                 </Link>
               </LocalizedLink>
-            </Box>
+            </ControlSection>
           )}
         </>
       )}
