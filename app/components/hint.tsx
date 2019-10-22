@@ -43,7 +43,7 @@ export const DataSetHint = () => (
   </Hint>
 );
 
-export const Success = ({ children }: { children: React.ReactNode }) => (
+export const Success = () => (
   <Flex
     variant={"hint"}
     mb={4}
@@ -54,12 +54,11 @@ export const Success = ({ children }: { children: React.ReactNode }) => (
     alignItems="center"
   >
     <Icon name="published" size={56} />
-    <Text variant="heading3" ml={4}>
+    <Text variant="heading3" ml={4} sx={{ textAlign: "left" }}>
       <Trans>
         Gratulation! Ihre Visualisierung kann jetzt geteilt und eingebettet
         werden.
       </Trans>
     </Text>
-    {children}
   </Flex>
 );

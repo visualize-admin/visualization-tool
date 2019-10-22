@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Button, Link } from "rebass";
+import { Button, Link, Box } from "rebass";
 import { ChartConfigurator } from "./chart-configurator";
 import { ChartTypeSelector } from "./chart-type-selector";
 import { Container, ContainerTitle } from "./container";
@@ -57,12 +57,16 @@ export const PanelLeft = ({
           {/* Step 5 */}
           {state.state === "PUBLISHED" && (
             <ControlSection title="Teilen & einbetten">
-              <Trans id="test-form-success">Grafik URL</Trans>
-              <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>
-                <Link sx={{ textDecoration: "underline", cursor: "pointer" }}>
-                  {state.configKey}
-                </Link>
-              </LocalizedLink>
+              <Box mb={2}>
+                <Trans id="test-form-success">Grafik URL</Trans>
+              </Box>
+              <Box mb={2}>
+                <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>
+                  <Link sx={{ textDecoration: "underline", cursor: "pointer" }}>
+                    {state.configKey}
+                  </Link>
+                </LocalizedLink>
+              </Box>
             </ControlSection>
           )}
         </>
