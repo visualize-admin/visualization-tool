@@ -4,16 +4,8 @@ import { Button } from "rebass";
 
 export default () => markdown`
 
+> The action bar is a container for components that trigger actions.
 
-~~~
-import { ActionBar } from "./components/action-bar"
-
-<ActionBar>
-  {children}
-</ActionBar>
-~~~
-
-## Action Bar
 ${(
   <ReactSpecimen span={6}>
     <ActionBar>
@@ -36,5 +28,15 @@ ${(
     </ActionBar>
   </ReactSpecimen>
 )}
+
+## How to use
+~~~
+import { ActionBar } from "./components/action-bar"
+
+<ActionBar>
+  {children}
+</ActionBar>
+~~~
+
 
 `;

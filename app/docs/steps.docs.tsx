@@ -1,8 +1,55 @@
-import { Step, Stepper } from "../components/stepper";
 import { markdown, ReactSpecimen } from "catalog";
+import { Step } from "../components/stepper";
 
 export default () => markdown`
-> The "stepper" is used to guide the user through the steps of creating a visualization.
+> The "stepper" is used to guide users through the steps of creating a visualization.
+
+
+
+  ${(
+    <ReactSpecimen span={1}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white"
+        }}
+      >
+        <Step stepNumber={1} stepState="CONFIGURING_CHART" status="past" />
+      </div>
+    </ReactSpecimen>
+  )}
+  ${(
+    <ReactSpecimen span={1}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white"
+        }}
+      >
+        <Step stepNumber={3} stepState="CONFIGURING_CHART" status="current" />
+      </div>
+    </ReactSpecimen>
+  )}
+  ${(
+    <ReactSpecimen span={1}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white"
+        }}
+      >
+        <Step stepNumber={4} stepState="CONFIGURING_CHART" status="future" />
+      </div>
+    </ReactSpecimen>
+  )}
+
+  ## How to use
 
 ~~~
 import { Step } from "../components/step";
@@ -11,23 +58,5 @@ import { Step } from "../components/step";
   Primary Step
 </Step>
 ~~~
-
-
-  ${(
-    <ReactSpecimen span={2}>
-      <Step stepNumber={1} stepState="CONFIGURING_CHART" status="past" />
-    </ReactSpecimen>
-  )}
-  ${(
-    <ReactSpecimen span={2}>
-      <Step stepNumber={3} stepState="CONFIGURING_CHART" status="current" />
-    </ReactSpecimen>
-  )}
-  ${(
-    <ReactSpecimen span={2}>
-      <Step stepNumber={4} stepState="CONFIGURING_CHART" status="future" />
-    </ReactSpecimen>
-  )}
-
 
 `;

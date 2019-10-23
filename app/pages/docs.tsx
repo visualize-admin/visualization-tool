@@ -75,6 +75,16 @@ const pages: ConfigPageOrGroup[] = [
     ]
   },
   {
+    title: "Charts",
+    pages: [
+      {
+        path: "/charts",
+        title: "Charts",
+        content: require("../docs/charts.docs")
+      }
+    ]
+  },
+  {
     title: "Components",
     pages: [
       {
@@ -92,15 +102,21 @@ const pages: ConfigPageOrGroup[] = [
         title: "Button",
         content: require("../docs/button.docs")
       },
-      {
-        path: "/components/containers",
-        title: "Containers",
-        content: require("../docs/container.docs")
-      },
+
+      // {
+      //   path: "/components/containers",
+      //   title: "Containers",
+      //   content: require("../docs/container.docs")
+      // },
       {
         path: "/components/controls",
         title: "Controls",
         content: require("../docs/controls.docs")
+      },
+      {
+        path: "/components/dataset-list",
+        title: "Datasets List",
+        content: require("../docs/dataset-list.docs")
       },
       {
         path: "/components/form",

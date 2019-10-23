@@ -52,6 +52,7 @@ export const Success = () => (
     bg="success.light"
     justifyContent="flex-start"
     alignItems="center"
+    sx={{ maxHeight: 200 }}
   >
     <Icon name="published" size={56} />
     <Text variant="heading3" ml={4} sx={{ textAlign: "left" }}>

@@ -4,19 +4,12 @@ import { markdown, ReactSpecimen } from "catalog";
 export default () => markdown`
 > Buttons are used to trigger an event after a user interaction.
 
-There are three basic styles that are styles defined in \`rebass\`'s \`variants\`:
+There are four basic styles that are styles defined in \`rebass\`'s \`variants\`:
 
 - \`primary\`
 - \`secondary\`
 - \`success\`
-
-~~~
-import { Button } from "rebass"
-
-<Button variant="primary">
-  Primary button
-</Button>
-~~~
+- \`outline\`
 
 
   ${(
@@ -43,4 +36,14 @@ import { Button } from "rebass"
       <Button variant="outline">Outline button</Button>
     </ReactSpecimen>
   )}
+
+  ## How to use
+
+~~~
+import { Button } from "rebass"
+
+<Button variant="primary">
+  Primary button
+</Button>
+~~~
 `;

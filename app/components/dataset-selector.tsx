@@ -36,7 +36,7 @@ export const DataSetList = ({
   }
 };
 
-const DatasetButton = ({
+export const DatasetButton = ({
   dataSetIri,
   dataSetLabel,
   dataSetDescription,

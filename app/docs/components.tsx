@@ -1,9 +1,9 @@
 import { markdown } from "catalog";
 
 export default () => markdown`
-> The component library is based on [rebass](https://rebassjs.org/).
+> The components used in the User Interface are built upon [rebass](https://rebassjs.org/), a library of React primitive UI components.
 
-> All styles are defined in a \`theme\` file that can be customized to a specific brand.
+> All styles are defined in a \`theme\` file [that can be customized to a specific brand](/theming).
 
 ## How to use a component
 

@@ -1,16 +1,10 @@
-import { Header, Logo } from "../components/header";
-import { LanguageMenu } from "../components/language-menu";
 import { markdown, ReactSpecimen } from "catalog";
+import { Logo } from "../components/header";
 
 export default () => markdown`
 
-> Header
+> The Header is used for brands components and language switch.
 
-~~~
-import { Header } from "./components/header"
-
-<Header />
-~~~
 
 ## Swiss Confederation Logo
 ${(
@@ -18,5 +12,13 @@ ${(
     <Logo />
   </ReactSpecimen>
 )}
+
+## How to use
+~~~
+import { Header } from "./components/header"
+
+<Header />
+~~~
+
 
 `;
