@@ -13,25 +13,90 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/step-dataset-selection.tsx:17
-msgid "Auswählen"
+#: app/components/stepper.tsx:51
+msgid "Anpassen"
 msgstr ""
 
-#: app/components/step-dataset-selection.tsx:9
+#: app/components/step-dataset-selection.tsx:17
+#~ msgid "Auswählen"
+#~ msgstr ""
+
+#: app/components/panel-middle.tsx:62
+msgid "Bearbeiten"
+msgstr ""
+
+#: app/components/panel-left.tsx:22
+msgid "Chart-Typ auswählen"
+msgstr ""
+
+#: app/components/stepper.tsx:37
+msgid "Datensatz"
+msgstr ""
+
+#: app/components/hint.tsx:17
+msgid "Datensatz Auswählen"
+msgstr ""
+
+#: app/components/panel-left.tsx:16
 msgid "Datensatz auswählen"
 msgstr ""
 
+#: app/components/dataset-selector.tsx:18
+msgid "Datensätze werden geladen"
+msgstr ""
+
 #: app/pages/[locale]/chart/[chartId].tsx:22
-msgid "Datensätze werden herausgeholt"
+#~ msgid "Datensätze werden herausgeholt"
+#~ msgstr ""
+
+#: app/components/hint.tsx:31
+msgid "Gratulation! Ihre Visualisierung kann jetzt geteilt und eingebettet werden."
 msgstr ""
 
 #: app/pages/[locale]/playground.tsx:17
 #~ msgid "Hallo Welt!"
 #~ msgstr "Hello World!"
 
-#: app/pages/[locale]/index.tsx:12
+#: app/components/hint.tsx:20
+msgid "Klicken Sie auf einen Datensatz in der linken Spalte, um eine Übersicht über die Struktur und Komposition des jeweiligen Datensatz zu erhalten."
+msgstr ""
+
+#: app/components/chart-configurator.tsx:32
+#: app/components/chart-filters.tsx:20
+#: app/components/chart-preview.tsx:41
+#: app/components/chart-type-selector.tsx:17
+msgid "Metadaten werden geladen..."
+msgstr ""
+
+#: app/pages/[locale]/index.tsx:14
 msgid "Neue Grafik erstellen"
 msgstr "Create new chart"
+
+#: app/components/panel-middle.tsx:69
+msgid "Neue Visualisierung"
+msgstr ""
+
+#: app/components/panel-middle.tsx:57
+msgid "Publizieren"
+msgstr ""
+
+#: app/components/stepper.tsx:58
+msgid "Teilen & Einbetten"
+msgstr ""
+
+#: app/components/stepper.tsx:44
+msgid "Visualisierungs-Typ"
+msgstr ""
+
+#: app/components/panel-middle.tsx:34
+#: app/components/panel-middle.tsx:46
+msgid "Weiter"
+msgstr ""
+
+#: app/components/panel-middle.tsx:42
+#: app/components/panel-middle.tsx:54
+msgid "Zurück"
+msgstr ""
 
 #: app/pages/[locale]/config-tester.tsx:28
 #~ msgid "no id"
@@ -41,7 +106,7 @@ msgstr "Create new chart"
 #~ msgid "test-form-save"
 #~ msgstr "Save"
 
-#: app/pages/[locale]/chart/[chartId].tsx:51
+#: app/components/panel-left.tsx:34
 msgid "test-form-success"
 msgstr "Configuration saved"
 
@@ -51,3 +116,7 @@ msgstr "Configuration saved"
 #: app/pages/[locale]/config-tester.tsx:64
 #~ msgid "test-form-title"
 #~ msgstr "Title"
+
+#: app/components/header.tsx:13
+msgid "visualize.admin.ch"
+msgstr ""

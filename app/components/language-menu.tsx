@@ -6,22 +6,15 @@ import { Link, Box, Flex } from "rebass";
 export const LanguageMenu = () => {
   const currentLocale = useLocale();
   return (
-    <Flex
-      variant="header.languageMenu"
-      as="ul"
-      sx={{ listStyle: "none" }}
-      p={0}
-      m={0}
-    >
+    <Flex variant="header.languageList" as="ul">
       {locales.map(locale => (
-        <Box as="li" key={locale} p={0} marginRight={0}>
+        <Box as="li" key={locale} variant="header.languageListItem">
           <CurrentPageLink locale={locale} passHref>
             <Link
               hrefLang={locale}
               variant="header.languageLink"
               sx={{
-                bg:
-                  locale === currentLocale ? "monochrome.300" : "monochrome.100"
+                bg: locale === currentLocale ? "monochrome.500" : "transparent"
               }}
             >
               {locale}

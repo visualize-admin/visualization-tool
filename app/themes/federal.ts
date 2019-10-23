@@ -1,3 +1,4 @@
+import { LanguageMenu } from "./../components/language-menu";
 /**
  * IMPORTANT: just export JSON-serializable data from this file!
  *
@@ -310,16 +311,47 @@ export const theme: Theme = {
   variants: {
     header: {
       root: {
-        px: 4,
-        pt: 4,
-        pb: 5,
+        px: [0, 4, 4],
+        pt: [0, 3, 3],
+        pb: [0, 5, 5],
         borderBottomWidth: "4px",
         borderBottomStyle: "solid",
         borderBottomColor: "ch.venetianRed",
-        color: "monochrome.700"
+        color: "monochrome.700",
+        flexDirection: ["column", "row"]
       },
+      logo: {
+        order: [2, 1],
+        alignItems: ["center", "flex-start"],
+        "& > h1": {
+          pl: [0, 6]
+        }
+      },
+      logoImgMobile: {
+        display: ["block", "none"],
+        mx: 4,
+        my: 4,
+        width: 24
+      },
+      logoImgDesktop: {
+        display: ["none", "block"],
+        pr: 7,
+        width: 448,
+        borderRightWidth: "1px",
+        borderRightStyle: "solid",
+        borderRightColor: "monochrome.300"
+      },
+      languageList: {
+        listStyle: "none",
+        pr: 2,
+        py: 2,
+        width: "100%",
+        bg: ["monochrome.300", "transparent"],
+        order: [1, 2],
+        justifyContent: "flex-end"
+      },
+      languageListItem: { mr: 2 },
       languageLink: {
-        ml: 2,
         p: 1,
         textTransform: "uppercase",
         textDecoration: "none",

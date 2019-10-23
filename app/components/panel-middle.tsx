@@ -33,16 +33,7 @@ export const PanelMiddle = ({
           )}
           {state.state === "PUBLISHED" && (
             <>
-              <Success>
-                <LocalizedLink
-                  href={`/[locale]/config?key=${state.configKey}`}
-                  passHref
-                >
-                  <Link sx={{ textDecoration: "underline", cursor: "pointer" }}>
-                    {state.configKey}
-                  </Link>
-                </LocalizedLink>
-              </Success>
+              <Success />
               <Box variant="container.chart">
                 <ChartPreview chartId={chartId} dataSetIri={state.dataSet} />
               </Box>
