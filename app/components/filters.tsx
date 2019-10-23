@@ -3,7 +3,8 @@ import React from "react";
 import {
   getDimensionIri,
   getDimensionLabel,
-  useDimensionValues
+  useDimensionValues,
+  isTimeDimension
 } from "../domain";
 import { Field } from "./field";
 import { Loading } from "./hint";
@@ -23,8 +24,8 @@ export const Filters = ({
       {dimensions.map(dimension => {
         return (
           <ControlSection
-            key={getDimensionIri({ dimension })}
-            title={getDimensionLabel({ dimension })}
+            key={getDimensionIri(dimension)}
+            title={getDimensionLabel(dimension)}
           >
             <ControlList>
               <DimensionValues
@@ -50,11 +51,7 @@ const DimensionValues = ({
   dimension: Dimension;
 }) => {
   const dimensionValues = useDimensionValues({ dataSet, dimension });
-  const dimensionIri = getDimensionIri({ dimension });
-  // FIXME: workaround time dimension
-  const isTimeDimension = ["Jahr", "Année", "Anno", "Year"].includes(
-    dimension.labels[0].value
-  );
+  const dimensionIri = getDimensionIri(dimension);
   if (dimensionValues.state === "loaded") {
     return (
       <>
@@ -65,9 +62,11 @@ const DimensionValues = ({
               type="checkbox"
               chartId={chartId}
               path={`filters["${dimensionIri}"]["${dv.value.value}"]`}
-              label={isTimeDimension ? dv.value.value : dv.label.value}
+              label={
+                isTimeDimension(dimension) ? dv.value.value : dv.label.value
+              }
               value={dv.value.value}
-              disabled={isTimeDimension} // FIXME: disable time filter for now because of missing iri
+              disabled={isTimeDimension(dimension)} // FIXME: disable time filter for now because of missing iri
             />
           );
         })}

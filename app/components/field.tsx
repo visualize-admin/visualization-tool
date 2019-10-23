@@ -6,6 +6,7 @@ import {
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
+import { DataSetMetadata } from "../domain/data-cube";
 
 export const Field = ({
   chartId,
@@ -49,7 +50,7 @@ export const ChartTypeSelectorField = ({
   path,
   type,
   value,
-  meta,
+  metaData,
   ...props
 }: {
   chartId: string;
@@ -57,14 +58,14 @@ export const ChartTypeSelectorField = ({
   path: string;
   type?: "text" | "checkbox" | "radio";
   value: string;
-  meta: any;
+  metaData: DataSetMetadata;
 }) => {
   const field = useChartTypeSelectorField({
     chartId,
     path,
     type: "radio",
     value,
-    metaData: meta.data
+    metaData
   });
 
   return <ChartTypeRadio label={label} {...field}></ChartTypeRadio>;

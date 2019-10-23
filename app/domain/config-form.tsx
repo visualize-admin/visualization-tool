@@ -3,9 +3,11 @@ import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
 import {
   getCategoricalDimensions,
   getDimensionIri,
-  getTimeDimensions
+  getTimeDimensions,
+  getInitialFilters
 } from ".";
 import { useConfiguratorState } from "./configurator-state";
+import { DataSetMetadata } from "./data-cube";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -80,55 +82,40 @@ export const useChartTypeSelectorField = ({
   path: string;
   value?: string;
   type: "radio";
-  metaData: any;
+  metaData: DataSetMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
       const chartType = e.currentTarget.value;
+      const initialFilters = getInitialFilters({
+        dataSet: metaData.dataSet,
+        dimensions: metaData.dimensions
+      });
       const initialState =
         chartType === "scatterplot"
           ? {
-              x: getDimensionIri({
-                dimension: metaData.measures[0]
-              }),
-              y: getDimensionIri({
-                dimension:
-                  metaData.measures.length > 1
-                    ? metaData.measures[1]
-                    : metaData.measures[0]
-              })
+              x: getDimensionIri(metaData.measures[0]),
+              y: getDimensionIri(
+                metaData.measures.length > 1
+                  ? metaData.measures[1]
+                  : metaData.measures[0]
+              )
             }
           : chartType === "column"
           ? {
-              x: getDimensionIri({
-                dimension: getTimeDimensions({
-                  dimensions: metaData.dimensions
-                })[1]
-              }),
-              height: getDimensionIri({
-                dimension: metaData.measures[0]
-              }),
-              color: getDimensionIri({
-                dimension: getCategoricalDimensions({
-                  dimensions: metaData.dimensions
-                })[1]
-              })
+              x: getDimensionIri(metaData.dimensions[0]),
+              height: getDimensionIri(metaData.measures[0]),
+              color: getDimensionIri(
+                getCategoricalDimensions(metaData.dimensions)[0]
+              )
             }
           : {
-              x: getDimensionIri({
-                dimension: getTimeDimensions({
-                  dimensions: metaData.dimensions
-                })[0]
-              }),
-              height: getDimensionIri({
-                dimension: metaData.measures[0]
-              }),
-              color: getDimensionIri({
-                dimension: getCategoricalDimensions({
-                  dimensions: metaData.dimensions
-                })[1]
-              })
+              x: getDimensionIri(getTimeDimensions(metaData.dimensions)[0]),
+              height: getDimensionIri(metaData.measures[0]),
+              color: getDimensionIri(
+                getCategoricalDimensions(metaData.dimensions)[1]
+              )
             };
       dispatch({
         type: "CHART_TYPE_PREVIEWED",
@@ -136,7 +123,7 @@ export const useChartTypeSelectorField = ({
           path: "chartConfig",
           value: {
             chartType,
-            filters: {},
+            filters: initialFilters,
             ...initialState
           }
         }

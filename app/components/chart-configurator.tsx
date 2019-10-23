@@ -27,8 +27,8 @@ export const ChartConfigurator = ({
   if (meta.state === "loaded") {
     const { dimensions, measures } = meta.data;
 
-    const timeDimensions = getTimeDimensions({ dimensions });
-    const categoricalDimensions = getCategoricalDimensions({ dimensions });
+    const timeDimensions = getTimeDimensions(dimensions);
+    const categoricalDimensions = getCategoricalDimensions(dimensions);
     const measuresDimensions = measures;
     return (
       <Flex flexDirection="column">

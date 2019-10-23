@@ -1,6 +1,6 @@
 import { Reducer, useReducer, useEffect } from "react";
 
-type RDState<T> =
+export type RDState<T> =
   | {
       state: "pending";
       data?: T;
