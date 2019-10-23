@@ -54,7 +54,6 @@ export const useField = ({
   const stateValue =
     state.state === "CONFIGURING_CHART" ? get(state.chartConfig, path, "") : "";
 
-  // FIXME: checked doesn't work for select menu on reload
   const checked =
     type === "checkbox"
       ? stateValue

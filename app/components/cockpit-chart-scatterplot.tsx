@@ -17,30 +17,30 @@ export const ChartScatterplotControls = ({
     <>
       <ControlSection title="Horizontale Achse" note="x-Achse">
         <ControlList>
-          {measuresDimensions.map(td => (
-            <Field
-              key={td.iri.value}
-              type="radio"
-              chartId={chartId}
-              path={"x"}
-              label={td.labels[0].value}
-              value={td.iri.value}
-            />
-          ))}
+          <Field
+            type="select"
+            chartId={chartId}
+            path={"x"}
+            label={"Werte wählen"}
+            options={measuresDimensions.map(dim => ({
+              value: dim.iri.value,
+              label: dim.labels[0].value
+            }))}
+          />
         </ControlList>
       </ControlSection>
       <ControlSection title="Vertikale Achse" note="y-Achse">
         <ControlList>
-          {measuresDimensions.map(md => (
-            <Field
-              key={md.iri.value}
-              type="radio"
-              chartId={chartId}
-              path={"y"}
-              label={md.labels[0].value}
-              value={md.iri.value}
-            />
-          ))}
+          <Field
+            type="select"
+            chartId={chartId}
+            path={"y"}
+            label={"Werte wählen"}
+            options={measuresDimensions.map(dim => ({
+              value: dim.iri.value,
+              label: dim.labels[0].value
+            }))}
+          />
         </ControlList>
       </ControlSection>
     </>
