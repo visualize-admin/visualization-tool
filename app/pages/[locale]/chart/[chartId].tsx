@@ -23,18 +23,34 @@ const ChartCreator = ({ chartId }: { chartId: string }) => {
   const [dataSetPreviewIri, updateDataSetPreviewIri] = React.useState<string>();
 
   return (
-    <Box bg="muted">
-      <Flex justifyContent="space-between" alignItems="flex-start">
-        <PanelLeft
-          chartId={chartId}
-          dataSetPreviewIri={dataSetPreviewIri}
-          updateDataSetPreviewIri={updateDataSetPreviewIri}
-        />
+    <Box
+      bg="muted"
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
+        gridTemplateAreas: `
+        "header header header"
+        "left middle right"
+        `,
+        height: "calc(100vh - 96px)",
+        position: "fixed",
+        top: "96px"
+      }}
+    >
+      <Box sx={{gridArea:"header"}}>
+      <Stepper />
 
-        <PanelMiddle chartId={chartId} dataSetIri={dataSetPreviewIri} />
+      </Box>
 
-        <PanelRight chartId={chartId} />
-      </Flex>
+      <PanelLeft
+        chartId={chartId}
+        dataSetPreviewIri={dataSetPreviewIri}
+        updateDataSetPreviewIri={updateDataSetPreviewIri}
+      />
+
+      <PanelMiddle chartId={chartId} dataSetIri={dataSetPreviewIri} />
+
+      <PanelRight chartId={chartId} />
     </Box>
   );
 };
@@ -46,7 +62,6 @@ const ChartConfiguratorPage: NextPage = () => {
     <DataCubeProvider>
       <AppLayout>
         <ConfiguratorStateProvider chartId={chartId}>
-          <Stepper />
           <ChartCreator chartId={chartId} />
         </ConfiguratorStateProvider>
       </AppLayout>

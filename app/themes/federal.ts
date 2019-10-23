@@ -413,15 +413,12 @@ export const theme: Theme = {
         borderRightColor: "monochrome.500",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
-        minWidth: "20rem",
-        width: "20rem",
-        height: "100vh"
+        gridArea:"left",
       },
       middle: {
-        m: 4,
-        width: "100%",
-        maxWidth: "824px",
-        minHeight: "384px"
+        variant: "variants.container.root",
+        p: 4,
+        gridArea: "middle"
       },
       chart: {
         variant: "variants.container.root",
@@ -437,9 +434,7 @@ export const theme: Theme = {
         borderLeftColor: "monochrome.500",
         borderLeftWidth: "1px",
         borderLeftStyle: "solid",
-        minWidth: "20rem",
-        width: "20rem",
-        height: "100vh"
+        gridArea: "right",
       },
       header: {
         p: 3,
