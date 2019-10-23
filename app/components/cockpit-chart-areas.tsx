@@ -35,30 +35,30 @@ export const ChartAreasControls = ({
       </ControlSection>
       <ControlSection title="Vertikale Achse" note="y-Achse">
         <ControlList>
-          {measuresDimensions.map(md => (
-            <Field
-              key={md.iri.value}
-              type="radio"
-              chartId={chartId}
-              path={"height"}
-              label={md.labels[0].value}
-              value={md.iri.value}
-            />
-          ))}
+          <Field
+            type="select"
+            chartId={chartId}
+            path={"height"}
+            label={"Werte wählen"}
+            options={measuresDimensions.map(dim => ({
+              value: dim.iri.value,
+              label: dim.labels[0].value
+            }))}
+          />
         </ControlList>
       </ControlSection>
       <ControlSection title="Farbe">
         <ControlList>
-          {categoricalDimensions.map(cd => (
-            <Field
-              key={`color-${cd.iri.value}`}
-              type="radio"
-              chartId={chartId}
-              path={"color"}
-              label={cd.labels[0].value}
-              value={cd.iri.value}
-            />
-          ))}{" "}
+          <Field
+            type="select"
+            chartId={chartId}
+            path={"color"}
+            label={"Dimension wählen"}
+            options={categoricalDimensions.map(dim => ({
+              value: dim.iri.value,
+              label: dim.labels[0].value
+            }))}
+          />
         </ControlList>
       </ControlSection>
     </>

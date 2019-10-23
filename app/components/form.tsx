@@ -104,6 +104,7 @@ export const Select = ({
       id={label}
       name={label}
       onChange={onChange}
+      value={value}
     >
       {options.map(opt => (
         <option key={opt.value} value={opt.value}>
