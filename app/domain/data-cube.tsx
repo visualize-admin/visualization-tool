@@ -12,7 +12,7 @@ import {
   useContext,
   useMemo
 } from "react";
-import { useRemoteData } from "../lib/remote-data";
+import { useRemoteData, RDState } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
 
 const DataCubeContext = createContext<string>("");
@@ -87,7 +87,16 @@ export const useDataSets = () => {
   return useRemoteData(fetchCb);
 };
 
-export const useDataSetAndMetadata = (iri: string) => {
+export interface DataSetMetadata {
+  dataSet: DataCube;
+  dimensions: Dimension[];
+  attributes: Attribute[];
+  measures: Measure[];
+}
+
+export const useDataSetAndMetadata = (
+  iri: string
+): RDState<DataSetMetadata> => {
   const entryPoint = useDataCubeEntryPoint();
   const fetchCb = useCallback(async () => {
     const dataSet = await entryPoint.dataCubeByIri(iri);
@@ -102,11 +111,6 @@ export const useDataSetAndMetadata = (iri: string) => {
   return useRemoteData(fetchCb);
 };
 
-interface Metadata {
-  dimensions: Dimension[];
-  attributes: Attribute[];
-  measures: Measure[];
-}
 export const useDataSetMetadata = (dataSet: DataCube) => {
   const fetchMeta = useCallback(async () => {
     return {
@@ -176,6 +180,9 @@ export const useObservations = ({
 
   return useRemoteData(fetchData);
 };
+
+// FIXME: This hook can take any field,
+// but currently only works for measures (not dimensions)
 export const useObservations2 = ({
   dataSet,
   dimensions,
@@ -223,35 +230,64 @@ export const useObservations2 = ({
   return useRemoteData(fetchData);
 };
 
+export const getInitialFilters = ({
+  dataSet,
+  dimensions
+}: {
+  dataSet: DataCube;
+  dimensions: Dimension[];
+}) => {
+  const nonTimeDimensions = dimensions.filter(
+    dimension => !isTimeDimension(dimension)
+  );
+  return nonTimeDimensions.reduce(
+    (obj, cur, i) => ({
+      ...obj,
+      [cur.iri.value]: { [`${cur.iri.value}/0`]: true }
+    }),
+    {}
+  );
+};
+
+export const isTimeDimension = (dimension: Dimension) => {
+  const scaleOfMeasure = dimension.extraMetadata.scaleOfMeasure;
+
+  if (scaleOfMeasure) {
+    return /cube\/scale\/Temporal\/?$/.test(scaleOfMeasure.value);
+  }
+
+  // FIXME: Remove this once we're sure that scaleOfMeasure always works
+  return ["Jahr", "Année", "Anno", "Year"].includes(dimension.labels[0].value);
+};
+
+export const isCategoricalDimension = (dimension: Dimension) => {
+  const scaleOfMeasure = dimension.extraMetadata.scaleOfMeasure;
+
+  if (scaleOfMeasure) {
+    return /cube\/scale\/Nominal\/?$/.test(scaleOfMeasure.value);
+  }
+
+  // FIXME: Don't just assume all non-time dimensions are categorical
+  return !isTimeDimension(dimension);
+};
+
 /**
  * @fixme use metadata to filter time dimension!
  */
-export const getTimeDimensions = ({
-  dimensions
-}: {
-  dimensions: Dimension[];
-}) => dimensions; //.filter(dim => dim.labels[0].value === "Jahr");
+export const getTimeDimensions = (dimensions: Dimension[]) =>
+  dimensions.filter(isTimeDimension); //.filter(dim => dim.labels[0].value === "Jahr");
 /**
  * @fixme use metadata to filter categorical dimension!
  */
-export const getCategoricalDimensions = ({
-  dimensions
-}: {
-  dimensions: Dimension[];
-}) => dimensions;
+export const getCategoricalDimensions = (dimensions: Dimension[]) =>
+  dimensions.filter(isCategoricalDimension);
 
-export const getDimensionIri = ({
-  dimension
-}: {
-  dimension: Dimension;
-}): Dimension["iri"]["value"] => {
+export const getDimensionIri = (
+  dimension: Dimension
+): Dimension["iri"]["value"] => {
   return dimension.iri.value;
 };
-export const getDimensionLabel = ({
-  dimension
-}: {
-  dimension: Dimension;
-}): string => {
+export const getDimensionLabel = (dimension: Dimension): string => {
   return dimension.labels[0].value;
 };
 
@@ -264,7 +300,7 @@ export const getDimensionLabelFromIri = ({
 }): string => {
   const dimension = dimensions.find(dim => dim.iri.value === dimensionIri);
   // FIXME: Is dimensionIri the right thing to return?
-  return dimension ? getDimensionLabel({ dimension }) : dimensionIri;
+  return dimension ? getDimensionLabel(dimension) : dimensionIri;
 };
 export const getMeasureLabelFromIri = ({
   measureIri,

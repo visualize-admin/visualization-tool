@@ -37,7 +37,7 @@ export const ChartTypeSelector = ({
             path={"chartType"}
             label={d}
             value={d}
-            meta={meta}
+            metaData={meta.data}
           />
         ))}
       </Flex>

@@ -1591,17 +1591,17 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zazuko/query-rdf-data-cube@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@zazuko/query-rdf-data-cube/-/query-rdf-data-cube-0.2.1.tgz#dbb6c232c322fda29b1d95aaab0827a0d2a66a27"
-  integrity sha512-60GvbiP1hDCdGqIVqgvzvwFEl7grWSu+6hjnOVd96ZWTQO5s3ZRc/J+fJ0zMDz++8bOiWXLQ0uzBWKbutswRcQ==
+"@zazuko/query-rdf-data-cube@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@zazuko/query-rdf-data-cube/-/query-rdf-data-cube-0.2.2.tgz#6349d5355825d61fc96beb09434ea78d6c54f947"
+  integrity sha512-LOnViNMaT65ZXANKNO9MIWpK8b162P1OanDjxR93Z00TuiQf6ObSCjWT/gFACnDsx1skdNU1EWzYMep0FH7CxQ==
   dependencies:
     "@rdfjs/data-model" "^1.1.2"
     "@rdfjs/namespace" "^1.1.0"
     clone "^2.1.2"
     node-fetch "^2.6.0"
     node-slugify "0.0.3"
-    sparqljs "^3.0.0-beta.0"
+    sparqljs "^3.0.0"
 
 abbrev@1:
   version "1.1.1"
@@ -7644,7 +7644,7 @@ space-separated-tokens@^1.0.0:
   resolved "https://registry.yarnpkg.com/space-separated-tokens/-/space-separated-tokens-1.1.4.tgz#27910835ae00d0adfcdbd0ad7e611fb9544351fa"
   integrity sha512-UyhMSmeIqZrQn2UdjYpxEkwY9JUrn8pP+7L4f91zRzOQuI8MF1FGLfYU9DKCYeLdo7LXMxwrX5zKFy7eeeVHuA==
 
-sparqljs@^3.0.0-beta.0:
+sparqljs@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/sparqljs/-/sparqljs-3.0.0.tgz#bc1f8ba39084b3ed8bece27ef60e860fa989c451"
   integrity sha512-uPlGML5IWfex1Up2YSA2LnvEJjyL87KCNXQ2vDnDbgraWKivy/pHxarlJA+6NUWFllNgN+1LmWFzanTRg8mhZg==
