@@ -1,37 +1,31 @@
-import * as React from "react";
-import { Box, Flex, Text, Image } from "rebass";
-import { LanguageMenu } from "./language-menu";
 import { Trans } from "@lingui/macro";
+import * as React from "react";
+import { Box, Flex, Text } from "rebass";
+import { LanguageMenu } from "./language-menu";
 
 export const Logo = () => (
-  <Flex>
-    <Image
-      src="/static/logo/BUND_Logo_CH.png"
-      alt="logo of the Swiss Confederation"
-      width="256px"
-      sx={{ pr: 6 }}
-    />
-    <Text
-      as="h1"
-      variant="lead"
-      sx={{
-        pl: 6,
-        borderLeftWidth: "1px",
-        borderLeftStyle: "solid",
-        borderLeftColor: "monochrome.300"
-      }}
-    >
+  <Flex variant="header.logo">
+    <Box variant="header.logoImgMobile">
+      <LogoMobile />
+    </Box>
+    <Box variant="header.logoImgDesktop">
+      <LogoDesktop />
+    </Box>
+    <Text as="h1" variant="lead">
       <Trans>visualize.admin.ch</Trans>
     </Text>
   </Flex>
 );
-export const Header = () => (
-  <Box variant="header.root">
-    <Flex justifyContent="space-between" alignItems="flex-start">
-      <Logo />
+
+export const Header = () => {
+  return (
+    <Flex variant="header.root" justifyContent="space-between">
       <LanguageMenu />
+      <Logo />
     </Flex>
-  </Box>
+  );
+};
+
 const LogoMobile = () => (
   <svg width={30} height={34}>
     <title>{"logo of the Swiss Confederation"}</title>
