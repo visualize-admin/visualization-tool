@@ -4,16 +4,6 @@ import { Radio, Checkbox, Select, Input } from "../components/form";
 export default () => markdown`
 > Form elements are used throughout the _Visualization Tool_ whenever user input is needed.
 
-~~~
-import { Radio, Checkbox, Select, Input } from "../components/form";
-
-<Radio
-  label={"Scatterplot"}
-  name={"Scatterplot"}
-  value={"Scatterplot"}
-/>
-~~~
-
 ## Radio button
 
 
@@ -93,8 +83,21 @@ ${(
   TODO
 
   # For developers
-  ### \`<Field />\`
-  Internally, all form elements rely on the component \`<Field />\`. The html element to render can be defined with the \`type\` props and must be one of \`text\`, \`checkbox\`, \`radio\`, \`input\`, \`select\`.
+
+  ## How to use
+
+~~~
+import { Radio, Checkbox, Select, Input } from "../components/form";
+
+<Radio
+  label={"Scatterplot"}
+  name={"Scatterplot"}
+  value={"Scatterplot"}
+/>
+~~~
+
+### \`<Field />\`
+Internally, all form elements rely on the component \`<Field />\`. The html element to render can be defined with the \`type\` props and must be one of \`text\`, \`checkbox\`, \`radio\`, \`input\`, \`select\`.
 
 ~~~
 import { Field } from "../components/field";

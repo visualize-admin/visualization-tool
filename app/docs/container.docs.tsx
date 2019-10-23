@@ -16,7 +16,4 @@ ${(
     </div>
   </ReactSpecimen>
 )}
-
-
-
 `;

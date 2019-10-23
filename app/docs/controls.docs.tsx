@@ -1,12 +1,10 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { ColorPalette } from "../components/chart-controls/color-palette";
-
 import {
-  ControlSection,
+  ChartTypeRadio,
   ControlList,
-  ChartTypeRadio
+  ControlSection
 } from "../components/chart-controls";
-import { Select, Checkbox, Input } from "../components/form";
+import { Checkbox, Input, Select, Radio } from "../components/form";
 
 // const vegaPalettes: Array<{ id: vega.ColorScheme; values: Array<string> }> = [
 //   { id: "category10", values: vega.scheme("category10") },
@@ -16,14 +14,16 @@ import { Select, Checkbox, Input } from "../components/form";
 //   { id: "dark2", values: vega.scheme("dark2") }
 // ];
 
-const palettes = ["category10", "accent", "pastel1", "pastel2", "dark2"];
+// const palettes = ["category10", "accent", "pastel1", "pastel2", "dark2"];
 export default () => markdown`
+
+> Controls are a composition of layout components and form elements, used throughout the application to configurate charts.
 
 ## Chart Type Selector
   ${(
     <ReactSpecimen span={2}>
       <ChartTypeRadio
-        label={"Linien"}
+        label={"line"}
         name={"Linien"}
         value={"Linien"}
         onChange={e => {
@@ -35,7 +35,7 @@ export default () => markdown`
   ${(
     <ReactSpecimen span={2}>
       <ChartTypeRadio
-        label={"Scatterplot"}
+        label={"scatterplot"}
         name={"Scatterplot"}
         value={"Scatterplot"}
         checked={true}
@@ -72,6 +72,7 @@ ${(
       <ControlList label={"Elemente Filtern"}>
         <Checkbox
           label={"Bern"}
+          checked={true}
           name={"Bern"}
           value={"Bern"}
           onChange={() => {}}
@@ -83,6 +84,27 @@ ${(
           onChange={() => {}}
         />
         <Checkbox
+          label={"Ticino"}
+          name={"Ticino"}
+          value={"Ticino"}
+          onChange={() => {}}
+        />
+      </ControlList>
+      <ControlList label={"Elemente Filtern"}>
+        <Radio
+          label={"Bern"}
+          checked={true}
+          name={"Bern"}
+          value={"Bern"}
+          onChange={() => {}}
+        />
+        <Radio
+          label={"Aargau"}
+          name={"Aargau"}
+          value={"Aargau"}
+          onChange={() => {}}
+        />
+        <Radio
           label={"Ticino"}
           name={"Ticino"}
           value={"Ticino"}
@@ -119,11 +141,5 @@ ${(
   </ReactSpecimen>
 )}
 
-## Color Palette
-  ${(
-    <ReactSpecimen span={2}>
-      <ColorPalette palettes={palettes} />
-    </ReactSpecimen>
-  )}
 
 `;
