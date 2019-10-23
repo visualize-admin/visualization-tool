@@ -30,8 +30,13 @@ const pages: ConfigPageOrGroup[] = [
     content: require("../docs/accessibility.mdx")
   },
   {
-    title: "Materials",
+    title: "Theming",
     pages: [
+      {
+        path: "/theming",
+        title: "Overview",
+        content: require("../docs/theming.mdx")
+      },
       {
         path: "/colors",
         title: "Colors",
