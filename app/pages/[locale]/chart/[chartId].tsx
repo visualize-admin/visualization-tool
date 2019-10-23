@@ -20,21 +20,18 @@ const useChartId = () => {
 
 const ChartCreator = ({ chartId }: { chartId: string }) => {
   // Local state, the dataset preview doesn't need to be persistent.
-  const [dataSetPreview, updateDataSetPreview] = React.useState({
-    iri: "",
-    label: ""
-  });
+  const [dataSetPreviewIri, updateDataSetPreviewIri] = React.useState<string>();
 
   return (
     <Box bg="muted">
       <Flex justifyContent="space-between" alignItems="flex-start">
         <PanelLeft
           chartId={chartId}
-          dataSetPreview={dataSetPreview}
-          updateDataSetPreview={updateDataSetPreview}
+          dataSetPreviewIri={dataSetPreviewIri}
+          updateDataSetPreviewIri={updateDataSetPreviewIri}
         />
 
-        <PanelMiddle chartId={chartId} dataSetIri={dataSetPreview.iri} />
+        <PanelMiddle chartId={chartId} dataSetIri={dataSetPreviewIri} />
 
         <PanelRight chartId={chartId} />
       </Flex>

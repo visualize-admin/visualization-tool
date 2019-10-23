@@ -1,19 +1,19 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Box, Button, Link } from "rebass";
+import { Box, Button } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { ActionBar } from "./action-bar";
 import { ChartPreview } from "./chart-preview";
 import { DataSetPreview } from "./dataset-preview";
 import { LocalizedLink } from "./links";
-import { Success } from "./hint";
+import { Success, DataSetHint } from "./hint";
 
 export const PanelMiddle = ({
   chartId,
   dataSetIri
 }: {
   chartId: string;
-  dataSetIri: string;
+  dataSetIri?: string;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -21,7 +21,11 @@ export const PanelMiddle = ({
     <Box variant="container.middle" data-name="panel-middle">
       {chartId === "new" ? (
         <Box variant="container.chart">
-          <DataSetPreview dataSetIri={dataSetIri} />
+          {dataSetIri ? (
+            <DataSetPreview dataSetIri={dataSetIri} />
+          ) : (
+            <DataSetHint />
+          )}
         </Box>
       ) : (
         <>
@@ -47,12 +51,14 @@ export const PanelMiddle = ({
         {chartId === "new" ? (
           <Button
             variant="primary"
-            onClick={() =>
-              dispatch({
-                type: "DATASET_SELECTED",
-                value: dataSetIri
-              })
-            }
+            onClick={() => {
+              if (dataSetIri) {
+                dispatch({
+                  type: "DATASET_SELECTED",
+                  value: dataSetIri
+                });
+              }
+            }}
             sx={{ width: "112px", ml: "auto" }}
             disabled={!dataSetIri}
           >

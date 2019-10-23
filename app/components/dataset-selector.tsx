@@ -4,20 +4,13 @@ import { Box, Button, Text } from "rebass";
 import { useDataSets } from "../domain";
 import { Loading } from "./hint";
 
-export interface Preview {
-  iri: string;
-  label: string;
-}
 export const DataSetList = ({
-  dataSetPreview,
-  updateDataSetPreview
+  dataSetPreviewIri,
+  updateDataSetPreviewIri
 }: {
-  dataSetPreview: Preview;
-  updateDataSetPreview: (dataSetPreview: Preview) => void;
+  dataSetPreviewIri?: string;
+  updateDataSetPreviewIri: (dataSetPreviewIri: string) => void;
 }) => {
-  const update = (dataSetPreview: Preview) => {
-    updateDataSetPreview(dataSetPreview);
-  };
   const datasets = useDataSets();
   if (datasets.state === "loaded") {
     return (
@@ -28,8 +21,8 @@ export const DataSetList = ({
             dataSetIri={d.iri}
             dataSetLabel={d.labels[0].value}
             dataSetDescription={d.extraMetadata.get("description")!.value}
-            selected={d.iri === dataSetPreview.iri}
-            handleClick={dataSetPreview => update(dataSetPreview)}
+            selected={d.iri === dataSetPreviewIri}
+            updateDataSetIri={updateDataSetPreviewIri}
           />
         ))}
       </Box>
@@ -48,17 +41,17 @@ const DatasetButton = ({
   dataSetLabel,
   dataSetDescription,
   selected,
-  handleClick
+  updateDataSetIri
 }: {
   dataSetIri: string;
   dataSetLabel: string;
   dataSetDescription: string;
   selected: boolean;
-  handleClick: (dataSetPreview: Preview) => void;
+  updateDataSetIri: (dataSetPreview: string) => void;
 }) => (
   <Button
     variant={selected ? "datasetButton.selected" : "datasetButton.normal"}
-    onClick={() => handleClick({ iri: dataSetIri, label: dataSetLabel })}
+    onClick={() => updateDataSetIri(dataSetIri)}
   >
     {selected && (
       <Box

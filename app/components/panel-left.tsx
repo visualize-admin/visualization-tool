@@ -1,24 +1,24 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Button, Link, Box } from "rebass";
+import { Link, Box } from "rebass";
 import { ChartConfigurator } from "./chart-configurator";
 import { ChartTypeSelector } from "./chart-type-selector";
 import { Container, ContainerTitle } from "./container";
-import { DataSetList, Preview } from "./dataset-selector";
+import { DataSetList } from "./dataset-selector";
 import { LocalizedLink } from "./links";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { ControlSection } from "./chart-controls";
 
 export const PanelLeft = ({
   chartId,
-  dataSetPreview,
-  updateDataSetPreview
+  dataSetPreviewIri,
+  updateDataSetPreviewIri
 }: {
   chartId: string;
-  dataSetPreview: Preview;
-  updateDataSetPreview: (x: Preview) => void;
+  dataSetPreviewIri?: string;
+  updateDataSetPreviewIri: (x: string) => void;
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [state] = useConfiguratorState();
 
   return (
     <Container side="left" data-name="panel-left">
@@ -28,8 +28,8 @@ export const PanelLeft = ({
             <Trans>Datensatz auswählen</Trans>
           </ContainerTitle>
           <DataSetList
-            dataSetPreview={dataSetPreview}
-            updateDataSetPreview={updateDataSetPreview}
+            dataSetPreviewIri={dataSetPreviewIri}
+            updateDataSetPreviewIri={updateDataSetPreviewIri}
           />
         </>
       ) : (
