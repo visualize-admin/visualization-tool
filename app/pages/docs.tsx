@@ -74,16 +74,16 @@ const pages: ConfigPageOrGroup[] = [
       }
     ]
   },
-  {
-    title: "Charts",
-    pages: [
-      {
-        path: "/charts",
-        title: "Charts",
-        content: require("../docs/charts.docs")
-      }
-    ]
-  },
+  // {
+  //   title: "Charts",
+  //   pages: [
+  //     {
+  //       path: "/charts",
+  //       title: "Charts",
+  //       content: require("../docs/charts.docs")
+  //     }
+  //   ]
+  // },
   {
     title: "Components",
     pages: [
