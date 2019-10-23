@@ -28,13 +28,16 @@ const ChartCreator = ({ chartId }: { chartId: string }) => {
       sx={{
         display: "grid",
         gridTemplateColumns: "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
+        gridTemplateRows: "auto minmax(0, 1fr)",
         gridTemplateAreas: `
         "header header header"
         "left middle right"
         `,
-        height: "calc(100vh - 96px)",
+        width: "100%",
         position: "fixed",
-        top: "96px"
+        // FIXME replace 96px with actual header size
+        top: "96px", 
+        height: "calc(100vh - 96px)",
       }}
     >
       <Box sx={{gridArea:"header"}}>
