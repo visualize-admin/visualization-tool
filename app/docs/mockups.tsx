@@ -86,9 +86,11 @@ export default () =>
   markdown`
 > The design mockups illustrate an exemplary user flow through the _Visualization Tool_.
 
-## Home and Gallery
+## Home
 
-The user's first contact with the _Visualization Tool_. In addition to a description of the tool and it's purpose, several entrypoints are available. A prominent call-to-action invites to go to the Visualization Builder directly. The gallery of recently created visualizations invites to just view them or create own visualizations based off of existing ones.
+The user's first contact with the _Visualization Tool_. In addition to a description of the tool and it's purpose, several entrypoints are available. A prominent call-to-action invites to go to the Visualization Builder directly. 
+
+The homepage includes a short tutorial section that describies the different steps needed to create a visualization, as well as some example charts that explain different features of the charts created with the tool and which invite the users to create their own visualizations based on the examples. The examples are followed by a section about which kind of data is available via the _Visualization Tool_, followed by a call-to-action for other potential data-providers.
 
 ~~~image
 plain: true
@@ -99,9 +101,9 @@ description: "[Open full-size image](./static/docs/design/mockups/1.0_l_home.png
 
 ~~~image
 plain: true
-span: 3
-src: "./static/docs/design/mockups/1.1_l_home_detail.png"
-description: "[Open full-size image](./static/docs/design/mockups/1.1_l_home_detail.png)"
+span: 1
+src: "./static/docs/design/mockups/1.0_s_home.png"
+description: "[Open full-size image](./static/docs/design/mockups/1.0_s_home.png)"
 ~~~
 
 ## Chart Builder
