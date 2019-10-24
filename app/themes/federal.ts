@@ -1,4 +1,3 @@
-import { LanguageMenu } from "./../components/language-menu";
 /**
  * IMPORTANT: just export JSON-serializable data from this file!
  *
@@ -8,7 +7,6 @@ import { LanguageMenu } from "./../components/language-menu";
  * - `globalStyles` should be a plain string (NOT a Emotion `css` template string).
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
-
 import { Theme } from "./index";
 
 /**
@@ -132,9 +130,9 @@ export const theme: Theme = {
     circle: 99999
   },
   shadows: {
-    primary: "0 2px 4px rgba(0, 0, 0, .5)",
-    rightSide: "0 2px 4px -2px rgba(0, 0, 0, .5)",
-    leftSide: "-2px 2px 4px -2px rgba(0, 0, 0, .5)"
+    primary: "0 3px 5px 0 rgba(0,0,0,0.10)",
+    rightSide: "0 2px 4px -2px rgba(0, 0, 0, .1)",
+    leftSide: "-2px 2px 4px -2px rgba(0, 0, 0, .1)"
   },
   text: {
     giga: {
@@ -413,7 +411,7 @@ export const theme: Theme = {
         borderRightColor: "monochrome.500",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
-        gridArea:"left",
+        gridArea: "left"
       },
       middle: {
         variant: "variants.container.root",
@@ -425,7 +423,10 @@ export const theme: Theme = {
         bg: "monochrome.100",
         boxShadow: "primary",
         width: "100%",
-        minHeight: 600
+        minHeight: 600,
+        borderWidth: "1px",
+        borderStyle: "solid",
+        borderColor: "monochrome.300"
       },
       right: {
         bg: "blueGrey",
@@ -434,7 +435,7 @@ export const theme: Theme = {
         borderLeftColor: "monochrome.500",
         borderLeftWidth: "1px",
         borderLeftStyle: "solid",
-        gridArea: "right",
+        gridArea: "right"
       },
       header: {
         p: 3,
@@ -454,15 +455,32 @@ export const theme: Theme = {
       fontSize: [2, 2, 2],
       pb: 1
     },
+    controlSection: {
+      borderTopColor: "monochrome.500",
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      "&:first-of-type": {
+        borderTopWidth: 0
+      },
+      "&:last-of-type": {
+        borderBottomColor: "monochrome.500",
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid"
+      }
+    },
     controlSectionTitle: {
       p: 3,
       bg: "monochrome.100",
-      borderColor: "monochrome.300",
-      borderWidth: "1px",
-      borderStyle: "solid"
+      appearance: "none",
+      width: "100%",
+      border: "none",
+      cursor: "pointer"
     },
     controlSectionContent: {
-      p: 3
+      p: 3,
+      borderTopColor: "monochrome.300",
+      borderTopWidth: "1px",
+      borderTopStyle: "solid"
     },
     chartTypeRadio: {
       width: "86px",
@@ -486,6 +504,14 @@ export const theme: Theme = {
     },
     loading: {
       variant: "variants.hint"
+    },
+    success: {
+      variant: "variants.hint",
+      mb: 4,
+      p: 4,
+      color: "success.base",
+      bg: "success.light",
+      height: "auto"
     }
   }
 };

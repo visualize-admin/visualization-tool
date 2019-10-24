@@ -11,7 +11,8 @@ export const ChartBars = ({
   xField,
   groupByField,
   heightField,
-  aggregationFunction
+  aggregationFunction,
+  palette
 }: {
   observations: any[];
   dimensions: Dimension[];
@@ -20,6 +21,7 @@ export const ChartBars = ({
   groupByField: string;
   heightField: string;
   aggregationFunction: "sum";
+  palette: string;
 }) => {
   const [resizeRef, width] = useResizeObserver();
   const formattedData = formatDataForBarChart({
@@ -47,6 +49,7 @@ export const ChartBars = ({
           dimensions
         })}
         aggregateFunction={aggregationFunction}
+        palette={palette}
       />
     </div>
   );

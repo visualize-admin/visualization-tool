@@ -1,4 +1,3 @@
-import { Trans } from "@lingui/macro";
 import React from "react";
 import { Box, Button, Text } from "rebass";
 import { useDataSets } from "../domain";
@@ -28,11 +27,7 @@ export const DataSetList = ({
       </Box>
     );
   } else {
-    return (
-      <Loading>
-        <Trans>Datensätze werden geladen</Trans>
-      </Loading>
-    );
+    return <Loading />;
   }
 };
 

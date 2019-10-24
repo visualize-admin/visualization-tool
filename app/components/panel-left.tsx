@@ -1,13 +1,13 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Link, Box } from "rebass";
+import { Box, Link } from "rebass";
+import { useConfiguratorState } from "../domain/configurator-state";
 import { ChartConfigurator } from "./chart-configurator";
+import { ControlSection } from "./chart-controls";
 import { ChartTypeSelector } from "./chart-type-selector";
-import { Container, ContainerTitle } from "./container";
+import { ContainerTitle } from "./container";
 import { DataSetList } from "./dataset-selector";
 import { LocalizedLink } from "./links";
-import { useConfiguratorState } from "../domain/configurator-state";
-import { ControlSection } from "./chart-controls";
 
 export const PanelLeft = ({
   chartId,
@@ -21,7 +21,7 @@ export const PanelLeft = ({
   const [state] = useConfiguratorState();
 
   return (
-    <Container side="left" data-name="panel-left">
+    <Box data-name="panel-left" variant="container.left">
       {chartId === "new" ? (
         <>
           <ContainerTitle>
@@ -71,6 +71,6 @@ export const PanelLeft = ({
           )}
         </>
       )}
-    </Container>
+    </Box>
   );
 };

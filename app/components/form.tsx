@@ -100,7 +100,12 @@ export const Select = ({
       </Label>
     )}
     <RebassSelect
-      sx={{ borderColor: "monochrome.500", fontSize: 4, bg: "monochrome.100" }}
+      sx={{
+        height: 48,
+        borderColor: "monochrome.500",
+        fontSize: 4,
+        bg: "monochrome.100"
+      }}
       id={label}
       name={label}
       onChange={onChange}

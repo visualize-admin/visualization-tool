@@ -3,7 +3,7 @@ import React from "react";
 import { useObservations2 } from "../domain/data-cube";
 import { Field } from "./field";
 import { Loading } from "./hint";
-import { ControlSection, ControlList } from "./chart-controls";
+import { ControlSection, ControlList, ColorPalette } from "./chart-controls";
 import { ChartScatterplot } from "./charts-scatterplot";
 
 export const ChartScatterplotControls = ({
@@ -43,6 +43,16 @@ export const ChartScatterplotControls = ({
           />
         </ControlList>
       </ControlSection>
+      <ControlSection title="Darstellung">
+        <ControlList>
+          <ColorPalette
+            type="select"
+            chartId={chartId}
+            path={"palette"}
+            label={"Farbpalette:"}
+          />
+        </ControlList>
+      </ControlSection>
     </>
   );
 };
@@ -53,7 +63,8 @@ export const ChartScatterplotVisualization = ({
   measures,
   filters,
   xField,
-  yField
+  yField,
+  palette
 }: {
   dataSet: DataCube;
   dimensions: Dimension[];
@@ -61,6 +72,7 @@ export const ChartScatterplotVisualization = ({
   filters?: any;
   xField: string;
   yField: string;
+  palette: string;
 }) => {
   const fields = React.useMemo(
     () => new Map([["xField", xField], ["yField", yField]]),
@@ -83,9 +95,10 @@ export const ChartScatterplotVisualization = ({
         measures={measures}
         xField={xField}
         yField={yField}
+        palette={palette}
       />
     );
   } else {
-    return <Loading>Updating data...</Loading>;
+    return <Loading />;
   }
 };

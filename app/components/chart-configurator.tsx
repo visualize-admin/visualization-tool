@@ -1,4 +1,3 @@
-import { Trans } from "@lingui/macro";
 import React from "react";
 import { Flex } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
@@ -10,8 +9,8 @@ import {
 import { ChartAreasControls } from "./cockpit-chart-areas";
 import { ChartBarsControls } from "./cockpit-chart-bars";
 import { ChartLinesControls } from "./cockpit-chart-lines";
-import { Loading } from "./hint";
 import { ChartScatterplotControls } from "./cockpit-chart-scatterplot";
+import { Loading } from "./hint";
 
 export const ChartConfigurator = ({
   chartId,
@@ -69,10 +68,6 @@ export const ChartConfigurator = ({
       </Flex>
     );
   } else {
-    return (
-      <Loading>
-        <Trans>Metadaten werden geladen...</Trans>
-      </Loading>
-    );
+    return <Loading />;
   }
 };

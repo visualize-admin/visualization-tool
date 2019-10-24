@@ -11,7 +11,8 @@ export const ChartLines = ({
   xField,
   groupByField,
   heightField,
-  aggregationFunction
+  aggregationFunction,
+  palette
 }: {
   observations: any[];
   dimensions: Dimension[];
@@ -20,6 +21,7 @@ export const ChartLines = ({
   groupByField: string;
   heightField: string;
   aggregationFunction: "sum";
+  palette: string;
 }) => {
   const [resizeRef, width] = useResizeObserver();
 
@@ -47,6 +49,7 @@ export const ChartLines = ({
           dimensions
         })}
         aggregateFunction={aggregationFunction}
+        palette={palette}
       />
     </div>
   );

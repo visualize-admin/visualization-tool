@@ -28,6 +28,7 @@ const DisplayChart = ({
           xField={chartConfig.x}
           groupByField={chartConfig.color}
           heightField={chartConfig.height}
+          palette={chartConfig.palette}
         />
       )}
       {chartConfig.chartType === "line" && (
@@ -39,6 +40,7 @@ const DisplayChart = ({
           xField={chartConfig.x}
           groupByField={chartConfig.color}
           heightField={chartConfig.height}
+          palette={chartConfig.palette}
         />
       )}
       {chartConfig.chartType === "area" && (
@@ -50,6 +52,7 @@ const DisplayChart = ({
           xField={chartConfig.x}
           groupByField={chartConfig.color}
           heightField={chartConfig.height}
+          palette={chartConfig.palette}
         />
       )}
     </div>

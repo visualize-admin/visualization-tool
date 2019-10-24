@@ -20,40 +20,42 @@ export const Hint = ({ children }: { children: React.ReactNode }) => (
   </Flex>
 );
 
-export const Loading = ({ children }: { children: React.ReactNode }) => (
-  <Flex justifyContent="center" alignItems="center" variant={"loading"}>
-    {children}
-  </Flex>
-);
+export const Loading = () => (
+  <Hint>
+    <Box
+      sx={{
+        animation: "spin 2s linear infinite",
 
+        "@keyframes spin": {
+          "0%": { transform: "rotate(360deg)" },
+          "100%": { transform: "rotate(0deg)" }
+        }
+      }}
+    >
+      <Icon name="loading" size={56} />
+    </Box>
+    <Text variant="heading2">
+      <Trans>Daten wird geladen…</Trans>
+    </Text>
+  </Hint>
+);
 export const DataSetHint = () => (
   <Hint>
-    <Box m={[5, 7, 7]}>
-      <Text variant="heading2" my={3}>
-        <Trans>Datensatz Auswählen</Trans>
-      </Text>
-      <Text variant="paragraph2">
-        <Trans>
-          Klicken Sie auf einen Datensatz in der linken Spalte, um eine
-          Übersicht über die Struktur und Komposition des jeweiligen Datensatz
-          zu erhalten.
-        </Trans>
-      </Text>
-    </Box>
+    <Icon name="dataset" size={56} />
+    <Text variant="heading2" my={3}>
+      <Trans>Datensatz Auswählen</Trans>
+    </Text>
+    <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+      <Trans>
+        Klicken Sie auf einen Datensatz in der linken Spalte, um eine Übersicht
+        über die Struktur und Komposition des jeweiligen Datensatz zu erhalten.
+      </Trans>
+    </Text>
   </Hint>
 );
 
 export const Success = () => (
-  <Flex
-    variant={"hint"}
-    mb={4}
-    p={4}
-    color="success.base"
-    bg="success.light"
-    justifyContent="flex-start"
-    alignItems="center"
-    sx={{ maxHeight: 200 }}
-  >
+  <Flex variant={"success"} justifyContent="flex-start" alignItems="center">
     <Icon name="published" size={56} />
     <Text variant="heading3" ml={4} sx={{ textAlign: "left" }}>
       <Trans>

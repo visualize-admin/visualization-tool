@@ -1,18 +1,23 @@
 import * as React from "react";
 import * as vega from "vega";
 import { xAxisTheme, yAxisTheme } from "./chart-styles";
-import { useTheme } from "../../themes";
 
 interface Props {
   data: any;
   width: number;
   xField: string;
   yField: string;
+  palette: string;
 }
 
-export const Scatterplot = ({ data, width, xField, yField }: Props) => {
-  // FIXME: Use hook to get the theme from ThemeProvider.
-  const theme = useTheme();
+export const Scatterplot = ({
+  data,
+  width,
+  xField,
+  yField,
+  palette
+}: Props) => {
+  console.log(vega.scheme(palette)[0]);
   const spec: vega.Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
@@ -73,7 +78,7 @@ export const Scatterplot = ({ data, width, xField, yField }: Props) => {
             strokeWidth: { value: 0 },
             opacity: { value: 0.6 },
             stroke: { value: "transparent" },
-            fill: { value: (theme.colors.primary as any).base } // FIXME
+            fill: { value: vega.scheme(palette)[0] }
           }
         }
       }

@@ -73,6 +73,6 @@ const DimensionValues = ({
       </>
     );
   } else {
-    return <Loading>Fetching dimension values...</Loading>;
+    return <Loading />;
   }
 };
