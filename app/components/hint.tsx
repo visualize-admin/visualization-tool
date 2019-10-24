@@ -35,7 +35,7 @@ export const Loading = () => (
       <Icon name="loading" size={56} />
     </Box>
     <Text variant="heading2">
-      <Trans>Daten wird geladen…</Trans>
+      <Trans>Daten werden geladen…</Trans>
     </Text>
   </Hint>
 );
