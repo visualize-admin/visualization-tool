@@ -1,4 +1,3 @@
-import { Trans } from "@lingui/macro";
 import React from "react";
 import { Flex } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
@@ -33,10 +32,6 @@ export const ChartFilters = ({
       </Flex>
     );
   } else {
-    return (
-      <Loading>
-        <Trans>Metadaten werden geladen...</Trans>
-      </Loading>
-    );
+    return <Loading />;
   }
 };

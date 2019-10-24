@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Flex, Text } from "rebass";
-import { DataSetHint } from "./hint";
+import { Loading } from "./hint";
 import { useDataSetAndMetadata } from "../domain";
 
 export interface Preview {
@@ -32,6 +32,6 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
       </Box>
     );
   } else {
-    return <DataSetHint />;
+    return <Loading />;
   }
 };

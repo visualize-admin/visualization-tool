@@ -1,8 +1,6 @@
 import * as React from "react";
 import * as vega from "vega";
-import { Select as RebassSelect } from "@rebass/forms";
-import { Box } from "rebass";
-
+import { Field } from "../field";
 // export const ColorPalette = ({
 //   palettes
 // }: {
@@ -38,10 +36,40 @@ import { Box } from "rebass";
 //     </div>
 //   );
 // };
+
+const vegaPalettes: Array<{
+  label: vega.ColorScheme;
+  value: string;
+}> = [
+  { label: "category10", value: "category10" },
+  { label: "accent", value: "accent" },
+  { label: "pastel1", value: "pastel1" },
+  { label: "pastel2", value: "pastel2" },
+  { label: "dark2", value: "dark2" }
+];
 export const ColorPalette = ({
-  palettes
+  chartId,
+  label,
+  path,
+  type,
+  value,
+  disabled,
+  ...props
 }: {
-  palettes: Array<{ id: vega.ColorScheme; values: Array<string> }> | any;
+  chartId: string;
+  label: string;
+  path: string;
+  type?: "text" | "checkbox" | "radio" | "input" | "select";
+  value?: string;
+  disabled?: boolean;
 }) => {
-  return <div></div>;
+  return (
+    <Field
+      type="select"
+      chartId={chartId}
+      path={path}
+      label={label}
+      options={vegaPalettes}
+    />
+  );
 };

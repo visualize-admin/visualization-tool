@@ -3,10 +3,14 @@ import { Flex } from "rebass";
 import { ChartTypeSelectorField } from "./field";
 import { Loading } from "./hint";
 import { useDataSetAndMetadata } from "../domain";
-import { Trans } from "@lingui/macro";
 import { ChartType } from "../domain/config-types";
 
-const availableChartTypes: ChartType[] = ["column", "line", "area", "scatterplot"];
+const availableChartTypes: ChartType[] = [
+  "column",
+  "line",
+  "area",
+  "scatterplot"
+];
 export const ChartTypeSelector = ({
   chartId,
   dataSet
@@ -43,10 +47,6 @@ export const ChartTypeSelector = ({
       </Flex>
     );
   } else {
-    return (
-      <Loading>
-        <Trans>Metadaten werden geladen...</Trans>
-      </Loading>
-    );
+    return <Loading />;
   }
 };

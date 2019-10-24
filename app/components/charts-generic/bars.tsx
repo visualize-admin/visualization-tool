@@ -9,7 +9,8 @@ interface Props {
   heightField: string;
   groupBy: string;
   groupByLabel: string;
-  aggregateFunction: "sum"; // AggregateFunction;
+  aggregateFunction: "sum";
+  palette: string;
 }
 
 export const Bars = ({
@@ -19,7 +20,8 @@ export const Bars = ({
   heightField,
   groupBy,
   groupByLabel,
-  aggregateFunction
+  aggregateFunction,
+  palette
 }: Props) => {
   // FIXME: Use hook to get the theme from ThemeProvider.
   const spec: vega.Spec = {
@@ -82,7 +84,7 @@ export const Bars = ({
       {
         name: "colorScale",
         type: "ordinal",
-        range: { scheme: "dark2" },
+        range: { scheme: palette },
         domain: {
           data: "table",
           field: groupBy

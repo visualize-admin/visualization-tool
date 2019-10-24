@@ -1,10 +1,10 @@
 import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { useObservations } from "../domain/data-cube";
+import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
 import { ChartLines } from "./charts-lines";
 import { Field } from "./field";
 import { Loading } from "./hint";
-import { ControlList, ControlSection } from "./chart-controls";
 
 export const ChartLinesControls = ({
   chartId,
@@ -61,6 +61,16 @@ export const ChartLinesControls = ({
           />
         </ControlList>
       </ControlSection>
+      <ControlSection title="Darstellung">
+        <ControlList>
+          <ColorPalette
+            type="select"
+            chartId={chartId}
+            path={"palette"}
+            label={"Farbpalette:"}
+          />
+        </ControlList>
+      </ControlSection>
     </>
   );
 };
@@ -72,7 +82,8 @@ export const ChartLinesVisualization = ({
   filters,
   xField,
   groupByField,
-  heightField
+  heightField,
+  palette
 }: {
   dataSet: DataCube;
   dimensions: Dimension[];
@@ -81,6 +92,7 @@ export const ChartLinesVisualization = ({
   xField: string;
   groupByField: string;
   heightField: string;
+  palette: string;
 }) => {
   const observations = useObservations({
     dataSet,
@@ -102,9 +114,10 @@ export const ChartLinesVisualization = ({
         groupByField={groupByField}
         heightField={heightField}
         aggregationFunction={"sum"}
+        palette={palette}
       />
     );
   } else {
-    return <Loading>Updating data...</Loading>;
+    return <Loading />;
   }
 };

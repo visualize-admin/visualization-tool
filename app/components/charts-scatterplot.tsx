@@ -9,13 +9,15 @@ export const ChartScatterplot = ({
   dimensions,
   measures,
   xField,
-  yField
+  yField,
+  palette
 }: {
   observations: any[];
   dimensions: Dimension[];
   measures: Measure[];
   xField: string;
   yField: string;
+  palette: string;
 }) => {
   const [resizeRef, width] = useResizeObserver();
 
@@ -33,6 +35,7 @@ export const ChartScatterplot = ({
         width={width}
         xField={getMeasureLabelFromIri({ measureIri: xField, measures })}
         yField={getMeasureLabelFromIri({ measureIri: yField, measures })}
+        palette={palette}
       />
     </div>
   );

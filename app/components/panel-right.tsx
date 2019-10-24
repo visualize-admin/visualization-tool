@@ -1,21 +1,16 @@
 import React from "react";
+import { Box } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { ChartFilters } from "./chart-filters";
-import { Container } from "./container";
 
 export const PanelRight = ({ chartId }: { chartId: string }) => {
   const [state] = useConfiguratorState();
 
   return (
-    <Container side="right" data-name="panel-right">
+    <Box data-name="panel-right" variant="container.right">
       {state.state === "CONFIGURING_CHART" && (
-        <>
-          {/* <ContainerTitle>
-            <Trans>Daten Filter</Trans>
-          </ContainerTitle> */}
-          <ChartFilters chartId={chartId} dataSetIri={state.dataSet} />
-        </>
+        <ChartFilters chartId={chartId} dataSetIri={state.dataSet} />
       )}
-    </Container>
+    </Box>
   );
 };

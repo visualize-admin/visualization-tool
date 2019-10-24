@@ -10,7 +10,7 @@ export default () => markdown`
 ${(
   <ReactSpecimen>
     <div style={{ height: 150 }}>
-      <Loading>Updating data...</Loading>
+      <Loading />
     </div>
   </ReactSpecimen>
 )}

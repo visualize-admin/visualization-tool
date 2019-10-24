@@ -1,4 +1,3 @@
-import { Trans } from "@lingui/macro";
 import React from "react";
 import { Flex, Text } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
@@ -49,6 +48,7 @@ export const ChartPreview = ({
                 xField={state.chartConfig.x}
                 groupByField={state.chartConfig.color}
                 heightField={state.chartConfig.height}
+                palette={state.chartConfig.palette}
               />
             )}
             {state.chartConfig.chartType === "line" && (
@@ -60,6 +60,7 @@ export const ChartPreview = ({
                 xField={state.chartConfig.x}
                 groupByField={state.chartConfig.color}
                 heightField={state.chartConfig.height}
+                palette={state.chartConfig.palette}
               />
             )}
             {state.chartConfig.chartType === "area" && (
@@ -71,6 +72,7 @@ export const ChartPreview = ({
                 xField={state.chartConfig.x}
                 groupByField={state.chartConfig.color}
                 heightField={state.chartConfig.height}
+                palette={state.chartConfig.palette}
               />
             )}
             {state.chartConfig.chartType === "scatterplot" && (
@@ -81,6 +83,7 @@ export const ChartPreview = ({
                 filters={state.chartConfig.filters}
                 xField={state.chartConfig.x}
                 yField={state.chartConfig.y}
+                palette={state.chartConfig.palette}
               />
             )}
           </>
@@ -96,10 +99,6 @@ export const ChartPreview = ({
       </Flex>
     );
   } else {
-    return (
-      <Loading>
-        <Trans>Metadaten werden geladen...</Trans>
-      </Loading>
-    );
+    return <Loading />;
   }
 };

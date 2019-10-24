@@ -14,6 +14,7 @@ interface Props {
   groupBy: string;
   groupByLabel: string;
   aggregateFunction: "sum";
+  palette: string;
 }
 
 export const Areas = ({
@@ -23,7 +24,8 @@ export const Areas = ({
   yField,
   groupBy,
   groupByLabel,
-  aggregateFunction
+  aggregateFunction,
+  palette
 }: Props) => {
   const spec: VegaSpecs = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
@@ -75,7 +77,7 @@ export const Areas = ({
       {
         name: "colorScale",
         type: "ordinal",
-        range: "category",
+        range: { scheme: palette },
         domain: {
           data: "table",
           field: groupBy

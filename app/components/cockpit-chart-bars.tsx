@@ -4,7 +4,7 @@ import { useObservations } from "../domain/data-cube";
 import { ChartBars } from "./charts-bars";
 import { Field } from "./field";
 import { Loading } from "./hint";
-import { ControlList, ControlSection } from "./chart-controls";
+import { ControlList, ControlSection, ColorPalette } from "./chart-controls";
 
 export const ChartBarsControls = ({
   chartId,
@@ -61,6 +61,16 @@ export const ChartBarsControls = ({
           />
         </ControlList>
       </ControlSection>
+      <ControlSection title="Darstellung">
+        <ControlList>
+          <ColorPalette
+            type="select"
+            chartId={chartId}
+            path={"palette"}
+            label={"Farbpalette:"}
+          />
+        </ControlList>
+      </ControlSection>
     </>
   );
 };
@@ -72,7 +82,8 @@ export const ChartBarsVisualization = ({
   filters,
   xField,
   groupByField,
-  heightField
+  heightField,
+  palette
 }: {
   dataSet: DataCube;
   dimensions: Dimension[];
@@ -81,6 +92,7 @@ export const ChartBarsVisualization = ({
   xField: string;
   groupByField: string;
   heightField: string;
+  palette: string;
 }) => {
   const observations = useObservations({
     dataSet,
@@ -102,9 +114,10 @@ export const ChartBarsVisualization = ({
         groupByField={groupByField}
         heightField={heightField}
         aggregationFunction={"sum"}
+        palette={palette}
       />
     );
   } else {
-    return <Loading>Updating data...</Loading>;
+    return <Loading />;
   }
 };

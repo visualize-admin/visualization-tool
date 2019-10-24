@@ -13,7 +13,7 @@ import { DataSetMetadata } from "./data-cube";
 //   name: HTMLInputElement["name"]
 //   onChange: [];
 // }
-export type Option = { value: string; label: string };
+export type Option = { value: string | any; label: string | any };
 
 export type FieldProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,
@@ -99,7 +99,8 @@ export const useChartTypeSelectorField = ({
                 metaData.measures.length > 1
                   ? metaData.measures[1]
                   : metaData.measures[0]
-              )
+              ),
+              palette: "category10"
             }
           : chartType === "column"
           ? {
@@ -107,14 +108,16 @@ export const useChartTypeSelectorField = ({
               height: getDimensionIri(metaData.measures[0]),
               color: getDimensionIri(
                 getCategoricalDimensions(metaData.dimensions)[0]
-              )
+              ),
+              palette: "category10"
             }
           : {
               x: getDimensionIri(getTimeDimensions(metaData.dimensions)[0]),
               height: getDimensionIri(metaData.measures[0]),
               color: getDimensionIri(
                 getCategoricalDimensions(metaData.dimensions)[1]
-              )
+              ),
+              palette: "category10"
             };
       dispatch({
         type: "CHART_TYPE_PREVIEWED",
