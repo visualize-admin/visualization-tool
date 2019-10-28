@@ -6,10 +6,10 @@ import {
   getTimeDimensions,
   useDataSetAndMetadata
 } from "../domain/data-cube";
-import { ChartAreasControls } from "./cockpit-chart-areas";
-import { ChartBarsControls } from "./cockpit-chart-bars";
-import { ChartLinesControls } from "./cockpit-chart-lines";
-import { ChartScatterplotControls } from "./cockpit-chart-scatterplot";
+import { ChartAreasControls } from "./chart-areas-controls";
+import { ChartBarsControls } from "./chart-bars-controls";
+import { ChartLinesControls } from "./chart-lines-controls";
+import { ChartScatterplotControls } from "./chart-scatterplot-controls";
 import { Loading } from "./hint";
 
 export const ChartConfigurator = ({
@@ -62,7 +62,9 @@ export const ChartConfigurator = ({
           state.chartConfig.chartType === "scatterplot" && (
             <ChartScatterplotControls
               chartId={chartId}
+              timeDimensions={timeDimensions}
               measuresDimensions={measuresDimensions}
+              categoricalDimensions={categoricalDimensions}
             />
           )}
       </Flex>

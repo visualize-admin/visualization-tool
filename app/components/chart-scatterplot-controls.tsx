@@ -1,17 +1,18 @@
-import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
+import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
-import { useObservations2 } from "../domain/data-cube";
+import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
 import { Field } from "./field";
-import { Loading } from "./hint";
-import { ControlSection, ControlList, ColorPalette } from "./chart-controls";
-import { ChartScatterplot } from "./charts-scatterplot";
 
 export const ChartScatterplotControls = ({
   chartId,
-  measuresDimensions
+  measuresDimensions,
+  categoricalDimensions,
+  timeDimensions
 }: {
   chartId: string;
   measuresDimensions: Dimension[];
+  categoricalDimensions: Dimension[];
+  timeDimensions: Dimension[];
 }) => {
   return (
     <>
@@ -43,6 +44,34 @@ export const ChartScatterplotControls = ({
           />
         </ControlList>
       </ControlSection>
+      <ControlSection title="Farbe">
+        <ControlList>
+          <Field
+            type="select"
+            chartId={chartId}
+            path={"color"}
+            label={"Dimension wählen"}
+            options={categoricalDimensions.map(dim => ({
+              value: dim.iri.value,
+              label: dim.labels[0].value
+            }))}
+          />
+        </ControlList>
+      </ControlSection>
+      <ControlSection title="Beschriftung">
+        <ControlList>
+          <Field
+            type="select"
+            chartId={chartId}
+            path={"label"}
+            label={"Dimension wählen"}
+            options={timeDimensions.map(dim => ({
+              value: dim.iri.value,
+              label: dim.labels[0].value
+            }))}
+          />
+        </ControlList>
+      </ControlSection>
       <ControlSection title="Darstellung">
         <ControlList>
           <ColorPalette
@@ -55,50 +84,4 @@ export const ChartScatterplotControls = ({
       </ControlSection>
     </>
   );
-};
-
-export const ChartScatterplotVisualization = ({
-  dataSet,
-  dimensions,
-  measures,
-  filters,
-  xField,
-  yField,
-  palette
-}: {
-  dataSet: DataCube;
-  dimensions: Dimension[];
-  measures: Measure[];
-  filters?: any;
-  xField: string;
-  yField: string;
-  palette: string;
-}) => {
-  const fields = React.useMemo(
-    () => new Map([["xField", xField], ["yField", yField]]),
-    [xField, yField]
-  );
-
-  const observations = useObservations2({
-    dataSet,
-    measures,
-    dimensions,
-    fields,
-    filters
-  });
-
-  if (observations.state === "loaded") {
-    return (
-      <ChartScatterplot
-        observations={observations.data.results}
-        dimensions={dimensions}
-        measures={measures}
-        xField={xField}
-        yField={yField}
-        palette={palette}
-      />
-    );
-  } else {
-    return <Loading />;
-  }
 };

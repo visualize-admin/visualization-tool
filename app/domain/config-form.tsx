@@ -7,7 +7,7 @@ import {
   getInitialFilters
 } from ".";
 import { useConfiguratorState } from "./configurator-state";
-import { DataSetMetadata } from "./data-cube";
+import { DataSetMetadata, isTimeDimension } from "./data-cube";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -87,10 +87,10 @@ export const useChartTypeSelectorField = ({
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
       const chartType = e.currentTarget.value;
-      const initialFilters = getInitialFilters({
-        dataSet: metaData.dataSet,
-        dimensions: metaData.dimensions
-      });
+      const nonTimeDImensions = metaData.dimensions.filter(
+        dimension => !isTimeDimension(dimension)
+      );
+      const initialFilters = getInitialFilters(metaData.dimensions);
       const initialState =
         chartType === "scatterplot"
           ? {
@@ -100,11 +100,15 @@ export const useChartTypeSelectorField = ({
                   ? metaData.measures[1]
                   : metaData.measures[0]
               ),
+              color: getDimensionIri(
+                getCategoricalDimensions(metaData.dimensions)[0]
+              ),
+              label: getDimensionIri(getTimeDimensions(metaData.dimensions)[0]),
               palette: "category10"
             }
           : chartType === "column"
           ? {
-              x: getDimensionIri(metaData.dimensions[0]),
+              x: getDimensionIri(nonTimeDImensions[0]),
               height: getDimensionIri(metaData.measures[0]),
               color: getDimensionIri(
                 getCategoricalDimensions(metaData.dimensions)[0]

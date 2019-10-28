@@ -1,12 +1,9 @@
-import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
+import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
-import { useObservations } from "../domain/data-cube";
 import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
-import { ChartLines } from "./charts-lines";
 import { Field } from "./field";
-import { Loading } from "./hint";
 
-export const ChartLinesControls = ({
+export const ChartAreasControls = ({
   chartId,
   timeDimensions,
   categoricalDimensions,
@@ -73,51 +70,4 @@ export const ChartLinesControls = ({
       </ControlSection>
     </>
   );
-};
-
-export const ChartLinesVisualization = ({
-  dataSet,
-  dimensions,
-  measures,
-  filters,
-  xField,
-  groupByField,
-  heightField,
-  palette
-}: {
-  dataSet: DataCube;
-  dimensions: Dimension[];
-  measures: Measure[];
-  filters?: any;
-  xField: string;
-  groupByField: string;
-  heightField: string;
-  palette: string;
-}) => {
-  const observations = useObservations({
-    dataSet,
-    measures,
-    dimensions,
-    xField,
-    heightField,
-    groupByField,
-    filters
-  });
-
-  if (observations.state === "loaded") {
-    return (
-      <ChartLines
-        observations={observations.data.results}
-        dimensions={dimensions}
-        measures={measures}
-        xField={xField}
-        groupByField={groupByField}
-        heightField={heightField}
-        aggregationFunction={"sum"}
-        palette={palette}
-      />
-    );
-  } else {
-    return <Loading />;
-  }
 };

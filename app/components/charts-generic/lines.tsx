@@ -74,7 +74,6 @@ export const Lines = ({
         name: "colorScale",
         type: "ordinal",
         range: { scheme: palette },
-
         domain: {
           data: "table",
           field: groupBy

@@ -7,7 +7,7 @@ export const IconColumnChart = ({ size = 48, color = "currentColor" }) => (
            height={size}
            viewBox="0 0 48 48"
            fill={color}
-           fill-rule="evenodd"
+           fillRule="evenodd"
            stroke="none"
          >
            <g transform="translate(2.000000, 8.000000)">

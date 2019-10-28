@@ -2,11 +2,13 @@ import React from "react";
 import { Flex, Text } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { useDataSetAndMetadata } from "../domain/data-cube";
-import { ChartAreasVisualization } from "./cockpit-chart-areas";
-import { ChartBarsVisualization } from "./cockpit-chart-bars";
-import { ChartLinesVisualization } from "./cockpit-chart-lines";
-import { ChartScatterplotVisualization } from "./cockpit-chart-scatterplot";
+
 import { Loading } from "./hint";
+import { ChartBarsVisualization } from "./chart-bars";
+import { ChartLinesVisualization } from "./chart-lines";
+import { ChartAreasVisualization } from "./chart-areas";
+import { ChartScatterplotVisualization } from "./chart-scatterplot";
+
 export const ChartPreview = ({
   chartId,
   dataSetIri
@@ -20,7 +22,6 @@ export const ChartPreview = ({
 
   if (meta.state === "loaded") {
     const { dimensions, measures, dataSet } = meta.data;
-    // console.log(dataSet.extraMetadata);
     return (
       <Flex
         p={5}
@@ -45,9 +46,13 @@ export const ChartPreview = ({
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
-                xField={state.chartConfig.x}
-                groupByField={state.chartConfig.color}
-                heightField={state.chartConfig.height}
+                fields={
+                  new Map([
+                    ["xField", state.chartConfig.x],
+                    ["heightField", state.chartConfig.height],
+                    ["groupByField", state.chartConfig.color]
+                  ])
+                }
                 palette={state.chartConfig.palette}
               />
             )}
@@ -57,9 +62,13 @@ export const ChartPreview = ({
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
-                xField={state.chartConfig.x}
-                groupByField={state.chartConfig.color}
-                heightField={state.chartConfig.height}
+                fields={
+                  new Map([
+                    ["xField", state.chartConfig.x],
+                    ["heightField", state.chartConfig.height],
+                    ["groupByField", state.chartConfig.color]
+                  ])
+                }
                 palette={state.chartConfig.palette}
               />
             )}
@@ -69,9 +78,13 @@ export const ChartPreview = ({
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
-                xField={state.chartConfig.x}
-                groupByField={state.chartConfig.color}
-                heightField={state.chartConfig.height}
+                fields={
+                  new Map([
+                    ["xField", state.chartConfig.x],
+                    ["heightField", state.chartConfig.height],
+                    ["groupByField", state.chartConfig.color]
+                  ])
+                }
                 palette={state.chartConfig.palette}
               />
             )}
@@ -81,8 +94,14 @@ export const ChartPreview = ({
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
-                xField={state.chartConfig.x}
-                yField={state.chartConfig.y}
+                fields={
+                  new Map([
+                    ["xField", state.chartConfig.x],
+                    ["yField", state.chartConfig.y],
+                    ["groupByField", state.chartConfig.color],
+                    ["labelField", state.chartConfig.label]
+                  ])
+                }
                 palette={state.chartConfig.palette}
               />
             )}

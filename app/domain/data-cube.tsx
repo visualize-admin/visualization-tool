@@ -127,66 +127,6 @@ export const useObservations = ({
   dataSet,
   dimensions,
   measures,
-  xField,
-  heightField,
-  groupByField,
-  filters
-}: {
-  dataSet: DataCube;
-  dimensions: Dimension[];
-  measures: Measure[];
-  xField: string;
-  heightField: string;
-  groupByField: string;
-  filters?: Record<string, Record<string, boolean>>;
-}) => {
-  const xDimension = dimensions.find(dim => dim.iri.value === xField);
-  const groupByDimension = dimensions.find(
-    dim => dim.iri.value === groupByField
-  );
-  const measure = measures.find(m => m.iri.value === heightField);
-  const fetchData = useCallback(async () => {
-    const constructedFilters = filters
-      ? Object.entries(filters).flatMap(([dim, values]) => {
-          const selectedValues = Object.entries(values).flatMap(
-            ([value, selected]) => (selected ? [value] : [])
-          );
-          return selectedValues.length === 1
-            ? [new Dimension({ iri: dim }).equals(selectedValues[0])]
-            : selectedValues.length > 0
-            ? [new Dimension({ iri: dim }).in(selectedValues)]
-            : [];
-        })
-      : [];
-
-    let query = dataSet
-      .query()
-      .select({
-        xField: xDimension!,
-        measure: measure!,
-        groupByField: groupByDimension!
-      })
-      .limit(100000);
-
-    for (const f of constructedFilters) {
-      query = query.filter(f);
-    }
-
-    const data = await query.execute();
-    return {
-      results: data
-    };
-  }, [filters, dataSet, xDimension, measure, groupByDimension]);
-
-  return useRemoteData(fetchData);
-};
-
-// FIXME: This hook can take any field,
-// but currently only works for measures (not dimensions)
-export const useObservations2 = ({
-  dataSet,
-  dimensions,
-  measures,
   fields,
   filters
 }: {
@@ -214,9 +154,10 @@ export const useObservations2 = ({
 
     for (const [key, value] of fields) {
       query = query.select({
-        [key]: measures.find(m => m.iri.value === value)!
+        [key]: [...measures, ...dimensions].find(m => m.iri.value === value)!
       });
     }
+
     for (const f of constructedFilters) {
       query = query.filter(f);
     }
@@ -225,18 +166,12 @@ export const useObservations2 = ({
     return {
       results: data
     };
-  }, [filters, dataSet, measures, fields]);
+  }, [filters, dataSet, fields, measures, dimensions]);
 
   return useRemoteData(fetchData);
 };
 
-export const getInitialFilters = ({
-  dataSet,
-  dimensions
-}: {
-  dataSet: DataCube;
-  dimensions: Dimension[];
-}) => {
+export const getInitialFilters = (dimensions: Dimension[]) => {
   const nonTimeDimensions = dimensions.filter(
     dimension => !isTimeDimension(dimension)
   );
@@ -275,7 +210,7 @@ export const isCategoricalDimension = (dimension: Dimension) => {
  * @fixme use metadata to filter time dimension!
  */
 export const getTimeDimensions = (dimensions: Dimension[]) =>
-  dimensions.filter(isTimeDimension); //.filter(dim => dim.labels[0].value === "Jahr");
+  dimensions.filter(isTimeDimension);
 /**
  * @fixme use metadata to filter categorical dimension!
  */
