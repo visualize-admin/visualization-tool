@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as vega from "vega";
-import { xAxisTheme, yAxisTheme, legendTheme } from "./chart-styles";
+import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
 
 interface Props {
   data: any;
@@ -8,7 +8,6 @@ interface Props {
   xField: string;
   heightField: string;
   groupBy: string;
-  groupByLabel: string;
   aggregateFunction: "sum";
   palette: string;
 }
@@ -19,7 +18,6 @@ export const Bars = ({
   xField,
   heightField,
   groupBy,
-  groupByLabel,
   aggregateFunction,
   palette
 }: Props) => {

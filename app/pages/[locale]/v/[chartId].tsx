@@ -1,11 +1,12 @@
 import "isomorphic-unfetch";
 import { NextPage } from "next";
 import ErrorPage from "next/error";
-import { ChartAreasVisualization } from "../../../components/cockpit-chart-areas";
-import { ChartBarsVisualization } from "../../../components/cockpit-chart-bars";
-import { ChartLinesVisualization } from "../../../components/cockpit-chart-lines";
 import { useDataSetAndMetadata, DataCubeProvider } from "../../../domain";
 import { ChartConfig } from "../../../domain/config-types";
+import { ChartBarsVisualization } from "../../../components/chart-bars";
+import { ChartLinesVisualization } from "../../../components/chart-lines";
+import { ChartAreasVisualization } from "../../../components/chart-areas";
+import { ChartScatterplotVisualization } from "../../../components/chart-scatterplot";
 
 const DisplayChart = ({
   dataSet,
@@ -25,9 +26,13 @@ const DisplayChart = ({
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
-          xField={chartConfig.x}
-          groupByField={chartConfig.color}
-          heightField={chartConfig.height}
+          fields={
+            new Map([
+              ["xField", chartConfig.x],
+              ["heightField", chartConfig.height],
+              ["groupByField", chartConfig.color]
+            ])
+          }
           palette={chartConfig.palette}
         />
       )}
@@ -37,9 +42,13 @@ const DisplayChart = ({
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
-          xField={chartConfig.x}
-          groupByField={chartConfig.color}
-          heightField={chartConfig.height}
+          fields={
+            new Map([
+              ["xField", chartConfig.x],
+              ["heightField", chartConfig.height],
+              ["groupByField", chartConfig.color]
+            ])
+          }
           palette={chartConfig.palette}
         />
       )}
@@ -49,9 +58,30 @@ const DisplayChart = ({
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
-          xField={chartConfig.x}
-          groupByField={chartConfig.color}
-          heightField={chartConfig.height}
+          fields={
+            new Map([
+              ["xField", chartConfig.x],
+              ["heightField", chartConfig.height],
+              ["groupByField", chartConfig.color]
+            ])
+          }
+          palette={chartConfig.palette}
+        />
+      )}
+      {chartConfig.chartType === "scatterplot" && (
+        <ChartScatterplotVisualization
+          dataSet={rd.data.dataSet}
+          dimensions={rd.data.dimensions}
+          measures={rd.data.measures}
+          filters={chartConfig.filters}
+          fields={
+            new Map([
+              ["xField", chartConfig.x],
+              ["yField", chartConfig.y],
+              ["groupByField", chartConfig.color],
+              ["labelField", chartConfig.label]
+            ])
+          }
           palette={chartConfig.palette}
         />
       )}

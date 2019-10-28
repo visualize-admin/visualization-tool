@@ -7,7 +7,7 @@ export const IconChevronDown = ({ size = 24, color = "currentColor" }) => (
            height={size}
            viewBox="0 0 24 24"
            fill="none"
-           fill-rule="evenodd"
+           fillRule="evenodd"
            stroke={color}
            strokeWidth="2"
            strokeLinecap="butt"

@@ -7,7 +7,7 @@ export const IconCaretDown = ({ size = 24, color = "currentColor" }) => (
            height={size}
            viewBox="0 0 24 24"
            fill={color}
-           fill-rule="evenodd"
+           fillRule="evenodd"
            stroke="none"
            strokeWidth="2"
            strokeLinecap="butt"
