@@ -32,6 +32,53 @@ export const getInitialFilters = (dimensions: Dimension[]) => {
   );
 };
 
+export const getInitialState = ({
+  chartType,
+  dimensions,
+  measures
+}: {
+  chartType: ChartType;
+  dimensions: Dimension[];
+  measures: Measure[];
+}) => {
+  const nonTimeDImensions = dimensions.filter(
+    dimension => !isTimeDimension(dimension)
+  );
+  switch (chartType) {
+    case "scatterplot":
+      return {
+        x: getDimensionIri(measures[0]),
+        y: getDimensionIri(measures.length > 1 ? measures[1] : measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
+        label: getDimensionIri(getTimeDimensions(dimensions)[0]),
+        palette: "category10"
+      };
+    case "column":
+      return {
+        x: getDimensionIri(nonTimeDImensions[0]),
+        height: getDimensionIri(measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
+        palette: "category10"
+      };
+    case "line":
+      return {
+        x: getDimensionIri(getTimeDimensions(dimensions)[0]),
+        height: getDimensionIri(measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[1]),
+        palette: "category10"
+      };
+    case "area":
+      return {
+        x: getDimensionIri(getTimeDimensions(dimensions)[0]),
+        height: getDimensionIri(measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[1]),
+        palette: "category10"
+      };
+    default:
+      return null;
+  }
+};
+
 export const formatDataForBarChart = ({
   observations,
   dimensions,
