@@ -43,13 +43,14 @@ export const getInitialFilters = (dimensions: DimensionWithMeta[]) => {
   const nonTimeDimensions = dimensions.filter(
     dimension => !isTimeDimension(dimension)
   );
-  return nonTimeDimensions.reduce(
-    (obj, cur, i) => ({
-      ...obj,
-      [cur.component.iri.value]: { [`${cur.component.iri.value}/0`]: true }
-    }),
-    {}
-  );
+  return nonTimeDimensions.reduce((obj, cur, i) => {
+    return cur.values.length > 0
+      ? {
+          ...obj,
+          [cur.component.iri.value]: { [cur.values[0].value.value]: true }
+        }
+      : obj;
+  }, {});
 };
 
 const visuals = { palette: "category10" };
