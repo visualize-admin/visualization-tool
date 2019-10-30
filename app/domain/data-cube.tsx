@@ -34,7 +34,7 @@ const useDataCubeEntryPoint = () => {
   const locale = useLocale();
   return useMemo(() => {
     return new DataCubeEntryPoint(endpoint, {
-      languages: [locale, "de"],
+      languages: [locale, "de", ""],
       extraMetadata: [
         {
           variable: "contact",
