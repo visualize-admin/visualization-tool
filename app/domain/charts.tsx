@@ -179,7 +179,7 @@ export const formatDataForLineChart = ({
       [getDimensionLabelFromIri({
         dimensionIri: fields.xField,
         dimensions
-      })]: new Date(d.xField.value.value, 1, 1),
+      })]: new Date(d.xField.value.value),
       [getDimensionLabelFromIri({
         dimensionIri: fields.groupByField,
         dimensions
@@ -205,7 +205,7 @@ export const formatDataForAreaChart = ({
       [getDimensionLabelFromIri({
         dimensionIri: fields.xField,
         dimensions
-      })]: new Date(d.xField.value.value, 1, 1),
+      })]: new Date(d.xField.value.value),
       [getDimensionLabelFromIri({
         dimensionIri: fields.groupByField,
         dimensions
