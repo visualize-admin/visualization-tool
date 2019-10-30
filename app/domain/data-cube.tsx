@@ -154,7 +154,7 @@ export const useObservations = ({
         })
       : [];
 
-    let query = dataSet.query();
+    let query = dataSet.query().limit(null!);
 
     for (const [key, value] of fields) {
       query = query.select({
@@ -173,19 +173,6 @@ export const useObservations = ({
   }, [filters, dataSet, fields, measures, dimensions]);
 
   return useRemoteData(fetchData);
-};
-
-export const getInitialFilters = (dimensions: Dimension[]) => {
-  const nonTimeDimensions = dimensions.filter(
-    dimension => !isTimeDimension(dimension)
-  );
-  return nonTimeDimensions.reduce(
-    (obj, cur, i) => ({
-      ...obj,
-      [cur.iri.value]: { [`${cur.iri.value}/0`]: true }
-    }),
-    {}
-  );
 };
 
 export const isTimeDimension = (dimension: Dimension) => {

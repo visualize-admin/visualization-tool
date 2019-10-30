@@ -1,5 +1,13 @@
 import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
-import { getDimensionLabelFromIri, getMeasureLabelFromIri } from "./data-cube";
+import {
+  getDimensionLabelFromIri,
+  getMeasureLabelFromIri,
+  isTimeDimension,
+  getDimensionIri,
+  getCategoricalDimensions,
+  getTimeDimensions
+} from "./data-cube";
+import { ChartType } from "./config-types";
 
 export type BarChartFieldKey = "xField" | "heightField" | "groupByField";
 export type LineChartFieldKey = "xField" | "heightField" | "groupByField";
@@ -10,6 +18,19 @@ export type ScatterplotFieldKey =
   | "groupByField"
   | "labelField";
 export type Fields<K> = Map<K, string>;
+
+export const getInitialFilters = (dimensions: Dimension[]) => {
+  const nonTimeDimensions = dimensions.filter(
+    dimension => !isTimeDimension(dimension)
+  );
+  return nonTimeDimensions.reduce(
+    (obj, cur, i) => ({
+      ...obj,
+      [cur.iri.value]: { [`${cur.iri.value}/0`]: true }
+    }),
+    {}
+  );
+};
 
 export const formatDataForBarChart = ({
   observations,
