@@ -2,7 +2,7 @@ import React from "react";
 import { Flex } from "rebass";
 import { ChartTypeSelectorField } from "./field";
 import { Loading } from "./hint";
-import { useDataSetAndMetadata, getRecommendedChartType } from "../domain";
+import { useDataSetAndMetadata, getPossibleChartType } from "../domain";
 import { ChartType } from "../domain/config-types";
 
 const chartTypes: ChartType[] = ["column", "line", "area", "scatterplot"];
@@ -15,7 +15,7 @@ export const ChartTypeSelector = ({
 }) => {
   const meta = useDataSetAndMetadata(dataSet);
   if (meta.state === "loaded") {
-    const recommendedChartTypes = getRecommendedChartType({
+    const possibleChartTypes = getPossibleChartType({
       chartTypes,
       meta: meta.data
     });
@@ -41,7 +41,7 @@ export const ChartTypeSelector = ({
             label={d}
             value={d}
             metaData={meta.data}
-            disabled={!recommendedChartTypes.includes(d)}
+            disabled={!possibleChartTypes.includes(d)}
           />
         ))}
       </Flex>

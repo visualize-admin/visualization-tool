@@ -32,8 +32,8 @@ export const getInitialFilters = (dimensions: Dimension[]) => {
     {}
   );
 };
-const visuals = { palette: "category10" };
 
+const visuals = { palette: "category10" };
 export const getInitialState = ({
   chartType,
   dimensions,
@@ -87,19 +87,32 @@ export const getInitialState = ({
   }
 };
 
-export const getRecommendedChartType = ({
+export const getPossibleChartType = ({
   chartTypes,
   meta
 }: {
   chartTypes: ChartType[];
   meta: DataSetMetadata;
-}) => {
+}): ChartType[] => {
   const { measures, dimensions } = meta;
-  if (measures.length <= 1) {
-    return chartTypes.filter(c => c !== "scatterplot");
+
+  const scatterplotFilter = (ct: ChartType) => ct !== "scatterplot";
+  const lineFilter = (ct: ChartType) => ct !== "line";
+  const areaFilter = (ct: ChartType) => ct !== "area";
+
+  if (measures.length <= 1 && dimensions.some(dim => !isTimeDimension(dim))) {
+    return chartTypes
+      .filter(scatterplotFilter)
+      .filter(lineFilter)
+      .filter(areaFilter);
+  } else if (measures.length <= 1) {
+    return chartTypes.filter(scatterplotFilter);
+  } else if (dimensions.some(dim => !isTimeDimension(dim))) {
+    chartTypes.filter(lineFilter).filter(areaFilter);
   } else {
     return chartTypes;
   }
+  return chartTypes;
 };
 export const formatDataForBarChart = ({
   observations,
