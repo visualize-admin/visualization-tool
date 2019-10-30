@@ -182,19 +182,6 @@ export const useObservations = ({
   return useRemoteData(fetchData);
 };
 
-export const getInitialFilters = (dimensions: Dimension[]) => {
-  const nonTimeDimensions = dimensions.filter(
-    dimension => !isTimeDimension(dimension)
-  );
-  return nonTimeDimensions.reduce(
-    (obj, cur, i) => ({
-      ...obj,
-      [cur.iri.value]: { [`${cur.iri.value}/0`]: true }
-    }),
-    {}
-  );
-};
-
 export const isTimeDimension = (dimension: Dimension) => {
   const scaleOfMeasure = dimension.extraMetadata.scaleOfMeasure;
 

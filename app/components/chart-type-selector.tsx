@@ -1,16 +1,12 @@
 import React from "react";
 import { Flex } from "rebass";
 import { ChartTypeSelectorField } from "./field";
-import { Loading } from "./hint";
-import { useDataSetAndMetadata } from "../domain";
+import { Loading, Hint } from "./hint";
+import { useDataSetAndMetadata, getPossibleChartType } from "../domain";
 import { ChartType } from "../domain/config-types";
+import { Trans } from "@lingui/macro";
 
-const availableChartTypes: ChartType[] = [
-  "column",
-  "line",
-  "area",
-  "scatterplot"
-];
+const chartTypes: ChartType[] = ["column", "line", "area", "scatterplot"];
 export const ChartTypeSelector = ({
   chartId,
   dataSet
@@ -20,6 +16,10 @@ export const ChartTypeSelector = ({
 }) => {
   const meta = useDataSetAndMetadata(dataSet);
   if (meta.state === "loaded") {
+    const possibleChartTypes = getPossibleChartType({
+      chartTypes,
+      meta: meta.data
+    });
     return (
       <Flex
         width="100%"
@@ -33,17 +33,26 @@ export const ChartTypeSelector = ({
         //   }
         // }}
       >
-        {availableChartTypes.map(d => (
-          <ChartTypeSelectorField
-            key={d}
-            type="radio"
-            chartId={chartId}
-            path={"chartType"}
-            label={d}
-            value={d}
-            metaData={meta.data}
-          />
-        ))}
+        {!possibleChartTypes ? (
+          <Hint>
+            <Trans>
+              Mit ausgewähltem Datensatz kann kein Graphik dargestellt werden
+            </Trans>
+          </Hint>
+        ) : (
+          chartTypes.map(d => (
+            <ChartTypeSelectorField
+              key={d}
+              type="radio"
+              chartId={chartId}
+              path={"chartType"}
+              label={d}
+              value={d}
+              metaData={meta.data}
+              disabled={!possibleChartTypes.includes(d)}
+            />
+          ))
+        )}
       </Flex>
     );
   } else {

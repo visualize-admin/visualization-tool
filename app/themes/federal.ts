@@ -487,7 +487,6 @@ export const theme: Theme = {
       height: "86px",
       mx: 4,
       my: 6,
-      cursor: "pointer",
       transition: "background-color .2s"
     },
 

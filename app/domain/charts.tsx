@@ -1,5 +1,14 @@
 import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
-import { getDimensionLabelFromIri, getMeasureLabelFromIri } from "./data-cube";
+import {
+  getDimensionLabelFromIri,
+  getMeasureLabelFromIri,
+  isTimeDimension,
+  getDimensionIri,
+  getCategoricalDimensions,
+  getTimeDimensions,
+  DataSetMetadata
+} from "./data-cube";
+import { ChartType } from "./config-types";
 
 export interface BarChartFields {
   xField: string;
@@ -28,6 +37,103 @@ export type Fields =
   | LineChartFields
   | AreaChartFields
   | ScatterPlotFields;
+
+export const getInitialFilters = (dimensions: Dimension[]) => {
+  const nonTimeDimensions = dimensions.filter(
+    dimension => !isTimeDimension(dimension)
+  );
+  return nonTimeDimensions.reduce(
+    (obj, cur, i) => ({
+      ...obj,
+      [cur.iri.value]: { [`${cur.iri.value}/0`]: true }
+    }),
+    {}
+  );
+};
+
+const visuals = { palette: "category10" };
+export const getInitialState = ({
+  chartType,
+  dimensions,
+  measures
+}: {
+  chartType: ChartType;
+  dimensions: Dimension[];
+  measures: Measure[];
+}): {} => {
+  // FIXME: Should the returned type match the Keys defined above?
+  const nonTimeDImensions = dimensions.filter(
+    dimension => !isTimeDimension(dimension)
+  );
+  switch (chartType) {
+    case "scatterplot":
+      return {
+        x: getDimensionIri(measures[0]),
+        y: getDimensionIri(measures.length > 1 ? measures[1] : measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
+        label: getDimensionIri(getTimeDimensions(dimensions)[0]),
+        ...visuals
+      };
+    case "column":
+      return {
+        x: getDimensionIri(nonTimeDImensions[0]),
+        height: getDimensionIri(measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
+        ...visuals
+      };
+    case "line":
+      return {
+        x: getDimensionIri(getTimeDimensions(dimensions)[0]),
+        height: getDimensionIri(measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[1]),
+        ...visuals
+      };
+    case "area":
+      return {
+        x: getDimensionIri(getTimeDimensions(dimensions)[0]),
+        height: getDimensionIri(measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[1]),
+        ...visuals
+      };
+    default:
+      return {
+        x: getDimensionIri(nonTimeDImensions[0]),
+        height: getDimensionIri(measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
+        ...visuals
+      };
+  }
+};
+
+export const getPossibleChartType = ({
+  chartTypes,
+  meta
+}: {
+  chartTypes: ChartType[];
+  meta: DataSetMetadata;
+}): ChartType[] | null => {
+  const { measures, dimensions } = meta;
+
+  const hasMultipleQ = measures.length >= 1;
+  const hasTime = dimensions.some(dim => isTimeDimension(dim));
+
+  const catBased: ChartType[] = ["column"];
+  const multipleQ: ChartType[] = ["scatterplot"];
+  const timeBased: ChartType[] = ["line", "area"];
+
+  let possibles: ChartType[] | null = [];
+
+  if (hasMultipleQ && hasTime) {
+    possibles = [...multipleQ, ...timeBased, ...catBased];
+  } else if (hasMultipleQ && !hasTime) {
+    possibles = [...multipleQ, ...catBased];
+  } else if (!hasMultipleQ && !hasTime) {
+    possibles = [...catBased];
+  } else {
+    possibles = null;
+  }
+  return possibles;
+};
 
 export const formatDataForBarChart = ({
   observations,

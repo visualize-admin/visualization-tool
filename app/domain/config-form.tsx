@@ -1,13 +1,9 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
-import {
-  getCategoricalDimensions,
-  getDimensionIri,
-  getTimeDimensions,
-  getInitialFilters
-} from ".";
+import { getInitialFilters, getInitialState } from ".";
+import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
-import { DataSetMetadata, isTimeDimension } from "./data-cube";
+import { DataSetMetadata } from "./data-cube";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -84,58 +80,25 @@ export const useChartTypeSelectorField = ({
   metaData: DataSetMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
+  const { dimensions, measures } = metaData;
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
-      const chartType = e.currentTarget.value;
-      const nonTimeDImensions = metaData.dimensions.filter(
-        dimension => !isTimeDimension(dimension)
-      );
-      const initialFilters = getInitialFilters(metaData.dimensions);
-      const initialState =
-        chartType === "scatterplot"
-          ? {
-              x: getDimensionIri(metaData.measures[0]),
-              y: getDimensionIri(
-                metaData.measures.length > 1
-                  ? metaData.measures[1]
-                  : metaData.measures[0]
-              ),
-              color: getDimensionIri(
-                getCategoricalDimensions(metaData.dimensions)[0]
-              ),
-              label: getDimensionIri(getTimeDimensions(metaData.dimensions)[0]),
-              palette: "category10"
-            }
-          : chartType === "column"
-          ? {
-              x: getDimensionIri(nonTimeDImensions[0]),
-              height: getDimensionIri(metaData.measures[0]),
-              color: getDimensionIri(
-                getCategoricalDimensions(metaData.dimensions)[0]
-              ),
-              palette: "category10"
-            }
-          : {
-              x: getDimensionIri(getTimeDimensions(metaData.dimensions)[0]),
-              height: getDimensionIri(metaData.measures[0]),
-              color: getDimensionIri(
-                getCategoricalDimensions(metaData.dimensions)[1]
-              ),
-              palette: "category10"
-            };
+      const chartType = e.currentTarget.value as ChartType;
+      const filters = getInitialFilters(dimensions);
+      const initialState = getInitialState({ chartType, dimensions, measures });
       dispatch({
         type: "CHART_TYPE_PREVIEWED",
         value: {
           path: "chartConfig",
           value: {
             chartType,
-            filters: initialFilters,
+            filters,
             ...initialState
           }
         }
       });
     },
-    [dispatch, metaData]
+    [dimensions, dispatch, measures]
   );
 
   const stateValue =
