@@ -3,12 +3,10 @@ import React from "react";
 import {
   getComponentIri,
   getDimensionLabel,
-  useDimensionValues,
   isTimeDimension,
   DimensionWithMeta
 } from "../domain";
 import { Field } from "./field";
-import { Loading } from "./hint";
 import { ControlSection, ControlList } from "./chart-controls";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { Literal, NamedNode } from "rdf-js";
@@ -55,8 +53,6 @@ const DimensionValues = ({
   dataSet: DataCube;
   dimension: DimensionWithMeta;
 }) => {
-  // FIXME: SIMPLIFY
-  const dimensionValues = useDimensionValues({ dataSet, dimension:dimension.component });
   const dimensionIri = getComponentIri(dimension);
   const [, dispatch] = useConfiguratorState();
 
@@ -84,40 +80,34 @@ const DimensionValues = ({
     });
   };
 
-  if (dimensionValues.state === "loaded") {
-    return (
-      <>
-        {!isTimeDimension(dimension) && (
-          <Text
-            variant="paragraph2"
-            mb={4}
-            onClick={() => toggle(dimensionIri, dimensionValues.data)}
-            sx={{ textDecoration: "underline", cursor: "pointer" }}
-          >
-            {all ? (
-              <Trans>Nur erste auswählen</Trans>
-            ) : (
-              <Trans>Alle auswählen</Trans>
-            )}
-          </Text>
-        )}
-        {dimensionValues.data.map(dv => {
-          return (
-            <Field
-              key={dv.value.value}
-              type="checkbox"
-              chartId={chartId}
-              path={`filters["${dimensionIri}"]["${dv.value.value}"]`}
-              label={
-                isTimeDimension(dimension) ? dv.value.value : dv.label.value
-              }
-              value={dv.value.value}
-            />
-          );
-        })}
-      </>
-    );
-  } else {
-    return <Loading />;
-  }
+  return (
+    <>
+      {!isTimeDimension(dimension) && (
+        <Text
+          variant="paragraph2"
+          mb={4}
+          onClick={() => toggle(dimensionIri, dimension.values)}
+          sx={{ textDecoration: "underline", cursor: "pointer" }}
+        >
+          {all ? (
+            <Trans>Nur erste auswählen</Trans>
+          ) : (
+            <Trans>Alle auswählen</Trans>
+          )}
+        </Text>
+      )}
+      {dimension.values.map(dv => {
+        return (
+          <Field
+            key={dv.value.value}
+            type="checkbox"
+            chartId={chartId}
+            path={`filters["${dimensionIri}"]["${dv.value.value}"]`}
+            label={isTimeDimension(dimension) ? dv.value.value : dv.label.value}
+            value={dv.value.value}
+          />
+        );
+      })}
+    </>
+  );
 };
