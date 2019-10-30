@@ -1,15 +1,9 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
-import {
-  getCategoricalDimensions,
-  getDimensionIri,
-  getTimeDimensions,
-  getInitialFilters,
-  getInitialState
-} from ".";
-import { useConfiguratorState } from "./configurator-state";
-import { DataSetMetadata, isTimeDimension } from "./data-cube";
+import { getInitialFilters, getInitialState } from ".";
 import { ChartType } from "./config-types";
+import { useConfiguratorState } from "./configurator-state";
+import { DataSetMetadata } from "./data-cube";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
