@@ -1,11 +1,10 @@
 import { Dimension, DataCube, Measure } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import {
-  BarChartFieldKey,
-  Fields,
   getDimensionLabelFromIri,
   useObservations,
-  formatDataForBarChart
+  formatDataForBarChart,
+  BarChartFields
 } from "../domain";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Bars } from "./charts-generic/bars";
@@ -23,7 +22,7 @@ export const ChartBarsVisualization = ({
   dimensions: Dimension[];
   measures: Measure[];
   filters?: any;
-  fields: Fields<BarChartFieldKey>;
+  fields: BarChartFields;
   palette: string;
 }) => {
   const observations = useObservations({
@@ -61,7 +60,7 @@ export const ChartBars = ({
   observations: any[];
   dimensions: Dimension[];
   measures: Measure[];
-  fields: Fields<BarChartFieldKey>;
+  fields: BarChartFields;
   aggregationFunction: "sum";
   palette: string;
 }) => {
@@ -78,12 +77,12 @@ export const ChartBars = ({
         data={formattedData}
         width={width}
         xField={getDimensionLabelFromIri({
-          dimensionIri: fields.get("xField")!,
+          dimensionIri: fields.xField,
           dimensions
         })}
         heightField="measure"
         groupBy={getDimensionLabelFromIri({
-          dimensionIri: fields.get("groupByField")!,
+          dimensionIri: fields.groupByField,
           dimensions
         })}
         aggregateFunction={aggregationFunction}

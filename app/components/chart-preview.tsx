@@ -46,13 +46,11 @@ export const ChartPreview = ({
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
-                fields={
-                  new Map([
-                    ["xField", state.chartConfig.x],
-                    ["heightField", state.chartConfig.height],
-                    ["groupByField", state.chartConfig.color]
-                  ])
-                }
+                fields={{
+                  xField: state.chartConfig.x,
+                  heightField: state.chartConfig.height,
+                  groupByField: state.chartConfig.color
+                }}
                 palette={state.chartConfig.palette}
               />
             )}
@@ -62,13 +60,11 @@ export const ChartPreview = ({
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
-                fields={
-                  new Map([
-                    ["xField", state.chartConfig.x],
-                    ["heightField", state.chartConfig.height],
-                    ["groupByField", state.chartConfig.color]
-                  ])
-                }
+                fields={{
+                  xField: state.chartConfig.x,
+                  heightField: state.chartConfig.height,
+                  groupByField: state.chartConfig.color
+                }}
                 palette={state.chartConfig.palette}
               />
             )}
@@ -78,13 +74,11 @@ export const ChartPreview = ({
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
-                fields={
-                  new Map([
-                    ["xField", state.chartConfig.x],
-                    ["heightField", state.chartConfig.height],
-                    ["groupByField", state.chartConfig.color]
-                  ])
-                }
+                fields={{
+                  xField: state.chartConfig.x,
+                  heightField: state.chartConfig.height,
+                  groupByField: state.chartConfig.color
+                }}
                 palette={state.chartConfig.palette}
               />
             )}
@@ -94,14 +88,12 @@ export const ChartPreview = ({
                 dimensions={dimensions}
                 measures={measures}
                 filters={state.chartConfig.filters}
-                fields={
-                  new Map([
-                    ["xField", state.chartConfig.x],
-                    ["yField", state.chartConfig.y],
-                    ["groupByField", state.chartConfig.color],
-                    ["labelField", state.chartConfig.label]
-                  ])
-                }
+                fields={{
+                  xField: state.chartConfig.x,
+                  yField: state.chartConfig.y,
+                  groupByField: state.chartConfig.color,
+                  labelField: state.chartConfig.label
+                }}
                 palette={state.chartConfig.palette}
               />
             )}

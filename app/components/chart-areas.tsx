@@ -3,9 +3,8 @@ import React from "react";
 import {
   formatDataForAreaChart,
   getDimensionLabelFromIri,
-  Fields,
-  AreaChartFieldKey,
-  useObservations
+  useObservations,
+  AreaChartFields
 } from "../domain";
 import { Areas } from "./charts-generic/areas";
 import { useResizeObserver } from "../lib/use-resize-observer";
@@ -23,7 +22,7 @@ export const ChartAreasVisualization = ({
   dimensions: Dimension[];
   measures: Measure[];
   filters?: any;
-  fields: Fields<AreaChartFieldKey>;
+  fields: AreaChartFields;
 
   palette: string;
 }) => {
@@ -62,7 +61,7 @@ export const ChartAreas = ({
   observations: any[];
   dimensions: Dimension[];
   measures: Measure[];
-  fields: Fields<AreaChartFieldKey>;
+  fields: AreaChartFields;
 
   aggregationFunction: "sum";
   palette: string;
@@ -81,16 +80,16 @@ export const ChartAreas = ({
         data={formattedData}
         width={width}
         xField={getDimensionLabelFromIri({
-          dimensionIri: fields.get("xField")!,
+          dimensionIri: fields.xField,
           dimensions
         })}
         yField="measure"
         groupBy={getDimensionLabelFromIri({
-          dimensionIri: fields.get("groupByField")!,
+          dimensionIri: fields.groupByField,
           dimensions
         })}
         groupByLabel={getDimensionLabelFromIri({
-          dimensionIri: fields.get("groupByField")!,
+          dimensionIri: fields.groupByField,
           dimensions
         })}
         aggregateFunction={aggregationFunction}

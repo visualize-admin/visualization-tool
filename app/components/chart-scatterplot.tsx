@@ -4,9 +4,8 @@ import {
   formatDataForScatterplot,
   getMeasureLabelFromIri,
   getDimensionLabelFromIri,
-  Fields,
-  ScatterplotFieldKey,
-  useObservations
+  useObservations,
+  ScatterPlotFields
 } from "../domain";
 import { Scatterplot } from "./charts-generic/scatterplot";
 import { useResizeObserver } from "../lib/use-resize-observer";
@@ -24,7 +23,7 @@ export const ChartScatterplotVisualization = ({
   dimensions: Dimension[];
   measures: Measure[];
   filters?: any;
-  fields: Fields<ScatterplotFieldKey>;
+  fields: ScatterPlotFields;
 
   palette: string;
 }) => {
@@ -61,7 +60,7 @@ export const ChartScatterplot = ({
   observations: any[];
   dimensions: Dimension[];
   measures: Measure[];
-  fields: Fields<ScatterplotFieldKey>;
+  fields: ScatterPlotFields;
   palette: string;
 }) => {
   const [resizeRef, width] = useResizeObserver();
@@ -78,19 +77,19 @@ export const ChartScatterplot = ({
         data={formattedData}
         width={width}
         xField={getMeasureLabelFromIri({
-          measureIri: fields.get("xField")!,
+          measureIri: fields.xField,
           measures
         })}
         yField={getMeasureLabelFromIri({
-          measureIri: fields.get("yField")!,
+          measureIri: fields.yField,
           measures
         })}
         groupByField={getDimensionLabelFromIri({
-          dimensionIri: fields.get("groupByField")!,
+          dimensionIri: fields.groupByField,
           dimensions
         })}
         labelField={getDimensionLabelFromIri({
-          dimensionIri: fields.get("labelField")!,
+          dimensionIri: fields.labelField,
           dimensions
         })}
         palette={palette}

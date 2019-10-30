@@ -2,9 +2,8 @@ import React from "react";
 import {
   formatDataForLineChart,
   getDimensionLabelFromIri,
-  Fields,
-  LineChartFieldKey,
-  useObservations
+  useObservations,
+  LineChartFields
 } from "../domain";
 import { Lines } from "./charts-generic/lines";
 import { Dimension, Measure, DataCube } from "@zazuko/query-rdf-data-cube";
@@ -23,7 +22,7 @@ export const ChartLinesVisualization = ({
   dimensions: Dimension[];
   measures: Measure[];
   filters?: any;
-  fields: Fields<LineChartFieldKey>;
+  fields: LineChartFields;
   palette: string;
 }) => {
   const observations = useObservations({
@@ -61,7 +60,7 @@ export const ChartLines = ({
   observations: any[];
   dimensions: Dimension[];
   measures: Measure[];
-  fields: Fields<LineChartFieldKey>;
+  fields: LineChartFields;
   aggregationFunction: "sum";
   palette: string;
 }) => {
@@ -79,16 +78,16 @@ export const ChartLines = ({
         data={formattedData}
         width={width}
         xField={getDimensionLabelFromIri({
-          dimensionIri: fields.get("xField")!,
+          dimensionIri: fields.xField,
           dimensions
         })}
         yField="measure"
         groupBy={getDimensionLabelFromIri({
-          dimensionIri: fields.get("groupByField")!,
+          dimensionIri: fields.groupByField,
           dimensions
         })}
         groupByLabel={getDimensionLabelFromIri({
-          dimensionIri: fields.get("groupByField")!,
+          dimensionIri: fields.groupByField,
           dimensions
         })}
         aggregateFunction={aggregationFunction}

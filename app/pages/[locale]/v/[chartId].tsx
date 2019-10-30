@@ -26,13 +26,11 @@ const DisplayChart = ({
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
-          fields={
-            new Map([
-              ["xField", chartConfig.x],
-              ["heightField", chartConfig.height],
-              ["groupByField", chartConfig.color]
-            ])
-          }
+          fields={{
+            xField: chartConfig.x,
+            heightField: chartConfig.height,
+            groupByField: chartConfig.color
+          }}
           palette={chartConfig.palette}
         />
       )}
@@ -42,13 +40,11 @@ const DisplayChart = ({
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
-          fields={
-            new Map([
-              ["xField", chartConfig.x],
-              ["heightField", chartConfig.height],
-              ["groupByField", chartConfig.color]
-            ])
-          }
+          fields={{
+            xField: chartConfig.x,
+            heightField: chartConfig.height,
+            groupByField: chartConfig.color
+          }}
           palette={chartConfig.palette}
         />
       )}
@@ -58,13 +54,11 @@ const DisplayChart = ({
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
-          fields={
-            new Map([
-              ["xField", chartConfig.x],
-              ["heightField", chartConfig.height],
-              ["groupByField", chartConfig.color]
-            ])
-          }
+          fields={{
+            xField: chartConfig.x,
+            heightField: chartConfig.height,
+            groupByField: chartConfig.color
+          }}
           palette={chartConfig.palette}
         />
       )}
@@ -74,14 +68,12 @@ const DisplayChart = ({
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
           filters={chartConfig.filters}
-          fields={
-            new Map([
-              ["xField", chartConfig.x],
-              ["yField", chartConfig.y],
-              ["groupByField", chartConfig.color],
-              ["labelField", chartConfig.label]
-            ])
-          }
+          fields={{
+            xField: chartConfig.x,
+            yField: chartConfig.y,
+            groupByField: chartConfig.color,
+            labelField: chartConfig.label
+          }}
           palette={chartConfig.palette}
         />
       )}

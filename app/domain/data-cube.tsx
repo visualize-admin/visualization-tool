@@ -15,6 +15,7 @@ import {
 } from "react";
 import { useRemoteData, RDState } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
+import { Fields } from "./charts";
 
 const DataCubeContext = createContext<string>("");
 
@@ -122,17 +123,24 @@ export const useObservations = ({
   dataSet: DataCube;
   dimensions: Dimension[];
   measures: Measure[];
-  fields: any;
+  fields: Fields;
   filters?: Record<string, Record<string, boolean>>;
 }) => {
   const fetchData = useCallback(async () => {
+    const componentsByIri = [...measures, ...dimensions].reduce<
+      Record<string, Dimension | Measure>
+    >((comps, c) => {
+      comps[c.iri.value] = c;
+      return comps;
+    }, {});
+
     const constructedFilters = filters
       ? Object.entries(filters).flatMap(([dimIri, values]) => {
           const selectedValues = Object.entries(values).flatMap(
             ([value, selected]) => (selected ? [value] : [])
           );
 
-          const dimension = dimensions.find(d => d.iri.value === dimIri);
+          const dimension = componentsByIri[dimIri];
 
           if (!dimension) {
             return [];
@@ -154,17 +162,16 @@ export const useObservations = ({
         })
       : [];
 
-    let query = dataSet.query().limit(null);
+    const selectedComponents = Object.entries(fields).flatMap(
+      ([key, iri]) =>
+        componentsByIri[iri] !== undefined ? [[key, componentsByIri[iri]]] : []
+    );
 
-    for (const [key, value] of fields) {
-      query = query.select({
-        [key]: [...measures, ...dimensions].find(m => m.iri.value === value)!
-      });
-    }
-
-    for (const f of constructedFilters) {
-      query = query.filter(f);
-    }
+    const query = dataSet
+      .query()
+      .limit(null)
+      .select(selectedComponents)
+      .filter(constructedFilters);
 
     const data = await query.execute();
     return {

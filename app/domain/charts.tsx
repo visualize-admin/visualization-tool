@@ -1,15 +1,33 @@
 import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import { getDimensionLabelFromIri, getMeasureLabelFromIri } from "./data-cube";
 
-export type BarChartFieldKey = "xField" | "heightField" | "groupByField";
-export type LineChartFieldKey = "xField" | "heightField" | "groupByField";
-export type AreaChartFieldKey = "xField" | "heightField" | "groupByField";
-export type ScatterplotFieldKey =
-  | "xField"
-  | "yField"
-  | "groupByField"
-  | "labelField";
-export type Fields<K> = Map<K, string>;
+export interface BarChartFields {
+  xField: string;
+  heightField: string;
+  groupByField: string;
+}
+export interface LineChartFields {
+  xField: string;
+  heightField: string;
+  groupByField: string;
+}
+export interface AreaChartFields {
+  xField: string;
+  heightField: string;
+  groupByField: string;
+}
+export interface ScatterPlotFields {
+  xField: string;
+  yField: string;
+  groupByField: string;
+  labelField: string;
+}
+
+export type Fields =
+  | BarChartFields
+  | LineChartFields
+  | AreaChartFields
+  | ScatterPlotFields;
 
 export const formatDataForBarChart = ({
   observations,
@@ -20,16 +38,16 @@ export const formatDataForBarChart = ({
   observations: any;
   dimensions: Dimension[];
   measures: Measure[];
-  fields: Fields<BarChartFieldKey>;
+  fields: BarChartFields;
 }) => {
   return observations.map((d: any) => {
     return {
       [getDimensionLabelFromIri({
-        dimensionIri: fields.get("xField")!,
+        dimensionIri: fields.xField,
         dimensions
       })]: d.xField.label.value,
       [getDimensionLabelFromIri({
-        dimensionIri: fields.get("groupByField")!,
+        dimensionIri: fields.groupByField,
         dimensions
       })]: d.groupByField.label.value,
       measure: +d.heightField.value.value
@@ -46,16 +64,16 @@ export const formatDataForLineChart = ({
   observations: any;
   dimensions: Dimension[];
   measures: Measure[];
-  fields: Fields<LineChartFieldKey>;
+  fields: LineChartFields;
 }) => {
   return observations.map((d: any) => {
     return {
       [getDimensionLabelFromIri({
-        dimensionIri: fields.get("xField")!,
+        dimensionIri: fields.xField,
         dimensions
       })]: new Date(d.xField.value.value, 1, 1),
       [getDimensionLabelFromIri({
-        dimensionIri: fields.get("groupByField")!,
+        dimensionIri: fields.groupByField,
         dimensions
       })]: d.groupByField.label.value,
       measure: +d.heightField.value.value
@@ -72,16 +90,16 @@ export const formatDataForAreaChart = ({
   observations: any;
   dimensions: Dimension[];
   measures: Measure[];
-  fields: Fields<AreaChartFieldKey>;
+  fields: AreaChartFields;
 }) => {
   return observations.map((d: any) => {
     return {
       [getDimensionLabelFromIri({
-        dimensionIri: fields.get("xField")!,
+        dimensionIri: fields.xField,
         dimensions
       })]: new Date(d.xField.value.value, 1, 1),
       [getDimensionLabelFromIri({
-        dimensionIri: fields.get("groupByField")!,
+        dimensionIri: fields.groupByField,
         dimensions
       })]: d.groupByField.label.value,
       measure: +d.heightField.value.value
@@ -98,24 +116,24 @@ export const formatDataForScatterplot = ({
   observations: any;
   dimensions: Dimension[];
   measures: Measure[];
-  fields: Fields<ScatterplotFieldKey>;
+  fields: ScatterPlotFields;
 }) => {
   return observations.map((d: any) => {
     return {
       [getMeasureLabelFromIri({
-        measureIri: fields.get("xField")!,
+        measureIri: fields.xField,
         measures
       })]: +d.xField.value.value,
       [getMeasureLabelFromIri({
-        measureIri: fields.get("yField")!,
+        measureIri: fields.yField,
         measures
       })]: +d.yField.value.value,
       [getDimensionLabelFromIri({
-        dimensionIri: fields.get("groupByField")!,
+        dimensionIri: fields.groupByField,
         dimensions
       })]: d.groupByField.label.value,
       [getDimensionLabelFromIri({
-        dimensionIri: fields.get("labelField")!,
+        dimensionIri: fields.labelField,
         dimensions
       })]: d.labelField.value.value
     };
