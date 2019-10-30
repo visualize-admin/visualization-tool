@@ -111,18 +111,6 @@ export const useDataSetAndMetadata = (
   return useRemoteData(fetchCb);
 };
 
-export const useDataSetMetadata = (dataSet: DataCube) => {
-  const fetchMeta = useCallback(async () => {
-    return {
-      dimensions: await dataSet.dimensions(),
-      attributes: await dataSet.attributes(),
-      measures: await dataSet.measures()
-    };
-  }, [dataSet]);
-
-  return useRemoteData(fetchMeta);
-};
-
 export const useObservations = ({
   dataSet,
   dimensions,
