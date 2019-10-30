@@ -34,7 +34,7 @@ const useDataCubeEntryPoint = () => {
   const locale = useLocale();
   return useMemo(() => {
     return new DataCubeEntryPoint(endpoint, {
-      languages: [locale, "de"],
+      languages: [locale, "de", ""],
       extraMetadata: [
         {
           variable: "contact",
@@ -154,7 +154,7 @@ export const useObservations = ({
         })
       : [];
 
-    let query = dataSet.query().limit(null!);
+    let query = dataSet.query().limit(null);
 
     for (const [key, value] of fields) {
       query = query.select({
