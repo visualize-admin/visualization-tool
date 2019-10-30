@@ -42,7 +42,8 @@ export const getInitialState = ({
   chartType: ChartType;
   dimensions: Dimension[];
   measures: Measure[];
-}) => {
+}): {} => {
+  // FIXME: Should the returned type match the Keys defined above?
   const nonTimeDImensions = dimensions.filter(
     dimension => !isTimeDimension(dimension)
   );
@@ -77,7 +78,12 @@ export const getInitialState = ({
         ...visuals
       };
     default:
-      return null;
+      return {
+        x: getDimensionIri(nonTimeDImensions[0]),
+        height: getDimensionIri(measures[0]),
+        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
+        ...visuals
+      };
   }
 };
 
