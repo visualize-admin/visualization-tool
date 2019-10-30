@@ -32,6 +32,7 @@ export const getInitialFilters = (dimensions: Dimension[]) => {
     {}
   );
 };
+const visuals = { palette: "category10" };
 
 export const getInitialState = ({
   chartType,
@@ -52,28 +53,28 @@ export const getInitialState = ({
         y: getDimensionIri(measures.length > 1 ? measures[1] : measures[0]),
         color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
         label: getDimensionIri(getTimeDimensions(dimensions)[0]),
-        palette: "category10"
+        ...visuals
       };
     case "column":
       return {
         x: getDimensionIri(nonTimeDImensions[0]),
         height: getDimensionIri(measures[0]),
         color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
-        palette: "category10"
+        ...visuals
       };
     case "line":
       return {
         x: getDimensionIri(getTimeDimensions(dimensions)[0]),
         height: getDimensionIri(measures[0]),
         color: getDimensionIri(getCategoricalDimensions(dimensions)[1]),
-        palette: "category10"
+        ...visuals
       };
     case "area":
       return {
         x: getDimensionIri(getTimeDimensions(dimensions)[0]),
         height: getDimensionIri(measures[0]),
         color: getDimensionIri(getCategoricalDimensions(dimensions)[1]),
-        palette: "category10"
+        ...visuals
       };
     default:
       return null;
