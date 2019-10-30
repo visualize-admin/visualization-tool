@@ -5,7 +5,8 @@ import {
   isTimeDimension,
   getDimensionIri,
   getCategoricalDimensions,
-  getTimeDimensions
+  getTimeDimensions,
+  DataSetMetadata
 } from "./data-cube";
 import { ChartType } from "./config-types";
 
@@ -79,6 +80,20 @@ export const getInitialState = ({
   }
 };
 
+export const getRecommendedChartType = ({
+  chartTypes,
+  meta
+}: {
+  chartTypes: ChartType[];
+  meta: DataSetMetadata;
+}) => {
+  const { measures, dimensions } = meta;
+  if (measures.length <= 1) {
+    return chartTypes.filter(c => c !== "scatterplot");
+  } else {
+    return chartTypes;
+  }
+};
 export const formatDataForBarChart = ({
   observations,
   dimensions,
