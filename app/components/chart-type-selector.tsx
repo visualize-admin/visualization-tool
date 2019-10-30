@@ -1,9 +1,10 @@
 import React from "react";
 import { Flex } from "rebass";
 import { ChartTypeSelectorField } from "./field";
-import { Loading } from "./hint";
+import { Loading, Hint } from "./hint";
 import { useDataSetAndMetadata, getPossibleChartType } from "../domain";
 import { ChartType } from "../domain/config-types";
+import { Trans } from "@lingui/macro";
 
 const chartTypes: ChartType[] = ["column", "line", "area", "scatterplot"];
 export const ChartTypeSelector = ({
@@ -32,18 +33,26 @@ export const ChartTypeSelector = ({
         //   }
         // }}
       >
-        {chartTypes.map(d => (
-          <ChartTypeSelectorField
-            key={d}
-            type="radio"
-            chartId={chartId}
-            path={"chartType"}
-            label={d}
-            value={d}
-            metaData={meta.data}
-            disabled={!possibleChartTypes.includes(d)}
-          />
-        ))}
+        {!possibleChartTypes ? (
+          <Hint>
+            <Trans>
+              Mit ausgewähltem Datensatz kann kein Graphik dargestellt werden
+            </Trans>
+          </Hint>
+        ) : (
+          chartTypes.map(d => (
+            <ChartTypeSelectorField
+              key={d}
+              type="radio"
+              chartId={chartId}
+              path={"chartType"}
+              label={d}
+              value={d}
+              metaData={meta.data}
+              disabled={!possibleChartTypes.includes(d)}
+            />
+          ))
+        )}
       </Flex>
     );
   } else {
