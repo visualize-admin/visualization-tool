@@ -5,6 +5,7 @@ import {
   Dimension,
   Measure
 } from "@zazuko/query-rdf-data-cube";
+import { literal, namedNode } from "@rdfjs/data-model";
 import {
   createContext,
   ReactNode,
@@ -126,14 +127,29 @@ export const useObservations = ({
 }) => {
   const fetchData = useCallback(async () => {
     const constructedFilters = filters
-      ? Object.entries(filters).flatMap(([dim, values]) => {
+      ? Object.entries(filters).flatMap(([dimIri, values]) => {
           const selectedValues = Object.entries(values).flatMap(
             ([value, selected]) => (selected ? [value] : [])
           );
+
+          const dimension = dimensions.find(d => d.iri.value === dimIri);
+
+          if (!dimension) {
+            return [];
+          }
+
+          const toTypedValue = (value: string) =>
+            isTimeDimension(dimension)
+              ? literal(
+                  value,
+                  namedNode("http://www.w3.org/2001/XMLSchema#gYear") // FIXME: not necessarily a year ...
+                )
+              : value;
+
           return selectedValues.length === 1
-            ? [new Dimension({ iri: dim }).equals(selectedValues[0])]
+            ? [dimension.equals(toTypedValue(selectedValues[0]))]
             : selectedValues.length > 0
-            ? [new Dimension({ iri: dim }).in(selectedValues)]
+            ? [dimension.in(selectedValues.map(toTypedValue))]
             : [];
         })
       : [];

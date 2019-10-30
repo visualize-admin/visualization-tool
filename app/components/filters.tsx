@@ -66,7 +66,6 @@ const DimensionValues = ({
                 isTimeDimension(dimension) ? dv.value.value : dv.label.value
               }
               value={dv.value.value}
-              disabled={isTimeDimension(dimension)} // FIXME: disable time filter for now because of missing iri
             />
           );
         })}
