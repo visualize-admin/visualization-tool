@@ -51,6 +51,8 @@ export const ChartTypeSelectorField = ({
   type,
   value,
   metaData,
+  disabled,
+
   ...props
 }: {
   chartId: string;
@@ -59,6 +61,7 @@ export const ChartTypeSelectorField = ({
   type?: "text" | "checkbox" | "radio";
   value: string;
   metaData: DataSetMetadata;
+  disabled?: boolean;
 }) => {
   const field = useChartTypeSelectorField({
     chartId,
@@ -68,5 +71,11 @@ export const ChartTypeSelectorField = ({
     metaData
   });
 
-  return <ChartTypeRadio label={label} {...field}></ChartTypeRadio>;
+  return (
+    <ChartTypeRadio
+      disabled={disabled}
+      label={label}
+      {...field}
+    ></ChartTypeRadio>
+  );
 };

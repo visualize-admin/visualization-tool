@@ -30,10 +30,19 @@ export const ChartTypeRadio = ({
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          color: checked ? "blueGrey" : "primary.base",
+          cursor: disabled ? "initial" : "pointer",
+          color: checked
+            ? "blueGrey"
+            : disabled
+            ? "monochrome.300"
+            : "primary.base",
           backgroundColor: checked ? "primary.base" : "blueGrey",
           ":hover": {
-            backgroundColor: checked ? "primary.base" : "monochrome.300"
+            backgroundColor: disabled
+              ? "blueGrey"
+              : checked
+              ? "primary.base"
+              : "monochrome.300"
           }
         }}
       >
