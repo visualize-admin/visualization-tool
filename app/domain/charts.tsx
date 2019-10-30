@@ -93,27 +93,30 @@ export const getPossibleChartType = ({
 }: {
   chartTypes: ChartType[];
   meta: DataSetMetadata;
-}): ChartType[] => {
+}): ChartType[] | null => {
   const { measures, dimensions } = meta;
 
-  const scatterplotFilter = (ct: ChartType) => ct !== "scatterplot";
-  const lineFilter = (ct: ChartType) => ct !== "line";
-  const areaFilter = (ct: ChartType) => ct !== "area";
+  const hasMultipleQ = measures.length >= 1;
+  const hasTime = dimensions.some(dim => isTimeDimension(dim));
 
-  if (measures.length <= 1 && dimensions.some(dim => !isTimeDimension(dim))) {
-    return chartTypes
-      .filter(scatterplotFilter)
-      .filter(lineFilter)
-      .filter(areaFilter);
-  } else if (measures.length <= 1) {
-    return chartTypes.filter(scatterplotFilter);
-  } else if (dimensions.some(dim => !isTimeDimension(dim))) {
-    chartTypes.filter(lineFilter).filter(areaFilter);
+  const catBased: ChartType[] = ["column"];
+  const multipleQ: ChartType[] = ["scatterplot"];
+  const timeBased: ChartType[] = ["line", "area"];
+
+  let possibles: ChartType[] | null = [];
+
+  if (hasMultipleQ && hasTime) {
+    possibles = [...multipleQ, ...timeBased, ...catBased];
+  } else if (hasMultipleQ && !hasTime) {
+    possibles = [...multipleQ, ...catBased];
+  } else if (!hasMultipleQ && !hasTime) {
+    possibles = [...catBased];
   } else {
-    return chartTypes;
+    possibles = null;
   }
-  return chartTypes;
+  return possibles;
 };
+
 export const formatDataForBarChart = ({
   observations,
   dimensions,
