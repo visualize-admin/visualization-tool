@@ -2,15 +2,10 @@ import React from "react";
 import { Flex } from "rebass";
 import { ChartTypeSelectorField } from "./field";
 import { Loading } from "./hint";
-import { useDataSetAndMetadata } from "../domain";
+import { useDataSetAndMetadata, getRecommendedChartType } from "../domain";
 import { ChartType } from "../domain/config-types";
 
-const availableChartTypes: ChartType[] = [
-  "column",
-  "line",
-  "area",
-  "scatterplot"
-];
+const chartTypes: ChartType[] = ["column", "line", "area", "scatterplot"];
 export const ChartTypeSelector = ({
   chartId,
   dataSet
@@ -20,6 +15,10 @@ export const ChartTypeSelector = ({
 }) => {
   const meta = useDataSetAndMetadata(dataSet);
   if (meta.state === "loaded") {
+    const recommendedChartTypes = getRecommendedChartType({
+      chartTypes,
+      meta: meta.data
+    });
     return (
       <Flex
         width="100%"
@@ -33,7 +32,7 @@ export const ChartTypeSelector = ({
         //   }
         // }}
       >
-        {availableChartTypes.map(d => (
+        {chartTypes.map(d => (
           <ChartTypeSelectorField
             key={d}
             type="radio"
@@ -42,6 +41,7 @@ export const ChartTypeSelector = ({
             label={d}
             value={d}
             metaData={meta.data}
+            disabled={!recommendedChartTypes.includes(d)}
           />
         ))}
       </Flex>
