@@ -154,7 +154,7 @@ export const useObservations = ({
         })
       : [];
 
-    let query = dataSet.query();
+    let query = dataSet.query().limit(Number.MAX_SAFE_INTEGER);
 
     for (const [key, value] of fields) {
       query = query.select({
