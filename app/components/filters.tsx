@@ -1,10 +1,11 @@
-import { DataCube, Dimension } from "@zazuko/query-rdf-data-cube";
+import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import {
-  getDimensionIri,
+  getComponentIri,
   getDimensionLabel,
   useDimensionValues,
-  isTimeDimension
+  isTimeDimension,
+  DimensionWithMeta
 } from "../domain";
 import { Field } from "./field";
 import { Loading } from "./hint";
@@ -21,14 +22,14 @@ export const Filters = ({
 }: {
   chartId: string;
   dataSet: DataCube;
-  dimensions: Dimension[];
+  dimensions: DimensionWithMeta[];
 }) => {
   return (
     <>
       {dimensions.map(dimension => {
         return (
           <ControlSection
-            key={getDimensionIri(dimension)}
+            key={getComponentIri(dimension)}
             title={getDimensionLabel(dimension)}
           >
             <ControlList>
@@ -52,10 +53,11 @@ const DimensionValues = ({
 }: {
   chartId: string;
   dataSet: DataCube;
-  dimension: Dimension;
+  dimension: DimensionWithMeta;
 }) => {
-  const dimensionValues = useDimensionValues({ dataSet, dimension });
-  const dimensionIri = getDimensionIri(dimension);
+  // FIXME: SIMPLIFY
+  const dimensionValues = useDimensionValues({ dataSet, dimension:dimension.component });
+  const dimensionIri = getComponentIri(dimension);
   const [, dispatch] = useConfiguratorState();
 
   const [all, toggleAll] = React.useState(false);

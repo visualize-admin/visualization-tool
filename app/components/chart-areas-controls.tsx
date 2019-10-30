@@ -1,7 +1,7 @@
-import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
 import { Field } from "./field";
+import { DimensionWithMeta, MeasureWithMeta } from "../domain";
 
 export const ChartAreasControls = ({
   chartId,
@@ -10,22 +10,22 @@ export const ChartAreasControls = ({
   measuresDimensions
 }: {
   chartId: string;
-  timeDimensions: Dimension[];
-  categoricalDimensions: Dimension[];
-  measuresDimensions: Dimension[];
+  timeDimensions: DimensionWithMeta[];
+  categoricalDimensions: DimensionWithMeta[];
+  measuresDimensions: MeasureWithMeta[];
 }) => {
   return (
     <>
       <ControlSection title="Horizontale Achse" note="x-Achse">
         <ControlList>
-          {timeDimensions.map(td => (
+          {timeDimensions.map(({component}) => (
             <Field
-              key={td.iri.value}
+              key={component.iri.value}
               type="radio"
               chartId={chartId}
               path={"x"}
-              label={td.labels[0].value}
-              value={td.iri.value}
+              label={component.labels[0].value}
+              value={component.iri.value}
             />
           ))}
         </ControlList>
@@ -37,9 +37,9 @@ export const ChartAreasControls = ({
             chartId={chartId}
             path={"height"}
             label={"Werte wählen"}
-            options={measuresDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={measuresDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>
@@ -51,9 +51,9 @@ export const ChartAreasControls = ({
             chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
-            options={categoricalDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={categoricalDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>

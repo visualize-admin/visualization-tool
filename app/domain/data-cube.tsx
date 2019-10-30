@@ -16,6 +16,7 @@ import {
 import { useRemoteData, RDState } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
 import { Fields } from "./charts";
+import { Literal, NamedNode } from "rdf-js";
 
 const DataCubeContext = createContext<string>("");
 
@@ -89,11 +90,36 @@ export const useDataSets = () => {
   return useRemoteData(fetchCb);
 };
 
+export interface DimensionWithMeta {
+  component: Dimension;
+  values: {
+    label: Literal;
+    value: NamedNode;
+  }[];
+}
+export interface AttributeWithMeta {
+  component: Attribute;
+  values: {
+    label: Literal;
+    value: NamedNode;
+  }[];
+}
+export interface MeasureWithMeta {
+  component: Measure;
+  min: Literal | null;
+  max: Literal | null;
+}
+
+export type ComponentWithMeta =
+  | DimensionWithMeta
+  | AttributeWithMeta
+  | MeasureWithMeta;
+
 export interface DataSetMetadata {
   dataSet: DataCube;
-  dimensions: Dimension[];
-  attributes: Attribute[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  attributes: AttributeWithMeta[];
+  measures: MeasureWithMeta[];
 }
 
 export const useDataSetAndMetadata = (
@@ -103,11 +129,38 @@ export const useDataSetAndMetadata = (
   const fetchCb = useCallback(async () => {
     const dataSet = await entryPoint.dataCubeByIri(iri);
 
+    const dimensions = await dataSet.dimensions();
+
+    const dimensionsWithValues = await Promise.all(
+      dimensions.map(async component => ({
+        component,
+        values: await dataSet.componentValues(component)
+      }))
+    );
+
+    const attributes = await dataSet.attributes();
+
+    const attributesWithValues = await Promise.all(
+      attributes.map(async component => ({
+        component,
+        values: await dataSet.componentValues(component)
+      }))
+    );
+
+    const measures = await dataSet.measures();
+
+    const measuresWithMinMax = await Promise.all(
+      measures.map(async component => ({
+        component,
+        ...(await dataSet.componentMinMax(component))
+      }))
+    );
+
     return {
       dataSet,
-      dimensions: await dataSet.dimensions(),
-      attributes: await dataSet.attributes(),
-      measures: await dataSet.measures()
+      dimensions: dimensionsWithValues,
+      attributes: attributesWithValues,
+      measures: measuresWithMinMax
     };
   }, [entryPoint, iri]);
   return useRemoteData(fetchCb);
@@ -121,16 +174,23 @@ export const useObservations = ({
   filters
 }: {
   dataSet: DataCube;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: Fields;
   filters?: Record<string, Record<string, boolean>>;
 }) => {
   const fetchData = useCallback(async () => {
     const componentsByIri = [...measures, ...dimensions].reduce<
-      Record<string, Dimension | Measure>
+      Record<string, DimensionWithMeta | MeasureWithMeta>
     >((comps, c) => {
-      comps[c.iri.value] = c;
+      comps[c.component.iri.value] = c;
+      return comps;
+    }, {});
+
+    const dimensionsByIri = dimensions.reduce<
+      Record<string, DimensionWithMeta>
+    >((comps, c) => {
+      comps[c.component.iri.value] = c;
       return comps;
     }, {});
 
@@ -140,7 +200,7 @@ export const useObservations = ({
             ([value, selected]) => (selected ? [value] : [])
           );
 
-          const dimension = componentsByIri[dimIri];
+          const dimension = dimensionsByIri[dimIri];
 
           if (!dimension) {
             return [];
@@ -155,16 +215,17 @@ export const useObservations = ({
               : value;
 
           return selectedValues.length === 1
-            ? [dimension.equals(toTypedValue(selectedValues[0]))]
+            ? [dimension.component.equals(toTypedValue(selectedValues[0]))]
             : selectedValues.length > 0
-            ? [dimension.in(selectedValues.map(toTypedValue))]
+            ? [dimension.component.in(selectedValues.map(toTypedValue))]
             : [];
         })
       : [];
 
-    const selectedComponents = Object.entries(fields).flatMap(
-      ([key, iri]) =>
-        componentsByIri[iri] !== undefined ? [[key, componentsByIri[iri]]] : []
+    const selectedComponents = Object.entries(fields).flatMap(([key, iri]) =>
+      componentsByIri[iri] !== undefined
+        ? [[key, componentsByIri[iri].component]]
+        : []
     );
 
     const query = dataSet
@@ -182,46 +243,47 @@ export const useObservations = ({
   return useRemoteData(fetchData);
 };
 
-export const isTimeDimension = (dimension: Dimension) => {
-  const scaleOfMeasure = dimension.extraMetadata.scaleOfMeasure;
+export const isTimeDimension = ({ component }: DimensionWithMeta) => {
+  const scaleOfMeasure = component.extraMetadata.scaleOfMeasure;
 
   if (scaleOfMeasure) {
     return /cube\/scale\/Temporal\/?$/.test(scaleOfMeasure.value);
   }
 
   // FIXME: Remove this once we're sure that scaleOfMeasure always works
-  return ["Jahr", "Année", "Anno", "Year"].includes(dimension.labels[0].value);
+  return ["Jahr", "Année", "Anno", "Year"].includes(component.labels[0].value);
 };
 
-export const isCategoricalDimension = (dimension: Dimension) => {
-  const scaleOfMeasure = dimension.extraMetadata.scaleOfMeasure;
+export const isCategoricalDimension = ({
+  component,
+  values
+}: DimensionWithMeta) => {
+  const scaleOfMeasure = component.extraMetadata.scaleOfMeasure;
 
   if (scaleOfMeasure) {
     return /cube\/scale\/Nominal\/?$/.test(scaleOfMeasure.value);
   }
 
   // FIXME: Don't just assume all non-time dimensions are categorical
-  return !isTimeDimension(dimension);
+  return !isTimeDimension({ component, values });
 };
 
 /**
  * @fixme use metadata to filter time dimension!
  */
-export const getTimeDimensions = (dimensions: Dimension[]) =>
+export const getTimeDimensions = (dimensions: DimensionWithMeta[]) =>
   dimensions.filter(isTimeDimension);
 /**
  * @fixme use metadata to filter categorical dimension!
  */
-export const getCategoricalDimensions = (dimensions: Dimension[]) =>
+export const getCategoricalDimensions = (dimensions: DimensionWithMeta[]) =>
   dimensions.filter(isCategoricalDimension);
 
-export const getDimensionIri = (
-  dimension: Dimension
-): Dimension["iri"]["value"] => {
-  return dimension.iri.value;
+export const getComponentIri = ({ component }: ComponentWithMeta): string => {
+  return component.iri.value;
 };
-export const getDimensionLabel = (dimension: Dimension): string => {
-  return dimension.labels[0].value;
+export const getDimensionLabel = ({ component }: DimensionWithMeta): string => {
+  return component.labels[0].value;
 };
 
 export const getDimensionLabelFromIri = ({
@@ -229,9 +291,11 @@ export const getDimensionLabelFromIri = ({
   dimensions
 }: {
   dimensionIri: string;
-  dimensions: Dimension[];
+  dimensions: DimensionWithMeta[];
 }): string => {
-  const dimension = dimensions.find(dim => dim.iri.value === dimensionIri);
+  const dimension = dimensions.find(
+    ({ component }) => component.iri.value === dimensionIri
+  );
   // FIXME: Is dimensionIri the right thing to return?
   return dimension ? getDimensionLabel(dimension) : dimensionIri;
 };
@@ -240,11 +304,13 @@ export const getMeasureLabelFromIri = ({
   measures
 }: {
   measureIri: string;
-  measures: Measure[];
+  measures: MeasureWithMeta[];
 }): string => {
-  const measure = measures.find(m => m.iri.value === measureIri);
+  const measure = measures.find(
+    ({ component }) => component.iri.value === measureIri
+  );
   // FIXME: Is measureIri the right thing to return?
-  return measure ? getMeasureLabel({ measure }) : measureIri;
+  return measure ? getMeasureLabel(measure) : measureIri;
 };
 
 export const useDimensionValues = ({
@@ -273,6 +339,6 @@ export const useDimensionMinMax = ({
 };
 
 // Measure
-export const getMeasureLabel = ({ measure }: { measure: Measure }): string => {
-  return measure.labels[0].value;
+export const getMeasureLabel = ({ component }: MeasureWithMeta): string => {
+  return component.labels[0].value;
 };

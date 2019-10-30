@@ -1,12 +1,13 @@
-import { Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import {
   getDimensionLabelFromIri,
   getMeasureLabelFromIri,
   isTimeDimension,
-  getDimensionIri,
+  getComponentIri,
   getCategoricalDimensions,
   getTimeDimensions,
-  DataSetMetadata
+  DataSetMetadata,
+  DimensionWithMeta,
+  MeasureWithMeta
 } from "./data-cube";
 import { ChartType } from "./config-types";
 
@@ -38,14 +39,14 @@ export type Fields =
   | AreaChartFields
   | ScatterPlotFields;
 
-export const getInitialFilters = (dimensions: Dimension[]) => {
+export const getInitialFilters = (dimensions: DimensionWithMeta[]) => {
   const nonTimeDimensions = dimensions.filter(
     dimension => !isTimeDimension(dimension)
   );
   return nonTimeDimensions.reduce(
     (obj, cur, i) => ({
       ...obj,
-      [cur.iri.value]: { [`${cur.iri.value}/0`]: true }
+      [cur.component.iri.value]: { [`${cur.component.iri.value}/0`]: true }
     }),
     {}
   );
@@ -58,8 +59,8 @@ export const getInitialState = ({
   measures
 }: {
   chartType: ChartType;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
 }): {} => {
   // FIXME: Should the returned type match the Keys defined above?
   const nonTimeDImensions = dimensions.filter(
@@ -68,38 +69,38 @@ export const getInitialState = ({
   switch (chartType) {
     case "scatterplot":
       return {
-        x: getDimensionIri(measures[0]),
-        y: getDimensionIri(measures.length > 1 ? measures[1] : measures[0]),
-        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
-        label: getDimensionIri(getTimeDimensions(dimensions)[0]),
+        x: getComponentIri(measures[0]),
+        y: getComponentIri(measures.length > 1 ? measures[1] : measures[0]),
+        color: getComponentIri(getCategoricalDimensions(dimensions)[0]),
+        label: getComponentIri(getTimeDimensions(dimensions)[0]),
         ...visuals
       };
     case "column":
       return {
-        x: getDimensionIri(nonTimeDImensions[0]),
-        height: getDimensionIri(measures[0]),
-        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
+        x: getComponentIri(nonTimeDImensions[0]),
+        height: getComponentIri(measures[0]),
+        color: getComponentIri(getCategoricalDimensions(dimensions)[0]),
         ...visuals
       };
     case "line":
       return {
-        x: getDimensionIri(getTimeDimensions(dimensions)[0]),
-        height: getDimensionIri(measures[0]),
-        color: getDimensionIri(getCategoricalDimensions(dimensions)[1]),
+        x: getComponentIri(getTimeDimensions(dimensions)[0]),
+        height: getComponentIri(measures[0]),
+        color: getComponentIri(getCategoricalDimensions(dimensions)[1]),
         ...visuals
       };
     case "area":
       return {
-        x: getDimensionIri(getTimeDimensions(dimensions)[0]),
-        height: getDimensionIri(measures[0]),
-        color: getDimensionIri(getCategoricalDimensions(dimensions)[1]),
+        x: getComponentIri(getTimeDimensions(dimensions)[0]),
+        height: getComponentIri(measures[0]),
+        color: getComponentIri(getCategoricalDimensions(dimensions)[1]),
         ...visuals
       };
     default:
       return {
-        x: getDimensionIri(nonTimeDImensions[0]),
-        height: getDimensionIri(measures[0]),
-        color: getDimensionIri(getCategoricalDimensions(dimensions)[0]),
+        x: getComponentIri(nonTimeDImensions[0]),
+        height: getComponentIri(measures[0]),
+        color: getComponentIri(getCategoricalDimensions(dimensions)[0]),
         ...visuals
       };
   }
@@ -142,8 +143,8 @@ export const formatDataForBarChart = ({
   fields
 }: {
   observations: any;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: BarChartFields;
 }) => {
   return observations.map((d: any) => {
@@ -168,8 +169,8 @@ export const formatDataForLineChart = ({
   fields
 }: {
   observations: any;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: LineChartFields;
 }) => {
   return observations.map((d: any) => {
@@ -194,8 +195,8 @@ export const formatDataForAreaChart = ({
   fields
 }: {
   observations: any;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: AreaChartFields;
 }) => {
   return observations.map((d: any) => {
@@ -220,8 +221,8 @@ export const formatDataForScatterplot = ({
   fields
 }: {
   observations: any;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: ScatterPlotFields;
 }) => {
   return observations.map((d: any) => {

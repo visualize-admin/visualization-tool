@@ -1,7 +1,7 @@
-import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
 import { Field } from "./field";
+import { DimensionWithMeta, MeasureWithMeta } from "../domain";
 
 export const ChartScatterplotControls = ({
   chartId,
@@ -10,9 +10,9 @@ export const ChartScatterplotControls = ({
   timeDimensions
 }: {
   chartId: string;
-  measuresDimensions: Dimension[];
-  categoricalDimensions: Dimension[];
-  timeDimensions: Dimension[];
+  measuresDimensions: MeasureWithMeta[];
+  categoricalDimensions: DimensionWithMeta[];
+  timeDimensions: DimensionWithMeta[];
 }) => {
   return (
     <>
@@ -23,9 +23,9 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"x"}
             label={"Werte wählen"}
-            options={measuresDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={measuresDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>
@@ -37,9 +37,9 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"y"}
             label={"Werte wählen"}
-            options={measuresDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={measuresDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>
@@ -51,9 +51,9 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
-            options={categoricalDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={categoricalDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>
@@ -65,9 +65,9 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"label"}
             label={"Dimension wählen"}
-            options={timeDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={timeDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>

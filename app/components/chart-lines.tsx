@@ -3,10 +3,12 @@ import {
   formatDataForLineChart,
   getDimensionLabelFromIri,
   useObservations,
-  LineChartFields
+  LineChartFields,
+  DimensionWithMeta,
+  MeasureWithMeta
 } from "../domain";
 import { Lines } from "./charts-generic/lines";
-import { Dimension, Measure, DataCube } from "@zazuko/query-rdf-data-cube";
+import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Loading } from "./hint";
 
@@ -19,8 +21,8 @@ export const ChartLinesVisualization = ({
   palette
 }: {
   dataSet: DataCube;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   filters?: any;
   fields: LineChartFields;
   palette: string;
@@ -58,8 +60,8 @@ export const ChartLines = ({
   palette
 }: {
   observations: any[];
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: LineChartFields;
   aggregationFunction: "sum";
   palette: string;

@@ -1,7 +1,7 @@
-import { Dimension } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
 import { Field } from "./field";
+import { DimensionWithMeta, MeasureWithMeta } from "../domain";
 
 export const ChartBarsControls = ({
   chartId,
@@ -10,9 +10,9 @@ export const ChartBarsControls = ({
   measuresDimensions
 }: {
   chartId: string;
-  timeDimensions: Dimension[];
-  categoricalDimensions: Dimension[];
-  measuresDimensions: Dimension[];
+  timeDimensions: DimensionWithMeta[];
+  categoricalDimensions: DimensionWithMeta[];
+  measuresDimensions: MeasureWithMeta[];
 }) => {
   return (
     <>
@@ -23,9 +23,9 @@ export const ChartBarsControls = ({
             chartId={chartId}
             path={"x"}
             label={"Dimension wählen"}
-            options={categoricalDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={categoricalDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>
@@ -37,9 +37,9 @@ export const ChartBarsControls = ({
             chartId={chartId}
             path={"height"}
             label={"Werte wählen"}
-            options={measuresDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={measuresDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>
@@ -51,9 +51,9 @@ export const ChartBarsControls = ({
             chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
-            options={categoricalDimensions.map(dim => ({
-              value: dim.iri.value,
-              label: dim.labels[0].value
+            options={categoricalDimensions.map(({component}) => ({
+              value: component.iri.value,
+              label: component.labels[0].value
             }))}
           />
         </ControlList>

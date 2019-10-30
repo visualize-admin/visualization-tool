@@ -1,10 +1,12 @@
-import { Dimension, Measure, DataCube } from "@zazuko/query-rdf-data-cube";
+import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import {
   formatDataForAreaChart,
   getDimensionLabelFromIri,
   useObservations,
-  AreaChartFields
+  AreaChartFields,
+  DimensionWithMeta,
+  MeasureWithMeta
 } from "../domain";
 import { Areas } from "./charts-generic/areas";
 import { useResizeObserver } from "../lib/use-resize-observer";
@@ -19,8 +21,8 @@ export const ChartAreasVisualization = ({
   palette
 }: {
   dataSet: DataCube;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   filters?: any;
   fields: AreaChartFields;
 
@@ -59,8 +61,8 @@ export const ChartAreas = ({
   palette
 }: {
   observations: any[];
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: AreaChartFields;
 
   aggregationFunction: "sum";

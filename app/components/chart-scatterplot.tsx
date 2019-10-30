@@ -1,11 +1,13 @@
-import { Dimension, Measure, DataCube } from "@zazuko/query-rdf-data-cube";
+import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import {
   formatDataForScatterplot,
   getMeasureLabelFromIri,
   getDimensionLabelFromIri,
   useObservations,
-  ScatterPlotFields
+  ScatterPlotFields,
+  DimensionWithMeta,
+  MeasureWithMeta
 } from "../domain";
 import { Scatterplot } from "./charts-generic/scatterplot";
 import { useResizeObserver } from "../lib/use-resize-observer";
@@ -20,8 +22,8 @@ export const ChartScatterplotVisualization = ({
   palette
 }: {
   dataSet: DataCube;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   filters?: any;
   fields: ScatterPlotFields;
 
@@ -58,8 +60,8 @@ export const ChartScatterplot = ({
   palette
 }: {
   observations: any[];
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: ScatterPlotFields;
   palette: string;
 }) => {

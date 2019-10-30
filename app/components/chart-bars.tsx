@@ -1,10 +1,12 @@
-import { Dimension, DataCube, Measure } from "@zazuko/query-rdf-data-cube";
+import {  DataCube  } from "@zazuko/query-rdf-data-cube";
 import React from "react";
 import {
   getDimensionLabelFromIri,
   useObservations,
   formatDataForBarChart,
-  BarChartFields
+  BarChartFields,
+  DimensionWithMeta,
+  MeasureWithMeta
 } from "../domain";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Bars } from "./charts-generic/bars";
@@ -19,8 +21,8 @@ export const ChartBarsVisualization = ({
   palette
 }: {
   dataSet: DataCube;
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   filters?: any;
   fields: BarChartFields;
   palette: string;
@@ -58,8 +60,8 @@ export const ChartBars = ({
   palette
 }: {
   observations: any[];
-  dimensions: Dimension[];
-  measures: Measure[];
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   fields: BarChartFields;
   aggregationFunction: "sum";
   palette: string;
