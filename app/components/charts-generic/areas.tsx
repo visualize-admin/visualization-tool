@@ -48,7 +48,8 @@ export const Areas = ({
             ops: ["sum"],
             as: ["sumByTime"]
           },
-          { type: "stack", field: "sumByTime", groupby: [xField] }
+          { type: "stack", field: "sumByTime", groupby: [xField] },
+          { type: "collect", sort: { field: xField } }
         ]
       }
     ],

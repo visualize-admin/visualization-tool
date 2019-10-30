@@ -44,7 +44,8 @@ export const Lines = ({
             fields: [yField, yField],
             ops: [aggregateFunction, aggregateFunction],
             as: ["byTime", "byGroup"]
-          }
+          },
+          { type: "collect", sort: { field: xField } }
         ]
       }
     ],
