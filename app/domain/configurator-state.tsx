@@ -6,7 +6,7 @@ import {
   ReactNode
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
-import set from "lodash/set";
+import setWith from "lodash/setWith";
 
 import {
   isValidConfiguratorState,
@@ -67,7 +67,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_TYPE_PREVIEWED":
       draft.state = "SELECTING_CHART_TYPE";
       if (draft.state === "SELECTING_CHART_TYPE") {
-        set(draft, action.value.path, action.value.value);
+        setWith(draft, action.value.path, action.value.value, Object);
       }
       return draft;
     case "CHART_TYPE_SELECTED":
@@ -77,7 +77,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_CHANGED":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
-        set(draft.chartConfig, action.value.path, action.value.value);
+        setWith(draft.chartConfig, action.value.path, action.value.value, Object);
       }
       return draft;
 
