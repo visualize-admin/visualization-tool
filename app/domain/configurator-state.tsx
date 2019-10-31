@@ -21,7 +21,7 @@ export type ConfiguratorStateAction =
   | { type: "DATASET_SELECTED"; value: string }
   | {
       type: "CHART_TYPE_PREVIEWED";
-      value: { path: string | string[]; value: any };
+      value: { path: string | string[]; value: $FixMe };
     }
   | {
       type: "CHART_TYPE_SELECTED";
@@ -29,7 +29,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_CHANGED";
-      value: { path: string | string[]; value: any };
+      value: { path: string | string[]; value: $FixMe };
     }
   | { type: "PUBLISH" }
   | { type: "PUBLISH_FAILED" }

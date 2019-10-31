@@ -4,7 +4,7 @@ import { AppLayout } from "../../components/layout";
 import { useLocale } from "../../lib/use-locale";
 import { Heading } from "rebass";
 
-const Page: NextPage<{ config: { key: string; data: any } | undefined }> = ({
+const Page: NextPage<{ config: { key: string; data: $IntentionalAny } | undefined }> = ({
   config
 }) => {
   const locale = useLocale();

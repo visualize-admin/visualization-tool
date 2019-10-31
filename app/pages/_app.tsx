@@ -5,12 +5,12 @@ import App, { AppContext } from "next/app";
 import ErrorPage from "next/error";
 import React from "react";
 import { catalogs, defaultLocale, locales } from "../locales/locales";
-import { loadTheme } from "../themes/index";
+import { loadTheme, Theme } from "../themes/index";
 
 class MyApp extends App<{
   locale: string;
   statusCode: void | number;
-  theme: any;
+  theme: Theme;
   globalStyles: string | undefined;
 }> {
   static async getInitialProps(appContext: AppContext) {

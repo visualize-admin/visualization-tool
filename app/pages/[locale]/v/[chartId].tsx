@@ -2,7 +2,7 @@ import "isomorphic-unfetch";
 import { NextPage } from "next";
 import ErrorPage from "next/error";
 import { useDataSetAndMetadata, DataCubeProvider } from "../../../domain";
-import { ChartConfig } from "../../../domain/config-types";
+import { ChartConfig, Config } from "../../../domain/config-types";
 import { ChartBarsVisualization } from "../../../components/chart-bars";
 import { ChartLinesVisualization } from "../../../components/chart-lines";
 import { ChartAreasVisualization } from "../../../components/chart-areas";
@@ -85,7 +85,7 @@ type PageProps = {
   statusCode?: number;
   config?: {
     key: string;
-    data: any;
+    data: Config;
   };
 };
 

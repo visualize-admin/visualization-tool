@@ -132,23 +132,23 @@ const pages: ConfigPageOrGroup[] = [
 ];
 
 const mdxComponents = {
-  wrapper: ({ children }: any) => <Page>{children}</Page>,
-  h1: (props: any) => (
+  wrapper: ({ children }: $IntentionalAny) => <Page>{children}</Page>,
+  h1: (props: $IntentionalAny) => (
     <Markdown.Heading level={1} text={[props.children]} slug={"wat"} />
   ),
-  h2: (props: any) => (
+  h2: (props: $IntentionalAny) => (
     <Markdown.Heading level={2} text={[props.children]} slug={"wat"} />
   ),
-  h3: (props: any) => (
+  h3: (props: $IntentionalAny) => (
     <Markdown.Heading level={3} text={[props.children]} slug={"wat"} />
   ),
-  h4: (props: any) => (
+  h4: (props: $IntentionalAny) => (
     <Markdown.Heading level={4} text={[props.children]} slug={"wat"} />
   ),
-  h5: (props: any) => (
+  h5: (props: $IntentionalAny) => (
     <Markdown.Heading level={5} text={[props.children]} slug={"wat"} />
   ),
-  h6: (props: any) => (
+  h6: (props: $IntentionalAny) => (
     <Markdown.Heading level={6} text={[props.children]} slug={"wat"} />
   ),
   p: Markdown.Paragraph,
@@ -162,7 +162,7 @@ const mdxComponents = {
   img: Markdown.Image,
   code: Markdown.CodeSpan,
   hr: Markdown.Hr,
-  a: ({ href, ...props }: any) => <Markdown.Link to={href} {...props} />,
+  a: ({ href, ...props }: $IntentionalAny) => <Markdown.Link to={href} {...props} />,
   ImageSpecimen,
   AudioSpecimen,
   CodeSpecimen,

@@ -8,7 +8,7 @@ import { createChartId } from "../domain/chart-id";
  * 
  * @param data Data to be stored as configuration
  */
-export const createConfig = async (data: any): Promise<{ key: string }> => {
+export const createConfig = async (data: $Unexpressable): Promise<{ key: string }> => {
   const result = await pool.query<{ key: string }>(
     `INSERT INTO config(key, data) VALUES ($1, $2) RETURNING key`,
     [createChartId(), data]
@@ -29,8 +29,8 @@ export const createConfig = async (data: any): Promise<{ key: string }> => {
  */
 export const getConfig = async (
   key: string
-): Promise<undefined | { key: string; data: any }> => {
-  const result = await pool.query<{ key: string; data: any }>(
+): Promise<undefined | { key: string; data: $Unexpressable }> => {
+  const result = await pool.query<{ key: string; data: $Unexpressable }>(
     `SELECT key, data FROM config WHERE key = $1 LIMIT 1`,
     [key]
   );
