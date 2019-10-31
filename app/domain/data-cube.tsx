@@ -200,8 +200,6 @@ export const useObservations = ({
             ([value, selected]) => (selected ? [value] : [])
           );
 
-          console.log(selectedValues)
-
           const dimension = dimensionsByIri[dimIri];
 
           if (!dimension) {
@@ -211,12 +209,7 @@ export const useObservations = ({
           const dataType = getDataTypeFromDimensionValues(dimension);
 
           const toTypedValue = (value: string) => {
-            return dataType
-              ? literal(
-                  value,
-                  dataType
-                )
-              : value;
+            return dataType ? literal(value, dataType) : value;
           };
 
           return selectedValues.length === 1
