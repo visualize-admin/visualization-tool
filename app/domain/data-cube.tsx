@@ -5,7 +5,7 @@ import {
   Dimension,
   Measure
 } from "@zazuko/query-rdf-data-cube";
-import { literal, namedNode } from "@rdfjs/data-model";
+import { literal } from "@rdfjs/data-model";
 import {
   createContext,
   ReactNode,
