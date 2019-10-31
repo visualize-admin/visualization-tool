@@ -62,7 +62,7 @@ const DimensionValues = ({
     dimIri: string,
     dimVal: {
       label: Literal;
-      value: NamedNode;
+      value: NamedNode | Literal;
     }[]
   ) => {
     toggleAll(!all);

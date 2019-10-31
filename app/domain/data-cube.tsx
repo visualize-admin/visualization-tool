@@ -94,14 +94,14 @@ export interface DimensionWithMeta {
   component: Dimension;
   values: {
     label: Literal;
-    value: NamedNode;
+    value: NamedNode | Literal;
   }[];
 }
 export interface AttributeWithMeta {
   component: Attribute;
   values: {
     label: Literal;
-    value: NamedNode;
+    value: NamedNode | Literal;
   }[];
 }
 export interface MeasureWithMeta {
@@ -200,19 +200,24 @@ export const useObservations = ({
             ([value, selected]) => (selected ? [value] : [])
           );
 
+          console.log(selectedValues)
+
           const dimension = dimensionsByIri[dimIri];
 
           if (!dimension) {
             return [];
           }
 
-          const toTypedValue = (value: string) =>
-            isTimeDimension(dimension)
+          const dataType = getDataTypeFromDimensionValues(dimension);
+
+          const toTypedValue = (value: string) => {
+            return dataType
               ? literal(
                   value,
-                  namedNode("http://www.w3.org/2001/XMLSchema#gYear") // FIXME: not necessarily a year ...
+                  dataType
                 )
               : value;
+          };
 
           return selectedValues.length === 1
             ? [dimension.component.equals(toTypedValue(selectedValues[0]))]
@@ -252,6 +257,17 @@ export const isTimeDimension = ({ component }: DimensionWithMeta) => {
 
   // FIXME: Remove this once we're sure that scaleOfMeasure always works
   return ["Jahr", "Année", "Anno", "Year"].includes(component.labels[0].value);
+};
+
+const getDataTypeFromDimensionValues = ({
+  component,
+  values
+}: DimensionWithMeta): NamedNode | undefined => {
+  if (values[0] && values[0].value.termType === "Literal") {
+    return values[0].value.datatype;
+  }
+
+  return undefined;
 };
 
 export const isCategoricalDimension = ({
