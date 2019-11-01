@@ -6,11 +6,13 @@ import {
   formatDataForBarChart,
   BarChartFields,
   DimensionWithMeta,
-  MeasureWithMeta
+  MeasureWithMeta,
+  Observations
 } from "../domain";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Bars } from "./charts-generic/bars";
 import { Loading } from "./hint";
+import { Filters } from "../domain/config-types";
 
 export const ChartBarsVisualization = ({
   dataSet,
@@ -23,11 +25,11 @@ export const ChartBarsVisualization = ({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  filters?: any;
+  filters?: Filters;
   fields: BarChartFields;
   palette: string;
 }) => {
-  const observations = useObservations({
+  const observations = useObservations<BarChartFields>({
     dataSet,
     measures,
     dimensions,
@@ -36,6 +38,9 @@ export const ChartBarsVisualization = ({
   });
 
   if (observations.state === "loaded") {
+    debugger
+    console.log(observations.data.results)
+
     return (
       <ChartBars
         observations={observations.data.results}
@@ -59,7 +64,7 @@ export const ChartBars = ({
   aggregationFunction,
   palette
 }: {
-  observations: any[];
+  observations: Observations<BarChartFields>;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
   fields: BarChartFields;

@@ -17,6 +17,7 @@ import { useRemoteData, RDState } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
 import { Fields } from "./charts";
 import { Literal, NamedNode } from "rdf-js";
+import { Filters } from "./config-types";
 
 const DataCubeContext = createContext<string>("");
 
@@ -166,7 +167,12 @@ export const useDataSetAndMetadata = (
   return useRemoteData(fetchCb);
 };
 
-export const useObservations = ({
+export type Observations<T extends Fields> = Record<
+  keyof T,
+  Literal | NamedNode
+>[];
+
+export const useObservations = <FieldsType extends Fields>({
   dataSet,
   dimensions,
   measures,
@@ -177,8 +183,8 @@ export const useObservations = ({
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
   fields: Fields;
-  filters?: Record<string, Record<string, boolean>>;
-}) => {
+  filters?: Filters;
+}): RDState<{ results: Observations<FieldsType> }> => {
   const fetchData = useCallback(async () => {
     const componentsByIri = [...measures, ...dimensions].reduce<
       Record<string, DimensionWithMeta | MeasureWithMeta>
@@ -238,7 +244,7 @@ export const useObservations = ({
     };
   }, [filters, dataSet, fields, measures, dimensions]);
 
-  return useRemoteData(fetchData);
+  return useRemoteData<{ results: Observations<FieldsType> }>(fetchData);
 };
 
 export const isTimeDimension = ({ component }: DimensionWithMeta) => {
