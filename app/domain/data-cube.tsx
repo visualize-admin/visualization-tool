@@ -167,10 +167,12 @@ export const useDataSetAndMetadata = (
   return useRemoteData(fetchCb);
 };
 
-export type Observations<T extends Fields> = Record<
-  keyof T,
-  Literal | NamedNode
->[];
+type ObservationValue = {
+  value: Literal | NamedNode;
+  label?: Literal;
+};
+
+export type Observations<T extends Fields> = Record<keyof T, ObservationValue>[];
 
 export const useObservations = <FieldsType extends Fields>({
   dataSet,
