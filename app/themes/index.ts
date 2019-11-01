@@ -1,42 +1,8 @@
 import { useTheme as useEmotionTheme } from "emotion-theming";
 
-// Should be recursive but not possible with TS 3.6
-type StyleValueMap = Record<
-  string,
-  | string
-  | number
-  | string[]
-  | number[]
-  | Record<
-      string,
-      | string
-      | number
-      | string[]
-      | number[]
-      | Record<
-          string,
-          | string
-          | number
-          | string[]
-          | number[]
-          | Record<
-              string,
-              | string
-              | number
-              | string[]
-              | number[]
-              | Record<
-                  string,
-                  | string
-                  | number
-                  | string[]
-                  | number[]
-                  | Record<string, string | number | string[] | number[]>
-                >
-            >
-        >
-    >
->;
+type StyleValueMap = {
+  [k: string]: string | number | string[] | number[] | StyleValueMap;
+}
 
 /**
  * Adapted from the [System UI Theme Specification](https://system-ui.com/theme/)
