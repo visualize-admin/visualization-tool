@@ -64,7 +64,7 @@ export const ChartAreas = ({
   const [resizeRef, width] = useResizeObserver();
 
   return (
-    <div ref={resizeRef}>
+    <div ref={resizeRef} aria-hidden="true">
       <Areas
         data={observations}
         width={width}

@@ -66,7 +66,7 @@ export const ChartScatterplot = ({
   const [resizeRef, width] = useResizeObserver();
 
   return (
-    <div ref={resizeRef}>
+    <div ref={resizeRef} aria-hidden="true">
       <Scatterplot
         data={observations}
         width={width}
