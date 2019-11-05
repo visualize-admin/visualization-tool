@@ -10,6 +10,7 @@ import {
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Areas } from "./charts-generic/areas";
 import { Loading } from "./hint";
+import { A11yTable } from "./a11y-table";
 
 export const ChartAreasVisualization = ({
   dataSet,
@@ -36,7 +37,18 @@ export const ChartAreasVisualization = ({
   });
 
   if (observations.state === "loaded") {
-    return <ChartAreas observations={observations.data} palette={palette} />;
+    return (
+      <>
+        <A11yTable
+          dataSet={dataSet}
+          dimensions={dimensions}
+          measures={measures}
+          fields={fields}
+          observations={observations.data}
+        />
+        <ChartAreas observations={observations.data} palette={palette} />
+      </>
+    );
   } else {
     return <Loading />;
   }

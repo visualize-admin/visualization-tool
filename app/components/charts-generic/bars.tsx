@@ -24,7 +24,6 @@ export const Bars = ({
   aggregateFunction,
   palette
 }: Props) => {
-  console.log("Bars data", data);
   // FIXME: Use hook to get the theme from ThemeProvider.
   const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
