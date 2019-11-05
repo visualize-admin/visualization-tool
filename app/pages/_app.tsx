@@ -28,7 +28,7 @@ class MyApp extends App<{
       if (asPath === "/") {
         res.writeHead(302, { Location: `/${defaultLocale}` });
         res.end();
-      } else if (query.locale && !locales.includes(query.locale as any)) {
+      } else if (query.locale && !locales.includes(query.locale as $IntentionalAny)) {
         console.log("is this error?", pathname);
         res.statusCode = 404;
         statusCode = 404;

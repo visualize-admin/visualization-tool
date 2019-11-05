@@ -1,4 +1,4 @@
-import * as vega from "vega";
+import { Axis, Legend } from "vega";
 
 // FIXME: Use hook to get the theme values from ThemeProvider.
 
@@ -6,7 +6,7 @@ const labelColor = "#666666";
 const legendLabelColor = "#454545";
 const fontFamily = "FrutigerNeueRegular, Helvetica, Arial, sans-serif";
 
-export const xAxisTheme: vega.Axis = {
+export const xAxisTheme: Axis = {
   orient: "bottom",
   scale: "x",
   bandPosition: 1,
@@ -26,7 +26,7 @@ export const xAxisTheme: vega.Axis = {
   tickColor: labelColor
 };
 
-export const yAxisTheme: vega.Axis = {
+export const yAxisTheme: Axis = {
   orient: "left",
   scale: "y",
   bandPosition: 0.5,
@@ -42,7 +42,7 @@ export const yAxisTheme: vega.Axis = {
   ticks: false
 };
 
-export const legendTheme: vega.Legend = {
+export const legendTheme: Legend = {
   orient: "bottom",
   direction: "vertical",
   columns: 2,

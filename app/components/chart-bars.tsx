@@ -1,14 +1,11 @@
-import {  DataCube  } from "@zazuko/query-rdf-data-cube";
+import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
+import { useObservations, BarChartFields } from "../domain";
 import {
-  getDimensionLabelFromIri,
-  useObservations,
-  formatDataForBarChart,
-  BarChartFields,
   DimensionWithMeta,
   MeasureWithMeta,
   Observations
-} from "../domain";
+} from "../domain/data";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Bars } from "./charts-generic/bars";
 import { Loading } from "./hint";
@@ -38,19 +35,16 @@ export const ChartBarsVisualization = ({
   });
 
   if (observations.state === "loaded") {
-    debugger
-    console.log(observations.data.results)
+    console.log(observations.data);
 
-    return (
-      <ChartBars
-        observations={observations.data.results}
-        dimensions={dimensions}
-        measures={measures}
-        fields={fields}
-        aggregationFunction={"sum"}
-        palette={palette}
-      />
-    );
+    // const formattedData = formatDataForBarChart({
+    //   observations: observations.data.results,
+    //   dimensions,
+    //   measures,
+    //   fields
+    // });
+
+    return <ChartBars observations={observations.data} palette={palette} />;
   } else {
     return <Loading />;
   }
@@ -58,41 +52,22 @@ export const ChartBarsVisualization = ({
 
 export const ChartBars = ({
   observations,
-  dimensions,
-  measures,
-  fields,
-  aggregationFunction,
   palette
 }: {
   observations: Observations<BarChartFields>;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: BarChartFields;
-  aggregationFunction: "sum";
   palette: string;
 }) => {
   const [resizeRef, width] = useResizeObserver();
-  const formattedData = formatDataForBarChart({
-    observations,
-    dimensions,
-    measures,
-    fields
-  });
+
   return (
     <div ref={resizeRef}>
       <Bars
-        data={formattedData}
+        data={observations}
         width={width}
-        xField={getDimensionLabelFromIri({
-          dimensionIri: fields.xField,
-          dimensions
-        })}
-        heightField="measure"
-        groupBy={getDimensionLabelFromIri({
-          dimensionIri: fields.groupByField,
-          dimensions
-        })}
-        aggregateFunction={aggregationFunction}
+        xField={"xField"}
+        heightField="heightField"
+        groupBy={"groupByField"}
+        aggregateFunction={"sum"}
         palette={palette}
       />
     </div>

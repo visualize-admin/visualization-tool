@@ -1,10 +1,13 @@
 import * as React from "react";
-import * as vega from "vega";
+import { Spec } from "vega";
 import { xAxisTheme, yAxisTheme, legendTheme } from "./chart-styles";
 import { useTheme } from "../../themes";
+import { Observations } from "../../domain/data";
+import { ScatterPlotFields } from "../../domain";
+import { useVegaView } from "../../lib/use-vega";
 
 interface Props {
-  data: any;
+  data: Observations<ScatterPlotFields>;
   width: number;
   xField: string;
   yField: string;
@@ -23,7 +26,7 @@ export const Scatterplot = ({
   palette
 }: Props) => {
   const theme = useTheme();
-  const spec: vega.Spec = {
+  const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
     height: width * 0.4,
@@ -152,27 +155,6 @@ export const Scatterplot = ({
 };
 
 const ScatterplotChart = ({ spec }: { spec: any }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const createView = async () => {
-      try {
-        const view = new vega.View(vega.parse(spec), {
-          logLevel: vega.Warn,
-          renderer: "svg",
-          container: ref.current,
-          hover: true
-        });
-
-        await view.runAsync();
-        console.table(view.data("table"));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    createView();
-    // return clean-up function
-  }, [spec]);
-
+  const [ref] = useVegaView({ spec });
   return <div ref={ref} />;
 };

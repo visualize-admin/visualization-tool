@@ -1,9 +1,12 @@
 import * as React from "react";
-import * as vega from "vega";
 import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
+import { Observations } from "../../domain/data";
+import { BarChartFields } from "../../domain";
+import { useVegaView } from "../../lib/use-vega";
+import { Spec } from "vega";
 
 interface Props {
-  data: any;
+  data: Observations<BarChartFields>;
   width: number;
   xField: string;
   heightField: string;
@@ -21,8 +24,9 @@ export const Bars = ({
   aggregateFunction,
   palette
 }: Props) => {
+  console.log("Bars data", data);
   // FIXME: Use hook to get the theme from ThemeProvider.
-  const spec: vega.Spec = {
+  const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
     height: width * 0.4,
@@ -125,10 +129,10 @@ export const Bars = ({
             fontSize: { value: 12 }
           },
           update: {
-            x: { scale: "x", signal: `tooltip.${xField}`, band: 0.5 },
+            x: { scale: "x", signal: `tooltip["${xField}"]`, band: 0.5 },
             y: { scale: "y", signal: "tooltip.y1", offset: -2 },
             text: {
-              signal: `tooltip.sum ? tooltip.${groupBy} + " " +format(tooltip.sum, '~s') : ''`
+              signal: `tooltip.sum ? tooltip["${groupBy}"] + " " +format(tooltip.sum, '~s') : ''`
             },
             fillOpacity: [{ test: "datum === tooltip", value: 0 }, { value: 1 }]
           }
@@ -146,28 +150,7 @@ export const Bars = ({
   return <BarsChart spec={spec} />;
 };
 
-const BarsChart = ({ spec }: { spec: any }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const createView = async () => {
-      try {
-        const view = new vega.View(vega.parse(spec), {
-          logLevel: vega.Warn,
-          renderer: "svg",
-          container: ref.current,
-          hover: true
-        });
-
-        await view.runAsync();
-        // console.log("vegadata", view.data("table"));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    createView();
-    // return clean-up function
-  }, [spec]);
-
+const BarsChart = ({ spec }: { spec: Spec }) => {
+  const [ref] = useVegaView({ spec });
   return <div ref={ref} />;
 };

@@ -1,13 +1,12 @@
 import * as React from "react";
-import * as vega from "vega";
 import { yAxisTheme, xAxisTheme, legendTheme } from "./chart-styles";
-
-interface VegaSpecs extends vega.Spec {
-  data: any;
-}
+import { Spec } from "vega";
+import { useVegaView } from "../../lib/use-vega";
+import { AreaChartFields } from "../../domain";
+import { Observations } from "../../domain/data";
 
 interface Props {
-  data: any;
+  data: Observations<AreaChartFields>;
   width: number;
   xField: string;
   yField: string;
@@ -27,7 +26,7 @@ export const Areas = ({
   aggregateFunction,
   palette
 }: Props) => {
-  const spec: VegaSpecs = {
+  const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width,
     height: width * 0.4,
@@ -136,26 +135,8 @@ export const Areas = ({
   return <AreasChart spec={spec} />;
 };
 
-const AreasChart = ({ spec }: { spec: vega.Spec }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const createView = async () => {
-      try {
-        const view = new vega.View(vega.parse(spec), {
-          logLevel: vega.Warn,
-          renderer: "svg",
-          container: ref.current,
-          hover: true
-        });
-        await view.runAsync();
-        // console.log("data in areas", view.data("table"));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    createView();
-  }, [spec]);
+const AreasChart = ({ spec }: { spec: Spec }) => {
+  const [ref] = useVegaView({ spec });
 
   return <div ref={ref} />;
 };

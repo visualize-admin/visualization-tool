@@ -1,15 +1,14 @@
-import React from "react";
-import {
-  formatDataForLineChart,
-  getDimensionLabelFromIri,
-  useObservations,
-  LineChartFields,
-  DimensionWithMeta,
-  MeasureWithMeta
-} from "../domain";
-import { Lines } from "./charts-generic/lines";
 import { DataCube } from "@zazuko/query-rdf-data-cube";
+import React from "react";
+import { LineChartFields, useObservations } from "../domain";
+import { Filters } from "../domain/config-types";
+import {
+  DimensionWithMeta,
+  MeasureWithMeta,
+  Observations
+} from "../domain/data";
 import { useResizeObserver } from "../lib/use-resize-observer";
+import { Lines } from "./charts-generic/lines";
 import { Loading } from "./hint";
 
 export const ChartLinesVisualization = ({
@@ -23,7 +22,7 @@ export const ChartLinesVisualization = ({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  filters?: any;
+  filters?: Filters;
   fields: LineChartFields;
   palette: string;
 }) => {
@@ -36,16 +35,7 @@ export const ChartLinesVisualization = ({
   });
 
   if (observations.state === "loaded") {
-    return (
-      <ChartLines
-        observations={observations.data.results}
-        dimensions={dimensions}
-        measures={measures}
-        fields={fields}
-        aggregationFunction={"sum"}
-        palette={palette}
-      />
-    );
+    return <ChartLines observations={observations.data} palette={palette} />;
   } else {
     return <Loading />;
   }
@@ -53,46 +43,23 @@ export const ChartLinesVisualization = ({
 
 export const ChartLines = ({
   observations,
-  dimensions,
-  measures,
-  fields,
-  aggregationFunction,
   palette
 }: {
-  observations: any[];
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: LineChartFields;
-  aggregationFunction: "sum";
+  observations: Observations<LineChartFields>;
   palette: string;
 }) => {
   const [resizeRef, width] = useResizeObserver();
 
-  const formattedData = formatDataForLineChart({
-    observations,
-    dimensions,
-    measures,
-    fields
-  });
   return (
     <div ref={resizeRef}>
       <Lines
-        data={formattedData}
+        data={observations}
         width={width}
-        xField={getDimensionLabelFromIri({
-          dimensionIri: fields.xField,
-          dimensions
-        })}
-        yField="measure"
-        groupBy={getDimensionLabelFromIri({
-          dimensionIri: fields.groupByField,
-          dimensions
-        })}
-        groupByLabel={getDimensionLabelFromIri({
-          dimensionIri: fields.groupByField,
-          dimensions
-        })}
-        aggregateFunction={aggregationFunction}
+        xField={"xField"}
+        yField="heightField"
+        groupBy={"groupByField"}
+        groupByLabel={"groupByLabel"}
+        aggregateFunction={"sum"}
         palette={palette}
       />
     </div>
