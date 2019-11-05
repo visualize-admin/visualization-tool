@@ -50,7 +50,12 @@ export const A11yTable = ({
         <tr>
           {Object.entries(fields).map(([fieldKey, fieldValue]) => {
             return (
-              <th>
+              <th
+                role="columnheader"
+                scope="col"
+                key={fieldKey}
+                aria-sort={sortingField === fieldKey ? direction : "none"}
+              >
                 <button onClick={() => sortBy(fieldKey)}>
                   {fieldKey}
                   {sortingField && (
