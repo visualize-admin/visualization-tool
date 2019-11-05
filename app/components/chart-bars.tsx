@@ -1,6 +1,7 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
-import { useObservations, BarChartFields } from "../domain";
+import { BarChartFields, useObservations } from "../domain";
+import { Filters } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
@@ -9,7 +10,7 @@ import {
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Bars } from "./charts-generic/bars";
 import { Loading } from "./hint";
-import { Filters } from "../domain/config-types";
+import { A11yTable } from "./a11y-table";
 
 export const ChartBarsVisualization = ({
   dataSet,
@@ -35,8 +36,6 @@ export const ChartBarsVisualization = ({
   });
 
   if (observations.state === "loaded") {
-    console.log(observations.data);
-
     // const formattedData = formatDataForBarChart({
     //   observations: observations.data.results,
     //   dimensions,
@@ -44,7 +43,18 @@ export const ChartBarsVisualization = ({
     //   fields
     // });
 
-    return <ChartBars observations={observations.data} palette={palette} />;
+    return (
+      <>
+        <A11yTable
+          dataSet={dataSet}
+          dimensions={dimensions}
+          measures={measures}
+          fields={fields}
+          observations={observations.data}
+        />
+        <ChartBars observations={observations.data} palette={palette} />
+      </>
+    );
   } else {
     return <Loading />;
   }

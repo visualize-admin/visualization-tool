@@ -10,6 +10,7 @@ import { Scatterplot } from "./charts-generic/scatterplot";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Loading } from "./hint";
 import { Filters } from "../domain/config-types";
+import { A11yTable } from "./a11y-table";
 
 export const ChartScatterplotVisualization = ({
   dataSet,
@@ -37,7 +38,16 @@ export const ChartScatterplotVisualization = ({
 
   if (observations.state === "loaded") {
     return (
-      <ChartScatterplot observations={observations.data} palette={palette} />
+      <>
+        <A11yTable
+          dataSet={dataSet}
+          dimensions={dimensions}
+          measures={measures}
+          fields={fields}
+          observations={observations.data}
+        />
+        <ChartScatterplot observations={observations.data} palette={palette} />
+      </>
     );
   } else {
     return <Loading />;

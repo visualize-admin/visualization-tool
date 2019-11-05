@@ -29,7 +29,7 @@ export const useVegaView = ({ spec }: { spec: Spec }) => {
         });
 
         await view.runAsync();
-        console.log("vegadata", view.data("table"));
+        // console.table("vegadata", view.data("table"));
       } catch (error) {
         console.log(error);
       }
