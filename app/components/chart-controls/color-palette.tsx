@@ -1,10 +1,10 @@
 import * as React from "react";
-import * as vega from "vega";
 import { Field } from "../field";
+import { ColorScheme } from "vega";
 // export const ColorPalette = ({
 //   palettes
 // }: {
-//   palettes: Array<{ id: vega.ColorScheme; values: Array<string> }> | any;
+//   palettes: Array<{ id: ColorScheme; values: Array<string> }> | any;
 // }) => {
 //   const {
 //     isOpen,
@@ -38,7 +38,7 @@ import { Field } from "../field";
 // };
 
 const vegaPalettes: Array<{
-  label: vega.ColorScheme;
+  label: ColorScheme;
   value: string;
 }> = [
   { label: "category10", value: "category10" },

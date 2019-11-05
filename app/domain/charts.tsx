@@ -1,15 +1,13 @@
-import {
-  getDimensionLabelFromIri,
-  getMeasureLabelFromIri,
-  isTimeDimension,
-  getComponentIri,
-  getCategoricalDimensions,
-  getTimeDimensions,
-  DataSetMetadata,
-  DimensionWithMeta,
-  MeasureWithMeta
-} from "./data-cube";
 import { ChartType } from "./config-types";
+import {
+  DimensionWithMeta,
+  getCategoricalDimensions,
+  getComponentIri,
+  getTimeDimensions,
+  isTimeDimension,
+  MeasureWithMeta
+} from "./data";
+import { DataSetMetadata } from "./data-cube";
 
 export interface BarChartFields {
   xField: string;
@@ -135,115 +133,4 @@ export const getPossibleChartType = ({
     possibles = null;
   }
   return possibles;
-};
-
-export const formatDataForBarChart = ({
-  observations,
-  dimensions,
-  measures,
-  fields
-}: {
-  observations: any;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: BarChartFields;
-}) => {
-  return observations.map((d: any) => {
-    return {
-      [getDimensionLabelFromIri({
-        dimensionIri: fields.xField,
-        dimensions
-      })]: d.xField.label.value,
-      [getDimensionLabelFromIri({
-        dimensionIri: fields.groupByField,
-        dimensions
-      })]: d.groupByField.label.value,
-      measure: +d.heightField.value.value
-    };
-  });
-};
-
-export const formatDataForLineChart = ({
-  observations,
-  dimensions,
-  measures,
-  fields
-}: {
-  observations: any;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: LineChartFields;
-}) => {
-  return observations.map((d: any) => {
-    return {
-      [getDimensionLabelFromIri({
-        dimensionIri: fields.xField,
-        dimensions
-      })]: new Date(d.xField.value.value),
-      [getDimensionLabelFromIri({
-        dimensionIri: fields.groupByField,
-        dimensions
-      })]: d.groupByField.label.value,
-      measure: +d.heightField.value.value
-    };
-  });
-};
-
-export const formatDataForAreaChart = ({
-  observations,
-  dimensions,
-  measures,
-  fields
-}: {
-  observations: any;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: AreaChartFields;
-}) => {
-  return observations.map((d: any) => {
-    return {
-      [getDimensionLabelFromIri({
-        dimensionIri: fields.xField,
-        dimensions
-      })]: new Date(d.xField.value.value),
-      [getDimensionLabelFromIri({
-        dimensionIri: fields.groupByField,
-        dimensions
-      })]: d.groupByField.label.value,
-      measure: +d.heightField.value.value
-    };
-  });
-};
-
-export const formatDataForScatterplot = ({
-  observations,
-  dimensions,
-  measures,
-  fields
-}: {
-  observations: any;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: ScatterPlotFields;
-}) => {
-  return observations.map((d: any) => {
-    return {
-      [getMeasureLabelFromIri({
-        measureIri: fields.xField,
-        measures
-      })]: +d.xField.value.value,
-      [getMeasureLabelFromIri({
-        measureIri: fields.yField,
-        measures
-      })]: +d.yField.value.value,
-      [getDimensionLabelFromIri({
-        dimensionIri: fields.groupByField,
-        dimensions
-      })]: d.groupByField.label.value,
-      [getDimensionLabelFromIri({
-        dimensionIri: fields.labelField,
-        dimensions
-      })]: d.labelField.value.value
-    };
-  });
 };

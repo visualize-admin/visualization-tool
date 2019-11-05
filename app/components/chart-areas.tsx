@@ -1,15 +1,14 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
+import { AreaChartFields, useObservations } from "../domain";
+import { Filters } from "../domain/config-types";
 import {
-  formatDataForAreaChart,
-  getDimensionLabelFromIri,
-  useObservations,
-  AreaChartFields,
   DimensionWithMeta,
-  MeasureWithMeta
-} from "../domain";
-import { Areas } from "./charts-generic/areas";
+  MeasureWithMeta,
+  Observations
+} from "../domain/data";
 import { useResizeObserver } from "../lib/use-resize-observer";
+import { Areas } from "./charts-generic/areas";
 import { Loading } from "./hint";
 
 export const ChartAreasVisualization = ({
@@ -23,7 +22,7 @@ export const ChartAreasVisualization = ({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  filters?: any;
+  filters?: Filters;
   fields: AreaChartFields;
 
   palette: string;
@@ -37,16 +36,7 @@ export const ChartAreasVisualization = ({
   });
 
   if (observations.state === "loaded") {
-    return (
-      <ChartAreas
-        observations={observations.data.results}
-        dimensions={dimensions}
-        measures={measures}
-        fields={fields}
-        aggregationFunction={"sum"}
-        palette={palette}
-      />
-    );
+    return <ChartAreas observations={observations.data} palette={palette} />;
   } else {
     return <Loading />;
   }
@@ -54,47 +44,23 @@ export const ChartAreasVisualization = ({
 
 export const ChartAreas = ({
   observations,
-  dimensions,
-  measures,
-  fields,
-  aggregationFunction,
   palette
 }: {
-  observations: any[];
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: AreaChartFields;
-
-  aggregationFunction: "sum";
+  observations: Observations<AreaChartFields>;
   palette: string;
 }) => {
   const [resizeRef, width] = useResizeObserver();
 
-  const formattedData = formatDataForAreaChart({
-    observations,
-    dimensions,
-    measures,
-    fields
-  });
   return (
     <div ref={resizeRef}>
       <Areas
-        data={formattedData}
+        data={observations}
         width={width}
-        xField={getDimensionLabelFromIri({
-          dimensionIri: fields.xField,
-          dimensions
-        })}
-        yField="measure"
-        groupBy={getDimensionLabelFromIri({
-          dimensionIri: fields.groupByField,
-          dimensions
-        })}
-        groupByLabel={getDimensionLabelFromIri({
-          dimensionIri: fields.groupByField,
-          dimensions
-        })}
-        aggregateFunction={aggregationFunction}
+        xField={"xField"}
+        yField="heightField"
+        groupBy={"groupByField"}
+        groupByLabel={"groupByLabel"}
+        aggregateFunction={"sum"}
         palette={palette}
       />
     </div>

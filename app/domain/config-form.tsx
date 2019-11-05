@@ -9,7 +9,7 @@ import { DataSetMetadata } from "./data-cube";
 //   name: HTMLInputElement["name"]
 //   onChange: [];
 // }
-export type Option = { value: string | any; label: string | any };
+export type Option = { value: string | $FixMe; label: string | $FixMe };
 
 export type FieldProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,

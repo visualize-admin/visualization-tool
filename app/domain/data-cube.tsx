@@ -1,11 +1,10 @@
+import { literal } from "@rdfjs/data-model";
 import {
-  Attribute,
   DataCube,
   DataCubeEntryPoint,
   Dimension,
   Measure
 } from "@zazuko/query-rdf-data-cube";
-import { literal } from "@rdfjs/data-model";
 import {
   createContext,
   ReactNode,
@@ -13,11 +12,19 @@ import {
   useContext,
   useMemo
 } from "react";
-import { useRemoteData, RDState } from "../lib/remote-data";
+import { RDState, useRemoteData } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
 import { Fields } from "./charts";
-import { Literal, NamedNode } from "rdf-js";
 import { Filters } from "./config-types";
+import {
+  AttributeWithMeta,
+  DimensionWithMeta,
+  getDataTypeFromDimensionValues,
+  MeasureWithMeta,
+  Observations,
+  parseObservations,
+  RawObservations
+} from "./data";
 
 const DataCubeContext = createContext<string>("");
 
@@ -91,31 +98,6 @@ export const useDataSets = () => {
   return useRemoteData(fetchCb);
 };
 
-export interface DimensionWithMeta {
-  component: Dimension;
-  values: {
-    label: Literal;
-    value: NamedNode | Literal;
-  }[];
-}
-export interface AttributeWithMeta {
-  component: Attribute;
-  values: {
-    label: Literal;
-    value: NamedNode | Literal;
-  }[];
-}
-export interface MeasureWithMeta {
-  component: Measure;
-  min: Literal | null;
-  max: Literal | null;
-}
-
-export type ComponentWithMeta =
-  | DimensionWithMeta
-  | AttributeWithMeta
-  | MeasureWithMeta;
-
 export interface DataSetMetadata {
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
@@ -167,13 +149,6 @@ export const useDataSetAndMetadata = (
   return useRemoteData(fetchCb);
 };
 
-type ObservationValue = {
-  value: Literal | NamedNode;
-  label?: Literal;
-};
-
-export type Observations<T extends Fields> = Record<keyof T, ObservationValue>[];
-
 export const useObservations = <FieldsType extends Fields>({
   dataSet,
   dimensions,
@@ -184,9 +159,9 @@ export const useObservations = <FieldsType extends Fields>({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  fields: Fields;
+  fields: FieldsType;
   filters?: Filters;
-}): RDState<{ results: Observations<FieldsType> }> => {
+}): RDState<Observations<FieldsType>> => {
   const fetchData = useCallback(async () => {
     const componentsByIri = [...measures, ...dimensions].reduce<
       Record<string, DimensionWithMeta | MeasureWithMeta>
@@ -228,6 +203,7 @@ export const useObservations = <FieldsType extends Fields>({
         })
       : [];
 
+    // TODO: Maybe explicitly specify all dimension fields? Currently not necessary because they're selected anyway.
     const selectedComponents = Object.entries(fields).flatMap(([key, iri]) =>
       componentsByIri[iri] !== undefined
         ? [[key, componentsByIri[iri].component]]
@@ -240,94 +216,12 @@ export const useObservations = <FieldsType extends Fields>({
       .select(selectedComponents)
       .filter(constructedFilters);
 
-    const data = await query.execute();
-    return {
-      results: data
-    };
+    // WARNING! Potentially dangrous/wrong typecast because query.execute() returns Promise<any[]>
+    const data: RawObservations<FieldsType> = await query.execute();
+    return parseObservations(data);
   }, [filters, dataSet, fields, measures, dimensions]);
 
-  return useRemoteData<{ results: Observations<FieldsType> }>(fetchData);
-};
-
-export const isTimeDimension = ({ component }: DimensionWithMeta) => {
-  const scaleOfMeasure = component.extraMetadata.scaleOfMeasure;
-
-  if (scaleOfMeasure) {
-    return /cube\/scale\/Temporal\/?$/.test(scaleOfMeasure.value);
-  }
-
-  // FIXME: Remove this once we're sure that scaleOfMeasure always works
-  return ["Jahr", "Année", "Anno", "Year"].includes(component.labels[0].value);
-};
-
-const getDataTypeFromDimensionValues = ({
-  component,
-  values
-}: DimensionWithMeta): NamedNode | undefined => {
-  if (values[0] && values[0].value.termType === "Literal") {
-    return values[0].value.datatype;
-  }
-
-  return undefined;
-};
-
-export const isCategoricalDimension = ({
-  component,
-  values
-}: DimensionWithMeta) => {
-  const scaleOfMeasure = component.extraMetadata.scaleOfMeasure;
-
-  if (scaleOfMeasure) {
-    return /cube\/scale\/Nominal\/?$/.test(scaleOfMeasure.value);
-  }
-
-  // FIXME: Don't just assume all non-time dimensions are categorical
-  return !isTimeDimension({ component, values });
-};
-
-/**
- * @fixme use metadata to filter time dimension!
- */
-export const getTimeDimensions = (dimensions: DimensionWithMeta[]) =>
-  dimensions.filter(isTimeDimension);
-/**
- * @fixme use metadata to filter categorical dimension!
- */
-export const getCategoricalDimensions = (dimensions: DimensionWithMeta[]) =>
-  dimensions.filter(isCategoricalDimension);
-
-export const getComponentIri = ({ component }: ComponentWithMeta): string => {
-  return component.iri.value;
-};
-export const getDimensionLabel = ({ component }: DimensionWithMeta): string => {
-  return component.labels[0].value;
-};
-
-export const getDimensionLabelFromIri = ({
-  dimensionIri,
-  dimensions
-}: {
-  dimensionIri: string;
-  dimensions: DimensionWithMeta[];
-}): string => {
-  const dimension = dimensions.find(
-    ({ component }) => component.iri.value === dimensionIri
-  );
-  // FIXME: Is dimensionIri the right thing to return?
-  return dimension ? getDimensionLabel(dimension) : dimensionIri;
-};
-export const getMeasureLabelFromIri = ({
-  measureIri,
-  measures
-}: {
-  measureIri: string;
-  measures: MeasureWithMeta[];
-}): string => {
-  const measure = measures.find(
-    ({ component }) => component.iri.value === measureIri
-  );
-  // FIXME: Is measureIri the right thing to return?
-  return measure ? getMeasureLabel(measure) : measureIri;
+  return useRemoteData<Observations<FieldsType>>(fetchData);
 };
 
 export const useDimensionValues = ({
@@ -353,9 +247,4 @@ export const useDimensionMinMax = ({
     return await dataSet.componentMinMax(measure);
   }, [dataSet, measure]);
   return useRemoteData(fetchData);
-};
-
-// Measure
-export const getMeasureLabel = ({ component }: MeasureWithMeta): string => {
-  return component.labels[0].value;
 };

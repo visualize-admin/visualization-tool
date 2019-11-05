@@ -30,8 +30,6 @@ type RDAction<T> =
 
 type RDReducer<T> = Reducer<RDState<T>, RDAction<T>>;
 
-type $FIXME = any;
-
 const remoteDataReducer = <T>(
   state: RDState<T>,
   action: RDAction<T>
@@ -64,7 +62,7 @@ export const useRemoteData = <T>(runFetch: () => Promise<T>) => {
         dispatch({ type: "pending" });
       }
       try {
-        const data = (await runFetch()) as $FIXME;
+        const data = (await runFetch()) as $Unexpressable;
         if (!didCancel) {
           dispatch({ type: "loaded", data });
         }

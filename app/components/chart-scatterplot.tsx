@@ -1,17 +1,15 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React from "react";
+import { useObservations, ScatterPlotFields } from "../domain";
 import {
-  formatDataForScatterplot,
-  getMeasureLabelFromIri,
-  getDimensionLabelFromIri,
-  useObservations,
-  ScatterPlotFields,
   DimensionWithMeta,
-  MeasureWithMeta
-} from "../domain";
+  MeasureWithMeta,
+  Observations
+} from "../domain/data";
 import { Scatterplot } from "./charts-generic/scatterplot";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Loading } from "./hint";
+import { Filters } from "../domain/config-types";
 
 export const ChartScatterplotVisualization = ({
   dataSet,
@@ -24,7 +22,7 @@ export const ChartScatterplotVisualization = ({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  filters?: any;
+  filters?: Filters;
   fields: ScatterPlotFields;
 
   palette: string;
@@ -39,13 +37,7 @@ export const ChartScatterplotVisualization = ({
 
   if (observations.state === "loaded") {
     return (
-      <ChartScatterplot
-        observations={observations.data.results}
-        dimensions={dimensions}
-        measures={measures}
-        fields={fields}
-        palette={palette}
-      />
+      <ChartScatterplot observations={observations.data} palette={palette} />
     );
   } else {
     return <Loading />;
@@ -54,46 +46,24 @@ export const ChartScatterplotVisualization = ({
 
 export const ChartScatterplot = ({
   observations,
-  dimensions,
-  measures,
-  fields,
+
   palette
 }: {
-  observations: any[];
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: ScatterPlotFields;
+  observations: Observations<ScatterPlotFields>;
+
   palette: string;
 }) => {
   const [resizeRef, width] = useResizeObserver();
 
-  const formattedData = formatDataForScatterplot({
-    observations,
-    dimensions,
-    measures,
-    fields
-  });
   return (
     <div ref={resizeRef}>
       <Scatterplot
-        data={formattedData}
+        data={observations}
         width={width}
-        xField={getMeasureLabelFromIri({
-          measureIri: fields.xField,
-          measures
-        })}
-        yField={getMeasureLabelFromIri({
-          measureIri: fields.yField,
-          measures
-        })}
-        groupByField={getDimensionLabelFromIri({
-          dimensionIri: fields.groupByField,
-          dimensions
-        })}
-        labelField={getDimensionLabelFromIri({
-          dimensionIri: fields.labelField,
-          dimensions
-        })}
+        xField={"xField"}
+        yField={"yField"}
+        groupByField={"groupByField"}
+        labelField={"labelField"}
         palette={palette}
       />
     </div>

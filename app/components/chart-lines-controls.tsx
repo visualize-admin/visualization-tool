@@ -1,7 +1,7 @@
 import React from "react";
+import { DimensionWithMeta, MeasureWithMeta } from "../domain/data";
 import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
 import { Field } from "./field";
-import { DimensionWithMeta, MeasureWithMeta } from "../domain";
 
 export const ChartLinesControls = ({
   chartId,
@@ -18,7 +18,7 @@ export const ChartLinesControls = ({
     <>
       <ControlSection title="Horizontale Achse" note="x-Achse">
         <ControlList>
-          {timeDimensions.map(({component}) => (
+          {timeDimensions.map(({ component }) => (
             <Field
               key={component.iri.value}
               type="radio"
@@ -37,7 +37,7 @@ export const ChartLinesControls = ({
             chartId={chartId}
             path={"height"}
             label={"Werte wählen"}
-            options={measuresDimensions.map(({component}) => ({
+            options={measuresDimensions.map(({ component }) => ({
               value: component.iri.value,
               label: component.labels[0].value
             }))}
@@ -51,7 +51,7 @@ export const ChartLinesControls = ({
             chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
-            options={categoricalDimensions.map(({component}) => ({
+            options={categoricalDimensions.map(({ component }) => ({
               value: component.iri.value,
               label: component.labels[0].value
             }))}

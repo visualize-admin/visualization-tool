@@ -1,11 +1,8 @@
 import React from "react";
 import { Flex } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
-import {
-  getCategoricalDimensions,
-  getTimeDimensions,
-  useDataSetAndMetadata
-} from "../domain/data-cube";
+import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
+import { useDataSetAndMetadata } from "../domain/data-cube";
 import { ChartAreasControls } from "./chart-areas-controls";
 import { ChartBarsControls } from "./chart-bars-controls";
 import { ChartLinesControls } from "./chart-lines-controls";

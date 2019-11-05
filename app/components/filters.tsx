@@ -5,7 +5,7 @@ import {
   getDimensionLabel,
   isTimeDimension,
   DimensionWithMeta
-} from "../domain";
+} from "../domain/data";
 import { Field } from "./field";
 import { ControlSection, ControlList } from "./chart-controls";
 import { useConfiguratorState } from "../domain/configurator-state";

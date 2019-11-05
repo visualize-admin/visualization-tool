@@ -1,7 +1,7 @@
 import React from "react";
 import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
 import { Field } from "./field";
-import { DimensionWithMeta, MeasureWithMeta } from "../domain";
+import { DimensionWithMeta, MeasureWithMeta } from "../domain/data";
 
 export const ChartScatterplotControls = ({
   chartId,
@@ -23,7 +23,7 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"x"}
             label={"Werte wählen"}
-            options={measuresDimensions.map(({component}) => ({
+            options={measuresDimensions.map(({ component }) => ({
               value: component.iri.value,
               label: component.labels[0].value
             }))}
@@ -37,7 +37,7 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"y"}
             label={"Werte wählen"}
-            options={measuresDimensions.map(({component}) => ({
+            options={measuresDimensions.map(({ component }) => ({
               value: component.iri.value,
               label: component.labels[0].value
             }))}
@@ -51,7 +51,7 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
-            options={categoricalDimensions.map(({component}) => ({
+            options={categoricalDimensions.map(({ component }) => ({
               value: component.iri.value,
               label: component.labels[0].value
             }))}
@@ -65,7 +65,7 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"label"}
             label={"Dimension wählen"}
-            options={timeDimensions.map(({component}) => ({
+            options={timeDimensions.map(({ component }) => ({
               value: component.iri.value,
               label: component.labels[0].value
             }))}

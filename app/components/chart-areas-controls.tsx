@@ -1,7 +1,7 @@
 import React from "react";
 import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
 import { Field } from "./field";
-import { DimensionWithMeta, MeasureWithMeta } from "../domain";
+import { DimensionWithMeta, MeasureWithMeta } from "../domain/data";
 
 export const ChartAreasControls = ({
   chartId,

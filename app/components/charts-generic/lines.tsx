@@ -1,10 +1,12 @@
 import * as React from "react";
-import * as vega from "vega";
 import { Spec } from "vega";
-import { yAxisTheme, xAxisTheme, legendTheme } from "./chart-styles";
+import { LineChartFields } from "../../domain";
+import { Observations } from "../../domain/data";
+import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
+import { useVegaView } from "../../lib/use-vega";
 
 interface Props {
-  data: any;
+  data: Observations<LineChartFields>;
   width: number;
   xField: string;
   yField: string;
@@ -146,26 +148,8 @@ export const Lines = ({
   return <LinesChart spec={spec} />;
 };
 
-const LinesChart = ({ spec }: { spec: any }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const createView = async () => {
-      try {
-        const view = new vega.View(vega.parse(spec), {
-          logLevel: vega.Warn,
-          renderer: "svg",
-          container: ref.current,
-          hover: true
-        });
-        await view.runAsync();
-        // console.log("data in lines", view.data("table"));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    createView();
-  }, [spec]);
+const LinesChart = ({ spec }: { spec: Spec }) => {
+  const [ref] = useVegaView({ spec });
 
   return <div ref={ref} />;
 };
