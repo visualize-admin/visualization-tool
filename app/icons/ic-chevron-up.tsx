@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const IconChevronRight = ({ size = 24, color = "currentColor" }) => (
+export const IconChevronUp = ({ size = 24, color = "currentColor" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -10,6 +10,6 @@ export const IconChevronRight = ({ size = 24, color = "currentColor" }) => (
     fillRule="evenodd"
     stroke="none"
   >
-    <polyline points="13.2928932 12 8 17.5 9.5 19 16 12 9.5 5 8 6.5"></polyline>
+    <polyline points="12 10.7071068 17.5 16 19 14.5 12 8 5 14.5 6.5 16"></polyline>
   </svg>
 );

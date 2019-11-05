@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const IconLoading = ({ size = 48, color = "currentColor" }) => (
+export const IconLoading = ({ size = 64, color = "currentColor" }) => (
          <svg
            xmlns="http://www.w3.org/2000/svg"
            width={size}
