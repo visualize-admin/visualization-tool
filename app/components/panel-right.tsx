@@ -7,7 +7,7 @@ export const PanelRight = ({ chartId }: { chartId: string }) => {
   const [state] = useConfiguratorState();
 
   return (
-    <Box data-name="panel-right" variant="container.right">
+    <Box as="section" data-name="panel-right" variant="container.right">
       {state.state === "CONFIGURING_CHART" && (
         <ChartFilters chartId={chartId} dataSetIri={state.dataSet} />
       )}

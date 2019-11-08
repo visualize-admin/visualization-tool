@@ -21,7 +21,7 @@ export const PanelLeft = ({
   const [state] = useConfiguratorState();
 
   return (
-    <Box data-name="panel-left" variant="container.left">
+    <Box as="section" data-name="panel-left" variant="container.left">
       {chartId === "new" ? (
         <>
           <ContainerTitle>

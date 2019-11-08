@@ -18,7 +18,7 @@ export const PanelMiddle = ({
   const [state, dispatch] = useConfiguratorState();
 
   return (
-    <Box variant="container.middle" data-name="panel-middle">
+    <Box as="section" variant="container.middle" data-name="panel-middle">
       {chartId === "new" ? (
         <>
           {dataSetIri ? (

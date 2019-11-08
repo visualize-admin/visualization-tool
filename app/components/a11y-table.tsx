@@ -79,7 +79,7 @@ export const A11yTable = ({
           return (
             <tr key={i}>
               {Object.keys(fields).map(fieldKey => (
-                <td>{obs[fieldKey]}</td>
+                <td key={fieldKey}>{obs[fieldKey]}</td>
               ))}
             </tr>
           );
