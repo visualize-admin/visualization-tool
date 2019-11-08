@@ -23,10 +23,12 @@ export const ChartBarsControls = ({
             chartId={chartId}
             path={"x"}
             label={"Dimension wählen"}
-            options={[...timeDimensions,...categoricalDimensions].map(({ component }) => ({
-              value: component.iri.value,
-              label: component.labels[0].value
-            }))}
+            options={[...timeDimensions, ...categoricalDimensions].map(
+              ({ component }) => ({
+                value: component.iri.value,
+                label: component.labels[0].value
+              })
+            )}
           />
         </ControlList>
       </ControlSection>
@@ -51,21 +53,18 @@ export const ChartBarsControls = ({
             chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
-            options={[...timeDimensions,...categoricalDimensions].map(({ component }) => ({
-              value: component.iri.value,
-              label: component.labels[0].value
-            }))}
+            options={[...timeDimensions, ...categoricalDimensions].map(
+              ({ component }) => ({
+                value: component.iri.value,
+                label: component.labels[0].value
+              })
+            )}
           />
         </ControlList>
       </ControlSection>
       <ControlSection title="Darstellung">
         <ControlList>
-          <ColorPalette
-            type="select"
-            chartId={chartId}
-            path={"palette"}
-            label={"Farbpalette:"}
-          />
+          <ColorPalette />
         </ControlList>
       </ControlSection>
     </>
