@@ -5,7 +5,7 @@ import { Header } from "./header";
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex flexDirection="column" sx={{ minHeight: "100vh" }}>
     <Header />
-    <Flex flex={1} flexDirection="column" bg="muted">
+    <Flex as="main" role="main" flex={1} flexDirection="column" bg="muted">
       {children}
     </Flex>
   </Flex>

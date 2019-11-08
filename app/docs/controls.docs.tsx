@@ -51,7 +51,7 @@ A section is a styling container, it has a title and a note (displayed on the ri
 ${(
   <ReactSpecimen span={6}>
     <ControlSection title="Werteachse" note="y-Achse">
-      <ControlList label={"Dimension wählen"}>
+      <ControlList>
         <Select
           options={[
             { label: "Kanton", value: "Kanton" },
@@ -65,11 +65,11 @@ ${(
           ]}
         />
       </ControlList>
-      <ControlList label={"Eigene Achsenticke"}>
+      <ControlList>
         <Input />
       </ControlList>
 
-      <ControlList label={"Elemente Filtern"}>
+      <ControlList>
         <Checkbox
           label={"Bern"}
           checked={true}
@@ -90,7 +90,7 @@ ${(
           onChange={() => {}}
         />
       </ControlList>
-      <ControlList label={"Elemente Filtern"}>
+      <ControlList>
         <Radio
           label={"Bern"}
           checked={true}
@@ -118,7 +118,7 @@ ${(
 
 ${(
   <ReactSpecimen span={2}>
-    <ControlList label={"Elemente Filtern"}>
+    <ControlList>
       <Checkbox
         label={"Scatterplot"}
         name={"Scatterplot"}

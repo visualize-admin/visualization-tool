@@ -82,20 +82,19 @@ const DimensionValues = ({
 
   return (
     <>
-      {!isTimeDimension(dimension) && (
-        <Text
-          variant="paragraph2"
-          mb={4}
-          onClick={() => toggle(dimensionIri, dimension.values)}
-          sx={{ textDecoration: "underline", cursor: "pointer" }}
-        >
-          {all ? (
-            <Trans>Nur erste auswählen</Trans>
-          ) : (
-            <Trans>Alle auswählen</Trans>
-          )}
-        </Text>
-      )}
+      <Text
+        variant="paragraph2"
+        mb={4}
+        onClick={() => toggle(dimensionIri, dimension.values)}
+        sx={{ textDecoration: "underline", cursor: "pointer" }}
+      >
+        {all ? (
+          <Trans>Nur erste auswählen</Trans>
+        ) : (
+          <Trans>Alle auswählen</Trans>
+        )}
+      </Text>
+
       {dimension.values.map(dv => {
         return (
           <Field

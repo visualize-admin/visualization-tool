@@ -487,7 +487,12 @@ export const theme: Theme = {
       height: "86px",
       mx: 4,
       my: 6,
-      transition: "background-color .2s"
+      transition: "background-color .2s",
+      ":focus": {
+        borderColor: "focus",
+        borderWidth: "1px",
+        borderStyle: "solid"
+      }
     },
 
     hint: {
@@ -550,11 +555,18 @@ export const globalStyles = `
   body {
     margin: 0;
     padding: 0;
-     svg {
+    font-family: FrutigerNeueRegular, -apple-system, BlinkMacSystemFont,
+    Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+    Segoe UI Symbol;
+    svg {
       display: block;
     }
-    font-family: FrutigerNeueRegular, -apple-system, BlinkMacSystemFont,
-      Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
-      Segoe UI Symbol;
-    }
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0.01em 0 0 0;
+    margin: 0;
+    min-width: 0;
+  }
 `;

@@ -27,7 +27,8 @@ const ChartCreator = ({ chartId }: { chartId: string }) => {
       bg="muted"
       sx={{
         display: "grid",
-        gridTemplateColumns: "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
+        gridTemplateColumns:
+          "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
         gridTemplateRows: "auto minmax(0, 1fr)",
         gridTemplateAreas: `
         "header header header"
@@ -36,13 +37,12 @@ const ChartCreator = ({ chartId }: { chartId: string }) => {
         width: "100%",
         position: "fixed",
         // FIXME replace 96px with actual header size
-        top: "96px", 
-        height: "calc(100vh - 96px)",
+        top: "96px",
+        height: "calc(100vh - 96px)"
       }}
     >
-      <Box sx={{gridArea:"header"}}>
-      <Stepper />
-
+      <Box as="section" role="navigation" sx={{ gridArea: "header" }}>
+        <Stepper />
       </Box>
 
       <PanelLeft
