@@ -74,12 +74,7 @@ export const ChartScatterplotControls = ({
       </ControlSection>
       <ControlSection title="Darstellung">
         <ControlList>
-          <ColorPalette
-            type="select"
-            chartId={chartId}
-            path={"palette"}
-            label={"Farbpalette:"}
-          />
+          <ColorPalette />
         </ControlList>
       </ControlSection>
     </>

@@ -18,7 +18,7 @@ export const ChartAreasControls = ({
     <>
       <ControlSection title="Horizontale Achse" note="x-Achse">
         <ControlList>
-          {timeDimensions.map(({component}) => (
+          {timeDimensions.map(({ component }) => (
             <Field
               key={component.iri.value}
               type="radio"
@@ -37,7 +37,7 @@ export const ChartAreasControls = ({
             chartId={chartId}
             path={"height"}
             label={"Werte wählen"}
-            options={measuresDimensions.map(({component}) => ({
+            options={measuresDimensions.map(({ component }) => ({
               value: component.iri.value,
               label: component.labels[0].value
             }))}
@@ -51,7 +51,7 @@ export const ChartAreasControls = ({
             chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
-            options={categoricalDimensions.map(({component}) => ({
+            options={categoricalDimensions.map(({ component }) => ({
               value: component.iri.value,
               label: component.labels[0].value
             }))}
@@ -60,12 +60,7 @@ export const ChartAreasControls = ({
       </ControlSection>
       <ControlSection title="Darstellung">
         <ControlList>
-          <ColorPalette
-            type="select"
-            chartId={chartId}
-            path={"palette"}
-            label={"Farbpalette:"}
-          />
+          <ColorPalette />
         </ControlList>
       </ControlSection>
     </>

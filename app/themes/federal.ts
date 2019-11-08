@@ -303,6 +303,31 @@ export const theme: Theme = {
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center"
+    },
+    palette: {
+      variant: "buttons.primary",
+      color: "monochrome.700",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      bg: "monochrome.100",
+      p: 1,
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "monochrome.500",
+      ":hover": {
+        bg: "monochrome.100"
+      },
+      ":active": {
+        bg: "monochrome.100"
+      },
+      ":disabled": {
+        cursor: "initial",
+        bg: "muted"
+      },
+      ":focus": {
+        outline: "1px solid #333333"
+      }
     }
   },
   // All variants except ^ buttons ^
@@ -516,6 +541,32 @@ export const theme: Theme = {
       color: "success.base",
       bg: "success.light",
       height: "auto"
+    },
+    palette: {
+      menu: {
+        ":focus": {
+          outline: "1px solid #333333"
+        }
+      },
+      row: { bg: "monochrome.100" },
+      color: {
+        display: "inline-block",
+        margin: 0,
+        padding: 0,
+        width: 16,
+        height: 36,
+        borderColor: "white",
+        borderWidth: "1px",
+        borderStyle: "solid",
+        "&:first-of-type": {
+          borderTopLeftRadius: "4px",
+          borderBottomLeftRadius: "4px"
+        },
+        "&:last-of-type": {
+          borderTopRightRadius: "4px",
+          borderBottomRightRadius: "4px"
+        }
+      }
     }
   }
 };
