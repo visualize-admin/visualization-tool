@@ -1,5 +1,5 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React from "react";
+import React, { useMemo } from "react";
 import { AreaChartFields, useObservations } from "../domain";
 import { Filters } from "../domain/config-types";
 import {
@@ -28,11 +28,28 @@ export const ChartAreasVisualization = ({
 
   palette: string;
 }) => {
+  // Explicitly specify all dimension fields.
+  // TODO: Improve/optimize/generalize this
+  const allFields = useMemo(() => {
+    const fieldIris = new Set(Object.values(fields));
+    const restDimensions = dimensions.reduce<{ [k: string]: string }>(
+      (acc, d, i) => {
+        if (!fieldIris.has(d.component.iri.value)) {
+          acc[`dim${i}`] = d.component.iri.value;
+        }
+        return acc;
+      },
+      {}
+    );
+
+    return { ...restDimensions, ...fields };
+  }, [fields, dimensions]);
+
   const observations = useObservations({
     dataSet,
     measures,
     dimensions,
-    fields,
+    fields: allFields,
     filters
   });
 
@@ -43,10 +60,16 @@ export const ChartAreasVisualization = ({
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
-          fields={fields}
+          fields={allFields}
           observations={observations.data}
         />
-        <ChartAreas observations={observations.data} palette={palette} />
+        <ChartAreas
+          observations={observations.data}
+          palette={palette}
+          dimensions={dimensions}
+          measures={measures}
+          fields={allFields}
+        />
       </>
     );
   } else {
@@ -56,10 +79,16 @@ export const ChartAreasVisualization = ({
 
 export const ChartAreas = ({
   observations,
-  palette
+  dimensions,
+  measures,
+  palette,
+  fields
 }: {
   observations: Observations<AreaChartFields>;
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
   palette: string;
+  fields: AreaChartFields;
 }) => {
   const [resizeRef, width] = useResizeObserver();
 
@@ -74,6 +103,9 @@ export const ChartAreas = ({
         groupByLabel={"groupByLabel"}
         aggregateFunction={"sum"}
         palette={palette}
+        dimensions={dimensions}
+        measures={measures}
+        fields={fields}
       />
     </div>
   );
