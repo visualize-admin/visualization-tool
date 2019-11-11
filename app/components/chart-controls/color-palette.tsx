@@ -60,7 +60,7 @@ export const ColorPalette = () => {
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
             {scheme(state.chartConfig.palette).map((color: string) => (
-              <Box variant="palette.color" sx={{ bg: color }}></Box>
+              <Box key={color} variant="palette.color" sx={{ bg: color }}></Box>
             ))}
           </Flex>
         )}
@@ -70,17 +70,21 @@ export const ColorPalette = () => {
         {isOpen &&
           vegaPalettes.map((palette, index) => (
             <Box
+              key={`${palette.value}${index}`}
               variant="palette.row"
               sx={
                 highlightedIndex === index
                   ? { backgroundColor: "monochrome.200" }
                   : {}
               }
-              key={`${palette.value}${index}`}
               {...getItemProps({ item: palette, index })}
             >
               {palette.colors.map(color => (
-                <Box variant="palette.color" sx={{ bg: color }}></Box>
+                <Box
+                  key={`option-${color}`}
+                  variant="palette.color"
+                  sx={{ bg: color }}
+                ></Box>
               ))}
             </Box>
           ))}

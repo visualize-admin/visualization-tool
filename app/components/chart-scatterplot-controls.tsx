@@ -65,10 +65,12 @@ export const ChartScatterplotControls = ({
             chartId={chartId}
             path={"label"}
             label={"Dimension wählen"}
-            options={timeDimensions.map(({ component }) => ({
-              value: component.iri.value,
-              label: component.labels[0].value
-            }))}
+            options={[...categoricalDimensions, ...timeDimensions].map(
+              ({ component }) => ({
+                value: component.iri.value,
+                label: component.labels[0].value
+              })
+            )}
           />
         </ControlList>
       </ControlSection>

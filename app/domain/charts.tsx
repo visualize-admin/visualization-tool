@@ -62,7 +62,7 @@ export const getInitialState = ({
   measures: MeasureWithMeta[];
 }): {} => {
   // FIXME: Should the returned type match the Keys defined above?
-  const nonTimeDImensions = dimensions.filter(
+  const nonTimeDimensions = dimensions.filter(
     dimension => !isTimeDimension(dimension)
   );
   switch (chartType) {
@@ -71,12 +71,12 @@ export const getInitialState = ({
         x: getComponentIri(measures[0]),
         y: getComponentIri(measures.length > 1 ? measures[1] : measures[0]),
         color: getComponentIri(getCategoricalDimensions(dimensions)[0]),
-        label: getComponentIri(getTimeDimensions(dimensions)[0]),
+        label: getComponentIri(getCategoricalDimensions(dimensions)[0]),
         ...visuals
       };
     case "column":
       return {
-        x: getComponentIri(nonTimeDImensions[0]),
+        x: getComponentIri(nonTimeDimensions[0]),
         height: getComponentIri(measures[0]),
         color: getComponentIri(getCategoricalDimensions(dimensions)[0]),
         ...visuals
@@ -97,7 +97,7 @@ export const getInitialState = ({
       };
     default:
       return {
-        x: getComponentIri(nonTimeDImensions[0]),
+        x: getComponentIri(nonTimeDimensions[0]),
         height: getComponentIri(measures[0]),
         color: getComponentIri(getCategoricalDimensions(dimensions)[0]),
         ...visuals
@@ -114,7 +114,7 @@ export const getPossibleChartType = ({
 }): ChartType[] | null => {
   const { measures, dimensions } = meta;
 
-  const hasMultipleQ = measures.length >= 1;
+  const hasMultipleQ = measures.length > 1;
   const hasTime = dimensions.some(dim => isTimeDimension(dim));
 
   const catBased: ChartType[] = ["column"];
