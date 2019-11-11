@@ -3,7 +3,11 @@ import { yAxisTheme, xAxisTheme, legendTheme } from "./chart-styles";
 import { Spec } from "vega";
 import { useVegaView } from "../../lib/use-vega";
 import { AreaChartFields } from "../../domain";
-import { Observations } from "../../domain/data";
+import {
+  Observations,
+  DimensionWithMeta,
+  MeasureWithMeta
+} from "../../domain/data";
 
 interface Props {
   data: Observations<AreaChartFields>;
@@ -14,6 +18,9 @@ interface Props {
   groupByLabel: string;
   aggregateFunction: "sum";
   palette: string;
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
+  fields: AreaChartFields;
 }
 
 export const Areas = ({
@@ -24,8 +31,20 @@ export const Areas = ({
   groupBy,
   groupByLabel,
   aggregateFunction,
-  palette
+  palette,
+  fields,
+  dimensions,
+  measures
 }: Props) => {
+  const fieldValues = new Set([fields.xField, fields.groupByField]);
+  const unmappedFields: [string, DimensionWithMeta][] = Object.entries(
+    fields
+  ).flatMap(([key, iri]) => {
+    const mbDim = dimensions.find(d => d.component.iri.value === iri);
+    return !fieldValues.has(iri) && mbDim ? [[key, mbDim]] : [];
+  });
+  const unmappedFieldKeys = unmappedFields.map(([key, value]) => key);
+
   const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width,
@@ -40,15 +59,25 @@ export const Areas = ({
         name: "table",
         values: data,
         transform: [
+          // {
+          //   type: "aggregate",
+          //   groupby: [groupBy],
+          //   fields: [yField],
+          //   ops: ["sum"],
+          //   as: ["sumByTime"]
+          // },
           {
-            type: "aggregate",
-            groupby: [xField, groupBy],
-            fields: [yField],
-            ops: ["sum"],
-            as: ["sumByTime"]
+            type: "formula",
+            as: "date",
+            expr: `timeParse(datum.xField, "%Y")`
           },
-          { type: "stack", field: "sumByTime", groupby: [xField] },
-          { type: "collect", sort: { field: xField } }
+          {
+            type: "stack",
+            field: yField,
+            groupby: ["date"],
+            sort: { field: [groupBy, ...unmappedFieldKeys] }
+          },
+          { type: "collect", sort: { field: "date" } }
         ]
       }
     ],
@@ -58,9 +87,10 @@ export const Areas = ({
         name: "x",
         type: "time",
         range: "width",
+
         domain: {
           data: "table",
-          field: xField
+          field: "date"
         }
       },
       {
@@ -97,7 +127,7 @@ export const Areas = ({
           facet: {
             name: "series",
             data: "table",
-            groupby: [groupBy]
+            groupby: [groupBy, ...unmappedFieldKeys]
           }
         },
         marks: [
@@ -106,7 +136,7 @@ export const Areas = ({
             from: { data: "series" },
             encode: {
               enter: {
-                x: { scale: "x", field: xField },
+                x: { scale: "x", field: "date" },
                 y: { scale: "y", field: "y0" },
                 y2: { scale: "y", field: "y1" },
                 fill: { scale: "colorScale", field: groupBy }

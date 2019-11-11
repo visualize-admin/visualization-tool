@@ -1,6 +1,6 @@
 import * as React from "react";
 import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
-import { Observations } from "../../domain/data";
+import { Observations, DimensionWithMeta, MeasureWithMeta, getDimensionLabel } from "../../domain/data";
 import { BarChartFields } from "../../domain";
 import { useVegaView } from "../../lib/use-vega";
 import { Spec } from "vega";
@@ -13,6 +13,9 @@ interface Props {
   groupBy: string;
   aggregateFunction: "sum";
   palette: string;
+  fields: BarChartFields;
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
 }
 
 export const Bars = ({
@@ -22,9 +25,25 @@ export const Bars = ({
   heightField,
   groupBy,
   aggregateFunction,
-  palette
+  palette,
+  fields,
+  dimensions,
+  measures
 }: Props) => {
+  console.log(fields)
   // FIXME: Use hook to get the theme from ThemeProvider.
+
+
+
+  const xFieldLabel = getDimensionLabel(dimensions.find(d => d.component.iri.value === fields.xField)!)
+  const fieldValues = new Set([fields.xField, fields.groupByField, fields.groupByField]);
+  const unmappedFields = Object.entries(fields).flatMap(([key, iri])=> {
+    const mbDim=dimensions.find(d=>d.component.iri.value === iri) ;
+    return !fieldValues.has(iri) && mbDim ? [[key, mbDim]] : []
+  
+  })
+  console.log("unmapped",unmappedFields)
+
   const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
@@ -34,22 +53,30 @@ export const Bars = ({
     autosize: { type: "fit-x", contains: "padding" },
 
     data: [
+      { name: "labels", values: [{ key: "xField", value: "X FIELD" }] },
       {
         name: "table",
         values: data,
         transform: [
+          // {
+          //   type: "aggregate",
+          //   groupby: [xField, groupBy],
+          //   fields: [heightField],
+          //   ops: [aggregateFunction],
+          //   as: ["sum"]
+          // },
           {
-            type: "aggregate",
-            groupby: [xField, groupBy],
-            fields: [heightField],
-            ops: [aggregateFunction],
-            as: ["sum"]
+            type: "formula",
+            expr: unmappedFields.map(f=>f[0])
+              .map(s => `datum["${s}"]`)
+              .join("+', '+"),
+            as: "tooltipLabel"
           },
           {
             type: "stack",
             groupby: [xField],
             sort: { field: groupBy },
-            field: "sum"
+            field: heightField
           }
         ]
       }
@@ -70,7 +97,7 @@ export const Bars = ({
       {
         name: "x",
         type: "band",
-        domain: { data: "table", field: xField },
+        domain: { data: "table", field: xField , sort: true},
         range: "width",
         padding: 0.3,
         paddingOuter: 0.3,
@@ -90,12 +117,25 @@ export const Bars = ({
           data: "table",
           field: groupBy
         }
-      }
+      },
+      // {
+      //   name: "labelScale",
+      //   type: "ordinal",
+      //   domain: { data: "labels", field: "key" },
+      //   range: { data: "labels", field: "value" }
+      // }
     ],
 
     axes: [
-      { ...yAxisTheme, formatType: "number", format: "~s" },
-      { ...xAxisTheme, labelAngle: -90, labelAlign: "right", ticks: false }
+      { ...yAxisTheme, formatType: "number", format: ",.2~f" },
+      {
+        ...xAxisTheme,
+        labelAngle: -90,
+        labelAlign: "right",
+        ticks: false,
+        title: xFieldLabel,
+        // encode: { title: { update: { text: { "signal": "scales.labelsScale('xField')" } } } }
+      }
     ],
 
     marks: [
@@ -131,7 +171,7 @@ export const Bars = ({
             x: { scale: "x", signal: `tooltip["${xField}"]`, band: 0.5 },
             y: { scale: "y", signal: "tooltip.y1", offset: -2 },
             text: {
-              signal: `tooltip.sum ? tooltip["${groupBy}"] + " " +format(tooltip.sum, '~s') : ''`
+              signal: `tooltip.heightField ? tooltip.tooltipLabel + " " +format(tooltip.heightField, ',.2~f') : ''`
             },
             fillOpacity: [{ test: "datum === tooltip", value: 0 }, { value: 1 }]
           }
@@ -141,8 +181,10 @@ export const Bars = ({
     legends: [
       {
         ...legendTheme,
-        fill: "colorScale"
+        fill: "colorScale",
         // title: groupByLabel
+        columns: 1,
+        labelLimit: width - 60
       }
     ]
   };

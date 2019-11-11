@@ -1,7 +1,12 @@
 import * as React from "react";
 import { Spec } from "vega";
 import { LineChartFields } from "../../domain";
-import { Observations } from "../../domain/data";
+import {
+  Observations,
+  DimensionWithMeta,
+  MeasureWithMeta,
+  getDimensionLabel
+} from "../../domain/data";
 import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
 import { useVegaView } from "../../lib/use-vega";
 
@@ -14,6 +19,9 @@ interface Props {
   groupByLabel: string;
   aggregateFunction: "sum";
   palette: string;
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
+  fields: LineChartFields;
 }
 
 export const Lines = ({
@@ -24,8 +32,20 @@ export const Lines = ({
   groupBy,
   groupByLabel,
   aggregateFunction,
+  dimensions,
+  measures,
+  fields,
   palette
 }: Props) => {
+  const fieldValues = new Set([fields.xField, fields.groupByField]);
+  const unmappedFields: [string, DimensionWithMeta][] = Object.entries(
+    fields
+  ).flatMap(([key, iri]) => {
+    const mbDim = dimensions.find(d => d.component.iri.value === iri);
+    return !fieldValues.has(iri) && mbDim ? [[key, mbDim]] : [];
+  });
+  const unmappedFieldKeys = unmappedFields.map(([key, value]) => key);
+
   const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width,
@@ -40,14 +60,19 @@ export const Lines = ({
         name: "table",
         values: data,
         transform: [
+          // {
+          //   type: "aggregate",
+          //   groupby: [xField, groupBy],
+          //   fields: [yField, yField],
+          //   ops: [aggregateFunction, aggregateFunction],
+          //   as: ["byTime", "byGroup"]
+          // },
           {
-            type: "aggregate",
-            groupby: [xField, groupBy],
-            fields: [yField, yField],
-            ops: [aggregateFunction, aggregateFunction],
-            as: ["byTime", "byGroup"]
+            type: "formula",
+            as: "date",
+            expr: `timeParse(datum.xField, "%Y")`
           },
-          { type: "collect", sort: { field: xField } }
+          { type: "collect", sort: { field: "date" } }
         ]
       }
     ],
@@ -59,7 +84,7 @@ export const Lines = ({
         range: "width",
         domain: {
           data: "table",
-          field: xField
+          field: "date"
         }
       },
       {
@@ -70,7 +95,7 @@ export const Lines = ({
         zero: true,
         domain: {
           data: "table",
-          field: "byGroup"
+          field: yField
         }
       },
       {
@@ -95,10 +120,9 @@ export const Lines = ({
           facet: {
             name: "series",
             data: "table",
-            groupby: groupBy
+            groupby: [groupBy, ...unmappedFieldKeys]
           }
         },
-        // from: { data: "table" },
         marks: [
           {
             type: "line",
@@ -109,11 +133,11 @@ export const Lines = ({
               enter: {
                 x: {
                   scale: "x",
-                  field: xField
+                  field: "date"
                 },
                 y: {
                   scale: "y",
-                  field: "byGroup"
+                  field: yField
                 },
                 stroke: {
                   scale: "colorScale",
