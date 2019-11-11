@@ -88,7 +88,7 @@ export default () =>
 
 ## Home
 
-The user's first contact with the _Visualization Tool_. In addition to a description of the tool and it's purpose, several entrypoints are available. A prominent call-to-action invites to go to the Visualization Builder directly. 
+The user's first contact with the _Visualization Tool_. In addition to a description of the tool and it's purpose, several entrypoints are available. A prominent call-to-action invites to go to the Chart Builder directly. 
 
 The homepage includes a short tutorial section that describies the different steps needed to create a visualization, as well as some example charts that explain different features of the charts created with the tool and which invite the users to create their own visualizations based on the examples. The examples are followed by a section about which kind of data is available via the _Visualization Tool_, followed by a call-to-action for other potential data-providers.
 
@@ -105,6 +105,64 @@ span: 1
 src: "./static/docs/design/mockups/1.0_s_home.png"
 description: "[Open full-size image](./static/docs/design/mockups/1.0_s_home.png)"
 ~~~
+
+As the Chart builder is not optimized for mobile use-case, a user trying to access the Chart Builder using a mobile device, will be presented with the following warning.
+
+~~~image
+plain: true
+span: 1
+src: "./static/docs/design/mockups/1.1_s_chart-maker_error-mobile.png"
+description: "[Open full-size image](./static/docs/design/mockups/1.1_s_chart-maker_error-mobile.png)"
+~~~
+
+## Chart Landing Page
+
+Each chart built with the _Visualization Tool_ is assignened a dedicated Chart-URL. As soon as a chart has been published, a dedicated «Landing Page» can be accessed by anyone using the appropriate URL. This page should also be made available on mobile devices (responisve design). 
+
+The landing page includes the chart itself, as well as the header & footer of the _Visualization Tool_ and a set of dedicated actions such as image download, sharing, or embedding. At the bottom of the page, the user is presented with the option to create a new visualization from scratch.
+
+~~~image
+plain: true
+span: 3
+src: "./static/docs/design/mockups/1.8.1_l_shared_page.png"
+description: "[Open full-size image](./static/docs/design/mockups/1.8.1_l_shared_page.png)"
+~~~
+
+~~~image
+plain: true
+span: 3
+src: "./static/docs/design/mockups/1.8.2_l_shared_page.png"
+description: "[Open full-size image](./static/docs/design/mockups/1.8.2_l_shared_page.png)"
+~~~
+
+~~~image
+plain: true
+span: 3
+src: "./static/docs/design/mockups/1.8.3_l_shared_page.png"
+description: "[Open full-size image](./static/docs/design/mockups/1.8.3_l_shared_page.png)"
+~~~
+
+~~~image
+plain: true
+span: 3
+src: "./static/docs/design/mockups/1.8.4_l_shared_page.png"
+description: "[Open full-size image](./static/docs/design/mockups/1.8.4_l_shared_page.png)"
+~~~
+
+~~~image
+plain: true
+span: 1
+src: "./static/docs/design/mockups/1.8.1_s_shared_page.png"
+description: "[Open full-size image](./static/docs/design/mockups/1.8.1_s_shared_page.png)"
+~~~
+
+~~~image
+plain: true
+span: 1
+src: "./static/docs/design/mockups/1.8.3_s_shared_page.png"
+description: "[Open full-size image](./static/docs/design/mockups/1.8.3_s_shared_page.png)"
+~~~
+
 
 ## Chart Builder
 
