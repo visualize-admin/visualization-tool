@@ -1,4 +1,4 @@
-import { ChartType } from "./config-types";
+import { ChartType, Filters } from "./config-types";
 import {
   DimensionWithMeta,
   getCategoricalDimensions,
@@ -37,15 +37,18 @@ export type Fields =
   | AreaChartFields
   | ScatterPlotFields;
 
-export const getInitialFilters = (dimensions: DimensionWithMeta[]) => {
+export const getInitialFilters = (dimensions: DimensionWithMeta[]): Filters => {
   const nonTimeDimensions = dimensions.filter(
     dimension => !isTimeDimension(dimension)
   );
-  return nonTimeDimensions.reduce((obj, cur, i) => {
+  return nonTimeDimensions.reduce<Filters>((obj, cur, i) => {
     return cur.values.length > 0
       ? {
           ...obj,
-          [cur.component.iri.value]: { [cur.values[0].value.value]: true }
+          [cur.component.iri.value]: {
+            type: "multi",
+            values: { [cur.values[0].value.value]: true }
+          }
         }
       : obj;
   }, {});

@@ -17,12 +17,10 @@ export type FieldProps = Pick<
 >;
 
 export const useField = ({
-  chartId,
   path,
   type = "text",
   value
 }: {
-  chartId: string;
   path: string;
   type?: "text" | "checkbox" | "radio" | "input" | "select";
   value?: string;
@@ -66,17 +64,89 @@ export const useField = ({
   };
 };
 
+export const useMultiFilterField = ({
+  dimensionIri,
+  value
+}: {
+  dimensionIri: string;
+  value: string;
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e => {
+      dispatch({
+        type: "CHART_CONFIG_FILTER_SET_MULTI",
+        value: {
+          dimensionIri,
+          values: { [value]: e.currentTarget.checked ? true : undefined }
+        }
+      });
+    },
+    [dispatch, dimensionIri, value]
+  );
+
+  const checked =
+    state.state === "CONFIGURING_CHART"
+      ? get(
+          state.chartConfig,
+          ["filters", dimensionIri, "values", value],
+          false
+        )
+      : false;
+
+  return {
+    name: dimensionIri,
+    value,
+    checked,
+    onChange
+  };
+};
+
+export const useSingleFilterField = ({
+  dimensionIri,
+  value
+}: {
+  value: string;
+  dimensionIri: string;
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e => {
+      dispatch({
+        type: "CHART_CONFIG_FILTER_SET_SINGLE",
+        value: {
+          dimensionIri,
+          value: e.currentTarget.value
+        }
+      });
+    },
+    [dispatch, dimensionIri]
+  );
+
+  const stateValue =
+    state.state === "CONFIGURING_CHART"
+      ? get(state.chartConfig, ["filters", dimensionIri, "value"], "")
+      : "";
+
+  const checked = stateValue === value;
+
+  return {
+    name: dimensionIri,
+    value: value ? value : stateValue,
+    checked,
+    onChange
+  };
+};
+
 export const useChartTypeSelectorField = ({
-  chartId,
   path,
   value,
-  type = "radio",
   metaData
 }: {
-  chartId: string;
   path: string;
   value?: string;
-  type: "radio";
   metaData: DataSetMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();

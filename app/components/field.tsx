@@ -2,7 +2,8 @@ import React from "react";
 import {
   useChartTypeSelectorField,
   useField,
-  Option
+  Option,
+  useMultiFilterField
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
@@ -27,7 +28,6 @@ export const Field = ({
   disabled?: boolean;
 }) => {
   const field = useField({
-    chartId,
     path,
     type,
     value
@@ -43,6 +43,26 @@ export const Field = ({
     <Select options={options!} label={label} {...field}></Select> // FIXME: make sure options is defined
   );
 };
+
+export const MultiFilterField = ({
+  dimensionIri,
+  label,
+  value,
+  disabled
+}: {
+  dimensionIri: string;
+  label: string;
+  value: string;
+  disabled?: boolean;
+}) => {
+  const field = useMultiFilterField({
+    dimensionIri,
+    value,
+  });
+
+  return <Checkbox label={label} disabled={disabled} {...field}></Checkbox>
+};
+
 
 export const ChartTypeSelectorField = ({
   chartId,
@@ -64,9 +84,7 @@ export const ChartTypeSelectorField = ({
   disabled?: boolean;
 }) => {
   const field = useChartTypeSelectorField({
-    chartId,
     path,
-    type: "radio",
     value,
     metaData
   });

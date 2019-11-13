@@ -2,11 +2,45 @@ import * as t from "io-ts";
 
 export type ChartType = "bar" | "line" | "area" | "scatterplot" | "column";
 
-const Filters = t.record(
-  t.string,
-  t.record(t.string, t.boolean, "FilterValue"),
-  "FilterDimension"
+const FilterValueMulti = t.type(
+  {
+    type: t.literal("multi"),
+    values: t.record(t.string, t.union([t.literal(true), t.undefined])) // undefined values will be removed when serializing to JSON
+  },
+  "FilterValueMulti"
 );
+export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
+
+const FilterValueSingle = t.type(
+  {
+    type: t.literal("single"),
+    value: t.string
+  },
+  "FilterValueSingle"
+);
+export type FilterValueSingle = t.TypeOf<typeof FilterValueSingle>;
+
+const FilterValueRange = t.type(
+  {
+    type: t.literal("range"),
+    from: t.string,
+    to: t.string
+  },
+  "FilterValueRange"
+);
+export type FilterValueRange = t.TypeOf<typeof FilterValueRange>;
+
+const FilterValue = t.union(
+  [FilterValueSingle, FilterValueMulti, FilterValueRange],
+  "FilterValue"
+);
+export type FilterValue = t.TypeOf<typeof FilterValue>;
+
+export type FilterValueType = FilterValue["type"];
+
+export type FilterValueMultiValues = FilterValueMulti["values"];
+
+const Filters = t.record(t.string, FilterValue, "Filters");
 
 export type Filters = t.TypeOf<typeof Filters>;
 
