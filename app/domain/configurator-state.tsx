@@ -11,7 +11,10 @@ import setWith from "lodash/setWith";
 import {
   isValidConfiguratorState,
   ConfiguratorState,
-  ConfiguratorStatePublishing
+  ConfiguratorStatePublishing,
+  FilterValueMulti,
+  Filters,
+  FilterValue
 } from "./config-types";
 import { useRouter } from "next/router";
 import { createChartId } from "./chart-id";
@@ -31,6 +34,14 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_CHANGED";
       value: { path: string | string[]; value: $FixMe };
     }
+  | {
+      type: "CHART_CONFIG_FILTER_SET_SINGLE";
+      value: { dimensionIri: string; value: string };
+    }
+  | {
+      type: "CHART_CONFIG_FILTER_SET_MULTI";
+      value: { dimensionIri: string; values: FilterValueMulti["values"] };
+    }
   | { type: "PUBLISH" }
   | { type: "PUBLISH_FAILED" }
   | { type: "PUBLISHED"; value: string };
@@ -47,6 +58,15 @@ const emptyState: ConfiguratorState = {
   state: "SELECTING_DATASET",
   dataSet: undefined,
   chartConfig: { chartType: "none", filters: {} }
+};
+
+export const getFilterValue = (
+  state: ConfiguratorState,
+  dimensionIri: string
+): FilterValue | undefined => {
+  return state.state !== "INITIAL"
+    ? state.chartConfig.filters[dimensionIri]
+    : undefined;
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
@@ -77,10 +97,36 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_CHANGED":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
-        setWith(draft.chartConfig, action.value.path, action.value.value, Object);
+        setWith(
+          draft.chartConfig,
+          action.value.path,
+          action.value.value,
+          Object
+        );
       }
       return draft;
-
+    case "CHART_CONFIG_FILTER_SET_SINGLE":
+      draft.state = "CONFIGURING_CHART";
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri, value } = action.value;
+        draft.chartConfig.filters[dimensionIri] = { type: "single", value };
+      }
+      return draft;
+    case "CHART_CONFIG_FILTER_SET_MULTI":
+      draft.state = "CONFIGURING_CHART";
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri, values } = action.value;
+        const f = draft.chartConfig.filters[dimensionIri];
+        if (f && f.type === "multi") {
+          f.values = { ...f.values, ...values };
+        } else {
+          draft.chartConfig.filters[dimensionIri] = {
+            type: "multi",
+            values
+          };
+        }
+      }
+      return draft;
     case "PUBLISH":
       draft.state = "PUBLISHING";
       return draft;

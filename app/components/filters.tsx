@@ -1,17 +1,21 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React from "react";
+import React, { useCallback } from "react";
 import {
   getComponentIri,
   getDimensionLabel,
   isTimeDimension,
   DimensionWithMeta
 } from "../domain/data";
-import { Field } from "./field";
+import { MultiFilterField } from "./field";
 import { ControlSection, ControlList } from "./chart-controls";
-import { useConfiguratorState } from "../domain/configurator-state";
+import {
+  useConfiguratorState,
+  getFilterValue
+} from "../domain/configurator-state";
 import { Literal, NamedNode } from "rdf-js";
 import { Text } from "rebass";
 import { Trans } from "@lingui/macro";
+import { FilterValueMultiValues } from "../domain";
 
 export const Filters = ({
   chartId,
@@ -56,29 +60,39 @@ const DimensionValues = ({
   const dimensionIri = getComponentIri(dimension);
   const [, dispatch] = useConfiguratorState();
 
-  const [all, toggleAll] = React.useState(false);
+  const [state] = useConfiguratorState();
 
-  const toggle = (
-    dimIri: string,
-    dimVal: {
-      label: Literal;
-      value: NamedNode | Literal;
-    }[]
-  ) => {
-    toggleAll(!all);
-    dispatch({
-      type: "CHART_CONFIG_CHANGED",
-      value: {
-        path: `filters["${dimIri}"]`,
-        value: all
-          ? { [dimVal[0].value.value]: true }
-          : Object.values(dimVal).reduce(
-              (obj, cur, i) => ({ ...obj, [cur.value.value]: true }),
-              {}
-            )
-      }
-    });
-  };
+  const filterValues = getFilterValue(state, dimension.component.iri.value);
+
+  const allSelected =
+    filterValues &&
+    filterValues.type === "multi" &&
+    dimension.values.every(dv => filterValues.values[dv.value.value] === true);
+
+  const toggle = useCallback(
+    (
+      dimensionIri: string,
+      dimVal: {
+        label: Literal;
+        value: NamedNode | Literal;
+      }[]
+    ) => {
+      dispatch({
+        type: "CHART_CONFIG_FILTER_SET_MULTI",
+        value: {
+          dimensionIri,
+          values: Object.values(dimVal).reduce<FilterValueMultiValues>(
+            (obj, cur, i) => ({
+              ...obj,
+              [cur.value.value]: !allSelected || i === 0 ? true : undefined
+            }),
+            {}
+          )
+        }
+      });
+    },
+    [dispatch, allSelected]
+  );
 
   return (
     <>
@@ -88,20 +102,18 @@ const DimensionValues = ({
         onClick={() => toggle(dimensionIri, dimension.values)}
         sx={{ textDecoration: "underline", cursor: "pointer" }}
       >
-        {all ? (
-          <Trans>Nur erste auswählen</Trans>
+        {allSelected ? (
+          <Trans>Reset</Trans>
         ) : (
-          <Trans>Alle auswählen</Trans>
+          <Trans>Select all</Trans>
         )}
       </Text>
 
       {dimension.values.map(dv => {
         return (
-          <Field
+          <MultiFilterField
             key={dv.value.value}
-            type="checkbox"
-            chartId={chartId}
-            path={`filters["${dimensionIri}"]["${dv.value.value}"]`}
+            dimensionIri={dimensionIri}
             label={isTimeDimension(dimension) ? dv.value.value : dv.label.value}
             value={dv.value.value}
           />

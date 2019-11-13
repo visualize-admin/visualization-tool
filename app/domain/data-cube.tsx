@@ -178,10 +178,15 @@ export const useObservations = <FieldsType extends Fields>({
     }, {});
 
     const constructedFilters = filters
-      ? Object.entries(filters).flatMap(([dimIri, values]) => {
-          const selectedValues = Object.entries(values).flatMap(
-            ([value, selected]) => (selected ? [value] : [])
-          );
+      ? Object.entries(filters).flatMap(([dimIri, filter]) => {
+          const selectedValues =
+            filter.type === "single"
+              ? [filter.value]
+              : filter.type === "multi"
+              ? Object.entries(filter.values).flatMap(([value, selected]) =>
+                  selected ? [value] : []
+                )
+              : [];
 
           const dimension = dimensionsByIri[dimIri];
 
