@@ -30,11 +30,7 @@ export const Bars = ({
   dimensions,
   measures
 }: Props) => {
-  console.log(fields)
   // FIXME: Use hook to get the theme from ThemeProvider.
-
-
-
   const xFieldLabel = getDimensionLabel(dimensions.find(d => d.component.iri.value === fields.xField)!)
   const fieldValues = new Set([fields.xField, fields.groupByField, fields.groupByField]);
   const unmappedFields = Object.entries(fields).flatMap(([key, iri])=> {
@@ -42,7 +38,6 @@ export const Bars = ({
     return !fieldValues.has(iri) && mbDim ? [[key, mbDim]] : []
   
   })
-  console.log("unmapped",unmappedFields)
 
   const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
