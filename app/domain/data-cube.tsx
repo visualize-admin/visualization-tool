@@ -95,7 +95,7 @@ const useDataCubeEntryPoint = () => {
 export const useDataSets = () => {
   const entryPoint = useDataCubeEntryPoint();
   const fetchCb = useCallback(() => entryPoint.dataCubes(), [entryPoint]);
-  return useRemoteData(fetchCb);
+  return useRemoteData(["datasets", entryPoint], fetchCb);
 };
 
 export interface DataSetMetadata {
@@ -146,7 +146,7 @@ export const useDataSetAndMetadata = (
       measures: measuresWithMinMax
     };
   }, [entryPoint, iri]);
-  return useRemoteData(fetchCb);
+  return useRemoteData(["datasetandmeta", entryPoint, iri], fetchCb);
 };
 
 export const useObservations = <FieldsType extends Fields>({
@@ -226,7 +226,10 @@ export const useObservations = <FieldsType extends Fields>({
     return parseObservations(data);
   }, [filters, dataSet, fields, measures, dimensions]);
 
-  return useRemoteData<Observations<FieldsType>>(fetchData);
+  return useRemoteData<Observations<FieldsType>>(
+    ["observations", filters, dataSet, fields, measures, dimensions],
+    fetchData
+  );
 };
 
 export const useDimensionValues = ({
@@ -239,7 +242,7 @@ export const useDimensionValues = ({
   const fetchData = useCallback(async () => {
     return await dataSet.componentValues(dimension);
   }, [dataSet, dimension]);
-  return useRemoteData(fetchData);
+  return useRemoteData(["dimensionvalues", dimension.iri.value], fetchData);
 };
 export const useDimensionMinMax = ({
   dataSet,
@@ -251,5 +254,5 @@ export const useDimensionMinMax = ({
   const fetchData = useCallback(async () => {
     return await dataSet.componentMinMax(measure);
   }, [dataSet, measure]);
-  return useRemoteData(fetchData);
+  return useRemoteData(["dimensionminmax", measure.iri.value], fetchData);
 };
