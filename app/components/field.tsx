@@ -3,11 +3,14 @@ import {
   useChartTypeSelectorField,
   useField,
   Option,
-  useMultiFilterField
+  useMultiFilterField,
+  useMetaField
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
 import { DataSetMetadata } from "../domain/data-cube";
+import { MetaKey } from "../domain";
+import { Locales } from "../locales/locales";
 
 export const Field = ({
   chartId,
@@ -43,6 +46,54 @@ export const Field = ({
     <Select options={options!} label={label} {...field}></Select> // FIXME: make sure options is defined
   );
 };
+export const MetaInputField = ({
+  chartId,
+  label,
+  metaKey,
+  locale,
+  value,
+  disabled,
+  ...props
+}: {
+  chartId: string;
+  label: string;
+  metaKey: MetaKey;
+  locale: Locales;
+  value?: string;
+  disabled?: boolean;
+}) => {
+  const field = useMetaField({
+    metaKey,
+    locale,
+    value
+  });
+
+  return <Input label={label} {...field} disabled={disabled}></Input>;
+};
+export const MetaTextarea = ({
+  chartId,
+  label,
+  metaKey,
+  locale,
+  value,
+  disabled,
+  ...props
+}: {
+  chartId: string;
+  label: string;
+  metaKey: MetaKey;
+  locale: Locales;
+  value?: string;
+  disabled?: boolean;
+}) => {
+  const field = useMetaField({
+    metaKey,
+    locale,
+    value
+  });
+
+  return <Input label={label} {...field} disabled={disabled}></Input>;
+};
 
 export const MultiFilterField = ({
   dimensionIri,
@@ -57,12 +108,11 @@ export const MultiFilterField = ({
 }) => {
   const field = useMultiFilterField({
     dimensionIri,
-    value,
+    value
   });
 
-  return <Checkbox label={label} disabled={disabled} {...field}></Checkbox>
+  return <Checkbox label={label} disabled={disabled} {...field}></Checkbox>;
 };
-
 
 export const ChartTypeSelectorField = ({
   chartId,

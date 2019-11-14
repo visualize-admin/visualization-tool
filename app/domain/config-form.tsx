@@ -1,9 +1,10 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
 import { getInitialFilters, getInitialState } from ".";
-import { ChartType } from "./config-types";
+import { ChartType, MetaKey } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
 import { DataSetMetadata } from "./data-cube";
+import { Locales } from "../locales/locales";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -60,6 +61,37 @@ export const useField = ({
     value: value ? value : stateValue,
     type,
     checked,
+    onChange
+  };
+};
+
+export const useMetaField = ({
+  metaKey,
+  locale,
+  value
+}: {
+  metaKey: MetaKey;
+  locale: Locales;
+  value?: string;
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e => {
+      dispatch({
+        type: "CHART_DESCRIPTION_CHANGED",
+        value: {
+          path: `${metaKey}.${locale}`,
+          value: e.currentTarget.value
+        }
+      });
+    },
+    [dispatch, metaKey, locale]
+  );
+
+  return {
+    name: `${metaKey}-${locale}`,
+    value,
     onChange
   };
 };

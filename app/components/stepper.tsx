@@ -9,12 +9,14 @@ type StepState =
   | "SELECTING_DATASET"
   | "SELECTING_CHART_TYPE"
   | "CONFIGURING_CHART"
+  | "DESCRIBING_CHART"
   | "PUBLISHED";
 
 const steps: Array<StepState> = [
   "SELECTING_DATASET",
   "SELECTING_CHART_TYPE",
   "CONFIGURING_CHART",
+  "DESCRIBING_CHART",
   "PUBLISHED"
 ];
 
@@ -88,7 +90,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans> Datensatz</Trans>
+          <Trans>Datensatz</Trans>
         </Text>
       );
     case "SELECTING_CHART_TYPE":
@@ -100,7 +102,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans> Visualisierungs-Typ</Trans>
+          <Trans>Visualisierungs-Typ</Trans>
         </Text>
       );
     case "CONFIGURING_CHART":
@@ -112,7 +114,19 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans> Anpassen</Trans>
+          <Trans>Anpassen</Trans>
+        </Text>
+      );
+    case "DESCRIBING_CHART":
+      return (
+        <Text
+          sx={{
+            color: highlight ? "monochrome.800" : "monochrome.700",
+            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+          }}
+          variant="paragraph2"
+        >
+          <Trans>Beschriften</Trans>
         </Text>
       );
     case "PUBLISHED":
@@ -124,7 +138,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans> Teilen & Einbetten</Trans>
+          <Trans>Teilen & Einbetten</Trans>
         </Text>
       );
   }

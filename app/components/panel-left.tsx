@@ -8,6 +8,7 @@ import { ChartTypeSelector } from "./chart-type-selector";
 import { ContainerTitle } from "./container";
 import { DataSetList } from "./dataset-selector";
 import { LocalizedLink } from "./links";
+import { ChartAnnotator } from "./chart-annotator";
 
 export const PanelLeft = ({
   chartId,
@@ -43,15 +44,10 @@ export const PanelLeft = ({
             </>
           )}
           {state.state === "CONFIGURING_CHART" && (
-            <>
-              {/* Step 3: CONFIGURING_CHART */}
-              {state.dataSet && state.chartConfig.chartType && (
-                <ChartConfigurator
-                  chartId={chartId}
-                  dataSetIri={state.dataSet}
-                />
-              )}
-            </>
+            <ChartConfigurator chartId={chartId} dataSetIri={state.dataSet} />
+          )}
+          {state.state === "DESCRIBING_CHART" && (
+            <ChartAnnotator chartId={chartId} />
           )}
 
           {/* Step 5 */}
