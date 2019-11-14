@@ -1,27 +1,25 @@
+import setWith from "lodash/setWith";
+import { useRouter } from "next/router";
 import {
-  useEffect,
   createContext,
   Dispatch,
+  ReactNode,
   useContext,
-  ReactNode
+  useEffect
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
-import setWith from "lodash/setWith";
-
+import { createChartId } from "./chart-id";
 import {
-  isValidConfiguratorState,
   ConfiguratorState,
   ConfiguratorStatePublishing,
+  FilterValue,
   FilterValueMulti,
-  Filters,
-  FilterValue
+  isValidConfiguratorState
 } from "./config-types";
-import { useRouter } from "next/router";
-import { createChartId } from "./chart-id";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
-  | { type: "DATASET_SELECTED"; value: string }
+  | { type: "DATASET_SELECTED"; value: { dataSet: string; title?: string } }
   | {
       type: "CHART_TYPE_PREVIEWED";
       value: { path: string | string[]; value: $FixMe };
@@ -32,6 +30,13 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_CHANGED";
+      value: { path: string | string[]; value: $FixMe };
+    }
+  | {
+      type: "CHART_CONFIGURED";
+    }
+  | {
+      type: "CHART_DESCRIPTION_CHANGED";
       value: { path: string | string[]; value: $FixMe };
     }
   | {
@@ -46,6 +51,10 @@ export type ConfiguratorStateAction =
   | { type: "PUBLISH_FAILED" }
   | { type: "PUBLISHED"; value: string };
 
+export type ActionType<
+  ConfiguratorStateAction
+> = ConfiguratorStateAction[keyof ConfiguratorStateAction];
+
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
@@ -57,7 +66,24 @@ const initialState: ConfiguratorState = {
 const emptyState: ConfiguratorState = {
   state: "SELECTING_DATASET",
   dataSet: undefined,
-  chartConfig: { chartType: "none", filters: {} }
+  meta: {
+    title: {
+      de: "",
+      fr: "",
+      it: "",
+      en: ""
+    },
+    description: {
+      de: "",
+      fr: "",
+      it: "",
+      en: ""
+    }
+  },
+  chartConfig: {
+    chartType: "none",
+    filters: {}
+  }
 };
 
 export const getFilterValue = (
@@ -80,7 +106,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "DATASET_SELECTED":
       draft.state = "SELECTING_CHART_TYPE";
       if (draft.state === "SELECTING_CHART_TYPE") {
-        draft.dataSet = action.value;
+        const { dataSet } = action.value;
+
+        setWith(draft, "dataSet", dataSet, Object);
+        //draft.dataSet = action.value;
       }
       return draft;
 
@@ -105,6 +134,18 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         );
       }
       return draft;
+
+    case "CHART_CONFIGURED":
+      draft.state = "DESCRIBING_CHART";
+      return draft;
+
+    case "CHART_DESCRIPTION_CHANGED":
+      draft.state = "DESCRIBING_CHART";
+      if (draft.state === "DESCRIBING_CHART") {
+        setWith(draft, `meta.${action.value.path}`, action.value.value, Object);
+      }
+      return draft;
+
     case "CHART_CONFIG_FILTER_SET_SINGLE":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
@@ -127,6 +168,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         }
       }
       return draft;
+
     case "PUBLISH":
       draft.state = "PUBLISHING";
       return draft;
@@ -197,6 +239,7 @@ const ConfiguratorStateProviderInternal = ({
     try {
       switch (state.state) {
         case "CONFIGURING_CHART":
+        case "DESCRIBING_CHART":
         case "SELECTING_CHART_TYPE":
           if (chartId === "new") {
             const newChartId = createChartId();

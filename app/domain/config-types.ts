@@ -44,6 +44,23 @@ const Filters = t.record(t.string, FilterValue, "Filters");
 
 export type Filters = t.TypeOf<typeof Filters>;
 
+const Title = t.type({
+  de: t.string,
+  fr: t.string,
+  it: t.string,
+  en: t.string
+});
+export type Title = t.TypeOf<typeof Title>;
+const Description = t.type({
+  de: t.string,
+  fr: t.string,
+  it: t.string,
+  en: t.string
+});
+const Meta = t.type({ title: Title, description: Description });
+export type Meta = t.TypeOf<typeof Meta>;
+export type MetaKey = keyof Meta;
+
 const NoneConfig = t.type(
   {
     chartType: t.literal("none"),
@@ -122,6 +139,7 @@ const Config = t.type(
   {
     dataSet: t.string,
     // filters: Filters,
+    meta: Meta,
     chartConfig: ChartConfig
   },
   "Config"
@@ -137,6 +155,7 @@ export const decodeConfig = (config: unknown) => Config.decode(config);
 const ConfiguratorStateInitial = t.type({ state: t.literal("INITIAL") });
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
+  meta: Meta,
   dataSet: t.undefined,
   chartConfig: NoneConfig
 });
@@ -150,6 +169,12 @@ const ConfiguratorStateSelectingChartType = t.intersection([
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
     state: t.literal("CONFIGURING_CHART")
+  }),
+  Config
+]);
+const ConfiguratorStateDescribingChart = t.intersection([
+  t.type({
+    state: t.literal("DESCRIBING_CHART")
   }),
   Config
 ]);
@@ -176,6 +201,7 @@ const ConfiguratorState = t.union([
   ConfiguratorStateSelectingDataSet,
   ConfiguratorStateSelectingChartType,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
   ConfiguratorStatePublished
 ]);

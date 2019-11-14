@@ -8,6 +8,7 @@ import { ChartBarsVisualization } from "./chart-bars";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
+import { useLocale } from "../lib/use-locale";
 
 export const ChartPreview = ({
   chartId,
@@ -20,6 +21,8 @@ export const ChartPreview = ({
 
   const meta = useDataSetAndMetadata(dataSetIri);
 
+  const locale = useLocale();
+
   if (meta.state === "loaded") {
     const { dimensions, measures, dataSet } = meta.data;
     return (
@@ -29,17 +32,22 @@ export const ChartPreview = ({
         justifyContent="space-between"
         sx={{ height: "100%", color: "monochrome.800" }}
       >
-        <Text variant="heading2" mb={2}>
-          {dataSet.labels[0].value}
-        </Text>
-        <Text variant="paragraph1" mb={2}>
-          {dataSet.extraMetadata.get("description")!.value}
-        </Text>
-        {/* // FIXME: we shouldn't need this condition because the states must be these */}
         {(state.state === "SELECTING_CHART_TYPE" ||
           state.state === "CONFIGURING_CHART" ||
+          state.state === "DESCRIBING_CHART" ||
           state.state === "PUBLISHED") && (
           <>
+            <Text variant="heading2" mb={2}>
+              {state.meta.title[locale] === ""
+                ? dataSet.labels[0].value
+                : state.meta.title[locale]}
+            </Text>
+            <Text variant="paragraph1" mb={2}>
+              {state.meta.description[locale] === ""
+                ? dataSet.extraMetadata.get("description")!.value
+                : state.meta.description[locale]}
+            </Text>
+            {/* // FIXME: we shouldn't need this condition because the states must be these */}
             {state.chartConfig.chartType === "column" && (
               <ChartBarsVisualization
                 dataSet={dataSet}
