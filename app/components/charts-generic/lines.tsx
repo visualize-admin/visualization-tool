@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Spec } from "vega";
-import { LineChartFields } from "../../domain";
 import {
   Observations,
   DimensionWithMeta,
@@ -9,40 +8,27 @@ import {
 } from "../../domain/data";
 import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
 import { useVegaView } from "../../lib/use-vega";
+import { LineFields } from "../../domain";
 
 interface Props {
-  data: Observations<LineChartFields>;
+  data: Observations<LineFields>;
   width: number;
-  xField: string;
-  yField: string;
-  groupBy: string;
-  groupByLabel: string;
-  aggregateFunction: "sum";
-  palette: string;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  fields: LineChartFields;
+  fields: LineFields;
 }
 
-export const Lines = ({
-  data,
-  width,
-  xField,
-  yField,
-  groupBy,
-  groupByLabel,
-  aggregateFunction,
-  dimensions,
-  measures,
-  fields,
-  palette
-}: Props) => {
-  const fieldValues = new Set([fields.xField, fields.groupByField]);
-  const unmappedFields: [string, DimensionWithMeta][] = Object.entries(
-    fields
-  ).flatMap(([key, iri]) => {
-    const mbDim = dimensions.find(d => d.component.iri.value === iri);
-    return !fieldValues.has(iri) && mbDim ? [[key, mbDim]] : [];
+export const Lines = ({ data, width, dimensions, measures, fields }: Props) => {
+  const fieldValues = new Set([fields.x.componentIri]);
+  const unmappedFields: [string, DimensionWithMeta][] = Object.entries<{
+    componentIri: string;
+  }>(fields).flatMap(([key, fieldValue]) => {
+    const mbDim = dimensions.find(
+      d => d.component.iri.value === fieldValue.componentIri
+    );
+    return !fieldValues.has(fieldValue.componentIri) && mbDim
+      ? [[key, mbDim]]
+      : [];
   });
   const unmappedFieldKeys = unmappedFields.map(([key, value]) => key);
 
@@ -70,7 +56,7 @@ export const Lines = ({
           {
             type: "formula",
             as: "date",
-            expr: `timeParse(datum.xField, "%Y")`
+            expr: `timeParse(datum.x, "%Y")`
           },
           { type: "collect", sort: { field: "date" } }
         ]
@@ -95,16 +81,18 @@ export const Lines = ({
         zero: true,
         domain: {
           data: "table",
-          field: yField
+          field: "y"
         }
       },
       {
         name: "colorScale",
         type: "ordinal",
-        range: { scheme: palette },
+        range: {
+          scheme: fields.segment ? fields.segment.palette : "category10"
+        },
         domain: {
           data: "table",
-          field: groupBy
+          field: "segment"
         }
       }
     ],
@@ -120,7 +108,7 @@ export const Lines = ({
           facet: {
             name: "series",
             data: "table",
-            groupby: [groupBy, ...unmappedFieldKeys]
+            groupby: ["segment", ...unmappedFieldKeys]
           }
         },
         marks: [
@@ -137,11 +125,11 @@ export const Lines = ({
                 },
                 y: {
                   scale: "y",
-                  field: yField
+                  field: "y"
                 },
                 stroke: {
                   scale: "colorScale",
-                  field: groupBy
+                  field: "segment"
                 },
 
                 strokeWidth: {

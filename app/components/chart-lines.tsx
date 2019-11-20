@@ -1,7 +1,7 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { useMemo } from "react";
-import { LineChartFields, useObservations } from "../domain";
-import { Filters } from "../domain/config-types";
+import { useObservations } from "../domain";
+import { LineFields, LineConfig } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
@@ -16,21 +16,21 @@ export const ChartLinesVisualization = ({
   dataSet,
   dimensions,
   measures,
-  filters,
-  fields,
-  palette
+  chartConfig
 }: {
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  fields: LineChartFields;
-  filters?: Filters;
-  palette: string;
+  chartConfig: LineConfig;
 }) => {
   // Explicitly specify all dimension fields.
   // TODO: Improve/optimize/generalize this
   const allFields = useMemo(() => {
-    const fieldIris = new Set(Object.values(fields));
+    const fieldIris = new Set(
+      Object.values<{ componentIri: string }>(chartConfig.fields).map(
+        f => f.componentIri
+      )
+    );
     const restDimensions = dimensions.reduce<{ [k: string]: string }>(
       (acc, d, i) => {
         if (!fieldIris.has(d.component.iri.value)) {
@@ -41,15 +41,15 @@ export const ChartLinesVisualization = ({
       {}
     );
 
-    return { ...restDimensions, ...fields };
-  }, [fields, dimensions]);
+    return { ...restDimensions, ...chartConfig.fields };
+  }, [chartConfig, dimensions]);
 
   const observations = useObservations({
     dataSet,
     measures,
     dimensions,
-    fields:allFields,
-    filters
+    fields: allFields,
+    filters: chartConfig.filters
   });
 
   if (observations.state === "loaded") {
@@ -67,7 +67,6 @@ export const ChartLinesVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
-          palette={palette}
         />
       </>
     );
@@ -81,13 +80,11 @@ export const ChartLines = ({
   dimensions,
   measures,
   fields,
-  palette
 }: {
-  observations: Observations<LineChartFields>;
+  observations: Observations<LineFields>;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  fields: LineChartFields;
-  palette: string;
+  fields: LineFields;
 }) => {
   const [resizeRef, width] = useResizeObserver();
 
@@ -96,15 +93,9 @@ export const ChartLines = ({
       <Lines
         data={observations}
         width={width}
-        xField={"xField"}
-        yField="heightField"
-        groupBy={"groupByField"}
-        groupByLabel={"groupByLabel"}
-        aggregateFunction={"sum"}
         dimensions={dimensions}
         measures={measures}
         fields={fields}
-        palette={palette}
       />
     </div>
   );

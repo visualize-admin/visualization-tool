@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import ErrorPage from "next/error";
 import { useDataSetAndMetadata, DataCubeProvider } from "../../../domain";
 import { ChartConfig, Config } from "../../../domain/config-types";
-import { ChartBarsVisualization } from "../../../components/chart-bars";
+import { ChartColumnsVisualization } from "../../../components/chart-columns";
 import { ChartLinesVisualization } from "../../../components/chart-lines";
 import { ChartAreasVisualization } from "../../../components/chart-areas";
 import { ChartScatterplotVisualization } from "../../../components/chart-scatterplot";
@@ -21,17 +21,11 @@ const DisplayChart = ({
   return rd.state === "loaded" ? (
     <div>
       {chartConfig.chartType === "column" && (
-        <ChartBarsVisualization
+        <ChartColumnsVisualization
           dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
-          filters={chartConfig.filters}
-          fields={{
-            xField: chartConfig.x,
-            heightField: chartConfig.height,
-            groupByField: chartConfig.color
-          }}
-          palette={chartConfig.palette}
+          chartConfig={chartConfig}
         />
       )}
       {chartConfig.chartType === "line" && (
@@ -39,13 +33,7 @@ const DisplayChart = ({
           dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
-          filters={chartConfig.filters}
-          fields={{
-            xField: chartConfig.x,
-            heightField: chartConfig.height,
-            groupByField: chartConfig.color
-          }}
-          palette={chartConfig.palette}
+          chartConfig={chartConfig}
         />
       )}
       {chartConfig.chartType === "area" && (
@@ -53,13 +41,7 @@ const DisplayChart = ({
           dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
-          filters={chartConfig.filters}
-          fields={{
-            xField: chartConfig.x,
-            heightField: chartConfig.height,
-            groupByField: chartConfig.color
-          }}
-          palette={chartConfig.palette}
+          chartConfig={chartConfig}
         />
       )}
       {chartConfig.chartType === "scatterplot" && (
@@ -67,14 +49,7 @@ const DisplayChart = ({
           dataSet={rd.data.dataSet}
           dimensions={rd.data.dimensions}
           measures={rd.data.measures}
-          filters={chartConfig.filters}
-          fields={{
-            xField: chartConfig.x,
-            yField: chartConfig.y,
-            groupByField: chartConfig.color,
-            labelField: chartConfig.label
-          }}
-          palette={chartConfig.palette}
+          chartConfig={chartConfig}
         />
       )}
     </div>

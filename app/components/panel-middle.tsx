@@ -7,21 +7,19 @@ import { DataSetPreview } from "./dataset-preview";
 import { DataSetHint, Success } from "./hint";
 
 export const PanelMiddle = ({
-  chartId,
-  dataSetIri
+  dataSetPreviewIri
 }: {
-  chartId: string;
-  dataSetIri?: string;
+  dataSetPreviewIri?: string;
 }) => {
   const [state] = useConfiguratorState();
 
   return (
-    <Box as="section" variant="container.middle" data-name="panel-middle">
-      {chartId === "new" ? (
+    <>
+      {state.state === "SELECTING_DATASET" ? (
         <>
-          {dataSetIri ? (
+          {dataSetPreviewIri ? (
             <Box variant="container.chart">
-              <DataSetPreview dataSetIri={dataSetIri} />
+              <DataSetPreview dataSetIri={dataSetPreviewIri} />
             </Box>
           ) : (
             <Flex
@@ -40,14 +38,14 @@ export const PanelMiddle = ({
             state.state === "CONFIGURING_CHART" ||
             state.state === "DESCRIBING_CHART") && (
             <Box variant="container.chart">
-              <ChartPreview chartId={chartId} dataSetIri={state.dataSet} />
+              <ChartPreview dataSetIri={state.dataSet} />
             </Box>
           )}
           {state.state === "PUBLISHED" && (
             <>
               <Success />
               <Box variant="container.chart">
-                <ChartPreview chartId={chartId} dataSetIri={state.dataSet} />
+                <ChartPreview dataSetIri={state.dataSet} />
               </Box>
             </>
           )}
@@ -55,12 +53,11 @@ export const PanelMiddle = ({
       )}
 
       {/* ACTIONS */}
-      <ActionBar chartId={chartId} dataSetIri={dataSetIri}></ActionBar>
+      <ActionBar dataSetIri={dataSetPreviewIri}></ActionBar>
 
       <Box my={3} p={2} bg="muted">
-        <pre>{chartId}</pre>
         <pre>{JSON.stringify(state, null, 2)}</pre>
       </Box>
-    </Box>
+    </>
   );
 };

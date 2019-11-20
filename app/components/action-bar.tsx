@@ -4,17 +4,11 @@ import { Button, Flex } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { LocalizedLink } from "./links";
 
-export const ActionBar = ({
-  chartId,
-  dataSetIri
-}: {
-  chartId: string;
-  dataSetIri?: string;
-}) => {
+export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
   return (
     <Flex role="navigation" variant="actionBar" justifyContent="space-between">
-      {chartId === "new" ? (
+      {state.state === "SELECTING_DATASET" ? (
         <Button
           variant="primary"
           onClick={() => {

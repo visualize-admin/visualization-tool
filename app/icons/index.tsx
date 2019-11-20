@@ -19,29 +19,39 @@ import { IconDatasetPublished } from "./ic-dataset-published";
 import { IconLoading } from "./ic-loading";
 import { IconWarning } from "./ic-warning";
 import { IconResize } from "./ic-resize";
+import { IconTable } from "./ic-table";
+import { IconSegment } from "./ic-segment";
+import { IconFilter } from "./ic-filter";
+import { IconX } from "./ic-x";
+import { IconY } from "./ic-y";
 
 export const Icons = {
-         check: IconCheck,
-         add: IconAdd,
-         search: IconSearch,
-         chevronup: IconChevronUp,
-         chevrondown: IconChevronDown,
-         chevronleft: IconChevronLeft,
-         chevronright: IconChevronRight,
-         caretdown: IconCaretDown,
-         caretright: IconCaretRight,
-         unfold: IconUnfold,
-         bar: IconBarChart,
-         column: IconColumnChart,
-         line: IconLineChart,
-         area: IconAreaChart,
-         scatterplot: IconScatterplot,
-         dataset: IconDataset,
-         published: IconDatasetPublished,
-         loading: IconLoading,
-         warning: IconWarning,
-         resize: IconResize,
-       };
+  check: IconCheck,
+  add: IconAdd,
+  search: IconSearch,
+  chevronup: IconChevronUp,
+  chevrondown: IconChevronDown,
+  chevronleft: IconChevronLeft,
+  chevronright: IconChevronRight,
+  caretdown: IconCaretDown,
+  caretright: IconCaretRight,
+  unfold: IconUnfold,
+  bar: IconBarChart,
+  column: IconColumnChart,
+  line: IconLineChart,
+  area: IconAreaChart,
+  scatterplot: IconScatterplot,
+  dataset: IconDataset,
+  published: IconDatasetPublished,
+  loading: IconLoading,
+  warning: IconWarning,
+  resize: IconResize,
+  table: IconTable,
+  x: IconX,
+  y: IconY,
+  segment: IconSegment,
+  filter: IconFilter
+};
 
 export type IconName = keyof (typeof Icons);
 

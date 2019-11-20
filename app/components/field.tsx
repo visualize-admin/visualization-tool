@@ -4,16 +4,20 @@ import {
   useField,
   Option,
   useMultiFilterField,
-  useMetaField
+  useMetaField,
+  useControlTab,
+  useSingleFilterField,
+  useChartFieldField
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
 import { DataSetMetadata } from "../domain/data-cube";
-import { MetaKey } from "../domain";
+import { MetaKey, ComponentWithMeta, ChartFieldKey } from "../domain";
 import { Locales } from "../locales/locales";
+import { ControlTab } from "./chart-controls/control-tab";
+import { IconName } from "../icons";
 
 export const Field = ({
-  chartId,
   label,
   path,
   type,
@@ -22,7 +26,6 @@ export const Field = ({
   disabled,
   ...props
 }: {
-  chartId: string;
   label: string;
   path: string;
   type?: "text" | "checkbox" | "radio" | "input" | "select";
@@ -46,8 +49,34 @@ export const Field = ({
     <Select options={options!} label={label} {...field}></Select> // FIXME: make sure options is defined
   );
 };
+export const ControlTabField = ({
+  iconName,
+  component,
+  value,
+  disabled
+}: {
+  iconName: IconName;
+  component?: ComponentWithMeta;
+  value: ChartFieldKey;
+  disabled?: boolean;
+}) => {
+  const field = useControlTab({
+    value
+  });
+
+  return (
+    <ControlTab
+      iconName={iconName}
+      component={component}
+      value={field.value}
+      checked={field.checked}
+      disabled={disabled}
+      onClick={field.onClick}
+    ></ControlTab>
+  );
+};
+
 export const MetaInputField = ({
-  chartId,
   label,
   metaKey,
   locale,
@@ -55,7 +84,6 @@ export const MetaInputField = ({
   disabled,
   ...props
 }: {
-  chartId: string;
   label: string;
   metaKey: MetaKey;
   locale: Locales;
@@ -71,7 +99,6 @@ export const MetaInputField = ({
   return <Input label={label} {...field} disabled={disabled}></Input>;
 };
 export const MetaTextarea = ({
-  chartId,
   label,
   metaKey,
   locale,
@@ -79,7 +106,6 @@ export const MetaTextarea = ({
   disabled,
   ...props
 }: {
-  chartId: string;
   label: string;
   metaKey: MetaKey;
   locale: Locales;
@@ -113,9 +139,47 @@ export const MultiFilterField = ({
 
   return <Checkbox label={label} disabled={disabled} {...field}></Checkbox>;
 };
+export const SingleFilterField = ({
+  dimensionIri,
+  label,
+  value,
+  disabled
+}: {
+  dimensionIri: string;
+  label: string;
+  value: string;
+  disabled?: boolean;
+}) => {
+  const field = useSingleFilterField({
+    dimensionIri,
+    value
+  });
+
+  return <Radio label={label} disabled={disabled} {...field}></Radio>;
+};
+
+export const ChartFieldField = ({
+  componentIri,
+  label,
+  field,
+  options,
+  disabled
+}: {
+  componentIri: string;
+  label: string;
+  field: ChartFieldKey;
+  options: Option[];
+  disabled?: boolean;
+}) => {
+  const fieldProps = useChartFieldField({
+    componentIri,
+    field
+  });
+
+  return <Select label={label} disabled={disabled} options={options} {...fieldProps}></Select>;
+};
 
 export const ChartTypeSelectorField = ({
-  chartId,
   label,
   path,
   type,
@@ -125,7 +189,6 @@ export const ChartTypeSelectorField = ({
 
   ...props
 }: {
-  chartId: string;
   label: string;
   path: string;
   type?: "text" | "checkbox" | "radio";

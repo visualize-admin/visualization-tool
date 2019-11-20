@@ -1,40 +1,40 @@
 import React from "react";
-import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
+import {
+  ColorPalette,
+  ControlList,
+  CollapsibleSection
+} from "./chart-controls";
 import { Field } from "./field";
 import { DimensionWithMeta, MeasureWithMeta } from "../domain/data";
 
 export const ChartAreasControls = ({
-  chartId,
   timeDimensions,
   categoricalDimensions,
   measuresDimensions
 }: {
-  chartId: string;
   timeDimensions: DimensionWithMeta[];
   categoricalDimensions: DimensionWithMeta[];
   measuresDimensions: MeasureWithMeta[];
 }) => {
   return (
     <>
-      <ControlSection title="Horizontale Achse" note="x-Achse">
+      <CollapsibleSection title="Horizontale Achse">
         <ControlList>
           {timeDimensions.map(({ component }) => (
             <Field
               key={component.iri.value}
               type="radio"
-              chartId={chartId}
               path={"x"}
               label={component.labels[0].value}
               value={component.iri.value}
             />
           ))}
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Vertikale Achse" note="y-Achse">
+      </CollapsibleSection>
+      <CollapsibleSection title="Vertikale Achse">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"height"}
             label={"Werte wählen"}
             options={measuresDimensions.map(({ component }) => ({
@@ -43,12 +43,11 @@ export const ChartAreasControls = ({
             }))}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Farbe">
+      </CollapsibleSection>
+      <CollapsibleSection title="Farbe">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
             options={categoricalDimensions.map(({ component }) => ({
@@ -57,12 +56,12 @@ export const ChartAreasControls = ({
             }))}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Darstellung">
+      </CollapsibleSection>
+      <CollapsibleSection title="Darstellung">
         <ControlList>
           <ColorPalette />
         </ControlList>
-      </ControlSection>
+      </CollapsibleSection>
     </>
   );
 };

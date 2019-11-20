@@ -14,8 +14,7 @@ import {
 } from "react";
 import { RDState, useRemoteData } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
-import { Fields } from "./charts";
-import { Filters } from "./config-types";
+import { Filters, ChartFields } from "./config-types";
 import {
   AttributeWithMeta,
   DimensionWithMeta,
@@ -25,6 +24,7 @@ import {
   parseObservations,
   RawObservations
 } from "./data";
+import { Component } from "@zazuko/query-rdf-data-cube/dist/node/components";
 
 const DataCubeContext = createContext<string>("");
 
@@ -103,6 +103,11 @@ export interface DataSetMetadata {
   dimensions: DimensionWithMeta[];
   attributes: AttributeWithMeta[];
   measures: MeasureWithMeta[];
+  componentLabels: Record<string, string>;
+  componentsByIri: Record<
+    string,
+    DimensionWithMeta | AttributeWithMeta | MeasureWithMeta
+  >;
 }
 
 export const useDataSetAndMetadata = (
@@ -139,17 +144,37 @@ export const useDataSetAndMetadata = (
       }))
     );
 
+    const componentLabels = [...dimensions, ...measures, ...attributes].reduce<
+      Record<string, string>
+    >((labels, component) => {
+      labels[component.iri.value] = component.labels[0].value;
+      return labels;
+    }, {});
+
+    const componentsByIri = [
+      ...dimensionsWithValues,
+      ...measuresWithMinMax,
+      ...attributesWithValues
+    ].reduce<
+      Record<string, DimensionWithMeta | AttributeWithMeta | MeasureWithMeta>
+    >((components, component) => {
+      components[component.component.iri.value] = component;
+      return components;
+    }, {});
+
     return {
       dataSet,
       dimensions: dimensionsWithValues,
       attributes: attributesWithValues,
-      measures: measuresWithMinMax
+      measures: measuresWithMinMax,
+      componentLabels,
+      componentsByIri
     };
   }, [entryPoint, iri]);
   return useRemoteData(["datasetandmeta", entryPoint, iri], fetchCb);
 };
 
-export const useObservations = <FieldsType extends Fields>({
+export const useObservations = <FieldsType extends ChartFields>({
   dataSet,
   dimensions,
   measures,
@@ -207,13 +232,14 @@ export const useObservations = <FieldsType extends Fields>({
             : [];
         })
       : [];
-
     // TODO: Maybe explicitly specify all dimension fields? Currently not necessary because they're selected anyway.
-    const selectedComponents = Object.entries(fields).flatMap(([key, iri]) =>
-      componentsByIri[iri] !== undefined
-        ? [[key, componentsByIri[iri].component]]
-        : []
-    );
+    const selectedComponents = Object.entries<{ componentIri: string }>(
+      fields
+    ).flatMap(([key, field]) => {
+      return componentsByIri[field.componentIri] !== undefined
+        ? [[key, componentsByIri[field.componentIri].component]]
+        : [];
+    });
 
     const query = dataSet
       .query()

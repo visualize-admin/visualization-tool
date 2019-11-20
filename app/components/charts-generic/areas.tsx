@@ -2,46 +2,32 @@ import * as React from "react";
 import { yAxisTheme, xAxisTheme, legendTheme } from "./chart-styles";
 import { Spec } from "vega";
 import { useVegaView } from "../../lib/use-vega";
-import { AreaChartFields } from "../../domain";
 import {
   Observations,
   DimensionWithMeta,
   MeasureWithMeta
 } from "../../domain/data";
+import { AreaFields } from "../../domain";
 
 interface Props {
-  data: Observations<AreaChartFields>;
+  data: Observations<AreaFields>;
   width: number;
-  xField: string;
-  yField: string;
-  groupBy: string;
-  groupByLabel: string;
-  aggregateFunction: "sum";
-  palette: string;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  fields: AreaChartFields;
+  fields: AreaFields;
 }
 
-export const Areas = ({
-  data,
-  width,
-  xField,
-  yField,
-  groupBy,
-  groupByLabel,
-  aggregateFunction,
-  palette,
-  fields,
-  dimensions,
-  measures
-}: Props) => {
-  const fieldValues = new Set([fields.xField, fields.groupByField]);
-  const unmappedFields: [string, DimensionWithMeta][] = Object.entries(
-    fields
-  ).flatMap(([key, iri]) => {
-    const mbDim = dimensions.find(d => d.component.iri.value === iri);
-    return !fieldValues.has(iri) && mbDim ? [[key, mbDim]] : [];
+export const Areas = ({ data, width, fields, dimensions, measures }: Props) => {
+  const fieldValues = new Set([fields.x.componentIri]);
+  const unmappedFields: [string, DimensionWithMeta][] = Object.entries<{
+    componentIri: string;
+  }>(fields).flatMap(([key, fieldValue]) => {
+    const mbDim = dimensions.find(
+      d => d.component.iri.value === fieldValue.componentIri
+    );
+    return !fieldValues.has(fieldValue.componentIri) && mbDim
+      ? [[key, mbDim]]
+      : [];
   });
   const unmappedFieldKeys = unmappedFields.map(([key, value]) => key);
 
@@ -69,13 +55,13 @@ export const Areas = ({
           {
             type: "formula",
             as: "date",
-            expr: `timeParse(datum.xField, "%Y")`
+            expr: `timeParse(datum.x, "%Y")`
           },
           {
             type: "stack",
-            field: yField,
+            field: "y",
             groupby: ["date"],
-            sort: { field: [groupBy, ...unmappedFieldKeys] }
+            sort: { field: ["segment", ...unmappedFieldKeys] }
           },
           { type: "collect", sort: { field: "date" } }
         ]
@@ -107,10 +93,12 @@ export const Areas = ({
       {
         name: "colorScale",
         type: "ordinal",
-        range: { scheme: palette },
+        range: {
+          scheme: fields.segment ? fields.segment.palette : "category10"
+        },
         domain: {
           data: "table",
-          field: groupBy
+          field: "segment"
         }
       }
     ],
@@ -127,7 +115,7 @@ export const Areas = ({
           facet: {
             name: "series",
             data: "table",
-            groupby: [groupBy, ...unmappedFieldKeys]
+            groupby: ["segment", ...unmappedFieldKeys]
           }
         },
         marks: [
@@ -139,7 +127,7 @@ export const Areas = ({
                 x: { scale: "x", field: "date" },
                 y: { scale: "y", field: "y0" },
                 y2: { scale: "y", field: "y1" },
-                fill: { scale: "colorScale", field: groupBy }
+                fill: { scale: "colorScale", field: "segment" }
               },
               update: {
                 fillOpacity: { value: 0.9 }

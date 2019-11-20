@@ -14,7 +14,8 @@ import {
   ConfiguratorStatePublishing,
   FilterValue,
   FilterValueMulti,
-  isValidConfiguratorState
+  isValidConfiguratorState,
+  ChartFieldKey
 } from "./config-types";
 
 export type ConfiguratorStateAction =
@@ -29,8 +30,16 @@ export type ConfiguratorStateAction =
       // value: { path: string | string[]; value: any };
     }
   | {
+      type: "CONTROL_TAB_CHANGED";
+      value: ChartFieldKey;
+    }
+  | {
       type: "CHART_CONFIG_CHANGED";
       value: { path: string | string[]; value: $FixMe };
+    }
+  | {
+      type: "CHART_FIELD_CHANGED";
+      value: { field: ChartFieldKey; componentIri: string };
     }
   | {
       type: "CHART_CONFIGURED";
@@ -80,9 +89,11 @@ const emptyState: ConfiguratorState = {
       en: ""
     }
   },
+  activeField: "",
   chartConfig: {
     chartType: "none",
-    filters: {}
+    filters: {},
+    fields: {}
   }
 };
 
@@ -103,6 +114,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
       return action.value.state === "INITIAL" ? emptyState : action.value;
+
     case "DATASET_SELECTED":
       draft.state = "SELECTING_CHART_TYPE";
       if (draft.state === "SELECTING_CHART_TYPE") {
@@ -119,8 +131,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         setWith(draft, action.value.path, action.value.value, Object);
       }
       return draft;
+
     case "CHART_TYPE_SELECTED":
       draft.state = "CONFIGURING_CHART";
+      return draft;
+
+    case "CONTROL_TAB_CHANGED":
+      draft.state = "CONFIGURING_CHART";
+      if (draft.state === "CONFIGURING_CHART") {
+        draft.activeField = action.value;
+      }
       return draft;
 
     case "CHART_CONFIG_CHANGED":
@@ -132,6 +152,43 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.value,
           Object
         );
+      }
+      return draft;
+
+    case "CHART_FIELD_CHANGED":
+      if (
+        draft.state === "CONFIGURING_CHART" &&
+        draft.chartConfig.chartType === "column"
+      ) {
+        const f = draft.chartConfig.fields[action.value.field];
+        if (!f) {
+          // Somehow works because only segment can be undefined …
+          draft.chartConfig.fields[action.value.field] = {
+            componentIri: action.value.componentIri,
+            palette: "category10",
+            type: "stacked"
+          };
+        } else {
+          const prevComponentIri = f.componentIri;
+
+          // Change filters
+          // If prevCompoIri is a multi filter, turn it into a single filter
+          // const prevFilter = draft.chartConfig.filters[prevComponentIri];
+          // if (prevFilter && prevFilter.type === "multi") {
+          //   draft.chartConfig.filters[prevComponentIri] = {
+          //     type: "single",
+          //     value: //  but what if there aren't any???
+          //   }
+          // }
+          // If new component IRI is a single filter, turn it into a multi filter
+          
+          // FIXME: do the above?!
+          delete draft.chartConfig.filters[prevComponentIri];
+
+          f.componentIri = action.value.componentIri;
+
+
+        }
       }
       return draft;
 
@@ -153,6 +210,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         draft.chartConfig.filters[dimensionIri] = { type: "single", value };
       }
       return draft;
+
     case "CHART_CONFIG_FILTER_SET_MULTI":
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
@@ -172,10 +230,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "PUBLISH":
       draft.state = "PUBLISHING";
       return draft;
+
     case "PUBLISH_FAILED":
       // Recover by going back to CONFIGURING_CHART state
       draft.state = "CONFIGURING_CHART";
       return draft;
+
     case "PUBLISHED":
       draft.state = "PUBLISHED";
       if (draft.state === "PUBLISHED") {

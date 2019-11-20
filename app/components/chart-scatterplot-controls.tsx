@@ -1,26 +1,27 @@
 import React from "react";
-import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
+import {
+  ColorPalette,
+  ControlList,
+  CollapsibleSection
+} from "./chart-controls";
 import { Field } from "./field";
 import { DimensionWithMeta, MeasureWithMeta } from "../domain/data";
 
 export const ChartScatterplotControls = ({
-  chartId,
   measuresDimensions,
   categoricalDimensions,
   timeDimensions
 }: {
-  chartId: string;
   measuresDimensions: MeasureWithMeta[];
   categoricalDimensions: DimensionWithMeta[];
   timeDimensions: DimensionWithMeta[];
 }) => {
   return (
     <>
-      <ControlSection title="Horizontale Achse" note="x-Achse">
+      <CollapsibleSection title="Horizontale Achse">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"x"}
             label={"Werte wählen"}
             options={measuresDimensions.map(({ component }) => ({
@@ -29,12 +30,11 @@ export const ChartScatterplotControls = ({
             }))}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Vertikale Achse" note="y-Achse">
+      </CollapsibleSection>
+      <CollapsibleSection title="Vertikale Achse">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"y"}
             label={"Werte wählen"}
             options={measuresDimensions.map(({ component }) => ({
@@ -43,12 +43,11 @@ export const ChartScatterplotControls = ({
             }))}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Farbe">
+      </CollapsibleSection>
+      <CollapsibleSection title="Farbe">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
             options={categoricalDimensions.map(({ component }) => ({
@@ -57,12 +56,11 @@ export const ChartScatterplotControls = ({
             }))}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Beschriftung">
+      </CollapsibleSection>
+      <CollapsibleSection title="Beschriftung">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"label"}
             label={"Dimension wählen"}
             options={[...categoricalDimensions, ...timeDimensions].map(
@@ -73,12 +71,12 @@ export const ChartScatterplotControls = ({
             )}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Darstellung">
+      </CollapsibleSection>
+      <CollapsibleSection title="Darstellung">
         <ControlList>
           <ColorPalette />
         </ControlList>
-      </ControlSection>
+      </CollapsibleSection>
     </>
   );
 };

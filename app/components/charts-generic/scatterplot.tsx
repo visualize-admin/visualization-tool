@@ -2,28 +2,24 @@ import * as React from "react";
 import { Spec } from "vega";
 import { xAxisTheme, yAxisTheme, legendTheme } from "./chart-styles";
 import { useTheme } from "../../themes";
-import { Observations } from "../../domain/data";
+import { Observations, DimensionWithMeta, MeasureWithMeta } from "../../domain/data";
 import { ScatterPlotFields } from "../../domain";
 import { useVegaView } from "../../lib/use-vega";
 
 interface Props {
   data: Observations<ScatterPlotFields>;
   width: number;
-  xField: string;
-  yField: string;
-  groupByField: string;
-  labelField: string;
-  palette: string;
+  fields: ScatterPlotFields;
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
 }
 
 export const Scatterplot = ({
   data,
   width,
-  xField,
-  yField,
-  groupByField,
-  labelField,
-  palette
+  fields,
+  dimensions,
+  measures
 }: Props) => {
   const theme = useTheme();
   const spec: Spec = {
@@ -41,7 +37,7 @@ export const Scatterplot = ({
         // transform: [
         //   {
         //     type: "nest",
-        //     keys: [groupByField],
+        //     keys: ["segment"],
         //     as: "byGroup"
         //   }
         // ]
@@ -55,7 +51,7 @@ export const Scatterplot = ({
         round: true,
         nice: true,
         zero: true,
-        domain: { data: "table", field: xField },
+        domain: { data: "table", field: "x" },
         range: "width"
       },
       {
@@ -64,16 +60,16 @@ export const Scatterplot = ({
         round: true,
         nice: true,
         zero: true,
-        domain: { data: "table", field: yField },
+        domain: { data: "table", field: "y" },
         range: "height"
       },
       {
         name: "colorScale",
         type: "ordinal",
-        range: { scheme: palette },
+        range: { scheme: fields.segment ? fields.segment.palette : "category10" },
         domain: {
           data: "table",
-          field: groupByField
+          field: "segment"
         }
       }
     ],
@@ -83,7 +79,7 @@ export const Scatterplot = ({
         ...yAxisTheme,
         formatType: "number",
         format: "~s",
-        title: yField,
+        title: "y",
         domain: true,
         domainColor: (theme as any).colors.monochrome["700"],
         domainWidth: 1
@@ -94,7 +90,7 @@ export const Scatterplot = ({
         labelAngle: -90,
         ticks: false,
         grid: true,
-        title: xField
+        title: "x"
       }
     ],
     marks: [
@@ -104,9 +100,9 @@ export const Scatterplot = ({
       //   encode: {
       //     enter: {
       //       interpolate: { value: "monotone" },
-      //       x: { scale: "x", field: xField },
-      //       y: { scale: "y", field: yField },
-      //       stroke: { scale: "colorScale", field: groupByField },
+      //       x: { scale: "x", field: "x" },
+      //       y: { scale: "y", field: "y" },
+      //       stroke: { scale: "colorScale", field: "segment" },
       //       strokeWidth: { value: 1 }
       //     }
       //   }
@@ -117,13 +113,13 @@ export const Scatterplot = ({
         from: { data: "table" },
         encode: {
           enter: {
-            x: { scale: "x", field: xField },
-            y: { scale: "y", field: yField },
+            x: { scale: "x", field: "x" },
+            y: { scale: "y", field: "y" },
             shape: { value: "circle" },
             strokeWidth: { value: 0 },
             opacity: { value: 0.6 },
             stroke: { value: "transparent" },
-            fill: { scale: "colorScale", field: groupByField } //{ value: vega.scheme(palette)[0] }
+            fill: { scale: "colorScale", field: "segment" } //{ value: vega.scheme(palette)[0] }
           }
         }
       },
@@ -133,12 +129,12 @@ export const Scatterplot = ({
         from: { data: "table" },
         encode: {
           enter: {
-            x: { scale: "x", field: xField },
-            y: { scale: "y", field: yField },
+            x: { scale: "x", field: "x" },
+            y: { scale: "y", field: "y" },
             dx: { value: 5 },
             dy: { value: -5 },
             fill: { value: (theme as any).colors.monochrome["700"] },
-            text: { field: labelField }
+            text: { value: "FIXME" }
           }
         }
       }
@@ -147,7 +143,7 @@ export const Scatterplot = ({
       {
         ...legendTheme,
         fill: "colorScale"
-        // title: groupByField
+        // title: "segment"
       }
     ]
   };
