@@ -30,7 +30,6 @@
     "d3-array": "^2.3.3",
     "downshift": "^3.4.1",
     "emotion-theming": "^10.0.17",
-    "formik": "^1.5.8",
     "fp-ts": "^2.0.5",
     "immer": "^5.0.0",
     "io-ts": "^2.0.1",
