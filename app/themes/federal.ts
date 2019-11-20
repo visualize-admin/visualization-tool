@@ -74,6 +74,7 @@ export const theme: Theme = {
     },
     muted: "#F5F5F5",
     blueGrey: "#F9FAFB",
+    blueGreyDarker: "#F2F7F9",
     focus: "#333333",
     error: "#FF5555",
     hint: "#757575",
@@ -127,6 +128,7 @@ export const theme: Theme = {
   },
   radii: {
     default: 3,
+    bigger: 4,
     circle: 99999
   },
   shadows: {
@@ -328,6 +330,31 @@ export const theme: Theme = {
       ":focus": {
         outline: "1px solid #333333"
       }
+    },
+    control: {
+      color: "monochrome.700",
+      borderColor: "primary.base",
+      borderRadius: "default",
+      width: "100%",
+      minWidth: 160,
+      maxWidth: 300,
+      px: 2,
+      py: 3,
+      // my: 1,
+      fontFamily: "frutigerRegular",
+      fontSize: [3, 3, 3],
+      transition: "background-color .2s",
+      cursor: "pointer",
+      ":hover": {
+        bg: "blueGreyDarker"
+      },
+      ":active": {
+        bg: "blueGreyDarker"
+      },
+      ":disabled": {
+        cursor: "initial",
+        bg: "muted"
+      }
     }
   },
   // All variants except ^ buttons ^
@@ -430,7 +457,7 @@ export const theme: Theme = {
         overflow: "scroll"
       },
       left: {
-        bg: "blueGrey",
+        bg: "monochrome.100",
         variant: "variants.container.root",
         boxShadow: "rightSide",
         borderRightColor: "monochrome.500",
@@ -481,16 +508,12 @@ export const theme: Theme = {
       pb: 1
     },
     controlSection: {
+      pb: 2,
       borderTopColor: "monochrome.500",
       borderTopWidth: "1px",
       borderTopStyle: "solid",
       "&:first-of-type": {
         borderTopWidth: 0
-      },
-      "&:last-of-type": {
-        borderBottomColor: "monochrome.500",
-        borderBottomWidth: "1px",
-        borderBottomStyle: "solid"
       }
     },
     controlSectionTitle: {
@@ -502,17 +525,15 @@ export const theme: Theme = {
       cursor: "pointer"
     },
     controlSectionContent: {
-      p: 3,
-      borderTopColor: "monochrome.300",
-      borderTopWidth: "1px",
-      borderTopStyle: "solid"
+      px: 3
     },
     chartTypeRadio: {
       width: "86px",
       height: "86px",
       mx: 4,
       my: 6,
-      transition: "background-color .2s",
+      transition: "all .2s",
+      borderRadius: "bigger",
       ":focus": {
         borderColor: "focus",
         borderWidth: "1px",
@@ -559,12 +580,12 @@ export const theme: Theme = {
         borderWidth: "1px",
         borderStyle: "solid",
         "&:first-of-type": {
-          borderTopLeftRadius: "4px",
-          borderBottomLeftRadius: "4px"
+          borderTopLeftRadius: "bigger",
+          borderBottomLeftRadius: "bigger"
         },
         "&:last-of-type": {
-          borderTopRightRadius: "4px",
-          borderBottomRightRadius: "4px"
+          borderTopRightRadius: "bigger",
+          borderBottomRightRadius: "bigger"
         }
       }
     }

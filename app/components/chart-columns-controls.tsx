@@ -1,26 +1,27 @@
 import React from "react";
 import { DimensionWithMeta, MeasureWithMeta } from "../domain/data";
-import { ColorPalette, ControlList, ControlSection } from "./chart-controls";
+import {
+  ColorPalette,
+  ControlList,
+  CollapsibleSection
+} from "./chart-controls";
 import { Field } from "./field";
 
-export const ChartBarsControls = ({
-  chartId,
+export const ChartColumnsControls = ({
   timeDimensions,
   categoricalDimensions,
   measuresDimensions
 }: {
-  chartId: string;
   timeDimensions: DimensionWithMeta[];
   categoricalDimensions: DimensionWithMeta[];
   measuresDimensions: MeasureWithMeta[];
 }) => {
   return (
     <>
-      <ControlSection title="Horizontale Achse" note="x-Achse">
+      <CollapsibleSection title="Horizontale Achse">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"x"}
             label={"Dimension wählen"}
             options={[...timeDimensions, ...categoricalDimensions].map(
@@ -31,12 +32,11 @@ export const ChartBarsControls = ({
             )}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Vertikale Achse" note="y-Achse">
+      </CollapsibleSection>
+      <CollapsibleSection title="Vertikale Achse">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"height"}
             label={"Werte wählen"}
             options={measuresDimensions.map(({ component }) => ({
@@ -45,12 +45,11 @@ export const ChartBarsControls = ({
             }))}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Farbe">
+      </CollapsibleSection>
+      <CollapsibleSection title="Farbe">
         <ControlList>
           <Field
             type="select"
-            chartId={chartId}
             path={"color"}
             label={"Dimension wählen"}
             options={[...timeDimensions, ...categoricalDimensions].map(
@@ -61,12 +60,12 @@ export const ChartBarsControls = ({
             )}
           />
         </ControlList>
-      </ControlSection>
-      <ControlSection title="Darstellung">
+      </CollapsibleSection>
+      <CollapsibleSection title="Darstellung">
         <ControlList>
           <ColorPalette />
         </ControlList>
-      </ControlSection>
+      </CollapsibleSection>
     </>
   );
 };

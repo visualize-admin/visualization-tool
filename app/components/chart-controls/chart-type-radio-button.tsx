@@ -39,7 +39,7 @@ export const ChartTypeRadio = ({
               : disabled
               ? "monochrome.300"
               : "primary.base",
-            backgroundColor: checked ? "primary.base" : "blueGrey",
+            backgroundColor: checked ? "primary.base" : "monochrome.100",
             ":hover": {
               backgroundColor: disabled
                 ? "blueGrey"

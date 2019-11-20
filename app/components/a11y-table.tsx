@@ -2,10 +2,10 @@ import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { ascending, descending } from "d3-array";
 import React, { useState } from "react";
 import {
-  Fields,
   Observations,
   DimensionWithMeta,
-  MeasureWithMeta
+  MeasureWithMeta,
+  ChartFields
 } from "../domain";
 import { Trans } from "@lingui/macro";
 
@@ -19,8 +19,8 @@ export const A11yTable = ({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  fields: Fields;
-  observations: Observations<Fields>;
+  fields: ChartFields;
+  observations: Observations<ChartFields>;
 }) => {
   const [sortingField, setSortingField] = useState();
   const [direction, setDirection] = useState();

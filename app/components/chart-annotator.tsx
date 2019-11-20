@@ -1,29 +1,28 @@
 import React from "react";
 import { Flex } from "rebass";
-import { ControlList, ControlSection } from "./chart-controls";
+import { ControlList, CollapsibleSection } from "./chart-controls";
 import { MetaInputField } from "./field";
 import { useLocale } from "../lib/use-locale";
+import { ConfiguratorStateDescribingChart } from "../domain";
 
-export const ChartAnnotator = ({ chartId }: { chartId: string }) => {
+export const ChartAnnotator = ({
+  state
+}: {
+  state: ConfiguratorStateDescribingChart;
+}) => {
   const locale = useLocale(); // FIXME: Should depend on local Locale (tabs)
   return (
     <Flex flexDirection="column">
-      <ControlSection title="Beschriftung">
+      <CollapsibleSection title="Beschriftung">
         <ControlList>
+          <MetaInputField metaKey="title" locale={locale} label={"Titel"} />
           <MetaInputField
-            chartId={chartId}
-            metaKey="title"
-            locale={locale}
-            label={"Titel"}
-          />
-          <MetaInputField
-            chartId={chartId}
             metaKey="description"
             locale={locale}
             label={"Description"}
           />
         </ControlList>
-      </ControlSection>
+      </CollapsibleSection>
     </Flex>
   );
 };

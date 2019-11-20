@@ -1,7 +1,7 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
-import { getInitialFilters, getInitialState } from ".";
-import { ChartType, MetaKey } from "./config-types";
+import { getInitialFilters, getInitialFields } from ".";
+import { ChartType, MetaKey, ChartFieldKey } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
 import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
@@ -65,6 +65,34 @@ export const useField = ({
   };
 };
 
+export const useControlTab = ({
+  value
+}: {
+  value: ChartFieldKey;
+}): FieldProps & {
+  onClick: (x: string) => void;
+} => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onClick = useCallback<() => void>(() => {
+    dispatch({
+      type: "CONTROL_TAB_CHANGED",
+      value
+    });
+  }, [dispatch, value]);
+
+  const stateValue =
+    state.state === "CONFIGURING_CHART" ? state.activeField : "";
+
+  const checked = stateValue === value;
+
+  return {
+    value,
+    checked,
+    onClick
+  };
+};
+
 export const useMetaField = ({
   metaKey,
   locale,
@@ -74,7 +102,7 @@ export const useMetaField = ({
   locale: Locales;
   value?: string;
 }): FieldProps => {
-  const [state, dispatch] = useConfiguratorState();
+  const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
@@ -172,6 +200,43 @@ export const useSingleFilterField = ({
   };
 };
 
+export const useChartFieldField = ({
+  componentIri,
+  field
+}: {
+  field: ChartFieldKey;
+  componentIri: string;
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e => {
+      dispatch({
+        type: "CHART_FIELD_CHANGED",
+        value: {
+          componentIri: e.currentTarget.value,
+          field
+        }
+      });
+    },
+    [dispatch, field]
+  );
+
+  // FIXME: remove $FixMe
+  const stateValue =
+    state.state === "CONFIGURING_CHART"
+      ? (state.chartConfig.fields as $FixMe)[field]!.componentIri
+      : undefined;
+  const checked = stateValue === componentIri;
+
+  return {
+    name: field,
+    value: componentIri,
+    checked,
+    onChange
+  };
+};
+
 export const useChartTypeSelectorField = ({
   path,
   value,
@@ -186,8 +251,8 @@ export const useChartTypeSelectorField = ({
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
       const chartType = e.currentTarget.value as ChartType;
-      const filters = getInitialFilters(dimensions);
-      const initialState = getInitialState({ chartType, dimensions, measures });
+      const fields = getInitialFields({ chartType, dimensions, measures });
+      const filters = getInitialFilters({ dimensions, fields });
       dispatch({
         type: "CHART_TYPE_PREVIEWED",
         value: {
@@ -195,7 +260,7 @@ export const useChartTypeSelectorField = ({
           value: {
             chartType,
             filters,
-            ...initialState
+            fields
           }
         }
       });

@@ -1,13 +1,10 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { useCallback } from "react";
 import {
   getComponentIri,
-  getDimensionLabel,
   isTimeDimension,
   DimensionWithMeta
 } from "../domain/data";
-import { MultiFilterField } from "./field";
-import { ControlSection, ControlList } from "./chart-controls";
+import { MultiFilterField, SingleFilterField } from "./field";
 import {
   useConfiguratorState,
   getFilterValue
@@ -17,44 +14,9 @@ import { Text } from "rebass";
 import { Trans } from "@lingui/macro";
 import { FilterValueMultiValues } from "../domain";
 
-export const Filters = ({
-  chartId,
-  dataSet,
-  dimensions
-}: {
-  chartId: string;
-  dataSet: DataCube;
-  dimensions: DimensionWithMeta[];
-}) => {
-  return (
-    <>
-      {dimensions.map(dimension => {
-        return (
-          <ControlSection
-            key={getComponentIri(dimension)}
-            title={getDimensionLabel(dimension)}
-          >
-            <ControlList>
-              <DimensionValues
-                chartId={chartId}
-                dataSet={dataSet}
-                dimension={dimension}
-              />
-            </ControlList>
-          </ControlSection>
-        );
-      })}
-    </>
-  );
-};
-
-const DimensionValues = ({
-  chartId,
-  dataSet,
+export const DimensionValuesMultiFilter = ({
   dimension
 }: {
-  chartId: string;
-  dataSet: DataCube;
   dimension: DimensionWithMeta;
 }) => {
   const dimensionIri = getComponentIri(dimension);
@@ -102,16 +64,35 @@ const DimensionValues = ({
         onClick={() => toggle(dimensionIri, dimension.values)}
         sx={{ textDecoration: "underline", cursor: "pointer" }}
       >
-        {allSelected ? (
-          <Trans>Reset</Trans>
-        ) : (
-          <Trans>Select all</Trans>
-        )}
+        {allSelected ? <Trans>Reset</Trans> : <Trans>Select all</Trans>}
       </Text>
 
       {dimension.values.map(dv => {
         return (
           <MultiFilterField
+            key={dv.value.value}
+            dimensionIri={dimensionIri}
+            label={isTimeDimension(dimension) ? dv.value.value : dv.label.value}
+            value={dv.value.value}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+export const DimensionValuesSingleFilter = ({
+  dimension
+}: {
+  dimension: DimensionWithMeta;
+}) => {
+  const dimensionIri = getComponentIri(dimension);
+
+  return (
+    <>
+      {dimension.values.map(dv => {
+        return (
+          <SingleFilterField
             key={dv.value.value}
             dimensionIri={dimensionIri}
             label={isTimeDimension(dimension) ? dv.value.value : dv.label.value}

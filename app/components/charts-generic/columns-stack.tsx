@@ -1,44 +1,47 @@
 import * as React from "react";
 import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
-import { Observations, DimensionWithMeta, MeasureWithMeta, getDimensionLabel } from "../../domain/data";
-import { BarChartFields } from "../../domain";
+import {
+  Observations,
+  DimensionWithMeta,
+  MeasureWithMeta,
+  getDimensionLabel
+} from "../../domain/data";
+import {  ColumnFields, FieldType, BarFields } from "../../domain";
 import { useVegaView } from "../../lib/use-vega";
 import { Spec } from "vega";
 
 interface Props {
-  data: Observations<BarChartFields>;
+  data: Observations<BarFields>;
   width: number;
-  xField: string;
-  heightField: string;
-  groupBy: string;
-  aggregateFunction: "sum";
-  palette: string;
-  fields: BarChartFields;
+  fields: ColumnFields;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
 }
 
-export const Bars = ({
+export const StackedColumns = ({
   data,
   width,
-  xField,
-  heightField,
-  groupBy,
-  aggregateFunction,
-  palette,
   fields,
   dimensions,
   measures
 }: Props) => {
-  // FIXME: Use hook to get the theme from ThemeProvider.
-  const xFieldLabel = getDimensionLabel(dimensions.find(d => d.component.iri.value === fields.xField)!)
-  const fieldValues = new Set([fields.xField, fields.groupByField, fields.groupByField]);
-  const unmappedFields = Object.entries(fields).flatMap(([key, iri])=> {
-    const mbDim=dimensions.find(d=>d.component.iri.value === iri) ;
-    return !fieldValues.has(iri) && mbDim ? [[key, mbDim]] : []
-  
-  })
+  // FIXME: we probably could inline these in the specs.
+  const xField = "x";
+  const heightField = "y";
+  const groupBy = "segment";
 
+  const xFieldLabel = getDimensionLabel(
+    dimensions.find(d => d.component.iri.value === fields.x.componentIri)!
+  );
+  const fieldValues = new Set([fields.x.componentIri, fields.y.componentIri]);
+  const unmappedFields = Object.entries(fields).flatMap(([key, field]) => {
+    const mbDim = dimensions.find(
+      d => d.component.iri.value === (field as FieldType).componentIri
+    );
+    return !fieldValues.has((field as FieldType).componentIri) && mbDim
+      ? [[key, mbDim]]
+      : [];
+  });
   const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
@@ -62,7 +65,8 @@ export const Bars = ({
           // },
           {
             type: "formula",
-            expr: unmappedFields.map(f=>f[0])
+            expr: unmappedFields
+              .map(f => f[0])
               .map(s => `datum["${s}"]`)
               .join("+', '+"),
             as: "tooltipLabel"
@@ -92,7 +96,7 @@ export const Bars = ({
       {
         name: "x",
         type: "band",
-        domain: { data: "table", field: xField , sort: true},
+        domain: { data: "table", field: xField, sort: true },
         range: "width",
         padding: 0.3,
         paddingOuter: 0.3,
@@ -107,12 +111,12 @@ export const Bars = ({
       {
         name: "colorScale",
         type: "ordinal",
-        range: { scheme: palette },
+        range: { scheme:  fields.segment ? fields.segment.palette : "category10" },
         domain: {
           data: "table",
           field: groupBy
         }
-      },
+      }
       // {
       //   name: "labelScale",
       //   type: "ordinal",
@@ -128,7 +132,7 @@ export const Bars = ({
         labelAngle: -90,
         labelAlign: "right",
         ticks: false,
-        title: xFieldLabel,
+        title: xFieldLabel
         // encode: { title: { update: { text: { "signal": "scales.labelsScale('xField')" } } } }
       }
     ],
@@ -183,10 +187,10 @@ export const Bars = ({
       }
     ]
   };
-  return <BarsChart spec={spec} />;
+  return <ColumnsChart spec={spec} />;
 };
 
-const BarsChart = ({ spec }: { spec: Spec }) => {
+const ColumnsChart = ({ spec }: { spec: Spec }) => {
   const [ref] = useVegaView({ spec });
   return <div ref={ref} />;
 };

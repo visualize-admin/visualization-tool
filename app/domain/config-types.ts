@@ -1,7 +1,6 @@
 import * as t from "io-ts";
 
-export type ChartType = "bar" | "line" | "area" | "scatterplot" | "column";
-
+// Filters
 const FilterValueMulti = t.type(
   {
     type: t.literal("multi"),
@@ -44,6 +43,7 @@ const Filters = t.record(t.string, FilterValue, "Filters");
 
 export type Filters = t.TypeOf<typeof Filters>;
 
+// Meta
 const Title = t.type({
   de: t.string,
   fr: t.string,
@@ -61,57 +61,152 @@ const Meta = t.type({ title: Title, description: Description });
 export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
+// Chart Config
+export type ChartType = "bar" | "line" | "area" | "scatterplot" | "column";
+const FieldType = t.type({ componentIri: t.string });
+export type FieldType = t.TypeOf<typeof FieldType>;
+
 const NoneConfig = t.type(
   {
     chartType: t.literal("none"),
-    filters: Filters
+    filters: Filters,
+    fields: t.record(t.string,t.any)
   },
   "NoneConfig"
 );
 export type NoneConfig = t.TypeOf<typeof NoneConfig>;
-
+const AreaFields = t.intersection([
+  t.type({
+    x: FieldType,
+    y: FieldType
+  }),
+  t.partial({
+    segment: t.type({
+      componentIri: t.string,
+      palette: t.string
+    })
+  })
+]);
 const AreaConfig = t.type(
   {
     chartType: t.literal("area"),
-    filters: Filters
+    filters: Filters,
+    fields: AreaFields
   },
   "AreaConfig"
 );
+
+export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
+const BarFields = t.intersection([
+  t.type({
+    x: FieldType,
+    y: FieldType
+  }),
+  t.partial({
+    segment: t.type({
+      componentIri: t.string,
+      type: t.union([t.literal("stacked"), t.literal("grouped")]),
+      palette: t.string
+    })
+  })
+]);
 const BarConfig = t.type(
   {
     chartType: t.literal("bar"),
-    filters: Filters
+    filters: Filters,
+    fields: BarFields
   },
   "BarConfig"
 );
+export type BarFields = t.TypeOf<typeof BarFields>;
+export type BarConfig = t.TypeOf<typeof BarConfig>;
+
+const ColumnFields = t.intersection([
+  t.type({
+    x: FieldType,
+    y: FieldType
+  }),
+  t.partial({
+    segment: t.type({
+      componentIri: t.string,
+      type: t.union([t.literal("stacked"), t.literal("grouped")]),
+      palette: t.string
+    })
+  })
+]);
 const ColumnConfig = t.type(
   {
     chartType: t.literal("column"),
-    filters: Filters
+    filters: Filters,
+    fields: ColumnFields
   },
-  "BarConfig"
+  "ColumnConfig"
 );
-export type BarConfig = t.TypeOf<typeof BarConfig>;
+export type ColumnFields = t.TypeOf<typeof ColumnFields>;
+export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
+const LineFields = t.intersection([
+  t.type({
+    x: FieldType,
+    y: FieldType
+  }),
+  t.partial({
+    segment: t.type({
+      componentIri: t.string,
+      palette: t.string
+    })
+  })
+]);
 const LineConfig = t.type(
   {
     chartType: t.literal("line"),
-    filters: Filters
+    filters: Filters,
+    fields: LineFields
   },
   "LineConfig"
 );
+export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
+const ScatterPlotFields = t.intersection([
+  t.type({
+    x: FieldType,
+    y: FieldType
+  }),
+  t.partial({
+    segment: t.type({
+      componentIri: t.string,
+      palette: t.string
+    })
+  })
+]);
 const ScatterPlotConfig = t.type(
   {
     chartType: t.literal("scatterplot"),
-    filters: Filters
+    filters: Filters,
+    fields: ScatterPlotFields
   },
   "ScatterPlotConfig"
 );
+export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
+
+export type ChartFields =
+  | ColumnFields
+  | BarFields
+  | LineFields
+  | AreaFields
+  | ScatterPlotFields;
+
+// FIXME: keep this in sync with actual types?
+const ChartFieldKey = t.keyof({
+  x: null,
+  y: null,
+  segment: null
+});
+export type ChartFieldKey = t.TypeOf<typeof ChartFieldKey>;
 
 // interface IriBrand {
 //   readonly IRI: unique symbol;
@@ -138,7 +233,7 @@ export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 const Config = t.type(
   {
     dataSet: t.string,
-    // filters: Filters,
+    activeField: t.string,
     meta: Meta,
     chartConfig: ChartConfig
   },
@@ -155,6 +250,7 @@ export const decodeConfig = (config: unknown) => Config.decode(config);
 const ConfiguratorStateInitial = t.type({ state: t.literal("INITIAL") });
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
+  activeField: t.string,
   meta: Meta,
   dataSet: t.undefined,
   chartConfig: NoneConfig
@@ -168,7 +264,10 @@ const ConfiguratorStateSelectingChartType = t.intersection([
 ]);
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
-    state: t.literal("CONFIGURING_CHART")
+    state: t.literal("CONFIGURING_CHART"),
+    activeField: ChartFieldKey,
+    meta: Meta,
+    dataSet: t.string
   }),
   Config
 ]);
@@ -192,6 +291,15 @@ const ConfiguratorStatePublished = t.intersection([
   Config
 ]);
 
+export type ConfiguratorStateSelectingChartType = t.TypeOf<
+  typeof ConfiguratorStateSelectingChartType
+>;
+export type ConfiguratorStateConfiguringChart = t.TypeOf<
+  typeof ConfiguratorStateConfiguringChart
+>;
+export type ConfiguratorStateDescribingChart = t.TypeOf<
+  typeof ConfiguratorStateDescribingChart
+>;
 export type ConfiguratorStatePublishing = t.TypeOf<
   typeof ConfiguratorStatePublishing
 >;

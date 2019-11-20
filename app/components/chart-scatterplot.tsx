@@ -1,5 +1,5 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React from "react";
+import React, { useMemo } from "react";
 import { useObservations, ScatterPlotFields } from "../domain";
 import {
   DimensionWithMeta,
@@ -9,31 +9,46 @@ import {
 import { Scatterplot } from "./charts-generic/scatterplot";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Loading } from "./hint";
-import { Filters } from "../domain/config-types";
+import { ScatterPlotConfig } from "../domain/config-types";
 import { A11yTable } from "./a11y-table";
 
 export const ChartScatterplotVisualization = ({
   dataSet,
   dimensions,
   measures,
-  filters,
-  fields,
-  palette
+  chartConfig
 }: {
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  filters?: Filters;
-  fields: ScatterPlotFields;
-
-  palette: string;
+  chartConfig: ScatterPlotConfig;
 }) => {
+  // Explicitly specify all dimension fields.
+  // TODO: Improve/optimize/generalize this
+  const allFields = useMemo(() => {
+    // debugger;
+    const fieldIris = new Set(
+      Object.values<{ componentIri: string }>(chartConfig.fields).map(
+        d => d.componentIri
+      )
+    );
+    const restDimensions = dimensions.reduce<{
+      [k: string]: { componentIri: string };
+    }>((acc, d, i) => {
+      if (!fieldIris.has(d.component.iri.value)) {
+        acc[`dim${i}`] = { componentIri: d.component.iri.value };
+      }
+      return acc;
+    }, {});
+    return { ...restDimensions, ...chartConfig.fields };
+  }, [chartConfig.fields, dimensions]);
+
   const observations = useObservations({
     dataSet,
     measures,
     dimensions,
-    fields,
-    filters
+    fields: allFields,
+    filters: chartConfig.filters
   });
 
   if (observations.state === "loaded") {
@@ -43,10 +58,15 @@ export const ChartScatterplotVisualization = ({
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
-          fields={fields}
+          fields={chartConfig.fields}
           observations={observations.data}
         />
-        <ChartScatterplot observations={observations.data} palette={palette} />
+        <ChartScatterplot
+          observations={observations.data}
+          dimensions={dimensions}
+          measures={measures}
+          fields={allFields}
+        />
       </>
     );
   } else {
@@ -56,12 +76,14 @@ export const ChartScatterplotVisualization = ({
 
 export const ChartScatterplot = ({
   observations,
-
-  palette
+  dimensions,
+  measures,
+  fields
 }: {
   observations: Observations<ScatterPlotFields>;
-
-  palette: string;
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
+  fields: ScatterPlotFields;
 }) => {
   const [resizeRef, width] = useResizeObserver();
 
@@ -70,11 +92,9 @@ export const ChartScatterplot = ({
       <Scatterplot
         data={observations}
         width={width}
-        xField={"xField"}
-        yField={"yField"}
-        groupByField={"groupByField"}
-        labelField={"labelField"}
-        palette={palette}
+        dimensions={dimensions}
+        measures={measures}
+        fields={fields}
       />
     </div>
   );

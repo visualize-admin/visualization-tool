@@ -1,18 +1,19 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { useMemo } from "react";
 import { useObservations } from "../domain";
-import { AreaFields, AreaConfig } from "../domain/config-types";
+import { ColumnConfig, ColumnFields } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observations
 } from "../domain/data";
 import { useResizeObserver } from "../lib/use-resize-observer";
-import { Areas } from "./charts-generic/areas";
 import { Loading } from "./hint";
 import { A11yTable } from "./a11y-table";
+import { StackedColumns } from "./charts-generic/columns-stack";
+import { Columns } from "./charts-generic/columns";
 
-export const ChartAreasVisualization = ({
+export const ChartColumnsVisualization = ({
   dataSet,
   dimensions,
   measures,
@@ -21,33 +22,32 @@ export const ChartAreasVisualization = ({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  chartConfig: AreaConfig;
+  chartConfig: ColumnConfig;
 }) => {
   // Explicitly specify all dimension fields.
   // TODO: Improve/optimize/generalize this
   const allFields = useMemo(() => {
+    // debugger;
     const fieldIris = new Set(
       Object.values<{ componentIri: string }>(chartConfig.fields).map(
-        f => f.componentIri
+        d => d.componentIri
       )
     );
-    const restDimensions = dimensions.reduce<{ [k: string]: string }>(
-      (acc, d, i) => {
-        if (!fieldIris.has(d.component.iri.value)) {
-          acc[`dim${i}`] = d.component.iri.value;
-        }
-        return acc;
-      },
-      {}
-    );
-
+    const restDimensions = dimensions.reduce<{
+      [k: string]: { componentIri: string };
+    }>((acc, d, i) => {
+      if (!fieldIris.has(d.component.iri.value)) {
+        acc[`dim${i}`] = { componentIri: d.component.iri.value };
+      }
+      return acc;
+    }, {});
     return { ...restDimensions, ...chartConfig.fields };
-  }, [chartConfig, dimensions]);
+  }, [chartConfig.fields, dimensions]);
 
-  const observations = useObservations({
+  const observations = useObservations<ColumnFields>({
     dataSet,
-    measures,
     dimensions,
+    measures,
     fields: allFields,
     filters: chartConfig.filters
   });
@@ -62,7 +62,7 @@ export const ChartAreasVisualization = ({
           fields={allFields}
           observations={observations.data}
         />
-        <ChartAreas
+        <ChartColumns
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
@@ -75,28 +75,39 @@ export const ChartAreasVisualization = ({
   }
 };
 
-export const ChartAreas = ({
+export const ChartColumns = ({
   observations,
   dimensions,
   measures,
   fields
 }: {
-  observations: Observations<AreaFields>;
+  observations: Observations<ColumnFields>;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  fields: AreaFields;
+  fields: ColumnFields;
 }) => {
   const [resizeRef, width] = useResizeObserver();
+  console.log("observations in chart-columns", observations);
 
   return (
     <div ref={resizeRef} aria-hidden="true">
-      <Areas
-        data={observations}
-        width={width}
-        dimensions={dimensions}
-        measures={measures}
-        fields={fields}
-      />
+      {fields.segment ? (
+        <StackedColumns
+          data={observations}
+          width={width}
+          dimensions={dimensions}
+          measures={measures}
+          fields={fields}
+        />
+      ) : (
+        <Columns
+          data={observations}
+          width={width}
+          dimensions={dimensions}
+          measures={measures}
+          fields={fields}
+        />
+      )}
     </div>
   );
 };

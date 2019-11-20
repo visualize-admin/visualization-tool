@@ -1,6 +1,6 @@
 import { Attribute, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import { Literal, NamedNode } from "rdf-js";
-import { Fields } from "./charts";
+import { ChartFields } from "./config-types";
 
 export interface DimensionWithMeta {
   component: Dimension;
@@ -32,16 +32,16 @@ export type RawObservationValue = {
   label?: Literal;
 };
 
-export type RawObservations<T extends Fields> = Record<
+export type RawObservations<T extends ChartFields> = Record<
   keyof T | string,
   RawObservationValue
 >[];
 
 export type ObservationValue = string | number | boolean | Date;
 
-export type Observation<T extends Fields> = Record<string, ObservationValue>;
+export type Observation<T extends ChartFields> = Record<string, ObservationValue>;
 
-export type Observations<T extends Fields> = Observation<T>[];
+export type Observations<T extends ChartFields> = Observation<T>[];
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 const parseRDFLiteral = (value: Literal): ObservationValue => {
@@ -69,7 +69,7 @@ const parseRDFLiteral = (value: Literal): ObservationValue => {
     case "unsignedShort":
     case "unsignedByte":
       return +v;
-    // TODO: Figure out how to preserve granularity of date (maybe include interval?) 
+    // TODO: Figure out how to preserve granularity of date (maybe include interval?)
     // case "date":
     // case "time":
     // case "dateTime":
@@ -104,7 +104,7 @@ const parseObservationValue = ({
   return value.value;
 };
 
-export const parseObservations = <T extends Fields>(
+export const parseObservations = <T extends ChartFields>(
   observations: RawObservations<T>
 ) =>
   observations.map(d => {
@@ -165,7 +165,7 @@ export const getCategoricalDimensions = (dimensions: DimensionWithMeta[]) =>
 export const getComponentIri = ({ component }: ComponentWithMeta): string => {
   return component.iri.value;
 };
-export const getDimensionLabel = ({ component }: DimensionWithMeta): string => {
+export const getDimensionLabel = ({ component }: ComponentWithMeta): string => {
   return component.labels[0].value;
 };
 

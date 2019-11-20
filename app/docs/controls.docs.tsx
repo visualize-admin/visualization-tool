@@ -2,7 +2,7 @@ import { markdown, ReactSpecimen } from "catalog";
 import {
   ChartTypeRadio,
   ControlList,
-  ControlSection
+  CollapsibleSection
 } from "../components/chart-controls";
 import { Checkbox, Input, Select, Radio } from "../components/form";
 
@@ -50,7 +50,7 @@ export default () => markdown`
 A section is a styling container, it has a title and a note (displayed on the right). Any component can be given as child component.
 ${(
   <ReactSpecimen span={6}>
-    <ControlSection title="Werteachse" note="y-Achse">
+    <CollapsibleSection title="Werteachse">
       <ControlList>
         <Select
           options={[
@@ -111,7 +111,7 @@ ${(
           onChange={() => {}}
         />
       </ControlList>
-    </ControlSection>
+    </CollapsibleSection>
   </ReactSpecimen>
 )}
 ## Controls list
