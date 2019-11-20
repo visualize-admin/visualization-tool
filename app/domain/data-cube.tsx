@@ -233,7 +233,7 @@ export const useObservations = <FieldsType extends ChartFields>({
         })
       : [];
     // TODO: Maybe explicitly specify all dimension fields? Currently not necessary because they're selected anyway.
-    const selectedComponents = Object.entries<{ componentIri: string }>(
+    const selectedComponents: [string, Dimension | Measure][] = Object.entries<{ componentIri: string }>(
       fields
     ).flatMap(([key, field]) => {
       return componentsByIri[field.componentIri] !== undefined
@@ -248,7 +248,7 @@ export const useObservations = <FieldsType extends ChartFields>({
       .filter(constructedFilters);
 
     // WARNING! Potentially dangrous/wrong typecast because query.execute() returns Promise<any[]>
-    const data: RawObservations<FieldsType> = await query.execute();
+    const data = await query.execute();
     return parseObservations(data);
   }, [filters, dataSet, fields, measures, dimensions]);
 
