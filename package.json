@@ -9,7 +9,7 @@
     "dev": "DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool next ./app",
     "db:migrate:dev": "DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool scripts/db-migrate.js",
     "db:migrate": "scripts/db-migrate.js",
-    "build": "lingui compile && next build ./app",
+    "build": "NODE_OPTIONS=--max_old_space_size=2048 lingui compile && next build ./app",
     "start": "yarn db:migrate && next start ./app -p $PORT",
     "lint": "tsc --noEmit -p ./app",
     "locales:extract": "lingui extract",
