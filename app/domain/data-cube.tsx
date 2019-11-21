@@ -232,6 +232,7 @@ export const useObservations = <FieldsType extends ChartFields>({
             : [];
         })
       : [];
+
     // TODO: Maybe explicitly specify all dimension fields? Currently not necessary because they're selected anyway.
     const selectedComponents: [string, Dimension | Measure][] = Object.entries<{ componentIri: string }>(
       fields

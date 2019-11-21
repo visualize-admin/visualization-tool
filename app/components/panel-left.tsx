@@ -27,7 +27,8 @@ export const PanelLeft = ({
         />
       ) : (
         <>
-          {state.state === "SELECTING_CHART_TYPE" && (
+          {(state.state === "SELECTING_CHART_TYPE" ||
+            state.state === "PRE_SELECTING_CHART_TYPE") && (
             <ChartTypeSelector state={state} />
           )}
           {state.state === "CONFIGURING_CHART" && (

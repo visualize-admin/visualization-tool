@@ -66,15 +66,9 @@ export type ChartType = "bar" | "line" | "area" | "scatterplot" | "column";
 const FieldType = t.type({ componentIri: t.string });
 export type FieldType = t.TypeOf<typeof FieldType>;
 
-const NoneConfig = t.type(
-  {
-    chartType: t.literal("none"),
-    filters: Filters,
-    fields: t.record(t.string,t.any)
-  },
-  "NoneConfig"
-);
-export type NoneConfig = t.TypeOf<typeof NoneConfig>;
+const AnyFields = t.record(t.string, t.union([FieldType, t.undefined]));
+type AnyFields = t.TypeOf<typeof AnyFields>;
+
 const AreaFields = t.intersection([
   t.type({
     x: FieldType,
@@ -85,7 +79,8 @@ const AreaFields = t.intersection([
       componentIri: t.string,
       palette: t.string
     })
-  })
+  }),
+  AnyFields
 ]);
 const AreaConfig = t.type(
   {
@@ -110,7 +105,8 @@ const BarFields = t.intersection([
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
       palette: t.string
     })
-  })
+  }),
+  AnyFields
 ]);
 const BarConfig = t.type(
   {
@@ -134,7 +130,8 @@ const ColumnFields = t.intersection([
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
       palette: t.string
     })
-  })
+  }),
+  AnyFields
 ]);
 const ColumnConfig = t.type(
   {
@@ -157,7 +154,8 @@ const LineFields = t.intersection([
       componentIri: t.string,
       palette: t.string
     })
-  })
+  }),
+  AnyFields
 ]);
 const LineConfig = t.type(
   {
@@ -180,7 +178,8 @@ const ScatterPlotFields = t.intersection([
       componentIri: t.string,
       palette: t.string
     })
-  })
+  }),
+  AnyFields
 ]);
 const ScatterPlotConfig = t.type(
   {
@@ -200,14 +199,6 @@ export type ChartFields =
   | AreaFields
   | ScatterPlotFields;
 
-// FIXME: keep this in sync with actual types?
-const ChartFieldKey = t.keyof({
-  x: null,
-  y: null,
-  segment: null
-});
-export type ChartFieldKey = t.TypeOf<typeof ChartFieldKey>;
-
 // interface IriBrand {
 //   readonly IRI: unique symbol;
 // }
@@ -217,23 +208,20 @@ export type ChartFieldKey = t.TypeOf<typeof ChartFieldKey>;
 //   "IRI"
 // );
 
-const ChartConfig = t.intersection([
-  t.union([
-    AreaConfig,
-    BarConfig,
-    ColumnConfig,
-    LineConfig,
-    ScatterPlotConfig,
-    NoneConfig
-  ]),
-  t.record(t.string, t.any)
+const ChartConfig = t.union([
+  AreaConfig,
+  BarConfig,
+  ColumnConfig,
+  LineConfig,
+  ScatterPlotConfig
 ]);
+// t.record(t.string, t.any)
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
 const Config = t.type(
   {
     dataSet: t.string,
-    activeField: t.string,
+    activeField: t.union([t.string, t.undefined]),
     meta: Meta,
     chartConfig: ChartConfig
   },
@@ -250,22 +238,28 @@ export const decodeConfig = (config: unknown) => Config.decode(config);
 const ConfiguratorStateInitial = t.type({ state: t.literal("INITIAL") });
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
-  activeField: t.string,
+  activeField: t.union([t.string, t.undefined]),
   meta: Meta,
   dataSet: t.undefined,
-  chartConfig: NoneConfig
+  chartConfig: t.undefined
 });
-
-const ConfiguratorStateSelectingChartType = t.intersection([
-  t.type({
-    state: t.literal("SELECTING_CHART_TYPE")
-  }),
-  Config
-]);
+const ConfiguratorStatePreSelectingChartType = t.type({
+  state: t.literal("PRE_SELECTING_CHART_TYPE"),
+  dataSet: t.string,
+  activeField: t.union([t.string, t.undefined]),
+  meta: Meta,
+  chartConfig: t.undefined
+});
+const ConfiguratorStateSelectingChartType = t.type({
+  state: t.literal("SELECTING_CHART_TYPE"),
+  dataSet: t.string,
+  activeField: t.union([t.string, t.undefined]),
+  meta: Meta,
+  chartConfig: ChartConfig
+});
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
     state: t.literal("CONFIGURING_CHART"),
-    activeField: ChartFieldKey,
     meta: Meta,
     dataSet: t.string
   }),
@@ -291,6 +285,12 @@ const ConfiguratorStatePublished = t.intersection([
   Config
 ]);
 
+export type ConfiguratorStateSelectingDataSet = t.TypeOf<
+  typeof ConfiguratorStateSelectingDataSet
+>;
+export type ConfiguratorStatePreSelectingChartType = t.TypeOf<
+  typeof ConfiguratorStatePreSelectingChartType
+>;
 export type ConfiguratorStateSelectingChartType = t.TypeOf<
   typeof ConfiguratorStateSelectingChartType
 >;
@@ -307,6 +307,7 @@ export type ConfiguratorStatePublishing = t.TypeOf<
 const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
+  ConfiguratorStatePreSelectingChartType,
   ConfiguratorStateSelectingChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,

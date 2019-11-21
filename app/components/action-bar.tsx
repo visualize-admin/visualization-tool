@@ -43,7 +43,7 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
                 variant="primary"
                 onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
                 sx={{ ml: "auto" }}
-                disabled={state.chartConfig.chartType === "none"}
+                disabled={state.chartConfig === undefined}
               >
                 <Trans>Weiter</Trans>
               </Button>

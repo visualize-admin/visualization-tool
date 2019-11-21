@@ -59,9 +59,9 @@ export const ColorPalette = () => {
       <Button variant="palette" {...getToggleButtonProps()}>
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
-            {scheme(state.chartConfig.palette).map((color: string) => (
+            {/* {scheme(state.chartConfig.palette).map((color: string) => (
               <Box key={color} variant="palette.color" sx={{ bg: color }}></Box>
-            ))}
+            ))} */}
           </Flex>
         )}
         <Icon name="unfold" />

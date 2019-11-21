@@ -1,7 +1,7 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { useMemo } from "react";
 import { useObservations } from "../domain";
-import { AreaFields, AreaConfig } from "../domain/config-types";
+import { AreaFields, AreaConfig, FieldType } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
@@ -27,14 +27,12 @@ export const ChartAreasVisualization = ({
   // TODO: Improve/optimize/generalize this
   const allFields = useMemo(() => {
     const fieldIris = new Set(
-      Object.values<{ componentIri: string }>(chartConfig.fields).map(
-        f => f.componentIri
-      )
+      Object.values<FieldType>(chartConfig.fields).map(f => f.componentIri)
     );
-    const restDimensions = dimensions.reduce<{ [k: string]: string }>(
+    const restDimensions = dimensions.reduce<{ [k: string]: FieldType }>(
       (acc, d, i) => {
         if (!fieldIris.has(d.component.iri.value)) {
-          acc[`dim${i}`] = d.component.iri.value;
+          acc[`dim${i}`] = { componentIri: d.component.iri.value };
         }
         return acc;
       },

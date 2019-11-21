@@ -12,7 +12,7 @@ import {
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
 import { DataSetMetadata } from "../domain/data-cube";
-import { MetaKey, ComponentWithMeta, ChartFieldKey } from "../domain";
+import { MetaKey, ComponentWithMeta } from "../domain";
 import { Locales } from "../locales/locales";
 import { ControlTab } from "./chart-controls/control-tab";
 import { IconName } from "../icons";
@@ -57,7 +57,7 @@ export const ControlTabField = ({
 }: {
   iconName: IconName;
   component?: ComponentWithMeta;
-  value: ChartFieldKey;
+  value: string;
   disabled?: boolean;
 }) => {
   const field = useControlTab({
@@ -163,17 +163,20 @@ export const ChartFieldField = ({
   label,
   field,
   options,
-  disabled
+  disabled,
+  dataSetMetadata
 }: {
-  componentIri: string;
+  componentIri?: string;
   label: string;
-  field: ChartFieldKey;
+  field: string;
   options: Option[];
   disabled?: boolean;
+  dataSetMetadata: DataSetMetadata;
 }) => {
   const fieldProps = useChartFieldField({
     componentIri,
-    field
+    field,
+    dataSetMetadata
   });
 
   return <Select label={label} disabled={disabled} options={options} {...fieldProps}></Select>;
