@@ -26,7 +26,7 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
         </Button>
       ) : (
         <>
-          {state.state === "SELECTING_CHART_TYPE" && (
+          {(state.state === "SELECTING_CHART_TYPE" || state.state === "PRE_SELECTING_CHART_TYPE" )&& (
             <>
               <LocalizedLink
                 href={{
