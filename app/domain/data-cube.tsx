@@ -146,7 +146,7 @@ export const useDataSetAndMetadata = (
     const componentLabels = [...dimensions, ...measures, ...attributes].reduce<
       Record<string, string>
     >((labels, component) => {
-      labels[component.iri.value] = component.labels[0].value;
+      labels[component.iri.value] = component.label.value;
       return labels;
     }, {});
 

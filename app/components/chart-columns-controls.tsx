@@ -27,7 +27,7 @@ export const ChartColumnsControls = ({
             options={[...timeDimensions, ...categoricalDimensions].map(
               ({ component }) => ({
                 value: component.iri.value,
-                label: component.labels[0].value
+                label: component.label.value
               })
             )}
           />
@@ -41,7 +41,7 @@ export const ChartColumnsControls = ({
             label={"Werte wählen"}
             options={measuresDimensions.map(({ component }) => ({
               value: component.iri.value,
-              label: component.labels[0].value
+              label: component.label.value
             }))}
           />
         </ControlList>
@@ -55,7 +55,7 @@ export const ChartColumnsControls = ({
             options={[...timeDimensions, ...categoricalDimensions].map(
               ({ component }) => ({
                 value: component.iri.value,
-                label: component.labels[0].value
+                label: component.label.value
               })
             )}
           />

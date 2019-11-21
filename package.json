@@ -26,7 +26,7 @@
     "@rebass/preset": "^4.0.5",
     "@types/d3-array": "^2.0.0",
     "@types/d3-format": "^1.3.1",
-    "@zazuko/query-rdf-data-cube": "^0.4.1",
+    "@zazuko/query-rdf-data-cube": "^0.5.0",
     "catalog": "^4.0.1-canary.2",
     "d3-array": "^2.3.3",
     "d3-format": "^1.4.2",
