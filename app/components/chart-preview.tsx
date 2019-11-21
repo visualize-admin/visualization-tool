@@ -83,7 +83,10 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             color: "monochrome.600",
             alignSelf: "flex-end"
           }}
-        >{`Quelle: ${dataSet.extraMetadata.get("source")!.value}`}</Text>
+        >{`Quelle: ${
+          // FIXME: use "source" instead of "contact" when the API is fixed
+          dataSet.extraMetadata.get("contact")!.value
+        }`}</Text>
       </Flex>
     );
   } else {

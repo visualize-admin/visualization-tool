@@ -277,24 +277,24 @@ export const theme: Theme = {
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
         borderBottomColor: "monochrome.300",
+        "&:first-of-type": {
+          borderTopWidth: "1px",
+          borderTopStyle: "solid",
+          borderTopColor: "monochrome.300"
+        },
         ":hover": {
-          bg: "monochrome.300"
+          bg: "blueGreyDarker"
         },
         ":active": {
-          bg: "monochrome.300"
+          bg: "blueGreyDarker"
         },
         ":focus": {
-          bg: "monochrome.300",
-          outline: "none"
+          outline: "1px solid #333333"
         }
       },
       selected: {
         variant: "buttons.datasetButton.normal",
-        borderLeftColor: "ch.venetianRed",
-        ":hover": {
-          borderLeftColor: "ch.venetianRed",
-          bg: "monochrome.300"
-        }
+        bg: "blueGreyDarker"
       }
     },
     step: {
@@ -588,6 +588,27 @@ export const theme: Theme = {
           borderBottomRightRadius: "bigger"
         }
       }
+    },
+    datatable: {
+      headerRow: {
+        fontFamily: "frutigerBold",
+        fontSize: [3],
+        verticalAlign: "baseline",
+        color: "monochrome.700",
+        borderBottomColor: "monochrome.700",
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid"
+      },
+      headerCell: { px: 2, py: 3, minWidth: 128 },
+      row: {
+        fontFamily: "frutigerLight",
+        fontSize: [3],
+        color: "monochrome.800",
+        borderBottomColor: "monochrome.400",
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid"
+      },
+      cell: { px: 2, py: 3, minWidth: 128 }
     }
   }
 };

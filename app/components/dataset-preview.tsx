@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Flex, Text } from "rebass";
+import { Box, Text } from "rebass";
 import { Loading } from "./hint";
 import { useDataSetAndMetadata } from "../domain";
+import { DataTable } from "./datatable";
 
 export interface Preview {
   iri: string;
@@ -9,26 +10,28 @@ export interface Preview {
 }
 export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const meta = useDataSetAndMetadata(dataSetIri);
-
   if (meta.state === "loaded") {
+    const { dataSet, dimensions, measures } = meta.data;
     return (
       <Box p={5} sx={{ textAlign: "left", width: "100%" }}>
         <Text variant="heading2" mb={1}>
           {meta.data.dataSet.labels[0].value}
         </Text>
-        <Text variant="paragraph1" mb={2}>
+        <Text variant="paragraph1" mb={4}>
           {meta.data.dataSet.extraMetadata.get("description")!.value}
         </Text>
 
-        <Flex
+        <Box
           variant="heading3"
-          my={3}
-          sx={{ width: "100%", height: "450px", bg: "missing" }}
-          justifyContent="center"
-          alignItems="center"
+          mt={6}
+          sx={{ width: "100%", position: "relative", overflowX: "auto" }}
         >
-          {"Vorschau des Datensatz"}
-        </Flex>
+          <DataTable
+            dataSet={dataSet}
+            dimensions={dimensions}
+            measures={measures}
+          />
+        </Box>
       </Box>
     );
   } else {

@@ -62,7 +62,7 @@ export const DatasetButton = ({
           left: 0,
           width: "4px",
           height: "calc(100% + 2px)",
-          bg: "ch.venetianRed",
+          bg: "primary.base",
           marginTop: "-1px"
         }}
       ></Box>
