@@ -5,7 +5,8 @@ import { Loading, Hint } from "./hint";
 import { useDataSetAndMetadata, getPossibleChartType } from "../domain";
 import {
   ChartType,
-  ConfiguratorStateSelectingChartType
+  ConfiguratorStateSelectingChartType,
+  ConfiguratorStatePreSelectingChartType
 } from "../domain/config-types";
 import { Trans } from "@lingui/macro";
 import { SectionTitle } from "./chart-controls";
@@ -14,7 +15,9 @@ const chartTypes: ChartType[] = ["column", "line", "area", "scatterplot"];
 export const ChartTypeSelector = ({
   state
 }: {
-  state: ConfiguratorStateSelectingChartType;
+  state:
+    | ConfiguratorStateSelectingChartType
+    | ConfiguratorStatePreSelectingChartType;
 }) => {
   const meta = useDataSetAndMetadata(state.dataSet);
   if (meta.state === "loaded") {

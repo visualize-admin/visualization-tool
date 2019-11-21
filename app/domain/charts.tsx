@@ -1,4 +1,4 @@
-import { ChartFields, ChartType, Filters } from "./config-types";
+import { ChartFields, ChartType } from "./config-types";
 import {
   DimensionWithMeta,
   getCategoricalDimensions,
@@ -8,47 +8,6 @@ import {
   getTimeDimensions
 } from "./data";
 import { DataSetMetadata } from "./data-cube";
-
-export const getInitialFilters = ({
-  dimensions,
-  fields
-}: {
-  dimensions: DimensionWithMeta[];
-  fields: ChartFields;
-}): Filters => {
-  // const nonTimeDimensions = dimensions.filter(
-  //   dimension => !isTimeDimension(dimension)
-  // );
-  // const fieldIris = Array.from(
-  //   new Set(Object.keys(fields).map(k => fields[k].componentIri))
-  // );
-  return dimensions.reduce<Filters>((obj, cur, i) => {
-    // const newFilter = fieldIris.includes(cur.component.iri.value)
-    //   ? {
-    //       ...obj,
-    //       [cur.component.iri.value]: {
-    //         type: "multi",
-    //         values: { [cur.values[0].value.value]: true }
-    //       }
-    //     }
-    //   : {
-    //       ...obj,
-    //       [cur.component.iri.value]: {
-    //         type: "single",
-    //         value: [cur.values[0].value.value]
-    //       }
-    //     };
-    return cur.values.length > 0
-      ? {
-          ...obj,
-          [cur.component.iri.value]: {
-            type: "multi",
-            values: { [cur.values[0].value.value]: true }
-          }
-        }
-      : obj;
-  }, {});
-};
 
 export const getInitialFields = ({
   chartType,

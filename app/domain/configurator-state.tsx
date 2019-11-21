@@ -15,23 +15,27 @@ import {
   FilterValue,
   FilterValueMulti,
   isValidConfiguratorState,
-  ChartFieldKey
+  ChartConfig,
+  FieldType,
+  ChartType,
+  ConfiguratorStateSelectingDataSet
 } from "./config-types";
+import { DataSetMetadata } from "./data-cube";
+import { getInitialFields } from "./charts";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
   | { type: "DATASET_SELECTED"; value: { dataSet: string; title?: string } }
   | {
       type: "CHART_TYPE_PREVIEWED";
-      value: { path: string | string[]; value: $FixMe };
+      value: { chartType: ChartType; dataSetMetadata: DataSetMetadata };
     }
   | {
       type: "CHART_TYPE_SELECTED";
-      // value: { path: string | string[]; value: any };
     }
   | {
       type: "CONTROL_TAB_CHANGED";
-      value: ChartFieldKey;
+      value: string;
     }
   | {
       type: "CHART_CONFIG_CHANGED";
@@ -39,7 +43,11 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_FIELD_CHANGED";
-      value: { field: ChartFieldKey; componentIri: string };
+      value: {
+        field: string;
+        componentIri: string;
+        dataSetMetadata: DataSetMetadata;
+      };
     }
   | {
       type: "CHART_CONFIGURED";
@@ -72,9 +80,10 @@ const initialState: ConfiguratorState = {
   state: "INITIAL"
 };
 
-const emptyState: ConfiguratorState = {
+const emptyState: ConfiguratorStateSelectingDataSet = {
   state: "SELECTING_DATASET",
   dataSet: undefined,
+  chartConfig: undefined,
   meta: {
     title: {
       de: "",
@@ -89,21 +98,67 @@ const emptyState: ConfiguratorState = {
       en: ""
     }
   },
-  activeField: "",
-  chartConfig: {
-    chartType: "none",
-    filters: {},
-    fields: {}
-  }
+  activeField: ""
 };
 
 export const getFilterValue = (
   state: ConfiguratorState,
   dimensionIri: string
 ): FilterValue | undefined => {
-  return state.state !== "INITIAL"
+  return state.state !== "INITIAL" &&
+    state.state !== "SELECTING_DATASET" &&
+    state.state !== "PRE_SELECTING_CHART_TYPE"
     ? state.chartConfig.filters[dimensionIri]
     : undefined;
+};
+
+const deriveFiltersFromFields = (
+  { fields, filters }: ChartConfig,
+  { dimensions }: DataSetMetadata
+) => {
+  // 1. we need filters for all dimensions
+  // 2. if a dimension is mapped to a field, it should be a multi filter, otherwise a single filter
+  // 3a. if the filter type is correct, we leave it alone
+  // 3b. if there's a mis-match, then we try to convert multi -> single and single -> multi
+
+  const fieldDimensionIris = new Set(
+    Object.values<FieldType>(fields).map(({ componentIri }) => componentIri)
+  );
+
+  const isField = (iri: string) => fieldDimensionIris.has(iri);
+
+  dimensions.forEach(dimension => {
+    if (filters[dimension.component.iri.value] !== undefined) {
+      // Fix wrong filter type
+      if (
+        isField(dimension.component.iri.value) &&
+        filters[dimension.component.iri.value].type === "single"
+      ) {
+        filters[dimension.component.iri.value] = { type: "multi", values: {} };
+      } else if (
+        !isField(dimension.component.iri.value) &&
+        filters[dimension.component.iri.value].type === "multi"
+      ) {
+        filters[dimension.component.iri.value] = {
+          type: "single",
+          value: dimension.values[0].value.value
+        };
+      }
+    } else {
+      // Add filter for this dim
+      if (isField(dimension.component.iri.value)) {
+        filters[dimension.component.iri.value] = { type: "multi", values: {} };
+      } else {
+        filters[dimension.component.iri.value] = {
+          type: "single",
+          value: dimension.values[0].value.value
+        };
+      }
+      // Check
+    }
+  });
+
+  return filters;
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
@@ -116,24 +171,44 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return action.value.state === "INITIAL" ? emptyState : action.value;
 
     case "DATASET_SELECTED":
-      draft.state = "SELECTING_CHART_TYPE";
-      if (draft.state === "SELECTING_CHART_TYPE") {
+      draft.state = "PRE_SELECTING_CHART_TYPE";
+      if (draft.state === "PRE_SELECTING_CHART_TYPE") {
         const { dataSet } = action.value;
-
-        setWith(draft, "dataSet", dataSet, Object);
-        //draft.dataSet = action.value;
+        draft.dataSet = dataSet;
+        draft.activeField = undefined;
       }
       return draft;
 
     case "CHART_TYPE_PREVIEWED":
-      draft.state = "SELECTING_CHART_TYPE";
-      if (draft.state === "SELECTING_CHART_TYPE") {
-        setWith(draft, action.value.path, action.value.value, Object);
+      if (
+        draft.state === "SELECTING_CHART_TYPE" ||
+        draft.state === "PRE_SELECTING_CHART_TYPE"
+      ) {
+        draft.state = "SELECTING_CHART_TYPE";
+        // setWith(draft, action.value.path, action.value.value, Object);
+        const { chartType, dataSetMetadata } = action.value;
+        draft.chartConfig = {
+          chartType,
+          fields: getInitialFields({
+            chartType,
+            dimensions: dataSetMetadata.dimensions,
+            measures: dataSetMetadata.measures
+          }),
+          filters: {}
+        };
+        draft.activeField = undefined;
+
+        if(draft.state === "SELECTING_CHART_TYPE") {
+          deriveFiltersFromFields(draft.chartConfig, dataSetMetadata);
+        }
       }
       return draft;
 
     case "CHART_TYPE_SELECTED":
       draft.state = "CONFIGURING_CHART";
+      if (draft.state === "CONFIGURING_CHART") {
+        draft.activeField = undefined;
+      }
       return draft;
 
     case "CONTROL_TAB_CHANGED":
@@ -162,33 +237,21 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       ) {
         const f = draft.chartConfig.fields[action.value.field];
         if (!f) {
-          // Somehow works because only segment can be undefined …
-          draft.chartConfig.fields[action.value.field] = {
-            componentIri: action.value.componentIri,
-            palette: "category10",
-            type: "stacked"
-          };
+          if (action.value.field === "segment") {
+            draft.chartConfig.fields[action.value.field] = {
+              componentIri: action.value.componentIri,
+              palette: "category10",
+              type: "stacked"
+            };
+          }
         } else {
-          const prevComponentIri = f.componentIri;
-
-          // Change filters
-          // If prevCompoIri is a multi filter, turn it into a single filter
-          // const prevFilter = draft.chartConfig.filters[prevComponentIri];
-          // if (prevFilter && prevFilter.type === "multi") {
-          //   draft.chartConfig.filters[prevComponentIri] = {
-          //     type: "single",
-          //     value: //  but what if there aren't any???
-          //   }
-          // }
-          // If new component IRI is a single filter, turn it into a multi filter
-          
-          // FIXME: do the above?!
-          delete draft.chartConfig.filters[prevComponentIri];
-
           f.componentIri = action.value.componentIri;
-
-
         }
+
+        deriveFiltersFromFields(
+          draft.chartConfig,
+          action.value.dataSetMetadata
+        );
       }
       return draft;
 

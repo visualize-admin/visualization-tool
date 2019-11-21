@@ -4,7 +4,8 @@ import {
   ConfiguratorStateConfiguringChart,
   LineConfig,
   AreaConfig,
-  ScatterPlotConfig
+  ScatterPlotConfig,
+  FieldType
 } from "../domain";
 import { DataSetMetadata, useDataSetAndMetadata } from "../domain/data-cube";
 import { CollapsibleSection } from "./chart-controls";
@@ -153,7 +154,7 @@ export const ChartConfigurator = ({
 
   if (meta.data) {
     const mappedIris = new Set(
-      Object.values<{ componentIri: string }>(state.chartConfig.fields).map(
+      Object.values<FieldType>(state.chartConfig.fields).map(
         f => f.componentIri
       )
     );

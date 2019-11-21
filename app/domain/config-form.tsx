@@ -1,7 +1,6 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
-import { getInitialFilters, getInitialFields } from ".";
-import { ChartType, MetaKey, ChartFieldKey } from "./config-types";
+import { ChartType, MetaKey } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
 import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
@@ -68,7 +67,7 @@ export const useField = ({
 export const useControlTab = ({
   value
 }: {
-  value: ChartFieldKey;
+  value: string;
 }): FieldProps & {
   onClick: (x: string) => void;
 } => {
@@ -202,10 +201,12 @@ export const useSingleFilterField = ({
 
 export const useChartFieldField = ({
   componentIri,
-  field
+  field,
+  dataSetMetadata
 }: {
-  field: ChartFieldKey;
-  componentIri: string;
+  field: string;
+  componentIri?: string;
+  dataSetMetadata: DataSetMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -215,23 +216,27 @@ export const useChartFieldField = ({
         type: "CHART_FIELD_CHANGED",
         value: {
           componentIri: e.currentTarget.value,
-          field
+          field,
+          dataSetMetadata
         }
       });
     },
-    [dispatch, field]
+    [dispatch, field, dataSetMetadata]
   );
 
-  // FIXME: remove $FixMe
-  const stateValue =
-    state.state === "CONFIGURING_CHART"
-      ? (state.chartConfig.fields as $FixMe)[field]!.componentIri
-      : undefined;
-  const checked = stateValue === componentIri;
+  let value:string | undefined;
+  if (state.state === "CONFIGURING_CHART") {
+    const currentField: {componentIri:string} | undefined = state.chartConfig.fields[field]
+    if (currentField) {
+      value = currentField.componentIri
+    }
+  }
+
+  const checked = value === componentIri;
 
   return {
     name: field,
-    value: componentIri,
+    value,
     checked,
     onChange
   };
@@ -247,25 +252,19 @@ export const useChartTypeSelectorField = ({
   metaData: DataSetMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
-  const { dimensions, measures } = metaData;
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     e => {
       const chartType = e.currentTarget.value as ChartType;
-      const fields = getInitialFields({ chartType, dimensions, measures });
-      const filters = getInitialFilters({ dimensions, fields });
+
       dispatch({
         type: "CHART_TYPE_PREVIEWED",
         value: {
-          path: "chartConfig",
-          value: {
-            chartType,
-            filters,
-            fields
-          }
+          chartType,
+          dataSetMetadata: metaData
         }
       });
     },
-    [dimensions, dispatch, measures]
+    [dispatch, metaData]
   );
 
   const stateValue =
