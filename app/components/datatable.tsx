@@ -102,7 +102,7 @@ export const DataTable = ({
 
   const headers: Header[] = Object.entries(selection).map(([key, value]) => ({
     headerIndex: key,
-    header: value[1].labels[0].value,
+    header: value[1].label.value,
     componentType: value[1].componentType
   }));
 

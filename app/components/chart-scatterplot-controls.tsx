@@ -26,7 +26,7 @@ export const ChartScatterplotControls = ({
             label={"Werte wählen"}
             options={measuresDimensions.map(({ component }) => ({
               value: component.iri.value,
-              label: component.labels[0].value
+              label: component.label.value
             }))}
           />
         </ControlList>
@@ -39,7 +39,7 @@ export const ChartScatterplotControls = ({
             label={"Werte wählen"}
             options={measuresDimensions.map(({ component }) => ({
               value: component.iri.value,
-              label: component.labels[0].value
+              label: component.label.value
             }))}
           />
         </ControlList>
@@ -52,7 +52,7 @@ export const ChartScatterplotControls = ({
             label={"Dimension wählen"}
             options={categoricalDimensions.map(({ component }) => ({
               value: component.iri.value,
-              label: component.labels[0].value
+              label: component.label.value
             }))}
           />
         </ControlList>
@@ -66,7 +66,7 @@ export const ChartScatterplotControls = ({
             options={[...categoricalDimensions, ...timeDimensions].map(
               ({ component }) => ({
                 value: component.iri.value,
-                label: component.labels[0].value
+                label: component.label.value
               })
             )}
           />

@@ -25,7 +25,7 @@ export const ChartAreasControls = ({
               key={component.iri.value}
               type="radio"
               path={"x"}
-              label={component.labels[0].value}
+              label={component.label.value}
               value={component.iri.value}
             />
           ))}
@@ -39,7 +39,7 @@ export const ChartAreasControls = ({
             label={"Werte wählen"}
             options={measuresDimensions.map(({ component }) => ({
               value: component.iri.value,
-              label: component.labels[0].value
+              label: component.label.value
             }))}
           />
         </ControlList>
@@ -52,7 +52,7 @@ export const ChartAreasControls = ({
             label={"Dimension wählen"}
             options={categoricalDimensions.map(({ component }) => ({
               value: component.iri.value,
-              label: component.labels[0].value
+              label: component.label.value
             }))}
           />
         </ControlList>

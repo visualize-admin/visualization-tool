@@ -90,7 +90,7 @@ const DimensionPanel = ({
         label={"Dimension wählen"}
         options={dimensions.map(({ component }) => ({
           value: component.iri.value,
-          label: component.labels[0].value
+          label: component.label.value
         }))}
         dataSetMetadata={metaData}
       />
@@ -119,7 +119,7 @@ const MeasurePanel = ({
         label={"Messreihe wählen"}
         options={measures.map(({ component }) => ({
           value: component.iri.value,
-          label: component.labels[0].value
+          label: component.label.value
         }))}
         dataSetMetadata={metaData}
       />
