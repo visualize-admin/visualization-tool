@@ -39,9 +39,14 @@ export type RawObservations<T extends ChartFields> = Record<
 
 export type ObservationValue = string | number | boolean | Date;
 
-export type Observation<T extends ChartFields> = Record<string, ObservationValue>;
+export type Observation<T extends ChartFields> = Record<
+  string,
+  ObservationValue
+>;
+export type ObservationPreview = Record<string, ObservationValue>;
 
 export type Observations<T extends ChartFields> = Observation<T>[];
+export type ObservationsPreview = ObservationPreview[];
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 const parseRDFLiteral = (value: Literal): ObservationValue => {

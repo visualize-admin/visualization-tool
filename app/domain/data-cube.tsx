@@ -14,7 +14,7 @@ import {
 } from "react";
 import { RDState, useRemoteData } from "../lib/remote-data";
 import { useLocale } from "../lib/use-locale";
-import { Filters, ChartFields } from "./config-types";
+import { ChartFields, Filters } from "./config-types";
 import {
   AttributeWithMeta,
   DimensionWithMeta,
@@ -22,9 +22,8 @@ import {
   MeasureWithMeta,
   Observations,
   parseObservations,
-  RawObservations
+  ObservationsPreview
 } from "./data";
-import { Component } from "@zazuko/query-rdf-data-cube/dist/node/components";
 
 const DataCubeContext = createContext<string>("");
 
@@ -174,6 +173,29 @@ export const useDataSetAndMetadata = (
   return useRemoteData(["datasetandmeta", entryPoint, iri], fetchCb);
 };
 
+export const usePreviewObservations = ({
+  dataSet,
+  selection
+}: {
+  dataSet: DataCube;
+  selection: [string, Dimension | Measure][];
+}): RDState<ObservationsPreview> => {
+  const fetchData = useCallback(async () => {
+    const query = dataSet
+      .query()
+      .limit(10)
+      .select(selection);
+
+    const data = await query.execute();
+    return parseObservations(data);
+  }, [dataSet, selection]);
+
+  return useRemoteData<ObservationsPreview>(
+    ["observationsPreview", dataSet, selection],
+    fetchData
+  );
+};
+
 export const useObservations = <FieldsType extends ChartFields>({
   dataSet,
   dimensions,
@@ -234,14 +256,13 @@ export const useObservations = <FieldsType extends ChartFields>({
       : [];
 
     // TODO: Maybe explicitly specify all dimension fields? Currently not necessary because they're selected anyway.
-    const selectedComponents: [string, Dimension | Measure][] = Object.entries<{ componentIri: string }>(
-      fields
-    ).flatMap(([key, field]) => {
+    const selectedComponents: [string, Dimension | Measure][] = Object.entries<{
+      componentIri: string;
+    }>(fields).flatMap(([key, field]) => {
       return componentsByIri[field.componentIri] !== undefined
         ? [[key, componentsByIri[field.componentIri].component]]
         : [];
     });
-
     const query = dataSet
       .query()
       .limit(null)

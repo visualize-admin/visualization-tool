@@ -23,6 +23,7 @@ const useChartId = () => {
 
 const ChartCreator = () => {
   // Local state, the dataset preview doesn't need to be persistent.
+  // FIXME: for a11y, "updateDataSetPreviewIri" should also move focus to "Weiter" button (?)
   const [dataSetPreviewIri, updateDataSetPreviewIri] = React.useState<string>();
   const [state] = useConfiguratorState();
 
