@@ -119,13 +119,40 @@ export const useFilterTab = ({
     onClick
   };
 };
+export const useAnnotatorTab = ({
+  value
+}: {
+  value: string;
+}): FieldProps & {
+  onClick: (x: string) => void;
+} => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onClick = useCallback<() => void>(() => {
+    dispatch({
+      type: "CHART_ANNOTATION_TAB_CHANGED",
+      value
+    });
+  }, [dispatch, value]);
+
+  const stateValue =
+    state.state === "DESCRIBING_CHART" ? state.activeField : "";
+
+  const checked = stateValue === value;
+
+  return {
+    value,
+    checked,
+    onClick
+  };
+};
 
 export const useMetaField = ({
   metaKey,
   locale,
   value
 }: {
-  metaKey: MetaKey;
+  metaKey: string;
   locale: Locales;
   value?: string;
 }): FieldProps => {

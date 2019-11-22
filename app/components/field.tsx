@@ -8,7 +8,8 @@ import {
   useSingleFilterField,
   useChartFieldField,
   useChartOptionField,
-  useFilterTab
+  useFilterTab,
+  useAnnotatorTab
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
@@ -21,7 +22,11 @@ import {
   DimensionWithMeta
 } from "../domain";
 import { Locales } from "../locales/locales";
-import { ControlTab, FilterTab } from "./chart-controls/control-tab";
+import {
+  ControlTab,
+  FilterTab,
+  AnnotatorTab
+} from "./chart-controls/control-tab";
 import { IconName } from "../icons";
 
 // export const Field = ({
@@ -115,6 +120,26 @@ export const FilterTabField = ({
     ></FilterTab>
   );
 };
+export const AnnotatorTabField = ({
+  value,
+  disabled
+}: {
+  value: string;
+  disabled?: boolean;
+}) => {
+  const field = useAnnotatorTab({
+    value
+  });
+
+  return (
+    <AnnotatorTab
+      value={field.value}
+      checked={field.checked}
+      disabled={disabled}
+      onClick={field.onClick}
+    ></AnnotatorTab>
+  );
+};
 
 export const MetaInputField = ({
   label,
@@ -125,7 +150,7 @@ export const MetaInputField = ({
   ...props
 }: {
   label: string;
-  metaKey: MetaKey;
+  metaKey: string;
   locale: Locales;
   value?: string;
   disabled?: boolean;
