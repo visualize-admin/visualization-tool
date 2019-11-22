@@ -5,13 +5,14 @@ import { Box } from "rebass";
 import { AppLayout } from "../../../components/layout";
 import { PanelLeft } from "../../../components/panel-left";
 import { PanelMiddle } from "../../../components/panel-middle";
-import { PanelRight } from "../../../components/panel-right";
+import { ChartOptionsSelector } from "../../../components/chart-options-selector";
 import { Stepper } from "../../../components/stepper";
 import { DataCubeProvider } from "../../../domain";
 import {
   ConfiguratorStateProvider,
   useConfiguratorState
 } from "../../../domain/configurator-state";
+import { ChartAnnotationsSelector } from "../../../components/chart-annotations-selector";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -61,7 +62,12 @@ const ChartCreator = () => {
         <PanelMiddle dataSetPreviewIri={dataSetPreviewIri} />
       </Box>
       <Box as="section" data-name="panel-right" variant="container.right">
-        {state.state === "CONFIGURING_CHART" && <PanelRight state={state} />}
+        {state.state === "CONFIGURING_CHART" && (
+          <ChartOptionsSelector state={state} />
+        )}
+        {state.state === "DESCRIBING_CHART" && (
+          <ChartAnnotationsSelector state={state} />
+        )}
       </Box>
     </Box>
   );
