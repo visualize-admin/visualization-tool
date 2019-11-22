@@ -61,6 +61,10 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIGURED";
     }
   | {
+      type: "CHART_ANNOTATION_TAB_CHANGED";
+      value: string;
+    }
+  | {
       type: "CHART_DESCRIPTION_CHANGED";
       value: { path: string | string[]; value: $FixMe };
     }
@@ -276,6 +280,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIGURED":
       draft.state = "DESCRIBING_CHART";
+      return draft;
+
+    case "CHART_ANNOTATION_TAB_CHANGED":
+      draft.state = "DESCRIBING_CHART";
+      if (draft.state === "DESCRIBING_CHART") {
+        draft.activeField = action.value;
+      }
       return draft;
 
     case "CHART_DESCRIPTION_CHANGED":

@@ -1,6 +1,6 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
-import { ChartType, MetaKey } from "./config-types";
+import { ChartType, MetaKey, FilterValueSingle } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
 import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
@@ -92,12 +92,67 @@ export const useControlTab = ({
   };
 };
 
+export const useFilterTab = ({
+  value
+}: {
+  value: string;
+}): FieldProps & {
+  onClick: (x: string) => void;
+} => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onClick = useCallback<() => void>(() => {
+    dispatch({
+      type: "CONTROL_TAB_CHANGED",
+      value
+    });
+  }, [dispatch, value]);
+
+  const stateValue =
+    state.state === "CONFIGURING_CHART" ? state.activeField : "";
+
+  const checked = stateValue === value;
+
+  return {
+    value,
+    checked,
+    onClick
+  };
+};
+export const useAnnotatorTab = ({
+  value
+}: {
+  value: string;
+}): FieldProps & {
+  onClick: (x: string) => void;
+} => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onClick = useCallback<() => void>(() => {
+    dispatch({
+      type: "CHART_ANNOTATION_TAB_CHANGED",
+      value
+    });
+  }, [dispatch, value]);
+
+  const stateValue =
+    state.state === "DESCRIBING_CHART" ? state.activeField : "";
+
+  const checked = stateValue === value;
+
+  return {
+    value,
+    checked,
+    onClick
+  };
+};
+
 export const useMetaField = ({
   metaKey,
   locale,
   value
 }: {
-  metaKey: MetaKey;
+  metaKey: string;
   locale: Locales;
   value?: string;
 }): FieldProps => {

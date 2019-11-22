@@ -18,7 +18,7 @@ import {
 } from "./filters";
 import { Loading } from "./hint";
 
-export const PanelRight = ({
+export const ChartOptionsSelector = ({
   state
 }: {
   state: ConfiguratorStateConfiguringChart;
