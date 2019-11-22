@@ -7,14 +7,21 @@ import {
   useControlTab,
   useSingleFilterField,
   useChartFieldField,
-  useChartOptionField
+  useChartOptionField,
+  useFilterTab
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
 import { DataSetMetadata } from "../domain/data-cube";
-import { MetaKey, ComponentWithMeta } from "../domain";
+import {
+  MetaKey,
+  ComponentWithMeta,
+  FilterValueSingle,
+  useConfiguratorState,
+  DimensionWithMeta
+} from "../domain";
 import { Locales } from "../locales/locales";
-import { ControlTab } from "./chart-controls/control-tab";
+import { ControlTab, FilterTab } from "./chart-controls/control-tab";
 import { IconName } from "../icons";
 
 // export const Field = ({
@@ -73,6 +80,39 @@ export const ControlTabField = ({
       disabled={disabled}
       onClick={field.onClick}
     ></ControlTab>
+  );
+};
+export const FilterTabField = ({
+  component,
+  value,
+  disabled
+}: {
+  component: DimensionWithMeta;
+  value: string;
+  disabled?: boolean;
+}) => {
+  const field = useFilterTab({
+    value
+  });
+  const [state] = useConfiguratorState();
+
+  const filterValueIri =
+    state.state === "CONFIGURING_CHART" &&
+    state.chartConfig.filters[value].type === "single"
+      ? (state.chartConfig.filters[value] as FilterValueSingle).value
+      : "";
+  const filterValue = component.values.find(
+    v => v.value.value === filterValueIri
+  )!.label.value;
+  return (
+    <FilterTab
+      component={component}
+      value={field.value}
+      checked={field.checked}
+      disabled={disabled}
+      onClick={field.onClick}
+      filterValue={filterValue}
+    ></FilterTab>
   );
 };
 
