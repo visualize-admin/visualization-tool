@@ -242,7 +242,45 @@ export const useChartFieldField = ({
     onChange
   };
 };
+export const useChartOptionField = ({
+  field,
+  path,
+  label,
+  value
+}: {
+  field: string;
+  path: string;
+  label: string;
+  value: string;
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState();
 
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e => {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field,
+          path,
+          value
+        }
+      });
+    },
+    [dispatch, field, path, value]
+  );
+  const stateValue =
+    state.state === "CONFIGURING_CHART"
+      ? get(state, `chartConfig.fields.${field}.${path}`, "")
+      : "";
+  const checked = stateValue === value;
+
+  return {
+    name: path,
+    value,
+    checked,
+    onChange
+  };
+};
 export const useChartTypeSelectorField = ({
   path,
   value,

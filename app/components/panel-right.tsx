@@ -3,14 +3,15 @@ import {
   ConfiguratorStateConfiguringChart,
   DataSetMetadata,
   DimensionWithMeta,
-  useDataSetAndMetadata
+  useDataSetAndMetadata,
+  ChartType
 } from "../domain";
 import {
   CollapsibleSection,
   ControlList,
   ColorPalette
 } from "./chart-controls";
-import { ChartFieldField } from "./field";
+import { ChartFieldField, ChartOptionField } from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter
@@ -61,6 +62,7 @@ const ActiveFieldSwitch = ({
   ) : (
     <DimensionPanel
       field={activeField}
+      chartType={state.chartConfig.chartType}
       metaData={metaData}
       dimension={component as DimensionWithMeta}
     />
@@ -69,10 +71,12 @@ const ActiveFieldSwitch = ({
 
 const DimensionPanel = ({
   field,
+  chartType,
   dimension,
   metaData
 }: {
   field: string;
+  chartType: ChartType;
   dimension: DimensionWithMeta;
   metaData: DataSetMetadata;
 }) => {
@@ -90,7 +94,9 @@ const DimensionPanel = ({
           }))}
           dataSetMetadata={metaData}
         />
-        {field === "segment" && <ChartFieldOptions field={field} />}
+        {field === "segment" && (
+          <ChartFieldOptions field={field} chartType={chartType} />
+        )}
       </CollapsibleSection>
       <CollapsibleSection title="Filter">
         <ControlList>
@@ -147,6 +153,32 @@ const Filter = ({
     </CollapsibleSection>
   );
 };
-const ChartFieldOptions = ({ field }: { field: string }) => {
-  return <ColorPalette field={field}></ColorPalette>;
+const ChartFieldOptions = ({
+  field,
+  chartType
+}: {
+  field: string;
+  chartType: ChartType;
+}) => {
+  return (
+    <>
+      {chartType === "column" && (
+        <>
+          <ChartOptionField
+            label="stacked"
+            field={field}
+            path="type"
+            value={"stacked"}
+          />
+          <ChartOptionField
+            label="grouped"
+            field={field}
+            path="type"
+            value={"grouped"}
+          />
+          <ColorPalette field={field}></ColorPalette>
+        </>
+      )}
+    </>
+  );
 };

@@ -10,7 +10,7 @@ import {
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { Loading } from "./hint";
 import { A11yTable } from "./a11y-table";
-import { StackedColumns } from "./charts-generic/columns-stack";
+import { ColumnsSegment } from "./charts-generic/columns-segment";
 import { Columns } from "./charts-generic/columns";
 
 export const ChartColumnsVisualization = ({
@@ -91,7 +91,7 @@ export const ChartColumns = ({
   return (
     <div ref={resizeRef} aria-hidden="true">
       {fields.segment ? (
-        <StackedColumns
+        <ColumnsSegment
           data={observations}
           width={width}
           dimensions={dimensions}

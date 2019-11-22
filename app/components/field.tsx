@@ -6,7 +6,8 @@ import {
   useMetaField,
   useControlTab,
   useSingleFilterField,
-  useChartFieldField
+  useChartFieldField,
+  useChartOptionField
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
@@ -186,6 +187,27 @@ export const ChartFieldField = ({
       {...fieldProps}
     ></Select>
   );
+};
+
+export const ChartOptionField = ({
+  label,
+  field,
+  path,
+  value
+}: {
+  label: string;
+  field: string;
+  path: string;
+  value: string;
+}) => {
+  const fieldProps = useChartOptionField({
+    path,
+    field,
+    label,
+    value
+  });
+
+  return <Radio label={label} {...fieldProps}></Radio>;
 };
 
 export const ChartTypeSelectorField = ({
