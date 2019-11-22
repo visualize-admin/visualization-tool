@@ -87,7 +87,6 @@ export const ChartColumns = ({
   fields: ColumnFields;
 }) => {
   const [resizeRef, width] = useResizeObserver();
-  console.log("observations in chart-columns", observations);
 
   return (
     <div ref={resizeRef} aria-hidden="true">

@@ -518,7 +518,7 @@ export const theme: Theme = {
     },
     controlSectionTitle: {
       p: 3,
-      bg: "monochrome.100",
+      bg: "transparent",
       appearance: "none",
       width: "100%",
       border: "none",
@@ -565,6 +565,8 @@ export const theme: Theme = {
     },
     palette: {
       menu: {
+        p: 1,
+        bg: "monochrome.100",
         ":focus": {
           outline: "1px solid #333333"
         }
@@ -654,6 +656,11 @@ export const globalStyles = `
     svg {
       display: block;
     }
+
+  }
+
+  *:focus {
+    outline: 2px solid #333333;
   }
 
   fieldset {

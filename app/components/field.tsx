@@ -1,7 +1,6 @@
 import React from "react";
 import {
   useChartTypeSelectorField,
-  useField,
   Option,
   useMultiFilterField,
   useMetaField,
@@ -17,38 +16,38 @@ import { Locales } from "../locales/locales";
 import { ControlTab } from "./chart-controls/control-tab";
 import { IconName } from "../icons";
 
-export const Field = ({
-  label,
-  path,
-  type,
-  value,
-  options,
-  disabled,
-  ...props
-}: {
-  label: string;
-  path: string;
-  type?: "text" | "checkbox" | "radio" | "input" | "select";
-  value?: string;
-  options?: Option[];
-  disabled?: boolean;
-}) => {
-  const field = useField({
-    path,
-    type,
-    value
-  });
+// export const Field = ({
+//   label,
+//   path,
+//   type,
+//   value,
+//   options,
+//   disabled,
+//   ...props
+// }: {
+//   label: string;
+//   path: string;
+//   type?: "text" | "checkbox" | "radio" | "input" | "select";
+//   value?: string;
+//   options?: Option[];
+//   disabled?: boolean;
+// }) => {
+//   const field = useField({
+//     path,
+//     type,
+//     value
+//   });
 
-  return type === "radio" ? (
-    <Radio label={label} disabled={disabled} {...field}></Radio>
-  ) : type === "checkbox" ? (
-    <Checkbox label={label} disabled={disabled} {...field}></Checkbox>
-  ) : type === "input" ? (
-    <Input label={label} {...field} disabled={disabled}></Input>
-  ) : (
-    <Select options={options!} label={label} {...field}></Select> // FIXME: make sure options is defined
-  );
-};
+//   return type === "radio" ? (
+//     <Radio label={label} disabled={disabled} {...field}></Radio>
+//   ) : type === "checkbox" ? (
+//     <Checkbox label={label} disabled={disabled} {...field}></Checkbox>
+//   ) : type === "input" ? (
+//     <Input label={label} {...field} disabled={disabled}></Input>
+//   ) : (
+//     <Select options={options!} label={label} {...field}></Select> // FIXME: make sure options is defined
+//   );
+// };
 export const ControlTabField = ({
   iconName,
   component,
@@ -179,7 +178,14 @@ export const ChartFieldField = ({
     dataSetMetadata
   });
 
-  return <Select label={label} disabled={disabled} options={options} {...fieldProps}></Select>;
+  return (
+    <Select
+      label={label}
+      disabled={disabled}
+      options={options}
+      {...fieldProps}
+    ></Select>
+  );
 };
 
 export const ChartTypeSelectorField = ({
