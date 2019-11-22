@@ -50,6 +50,14 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_OPTION_CHANGED";
+      value: {
+        path: string;
+        field: string;
+        value: string;
+      };
+    }
+  | {
       type: "CHART_CONFIGURED";
     }
   | {
@@ -198,7 +206,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         };
         draft.activeField = undefined;
 
-        if(draft.state === "SELECTING_CHART_TYPE") {
+        if (draft.state === "SELECTING_CHART_TYPE") {
           deriveFiltersFromFields(draft.chartConfig, dataSetMetadata);
         }
       }
@@ -232,8 +240,8 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_FIELD_CHANGED":
       if (
-        draft.state === "CONFIGURING_CHART" &&
-        draft.chartConfig.chartType === "column"
+        draft.state === "CONFIGURING_CHART"
+        //  && draft.chartConfig.chartType === "column"
       ) {
         const f = draft.chartConfig.fields[action.value.field];
         if (!f) {
@@ -251,6 +259,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         deriveFiltersFromFields(
           draft.chartConfig,
           action.value.dataSetMetadata
+        );
+      }
+      return draft;
+
+    case "CHART_OPTION_CHANGED":
+      if (draft.state === "CONFIGURING_CHART") {
+        setWith(
+          draft,
+          `chartConfig.fields.${action.value.field}.${action.value.path}`,
+          action.value.value,
+          Object
         );
       }
       return draft;

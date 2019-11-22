@@ -1,7 +1,7 @@
 import { useSelect } from "downshift";
 import * as React from "react";
 import { useEffect } from "react";
-import { Box, Button, Flex } from "rebass";
+import { Box, Button, Flex, Text } from "rebass";
 import { ColorScheme, scheme } from "vega";
 import { useConfiguratorState } from "../../domain";
 import { Icon } from "../../icons";
@@ -29,7 +29,7 @@ const vegaPalettes: Array<{
   // { label: "tableau20", value: "tableau20", colors: scheme("tableau20") }
 ];
 
-export const ColorPalette = () => {
+export const ColorPalette = ({ field }: { field: string }) => {
   const [state, dispatch] = useConfiguratorState();
   const {
     isOpen,
@@ -43,14 +43,14 @@ export const ColorPalette = () => {
 
   useEffect(() => {
     dispatch({
-      type: "CHART_CONFIG_CHANGED",
+      type: "CHART_OPTION_CHANGED",
       value: {
+        field,
         path: "palette",
-        value: (selectedItem && selectedItem.value) || "accent"
+        value: (selectedItem && selectedItem.value) || "category10"
       }
     });
-  }, [dispatch, selectedItem]);
-
+  }, [dispatch, field, selectedItem]);
   return (
     <div>
       <Label smaller {...getLabelProps()}>
@@ -59,9 +59,15 @@ export const ColorPalette = () => {
       <Button variant="palette" {...getToggleButtonProps()}>
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
-            {/* {scheme(state.chartConfig.palette).map((color: string) => (
-              <Box key={color} variant="palette.color" sx={{ bg: color }}></Box>
-            ))} */}
+            {scheme(state.chartConfig.fields.segment!.palette).map(
+              (color: string) => (
+                <Box
+                  key={color}
+                  variant="palette.color"
+                  sx={{ bg: color }}
+                ></Box>
+              )
+            )}
           </Flex>
         )}
         <Icon name="unfold" />
@@ -71,21 +77,32 @@ export const ColorPalette = () => {
           vegaPalettes.map((palette, index) => (
             <Box
               key={`${palette.value}${index}`}
-              variant="palette.row"
-              sx={
-                highlightedIndex === index
-                  ? { backgroundColor: "monochrome.200" }
-                  : {}
-              }
-              {...getItemProps({ item: palette, index })}
+              sx={{
+                cursor: "pointer",
+                backgroundColor:
+                  highlightedIndex === index
+                    ? "monochrome.200"
+                    : "monochrome.100"
+              }}
             >
-              {palette.colors.map(color => (
-                <Box
-                  key={`option-${color}`}
-                  variant="palette.color"
-                  sx={{ bg: color }}
-                ></Box>
-              ))}
+              <Text variant="meta">{palette.label}</Text>
+              <Box
+                variant="palette.row"
+                sx={
+                  highlightedIndex === index
+                    ? { backgroundColor: "monochrome.200" }
+                    : {}
+                }
+                {...getItemProps({ item: palette, index })}
+              >
+                {palette.colors.map(color => (
+                  <Box
+                    key={`option-${color}`}
+                    variant="palette.color"
+                    sx={{ bg: color }}
+                  ></Box>
+                ))}
+              </Box>
             </Box>
           ))}
       </Box>
@@ -94,30 +111,3 @@ export const ColorPalette = () => {
     </div>
   );
 };
-
-// export const ColorPalette = ({
-//   chartId,
-//   label,
-//   path,
-//   type,
-//   value,
-//   disabled,
-//   ...props
-// }: {
-//   chartId: string;
-//   label: string;
-//   path: string;
-//   type?: "text" | "checkbox" | "radio" | "input" | "select";
-//   value?: string;
-//   disabled?: boolean;
-// }) => {
-//   return (
-//     <Field
-//       type="select"
-//       chartId={chartId}
-//       path={path}
-//       label={label}
-//       options={vegaPalettes}
-//     />
-//   );
-// };

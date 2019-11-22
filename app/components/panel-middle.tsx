@@ -15,11 +15,6 @@ export const PanelMiddle = ({
 
   return (
     <>
-      {process.env.NODE_ENV === "development" && (
-        <Box my={3} p={2} bg="muted">
-          <pre>{JSON.stringify(state, null, 2)}</pre>
-        </Box>
-      )}
       {state.state === "SELECTING_DATASET" ? (
         <>
           {dataSetPreviewIri ? (
@@ -58,6 +53,11 @@ export const PanelMiddle = ({
       )}
       {/* ACTIONS */}
       <ActionBar dataSetIri={dataSetPreviewIri}></ActionBar>
+      {process.env.NODE_ENV === "development" && (
+        <Box my={3} p={2} bg="muted">
+          <pre>{JSON.stringify(state, null, 2)}</pre>
+        </Box>
+      )}
     </>
   );
 };

@@ -1,12 +1,15 @@
 import React from "react";
-import { Heading, Text } from "rebass";
 import {
   ConfiguratorStateConfiguringChart,
   DataSetMetadata,
   DimensionWithMeta,
   useDataSetAndMetadata
 } from "../domain";
-import { CollapsibleSection, ControlList } from "./chart-controls";
+import {
+  CollapsibleSection,
+  ControlList,
+  ColorPalette
+} from "./chart-controls";
 import { ChartFieldField } from "./field";
 import {
   DimensionValuesMultiFilter,
@@ -22,16 +25,7 @@ export const PanelRight = ({
   const meta = useDataSetAndMetadata(state.dataSet);
 
   if (meta.data) {
-    return (
-      <CollapsibleSection>
-        <Heading as="h2">
-          <Text variant="table">{state.activeField}</Text>
-        </Heading>
-        <ControlList>
-          <ActiveFieldSwitch state={state} metaData={meta.data} />
-        </ControlList>
-      </CollapsibleSection>
-    );
+    return <ActiveFieldSwitch state={state} metaData={meta.data} />;
   } else {
     return <Loading />;
   }
@@ -44,13 +38,14 @@ const ActiveFieldSwitch = ({
   state: ConfiguratorStateConfiguringChart;
   metaData: DataSetMetadata;
 }) => {
-  const {activeField} = state;
+  const { activeField } = state;
 
   if (!activeField) {
     return null;
   }
   // TODO: what to do with optional fields?
-  const activeFieldComponent: { componentIri: string } | undefined = state.chartConfig.fields[activeField];
+  const activeFieldComponent: { componentIri: string } | undefined =
+    state.chartConfig.fields[activeField];
 
   // It's a dimension which is not mapped to a field, so we show the filter!
   if (!activeFieldComponent) {
@@ -85,16 +80,19 @@ const DimensionPanel = ({
 
   return (
     <>
-      <ChartFieldField
-        field={field}
-        label={"Dimension wählen"}
-        options={dimensions.map(({ component }) => ({
-          value: component.iri.value,
-          label: component.label.value
-        }))}
-        dataSetMetadata={metaData}
-      />
-      <CollapsibleSection>
+      <CollapsibleSection title={field}>
+        <ChartFieldField
+          field={field}
+          label={"Dimension wählen"}
+          options={dimensions.map(({ component }) => ({
+            value: component.iri.value,
+            label: component.label.value
+          }))}
+          dataSetMetadata={metaData}
+        />
+        {field === "segment" && <ChartFieldOptions field={field} />}
+      </CollapsibleSection>
+      <CollapsibleSection title="Filter">
         <ControlList>
           <DimensionValuesMultiFilter dimension={dimension} />
         </ControlList>
@@ -113,7 +111,7 @@ const MeasurePanel = ({
   const { measures } = metaData;
 
   return (
-    <>
+    <CollapsibleSection title={field}>
       <ChartFieldField
         field={field}
         label={"Messreihe wählen"}
@@ -123,7 +121,7 @@ const MeasurePanel = ({
         }))}
         dataSetMetadata={metaData}
       />
-    </>
+    </CollapsibleSection>
   );
 };
 
@@ -136,7 +134,7 @@ const Filter = ({
 }) => {
   const { dimensions } = metaData;
   return (
-    <>
+    <CollapsibleSection title={"Filter"}>
       {state.activeField && ( // FIXME: Dont' check here if the filter panel is active
         <DimensionValuesSingleFilter
           dimension={
@@ -146,6 +144,9 @@ const Filter = ({
           }
         ></DimensionValuesSingleFilter>
       )}
-    </>
+    </CollapsibleSection>
   );
+};
+const ChartFieldOptions = ({ field }: { field: string }) => {
+  return <ColorPalette field={field}></ColorPalette>;
 };
