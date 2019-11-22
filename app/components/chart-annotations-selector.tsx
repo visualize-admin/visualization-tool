@@ -11,14 +11,15 @@ export const ChartAnnotationsSelector = ({
 }) => {
   return (
     <CollapsibleSection title={state.activeField}>
-      {locales.map(locale => (
-        <MetaInputField
-          key={`${locale}-${state.activeField!}`}
-          metaKey={state.activeField!} // FIXME !
-          locale={locale}
-          label={locale}
-        />
-      ))}
+      {state.activeField &&
+        locales.map(locale => (
+          <MetaInputField
+            key={`${locale}-${state.activeField!}`}
+            metaKey={state.activeField!} // FIXME !
+            locale={locale}
+            label={locale}
+          />
+        ))}
     </CollapsibleSection>
   );
 };
