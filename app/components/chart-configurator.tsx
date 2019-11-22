@@ -9,7 +9,7 @@ import {
 } from "../domain";
 import { DataSetMetadata, useDataSetAndMetadata } from "../domain/data-cube";
 import { CollapsibleSection } from "./chart-controls";
-import { ControlTabField } from "./field";
+import { ControlTabField, FilterTabField } from "./field";
 import { Loading } from "./hint";
 
 const ColumnChartFields = ({
@@ -188,12 +188,11 @@ export const ChartConfigurator = ({
         </CollapsibleSection>
         <CollapsibleSection title="Data">
           {unMappedDimensions.map((dimension, i) => (
-            <ControlTabField
+            <FilterTabField
               key={dimension.component.iri.value}
-              iconName={"table"}
               component={dimension}
               value={dimension.component.iri.value as $FixMe}
-            ></ControlTabField>
+            ></FilterTabField>
           ))}
         </CollapsibleSection>
       </>
