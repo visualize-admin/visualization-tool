@@ -287,9 +287,6 @@ export const theme: Theme = {
         },
         ":active": {
           bg: "blueGreyDarker"
-        },
-        ":focus": {
-          outline: "1px solid #333333"
         }
       },
       selected: {
@@ -326,9 +323,6 @@ export const theme: Theme = {
       ":disabled": {
         cursor: "initial",
         bg: "muted"
-      },
-      ":focus": {
-        outline: "1px solid #333333"
       }
     },
     control: {
@@ -338,7 +332,7 @@ export const theme: Theme = {
       width: "100%",
       minWidth: 160,
       maxWidth: 300,
-      my: "1px",
+      my: "2px",
       px: 2,
       py: 3,
       fontFamily: "frutigerRegular",
@@ -533,12 +527,7 @@ export const theme: Theme = {
       mx: 4,
       my: 6,
       transition: "all .2s",
-      borderRadius: "bigger",
-      ":focus": {
-        borderColor: "focus",
-        borderWidth: "1px",
-        borderStyle: "solid"
-      }
+      borderRadius: "bigger"
     },
 
     hint: {
@@ -566,10 +555,7 @@ export const theme: Theme = {
     palette: {
       menu: {
         p: 1,
-        bg: "monochrome.100",
-        ":focus": {
-          outline: "1px solid #333333"
-        }
+        bg: "monochrome.100"
       },
       row: { bg: "monochrome.100" },
       color: {
@@ -660,7 +646,7 @@ export const globalStyles = `
   }
 
   *:focus {
-    outline: 2px solid #333333;
+    outline: 4px solid #333333;
   }
 
   fieldset {

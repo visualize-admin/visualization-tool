@@ -282,10 +282,6 @@ export const theme: Theme = {
         },
         ":active": {
           bg: "monochrome.300"
-        },
-        ":focus": {
-          bg: "monochrome.300",
-          outline: "none"
         }
       },
       selected: {
