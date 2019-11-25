@@ -17,6 +17,7 @@ import {
   DimensionValuesSingleFilter
 } from "./filters";
 import { Loading } from "./hint";
+import { Trans } from "@lingui/macro";
 
 export const ChartOptionsSelector = ({
   state
@@ -87,7 +88,7 @@ const DimensionPanel = ({
       <CollapsibleSection title={field}>
         <ChartFieldField
           field={field}
-          label={"Dimension wählen"}
+          label={<Trans>Select a dimension</Trans>}
           options={dimensions.map(({ component }) => ({
             value: component.iri.value,
             label: component.label.value
@@ -98,7 +99,7 @@ const DimensionPanel = ({
           <ChartFieldOptions field={field} chartType={chartType} />
         )}
       </CollapsibleSection>
-      <CollapsibleSection title="Filter">
+      <CollapsibleSection title={<Trans>Filter</Trans>}>
         <ControlList>
           <DimensionValuesMultiFilter dimension={dimension} />
         </ControlList>
@@ -120,7 +121,7 @@ const MeasurePanel = ({
     <CollapsibleSection title={field}>
       <ChartFieldField
         field={field}
-        label={"Messreihe wählen"}
+        label={<Trans>Select a measure</Trans>}
         options={measures.map(({ component }) => ({
           value: component.iri.value,
           label: component.label.value
@@ -140,7 +141,7 @@ const Filter = ({
 }) => {
   const { dimensions } = metaData;
   return (
-    <CollapsibleSection title={"Filter"}>
+    <CollapsibleSection title={<Trans>Filter</Trans>}>
       {state.activeField && ( // FIXME: Dont' check here if the filter panel is active
         <DimensionValuesSingleFilter
           dimension={

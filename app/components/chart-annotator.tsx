@@ -2,6 +2,7 @@ import React from "react";
 import { ConfiguratorStateDescribingChart } from "../domain";
 import { CollapsibleSection } from "./chart-controls";
 import { AnnotatorTabField } from "./field";
+import { Trans } from "@lingui/macro";
 
 export const ChartAnnotator = ({
   state
@@ -9,7 +10,7 @@ export const ChartAnnotator = ({
   state: ConfiguratorStateDescribingChart;
 }) => {
   return (
-    <CollapsibleSection title="Beschriftung">
+    <CollapsibleSection title={<Trans>Description</Trans>}>
       <AnnotatorTabField value={"title"}></AnnotatorTabField>
       <AnnotatorTabField value={"description"}></AnnotatorTabField>
     </CollapsibleSection>

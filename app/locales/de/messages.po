@@ -13,110 +13,134 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/stepper.tsx:51
-msgid "Anpassen"
-msgstr ""
+#: app/components/stepper.tsx:52
+msgid "Adjust"
+msgstr "Anpassen"
 
-#: app/components/step-dataset-selection.tsx:17
-#~ msgid "Auswählen"
-#~ msgstr ""
+#: app/components/stepper.tsx:59
+msgid "Annotate"
+msgstr "Beschriften"
 
-#: app/components/panel-middle.tsx:62
-msgid "Bearbeiten"
-msgstr ""
-
-#: app/components/panel-left.tsx:22
-msgid "Chart-Typ auswählen"
-msgstr ""
-
-#: app/components/stepper.tsx:37
-msgid "Datensatz"
-msgstr ""
-
-#: app/components/hint.tsx:17
-msgid "Datensatz Auswählen"
-msgstr ""
-
-#: app/components/panel-left.tsx:16
-msgid "Datensatz auswählen"
-msgstr ""
-
-#: app/components/dataset-selector.tsx:18
-msgid "Datensätze werden geladen"
-msgstr ""
-
-#: app/pages/[locale]/chart/[chartId].tsx:22
-#~ msgid "Datensätze werden herausgeholt"
-#~ msgstr ""
+#: app/components/chart-type-selector.tsx:18
+#: app/components/chart-type-selector.tsx:21
+msgid "Chart Type"
+msgstr "Chart-Typ"
 
 #: app/components/hint.tsx:31
-msgid "Gratulation! Ihre Visualisierung kann jetzt geteilt und eingebettet werden."
-msgstr ""
+msgid "Click on a dataset in the left column to preview its structure and content."
+msgstr "Klicken Sie auf einen Datensatz in der linken Spalte, um eine Übersicht über die Struktur und Komposition des jeweiligen Datensatz zu erhalten."
 
-#: app/pages/[locale]/playground.tsx:17
-#~ msgid "Hallo Welt!"
-#~ msgstr "Hallo Welt!"
+#: app/components/chart-controls/color-palette.tsx:41
+msgid "Color Palette"
+msgstr "Farbpalette"
 
-#: app/components/hint.tsx:20
-msgid "Klicken Sie auf einen Datensatz in der linken Spalte, um eine Übersicht über die Struktur und Komposition des jeweiligen Datensatz zu erhalten."
-msgstr ""
-
-#: app/components/chart-configurator.tsx:32
-#: app/components/chart-filters.tsx:20
-#: app/components/chart-preview.tsx:41
-#: app/components/chart-type-selector.tsx:17
-msgid "Metadaten werden geladen..."
-msgstr ""
+#: app/components/hint.tsx:40
+msgid "Congratulations! Your visualization can now be shared and embedded."
+msgstr "Gratulation! Ihre Grafik kann nun geteilt und eingebettet werden."
 
 #: app/pages/[locale]/index.tsx:14
-msgid "Neue Grafik erstellen"
-msgstr "Neue Grafik erstellen"
+msgid "Create a new visualization"
+msgstr "Visualisierung erstellen"
 
-#: app/components/panel-middle.tsx:69
-msgid "Neue Visualisierung"
-msgstr ""
+#: app/components/chart-configurator.tsx:56
+msgid "Data"
+msgstr "Data"
 
-#: app/components/panel-middle.tsx:57
-msgid "Publizieren"
-msgstr ""
+#: app/components/stepper.tsx:38
+msgid "Dataset"
+msgstr "Datensatz"
 
-#: app/components/stepper.tsx:58
-msgid "Teilen & Einbetten"
-msgstr ""
+#: app/components/chart-annotator.tsx:6
+msgid "Description"
+msgstr "Beschreibung"
 
-#: app/components/stepper.tsx:44
-msgid "Visualisierungs-Typ"
-msgstr ""
+#: app/components/chart-configurator.tsx:53
+msgid "Design"
+msgstr "Design"
 
-#: app/components/panel-middle.tsx:34
-#: app/components/panel-middle.tsx:46
-msgid "Weiter"
-msgstr ""
+#: app/components/action-bar.tsx:54
+msgid "Edit"
+msgstr "Bearbeiten"
 
-#: app/components/panel-middle.tsx:42
-#: app/components/panel-middle.tsx:54
-msgid "Zurück"
-msgstr ""
+#: app/components/chart-options-selector.tsx:42
+#: app/components/chart-options-selector.tsx:60
+msgid "Filter"
+msgstr "Filter"
 
-#: app/pages/[locale]/config-tester.tsx:28
-#~ msgid "no id"
-#~ msgstr ""
+#: app/components/hint.tsx:22
+msgid "Loading data…"
+msgstr "Daten werden geladen…"
 
-#: app/pages/[locale]/config-tester.tsx:70
-#~ msgid "test-form-save"
-#~ msgstr "Speichern"
+#: app/components/header.tsx:24
+#: app/components/header.tsx:33
+msgid "Logo of the Swiss Confederation"
+msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
-#: app/components/panel-left.tsx:34
+#: app/components/action-bar.tsx:61
+msgid "New Visualization"
+msgstr "Neue Visualisierung"
+
+#: app/components/action-bar.tsx:17
+#: app/components/action-bar.tsx:30
+#: app/components/action-bar.tsx:41
+msgid "Next"
+msgstr "Weiter"
+
+#: app/components/chart-type-selector.tsx:25
+msgid "No visualization can be created with the selected dataset."
+msgstr "Mit ausgewähltem Datensatz kann kein Graphik dargestellt werden"
+
+#: app/components/action-bar.tsx:26
+#: app/components/action-bar.tsx:38
+#: app/components/action-bar.tsx:46
+msgid "Previous"
+msgstr "Zurück"
+
+#: app/components/action-bar.tsx:49
+msgid "Publish"
+msgstr "Publizieren"
+
+#: app/components/filters.tsx:26
+msgid "Reset"
+msgstr "Rücksetzen"
+
+#: app/components/dataset-selector.tsx:12
+msgid "Select Dataset"
+msgstr "Datensatz auswählen"
+
+#: app/components/hint.tsx:28
+msgid "Select a dataset"
+msgstr "Datensatz auswählen"
+
+#: app/components/chart-options-selector.tsx:36
+msgid "Select a dimension"
+msgstr "Dimension wählen"
+
+#: app/components/chart-options-selector.tsx:52
+msgid "Select a measure"
+msgstr "Messreihe wählen"
+
+#: app/components/filters.tsx:26
+msgid "Select all"
+msgstr "Alle auswählen"
+
+#: app/components/panel-left.tsx:21
+#: app/components/stepper.tsx:66
+msgid "Share & embed"
+msgstr "Teilen & einbetten"
+
+#: app/components/chart-preview.tsx:43
+msgid "Source"
+msgstr "Quelle"
+
+#: app/components/stepper.tsx:45
+msgid "Visualization Type"
+msgstr "Visualisierung-Typ"
+
+#: app/components/a11y-table.tsx:33
+msgid "sorted by {sortingField} in {0} order"
+msgstr "sortiert nach {sortingField} in {0} order"
+
+#: app/components/panel-left.tsx:23
 msgid "test-form-success"
 msgstr "Konfiguration gespeichert"
-
-#: app/pages/[locale]/config-tester.tsx:46
-#: app/pages/[locale]/config-tester.tsx:52
-#: app/pages/[locale]/config-tester.tsx:58
-#: app/pages/[locale]/config-tester.tsx:64
-#~ msgid "test-form-title"
-#~ msgstr "Titel"
-
-#: app/components/header.tsx:13
-msgid "visualize.admin.ch"
-msgstr ""

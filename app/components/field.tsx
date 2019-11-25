@@ -232,7 +232,7 @@ export const ChartFieldField = ({
   dataSetMetadata
 }: {
   componentIri?: string;
-  label: string;
+  label: string | React.ReactNode;
   field: string;
   options: Option[];
   disabled?: boolean;

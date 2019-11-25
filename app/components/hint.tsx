@@ -35,7 +35,7 @@ export const Loading = () => (
       <Icon name="loading" size={56} />
     </Box>
     <Text variant="heading2">
-      <Trans>Daten werden geladen…</Trans>
+      <Trans>Loading data…</Trans>
     </Text>
   </Hint>
 );
@@ -43,12 +43,12 @@ export const DataSetHint = () => (
   <Hint>
     <Icon name="dataset" size={56} />
     <Text variant="heading2" my={3}>
-      <Trans>Datensatz Auswählen</Trans>
+      <Trans>Select a dataset</Trans>
     </Text>
     <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
       <Trans>
-        Klicken Sie auf einen Datensatz in der linken Spalte, um eine Übersicht
-        über die Struktur und Komposition des jeweiligen Datensatz zu erhalten.
+        Click on a dataset in the left column to preview its structure and
+        content.
       </Trans>
     </Text>
   </Hint>
@@ -59,8 +59,7 @@ export const Success = () => (
     <Icon name="published" size={56} />
     <Text variant="heading3" ml={4} sx={{ textAlign: "left" }}>
       <Trans>
-        Gratulation! Ihre Visualisierung kann jetzt geteilt und eingebettet
-        werden.
+        Congratulations! Your visualization can now be shared and embedded.
       </Trans>
     </Text>
   </Flex>

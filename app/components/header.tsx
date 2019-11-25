@@ -12,7 +12,7 @@ export const Logo = () => (
       <LogoDesktop />
     </Box>
     <Text as="h1" variant="lead">
-      <Trans>visualize.admin.ch</Trans>
+      visualize.admin.ch
     </Text>
   </Flex>
 );
@@ -29,7 +29,7 @@ export const Header = () => {
 const LogoMobile = () => (
   <svg width={30} height={34}>
     <title id="logo">
-      <Trans>Logo der Schweizer Eidgenossenschaft</Trans>
+      <Trans>Logo of the Swiss Confederation</Trans>
     </title>
     <g fillRule="nonzero" fill="none">
       <path
@@ -46,7 +46,7 @@ const LogoMobile = () => (
 const LogoDesktop = () => (
   <svg width={224} height={56}>
     <title id="logo">
-      <Trans>Logo der Schweizer Eidgenossenschaft</Trans>
+      <Trans>Logo of the Swiss Confederation</Trans>
     </title>
     <g fillRule="nonzero" fill="none">
       <g fill="#0D0E0E">

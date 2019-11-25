@@ -11,6 +11,7 @@ import { DataSetMetadata, useDataSetAndMetadata } from "../domain/data-cube";
 import { CollapsibleSection } from "./chart-controls";
 import { ControlTabField, FilterTabField } from "./field";
 import { Loading } from "./hint";
+import { Trans } from "@lingui/macro";
 
 const ColumnChartFields = ({
   chartConfig,
@@ -163,7 +164,7 @@ export const ChartConfigurator = ({
     );
     return (
       <>
-        <CollapsibleSection title="Design">
+        <CollapsibleSection title={<Trans>Design</Trans>}>
           {state.chartConfig.chartType === "column" ? (
             <ColumnChartFields
               chartConfig={state.chartConfig}
@@ -186,7 +187,7 @@ export const ChartConfigurator = ({
             />
           ) : null}
         </CollapsibleSection>
-        <CollapsibleSection title="Data">
+        <CollapsibleSection title={<Trans>Data</Trans>}>
           {unMappedDimensions.map((dimension, i) => (
             <FilterTabField
               key={dimension.component.iri.value}

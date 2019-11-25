@@ -17,7 +17,7 @@ export const Label = ({
   children
 }: {
   label?: string;
-  htmlFor: string;
+  htmlFor: string | React.ReactNode;
   disabled?: boolean;
   smaller?: boolean;
   children: React.ReactNode;
@@ -90,7 +90,7 @@ export const Select = ({
   onChange
 }: {
   options: Option[];
-  label?: string;
+  label?: React.ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
   <Box sx={{ color: "monochrome.700", pb: 2 }}>

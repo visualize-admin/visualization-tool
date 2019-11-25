@@ -9,6 +9,7 @@ import { ChartLinesVisualization } from "./chart-lines";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
 import { useLocale } from "../lib/use-locale";
+import { Trans } from "@lingui/macro";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -83,10 +84,13 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             color: "monochrome.600",
             alignSelf: "flex-end"
           }}
-        >{`Quelle: ${
-          // FIXME: use "source" instead of "contact" when the API is fixed
-          dataSet.extraMetadata.get("contact")!.value
-        }`}</Text>
+        >
+          <Trans>Source</Trans>
+          {`: ${
+            // FIXME: use "source" instead of "contact" when the API is fixed
+            dataSet.extraMetadata.get("contact")!.value
+          }`}
+        </Text>
       </Flex>
     );
   } else {
