@@ -16,7 +16,7 @@ const Page = () => {
           passHref
         >
           <Button as="a" variant="primary">
-            <Trans>Neue Grafik erstellen</Trans>
+            <Trans>Create a new visualization</Trans>
           </Button>
         </LocalizedLink>
       </Center>

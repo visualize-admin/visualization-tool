@@ -90,7 +90,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Datensatz</Trans>
+          <Trans>Dataset</Trans>
         </Text>
       );
     case "SELECTING_CHART_TYPE":
@@ -102,7 +102,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Visualisierungs-Typ</Trans>
+          <Trans>Visualization Type</Trans>
         </Text>
       );
     case "CONFIGURING_CHART":
@@ -114,7 +114,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Anpassen</Trans>
+          <Trans>Adjust</Trans>
         </Text>
       );
     case "DESCRIBING_CHART":
@@ -126,7 +126,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Beschriften</Trans>
+          <Trans>Annotate</Trans>
         </Text>
       );
     case "PUBLISHED":
@@ -138,7 +138,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Teilen & Einbetten</Trans>
+          <Trans>Share & embed</Trans>
         </Text>
       );
   }

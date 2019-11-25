@@ -40,9 +40,9 @@ export const PanelLeft = ({
 
           {/* Step 5 */}
           {state.state === "PUBLISHED" && (
-            <CollapsibleSection title="Teilen & einbetten">
+            <CollapsibleSection title={<Trans>Share & embed</Trans>}>
               <Box mb={2}>
-                <Trans id="test-form-success">Grafik URL</Trans>
+                <Trans id="test-form-success">Visualization URL</Trans>
               </Box>
               <Box mb={2}>
                 <LocalizedLink href={`/[locale]/v/${state.configKey}`} passHref>

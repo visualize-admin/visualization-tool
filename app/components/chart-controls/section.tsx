@@ -7,11 +7,10 @@ export const CollapsibleSection = ({
   title,
   children
 }: {
-  title?: string;
+  title?: React.ReactNode;
   children: React.ReactNode;
 }) => {
   const [show, toggle] = React.useState(true);
-  // FIXME: Translation problem here... Pass the message id as prop?
   return (
     <Box variant="controlSection">
       {title && (

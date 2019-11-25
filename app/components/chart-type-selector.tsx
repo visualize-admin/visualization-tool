@@ -28,10 +28,10 @@ export const ChartTypeSelector = ({
     return (
       <Box as="fieldset">
         <legend style={{ display: "none" }}>
-          <Trans>Chart-Type</Trans>
+          <Trans>Chart Type</Trans>
         </legend>
         <SectionTitle>
-          <Trans>Chart-Type</Trans>
+          <Trans>Chart Type</Trans>
         </SectionTitle>
         <Flex
           width="100%"
@@ -48,7 +48,7 @@ export const ChartTypeSelector = ({
           {!possibleChartTypes ? (
             <Hint>
               <Trans>
-                Mit ausgewähltem Datensatz kann kein Graphik dargestellt werden
+                No visualization can be created with the selected dataset.
               </Trans>
             </Hint>
           ) : (
