@@ -45,10 +45,6 @@ export type ConfiguratorStateAction =
       value: string;
     }
   | {
-      type: "CHART_CONFIG_CHANGED";
-      value: { path: string | string[]; value: $FixMe };
-    }
-  | {
       type: "CHART_FIELD_CHANGED";
       value: {
         field: string;
@@ -241,18 +237,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
         draft.activeField = action.value;
-      }
-      return draft;
-
-    case "CHART_CONFIG_CHANGED":
-      draft.state = "CONFIGURING_CHART";
-      if (draft.state === "CONFIGURING_CHART") {
-        setWith(
-          draft.chartConfig,
-          action.value.path,
-          action.value.value,
-          Object
-        );
       }
       return draft;
 

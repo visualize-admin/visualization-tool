@@ -16,54 +16,6 @@ export type FieldProps = Pick<
   "onChange" | "name" | "value" | "checked" | "type"
 >;
 
-// export const useField = ({
-//   path,
-//   type = "text",
-//   value
-// }: {
-//   path: string;
-//   type?: "text" | "checkbox" | "radio" | "input" | "select";
-//   value?: string;
-// }): FieldProps => {
-//   const [state, dispatch] = useConfiguratorState();
-
-//   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-//     e => {
-//       dispatch({
-//         type: "CHART_CONFIG_CHANGED",
-//         value: {
-//           path,
-//           value:
-//             type === "checkbox"
-//               ? e.currentTarget.checked
-//                 ? true
-//                 : undefined
-//               : e.currentTarget.value
-//         }
-//       });
-//     },
-//     [dispatch, path, type]
-//   );
-
-//   const stateValue =
-//     state.state === "CONFIGURING_CHART" ? get(state.chartConfig, path, "") : "";
-
-//   const checked =
-//     type === "checkbox"
-//       ? stateValue
-//       : type === "radio" || "select"
-//       ? stateValue === value
-//       : undefined;
-
-//   return {
-//     name: path,
-//     value: value ? value : stateValue,
-//     type,
-//     checked,
-//     onChange
-//   };
-// };
-
 export const useControlTab = ({
   value
 }: {
