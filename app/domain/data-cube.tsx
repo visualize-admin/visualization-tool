@@ -110,10 +110,11 @@ export const useDataSets = () => {
   );
 };
 
-const useDataSet = (iri: string) => {
+const useDataSet = (iri: string | undefined) => {
   const entryPoint = useDataCubeEntryPoint();
-  return useRemoteData(["dataSet", entryPoint, iri], () =>
-    entryPoint.dataCubeByIri(iri)
+  return useRemoteData(
+    () => (iri ? ["dataSet", entryPoint, iri] : null),
+    () => entryPoint.dataCubeByIri(iri!)
   );
 };
 
@@ -206,7 +207,7 @@ const useMetadata = (cube: DataCube | undefined) => {
 // };
 
 export const useDataSetAndMetadata = (
-  iri: string
+  iri: string | undefined
 ): RDState<DataSetMetadata> => {
   const { data: dataSet } = useDataSet(iri);
   const { data: metaData } = useMetadata(dataSet);

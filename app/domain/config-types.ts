@@ -245,13 +245,6 @@ const ConfiguratorStateSelectingDataSet = t.type({
   dataSet: t.undefined,
   chartConfig: t.undefined
 });
-const ConfiguratorStatePreSelectingChartType = t.type({
-  state: t.literal("PRE_SELECTING_CHART_TYPE"),
-  dataSet: t.string,
-  activeField: t.union([t.string, t.undefined]),
-  meta: Meta,
-  chartConfig: t.undefined
-});
 const ConfiguratorStateSelectingChartType = t.type({
   state: t.literal("SELECTING_CHART_TYPE"),
   dataSet: t.string,
@@ -290,9 +283,6 @@ const ConfiguratorStatePublished = t.intersection([
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
   typeof ConfiguratorStateSelectingDataSet
 >;
-export type ConfiguratorStatePreSelectingChartType = t.TypeOf<
-  typeof ConfiguratorStatePreSelectingChartType
->;
 export type ConfiguratorStateSelectingChartType = t.TypeOf<
   typeof ConfiguratorStateSelectingChartType
 >;
@@ -309,7 +299,6 @@ export type ConfiguratorStatePublishing = t.TypeOf<
 const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
-  ConfiguratorStatePreSelectingChartType,
   ConfiguratorStateSelectingChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
@@ -325,7 +314,10 @@ export const decodeConfiguratorState = (
   return pipe(
     ConfiguratorState.decode(state),
     fold(
-      err => undefined,
+      err => {
+        console.log(err)
+        return undefined
+      },
       d => d
     )
   );

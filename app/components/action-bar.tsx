@@ -3,31 +3,32 @@ import React from "react";
 import { Button, Flex } from "rebass";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { LocalizedLink } from "./links";
+import { useDataSetAndMetadata } from "../domain";
 
 export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
+  const { data: dataSetMetadata } = useDataSetAndMetadata(dataSetIri);
   return (
     <Flex role="navigation" variant="actionBar" justifyContent="space-between">
       {state.state === "SELECTING_DATASET" ? (
         <Button
           variant="primary"
           onClick={() => {
-            if (dataSetIri) {
+            if (dataSetIri && dataSetMetadata) {
               dispatch({
                 type: "DATASET_SELECTED",
-                value: { dataSet: dataSetIri, title: "" }
+                value: { dataSet: dataSetIri, title: "", dataSetMetadata }
               });
             }
           }}
           sx={{ width: "112px", ml: "auto" }}
-          disabled={!dataSetIri}
+          disabled={!dataSetMetadata || !dataSetIri}
         >
           <Trans>Next</Trans>
         </Button>
       ) : (
         <>
-          {(state.state === "SELECTING_CHART_TYPE" ||
-            state.state === "PRE_SELECTING_CHART_TYPE") && (
+          {state.state === "SELECTING_CHART_TYPE" && (
             <>
               <LocalizedLink
                 href={{
@@ -54,12 +55,18 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
             <>
               <Button
                 variant="secondary"
-                onClick={() =>
-                  dispatch({
-                    type: "DATASET_SELECTED",
-                    value: { dataSet: state.dataSet, title: "" }
-                  })
-                }
+                onClick={() => {
+                  if (dataSetMetadata) {
+                    dispatch({
+                      type: "DATASET_SELECTED",
+                      value: {
+                        dataSet: state.dataSet,
+                        title: "",
+                        dataSetMetadata
+                      }
+                    });
+                  }
+                }}
                 sx={{ mr: "auto" }}
                 disabled={false}
               >
