@@ -1,4 +1,5 @@
 import useSWR, { keyInterface } from "swr";
+import { fetcherFn, ConfigInterface } from "swr/dist/types";
 
 export type RDState<T> =
   | {
@@ -19,9 +20,13 @@ const initialState = { state: "pending" as const };
 
 export const useRemoteData = <T>(
   key: keyInterface,
-  runFetch: () => Promise<T>
+  runFetch: fetcherFn<T>,
+  options?: ConfigInterface<T, Error, fetcherFn<T>>
 ): RDState<T> => {
-  const { data, error, isValidating } = useSWR<T, Error>(key, runFetch);
+  const { data, error, isValidating } = useSWR<T, Error>(key, runFetch, {
+    revalidateOnFocus: false,
+    ...options
+  });
 
   if (error) {
     return { state: "error", error, data };

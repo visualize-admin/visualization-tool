@@ -3,7 +3,8 @@ import {
   DataCube,
   DataCubeEntryPoint,
   Dimension,
-  Measure
+  Measure,
+  Attribute
 } from "@zazuko/query-rdf-data-cube";
 import {
   createContext,
@@ -24,26 +25,23 @@ import {
   parseObservations,
   ObservationsPreview
 } from "./data";
+import { defaultLocale } from "../locales/locales";
 
-const DataCubeContext = createContext<string>("");
+const DataCubeContext = createContext<DataCubeEntryPoint>(
+  new DataCubeEntryPoint("")
+);
 
 export const DataCubeProvider = ({ children }: { children?: ReactNode }) => {
   if (!process.env.SPARQL_ENDPOINT) {
     throw Error("No SPARQL_ENDPOINT set!");
   }
-  return (
-    <DataCubeContext.Provider value={process.env.SPARQL_ENDPOINT}>
-      {children}
-    </DataCubeContext.Provider>
-  );
-};
-
-const useDataCubeEntryPoint = () => {
-  const endpoint = useContext(DataCubeContext);
+  const endpoint = process.env.SPARQL_ENDPOINT;
   const locale = useLocale();
-  return useMemo(() => {
+
+  const entryPoint = useMemo(() => {
     return new DataCubeEntryPoint(endpoint, {
-      languages: [locale, "de", ""],
+      languages:
+        locale === defaultLocale ? [locale, ""] : [locale, defaultLocale, ""],
       extraMetadata: [
         {
           variable: "contact",
@@ -89,12 +87,34 @@ const useDataCubeEntryPoint = () => {
       ]
     });
   }, [endpoint, locale]);
+
+  return (
+    <DataCubeContext.Provider value={entryPoint}>
+      {children}
+    </DataCubeContext.Provider>
+  );
+};
+
+const useDataCubeEntryPoint = () => {
+  const entryPoint = useContext(DataCubeContext);
+  return entryPoint;
 };
 
 export const useDataSets = () => {
   const entryPoint = useDataCubeEntryPoint();
-  const fetchCb = useCallback(() => entryPoint.dataCubes(), [entryPoint]);
-  return useRemoteData(["datasets", entryPoint], fetchCb);
+  return useRemoteData(
+    ["dataSets", entryPoint],
+    (_: string, _entryPoint: DataCubeEntryPoint) => {
+      return _entryPoint.dataCubes();
+    }
+  );
+};
+
+const useDataSet = (iri: string) => {
+  const entryPoint = useDataCubeEntryPoint();
+  return useRemoteData(["dataSet", entryPoint, iri], () =>
+    entryPoint.dataCubeByIri(iri)
+  );
 };
 
 export interface DataSetMetadata {
@@ -109,68 +129,158 @@ export interface DataSetMetadata {
   >;
 }
 
+const useMetadata = (cube: DataCube | undefined) => {
+  return useRemoteData(
+    () => (cube ? cube.iri : null),
+    async () => ({
+      dimensions: await cube!.dimensions(),
+      measures: await cube!.measures(),
+      attributes: await cube!.attributes()
+    })
+  );
+};
+
+// Alternative implementation of useDataSetAndMetadata which fetches values for multiple components at the same time
+// Not used because it's actually slower!
+// export const useDataSetAndMetadata2 = (
+//   iri: string
+// ): RDState<DataSetMetadata> => {
+//   const { data: dataSet } = useDataSet(iri);
+//   const { data: metaData } = useMetadata(dataSet);
+
+//   return useRemoteData(
+//     () => (dataSet && metaData ? [dataSet, metaData] : null),
+//     async () => {
+//       const { dimensions, attributes, measures } = metaData!;
+//       console.time("dimensionValues")
+//       const dimensionValues = await dataSet!.componentsValues(dimensions,
+//         );
+//       console.timeEnd("dimensionValues")
+//       const attributeValues = await dataSet!.componentsValues(attributes
+//       );
+//       const measureMinMax = await dataSet!.componentsMinMax(measures);
+
+//       const dimensionsWithValues = dimensions.map(component => ({
+//         component,
+//         values: dimensionValues.get(component)!
+//       }));
+//       const attributesWithValues = attributes.map(component => ({
+//         component,
+//         values: attributeValues.get(component)!
+//       }));
+//       const measuresWithMinMax = measures.map(component => ({
+//         component,
+//         ...measureMinMax.get(component)!
+//       }));
+
+//       const componentLabels = [
+//         ...dimensions,
+//         ...measures,
+//         ...attributes
+//       ].reduce<Record<string, string>>((labels, component) => {
+//         labels[component.iri.value] = component.label.value;
+//         return labels;
+//       }, {});
+
+//       const componentsByIri = [
+//         ...dimensionsWithValues,
+//         ...measuresWithMinMax,
+//         ...attributesWithValues
+//       ].reduce<
+//         Record<string, DimensionWithMeta | AttributeWithMeta | MeasureWithMeta>
+//       >((components, component) => {
+//         components[component.component.iri.value] = component;
+//         return components;
+//       }, {});
+
+//       return {
+//         dataSet: dataSet!,
+//         dimensions: dimensionsWithValues,
+//         attributes: attributesWithValues,
+//         measures: measuresWithMinMax,
+//         componentLabels,
+//         componentsByIri
+//       };
+//     }
+//   );
+// };
+
 export const useDataSetAndMetadata = (
   iri: string
 ): RDState<DataSetMetadata> => {
-  const entryPoint = useDataCubeEntryPoint();
-  const fetchCb = useCallback(async () => {
-    const dataSet = await entryPoint.dataCubeByIri(iri);
+  const { data: dataSet } = useDataSet(iri);
+  const { data: metaData } = useMetadata(dataSet);
 
-    const dimensions = await dataSet.dimensions();
+  const fetchCb = useCallback(
+    async (
+      dataSet: DataCube,
+      metaData: {
+        dimensions: Dimension[];
+        attributes: Attribute[];
+        measures: Measure[];
+      }
+    ) => {
+      const { dimensions, attributes, measures } = metaData;
 
-    const dimensionsWithValues = await Promise.all(
-      dimensions.map(async component => ({
-        component,
-        values: await dataSet.componentValues(component)
-      }))
-    );
+      console.time("dimensionValues");
+      const dimensionsWithValues = await Promise.all(
+        dimensions.map(async component => ({
+          component,
+          values: await dataSet.componentValues(component)
+        }))
+      );
+      console.timeEnd("dimensionValues");
 
-    const attributes = await dataSet.attributes();
+      const attributesWithValues = await Promise.all(
+        attributes.map(async component => ({
+          component,
+          values: await dataSet.componentValues(component)
+        }))
+      );
 
-    const attributesWithValues = await Promise.all(
-      attributes.map(async component => ({
-        component,
-        values: await dataSet.componentValues(component)
-      }))
-    );
+      const measuresWithMinMax = await Promise.all(
+        measures.map(async component => ({
+          component,
+          ...(await dataSet.componentMinMax(component))
+        }))
+      );
 
-    const measures = await dataSet.measures();
+      const componentLabels = [
+        ...dimensions,
+        ...measures,
+        ...attributes
+      ].reduce<Record<string, string>>((labels, component) => {
+        labels[component.iri.value] = component.label.value;
+        return labels;
+      }, {});
 
-    const measuresWithMinMax = await Promise.all(
-      measures.map(async component => ({
-        component,
-        ...(await dataSet.componentMinMax(component))
-      }))
-    );
+      const componentsByIri = [
+        ...dimensionsWithValues,
+        ...measuresWithMinMax,
+        ...attributesWithValues
+      ].reduce<
+        Record<string, DimensionWithMeta | AttributeWithMeta | MeasureWithMeta>
+      >((components, component) => {
+        components[component.component.iri.value] = component;
+        return components;
+      }, {});
 
-    const componentLabels = [...dimensions, ...measures, ...attributes].reduce<
-      Record<string, string>
-    >((labels, component) => {
-      labels[component.iri.value] = component.label.value;
-      return labels;
-    }, {});
+      return {
+        dataSet,
+        dimensions: dimensionsWithValues,
+        attributes: attributesWithValues,
+        measures: measuresWithMinMax,
+        componentLabels,
+        componentsByIri
+      };
+    },
+    []
+  );
 
-    const componentsByIri = [
-      ...dimensionsWithValues,
-      ...measuresWithMinMax,
-      ...attributesWithValues
-    ].reduce<
-      Record<string, DimensionWithMeta | AttributeWithMeta | MeasureWithMeta>
-    >((components, component) => {
-      components[component.component.iri.value] = component;
-      return components;
-    }, {});
-
-    return {
-      dataSet,
-      dimensions: dimensionsWithValues,
-      attributes: attributesWithValues,
-      measures: measuresWithMinMax,
-      componentLabels,
-      componentsByIri
-    };
-  }, [entryPoint, iri]);
-  return useRemoteData(["datasetandmeta", entryPoint, iri], fetchCb);
+  return useRemoteData(
+    () => (dataSet && metaData ? [dataSet, metaData] : null),
+    fetchCb
+  );
 };
 
 export const usePreviewObservations = ({
