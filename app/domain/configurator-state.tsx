@@ -14,11 +14,11 @@ import {
   ConfiguratorStatePublishing,
   FilterValue,
   FilterValueMulti,
-  isValidConfiguratorState,
   ChartConfig,
   FieldType,
   ChartType,
-  ConfiguratorStateSelectingDataSet
+  ConfiguratorStateSelectingDataSet,
+  decodeConfiguratorState
 } from "./config-types";
 import { DataSetMetadata } from "./data-cube";
 import { getInitialFields } from "./charts";
@@ -365,8 +365,8 @@ const ConfiguratorStateProviderInternal = ({
           getLocalStorageKey(chartId)
         );
         if (storedState) {
-          const parsedState = JSON.parse(storedState);
-          if (isValidConfiguratorState(parsedState)) {
+          const parsedState = decodeConfiguratorState(JSON.parse(storedState));
+          if (parsedState) {
             stateToInitialize = parsedState;
           } else {
             console.warn(

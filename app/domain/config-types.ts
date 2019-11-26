@@ -1,4 +1,6 @@
 import * as t from "io-ts";
+import { pipe } from "fp-ts/lib/pipeable";
+import { fold } from "fp-ts/lib/Either";
 
 // Filters
 const FilterValueMulti = t.type(
@@ -317,6 +319,14 @@ const ConfiguratorState = t.union([
 
 export type ConfiguratorState = t.TypeOf<typeof ConfiguratorState>;
 
-export const isValidConfiguratorState = (
+export const decodeConfiguratorState = (
   state: unknown
-): state is ConfiguratorState => ConfiguratorState.is(state);
+): ConfiguratorState | undefined => {
+  return pipe(
+    ConfiguratorState.decode(state),
+    fold(
+      err => undefined,
+      d => d
+    )
+  );
+};
