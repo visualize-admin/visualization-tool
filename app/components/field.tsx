@@ -4,12 +4,10 @@ import {
   Option,
   useMultiFilterField,
   useMetaField,
-  useControlTab,
   useSingleFilterField,
   useChartFieldField,
   useChartOptionField,
-  useFilterTab,
-  useAnnotatorTab
+  useActiveFieldField
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeRadio } from "./chart-controls";
@@ -29,38 +27,6 @@ import {
 } from "./chart-controls/control-tab";
 import { IconName } from "../icons";
 
-// export const Field = ({
-//   label,
-//   path,
-//   type,
-//   value,
-//   options,
-//   disabled,
-//   ...props
-// }: {
-//   label: string;
-//   path: string;
-//   type?: "text" | "checkbox" | "radio" | "input" | "select";
-//   value?: string;
-//   options?: Option[];
-//   disabled?: boolean;
-// }) => {
-//   const field = useField({
-//     path,
-//     type,
-//     value
-//   });
-
-//   return type === "radio" ? (
-//     <Radio label={label} disabled={disabled} {...field}></Radio>
-//   ) : type === "checkbox" ? (
-//     <Checkbox label={label} disabled={disabled} {...field}></Checkbox>
-//   ) : type === "input" ? (
-//     <Input label={label} {...field} disabled={disabled}></Input>
-//   ) : (
-//     <Select options={options!} label={label} {...field}></Select> // FIXME: make sure options is defined
-//   );
-// };
 export const ControlTabField = ({
   iconName,
   component,
@@ -72,7 +38,7 @@ export const ControlTabField = ({
   value: string;
   disabled?: boolean;
 }) => {
-  const field = useControlTab({
+  const field = useActiveFieldField({
     value
   });
 
@@ -87,6 +53,7 @@ export const ControlTabField = ({
     ></ControlTab>
   );
 };
+
 export const FilterTabField = ({
   component,
   value,
@@ -96,7 +63,7 @@ export const FilterTabField = ({
   value: string;
   disabled?: boolean;
 }) => {
-  const field = useFilterTab({
+  const field = useActiveFieldField({
     value
   });
   const [state] = useConfiguratorState();
@@ -120,6 +87,7 @@ export const FilterTabField = ({
     ></FilterTab>
   );
 };
+
 export const AnnotatorTabField = ({
   value,
   disabled
@@ -127,7 +95,7 @@ export const AnnotatorTabField = ({
   value: string;
   disabled?: boolean;
 }) => {
-  const field = useAnnotatorTab({
+  const field = useActiveFieldField({
     value
   });
 
@@ -163,6 +131,7 @@ export const MetaInputField = ({
 
   return <Input label={label} {...field} disabled={disabled}></Input>;
 };
+
 export const MetaTextarea = ({
   label,
   metaKey,

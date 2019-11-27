@@ -25,24 +25,19 @@ import { getInitialFields } from "./charts";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
+  | { type: "STEP_NEXT"; dataSetMetadata: DataSetMetadata }
+  | { type: "STEP_PREVIOUS" }
   | {
       type: "DATASET_SELECTED";
-      value: {
-        dataSet: string;
-        title?: string;
-        dataSetMetadata: DataSetMetadata;
-      };
+      dataSet: string;
     }
   | {
-      type: "CHART_TYPE_PREVIEWED";
+      type: "CHART_TYPE_CHANGED";
       value: { chartType: ChartType; dataSetMetadata: DataSetMetadata };
     }
   | {
-      type: "CHART_TYPE_SELECTED";
-    }
-  | {
-      type: "CONTROL_TAB_CHANGED";
-      value: string;
+      type: "ACTIVE_FIELD_CHANGED";
+      value: string | undefined;
     }
   | {
       type: "CHART_FIELD_CHANGED";
@@ -61,13 +56,6 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_CONFIGURED";
-    }
-  | {
-      type: "CHART_ANNOTATION_TAB_CHANGED";
-      value: string;
-    }
-  | {
       type: "CHART_DESCRIPTION_CHANGED";
       value: { path: string | string[]; value: $FixMe };
     }
@@ -79,7 +67,6 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_FILTER_SET_MULTI";
       value: { dimensionIri: string; values: FilterValueMulti["values"] };
     }
-  | { type: "PUBLISH" }
   | { type: "PUBLISH_FAILED" }
   | { type: "PUBLISHED"; value: string };
 
@@ -92,7 +79,9 @@ export const getLocalStorageKey = (chartId: string) =>
   `${LOCALSTORAGE_PREFIX}:${chartId}`;
 
 const initialState: ConfiguratorState = {
-  state: "INITIAL"
+  state: "INITIAL",
+  dataSet: undefined,
+  activeField: undefined
 };
 
 const emptyState: ConfiguratorStateSelectingDataSet = {
@@ -113,7 +102,7 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
       en: ""
     }
   },
-  activeField: ""
+  activeField: undefined
 };
 
 export const getFilterValue = (
@@ -126,13 +115,14 @@ export const getFilterValue = (
 };
 
 const deriveFiltersFromFields = (
-  { fields, filters }: ChartConfig,
+  chartConfig: ChartConfig,
   { dimensions }: DataSetMetadata
 ) => {
   // 1. we need filters for all dimensions
   // 2. if a dimension is mapped to a field, it should be a multi filter, otherwise a single filter
   // 3a. if the filter type is correct, we leave it alone
   // 3b. if there's a mis-match, then we try to convert multi -> single and single -> multi
+  const { fields, filters } = chartConfig;
 
   const fieldDimensionIris = new Set(
     Object.values<FieldType>(fields).map(({ componentIri }) => componentIri)
@@ -171,7 +161,130 @@ const deriveFiltersFromFields = (
     }
   });
 
-  return filters;
+  return chartConfig;
+};
+
+const transitionStepNext = (
+  draft: ConfiguratorState,
+  dataSetMetadata: DataSetMetadata
+): ConfiguratorState => {
+  switch (draft.state) {
+    case "SELECTING_DATASET":
+      if (draft.dataSet) {
+        const chartConfig: ChartConfig = {
+          chartType: "column",
+          fields: getInitialFields({
+            chartType: "column",
+            dimensions: dataSetMetadata.dimensions,
+            measures: dataSetMetadata.measures
+          }),
+          filters: {}
+        };
+
+        deriveFiltersFromFields(chartConfig, dataSetMetadata);
+
+        return {
+          state: "SELECTING_CHART_TYPE",
+          dataSet: draft.dataSet,
+          meta: draft.meta,
+          activeField: undefined,
+          chartConfig
+        };
+      }
+      break;
+    case "SELECTING_CHART_TYPE":
+      return {
+        ...draft,
+        activeField: undefined,
+        state: "CONFIGURING_CHART"
+      };
+    case "CONFIGURING_CHART":
+      return {
+        ...draft,
+        activeField: undefined,
+        state: "DESCRIBING_CHART"
+      };
+    case "DESCRIBING_CHART":
+      return {
+        ...draft,
+        activeField: undefined,
+        state: "PUBLISHING"
+      };
+    //    case "PUBLISHING":
+    // NO next step?
+    default:
+      console.warn("Unhandled STEP_NEXT from", draft.state);
+      break;
+  }
+  return draft;
+};
+
+export const canTransitionToNextStep = (
+  state: ConfiguratorState,
+  dataSetMetadata: DataSetMetadata | undefined
+): boolean => {
+  if (!dataSetMetadata) {
+    return false;
+  }
+
+  switch (state.state) {
+    case "SELECTING_DATASET":
+      return state.dataSet !== undefined;
+    case "SELECTING_CHART_TYPE":
+    case "CONFIGURING_CHART":
+    case "DESCRIBING_CHART":
+      // These are all interchangeable in terms of validity
+      return true;
+  }
+
+  return false;
+};
+
+const transitionStepPrevious = (
+  draft: ConfiguratorState
+): ConfiguratorState => {
+  switch (draft.state) {
+    case "SELECTING_DATASET":
+      return draft;
+    case "SELECTING_CHART_TYPE":
+      return {
+        ...draft,
+        activeField: undefined,
+        chartConfig: undefined,
+        state: "SELECTING_DATASET"
+      };
+    case "CONFIGURING_CHART":
+      return {
+        ...draft,
+        activeField: undefined,
+        state: "SELECTING_CHART_TYPE"
+      };
+    case "DESCRIBING_CHART":
+      return {
+        ...draft,
+        activeField: undefined,
+        state: "CONFIGURING_CHART"
+      };
+    case "PUBLISHING":
+      return {
+        ...draft,
+        activeField: undefined,
+        state: "DESCRIBING_CHART"
+      };
+  }
+  return draft;
+};
+
+export const canTransitionToPreviousStep = (
+  state: ConfiguratorState
+): boolean => {
+  switch (state.state) {
+    case "PUBLISHED":
+      return false;
+    default:
+      // These are all interchangeable in terms of validity
+      return true;
+  }
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
@@ -182,31 +295,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
       return action.value.state === "INITIAL" ? emptyState : action.value;
-
     case "DATASET_SELECTED":
-      draft.state = "SELECTING_CHART_TYPE";
-      if (draft.state === "SELECTING_CHART_TYPE") {
-        draft.dataSet = action.value.dataSet;
-
-        // setWith(draft, action.value.path, action.value.value, Object);
-        const { dataSetMetadata } = action.value;
-
-        draft.chartConfig = {
-          chartType: "column",
-          fields: getInitialFields({
-            chartType: "column",
-            dimensions: dataSetMetadata.dimensions,
-            measures: dataSetMetadata.measures
-          }),
-          filters: {}
-        };
-        draft.activeField = undefined;
-
-        deriveFiltersFromFields(draft.chartConfig, dataSetMetadata);
+      if (draft.state === "SELECTING_DATASET") {
+        draft.dataSet = action.dataSet;
       }
       return draft;
-    case "CHART_TYPE_PREVIEWED":
-      draft.state = "SELECTING_CHART_TYPE";
+    case "CHART_TYPE_CHANGED":
       if (draft.state === "SELECTING_CHART_TYPE") {
         // setWith(draft, action.value.path, action.value.value, Object);
         const { chartType, dataSetMetadata } = action.value;
@@ -226,18 +320,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_TYPE_SELECTED":
-      draft.state = "CONFIGURING_CHART";
-      if (draft.state === "CONFIGURING_CHART") {
-        draft.activeField = undefined;
-      }
-      return draft;
-
-    case "CONTROL_TAB_CHANGED":
-      draft.state = "CONFIGURING_CHART";
-      if (draft.state === "CONFIGURING_CHART") {
+    case "ACTIVE_FIELD_CHANGED":
+      if (
+        draft.state === "CONFIGURING_CHART" ||
+        draft.state === "DESCRIBING_CHART"
+      )
         draft.activeField = action.value;
-      }
       return draft;
 
     case "CHART_FIELD_CHANGED":
@@ -276,26 +364,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_CONFIGURED":
-      draft.state = "DESCRIBING_CHART";
-      return draft;
-
-    case "CHART_ANNOTATION_TAB_CHANGED":
-      draft.state = "DESCRIBING_CHART";
-      if (draft.state === "DESCRIBING_CHART") {
-        draft.activeField = action.value;
-      }
-      return draft;
-
     case "CHART_DESCRIPTION_CHANGED":
-      draft.state = "DESCRIBING_CHART";
       if (draft.state === "DESCRIBING_CHART") {
         setWith(draft, `meta.${action.value.path}`, action.value.value, Object);
       }
       return draft;
 
     case "CHART_CONFIG_FILTER_SET_SINGLE":
-      draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, value } = action.value;
         draft.chartConfig.filters[dimensionIri] = { type: "single", value };
@@ -303,7 +378,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTER_SET_MULTI":
-      draft.state = "CONFIGURING_CHART";
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, values } = action.value;
         const f = draft.chartConfig.filters[dimensionIri];
@@ -318,23 +392,33 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "PUBLISH":
-      draft.state = "PUBLISHING";
-      return draft;
+    // State transitions
+    case "STEP_NEXT":
+      return transitionStepNext(draft, action.dataSetMetadata);
+      
+    case "STEP_PREVIOUS":
+      return transitionStepPrevious(draft);
 
+    // Special state transitions
     case "PUBLISH_FAILED":
-      // Recover by going back to CONFIGURING_CHART state
-      draft.state = "CONFIGURING_CHART";
+      if (draft.state === "PUBLISHING") {
+        return transitionStepPrevious(draft);
+      }
       return draft;
 
     case "PUBLISHED":
-      draft.state = "PUBLISHED";
-      if (draft.state === "PUBLISHED") {
-        draft.configKey = action.value;
+      if (draft.state === "PUBLISHING") {
+        return {
+          ...draft,
+          activeField: undefined,
+          configKey: action.value,
+          state: "PUBLISHED"
+        };
       }
       return draft;
+
     default:
-      return;
+      return draft;
   }
 };
 

@@ -237,26 +237,28 @@ export const isValidConfig = (config: unknown): config is Config =>
 
 export const decodeConfig = (config: unknown) => Config.decode(config);
 
-const ConfiguratorStateInitial = t.type({ state: t.literal("INITIAL") });
+const ConfiguratorStateInitial = t.type({
+  state: t.literal("INITIAL"),
+  activeField: t.undefined,
+  dataSet: t.undefined
+});
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
-  activeField: t.union([t.string, t.undefined]),
+  activeField: t.undefined,
   meta: Meta,
-  dataSet: t.undefined,
+  dataSet: t.union([t.string, t.undefined]),
   chartConfig: t.undefined
 });
-const ConfiguratorStateSelectingChartType = t.type({
-  state: t.literal("SELECTING_CHART_TYPE"),
-  dataSet: t.string,
-  activeField: t.union([t.string, t.undefined]),
-  meta: Meta,
-  chartConfig: ChartConfig
-});
+const ConfiguratorStateSelectingChartType =
+t.intersection([
+  t.type({
+    state: t.literal("SELECTING_CHART_TYPE"),
+  }),
+  Config
+]);
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
     state: t.literal("CONFIGURING_CHART"),
-    meta: Meta,
-    dataSet: t.string
   }),
   Config
 ]);
@@ -315,8 +317,8 @@ export const decodeConfiguratorState = (
     ConfiguratorState.decode(state),
     fold(
       err => {
-        console.log(err)
-        return undefined
+        console.log(err);
+        return undefined;
       },
       d => d
     )

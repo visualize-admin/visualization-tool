@@ -1,6 +1,6 @@
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
-import { ChartType, MetaKey, FilterValueSingle } from "./config-types";
+import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
 import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
@@ -16,7 +16,7 @@ export type FieldProps = Pick<
   "onChange" | "name" | "value" | "checked" | "type"
 >;
 
-export const useControlTab = ({
+export const useActiveFieldField = ({
   value
 }: {
   value: string;
@@ -25,72 +25,14 @@ export const useControlTab = ({
 } => {
   const [state, dispatch] = useConfiguratorState();
 
-  const onClick = useCallback<() => void>(() => {
+  const onClick = useCallback(() => {
     dispatch({
-      type: "CONTROL_TAB_CHANGED",
+      type: "ACTIVE_FIELD_CHANGED",
       value
     });
   }, [dispatch, value]);
 
-  const stateValue =
-    state.state === "CONFIGURING_CHART" ? state.activeField : "";
-
-  const checked = stateValue === value;
-
-  return {
-    value,
-    checked,
-    onClick
-  };
-};
-
-export const useFilterTab = ({
-  value
-}: {
-  value: string;
-}): FieldProps & {
-  onClick: (x: string) => void;
-} => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const onClick = useCallback<() => void>(() => {
-    dispatch({
-      type: "CONTROL_TAB_CHANGED",
-      value
-    });
-  }, [dispatch, value]);
-
-  const stateValue =
-    state.state === "CONFIGURING_CHART" ? state.activeField : "";
-
-  const checked = stateValue === value;
-
-  return {
-    value,
-    checked,
-    onClick
-  };
-};
-export const useAnnotatorTab = ({
-  value
-}: {
-  value: string;
-}): FieldProps & {
-  onClick: (x: string) => void;
-} => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const onClick = useCallback<() => void>(() => {
-    dispatch({
-      type: "CHART_ANNOTATION_TAB_CHANGED",
-      value
-    });
-  }, [dispatch, value]);
-
-  const stateValue =
-    state.state === "DESCRIBING_CHART" ? state.activeField : "";
-
-  const checked = stateValue === value;
+  const checked = state.activeField === value;
 
   return {
     value,
@@ -303,7 +245,7 @@ export const useChartTypeSelectorField = ({
       const chartType = e.currentTarget.value as ChartType;
 
       dispatch({
-        type: "CHART_TYPE_PREVIEWED",
+        type: "CHART_TYPE_CHANGED",
         value: {
           chartType,
           dataSetMetadata: metaData

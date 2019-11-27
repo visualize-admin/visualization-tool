@@ -22,8 +22,6 @@ export default () => markdown`
           dataSetDescription={
             "Comptes des exploitations forestières en francs, dès 2015"
           }
-          selected={false}
-          updateDataSetIri={() => {}}
         />
       </div>
     </ReactSpecimen>
@@ -46,8 +44,6 @@ export default () => markdown`
           dataSetDescription={
             "Comptes des exploitations forestières en francs, dès 2015"
           }
-          selected={true}
-          updateDataSetIri={() => {}}
         />
       </div>
     </ReactSpecimen>

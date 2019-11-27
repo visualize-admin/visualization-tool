@@ -1,6 +1,5 @@
 import { useSelect } from "downshift";
 import * as React from "react";
-import { useEffect } from "react";
 import { Box, Button, Flex, Text } from "rebass";
 import { ColorScheme, scheme } from "vega";
 import { useConfiguratorState } from "../../domain";
@@ -13,8 +12,8 @@ const vegaPalettes: Array<{
   value: ColorScheme;
   colors: Array<string>;
 }> = [
-  { label: "accent", value: "accent", colors: scheme("accent") },
   { label: "category10", value: "category10", colors: scheme("category10") },
+  { label: "accent", value: "accent", colors: scheme("accent") },
   // { label: "category20", value: "category20", colors: scheme("category20") },
   // { label: "category20b", value: "category20b", colors: scheme("category20b") },
   // { label: "category20c", value: "category20c", colors: scheme("category20c") },
@@ -33,24 +32,28 @@ export const ColorPalette = ({ field }: { field: string }) => {
   const [state, dispatch] = useConfiguratorState();
   const {
     isOpen,
-    selectedItem,
     getToggleButtonProps,
     getLabelProps,
     getMenuProps,
     highlightedIndex,
     getItemProps
-  } = useSelect({ items: vegaPalettes });
-
-  useEffect(() => {
-    dispatch({
-      type: "CHART_OPTION_CHANGED",
-      value: {
-        field,
-        path: "palette",
-        value: (selectedItem && selectedItem.value) || "category10"
+  } = useSelect({
+    items: vegaPalettes,
+    defaultSelectedItem: vegaPalettes[0], // Probably should use `selectedItem` here …
+    onSelectedItemChange: ({ selectedItem }) => {
+      if (selectedItem) {
+        dispatch({
+          type: "CHART_OPTION_CHANGED",
+          value: {
+            field,
+            path: "palette",
+            value: selectedItem.value
+          }
+        });
       }
-    });
-  }, [dispatch, field, selectedItem]);
+    }
+  });
+
   return (
     <div>
       <Label smaller {...getLabelProps()}>

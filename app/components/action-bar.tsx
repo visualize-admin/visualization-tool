@@ -1,28 +1,44 @@
 import { Trans } from "@lingui/macro";
-import React from "react";
+import React, { useCallback } from "react";
 import { Button, Flex } from "rebass";
-import { useConfiguratorState } from "../domain/configurator-state";
+import {
+  useConfiguratorState,
+  canTransitionToNextStep,
+  canTransitionToPreviousStep
+} from "../domain/configurator-state";
 import { LocalizedLink } from "./links";
 import { useDataSetAndMetadata } from "../domain";
 
 export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
   const { data: dataSetMetadata } = useDataSetAndMetadata(dataSetIri);
+
+  const goNext = useCallback(() => {
+    if (dataSetMetadata) {
+      dispatch({
+        type: "STEP_NEXT",
+        dataSetMetadata
+      });
+    }
+  }, [dataSetMetadata, dispatch]);
+
+  const goPrevious = useCallback(() => {
+    dispatch({
+      type: "STEP_PREVIOUS"
+    });
+  }, [dispatch]);
+
+  const nextDisabled = !canTransitionToNextStep(state, dataSetMetadata);
+  const previousDisabled = !canTransitionToPreviousStep(state);
+
   return (
     <Flex role="navigation" variant="actionBar" justifyContent="space-between">
       {state.state === "SELECTING_DATASET" ? (
         <Button
           variant="primary"
-          onClick={() => {
-            if (dataSetIri && dataSetMetadata) {
-              dispatch({
-                type: "DATASET_SELECTED",
-                value: { dataSet: dataSetIri, title: "", dataSetMetadata }
-              });
-            }
-          }}
+          onClick={goNext}
           sx={{ width: "112px", ml: "auto" }}
-          disabled={!dataSetMetadata || !dataSetIri}
+          disabled={nextDisabled}
         >
           <Trans>Next</Trans>
         </Button>
@@ -43,61 +59,32 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
               </LocalizedLink>
               <Button
                 variant="primary"
-                onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
+                onClick={goNext}
                 sx={{ ml: "auto" }}
-                disabled={state.chartConfig === undefined}
+                disabled={nextDisabled}
               >
                 <Trans>Next</Trans>
               </Button>
             </>
           )}
-          {state.state === "CONFIGURING_CHART" && (
+          {(state.state === "CONFIGURING_CHART" ||
+            state.state === "DESCRIBING_CHART") && (
             <>
               <Button
                 variant="secondary"
-                onClick={() => {
-                  if (dataSetMetadata) {
-                    dispatch({
-                      type: "DATASET_SELECTED",
-                      value: {
-                        dataSet: state.dataSet,
-                        title: "",
-                        dataSetMetadata
-                      }
-                    });
-                  }
-                }}
+                onClick={goPrevious}
                 sx={{ mr: "auto" }}
-                disabled={false}
+                disabled={previousDisabled}
               >
                 <Trans>Previous</Trans>
               </Button>
               <Button
                 variant="primary"
-                onClick={() => dispatch({ type: "CHART_CONFIGURED" })}
+                onClick={goNext}
                 sx={{ ml: "auto" }}
-                // disabled={state.chartConfig.chartType === "none"}
+                disabled={nextDisabled}
               >
                 <Trans>Next</Trans>
-              </Button>
-            </>
-          )}
-          {state.state === "DESCRIBING_CHART" && (
-            <>
-              <Button
-                variant="secondary"
-                onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
-                sx={{ mr: "auto" }}
-              >
-                <Trans>Previous</Trans>
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => dispatch({ type: "PUBLISH" })}
-                sx={{ ml: "auto" }}
-                // disabled={state.chartConfig.chartType === "none"}
-              >
-                <Trans>Publish</Trans>
               </Button>
             </>
           )}
@@ -105,7 +92,10 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
             <>
               <Button
                 variant="secondary"
-                onClick={() => dispatch({ type: "CHART_TYPE_SELECTED" })}
+                onClick={() => {
+                  // TODO
+                  console.log("TODO");
+                }}
                 sx={{ mr: "auto" }}
                 disabled
               >
