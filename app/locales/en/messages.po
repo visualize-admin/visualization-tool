@@ -24,11 +24,11 @@ msgstr "Annotate"
 #: app/components/chart-type-selector.tsx:18
 #: app/components/chart-type-selector.tsx:21
 msgid "Chart Type"
-msgstr "Chart Type"
+msgstr "Visualization type"
 
 #: app/components/hint.tsx:31
 msgid "Click on a dataset in the left column to preview its structure and content."
-msgstr "Click on a dataset in the left column to preview its structure and content."
+msgstr "Select a dataset on the left to preview its structure and content."
 
 #: app/components/chart-controls/color-palette.tsx:41
 msgid "Color Palette"
@@ -94,7 +94,7 @@ msgstr "No visualization can be created with the selected dataset"
 #: app/components/action-bar.tsx:38
 #: app/components/action-bar.tsx:46
 msgid "Previous"
-msgstr "Previous"
+msgstr "Back"
 
 #: app/components/action-bar.tsx:49
 msgid "Publish"
@@ -110,7 +110,7 @@ msgstr "Select Dataset"
 
 #: app/components/hint.tsx:28
 msgid "Select a dataset"
-msgstr "Select a dataset"
+msgstr "No dataset selected"
 
 #: app/components/chart-options-selector.tsx:36
 msgid "Select a dimension"
