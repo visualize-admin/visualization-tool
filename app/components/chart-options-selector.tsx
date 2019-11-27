@@ -140,20 +140,20 @@ const Filter = ({
   metaData: DataSetMetadata;
 }) => {
   const { dimensions } = metaData;
+  const activeDimension = dimensions.find(
+    dim => dim.component.iri.value === state.activeField
+  );
   return (
     <CollapsibleSection title={<Trans>Filter</Trans>}>
-      {state.activeField && ( // FIXME: Dont' check here if the filter panel is active
+      {activeDimension && (
         <DimensionValuesSingleFilter
-          dimension={
-            dimensions.find(
-              dim => dim.component.iri.value === state.activeField
-            )!
-          }
+          dimension={activeDimension}
         ></DimensionValuesSingleFilter>
       )}
     </CollapsibleSection>
   );
 };
+
 const ChartFieldOptions = ({
   field,
   chartType

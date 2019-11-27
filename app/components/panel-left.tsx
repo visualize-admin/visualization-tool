@@ -9,22 +9,13 @@ import { DataSetList } from "./dataset-selector";
 import { LocalizedLink } from "./links";
 import { ChartAnnotator } from "./chart-annotator";
 
-export const PanelLeft = ({
-  dataSetPreviewIri,
-  updateDataSetPreviewIri
-}: {
-  dataSetPreviewIri?: string;
-  updateDataSetPreviewIri: (x: string) => void;
-}) => {
+export const PanelLeft = () => {
   const [state] = useConfiguratorState();
 
   return (
     <>
       {state.state === "SELECTING_DATASET" ? (
-        <DataSetList
-          dataSetPreviewIri={dataSetPreviewIri}
-          updateDataSetPreviewIri={updateDataSetPreviewIri}
-        />
+        <DataSetList />
       ) : (
         <>
           {state.state === "SELECTING_CHART_TYPE" && (
