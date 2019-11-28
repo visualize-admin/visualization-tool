@@ -30,7 +30,7 @@ msgstr "Tipo di visualizzazione"
 msgid "Click on a dataset in the left column to preview its structure and content."
 msgstr "Seleziona un set di dati a sinistra per visualizzare in anteprima la sua struttura e il suo contenuto."
 
-#: app/components/chart-controls/color-palette.tsx:41
+#: app/components/chart-controls/color-palette.tsx:45
 msgid "Color Palette"
 msgstr "Colorazione"
 
@@ -46,6 +46,7 @@ msgstr "Créer une visualisation"
 msgid "Data"
 msgstr "Dati"
 
+#: app/components/chart-preview.tsx:52
 #: app/components/stepper.tsx:38
 msgid "Dataset"
 msgstr "Il record"
@@ -58,12 +59,12 @@ msgstr "Descrizione"
 msgid "Design"
 msgstr "Design"
 
-#: app/components/action-bar.tsx:54
+#: app/components/action-bar.tsx:56
 msgid "Edit"
 msgstr "Modificare"
 
 #: app/components/chart-options-selector.tsx:42
-#: app/components/chart-options-selector.tsx:60
+#: app/components/chart-options-selector.tsx:61
 msgid "Filter"
 msgstr "Filtro"
 
@@ -76,13 +77,13 @@ msgstr "Caricamento dati…"
 msgid "Logo of the Swiss Confederation"
 msgstr "Logo della Confederazione Svizzera"
 
-#: app/components/action-bar.tsx:61
+#: app/components/action-bar.tsx:63
 msgid "New Visualization"
 msgstr "Nuova visualizzazione"
 
-#: app/components/action-bar.tsx:17
-#: app/components/action-bar.tsx:30
-#: app/components/action-bar.tsx:41
+#: app/components/action-bar.tsx:27
+#: app/components/action-bar.tsx:39
+#: app/components/action-bar.tsx:48
 msgid "Next"
 msgstr "Avanti"
 
@@ -90,15 +91,14 @@ msgstr "Avanti"
 msgid "No visualization can be created with the selected dataset."
 msgstr "Nessuna visualizzazione può essere creata con il set di dati selezionato"
 
-#: app/components/action-bar.tsx:26
-#: app/components/action-bar.tsx:38
-#: app/components/action-bar.tsx:46
+#: app/components/action-bar.tsx:35
+#: app/components/action-bar.tsx:45
 msgid "Previous"
 msgstr "Indietro"
 
 #: app/components/action-bar.tsx:49
-msgid "Publish"
-msgstr "Pubblicare"
+#~ msgid "Publish"
+#~ msgstr "Pubblicare"
 
 #: app/components/filters.tsx:26
 msgid "Reset"
@@ -124,10 +124,14 @@ msgstr "Seleziona una misura"
 msgid "Select all"
 msgstr "Seleziona tutto"
 
-#: app/components/panel-left.tsx:21
+#: app/components/panel-left.tsx:20
 #: app/components/stepper.tsx:66
 msgid "Share & embed"
 msgstr "Condividi e incorpora"
+
+#: app/components/dataset-preview.tsx:23
+msgid "Showing 10 first rows"
+msgstr ""
 
 #: app/components/chart-preview.tsx:43
 msgid "Source"
@@ -141,6 +145,6 @@ msgstr "Tipo di visualizzazione"
 msgid "sorted by {sortingField} in {0} order"
 msgstr "ordinati per {sortingField} nell'ordine {0}"
 
-#: app/components/panel-left.tsx:23
+#: app/components/panel-left.tsx:22
 msgid "test-form-success"
 msgstr "Conservato la configurazione"
