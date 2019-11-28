@@ -274,13 +274,6 @@ const ConfiguratorStatePublishing = t.intersection([
   }),
   Config
 ]);
-const ConfiguratorStatePublished = t.intersection([
-  t.type({
-    state: t.literal("PUBLISHED"),
-    configKey: t.string
-  }),
-  Config
-]);
 
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
   typeof ConfiguratorStateSelectingDataSet
@@ -305,7 +298,6 @@ const ConfiguratorState = t.union([
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,
-  ConfiguratorStatePublished
 ]);
 
 export type ConfiguratorState = t.TypeOf<typeof ConfiguratorState>;

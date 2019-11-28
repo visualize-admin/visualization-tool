@@ -9,10 +9,8 @@ const Page = () => {
     <AppLayout>
       <Center>
         <LocalizedLink
-          href={{
-            pathname: "/[locale]/chart/[chartId]",
-            query: { chartId: "new" }
-          }}
+          pathname="/[locale]/chart/[chartId]"
+          query={{ chartId: "new" }}
           passHref
         >
           <Button as="a" variant="primary">

@@ -1,4 +1,3 @@
-import { LanguageMenu } from "./../components/language-menu";
 /**
  * IMPORTANT: just export JSON-serializable data from this file!
  *
@@ -387,7 +386,7 @@ export const theme: Theme = {
       },
       past: {
         variant: "variants.step.basic",
-        bg: "monochrome.800"
+        bg: "monochrome.700"
       },
       current: {
         variant: "variants.step.basic",

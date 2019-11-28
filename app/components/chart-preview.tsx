@@ -30,7 +30,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         {(state.state === "SELECTING_CHART_TYPE" ||
           state.state === "CONFIGURING_CHART" ||
           state.state === "DESCRIBING_CHART" ||
-          state.state === "PUBLISHED") && (
+          state.state === "PUBLISHING") && (
           <>
             <Text variant="heading2" mb={2}>
               {state.meta.title[locale] === ""

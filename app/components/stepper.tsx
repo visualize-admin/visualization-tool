@@ -1,6 +1,9 @@
 import * as React from "react";
 import { Button, Flex, Text, Box } from "rebass";
-import { useConfiguratorState } from "../domain/configurator-state";
+import {
+  useConfiguratorState,
+  ConfiguratorStateAction
+} from "../domain/configurator-state";
 import { Icon } from "../icons";
 import { Trans } from "@lingui/macro";
 
@@ -9,19 +12,18 @@ type StepState =
   | "SELECTING_DATASET"
   | "SELECTING_CHART_TYPE"
   | "CONFIGURING_CHART"
-  | "DESCRIBING_CHART"
-  | "PUBLISHED";
+  | "DESCRIBING_CHART";
 
 const steps: Array<StepState> = [
   "SELECTING_DATASET",
   "SELECTING_CHART_TYPE",
   "CONFIGURING_CHART",
-  "DESCRIBING_CHART",
-  "PUBLISHED"
+  "DESCRIBING_CHART"
 ];
 
 export const Stepper = () => {
-  const [state] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState();
+  const currentStepIndex = steps.indexOf(state.state as $IntentionalAny);
 
   return (
     <Flex variant="stepper.root" justifyContent="center">
@@ -36,7 +38,14 @@ export const Stepper = () => {
             key={step}
             stepNumber={i + 1}
             stepState={step}
-            status={state.state === step ? "current" : "future"}
+            status={
+              currentStepIndex === i
+                ? "current"
+                : currentStepIndex > i || state.state === "PUBLISHING"
+                ? "past"
+                : "future"
+            }
+            dispatch={dispatch}
           ></Step>
         ))}
       </Flex>
@@ -47,31 +56,49 @@ export const Stepper = () => {
 export const Step = ({
   stepState,
   stepNumber,
-  status
+  status,
+  dispatch
 }: {
   stepState: StepState;
   stepNumber: number;
   status: StepStatus;
-}) => (
-  <Button disabled variant="step">
-    <Flex
-      justifyContent="center"
-      alignItems="center"
-      px={4}
-      sx={{ height: "100%", bg: "monochrome.100", zIndex: 5 }}
+  dispatch?: React.Dispatch<ConfiguratorStateAction>;
+}) => {
+  const onClick = React.useCallback(() => {
+    if (status === "past" && dispatch) {
+      dispatch({
+        type: "STEP_PREVIOUS",
+        to: stepState
+      });
+    }
+  }, [status, stepState, dispatch]);
+
+  return (
+    <Button
+      disabled={status !== "past"}
+      variant="step"
+      onClick={onClick}
+      sx={{ cursor: status === "past" ? "pointer" : undefined }}
     >
       <Flex
         justifyContent="center"
         alignItems="center"
-        variant={`step.${status}`}
+        px={4}
+        sx={{ height: "100%", bg: "monochrome.100", zIndex: 5 }}
       >
-        {status === "past" ? <Icon name="check" /> : stepNumber}
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          variant={`step.${status}`}
+        >
+          {status === "past" ? <Icon name="check" size={16} /> : stepNumber}
+        </Flex>
       </Flex>
-    </Flex>
 
-    <StepLabel stepState={stepState} highlight={status === "current"} />
-  </Button>
-);
+      <StepLabel stepState={stepState} highlight={status === "current"} />
+    </Button>
+  );
+};
 
 export const StepLabel = ({
   stepState,
@@ -127,18 +154,6 @@ export const StepLabel = ({
           variant="paragraph2"
         >
           <Trans>Annotate</Trans>
-        </Text>
-      );
-    case "PUBLISHED":
-      return (
-        <Text
-          sx={{
-            color: highlight ? "monochrome.800" : "monochrome.700",
-            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
-          }}
-          variant="paragraph2"
-        >
-          <Trans>Share & embed</Trans>
         </Text>
       );
   }
