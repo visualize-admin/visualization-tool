@@ -138,7 +138,7 @@ export const AnnotatorTab = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Icon size={20} name={"table"} />
+          <Icon size={20} name={"text"} />
         </Flex>
         <Flex flexDirection="column" alignItems="flex-start" mx={2}>
           <Text
