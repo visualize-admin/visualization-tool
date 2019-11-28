@@ -1,8 +1,8 @@
 import { useTheme as useEmotionTheme } from "emotion-theming";
 
 type StyleValueMap = {
-  [k: string]: string | number | string[] | number[] | StyleValueMap;
-}
+  [k: string]: string | number | (string | number)[] | StyleValueMap;
+};
 
 /**
  * Adapted from the [System UI Theme Specification](https://system-ui.com/theme/)

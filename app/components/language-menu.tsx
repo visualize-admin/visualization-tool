@@ -14,7 +14,7 @@ export const LanguageMenu = () => {
               hrefLang={locale}
               variant="header.languageLink"
               sx={{
-                bg: locale === currentLocale ? "monochrome.500" : "transparent"
+                bg: locale === currentLocale ? "monochrome.300" : "transparent"
               }}
             >
               {locale}

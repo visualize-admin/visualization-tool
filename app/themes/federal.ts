@@ -367,8 +367,11 @@ export const theme: Theme = {
       logo: {
         order: [2, 1],
         alignItems: ["center", "flex-start"],
+        cursor: "pointer",
         "& > h1": {
-          pl: [0, 6]
+          pl: [0, 6],
+          textDecoration: "none",
+          color: "monochrome.700"
         }
       },
       logoImgMobile: {
@@ -379,23 +382,24 @@ export const theme: Theme = {
       },
       logoImgDesktop: {
         display: ["none", "block"],
-        pr: 7,
-        width: 448,
+        pr: 6,
         borderRightWidth: "1px",
         borderRightStyle: "solid",
         borderRightColor: "monochrome.300"
       },
       languageList: {
         listStyle: "none",
-        pr: 2,
-        py: 2,
-        width: "100%",
+        p: [2, 0],
+        ml: [0, "auto"],
+        width: ["100%", "auto"],
+        // flexGrow: 1,
         bg: ["monochrome.300", "transparent"],
         order: [1, 2],
         justifyContent: "flex-end"
       },
-      languageListItem: { mr: 2 },
+      languageListItem: { ml: 2 },
       languageLink: {
+        variant: "text.paragraph2",
         p: 1,
         textTransform: "uppercase",
         textDecoration: "none",
