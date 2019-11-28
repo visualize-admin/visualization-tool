@@ -516,7 +516,13 @@ const ConfiguratorStateProviderInternal = ({
           (async () => {
             try {
               const result = await save(state);
-              await push(`/[locale]/v/[chartId]`, `/${locale}/v/${result.key}`);
+              await push(
+                {
+                  pathname: `/[locale]/v/[chartId]`,
+                  query: { publishSuccess: true }
+                },
+                `/${locale}/v/${result.key}`
+              );
             } catch (e) {
               console.error(e);
               dispatch({ type: "PUBLISH_FAILED" });
