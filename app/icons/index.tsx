@@ -24,6 +24,7 @@ import { IconSegment } from "./ic-segment";
 import { IconFilter } from "./ic-filter";
 import { IconX } from "./ic-x";
 import { IconY } from "./ic-y";
+import { IconText } from "./ic-text";
 
 export const Icons = {
   check: IconCheck,
@@ -50,7 +51,8 @@ export const Icons = {
   x: IconX,
   y: IconY,
   segment: IconSegment,
-  filter: IconFilter
+  filter: IconFilter,
+  text: IconText
 };
 
 export type IconName = keyof (typeof Icons);
