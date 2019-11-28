@@ -34,7 +34,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           />
         </Box>
         <Text variant="meta" color="monochrome.600">
-          <Trans>Showing 10 first rows</Trans>
+          <Trans>Showing first 10 rows</Trans>
         </Text>
       </Box>
     );

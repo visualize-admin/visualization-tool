@@ -130,8 +130,8 @@ msgid "Share & embed"
 msgstr "Share & embed"
 
 #: app/components/dataset-preview.tsx:23
-msgid "Showing 10 first rows"
-msgstr "Showing 10 first rows"
+msgid "Showing first 10 rows"
+msgstr "Showing first 10 rows"
 
 #: app/components/chart-preview.tsx:43
 msgid "Source"
