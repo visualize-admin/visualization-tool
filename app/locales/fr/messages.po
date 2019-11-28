@@ -40,7 +40,7 @@ msgstr "Félicitations! Votre visualisation est prête à être partagée et int
 
 #: app/pages/[locale]/index.tsx:14
 msgid "Create a new visualization"
-msgstr "Crea una visualizzazione"
+msgstr "Créer une visualisation"
 
 #: app/components/chart-configurator.tsx:56
 msgid "Data"
