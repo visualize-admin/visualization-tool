@@ -397,13 +397,22 @@ export const theme: Theme = {
         order: [1, 2],
         justifyContent: "flex-end"
       },
-      languageListItem: { ml: 2 },
+      languageListItem: { ml: 1, p: 0 },
       languageLink: {
-        variant: "text.paragraph2",
-        p: 1,
-        textTransform: "uppercase",
-        textDecoration: "none",
-        color: "monochrome.700"
+        normal: {
+          variant: "text.paragraph2",
+          fontSize: 3,
+          lineHeight: 3,
+          p: 1,
+          textTransform: "uppercase",
+          textDecoration: "none",
+          color: "monochrome.700",
+          bg: "transparent"
+        },
+        active: {
+          variant: "variants.header.languageLink.normal",
+          bg: ["monochrome.500", "monochrome.300"]
+        }
       }
     },
 
