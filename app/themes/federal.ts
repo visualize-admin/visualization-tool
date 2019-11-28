@@ -659,7 +659,7 @@ export const globalStyles = `
   }
 
   *:focus {
-    outline: 4px solid #333333;
+    outline: 3px solid #333333;
   }
 
   fieldset {
