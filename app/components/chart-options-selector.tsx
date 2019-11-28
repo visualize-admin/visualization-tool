@@ -177,9 +177,9 @@ const ChartFieldOptions = ({
             path="type"
             value={"grouped"}
           />
-          <ColorPalette field={field}></ColorPalette>
         </>
       )}
+      <ColorPalette field={field}></ColorPalette>
     </>
   );
 };

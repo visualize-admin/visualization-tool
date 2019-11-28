@@ -201,7 +201,7 @@ export const ColumnsSegment = ({
       {
         name: "xscale",
         type: "band",
-        domain: { data: "table", field: "x" },
+        domain: { data: "table", field: "x", sort: true },
         range: "width",
         padding: 0.3,
         round: false

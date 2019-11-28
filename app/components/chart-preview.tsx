@@ -91,6 +91,16 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             dataSet.extraMetadata.get("contact")!.value
           }`}
         </Text>
+        <Text
+          variant="meta"
+          sx={{
+            color: "monochrome.600",
+            alignSelf: "flex-end"
+          }}
+        >
+          <Trans>Dataset</Trans>
+          {`: ${dataSet.labels[0].value}`}
+        </Text>
       </Flex>
     );
   } else {
