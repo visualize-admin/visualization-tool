@@ -35,7 +35,7 @@ export const ControlTab = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Icon size={20} name={iconName} />
+          <Icon size={24} name={iconName} />
         </Flex>
         <Flex flexDirection="column" alignItems="flex-start" mx={2}>
           <Text
@@ -89,7 +89,7 @@ export const FilterTab = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Icon size={20} name={"table"} />
+          <Icon size={24} name={"table"} />
         </Flex>
         <Flex flexDirection="column" alignItems="flex-start" mx={2}>
           <Text
@@ -138,7 +138,7 @@ export const AnnotatorTab = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Icon size={20} name={"text"} />
+          <Icon size={24} name={"text"} />
         </Flex>
         <Flex flexDirection="column" alignItems="flex-start" mx={2}>
           <Text

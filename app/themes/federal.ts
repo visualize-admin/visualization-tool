@@ -444,7 +444,8 @@ export const theme: Theme = {
         height: "24px",
         mb: 1,
         borderRadius: "circle",
-        fontSize: 4
+        fontSize: 3,
+        fontFamily: "frutigerRegular"
       },
       past: {
         variant: "variants.step.basic",

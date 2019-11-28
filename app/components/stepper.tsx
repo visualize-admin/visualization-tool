@@ -91,7 +91,7 @@ export const Step = ({
           alignItems="center"
           variant={`step.${status}`}
         >
-          {status === "past" ? <Icon name="check" size={16} /> : stepNumber}
+          {status === "past" ? <Icon name="check" size={20} /> : stepNumber}
         </Flex>
       </Flex>
 
