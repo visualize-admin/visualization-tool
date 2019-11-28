@@ -131,7 +131,7 @@ msgstr "Condividi e incorpora"
 
 #: app/components/dataset-preview.tsx:23
 msgid "Showing first 10 rows"
-msgstr ""
+msgstr "Mostra le prime 10 righe"
 
 #: app/components/chart-preview.tsx:43
 msgid "Source"

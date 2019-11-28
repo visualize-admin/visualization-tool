@@ -131,7 +131,7 @@ msgstr "Partager et intégrer"
 
 #: app/components/dataset-preview.tsx:23
 msgid "Showing first 10 rows"
-msgstr ""
+msgstr "Afficher les 10 premières lignes"
 
 #: app/components/chart-preview.tsx:43
 msgid "Source"
