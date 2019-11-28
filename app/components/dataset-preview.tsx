@@ -33,8 +33,17 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             measures={measures}
           />
         </Box>
-        <Text variant="meta" color="monochrome.600">
-          <Trans>Showing 10 first rows</Trans>
+        <Text
+          variant="table"
+          color="monochrome.600"
+          mt={4}
+          sx={{
+            width: "100%",
+            textAlign: "center",
+            fontFamily: "frutigerLight"
+          }}
+        >
+          <Trans>Showing first 10 rows</Trans>
         </Text>
       </Box>
     );
