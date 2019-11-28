@@ -28,8 +28,19 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
     });
   }, [dispatch]);
 
-  const nextDisabled = !canTransitionToNextStep(state, dataSetMetadata);
-  const previousDisabled = !canTransitionToPreviousStep(state);
+  const nextDisabled =
+    !canTransitionToNextStep(state, dataSetMetadata) ||
+    state.state === "PUBLISHING";
+  const previousDisabled =
+    !canTransitionToPreviousStep(state) || state.state === "PUBLISHING";
+
+  const previousLabel = <Trans>Previous</Trans>;
+  const nextLabel =
+    state.state === "DESCRIBING_CHART" || state.state === "PUBLISHING" ? (
+      <Trans>Publish</Trans>
+    ) : (
+      <Trans>Next</Trans>
+    );
 
   return (
     <Flex role="navigation" variant="actionBar" justifyContent="space-between">
@@ -40,80 +51,46 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
           sx={{ width: "112px", ml: "auto" }}
           disabled={nextDisabled}
         >
-          <Trans>Next</Trans>
+          {nextLabel}
         </Button>
+      ) : state.state === "SELECTING_CHART_TYPE" ? (
+        <>
+          <LocalizedLink
+            pathname= "/[locale]/chart/[chartId]"
+            query= {{ chartId: "new" }}
+            passHref
+          >
+            <Button as="a" variant="secondary">
+              {previousLabel}
+            </Button>
+          </LocalizedLink>
+          <Button
+            variant="primary"
+            onClick={goNext}
+            sx={{ ml: "auto" }}
+            disabled={nextDisabled}
+          >
+            {nextLabel}
+          </Button>
+        </>
       ) : (
         <>
-          {state.state === "SELECTING_CHART_TYPE" && (
-            <>
-              <LocalizedLink
-                href={{
-                  pathname: "/[locale]/chart/[chartId]",
-                  query: { chartId: "new" }
-                }}
-                passHref
-              >
-                <Button as="a" variant="secondary">
-                  <Trans>Previous</Trans>
-                </Button>
-              </LocalizedLink>
-              <Button
-                variant="primary"
-                onClick={goNext}
-                sx={{ ml: "auto" }}
-                disabled={nextDisabled}
-              >
-                <Trans>Next</Trans>
-              </Button>
-            </>
-          )}
-          {(state.state === "CONFIGURING_CHART" ||
-            state.state === "DESCRIBING_CHART") && (
-            <>
-              <Button
-                variant="secondary"
-                onClick={goPrevious}
-                sx={{ mr: "auto" }}
-                disabled={previousDisabled}
-              >
-                <Trans>Previous</Trans>
-              </Button>
-              <Button
-                variant="primary"
-                onClick={goNext}
-                sx={{ ml: "auto" }}
-                disabled={nextDisabled}
-              >
-                <Trans>Next</Trans>
-              </Button>
-            </>
-          )}
-          {state.state === "PUBLISHED" && (
-            <>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  // TODO
-                  console.log("TODO");
-                }}
-                sx={{ mr: "auto" }}
-                disabled
-              >
-                <Trans>Edit</Trans>
-              </Button>
-              <LocalizedLink
-                href={{
-                  pathname: "/[locale]/chart/[chartId]",
-                  query: { chartId: "new" }
-                }}
-                passHref
-              >
-                <Button as="a" variant="outline">
-                  <Trans>New Visualization</Trans>
-                </Button>
-              </LocalizedLink>
-            </>
-          )}
+          <Button
+            variant="secondary"
+            onClick={goPrevious}
+            sx={{ mr: "auto" }}
+            disabled={previousDisabled}
+          >
+            {previousLabel}
+          </Button>
+          <Button
+            variant="primary"
+            onClick={goNext}
+            sx={{ ml: "auto" }}
+            disabled={nextDisabled}
+          >
+            {nextLabel}
+          </Button>
         </>
       )}
     </Flex>

@@ -43,20 +43,24 @@ const createDynamicRouteProps = ({
 };
 
 export const LocalizedLink = ({
-  href,
-  as,
+  pathname,
+  query,
   ...rest
-}: LinkProps & { children: React.ReactNode }) => {
+}: Omit<LinkProps, "href" | "as"> & {
+  pathname: string;
+  query?: qs.ParsedUrlQuery;
+  children?: React.ReactNode;
+}) => {
   const locale = useLocale();
-  const pathname =
-    typeof href === "string" ? href : href.pathname ? href.pathname : "";
-  const query = typeof href === "string" ? undefined : href.query;
-  const search = qs.stringify(query as qs.ParsedUrlQueryInput);
-  const localizedAs = as
-    ? as
-    : pathname.replace(/\[locale\]/, locale) + (search ? `?${search}` : "");
-
-  return <Link href={href} as={localizedAs} {...rest} />;
+  return (
+    <Link
+      {...rest}
+      {...createDynamicRouteProps({
+        pathname,
+        query: query ? { ...query, locale } : { locale }
+      })}
+    />
+  );
 };
 
 export const CurrentPageLink = ({

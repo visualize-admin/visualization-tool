@@ -4,7 +4,7 @@ import { useConfiguratorState } from "../domain/configurator-state";
 import { ActionBar } from "./action-bar";
 import { ChartPreview } from "./chart-preview";
 import { DataSetPreview } from "./dataset-preview";
-import { DataSetHint, Success } from "./hint";
+import { DataSetHint } from "./hint";
 
 export const PanelMiddle = ({
   dataSetPreviewIri
@@ -36,18 +36,11 @@ export const PanelMiddle = ({
         <>
           {(state.state === "SELECTING_CHART_TYPE" ||
             state.state === "CONFIGURING_CHART" ||
-            state.state === "DESCRIBING_CHART") && (
+            state.state === "DESCRIBING_CHART" ||
+            state.state === "PUBLISHING") && (
             <Box variant="container.chart">
               <ChartPreview dataSetIri={state.dataSet} />
             </Box>
-          )}
-          {state.state === "PUBLISHED" && (
-            <>
-              <Success />
-              <Box variant="container.chart">
-                <ChartPreview dataSetIri={state.dataSet} />
-              </Box>
-            </>
           )}
         </>
       )}
