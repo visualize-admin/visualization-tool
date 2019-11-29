@@ -1,18 +1,24 @@
+import { Trans } from "@lingui/macro";
 import "isomorphic-unfetch";
 import { NextPage } from "next";
 import ErrorPage from "next/error";
-import { useDataSetAndMetadata, DataCubeProvider } from "../../../domain";
-import { ChartConfig, Config, Meta } from "../../../domain/config-types";
-import { ChartColumnsVisualization } from "../../../components/chart-columns";
-import { ChartLinesVisualization } from "../../../components/chart-lines";
+import { Box, Button, Flex, Text } from "rebass";
 import { ChartAreasVisualization } from "../../../components/chart-areas";
+import { ChartColumnsVisualization } from "../../../components/chart-columns";
+import { ChartFootnotes } from "../../../components/chart-footnotes";
+import { ChartLinesVisualization } from "../../../components/chart-lines";
 import { ChartScatterplotVisualization } from "../../../components/chart-scatterplot";
-import { Box, Button, Text, Flex } from "rebass";
+import { Header } from "../../../components/header";
 import { Success } from "../../../components/hint";
 import { LocalizedLink } from "../../../components/links";
-import { Trans } from "@lingui/macro";
-import { Header } from "../../../components/header";
 import { PublishActions } from "../../../components/publish-actions";
+import {
+  AttributeWithMeta,
+  DataCubeProvider,
+  DimensionWithMeta,
+  useDataSetAndMetadata
+} from "../../../domain";
+import { ChartConfig, Config, Meta } from "../../../domain/config-types";
 import { useLocale } from "../../../lib/use-locale";
 
 const DisplayChart = ({
@@ -76,30 +82,17 @@ const DisplayChart = ({
           chartConfig={chartConfig}
         />
       )}
-      <Text
-        variant="meta"
-        mt={4}
-        sx={{
-          color: "monochrome.600",
-          alignSelf: "flex-end"
-        }}
-      >
-        <Trans>Source</Trans>
-        {`: ${
-          // FIXME: use "source" instead of "contact" when the API is fixed
-          rd.data.dataSet.extraMetadata.get("contact")!.value
-        }`}
-      </Text>
-      <Text
-        variant="meta"
-        sx={{
-          color: "monochrome.600",
-          alignSelf: "flex-end"
-        }}
-      >
-        <Trans>Dataset</Trans>
-        {`: ${rd.data.dataSet.labels[0].value}`}
-      </Text>
+      <ChartFootnotes
+        source={rd.data.dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
+        dataSetName={rd.data.dataSet.labels[0].value}
+        filters={chartConfig.filters}
+        componentsByIri={
+          rd.data.componentsByIri as Record<
+            string,
+            DimensionWithMeta | AttributeWithMeta
+          >
+        }
+      />
     </Flex>
   ) : null;
 };
@@ -146,11 +139,19 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
               color="monochrome.800"
               fontFamily="frutigerLight"
             >
-              <Trans>
-                You can share this chart either by sharing its URL or by
-                embedding it on your website. You can also create a new
-                visualization or duplicate the above chart.
-              </Trans>
+              {publishSuccess ? (
+                <Trans>
+                  You can share this chart either by sharing its URL or by
+                  embedding it on your website. You can also create a new
+                  visualization or duplicate the above chart.
+                </Trans>
+              ) : (
+                <Trans>
+                  Create your own graphic now! With the visualization tool, you
+                  can create your own graphics, based on a large number of Swiss
+                  federal data.
+                </Trans>
+              )}
             </Text>
 
             <LocalizedLink

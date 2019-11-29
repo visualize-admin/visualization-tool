@@ -1,14 +1,14 @@
 import * as React from "react";
 import { Spec } from "vega";
+import { LineFields } from "../../domain";
 import {
-  Observations,
   DimensionWithMeta,
   MeasureWithMeta,
+  Observations,
   getDimensionLabel
 } from "../../domain/data";
-import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
 import { useVegaView } from "../../lib/use-vega";
-import { LineFields } from "../../domain";
+import { legendTheme, useChartTheme } from "./chart-styles";
 
 interface Props {
   data: Observations<LineFields>;
@@ -19,6 +19,13 @@ interface Props {
 }
 
 export const Lines = ({ data, width, dimensions, measures, fields }: Props) => {
+  const {
+    labelColor,
+    domainColor,
+    gridColor,
+    legendLabelColor,
+    fontFamily
+  } = useChartTheme();
   const fieldValues = new Set([fields.x.componentIri]);
   const unmappedFields: [string, DimensionWithMeta][] = Object.entries<{
     componentIri: string;
@@ -32,11 +39,15 @@ export const Lines = ({ data, width, dimensions, measures, fields }: Props) => {
   });
   const unmappedFieldKeys = unmappedFields.map(([key, value]) => key);
 
+  const yFieldLabel = getDimensionLabel(
+    measures.find(d => d.component.iri.value === fields.y.componentIri)!
+  );
+
   const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width,
     height: width * 0.4,
-    padding: { left: 16, right: 16, top: 64, bottom: 16 },
+    padding: { left: 16, right: 16, top: 16, bottom: 16 },
     autosize: { type: "fit-x", contains: "padding" },
 
     // title: { text: title, orient: "none", align: "left", fontSize: 16 },
@@ -68,6 +79,7 @@ export const Lines = ({ data, width, dimensions, measures, fields }: Props) => {
         name: "x",
         type: "time",
         range: "width",
+        nice: true,
         domain: {
           data: "table",
           field: "date"
@@ -97,8 +109,54 @@ export const Lines = ({ data, width, dimensions, measures, fields }: Props) => {
       }
     ],
     axes: [
-      { ...yAxisTheme, formatType: "number", format: "~s" },
-      { ...xAxisTheme, formatType: "time", format: "%Y" }
+      {
+        orient: "left",
+        scale: "y",
+        bandPosition: 0.5,
+        domain: false,
+        grid: true,
+        gridColor: gridColor,
+        labelFont: fontFamily,
+        labelColor: labelColor,
+        labelFontSize: 12,
+        labelPadding: 8,
+        ticks: false,
+        tickCount: 5,
+        formatType: "number",
+        format: ",.2~f",
+        offset: 0,
+        title: yFieldLabel,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        titleY: 0,
+        titleX: 0,
+        titlePadding: 16,
+        titleAngle: 0,
+        titleAnchor: "start",
+        titleAlign: "left"
+      },
+      {
+        scale: "x",
+        orient: "bottom",
+        bandPosition: 1,
+        domain: true,
+        domainColor,
+        domainWidth: 1,
+        grid: false,
+        labelColor: labelColor,
+        labelFont: fontFamily,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        labelFontSize: 12,
+        labelAngle: 0,
+        labelBaseline: "middle",
+        labelPadding: 8,
+        ticks: true,
+        tickCount: 5,
+        tickColor: domainColor,
+        formatType: "time",
+        format: "%Y"
+      }
     ],
 
     marks: [
