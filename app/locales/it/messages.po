@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/stepper.tsx:52
+#: app/components/stepper.tsx:66
 msgid "Adjust"
 msgstr "Aggiustare"
 
-#: app/components/stepper.tsx:59
+#: app/components/stepper.tsx:73
 msgid "Annotate"
 msgstr "Descrivere"
 
@@ -25,6 +25,10 @@ msgstr "Descrivere"
 #: app/components/chart-type-selector.tsx:21
 msgid "Chart Type"
 msgstr "Tipo di visualizzazione"
+
+#: app/components/publish-actions.tsx:45
+msgid "Chart URL:"
+msgstr "URL:"
 
 #: app/components/hint.tsx:31
 msgid "Click on a dataset in the left column to preview its structure and content."
@@ -38,18 +42,29 @@ msgstr "Colorazione"
 msgid "Congratulations! Your visualization can now be shared and embedded."
 msgstr "Congratulazioni! La visualizzazione ora può essere condivisa e incorporata."
 
-#: app/pages/[locale]/index.tsx:14
+#: app/pages/[locale]/index.tsx:11
 msgid "Create a new visualization"
 msgstr "Crea una visualizzazione"
+
+#: app/pages/[locale]/v/[chartId].tsx:70
+msgid "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
+msgstr "Crea la tua grafica ora! Con lo strumento di visualizzazione puoi creare la tua grafica basata su un gran numero di dati federali svizzeri."
 
 #: app/components/chart-configurator.tsx:56
 msgid "Data"
 msgstr "Dati"
 
-#: app/components/chart-preview.tsx:52
-#: app/components/stepper.tsx:38
+#: app/components/chart-footnotes.tsx:23
+msgid "Data:"
+msgstr "Dati:"
+
+#: app/components/stepper.tsx:52
 msgid "Dataset"
 msgstr "Il record"
+
+#: app/components/chart-footnotes.tsx:19
+msgid "Dataset:"
+msgstr "Record:"
 
 #: app/components/chart-annotator.tsx:6
 msgid "Description"
@@ -59,9 +74,17 @@ msgstr "Descrizione"
 msgid "Design"
 msgstr "Design"
 
-#: app/components/action-bar.tsx:56
-msgid "Edit"
-msgstr "Modificare"
+#: app/components/publish-actions.tsx:136
+msgid "Download Image"
+msgstr "scarica l'immagine"
+
+#: app/components/publish-actions.tsx:73
+msgid "Embed"
+msgstr "incorporare"
+
+#: app/components/publish-actions.tsx:87
+msgid "Embed:"
+msgstr "incorporare:"
 
 #: app/components/chart-options-selector.tsx:42
 #: app/components/chart-options-selector.tsx:61
@@ -72,18 +95,16 @@ msgstr "Filtro"
 msgid "Loading data…"
 msgstr "Caricamento dati…"
 
-#: app/components/header.tsx:24
-#: app/components/header.tsx:33
+#: app/components/header.tsx:27
+#: app/components/header.tsx:36
 msgid "Logo of the Swiss Confederation"
 msgstr "Logo della Confederazione Svizzera"
 
-#: app/components/action-bar.tsx:63
+#: app/pages/[locale]/v/[chartId].tsx:79
 msgid "New Visualization"
 msgstr "Nuova visualizzazione"
 
 #: app/components/action-bar.tsx:27
-#: app/components/action-bar.tsx:39
-#: app/components/action-bar.tsx:48
 msgid "Next"
 msgstr "Avanti"
 
@@ -91,14 +112,13 @@ msgstr "Avanti"
 msgid "No visualization can be created with the selected dataset."
 msgstr "Nessuna visualizzazione può essere creata con il set di dati selezionato"
 
-#: app/components/action-bar.tsx:35
-#: app/components/action-bar.tsx:45
+#: app/components/action-bar.tsx:26
 msgid "Previous"
 msgstr "Indietro"
 
-#: app/components/action-bar.tsx:49
-#~ msgid "Publish"
-#~ msgstr "Pubblicare"
+#: app/components/action-bar.tsx:27
+msgid "Publish"
+msgstr "Pubblicare"
 
 #: app/components/filters.tsx:26
 msgid "Reset"
@@ -124,27 +144,30 @@ msgstr "Seleziona una misura"
 msgid "Select all"
 msgstr "Seleziona tutto"
 
-#: app/components/panel-left.tsx:20
-#: app/components/stepper.tsx:66
-msgid "Share & embed"
-msgstr "Condividi e incorpora"
+#: app/components/publish-actions.tsx:21
+msgid "Share"
+msgstr "Condividi"
 
-#: app/components/dataset-preview.tsx:23
+#: app/components/publish-actions.tsx:35
+msgid "Share:"
+msgstr "Condividi:"
+
+#: app/components/dataset-preview.tsx:27
 msgid "Showing first 10 rows"
 msgstr "Mostra le prime 10 righe"
 
-#: app/components/chart-preview.tsx:43
-msgid "Source"
-msgstr "Origine"
+#: app/components/chart-footnotes.tsx:15
+msgid "Source:"
+msgstr "Origine:"
 
-#: app/components/stepper.tsx:45
+#: app/components/stepper.tsx:59
 msgid "Visualization Type"
 msgstr "Tipo di visualizzazione"
+
+#: app/pages/[locale]/v/[chartId].tsx:66
+msgid "You can share this chart either by sharing its URL or by embedding it on your website. You can also create a new visualization or duplicate the above chart."
+msgstr "Puoi condividere questo grafico condividendo il suo URL o incorporandolo nel tuo sito web. Puoi anche creare una nuova visualizzazione o duplicare il grafico sopra."
 
 #: app/components/a11y-table.tsx:33
 msgid "sorted by {sortingField} in {0} order"
 msgstr "ordinati per {sortingField} nell'ordine {0}"
-
-#: app/components/panel-left.tsx:22
-msgid "test-form-success"
-msgstr "Conservato la configurazione"

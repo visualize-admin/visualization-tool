@@ -1,46 +1,26 @@
-import { Axis, Legend } from "vega";
+import { Legend } from "vega";
+import { useTheme } from "../../themes";
+
+export const useChartTheme = () => {
+  const theme = useTheme();
+  const labelColor = (theme as $FixMe).colors.monochrome["700"] as string; // FIXME: #666666 in Sketch
+  const legendLabelColor = (theme as $FixMe).colors.monochrome["700"] as string;
+  const domainColor = (theme as $FixMe).colors.monochrome["700"] as string;
+  const gridColor = (theme as $FixMe).colors.monochrome["300"] as string;
+
+  const fontFamily = theme.fonts.frutigerRegular;
+  return { labelColor, domainColor, gridColor, legendLabelColor, fontFamily };
+};
 
 // FIXME: Use hook to get the theme values from ThemeProvider.
-
-const labelColor = "#666666";
 const legendLabelColor = "#454545";
 const fontFamily = "FrutigerNeueRegular, Helvetica, Arial, sans-serif";
 
-export const xAxisTheme: Axis = {
-  orient: "bottom",
-  scale: "x",
-  bandPosition: 1,
-  domain: true,
-  domainColor: labelColor,
-  domainWidth: 1,
-  grid: false,
-  labelColor: labelColor,
-  labelFont: fontFamily,
-  titleFont: fontFamily,
-  titleColor: labelColor,
-  labelFontSize: 12,
-  labelAngle: 0,
-  labelBaseline: "middle",
-  labelPadding: 8,
-  ticks: true,
-  tickColor: labelColor
-};
-
-export const yAxisTheme: Axis = {
-  orient: "left",
-  scale: "y",
-  bandPosition: 0.5,
-  domain: false,
-  grid: true,
-  gridColor: "#E5E5E5",
-  labelFont: fontFamily,
-  titleFont: fontFamily,
-  titleColor: labelColor,
-  labelColor: labelColor,
-  labelFontSize: 12,
-  labelPadding: 8,
-  ticks: false
-};
+// FIXME: quick fix for label orientation
+export const getLabelAngle = (nbXLabels: number): number =>
+  nbXLabels > 6 ? -90 : 0;
+export const getLabelPosition = (nbXLabels: number): "center" | "right" =>
+  nbXLabels > 6 ? "right" : "center";
 
 export const legendTheme: Legend = {
   orient: "bottom",

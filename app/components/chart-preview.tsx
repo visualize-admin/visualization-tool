@@ -1,15 +1,15 @@
 import React from "react";
 import { Flex, Text } from "rebass";
+import { AttributeWithMeta, DimensionWithMeta } from "../domain";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { useDataSetAndMetadata } from "../domain/data-cube";
-
-import { Loading } from "./hint";
-import { ChartColumnsVisualization } from "./chart-columns";
-import { ChartLinesVisualization } from "./chart-lines";
-import { ChartAreasVisualization } from "./chart-areas";
-import { ChartScatterplotVisualization } from "./chart-scatterplot";
 import { useLocale } from "../lib/use-locale";
-import { Trans } from "@lingui/macro";
+import { ChartAreasVisualization } from "./chart-areas";
+import { ChartColumnsVisualization } from "./chart-columns";
+import { ChartFootnotes } from "./chart-footnotes";
+import { ChartLinesVisualization } from "./chart-lines";
+import { ChartScatterplotVisualization } from "./chart-scatterplot";
+import { Loading } from "./hint";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -19,7 +19,8 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
 
   if (meta.state === "loaded") {
-    const { dimensions, measures, dataSet } = meta.data;
+    const { dimensions, measures, dataSet, componentsByIri } = meta.data;
+
     return (
       <Flex
         p={5}
@@ -77,30 +78,20 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             )}
           </>
         )}
-        <Text
-          variant="meta"
-          mt={4}
-          sx={{
-            color: "monochrome.600",
-            alignSelf: "flex-end"
-          }}
-        >
-          <Trans>Source</Trans>
-          {`: ${
-            // FIXME: use "source" instead of "contact" when the API is fixed
-            dataSet.extraMetadata.get("contact")!.value
-          }`}
-        </Text>
-        <Text
-          variant="meta"
-          sx={{
-            color: "monochrome.600",
-            alignSelf: "flex-end"
-          }}
-        >
-          <Trans>Dataset</Trans>
-          {`: ${dataSet.labels[0].value}`}
-        </Text>
+
+        {state.state !== "INITIAL" && state.chartConfig && (
+          <ChartFootnotes
+            source={dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
+            dataSetName={dataSet.labels[0].value}
+            filters={state.chartConfig.filters}
+            componentsByIri={
+              componentsByIri as Record<
+                string,
+                DimensionWithMeta | AttributeWithMeta
+              >
+            }
+          />
+        )}
       </Flex>
     );
   } else {

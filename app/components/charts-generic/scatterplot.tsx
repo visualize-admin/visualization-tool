@@ -1,10 +1,14 @@
 import * as React from "react";
 import { Spec } from "vega";
-import { xAxisTheme, yAxisTheme, legendTheme } from "./chart-styles";
-import { useTheme } from "../../themes";
-import { Observations, DimensionWithMeta, MeasureWithMeta } from "../../domain/data";
 import { ScatterPlotFields } from "../../domain";
+import {
+  DimensionWithMeta,
+  MeasureWithMeta,
+  Observations,
+  getDimensionLabel
+} from "../../domain/data";
 import { useVegaView } from "../../lib/use-vega";
+import { legendTheme, useChartTheme } from "./chart-styles";
 
 interface Props {
   data: Observations<ScatterPlotFields>;
@@ -21,12 +25,19 @@ export const Scatterplot = ({
   dimensions,
   measures
 }: Props) => {
-  const theme = useTheme();
+  const { labelColor, domainColor, gridColor, fontFamily } = useChartTheme();
+
+  const xFieldLabel = getDimensionLabel(
+    measures.find(d => d.component.iri.value === fields.x.componentIri)!
+  );
+  const yFieldLabel = getDimensionLabel(
+    measures.find(d => d.component.iri.value === fields.y.componentIri)!
+  );
   const spec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
     height: width * 0.4,
-    padding: 5,
+    padding: { left: 16, right: 16, top: 16, bottom: 16 },
 
     autosize: { type: "fit-x", contains: "padding" },
 
@@ -66,7 +77,9 @@ export const Scatterplot = ({
       {
         name: "colorScale",
         type: "ordinal",
-        range: { scheme: fields.segment ? fields.segment.palette : "category10" },
+        range: {
+          scheme: fields.segment ? fields.segment.palette : "category10"
+        },
         domain: {
           data: "table",
           field: "segment"
@@ -76,23 +89,64 @@ export const Scatterplot = ({
 
     axes: [
       {
-        ...yAxisTheme,
+        scale: "y",
+        orient: "left",
         formatType: "number",
-        format: "~s",
-        title: "y",
+        format: ",.2~f",
+        bandPosition: 0.5,
+        labelFont: fontFamily,
+        labelColor: labelColor,
+        labelFontSize: 12,
+        labelPadding: 8,
         domain: true,
-        domainColor: (theme as any).colors.monochrome["700"],
-        domainWidth: 1
+        domainColor,
+        ticks: true,
+        tickCount: 5,
+        tickColor: gridColor,
+        grid: true,
+        gridColor,
+        domainWidth: 1,
+        title: yFieldLabel,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        titleY: -16,
+        titleX: 0,
+        titlePadding: 16,
+        titleAngle: 0,
+        titleAnchor: "start",
+        titleAlign: "left"
       },
       {
-        ...xAxisTheme,
-        labelAlign: "right",
-        labelAngle: -90,
-        ticks: false,
+        scale: "x",
+        orient: "bottom",
+        formatType: "number",
+        format: ",.2~f",
+        bandPosition: 1,
+        domainColor,
+        domainWidth: 1,
+        labelColor,
+        labelFont: fontFamily,
+        labelFontSize: 12,
+        labelBaseline: "middle",
+        labelPadding: 8,
+        // labelAlign: "right",
+        // labelAngle: -90,
+        domain: true,
+        ticks: true,
+        tickCount: 5,
+        tickColor: gridColor,
         grid: true,
-        title: "x"
+        gridColor,
+        title: xFieldLabel,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        titlePadding: 16,
+        titleAngle: 0,
+        titleAnchor: "end",
+        titleAlign: "right"
       }
     ],
+
     marks: [
       // {
       //   type: "line",
@@ -107,6 +161,7 @@ export const Scatterplot = ({
       //     }
       //   }
       // },
+
       {
         name: "dots",
         type: "symbol",
@@ -122,22 +177,22 @@ export const Scatterplot = ({
             fill: { scale: "colorScale", field: "segment" } //{ value: vega.scheme(palette)[0] }
           }
         }
-      },
-      {
-        name: "label",
-        type: "text",
-        from: { data: "table" },
-        encode: {
-          enter: {
-            x: { scale: "x", field: "x" },
-            y: { scale: "y", field: "y" },
-            dx: { value: 5 },
-            dy: { value: -5 },
-            fill: { value: (theme as any).colors.monochrome["700"] },
-            text: { value: "FIXME" }
-          }
-        }
       }
+      // {
+      //   name: "label",
+      //   type: "text",
+      //   from: { data: "table" },
+      //   encode: {
+      //     enter: {
+      //       x: { scale: "x", field: "x" },
+      //       y: { scale: "y", field: "y" },
+      //       dx: { value: 5 },
+      //       dy: { value: -5 },
+      //       fill: { value: labelColor },
+      //       text: { value: "FIXME" }
+      //     }
+      //   }
+      // }
     ],
     legends: [
       {

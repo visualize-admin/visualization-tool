@@ -1,14 +1,19 @@
 import * as React from "react";
-import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
-import {
-  Observations,
-  DimensionWithMeta,
-  MeasureWithMeta,
-  getDimensionLabel
-} from "../../domain/data";
-import { ColumnFields, FieldType, BarFields } from "../../domain";
-import { useVegaView } from "../../lib/use-vega";
 import { Spec } from "vega";
+import { BarFields, ColumnFields, FieldType } from "../../domain";
+import {
+  DimensionWithMeta,
+  getDimensionLabel,
+  MeasureWithMeta,
+  Observations
+} from "../../domain/data";
+import { useVegaView } from "../../lib/use-vega";
+import {
+  getLabelAngle,
+  getLabelPosition,
+  legendTheme,
+  useChartTheme
+} from "./chart-styles";
 
 interface Props {
   data: Observations<BarFields>;
@@ -25,25 +30,37 @@ export const ColumnsSegment = ({
   dimensions,
   measures
 }: Props) => {
-  const xFieldLabel = getDimensionLabel(
-    dimensions.find(d => d.component.iri.value === fields.x.componentIri)!
+  const {
+    labelColor,
+    legendLabelColor,
+    domainColor,
+    gridColor,
+    fontFamily
+  } = useChartTheme();
+
+  // const xFieldLabel = getDimensionLabel(
+  //   dimensions.find(d => d.component.iri.value === fields.x.componentIri)!
+  // );
+  const yFieldLabel = getDimensionLabel(
+    measures.find(d => d.component.iri.value === fields.y.componentIri)!
   );
   const fieldValues = new Set([fields.x.componentIri, fields.y.componentIri]);
   const unmappedFields = Object.entries(fields).flatMap(([key, field]) => {
     const mbDim = dimensions.find(
       d => d.component.iri.value === (field as FieldType).componentIri
     );
+
     return !fieldValues.has((field as FieldType).componentIri) && mbDim
       ? [[key, mbDim]]
       : [];
   });
-
+  const nbXLabels = new Set(data.map(d => d.x)).size;
   // STACKED ------------------------------------------------------------------------------//
   const stackedSpec: Spec = {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
     height: width * 0.4,
-    padding: 5,
+    padding: { left: 16, right: 16, top: 16, bottom: 16 },
 
     autosize: { type: "fit-x", contains: "padding" },
 
@@ -118,13 +135,54 @@ export const ColumnsSegment = ({
     ],
 
     axes: [
-      { ...yAxisTheme, formatType: "number", format: ",.2~f" },
       {
-        ...xAxisTheme,
-        labelAngle: -90,
-        labelAlign: "right",
+        orient: "left",
+        scale: "y",
+        // offset: 0,
+        bandPosition: 0.5,
+        domain: false,
+        grid: true,
+        gridColor,
+        labelFont: fontFamily,
+        labelColor: labelColor,
+        labelFontSize: 12,
+        labelPadding: 8,
         ticks: false,
-        title: xFieldLabel
+        tickCount: 5,
+        formatType: "number",
+        format: ",.2~f",
+        title: yFieldLabel,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        titleY: 0,
+        titleX: 0,
+        titlePadding: 16,
+        titleAngle: 0,
+        titleAnchor: "start",
+        titleAlign: "left"
+        // titleBaseline: "bottom"
+      },
+      {
+        scale: "x",
+        orient: "bottom",
+        bandPosition: 1,
+        domain: true,
+        domainColor,
+        domainWidth: 1,
+        grid: false,
+        labelColor: labelColor,
+        labelFont: fontFamily,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        labelFontSize: 12,
+        labelBaseline: "middle",
+        labelPadding: 8,
+        tickColor: domainColor,
+        labelAngle: getLabelAngle(nbXLabels),
+        labelAlign: getLabelPosition(nbXLabels),
+        ticks: true,
+        tickBand: "center"
+        // title: xFieldLabel
         // encode: { title: { update: { text: { "signal": "scales.labelsScale('xField')" } } } }
       }
     ],
@@ -141,33 +199,33 @@ export const ColumnsSegment = ({
             y2: { scale: "y", field: "y1" }
           },
           update: {
-            fillOpacity: { value: 0.9 },
+            fillOpacity: { value: 1 },
             fill: { scale: "colorScale", field: "segment" }
           },
           hover: {
             fillOpacity: { value: 1 }
           }
         }
-      },
-      {
-        type: "text",
-        encode: {
-          enter: {
-            align: { value: "center" },
-            baseline: { value: "bottom" },
-            fill: { value: "#454545" },
-            fontSize: { value: 12 }
-          },
-          update: {
-            x: { scale: "x", signal: `tooltip["x"]`, band: 0.5 },
-            y: { scale: "y", signal: "tooltip.y1", offset: -2 },
-            text: {
-              signal: `tooltip.y ? tooltip.tooltipLabel + " " +format(tooltip.y, ',.2~f') : ''`
-            },
-            fillOpacity: [{ test: "datum === tooltip", value: 0 }, { value: 1 }]
-          }
-        }
       }
+      // {
+      //   type: "text",
+      //   encode: {
+      //     enter: {
+      //       align: { value: "center" },
+      //       baseline: { value: "bottom" },
+      //       fill: { value: "#454545" },
+      //       fontSize: { value: 12 }
+      //     },
+      //     update: {
+      //       x: { scale: "x", signal: `tooltip["x"]`, band: 0.5 },
+      //       y: { scale: "y", signal: "tooltip.y1", offset: -2 },
+      //       text: {
+      //         signal: `tooltip.y ? tooltip.tooltipLabel + " " +format(tooltip.y, ',.2~f') : ''`
+      //       },
+      //       fillOpacity: [{ test: "datum === tooltip", value: 0 }, { value: 1 }]
+      //     }
+      //   }
+      // }
     ],
     legends: [
       {
@@ -229,19 +287,50 @@ export const ColumnsSegment = ({
 
     axes: [
       {
-        ...yAxisTheme,
         orient: "left",
         scale: "yscale",
+        bandPosition: 0.5,
+        domain: false,
+        grid: true,
+        gridColor,
+        labelFont: fontFamily,
+        labelColor: labelColor,
+        labelFontSize: 12,
+        labelPadding: 8,
+        ticks: false,
+        tickCount: 5,
         formatType: "number",
-        format: ",.2~f"
+        format: ",.2~f",
+        title: yFieldLabel,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        titleY: 0,
+        titleX: 0,
+        titlePadding: 16,
+        titleAngle: 0,
+        titleAnchor: "start",
+        titleAlign: "left"
       },
       {
-        ...xAxisTheme,
-        orient: "bottom",
         scale: "xscale",
-        labelAlign: "center",
-        ticks: false,
-        labelPadding: 16,
+        orient: "bottom",
+        bandPosition: 1,
+        domain: true,
+        domainColor,
+        domainWidth: 1,
+        grid: false,
+        labelColor: labelColor,
+        labelFont: fontFamily,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        labelFontSize: 12,
+        labelBaseline: "middle",
+        labelPadding: 8,
+        tickColor: domainColor,
+        labelAngle: getLabelAngle(nbXLabels),
+        labelAlign: getLabelPosition(nbXLabels),
+        ticks: true,
+        tickBand: "center",
         zindex: 1
         // title: xFieldLabel
         // encode: { title: { update: { text: { "signal": "scales.labelsScale('xField')" } } } }

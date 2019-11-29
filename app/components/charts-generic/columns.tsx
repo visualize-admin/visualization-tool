@@ -1,14 +1,14 @@
 import * as React from "react";
-import { legendTheme, xAxisTheme, yAxisTheme } from "./chart-styles";
-import {
-  Observations,
-  DimensionWithMeta,
-  MeasureWithMeta,
-  getDimensionLabel
-} from "../../domain/data";
-import { ColumnFields, FieldType } from "../../domain";
-import { useVegaView } from "../../lib/use-vega";
 import { Spec } from "vega";
+import { ColumnFields, FieldType } from "../../domain";
+import {
+  DimensionWithMeta,
+  getDimensionLabel,
+  MeasureWithMeta,
+  Observations
+} from "../../domain/data";
+import { useVegaView } from "../../lib/use-vega";
+import { useChartTheme } from "./chart-styles";
 
 interface Props {
   data: Observations<ColumnFields>;
@@ -25,6 +25,8 @@ export const Columns = ({
   dimensions,
   measures
 }: Props) => {
+  const { labelColor, gridColor, domainColor, fontFamily } = useChartTheme();
+
   // FIXME: we probably could inline these in the specs.
   const xField = "x";
   const heightField = "y";
@@ -44,7 +46,7 @@ export const Columns = ({
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
     height: width * 0.4,
-    padding: 5,
+    padding: { left: 16, right: 16, top: 16, bottom: 16 },
 
     autosize: { type: "fit-x", contains: "padding" },
 
@@ -124,12 +126,43 @@ export const Columns = ({
     ],
 
     axes: [
-      { ...yAxisTheme, formatType: "number", format: ",.2~f" },
       {
-        ...xAxisTheme,
-        labelAngle: -90,
-        labelAlign: "right",
+        orient: "left",
+        scale: "y",
+        bandPosition: 0.5,
+        domain: false,
+        grid: true,
+        gridColor: gridColor,
+        labelFont: fontFamily,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        labelColor: labelColor,
+        labelFontSize: 12,
+        labelPadding: 8,
         ticks: false,
+        tickCount: 5,
+        formatType: "number",
+        format: ",.2~f"
+      },
+      {
+        scale: "x",
+        orient: "bottom",
+        bandPosition: 1,
+        domain: true,
+        domainColor,
+        domainWidth: 1,
+        grid: false,
+        labelColor: labelColor,
+        labelFont: fontFamily,
+        titleFont: fontFamily,
+        titleColor: labelColor,
+        labelFontSize: 12,
+        labelAngle: 0,
+        labelBaseline: "middle",
+        labelPadding: 8,
+        ticks: true,
+        tickColor: domainColor,
+        labelAlign: "right",
         title: xFieldLabel
         // encode: { title: { update: { text: { "signal": "scales.labelsScale('xField')" } } } }
       }
