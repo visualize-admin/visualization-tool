@@ -125,7 +125,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
     return (
       <DataCubeProvider>
         <Header />
-        <Box px={4} bg="muted" height="100vh">
+        <Box px={4} bg="muted" minHeight="100vh">
           <Box sx={{ pt: 4, maxWidth: 696, margin: "0 auto" }}>
             {publishSuccess && <Success />}
 
