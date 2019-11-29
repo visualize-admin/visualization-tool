@@ -56,8 +56,8 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
       ) : state.state === "SELECTING_CHART_TYPE" ? (
         <>
           <LocalizedLink
-            pathname= "/[locale]/chart/[chartId]"
-            query= {{ chartId: "new" }}
+            pathname="/[locale]/chart/[chartId]"
+            query={{ chartId: "new" }}
             passHref
           >
             <Button as="a" variant="secondary">

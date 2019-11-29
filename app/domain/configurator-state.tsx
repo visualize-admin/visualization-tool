@@ -553,6 +553,7 @@ const save = async (state: ConfiguratorStatePublishing): Promise<ReturnVal> => {
     },
     body: JSON.stringify({
       dataSet: state.dataSet,
+      meta: state.meta,
       chartConfig: state.chartConfig
     })
   }).then(res => res.json());

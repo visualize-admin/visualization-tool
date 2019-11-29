@@ -24,6 +24,13 @@ import { IconSegment } from "./ic-segment";
 import { IconFilter } from "./ic-filter";
 import { IconX } from "./ic-x";
 import { IconY } from "./ic-y";
+import { IconShare } from "./ic-share";
+import { IconCopy } from "./ic-copy";
+import { IconEmbed } from "./ic-embed";
+import { IconFacebook } from "./ic-facebook";
+import { IconImage } from "./ic-image";
+import { IconMail } from "./ic-mail";
+import { IconTwitter } from "./ic-twitter";
 import { IconText } from "./ic-text";
 
 export const Icons = {
@@ -52,10 +59,17 @@ export const Icons = {
   y: IconY,
   segment: IconSegment,
   filter: IconFilter,
+  share: IconShare,
+  copy: IconCopy,
+  embed: IconEmbed,
+  facebook: IconFacebook,
+  image: IconImage,
+  mail: IconMail,
+  twitter: IconTwitter,
   text: IconText
 };
 
-export type IconName = keyof (typeof Icons);
+export type IconName = keyof typeof Icons;
 
 export const Icon = ({
   size,

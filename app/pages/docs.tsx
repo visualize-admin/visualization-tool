@@ -118,6 +118,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/hint.docs")
       },
       {
+        path: "/components/publish-actions",
+        title: "Publish actions",
+        content: require("../docs/publish-actions.docs")
+      },
+      {
         path: "/components/steps",
         title: "Stepper",
         content: require("../docs/steps.docs")
@@ -162,7 +167,9 @@ const mdxComponents = {
   img: Markdown.Image,
   code: Markdown.CodeSpan,
   hr: Markdown.Hr,
-  a: ({ href, ...props }: $IntentionalAny) => <Markdown.Link to={href} {...props} />,
+  a: ({ href, ...props }: $IntentionalAny) => (
+    <Markdown.Link to={href} {...props} />
+  ),
   ImageSpecimen,
   AudioSpecimen,
   CodeSpecimen,
