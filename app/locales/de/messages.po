@@ -48,7 +48,7 @@ msgstr "Visualisierung erstellen"
 
 #: app/pages/[locale]/v/[chartId].tsx:70
 msgid "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
-msgstr "Erstellen Sie jetzt Ihre eigene Grafik! Mit dem Visualisierungs-Tool können Sie eigene Grafiken erstellen, auf der Basis einer Vielzahl an Schweizer Bundesdaten."
+msgstr "Erstellen Sie jetzt Ihre eigene Grafik. Mit dem Visualisierungs-Tool können Sie eigene Grafiken erstellen, auf der Basis einer Vielzahl an Schweizer Bundesdaten."
 
 #: app/components/chart-configurator.tsx:56
 msgid "Data"

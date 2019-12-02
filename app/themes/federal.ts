@@ -585,7 +585,7 @@ export const theme: Theme = {
       mx: 4,
       my: 6,
       transition: "all .2s",
-      borderRadius: "bigger"
+      borderRadius: "default"
     },
 
     hint: {
