@@ -64,6 +64,7 @@ export const Lines = ({ data, width, dimensions, measures, fields }: Props) => {
           //   ops: [aggregateFunction, aggregateFunction],
           //   as: ["byTime", "byGroup"]
           // },
+          { type: "filter", expr: "isValid(datum.y)" },
           {
             type: "formula",
             as: "date",
@@ -128,7 +129,7 @@ export const Lines = ({ data, width, dimensions, measures, fields }: Props) => {
         title: yFieldLabel,
         titleFont: fontFamily,
         titleColor: labelColor,
-        titleY: 0,
+        titleY: -16,
         titleX: 0,
         titlePadding: 16,
         titleAngle: 0,

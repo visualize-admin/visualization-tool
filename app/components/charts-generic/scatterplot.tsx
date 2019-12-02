@@ -44,7 +44,10 @@ export const Scatterplot = ({
     data: [
       {
         name: "table",
-        values: data
+        values: data,
+        transform: [
+          { type: "filter", expr: "isValid(datum.y) && isValid(datum.x)" }
+        ]
         // transform: [
         //   {
         //     type: "nest",

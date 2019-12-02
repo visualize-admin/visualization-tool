@@ -70,6 +70,7 @@ export const ColumnsSegment = ({
         name: "table",
         values: data,
         transform: [
+          { type: "filter", expr: "isValid(datum.y)" },
           {
             type: "formula",
             expr: unmappedFields
@@ -154,7 +155,7 @@ export const ColumnsSegment = ({
         title: yFieldLabel,
         titleFont: fontFamily,
         titleColor: labelColor,
-        titleY: 0,
+        titleY: -16,
         titleX: 0,
         titlePadding: 16,
         titleAngle: 0,
@@ -251,7 +252,8 @@ export const ColumnsSegment = ({
       // { name: "labels", values: [{ key: "xField", value: "X FIELD" }] },
       {
         name: "table",
-        values: data
+        values: data,
+        transform: [{ type: "filter", expr: "isValid(datum.y)" }]
       }
     ],
 
@@ -304,7 +306,7 @@ export const ColumnsSegment = ({
         title: yFieldLabel,
         titleFont: fontFamily,
         titleColor: labelColor,
-        titleY: 0,
+        titleY: -16,
         titleX: 0,
         titlePadding: 16,
         titleAngle: 0,
