@@ -122,7 +122,7 @@ msgstr "Pubblicare"
 
 #: app/components/filters.tsx:26
 msgid "Reset"
-msgstr "Reset"
+msgstr "Rimettere"
 
 #: app/components/dataset-selector.tsx:12
 msgid "Select Dataset"
