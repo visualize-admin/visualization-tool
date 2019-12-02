@@ -18,6 +18,7 @@ import {
 } from "./filters";
 import { Loading } from "./hint";
 import { Trans } from "@lingui/macro";
+import { getFieldLabel } from "./chart-controls/control-tab";
 
 export const ChartOptionsSelector = ({
   state
@@ -85,7 +86,7 @@ const DimensionPanel = ({
 
   return (
     <>
-      <CollapsibleSection title={field}>
+      <CollapsibleSection title={getFieldLabel(field)}>
         <ChartFieldField
           field={field}
           label={<Trans>Select a dimension</Trans>}
@@ -118,7 +119,7 @@ const MeasurePanel = ({
   const { measures } = metaData;
 
   return (
-    <CollapsibleSection title={field}>
+    <CollapsibleSection title={getFieldLabel(field)}>
       <ChartFieldField
         field={field}
         label={<Trans>Select a measure</Trans>}

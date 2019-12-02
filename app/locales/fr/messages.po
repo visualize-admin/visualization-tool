@@ -67,6 +67,7 @@ msgid "Dataset:"
 msgstr "Jeu de données:"
 
 #: app/components/chart-annotator.tsx:6
+#: app/components/chart-controls/control-tab.tsx:81
 msgid "Description"
 msgstr "Description"
 
@@ -86,10 +87,14 @@ msgstr "Intégrer"
 msgid "Embed:"
 msgstr "Intégrer:"
 
-#: app/components/chart-options-selector.tsx:42
-#: app/components/chart-options-selector.tsx:61
+#: app/components/chart-options-selector.tsx:43
+#: app/components/chart-options-selector.tsx:62
 msgid "Filter"
 msgstr "Filtre"
+
+#: app/components/chart-controls/control-tab.tsx:73
+msgid "Horizontal axis"
+msgstr "Axe horizontal"
 
 #: app/components/hint.tsx:22
 msgid "Loading data…"
@@ -99,6 +104,10 @@ msgstr "Chargement des données…"
 #: app/components/header.tsx:36
 msgid "Logo of the Swiss Confederation"
 msgstr "Logo de la Confédération Suisse"
+
+#: app/components/chart-controls/control-tab.tsx:75
+msgid "Measure"
+msgstr "Mesure"
 
 #: app/pages/[locale]/v/[chartId].tsx:79
 msgid "New Visualization"
@@ -124,6 +133,10 @@ msgstr "Publier"
 msgid "Reset"
 msgstr "Réinitialiser"
 
+#: app/components/chart-controls/control-tab.tsx:77
+msgid "Segmentation"
+msgstr "Segmentation"
+
 #: app/components/dataset-selector.tsx:12
 msgid "Select Dataset"
 msgstr "Sélectionner un jeu de données"
@@ -132,11 +145,11 @@ msgstr "Sélectionner un jeu de données"
 msgid "Select a dataset"
 msgstr "Sélectionnez un jeu de données"
 
-#: app/components/chart-options-selector.tsx:36
+#: app/components/chart-options-selector.tsx:37
 msgid "Select a dimension"
 msgstr "Sélectionnez une dimension"
 
-#: app/components/chart-options-selector.tsx:52
+#: app/components/chart-options-selector.tsx:53
 msgid "Select a measure"
 msgstr "Sélectionnez une mesure"
 
@@ -159,6 +172,10 @@ msgstr "Les 10 premières lignes sont affichées"
 #: app/components/chart-footnotes.tsx:15
 msgid "Source:"
 msgstr "Source:"
+
+#: app/components/chart-controls/control-tab.tsx:79
+msgid "Title"
+msgstr "Titre"
 
 #: app/components/stepper.tsx:59
 msgid "Visualization Type"

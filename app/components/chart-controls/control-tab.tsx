@@ -4,6 +4,7 @@ import { Flex, Text } from "rebass";
 import { Icon, IconName } from "../../icons";
 import { Button } from "rebass";
 import { ComponentWithMeta, getDimensionLabel } from "../../domain";
+import { Trans } from "@lingui/macro";
 
 export const ControlTab = ({
   iconName,
@@ -42,7 +43,7 @@ export const ControlTab = ({
             variant="meta"
             sx={{ color: "monochrome.600", lineHeight: [1, 1, 1] }}
           >
-            {iconName}
+            {getFieldLabel(iconName)}
           </Text>
           <Text
             variant="paragraph1"
@@ -145,7 +146,7 @@ export const AnnotatorTab = ({
             variant="meta"
             sx={{ color: "monochrome.600", lineHeight: [1, 1, 1] }}
           >
-            {value}
+            {/* {getFieldLabel(value as string)} */}
           </Text>
           <Text
             variant="paragraph1"
@@ -155,10 +156,27 @@ export const AnnotatorTab = ({
               textAlign: "left"
             }}
           >
-            {value}
+            {getFieldLabel(value as string)}
           </Text>
         </Flex>
       </Flex>
     </Button>
   );
+};
+
+export const getFieldLabel = (field: string): React.ReactNode => {
+  switch (field) {
+    case "x":
+      return <Trans>Horizontal axis</Trans>;
+    case "y":
+      return <Trans>Measure</Trans>;
+    case "segment":
+      return <Trans>Segmentation</Trans>;
+    case "title":
+      return <Trans>Title</Trans>;
+    case "description":
+      return <Trans>Description</Trans>;
+    default:
+      return field;
+  }
 };
