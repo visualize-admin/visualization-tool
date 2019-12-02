@@ -56,7 +56,7 @@ msgstr "Dati"
 
 #: app/components/chart-footnotes.tsx:23
 msgid "Data:"
-msgstr "Dati:"
+msgstr "Filtro:"
 
 #: app/components/stepper.tsx:52
 msgid "Dataset"
