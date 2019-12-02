@@ -21,6 +21,11 @@ module.exports = withBundleAnalyzer(
       //   ]
       // });
 
+      config.module.rules.push({
+        test: /\/node_modules\/.*\.(js|mjs)$/,
+        loader: defaultLoaders.babel,
+        exclude: [/babel\/standalone/, /core-js/, /next/]
+      });
 
       /* Enable source maps in production */
       if (!dev) {

@@ -64,6 +64,7 @@ export const Areas = ({ data, width, fields, dimensions, measures }: Props) => {
           //   ops: ["sum"],
           //   as: ["sumByTime"]
           // },
+          { type: "filter", expr: "isValid(datum.y)" },
           {
             type: "formula",
             as: "date",
@@ -135,7 +136,7 @@ export const Areas = ({ data, width, fields, dimensions, measures }: Props) => {
         title: yFieldLabel,
         titleFont: fontFamily,
         titleColor: labelColor,
-        titleY: 0,
+        titleY: -16,
         titleX: 0,
         titlePadding: 16,
         titleAngle: 0,
@@ -179,7 +180,9 @@ export const Areas = ({ data, width, fields, dimensions, measures }: Props) => {
         marks: [
           {
             type: "area",
-            from: { data: "series" },
+            from: {
+              data: "series"
+            },
             encode: {
               enter: {
                 x: { scale: "x", field: "date" },
