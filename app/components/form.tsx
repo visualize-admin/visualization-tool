@@ -141,7 +141,7 @@ export const Input = ({
       sx={{ borderColor: "monochrome.500", bg: "monochrome.100" }}
       id={label}
       name={label}
-      placeholder={label}
+      placeholder={value}
       onChange={onChange}
     />
   </Box>

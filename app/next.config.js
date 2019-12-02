@@ -21,10 +21,24 @@ module.exports = withBundleAnalyzer(
       //   ]
       // });
 
+      // config.module.rules.push({
+      //   test: /\.(js|mjs)$/,
+      //   include: [/node_modules/],
+      //   exclude: [/babel\/standalone/, /core-js/, /next/],
+      //   use: {
+      //     loader: "babel-loader"
+      //   }
+      // });
       config.module.rules.push({
-        test: /\/node_modules\/.*\.(js|mjs)$/,
-        loader: defaultLoaders.babel,
-        exclude: [/babel\/standalone/, /core-js/, /next/]
+        test: /\.(js|mjs)$/,
+        include: [/node_modules/],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+            plugins: ["@babel/plugin-syntax-dynamic-import"]
+          }
+        }
       });
 
       /* Enable source maps in production */
