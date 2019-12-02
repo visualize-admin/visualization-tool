@@ -244,7 +244,7 @@ export const ColumnsSegment = ({
     $schema: "https://vega.github.io/schema/vega/v5.json",
     width: width,
     height: width * 0.4,
-    padding: 5,
+    padding: { left: 16, right: 16, top: 16, bottom: 16 },
 
     autosize: { type: "fit-x", contains: "padding" },
 
