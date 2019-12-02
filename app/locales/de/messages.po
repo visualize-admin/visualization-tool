@@ -94,7 +94,7 @@ msgstr "Filter"
 
 #: app/components/chart-controls/control-tab.tsx:73
 msgid "Horizontal axis"
-msgstr ""
+msgstr "Horizontale Achse"
 
 #: app/components/hint.tsx:22
 msgid "Loading data…"
@@ -107,7 +107,7 @@ msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
 #: app/components/chart-controls/control-tab.tsx:75
 msgid "Measure"
-msgstr ""
+msgstr "Messwert"
 
 #: app/pages/[locale]/v/[chartId].tsx:79
 msgid "New Visualization"
@@ -135,7 +135,7 @@ msgstr "Zurücksetzen"
 
 #: app/components/chart-controls/control-tab.tsx:77
 msgid "Segmentation"
-msgstr ""
+msgstr "Segmentierung"
 
 #: app/components/dataset-selector.tsx:12
 msgid "Select Dataset"

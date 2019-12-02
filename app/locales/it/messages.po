@@ -94,7 +94,7 @@ msgstr "Filtro"
 
 #: app/components/chart-controls/control-tab.tsx:73
 msgid "Horizontal axis"
-msgstr ""
+msgstr "Asse orizzontale"
 
 #: app/components/hint.tsx:22
 msgid "Loading data…"
@@ -107,7 +107,7 @@ msgstr "Logo della Confederazione Svizzera"
 
 #: app/components/chart-controls/control-tab.tsx:75
 msgid "Measure"
-msgstr ""
+msgstr "Misura "
 
 #: app/pages/[locale]/v/[chartId].tsx:79
 msgid "New Visualization"
@@ -135,7 +135,7 @@ msgstr "Rimettere"
 
 #: app/components/chart-controls/control-tab.tsx:77
 msgid "Segmentation"
-msgstr ""
+msgstr "Segmentazione"
 
 #: app/components/dataset-selector.tsx:12
 msgid "Select Dataset"
