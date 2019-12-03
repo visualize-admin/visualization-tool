@@ -1,5 +1,5 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { useMemo } from "react";
+import React, { useMemo, memo } from "react";
 import { useObservations } from "../domain";
 import { LineFields, LineConfig, FieldType } from "../domain/config-types";
 import {
@@ -73,28 +73,30 @@ export const ChartLinesVisualization = ({
   }
 };
 
-export const ChartLines = ({
-  observations,
-  dimensions,
-  measures,
-  fields
-}: {
-  observations: Observations<LineFields>;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: LineFields;
-}) => {
-  const [resizeRef, width] = useResizeObserver();
+export const ChartLines = memo(
+  ({
+    observations,
+    dimensions,
+    measures,
+    fields
+  }: {
+    observations: Observations<LineFields>;
+    dimensions: DimensionWithMeta[];
+    measures: MeasureWithMeta[];
+    fields: LineFields;
+  }) => {
+    const [resizeRef, width] = useResizeObserver();
 
-  return (
-    <div ref={resizeRef} aria-hidden="true">
-      <Lines
-        data={observations}
-        width={width}
-        dimensions={dimensions}
-        measures={measures}
-        fields={fields}
-      />
-    </div>
-  );
-};
+    return (
+      <div ref={resizeRef} aria-hidden="true">
+        <Lines
+          data={observations}
+          width={width}
+          dimensions={dimensions}
+          measures={measures}
+          fields={fields}
+        />
+      </div>
+    );
+  }
+);

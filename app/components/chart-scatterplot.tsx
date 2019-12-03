@@ -1,5 +1,5 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { useMemo } from "react";
+import React, { useMemo, memo } from "react";
 import { useObservations, ScatterPlotFields } from "../domain";
 import {
   DimensionWithMeta,
@@ -74,28 +74,30 @@ export const ChartScatterplotVisualization = ({
   }
 };
 
-export const ChartScatterplot = ({
-  observations,
-  dimensions,
-  measures,
-  fields
-}: {
-  observations: Observations<ScatterPlotFields>;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-  fields: ScatterPlotFields;
-}) => {
-  const [resizeRef, width] = useResizeObserver();
+export const ChartScatterplot = memo(
+  ({
+    observations,
+    dimensions,
+    measures,
+    fields
+  }: {
+    observations: Observations<ScatterPlotFields>;
+    dimensions: DimensionWithMeta[];
+    measures: MeasureWithMeta[];
+    fields: ScatterPlotFields;
+  }) => {
+    const [resizeRef, width] = useResizeObserver();
 
-  return (
-    <div ref={resizeRef} aria-hidden="true">
-      <Scatterplot
-        data={observations}
-        width={width}
-        dimensions={dimensions}
-        measures={measures}
-        fields={fields}
-      />
-    </div>
-  );
-};
+    return (
+      <div ref={resizeRef} aria-hidden="true">
+        <Scatterplot
+          data={observations}
+          width={width}
+          dimensions={dimensions}
+          measures={measures}
+          fields={fields}
+        />
+      </div>
+    );
+  }
+);

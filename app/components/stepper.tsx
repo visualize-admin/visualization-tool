@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useMemo } from "react";
 import { Button, Flex, Text, Box } from "rebass";
 import {
   useConfiguratorState,
@@ -22,35 +22,37 @@ const steps: Array<StepState> = [
 ];
 
 export const Stepper = () => {
-  const [state, dispatch] = useConfiguratorState();
-  const currentStepIndex = steps.indexOf(state.state as $IntentionalAny);
+  const [{ state }, dispatch] = useConfiguratorState();
 
-  return (
-    <Flex variant="stepper.root" justifyContent="center">
-      <Flex
-        justifyContent="center"
-        alignItems="flex-start"
-        sx={{ position: "relative" }}
-      >
-        <Box variant="stepper.line" />
-        {steps.map((step, i) => (
-          <Step
-            key={step}
-            stepNumber={i + 1}
-            stepState={step}
-            status={
-              currentStepIndex === i
-                ? "current"
-                : currentStepIndex > i || state.state === "PUBLISHING"
-                ? "past"
-                : "future"
-            }
-            dispatch={dispatch}
-          ></Step>
-        ))}
+  return useMemo(() => {
+    const currentStepIndex = steps.indexOf(state as $IntentionalAny);
+    return (
+      <Flex variant="stepper.root" justifyContent="center">
+        <Flex
+          justifyContent="center"
+          alignItems="flex-start"
+          sx={{ position: "relative" }}
+        >
+          <Box variant="stepper.line" />
+          {steps.map((step, i) => (
+            <Step
+              key={step}
+              stepNumber={i + 1}
+              stepState={step}
+              status={
+                currentStepIndex === i
+                  ? "current"
+                  : currentStepIndex > i || state === "PUBLISHING"
+                  ? "past"
+                  : "future"
+              }
+              dispatch={dispatch}
+            ></Step>
+          ))}
+        </Flex>
       </Flex>
-    </Flex>
-  );
+    );
+  }, [state, dispatch]);
 };
 
 export const Step = ({
