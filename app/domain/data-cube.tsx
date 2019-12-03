@@ -25,7 +25,7 @@ import {
   parseObservations,
   ObservationsPreview
 } from "./data";
-import { defaultLocale } from "../locales/locales";
+import { defaultLocale, dataFallbackLocale } from "../locales/locales";
 
 const DataCubeContext = createContext<DataCubeEntryPoint>(
   new DataCubeEntryPoint("")
@@ -41,7 +41,11 @@ export const DataCubeProvider = ({ children }: { children?: ReactNode }) => {
   const entryPoint = useMemo(() => {
     return new DataCubeEntryPoint(endpoint, {
       languages:
-        locale === defaultLocale ? [locale, ""] : [locale, defaultLocale, ""],
+        locale === defaultLocale
+          ? [locale, dataFallbackLocale, ""]
+          : locale === dataFallbackLocale
+          ? [locale, defaultLocale, ""]
+          : [locale, defaultLocale, dataFallbackLocale, ""],
       extraMetadata: [
         {
           variable: "contact",
