@@ -14,9 +14,8 @@ import numberFormatCh from "d3-format/locale/de-CH.json";
 
 export const defaultLocale = "en";
 
-export const dataFallbackLocale = "de";
-
-export const locales = ["de", "fr", "it", "en"] as const;
+// The order specified here will determine the fallback order when strings are not available in the preferred language
+export const locales = ["en", "de", "fr", "it"] as const;
 
 export type Locales = "de" | "fr" | "it" | "en";
 
