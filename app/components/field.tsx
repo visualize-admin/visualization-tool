@@ -25,15 +25,12 @@ import {
   FilterTab,
   AnnotatorTab
 } from "./chart-controls/control-tab";
-import { IconName } from "../icons";
 
 export const ControlTabField = ({
-  iconName,
   component,
   value,
   disabled
 }: {
-  iconName: IconName;
   component?: ComponentWithMeta;
   value: string;
   disabled?: boolean;
@@ -44,9 +41,8 @@ export const ControlTabField = ({
 
   return (
     <ControlTab
-      iconName={iconName}
       component={component}
-      value={field.value}
+      value={`${field.value}`}
       checked={field.checked}
       disabled={disabled}
       onClick={field.onClick}
@@ -79,7 +75,7 @@ export const FilterTabField = ({
   return (
     <FilterTab
       component={component}
-      value={field.value}
+      value={`${field.value}`}
       checked={field.checked}
       disabled={disabled}
       onClick={field.onClick}
@@ -101,7 +97,7 @@ export const AnnotatorTabField = ({
 
   return (
     <AnnotatorTab
-      value={field.value}
+      value={`${field.value}`}
       checked={field.checked}
       disabled={disabled}
       onClick={field.onClick}
@@ -246,23 +242,17 @@ export const ChartOptionField = ({
 
 export const ChartTypeSelectorField = ({
   label,
-  path,
-  type,
   value,
   metaData,
   disabled,
-
   ...props
 }: {
   label: string;
-  path: string;
-  type?: "text" | "checkbox" | "radio";
   value: string;
   metaData: DataSetMetadata;
   disabled?: boolean;
 }) => {
   const field = useChartTypeSelectorField({
-    path,
     value,
     metaData
   });
@@ -271,6 +261,7 @@ export const ChartTypeSelectorField = ({
     <ChartTypeRadio
       disabled={disabled}
       label={label}
+      onClick={field.onClick}
       {...field}
     ></ChartTypeRadio>
   );

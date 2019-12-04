@@ -1,17 +1,92 @@
+import { Trans } from "@lingui/macro";
 import React from "react";
+import { Box } from "rebass";
 import {
+  AreaConfig,
   ColumnConfig,
   ConfiguratorStateConfiguringChart,
+  FieldType,
   LineConfig,
-  AreaConfig,
-  ScatterPlotConfig,
-  FieldType
+  ScatterPlotConfig
 } from "../domain";
 import { DataSetMetadata, useDataSetAndMetadata } from "../domain/data-cube";
 import { CollapsibleSection } from "./chart-controls";
 import { ControlTabField, FilterTabField } from "./field";
 import { Loading } from "./hint";
-import { Trans } from "@lingui/macro";
+
+export const ChartConfigurator = ({
+  state
+}: {
+  state: ConfiguratorStateConfiguringChart;
+}) => {
+  const meta = useDataSetAndMetadata(state.dataSet);
+
+  if (meta.data) {
+    const mappedIris = new Set(
+      Object.values<FieldType>(state.chartConfig.fields).map(
+        f => f.componentIri
+      )
+    );
+    const unMappedDimensions = meta.data.dimensions.filter(
+      dim => !mappedIris.has(dim.component.iri.value)
+    );
+    return (
+      <>
+        {/* CollapsibleSection is not really needed here, but let's keep it
+      in case we need them later */}
+        <CollapsibleSection
+          titleId="controls-design"
+          title={<Trans>Design</Trans>}
+        >
+          <Box
+            role="tablist"
+            aria-labelledby="controls-design"
+            variant="controlSectionContent"
+          >
+            {state.chartConfig.chartType === "column" ? (
+              <ColumnChartFields
+                chartConfig={state.chartConfig}
+                metaData={meta.data}
+              />
+            ) : state.chartConfig.chartType === "line" ? (
+              <LineChartFields
+                chartConfig={state.chartConfig}
+                metaData={meta.data}
+              />
+            ) : state.chartConfig.chartType === "area" ? (
+              <AreaChartFields
+                chartConfig={state.chartConfig}
+                metaData={meta.data}
+              />
+            ) : state.chartConfig.chartType === "scatterplot" ? (
+              <ScatterPlotChartFields
+                chartConfig={state.chartConfig}
+                metaData={meta.data}
+              />
+            ) : null}
+          </Box>
+        </CollapsibleSection>
+        <CollapsibleSection titleId="controls-data" title={<Trans>Data</Trans>}>
+          <Box
+            role="tablist"
+            aria-labelledby="controls-data"
+            variant="controlSectionContent"
+          >
+            {unMappedDimensions.map((dimension, i) => (
+              <FilterTabField
+                key={dimension.component.iri.value}
+                component={dimension}
+                value={dimension.component.iri.value as $FixMe}
+              ></FilterTabField>
+            ))}
+          </Box>
+        </CollapsibleSection>
+      </>
+    );
+  } else {
+    return <Loading />;
+  }
+};
 
 const ColumnChartFields = ({
   chartConfig,
@@ -25,17 +100,14 @@ const ColumnChartFields = ({
   return (
     <>
       <ControlTabField
-        iconName={"y"}
         component={componentsByIri[chartConfig.fields.y.componentIri]}
         value={"y"}
       ></ControlTabField>
       <ControlTabField
-        iconName={"x"}
         component={componentsByIri[chartConfig.fields.x.componentIri]}
         value={"x"}
       ></ControlTabField>
       <ControlTabField
-        iconName={"segment"}
         component={
           chartConfig.fields.segment
             ? componentsByIri[chartConfig.fields.segment.componentIri]
@@ -58,17 +130,14 @@ const LineChartFields = ({
   return (
     <>
       <ControlTabField
-        iconName={"y"}
         component={componentsByIri[chartConfig.fields.y.componentIri]}
         value={"y"}
       ></ControlTabField>
       <ControlTabField
-        iconName={"x"}
         component={componentsByIri[chartConfig.fields.x.componentIri]}
         value={"x"}
       ></ControlTabField>
       <ControlTabField
-        iconName={"segment"}
         component={
           chartConfig.fields.segment
             ? componentsByIri[chartConfig.fields.segment.componentIri]
@@ -91,17 +160,14 @@ const AreaChartFields = ({
   return (
     <>
       <ControlTabField
-        iconName={"y"}
         component={componentsByIri[chartConfig.fields.y.componentIri]}
         value={"y"}
       ></ControlTabField>
       <ControlTabField
-        iconName={"x"}
         component={componentsByIri[chartConfig.fields.x.componentIri]}
         value={"x"}
       ></ControlTabField>
       <ControlTabField
-        iconName={"segment"}
         component={
           chartConfig.fields.segment
             ? componentsByIri[chartConfig.fields.segment.componentIri]
@@ -124,17 +190,14 @@ const ScatterPlotChartFields = ({
   return (
     <>
       <ControlTabField
-        iconName={"y"}
         component={componentsByIri[chartConfig.fields.y.componentIri]}
         value={"y"}
       ></ControlTabField>
       <ControlTabField
-        iconName={"x"}
         component={componentsByIri[chartConfig.fields.x.componentIri]}
         value={"x"}
       ></ControlTabField>
       <ControlTabField
-        iconName={"segment"}
         component={
           chartConfig.fields.segment
             ? componentsByIri[chartConfig.fields.segment.componentIri]
@@ -144,61 +207,4 @@ const ScatterPlotChartFields = ({
       ></ControlTabField>
     </>
   );
-};
-
-export const ChartConfigurator = ({
-  state
-}: {
-  state: ConfiguratorStateConfiguringChart;
-}) => {
-  const meta = useDataSetAndMetadata(state.dataSet);
-
-  if (meta.data) {
-    const mappedIris = new Set(
-      Object.values<FieldType>(state.chartConfig.fields).map(
-        f => f.componentIri
-      )
-    );
-    const unMappedDimensions = meta.data.dimensions.filter(
-      dim => !mappedIris.has(dim.component.iri.value)
-    );
-    return (
-      <>
-        <CollapsibleSection title={<Trans>Design</Trans>}>
-          {state.chartConfig.chartType === "column" ? (
-            <ColumnChartFields
-              chartConfig={state.chartConfig}
-              metaData={meta.data}
-            />
-          ) : state.chartConfig.chartType === "line" ? (
-            <LineChartFields
-              chartConfig={state.chartConfig}
-              metaData={meta.data}
-            />
-          ) : state.chartConfig.chartType === "area" ? (
-            <AreaChartFields
-              chartConfig={state.chartConfig}
-              metaData={meta.data}
-            />
-          ) : state.chartConfig.chartType === "scatterplot" ? (
-            <ScatterPlotChartFields
-              chartConfig={state.chartConfig}
-              metaData={meta.data}
-            />
-          ) : null}
-        </CollapsibleSection>
-        <CollapsibleSection title={<Trans>Data</Trans>}>
-          {unMappedDimensions.map((dimension, i) => (
-            <FilterTabField
-              key={dimension.component.iri.value}
-              component={dimension}
-              value={dimension.component.iri.value as $FixMe}
-            ></FilterTabField>
-          ))}
-        </CollapsibleSection>
-      </>
-    );
-  } else {
-    return <Loading />;
-  }
 };

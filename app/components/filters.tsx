@@ -10,7 +10,7 @@ import {
   getFilterValue
 } from "../domain/configurator-state";
 import { Literal, NamedNode } from "rdf-js";
-import { Text } from "rebass";
+import { Text, Button, Box } from "rebass";
 import { Trans } from "@lingui/macro";
 import { FilterValueMultiValues } from "../domain";
 
@@ -58,14 +58,14 @@ export const DimensionValuesMultiFilter = ({
 
   return (
     <>
-      <Text
-        variant="paragraph2"
-        mb={4}
+      <Button
+        variant="linkButton"
         onClick={() => toggle(dimensionIri, dimension.values)}
-        sx={{ textDecoration: "underline", cursor: "pointer" }}
       >
-        {allSelected ? <Trans>Reset</Trans> : <Trans>Select all</Trans>}
-      </Text>
+        <Text variant="paragraph2" sx={{ textDecoration: "underline" }}>
+          {allSelected ? <Trans>Reset</Trans> : <Trans>Select all</Trans>}
+        </Text>
+      </Button>
 
       {dimension.values.map(dv => {
         return (

@@ -231,16 +231,18 @@ export const useChartOptionField = ({
   };
 };
 export const useChartTypeSelectorField = ({
-  path,
   value,
   metaData
 }: {
-  path: string;
-  value?: string;
+  value: string;
   metaData: DataSetMetadata;
-}): FieldProps => {
+}): FieldProps & {
+  onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
+} => {
   const [state, dispatch] = useConfiguratorState();
-  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+  const onClick = useCallback<
+    (e: React.SyntheticEvent<HTMLButtonElement>) => void
+  >(
     e => {
       const chartType = e.currentTarget.value as ChartType;
 
@@ -264,9 +266,9 @@ export const useChartTypeSelectorField = ({
   const checked = stateValue === value;
 
   return {
-    name: path,
-    value: value ? value : stateValue,
+    name: "chartType",
+    value, // ? value : stateValue,
     checked,
-    onChange
+    onClick
   };
 };

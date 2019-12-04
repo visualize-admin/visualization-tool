@@ -26,7 +26,7 @@ export default () => markdown`
         label={"line"}
         name={"Linien"}
         value={"Linien"}
-        onChange={e => {
+        onClick={e => {
           console.log(e.currentTarget.value);
         }}
       />
@@ -39,7 +39,7 @@ export default () => markdown`
         name={"Scatterplot"}
         value={"Scatterplot"}
         checked={true}
-        onChange={e => {
+        onClick={e => {
           console.log(e.currentTarget.value);
         }}
       />

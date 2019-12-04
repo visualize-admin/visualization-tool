@@ -54,10 +54,6 @@ const ChartCreator = () => {
         <PanelLeft />
       </Box>
 
-      <Box as="section" data-name="panel-middle" variant="container.middle">
-        <PanelMiddle dataSetPreviewIri={state.dataSet} />
-      </Box>
-
       <Box as="section" data-name="panel-right" variant="container.right">
         {state.state === "CONFIGURING_CHART" && (
           <ChartOptionsSelector state={state} />
@@ -65,6 +61,9 @@ const ChartCreator = () => {
         {state.state === "DESCRIBING_CHART" && (
           <ChartAnnotationsSelector state={state} />
         )}
+      </Box>
+      <Box as="section" data-name="panel-middle" variant="container.middle">
+        <PanelMiddle dataSetPreviewIri={state.dataSet} />
       </Box>
     </Box>
   );
