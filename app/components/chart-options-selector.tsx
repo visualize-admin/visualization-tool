@@ -1,24 +1,22 @@
-import React from "react";
+import { Trans } from "@lingui/macro";
+import React, { useEffect, useRef } from "react";
+import { Box, Text } from "rebass";
 import {
+  ChartType,
   ConfiguratorStateConfiguringChart,
   DataSetMetadata,
   DimensionWithMeta,
-  useDataSetAndMetadata,
-  ChartType
+  useDataSetAndMetadata
 } from "../domain";
-import {
-  CollapsibleSection,
-  ControlList,
-  ColorPalette
-} from "./chart-controls";
+import { IconName } from "../icons";
+import { ColorPalette, SectionTitle } from "./chart-controls";
+import { getFieldLabel } from "./chart-controls/control-tab";
 import { ChartFieldField, ChartOptionField } from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter
 } from "./filters";
 import { Loading } from "./hint";
-import { Trans } from "@lingui/macro";
-import { getFieldLabel } from "./chart-controls/control-tab";
 
 export const ChartOptionsSelector = ({
   state
@@ -83,10 +81,25 @@ const DimensionPanel = ({
   metaData: DataSetMetadata;
 }) => {
   const { dimensions } = metaData;
-
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (panelRef && panelRef.current) {
+      panelRef.current.focus();
+    }
+  }, [field]);
   return (
-    <>
-      <CollapsibleSection title={getFieldLabel(field)}>
+    <Box
+      variant="controlSection"
+      role="tabpanel"
+      id={`control-panel-${field}`}
+      aria-labelledby={`tab-${field}`}
+      ref={panelRef}
+      tabIndex={-1}
+    >
+      <SectionTitle iconName={field as IconName}>
+        {getFieldLabel(field)}
+      </SectionTitle>
+      <Box variant="controlSectionContent">
         <ChartFieldField
           field={field}
           label={<Trans>Select a dimension</Trans>}
@@ -99,13 +112,19 @@ const DimensionPanel = ({
         {field === "segment" && (
           <ChartFieldOptions field={field} chartType={chartType} />
         )}
-      </CollapsibleSection>
-      <CollapsibleSection title={<Trans>Filter</Trans>}>
-        <ControlList>
+      </Box>
+      <Box variant="controlSection">
+        <SectionTitle iconName="filter">
+          <Trans>Filter</Trans>
+        </SectionTitle>
+        <Box variant="controlSectionContent" as="fieldset">
+          <legend style={{ display: "none" }}>
+            <Trans>Filter</Trans>
+          </legend>
           <DimensionValuesMultiFilter dimension={dimension} />
-        </ControlList>
-      </CollapsibleSection>
-    </>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
@@ -117,19 +136,34 @@ const MeasurePanel = ({
   metaData: DataSetMetadata;
 }) => {
   const { measures } = metaData;
-
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (panelRef && panelRef.current) {
+      panelRef.current.focus();
+    }
+  }, [field]);
   return (
-    <CollapsibleSection title={getFieldLabel(field)}>
-      <ChartFieldField
-        field={field}
-        label={<Trans>Select a measure</Trans>}
-        options={measures.map(({ component }) => ({
-          value: component.iri.value,
-          label: component.label.value
-        }))}
-        dataSetMetadata={metaData}
-      />
-    </CollapsibleSection>
+    <Box
+      variant="controlSection"
+      role="tabpanel"
+      id={`control-panel-${field}`}
+      aria-labelledby={`tab-${field}`}
+      ref={panelRef}
+      tabIndex={-1}
+    >
+      <SectionTitle iconName="y">{getFieldLabel(field)}</SectionTitle>
+      <Box variant="controlSectionContent">
+        <ChartFieldField
+          field={field}
+          label={<Trans>Select a measure</Trans>}
+          options={measures.map(({ component }) => ({
+            value: component.iri.value,
+            label: component.label.value
+          }))}
+          dataSetMetadata={metaData}
+        />
+      </Box>
+    </Box>
   );
 };
 
@@ -144,14 +178,35 @@ const Filter = ({
   const activeDimension = dimensions.find(
     dim => dim.component.iri.value === state.activeField
   );
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (panelRef && panelRef.current) {
+      panelRef.current.focus();
+    }
+  }, [state.activeField]);
   return (
-    <CollapsibleSection title={<Trans>Filter</Trans>}>
-      {activeDimension && (
-        <DimensionValuesSingleFilter
-          dimension={activeDimension}
-        ></DimensionValuesSingleFilter>
-      )}
-    </CollapsibleSection>
+    <Box
+      variant="controlSection"
+      role="tabpanel"
+      id={`filter-panel-${state.activeField}`}
+      aria-labelledby={`tab-${state.activeField}`}
+      ref={panelRef}
+      tabIndex={-1}
+    >
+      <SectionTitle iconName="table">
+        {activeDimension && activeDimension.component.label.value}
+      </SectionTitle>
+      <Box variant="controlSectionContent" as="fieldset">
+        <legend style={{ display: "none" }}>
+          <Trans>Filter</Trans>
+        </legend>
+        {activeDimension && (
+          <DimensionValuesSingleFilter
+            dimension={activeDimension}
+          ></DimensionValuesSingleFilter>
+        )}
+      </Box>
+    </Box>
   );
 };
 
@@ -165,7 +220,13 @@ const ChartFieldOptions = ({
   return (
     <>
       {chartType === "column" && (
-        <>
+        <Box as="fieldset">
+          <legend style={{ display: "none" }}>
+            <Trans>Chart Type</Trans>
+          </legend>
+          <Text variant="meta" pb={1} mb={2} color="monochrome.700">
+            <Trans>Chart Type</Trans>
+          </Text>
           <ChartOptionField
             label="stacked"
             field={field}
@@ -178,7 +239,7 @@ const ChartFieldOptions = ({
             path="type"
             value={"grouped"}
           />
-        </>
+        </Box>
       )}
       <ColorPalette field={field}></ColorPalette>
     </>

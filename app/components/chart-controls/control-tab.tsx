@@ -7,23 +7,26 @@ import { ComponentWithMeta, getDimensionLabel } from "../../domain";
 import { Trans } from "@lingui/macro";
 
 export const ControlTab = ({
-  iconName,
   component,
   value,
-  checked,
   disabled,
-  onClick
+  onClick,
+  checked
 }: {
-  iconName: IconName;
   component?: ComponentWithMeta;
   disabled?: boolean;
+  value: string;
   onClick: (x: string) => void;
 } & FieldProps) => {
   return (
     <Button
       variant="control"
       value={value}
-      onClick={() => onClick(value as string)}
+      onClick={() => onClick(value)}
+      role="tab"
+      aria-selected={checked}
+      aria-controls={`control-panel-${value}`}
+      id={`tab-${value}`}
       bg={checked ? "blueGreyDarker" : "monochrome.100"}
     >
       <Flex justifyContent="flex-start" alignItems="center">
@@ -36,14 +39,14 @@ export const ControlTab = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Icon size={24} name={iconName} />
+          <Icon size={24} name={value as IconName} />
         </Flex>
         <Flex flexDirection="column" alignItems="flex-start" mx={2}>
           <Text
             variant="meta"
             sx={{ color: "monochrome.600", lineHeight: [1, 1, 1] }}
           >
-            {getFieldLabel(iconName)}
+            {getFieldLabel(value)}
           </Text>
           <Text
             variant="paragraph1"
@@ -72,12 +75,17 @@ export const FilterTab = ({
   disabled?: boolean;
   onClick: (x: string) => void;
   filterValue: string;
+  value: string;
 } & FieldProps) => {
   return (
     <Button
       variant="control"
       value={value}
-      onClick={() => onClick(value as string)}
+      role="tab"
+      aria-selected={checked}
+      aria-controls={`filter-panel-${value}`}
+      id={`tab-${value}`}
+      onClick={() => onClick(value)}
       bg={checked ? "blueGreyDarker" : "monochrome.100"}
     >
       <Flex justifyContent="flex-start" alignItems="center">
@@ -121,12 +129,13 @@ export const AnnotatorTab = ({
 }: {
   disabled?: boolean;
   onClick: (x: string) => void;
+  value: string;
 } & FieldProps) => {
   return (
     <Button
       variant="control"
       value={value}
-      onClick={() => onClick(value as string)}
+      onClick={() => onClick(value)}
       bg={checked ? "blueGreyDarker" : "monochrome.100"}
     >
       <Flex justifyContent="flex-start" alignItems="center">

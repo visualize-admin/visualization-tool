@@ -20,9 +20,7 @@ export const PanelLeft = () => {
           {state.state === "CONFIGURING_CHART" && (
             <ChartConfigurator state={state} />
           )}
-          {state.state === "DESCRIBING_CHART" && (
-            <ChartAnnotator state={state} />
-          )}
+          {state.state === "DESCRIBING_CHART" && <ChartAnnotator />}
         </>
       )}
     </>

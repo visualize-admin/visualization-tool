@@ -1,32 +1,51 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { ConfiguratorStateDescribingChart } from "../domain";
 import { locales } from "../locales/locales";
-import { CollapsibleSection } from "./chart-controls";
+import { SectionTitle } from "./chart-controls";
 import { MetaInputField } from "./field";
 import { getFieldLabel } from "./chart-controls/control-tab";
+import { Box } from "rebass";
 
 export const ChartAnnotationsSelector = ({
   state
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
-  // FIXME: use an identity function to ensure type safety
-  const af = state.activeField === "title" ? "title" : "description";
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (panelRef && panelRef.current) {
+      panelRef.current.focus();
+    }
+  }, [state.activeField]);
 
+  if (state.activeField !== "title" && state.activeField !== "description") {
+    return <div></div>; // To avoid focus on first mount
+  }
+  const af = state.activeField === "title" ? "title" : "description";
   return (
-    <CollapsibleSection
-      title={state.activeField && getFieldLabel(state.activeField)}
+    <Box
+      variant="controlSection"
+      role="tabpanel"
+      id={`annotation-panel-${state.activeField}`}
+      aria-labelledby={`annotation-tab-${state.activeField}`}
+      ref={panelRef}
+      tabIndex={-1}
     >
-      {state.activeField &&
-        locales.map(locale => (
-          <MetaInputField
-            key={`${locale}-${state.activeField!}`}
-            metaKey={state.activeField!} // FIXME !
-            locale={locale}
-            label={locale}
-            value={state.meta[af][locale]}
-          />
-        ))}
-    </CollapsibleSection>
+      <SectionTitle iconName="text">
+        {state.activeField && getFieldLabel(state.activeField)}
+      </SectionTitle>
+      <Box variant="controlSectionContent">
+        {state.activeField &&
+          locales.map(locale => (
+            <MetaInputField
+              key={`${locale}-${state.activeField!}`}
+              metaKey={state.activeField!}
+              locale={locale}
+              label={locale}
+              value={state.meta[af][locale]}
+            />
+          ))}
+      </Box>
+    </Box>
   );
 };

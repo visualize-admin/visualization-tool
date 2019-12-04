@@ -52,8 +52,6 @@ export const ChartTypeSelector = ({
             chartTypes.map(d => (
               <ChartTypeSelectorField
                 key={d}
-                type="radio"
-                path={"chartType"}
                 label={d}
                 value={d}
                 metaData={meta.data}
