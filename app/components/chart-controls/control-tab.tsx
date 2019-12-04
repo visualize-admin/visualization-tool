@@ -1,10 +1,11 @@
 import * as React from "react";
 import { FieldProps } from "../../domain/config-form";
 import { Flex, Text } from "rebass";
-import { Icon, IconName } from "../../icons";
+import { Icon } from "../../icons";
 import { Button } from "rebass";
 import { ComponentWithMeta, getDimensionLabel } from "../../domain";
 import { Trans } from "@lingui/macro";
+import { getIconName } from "../helpers";
 
 export const ControlTab = ({
   component,
@@ -39,7 +40,7 @@ export const ControlTab = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Icon size={24} name={value as IconName} />
+          <Icon size={24} name={getIconName(value)} />
         </Flex>
         <Flex flexDirection="column" alignItems="flex-start" mx={2}>
           <Text

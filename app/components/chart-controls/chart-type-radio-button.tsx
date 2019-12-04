@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Button, Text } from "rebass";
 import { FieldProps } from "../../domain/config-form";
-import { Icon, IconName } from "../../icons";
+import { Icon } from "../../icons";
+import { getIconName } from "../helpers";
 
 export const ChartTypeRadio = ({
   label,
@@ -42,7 +43,7 @@ export const ChartTypeRadio = ({
         }
       }}
     >
-      <Icon name={label as IconName} />
+      <Icon name={getIconName(label)} />
       <Text
         variant="paragraph2"
         sx={{ color: checked ? "monochrome.100" : "monochrome.600" }}
