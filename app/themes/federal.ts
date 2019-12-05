@@ -303,6 +303,7 @@ export const theme: Theme = {
     },
     palette: {
       variant: "buttons.primary",
+      width: ["100%"],
       color: "monochrome.700",
       display: "flex",
       justifyContent: "space-between",
@@ -580,7 +581,6 @@ export const theme: Theme = {
       pb: 1
     },
     controlSection: {
-      pb: 2,
       borderTopColor: "monochrome.500",
       borderTopWidth: "1px",
       borderTopStyle: "solid",
@@ -589,14 +589,15 @@ export const theme: Theme = {
       }
     },
     controlSectionTitle: {
-      p: 3,
+      p: 4,
       bg: "transparent",
       appearance: "none",
       width: "100%",
       border: "none"
     },
     controlSectionContent: {
-      px: 3
+      px: 4,
+      pb: 5
     },
 
     hint: {
@@ -624,7 +625,6 @@ export const theme: Theme = {
     },
     palette: {
       menu: {
-        p: 1,
         bg: "monochrome.100"
       },
       row: { bg: "monochrome.100" },
@@ -633,7 +633,7 @@ export const theme: Theme = {
         margin: 0,
         padding: 0,
         width: 16,
-        height: 36,
+        height: 24,
         borderColor: "white",
         borderWidth: "1px",
         borderStyle: "solid",
@@ -732,6 +732,14 @@ export const theme: Theme = {
       borderWidth: "1px",
       borderStyle: "solid",
       borderColor: "monochrome.500"
+    },
+    fieldSetLegend: {
+      fontFamily: "frutigerRegular",
+      lineHeight: [1, 2, 2],
+      fontWeight: "regular",
+      fontSize: [1, 2, 2],
+      mb: 1,
+      color: "monochrome.600"
     }
   }
 };

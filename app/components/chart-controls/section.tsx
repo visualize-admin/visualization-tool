@@ -1,7 +1,7 @@
 import * as React from "react";
-
-import { Box, Text, Flex, Heading } from "rebass";
-import { IconName, Icon } from "../../icons";
+import { Box, Flex, Text } from "rebass";
+import { Icon, IconName } from "../../icons";
+import { useTheme } from "../../themes";
 
 export const CollapsibleSection = ({
   title,
@@ -14,21 +14,7 @@ export const CollapsibleSection = ({
 }) => {
   return (
     <Box variant="controlSection">
-      {title && (
-        <Heading as="h2" id={titleId}>
-          <Flex variant="controlSectionTitle" justifyContent="space-between">
-            <Flex
-              justifyContent="space-between"
-              width="100%"
-              color="monochrome.600"
-            >
-              <Text variant="table" color="monochrome.800">
-                {title}
-              </Text>
-            </Flex>
-          </Flex>
-        </Heading>
-      )}
+      {title && <SectionTitle titleId={titleId}> {title}</SectionTitle>}
       {children}
     </Box>
   );
@@ -36,17 +22,36 @@ export const CollapsibleSection = ({
 
 export const SectionTitle = ({
   iconName,
+  titleId,
   children
 }: {
   iconName?: IconName;
+  titleId?: string;
+
   children: React.ReactNode;
-}) => (
-  <Heading as="h2">
-    <Flex variant="controlSectionTitle" justifyContent="flex-start">
-      {iconName && <Icon name={iconName}></Icon>}
-      <Text variant="table" color="monochrome.800" ml={2}>
+}) => {
+  const theme = useTheme();
+  return (
+    <Flex
+      id={titleId}
+      as="h2"
+      variant="controlSectionTitle"
+      justifyContent="flex-start"
+    >
+      {iconName && (
+        <Icon
+          color={(theme as any).colors.monochrome["700"]}
+          name={iconName}
+        ></Icon>
+      )}
+      <Text
+        variant="table"
+        color="monochrome.800"
+        ml={2}
+        sx={{ fontFamily: "frutigerBold" }}
+      >
         {children}
       </Text>
     </Flex>
-  </Heading>
-);
+  );
+};

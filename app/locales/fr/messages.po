@@ -13,14 +13,15 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/stepper.tsx:66
+#: app/components/stepper.tsx:68
 msgid "Adjust"
 msgstr "Ajuster"
 
-#: app/components/stepper.tsx:73
+#: app/components/stepper.tsx:75
 msgid "Annotate"
 msgstr "Décrire"
 
+#: app/components/chart-options-selector.tsx:110
 #: app/components/chart-type-selector.tsx:18
 #: app/components/chart-type-selector.tsx:21
 msgid "Chart Type"
@@ -50,7 +51,7 @@ msgstr "Créer une visualisation"
 msgid "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
 msgstr "Vous pouvez également créer votre propre graphique. Avec l'outil de visualisation, vous pouvez créer vos propres visualisations, à partir d'un grand nombre de données fédérales suisses."
 
-#: app/components/chart-configurator.tsx:56
+#: app/components/chart-configurator.tsx:20
 msgid "Data"
 msgstr "Données"
 
@@ -58,7 +59,7 @@ msgstr "Données"
 msgid "Data:"
 msgstr "Filtre:"
 
-#: app/components/stepper.tsx:52
+#: app/components/stepper.tsx:54
 msgid "Dataset"
 msgstr "Jeu de données"
 
@@ -66,12 +67,12 @@ msgstr "Jeu de données"
 msgid "Dataset:"
 msgstr "Jeu de données:"
 
-#: app/components/chart-annotator.tsx:6
-#: app/components/chart-controls/control-tab.tsx:81
+#: app/components/chart-annotator.tsx:9
+#: app/domain/helpers.tsx:38
 msgid "Description"
 msgstr "Description"
 
-#: app/components/chart-configurator.tsx:53
+#: app/components/chart-configurator.tsx:15
 msgid "Design"
 msgstr "Design"
 
@@ -87,12 +88,17 @@ msgstr "Intégrer"
 msgid "Embed:"
 msgstr "Intégrer:"
 
-#: app/components/chart-options-selector.tsx:43
-#: app/components/chart-options-selector.tsx:62
+#: app/components/chart-options-selector.tsx:57
+#: app/components/chart-options-selector.tsx:61
+#: app/components/chart-options-selector.tsx:101
 msgid "Filter"
 msgstr "Filtre"
 
-#: app/components/chart-controls/control-tab.tsx:73
+#: app/domain/helpers.tsx:42
+msgid "Grouped"
+msgstr "Groupées"
+
+#: app/domain/helpers.tsx:30
 msgid "Horizontal axis"
 msgstr "Axe horizontal"
 
@@ -105,7 +111,7 @@ msgstr "Chargement des données…"
 msgid "Logo of the Swiss Confederation"
 msgstr "Logo de la Confédération Suisse"
 
-#: app/components/chart-controls/control-tab.tsx:75
+#: app/domain/helpers.tsx:32
 msgid "Measure"
 msgstr "Mesure"
 
@@ -129,11 +135,11 @@ msgstr "Précédent"
 msgid "Publish"
 msgstr "Publier"
 
-#: app/components/filters.tsx:26
+#: app/components/filters.tsx:27
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: app/components/chart-controls/control-tab.tsx:77
+#: app/domain/helpers.tsx:34
 msgid "Segmentation"
 msgstr "Segmentation"
 
@@ -145,15 +151,15 @@ msgstr "Sélectionner un jeu de données"
 msgid "Select a dataset"
 msgstr "Sélectionnez un jeu de données"
 
-#: app/components/chart-options-selector.tsx:37
+#: app/components/chart-options-selector.tsx:48
 msgid "Select a dimension"
 msgstr "Sélectionnez une dimension"
 
-#: app/components/chart-options-selector.tsx:53
+#: app/components/chart-options-selector.tsx:79
 msgid "Select a measure"
 msgstr "Sélectionnez une mesure"
 
-#: app/components/filters.tsx:26
+#: app/components/filters.tsx:27
 msgid "Select all"
 msgstr "Tout sélectionner"
 
@@ -173,11 +179,15 @@ msgstr "Les 10 premières lignes sont affichées"
 msgid "Source:"
 msgstr "Source:"
 
-#: app/components/chart-controls/control-tab.tsx:79
+#: app/domain/helpers.tsx:40
+msgid "Stacked"
+msgstr "Empilées"
+
+#: app/domain/helpers.tsx:36
 msgid "Title"
 msgstr "Titre"
 
-#: app/components/stepper.tsx:59
+#: app/components/stepper.tsx:61
 msgid "Visualization Type"
 msgstr "Type de visualisation"
 

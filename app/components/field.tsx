@@ -25,6 +25,7 @@ import {
   FilterTab,
   AnnotatorTab
 } from "./chart-controls/control-tab";
+import { getFieldLabel } from "../domain/helpers";
 
 export const ControlTabField = ({
   component,
@@ -237,7 +238,7 @@ export const ChartOptionField = ({
     value
   });
 
-  return <Radio label={label} {...fieldProps}></Radio>;
+  return <Radio label={getFieldLabel(label)} {...fieldProps}></Radio>;
 };
 
 export const ChartTypeSelectorField = ({
