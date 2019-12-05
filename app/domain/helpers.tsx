@@ -8,6 +8,8 @@ export const getIconName = (name: string): IconName => {
       return "x";
     case "y":
       return "y";
+    case "segment":
+      return "segment";
     case "table":
       return "table";
     case "filter":
