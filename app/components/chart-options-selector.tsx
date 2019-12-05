@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { useEffect, useRef } from "react";
-import { Box, Text } from "rebass";
+import { Box, Flex } from "rebass";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
@@ -8,14 +8,15 @@ import {
   DimensionWithMeta,
   useDataSetAndMetadata
 } from "../domain";
+import { getFieldLabel } from "../domain/helpers";
 import { IconName } from "../icons";
 import { ColorPalette, SectionTitle } from "./chart-controls";
-import { getFieldLabel } from "./chart-controls/control-tab";
 import { ChartFieldField, ChartOptionField } from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter
 } from "./filters";
+import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
 
 export const ChartOptionsSelector = ({
@@ -113,6 +114,7 @@ const DimensionPanel = ({
           <ChartFieldOptions field={field} chartType={chartType} />
         )}
       </Box>
+
       <Box variant="controlSection">
         <SectionTitle iconName="filter">
           <Trans>Filter</Trans>
@@ -220,25 +222,22 @@ const ChartFieldOptions = ({
   return (
     <>
       {chartType === "column" && (
-        <Box as="fieldset">
-          <legend style={{ display: "none" }}>
-            <Trans>Chart Type</Trans>
-          </legend>
-          <Text variant="meta" pb={1} mb={2} color="monochrome.700">
-            <Trans>Chart Type</Trans>
-          </Text>
-          <ChartOptionField
-            label="stacked"
-            field={field}
-            path="type"
-            value={"stacked"}
-          />
-          <ChartOptionField
-            label="grouped"
-            field={field}
-            path="type"
-            value={"grouped"}
-          />
+        <Box as="fieldset" mt={2}>
+          <FieldSetLegend legendTitle={<Trans>Chart Type</Trans>} />
+          <Flex justifyContent="flex-start" mt={1}>
+            <ChartOptionField
+              label="stacked"
+              field={field}
+              path="type"
+              value={"stacked"}
+            />
+            <ChartOptionField
+              label="grouped"
+              field={field}
+              path="type"
+              value={"grouped"}
+            />
+          </Flex>
         </Box>
       )}
       <ColorPalette field={field}></ColorPalette>

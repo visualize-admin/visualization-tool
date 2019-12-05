@@ -6,7 +6,7 @@ import {
   Select as RebassSelect
 } from "@rebass/forms";
 import * as React from "react";
-import { Box } from "rebass";
+import { Box, Flex } from "rebass";
 import { FieldProps, Option } from "../domain/config-form";
 
 export const Label = ({
@@ -16,7 +16,7 @@ export const Label = ({
   smaller = false,
   children
 }: {
-  label?: string;
+  label?: string | React.ReactNode;
   htmlFor: string | React.ReactNode;
   disabled?: boolean;
   smaller?: boolean;
@@ -24,15 +24,28 @@ export const Label = ({
 }) => (
   <RebassLabel
     htmlFor={htmlFor}
-    mb={2}
+    mb={1}
     sx={{
-      color: disabled ? "monochrome.500" : "monochrome.700",
+      width: "auto",
+      color: disabled ? "monochrome.500" : "monochrome.600",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
-      pb: smaller ? 1 : 0
+      pb: smaller ? 1 : 0,
+      mr: 4
     }}
   >
     {children}
-    {label && <Box sx={{ maxWidth: "75%", textAlign: "left" }}>{label}</Box>}
+    {label && (
+      <Box
+        sx={{
+          maxWidth: "75%",
+          textAlign: "left",
+          color: "monochrome.700",
+          fontFamily: "frutigerRegular"
+        }}
+      >
+        {label}
+      </Box>
+    )}
   </RebassLabel>
 );
 
@@ -43,19 +56,21 @@ export const Radio = ({
   checked,
   disabled,
   onChange
-}: { label: string; disabled?: boolean } & FieldProps) => {
+}: { label: string | React.ReactNode; disabled?: boolean } & FieldProps) => {
   return (
-    <Label label={label} htmlFor={`${name}-${value}`}>
-      <RebassRadio
-        name={name}
-        id={`${name}-${value}`}
-        value={value}
-        onChange={onChange}
-        checked={checked}
-        disabled={disabled}
-        sx={{ size: 20, color: checked ? "primary.base" : "monochrome.500" }}
-      />
-    </Label>
+    <Box mb={2}>
+      <Label label={label} htmlFor={`${name}-${value}`}>
+        <RebassRadio
+          name={name}
+          id={`${name}-${value}`}
+          value={value}
+          onChange={onChange}
+          checked={checked}
+          disabled={disabled}
+          sx={{ size: 20, color: checked ? "primary.base" : "monochrome.500" }}
+        />
+      </Label>
+    </Box>
   );
 };
 
@@ -67,17 +82,19 @@ export const Checkbox = ({
   disabled,
   onChange
 }: { label: string; disabled?: boolean } & FieldProps) => (
-  <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
-    <RebassCheckbox
-      sx={{ size: 20, color: checked ? "primary.base" : "monochrome.500" }}
-      id={`${name}-${label}`}
-      name={name}
-      value={value}
-      checked={checked}
-      disabled={disabled}
-      onChange={onChange}
-    />
-  </Label>
+  <Box mb={4}>
+    <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
+      <RebassCheckbox
+        sx={{ size: 20, color: checked ? "primary.base" : "monochrome.500" }}
+        id={`${name}-${label}`}
+        name={name}
+        value={value}
+        checked={checked}
+        disabled={disabled}
+        onChange={onChange}
+      />
+    </Label>
+  </Box>
 );
 
 export const Select = ({
@@ -101,10 +118,10 @@ export const Select = ({
     )}
     <RebassSelect
       sx={{
-        height: 48,
         borderColor: "monochrome.500",
         fontSize: 4,
-        bg: "monochrome.100"
+        bg: "monochrome.100",
+        p: 2
       }}
       id={label}
       name={label}
@@ -159,5 +176,15 @@ export const SearchField = () => (
       type="email"
       placeholder="jane@example.com"
     />
+  </Box>
+);
+
+export const FieldSetLegend = ({
+  legendTitle
+}: {
+  legendTitle: string | React.ReactNode;
+}) => (
+  <Box variant="fieldSetLegend" as="legend">
+    {legendTitle}
   </Box>
 );

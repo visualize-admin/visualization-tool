@@ -3,8 +3,8 @@ import { ConfiguratorStateDescribingChart } from "../domain";
 import { locales } from "../locales/locales";
 import { SectionTitle } from "./chart-controls";
 import { MetaInputField } from "./field";
-import { getFieldLabel } from "./chart-controls/control-tab";
 import { Box } from "rebass";
+import { getFieldLabel } from "../domain/helpers";
 
 export const ChartAnnotationsSelector = ({
   state

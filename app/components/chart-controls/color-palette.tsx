@@ -55,7 +55,7 @@ export const ColorPalette = ({ field }: { field: string }) => {
   });
 
   return (
-    <div>
+    <Box mt={2}>
       <Label smaller {...getLabelProps()}>
         <Trans>Color Palette</Trans>
       </Label>
@@ -81,6 +81,7 @@ export const ColorPalette = ({ field }: { field: string }) => {
             <Box
               key={`${palette.value}${index}`}
               sx={{
+                p: 1,
                 cursor: "pointer",
                 backgroundColor:
                   highlightedIndex === index
@@ -111,6 +112,6 @@ export const ColorPalette = ({ field }: { field: string }) => {
       </Box>
       {/* if you Tab from menu, focus goes on button, and it shouldn't. only happens here. */}
       <div tabIndex={0} />
-    </div>
+    </Box>
   );
 };

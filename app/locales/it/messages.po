@@ -13,14 +13,15 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/stepper.tsx:66
+#: app/components/stepper.tsx:68
 msgid "Adjust"
 msgstr "Aggiustare"
 
-#: app/components/stepper.tsx:73
+#: app/components/stepper.tsx:75
 msgid "Annotate"
 msgstr "Descrivere"
 
+#: app/components/chart-options-selector.tsx:110
 #: app/components/chart-type-selector.tsx:18
 #: app/components/chart-type-selector.tsx:21
 msgid "Chart Type"
@@ -50,7 +51,7 @@ msgstr "Crea una visualizzazione"
 msgid "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
 msgstr "Crea la tua grafica ora. Con lo strumento di visualizzazione puoi creare la tua grafica basata su un gran numero di dati federali svizzeri."
 
-#: app/components/chart-configurator.tsx:56
+#: app/components/chart-configurator.tsx:20
 msgid "Data"
 msgstr "Dati"
 
@@ -58,7 +59,7 @@ msgstr "Dati"
 msgid "Data:"
 msgstr "Filtro:"
 
-#: app/components/stepper.tsx:52
+#: app/components/stepper.tsx:54
 msgid "Dataset"
 msgstr "Il record"
 
@@ -66,12 +67,12 @@ msgstr "Il record"
 msgid "Dataset:"
 msgstr "Record:"
 
-#: app/components/chart-annotator.tsx:6
-#: app/components/chart-controls/control-tab.tsx:81
+#: app/components/chart-annotator.tsx:9
+#: app/domain/helpers.tsx:38
 msgid "Description"
 msgstr "Descrizione"
 
-#: app/components/chart-configurator.tsx:53
+#: app/components/chart-configurator.tsx:15
 msgid "Design"
 msgstr "Design"
 
@@ -87,12 +88,17 @@ msgstr "incorporare"
 msgid "Embed:"
 msgstr "incorporare:"
 
-#: app/components/chart-options-selector.tsx:43
-#: app/components/chart-options-selector.tsx:62
+#: app/components/chart-options-selector.tsx:57
+#: app/components/chart-options-selector.tsx:61
+#: app/components/chart-options-selector.tsx:101
 msgid "Filter"
 msgstr "Filtro"
 
-#: app/components/chart-controls/control-tab.tsx:73
+#: app/domain/helpers.tsx:42
+msgid "Grouped"
+msgstr "Raggruppate"
+
+#: app/domain/helpers.tsx:30
 msgid "Horizontal axis"
 msgstr "Asse orizzontale"
 
@@ -105,7 +111,7 @@ msgstr "Caricamento dati…"
 msgid "Logo of the Swiss Confederation"
 msgstr "Logo della Confederazione Svizzera"
 
-#: app/components/chart-controls/control-tab.tsx:75
+#: app/domain/helpers.tsx:32
 msgid "Measure"
 msgstr "Misura "
 
@@ -129,11 +135,11 @@ msgstr "Indietro"
 msgid "Publish"
 msgstr "Pubblicare"
 
-#: app/components/filters.tsx:26
+#: app/components/filters.tsx:27
 msgid "Reset"
 msgstr "Rimettere"
 
-#: app/components/chart-controls/control-tab.tsx:77
+#: app/domain/helpers.tsx:34
 msgid "Segmentation"
 msgstr "Segmentazione"
 
@@ -145,15 +151,15 @@ msgstr "Seleziona il set di dati"
 msgid "Select a dataset"
 msgstr "Nessun record selezionato"
 
-#: app/components/chart-options-selector.tsx:37
+#: app/components/chart-options-selector.tsx:48
 msgid "Select a dimension"
 msgstr "Seleziona una dimensione"
 
-#: app/components/chart-options-selector.tsx:53
+#: app/components/chart-options-selector.tsx:79
 msgid "Select a measure"
 msgstr "Seleziona una misura"
 
-#: app/components/filters.tsx:26
+#: app/components/filters.tsx:27
 msgid "Select all"
 msgstr "Seleziona tutto"
 
@@ -173,11 +179,15 @@ msgstr "Mostra le prime 10 righe"
 msgid "Source:"
 msgstr "Origine:"
 
-#: app/components/chart-controls/control-tab.tsx:79
-msgid "Title"
-msgstr ""
+#: app/domain/helpers.tsx:40
+msgid "Stacked"
+msgstr "Impilate"
 
-#: app/components/stepper.tsx:59
+#: app/domain/helpers.tsx:36
+msgid "Title"
+msgstr "Titolo"
+
+#: app/components/stepper.tsx:61
 msgid "Visualization Type"
 msgstr "Tipo di visualizzazione"
 

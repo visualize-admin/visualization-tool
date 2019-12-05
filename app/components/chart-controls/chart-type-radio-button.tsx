@@ -2,7 +2,7 @@ import * as React from "react";
 import { Button, Text } from "rebass";
 import { FieldProps } from "../../domain/config-form";
 import { Icon } from "../../icons";
-import { getIconName } from "../helpers";
+import { getIconName } from "../../domain/helpers";
 
 export const ChartTypeRadio = ({
   label,
