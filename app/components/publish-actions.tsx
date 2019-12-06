@@ -1,10 +1,11 @@
 import { Trans } from "@lingui/macro";
-import Downshift from "downshift";
-import React from "react";
-import { Box, Button, Flex, Link, Text } from "rebass";
-import { Icon, IconName } from "../icons";
-import { LocalizedLink } from "./links";
 import { Input } from "@rebass/forms";
+import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
+import React, { useState, ReactNode } from "react";
+import { Box, Button, Flex, Link, Text } from "rebass";
+import { Item } from "vega";
+import { Icon, IconName } from "../icons";
+import { LocalizedLink, IconLink } from "./links";
 
 export const PublishActions = ({ configKey }: { configKey: string }) => {
   return (
@@ -16,89 +17,55 @@ export const PublishActions = ({ configKey }: { configKey: string }) => {
   );
 };
 
-export const Share = ({ configKey }: { configKey: string }) => {
-  return (
-    <Downshift>
-      {({ getToggleButtonProps, getMenuProps, getItemProps, isOpen }) => (
-        <div style={{ position: "relative" }}>
-          <Button
-            variant="publishAction"
-            {...getToggleButtonProps()}
-            color={isOpen ? "primary.active" : "primary.base"}
-          >
-            <Icon name="share"></Icon>
-            <Text ml={3}>
-              <Trans>Share</Trans>
-            </Text>
-          </Button>
+const PopUp = ({
+  triggerLabel,
+  triggerIconName,
+  children
+}: {
+  triggerLabel: string | ReactNode;
+  triggerIconName: IconName;
+  children: ReactNode;
+}) => {
+  const [menuIsOpen, toggle] = useState(false);
+  const handleOuterClick = () => {
+    toggle(false);
+  };
+  const stateReducer = (
+    state: DownshiftState<Item>,
+    changes: StateChangeOptions<Item>
+  ) => {
+    switch (changes.type) {
+      case Downshift.stateChangeTypes.clickButton:
+        toggle(!menuIsOpen);
+        return {
+          ...changes,
+          isOpen: menuIsOpen
+        };
+      case Downshift.stateChangeTypes.keyDownEnter:
+      case Downshift.stateChangeTypes.clickItem:
+        toggle(true);
+        return {
+          ...changes,
+          isOpen: menuIsOpen
+        };
+      case Downshift.stateChangeTypes.blurInput:
+      case Downshift.stateChangeTypes.keyDownEscape:
+        toggle(false);
+        return {
+          ...changes,
+          isOpen: false
+        };
+      default:
+        return changes;
+    }
+  };
 
-          <div {...getMenuProps()}>
-            {isOpen ? (
-              <>
-                <Box variant="publishActionOverlay" />
-                <Box variant="publishActionModal">
-                  <Flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    height={48}
-                    sx={{
-                      borderBottomWidth: "1px",
-                      borderBottomStyle: "solid",
-                      borderBottomColor: "monochrome.500"
-                    }}
-                  >
-                    <Text variant="paragraph1" color="monochrome.700">
-                      <Trans>Share: </Trans>
-                    </Text>
-                    <Flex color="primary.base">
-                      <IconLink iconName="facebook" href="" disabled></IconLink>
-                      <IconLink iconName="twitter" href="" disabled></IconLink>
-                      <IconLink
-                        iconName="mail"
-                        href={`mailto:?subject=visualize.admin.ch&body=Here is a link to a visualization I created on visualize.admin.ch: https://dev.visualize.admin.ch/en/v/${configKey}`}
-                      ></IconLink>
-                    </Flex>
-                  </Flex>
-                  <Flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    height={48}
-                  >
-                    <Text variant="paragraph1" color="monochrome.700">
-                      <Trans>Chart URL: </Trans>
-                    </Text>
-                    <Flex sx={{ color: "primary.base" }}>
-                      <LocalizedLink
-                        pathname={`/[locale]/v/${configKey}`}
-                        passHref
-                      >
-                        <Link
-                          sx={{
-                            color: "primary.base",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                            mr: 4
-                          }}
-                        >
-                          {configKey}
-                        </Link>
-                      </LocalizedLink>
-                      <Icon name="share"></Icon>
-                    </Flex>
-                  </Flex>
-                </Box>
-              </>
-            ) : null}
-          </div>
-        </div>
-      )}
-    </Downshift>
-  );
-};
-
-export const Embed = ({ configKey }: { configKey: string }) => {
   return (
-    <Downshift>
+    <Downshift
+      stateReducer={stateReducer}
+      onOuterClick={handleOuterClick}
+      isOpen={menuIsOpen}
+    >
       {({ getToggleButtonProps, getMenuProps, isOpen }) => (
         <div style={{ position: "relative" }}>
           <Button
@@ -106,34 +73,87 @@ export const Embed = ({ configKey }: { configKey: string }) => {
             {...getToggleButtonProps()}
             color={isOpen ? "primary.active" : "primary.base"}
           >
-            <Icon name="embed"></Icon>
-            <Text ml={3}>
-              <Trans>Embed</Trans>
-            </Text>
+            <Icon name={triggerIconName}></Icon>
+            <Text ml={3}>{triggerLabel}</Text>
           </Button>
-          <div {...getMenuProps()}>
-            {isOpen ? <EmbedMenu link={configKey} /> : null}
-          </div>
+
+          <div {...getMenuProps()}>{isOpen ? children : null}</div>
         </div>
       )}
     </Downshift>
   );
 };
 
-export const EmbedMenu = ({ link }: { link: React.ReactNode }) => {
+export const Share = ({ configKey }: { configKey: string }) => {
   return (
-    <>
-      <Box variant="publishActionOverlay" />
-      <Box variant="publishActionModal">
-        <Text variant="paragraph1" color="monochrome.700" mt={2}>
-          <Trans>Embed: </Trans>
-        </Text>
+    <PopUp triggerLabel={<Trans>Share</Trans>} triggerIconName="share">
+      <>
+        <Box variant="publishActionOverlay" />
+        <Box variant="publishActionModal">
+          <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            height={48}
+            sx={{
+              borderBottomWidth: "1px",
+              borderBottomStyle: "solid",
+              borderBottomColor: "monochrome.500"
+            }}
+          >
+            <Text variant="paragraph1" color="monochrome.700">
+              <Trans>Share: </Trans>
+            </Text>
+            <Flex color="primary.base">
+              <IconLink iconName="facebook" href="" disabled></IconLink>
+              <IconLink iconName="twitter" href="" disabled></IconLink>
+              <IconLink
+                iconName="mail"
+                href={`mailto:?subject=visualize.admin.ch&body=Here is a link to a visualization I created on visualize.admin.ch: https://dev.visualize.admin.ch/en/v/${configKey}`}
+              ></IconLink>
+            </Flex>
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center" height={48}>
+            <Text variant="paragraph1" color="monochrome.700">
+              <Trans>Chart URL: </Trans>
+            </Text>
+            <Flex sx={{ color: "primary.base" }}>
+              <LocalizedLink pathname={`/[locale]/v/${configKey}`} passHref>
+                <Link
+                  sx={{
+                    color: "primary.base",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    mr: 4
+                  }}
+                >
+                  {configKey}
+                </Link>
+              </LocalizedLink>
+              <Icon name="share"></Icon>
+            </Flex>
+          </Flex>
+        </Box>
+      </>
+    </PopUp>
+  );
+};
 
-        <CopyToClipboardTextInput
-          iFrameCode={`<iframe src="" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
-        />
-      </Box>
-    </>
+export const Embed = ({ configKey }: { configKey: string }) => {
+  return (
+    <PopUp triggerLabel={<Trans>Embed</Trans>} triggerIconName="embed">
+      <>
+        <Box variant="publishActionOverlay" />
+        <Box variant="publishActionModal">
+          <Text variant="paragraph1" color="monochrome.700" mt={2}>
+            <Trans>Embed: </Trans>
+          </Text>
+
+          <CopyToClipboardTextInput
+            iFrameCode={`<iframe src="" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
+          />
+        </Box>
+      </>
+    </PopUp>
   );
 };
 
@@ -197,17 +217,3 @@ export const ImageDownload = () => {
     </Button>
   );
 };
-
-const IconLink = ({
-  iconName,
-  href,
-  disabled = false
-}: {
-  iconName: IconName;
-  href: string;
-  disabled?: boolean;
-}) => (
-  <Link variant="iconLink" disabled href={href} target="_blank">
-    <Icon name={iconName}></Icon>
-  </Link>
-);

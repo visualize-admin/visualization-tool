@@ -34,7 +34,7 @@ export const ChartAnnotationsSelector = ({
       <SectionTitle iconName="text">
         {state.activeField && getFieldLabel(state.activeField)}
       </SectionTitle>
-      <Box variant="controlSectionContent">
+      <Box variant="rightControlSectionContent">
         {state.activeField &&
           locales.map(locale => (
             <MetaInputField
