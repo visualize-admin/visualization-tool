@@ -41,7 +41,7 @@ export const ChartConfigurator = ({
           <Box
             role="tablist"
             aria-labelledby="controls-design"
-            variant="controlSectionContent"
+            variant="leftControlSectionContent"
           >
             {state.chartConfig.chartType === "column" ? (
               <ColumnChartFields
@@ -70,7 +70,7 @@ export const ChartConfigurator = ({
           <Box
             role="tablist"
             aria-labelledby="controls-data"
-            variant="controlSectionContent"
+            variant="leftControlSectionContent"
           >
             {unMappedDimensions.map((dimension, i) => (
               <FilterTabField

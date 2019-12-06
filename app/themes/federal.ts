@@ -595,9 +595,13 @@ export const theme: Theme = {
       width: "100%",
       border: "none"
     },
-    controlSectionContent: {
+    leftControlSectionContent: {
+      px: 2,
+      pb: 4
+    },
+    rightControlSectionContent: {
       px: 4,
-      pb: 5
+      pb: 4
     },
 
     hint: {

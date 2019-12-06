@@ -100,7 +100,7 @@ const DimensionPanel = ({
       <SectionTitle iconName={field as IconName}>
         {getFieldLabel(field)}
       </SectionTitle>
-      <Box variant="controlSectionContent">
+      <Box variant="rightControlSectionContent">
         <ChartFieldField
           field={field}
           label={<Trans>Select a dimension</Trans>}
@@ -119,7 +119,7 @@ const DimensionPanel = ({
         <SectionTitle iconName="filter">
           <Trans>Filter</Trans>
         </SectionTitle>
-        <Box variant="controlSectionContent" as="fieldset">
+        <Box variant="rightControlSectionContent" as="fieldset">
           <legend style={{ display: "none" }}>
             <Trans>Filter</Trans>
           </legend>
@@ -154,7 +154,7 @@ const MeasurePanel = ({
       tabIndex={-1}
     >
       <SectionTitle iconName="y">{getFieldLabel(field)}</SectionTitle>
-      <Box variant="controlSectionContent">
+      <Box variant="rightControlSectionContent">
         <ChartFieldField
           field={field}
           label={<Trans>Select a measure</Trans>}
@@ -198,7 +198,7 @@ const Filter = ({
       <SectionTitle iconName="table">
         {activeDimension && activeDimension.component.label.value}
       </SectionTitle>
-      <Box variant="controlSectionContent" as="fieldset">
+      <Box variant="rightControlSectionContent" as="fieldset">
         <legend style={{ display: "none" }}>
           <Trans>Filter</Trans>
         </legend>

@@ -3,7 +3,8 @@ import Link, { LinkProps } from "next/link";
 import { useLocale } from "../lib/use-locale";
 import * as qs from "querystring";
 import { useRouter } from "next/router";
-
+import { IconName, Icon } from "../icons";
+import { Link as RebassLink } from "rebass";
 const createDynamicRouteProps = ({
   pathname,
   query
@@ -83,3 +84,17 @@ export const CurrentPageLink = ({
     />
   );
 };
+
+export const IconLink = ({
+  iconName,
+  href,
+  disabled = false
+}: {
+  iconName: IconName;
+  href: string;
+  disabled?: boolean;
+}) => (
+  <RebassLink variant="iconLink" disabled href={href} target="_blank">
+    <Icon name={iconName}></Icon>
+  </RebassLink>
+);
