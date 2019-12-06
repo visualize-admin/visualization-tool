@@ -27,7 +27,7 @@ msgstr "Beschriften"
 msgid "Chart Type"
 msgstr "Visualisierungstyp"
 
-#: app/components/publish-actions.tsx:45
+#: app/components/publish-actions.tsx:69
 msgid "Chart URL:"
 msgstr "Grafik URL:"
 
@@ -68,7 +68,7 @@ msgid "Dataset:"
 msgstr "Datensatz:"
 
 #: app/components/chart-annotator.tsx:9
-#: app/domain/helpers.tsx:38
+#: app/domain/helpers.tsx:40
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -76,15 +76,19 @@ msgstr "Beschreibung"
 msgid "Design"
 msgstr "Design"
 
-#: app/components/publish-actions.tsx:136
+#: app/components/publish-actions.tsx:145
 msgid "Download Image"
 msgstr "Bild herunterladen"
 
-#: app/components/publish-actions.tsx:73
+#: app/components/data-download.tsx:14
+msgid "Download data"
+msgstr "Daten herunterladen"
+
+#: app/components/publish-actions.tsx:90
 msgid "Embed"
 msgstr "Einbetten"
 
-#: app/components/publish-actions.tsx:87
+#: app/components/publish-actions.tsx:95
 msgid "Embed:"
 msgstr "Einbetten:"
 
@@ -94,11 +98,11 @@ msgstr "Einbetten:"
 msgid "Filter"
 msgstr "Filter"
 
-#: app/domain/helpers.tsx:42
+#: app/domain/helpers.tsx:44
 msgid "Grouped"
 msgstr "Gruppiert"
 
-#: app/domain/helpers.tsx:30
+#: app/domain/helpers.tsx:32
 msgid "Horizontal axis"
 msgstr "Horizontale Achse"
 
@@ -111,7 +115,7 @@ msgstr "Daten werden geladen…"
 msgid "Logo of the Swiss Confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
-#: app/domain/helpers.tsx:32
+#: app/domain/helpers.tsx:34
 msgid "Measure"
 msgstr "Messwert"
 
@@ -139,7 +143,7 @@ msgstr "Publizieren"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: app/domain/helpers.tsx:34
+#: app/domain/helpers.tsx:36
 msgid "Segmentation"
 msgstr "Segmentierung"
 
@@ -163,11 +167,11 @@ msgstr "Messreihe wählen"
 msgid "Select all"
 msgstr "Alle auswählen"
 
-#: app/components/publish-actions.tsx:21
+#: app/components/publish-actions.tsx:49
 msgid "Share"
 msgstr "Teilen"
 
-#: app/components/publish-actions.tsx:35
+#: app/components/publish-actions.tsx:59
 msgid "Share:"
 msgstr "Teilen: "
 
@@ -179,11 +183,11 @@ msgstr "Vorschau der ersten 10 Zeilen"
 msgid "Source:"
 msgstr "Quelle:"
 
-#: app/domain/helpers.tsx:40
+#: app/domain/helpers.tsx:42
 msgid "Stacked"
 msgstr "Gestapelt"
 
-#: app/domain/helpers.tsx:36
+#: app/domain/helpers.tsx:38
 msgid "Title"
 msgstr "Title"
 

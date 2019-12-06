@@ -27,7 +27,7 @@ msgstr "Descrivere"
 msgid "Chart Type"
 msgstr "Tipo di visualizzazione"
 
-#: app/components/publish-actions.tsx:45
+#: app/components/publish-actions.tsx:69
 msgid "Chart URL:"
 msgstr "URL:"
 
@@ -68,7 +68,7 @@ msgid "Dataset:"
 msgstr "Record:"
 
 #: app/components/chart-annotator.tsx:9
-#: app/domain/helpers.tsx:38
+#: app/domain/helpers.tsx:40
 msgid "Description"
 msgstr "Descrizione"
 
@@ -76,17 +76,21 @@ msgstr "Descrizione"
 msgid "Design"
 msgstr "Design"
 
-#: app/components/publish-actions.tsx:136
+#: app/components/publish-actions.tsx:145
 msgid "Download Image"
 msgstr "scarica l'immagine"
 
-#: app/components/publish-actions.tsx:73
+#: app/components/data-download.tsx:14
+msgid "Download data"
+msgstr "Scarica i dati"
+
+#: app/components/publish-actions.tsx:90
 msgid "Embed"
 msgstr "incorporare"
 
-#: app/components/publish-actions.tsx:87
+#: app/components/publish-actions.tsx:95
 msgid "Embed:"
-msgstr "incorporare:"
+msgstr "Incorporare:"
 
 #: app/components/chart-options-selector.tsx:57
 #: app/components/chart-options-selector.tsx:61
@@ -94,11 +98,11 @@ msgstr "incorporare:"
 msgid "Filter"
 msgstr "Filtro"
 
-#: app/domain/helpers.tsx:42
+#: app/domain/helpers.tsx:44
 msgid "Grouped"
 msgstr "Raggruppate"
 
-#: app/domain/helpers.tsx:30
+#: app/domain/helpers.tsx:32
 msgid "Horizontal axis"
 msgstr "Asse orizzontale"
 
@@ -111,7 +115,7 @@ msgstr "Caricamento dati…"
 msgid "Logo of the Swiss Confederation"
 msgstr "Logo della Confederazione Svizzera"
 
-#: app/domain/helpers.tsx:32
+#: app/domain/helpers.tsx:34
 msgid "Measure"
 msgstr "Misura "
 
@@ -139,7 +143,7 @@ msgstr "Pubblicare"
 msgid "Reset"
 msgstr "Rimettere"
 
-#: app/domain/helpers.tsx:34
+#: app/domain/helpers.tsx:36
 msgid "Segmentation"
 msgstr "Segmentazione"
 
@@ -163,11 +167,11 @@ msgstr "Seleziona una misura"
 msgid "Select all"
 msgstr "Seleziona tutto"
 
-#: app/components/publish-actions.tsx:21
+#: app/components/publish-actions.tsx:49
 msgid "Share"
 msgstr "Condividi"
 
-#: app/components/publish-actions.tsx:35
+#: app/components/publish-actions.tsx:59
 msgid "Share:"
 msgstr "Condividi:"
 
@@ -179,11 +183,11 @@ msgstr "Mostra le prime 10 righe"
 msgid "Source:"
 msgstr "Origine:"
 
-#: app/domain/helpers.tsx:40
+#: app/domain/helpers.tsx:42
 msgid "Stacked"
 msgstr "Impilate"
 
-#: app/domain/helpers.tsx:36
+#: app/domain/helpers.tsx:38
 msgid "Title"
 msgstr "Titolo"
 

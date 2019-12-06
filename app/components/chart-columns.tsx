@@ -1,5 +1,5 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { useMemo, memo } from "react";
+import React, { memo, useMemo } from "react";
 import { useObservations } from "../domain";
 import { ColumnConfig, ColumnFields } from "../domain/config-types";
 import {
@@ -8,11 +8,11 @@ import {
   Observations
 } from "../domain/data";
 import { useResizeObserver } from "../lib/use-resize-observer";
-import { Loading } from "./hint";
 import { A11yTable } from "./a11y-table";
-import { ColumnsSegment } from "./charts-generic/columns-segment";
 import { Columns } from "./charts-generic/columns";
-
+import { ColumnsSegment } from "./charts-generic/columns-segment";
+import { DataDownload } from "./data-download";
+import { Loading } from "./hint";
 export const ChartColumnsVisualization = ({
   dataSet,
   dimensions,
@@ -67,6 +67,13 @@ export const ChartColumnsVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
+        />
+        <DataDownload
+          dataSet={dataSet}
+          dimensions={dimensions}
+          measures={measures}
+          fields={allFields}
+          observations={observations.data}
         />
       </>
     );
