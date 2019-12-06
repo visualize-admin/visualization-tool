@@ -414,6 +414,23 @@ export const theme: Theme = {
         cursor: "initial",
         color: "monochrome.300"
       }
+    },
+    downloadButton: {
+      background: "transparent",
+      color: "primary.base",
+      textAlign: "left",
+      fontFamily: "frutigerRegular",
+      lineHeight: [1, 2, 2],
+      fontWeight: "regular",
+      fontSize: [1, 2, 2],
+      border: "none",
+      cursor: "pointer",
+      mt: 2,
+      p: 0,
+      ":disabled": {
+        cursor: "initial",
+        color: "monochrome.300"
+      }
     }
   },
   // All variants except ^ buttons ^

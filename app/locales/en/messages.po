@@ -27,7 +27,7 @@ msgstr "Annotate"
 msgid "Chart Type"
 msgstr "Visualization type"
 
-#: app/components/publish-actions.tsx:45
+#: app/components/publish-actions.tsx:69
 msgid "Chart URL:"
 msgstr "Chart URL:"
 
@@ -68,7 +68,7 @@ msgid "Dataset:"
 msgstr "Dataset:"
 
 #: app/components/chart-annotator.tsx:9
-#: app/domain/helpers.tsx:38
+#: app/domain/helpers.tsx:40
 msgid "Description"
 msgstr "Description"
 
@@ -76,15 +76,19 @@ msgstr "Description"
 msgid "Design"
 msgstr "Design"
 
-#: app/components/publish-actions.tsx:136
+#: app/components/publish-actions.tsx:145
 msgid "Download Image"
 msgstr "Download Image"
 
-#: app/components/publish-actions.tsx:73
+#: app/components/data-download.tsx:14
+msgid "Download data"
+msgstr "Download data"
+
+#: app/components/publish-actions.tsx:90
 msgid "Embed"
 msgstr "Embed"
 
-#: app/components/publish-actions.tsx:87
+#: app/components/publish-actions.tsx:95
 msgid "Embed:"
 msgstr "Embed:"
 
@@ -94,11 +98,11 @@ msgstr "Embed:"
 msgid "Filter"
 msgstr "Filter"
 
-#: app/domain/helpers.tsx:42
+#: app/domain/helpers.tsx:44
 msgid "Grouped"
 msgstr "Grouped"
 
-#: app/domain/helpers.tsx:30
+#: app/domain/helpers.tsx:32
 msgid "Horizontal axis"
 msgstr "Horizontal axis"
 
@@ -111,7 +115,7 @@ msgstr "Loading data…"
 msgid "Logo of the Swiss Confederation"
 msgstr "Logo of the Swiss Confederation"
 
-#: app/domain/helpers.tsx:32
+#: app/domain/helpers.tsx:34
 msgid "Measure"
 msgstr "Measure"
 
@@ -139,7 +143,7 @@ msgstr "Publish"
 msgid "Reset"
 msgstr "Reset"
 
-#: app/domain/helpers.tsx:34
+#: app/domain/helpers.tsx:36
 msgid "Segmentation"
 msgstr "Segmentation"
 
@@ -163,11 +167,11 @@ msgstr "Select a measure"
 msgid "Select all"
 msgstr "Select all"
 
-#: app/components/publish-actions.tsx:21
+#: app/components/publish-actions.tsx:49
 msgid "Share"
 msgstr "Share"
 
-#: app/components/publish-actions.tsx:35
+#: app/components/publish-actions.tsx:59
 msgid "Share:"
 msgstr "Share:"
 
@@ -179,11 +183,11 @@ msgstr "Showing first 10 rows"
 msgid "Source:"
 msgstr "Source:"
 
-#: app/domain/helpers.tsx:40
+#: app/domain/helpers.tsx:42
 msgid "Stacked"
 msgstr "Stacked"
 
-#: app/domain/helpers.tsx:36
+#: app/domain/helpers.tsx:38
 msgid "Title"
 msgstr "Title"
 

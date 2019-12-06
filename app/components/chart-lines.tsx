@@ -1,16 +1,17 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { useMemo, memo } from "react";
+import React, { memo, useMemo } from "react";
 import { useObservations } from "../domain";
-import { LineFields, LineConfig, FieldType } from "../domain/config-types";
+import { FieldType, LineConfig, LineFields } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observations
 } from "../domain/data";
 import { useResizeObserver } from "../lib/use-resize-observer";
-import { Lines } from "./charts-generic/lines";
-import { Loading } from "./hint";
 import { A11yTable } from "./a11y-table";
+import { Lines } from "./charts-generic/lines";
+import { DataDownload } from "./data-download";
+import { Loading } from "./hint";
 
 export const ChartLinesVisualization = ({
   dataSet,
@@ -65,6 +66,13 @@ export const ChartLinesVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
+        />
+        <DataDownload
+          dataSet={dataSet}
+          dimensions={dimensions}
+          measures={measures}
+          fields={allFields}
+          observations={observations.data}
         />
       </>
     );

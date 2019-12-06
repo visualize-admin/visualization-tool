@@ -1,16 +1,17 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { useMemo, memo } from "react";
-import { useObservations, ScatterPlotFields } from "../domain";
+import React, { memo, useMemo } from "react";
+import { ScatterPlotFields, useObservations } from "../domain";
+import { ScatterPlotConfig } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observations
 } from "../domain/data";
-import { Scatterplot } from "./charts-generic/scatterplot";
 import { useResizeObserver } from "../lib/use-resize-observer";
-import { Loading } from "./hint";
-import { ScatterPlotConfig } from "../domain/config-types";
 import { A11yTable } from "./a11y-table";
+import { Scatterplot } from "./charts-generic/scatterplot";
+import { DataDownload } from "./data-download";
+import { Loading } from "./hint";
 
 export const ChartScatterplotVisualization = ({
   dataSet,
@@ -66,6 +67,13 @@ export const ChartScatterplotVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
+        />
+        <DataDownload
+          dataSet={dataSet}
+          dimensions={dimensions}
+          measures={measures}
+          fields={allFields}
+          observations={observations.data}
         />
       </>
     );
