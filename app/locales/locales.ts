@@ -19,6 +19,16 @@ export const locales = ["en", "de", "fr", "it"] as const;
 
 export type Locales = "de" | "fr" | "it" | "en";
 
+/**
+ * Parses a valid app locale from a locale string (e.g. a Accept-Language header).
+ * If unparseable, returns default locale.
+ * @param localeString locale string, e.g. de,en-US;q=0.7,en;q=0.3
+ */
+export const parseLocaleString = (localeString: string): Locales => {
+  const result = /^(de|fr|it|en)/.exec(localeString);
+  return result ? (result[1] as Locales) : defaultLocale;
+};
+
 export const catalogs = {
   de: catalogDe,
   fr: catalogFr,

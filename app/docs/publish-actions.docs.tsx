@@ -6,7 +6,7 @@ export default () => markdown`
 
 ${(
   <ReactSpecimen span={2}>
-    <Embed configKey="123456789" />
+    <Embed configKey="123456789" locale="en" />
   </ReactSpecimen>
 )}
 
