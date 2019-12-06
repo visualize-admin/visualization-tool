@@ -32,6 +32,18 @@ If the database server is not running, run:
 docker-compose up
 ```
 
+### Building the Embed script `/dist/embed.js`
+
+Currently, the embed script is not automatically built when the dev server starts.
+
+Run the following command when you're changing the source file in `embed/index.ts`.
+
+```sh
+yarn dev:rollup
+```
+
+> Currently, this only bundles and initializes [iframe-resizer](https://github.com/davidjbradshaw/iframe-resizer) but could be used to render charts without iframes (using [custom elements](https://developers.google.com/web/fundamentals/web-components/customelements) or render to a generic DOM element) in the future.
+
 #### Database migrations
 
 Database migrations are run automatically when the *production* app starts. In *development*, you'll have to run them manually:

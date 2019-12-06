@@ -1,18 +1,21 @@
 import { Trans } from "@lingui/macro";
 import { Input } from "@rebass/forms";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
-import React, { useState, ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Box, Button, Flex, Link, Text } from "rebass";
 import { Item } from "vega";
 import { Icon, IconName } from "../icons";
-import { LocalizedLink, IconLink } from "./links";
+import { useLocale } from "../lib/use-locale";
+import { IconLink } from "./links";
 
 export const PublishActions = ({ configKey }: { configKey: string }) => {
+  const locale = useLocale();
+
   return (
     <Flex flexDirection={["column", "row"]}>
       <ImageDownload />
-      <Share configKey={configKey} />
-      <Embed configKey={configKey}></Embed>
+      <Share configKey={configKey} locale={locale} />
+      <Embed configKey={configKey} locale={locale}></Embed>
     </Flex>
   );
 };
@@ -84,7 +87,12 @@ const PopUp = ({
   );
 };
 
-export const Share = ({ configKey }: { configKey: string }) => {
+export const Share = ({ configKey, locale }: EmbedShareProps) => {
+  const [shareUrl, setShareUrl] = useState("");
+  useEffect(() => {
+    setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
+  }, [configKey, locale]);
+
   return (
     <PopUp triggerLabel={<Trans>Share</Trans>} triggerIconName="share">
       <>
@@ -108,49 +116,65 @@ export const Share = ({ configKey }: { configKey: string }) => {
               <IconLink iconName="twitter" href="" disabled></IconLink>
               <IconLink
                 iconName="mail"
-                href={`mailto:?subject=visualize.admin.ch&body=Here is a link to a visualization I created on visualize.admin.ch: https://dev.visualize.admin.ch/en/v/${configKey}`}
+                href={`mailto:?subject=visualize.admin.ch&body=Here is a link to a visualization I created on visualize.admin.ch: ${shareUrl}`}
               ></IconLink>
             </Flex>
           </Flex>
-          <Flex justifyContent="space-between" alignItems="center" height={48}>
+          <Box mt={2}>
             <Text variant="paragraph1" color="monochrome.700">
               <Trans>Chart URL: </Trans>
             </Text>
-            <Flex sx={{ color: "primary.base" }}>
-              <LocalizedLink pathname={`/[locale]/v/${configKey}`} passHref>
-                <Link
-                  sx={{
-                    color: "primary.base",
-                    textDecoration: "underline",
-                    cursor: "pointer",
-                    mr: 4
-                  }}
-                >
-                  {configKey}
-                </Link>
-              </LocalizedLink>
-              <Icon name="share"></Icon>
-            </Flex>
-          </Flex>
+            <Box my={1} sx={{ color: "primary.base" }}>
+              <Link
+                href={shareUrl}
+                sx={{
+                  color: "primary.base",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  mr: 4
+                }}
+              >
+                {shareUrl}
+              </Link>
+              {/* <Icon name="share"></Icon> */}
+            </Box>
+          </Box>
         </Box>
       </>
     </PopUp>
   );
 };
 
-export const Embed = ({ configKey }: { configKey: string }) => {
+type EmbedShareProps = {
+  configKey: string;
+  locale: string;
+};
+
+export const Embed = ({ configKey, locale }: EmbedShareProps) => {
+  const [embedIframeUrl, setEmbedIframeUrl] = useState("");
+  const [embedAEMUrl, setEmbedAEMUrl] = useState("");
+  useEffect(() => {
+    setEmbedIframeUrl(`${window.location.origin}/${locale}/embed/${configKey}`);
+    setEmbedAEMUrl(`${window.location.origin}/api/embed-aem-ext/${configKey}`);
+  }, [configKey, locale]);
+
   return (
     <PopUp triggerLabel={<Trans>Embed</Trans>} triggerIconName="embed">
       <>
         <Box variant="publishActionOverlay" />
         <Box variant="publishActionModal">
           <Text variant="paragraph1" color="monochrome.700" mt={2}>
-            <Trans>Embed: </Trans>
+            <Trans>Iframe Embed Code: </Trans>
           </Text>
 
           <CopyToClipboardTextInput
-            iFrameCode={`<iframe src="" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
+            iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
+          <Text variant="paragraph1" color="monochrome.700" mt={2}>
+            <Trans>Embed Code for AEM "External Application": </Trans>
+          </Text>
+
+          <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
         </Box>
       </>
     </PopUp>

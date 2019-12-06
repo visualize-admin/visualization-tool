@@ -6,7 +6,12 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 module.exports = withBundleAnalyzer(
   withMDX({
     env: {
-      SPARQL_ENDPOINT: "https://trifid-lindas.test.cluster.ldbar.ch/query"
+      SPARQL_ENDPOINT:
+        process.env.SPARQL_ENDPOINT ||
+        "https://trifid-lindas.test.cluster.ldbar.ch/query",
+      PUBLIC_URL: process.env.PUBLIC_URL
+        ? process.env.PUBLIC_URL.replace(/\/$/, "")
+        : "https://dev.visualize.admin.ch"
       // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
     },
 

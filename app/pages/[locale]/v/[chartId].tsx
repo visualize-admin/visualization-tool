@@ -2,100 +2,14 @@ import { Trans } from "@lingui/macro";
 import "isomorphic-unfetch";
 import { NextPage } from "next";
 import ErrorPage from "next/error";
-import { Box, Button, Flex, Text } from "rebass";
-import { ChartAreasVisualization } from "../../../components/chart-areas";
-import { ChartColumnsVisualization } from "../../../components/chart-columns";
-import { ChartFootnotes } from "../../../components/chart-footnotes";
-import { ChartLinesVisualization } from "../../../components/chart-lines";
-import { ChartScatterplotVisualization } from "../../../components/chart-scatterplot";
+import { Box, Button, Text } from "rebass";
+import { ChartPublished } from "../../../components/chart-published";
 import { Header } from "../../../components/header";
 import { Success } from "../../../components/hint";
 import { LocalizedLink } from "../../../components/links";
 import { PublishActions } from "../../../components/publish-actions";
-import {
-  AttributeWithMeta,
-  DataCubeProvider,
-  DimensionWithMeta,
-  useDataSetAndMetadata
-} from "../../../domain";
-import { ChartConfig, Config, Meta } from "../../../domain/config-types";
-import { useLocale } from "../../../lib/use-locale";
-
-const DisplayChart = ({
-  dataSet,
-  meta,
-  chartConfig
-}: {
-  dataSet: string;
-  meta: Meta;
-  chartConfig: ChartConfig;
-}) => {
-  const rd = useDataSetAndMetadata(dataSet);
-  const locale = useLocale();
-
-  return rd.state === "loaded" ? (
-    <Flex
-      p={5}
-      flexDirection="column"
-      justifyContent="space-between"
-      sx={{ height: "100%", color: "monochrome.800" }}
-    >
-      <Text variant="heading2" mb={2}>
-        {meta.title[locale] === ""
-          ? rd.data.dataSet.labels[0].value
-          : meta.title[locale]}
-      </Text>
-      <Text variant="paragraph1" mb={2}>
-        {meta.description[locale] === ""
-          ? rd.data.dataSet.extraMetadata.get("description")!.value
-          : meta.description[locale]}
-      </Text>
-      {chartConfig.chartType === "column" && (
-        <ChartColumnsVisualization
-          dataSet={rd.data.dataSet}
-          dimensions={rd.data.dimensions}
-          measures={rd.data.measures}
-          chartConfig={chartConfig}
-        />
-      )}
-      {chartConfig.chartType === "line" && (
-        <ChartLinesVisualization
-          dataSet={rd.data.dataSet}
-          dimensions={rd.data.dimensions}
-          measures={rd.data.measures}
-          chartConfig={chartConfig}
-        />
-      )}
-      {chartConfig.chartType === "area" && (
-        <ChartAreasVisualization
-          dataSet={rd.data.dataSet}
-          dimensions={rd.data.dimensions}
-          measures={rd.data.measures}
-          chartConfig={chartConfig}
-        />
-      )}
-      {chartConfig.chartType === "scatterplot" && (
-        <ChartScatterplotVisualization
-          dataSet={rd.data.dataSet}
-          dimensions={rd.data.dimensions}
-          measures={rd.data.measures}
-          chartConfig={chartConfig}
-        />
-      )}
-      <ChartFootnotes
-        source={rd.data.dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
-        dataSetName={rd.data.dataSet.labels[0].value}
-        filters={chartConfig.filters}
-        componentsByIri={
-          rd.data.componentsByIri as Record<
-            string,
-            DimensionWithMeta | AttributeWithMeta
-          >
-        }
-      />
-    </Flex>
-  ) : null;
-};
+import { DataCubeProvider } from "../../../domain";
+import { Config } from "../../../domain/config-types";
 
 type PageProps = {
   statusCode?: number;
@@ -123,7 +37,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
             {publishSuccess && <Success />}
 
             <Box variant="container.chart">
-              <DisplayChart
+              <ChartPublished
                 dataSet={dataSet}
                 chartConfig={chartConfig}
                 meta={meta}

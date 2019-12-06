@@ -5,3 +5,4 @@
 
 /app/locales/_build
 /app/locales/**/*.js
+/app/public/dist/**/*.js

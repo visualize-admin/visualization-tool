@@ -690,7 +690,6 @@ export const theme: Theme = {
       bottom: 4,
       left: 4,
       right: 4,
-
       zIndex: 12,
       py: 2,
       px: 4,
@@ -704,8 +703,8 @@ export const theme: Theme = {
         left: "unset",
         right: "unset",
         position: "absolute",
-        width: 340,
-        maxWidth: 340,
+        minWidth: 340,
+        // maxWidth: 340,
         borderWidth: "1px",
         borderStyle: "solid",
         borderColor: "monochrome.500"
