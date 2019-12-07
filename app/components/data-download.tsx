@@ -64,7 +64,7 @@ export const DataDownload = memo(
     return (
       <Button
         variant="downloadButton"
-        onClick={() => saveAs(blob, `${dataSet.labels[0].value}.csv`)}
+        onClick={() => saveAs(blob, `${dataSet.label.value}.csv`)}
       >
         <Trans>Download data</Trans>
       </Button>

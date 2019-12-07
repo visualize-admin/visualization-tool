@@ -17,7 +17,7 @@ export const DataSetList = () => {
           <DatasetButton
             key={d.iri}
             dataSetIri={d.iri}
-            dataSetLabel={d.labels[0].value}
+            dataSetLabel={d.label.value}
             dataSetDescription={d.extraMetadata.get("description")!.value}
           />
         ))}

@@ -35,7 +35,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           <>
             <Text variant="heading2" mb={2}>
               {state.meta.title[locale] === ""
-                ? dataSet.labels[0].value
+                ? dataSet.label.value
                 : state.meta.title[locale]}
             </Text>
             <Text variant="paragraph1" mb={2}>
@@ -82,7 +82,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         {state.state !== "INITIAL" && state.chartConfig && (
           <ChartFootnotes
             source={dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
-            dataSetName={dataSet.labels[0].value}
+            dataSetName={dataSet.label.value}
             filters={state.chartConfig.filters}
             componentsByIri={
               componentsByIri as Record<

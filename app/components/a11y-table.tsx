@@ -46,7 +46,7 @@ export const A11yTable = memo(
     // FIXME: Add actual label
     return (
       <table style={{ display: "none" }}>
-        <caption>{dataSet.labels[0].value}</caption>
+        <caption>{dataSet.label.value}</caption>
         <tbody>
           <tr>
             {Object.entries(fields).map(([fieldKey, fieldValue]) => {

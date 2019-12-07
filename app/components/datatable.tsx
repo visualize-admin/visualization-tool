@@ -109,7 +109,7 @@ export const DataTable = ({
   if (observations.data) {
     return (
       <Table
-        title={dataSet.labels[0].value}
+        title={dataSet.label.value}
         headers={headers}
         observations={observations.data}
       />

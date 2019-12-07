@@ -33,7 +33,7 @@ export const ChartPublished = ({
     >
       <Text variant="heading2" mb={2}>
         {meta.title[locale] === ""
-          ? rd.data.dataSet.labels[0].value
+          ? rd.data.dataSet.label.value
           : meta.title[locale]}
       </Text>
       <Text variant="paragraph1" mb={2}>
@@ -75,7 +75,7 @@ export const ChartPublished = ({
       )}
       <ChartFootnotes
         source={rd.data.dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
-        dataSetName={rd.data.dataSet.labels[0].value}
+        dataSetName={rd.data.dataSet.label.value}
         filters={chartConfig.filters}
         componentsByIri={
           rd.data.componentsByIri as Record<
