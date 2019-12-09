@@ -21,10 +21,10 @@ export const ChartPublished = ({
   meta: Meta;
   chartConfig: ChartConfig;
 }) => {
-  const rd = useDataSetAndMetadata(dataSet);
+  const { data: metaData } = useDataSetAndMetadata(dataSet);
   const locale = useLocale();
 
-  return rd.state === "loaded" ? (
+  return metaData ? (
     <Flex
       p={5}
       flexDirection="column"
@@ -33,52 +33,52 @@ export const ChartPublished = ({
     >
       <Text variant="heading2" mb={2}>
         {meta.title[locale] === ""
-          ? rd.data.dataSet.label.value
+          ? metaData.dataSet.label.value
           : meta.title[locale]}
       </Text>
       <Text variant="paragraph1" mb={2}>
         {meta.description[locale] === ""
-          ? rd.data.dataSet.extraMetadata.get("description")!.value
+          ? metaData.dataSet.extraMetadata.get("description")!.value
           : meta.description[locale]}
       </Text>
       {chartConfig.chartType === "column" && (
         <ChartColumnsVisualization
-          dataSet={rd.data.dataSet}
-          dimensions={rd.data.dimensions}
-          measures={rd.data.measures}
+          dataSet={metaData.dataSet}
+          dimensions={metaData.dimensions}
+          measures={metaData.measures}
           chartConfig={chartConfig}
         />
       )}
       {chartConfig.chartType === "line" && (
         <ChartLinesVisualization
-          dataSet={rd.data.dataSet}
-          dimensions={rd.data.dimensions}
-          measures={rd.data.measures}
+          dataSet={metaData.dataSet}
+          dimensions={metaData.dimensions}
+          measures={metaData.measures}
           chartConfig={chartConfig}
         />
       )}
       {chartConfig.chartType === "area" && (
         <ChartAreasVisualization
-          dataSet={rd.data.dataSet}
-          dimensions={rd.data.dimensions}
-          measures={rd.data.measures}
+          dataSet={metaData.dataSet}
+          dimensions={metaData.dimensions}
+          measures={metaData.measures}
           chartConfig={chartConfig}
         />
       )}
       {chartConfig.chartType === "scatterplot" && (
         <ChartScatterplotVisualization
-          dataSet={rd.data.dataSet}
-          dimensions={rd.data.dimensions}
-          measures={rd.data.measures}
+          dataSet={metaData.dataSet}
+          dimensions={metaData.dimensions}
+          measures={metaData.measures}
           chartConfig={chartConfig}
         />
       )}
       <ChartFootnotes
-        source={rd.data.dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
-        dataSetName={rd.data.dataSet.label.value}
+        source={metaData.dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
+        dataSetName={metaData.dataSet.label.value}
         filters={chartConfig.filters}
         componentsByIri={
-          rd.data.componentsByIri as Record<
+          metaData.componentsByIri as Record<
             string,
             DimensionWithMeta | AttributeWithMeta
           >

@@ -14,12 +14,12 @@ import { Loading } from "./hint";
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
 
-  const meta = useDataSetAndMetadata(dataSetIri);
+  const { data: metaData } = useDataSetAndMetadata(dataSetIri);
 
   const locale = useLocale();
 
-  if (meta.state === "loaded") {
-    const { dimensions, measures, dataSet, componentsByIri } = meta.data;
+  if (metaData) {
+    const { dimensions, measures, dataSet, componentsByIri } = metaData;
 
     return (
       <Flex

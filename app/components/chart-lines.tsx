@@ -43,7 +43,7 @@ export const ChartLinesVisualization = ({
     return { ...restDimensions, ...chartConfig.fields };
   }, [chartConfig, dimensions]);
 
-  const observations = useObservations({
+  const { data: observations } = useObservations({
     dataSet,
     measures,
     dimensions,
@@ -51,7 +51,7 @@ export const ChartLinesVisualization = ({
     filters: chartConfig.filters
   });
 
-  if (observations.state === "loaded") {
+  if (observations) {
     return (
       <>
         <A11yTable
@@ -59,10 +59,10 @@ export const ChartLinesVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
-          observations={observations.data}
+          observations={observations}
         />
         <ChartLines
-          observations={observations.data}
+          observations={observations}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
@@ -72,7 +72,7 @@ export const ChartLinesVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
-          observations={observations.data}
+          observations={observations}
         />
       </>
     );

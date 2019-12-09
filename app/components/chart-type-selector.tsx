@@ -16,11 +16,11 @@ export const ChartTypeSelector = ({
 }: {
   state: ConfiguratorStateSelectingChartType;
 }) => {
-  const meta = useDataSetAndMetadata(state.dataSet);
-  if (meta.state === "loaded") {
+  const { data: metaData } = useDataSetAndMetadata(state.dataSet);
+  if (metaData) {
     const possibleChartTypes = getPossibleChartType({
       chartTypes,
-      meta: meta.data
+      meta: metaData
     });
     return (
       <Box as="fieldset">
@@ -54,7 +54,7 @@ export const ChartTypeSelector = ({
                 key={d}
                 label={d}
                 value={d}
-                metaData={meta.data}
+                metaData={metaData}
                 disabled={!possibleChartTypes.includes(d)}
               />
             ))

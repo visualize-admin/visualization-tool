@@ -6,14 +6,14 @@ import { Trans } from "@lingui/macro";
 import { SectionTitle } from "./chart-controls";
 
 export const DataSetList = () => {
-  const datasets = useDataSets();
-  if (datasets.state === "loaded") {
+  const { data: datasets } = useDataSets();
+  if (datasets) {
     return (
       <Box sx={{ bg: "monochrome.100" }}>
         <SectionTitle>
           <Trans>Select Dataset</Trans>
         </SectionTitle>
-        {datasets.data.map(d => (
+        {datasets.map(d => (
           <DatasetButton
             key={d.iri}
             dataSetIri={d.iri}

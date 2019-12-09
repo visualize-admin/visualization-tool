@@ -10,16 +10,16 @@ export interface Preview {
   label: string;
 }
 export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
-  const meta = useDataSetAndMetadata(dataSetIri);
-  if (meta.state === "loaded") {
-    const { dataSet, dimensions, measures } = meta.data;
+  const { data: metaData } = useDataSetAndMetadata(dataSetIri);
+  if (metaData) {
+    const { dataSet, dimensions, measures } = metaData;
     return (
       <Box p={5} sx={{ textAlign: "left", width: "100%" }}>
         <Text variant="heading2" mb={1}>
-          {meta.data.dataSet.label.value}
+          {dataSet.label.value}
         </Text>
         <Text variant="paragraph1" mb={4}>
-          {meta.data.dataSet.extraMetadata.get("description")!.value}
+          {dataSet.extraMetadata.get("description")!.value}
         </Text>
 
         <Box

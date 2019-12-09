@@ -44,7 +44,7 @@ export const ChartScatterplotVisualization = ({
     return { ...restDimensions, ...chartConfig.fields };
   }, [chartConfig.fields, dimensions]);
 
-  const observations = useObservations({
+  const { data: observations } = useObservations({
     dataSet,
     measures,
     dimensions,
@@ -52,7 +52,7 @@ export const ChartScatterplotVisualization = ({
     filters: chartConfig.filters
   });
 
-  if (observations.state === "loaded") {
+  if (observations) {
     return (
       <>
         <A11yTable
@@ -60,10 +60,10 @@ export const ChartScatterplotVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          observations={observations.data}
+          observations={observations}
         />
         <ChartScatterplot
-          observations={observations.data}
+          observations={observations}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
@@ -73,7 +73,7 @@ export const ChartScatterplotVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
-          observations={observations.data}
+          observations={observations}
         />
       </>
     );

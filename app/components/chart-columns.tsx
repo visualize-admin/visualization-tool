@@ -44,7 +44,7 @@ export const ChartColumnsVisualization = ({
     return { ...restDimensions, ...chartConfig.fields };
   }, [chartConfig.fields, dimensions]);
 
-  const observations = useObservations<ColumnFields>({
+  const { data: observations } = useObservations<ColumnFields>({
     dataSet,
     dimensions,
     measures,
@@ -52,7 +52,7 @@ export const ChartColumnsVisualization = ({
     filters: chartConfig.filters
   });
 
-  if (observations.state === "loaded") {
+  if (observations) {
     return (
       <>
         <A11yTable
@@ -60,10 +60,10 @@ export const ChartColumnsVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
-          observations={observations.data}
+          observations={observations}
         />
         <ChartColumns
-          observations={observations.data}
+          observations={observations}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
@@ -73,7 +73,7 @@ export const ChartColumnsVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
-          observations={observations.data}
+          observations={observations}
         />
       </>
     );
