@@ -9,7 +9,8 @@ declare global {
 // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const analyticsPageView = (path: string) => {
   window.gtag("config", GA_TRACKING_ID, {
-    page_path: path
+    page_path: path,
+    anonymize_ip: true
   });
 };
 
@@ -28,6 +29,7 @@ export const analyticsEvent = ({
   window.gtag("event", action, {
     event_category: category,
     event_label: label,
-    value: value
+    value: value,
+    anonymize_ip: true
   });
 };
