@@ -10,7 +10,7 @@ const publicRuntimeConfig = {
     "https://trifid-lindas.test.cluster.ldbar.ch/query",
   PUBLIC_URL: process.env.PUBLIC_URL
     ? process.env.PUBLIC_URL.replace(/\/$/, "")
-    : "https://dev.visualize.admin.ch",
+    : "",
   GA_TRACKING_ID: process.env.GA_TRACKING_ID
 };
 
