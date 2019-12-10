@@ -3,18 +3,22 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true"
 });
 
+const publicRuntimeConfig = {
+  // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
+  SPARQL_ENDPOINT:
+    process.env.SPARQL_ENDPOINT ||
+    "https://trifid-lindas.test.cluster.ldbar.ch/query",
+  PUBLIC_URL: process.env.PUBLIC_URL
+    ? process.env.PUBLIC_URL.replace(/\/$/, "")
+    : "https://dev.visualize.admin.ch",
+  GA_TRACKING_ID: process.env.GA_TRACKING_ID
+};
+
+console.log("Starting with publicRuntimeConfig\n", publicRuntimeConfig);
+
 module.exports = withBundleAnalyzer(
   withMDX({
-    env: {
-      // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
-      SPARQL_ENDPOINT:
-        process.env.SPARQL_ENDPOINT ||
-        "https://trifid-lindas.test.cluster.ldbar.ch/query",
-      PUBLIC_URL: process.env.PUBLIC_URL
-        ? process.env.PUBLIC_URL.replace(/\/$/, "")
-        : "https://dev.visualize.admin.ch",
-      GA_TRACKING_ID: process.env.GA_TRACKING_ID
-    },
+    publicRuntimeConfig,
 
     webpack(config, { dev, isServer, defaultLoaders }) {
       // Transpile ES6 modules from node_modules

@@ -26,16 +26,17 @@ import {
   ObservationsPreview
 } from "./data";
 import { locales } from "../locales/locales";
+import { SPARQL_ENDPOINT } from "./env";
 
 const DataCubeContext = createContext<DataCubeEntryPoint>(
   new DataCubeEntryPoint("")
 );
 
 export const DataCubeProvider = ({ children }: { children?: ReactNode }) => {
-  if (!process.env.SPARQL_ENDPOINT) {
+  if (!SPARQL_ENDPOINT) {
     throw Error("No SPARQL_ENDPOINT set!");
   }
-  const endpoint = process.env.SPARQL_ENDPOINT;
+  const endpoint = SPARQL_ENDPOINT;
   const locale = useLocale();
 
   const entryPoint = useMemo(() => {
