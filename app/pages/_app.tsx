@@ -3,9 +3,13 @@ import { I18nProvider } from "@lingui/react";
 import { ThemeProvider } from "emotion-theming";
 import App, { AppContext } from "next/app";
 import ErrorPage from "next/error";
+import Router from "next/router";
 import React from "react";
+import { analyticsPageView } from "../domain/analytics";
 import { catalogs, defaultLocale, locales } from "../locales/locales";
 import { loadTheme, Theme } from "../themes/index";
+
+Router.events.on("routeChangeComplete", path => analyticsPageView(path));
 
 class MyApp extends App<{
   locale: string;
