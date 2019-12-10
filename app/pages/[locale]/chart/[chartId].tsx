@@ -13,6 +13,7 @@ import {
   useConfiguratorState
 } from "../../../domain/configurator-state";
 import { ChartAnnotationsSelector } from "../../../components/chart-annotations-selector";
+import Head from "next/head";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -73,13 +74,19 @@ const ChartConfiguratorPage: NextPage = () => {
   const chartId = useChartId();
 
   return (
-    <DataCubeProvider>
-      <AppLayout>
-        <ConfiguratorStateProvider chartId={chartId}>
-          <ChartCreator />
-        </ConfiguratorStateProvider>
-      </AppLayout>
-    </DataCubeProvider>
+    <>
+      <Head>
+        {/* Disables resoponsive scaling for this page (other pages still work) */}
+        <meta name="viewport" content="width=1280"></meta>
+      </Head>
+      <DataCubeProvider>
+        <AppLayout>
+          <ConfiguratorStateProvider chartId={chartId}>
+            <ChartCreator />
+          </ConfiguratorStateProvider>
+        </AppLayout>
+      </DataCubeProvider>
+    </>
   );
 };
 
