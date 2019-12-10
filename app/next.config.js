@@ -42,11 +42,12 @@ module.exports = withBundleAnalyzer(
       config.module.rules.push({
         test: /\.(js|mjs)$/,
         include: [/node_modules/],
+        exclude: [/@babel\/standalone/, /@babel\/runtime/, /core-js/, /next/],
         use: {
           loader: "babel-loader",
           options: {
             presets: ["@babel/preset-env"],
-            plugins: ["@babel/plugin-syntax-dynamic-import"]
+            // plugins: ["@babel/plugin-syntax-dynamic-import"]
           }
         }
       });

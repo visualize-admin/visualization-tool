@@ -8,7 +8,6 @@ import commonjs from "rollup-plugin-commonjs";
 import json from "@rollup/plugin-json";
 import babel from "rollup-plugin-babel";
 import builtins from "rollup-plugin-node-builtins";
-import analyze from "rollup-plugin-analyzer";
 import { terser } from "rollup-plugin-terser";
 
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
@@ -67,7 +66,6 @@ export default {
       configFile: "./app/babel.config.js",
       runtimeHelpers: true
     }),
-    // terser(),
-    process.env.ANALYZE === "true" ? analyze() : undefined
+    terser(),
   ]
 };
