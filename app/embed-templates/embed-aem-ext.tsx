@@ -1,6 +1,7 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Locales } from "../locales/locales";
+import { PUBLIC_URL } from "../domain/env";
 
 type Props = {
   locale: Locales;
@@ -14,7 +15,7 @@ const EmbedHTML = ({ locale, chartId }: Props) => (
       <iframe
         title="chart"
         // src="/static/embed-content-placeholder.html"
-        src={`/${locale}/embed/${chartId}`}
+        src={`${PUBLIC_URL}/${locale}/embed/${chartId}`}
         data-visualize-iframe
         style={{ width: 1, minWidth: "100%" }}
         frameBorder="0"
@@ -22,7 +23,7 @@ const EmbedHTML = ({ locale, chartId }: Props) => (
         scrolling="no"
       />
       <div id="" />
-      <script defer src="/dist/embed.js"></script>
+      <script defer src={`${PUBLIC_URL}/dist/embed.js`}></script>
     </body>
   </html>
 );
