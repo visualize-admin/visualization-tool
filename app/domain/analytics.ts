@@ -2,13 +2,15 @@ import { GA_TRACKING_ID } from "./env";
 
 declare global {
   interface Window {
-    gtag: (...args: $IntentionalAny) => void;
+    gtag?: (...args: $IntentionalAny) => void;
   }
 }
 
+// https://developers.google.com/analytics/devguides/collection/gtagjs/ip-anonymization
+
 // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const analyticsPageView = (path: string) => {
-  window.gtag("config", GA_TRACKING_ID, {
+  window.gtag?.("config", GA_TRACKING_ID, {
     page_path: path,
     anonymize_ip: true
   });
@@ -26,7 +28,7 @@ export const analyticsEvent = ({
   label: string;
   value?: number;
 }) => {
-  window.gtag("event", action, {
+  window.gtag?.("event", action, {
     event_category: category,
     event_label: label,
     value: value,
