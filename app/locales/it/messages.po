@@ -41,7 +41,7 @@ msgstr "Colorazione"
 
 #: app/components/hint.tsx:40
 msgid "Congratulations! Your visualization can now be shared and embedded."
-msgstr "Congratulazioni! La visualizzazione ora può essere condivisa e incorporata."
+msgstr "La tua visualizzazione è ora pubblicata. Puoi condividerlo e incorporarlo utilizzando l'URL o le opzioni di seguito."
 
 #: app/pages/[locale]/index.tsx:11
 msgid "Create a new visualization"

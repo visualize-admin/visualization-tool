@@ -41,7 +41,7 @@ msgstr "Palette"
 
 #: app/components/hint.tsx:40
 msgid "Congratulations! Your visualization can now be shared and embedded."
-msgstr "Félicitations! Votre visualisation est prête à être partagée et intégrée."
+msgstr "Votre visualisation est maintenant publiée. Vous pouvez le partager et l'intégrer à l'aide de l'URL ou des options ci-dessous."
 
 #: app/pages/[locale]/index.tsx:11
 msgid "Create a new visualization"

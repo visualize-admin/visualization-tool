@@ -41,7 +41,7 @@ msgstr "Color Palette"
 
 #: app/components/hint.tsx:40
 msgid "Congratulations! Your visualization can now be shared and embedded."
-msgstr "Congratulations! Your visualization can now be shared and embedded."
+msgstr "Your visualization is now published. You can share and embed it using the URL or the options below."
 
 #: app/pages/[locale]/index.tsx:11
 msgid "Create a new visualization"
