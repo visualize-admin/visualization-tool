@@ -32,6 +32,7 @@ import { IconImage } from "./ic-image";
 import { IconMail } from "./ic-mail";
 import { IconTwitter } from "./ic-twitter";
 import { IconText } from "./ic-text";
+import { IconInfo } from "./ic-info";
 
 export const Icons = {
   check: IconCheck,
@@ -66,7 +67,8 @@ export const Icons = {
   image: IconImage,
   mail: IconMail,
   twitter: IconTwitter,
-  text: IconText
+  text: IconText,
+  info: IconInfo
 };
 
 export type IconName = keyof typeof Icons;
