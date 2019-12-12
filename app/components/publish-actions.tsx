@@ -13,7 +13,7 @@ export const PublishActions = ({ configKey }: { configKey: string }) => {
 
   return (
     <Flex flexDirection={["column", "row"]}>
-      <ImageDownload />
+      {/* <ImageDownload /> */}
       <Share configKey={configKey} locale={locale} />
       <Embed configKey={configKey} locale={locale}></Embed>
     </Flex>
