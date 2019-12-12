@@ -1,9 +1,11 @@
 stages:
   - lint
   - build
+  - release
 
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  RELEASE_IMAGE_TAG: $CI_REGISTRY_IMAGE:release
 
 lint:
   image: node:12
@@ -24,3 +26,17 @@ build:
     - docker push $IMAGE_TAG
   only:
     - master
+
+release:
+  image: docker.io/docker:stable
+  stage: release
+  tags:
+    - medium
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $RELEASE_IMAGE_TAG .
+    - docker push $RELEASE_IMAGE_TAG
+  only:
+    - /^v\d+\.\d+\.\d+$/ # use `yarn version` to create these tags
+  except:
+    - branches
