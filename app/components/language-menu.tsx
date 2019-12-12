@@ -1,13 +1,14 @@
 import { CurrentPageLink } from "./links";
-import { locales } from "../locales/locales";
 import { useLocale } from "../lib/use-locale";
 import { Link, Box, Flex } from "rebass";
+
+const localesOrder = ["de", "fr", "it", "en"];
 
 export const LanguageMenu = () => {
   const currentLocale = useLocale();
   return (
     <Flex variant="header.languageList" as="ul">
-      {locales.map(locale => (
+      {localesOrder.map(locale => (
         <Box as="li" key={locale} variant="header.languageListItem">
           <CurrentPageLink locale={locale} passHref>
             <Link

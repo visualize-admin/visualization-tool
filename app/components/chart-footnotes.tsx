@@ -36,15 +36,15 @@ export const ChartFootnotes = ({
   return (
     <>
       <Text variant="meta" color="monochrome.600">
-        <Trans>Source: </Trans> {source}
+        <Trans id="metadata.source">Source</Trans>: {source}
       </Text>
 
       <Text variant="meta" color="monochrome.600">
-        <Trans>Dataset: </Trans> {dataSetName}
+        <Trans id="metadata.dataset">Dataset</Trans>: {dataSetName}
       </Text>
 
       <Text variant="meta" color="monochrome.600">
-        <Trans>Data: </Trans>
+        <Trans id="metadata.filter">Data</Trans>:
         {namedFilters.map((f, i) => (
           <React.Fragment key={f.dimension}>
             {" "}

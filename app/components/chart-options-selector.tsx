@@ -103,7 +103,9 @@ const DimensionPanel = ({
       <Box variant="rightControlSectionContent">
         <ChartFieldField
           field={field}
-          label={<Trans>Select a dimension</Trans>}
+          label={
+            <Trans id="controls.select.dimension">Select a dimension</Trans>
+          }
           options={dimensions.map(({ component }) => ({
             value: component.iri.value,
             label: component.label.value
@@ -117,11 +119,11 @@ const DimensionPanel = ({
 
       <Box variant="controlSection">
         <SectionTitle iconName="filter">
-          <Trans>Filter</Trans>
+          <Trans id="controls.section.filter">Filter</Trans>
         </SectionTitle>
         <Box variant="rightControlSectionContent" as="fieldset">
           <legend style={{ display: "none" }}>
-            <Trans>Filter</Trans>
+            <Trans id="controls.section.filter">Filter</Trans>
           </legend>
           <DimensionValuesMultiFilter dimension={dimension} />
         </Box>
@@ -157,7 +159,7 @@ const MeasurePanel = ({
       <Box variant="rightControlSectionContent">
         <ChartFieldField
           field={field}
-          label={<Trans>Select a measure</Trans>}
+          label={<Trans id="controls.select.measure">Select a measure</Trans>}
           options={measures.map(({ component }) => ({
             value: component.iri.value,
             label: component.label.value
@@ -200,7 +202,7 @@ const Filter = ({
       </SectionTitle>
       <Box variant="rightControlSectionContent" as="fieldset">
         <legend style={{ display: "none" }}>
-          <Trans>Filter</Trans>
+          {activeDimension && activeDimension.component.label.value}
         </legend>
         {activeDimension && (
           <DimensionValuesSingleFilter
@@ -223,7 +225,11 @@ const ChartFieldOptions = ({
     <>
       {chartType === "column" && (
         <Box as="fieldset" mt={2}>
-          <FieldSetLegend legendTitle={<Trans>Chart Type</Trans>} />
+          <FieldSetLegend
+            legendTitle={
+              <Trans id="controls.select.column.chart.type">Chart Type</Trans>
+            }
+          />
           <Flex justifyContent="flex-start" mt={1}>
             <ChartOptionField
               label="stacked"

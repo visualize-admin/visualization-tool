@@ -2,9 +2,9 @@ import * as React from "react";
 import { Button, Text } from "rebass";
 import { FieldProps } from "../../domain/config-form";
 import { Icon } from "../../icons";
-import { getIconName } from "../../domain/helpers";
+import { getIconName, getFieldLabel } from "../../domain/helpers";
 
-export const ChartTypeRadio = ({
+export const ChartTypeSelectionButton = ({
   label,
   value,
   checked,
@@ -48,7 +48,7 @@ export const ChartTypeRadio = ({
         variant="paragraph2"
         sx={{ color: checked ? "monochrome.100" : "monochrome.600" }}
       >
-        {label}
+        {getFieldLabel(label)}
       </Text>
     </Button>
   );

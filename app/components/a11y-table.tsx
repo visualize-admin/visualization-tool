@@ -62,11 +62,17 @@ export const A11yTable = memo(
                     {sortingField && (
                       <>
                         {", "}
-                        <Trans>
+                        <Trans id="accessibility.table.sorting">
                           sorted by {sortingField} in
-                          {direction === "ascending"
-                            ? "ascending"
-                            : "descending"}{" "}
+                          {direction === "ascending" ? (
+                            <Trans id="accessibility.table.sorting.ascending">
+                              ascending
+                            </Trans>
+                          ) : (
+                            <Trans id="accessibility.table.sorting.descending">
+                              descending
+                            </Trans>
+                          )}{" "}
                           order
                         </Trans>
                       </>

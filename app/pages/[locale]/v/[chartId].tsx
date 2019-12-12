@@ -54,13 +54,13 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
               fontFamily="frutigerLight"
             >
               {publishSuccess ? (
-                <Trans>
+                <Trans id="hint.how.to.share">
                   You can share this chart either by sharing its URL or by
                   embedding it on your website. You can also create a new
                   visualization or duplicate the above chart.
                 </Trans>
               ) : (
-                <Trans>
+                <Trans id="hint.create.your.own.chart">
                   Create your own graphic now! With the visualization tool, you
                   can create your own graphics, based on a large number of Swiss
                   federal data.
@@ -74,7 +74,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
               passHref
             >
               <Button as="a" variant="primary" mb={4}>
-                <Trans>New Visualization</Trans>
+                <Trans id="button.new.visualization">New Visualization</Trans>
               </Button>
             </LocalizedLink>
           </Box>

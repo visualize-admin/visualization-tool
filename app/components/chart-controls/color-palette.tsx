@@ -57,7 +57,7 @@ export const ColorPalette = ({ field }: { field: string }) => {
   return (
     <Box mt={2}>
       <Label smaller {...getLabelProps()}>
-        <Trans>Color Palette</Trans>
+        <Trans id="controls.color.palette">Color Palette</Trans>
       </Label>
       <Button variant="palette" {...getToggleButtonProps()}>
         {state.state === "CONFIGURING_CHART" && (

@@ -35,7 +35,7 @@ export const Loading = () => (
       <Icon name="loading" size={56} />
     </Box>
     <Text variant="heading2">
-      <Trans>Loading data…</Trans>
+      <Trans id="hint.loading.data">Loading data…</Trans>
     </Text>
   </Hint>
 );
@@ -43,10 +43,10 @@ export const DataSetHint = () => (
   <Hint>
     <Icon name="dataset" size={56} />
     <Text variant="heading2" my={3}>
-      <Trans>Select a dataset</Trans>
+      <Trans id="hint.select.dataset">Select a dataset</Trans>
     </Text>
     <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-      <Trans>
+      <Trans id="hint.select.dataset.to.preview">
         Click on a dataset in the left column to preview its structure and
         content.
       </Trans>
@@ -58,8 +58,9 @@ export const Success = () => (
   <Flex variant={"success"} justifyContent="flex-start" alignItems="center">
     <Icon name="published" size={56} />
     <Text variant="heading3" ml={4} sx={{ textAlign: "left" }}>
-      <Trans>
-        Congratulations! Your visualization can now be shared and embedded.
+      <Trans id="hint.publication.success">
+        Your visualization is now published. You can share and embed it using
+        the URL or the options below.
       </Trans>
     </Text>
   </Flex>

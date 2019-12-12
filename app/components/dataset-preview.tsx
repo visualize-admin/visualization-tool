@@ -43,7 +43,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             fontFamily: "frutigerLight"
           }}
         >
-          <Trans>Showing first 10 rows</Trans>
+          <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
         </Text>
       </Box>
     );
