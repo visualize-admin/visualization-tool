@@ -1,0 +1,20 @@
+{
+  "controls.filter.reset": {
+    "defaults": "Reset",
+    "origin": [
+      [
+        "app/components/filters.tsx",
+        27
+      ]
+    ]
+  },
+  "controls.filter.select.all": {
+    "defaults": "Select all",
+    "origin": [
+      [
+        "app/components/filters.tsx",
+        27
+      ]
+    ]
+  }
+}

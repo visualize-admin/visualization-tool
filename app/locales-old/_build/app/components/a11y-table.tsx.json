@@ -1,0 +1,29 @@
+{
+  "accessibility.table.sorting": {
+    "defaults": "sorted by {sortingField} in {0} order",
+    "origin": [
+      [
+        "app/components/a11y-table.tsx",
+        33
+      ]
+    ]
+  },
+  "accessibility.table.sorting.ascending": {
+    "defaults": "ascending",
+    "origin": [
+      [
+        "app/components/a11y-table.tsx",
+        35
+      ]
+    ]
+  },
+  "accessibility.table.sorting.descending": {
+    "defaults": "descending",
+    "origin": [
+      [
+        "app/components/a11y-table.tsx",
+        37
+      ]
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "step.dataset": {
+    "defaults": "Dataset",
+    "origin": [
+      [
+        "app/components/stepper.tsx",
+        54
+      ]
+    ]
+  },
+  "step.visualization.type": {
+    "defaults": "Visualization Type",
+    "origin": [
+      [
+        "app/components/stepper.tsx",
+        61
+      ]
+    ]
+  },
+  "step.adjust": {
+    "defaults": "Adjust",
+    "origin": [
+      [
+        "app/components/stepper.tsx",
+        68
+      ]
+    ]
+  },
+  "step.annotate": {
+    "defaults": "Annotate",
+    "origin": [
+      [
+        "app/components/stepper.tsx",
+        75
+      ]
+    ]
+  }
+}

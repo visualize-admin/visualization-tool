@@ -1,0 +1,11 @@
+{
+  "button.download.data": {
+    "defaults": "Download data",
+    "origin": [
+      [
+        "app/components/data-download.tsx",
+        14
+      ]
+    ]
+  }
+}

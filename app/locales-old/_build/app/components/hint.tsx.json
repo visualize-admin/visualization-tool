@@ -1,0 +1,38 @@
+{
+  "hint.loading.data": {
+    "defaults": "Loading data…",
+    "origin": [
+      [
+        "app/components/hint.tsx",
+        22
+      ]
+    ]
+  },
+  "hint.select.dataset": {
+    "defaults": "Select a dataset",
+    "origin": [
+      [
+        "app/components/hint.tsx",
+        28
+      ]
+    ]
+  },
+  "hint.select.dataset.to.preview": {
+    "defaults": "Click on a dataset in the left column to preview its structure and content.",
+    "origin": [
+      [
+        "app/components/hint.tsx",
+        31
+      ]
+    ]
+  },
+  "hint.publication.success": {
+    "defaults": "Your visualization is now published. You can share and embed it using the URL or the options below.",
+    "origin": [
+      [
+        "app/components/hint.tsx",
+        40
+      ]
+    ]
+  }
+}

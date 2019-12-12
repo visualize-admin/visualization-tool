@@ -1,0 +1,42 @@
+{
+  "controls.select.dimension": {
+    "defaults": "Select a dimension",
+    "origin": [
+      [
+        "app/components/chart-options-selector.tsx",
+        48
+      ]
+    ]
+  },
+  "controls.section.filter": {
+    "defaults": "Filter",
+    "origin": [
+      [
+        "app/components/chart-options-selector.tsx",
+        57
+      ],
+      [
+        "app/components/chart-options-selector.tsx",
+        61
+      ]
+    ]
+  },
+  "controls.select.measure": {
+    "defaults": "Select a measure",
+    "origin": [
+      [
+        "app/components/chart-options-selector.tsx",
+        79
+      ]
+    ]
+  },
+  "controls.select.column.chart.type": {
+    "defaults": "Chart Type",
+    "origin": [
+      [
+        "app/components/chart-options-selector.tsx",
+        110
+      ]
+    ]
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "controls.axis.horizontal": {
+    "defaults": "Horizontal axis",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        32
+      ]
+    ]
+  },
+  "controls.measure": {
+    "defaults": "Measure",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        34
+      ]
+    ]
+  },
+  "controls.segmentation": {
+    "defaults": "Segmentation",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        36
+      ]
+    ]
+  },
+  "controls.title": {
+    "defaults": "Title",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        38
+      ]
+    ]
+  },
+  "controls.description": {
+    "defaults": "Description",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        40
+      ]
+    ]
+  },
+  "controls.column.stacked": {
+    "defaults": "Stacked",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        42
+      ]
+    ]
+  },
+  "controls.column.grouped": {
+    "defaults": "Grouped",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        44
+      ]
+    ]
+  },
+  "controls.chart.type.column": {
+    "defaults": "Columns",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        46
+      ]
+    ]
+  },
+  "controls.chart.type.bar": {
+    "defaults": "Bars",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        48
+      ]
+    ]
+  },
+  "controls.chart.type.line": {
+    "defaults": "Lines",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        50
+      ]
+    ]
+  },
+  "controls.chart.type.area": {
+    "defaults": "Areas",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        52
+      ]
+    ]
+  },
+  "controls.chart.type.scatterplot": {
+    "defaults": "Scatterplot",
+    "origin": [
+      [
+        "app/domain/helpers.tsx",
+        54
+      ]
+    ]
+  }
+}

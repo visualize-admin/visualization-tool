@@ -1,0 +1,29 @@
+{
+  "metadata.source": {
+    "defaults": "Source",
+    "origin": [
+      [
+        "app/components/chart-footnotes.tsx",
+        15
+      ]
+    ]
+  },
+  "metadata.dataset": {
+    "defaults": "Dataset",
+    "origin": [
+      [
+        "app/components/chart-footnotes.tsx",
+        19
+      ]
+    ]
+  },
+  "metadata.filter": {
+    "defaults": "Data",
+    "origin": [
+      [
+        "app/components/chart-footnotes.tsx",
+        23
+      ]
+    ]
+  }
+}

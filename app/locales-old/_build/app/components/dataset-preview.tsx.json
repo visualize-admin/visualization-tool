@@ -1,0 +1,11 @@
+{
+  "datatable.showing.first.rows": {
+    "defaults": "Showing first 10 rows",
+    "origin": [
+      [
+        "app/components/dataset-preview.tsx",
+        27
+      ]
+    ]
+  }
+}

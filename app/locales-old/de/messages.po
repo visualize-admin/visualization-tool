@@ -1,0 +1,204 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2019-08-27 16:17+0200\n"
+"Mime-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: de\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: app/components/stepper.tsx:68
+msgid "Adjust"
+msgstr "Anpassen"
+
+#: app/components/stepper.tsx:75
+msgid "Annotate"
+msgstr "Beschriften"
+
+#: app/components/chart-options-selector.tsx:110
+#: app/components/chart-type-selector.tsx:18
+#: app/components/chart-type-selector.tsx:21
+msgid "Chart Type"
+msgstr "Visualisierungstyp"
+
+#: app/components/publish-actions.tsx:69
+msgid "Chart URL:"
+msgstr "Grafik URL:"
+
+#: app/components/hint.tsx:31
+msgid "Click on a dataset in the left column to preview its structure and content."
+msgstr "Wählen Sie links einen Datensatz aus, um eine Übersicht über die Struktur und Komposition des jeweiligen Datensatz zu erhalten."
+
+#: app/components/chart-controls/color-palette.tsx:45
+msgid "Color Palette"
+msgstr "Farbpalette"
+
+#: app/components/hint.tsx:40
+msgid "Congratulations! Your visualization can now be shared and embedded."
+msgstr "Ihre Visualisierung wurde veröffentlicht. Sie können die URL nun teilen, oder mithilfe der unten stehenden Optionen einbetten."
+
+#: app/pages/[locale]/index.tsx:11
+msgid "Create a new visualization"
+msgstr "Visualisierung erstellen"
+
+#: app/pages/[locale]/v/[chartId].tsx:70
+msgid "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
+msgstr "Erstellen Sie jetzt Ihre eigene Grafik. Mit dem Visualisierungs-Tool können Sie eigene Grafiken erstellen, auf der Basis einer Vielzahl an Schweizer Bundesdaten."
+
+#: app/components/chart-configurator.tsx:20
+msgid "Data"
+msgstr "Data"
+
+#: app/components/chart-footnotes.tsx:23
+msgid "Data:"
+msgstr "Filter:"
+
+#: app/components/stepper.tsx:54
+msgid "Dataset"
+msgstr "Datensatz"
+
+#: app/components/chart-footnotes.tsx:19
+msgid "Dataset:"
+msgstr "Datensatz:"
+
+#: app/components/chart-annotator.tsx:9
+#: app/domain/helpers.tsx:40
+msgid "Description"
+msgstr "Beschreibung"
+
+#: app/components/chart-configurator.tsx:15
+msgid "Design"
+msgstr "Design"
+
+#: app/components/publish-actions.tsx:145
+msgid "Download Image"
+msgstr "Bild herunterladen"
+
+#: app/components/data-download.tsx:14
+msgid "Download data"
+msgstr "Daten herunterladen"
+
+#: app/components/publish-actions.tsx:90
+msgid "Embed"
+msgstr "Einbetten"
+
+#: app/components/publish-actions.tsx:95
+msgid "Embed:"
+msgstr "Einbetten:"
+
+#: app/components/chart-options-selector.tsx:57
+#: app/components/chart-options-selector.tsx:61
+#: app/components/chart-options-selector.tsx:101
+msgid "Filter"
+msgstr "Filter"
+
+#: app/domain/helpers.tsx:44
+msgid "Grouped"
+msgstr "Gruppiert"
+
+#: app/domain/helpers.tsx:32
+msgid "Horizontal axis"
+msgstr "Horizontale Achse"
+
+#: app/components/hint.tsx:22
+msgid "Loading data…"
+msgstr "Daten werden geladen…"
+
+#: app/components/header.tsx:27
+#: app/components/header.tsx:36
+msgid "Logo of the Swiss Confederation"
+msgstr "Logo der Schweizerischen Eidgenossenschaft"
+
+#: app/domain/helpers.tsx:34
+msgid "Measure"
+msgstr "Messwert"
+
+#: app/pages/[locale]/v/[chartId].tsx:79
+msgid "New Visualization"
+msgstr "Neue Visualisierung"
+
+#: app/components/action-bar.tsx:27
+msgid "Next"
+msgstr "Weiter"
+
+#: app/components/chart-type-selector.tsx:25
+msgid "No visualization can be created with the selected dataset."
+msgstr "Mit dem ausgewählten Datensatz kann keine Visualisierung erstellt werden"
+
+#: app/components/action-bar.tsx:26
+msgid "Previous"
+msgstr "Zurück"
+
+#: app/components/action-bar.tsx:27
+msgid "Publish"
+msgstr "Publizieren"
+
+#: app/components/filters.tsx:27
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: app/domain/helpers.tsx:36
+msgid "Segmentation"
+msgstr "Segmentierung"
+
+#: app/components/dataset-selector.tsx:12
+msgid "Select Dataset"
+msgstr "Datensatz auswählen"
+
+#: app/components/hint.tsx:28
+msgid "Select a dataset"
+msgstr "Kein Datensatz ausgewählt"
+
+#: app/components/chart-options-selector.tsx:48
+msgid "Select a dimension"
+msgstr "Dimension wählen"
+
+#: app/components/chart-options-selector.tsx:79
+msgid "Select a measure"
+msgstr "Messreihe wählen"
+
+#: app/components/filters.tsx:27
+msgid "Select all"
+msgstr "Alle auswählen"
+
+#: app/components/publish-actions.tsx:49
+msgid "Share"
+msgstr "Teilen"
+
+#: app/components/publish-actions.tsx:59
+msgid "Share:"
+msgstr "Teilen: "
+
+#: app/components/dataset-preview.tsx:27
+msgid "Showing first 10 rows"
+msgstr "Vorschau der ersten 10 Zeilen"
+
+#: app/components/chart-footnotes.tsx:15
+msgid "Source:"
+msgstr "Quelle:"
+
+#: app/domain/helpers.tsx:42
+msgid "Stacked"
+msgstr "Gestapelt"
+
+#: app/domain/helpers.tsx:38
+msgid "Title"
+msgstr "Title"
+
+#: app/components/stepper.tsx:61
+msgid "Visualization Type"
+msgstr "Visualisierungstyp"
+
+#: app/pages/[locale]/v/[chartId].tsx:66
+msgid "You can share this chart either by sharing its URL or by embedding it on your website. You can also create a new visualization or duplicate the above chart."
+msgstr "Teilen Sie Ihre Grafik via URL oder durch das einbetten in Ihrer Webseite. Zudem können Sie auch direkt eine neue Visualisierung erstellen oder die gezeigte Grafik duplizieren."
+
+#: app/components/a11y-table.tsx:33
+msgid "sorted by {sortingField} in {0} order"
+msgstr "sortiert nach {sortingField} in {0} order"

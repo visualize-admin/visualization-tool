@@ -1,0 +1,29 @@
+{
+  "button.previous": {
+    "defaults": "Previous",
+    "origin": [
+      [
+        "app/components/action-bar.tsx",
+        26
+      ]
+    ]
+  },
+  "button.publish": {
+    "defaults": "Publish",
+    "origin": [
+      [
+        "app/components/action-bar.tsx",
+        27
+      ]
+    ]
+  },
+  "button.next": {
+    "defaults": "Next",
+    "origin": [
+      [
+        "app/components/action-bar.tsx",
+        27
+      ]
+    ]
+  }
+}

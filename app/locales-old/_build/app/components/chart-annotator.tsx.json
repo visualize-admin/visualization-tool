@@ -1,0 +1,11 @@
+{
+  "controls.section.description": {
+    "defaults": "Description",
+    "origin": [
+      [
+        "app/components/chart-annotator.tsx",
+        9
+      ]
+    ]
+  }
+}

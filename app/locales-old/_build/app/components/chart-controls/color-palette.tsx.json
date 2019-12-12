@@ -1,0 +1,11 @@
+{
+  "controls.color.palette": {
+    "defaults": "Color Palette",
+    "origin": [
+      [
+        "app/components/chart-controls/color-palette.tsx",
+        45
+      ]
+    ]
+  }
+}

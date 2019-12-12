@@ -1,0 +1,11 @@
+{
+  "button.create.new.visualization": {
+    "defaults": "Create a new visualization",
+    "origin": [
+      [
+        "app/pages/[locale]/index.tsx",
+        11
+      ]
+    ]
+  }
+}
