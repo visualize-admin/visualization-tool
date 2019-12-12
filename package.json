@@ -1,6 +1,6 @@
 {
   "name": "visualization-tool",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "repository": "git@gitlab.ldbar.ch:interactivethings/visualization-tool.git",
   "author": "Jeremy Stucki <jeremy@interactivethings.com>",
   "license": "MIT",
