@@ -5,6 +5,7 @@ import App, { AppContext } from "next/app";
 import ErrorPage from "next/error";
 import Router from "next/router";
 import React from "react";
+import { ContentMDXProvider } from "../components/content-mdx-provider";
 import { analyticsPageView } from "../domain/analytics";
 import { LocaleProvider } from "../lib/use-locale";
 import {
@@ -52,9 +53,18 @@ class MyApp extends App<{
     const __theme = query.__theme ? query.__theme.toString() : undefined;
     const { theme, globalStyles } = await loadTheme(__theme);
 
+    /**
+     * Parse locale from query OR pathname
+     * - so we can have dynamic locale query params like /[locale]/chart/...
+     * - and static localized pages like /en/index.mdx
+     */
+    const locale = /^\/\[locale\]/.test(pathname)
+      ? parseLocaleString(query.locale.toString())
+      : parseLocaleString(pathname.slice(1));
+
     return {
       ...appProps,
-      locale: parseLocaleString(query.locale as string),
+      locale,
       statusCode,
       theme,
       globalStyles
@@ -70,9 +80,12 @@ class MyApp extends App<{
       theme,
       globalStyles
     } = this.props;
-    return statusCode ? (
-      <ErrorPage statusCode={statusCode} />
-    ) : (
+
+    if (statusCode) {
+      return <ErrorPage statusCode={statusCode} />;
+    }
+
+    return (
       <LocaleProvider value={locale}>
         <I18nProvider language={locale} catalogs={catalogs}>
           <ThemeProvider theme={theme}>
@@ -81,7 +94,9 @@ class MyApp extends App<{
                 ${globalStyles}
               `}
             />
-            <Component {...pageProps} />
+            <ContentMDXProvider>
+              <Component {...pageProps} />
+            </ContentMDXProvider>
           </ThemeProvider>
         </I18nProvider>
       </LocaleProvider>

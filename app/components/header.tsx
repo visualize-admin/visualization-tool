@@ -2,23 +2,33 @@ import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { Box, Flex, Text } from "rebass";
 import { LanguageMenu } from "./language-menu";
-import { LocalizedLink } from "./links";
+import { HomeLink } from "./links";
 
-export const Logo = () => (
-  <LocalizedLink pathname="/[locale]">
-    <Flex as="a" variant="header.logo">
-      <Box role="figure" aria-labelledby="logo" variant="header.logoImgMobile">
-        <LogoMobile />
-      </Box>
-      <Box role="figure" aria-labelledby="logo" variant="header.logoImgDesktop">
-        <LogoDesktop />
-      </Box>
-      <Text as="h1" variant="lead">
-        visualize.admin.ch
-      </Text>
-    </Flex>
-  </LocalizedLink>
-);
+export const Logo = () => {
+  return (
+    <HomeLink passHref>
+      <Flex as="a" variant="header.logo">
+        <Box
+          role="figure"
+          aria-labelledby="logo"
+          variant="header.logoImgMobile"
+        >
+          <LogoMobile />
+        </Box>
+        <Box
+          role="figure"
+          aria-labelledby="logo"
+          variant="header.logoImgDesktop"
+        >
+          <LogoDesktop />
+        </Box>
+        <Text as="h1" variant="lead">
+          visualize.admin.ch
+        </Text>
+      </Flex>
+    </HomeLink>
+  );
+};
 
 export const Header = () => {
   return (

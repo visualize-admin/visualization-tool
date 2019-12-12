@@ -450,6 +450,7 @@ export const theme: Theme = {
         order: [2, 1],
         alignItems: ["center", "flex-start"],
         cursor: "pointer",
+        textDecoration: "none",
         "& > h1": {
           pl: [0, 6],
           textDecoration: "none",
