@@ -36,7 +36,7 @@ export const ChartConfigurator = ({
       in case we need them later */}
         <CollapsibleSection
           titleId="controls-design"
-          title={<Trans>Design</Trans>}
+          title={<Trans id="controls.section.design">Design</Trans>}
         >
           <Box
             role="tablist"
@@ -66,7 +66,10 @@ export const ChartConfigurator = ({
             ) : null}
           </Box>
         </CollapsibleSection>
-        <CollapsibleSection titleId="controls-data" title={<Trans>Data</Trans>}>
+        <CollapsibleSection
+          titleId="controls-data"
+          title={<Trans id="controls.section.data">Data</Trans>}
+        >
           <Box
             role="tablist"
             aria-labelledby="controls-data"

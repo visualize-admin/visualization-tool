@@ -1,6 +1,6 @@
 import { markdown, ReactSpecimen } from "catalog";
 import {
-  ChartTypeRadio,
+  ChartTypeSelectionButton,
   ControlList,
   CollapsibleSection
 } from "../components/chart-controls";
@@ -22,7 +22,7 @@ export default () => markdown`
 ## Chart Type Selector
   ${(
     <ReactSpecimen span={2}>
-      <ChartTypeRadio
+      <ChartTypeSelectionButton
         label={"line"}
         name={"Linien"}
         value={"Linien"}
@@ -34,7 +34,7 @@ export default () => markdown`
   )}
   ${(
     <ReactSpecimen span={2}>
-      <ChartTypeRadio
+      <ChartTypeSelectionButton
         label={"scatterplot"}
         name={"Scatterplot"}
         value={"Scatterplot"}

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { Input } from "@rebass/forms";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import React, { ReactNode, useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import { Item } from "vega";
 import { Icon, IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
 import { IconLink } from "./links";
+import { I18n } from "@lingui/react";
 
 export const PublishActions = ({ configKey }: { configKey: string }) => {
   const locale = useLocale();
@@ -92,9 +93,11 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
-
   return (
-    <PopUp triggerLabel={<Trans>Share</Trans>} triggerIconName="share">
+    <PopUp
+      triggerLabel={<Trans id="button.share">Share</Trans>}
+      triggerIconName="share"
+    >
       <>
         <Box variant="publishActionOverlay" />
         <Box variant="publishActionModal">
@@ -109,20 +112,30 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             }}
           >
             <Text variant="paragraph1" color="monochrome.700">
-              <Trans>Share: </Trans>
+              <Trans id="publication.popup.share">Share</Trans>:
             </Text>
             <Flex color="primary.base">
               <IconLink iconName="facebook" href="" disabled></IconLink>
               <IconLink iconName="twitter" href="" disabled></IconLink>
-              <IconLink
-                iconName="mail"
-                href={`mailto:?subject=visualize.admin.ch&body=Here is a link to a visualization I created on visualize.admin.ch: ${shareUrl}`}
-              ></IconLink>
+              <I18n>
+                {({ i18n }) => (
+                  <IconLink
+                    iconName="mail"
+                    href={`mailto:?subject=${i18n._(
+                      t("publication.share.mail.subject")`visualize.admin.ch`
+                    )}&body=${i18n._(
+                      t(
+                        "publication.share.mail.body"
+                      )`Here is a link to a visualization I created on visualize.admin.ch`
+                    )}: ${shareUrl}`}
+                  ></IconLink>
+                )}
+              </I18n>
             </Flex>
           </Flex>
           <Box mt={2}>
             <Text variant="paragraph1" color="monochrome.700">
-              <Trans>Chart URL: </Trans>
+              <Trans id="publication.share.chart.url">Chart URL: </Trans>
             </Text>
             <Box my={1} sx={{ color: "primary.base" }}>
               <Link
@@ -159,19 +172,24 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   }, [configKey, locale]);
 
   return (
-    <PopUp triggerLabel={<Trans>Embed</Trans>} triggerIconName="embed">
+    <PopUp
+      triggerLabel={<Trans id="button.embed">Embed</Trans>}
+      triggerIconName="embed"
+    >
       <>
         <Box variant="publishActionOverlay" />
         <Box variant="publishActionModal">
           <Text variant="paragraph1" color="monochrome.700" mt={2}>
-            <Trans>Iframe Embed Code: </Trans>
+            <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
           </Text>
 
           <CopyToClipboardTextInput
             iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
           <Text variant="paragraph1" color="monochrome.700" mt={2}>
-            <Trans>Embed Code for AEM "External Application": </Trans>
+            <Trans id="publication.embed.AEM">
+              Embed Code for AEM "External Application":{" "}
+            </Trans>
           </Text>
 
           <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
@@ -236,7 +254,7 @@ export const ImageDownload = () => {
     <Button disabled variant="publishAction" onClick={handleClick}>
       <Icon name="image"></Icon>
       <Text ml={3}>
-        <Trans>Download Image</Trans>
+        <Trans id="button.download.image">Download Image</Trans>
       </Text>
     </Button>
   );

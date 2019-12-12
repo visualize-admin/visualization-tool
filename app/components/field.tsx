@@ -10,7 +10,7 @@ import {
   useActiveFieldField
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
-import { ChartTypeRadio } from "./chart-controls";
+import { ChartTypeSelectionButton } from "./chart-controls";
 import { DataSetMetadata } from "../domain/data-cube";
 import {
   MetaKey,
@@ -259,11 +259,11 @@ export const ChartTypeSelectorField = ({
   });
 
   return (
-    <ChartTypeRadio
+    <ChartTypeSelectionButton
       disabled={disabled}
       label={label}
       onClick={field.onClick}
       {...field}
-    ></ChartTypeRadio>
+    ></ChartTypeSelectionButton>
   );
 };

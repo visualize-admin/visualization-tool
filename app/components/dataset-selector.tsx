@@ -11,7 +11,7 @@ export const DataSetList = () => {
     return (
       <Box sx={{ bg: "monochrome.100" }}>
         <SectionTitle>
-          <Trans>Select Dataset</Trans>
+          <Trans id="controls.select.dataset">Select Dataset</Trans>
         </SectionTitle>
         {datasets.map(d => (
           <DatasetButton

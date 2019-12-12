@@ -34,12 +34,12 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const previousDisabled =
     !canTransitionToPreviousStep(state) || state.state === "PUBLISHING";
 
-  const previousLabel = <Trans>Previous</Trans>;
+  const previousLabel = <Trans id="button.previous">Previous</Trans>;
   const nextLabel =
     state.state === "DESCRIBING_CHART" || state.state === "PUBLISHING" ? (
-      <Trans>Publish</Trans>
+      <Trans id="button.publish">Publish</Trans>
     ) : (
-      <Trans>Next</Trans>
+      <Trans id="button.next">Next</Trans>
     );
 
   return (

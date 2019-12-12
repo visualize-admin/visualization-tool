@@ -119,7 +119,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Dataset</Trans>
+          <Trans id="step.dataset">Dataset</Trans>
         </Text>
       );
     case "SELECTING_CHART_TYPE":
@@ -131,7 +131,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Visualization Type</Trans>
+          <Trans id="step.visualization.type">Visualization Type</Trans>
         </Text>
       );
     case "CONFIGURING_CHART":
@@ -143,7 +143,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Adjust</Trans>
+          <Trans id="step.adjust">Adjust</Trans>
         </Text>
       );
     case "DESCRIBING_CHART":
@@ -155,7 +155,7 @@ export const StepLabel = ({
           }}
           variant="paragraph2"
         >
-          <Trans>Annotate</Trans>
+          <Trans id="step.annotate">Annotate</Trans>
         </Text>
       );
   }

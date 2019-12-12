@@ -12,7 +12,7 @@ export const ChartAnnotator = () => {
       variant="controlSection"
     >
       <SectionTitle>
-        <Trans>Description</Trans>
+        <Trans id="controls.section.description">Description</Trans>
       </SectionTitle>
       <Box variant="leftControlSectionContent">
         <AnnotatorTabField value={"title"}></AnnotatorTabField>
