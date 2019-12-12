@@ -56,6 +56,16 @@ Migrations are located in `db-migrations/`. Write SQL or JS migrations and follo
 
 For detailed instructions, please refer to the [postgres-migrations](https://github.com/thomwright/postgres-migrations) documentation.
 
+## Versioning
+
+New versions of `package.json` are built on GitLab CI into a separate image that will be deployed to the integration env.
+
+```sh
+yarn version
+```
+
+This will prompt for a new version. The `postversion` script will automatically try to push the created version tag to the origin repo.
+
 ## Deployment
 
 ### Heroku
