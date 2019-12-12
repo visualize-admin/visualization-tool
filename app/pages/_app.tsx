@@ -6,13 +6,20 @@ import ErrorPage from "next/error";
 import Router from "next/router";
 import React from "react";
 import { analyticsPageView } from "../domain/analytics";
-import { catalogs, defaultLocale, locales } from "../locales/locales";
+import { LocaleProvider } from "../lib/use-locale";
+import {
+  catalogs,
+  defaultLocale,
+  locales,
+  Locales,
+  parseLocaleString
+} from "../locales/locales";
 import { loadTheme, Theme } from "../themes/index";
 
 Router.events.on("routeChangeComplete", path => analyticsPageView(path));
 
 class MyApp extends App<{
-  locale: string;
+  locale: Locales;
   statusCode: void | number;
   theme: Theme;
   globalStyles: string | undefined;
@@ -47,7 +54,7 @@ class MyApp extends App<{
 
     return {
       ...appProps,
-      locale: query.locale,
+      locale: parseLocaleString(query.locale as string),
       statusCode,
       theme,
       globalStyles
@@ -66,16 +73,18 @@ class MyApp extends App<{
     return statusCode ? (
       <ErrorPage statusCode={statusCode} />
     ) : (
-      <I18nProvider language={locale} catalogs={catalogs}>
-        <ThemeProvider theme={theme}>
-          <Global
-            styles={css`
-              ${globalStyles}
-            `}
-          />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </I18nProvider>
+      <LocaleProvider value={locale}>
+        <I18nProvider language={locale} catalogs={catalogs}>
+          <ThemeProvider theme={theme}>
+            <Global
+              styles={css`
+                ${globalStyles}
+              `}
+            />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </I18nProvider>
+      </LocaleProvider>
     );
   }
 }
