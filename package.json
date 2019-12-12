@@ -1,6 +1,6 @@
 {
   "name": "visualization-tool",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": "git@gitlab.ldbar.ch:interactivethings/visualization-tool.git",
   "author": "Jeremy Stucki <jeremy@interactivethings.com>",
   "license": "MIT",
@@ -15,7 +15,9 @@
     "lint": "tsc --noEmit -p ./app -p ./embed",
     "locales:extract": "lingui extract",
     "locales:compile": "lingui compile",
-    "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev"
+    "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
+    "preversion": "yarn lint",
+    "postversion": "git push --follow-tags"
   },
   "dependencies": {
     "@babel/standalone": "^7.7.6",
