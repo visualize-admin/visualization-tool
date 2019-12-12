@@ -27,7 +27,7 @@ msgstr "Annotate"
 msgid "Chart Type"
 msgstr "Visualization type"
 
-#: app/components/publish-actions.tsx:69
+#: app/components/publish-actions.tsx:75
 msgid "Chart URL:"
 msgstr "Chart URL:"
 
@@ -47,7 +47,7 @@ msgstr "Your visualization is now published. You can share and embed it using th
 msgid "Create a new visualization"
 msgstr "Create a new visualization"
 
-#: app/pages/[locale]/v/[chartId].tsx:70
+#: app/pages/[locale]/v/[chartId].tsx:44
 msgid "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
 msgstr "Create your own graphic now. With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
 
@@ -76,7 +76,7 @@ msgstr "Description"
 msgid "Design"
 msgstr "Design"
 
-#: app/components/publish-actions.tsx:145
+#: app/components/publish-actions.tsx:160
 msgid "Download Image"
 msgstr "Download Image"
 
@@ -84,13 +84,17 @@ msgstr "Download Image"
 msgid "Download data"
 msgstr "Download data"
 
-#: app/components/publish-actions.tsx:90
+#: app/components/publish-actions.tsx:100
 msgid "Embed"
 msgstr "Embed"
 
+#: app/components/publish-actions.tsx:110
+msgid "Embed Code for AEM \"External Application\":"
+msgstr ""
+
 #: app/components/publish-actions.tsx:95
-msgid "Embed:"
-msgstr "Embed:"
+#~ msgid "Embed:"
+#~ msgstr "Embed:"
 
 #: app/components/chart-options-selector.tsx:57
 #: app/components/chart-options-selector.tsx:61
@@ -106,6 +110,10 @@ msgstr "Grouped"
 msgid "Horizontal axis"
 msgstr "Horizontal axis"
 
+#: app/components/publish-actions.tsx:105
+msgid "Iframe Embed Code:"
+msgstr ""
+
 #: app/components/hint.tsx:22
 msgid "Loading data…"
 msgstr "Loading data…"
@@ -119,7 +127,7 @@ msgstr "Logo of the Swiss Confederation"
 msgid "Measure"
 msgstr "Measure"
 
-#: app/pages/[locale]/v/[chartId].tsx:79
+#: app/pages/[locale]/v/[chartId].tsx:53
 msgid "New Visualization"
 msgstr "New Visualization"
 
@@ -167,11 +175,11 @@ msgstr "Select a measure"
 msgid "Select all"
 msgstr "Select all"
 
-#: app/components/publish-actions.tsx:49
+#: app/components/publish-actions.tsx:55
 msgid "Share"
 msgstr "Share"
 
-#: app/components/publish-actions.tsx:59
+#: app/components/publish-actions.tsx:65
 msgid "Share:"
 msgstr "Share:"
 
@@ -195,7 +203,7 @@ msgstr "Title"
 msgid "Visualization Type"
 msgstr "Visualization Type"
 
-#: app/pages/[locale]/v/[chartId].tsx:66
+#: app/pages/[locale]/v/[chartId].tsx:40
 msgid "You can share this chart either by sharing its URL or by embedding it on your website. You can also create a new visualization or duplicate the above chart."
 msgstr "You can share this chart either by sharing its URL or by embedding it on your website. You can also create a new visualization or duplicate the above chart."
 
