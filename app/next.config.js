@@ -20,6 +20,8 @@ module.exports = withBundleAnalyzer(
   withMDX({
     publicRuntimeConfig,
 
+    pageExtensions: ["js", "tsx", "mdx"],
+
     webpack(config, { dev, isServer, defaultLoaders }) {
       // Transpile ES6 modules from node_modules
       // ATTENTION: this does actually NOT WORK. Probably needs a different loader than the next-babel-loader (like e.g. vanilla babel-loader). Figure out later. Cf. https://github.com/facebook/create-react-app/blob/f36d61a5dbabd0266c65bcdb3061d8bf9334f752/packages/react-scripts/config/webpack.config.js#L444-L482
@@ -46,7 +48,7 @@ module.exports = withBundleAnalyzer(
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env"],
+            presets: ["@babel/preset-env"]
             // plugins: ["@babel/plugin-syntax-dynamic-import"]
           }
         }

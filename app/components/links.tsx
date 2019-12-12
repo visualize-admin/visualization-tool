@@ -64,6 +64,15 @@ export const LocalizedLink = ({
   );
 };
 
+export const HomeLink = (
+  props: Omit<LinkProps, "href" | "as"> & {
+    children?: React.ReactNode;
+  }
+) => {
+  const locale = useLocale();
+  return <Link {...props} href={`/${locale}`} as={`/${locale}`} />;
+};
+
 export const CurrentPageLink = ({
   locale,
   ...rest
@@ -73,6 +82,21 @@ export const CurrentPageLink = ({
   children: React.ReactNode;
 }) => {
   const { pathname, query } = useRouter();
+
+  /**
+   * Hack for static content pages
+   * */
+  if (/^\/(en|de|fr|it)/.test(pathname)) {
+    return (
+      <Link
+        {...rest}
+        {...createDynamicRouteProps({
+          pathname: pathname.replace(/^\/(en|de|fr|it)/, `/${locale}`),
+          query
+        })}
+      />
+    );
+  }
 
   return (
     <Link
