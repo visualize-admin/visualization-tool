@@ -840,6 +840,65 @@ export const theme: Theme = {
       fontSize: [1, 2, 2],
       mb: 1,
       color: "monochrome.600"
+    },
+    footer: {
+      institution: {
+        width: ["100%", "auto"],
+        p: [4, 5],
+        color: ["monochrome.900", "monochrome.700"]
+      },
+      logo: {
+        width: "100vw",
+        display: ["block", "none"],
+        px: 4,
+        py: 5,
+        borderTopWidth: "1px",
+        borderBottomWidth: "1px",
+        borderTopStyle: "solid",
+        borderBottomStyle: "solid",
+        borderTopColor: "monochrome.500",
+        borderBottomColor: "monochrome.500"
+      },
+      link: {
+        width: ["100%", "auto"],
+        px: [4, 5],
+        py: [3, 4],
+        color: "primary.base",
+        fontSize: 3,
+        fontFamily: "frutigerRegular",
+        cursor: "pointer",
+        ":hover": {
+          color: "primary.hover"
+        },
+        ":active": {
+          color: "primary.hover"
+        },
+        ":disabled": {
+          cursor: "initial",
+          color: "primary.disabled"
+        }
+      },
+      linkBottom: {
+        px: [4, 5],
+        py: [3, 4],
+        color: "primary.base",
+        fontSize: 3,
+        fontFamily: "frutigerRegular",
+        borderLeftWidth: ["1px", 0],
+        borderLeftStyle: "solid",
+        borderLeftColor: "monochrome.500",
+        cursor: "pointer",
+        ":hover": {
+          color: "primary.hover"
+        },
+        ":active": {
+          color: "primary.hover"
+        },
+        ":disabled": {
+          cursor: "initial",
+          color: "primary.disabled"
+        }
+      }
     }
   }
 };
