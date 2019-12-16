@@ -22,7 +22,8 @@ export const theme: Theme = {
     "1rem",
     "1.5rem",
     "2rem",
-    "4rem"
+    "4rem",
+    "4.5rem"
   ],
   colors: {
     ch: {
@@ -57,7 +58,8 @@ export const theme: Theme = {
       base: "#006699",
       hover: "#004B70",
       active: "#00334D",
-      disabled: "#599cbd"
+      disabled: "#599cbd",
+      light: "#d8e8ef"
     },
     secondary: {
       base: "#757575",
@@ -190,6 +192,48 @@ export const theme: Theme = {
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2]
+    },
+    // Custom
+    toolTitle: {
+      fontFamily: "frutigerBold",
+      lineHeight: 1.2,
+      fontWeight: "bold",
+      fontSize: [8, "3.5rem", "3.5rem"],
+      mb: [4]
+    },
+    homepageSection: {
+      fontFamily: "frutigerLight",
+      lineHeight: [7, 8, 8],
+      fontWeight: "light",
+      fontSize: [6, 7, 7],
+      color: "monochrome.800",
+      mb: 6,
+      textAlign: "center"
+    },
+    homepageTutorialStep: {
+      fontSize: 5,
+      fontFamily: "frutigerBold",
+      mt: 4,
+      mb: 2
+    },
+    homepageExampleHeadline: {
+      fontSize: [5, 5, 6],
+      lineHeight: 1.5,
+      fontFamily: "frutigerBold",
+      mb: [2, 2, 4]
+    },
+    homepageExampleDescription: {
+      fontSize: 4,
+      lineHeight: 1.5,
+      fontFamily: "frutigerRegular",
+      mt: 4,
+      mb: [2, 2, 0]
+    },
+    homepageContribute: {
+      fontSize: [6, 6, 7],
+      lineHeight: 1.25,
+      fontFamily: "frutigerLight",
+      mb: 3
     }
   },
   buttons: {
@@ -199,9 +243,10 @@ export const theme: Theme = {
       borderRadius: "default",
       width: ["100%", "auto"],
       minWidth: 160,
-      p: 3,
+      px: 7,
+      py: 3,
       fontFamily: "frutigerRegular",
-      fontSize: [3, 3, 3],
+      fontSize: 4,
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
@@ -260,6 +305,30 @@ export const theme: Theme = {
       ":disabled": {
         cursor: "initial",
         bg: "secondary.disabled"
+      }
+    },
+    inverted: {
+      bg: "monochrome.100",
+      color: "monochrome.800",
+      borderRadius: "default",
+      width: ["100%", "auto"],
+      minWidth: 160,
+      px: 7,
+      py: 3,
+      fontFamily: "frutigerRegular",
+      fontSize: 4,
+      transition: "background-color .2s",
+      cursor: "pointer",
+      ":hover": {
+        bg: "monochrome.300"
+      },
+      ":active": {
+        bg: "monochrome.400"
+      },
+      ":disabled": {
+        cursor: "initial",
+        color: "monochrome.600",
+        bg: "monochrome.300"
       }
     },
     datasetButton: {
@@ -643,6 +712,16 @@ export const theme: Theme = {
       p: 4,
       color: "success.base",
       bg: "success.light",
+      height: "auto"
+    },
+    info: {
+      variant: "variants.hint",
+      width: "auto",
+      mb: 4,
+      mx: 6,
+      p: 4,
+      color: "primary.base",
+      bg: "primary.light",
       height: "auto"
     },
     palette: {
