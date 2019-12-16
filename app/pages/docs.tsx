@@ -103,6 +103,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/dataset-list.docs")
       },
       {
+        path: "/components/footer",
+        title: "Footer",
+        content: require("../docs/footer.docs")
+      },
+      {
         path: "/components/form",
         title: "Form",
         content: require("../docs/form.docs")
