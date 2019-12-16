@@ -118,6 +118,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/hint.docs")
       },
       {
+        path: "/components/homepage",
+        title: "Homepag",
+        content: require("../docs/homepage.docs")
+      },
+      {
         path: "/components/publish-actions",
         title: "Publish actions",
         content: require("../docs/publish-actions.docs")

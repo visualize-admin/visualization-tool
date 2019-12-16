@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Flex, Text, Box } from "rebass";
 import { Trans } from "@lingui/macro";
-import { Icon } from "../icons";
+import { Icon, IconName } from "../icons";
 
 export const Error = ({ children }: { children: React.ReactNode }) => (
   <Flex justifyContent="center" alignItems="center" variant={"error"}>
@@ -55,13 +55,33 @@ export const DataSetHint = () => (
 );
 
 export const Success = () => (
-  <Flex variant={"success"} justifyContent="flex-start" alignItems="center">
+  <Flex variant="success" justifyContent="flex-start" alignItems="center">
     <Icon name="published" size={56} />
     <Text variant="heading3" ml={4} sx={{ textAlign: "left" }}>
       <Trans id="hint.publication.success">
         Your visualization is now published. You can share and embed it using
         the URL or the options below.
       </Trans>
+    </Text>
+  </Flex>
+);
+export const HintBlue = ({
+  iconName,
+  children
+}: {
+  iconName: IconName;
+  children: React.ReactNode;
+}) => (
+  <Flex
+    variant="info"
+    justifyContent="flex-start"
+    alignItems={["flex-start", "center"]}
+  >
+    <Box width={24} pr={4}>
+      <Icon name={iconName} size={24} />
+    </Box>
+    <Text variant="paragraph1" ml={4} sx={{ textAlign: "left" }}>
+      {children}
     </Text>
   </Flex>
 );
