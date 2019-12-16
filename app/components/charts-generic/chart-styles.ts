@@ -26,7 +26,7 @@ export const legendTheme: Legend = {
   orient: "bottom",
   direction: "vertical",
   columns: 2,
-  columnPadding: 8,
+  columnPadding: 32,
   rowPadding: 4,
   labelColor: legendLabelColor,
   labelFontSize: 12,

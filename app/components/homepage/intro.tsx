@@ -15,7 +15,7 @@ export const Intro = ({
   buttonLabel: string;
 }) => {
   return (
-    <>
+    <Box maxWidth={1024} m="0 auto">
       <Box px={4} pt={5}>
         <HintBlue iconName="info">{hint}</HintBlue>
       </Box>
@@ -45,7 +45,7 @@ export const Intro = ({
           </Flex>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 
