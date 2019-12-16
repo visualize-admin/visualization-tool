@@ -17,7 +17,7 @@ export const Tutorial = ({
   step3: string;
 }) => {
   return (
-    <Box color="monochrome.800" px={4} pb={7}>
+    <Box maxWidth={1024} m="0 auto" color="monochrome.800" px={4} pb={7}>
       <Text variant="homepageSection">{headline}</Text>
       <Flex
         flexDirection={["column", "column", "row"]}
@@ -52,14 +52,14 @@ const Arrow = () => (
     <Box
       sx={{ display: ["none", "none", "block"], zIndex: 12 }}
       mb={[4, 4, 6]}
-      mx={[0, 0, "-104px"]}
+      mx={[0, 0, "-8px"]}
     >
       <Icon size={32} name="arrowRight"></Icon>
     </Box>
     <Box
       sx={{ display: ["block", "block", "none"], zIndex: 12 }}
       mb={[4, 4, 6]}
-      mx={[0, 0, "-104px"]}
+      mx={[0, 0, "-8px"]}
     >
       <Icon size={32} name="arrowDown"></Icon>
     </Box>
