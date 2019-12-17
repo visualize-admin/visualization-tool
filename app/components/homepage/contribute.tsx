@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Flex, Text } from "rebass";
+import { Box, Button, Flex, Text, Link } from "rebass";
 
 export const Contribute = ({
   headline,
@@ -23,7 +23,9 @@ export const Contribute = ({
             alignItems="center"
             width={["100%", "100%", "30%"]}
           >
-            <Button variant="inverted">{buttonLabel}</Button>
+            <Link href="https://lindas-data.ch/">
+              <Button variant="inverted">{buttonLabel}</Button>
+            </Link>
           </Flex>
         </Flex>
       </Box>
