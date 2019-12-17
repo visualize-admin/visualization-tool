@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Flex, Text, Box } from "rebass";
+import { Flex, Text, Box, FlexProps } from "rebass";
 import { Trans } from "@lingui/macro";
 import { Icon, IconName } from "../icons";
+import { keyframes } from "@emotion/core";
 
 export const Error = ({ children }: { children: React.ReactNode }) => (
   <Flex justifyContent="center" alignItems="center" variant={"error"}>
@@ -9,32 +10,44 @@ export const Error = ({ children }: { children: React.ReactNode }) => (
   </Flex>
 );
 
-export const Hint = ({ children }: { children: React.ReactNode }) => (
+export const Hint = ({ children, sx }: FlexProps) => (
   <Flex
     flexDirection="column"
     justifyContent="center"
     alignItems="center"
     variant={"hint"}
+    sx={sx}
   >
     {children}
   </Flex>
 );
 
+const delayedShow = keyframes`
+  0% { opacity: 0 }
+  100% { opacity: 1 }
+`;
+
+const spin = keyframes`
+  0% { transform: rotate(360deg) },
+  100% { transform: rotate(0deg) }
+`;
+
 export const Loading = () => (
-  <Hint>
+  <Hint
+    sx={{
+      padding: 2,
+      opacity: 0,
+      animation: `0s linear 1s forwards ${delayedShow}`
+    }}
+  >
     <Box
       sx={{
-        animation: "spin 2s linear infinite",
-
-        "@keyframes spin": {
-          "0%": { transform: "rotate(360deg)" },
-          "100%": { transform: "rotate(0deg)" }
-        }
+        animation: `2s linear infinite ${spin}`
       }}
     >
-      <Icon name="loading" size={56} />
+      <Icon name="loading" size={48} />
     </Box>
-    <Text variant="heading2">
+    <Text variant="heading4">
       <Trans id="hint.loading.data">Loading data…</Trans>
     </Text>
   </Hint>
