@@ -20,7 +20,7 @@ module.exports = withBundleAnalyzer(
   withMDX({
     publicRuntimeConfig,
 
-    pageExtensions: ["js", "tsx", "mdx"],
+    pageExtensions: ["js", "ts", "tsx", "mdx"],
 
     webpack(config, { dev, isServer, defaultLoaders }) {
       // Transpile ES6 modules from node_modules
