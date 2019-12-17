@@ -26,8 +26,8 @@ msgid "accessibility.table.sorting.descending"
 msgstr ""
 
 #: app/pages/[locale]/index.tsx:11
-msgid "button.create.new.visualization"
-msgstr ""
+#~ msgid "button.create.new.visualization"
+#~ msgstr ""
 
 #: app/components/data-download.tsx:14
 msgid "button.download.data"
@@ -163,6 +163,26 @@ msgstr ""
 msgid "datatable.showing.first.rows"
 msgstr ""
 
+#: app/components/footer.tsx:17
+msgid "footer.contact"
+msgstr ""
+
+#: app/components/footer.tsx:14
+msgid "footer.help"
+msgstr ""
+
+#: app/components/footer.tsx:30
+msgid "footer.imprint"
+msgstr ""
+
+#: app/components/footer.tsx:6
+msgid "footer.institution.name"
+msgstr ""
+
+#: app/components/footer.tsx:27
+msgid "footer.legal"
+msgstr ""
+
 #: app/pages/[locale]/v/[chartId].tsx:44
 msgid "hint.create.your.own.chart"
 msgstr ""
@@ -191,8 +211,8 @@ msgstr ""
 msgid "hint.select.dataset.to.preview"
 msgstr ""
 
-#: app/components/header.tsx:27
-#: app/components/header.tsx:38
+#: app/components/header.tsx:29
+#: app/components/header.tsx:40
 msgid "logo.swiss.confederation"
 msgstr ""
 
