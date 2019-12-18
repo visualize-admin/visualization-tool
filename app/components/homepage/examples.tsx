@@ -208,7 +208,7 @@ const Example = ({
       }}
       width={["100%", "100%", "50%"]}
       minWidth={0}
-      maxWidth={512}
+      maxWidth={["unset", "unset", 512]}
     >
       {children}
     </Box>
