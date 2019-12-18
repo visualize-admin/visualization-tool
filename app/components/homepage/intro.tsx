@@ -37,7 +37,7 @@ export const Intro = ({
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <Flex justifyContent="center">
-            <LocalizedLink pathname="/[locale]/chart/new" passHref>
+            <LocalizedLink pathname="/[locale]/create/new" passHref>
               <Button as="a" variant="primary">
                 {buttonLabel}
               </Button>

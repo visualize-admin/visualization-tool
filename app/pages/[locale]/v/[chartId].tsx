@@ -69,7 +69,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
             </Text>
 
             <LocalizedLink
-              pathname="/[locale]/chart/[chartId]"
+              pathname="/[locale]/create/[chartId]"
               query={{ chartId: "new" }}
               passHref
             >

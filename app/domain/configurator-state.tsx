@@ -490,8 +490,8 @@ const ConfiguratorStateProviderInternal = ({
           }
         } else {
           replace(
-            `/[locale]/chart/[chartId]`,
-            asPath.replace(/\/chart\/.+$/, "/chart/new")
+            `/[locale]/create/[chartId]`,
+            asPath.replace(/\/create\/.+$/, "/create/new")
           );
         }
       }
@@ -515,7 +515,7 @@ const ConfiguratorStateProviderInternal = ({
               JSON.stringify(state)
             );
             push(
-              `/[locale]/chart/[chartId]`,
+              `/[locale]/create/[chartId]`,
               (asPath as string).replace(/new$/, newChartId)
             );
           } else {

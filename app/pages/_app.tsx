@@ -55,7 +55,7 @@ class MyApp extends App<{
 
     /**
      * Parse locale from query OR pathname
-     * - so we can have dynamic locale query params like /[locale]/chart/...
+     * - so we can have dynamic locale query params like /[locale]/create/...
      * - and static localized pages like /en/index.mdx
      */
     const locale = /^\/\[locale\]/.test(pathname)
