@@ -7,5 +7,6 @@
   "extractBabelOptions": {
     "configFile": "./app/babel.config.js"
   },
-   "sourceLocale": "en"
+   "sourceLocale": "en",
+   "fallbackLocale": "en"
 }
