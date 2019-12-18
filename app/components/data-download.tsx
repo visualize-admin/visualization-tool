@@ -11,7 +11,7 @@ import {
   Observations
 } from "../domain";
 
-interface ChartFieldsWithLabel {
+export interface ChartFieldsWithLabel {
   [x: string]: string;
 }
 export const DataDownload = memo(

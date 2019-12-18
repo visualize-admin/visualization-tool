@@ -1,6 +1,6 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { ascending, descending } from "d3-array";
-import React, { useState, memo } from "react";
+import React, { useState, memo, useMemo } from "react";
 import {
   Observations,
   DimensionWithMeta,
@@ -8,6 +8,7 @@ import {
   ChartFields
 } from "../domain";
 import { Trans } from "@lingui/macro";
+import { ChartFieldsWithLabel } from "./data-download";
 
 export const A11yTable = memo(
   ({
@@ -42,7 +43,19 @@ export const A11yTable = memo(
       setSortingField(fieldKey);
       setDirection(newDirection);
     };
-
+    const fieldsWithLabel: ChartFieldsWithLabel = useMemo(
+      () =>
+        Object.entries(fields).reduce(
+          (obj, [key, value]) => ({
+            ...obj,
+            [key]: [...dimensions, ...measures].find(
+              c => c.component.iri.value === value!.componentIri
+            )!.component.label.value
+          }),
+          {}
+        ),
+      [dimensions, fields, measures]
+    );
     // FIXME: Add actual label
     return (
       <table style={{ display: "none" }}>
@@ -58,12 +71,12 @@ export const A11yTable = memo(
                   aria-sort={sortingField === fieldKey ? direction : "none"}
                 >
                   <button onClick={() => sortBy(fieldKey)}>
-                    {fieldKey}
+                    {fieldsWithLabel[fieldKey]}
                     {sortingField && (
                       <>
                         {", "}
                         <Trans id="accessibility.table.sorting">
-                          sorted by {sortingField} in
+                          sorted by {fieldsWithLabel[sortingField]} in
                           {direction === "ascending" ? (
                             <Trans id="accessibility.table.sorting.ascending">
                               ascending
