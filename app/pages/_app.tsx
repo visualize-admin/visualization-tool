@@ -3,6 +3,7 @@ import { I18nProvider } from "@lingui/react";
 import { ThemeProvider } from "emotion-theming";
 import App, { AppContext } from "next/app";
 import ErrorPage from "next/error";
+import Head from "next/head";
 import Router from "next/router";
 import React from "react";
 import { ContentMDXProvider } from "../components/content-mdx-provider";
@@ -16,6 +17,7 @@ import {
   parseLocaleString
 } from "../locales/locales";
 import { loadTheme, Theme } from "../themes/index";
+import { PUBLIC_URL } from "../domain/env";
 
 Router.events.on("routeChangeComplete", path => analyticsPageView(path));
 
@@ -24,6 +26,7 @@ class MyApp extends App<{
   statusCode: void | number;
   theme: Theme;
   globalStyles: string | undefined;
+  asPath: string;
 }> {
   static async getInitialProps(appContext: AppContext) {
     // calls page's `getInitialProps` and fills `appProps.pageProps`
@@ -67,7 +70,8 @@ class MyApp extends App<{
       locale,
       statusCode,
       theme,
-      globalStyles
+      globalStyles,
+      asPath
     };
   }
 
@@ -78,7 +82,8 @@ class MyApp extends App<{
       locale,
       statusCode,
       theme,
-      globalStyles
+      globalStyles,
+      asPath
     } = this.props;
 
     if (statusCode) {
@@ -86,20 +91,28 @@ class MyApp extends App<{
     }
 
     return (
-      <LocaleProvider value={locale}>
-        <I18nProvider language={locale} catalogs={catalogs}>
-          <ThemeProvider theme={theme}>
-            <Global
-              styles={css`
-                ${globalStyles}
-              `}
-            />
-            <ContentMDXProvider>
-              <Component {...pageProps} />
-            </ContentMDXProvider>
-          </ThemeProvider>
-        </I18nProvider>
-      </LocaleProvider>
+      <>
+        <Head>
+          <title>visualize.admin.ch</title>
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={"visualize.admin.ch"} />
+          <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
+        </Head>
+        <LocaleProvider value={locale}>
+          <I18nProvider language={locale} catalogs={catalogs}>
+            <ThemeProvider theme={theme}>
+              <Global
+                styles={css`
+                  ${globalStyles}
+                `}
+              />
+              <ContentMDXProvider>
+                <Component {...pageProps} />
+              </ContentMDXProvider>
+            </ThemeProvider>
+          </I18nProvider>
+        </LocaleProvider>
+      </>
     );
   }
 }
