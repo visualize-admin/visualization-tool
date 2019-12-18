@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   getComponentIri,
   isTimeDimension,
@@ -13,6 +13,8 @@ import { Literal, NamedNode } from "rdf-js";
 import { Text, Button } from "rebass";
 import { Trans } from "@lingui/macro";
 import { FilterValueMultiValues } from "../domain";
+import { Checkbox } from "./form";
+import { filter } from "fp-ts/lib/Option";
 
 export const DimensionValuesMultiFilter = ({
   dimension
@@ -20,16 +22,16 @@ export const DimensionValuesMultiFilter = ({
   dimension: DimensionWithMeta;
 }) => {
   const dimensionIri = getComponentIri(dimension);
-  const [, dispatch] = useConfiguratorState();
-
-  const [state] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState();
 
   const filterValues = getFilterValue(state, dimension.component.iri.value);
 
-  const allSelected =
-    filterValues &&
-    filterValues.type === "multi" &&
-    dimension.values.every(dv => filterValues.values[dv.value.value] === true);
+  const initialAllSelected =
+    !filterValues ||
+    filterValues.type !== "multi" ||
+    Object.keys(filterValues.values).length === 0;
+
+  const [allSelected, setAllSelected] = useState<boolean>(initialAllSelected);
 
   const toggle = useCallback(
     (
@@ -39,37 +41,28 @@ export const DimensionValuesMultiFilter = ({
         value: NamedNode | Literal;
       }[]
     ) => {
-      dispatch({
-        type: "CHART_CONFIG_FILTER_SET_MULTI",
-        value: {
-          dimensionIri,
-          values: Object.values(dimVal).reduce<FilterValueMultiValues>(
-            (obj, cur, i) => ({
-              ...obj,
-              [cur.value.value]: !allSelected || i === 0 ? true : undefined
-            }),
-            {}
-          )
-        }
-      });
+      if (allSelected) {
+        setAllSelected(false);
+      } else {
+        setAllSelected(true);
+        dispatch({
+          type: "CHART_CONFIG_FILTER_RESET_MULTI",
+          value: {
+            dimensionIri
+          }
+        });
+      }
     },
     [dispatch, allSelected]
   );
 
   return (
     <>
-      <Button
-        variant="linkButton"
-        onClick={() => toggle(dimensionIri, dimension.values)}
-      >
-        <Text variant="paragraph2" sx={{ textDecoration: "underline" }}>
-          {allSelected ? (
-            <Trans id="controls.filter.reset">Reset</Trans>
-          ) : (
-            <Trans id="controls.filter.select.all">Select all</Trans>
-          )}
-        </Text>
-      </Button>
+      <Checkbox
+        label={<Trans id="controls.filter.select.all">Select all</Trans>}
+        onChange={() => toggle(dimensionIri, dimension.values)}
+        checked={allSelected}
+      />
 
       {dimension.values.map(dv => {
         return (
@@ -78,6 +71,8 @@ export const DimensionValuesMultiFilter = ({
             dimensionIri={dimensionIri}
             label={isTimeDimension(dimension) ? dv.value.value : dv.label.value}
             value={dv.value.value}
+            allSelected={allSelected}
+            disabled={allSelected}
           />
         );
       })}

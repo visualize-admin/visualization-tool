@@ -156,19 +156,28 @@ export const MultiFilterField = ({
   dimensionIri,
   label,
   value,
-  disabled
+  disabled,
+  allSelected
 }: {
   dimensionIri: string;
   label: string;
   value: string;
   disabled?: boolean;
+  allSelected?: boolean;
 }) => {
   const field = useMultiFilterField({
     dimensionIri,
     value
   });
 
-  return <Checkbox label={label} disabled={disabled} {...field}></Checkbox>;
+  return (
+    <Checkbox
+      label={label}
+      disabled={disabled}
+      {...field}
+      checked={ allSelected ? true : field.checked}
+    ></Checkbox>
+  );
 };
 export const SingleFilterField = ({
   dimensionIri,
