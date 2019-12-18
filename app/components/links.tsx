@@ -112,13 +112,22 @@ export const CurrentPageLink = ({
 export const IconLink = ({
   iconName,
   href,
+  title,
   disabled = false
 }: {
   iconName: IconName;
+  title?: string;
   href: string;
   disabled?: boolean;
 }) => (
-  <RebassLink variant="iconLink" disabled href={href} target="_blank">
+  <RebassLink
+    variant="iconLink"
+    title={title}
+    disabled={disabled}
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
     <Icon name={iconName}></Icon>
   </RebassLink>
 );

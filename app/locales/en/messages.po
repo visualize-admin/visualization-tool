@@ -33,15 +33,15 @@ msgstr "descending"
 msgid "button.download.data"
 msgstr "Download data"
 
-#: app/components/publish-actions.tsx:165
+#: app/components/publish-actions.tsx:167
 msgid "button.download.image"
 msgstr "Download Image"
 
-#: app/components/publish-actions.tsx:103
+#: app/components/publish-actions.tsx:105
 msgid "button.embed"
 msgstr "Embed"
 
-#: app/pages/[locale]/v/[chartId].tsx:53
+#: app/pages/[locale]/v/[chartId].tsx:63
 msgid "button.new.visualization"
 msgstr "New Visualization"
 
@@ -183,11 +183,11 @@ msgstr "Federal Office for the Environment FOEN"
 msgid "footer.legal"
 msgstr "Legal"
 
-#: app/pages/[locale]/v/[chartId].tsx:44
+#: app/pages/[locale]/v/[chartId].tsx:54
 msgid "hint.create.your.own.chart"
 msgstr "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
 
-#: app/pages/[locale]/v/[chartId].tsx:40
+#: app/pages/[locale]/v/[chartId].tsx:50
 msgid "hint.how.to.share"
 msgstr "You can share this chart either by sharing its URL or by embedding it on your website. You can also create a new visualization or duplicate the above chart."
 
@@ -228,11 +228,11 @@ msgstr "Data"
 msgid "metadata.source"
 msgstr "Source"
 
-#: app/components/publish-actions.tsx:113
+#: app/components/publish-actions.tsx:115
 msgid "publication.embed.AEM"
 msgstr "Embed Code for AEM \"External Application\":"
 
-#: app/components/publish-actions.tsx:108
+#: app/components/publish-actions.tsx:110
 msgid "publication.embed.iframe"
 msgstr "Iframe Embed Code:"
 
@@ -240,15 +240,27 @@ msgstr "Iframe Embed Code:"
 msgid "publication.popup.share"
 msgstr "Share"
 
-#: app/components/publish-actions.tsx:78
+#: app/components/publish-actions.tsx:80
 msgid "publication.share.chart.url"
 msgstr "Chart URL:"
 
+#: app/components/publish-actions.tsx:71
+msgid "publication.share.linktitle.facebook"
+msgstr "Share on Facebook"
+
+#: app/components/publish-actions.tsx:73
+msgid "publication.share.linktitle.mail"
+msgstr "Share via email"
+
 #: app/components/publish-actions.tsx:72
+msgid "publication.share.linktitle.twitter"
+msgstr "Share on Twitter"
+
+#: app/components/publish-actions.tsx:73
 msgid "publication.share.mail.body"
 msgstr "Here is a link to a visualization I created on visualize.admin.ch"
 
-#: app/components/publish-actions.tsx:72
+#: app/components/publish-actions.tsx:73
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 

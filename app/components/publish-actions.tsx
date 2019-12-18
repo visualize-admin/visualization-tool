@@ -115,20 +115,41 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               <Trans id="publication.popup.share">Share</Trans>:
             </Text>
             <Flex color="primary.base">
-              <IconLink iconName="facebook" href="" disabled></IconLink>
-              <IconLink iconName="twitter" href="" disabled></IconLink>
               <I18n>
                 {({ i18n }) => (
-                  <IconLink
-                    iconName="mail"
-                    href={`mailto:?subject=${i18n._(
-                      t("publication.share.mail.subject")`visualize.admin.ch`
-                    )}&body=${i18n._(
-                      t(
-                        "publication.share.mail.body"
-                      )`Here is a link to a visualization I created on visualize.admin.ch`
-                    )}: ${shareUrl}`}
-                  ></IconLink>
+                  <>
+                    <IconLink
+                      iconName="facebook"
+                      title={i18n._(
+                        t(
+                          "publication.share.linktitle.facebook"
+                        )`Share on Facebook`
+                      )}
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                    ></IconLink>
+                    <IconLink
+                      iconName="twitter"
+                      title={i18n._(
+                        t(
+                          "publication.share.linktitle.twitter"
+                        )`Share on Twitter`
+                      )}
+                      href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
+                    ></IconLink>
+                    <IconLink
+                      iconName="mail"
+                      title={i18n._(
+                        t("publication.share.linktitle.mail")`Share via email`
+                      )}
+                      href={`mailto:?subject=${i18n._(
+                        t("publication.share.mail.subject")`visualize.admin.ch`
+                      )}&body=${i18n._(
+                        t(
+                          "publication.share.mail.body"
+                        )`Here is a link to a visualization I created on visualize.admin.ch`
+                      )}: ${shareUrl}`}
+                    ></IconLink>
+                  </>
                 )}
               </I18n>
             </Flex>

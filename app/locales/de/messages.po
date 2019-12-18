@@ -33,15 +33,15 @@ msgstr ""
 msgid "button.download.data"
 msgstr ""
 
-#: app/components/publish-actions.tsx:165
+#: app/components/publish-actions.tsx:167
 msgid "button.download.image"
 msgstr ""
 
-#: app/components/publish-actions.tsx:103
+#: app/components/publish-actions.tsx:105
 msgid "button.embed"
 msgstr ""
 
-#: app/pages/[locale]/v/[chartId].tsx:53
+#: app/pages/[locale]/v/[chartId].tsx:63
 msgid "button.new.visualization"
 msgstr ""
 
@@ -183,11 +183,11 @@ msgstr ""
 msgid "footer.legal"
 msgstr ""
 
-#: app/pages/[locale]/v/[chartId].tsx:44
+#: app/pages/[locale]/v/[chartId].tsx:54
 msgid "hint.create.your.own.chart"
 msgstr ""
 
-#: app/pages/[locale]/v/[chartId].tsx:40
+#: app/pages/[locale]/v/[chartId].tsx:50
 msgid "hint.how.to.share"
 msgstr ""
 
@@ -228,11 +228,11 @@ msgstr ""
 msgid "metadata.source"
 msgstr ""
 
-#: app/components/publish-actions.tsx:113
+#: app/components/publish-actions.tsx:115
 msgid "publication.embed.AEM"
 msgstr ""
 
-#: app/components/publish-actions.tsx:108
+#: app/components/publish-actions.tsx:110
 msgid "publication.embed.iframe"
 msgstr ""
 
@@ -240,15 +240,27 @@ msgstr ""
 msgid "publication.popup.share"
 msgstr ""
 
-#: app/components/publish-actions.tsx:78
+#: app/components/publish-actions.tsx:80
 msgid "publication.share.chart.url"
 msgstr ""
 
-#: app/components/publish-actions.tsx:72
-msgid "publication.share.mail.body"
+#: app/components/publish-actions.tsx:71
+msgid "publication.share.linktitle.facebook"
+msgstr ""
+
+#: app/components/publish-actions.tsx:73
+msgid "publication.share.linktitle.mail"
 msgstr ""
 
 #: app/components/publish-actions.tsx:72
+msgid "publication.share.linktitle.twitter"
+msgstr ""
+
+#: app/components/publish-actions.tsx:73
+msgid "publication.share.mail.body"
+msgstr ""
+
+#: app/components/publish-actions.tsx:73
 msgid "publication.share.mail.subject"
 msgstr ""
 
