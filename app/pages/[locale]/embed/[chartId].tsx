@@ -5,7 +5,6 @@ import ErrorPage from "next/error";
 import { ChartPublished } from "../../../components/chart-published";
 import { DataCubeProvider } from "../../../domain";
 import { Config } from "../../../domain/config-types";
-import { ContentLayout } from "../../../components/layout";
 
 type PageProps = {
   statusCode?: number;
@@ -27,13 +26,11 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
 
     return (
       <DataCubeProvider>
-        <ContentLayout>
-          <ChartPublished
-            dataSet={dataSet}
-            chartConfig={chartConfig}
-            meta={meta}
-          />
-        </ContentLayout>
+        <ChartPublished
+          dataSet={dataSet}
+          chartConfig={chartConfig}
+          meta={meta}
+        />
       </DataCubeProvider>
     );
   }
