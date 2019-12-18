@@ -6,7 +6,7 @@ import {
   Select as RebassSelect
 } from "@rebass/forms";
 import * as React from "react";
-import { Box, Flex } from "rebass";
+import { Box } from "rebass";
 import { FieldProps, Option } from "../domain/config-form";
 
 export const Label = ({
@@ -27,7 +27,7 @@ export const Label = ({
     mb={1}
     sx={{
       width: "auto",
-      color: disabled ? "monochrome.500" : "monochrome.600",
+      color: disabled ? "monochrome.600" : "monochrome.700",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
       pb: smaller ? 1 : 0,
       mr: 4
@@ -39,7 +39,6 @@ export const Label = ({
         sx={{
           maxWidth: "75%",
           textAlign: "left",
-          color: "monochrome.700",
           fontFamily: "frutigerRegular"
         }}
       >
@@ -67,7 +66,10 @@ export const Radio = ({
           onChange={onChange}
           checked={checked}
           disabled={disabled}
-          sx={{ size: 20, color: checked ? "primary.base" : "monochrome.500" }}
+          sx={{
+            size: 20,
+            color: checked && !disabled ? "primary.base" : "monochrome.500"
+          }}
         />
       </Label>
     </Box>
@@ -81,11 +83,14 @@ export const Checkbox = ({
   checked,
   disabled,
   onChange
-}: { label: string; disabled?: boolean } & FieldProps) => (
+}: { label: React.ReactNode; disabled?: boolean } & FieldProps) => (
   <Box mb={4}>
     <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
       <RebassCheckbox
-        sx={{ size: 20, color: checked ? "primary.base" : "monochrome.500" }}
+        sx={{
+          size: 20,
+          color: checked && !disabled ? "primary.base" : "monochrome.500"
+        }}
         id={`${name}-${label}`}
         name={name}
         value={value}

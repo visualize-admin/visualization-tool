@@ -71,6 +71,10 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_FILTER_SET_MULTI";
       value: { dimensionIri: string; values: FilterValueMulti["values"] };
     }
+  | {
+      type: "CHART_CONFIG_FILTER_RESET_MULTI";
+      value: { dimensionIri: string };
+    }
   | { type: "PUBLISH_FAILED" }
   | { type: "PUBLISHED"; value: string };
 
@@ -414,6 +418,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             values
           };
         }
+      }
+      return draft;
+
+    case "CHART_CONFIG_FILTER_RESET_MULTI":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri } = action.value;
+        draft.chartConfig.filters[dimensionIri] = {
+          type: "multi",
+          values: {}
+        };
       }
       return draft;
 

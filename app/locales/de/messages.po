@@ -102,10 +102,10 @@ msgid "controls.description"
 msgstr ""
 
 #: app/components/filters.tsx:27
-msgid "controls.filter.reset"
-msgstr ""
+#~ msgid "controls.filter.reset"
+#~ msgstr ""
 
-#: app/components/filters.tsx:27
+#: app/components/filters.tsx:30
 msgid "controls.filter.select.all"
 msgstr ""
 
@@ -191,7 +191,7 @@ msgstr ""
 msgid "hint.how.to.share"
 msgstr ""
 
-#: app/components/hint.tsx:22
+#: app/components/hint.tsx:31
 msgid "hint.loading.data"
 msgstr ""
 
@@ -199,15 +199,15 @@ msgstr ""
 msgid "hint.no.visualization.with.dataset"
 msgstr ""
 
-#: app/components/hint.tsx:40
+#: app/components/hint.tsx:49
 msgid "hint.publication.success"
 msgstr ""
 
-#: app/components/hint.tsx:28
+#: app/components/hint.tsx:37
 msgid "hint.select.dataset"
 msgstr ""
 
-#: app/components/hint.tsx:31
+#: app/components/hint.tsx:40
 msgid "hint.select.dataset.to.preview"
 msgstr ""
 
