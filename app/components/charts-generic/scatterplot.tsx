@@ -200,8 +200,8 @@ export const Scatterplot = ({
     legends: [
       {
         ...legendTheme,
-        fill: "colorScale"
-        // title: "segment"
+        fill: "colorScale",
+        symbolType: "circle"
       }
     ]
   };

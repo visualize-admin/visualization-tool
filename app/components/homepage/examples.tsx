@@ -22,7 +22,12 @@ export const Examples = ({
 }) => {
   return (
     <DataCubeProvider>
-      <Box maxWidth={1024} m="0 auto" p={4} color="monochrome.800">
+      <Box
+        maxWidth={1024}
+        margin={[0, 0, "0 auto"]}
+        p={4}
+        color="monochrome.800"
+      >
         <Text variant="homepageSection">{headline}</Text>
         <Example headline={example1Headline} description={example1Description}>
           <ChartPublished
@@ -180,14 +185,15 @@ const Example = ({
   <Flex
     flexDirection={["column", "column", "row"]}
     justifyContent={["flex-start", "flex-start", "space-between"]}
-    alignItems={["center"]}
+    alignItems="center"
     mb={6}
   >
     <Box
       sx={{ order: reverse ? [1, 1, 2] : [2, 2, 1] }}
-      width={["100%", "100%", "50%"]}
       ml={reverse ? [0, 0, 8] : 0}
       mr={reverse ? 0 : [0, 0, 8]}
+      minWidth={0}
+      width={["100%", "100%", "50%"]}
     >
       <Text variant="homepageExampleHeadline">{headline}</Text>
       <Text variant="homepageExampleDescription">{description}</Text>
@@ -200,6 +206,8 @@ const Example = ({
         borderColor: "monochrome.400",
         mt: 2
       }}
+      width={["100%", "100%", "50%"]}
+      minWidth={0}
       maxWidth={512}
     >
       {children}
