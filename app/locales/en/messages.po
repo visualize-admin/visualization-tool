@@ -13,15 +13,15 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/a11y-table.tsx:33
+#: app/components/a11y-table.tsx:34
 msgid "accessibility.table.sorting"
-msgstr "sorted by {sortingField} in {0} order"
+msgstr "sorted by {0} in {1} order"
 
-#: app/components/a11y-table.tsx:35
+#: app/components/a11y-table.tsx:36
 msgid "accessibility.table.sorting.ascending"
 msgstr "ascending"
 
-#: app/components/a11y-table.tsx:37
+#: app/components/a11y-table.tsx:38
 msgid "accessibility.table.sorting.descending"
 msgstr "descending"
 
