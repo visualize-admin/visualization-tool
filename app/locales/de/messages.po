@@ -25,6 +25,14 @@ msgstr ""
 msgid "accessibility.table.sorting.descending"
 msgstr ""
 
+#: app/components/chart-preview.tsx:31
+msgid "annotation.add.description"
+msgstr ""
+
+#: app/components/chart-preview.tsx:25
+msgid "annotation.add.title"
+msgstr ""
+
 #: app/pages/[locale]/index.tsx:11
 #~ msgid "button.create.new.visualization"
 #~ msgstr ""
