@@ -221,6 +221,22 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
 };
 
 const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
+  const [showTooltip, toggleTooltip] = useState(false);
+  const [tooltipContent, updateTooltipContent] = useState(
+    <Trans>click to copy</Trans>
+  );
+
+  const handleMouseLeave = () => {
+    toggleTooltip(false);
+    updateTooltipContent(<Trans>click to copy</Trans>);
+  };
+  const handleClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    iFrameCode: string
+  ) => {
+    e.preventDefault();
+    clipboard.writeText(iFrameCode);
+  };
   return (
     <Flex alignItems="stretch" mt={1} mb={2} height={48}>
       <Input
@@ -246,11 +262,12 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
 
       <Button
         variant="iconButton"
-        onClick={e => {
-          e.preventDefault();
-          clipboard.writeText(iFrameCode);
-        }}
+        onMouseOver={() => toggleTooltip(true)}
+        onMouseDown={() => updateTooltipContent(<Trans>copied!</Trans>)}
+        onMouseLeave={handleMouseLeave}
+        onClick={e => handleClick(e, iFrameCode)}
         sx={{
+          position: "relative",
           borderTopRightRadius: "default",
           borderBottomRightRadius: "default",
           borderTopLeftRadius: 0,
@@ -262,6 +279,50 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
         }}
       >
         <Icon name="copy" size={16} />
+
+        {showTooltip && (
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "100%",
+              left: "50%",
+              transform: "translate3d(-50%, 0, 0)",
+
+              bg: "monochrome.700",
+              borderRadius: "default",
+              color: "monochrome.100",
+
+              fontSize: 1,
+              textAlign: "center",
+              whiteSpace: "nowrap",
+
+              width: 80,
+              px: 2,
+              py: 1,
+              mx: 0,
+              mb: "calc(0.5rem + 2px)",
+
+              zIndex: 13,
+              pointerEvents: "none",
+              filter: "0 3px 5px 0 rgba(0,0,0,0.90)",
+
+              "&::after": {
+                content: "''",
+                position: "absolute",
+                width: 0,
+                height: 0,
+                border: "0.5rem solid transparent",
+                borderTopColor: "monochrome.700",
+                left: "50%",
+                top: "100%",
+                zIndex: -1,
+                transform: "translateX(-50%)"
+              }
+            }}
+          >
+            {tooltipContent}
+          </Box>
+        )}
       </Button>
     </Flex>
   );
