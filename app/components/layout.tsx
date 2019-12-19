@@ -11,10 +11,19 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => (
     </Flex>
   </Flex>
 );
-export const ContentLayout = ({ children }: { children?: ReactNode }) => (
-  <Flex flexDirection="column" sx={{ minHeight: "100vh" }}>
+export const ContentLayout = ({
+  homepage = true,
+  children
+}: {
+  homepage?: boolean;
+  children?: ReactNode;
+}) => (
+  <Flex
+    flexDirection="column"
+    sx={{ minHeight: "100vh", bg: homepage ? "monochrome.100" : "muted" }}
+  >
     <Header />
-    <Flex as="main" role="main" flex={1} flexDirection="column">
+    <Flex as="main" role="main" flex={1} flexDirection="column" sx={{ mt: 96 }}>
       {children}
     </Flex>
     <Footer />

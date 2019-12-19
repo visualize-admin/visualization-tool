@@ -13,7 +13,7 @@ export const Contribute = ({
   return (
     <Box bg="primary.base" color="monochrome.100">
       <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
-        <Flex flexDirection={["column", "row"]} px={[4, 4, 0]} py={[6, 6, 7]}>
+        <Flex flexDirection={["column", "row"]} px={4} py={[6, 6, 7]}>
           <Box width={["100%", "100%", "70%"]} mb={[6, 6, 0]}>
             <Text variant="homepageContribute">{headline}</Text>
             <Text variant="paragraph1">{description}</Text>

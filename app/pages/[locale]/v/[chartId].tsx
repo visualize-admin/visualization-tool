@@ -42,9 +42,9 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
           {/* og:url is set in _app.tsx */}
         </Head>
         <DataCubeProvider>
-          <ContentLayout>
-            <Box px={4} bg="muted">
-              <Box sx={{ pt: 4, maxWidth: 696, margin: "0 auto" }}>
+          <ContentLayout homepage={false}>
+            <Box px={4} bg="muted" mb="auto">
+              <Box sx={{ pt: 4, maxWidth: 696, margin: "auto" }}>
                 {publishSuccess && <Success />}
 
                 <Box variant="container.chart">

@@ -8,7 +8,7 @@ import { Icon, IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
 import { IconLink } from "./links";
 import { I18n } from "@lingui/react";
-
+import * as clipboard from "clipboard-polyfill";
 export const PublishActions = ({ configKey }: { configKey: string }) => {
   const locale = useLocale();
 
@@ -248,7 +248,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
         variant="iconButton"
         onClick={e => {
           e.preventDefault();
-          navigator.clipboard.writeText(iFrameCode);
+          clipboard.writeText(iFrameCode);
         }}
         sx={{
           borderTopRightRadius: "default",

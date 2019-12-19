@@ -27,7 +27,18 @@ export const ChartOptionsSelector = ({
   const meta = useDataSetAndMetadata(state.dataSet);
 
   if (meta.data) {
-    return <ActiveFieldSwitch state={state} metaData={meta.data} />;
+    return (
+      <Box
+        sx={{
+          // we need these overflow parameters to allow iOS scrolling
+          overflowX: "hidden",
+          overflowY: "scroll",
+          mb: 7
+        }}
+      >
+        <ActiveFieldSwitch state={state} metaData={meta.data} />
+      </Box>
+    );
   } else {
     return <Loading />;
   }

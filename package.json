@@ -29,6 +29,7 @@
     "@rebass/preset": "^4.0.5",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
     "catalog": "^4.0.1-canary.2",
+    "clipboard-polyfill": "^2.8.6",
     "d3-array": "^2.3.3",
     "d3-dsv": "^1.2.0",
     "d3-format": "^1.4.2",
