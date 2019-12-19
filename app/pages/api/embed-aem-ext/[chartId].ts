@@ -15,7 +15,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         console.log("AEM CMS Req header (accept-language):", headers["accept-language"]);
         console.log("AEM CMS Req header (accepted-language):", headers["accepted-language"]);
         console.log("AEM CMS Req header (Accepted-Language):", headers["Accepted-Language"]);
-        
+        console.log("AEM CMS Req query", query);
+
         const locale = parseLocaleString(headers["accepted-language"]?.toString() ?? "");
 
         res.setHeader("Content-Type", "text/html; charset=UTF-8");
