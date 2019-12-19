@@ -12,8 +12,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET":
       try {
         const chartId = query.chartId as string;
-        console.log("Language from AEM Requested:", headers["accept-language"]);
-        const locale = parseLocaleString(headers["accept-language"] || "");
+        console.log("AEM CMS Req header (accept-language):", headers["accept-language"]);
+        console.log("AEM CMS Req header (accepted-language):", headers["accepted-language"]);
+        console.log("AEM CMS Req header (Accepted-Language):", headers["Accepted-Language"]);
+        
+        const locale = parseLocaleString(headers["accepted-language"]?.toString() ?? "");
 
         res.setHeader("Content-Type", "text/html; charset=UTF-8");
         res.status(200).send(renderEmbedMarkup({ locale, chartId }));
