@@ -513,7 +513,16 @@ export const theme: Theme = {
         borderBottomStyle: "solid",
         borderBottomColor: "ch.venetianRed",
         color: "monochrome.700",
-        flexDirection: ["column", "row"]
+        flexDirection: ["column", "row"],
+        // Needs to be "fixed" to prevent
+        // iOS full-page scrolling
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        bg: "monochrome.100",
+        overflowY: "hidden",
+        zIndex: 13
       },
       logo: {
         order: [2, 1],
@@ -614,7 +623,8 @@ export const theme: Theme = {
     },
     container: {
       root: {
-        overflow: "scroll"
+        overflowX: "hidden",
+        overflowY: "scroll"
       },
       left: {
         bg: "monochrome.100",
@@ -648,13 +658,6 @@ export const theme: Theme = {
         borderLeftWidth: "1px",
         borderLeftStyle: "solid",
         gridArea: "right"
-      },
-      header: {
-        p: 3,
-        bg: "monochrome.100",
-        borderBottomColor: "monochrome.500",
-        borderBottomWidth: "1px",
-        borderBottomStyle: "solid"
       }
     },
     actionBar: { my: 5 },
@@ -844,7 +847,8 @@ export const theme: Theme = {
     footer: {
       institution: {
         width: ["100%", "auto"],
-        p: [4, 5],
+        px: 4,
+        py: 5,
         color: ["monochrome.900", "monochrome.700"]
       },
       logo: {
@@ -945,6 +949,8 @@ export const globalStyles = `
       display: block;
     }
 
+    // Use momentum-based scrolling on iOS devices
+    -webkit-overflow-scrolling: touch;
   }
 
   *:focus {
