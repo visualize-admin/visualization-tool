@@ -31,16 +31,16 @@ export const ChartPublished = ({
       justifyContent="space-between"
       sx={{ height: "100%", color: "monochrome.800" }}
     >
-      <Text variant="heading2" mb={2}>
-        {meta.title[locale] === ""
-          ? metaData.dataSet.label.value
-          : meta.title[locale]}
-      </Text>
-      <Text variant="paragraph1" mb={2}>
-        {meta.description[locale] === ""
-          ? metaData.dataSet.extraMetadata.get("description")!.value
-          : meta.description[locale]}
-      </Text>
+      {meta.title[locale] !== "" && (
+        <Text variant="heading2" mb={2}>
+          {meta.title[locale]}
+        </Text>
+      )}
+      {meta.description[locale] && (
+        <Text variant="paragraph1" mb={2}>
+          {meta.description[locale]}
+        </Text>
+      )}
       {chartConfig.chartType === "column" && (
         <ChartColumnsVisualization
           dataSet={metaData.dataSet}

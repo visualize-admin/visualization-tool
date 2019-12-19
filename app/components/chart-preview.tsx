@@ -10,6 +10,7 @@ import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
 import { Loading } from "./hint";
+import { Trans } from "@lingui/macro";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -34,14 +35,22 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           state.state === "PUBLISHING") && (
           <>
             <Text variant="heading2" mb={2}>
-              {state.meta.title[locale] === ""
-                ? dataSet.label.value
-                : state.meta.title[locale]}
+              {state.meta.title[locale] === "" ? (
+                <Trans id="annotation.add.title">
+                  [You can add a title here]
+                </Trans> // dataSet.label.value
+              ) : (
+                state.meta.title[locale]
+              )}
             </Text>
             <Text variant="paragraph1" mb={2}>
-              {state.meta.description[locale] === ""
-                ? dataSet.extraMetadata.get("description")!.value
-                : state.meta.description[locale]}
+              {state.meta.description[locale] === "" ? (
+                <Trans id="annotation.add.description">
+                  [You can add a description here]
+                </Trans> // dataSet.extraMetadata.get("description")!.value
+              ) : (
+                state.meta.description[locale]
+              )}
             </Text>
             {/* // FIXME: we shouldn't need this condition because the states must be these */}
             {state.chartConfig.chartType === "column" && (
