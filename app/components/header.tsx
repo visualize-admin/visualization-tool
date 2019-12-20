@@ -30,9 +30,16 @@ export const Logo = () => {
   );
 };
 
-export const Header = () => {
+export const Header = ({
+  pageType = "app"
+}: {
+  pageType?: "content" | "app";
+}) => {
   return (
-    <Flex as="header" variant="header.root">
+    <Flex
+      as="header"
+      variant={pageType === "content" ? "header.content" : "header.root"}
+    >
       <LanguageMenu />
       <Logo />
     </Flex>

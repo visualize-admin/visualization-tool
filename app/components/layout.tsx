@@ -5,7 +5,7 @@ import { Footer } from "./footer";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex flexDirection="column" sx={{ minHeight: "100vh" }}>
-    <Header />
+    <Header pageType="app" />
     <Flex as="main" role="main" flex={1} flexDirection="column" bg="muted">
       {children}
     </Flex>
@@ -22,8 +22,8 @@ export const ContentLayout = ({
     flexDirection="column"
     sx={{ minHeight: "100vh", bg: homepage ? "monochrome.100" : "muted" }}
   >
-    <Header />
-    <Flex as="main" role="main" flex={1} flexDirection="column" sx={{ mt: 96 }}>
+    <Header pageType="content" />
+    <Flex as="main" role="main" flex={1} flexDirection="column">
       {children}
     </Flex>
     <Footer />

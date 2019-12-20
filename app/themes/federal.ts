@@ -524,6 +524,16 @@ export const theme: Theme = {
         overflowY: "hidden",
         zIndex: 13
       },
+      content: {
+        px: [0, 4, 4],
+        pt: [0, 3, 3],
+        pb: [0, 5, 5],
+        borderBottomWidth: "4px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "ch.venetianRed",
+        color: "monochrome.700",
+        flexDirection: ["column", "row"]
+      },
       logo: {
         order: [2, 1],
         alignItems: ["center", "flex-start"],
