@@ -41,11 +41,11 @@ msgstr "[You can add a title here]"
 msgid "button.download.data"
 msgstr "Download data"
 
-#: app/components/publish-actions.tsx:167
+#: app/components/publish-actions.tsx:211
 msgid "button.download.image"
 msgstr "Download Image"
 
-#: app/components/publish-actions.tsx:105
+#: app/components/publish-actions.tsx:106
 msgid "button.embed"
 msgstr "Embed"
 
@@ -65,9 +65,14 @@ msgstr "Previous"
 msgid "button.publish"
 msgstr "Publish"
 
-#: app/components/publish-actions.tsx:56
+#: app/components/publish-actions.tsx:57
 msgid "button.share"
 msgstr "Share"
+
+#: app/components/publish-actions.tsx:128
+#: app/components/publish-actions.tsx:131
+msgid "click to copy"
+msgstr "click to copy"
 
 #: app/domain/helpers.tsx:32
 msgid "controls.axis.horizontal"
@@ -133,8 +138,8 @@ msgstr "Description"
 msgid "controls.section.design"
 msgstr "Design"
 
-#: app/components/chart-options-selector.tsx:57
-#: app/components/chart-options-selector.tsx:61
+#: app/components/chart-options-selector.tsx:64
+#: app/components/chart-options-selector.tsx:68
 msgid "controls.section.filter"
 msgstr "Filter"
 
@@ -147,7 +152,7 @@ msgstr "Segmentation"
 msgid "controls.select.chart.type"
 msgstr "Chart Type"
 
-#: app/components/chart-options-selector.tsx:110
+#: app/components/chart-options-selector.tsx:117
 msgid "controls.select.column.chart.type"
 msgstr "Chart Type"
 
@@ -155,17 +160,21 @@ msgstr "Chart Type"
 msgid "controls.select.dataset"
 msgstr "Select Dataset"
 
-#: app/components/chart-options-selector.tsx:48
+#: app/components/chart-options-selector.tsx:55
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
 
-#: app/components/chart-options-selector.tsx:79
+#: app/components/chart-options-selector.tsx:86
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
 #: app/domain/helpers.tsx:38
 msgid "controls.title"
 msgstr "Title"
+
+#: app/components/publish-actions.tsx:154
+msgid "copied!"
+msgstr "copied!"
 
 #: app/components/dataset-preview.tsx:27
 msgid "datatable.showing.first.rows"
@@ -207,7 +216,15 @@ msgstr "Loading data…"
 msgid "hint.no.visualization.with.dataset"
 msgstr "No visualization can be created with the selected dataset."
 
+#: app/components/hint.tsx:52
+msgid "hint.nodata.message"
+msgstr "No data was returned with the current filters."
+
 #: app/components/hint.tsx:49
+msgid "hint.nodata.title"
+msgstr "No data"
+
+#: app/components/hint.tsx:60
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. You can share and embed it using the URL or the options below."
 
@@ -236,39 +253,39 @@ msgstr "Data"
 msgid "metadata.source"
 msgstr "Source"
 
-#: app/components/publish-actions.tsx:115
+#: app/components/publish-actions.tsx:116
 msgid "publication.embed.AEM"
 msgstr "Embed Code for AEM \"External Application\":"
 
-#: app/components/publish-actions.tsx:110
+#: app/components/publish-actions.tsx:111
 msgid "publication.embed.iframe"
 msgstr "Iframe Embed Code:"
 
-#: app/components/publish-actions.tsx:66
+#: app/components/publish-actions.tsx:67
 msgid "publication.popup.share"
 msgstr "Share"
 
-#: app/components/publish-actions.tsx:80
+#: app/components/publish-actions.tsx:81
 msgid "publication.share.chart.url"
 msgstr "Chart URL:"
 
-#: app/components/publish-actions.tsx:71
+#: app/components/publish-actions.tsx:72
 msgid "publication.share.linktitle.facebook"
 msgstr "Share on Facebook"
 
-#: app/components/publish-actions.tsx:73
+#: app/components/publish-actions.tsx:74
 msgid "publication.share.linktitle.mail"
 msgstr "Share via email"
 
-#: app/components/publish-actions.tsx:72
+#: app/components/publish-actions.tsx:73
 msgid "publication.share.linktitle.twitter"
 msgstr "Share on Twitter"
 
-#: app/components/publish-actions.tsx:73
+#: app/components/publish-actions.tsx:74
 msgid "publication.share.mail.body"
 msgstr "Here is a link to a visualization I created on visualize.admin.ch"
 
-#: app/components/publish-actions.tsx:73
+#: app/components/publish-actions.tsx:74
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 

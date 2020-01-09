@@ -11,7 +11,7 @@ import { useResizeObserver } from "../lib/use-resize-observer";
 import { A11yTable } from "./a11y-table";
 import { Scatterplot } from "./charts-generic/scatterplot";
 import { DataDownload } from "./data-download";
-import { Loading } from "./hint";
+import { Loading, NoDataHint } from "./hint";
 
 export const ChartScatterplotVisualization = ({
   dataSet,
@@ -53,7 +53,7 @@ export const ChartScatterplotVisualization = ({
   });
 
   if (observations) {
-    return (
+    return observations.length > 0 ? (
       <>
         <A11yTable
           dataSet={dataSet}
@@ -76,6 +76,8 @@ export const ChartScatterplotVisualization = ({
           observations={observations}
         />
       </>
+    ) : (
+      <NoDataHint />
     );
   } else {
     return <Loading />;

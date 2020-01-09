@@ -66,6 +66,19 @@ export const DataSetHint = () => (
     </Text>
   </Hint>
 );
+export const NoDataHint = () => (
+  <Hint>
+    <Icon name="warning" size={56} />
+    <Text variant="heading2" my={3}>
+      <Trans id="hint.nodata.title">No data</Trans>
+    </Text>
+    <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+      <Trans id="hint.nodata.message">
+        No data was returned with the current filters.
+      </Trans>
+    </Text>
+  </Hint>
+);
 
 export const Success = () => (
   <Flex variant="success" justifyContent="flex-start" alignItems="center">

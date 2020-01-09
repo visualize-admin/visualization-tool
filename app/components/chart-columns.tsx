@@ -12,7 +12,7 @@ import { A11yTable } from "./a11y-table";
 import { Columns } from "./charts-generic/columns";
 import { ColumnsSegment } from "./charts-generic/columns-segment";
 import { DataDownload } from "./data-download";
-import { Loading } from "./hint";
+import { Loading, NoDataHint } from "./hint";
 export const ChartColumnsVisualization = ({
   dataSet,
   dimensions,
@@ -53,7 +53,7 @@ export const ChartColumnsVisualization = ({
   });
 
   if (observations) {
-    return (
+    return observations.length > 0 ? (
       <>
         <A11yTable
           dataSet={dataSet}
@@ -76,6 +76,8 @@ export const ChartColumnsVisualization = ({
           observations={observations}
         />
       </>
+    ) : (
+      <NoDataHint />
     );
   } else {
     return <Loading />;
@@ -95,6 +97,8 @@ export const ChartColumns = memo(
     fields: ColumnFields;
   }) => {
     const [resizeRef, width] = useResizeObserver();
+
+    console.log(observations.length);
 
     return (
       <div ref={resizeRef} aria-hidden="true">

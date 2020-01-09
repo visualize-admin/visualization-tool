@@ -11,7 +11,7 @@ import { useResizeObserver } from "../lib/use-resize-observer";
 import { A11yTable } from "./a11y-table";
 import { Areas } from "./charts-generic/areas";
 import { DataDownload } from "./data-download";
-import { Loading } from "./hint";
+import { Loading, NoDataHint } from "./hint";
 
 export const ChartAreasVisualization = ({
   dataSet,
@@ -52,7 +52,7 @@ export const ChartAreasVisualization = ({
   });
 
   if (observations) {
-    return (
+    return observations.length > 0 ? (
       <>
         <A11yTable
           dataSet={dataSet}
@@ -75,6 +75,8 @@ export const ChartAreasVisualization = ({
           observations={observations}
         />
       </>
+    ) : (
+      <NoDataHint />
     );
   } else {
     return <Loading />;

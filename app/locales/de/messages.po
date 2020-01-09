@@ -41,11 +41,11 @@ msgstr ""
 msgid "button.download.data"
 msgstr ""
 
-#: app/components/publish-actions.tsx:167
+#: app/components/publish-actions.tsx:211
 msgid "button.download.image"
 msgstr ""
 
-#: app/components/publish-actions.tsx:105
+#: app/components/publish-actions.tsx:106
 msgid "button.embed"
 msgstr ""
 
@@ -65,8 +65,13 @@ msgstr ""
 msgid "button.publish"
 msgstr ""
 
-#: app/components/publish-actions.tsx:56
+#: app/components/publish-actions.tsx:57
 msgid "button.share"
+msgstr ""
+
+#: app/components/publish-actions.tsx:128
+#: app/components/publish-actions.tsx:131
+msgid "click to copy"
 msgstr ""
 
 #: app/domain/helpers.tsx:32
@@ -133,8 +138,8 @@ msgstr ""
 msgid "controls.section.design"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:57
-#: app/components/chart-options-selector.tsx:61
+#: app/components/chart-options-selector.tsx:64
+#: app/components/chart-options-selector.tsx:68
 msgid "controls.section.filter"
 msgstr ""
 
@@ -147,7 +152,7 @@ msgstr ""
 msgid "controls.select.chart.type"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:110
+#: app/components/chart-options-selector.tsx:117
 msgid "controls.select.column.chart.type"
 msgstr ""
 
@@ -155,16 +160,20 @@ msgstr ""
 msgid "controls.select.dataset"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:48
+#: app/components/chart-options-selector.tsx:55
 msgid "controls.select.dimension"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:79
+#: app/components/chart-options-selector.tsx:86
 msgid "controls.select.measure"
 msgstr ""
 
 #: app/domain/helpers.tsx:38
 msgid "controls.title"
+msgstr ""
+
+#: app/components/publish-actions.tsx:154
+msgid "copied!"
 msgstr ""
 
 #: app/components/dataset-preview.tsx:27
@@ -207,7 +216,15 @@ msgstr ""
 msgid "hint.no.visualization.with.dataset"
 msgstr ""
 
+#: app/components/hint.tsx:52
+msgid "hint.nodata.message"
+msgstr ""
+
 #: app/components/hint.tsx:49
+msgid "hint.nodata.title"
+msgstr ""
+
+#: app/components/hint.tsx:60
 msgid "hint.publication.success"
 msgstr ""
 
@@ -236,39 +253,39 @@ msgstr ""
 msgid "metadata.source"
 msgstr ""
 
-#: app/components/publish-actions.tsx:115
+#: app/components/publish-actions.tsx:116
 msgid "publication.embed.AEM"
 msgstr ""
 
-#: app/components/publish-actions.tsx:110
+#: app/components/publish-actions.tsx:111
 msgid "publication.embed.iframe"
 msgstr ""
 
-#: app/components/publish-actions.tsx:66
+#: app/components/publish-actions.tsx:67
 msgid "publication.popup.share"
 msgstr ""
 
-#: app/components/publish-actions.tsx:80
+#: app/components/publish-actions.tsx:81
 msgid "publication.share.chart.url"
 msgstr ""
 
-#: app/components/publish-actions.tsx:71
+#: app/components/publish-actions.tsx:72
 msgid "publication.share.linktitle.facebook"
 msgstr ""
 
-#: app/components/publish-actions.tsx:73
+#: app/components/publish-actions.tsx:74
 msgid "publication.share.linktitle.mail"
 msgstr ""
 
-#: app/components/publish-actions.tsx:72
+#: app/components/publish-actions.tsx:73
 msgid "publication.share.linktitle.twitter"
 msgstr ""
 
-#: app/components/publish-actions.tsx:73
+#: app/components/publish-actions.tsx:74
 msgid "publication.share.mail.body"
 msgstr ""
 
-#: app/components/publish-actions.tsx:73
+#: app/components/publish-actions.tsx:74
 msgid "publication.share.mail.subject"
 msgstr ""
 
