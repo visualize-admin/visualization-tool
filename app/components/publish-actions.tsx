@@ -189,7 +189,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   useEffect(() => {
     setEmbedIframeUrl(`${window.location.origin}/${locale}/embed/${configKey}`);
-    setEmbedAEMUrl(`${window.location.origin}/api/embed-aem-ext/${configKey}`);
+    setEmbedAEMUrl(`${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}`);
   }, [configKey, locale]);
 
   return (
