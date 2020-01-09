@@ -18,9 +18,9 @@ export const PanelMiddle = ({
       {state.state === "SELECTING_DATASET" ? (
         <>
           {dataSetPreviewIri ? (
-            <Box variant="container.chart">
+            <Flex variant="container.chart">
               <DataSetPreview dataSetIri={dataSetPreviewIri} />
-            </Box>
+            </Flex>
           ) : (
             <Flex
               variant="container.chart"
@@ -38,9 +38,10 @@ export const PanelMiddle = ({
             state.state === "CONFIGURING_CHART" ||
             state.state === "DESCRIBING_CHART" ||
             state.state === "PUBLISHING") && (
-            <Box variant="container.chart">
+            <Flex variant="container.chart"               flexDirection="column"
+            >
               <ChartPreview dataSetIri={state.dataSet} />
-            </Box>
+            </Flex>
           )}
         </>
       )}

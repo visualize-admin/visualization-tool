@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text } from "rebass";
+import { Box, Text, Flex } from "rebass";
 import { Loading } from "./hint";
 import { useDataSetAndMetadata } from "../domain";
 import { DataTable } from "./datatable";
@@ -14,7 +14,12 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   if (metaData) {
     const { dataSet, dimensions, measures } = metaData;
     return (
-      <Box p={5} sx={{ textAlign: "left", width: "100%" }}>
+      <Flex
+        flexDirection="column"
+        justifyContent="space-between"
+        p={5}
+        sx={{ flexGrow: 1 }}
+      >
         <Text variant="heading2" mb={1}>
           {dataSet.label.value}
         </Text>
@@ -25,7 +30,12 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         <Box
           variant="heading3"
           mt={6}
-          sx={{ width: "100%", position: "relative", overflowX: "auto" }}
+          sx={{
+            flexGrow: 1,
+            width: "100%",
+            position: "relative",
+            overflowX: "auto"
+          }}
         >
           <DataTable
             dataSet={dataSet}
@@ -45,9 +55,19 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         >
           <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
         </Text>
-      </Box>
+      </Flex>
     );
   } else {
-    return <Loading />;
+    return (
+      <Flex
+        flexDirection="column"
+        justifyContent="space-between"
+        p={5}
+        sx={{ flexGrow: 1 }}
+      >
+        {" "}
+        <Loading />
+      </Flex>
+    );
   }
 };

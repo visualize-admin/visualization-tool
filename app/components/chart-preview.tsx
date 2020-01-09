@@ -27,7 +27,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         p={5}
         flexDirection="column"
         justifyContent="space-between"
-        sx={{ height: "100%", color: "monochrome.800" }}
+        sx={{ flexGrow: 1, color: "monochrome.800" }}
       >
         {(state.state === "SELECTING_CHART_TYPE" ||
           state.state === "CONFIGURING_CHART" ||

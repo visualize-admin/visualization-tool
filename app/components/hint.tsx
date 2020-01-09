@@ -16,7 +16,7 @@ export const Hint = ({ children, sx }: FlexProps) => (
     justifyContent="center"
     alignItems="center"
     variant={"hint"}
-    sx={sx}
+    sx={{ flexGrow: 1, ...sx }}
   >
     {children}
   </Flex>
