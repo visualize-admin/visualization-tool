@@ -98,8 +98,6 @@ export const ChartColumns = memo(
   }) => {
     const [resizeRef, width] = useResizeObserver();
 
-    console.log(observations.length);
-
     return (
       <div ref={resizeRef} aria-hidden="true">
         {fields.segment ? (
