@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import "isomorphic-unfetch";
 import { NextPage } from "next";
 import ErrorPage from "next/error";
-import { Box, Button, Text } from "rebass";
+import { Box, Button, Text, Flex } from "rebass";
 import { ChartPublished } from "../../../components/chart-published";
 import { Success } from "../../../components/hint";
 import { ContentLayout } from "../../../components/layout";
@@ -47,13 +47,13 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
               <Box sx={{ pt: 4, maxWidth: 696, margin: "auto" }}>
                 {publishSuccess && <Success />}
 
-                <Box variant="container.chart">
+                <Flex variant="container.chart">
                   <ChartPublished
                     dataSet={dataSet}
                     chartConfig={chartConfig}
                     meta={meta}
                   />
-                </Box>
+                </Flex>
 
                 <PublishActions configKey={config.key} />
 

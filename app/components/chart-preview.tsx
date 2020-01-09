@@ -52,39 +52,45 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 state.meta.description[locale]
               )}
             </Text>
-            {/* // FIXME: we shouldn't need this condition because the states must be these */}
-            {state.chartConfig.chartType === "column" && (
-              <ChartColumnsVisualization
-                dataSet={dataSet}
-                dimensions={dimensions}
-                measures={measures}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "line" && (
-              <ChartLinesVisualization
-                dataSet={dataSet}
-                dimensions={dimensions}
-                measures={measures}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "area" && (
-              <ChartAreasVisualization
-                dataSet={dataSet}
-                dimensions={dimensions}
-                measures={measures}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "scatterplot" && (
-              <ChartScatterplotVisualization
-                dataSet={dataSet}
-                dimensions={dimensions}
-                measures={measures}
-                chartConfig={state.chartConfig}
-              />
-            )}
+            <Flex
+              flexDirection="column"
+              justifyContent="space-between"
+              sx={{ flexGrow: 1 }}
+            >
+              {/* // FIXME: we shouldn't need this condition because the states must be these */}
+              {state.chartConfig.chartType === "column" && (
+                <ChartColumnsVisualization
+                  dataSet={dataSet}
+                  dimensions={dimensions}
+                  measures={measures}
+                  chartConfig={state.chartConfig}
+                />
+              )}
+              {state.chartConfig.chartType === "line" && (
+                <ChartLinesVisualization
+                  dataSet={dataSet}
+                  dimensions={dimensions}
+                  measures={measures}
+                  chartConfig={state.chartConfig}
+                />
+              )}
+              {state.chartConfig.chartType === "area" && (
+                <ChartAreasVisualization
+                  dataSet={dataSet}
+                  dimensions={dimensions}
+                  measures={measures}
+                  chartConfig={state.chartConfig}
+                />
+              )}
+              {state.chartConfig.chartType === "scatterplot" && (
+                <ChartScatterplotVisualization
+                  dataSet={dataSet}
+                  dimensions={dimensions}
+                  measures={measures}
+                  chartConfig={state.chartConfig}
+                />
+              )}
+            </Flex>
           </>
         )}
 

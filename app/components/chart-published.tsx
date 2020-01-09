@@ -29,7 +29,7 @@ export const ChartPublished = ({
       p={5}
       flexDirection="column"
       justifyContent="space-between"
-      sx={{ height: "100%", color: "monochrome.800" }}
+      sx={{ flexGrow: 1, color: "monochrome.800" }}
     >
       {meta.title[locale] !== "" && (
         <Text variant="heading2" mb={2}>
@@ -41,38 +41,44 @@ export const ChartPublished = ({
           {meta.description[locale]}
         </Text>
       )}
-      {chartConfig.chartType === "column" && (
-        <ChartColumnsVisualization
-          dataSet={metaData.dataSet}
-          dimensions={metaData.dimensions}
-          measures={metaData.measures}
-          chartConfig={chartConfig}
-        />
-      )}
-      {chartConfig.chartType === "line" && (
-        <ChartLinesVisualization
-          dataSet={metaData.dataSet}
-          dimensions={metaData.dimensions}
-          measures={metaData.measures}
-          chartConfig={chartConfig}
-        />
-      )}
-      {chartConfig.chartType === "area" && (
-        <ChartAreasVisualization
-          dataSet={metaData.dataSet}
-          dimensions={metaData.dimensions}
-          measures={metaData.measures}
-          chartConfig={chartConfig}
-        />
-      )}
-      {chartConfig.chartType === "scatterplot" && (
-        <ChartScatterplotVisualization
-          dataSet={metaData.dataSet}
-          dimensions={metaData.dimensions}
-          measures={metaData.measures}
-          chartConfig={chartConfig}
-        />
-      )}
+      <Flex
+        flexDirection="column"
+        justifyContent="space-between"
+        sx={{ flexGrow: 1 }}
+      >
+        {chartConfig.chartType === "column" && (
+          <ChartColumnsVisualization
+            dataSet={metaData.dataSet}
+            dimensions={metaData.dimensions}
+            measures={metaData.measures}
+            chartConfig={chartConfig}
+          />
+        )}
+        {chartConfig.chartType === "line" && (
+          <ChartLinesVisualization
+            dataSet={metaData.dataSet}
+            dimensions={metaData.dimensions}
+            measures={metaData.measures}
+            chartConfig={chartConfig}
+          />
+        )}
+        {chartConfig.chartType === "area" && (
+          <ChartAreasVisualization
+            dataSet={metaData.dataSet}
+            dimensions={metaData.dimensions}
+            measures={metaData.measures}
+            chartConfig={chartConfig}
+          />
+        )}
+        {chartConfig.chartType === "scatterplot" && (
+          <ChartScatterplotVisualization
+            dataSet={metaData.dataSet}
+            dimensions={metaData.dimensions}
+            measures={metaData.measures}
+            chartConfig={chartConfig}
+          />
+        )}
+      </Flex>
       <ChartFootnotes
         source={metaData.dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
         dataSetName={metaData.dataSet.label.value}
