@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, Flex } from "rebass";
+import { Box, Text, Flex } from "@theme-ui/components";
 import { Step1 } from "./step1";
 import { Step2 } from "./step2";
 import { Step3 } from "./step3";
@@ -17,28 +17,36 @@ export const Tutorial = ({
   step3: string;
 }) => {
   return (
-    <Box maxWidth={1024} m="0 auto" color="monochrome.800" px={4} pb={7}>
+    <Box
+      sx={{ maxWidth: 1024 }}
+      m="0 auto"
+      color="monochrome800"
+      px={4}
+      pb={7}
+    >
       <Text variant="homepageSection">{headline}</Text>
       <Flex
-        flexDirection={["column", "column", "row"]}
-        justifyContent={["flex-start", "flex-start", "space-around"]}
-        alignItems="center"
+        sx={{
+          flexDirection: ["column", "column", "row"],
+          justifyContent: ["flex-start", "flex-start", "space-around"],
+          alignItems: "center"
+        }}
       >
-        <Flex flexDirection="column" alignItems="center">
+        <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
           <Step1 />
           <Text variant="homepageTutorialStep">{step1}</Text>
         </Flex>
 
         <Arrow />
 
-        <Flex flexDirection="column" alignItems="center">
+        <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
           <Step2 />
           <Text variant="homepageTutorialStep">{step2}</Text>
         </Flex>
 
         <Arrow />
 
-        <Flex flexDirection="column" alignItems="center">
+        <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
           <Step3 />
           <Text variant="homepageTutorialStep">{step3}</Text>
         </Flex>

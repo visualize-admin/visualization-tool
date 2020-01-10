@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Text } from "rebass";
+import { Text } from "@theme-ui/components";
 import {
   AttributeWithMeta,
   DimensionWithMeta,
@@ -35,15 +35,15 @@ export const ChartFootnotes = ({
 
   return (
     <>
-      <Text variant="meta" color="monochrome.600">
+      <Text variant="meta" color="monochrome600">
         <Trans id="metadata.source">Source</Trans>: {source}
       </Text>
 
-      <Text variant="meta" color="monochrome.600">
+      <Text variant="meta" color="monochrome600">
         <Trans id="metadata.dataset">Dataset</Trans>: {dataSetName}
       </Text>
 
-      <Text variant="meta" color="monochrome.600">
+      <Text variant="meta" color="monochrome600">
         <Trans id="metadata.filter">Data</Trans>:
         {namedFilters.map((f, i) => (
           <React.Fragment key={f.dimension}>

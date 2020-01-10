@@ -3,12 +3,12 @@ import { useTheme } from "../../themes";
 
 export const useChartTheme = () => {
   const theme = useTheme();
-  const labelColor = (theme as $FixMe).colors.monochrome["700"] as string; // FIXME: #666666 in Sketch
-  const legendLabelColor = (theme as $FixMe).colors.monochrome["700"] as string;
-  const domainColor = (theme as $FixMe).colors.monochrome["700"] as string;
-  const gridColor = (theme as $FixMe).colors.monochrome["300"] as string;
+  const labelColor = theme.colors.monochrome700; // FIXME: #666666 in Sketch
+  const legendLabelColor = theme.colors.monochrome700;
+  const domainColor = theme.colors.monochrome700;
+  const gridColor = theme.colors.monochrome300;
 
-  const fontFamily = theme.fonts.frutigerRegular;
+  const fontFamily = theme.fonts.body;
   return { labelColor, domainColor, gridColor, legendLabelColor, fontFamily };
 };
 

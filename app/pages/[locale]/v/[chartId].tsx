@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import "isomorphic-unfetch";
 import { NextPage } from "next";
 import ErrorPage from "next/error";
-import { Box, Button, Text, Flex } from "rebass";
+import { Box, Button, Text, Flex } from "@theme-ui/components";
 import { ChartPublished } from "../../../components/chart-published";
 import { Success } from "../../../components/hint";
 import { ContentLayout } from "../../../components/layout";
@@ -61,8 +61,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
                   variant="heading3"
                   mt={3}
                   mb={5}
-                  color="monochrome.800"
-                  fontFamily="frutigerLight"
+                  sx={{ color: "monochrome800", fontFamily: "body" }}
                 >
                   {publishSuccess ? (
                     <Trans id="hint.how.to.share">

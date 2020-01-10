@@ -1,6 +1,6 @@
 import { useSelect } from "downshift";
 import * as React from "react";
-import { Box, Button, Flex, Text } from "rebass";
+import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { ColorScheme, scheme } from "vega";
 import { useConfiguratorState } from "../../domain";
 import { Icon } from "../../icons";
@@ -85,8 +85,8 @@ export const ColorPalette = ({ field }: { field: string }) => {
                 cursor: "pointer",
                 backgroundColor:
                   highlightedIndex === index
-                    ? "monochrome.200"
-                    : "monochrome.100"
+                    ? "monochrome200"
+                    : "monochrome100"
               }}
             >
               <Text variant="meta">{palette.label}</Text>
@@ -94,7 +94,7 @@ export const ColorPalette = ({ field }: { field: string }) => {
                 variant="palette.row"
                 sx={
                   highlightedIndex === index
-                    ? { backgroundColor: "monochrome.200" }
+                    ? { backgroundColor: "monochrome200" }
                     : {}
                 }
                 {...getItemProps({ item: palette, index })}

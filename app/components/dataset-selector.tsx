@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Text } from "rebass";
+import { Box, Button, Text } from "@theme-ui/components";
 import { useDataSets, useConfiguratorState } from "../domain";
 import { Loading } from "./hint";
 import { Trans } from "@lingui/macro";
@@ -9,7 +9,7 @@ export const DataSetList = () => {
   const { data: datasets } = useDataSets();
   if (datasets) {
     return (
-      <Box sx={{ bg: "monochrome.100" }}>
+      <Box sx={{ bg: "monochrome100" }}>
         <SectionTitle>
           <Trans id="controls.select.dataset">Select Dataset</Trans>
         </SectionTitle>
@@ -57,12 +57,12 @@ export const DatasetButton = ({
             left: 0,
             width: "4px",
             height: "calc(100% + 2px)",
-            bg: "primary.base",
+            bg: "primary",
             marginTop: "-1px"
           }}
         ></Box>
       )}
-      <Text variant="paragraph2" sx={{ fontFamily: "frutigerBold" }} pb={1}>
+      <Text variant="paragraph2" sx={{ fontWeight: "bold" }} pb={1}>
         {dataSetLabel}
       </Text>
       <Text variant="paragraph2">{dataSetDescription}</Text>

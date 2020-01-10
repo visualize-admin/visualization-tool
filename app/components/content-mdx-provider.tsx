@@ -2,7 +2,7 @@ import { MDXProvider } from "@mdx-js/react";
 import { ContentLayout } from "./layout";
 import { Intro, Tutorial, Examples, Contribute } from "../components/homepage";
 
-import { Box } from "rebass";
+import { Box } from "@theme-ui/components";
 const defaultMDXComponents = {
   wrapper: ContentLayout,
   // p: (props: $FixMe) => <p {...props} style={{ color: "red" }} />,

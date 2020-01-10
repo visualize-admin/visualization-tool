@@ -1,31 +1,32 @@
-import { useTheme as useEmotionTheme } from "emotion-theming";
+import { useThemeUI, Theme as ThemeUITheme } from "theme-ui";
+import { SystemStyleObject } from "@styled-system/css";
 
 type StyleValueMap = {
   [k: string]: string | number | (string | number)[] | StyleValueMap;
 };
 
 /**
- * Adapted from the [System UI Theme Specification](https://system-ui.com/theme/)
+ * Adapted/refined from the [Theme UI Theme Specification](https://theme-ui.com/theme-spec)
  *
- * TODO: improve typing to be less generic and more specific to the theme configs that *we* use.
+ * TODO: Types are still a bit wonky because the base types are not the greatest
  */
-export interface Theme {
-  colors: StyleValueMap;
-  space: string[] | number[];
-  breakpoints: string[];
-  fontSizes: string[];
-  fonts: Record<string, string>;
-  fontWeights: Record<string, number>;
-  lineHeights: string[];
-
-  // Rebass component theme keys
-  variants: StyleValueMap;
-  text: StyleValueMap;
-  buttons: StyleValueMap;
-  sizes: StyleValueMap;
-  radii: StyleValueMap;
-  shadows: StyleValueMap;
-}
+export type Theme = Omit<
+  ThemeUITheme,
+  "colors" | "buttons" | "links" | "fontSizes" | "lineHeights" | "fonts"
+> &
+  Required<Pick<ThemeUITheme, "space" | "breakpoints">> & {
+    fontSizes: Array<string | number>;
+    lineHeights: Array<string | number>;
+    fonts: {
+      body: string;
+      monospace: string;
+    };
+    colors: Record<string, string>;
+    text: SystemStyleObject;
+    buttons: SystemStyleObject;
+    links: SystemStyleObject;
+    variants: SystemStyleObject;
+  };
 
 interface ThemeModule {
   theme: Theme;
@@ -44,4 +45,4 @@ export const loadTheme = async (theme: string = "federal") => {
   return themeModule;
 };
 
-export const useTheme = () => useEmotionTheme<Theme>();
+export const useTheme = () => useThemeUI().theme as Theme;

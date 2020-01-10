@@ -61,6 +61,7 @@ ${(
   ${(
     <ReactSpecimen span={2}>
       <Select
+        id="dim"
         label="Dimension wählen"
         options={[
           { label: "Nadelholz", value: "Nadelholz" },

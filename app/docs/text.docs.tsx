@@ -1,12 +1,12 @@
 import { markdown, TableSpecimen } from "catalog";
-import { Text } from "rebass";
+import { Text } from "@theme-ui/components";
 import { useTheme } from "../themes/index";
 const pixelSize = 16;
 
 export default () => {
   const theme = useTheme();
 
- return markdown`
+  return markdown`
 
 > Text elements are based on \`rebass\` \`<Text />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
 
@@ -16,7 +16,7 @@ The variants only refer to styles, they don't generate HTML semantics. For acces
 
 Example of a heading \`h1\` with the style \`heading1\`.
 ~~~
-import { Text } from "rebass"
+import { Text } from "@theme-ui/components"
 
 <Text variant="heading1" as="h1" >
  Heading 1
@@ -47,7 +47,7 @@ The font size and line height values currently in use in the application are lis
 ${(
   <TableSpecimen
     span={3}
-    rows={theme.fontSizes.map((d, i) => ({
+    rows={theme.fontSizes.map((d: $FixMe, i: number) => ({
       index: i,
       "font-size (rem)": d,
       "font-size (px)": `${+(d as string).split("rem")[0] * pixelSize}px`
@@ -57,12 +57,12 @@ ${(
 ${(
   <TableSpecimen
     span={3}
-    rows={theme.lineHeights.map((d, i) => ({
+    rows={theme.lineHeights.map((d: $FixMe, i: number) => ({
       index: i,
       "line-height (rem)": d,
       "line-height (px)": `${+(d as string).split("rem")[0] * pixelSize}px`
     }))}
   ></TableSpecimen>
 )}
-`
-  };
+`;
+};

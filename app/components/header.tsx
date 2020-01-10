@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
-import { Box, Flex, Text } from "rebass";
+import { Box, Flex, Text } from "@theme-ui/components";
 import { LanguageMenu } from "./language-menu";
 import { HomeLink } from "./links";
 

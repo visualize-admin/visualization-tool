@@ -10,7 +10,7 @@ import {
   getFilterValue
 } from "../domain/configurator-state";
 import { Literal, NamedNode } from "rdf-js";
-import { Text, Button } from "rebass";
+import { Text, Button } from "@theme-ui/components";
 import { Trans } from "@lingui/macro";
 import { FilterValueMultiValues } from "../domain";
 import { Checkbox } from "./form";

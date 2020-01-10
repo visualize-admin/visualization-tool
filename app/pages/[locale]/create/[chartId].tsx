@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import { Box } from "rebass";
+import { Box } from "@theme-ui/components";
 import { AppLayout } from "../../../components/layout";
 import { PanelLeft } from "../../../components/panel-left";
 import { PanelMiddle } from "../../../components/panel-middle";

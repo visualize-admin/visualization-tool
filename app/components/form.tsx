@@ -3,10 +3,11 @@ import {
   Input as RebassInput,
   Label as RebassLabel,
   Radio as RebassRadio,
-  Select as RebassSelect
-} from "@rebass/forms";
+  Select as RebassSelect,
+  SelectProps
+} from "@theme-ui/components";
 import * as React from "react";
-import { Box } from "rebass";
+import { Box } from "@theme-ui/components";
 import { FieldProps, Option } from "../domain/config-form";
 
 export const Label = ({
@@ -17,7 +18,7 @@ export const Label = ({
   children
 }: {
   label?: string | React.ReactNode;
-  htmlFor: string | React.ReactNode;
+  htmlFor: string;
   disabled?: boolean;
   smaller?: boolean;
   children: React.ReactNode;
@@ -27,7 +28,7 @@ export const Label = ({
     mb={1}
     sx={{
       width: "auto",
-      color: disabled ? "monochrome.600" : "monochrome.700",
+      color: disabled ? "monochrome600" : "monochrome700",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
       pb: smaller ? 1 : 0,
       mr: 4
@@ -39,7 +40,7 @@ export const Label = ({
         sx={{
           maxWidth: "75%",
           textAlign: "left",
-          fontFamily: "frutigerRegular"
+          fontFamily: "body"
         }}
       >
         {label}
@@ -68,7 +69,7 @@ export const Radio = ({
           disabled={disabled}
           sx={{
             size: 20,
-            color: checked && !disabled ? "primary.base" : "monochrome.500"
+            color: checked && !disabled ? "primary" : "monochrome500"
           }}
         />
       </Label>
@@ -89,7 +90,7 @@ export const Checkbox = ({
       <RebassCheckbox
         sx={{
           size: 20,
-          color: checked && !disabled ? "primary.base" : "monochrome.500"
+          color: checked && !disabled ? "primary" : "monochrome500"
         }}
         id={`${name}-${label}`}
         name={name}
@@ -104,32 +105,33 @@ export const Checkbox = ({
 
 export const Select = ({
   label,
+  id,
   name,
   value,
-  checked,
   disabled,
   options,
   onChange
 }: {
+  id: string;
   options: Option[];
   label?: React.ReactNode;
   disabled?: boolean;
-} & FieldProps) => (
-  <Box sx={{ color: "monochrome.700", pb: 2 }}>
+} & SelectProps) => (
+  <Box sx={{ color: "monochrome700", pb: 2 }}>
     {label && (
-      <Label htmlFor={label} smaller>
+      <Label htmlFor={id} smaller>
         {label}
       </Label>
     )}
     <RebassSelect
       sx={{
-        borderColor: "monochrome.500",
+        borderColor: "monochrome500",
         fontSize: 4,
-        bg: "monochrome.100",
+        bg: "monochrome100",
         p: 2
       }}
-      id={label}
-      name={label}
+      id={id}
+      name={id}
       onChange={onChange}
       value={value}
     >
@@ -153,14 +155,14 @@ export const Input = ({
   label?: string;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "monochrome.700", fontSize: 4 }}>
+  <Box sx={{ color: "monochrome700", fontSize: 4 }}>
     {label && (
       <Label htmlFor={label} smaller>
         {label}
       </Label>
     )}
     <RebassInput
-      sx={{ borderColor: "monochrome.500", bg: "monochrome.100" }}
+      sx={{ borderColor: "monochrome500", bg: "monochrome100" }}
       id={label}
       name={label}
       value={value}

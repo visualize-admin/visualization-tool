@@ -1,12 +1,17 @@
 import { ReactNode } from "react";
-import { Flex } from "rebass";
+import { Flex } from "@theme-ui/components";
 import { Header } from "./header";
 import { Footer } from "./footer";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
-  <Flex flexDirection="column" sx={{ minHeight: "100vh" }}>
+  <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
     <Header pageType="app" />
-    <Flex as="main" role="main" flex={1} flexDirection="column" bg="muted">
+    <Flex
+      as="main"
+      role="main"
+      sx={{ flex: 1, flexDirection: "column" }}
+      bg="muted"
+    >
       {children}
     </Flex>
   </Flex>
@@ -19,11 +24,14 @@ export const ContentLayout = ({
   children?: ReactNode;
 }) => (
   <Flex
-    flexDirection="column"
-    sx={{ minHeight: "100vh", bg: homepage ? "monochrome.100" : "muted" }}
+    sx={{
+      minHeight: "100vh",
+      flexDirection: "column",
+      bg: homepage ? "monochrome100" : "muted"
+    }}
   >
     <Header pageType="content" />
-    <Flex as="main" role="main" flex={1} flexDirection="column">
+    <Flex as="main" role="main" sx={{ flexDirection: "column", flex: 1 }}>
       {children}
     </Flex>
     <Footer />
@@ -31,7 +39,7 @@ export const ContentLayout = ({
 );
 
 export const Center = ({ children }: { children?: ReactNode }) => (
-  <Flex flex={1} justifyContent="center" alignItems="center">
+  <Flex sx={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
     {children}
   </Flex>
 );

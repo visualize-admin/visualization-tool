@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, Flex } from "rebass";
+import { Box, Text, Flex } from "@theme-ui/components";
 import { ChartPublished } from "../chart-published";
 import { DataCubeProvider } from "../../domain";
 
@@ -23,10 +23,10 @@ export const Examples = ({
   return (
     <DataCubeProvider>
       <Box
-        maxWidth={1024}
+        sx={{ maxWidth: 1024 }}
         margin={[0, 0, "0 auto"]}
         p={4}
-        color="monochrome.800"
+        color="monochrome800"
       >
         <Text variant="homepageSection">{headline}</Text>
         <Example headline={example1Headline} description={example1Description}>
@@ -183,17 +183,21 @@ const Example = ({
   children?: React.ReactNode;
 }) => (
   <Flex
-    flexDirection={["column", "column", "row"]}
-    justifyContent={["flex-start", "flex-start", "space-between"]}
-    alignItems="center"
+    sx={{
+      flexDirection: ["column", "column", "row"],
+      justifyContent: ["flex-start", "flex-start", "space-between"],
+      alignItems: "center"
+    }}
     mb={6}
   >
     <Box
-      sx={{ order: reverse ? [1, 1, 2] : [2, 2, 1] }}
+      sx={{
+        order: reverse ? [1, 1, 2] : [2, 2, 1],
+        minWidth: 0,
+        width: ["100%", "100%", "50%"]
+      }}
       ml={reverse ? [0, 0, 8] : 0}
       mr={reverse ? 0 : [0, 0, 8]}
-      minWidth={0}
-      width={["100%", "100%", "50%"]}
     >
       <Text variant="homepageExampleHeadline">{headline}</Text>
       <Text variant="homepageExampleDescription">{description}</Text>
@@ -203,12 +207,12 @@ const Example = ({
         order: reverse ? 1 : 2,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "monochrome.400",
-        mt: 2
+        borderColor: "monochrome400",
+        width: ["100%", "100%", "50%"],
+        mt: 2,
+        minWidth: 0,
+        maxWidth: ["unset", "unset", 512]
       }}
-      width={["100%", "100%", "50%"]}
-      minWidth={0}
-      maxWidth={["unset", "unset", 512]}
     >
       {children}
     </Box>
