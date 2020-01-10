@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Box } from "rebass";
+import { Box } from "@theme-ui/components";
 import {
   AreaConfig,
   ColumnConfig,

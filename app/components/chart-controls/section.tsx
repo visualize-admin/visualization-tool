@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Flex, Text } from "rebass";
+import { Box, Flex, Text } from "@theme-ui/components";
 import { Icon, IconName } from "../../icons";
 import { useTheme } from "../../themes";
 
@@ -36,22 +36,13 @@ export const SectionTitle = ({
       id={titleId}
       as="h2"
       variant="controlSectionTitle"
-      justifyContent="flex-start"
+      color="monochrome800"
+      sx={{ justifyContent: "flex-start" }}
     >
       {iconName && (
-        <Icon
-          color={(theme as any).colors.monochrome["700"]}
-          name={iconName}
-        ></Icon>
+        <Icon color={theme.colors.monochrome700} name={iconName}></Icon>
       )}
-      <Text
-        variant="table"
-        color="monochrome.800"
-        ml={2}
-        sx={{ fontFamily: "frutigerBold" }}
-      >
-        {children}
-      </Text>
+      <Text ml={iconName ? 2 : 0}>{children}</Text>
     </Flex>
   );
 };

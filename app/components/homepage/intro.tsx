@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Text, Flex } from "rebass";
+import { Box, Button, Text, Flex } from "@theme-ui/components";
 import { HintBlue } from "../hint";
 import { LocalizedLink } from "../links";
 
@@ -15,7 +15,7 @@ export const Intro = ({
   buttonLabel: string;
 }) => {
   return (
-    <Box maxWidth={1024} m="0 auto">
+    <Box sx={{ maxWidth: 1024 }} m="0 auto">
       <Box px={4} pt={5}>
         <HintBlue iconName="info">{hint}</HintBlue>
       </Box>
@@ -33,10 +33,10 @@ export const Intro = ({
           backgroundRepeat: "no-repeat"
         }}
       >
-        <Box maxWidth={657} m="0 auto">
+        <Box sx={{ maxWidth: 657 }} m="0 auto">
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
-          <Flex justifyContent="center">
+          <Flex sx={{ justifyContent: "center" }}>
             <LocalizedLink pathname="/[locale]/create/new" passHref>
               <Button as="a" variant="primary">
                 {buttonLabel}
@@ -50,16 +50,23 @@ export const Intro = ({
 };
 
 export const Title = ({ children }: { children: React.ReactNode }) => (
-  <Text as="h1" variant="toolTitle" color="monochrome.800" textAlign="center">
+  <Text
+    as="h1"
+    variant="toolTitle"
+    color="monochrome800"
+    sx={{ textAlign: "center" }}
+  >
     {children}
   </Text>
 );
 export const Teaser = ({ children }: { children: React.ReactNode }) => (
   <Text
     variant="paragraph1"
-    fontSize={[4, 4, 4]}
-    color="monochrome.700"
-    textAlign="center"
+    color="monochrome700"
+    sx={{
+      fontSize: [4, 4, 4],
+      textAlign: "center"
+    }}
     mb={[6, 5]}
   >
     {children}

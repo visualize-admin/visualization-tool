@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { useCallback } from "react";
-import { Button, Flex } from "rebass";
+import { Button, Flex } from "@theme-ui/components";
 import {
   useConfiguratorState,
   canTransitionToNextStep,
@@ -43,7 +43,11 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
     );
 
   return (
-    <Flex role="navigation" variant="actionBar" justifyContent="space-between">
+    <Flex
+      role="navigation"
+      variant="actionBar"
+      sx={{ justifyContent: "space-between" }}
+    >
       {state.state === "SELECTING_DATASET" ? (
         <Button
           variant="primary"

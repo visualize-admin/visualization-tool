@@ -1,8 +1,7 @@
 import { Trans, t } from "@lingui/macro";
-import { Input } from "@rebass/forms";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import React, { ReactNode, useEffect, useState } from "react";
-import { Box, Button, Flex, Link, Text } from "rebass";
+import { Box, Button, Flex, Link, Text, Input } from "@theme-ui/components";
 import { Item } from "vega";
 import { Icon, IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
@@ -13,7 +12,7 @@ export const PublishActions = ({ configKey }: { configKey: string }) => {
   const locale = useLocale();
 
   return (
-    <Flex flexDirection={["column", "row"]}>
+    <Flex sx={{ flexDirection: ["column", "row"] }}>
       {/* <ImageDownload /> */}
       <Share configKey={configKey} locale={locale} />
       <Embed configKey={configKey} locale={locale}></Embed>
@@ -75,7 +74,7 @@ const PopUp = ({
           <Button
             variant="publishAction"
             {...getToggleButtonProps()}
-            color={isOpen ? "primary.active" : "primary.base"}
+            color={isOpen ? "primaryActive" : "primary"}
           >
             <Icon name={triggerIconName}></Icon>
             <Text ml={3}>{triggerLabel}</Text>
@@ -102,19 +101,19 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
         <Box variant="publishActionOverlay" />
         <Box variant="publishActionModal">
           <Flex
-            justifyContent="space-between"
-            alignItems="center"
-            height={48}
             sx={{
+              height: 48,
               borderBottomWidth: "1px",
               borderBottomStyle: "solid",
-              borderBottomColor: "monochrome.500"
+              borderBottomColor: "monochrome500",
+              justifyContent: "space-between",
+              alignItems: "center"
             }}
           >
-            <Text variant="paragraph1" color="monochrome.700">
+            <Text variant="paragraph1" color="monochrome700">
               <Trans id="publication.popup.share">Share</Trans>:
             </Text>
-            <Flex color="primary.base">
+            <Flex color="primary">
               <I18n>
                 {({ i18n }) => (
                   <>
@@ -155,14 +154,14 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             </Flex>
           </Flex>
           <Box mt={2}>
-            <Text variant="paragraph1" color="monochrome.700">
+            <Text variant="paragraph1" color="monochrome700">
               <Trans id="publication.share.chart.url">Chart URL: </Trans>
             </Text>
-            <Box my={1} sx={{ color: "primary.base" }}>
+            <Box my={1} sx={{ color: "primary" }}>
               <Link
                 href={shareUrl}
                 sx={{
-                  color: "primary.base",
+                  color: "primary",
                   textDecoration: "underline",
                   cursor: "pointer",
                   mr: 4
@@ -189,7 +188,9 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   useEffect(() => {
     setEmbedIframeUrl(`${window.location.origin}/${locale}/embed/${configKey}`);
-    setEmbedAEMUrl(`${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}`);
+    setEmbedAEMUrl(
+      `${window.location.origin}/api/embed-aem-ext/${locale}/${configKey}`
+    );
   }, [configKey, locale]);
 
   return (
@@ -200,14 +201,14 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       <>
         <Box variant="publishActionOverlay" />
         <Box variant="publishActionModal">
-          <Text variant="paragraph1" color="monochrome.700" mt={2}>
+          <Text variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
           </Text>
 
           <CopyToClipboardTextInput
             iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
-          <Text variant="paragraph1" color="monochrome.700" mt={2}>
+          <Text variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.AEM">
               Embed Code for AEM "External Application":{" "}
             </Trans>
@@ -238,12 +239,12 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
     clipboard.writeText(iFrameCode);
   };
   return (
-    <Flex alignItems="stretch" mt={1} mb={2} height={48}>
+    <Flex sx={{ alignItems: "stretch", height: 48 }} mt={1} mb={2}>
       <Input
         sx={{
-          color: "monochrome.700",
+          color: "monochrome700",
           px: 2,
-          fontFamily: "frutigerRegular",
+          fontFamily: "body",
           fontSize: 4,
           minWidth: 160,
           overflowX: "scroll",
@@ -253,7 +254,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           borderBottomRightRadius: 0,
           borderWidth: "1px",
           borderStyle: "solid",
-          borderColor: "monochrome.500"
+          borderColor: "monochrome500"
         }}
         type="text"
         value={iFrameCode}
@@ -274,7 +275,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           borderBottomLeftRadius: 0,
           borderWidth: "1px",
           borderStyle: "solid",
-          borderColor: "monochrome.500",
+          borderColor: "monochrome500",
           borderLeft: "none"
         }}
       >
@@ -288,9 +289,9 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
               left: "50%",
               transform: "translate3d(-50%, 0, 0)",
 
-              bg: "monochrome.700",
+              bg: "monochrome700",
               borderRadius: "default",
-              color: "monochrome.100",
+              color: "monochrome100",
 
               fontSize: 1,
               textAlign: "center",
@@ -312,7 +313,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
                 width: 0,
                 height: 0,
                 border: "0.5rem solid transparent",
-                borderTopColor: "monochrome.700",
+                borderTopColor: "monochrome700",
                 left: "50%",
                 top: "100%",
                 zIndex: -1,

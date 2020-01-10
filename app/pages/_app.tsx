@@ -1,6 +1,6 @@
 import { css, Global } from "@emotion/core";
 import { I18nProvider } from "@lingui/react";
-import { ThemeProvider } from "emotion-theming";
+import { ThemeProvider } from "theme-ui";
 import App, { AppContext } from "next/app";
 import ErrorPage from "next/error";
 import Head from "next/head";

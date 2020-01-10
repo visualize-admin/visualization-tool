@@ -2,18 +2,18 @@ import "isomorphic-unfetch";
 import { NextPage } from "next";
 import { AppLayout } from "../../components/layout";
 import { useLocale } from "../../lib/use-locale";
-import { Heading } from "rebass";
+import { Heading } from "@theme-ui/components";
 
-const Page: NextPage<{ config: { key: string; data: $IntentionalAny } | undefined }> = ({
-  config
-}) => {
+const Page: NextPage<{
+  config: { key: string; data: $IntentionalAny } | undefined;
+}> = ({ config }) => {
   const locale = useLocale();
 
   console.log(config);
 
   return (
     <AppLayout>
-      <Heading fontSize={5}>
+      <Heading sx={{ fontSize: 5 }}>
         {config ? config.data.title[locale] : "???"}
       </Heading>
     </AppLayout>
@@ -21,11 +21,10 @@ const Page: NextPage<{ config: { key: string; data: $IntentionalAny } | undefine
 };
 
 Page.getInitialProps = async ({ req, query, res }) => {
-
-  const uri = res ? `http://localhost:${process.env.PORT || 3000}/api/config/${query.key}` : `/api/config/${query.key}`;
-  const config = await fetch(
-    uri
-  ).then(res => res.json());
+  const uri = res
+    ? `http://localhost:${process.env.PORT || 3000}/api/config/${query.key}`
+    : `/api/config/${query.key}`;
+  const config = await fetch(uri).then(res => res.json());
   if (config && config.data) {
     return { config };
   }

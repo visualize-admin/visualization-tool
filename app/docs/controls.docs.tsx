@@ -53,12 +53,14 @@ ${(
     <CollapsibleSection title="Werteachse">
       <ControlList>
         <Select
+          id="foo"
           options={[
             { label: "Kanton", value: "Kanton" },
             { label: "Eigentümertyp", value: "Eigentümertyp" }
           ]}
         />
         <Select
+          id="bar"
           options={[
             { label: "Kanton", value: "Kanton" },
             { label: "Eigentümertyp", value: "Eigentümertyp" }

@@ -26,54 +26,50 @@ export const theme: Theme = {
     "4.5rem"
   ],
   colors: {
-    ch: {
-      red: "#F7001D",
-      venetianRed: "#DC0018"
-    },
-    monochrome: {
-      "100": "#FFFFFF",
-      "200": "#F5F5F5",
-      "300": "#E5E5E5",
-      "400": "#D5D5D5",
-      "500": "#CCCCCC",
-      "600": "#757575",
-      "700": "#454545",
-      "800": "#333333",
-      "900": "#000000"
-    },
-    bafu: {
-      chardonnay: "#F9C16E",
-      sun: "#F38B3C",
-      stTropaz: "#375172",
-      lightBlue: "#62A8E5",
-      summerSky: "#32B8DF",
-      darkCyan: "#008F85",
-      silverTree: "#6ECD9C",
-      olivine: "#93B479",
-      redDamask: "#C97146",
-      taupe: "#8D5A54"
-    },
+    text: "monochrome900",
+    background: "monochrome100",
 
-    primary: {
-      base: "#006699",
-      hover: "#004B70",
-      active: "#00334D",
-      disabled: "#599cbd",
-      light: "#d8e8ef"
-    },
-    secondary: {
-      base: "#757575",
-      hover: "#616161",
-      active: "#454545",
-      disabled: "#a6a6a6"
-    },
-    success: {
-      base: "#3c763d",
-      hover: "#3c763d",
-      active: "#3c763d",
-      disabled: "#DFF0D8",
-      light: "#DFF0D8"
-    },
+    brand: "#DC0018", // Venetian Red
+    monochrome100: "#FFFFFF",
+    monochrome200: "#F5F5F5",
+    monochrome300: "#E5E5E5",
+    monochrome400: "#D5D5D5",
+    monochrome500: "#CCCCCC",
+    monochrome600: "#757575",
+    monochrome700: "#454545",
+    monochrome800: "#333333",
+    monochrome900: "#000000",
+
+    // bafu: {
+    //   chardonnay: "#F9C16E",
+    //   sun: "#F38B3C",
+    //   stTropaz: "#375172",
+    //   lightBlue: "#62A8E5",
+    //   summerSky: "#32B8DF",
+    //   darkCyan: "#008F85",
+    //   silverTree: "#6ECD9C",
+    //   olivine: "#93B479",
+    //   redDamask: "#C97146",
+    //   taupe: "#8D5A54"
+    // },
+
+    primary: "#006699",
+    primaryHover: "#004B70",
+    primaryActive: "#00334D",
+    primaryDisabled: "#599cbd",
+    primaryLight: "#d8e8ef",
+
+    secondary: "#757575",
+    secondaryHover: "#616161",
+    secondaryActive: "#454545",
+    secondaryDisabled: "#a6a6a6",
+
+    success: "#3c763d",
+    successHover: "#3c763d",
+    successActive: "#3c763d",
+    successDisabled: "#DFF0D8",
+    successLight: "#DFF0D8",
+
     muted: "#F5F5F5",
     blueGrey: "#F9FAFB",
     blueGreyDarker: "#F2F7F9",
@@ -83,12 +79,8 @@ export const theme: Theme = {
     missing: "#EFEFEF"
   },
   fonts: {
-    frutigerLight:
-      "FrutigerNeueLight, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-    frutigerRegular:
-      "FrutigerNeueRegular, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-    frutigerBold:
-      "FrutigerNeueBold, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+    body:
+      "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
     monospace: "Menlo, monospace"
   },
   fontSizes: [
@@ -140,148 +132,148 @@ export const theme: Theme = {
   },
   text: {
     giga: {
-      fontFamily: "frutigerLight",
+      fontFamily: "body",
       lineHeight: [9, 10, 10],
       fontWeight: "light",
       fontSize: [8, 9, 9]
     },
     heading1: {
-      fontFamily: "frutigerBold",
+      fontFamily: "body",
       lineHeight: [7, 8, 8],
       fontWeight: "bold",
       fontSize: [6, 7, 7]
     },
     heading2: {
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       lineHeight: [6, 7, 7],
       fontWeight: "regular",
       fontSize: [5, 6, 6]
     },
     heading3: {
-      fontFamily: "frutigerBold",
+      fontFamily: "body",
       lineHeight: [5, 6, 6],
       fontWeight: "bold",
       fontSize: [4, 5, 5]
     },
     lead: {
-      fontFamily: "frutigerBold",
+      fontFamily: "body",
       lineHeight: [4, 5, 5],
       fontWeight: "bold",
       fontSize: [3, 4, 4]
     },
     paragraph1: {
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       lineHeight: [4, 5, 5],
       fontWeight: "regular",
       fontSize: [3, 4, 4]
     },
     paragraph2: {
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       lineHeight: [2, 4, 3],
       fontWeight: "regular",
       fontSize: [2, 3, 3]
     },
     table: {
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       lineHeight: [2, 4, 4],
       fontWeight: "regular",
       fontSize: [2, 3, 3]
     },
     meta: {
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2]
     },
     // Custom
     toolTitle: {
-      fontFamily: "frutigerBold",
+      fontFamily: "body",
       lineHeight: 1.2,
       fontWeight: "bold",
       fontSize: [8, "3.5rem", "3.5rem"],
       mb: [4]
     },
     homepageSection: {
-      fontFamily: "frutigerLight",
+      fontFamily: "body",
       lineHeight: [7, 8, 8],
       fontWeight: "light",
       fontSize: [6, 7, 7],
-      color: "monochrome.800",
+      color: "monochrome800",
       mb: 6,
       textAlign: "center"
     },
     homepageTutorialStep: {
       fontSize: 5,
-      fontFamily: "frutigerBold",
+      fontFamily: "body",
       mt: 4,
       mb: 2
     },
     homepageExampleHeadline: {
       fontSize: [5, 5, 6],
       lineHeight: 1.5,
-      fontFamily: "frutigerBold",
+      fontFamily: "body",
       mb: [2, 2, 4]
     },
     homepageExampleDescription: {
       fontSize: 4,
       lineHeight: 1.5,
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       mt: 4,
       mb: [2, 2, 0]
     },
     homepageContribute: {
       fontSize: [6, 6, 7],
       lineHeight: 1.25,
-      fontFamily: "frutigerLight",
+      fontFamily: "body",
       mb: 3
     }
   },
   buttons: {
     primary: {
-      bg: "primary.base",
-      color: "monochrome.100",
+      bg: "primary",
+      color: "monochrome100",
       borderRadius: "default",
       width: ["100%", "auto"],
-      minWidth: 160,
+      minWidth: "160px",
       px: 7,
       py: 3,
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       fontSize: 4,
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        bg: "primary.hover"
+        bg: "primaryHover"
       },
       ":active": {
-        bg: "primary.hover"
+        bg: "primaryHover"
       },
       ":disabled": {
         cursor: "initial",
-        bg: "primary.disabled"
+        bg: "primaryDisabled"
       }
     },
     success: {
       variant: "buttons.primary",
-      bg: "success.base",
+      bg: "successBase",
       ":hover": {
-        bg: "success.hover"
+        bg: "successHover"
       },
       ":active": {
-        bg: "success.hover"
+        bg: "successHover"
       },
       ":disabled": {
         cursor: "initial",
-        bg: "success.disabled"
+        bg: "successDisabled"
       }
     },
     outline: {
       variant: "buttons.primary",
-      color: "primary.base",
-      bg: "monochrome.100",
+      color: "primary",
+      bg: "monochrome100",
       border: "1px",
       borderWidth: "1px",
       borderStyle: "solid",
-      borderColor: "primary.base",
+      borderColor: "primary",
       ":hover": {
         bg: "muted"
       },
@@ -295,47 +287,47 @@ export const theme: Theme = {
     },
     secondary: {
       variant: "buttons.primary",
-      bg: "secondary.base",
+      bg: "secondary",
       ":hover": {
-        bg: "secondary.hover"
+        bg: "secondaryHover"
       },
       ":active": {
-        bg: "secondary.hover"
+        bg: "secondaryHover"
       },
       ":disabled": {
         cursor: "initial",
-        bg: "secondary.disabled"
+        bg: "secondaryDisabled"
       }
     },
     inverted: {
-      bg: "monochrome.100",
-      color: "monochrome.800",
+      bg: "monochrome100",
+      color: "monochrome800",
       borderRadius: "default",
       width: ["100%", "auto"],
       minWidth: 160,
       px: 7,
       py: 3,
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       fontSize: 4,
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        bg: "monochrome.300"
+        bg: "monochrome300"
       },
       ":active": {
-        bg: "monochrome.400"
+        bg: "monochrome400"
       },
       ":disabled": {
         cursor: "initial",
-        color: "monochrome.600",
-        bg: "monochrome.300"
+        color: "monochrome600",
+        bg: "monochrome300"
       }
     },
     datasetButton: {
       normal: {
         bg: "transparent",
         position: "relative",
-        color: "monochrome.700",
+        color: "monochrome700",
         cursor: "pointer",
         width: "100%",
         textAlign: "left",
@@ -343,11 +335,11 @@ export const theme: Theme = {
         borderRadius: 0,
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
-        borderBottomColor: "monochrome.300",
+        borderBottomColor: "monochrome300",
         "&:first-of-type": {
           borderTopWidth: "1px",
           borderTopStyle: "solid",
-          borderTopColor: "monochrome.300"
+          borderTopColor: "monochrome300"
         },
         ":hover": {
           bg: "blueGreyDarker"
@@ -373,20 +365,20 @@ export const theme: Theme = {
     palette: {
       variant: "buttons.primary",
       width: ["100%"],
-      color: "monochrome.700",
+      color: "monochrome700",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      bg: "monochrome.100",
+      bg: "monochrome100",
       p: 1,
       borderWidth: "1px",
       borderStyle: "solid",
-      borderColor: "monochrome.500",
+      borderColor: "monochrome500",
       ":hover": {
-        bg: "monochrome.100"
+        bg: "monochrome100"
       },
       ":active": {
-        bg: "monochrome.100"
+        bg: "monochrome100"
       },
       ":disabled": {
         cursor: "initial",
@@ -394,8 +386,8 @@ export const theme: Theme = {
       }
     },
     control: {
-      color: "monochrome.700",
-      borderColor: "primary.base",
+      color: "monochrome700",
+      borderColor: "primary",
       borderRadius: "default",
       width: "100%",
       minWidth: 160,
@@ -403,7 +395,7 @@ export const theme: Theme = {
       my: "2px",
       px: 2,
       py: 3,
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       fontSize: [3, 3, 3],
       transition: "background-color .2s",
       cursor: "pointer",
@@ -421,7 +413,7 @@ export const theme: Theme = {
     publishAction: {
       display: "flex",
       alignItems: "center",
-      color: "primary.base",
+      color: "primary",
       bg: "transparent",
       border: "none",
       borderRadius: "default",
@@ -430,38 +422,38 @@ export const theme: Theme = {
       pr: 2,
       pl: 0,
       py: [2, 3],
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       fontSize: [3, 3, 3],
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        color: "primary.hover"
+        color: "primaryHover"
       },
       ":active": {
-        color: "primary.active"
+        color: "primaryActive"
       },
       ":disabled": {
         cursor: "initial",
-        color: "primary.disabled"
+        color: "primaryDisabled"
       }
     },
     iconButton: {
       background: "transparent",
-      color: "monochrome.600",
-      bg: "monochrome.200",
+      color: "monochrome600",
+      bg: "monochrome200",
       border: "none",
       cursor: "pointer",
       ":hover": {
-        bg: "monochrome.300",
-        color: "monochrome.700"
+        bg: "monochrome300",
+        color: "monochrome700"
       },
       ":active": {
-        bg: "monochrome.400",
-        color: "monochrome.800"
+        bg: "monochrome400",
+        color: "monochrome800"
       },
       ":disabled": {
         cursor: "initial",
-        color: "monochrome.300"
+        color: "monochrome300"
       }
     },
     chartTypeRadio: {
@@ -474,21 +466,21 @@ export const theme: Theme = {
     },
     linkButton: {
       background: "transparent",
-      color: "monochrome.700",
+      color: "monochrome700",
       border: "none",
       cursor: "pointer",
       mb: 4,
       p: 0,
       ":disabled": {
         cursor: "initial",
-        color: "monochrome.300"
+        color: "monochrome300"
       }
     },
     downloadButton: {
       background: "transparent",
-      color: "primary.base",
+      color: "primary",
       textAlign: "left",
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2],
@@ -498,7 +490,25 @@ export const theme: Theme = {
       p: 0,
       ":disabled": {
         cursor: "initial",
-        color: "monochrome.300"
+        color: "monochrome300"
+      }
+    }
+  },
+  links: {
+    iconLink: {
+      ml: 4,
+      color: "primary",
+      "&:disabled": {
+        color: "primaryDisabled"
+      },
+      "&:hover": {
+        color: "primaryHover"
+      },
+      "&:active": {
+        color: "primaryActive"
+      },
+      "&:visited": {
+        color: "primary"
       }
     }
   },
@@ -511,8 +521,8 @@ export const theme: Theme = {
         pb: [0, 5, 5],
         borderBottomWidth: "4px",
         borderBottomStyle: "solid",
-        borderBottomColor: "ch.venetianRed",
-        color: "monochrome.700",
+        borderBottomColor: "brand",
+        color: "monochrome700",
         flexDirection: ["column", "row"],
         // Needs to be "fixed" to prevent
         // iOS full-page scrolling
@@ -520,7 +530,7 @@ export const theme: Theme = {
         top: 0,
         left: 0,
         width: "100%",
-        bg: "monochrome.100",
+        bg: "monochrome100",
         overflowY: "hidden",
         zIndex: 13
       },
@@ -530,8 +540,8 @@ export const theme: Theme = {
         pb: [0, 5, 5],
         borderBottomWidth: "4px",
         borderBottomStyle: "solid",
-        borderBottomColor: "ch.venetianRed",
-        color: "monochrome.700",
+        borderBottomColor: "brand",
+        color: "monochrome700",
         flexDirection: ["column", "row"]
       },
       logo: {
@@ -542,7 +552,7 @@ export const theme: Theme = {
         "& > h1": {
           pl: [0, 6],
           textDecoration: "none",
-          color: "monochrome.700"
+          color: "monochrome700"
         }
       },
       logoImgMobile: {
@@ -556,7 +566,7 @@ export const theme: Theme = {
         pr: 6,
         borderRightWidth: "1px",
         borderRightStyle: "solid",
-        borderRightColor: "monochrome.300"
+        borderRightColor: "monochrome300"
       },
       languageList: {
         listStyle: "none",
@@ -564,7 +574,7 @@ export const theme: Theme = {
         ml: [0, "auto"],
         width: ["100%", "auto"],
         // flexGrow: 1,
-        bg: ["monochrome.300", "transparent"],
+        bg: ["monochrome300", "transparent"],
         order: [1, 2],
         justifyContent: "flex-end"
       },
@@ -577,12 +587,12 @@ export const theme: Theme = {
           p: 1,
           textTransform: "uppercase",
           textDecoration: "none",
-          color: "monochrome.700",
+          color: "monochrome700",
           bg: "transparent"
         },
         active: {
           variant: "variants.header.languageLink.normal",
-          bg: ["monochrome.500", "monochrome.300"]
+          bg: ["monochrome500", "monochrome300"]
         }
       }
     },
@@ -591,10 +601,10 @@ export const theme: Theme = {
       root: {
         position: "relative",
         pt: 2,
-        bg: "monochrome.100",
+        bg: "monochrome100",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
-        borderBottomColor: "monochrome.500",
+        borderBottomColor: "monochrome500",
         overflow: "hidden"
       },
       line: {
@@ -605,7 +615,7 @@ export const theme: Theme = {
         transform: "translateY(-50%)",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
-        borderBottomColor: "monochrome.300",
+        borderBottomColor: "monochrome300",
         zIndex: 3
       }
     },
@@ -616,19 +626,19 @@ export const theme: Theme = {
         mb: 1,
         borderRadius: "circle",
         fontSize: 3,
-        fontFamily: "frutigerRegular"
+        fontFamily: "body"
       },
       past: {
         variant: "variants.step.basic",
-        bg: "monochrome.800"
+        bg: "monochrome800"
       },
       current: {
         variant: "variants.step.basic",
-        bg: "ch.venetianRed"
+        bg: "brand"
       },
       future: {
         variant: "variants.step.basic",
-        bg: "monochrome.600"
+        bg: "monochrome600"
       }
     },
     container: {
@@ -637,10 +647,10 @@ export const theme: Theme = {
         overflowY: "scroll"
       },
       left: {
-        bg: "monochrome.100",
+        bg: "monochrome100",
         variant: "variants.container.root",
         boxShadow: "rightSide",
-        borderRightColor: "monochrome.500",
+        borderRightColor: "monochrome500",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
         gridArea: "left"
@@ -652,19 +662,19 @@ export const theme: Theme = {
       },
       chart: {
         variant: "variants.container.root",
-        bg: "monochrome.100",
+        bg: "monochrome100",
         boxShadow: "primary",
         width: "auto",
         minHeight: [50, 100, 500],
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "monochrome.300"
+        borderColor: "monochrome300"
       },
       right: {
         bg: "blueGrey",
         variant: "variants.container.root",
         boxShadow: "leftSide",
-        borderLeftColor: "monochrome.500",
+        borderLeftColor: "monochrome500",
         borderLeftWidth: "1px",
         borderLeftStyle: "solid",
         gridArea: "right"
@@ -672,7 +682,7 @@ export const theme: Theme = {
     },
     actionBar: { my: 5 },
     label: {
-      color: "monochrome.700",
+      color: "monochrome700",
       fontSize: [4, 4, 4],
       pb: 0
     },
@@ -681,7 +691,7 @@ export const theme: Theme = {
       pb: 1
     },
     controlSection: {
-      borderTopColor: "monochrome.500",
+      borderTopColor: "monochrome500",
       borderTopWidth: "1px",
       borderTopStyle: "solid",
       "&:first-of-type": {
@@ -689,6 +699,8 @@ export const theme: Theme = {
       }
     },
     controlSectionTitle: {
+      variant: "text.table",
+      fontWeight: "bold",
       p: 4,
       bg: "transparent",
       appearance: "none",
@@ -723,8 +735,8 @@ export const theme: Theme = {
       width: "auto",
       mb: 4,
       p: 4,
-      color: "success.base",
-      bg: "success.light",
+      color: "successBase",
+      bg: "successLight",
       height: "auto"
     },
     info: {
@@ -733,15 +745,15 @@ export const theme: Theme = {
       mb: 4,
       mx: 6,
       p: 4,
-      color: "primary.base",
-      bg: "primary.light",
+      color: "primary",
+      bg: "primaryLight",
       height: "auto"
     },
     palette: {
       menu: {
-        bg: "monochrome.100"
+        bg: "monochrome100"
       },
-      row: { bg: "monochrome.100" },
+      row: { bg: "monochrome100" },
       color: {
         display: "inline-block",
         margin: 0,
@@ -763,20 +775,20 @@ export const theme: Theme = {
     },
     datatable: {
       headerRow: {
-        fontFamily: "frutigerBold",
+        fontFamily: "body",
         fontSize: [3],
         verticalAlign: "baseline",
-        color: "monochrome.700",
-        borderBottomColor: "monochrome.700",
+        color: "monochrome700",
+        borderBottomColor: "monochrome700",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid"
       },
       headerCell: { px: 2, py: 3, minWidth: 128 },
       row: {
-        fontFamily: "frutigerLight",
+        fontFamily: "body",
         fontSize: [3],
-        color: "monochrome.800",
-        borderBottomColor: "monochrome.400",
+        color: "monochrome800",
+        borderBottomColor: "monochrome400",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid"
       },
@@ -786,7 +798,7 @@ export const theme: Theme = {
     publishActionOverlay: {
       zIndex: 10,
       display: ["block", "none"],
-      bg: "monochrome.900",
+      bg: "monochrome900",
       opacity: 0.25,
       width: "100vw",
       height: "100vh",
@@ -803,7 +815,7 @@ export const theme: Theme = {
       zIndex: 12,
       py: 2,
       px: 4,
-      bg: "monochrome.100",
+      bg: "monochrome100",
       boxShadow: "primary",
       borderRadius: "default",
 
@@ -817,49 +829,33 @@ export const theme: Theme = {
         // maxWidth: 340,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "monochrome.500"
-      }
-    },
-    iconLink: {
-      ml: 4,
-      color: "primary.base",
-      "&:disabled": {
-        color: "primary.disabled"
-      },
-      "&:hover": {
-        color: "primary.hover"
-      },
-      "&:active": {
-        color: "primary.active"
-      },
-      "&:visited": {
-        color: "primary.base"
+        borderColor: "monochrome500"
       }
     },
     iFrameCode: {
-      color: "monochrome.700",
+      color: "monochrome700",
       fontSize: 4,
       minWidth: 160,
       overflowX: "scroll",
       borderRadius: 0,
       borderWidth: "1px",
       borderStyle: "solid",
-      borderColor: "monochrome.500"
+      borderColor: "monochrome500"
     },
     fieldSetLegend: {
-      fontFamily: "frutigerRegular",
+      fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2],
       mb: 1,
-      color: "monochrome.600"
+      color: "monochrome600"
     },
     footer: {
       institution: {
         width: ["100%", "auto"],
         px: 4,
         py: 5,
-        color: ["monochrome.900", "monochrome.700"]
+        color: ["monochrome900", "monochrome700"]
       },
       logo: {
         width: "100vw",
@@ -870,47 +866,47 @@ export const theme: Theme = {
         borderBottomWidth: "1px",
         borderTopStyle: "solid",
         borderBottomStyle: "solid",
-        borderTopColor: "monochrome.500",
-        borderBottomColor: "monochrome.500"
+        borderTopColor: "monochrome500",
+        borderBottomColor: "monochrome500"
       },
       link: {
         width: ["100%", "auto"],
         px: [4, 5],
         py: [3, 4],
-        color: "primary.base",
+        color: "primary",
         fontSize: 3,
-        fontFamily: "frutigerRegular",
+        fontFamily: "body",
         cursor: "pointer",
         ":hover": {
-          color: "primary.hover"
+          color: "primaryHover"
         },
         ":active": {
-          color: "primary.hover"
+          color: "primaryHover"
         },
         ":disabled": {
           cursor: "initial",
-          color: "primary.disabled"
+          color: "primaryDisabled"
         }
       },
       linkBottom: {
         px: [4, 5],
         py: [3, 4],
-        color: "primary.base",
+        color: "primary",
         fontSize: 3,
-        fontFamily: "frutigerRegular",
+        fontFamily: "body",
         borderLeftWidth: ["1px", 0],
         borderLeftStyle: "solid",
-        borderLeftColor: "monochrome.500",
+        borderLeftColor: "monochrome500",
         cursor: "pointer",
         ":hover": {
-          color: "primary.hover"
+          color: "primaryHover"
         },
         ":active": {
-          color: "primary.hover"
+          color: "primaryHover"
         },
         ":disabled": {
           cursor: "initial",
-          color: "primary.disabled"
+          color: "primaryDisabled"
         }
       }
     }
@@ -922,28 +918,28 @@ export const theme: Theme = {
  */
 export const globalStyles = `
   @font-face {
-    font-family: "FrutigerNeueBold";
+    font-family: "FrutigerNeue";
     font-style: normal;
     font-weight: 700;
     src: url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
       url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff");
   }
   @font-face {
-    font-family: "FrutigerNeueRegular";
+    font-family: "FrutigerNeue";
     font-style: normal;
     font-weight: 400;
     src: url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
       url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff");
   }
   @font-face {
-    font-family: "FrutigerNeueLight";
+    font-family: "FrutigerNeue";
     font-style: normal;
     font-weight: 300;
     src: url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
       url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff");
   }
   @font-face {
-    font-family: "FrutigerNeueItalic";
+    font-family: "FrutigerNeue";
     font-style: italic;
     font-weight: 400;
     src: url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
@@ -952,9 +948,7 @@ export const globalStyles = `
   body {
     margin: 0;
     padding: 0;
-    font-family: FrutigerNeueRegular, -apple-system, BlinkMacSystemFont,
-    Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
-    Segoe UI Symbol;
+    font-family: FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
     svg {
       display: block;
     }

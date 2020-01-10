@@ -1,22 +1,31 @@
 import * as React from "react";
-import { Flex, Text, Box, FlexProps } from "rebass";
+import { Flex, Text, Box, BoxOwnProps } from "@theme-ui/components";
 import { Trans } from "@lingui/macro";
 import { Icon, IconName } from "../icons";
 import { keyframes } from "@emotion/core";
 
 export const Error = ({ children }: { children: React.ReactNode }) => (
-  <Flex justifyContent="center" alignItems="center" variant={"error"}>
+  <Flex
+    sx={{ justifyContent: "center", alignItems: "center" }}
+    variant={"error"}
+  >
     {children}
   </Flex>
 );
 
-export const Hint = ({ children, sx }: FlexProps) => (
+export const Hint = ({
+  children,
+  sx
+}: { children: React.ReactNode } & BoxOwnProps) => (
   <Flex
-    flexDirection="column"
-    justifyContent="center"
-    alignItems="center"
     variant={"hint"}
-    sx={{ flexGrow: 1, ...sx }}
+    sx={{
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      flexGrow: 1,
+      ...sx
+    }}
   >
     {children}
   </Flex>
@@ -81,7 +90,10 @@ export const NoDataHint = () => (
 );
 
 export const Success = () => (
-  <Flex variant="success" justifyContent="flex-start" alignItems="center">
+  <Flex
+    variant="success"
+    sx={{ justifyContent: "flex-start", alignItems: "center" }}
+  >
     <Icon name="published" size={56} />
     <Text variant="heading3" ml={4} sx={{ textAlign: "left" }}>
       <Trans id="hint.publication.success">
@@ -100,10 +112,9 @@ export const HintBlue = ({
 }) => (
   <Flex
     variant="info"
-    justifyContent="flex-start"
-    alignItems={["flex-start", "center"]}
+    sx={{ justifyContent: "flex-start", alignItems: ["flex-start", "center"] }}
   >
-    <Box width={24} pr={4}>
+    <Box sx={{ width: 24 }} pr={4}>
       <Icon name={iconName} size={24} />
     </Box>
     <Text variant="paragraph1" ml={4} sx={{ textAlign: "left" }}>

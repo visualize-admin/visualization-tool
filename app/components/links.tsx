@@ -4,7 +4,7 @@ import { useLocale } from "../lib/use-locale";
 import * as qs from "querystring";
 import { useRouter } from "next/router";
 import { IconName, Icon } from "../icons";
-import { Link as RebassLink } from "rebass";
+import { Link as UILink } from "@theme-ui/components";
 const createDynamicRouteProps = ({
   pathname,
   query
@@ -120,14 +120,15 @@ export const IconLink = ({
   href: string;
   disabled?: boolean;
 }) => (
-  <RebassLink
+  <UILink
     variant="iconLink"
     title={title}
-    disabled={disabled}
+    // disabled={disabled}
     href={href}
     target="_blank"
     rel="noopener noreferrer"
+    sx={{ ml: 4, color: "primary" }}
   >
     <Icon name={iconName}></Icon>
-  </RebassLink>
+  </UILink>
 );

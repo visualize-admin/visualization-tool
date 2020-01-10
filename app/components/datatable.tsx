@@ -1,7 +1,7 @@
 import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import { format } from "d3-format";
 import * as React from "react";
-import { Box } from "rebass";
+import { Box } from "@theme-ui/components";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
@@ -44,9 +44,9 @@ const Table = ({
                 as="th"
                 variant="datatable.headerCell"
                 role="columnheader"
-                scope="col"
                 key={header}
                 sx={{
+                  scope: "col",
                   textAlign: componentType === "measure" ? "right" : "left"
                 }}
               >

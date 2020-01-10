@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Box } from "rebass";
+import { Flex, Box } from "@theme-ui/components";
 import { ChartTypeSelectorField } from "./field";
 import { Loading, Hint } from "./hint";
 import { useDataSetAndMetadata, getPossibleChartType } from "../domain";
@@ -31,10 +31,13 @@ export const ChartTypeSelector = ({
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </SectionTitle>
         <Flex
-          width="100%"
-          flexWrap="wrap"
-          justifyContent="space-around"
-          alignItems="center"
+          sx={{
+            width: "100%",
+            flexWrap: "wrap",
+            justifyContent: "space-around",
+            alignItems: "center"
+          }}
+
           // sx={{
           //   "&::after": {
           //     content: "''",

@@ -1,6 +1,6 @@
 import { CurrentPageLink } from "./links";
 import { useLocale } from "../lib/use-locale";
-import { Link, Box, Flex } from "rebass";
+import { Link, Box, Flex } from "@theme-ui/components";
 
 const localesOrder = ["de", "fr", "it", "en"];
 
@@ -15,8 +15,8 @@ export const LanguageMenu = () => {
               hrefLang={locale}
               variant={
                 locale === currentLocale
-                  ? "header.languageLink.active"
-                  : "header.languageLink.normal"
+                  ? "variants.header.languageLink.active"
+                  : "variants.header.languageLink.normal"
               }
             >
               {locale}

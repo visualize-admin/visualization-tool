@@ -2,7 +2,7 @@ import { markdown, ReactSpecimen } from "catalog";
 import { ActionBar } from "../components/action-bar";
 import { ConfiguratorStateProvider } from "../domain";
 import { states } from "./fixtures";
-import { Text, Box } from "rebass";
+import { Text, Box } from "@theme-ui/components";
 
 export default () =>
   markdown`

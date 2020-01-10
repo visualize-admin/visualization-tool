@@ -1,14 +1,16 @@
 import * as React from "react";
-import { Flex, Box } from "rebass";
+import { Flex, Box } from "@theme-ui/components";
 import { Trans } from "@lingui/macro";
 
 export const Footer = () => (
   <Flex
     as="footer"
-    flexDirection={["column", "row"]}
-    justifyContent={["flex-start", "space-between"]}
-    alignItems={["flex-start", "center"]}
-    bg="monochrome.200"
+    sx={{
+      flexDirection: ["column", "row"],
+      justifyContent: ["flex-start", "space-between"],
+      alignItems: ["flex-start", "center"]
+    }}
+    bg="monochrome200"
   >
     <Box variant="footer.institution">
       <Trans id="footer.institution.name">
@@ -17,10 +19,12 @@ export const Footer = () => (
     </Box>
 
     <Flex
-      flexDirection={["column", "row"]}
-      alignItems={["flex-start", "center"]}
+      sx={{
+        flexDirection: ["column", "row"],
+        alignItems: ["flex-start", "center"]
+      }}
     >
-      <Flex flexDirection={["column", "row"]} pb={[4, 0]}>
+      <Flex sx={{ flexDirection: ["column", "row"] }} pb={[4, 0]}>
         <Box variant="footer.link" as="a">
           <Trans id="footer.help">Help</Trans>
         </Box>
@@ -33,7 +37,7 @@ export const Footer = () => (
         <Logo />
       </Box>
 
-      <Flex justifyContent="flex-end" width={["100%", "auto"]}>
+      <Flex sx={{ justifyContent: "flex-end", width: ["100%", "auto"] }}>
         <Box variant="footer.linkBottom" as="a">
           <Trans id="footer.legal">Legal</Trans>
         </Box>

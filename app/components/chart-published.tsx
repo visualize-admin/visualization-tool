@@ -1,4 +1,4 @@
-import { Flex, Text } from "rebass";
+import { Flex, Text } from "@theme-ui/components";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartColumnsVisualization } from "./chart-columns";
 import { ChartFootnotes } from "./chart-footnotes";
@@ -27,9 +27,12 @@ export const ChartPublished = ({
   return metaData ? (
     <Flex
       p={5}
-      flexDirection="column"
-      justifyContent="space-between"
-      sx={{ flexGrow: 1, color: "monochrome.800" }}
+      sx={{
+        flexGrow: 1,
+        color: "monochrome800",
+        flexDirection: "column",
+        justifyContent: "space-between"
+      }}
     >
       {meta.title[locale] !== "" && (
         <Text variant="heading2" mb={2}>
@@ -42,9 +45,11 @@ export const ChartPublished = ({
         </Text>
       )}
       <Flex
-        flexDirection="column"
-        justifyContent="space-between"
-        sx={{ flexGrow: 1 }}
+        sx={{
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flexGrow: 1
+        }}
       >
         {chartConfig.chartType === "column" && (
           <ChartColumnsVisualization

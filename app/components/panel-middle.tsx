@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex } from "rebass";
+import { Box, Flex } from "@theme-ui/components";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { ActionBar } from "./action-bar";
 import { ChartPreview } from "./chart-preview";
@@ -24,9 +24,11 @@ export const PanelMiddle = ({
           ) : (
             <Flex
               variant="container.chart"
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
+              sx={{
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
             >
               <DataSetHint />
             </Flex>
@@ -38,8 +40,7 @@ export const PanelMiddle = ({
             state.state === "CONFIGURING_CHART" ||
             state.state === "DESCRIBING_CHART" ||
             state.state === "PUBLISHING") && (
-            <Flex variant="container.chart"               flexDirection="column"
-            >
+            <Flex variant="container.chart" sx={{ flexDirection: "column" }}>
               <ChartPreview dataSetIri={state.dataSet} />
             </Flex>
           )}

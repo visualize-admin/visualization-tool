@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, Flex } from "rebass";
+import { Box, Text, Flex } from "@theme-ui/components";
 import { Loading } from "./hint";
 import { useDataSetAndMetadata } from "../domain";
 import { DataTable } from "./datatable";
@@ -15,10 +15,12 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
     const { dataSet, dimensions, measures } = metaData;
     return (
       <Flex
-        flexDirection="column"
-        justifyContent="space-between"
         p={5}
-        sx={{ flexGrow: 1 }}
+        sx={{
+          flexGrow: 1,
+          flexDirection: "column",
+          justifyContent: "space-between"
+        }}
       >
         <Text variant="heading2" mb={1}>
           {dataSet.label.value}
@@ -45,12 +47,12 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         </Box>
         <Text
           variant="table"
-          color="monochrome.600"
+          color="monochrome600"
           mt={4}
           sx={{
             width: "100%",
             textAlign: "center",
-            fontFamily: "frutigerLight"
+            fontWeight: "light"
           }}
         >
           <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
@@ -60,10 +62,12 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   } else {
     return (
       <Flex
-        flexDirection="column"
-        justifyContent="space-between"
         p={5}
-        sx={{ flexGrow: 1 }}
+        sx={{
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flexGrow: 1
+        }}
       >
         {" "}
         <Loading />

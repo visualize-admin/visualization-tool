@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Button, Flex, Text, Box } from "rebass";
+import { Button, Flex, Text, Box } from "@theme-ui/components";
 import {
   useConfiguratorState,
   ConfiguratorStateAction
@@ -27,11 +27,13 @@ export const Stepper = () => {
   return useMemo(() => {
     const currentStepIndex = steps.indexOf(state as $IntentionalAny);
     return (
-      <Flex variant="stepper.root" justifyContent="center">
+      <Flex variant="stepper.root" sx={{ justifyContent: "center" }}>
         <Flex
-          justifyContent="center"
-          alignItems="flex-start"
-          sx={{ position: "relative" }}
+          sx={{
+            position: "relative",
+            justifyContent: "center",
+            alignItems: "flex-start"
+          }}
         >
           <Box variant="stepper.line" />
           {steps.map((step, i) => (
@@ -83,14 +85,17 @@ export const Step = ({
       sx={{ cursor: status === "past" ? "pointer" : undefined }}
     >
       <Flex
-        justifyContent="center"
-        alignItems="center"
         px={4}
-        sx={{ height: "100%", bg: "monochrome.100", zIndex: 5 }}
+        sx={{
+          height: "100%",
+          bg: "monochrome100",
+          zIndex: 5,
+          justifyContent: "center",
+          alignItems: "center"
+        }}
       >
         <Flex
-          justifyContent="center"
-          alignItems="center"
+          sx={{ justifyContent: "center", alignItems: "center" }}
           variant={`step.${status}`}
         >
           {status === "past" ? <Icon name="check" size={20} /> : stepNumber}
@@ -114,8 +119,8 @@ export const StepLabel = ({
       return (
         <Text
           sx={{
-            color: highlight ? "monochrome.800" : "monochrome.700",
-            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+            color: highlight ? "monochrome800" : "monochrome700",
+            fontWeight: highlight ? "bold" : "regular"
           }}
           variant="paragraph2"
         >
@@ -126,8 +131,8 @@ export const StepLabel = ({
       return (
         <Text
           sx={{
-            color: highlight ? "monochrome.800" : "monochrome.700",
-            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+            color: highlight ? "monochrome800" : "monochrome700",
+            fontWeight: highlight ? "bold" : "regular"
           }}
           variant="paragraph2"
         >
@@ -138,8 +143,8 @@ export const StepLabel = ({
       return (
         <Text
           sx={{
-            color: highlight ? "monochrome.800" : "monochrome.700",
-            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+            color: highlight ? "monochrome800" : "monochrome700",
+            fontWeight: highlight ? "bold" : "regular"
           }}
           variant="paragraph2"
         >
@@ -150,8 +155,8 @@ export const StepLabel = ({
       return (
         <Text
           sx={{
-            color: highlight ? "monochrome.800" : "monochrome.700",
-            fontFamily: highlight ? "frutigerBold" : "frutigerRegular"
+            color: highlight ? "monochrome800" : "monochrome700",
+            fontWeight: highlight ? "bold" : "regular"
           }}
           variant="paragraph2"
         >

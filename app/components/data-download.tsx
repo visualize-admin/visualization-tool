@@ -3,7 +3,7 @@ import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { csvFormat } from "d3-dsv";
 import { saveAs } from "file-saver";
 import React, { memo, useMemo } from "react";
-import { Button } from "rebass";
+import { Button } from "@theme-ui/components";
 import {
   ChartFields,
   DimensionWithMeta,

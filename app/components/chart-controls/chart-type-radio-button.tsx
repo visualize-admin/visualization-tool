@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Text } from "rebass";
+import { Button, Text } from "@theme-ui/components";
 import { FieldProps } from "../../domain/config-form";
 import { Icon } from "../../icons";
 import { getIconName, getFieldLabel } from "../../domain/helpers";
@@ -31,22 +31,22 @@ export const ChartTypeSelectionButton = ({
         color: checked
           ? "blueGrey"
           : disabled
-          ? "monochrome.300"
-          : "primary.base",
-        backgroundColor: checked ? "primary.base" : "monochrome.100",
+          ? "monochrome300"
+          : "primary",
+        backgroundColor: checked ? "primary" : "monochrome100",
         ":hover": {
           backgroundColor: disabled
             ? "blueGrey"
             : checked
-            ? "primary.base"
-            : "monochrome.300"
+            ? "primary"
+            : "monochrome300"
         }
       }}
     >
       <Icon name={getIconName(label)} />
       <Text
         variant="paragraph2"
-        sx={{ color: checked ? "monochrome.100" : "monochrome.600" }}
+        sx={{ color: checked ? "monochrome100" : "monochrome600" }}
       >
         {getFieldLabel(label)}
       </Text>

@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { useEffect, useRef } from "react";
-import { Box, Flex } from "rebass";
+import { Box, Flex } from "@theme-ui/components";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
@@ -241,7 +241,7 @@ const ChartFieldOptions = ({
               <Trans id="controls.select.column.chart.type">Chart Type</Trans>
             }
           />
-          <Flex justifyContent="flex-start" mt={1}>
+          <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
             <ChartOptionField
               label="stacked"
               field={field}

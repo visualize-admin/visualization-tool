@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Flex, Text } from "rebass";
+import { Button, Flex, Text } from "@theme-ui/components";
 import { ComponentWithMeta, getDimensionLabel } from "../../domain";
 import { FieldProps } from "../../domain/config-form";
 import { Icon, IconName } from "../../icons";
@@ -26,7 +26,7 @@ export const ControlTab = ({
       aria-selected={checked}
       aria-controls={`control-panel-${value}`}
       id={`tab-${value}`}
-      bg={checked ? "blueGreyDarker" : "monochrome.100"}
+      bg={checked ? "blueGreyDarker" : "monochrome100"}
     >
       <LeftPanelTabContent
         iconName={getIconName(value)}
@@ -60,7 +60,7 @@ export const FilterTab = ({
       aria-controls={`filter-panel-${value}`}
       id={`tab-${value}`}
       onClick={() => onClick(value)}
-      bg={checked ? "blueGreyDarker" : "monochrome.100"}
+      bg={checked ? "blueGreyDarker" : "monochrome100"}
     >
       <LeftPanelTabContent
         iconName={"table"}
@@ -85,7 +85,7 @@ export const AnnotatorTab = ({
       variant="control"
       value={value}
       onClick={() => onClick(value)}
-      bg={checked ? "blueGreyDarker" : "monochrome.100"}
+      bg={checked ? "blueGreyDarker" : "monochrome100"}
     >
       <LeftPanelTabContent
         iconName={"text"}
@@ -107,23 +107,26 @@ const LeftPanelTabContent = ({
   lowerLabel: string | React.ReactNode;
   checked?: boolean;
 }) => (
-  <Flex justifyContent="flex-start" alignItems="center">
+  <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
     <Flex
-      width={32}
-      height={32}
-      sx={{ minWidth: 32, borderRadius: "bigger" }}
-      bg={checked ? "primary.base" : "monochrome.100"}
-      color={checked ? "monochrome.100" : "monochrome.700"}
-      justifyContent="center"
-      alignItems="center"
+      sx={{
+        width: 32,
+        height: 32,
+        minWidth: 32,
+        borderRadius: "bigger",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+      bg={checked ? "primary" : "monochrome100"}
+      color={checked ? "monochrome100" : "monochrome700"}
     >
       <Icon size={24} name={iconName} />
     </Flex>
-    <Flex flexDirection="column" alignItems="flex-start" mx={3}>
+    <Flex mx={3} sx={{ flexDirection: "column", alignItems: "flex-start" }}>
       {upperLabel && (
         <Text
           variant="meta"
-          sx={{ color: "monochrome.600", lineHeight: [1, 1, 1] }}
+          sx={{ color: "monochrome600", lineHeight: [1, 1, 1] }}
         >
           {upperLabel}
         </Text>
@@ -131,7 +134,7 @@ const LeftPanelTabContent = ({
       <Text
         variant="paragraph1"
         sx={{
-          color: "monochrome.800",
+          color: "monochrome800",
           lineHeight: [1, 1, 1],
           textAlign: "left"
         }}

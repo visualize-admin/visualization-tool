@@ -4,6 +4,7 @@ import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
 import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
+import { SelectProps } from "@theme-ui/components";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -13,7 +14,7 @@ export type Option = { value: string | $FixMe; label: string | $FixMe };
 
 export type FieldProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,
-  "onChange" | "name" | "value" | "checked" | "type"
+  "onChange" | "id" | "name" | "value" | "checked" | "type"
 >;
 
 export const useActiveFieldField = ({
@@ -156,10 +157,10 @@ export const useChartFieldField = ({
   field: string;
   componentIri?: string;
   dataSetMetadata: DataSetMetadata;
-}): FieldProps => {
+}): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
 
-  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+  const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
     e => {
       dispatch({
         type: "CHART_FIELD_CHANGED",
@@ -182,12 +183,9 @@ export const useChartFieldField = ({
     }
   }
 
-  const checked = value === componentIri;
-
   return {
     name: field,
     value,
-    checked,
     onChange
   };
 };

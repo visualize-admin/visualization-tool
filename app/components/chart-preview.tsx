@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text } from "rebass";
+import { Flex, Text } from "@theme-ui/components";
 import { AttributeWithMeta, DimensionWithMeta } from "../domain";
 import { useConfiguratorState } from "../domain/configurator-state";
 import { useDataSetAndMetadata } from "../domain/data-cube";
@@ -25,9 +25,12 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
     return (
       <Flex
         p={5}
-        flexDirection="column"
-        justifyContent="space-between"
-        sx={{ flexGrow: 1, color: "monochrome.800" }}
+        sx={{
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flexGrow: 1,
+          color: "monochrome800"
+        }}
       >
         {(state.state === "SELECTING_CHART_TYPE" ||
           state.state === "CONFIGURING_CHART" ||
@@ -53,9 +56,11 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               )}
             </Text>
             <Flex
-              flexDirection="column"
-              justifyContent="space-between"
-              sx={{ flexGrow: 1 }}
+              sx={{
+                flexDirection: "column",
+                justifyContent: "space-between",
+                flexGrow: 1
+              }}
             >
               {/* // FIXME: we shouldn't need this condition because the states must be these */}
               {state.chartConfig.chartType === "column" && (

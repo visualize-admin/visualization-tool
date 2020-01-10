@@ -221,6 +221,7 @@ export const ChartFieldField = ({
 
   return (
     <Select
+      id={field}
       label={label}
       disabled={disabled}
       options={options}
