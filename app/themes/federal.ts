@@ -644,7 +644,7 @@ export const theme: Theme = {
     container: {
       root: {
         overflowX: "hidden",
-        overflowY: "scroll"
+        overflowY: "auto"
       },
       left: {
         bg: "monochrome100",
