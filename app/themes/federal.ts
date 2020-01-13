@@ -955,6 +955,10 @@ export const globalStyles = `
 
     // Use momentum-based scrolling on iOS devices
     -webkit-overflow-scrolling: touch;
+
+    // Auto-hide scrollbars in Edge
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+
   }
 
   *:focus {
