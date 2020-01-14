@@ -42,7 +42,7 @@ export const ChartAnnotationsSelector = ({
               key={`${locale}-${state.activeField!}`}
               metaKey={state.activeField!}
               locale={locale}
-              label={locale}
+              label={getFieldLabel(locale)}
               value={state.meta[af][locale]}
             />
           ))}

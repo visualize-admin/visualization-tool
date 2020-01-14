@@ -12,95 +12,101 @@ export const Step3 = () => (
         stroke="#C9CCCF"
         rx={2}
       />
-      <g fill="#333" opacity={0.2} transform="translate(11 42)">
-        <path d="M0 0H32V3H0z" />
-        <path d="M0 16H32V19H0z" />
-        <path d="M0 8H20V11H0z" />
-        <path d="M0 24H20V27H0z" />
-        <path d="M0 32H32V35H0z" />
-        <path d="M0 40H20V43H0z" />
-        <path d="M7 48a1 1 0 011 1v6a1 1 0 01-1 1H1a1 1 0 01-1-1v-6a1 1 0 011-1h6zm11 0a1 1 0 011 1v6a1 1 0 01-1 1h-6a1 1 0 01-1-1v-6a1 1 0 011-1h6zm11 0a1 1 0 011 1v6a1 1 0 01-1 1h-6a1 1 0 01-1-1v-6a1 1 0 011-1h6z" />
-      </g>
-      <g transform="translate(69.038 41.152) translate(.962 35.848)">
-        <path fill="#FFF" stroke="#E5E5E5" d="M0.5 0.5H147.5V107.5H0.5z" />
-        <path
-          fill="#333"
-          d="M37.5 98a.5.5 0 110 1h-31a.5.5 0 110-1h31zm39 0a.5.5 0 110 1h-35a.5.5 0 110-1h35zm-7-4a.5.5 0 110 1h-63a.5.5 0 110-1h63z"
-          opacity={0.2}
-        />
-        <g fill="#333" transform="translate(6 9)">
+      <g transform="translate(69.038 41.152)">
+        <g transform="translate(.962 35.848)">
+          <rect
+            width={147}
+            height={107}
+            x={0.5}
+            y={0.5}
+            fill="#FFF"
+            stroke="#E5E5E5"
+          />
           <path
-            d="M92.5 13a1.5 1.5 0 010 3h-91a1.5 1.5 0 010-3h91zm-16-6a1.5 1.5 0 010 3h-75a1.5 1.5 0 010-3h75z"
+            fill="#333"
+            d="M37.5,98 C37.7761424,98 38,98.2238576 38,98.5 C38,98.7761424 37.7761424,99 37.5,99 L6.5,99 C6.22385763,99 6,98.7761424 6,98.5 C6,98.2238576 6.22385763,98 6.5,98 L37.5,98 Z M76.5,98 C76.7761424,98 77,98.2238576 77,98.5 C77,98.7761424 76.7761424,99 76.5,99 L41.5,99 C41.2238576,99 41,98.7761424 41,98.5 C41,98.2238576 41.2238576,98 41.5,98 L76.5,98 Z M69.5,94 C69.7761424,94 70,94.2238576 70,94.5 C70,94.7761424 69.7761424,95 69.5,95 L6.5,95 C6.22385763,95 6,94.7761424 6,94.5 C6,94.2238576 6.22385763,94 6.5,94 L69.5,94 Z"
             opacity={0.2}
           />
-          <rect width={94} height={3} opacity={0.8} rx={1.5} />
+          <g fill="#333" transform="translate(6 9)">
+            <path
+              d="M92.5,13 C93.3284271,13 94,13.6715729 94,14.5 C94,15.3284271 93.3284271,16 92.5,16 L1.5,16 C0.671572875,16 1.01453063e-16,15.3284271 0,14.5 C-5.45542273e-16,13.6715729 0.671572875,13 1.5,13 L92.5,13 Z M76.5,7 C77.3284271,7 78,7.67157288 78,8.5 C78,9.32842712 77.3284271,10 76.5,10 L1.5,10 C0.671572875,10 1.01453063e-16,9.32842712 0,8.5 C-1.01453063e-16,7.67157288 0.671572875,7 1.5,7 L76.5,7 Z"
+              opacity={0.2}
+            />
+            <rect width={94} height={3} opacity={0.8} rx={1.5} />
+          </g>
+          <g transform="translate(6 36)">
+            <g fill="#757575" opacity={0.8} transform="translate(6 48)">
+              <rect width={10} height={1} rx={0.5} />
+              <rect width={10} height={1} x={17} rx={0.5} />
+              <rect width={10} height={1} x={34} rx={0.5} />
+              <rect width={10} height={1} x={51} rx={0.5} />
+              <rect width={10} height={1} x={68} rx={0.5} />
+              <rect width={10} height={1} x={85} rx={0.5} />
+              <rect width={10} height={1} x={102} rx={0.5} />
+              <rect width={10} height={1} x={119} rx={0.5} />
+            </g>
+            <polygon fill="#E5E5E5" points="0 31 136 31 136 32 0 32" />
+            <polygon fill="#E5E5E5" points="0 24 136 24 136 25 0 25" />
+            <polygon fill="#E5E5E5" points="0 17 136 17 136 18 0 18" />
+            <polygon fill="#E5E5E5" points="0 9 136 9 136 10 0 10" />
+            <polygon fill="#E5E5E5" points="0 38 136 38 136 39 0 39" />
+            <polygon fill="#E5E5E5" points="0 2 136 2 136 3 0 3" />
+            <polygon fill="#757575" points="0 46 136 46 136 47 0 47" />
+            <g fill="#333" opacity={0.2}>
+              <rect width={3} height={1} y={44} rx={0.5} />
+              <rect width={3} height={1} y={37} rx={0.5} />
+              <rect width={3} height={1} y={29} rx={0.5} />
+              <rect width={3} height={1} y={22} rx={0.5} />
+              <rect width={3} height={1} y={15} rx={0.5} />
+              <rect width={3} height={1} y={7} rx={0.5} />
+              <rect width={3} height={1} rx={0.5} />
+            </g>
+            <g fill="#069" transform="translate(5 6)">
+              <rect width={12} height={23} x={119} y={17} />
+              <rect width={12} height={27} x={102} y={13} />
+              <rect width={12} height={32} x={85} y={8} />
+              <rect width={12} height={35} x={68} y={5} />
+              <rect width={12} height={33} x={51} y={7} />
+              <rect width={12} height={37} x={34} y={3} />
+              <rect width={12} height={38} x={17} y={2} />
+              <rect width={12} height={40} />
+            </g>
+          </g>
         </g>
-        <g transform="translate(6 36)">
-          <g fill="#757575" opacity={0.8} transform="translate(6 48)">
-            <rect width={10} height={1} rx={0.5} />
-            <rect width={10} height={1} x={17} rx={0.5} />
-            <rect width={10} height={1} x={34} rx={0.5} />
-            <rect width={10} height={1} x={51} rx={0.5} />
-            <rect width={10} height={1} x={68} rx={0.5} />
-            <rect width={10} height={1} x={85} rx={0.5} />
-            <rect width={10} height={1} x={102} rx={0.5} />
-            <rect width={10} height={1} x={119} rx={0.5} />
-          </g>
-          <path fill="#E5E5E5" d="M0 31L136 31 136 32 0 32z" />
-          <path fill="#E5E5E5" d="M0 24L136 24 136 25 0 25z" />
-          <path fill="#E5E5E5" d="M0 17L136 17 136 18 0 18z" />
-          <path fill="#E5E5E5" d="M0 9L136 9 136 10 0 10z" />
-          <path fill="#E5E5E5" d="M0 38L136 38 136 39 0 39z" />
-          <path fill="#E5E5E5" d="M0 2L136 2 136 3 0 3z" />
-          <path fill="#757575" d="M0 46L136 46 136 47 0 47z" />
-          <g fill="#333" opacity={0.2}>
-            <rect width={3} height={1} y={44} rx={0.5} />
-            <rect width={3} height={1} y={37} rx={0.5} />
-            <rect width={3} height={1} y={29} rx={0.5} />
-            <rect width={3} height={1} y={22} rx={0.5} />
-            <rect width={3} height={1} y={15} rx={0.5} />
-            <rect width={3} height={1} y={7} rx={0.5} />
-            <rect width={3} height={1} rx={0.5} />
-          </g>
-          <g fill="#069" transform="translate(5 6)">
-            <path d="M119 17H131V40H119z" />
-            <path d="M102 13H114V40H102z" />
-            <path d="M85 8H97V40H85z" />
-            <path d="M68 5H80V40H68z" />
-            <path d="M51 7H63V40H51z" />
-            <path d="M34 3H46V40H34z" />
-            <path d="M17 2H29V40H17z" />
-            <path d="M0 0H12V40H0z" />
-          </g>
+        <g fill="#333" transform="translate(.962 .848)">
+          <path
+            d="M112,28 L112,31 L0,31 L0,28 L112,28 Z M128,22 L128,25 L0,25 L0,22 L128,22 Z M112,16 L112,19 L0,19 L0,16 L112,16 Z M128,10 L128,13 L0,13 L0,10 L128,10 Z"
+            opacity={0.2}
+          />
+          <rect width={74} height={5} opacity={0.4} />
+          <rect width={128} height={3} y={152} opacity={0.2} />
         </g>
       </g>
-      <g fill="#333" transform="translate(69.038 41.152) translate(.962 .848)">
-        <path
-          d="M112 28v3H0v-3h112zm16-6v3H0v-3h128zm-16-6v3H0v-3h112zm16-6v3H0v-3h128z"
-          opacity={0.2}
-        />
-        <path opacity={0.4} d="M0 0H74V5H0z" />
-        <path
-          d="M112 170v3H0v-3h112zm16-6v3H0v-3h128zm-16-6v3H0v-3h112zm16-6v3H0v-3h128z"
-          opacity={0.2}
-        />
+      <g fill="#333" opacity={0.2} transform="translate(11 42)">
+        <rect width={32} height={3} />
+        <rect width={32} height={3} y={16} />
+        <rect width={20} height={3} y={8} />
+        <rect width={20} height={3} y={24} />
+        <rect width={32} height={3} y={32} />
+        <rect width={20} height={3} y={40} />
+        <path d="M7,48 C7.55228475,48 8,48.4477153 8,49 L8,55 C8,55.5522847 7.55228475,56 7,56 L1,56 C0.44771525,56 6.76353751e-17,55.5522847 0,55 L0,49 C-6.76353751e-17,48.4477153 0.44771525,48 1,48 L7,48 Z M18,48 C18.5522847,48 19,48.4477153 19,49 L19,55 C19,55.5522847 18.5522847,56 18,56 L12,56 C11.4477153,56 11,55.5522847 11,55 L11,49 C11,48.4477153 11.4477153,48 12,48 L18,48 Z M29,48 C29.5522847,48 30,48.4477153 30,49 L30,55 C30,55.5522847 29.5522847,56 29,56 L23,56 C22.4477153,56 22,55.5522847 22,55 L22,49 C22,48.4477153 22.4477153,48 23,48 L29,48 Z" />
       </g>
       <g transform="translate(1 13)">
-        <path fill="#069" d="M0 0H286V20H0z" />
+        <rect width={286} height={20} fill="#069" />
         <g fill="#FFF" transform="translate(67 8)">
-          <path d="M0 0H24V4H0z" />
-          <path d="M32 0H56V4H32z" />
-          <path d="M64 0H88V4H64z" />
-          <path d="M96 0H120V4H96z" />
+          <rect width={24} height={4} />
+          <rect width={24} height={4} x={32} />
+          <rect width={24} height={4} x={64} />
+          <rect width={24} height={4} x={96} />
         </g>
-        <path fill="#FFF" d="M10 5H42V15H10z" />
+        <rect width={32} height={10} x={10} y={5} fill="#FFF" />
         <rect width={10} height={10} x={266} y={5} fill="#FFF" rx={5} />
       </g>
       <g transform="translate(1 1)">
-        <path fill="#C9CCCF" d="M0 0L286 0 286 12 0 12z" />
+        <polygon fill="#C9CCCF" points="0 0 286 0 286 12 0 12" />
         <path
           fill="#91999F"
-          d="M5.5 4a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm5 0a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm5 0a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"
+          d="M5.5,4 C6.32842712,4 7,4.67157288 7,5.5 C7,6.32842712 6.32842712,7 5.5,7 C4.67157288,7 4,6.32842712 4,5.5 C4,4.67157288 4.67157288,4 5.5,4 Z M10.5,4 C11.3284271,4 12,4.67157288 12,5.5 C12,6.32842712 11.3284271,7 10.5,7 C9.67157288,7 9,6.32842712 9,5.5 C9,4.67157288 9.67157288,4 10.5,4 Z M15.5,4 C16.3284271,4 17,4.67157288 17,5.5 C17,6.32842712 16.3284271,7 15.5,7 C14.6715729,7 14,6.32842712 14,5.5 C14,4.67157288 14.6715729,4 15.5,4 Z"
         />
       </g>
       <rect width={287} height={199} x={0.5} y={0.5} stroke="#C9CCCF" rx={2} />
