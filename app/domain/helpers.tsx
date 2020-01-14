@@ -55,6 +55,14 @@ export const getFieldLabel = (field: string): React.ReactNode => {
       return <Trans id="controls.chart.type.area">Areas</Trans>;
     case "scatterplot":
       return <Trans id="controls.chart.type.scatterplot">Scatterplot</Trans>;
+    case "en":
+      return <Trans id="controls.language.english">English</Trans>;
+    case "de":
+      return <Trans id="controls.language.german">German</Trans>;
+    case "fr":
+      return <Trans id="controls.language.french">French</Trans>;
+    case "it":
+      return <Trans id="controls.language.italian">Italian</Trans>;
     default:
       return field;
   }

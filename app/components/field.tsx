@@ -114,7 +114,7 @@ export const MetaInputField = ({
   disabled,
   ...props
 }: {
-  label: string;
+  label: string | React.ReactNode;
   metaKey: string;
   locale: Locales;
   value?: string;
@@ -175,7 +175,7 @@ export const MultiFilterField = ({
       label={label}
       disabled={disabled}
       {...field}
-      checked={ allSelected ? true : field.checked}
+      checked={allSelected ? true : field.checked}
     ></Checkbox>
   );
 };

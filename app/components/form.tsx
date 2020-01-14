@@ -152,19 +152,19 @@ export const Input = ({
   disabled,
   onChange
 }: {
-  label?: string;
+  label?: string | React.ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
   <Box sx={{ color: "monochrome700", fontSize: 4 }}>
-    {label && (
-      <Label htmlFor={label} smaller>
+    {label && name && (
+      <Label htmlFor={name} smaller>
         {label}
       </Label>
     )}
     <RebassInput
       sx={{ borderColor: "monochrome500", bg: "monochrome100" }}
-      id={label}
-      name={label}
+      id={name}
+      name={name}
       value={value}
       onChange={onChange}
     />
