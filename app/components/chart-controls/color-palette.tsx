@@ -28,7 +28,13 @@ const vegaPalettes: Array<{
   // { label: "tableau20", value: "tableau20", colors: scheme("tableau20") }
 ];
 
-export const ColorPalette = ({ field }: { field: string }) => {
+export const ColorPalette = ({
+  field,
+  disabled
+}: {
+  field: string;
+  disabled?: boolean;
+}) => {
   const [state, dispatch] = useConfiguratorState();
   const {
     isOpen,
@@ -55,22 +61,22 @@ export const ColorPalette = ({ field }: { field: string }) => {
   });
 
   return (
-    <Box mt={2}>
-      <Label smaller {...getLabelProps()}>
+    <Box mt={2} sx={{ pointerEvents: disabled ? "none" : "unset" }}>
+      <Label disabled={disabled} smaller {...getLabelProps()}>
         <Trans id="controls.color.palette">Color Palette</Trans>
       </Label>
       <Button variant="palette" {...getToggleButtonProps()}>
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
-            {scheme(state.chartConfig.fields.segment!.palette).map(
-              (color: string) => (
-                <Box
-                  key={color}
-                  variant="palette.color"
-                  sx={{ bg: color }}
-                ></Box>
-              )
-            )}
+            {scheme(
+              state.chartConfig.fields.segment?.palette || "category10"
+            ).map((color: string) => (
+              <Box
+                key={color}
+                variant="palette.color"
+                sx={{ bg: disabled ? "monochrome300" : color }}
+              ></Box>
+            ))}
           </Flex>
         )}
         <Icon name="unfold" />
@@ -84,9 +90,7 @@ export const ColorPalette = ({ field }: { field: string }) => {
                 p: 1,
                 cursor: "pointer",
                 backgroundColor:
-                  highlightedIndex === index
-                    ? "monochrome200"
-                    : "monochrome100"
+                  highlightedIndex === index ? "monochrome200" : "monochrome100"
               }}
             >
               <Text variant="meta">{palette.label}</Text>

@@ -10,7 +10,6 @@ import {
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { A11yTable } from "./a11y-table";
 import { Columns } from "./charts-generic/columns";
-import { ColumnsSegment } from "./charts-generic/columns-segment";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 export const ChartColumnsVisualization = ({
@@ -100,23 +99,13 @@ export const ChartColumns = memo(
 
     return (
       <div ref={resizeRef} aria-hidden="true">
-        {fields.segment ? (
-          <ColumnsSegment
-            data={observations}
-            width={width}
-            dimensions={dimensions}
-            measures={measures}
-            fields={fields}
-          />
-        ) : (
-          <Columns
-            data={observations}
-            width={width}
-            dimensions={dimensions}
-            measures={measures}
-            fields={fields}
-          />
-        )}
+        <Columns
+          data={observations}
+          width={width}
+          dimensions={dimensions}
+          measures={measures}
+          fields={fields}
+        />
       </div>
     );
   }

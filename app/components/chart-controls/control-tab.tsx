@@ -4,6 +4,7 @@ import { ComponentWithMeta, getDimensionLabel } from "../../domain";
 import { FieldProps } from "../../domain/config-form";
 import { Icon, IconName } from "../../icons";
 import { getFieldLabel, getIconName } from "../../domain/helpers";
+import { Trans } from "@lingui/macro";
 
 export const ControlTab = ({
   component,
@@ -31,12 +32,20 @@ export const ControlTab = ({
       <LeftPanelTabContent
         iconName={getIconName(value)}
         upperLabel={getFieldLabel(value)}
-        lowerLabel={component && getDimensionLabel(component)}
+        lowerLabel={
+          component ? (
+            getDimensionLabel(component)
+          ) : (
+            <Trans id="controls.partition.add">Add ...</Trans>
+          )
+        }
         checked={checked}
+        optional={!component}
       />
     </Button>
   );
 };
+
 export const FilterTab = ({
   component,
   value,
@@ -100,12 +109,14 @@ const LeftPanelTabContent = ({
   iconName,
   upperLabel,
   lowerLabel,
-  checked
+  checked,
+  optional = false
 }: {
   iconName: IconName;
   upperLabel?: string | React.ReactNode;
   lowerLabel: string | React.ReactNode;
   checked?: boolean;
+  optional?: boolean;
 }) => (
   <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
     <Flex
@@ -118,7 +129,13 @@ const LeftPanelTabContent = ({
         alignItems: "center"
       }}
       bg={checked ? "primary" : "monochrome100"}
-      color={checked ? "monochrome100" : "monochrome700"}
+      color={
+        optional && !checked
+          ? "monochrome600"
+          : checked
+          ? "monochrome100"
+          : "monochrome700"
+      }
     >
       <Icon size={24} name={iconName} />
     </Flex>
@@ -134,7 +151,7 @@ const LeftPanelTabContent = ({
       <Text
         variant="paragraph1"
         sx={{
-          color: "monochrome800",
+          color: optional && !checked ? "monochrome600" : "monochrome800",
           lineHeight: [1, 1, 1],
           textAlign: "left"
         }}

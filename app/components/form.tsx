@@ -9,6 +9,7 @@ import {
 import * as React from "react";
 import { Box } from "@theme-ui/components";
 import { FieldProps, Option } from "../domain/config-form";
+import { Trans } from "@lingui/macro";
 
 export const Label = ({
   label,
@@ -59,7 +60,7 @@ export const Radio = ({
 }: { label: string | React.ReactNode; disabled?: boolean } & FieldProps) => {
   return (
     <Box mb={2}>
-      <Label label={label} htmlFor={`${name}-${value}`}>
+      <Label label={label} htmlFor={`${name}-${value}`} disabled={disabled}>
         <RebassRadio
           name={name}
           id={`${name}-${value}`}
@@ -136,8 +137,8 @@ export const Select = ({
       value={value}
     >
       {options.map(opt => (
-        <option key={opt.value} value={opt.value}>
-          {opt.label}
+        <option key={opt.value} value={opt.value || undefined}>
+          {opt.value ? opt.label : "None"}
         </option>
       ))}
     </RebassSelect>

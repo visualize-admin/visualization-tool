@@ -7,7 +7,8 @@ import {
   useSingleFilterField,
   useChartFieldField,
   useChartOptionField,
-  useActiveFieldField
+  useActiveFieldField,
+  FIELD_VALUE_NONE
 } from "../domain/config-form";
 import { Radio, Checkbox, Select, Input } from "./form";
 import { ChartTypeSelectionButton } from "./chart-controls";
@@ -203,6 +204,7 @@ export const ChartFieldField = ({
   label,
   field,
   options,
+  optional,
   disabled,
   dataSetMetadata
 }: {
@@ -210,6 +212,7 @@ export const ChartFieldField = ({
   label: string | React.ReactNode;
   field: string;
   options: Option[];
+  optional?: boolean;
   disabled?: boolean;
   dataSetMetadata: DataSetMetadata;
 }) => {
@@ -221,10 +224,15 @@ export const ChartFieldField = ({
 
   return (
     <Select
+      key={`select-${field}-dimension`}
       id={field}
       label={label}
       disabled={disabled}
-      options={options}
+      options={
+        optional
+          ? [{ value: FIELD_VALUE_NONE, label: "None" }, ...options]
+          : options
+      }
       {...fieldProps}
     ></Select>
   );
@@ -234,12 +242,14 @@ export const ChartOptionField = ({
   label,
   field,
   path,
-  value
+  value,
+  disabled = false
 }: {
   label: string;
   field: string;
   path: string;
   value: string;
+  disabled?: boolean;
 }) => {
   const fieldProps = useChartOptionField({
     path,
@@ -248,7 +258,13 @@ export const ChartOptionField = ({
     value
   });
 
-  return <Radio label={getFieldLabel(label)} {...fieldProps}></Radio>;
+  return (
+    <Radio
+      disabled={disabled}
+      label={getFieldLabel(label)}
+      {...fieldProps}
+    ></Radio>
+  );
 };
 
 export const ChartTypeSelectorField = ({

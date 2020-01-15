@@ -23,11 +23,12 @@ export const CollapsibleSection = ({
 export const SectionTitle = ({
   iconName,
   titleId,
+  disabled,
   children
 }: {
   iconName?: IconName;
   titleId?: string;
-
+  disabled?: boolean;
   children: React.ReactNode;
 }) => {
   const theme = useTheme();
@@ -37,10 +38,18 @@ export const SectionTitle = ({
       as="h2"
       variant="controlSectionTitle"
       color="monochrome800"
-      sx={{ justifyContent: "flex-start" }}
+      sx={{
+        justifyContent: "flex-start",
+        color: disabled ? "monochrome600" : "monochrome800"
+      }}
     >
       {iconName && (
-        <Icon color={theme.colors.monochrome700} name={iconName}></Icon>
+        <Icon
+          color={
+            disabled ? theme.colors.monochrome600 : theme.colors.monochrome700
+          }
+          name={iconName}
+        ></Icon>
       )}
       <Text ml={iconName ? 2 : 0}>{children}</Text>
     </Flex>

@@ -60,14 +60,27 @@ const ActiveFieldSwitch = ({
   const activeFieldComponent: { componentIri: string } | undefined =
     state.chartConfig.fields[activeField];
 
+  // It's an optional field
+  if (!activeFieldComponent && activeField === "segment") {
+    return (
+      <DimensionPanel
+        field={activeField}
+        chartType={state.chartConfig.chartType}
+        metaData={metaData}
+        dimension={undefined}
+      />
+    );
+  }
+
   // It's a dimension which is not mapped to a field, so we show the filter!
   if (!activeFieldComponent) {
     return <Filter state={state} metaData={metaData} />;
   }
 
-  const component = metaData.componentsByIri[activeFieldComponent.componentIri];
-
-  const componentType = component.component.componentType;
+  const component =
+    activeFieldComponent.componentIri &&
+    metaData.componentsByIri[activeFieldComponent.componentIri];
+  const componentType = component && component.component.componentType;
 
   return componentType === "measure" ? (
     <MeasurePanel field={activeField} metaData={metaData} />
@@ -89,18 +102,21 @@ const DimensionPanel = ({
 }: {
   field: string;
   chartType: ChartType;
-  dimension: DimensionWithMeta;
+  dimension: DimensionWithMeta | undefined;
   metaData: DataSetMetadata;
 }) => {
   const { dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (panelRef && panelRef.current) {
       panelRef.current.focus();
     }
   }, [field]);
+
   return (
     <Box
+      key={`control-panel-${field}`}
       variant="controlSection"
       role="tabpanel"
       id={`control-panel-${field}`}
@@ -117,6 +133,7 @@ const DimensionPanel = ({
           label={
             <Trans id="controls.select.dimension">Select a dimension</Trans>
           }
+          optional={field === "segment"} // FIXME: Should be a more robust optional tag
           options={dimensions.map(({ component }) => ({
             value: component.iri.value,
             label: component.label.value
@@ -124,19 +141,28 @@ const DimensionPanel = ({
           dataSetMetadata={metaData}
         />
         {field === "segment" && (
-          <ChartFieldOptions field={field} chartType={chartType} />
+          <ChartFieldOptions
+            disabled={!dimension}
+            field={field}
+            chartType={chartType}
+          />
         )}
       </Box>
 
       <Box variant="controlSection">
-        <SectionTitle iconName="filter">
+        <SectionTitle disabled={!dimension} iconName="filter">
           <Trans id="controls.section.filter">Filter</Trans>
         </SectionTitle>
         <Box variant="rightControlSectionContent" as="fieldset">
           <legend style={{ display: "none" }}>
             <Trans id="controls.section.filter">Filter</Trans>
           </legend>
-          <DimensionValuesMultiFilter dimension={dimension} />
+          {dimension && (
+            <DimensionValuesMultiFilter
+              key={dimension.component.iri.value}
+              dimension={dimension}
+            />
+          )}
         </Box>
       </Box>
     </Box>
@@ -159,6 +185,7 @@ const MeasurePanel = ({
   }, [field]);
   return (
     <Box
+      key={`control-panel-${field}`}
       variant="controlSection"
       role="tabpanel"
       id={`control-panel-${field}`}
@@ -201,6 +228,7 @@ const Filter = ({
   }, [state.activeField]);
   return (
     <Box
+      key={`filter-panel-${state.activeField}`}
       variant="controlSection"
       role="tabpanel"
       id={`filter-panel-${state.activeField}`}
@@ -227,10 +255,12 @@ const Filter = ({
 
 const ChartFieldOptions = ({
   field,
-  chartType
+  chartType,
+  disabled = false
 }: {
   field: string;
   chartType: ChartType;
+  disabled?: boolean;
 }) => {
   return (
     <>
@@ -247,17 +277,19 @@ const ChartFieldOptions = ({
               field={field}
               path="type"
               value={"stacked"}
+              disabled={disabled}
             />
             <ChartOptionField
               label="grouped"
               field={field}
               path="type"
               value={"grouped"}
+              disabled={disabled}
             />
           </Flex>
         </Box>
       )}
-      <ColorPalette field={field}></ColorPalette>
+      <ColorPalette disabled={disabled} field={field}></ColorPalette>
     </>
   );
 };

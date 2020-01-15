@@ -34,8 +34,8 @@ export const DataDownload = memo(
           (obj, [key, value]) => ({
             ...obj,
             [key]: [...dimensions, ...measures].find(
-              c => c.component.iri.value === value!.componentIri
-            )!.component.label.value
+              c => c.component.iri.value === value?.componentIri
+            )?.component.label.value
           }),
           {}
         ),

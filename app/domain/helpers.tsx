@@ -36,7 +36,7 @@ export const getFieldLabel = (field: string): React.ReactNode => {
     case "y":
       return <Trans id="controls.measure">Measure</Trans>;
     case "segment":
-      return <Trans id="controls.segmentation">Segmentation</Trans>;
+      return <Trans id="controls.partition">Partition</Trans>;
     case "title":
       return <Trans id="controls.title">Title</Trans>;
     case "description":

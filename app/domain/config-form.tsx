@@ -149,6 +149,8 @@ export const useSingleFilterField = ({
   };
 };
 
+export const FIELD_VALUE_NONE = "FIELD_VALUE_NONE";
+
 export const useChartFieldField = ({
   componentIri,
   field,
@@ -161,16 +163,23 @@ export const useChartFieldField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
-    e => {
-      dispatch({
-        type: "CHART_FIELD_CHANGED",
-        value: {
-          componentIri: e.currentTarget.value,
-          field,
-          dataSetMetadata
-        }
-      });
-    },
+    e =>
+      e.currentTarget.value !== FIELD_VALUE_NONE
+        ? dispatch({
+            type: "CHART_FIELD_CHANGED",
+            value: {
+              componentIri: e.currentTarget.value,
+              field,
+              dataSetMetadata
+            }
+          })
+        : dispatch({
+            type: "CHART_FIELD_DELETED",
+            value: {
+              field,
+              dataSetMetadata
+            }
+          }),
     [dispatch, field, dataSetMetadata]
   );
 
