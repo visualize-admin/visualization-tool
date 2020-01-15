@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import { Box } from "@theme-ui/components";
+import { DataSetMetadata } from "../../../components/dataset-metadata";
 import { AppLayout } from "../../../components/layout";
 import { PanelLeft } from "../../../components/panel-left";
 import { PanelMiddle } from "../../../components/panel-middle";
@@ -56,6 +57,9 @@ const ChartCreator = () => {
       </Box>
 
       <Box as="section" data-name="panel-right" variant="container.right">
+        {state.state === "SELECTING_DATASET" && state.dataSet && (
+          <DataSetMetadata dataSetIri={state.dataSet} />
+        )}
         {state.state === "CONFIGURING_CHART" && (
           <ChartOptionsSelector state={state} />
         )}

@@ -18,6 +18,7 @@ import {
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
+import { EmptyRightPanel } from "./empty-right-panel";
 
 export const ChartOptionsSelector = ({
   state
@@ -36,7 +37,11 @@ export const ChartOptionsSelector = ({
           mb: 7
         }}
       >
-        <ActiveFieldSwitch state={state} metaData={meta.data} />
+        {state.activeField ? (
+          <ActiveFieldSwitch state={state} metaData={meta.data} />
+        ) : (
+          <EmptyRightPanel state={state} />
+        )}
       </Box>
     );
   } else {
