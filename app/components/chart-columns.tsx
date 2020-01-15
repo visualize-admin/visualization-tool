@@ -96,7 +96,7 @@ export const ChartColumns = memo(
     measures: MeasureWithMeta[];
     fields: ColumnFields;
   }) => {
-    const [resizeRef, width] = useResizeObserver();
+    const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
 
     return (
       <div ref={resizeRef} aria-hidden="true">

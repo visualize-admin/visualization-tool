@@ -95,7 +95,7 @@ export const ChartAreas = memo(
     measures: MeasureWithMeta[];
     fields: AreaFields;
   }) => {
-    const [resizeRef, width] = useResizeObserver();
+    const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
 
     return (
       <div ref={resizeRef} aria-hidden="true">

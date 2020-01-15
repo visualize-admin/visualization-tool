@@ -95,7 +95,7 @@ export const ChartLines = memo(
     measures: MeasureWithMeta[];
     fields: LineFields;
   }) => {
-    const [resizeRef, width] = useResizeObserver();
+    const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
 
     return (
       <div ref={resizeRef} aria-hidden="true">

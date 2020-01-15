@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import ResizeObserver from "resize-observer-polyfill";
+import { ResizeObserver } from "@juggle/resize-observer";
 
-export const useResizeObserver = () => {
-  const ref = useRef<HTMLDivElement>(null);
+export const useResizeObserver = <T extends Element>() => {
+  const ref = useRef<T>(null);
   const [width, changeWidth] = useState(1);
   const [height, changeHeight] = useState(1);
 
@@ -14,10 +14,6 @@ export const useResizeObserver = () => {
     const el = ref.current;
 
     const resizeObserver = new ResizeObserver(entries => {
-      if (!Array.isArray(entries)) {
-        return;
-      }
-
       // Since we only observe the one element, we don't need to loop over the
       // array
       if (!entries.length) {
@@ -26,13 +22,17 @@ export const useResizeObserver = () => {
 
       const entry = entries[0];
 
-      changeWidth(entry.contentRect.width);
-      changeHeight(entry.contentRect.height);
+      const { inlineSize: width, blockSize: height } = entry.contentBoxSize[0];
+
+      changeWidth(width);
+      changeHeight(height);
     });
 
     resizeObserver.observe(el);
 
-    return () => resizeObserver.unobserve(el);
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
 
   return [ref, width, height] as const;

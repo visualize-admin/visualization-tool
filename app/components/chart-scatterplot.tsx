@@ -96,7 +96,7 @@ export const ChartScatterplot = memo(
     measures: MeasureWithMeta[];
     fields: ScatterPlotFields;
   }) => {
-    const [resizeRef, width] = useResizeObserver();
+    const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
 
     return (
       <div ref={resizeRef} aria-hidden="true">
