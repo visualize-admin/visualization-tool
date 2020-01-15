@@ -223,14 +223,12 @@ export const useDataSetAndMetadata = (
     ) => {
       const { dimensions, attributes, measures } = metaData;
 
-      console.time("dimensionValues");
       const dimensionsWithValues = await Promise.all(
         dimensions.map(async component => ({
           component,
           values: await dataSet.componentValues(component)
         }))
       );
-      console.timeEnd("dimensionValues");
 
       const attributesWithValues = await Promise.all(
         attributes.map(async component => ({

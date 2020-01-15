@@ -909,6 +909,23 @@ export const theme: Theme = {
           color: "primaryDisabled"
         }
       }
+    },
+    dataSetMetadata: {
+      title: {
+        fontFamily: "body",
+        lineHeight: [1, 2, 2],
+        fontWeight: "regular",
+        fontSize: [1, 2, 2],
+        color: "monochrome600"
+      },
+      body: {
+        fontFamily: "body",
+        lineHeight: [4, 5, 5],
+        fontWeight: "regular",
+        fontSize: [3, 4, 4],
+        color: "monochrome900",
+        mb: 3
+      }
     }
   }
 };
