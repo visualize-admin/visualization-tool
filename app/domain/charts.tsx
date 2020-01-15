@@ -18,70 +18,63 @@ export const getInitialFields = ({
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
 }): ChartFields => {
-  // FIXME: Should the returned type match the Keys defined above?
-  const nonTimeDimensions = dimensions.filter(
-    dimension => !isTimeDimension(dimension)
-  );
   switch (chartType) {
     case "scatterplot":
       return {
-        x: { componentIri: getComponentIri(measures[0])},
-        y: { componentIri: getComponentIri(measures.length > 1 ? measures[1] : measures[0])},
+        x: { componentIri: getComponentIri(measures[0]) },
+        y: {
+          componentIri: getComponentIri(
+            measures.length > 1 ? measures[1] : measures[0]
+          )
+        },
         segment: {
           componentIri: getComponentIri(
             getCategoricalDimensions(dimensions)[0]
           ),
           palette: "category10"
         }
-        // label: getComponentIri(getCategoricalDimensions(dimensions)[0]),
       };
     case "column":
       return {
         x: { componentIri: getComponentIri(dimensions[0]) },
-        y: { componentIri: getComponentIri(measures[0]) },
-        segment: {
-          componentIri: getComponentIri(
-            getCategoricalDimensions(dimensions)[0]
-          ),
-          type: "stacked",
-          palette: "category10"
-        }
+        y: { componentIri: getComponentIri(measures[0]) }
+        // segment: {
+        //   componentIri: getComponentIri(
+        //     getCategoricalDimensions(dimensions)[0]
+        //   ),
+        //   type: "stacked",
+        //   palette: "category10"
+        // }
       };
     case "line":
       return {
         x: { componentIri: getComponentIri(getTimeDimensions(dimensions)[0]) },
-        y: { componentIri: getComponentIri(measures[0]) },
-        segment: {
-          componentIri: getComponentIri(
-            getCategoricalDimensions(dimensions)[1]
-          ),
-          palette: "category10"
-        }
+        y: { componentIri: getComponentIri(measures[0]) }
       };
 
     case "area":
       return {
         x: { componentIri: getComponentIri(getTimeDimensions(dimensions)[0]) },
-        y: { componentIri: getComponentIri(measures[0]) },
-        segment: {
-          componentIri: getComponentIri(
-            getCategoricalDimensions(dimensions)[1]
-          ),
-          palette: "category10"
-        }
+        y: { componentIri: getComponentIri(measures[0]) }
+        // segment: {
+        //   componentIri: getComponentIri(
+        //     getCategoricalDimensions(dimensions)[1]
+        //   ),
+        //   palette: "category10"
+        // }
       };
 
     default:
       return {
         x: { componentIri: getComponentIri(dimensions[0]) },
-        y: { componentIri: getComponentIri(measures[0]) },
-        segment: {
-          componentIri: getComponentIri(
-            getCategoricalDimensions(dimensions)[0]
-          ),
-          type: "stacked",
-          palette: "category10"
-        }
+        y: { componentIri: getComponentIri(measures[0]) }
+        // segment: {
+        //   componentIri: getComponentIri(
+        //     getCategoricalDimensions(dimensions)[0]
+        //   ),
+        //   type: "stacked",
+        //   palette: "category10"
+        // }
       };
   }
 };

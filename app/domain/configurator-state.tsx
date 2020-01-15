@@ -60,6 +60,13 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_FIELD_DELETED";
+      value: {
+        field: string;
+        dataSetMetadata: DataSetMetadata;
+      };
+    }
+  | {
       type: "CHART_DESCRIPTION_CHANGED";
       value: { path: string | string[]; value: $FixMe };
     }
@@ -358,10 +365,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_FIELD_CHANGED":
-      if (
-        draft.state === "CONFIGURING_CHART"
-        //  && draft.chartConfig.chartType === "column"
-      ) {
+      if (draft.state === "CONFIGURING_CHART") {
         const f = draft.chartConfig.fields[action.value.field];
         if (!f) {
           if (action.value.field === "segment") {
@@ -374,6 +378,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         } else {
           f.componentIri = action.value.componentIri;
         }
+
+        deriveFiltersFromFields(
+          draft.chartConfig,
+          action.value.dataSetMetadata
+        );
+      }
+      return draft;
+
+    case "CHART_FIELD_DELETED":
+      if (draft.state === "CONFIGURING_CHART") {
+        delete draft.chartConfig.fields[action.value.field];
 
         deriveFiltersFromFields(
           draft.chartConfig,

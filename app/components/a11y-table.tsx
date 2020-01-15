@@ -49,14 +49,14 @@ export const A11yTable = memo(
           (obj, [key, value]) => ({
             ...obj,
             [key]: [...dimensions, ...measures].find(
-              c => c.component.iri.value === value!.componentIri
-            )!.component.label.value
+              c => c.component.iri.value === value?.componentIri
+            )?.component.label.value
           }),
           {}
         ),
       [dimensions, fields, measures]
     );
-    // FIXME: Add actual label
+
     return (
       <table style={{ display: "none" }}>
         <caption>{dataSet.label.value}</caption>
