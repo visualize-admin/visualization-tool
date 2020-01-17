@@ -26,6 +26,7 @@ class MyApp extends App<{
   statusCode: void | number;
   theme: Theme;
   globalStyles: string | undefined;
+  preloadFonts?: string[];
   asPath: string;
 }> {
   static async getInitialProps(appContext: AppContext) {
@@ -54,7 +55,7 @@ class MyApp extends App<{
     }
 
     const __theme = query.__theme ? query.__theme.toString() : undefined;
-    const { theme, globalStyles } = await loadTheme(__theme);
+    const { theme, globalStyles, preloadFonts } = await loadTheme(__theme);
 
     /**
      * Parse locale from query OR pathname
@@ -71,6 +72,7 @@ class MyApp extends App<{
       statusCode,
       theme,
       globalStyles,
+      preloadFonts,
       asPath
     };
   }
@@ -83,6 +85,7 @@ class MyApp extends App<{
       statusCode,
       theme,
       globalStyles,
+      preloadFonts,
       asPath
     } = this.props;
 
@@ -97,6 +100,8 @@ class MyApp extends App<{
           <meta property="og:type" content="website" />
           <meta property="og:title" content={"visualize.admin.ch"} />
           <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
+          {preloadFonts &&
+            preloadFonts.map(src => <link key={src} rel={src} as="font" />)}
         </Head>
         <LocaleProvider value={locale}>
           <I18nProvider language={locale} catalogs={catalogs}>

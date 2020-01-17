@@ -31,6 +31,7 @@ export type Theme = Omit<
 interface ThemeModule {
   theme: Theme;
   globalStyles?: string;
+  preloadFonts?: string[];
 }
 
 export const loadTheme = async (theme: string = "federal") => {

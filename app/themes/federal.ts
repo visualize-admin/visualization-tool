@@ -931,6 +931,16 @@ export const theme: Theme = {
 };
 
 /**
+ * Load these fonts early using <link rel="preload" />
+ * Use WOFF2 fonts if possible!
+ */
+export const preloadFonts=[
+  "/static/fonts/FrutigerNeueW02-Bd.woff2",
+  "/static/fonts/FrutigerNeueW02-Regular.woff2",
+  "/static/fonts/FrutigerNeueW02-Light.woff2",
+]
+
+/**
  * Global styles to load font files or similar things
  */
 export const globalStyles = `
