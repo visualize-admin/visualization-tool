@@ -149,7 +149,13 @@ export const Examples = ({
                 },
                 "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1": {
                   type: "multi",
-                  values: {}
+                  values: {
+                    "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/1": true,
+                    "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/2": true,
+                    "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/3": true,
+                    "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/4": true,
+                    "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/5": true
+                  }
                 },
                 "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/2": {
                   type: "single",
