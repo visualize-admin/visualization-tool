@@ -13,23 +13,23 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/a11y-table.tsx:34
+#: app/components/a11y-table.tsx:36
 msgid "accessibility.table.sorting"
 msgstr ""
 
-#: app/components/a11y-table.tsx:36
+#: app/components/a11y-table.tsx:38
 msgid "accessibility.table.sorting.ascending"
 msgstr ""
 
-#: app/components/a11y-table.tsx:38
+#: app/components/a11y-table.tsx:40
 msgid "accessibility.table.sorting.descending"
 msgstr ""
 
-#: app/components/chart-preview.tsx:31
+#: app/components/chart-preview.tsx:36
 msgid "annotation.add.description"
 msgstr ""
 
-#: app/components/chart-preview.tsx:25
+#: app/components/chart-preview.tsx:30
 msgid "annotation.add.title"
 msgstr ""
 
@@ -37,15 +37,15 @@ msgstr ""
 #~ msgid "button.create.new.visualization"
 #~ msgstr ""
 
-#: app/components/data-download.tsx:14
+#: app/components/data-download.tsx:17
 msgid "button.download.data"
 msgstr ""
 
-#: app/components/publish-actions.tsx:211
+#: app/components/publish-actions.tsx:213
 msgid "button.download.image"
 msgstr ""
 
-#: app/components/publish-actions.tsx:106
+#: app/components/publish-actions.tsx:108
 msgid "button.embed"
 msgstr ""
 
@@ -65,12 +65,12 @@ msgstr ""
 msgid "button.publish"
 msgstr ""
 
-#: app/components/publish-actions.tsx:57
+#: app/components/publish-actions.tsx:56
 msgid "button.share"
 msgstr ""
 
-#: app/components/publish-actions.tsx:128
-#: app/components/publish-actions.tsx:131
+#: app/components/publish-actions.tsx:130
+#: app/components/publish-actions.tsx:133
 msgid "click to copy"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgstr ""
 msgid "controls.chart.type.scatterplot"
 msgstr ""
 
-#: app/components/chart-controls/color-palette.tsx:45
+#: app/components/chart-controls/color-palette.tsx:46
 msgid "controls.color.palette"
 msgstr ""
 
@@ -122,8 +122,40 @@ msgstr ""
 msgid "controls.filter.select.all"
 msgstr ""
 
+#: app/components/empty-right-panel.tsx:10
+msgid "controls.hint.configuring.chart"
+msgstr ""
+
+#: app/components/empty-right-panel.tsx:15
+msgid "controls.hint.describing.chart"
+msgstr ""
+
+#: app/domain/helpers.tsx:56
+msgid "controls.language.english"
+msgstr ""
+
+#: app/domain/helpers.tsx:60
+msgid "controls.language.french"
+msgstr ""
+
+#: app/domain/helpers.tsx:58
+msgid "controls.language.german"
+msgstr ""
+
+#: app/domain/helpers.tsx:62
+msgid "controls.language.italian"
+msgstr ""
+
 #: app/domain/helpers.tsx:34
 msgid "controls.measure"
+msgstr ""
+
+#: app/domain/helpers.tsx:36
+msgid "controls.partition"
+msgstr ""
+
+#: app/components/chart-controls/control-tab.tsx:9
+msgid "controls.partition.add"
 msgstr ""
 
 #: app/components/chart-configurator.tsx:20
@@ -138,21 +170,21 @@ msgstr ""
 msgid "controls.section.design"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:64
-#: app/components/chart-options-selector.tsx:68
+#: app/components/chart-options-selector.tsx:71
+#: app/components/chart-options-selector.tsx:75
 msgid "controls.section.filter"
 msgstr ""
 
 #: app/domain/helpers.tsx:36
-msgid "controls.segmentation"
-msgstr ""
+#~ msgid "controls.segmentation"
+#~ msgstr ""
 
 #: app/components/chart-type-selector.tsx:18
 #: app/components/chart-type-selector.tsx:21
 msgid "controls.select.chart.type"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:117
+#: app/components/chart-options-selector.tsx:124
 msgid "controls.select.column.chart.type"
 msgstr ""
 
@@ -160,11 +192,11 @@ msgstr ""
 msgid "controls.select.dataset"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:55
+#: app/components/chart-options-selector.tsx:61
 msgid "controls.select.dimension"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:86
+#: app/components/chart-options-selector.tsx:93
 msgid "controls.select.measure"
 msgstr ""
 
@@ -172,31 +204,43 @@ msgstr ""
 msgid "controls.title"
 msgstr ""
 
-#: app/components/publish-actions.tsx:154
+#: app/components/publish-actions.tsx:156
 msgid "copied!"
 msgstr ""
 
-#: app/components/dataset-preview.tsx:27
+#: app/components/dataset-metadata.tsx:32
+msgid "dataset.metadata.date.created"
+msgstr ""
+
+#: app/components/dataset-metadata.tsx:25
+msgid "dataset.metadata.source"
+msgstr ""
+
+#: app/components/dataset-metadata.tsx:19
+msgid "dataset.metadata.title"
+msgstr ""
+
+#: app/components/dataset-preview.tsx:36
 msgid "datatable.showing.first.rows"
 msgstr ""
 
-#: app/components/footer.tsx:17
+#: app/components/footer.tsx:24
 msgid "footer.contact"
 msgstr ""
 
-#: app/components/footer.tsx:14
+#: app/components/footer.tsx:21
 msgid "footer.help"
 msgstr ""
 
-#: app/components/footer.tsx:30
+#: app/components/footer.tsx:37
 msgid "footer.imprint"
 msgstr ""
 
-#: app/components/footer.tsx:6
+#: app/components/footer.tsx:10
 msgid "footer.institution.name"
 msgstr ""
 
-#: app/components/footer.tsx:27
+#: app/components/footer.tsx:34
 msgid "footer.legal"
 msgstr ""
 
@@ -212,7 +256,7 @@ msgstr ""
 msgid "hint.loading.data"
 msgstr ""
 
-#: app/components/chart-type-selector.tsx:25
+#: app/components/chart-type-selector.tsx:30
 msgid "hint.no.visualization.with.dataset"
 msgstr ""
 
@@ -253,54 +297,54 @@ msgstr ""
 msgid "metadata.source"
 msgstr ""
 
-#: app/components/publish-actions.tsx:116
+#: app/components/publish-actions.tsx:118
 msgid "publication.embed.AEM"
 msgstr ""
 
-#: app/components/publish-actions.tsx:111
+#: app/components/publish-actions.tsx:113
 msgid "publication.embed.iframe"
 msgstr ""
 
-#: app/components/publish-actions.tsx:67
+#: app/components/publish-actions.tsx:69
 msgid "publication.popup.share"
 msgstr ""
 
-#: app/components/publish-actions.tsx:81
+#: app/components/publish-actions.tsx:83
 msgid "publication.share.chart.url"
 msgstr ""
 
-#: app/components/publish-actions.tsx:72
+#: app/components/publish-actions.tsx:74
 msgid "publication.share.linktitle.facebook"
 msgstr ""
 
-#: app/components/publish-actions.tsx:74
+#: app/components/publish-actions.tsx:76
 msgid "publication.share.linktitle.mail"
 msgstr ""
 
-#: app/components/publish-actions.tsx:73
+#: app/components/publish-actions.tsx:75
 msgid "publication.share.linktitle.twitter"
 msgstr ""
 
-#: app/components/publish-actions.tsx:74
+#: app/components/publish-actions.tsx:76
 msgid "publication.share.mail.body"
 msgstr ""
 
-#: app/components/publish-actions.tsx:74
+#: app/components/publish-actions.tsx:76
 msgid "publication.share.mail.subject"
 msgstr ""
 
-#: app/components/stepper.tsx:68
+#: app/components/stepper.tsx:78
 msgid "step.adjust"
 msgstr ""
 
-#: app/components/stepper.tsx:75
+#: app/components/stepper.tsx:85
 msgid "step.annotate"
 msgstr ""
 
-#: app/components/stepper.tsx:54
+#: app/components/stepper.tsx:64
 msgid "step.dataset"
 msgstr ""
 
-#: app/components/stepper.tsx:61
+#: app/components/stepper.tsx:71
 msgid "step.visualization.type"
 msgstr ""
