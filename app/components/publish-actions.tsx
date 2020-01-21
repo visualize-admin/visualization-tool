@@ -7,7 +7,7 @@ import { Icon, IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
 import { IconLink } from "./links";
 import { I18n } from "@lingui/react";
-import * as clipboard from "clipboard-polyfill";
+import clipboard from "clipboard-polyfill";
 export const PublishActions = ({ configKey }: { configKey: string }) => {
   const locale = useLocale();
 
