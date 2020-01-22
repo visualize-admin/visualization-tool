@@ -4,7 +4,7 @@ import { GA_TRACKING_ID } from "../domain/env";
 class MyDocument extends Document {
   render() {
     return (
-      <Html>
+      <Html data-app-version={`${process.env.VERSION}`}>
         <Head>
           {GA_TRACKING_ID && (
             <>

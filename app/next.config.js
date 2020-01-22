@@ -1,7 +1,15 @@
+const childProcess = require("child_process");
+const pkg = require("../package.json");
 const withMDX = require("@next/mdx")();
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true"
 });
+
+const VERSION = 
+  `v${pkg.version}-${childProcess
+    .execSync("git rev-parse HEAD")
+    .toString()
+    .substring(0, 7)}`;
 
 const publicRuntimeConfig = {
   // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
@@ -15,10 +23,16 @@ const publicRuntimeConfig = {
 };
 
 console.log("Starting with publicRuntimeConfig\n", publicRuntimeConfig);
+console.log("Version", VERSION);
 
 module.exports = withBundleAnalyzer(
   withMDX({
     publicRuntimeConfig,
+
+    // Build-time env variables
+    env: {
+      VERSION
+    },
 
     pageExtensions: ["js", "ts", "tsx", "mdx"],
 
