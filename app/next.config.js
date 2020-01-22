@@ -5,11 +5,14 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true"
 });
 
-const VERSION = 
-  `v${pkg.version}-${childProcess
+let VERSION = `v${pkg.version}`;
+
+try {
+  VERSION = `v${pkg.version}-${childProcess
     .execSync("git rev-parse HEAD")
     .toString()
     .substring(0, 7)}`;
+} catch {}
 
 const publicRuntimeConfig = {
   // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
