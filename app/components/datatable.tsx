@@ -5,7 +5,7 @@ import { Box } from "@theme-ui/components";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
-  ObservationPreview,
+  Observation,
   usePreviewObservations
 } from "../domain";
 import { Loading } from "./hint";
@@ -25,7 +25,7 @@ const Table = ({
 }: {
   title: string;
   headers: Header[];
-  observations: ObservationPreview[];
+  observations: Observation[];
 }) => {
   return (
     <Box

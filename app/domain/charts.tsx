@@ -1,4 +1,4 @@
-import { ChartFields, ChartType } from "./config-types";
+import { GenericFields, ChartType, ChartConfig } from "./config-types";
 import {
   DimensionWithMeta,
   getCategoricalDimensions,
@@ -9,7 +9,11 @@ import {
 } from "./data";
 import { DataSetMetadata } from "./data-cube";
 
-export const getInitialFields = ({
+const unreachableError = (x: never): Error => {
+  return new Error(`This should be unreachable! but got ${x}`);
+};
+
+export const getInitialConfig = ({
   chartType,
   dimensions,
   measures
@@ -17,65 +21,79 @@ export const getInitialFields = ({
   chartType: ChartType;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-}): ChartFields => {
+}): ChartConfig => {
   switch (chartType) {
     case "scatterplot":
       return {
-        x: { componentIri: getComponentIri(measures[0]) },
-        y: {
-          componentIri: getComponentIri(
-            measures.length > 1 ? measures[1] : measures[0]
-          )
-        },
-        segment: {
-          componentIri: getComponentIri(
-            getCategoricalDimensions(dimensions)[0]
-          ),
-          palette: "category10"
+        chartType: "scatterplot",
+        filters: {},
+        fields: {
+          x: { componentIri: getComponentIri(measures[0]) },
+          y: {
+            componentIri: getComponentIri(
+              measures.length > 1 ? measures[1] : measures[0]
+            )
+          },
+          segment: {
+            componentIri: getComponentIri(
+              getCategoricalDimensions(dimensions)[0]
+            ),
+            palette: "category10"
+          }
         }
       };
+    case "bar":
     case "column":
       return {
-        x: { componentIri: getComponentIri(dimensions[0]) },
-        y: { componentIri: getComponentIri(measures[0]) }
-        // segment: {
-        //   componentIri: getComponentIri(
-        //     getCategoricalDimensions(dimensions)[0]
-        //   ),
-        //   type: "stacked",
-        //   palette: "category10"
-        // }
+        chartType,
+        filters: {},
+        fields: {
+          x: { componentIri: getComponentIri(dimensions[0]) },
+          y: { componentIri: getComponentIri(measures[0]) }
+        }
       };
     case "line":
       return {
-        x: { componentIri: getComponentIri(getTimeDimensions(dimensions)[0]) },
-        y: { componentIri: getComponentIri(measures[0]) }
+        chartType,
+        filters: {},
+        fields: {
+          x: {
+            componentIri: getComponentIri(getTimeDimensions(dimensions)[0])
+          },
+          y: { componentIri: getComponentIri(measures[0]) }
+        }
       };
 
     case "area":
       return {
-        x: { componentIri: getComponentIri(getTimeDimensions(dimensions)[0]) },
-        y: { componentIri: getComponentIri(measures[0]) }
-        // segment: {
-        //   componentIri: getComponentIri(
-        //     getCategoricalDimensions(dimensions)[1]
-        //   ),
-        //   palette: "category10"
-        // }
+        chartType,
+        filters: {},
+        fields: {
+          x: {
+            componentIri: getComponentIri(getTimeDimensions(dimensions)[0])
+          },
+          y: { componentIri: getComponentIri(measures[0]) }
+        }
       };
 
-    default:
+    case "pie":
       return {
-        x: { componentIri: getComponentIri(dimensions[0]) },
-        y: { componentIri: getComponentIri(measures[0]) }
-        // segment: {
-        //   componentIri: getComponentIri(
-        //     getCategoricalDimensions(dimensions)[0]
-        //   ),
-        //   type: "stacked",
-        //   palette: "category10"
-        // }
+        chartType,
+        filters: {},
+        fields: {
+          value: { componentIri: getComponentIri(measures[0]) },
+          segment: {
+            componentIri: getComponentIri(
+              getCategoricalDimensions(dimensions)[0]
+            ),
+            palette: "category10"
+          }
+        }
       };
+
+    // This code *should* be unreachable! If it's not, it means we haven't checked all cases (and we should get a TS error).
+    default:
+      throw unreachableError(chartType);
   }
 };
 
@@ -91,7 +109,7 @@ export const getPossibleChartType = ({
   const hasMultipleQ = measures.length > 1;
   const hasTime = dimensions.some(dim => isTimeDimension(dim));
 
-  const catBased: ChartType[] = ["column"];
+  const catBased: ChartType[] = ["column", "pie"];
   const multipleQ: ChartType[] = ["scatterplot"];
   const timeBased: ChartType[] = ["line", "area"];
 
@@ -107,4 +125,14 @@ export const getPossibleChartType = ({
     possibles = null;
   }
   return possibles;
+};
+
+export const getFieldComponentIris = (fields: GenericFields) => {
+  return new Set(
+    Object.values(fields).flatMap(f => (f ? [f.componentIri] : []))
+  );
+};
+
+export const getFieldComponentIri = (fields: GenericFields, field: string) => {
+  return fields[field]?.componentIri;
 };

@@ -5,9 +5,10 @@ import {
   AreaConfig,
   ColumnConfig,
   ConfiguratorStateConfiguringChart,
-  FieldType,
   LineConfig,
-  ScatterPlotConfig
+  ScatterPlotConfig,
+  getFieldComponentIris,
+  PieConfig
 } from "../domain";
 import { DataSetMetadata, useDataSetAndMetadata } from "../domain/data-cube";
 import { CollapsibleSection } from "./chart-controls";
@@ -22,11 +23,7 @@ export const ChartConfigurator = ({
   const meta = useDataSetAndMetadata(state.dataSet);
 
   if (meta.data) {
-    const mappedIris = new Set(
-      Object.values<FieldType>(state.chartConfig.fields).map(
-        f => f.componentIri
-      )
-    );
+    const mappedIris = getFieldComponentIris(state.chartConfig.fields);
     const unMappedDimensions = meta.data.dimensions.filter(
       dim => !mappedIris.has(dim.component.iri.value)
     );
@@ -60,6 +57,11 @@ export const ChartConfigurator = ({
               />
             ) : state.chartConfig.chartType === "scatterplot" ? (
               <ScatterPlotChartFields
+                chartConfig={state.chartConfig}
+                metaData={meta.data}
+              />
+            ) : state.chartConfig.chartType === "pie" ? (
+              <PieChartFields
                 chartConfig={state.chartConfig}
                 metaData={meta.data}
               />
@@ -206,6 +208,28 @@ const ScatterPlotChartFields = ({
             ? componentsByIri[chartConfig.fields.segment.componentIri]
             : undefined
         }
+        value={"segment"}
+      ></ControlTabField>
+    </>
+  );
+};
+const PieChartFields = ({
+  chartConfig,
+  metaData
+}: {
+  chartConfig: PieConfig;
+  metaData: DataSetMetadata;
+}) => {
+  const { componentsByIri } = metaData;
+
+  return (
+    <>
+      <ControlTabField
+        component={componentsByIri[chartConfig.fields.value.componentIri]}
+        value={"value"}
+      ></ControlTabField>
+      <ControlTabField
+        component={componentsByIri[chartConfig.fields.segment.componentIri]}
         value={"segment"}
       ></ControlTabField>
     </>

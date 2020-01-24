@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Spec } from "vega";
-import { BarFields, ColumnFields, FieldType } from "../../domain";
+import { ColumnFields, GenericField } from "../../domain";
 import {
   DimensionWithMeta,
   getDimensionLabel,
   MeasureWithMeta,
-  Observations
+  Observation
 } from "../../domain/data";
 import { useVegaView } from "../../lib/use-vega";
 import {
@@ -17,7 +17,7 @@ import {
 import { useTheme } from "../../themes";
 
 interface Props {
-  data: Observations<BarFields>;
+  data: Observation[];
   width: number;
   fields: ColumnFields;
   dimensions: DimensionWithMeta[];
@@ -40,10 +40,10 @@ export const Columns = ({
   const fieldValues = new Set([fields.x.componentIri, fields.y.componentIri]);
   const unmappedFields = Object.entries(fields).flatMap(([key, field]) => {
     const mbDim = dimensions.find(
-      d => d.component.iri.value === (field as FieldType).componentIri
+      d => d.component.iri.value === (field as GenericField).componentIri
     );
 
-    return !fieldValues.has((field as FieldType).componentIri) && mbDim
+    return !fieldValues.has((field as GenericField).componentIri) && mbDim
       ? [[key, mbDim]]
       : [];
   });

@@ -5,6 +5,7 @@ import { useConfiguratorState } from "./configurator-state";
 import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
 import { SelectProps } from "@theme-ui/components";
+import { getFieldComponentIri } from "./charts";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -185,11 +186,7 @@ export const useChartFieldField = ({
 
   let value: string | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    const currentField: { componentIri: string } | undefined =
-      state.chartConfig.fields[field];
-    if (currentField) {
-      value = currentField.componentIri;
-    }
+    value = getFieldComponentIri(state.chartConfig.fields, field);
   }
 
   return {

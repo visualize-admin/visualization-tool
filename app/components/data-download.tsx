@@ -8,7 +8,7 @@ import {
   ChartFields,
   DimensionWithMeta,
   MeasureWithMeta,
-  Observations
+  Observation
 } from "../domain";
 
 export interface ChartFieldsWithLabel {
@@ -26,15 +26,15 @@ export const DataDownload = memo(
     dimensions: DimensionWithMeta[];
     measures: MeasureWithMeta[];
     fields: ChartFields;
-    observations: Observations<ChartFields>;
+    observations: Observation[];
   }) => {
     const fieldsWithLabel: ChartFieldsWithLabel = useMemo(
       () =>
-        Object.entries(fields).reduce(
+        Object.entries<{ componentIri: string }>(fields).reduce(
           (obj, [key, value]) => ({
             ...obj,
             [key]: [...dimensions, ...measures].find(
-              c => c.component.iri.value === value?.componentIri
+              c => c.component.iri.value === value.componentIri
             )?.component.label.value
           }),
           {}

@@ -4,14 +4,14 @@ import { AreaFields } from "../../domain";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
-  Observations,
+  Observation,
   getDimensionLabel
 } from "../../domain/data";
 import { useVegaView } from "../../lib/use-vega";
 import { legendTheme, useChartTheme } from "./chart-styles";
 
 interface Props {
-  data: Observations<AreaFields>;
+  data: Observation[];
   width: number;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
@@ -21,9 +21,15 @@ interface Props {
 export const Areas = ({ data, width, fields, dimensions, measures }: Props) => {
   const { labelColor, domainColor, gridColor, fontFamily } = useChartTheme();
   const fieldValues = new Set([fields.x.componentIri]);
-  const unmappedFields: [string, DimensionWithMeta][] = Object.entries<{
-    componentIri: string;
-  }>(fields).flatMap(([key, fieldValue]) => {
+  const unmappedFields: [string, DimensionWithMeta][] = Object.entries<
+    | {
+        componentIri: string;
+      }
+    | undefined
+  >(fields).flatMap(([key, fieldValue]) => {
+    if (!fieldValue) {
+      return [];
+    }
     const mbDim = dimensions.find(
       d => d.component.iri.value === fieldValue.componentIri
     );

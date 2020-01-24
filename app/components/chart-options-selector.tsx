@@ -6,7 +6,8 @@ import {
   ConfiguratorStateConfiguringChart,
   DataSetMetadata,
   DimensionWithMeta,
-  useDataSetAndMetadata
+  useDataSetAndMetadata,
+  getFieldComponentIri
 } from "../domain";
 import { getFieldLabel } from "../domain/helpers";
 import { IconName } from "../icons";
@@ -62,11 +63,11 @@ const ActiveFieldSwitch = ({
     return null;
   }
   // TODO: what to do with optional fields?
-  const activeFieldComponent: { componentIri: string } | undefined =
-    state.chartConfig.fields[activeField];
+  const activeFieldComponentIri = getFieldComponentIri(state.chartConfig.fields, activeField)
+    // state.chartConfig.fields[activeField];
 
   // It's an optional field
-  if (!activeFieldComponent && activeField === "segment") {
+  if (!activeFieldComponentIri && activeField === "segment") {
     return (
       <DimensionPanel
         field={activeField}
@@ -78,13 +79,13 @@ const ActiveFieldSwitch = ({
   }
 
   // It's a dimension which is not mapped to a field, so we show the filter!
-  if (!activeFieldComponent) {
+  if (!activeFieldComponentIri) {
     return <Filter state={state} metaData={metaData} />;
   }
 
   const component =
-    activeFieldComponent.componentIri &&
-    metaData.componentsByIri[activeFieldComponent.componentIri];
+    activeFieldComponentIri &&
+    metaData.componentsByIri[activeFieldComponentIri];
   const componentType = component && component.component.componentType;
 
   return componentType === "measure" ? (

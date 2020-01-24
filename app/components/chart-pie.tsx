@@ -1,19 +1,21 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { memo, useMemo } from "react";
-import { useObservations, getFieldComponentIris } from "../domain";
-import { AreaConfig, AreaFields, GenericField } from "../domain/config-types";
+import { PieFields, useObservations } from "../domain";
+import { PieConfig } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observation
 } from "../domain/data";
-import { useResizeObserver } from "../lib/use-resize-observer";
+
 import { A11yTable } from "./a11y-table";
-import { Areas } from "./charts-generic/areas";
+import { Pie } from "./charts-generic/pie";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
+import { Chart } from "./charts-generic/chart-state";
+import { Tooltip } from "./charts-generic/tooltip";
 
-export const ChartAreasVisualization = ({
+export const ChartPieVisualization = ({
   dataSet,
   dimensions,
   measures,
@@ -22,24 +24,27 @@ export const ChartAreasVisualization = ({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  chartConfig: AreaConfig;
+  chartConfig: PieConfig;
 }) => {
   // Explicitly specify all dimension fields.
   // TODO: Improve/optimize/generalize this
   const allFields = useMemo(() => {
-    const fieldIris = getFieldComponentIris(chartConfig.fields);
-    const restDimensions = dimensions.reduce<{ [k: string]: GenericField }>(
-      (acc, d, i) => {
-        if (!fieldIris.has(d.component.iri.value)) {
-          acc[`dim${i}`] = { componentIri: d.component.iri.value };
-        }
-        return acc;
-      },
-      {}
+    // debugger;
+    const fieldIris = new Set(
+      Object.values<{ componentIri: string }>(chartConfig.fields).map(
+        d => d.componentIri
+      )
     );
-
+    const restDimensions = dimensions.reduce<{
+      [k: string]: { componentIri: string };
+    }>((acc, d, i) => {
+      if (!fieldIris.has(d.component.iri.value)) {
+        acc[`dim${i}`] = { componentIri: d.component.iri.value };
+      }
+      return acc;
+    }, {});
     return { ...restDimensions, ...chartConfig.fields };
-  }, [chartConfig, dimensions]);
+  }, [chartConfig.fields, dimensions]);
 
   const { data: observations } = useObservations({
     dataSet,
@@ -56,10 +61,10 @@ export const ChartAreasVisualization = ({
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
+          fields={chartConfig.fields}
           observations={observations}
         />
-        <ChartAreas
+        <ChartPie
           observations={observations}
           dimensions={dimensions}
           measures={measures}
@@ -81,7 +86,7 @@ export const ChartAreasVisualization = ({
   }
 };
 
-export const ChartAreas = memo(
+export const ChartPie = memo(
   ({
     observations,
     dimensions,
@@ -91,20 +96,18 @@ export const ChartAreas = memo(
     observations: Observation[];
     dimensions: DimensionWithMeta[];
     measures: MeasureWithMeta[];
-    fields: AreaFields;
+    fields: PieFields;
   }) => {
-    const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
-
     return (
-      <div ref={resizeRef} aria-hidden="true">
-        <Areas
+      <Chart>
+        <Pie
           data={observations}
-          width={width}
           dimensions={dimensions}
           measures={measures}
           fields={fields}
         />
-      </div>
+        <Tooltip />
+      </Chart>
     );
   }
 );

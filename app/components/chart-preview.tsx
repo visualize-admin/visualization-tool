@@ -11,6 +11,7 @@ import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
 import { Loading } from "./hint";
 import { Trans } from "@lingui/macro";
+import { ChartPieVisualization } from "./chart-pie";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -89,6 +90,14 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               )}
               {state.chartConfig.chartType === "scatterplot" && (
                 <ChartScatterplotVisualization
+                  dataSet={dataSet}
+                  dimensions={dimensions}
+                  measures={measures}
+                  chartConfig={state.chartConfig}
+                />
+              )}
+              {state.chartConfig.chartType === "pie" && (
+                <ChartPieVisualization
                   dataSet={dataSet}
                   dimensions={dimensions}
                   measures={measures}

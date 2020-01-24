@@ -64,25 +64,22 @@ export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
 // Chart Config
-export type ChartType = "bar" | "line" | "area" | "scatterplot" | "column";
-const FieldType = t.type({ componentIri: t.string });
-export type FieldType = t.TypeOf<typeof FieldType>;
+const GenericField = t.type({ componentIri: t.string });
+export type GenericField = t.TypeOf<typeof GenericField>;
 
-const AnyFields = t.record(t.string, t.union([FieldType, t.undefined]));
-type AnyFields = t.TypeOf<typeof AnyFields>;
+export type GenericFields = Record<string, GenericField | undefined>;
 
 const AreaFields = t.intersection([
   t.type({
-    x: FieldType,
-    y: FieldType
+    x: GenericField,
+    y: GenericField
   }),
   t.partial({
     segment: t.type({
       componentIri: t.string,
       palette: t.string
     })
-  }),
-  AnyFields
+  })
 ]);
 const AreaConfig = t.type(
   {
@@ -98,8 +95,8 @@ export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
 const BarFields = t.intersection([
   t.type({
-    x: FieldType,
-    y: FieldType
+    x: GenericField,
+    y: GenericField
   }),
   t.partial({
     segment: t.type({
@@ -107,8 +104,7 @@ const BarFields = t.intersection([
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
       palette: t.string
     })
-  }),
-  AnyFields
+  })
 ]);
 const BarConfig = t.type(
   {
@@ -123,8 +119,8 @@ export type BarConfig = t.TypeOf<typeof BarConfig>;
 
 const ColumnFields = t.intersection([
   t.type({
-    x: FieldType,
-    y: FieldType
+    x: GenericField,
+    y: GenericField
   }),
   t.partial({
     segment: t.type({
@@ -132,8 +128,7 @@ const ColumnFields = t.intersection([
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
       palette: t.string
     })
-  }),
-  AnyFields
+  })
 ]);
 const ColumnConfig = t.type(
   {
@@ -148,16 +143,15 @@ export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
 const LineFields = t.intersection([
   t.type({
-    x: FieldType,
-    y: FieldType
+    x: GenericField,
+    y: GenericField
   }),
   t.partial({
     segment: t.type({
       componentIri: t.string,
       palette: t.string
     })
-  }),
-  AnyFields
+  })
 ]);
 const LineConfig = t.type(
   {
@@ -172,16 +166,15 @@ export type LineConfig = t.TypeOf<typeof LineConfig>;
 
 const ScatterPlotFields = t.intersection([
   t.type({
-    x: FieldType,
-    y: FieldType
+    x: GenericField,
+    y: GenericField
   }),
   t.partial({
     segment: t.type({
       componentIri: t.string,
       palette: t.string
     })
-  }),
-  AnyFields
+  })
 ]);
 const ScatterPlotConfig = t.type(
   {
@@ -194,12 +187,31 @@ const ScatterPlotConfig = t.type(
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
+const PieFields = t.type({
+  value: GenericField,
+  segment: t.type({
+    componentIri: t.string,
+    palette: t.string
+  })
+});
+const PieConfig = t.type(
+  {
+    chartType: t.literal("pie"),
+    filters: Filters,
+    fields: PieFields
+  },
+  "PieConfig"
+);
+export type PieFields = t.TypeOf<typeof PieFields>;
+export type PieConfig = t.TypeOf<typeof PieConfig>;
+
 export type ChartFields =
   | ColumnFields
   | BarFields
   | LineFields
   | AreaFields
-  | ScatterPlotFields;
+  | ScatterPlotFields
+  | PieFields;
 
 // interface IriBrand {
 //   readonly IRI: unique symbol;
@@ -210,15 +222,24 @@ export type ChartFields =
 //   "IRI"
 // );
 
+// const ChartConfig = t.intersection([
+//   t.union([AreaConfig, BarConfig, ColumnConfig, LineConfig, ScatterPlotConfig]),
+//   t.type({
+//     fields: GenericFields
+//   })
+// ]);
 const ChartConfig = t.union([
   AreaConfig,
   BarConfig,
   ColumnConfig,
   LineConfig,
-  ScatterPlotConfig
+  ScatterPlotConfig,
+  PieConfig
 ]);
 // t.record(t.string, t.any)
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
+
+export type ChartType = ChartConfig["chartType"];
 
 const Config = t.type(
   {

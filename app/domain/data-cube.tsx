@@ -21,9 +21,8 @@ import {
   DimensionWithMeta,
   getDataTypeFromDimensionValues,
   MeasureWithMeta,
-  Observations,
   parseObservations,
-  ObservationsPreview
+  Observation
 } from "./data";
 import { locales } from "../locales/locales";
 import { SPARQL_ENDPOINT } from "./env";
@@ -288,7 +287,7 @@ export const usePreviewObservations = ({
 }: {
   dataSet: DataCube;
   selection: [string, Dimension | Measure][];
-}): RDState<ObservationsPreview> => {
+}): RDState<Observation[]> => {
   const fetchData = useCallback(async () => {
     const query = dataSet
       .query()
@@ -299,13 +298,13 @@ export const usePreviewObservations = ({
     return parseObservations(data);
   }, [dataSet, selection]);
 
-  return useRemoteData<ObservationsPreview>(
+  return useRemoteData<Observation[]>(
     ["observationsPreview", dataSet, selection],
     fetchData
   );
 };
 
-export const useObservations = <FieldsType extends ChartFields>({
+export const useObservations = ({
   dataSet,
   dimensions,
   measures,
@@ -315,9 +314,9 @@ export const useObservations = <FieldsType extends ChartFields>({
   dataSet: DataCube;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
-  fields: FieldsType;
+  fields: ChartFields;
   filters?: Filters;
-}): RDState<Observations<FieldsType>> => {
+}): RDState<Observation[]> => {
   const fetchData = useCallback(async () => {
     const componentsByIri = [...measures, ...dimensions].reduce<
       Record<string, DimensionWithMeta | MeasureWithMeta>
@@ -367,8 +366,8 @@ export const useObservations = <FieldsType extends ChartFields>({
     // TODO: Maybe explicitly specify all dimension fields? Currently not necessary because they're selected anyway.
     const selectedComponents: [string, Dimension | Measure][] = Object.entries<{
       componentIri: string;
-    }>(fields).flatMap(([key, field]) => {
-      return componentsByIri[field.componentIri] !== undefined
+    } | undefined>(fields).flatMap(([key, field]) => {
+      return field && componentsByIri[field.componentIri] !== undefined
         ? [[key, componentsByIri[field.componentIri].component]]
         : [];
     });
@@ -383,7 +382,7 @@ export const useObservations = <FieldsType extends ChartFields>({
     return parseObservations(data);
   }, [filters, dataSet, fields, measures, dimensions]);
 
-  return useRemoteData<Observations<FieldsType>>(
+  return useRemoteData<Observation[]>(
     ["observations", filters, dataSet, fields, measures, dimensions],
     fetchData
   );

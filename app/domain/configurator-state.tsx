@@ -15,13 +15,13 @@ import {
   FilterValue,
   FilterValueMulti,
   ChartConfig,
-  FieldType,
   ChartType,
   ConfiguratorStateSelectingDataSet,
-  decodeConfiguratorState
+  decodeConfiguratorState,
+  GenericFields
 } from "./config-types";
 import { DataSetMetadata } from "./data-cube";
-import { getInitialFields } from "./charts";
+import { getInitialConfig, getFieldComponentIris } from "./charts";
 import { useLocale } from "../lib/use-locale";
 
 export type ConfiguratorStateAction =
@@ -68,7 +68,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_DESCRIPTION_CHANGED";
-      value: { path: string | string[]; value: $FixMe };
+      value: { path: string | string[]; value: string };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
@@ -139,9 +139,7 @@ const deriveFiltersFromFields = (
   // 3b. if there's a mis-match, then we try to convert multi -> single and single -> multi
   const { fields, filters } = chartConfig;
 
-  const fieldDimensionIris = new Set(
-    Object.values<FieldType>(fields).map(({ componentIri }) => componentIri)
-  );
+  const fieldDimensionIris = getFieldComponentIris(fields);
 
   const isField = (iri: string) => fieldDimensionIris.has(iri);
 
@@ -186,15 +184,11 @@ const transitionStepNext = (
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (draft.dataSet) {
-        const chartConfig: ChartConfig = {
+        const chartConfig = getInitialConfig({
           chartType: "column",
-          fields: getInitialFields({
-            chartType: "column",
-            dimensions: dataSetMetadata.dimensions,
-            measures: dataSetMetadata.measures
-          }),
-          filters: {}
-        };
+          dimensions: dataSetMetadata.dimensions,
+          measures: dataSetMetadata.measures
+        });
 
         deriveFiltersFromFields(chartConfig, dataSetMetadata);
 
@@ -341,15 +335,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         // setWith(draft, action.value.path, action.value.value, Object);
         const { chartType, dataSetMetadata } = action.value;
 
-        draft.chartConfig = {
+        draft.chartConfig = getInitialConfig({
           chartType,
-          fields: getInitialFields({
-            chartType,
-            dimensions: dataSetMetadata.dimensions,
-            measures: dataSetMetadata.measures
-          }),
-          filters: {}
-        };
+          dimensions: dataSetMetadata.dimensions,
+          measures: dataSetMetadata.measures
+        });
         draft.activeField = undefined;
 
         deriveFiltersFromFields(draft.chartConfig, dataSetMetadata);
@@ -366,10 +356,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_FIELD_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
-        const f = draft.chartConfig.fields[action.value.field];
+        const f = (draft.chartConfig.fields as GenericFields)[
+          action.value.field
+        ];
         if (!f) {
           if (action.value.field === "segment") {
-            draft.chartConfig.fields[action.value.field] = {
+            draft.chartConfig.fields.segment = {
               componentIri: action.value.componentIri,
               palette: "category10",
               type: "stacked"
@@ -388,7 +380,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_FIELD_DELETED":
       if (draft.state === "CONFIGURING_CHART") {
-        delete draft.chartConfig.fields[action.value.field];
+        delete (draft.chartConfig.fields as GenericFields)[action.value.field];
 
         deriveFiltersFromFields(
           draft.chartConfig,

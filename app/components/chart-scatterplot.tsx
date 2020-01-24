@@ -1,11 +1,15 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { memo, useMemo } from "react";
-import { ScatterPlotFields, useObservations } from "../domain";
+import {
+  ScatterPlotFields,
+  useObservations,
+  getFieldComponentIris
+} from "../domain";
 import { ScatterPlotConfig } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
-  Observations
+  Observation
 } from "../domain/data";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { A11yTable } from "./a11y-table";
@@ -28,11 +32,7 @@ export const ChartScatterplotVisualization = ({
   // TODO: Improve/optimize/generalize this
   const allFields = useMemo(() => {
     // debugger;
-    const fieldIris = new Set(
-      Object.values<{ componentIri: string }>(chartConfig.fields).map(
-        d => d.componentIri
-      )
-    );
+    const fieldIris = getFieldComponentIris(chartConfig.fields);
     const restDimensions = dimensions.reduce<{
       [k: string]: { componentIri: string };
     }>((acc, d, i) => {
@@ -91,7 +91,7 @@ export const ChartScatterplot = memo(
     measures,
     fields
   }: {
-    observations: Observations<ScatterPlotFields>;
+    observations: Observation[];
     dimensions: DimensionWithMeta[];
     measures: MeasureWithMeta[];
     fields: ScatterPlotFields;
