@@ -4,7 +4,7 @@ import { LineFields } from "../../domain";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
-  Observations,
+  Observation,
   getDimensionLabel
 } from "../../domain/data";
 import { useVegaView } from "../../lib/use-vega";
@@ -12,7 +12,7 @@ import { legendTheme, useChartTheme } from "./chart-styles";
 import { useTheme } from "../../themes";
 
 interface Props {
-  data: Observations<LineFields>;
+  data: Observation[];
   width: number;
   dimensions: DimensionWithMeta[];
   measures: MeasureWithMeta[];
@@ -24,9 +24,15 @@ export const Lines = ({ data, width, dimensions, measures, fields }: Props) => {
   const theme = useTheme();
 
   const fieldValues = new Set([fields.x.componentIri]);
-  const unmappedFields: [string, DimensionWithMeta][] = Object.entries<{
-    componentIri: string;
-  }>(fields).flatMap(([key, fieldValue]) => {
+  const unmappedFields: [string, DimensionWithMeta][] = Object.entries<
+    | {
+        componentIri: string;
+      }
+    | undefined
+  >(fields).flatMap(([key, fieldValue]) => {
+    if (!fieldValue) {
+      return [];
+    }
     const mbDim = dimensions.find(
       d => d.component.iri.value === fieldValue.componentIri
     );

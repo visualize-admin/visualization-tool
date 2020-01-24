@@ -1,11 +1,11 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { memo, useMemo } from "react";
-import { useObservations } from "../domain";
+import { useObservations, getFieldComponentIris } from "../domain";
 import { ColumnConfig, ColumnFields } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
-  Observations
+  Observation
 } from "../domain/data";
 import { useResizeObserver } from "../lib/use-resize-observer";
 import { A11yTable } from "./a11y-table";
@@ -27,11 +27,7 @@ export const ChartColumnsVisualization = ({
   // TODO: Improve/optimize/generalize this
   const allFields = useMemo(() => {
     // debugger;
-    const fieldIris = new Set(
-      Object.values<{ componentIri: string }>(chartConfig.fields).map(
-        d => d.componentIri
-      )
-    );
+    const fieldIris = getFieldComponentIris(chartConfig.fields);
     const restDimensions = dimensions.reduce<{
       [k: string]: { componentIri: string };
     }>((acc, d, i) => {
@@ -43,7 +39,7 @@ export const ChartColumnsVisualization = ({
     return { ...restDimensions, ...chartConfig.fields };
   }, [chartConfig.fields, dimensions]);
 
-  const { data: observations } = useObservations<ColumnFields>({
+  const { data: observations } = useObservations({
     dataSet,
     dimensions,
     measures,
@@ -90,7 +86,7 @@ export const ChartColumns = memo(
     measures,
     fields
   }: {
-    observations: Observations<ColumnFields>;
+    observations: Observation[];
     dimensions: DimensionWithMeta[];
     measures: MeasureWithMeta[];
     fields: ColumnFields;

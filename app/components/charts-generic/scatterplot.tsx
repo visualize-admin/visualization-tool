@@ -4,7 +4,7 @@ import { ScatterPlotFields } from "../../domain";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
-  Observations,
+  Observation,
   getDimensionLabel
 } from "../../domain/data";
 import { useVegaView } from "../../lib/use-vega";
@@ -12,7 +12,7 @@ import { legendTheme, useChartTheme } from "./chart-styles";
 import { useTheme } from "../../themes";
 
 interface Props {
-  data: Observations<ScatterPlotFields>;
+  data: Observation[];
   width: number;
   fields: ScatterPlotFields;
   dimensions: DimensionWithMeta[];
@@ -327,7 +327,7 @@ export const Scatterplot = ({
   return <ScatterplotChart spec={spec} />;
 };
 
-const ScatterplotChart = ({ spec }: { spec: any }) => {
+const ScatterplotChart = ({ spec }: { spec: $FixMe }) => {
   const [ref] = useVegaView({ spec });
   return <div ref={ref} />;
 };

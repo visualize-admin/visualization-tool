@@ -2,7 +2,7 @@ import { DataCube } from "@zazuko/query-rdf-data-cube";
 import { ascending, descending } from "d3-array";
 import React, { useState, memo, useMemo } from "react";
 import {
-  Observations,
+  Observation,
   DimensionWithMeta,
   MeasureWithMeta,
   ChartFields
@@ -22,7 +22,7 @@ export const A11yTable = memo(
     dimensions: DimensionWithMeta[];
     measures: MeasureWithMeta[];
     fields: ChartFields;
-    observations: Observations<ChartFields>;
+    observations: Observation[];
   }) => {
     const [sortingField, setSortingField] = useState();
     const [direction, setDirection] = useState();
@@ -45,11 +45,11 @@ export const A11yTable = memo(
     };
     const fieldsWithLabel: ChartFieldsWithLabel = useMemo(
       () =>
-        Object.entries(fields).reduce(
+        Object.entries<{ componentIri: string }>(fields).reduce(
           (obj, [key, value]) => ({
             ...obj,
             [key]: [...dimensions, ...measures].find(
-              c => c.component.iri.value === value?.componentIri
+              c => c.component.iri.value === value.componentIri
             )?.component.label.value
           }),
           {}

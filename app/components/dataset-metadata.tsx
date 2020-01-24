@@ -12,7 +12,6 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   const { data } = useDataSetAndMetadata(dataSetIri);
 
   if (data) {
-    console.log({ data });
     const { extraMetadata } = data.dataSet;
 
     const creationDate = extraMetadata.get("dateCreated")?.value;

@@ -1,6 +1,5 @@
 import { Attribute, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import { Literal, NamedNode } from "rdf-js";
-import { ChartFields } from "./config-types";
 
 export interface DimensionWithMeta {
   component: Dimension;
@@ -32,21 +31,11 @@ export type RawObservationValue = {
   label?: Literal;
 };
 
-export type RawObservations<T extends ChartFields> = Record<
-  keyof T | string,
-  RawObservationValue
->[];
+export type RawObservation = Record<string, RawObservationValue>;
 
 export type ObservationValue = string | number | boolean | Date;
 
-export type Observation<T extends ChartFields> = Record<
-  string,
-  ObservationValue
->;
-export type ObservationPreview = Record<string, ObservationValue>;
-
-export type Observations<T extends ChartFields> = Observation<T>[];
-export type ObservationsPreview = ObservationPreview[];
+export type Observation = Record<string, ObservationValue>;
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 const parseRDFLiteral = (value: Literal): ObservationValue => {
@@ -109,11 +98,11 @@ const parseObservationValue = ({
   return value.value;
 };
 
-export const parseObservations = <T extends ChartFields>(
-  observations: RawObservations<T>
-) =>
+export const parseObservations = (
+  observations: RawObservation[]
+): Observation[] =>
   observations.map(d => {
-    let parsedOperation: Observation<T> = {};
+    let parsedOperation: Observation = {};
     for (const [k, v] of Object.entries(d)) {
       parsedOperation[k] = parseObservationValue(v);
     }
