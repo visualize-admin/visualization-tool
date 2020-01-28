@@ -117,7 +117,7 @@ export const isTimeDimension = ({ component }: DimensionWithMeta) => {
   }
 
   // FIXME: Remove this once we're sure that scaleOfMeasure always works
-  return ["Jahr", "Année", "Anno", "Year"].includes(component.label.value);
+  return /(Jahr|Année|Anno|Year|Zeit|Time|Temps|Tempo)/i.test(component.label.value);
 };
 
 export const getDataTypeFromDimensionValues = ({
