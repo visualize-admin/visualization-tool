@@ -355,9 +355,13 @@ export const useObservations = ({
             return dataType ? literal(value, dataType) : value;
           };
 
-          return selectedValues.length === 1
-            ? [dimension.component.equals(toTypedValue(selectedValues[0]))]
-            : selectedValues.length > 0
+          // FIXME: why doesn't .equals work for date types but .in does?
+          // Temporary solution: filter everything usin .in!
+          // return selectedValues.length === 1
+          //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
+          //   : 
+          
+          return selectedValues.length > 0
             ? [dimension.component.in(selectedValues.map(toTypedValue))]
             : [];
         })
