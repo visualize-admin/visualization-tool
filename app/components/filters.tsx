@@ -1,20 +1,18 @@
-import React, { useCallback, useState } from "react";
+import { Trans } from "@lingui/macro";
+import { Button, Box } from "@theme-ui/components";
+import React, { useCallback, useMemo } from "react";
 import {
+  getFilterValue,
+  useConfiguratorState
+} from "../domain/configurator-state";
+import {
+  DimensionWithMeta,
   getComponentIri,
-  isTimeDimension,
-  DimensionWithMeta
+  isTimeDimension
 } from "../domain/data";
 import { MultiFilterField, SingleFilterField } from "./field";
-import {
-  useConfiguratorState,
-  getFilterValue
-} from "../domain/configurator-state";
-import { Literal, NamedNode } from "rdf-js";
-import { Text, Button } from "@theme-ui/components";
-import { Trans } from "@lingui/macro";
-import { FilterValueMultiValues } from "../domain";
-import { Checkbox } from "./form";
-import { filter } from "fp-ts/lib/Option";
+
+type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 
 export const DimensionValuesMultiFilter = ({
   dimension
@@ -24,55 +22,80 @@ export const DimensionValuesMultiFilter = ({
   const dimensionIri = getComponentIri(dimension);
   const [state, dispatch] = useConfiguratorState();
 
-  const filterValues = getFilterValue(state, dimension.component.iri.value);
-
-  const initialAllSelected =
-    !filterValues ||
-    filterValues.type !== "multi" ||
-    Object.keys(filterValues.values).length === 0;
-
-  const [allSelected, setAllSelected] = useState<boolean>(initialAllSelected);
-
-  const toggle = useCallback(
-    (
-      dimensionIri: string,
-      dimVal: {
-        label: Literal;
-        value: NamedNode | Literal;
-      }[]
-    ) => {
-      if (allSelected) {
-        setAllSelected(false);
-      } else {
-        setAllSelected(true);
-        dispatch({
-          type: "CHART_CONFIG_FILTER_RESET_MULTI",
-          value: {
-            dimensionIri
-          }
-        });
+  const selectAll = useCallback(() => {
+    dispatch({
+      type: "CHART_CONFIG_FILTER_RESET_MULTI",
+      value: {
+        dimensionIri
       }
-    },
-    [dispatch, allSelected]
+    });
+  }, [dispatch, dimensionIri]);
+
+  const selectNone = useCallback(() => {
+    dispatch({
+      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI",
+      value: { dimensionIri }
+    });
+  }, [dispatch, dimensionIri]);
+
+  const isTime = isTimeDimension(dimension);
+
+  const allValuesAndLabels = useMemo(
+    () =>
+      dimension.values
+        .map(dv => ({
+          value: dv.value.value,
+          label: isTime ? dv.value.value : dv.label.value
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [dimension.values, isTime]
   );
+
+  const allValues = useMemo(() => allValuesAndLabels.map(dv => dv.value), [
+    allValuesAndLabels
+  ]);
+
+  const activeFilter = getFilterValue(state, dimension.component.iri.value);
+
+  const selectionState: SelectionState = !activeFilter
+    ? "ALL_SELECTED"
+    : activeFilter.type === "multi" &&
+      Object.keys(activeFilter.values).length === 0
+    ? "NONE_SELECTED"
+    : "SOME_SELECTED";
 
   return (
     <>
-      <Checkbox
-        label={<Trans id="controls.filter.select.all">Select all</Trans>}
-        onChange={() => toggle(dimensionIri, dimension.values)}
-        checked={allSelected}
-      />
+      <Box color="monochrome500">
+        <Button
+          onClick={selectAll}
+          variant="linkButton"
+          sx={{ mr: 2 }}
+          disabled={selectionState === "ALL_SELECTED"}
+        >
+          <Trans id="controls.filter.select.all">Select all</Trans>
+        </Button>
+        ·
+        <Button
+          onClick={selectNone}
+          variant="linkButton"
+          sx={{ ml: 2 }}
+          disabled={selectionState === "NONE_SELECTED"}
+        >
+          <Trans id="controls.filter.select.none">Select none</Trans>
+        </Button>
+      </Box>
 
-      {dimension.values.map(dv => {
+      {allValuesAndLabels.map(dv => {
         return (
           <MultiFilterField
-            key={dv.value.value}
+            key={dv.value}
             dimensionIri={dimensionIri}
-            label={isTimeDimension(dimension) ? dv.value.value : dv.label.value}
-            value={dv.value.value}
-            allSelected={allSelected}
-            disabled={allSelected}
+            label={dv.label}
+            value={dv.value}
+            allValues={allValues}
+            checked={selectionState === "ALL_SELECTED" ? true : undefined}
+            checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
           />
         );
       })}

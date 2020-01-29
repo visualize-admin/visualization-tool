@@ -13,16 +13,17 @@ import {
   ConfiguratorState,
   ConfiguratorStatePublishing,
   FilterValue,
-  FilterValueMulti,
   ChartConfig,
   ChartType,
   ConfiguratorStateSelectingDataSet,
   decodeConfiguratorState,
-  GenericFields
+  GenericFields,
+  FilterValueMultiValues
 } from "./config-types";
 import { DataSetMetadata } from "./data-cube";
 import { getInitialConfig, getFieldComponentIris } from "./charts";
 import { useLocale } from "../lib/use-locale";
+import { unreachableError } from "../lib/unreachable";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -76,10 +77,22 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_MULTI";
-      value: { dimensionIri: string; values: FilterValueMulti["values"] };
+      value: { dimensionIri: string; value: string; allValues: string[] };
+    }
+  | {
+      type: "CHART_CONFIG_FILTER_ADD_MULTI";
+      value: { dimensionIri: string; value: string; allValues: string[] };
+    }
+  | {
+      type: "CHART_CONFIG_FILTER_REMOVE_MULTI";
+      value: { dimensionIri: string; value: string; allValues: string[] };
     }
   | {
       type: "CHART_CONFIG_FILTER_RESET_MULTI";
+      value: { dimensionIri: string };
+    }
+  | {
+      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI";
       value: { dimensionIri: string };
     }
   | { type: "PUBLISH_FAILED" }
@@ -150,7 +163,8 @@ const deriveFiltersFromFields = (
         isField(dimension.component.iri.value) &&
         filters[dimension.component.iri.value].type === "single"
       ) {
-        filters[dimension.component.iri.value] = { type: "multi", values: {} };
+        // Remove filter
+        delete filters[dimension.component.iri.value];
       } else if (
         !isField(dimension.component.iri.value) &&
         filters[dimension.component.iri.value].type === "multi"
@@ -161,16 +175,13 @@ const deriveFiltersFromFields = (
         };
       }
     } else {
-      // Add filter for this dim
-      if (isField(dimension.component.iri.value)) {
-        filters[dimension.component.iri.value] = { type: "multi", values: {} };
-      } else {
+      // Add filter for this dim if it's not one of the selected multi filter fields
+      if (!isField(dimension.component.iri.value)) {
         filters[dimension.component.iri.value] = {
           type: "single",
           value: dimension.values[0].value.value
         };
       }
-      // Check
     }
   });
 
@@ -219,11 +230,11 @@ const transitionStepNext = (
         activeField: undefined,
         state: "PUBLISHING"
       };
-    //    case "PUBLISHING":
-    // NO next step?
-    default:
-      console.warn("Unhandled STEP_NEXT from", draft.state);
+    case "INITIAL":
+    case "PUBLISHING":
       break;
+    default:
+      throw unreachableError(draft);
   }
   return draft;
 };
@@ -415,11 +426,52 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_SET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, values } = action.value;
+        const { dimensionIri, value } = action.value;
+        draft.chartConfig.filters[dimensionIri] = {
+          type: "multi",
+          values: { [value]: true }
+        };
+      }
+      return draft;
+
+    case "CHART_CONFIG_FILTER_ADD_MULTI":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri, value, allValues } = action.value;
         const f = draft.chartConfig.filters[dimensionIri];
         if (f && f.type === "multi") {
-          f.values = { ...f.values, ...values };
+          f.values = { ...f.values, [value]: true };
+          // If all values are selected, we remove the filter again!
+          if (allValues.every(v => v in f.values)) {
+            delete draft.chartConfig.filters[dimensionIri];
+          }
         } else {
+          draft.chartConfig.filters[dimensionIri] = {
+            type: "multi",
+            values: { [value]: true }
+          };
+        }
+      }
+      return draft;
+
+    case "CHART_CONFIG_FILTER_REMOVE_MULTI":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri, value, allValues } = action.value;
+        const f = draft.chartConfig.filters[dimensionIri];
+
+        if (f && f.type === "multi" && Object.keys(f.values).length > 0) {
+          // If there are existing object keys, we just remove the current one
+          delete f.values[value];
+        } else {
+          // Otherwise we set the filters to all values minus the current one
+          const values = allValues.reduce<FilterValueMultiValues>(
+            (_values, v) => {
+              if (v !== value) {
+                _values[v] = true;
+              }
+              return _values;
+            },
+            {}
+          );
           draft.chartConfig.filters[dimensionIri] = {
             type: "multi",
             values
@@ -429,6 +481,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTER_RESET_MULTI":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri } = action.value;
+        delete draft.chartConfig.filters[dimensionIri];
+      }
+      return draft;
+
+    case "CHART_CONFIG_FILTER_SET_NONE_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri } = action.value;
         draft.chartConfig.filters[dimensionIri] = {
@@ -452,8 +511,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    default:
+    case "PUBLISHED":
       return draft;
+
+    default:
+      throw unreachableError(action);
   }
 };
 

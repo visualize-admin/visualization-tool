@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useCallback, ChangeEvent } from "react";
 import {
   useChartTypeSelectorField,
   Option,
-  useMultiFilterField,
   useMetaField,
   useSingleFilterField,
   useChartFieldField,
@@ -158,25 +157,68 @@ export const MultiFilterField = ({
   label,
   value,
   disabled,
-  allSelected
+  allValues,
+  checked,
+  onChange,
+  checkAction
 }: {
   dimensionIri: string;
   label: string;
   value: string;
+  allValues: string[];
   disabled?: boolean;
-  allSelected?: boolean;
+  checked?: boolean;
+  onChange?: () => void;
+  checkAction: "ADD" | "SET";
 }) => {
-  const field = useMultiFilterField({
-    dimensionIri,
-    value
-  });
+  const [state, dispatch] = useConfiguratorState();
+
+  const onFieldChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    e => {
+      if (e.currentTarget.checked) {
+        dispatch({
+          type:
+            checkAction === "ADD"
+              ? "CHART_CONFIG_FILTER_ADD_MULTI"
+              : "CHART_CONFIG_FILTER_SET_MULTI",
+          value: {
+            dimensionIri,
+            value,
+            allValues
+          }
+        });
+      } else {
+        dispatch({
+          type: "CHART_CONFIG_FILTER_REMOVE_MULTI",
+          value: {
+            dimensionIri,
+            value,
+            allValues
+          }
+        });
+      }
+      // Call onChange prop
+      onChange?.();
+    },
+    [dispatch, dimensionIri, allValues, value, onChange, checkAction]
+  );
+
+  if (state.state !== "CONFIGURING_CHART") {
+    return null;
+  }
+
+  const filter = state.chartConfig.filters[dimensionIri];
+  const fieldChecked =
+    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 
   return (
     <Checkbox
+      name={dimensionIri}
+      value={value}
       label={label}
       disabled={disabled}
-      {...field}
-      checked={allSelected ? true : field.checked}
+      onChange={onFieldChange}
+      checked={checked ?? fieldChecked}
     ></Checkbox>
   );
 };
