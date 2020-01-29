@@ -143,10 +143,6 @@ export const Examples = ({
                 }
               },
               filters: {
-                "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/0": {
-                  type: "multi",
-                  values: {}
-                },
                 "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1": {
                   type: "multi",
                   values: {
