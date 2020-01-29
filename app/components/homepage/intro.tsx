@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Text, Flex } from "@theme-ui/components";
-import { HintBlue } from "../hint";
+import { HintBlue, HintRed } from "../hint";
 import { LocalizedLink } from "../links";
 
 export const Intro = ({
@@ -16,8 +16,8 @@ export const Intro = ({
 }) => {
   return (
     <Box sx={{ maxWidth: 1024 }} m="0 auto">
-      <Box px={4} pt={5}>
-        <HintBlue iconName="info">{hint}</HintBlue>
+      <Box mx={4} my={6}>
+        <HintRed iconName="warning">{hint}</HintRed>
       </Box>
       <Box
         mx={4}

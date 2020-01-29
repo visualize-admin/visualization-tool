@@ -122,3 +122,22 @@ export const HintBlue = ({
     </Text>
   </Flex>
 );
+export const HintRed = ({
+  iconName,
+  children
+}: {
+  iconName: IconName;
+  children: React.ReactNode;
+}) => (
+  <Flex
+    variant="alert"
+    sx={{ justifyContent: "flex-start", alignItems: ["flex-start", "center"] }}
+  >
+    <Box sx={{ width: 24 }} pr={4}>
+      <Icon name={iconName} size={24} />
+    </Box>
+    <Text variant="paragraph1" ml={4} sx={{ textAlign: "left" }}>
+      {children}
+    </Text>
+  </Flex>
+);

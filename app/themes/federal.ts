@@ -76,7 +76,10 @@ export const theme: Theme = {
     focus: "#333333",
     error: "#FF5555",
     hint: "#757575",
-    missing: "#EFEFEF"
+    missing: "#EFEFEF",
+
+    alert: "#DC0018",
+    alertLight: "#ffe6e1"
   },
   fonts: {
     body:
@@ -747,6 +750,14 @@ export const theme: Theme = {
       p: 4,
       color: "primary",
       bg: "primaryLight",
+      height: "auto"
+    },
+    alert: {
+      variant: "variants.hint",
+      width: "auto",
+      p: 5,
+      color: "alert",
+      bg: "alertLight",
       height: "auto"
     },
     palette: {
