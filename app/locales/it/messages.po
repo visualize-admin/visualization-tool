@@ -25,11 +25,11 @@ msgstr ""
 msgid "accessibility.table.sorting.descending"
 msgstr ""
 
-#: app/components/chart-preview.tsx:36
+#: app/components/chart-preview.tsx:37
 msgid "annotation.add.description"
 msgstr ""
 
-#: app/components/chart-preview.tsx:30
+#: app/components/chart-preview.tsx:31
 msgid "annotation.add.title"
 msgstr ""
 
@@ -118,8 +118,12 @@ msgstr ""
 #~ msgid "controls.filter.reset"
 #~ msgstr ""
 
-#: app/components/filters.tsx:30
+#: app/components/filters.tsx:44
 msgid "controls.filter.select.all"
+msgstr ""
+
+#: app/components/filters.tsx:48
+msgid "controls.filter.select.none"
 msgstr ""
 
 #: app/components/empty-right-panel.tsx:10
@@ -158,7 +162,7 @@ msgstr ""
 msgid "controls.partition.add"
 msgstr ""
 
-#: app/components/chart-configurator.tsx:20
+#: app/components/chart-configurator.tsx:21
 msgid "controls.section.data"
 msgstr ""
 
@@ -166,12 +170,12 @@ msgstr ""
 msgid "controls.section.description"
 msgstr ""
 
-#: app/components/chart-configurator.tsx:15
+#: app/components/chart-configurator.tsx:16
 msgid "controls.section.design"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:71
-#: app/components/chart-options-selector.tsx:75
+#: app/components/chart-options-selector.tsx:72
+#: app/components/chart-options-selector.tsx:76
 msgid "controls.section.filter"
 msgstr ""
 
@@ -184,7 +188,7 @@ msgstr ""
 msgid "controls.select.chart.type"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:124
+#: app/components/chart-options-selector.tsx:125
 msgid "controls.select.column.chart.type"
 msgstr ""
 
@@ -192,11 +196,11 @@ msgstr ""
 msgid "controls.select.dataset"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:61
+#: app/components/chart-options-selector.tsx:62
 msgid "controls.select.dimension"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:93
+#: app/components/chart-options-selector.tsx:94
 msgid "controls.select.measure"
 msgstr ""
 
@@ -208,15 +212,15 @@ msgstr ""
 msgid "copied!"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:32
+#: app/components/dataset-metadata.tsx:31
 msgid "dataset.metadata.date.created"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:25
+#: app/components/dataset-metadata.tsx:24
 msgid "dataset.metadata.source"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:19
+#: app/components/dataset-metadata.tsx:18
 msgid "dataset.metadata.title"
 msgstr ""
 

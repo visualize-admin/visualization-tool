@@ -25,11 +25,11 @@ msgstr "ascending"
 msgid "accessibility.table.sorting.descending"
 msgstr "descending"
 
-#: app/components/chart-preview.tsx:36
+#: app/components/chart-preview.tsx:37
 msgid "annotation.add.description"
 msgstr "[You can add a description here]"
 
-#: app/components/chart-preview.tsx:30
+#: app/components/chart-preview.tsx:31
 msgid "annotation.add.title"
 msgstr "[You can add a title here]"
 
@@ -118,9 +118,13 @@ msgstr "Description"
 #~ msgid "controls.filter.reset"
 #~ msgstr "Reset"
 
-#: app/components/filters.tsx:30
+#: app/components/filters.tsx:44
 msgid "controls.filter.select.all"
 msgstr "Select all"
+
+#: app/components/filters.tsx:48
+msgid "controls.filter.select.none"
+msgstr "Select none"
 
 #: app/components/empty-right-panel.tsx:10
 msgid "controls.hint.configuring.chart"
@@ -158,7 +162,7 @@ msgstr "Partition"
 msgid "controls.partition.add"
 msgstr "Add ..."
 
-#: app/components/chart-configurator.tsx:20
+#: app/components/chart-configurator.tsx:21
 msgid "controls.section.data"
 msgstr "Data"
 
@@ -166,12 +170,12 @@ msgstr "Data"
 msgid "controls.section.description"
 msgstr "Description"
 
-#: app/components/chart-configurator.tsx:15
+#: app/components/chart-configurator.tsx:16
 msgid "controls.section.design"
 msgstr "Design"
 
-#: app/components/chart-options-selector.tsx:71
-#: app/components/chart-options-selector.tsx:75
+#: app/components/chart-options-selector.tsx:72
+#: app/components/chart-options-selector.tsx:76
 msgid "controls.section.filter"
 msgstr "Filter"
 
@@ -184,7 +188,7 @@ msgstr "Filter"
 msgid "controls.select.chart.type"
 msgstr "Chart Type"
 
-#: app/components/chart-options-selector.tsx:124
+#: app/components/chart-options-selector.tsx:125
 msgid "controls.select.column.chart.type"
 msgstr "Chart Type"
 
@@ -192,11 +196,11 @@ msgstr "Chart Type"
 msgid "controls.select.dataset"
 msgstr "Select Dataset"
 
-#: app/components/chart-options-selector.tsx:61
+#: app/components/chart-options-selector.tsx:62
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
 
-#: app/components/chart-options-selector.tsx:93
+#: app/components/chart-options-selector.tsx:94
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
@@ -208,15 +212,15 @@ msgstr "Title"
 msgid "copied!"
 msgstr "copied!"
 
-#: app/components/dataset-metadata.tsx:32
+#: app/components/dataset-metadata.tsx:31
 msgid "dataset.metadata.date.created"
 msgstr "Date Created"
 
-#: app/components/dataset-metadata.tsx:25
+#: app/components/dataset-metadata.tsx:24
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/components/dataset-metadata.tsx:19
+#: app/components/dataset-metadata.tsx:18
 msgid "dataset.metadata.title"
 msgstr "Title"
 
