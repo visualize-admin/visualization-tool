@@ -8,10 +8,7 @@ import {
   getTimeDimensions
 } from "./data";
 import { DataSetMetadata } from "./data-cube";
-
-const unreachableError = (x: never): Error => {
-  return new Error(`This should be unreachable! but got ${x}`);
-};
+import { unreachableError } from "../lib/unreachable";
 
 export const getInitialConfig = ({
   chartType,

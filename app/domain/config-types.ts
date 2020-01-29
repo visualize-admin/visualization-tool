@@ -6,7 +6,7 @@ import { fold } from "fp-ts/lib/Either";
 const FilterValueMulti = t.type(
   {
     type: t.literal("multi"),
-    values: t.record(t.string, t.union([t.literal(true), t.undefined])) // undefined values will be removed when serializing to JSON
+    values: t.record(t.string, t.literal(true)) // undefined values will be removed when serializing to JSON
   },
   "FilterValueMulti"
 );

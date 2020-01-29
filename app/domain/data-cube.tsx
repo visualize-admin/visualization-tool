@@ -338,9 +338,12 @@ export const useObservations = ({
             filter.type === "single"
               ? [filter.value]
               : filter.type === "multi"
-              ? Object.entries(filter.values).flatMap(([value, selected]) =>
-                  selected ? [value] : []
-                )
+              ? // If values is an empty object, we filter by something that doesn't exist
+                Object.keys(filter.values).length > 0
+                ? Object.entries(filter.values).flatMap(([value, selected]) =>
+                    selected ? [value] : []
+                  )
+                : ["EMPTY_VALUE"]
               : [];
 
           const dimension = dimensionsByIri[dimIri];
@@ -359,8 +362,8 @@ export const useObservations = ({
           // Temporary solution: filter everything usin .in!
           // return selectedValues.length === 1
           //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
-          //   : 
-          
+          //   :
+
           return selectedValues.length > 0
             ? [dimension.component.in(selectedValues.map(toTypedValue))]
             : [];
@@ -368,9 +371,12 @@ export const useObservations = ({
       : [];
 
     // TODO: Maybe explicitly specify all dimension fields? Currently not necessary because they're selected anyway.
-    const selectedComponents: [string, Dimension | Measure][] = Object.entries<{
-      componentIri: string;
-    } | undefined>(fields).flatMap(([key, field]) => {
+    const selectedComponents: [string, Dimension | Measure][] = Object.entries<
+      | {
+          componentIri: string;
+        }
+      | undefined
+    >(fields).flatMap(([key, field]) => {
       return field && componentsByIri[field.componentIri] !== undefined
         ? [[key, componentsByIri[field.componentIri].component]]
         : [];

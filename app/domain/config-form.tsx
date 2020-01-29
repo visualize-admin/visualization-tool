@@ -74,45 +74,6 @@ export const useMetaField = ({
   };
 };
 
-export const useMultiFilterField = ({
-  dimensionIri,
-  value
-}: {
-  dimensionIri: string;
-  value: string;
-}): FieldProps => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    e => {
-      dispatch({
-        type: "CHART_CONFIG_FILTER_SET_MULTI",
-        value: {
-          dimensionIri,
-          values: { [value]: e.currentTarget.checked ? true : undefined }
-        }
-      });
-    },
-    [dispatch, dimensionIri, value]
-  );
-
-  const checked =
-    state.state === "CONFIGURING_CHART"
-      ? get(
-          state.chartConfig,
-          ["filters", dimensionIri, "values", value],
-          false
-        )
-      : false;
-
-  return {
-    name: dimensionIri,
-    value,
-    checked,
-    onChange
-  };
-};
-
 export const useSingleFilterField = ({
   dimensionIri,
   value

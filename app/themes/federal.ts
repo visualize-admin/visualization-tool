@@ -469,14 +469,21 @@ export const theme: Theme = {
     },
     linkButton: {
       background: "transparent",
-      color: "monochrome700",
+      color: "primary",
+      fontFamily: "body",
+      lineHeight: [1, 2, 2],
+      fontWeight: "regular",
+      fontSize: [3, 3, 3],
       border: "none",
       cursor: "pointer",
       mb: 4,
       p: 0,
+      ":hover": {
+        color: "primaryHover"
+      },
       ":disabled": {
         cursor: "initial",
-        color: "monochrome300"
+        color: "monochrome500"
       }
     },
     downloadButton: {
@@ -493,7 +500,7 @@ export const theme: Theme = {
       p: 0,
       ":disabled": {
         cursor: "initial",
-        color: "monochrome300"
+        color: "monochrome500"
       }
     }
   },
@@ -945,11 +952,11 @@ export const theme: Theme = {
  * Load these fonts early using <link rel="preload" />
  * Use WOFF2 fonts if possible!
  */
-export const preloadFonts=[
+export const preloadFonts = [
   "/static/fonts/FrutigerNeueW02-Bd.woff2",
   "/static/fonts/FrutigerNeueW02-Regular.woff2",
-  "/static/fonts/FrutigerNeueW02-Light.woff2",
-]
+  "/static/fonts/FrutigerNeueW02-Light.woff2"
+];
 
 /**
  * Global styles to load font files or similar things
