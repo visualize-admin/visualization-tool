@@ -5,5 +5,12 @@
     "javascriptreact",
     { "language": "typescript", "autoFix": true },
     { "language": "typescriptreact", "autoFix": true }
-  ]
+  ],
+  "files.exclude": {
+    "**/.next": true
+  },
+  "search.exclude": {
+    "**/.yarn": true,
+    "yarn.lock": true
+  }
 }
