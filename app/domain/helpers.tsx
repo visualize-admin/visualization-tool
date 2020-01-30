@@ -5,7 +5,8 @@ import { IconName } from "../icons";
 // FIXME: We should cover more time format
 export const parseDate = (year: number): Date => new Date(year, 0, 1);
 
-export const isNumber = (x: $IntentionalAny): boolean => typeof x === "number";
+export const isNumber = (x: $IntentionalAny): boolean =>
+  typeof x === "number" && !isNaN(x);
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
 export const getIconName = (name: string): IconName => {
