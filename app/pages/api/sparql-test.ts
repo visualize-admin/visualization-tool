@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { DataCubeEntryPoint } from "@zazuko/query-rdf-data-cube";
+import { DataCubeEntryPoint, DataCube } from "@zazuko/query-rdf-data-cube";
 import { SPARQL_ENDPOINT } from "../../domain/env";
 import { locales } from "../../locales/locales";
 
@@ -50,6 +50,14 @@ const entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
   ]
 });
 
+const mkTimeout = async (ms = 0) => {
+  return new Promise<DataCube[]>((resolve, reject) => {
+    let id = setTimeout(() => {
+      clearTimeout(id);
+      reject(new Error("Timed out in " + ms + "ms."));
+    }, ms);
+  });
+};
 
 /**
  * Endpoint to write configuration to.
@@ -60,13 +68,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case "GET":
       try {
-        const result = await entry.dataCubes();
+        const result = await Promise.race([
+          mkTimeout(10000),
+          entry.dataCubes()
+        ]);
 
-        // TODO: Make this 201 and set final URI as Location header
         res.status(200).json(result.map(cb => cb.iri));
       } catch (e) {
         console.error(e);
-        res.status(500).json({ message: "Something went wrong!" });
+        res.status(500).json({ message: e.message ?? "Something went wrong!" });
       }
 
       break;
