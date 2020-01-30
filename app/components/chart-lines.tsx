@@ -1,15 +1,24 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { memo, useMemo } from "react";
-import { useObservations, getFieldComponentIris } from "../domain";
+import { getFieldComponentIris, useObservations } from "../domain";
 import { GenericField, LineConfig, LineFields } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observation
 } from "../domain/data";
-import { useResizeObserver } from "../lib/use-resize-observer";
 import { A11yTable } from "./a11y-table";
-import { Lines } from "./charts-generic/lines";
+import {
+  Chart,
+  Lines,
+  AxisTime,
+  AxisLinearHeight,
+  Interaction,
+  Tooltip,
+  ChartSvg,
+  Legend,
+  ChartContainer
+} from "./charts-generic";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 
@@ -93,18 +102,25 @@ export const ChartLines = memo(
     measures: MeasureWithMeta[];
     fields: LineFields;
   }) => {
-    const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
-
     return (
-      <div ref={resizeRef} aria-hidden="true">
-        <Lines
-          data={observations}
-          width={width}
-          dimensions={dimensions}
-          measures={measures}
-          fields={fields}
-        />
-      </div>
+      <Chart aspectRatio={0.4}>
+        <ChartContainer>
+          <ChartSvg>
+            <AxisTime data={observations} field="x" />
+            <AxisLinearHeight
+              data={observations}
+              field="y"
+              measures={measures}
+              fields={fields}
+            />
+            <Lines data={observations} fields={fields} />
+            <Interaction data={observations} fields={fields} />
+          </ChartSvg>
+          {/* <Tooltip /> */}
+        </ChartContainer>
+
+        {fields.segment && <Legend data={observations} fields={fields} />}
+      </Chart>
     );
   }
 );

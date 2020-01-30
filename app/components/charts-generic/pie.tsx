@@ -1,27 +1,14 @@
 import { arc, pie, PieArcDatum } from "d3-shape";
 import * as React from "react";
 import { useState } from "react";
-import {
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation,
-  PieFields
-} from "../../domain";
-import { useChartState } from "./chart-state";
+import { Observation } from "../../domain";
+import { ChartProps, useChartState } from "./chart-state";
 import { useColorScale } from "./scales";
+import { useBounds } from ".";
 
-export interface PieProps {
-  data: Observation[];
-  fields: PieFields;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
-}
-
-export function Pie({ data, fields, dimensions, measures }: PieProps) {
-  // @ts-ignore
-  const [state, dispatch] = useChartState();
-
-  const { width, height } = state.bounds;
+export function Pie({ data, fields, dimensions, measures }: ChartProps) {
+  const bounds = useBounds();
+  const { width } = bounds;
 
   // type assertion because ObservationValue is too generic
   const getPieValue = (d: Observation): number => +d.value as number;
@@ -37,24 +24,18 @@ export function Pie({ data, fields, dimensions, measures }: PieProps) {
   const outerRadius = Math.min(width, width * 0.4) / 2 - 1;
 
   return (
-    <svg
-      width={width}
-      height={height}
-      style={{ position: "absolute", left: 0, top: 0 }}
-    >
-      <g transform={`translate(${width / 2} ${outerRadius})`}>
-        {arcs.map((arcDatum, i) => (
-          <Arc
-            key={i}
-            arcDatum={arcDatum}
-            tooltipContent={getPiePartition(arcDatum.data)}
-            innerRadius={innerRadius}
-            outerRadius={outerRadius}
-            color={colors(getPiePartition(arcDatum.data))}
-          />
-        ))}
-      </g>
-    </svg>
+    <g transform={`translate(${width / 2} ${outerRadius})`}>
+      {arcs.map((arcDatum, i) => (
+        <Arc
+          key={i}
+          arcDatum={arcDatum}
+          tooltipContent={getPiePartition(arcDatum.data)}
+          innerRadius={innerRadius}
+          outerRadius={outerRadius}
+          color={colors(getPiePartition(arcDatum.data))}
+        />
+      ))}
+    </g>
   );
 }
 
@@ -71,8 +52,9 @@ const Arc = ({
   outerRadius: number;
   color: string;
 }) => {
-  // @ts-ignore
   const [, dispatch] = useChartState();
+  const bounds = useBounds();
+  const { width, height } = bounds;
 
   const [visible, toggleTooltipVisibility] = useState(false);
   const { startAngle, endAngle } = arcDatum;
@@ -91,7 +73,13 @@ const Arc = ({
     dispatch({
       type: "TOOLTIP_UPDATE",
       value: {
-        tooltip: { visible: false, x, y, content: tooltipContent }
+        tooltip: {
+          visible: false,
+          x: width / 2 + x,
+          y: height / 2 + y,
+          placement: "left",
+          content: tooltipContent
+        }
       }
     });
   };
@@ -104,7 +92,13 @@ const Arc = ({
         dispatch({
           type: "TOOLTIP_UPDATE",
           value: {
-            tooltip: { visible, x, y, content: tooltipContent }
+            tooltip: {
+              visible,
+              x: width / 2 + x,
+              y: height / 2 + y,
+              placement: "left",
+              content: tooltipContent
+            }
           }
         })
       }

@@ -7,9 +7,16 @@ export const useChartTheme = () => {
   const legendLabelColor = theme.colors.monochrome700;
   const domainColor = theme.colors.monochrome700;
   const gridColor = theme.colors.monochrome300;
-
+  const labelFontSize = 12;
   const fontFamily = theme.fonts.body;
-  return { labelColor, domainColor, gridColor, legendLabelColor, fontFamily };
+  return {
+    labelColor,
+    labelFontSize,
+    domainColor,
+    gridColor,
+    legendLabelColor,
+    fontFamily
+  };
 };
 
 // FIXME: Use hook to get the theme values from ThemeProvider.

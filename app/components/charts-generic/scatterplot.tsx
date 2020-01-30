@@ -8,7 +8,7 @@ import {
   getDimensionLabel
 } from "../../domain/data";
 import { useVegaView } from "../../lib/use-vega";
-import { legendTheme, useChartTheme } from "./chart-styles";
+import { legendTheme, useChartTheme } from "./styles";
 import { useTheme } from "../../themes";
 
 interface Props {

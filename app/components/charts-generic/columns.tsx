@@ -13,7 +13,7 @@ import {
   getLabelPosition,
   legendTheme,
   useChartTheme
-} from "./chart-styles";
+} from "./styles";
 import { useTheme } from "../../themes";
 
 interface Props {
