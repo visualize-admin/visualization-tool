@@ -109,7 +109,13 @@ const resolvers = {
   }
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  // Enable playground in production
+  introspection: true,
+  playground: true
+});
 
 export const config = {
   api: {
