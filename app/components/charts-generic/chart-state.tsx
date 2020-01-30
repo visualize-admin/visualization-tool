@@ -6,42 +6,49 @@ import React, {
   useContext,
   useReducer
 } from "react";
-import { ChartObserver } from "./chart-observer";
+import { useBounds, Observer } from "./observer";
+import {
+  Observation,
+  ChartFields,
+  DimensionWithMeta,
+  MeasureWithMeta
+} from "../../domain";
+import { Loading } from "../hint";
 
 // State & Actions
-interface Bounds {
-  width: number | undefined;
-  height: number | undefined;
+export interface ChartProps {
+  data: Observation[];
+  fields: ChartFields;
+  dimensions: DimensionWithMeta[];
+  measures: MeasureWithMeta[];
 }
+
 interface TooltipState {
   visible: boolean;
   x: number | undefined;
   y: number | undefined;
-  content: string | undefined;
+  placement: "left" | "right";
+  content: ReactNode | string | undefined;
 }
 interface ChartState {
-  bounds: Bounds;
-  // margins:
   tooltip: TooltipState;
 }
 
 type ChartStateAction =
   | {
-      type: "BOUNDS_UPDATE";
-      value: Pick<ChartState, "bounds">;
-    }
-  | {
       type: "TOOLTIP_UPDATE";
       value: Pick<ChartState, "tooltip">;
+    }
+  | {
+      type: "TOOLTIP_HIDE";
     };
 
 const CHART_INITIAL_STATE: ChartState = {
-  bounds: { width: undefined, height: undefined },
-  // margins: { top: 0, right: 0, bottom: 0, right: 0 },
   tooltip: {
     visible: false,
     x: undefined,
     y: undefined,
+    placement: "right",
     content: undefined
   }
 };
@@ -49,14 +56,6 @@ const CHART_INITIAL_STATE: ChartState = {
 // Reducer
 const chartStateReducer = (state: ChartState, action: ChartStateAction) => {
   switch (action.type) {
-    case "BOUNDS_UPDATE":
-      return {
-        ...state,
-        bounds: {
-          width: action.value.bounds.width,
-          height: action.value.bounds.height
-        }
-      };
     case "TOOLTIP_UPDATE":
       return {
         ...state,
@@ -64,7 +63,16 @@ const chartStateReducer = (state: ChartState, action: ChartStateAction) => {
           visible: action.value.tooltip.visible,
           x: action.value.tooltip.x,
           y: action.value.tooltip.y,
+          placement: action.value.tooltip.placement,
           content: action.value.tooltip.content
+        }
+      };
+    case "TOOLTIP_HIDE":
+      return {
+        ...state,
+        tooltip: {
+          ...state.tooltip,
+          visible: false
         }
       };
 
@@ -80,29 +88,53 @@ const ChartStateContext = createContext<
 
 export const useChartState = () => {
   const ctx = useContext(ChartStateContext);
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <Chart /> to useChartState()"
+    );
+  }
   return ctx;
 };
 
 // Component
-export const Chart = ({ children }: { children: ReactNode }) => {
+export const Chart = ({
+  children,
+  aspectRatio
+}: {
+  children: ReactNode;
+  aspectRatio: number;
+}) => {
   const [state, dispatch] = useReducer<Reducer<ChartState, ChartStateAction>>(
     chartStateReducer,
     CHART_INITIAL_STATE
   );
 
   return (
-    <ChartStateContext.Provider value={[state, dispatch]}>
-      <ChartObserver>
-        <ChartContainer>{children}</ChartContainer>
-      </ChartObserver>
-    </ChartStateContext.Provider>
+    <Observer aspectRatio={aspectRatio}>
+      <ChartStateContext.Provider value={[state, dispatch]}>
+        {children}
+      </ChartStateContext.Provider>
+    </Observer>
   );
 };
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
-  // @ts-ignore
-  const [state, dispatch] = useChartState();
-  const { width, height } = state.bounds;
+  const bounds = useBounds();
+  const { width, height } = bounds;
 
-  return <div style={{ position: "relative", width, height }}>{children}</div>;
+  return <div style={{ position: "relative", width, height }}>{children} </div>;
+};
+
+export const ChartSvg = ({ children }: { children: ReactNode }) => {
+  const bounds = useBounds();
+  const { width, height } = bounds;
+  return (
+    <svg
+      width={width}
+      height={height}
+      style={{ position: "absolute", left: 0, top: 0 }}
+    >
+      {children}
+    </svg>
+  );
 };

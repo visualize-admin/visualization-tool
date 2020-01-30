@@ -12,7 +12,7 @@ import { A11yTable } from "./a11y-table";
 import { Pie } from "./charts-generic/pie";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
-import { Chart } from "./charts-generic/chart-state";
+import { Chart, useChartState, ChartSvg } from "./charts-generic/chart-state";
 import { Tooltip } from "./charts-generic/tooltip";
 
 export const ChartPieVisualization = ({
@@ -99,13 +99,15 @@ export const ChartPie = memo(
     fields: PieFields;
   }) => {
     return (
-      <Chart>
-        <Pie
-          data={observations}
-          dimensions={dimensions}
-          measures={measures}
-          fields={fields}
-        />
+      <Chart aspectRatio={1}>
+        <ChartSvg>
+          <Pie
+            data={observations}
+            dimensions={dimensions}
+            measures={measures}
+            fields={fields}
+          />
+        </ChartSvg>
         <Tooltip />
       </Chart>
     );

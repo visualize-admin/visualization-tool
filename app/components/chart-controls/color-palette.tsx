@@ -23,8 +23,8 @@ const vegaPalettes: Array<{
   { label: "pastel2", value: "pastel2", colors: scheme("pastel2") },
   { label: "set1", value: "set1", colors: scheme("set1") },
   { label: "set2", value: "set2", colors: scheme("set2") },
-  { label: "set3", value: "set3", colors: scheme("set3") },
-  { label: "tableau10", value: "tableau10", colors: scheme("tableau10") }
+  { label: "set3", value: "set3", colors: scheme("set3") }
+  // { label: "tableau10", value: "tableau10", colors: scheme("tableau10") }
   // { label: "tableau20", value: "tableau20", colors: scheme("tableau20") }
 ];
 
