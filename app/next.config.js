@@ -71,6 +71,12 @@ module.exports = withBundleAnalyzer(
         }
       });
 
+      config.module.rules.push({
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        loader: "graphql-tag/loader"
+      });
+
       /* Enable source maps in production */
       if (!dev) {
         config.devtool = "source-map";

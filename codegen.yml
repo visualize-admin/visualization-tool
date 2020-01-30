@@ -1,0 +1,18 @@
+overwrite: true
+schema: "./app/graphql/schema.graphql"
+documents: ["./app/**/*.tsx", "./app/**/*.ts", "./app/graphql/queries/*.graphql"]
+generates:
+  app/graphql/query-hooks.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-urql"
+    config:
+      nonOptionalTypename: true
+      preResolveTypes: true
+      withComponent: false
+      withHooks: true
+  app/graphql/resolver-types.ts:
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
