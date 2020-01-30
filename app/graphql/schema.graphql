@@ -1,0 +1,58 @@
+type DataCube {
+  iri: String!
+  title: String!
+  contact: String
+  source: String
+  description: String
+  observations: [Observation!]!
+  dimensions: [Dimension!]!
+  measures: [Measure!]!
+}
+
+# A DataCube-ish component
+interface Component {
+  iri: String!
+  label: String
+}
+
+interface Dimension {
+  iri: String!
+  label: String
+}
+
+type NominalDimension implements Component & Dimension {
+  iri: String!
+  label: String
+}
+
+type OrdinalDimension implements Component & Dimension {
+  iri: String!
+  label: String
+}
+
+type TemporalDimension implements Component & Dimension {
+  iri: String!
+  label: String
+}
+
+type Measure implements Component {
+  iri: String!
+  label: String
+}
+
+type Attribute implements Component {
+  iri: String!
+  label: String
+}
+
+type Observation {
+  iri: String!
+}
+
+# The "Query" type is special: it lists all of the available queries that
+# clients can execute, along with the return type for each. In this
+# case, the "books" query returns an array of zero or more Books (defined above).
+type Query {
+  dataCubeByIri(iri: String): DataCube
+  dataCubes: [DataCube!]!
+}

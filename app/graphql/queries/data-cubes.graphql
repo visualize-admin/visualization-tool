@@ -1,0 +1,15 @@
+query DataCubes {
+  dataCubes {
+    iri
+    title
+    contact
+    description
+  }
+}
+query DataCubesWithoutDesc {
+  dataCubes {
+    iri
+    title
+    contact
+  }
+}
