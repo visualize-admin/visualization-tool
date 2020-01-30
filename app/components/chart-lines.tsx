@@ -21,6 +21,7 @@ import {
 } from "./charts-generic";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
+import { isNumber } from "../domain/helpers";
 
 export const ChartLinesVisualization = ({
   dataSet,
@@ -58,7 +59,7 @@ export const ChartLinesVisualization = ({
     filters: chartConfig.filters
   });
 
-  if (observations) {
+  if (observations && observations.map(obs => obs.y).some(isNumber)) {
     return observations.length > 0 ? (
       <>
         <A11yTable
@@ -85,6 +86,8 @@ export const ChartLinesVisualization = ({
     ) : (
       <NoDataHint />
     );
+  } else if (observations && !observations.map(obs => obs.y).some(isNumber)) {
+    return <NoDataHint />;
   } else {
     return <Loading />;
   }
