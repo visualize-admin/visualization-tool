@@ -11,7 +11,16 @@ if (process.env.HTTPS_PROXY) {
 
 const entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
   languages: [...locales],
-  fetcher: proxyAgent ? { fetchOptions: { agent: proxyAgent } } : {},
+  fetcher: {
+    fetchOptions: {
+      agent: proxyAgent,
+      method: "POST",
+      headers: {
+        Accept: "application/sparql-results+json",
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+      }
+    }
+  },
   extraMetadata: [
     {
       variable: "contact",
