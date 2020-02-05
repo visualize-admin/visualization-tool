@@ -101,7 +101,9 @@ class MyApp extends App<{
           <meta property="og:title" content={"visualize.admin.ch"} />
           <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
           {preloadFonts &&
-            preloadFonts.map(src => <link key={src} rel={src} as="font" />)}
+            preloadFonts.map(src => (
+              <link key={src} rel="preload" href={src} as="font" />
+            ))}
         </Head>
         <LocaleProvider value={locale}>
           <I18nProvider language={locale} catalogs={catalogs}>
