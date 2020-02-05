@@ -4,21 +4,23 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true"
 });
 
+
 const VERSION = `v${pkg.version}`;
 
 const publicRuntimeConfig = {
   // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
   SPARQL_ENDPOINT:
-    process.env.SPARQL_ENDPOINT ||
-    "https://trifid-lindas.test.cluster.ldbar.ch/query",
+  process.env.SPARQL_ENDPOINT ||
+  "https://trifid-lindas.test.cluster.ldbar.ch/query",
   PUBLIC_URL: process.env.PUBLIC_URL
-    ? process.env.PUBLIC_URL.replace(/\/$/, "")
-    : "",
+  ? process.env.PUBLIC_URL.replace(/\/$/, "")
+  : "",
   GA_TRACKING_ID: process.env.GA_TRACKING_ID
 };
 
 console.log("Starting with publicRuntimeConfig\n", publicRuntimeConfig);
 console.log("Version", VERSION);
+console.log("Extra Certs", process.env.NODE_EXTRA_CA_CERTS);
 
 module.exports = withBundleAnalyzer(
   withMDX({
