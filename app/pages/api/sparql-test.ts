@@ -1,10 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { DataCubeEntryPoint, DataCube } from "@zazuko/query-rdf-data-cube";
+import HttpsProxyAgent from "https-proxy-agent";
 import { SPARQL_ENDPOINT } from "../../domain/env";
 import { locales } from "../../locales/locales";
 
+let proxyAgent;
+if (process.env.HTTPS_PROXY) {
+  proxyAgent = new HttpsProxyAgent(process.env.HTTPS_PROXY);
+}
+
 const entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
   languages: [...locales],
+  fetcher: proxyAgent ? { fetchOptions: { agent: proxyAgent } } : {},
   extraMetadata: [
     {
       variable: "contact",
