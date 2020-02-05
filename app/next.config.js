@@ -1,18 +1,10 @@
-const childProcess = require("child_process");
 const pkg = require("../package.json");
 const withMDX = require("@next/mdx")();
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true"
 });
 
-let VERSION = `v${pkg.version}`;
-
-try {
-  VERSION = `v${pkg.version}-${childProcess
-    .execSync("git rev-parse HEAD")
-    .toString()
-    .substring(0, 7)}`;
-} catch {}
+const VERSION = `v${pkg.version}`;
 
 const publicRuntimeConfig = {
   // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
