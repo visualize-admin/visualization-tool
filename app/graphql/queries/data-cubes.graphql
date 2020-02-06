@@ -13,3 +13,19 @@ query DataCubesWithoutDesc {
     contact
   }
 }
+
+fragment observationFields on DataCube {
+  observations(limit: 10) {
+    data
+  }
+}
+
+query DataCubesWithObservations {
+  dataCubes {
+    iri
+    title
+    contact
+    description
+    ...observationFields
+  }
+}

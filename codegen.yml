@@ -16,3 +16,18 @@ generates:
     plugins:
       - "typescript"
       - "typescript-resolvers"
+    config:
+      useIndexSignature: true
+      noSchemaStitching: true
+      scalars:
+        Observation: "../domain/data#Observation"
+        RawObservation: "../domain/data#RawObservation"
+        Filters: "../domain/config-types#Filters"
+      mappers:
+        DataCube: "./shared-types#ResolvedDataCube"
+        ObservationsQuery: "./shared-types#ResolvedObservationsQuery"
+        Measure: "./shared-types#ResolvedMeasure"
+        Dimension: "./shared-types#ResolvedDimension"
+        NominalDimension: "./shared-types#ResolvedDimension"
+        OrdinalDimension: "./shared-types#ResolvedDimension"
+        TemporalDimension: "./shared-types#ResolvedDimension"

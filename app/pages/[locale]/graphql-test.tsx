@@ -1,24 +1,13 @@
 import "isomorphic-unfetch";
 import { Provider, createClient } from "urql";
-import { useDataCubesQuery } from "../../graphql/query-hooks";
+import { useDataCubesWithObservationsQuery } from "../../graphql/query-hooks";
 
 const client = createClient({
   url: "/api/graphql"
 });
 
-// const getCubes = gql`
-//   query GetDataCubes {
-//     dataCubes {
-//       iri
-//       title
-//       contact
-//       description
-//     }
-//   }
-// `;
-
 const Cubes = () => {
-  const [result] = useDataCubesQuery({
+  const [result] = useDataCubesWithObservationsQuery({
     // query: getCubes,
     requestPolicy: "network-only"
   });
@@ -31,6 +20,11 @@ const Cubes = () => {
             <h4>{cb.title}</h4>
             <p>{cb.contact}</p>
             <p>{cb.description}</p>
+            <ul>
+              {/* {cb.observations.map((o, i) => (
+                <li key={i}>{JSON.stringify(o)}</li>
+              ))} */}
+            </ul>
           </li>
         ))}
       </ul>

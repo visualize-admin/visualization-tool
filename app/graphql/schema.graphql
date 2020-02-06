@@ -1,58 +1,69 @@
+scalar Observation
+scalar RawObservation
+scalar Filters
+
+type ObservationsQuery {
+  "Observations with their values parsed to native JS types"
+  data: [Observation!]!
+  "Observations with their original RDF-y type"
+  rawData: [RawObservation!]!
+  "The generated SPARQL query string of the current query (doesn't fetch any data)"
+  sparql: String!
+}
+
 type DataCube {
   iri: String!
   title: String!
   contact: String
   source: String
   description: String
-  observations: [Observation!]!
+  observations(limit: Int, additionalComponents: [String!], filters: Filters): ObservationsQuery!
   dimensions: [Dimension!]!
   measures: [Measure!]!
 }
 
-# A DataCube-ish component
-interface Component {
-  iri: String!
-  label: String
+type DimensionValue {
+  value: String!
+  label: String!
 }
 
 interface Dimension {
   iri: String!
-  label: String
+  label: String!
+  values: [DimensionValue!]!
 }
 
-type NominalDimension implements Component & Dimension {
+type NominalDimension implements Dimension {
   iri: String!
-  label: String
+  label: String!
+  values: [DimensionValue!]!
 }
 
-type OrdinalDimension implements Component & Dimension {
+type OrdinalDimension implements Dimension {
   iri: String!
-  label: String
+  label: String!
+  values: [DimensionValue!]!
 }
 
-type TemporalDimension implements Component & Dimension {
+type TemporalDimension implements Dimension {
   iri: String!
-  label: String
+  label: String!
+  values: [DimensionValue!]!
 }
 
-type Measure implements Component {
+type Measure {
   iri: String!
-  label: String
+  label: String!
 }
 
-type Attribute implements Component {
+type Attribute {
   iri: String!
-  label: String
-}
-
-type Observation {
-  iri: String!
+  label: String!
 }
 
 # The "Query" type is special: it lists all of the available queries that
-# clients can execute, along with the return type for each. In this
-# case, the "books" query returns an array of zero or more Books (defined above).
+# clients can execute, along with the return type for each.
 type Query {
-  dataCubeByIri(iri: String): DataCube
-  dataCubes: [DataCube!]!
+  dataCubeByIri(locale: String, iri: String!): DataCube
+  dataCubes(locale: String): [DataCube!]!
 }
