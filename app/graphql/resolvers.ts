@@ -8,13 +8,9 @@ import { GraphQLJSONObject } from "graphql-type-json";
 import HttpsProxyAgent from "https-proxy-agent";
 import { Filters, parseObservationValue } from "../domain";
 import { SPARQL_ENDPOINT } from "../domain/env";
-import { locales,  parseLocaleString } from "../locales/locales";
+import { locales, parseLocaleString } from "../locales/locales";
 import { QueryResolvers, Resolvers, DataCubeResolvers } from "./resolver-types";
 import { ResolvedDimension, ResolvedMeasure } from "./shared-types";
-
-const proxyAgent = process.env.HTTPS_PROXY
-  ? new HttpsProxyAgent(process.env.HTTPS_PROXY)
-  : undefined;
 
 let entryPointCache = new Map<string, DataCubeEntryPoint>();
 const getEntryPoint = (
@@ -27,6 +23,10 @@ const getEntryPoint = (
   if (entry) {
     return entry;
   }
+
+  const proxyAgent = process.env.HTTPS_PROXY
+    ? new HttpsProxyAgent(process.env.HTTPS_PROXY)
+    : undefined;
 
   entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
     languages: [locale, ...locales.filter(l => l !== locale), ""],
