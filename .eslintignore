@@ -1,2 +1,5 @@
-/app/public/dist/*
 /rollup.config.js
+# Generated files
+/app/public/dist/*
+/app/graphql/resolver-types.ts
+/app/graphql/query-hooks.ts

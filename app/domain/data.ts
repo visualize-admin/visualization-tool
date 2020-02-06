@@ -80,7 +80,7 @@ const parseRDFLiteral = (value: Literal): ObservationValue => {
  *
  * @param observationValue
  */
-const parseObservationValue = ({
+export const parseObservationValue = ({
   label,
   value
 }: RawObservationValue): ObservationValue => {

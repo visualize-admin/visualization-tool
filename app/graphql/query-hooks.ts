@@ -9,18 +9,15 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  Filters: any,
+  Observation: any,
+  RawObservation: any,
 };
 
-export type Attribute = Component & {
+export type Attribute = {
    __typename: 'Attribute',
   iri: Scalars['String'],
-  label?: Maybe<Scalars['String']>,
-};
-
-/** A DataCube-ish component */
-export type Component = {
-  iri: Scalars['String'],
-  label?: Maybe<Scalars['String']>,
+  label: Scalars['String'],
 };
 
 export type DataCube = {
@@ -30,43 +27,65 @@ export type DataCube = {
   contact?: Maybe<Scalars['String']>,
   source?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
-  observations: Array<Observation>,
+  observations: ObservationsQuery,
   dimensions: Array<Dimension>,
   measures: Array<Measure>,
 };
 
+
+export type DataCubeObservationsArgs = {
+  limit?: Maybe<Scalars['Int']>,
+  additionalComponents?: Maybe<Array<Scalars['String']>>,
+  filters?: Maybe<Scalars['Filters']>
+};
+
 export type Dimension = {
   iri: Scalars['String'],
-  label?: Maybe<Scalars['String']>,
+  label: Scalars['String'],
+  values: Array<DimensionValue>,
 };
 
-export type Measure = Component & {
+export type DimensionValue = {
+   __typename: 'DimensionValue',
+  value: Scalars['String'],
+  label: Scalars['String'],
+};
+
+
+export type Measure = {
    __typename: 'Measure',
   iri: Scalars['String'],
-  label?: Maybe<Scalars['String']>,
+  label: Scalars['String'],
 };
 
-export type NominalDimension = Component & Dimension & {
+export type NominalDimension = Dimension & {
    __typename: 'NominalDimension',
   iri: Scalars['String'],
-  label?: Maybe<Scalars['String']>,
+  label: Scalars['String'],
+  values: Array<DimensionValue>,
 };
 
-export type Observation = {
-   __typename: 'Observation',
-  iri: Scalars['String'],
+
+export type ObservationsQuery = {
+   __typename: 'ObservationsQuery',
+  /** Observations with their values parsed to native JS types */
+  data: Array<Scalars['Observation']>,
+  /** Observations with their original RDF-y type */
+  rawData: Array<Scalars['RawObservation']>,
+  /** The generated SPARQL query string of the current query (doesn't fetch any data) */
+  sparql: Scalars['String'],
 };
 
-export type OrdinalDimension = Component & Dimension & {
+export type OrdinalDimension = Dimension & {
    __typename: 'OrdinalDimension',
   iri: Scalars['String'],
-  label?: Maybe<Scalars['String']>,
+  label: Scalars['String'],
+  values: Array<DimensionValue>,
 };
 
 /** 
  * The "Query" type is special: it lists all of the available queries that
- * clients can execute, along with the return type for each. In this
- * case, the "books" query returns an array of zero or more Books (defined above).
+ * clients can execute, along with the return type for each.
  */
 export type Query = {
    __typename: 'Query',
@@ -77,17 +96,28 @@ export type Query = {
 
 /** 
  * The "Query" type is special: it lists all of the available queries that
- * clients can execute, along with the return type for each. In this
- * case, the "books" query returns an array of zero or more Books (defined above).
+ * clients can execute, along with the return type for each.
  */
 export type QueryDataCubeByIriArgs = {
-  iri?: Maybe<Scalars['String']>
+  locale?: Maybe<Scalars['String']>,
+  iri: Scalars['String']
 };
 
-export type TemporalDimension = Component & Dimension & {
+
+/** 
+ * The "Query" type is special: it lists all of the available queries that
+ * clients can execute, along with the return type for each.
+ */
+export type QueryDataCubesArgs = {
+  locale?: Maybe<Scalars['String']>
+};
+
+
+export type TemporalDimension = Dimension & {
    __typename: 'TemporalDimension',
   iri: Scalars['String'],
-  label?: Maybe<Scalars['String']>,
+  label: Scalars['String'],
+  values: Array<DimensionValue>,
 };
 
 export type DataCubesQueryVariables = {};
@@ -100,7 +130,23 @@ export type DataCubesWithoutDescQueryVariables = {};
 
 export type DataCubesWithoutDescQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCube', iri: string, title: string, contact: Maybe<string> }> };
 
+export type ObservationFieldsFragment = { __typename: 'DataCube', observations: { __typename: 'ObservationsQuery', data: Array<any> } };
 
+export type DataCubesWithObservationsQueryVariables = {};
+
+
+export type DataCubesWithObservationsQuery = { __typename: 'Query', dataCubes: Array<(
+    { __typename: 'DataCube', iri: string, title: string, contact: Maybe<string>, description: Maybe<string> }
+    & ObservationFieldsFragment
+  )> };
+
+export const ObservationFieldsFragmentDoc = gql`
+    fragment observationFields on DataCube {
+  observations(limit: 10) {
+    data
+  }
+}
+    `;
 export const DataCubesDocument = gql`
     query DataCubes {
   dataCubes {
@@ -127,4 +173,19 @@ export const DataCubesWithoutDescDocument = gql`
 
 export function useDataCubesWithoutDescQuery(options: Omit<Urql.UseQueryArgs<DataCubesWithoutDescQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubesWithoutDescQuery>({ query: DataCubesWithoutDescDocument, ...options });
+};
+export const DataCubesWithObservationsDocument = gql`
+    query DataCubesWithObservations {
+  dataCubes {
+    iri
+    title
+    contact
+    description
+    ...observationFields
+  }
+}
+    ${ObservationFieldsFragmentDoc}`;
+
+export function useDataCubesWithObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubesWithObservationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubesWithObservationsQuery>({ query: DataCubesWithObservationsDocument, ...options });
 };
