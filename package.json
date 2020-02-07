@@ -12,7 +12,7 @@
     "db:migrate:dev": "DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool scripts/db-migrate.js",
     "db:migrate": "scripts/db-migrate.js",
     "build": "NODE_OPTIONS=--max_old_space_size=2048 yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && next build ./app",
-    "start": "yarn db:migrate && DEBUG=* NODE_EXTRA_CA_CERTS=./certs/proxywg.crt next start ./app -p $PORT",
+    "start": "yarn db:migrate && DEBUG='https-proxy-agent:*' NODE_EXTRA_CA_CERTS=./certs/proxywg.crt next start ./app -p $PORT",
     "lint": "tsc --noEmit -p ./app -p ./embed",
     "locales:extract": "lingui extract",
     "locales:compile": "lingui compile",
