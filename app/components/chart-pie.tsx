@@ -7,13 +7,13 @@ import {
   MeasureWithMeta,
   Observation
 } from "../domain/data";
-
 import { A11yTable } from "./a11y-table";
+import { Tooltip } from "./charts-generic/annotations";
+import { ChartSvg } from "./charts-generic/containers";
 import { Pie } from "./charts-generic/pie";
+import { PieChart } from "./charts-generic/pie/pie-state";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
-import { Chart, useChartState, ChartSvg } from "./charts-generic/chart-state";
-import { Tooltip } from "./charts-generic/tooltip";
 
 export const ChartPieVisualization = ({
   dataSet,
@@ -99,17 +99,17 @@ export const ChartPie = memo(
     fields: PieFields;
   }) => {
     return (
-      <Chart aspectRatio={1}>
+      <PieChart
+        data={observations}
+        fields={fields}
+        measures={measures}
+        aspectRatio={1}
+      >
         <ChartSvg>
-          <Pie
-            data={observations}
-            dimensions={dimensions}
-            measures={measures}
-            fields={fields}
-          />
+          <Pie />
         </ChartSvg>
-        <Tooltip />
-      </Chart>
+        {/* <Tooltip /> */}
+      </PieChart>
     );
   }
 );

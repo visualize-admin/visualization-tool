@@ -1,15 +1,15 @@
 import * as React from "react";
 import { Spec } from "vega";
-import { ScatterPlotFields } from "../../domain";
+import { ScatterPlotFields } from "../../../domain";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observation,
   getDimensionLabel
-} from "../../domain/data";
-import { useVegaView } from "../../lib/use-vega";
-import { legendTheme, useChartTheme } from "./styles";
-import { useTheme } from "../../themes";
+} from "../../../domain/data";
+import { useVegaView } from "../../../lib/use-vega";
+import { legendTheme, useChartTheme } from "../use-chart-theme";
+import { useTheme } from "../../../themes";
 
 interface Props {
   data: Observation[];

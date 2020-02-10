@@ -1,4 +1,4 @@
-export * from "./chart";
+export * from "./lines";
 export * from "./tooltip";
-export * from "./interaction";
-export * from "./legend";
+export * from "./interaction-tooltip";
+export * from "./interaction-ruler";

@@ -1,14 +1,14 @@
 import * as React from "react";
 import { Spec } from "vega";
-import { AreaFields } from "../../domain";
+import { AreaFields } from "../../../domain";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observation,
   getDimensionLabel
-} from "../../domain/data";
-import { useVegaView } from "../../lib/use-vega";
-import { legendTheme, useChartTheme } from "./styles";
+} from "../../../domain/data";
+import { useVegaView } from "../../../lib/use-vega";
+import { legendTheme, useChartTheme } from "../use-chart-theme";
 
 interface Props {
   data: Observation[];
