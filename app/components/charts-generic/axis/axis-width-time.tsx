@@ -26,7 +26,7 @@ export const AxisTime = () => {
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     g.call(
       axisBottom(xScale)
-        .ticks(Math.min(xUniqueValues.length, 10))
+        .ticks(Math.min(xUniqueValues.length, 5))
         .tickFormat(x => formatYear(x as Date))
     );
     g.selectAll(".tick line").remove();
