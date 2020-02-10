@@ -1,4 +1,4 @@
-import { group, max, min } from "d3-array";
+import { group, max, min, ascending } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -55,12 +55,12 @@ const useColumnsState = ({
   const getSegment = (d: Observation): string => d.segment as string;
 
   // FIXME: sorting:
-  // - If time dimension > always sort by X
+  // - Always sort by X (~ by time or alphabetically)
   // - If not time dimension, make sort optional
   //    - by x
   //    - by y
   // How to know it is a time dimension ??
-  const sortedData = data;
+  const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
 
   // segments
   const segments = Array.from(new Set(sortedData.map(d => getSegment(d))));
