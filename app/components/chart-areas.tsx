@@ -1,17 +1,24 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { memo, useMemo } from "react";
-import { useObservations, getFieldComponentIris } from "../domain";
+import { getFieldComponentIris, useObservations } from "../domain";
 import { AreaConfig, AreaFields, GenericField } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observation
 } from "../domain/data";
-import { useResizeObserver } from "../lib/use-resize-observer";
+import { isNumber } from "../domain/helpers";
 import { A11yTable } from "./a11y-table";
-import { Areas } from "./charts-generic/areas";
+import { Areas, Interaction } from "./charts-generic/areas";
+import { AxisTime } from "./charts-generic/axis";
+import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers";
+import { LegendColor } from "./charts-generic/legends";
+
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
+import { AreaChart } from "./charts-generic/areas/areas-state";
+import { Ruler } from "./charts-generic/annotations";
 
 export const ChartAreasVisualization = ({
   dataSet,
@@ -49,7 +56,7 @@ export const ChartAreasVisualization = ({
     filters: chartConfig.filters
   });
 
-  if (observations) {
+  if (observations && observations.map(obs => obs.y).some(isNumber)) {
     return observations.length > 0 ? (
       <>
         <A11yTable
@@ -76,6 +83,8 @@ export const ChartAreasVisualization = ({
     ) : (
       <NoDataHint />
     );
+  } else if (observations && !observations.map(obs => obs.y).some(isNumber)) {
+    return <NoDataHint />;
   } else {
     return <Loading />;
   }
@@ -93,18 +102,22 @@ export const ChartAreas = memo(
     measures: MeasureWithMeta[];
     fields: AreaFields;
   }) => {
-    const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
-
     return (
-      <div ref={resizeRef} aria-hidden="true">
-        <Areas
-          data={observations}
-          width={width}
-          dimensions={dimensions}
-          measures={measures}
-          fields={fields}
-        />
-      </div>
+      <AreaChart
+        data={observations}
+        fields={fields}
+        measures={measures}
+        aspectRatio={0.4}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            <AxisTime />
+            <AxisHeightLinear />
+            <Areas />
+          </ChartSvg>
+        </ChartContainer>
+        {fields.segment && <LegendColor symbol="square" />}
+      </AreaChart>
     );
   }
 );

@@ -7,21 +7,21 @@ import {
   MeasureWithMeta,
   Observation
 } from "../domain/data";
+import { isNumber } from "../domain/helpers";
 import { A11yTable } from "./a11y-table";
+import { Ruler, Tooltip } from "./charts-generic/annotations";
+import { AxisTime } from "./charts-generic/axis";
+import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers";
+import { LegendColor } from "./charts-generic/legends";
 import {
-  Chart,
-  Lines,
-  AxisTime,
-  AxisLinearHeight,
-  Interaction,
-  Tooltip,
-  ChartSvg,
-  Legend,
-  ChartContainer
-} from "./charts-generic";
+  InteractionRuler,
+  InteractionTooltip,
+  Lines
+} from "./charts-generic/lines";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
-import { isNumber } from "../domain/helpers";
+import { LineChart } from "./charts-generic/lines/lines-state";
 
 export const ChartLinesVisualization = ({
   dataSet,
@@ -106,24 +106,24 @@ export const ChartLines = memo(
     fields: LineFields;
   }) => {
     return (
-      <Chart aspectRatio={0.4}>
+      <LineChart
+        data={observations}
+        fields={fields}
+        measures={measures}
+        aspectRatio={0.4}
+      >
         <ChartContainer>
           <ChartSvg>
-            <AxisTime data={observations} field="x" />
-            <AxisLinearHeight
-              data={observations}
-              field="y"
-              measures={measures}
-              fields={fields}
-            />
-            <Lines data={observations} fields={fields} />
-            <Interaction data={observations} fields={fields} />
+            <AxisHeightLinear />
+            <AxisTime />
+            <Lines />
+            {/* {fields.segment ? <InteractionRuler /> : <InteractionTooltip />} */}
           </ChartSvg>
-          {/* <Tooltip /> */}
+          {/* {fields.segment ? <Ruler /> : <Tooltip />} */}
         </ChartContainer>
 
-        {fields.segment && <Legend data={observations} fields={fields} />}
-      </Chart>
+        {fields.segment && <LegendColor symbol="line" />}
+      </LineChart>
     );
   }
 );

@@ -1,60 +1,64 @@
 import { arc, pie, PieArcDatum } from "d3-shape";
 import * as React from "react";
 import { useState } from "react";
-import { Observation } from "../../domain";
-import { ChartProps, useChartState } from "./chart-state";
-import { useColorScale } from "./scales";
-import { useBounds } from ".";
+import { Observation } from "../../../domain";
+import { useChartState } from "../use-chart-state";
+import { useInteraction } from "../use-interaction";
+import { PieState } from "./pie-state";
 
-export function Pie({ data, fields, dimensions, measures }: ChartProps) {
-  const bounds = useBounds();
-  const { width } = bounds;
+export const Pie = () => {
+  const {
+    data,
+    getValue,
+    getSegment,
+    colors,
+    bounds
+  } = useChartState() as PieState;
+  const { chartWidth, chartHeight } = bounds;
 
-  // type assertion because ObservationValue is too generic
-  const getPieValue = (d: Observation): number => +d.value as number;
-  const getPiePartition = (d: Observation): string => d.segment as string;
-
-  const colors = useColorScale({ data, field: "segment" });
-
-  const getPieData = pie<Observation>().value(d => getPieValue(d));
+  const getPieData = pie<Observation>().value(d => getValue(d));
 
   const arcs = getPieData(data);
 
   const innerRadius = 0;
-  const outerRadius = Math.min(width, width * 0.4) / 2 - 1;
+  const outerRadius = Math.min(chartWidth, chartWidth * 0.4) / 2 - 1;
 
   return (
-    <g transform={`translate(${width / 2} ${outerRadius})`}>
+    <g transform={`translate(${chartWidth / 2} ${outerRadius})`}>
       {arcs.map((arcDatum, i) => (
         <Arc
           key={i}
           arcDatum={arcDatum}
-          tooltipContent={getPiePartition(arcDatum.data)}
+          tooltipContent={getSegment(arcDatum.data)}
           innerRadius={innerRadius}
           outerRadius={outerRadius}
-          color={colors(getPiePartition(arcDatum.data))}
+          color={colors(getSegment(arcDatum.data))}
+          chartWidth={chartWidth}
+          chartHeight={chartHeight}
         />
       ))}
     </g>
   );
-}
+};
 
 const Arc = ({
   arcDatum,
   tooltipContent,
   innerRadius,
   outerRadius,
-  color
+  color,
+  chartWidth,
+  chartHeight
 }: {
   arcDatum: PieArcDatum<Observation>;
   tooltipContent: string;
   innerRadius: number;
   outerRadius: number;
   color: string;
+  chartWidth: number;
+  chartHeight: number;
 }) => {
-  const [, dispatch] = useChartState();
-  const bounds = useBounds();
-  const { width, height } = bounds;
+  const [, dispatch] = useInteraction();
 
   const [visible, toggleTooltipVisibility] = useState(false);
   const { startAngle, endAngle } = arcDatum;
@@ -75,8 +79,8 @@ const Arc = ({
       value: {
         tooltip: {
           visible: false,
-          x: width / 2 + x,
-          y: height / 2 + y,
+          x: chartWidth / 2 + x,
+          y: chartHeight / 2 + y,
           placement: "left",
           content: tooltipContent
         }
@@ -94,8 +98,8 @@ const Arc = ({
           value: {
             tooltip: {
               visible,
-              x: width / 2 + x,
-              y: height / 2 + y,
+              x: chartWidth / 2 + x,
+              y: chartHeight / 2 + y,
               placement: "left",
               content: tooltipContent
             }

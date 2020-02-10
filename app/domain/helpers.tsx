@@ -1,3 +1,14 @@
+import {
+  schemeAccent,
+  schemeCategory10,
+  schemeDark2,
+  schemePaired,
+  schemePastel1,
+  schemePastel2,
+  schemeSet1,
+  schemeSet2,
+  schemeSet3
+} from "d3-scale-chromatic";
 import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { IconName } from "../icons";
@@ -72,5 +83,32 @@ export const getFieldLabel = (field: string): React.ReactNode => {
       return <Trans id="controls.language.italian">Italian</Trans>;
     default:
       return field;
+  }
+};
+
+export const getPalette = (
+  palette: string | undefined
+): ReadonlyArray<string> => {
+  switch (palette) {
+    case "accent":
+      return schemeAccent;
+    case "category10":
+      return schemeCategory10;
+    case "dark2":
+      return schemeDark2;
+    case "paired":
+      return schemePaired;
+    case "pastel1":
+      return schemePastel1;
+    case "pastel2":
+      return schemePastel2;
+    case "set1":
+      return schemeSet1;
+    case "set2":
+      return schemeSet2;
+    case "set3":
+      return schemeSet3;
+    default:
+      return schemeCategory10;
   }
 };

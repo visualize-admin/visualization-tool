@@ -7,7 +7,7 @@ interface Margins {
   bottom: number;
   left: number;
 }
-interface Bounds {
+export interface Bounds {
   width: number;
   height: number;
   margins: Margins;
@@ -20,8 +20,8 @@ const INITIAL_BOUNDS: Bounds = {
   height: 1,
   margins: {
     top: 20,
-    right: 20,
-    bottom: 50,
+    right: 40,
+    bottom: 100,
     left: 20
   },
   chartWidth: 1,
@@ -40,9 +40,9 @@ export const Observer = ({
   const bounds = useMemo(() => {
     const margins = {
       top: 50,
-      right: 20,
-      bottom: 50,
-      left: 20
+      right: 40,
+      bottom: 100,
+      left: 100
     };
     const chartWidth = width - margins.left - margins.right;
     const chartHeight = chartWidth * aspectRatio;
@@ -54,6 +54,7 @@ export const Observer = ({
       chartHeight
     };
   }, [width, aspectRatio]);
+
   return (
     <div ref={resizeRef} aria-hidden="true">
       {width > 1 ? (
@@ -65,7 +66,6 @@ export const Observer = ({
   );
 };
 
-// Provider
 const ChartObserverContext = createContext<Bounds>(INITIAL_BOUNDS);
 
 export const useBounds = () => {

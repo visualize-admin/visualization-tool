@@ -2,32 +2,27 @@ import { Delaunay } from "d3-delaunay";
 import { clientPoint } from "d3-selection";
 import * as React from "react";
 import { useRef } from "react";
-import { Observation } from "../../../domain";
-import { parseDate } from "../../../domain/helpers";
-import { ChartProps, useChartState } from "../chart-state";
-
+import { useChartState } from "../use-chart-state";
+import { useInteraction } from "../use-interaction";
 import { LineTooltip } from "./tooltip";
-import { useLinesScale } from "./scales";
-import { useBounds } from "..";
+import { LinesState } from "./lines-state";
 
-export const Interaction = React.memo(
-  ({
-    data,
-    fields,
-    debug
-  }: Pick<ChartProps, "data" | "fields"> & { debug?: boolean }) => {
-    const [, dispatch] = useChartState();
-    const bounds = useBounds();
+export const InteractionTooltip = React.memo(
+  ({ debug }: { debug?: boolean }) => {
+    const [, dispatch] = useInteraction();
+    const ref = useRef<SVGGElement>(null);
+    const {
+      data,
+      getX,
+      xScale,
+      getY,
+      yScale,
+      getSegment,
+      colors,
+      bounds
+    } = useChartState() as LinesState;
 
     const { chartWidth, chartHeight, margins } = bounds;
-    const ref = useRef<SVGGElement>(null);
-
-    // type assertion because ObservationValue is too generic
-    const getX = (d: Observation): Date => parseDate(+d.x);
-    const getY = (d: Observation): number => +d.y as number;
-    const getPartition = (d: Observation): string => d.segment as string;
-
-    const { colors, xScale, yScale } = useLinesScale({ data, fields });
 
     // FIXME: delaunay/voronoi calculation could be memoized
     const delaunay = Delaunay.from(
@@ -50,8 +45,8 @@ export const Interaction = React.memo(
           value: {
             tooltip: {
               visible: true,
-              x: xScale(parseDate(+data[location].x)),
-              y: yScale(+data[location].y),
+              x: xScale(getX(data[location])),
+              y: yScale(getY(data[location])),
               placement,
               content: <LineTooltip content={data[location]} />
             }
@@ -81,7 +76,7 @@ export const Interaction = React.memo(
             <path
               key={i}
               d={voronoi.renderCell(i)}
-              fill={colors(getPartition(d))}
+              fill={colors(getSegment(d))}
               fillOpacity={0.2}
               stroke="white"
               strokeOpacity={1}

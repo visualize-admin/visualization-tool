@@ -1,17 +1,31 @@
 import { DataCube } from "@zazuko/query-rdf-data-cube";
 import React, { memo, useMemo } from "react";
-import { useObservations, getFieldComponentIris } from "../domain";
+import { getFieldComponentIris, useObservations } from "../domain";
 import { ColumnConfig, ColumnFields } from "../domain/config-types";
 import {
   DimensionWithMeta,
   MeasureWithMeta,
   Observation
 } from "../domain/data";
-import { useResizeObserver } from "../lib/use-resize-observer";
+import { isNumber } from "../domain/helpers";
 import { A11yTable } from "./a11y-table";
-import { Columns } from "./charts-generic/columns";
+import { Tooltip } from "./charts-generic/annotations";
+import { AxisHeightLinearMax, AxisWidthBand } from "./charts-generic/axis";
+import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
+import {
+  Columns,
+  ColumnsGrouped,
+  ColumnsStacked,
+  Interaction,
+  InteractionGrouped,
+  InteractionStacked
+} from "./charts-generic/columns";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers";
+import { LegendColor } from "./charts-generic/legends";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
+import { ColumnChart } from "./charts-generic/columns/columns-state";
+
 export const ChartColumnsVisualization = ({
   dataSet,
   dimensions,
@@ -47,7 +61,7 @@ export const ChartColumnsVisualization = ({
     filters: chartConfig.filters
   });
 
-  if (observations) {
+  if (observations && observations.map(obs => obs.y).some(isNumber)) {
     return observations.length > 0 ? (
       <>
         <A11yTable
@@ -74,6 +88,8 @@ export const ChartColumnsVisualization = ({
     ) : (
       <NoDataHint />
     );
+  } else if (observations && !observations.map(obs => obs.y).some(isNumber)) {
+    return <NoDataHint />;
   } else {
     return <Loading />;
   }
@@ -91,18 +107,44 @@ export const ChartColumns = memo(
     measures: MeasureWithMeta[];
     fields: ColumnFields;
   }) => {
-    const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
-
     return (
-      <div ref={resizeRef} aria-hidden="true">
-        <Columns
-          data={observations}
-          width={width}
-          dimensions={dimensions}
-          measures={measures}
-          fields={fields}
-        />
-      </div>
+      <ColumnChart
+        data={observations}
+        fields={fields}
+        measures={measures}
+        aspectRatio={0.4}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            {fields.segment && fields.segment.type === "stacked" ? (
+              <AxisHeightLinearMax />
+            ) : (
+              <AxisHeightLinear />
+            )}
+            <AxisWidthBand />
+
+            {!fields.segment ? (
+              <>
+                <Columns />
+                {/* <Interaction /> */}
+              </>
+            ) : fields.segment.type === "stacked" ? (
+              <>
+                <ColumnsStacked />
+                {/* <InteractionStacked /> */}
+              </>
+            ) : (
+              <>
+                <ColumnsGrouped />
+                {/* <InteractionGrouped /> */}
+              </>
+            )}
+          </ChartSvg>
+          {/* <Tooltip /> */}
+        </ChartContainer>
+
+        {fields.segment && <LegendColor symbol="square" />}
+      </ColumnChart>
     );
   }
 );

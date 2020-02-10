@@ -1,20 +1,20 @@
 import * as React from "react";
 import { Spec } from "vega";
-import { ColumnFields, GenericField } from "../../domain";
+import { ColumnFields, GenericField } from "../../../domain";
 import {
   DimensionWithMeta,
   getDimensionLabel,
   MeasureWithMeta,
   Observation
-} from "../../domain/data";
-import { useVegaView } from "../../lib/use-vega";
+} from "../../../domain/data";
+import { useVegaView } from "../../../lib/use-vega";
 import {
   getLabelAngle,
   getLabelPosition,
   legendTheme,
   useChartTheme
-} from "./styles";
-import { useTheme } from "../../themes";
+} from "../use-chart-theme";
+import { useTheme } from "../../../themes";
 
 interface Props {
   data: Observation[];
