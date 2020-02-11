@@ -121,7 +121,7 @@ export const useChartFieldField = ({
 }: {
   field: string;
   componentIri?: string;
-  dataSetMetadata: DataSetMetadata;
+  dataSetMetadata: DataCubeMetadata;
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -133,14 +133,14 @@ export const useChartFieldField = ({
             value: {
               componentIri: e.currentTarget.value,
               field,
-              dataSetMetadata: dataSetMetadata as $FixMe
+              dataSetMetadata
             }
           })
         : dispatch({
             type: "CHART_FIELD_DELETED",
             value: {
               field,
-              dataSetMetadata: dataSetMetadata as $FixMe
+              dataSetMetadata
             }
           }),
     [dispatch, field, dataSetMetadata]

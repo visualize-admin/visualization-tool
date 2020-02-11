@@ -184,6 +184,17 @@ const DataCube: DataCubeResolvers = {
       dimension
     }));
   },
+  dimensionByIri: async (dataCube, { iri }) => {
+    const dimension = (await dataCube.dimensions()).find(
+      dimension => dimension.iri.value === iri
+    );
+    return dimension
+      ? {
+          dataCube,
+          dimension
+        }
+      : null;
+  },
   measures: async dataCube => {
     return (await dataCube.measures()).map(measure => ({
       dataCube,

@@ -70,6 +70,18 @@ query DataCubeMetadataWithComponents($iri: String!, $locale: String!) {
   }
 }
 
+query DimensionValues(
+  $dataCubeIri: String!
+  $dimensionIri: String!
+  $locale: String!
+) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
+    dimensionByIri(iri: $dimensionIri) {
+      ...dimensionFieldsWithValues
+    }
+  }
+}
+
 fragment observationFields on DataCube {
   observations(limit: 10) {
     data

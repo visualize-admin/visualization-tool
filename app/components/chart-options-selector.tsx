@@ -4,9 +4,6 @@ import { Box, Flex } from "@theme-ui/components";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  DataSetMetadata,
-  DimensionWithMeta,
-  useDataSetAndMetadata,
   getFieldComponentIri
 } from "../domain";
 import { getFieldLabel } from "../domain/helpers";
@@ -20,15 +17,26 @@ import {
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
 import { EmptyRightPanel } from "./empty-right-panel";
+import { useLocale } from "../lib/use-locale";
+import {
+  useDataCubeMetadataWithComponentsQuery,
+  DimensionFieldsWithValuesFragment
+} from "../graphql/query-hooks";
+import { DataCubeMetadata } from "../graphql/types";
 
 export const ChartOptionsSelector = ({
   state
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
-  const meta = useDataSetAndMetadata(state.dataSet);
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataWithComponentsQuery({
+    variables: { iri: state.dataSet, locale }
+  });
 
-  if (meta.data) {
+  if (data?.dataCubeByIri) {
+    const meta = data.dataCubeByIri;
+
     return (
       <Box
         sx={{
@@ -39,7 +47,7 @@ export const ChartOptionsSelector = ({
         }}
       >
         {state.activeField ? (
-          <ActiveFieldSwitch state={state} metaData={meta.data} />
+          <ActiveFieldSwitch state={state} metaData={meta} />
         ) : (
           <EmptyRightPanel state={state} />
         )}
@@ -55,7 +63,7 @@ const ActiveFieldSwitch = ({
   metaData
 }: {
   state: ConfiguratorStateConfiguringChart;
-  metaData: DataSetMetadata;
+  metaData: DataCubeMetadata;
 }) => {
   const { activeField } = state;
 
@@ -63,8 +71,11 @@ const ActiveFieldSwitch = ({
     return null;
   }
   // TODO: what to do with optional fields?
-  const activeFieldComponentIri = getFieldComponentIri(state.chartConfig.fields, activeField)
-    // state.chartConfig.fields[activeField];
+  const activeFieldComponentIri = getFieldComponentIri(
+    state.chartConfig.fields,
+    activeField
+  );
+  // state.chartConfig.fields[activeField];
 
   // It's an optional field
   if (!activeFieldComponentIri && activeField === "segment") {
@@ -83,19 +94,18 @@ const ActiveFieldSwitch = ({
     return <Filter state={state} metaData={metaData} />;
   }
 
-  const component =
-    activeFieldComponentIri &&
-    metaData.componentsByIri[activeFieldComponentIri];
-  const componentType = component && component.component.componentType;
+  const component = [...metaData.dimensions, ...metaData.measures].find(
+    d => d.iri === activeFieldComponentIri
+  );
 
-  return componentType === "measure" ? (
+  return component?.__typename === "Measure" ? (
     <MeasurePanel field={activeField} metaData={metaData} />
   ) : (
     <DimensionPanel
       field={activeField}
       chartType={state.chartConfig.chartType}
       metaData={metaData}
-      dimension={component as DimensionWithMeta}
+      dimension={component}
     />
   );
 };
@@ -108,8 +118,8 @@ const DimensionPanel = ({
 }: {
   field: string;
   chartType: ChartType;
-  dimension: DimensionWithMeta | undefined;
-  metaData: DataSetMetadata;
+  dimension: { iri: string; label: string } | undefined;
+  metaData: DataCubeMetadata;
 }) => {
   const { dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
@@ -140,9 +150,9 @@ const DimensionPanel = ({
             <Trans id="controls.select.dimension">Select a dimension</Trans>
           }
           optional={field === "segment"} // FIXME: Should be a more robust optional tag
-          options={dimensions.map(({ component }) => ({
-            value: component.iri.value,
-            label: component.label.value
+          options={dimensions.map(dimension => ({
+            value: dimension.iri,
+            label: dimension.label
           }))}
           dataSetMetadata={metaData}
         />
@@ -165,8 +175,9 @@ const DimensionPanel = ({
           </legend>
           {dimension && (
             <DimensionValuesMultiFilter
-              key={dimension.component.iri.value}
-              dimension={dimension}
+              key={dimension.iri}
+              dimensionIri={dimension.iri}
+              dataSetIri={metaData.iri}
             />
           )}
         </Box>
@@ -180,7 +191,7 @@ const MeasurePanel = ({
   metaData
 }: {
   field: string;
-  metaData: DataSetMetadata;
+  metaData: DataCubeMetadata;
 }) => {
   const { measures } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
@@ -204,9 +215,9 @@ const MeasurePanel = ({
         <ChartFieldField
           field={field}
           label={<Trans id="controls.select.measure">Select a measure</Trans>}
-          options={measures.map(({ component }) => ({
-            value: component.iri.value,
-            label: component.label.value
+          options={measures.map(measure => ({
+            value: measure.iri,
+            label: measure.label
           }))}
           dataSetMetadata={metaData}
         />
@@ -220,12 +231,10 @@ const Filter = ({
   metaData
 }: {
   state: ConfiguratorStateConfiguringChart;
-  metaData: DataSetMetadata;
+  metaData: DataCubeMetadata;
 }) => {
   const { dimensions } = metaData;
-  const activeDimension = dimensions.find(
-    dim => dim.component.iri.value === state.activeField
-  );
+  const activeDimension = dimensions.find(dim => dim.iri === state.activeField);
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (panelRef && panelRef.current) {
@@ -243,16 +252,17 @@ const Filter = ({
       tabIndex={-1}
     >
       <SectionTitle iconName="table">
-        {activeDimension && activeDimension.component.label.value}
+        {activeDimension && activeDimension.label}
       </SectionTitle>
       <Box variant="rightControlSectionContent" as="fieldset">
         <legend style={{ display: "none" }}>
-          {activeDimension && activeDimension.component.label.value}
+          {activeDimension && activeDimension.label}
         </legend>
         {activeDimension && (
           <DimensionValuesSingleFilter
-            dimension={activeDimension}
-          ></DimensionValuesSingleFilter>
+            dataSetIri={metaData.iri}
+            dimensionIri={activeDimension.iri}
+          />
         )}
       </Box>
     </Box>

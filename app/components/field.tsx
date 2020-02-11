@@ -257,7 +257,7 @@ export const ChartFieldField = ({
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
-  dataSetMetadata: DataSetMetadata;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartFieldField({
     componentIri,

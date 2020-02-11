@@ -38,6 +38,7 @@ export type DataCube = {
   dateCreated?: Maybe<Scalars['String']>,
   observations: ObservationsQuery,
   dimensions: Array<Dimension>,
+  dimensionByIri?: Maybe<Dimension>,
   measures: Array<Measure>,
 };
 
@@ -46,6 +47,11 @@ export type DataCubeObservationsArgs = {
   limit?: Maybe<Scalars['Int']>,
   measures?: Maybe<Array<Scalars['String']>>,
   filters?: Maybe<Scalars['Filters']>
+};
+
+
+export type DataCubeDimensionByIriArgs = {
+  iri: Scalars['String']
 };
 
 export type Dimension = {
@@ -256,6 +262,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   dateCreated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, DataCubeObservationsArgs>,
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>,
+  dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>,
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;

@@ -18,8 +18,13 @@ type DataCube {
   source: String
   description: String
   dateCreated: String
-  observations(limit: Int, measures: [String!], filters: Filters): ObservationsQuery!
+  observations(
+    limit: Int
+    measures: [String!]
+    filters: Filters
+  ): ObservationsQuery!
   dimensions: [Dimension!]!
+  dimensionByIri(iri: String!): Dimension
   measures: [Measure!]!
 }
 

@@ -35,6 +35,7 @@ export type DataCube = {
   dateCreated?: Maybe<Scalars['String']>,
   observations: ObservationsQuery,
   dimensions: Array<Dimension>,
+  dimensionByIri?: Maybe<Dimension>,
   measures: Array<Measure>,
 };
 
@@ -43,6 +44,11 @@ export type DataCubeObservationsArgs = {
   limit?: Maybe<Scalars['Int']>,
   measures?: Maybe<Array<Scalars['String']>>,
   filters?: Maybe<Scalars['Filters']>
+};
+
+
+export type DataCubeDimensionByIriArgs = {
+  iri: Scalars['String']
 };
 
 export type Dimension = {
@@ -210,6 +216,24 @@ export type DataCubeMetadataWithComponentsQuery = { __typename: 'Query', dataCub
       & ComponentFields_Measure_Fragment
     )> }> };
 
+export type DimensionValuesQueryVariables = {
+  dataCubeIri: Scalars['String'],
+  dimensionIri: Scalars['String'],
+  locale: Scalars['String']
+};
+
+
+export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri: Maybe<{ __typename: 'DataCube', dimensionByIri: Maybe<(
+      { __typename: 'NominalDimension' }
+      & DimensionFieldsWithValues_NominalDimension_Fragment
+    ) | (
+      { __typename: 'OrdinalDimension' }
+      & DimensionFieldsWithValues_OrdinalDimension_Fragment
+    ) | (
+      { __typename: 'TemporalDimension' }
+      & DimensionFieldsWithValues_TemporalDimension_Fragment
+    )> }> };
+
 export type ObservationFieldsFragment = { __typename: 'DataCube', observations: { __typename: 'ObservationsQuery', data: Array<any> } };
 
 export type DataCubesWithObservationsQueryVariables = {};
@@ -322,6 +346,19 @@ ${ComponentFieldsFragmentDoc}`;
 
 export function useDataCubeMetadataWithComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataWithComponentsQuery>({ query: DataCubeMetadataWithComponentsDocument, ...options });
+};
+export const DimensionValuesDocument = gql`
+    query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
+    dimensionByIri(iri: $dimensionIri) {
+      ...dimensionFieldsWithValues
+    }
+  }
+}
+    ${DimensionFieldsWithValuesFragmentDoc}`;
+
+export function useDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<DimensionValuesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DimensionValuesQuery>({ query: DimensionValuesDocument, ...options });
 };
 export const DataCubesWithObservationsDocument = gql`
     query DataCubesWithObservations {
