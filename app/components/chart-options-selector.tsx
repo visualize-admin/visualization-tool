@@ -1,14 +1,18 @@
 import { Trans } from "@lingui/macro";
-import React, { useEffect, useRef } from "react";
 import { Box, Flex } from "@theme-ui/components";
+import React, { useEffect, useRef } from "react";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   getFieldComponentIri
 } from "../domain";
 import { getFieldLabel } from "../domain/helpers";
+import { useDataCubeMetadataWithComponentsQuery } from "../graphql/query-hooks";
+import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
+import { useLocale } from "../lib/use-locale";
 import { ColorPalette, SectionTitle } from "./chart-controls";
+import { EmptyRightPanel } from "./empty-right-panel";
 import { ChartFieldField, ChartOptionField } from "./field";
 import {
   DimensionValuesMultiFilter,
@@ -16,13 +20,6 @@ import {
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
-import { EmptyRightPanel } from "./empty-right-panel";
-import { useLocale } from "../lib/use-locale";
-import {
-  useDataCubeMetadataWithComponentsQuery,
-  DimensionFieldsWithValuesFragment
-} from "../graphql/query-hooks";
-import { DataCubeMetadata } from "../graphql/types";
 
 export const ChartOptionsSelector = ({
   state
