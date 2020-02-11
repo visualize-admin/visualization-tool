@@ -7,20 +7,24 @@ import {
   canTransitionToPreviousStep
 } from "../domain/configurator-state";
 import { LocalizedLink } from "./links";
-import { useDataSetAndMetadata } from "../domain";
+import { useLocale } from "../lib/use-locale";
+import { useDataCubeMetadataWithComponentsQuery } from "../graphql/query-hooks";
 
 export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
-  const { data: dataSetMetadata } = useDataSetAndMetadata(dataSetIri);
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataWithComponentsQuery({
+    variables: { iri: dataSetIri ?? "", locale }
+  });
 
   const goNext = useCallback(() => {
-    if (dataSetMetadata) {
+    if (data?.dataCubeByIri) {
       dispatch({
         type: "STEP_NEXT",
-        dataSetMetadata
+        dataSetMetadata: data?.dataCubeByIri
       });
     }
-  }, [dataSetMetadata, dispatch]);
+  }, [data, dispatch]);
 
   const goPrevious = useCallback(() => {
     dispatch({
@@ -29,7 +33,7 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   }, [dispatch]);
 
   const nextDisabled =
-    !canTransitionToNextStep(state, dataSetMetadata) ||
+    !canTransitionToNextStep(state, data?.dataCubeByIri) ||
     state.state === "PUBLISHING";
   const previousDisabled =
     !canTransitionToPreviousStep(state) || state.state === "PUBLISHING";

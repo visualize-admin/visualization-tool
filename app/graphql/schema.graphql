@@ -17,6 +17,7 @@ type DataCube {
   contact: String
   source: String
   description: String
+  dateCreated: String
   observations(limit: Int, measures: [String!], filters: Filters): ObservationsQuery!
   dimensions: [Dimension!]!
   measures: [Measure!]!
@@ -33,6 +34,8 @@ interface Component {
 }
 
 interface Dimension {
+  iri: String!
+  label: String!
   values: [DimensionValue!]!
 }
 

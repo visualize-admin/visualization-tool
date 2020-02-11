@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Text, Flex } from "@theme-ui/components";
 import { Loading } from "./hint";
-import { useDataSetAndMetadata } from "../domain";
 import { DataTable } from "./datatable";
 import { Trans } from "@lingui/macro";
 import { useDataCubePreviewQuery } from "../graphql/query-hooks";
@@ -13,7 +12,6 @@ export interface Preview {
 }
 export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
-  // const { data: metaData } = useDataSetAndMetadata(dataSetIri);
   const [{ data: metaData }] = useDataCubePreviewQuery({
     variables: { iri: dataSetIri, locale }
   });

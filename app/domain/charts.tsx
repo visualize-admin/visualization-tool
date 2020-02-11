@@ -1,14 +1,12 @@
-import { GenericFields, ChartType, ChartConfig } from "./config-types";
+import { DataCubeMetadata } from "../graphql/types";
+import { unreachableError } from "../lib/unreachable";
+import { ChartConfig, ChartType, GenericFields } from "./config-types";
 import {
-  DimensionWithMeta,
   getCategoricalDimensions,
-  getComponentIri,
-  isTimeDimension,
-  MeasureWithMeta,
-  getTimeDimensions
+  getTimeDimensions,
+  isTimeDimension
 } from "./data";
 import { DataSetMetadata } from "./data-cube";
-import { unreachableError } from "../lib/unreachable";
 
 export const getInitialConfig = ({
   chartType,
@@ -16,8 +14,8 @@ export const getInitialConfig = ({
   measures
 }: {
   chartType: ChartType;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
+  dimensions: DataCubeMetadata["dimensions"];
+  measures: DataCubeMetadata["measures"];
 }): ChartConfig => {
   switch (chartType) {
     case "scatterplot":
@@ -25,16 +23,13 @@ export const getInitialConfig = ({
         chartType: "scatterplot",
         filters: {},
         fields: {
-          x: { componentIri: getComponentIri(measures[0]) },
+          x: { componentIri: measures[0].iri },
           y: {
-            componentIri: getComponentIri(
-              measures.length > 1 ? measures[1] : measures[0]
-            )
+            componentIri:
+              measures.length > 1 ? measures[1].iri : measures[0].iri
           },
           segment: {
-            componentIri: getComponentIri(
-              getCategoricalDimensions(dimensions)[0]
-            ),
+            componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10"
           }
         }
@@ -45,8 +40,8 @@ export const getInitialConfig = ({
         chartType,
         filters: {},
         fields: {
-          x: { componentIri: getComponentIri(dimensions[0]) },
-          y: { componentIri: getComponentIri(measures[0]) }
+          x: { componentIri: dimensions[0].iri },
+          y: { componentIri: measures[0].iri }
         }
       };
     case "line":
@@ -55,9 +50,9 @@ export const getInitialConfig = ({
         filters: {},
         fields: {
           x: {
-            componentIri: getComponentIri(getTimeDimensions(dimensions)[0])
+            componentIri: getTimeDimensions(dimensions)[0].iri
           },
-          y: { componentIri: getComponentIri(measures[0]) }
+          y: { componentIri: measures[0].iri }
         }
       };
 
@@ -67,9 +62,9 @@ export const getInitialConfig = ({
         filters: {},
         fields: {
           x: {
-            componentIri: getComponentIri(getTimeDimensions(dimensions)[0])
+            componentIri: getTimeDimensions(dimensions)[0].iri
           },
-          y: { componentIri: getComponentIri(measures[0]) }
+          y: { componentIri: measures[0].iri }
         }
       };
 
@@ -78,11 +73,9 @@ export const getInitialConfig = ({
         chartType,
         filters: {},
         fields: {
-          value: { componentIri: getComponentIri(measures[0]) },
+          value: { componentIri: measures[0].iri },
           segment: {
-            componentIri: getComponentIri(
-              getCategoricalDimensions(dimensions)[0]
-            ),
+            componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10"
           }
         }

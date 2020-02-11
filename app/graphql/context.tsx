@@ -1,3 +1,4 @@
+import "isomorphic-unfetch";
 import React from "react";
 import { Provider, createClient } from "urql";
 

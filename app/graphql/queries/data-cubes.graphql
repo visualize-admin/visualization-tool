@@ -11,6 +11,15 @@ fragment componentFields on Component {
   label
 }
 
+fragment dimensionFieldsWithValues on Dimension {
+  iri
+  label
+  values {
+    value
+    label
+  }
+}
+
 query DataCubePreview($iri: String!, $locale: String!) {
   dataCubeByIri(iri: $iri, locale: $locale) {
     iri
@@ -34,6 +43,29 @@ query DataCubePreviewObservations(
     observations(limit: 10, measures: $measures) {
       data
       sparql
+    }
+  }
+}
+
+query DataCubeMetadata($iri: String!, $locale: String!) {
+  dataCubeByIri(iri: $iri, locale: $locale) {
+    iri
+    title
+    description
+    source
+    dateCreated
+  }
+}
+
+query DataCubeMetadataWithComponents($iri: String!, $locale: String!) {
+  dataCubeByIri(iri: $iri, locale: $locale) {
+    iri
+    title
+    dimensions {
+      ...dimensionFieldsWithValues
+    }
+    measures {
+      ...componentFields
     }
   }
 }

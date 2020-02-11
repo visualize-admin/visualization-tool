@@ -176,6 +176,8 @@ const DataCube: DataCubeResolvers = {
   source: dataCube => dataCube.extraMetadata.get("source")?.value ?? null,
   description: dataCube =>
     dataCube.extraMetadata.get("description")?.value ?? null,
+  dateCreated: dataCube =>
+    dataCube.extraMetadata.get("dateCreated")?.value ?? null,
   dimensions: async dataCube => {
     return (await dataCube.dimensions()).map(dimension => ({
       dataCube,

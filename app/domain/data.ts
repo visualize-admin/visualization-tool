@@ -1,5 +1,6 @@
 import { Attribute, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import { Literal, NamedNode } from "rdf-js";
+import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 
 export interface DimensionWithMeta {
   component: Dimension;
@@ -117,7 +118,9 @@ export const isTimeDimension = ({ component }: DimensionWithMeta) => {
   }
 
   // FIXME: Remove this once we're sure that scaleOfMeasure always works
-  return /(Jahr|Année|Anno|Year|Zeit|Time|Temps|Tempo)/i.test(component.label.value);
+  return /(Jahr|Année|Anno|Year|Zeit|Time|Temps|Tempo)/i.test(
+    component.label.value
+  );
 };
 
 export const getDataTypeFromDimensionValues = ({
@@ -148,13 +151,19 @@ export const isCategoricalDimension = ({
 /**
  * @fixme use metadata to filter time dimension!
  */
-export const getTimeDimensions = (dimensions: DimensionWithMeta[]) =>
-  dimensions.filter(isTimeDimension);
+export const getTimeDimensions = (
+  dimensions: DimensionFieldsWithValuesFragment[]
+) => dimensions.filter(d => d.__typename === "TemporalDimension");
 /**
  * @fixme use metadata to filter categorical dimension!
  */
-export const getCategoricalDimensions = (dimensions: DimensionWithMeta[]) =>
-  dimensions.filter(isCategoricalDimension);
+export const getCategoricalDimensions = (
+  dimensions: DimensionFieldsWithValuesFragment[]
+) =>
+  dimensions.filter(
+    d =>
+      d.__typename === "NominalDimension" || d.__typename === "OrdinalDimension"
+  );
 
 export const getComponentIri = ({ component }: ComponentWithMeta): string => {
   return component.iri.value;

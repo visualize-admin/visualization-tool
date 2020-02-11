@@ -132,14 +132,14 @@ export const useChartFieldField = ({
             value: {
               componentIri: e.currentTarget.value,
               field,
-              dataSetMetadata
+              dataSetMetadata: dataSetMetadata as $FixMe
             }
           })
         : dispatch({
             type: "CHART_FIELD_DELETED",
             value: {
               field,
-              dataSetMetadata
+              dataSetMetadata: dataSetMetadata as $FixMe
             }
           }),
     [dispatch, field, dataSetMetadata]
@@ -210,12 +210,12 @@ export const useChartTypeSelectorField = ({
   >(
     e => {
       const chartType = e.currentTarget.value as ChartType;
-
+      
       dispatch({
         type: "CHART_TYPE_CHANGED",
         value: {
           chartType,
-          dataSetMetadata: metaData
+          dataSetMetadata: metaData as $FixMe
         }
       });
     },

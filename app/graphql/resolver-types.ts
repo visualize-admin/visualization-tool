@@ -35,6 +35,7 @@ export type DataCube = {
   contact?: Maybe<Scalars['String']>,
   source?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
+  dateCreated?: Maybe<Scalars['String']>,
   observations: ObservationsQuery,
   dimensions: Array<Dimension>,
   measures: Array<Measure>,
@@ -48,6 +49,8 @@ export type DataCubeObservationsArgs = {
 };
 
 export type Dimension = {
+  iri: Scalars['String'],
+  label: Scalars['String'],
   values: Array<DimensionValue>,
 };
 
@@ -250,6 +253,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   contact?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   source?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  dateCreated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, DataCubeObservationsArgs>,
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>,
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType>,
@@ -258,6 +262,8 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type DimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Dimension'] = ResolversParentTypes['Dimension']> = ResolversObject<{
   __resolveType: TypeResolveFn<'NominalDimension' | 'OrdinalDimension' | 'TemporalDimension', ParentType, ContextType>,
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>,
 }>;
 
