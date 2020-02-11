@@ -5,9 +5,11 @@ import { Loading } from "./hint";
 import { Trans } from "@lingui/macro";
 import { SectionTitle } from "./chart-controls";
 import { useDataCubesQuery } from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 
 export const DataSetList = () => {
-  const [{ data }] = useDataCubesQuery();
+  const locale = useLocale();
+  const [{ data }] = useDataCubesQuery({ variables: { locale } });
 
   if (data) {
     return (

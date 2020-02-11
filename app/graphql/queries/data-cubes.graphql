@@ -1,5 +1,5 @@
-query DataCubes {
-  dataCubes {
+query DataCubes($locale: String!) {
+  dataCubes(locale: $locale) {
     iri
     title
     description

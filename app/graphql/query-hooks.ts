@@ -120,7 +120,9 @@ export type TemporalDimension = Dimension & {
   values: Array<DimensionValue>,
 };
 
-export type DataCubesQueryVariables = {};
+export type DataCubesQueryVariables = {
+  locale: Scalars['String']
+};
 
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCube', iri: string, title: string, description: Maybe<string> }> };
@@ -148,8 +150,8 @@ export const ObservationFieldsFragmentDoc = gql`
 }
     `;
 export const DataCubesDocument = gql`
-    query DataCubes {
-  dataCubes {
+    query DataCubes($locale: String!) {
+  dataCubes(locale: $locale) {
     iri
     title
     description
