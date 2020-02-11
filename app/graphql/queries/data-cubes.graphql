@@ -2,7 +2,6 @@ query DataCubes {
   dataCubes {
     iri
     title
-    contact
     description
   }
 }

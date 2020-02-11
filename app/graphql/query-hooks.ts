@@ -123,7 +123,7 @@ export type TemporalDimension = Dimension & {
 export type DataCubesQueryVariables = {};
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCube', iri: string, title: string, contact: Maybe<string>, description: Maybe<string> }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCube', iri: string, title: string, description: Maybe<string> }> };
 
 export type DataCubesWithoutDescQueryVariables = {};
 
@@ -152,7 +152,6 @@ export const DataCubesDocument = gql`
   dataCubes {
     iri
     title
-    contact
     description
   }
 }
