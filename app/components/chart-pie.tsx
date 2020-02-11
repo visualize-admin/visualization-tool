@@ -95,7 +95,7 @@ export const ChartPie = memo(
   }: {
     observations: Observation[];
     dimensions: DimensionWithMeta[];
-    measures: MeasureWithMeta[];
+    measures: $FixMe[];
     fields: PieFields;
   }) => {
     return (

@@ -104,7 +104,7 @@ export const ChartColumns = memo(
   }: {
     observations: Observation[];
     dimensions: DimensionWithMeta[];
-    measures: MeasureWithMeta[];
+    measures: $FixMe[];
     fields: ColumnFields;
   }) => {
     return (

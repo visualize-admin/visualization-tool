@@ -38,35 +38,36 @@ const useAreasState = ({
   bounds
 }: Pick<ChartProps, "data" | "fields" | "measures"> & {
   bounds: Bounds;
-}): AreasState => {
+} & { fields: AreaFields }): AreasState => {
   const { chartWidth, chartHeight } = bounds;
 
-  const getGroups = (d: Observation): string => d.x as string;
-  const getX = (d: Observation): Date => parseDate(+d.x);
-  const getY = (d: Observation): number => +d.y as number;
-  const getSegment = (d: Observation): string => d.segment as string;
+  const getGroups = (d: Observation): string =>
+    d[fields.x.componentIri] as string;
+  const getX = (d: Observation): Date => parseDate(+d[fields.x.componentIri]);
+  const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
+  const getSegment = (d: Observation): string =>
+    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
 
-  const yAxisLabel = getDimensionLabel(
-    measures.find(
-      d => d.component.iri.value === (fields as AreaFields).y.componentIri
-    )!
-  );
+  const yAxisLabel =
+    measures.find(d => d.iri === fields.y.componentIri)?.label ??
+    fields.y.componentIri;
 
   const sortedData = useMemo(
-    () => [...data].sort((a, b) => ascending(parseDate(+a.x), parseDate(+b.x))),
-    [data]
+    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
+    [data, getX]
   );
 
   const segments = Array.from(new Set(sortedData.map(d => getSegment(d))));
 
+  const xKey = fields.x.componentIri;
   const memo = useMemo(() => {
     const wide: { [key: string]: number | string }[] = [];
     const groupedMap = group(sortedData, getGroups);
 
     for (const [key, values] of groupedMap) {
-      const keyObject = values.reduce(
+      const keyObject = values.reduce<{ [k: string]: number | string }>(
         (obj, cur) => {
-          const currentKey = cur.segment as string;
+          const currentKey = getSegment(cur);
           const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
           const total = currentY + (obj.total as number);
           return {
@@ -79,7 +80,7 @@ const useAreasState = ({
       );
       wide.push({
         ...keyObject,
-        x: key
+        [xKey]: key
       });
     }
 
@@ -91,7 +92,7 @@ const useAreasState = ({
     const series = stacked(wide as { [key: string]: number }[]);
 
     return { yDomain, series, wide };
-  }, [segments, sortedData]);
+  }, [getGroups, getSegment, getY, segments, sortedData]);
 
   const { yDomain, series, wide } = memo;
 
@@ -136,7 +137,7 @@ const AreaChartProvider = ({
   children
 }: Pick<ChartProps, "data" | "fields" | "measures"> & {
   children: ReactNode;
-}) => {
+} & { fields: AreaFields }) => {
   const bounds = useBounds();
 
   const state = useAreasState({
@@ -159,6 +160,7 @@ export const AreaChart = ({
 }: Pick<ChartProps, "data" | "fields" | "measures"> & {
   aspectRatio: number;
   children: ReactNode;
+  fields: AreaFields;
 }) => {
   return (
     <Observer aspectRatio={aspectRatio}>

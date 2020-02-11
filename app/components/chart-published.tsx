@@ -69,9 +69,7 @@ export const ChartPublished = ({
         )}
         {chartConfig.chartType === "area" && (
           <ChartAreasVisualization
-            dataSet={metaData.dataSet}
-            dimensions={metaData.dimensions}
-            measures={metaData.measures}
+            dataSetIri={dataSet}
             chartConfig={chartConfig}
           />
         )}

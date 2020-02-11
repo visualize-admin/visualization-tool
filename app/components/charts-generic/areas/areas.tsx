@@ -21,13 +21,15 @@ export const Areas = () => {
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      {series.map((d, i) => (
-        <Area
-          key={`${d.key}-${i}`}
-          path={areaGenerator(d) as string}
-          color={colors(d.key)}
-        />
-      ))}
+      {series.map((d, i) => {
+        return (
+          <Area
+            key={`${d.key}-${i}`}
+            path={areaGenerator(d) as string}
+            color={colors(d.key)}
+          />
+        );
+      })}
     </g>
   );
 };

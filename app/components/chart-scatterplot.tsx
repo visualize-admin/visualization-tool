@@ -107,7 +107,7 @@ export const ChartScatterplot = memo(
   }: {
     observations: Observation[];
     dimensions: DimensionWithMeta[];
-    measures: MeasureWithMeta[];
+    measures: $FixMe[];
     fields: ScatterPlotFields;
   }) => {
     return (

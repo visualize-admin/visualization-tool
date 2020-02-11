@@ -102,7 +102,7 @@ export const ChartLines = memo(
   }: {
     observations: Observation[];
     dimensions: DimensionWithMeta[];
-    measures: MeasureWithMeta[];
+    measures: $FixMe[];
     fields: LineFields;
   }) => {
     return (

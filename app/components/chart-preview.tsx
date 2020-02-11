@@ -64,7 +64,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               }}
             >
               {/* // FIXME: we shouldn't need this condition because the states must be these */}
-              {state.chartConfig.chartType === "column" && (
+              {/* {state.chartConfig.chartType === "column" && (
                 <ChartColumnsVisualization
                   dataSet={dataSet}
                   dimensions={dimensions}
@@ -79,16 +79,14 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                   measures={measures}
                   chartConfig={state.chartConfig}
                 />
-              )}
+              )} */}
               {state.chartConfig.chartType === "area" && (
                 <ChartAreasVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
+                  dataSetIri={dataSetIri}
                   chartConfig={state.chartConfig}
                 />
               )}
-              {state.chartConfig.chartType === "scatterplot" && (
+              {/* {state.chartConfig.chartType === "scatterplot" && (
                 <ChartScatterplotVisualization
                   dataSet={dataSet}
                   dimensions={dimensions}
@@ -103,7 +101,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                   measures={measures}
                   chartConfig={state.chartConfig}
                 />
-              )}
+              )} */}
             </Flex>
           </>
         )}
