@@ -17,5 +17,5 @@ export type ResolvedMeasure = {
 export type ResolvedObservationsQuery = {
   dataCube: RDF.DataCube;
   query: RDF.Query;
-  selectedFields: [string, RDF.Dimension][]
+  selectedFields: [string, RDF.Dimension | RDF.Measure | RDF.Attribute][];
 };

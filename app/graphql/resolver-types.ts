@@ -17,8 +17,13 @@ export type Scalars = {
   RawObservation: RawObservation,
 };
 
-export type Attribute = {
+export type Attribute = Component & {
    __typename?: 'Attribute',
+  iri: Scalars['String'],
+  label: Scalars['String'],
+};
+
+export type Component = {
   iri: Scalars['String'],
   label: Scalars['String'],
 };
@@ -43,8 +48,6 @@ export type DataCubeObservationsArgs = {
 };
 
 export type Dimension = {
-  iri: Scalars['String'],
-  label: Scalars['String'],
   values: Array<DimensionValue>,
 };
 
@@ -55,13 +58,13 @@ export type DimensionValue = {
 };
 
 
-export type Measure = {
+export type Measure = Component & {
    __typename?: 'Measure',
   iri: Scalars['String'],
   label: Scalars['String'],
 };
 
-export type NominalDimension = Dimension & {
+export type NominalDimension = Component & Dimension & {
    __typename?: 'NominalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -79,7 +82,7 @@ export type ObservationsQuery = {
   sparql: Scalars['String'],
 };
 
-export type OrdinalDimension = Dimension & {
+export type OrdinalDimension = Component & Dimension & {
    __typename?: 'OrdinalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -116,7 +119,7 @@ export type QueryDataCubesArgs = {
 };
 
 
-export type TemporalDimension = Dimension & {
+export type TemporalDimension = Component & Dimension & {
    __typename?: 'TemporalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -200,6 +203,7 @@ export type ResolversTypes = ResolversObject<{
   Dimension: ResolverTypeWrapper<ResolvedDimension>,
   DimensionValue: ResolverTypeWrapper<DimensionValue>,
   Measure: ResolverTypeWrapper<ResolvedMeasure>,
+  Component: ResolverTypeWrapper<Component>,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   NominalDimension: ResolverTypeWrapper<ResolvedDimension>,
   OrdinalDimension: ResolverTypeWrapper<ResolvedDimension>,
@@ -220,6 +224,7 @@ export type ResolversParentTypes = ResolversObject<{
   Dimension: ResolvedDimension,
   DimensionValue: DimensionValue,
   Measure: ResolvedMeasure,
+  Component: Component,
   Boolean: Scalars['Boolean'],
   NominalDimension: ResolvedDimension,
   OrdinalDimension: ResolvedDimension,
@@ -231,6 +236,12 @@ export type AttributeResolvers<ContextType = any, ParentType extends ResolversPa
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
+}>;
+
+export type ComponentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Component'] = ResolversParentTypes['Component']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Measure' | 'NominalDimension' | 'OrdinalDimension' | 'TemporalDimension' | 'Attribute', ParentType, ContextType>,
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
 }>;
 
 export type DataCubeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataCube'] = ResolversParentTypes['DataCube']> = ResolversObject<{
@@ -247,8 +258,6 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type DimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Dimension'] = ResolversParentTypes['Dimension']> = ResolversObject<{
   __resolveType: TypeResolveFn<'NominalDimension' | 'OrdinalDimension' | 'TemporalDimension', ParentType, ContextType>,
-  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>,
 }>;
 
@@ -311,6 +320,7 @@ export type TemporalDimensionResolvers<ContextType = any, ParentType extends Res
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Attribute?: AttributeResolvers<ContextType>,
+  Component?: ComponentResolvers,
   DataCube?: DataCubeResolvers<ContextType>,
   Dimension?: DimensionResolvers,
   DimensionValue?: DimensionValueResolvers<ContextType>,

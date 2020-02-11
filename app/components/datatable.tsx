@@ -1,21 +1,16 @@
-import { DataCube, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
+import { Box } from "@theme-ui/components";
 import { format } from "d3-format";
 import * as React from "react";
-import { Box } from "@theme-ui/components";
+import { Observation } from "../domain";
 import {
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation,
-  usePreviewObservations
-} from "../domain";
+  ComponentFieldsFragment,
+  useDataCubePreviewObservationsQuery
+} from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 import { Loading } from "./hint";
-import { useMemo } from "react";
 
-interface Header {
-  headerIndex: string;
-  header: string;
-  componentType: string;
-}
+type Header = ComponentFieldsFragment;
+
 const formatNumber = format(",.2~f");
 
 const Table = ({
@@ -38,19 +33,19 @@ const Table = ({
       <caption style={{ display: "none" }}>{title}</caption>
       <tbody>
         <Box as="tr" variant="datatable.headerRow">
-          {headers.map(({ header, componentType }) => {
+          {headers.map(({ iri, label, __typename }) => {
             return (
               <Box
                 as="th"
                 variant="datatable.headerCell"
                 role="columnheader"
-                key={header}
+                key={iri}
                 sx={{
                   scope: "col",
-                  textAlign: componentType === "measure" ? "right" : "left"
+                  textAlign: __typename === "Measure" ? "right" : "left"
                 }}
               >
-                {header}
+                {label}
               </Box>
             );
           })}
@@ -58,18 +53,18 @@ const Table = ({
         {observations.map((obs, i) => {
           return (
             <Box as="tr" variant="datatable.row" key={i}>
-              {headers.map(({ headerIndex, componentType }) => (
+              {headers.map(({ iri, label, __typename }) => (
                 <Box
-                  key={headerIndex}
+                  key={iri}
                   as="td"
                   variant="datatable.cell"
                   sx={{
-                    textAlign: componentType === "measure" ? "right" : "left"
+                    textAlign: __typename === "Measure" ? "right" : "left"
                   }}
                 >
-                  {componentType === "measure"
-                    ? formatNumber(+obs[headerIndex])
-                    : obs[headerIndex]}
+                  {__typename === "Measure"
+                    ? formatNumber(+obs[iri])
+                    : obs[iri]}
                 </Box>
               ))}
             </Box>
@@ -81,37 +76,32 @@ const Table = ({
 };
 
 export const DataTable = ({
-  dataSet,
+  title,
+  dataSetIri,
   dimensions,
   measures
 }: {
-  dataSet: DataCube;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
+  title: string;
+  dataSetIri: string;
+  dimensions: Header[];
+  measures: Header[];
 }) => {
-  const selection: [string, Dimension | Measure][] = useMemo(
-    () =>
-      [...dimensions, ...measures].map((comp, i) => [`${i}`, comp.component]),
-    [dimensions, measures]
-  );
-
-  const observations = usePreviewObservations({
-    dataSet,
-    selection
+  const locale = useLocale();
+  const [{ data, fetching }] = useDataCubePreviewObservationsQuery({
+    variables: {
+      iri: dataSetIri,
+      locale,
+      measures: measures.map(m => m.iri)
+    }
   });
 
-  const headers: Header[] = Object.entries(selection).map(([key, value]) => ({
-    headerIndex: key,
-    header: value[1].label.value,
-    componentType: value[1].componentType
-  }));
-
-  if (observations.data) {
+  if (!fetching && data?.dataCubeByIri) {
+    const headers = [...dimensions, ...measures];
     return (
       <Table
-        title={dataSet.label.value}
+        title={title}
         headers={headers}
-        observations={observations.data}
+        observations={data.dataCubeByIri.observations.data}
       />
     );
   } else {

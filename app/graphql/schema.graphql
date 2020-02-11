@@ -27,36 +27,39 @@ type DimensionValue {
   label: String!
 }
 
+interface Component {
+  iri: String!
+  label: String!
+}
+
 interface Dimension {
+  values: [DimensionValue!]!
+}
+
+type NominalDimension implements Component & Dimension {
   iri: String!
   label: String!
   values: [DimensionValue!]!
 }
 
-type NominalDimension implements Dimension {
+type OrdinalDimension implements Component & Dimension {
   iri: String!
   label: String!
   values: [DimensionValue!]!
 }
 
-type OrdinalDimension implements Dimension {
+type TemporalDimension implements Component & Dimension {
   iri: String!
   label: String!
   values: [DimensionValue!]!
 }
 
-type TemporalDimension implements Dimension {
-  iri: String!
-  label: String!
-  values: [DimensionValue!]!
-}
-
-type Measure {
+type Measure implements Component {
   iri: String!
   label: String!
 }
 
-type Attribute {
+type Attribute implements Component {
   iri: String!
   label: String!
 }

@@ -14,8 +14,13 @@ export type Scalars = {
   RawObservation: any,
 };
 
-export type Attribute = {
+export type Attribute = Component & {
    __typename: 'Attribute',
+  iri: Scalars['String'],
+  label: Scalars['String'],
+};
+
+export type Component = {
   iri: Scalars['String'],
   label: Scalars['String'],
 };
@@ -35,13 +40,11 @@ export type DataCube = {
 
 export type DataCubeObservationsArgs = {
   limit?: Maybe<Scalars['Int']>,
-  additionalComponents?: Maybe<Array<Scalars['String']>>,
+  measures?: Maybe<Array<Scalars['String']>>,
   filters?: Maybe<Scalars['Filters']>
 };
 
 export type Dimension = {
-  iri: Scalars['String'],
-  label: Scalars['String'],
   values: Array<DimensionValue>,
 };
 
@@ -52,13 +55,13 @@ export type DimensionValue = {
 };
 
 
-export type Measure = {
+export type Measure = Component & {
    __typename: 'Measure',
   iri: Scalars['String'],
   label: Scalars['String'],
 };
 
-export type NominalDimension = Dimension & {
+export type NominalDimension = Component & Dimension & {
    __typename: 'NominalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -76,7 +79,7 @@ export type ObservationsQuery = {
   sparql: Scalars['String'],
 };
 
-export type OrdinalDimension = Dimension & {
+export type OrdinalDimension = Component & Dimension & {
    __typename: 'OrdinalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -113,7 +116,7 @@ export type QueryDataCubesArgs = {
 };
 
 
-export type TemporalDimension = Dimension & {
+export type TemporalDimension = Component & Dimension & {
    __typename: 'TemporalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -127,10 +130,46 @@ export type DataCubesQueryVariables = {
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCube', iri: string, title: string, description: Maybe<string> }> };
 
-export type DataCubesWithoutDescQueryVariables = {};
+type ComponentFields_Measure_Fragment = { __typename: 'Measure', iri: string, label: string };
+
+type ComponentFields_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string };
+
+type ComponentFields_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string };
+
+type ComponentFields_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string };
+
+type ComponentFields_Attribute_Fragment = { __typename: 'Attribute', iri: string, label: string };
+
+export type ComponentFieldsFragment = ComponentFields_Measure_Fragment | ComponentFields_NominalDimension_Fragment | ComponentFields_OrdinalDimension_Fragment | ComponentFields_TemporalDimension_Fragment | ComponentFields_Attribute_Fragment;
+
+export type DataCubePreviewQueryVariables = {
+  iri: Scalars['String'],
+  locale: Scalars['String']
+};
 
 
-export type DataCubesWithoutDescQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCube', iri: string, title: string, contact: Maybe<string> }> };
+export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri: Maybe<{ __typename: 'DataCube', iri: string, title: string, description: Maybe<string>, dimensions: Array<(
+      { __typename: 'NominalDimension' }
+      & ComponentFields_NominalDimension_Fragment
+    ) | (
+      { __typename: 'OrdinalDimension' }
+      & ComponentFields_OrdinalDimension_Fragment
+    ) | (
+      { __typename: 'TemporalDimension' }
+      & ComponentFields_TemporalDimension_Fragment
+    )>, measures: Array<(
+      { __typename: 'Measure' }
+      & ComponentFields_Measure_Fragment
+    )> }> };
+
+export type DataCubePreviewObservationsQueryVariables = {
+  iri: Scalars['String'],
+  locale: Scalars['String'],
+  measures: Array<Scalars['String']>
+};
+
+
+export type DataCubePreviewObservationsQuery = { __typename: 'Query', dataCubeByIri: Maybe<{ __typename: 'DataCube', observations: { __typename: 'ObservationsQuery', data: Array<any>, sparql: string } }> };
 
 export type ObservationFieldsFragment = { __typename: 'DataCube', observations: { __typename: 'ObservationsQuery', data: Array<any> } };
 
@@ -142,6 +181,12 @@ export type DataCubesWithObservationsQuery = { __typename: 'Query', dataCubes: A
     & ObservationFieldsFragment
   )> };
 
+export const ComponentFieldsFragmentDoc = gql`
+    fragment componentFields on Component {
+  iri
+  label
+}
+    `;
 export const ObservationFieldsFragmentDoc = gql`
     fragment observationFields on DataCube {
   observations(limit: 10) {
@@ -162,18 +207,38 @@ export const DataCubesDocument = gql`
 export function useDataCubesQuery(options: Omit<Urql.UseQueryArgs<DataCubesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubesQuery>({ query: DataCubesDocument, ...options });
 };
-export const DataCubesWithoutDescDocument = gql`
-    query DataCubesWithoutDesc {
-  dataCubes {
+export const DataCubePreviewDocument = gql`
+    query DataCubePreview($iri: String!, $locale: String!) {
+  dataCubeByIri(iri: $iri, locale: $locale) {
     iri
     title
-    contact
+    description
+    dimensions {
+      ...componentFields
+    }
+    measures {
+      ...componentFields
+    }
+  }
+}
+    ${ComponentFieldsFragmentDoc}`;
+
+export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });
+};
+export const DataCubePreviewObservationsDocument = gql`
+    query DataCubePreviewObservations($iri: String!, $locale: String!, $measures: [String!]!) {
+  dataCubeByIri(iri: $iri, locale: $locale) {
+    observations(limit: 10, measures: $measures) {
+      data
+      sparql
+    }
   }
 }
     `;
 
-export function useDataCubesWithoutDescQuery(options: Omit<Urql.UseQueryArgs<DataCubesWithoutDescQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubesWithoutDescQuery>({ query: DataCubesWithoutDescDocument, ...options });
+export function useDataCubePreviewObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewObservationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubePreviewObservationsQuery>({ query: DataCubePreviewObservationsDocument, ...options });
 };
 export const DataCubesWithObservationsDocument = gql`
     query DataCubesWithObservations {

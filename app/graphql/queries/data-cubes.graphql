@@ -5,11 +5,36 @@ query DataCubes($locale: String!) {
     description
   }
 }
-query DataCubesWithoutDesc {
-  dataCubes {
+
+fragment componentFields on Component {
+  iri
+  label
+}
+
+query DataCubePreview($iri: String!, $locale: String!) {
+  dataCubeByIri(iri: $iri, locale: $locale) {
     iri
     title
-    contact
+    description
+    dimensions {
+      ...componentFields
+    }
+    measures {
+      ...componentFields
+    }
+  }
+}
+
+query DataCubePreviewObservations(
+  $iri: String!
+  $locale: String!
+  $measures: [String!]!
+) {
+  dataCubeByIri(iri: $iri, locale: $locale) {
+    observations(limit: 10, measures: $measures) {
+      data
+      sparql
+    }
   }
 }
 
