@@ -2,7 +2,8 @@ import { literal } from "@rdfjs/data-model";
 import {
   DataCube as RDFDataCube,
   DataCubeEntryPoint,
-  Dimension as RDFDimension
+  Dimension as RDFDimension,
+  Measure as RDFMeasure
 } from "@zazuko/query-rdf-data-cube";
 import { GraphQLJSONObject } from "graphql-type-json";
 import HttpsProxyAgent from "https-proxy-agent";
@@ -187,24 +188,24 @@ const DataCube: DataCubeResolvers = {
       measure
     }));
   },
-  observations: async (dataCube, { limit, filters, additionalComponents }) => {
+  observations: async (dataCube, { limit, filters, measures }) => {
     const constructedFilters = filters
       ? await constructFilters(dataCube, filters)
       : [];
 
     // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
     const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
-      return additionalComponents?.find(iri => iri === d.iri.value)
+      return measures?.find(iri => iri === d.iri.value)
         ? []
         : ([[`dim${i}`, d]] as [string, RDFDimension][]);
     });
 
     const selectedFields = [
       ...unmappedDimensions,
-      ...(additionalComponents
-        ? additionalComponents.map(
+      ...(measures
+        ? measures.map(
             (iri, i) =>
-              [`comp${i}`, new RDFDimension({ iri })] as [string, RDFDimension]
+              [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
           )
         : [])
     ];

@@ -17,7 +17,7 @@ type DataCube {
   contact: String
   source: String
   description: String
-  observations(limit: Int, additionalComponents: [String!], filters: Filters): ObservationsQuery!
+  observations(limit: Int, measures: [String!], filters: Filters): ObservationsQuery!
   dimensions: [Dimension!]!
   measures: [Measure!]!
 }
