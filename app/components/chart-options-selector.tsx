@@ -7,7 +7,7 @@ import {
   getFieldComponentIri
 } from "../domain";
 import { getFieldLabel } from "../domain/helpers";
-import { useDataCubeMetadataWithComponentsQuery } from "../graphql/query-hooks";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
@@ -27,7 +27,7 @@ export const ChartOptionsSelector = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentsQuery({
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: state.dataSet, locale }
   });
 

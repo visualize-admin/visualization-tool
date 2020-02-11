@@ -1,10 +1,10 @@
-import * as React from "react";
-import { Button, Flex, Text } from "@theme-ui/components";
-import { ComponentWithMeta, getDimensionLabel } from "../../domain";
-import { FieldProps } from "../../domain/config-form";
-import { Icon, IconName } from "../../icons";
-import { getFieldLabel, getIconName } from "../../domain/helpers";
 import { Trans } from "@lingui/macro";
+import { Button, Flex, Text } from "@theme-ui/components";
+import * as React from "react";
+import { FieldProps } from "../../domain/config-form";
+import { getFieldLabel, getIconName } from "../../domain/helpers";
+import { ComponentFieldsFragment } from "../../graphql/query-hooks";
+import { Icon, IconName } from "../../icons";
 
 export const ControlTab = ({
   component,
@@ -13,7 +13,7 @@ export const ControlTab = ({
   onClick,
   checked
 }: {
-  component?: ComponentWithMeta;
+  component?: ComponentFieldsFragment;
   disabled?: boolean;
   value: string;
   onClick: (x: string) => void;
@@ -34,7 +34,7 @@ export const ControlTab = ({
         upperLabel={getFieldLabel(value)}
         lowerLabel={
           component ? (
-            getDimensionLabel(component)
+            component.label
           ) : (
             <Trans id="controls.partition.add">Add ...</Trans>
           )
@@ -47,14 +47,14 @@ export const ControlTab = ({
 };
 
 export const FilterTab = ({
-  component,
+  label,
   value,
   checked,
   disabled,
   onClick,
   filterValue
 }: {
-  component?: ComponentWithMeta;
+  label: string;
   disabled?: boolean;
   onClick: (x: string) => void;
   filterValue: string;
@@ -73,7 +73,7 @@ export const FilterTab = ({
     >
       <LeftPanelTabContent
         iconName={"table"}
-        upperLabel={component && getDimensionLabel(component)}
+        upperLabel={label}
         lowerLabel={filterValue}
         checked={checked}
       />

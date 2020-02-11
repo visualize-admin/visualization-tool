@@ -9,7 +9,7 @@ import {
 } from "../domain/config-types";
 import { Trans } from "@lingui/macro";
 import { SectionTitle } from "./chart-controls";
-import { useDataCubeMetadataWithComponentsQuery } from "../graphql/query-hooks";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 
 const chartTypes: ChartType[] = ["column", "line", "area", "scatterplot"];
@@ -19,7 +19,7 @@ export const ChartTypeSelector = ({
   state: ConfiguratorStateSelectingChartType;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentsQuery({
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: state.dataSet, locale }
   });
 

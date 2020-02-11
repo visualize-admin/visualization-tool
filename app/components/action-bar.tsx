@@ -8,12 +8,12 @@ import {
 } from "../domain/configurator-state";
 import { LocalizedLink } from "./links";
 import { useLocale } from "../lib/use-locale";
-import { useDataCubeMetadataWithComponentsQuery } from "../graphql/query-hooks";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 
 export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentsQuery({
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: dataSetIri ?? "", locale }
   });
 

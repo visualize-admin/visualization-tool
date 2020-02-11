@@ -204,6 +204,26 @@ export type DataCubeMetadataWithComponentsQueryVariables = {
 
 export type DataCubeMetadataWithComponentsQuery = { __typename: 'Query', dataCubeByIri: Maybe<{ __typename: 'DataCube', iri: string, title: string, dimensions: Array<(
       { __typename: 'NominalDimension' }
+      & ComponentFields_NominalDimension_Fragment
+    ) | (
+      { __typename: 'OrdinalDimension' }
+      & ComponentFields_OrdinalDimension_Fragment
+    ) | (
+      { __typename: 'TemporalDimension' }
+      & ComponentFields_TemporalDimension_Fragment
+    )>, measures: Array<(
+      { __typename: 'Measure' }
+      & ComponentFields_Measure_Fragment
+    )> }> };
+
+export type DataCubeMetadataWithComponentValuesQueryVariables = {
+  iri: Scalars['String'],
+  locale: Scalars['String']
+};
+
+
+export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri: Maybe<{ __typename: 'DataCube', iri: string, title: string, dimensions: Array<(
+      { __typename: 'NominalDimension' }
       & DimensionFieldsWithValues_NominalDimension_Fragment
     ) | (
       { __typename: 'OrdinalDimension' }
@@ -334,6 +354,24 @@ export const DataCubeMetadataWithComponentsDocument = gql`
     iri
     title
     dimensions {
+      ...componentFields
+    }
+    measures {
+      ...componentFields
+    }
+  }
+}
+    ${ComponentFieldsFragmentDoc}`;
+
+export function useDataCubeMetadataWithComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeMetadataWithComponentsQuery>({ query: DataCubeMetadataWithComponentsDocument, ...options });
+};
+export const DataCubeMetadataWithComponentValuesDocument = gql`
+    query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
+  dataCubeByIri(iri: $iri, locale: $locale) {
+    iri
+    title
+    dimensions {
       ...dimensionFieldsWithValues
     }
     measures {
@@ -344,8 +382,8 @@ export const DataCubeMetadataWithComponentsDocument = gql`
     ${DimensionFieldsWithValuesFragmentDoc}
 ${ComponentFieldsFragmentDoc}`;
 
-export function useDataCubeMetadataWithComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubeMetadataWithComponentsQuery>({ query: DataCubeMetadataWithComponentsDocument, ...options });
+export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentValuesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });
 };
 export const DimensionValuesDocument = gql`
     query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!) {
