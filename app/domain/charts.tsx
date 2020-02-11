@@ -92,12 +92,14 @@ export const getPossibleChartType = ({
   meta
 }: {
   chartTypes: ChartType[];
-  meta: DataSetMetadata;
+  meta: DataCubeMetadata;
 }): ChartType[] | null => {
   const { measures, dimensions } = meta;
 
   const hasMultipleQ = measures.length > 1;
-  const hasTime = dimensions.some(dim => isTimeDimension(dim));
+  const hasTime = dimensions.some(
+    dim => dim.__typename === "TemporalDimension"
+  );
 
   const catBased: ChartType[] = ["column", "pie"];
   const multipleQ: ChartType[] = ["scatterplot"];

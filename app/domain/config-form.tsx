@@ -6,6 +6,7 @@ import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
 import { SelectProps } from "@theme-ui/components";
 import { getFieldComponentIri } from "./charts";
+import { DataCubeMetadata } from "../graphql/types";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -200,7 +201,7 @@ export const useChartTypeSelectorField = ({
   metaData
 }: {
   value: string;
-  metaData: DataSetMetadata;
+  metaData: DataCubeMetadata;
 }): FieldProps & {
   onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
 } => {
@@ -210,12 +211,12 @@ export const useChartTypeSelectorField = ({
   >(
     e => {
       const chartType = e.currentTarget.value as ChartType;
-      
+
       dispatch({
         type: "CHART_TYPE_CHANGED",
         value: {
           chartType,
-          dataSetMetadata: metaData as $FixMe
+          dataSetMetadata: metaData
         }
       });
     },

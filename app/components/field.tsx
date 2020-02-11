@@ -26,6 +26,7 @@ import {
   AnnotatorTab
 } from "./chart-controls/control-tab";
 import { getFieldLabel } from "../domain/helpers";
+import { DataCubeMetadata } from "../graphql/types";
 
 export const ControlTabField = ({
   component,
@@ -318,7 +319,7 @@ export const ChartTypeSelectorField = ({
 }: {
   label: string;
   value: string;
-  metaData: DataSetMetadata;
+  metaData: DataCubeMetadata;
   disabled?: boolean;
 }) => {
   const field = useChartTypeSelectorField({
