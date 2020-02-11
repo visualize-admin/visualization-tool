@@ -15,6 +15,7 @@ import {
 } from "../../../domain/configurator-state";
 import { ChartAnnotationsSelector } from "../../../components/chart-annotations-selector";
 import Head from "next/head";
+import { GraphqlProvider } from "../../../graphql/context";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -84,11 +85,13 @@ const ChartConfiguratorPage: NextPage = () => {
         <meta name="viewport" content="width=1280"></meta>
       </Head>
       <DataCubeProvider>
-        <AppLayout>
-          <ConfiguratorStateProvider chartId={chartId}>
-            <ChartCreator />
-          </ConfiguratorStateProvider>
-        </AppLayout>
+        <GraphqlProvider>
+          <AppLayout>
+            <ConfiguratorStateProvider chartId={chartId}>
+              <ChartCreator />
+            </ConfiguratorStateProvider>
+          </AppLayout>
+        </GraphqlProvider>
       </DataCubeProvider>
     </>
   );
