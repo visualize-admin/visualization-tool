@@ -17,6 +17,7 @@
     "locales:extract": "lingui extract",
     "locales:compile": "lingui compile",
     "graphql:codegen": "graphql-codegen --config codegen.yml",
+    "graphql:codegen:dev": "graphql-codegen --config codegen.yml --watch",
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "preversion": "yarn lint",
     "postversion": "git push --follow-tags",
