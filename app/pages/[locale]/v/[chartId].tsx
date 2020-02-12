@@ -1,18 +1,17 @@
 import { Trans } from "@lingui/macro";
+import { Box, Button, Flex, Text } from "@theme-ui/components";
 import "isomorphic-unfetch";
 import { NextPage } from "next";
 import ErrorPage from "next/error";
-import { Box, Button, Text, Flex } from "@theme-ui/components";
+import Head from "next/head";
 import { ChartPublished } from "../../../components/chart-published";
 import { Success } from "../../../components/hint";
 import { ContentLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { PublishActions } from "../../../components/publish-actions";
 import { Config } from "../../../domain/config-types";
-import Head from "next/head";
-import { useLocale } from "../../../lib/use-locale";
-import { PUBLIC_URL } from "../../../domain/env";
 import { GraphqlProvider } from "../../../graphql/context";
+import { useLocale } from "../../../lib/use-locale";
 
 type PageProps = {
   statusCode?: number;
