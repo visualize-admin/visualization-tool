@@ -57,26 +57,26 @@ export const ChartPieVisualization = ({
   if (observations) {
     return observations.length > 0 ? (
       <>
-        <A11yTable
+        {/* <A11yTable
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
           observations={observations}
-        />
+        /> */}
         <ChartPie
           observations={observations}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
         />
-        <DataDownload
+        {/* <DataDownload
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
           observations={observations}
-        />
+        /> */}
       </>
     ) : (
       <NoDataHint />

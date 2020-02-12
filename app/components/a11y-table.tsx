@@ -1,9 +1,8 @@
 import { Trans } from "@lingui/macro";
 import { ascending, descending } from "d3-array";
 import React, { memo, useMemo, useState } from "react";
-import { ChartFields, Observation, ObservationValue } from "../domain";
+import { ChartFields, Observation } from "../domain";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
-import { ChartFieldsWithLabel } from "./data-download";
 
 export const A11yTable = memo(
   ({
