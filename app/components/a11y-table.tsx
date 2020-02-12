@@ -1,26 +1,21 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import { ascending, descending } from "d3-array";
-import React, { useState, memo, useMemo } from "react";
-import {
-  Observation,
-  DimensionWithMeta,
-  MeasureWithMeta,
-  ChartFields
-} from "../domain";
 import { Trans } from "@lingui/macro";
+import { ascending, descending } from "d3-array";
+import React, { memo, useMemo, useState } from "react";
+import { ChartFields, Observation, ObservationValue } from "../domain";
+import { ComponentFieldsFragment } from "../graphql/query-hooks";
 import { ChartFieldsWithLabel } from "./data-download";
 
 export const A11yTable = memo(
   ({
-    dataSet,
+    title,
     dimensions,
     measures,
     fields,
     observations
   }: {
-    dataSet: DataCube;
-    dimensions: DimensionWithMeta[];
-    measures: MeasureWithMeta[];
+    title: string;
+    dimensions: ComponentFieldsFragment[];
+    measures: ComponentFieldsFragment[];
     fields: ChartFields;
     observations: Observation[];
   }) => {
@@ -43,40 +38,33 @@ export const A11yTable = memo(
       setSortingField(fieldKey);
       setDirection(newDirection);
     };
-    const fieldsWithLabel: ChartFieldsWithLabel = useMemo(
-      () =>
-        Object.entries<{ componentIri: string }>(fields).reduce(
-          (obj, [key, value]) => ({
-            ...obj,
-            [key]: [...dimensions, ...measures].find(
-              c => c.component.iri.value === value.componentIri
-            )?.component.label.value
-          }),
-          {}
-        ),
-      [dimensions, fields, measures]
-    );
+
+    const headers = useMemo(() => {
+      const obsKeys = new Set(Object.keys(observations[0]));
+      return [...dimensions, ...measures].filter(d => obsKeys.has(d.iri));
+    }, [dimensions, measures, observations]);
 
     return (
       <table style={{ display: "none" }}>
-        <caption>{dataSet.label.value}</caption>
+        <caption>{title}</caption>
         <tbody>
           <tr>
-            {Object.entries(fields).map(([fieldKey, fieldValue]) => {
+            {headers.map(({ iri, label }) => {
+              const isSortingField = sortingField === iri;
               return (
                 <th
                   role="columnheader"
                   scope="col"
-                  key={fieldKey}
-                  aria-sort={sortingField === fieldKey ? direction : "none"}
+                  key={iri}
+                  aria-sort={isSortingField ? direction : "none"}
                 >
-                  <button onClick={() => sortBy(fieldKey)}>
-                    {fieldsWithLabel[fieldKey]}
-                    {sortingField && (
+                  <button onClick={() => sortBy(iri)}>
+                    {label}
+                    {isSortingField && (
                       <>
                         {", "}
                         <Trans id="accessibility.table.sorting">
-                          sorted by {fieldsWithLabel[sortingField]} in
+                          sorted by {label} in
                           {direction === "ascending" ? (
                             <Trans id="accessibility.table.sorting.ascending">
                               ascending
@@ -98,8 +86,8 @@ export const A11yTable = memo(
           {observations.map((obs, i) => {
             return (
               <tr key={i}>
-                {Object.keys(fields).map(fieldKey => (
-                  <td key={fieldKey}>{obs[fieldKey]}</td>
+                {headers.map(({ iri }) => (
+                  <td key={iri}>{obs[iri]}</td>
                 ))}
               </tr>
             );

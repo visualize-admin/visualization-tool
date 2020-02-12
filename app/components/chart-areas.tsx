@@ -7,12 +7,14 @@ import {
   useDataCubeObservationsQuery
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
+import { A11yTable } from "./a11y-table";
 import { Areas } from "./charts-generic/areas";
 import { AreaChart } from "./charts-generic/areas/areas-state";
 import { AxisTime } from "./charts-generic/axis";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { LegendColor } from "./charts-generic/legends";
+import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 
 export const ChartAreasVisualization = ({
@@ -35,29 +37,29 @@ export const ChartAreasVisualization = ({
   const observations = data?.dataCubeByIri?.observations.data;
 
   if (data?.dataCubeByIri) {
-    const { dimensions, measures, observations } = data?.dataCubeByIri;
+    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
       <>
-        {/* <A11yTable
-          dataSet={dataSet}
+        <A11yTable
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
-        /> */}
+          fields={chartConfig.fields}
+        />
         <ChartAreas
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
         />
-        {/* <DataDownload
-          dataSet={dataSet}
+        <DataDownload
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
-        /> */}
+          fields={chartConfig.fields}
+        />
       </>
     ) : (
       <NoDataHint />

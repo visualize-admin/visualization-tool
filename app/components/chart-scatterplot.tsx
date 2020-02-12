@@ -3,21 +3,20 @@ import { ScatterPlotFields } from "../domain";
 import { ScatterPlotConfig } from "../domain/config-types";
 import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
-import { A11yTable } from "./a11y-table";
-import { Tooltip } from "./charts-generic/annotations";
-import { AxisWidthLinear } from "./charts-generic/axis";
-import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers";
-import { LegendColor } from "./charts-generic/legends";
-import { Interaction, Scatterplot } from "./charts-generic/scatterplot";
-import { DataDownload } from "./data-download";
-import { Loading, NoDataHint } from "./hint";
-import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";
-import { useLocale } from "../lib/use-locale";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery
 } from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
+import { A11yTable } from "./a11y-table";
+import { AxisWidthLinear } from "./charts-generic/axis";
+import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers";
+import { LegendColor } from "./charts-generic/legends";
+import { Scatterplot } from "./charts-generic/scatterplot";
+import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";
+import { DataDownload } from "./data-download";
+import { Loading, NoDataHint } from "./hint";
 
 export const ChartScatterplotVisualization = ({
   dataSetIri,
@@ -42,29 +41,29 @@ export const ChartScatterplotVisualization = ({
   const observations = data?.dataCubeByIri?.observations.data;
 
   if (data?.dataCubeByIri) {
-    const { dimensions, measures, observations } = data?.dataCubeByIri;
+    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
       <>
-        {/* <A11yTable
-          dataSet={dataSet}
+        <A11yTable
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          observations={observations}
-        /> */}
+        />
         <ChartScatterplot
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
         />
-        {/* <DataDownload
-          dataSet={dataSet}
+        <DataDownload
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
-        /> */}
+          fields={chartConfig.fields}
+        />
       </>
     ) : (
       <NoDataHint />

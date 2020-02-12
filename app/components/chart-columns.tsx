@@ -45,29 +45,29 @@ export const ChartColumnsVisualization = ({
   const observations = data?.dataCubeByIri?.observations.data;
 
   if (data?.dataCubeByIri) {
-    const { dimensions, measures, observations } = data?.dataCubeByIri;
+    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
       <>
-        {/* <A11yTable
-          dataSet={dataSet}
+        <A11yTable
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
-        /> */}
+          fields={chartConfig.fields}
+        />
         <ChartColumns
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
         />
-        {/* <DataDownload
-          dataSet={dataSet}
+        <DataDownload
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
-        /> */}
+          fields={chartConfig.fields}
+        />
       </>
     ) : (
       <NoDataHint />
