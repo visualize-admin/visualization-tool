@@ -66,41 +66,24 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               />
             )}
             {state.chartConfig.chartType === "line" && (
-                <ChartLinesVisualization
+              <ChartLinesVisualization
                 dataSetIri={dataSetIri}
                 chartConfig={state.chartConfig}
-                />
-              )}
-            {/* {state.chartConfig.chartType === "column" && (
-                <ChartColumnsVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
-                  chartConfig={state.chartConfig}
-                />
-              )}
-              {state.chartConfig.chartType === "line" && (
-                <ChartLinesVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
-                  chartConfig={state.chartConfig}
-                />
-              )} */}
+              />
+            )}
             {state.chartConfig.chartType === "area" && (
               <ChartAreasVisualization
                 dataSetIri={dataSetIri}
                 chartConfig={state.chartConfig}
               />
             )}
-            {/* {state.chartConfig.chartType === "scatterplot" && (
-                <ChartScatterplotVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
-                  chartConfig={state.chartConfig}
-                />
-              )}
+            {state.chartConfig.chartType === "scatterplot" && (
+              <ChartScatterplotVisualization
+                dataSetIri={dataSetIri}
+                chartConfig={state.chartConfig}
+              />
+            )}
+            {/* 
               {state.chartConfig.chartType === "pie" && (
                 <ChartPieVisualization
                   dataSet={dataSet}

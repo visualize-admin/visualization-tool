@@ -71,9 +71,7 @@ export const ChartPublished = ({
         )}
         {chartConfig.chartType === "scatterplot" && (
           <ChartScatterplotVisualization
-            dataSet={metaData.dataSet}
-            dimensions={metaData.dimensions}
-            measures={metaData.measures}
+            dataSetIri={dataSet}
             chartConfig={chartConfig}
           />
         )}

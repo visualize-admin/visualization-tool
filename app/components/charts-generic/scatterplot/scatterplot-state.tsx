@@ -31,21 +31,19 @@ const useScatterplotState = ({
   fields,
   measures,
   bounds
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   bounds: Bounds;
+  fields: ScatterPlotFields;
 }): ScatterplotState => {
   const { chartWidth, chartHeight } = bounds;
 
-  const getX = (d: Observation): number => +d.x;
-  const getY = (d: Observation): number => +d.y;
-  const getSegment = (d: Observation): string => d.segment as string;
-
-  const xAxisLabel = getDimensionLabel(
-    measures.find(
-      d =>
-        d.component.iri.value === (fields as ScatterPlotFields).x.componentIri
-    )!
-  );
+  const getX = (d: Observation): number => +d[fields.x.componentIri];
+  const getY = (d: Observation): number => +d[fields.y.componentIri];
+  const getSegment = (d: Observation): string =>
+    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
+  const xAxisLabel =
+    measures.find(d => d.iri === fields.x.componentIri)?.label ??
+    fields.y.componentIri;
   const xMinValue = Math.min(mkNumber(min(data, d => getX(d))), 0);
   const xMaxValue = max(data, d => getX(d)) as number;
   const xDomain = [xMinValue, xMaxValue];
@@ -55,14 +53,11 @@ const useScatterplotState = ({
     .range(xRange)
     .nice();
 
-  const yAxisLabel = getDimensionLabel(
-    measures.find(
-      d =>
-        d.component.iri.value === (fields as ScatterPlotFields).y.componentIri
-    )!
-  );
+  const yAxisLabel =
+    measures.find(d => d.iri === fields.y.componentIri)?.label ??
+    fields.y.componentIri;
   const yMinValue = Math.min(mkNumber(min(data, d => getY(d))), 0);
-  const yMaxValue = max(data, d => getY(d)) as number;
+  const yMaxValue = max(data, getY) as number;
   const yDomain = [yMinValue, yMaxValue];
   const yRange = [chartHeight, 0];
   const yScale = scaleLinear()
@@ -72,7 +67,7 @@ const useScatterplotState = ({
 
   const hasSegment = fields.segment ? true : false;
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    data.map(d => getSegment(d) as string)
+    data.map(getSegment)
   );
 
   return {
@@ -95,8 +90,9 @@ const ScatterplotChartProvider = ({
   fields,
   measures,
   children
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
+  fields: ScatterPlotFields;
 }) => {
   const bounds = useBounds();
 
@@ -117,8 +113,9 @@ export const ScatterplotChart = ({
   measures,
   aspectRatio,
   children
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
+  fields: ScatterPlotFields;
   children: ReactNode;
 }) => {
   return (
