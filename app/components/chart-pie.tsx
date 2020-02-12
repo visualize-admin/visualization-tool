@@ -1,12 +1,7 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { memo, useMemo } from "react";
-import { PieFields, useObservations } from "../domain";
+import React, { memo } from "react";
+import { PieFields } from "../domain";
 import { PieConfig } from "../domain/config-types";
-import {
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation
-} from "../domain/data";
+import { Observation } from "../domain/data";
 import { A11yTable } from "./a11y-table";
 import { Tooltip } from "./charts-generic/annotations";
 import { ChartSvg } from "./charts-generic/containers";
@@ -14,69 +9,53 @@ import { Pie } from "./charts-generic/pie";
 import { PieChart } from "./charts-generic/pie/pie-state";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
+import {
+  useDataCubeObservationsQuery,
+  ComponentFieldsFragment
+} from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 
 export const ChartPieVisualization = ({
-  dataSet,
-  dimensions,
-  measures,
+  dataSetIri,
   chartConfig
 }: {
-  dataSet: DataCube;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
+  dataSetIri: string;
   chartConfig: PieConfig;
 }) => {
-  // Explicitly specify all dimension fields.
-  // TODO: Improve/optimize/generalize this
-  const allFields = useMemo(() => {
-    // debugger;
-    const fieldIris = new Set(
-      Object.values<{ componentIri: string }>(chartConfig.fields).map(
-        d => d.componentIri
-      )
-    );
-    const restDimensions = dimensions.reduce<{
-      [k: string]: { componentIri: string };
-    }>((acc, d, i) => {
-      if (!fieldIris.has(d.component.iri.value)) {
-        acc[`dim${i}`] = { componentIri: d.component.iri.value };
-      }
-      return acc;
-    }, {});
-    return { ...restDimensions, ...chartConfig.fields };
-  }, [chartConfig.fields, dimensions]);
-
-  const { data: observations } = useObservations({
-    dataSet,
-    measures,
-    dimensions,
-    fields: allFields,
-    filters: chartConfig.filters
+  const locale = useLocale();
+  const [{ data }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: dataSetIri,
+      measures: [chartConfig.fields.value.componentIri], // FIXME: Other fields may also be measures
+      filters: chartConfig.filters
+    }
   });
 
-  if (observations) {
-    return observations.length > 0 ? (
+  if (data?.dataCubeByIri) {
+    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
+    return observations.data.length > 0 ? (
       <>
-        {/* <A11yTable
-          dataSet={dataSet}
+        <A11yTable
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          observations={observations}
-        /> */}
-        <ChartPie
-          observations={observations}
-          dimensions={dimensions}
-          measures={measures}
-          fields={allFields}
         />
-        {/* <DataDownload
-          dataSet={dataSet}
+        <ChartPie
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
-        /> */}
+          fields={chartConfig.fields}
+        />
+        <DataDownload
+          title={title}
+          observations={observations.data}
+          dimensions={dimensions}
+          measures={measures}
+          fields={chartConfig.fields}
+        />
       </>
     ) : (
       <NoDataHint />
@@ -94,8 +73,8 @@ export const ChartPie = memo(
     fields
   }: {
     observations: Observation[];
-    dimensions: DimensionWithMeta[];
-    measures: $FixMe[];
+    dimensions: ComponentFieldsFragment[];
+    measures: ComponentFieldsFragment[];
     fields: PieFields;
   }) => {
     return (
