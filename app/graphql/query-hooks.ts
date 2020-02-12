@@ -222,7 +222,7 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = {
 };
 
 
-export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri: Maybe<{ __typename: 'DataCube', iri: string, title: string, dimensions: Array<(
+export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri: Maybe<{ __typename: 'DataCube', iri: string, title: string, source: Maybe<string>, dimensions: Array<(
       { __typename: 'NominalDimension' }
       & DimensionFieldsWithValues_NominalDimension_Fragment
     ) | (
@@ -376,6 +376,7 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
   dataCubeByIri(iri: $iri, locale: $locale) {
     iri
     title
+    source
     dimensions {
       ...dimensionFieldsWithValues
     }

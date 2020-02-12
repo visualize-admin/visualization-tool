@@ -5,54 +5,72 @@ import {
   AttributeWithMeta,
   DimensionWithMeta,
   Filters,
-  FilterValueSingle
+  FilterValueSingle,
+  ChartConfig
 } from "../domain";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 
 export const ChartFootnotes = ({
-  source,
-  dataSetName,
-  filters,
-  componentsByIri
+  dataSetIri,
+  chartConfig
 }: {
-  source: string;
-  dataSetName: string;
-  filters: Filters;
-  componentsByIri: Record<string, DimensionWithMeta | AttributeWithMeta>;
+  dataSetIri: string;
+  chartConfig: ChartConfig;
 }) => {
-  const namedFilters: Array<{
-    dimension: string;
-    value: string;
-  }> = Object.entries(filters)
-    .filter(([dimIri, filter]) => filter.type === "single")
-    .map(([dimIri, filter]) => {
-      return {
-        dimension: componentsByIri[dimIri].component.label.value,
-        value: componentsByIri[dimIri].values.filter(
-          v => v.value.value === (filter as FilterValueSingle).value
-        )[0].label.value
-      };
-    });
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: { iri: dataSetIri, locale }
+  });
 
-  return (
-    <>
-      <Text variant="meta" color="monochrome600">
-        <Trans id="metadata.source">Source</Trans>: {source}
-      </Text>
+  if (data?.dataCubeByIri) {
+    const {
+      dataCubeByIri: { dimensions }
+    } = data;
 
-      <Text variant="meta" color="monochrome600">
-        <Trans id="metadata.dataset">Dataset</Trans>: {dataSetName}
-      </Text>
+    const namedFilters = Object.entries(chartConfig.filters).flatMap(
+      ([iri, f]) => {
+        if (f.type !== "single") {
+          return [];
+        }
 
-      <Text variant="meta" color="monochrome600">
-        <Trans id="metadata.filter">Data</Trans>:
-        {namedFilters.map((f, i) => (
-          <React.Fragment key={f.dimension}>
-            {" "}
-            <span>{f.dimension}</span> (<span>{f.value}</span>)
-            {i < namedFilters.length - 1 && ","}
-          </React.Fragment>
-        ))}
-      </Text>
-    </>
-  );
+        const dimension = dimensions.find(d => d.iri === iri)!;
+        const value = dimension?.values.find(v => v.value === f.value);
+
+        return [
+          {
+            dimension,
+            value
+          }
+        ];
+      }
+    );
+
+    return (
+      <>
+        <Text variant="meta" color="monochrome600">
+          <Trans id="metadata.source">Source</Trans>:{" "}
+          {data.dataCubeByIri.source}
+        </Text>
+
+        <Text variant="meta" color="monochrome600">
+          <Trans id="metadata.dataset">Dataset</Trans>:{" "}
+          {data.dataCubeByIri.title}
+        </Text>
+
+        <Text variant="meta" color="monochrome600">
+          <Trans id="metadata.filter">Data</Trans>:
+          {namedFilters.map(({ dimension, value }, i) => (
+            <React.Fragment key={dimension.iri}>
+              {" "}
+              <span>{dimension.label}</span> (<span>{value?.label}</span>)
+              {i < namedFilters.length - 1 && ","}
+            </React.Fragment>
+          ))}
+        </Text>
+      </>
+    );
+  } else {
+    return null;
+  }
 };

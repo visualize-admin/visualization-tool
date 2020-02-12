@@ -74,6 +74,7 @@ query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
   dataCubeByIri(iri: $iri, locale: $locale) {
     iri
     title
+    source
     dimensions {
       ...dimensionFieldsWithValues
     }

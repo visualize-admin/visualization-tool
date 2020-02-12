@@ -83,15 +83,8 @@ export const ChartPublished = ({
         )}
       </Flex>
       <ChartFootnotes
-        source={metaData.dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
-        dataSetName={metaData.dataSet.label.value}
-        filters={chartConfig.filters}
-        componentsByIri={
-          metaData.componentsByIri as Record<
-            string,
-            DimensionWithMeta | AttributeWithMeta
-          >
-        }
+        dataSetIri={dataSet} 
+        chartConfig={chartConfig}
       />
     </Flex>
   ) : null;
