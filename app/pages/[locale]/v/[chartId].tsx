@@ -82,9 +82,20 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
                   query={{ chartId: "new" }}
                   passHref
                 >
-                  <Button as="a" variant="primary" mb={4}>
+                  <Button as="a" variant="primary" sx={{ mb: 4 }}>
                     <Trans id="button.new.visualization">
                       New Visualization
+                    </Trans>
+                  </Button>
+                </LocalizedLink>
+                <LocalizedLink
+                  pathname="/[locale]/create/new"
+                  query={{ from: config.key }}
+                  passHref
+                >
+                  <Button as="a" variant="outline" sx={{ mb: 4, ml: 4 }}>
+                    <Trans id="button.copy.visualization">
+                      Copy Visualization
                     </Trans>
                   </Button>
                 </LocalizedLink>

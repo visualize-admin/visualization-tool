@@ -533,39 +533,60 @@ const ConfiguratorStateProviderInternal = ({
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;
-  const { asPath, push, replace } = useRouter();
+  const { asPath, push, replace, query } = useRouter();
 
   // Re-initialize state on page load
   useEffect(() => {
     let stateToInitialize: ConfiguratorState = initialState;
-    try {
-      if (chartId !== "new") {
-        const storedState = window.localStorage.getItem(
-          getLocalStorageKey(chartId)
-        );
-        if (storedState) {
-          const parsedState = decodeConfiguratorState(JSON.parse(storedState));
-          if (parsedState) {
-            stateToInitialize = parsedState;
-          } else {
-            console.warn(
-              "Attempted to restore invalid state. Removing from localStorage.",
-              parsedState
-            );
-            window.localStorage.removeItem(getLocalStorageKey(chartId));
-          }
-        } else {
-          replace(
-            `/[locale]/create/[chartId]`,
-            asPath.replace(/\/create\/.+$/, "/create/new")
+
+    const initialize = async () => {
+      try {
+        if (chartId === "new" && query.from) {
+          const config = await fetch(`/api/config/${query.from}`).then(result =>
+            result.json()
           );
+          if (config && config.data) {
+            const { dataSet, meta, chartConfig } = config.data;
+            stateToInitialize = {
+              state: "CONFIGURING_CHART",
+              dataSet,
+              meta,
+              chartConfig,
+              activeField: undefined
+            };
+          }
         }
+        if (chartId !== "new") {
+          const storedState = window.localStorage.getItem(
+            getLocalStorageKey(chartId)
+          );
+          if (storedState) {
+            const parsedState = decodeConfiguratorState(
+              JSON.parse(storedState)
+            );
+            if (parsedState) {
+              stateToInitialize = parsedState;
+            } else {
+              console.warn(
+                "Attempted to restore invalid state. Removing from localStorage.",
+                parsedState
+              );
+              window.localStorage.removeItem(getLocalStorageKey(chartId));
+            }
+          } else {
+            replace(
+              `/[locale]/create/[chartId]`,
+              asPath.replace(/\/create\/.+$/, "/create/new")
+            );
+          }
+        }
+      } catch {
+      } finally {
+        dispatch({ type: "INITIALIZED", value: stateToInitialize });
       }
-    } catch {
-    } finally {
-      dispatch({ type: "INITIALIZED", value: stateToInitialize });
-    }
-  }, [dispatch, chartId, replace, asPath, initialState]);
+    };
+    initialize();
+  }, [dispatch, chartId, replace, asPath, initialState, query]);
 
   useEffect(() => {
     try {
@@ -575,14 +596,13 @@ const ConfiguratorStateProviderInternal = ({
         case "SELECTING_CHART_TYPE":
           if (chartId === "new") {
             const newChartId = createChartId();
-            // Store current state in localstorage
             window.localStorage.setItem(
               getLocalStorageKey(newChartId),
               JSON.stringify(state)
             );
             push(
               `/[locale]/create/[chartId]`,
-              (asPath as string).replace(/new$/, newChartId)
+              `/${locale}/create/${newChartId}`
             );
           } else {
             // Store current state in localstorage
@@ -613,7 +633,7 @@ const ConfiguratorStateProviderInternal = ({
     } catch (e) {
       console.error(e);
     }
-  }, [state, dispatch, chartId, push, asPath, locale]);
+  }, [state, dispatch, chartId, push, asPath, locale, query.from]);
 
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>
