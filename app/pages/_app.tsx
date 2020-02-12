@@ -102,7 +102,7 @@ class MyApp extends App<{
           <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
           {preloadFonts &&
             preloadFonts.map(src => (
-              <link key={src} rel="preload" href={src} as="font" />
+              <link key={src} rel="preload" href={src} as="font" crossOrigin="anonymous" />
             ))}
         </Head>
         <LocaleProvider value={locale}>
