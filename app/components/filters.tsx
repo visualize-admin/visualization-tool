@@ -1,18 +1,13 @@
 import { Trans } from "@lingui/macro";
-import { Button, Box } from "@theme-ui/components";
-import React, { useCallback, useMemo } from "react";
+import { Box, Button } from "@theme-ui/components";
+import React, { useCallback } from "react";
 import {
   getFilterValue,
   useConfiguratorState
 } from "../domain/configurator-state";
-import {
-  DimensionWithMeta,
-  getComponentIri,
-  isTimeDimension
-} from "../domain/data";
 import { useDimensionValuesQuery } from "../graphql/query-hooks";
-import { MultiFilterField, SingleFilterField } from "./field";
 import { useLocale } from "../lib/use-locale";
+import { MultiFilterField, SingleFilterField } from "./field";
 import { Loading } from "./hint";
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";

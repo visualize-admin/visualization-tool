@@ -9,12 +9,7 @@ import {
 } from "d3-scale";
 import * as React from "react";
 import { ReactNode, useMemo } from "react";
-import {
-  Observation,
-  getDimensionLabel,
-  LineFields,
-  ObservationValue
-} from "../../../domain";
+import { Observation, LineFields, ObservationValue } from "../../../domain";
 import { getPalette, mkNumber, parseDate } from "../../../domain/helpers";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
@@ -102,11 +97,10 @@ const useLinesState = ({
           [currentKey]: getY(cur)
         };
       }, {});
-      wider
-        .push({
-          ...keyObject,
-          [xKey]: key
-        });
+      wider.push({
+        ...keyObject,
+        [xKey]: key
+      });
     }
 
     return wider;

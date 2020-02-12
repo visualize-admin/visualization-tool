@@ -2,7 +2,6 @@ import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
 import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
-import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
 import { SelectProps } from "@theme-ui/components";
 import { getFieldComponentIri } from "./charts";

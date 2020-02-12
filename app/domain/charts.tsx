@@ -1,12 +1,7 @@
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { ChartConfig, ChartType, GenericFields } from "./config-types";
-import {
-  getCategoricalDimensions,
-  getTimeDimensions,
-  isTimeDimension
-} from "./data";
-import { DataSetMetadata } from "./data-cube";
+import { getCategoricalDimensions, getTimeDimensions } from "./data";
 
 export const getInitialConfig = ({
   chartType,

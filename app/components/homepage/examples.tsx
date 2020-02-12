@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text, Flex } from "@theme-ui/components";
 import { ChartPublished } from "../chart-published";
-import { DataCubeProvider } from "../../domain";
+import { GraphqlProvider } from "../../graphql/context";
 
 export const Examples = ({
   headline,
@@ -21,7 +21,7 @@ export const Examples = ({
   example3Description?: string;
 }) => {
   return (
-    <DataCubeProvider>
+    <GraphqlProvider>
       <Box
         sx={{ maxWidth: 1024 }}
         margin={[0, 0, "0 auto"]}
@@ -169,7 +169,7 @@ export const Examples = ({
           ></Example>
         )}
       </Box>
-    </DataCubeProvider>
+    </GraphqlProvider>
   );
 };
 

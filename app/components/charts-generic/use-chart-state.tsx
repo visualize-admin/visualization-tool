@@ -1,10 +1,5 @@
 import { createContext, useContext } from "react";
-import {
-  ChartFields,
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation
-} from "../../domain";
+import { ChartFields, Observation } from "../../domain";
 import { ColumnsState } from "./columns/columns-state";
 import { LinesState } from "./lines/lines-state";
 import { AreasState } from "./areas/areas-state";
@@ -15,8 +10,8 @@ import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 export interface ChartProps {
   data: Observation[];
   fields: ChartFields;
-  dimensions: $FixMe[];
-  measures: $FixMe[];
+  dimensions: ComponentFieldsFragment[];
+  measures: ComponentFieldsFragment[];
 }
 
 export type ChartState =

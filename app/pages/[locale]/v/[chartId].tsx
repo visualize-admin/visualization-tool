@@ -8,11 +8,11 @@ import { Success } from "../../../components/hint";
 import { ContentLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { PublishActions } from "../../../components/publish-actions";
-import { DataCubeProvider } from "../../../domain";
 import { Config } from "../../../domain/config-types";
 import Head from "next/head";
 import { useLocale } from "../../../lib/use-locale";
 import { PUBLIC_URL } from "../../../domain/env";
+import { GraphqlProvider } from "../../../graphql/context";
 
 type PageProps = {
   statusCode?: number;
@@ -41,7 +41,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
           <meta property="og:description" content={meta.description[locale]} />
           {/* og:url is set in _app.tsx */}
         </Head>
-        <DataCubeProvider>
+        <GraphqlProvider>
           <ContentLayout homepage={false}>
             <Box px={4} bg="muted" mb="auto">
               <Box sx={{ pt: 4, maxWidth: 696, margin: "auto" }}>
@@ -92,7 +92,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
               </Box>
             </Box>
           </ContentLayout>
-        </DataCubeProvider>
+        </GraphqlProvider>
       </>
     );
   }
