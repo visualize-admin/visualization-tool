@@ -1,60 +1,43 @@
 import { Trans } from "@lingui/macro";
-import { DataCube } from "@zazuko/query-rdf-data-cube";
+import { Button } from "@theme-ui/components";
 import { csvFormat } from "d3-dsv";
 import { saveAs } from "file-saver";
 import React, { memo, useMemo } from "react";
-import { Button } from "@theme-ui/components";
-import {
-  ChartFields,
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation
-} from "../domain";
+import { ChartFields, Observation } from "../domain";
+import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export interface ChartFieldsWithLabel {
   [x: string]: string;
 }
 export const DataDownload = memo(
   ({
-    dataSet,
+    title,
     dimensions,
     measures,
     fields,
     observations
   }: {
-    dataSet: DataCube;
-    dimensions: DimensionWithMeta[];
-    measures: MeasureWithMeta[];
+    title: string;
+    dimensions: ComponentFieldsFragment[];
+    measures: ComponentFieldsFragment[];
     fields: ChartFields;
     observations: Observation[];
   }) => {
-    const fieldsWithLabel: ChartFieldsWithLabel = useMemo(
-      () =>
-        Object.entries<{ componentIri: string }>(fields).reduce(
-          (obj, [key, value]) => ({
-            ...obj,
-            [key]: [...dimensions, ...measures].find(
-              c => c.component.iri.value === value.componentIri
-            )?.component.label.value
-          }),
-          {}
-        ),
-      [dimensions, fields, measures]
-    );
+    const data = useMemo(() => {
+      const columns = [...dimensions, ...measures];
+      return observations.map(obs => {
+        return Object.keys(obs).reduce((acc, key) => {
+          const col = columns.find(d => d.iri === key);
 
-    const data = useMemo(
-      () =>
-        observations.map(obs =>
-          Object.keys(obs).reduce(
-            (acc, key) => ({
-              ...acc,
-              ...{ [fieldsWithLabel[key]]: obs[key] }
-            }),
-            {}
-          )
-        ),
-      [fieldsWithLabel, observations]
-    );
+          return col
+            ? {
+                ...acc,
+                ...{ [col.label]: obs[key] }
+              }
+            : acc;
+        }, {});
+      });
+    }, [dimensions, measures, observations]);
 
     const csvData = csvFormat(data);
 
@@ -64,7 +47,7 @@ export const DataDownload = memo(
     return (
       <Button
         variant="downloadButton"
-        onClick={() => saveAs(blob, `${dataSet.label.value}.csv`)}
+        onClick={() => saveAs(blob, `${title}.csv`)}
       >
         <Trans id="button.download.data">Download data</Trans>
       </Button>

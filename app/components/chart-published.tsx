@@ -1,16 +1,11 @@
 import { Flex, Text } from "@theme-ui/components";
+import { ChartConfig, Meta } from "../domain/config-types";
+import { useLocale } from "../lib/use-locale";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartColumnsVisualization } from "./chart-columns";
 import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
-import {
-  AttributeWithMeta,
-  DimensionWithMeta,
-  useDataSetAndMetadata
-} from "../domain";
-import { ChartConfig, Meta } from "../domain/config-types";
-import { useLocale } from "../lib/use-locale";
 
 export const ChartPublished = ({
   dataSet,
@@ -21,10 +16,9 @@ export const ChartPublished = ({
   meta: Meta;
   chartConfig: ChartConfig;
 }) => {
-  const { data: metaData } = useDataSetAndMetadata(dataSet);
   const locale = useLocale();
 
-  return metaData ? (
+  return (
     <Flex
       p={5}
       sx={{
@@ -53,48 +47,30 @@ export const ChartPublished = ({
       >
         {chartConfig.chartType === "column" && (
           <ChartColumnsVisualization
-            dataSet={metaData.dataSet}
-            dimensions={metaData.dimensions}
-            measures={metaData.measures}
+            dataSetIri={dataSet}
             chartConfig={chartConfig}
           />
         )}
         {chartConfig.chartType === "line" && (
           <ChartLinesVisualization
-            dataSet={metaData.dataSet}
-            dimensions={metaData.dimensions}
-            measures={metaData.measures}
+            dataSetIri={dataSet}
             chartConfig={chartConfig}
           />
         )}
         {chartConfig.chartType === "area" && (
           <ChartAreasVisualization
-            dataSet={metaData.dataSet}
-            dimensions={metaData.dimensions}
-            measures={metaData.measures}
+            dataSetIri={dataSet}
             chartConfig={chartConfig}
           />
         )}
         {chartConfig.chartType === "scatterplot" && (
           <ChartScatterplotVisualization
-            dataSet={metaData.dataSet}
-            dimensions={metaData.dimensions}
-            measures={metaData.measures}
+            dataSetIri={dataSet}
             chartConfig={chartConfig}
           />
         )}
       </Flex>
-      <ChartFootnotes
-        source={metaData.dataSet.extraMetadata.get("contact")!.value} // FIXME: use "source" instead of "contact" when the API is fixed
-        dataSetName={metaData.dataSet.label.value}
-        filters={chartConfig.filters}
-        componentsByIri={
-          metaData.componentsByIri as Record<
-            string,
-            DimensionWithMeta | AttributeWithMeta
-          >
-        }
-      />
+      <ChartFootnotes dataSetIri={dataSet} chartConfig={chartConfig} />
     </Flex>
-  ) : null;
+  );
 };

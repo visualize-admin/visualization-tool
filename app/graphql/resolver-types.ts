@@ -17,8 +17,13 @@ export type Scalars = {
   RawObservation: RawObservation,
 };
 
-export type Attribute = {
+export type Attribute = Component & {
    __typename?: 'Attribute',
+  iri: Scalars['String'],
+  label: Scalars['String'],
+};
+
+export type Component = {
   iri: Scalars['String'],
   label: Scalars['String'],
 };
@@ -30,16 +35,23 @@ export type DataCube = {
   contact?: Maybe<Scalars['String']>,
   source?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
+  dateCreated?: Maybe<Scalars['String']>,
   observations: ObservationsQuery,
   dimensions: Array<Dimension>,
+  dimensionByIri?: Maybe<Dimension>,
   measures: Array<Measure>,
 };
 
 
 export type DataCubeObservationsArgs = {
   limit?: Maybe<Scalars['Int']>,
-  additionalComponents?: Maybe<Array<Scalars['String']>>,
+  measures?: Maybe<Array<Scalars['String']>>,
   filters?: Maybe<Scalars['Filters']>
+};
+
+
+export type DataCubeDimensionByIriArgs = {
+  iri: Scalars['String']
 };
 
 export type Dimension = {
@@ -55,13 +67,13 @@ export type DimensionValue = {
 };
 
 
-export type Measure = {
+export type Measure = Component & {
    __typename?: 'Measure',
   iri: Scalars['String'],
   label: Scalars['String'],
 };
 
-export type NominalDimension = Dimension & {
+export type NominalDimension = Component & Dimension & {
    __typename?: 'NominalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -79,7 +91,7 @@ export type ObservationsQuery = {
   sparql: Scalars['String'],
 };
 
-export type OrdinalDimension = Dimension & {
+export type OrdinalDimension = Component & Dimension & {
    __typename?: 'OrdinalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -116,7 +128,7 @@ export type QueryDataCubesArgs = {
 };
 
 
-export type TemporalDimension = Dimension & {
+export type TemporalDimension = Component & Dimension & {
    __typename?: 'TemporalDimension',
   iri: Scalars['String'],
   label: Scalars['String'],
@@ -200,6 +212,7 @@ export type ResolversTypes = ResolversObject<{
   Dimension: ResolverTypeWrapper<ResolvedDimension>,
   DimensionValue: ResolverTypeWrapper<DimensionValue>,
   Measure: ResolverTypeWrapper<ResolvedMeasure>,
+  Component: ResolverTypeWrapper<Component>,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   NominalDimension: ResolverTypeWrapper<ResolvedDimension>,
   OrdinalDimension: ResolverTypeWrapper<ResolvedDimension>,
@@ -220,6 +233,7 @@ export type ResolversParentTypes = ResolversObject<{
   Dimension: ResolvedDimension,
   DimensionValue: DimensionValue,
   Measure: ResolvedMeasure,
+  Component: Component,
   Boolean: Scalars['Boolean'],
   NominalDimension: ResolvedDimension,
   OrdinalDimension: ResolvedDimension,
@@ -233,14 +247,22 @@ export type AttributeResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
+export type ComponentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Component'] = ResolversParentTypes['Component']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Measure' | 'NominalDimension' | 'OrdinalDimension' | 'TemporalDimension' | 'Attribute', ParentType, ContextType>,
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+}>;
+
 export type DataCubeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataCube'] = ResolversParentTypes['DataCube']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   contact?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   source?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  dateCreated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, DataCubeObservationsArgs>,
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>,
+  dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>,
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
@@ -311,6 +333,7 @@ export type TemporalDimensionResolvers<ContextType = any, ParentType extends Res
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Attribute?: AttributeResolvers<ContextType>,
+  Component?: ComponentResolvers,
   DataCube?: DataCubeResolvers<ContextType>,
   Dimension?: DimensionResolvers,
   DimensionValue?: DimensionValueResolvers<ContextType>,

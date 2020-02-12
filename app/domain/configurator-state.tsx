@@ -20,14 +20,14 @@ import {
   GenericFields,
   FilterValueMultiValues
 } from "./config-types";
-import { DataSetMetadata } from "./data-cube";
 import { getInitialConfig, getFieldComponentIris } from "./charts";
 import { useLocale } from "../lib/use-locale";
 import { unreachableError } from "../lib/unreachable";
+import { DataCubeMetadata } from "../graphql/types";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
-  | { type: "STEP_NEXT"; dataSetMetadata: DataSetMetadata }
+  | { type: "STEP_NEXT"; dataSetMetadata: DataCubeMetadata }
   | {
       type: "STEP_PREVIOUS";
       to?: Exclude<ConfiguratorState["state"], "INITIAL" | "PUBLISHING">;
@@ -38,7 +38,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_TYPE_CHANGED";
-      value: { chartType: ChartType; dataSetMetadata: DataSetMetadata };
+      value: { chartType: ChartType; dataSetMetadata: DataCubeMetadata };
     }
   | {
       type: "ACTIVE_FIELD_CHANGED";
@@ -49,7 +49,7 @@ export type ConfiguratorStateAction =
       value: {
         field: string;
         componentIri: string;
-        dataSetMetadata: DataSetMetadata;
+        dataSetMetadata: DataCubeMetadata;
       };
     }
   | {
@@ -64,7 +64,7 @@ export type ConfiguratorStateAction =
       type: "CHART_FIELD_DELETED";
       value: {
         field: string;
-        dataSetMetadata: DataSetMetadata;
+        dataSetMetadata: DataCubeMetadata;
       };
     }
   | {
@@ -144,7 +144,7 @@ export const getFilterValue = (
 
 const deriveFiltersFromFields = (
   chartConfig: ChartConfig,
-  { dimensions }: DataSetMetadata
+  { dimensions }: DataCubeMetadata
 ) => {
   // 1. we need filters for all dimensions
   // 2. if a dimension is mapped to a field, it should be a multi filter, otherwise a single filter
@@ -157,29 +157,26 @@ const deriveFiltersFromFields = (
   const isField = (iri: string) => fieldDimensionIris.has(iri);
 
   dimensions.forEach(dimension => {
-    if (filters[dimension.component.iri.value] !== undefined) {
+    if (filters[dimension.iri] !== undefined) {
       // Fix wrong filter type
-      if (
-        isField(dimension.component.iri.value) &&
-        filters[dimension.component.iri.value].type === "single"
-      ) {
+      if (isField(dimension.iri) && filters[dimension.iri].type === "single") {
         // Remove filter
-        delete filters[dimension.component.iri.value];
+        delete filters[dimension.iri];
       } else if (
-        !isField(dimension.component.iri.value) &&
-        filters[dimension.component.iri.value].type === "multi"
+        !isField(dimension.iri) &&
+        filters[dimension.iri].type === "multi"
       ) {
-        filters[dimension.component.iri.value] = {
+        filters[dimension.iri] = {
           type: "single",
-          value: dimension.values[0].value.value
+          value: dimension.values[0].value
         };
       }
     } else {
       // Add filter for this dim if it's not one of the selected multi filter fields
-      if (!isField(dimension.component.iri.value)) {
-        filters[dimension.component.iri.value] = {
+      if (!isField(dimension.iri)) {
+        filters[dimension.iri] = {
           type: "single",
-          value: dimension.values[0].value.value
+          value: dimension.values[0].value
         };
       }
     }
@@ -190,7 +187,7 @@ const deriveFiltersFromFields = (
 
 const transitionStepNext = (
   draft: ConfiguratorState,
-  dataSetMetadata: DataSetMetadata
+  dataSetMetadata: DataCubeMetadata
 ): ConfiguratorState => {
   switch (draft.state) {
     case "SELECTING_DATASET":
@@ -241,7 +238,7 @@ const transitionStepNext = (
 
 export const canTransitionToNextStep = (
   state: ConfiguratorState,
-  dataSetMetadata: DataSetMetadata | undefined
+  dataSetMetadata: DataCubeMetadata | null | undefined
 ): boolean => {
   if (!dataSetMetadata) {
     return false;

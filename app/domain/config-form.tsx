@@ -2,10 +2,10 @@ import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
 import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
-import { DataSetMetadata } from "./data-cube";
 import { Locales } from "../locales/locales";
 import { SelectProps } from "@theme-ui/components";
 import { getFieldComponentIri } from "./charts";
+import { DataCubeMetadata } from "../graphql/types";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -120,7 +120,7 @@ export const useChartFieldField = ({
 }: {
   field: string;
   componentIri?: string;
-  dataSetMetadata: DataSetMetadata;
+  dataSetMetadata: DataCubeMetadata;
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -200,7 +200,7 @@ export const useChartTypeSelectorField = ({
   metaData
 }: {
   value: string;
-  metaData: DataSetMetadata;
+  metaData: DataCubeMetadata;
 }): FieldProps & {
   onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
 } => {

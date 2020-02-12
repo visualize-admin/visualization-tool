@@ -1,38 +1,36 @@
-import React, { useCallback, ChangeEvent } from "react";
+import React, { ChangeEvent, useCallback } from "react";
+import { FilterValueSingle, MetaKey, useConfiguratorState } from "../domain";
 import {
-  useChartTypeSelectorField,
+  FIELD_VALUE_NONE,
   Option,
-  useMetaField,
-  useSingleFilterField,
+  useActiveFieldField,
   useChartFieldField,
   useChartOptionField,
-  useActiveFieldField,
-  FIELD_VALUE_NONE
+  useChartTypeSelectorField,
+  useMetaField,
+  useSingleFilterField
 } from "../domain/config-form";
-import { Radio, Checkbox, Select, Input } from "./form";
-import { ChartTypeSelectionButton } from "./chart-controls";
-import { DataSetMetadata } from "../domain/data-cube";
-import {
-  MetaKey,
-  ComponentWithMeta,
-  FilterValueSingle,
-  useConfiguratorState,
-  DimensionWithMeta
-} from "../domain";
-import { Locales } from "../locales/locales";
-import {
-  ControlTab,
-  FilterTab,
-  AnnotatorTab
-} from "./chart-controls/control-tab";
 import { getFieldLabel } from "../domain/helpers";
+import {
+  ComponentFieldsFragment,
+  DimensionFieldsWithValuesFragment
+} from "../graphql/query-hooks";
+import { DataCubeMetadata } from "../graphql/types";
+import { Locales } from "../locales/locales";
+import { ChartTypeSelectionButton } from "./chart-controls";
+import {
+  AnnotatorTab,
+  ControlTab,
+  FilterTab
+} from "./chart-controls/control-tab";
+import { Checkbox, Input, Radio, Select } from "./form";
 
 export const ControlTabField = ({
   component,
   value,
   disabled
 }: {
-  component?: ComponentWithMeta;
+  component?: ComponentFieldsFragment;
   value: string;
   disabled?: boolean;
 }) => {
@@ -56,7 +54,7 @@ export const FilterTabField = ({
   value,
   disabled
 }: {
-  component: DimensionWithMeta;
+  component: DimensionFieldsWithValuesFragment;
   value: string;
   disabled?: boolean;
 }) => {
@@ -70,12 +68,11 @@ export const FilterTabField = ({
     state.chartConfig.filters[value].type === "single"
       ? (state.chartConfig.filters[value] as FilterValueSingle).value
       : "";
-  const filterValue = component.values.find(
-    v => v.value.value === filterValueIri
-  )!.label.value;
+  const filterValue = component.values.find(v => v.value === filterValueIri)!
+    .label;
   return (
     <FilterTab
-      component={component}
+      label={component.label}
       value={`${field.value}`}
       checked={field.checked}
       disabled={disabled}
@@ -256,7 +253,7 @@ export const ChartFieldField = ({
   options: Option[];
   optional?: boolean;
   disabled?: boolean;
-  dataSetMetadata: DataSetMetadata;
+  dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartFieldField({
     componentIri,
@@ -318,7 +315,7 @@ export const ChartTypeSelectorField = ({
 }: {
   label: string;
   value: string;
-  metaData: DataSetMetadata;
+  metaData: DataCubeMetadata;
   disabled?: boolean;
 }) => {
   const field = useChartTypeSelectorField({

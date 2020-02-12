@@ -2,7 +2,8 @@ import { literal } from "@rdfjs/data-model";
 import {
   DataCube as RDFDataCube,
   DataCubeEntryPoint,
-  Dimension as RDFDimension
+  Dimension as RDFDimension,
+  Measure as RDFMeasure
 } from "@zazuko/query-rdf-data-cube";
 import { GraphQLJSONObject } from "graphql-type-json";
 import HttpsProxyAgent from "https-proxy-agent";
@@ -175,11 +176,24 @@ const DataCube: DataCubeResolvers = {
   source: dataCube => dataCube.extraMetadata.get("source")?.value ?? null,
   description: dataCube =>
     dataCube.extraMetadata.get("description")?.value ?? null,
+  dateCreated: dataCube =>
+    dataCube.extraMetadata.get("dateCreated")?.value ?? null,
   dimensions: async dataCube => {
     return (await dataCube.dimensions()).map(dimension => ({
       dataCube,
       dimension
     }));
+  },
+  dimensionByIri: async (dataCube, { iri }) => {
+    const dimension = (await dataCube.dimensions()).find(
+      dimension => dimension.iri.value === iri
+    );
+    return dimension
+      ? {
+          dataCube,
+          dimension
+        }
+      : null;
   },
   measures: async dataCube => {
     return (await dataCube.measures()).map(measure => ({
@@ -187,24 +201,24 @@ const DataCube: DataCubeResolvers = {
       measure
     }));
   },
-  observations: async (dataCube, { limit, filters, additionalComponents }) => {
+  observations: async (dataCube, { limit, filters, measures }) => {
     const constructedFilters = filters
       ? await constructFilters(dataCube, filters)
       : [];
 
     // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
     const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
-      return additionalComponents?.find(iri => iri === d.iri.value)
+      return measures?.find(iri => iri === d.iri.value)
         ? []
         : ([[`dim${i}`, d]] as [string, RDFDimension][]);
     });
 
     const selectedFields = [
       ...unmappedDimensions,
-      ...(additionalComponents
-        ? additionalComponents.map(
+      ...(measures
+        ? measures.map(
             (iri, i) =>
-              [`comp${i}`, new RDFDimension({ iri })] as [string, RDFDimension]
+              [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
           )
         : [])
     ];

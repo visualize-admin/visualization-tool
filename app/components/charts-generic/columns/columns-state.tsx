@@ -1,4 +1,4 @@
-import { group, max, min, ascending } from "d3-array";
+import { ascending, group, max, min } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -10,12 +10,7 @@ import {
 import { stack } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useMemo } from "react";
-import {
-  Observation,
-  getDimensionLabel,
-  ColumnFields,
-  ObservationValue
-} from "../../../domain";
+import { ColumnFields, Observation, ObservationValue } from "../../../domain";
 import { getPalette, isNumber, mkNumber } from "../../../domain/helpers";
 import { PADDING, PADDING_INNER } from "../columns/constants";
 import { Bounds, Observer, useBounds } from "../use-bounds";
@@ -45,14 +40,16 @@ const useColumnsState = ({
   fields,
   measures,
   bounds
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   bounds: Bounds;
+  fields: ColumnFields;
 }): ColumnsState => {
   const { chartWidth, chartHeight } = bounds;
 
-  const getX = (d: Observation): string => d.x as string;
-  const getY = (d: Observation): number => +d.y as number;
-  const getSegment = (d: Observation): string => d.segment as string;
+  const getX = (d: Observation): string => d[fields.x.componentIri] as string;
+  const getY = (d: Observation): number => +d[fields.y.componentIri];
+  const getSegment = (d: Observation): string =>
+    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
 
   // FIXME: sorting:
   // - Always sort by X (~ by time or alphabetically)
@@ -75,7 +72,7 @@ const useColumnsState = ({
     .range([0, chartWidth])
     .padding(PADDING);
 
-  const inBandDomain = [...new Set(data.map(d => d.segment as string))];
+  const inBandDomain = [...new Set(data.map(getSegment))];
   const xScaleIn = scaleBand()
     .domain(inBandDomain)
     .range([0, xScale.bandwidth()])
@@ -88,19 +85,19 @@ const useColumnsState = ({
     .domain([mkNumber(minValue), mkNumber(maxValue)])
     .range([chartHeight, 0])
     .nice();
-  const yAxisLabel = getDimensionLabel(
-    measures.find(
-      d => d.component.iri.value === (fields as ColumnFields).y.componentIri
-    )!
-  );
+  const yAxisLabel =
+    measures.find(d => d.iri === fields.y.componentIri)?.label ??
+    fields.y.componentIri;
+
+  const xKey = fields.x.componentIri;
 
   const stackMemo = useMemo(() => {
     const wide: Record<string, ObservationValue>[] = [];
     const groupedMap = group(sortedData, getX);
     for (const [key, values] of groupedMap) {
-      const keyObject = values.reduce(
+      const keyObject = values.reduce<{ [k: string]: number | string }>(
         (obj, cur) => {
-          const currentKey = cur.segment as string;
+          const currentKey = getSegment(cur);
           const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
           const total = currentY + (obj.total as number);
           return {
@@ -113,7 +110,7 @@ const useColumnsState = ({
       );
       wide.push({
         ...keyObject,
-        x: key
+        [xKey]: key
       });
     }
 
@@ -159,8 +156,9 @@ const ColumnChartProvider = ({
   fields,
   measures,
   children
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
+  fields: ColumnFields;
 }) => {
   const bounds = useBounds();
 
@@ -181,9 +179,10 @@ export const ColumnChart = ({
   measures,
   aspectRatio,
   children
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
   children: ReactNode;
+  fields: ColumnFields;
 }) => {
   return (
     <Observer aspectRatio={aspectRatio}>

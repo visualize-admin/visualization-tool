@@ -1,30 +1,5 @@
-import { Attribute, Dimension, Measure } from "@zazuko/query-rdf-data-cube";
 import { Literal, NamedNode } from "rdf-js";
-
-export interface DimensionWithMeta {
-  component: Dimension;
-  values: {
-    label: Literal;
-    value: NamedNode | Literal;
-  }[];
-}
-export interface AttributeWithMeta {
-  component: Attribute;
-  values: {
-    label: Literal;
-    value: NamedNode | Literal;
-  }[];
-}
-export interface MeasureWithMeta {
-  component: Measure;
-  min: Literal | null;
-  max: Literal | null;
-}
-
-export type ComponentWithMeta =
-  | DimensionWithMeta
-  | AttributeWithMeta
-  | MeasureWithMeta;
+import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 
 export type RawObservationValue = {
   value: Literal | NamedNode;
@@ -109,61 +84,19 @@ export const parseObservations = (
     return parsedOperation;
   });
 
-export const isTimeDimension = ({ component }: DimensionWithMeta) => {
-  const scaleOfMeasure = component.extraMetadata.scaleOfMeasure;
-
-  if (scaleOfMeasure) {
-    return /cube\/scale\/Temporal\/?$/.test(scaleOfMeasure.value);
-  }
-
-  // FIXME: Remove this once we're sure that scaleOfMeasure always works
-  return /(Jahr|Année|Anno|Year|Zeit|Time|Temps|Tempo)/i.test(component.label.value);
-};
-
-export const getDataTypeFromDimensionValues = ({
-  component,
-  values
-}: DimensionWithMeta): NamedNode | undefined => {
-  if (values[0] && values[0].value.termType === "Literal") {
-    return values[0].value.datatype;
-  }
-
-  return undefined;
-};
-
-export const isCategoricalDimension = ({
-  component,
-  values
-}: DimensionWithMeta) => {
-  const scaleOfMeasure = component.extraMetadata.scaleOfMeasure;
-
-  if (scaleOfMeasure) {
-    return /cube\/scale\/Nominal\/?$/.test(scaleOfMeasure.value);
-  }
-
-  // FIXME: Don't just assume all non-time dimensions are categorical
-  return !isTimeDimension({ component, values });
-};
-
 /**
  * @fixme use metadata to filter time dimension!
  */
-export const getTimeDimensions = (dimensions: DimensionWithMeta[]) =>
-  dimensions.filter(isTimeDimension);
+export const getTimeDimensions = (
+  dimensions: DimensionFieldsWithValuesFragment[]
+) => dimensions.filter(d => d.__typename === "TemporalDimension");
 /**
  * @fixme use metadata to filter categorical dimension!
  */
-export const getCategoricalDimensions = (dimensions: DimensionWithMeta[]) =>
-  dimensions.filter(isCategoricalDimension);
-
-export const getComponentIri = ({ component }: ComponentWithMeta): string => {
-  return component.iri.value;
-};
-export const getDimensionLabel = ({ component }: ComponentWithMeta): string => {
-  return component.label.value;
-};
-
-// Measure
-export const getMeasureLabel = ({ component }: MeasureWithMeta): string => {
-  return component.label.value;
-};
+export const getCategoricalDimensions = (
+  dimensions: DimensionFieldsWithValuesFragment[]
+) =>
+  dimensions.filter(
+    d =>
+      d.__typename === "NominalDimension" || d.__typename === "OrdinalDimension"
+  );

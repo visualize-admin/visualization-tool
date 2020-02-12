@@ -1,96 +1,77 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { memo, useMemo } from "react";
-import {
-  getFieldComponentIris,
-  ScatterPlotFields,
-  useObservations
-} from "../domain";
+import React, { memo } from "react";
+import { ScatterPlotFields } from "../domain";
 import { ScatterPlotConfig } from "../domain/config-types";
-import {
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation
-} from "../domain/data";
+import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
+import {
+  ComponentFieldsFragment,
+  useDataCubeObservationsQuery
+} from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { Tooltip } from "./charts-generic/annotations";
 import { AxisWidthLinear } from "./charts-generic/axis";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { LegendColor } from "./charts-generic/legends";
-import { Interaction, Scatterplot } from "./charts-generic/scatterplot";
+import { Scatterplot } from "./charts-generic/scatterplot";
+import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
-import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";
 
 export const ChartScatterplotVisualization = ({
-  dataSet,
-  dimensions,
-  measures,
+  dataSetIri,
   chartConfig
 }: {
-  dataSet: DataCube;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
+  dataSetIri: string;
   chartConfig: ScatterPlotConfig;
 }) => {
-  // Explicitly specify all dimension fields.
-  // TODO: Improve/optimize/generalize this
-  const allFields = useMemo(() => {
-    const fieldIris = getFieldComponentIris(chartConfig.fields);
-    const restDimensions = dimensions.reduce<{
-      [k: string]: { componentIri: string };
-    }>((acc, d, i) => {
-      if (!fieldIris.has(d.component.iri.value)) {
-        acc[`dim${i}`] = { componentIri: d.component.iri.value };
-      }
-      return acc;
-    }, {});
-    return { ...restDimensions, ...chartConfig.fields };
-  }, [chartConfig.fields, dimensions]);
-
-  const { data: observations } = useObservations({
-    dataSet,
-    measures,
-    dimensions,
-    fields: allFields,
-    filters: chartConfig.filters
+  const locale = useLocale();
+  const [{ data }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: dataSetIri,
+      measures: [
+        chartConfig.fields.x.componentIri,
+        chartConfig.fields.y.componentIri
+      ], // FIXME: Other fields may also be measures
+      filters: chartConfig.filters
+    }
   });
 
-  if (
-    observations &&
-    observations.map(obs => obs.x).some(isNumber) &&
-    observations.map(obs => obs.y).some(isNumber)
-  ) {
-    return observations.length > 0 ? (
+  const observations = data?.dataCubeByIri?.observations.data;
+
+  if (data?.dataCubeByIri) {
+    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
+    return observations.data.length > 0 ? (
       <>
         <A11yTable
-          dataSet={dataSet}
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          observations={observations}
         />
         <ChartScatterplot
-          observations={observations}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
+          fields={chartConfig.fields}
         />
         <DataDownload
-          dataSet={dataSet}
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
+          fields={chartConfig.fields}
         />
       </>
     ) : (
       <NoDataHint />
     );
   } else if (
-    (observations && !observations.map(obs => obs.x).some(isNumber)) ||
-    (observations && !observations.map(obs => obs.y).some(isNumber))
+    (observations &&
+      !observations.map((obs: $FixMe) => obs.x).some(isNumber)) ||
+    (observations && !observations.map((obs: $FixMe) => obs.y).some(isNumber))
   ) {
     return <NoDataHint />;
   } else {
@@ -106,8 +87,8 @@ export const ChartScatterplot = memo(
     fields
   }: {
     observations: Observation[];
-    dimensions: DimensionWithMeta[];
-    measures: MeasureWithMeta[];
+    dimensions: ComponentFieldsFragment[];
+    measures: ComponentFieldsFragment[];
     fields: ScatterPlotFields;
   }) => {
     return (

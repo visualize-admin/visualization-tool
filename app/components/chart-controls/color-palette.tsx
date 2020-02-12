@@ -1,29 +1,33 @@
+import { Trans } from "@lingui/macro";
+import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { useSelect } from "downshift";
 import * as React from "react";
-import { Box, Button, Flex, Text } from "@theme-ui/components";
-import { ColorScheme, scheme } from "vega";
 import { useConfiguratorState } from "../../domain";
+import { getPalette } from "../../domain/helpers";
 import { Icon } from "../../icons";
 import { Label } from "../form";
-import { Trans } from "@lingui/macro";
 
 const vegaPalettes: Array<{
   label: string;
-  value: ColorScheme;
-  colors: Array<string>;
+  value: string;
+  colors: ReadonlyArray<string>;
 }> = [
-  { label: "category10", value: "category10", colors: scheme("category10") },
-  { label: "accent", value: "accent", colors: scheme("accent") },
-  // { label: "category20", value: "category20", colors: scheme("category20") },
-  // { label: "category20b", value: "category20b", colors: scheme("category20b") },
-  // { label: "category20c", value: "category20c", colors: scheme("category20c") },
-  { label: "dark2", value: "dark2", colors: scheme("dark2") },
-  { label: "paired", value: "paired", colors: scheme("paired") },
-  { label: "pastel1", value: "pastel1", colors: scheme("pastel1") },
-  { label: "pastel2", value: "pastel2", colors: scheme("pastel2") },
-  { label: "set1", value: "set1", colors: scheme("set1") },
-  { label: "set2", value: "set2", colors: scheme("set2") },
-  { label: "set3", value: "set3", colors: scheme("set3") }
+  {
+    label: "category10",
+    value: "category10",
+    colors: getPalette("category10")
+  },
+  { label: "accent", value: "accent", colors: getPalette("accent") },
+  // { label: "category20", value: "category20", colors: getPalette("category20") },
+  // { label: "category20b", value: "category20b", colors: getPalette("category20b") },
+  // { label: "category20c", value: "category20c", colors: getPalette("category20c") },
+  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
+  { label: "paired", value: "paired", colors: getPalette("paired") },
+  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
+  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
+  { label: "set1", value: "set1", colors: getPalette("set1") },
+  { label: "set2", value: "set2", colors: getPalette("set2") },
+  { label: "set3", value: "set3", colors: getPalette("set3") }
   // { label: "tableau10", value: "tableau10", colors: scheme("tableau10") }
   // { label: "tableau20", value: "tableau20", colors: scheme("tableau20") }
 ];
@@ -68,7 +72,7 @@ export const ColorPalette = ({
       <Button variant="palette" {...getToggleButtonProps()}>
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
-            {scheme(
+            {getPalette(
               state.chartConfig.fields.segment?.palette || "category10"
             ).map((color: string) => (
               <Box

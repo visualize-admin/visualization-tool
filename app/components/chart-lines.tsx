@@ -1,12 +1,6 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { memo, useMemo } from "react";
-import { getFieldComponentIris, useObservations } from "../domain";
-import { GenericField, LineConfig, LineFields } from "../domain/config-types";
-import {
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation
-} from "../domain/data";
+import React, { memo } from "react";
+import { LineConfig, LineFields } from "../domain/config-types";
+import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import { A11yTable } from "./a11y-table";
 import { Ruler, Tooltip } from "./charts-generic/annotations";
@@ -22,65 +16,54 @@ import {
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 import { LineChart } from "./charts-generic/lines/lines-state";
+import { useLocale } from "../lib/use-locale";
+import {
+  useDataCubeObservationsQuery,
+  ComponentFieldsFragment
+} from "../graphql/query-hooks";
 
 export const ChartLinesVisualization = ({
-  dataSet,
-  dimensions,
-  measures,
+  dataSetIri,
   chartConfig
 }: {
-  dataSet: DataCube;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
+  dataSetIri: string;
   chartConfig: LineConfig;
 }) => {
-  // Explicitly specify all dimension fields.
-  // TODO: Improve/optimize/generalize this
-  const allFields = useMemo(() => {
-    const fieldIris = getFieldComponentIris(chartConfig.fields);
-    const restDimensions = dimensions.reduce<{ [k: string]: GenericField }>(
-      (acc, d, i) => {
-        if (!fieldIris.has(d.component.iri.value)) {
-          acc[`dim${i}`] = { componentIri: d.component.iri.value };
-        }
-        return acc;
-      },
-      {}
-    );
-
-    return { ...restDimensions, ...chartConfig.fields };
-  }, [chartConfig, dimensions]);
-
-  const { data: observations } = useObservations({
-    dataSet,
-    measures,
-    dimensions,
-    fields: allFields,
-    filters: chartConfig.filters
+  const locale = useLocale();
+  const [{ data }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: dataSetIri,
+      measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+      filters: chartConfig.filters
+    }
   });
 
-  if (observations && observations.map(obs => obs.y).some(isNumber)) {
-    return observations.length > 0 ? (
+  const observations = data?.dataCubeByIri?.observations.data;
+
+  if (data?.dataCubeByIri) {
+    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
+    return observations.data.length > 0 ? (
       <>
         <A11yTable
-          dataSet={dataSet}
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
+          fields={chartConfig.fields}
         />
         <ChartLines
-          observations={observations}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
+          fields={chartConfig.fields}
         />
         <DataDownload
-          dataSet={dataSet}
+          title={title}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
-          observations={observations}
+          fields={chartConfig.fields}
         />
       </>
     ) : (
@@ -101,8 +84,8 @@ export const ChartLines = memo(
     fields
   }: {
     observations: Observation[];
-    dimensions: DimensionWithMeta[];
-    measures: MeasureWithMeta[];
+    dimensions: ComponentFieldsFragment[];
+    measures: ComponentFieldsFragment[];
     fields: LineFields;
   }) => {
     return (

@@ -13,23 +13,23 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/a11y-table.tsx:36
+#: app/components/a11y-table.tsx:37
 msgid "accessibility.table.sorting"
 msgstr ""
 
-#: app/components/a11y-table.tsx:38
+#: app/components/a11y-table.tsx:39
 msgid "accessibility.table.sorting.ascending"
 msgstr ""
 
-#: app/components/a11y-table.tsx:40
+#: app/components/a11y-table.tsx:41
 msgid "accessibility.table.sorting.descending"
 msgstr ""
 
-#: app/components/chart-preview.tsx:37
+#: app/components/chart-preview.tsx:31
 msgid "annotation.add.description"
 msgstr ""
 
-#: app/components/chart-preview.tsx:31
+#: app/components/chart-preview.tsx:25
 msgid "annotation.add.title"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgstr ""
 #~ msgid "button.create.new.visualization"
 #~ msgstr ""
 
-#: app/components/data-download.tsx:17
+#: app/components/data-download.tsx:22
 msgid "button.download.data"
 msgstr ""
 
@@ -53,15 +53,15 @@ msgstr ""
 msgid "button.new.visualization"
 msgstr ""
 
-#: app/components/action-bar.tsx:27
+#: app/components/action-bar.tsx:33
 msgid "button.next"
 msgstr ""
 
-#: app/components/action-bar.tsx:26
+#: app/components/action-bar.tsx:32
 msgid "button.previous"
 msgstr ""
 
-#: app/components/action-bar.tsx:27
+#: app/components/action-bar.tsx:33
 msgid "button.publish"
 msgstr ""
 
@@ -74,27 +74,27 @@ msgstr ""
 msgid "click to copy"
 msgstr ""
 
-#: app/domain/helpers.tsx:32
+#: app/domain/helpers.tsx:37
 msgid "controls.axis.horizontal"
 msgstr ""
 
-#: app/domain/helpers.tsx:52
+#: app/domain/helpers.tsx:57
 msgid "controls.chart.type.area"
 msgstr ""
 
-#: app/domain/helpers.tsx:48
+#: app/domain/helpers.tsx:53
 msgid "controls.chart.type.bar"
 msgstr ""
 
-#: app/domain/helpers.tsx:46
+#: app/domain/helpers.tsx:51
 msgid "controls.chart.type.column"
 msgstr ""
 
-#: app/domain/helpers.tsx:50
+#: app/domain/helpers.tsx:55
 msgid "controls.chart.type.line"
 msgstr ""
 
-#: app/domain/helpers.tsx:54
+#: app/domain/helpers.tsx:59
 msgid "controls.chart.type.scatterplot"
 msgstr ""
 
@@ -102,15 +102,15 @@ msgstr ""
 msgid "controls.color.palette"
 msgstr ""
 
-#: app/domain/helpers.tsx:44
+#: app/domain/helpers.tsx:49
 msgid "controls.column.grouped"
 msgstr ""
 
-#: app/domain/helpers.tsx:42
+#: app/domain/helpers.tsx:47
 msgid "controls.column.stacked"
 msgstr ""
 
-#: app/domain/helpers.tsx:40
+#: app/domain/helpers.tsx:45
 msgid "controls.description"
 msgstr ""
 
@@ -118,11 +118,11 @@ msgstr ""
 #~ msgid "controls.filter.reset"
 #~ msgstr ""
 
-#: app/components/filters.tsx:44
+#: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
 msgstr ""
 
-#: app/components/filters.tsx:48
+#: app/components/filters.tsx:46
 msgid "controls.filter.select.none"
 msgstr ""
 
@@ -134,35 +134,35 @@ msgstr ""
 msgid "controls.hint.describing.chart"
 msgstr ""
 
-#: app/domain/helpers.tsx:56
+#: app/domain/helpers.tsx:61
 msgid "controls.language.english"
 msgstr ""
 
-#: app/domain/helpers.tsx:60
+#: app/domain/helpers.tsx:65
 msgid "controls.language.french"
 msgstr ""
 
-#: app/domain/helpers.tsx:58
+#: app/domain/helpers.tsx:63
 msgid "controls.language.german"
 msgstr ""
 
-#: app/domain/helpers.tsx:62
+#: app/domain/helpers.tsx:67
 msgid "controls.language.italian"
 msgstr ""
 
-#: app/domain/helpers.tsx:34
+#: app/domain/helpers.tsx:39
 msgid "controls.measure"
 msgstr ""
 
-#: app/domain/helpers.tsx:36
+#: app/domain/helpers.tsx:41
 msgid "controls.partition"
 msgstr ""
 
-#: app/components/chart-controls/control-tab.tsx:9
+#: app/components/chart-controls/control-tab.tsx:8
 msgid "controls.partition.add"
 msgstr ""
 
-#: app/components/chart-configurator.tsx:21
+#: app/components/chart-configurator.tsx:26
 msgid "controls.section.data"
 msgstr ""
 
@@ -170,12 +170,12 @@ msgstr ""
 msgid "controls.section.description"
 msgstr ""
 
-#: app/components/chart-configurator.tsx:16
+#: app/components/chart-configurator.tsx:21
 msgid "controls.section.design"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:72
-#: app/components/chart-options-selector.tsx:76
+#: app/components/chart-options-selector.tsx:78
+#: app/components/chart-options-selector.tsx:82
 msgid "controls.section.filter"
 msgstr ""
 
@@ -183,28 +183,28 @@ msgstr ""
 #~ msgid "controls.segmentation"
 #~ msgstr ""
 
-#: app/components/chart-type-selector.tsx:18
-#: app/components/chart-type-selector.tsx:21
+#: app/components/chart-type-selector.tsx:25
+#: app/components/chart-type-selector.tsx:28
 msgid "controls.select.chart.type"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:125
+#: app/components/chart-options-selector.tsx:131
 msgid "controls.select.column.chart.type"
 msgstr ""
 
-#: app/components/dataset-selector.tsx:12
+#: app/components/dataset-selector.tsx:15
 msgid "controls.select.dataset"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:62
+#: app/components/chart-options-selector.tsx:68
 msgid "controls.select.dimension"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:94
+#: app/components/chart-options-selector.tsx:100
 msgid "controls.select.measure"
 msgstr ""
 
-#: app/domain/helpers.tsx:38
+#: app/domain/helpers.tsx:43
 msgid "controls.title"
 msgstr ""
 
@@ -212,19 +212,19 @@ msgstr ""
 msgid "copied!"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:31
+#: app/components/dataset-metadata.tsx:34
 msgid "dataset.metadata.date.created"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:24
+#: app/components/dataset-metadata.tsx:25
 msgid "dataset.metadata.source"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:18
+#: app/components/dataset-metadata.tsx:19
 msgid "dataset.metadata.title"
 msgstr ""
 
-#: app/components/dataset-preview.tsx:36
+#: app/components/dataset-preview.tsx:40
 msgid "datatable.showing.first.rows"
 msgstr ""
 
@@ -260,7 +260,7 @@ msgstr ""
 msgid "hint.loading.data"
 msgstr ""
 
-#: app/components/chart-type-selector.tsx:30
+#: app/components/chart-type-selector.tsx:37
 msgid "hint.no.visualization.with.dataset"
 msgstr ""
 
@@ -289,15 +289,15 @@ msgstr ""
 msgid "logo.swiss.confederation"
 msgstr ""
 
-#: app/components/chart-footnotes.tsx:19
+#: app/components/chart-footnotes.tsx:35
 msgid "metadata.dataset"
 msgstr ""
 
-#: app/components/chart-footnotes.tsx:23
+#: app/components/chart-footnotes.tsx:40
 msgid "metadata.filter"
 msgstr ""
 
-#: app/components/chart-footnotes.tsx:15
+#: app/components/chart-footnotes.tsx:30
 msgid "metadata.source"
 msgstr ""
 

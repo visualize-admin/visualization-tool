@@ -1,24 +1,28 @@
 import React from "react";
 import { Box, Button, Text } from "@theme-ui/components";
-import { useDataSets, useConfiguratorState } from "../domain";
+import { useConfiguratorState } from "../domain";
 import { Loading } from "./hint";
 import { Trans } from "@lingui/macro";
 import { SectionTitle } from "./chart-controls";
+import { useDataCubesQuery } from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 
 export const DataSetList = () => {
-  const { data: datasets } = useDataSets();
-  if (datasets) {
+  const locale = useLocale();
+  const [{ data }] = useDataCubesQuery({ variables: { locale } });
+
+  if (data) {
     return (
       <Box sx={{ bg: "monochrome100" }}>
         <SectionTitle>
           <Trans id="controls.select.dataset">Select Dataset</Trans>
         </SectionTitle>
-        {datasets.map(d => (
+        {data.dataCubes.map(d => (
           <DatasetButton
             key={d.iri}
             dataSetIri={d.iri}
-            dataSetLabel={d.label.value}
-            dataSetDescription={d.extraMetadata.get("description")!.value}
+            dataSetLabel={d.title}
+            dataSetDescription={d.description}
           />
         ))}
       </Box>
@@ -35,7 +39,7 @@ export const DatasetButton = ({
 }: {
   dataSetIri: string;
   dataSetLabel: string;
-  dataSetDescription: string;
+  dataSetDescription: string | null;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 

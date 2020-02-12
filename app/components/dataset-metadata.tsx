@@ -2,56 +2,48 @@ import { Trans } from "@lingui/macro";
 import { Box } from "@theme-ui/components";
 import { timeFormat } from "d3-time-format";
 import * as React from "react";
-import { useDataSetAndMetadata } from "../domain";
 import { Loading } from "./hint";
+import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 
 // FIXME: localize time format
 const formatTime = timeFormat("%B %d, %Y");
 
 export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
-  const { data } = useDataSetAndMetadata(dataSetIri);
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataQuery({
+    variables: { iri: dataSetIri, locale }
+  });
 
-  if (data) {
-    const { extraMetadata } = data.dataSet;
-
-    const creationDate = extraMetadata.get("dateCreated")?.value;
-    const source = extraMetadata.get("contact")?.value;
+  if (data?.dataCubeByIri) {
     return (
       <Box sx={{ m: 4 }}>
         <Box variant="dataSetMetadata.title">
           <Trans id="dataset.metadata.title">Title</Trans>
         </Box>
-        <Box variant="dataSetMetadata.body">{data.dataSet.label.value}</Box>
+        <Box variant="dataSetMetadata.body">{data.dataCubeByIri.title}</Box>
 
-        {source && (
+        {data.dataCubeByIri.source && (
           <>
             <Box variant="dataSetMetadata.title">
               <Trans id="dataset.metadata.source">Source</Trans>
             </Box>
-            <Box variant="dataSetMetadata.body">{source}</Box>
+            <Box variant="dataSetMetadata.body">
+              {data.dataCubeByIri.source}
+            </Box>
           </>
         )}
 
-        {creationDate && (
+        {data.dataCubeByIri.dateCreated && (
           <>
             <Box variant="dataSetMetadata.title">
               <Trans id="dataset.metadata.date.created">Date Created</Trans>
             </Box>
             <Box variant="dataSetMetadata.body">
-              {formatTime(new Date(creationDate))}
+              {formatTime(new Date(data.dataCubeByIri.dateCreated))}
             </Box>
           </>
         )}
-        {/* <Box variant="dataSetMetadata.title">
-          <Trans id="dataset.metadata.available.languages">
-            Available languages
-          </Trans>
-        </Box>
-        <Box variant="dataSetMetadata.body">
-          {data.dataSet.map(l => (
-            <Box>{l}</Box>
-          ))}
-        </Box> */}
       </Box>
     );
   } else {

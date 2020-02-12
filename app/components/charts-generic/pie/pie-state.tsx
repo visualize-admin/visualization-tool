@@ -1,7 +1,7 @@
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import * as React from "react";
 import { ReactNode } from "react";
-import { Observation } from "../../../domain";
+import { Observation, PieFields } from "../../../domain";
 import { getPalette } from "../../../domain/helpers";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
@@ -20,14 +20,17 @@ const usePieState = ({
   fields,
   measures,
   bounds
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   bounds: Bounds;
+  fields: PieFields;
 }): PieState => {
-  const getValue = (d: Observation): number => +d.value as number;
-  const getSegment = (d: Observation): string => d.segment as string;
+  const getValue = (d: Observation): number =>
+    +d[fields.value.componentIri] as number;
+  const getSegment = (d: Observation): string =>
+    d[fields.value.componentIri] as string;
 
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    data.map(d => getSegment(d) as string)
+    data.map(getSegment)
   );
 
   return {
@@ -44,8 +47,9 @@ const PieChartProvider = ({
   fields,
   measures,
   children
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
+  fields: PieFields;
 }) => {
   const bounds = useBounds();
 
@@ -66,8 +70,9 @@ export const PieChart = ({
   measures,
   aspectRatio,
   children
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
+  fields: PieFields;
   children: ReactNode;
 }) => {
   return (

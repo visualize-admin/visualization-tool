@@ -5,6 +5,7 @@ import { ColumnsState } from "./columns-state";
 export const ColumnsStacked = () => {
   const {
     bounds,
+    getX,
     xScale,
     yStackScale,
     colors,
@@ -19,7 +20,7 @@ export const ColumnsStacked = () => {
           {sv.map((segment: $FixMe, i: number) => (
             <Column
               key={`${segment.key}-${i}`}
-              x={xScale(segment.data.x) as number}
+              x={xScale(getX(segment.data)) as number}
               y={yStackScale(segment[1])}
               width={xScale.bandwidth()}
               height={yStackScale(segment[0]) - yStackScale(segment[1])}

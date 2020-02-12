@@ -17,13 +17,24 @@ type DataCube {
   contact: String
   source: String
   description: String
-  observations(limit: Int, additionalComponents: [String!], filters: Filters): ObservationsQuery!
+  dateCreated: String
+  observations(
+    limit: Int
+    measures: [String!]
+    filters: Filters
+  ): ObservationsQuery!
   dimensions: [Dimension!]!
+  dimensionByIri(iri: String!): Dimension
   measures: [Measure!]!
 }
 
 type DimensionValue {
   value: String!
+  label: String!
+}
+
+interface Component {
+  iri: String!
   label: String!
 }
 
@@ -33,30 +44,30 @@ interface Dimension {
   values: [DimensionValue!]!
 }
 
-type NominalDimension implements Dimension {
+type NominalDimension implements Component & Dimension {
   iri: String!
   label: String!
   values: [DimensionValue!]!
 }
 
-type OrdinalDimension implements Dimension {
+type OrdinalDimension implements Component & Dimension {
   iri: String!
   label: String!
   values: [DimensionValue!]!
 }
 
-type TemporalDimension implements Dimension {
+type TemporalDimension implements Component & Dimension {
   iri: String!
   label: String!
   values: [DimensionValue!]!
 }
 
-type Measure {
+type Measure implements Component {
   iri: String!
   label: String!
 }
 
-type Attribute {
+type Attribute implements Component {
   iri: String!
   label: String!
 }

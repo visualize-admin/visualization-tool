@@ -8,13 +8,13 @@ import { PanelLeft } from "../../../components/panel-left";
 import { PanelMiddle } from "../../../components/panel-middle";
 import { ChartOptionsSelector } from "../../../components/chart-options-selector";
 import { Stepper } from "../../../components/stepper";
-import { DataCubeProvider } from "../../../domain";
 import {
   ConfiguratorStateProvider,
   useConfiguratorState
 } from "../../../domain/configurator-state";
 import { ChartAnnotationsSelector } from "../../../components/chart-annotations-selector";
 import Head from "next/head";
+import { GraphqlProvider } from "../../../graphql/context";
 
 const useChartId = () => {
   const { query } = useRouter();
@@ -83,13 +83,13 @@ const ChartConfiguratorPage: NextPage = () => {
         {/* Disables resoponsive scaling for this page (other pages still work) */}
         <meta name="viewport" content="width=1280"></meta>
       </Head>
-      <DataCubeProvider>
+      <GraphqlProvider>
         <AppLayout>
           <ConfiguratorStateProvider chartId={chartId}>
             <ChartCreator />
           </ConfiguratorStateProvider>
         </AppLayout>
-      </DataCubeProvider>
+      </GraphqlProvider>
     </>
   );
 };

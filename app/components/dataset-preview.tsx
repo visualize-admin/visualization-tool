@@ -1,18 +1,22 @@
 import React from "react";
 import { Box, Text, Flex } from "@theme-ui/components";
 import { Loading } from "./hint";
-import { useDataSetAndMetadata } from "../domain";
 import { DataTable } from "./datatable";
 import { Trans } from "@lingui/macro";
+import { useDataCubePreviewQuery } from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 
 export interface Preview {
   iri: string;
   label: string;
 }
 export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
-  const { data: metaData } = useDataSetAndMetadata(dataSetIri);
-  if (metaData) {
-    const { dataSet, dimensions, measures } = metaData;
+  const locale = useLocale();
+  const [{ data: metaData }] = useDataCubePreviewQuery({
+    variables: { iri: dataSetIri, locale }
+  });
+  if (metaData && metaData.dataCubeByIri) {
+    const { dataCubeByIri } = metaData;
     return (
       <Flex
         p={5}
@@ -23,10 +27,10 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         }}
       >
         <Text variant="heading2" mb={1}>
-          {dataSet.label.value}
+          {dataCubeByIri.title}
         </Text>
         <Text variant="paragraph1" mb={4}>
-          {dataSet.extraMetadata.get("description")!.value}
+          {dataCubeByIri.description}
         </Text>
 
         <Box
@@ -40,9 +44,10 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           }}
         >
           <DataTable
-            dataSet={dataSet}
-            dimensions={dimensions}
-            measures={measures}
+            title={dataCubeByIri.title}
+            dataSetIri={dataCubeByIri.iri}
+            dimensions={dataCubeByIri.dimensions}
+            measures={dataCubeByIri.measures}
           />
         </Box>
         <Text
