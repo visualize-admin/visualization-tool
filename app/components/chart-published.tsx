@@ -53,9 +53,7 @@ export const ChartPublished = ({
       >
         {chartConfig.chartType === "column" && (
           <ChartColumnsVisualization
-            dataSet={metaData.dataSet}
-            dimensions={metaData.dimensions}
-            measures={metaData.measures}
+            dataSetIri={dataSet}
             chartConfig={chartConfig}
           />
         )}
@@ -82,10 +80,7 @@ export const ChartPublished = ({
           />
         )}
       </Flex>
-      <ChartFootnotes
-        dataSetIri={dataSet} 
-        chartConfig={chartConfig}
-      />
+      <ChartFootnotes dataSetIri={dataSet} chartConfig={chartConfig} />
     </Flex>
   ) : null;
 };

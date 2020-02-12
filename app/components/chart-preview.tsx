@@ -59,6 +59,12 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             }}
           >
             {/* // FIXME: we shouldn't need this condition because the states must be these */}
+            {state.chartConfig.chartType === "column" && (
+              <ChartColumnsVisualization
+                dataSetIri={dataSetIri}
+                chartConfig={state.chartConfig}
+              />
+            )}
             {/* {state.chartConfig.chartType === "column" && (
                 <ChartColumnsVisualization
                   dataSet={dataSet}

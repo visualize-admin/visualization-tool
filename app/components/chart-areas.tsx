@@ -17,7 +17,6 @@ import { Loading, NoDataHint } from "./hint";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
-
   chartConfig
 }: {
   dataSetIri: string;
@@ -28,7 +27,7 @@ export const ChartAreasVisualization = ({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [chartConfig.fields.y.componentIri], // FIXME
+      measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
       filters: chartConfig.filters
     }
   });

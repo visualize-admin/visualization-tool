@@ -1,12 +1,6 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { memo, useMemo } from "react";
-import { getFieldComponentIris, useObservations } from "../domain";
+import React, { memo } from "react";
 import { ColumnConfig, ColumnFields } from "../domain/config-types";
-import {
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation
-} from "../domain/data";
+import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import { A11yTable } from "./a11y-table";
 import { Tooltip } from "./charts-generic/annotations";
@@ -25,65 +19,55 @@ import { LegendColor } from "./charts-generic/legends";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 import { ColumnChart } from "./charts-generic/columns/columns-state";
+import {
+  useDataCubeObservationsQuery,
+  ComponentFieldsFragment
+} from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 
 export const ChartColumnsVisualization = ({
-  dataSet,
-  dimensions,
-  measures,
+  dataSetIri,
   chartConfig
 }: {
-  dataSet: DataCube;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
+  dataSetIri: string;
   chartConfig: ColumnConfig;
 }) => {
-  // Explicitly specify all dimension fields.
-  // TODO: Improve/optimize/generalize this
-  const allFields = useMemo(() => {
-    // debugger;
-    const fieldIris = getFieldComponentIris(chartConfig.fields);
-    const restDimensions = dimensions.reduce<{
-      [k: string]: { componentIri: string };
-    }>((acc, d, i) => {
-      if (!fieldIris.has(d.component.iri.value)) {
-        acc[`dim${i}`] = { componentIri: d.component.iri.value };
-      }
-      return acc;
-    }, {});
-    return { ...restDimensions, ...chartConfig.fields };
-  }, [chartConfig.fields, dimensions]);
-
-  const { data: observations } = useObservations({
-    dataSet,
-    dimensions,
-    measures,
-    fields: allFields,
-    filters: chartConfig.filters
+  const locale = useLocale();
+  const [{ data }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: dataSetIri,
+      measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+      filters: chartConfig.filters
+    }
   });
 
-  if (observations && observations.map(obs => obs.y).some(isNumber)) {
-    return observations.length > 0 ? (
+  const observations = data?.dataCubeByIri?.observations.data;
+
+  if (data?.dataCubeByIri) {
+    const { dimensions, measures, observations } = data?.dataCubeByIri;
+    return observations.data.length > 0 ? (
       <>
-        <A11yTable
+        {/* <A11yTable
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
           observations={observations}
-        />
+        /> */}
         <ChartColumns
-          observations={observations}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
+          fields={chartConfig.fields}
         />
-        <DataDownload
+        {/* <DataDownload
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
           observations={observations}
-        />
+        /> */}
       </>
     ) : (
       <NoDataHint />
@@ -103,8 +87,8 @@ export const ChartColumns = memo(
     fields
   }: {
     observations: Observation[];
-    dimensions: DimensionWithMeta[];
-    measures: $FixMe[];
+    dimensions: ComponentFieldsFragment[];
+    measures: ComponentFieldsFragment[];
     fields: ColumnFields;
   }) => {
     return (
