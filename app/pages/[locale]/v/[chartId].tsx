@@ -10,7 +10,6 @@ import { ContentLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { PublishActions } from "../../../components/publish-actions";
 import { Config } from "../../../domain/config-types";
-import { GraphqlProvider } from "../../../graphql/context";
 import { useLocale } from "../../../lib/use-locale";
 
 type PageProps = {
@@ -40,69 +39,65 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
           <meta property="og:description" content={meta.description[locale]} />
           {/* og:url is set in _app.tsx */}
         </Head>
-        <GraphqlProvider>
-          <ContentLayout homepage={false}>
-            <Box px={4} bg="muted" mb="auto">
-              <Box sx={{ pt: 4, maxWidth: 696, margin: "auto" }}>
-                {publishSuccess && <Success />}
+        <ContentLayout homepage={false}>
+          <Box px={4} bg="muted" mb="auto">
+            <Box sx={{ pt: 4, maxWidth: 696, margin: "auto" }}>
+              {publishSuccess && <Success />}
 
-                <Flex variant="container.chart">
-                  <ChartPublished
-                    dataSet={dataSet}
-                    chartConfig={chartConfig}
-                    meta={meta}
-                  />
-                </Flex>
+              <Flex variant="container.chart">
+                <ChartPublished
+                  dataSet={dataSet}
+                  chartConfig={chartConfig}
+                  meta={meta}
+                />
+              </Flex>
 
-                <PublishActions configKey={config.key} />
+              <PublishActions configKey={config.key} />
 
-                <Text
-                  variant="heading3"
-                  mt={3}
-                  mb={5}
-                  sx={{ color: "monochrome800", fontFamily: "body" }}
-                >
-                  {publishSuccess ? (
-                    <Trans id="hint.how.to.share">
-                      You can share this chart either by sharing its URL or by
-                      embedding it on your website. You can also create a new
-                      visualization or duplicate the above chart.
-                    </Trans>
-                  ) : (
-                    <Trans id="hint.create.your.own.chart">
-                      Create your own graphic now! With the visualization tool,
-                      you can create your own graphics, based on a large number
-                      of Swiss federal data.
-                    </Trans>
-                  )}
-                </Text>
+              <Text
+                variant="heading3"
+                mt={3}
+                mb={5}
+                sx={{ color: "monochrome800", fontFamily: "body" }}
+              >
+                {publishSuccess ? (
+                  <Trans id="hint.how.to.share">
+                    You can share this chart either by sharing its URL or by
+                    embedding it on your website. You can also create a new
+                    visualization or duplicate the above chart.
+                  </Trans>
+                ) : (
+                  <Trans id="hint.create.your.own.chart">
+                    Create your own graphic now! With the visualization tool,
+                    you can create your own graphics, based on a large number of
+                    Swiss federal data.
+                  </Trans>
+                )}
+              </Text>
 
-                <LocalizedLink
-                  pathname="/[locale]/create/[chartId]"
-                  query={{ chartId: "new" }}
-                  passHref
-                >
-                  <Button as="a" variant="primary" sx={{ mb: 4 }}>
-                    <Trans id="button.new.visualization">
-                      New Visualization
-                    </Trans>
-                  </Button>
-                </LocalizedLink>
-                <LocalizedLink
-                  pathname="/[locale]/create/new"
-                  query={{ from: config.key }}
-                  passHref
-                >
-                  <Button as="a" variant="outline" sx={{ mb: 4, ml: 4 }}>
-                    <Trans id="button.copy.visualization">
-                      Copy Visualization
-                    </Trans>
-                  </Button>
-                </LocalizedLink>
-              </Box>
+              <LocalizedLink
+                pathname="/[locale]/create/[chartId]"
+                query={{ chartId: "new" }}
+                passHref
+              >
+                <Button as="a" variant="primary" sx={{ mb: 4 }}>
+                  <Trans id="button.new.visualization">New Visualization</Trans>
+                </Button>
+              </LocalizedLink>
+              <LocalizedLink
+                pathname="/[locale]/create/new"
+                query={{ from: config.key }}
+                passHref
+              >
+                <Button as="a" variant="outline" sx={{ mb: 4, ml: 4 }}>
+                  <Trans id="button.copy.visualization">
+                    Copy Visualization
+                  </Trans>
+                </Button>
+              </LocalizedLink>
             </Box>
-          </ContentLayout>
-        </GraphqlProvider>
+          </Box>
+        </ContentLayout>
       </>
     );
   }

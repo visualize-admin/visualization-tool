@@ -4,7 +4,6 @@ import { NextPage } from "next";
 import ErrorPage from "next/error";
 import { ChartPublished } from "../../../components/chart-published";
 import { Config } from "../../../domain/config-types";
-import { GraphqlProvider } from "../../../graphql/context";
 
 type PageProps = {
   statusCode?: number;
@@ -25,13 +24,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
     const { dataSet, meta, chartConfig } = config.data;
 
     return (
-      <GraphqlProvider>
-        <ChartPublished
-          dataSet={dataSet}
-          chartConfig={chartConfig}
-          meta={meta}
-        />
-      </GraphqlProvider>
+      <ChartPublished dataSet={dataSet} chartConfig={chartConfig} meta={meta} />
     );
   }
 

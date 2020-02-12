@@ -18,6 +18,7 @@ import {
 } from "../locales/locales";
 import { loadTheme, Theme } from "../themes/index";
 import { PUBLIC_URL } from "../domain/env";
+import { GraphqlProvider } from "../graphql/context";
 
 Router.events.on("routeChangeComplete", path => analyticsPageView(path));
 
@@ -102,21 +103,29 @@ class MyApp extends App<{
           <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
           {preloadFonts &&
             preloadFonts.map(src => (
-              <link key={src} rel="preload" href={src} as="font" crossOrigin="anonymous" />
+              <link
+                key={src}
+                rel="preload"
+                href={src}
+                as="font"
+                crossOrigin="anonymous"
+              />
             ))}
         </Head>
         <LocaleProvider value={locale}>
           <I18nProvider language={locale} catalogs={catalogs}>
-            <ThemeProvider theme={theme}>
-              <Global
-                styles={css`
-                  ${globalStyles}
-                `}
-              />
-              <ContentMDXProvider>
-                <Component {...pageProps} />
-              </ContentMDXProvider>
-            </ThemeProvider>
+            <GraphqlProvider>
+              <ThemeProvider theme={theme}>
+                <Global
+                  styles={css`
+                    ${globalStyles}
+                  `}
+                />
+                <ContentMDXProvider>
+                  <Component {...pageProps} />
+                </ContentMDXProvider>
+              </ThemeProvider>
+            </GraphqlProvider>
           </I18nProvider>
         </LocaleProvider>
       </>
