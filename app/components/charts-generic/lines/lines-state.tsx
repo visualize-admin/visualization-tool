@@ -41,15 +41,18 @@ const useLinesState = ({
   fields,
   measures,
   bounds
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   bounds: Bounds;
+  fields: LineFields;
 }): LinesState => {
   const { chartWidth, chartHeight } = bounds;
 
-  const getGroups = (d: Observation): string => d.x as string;
-  const getX = (d: Observation): Date => parseDate(+d.x);
-  const getY = (d: Observation): number => +d.y as number;
-  const getSegment = (d: Observation): string => d.segment as string;
+  const getGroups = (d: Observation): string =>
+    d[fields.x.componentIri] as string;
+  const getX = (d: Observation): Date => parseDate(+d[fields.x.componentIri]);
+  const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
+  const getSegment = (d: Observation): string =>
+    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
 
   // x
   const xUniqueValues = [...new Set(data.map(d => getX(d)))];
@@ -61,31 +64,31 @@ const useLinesState = ({
     .nice();
 
   // y
-  const minValue = Math.min(mkNumber(min(data, d => +d.y)), 0);
-  const maxValue = max(data, d => +d.y) as number;
+  const minValue = Math.min(mkNumber(min(data, getY)), 0);
+  const maxValue = max(data, getY) as number;
   const yDomain = [minValue, maxValue];
   const yRange = [chartHeight, 0];
   const yScale = scaleLinear()
     .domain(yDomain)
     .range(yRange)
     .nice();
-  const yAxisLabel = getDimensionLabel(
-    measures.find(
-      d => d.component.iri.value === (fields as LineFields).y.componentIri
-    )!
-  );
+  const yAxisLabel =
+    measures.find(d => d.iri === fields.y.componentIri)?.label ??
+    fields.y.componentIri;
 
   // segments
-  const segments = [...new Set(data.map(d => d.segment as string))];
+  const segments = [...new Set(data.map(getSegment))];
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );
 
   // data
   const sortedData = useMemo(
-    () => [...data].sort((a, b) => ascending(parseDate(+a.x), parseDate(+b.x))),
+    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data]
   );
+  const xKey = fields.x.componentIri;
+
   const grouped = group(sortedData, getSegment);
   const wide = useMemo(() => {
     const groupedMap = group(sortedData, getGroups);
@@ -93,16 +96,17 @@ const useLinesState = ({
 
     for (const [key, values] of groupedMap) {
       const keyObject = values.reduce((obj, cur) => {
-        const currentKey = cur.segment as string;
+        const currentKey = getSegment(cur);
         return {
           ...obj,
           [currentKey]: getY(cur)
         };
       }, {});
-      wider.push({
-        ...keyObject,
-        x: key
-      });
+      wider
+        .push({
+          ...keyObject,
+          [xKey]: key
+        });
     }
 
     return wider;
@@ -130,8 +134,9 @@ const LineChartProvider = ({
   fields,
   measures,
   children
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
+  fields: LineFields;
 }) => {
   const bounds = useBounds();
 
@@ -152,8 +157,9 @@ export const LineChart = ({
   measures,
   aspectRatio,
   children
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
+  fields: LineFields;
   children: ReactNode;
 }) => {
   return (

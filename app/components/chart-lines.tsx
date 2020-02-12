@@ -22,66 +22,52 @@ import {
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 import { LineChart } from "./charts-generic/lines/lines-state";
+import { useLocale } from "../lib/use-locale";
+import { useDataCubeObservationsQuery, ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const ChartLinesVisualization = ({
-  dataSet,
-  dimensions,
-  measures,
+  dataSetIri,
   chartConfig
 }: {
-  dataSet: DataCube;
-  dimensions: DimensionWithMeta[];
-  measures: MeasureWithMeta[];
+  dataSetIri: string;
   chartConfig: LineConfig;
 }) => {
-  // Explicitly specify all dimension fields.
-  // TODO: Improve/optimize/generalize this
-  const allFields = useMemo(() => {
-    const fieldIris = getFieldComponentIris(chartConfig.fields);
-    const restDimensions = dimensions.reduce<{ [k: string]: GenericField }>(
-      (acc, d, i) => {
-        if (!fieldIris.has(d.component.iri.value)) {
-          acc[`dim${i}`] = { componentIri: d.component.iri.value };
-        }
-        return acc;
-      },
-      {}
-    );
-
-    return { ...restDimensions, ...chartConfig.fields };
-  }, [chartConfig, dimensions]);
-
-  const { data: observations } = useObservations({
-    dataSet,
-    measures,
-    dimensions,
-    fields: allFields,
-    filters: chartConfig.filters
+  const locale = useLocale();
+  const [{ data }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: dataSetIri,
+      measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+      filters: chartConfig.filters
+    }
   });
 
-  if (observations && observations.map(obs => obs.y).some(isNumber)) {
-    return observations.length > 0 ? (
+  const observations = data?.dataCubeByIri?.observations.data;
+
+  if (data?.dataCubeByIri) {
+    const { dimensions, measures, observations } = data?.dataCubeByIri;
+    return observations.data.length > 0 ? (
       <>
-        <A11yTable
+        {/* <A11yTable
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
           observations={observations}
-        />
+        /> */}
         <ChartLines
-          observations={observations}
+          observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={allFields}
+          fields={chartConfig.fields}
         />
-        <DataDownload
+        {/* <DataDownload
           dataSet={dataSet}
           dimensions={dimensions}
           measures={measures}
           fields={allFields}
           observations={observations}
-        />
+        /> */}
       </>
     ) : (
       <NoDataHint />
@@ -101,8 +87,8 @@ export const ChartLines = memo(
     fields
   }: {
     observations: Observation[];
-    dimensions: DimensionWithMeta[];
-    measures: $FixMe[];
+    dimensions: ComponentFieldsFragment[];
+    measures: ComponentFieldsFragment[];
     fields: LineFields;
   }) => {
     return (

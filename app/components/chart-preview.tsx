@@ -65,6 +65,12 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 chartConfig={state.chartConfig}
               />
             )}
+            {state.chartConfig.chartType === "line" && (
+                <ChartLinesVisualization
+                dataSetIri={dataSetIri}
+                chartConfig={state.chartConfig}
+                />
+              )}
             {/* {state.chartConfig.chartType === "column" && (
                 <ChartColumnsVisualization
                   dataSet={dataSet}
