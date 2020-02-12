@@ -263,7 +263,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
       <Button
         variant="iconButton"
         onMouseOver={() => toggleTooltip(true)}
-        onMouseDown={() => updateTooltipContent(<Trans>copied!</Trans>)}
+        onMouseUp={() => updateTooltipContent(<Trans>copied!</Trans>)}
         onMouseLeave={handleMouseLeave}
         onClick={e => handleClick(e, iFrameCode)}
         sx={{

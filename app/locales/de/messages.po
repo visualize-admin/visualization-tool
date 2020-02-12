@@ -33,6 +33,10 @@ msgstr ""
 msgid "annotation.add.title"
 msgstr ""
 
+#: app/pages/[locale]/v/[chartId].tsx:70
+msgid "button.copy.visualization"
+msgstr ""
+
 #: app/pages/[locale]/index.tsx:11
 #~ msgid "button.create.new.visualization"
 #~ msgstr ""
@@ -98,7 +102,7 @@ msgstr ""
 msgid "controls.chart.type.scatterplot"
 msgstr ""
 
-#: app/components/chart-controls/color-palette.tsx:46
+#: app/components/chart-controls/color-palette.tsx:50
 msgid "controls.color.palette"
 msgstr ""
 
