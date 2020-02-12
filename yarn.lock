@@ -1805,11 +1805,6 @@
   dependencies:
     "@rdfjs/data-model" "^1.1.0"
 
-"@rebass/preset@^4.0.5":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@rebass/preset/-/preset-4.0.5.tgz#f4fb9bec85efa1eb658b92fc64fbb4250d0af2fb"
-  integrity sha512-RsNZ6r6GjJj7dvis7J+fniekpzqGh+tQ+slIbSX0vUjoB9XTJrRHPnNAf2fcWJHxVfCbZWY1JNsuq3Fcdj1oJA==
-
 "@rollup/plugin-json@^4.0.0":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-json/-/plugin-json-4.0.1.tgz#223898c6c37993886da06989b0e93ceef52aa3ce"
