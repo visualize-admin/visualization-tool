@@ -1,16 +1,7 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { memo, useMemo } from "react";
-import {
-  getFieldComponentIris,
-  ScatterPlotFields,
-  useObservations
-} from "../domain";
+import React, { memo } from "react";
+import { ScatterPlotFields } from "../domain";
 import { ScatterPlotConfig } from "../domain/config-types";
-import {
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation
-} from "../domain/data";
+import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import { A11yTable } from "./a11y-table";
 import { Tooltip } from "./charts-generic/annotations";
@@ -23,7 +14,10 @@ import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";
 import { useLocale } from "../lib/use-locale";
-import { ComponentFieldsFragment, useDataCubeObservationsQuery } from "../graphql/query-hooks";
+import {
+  ComponentFieldsFragment,
+  useDataCubeObservationsQuery
+} from "../graphql/query-hooks";
 
 export const ChartScatterplotVisualization = ({
   dataSetIri,
@@ -37,7 +31,10 @@ export const ChartScatterplotVisualization = ({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [chartConfig.fields.x.componentIri,chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+      measures: [
+        chartConfig.fields.x.componentIri,
+        chartConfig.fields.y.componentIri
+      ], // FIXME: Other fields may also be measures
       filters: chartConfig.filters
     }
   });
@@ -73,8 +70,9 @@ export const ChartScatterplotVisualization = ({
       <NoDataHint />
     );
   } else if (
-    (observations && !observations.map((obs:$FixMe) => obs.x).some(isNumber)) ||
-    (observations && !observations.map((obs:$FixMe) => obs.y).some(isNumber))
+    (observations &&
+      !observations.map((obs: $FixMe) => obs.x).some(isNumber)) ||
+    (observations && !observations.map((obs: $FixMe) => obs.y).some(isNumber))
   ) {
     return <NoDataHint />;
   } else {

@@ -1,16 +1,11 @@
 import { Flex, Text } from "@theme-ui/components";
+import { ChartConfig, Meta } from "../domain/config-types";
+import { useLocale } from "../lib/use-locale";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartColumnsVisualization } from "./chart-columns";
 import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
-import {
-  AttributeWithMeta,
-  DimensionWithMeta,
-  useDataSetAndMetadata
-} from "../domain";
-import { ChartConfig, Meta } from "../domain/config-types";
-import { useLocale } from "../lib/use-locale";
 
 export const ChartPublished = ({
   dataSet,
@@ -21,10 +16,9 @@ export const ChartPublished = ({
   meta: Meta;
   chartConfig: ChartConfig;
 }) => {
-  const { data: metaData } = useDataSetAndMetadata(dataSet);
   const locale = useLocale();
 
-  return metaData ? (
+  return (
     <Flex
       p={5}
       sx={{
@@ -78,5 +72,5 @@ export const ChartPublished = ({
       </Flex>
       <ChartFootnotes dataSetIri={dataSet} chartConfig={chartConfig} />
     </Flex>
-  ) : null;
+  );
 };

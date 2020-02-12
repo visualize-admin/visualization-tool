@@ -1,21 +1,16 @@
-import React from "react";
+import { Trans } from "@lingui/macro";
 import { Flex, Text } from "@theme-ui/components";
-import { AttributeWithMeta, DimensionWithMeta } from "../domain";
+import React from "react";
 import { useConfiguratorState } from "../domain/configurator-state";
-import { useDataSetAndMetadata } from "../domain/data-cube";
 import { useLocale } from "../lib/use-locale";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartColumnsVisualization } from "./chart-columns";
 import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
-import { Loading } from "./hint";
-import { Trans } from "@lingui/macro";
-import { ChartPieVisualization } from "./chart-pie";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
-
   const locale = useLocale();
 
   return (
@@ -83,15 +78,12 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 chartConfig={state.chartConfig}
               />
             )}
-            {/* 
-              {state.chartConfig.chartType === "pie" && (
-                <ChartPieVisualization
-                  dataSet={dataSet}
-                  dimensions={dimensions}
-                  measures={measures}
-                  chartConfig={state.chartConfig}
-                />
-              )} */}
+            {/* {state.chartConfig.chartType === "pie" && (
+              <ChartPieVisualization
+                dataSetIri={dataSetIri}
+                chartConfig={state.chartConfig}
+              />
+            )} */}
           </Flex>
         </>
       )}

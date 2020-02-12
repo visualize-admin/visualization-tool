@@ -1,13 +1,7 @@
 import { Trans } from "@lingui/macro";
-import React from "react";
 import { Text } from "@theme-ui/components";
-import {
-  AttributeWithMeta,
-  DimensionWithMeta,
-  Filters,
-  FilterValueSingle,
-  ChartConfig
-} from "../domain";
+import React from "react";
+import { ChartConfig } from "../domain";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 

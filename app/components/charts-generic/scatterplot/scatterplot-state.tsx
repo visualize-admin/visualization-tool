@@ -2,11 +2,7 @@ import { max, min } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import * as React from "react";
 import { ReactNode } from "react";
-import {
-  Observation,
-  getDimensionLabel,
-  ScatterPlotFields
-} from "../../../domain";
+import { Observation, ScatterPlotFields } from "../../../domain";
 import { getPalette, mkNumber } from "../../../domain/helpers";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";

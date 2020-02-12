@@ -1,12 +1,6 @@
-import { DataCube } from "@zazuko/query-rdf-data-cube";
-import React, { memo, useMemo } from "react";
-import { getFieldComponentIris, useObservations } from "../domain";
-import { GenericField, LineConfig, LineFields } from "../domain/config-types";
-import {
-  DimensionWithMeta,
-  MeasureWithMeta,
-  Observation
-} from "../domain/data";
+import React, { memo } from "react";
+import { LineConfig, LineFields } from "../domain/config-types";
+import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import { A11yTable } from "./a11y-table";
 import { Ruler, Tooltip } from "./charts-generic/annotations";
@@ -23,7 +17,10 @@ import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 import { LineChart } from "./charts-generic/lines/lines-state";
 import { useLocale } from "../lib/use-locale";
-import { useDataCubeObservationsQuery, ComponentFieldsFragment } from "../graphql/query-hooks";
+import {
+  useDataCubeObservationsQuery,
+  ComponentFieldsFragment
+} from "../graphql/query-hooks";
 
 export const ChartLinesVisualization = ({
   dataSetIri,

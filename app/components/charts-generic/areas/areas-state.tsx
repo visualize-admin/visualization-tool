@@ -10,7 +10,7 @@ import {
 import { stack } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useMemo } from "react";
-import { AreaFields, getDimensionLabel, Observation } from "../../../domain";
+import { AreaFields, Observation } from "../../../domain";
 import { getPalette, isNumber, parseDate } from "../../../domain/helpers";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
