@@ -2,7 +2,6 @@ import { Trans, t } from "@lingui/macro";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import React, { ReactNode, useEffect, useState } from "react";
 import { Box, Button, Flex, Link, Text, Input } from "@theme-ui/components";
-import { Item } from "vega";
 import { Icon, IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
 import { IconLink } from "./links";
@@ -34,8 +33,8 @@ const PopUp = ({
     toggle(false);
   };
   const stateReducer = (
-    state: DownshiftState<Item>,
-    changes: StateChangeOptions<Item>
+    state: DownshiftState<$FixMe>,
+    changes: StateChangeOptions<$FixMe>
   ) => {
     switch (changes.type) {
       case Downshift.stateChangeTypes.clickButton:
