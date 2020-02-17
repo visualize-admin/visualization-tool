@@ -1,3 +1,4 @@
+import "global-agent/bootstrap";
 import { ApolloServer } from "apollo-server-micro";
 import typeDefs from "../../graphql/schema.graphql";
 import { resolvers } from "../../graphql/resolvers";

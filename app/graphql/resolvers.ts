@@ -6,7 +6,6 @@ import {
   Measure as RDFMeasure
 } from "@zazuko/query-rdf-data-cube";
 import { GraphQLJSONObject } from "graphql-type-json";
-import HttpsProxyAgent from "https-proxy-agent";
 import { Filters, parseObservationValue } from "../domain";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { locales, parseLocaleString } from "../locales/locales";
@@ -25,22 +24,8 @@ const getEntryPoint = (
     return entry;
   }
 
-  const proxyAgent = process.env.HTTPS_PROXY
-    ? new HttpsProxyAgent(process.env.HTTPS_PROXY)
-    : undefined;
-
   entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
     languages: [locale, ...locales.filter(l => l !== locale), ""],
-    fetcher: {
-      fetchOptions: {
-        agent: proxyAgent,
-        method: "POST",
-        headers: {
-          Accept: "application/sparql-results+json",
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
-        }
-      }
-    },
     extraMetadata: [
       {
         variable: "contact",
