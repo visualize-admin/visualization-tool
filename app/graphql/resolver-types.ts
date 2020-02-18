@@ -187,7 +187,7 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => Maybe<TTypes>;
 
-export type isTypeOfResolverFn = (obj: any, info: GraphQLResolveInfo) => boolean;
+export type isTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -244,7 +244,7 @@ export type ResolversParentTypes = ResolversObject<{
 export type AttributeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Attribute'] = ResolversParentTypes['Attribute']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
 export type ComponentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Component'] = ResolversParentTypes['Component']> = ResolversObject<{
@@ -264,7 +264,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>,
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>,
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
 export type DimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Dimension'] = ResolversParentTypes['Dimension']> = ResolversObject<{
@@ -277,7 +277,7 @@ export type DimensionResolvers<ContextType = any, ParentType extends ResolversPa
 export type DimensionValueResolvers<ContextType = any, ParentType extends ResolversParentTypes['DimensionValue'] = ResolversParentTypes['DimensionValue']> = ResolversObject<{
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
 export interface FiltersScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Filters'], any> {
@@ -287,14 +287,14 @@ export interface FiltersScalarConfig extends GraphQLScalarTypeConfig<ResolversTy
 export type MeasureResolvers<ContextType = any, ParentType extends ResolversParentTypes['Measure'] = ResolversParentTypes['Measure']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
 export type NominalDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['NominalDimension'] = ResolversParentTypes['NominalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
 export interface ObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Observation'], any> {
@@ -305,14 +305,14 @@ export type ObservationsQueryResolvers<ContextType = any, ParentType extends Res
   data?: Resolver<Array<ResolversTypes['Observation']>, ParentType, ContextType>,
   rawData?: Resolver<Array<ResolversTypes['RawObservation']>, ParentType, ContextType>,
   sparql?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
 export type OrdinalDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrdinalDimension'] = ResolversParentTypes['OrdinalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -328,7 +328,7 @@ export type TemporalDimensionResolvers<ContextType = any, ParentType extends Res
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
