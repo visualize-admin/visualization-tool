@@ -1,14 +1,15 @@
 import { pool } from "./pg-pool";
 import { createChartId } from "../domain/chart-id";
 
-
 /**
- * Store data in the DB. 
- * Do not try to use on client-side! Use /api/config instead. 
- * 
+ * Store data in the DB.
+ * Do not try to use on client-side! Use /api/config instead.
+ *
  * @param data Data to be stored as configuration
  */
-export const createConfig = async (data: $Unexpressable): Promise<{ key: string }> => {
+export const createConfig = async (
+  data: $Unexpressable
+): Promise<{ key: string }> => {
   const result = await pool.query<{ key: string }>(
     `INSERT INTO config(key, data) VALUES ($1, $2) RETURNING key`,
     [createChartId(), data]
@@ -24,7 +25,7 @@ export const createConfig = async (data: $Unexpressable): Promise<{ key: string 
 /**
  * Get data from DB.
  * Do not try to use on client-side! Use /api/config instead.
- * 
+ *
  * @param key Get data from DB with this key
  */
 export const getConfig = async (
@@ -36,4 +37,21 @@ export const getConfig = async (
   );
 
   return result.rows[0];
+};
+
+/**
+ * Get all keys from DB.
+ * Do not try to use on client-side! Use /api/config instead.
+ *
+ * @param key Get data from DB with this key
+ */
+export const getAllConfigs = async (): Promise<{
+  key: string;
+  data: $Unexpressable;
+}[]> => {
+  const result = await pool.query<{ key: string; data: $Unexpressable }>(
+    `SELECT key,data FROM config ORDER BY created_at DESC`
+  );
+
+  return result.rows;
 };
