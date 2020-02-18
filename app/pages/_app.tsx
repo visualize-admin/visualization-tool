@@ -67,6 +67,10 @@ class MyApp extends App<{
       ? parseLocaleString(query.locale.toString())
       : parseLocaleString(pathname.slice(1));
 
+    if (typeof document !== "undefined") {
+      document.querySelector("html")?.setAttribute("lang", locale);
+    }
+
     return {
       ...appProps,
       locale,

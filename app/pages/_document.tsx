@@ -1,10 +1,36 @@
-import Document, { Html, Head, Main, NextScript } from "next/document";
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentContext
+} from "next/document";
 import { GA_TRACKING_ID } from "../domain/env";
+import { parseLocaleString } from "../locales/locales";
 
-class MyDocument extends Document {
+class MyDocument extends Document<{ locale: string }> {
+  static async getInitialProps(ctx: DocumentContext) {
+    const initialProps = await Document.getInitialProps(ctx);
+
+    const { query, pathname } = ctx;
+    /**
+     * Parse locale from query OR pathname
+     * - so we can have dynamic locale query params like /[locale]/create/...
+     * - and static localized pages like /en/index.mdx
+     */
+    const locale = /^\/\[locale\]/.test(pathname)
+      ? parseLocaleString(query.locale.toString())
+      : parseLocaleString(pathname.slice(1));
+
+    return { ...initialProps, locale };
+  }
+
   render() {
     return (
-      <Html data-app-version={`${process.env.VERSION}`}>
+      <Html
+        data-app-version={`${process.env.VERSION}`}
+        lang={this.props.locale}
+      >
         <Head>
           {GA_TRACKING_ID && (
             <>

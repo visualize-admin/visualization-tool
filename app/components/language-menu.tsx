@@ -12,6 +12,7 @@ export const LanguageMenu = () => {
         <Box as="li" key={locale} variant="header.languageListItem">
           <CurrentPageLink locale={locale} passHref>
             <Link
+              rel="alternate"
               hrefLang={locale}
               variant={
                 locale === currentLocale
