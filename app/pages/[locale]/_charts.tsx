@@ -1,9 +1,10 @@
-import { Box, Flex } from "@theme-ui/components";
-import "isomorphic-unfetch";
+import { Box, Flex, Link } from "@theme-ui/components";
 import { NextPage } from "next";
 import { ChartPublished } from "../../components/chart-published";
 import { ContentLayout } from "../../components/layout";
 import { Config } from "../../domain/config-types";
+import { fetchAllConfigs } from "../../config-api";
+import { LocalizedLink } from "../../components/links";
 
 type PageProps = {
   configs: {
@@ -23,14 +24,26 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                 <Box
                   // variant="container.chart"
                   key={key}
-                  sx={{ width: ["100%", "50%"] }}
+                  id={`chart-${key}`}
+                  sx={{ width: ["100%", "50%", "50%", "33.33%"] }}
                 >
-                  <Flex variant="container.chart" sx={{m: 2}}>
+                  <Flex
+                    variant="container.chart"
+                    sx={{ m: 2, flexDirection: "column" }}
+                  >
                     <ChartPublished
                       dataSet={dataSet}
                       chartConfig={chartConfig}
                       meta={meta}
                     />
+                    <LocalizedLink
+                      pathname={`/[locale]/v/[chartId]`}
+                      query={{ chartId: key }}
+                    >
+                      <Link variant="buttons.downloadButton" sx={{ p: 5 }}>
+                        →
+                      </Link>
+                    </LocalizedLink>
                   </Flex>
                 </Box>
               );
@@ -43,10 +56,8 @@ const Page: NextPage<PageProps> = ({ configs }) => {
 };
 
 Page.getInitialProps = async ({ req, res }) => {
-  const uri = res
-    ? `http://localhost:${process.env.PORT || 3000}/api/config/all`
-    : `/api/config/all`;
-  const configs = await fetch(uri).then(result => result.json());
+  const configs = await fetchAllConfigs();
+
   return {
     configs: configs.filter((c: $Unexpressable) => c.data && c.data.meta)
   };

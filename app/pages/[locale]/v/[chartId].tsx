@@ -11,6 +11,7 @@ import { LocalizedLink } from "../../../components/links";
 import { PublishActions } from "../../../components/publish-actions";
 import { Config } from "../../../domain/config-types";
 import { useLocale } from "../../../lib/use-locale";
+import { fetchConfig } from "../../../config-api";
 
 type PageProps = {
   statusCode?: number;
@@ -107,11 +108,9 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
 };
 
 Page.getInitialProps = async ({ req, query, res }) => {
-  const uri = res
-    ? `http://localhost:${process.env.PORT || 3000}/api/config/${query.chartId}`
-    : `/api/config/${query.chartId}`;
-  const config = await fetch(uri).then(result => result.json());
+  const config = await fetchConfig(query.chartId as string);
   const publishSuccess = query.publishSuccess as string;
+  
   if (config && config.data) {
     // TODO validate configuration
     return { config, publishSuccess };

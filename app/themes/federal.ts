@@ -671,7 +671,6 @@ export const theme: Theme = {
         gridArea: "middle"
       },
       chart: {
-        variant: "variants.container.root",
         bg: "monochrome100",
         boxShadow: "primary",
         width: "auto",
