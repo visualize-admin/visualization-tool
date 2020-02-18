@@ -85,8 +85,8 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
                 </Button>
               </LocalizedLink>
               <LocalizedLink
-                pathname="/[locale]/create/new"
-                query={{ from: config.key }}
+                pathname="/[locale]/create/[chartId]"
+                query={{ chartId: "new", from: config.key }}
                 passHref
               >
                 <Button as="a" variant="outline" sx={{ mb: 4, ml: 4 }}>
