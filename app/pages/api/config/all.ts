@@ -10,9 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case "GET":
       try {
-        console.time("allconfigs")
         const result = await getAllConfigs();
-        console.timeEnd("allconfigs")
 
         if (result) {
           res.status(200).json(result);
