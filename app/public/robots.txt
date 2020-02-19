@@ -1,0 +1,7 @@
+User-agent: *
+# For now, disallow everything
+Disallow: /
+
+## More specific rules for later
+# Disallow: /api/
+# Allow: /*/v/
