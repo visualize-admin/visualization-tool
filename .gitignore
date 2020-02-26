@@ -1,4 +1,4 @@
-/node_modules
+node_modules
 .next
 .DS_Store
 *.log
@@ -7,3 +7,4 @@
 /app/locales/**/*.js
 /app/public/dist/**/*.js
 /packages/**/dist
+/app/dist

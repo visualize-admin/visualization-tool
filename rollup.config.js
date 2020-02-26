@@ -63,7 +63,7 @@ export default {
       extensions,
       include: ["embed/**/*", "app/**/*"],
       exclude: "node_modules/**",
-      configFile: "./app/babel.config.js",
+      configFile: "./babel.config.js",
       runtimeHelpers: true
     }),
     terser(),
