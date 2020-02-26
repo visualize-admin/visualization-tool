@@ -1,0 +1,10 @@
+{
+  "name": "@visualize/dummy-package",
+  "version": "0.4.0",
+  "main": "dist/dummy-package.cjs.js",
+  "module": "dist/dummy-package.esm.js",
+  "private": true,
+  "peerDependencies": {
+    "graphql": "^14.6.0"
+  }
+}
