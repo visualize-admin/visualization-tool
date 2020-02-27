@@ -11,7 +11,8 @@
     "dev:rollup": "rollup -c rollup.config.js --watch",
     "db:migrate:dev": "DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool scripts/db-migrate.js",
     "db:migrate": "scripts/db-migrate.js",
-    "build": "NODE_OPTIONS=--max_old_space_size=2048 yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && preconstruct build && next build ./app",
+    "build": "NODE_OPTIONS=--max_old_space_size=2048 yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && next build ./app",
+    "build:npm": "yarn graphql:codegen && lingui compile && BABEL_ENV=NPM_PACKAGE preconstruct build",
     "start": "yarn db:migrate && GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' NODE_EXTRA_CA_CERTS=./certs/proxywg.crt next start ./app -p $PORT",
     "lint": "tsc --noEmit -p ./app -p ./embed",
     "locales:extract": "lingui extract",
@@ -21,8 +22,7 @@
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "preversion": "yarn lint",
     "postversion": "git push --follow-tags",
-    "postinstall": "preconstruct dev",
-    "publish:npm": "yarn build && npm publish ./app"
+    "postinstall": "preconstruct dev"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.12.2",
@@ -71,7 +71,7 @@
     "eslint-plugin-jsx-a11y": "6.x",
     "eslint-plugin-react": "7.18.3",
     "eslint-plugin-react-hooks": "2.4.0",
-    "next": "^9.2.2",
+    "next": "^9.2.3-canary.13",
     "prettier": "^1.18.2",
     "rollup": "^1.31.1",
     "rollup-plugin-analyzer": "^3.2.2",

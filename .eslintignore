@@ -3,3 +3,4 @@
 /app/public/dist/*
 /app/graphql/resolver-types.ts
 /app/graphql/query-hooks.ts
+/app/dist/*
