@@ -1,5 +1,5 @@
 {
-  "name": "@visualize/site",
+  "name": "@interactivethings/visualize-site",
   "version": "0.4.0",
   "repository": "git@gitlab.ldbar.ch:interactivethings/visualization-tool.git",
   "author": "Jeremy Stucki <jeremy@interactivethings.com>",
