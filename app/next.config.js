@@ -12,6 +12,7 @@ const publicRuntimeConfig = {
   SPARQL_ENDPOINT:
     process.env.SPARQL_ENDPOINT ||
     "https://trifid-lindas.test.cluster.ldbar.ch/query",
+  GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT || "/api/graphl",
   PUBLIC_URL: process.env.PUBLIC_URL
     ? process.env.PUBLIC_URL.replace(/\/$/, "")
     : "",
