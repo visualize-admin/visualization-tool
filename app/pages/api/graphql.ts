@@ -18,4 +18,8 @@ export const config = {
   }
 };
 
-export default cors()(server.createHandler({ path: "/api/graphql" }));
+const handler = server.createHandler({ path: "/api/graphql" });
+
+export default cors()((req, res) =>
+  req.method === "OPTIONS" ? res.end() : handler(req, res)
+);
