@@ -24,6 +24,11 @@
     "postversion": "git push --follow-tags",
     "postinstall": "preconstruct dev"
   },
+  "dependencies": {
+    "next": "^9.2.3-canary.13",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
+  },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.12.2",
     "@graphql-codegen/typescript": "^1.12.2",
@@ -71,7 +76,6 @@
     "eslint-plugin-jsx-a11y": "6.x",
     "eslint-plugin-react": "7.18.3",
     "eslint-plugin-react-hooks": "2.4.0",
-    "next": "^9.2.3-canary.13",
     "prettier": "^1.18.2",
     "rollup": "^1.31.1",
     "rollup-plugin-analyzer": "^3.2.2",

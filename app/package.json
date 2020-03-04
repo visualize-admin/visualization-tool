@@ -49,15 +49,15 @@
     "pg": "^7.18.1",
     "pg-connection-string": "^2.1.0",
     "postgres-migrations": "^4.0.2",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
     "theme-ui": "^0.3.1",
     "urql": "^1.9.0",
     "use-immer": "^0.3.3"
   },
   "peerDependencies": {
     "@babel/runtime": "^7.8.4",
-    "next": "^9.2.2"
+    "next": "^9.2.2",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
   },
   "preconstruct": {
     "source": "index"
