@@ -8,3 +8,4 @@ node_modules
 /app/public/dist/**/*.js
 /packages/**/dist
 /app/dist
+.now
