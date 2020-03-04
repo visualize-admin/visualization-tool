@@ -58,6 +58,7 @@
     "@types/lingui__macro": "^2.7.3",
     "@types/lingui__react": "^2.8.0",
     "@types/lodash": "^4.14.138",
+    "@types/micro-cors": "^0.1.0",
     "@types/nanoid": "^2.0.0",
     "@types/node": "^12.12.20",
     "@types/pg": "^7.11.1",

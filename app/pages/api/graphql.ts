@@ -1,5 +1,6 @@
 import "global-agent/bootstrap";
 import { ApolloServer } from "apollo-server-micro";
+import cors from "micro-cors";
 import typeDefs from "../../graphql/schema.graphql";
 import { resolvers } from "../../graphql/resolvers";
 
@@ -17,4 +18,4 @@ export const config = {
   }
 };
 
-export default server.createHandler({ path: "/api/graphql" });
+export default cors()(server.createHandler({ path: "/api/graphql" }));
