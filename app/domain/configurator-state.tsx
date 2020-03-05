@@ -574,10 +574,7 @@ const ConfiguratorStateProviderInternal = ({
               window.localStorage.removeItem(getLocalStorageKey(chartId));
             }
           } else {
-            replace(
-              `/[locale]/create/[chartId]`,
-              asPath.replace(/\/create\/.+$/, "/create/new")
-            );
+            replace(`/[locale]/create/[chartId]`, `/${locale}/create/new`);
           }
         }
       } catch {
@@ -586,7 +583,7 @@ const ConfiguratorStateProviderInternal = ({
       }
     };
     initialize();
-  }, [dispatch, chartId, replace, asPath, initialState, query]);
+  }, [dispatch, chartId, replace, initialState, query, locale]);
 
   useEffect(() => {
     try {
