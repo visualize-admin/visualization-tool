@@ -22,7 +22,7 @@
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "preversion": "yarn lint",
     "postversion": "git push --follow-tags",
-    "prepublishOnly": "yarn build:npm"
+    "release:npm": "yarn build:npm && yarn publish app"
   },
   "dependencies": {
     "next": "^9.2.3-canary.13",
