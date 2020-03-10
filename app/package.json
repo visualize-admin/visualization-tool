@@ -15,8 +15,8 @@
     "@juggle/resize-observer": "^3.0.2",
     "@lingui/react": "^2.8.3",
     "@mdx-js/react": "^1.5.2",
-    "@next/bundle-analyzer": "^9.2.2",
-    "@next/mdx": "^9.2.2",
+    "@next/bundle-analyzer": "^9.3.0",
+    "@next/mdx": "^9.3.0",
     "@preconstruct/next": "^1.0.1",
     "@theme-ui/components": "^0.3.1",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
@@ -56,7 +56,7 @@
   },
   "peerDependencies": {
     "@babel/runtime": "^7.8.4",
-    "next": "^9.2.2",
+    "next": "^9.3.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
   },
