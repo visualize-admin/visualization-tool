@@ -74,38 +74,40 @@ const Arc = ({
   };
   const handleMouseLeave = () => {
     toggleTooltipVisibility(false);
-    dispatch({
-      type: "TOOLTIP_UPDATE",
-      value: {
-        tooltip: {
-          visible: false,
-          x: chartWidth / 2 + x,
-          y: chartHeight / 2 + y,
-          placement: "left",
-          content: tooltipContent
-        }
-      }
-    });
+    // dispatch({
+    //   type: "ANNOTATION_UPDATE",
+    //   value: {
+    //     tooltip: {
+    //       visible: false,
+    //       x: chartWidth / 2 + x,
+    //       y: chartHeight / 2 + y,
+    //       placement: { x: "left", y: "top" },
+
+    //       content: tooltipContent
+    //     }
+    //   }
+    // });
   };
   return (
     <path
       d={arcGenerator({ startAngle, endAngle }) as string}
       fill={color}
       onMouseEnter={handleMouseEnter}
-      onMouseOver={() =>
-        dispatch({
-          type: "TOOLTIP_UPDATE",
-          value: {
-            tooltip: {
-              visible,
-              x: chartWidth / 2 + x,
-              y: chartHeight / 2 + y,
-              placement: "left",
-              content: tooltipContent
-            }
-          }
-        })
-      }
+      // onMouseOver={() =>
+      //   dispatch({
+      //     type: "ANNOTATION_UPDATE",
+      //     value: {
+      //       tooltip: {
+      //         visible,
+      //         x: chartWidth / 2 + x,
+      //         y: chartHeight / 2 + y,
+
+      //         placement: { x: "left", y: "top" },
+      //         content: tooltipContent
+      //       }
+      //     }
+      //   })
+      // }
       onMouseLeave={handleMouseLeave}
     />
   );

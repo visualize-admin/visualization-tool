@@ -7,23 +7,22 @@ export const ColumnsStacked = () => {
     bounds,
     getX,
     xScale,
-    yStackScale,
+    yScale,
     colors,
     series
   } = useChartState() as ColumnsState;
   const { margins } = bounds;
-
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
       {series.map(sv => (
         <g key={sv.key} fill={colors(sv.key)} data-n={sv.key}>
           {sv.map((segment: $FixMe, i: number) => (
             <Column
-              key={`${segment.key}-${i}`}
+              key={`${getX(segment.data)}-${i}`}
               x={xScale(getX(segment.data)) as number}
-              y={yStackScale(segment[1])}
+              y={yScale(segment[1])}
               width={xScale.bandwidth()}
-              height={yStackScale(segment[0]) - yStackScale(segment[1])}
+              height={yScale(segment[0]) - yScale(segment[1])}
             />
           ))}
         </g>

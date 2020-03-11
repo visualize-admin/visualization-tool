@@ -2,42 +2,28 @@ import * as React from "react";
 import { Observation } from "../../../domain";
 import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";
-import { ColumnsTooltip } from "./tooltip";
-import { ColumnsState } from "./columns-state";
+import { ColumnsState } from "../columns/columns-state";
 
-export const Interaction = () => {
+export const InteractionColumns = () => {
   const [, dispatch] = useInteraction();
 
   const {
     sortedData,
     bounds,
     getX,
-    xScale,
-    getY,
-    yScale
+    xScaleInteraction
   } = useChartState() as ColumnsState;
-  const { margins, chartWidth, chartHeight } = bounds;
+  const { margins, chartHeight } = bounds;
 
   const showTooltip = (d: Observation) => {
-    const placement =
-      (xScale(getX(d)) as number) > chartWidth / 2 ? "left" : "right";
-
     dispatch({
-      type: "TOOLTIP_UPDATE",
-      value: {
-        tooltip: {
-          visible: true,
-          x: xScale(getX(d)),
-          y: yScale(getY(d)),
-          placement,
-          content: <ColumnsTooltip content={{ x: getX(d), y: getY(d) }} />
-        }
-      }
+      type: "ANNOTATION_UPDATE",
+      value: { annotation: { visible: true, d } }
     });
   };
   const hideTooltip = () => {
     dispatch({
-      type: "TOOLTIP_HIDE"
+      type: "ANNOTATION_HIDE"
     });
   };
   return (
@@ -45,11 +31,11 @@ export const Interaction = () => {
       {sortedData.map((d, i) => (
         <rect
           key={i}
-          x={xScale(getX(d)) as number}
+          x={xScaleInteraction(getX(d)) as number}
           y={0}
-          width={xScale.bandwidth()}
+          width={xScaleInteraction.bandwidth()}
           height={chartHeight}
-          fill="black"
+          fill="hotpink"
           fillOpacity={0}
           stroke="none"
           onMouseOut={hideTooltip}

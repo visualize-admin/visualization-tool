@@ -18,6 +18,7 @@ export const AxisWidthLinear = () => {
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     const tickValues = xScale.ticks(4);
     if (!tickValues.includes(xScale.domain()[1])) {
+      tickValues.splice(-1, 1);
       tickValues.push(xScale.domain()[1]);
     }
     g.call(

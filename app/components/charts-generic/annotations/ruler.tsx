@@ -1,48 +1,99 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Box } from "theme-ui";
+import { Observation } from "../../../domain/data";
+import { LinesState } from "../lines/lines-state";
+import { Margins } from "../use-bounds";
+import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";
-import { useBounds } from "../use-bounds";
+import { TooltipValue, TooltipPlacement } from "./tooltip";
 
-export interface RulerProps {
-  y: number;
-  body: string | ReactNode;
-  color: string;
-}
-
-export const Ruler = React.memo(() => {
+export const Ruler = () => {
   const [state] = useInteraction();
-  const { visible, x, placement, points } = state.ruler;
-  const { margins, chartHeight } = useBounds();
+  const { visible, d } = state.annotation;
+  return <>{visible && d && <RulerInner d={d} />}</>;
+};
+
+const RulerInner = ({ d }: { d: Observation }) => {
+  const { getAnnotationInfo, bounds } = useChartState() as LinesState;
+  const {
+    xAnchor,
+    yAnchor,
+    xValue,
+    datum,
+    placement,
+    values
+  } = getAnnotationInfo(d);
 
   return (
+    <RulerContent
+      xValue={xValue}
+      values={values}
+      chartHeight={bounds.chartHeight}
+      margins={bounds.margins}
+      xAnchor={xAnchor}
+      yAnchor={yAnchor}
+      datum={datum}
+      placement={placement}
+    />
+  );
+};
+
+interface RulerContentProps {
+  xValue: string;
+  values: TooltipValue[] | undefined;
+  chartHeight: number;
+  margins: Margins;
+  xAnchor: number;
+  yAnchor: number;
+  datum: TooltipValue;
+  placement: TooltipPlacement;
+}
+
+export const RulerContent = ({
+  xValue,
+  values,
+  chartHeight,
+  margins,
+  xAnchor,
+  yAnchor,
+  datum,
+  placement
+}: RulerContentProps) => {
+  return (
     <>
-      {visible && points && (
-        <>
-          {points
-            .filter(p => p.body !== "x")
-            .filter(p => p.body !== "total")
-            .map((point, i) => (
-              <Box
-                key={i}
-                sx={{
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  width: "fit-content",
-                  pointerEvents: "none",
-                  color: point.color,
-                  backgroundColor: "white",
-                  border: `2px solid ${point.color}`,
-                  padding: 2,
-                  transform: `translate3d(${x! + margins.left}px,${point.y! +
-                    margins.top}px,0)`
-                }}
-              >
-                {point.body}
-              </Box>
-            ))}
-        </>
-      )}
+      <Box
+        style={{
+          height: chartHeight,
+          left: xAnchor + margins.left,
+          top: margins.top
+        }}
+        sx={{
+          width: 0,
+          position: "absolute",
+          borderWidth: 0.5,
+          borderStyle: "dashed",
+          borderColor: "monochrome.200",
+          pointerEvents: "none",
+          transform: "translateX(-50%)"
+        }}
+      />
+      <Box
+        style={{
+          left: xAnchor + margins.left,
+          top: chartHeight + margins.top + 6
+        }}
+        sx={{
+          position: "absolute",
+          fontWeight: "bold",
+          bg: "monochrome100",
+          transform: "translateX(-50%)",
+          px: 1,
+          fontSize: 3,
+          color: "monochrome800"
+        }}
+      >
+        {xValue}
+      </Box>
     </>
   );
-});
+};

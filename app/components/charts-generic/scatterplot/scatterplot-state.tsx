@@ -3,7 +3,8 @@ import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import * as React from "react";
 import { ReactNode } from "react";
 import { Observation, ScatterPlotFields } from "../../../domain";
-import { getPalette, mkNumber } from "../../../domain/helpers";
+import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
+import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
@@ -20,6 +21,7 @@ export interface ScatterplotState {
   colors: ScaleOrdinal<string, string>;
   xAxisLabel: string;
   yAxisLabel: string;
+  getAnnotationInfo: (d: Observation, values: Observation[]) => Tooltip;
 }
 
 const useScatterplotState = ({
@@ -66,6 +68,40 @@ const useScatterplotState = ({
     data.map(getSegment)
   );
 
+  // Tooltip
+  const getAnnotationInfo = (datum: Observation): Tooltip => {
+    const xRef = xScale(getX(datum));
+    const yRef = yScale(getY(datum));
+    const xAnchor = xRef;
+    const yAnchor = yRef;
+
+    const xPlacement =
+      xAnchor < chartWidth * 0.33
+        ? "right"
+        : xAnchor > chartWidth * 0.66
+        ? "left"
+        : "center";
+
+    const yPlacement =
+      yAnchor > chartHeight * 0.33
+        ? "top"
+        : yAnchor < chartHeight * 0.66
+        ? "bottom"
+        : "middle";
+    return {
+      xAnchor,
+      yAnchor,
+      placement: { x: xPlacement, y: yPlacement },
+      xValue: formatNumber(getX(datum)),
+      datum: {
+        label: fields.segment && getSegment(datum),
+        value: formatNumber(getY(datum)),
+        color: colors(getSegment(datum)) as string
+      },
+      values: undefined
+    };
+  };
+
   return {
     data,
     bounds,
@@ -77,7 +113,8 @@ const useScatterplotState = ({
     getSegment,
     colors,
     xAxisLabel,
-    yAxisLabel
+    yAxisLabel,
+    getAnnotationInfo
   };
 };
 

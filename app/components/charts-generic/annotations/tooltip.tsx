@@ -1,44 +1,63 @@
 import React from "react";
-import { Box } from "theme-ui";
+import { Observation } from "../../../domain";
+import { LinesState } from "../lines/lines-state";
+import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";
-import { useBounds } from "../use-bounds";
+import { TooltipBox } from "./tooltip-box";
+import { TooltipMultiple, TooltipSingle } from "./tooltip-content";
 
-export const Tooltip = React.memo(() => {
+export const TRIANGLE_SIZE = 8;
+export const TOOLTIP_OFFSET = 4;
+
+export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
-  const { visible, x, y, placement, content } = state.tooltip;
-  const { margins } = useBounds();
+  const { visible, d } = state.annotation;
+  return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
+};
+
+export type Xplacement = "left" | "center" | "right";
+export type Yplacement = "top" | "middle" | "bottom";
+export type TooltipPlacement = { x: Xplacement; y: Yplacement };
+
+export type TooltipType = "single" | "multiple";
+export interface TooltipValue {
+  label?: string;
+  value: string;
+  color: string;
+  yPos?: number;
+}
+export interface Tooltip {
+  xAnchor: number;
+  yAnchor: number;
+  placement: TooltipPlacement;
+  xValue: string;
+  datum: TooltipValue;
+  values: TooltipValue[] | undefined;
+}
+
+const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
+  const { bounds, getAnnotationInfo } = useChartState() as LinesState;
+  const { margins } = bounds;
+  const {
+    xAnchor,
+    yAnchor,
+    placement,
+    xValue,
+    datum,
+    values
+  } = getAnnotationInfo(d);
 
   return (
-    <>
-      {visible && (
-        <Box
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: "fit-content",
-            pointerEvents: "none",
-            backgroundColor: "white",
-            border: "1px solid black",
-            padding: 2,
-            transform: `translate3d(${x! + margins.left}px,${y! +
-              margins.top}px,0)`
-          }}
-        >
-          <Box
-            sx={
-              {
-                // transform:
-                //   placement === "left"
-                //     ? "translate3d(-100%, 0, 0)"
-                //     : "translate3d(0, 0, 0)"
-              }
-            }
-          >
-            {content}
-          </Box>
-        </Box>
+    <TooltipBox x={xAnchor} y={yAnchor} placement={placement} margins={margins}>
+      {type === "multiple" && values ? (
+        <TooltipMultiple xValue={xValue} segmentValues={values} />
+      ) : (
+        <TooltipSingle
+          xValue={xValue}
+          segment={datum.label}
+          yValue={datum.value}
+        />
       )}
-    </>
+    </TooltipBox>
   );
-});
+};

@@ -21,6 +21,7 @@ export const AxisHeightLinear = () => {
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     const tickValues = yScale.ticks(4);
     if (!tickValues.includes(yScale.domain()[1])) {
+      tickValues.splice(-1, 1);
       tickValues.push(yScale.domain()[1]);
     }
     g.call(

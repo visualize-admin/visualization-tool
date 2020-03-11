@@ -12,6 +12,8 @@ import {
 import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { IconName } from "../icons";
+import { timeFormat } from "d3-time-format";
+import { format } from "d3-format";
 
 // FIXME: We should cover more time format
 export const parseDate = (year: number): Date => new Date(year, 0, 1);
@@ -19,6 +21,10 @@ export const parseDate = (year: number): Date => new Date(year, 0, 1);
 export const isNumber = (x: $IntentionalAny): boolean =>
   typeof x === "number" && !isNaN(x);
 export const mkNumber = (x: $IntentionalAny): number => +x;
+
+// const formatLocale = d3TimeFormatLocales[locale];
+export const formatYear = (x: Date): string => timeFormat("%Y")(x);
+export const formatNumber = (x: number): string => format(",.2~f")(x);
 
 export const getIconName = (name: string): IconName => {
   switch (name) {

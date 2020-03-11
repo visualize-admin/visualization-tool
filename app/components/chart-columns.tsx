@@ -2,28 +2,26 @@ import React, { memo } from "react";
 import { ColumnConfig, ColumnFields } from "../domain/config-types";
 import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
-import { A11yTable } from "./a11y-table";
-import { Tooltip } from "./charts-generic/annotations";
-import { AxisHeightLinearMax, AxisWidthBand } from "./charts-generic/axis";
-import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import {
-  Columns,
-  ColumnsGrouped,
-  ColumnsStacked,
-  Interaction,
-  InteractionGrouped,
-  InteractionStacked
-} from "./charts-generic/columns";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers";
-import { LegendColor } from "./charts-generic/legends";
-import { DataDownload } from "./data-download";
-import { Loading, NoDataHint } from "./hint";
-import { ColumnChart } from "./charts-generic/columns/columns-state";
-import {
-  useDataCubeObservationsQuery,
-  ComponentFieldsFragment
+  ComponentFieldsFragment,
+  useDataCubeObservationsQuery
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
+import { A11yTable } from "./a11y-table";
+import { Tooltip } from "./charts-generic/annotations/tooltip";
+import { AxisWidthBand } from "./charts-generic/axis";
+import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
+import { ColumnsGrouped } from "./charts-generic/columns/columns-grouped";
+import { GroupedColumnChart } from "./charts-generic/columns/columns-grouped-state";
+import { Columns } from "./charts-generic/columns/columns-simple";
+import { ColumnsStacked } from "./charts-generic/columns/columns-stacked";
+import { StackedColumnsChart } from "./charts-generic/columns/columns-stacked-state";
+import { ColumnChart } from "./charts-generic/columns/columns-state";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers";
+import { InteractionColumns } from "./charts-generic/interaction/interaction-columns";
+import { LegendColor } from "./charts-generic/legends/color";
+import { DataDownload } from "./data-download";
+import { Loading, NoDataHint } from "./hint";
 
 export const ChartColumnsVisualization = ({
   dataSetIri,
@@ -92,43 +90,63 @@ export const ChartColumns = memo(
     fields: ColumnFields;
   }) => {
     return (
-      <ColumnChart
-        data={observations}
-        fields={fields}
-        measures={measures}
-        aspectRatio={0.4}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            {fields.segment && fields.segment.type === "stacked" ? (
-              <AxisHeightLinearMax />
-            ) : (
-              <AxisHeightLinear />
-            )}
-            <AxisWidthBand />
-
-            {!fields.segment ? (
-              <>
-                <Columns />
-                {/* <Interaction /> */}
-              </>
-            ) : fields.segment.type === "stacked" ? (
-              <>
+      <>
+        {fields.segment && fields.segment.type === "stacked" ? (
+          <StackedColumnsChart
+            data={observations}
+            fields={fields}
+            measures={measures}
+            aspectRatio={0.4}
+          >
+            <ChartContainer>
+              <ChartSvg>
+                <AxisHeightLinear />
+                <AxisWidthBand />
                 <ColumnsStacked />
-                {/* <InteractionStacked /> */}
-              </>
-            ) : (
-              <>
+                <InteractionColumns />
+              </ChartSvg>
+              <Tooltip type="multiple" />
+            </ChartContainer>
+            <LegendColor symbol="square" />
+          </StackedColumnsChart>
+        ) : fields.segment && fields.segment.type === "grouped" ? (
+          <GroupedColumnChart
+            data={observations}
+            fields={fields}
+            measures={measures}
+            aspectRatio={0.4}
+          >
+            <ChartContainer>
+              <ChartSvg>
+                <AxisHeightLinear />
+                <AxisWidthBand />
                 <ColumnsGrouped />
-                {/* <InteractionGrouped /> */}
-              </>
-            )}
-          </ChartSvg>
-          {/* <Tooltip /> */}
-        </ChartContainer>
+                <InteractionColumns />
+              </ChartSvg>
+              <Tooltip type="multiple" />
+            </ChartContainer>
 
-        {fields.segment && <LegendColor symbol="square" />}
-      </ColumnChart>
+            <LegendColor symbol="square" />
+          </GroupedColumnChart>
+        ) : (
+          <ColumnChart
+            data={observations}
+            fields={fields}
+            measures={measures}
+            aspectRatio={0.4}
+          >
+            <ChartContainer>
+              <ChartSvg>
+                <AxisHeightLinear />
+                <AxisWidthBand />
+                <Columns />
+                <InteractionColumns />
+              </ChartSvg>
+              <Tooltip type="single" />
+            </ChartContainer>
+          </ColumnChart>
+        )}
+      </>
     );
   }
 );
