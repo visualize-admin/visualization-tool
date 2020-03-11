@@ -6,16 +6,10 @@ import { useChartTheme } from "../use-chart-theme";
 import { useChartState } from "../use-chart-state";
 import { LinesState } from "../lines/lines-state";
 import { AreasState } from "../areas/areas-state";
-import { useLocale } from "../../../lib/use-locale";
-import { d3TimeFormatLocales } from "../../../locales/locales";
-import { timeFormat } from "d3-time-format";
+import { formatYear } from "../../../domain/helpers";
 
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
-  const locale = useLocale();
-
-  const formatLocale = d3TimeFormatLocales[locale];
-  const formatYear = (x: Date): string => timeFormat("%Y")(x);
 
   const { xScale, xUniqueValues, bounds } = useChartState() as
     | LinesState

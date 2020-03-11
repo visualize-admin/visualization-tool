@@ -4,10 +4,11 @@ import * as React from "react";
 import { useRef } from "react";
 import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";
-import { LineTooltip } from "./tooltip";
-import { LinesState } from "./lines-state";
+import { LinesState } from "../lines/lines-state";
+import { AreasState } from "../areas/areas-state";
+import { ScatterplotState } from "../scatterplot/scatterplot-state";
 
-export const InteractionTooltip = React.memo(
+export const InteractionVoronoi = React.memo(
   ({ debug }: { debug?: boolean }) => {
     const [, dispatch] = useInteraction();
     const ref = useRef<SVGGElement>(null);
@@ -20,7 +21,7 @@ export const InteractionTooltip = React.memo(
       getSegment,
       colors,
       bounds
-    } = useChartState() as LinesState;
+    } = useChartState() as LinesState | AreasState | ScatterplotState;
 
     const { chartWidth, chartHeight, margins } = bounds;
 
@@ -36,19 +37,15 @@ export const InteractionTooltip = React.memo(
       const [x, y] = clientPoint(ref.current!, e);
 
       const location = delaunay.find(x, y);
+      const d = data[location];
 
-      const placement = x > chartWidth / 2 ? "left" : "right";
-
-      if (location) {
+      if (typeof location !== "undefined") {
         dispatch({
-          type: "TOOLTIP_UPDATE",
+          type: "ANNOTATION_UPDATE",
           value: {
-            tooltip: {
+            annotation: {
               visible: true,
-              x: xScale(getX(data[location])),
-              y: yScale(getY(data[location])),
-              placement,
-              content: <LineTooltip content={data[location]} />
+              d
             }
           }
         });
@@ -56,7 +53,7 @@ export const InteractionTooltip = React.memo(
     };
     const hideTooltip = () => {
       dispatch({
-        type: "TOOLTIP_HIDE"
+        type: "ANNOTATION_HIDE"
       });
     };
 

@@ -3,7 +3,7 @@ import { PieFields } from "../domain";
 import { PieConfig } from "../domain/config-types";
 import { Observation } from "../domain/data";
 import { A11yTable } from "./a11y-table";
-import { Tooltip } from "./charts-generic/annotations";
+
 import { ChartSvg } from "./charts-generic/containers";
 import { Pie } from "./charts-generic/pie";
 import { PieChart } from "./charts-generic/pie/pie-state";

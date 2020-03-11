@@ -75,6 +75,16 @@ const pages: ConfigPageOrGroup[] = [
     ]
   },
   {
+    title: "Charts",
+    pages: [
+      {
+        path: "/charts/annotations",
+        title: "Annotations",
+        content: require("../docs/annotations.docs")
+      }
+    ]
+  },
+  {
     title: "Components",
     pages: [
       {
@@ -124,7 +134,7 @@ const pages: ConfigPageOrGroup[] = [
       },
       {
         path: "/components/homepage",
-        title: "Homepag",
+        title: "Homepage",
         content: require("../docs/homepage.docs")
       },
       {
@@ -132,6 +142,7 @@ const pages: ConfigPageOrGroup[] = [
         title: "Publish actions",
         content: require("../docs/publish-actions.docs")
       },
+
       {
         path: "/components/steps",
         title: "Stepper",

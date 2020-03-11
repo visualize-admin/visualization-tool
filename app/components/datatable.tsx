@@ -1,5 +1,4 @@
 import { Box } from "@theme-ui/components";
-import { format } from "d3-format";
 import * as React from "react";
 import { Observation } from "../domain";
 import {
@@ -8,10 +7,9 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { Loading } from "./hint";
+import { formatNumber } from "../domain/helpers";
 
 type Header = ComponentFieldsFragment;
-
-const formatNumber = format(",.2~f");
 
 const Table = ({
   title,

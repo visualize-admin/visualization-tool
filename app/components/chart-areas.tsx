@@ -8,14 +8,18 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { Areas } from "./charts-generic/areas";
+import { Ruler } from "./charts-generic/annotations/ruler";
+import { Tooltip } from "./charts-generic/annotations/tooltip";
+import { Areas } from "./charts-generic/areas/areas";
 import { AreaChart } from "./charts-generic/areas/areas-state";
 import { AxisTime } from "./charts-generic/axis";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
-import { LegendColor } from "./charts-generic/legends";
+import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
+import { LegendColor } from "./charts-generic/legends/color";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
+import { HoverDotMultiple } from "./charts-generic/annotations/hover-dots-multiple";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
@@ -95,7 +99,11 @@ export const ChartAreas = memo(
             <AxisTime />
             <AxisHeightLinear />
             <Areas />
+            <InteractionHorizontal />
           </ChartSvg>
+          <Tooltip type={fields.segment ? "multiple" : "single"} />
+          <Ruler />
+          <HoverDotMultiple />
         </ChartContainer>
         {fields.segment && <LegendColor symbol="square" />}
       </AreaChart>

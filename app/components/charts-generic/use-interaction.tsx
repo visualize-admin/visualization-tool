@@ -6,55 +6,30 @@ import React, {
   useContext,
   useReducer
 } from "react";
-import { RulerProps } from "./annotations/ruler";
+import { Observation } from "../../domain";
 
-interface TooltipState {
+export interface AnnotationState {
   visible: boolean;
-  x: number | undefined;
-  y: number | undefined;
-  placement: "left" | "right";
-  content: ReactNode | string | undefined;
+  d: Observation | undefined;
 }
-interface RulerState {
-  visible: boolean;
-  x: number | undefined;
-  placement: "left" | "right";
-  points: RulerProps[] | undefined;
-}
+
 interface InteractionState {
-  tooltip: TooltipState;
-  ruler: RulerState;
+  annotation: AnnotationState;
 }
 
 type InteractionStateAction =
   | {
-      type: "TOOLTIP_UPDATE";
-      value: Pick<InteractionState, "tooltip">;
+      type: "ANNOTATION_UPDATE";
+      value: Pick<InteractionState, "annotation">;
     }
   | {
-      type: "TOOLTIP_HIDE";
-    }
-  | {
-      type: "RULER_UPDATE";
-      value: Pick<InteractionState, "ruler">;
-    }
-  | {
-      type: "RULER_HIDE";
+      type: "ANNOTATION_HIDE";
     };
 
 const INTERACTION_INITIAL_STATE: InteractionState = {
-  tooltip: {
+  annotation: {
     visible: false,
-    x: undefined,
-    y: undefined,
-    placement: "right",
-    content: undefined
-  },
-  ruler: {
-    visible: false,
-    x: undefined,
-    placement: "right",
-    points: undefined
+    d: undefined
   }
 };
 
@@ -64,40 +39,19 @@ const InteractionStateReducer = (
   action: InteractionStateAction
 ) => {
   switch (action.type) {
-    case "TOOLTIP_UPDATE":
+    case "ANNOTATION_UPDATE":
       return {
         ...state,
-        tooltip: {
-          visible: action.value.tooltip.visible,
-          x: action.value.tooltip.x,
-          y: action.value.tooltip.y,
-          placement: action.value.tooltip.placement,
-          content: action.value.tooltip.content
+        annotation: {
+          visible: action.value.annotation.visible,
+          d: action.value.annotation.d
         }
       };
-    case "TOOLTIP_HIDE":
+    case "ANNOTATION_HIDE":
       return {
         ...state,
-        tooltip: {
-          ...state.tooltip,
-          visible: false
-        }
-      };
-    case "RULER_UPDATE":
-      return {
-        ...state,
-        ruler: {
-          visible: action.value.ruler.visible,
-          x: action.value.ruler.x,
-          placement: action.value.ruler.placement,
-          points: action.value.ruler.points
-        }
-      };
-    case "RULER_HIDE":
-      return {
-        ...state,
-        ruler: {
-          ...state.ruler,
+        annotation: {
+          ...state.annotation,
           visible: false
         }
       };

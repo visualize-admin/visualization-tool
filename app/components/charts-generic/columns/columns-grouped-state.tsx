@@ -7,16 +7,10 @@ import {
   ScaleOrdinal,
   scaleOrdinal
 } from "d3-scale";
-import { stack } from "d3-shape";
 import * as React from "react";
 import { ReactNode } from "react";
 import { ColumnFields, Observation, ObservationValue } from "../../../domain";
-import {
-  formatNumber,
-  getPalette,
-  isNumber,
-  mkNumber
-} from "../../../domain/helpers";
+import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
 import { Tooltip } from "../annotations/tooltip";
 import {
   PADDING_INNER,
@@ -27,7 +21,7 @@ import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 
-export interface ColumnsState {
+export interface GroupedColumnsState {
   sortedData: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => string;
@@ -36,18 +30,15 @@ export interface ColumnsState {
   xScaleIn: ScaleBand<string>;
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
-  yStackScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  wide: Record<string, ObservationValue>[];
   grouped: [string, Record<string, ObservationValue>[]][];
-  series: $FixMe[];
   getAnnotationInfo: (d: Observation) => Tooltip;
 }
 
-const useColumnsState = ({
+const useGroupedColumnsState = ({
   data,
   fields,
   measures,
@@ -55,13 +46,13 @@ const useColumnsState = ({
 }: Pick<ChartProps, "data" | "measures"> & {
   bounds: Bounds;
   fields: ColumnFields;
-}): ColumnsState => {
+}): GroupedColumnsState => {
   const { chartWidth, chartHeight } = bounds;
 
   const getX = (d: Observation): string => d[fields.x.componentIri] as string;
   const getY = (d: Observation): number => +d[fields.y.componentIri];
   const getSegment = (d: Observation): string =>
-    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
+    d[fields.segment!.componentIri] as string;
 
   const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
 
@@ -101,42 +92,7 @@ const useColumnsState = ({
     measures.find(d => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
-  const xKey = fields.x.componentIri;
-
-  const wide: Record<string, ObservationValue>[] = [];
   const groupedMap = group(sortedData, getX);
-  for (const [key, values] of groupedMap) {
-    const keyObject = values.reduce<{ [k: string]: number | string }>(
-      (obj, cur) => {
-        const currentKey = getSegment(cur);
-        const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
-        const total = currentY + (obj.total as number);
-        return {
-          ...obj,
-          [currentKey]: getY(cur),
-          total
-        };
-      },
-      { total: 0 }
-    );
-    wide.push({
-      ...keyObject,
-      [xKey]: key
-    });
-  }
-
-  const maxTotal = max<$FixMe, number>(wide, d => d.total) as number;
-  const yStackDomain = [0, maxTotal] as [number, number];
-
-  const stacked = stack().keys(segments);
-
-  const series = stacked(wide as { [key: string]: number }[]);
-
-  const yStackScale = scaleLinear()
-    .domain(yStackDomain)
-    .range([chartHeight, 0])
-    .nice();
-
   const grouped = [...groupedMap];
 
   // Tooltip
@@ -145,6 +101,8 @@ const useColumnsState = ({
     const xOffset = xScale.bandwidth() / 2;
     const yRef = yScale(getY(datum));
     const yAnchor = yRef;
+
+    const tooltipValues = data.filter(j => getX(j) === getX(datum));
 
     const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
 
@@ -186,7 +144,11 @@ const useColumnsState = ({
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string
       },
-      values: undefined
+      values: tooltipValues.map(td => ({
+        label: getSegment(td),
+        value: formatNumber(getY(td)),
+        color: colors(getSegment(td)) as string
+      }))
     };
   };
 
@@ -199,19 +161,16 @@ const useColumnsState = ({
     xScaleIn,
     getY,
     yScale,
-    yStackScale,
     getSegment,
     yAxisLabel,
     segments,
     colors,
-    wide,
     grouped,
-    series,
     getAnnotationInfo
   };
 };
 
-const ColumnChartProvider = ({
+const GroupedColumnChartProvider = ({
   data,
   fields,
   measures,
@@ -222,7 +181,7 @@ const ColumnChartProvider = ({
 }) => {
   const bounds = useBounds();
 
-  const state = useColumnsState({
+  const state = useGroupedColumnsState({
     data,
     fields,
     measures,
@@ -233,7 +192,7 @@ const ColumnChartProvider = ({
   );
 };
 
-export const ColumnChart = ({
+export const GroupedColumnChart = ({
   data,
   fields,
   measures,
@@ -247,9 +206,13 @@ export const ColumnChart = ({
   return (
     <Observer aspectRatio={aspectRatio}>
       <InteractionProvider>
-        <ColumnChartProvider data={data} fields={fields} measures={measures}>
+        <GroupedColumnChartProvider
+          data={data}
+          fields={fields}
+          measures={measures}
+        >
           {children}
-        </ColumnChartProvider>
+        </GroupedColumnChartProvider>
       </InteractionProvider>
     </Observer>
   );

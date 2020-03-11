@@ -6,6 +6,8 @@ import { AreasState } from "./areas/areas-state";
 import { ScatterplotState } from "./scatterplot/scatterplot-state";
 import { PieState } from "./pie/pie-state";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
+import { StackedColumnsState } from "./columns/columns-stacked-state";
+import { GroupedColumnsState } from "./columns/columns-grouped-state";
 
 export interface ChartProps {
   data: Observation[];
@@ -16,6 +18,8 @@ export interface ChartProps {
 
 export type ChartState =
   | ColumnsState
+  | StackedColumnsState
+  | GroupedColumnsState
   | LinesState
   | AreasState
   | ScatterplotState

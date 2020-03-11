@@ -7,11 +7,18 @@ import {
   ScaleTime,
   scaleTime
 } from "d3-scale";
-import { stack } from "d3-shape";
+import { stack, stackOrderNone } from "d3-shape";
 import * as React from "react";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import { AreaFields, Observation } from "../../../domain";
-import { getPalette, isNumber, parseDate } from "../../../domain/helpers";
+import {
+  formatNumber,
+  formatYear,
+  getPalette,
+  isNumber,
+  parseDate
+} from "../../../domain/helpers";
+import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
@@ -25,10 +32,12 @@ export interface AreasState {
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
+  segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
   wide: { [key: string]: number | string }[];
   series: $FixMe[];
+  getAnnotationInfo: (d: Observation) => Tooltip;
 }
 
 const useAreasState = ({
@@ -43,7 +52,10 @@ const useAreasState = ({
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
-  const getX = (d: Observation): Date => parseDate(+d[fields.x.componentIri]);
+  const getX = useCallback(
+    (d: Observation): Date => parseDate(+d[fields.x.componentIri]),
+    [fields.x.componentIri]
+  );
   const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
   const getSegment = (d: Observation): string =>
     fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
@@ -52,49 +64,46 @@ const useAreasState = ({
     measures.find(d => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
+  const segments = Array.from(new Set(data.map(d => getSegment(d))));
+
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
+
     [data, getX]
   );
 
-  const segments = Array.from(new Set(sortedData.map(d => getSegment(d))));
-
   const xKey = fields.x.componentIri;
-  const memo = useMemo(() => {
-    const wide: { [key: string]: number | string }[] = [];
-    const groupedMap = group(sortedData, getGroups);
 
-    for (const [key, values] of groupedMap) {
-      const keyObject = values.reduce<{ [k: string]: number | string }>(
-        (obj, cur) => {
-          const currentKey = getSegment(cur);
-          const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
-          const total = currentY + (obj.total as number);
-          return {
-            ...obj,
-            [currentKey]: getY(cur),
-            total
-          };
-        },
-        { total: 0 }
-      );
-      wide.push({
-        ...keyObject,
-        [xKey]: key
-      });
-    }
+  const wide: { [key: string]: number | string }[] = [];
+  const groupedMap = group(sortedData, getGroups);
 
-    const maxTotal = max<$FixMe, number>(wide, d => d.total) as number;
-    const yDomain = [0, maxTotal] as [number, number];
+  for (const [key, values] of groupedMap) {
+    const keyObject = values.reduce<{ [k: string]: number | string }>(
+      (obj, cur) => {
+        const currentKey = getSegment(cur);
+        const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
+        const total = currentY + (obj.total as number);
+        return {
+          ...obj,
+          [currentKey]: getY(cur),
+          total
+        };
+      },
+      { total: 0 }
+    );
+    wide.push({
+      ...keyObject,
+      [xKey]: key
+    });
+  }
 
-    const stacked = stack().keys(segments);
+  const maxTotal = max<$FixMe, number>(wide, d => d.total) as number;
+  const yDomain = [0, maxTotal] as [number, number];
 
-    const series = stacked(wide as { [key: string]: number }[]);
-
-    return { yDomain, series, wide };
-  }, [getGroups, getSegment, getY, segments, sortedData]);
-
-  const { yDomain, series, wide } = memo;
+  const stacked = stack()
+    .order(stackOrderNone)
+    .keys(segments);
+  const series = stacked(wide as { [key: string]: number }[]);
 
   const xUniqueValues = [...new Set(data.map(d => getX(d)))];
   const xDomain = extent(data, d => getX(d)) as [Date, Date];
@@ -114,6 +123,53 @@ const useAreasState = ({
     segments
   );
 
+  // Tooltip
+  const getAnnotationInfo = (datum: Observation): Tooltip => {
+    const datumIndex = wide.findIndex(
+      w => getX(w).getTime() === getX(datum).getTime()
+    );
+
+    const xAnchor = xScale(getX(datum));
+
+    const tooltipValues = data.filter(
+      j => getX(j).getTime() === getX(datum).getTime()
+    );
+
+    const cumulativeSum = (sum => (d: Observation) => (sum += getY(d)))(0);
+    const cumulativeRulerItemValues = [...tooltipValues.map(cumulativeSum)];
+
+    const yAnchor = yScale(
+      cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1]
+    );
+
+    const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
+
+    const yPlacement = "middle";
+    // yAnchor > chartHeight * 0.33
+    //   ? "top"
+    //   : yAnchor < chartHeight * 0.66
+    //   ? "bottom"
+    //   : "middle";
+
+    return {
+      xAnchor,
+      yAnchor,
+      placement: { x: xPlacement, y: yPlacement },
+      xValue: formatYear(getX(datum)),
+      datum: {
+        label: fields.segment && getSegment(datum),
+        value: formatNumber(getY(datum)),
+        color: colors(getSegment(datum)) as string
+      },
+      values: series.map(serie => ({
+        label: serie.key,
+        value: formatNumber(serie[datumIndex].data[serie.key]),
+        color: colors(serie.key) as string,
+        yPos: yScale(serie[datumIndex][1])
+      }))
+    };
+  };
+
   return {
     data,
     bounds,
@@ -124,9 +180,11 @@ const useAreasState = ({
     yScale,
     getSegment,
     yAxisLabel,
+    segments,
     colors,
     wide,
-    series
+    series,
+    getAnnotationInfo
   };
 };
 

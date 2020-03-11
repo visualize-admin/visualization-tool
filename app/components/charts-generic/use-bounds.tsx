@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useContext, useMemo } from "react";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 
-interface Margins {
+export interface Margins {
   top: number;
   right: number;
   bottom: number;
