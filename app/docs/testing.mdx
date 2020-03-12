@@ -1,0 +1,17 @@
+## Testing Strategy
+
+### Snapshot Regression Testing
+
+- Existing chart configurations are downloaded from the ~~production~~ develompent environment stored in `app/test/__fixtures`
+- Running `yarn test` will compare **image snapshots** of the rendered charts with previous snapshots. When the new snapshots differ more than a certain threshold, the test will fail and a diff will be stored to inspect.
+
+To prevent regressions between releases, snapshot **tests are run automatically before a new version is applied**.
+
+### Notes
+
+- The snapshot tests rely on the app server running on http://localhost:3000
+- Fixtures can be updated by running `./scripts/fetch-config-fixtures.js`. Make sure that tests are passing before running this command and delete the `__image_snapshots__` directory in `app/test/` to get a fresh set of snapshots.
+
+### To Do
+
+- Download full data for test fixtures incl. observations, so tests can run faster and don't rely on network requests.

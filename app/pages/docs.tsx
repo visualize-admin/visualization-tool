@@ -154,7 +154,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/text.docs")
       }
     ]
-  }
+  },{
+    path: "/testing",
+    title: "Testing",
+    content: require("../docs/testing.mdx")
+  },
 ];
 
 const mdxComponents = {
