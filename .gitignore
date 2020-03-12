@@ -9,3 +9,5 @@ node_modules
 /packages/**/dist
 /app/dist
 .now
+
+__diff_output__

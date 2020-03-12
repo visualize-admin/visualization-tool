@@ -1,8 +1,11 @@
 import getConfig from "next/config";
 
-const { publicRuntimeConfig } = getConfig();
+const config = getConfig();
 
-export const PUBLIC_URL = publicRuntimeConfig.PUBLIC_URL;
-export const SPARQL_ENDPOINT = publicRuntimeConfig.SPARQL_ENDPOINT;
-export const GRAPHQL_ENDPOINT = publicRuntimeConfig.GRAPHQL_ENDPOINT;
-export const GA_TRACKING_ID = publicRuntimeConfig.GA_TRACKING_ID;
+export const PUBLIC_URL = config?.publicRuntimeConfig?.PUBLIC_URL ?? "";
+export const SPARQL_ENDPOINT =
+  config?.publicRuntimeConfig?.SPARQL_ENDPOINT ??
+  "https://trifid-lindas.test.cluster.ldbar.ch/query";
+export const GRAPHQL_ENDPOINT =
+  config?.publicRuntimeConfig?.GRAPHQL_ENDPOINT ?? "/api/graphql";
+export const GA_TRACKING_ID = config?.publicRuntimeConfig?.GA_TRACKING_ID;

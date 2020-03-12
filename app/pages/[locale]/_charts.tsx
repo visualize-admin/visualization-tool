@@ -55,11 +55,13 @@ const Page: NextPage<PageProps> = ({ configs }) => {
   );
 };
 
-Page.getInitialProps = async ({ req, res }) => {
+export const getServerSideProps = async () => {
   const configs = await fetchAllConfigs();
 
   return {
-    configs: configs.filter((c: $Unexpressable) => c.data && c.data.meta)
+    props: {
+      configs: configs.filter((c: $Unexpressable) => c.data && c.data.meta)
+    }
   };
 };
 

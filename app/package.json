@@ -23,6 +23,7 @@
     "apollo-server-micro": "^2.10.1",
     "catalog": "^4.0.1-canary.2",
     "clipboard-polyfill": "^2.8.6",
+    "core-js": "^3.6.4",
     "d3-array": "^2.3.3",
     "d3-axis": "^1.0.12",
     "d3-delaunay": "^5.2.1",
