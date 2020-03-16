@@ -6,6 +6,8 @@ import {
 } from "../domain/configurator-state";
 import { Icon } from "../icons";
 import { Trans } from "@lingui/macro";
+import { theme } from "../themes/federal";
+import { useTheme } from "../themes";
 
 export type StepStatus = "past" | "current" | "future";
 type StepState =
@@ -91,6 +93,7 @@ export const Step = ({
   status: StepStatus;
   dispatch?: React.Dispatch<ConfiguratorStateAction>;
 }) => {
+  const theme = useTheme();
   const onClick = React.useCallback(() => {
     if (status === "past" && dispatch) {
       dispatch({
@@ -136,6 +139,7 @@ export const Step = ({
             fontFamily: "body",
             justifyContent: "center",
             alignItems: "center",
+            color: "monochrome100",
             bg:
               status === "past"
                 ? "monochrome800"
@@ -144,7 +148,11 @@ export const Step = ({
                 : "monochrome600"
           }}
         >
-          {status === "past" ? <Icon name="check" size={20} /> : stepNumber}
+          {status === "past" ? (
+            <Icon name="check" size={20} color={theme.colors.monochrome100} />
+          ) : (
+            stepNumber
+          )}
         </Flex>
       </Flex>
 

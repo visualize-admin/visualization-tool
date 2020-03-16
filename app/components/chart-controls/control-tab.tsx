@@ -116,7 +116,7 @@ const ControlTabButton = ({
     id={`tab-${value}`}
     onClick={() => onClick(value)}
     sx={{
-      bg: checked ? "blueGreyDarker" : "monochrome100",
+      bg: checked ? "mutedDarker" : "monochrome100",
       color: "monochrome700",
       borderColor: "primary",
       borderRadius: "default",
@@ -131,10 +131,10 @@ const ControlTabButton = ({
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        bg: "blueGreyDarker"
+        bg: "mutedDarker"
       },
       ":active": {
-        bg: "blueGreyDarker"
+        bg: "mutedDarker"
       },
       ":disabled": {
         cursor: "initial",

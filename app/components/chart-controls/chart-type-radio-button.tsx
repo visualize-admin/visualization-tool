@@ -30,7 +30,11 @@ export const ChartTypeSelectionButton = ({
         borderRadius: "default",
 
         backgroundColor: checked ? "primary" : "monochrome100",
-        color: checked ? "blueGrey" : disabled ? "monochrome300" : "primary",
+        color: checked
+          ? "mutedColored"
+          : disabled
+          ? "monochrome300"
+          : "primary",
 
         display: "flex",
         flexDirection: "column",
@@ -42,7 +46,7 @@ export const ChartTypeSelectionButton = ({
 
         ":hover": {
           backgroundColor: disabled
-            ? "blueGrey"
+            ? "mutedColored"
             : checked
             ? "primary"
             : "monochrome300"

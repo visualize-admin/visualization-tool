@@ -8,6 +8,7 @@ import {
   Xplacement,
   Yplacement
 } from "./tooltip";
+import { useTheme } from "../../../themes";
 
 export interface TooltipBoxProps {
   x: number | undefined;
@@ -25,7 +26,7 @@ export const TooltipBox = ({
   children
 }: TooltipBoxProps) => {
   const triangle = mkTriangle(placement);
-
+  const theme = useTheme();
   return (
     <Box
       style={{
@@ -45,7 +46,7 @@ export const TooltipBox = ({
           whiteSpace: "nowrap",
           pointerEvents: "none",
           backgroundColor: "monochrome100",
-          filter: "drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25))",
+          filter: `drop-shadow(${theme.shadows?.tooltip})`,
 
           "&::before": {
             content: "''",
