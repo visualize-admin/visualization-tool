@@ -52,7 +52,7 @@ export const DatasetButton = ({
         dispatch({ type: "DATASET_SELECTED", dataSet: dataSetIri })
       }
       sx={{
-        bg: selected ? "blueGreyDarker" : "transparent",
+        bg: selected ? "mutedDarker" : "transparent",
         position: "relative",
         color: "monochrome700",
         cursor: "pointer",
@@ -69,10 +69,10 @@ export const DatasetButton = ({
           borderTopColor: "monochrome300"
         },
         ":hover": {
-          bg: "blueGreyDarker"
+          bg: "mutedDarker"
         },
         ":active": {
-          bg: "blueGreyDarker"
+          bg: "mutedDarker"
         }
       }}
     >

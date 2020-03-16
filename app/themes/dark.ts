@@ -26,19 +26,19 @@ export const theme: Theme = {
     "4.5rem"
   ],
   colors: {
-    text: "monochrome900",
-    background: "monochrome100",
+    text: "monochrome100",
+    background: "monochrome900",
 
     brand: "#DC0018",
-    monochrome100: "#FFFFFF",
-    monochrome200: "#F5F5F5",
-    monochrome300: "#E5E5E5",
-    monochrome400: "#D5D5D5",
+    monochrome100: "#000000",
+    monochrome200: "#333333",
+    monochrome300: "#454545",
+    monochrome400: "#757575",
     monochrome500: "#CCCCCC",
-    monochrome600: "#757575",
-    monochrome700: "#454545",
-    monochrome800: "#333333",
-    monochrome900: "#000000",
+    monochrome600: "#D5D5D5",
+    monochrome700: "#E5E5E5",
+    monochrome800: "#F5F5F5",
+    monochrome900: "#FFFFFF",
 
     primary: "#006699",
     primaryHover: "#004B70",
@@ -57,10 +57,11 @@ export const theme: Theme = {
     successDisabled: "#DFF0D8",
     successLight: "#DFF0D8",
 
-    muted: "#F5F5F5",
-    mutedColored: "#F9FAFB",
-    mutedDarker: "#F2F7F9",
-    focus: "#333333",
+    muted: "#616171",
+    mutedColored: "#454556",
+    mutedDarker: "#252536",
+
+    focus: "hotpink",
     error: "#FF5555",
     hint: "#757575",
     missing: "#EFEFEF",
@@ -107,17 +108,16 @@ export const theme: Theme = {
     "4rem",
     "4.5rem"
   ],
-
   radii: {
     default: 3,
     bigger: 4,
     circle: 99999
   },
   shadows: {
-    primary: "0 3px 5px 0 rgba(0,0,0,0.10)",
-    rightSide: "2px 0 4px 0 rgba(0,0,0,0.05)",
-    leftSide: "-2px 0 2px 0 rgba(0,0,0,0.05)",
-    tooltip: "0 2px 8px rgba(0, 0, 0, 0.25)"
+    primary: "0 3px 5px 0 rgba(255,255,255,0.10)",
+    rightSide: "2px 0 4px 0 rgba(255,255,255,0.05)",
+    leftSide: "-2px 0 2px 0 rgba(255,255,255,0.05)",
+    tooltip: "0 2px 8px rgba(255, 255, 255, 0.25)"
   },
   text: {
     giga: {
@@ -196,7 +196,7 @@ export const theme: Theme = {
       },
 
       "*:focus": {
-        outline: "3px solid #333333"
+        outline: "3px solid #ddd"
       },
 
       fieldset: {

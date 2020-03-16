@@ -56,7 +56,7 @@ export const ChartEditor = () => {
         as="section"
         data-name="panel-right"
         sx={{
-          bg: "blueGrey",
+          bg: "mutedColored",
           overflowX: "hidden",
           overflowY: "auto",
           boxShadow: "leftSide",
