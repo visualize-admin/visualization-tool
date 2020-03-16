@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Button } from "@theme-ui/components";
 import { csvFormat } from "d3-dsv";
 import { saveAs } from "file-saver";
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, ReactNode } from "react";
 import { ChartFields, Observation } from "../domain";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
@@ -45,12 +45,41 @@ export const DataDownload = memo(
       type: "text/plain;charset=utf-8"
     });
     return (
-      <Button
-        variant="downloadButton"
-        onClick={() => saveAs(blob, `${title}.csv`)}
-      >
+      <DownloadButton onClick={() => saveAs(blob, `${title}.csv`)}>
         <Trans id="button.download.data">Download data</Trans>
-      </Button>
+      </DownloadButton>
     );
   }
+);
+
+export const DownloadButton = ({
+  onClick,
+  children
+}: {
+  onClick?: () => void;
+  children: ReactNode;
+}) => (
+  <Button
+    variant="reset"
+    sx={{
+      background: "transparent",
+      color: "primary",
+      textAlign: "left",
+      fontFamily: "body",
+      lineHeight: [1, 2, 2],
+      fontWeight: "regular",
+      fontSize: [1, 2, 2],
+      border: "none",
+      cursor: "pointer",
+      mt: 2,
+      p: 0,
+      ":disabled": {
+        cursor: "initial",
+        color: "monochrome500"
+      }
+    }}
+    onClick={onClick}
+  >
+    {children}
+  </Button>
 );

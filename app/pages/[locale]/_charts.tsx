@@ -5,6 +5,7 @@ import { ContentLayout } from "../../components/layout";
 import { Config } from "../../domain/config-types";
 import { fetchAllConfigs } from "../../config-api";
 import { LocalizedLink } from "../../components/links";
+import { ChartPanel } from "../../components/chart-panel";
 
 type PageProps = {
   configs: {
@@ -22,15 +23,11 @@ const Page: NextPage<PageProps> = ({ configs }) => {
             {configs.map(({ key, data: { dataSet, chartConfig, meta } }) => {
               return (
                 <Box
-                  // variant="container.chart"
                   key={key}
                   id={`chart-${key}`}
                   sx={{ width: ["100%", "50%", "50%", "33.33%"] }}
                 >
-                  <Flex
-                    variant="container.chart"
-                    sx={{ m: 2, flexDirection: "column" }}
-                  >
+                  <ChartPanel sx={{ m: 2, flexDirection: "column" }}>
                     <ChartPublished
                       dataSet={dataSet}
                       chartConfig={chartConfig}
@@ -40,11 +37,29 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                       pathname={`/[locale]/v/[chartId]`}
                       query={{ chartId: key }}
                     >
-                      <Link variant="buttons.downloadButton" sx={{ p: 5 }}>
+                      <Link
+                        sx={{
+                          background: "transparent",
+                          color: "primary",
+                          textAlign: "left",
+                          fontFamily: "body",
+                          lineHeight: [1, 2, 2],
+                          fontWeight: "regular",
+                          fontSize: [1, 2, 2],
+                          border: "none",
+                          cursor: "pointer",
+                          mt: 2,
+                          p: 5,
+                          ":disabled": {
+                            cursor: "initial",
+                            color: "monochrome500"
+                          }
+                        }}
+                      >
                         →
                       </Link>
                     </LocalizedLink>
-                  </Flex>
+                  </ChartPanel>
                 </Box>
               );
             })}

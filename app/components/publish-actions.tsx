@@ -1,12 +1,13 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
+import { I18n } from "@lingui/react";
+import { Box, Button, Flex, Input, Link, Text } from "@theme-ui/components";
+import clipboard from "clipboard-polyfill";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import React, { ReactNode, useEffect, useState } from "react";
-import { Box, Button, Flex, Link, Text, Input } from "@theme-ui/components";
 import { Icon, IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
 import { IconLink } from "./links";
-import { I18n } from "@lingui/react";
-import clipboard from "clipboard-polyfill";
+
 export const PublishActions = ({ configKey }: { configKey: string }) => {
   const locale = useLocale();
 
@@ -71,9 +72,35 @@ const PopUp = ({
       {({ getToggleButtonProps, getMenuProps, isOpen }) => (
         <div style={{ position: "relative" }}>
           <Button
-            variant="publishAction"
+            variant="reset"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              color: isOpen ? "primaryActive" : "primary",
+              bg: "transparent",
+              border: "none",
+              borderRadius: "default",
+              mr: 4,
+              mt: [2, 4],
+              pr: 2,
+              pl: 0,
+              py: [2, 3],
+              fontFamily: "body",
+              fontSize: [3, 3, 3],
+              transition: "background-color .2s",
+              cursor: "pointer",
+              ":hover": {
+                color: "primaryHover"
+              },
+              ":active": {
+                color: "primaryActive"
+              },
+              ":disabled": {
+                cursor: "initial",
+                color: "primaryDisabled"
+              }
+            }}
             {...getToggleButtonProps()}
-            color={isOpen ? "primaryActive" : "primary"}
           >
             <Icon name={triggerIconName}></Icon>
             <Text ml={3}>{triggerLabel}</Text>
@@ -97,8 +124,8 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
       triggerIconName="share"
     >
       <>
-        <Box variant="publishActionOverlay" />
-        <Box variant="publishActionModal">
+        <PublishActionOverlay />
+        <PublishActionModal>
           <Flex
             sx={{
               height: 48,
@@ -171,7 +198,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               {/* <Icon name="share"></Icon> */}
             </Box>
           </Box>
-        </Box>
+        </PublishActionModal>
       </>
     </PopUp>
   );
@@ -198,8 +225,8 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       triggerIconName="embed"
     >
       <>
-        <Box variant="publishActionOverlay" />
-        <Box variant="publishActionModal">
+        <PublishActionOverlay />
+        <PublishActionModal>
           <Text variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
           </Text>
@@ -214,7 +241,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
           </Text>
 
           <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
-        </Box>
+        </PublishActionModal>
       </>
     </PopUp>
   );
@@ -261,83 +288,156 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
       ></Input>
 
       <Button
-        variant="iconButton"
+        variant="reset"
         onMouseOver={() => toggleTooltip(true)}
         onMouseUp={() => updateTooltipContent(<Trans>copied!</Trans>)}
         onMouseLeave={handleMouseLeave}
         onClick={e => handleClick(e, iFrameCode)}
         sx={{
+          color: "monochrome600",
+          bg: "monochrome200",
           position: "relative",
+
           borderTopRightRadius: "default",
           borderBottomRightRadius: "default",
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
+
           borderWidth: "1px",
           borderStyle: "solid",
           borderColor: "monochrome500",
-          borderLeft: "none"
+          borderLeft: "none",
+
+          cursor: "pointer",
+
+          ":hover": {
+            bg: "monochrome300",
+            color: "monochrome700"
+          },
+          ":active": {
+            bg: "monochrome400",
+            color: "monochrome800"
+          },
+          ":disabled": {
+            cursor: "initial",
+            color: "monochrome300"
+          }
         }}
       >
         <Icon name="copy" size={16} />
 
-        {showTooltip && (
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: "100%",
-              left: "50%",
-              transform: "translate3d(-50%, 0, 0)",
-
-              bg: "monochrome700",
-              borderRadius: "default",
-              color: "monochrome100",
-
-              fontSize: 1,
-              textAlign: "center",
-              whiteSpace: "nowrap",
-
-              width: 80,
-              px: 2,
-              py: 1,
-              mx: 0,
-              mb: "calc(0.5rem + 2px)",
-
-              zIndex: 13,
-              pointerEvents: "none",
-              filter: "0 3px 5px 0 rgba(0,0,0,0.90)",
-
-              "&::after": {
-                content: "''",
-                position: "absolute",
-                width: 0,
-                height: 0,
-                border: "0.5rem solid transparent",
-                borderTopColor: "monochrome700",
-                left: "50%",
-                top: "100%",
-                zIndex: -1,
-                transform: "translateX(-50%)"
-              }
-            }}
-          >
-            {tooltipContent}
-          </Box>
-        )}
+        {showTooltip && <ActionTooltip>{tooltipContent}</ActionTooltip>}
       </Button>
     </Flex>
   );
 };
 
-export const ImageDownload = () => {
-  const handleClick = () => {
-    console.log("download image");
-  };
-  return (
-    <Button disabled variant="publishAction" onClick={handleClick}>
-      <Icon name="image"></Icon>
-      <Text ml={3}>
-        <Trans id="button.download.image">Download Image</Trans>
-      </Text>
-    </Button>
-  );
-};
+// export const ImageDownload = () => {
+//   const handleClick = () => {
+//     console.log("download image");
+//   };
+//   return (
+//     <Button disabled variant="publishAction" onClick={handleClick}>
+//       <Icon name="image"></Icon>
+//       <Text ml={3}>
+//         <Trans id="button.download.image">Download Image</Trans>
+//       </Text>
+//     </Button>
+//   );
+// };
+
+// Presentational Components
+
+// Modal
+const PublishActionModal = ({ children }: { children: ReactNode }) => (
+  <Box
+    sx={{
+      position: "fixed",
+      bottom: 4,
+      left: 4,
+      right: 4,
+      zIndex: 12,
+      py: 2,
+      px: 4,
+      bg: "monochrome100",
+      boxShadow: "primary",
+      borderRadius: "default",
+
+      "@media screen and (min-width: 62em)": {
+        mt: 2,
+        bottom: "unset",
+        left: "unset",
+        right: "unset",
+        position: "absolute",
+        minWidth: 340,
+        // maxWidth: 340,
+        borderWidth: "1px",
+        borderStyle: "solid",
+        borderColor: "monochrome500"
+      }
+    }}
+  >
+    {children}
+  </Box>
+);
+const PublishActionOverlay = () => (
+  <Box
+    sx={{
+      zIndex: 10,
+      display: ["block", "none"],
+      bg: "monochrome900",
+      opacity: 0.25,
+      width: "100vw",
+      height: "100vh",
+      position: "fixed",
+      top: 0,
+      left: 0,
+      pointerEvents: "none"
+    }}
+  />
+);
+
+// Form
+const ActionTooltip = ({ children }: { children: ReactNode }) => (
+  <Box
+    sx={{
+      position: "absolute",
+      bottom: "100%",
+      left: "50%",
+      transform: "translate3d(-50%, 0, 0)",
+
+      bg: "monochrome700",
+      borderRadius: "default",
+      color: "monochrome100",
+
+      fontSize: 1,
+      textAlign: "center",
+      whiteSpace: "nowrap",
+
+      width: 80,
+      px: 2,
+      py: 1,
+      mx: 0,
+      mb: "calc(0.5rem + 2px)",
+
+      zIndex: 13,
+      pointerEvents: "none",
+      filter: "0 3px 5px 0 rgba(0,0,0,0.90)",
+
+      "&::after": {
+        content: "''",
+        position: "absolute",
+        width: 0,
+        height: 0,
+        border: "0.5rem solid transparent",
+        borderTopColor: "monochrome700",
+        left: "50%",
+        top: "100%",
+        zIndex: -1,
+        transform: "translateX(-50%)"
+      }
+    }}
+  >
+    {children}
+  </Box>
+);

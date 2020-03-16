@@ -121,13 +121,27 @@ export const IconLink = ({
   disabled?: boolean;
 }) => (
   <UILink
-    variant="iconLink"
     title={title}
     // disabled={disabled}
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    sx={{ ml: 4, color: "primary" }}
+    sx={{
+      ml: 4,
+      color: "primary",
+      "&:disabled": {
+        color: "primaryDisabled"
+      },
+      "&:hover": {
+        color: "primaryHover"
+      },
+      "&:active": {
+        color: "primaryActive"
+      },
+      "&:visited": {
+        color: "primary"
+      }
+    }}
   >
     <Icon name={iconName}></Icon>
   </UILink>

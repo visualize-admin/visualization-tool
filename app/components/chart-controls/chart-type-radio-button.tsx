@@ -17,23 +17,29 @@ export const ChartTypeSelectionButton = ({
 } & FieldProps) => {
   return (
     <Button
-      variant="chartTypeRadio"
+      variant="reset"
       tabIndex={0}
       value={value}
       onClick={onClick}
       sx={{
-        m: 2,
-        justifyContent: "center",
-        display: "flex",
-        alignItems: "center",
-        flexDirection: "column",
-        cursor: disabled ? "initial" : "pointer",
-        color: checked
-          ? "blueGrey"
-          : disabled
-          ? "monochrome300"
-          : "primary",
+        width: "86px",
+        height: "86px",
+        mx: 4,
+        my: 2,
+
+        borderRadius: "default",
+
         backgroundColor: checked ? "primary" : "monochrome100",
+        color: checked ? "blueGrey" : disabled ? "monochrome300" : "primary",
+
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+
+        cursor: disabled ? "initial" : "pointer",
+        transition: "all .2s",
+
         ":hover": {
           backgroundColor: disabled
             ? "blueGrey"

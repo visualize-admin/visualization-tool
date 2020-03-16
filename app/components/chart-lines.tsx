@@ -108,13 +108,13 @@ export const ChartLines = memo(
             <InteractionVoronoi />
           </ChartSvg>
 
-          <Tooltip type={fields.segment ? "multiple" : "single"} />
-
           <Ruler />
 
           <HoverDotMultiple />
 
           <HoverDot />
+
+          <Tooltip type={fields.segment ? "multiple" : "single"} />
         </ChartContainer>
 
         {fields.segment && <LegendColor symbol="line" />}

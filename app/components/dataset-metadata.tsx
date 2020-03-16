@@ -5,6 +5,7 @@ import * as React from "react";
 import { Loading } from "./hint";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
+import { ReactNode } from "react";
 
 // FIXME: localize time format
 const formatTime = timeFormat("%B %d, %Y");
@@ -18,30 +19,30 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   if (data?.dataCubeByIri) {
     return (
       <Box sx={{ m: 4 }}>
-        <Box variant="dataSetMetadata.title">
+        <DataSetMetadataTitle>
           <Trans id="dataset.metadata.title">Title</Trans>
-        </Box>
-        <Box variant="dataSetMetadata.body">{data.dataCubeByIri.title}</Box>
+        </DataSetMetadataTitle>
+        <DataSetMetadataBody>{data.dataCubeByIri.title}</DataSetMetadataBody>
 
         {data.dataCubeByIri.source && (
           <>
-            <Box variant="dataSetMetadata.title">
+            <DataSetMetadataTitle>
               <Trans id="dataset.metadata.source">Source</Trans>
-            </Box>
-            <Box variant="dataSetMetadata.body">
+            </DataSetMetadataTitle>
+            <DataSetMetadataBody>
               {data.dataCubeByIri.source}
-            </Box>
+            </DataSetMetadataBody>
           </>
         )}
 
         {data.dataCubeByIri.dateCreated && (
           <>
-            <Box variant="dataSetMetadata.title">
+            <DataSetMetadataTitle>
               <Trans id="dataset.metadata.date.created">Date Created</Trans>
-            </Box>
-            <Box variant="dataSetMetadata.body">
+            </DataSetMetadataTitle>
+            <DataSetMetadataBody>
               {formatTime(new Date(data.dataCubeByIri.dateCreated))}
-            </Box>
+            </DataSetMetadataBody>
           </>
         )}
       </Box>
@@ -50,3 +51,31 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
     return <Loading />;
   }
 };
+
+const DataSetMetadataTitle = ({ children }: { children: ReactNode }) => (
+  <Box
+    sx={{
+      fontFamily: "body",
+      lineHeight: [1, 2, 2],
+      fontWeight: "regular",
+      fontSize: [1, 2, 2],
+      color: "monochrome600"
+    }}
+  >
+    {children}
+  </Box>
+);
+const DataSetMetadataBody = ({ children }: { children: ReactNode }) => (
+  <Box
+    sx={{
+      fontFamily: "body",
+      lineHeight: [4, 5, 5],
+      fontWeight: "regular",
+      fontSize: [3, 4, 4],
+      color: "monochrome900",
+      mb: 3
+    }}
+  >
+    {children}
+  </Box>
+);

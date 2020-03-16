@@ -4,6 +4,7 @@ import { Step1 } from "./step1";
 import { Step2 } from "./step2";
 import { Step3 } from "./step3";
 import { Icon } from "../../icons";
+import { HomepageSection } from "./generic";
 
 export const Tutorial = ({
   headline,
@@ -18,13 +19,9 @@ export const Tutorial = ({
 }) => {
   return (
     <Box
-      sx={{ maxWidth: 1024 }}
-      m="0 auto"
-      color="monochrome800"
-      px={4}
-      pb={7}
+      sx={{ maxWidth: 1024, m: "0 auto", color: "monochrome800", px: 4, pb: 7 }}
     >
-      <Text variant="homepageSection">{headline}</Text>
+      <HomepageSection>{headline}</HomepageSection>
       <Flex
         sx={{
           flexDirection: ["column", "column", "row"],
@@ -34,40 +31,59 @@ export const Tutorial = ({
       >
         <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
           <Step1 />
-          <Text variant="homepageTutorialStep">{step1}</Text>
+          <HomepageTutorialStep>{step1}</HomepageTutorialStep>
         </Flex>
 
         <Arrow />
 
         <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
           <Step2 />
-          <Text variant="homepageTutorialStep">{step2}</Text>
+          <HomepageTutorialStep>{step2}</HomepageTutorialStep>
         </Flex>
 
         <Arrow />
 
         <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
           <Step3 />
-          <Text variant="homepageTutorialStep">{step3}</Text>
+          <HomepageTutorialStep>{step3}</HomepageTutorialStep>
         </Flex>
       </Flex>
     </Box>
   );
 };
 
+const HomepageTutorialStep = ({ children }: { children: React.ReactNode }) => (
+  <Text
+    sx={{
+      fontSize: 5,
+      fontFamily: "body",
+      mt: 4,
+      mb: 2
+    }}
+  >
+    {children}
+  </Text>
+);
+
 const Arrow = () => (
   <>
     <Box
-      sx={{ display: ["none", "none", "block"], zIndex: 12 }}
-      mb={[4, 4, 6]}
-      mx={[0, 0, "-8px"]}
+      sx={{
+        display: ["none", "none", "block"],
+        zIndex: 12,
+        mb: [4, 4, 6],
+        mx: [0, 0, "-8px"]
+      }}
     >
       <Icon size={32} name="arrowRight"></Icon>
     </Box>
     <Box
-      sx={{ display: ["block", "block", "none"], zIndex: 12 }}
-      mb={[4, 4, 6]}
-      mx={[0, 0, "-8px"]}
+      sx={{
+        display: ["block", "block", "none"],
+        zIndex: 12,
+        mb: [4, 4, 6],
+        mx: [0, 0, "-8px"]
+      }}
     >
       <Icon size={32} name="arrowDown"></Icon>
     </Box>

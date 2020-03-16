@@ -5,6 +5,7 @@ import { ActionBar } from "./action-bar";
 import { ChartPreview } from "./chart-preview";
 import { DataSetPreview } from "./dataset-preview";
 import { DataSetHint } from "./hint";
+import { ChartPanel } from "./chart-panel";
 
 export const PanelMiddle = ({
   dataSetPreviewIri
@@ -18,12 +19,11 @@ export const PanelMiddle = ({
       {state.state === "SELECTING_DATASET" ? (
         <>
           {dataSetPreviewIri ? (
-            <Flex variant="container.chart">
+            <ChartPanel>
               <DataSetPreview dataSetIri={dataSetPreviewIri} />
-            </Flex>
+            </ChartPanel>
           ) : (
-            <Flex
-              variant="container.chart"
+            <ChartPanel
               sx={{
                 flexDirection: "column",
                 justifyContent: "center",
@@ -31,7 +31,7 @@ export const PanelMiddle = ({
               }}
             >
               <DataSetHint />
-            </Flex>
+            </ChartPanel>
           )}
         </>
       ) : (
@@ -40,14 +40,14 @@ export const PanelMiddle = ({
             state.state === "CONFIGURING_CHART" ||
             state.state === "DESCRIBING_CHART" ||
             state.state === "PUBLISHING") && (
-            <Flex variant="container.chart" sx={{ flexDirection: "column" }}>
+            <ChartPanel sx={{ flexDirection: "column" }}>
               <ChartPreview dataSetIri={state.dataSet} />
-            </Flex>
+            </ChartPanel>
           )}
         </>
       )}
       {/* ACTIONS */}
-      <ActionBar dataSetIri={dataSetPreviewIri}></ActionBar>
+      <ActionBar dataSetIri={dataSetPreviewIri} />
       {process.env.NODE_ENV === "development" && (
         <Box my={3} p={2} bg="muted">
           <pre>{JSON.stringify(state, null, 2)}</pre>

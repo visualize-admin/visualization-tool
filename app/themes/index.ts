@@ -24,8 +24,8 @@ export type Theme = Omit<
     colors: Record<string, string>;
     text: SystemStyleObject;
     buttons: SystemStyleObject;
-    links: SystemStyleObject;
-    variants: SystemStyleObject;
+    links?: SystemStyleObject;
+    variants?: SystemStyleObject;
   };
 
 interface ThemeModule {

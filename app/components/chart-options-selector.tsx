@@ -11,7 +11,11 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-ho
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
-import { ColorPalette, SectionTitle } from "./chart-controls";
+import {
+  SectionTitle,
+  ControlSectionContent,
+  ControlSection
+} from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { ChartFieldField, ChartOptionField } from "./field";
 import {
@@ -20,6 +24,7 @@ import {
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
+import { ColorPalette } from "./chart-controls/color-palette";
 
 export const ChartOptionsSelector = ({
   state
@@ -128,45 +133,45 @@ const DimensionPanel = ({
   }, [field]);
 
   return (
-    <Box
+    <div
       key={`control-panel-${field}`}
-      variant="controlSection"
       role="tabpanel"
       id={`control-panel-${field}`}
       aria-labelledby={`tab-${field}`}
       ref={panelRef}
       tabIndex={-1}
     >
-      <SectionTitle iconName={field as IconName}>
-        {getFieldLabel(field)}
-      </SectionTitle>
-      <Box variant="rightControlSectionContent">
-        <ChartFieldField
-          field={field}
-          label={
-            <Trans id="controls.select.dimension">Select a dimension</Trans>
-          }
-          optional={field === "segment"} // FIXME: Should be a more robust optional tag
-          options={dimensions.map(dimension => ({
-            value: dimension.iri,
-            label: dimension.label
-          }))}
-          dataSetMetadata={metaData}
-        />
-        {field === "segment" && (
-          <ChartFieldOptions
-            disabled={!dimension}
+      <ControlSection>
+        <SectionTitle iconName={field as IconName}>
+          {getFieldLabel(field)}
+        </SectionTitle>
+        <ControlSectionContent side="right">
+          <ChartFieldField
             field={field}
-            chartType={chartType}
+            label={
+              <Trans id="controls.select.dimension">Select a dimension</Trans>
+            }
+            optional={field === "segment"} // FIXME: Should be a more robust optional tag
+            options={dimensions.map(dimension => ({
+              value: dimension.iri,
+              label: dimension.label
+            }))}
+            dataSetMetadata={metaData}
           />
-        )}
-      </Box>
-
-      <Box variant="controlSection">
+          {field === "segment" && (
+            <ChartFieldOptions
+              disabled={!dimension}
+              field={field}
+              chartType={chartType}
+            />
+          )}
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection>
         <SectionTitle disabled={!dimension} iconName="filter">
           <Trans id="controls.section.filter">Filter</Trans>
         </SectionTitle>
-        <Box variant="rightControlSectionContent" as="fieldset">
+        <ControlSectionContent side="right" as="fieldset">
           <legend style={{ display: "none" }}>
             <Trans id="controls.section.filter">Filter</Trans>
           </legend>
@@ -177,9 +182,9 @@ const DimensionPanel = ({
               dataSetIri={metaData.iri}
             />
           )}
-        </Box>
-      </Box>
-    </Box>
+        </ControlSectionContent>
+      </ControlSection>
+    </div>
   );
 };
 
@@ -198,28 +203,29 @@ const MeasurePanel = ({
     }
   }, [field]);
   return (
-    <Box
-      key={`control-panel-${field}`}
-      variant="controlSection"
+    <div
       role="tabpanel"
       id={`control-panel-${field}`}
       aria-labelledby={`tab-${field}`}
       ref={panelRef}
       tabIndex={-1}
+      key={`control-panel-${field}`}
     >
-      <SectionTitle iconName="y">{getFieldLabel(field)}</SectionTitle>
-      <Box variant="rightControlSectionContent">
-        <ChartFieldField
-          field={field}
-          label={<Trans id="controls.select.measure">Select a measure</Trans>}
-          options={measures.map(measure => ({
-            value: measure.iri,
-            label: measure.label
-          }))}
-          dataSetMetadata={metaData}
-        />
-      </Box>
-    </Box>
+      <ControlSection>
+        <SectionTitle iconName="y">{getFieldLabel(field)}</SectionTitle>
+        <ControlSectionContent side="right">
+          <ChartFieldField
+            field={field}
+            label={<Trans id="controls.select.measure">Select a measure</Trans>}
+            options={measures.map(measure => ({
+              value: measure.iri,
+              label: measure.label
+            }))}
+            dataSetMetadata={metaData}
+          />
+        </ControlSectionContent>
+      </ControlSection>
+    </div>
   );
 };
 
@@ -239,30 +245,31 @@ const Filter = ({
     }
   }, [state.activeField]);
   return (
-    <Box
+    <div
       key={`filter-panel-${state.activeField}`}
-      variant="controlSection"
       role="tabpanel"
       id={`filter-panel-${state.activeField}`}
       aria-labelledby={`tab-${state.activeField}`}
       ref={panelRef}
       tabIndex={-1}
     >
-      <SectionTitle iconName="table">
-        {activeDimension && activeDimension.label}
-      </SectionTitle>
-      <Box variant="rightControlSectionContent" as="fieldset">
-        <legend style={{ display: "none" }}>
+      <ControlSection>
+        <SectionTitle iconName="table">
           {activeDimension && activeDimension.label}
-        </legend>
-        {activeDimension && (
-          <DimensionValuesSingleFilter
-            dataSetIri={metaData.iri}
-            dimensionIri={activeDimension.iri}
-          />
-        )}
-      </Box>
-    </Box>
+        </SectionTitle>
+        <ControlSectionContent side="right" as="fieldset">
+          <legend style={{ display: "none" }}>
+            {activeDimension && activeDimension.label}
+          </legend>
+          {activeDimension && (
+            <DimensionValuesSingleFilter
+              dataSetIri={metaData.iri}
+              dimensionIri={activeDimension.iri}
+            />
+          )}
+        </ControlSectionContent>
+      </ControlSection>
+    </div>
   );
 };
 

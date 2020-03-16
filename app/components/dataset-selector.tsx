@@ -3,7 +3,7 @@ import { Box, Button, Text } from "@theme-ui/components";
 import { useConfiguratorState } from "../domain";
 import { Loading } from "./hint";
 import { Trans } from "@lingui/macro";
-import { SectionTitle } from "./chart-controls";
+import { SectionTitle } from "./chart-controls/section";
 import { useDataCubesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 
@@ -47,10 +47,34 @@ export const DatasetButton = ({
 
   return (
     <Button
-      variant={selected ? "datasetButton.selected" : "datasetButton.normal"}
+      variant="reset"
       onClick={() =>
         dispatch({ type: "DATASET_SELECTED", dataSet: dataSetIri })
       }
+      sx={{
+        bg: selected ? "blueGreyDarker" : "transparent",
+        position: "relative",
+        color: "monochrome700",
+        cursor: "pointer",
+        width: "100%",
+        textAlign: "left",
+        py: 4,
+        borderRadius: 0,
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "monochrome300",
+        "&:first-of-type": {
+          borderTopWidth: "1px",
+          borderTopStyle: "solid",
+          borderTopColor: "monochrome300"
+        },
+        ":hover": {
+          bg: "blueGreyDarker"
+        },
+        ":active": {
+          bg: "blueGreyDarker"
+        }
+      }}
     >
       {selected && (
         <Box

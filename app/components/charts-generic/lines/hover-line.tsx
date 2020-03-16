@@ -46,7 +46,7 @@ export const HoverLine = () => {
                 cx={xScale(getX(d))}
                 cy={yScale(getY(d))}
                 r={4}
-                stroke="white"
+                stroke="monochrome100"
                 fill={colors(segment)}
               />
             ))}

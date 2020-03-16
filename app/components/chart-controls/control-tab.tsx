@@ -5,6 +5,7 @@ import { FieldProps } from "../../domain/config-form";
 import { getFieldLabel, getIconName } from "../../domain/helpers";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { Icon, IconName } from "../../icons";
+import { ReactNode } from "react";
 
 export const ControlTab = ({
   component,
@@ -19,17 +20,12 @@ export const ControlTab = ({
   onClick: (x: string) => void;
 } & FieldProps) => {
   return (
-    <Button
-      variant="control"
+    <ControlTabButton
+      checked={checked}
       value={value}
       onClick={() => onClick(value)}
-      role="tab"
-      aria-selected={checked}
-      aria-controls={`control-panel-${value}`}
-      id={`tab-${value}`}
-      bg={checked ? "blueGreyDarker" : "monochrome100"}
     >
-      <LeftPanelTabContent
+      <ControlTabButtonInner
         iconName={getIconName(value)}
         upperLabel={getFieldLabel(value)}
         lowerLabel={
@@ -42,7 +38,7 @@ export const ControlTab = ({
         checked={checked}
         optional={!component}
       />
-    </Button>
+    </ControlTabButton>
   );
 };
 
@@ -61,23 +57,18 @@ export const FilterTab = ({
   value: string;
 } & FieldProps) => {
   return (
-    <Button
-      variant="control"
+    <ControlTabButton
+      checked={checked}
       value={value}
-      role="tab"
-      aria-selected={checked}
-      aria-controls={`filter-panel-${value}`}
-      id={`tab-${value}`}
       onClick={() => onClick(value)}
-      bg={checked ? "blueGreyDarker" : "monochrome100"}
     >
-      <LeftPanelTabContent
+      <ControlTabButtonInner
         iconName={"table"}
         upperLabel={label}
         lowerLabel={filterValue}
         checked={checked}
       />
-    </Button>
+    </ControlTabButton>
   );
 };
 export const AnnotatorTab = ({
@@ -90,22 +81,72 @@ export const AnnotatorTab = ({
   value: string;
 } & FieldProps) => {
   return (
-    <Button
-      variant="control"
+    <ControlTabButton
+      checked={checked}
       value={value}
       onClick={() => onClick(value)}
-      bg={checked ? "blueGreyDarker" : "monochrome100"}
     >
-      <LeftPanelTabContent
+      <ControlTabButtonInner
         iconName={"text"}
         lowerLabel={getFieldLabel(value)}
         checked={checked}
       />
-    </Button>
+    </ControlTabButton>
   );
 };
 
-const LeftPanelTabContent = ({
+// Generic component
+const ControlTabButton = ({
+  checked,
+  value,
+  onClick,
+  children
+}: {
+  checked?: boolean;
+  value: string;
+  onClick: (x: string) => void;
+  children: ReactNode;
+}) => (
+  <Button
+    variant="reset"
+    value={value}
+    role="tab"
+    aria-selected={checked}
+    aria-controls={`filter-panel-${value}`}
+    id={`tab-${value}`}
+    onClick={() => onClick(value)}
+    sx={{
+      bg: checked ? "blueGreyDarker" : "monochrome100",
+      color: "monochrome700",
+      borderColor: "primary",
+      borderRadius: "default",
+      width: "100%",
+      minWidth: 160,
+      maxWidth: 300,
+      my: "2px",
+      px: 2,
+      py: 3,
+      fontFamily: "body",
+      fontSize: [3, 3, 3],
+      transition: "background-color .2s",
+      cursor: "pointer",
+      ":hover": {
+        bg: "blueGreyDarker"
+      },
+      ":active": {
+        bg: "blueGreyDarker"
+      },
+      ":disabled": {
+        cursor: "initial",
+        bg: "muted"
+      }
+    }}
+  >
+    {children}
+  </Button>
+);
+
+const ControlTabButtonInner = ({
   iconName,
   upperLabel,
   lowerLabel,
@@ -126,20 +167,19 @@ const LeftPanelTabContent = ({
         minWidth: 32,
         borderRadius: "bigger",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        bg: checked ? "primary" : "monochrome100",
+        color:
+          optional && !checked
+            ? "monochrome600"
+            : checked
+            ? "monochrome100"
+            : "monochrome700"
       }}
-      bg={checked ? "primary" : "monochrome100"}
-      color={
-        optional && !checked
-          ? "monochrome600"
-          : checked
-          ? "monochrome100"
-          : "monochrome700"
-      }
     >
       <Icon size={24} name={iconName} />
     </Flex>
-    <Flex mx={3} sx={{ flexDirection: "column", alignItems: "flex-start" }}>
+    <Flex sx={{ flexDirection: "column", alignItems: "flex-start", mx: 3 }}>
       {upperLabel && (
         <Text
           variant="meta"

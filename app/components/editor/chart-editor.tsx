@@ -35,11 +35,37 @@ export const ChartEditor = () => {
         <Stepper />
       </Box>
 
-      <Box as="section" data-name="panel-left" variant="container.left">
+      <Box
+        as="section"
+        data-name="panel-left"
+        sx={{
+          overflowX: "hidden",
+          overflowY: "auto",
+          bg: "monochrome100",
+          boxShadow: "rightSide",
+          borderRightColor: "monochrome500",
+          borderRightWidth: "1px",
+          borderRightStyle: "solid",
+          gridArea: "left"
+        }}
+      >
         <PanelLeft />
       </Box>
 
-      <Box as="section" data-name="panel-right" variant="container.right">
+      <Box
+        as="section"
+        data-name="panel-right"
+        sx={{
+          bg: "blueGrey",
+          overflowX: "hidden",
+          overflowY: "auto",
+          boxShadow: "leftSide",
+          borderLeftColor: "monochrome500",
+          borderLeftWidth: "1px",
+          borderLeftStyle: "solid",
+          gridArea: "right"
+        }}
+      >
         {state.state === "SELECTING_DATASET" && state.dataSet && (
           <DataSetMetadata dataSetIri={state.dataSet} />
         )}
@@ -50,7 +76,16 @@ export const ChartEditor = () => {
           <ChartAnnotationsSelector state={state} />
         )}
       </Box>
-      <Box as="section" data-name="panel-middle" variant="container.middle">
+      <Box
+        as="section"
+        data-name="panel-middle"
+        sx={{
+          overflowX: "hidden",
+          overflowY: "auto",
+          p: 4,
+          gridArea: "middle"
+        }}
+      >
         <PanelMiddle dataSetPreviewIri={state.dataSet} />
       </Box>
     </Box>

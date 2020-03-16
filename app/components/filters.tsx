@@ -58,7 +58,7 @@ export const DimensionValuesMultiFilter = ({
         <Box color="monochrome500">
           <Button
             onClick={selectAll}
-            variant="linkButton"
+            variant="inline"
             sx={{ mr: 2 }}
             disabled={selectionState === "ALL_SELECTED"}
           >
@@ -67,7 +67,7 @@ export const DimensionValuesMultiFilter = ({
           ·
           <Button
             onClick={selectNone}
-            variant="linkButton"
+            variant="inline"
             sx={{ ml: 2 }}
             disabled={selectionState === "NONE_SELECTED"}
           >

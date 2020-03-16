@@ -1,10 +1,11 @@
 import { markdown, ReactSpecimen } from "catalog";
+import { ChartTypeSelectionButton } from "../components/chart-controls/chart-type-radio-button";
+import { ControlList } from "../components/chart-controls/list";
 import {
-  ChartTypeSelectionButton,
-  ControlList,
-  CollapsibleSection
-} from "../components/chart-controls";
-import { Checkbox, Input, Select, Radio } from "../components/form";
+  ControlSection,
+  SectionTitle
+} from "../components/chart-controls/section";
+import { Checkbox, Input, Radio, Select } from "../components/form";
 
 // const vegaPalettes: Array<{ id: vega.ColorScheme; values: Array<string> }> = [
 //   { id: "category10", values: vega.scheme("category10") },
@@ -50,7 +51,8 @@ export default () => markdown`
 A section is a styling container, it has a title and a note (displayed on the right). Any component can be given as child component.
 ${(
   <ReactSpecimen span={6}>
-    <CollapsibleSection title="Werteachse">
+    <ControlSection>
+      <SectionTitle>Werteachse</SectionTitle>
       <ControlList>
         <Select
           id="foo"
@@ -113,7 +115,7 @@ ${(
           onChange={() => {}}
         />
       </ControlList>
-    </CollapsibleSection>
+    </ControlSection>
   </ReactSpecimen>
 )}
 ## Controls list

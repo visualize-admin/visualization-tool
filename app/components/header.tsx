@@ -7,22 +7,40 @@ import { HomeLink } from "./links";
 export const Logo = () => {
   return (
     <HomeLink passHref>
-      <Flex as="a" variant="header.logo">
+      <Flex
+        as="a"
+        sx={{
+          order: [2, 1],
+          alignItems: ["center", "flex-start"],
+          cursor: "pointer",
+          textDecoration: "none"
+        }}
+      >
         <Box
           role="figure"
           aria-labelledby="logo"
-          variant="header.logoImgMobile"
+          sx={{ display: ["block", "none"], mx: 4, my: 4, width: 24 }}
         >
           <LogoMobile />
         </Box>
         <Box
           role="figure"
           aria-labelledby="logo"
-          variant="header.logoImgDesktop"
+          sx={{
+            display: ["none", "block"],
+            pr: 6,
+            borderRightWidth: "1px",
+            borderRightStyle: "solid",
+            borderRightColor: "monochrome300"
+          }}
         >
           <LogoDesktop />
         </Box>
-        <Text as="h1" variant="lead">
+        <Text
+          as="h1"
+          variant="lead"
+          sx={{ pl: [0, 6], textDecoration: "none", color: "monochrome700" }}
+        >
           visualize.admin.ch
         </Text>
       </Flex>
@@ -38,7 +56,38 @@ export const Header = ({
   return (
     <Flex
       as="header"
-      variant={pageType === "content" ? "header.content" : "header.root"}
+      sx={
+        pageType === "content"
+          ? {
+              px: [0, 4, 4],
+              pt: [0, 3, 3],
+              pb: [0, 5, 5],
+              borderBottomWidth: "4px",
+              borderBottomStyle: "solid",
+              borderBottomColor: "brand",
+              color: "monochrome700",
+              flexDirection: ["column", "row"]
+            }
+          : {
+              px: [0, 4, 4],
+              pt: [0, 3, 3],
+              pb: [0, 5, 5],
+              borderBottomWidth: "4px",
+              borderBottomStyle: "solid",
+              borderBottomColor: "brand",
+              color: "monochrome700",
+              flexDirection: ["column", "row"],
+              // Needs to be "fixed" to prevent
+              // iOS full-page scrolling
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              bg: "monochrome100",
+              overflowY: "hidden",
+              zIndex: 13
+            }
+      }
     >
       <LanguageMenu />
       <Logo />

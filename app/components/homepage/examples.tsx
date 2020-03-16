@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from "@theme-ui/components";
 import React from "react";
 import { ChartPublished } from "../chart-published";
+import { HomepageSection } from "./generic";
 
 export const Examples = ({
   headline,
@@ -21,12 +22,14 @@ export const Examples = ({
 }) => {
   return (
     <Box
-      sx={{ maxWidth: 1024 }}
-      margin={[0, 0, "0 auto"]}
-      p={4}
-      color="monochrome800"
+      sx={{
+        maxWidth: 1024,
+        margin: [0, 0, "0 auto"],
+        p: 4,
+        color: "monochrome800"
+      }}
     >
-      <Text variant="homepageSection">{headline}</Text>
+      <HomepageSection>{headline}</HomepageSection>
       <Example headline={example1Headline} description={example1Description}>
         <ChartPublished
           dataSet="http://environment.ld.admin.ch/foen/px/0703010000_102/dataset"
@@ -184,21 +187,40 @@ const Example = ({
     sx={{
       flexDirection: ["column", "column", "row"],
       justifyContent: ["flex-start", "flex-start", "space-between"],
-      alignItems: "center"
+      alignItems: "center",
+      mb: 6
     }}
-    mb={6}
   >
     <Box
       sx={{
         order: reverse ? [1, 1, 2] : [2, 2, 1],
         minWidth: 0,
-        width: ["100%", "100%", "50%"]
+        width: ["100%", "100%", "50%"],
+        ml: reverse ? [0, 0, 8] : 0,
+        mr: reverse ? 0 : [0, 0, 8]
       }}
-      ml={reverse ? [0, 0, 8] : 0}
-      mr={reverse ? 0 : [0, 0, 8]}
     >
-      <Text variant="homepageExampleHeadline">{headline}</Text>
-      <Text variant="homepageExampleDescription">{description}</Text>
+      <Text
+        sx={{
+          fontSize: [5, 5, 6],
+          lineHeight: 1.5,
+          fontFamily: "body",
+          mb: [2, 2, 4]
+        }}
+      >
+        {headline}
+      </Text>
+      <Text
+        sx={{
+          fontSize: 4,
+          lineHeight: 1.5,
+          fontFamily: "body",
+          mt: 4,
+          mb: [2, 2, 0]
+        }}
+      >
+        {description}
+      </Text>
     </Box>
     <Box
       sx={{

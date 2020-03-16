@@ -11,11 +11,20 @@ export const Contribute = ({
   buttonLabel: string;
 }) => {
   return (
-    <Box bg="primary" color="monochrome100">
+    <Box sx={{ bg: "primary", color: "monochrome100" }}>
       <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
-        <Flex sx={{ flexDirection: ["column", "row"] }} px={4} py={[6, 6, 7]}>
-          <Box sx={{ width: ["100%", "100%", "70%"] }} mb={[6, 6, 0]}>
-            <Text variant="homepageContribute">{headline}</Text>
+        <Flex sx={{ flexDirection: ["column", "row"], px: 4, py: [6, 6, 7] }}>
+          <Box sx={{ width: ["100%", "100%", "70%"], mb: [6, 6, 0] }}>
+            <Text
+              sx={{
+                fontSize: [6, 6, 7],
+                lineHeight: 1.25,
+                fontFamily: "body",
+                mb: 3
+              }}
+            >
+              {headline}
+            </Text>
             <Text variant="paragraph1">{description}</Text>
           </Box>
           <Flex

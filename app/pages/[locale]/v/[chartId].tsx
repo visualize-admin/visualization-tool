@@ -12,6 +12,7 @@ import { PublishActions } from "../../../components/publish-actions";
 import { Config } from "../../../domain/config-types";
 import { useLocale } from "../../../lib/use-locale";
 import { fetchConfig } from "../../../config-api";
+import { ChartPanel } from "../../../components/chart-panel";
 
 type PageProps = {
   statusCode?: number;
@@ -45,13 +46,13 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
             <Box sx={{ pt: 4, maxWidth: 696, margin: "auto" }}>
               {publishSuccess && <Success />}
 
-              <Flex variant="container.chart">
+              <ChartPanel>
                 <ChartPublished
                   dataSet={dataSet}
                   chartConfig={chartConfig}
                   meta={meta}
                 />
-              </Flex>
+              </ChartPanel>
 
               <PublishActions configKey={config.key} />
 
@@ -90,7 +91,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
                 query={{ chartId: "new", from: config.key }}
                 passHref
               >
-                <Button as="a" variant="outline" sx={{ mb: 4, ml: 4 }}>
+                <Button as="a" variant="outline" sx={{ mb: 4, ml: [0, 4] }}>
                   <Trans id="button.copy.visualization">
                     Copy Visualization
                   </Trans>
@@ -110,7 +111,7 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
 Page.getInitialProps = async ({ req, query, res }) => {
   const config = await fetchConfig(query.chartId as string);
   const publishSuccess = query.publishSuccess as string;
-  
+
   if (config && config.data) {
     // TODO validate configuration
     return { config, publishSuccess };

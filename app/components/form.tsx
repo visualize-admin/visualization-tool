@@ -1,4 +1,5 @@
 import {
+  Box,
   Checkbox as RebassCheckbox,
   Input as RebassInput,
   Label as RebassLabel,
@@ -7,9 +8,7 @@ import {
   SelectProps
 } from "@theme-ui/components";
 import * as React from "react";
-import { Box } from "@theme-ui/components";
 import { FieldProps, Option } from "../domain/config-form";
-import { Trans } from "@lingui/macro";
 
 export const Label = ({
   label,
@@ -192,7 +191,17 @@ export const FieldSetLegend = ({
 }: {
   legendTitle: string | React.ReactNode;
 }) => (
-  <Box variant="fieldSetLegend" as="legend">
+  <Box
+    sx={{
+      fontFamily: "body",
+      lineHeight: [1, 2, 2],
+      fontWeight: "regular",
+      fontSize: [1, 2, 2],
+      mb: 1,
+      color: "monochrome600"
+    }}
+    as="legend"
+  >
     {legendTitle}
   </Box>
 );

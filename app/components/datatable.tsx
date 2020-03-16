@@ -30,17 +30,30 @@ const Table = ({
     >
       <caption style={{ display: "none" }}>{title}</caption>
       <tbody>
-        <Box as="tr" variant="datatable.headerRow">
+        <Box
+          as="tr"
+          sx={{
+            fontFamily: "body",
+            fontSize: [3],
+            verticalAlign: "baseline",
+            color: "monochrome700",
+            borderBottomColor: "monochrome700",
+            borderBottomWidth: "1px",
+            borderBottomStyle: "solid"
+          }}
+        >
           {headers.map(({ iri, label, __typename }) => {
             return (
               <Box
                 as="th"
-                variant="datatable.headerCell"
                 role="columnheader"
                 key={iri}
                 sx={{
                   scope: "col",
-                  textAlign: __typename === "Measure" ? "right" : "left"
+                  textAlign: __typename === "Measure" ? "right" : "left",
+                  px: 2,
+                  py: 3,
+                  minWidth: 128
                 }}
               >
                 {label}
@@ -50,14 +63,27 @@ const Table = ({
         </Box>
         {observations.map((obs, i) => {
           return (
-            <Box as="tr" variant="datatable.row" key={i}>
+            <Box
+              as="tr"
+              sx={{
+                fontFamily: "body",
+                fontSize: [3],
+                color: "monochrome800",
+                borderBottomColor: "monochrome400",
+                borderBottomWidth: "1px",
+                borderBottomStyle: "solid"
+              }}
+              key={i}
+            >
               {headers.map(({ iri, label, __typename }) => (
                 <Box
                   key={iri}
                   as="td"
-                  variant="datatable.cell"
                   sx={{
-                    textAlign: __typename === "Measure" ? "right" : "left"
+                    textAlign: __typename === "Measure" ? "right" : "left",
+                    px: 2,
+                    py: 3,
+                    minWidth: 128
                   }}
                 >
                   {__typename === "Measure"

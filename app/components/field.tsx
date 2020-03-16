@@ -17,7 +17,7 @@ import {
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { Locales } from "../locales/locales";
-import { ChartTypeSelectionButton } from "./chart-controls";
+import { ChartTypeSelectionButton } from "./chart-controls/chart-type-radio-button";
 import {
   AnnotatorTab,
   ControlTab,

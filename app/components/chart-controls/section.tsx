@@ -1,20 +1,55 @@
-import * as React from "react";
 import { Box, Flex, Text } from "@theme-ui/components";
+import * as React from "react";
+import { ElementType, ReactNode } from "react";
 import { Icon, IconName } from "../../icons";
 import { useTheme } from "../../themes";
 
-export const CollapsibleSection = ({
-  title,
-  titleId,
+export const ControlSection = ({
+  role,
   children
 }: {
-  title?: React.ReactNode;
-  titleId?: string;
-  children: React.ReactNode;
+  role?: string;
+  children: ReactNode;
 }) => {
   return (
-    <Box variant="controlSection">
-      {title && <SectionTitle titleId={titleId}> {title}</SectionTitle>}
+    <Box
+      role={role}
+      sx={{
+        borderTopColor: "monochrome500",
+        borderTopWidth: "1px",
+        borderTopStyle: "solid",
+        overflowX: "hidden",
+        overflowY: "scroll",
+
+        "&:first-of-type": {
+          borderTopWidth: 0
+        }
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+export const ControlSectionContent = ({
+  side,
+  as,
+  role,
+  ariaLabelledBy,
+  children
+}: {
+  side: "left" | "right";
+  as?: ElementType;
+  role?: string;
+  ariaLabelledBy?: string;
+  children: ReactNode;
+}) => {
+  return (
+    <Box
+      as={as}
+      role={role}
+      aria-labelledby={ariaLabelledBy}
+      sx={{ px: side === "left" ? 2 : 4, pb: 4 }}
+    >
       {children}
     </Box>
   );
@@ -29,16 +64,21 @@ export const SectionTitle = ({
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   const theme = useTheme();
   return (
     <Flex
-      id={titleId}
       as="h2"
-      variant="controlSectionTitle"
+      id={titleId}
       color="monochrome800"
       sx={{
+        fontWeight: "bold",
+        p: 4,
+        bg: "transparent",
+        appearance: "none",
+        width: "100%",
+        border: "none",
         justifyContent: "flex-start",
         color: disabled ? "monochrome600" : "monochrome800"
       }}
@@ -51,7 +91,9 @@ export const SectionTitle = ({
           name={iconName}
         ></Icon>
       )}
-      <Text ml={iconName ? 2 : 0}>{children}</Text>
+      <Text variant="table" sx={{ ml: iconName ? 2 : 0 }}>
+        {children}
+      </Text>
     </Flex>
   );
 };
