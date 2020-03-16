@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Flex, Box } from "@theme-ui/components";
 import { Trans } from "@lingui/macro";
+import { ReactNode } from "react";
 
 export const Footer = () => (
   <Flex
@@ -12,7 +13,14 @@ export const Footer = () => (
     }}
     bg="monochrome200"
   >
-    <Box variant="footer.institution">
+    <Box
+      sx={{
+        width: ["100%", "auto"],
+        px: 4,
+        py: 5,
+        color: ["monochrome900", "monochrome700"]
+      }}
+    >
       <Trans id="footer.institution.name">
         Federal Office for the Environment FOEN
       </Trans>
@@ -25,28 +33,97 @@ export const Footer = () => (
       }}
     >
       <Flex sx={{ flexDirection: ["column", "row"] }} pb={[4, 0]}>
-        <Box variant="footer.link" as="a">
+        <FooterLink>
           <Trans id="footer.help">Help</Trans>
-        </Box>
-        <Box variant="footer.link" as="a">
+        </FooterLink>
+        <FooterLink>
           <Trans id="footer.contact">Contact</Trans>
-        </Box>
+        </FooterLink>
       </Flex>
 
-      <Box variant="footer.logo">
+      <Box
+        sx={{
+          width: "100vw",
+          display: ["block", "none"],
+          px: 4,
+          py: 5,
+          borderTopWidth: "1px",
+          borderBottomWidth: "1px",
+          borderTopStyle: "solid",
+          borderBottomStyle: "solid",
+          borderTopColor: "monochrome500",
+          borderBottomColor: "monochrome500"
+        }}
+      >
         <Logo />
       </Box>
 
       <Flex sx={{ justifyContent: "flex-end", width: ["100%", "auto"] }}>
-        <Box variant="footer.linkBottom" as="a">
+        <FooterLinkBottom>
           <Trans id="footer.legal">Legal</Trans>
-        </Box>
-        <Box variant="footer.linkBottom" as="a">
+        </FooterLinkBottom>
+        <FooterLinkBottom>
           <Trans id="footer.imprint">Imprint</Trans>
-        </Box>
+        </FooterLinkBottom>
       </Flex>
     </Flex>
   </Flex>
+);
+
+const FooterLink = ({ children }: { children: ReactNode }) => (
+  <Box
+    as="a"
+    sx={{
+      width: ["100%", "auto"],
+      px: [4, 5],
+      py: [3, 4],
+      color: "primary",
+      fontSize: 3,
+      fontFamily: "body",
+      cursor: "pointer",
+      ":hover": {
+        color: "primaryHover"
+      },
+      ":active": {
+        color: "primaryHover"
+      },
+      ":disabled": {
+        cursor: "initial",
+        color: "primaryDisabled"
+      }
+    }}
+  >
+    {children}
+  </Box>
+);
+
+const FooterLinkBottom = ({ children }: { children: ReactNode }) => (
+  <Box
+    as="a"
+    sx={{
+      px: [4, 5],
+      py: [3, 4],
+      color: "primary",
+      fontSize: 3,
+      fontFamily: "body",
+      borderLeftWidth: ["1px", 0],
+      borderLeftStyle: "solid",
+      borderLeftColor: "monochrome500",
+      cursor: "pointer",
+      ":hover": {
+        color: "primaryHover"
+      },
+      ":active": {
+        color: "primaryHover"
+      },
+      ":disabled": {
+        cursor: "initial",
+        color: "primaryDisabled"
+      }
+    }}
+  >
+    {children}
+  </Box>
 );
 
 const Logo = () => (

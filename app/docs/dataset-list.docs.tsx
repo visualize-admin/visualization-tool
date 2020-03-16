@@ -11,7 +11,7 @@ export default () => markdown`
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "white"
+          backgroundColor: "monochrome100"
         }}
       >
         <DatasetButton
@@ -33,7 +33,7 @@ export default () => markdown`
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "white"
+          backgroundColor: "monochrome100"
         }}
       >
         <DatasetButton

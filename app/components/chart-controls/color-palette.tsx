@@ -69,23 +69,43 @@ export const ColorPalette = ({
       <Label disabled={disabled} smaller {...getLabelProps()}>
         <Trans id="controls.color.palette">Color Palette</Trans>
       </Label>
-      <Button variant="palette" {...getToggleButtonProps()}>
+      <Button
+        {...getToggleButtonProps()}
+        sx={{
+          width: ["100%"],
+          color: "monochrome700",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          bg: "monochrome100",
+          p: 1,
+          borderWidth: "1px",
+          borderStyle: "solid",
+          borderColor: "monochrome500",
+          ":hover": {
+            bg: "monochrome100"
+          },
+          ":active": {
+            bg: "monochrome100"
+          },
+          ":disabled": {
+            cursor: "initial",
+            bg: "muted"
+          }
+        }}
+      >
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
             {getPalette(
               state.chartConfig.fields.segment?.palette || "category10"
             ).map((color: string) => (
-              <Box
-                key={color}
-                variant="palette.color"
-                sx={{ bg: disabled ? "monochrome300" : color }}
-              ></Box>
+              <ColorSquare key={color} color={color} disabled={disabled} />
             ))}
           </Flex>
         )}
         <Icon name="unfold" />
       </Button>
-      <Box {...getMenuProps()} variant="palette.menu">
+      <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
         {isOpen &&
           vegaPalettes.map((palette, index) => (
             <Box
@@ -99,20 +119,20 @@ export const ColorPalette = ({
             >
               <Text variant="meta">{palette.label}</Text>
               <Box
-                variant="palette.row"
-                sx={
-                  highlightedIndex === index
-                    ? { backgroundColor: "monochrome200" }
-                    : {}
-                }
+                sx={{
+                  backgroundColor:
+                    highlightedIndex === index
+                      ? "monochrome200"
+                      : "monochrome100"
+                }}
                 {...getItemProps({ item: palette, index })}
               >
                 {palette.colors.map(color => (
-                  <Box
+                  <ColorSquare
                     key={`option-${color}`}
-                    variant="palette.color"
-                    sx={{ bg: color }}
-                  ></Box>
+                    color={color}
+                    disabled={false}
+                  />
                 ))}
               </Box>
             </Box>
@@ -123,3 +143,33 @@ export const ColorPalette = ({
     </Box>
   );
 };
+
+const ColorSquare = ({
+  disabled,
+  color
+}: {
+  disabled?: boolean;
+  color: string;
+}) => (
+  <Box
+    sx={{
+      bg: disabled ? "monochrome300" : color,
+      display: "inline-block",
+      margin: 0,
+      padding: 0,
+      width: 16,
+      height: 24,
+      borderColor: "monochrome100",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      "&:first-of-type": {
+        borderTopLeftRadius: "bigger",
+        borderBottomLeftRadius: "bigger"
+      },
+      "&:last-of-type": {
+        borderTopRightRadius: "bigger",
+        borderBottomRightRadius: "bigger"
+      }
+    }}
+  />
+);

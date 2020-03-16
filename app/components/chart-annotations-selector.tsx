@@ -1,11 +1,15 @@
-import React, { useRef, useEffect } from "react";
-import { ConfiguratorStateDescribingChart } from "../domain";
-import { locales } from "../locales/locales";
-import { SectionTitle } from "./chart-controls";
-import { MetaInputField } from "./field";
 import { Box } from "@theme-ui/components";
+import React, { useEffect, useRef } from "react";
+import { ConfiguratorStateDescribingChart } from "../domain";
 import { getFieldLabel } from "../domain/helpers";
+import { locales } from "../locales/locales";
+import {
+  ControlSection,
+  ControlSectionContent,
+  SectionTitle
+} from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
+import { MetaInputField } from "./field";
 
 export const ChartAnnotationsSelector = ({
   state
@@ -20,10 +24,10 @@ export const ChartAnnotationsSelector = ({
   }, [state.activeField]);
 
   const af = state.activeField === "title" ? "title" : "description";
+
   if (state.activeField) {
     return (
       <Box
-        variant="controlSection"
         role="tabpanel"
         id={`annotation-panel-${state.activeField}`}
         aria-labelledby={`annotation-tab-${state.activeField}`}
@@ -31,11 +35,11 @@ export const ChartAnnotationsSelector = ({
         tabIndex={-1}
         sx={{ overflowX: "hidden", overflowY: "scroll" }}
       >
-        <>
+        <ControlSection>
           <SectionTitle iconName="text">
             {state.activeField && getFieldLabel(state.activeField)}
           </SectionTitle>
-          <Box variant="rightControlSectionContent">
+          <ControlSectionContent side="right">
             {state.activeField &&
               locales.map(locale => (
                 <MetaInputField
@@ -46,8 +50,8 @@ export const ChartAnnotationsSelector = ({
                   value={state.meta[af][locale]}
                 />
               ))}
-          </Box>
-        </>
+          </ControlSectionContent>
+        </ControlSection>
       </Box>
     );
   } else {

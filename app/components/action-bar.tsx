@@ -1,14 +1,14 @@
 import { Trans } from "@lingui/macro";
-import React, { useCallback } from "react";
 import { Button, Flex } from "@theme-ui/components";
+import React, { useCallback } from "react";
 import {
-  useConfiguratorState,
   canTransitionToNextStep,
-  canTransitionToPreviousStep
+  canTransitionToPreviousStep,
+  useConfiguratorState
 } from "../domain/configurator-state";
-import { LocalizedLink } from "./links";
-import { useLocale } from "../lib/use-locale";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
+import { LocalizedLink } from "./links";
 
 export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
@@ -47,11 +47,7 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
     );
 
   return (
-    <Flex
-      role="navigation"
-      variant="actionBar"
-      sx={{ justifyContent: "space-between" }}
-    >
+    <Flex role="navigation" sx={{ justifyContent: "space-between", my: 5 }}>
       {state.state === "SELECTING_DATASET" ? (
         <Button
           variant="primary"

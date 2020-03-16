@@ -27,7 +27,18 @@ export const Stepper = () => {
   return useMemo(() => {
     const currentStepIndex = steps.indexOf(state as $IntentionalAny);
     return (
-      <Flex variant="stepper.root" sx={{ justifyContent: "center" }}>
+      <Flex
+        sx={{
+          justifyContent: "center",
+          position: "relative",
+          pt: 2,
+          bg: "monochrome100",
+          borderBottomWidth: "1px",
+          borderBottomStyle: "solid",
+          borderBottomColor: "monochrome500",
+          overflow: "hidden"
+        }}
+      >
         <Flex
           sx={{
             position: "relative",
@@ -35,7 +46,19 @@ export const Stepper = () => {
             alignItems: "flex-start"
           }}
         >
-          <Box variant="stepper.line" />
+          <Box
+            sx={{
+              position: "absolute",
+              width: "calc(100% - 156px)", // Remove: 2 * buttons.step.width / 2
+              height: "24px",
+              mt: 2,
+              transform: "translateY(-50%)",
+              borderBottomWidth: "1px",
+              borderBottomStyle: "solid",
+              borderBottomColor: "monochrome300",
+              zIndex: 3
+            }}
+          />
           {steps.map((step, i) => (
             <Step
               key={step}
@@ -49,7 +72,7 @@ export const Stepper = () => {
                   : "future"
               }
               dispatch={dispatch}
-            ></Step>
+            />
           ))}
         </Flex>
       </Flex>
@@ -79,24 +102,47 @@ export const Step = ({
 
   return (
     <Button
+      variant="reset"
+      sx={{
+        bg: "transparent",
+        appearance: "none",
+        width: "156px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: status === "past" ? "pointer" : undefined
+      }}
       disabled={status !== "past"}
-      variant="step"
       onClick={onClick}
-      sx={{ cursor: status === "past" ? "pointer" : undefined }}
     >
       <Flex
-        px={4}
         sx={{
           height: "100%",
           bg: "monochrome100",
           zIndex: 5,
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
+          px: 4
         }}
       >
         <Flex
-          sx={{ justifyContent: "center", alignItems: "center" }}
-          variant={`step.${status}`}
+          sx={{
+            width: "24px",
+            height: "24px",
+            mb: 1,
+            borderRadius: "circle",
+            fontSize: 3,
+            fontFamily: "body",
+            justifyContent: "center",
+            alignItems: "center",
+            bg:
+              status === "past"
+                ? "monochrome800"
+                : status === "current"
+                ? "brand"
+                : "monochrome600"
+          }}
         >
           {status === "past" ? <Icon name="check" size={20} /> : stepNumber}
         </Flex>

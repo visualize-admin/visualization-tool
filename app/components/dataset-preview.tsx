@@ -19,11 +19,11 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
     const { dataCubeByIri } = metaData;
     return (
       <Flex
-        p={5}
         sx={{
           flexGrow: 1,
           flexDirection: "column",
-          justifyContent: "space-between"
+          justifyContent: "space-between",
+          p: 5
         }}
       >
         <Text variant="heading2" mb={1}>
@@ -35,12 +35,12 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
 
         <Box
           variant="heading3"
-          mt={6}
           sx={{
             flexGrow: 1,
             width: "100%",
             position: "relative",
-            overflowX: "auto"
+            overflowX: "auto",
+            mt: 6
           }}
         >
           <DataTable
@@ -67,14 +67,13 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   } else {
     return (
       <Flex
-        p={5}
         sx={{
           flexDirection: "column",
           justifyContent: "space-between",
-          flexGrow: 1
+          flexGrow: 1,
+          p: 5
         }}
       >
-        {" "}
         <Loading />
       </Flex>
     );

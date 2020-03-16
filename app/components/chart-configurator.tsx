@@ -10,7 +10,11 @@ import {
   getFieldComponentIris,
   PieConfig
 } from "../domain";
-import { CollapsibleSection } from "./chart-controls";
+import {
+  ControlSection,
+  SectionTitle,
+  ControlSectionContent
+} from "./chart-controls/section";
 import { ControlTabField, FilterTabField } from "./field";
 import { Loading } from "./hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
@@ -34,16 +38,14 @@ export const ChartConfigurator = ({
     );
     return (
       <>
-        {/* CollapsibleSection is not really needed here, but let's keep it
-      in case we need them later */}
-        <CollapsibleSection
-          titleId="controls-design"
-          title={<Trans id="controls.section.design">Design</Trans>}
-        >
-          <Box
+        <ControlSection>
+          <SectionTitle>
+            <Trans id="controls.section.design">Design</Trans>
+          </SectionTitle>
+          <ControlSectionContent
+            side="left"
             role="tablist"
             aria-labelledby="controls-design"
-            variant="leftControlSectionContent"
           >
             {state.chartConfig.chartType === "column" ? (
               <ColumnChartFields
@@ -71,16 +73,16 @@ export const ChartConfigurator = ({
                 metaData={data.dataCubeByIri}
               />
             ) : null}
-          </Box>
-        </CollapsibleSection>
-        <CollapsibleSection
-          titleId="controls-data"
-          title={<Trans id="controls.section.data">Data</Trans>}
-        >
-          <Box
+          </ControlSectionContent>
+        </ControlSection>
+        <ControlSection>
+          <SectionTitle>
+            <Trans id="controls.section.data">Data</Trans>
+          </SectionTitle>
+          <ControlSectionContent
+            side="left"
             role="tablist"
             aria-labelledby="controls-data"
-            variant="leftControlSectionContent"
           >
             {unMappedDimensions.map((dimension, i) => (
               <FilterTabField
@@ -89,8 +91,8 @@ export const ChartConfigurator = ({
                 value={dimension.iri}
               ></FilterTabField>
             ))}
-          </Box>
-        </CollapsibleSection>
+          </ControlSectionContent>
+        </ControlSection>
       </>
     );
   } else {
