@@ -28,7 +28,7 @@ import { Text } from "@theme-ui/components"
 ${(
   <TableSpecimen
     span={6}
-    rows={Object.entries(theme.text).map(([key, textStyle], i) => {
+    rows={Object.entries(theme.text as $FixMe).map(([key, textStyle], i) => {
       return {
         Variant: `\`${key}\``,
         Sample: (
