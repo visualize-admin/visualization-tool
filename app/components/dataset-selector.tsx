@@ -39,7 +39,7 @@ export const DatasetButton = ({
 }: {
   dataSetIri: string;
   dataSetLabel: string;
-  dataSetDescription: string | null;
+  dataSetDescription?: string | null;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
