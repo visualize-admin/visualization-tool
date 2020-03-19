@@ -106,6 +106,8 @@ export const getPossibleChartType = ({
     possibles = [...multipleQ, ...timeBased, ...catBased];
   } else if (hasMultipleQ && !hasTime) {
     possibles = [...multipleQ, ...catBased];
+  } else if (!hasMultipleQ && hasTime) {
+    possibles = [...catBased, ...timeBased];
   } else if (!hasMultipleQ && !hasTime) {
     possibles = [...catBased];
   } else {
