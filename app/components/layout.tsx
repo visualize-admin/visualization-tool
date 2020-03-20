@@ -18,25 +18,30 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => (
 );
 export const ContentLayout = ({
   homepage = true,
-  children
+  children,
+  ...extraProps
 }: {
   homepage?: boolean;
   children?: ReactNode;
-}) => (
-  <Flex
-    sx={{
-      minHeight: "100vh",
-      flexDirection: "column",
-      bg: homepage ? "monochrome100" : "muted"
-    }}
-  >
-    <Header pageType="content" />
-    <Flex as="main" role="main" sx={{ flexDirection: "column", flex: 1 }}>
-      {children}
+  [k: string]: $IntentionalAny;
+}) => {
+  console.log(extraProps);
+  return (
+    <Flex
+      sx={{
+        minHeight: "100vh",
+        flexDirection: "column",
+        bg: homepage ? "monochrome100" : "muted"
+      }}
+    >
+      <Header pageType="content" alternates={extraProps?.meta?.alternates} />
+      <Flex as="main" role="main" sx={{ flexDirection: "column", flex: 1 }}>
+        {children}
+      </Flex>
+      <Footer />
     </Flex>
-    <Footer />
-  </Flex>
-);
+  );
+};
 
 export const Center = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ justifyContent: "center", alignItems: "center", flex: 1 }}>

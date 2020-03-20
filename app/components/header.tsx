@@ -5,9 +5,11 @@ import { LanguageMenu } from "./language-menu";
 import { HomeLink } from "./links";
 
 export const Header = ({
-  pageType = "app"
+  pageType = "app",
+  alternates
 }: {
   pageType?: "content" | "app";
+  alternates?: { [k: string]: string };
 }) => {
   return (
     <Flex
@@ -46,7 +48,7 @@ export const Header = ({
             }
       }
     >
-      <LanguageMenu />
+      <LanguageMenu alternates={alternates} />
       <Logo />
     </Flex>
   );
