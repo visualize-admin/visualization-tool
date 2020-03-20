@@ -1,53 +1,51 @@
 import "iframe-resizer/js/iframeResizer.contentWindow.js";
-import "isomorphic-unfetch";
-import { NextPage } from "next";
+import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 import { ChartPublished } from "../../../components/chart-published";
+import { fetchConfig } from "../../../config-api";
 import { Config } from "../../../domain/config-types";
 
-type PageProps = {
-  statusCode?: number;
-  config?: {
-    key: string;
-    data: Config;
-  };
-  publishSuccess?: string;
-};
+type PageProps =
+  | {
+      status: "notfound";
+    }
+  | {
+      status: "found";
+      config: {
+        key: string;
+        data: Config;
+      };
+    };
 
-const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
-  if (statusCode) {
-    // TODO: display 404 message
-    return <ErrorPage statusCode={statusCode} />;
-  }
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+  query,
+  res
+}) => {
+  const config = await fetchConfig(query.chartId as string);
 
-  if (config) {
-    const { dataSet, meta, chartConfig } = config.data;
-
-    return (
-      <ChartPublished dataSet={dataSet} chartConfig={chartConfig} meta={meta} />
-    );
-  }
-
-  // Should never happen
-  return null;
-};
-
-Page.getInitialProps = async ({ req, query, res }) => {
-  const uri = res
-    ? `http://localhost:${process.env.PORT || 3000}/api/config/${query.chartId}`
-    : `/api/config/${query.chartId}`;
-  const config = await fetch(uri).then(result => result.json());
-  const publishSuccess = query.publishSuccess as string;
   if (config && config.data) {
     // TODO validate configuration
-    return { config, publishSuccess };
+    return { props: { status: "found", config } };
   }
 
-  if (res) {
-    res.statusCode = 404;
-  }
+  res.statusCode = 404;
 
-  return { statusCode: 404 };
+  return { props: { status: "notfound" } };
 };
 
-export default Page;
+export default (props: PageProps) => {
+  if (props.status === "notfound") {
+    // TODO: display 404 message
+    return <ErrorPage statusCode={404} />;
+  }
+
+  const {
+    config: {
+      data: { dataSet, meta, chartConfig }
+    }
+  } = props;
+
+  return (
+    <ChartPublished dataSet={dataSet} chartConfig={chartConfig} meta={meta} />
+  );
+};
