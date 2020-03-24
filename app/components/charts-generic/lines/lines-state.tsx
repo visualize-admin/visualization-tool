@@ -135,8 +135,6 @@ const useLinesState = ({
         ? "bottom"
         : "middle";
 
-      console.log("x",getX(datum), formatDateAuto(getX(datum)))
-
     return {
       xAnchor,
       yAnchor,
