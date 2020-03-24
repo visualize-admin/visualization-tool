@@ -12,18 +12,60 @@ import {
 import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { IconName } from "../icons";
-import { timeFormat } from "d3-time-format";
+import { timeFormat, timeParse } from "d3-time-format";
+import {
+  timeDay,
+  timeMinute,
+  timeHour,
+  timeMonth,
+  timeWeek,
+  timeYear
+} from "d3-time";
 import { format } from "d3-format";
 
 // FIXME: We should cover more time format
-export const parseDate = (dateStr: string): Date => new Date(dateStr);
+const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
+const parseDay = timeParse("%Y-%m-%d");
+const parseMonth = timeParse("%Y-%m");
+const parseYear = timeParse("%Y");
+export const parseDate = (dateStr: string): Date =>
+  parseTime(dateStr) ??
+  parseDay(dateStr) ??
+  parseMonth(dateStr) ??
+  parseYear(dateStr) ??
+  // This should probably not happen
+  new Date(dateStr);
 
 export const isNumber = (x: $IntentionalAny): boolean =>
   typeof x === "number" && !isNaN(x);
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
 // const formatLocale = d3TimeFormatLocales[locale];
-export const formatYear = (x: Date): string => timeFormat("%Y")(x);
+
+const formatSecond = timeFormat(":%S");
+const formatMinute = timeFormat("%I:%M");
+const formatHour = timeFormat("%I %p");
+const formatDay = timeFormat("%a %d");
+const formatWeek = timeFormat("%b %d");
+const formatMonth = timeFormat("%B");
+const formatYear = timeFormat("%Y");
+
+export const formatDateAuto = (date: Date) => {
+  return (timeMinute(date) < date
+    ? formatSecond
+    : timeHour(date) < date
+    ? formatMinute
+    : timeDay(date) < date
+    ? formatHour
+    : timeMonth(date) < date
+    ? timeWeek(date) < date
+      ? formatDay
+      : formatWeek
+    : timeYear(date) < date
+    ? formatMonth
+    : formatYear)(date);
+};
+
 export const formatNumber = (x: number): string => format(",.2~f")(x);
 
 export const getIconName = (name: string): IconName => {

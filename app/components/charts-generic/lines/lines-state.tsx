@@ -12,7 +12,7 @@ import { ReactNode, useCallback, useMemo } from "react";
 import { LineFields, Observation, ObservationValue } from "../../../domain";
 import {
   formatNumber,
-  formatYear,
+  formatDateAuto,
   getPalette,
   mkNumber,
   parseDate
@@ -68,8 +68,8 @@ const useLinesState = ({
   const xRange = [0, chartWidth];
   const xScale = scaleTime()
     .domain(xDomain)
-    .range(xRange)
-    .nice();
+    .range(xRange);
+
   const xAxisLabel =
     measures.find(d => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
@@ -135,11 +135,13 @@ const useLinesState = ({
         ? "bottom"
         : "middle";
 
+      console.log("x",getX(datum), formatDateAuto(getX(datum)))
+
     return {
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: formatYear(getX(datum)),
+      xValue: formatDateAuto(getX(datum)),
       datum: {
         label: fields.segment && getSegment(datum),
         value: formatNumber(getY(datum)),

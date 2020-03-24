@@ -6,7 +6,7 @@ import { useChartTheme } from "../use-chart-theme";
 import { useChartState } from "../use-chart-state";
 import { LinesState } from "../lines/lines-state";
 import { AreasState } from "../areas/areas-state";
-import { formatYear } from "../../../domain/helpers";
+import { formatDateAuto } from "../../../domain/helpers";
 
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
@@ -20,8 +20,8 @@ export const AxisTime = () => {
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     g.call(
       axisBottom(xScale)
-        .ticks(Math.min(xUniqueValues.length, 5))
-        .tickFormat(x => formatYear(x as Date))
+        // .ticks(Math.min(xUniqueValues.length, 5))
+        .tickFormat(x => formatDateAuto(x as Date))
     );
     g.selectAll(".tick line").remove();
     g.selectAll(".tick text")

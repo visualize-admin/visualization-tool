@@ -13,7 +13,7 @@ import { ReactNode, useCallback, useMemo } from "react";
 import { AreaFields, Observation } from "../../../domain";
 import {
   formatNumber,
-  formatYear,
+  formatDateAuto,
   getPalette,
   isNumber,
   parseDate
@@ -155,7 +155,7 @@ const useAreasState = ({
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: formatYear(getX(datum)),
+      xValue: formatDateAuto(getX(datum)),
       datum: {
         label: fields.segment && getSegment(datum),
         value: formatNumber(getY(datum)),
