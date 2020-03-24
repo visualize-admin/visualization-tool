@@ -53,7 +53,7 @@ const useAreasState = ({
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
   const getX = useCallback(
-    (d: Observation): Date => parseDate(+d[fields.x.componentIri]),
+    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
     [fields.x.componentIri]
   );
   const getY = (d: Observation): number => +d[fields.y.componentIri] as number;

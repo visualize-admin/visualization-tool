@@ -16,7 +16,7 @@ import { timeFormat } from "d3-time-format";
 import { format } from "d3-format";
 
 // FIXME: We should cover more time format
-export const parseDate = (year: number): Date => new Date(year, 0, 1);
+export const parseDate = (dateStr: string): Date => new Date(dateStr);
 
 export const isNumber = (x: $IntentionalAny): boolean =>
   typeof x === "number" && !isNaN(x);
