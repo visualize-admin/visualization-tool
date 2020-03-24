@@ -25,7 +25,6 @@ export const ContentLayout = ({
   children?: ReactNode;
   [k: string]: $IntentionalAny;
 }) => {
-  console.log(extraProps);
   return (
     <Flex
       sx={{
