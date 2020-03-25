@@ -186,10 +186,10 @@ export const theme: Theme = {
         "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
 
       // Use momentum-based scrolling on iOS devices
-      "-webkit-overflow-scrolling": "touch",
+      WebkitOverflowScrolling: "touch",
 
       // Auto-hide scrollbars in Edge
-      "-ms-overflow-style": "-ms-autohiding-scrollbar",
+      msOverflowStyle: "-ms-autohiding-scrollbar",
 
       svg: {
         display: "block"

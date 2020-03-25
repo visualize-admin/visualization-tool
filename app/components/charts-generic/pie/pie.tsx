@@ -1,38 +1,36 @@
 import { arc, pie, PieArcDatum } from "d3-shape";
 import * as React from "react";
-import { useState } from "react";
 import { Observation } from "../../../domain";
 import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";
 import { PieState } from "./pie-state";
 
 export const Pie = () => {
-  const {
-    data,
-    getValue,
-    getSegment,
-    colors,
-    bounds
-  } = useChartState() as PieState;
-  const { chartWidth, chartHeight } = bounds;
+  const { data, getY, getX, colors, bounds } = useChartState() as PieState;
+  const { width, height, chartWidth, chartHeight } = bounds;
 
-  const getPieData = pie<Observation>().value(d => getValue(d));
+  const getPieData = pie<Observation>().value(d => getY(d));
 
   const arcs = getPieData(data);
 
+  const maxSide = Math.min(chartWidth, chartHeight) / 2;
+
   const innerRadius = 0;
-  const outerRadius = Math.min(chartWidth, chartWidth * 0.4) / 2 - 1;
+  const outerRadius = maxSide; // Math.min(maxSide, 100);
+
+  const xTranslate = width / 2;
+  const yTranslate = height / 2;
 
   return (
-    <g transform={`translate(${chartWidth / 2} ${outerRadius})`}>
+    <g transform={`translate(${xTranslate},${yTranslate})`}>
       {arcs.map((arcDatum, i) => (
         <Arc
           key={i}
           arcDatum={arcDatum}
-          tooltipContent={getSegment(arcDatum.data)}
+          tooltipContent={getX(arcDatum.data)}
           innerRadius={innerRadius}
           outerRadius={outerRadius}
-          color={colors(getSegment(arcDatum.data))}
+          color={colors(getX(arcDatum.data))}
           chartWidth={chartWidth}
           chartHeight={chartHeight}
         />
@@ -59,55 +57,33 @@ const Arc = ({
   chartHeight: number;
 }) => {
   const [, dispatch] = useInteraction();
-
-  const [visible, toggleTooltipVisibility] = useState(false);
   const { startAngle, endAngle } = arcDatum;
 
-  const arcGenerator = arc<$FixMe, $FixMe>()
+  const arcGenerator = arc<$FixMe>()
     .innerRadius(innerRadius)
     .outerRadius(outerRadius);
 
-  const [x, y] = arcGenerator.centroid(arcDatum);
-
-  const handleMouseEnter = () => {
-    toggleTooltipVisibility(true);
+  const handleMouseEnter = (d: PieArcDatum<Observation>) => {
+    dispatch({
+      type: "ANNOTATION_UPDATE",
+      value: {
+        annotation: {
+          visible: true,
+          d: (d as unknown) as Observation // FIXME
+        }
+      }
+    });
   };
   const handleMouseLeave = () => {
-    toggleTooltipVisibility(false);
-    // dispatch({
-    //   type: "ANNOTATION_UPDATE",
-    //   value: {
-    //     tooltip: {
-    //       visible: false,
-    //       x: chartWidth / 2 + x,
-    //       y: chartHeight / 2 + y,
-    //       placement: { x: "left", y: "top" },
-
-    //       content: tooltipContent
-    //     }
-    //   }
-    // });
+    dispatch({
+      type: "ANNOTATION_HIDE"
+    });
   };
   return (
     <path
       d={arcGenerator({ startAngle, endAngle }) as string}
       fill={color}
-      onMouseEnter={handleMouseEnter}
-      // onMouseOver={() =>
-      //   dispatch({
-      //     type: "ANNOTATION_UPDATE",
-      //     value: {
-      //       tooltip: {
-      //         visible,
-      //         x: chartWidth / 2 + x,
-      //         y: chartHeight / 2 + y,
-
-      //         placement: { x: "left", y: "top" },
-      //         content: tooltipContent
-      //       }
-      //     }
-      //   })
-      // }
+      onMouseEnter={() => handleMouseEnter(arcDatum)}
       onMouseLeave={handleMouseLeave}
     />
   );

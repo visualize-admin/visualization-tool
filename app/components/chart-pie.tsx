@@ -4,7 +4,7 @@ import { PieConfig } from "../domain/config-types";
 import { Observation } from "../domain/data";
 import { A11yTable } from "./a11y-table";
 
-import { ChartSvg } from "./charts-generic/containers";
+import { ChartSvg, ChartContainer } from "./charts-generic/containers";
 import { Pie } from "./charts-generic/pie";
 import { PieChart } from "./charts-generic/pie/pie-state";
 import { DataDownload } from "./data-download";
@@ -14,6 +14,8 @@ import {
   ComponentFieldsFragment
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
+import { LegendColor } from "./charts-generic/legends/color";
+import { Tooltip } from "./charts-generic/annotations/tooltip";
 
 export const ChartPieVisualization = ({
   dataSetIri,
@@ -82,12 +84,21 @@ export const ChartPie = memo(
         data={observations}
         fields={fields}
         measures={measures}
-        aspectRatio={1}
+        margins={{
+          top: 40,
+          right: 40,
+          bottom: 40,
+          left: 40
+        }}
+        aspectRatio={0.5}
       >
-        <ChartSvg>
-          <Pie />
-        </ChartSvg>
-        {/* <Tooltip /> */}
+        <ChartContainer>
+          <ChartSvg>
+            <Pie />
+          </ChartSvg>
+          <Tooltip type="single" />
+        </ChartContainer>
+        {fields.segment && <LegendColor symbol="square" />}
       </PieChart>
     );
   }

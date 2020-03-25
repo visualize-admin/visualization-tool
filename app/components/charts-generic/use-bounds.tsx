@@ -30,20 +30,21 @@ const INITIAL_BOUNDS: Bounds = {
 
 export const Observer = ({
   children,
-  aspectRatio
+  aspectRatio,
+  margins = {
+    top: 50,
+    right: 40,
+    bottom: 100,
+    left: 100
+  }
 }: {
   children: ReactNode;
   aspectRatio: number;
+  margins?: Margins;
 }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
 
   const bounds = useMemo(() => {
-    const margins = {
-      top: 50,
-      right: 40,
-      bottom: 100,
-      left: 100
-    };
     const chartWidth = width - margins.left - margins.right;
     const chartHeight = chartWidth * aspectRatio;
     return {
@@ -53,7 +54,7 @@ export const Observer = ({
       chartWidth,
       chartHeight
     };
-  }, [width, aspectRatio]);
+  }, [width, aspectRatio, margins]);
 
   return (
     <div ref={resizeRef} aria-hidden="true">

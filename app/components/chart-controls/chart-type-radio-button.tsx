@@ -24,17 +24,11 @@ export const ChartTypeSelectionButton = ({
       sx={{
         width: "86px",
         height: "86px",
-        mx: 4,
-        my: 2,
-
+        mt: 4,
         borderRadius: "default",
 
         backgroundColor: checked ? "primary" : "monochrome100",
-        color: checked
-          ? "mutedColored"
-          : disabled
-          ? "monochrome300"
-          : "primary",
+        color: checked ? "mutedColored" : disabled ? "mutedDarker" : "primary",
 
         display: "flex",
         flexDirection: "column",
@@ -49,14 +43,17 @@ export const ChartTypeSelectionButton = ({
             ? "mutedColored"
             : checked
             ? "primary"
-            : "monochrome300"
+            : "mutedDarker"
         }
       }}
     >
       <Icon name={getIconName(label)} />
       <Text
         variant="paragraph2"
-        sx={{ color: checked ? "monochrome100" : "monochrome600" }}
+        sx={{
+          color: checked ? "monochrome100" : "monochrome700",
+          fontSize: [2, 2, 2]
+        }}
       >
         {getFieldLabel(label)}
       </Text>
