@@ -6,5 +6,5 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const { width, height } = bounds;
 
   // FIXME: braucht keine höhe
-  return <div style={{ position: "relative", width, height }}>{children} </div>;
+  return <div style={{ position: "relative", width, height }}>{children}</div>;
 };

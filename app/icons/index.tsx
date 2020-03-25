@@ -13,6 +13,7 @@ import { IconBarChart } from "./ic-bar-chart";
 import { IconColumnChart } from "./ic-column-chart";
 import { IconLineChart } from "./ic-line-chart";
 import { IconAreaChart } from "./ic-area-chart";
+import { IconPieChart } from "./ic-pie-chart";
 import { IconScatterplot } from "./ic-scatterplot";
 import { IconDataset } from "./ic-dataset";
 import { IconDatasetPublished } from "./ic-dataset-published";
@@ -51,6 +52,7 @@ export const Icons = {
   column: IconColumnChart,
   line: IconLineChart,
   area: IconAreaChart,
+  pie: IconPieChart,
   scatterplot: IconScatterplot,
   dataset: IconDataset,
   published: IconDatasetPublished,

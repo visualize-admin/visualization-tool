@@ -90,6 +90,8 @@ export const getIconName = (name: string): IconName => {
       return "area";
     case "scatterplot":
       return "scatterplot";
+    case "pie":
+      return "pie";
     default:
       return "table";
   }
@@ -121,6 +123,8 @@ export const getFieldLabel = (field: string): React.ReactNode => {
       return <Trans id="controls.chart.type.area">Areas</Trans>;
     case "scatterplot":
       return <Trans id="controls.chart.type.scatterplot">Scatterplot</Trans>;
+    case "pie":
+      return <Trans id="controls.chart.type.pie">Pie</Trans>;
     case "en":
       return <Trans id="controls.language.english">English</Trans>;
     case "de":

@@ -8,6 +8,7 @@ import { ChartColumnsVisualization } from "./chart-columns";
 import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
+import { ChartPieVisualization } from "./chart-pie";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -78,12 +79,12 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 chartConfig={state.chartConfig}
               />
             )}
-            {/* {state.chartConfig.chartType === "pie" && (
+            {state.chartConfig.chartType === "pie" && (
               <ChartPieVisualization
                 dataSetIri={dataSetIri}
                 chartConfig={state.chartConfig}
               />
-            )} */}
+            )}
           </Flex>
         </>
       )}
