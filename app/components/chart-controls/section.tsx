@@ -73,7 +73,6 @@ export const SectionTitle = ({
       id={titleId}
       color="monochrome800"
       sx={{
-        fontWeight: "bold",
         p: 4,
         bg: "transparent",
         appearance: "none",
@@ -91,7 +90,7 @@ export const SectionTitle = ({
           name={iconName}
         ></Icon>
       )}
-      <Text variant="table" sx={{ ml: iconName ? 2 : 0 }}>
+      <Text variant="table" sx={{ fontWeight: "bold", ml: iconName ? 2 : 0 }}>
         {children}
       </Text>
     </Flex>

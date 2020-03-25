@@ -21,6 +21,7 @@ import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
+import { useTheme } from "../../../themes";
 
 export interface LinesState {
   data: Observation[];
@@ -50,6 +51,8 @@ const useLinesState = ({
   bounds: Bounds;
   fields: LineFields;
 }): LinesState => {
+  const theme = useTheme();
+
   const { chartWidth, chartHeight } = bounds;
 
   const getGroups = (d: Observation): string =>
@@ -128,12 +131,12 @@ const useLinesState = ({
 
     const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
 
-    const yPlacement =
-      yAnchor > chartHeight * 0.2
-        ? "top"
-        : yAnchor < chartHeight * 0.8
-        ? "bottom"
-        : "middle";
+    const yPlacement = "middle";
+    // yAnchor > chartHeight * 0.2
+    //   ? "top"
+    //   : yAnchor < chartHeight * 0.8
+    //   ? "bottom"
+    // :  "middle";
 
     return {
       xAnchor,
@@ -148,7 +151,10 @@ const useLinesState = ({
       values: tooltipValues.map(td => ({
         label: getSegment(td),
         value: formatNumber(getY(td)),
-        color: colors(getSegment(td)) as string,
+        color:
+          segments.length > 1
+            ? (colors(getSegment(td)) as string)
+            : theme.colors.primary,
         yPos: yScale(getY(td))
       }))
     };

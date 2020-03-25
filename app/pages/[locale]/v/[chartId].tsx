@@ -86,7 +86,12 @@ export default (props: PageProps) => {
               variant="heading3"
               mt={3}
               mb={5}
-              sx={{ color: "monochrome800", fontFamily: "body" }}
+              sx={{
+                color: "monochrome800",
+                fontSize: 5,
+                fontFamily: "body",
+                fontWeight: "regular"
+              }}
             >
               {publishSuccess ? (
                 <Trans id="hint.how.to.share">

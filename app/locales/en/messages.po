@@ -25,15 +25,15 @@ msgstr "ascending"
 msgid "accessibility.table.sorting.descending"
 msgstr "descending"
 
-#: app/components/chart-preview.tsx:31
+#: app/components/chart-preview.tsx:32
 msgid "annotation.add.description"
 msgstr "[You can add a description here]"
 
-#: app/components/chart-preview.tsx:25
+#: app/components/chart-preview.tsx:26
 msgid "annotation.add.title"
 msgstr "[You can add a title here]"
 
-#: app/pages/[locale]/v/[chartId].tsx:70
+#: app/pages/[locale]/v/[chartId].tsx:78
 msgid "button.copy.visualization"
 msgstr "Copy Visualization"
 
@@ -46,14 +46,14 @@ msgid "button.download.data"
 msgstr "Download data"
 
 #: app/components/publish-actions.tsx:213
-msgid "button.download.image"
-msgstr "Download Image"
+#~ msgid "button.download.image"
+#~ msgstr "Download Image"
 
-#: app/components/publish-actions.tsx:108
+#: app/components/publish-actions.tsx:134
 msgid "button.embed"
 msgstr "Embed"
 
-#: app/pages/[locale]/v/[chartId].tsx:63
+#: app/pages/[locale]/v/[chartId].tsx:73
 msgid "button.new.visualization"
 msgstr "New Visualization"
 
@@ -69,36 +69,39 @@ msgstr "Previous"
 msgid "button.publish"
 msgstr "Publish"
 
-#: app/components/publish-actions.tsx:56
+#: app/components/publish-actions.tsx:82
 msgid "button.share"
 msgstr "Share"
 
-#: app/components/publish-actions.tsx:130
-#: app/components/publish-actions.tsx:133
+#: app/components/publish-actions.tsx:156
+#: app/components/publish-actions.tsx:159
 msgid "click to copy"
-msgstr "click to copy"
 
-#: app/domain/helpers.tsx:37
+#: app/domain/helpers.tsx:72
 msgid "controls.axis.horizontal"
 msgstr "Horizontal axis"
 
-#: app/domain/helpers.tsx:57
+#: app/domain/helpers.tsx:92
 msgid "controls.chart.type.area"
 msgstr "Areas"
 
-#: app/domain/helpers.tsx:53
+#: app/domain/helpers.tsx:88
 msgid "controls.chart.type.bar"
 msgstr "Bars"
 
-#: app/domain/helpers.tsx:51
+#: app/domain/helpers.tsx:86
 msgid "controls.chart.type.column"
 msgstr "Columns"
 
-#: app/domain/helpers.tsx:55
+#: app/domain/helpers.tsx:90
 msgid "controls.chart.type.line"
 msgstr "Lines"
 
-#: app/domain/helpers.tsx:59
+#: app/domain/helpers.tsx:96
+msgid "controls.chart.type.pie"
+msgstr "Pie"
+
+#: app/domain/helpers.tsx:94
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
@@ -106,15 +109,15 @@ msgstr "Scatterplot"
 msgid "controls.color.palette"
 msgstr "Color Palette"
 
-#: app/domain/helpers.tsx:49
+#: app/domain/helpers.tsx:84
 msgid "controls.column.grouped"
 msgstr "Grouped"
 
-#: app/domain/helpers.tsx:47
+#: app/domain/helpers.tsx:82
 msgid "controls.column.stacked"
 msgstr "Stacked"
 
-#: app/domain/helpers.tsx:45
+#: app/domain/helpers.tsx:80
 msgid "controls.description"
 msgstr "Description"
 
@@ -138,27 +141,27 @@ msgstr "Select a chart element or a data dimension in the left panel to modify i
 msgid "controls.hint.describing.chart"
 msgstr "Select an annotation field in the left panel."
 
-#: app/domain/helpers.tsx:61
+#: app/domain/helpers.tsx:98
 msgid "controls.language.english"
 msgstr "English"
 
-#: app/domain/helpers.tsx:65
+#: app/domain/helpers.tsx:102
 msgid "controls.language.french"
 msgstr "French"
 
-#: app/domain/helpers.tsx:63
+#: app/domain/helpers.tsx:100
 msgid "controls.language.german"
 msgstr "German"
 
-#: app/domain/helpers.tsx:67
+#: app/domain/helpers.tsx:104
 msgid "controls.language.italian"
 msgstr "Italian"
 
-#: app/domain/helpers.tsx:39
+#: app/domain/helpers.tsx:74
 msgid "controls.measure"
 msgstr "Measure"
 
-#: app/domain/helpers.tsx:41
+#: app/domain/helpers.tsx:76
 msgid "controls.partition"
 msgstr "Partition"
 
@@ -166,20 +169,20 @@ msgstr "Partition"
 msgid "controls.partition.add"
 msgstr "Add ..."
 
-#: app/components/chart-configurator.tsx:26
+#: app/components/chart-configurator.tsx:29
 msgid "controls.section.data"
 msgstr "Data"
 
-#: app/components/chart-annotator.tsx:9
+#: app/components/chart-annotator.tsx:8
 msgid "controls.section.description"
-msgstr "Description"
+msgstr "Annotate"
 
 #: app/components/chart-configurator.tsx:21
 msgid "controls.section.design"
 msgstr "Design"
 
-#: app/components/chart-options-selector.tsx:78
-#: app/components/chart-options-selector.tsx:82
+#: app/components/chart-options-selector.tsx:80
+#: app/components/chart-options-selector.tsx:84
 msgid "controls.section.filter"
 msgstr "Filter"
 
@@ -187,12 +190,12 @@ msgstr "Filter"
 #~ msgid "controls.segmentation"
 #~ msgstr "Segmentation"
 
-#: app/components/chart-type-selector.tsx:25
-#: app/components/chart-type-selector.tsx:28
+#: app/components/chart-type-selector.tsx:31
+#: app/components/chart-type-selector.tsx:34
 msgid "controls.select.chart.type"
 msgstr "Chart Type"
 
-#: app/components/chart-options-selector.tsx:131
+#: app/components/chart-options-selector.tsx:137
 msgid "controls.select.column.chart.type"
 msgstr "Chart Type"
 
@@ -200,21 +203,20 @@ msgstr "Chart Type"
 msgid "controls.select.dataset"
 msgstr "Select Dataset"
 
-#: app/components/chart-options-selector.tsx:68
+#: app/components/chart-options-selector.tsx:70
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
 
-#: app/components/chart-options-selector.tsx:100
+#: app/components/chart-options-selector.tsx:103
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
-#: app/domain/helpers.tsx:43
+#: app/domain/helpers.tsx:78
 msgid "controls.title"
 msgstr "Title"
 
-#: app/components/publish-actions.tsx:156
+#: app/components/publish-actions.tsx:182
 msgid "copied!"
-msgstr "copied!"
 
 #: app/components/dataset-metadata.tsx:34
 msgid "dataset.metadata.date.created"
@@ -228,68 +230,68 @@ msgstr "Source"
 msgid "dataset.metadata.title"
 msgstr "Title"
 
-#: app/components/dataset-preview.tsx:40
+#: app/components/dataset-preview.tsx:44
 msgid "datatable.showing.first.rows"
 msgstr "Showing first 10 rows"
 
-#: app/components/footer.tsx:24
+#: app/components/footer.tsx:33
 msgid "footer.contact"
 msgstr "Contact"
 
-#: app/components/footer.tsx:21
+#: app/components/footer.tsx:30
 msgid "footer.help"
 msgstr "Help"
 
-#: app/components/footer.tsx:37
+#: app/components/footer.tsx:57
 msgid "footer.imprint"
 msgstr "Imprint"
 
-#: app/components/footer.tsx:10
+#: app/components/footer.tsx:19
 msgid "footer.institution.name"
 msgstr "Federal Office for the Environment FOEN"
 
-#: app/components/footer.tsx:34
+#: app/components/footer.tsx:54
 msgid "footer.legal"
 msgstr "Legal"
 
-#: app/pages/[locale]/v/[chartId].tsx:54
+#: app/pages/[locale]/v/[chartId].tsx:64
 msgid "hint.create.your.own.chart"
 msgstr "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
 
-#: app/pages/[locale]/v/[chartId].tsx:50
+#: app/pages/[locale]/v/[chartId].tsx:60
 msgid "hint.how.to.share"
 msgstr "You can share this chart either by sharing its URL or by embedding it on your website. You can also create a new visualization or duplicate the above chart."
 
-#: app/components/hint.tsx:31
+#: app/components/hint.tsx:55
 msgid "hint.loading.data"
 msgstr "Loading data…"
 
-#: app/components/chart-type-selector.tsx:37
+#: app/components/chart-type-selector.tsx:38
 msgid "hint.no.visualization.with.dataset"
 msgstr "No visualization can be created with the selected dataset."
 
-#: app/components/hint.tsx:52
+#: app/components/hint.tsx:96
 msgid "hint.nodata.message"
 msgstr "No data was returned with the current filters."
 
-#: app/components/hint.tsx:49
+#: app/components/hint.tsx:93
 msgid "hint.nodata.title"
 msgstr "No data"
 
-#: app/components/hint.tsx:60
+#: app/components/hint.tsx:114
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. You can share and embed it using the URL or the options below."
 
-#: app/components/hint.tsx:37
+#: app/components/hint.tsx:71
 msgid "hint.select.dataset"
 msgstr "Select a dataset"
 
-#: app/components/hint.tsx:40
+#: app/components/hint.tsx:74
 msgid "hint.select.dataset.to.preview"
 msgstr "Click on a dataset in the left column to preview its structure and content."
 
-#: app/components/header.tsx:29
-#: app/components/header.tsx:40
+#: app/components/header.tsx:72
+#: app/components/header.tsx:83
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
@@ -305,54 +307,54 @@ msgstr "Data"
 msgid "metadata.source"
 msgstr "Source"
 
-#: app/components/publish-actions.tsx:118
+#: app/components/publish-actions.tsx:144
 msgid "publication.embed.AEM"
 msgstr "Embed Code for AEM \"External Application\":"
 
-#: app/components/publish-actions.tsx:113
+#: app/components/publish-actions.tsx:139
 msgid "publication.embed.iframe"
 msgstr "Iframe Embed Code:"
 
-#: app/components/publish-actions.tsx:69
+#: app/components/publish-actions.tsx:95
 msgid "publication.popup.share"
 msgstr "Share"
 
-#: app/components/publish-actions.tsx:83
+#: app/components/publish-actions.tsx:109
 msgid "publication.share.chart.url"
 msgstr "Chart URL:"
 
-#: app/components/publish-actions.tsx:74
+#: app/components/publish-actions.tsx:100
 msgid "publication.share.linktitle.facebook"
 msgstr "Share on Facebook"
 
-#: app/components/publish-actions.tsx:76
+#: app/components/publish-actions.tsx:102
 msgid "publication.share.linktitle.mail"
 msgstr "Share via email"
 
-#: app/components/publish-actions.tsx:75
+#: app/components/publish-actions.tsx:101
 msgid "publication.share.linktitle.twitter"
 msgstr "Share on Twitter"
 
-#: app/components/publish-actions.tsx:76
+#: app/components/publish-actions.tsx:102
 msgid "publication.share.mail.body"
 msgstr "Here is a link to a visualization I created on visualize.admin.ch"
 
-#: app/components/publish-actions.tsx:76
+#: app/components/publish-actions.tsx:102
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/components/stepper.tsx:78
+#: app/components/stepper.tsx:124
 msgid "step.adjust"
 msgstr "Adjust"
 
-#: app/components/stepper.tsx:85
+#: app/components/stepper.tsx:131
 msgid "step.annotate"
 msgstr "Annotate"
 
-#: app/components/stepper.tsx:64
+#: app/components/stepper.tsx:110
 msgid "step.dataset"
 msgstr "Dataset"
 
-#: app/components/stepper.tsx:71
+#: app/components/stepper.tsx:117
 msgid "step.visualization.type"
 msgstr "Visualization Type"

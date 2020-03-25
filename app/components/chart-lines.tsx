@@ -112,7 +112,7 @@ export const ChartLines = memo(
 
           <HoverDotMultiple />
 
-          <HoverDot />
+          {/* <HoverDot /> */}
 
           <Tooltip type={fields.segment ? "multiple" : "single"} />
         </ChartContainer>

@@ -1,16 +1,16 @@
+import { Trans } from "@lingui/macro";
+import { Box, Grid } from "@theme-ui/components";
 import React from "react";
-import { Flex, Box, Grid } from "@theme-ui/components";
-import { ChartTypeSelectorField } from "./field";
-import { Loading, Hint } from "./hint";
 import { getPossibleChartType } from "../domain";
 import {
   ChartType,
   ConfiguratorStateSelectingChartType
 } from "../domain/config-types";
-import { Trans } from "@lingui/macro";
-import { SectionTitle } from "./chart-controls/section";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
+import { SectionTitle } from "./chart-controls/section";
+import { ChartTypeSelectorField } from "./field";
+import { Hint, Loading } from "./hint";
 
 const chartTypes: ChartType[] = [
   "column",
