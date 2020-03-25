@@ -2,6 +2,7 @@ import { area } from "d3-shape";
 import * as React from "react";
 import { useChartState } from "../use-chart-state";
 import { AreasState } from "./areas-state";
+import { useTheme } from "../../../themes";
 
 export const Areas = () => {
   const {
@@ -12,7 +13,7 @@ export const Areas = () => {
     colors,
     series
   } = useChartState() as AreasState;
-
+  const theme = useTheme();
   const areaGenerator = area<$FixMe>()
     // .defined(d => !isNaN(d))
     .x(d => xScale(getX(d.data)))
@@ -26,7 +27,7 @@ export const Areas = () => {
           <Area
             key={`${d.key}-${i}`}
             path={areaGenerator(d) as string}
-            color={colors(d.key)}
+            color={series.length > 1 ? colors(d.key) : theme.colors.primary}
           />
         );
       })}

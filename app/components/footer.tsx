@@ -9,9 +9,12 @@ export const Footer = () => (
     sx={{
       flexDirection: ["column", "row"],
       justifyContent: ["flex-start", "space-between"],
-      alignItems: ["flex-start", "center"]
+      alignItems: ["flex-start", "center"],
+      bg: "monochrome200",
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      borderTopColor: "monochrome100"
     }}
-    bg="monochrome200"
   >
     <Box
       sx={{

@@ -134,14 +134,16 @@ export const Success = () => (
       mb: 4,
       p: 4,
       bg: "successLight",
-      color: "successBase",
-      textAlign: "center",
+      color: "success",
       justifyContent: "flex-start",
       alignItems: "center"
     }}
   >
-    <Icon name="published" size={56} />
-    <Text variant="heading3" sx={{ textAlign: "left", ml: 4 }}>
+    <Icon name="published" size={80} />
+    <Text
+      variant="heading3"
+      sx={{ textAlign: "left", fontSize: 4, fontWeight: "regular", ml: 4 }}
+    >
       <Trans id="hint.publication.success">
         Your visualization is now published. You can share and embed it using
         the URL or the options below.

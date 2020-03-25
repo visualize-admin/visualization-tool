@@ -22,6 +22,7 @@ import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
+import { useTheme } from "../../../themes";
 
 export interface AreasState {
   data: Observation[];
@@ -48,6 +49,8 @@ const useAreasState = ({
 }: Pick<ChartProps, "data" | "fields" | "measures"> & {
   bounds: Bounds;
 } & { fields: AreaFields }): AreasState => {
+  const theme = useTheme();
+
   const { chartWidth, chartHeight } = bounds;
 
   const getGroups = (d: Observation): string =>
@@ -164,7 +167,10 @@ const useAreasState = ({
       values: series.map(serie => ({
         label: serie.key,
         value: formatNumber(serie[datumIndex].data[serie.key]),
-        color: colors(serie.key) as string,
+        color:
+          segments.length > 1
+            ? (colors(serie.key) as string)
+            : theme.colors.primary,
         yPos: yScale(serie[datumIndex][1])
       }))
     };

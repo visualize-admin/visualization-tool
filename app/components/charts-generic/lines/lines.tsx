@@ -3,6 +3,7 @@ import { useChartState } from "../use-chart-state";
 import { line } from "d3-shape";
 import { Observation } from "../../../domain";
 import { LinesState } from "./lines-state";
+import { useTheme } from "../../../themes";
 
 export const Lines = () => {
   const {
@@ -14,6 +15,7 @@ export const Lines = () => {
     colors,
     bounds
   } = useChartState() as LinesState;
+  const theme = useTheme();
 
   const lineGenerator = line<Observation>()
     // .defined(d => !isNaN(d))
@@ -27,7 +29,11 @@ export const Lines = () => {
           <Line
             key={index}
             path={lineGenerator(observation[1]) as string}
-            color={colors(observation[0])}
+            color={
+              Array.from(grouped).length > 1
+                ? colors(observation[0])
+                : theme.colors.primary
+            }
           />
         );
       })}

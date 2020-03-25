@@ -11,7 +11,7 @@ export const ChartAnnotator = () => {
   return (
     <ControlSection role="tablist" aria-labelledby="controls-design">
       <SectionTitle>
-        <Trans id="controls.section.description">Description</Trans>
+        <Trans id="controls.section.description">Annotate</Trans>
       </SectionTitle>
       <ControlSectionContent side="left">
         <AnnotatorTabField value={"title"}></AnnotatorTabField>

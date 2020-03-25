@@ -30,6 +30,7 @@ export const TooltipBox = ({
   return (
     <Box
       style={{
+        zIndex: 2,
         position: "absolute",
         left: x! + margins.left,
         top: mxYOffset(y!, placement) + margins.top,
@@ -42,7 +43,7 @@ export const TooltipBox = ({
         }}
         sx={{
           width: "fit-content",
-          padding: 1,
+          padding: 3,
           whiteSpace: "nowrap",
           pointerEvents: "none",
           backgroundColor: "monochrome100",
