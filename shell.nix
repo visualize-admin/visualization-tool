@@ -1,5 +1,5 @@
 let
-  pkgs = import (fetchTarball http://nixos.org/channels/nixpkgs-19.09-darwin/nixexprs.tar.xz) { };
+  pkgs = import <nixpkgs> { };
   nodejs = pkgs.nodejs-12_x;
 
 in pkgs.mkShell {
