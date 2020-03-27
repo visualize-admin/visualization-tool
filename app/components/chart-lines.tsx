@@ -8,13 +8,13 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { HoverDot } from "./charts-generic/annotations/hover-dot";
+import { HoverDotMultiple } from "./charts-generic/annotations/hover-dots-multiple";
 import { Ruler } from "./charts-generic/annotations/ruler";
 import { Tooltip } from "./charts-generic/annotations/tooltip";
 import { AxisTime } from "./charts-generic/axis";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
-import { InteractionVoronoi } from "./charts-generic/interaction/interaction-voronoi";
+import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
 import { HoverLine } from "./charts-generic/lines/hover-line";
 import { HoverLineValues } from "./charts-generic/lines/hover-line-values";
@@ -22,7 +22,6 @@ import { Lines } from "./charts-generic/lines/lines";
 import { LineChart } from "./charts-generic/lines/lines-state";
 import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
-import { HoverDotMultiple } from "./charts-generic/annotations/hover-dots-multiple";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
@@ -105,7 +104,7 @@ export const ChartLines = memo(
             <HoverLine />
             <HoverLineValues />
 
-            <InteractionVoronoi />
+            <InteractionHorizontal />
           </ChartSvg>
 
           <Ruler />

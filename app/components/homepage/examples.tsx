@@ -35,10 +35,10 @@ export const Examples = ({
           dataSet="http://environment.ld.admin.ch/foen/px/0703010000_102/dataset"
           meta={{
             title: {
-              de: "Holzernte der Schweiz (m3)",
-              fr: "Récolte de bois en Suisse (m3)",
-              it: "Sfruttamento del legname in Svizzera (m3)",
-              en: "Wood harvest in Switzerland (m3)"
+              de: "",
+              fr: "",
+              it: "",
+              en: ""
             },
             description: {
               de: " ",
@@ -62,7 +62,7 @@ export const Examples = ({
                 componentIri:
                   "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1",
                 type: "stacked",
-                palette: "category10"
+                palette: "dark2"
               }
             },
             filters: {
@@ -113,10 +113,10 @@ export const Examples = ({
           dataSet="http://environment.ld.admin.ch/foen/px/0703030000_122/dataset"
           meta={{
             title: {
-              de: "Investitionen in den Forstbetrieben (Franken)",
-              fr: "Investissements dans les exploitations forestières (Francs)",
-              it: "Investimenti nelle imprese forestal",
-              en: "Investments in forest enterprises (Francs)"
+              de: "",
+              fr: "",
+              it: "",
+              en: ""
             },
             description: {
               de: " ",
@@ -139,7 +139,7 @@ export const Examples = ({
               segment: {
                 componentIri:
                   "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1",
-                palette: "category10"
+                palette: "set2"
               }
             },
             filters: {
@@ -149,8 +149,7 @@ export const Examples = ({
                   "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/1": true,
                   "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/2": true,
                   "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/3": true,
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/4": true,
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/5": true
+                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/4": true
                 }
               },
               "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/2": {
@@ -205,6 +204,7 @@ const Example = ({
           fontSize: [5, 5, 6],
           lineHeight: 1.5,
           fontFamily: "body",
+          fontWeight: "bold",
           mb: [2, 2, 4]
         }}
       >
