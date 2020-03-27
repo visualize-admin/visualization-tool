@@ -10,13 +10,13 @@
     "dist"
   ],
   "dependencies": {
-    "@babel/standalone": "^7.8.4",
+    "@babel/standalone": "^7.9.4",
     "@emotion/core": "^10.0.27",
     "@juggle/resize-observer": "^3.0.2",
     "@lingui/react": "^2.8.3",
-    "@mdx-js/react": "^1.5.2",
-    "@next/bundle-analyzer": "^9.3.0",
-    "@next/mdx": "^9.3.0",
+    "@mdx-js/react": "^1.5.8",
+    "@next/bundle-analyzer": "^9.3.2",
+    "@next/mdx": "^9.3.2",
     "@preconstruct/next": "^1.0.1",
     "@theme-ui/components": "^0.3.1",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
@@ -48,12 +48,12 @@
     "isomorphic-unfetch": "^3.0.0",
     "lodash": "^4.17.15",
     "micro-cors": "^0.1.1",
-    "nanoid": "^2.1.11",
+    "nanoid": "^3.0.0",
     "pg": "^7.18.1",
-    "pg-connection-string": "^2.1.0",
+    "pg-connection-string": "^2.2.0",
     "postgres-migrations": "^4.0.2",
     "theme-ui": "^0.3.1",
-    "urql": "^1.9.0",
+    "urql": "^1.9.5",
     "use-immer": "^0.3.3"
   },
   "peerDependencies": {
