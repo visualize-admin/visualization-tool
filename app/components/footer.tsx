@@ -78,7 +78,7 @@ const FooterLink = ({ children }: { children: ReactNode }) => (
     as="a"
     sx={{
       width: ["100%", "auto"],
-      px: [4, 5],
+      px: [4, 3],
       py: [3, 4],
       color: "primary",
       fontSize: 3,
@@ -104,7 +104,7 @@ const FooterLinkBottom = ({ children }: { children: ReactNode }) => (
   <Box
     as="a"
     sx={{
-      px: [4, 5],
+      px: [4, 3],
       py: [3, 4],
       color: "primary",
       fontSize: 3,

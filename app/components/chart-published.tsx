@@ -6,6 +6,7 @@ import { ChartColumnsVisualization } from "./chart-columns";
 import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
+import { ChartPieVisualization } from "./chart-pie";
 
 export const ChartPublished = ({
   dataSet,
@@ -65,6 +66,12 @@ export const ChartPublished = ({
         )}
         {chartConfig.chartType === "scatterplot" && (
           <ChartScatterplotVisualization
+            dataSetIri={dataSet}
+            chartConfig={chartConfig}
+          />
+        )}
+        {chartConfig.chartType === "pie" && (
+          <ChartPieVisualization
             dataSetIri={dataSet}
             chartConfig={chartConfig}
           />

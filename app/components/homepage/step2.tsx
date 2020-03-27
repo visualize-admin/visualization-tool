@@ -168,7 +168,7 @@ export const Step2 = () => (
         />
         <feColorMatrix
           in="shadowInnerInner1"
-          values="0 0 0 0 0.8   0 0 0 0 0.8   0 0 0 0 0.8  0 0 0 1 0"
+          values="0 0 0 0 0.862745098   0 0 0 0 0   0 0 0 0 0.0941176471  0 0 0 1 0"
         />
       </filter>
     </defs>
