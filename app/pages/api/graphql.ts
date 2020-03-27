@@ -1,8 +1,12 @@
-import "global-agent/bootstrap";
 import { ApolloServer } from "apollo-server-micro";
-import cors from "micro-cors";
-import typeDefs from "../../graphql/schema.graphql";
+import configureCors from "cors";
+import "global-agent/bootstrap";
+import { NextApiRequest, NextApiResponse } from "next";
 import { resolvers } from "../../graphql/resolvers";
+import typeDefs from "../../graphql/schema.graphql";
+import { runMiddleware } from "../../lib/run-middleware";
+
+const cors = configureCors();
 
 const server = new ApolloServer({
   typeDefs,
@@ -20,6 +24,7 @@ export const config = {
 
 const handler = server.createHandler({ path: "/api/graphql" });
 
-export default cors()((req, res) =>
-  req.method === "OPTIONS" ? res.end() : handler(req, res)
-);
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await runMiddleware(req, res, cors);
+  return handler(req, res);
+};
