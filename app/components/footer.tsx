@@ -42,12 +42,12 @@ export const Footer = () => {
         }}
       >
         <Flex sx={{ flexDirection: ["column", "row"] }} pb={[4, 0]}>
-          <FooterLink>
+          {/* <FooterLink>
             <Trans id="footer.help">Help</Trans>
           </FooterLink>
           <FooterLink>
             <Trans id="footer.contact">Contact</Trans>
-          </FooterLink>
+          </FooterLink> */}
         </Flex>
 
         <Box
@@ -94,6 +94,7 @@ const FooterLink = ({ children, ...props }: { children: ReactNode }) => (
       color: "primary",
       fontSize: 3,
       fontFamily: "body",
+      textDecoration: "none",
       cursor: "pointer",
       ":hover": {
         color: "primaryHover"
@@ -127,6 +128,7 @@ const FooterLinkBottom = React.forwardRef<
       borderLeftWidth: ["1px", 0],
       borderLeftStyle: "solid",
       borderLeftColor: "monochrome500",
+      textDecoration: "none",
       cursor: "pointer",
       ":hover": {
         color: "primaryHover"
