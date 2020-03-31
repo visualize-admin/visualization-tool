@@ -18,11 +18,11 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => (
 );
 
 export const ContentLayout = ({
-  homepage = true,
+  isHome = false,
   children,
   contentId
 }: {
-  homepage?: boolean;
+  isHome?: boolean;
   children?: ReactNode;
   [k: string]: unknown;
 }) => {
@@ -31,14 +31,24 @@ export const ContentLayout = ({
       sx={{
         minHeight: "100vh",
         flexDirection: "column",
-        bg: homepage ? "monochrome100" : "muted"
+        bg: "monochrome100"
       }}
     >
       <Header
         pageType="content"
         contentId={typeof contentId === "string" ? contentId : undefined}
       />
-      <Flex as="main" role="main" sx={{ flexDirection: "column", flex: 1 }}>
+      <Flex
+        as="main"
+        role="main"
+        sx={{
+          flexDirection: "column",
+          flex: 1,
+          maxWidth: isHome ? undefined : 1024,
+          mx: isHome ? undefined : [0, 0, "auto"],
+          px: isHome ? undefined : 4
+        }}
+      >
         {children}
       </Flex>
       <Footer />
