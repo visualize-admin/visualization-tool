@@ -8,7 +8,7 @@ const localesOrder = ["de", "fr", "it", "en"];
 export const LanguageMenu = ({
   alternates
 }: {
-  alternates?: { [k: string]: string };
+  alternates?: { [k: string]: {path:string} };
 }) => {
   const currentLocale = useLocale();
   return (
@@ -52,7 +52,7 @@ export const LanguageMenu = ({
         return (
           <Box as="li" key={locale} sx={{ ml: 1, p: 0 }}>
             {alternate ? (
-              <NextLink href={alternate} passHref>
+              <NextLink href={alternate.path} passHref>
                 {linkEl}
               </NextLink>
             ) : (

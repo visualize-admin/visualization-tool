@@ -9,7 +9,7 @@ export const Header = ({
   alternates
 }: {
   pageType?: "content" | "app";
-  alternates?: { [k: string]: string };
+  alternates?: { [k: string]: { path: string; title: string } };
 }) => {
   return (
     <Flex

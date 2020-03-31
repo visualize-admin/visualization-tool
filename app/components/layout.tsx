@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Flex } from "@theme-ui/components";
 import { Header } from "./header";
 import { Footer } from "./footer";
+import contentRoutes from "../content-routes.json";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
@@ -16,15 +17,23 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => (
     </Flex>
   </Flex>
 );
+
 export const ContentLayout = ({
   homepage = true,
   children,
-  ...extraProps
+  contentId
 }: {
   homepage?: boolean;
   children?: ReactNode;
-  [k: string]: $IntentionalAny;
+  [k: string]: unknown;
 }) => {
+  const alternates =
+    typeof contentId === "string" && contentId in contentRoutes
+      ? (contentRoutes as {
+          [k: string]: { [k: string]: { title: string; path: string } };
+        })[contentId]
+      : undefined;
+
   return (
     <Flex
       sx={{
@@ -33,7 +42,7 @@ export const ContentLayout = ({
         bg: homepage ? "monochrome100" : "muted"
       }}
     >
-      <Header pageType="content" alternates={extraProps?.meta?.alternates} />
+      <Header pageType="content" alternates={alternates} />
       <Flex as="main" role="main" sx={{ flexDirection: "column", flex: 1 }}>
         {children}
       </Flex>
