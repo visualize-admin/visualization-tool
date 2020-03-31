@@ -6,10 +6,10 @@ import { HomeLink } from "./links";
 
 export const Header = ({
   pageType = "app",
-  alternates
+  contentId
 }: {
   pageType?: "content" | "app";
-  alternates?: { [k: string]: { path: string; title: string } };
+  contentId?: string
 }) => {
   return (
     <Flex
@@ -48,7 +48,7 @@ export const Header = ({
             }
       }
     >
-      <LanguageMenu alternates={alternates} />
+      <LanguageMenu contentId={contentId} />
       <Logo />
     </Flex>
   );

@@ -2,15 +2,20 @@ import { CurrentPageLink } from "./links";
 import { useLocale } from "../lib/use-locale";
 import { Link, Box, Flex } from "@theme-ui/components";
 import NextLink from "next/link";
+import contentRoutes from "../content-routes.json";
 
 const localesOrder = ["de", "fr", "it", "en"];
 
-export const LanguageMenu = ({
-  alternates
-}: {
-  alternates?: { [k: string]: {path:string} };
-}) => {
+export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
   const currentLocale = useLocale();
+
+  const alternates =
+    contentId && contentId in contentRoutes
+      ? (contentRoutes as {
+          [k: string]: { [k: string]: { title: string; path: string } };
+        })[contentId]
+      : undefined;
+
   return (
     <Flex
       as="ul"

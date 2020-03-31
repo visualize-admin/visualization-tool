@@ -1,8 +1,7 @@
-import { ReactNode } from "react";
 import { Flex } from "@theme-ui/components";
-import { Header } from "./header";
+import { ReactNode } from "react";
 import { Footer } from "./footer";
-import contentRoutes from "../content-routes.json";
+import { Header } from "./header";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
@@ -27,13 +26,6 @@ export const ContentLayout = ({
   children?: ReactNode;
   [k: string]: unknown;
 }) => {
-  const alternates =
-    typeof contentId === "string" && contentId in contentRoutes
-      ? (contentRoutes as {
-          [k: string]: { [k: string]: { title: string; path: string } };
-        })[contentId]
-      : undefined;
-
   return (
     <Flex
       sx={{
@@ -42,7 +34,10 @@ export const ContentLayout = ({
         bg: homepage ? "monochrome100" : "muted"
       }}
     >
-      <Header pageType="content" alternates={alternates} />
+      <Header
+        pageType="content"
+        contentId={typeof contentId === "string" ? contentId : undefined}
+      />
       <Flex as="main" role="main" sx={{ flexDirection: "column", flex: 1 }}>
         {children}
       </Flex>
