@@ -28,7 +28,11 @@ export const ChartTypeSelectionButton = ({
         borderRadius: "default",
 
         backgroundColor: checked ? "primary" : "monochrome100",
-        color: checked ? "mutedColored" : disabled ? "mutedDarker" : "primary",
+        color: checked
+          ? "mutedColored"
+          : disabled
+          ? "monochrome500"
+          : "primary",
 
         display: "flex",
         flexDirection: "column",
@@ -36,6 +40,8 @@ export const ChartTypeSelectionButton = ({
         alignItems: "center",
 
         cursor: disabled ? "initial" : "pointer",
+        pointerEvents: disabled ? "none" : "initial",
+
         transition: "all .2s",
 
         ":hover": {
@@ -51,7 +57,11 @@ export const ChartTypeSelectionButton = ({
       <Text
         variant="paragraph2"
         sx={{
-          color: checked ? "monochrome100" : "monochrome700",
+          color: disabled
+            ? "monochrome600"
+            : checked
+            ? "monochrome100"
+            : "monochrome700",
           fontSize: [2, 2, 2]
         }}
       >
