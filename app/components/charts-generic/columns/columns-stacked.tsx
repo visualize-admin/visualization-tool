@@ -20,8 +20,8 @@ export const ColumnsStacked = () => {
             <Column
               key={`${getX(segment.data)}-${i}`}
               x={xScale(getX(segment.data)) as number}
-              y={yScale(segment[1])}
               width={xScale.bandwidth()}
+              y={yScale(segment[1])}
               height={yScale(segment[0]) - yScale(segment[1])}
             />
           ))}

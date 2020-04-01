@@ -1,4 +1,4 @@
-import { ascending, group, max } from "d3-array";
+import { ascending, group, max, min } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal
 } from "d3-scale";
-import { stack } from "d3-shape";
+import { stack, stackOffsetDiverging } from "d3-shape";
 import * as React from "react";
 import { ReactNode } from "react";
 import { ColumnFields, Observation, ObservationValue } from "../../../domain";
@@ -96,8 +96,12 @@ const useColumnsStackedState = ({
       [xKey]: key
     });
   }
+  const minTotal = Math.min(
+    min<$FixMe, number>(wide, d => d.total) as number,
+    0
+  );
   const maxTotal = max<$FixMe, number>(wide, d => d.total) as number;
-  const yStackDomain = [0, maxTotal] as [number, number];
+  const yStackDomain = [minTotal, maxTotal] as [number, number];
   const yAxisLabel =
     measures.find(d => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
@@ -107,7 +111,9 @@ const useColumnsStackedState = ({
     .nice();
 
   // data
-  const stacked = stack().keys(segments);
+  const stacked = stack()
+    .offset(stackOffsetDiverging)
+    .keys(segments);
   const series = stacked(wide as { [key: string]: number }[]);
 
   // Tooltip
@@ -121,10 +127,12 @@ const useColumnsStackedState = ({
     const cumulativeRulerItemValues = [...tooltipValues.map(cumulativeSum)];
 
     const yRef = yScale(
-      cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1]
+      Math.max(
+        cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1],
+        0
+      )
     );
     const yAnchor = yRef;
-
     const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
 
     const getXPlacement = () => {

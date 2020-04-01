@@ -11,7 +11,7 @@ import { A11yTable } from "./a11y-table";
 import { HoverDotMultiple } from "./charts-generic/annotations/hover-dots-multiple";
 import { Ruler } from "./charts-generic/annotations/ruler";
 import { Tooltip } from "./charts-generic/annotations/tooltip";
-import { AxisTime } from "./charts-generic/axis";
+import { AxisTime, AxisTimeDomain } from "./charts-generic/axis";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
@@ -98,12 +98,9 @@ export const ChartLines = memo(
       >
         <ChartContainer>
           <ChartSvg>
-            <AxisHeightLinear />
-            <AxisTime />
+            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
             <Lines />
-            <HoverLine />
-            <HoverLineValues />
-
+            {/* <HoverLine /> <HoverLineValues /> */}
             <InteractionHorizontal />
           </ChartSvg>
 

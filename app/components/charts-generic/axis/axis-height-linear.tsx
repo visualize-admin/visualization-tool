@@ -19,17 +19,16 @@ export const AxisHeightLinear = () => {
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const tickValues = yScale.ticks(4);
-    if (!tickValues.includes(yScale.domain()[1])) {
-      tickValues.splice(-1, 1);
-      tickValues.push(yScale.domain()[1]);
-    }
+    const tickValues = yScale.ticks(4).concat(yScale.domain());
+
     g.call(
       axisLeft(yScale)
         .tickValues(tickValues)
-        .tickSize(-bounds.chartWidth)
+        .tickSizeInner(-bounds.chartWidth)
     );
+
     g.select(".domain").remove();
+
     g.selectAll(".tick line")
       .attr("stroke", gridColor)
       .attr("stroke-width", 1);
@@ -56,7 +55,41 @@ export const AxisHeightLinear = () => {
       <g
         ref={ref}
         transform={`translate(${bounds.margins.left}, ${bounds.margins.top})`}
-      ></g>
+      />
     </>
+  );
+};
+
+export const AxisHeightLinearDomain = () => {
+  const ref = useRef<SVGGElement>(null);
+  const { xScale, yScale, bounds } = useChartState() as
+    | ColumnsState
+    | LinesState
+    | AreasState;
+  const { domainColor } = useChartTheme();
+
+  const mkAxisDomain = (
+    g: Selection<SVGGElement, unknown, null, undefined>
+  ) => {
+    g.call(axisLeft(yScale).tickSizeOuter(0));
+
+    g.select(".domain")
+      .attr("data-name", "height-axis-domain")
+      .attr("transform", `translate(${xScale(0 as $FixMe)}, 0)`)
+      .attr("stroke", domainColor);
+
+    g.selectAll(".tick line").remove();
+    g.selectAll(".tick text").remove();
+  };
+  useEffect(() => {
+    const g = select(ref.current);
+    mkAxisDomain(g as Selection<SVGGElement, unknown, null, undefined>);
+  });
+
+  return (
+    <g
+      ref={ref}
+      transform={`translate(${bounds.margins.left}, ${bounds.margins.top})`}
+    />
   );
 };

@@ -8,7 +8,6 @@ import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { Box } from "@theme-ui/components";
 import { TooltipScatterplot } from "../annotations/tooltip-content";
 
 export interface ScatterplotState {
