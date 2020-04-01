@@ -10,6 +10,7 @@ import { Observation } from "../../domain";
 
 export interface AnnotationState {
   visible: boolean;
+  mouse?: { x: number; y: number } | undefined;
   d: Observation | undefined;
 }
 
@@ -29,6 +30,7 @@ type InteractionStateAction =
 const INTERACTION_INITIAL_STATE: InteractionState = {
   annotation: {
     visible: false,
+    mouse: undefined,
     d: undefined
   }
 };
@@ -44,6 +46,12 @@ const InteractionStateReducer = (
         ...state,
         annotation: {
           visible: action.value.annotation.visible,
+          mouse: action.value.annotation.mouse
+            ? {
+                x: action.value.annotation.mouse.x,
+                y: action.value.annotation.mouse.y
+              }
+            : undefined,
           d: action.value.annotation.d
         }
       };
@@ -52,7 +60,8 @@ const InteractionStateReducer = (
         ...state,
         annotation: {
           ...state.annotation,
-          visible: false
+          visible: false,
+          mouse: undefined
         }
       };
 

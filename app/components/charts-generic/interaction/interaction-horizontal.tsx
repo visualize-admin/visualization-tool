@@ -17,7 +17,7 @@ export const InteractionHorizontal = React.memo(
     const { chartWidth, chartHeight, margins } = bounds;
 
     const findDatum = (e: React.MouseEvent) => {
-      const [x] = clientPoint(ref.current!, e);
+      const [x, y] = clientPoint(ref.current!, e);
 
       const bisectDate = bisector(
         (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
@@ -40,6 +40,7 @@ export const InteractionHorizontal = React.memo(
           value: {
             annotation: {
               visible: true,
+              mouse: { x, y },
               d: data.find(
                 // FIXME: we should also filter on y
                 d => getX(closestDatum).getTime() === getX(d).getTime()
