@@ -11,9 +11,7 @@ import { formatDateAuto } from "../../../domain/helpers";
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
 
-  const { xScale, xUniqueValues, bounds } = useChartState() as
-    | LinesState
-    | AreasState;
+  const { xScale, bounds } = useChartState() as LinesState | AreasState;
 
   const { labelColor, labelFontSize, fontFamily } = useChartTheme();
 
@@ -23,11 +21,42 @@ export const AxisTime = () => {
         // .ticks(Math.min(xUniqueValues.length, 5))
         .tickFormat(x => formatDateAuto(x as Date))
     );
+    g.select(".domain").remove();
     g.selectAll(".tick line").remove();
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
       .attr("font-family", fontFamily)
       .attr("fill", labelColor);
+  };
+
+  useEffect(() => {
+    const g = select(ref.current);
+    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+  });
+
+  return (
+    <g
+      ref={ref}
+      transform={`translate(${bounds.margins.left}, ${bounds.chartHeight +
+        bounds.margins.top})`}
+    />
+  );
+};
+
+export const AxisTimeDomain = () => {
+  const ref = useRef<SVGGElement>(null);
+
+  const { xScale, yScale, bounds } = useChartState() as LinesState | AreasState;
+
+  const { domainColor } = useChartTheme();
+
+  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+    g.call(axisBottom(xScale).tickSizeOuter(0));
+    g.selectAll(".tick line").remove();
+    g.selectAll(".tick text").remove();
+    g.select(".domain")
+      .attr("transform", `translate(0, -${bounds.chartHeight - yScale(0)})`)
+      .attr("stroke", domainColor);
   };
 
   useEffect(() => {

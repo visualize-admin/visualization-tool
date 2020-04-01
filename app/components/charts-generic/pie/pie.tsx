@@ -27,12 +27,9 @@ export const Pie = () => {
         <Arc
           key={i}
           arcDatum={arcDatum}
-          tooltipContent={getX(arcDatum.data)}
           innerRadius={innerRadius}
           outerRadius={outerRadius}
           color={colors(getX(arcDatum.data))}
-          chartWidth={chartWidth}
-          chartHeight={chartHeight}
         />
       ))}
     </g>
@@ -41,20 +38,14 @@ export const Pie = () => {
 
 const Arc = ({
   arcDatum,
-  tooltipContent,
   innerRadius,
   outerRadius,
-  color,
-  chartWidth,
-  chartHeight
+  color
 }: {
   arcDatum: PieArcDatum<Observation>;
-  tooltipContent: string;
   innerRadius: number;
   outerRadius: number;
   color: string;
-  chartWidth: number;
-  chartHeight: number;
 }) => {
   const [, dispatch] = useInteraction();
   const { startAngle, endAngle } = arcDatum;

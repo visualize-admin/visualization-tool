@@ -23,9 +23,9 @@ export const ColumnsGrouped = () => {
             <Column
               key={i}
               x={xScaleIn(getSegment(d)) as number}
-              y={yScale(getY(d))}
+              y={yScale(Math.max(0, getY(d)))}
               width={xScaleIn.bandwidth()}
-              height={yScale(0) - yScale(getY(d))}
+              height={Math.abs(yScale(getY(d)) - yScale(0))}
               color={colors(getSegment(d))}
             />
           ))}

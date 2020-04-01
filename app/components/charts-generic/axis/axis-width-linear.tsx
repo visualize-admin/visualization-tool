@@ -8,25 +8,19 @@ import { ScatterplotState } from "../scatterplot/scatterplot-state";
 
 export const AxisWidthLinear = () => {
   const { xScale, bounds, xAxisLabel } = useChartState() as ScatterplotState;
-
   const { chartWidth, chartHeight, margins } = bounds;
-
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
-
-  const ref = useRef<SVGGElement>(null);
+  const xAxisRef = useRef<SVGGElement>(null);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const tickValues = xScale.ticks(4);
-    if (!tickValues.includes(xScale.domain()[1])) {
-      tickValues.splice(-1, 1);
-      tickValues.push(xScale.domain()[1]);
-    }
+    const tickValues = xScale.ticks(4).concat(xScale.domain());
+
     g.call(
       axisBottom(xScale)
         .tickValues(tickValues)
-        .tickSize(-chartHeight)
+        .tickSizeInner(-chartHeight)
     );
-    g.select(".domain").remove();
+
     g.selectAll(".tick line")
       .attr("stroke", gridColor)
       .attr("stroke-width", 1);
@@ -37,9 +31,12 @@ export const AxisWidthLinear = () => {
       .attr("x", 0)
       .attr("dy", labelFontSize)
       .attr("text-anchor", "middle");
+
+    g.select("path.domain").remove();
   };
+
   useEffect(() => {
-    const g = select(ref.current);
+    const g = select(xAxisRef.current);
     mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
   });
 
@@ -57,9 +54,42 @@ export const AxisWidthLinear = () => {
         </text>
       </g>
       <g
-        ref={ref}
+        ref={xAxisRef}
+        key="x-axis-linear"
         transform={`translate(${margins.left}, ${chartHeight + margins.top})`}
-      ></g>
+      />
     </>
+  );
+};
+
+export const AxisWidthLinearDomain = () => {
+  const { xScale, yScale, bounds } = useChartState() as ScatterplotState;
+  const { chartHeight, margins } = bounds;
+  const { domainColor } = useChartTheme();
+  const xAxisDomainRef = useRef<SVGGElement>(null);
+
+  const mkAxisDomain = (
+    g: Selection<SVGGElement, unknown, null, undefined>
+  ) => {
+    g.call(axisBottom(xScale).tickSizeOuter(0));
+    g.selectAll(".tick line").remove();
+    g.selectAll(".tick text").remove();
+    g.select("path.domain")
+      .attr("data-name", "width-axis-domain")
+      .attr("transform", `translate(0, -${bounds.chartHeight - yScale(0)})`)
+      .attr("stroke", domainColor);
+  };
+
+  useEffect(() => {
+    const g = select(xAxisDomainRef.current);
+    mkAxisDomain(g as Selection<SVGGElement, unknown, null, undefined>);
+  });
+
+  return (
+    <g
+      ref={xAxisDomainRef}
+      key="x-axis-linear-domain"
+      transform={`translate(${margins.left}, ${chartHeight + margins.top})`}
+    />
   );
 };

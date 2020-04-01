@@ -12,7 +12,7 @@ import { Ruler } from "./charts-generic/annotations/ruler";
 import { Tooltip } from "./charts-generic/annotations/tooltip";
 import { Areas } from "./charts-generic/areas/areas";
 import { AreaChart } from "./charts-generic/areas/areas-state";
-import { AxisTime } from "./charts-generic/axis";
+import { AxisTime, AxisTimeDomain } from "./charts-generic/axis";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
@@ -96,9 +96,8 @@ export const ChartAreas = memo(
       >
         <ChartContainer>
           <ChartSvg>
-            <AxisTime />
-            <AxisHeightLinear />
-            <Areas />
+            <AxisTime /> <AxisHeightLinear />
+            <Areas /> <AxisTimeDomain />
             <InteractionHorizontal />
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
