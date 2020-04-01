@@ -66,8 +66,9 @@ const TooltipInner = ({
       placement={placement}
       margins={margins}
     >
-      {tooltipContent ? tooltipContent : "coucou"}
-      {/* {type === "multiple" && values ? (
+      {tooltipContent ? (
+        tooltipContent
+      ) : type === "multiple" && values ? (
         <TooltipMultiple xValue={xValue} segmentValues={values} />
       ) : (
         <TooltipSingle
@@ -75,7 +76,7 @@ const TooltipInner = ({
           segment={datum.label}
           yValue={datum.value}
         />
-      )} */}
+      )}
     </TooltipBox>
   );
 };
