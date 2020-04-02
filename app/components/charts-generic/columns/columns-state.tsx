@@ -143,7 +143,7 @@ const useColumnsState = ({
   const getAnnotationInfo = (datum: Observation): Tooltip => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
-    const yRef = yScale(getY(datum));
+    const yRef = yScale(Math.max(getY(datum), 0));
     const yAnchor = yRef;
 
     const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";

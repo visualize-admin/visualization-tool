@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Observation } from "../../../domain";
 import { LinesState } from "../lines/lines-state";
 import { useChartState } from "../use-chart-state";
@@ -11,8 +11,10 @@ export const TOOLTIP_OFFSET = 4;
 
 export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
-  const { visible, d } = state.annotation;
-  return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
+  const { visible, mouse, d } = state.annotation;
+  return (
+    <>{visible && d && <TooltipInner d={d} mouse={mouse} type={type} />}</>
+  );
 };
 
 export type Xplacement = "left" | "center" | "right";
@@ -31,11 +33,20 @@ export interface Tooltip {
   yAnchor: number;
   placement: TooltipPlacement;
   xValue: string;
+  tooltipContent?: ReactNode;
   datum: TooltipValue;
   values: TooltipValue[] | undefined;
 }
 
-const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
+const TooltipInner = ({
+  d,
+  mouse,
+  type
+}: {
+  d: Observation;
+  mouse?: { x: number; y: number };
+  type: TooltipType;
+}) => {
   const { bounds, getAnnotationInfo } = useChartState() as LinesState;
   const { margins } = bounds;
   const {
@@ -43,13 +54,21 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
     yAnchor,
     placement,
     xValue,
+    tooltipContent,
     datum,
     values
   } = getAnnotationInfo(d);
 
   return (
-    <TooltipBox x={xAnchor} y={yAnchor} placement={placement} margins={margins}>
-      {type === "multiple" && values ? (
+    <TooltipBox
+      x={xAnchor}
+      y={mouse && values && values.length > 1 ? mouse.y : yAnchor}
+      placement={placement}
+      margins={margins}
+    >
+      {tooltipContent ? (
+        tooltipContent
+      ) : type === "multiple" && values ? (
         <TooltipMultiple xValue={xValue} segmentValues={values} />
       ) : (
         <TooltipSingle

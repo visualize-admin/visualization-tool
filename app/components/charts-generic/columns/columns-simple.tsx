@@ -21,10 +21,12 @@ export const Columns = () => {
         <Column
           key={i}
           x={xScale(getX(d)) as number}
-          y={yScale(getY(d))}
           width={xScale.bandwidth()}
-          height={yScale(0) - yScale(getY(d))}
-          color={theme.colors.primary}
+          // y={yScale(getY(d))}
+          y={yScale(Math.max(0, getY(d)))}
+          // height={yScale(0) - yScale(getY(d))}
+          height={Math.abs(yScale(getY(d)) - yScale(0))}
+          color={getY(d) <= 0 ? theme.colors.secondary : theme.colors.primary}
         />
       ))}
     </g>

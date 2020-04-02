@@ -8,12 +8,13 @@ import { ColumnsState } from "../columns/columns-state";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const { xScale, bounds } = useChartState() as ColumnsState;
+  const { xScale, yScale, bounds } = useChartState() as ColumnsState;
 
   const { chartHeight, margins } = bounds;
 
   const {
     labelColor,
+    gridColor,
     labelFontSize,
     fontFamily,
     domainColor
@@ -21,10 +22,17 @@ export const AxisWidthBand = () => {
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     const rotation = xScale.domain().length > 6;
-
-    g.call(axisBottom(xScale).tickSizeOuter(0));
-    g.select(".domain").attr("stroke", domainColor);
-    g.selectAll(".tick line").attr("stroke", domainColor);
+    const hasNegativeValues = yScale.domain()[0] < 0;
+    g.call(
+      axisBottom(xScale)
+        .tickSizeOuter(0)
+        .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
+    );
+    g.select(".domain").remove();
+    g.selectAll(".tick line").attr(
+      "stroke",
+      hasNegativeValues ? gridColor : domainColor
+    );
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
       .attr("font-family", fontFamily)
@@ -39,6 +47,36 @@ export const AxisWidthBand = () => {
   useEffect(() => {
     const g = select(ref.current);
     mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+  });
+
+  return (
+    <g
+      ref={ref}
+      transform={`translate(${margins.left}, ${chartHeight + margins.top})`}
+    ></g>
+  );
+};
+
+export const AxisWidthBandDomain = () => {
+  const ref = useRef<SVGGElement>(null);
+  const { xScale, yScale, bounds } = useChartState() as ColumnsState;
+  const { chartHeight, margins } = bounds;
+  const { domainColor } = useChartTheme();
+
+  const mkAxisDomain = (
+    g: Selection<SVGGElement, unknown, null, undefined>
+  ) => {
+    g.call(axisBottom(xScale).tickSizeOuter(0));
+    g.selectAll(".tick line").remove();
+    g.selectAll(".tick text").remove();
+    g.select(".domain")
+      .attr("transform", `translate(0, -${bounds.chartHeight - yScale(0)})`)
+      .attr("stroke", domainColor);
+  };
+
+  useEffect(() => {
+    const g = select(ref.current);
+    mkAxisDomain(g as Selection<SVGGElement, unknown, null, undefined>);
   });
 
   return (

@@ -9,7 +9,7 @@ import {
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
 import { Tooltip } from "./charts-generic/annotations/tooltip";
-import { AxisWidthBand } from "./charts-generic/axis";
+import { AxisWidthBand, AxisWidthBandDomain } from "./charts-generic/axis";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ColumnsGrouped } from "./charts-generic/columns/columns-grouped";
 import { GroupedColumnChart } from "./charts-generic/columns/columns-grouped-state";
@@ -100,9 +100,8 @@ export const ChartColumns = memo(
           >
             <ChartContainer>
               <ChartSvg>
-                <AxisHeightLinear />
-                <AxisWidthBand />
-                <ColumnsStacked />
+                <AxisHeightLinear /> <AxisWidthBand />
+                <ColumnsStacked /> <AxisWidthBandDomain />
                 <InteractionColumns />
               </ChartSvg>
               <Tooltip type="multiple" />
@@ -118,9 +117,8 @@ export const ChartColumns = memo(
           >
             <ChartContainer>
               <ChartSvg>
-                <AxisHeightLinear />
-                <AxisWidthBand />
-                <ColumnsGrouped />
+                <AxisHeightLinear /> <AxisWidthBand />
+                <ColumnsGrouped /> <AxisWidthBandDomain />
                 <InteractionColumns />
               </ChartSvg>
               <Tooltip type="multiple" />
@@ -137,9 +135,8 @@ export const ChartColumns = memo(
           >
             <ChartContainer>
               <ChartSvg>
-                <AxisHeightLinear />
-                <AxisWidthBand />
-                <Columns />
+                <AxisHeightLinear /> <AxisWidthBand />
+                <Columns /> <AxisWidthBandDomain />
                 <InteractionColumns />
               </ChartSvg>
               <Tooltip type="single" />

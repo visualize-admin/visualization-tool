@@ -8,6 +8,7 @@ import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useBounds } from "../use-bounds";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
+import { TooltipScatterplot } from "../annotations/tooltip-content";
 
 export interface ScatterplotState {
   data: Observation[];
@@ -93,6 +94,13 @@ const useScatterplotState = ({
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
       xValue: formatNumber(getX(datum)),
+      tooltipContent: (
+        <TooltipScatterplot
+          firstLine={fields.segment && getSegment(datum)}
+          secondLine={`${xAxisLabel}: ${formatNumber(getX(datum))}`}
+          thirdLine={`${yAxisLabel}: ${formatNumber(getY(datum))}`}
+        />
+      ),
       datum: {
         label: fields.segment && getSegment(datum),
         value: formatNumber(getY(datum)),

@@ -10,8 +10,11 @@ import {
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
 
-import { AxisWidthLinear } from "./charts-generic/axis";
-import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
+import { AxisWidthLinear, AxisWidthLinearDomain } from "./charts-generic/axis";
+import {
+  AxisHeightLinear,
+  AxisHeightLinearDomain
+} from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionVoronoi } from "./charts-generic/interaction/interaction-voronoi";
 import { LegendColor } from "./charts-generic/legends/color";
@@ -103,8 +106,10 @@ export const ChartScatterplot = memo(
       >
         <ChartContainer>
           <ChartSvg>
-            <AxisHeightLinear />
             <AxisWidthLinear />
+            <AxisHeightLinear />
+            <AxisWidthLinearDomain />
+            <AxisHeightLinearDomain />
             <Scatterplot />
             <InteractionVoronoi />
           </ChartSvg>
