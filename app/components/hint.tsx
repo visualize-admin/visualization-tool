@@ -191,7 +191,7 @@ export const HintRed = ({
     sx={{
       width: "auto",
       height: "auto",
-      borderRadius: "4px",
+      borderRadius: "bigger",
       margin: "auto",
       p: 5,
       bg: "alertLight",

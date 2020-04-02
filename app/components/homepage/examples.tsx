@@ -228,7 +228,7 @@ const Example = ({
         borderWidth: "1px",
         borderStyle: "solid",
         borderColor: "monochrome300",
-        boxShadow: "0 3px 5px 0 rgba(0,0,0,0.10)",
+        boxShadow: "primary",
         width: ["100%", "100%", "50%"],
         mt: 2,
         minWidth: 0,
