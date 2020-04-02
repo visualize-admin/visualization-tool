@@ -44,6 +44,7 @@ export const ContentLayout = ({
         sx={{
           flexDirection: "column",
           flex: 1,
+          width: "100%",
           maxWidth: isHome ? undefined : 1024,
           mx: isHome ? undefined : [0, 0, "auto"],
           px: isHome ? undefined : 4
