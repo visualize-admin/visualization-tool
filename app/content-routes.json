@@ -1,0 +1,38 @@
+{
+  "imprint": {
+    "de": {
+      "title": "Impressum",
+      "path": "/de/impressum"
+    },
+    "fr": {
+      "title": "Empreinte",
+      "path": "/fr/empreinte"
+    },
+    "it": {
+      "title": "Colophon",
+      "path": "/it/colophon"
+    },
+    "en": {
+      "title": "Imprint",
+      "path": "/en/imprint"
+    }
+  },
+  "legal": {
+    "de": {
+      "title": "Rechtliche Grundlagen",
+      "path": "/de/rechtliche-grundlagen"
+    },
+    "fr": {
+      "title": "Bases légales",
+      "path": "/fr/bases-legales"
+    },
+    "it": {
+      "title": "Basi legali",
+      "path": "/it/basi-legali"
+    },
+    "en": {
+      "title": "Legal Basis",
+      "path": "/en/legal-basis"
+    }
+  }
+}

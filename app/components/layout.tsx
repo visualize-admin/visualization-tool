@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
 import { Flex } from "@theme-ui/components";
-import { Header } from "./header";
+import { ReactNode } from "react";
 import { Footer } from "./footer";
+import { Header } from "./header";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
@@ -16,27 +16,46 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => (
     </Flex>
   </Flex>
 );
+
 export const ContentLayout = ({
-  homepage = true,
-  children
+  isHome = false,
+  children,
+  contentId
 }: {
-  homepage?: boolean;
+  isHome?: boolean;
   children?: ReactNode;
-}) => (
-  <Flex
-    sx={{
-      minHeight: "100vh",
-      flexDirection: "column",
-      bg: homepage ? "monochrome100" : "muted"
-    }}
-  >
-    <Header pageType="content" />
-    <Flex as="main" role="main" sx={{ flexDirection: "column", flex: 1 }}>
-      {children}
+  [k: string]: unknown;
+}) => {
+  return (
+    <Flex
+      sx={{
+        minHeight: "100vh",
+        flexDirection: "column",
+        bg: "monochrome100"
+      }}
+    >
+      <Header
+        pageType="content"
+        contentId={typeof contentId === "string" ? contentId : undefined}
+      />
+      <Flex
+        as="main"
+        role="main"
+        sx={{
+          flexDirection: "column",
+          flex: 1,
+          width: "100%",
+          maxWidth: isHome ? undefined : 1024,
+          mx: isHome ? undefined : [0, 0, "auto"],
+          px: isHome ? undefined : 4
+        }}
+      >
+        {children}
+      </Flex>
+      <Footer />
     </Flex>
-    <Footer />
-  </Flex>
-);
+  );
+};
 
 export const Center = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ justifyContent: "center", alignItems: "center", flex: 1 }}>

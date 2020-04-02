@@ -1,11 +1,21 @@
 import { CurrentPageLink } from "./links";
 import { useLocale } from "../lib/use-locale";
 import { Link, Box, Flex } from "@theme-ui/components";
+import NextLink from "next/link";
+import contentRoutes from "../content-routes.json";
 
 const localesOrder = ["de", "fr", "it", "en"];
 
-export const LanguageMenu = () => {
+export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
   const currentLocale = useLocale();
+
+  const alternates =
+    contentId && contentId in contentRoutes
+      ? (contentRoutes as {
+          [k: string]: { [k: string]: { title: string; path: string } };
+        })[contentId]
+      : undefined;
+
   return (
     <Flex
       as="ul"
@@ -19,31 +29,45 @@ export const LanguageMenu = () => {
         justifyContent: "flex-end"
       }}
     >
-      {localesOrder.map(locale => (
-        <Box as="li" key={locale} sx={{ ml: 1, p: 0 }}>
-          <CurrentPageLink locale={locale} passHref>
-            <Link
-              rel="alternate"
-              hrefLang={locale}
-              sx={{
-                variant: "text.paragraph2",
-                fontSize: 3,
-                lineHeight: 3,
-                p: 1,
-                textTransform: "uppercase",
-                textDecoration: "none",
-                color: "monochrome700",
-                bg:
-                  locale === currentLocale
-                    ? ["monochrome500", "monochrome300"]
-                    : "transparent"
-              }}
-            >
-              {locale}
-            </Link>
-          </CurrentPageLink>
-        </Box>
-      ))}
+      {localesOrder.map(locale => {
+        const alternate = alternates?.[locale];
+
+        const linkEl = (
+          <Link
+            rel="alternate"
+            hrefLang={locale}
+            sx={{
+              variant: "text.paragraph2",
+              fontSize: 3,
+              lineHeight: 3,
+              p: 1,
+              textTransform: "uppercase",
+              textDecoration: "none",
+              color: "monochrome700",
+              bg:
+                locale === currentLocale
+                  ? ["monochrome500", "monochrome300"]
+                  : "transparent"
+            }}
+          >
+            {locale}
+          </Link>
+        );
+
+        return (
+          <Box as="li" key={locale} sx={{ ml: 1, p: 0 }}>
+            {alternate ? (
+              <NextLink href={alternate.path} passHref>
+                {linkEl}
+              </NextLink>
+            ) : (
+              <CurrentPageLink locale={locale} passHref>
+                {linkEl}
+              </CurrentPageLink>
+            )}
+          </Box>
+        );
+      })}
     </Flex>
   );
 };
