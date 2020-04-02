@@ -17,7 +17,7 @@ export const Intro = ({
   return (
     <Box sx={{ maxWidth: 1024, m: "0 auto" }}>
       <Box sx={{ mx: 4, my: 6 }}>
-        <HintRed iconName="warning">{hint}</HintRed>
+        <HintRed iconName="hintWarning">{hint}</HintRed>
       </Box>
       <Box
         sx={{
@@ -33,7 +33,7 @@ export const Intro = ({
           pb: [7, 8]
         }}
       >
-        <Box sx={{ maxWidth: 657, m: "0 auto" }}>
+        <Box sx={{ maxWidth: 768, m: "0 auto" }}>
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <Flex sx={{ justifyContent: "center" }}>

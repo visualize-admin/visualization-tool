@@ -19,6 +19,7 @@ import { IconDataset } from "./ic-dataset";
 import { IconDatasetPublished } from "./ic-dataset-published";
 import { IconLoading } from "./ic-loading";
 import { IconWarning } from "./ic-warning";
+import { IconHintWarning } from "./ic-hint-warning";
 import { IconResize } from "./ic-resize";
 import { IconTable } from "./ic-table";
 import { IconSegment } from "./ic-segment";
@@ -58,6 +59,7 @@ export const Icons = {
   published: IconDatasetPublished,
   loading: IconLoading,
   warning: IconWarning,
+  hintWarning: IconHintWarning,
   resize: IconResize,
   table: IconTable,
   x: IconX,
