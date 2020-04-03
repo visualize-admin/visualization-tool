@@ -1,18 +1,25 @@
 import { MDXProvider } from "@mdx-js/react";
-import { ContentLayout } from "./layout";
+import { ContentLayout, StaticContentLayout } from "./layout";
 import { Intro, Tutorial, Examples, Contribute } from "../components/homepage";
 import { Box } from "@theme-ui/components";
+import { ReactNode } from "react";
 
-const Wrapper = (props: { [k: string]: unknown }) => (
-  <ContentLayout
-    {...props}
-    isHome={
-      typeof props.contentId === "string" && props.contentId === "home"
-        ? true
-        : false
-    }
-  />
-);
+const Wrapper = ({
+  contentId,
+  children
+}: {
+  contentId: unknown;
+  children: ReactNode;
+}) => {
+  if (typeof contentId !== "string") {
+    return <StaticContentLayout>{children}</StaticContentLayout>;
+  }
+  return contentId === "home" ? (
+    <ContentLayout contentId={contentId}>{children}</ContentLayout>
+  ) : (
+    <StaticContentLayout contentId={contentId}>{children}</StaticContentLayout>
+  );
+};
 
 const defaultMDXComponents = {
   wrapper: Wrapper,

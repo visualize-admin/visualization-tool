@@ -17,7 +17,7 @@ type PageProps = {
 const Page: NextPage<PageProps> = ({ configs }) => {
   return (
     <>
-      <ContentLayout homepage={false}>
+      <ContentLayout>
         <Box px={4} bg="muted" mb="auto">
           <Flex sx={{ pt: 4, flexWrap: "wrap" }}>
             {configs.map(({ key, data: { dataSet, chartConfig, meta } }) => {

@@ -18,13 +18,43 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => (
 );
 
 export const ContentLayout = ({
-  isHome = false,
   children,
   contentId
 }: {
-  isHome?: boolean;
   children?: ReactNode;
-  [k: string]: unknown;
+  contentId?: string;
+}) => {
+  return (
+    <Flex
+      sx={{
+        minHeight: "100vh",
+        flexDirection: "column",
+        bg: contentId === "home" ? "monochrome100" : "muted"
+      }}
+    >
+      <Header pageType="content" contentId={contentId} />
+      <Flex
+        as="main"
+        role="main"
+        sx={{
+          flexDirection: "column",
+          flex: 1,
+          width: "100%"
+        }}
+      >
+        {children}
+      </Flex>
+      <Footer />
+    </Flex>
+  );
+};
+
+export const StaticContentLayout = ({
+  children,
+  contentId
+}: {
+  children?: ReactNode;
+  contentId?: string;
 }) => {
   return (
     <Flex
@@ -34,10 +64,7 @@ export const ContentLayout = ({
         bg: "monochrome100"
       }}
     >
-      <Header
-        pageType="content"
-        contentId={typeof contentId === "string" ? contentId : undefined}
-      />
+      <Header pageType="content" contentId={contentId} />
       <Flex
         as="main"
         role="main"
@@ -45,9 +72,9 @@ export const ContentLayout = ({
           flexDirection: "column",
           flex: 1,
           width: "100%",
-          maxWidth: isHome ? undefined : 1024,
-          mx: isHome ? undefined : [0, 0, "auto"],
-          px: isHome ? undefined : 4
+          maxWidth: 1024,
+          mx: [0, 0, "auto"],
+          px: 4
         }}
       >
         {children}

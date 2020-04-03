@@ -67,7 +67,7 @@ export default (props: PageProps) => {
         <meta property="og:description" content={meta.description[locale]} />
         {/* og:url is set in _app.tsx */}
       </Head>
-      <ContentLayout homepage={false}>
+      <ContentLayout>
         <Box px={4} bg="muted" mb="auto">
           <Box sx={{ pt: 4, maxWidth: 696, margin: "auto" }}>
             {publishSuccess && <Success />}
