@@ -47,7 +47,17 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
               bg:
                 locale === currentLocale
                   ? ["monochrome500", "monochrome300"]
-                  : "transparent"
+                  : "transparent",
+              ":hover": {
+                color: "primary"
+              },
+              ":active": {
+                color: "primaryActive"
+              },
+              ":disabled": {
+                cursor: "initial",
+                color: "primaryDisabled"
+              }
             }}
           >
             {locale}
