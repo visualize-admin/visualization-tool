@@ -9,7 +9,7 @@ export const Header = ({
   contentId
 }: {
   pageType?: "content" | "app";
-  contentId?: string
+  contentId?: string;
 }) => {
   return (
     <Flex
@@ -91,7 +91,7 @@ export const Logo = () => {
         <Text
           as="h1"
           variant="lead"
-          sx={{ pl: [0, 6], textDecoration: "none", color: "monochrome700" }}
+          sx={{ pl: [0, 6], textDecoration: "none", color: "monochrome800" }}
         >
           visualize.admin.ch
         </Text>
