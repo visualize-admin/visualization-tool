@@ -1,6 +1,7 @@
 import * as React from "react";
 import { IconCheck } from "./ic-check";
 import { IconAdd } from "./ic-add";
+import { IconClear } from "./ic-clear";
 import { IconSearch } from "./ic-search";
 import { IconChevronUp } from "./ic-chevron-up";
 import { IconChevronDown } from "./ic-chevron-down";
@@ -41,6 +42,7 @@ import { IconArrowDown } from "./ic-arrow-down";
 export const Icons = {
   check: IconCheck,
   add: IconAdd,
+  clear: IconClear,
   search: IconSearch,
   chevronup: IconChevronUp,
   chevrondown: IconChevronDown,
