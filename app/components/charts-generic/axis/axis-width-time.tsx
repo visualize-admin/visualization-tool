@@ -7,22 +7,54 @@ import { useChartState } from "../use-chart-state";
 import { LinesState } from "../lines/lines-state";
 import { AreasState } from "../areas/areas-state";
 import { formatDateAuto } from "../../../domain/helpers";
+import { estimateTextWidth } from "../../../lib/estimate-text-width";
+import { max } from "d3-array";
 
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
 
-  const { xScale, bounds } = useChartState() as LinesState | AreasState;
+  const { xScale, yScale, bounds, xUniqueValues } = useChartState() as
+    | LinesState
+    | AreasState;
 
-  const { labelColor, labelFontSize, fontFamily } = useChartTheme();
+  const {
+    labelColor,
+    gridColor,
+    domainColor,
+    labelFontSize,
+    fontFamily,
+  } = useChartTheme();
+
+  const hasNegativeValues = yScale.domain()[0] < 0;
+
+  const labelLengths = xUniqueValues.map((v) =>
+    estimateTextWidth(formatDateAuto(v))
+  );
+  const maxLabelLength = max(labelLengths, (d) => d) || 70;
+
+  // This could be useful: use data points as tick values,
+  // but it does not solve the problem of overlapping.
+  // const tickValues =
+  //   bounds.chartWidth / (maxLabelLength + 20) > xUniqueValues.length
+  //     ? xUniqueValues
+  //     : null;
+  const ticks = Math.min(
+    xUniqueValues.length,
+    bounds.chartWidth / (maxLabelLength + 20)
+  );
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     g.call(
       axisBottom(xScale)
-        // .ticks(Math.min(xUniqueValues.length, 5))
-        .tickFormat(x => formatDateAuto(x as Date))
+        .ticks(ticks)
+        .tickFormat((x) => formatDateAuto(x as Date))
+      // .tickValues(tickValues as $FixMe)
     );
     g.select(".domain").remove();
-    g.selectAll(".tick line").remove();
+    g.selectAll(".tick line").attr(
+      "stroke",
+      hasNegativeValues ? gridColor : domainColor
+    );
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
       .attr("font-family", fontFamily)

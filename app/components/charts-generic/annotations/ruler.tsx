@@ -2,7 +2,7 @@ import React from "react";
 import { Box } from "theme-ui";
 import { Observation } from "../../../domain/data";
 import { LinesState } from "../lines/lines-state";
-import { Margins } from "../use-bounds";
+import { Margins } from "../use-width";
 import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";
 import { TooltipValue, TooltipPlacement } from "./tooltip";
@@ -21,7 +21,7 @@ const RulerInner = ({ d }: { d: Observation }) => {
     xValue,
     datum,
     placement,
-    values
+    values,
   } = getAnnotationInfo(d);
 
   return (
@@ -57,7 +57,7 @@ export const RulerContent = ({
   xAnchor,
   yAnchor,
   datum,
-  placement
+  placement,
 }: RulerContentProps) => {
   return (
     <>
@@ -65,22 +65,22 @@ export const RulerContent = ({
         style={{
           height: chartHeight,
           left: xAnchor + margins.left,
-          top: margins.top
+          top: margins.top,
         }}
         sx={{
           width: 0,
           position: "absolute",
           borderWidth: 0.5,
-          borderStyle: "dashed",
+          borderStyle: "solid",
           borderColor: "monochrome.200",
           pointerEvents: "none",
-          transform: "translateX(-50%)"
+          transform: "translateX(-50%)",
         }}
       />
       <Box
         style={{
           left: xAnchor + margins.left,
-          top: chartHeight + margins.top + 6
+          top: chartHeight + margins.top + 6,
         }}
         sx={{
           position: "absolute",
@@ -89,7 +89,7 @@ export const RulerContent = ({
           transform: "translateX(-50%)",
           px: 1,
           fontSize: 3,
-          color: "monochrome800"
+          color: "monochrome800",
         }}
       >
         {xValue}

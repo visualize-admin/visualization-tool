@@ -5,10 +5,12 @@ import { ReactNode } from "react";
 import { Observation, ScatterPlotFields } from "../../../domain";
 import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
 import { Tooltip } from "../annotations/tooltip";
-import { Bounds, Observer, useBounds } from "../use-bounds";
+import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { TooltipScatterplot } from "../annotations/tooltip-content";
+import { estimateTextWidth } from "../../../lib/estimate-text-width";
+import { LEFT_MARGIN_OFFSET } from "../constants";
 
 export interface ScatterplotState {
   data: Observation[];
@@ -29,45 +31,64 @@ const useScatterplotState = ({
   data,
   fields,
   measures,
-  bounds
+  aspectRatio,
 }: Pick<ChartProps, "data" | "measures"> & {
-  bounds: Bounds;
   fields: ScatterPlotFields;
+  aspectRatio: number;
 }): ScatterplotState => {
-  const { chartWidth, chartHeight } = bounds;
+  const width = useWidth();
 
   const getX = (d: Observation): number => +d[fields.x.componentIri];
   const getY = (d: Observation): number => +d[fields.y.componentIri];
   const getSegment = (d: Observation): string =>
     fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
   const xAxisLabel =
-    measures.find(d => d.iri === fields.x.componentIri)?.label ??
+    measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.y.componentIri;
-  const xMinValue = Math.min(mkNumber(min(data, d => getX(d))), 0);
-  const xMaxValue = max(data, d => getX(d)) as number;
+  const xMinValue = Math.min(mkNumber(min(data, (d) => getX(d))), 0);
+  const xMaxValue = max(data, (d) => getX(d)) as number;
   const xDomain = [xMinValue, xMaxValue];
-  const xRange = [0, chartWidth];
   const xScale = scaleLinear()
     .domain(xDomain)
-    .range(xRange)
     .nice();
 
   const yAxisLabel =
-    measures.find(d => d.iri === fields.y.componentIri)?.label ??
+    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
-  const yMinValue = Math.min(mkNumber(min(data, d => getY(d))), 0);
+  const yMinValue = Math.min(mkNumber(min(data, (d) => getY(d))), 0);
   const yMaxValue = max(data, getY) as number;
   const yDomain = [yMinValue, yMaxValue];
-  const yRange = [chartHeight, 0];
   const yScale = scaleLinear()
     .domain(yDomain)
-    .range(yRange)
     .nice();
 
   const hasSegment = fields.segment ? true : false;
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     data.map(getSegment)
   );
+
+  // Dimensions
+  const left = Math.max(
+    estimateTextWidth(formatNumber(yScale.domain()[0])),
+    estimateTextWidth(formatNumber(yScale.domain()[1]))
+  );
+  const margins = {
+    top: 50,
+    right: 40,
+    bottom: 50,
+    left: left + LEFT_MARGIN_OFFSET,
+  };
+  const chartWidth = width - margins.left - margins.right;
+  const chartHeight = chartWidth * aspectRatio;
+  const bounds = {
+    width,
+    height: chartHeight + margins.top + margins.bottom,
+    margins,
+    chartWidth,
+    chartHeight,
+  };
+  xScale.range([0, chartWidth]);
+  yScale.range([chartHeight, 0]);
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): Tooltip => {
@@ -104,9 +125,9 @@ const useScatterplotState = ({
       datum: {
         label: fields.segment && getSegment(datum),
         value: formatNumber(getY(datum)),
-        color: colors(getSegment(datum)) as string
+        color: colors(getSegment(datum)) as string,
       },
-      values: undefined
+      values: undefined,
     };
   };
 
@@ -122,7 +143,7 @@ const useScatterplotState = ({
     colors,
     xAxisLabel,
     yAxisLabel,
-    getAnnotationInfo
+    getAnnotationInfo,
   };
 };
 
@@ -130,18 +151,18 @@ const ScatterplotChartProvider = ({
   data,
   fields,
   measures,
-  children
+  aspectRatio,
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
   fields: ScatterPlotFields;
+  aspectRatio: number;
 }) => {
-  const bounds = useBounds();
-
   const state = useScatterplotState({
     data,
     fields,
     measures,
-    bounds
+    aspectRatio,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -153,19 +174,20 @@ export const ScatterplotChart = ({
   fields,
   measures,
   aspectRatio,
-  children
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
   fields: ScatterPlotFields;
   children: ReactNode;
 }) => {
   return (
-    <Observer aspectRatio={aspectRatio}>
+    <Observer>
       <InteractionProvider>
         <ScatterplotChartProvider
           data={data}
           fields={fields}
           measures={measures}
+          aspectRatio={aspectRatio}
         >
           {children}
         </ScatterplotChartProvider>

@@ -1,12 +1,12 @@
 import React, { ReactNode } from "react";
 import { Box } from "theme-ui";
-import { Margins } from "../use-bounds";
+import { Margins } from "../use-width";
 import {
   TRIANGLE_SIZE,
   TOOLTIP_OFFSET,
   TooltipPlacement,
   Xplacement,
-  Yplacement
+  Yplacement,
 } from "./tooltip";
 import { useTheme } from "../../../themes";
 
@@ -23,7 +23,7 @@ export const TooltipBox = ({
   y,
   placement,
   margins,
-  children
+  children,
 }: TooltipBoxProps) => {
   const triangle = mkTriangle(placement);
   const theme = useTheme();
@@ -34,12 +34,12 @@ export const TooltipBox = ({
         position: "absolute",
         left: x! + margins.left,
         top: mxYOffset(y!, placement) + margins.top,
-        pointerEvents: "none"
+        pointerEvents: "none",
       }}
     >
       <Box
         style={{
-          transform: mkTranslation(placement)
+          transform: mkTranslation(placement),
         }}
         sx={{
           width: "fit-content",
@@ -66,8 +66,8 @@ export const TooltipBox = ({
             borderTopColor: triangle.borderTopColor,
             borderRightColor: triangle.borderRightColor,
             borderBottomColor: triangle.borderBottomColor,
-            borderLeftColor: triangle.borderLeftColor
-          }
+            borderLeftColor: triangle.borderLeftColor,
+          },
         }}
       >
         {children}
@@ -132,7 +132,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `transparent`,
         borderRightColor: `transparent`,
         borderBottomColor: `monochrome100`,
-        borderLeftColor: `monochrome100`
+        borderLeftColor: `monochrome100`,
       };
     case p.x === "center" && p.y === "bottom":
       return {
@@ -144,7 +144,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `transparent`,
         borderRightColor: `transparent`,
         borderBottomColor: `monochrome100`,
-        borderLeftColor: `transparent`
+        borderLeftColor: `transparent`,
       };
     case p.x === "left" && p.y === "bottom":
       return {
@@ -156,7 +156,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `transparent`,
         borderRightColor: `monochrome100`,
         borderBottomColor: `monochrome100`,
-        borderLeftColor: `transparent`
+        borderLeftColor: `transparent`,
       };
     // triangle position downwards pointing (placement "top")
     case p.x === "right" && p.y === "top":
@@ -169,7 +169,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `monochrome100`,
         borderRightColor: `transparent`,
         borderBottomColor: `transparent`,
-        borderLeftColor: `monochrome100`
+        borderLeftColor: `monochrome100`,
       };
     case p.x === "center" && p.y === "top":
       return {
@@ -181,7 +181,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `monochrome100`,
         borderRightColor: `transparent`,
         borderBottomColor: `transparent`,
-        borderLeftColor: `transparent`
+        borderLeftColor: `transparent`,
       };
     case p.x === "left" && p.y === "top":
       return {
@@ -193,7 +193,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `monochrome100`,
         borderRightColor: `monochrome100`,
         borderBottomColor: `transparent`,
-        borderLeftColor: `transparent`
+        borderLeftColor: `transparent`,
       };
     // triangle pointing towards the side (left /right) (placement "middle")
     case p.x === "left" && p.y === "middle":
@@ -206,7 +206,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `transparent`,
         borderRightColor: `transparent`,
         borderBottomColor: `transparent`,
-        borderLeftColor: `monochrome100`
+        borderLeftColor: `monochrome100`,
       };
     case p.x === "right" && p.y === "middle":
       return {
@@ -218,7 +218,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `transparent`,
         borderRightColor: `monochrome100`,
         borderBottomColor: `transparent`,
-        borderLeftColor: `transparent`
+        borderLeftColor: `transparent`,
       };
     case p.x === "center" && p.y === "middle":
       return {
@@ -230,7 +230,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `transparent`,
         borderRightColor: `transparent`,
         borderBottomColor: `transparent`,
-        borderLeftColor: `transparent`
+        borderLeftColor: `transparent`,
       };
 
     default:
@@ -243,7 +243,7 @@ const mkTriangle = (p: TooltipPlacement) => {
         borderTopColor: `monochrome100`,
         borderRightColor: `monochrome100`,
         borderBottomColor: `transparent`,
-        borderLeftColor: `transparent`
+        borderLeftColor: `transparent`,
       };
   }
 };

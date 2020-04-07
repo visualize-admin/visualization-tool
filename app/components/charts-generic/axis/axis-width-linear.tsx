@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 import { useChartState } from "../use-chart-state";
 import { useChartTheme } from "../use-chart-theme";
 import { ScatterplotState } from "../scatterplot/scatterplot-state";
+import { estimateTextWidth } from "../../../lib/estimate-text-width";
+import { formatNumber } from "../../../domain/helpers";
 
 export const AxisWidthLinear = () => {
   const { xScale, bounds, xAxisLabel } = useChartState() as ScatterplotState;
@@ -13,12 +15,15 @@ export const AxisWidthLinear = () => {
   const xAxisRef = useRef<SVGGElement>(null);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const tickValues = xScale.ticks(4).concat(xScale.domain());
+    const maxLabelLength = estimateTextWidth(formatNumber(xScale.domain()[1]));
+    const ticks = Math.min(bounds.chartWidth / (maxLabelLength + 20), 4);
+    const tickValues = xScale.ticks(ticks);
 
     g.call(
       axisBottom(xScale)
         .tickValues(tickValues)
         .tickSizeInner(-chartHeight)
+        .tickSizeOuter(-chartHeight)
     );
 
     g.selectAll(".tick line")
@@ -32,7 +37,7 @@ export const AxisWidthLinear = () => {
       .attr("dy", labelFontSize)
       .attr("text-anchor", "middle");
 
-    g.select("path.domain").remove();
+    g.select("path.domain").attr("stroke", gridColor);
   };
 
   useEffect(() => {

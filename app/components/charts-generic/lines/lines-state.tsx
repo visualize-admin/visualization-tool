@@ -5,23 +5,25 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
   ScaleTime,
-  scaleTime
+  scaleTime,
 } from "d3-scale";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
 import { LineFields, Observation, ObservationValue } from "../../../domain";
 import {
-  formatNumber,
   formatDateAuto,
+  formatNumber,
   getPalette,
   mkNumber,
-  parseDate
+  parseDate,
 } from "../../../domain/helpers";
+import { estimateTextWidth } from "../../../lib/estimate-text-width";
+import { useTheme } from "../../../themes";
 import { Tooltip } from "../annotations/tooltip";
-import { Bounds, Observer, useBounds } from "../use-bounds";
+import { LEFT_MARGIN_OFFSET } from "../constants";
+import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { useTheme } from "../../../themes";
 
 export interface LinesState {
   data: Observation[];
@@ -46,14 +48,13 @@ const useLinesState = ({
   data,
   fields,
   measures,
-  bounds
+  aspectRatio,
 }: Pick<ChartProps, "data" | "measures"> & {
-  bounds: Bounds;
   fields: LineFields;
+  aspectRatio: number;
 }): LinesState => {
   const theme = useTheme();
-
-  const { chartWidth, chartHeight } = bounds;
+  const width = useWidth();
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
@@ -66,27 +67,24 @@ const useLinesState = ({
     fields.segment ? (d[fields.segment.componentIri] as string) : "fixme";
 
   // x
-  const xUniqueValues = [...new Set(data.map(d => getX(d)))];
-  const xDomain = extent(data, d => getX(d)) as [Date, Date];
-  const xRange = [0, chartWidth];
-  const xScale = scaleTime()
-    .domain(xDomain)
-    .range(xRange);
+  const xUniqueValues = [...new Set(data.map((d) => getX(d)))];
+  const xDomain = extent(data, (d) => getX(d)) as [Date, Date];
+
+  const xScale = scaleTime().domain(xDomain);
 
   const xAxisLabel =
-    measures.find(d => d.iri === fields.x.componentIri)?.label ??
+    measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
   // y
   const minValue = Math.min(mkNumber(min(data, getY)), 0);
   const maxValue = max(data, getY) as number;
   const yDomain = [minValue, maxValue];
-  const yRange = [chartHeight, 0];
+
   const yScale = scaleLinear()
     .domain(yDomain)
-    .range(yRange)
     .nice();
   const yAxisLabel =
-    measures.find(d => d.iri === fields.y.componentIri)?.label ??
+    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
   // segments
@@ -111,14 +109,37 @@ const useLinesState = ({
       const currentKey = getSegment(cur);
       return {
         ...obj,
-        [currentKey]: getY(cur)
+        [currentKey]: getY(cur),
       };
     }, {});
     wide.push({
       ...keyObject,
-      [xKey]: key
+      [xKey]: key,
     });
   }
+
+  // Dimensions
+  const left = Math.max(
+    estimateTextWidth(formatNumber(yScale.domain()[0])),
+    estimateTextWidth(formatNumber(yScale.domain()[1]))
+  );
+  const margins = {
+    top: 50,
+    right: 40,
+    bottom: 40,
+    left: left + LEFT_MARGIN_OFFSET,
+  };
+  const chartWidth = width - margins.left - margins.right;
+  const chartHeight = chartWidth * aspectRatio;
+  const bounds = {
+    width,
+    height: chartHeight + margins.top + margins.bottom,
+    margins,
+    chartWidth,
+    chartHeight,
+  };
+  xScale.range([0, chartWidth]);
+  yScale.range([chartHeight, 0]);
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): Tooltip => {
@@ -126,7 +147,7 @@ const useLinesState = ({
     const yAnchor = yScale(getY(datum));
 
     const tooltipValues = data.filter(
-      j => getX(j).getTime() === getX(datum).getTime()
+      (j) => getX(j).getTime() === getX(datum).getTime()
     );
 
     const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
@@ -146,17 +167,17 @@ const useLinesState = ({
       datum: {
         label: fields.segment && getSegment(datum),
         value: formatNumber(getY(datum)),
-        color: colors(getSegment(datum)) as string
+        color: colors(getSegment(datum)) as string,
       },
-      values: tooltipValues.map(td => ({
+      values: tooltipValues.map((td) => ({
         label: getSegment(td),
         value: formatNumber(getY(td)),
         color:
           segments.length > 1
             ? (colors(getSegment(td)) as string)
             : theme.colors.primary,
-        yPos: yScale(getY(td))
-      }))
+        yPos: yScale(getY(td)),
+      })),
     };
   };
   return {
@@ -175,7 +196,7 @@ const useLinesState = ({
     grouped,
     wide,
     xKey,
-    getAnnotationInfo
+    getAnnotationInfo,
   };
 };
 
@@ -183,18 +204,18 @@ const LineChartProvider = ({
   data,
   fields,
   measures,
-  children
+  aspectRatio,
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
   fields: LineFields;
+  aspectRatio: number;
 }) => {
-  const bounds = useBounds();
-
   const state = useLinesState({
     data,
     fields,
     measures,
-    bounds
+    aspectRatio,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -206,16 +227,21 @@ export const LineChart = ({
   fields,
   measures,
   aspectRatio,
-  children
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
   fields: LineFields;
   children: ReactNode;
 }) => {
   return (
-    <Observer aspectRatio={aspectRatio}>
+    <Observer>
       <InteractionProvider>
-        <LineChartProvider data={data} fields={fields} measures={measures}>
+        <LineChartProvider
+          data={data}
+          fields={fields}
+          measures={measures}
+          aspectRatio={aspectRatio}
+        >
           {children}
         </LineChartProvider>
       </InteractionProvider>
