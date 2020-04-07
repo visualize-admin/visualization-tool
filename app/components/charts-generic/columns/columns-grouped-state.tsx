@@ -5,21 +5,23 @@ import {
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
-  scaleOrdinal
+  scaleOrdinal,
 } from "d3-scale";
 import * as React from "react";
 import { ReactNode } from "react";
 import { ColumnFields, Observation, ObservationValue } from "../../../domain";
 import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
+import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
 import {
   PADDING_INNER,
   PADDING_OUTER,
-  PADDING_WITHIN
+  PADDING_WITHIN,
 } from "../columns/constants";
-import { Bounds, Observer, useBounds } from "../use-bounds";
+import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
+import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
 
 export interface GroupedColumnsState {
   sortedData: Observation[];
@@ -42,12 +44,12 @@ const useGroupedColumnsState = ({
   data,
   fields,
   measures,
-  bounds
+  aspectRatio,
 }: Pick<ChartProps, "data" | "measures"> & {
-  bounds: Bounds;
   fields: ColumnFields;
+  aspectRatio: number;
 }): GroupedColumnsState => {
-  const { chartWidth, chartHeight } = bounds;
+  const width = useWidth();
 
   const getX = (d: Observation): string => d[fields.x.componentIri] as string;
   const getY = (d: Observation): number => +d[fields.y.componentIri];
@@ -57,43 +59,66 @@ const useGroupedColumnsState = ({
   const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
 
   // segments
-  const segments = Array.from(new Set(sortedData.map(d => getSegment(d))));
+  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );
 
   // x
-  const bandDomain = [...new Set(sortedData.map(d => getX(d) as string))];
+  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
   const xScale = scaleBand()
     .domain(bandDomain)
-    .range([0, chartWidth])
     .paddingInner(PADDING_INNER)
     .paddingOuter(PADDING_OUTER);
   const xScaleInteraction = scaleBand()
     .domain(bandDomain)
-    .range([0, chartWidth])
     .paddingInner(0)
     .paddingOuter(0);
 
   const inBandDomain = [...new Set(data.map(getSegment))];
   const xScaleIn = scaleBand()
     .domain(inBandDomain)
-    .range([0, xScale.bandwidth()])
     .padding(PADDING_WITHIN);
 
   // y
-  const minValue = Math.min(mkNumber(min(sortedData, d => getY(d))), 0);
-  const maxValue = max(sortedData, d => getY(d)) as number;
+  const minValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
+  const maxValue = max(sortedData, (d) => getY(d)) as number;
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
-    .range([chartHeight, 0])
     .nice();
   const yAxisLabel =
-    measures.find(d => d.iri === fields.y.componentIri)?.label ??
+    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
   const groupedMap = group(sortedData, getX);
   const grouped = [...groupedMap];
+
+  // Dimensions
+  const left = Math.max(
+    estimateTextWidth(formatNumber(yScale.domain()[0])),
+    estimateTextWidth(formatNumber(yScale.domain()[1]))
+  );
+  const bottom = max(bandDomain, (d) => estimateTextWidth(d)) || 70;
+  const margins = {
+    top: 50,
+    right: 40,
+    bottom: bottom + BOTTOM_MARGIN_OFFSET,
+    left: left + LEFT_MARGIN_OFFSET,
+  };
+  const chartWidth = width - margins.left - margins.right;
+  const chartHeight = chartWidth * aspectRatio;
+  const bounds = {
+    width,
+    height: chartHeight + margins.top + margins.bottom,
+    margins,
+    chartWidth,
+    chartHeight,
+  };
+
+  xScale.range([0, chartWidth]);
+  xScaleInteraction.range([0, chartWidth]);
+  xScaleIn.range([0, xScale.bandwidth()]);
+  yScale.range([chartHeight, 0]);
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): Tooltip => {
@@ -102,7 +127,7 @@ const useGroupedColumnsState = ({
     const yRef = yScale(getY(datum));
     const yAnchor = yRef;
 
-    const tooltipValues = data.filter(j => getX(j) === getX(datum));
+    const tooltipValues = data.filter((j) => getX(j) === getX(datum));
 
     const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
 
@@ -142,13 +167,13 @@ const useGroupedColumnsState = ({
       datum: {
         label: fields.segment && getSegment(datum),
         value: formatNumber(getY(datum)),
-        color: colors(getSegment(datum)) as string
+        color: colors(getSegment(datum)) as string,
       },
-      values: tooltipValues.map(td => ({
+      values: tooltipValues.map((td) => ({
         label: getSegment(td),
         value: formatNumber(getY(td)),
-        color: colors(getSegment(td)) as string
-      }))
+        color: colors(getSegment(td)) as string,
+      })),
     };
   };
 
@@ -166,7 +191,7 @@ const useGroupedColumnsState = ({
     segments,
     colors,
     grouped,
-    getAnnotationInfo
+    getAnnotationInfo,
   };
 };
 
@@ -174,18 +199,18 @@ const GroupedColumnChartProvider = ({
   data,
   fields,
   measures,
-  children
+  aspectRatio,
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
   fields: ColumnFields;
+  aspectRatio: number;
 }) => {
-  const bounds = useBounds();
-
   const state = useGroupedColumnsState({
     data,
     fields,
     measures,
-    bounds
+    aspectRatio,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -197,19 +222,20 @@ export const GroupedColumnChart = ({
   fields,
   measures,
   aspectRatio,
-  children
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
 }) => {
   return (
-    <Observer aspectRatio={aspectRatio}>
+    <Observer>
       <InteractionProvider>
         <GroupedColumnChartProvider
           data={data}
           fields={fields}
           measures={measures}
+          aspectRatio={aspectRatio}
         >
           {children}
         </GroupedColumnChartProvider>

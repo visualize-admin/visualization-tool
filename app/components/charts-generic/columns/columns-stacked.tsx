@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useChartState } from "../use-chart-state";
-import { ColumnsState } from "./columns-state";
+import { StackedColumnsState } from "./columns-stacked-state";
 
 export const ColumnsStacked = () => {
   const {
@@ -9,12 +9,12 @@ export const ColumnsStacked = () => {
     xScale,
     yScale,
     colors,
-    series
-  } = useChartState() as ColumnsState;
+    series,
+  } = useChartState() as StackedColumnsState;
   const { margins } = bounds;
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {series.map(sv => (
+      {series.map((sv) => (
         <g key={sv.key} fill={colors(sv.key)} data-n={sv.key}>
           {sv.map((segment: $FixMe, i: number) => (
             <Column
@@ -36,7 +36,7 @@ const Column = React.memo(
     x,
     y,
     width,
-    height
+    height,
   }: {
     x: number;
     y: number;

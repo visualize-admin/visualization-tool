@@ -2,9 +2,9 @@ import { axisBottom } from "d3-axis";
 import { select, Selection } from "d3-selection";
 import * as React from "react";
 import { useEffect, useRef } from "react";
+import { ColumnsState } from "../columns/columns-state";
 import { useChartState } from "../use-chart-state";
 import { useChartTheme } from "../use-chart-theme";
-import { ColumnsState } from "../columns/columns-state";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
@@ -21,24 +21,28 @@ export const AxisWidthBand = () => {
   } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const rotation = xScale.domain().length > 6;
+    const rotation = true; // xScale.domain().length > 6;
     const hasNegativeValues = yScale.domain()[0] < 0;
+
+    const fontSize =
+      xScale.bandwidth() > labelFontSize ? labelFontSize : xScale.bandwidth();
     g.call(
       axisBottom(xScale)
         .tickSizeOuter(0)
         .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
     );
+
     g.select(".domain").remove();
     g.selectAll(".tick line").attr(
       "stroke",
       hasNegativeValues ? gridColor : domainColor
     );
     g.selectAll(".tick text")
-      .attr("font-size", labelFontSize)
+      .attr("font-size", fontSize)
       .attr("font-family", fontFamily)
       .attr("fill", labelColor)
-      .attr("y", rotation ? 0 : labelFontSize + 6)
-      .attr("x", rotation ? labelFontSize : 0)
+      .attr("y", rotation ? 0 : fontSize + 6)
+      .attr("x", rotation ? fontSize : 0)
       .attr("dy", rotation ? ".35em" : 0)
       .attr("transform", rotation ? "rotate(90)" : "rotate(0)")
       .attr("text-anchor", rotation ? "start" : "unset");
@@ -53,7 +57,7 @@ export const AxisWidthBand = () => {
     <g
       ref={ref}
       transform={`translate(${margins.left}, ${chartHeight + margins.top})`}
-    ></g>
+    />
   );
 };
 
@@ -83,6 +87,6 @@ export const AxisWidthBandDomain = () => {
     <g
       ref={ref}
       transform={`translate(${margins.left}, ${chartHeight + margins.top})`}
-    ></g>
+    />
   );
 };

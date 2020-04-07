@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useChartState } from "../use-chart-state";
-import { ColumnsState } from "./columns-state";
+import { GroupedColumnsState } from "./columns-grouped-state";
 
 export const ColumnsGrouped = () => {
   const {
@@ -11,13 +11,13 @@ export const ColumnsGrouped = () => {
     yScale,
     getSegment,
     colors,
-    grouped
-  } = useChartState() as ColumnsState;
+    grouped,
+  } = useChartState() as GroupedColumnsState;
   const { margins } = bounds;
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {grouped.map(segment => (
+      {grouped.map((segment) => (
         <g key={segment[0]} transform={`translate(${xScale(segment[0])}, 0)`}>
           {segment[1].map((d, i) => (
             <Column
@@ -41,7 +41,7 @@ const Column = React.memo(
     y,
     width,
     height,
-    color
+    color,
   }: {
     x: number;
     y: number;

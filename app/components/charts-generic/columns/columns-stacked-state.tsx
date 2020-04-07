@@ -5,18 +5,20 @@ import {
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
-  scaleOrdinal
+  scaleOrdinal,
 } from "d3-scale";
 import { stack, stackOffsetDiverging } from "d3-shape";
 import * as React from "react";
 import { ReactNode } from "react";
 import { ColumnFields, Observation, ObservationValue } from "../../../domain";
 import { formatNumber, getPalette, isNumber } from "../../../domain/helpers";
+import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
 import { PADDING_INNER, PADDING_OUTER } from "../columns/constants";
-import { Bounds, Observer, useBounds } from "../use-bounds";
+import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
+import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
 
 export interface StackedColumnsState {
   sortedData: Observation[];
@@ -40,12 +42,12 @@ const useColumnsStackedState = ({
   data,
   fields,
   measures,
-  bounds
+  aspectRatio,
 }: Pick<ChartProps, "data" | "measures"> & {
-  bounds: Bounds;
   fields: ColumnFields;
+  aspectRatio: number;
 }): StackedColumnsState => {
-  const { chartWidth, chartHeight } = bounds;
+  const width = useWidth();
 
   const getX = (d: Observation): string => d[fields.x.componentIri] as string;
   const getY = (d: Observation): number => +d[fields.y.componentIri];
@@ -55,21 +57,19 @@ const useColumnsStackedState = ({
   const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
 
   // segments
-  const segments = Array.from(new Set(sortedData.map(d => getSegment(d))));
+  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );
 
   // x
-  const bandDomain = [...new Set(sortedData.map(d => getX(d) as string))];
+  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
   const xScale = scaleBand()
     .domain(bandDomain)
-    .range([0, chartWidth])
     .paddingInner(PADDING_INNER)
     .paddingOuter(PADDING_OUTER);
   const xScaleInteraction = scaleBand()
     .domain(bandDomain)
-    .range([0, chartWidth])
     .paddingInner(0)
     .paddingOuter(0);
 
@@ -86,28 +86,27 @@ const useColumnsStackedState = ({
         return {
           ...obj,
           [currentKey]: getY(cur),
-          total
+          total,
         };
       },
       { total: 0 }
     );
     wide.push({
       ...keyObject,
-      [xKey]: key
+      [xKey]: key,
     });
   }
   const minTotal = Math.min(
-    min<$FixMe, number>(wide, d => d.total) as number,
+    min<$FixMe, number>(wide, (d) => d.total) as number,
     0
   );
-  const maxTotal = max<$FixMe, number>(wide, d => d.total) as number;
+  const maxTotal = max<$FixMe, number>(wide, (d) => d.total) as number;
   const yStackDomain = [minTotal, maxTotal] as [number, number];
   const yAxisLabel =
-    measures.find(d => d.iri === fields.y.componentIri)?.label ??
+    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
   const yScale = scaleLinear()
     .domain(yStackDomain)
-    .range([chartHeight, 0])
     .nice();
 
   // data
@@ -116,14 +115,40 @@ const useColumnsStackedState = ({
     .keys(segments);
   const series = stacked(wide as { [key: string]: number }[]);
 
+  // Dimensions
+  const left = Math.max(
+    estimateTextWidth(formatNumber(yScale.domain()[0])),
+    estimateTextWidth(formatNumber(yScale.domain()[1]))
+  );
+  const bottom = max(bandDomain, (d) => estimateTextWidth(d)) || 70;
+  const margins = {
+    top: 50,
+    right: 40,
+    bottom: bottom + BOTTOM_MARGIN_OFFSET,
+    left: left + LEFT_MARGIN_OFFSET,
+  };
+  const chartWidth = width - margins.left - margins.right;
+  const chartHeight = chartWidth * aspectRatio;
+  const bounds = {
+    width,
+    height: chartHeight + margins.top + margins.bottom,
+    margins,
+    chartWidth,
+    chartHeight,
+  };
+
+  xScale.range([0, chartWidth]);
+  xScaleInteraction.range([0, chartWidth]);
+  yScale.range([chartHeight, 0]);
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): Tooltip => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
 
-    const tooltipValues = data.filter(j => getX(j) === getX(datum));
+    const tooltipValues = data.filter((j) => getX(j) === getX(datum));
 
-    const cumulativeSum = (sum => (d: Observation) => (sum += getY(d)))(0);
+    const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
     const cumulativeRulerItemValues = [...tooltipValues.map(cumulativeSum)];
 
     const yRef = yScale(
@@ -171,13 +196,13 @@ const useColumnsStackedState = ({
       datum: {
         label: fields.segment && getSegment(datum),
         value: formatNumber(getY(datum)),
-        color: colors(getSegment(datum)) as string
+        color: colors(getSegment(datum)) as string,
       },
-      values: tooltipValues.map(td => ({
+      values: tooltipValues.map((td) => ({
         label: getSegment(td),
         value: formatNumber(getY(td)),
-        color: colors(getSegment(td)) as string
-      }))
+        color: colors(getSegment(td)) as string,
+      })),
     };
   };
 
@@ -196,7 +221,7 @@ const useColumnsStackedState = ({
     wide,
     grouped: [...groupedMap],
     series,
-    getAnnotationInfo
+    getAnnotationInfo,
   };
 };
 
@@ -204,18 +229,18 @@ const StackedColumnsChartProvider = ({
   data,
   fields,
   measures,
-  children
+  aspectRatio,
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
   fields: ColumnFields;
+  aspectRatio: number;
 }) => {
-  const bounds = useBounds();
-
   const state = useColumnsStackedState({
     data,
     fields,
     measures,
-    bounds
+    aspectRatio,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -227,19 +252,20 @@ export const StackedColumnsChart = ({
   fields,
   measures,
   aspectRatio,
-  children
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
 }) => {
   return (
-    <Observer aspectRatio={aspectRatio}>
+    <Observer>
       <InteractionProvider>
         <StackedColumnsChartProvider
           data={data}
           fields={fields}
           measures={measures}
+          aspectRatio={aspectRatio}
         >
           {children}
         </StackedColumnsChartProvider>

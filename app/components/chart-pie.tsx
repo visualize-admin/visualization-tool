@@ -11,7 +11,7 @@ import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 import {
   useDataCubeObservationsQuery,
-  ComponentFieldsFragment
+  ComponentFieldsFragment,
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { LegendColor } from "./charts-generic/legends/color";
@@ -19,7 +19,7 @@ import { Tooltip } from "./charts-generic/annotations/tooltip";
 
 export const ChartPieVisualization = ({
   dataSetIri,
-  chartConfig
+  chartConfig,
 }: {
   dataSetIri: string;
   chartConfig: PieConfig;
@@ -30,8 +30,8 @@ export const ChartPieVisualization = ({
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.value.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters
-    }
+      filters: chartConfig.filters,
+    },
   });
 
   if (data?.dataCubeByIri) {
@@ -72,7 +72,7 @@ export const ChartPie = memo(
     observations,
     dimensions,
     measures,
-    fields
+    fields,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
@@ -84,12 +84,6 @@ export const ChartPie = memo(
         data={observations}
         fields={fields}
         measures={measures}
-        margins={{
-          top: 40,
-          right: 40,
-          bottom: 40,
-          left: 40
-        }}
         aspectRatio={0.5}
       >
         <ChartContainer>

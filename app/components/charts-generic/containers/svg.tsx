@@ -1,11 +1,9 @@
 import React, { ReactNode } from "react";
-import { useBounds } from "../use-bounds";
+import { useChartState } from "../use-chart-state";
 
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
-  const bounds = useBounds();
+  const { bounds } = useChartState();
   const { width, height } = bounds;
-
-  // FIXME: Soll nicht absolute sein
   return (
     <svg
       width={width}

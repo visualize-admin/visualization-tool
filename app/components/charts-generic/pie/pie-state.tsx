@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import { Observation, PieFields } from "../../../domain";
 import { formatNumber, getPalette } from "../../../domain/helpers";
 import { Tooltip } from "../annotations/tooltip";
-import { Bounds, Margins, Observer, useBounds } from "../use-bounds";
+import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 
@@ -22,12 +22,13 @@ const usePieState = ({
   data,
   fields,
   measures,
-  bounds
+  aspectRatio,
 }: Pick<ChartProps, "data" | "measures"> & {
-  bounds: Bounds;
   fields: PieFields;
+  aspectRatio: number;
 }): PieState => {
-  const { chartWidth, chartHeight } = bounds;
+  const width = useWidth();
+
   const getY = (d: Observation): number =>
     +d[fields.value.componentIri] as number;
   const getX = (d: Observation): string =>
@@ -37,6 +38,24 @@ const usePieState = ({
     data.map(getX)
   );
 
+  // Dimensions
+  const margins = {
+    top: 40,
+    right: 40,
+    bottom: 40,
+    left: 40,
+  };
+  const chartWidth = width - margins.left - margins.right;
+  const chartHeight = chartWidth * aspectRatio;
+  const bounds = {
+    width,
+    height: chartHeight + margins.top + margins.bottom,
+    margins,
+    chartWidth,
+    chartHeight,
+  };
+
+  // Pie values
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 
   const innerRadius = 0;
@@ -73,9 +92,9 @@ const usePieState = ({
       xValue: getX(datum),
       datum: {
         value: formatNumber(getY(datum)),
-        color: colors(getX(datum)) as string
+        color: colors(getX(datum)) as string,
       },
-      values: undefined
+      values: undefined,
     };
   };
   return {
@@ -84,7 +103,7 @@ const usePieState = ({
     getY,
     getX,
     colors,
-    getAnnotationInfo
+    getAnnotationInfo,
   };
 };
 
@@ -92,18 +111,19 @@ const PieChartProvider = ({
   data,
   fields,
   measures,
-  children
+  aspectRatio,
+
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   children: ReactNode;
   fields: PieFields;
+  aspectRatio: number;
 }) => {
-  const bounds = useBounds();
-
   const state = usePieState({
     data,
     fields,
     measures,
-    bounds
+    aspectRatio,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -115,18 +135,21 @@ export const PieChart = ({
   fields,
   measures,
   aspectRatio,
-  margins,
-  children
+  children,
 }: Pick<ChartProps, "data" | "measures"> & {
   aspectRatio: number;
   fields: PieFields;
-  margins?: Margins;
   children: ReactNode;
 }) => {
   return (
-    <Observer aspectRatio={aspectRatio} margins={margins}>
+    <Observer>
       <InteractionProvider>
-        <PieChartProvider data={data} fields={fields} measures={measures}>
+        <PieChartProvider
+          data={data}
+          fields={fields}
+          measures={measures}
+          aspectRatio={aspectRatio}
+        >
           {children}
         </PieChartProvider>
       </InteractionProvider>
