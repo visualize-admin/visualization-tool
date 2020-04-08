@@ -33,27 +33,28 @@ msgstr "[You can add a description here]"
 msgid "annotation.add.title"
 msgstr "[You can add a title here]"
 
-#: app/pages/[locale]/v/[chartId].tsx:78
+#: app/pages/[locale]/v/[chartId].tsx:83
 msgid "button.copy.visualization"
 msgstr "Copy Visualization"
-
-#: app/pages/[locale]/index.tsx:11
-#~ msgid "button.create.new.visualization"
-#~ msgstr "Create a new visualization"
 
 #: app/components/data-download.tsx:22
 msgid "button.download.data"
 msgstr "Download data"
 
-#: app/components/publish-actions.tsx:213
-#~ msgid "button.download.image"
-#~ msgstr "Download Image"
-
 #: app/components/publish-actions.tsx:134
 msgid "button.embed"
 msgstr "Embed"
 
-#: app/pages/[locale]/v/[chartId].tsx:73
+#: app/components/publish-actions.tsx:156
+#: app/components/publish-actions.tsx:159
+msgid "button.hint.click.to.copy"
+msgstr "click to copy"
+
+#: app/components/publish-actions.tsx:182
+msgid "button.hint.copied"
+msgstr "copied!"
+
+#: app/pages/[locale]/v/[chartId].tsx:78
 msgid "button.new.visualization"
 msgstr "New Visualization"
 
@@ -72,10 +73,6 @@ msgstr "Publish"
 #: app/components/publish-actions.tsx:82
 msgid "button.share"
 msgstr "Share"
-
-#: app/components/publish-actions.tsx:156
-#: app/components/publish-actions.tsx:159
-msgid "click to copy"
 
 #: app/domain/helpers.tsx:72
 msgid "controls.axis.horizontal"
@@ -120,10 +117,6 @@ msgstr "Stacked"
 #: app/domain/helpers.tsx:80
 msgid "controls.description"
 msgstr "Description"
-
-#: app/components/filters.tsx:27
-#~ msgid "controls.filter.reset"
-#~ msgstr "Reset"
 
 #: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
@@ -186,10 +179,6 @@ msgstr "Design"
 msgid "controls.section.filter"
 msgstr "Filter"
 
-#: app/domain/helpers.tsx:36
-#~ msgid "controls.segmentation"
-#~ msgstr "Segmentation"
-
 #: app/components/chart-type-selector.tsx:31
 #: app/components/chart-type-selector.tsx:34
 msgid "controls.select.chart.type"
@@ -215,9 +204,6 @@ msgstr "Select a measure"
 msgid "controls.title"
 msgstr "Title"
 
-#: app/components/publish-actions.tsx:182
-msgid "copied!"
-
 #: app/components/dataset-metadata.tsx:34
 msgid "dataset.metadata.date.created"
 msgstr "Date Created"
@@ -234,31 +220,15 @@ msgstr "Title"
 msgid "datatable.showing.first.rows"
 msgstr "Showing first 10 rows"
 
-#: app/components/footer.tsx:33
-msgid "footer.contact"
-msgstr "Contact"
-
-#: app/components/footer.tsx:30
-msgid "footer.help"
-msgstr "Help"
-
-#: app/components/footer.tsx:57
-msgid "footer.imprint"
-msgstr "Imprint"
-
-#: app/components/footer.tsx:19
+#: app/components/footer.tsx:35
 msgid "footer.institution.name"
 msgstr "Federal Office for the Environment FOEN"
 
-#: app/components/footer.tsx:54
-msgid "footer.legal"
-msgstr "Legal"
-
-#: app/pages/[locale]/v/[chartId].tsx:64
+#: app/pages/[locale]/v/[chartId].tsx:69
 msgid "hint.create.your.own.chart"
 msgstr "Create your own graphic now! With the visualization tool, you can create your own graphics, based on a large number of Swiss federal data."
 
-#: app/pages/[locale]/v/[chartId].tsx:60
+#: app/pages/[locale]/v/[chartId].tsx:65
 msgid "hint.how.to.share"
 msgstr "You can share this chart either by sharing its URL or by embedding it on your website. You can also create a new visualization or duplicate the above chart."
 
@@ -278,7 +248,7 @@ msgstr "No data was returned with the current filters."
 msgid "hint.nodata.title"
 msgstr "No data"
 
-#: app/components/hint.tsx:114
+#: app/components/hint.tsx:113
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. You can share and embed it using the URL or the options below."
 

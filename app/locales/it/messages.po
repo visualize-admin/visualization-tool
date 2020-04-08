@@ -33,27 +33,28 @@ msgstr ""
 msgid "annotation.add.title"
 msgstr ""
 
-#: app/pages/[locale]/v/[chartId].tsx:78
+#: app/pages/[locale]/v/[chartId].tsx:83
 msgid "button.copy.visualization"
 msgstr ""
-
-#: app/pages/[locale]/index.tsx:11
-#~ msgid "button.create.new.visualization"
-#~ msgstr ""
 
 #: app/components/data-download.tsx:22
 msgid "button.download.data"
 msgstr ""
 
-#: app/components/publish-actions.tsx:213
-#~ msgid "button.download.image"
-#~ msgstr ""
-
 #: app/components/publish-actions.tsx:134
 msgid "button.embed"
 msgstr ""
 
-#: app/pages/[locale]/v/[chartId].tsx:73
+#: app/components/publish-actions.tsx:156
+#: app/components/publish-actions.tsx:159
+msgid "button.hint.click.to.copy"
+msgstr ""
+
+#: app/components/publish-actions.tsx:182
+msgid "button.hint.copied"
+msgstr ""
+
+#: app/pages/[locale]/v/[chartId].tsx:78
 msgid "button.new.visualization"
 msgstr ""
 
@@ -71,11 +72,6 @@ msgstr ""
 
 #: app/components/publish-actions.tsx:82
 msgid "button.share"
-msgstr ""
-
-#: app/components/publish-actions.tsx:156
-#: app/components/publish-actions.tsx:159
-msgid "click to copy"
 msgstr ""
 
 #: app/domain/helpers.tsx:72
@@ -121,10 +117,6 @@ msgstr ""
 #: app/domain/helpers.tsx:80
 msgid "controls.description"
 msgstr ""
-
-#: app/components/filters.tsx:27
-#~ msgid "controls.filter.reset"
-#~ msgstr ""
 
 #: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
@@ -187,10 +179,6 @@ msgstr ""
 msgid "controls.section.filter"
 msgstr ""
 
-#: app/domain/helpers.tsx:36
-#~ msgid "controls.segmentation"
-#~ msgstr ""
-
 #: app/components/chart-type-selector.tsx:31
 #: app/components/chart-type-selector.tsx:34
 msgid "controls.select.chart.type"
@@ -216,10 +204,6 @@ msgstr ""
 msgid "controls.title"
 msgstr ""
 
-#: app/components/publish-actions.tsx:182
-msgid "copied!"
-msgstr ""
-
 #: app/components/dataset-metadata.tsx:34
 msgid "dataset.metadata.date.created"
 msgstr ""
@@ -236,31 +220,15 @@ msgstr ""
 msgid "datatable.showing.first.rows"
 msgstr ""
 
-#: app/components/footer.tsx:33
-msgid "footer.contact"
-msgstr ""
-
-#: app/components/footer.tsx:30
-msgid "footer.help"
-msgstr ""
-
-#: app/components/footer.tsx:57
-msgid "footer.imprint"
-msgstr ""
-
-#: app/components/footer.tsx:19
+#: app/components/footer.tsx:35
 msgid "footer.institution.name"
 msgstr ""
 
-#: app/components/footer.tsx:54
-msgid "footer.legal"
-msgstr ""
-
-#: app/pages/[locale]/v/[chartId].tsx:64
+#: app/pages/[locale]/v/[chartId].tsx:69
 msgid "hint.create.your.own.chart"
 msgstr ""
 
-#: app/pages/[locale]/v/[chartId].tsx:60
+#: app/pages/[locale]/v/[chartId].tsx:65
 msgid "hint.how.to.share"
 msgstr ""
 
@@ -280,7 +248,7 @@ msgstr ""
 msgid "hint.nodata.title"
 msgstr ""
 
-#: app/components/hint.tsx:114
+#: app/components/hint.tsx:113
 msgid "hint.publication.success"
 msgstr ""
 
