@@ -250,12 +250,14 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
 const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
   const [showTooltip, toggleTooltip] = useState(false);
   const [tooltipContent, updateTooltipContent] = useState(
-    <Trans>click to copy</Trans>
+    <Trans id="button.hint.click.to.copy">click to copy</Trans>
   );
 
   const handleMouseLeave = () => {
     toggleTooltip(false);
-    updateTooltipContent(<Trans>click to copy</Trans>);
+    updateTooltipContent(
+      <Trans id="button.hint.click.to.copy">click to copy</Trans>
+    );
   };
   const handleClick = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -290,7 +292,9 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
       <Button
         variant="reset"
         onMouseOver={() => toggleTooltip(true)}
-        onMouseUp={() => updateTooltipContent(<Trans>copied!</Trans>)}
+        onMouseUp={() =>
+          updateTooltipContent(<Trans id="button.hint.copied">copied!</Trans>)
+        }
         onMouseLeave={handleMouseLeave}
         onClick={e => handleClick(e, iFrameCode)}
         sx={{
