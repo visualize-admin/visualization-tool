@@ -35,6 +35,7 @@ export const DataSetList = () => {
           flexDirection: "column",
           height: "100%",
         }}
+        role="search"
       >
         <Box
           sx={{
@@ -76,7 +77,8 @@ export const DataSetList = () => {
                     }}
                   >
                     <SearchField
-                      name="datasetSearch"
+                      id="datasetSearch"
+                      label={searchLabel}
                       value={query}
                       onChange={(e) => {
                         setQuery(e.currentTarget.value);
@@ -92,7 +94,6 @@ export const DataSetList = () => {
                         setQuery("");
                         setOrder(previousOrderRef.current);
                       }}
-                      aria-label={searchLabel}
                       placeholder={searchLabel}
                     ></SearchField>
                   </Box>

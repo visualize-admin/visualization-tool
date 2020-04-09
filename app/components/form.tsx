@@ -1,3 +1,5 @@
+import { Trans } from "@lingui/macro";
+import VisuallyHidden from "@reach/visually-hidden";
 import {
   Box,
   Button,
@@ -223,13 +225,14 @@ export const Input = ({
 );
 
 export const SearchField = ({
+  id,
   label,
-  name,
   value,
   placeholder,
   onChange,
   onReset,
 }: {
+  id: string;
   label?: string | React.ReactNode;
   disabled?: boolean;
   value?: string;
@@ -238,12 +241,15 @@ export const SearchField = ({
 } & FieldProps) => {
   return (
     <Box sx={{ color: "monochrome700", fontSize: 4, position: "relative" }}>
-      {label && name && (
-        <Label htmlFor={name} smaller>
-          {label}
-        </Label>
+      {label && id && (
+        <label htmlFor={id}>
+          <VisuallyHidden>{label}</VisuallyHidden>
+        </label>
       )}
-      <Box sx={{ position: "absolute", top: "50%", mt: "-8px", ml: 2 }}>
+      <Box
+        aria-hidden="true"
+        sx={{ position: "absolute", top: "50%", mt: "-8px", ml: 2 }}
+      >
         <Icon name="search" size={16} />
       </Box>
       <RebassInput
@@ -253,8 +259,7 @@ export const SearchField = ({
           px: 6,
           ":focus": { outline: "none", borderColor: "primary" },
         }}
-        id={name}
-        name={name}
+        id={id}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
@@ -274,7 +279,13 @@ export const SearchField = ({
             sx={{ p: 0, cursor: "pointer" }}
             onClick={onReset}
           >
-            <Box sx={{ borderRadius: "circle", bg: "monochrome600" }}>
+            <VisuallyHidden>
+              <Trans id="controls.search.clear">Clear search field</Trans>
+            </VisuallyHidden>
+            <Box
+              aria-hidden="true"
+              sx={{ borderRadius: "circle", bg: "monochrome600" }}
+            >
               <Icon name="clear" size={16} />
             </Box>
           </Button>

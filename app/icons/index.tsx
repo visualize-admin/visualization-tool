@@ -88,11 +88,11 @@ export const Icon = ({
   color,
   name,
   ...props
-}: {
+} : {
   size?: number;
   color?: string;
   name: IconName;
-}) => {
+} & React.ComponentProps<'svg'>) => {
   const IconComponent = Icons[name];
   return <IconComponent size={size} color={color} {...props} />;
 };

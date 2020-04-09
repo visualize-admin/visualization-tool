@@ -18,6 +18,7 @@
     "@next/bundle-analyzer": "^9.3.2",
     "@next/mdx": "^9.3.2",
     "@preconstruct/next": "^1.0.1",
+    "@reach/visually-hidden": "^0.10.0",
     "@theme-ui/components": "^0.3.1",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
     "apollo-server-micro": "^2.10.1",
