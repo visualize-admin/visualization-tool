@@ -5,7 +5,7 @@ import {
   Select,
   Input,
   MiniSelect,
-  SearchField
+  SearchField,
 } from "../components/form";
 
 export default () => markdown`
@@ -72,7 +72,7 @@ ${(
         label="Dimension wählen"
         options={[
           { label: "Nadelholz", value: "Nadelholz" },
-          { label: "Laubholz", value: "Laubholz" }
+          { label: "Laubholz", value: "Laubholz" },
         ]}
       />
     </ReactSpecimen>
@@ -87,7 +87,7 @@ ${(
         label="Dimension wählen"
         options={[
           { label: "Nadelholz", value: "Nadelholz" },
-          { label: "Laubholz", value: "Laubholz" }
+          { label: "Laubholz", value: "Laubholz" },
         ]}
       />
     </ReactSpecimen>
@@ -105,13 +105,14 @@ ${(
   
     ${(
       <ReactSpecimen span={2}>
-        <SearchField label="Title einfügen" />
+        <SearchField id="search-ex-1" label="Title einfügen" />
       </ReactSpecimen>
     )}
 
     ${(
       <ReactSpecimen span={2}>
         <SearchField
+          id="search-ex-2"
           label="Tier"
           value="Affe"
           onReset={() => alert("reset search")}
