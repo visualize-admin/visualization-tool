@@ -1,19 +1,16 @@
 import { Trans } from "@lingui/macro";
 import { Box } from "@theme-ui/components";
-import { timeFormat } from "d3-time-format";
 import * as React from "react";
-import { Loading } from "./hint";
+import { ReactNode } from "react";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
-import { ReactNode } from "react";
-
-// FIXME: localize time format
-const formatTime = timeFormat("%B %d, %Y");
+import { Loading } from "./hint";
+import { formatDate } from "../domain/helpers";
 
 export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataQuery({
-    variables: { iri: dataSetIri, locale }
+    variables: { iri: dataSetIri, locale },
   });
 
   if (data?.dataCubeByIri) {
@@ -30,7 +27,10 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
               <Trans id="dataset.metadata.source">Source</Trans>
             </DataSetMetadataTitle>
             <DataSetMetadataBody>
-              {data.dataCubeByIri.source}
+              <Box
+                sx={{ "> a": { color: "monochrome900" } }}
+                dangerouslySetInnerHTML={{ __html: data.dataCubeByIri.source }}
+              ></Box>
             </DataSetMetadataBody>
           </>
         )}
@@ -41,7 +41,7 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
               <Trans id="dataset.metadata.date.created">Date Created</Trans>
             </DataSetMetadataTitle>
             <DataSetMetadataBody>
-              {formatTime(new Date(data.dataCubeByIri.dateCreated))}
+              {formatDate(new Date(data.dataCubeByIri.dateCreated))}
             </DataSetMetadataBody>
           </>
         )}
@@ -59,7 +59,7 @@ const DataSetMetadataTitle = ({ children }: { children: ReactNode }) => (
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2],
-      color: "monochrome600"
+      color: "monochrome600",
     }}
   >
     {children}
@@ -73,7 +73,7 @@ const DataSetMetadataBody = ({ children }: { children: ReactNode }) => (
       fontWeight: "regular",
       fontSize: [3, 4, 4],
       color: "monochrome900",
-      mb: 3
+      mb: 3,
     }}
   >
     {children}

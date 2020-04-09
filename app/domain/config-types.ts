@@ -6,7 +6,7 @@ import { fold } from "fp-ts/lib/Either";
 const FilterValueMulti = t.type(
   {
     type: t.literal("multi"),
-    values: t.record(t.string, t.literal(true)) // undefined values will be removed when serializing to JSON
+    values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
   },
   "FilterValueMulti"
 );
@@ -15,7 +15,7 @@ export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
 const FilterValueSingle = t.type(
   {
     type: t.literal("single"),
-    value: t.string
+    value: t.string,
   },
   "FilterValueSingle"
 );
@@ -25,7 +25,7 @@ const FilterValueRange = t.type(
   {
     type: t.literal("range"),
     from: t.string,
-    to: t.string
+    to: t.string,
   },
   "FilterValueRange"
 );
@@ -50,14 +50,14 @@ const Title = t.type({
   de: t.string,
   fr: t.string,
   it: t.string,
-  en: t.string
+  en: t.string,
 });
 export type Title = t.TypeOf<typeof Title>;
 const Description = t.type({
   de: t.string,
   fr: t.string,
   it: t.string,
-  en: t.string
+  en: t.string,
 });
 const Meta = t.type({ title: Title, description: Description });
 export type Meta = t.TypeOf<typeof Meta>;
@@ -72,20 +72,20 @@ export type GenericFields = Record<string, GenericField | undefined>;
 const AreaFields = t.intersection([
   t.type({
     x: GenericField,
-    y: GenericField
+    y: GenericField,
   }),
   t.partial({
     segment: t.type({
       componentIri: t.string,
-      palette: t.string
-    })
-  })
+      palette: t.string,
+    }),
+  }),
 ]);
 const AreaConfig = t.type(
   {
     chartType: t.literal("area"),
     filters: Filters,
-    fields: AreaFields
+    fields: AreaFields,
   },
   "AreaConfig"
 );
@@ -96,21 +96,21 @@ export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 const BarFields = t.intersection([
   t.type({
     x: GenericField,
-    y: GenericField
+    y: GenericField,
   }),
   t.partial({
     segment: t.type({
       componentIri: t.string,
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
-      palette: t.string
-    })
-  })
+      palette: t.string,
+    }),
+  }),
 ]);
 const BarConfig = t.type(
   {
     chartType: t.literal("bar"),
     filters: Filters,
-    fields: BarFields
+    fields: BarFields,
   },
   "BarConfig"
 );
@@ -120,21 +120,21 @@ export type BarConfig = t.TypeOf<typeof BarConfig>;
 const ColumnFields = t.intersection([
   t.type({
     x: GenericField,
-    y: GenericField
+    y: GenericField,
   }),
   t.partial({
     segment: t.type({
       componentIri: t.string,
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
-      palette: t.string
-    })
-  })
+      palette: t.string,
+    }),
+  }),
 ]);
 const ColumnConfig = t.type(
   {
     chartType: t.literal("column"),
     filters: Filters,
-    fields: ColumnFields
+    fields: ColumnFields,
   },
   "ColumnConfig"
 );
@@ -144,20 +144,20 @@ export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 const LineFields = t.intersection([
   t.type({
     x: GenericField,
-    y: GenericField
+    y: GenericField,
   }),
   t.partial({
     segment: t.type({
       componentIri: t.string,
-      palette: t.string
-    })
-  })
+      palette: t.string,
+    }),
+  }),
 ]);
 const LineConfig = t.type(
   {
     chartType: t.literal("line"),
     filters: Filters,
-    fields: LineFields
+    fields: LineFields,
   },
   "LineConfig"
 );
@@ -167,20 +167,20 @@ export type LineConfig = t.TypeOf<typeof LineConfig>;
 const ScatterPlotFields = t.intersection([
   t.type({
     x: GenericField,
-    y: GenericField
+    y: GenericField,
   }),
   t.partial({
     segment: t.type({
       componentIri: t.string,
-      palette: t.string
-    })
-  })
+      palette: t.string,
+    }),
+  }),
 ]);
 const ScatterPlotConfig = t.type(
   {
     chartType: t.literal("scatterplot"),
     filters: Filters,
-    fields: ScatterPlotFields
+    fields: ScatterPlotFields,
   },
   "ScatterPlotConfig"
 );
@@ -188,17 +188,17 @@ export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
 const PieFields = t.type({
-  value: GenericField,
+  y: GenericField,
   segment: t.type({
     componentIri: t.string,
-    palette: t.string
-  })
+    palette: t.string,
+  }),
 });
 const PieConfig = t.type(
   {
     chartType: t.literal("pie"),
     filters: Filters,
-    fields: PieFields
+    fields: PieFields,
   },
   "PieConfig"
 );
@@ -234,7 +234,7 @@ const ChartConfig = t.union([
   ColumnConfig,
   LineConfig,
   ScatterPlotConfig,
-  PieConfig
+  PieConfig,
 ]);
 // t.record(t.string, t.any)
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
@@ -246,7 +246,7 @@ const Config = t.type(
     dataSet: t.string,
     activeField: t.union([t.string, t.undefined]),
     meta: Meta,
-    chartConfig: ChartConfig
+    chartConfig: ChartConfig,
   },
   "Config"
 );
@@ -261,38 +261,38 @@ export const decodeConfig = (config: unknown) => Config.decode(config);
 const ConfiguratorStateInitial = t.type({
   state: t.literal("INITIAL"),
   activeField: t.undefined,
-  dataSet: t.undefined
+  dataSet: t.undefined,
 });
 const ConfiguratorStateSelectingDataSet = t.type({
   state: t.literal("SELECTING_DATASET"),
   activeField: t.undefined,
   meta: Meta,
   dataSet: t.union([t.string, t.undefined]),
-  chartConfig: t.undefined
+  chartConfig: t.undefined,
 });
 const ConfiguratorStateSelectingChartType = t.intersection([
   t.type({
-    state: t.literal("SELECTING_CHART_TYPE")
+    state: t.literal("SELECTING_CHART_TYPE"),
   }),
-  Config
+  Config,
 ]);
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
-    state: t.literal("CONFIGURING_CHART")
+    state: t.literal("CONFIGURING_CHART"),
   }),
-  Config
+  Config,
 ]);
 const ConfiguratorStateDescribingChart = t.intersection([
   t.type({
-    state: t.literal("DESCRIBING_CHART")
+    state: t.literal("DESCRIBING_CHART"),
   }),
-  Config
+  Config,
 ]);
 const ConfiguratorStatePublishing = t.intersection([
   t.type({
-    state: t.literal("PUBLISHING")
+    state: t.literal("PUBLISHING"),
   }),
-  Config
+  Config,
 ]);
 
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
@@ -316,7 +316,7 @@ const ConfiguratorState = t.union([
   ConfiguratorStateSelectingChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
-  ConfiguratorStatePublishing
+  ConfiguratorStatePublishing,
 ]);
 
 export type ConfiguratorState = t.TypeOf<typeof ConfiguratorState>;
@@ -327,11 +327,11 @@ export const decodeConfiguratorState = (
   return pipe(
     ConfiguratorState.decode(state),
     fold(
-      err => {
+      (err) => {
         console.log(err);
         return undefined;
       },
-      d => d
+      (d) => d
     )
   );
 };

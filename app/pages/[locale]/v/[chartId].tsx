@@ -28,7 +28,7 @@ type PageProps =
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   query,
-  res
+  res,
 }) => {
   const config = await fetchConfig(query.chartId as string);
 
@@ -54,8 +54,8 @@ export default (props: PageProps) => {
   const {
     config: {
       key,
-      data: { dataSet, meta, chartConfig }
-    }
+      data: { dataSet, meta, chartConfig },
+    },
   } = props;
   const publishSuccess = !!query.publishSuccess;
 
@@ -77,6 +77,7 @@ export default (props: PageProps) => {
                 dataSet={dataSet}
                 chartConfig={chartConfig}
                 meta={meta}
+                configKey={key}
               />
             </ChartPanel>
 
@@ -90,7 +91,7 @@ export default (props: PageProps) => {
                 color: "monochrome800",
                 fontSize: 5,
                 fontFamily: "body",
-                fontWeight: "regular"
+                fontWeight: "regular",
               }}
             >
               {publishSuccess ? (

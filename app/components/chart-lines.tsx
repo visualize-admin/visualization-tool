@@ -4,7 +4,7 @@ import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import {
   ComponentFieldsFragment,
-  useDataCubeObservationsQuery
+  useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
@@ -25,7 +25,7 @@ import { Loading, NoDataHint } from "./hint";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
-  chartConfig
+  chartConfig,
 }: {
   dataSetIri: string;
   chartConfig: LineConfig;
@@ -36,8 +36,8 @@ export const ChartLinesVisualization = ({
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters
-    }
+      filters: chartConfig.filters,
+    },
   });
 
   const observations = data?.dataCubeByIri?.observations.data;
@@ -59,18 +59,11 @@ export const ChartLinesVisualization = ({
           measures={measures}
           fields={chartConfig.fields}
         />
-        <DataDownload
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-        />
       </>
     ) : (
       <NoDataHint />
     );
-  } else if (observations && !observations.map(obs => obs.y).some(isNumber)) {
+  } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
     return <NoDataHint />;
   } else {
     return <Loading />;
@@ -82,7 +75,7 @@ export const ChartLines = memo(
     observations,
     dimensions,
     measures,
-    fields
+    fields,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];

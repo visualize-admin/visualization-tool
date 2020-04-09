@@ -29,8 +29,7 @@ const usePieState = ({
 }): PieState => {
   const width = useWidth();
 
-  const getY = (d: Observation): number =>
-    +d[fields.value.componentIri] as number;
+  const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
   const getX = (d: Observation): string =>
     d[fields.segment.componentIri] as string;
 

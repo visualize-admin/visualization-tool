@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Box } from "@theme-ui/components";
 import {
   AreaConfig,
   ColumnConfig,
@@ -8,12 +7,12 @@ import {
   LineConfig,
   ScatterPlotConfig,
   getFieldComponentIris,
-  PieConfig
+  PieConfig,
 } from "../domain";
 import {
   ControlSection,
   SectionTitle,
-  ControlSectionContent
+  ControlSectionContent,
 } from "./chart-controls/section";
 import { ControlTabField, FilterTabField } from "./field";
 import { Loading } from "./hint";
@@ -22,19 +21,19 @@ import { useLocale } from "../lib/use-locale";
 import { DataCubeMetadata } from "../graphql/types";
 
 export const ChartConfigurator = ({
-  state
+  state,
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale }
+    variables: { iri: state.dataSet, locale },
   });
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
     const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
-      dim => !mappedIris.has(dim.iri)
+      (dim) => !mappedIris.has(dim.iri)
     );
     return (
       <>
@@ -102,7 +101,7 @@ export const ChartConfigurator = ({
 
 const ColumnChartFields = ({
   chartConfig,
-  metaData
+  metaData,
 }: {
   chartConfig: ColumnConfig;
   metaData: DataCubeMetadata;
@@ -115,19 +114,19 @@ const ColumnChartFields = ({
     <>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.y.componentIri
+          (d) => d.iri === chartConfig.fields.y.componentIri
         )}
         value={"y"}
       ></ControlTabField>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.x.componentIri
+          (d) => d.iri === chartConfig.fields.x.componentIri
         )}
         value={"x"}
       ></ControlTabField>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.segment?.componentIri
+          (d) => d.iri === chartConfig.fields.segment?.componentIri
         )}
         value={"segment"}
       ></ControlTabField>
@@ -136,7 +135,7 @@ const ColumnChartFields = ({
 };
 const LineChartFields = ({
   chartConfig,
-  metaData
+  metaData,
 }: {
   chartConfig: LineConfig;
   metaData: DataCubeMetadata;
@@ -148,19 +147,19 @@ const LineChartFields = ({
     <>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.y.componentIri
+          (d) => d.iri === chartConfig.fields.y.componentIri
         )}
         value={"y"}
       ></ControlTabField>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.x.componentIri
+          (d) => d.iri === chartConfig.fields.x.componentIri
         )}
         value={"x"}
       ></ControlTabField>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.segment?.componentIri
+          (d) => d.iri === chartConfig.fields.segment?.componentIri
         )}
         value={"segment"}
       ></ControlTabField>
@@ -169,7 +168,7 @@ const LineChartFields = ({
 };
 const AreaChartFields = ({
   chartConfig,
-  metaData
+  metaData,
 }: {
   chartConfig: AreaConfig;
   metaData: DataCubeMetadata;
@@ -181,19 +180,19 @@ const AreaChartFields = ({
     <>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.y.componentIri
+          (d) => d.iri === chartConfig.fields.y.componentIri
         )}
         value={"y"}
       ></ControlTabField>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.x.componentIri
+          (d) => d.iri === chartConfig.fields.x.componentIri
         )}
         value={"x"}
       ></ControlTabField>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.segment?.componentIri
+          (d) => d.iri === chartConfig.fields.segment?.componentIri
         )}
         value={"segment"}
       ></ControlTabField>
@@ -202,7 +201,7 @@ const AreaChartFields = ({
 };
 const ScatterPlotChartFields = ({
   chartConfig,
-  metaData
+  metaData,
 }: {
   chartConfig: ScatterPlotConfig;
   metaData: DataCubeMetadata;
@@ -214,19 +213,19 @@ const ScatterPlotChartFields = ({
     <>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.y.componentIri
+          (d) => d.iri === chartConfig.fields.y.componentIri
         )}
         value={"y"}
       ></ControlTabField>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.x.componentIri
+          (d) => d.iri === chartConfig.fields.x.componentIri
         )}
         value={"x"}
       ></ControlTabField>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.segment?.componentIri
+          (d) => d.iri === chartConfig.fields.segment?.componentIri
         )}
         value={"segment"}
       ></ControlTabField>
@@ -235,7 +234,7 @@ const ScatterPlotChartFields = ({
 };
 const PieChartFields = ({
   chartConfig,
-  metaData
+  metaData,
 }: {
   chartConfig: PieConfig;
   metaData: DataCubeMetadata;
@@ -247,14 +246,14 @@ const PieChartFields = ({
     <>
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.value.componentIri
+          (d) => d.iri === chartConfig.fields.y.componentIri
         )}
         value={"y"}
       ></ControlTabField>
 
       <ControlTabField
         component={components.find(
-          d => d.iri === chartConfig.fields.segment?.componentIri
+          (d) => d.iri === chartConfig.fields.segment?.componentIri
         )}
         value={"segment"}
       ></ControlTabField>

@@ -32,6 +32,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                       dataSet={dataSet}
                       chartConfig={chartConfig}
                       meta={meta}
+                      configKey={key}
                     />
                     <LocalizedLink
                       pathname={`/[locale]/v/[chartId]`}
@@ -52,8 +53,8 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                           p: 5,
                           ":disabled": {
                             cursor: "initial",
-                            color: "monochrome500"
-                          }
+                            color: "monochrome500",
+                          },
                         }}
                       >
                         →
@@ -75,8 +76,8 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      configs: configs.filter((c: $Unexpressable) => c.data && c.data.meta)
-    }
+      configs: configs.filter((c: $Unexpressable) => c.data && c.data.meta),
+    },
   };
 };
 
