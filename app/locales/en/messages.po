@@ -13,18 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/a11y-table.tsx:37
-msgid "accessibility.table.sorting"
-msgstr "sorted by {label} in {0} order"
-
-#: app/components/a11y-table.tsx:39
-msgid "accessibility.table.sorting.ascending"
-msgstr "ascending"
-
-#: app/components/a11y-table.tsx:41
-msgid "accessibility.table.sorting.descending"
-msgstr "descending"
-
 #: app/components/chart-preview.tsx:32
 msgid "annotation.add.description"
 msgstr "[You can add a description here]"
