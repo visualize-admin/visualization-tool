@@ -176,10 +176,6 @@ msgstr "Chart Type"
 msgid "controls.select.column.chart.type"
 msgstr "Chart Type"
 
-#: app/components/dataset-selector.tsx:15
-msgid "controls.select.dataset"
-msgstr "Select Dataset"
-
 #: app/components/chart-options-selector.tsx:70
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
@@ -203,6 +199,30 @@ msgstr "Source"
 #: app/components/dataset-metadata.tsx:17
 msgid "dataset.metadata.title"
 msgstr "Title"
+
+#: app/components/dataset-selector.tsx:46
+msgid "dataset.order.newest"
+msgstr "Newest"
+
+#: app/components/dataset-selector.tsx:38
+msgid "dataset.order.relevance"
+msgstr "Relevance"
+
+#: app/components/dataset-selector.tsx:42
+msgid "dataset.order.title"
+msgstr "Title"
+
+#: app/components/dataset-selector.tsx:76
+msgid "dataset.results"
+msgstr "{0, plural, =0 {No results} =1 {# result} other {# results}}"
+
+#: app/components/dataset-selector.tsx:67
+msgid "dataset.search.label"
+msgstr "Search datasets"
+
+#: app/components/dataset-selector.tsx:86
+msgid "dataset.sortby"
+msgstr "Sort by"
 
 #: app/components/dataset-preview.tsx:44
 msgid "datatable.showing.first.rows"

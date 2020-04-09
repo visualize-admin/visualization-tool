@@ -1,5 +1,12 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Radio, Checkbox, Select, Input } from "../components/form";
+import {
+  Radio,
+  Checkbox,
+  Select,
+  Input,
+  MiniSelect,
+  SearchField
+} from "../components/form";
 
 export default () => markdown`
 > Form elements are used throughout the _Visualization Tool_ whenever user input is needed.
@@ -71,6 +78,21 @@ ${(
     </ReactSpecimen>
   )}
 
+  ## MiniSelect
+
+  ${(
+    <ReactSpecimen span={2}>
+      <MiniSelect
+        id="dim"
+        label="Dimension wählen"
+        options={[
+          { label: "Nadelholz", value: "Nadelholz" },
+          { label: "Laubholz", value: "Laubholz" }
+        ]}
+      />
+    </ReactSpecimen>
+  )}
+
   ## Input
 
   ${(
@@ -78,10 +100,24 @@ ${(
       <Input label="Title einfügen" />
     </ReactSpecimen>
   )}
-
+  
   ## Search Field
+  
+    ${(
+      <ReactSpecimen span={2}>
+        <SearchField label="Title einfügen" />
+      </ReactSpecimen>
+    )}
 
-  TODO
+    ${(
+      <ReactSpecimen span={2}>
+        <SearchField
+          label="Tier"
+          value="Affe"
+          onReset={() => alert("reset search")}
+        />
+      </ReactSpecimen>
+    )}
 
   # For developers
 

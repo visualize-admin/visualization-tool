@@ -1,8 +1,12 @@
-query DataCubes($locale: String!) {
-  dataCubes(locale: $locale) {
-    iri
-    title
-    description
+query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder) {
+  dataCubes(locale: $locale, query: $query, order: $order) {
+    highlightedTitle
+    highlightedDescription
+    dataCube {
+      iri
+      title
+      description
+    }
   }
 }
 

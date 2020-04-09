@@ -15,11 +15,11 @@ export default () => markdown`
         }}
       >
         <DatasetButton
-          dataSetIri={""}
-          dataSetLabel={
+          iri={""}
+          title={
             "Comptes des exploitations forestières en francs selon Année, Zone forestière, Canton et Variable"
           }
-          dataSetDescription={
+          description={
             "Comptes des exploitations forestières en francs, dès 2015"
           }
         />
@@ -37,11 +37,11 @@ export default () => markdown`
         }}
       >
         <DatasetButton
-          dataSetIri={""}
-          dataSetLabel={
+          iri={""}
+          title={
             "Comptes des exploitations forestières en francs selon Année, Zone forestière, Canton et Variable"
           }
-          dataSetDescription={
+          description={
             "Comptes des exploitations forestières en francs, dès 2015"
           }
         />
@@ -56,11 +56,11 @@ export default () => markdown`
 import { DatasetButton } from "../components/dataset-selector";
 
 <DatasetButton
-  dataSetIri={"http://..."}
+  iri={"http://..."}
   dataSetLabel="Comptes des exploitations forestières en francs selon Année, Zone forestière, Canton et Variable"
   dataSetDescription= "Comptes des exploitations forestières en francs, dès 2015"
   selected={true}
-  updateDataSetIri={() => updateDatasetIri()}
+  updateiri={() => updateiri()}
 />
 ~~~
 

@@ -2597,6 +2597,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/fuzzaldrin-plus@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@types/fuzzaldrin-plus/-/fuzzaldrin-plus-0.6.0.tgz#7bdb91a6a50dea787e7f735ecac48c43a8965674"
+  integrity sha512-SSQi/XZ4d+x1xqmabEVrsTkPuiUFx02zne+Y90I9XyCOQxdnyIzRJBRlLRWjJazi7Wls8JVkfdYZ+zbktqDvzA==
+
 "@types/glob@^7.1.1":
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.1.tgz#aa59a1c6e3fbc421e07ccd31a944c30eba521575"
@@ -7050,6 +7055,11 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
+
+fuzzaldrin-plus@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/fuzzaldrin-plus/-/fuzzaldrin-plus-0.6.0.tgz#832f6489fbe876769459599c914a670ec22947ee"
+  integrity sha1-gy9kifvodnaUWVmckUpnDsIpR+4=
 
 fuzzaldrin@^2.1.0:
   version "2.1.0"
@@ -14053,6 +14063,11 @@ urql@^1.9.5:
   dependencies:
     "@urql/core" "^1.10.5"
     wonka "^4.0.9"
+
+use-debounce@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-3.4.1.tgz#361a20e583c1bd4a44f8b29a26793a52a0b84d2c"
+  integrity sha512-KHZPsL+cZvOt/ZAsHTcoAK65ImXU0iG9FDeofuj9uJTdUULF6Gjws8HpK+JlIjZpZ7LTqPHZtEknc+Im4cB3AA==
 
 use-immer@^0.3.3:
   version "0.3.5"
