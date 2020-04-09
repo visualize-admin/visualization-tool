@@ -1,10 +1,7 @@
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { ChartPublished } from "../../../components/chart-published";
 import { Config } from "../../../domain/config-types";
-import {
-  loadFixtureConfigIds,
-  loadFixtureConfig
-} from "../../../test/utils";
+import { loadFixtureConfigIds, loadFixtureConfig } from "../../../test/utils";
 
 type PageProps = {
   statusCode?: number;
@@ -20,12 +17,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     fallback: false,
-    paths: ids.flatMap(chartId => {
+    paths: ids.flatMap((chartId) => {
       return [
         { params: { locale: "en", chartId } },
-        { params: { locale: "de", chartId } }
+        { params: { locale: "de", chartId } },
       ];
-    })
+    }),
   };
 };
 
@@ -33,16 +30,21 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const config = await loadFixtureConfig(params?.chartId.toString() ?? "");
 
   return {
-    props: { config }
+    props: { config },
   };
 };
 
 const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
   if (config) {
     const { dataSet, meta, chartConfig } = config.data;
-    
+
     return (
-      <ChartPublished dataSet={dataSet} chartConfig={chartConfig} meta={meta} />
+      <ChartPublished
+        dataSet={dataSet}
+        chartConfig={chartConfig}
+        meta={meta}
+        configKey={config.key}
+      />
     );
   }
 

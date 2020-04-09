@@ -7,7 +7,6 @@ import { A11yTable } from "./a11y-table";
 import { ChartSvg, ChartContainer } from "./charts-generic/containers";
 import { Pie } from "./charts-generic/pie";
 import { PieChart } from "./charts-generic/pie/pie-state";
-import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 import {
   useDataCubeObservationsQuery,
@@ -29,7 +28,7 @@ export const ChartPieVisualization = ({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [chartConfig.fields.value.componentIri], // FIXME: Other fields may also be measures
+      measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
       filters: chartConfig.filters,
     },
   });
@@ -46,13 +45,6 @@ export const ChartPieVisualization = ({
           fields={chartConfig.fields}
         />
         <ChartPie
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-        />
-        <DataDownload
-          title={title}
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}

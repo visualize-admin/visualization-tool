@@ -2,47 +2,88 @@ import { Trans } from "@lingui/macro";
 import { Button } from "@theme-ui/components";
 import { csvFormat } from "d3-dsv";
 import { saveAs } from "file-saver";
-import React, { memo, useMemo, ReactNode } from "react";
-import { ChartFields, Observation } from "../domain";
-import { ComponentFieldsFragment } from "../graphql/query-hooks";
+import React, { memo, ReactNode, useMemo } from "react";
+import { ChartConfig, ChartFields, Observation } from "../domain";
+import {
+  ComponentFieldsFragment,
+  useDataCubeObservationsQuery,
+} from "../graphql/query-hooks";
+import { useLocale } from "../lib/use-locale";
 
 export interface ChartFieldsWithLabel {
   [x: string]: string;
 }
+
 export const DataDownload = memo(
   ({
+    dataSetIri,
+    chartConfig,
+  }: {
+    dataSetIri: string;
+    chartConfig: ChartConfig;
+  }) => {
+    const locale = useLocale();
+    const [{ data }] = useDataCubeObservationsQuery({
+      variables: {
+        locale,
+        iri: dataSetIri,
+        measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+        filters: chartConfig.filters,
+      },
+    });
+
+    if (data?.dataCubeByIri) {
+      const { title, dimensions, measures, observations } = data?.dataCubeByIri;
+
+      return (
+        <DataDownloadInner
+          title={title}
+          observations={observations.data}
+          dimensions={dimensions}
+          measures={measures}
+          fields={chartConfig.fields}
+        />
+      );
+    } else {
+      return <DownloadButton onClick={() => {}}> </DownloadButton>;
+    }
+  }
+);
+
+const DataDownloadInner = memo(
+  ({
     title,
+    observations,
     dimensions,
     measures,
     fields,
-    observations
   }: {
     title: string;
+    observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: ChartFields;
-    observations: Observation[];
   }) => {
-    const data = useMemo(() => {
+    const forCsvData = useMemo(() => {
       const columns = [...dimensions, ...measures];
-      return observations.map(obs => {
+      return observations.map((obs) => {
         return Object.keys(obs).reduce((acc, key) => {
-          const col = columns.find(d => d.iri === key);
+          const col = columns.find((d) => d.iri === key);
 
           return col
             ? {
                 ...acc,
-                ...{ [col.label]: obs[key] }
+                ...{ [col.label]: obs[key] },
               }
             : acc;
         }, {});
       });
     }, [dimensions, measures, observations]);
 
-    const csvData = csvFormat(data);
+    const csvData = csvFormat(forCsvData);
 
     const blob = new Blob([csvData], {
-      type: "text/plain;charset=utf-8"
+      type: "text/plain;charset=utf-8",
     });
     return (
       <DownloadButton onClick={() => saveAs(blob, `${title}.csv`)}>
@@ -54,7 +95,7 @@ export const DataDownload = memo(
 
 export const DownloadButton = ({
   onClick,
-  children
+  children,
 }: {
   onClick?: () => void;
   children: ReactNode;
@@ -62,6 +103,7 @@ export const DownloadButton = ({
   <Button
     variant="reset"
     sx={{
+      display: "inline",
       background: "transparent",
       color: "primary",
       textAlign: "left",
@@ -75,8 +117,8 @@ export const DownloadButton = ({
       p: 0,
       ":disabled": {
         cursor: "initial",
-        color: "monochrome500"
-      }
+        color: "monochrome500",
+      },
     }}
     onClick={onClick}
   >

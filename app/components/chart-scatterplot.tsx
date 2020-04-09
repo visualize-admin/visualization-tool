@@ -5,7 +5,7 @@ import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import {
   ComponentFieldsFragment,
-  useDataCubeObservationsQuery
+  useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
@@ -13,7 +13,7 @@ import { A11yTable } from "./a11y-table";
 import { AxisWidthLinear, AxisWidthLinearDomain } from "./charts-generic/axis";
 import {
   AxisHeightLinear,
-  AxisHeightLinearDomain
+  AxisHeightLinearDomain,
 } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionVoronoi } from "./charts-generic/interaction/interaction-voronoi";
@@ -26,7 +26,7 @@ import { Tooltip } from "./charts-generic/annotations/tooltip";
 
 export const ChartScatterplotVisualization = ({
   dataSetIri,
-  chartConfig
+  chartConfig,
 }: {
   dataSetIri: string;
   chartConfig: ScatterPlotConfig;
@@ -38,10 +38,10 @@ export const ChartScatterplotVisualization = ({
       iri: dataSetIri,
       measures: [
         chartConfig.fields.x.componentIri,
-        chartConfig.fields.y.componentIri
+        chartConfig.fields.y.componentIri,
       ], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters
-    }
+      filters: chartConfig.filters,
+    },
   });
 
   const observations = data?.dataCubeByIri?.observations.data;
@@ -58,13 +58,6 @@ export const ChartScatterplotVisualization = ({
           fields={chartConfig.fields}
         />
         <ChartScatterplot
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-        />
-        <DataDownload
-          title={title}
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
@@ -90,7 +83,7 @@ export const ChartScatterplot = memo(
     observations,
     dimensions,
     measures,
-    fields
+    fields,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];

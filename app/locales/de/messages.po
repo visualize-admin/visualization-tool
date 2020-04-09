@@ -37,7 +37,7 @@ msgstr ""
 msgid "button.copy.visualization"
 msgstr ""
 
-#: app/components/data-download.tsx:22
+#: app/components/data-download.tsx:43
 msgid "button.download.data"
 msgstr ""
 
@@ -74,31 +74,31 @@ msgstr ""
 msgid "button.share"
 msgstr ""
 
-#: app/domain/helpers.tsx:72
+#: app/domain/helpers.tsx:73
 msgid "controls.axis.horizontal"
 msgstr ""
 
-#: app/domain/helpers.tsx:92
+#: app/domain/helpers.tsx:93
 msgid "controls.chart.type.area"
 msgstr ""
 
-#: app/domain/helpers.tsx:88
+#: app/domain/helpers.tsx:89
 msgid "controls.chart.type.bar"
 msgstr ""
 
-#: app/domain/helpers.tsx:86
+#: app/domain/helpers.tsx:87
 msgid "controls.chart.type.column"
 msgstr ""
 
-#: app/domain/helpers.tsx:90
+#: app/domain/helpers.tsx:91
 msgid "controls.chart.type.line"
 msgstr ""
 
-#: app/domain/helpers.tsx:96
+#: app/domain/helpers.tsx:97
 msgid "controls.chart.type.pie"
 msgstr ""
 
-#: app/domain/helpers.tsx:94
+#: app/domain/helpers.tsx:95
 msgid "controls.chart.type.scatterplot"
 msgstr ""
 
@@ -106,15 +106,15 @@ msgstr ""
 msgid "controls.color.palette"
 msgstr ""
 
-#: app/domain/helpers.tsx:84
+#: app/domain/helpers.tsx:85
 msgid "controls.column.grouped"
 msgstr ""
 
-#: app/domain/helpers.tsx:82
+#: app/domain/helpers.tsx:83
 msgid "controls.column.stacked"
 msgstr ""
 
-#: app/domain/helpers.tsx:80
+#: app/domain/helpers.tsx:81
 msgid "controls.description"
 msgstr ""
 
@@ -134,27 +134,27 @@ msgstr ""
 msgid "controls.hint.describing.chart"
 msgstr ""
 
-#: app/domain/helpers.tsx:98
+#: app/domain/helpers.tsx:99
 msgid "controls.language.english"
 msgstr ""
 
-#: app/domain/helpers.tsx:102
+#: app/domain/helpers.tsx:103
 msgid "controls.language.french"
 msgstr ""
 
-#: app/domain/helpers.tsx:100
+#: app/domain/helpers.tsx:101
 msgid "controls.language.german"
 msgstr ""
 
-#: app/domain/helpers.tsx:104
+#: app/domain/helpers.tsx:105
 msgid "controls.language.italian"
 msgstr ""
 
-#: app/domain/helpers.tsx:74
+#: app/domain/helpers.tsx:75
 msgid "controls.measure"
 msgstr ""
 
-#: app/domain/helpers.tsx:76
+#: app/domain/helpers.tsx:77
 msgid "controls.partition"
 msgstr ""
 
@@ -200,19 +200,19 @@ msgstr ""
 msgid "controls.select.measure"
 msgstr ""
 
-#: app/domain/helpers.tsx:78
+#: app/domain/helpers.tsx:79
 msgid "controls.title"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:34
+#: app/components/dataset-metadata.tsx:32
 msgid "dataset.metadata.date.created"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:25
+#: app/components/dataset-metadata.tsx:23
 msgid "dataset.metadata.source"
 msgstr ""
 
-#: app/components/dataset-metadata.tsx:19
+#: app/components/dataset-metadata.tsx:17
 msgid "dataset.metadata.title"
 msgstr ""
 
@@ -265,15 +265,19 @@ msgstr ""
 msgid "logo.swiss.confederation"
 msgstr ""
 
-#: app/components/chart-footnotes.tsx:35
+#: app/components/chart-footnotes.tsx:47
 msgid "metadata.dataset"
 msgstr ""
 
-#: app/components/chart-footnotes.tsx:40
+#: app/components/chart-footnotes.tsx:35
 msgid "metadata.filter"
 msgstr ""
 
-#: app/components/chart-footnotes.tsx:30
+#: app/components/chart-footnotes.tsx:77
+msgid "metadata.link.created.with.visualize"
+msgstr ""
+
+#: app/components/chart-footnotes.tsx:52
 msgid "metadata.source"
 msgstr ""
 

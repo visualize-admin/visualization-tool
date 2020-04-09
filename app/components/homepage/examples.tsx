@@ -10,7 +10,7 @@ export const Examples = ({
   example2Headline,
   example2Description,
   example3Headline,
-  example3Description
+  example3Description,
 }: {
   headline: string;
   example1Headline: string;
@@ -26,7 +26,7 @@ export const Examples = ({
         maxWidth: 1024,
         margin: [0, 0, "0 auto"],
         p: 4,
-        color: "monochrome800"
+        color: "monochrome800",
       }}
     >
       <HomepageSection>{headline}</HomepageSection>
@@ -38,32 +38,32 @@ export const Examples = ({
               de: "",
               fr: "",
               it: "",
-              en: ""
+              en: "",
             },
             description: {
               de: " ",
               fr: " ",
               it: " ",
-              en: " "
-            }
+              en: " ",
+            },
           }}
           chartConfig={{
             chartType: "column",
             fields: {
               x: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/0"
+                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/0",
               },
               y: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/measure/0"
+                  "http://environment.ld.admin.ch/foen/px/0703010000_102/measure/0",
               },
               segment: {
                 componentIri:
                   "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1",
                 type: "stacked",
-                palette: "dark2"
-              }
+                palette: "dark2",
+              },
             },
             filters: {
               "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/0": {
@@ -76,32 +76,33 @@ export const Examples = ({
                   "2000": true,
                   "2005": true,
                   "2010": true,
-                  "2015": true
-                }
+                  "2015": true,
+                },
               },
               "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1": {
                 type: "multi",
                 values: {
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1/0": true
-                }
+                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1/0": true,
+                },
               },
               "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/2": {
                 type: "single",
                 value:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/2/0"
+                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/2/0",
               },
               "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/3": {
                 type: "single",
                 value:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/3/0"
+                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/3/0",
               },
               "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/4": {
                 type: "single",
                 value:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/4/0"
-              }
-            }
+                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/4/0",
+              },
+            },
           }}
+          configKey={""}
         />
       </Example>
       <Example
@@ -116,31 +117,31 @@ export const Examples = ({
               de: "",
               fr: "",
               it: "",
-              en: ""
+              en: "",
             },
             description: {
               de: " ",
               fr: " ",
               it: " ",
-              en: " "
-            }
+              en: " ",
+            },
           }}
           chartConfig={{
             chartType: "area",
             fields: {
               x: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/0"
+                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/0",
               },
               y: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/measure/0"
+                  "http://environment.ld.admin.ch/foen/px/0703030000_122/measure/0",
               },
               segment: {
                 componentIri:
                   "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1",
-                palette: "set2"
-              }
+                palette: "set2",
+              },
             },
             filters: {
               "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1": {
@@ -149,16 +150,17 @@ export const Examples = ({
                   "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/1": true,
                   "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/2": true,
                   "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/3": true,
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/4": true
-                }
+                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/4": true,
+                },
               },
               "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/2": {
                 type: "single",
                 value:
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/2/0"
-              }
-            }
+                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/2/0",
+              },
+            },
           }}
+          configKey={""}
         />
       </Example>
       {example3Headline && example3Description && (
@@ -175,7 +177,7 @@ const Example = ({
   headline,
   description,
   reverse,
-  children
+  children,
 }: {
   headline: string;
   description: string;
@@ -187,7 +189,7 @@ const Example = ({
       flexDirection: ["column", "column", "row"],
       justifyContent: ["flex-start", "flex-start", "space-between"],
       alignItems: "center",
-      mb: 6
+      mb: 6,
     }}
   >
     <Box
@@ -196,7 +198,7 @@ const Example = ({
         minWidth: 0,
         width: ["100%", "100%", "50%"],
         ml: reverse ? [0, 0, 8] : 0,
-        mr: reverse ? 0 : [0, 0, 8]
+        mr: reverse ? 0 : [0, 0, 8],
       }}
     >
       <Text
@@ -205,7 +207,7 @@ const Example = ({
           lineHeight: 1.5,
           fontFamily: "body",
           fontWeight: "bold",
-          mb: [2, 2, 4]
+          mb: [2, 2, 4],
         }}
       >
         {headline}
@@ -216,7 +218,7 @@ const Example = ({
           lineHeight: 1.5,
           fontFamily: "body",
           mt: 4,
-          mb: [2, 2, 0]
+          mb: [2, 2, 0],
         }}
       >
         {description}
@@ -232,7 +234,7 @@ const Example = ({
         width: ["100%", "100%", "50%"],
         mt: 2,
         minWidth: 0,
-        maxWidth: ["unset", "unset", 512]
+        maxWidth: ["unset", "unset", 512],
       }}
     >
       {children}

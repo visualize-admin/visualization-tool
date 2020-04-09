@@ -7,7 +7,7 @@ import {
   schemePastel2,
   schemeSet1,
   schemeSet2,
-  schemeSet3
+  schemeSet3,
 } from "d3-scale-chromatic";
 import { Trans } from "@lingui/macro";
 import * as React from "react";
@@ -19,7 +19,7 @@ import {
   timeHour,
   timeMonth,
   timeWeek,
-  timeYear
+  timeYear,
 } from "d3-time";
 import { format } from "d3-format";
 
@@ -41,6 +41,8 @@ export const isNumber = (x: $IntentionalAny): boolean =>
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
 // const formatLocale = d3TimeFormatLocales[locale];
+
+export const formatDate = timeFormat("%B %d, %Y");
 
 const formatSecond = timeFormat(":%S");
 const formatMinute = timeFormat("%I:%M");

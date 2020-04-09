@@ -11,11 +11,13 @@ import { ChartPieVisualization } from "./chart-pie";
 export const ChartPublished = ({
   dataSet,
   meta,
-  chartConfig
+  chartConfig,
+  configKey,
 }: {
   dataSet: string;
   meta: Meta;
   chartConfig: ChartConfig;
+  configKey: string;
 }) => {
   const locale = useLocale();
 
@@ -26,7 +28,7 @@ export const ChartPublished = ({
         flexGrow: 1,
         color: "monochrome800",
         flexDirection: "column",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
       }}
     >
       {meta.title[locale] !== "" && (
@@ -43,7 +45,7 @@ export const ChartPublished = ({
         sx={{
           flexDirection: "column",
           justifyContent: "space-between",
-          flexGrow: 1
+          flexGrow: 1,
         }}
       >
         {chartConfig.chartType === "column" && (
@@ -77,7 +79,11 @@ export const ChartPublished = ({
           />
         )}
       </Flex>
-      <ChartFootnotes dataSetIri={dataSet} chartConfig={chartConfig} />
+      <ChartFootnotes
+        dataSetIri={dataSet}
+        chartConfig={chartConfig}
+        configKey={configKey}
+      />
     </Flex>
   );
 };

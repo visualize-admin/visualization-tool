@@ -19,7 +19,7 @@ type PageProps =
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   query,
-  res
+  res,
 }) => {
   const config = await fetchConfig(query.chartId as string);
 
@@ -41,11 +41,17 @@ export default (props: PageProps) => {
 
   const {
     config: {
-      data: { dataSet, meta, chartConfig }
-    }
+      key,
+      data: { dataSet, meta, chartConfig },
+    },
   } = props;
 
   return (
-    <ChartPublished dataSet={dataSet} chartConfig={chartConfig} meta={meta} />
+    <ChartPublished
+      dataSet={dataSet}
+      chartConfig={chartConfig}
+      meta={meta}
+      configKey={key}
+    />
   );
 };

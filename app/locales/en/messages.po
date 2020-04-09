@@ -37,7 +37,7 @@ msgstr "[You can add a title here]"
 msgid "button.copy.visualization"
 msgstr "Copy Visualization"
 
-#: app/components/data-download.tsx:22
+#: app/components/data-download.tsx:43
 msgid "button.download.data"
 msgstr "Download data"
 
@@ -74,31 +74,31 @@ msgstr "Publish"
 msgid "button.share"
 msgstr "Share"
 
-#: app/domain/helpers.tsx:72
+#: app/domain/helpers.tsx:73
 msgid "controls.axis.horizontal"
 msgstr "Horizontal axis"
 
-#: app/domain/helpers.tsx:92
+#: app/domain/helpers.tsx:93
 msgid "controls.chart.type.area"
 msgstr "Areas"
 
-#: app/domain/helpers.tsx:88
+#: app/domain/helpers.tsx:89
 msgid "controls.chart.type.bar"
 msgstr "Bars"
 
-#: app/domain/helpers.tsx:86
+#: app/domain/helpers.tsx:87
 msgid "controls.chart.type.column"
 msgstr "Columns"
 
-#: app/domain/helpers.tsx:90
+#: app/domain/helpers.tsx:91
 msgid "controls.chart.type.line"
 msgstr "Lines"
 
-#: app/domain/helpers.tsx:96
+#: app/domain/helpers.tsx:97
 msgid "controls.chart.type.pie"
 msgstr "Pie"
 
-#: app/domain/helpers.tsx:94
+#: app/domain/helpers.tsx:95
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
@@ -106,15 +106,15 @@ msgstr "Scatterplot"
 msgid "controls.color.palette"
 msgstr "Color Palette"
 
-#: app/domain/helpers.tsx:84
+#: app/domain/helpers.tsx:85
 msgid "controls.column.grouped"
 msgstr "Grouped"
 
-#: app/domain/helpers.tsx:82
+#: app/domain/helpers.tsx:83
 msgid "controls.column.stacked"
 msgstr "Stacked"
 
-#: app/domain/helpers.tsx:80
+#: app/domain/helpers.tsx:81
 msgid "controls.description"
 msgstr "Description"
 
@@ -134,27 +134,27 @@ msgstr "Select a chart element or a data dimension in the left panel to modify i
 msgid "controls.hint.describing.chart"
 msgstr "Select an annotation field in the left panel."
 
-#: app/domain/helpers.tsx:98
+#: app/domain/helpers.tsx:99
 msgid "controls.language.english"
 msgstr "English"
 
-#: app/domain/helpers.tsx:102
+#: app/domain/helpers.tsx:103
 msgid "controls.language.french"
 msgstr "French"
 
-#: app/domain/helpers.tsx:100
+#: app/domain/helpers.tsx:101
 msgid "controls.language.german"
 msgstr "German"
 
-#: app/domain/helpers.tsx:104
+#: app/domain/helpers.tsx:105
 msgid "controls.language.italian"
 msgstr "Italian"
 
-#: app/domain/helpers.tsx:74
+#: app/domain/helpers.tsx:75
 msgid "controls.measure"
 msgstr "Measure"
 
-#: app/domain/helpers.tsx:76
+#: app/domain/helpers.tsx:77
 msgid "controls.partition"
 msgstr "Partition"
 
@@ -200,19 +200,19 @@ msgstr "Select a dimension"
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
-#: app/domain/helpers.tsx:78
+#: app/domain/helpers.tsx:79
 msgid "controls.title"
 msgstr "Title"
 
-#: app/components/dataset-metadata.tsx:34
+#: app/components/dataset-metadata.tsx:32
 msgid "dataset.metadata.date.created"
 msgstr "Date Created"
 
-#: app/components/dataset-metadata.tsx:25
+#: app/components/dataset-metadata.tsx:23
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/components/dataset-metadata.tsx:19
+#: app/components/dataset-metadata.tsx:17
 msgid "dataset.metadata.title"
 msgstr "Title"
 
@@ -265,15 +265,19 @@ msgstr "Click on a dataset in the left column to preview its structure and conte
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
-#: app/components/chart-footnotes.tsx:35
+#: app/components/chart-footnotes.tsx:47
 msgid "metadata.dataset"
 msgstr "Dataset"
 
-#: app/components/chart-footnotes.tsx:40
+#: app/components/chart-footnotes.tsx:35
 msgid "metadata.filter"
-msgstr "Data"
+msgstr "Filterset"
 
-#: app/components/chart-footnotes.tsx:30
+#: app/components/chart-footnotes.tsx:77
+msgid "metadata.link.created.with.visualize"
+msgstr "Created with visualize.admin.ch"
+
+#: app/components/chart-footnotes.tsx:52
 msgid "metadata.source"
 msgstr "Source"
 
