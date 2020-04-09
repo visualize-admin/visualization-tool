@@ -53,8 +53,13 @@ export const ChartTypeSelector = ({
             </Trans>
           </Hint>
         ) : (
-          <Grid sx={{ gridTemplateColumns: "1fr 1fr 1fr", mx: 4 }}>
-            {chartTypes.map(d => (
+          <Grid
+            sx={{
+              gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+              mx: 4,
+            }}
+          >
+            {chartTypes.map((d) => (
               <ChartTypeSelectorField
                 key={d}
                 label={d}
