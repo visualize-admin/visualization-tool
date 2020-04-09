@@ -72,9 +72,26 @@ type Attribute implements Component {
   label: String!
 }
 
+type DataCubeResult {
+  score: Float
+  highlightedTitle: String
+  highlightedDescription: String
+  dataCube: DataCube!
+}
+
+enum DataCubeResultOrder {
+  SCORE
+  TITLE_ASC
+  CREATED_DESC
+}
+
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
   dataCubeByIri(locale: String, iri: String!): DataCube
-  dataCubes(locale: String): [DataCube!]!
+  dataCubes(
+    locale: String
+    query: String
+    order: DataCubeResultOrder
+  ): [DataCubeResult!]!
 }

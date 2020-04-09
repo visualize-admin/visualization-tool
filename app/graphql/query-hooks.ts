@@ -51,6 +51,20 @@ export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
 };
 
+export type DataCubeResult = {
+   __typename: 'DataCubeResult';
+  score?: Maybe<Scalars['Float']>;
+  highlightedTitle?: Maybe<Scalars['String']>;
+  highlightedDescription?: Maybe<Scalars['String']>;
+  dataCube: DataCube;
+};
+
+export enum DataCubeResultOrder {
+  Score = 'SCORE',
+  TitleAsc = 'TITLE_ASC',
+  CreatedDesc = 'CREATED_DESC'
+}
+
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
@@ -102,7 +116,7 @@ export type OrdinalDimension = Component & Dimension & {
 export type Query = {
    __typename: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
-  dataCubes: Array<DataCube>;
+  dataCubes: Array<DataCubeResult>;
 };
 
 
@@ -122,6 +136,8 @@ export type QueryDataCubeByIriArgs = {
  */
 export type QueryDataCubesArgs = {
   locale?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
+  order?: Maybe<DataCubeResultOrder>;
 };
 
 
@@ -134,10 +150,12 @@ export type TemporalDimension = Component & Dimension & {
 
 export type DataCubesQueryVariables = {
   locale: Scalars['String'];
+  query?: Maybe<Scalars['String']>;
+  order?: Maybe<DataCubeResultOrder>;
 };
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string> }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string> } }> };
 
 type ComponentFields_Measure_Fragment = { __typename: 'Measure', iri: string, label: string };
 
@@ -293,11 +311,15 @@ export const DimensionFieldsWithValuesFragmentDoc = gql`
 }
     `;
 export const DataCubesDocument = gql`
-    query DataCubes($locale: String!) {
-  dataCubes(locale: $locale) {
-    iri
-    title
-    description
+    query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder) {
+  dataCubes(locale: $locale, query: $query, order: $order) {
+    highlightedTitle
+    highlightedDescription
+    dataCube {
+      iri
+      title
+      description
+    }
   }
 }
     `;

@@ -3,13 +3,20 @@ import {
   DataCube as RDFDataCube,
   DataCubeEntryPoint,
   Dimension as RDFDimension,
-  Measure as RDFMeasure
+  Measure as RDFMeasure,
 } from "@zazuko/query-rdf-data-cube";
+import { descending } from "d3-array";
+import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { Filters, parseObservationValue } from "../domain";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { locales, parseLocaleString } from "../locales/locales";
-import { QueryResolvers, Resolvers, DataCubeResolvers } from "./resolver-types";
+import {
+  DataCubeResolvers,
+  DataCubeResultOrder,
+  QueryResolvers,
+  Resolvers,
+} from "./resolver-types";
 import { ResolvedDimension, ResolvedMeasure } from "./shared-types";
 
 let entryPointCache = new Map<string, DataCubeEntryPoint>();
@@ -25,50 +32,50 @@ const getEntryPoint = (
   }
 
   entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
-    languages: [locale, ...locales.filter(l => l !== locale), ""],
+    languages: [locale, ...locales.filter((l) => l !== locale), ""],
     extraMetadata: [
       {
         variable: "contact",
         iri: "https://pcaxis.described.at/contact",
-        multilang: true
+        multilang: true,
       },
       {
         variable: "source",
         iri: "https://pcaxis.described.at/source",
-        multilang: true
+        multilang: true,
       },
       {
         variable: "survey",
         iri: "https://pcaxis.described.at/survey",
-        multilang: true
+        multilang: true,
       },
       {
         variable: "database",
         iri: "https://pcaxis.described.at/database",
-        multilang: true
+        multilang: true,
       },
       {
         variable: "unit",
         iri: "https://pcaxis.described.at/unit",
-        multilang: true
+        multilang: true,
       },
       {
         variable: "note",
         iri: "https://pcaxis.described.at/note",
-        multilang: true
+        multilang: true,
       },
       {
         variable: "dateCreated",
         iri: "http://schema.org/dateCreated",
-        multilang: false
+        multilang: false,
       },
       { variable: "dateModified", iri: "http://schema.org/dateModified" },
       {
         variable: "description",
         iri: "http://www.w3.org/2000/01/rdf-schema#comment",
-        multilang: true
-      }
-    ]
+        multilang: true,
+      },
+    ],
   });
 
   entryPointCache.set(locale, entry);
@@ -146,44 +153,115 @@ const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
 };
 
 const Query: QueryResolvers = {
-  dataCubes: async (_, { locale }) => {
-    return getEntryPoint(locale).dataCubes();
+  dataCubes: async (_, { locale, query, order }) => {
+    const dataCubes = await getEntryPoint(locale).dataCubes();
+
+    const dataCubeCandidates = dataCubes.map((dataCube) => ({
+      title: dataCube.label.value,
+      description: dataCube.extraMetadata.get("description")?.value ?? "",
+      created: dataCube.extraMetadata.get("dateCreated")?.value ?? "",
+      dataCube,
+    }));
+
+    if (query) {
+      /**
+       * This uses https://github.com/jeancroy/fuzz-aldrin-plus which is a re-implementation of the Atom editor file picker algorithm
+       *
+       * Alternatives:
+       * - https://github.com/kentcdodds/match-sorter looks nice, but does not support highlighting results.
+       * - https://fusejs.io/ tried out but result matching is a bit too random (order of letters seems to be ignored). Whole-word matches don't support highlighting and scoring for some reason.
+       */
+
+      const titleResults = fuzzaldrin.filter(dataCubeCandidates, `${query}`, {
+        key: "title",
+      });
+
+      const descriptionResults = fuzzaldrin.filter(
+        dataCubeCandidates,
+        `${query}`,
+        { key: "description" }
+      );
+
+      const results = Array.from(
+        new Set([...titleResults, ...descriptionResults])
+      );
+
+      if (order == null || order === DataCubeResultOrder.Score) {
+        results.sort((a, b) => {
+          return (
+            fuzzaldrin.score(b.title, query) +
+            fuzzaldrin.score(b.description, query) * 0.5 -
+            (fuzzaldrin.score(a.title, query) +
+              fuzzaldrin.score(a.description, query) * 0.5)
+          );
+        });
+      } else if (order === DataCubeResultOrder.TitleAsc) {
+        results.sort((a, b) =>
+          a.title.localeCompare(b.title, locale ?? undefined)
+        );
+      } else if (order === DataCubeResultOrder.CreatedDesc) {
+        results.sort((a, b) => descending(a.created, b.created));
+      }
+
+      return results.map((result) => ({
+        dataCube: result.dataCube,
+        highlightedTitle: fuzzaldrin.wrap(result.title, query, {
+          wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
+        }),
+        highlightedDescription: fuzzaldrin.wrap(result.description, query, {
+          wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
+        }),
+        score:
+          fuzzaldrin.score(result.title, query) +
+          fuzzaldrin.score(result.description, query) * 0.5,
+      }));
+    }
+
+    if (order === DataCubeResultOrder.TitleAsc) {
+      dataCubeCandidates.sort((a, b) =>
+        a.title.localeCompare(b.title, locale ?? undefined)
+      );
+    } else if (order === DataCubeResultOrder.CreatedDesc) {
+      dataCubeCandidates.sort((a, b) => descending(a.created, b.created));
+    }
+
+    return dataCubeCandidates;
   },
   dataCubeByIri: async (_, { iri, locale }) => {
     return getEntryPoint(locale).dataCubeByIri(iri);
-  }
+  },
 };
 
 const DataCube: DataCubeResolvers = {
-  iri: dataCube => dataCube.iri,
-  title: dataCube => dataCube.label.value,
-  contact: dataCube => dataCube.extraMetadata.get("contact")?.value ?? null,
-  source: dataCube => dataCube.extraMetadata.get("source")?.value ?? null,
-  description: dataCube =>
+  iri: (dataCube) => dataCube.iri,
+  title: (dataCube) => dataCube.label.value,
+  contact: (dataCube) => dataCube.extraMetadata.get("contact")?.value ?? null,
+  source: (dataCube) => dataCube.extraMetadata.get("source")?.value ?? null,
+  description: (dataCube) =>
     dataCube.extraMetadata.get("description")?.value ?? null,
-  dateCreated: dataCube =>
+  dateCreated: (dataCube) =>
     dataCube.extraMetadata.get("dateCreated")?.value ?? null,
-  dimensions: async dataCube => {
-    return (await dataCube.dimensions()).map(dimension => ({
+  dimensions: async (dataCube) => {
+    return (await dataCube.dimensions()).map((dimension) => ({
       dataCube,
-      dimension
+      dimension,
     }));
   },
   dimensionByIri: async (dataCube, { iri }) => {
     const dimension = (await dataCube.dimensions()).find(
-      dimension => dimension.iri.value === iri
+      (dimension) => dimension.iri.value === iri
     );
     return dimension
       ? {
           dataCube,
-          dimension
+          dimension,
         }
       : null;
   },
-  measures: async dataCube => {
-    return (await dataCube.measures()).map(measure => ({
+  measures: async (dataCube) => {
+    return (await dataCube.measures()).map((measure) => ({
       dataCube,
-      measure
+      measure,
     }));
   },
   observations: async (dataCube, { limit, filters, measures }) => {
@@ -193,7 +271,7 @@ const DataCube: DataCubeResolvers = {
 
     // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
     const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
-      return measures?.find(iri => iri === d.iri.value)
+      return measures?.find((iri) => iri === d.iri.value)
         ? []
         : ([[`dim${i}`, d]] as [string, RDFDimension][]);
     });
@@ -205,7 +283,7 @@ const DataCube: DataCubeResolvers = {
             (iri, i) =>
               [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
           )
-        : [])
+        : []),
     ];
 
     const query = dataCube
@@ -217,9 +295,9 @@ const DataCube: DataCubeResolvers = {
     return {
       dataCube,
       query,
-      selectedFields
+      selectedFields,
     };
-  }
+  },
 };
 
 const dimensionResolvers = {
@@ -230,10 +308,10 @@ const dimensionResolvers = {
     return values.map(({ value, label }) => {
       return {
         value: value.value,
-        label: label.value !== "" ? label.value : value.value
+        label: label.value !== "" ? label.value : value.value,
       };
     });
-  }
+  },
 };
 
 export const resolvers: Resolvers = {
@@ -246,11 +324,11 @@ export const resolvers: Resolvers = {
     data: async ({ query, selectedFields }) => {
       const observations = await query.execute();
       // TODO: Optimize Performance
-      const fullyQualifiedObservations = observations.map(obs => {
+      const fullyQualifiedObservations = observations.map((obs) => {
         return Object.fromEntries(
           Object.entries(obs).map(([k, v]) => [
             selectedFields.find(([selK]) => selK === k)![1].iri.value,
-            parseObservationValue(v)
+            parseObservationValue(v),
           ])
         );
       });
@@ -260,11 +338,11 @@ export const resolvers: Resolvers = {
     rawData: async ({ query, selectedFields }) => {
       const observations = await query.execute();
       // TODO: Optimize Performance
-      const fullyQualifiedObservations = observations.map(obs => {
+      const fullyQualifiedObservations = observations.map((obs) => {
         return Object.fromEntries(
           Object.entries(obs).map(([k, v]) => [
             selectedFields.find(([selK]) => selK === k)![1].iri.value,
-            v
+            v,
           ])
         );
       });
@@ -273,7 +351,7 @@ export const resolvers: Resolvers = {
     },
     sparql: async ({ query }) => {
       return query.toSparql();
-    }
+    },
   },
   Dimension: {
     __resolveType({ dimension }) {
@@ -296,19 +374,19 @@ export const resolvers: Resolvers = {
       }
 
       return "NominalDimension";
-    }
+    },
   },
   NominalDimension: {
-    ...dimensionResolvers
+    ...dimensionResolvers,
   },
   OrdinalDimension: {
-    ...dimensionResolvers
+    ...dimensionResolvers,
   },
   TemporalDimension: {
-    ...dimensionResolvers
+    ...dimensionResolvers,
   },
   Measure: {
     iri: ({ measure }: ResolvedMeasure) => measure.iri.value,
-    label: ({ measure }: ResolvedMeasure) => measure.label.value
-  }
+    label: ({ measure }: ResolvedMeasure) => measure.label.value,
+  },
 };

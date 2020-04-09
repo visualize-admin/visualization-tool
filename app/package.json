@@ -39,6 +39,7 @@
     "downshift": "^5.0.3",
     "file-saver": "^2.0.2",
     "fp-ts": "^2.5.0",
+    "fuzzaldrin-plus": "^0.6.0",
     "global-agent": "^2.1.8",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.3",
@@ -55,6 +56,7 @@
     "postgres-migrations": "^4.0.2",
     "theme-ui": "^0.3.1",
     "urql": "^1.9.5",
+    "use-debounce": "^3.4.1",
     "use-immer": "^0.3.3"
   },
   "peerDependencies": {

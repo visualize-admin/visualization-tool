@@ -1,21 +1,23 @@
 import {
   Box,
+  Button,
   Checkbox as RebassCheckbox,
   Input as RebassInput,
   Label as RebassLabel,
   Radio as RebassRadio,
   Select as RebassSelect,
-  SelectProps
+  SelectProps,
 } from "@theme-ui/components";
 import * as React from "react";
 import { FieldProps, Option } from "../domain/config-form";
+import { Icon } from "../icons";
 
 export const Label = ({
   label,
   htmlFor,
   disabled,
   smaller = false,
-  children
+  children,
 }: {
   label?: string | React.ReactNode;
   htmlFor: string;
@@ -31,7 +33,7 @@ export const Label = ({
       color: disabled ? "monochrome600" : "monochrome700",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
       pb: smaller ? 1 : 0,
-      mr: 4
+      mr: 4,
     }}
   >
     {children}
@@ -40,7 +42,7 @@ export const Label = ({
         sx={{
           maxWidth: "75%",
           textAlign: "left",
-          fontFamily: "body"
+          fontFamily: "body",
         }}
       >
         {label}
@@ -55,7 +57,7 @@ export const Radio = ({
   value,
   checked,
   disabled,
-  onChange
+  onChange,
 }: { label: string | React.ReactNode; disabled?: boolean } & FieldProps) => {
   return (
     <Box mb={2}>
@@ -69,7 +71,7 @@ export const Radio = ({
           disabled={disabled}
           sx={{
             size: 20,
-            color: checked && !disabled ? "primary" : "monochrome500"
+            color: checked && !disabled ? "primary" : "monochrome500",
           }}
         />
       </Label>
@@ -83,14 +85,14 @@ export const Checkbox = ({
   value,
   checked,
   disabled,
-  onChange
+  onChange,
 }: { label: React.ReactNode; disabled?: boolean } & FieldProps) => (
   <Box mb={4}>
     <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
       <RebassCheckbox
         sx={{
           size: 20,
-          color: checked && !disabled ? "primary" : "monochrome500"
+          color: checked && !disabled ? "primary" : "monochrome500",
         }}
         id={`${name}-${label}`}
         name={name}
@@ -110,7 +112,7 @@ export const Select = ({
   value,
   disabled,
   options,
-  onChange
+  onChange,
 }: {
   id: string;
   options: Option[];
@@ -128,14 +130,63 @@ export const Select = ({
         borderColor: "monochrome500",
         fontSize: 4,
         bg: "monochrome100",
-        p: 2
+        p: 2,
       }}
       id={id}
       name={id}
       onChange={onChange}
       value={value}
     >
-      {options.map(opt => (
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value || undefined}>
+          {opt.value ? opt.label : "None"}
+        </option>
+      ))}
+    </RebassSelect>
+  </Box>
+);
+
+export const MiniSelect = ({
+  label,
+  id,
+  name,
+  value,
+  disabled,
+  options,
+  onChange,
+}: {
+  id: string;
+  options: Option[];
+  label?: React.ReactNode;
+  disabled?: boolean;
+} & SelectProps) => (
+  <Box sx={{ color: "monochrome800" }}>
+    {label && (
+      <Label htmlFor={id} smaller>
+        {label}
+      </Label>
+    )}
+    <RebassSelect
+      sx={{
+        borderColor: "transparent",
+        fontSize: [1, 2, 2],
+        fontFamily: "body",
+        bg: "transparent",
+        py: 0,
+        pl: 1,
+        pr: 4,
+        mr: 1, // Fix for Chrome which cuts of the label otherwise
+        ":focus": {
+          outline: "none",
+          borderColor: "primary",
+        },
+      }}
+      id={id}
+      name={id}
+      onChange={onChange}
+      value={value}
+    >
+      {options.map((opt) => (
         <option key={opt.value} value={opt.value || undefined}>
           {opt.value ? opt.label : "None"}
         </option>
@@ -150,7 +201,7 @@ export const Input = ({
   value,
   checked,
   disabled,
-  onChange
+  onChange,
 }: {
   label?: string | React.ReactNode;
   disabled?: boolean;
@@ -171,23 +222,70 @@ export const Input = ({
   </Box>
 );
 
-// TODO
-export const SearchField = () => (
-  <Box>
-    <Label htmlFor="email" smaller>
-      Email
-    </Label>
-    <RebassInput
-      id="email"
-      name="email"
-      type="email"
-      placeholder="jane@example.com"
-    />
-  </Box>
-);
+export const SearchField = ({
+  label,
+  name,
+  value,
+  placeholder,
+  onChange,
+  onReset,
+}: {
+  label?: string | React.ReactNode;
+  disabled?: boolean;
+  value?: string;
+  placeholder?: string;
+  onReset?: () => void;
+} & FieldProps) => {
+  return (
+    <Box sx={{ color: "monochrome700", fontSize: 4, position: "relative" }}>
+      {label && name && (
+        <Label htmlFor={name} smaller>
+          {label}
+        </Label>
+      )}
+      <Box sx={{ position: "absolute", top: "50%", mt: "-8px", ml: 2 }}>
+        <Icon name="search" size={16} />
+      </Box>
+      <RebassInput
+        sx={{
+          borderColor: "monochrome500",
+          bg: "monochrome100",
+          px: 6,
+          ":focus": { outline: "none", borderColor: "primary" },
+        }}
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
+      {value && value !== "" && onReset && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            right: 0,
+            mt: "-8px",
+            mr: 2,
+          }}
+        >
+          <Button
+            variant="reset"
+            sx={{ p: 0, cursor: "pointer" }}
+            onClick={onReset}
+          >
+            <Box sx={{ borderRadius: "circle", bg: "monochrome600" }}>
+              <Icon name="clear" size={16} />
+            </Box>
+          </Button>
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 export const FieldSetLegend = ({
-  legendTitle
+  legendTitle,
 }: {
   legendTitle: string | React.ReactNode;
 }) => (
@@ -198,7 +296,7 @@ export const FieldSetLegend = ({
       fontWeight: "regular",
       fontSize: [1, 2, 2],
       mb: 1,
-      color: "monochrome600"
+      color: "monochrome600",
     }}
     as="legend"
   >
