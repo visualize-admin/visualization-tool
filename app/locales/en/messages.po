@@ -150,6 +150,10 @@ msgstr "Partition"
 msgid "controls.partition.add"
 msgstr "Add ..."
 
+#: app/components/form.tsx:107
+msgid "controls.search.clear"
+msgstr "Clear search field"
+
 #: app/components/chart-configurator.tsx:29
 msgid "controls.section.data"
 msgstr "Data"
@@ -212,15 +216,15 @@ msgstr "Relevance"
 msgid "dataset.order.title"
 msgstr "Title"
 
-#: app/components/dataset-selector.tsx:76
+#: app/components/dataset-selector.tsx:77
 msgid "dataset.results"
 msgstr "{0, plural, =0 {No results} =1 {# result} other {# results}}"
 
-#: app/components/dataset-selector.tsx:67
+#: app/components/dataset-selector.tsx:49
 msgid "dataset.search.label"
 msgstr "Search datasets"
 
-#: app/components/dataset-selector.tsx:86
+#: app/components/dataset-selector.tsx:87
 msgid "dataset.sortby"
 msgstr "Sort by"
 
