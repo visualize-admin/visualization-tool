@@ -60,6 +60,10 @@ export const DataSetList = () => {
                 },
               ];
 
+              const searchLabel = i18n._(
+                t("dataset.search.label")`Search datasets`
+              );
+
               return (
                 <>
                   {/* <SectionTitle>
@@ -88,7 +92,8 @@ export const DataSetList = () => {
                         setQuery("");
                         setOrder(previousOrderRef.current);
                       }}
-                      placeholder={i18n._(t("dataset.search.label")`Search datasets`)}
+                      aria-label={searchLabel}
+                      placeholder={searchLabel}
                     ></SearchField>
                   </Box>
 
@@ -100,6 +105,7 @@ export const DataSetList = () => {
                         fontSize: [2, 2, 2],
                         lineHeight: "24px",
                       }}
+                      aria-live="polite"
                     >
                       <Plural
                         id="dataset.results"
