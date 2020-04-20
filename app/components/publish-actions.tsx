@@ -418,7 +418,6 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
       textAlign: "center",
       whiteSpace: "nowrap",
 
-      width: 80,
       px: 2,
       py: 1,
       mx: 0,

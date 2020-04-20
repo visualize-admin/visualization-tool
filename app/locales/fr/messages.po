@@ -204,7 +204,7 @@ msgstr "Annoter"
 
 #: app/components/stepper.tsx:110
 msgid "step.dataset"
-msgstr "Jeu de données"
+msgstr "Données"
 
 #: app/components/stepper.tsx:117
 msgid "step.visualization.type"
@@ -304,7 +304,7 @@ msgstr "Il n'y a pas de données correspondant aux filtres sélectionnés."
 
 #: app/components/hint.tsx:93
 msgid "hint.nodata.title"
-msgstr "Pas de données"
+msgstr "Aucune donnée"
 
 #: app/components/publish-actions.tsx:100
 msgid "publication.share.linktitle.facebook"
