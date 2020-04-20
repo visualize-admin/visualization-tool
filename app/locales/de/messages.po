@@ -184,7 +184,7 @@ msgstr "Teilen"
 
 #: app/components/publish-actions.tsx:109
 msgid "publication.share.chart.url"
-msgstr "Grafik-URL"
+msgstr "Diagramm-URL"
 
 #: app/components/publish-actions.tsx:102
 msgid "publication.share.mail.body"
@@ -236,7 +236,7 @@ msgstr "Zurücksetzen"
 
 #: app/components/empty-right-panel.tsx:10
 msgid "controls.hint.configuring.chart"
-msgstr "Bitte eine Designoption oder Dimension auswählen, um diese zu bearbeiten."
+msgstr "Bitte eine Designoption oder Datendimension auswählen, um diese zu bearbeiten."
 
 #: app/components/empty-right-panel.tsx:15
 msgid "controls.hint.describing.chart"
