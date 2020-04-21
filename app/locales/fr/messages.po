@@ -220,7 +220,7 @@ msgstr "[ Ajouter une description ici ]"
 
 #: app/components/chart-preview.tsx:26
 msgid "annotation.add.title"
-msgstr "[ Insérer in titre ici ]"
+msgstr "[ Insérer un titre ici ]"
 
 #: app/pages/[locale]/v/[chartId].tsx:83
 msgid "button.copy.visualization"
