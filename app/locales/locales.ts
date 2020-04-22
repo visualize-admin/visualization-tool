@@ -12,7 +12,7 @@ import timeFormatEn from "d3-time-format/locale/en-GB.json";
 // Use the same number format in each language
 import numberFormatCh from "d3-format/locale/de-CH.json";
 
-export const defaultLocale = "en";
+export const defaultLocale = "de";
 
 // The order specified here will determine the fallback order when strings are not available in the preferred language
 export const locales = ["en", "de", "fr", "it"] as const;
