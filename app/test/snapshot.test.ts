@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-const RENDER_DELAY = 10;
+const RENDER_DELAY = 1000;
 const SNAPSHOT_OPTS = {
   failureThreshold: 10,
   failureThresholdType: "pixel",
