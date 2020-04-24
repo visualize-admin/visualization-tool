@@ -141,7 +141,7 @@ msgstr "Lade Daten"
 msgid "hint.no.visualization.with.dataset"
 msgstr "Mit dem ausgewählten Datensatz kann keine Visualisierung erstellt werden."
 
-#: app/components/hint.tsx:113
+#: app/components/hint.tsx:135
 msgid "hint.publication.success"
 msgstr "Die Visualisierung ist jetzt veröffentlicht und kann geteilt werden, indem Sie die URL kopieren oder die Einbettungsoptionen verwenden."
 
@@ -342,4 +342,12 @@ msgstr "Suche zurücksetzen"
 #: app/components/dataset-selector.tsx:49
 msgid "dataset.search.label"
 msgstr "Datensätze suchen"
+
+#: app/components/hint.tsx:117
+msgid "hint.only.negative.data.message"
+msgstr "Negative Datenwerte können mit diesem Diagrammtyp nicht dargestellt werden."
+
+#: app/components/hint.tsx:114
+msgid "hint.only.negative.data.title"
+msgstr "Negative Werte"
 

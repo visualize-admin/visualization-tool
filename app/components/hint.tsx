@@ -10,7 +10,7 @@ export const Error = ({ children }: { children: React.ReactNode }) => (
       justifyContent: "center",
       alignItems: "center",
       color: "error",
-      borderColor: "error"
+      borderColor: "error",
     }}
   >
     {children}
@@ -28,7 +28,7 @@ export const Hint = ({ children }: { children: React.ReactNode }) => (
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      flexGrow: 1
+      flexGrow: 1,
     }}
   >
     {children}
@@ -59,12 +59,12 @@ export const Loading = () => (
       flexGrow: 1,
       padding: 2,
       opacity: 0,
-      animation: `0s linear 1s forwards ${delayedShow}`
+      animation: `0s linear 1s forwards ${delayedShow}`,
     }}
   >
     <Box
       sx={{
-        animation: `2s linear infinite ${spin}`
+        animation: `2s linear infinite ${spin}`,
       }}
     >
       <Icon name="loading" size={48} />
@@ -85,7 +85,7 @@ export const DataSetHint = () => (
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      flexGrow: 1
+      flexGrow: 1,
     }}
   >
     <Icon name="dataset" size={56} />
@@ -111,7 +111,7 @@ export const NoDataHint = () => (
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      flexGrow: 1
+      flexGrow: 1,
     }}
   >
     <Icon name="warning" size={56} />
@@ -121,6 +121,31 @@ export const NoDataHint = () => (
     <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.nodata.message">
         No data was returned with the current filters.
+      </Trans>
+    </Text>
+  </Flex>
+);
+export const OnlyNegativeDataHint = () => (
+  <Flex
+    sx={{
+      width: "100%",
+      height: "100%",
+      color: "hint",
+      margin: "auto",
+      textAlign: "center",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      flexGrow: 1,
+    }}
+  >
+    <Icon name="warning" size={56} />
+    <Text variant="heading2" sx={{ my: 3 }}>
+      <Trans id="hint.only.negative.data.title">Negative Values</Trans>
+    </Text>
+    <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+      <Trans id="hint.only.negative.data.message">
+        Negative data values cannot be displayed with this chart type.
       </Trans>
     </Text>
   </Flex>
@@ -136,7 +161,7 @@ export const Success = () => (
       bg: "successLight",
       color: "success",
       justifyContent: "flex-start",
-      alignItems: "center"
+      alignItems: "center",
     }}
   >
     <Icon name="published" size={80} />
@@ -153,7 +178,7 @@ export const Success = () => (
 );
 export const HintBlue = ({
   iconName,
-  children
+  children,
 }: {
   iconName: IconName;
   children: React.ReactNode;
@@ -169,7 +194,7 @@ export const HintBlue = ({
       color: "primary",
       textAlign: "center",
       justifyContent: "flex-start",
-      alignItems: ["flex-start", "center"]
+      alignItems: ["flex-start", "center"],
     }}
   >
     <Box sx={{ width: 24, pr: 4 }}>
@@ -182,7 +207,7 @@ export const HintBlue = ({
 );
 export const HintRed = ({
   iconName,
-  children
+  children,
 }: {
   iconName: IconName;
   children: React.ReactNode;
@@ -198,7 +223,7 @@ export const HintRed = ({
       color: "alert",
       textAlign: "center",
       justifyContent: "flex-start",
-      alignItems: ["flex-start", "center"]
+      alignItems: ["flex-start", "center"],
     }}
   >
     <Box sx={{ width: 24, pr: 4 }}>

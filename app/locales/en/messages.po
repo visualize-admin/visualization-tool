@@ -141,7 +141,7 @@ msgstr "Loading data..."
 msgid "hint.no.visualization.with.dataset"
 msgstr "No visualization can be created with the selected dataset."
 
-#: app/components/hint.tsx:113
+#: app/components/hint.tsx:135
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. Share it by copying the URL or using the embedding-options."
 
@@ -342,4 +342,12 @@ msgstr "Clear search field"
 #: app/components/dataset-selector.tsx:49
 msgid "dataset.search.label"
 msgstr "Search datasets"
+
+#: app/components/hint.tsx:117
+msgid "hint.only.negative.data.message"
+msgstr "Negative data values cannot be displayed with this chart type."
+
+#: app/components/hint.tsx:114
+msgid "hint.only.negative.data.title"
+msgstr "Negative Values"
 

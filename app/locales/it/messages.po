@@ -143,7 +143,7 @@ msgstr "Caricamento dei dati..."
 msgid "hint.no.visualization.with.dataset"
 msgstr "Nessuna visualizzazione può essere creata con il dataset selezionato."
 
-#: app/components/hint.tsx:113
+#: app/components/hint.tsx:135
 msgid "hint.publication.success"
 msgstr "La tua visualizzazione è ora pubblicata. Condividila copiando l'URL o utilizzando le opzioni di incorporamento."
 
@@ -350,4 +350,12 @@ msgstr "Cancella la ricerca"
 #: app/components/dataset-selector.tsx:49
 msgid "dataset.search.label"
 msgstr "Cerca un dataset"
+
+#: app/components/hint.tsx:117
+msgid "hint.only.negative.data.message"
+msgstr "Dati con valori negativi non possono essere visualizzati con questo tipo di grafico."
+
+#: app/components/hint.tsx:114
+msgid "hint.only.negative.data.title"
+msgstr "Valori negativi"
 
