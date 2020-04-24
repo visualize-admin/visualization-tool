@@ -113,10 +113,6 @@ export type OrdinalDimension = Component & Dimension & {
   values: Array<DimensionValue>;
 };
 
-/**
- * The "Query" type is special: it lists all of the available queries that
- * clients can execute, along with the return type for each.
- */
 export type Query = {
    __typename?: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
@@ -124,20 +120,12 @@ export type Query = {
 };
 
 
-/**
- * The "Query" type is special: it lists all of the available queries that
- * clients can execute, along with the return type for each.
- */
 export type QueryDataCubeByIriArgs = {
   locale?: Maybe<Scalars['String']>;
   iri: Scalars['String'];
 };
 
 
-/**
- * The "Query" type is special: it lists all of the available queries that
- * clients can execute, along with the return type for each.
- */
 export type QueryDataCubesArgs = {
   locale?: Maybe<Scalars['String']>;
   query?: Maybe<Scalars['String']>;
