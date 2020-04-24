@@ -67,9 +67,13 @@ const useLinesState = ({
     fields.segment ? (d[fields.segment.componentIri] as string) : "fixme";
 
   // x
-  const xUniqueValues = [...new Set(data.map((d) => getX(d)))];
+  const xUniqueValues = data
+    .map((d) => getX(d))
+    .filter(
+      (date, i, self) =>
+        self.findIndex((d) => d.getTime() === date.getTime()) === i
+    );
   const xDomain = extent(data, (d) => getX(d)) as [Date, Date];
-
   const xScale = scaleTime().domain(xDomain);
 
   const xAxisLabel =

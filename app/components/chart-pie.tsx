@@ -7,7 +7,7 @@ import { A11yTable } from "./a11y-table";
 import { ChartSvg, ChartContainer } from "./charts-generic/containers";
 import { Pie } from "./charts-generic/pie";
 import { PieChart } from "./charts-generic/pie/pie-state";
-import { Loading, NoDataHint } from "./hint";
+import { Loading, NoDataHint, OnlyNegativeDataHint } from "./hint";
 import {
   useDataCubeObservationsQuery,
   ComponentFieldsFragment,
@@ -35,7 +35,12 @@ export const ChartPieVisualization = ({
 
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-    return observations.data.length > 0 ? (
+
+    const notAllNegative = observations.data.some(
+      (d) => d[chartConfig.fields.y.componentIri] > 0
+    );
+
+    return notAllNegative && observations.data.length > 0 ? (
       <>
         <A11yTable
           title={title}
@@ -51,6 +56,8 @@ export const ChartPieVisualization = ({
           fields={chartConfig.fields}
         />
       </>
+    ) : !notAllNegative && observations.data.length > 0 ? (
+      <OnlyNegativeDataHint />
     ) : (
       <NoDataHint />
     );

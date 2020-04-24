@@ -111,15 +111,21 @@ const useAreasState = ({
     .keys(segments);
   const series = stacked(wide as { [key: string]: number }[]);
 
-  const xUniqueValues = [...new Set(data.map((d) => getX(d)))];
+  const xUniqueValues = data
+    .map((d) => getX(d))
+    .filter(
+      (date, i, self) =>
+        self.findIndex((d) => d.getTime() === date.getTime()) === i
+    );
+
   const xDomain = extent(data, (d) => getX(d)) as [Date, Date];
 
   const xScale = scaleTime().domain(xDomain);
 
   const yScale = scaleLinear()
     .domain(yDomain)
-
     .nice();
+
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );

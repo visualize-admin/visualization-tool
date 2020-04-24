@@ -151,10 +151,10 @@ const DimensionPanel = ({
             label={
               <Trans id="controls.select.dimension">Select a dimension</Trans>
             }
-            optional={field === "segment"} // FIXME: Should be a more robust optional tag
-            options={dimensions.map(dimension => ({
+            optional={chartType !== "pie" && field === "segment"} // FIXME: Should be a more robust optional tag
+            options={dimensions.map((dimension) => ({
               value: dimension.iri,
-              label: dimension.label
+              label: dimension.label,
             }))}
             dataSetMetadata={metaData}
           />
