@@ -1,9 +1,12 @@
 {
-  "name": "@interactivethings/visualize-site",
+  "name": "@visualize-admin/visualization-tool",
   "version": "0.5.1",
-  "repository": "git@gitlab.ldbar.ch:interactivethings/visualization-tool.git",
-  "author": "Jeremy Stucki <jeremy@interactivethings.com>",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/visualize-admin/visualization-tool.git"
+  },
+  "author": "Federal Office for the Environment FOEN <visualize@bafu.admin.ch>",
+  "license": "BSD-3-Clause",
   "private": true,
   "scripts": {
     "dev": "preconstruct dev && DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool next ./app",
