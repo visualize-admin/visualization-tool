@@ -1,7 +1,7 @@
 const pkg = require("../package.json");
 const withMDX = require("@next/mdx")();
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true"
+  enabled: process.env.ANALYZE === "true",
 });
 const withPreconstruct = require("@preconstruct/next");
 
@@ -10,13 +10,12 @@ const VERSION = `v${pkg.version}`;
 const publicRuntimeConfig = {
   // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
   SPARQL_ENDPOINT:
-    process.env.SPARQL_ENDPOINT ||
-    "https://int.lindas.admin.ch/query",
+    process.env.SPARQL_ENDPOINT || "https://int.lindas.admin.ch/query",
   GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT || "/api/graphql",
   PUBLIC_URL: process.env.PUBLIC_URL
     ? process.env.PUBLIC_URL.replace(/\/$/, "")
     : "",
-  GA_TRACKING_ID: process.env.GA_TRACKING_ID
+  GA_TRACKING_ID: process.env.GA_TRACKING_ID,
 };
 
 console.log("Starting with publicRuntimeConfig\n", publicRuntimeConfig);
@@ -30,7 +29,7 @@ module.exports = withPreconstruct(
 
       // Build-time env variables
       env: {
-        VERSION
+        VERSION,
       },
 
       pageExtensions: ["js", "ts", "tsx", "mdx"],
@@ -41,9 +40,8 @@ module.exports = withPreconstruct(
         // config.module.rules.push({
         //   test: /\.(js|mjs)$/,
         //   loader: defaultLoaders.babel,
-        //   include: [
-        //     /node_modules/
-        //   ]
+        //   include: [/node_modules/],
+        //   exclude: [/@babel/, /core-js/, /next/],
         // });
 
         // config.module.rules.push({
@@ -54,23 +52,23 @@ module.exports = withPreconstruct(
         //     loader: "babel-loader"
         //   }
         // });
-        config.module.rules.push({
-          test: /\.(js|mjs)$/,
-          include: [/node_modules/],
-          exclude: [/@babel\/standalone/, /@babel\/runtime/, /core-js/, /next/],
-          use: {
-            loader: "babel-loader",
-            options: {
-              presets: ["@babel/preset-env"]
-              // plugins: ["@babel/plugin-syntax-dynamic-import"]
-            }
-          }
-        });
+        // config.module.rules.push({
+        //   test: /\.(js|mjs)$/,
+        //   include: [/node_modules/],
+        //   exclude: [/@babel\/standalone/, /@babel\/runtime/, /core-js/, /next/],
+        //   use: {
+        //     loader: "babel-loader",
+        //     options: {
+        //       presets: ["@babel/preset-env"]
+        //       // plugins: ["@babel/plugin-syntax-dynamic-import"]
+        //     }
+        //   }
+        // });
 
         config.module.rules.push({
           test: /\.(graphql|gql)$/,
           exclude: /node_modules/,
-          loader: "graphql-tag/loader"
+          loader: "graphql-tag/loader",
         });
 
         /* Enable source maps in production */
@@ -95,7 +93,7 @@ module.exports = withPreconstruct(
         }
 
         return config;
-      }
+      },
     })
   )
 );
