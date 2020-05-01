@@ -23,16 +23,16 @@
       "path": "/de/rechtliche-grundlagen"
     },
     "fr": {
-      "title": "Bases légales",
-      "path": "/fr/bases-legales"
+      "title": "Cadre juridique",
+      "path": "/fr/cadre-juridique"
     },
     "it": {
-      "title": "Basi legali",
-      "path": "/it/basi-legali"
+      "title": "Quadro giuridico",
+      "path": "/it/quadro-giuridico"
     },
     "en": {
-      "title": "Legal Basis",
-      "path": "/en/legal-basis"
+      "title": "Legal Framework",
+      "path": "/en/legal-framework"
     }
   }
 }
