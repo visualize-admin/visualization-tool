@@ -110,5 +110,8 @@
       "app"
     ]
   },
-  "cacheDirectories": ["node_modules", "app/.next/cache"]
+  "cacheDirectories": [
+    "node_modules",
+    "app/.next/cache"
+  ]
 }
