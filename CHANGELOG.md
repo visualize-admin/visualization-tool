@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - To prevent search indexing of staging environments, the header `X-Robots-Tag` will be set to `noindex, nofollow` unless the env variable `ALLOW_SEARCH_BOTS=true` is set.
 
-## [0.5.1] – 2022-04-29
+## [0.5.1] – 2020-04-29
 
 ### Fixed
 - Remove "none" from pie partition options
