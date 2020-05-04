@@ -18,6 +18,7 @@ import { IconPieChart } from "./ic-pie-chart";
 import { IconScatterplot } from "./ic-scatterplot";
 import { IconDataset } from "./ic-dataset";
 import { IconDatasetPublished } from "./ic-dataset-published";
+import { IconDatasetWarning } from "./ic-dataset-warning";
 import { IconLoading } from "./ic-loading";
 import { IconWarning } from "./ic-warning";
 import { IconHintWarning } from "./ic-hint-warning";
@@ -58,6 +59,7 @@ export const Icons = {
   pie: IconPieChart,
   scatterplot: IconScatterplot,
   dataset: IconDataset,
+  datasetWarning: IconDatasetWarning,
   published: IconDatasetPublished,
   loading: IconLoading,
   warning: IconWarning,
@@ -78,7 +80,7 @@ export const Icons = {
   text: IconText,
   info: IconInfo,
   arrowRight: IconArrowRight,
-  arrowDown: IconArrowDown
+  arrowDown: IconArrowDown,
 };
 
 export type IconName = keyof typeof Icons;
@@ -88,11 +90,11 @@ export const Icon = ({
   color,
   name,
   ...props
-} : {
+}: {
   size?: number;
   color?: string;
   name: IconName;
-} & React.ComponentProps<'svg'>) => {
+} & React.ComponentProps<"svg">) => {
   const IconComponent = Icons[name];
   return <IconComponent size={size} color={color} {...props} />;
 };
