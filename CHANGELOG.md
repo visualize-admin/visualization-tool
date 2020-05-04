@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Only allow temporal dimensions for line and area chart x-axis
+- Only show scrollbars when necessary
+
 ## [0.5.2] – 2020-05-04
 
 ### Added
