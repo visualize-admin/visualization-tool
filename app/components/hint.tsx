@@ -41,7 +41,7 @@ const delayedShow = keyframes`
 `;
 
 const spin = keyframes`
-  0% { transform: rotate(360deg) },
+  0% { transform: rotate(-360deg) },
   100% { transform: rotate(0deg) }
 `;
 
@@ -64,7 +64,7 @@ export const Loading = () => (
   >
     <Box
       sx={{
-        animation: `2s linear infinite ${spin}`,
+        animation: `1s linear infinite ${spin}`,
       }}
     >
       <Icon name="loading" size={48} />
