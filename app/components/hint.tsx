@@ -88,7 +88,7 @@ export const DataSetHint = () => (
       flexGrow: 1,
     }}
   >
-    <Icon name="dataset" size={56} />
+    <Icon name="dataset" size={64} />
     <Text variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.select.dataset">Select a dataset</Trans>
     </Text>
@@ -114,7 +114,7 @@ export const NoDataHint = () => (
       flexGrow: 1,
     }}
   >
-    <Icon name="warning" size={56} />
+    <Icon name="warning" size={64} />
     <Text variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.nodata.title">No data</Trans>
     </Text>
@@ -139,7 +139,7 @@ export const OnlyNegativeDataHint = () => (
       flexGrow: 1,
     }}
   >
-    <Icon name="warning" size={56} />
+    <Icon name="datasetWarning" size={64} />
     <Text variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.only.negative.data.title">Negative Values</Trans>
     </Text>
