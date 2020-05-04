@@ -3,7 +3,7 @@ import Document, {
   Head,
   Main,
   NextScript,
-  DocumentContext
+  DocumentContext,
 } from "next/document";
 import { GA_TRACKING_ID } from "../domain/env";
 import { parseLocaleString } from "../locales/locales";
@@ -12,7 +12,13 @@ class MyDocument extends Document<{ locale: string }> {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx);
 
-    const { query, pathname } = ctx;
+    const { query, pathname, res } = ctx;
+
+    // TODO: Move this to next.config.js once custom routes are out of experimental status
+    if (!process.env.ALLOW_SEARCH_BOTS) {
+      res?.setHeader("X-Robots-Tag", "noindex, nofollow");
+    }
+
     /**
      * Parse locale from query OR pathname
      * - so we can have dynamic locale query params like /[locale]/create/...
@@ -40,7 +46,7 @@ class MyDocument extends Document<{ locale: string }> {
               />
               <script
                 dangerouslySetInnerHTML={{
-                  __html: `window.dataLayer = window.dataLayer || [];function gtag() {window.dataLayer.push(arguments);};gtag("js", new Date());gtag("config", "${GA_TRACKING_ID}", {anonymize_ip:true});`
+                  __html: `window.dataLayer = window.dataLayer || [];function gtag() {window.dataLayer.push(arguments);};gtag("js", new Date());gtag("config", "${GA_TRACKING_ID}", {anonymize_ip:true});`,
                 }}
               ></script>
             </>
