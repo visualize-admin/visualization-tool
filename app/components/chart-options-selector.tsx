@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  getFieldComponentIri
+  getFieldComponentIri,
 } from "../domain";
 import { getFieldLabel } from "../domain/helpers";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
@@ -14,26 +14,26 @@ import { useLocale } from "../lib/use-locale";
 import {
   SectionTitle,
   ControlSectionContent,
-  ControlSection
+  ControlSection,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { ChartFieldField, ChartOptionField } from "./field";
 import {
   DimensionValuesMultiFilter,
-  DimensionValuesSingleFilter
+  DimensionValuesSingleFilter,
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
 import { ColorPalette } from "./chart-controls/color-palette";
 
 export const ChartOptionsSelector = ({
-  state
+  state,
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale }
+    variables: { iri: state.dataSet, locale },
   });
 
   if (data?.dataCubeByIri) {
@@ -45,7 +45,7 @@ export const ChartOptionsSelector = ({
           // we need these overflow parameters to allow iOS scrolling
           overflowX: "hidden",
           overflowY: "scroll",
-          mb: 7
+          mb: 7,
         }}
       >
         {state.activeField ? (
@@ -62,7 +62,7 @@ export const ChartOptionsSelector = ({
 
 const ActiveFieldSwitch = ({
   state,
-  metaData
+  metaData,
 }: {
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
@@ -97,7 +97,7 @@ const ActiveFieldSwitch = ({
   }
 
   const component = [...metaData.dimensions, ...metaData.measures].find(
-    d => d.iri === activeFieldComponentIri
+    (d) => d.iri === activeFieldComponentIri
   );
 
   return component?.__typename === "Measure" ? (
@@ -116,7 +116,7 @@ const DimensionPanel = ({
   field,
   chartType,
   dimension,
-  metaData
+  metaData,
 }: {
   field: string;
   chartType: ChartType;
@@ -152,10 +152,23 @@ const DimensionPanel = ({
               <Trans id="controls.select.dimension">Select a dimension</Trans>
             }
             optional={chartType !== "pie" && field === "segment"} // FIXME: Should be a more robust optional tag
-            options={dimensions.map((dimension) => ({
-              value: dimension.iri,
-              label: dimension.label,
-            }))}
+            options={
+              field === "x" && (chartType === "line" || chartType === "area")
+                ? dimensions.flatMap((dimension) => {
+                    return dimension.__typename === "TemporalDimension"
+                      ? [
+                          {
+                            value: dimension.iri,
+                            label: dimension.label,
+                          },
+                        ]
+                      : [];
+                  })
+                : dimensions.map((dimension) => ({
+                    value: dimension.iri,
+                    label: dimension.label,
+                  }))
+            }
             dataSetMetadata={metaData}
           />
           {field === "segment" && (
@@ -190,7 +203,7 @@ const DimensionPanel = ({
 
 const MeasurePanel = ({
   field,
-  metaData
+  metaData,
 }: {
   field: string;
   metaData: DataCubeMetadata;
@@ -217,9 +230,9 @@ const MeasurePanel = ({
           <ChartFieldField
             field={field}
             label={<Trans id="controls.select.measure">Select a measure</Trans>}
-            options={measures.map(measure => ({
+            options={measures.map((measure) => ({
               value: measure.iri,
-              label: measure.label
+              label: measure.label,
             }))}
             dataSetMetadata={metaData}
           />
@@ -231,13 +244,15 @@ const MeasurePanel = ({
 
 const Filter = ({
   state,
-  metaData
+  metaData,
 }: {
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
 }) => {
   const { dimensions } = metaData;
-  const activeDimension = dimensions.find(dim => dim.iri === state.activeField);
+  const activeDimension = dimensions.find(
+    (dim) => dim.iri === state.activeField
+  );
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (panelRef && panelRef.current) {
@@ -276,7 +291,7 @@ const Filter = ({
 const ChartFieldOptions = ({
   field,
   chartType,
-  disabled = false
+  disabled = false,
 }: {
   field: string;
   chartType: ChartType;
