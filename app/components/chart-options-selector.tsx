@@ -44,7 +44,7 @@ export const ChartOptionsSelector = ({
         sx={{
           // we need these overflow parameters to allow iOS scrolling
           overflowX: "hidden",
-          overflowY: "scroll",
+          overflowY: "auto",
           mb: 7,
         }}
       >

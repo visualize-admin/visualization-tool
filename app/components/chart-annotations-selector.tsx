@@ -33,7 +33,7 @@ export const ChartAnnotationsSelector = ({
         aria-labelledby={`annotation-tab-${state.activeField}`}
         ref={panelRef}
         tabIndex={-1}
-        sx={{ overflowX: "hidden", overflowY: "scroll" }}
+        sx={{ overflowX: "hidden", overflowY: "auto" }}
       >
         <ControlSection>
           <SectionTitle iconName="text">
