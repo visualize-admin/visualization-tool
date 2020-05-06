@@ -30,6 +30,7 @@ import {
   chartConfigOptionsSpec,
   EncodingSpec,
   EncodingField,
+  EncodingOptions,
 } from "../domain/chart-config-options";
 
 export const ChartOptionsSelector = ({
@@ -55,7 +56,7 @@ export const ChartOptionsSelector = ({
         }}
       >
         {state.activeField ? (
-          <ActiveFieldSwitchReworked state={state} metaData={meta} />
+          <ActiveFieldSwitch state={state} metaData={meta} />
         ) : (
           <EmptyRightPanel state={state} />
         )}
@@ -66,7 +67,7 @@ export const ChartOptionsSelector = ({
   }
 };
 
-const ActiveFieldSwitchReworked = ({
+const ActiveFieldSwitch = ({
   state,
   metaData,
 }: {
@@ -105,7 +106,7 @@ const ActiveFieldSwitchReworked = ({
   return (
     <EncodingOptionsPanel
       encoding={encoding}
-      field={activeField}
+      field={activeField} // FIXME: or encoding.field?
       chartType={state.chartConfig.chartType}
       metaData={metaData}
       dimension={component}
@@ -167,6 +168,7 @@ const EncodingOptionsPanel = ({
             <ChartFieldOptions
               disabled={!dimension}
               field={encoding.field}
+              encodingOptions={encoding.options}
               chartType={chartType}
             />
           )}
@@ -242,44 +244,50 @@ const Filter = ({
   );
 };
 
-// FIXME: update with new chart specs
 const ChartFieldOptions = ({
   field,
   chartType,
+  encodingOptions,
   disabled = false,
 }: {
   field: string;
   chartType: ChartType;
+  encodingOptions: EncodingOptions;
   disabled?: boolean;
 }) => {
   return (
     <>
-      {chartType === "column" && (
-        <Box as="fieldset" mt={2}>
-          <FieldSetLegend
-            legendTitle={
-              <Trans id="controls.select.column.chart.type">Chart Type</Trans>
-            }
-          />
-          <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-            <ChartOptionField
-              label="stacked"
-              field={field}
-              path="type"
-              value={"stacked"}
-              disabled={disabled}
+      {/* FIXME: improve use of encodingOptions to get chart options */}
+      {/* TODO: Add sorting options */}
+      {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
+        chartType === "column" && (
+          <Box as="fieldset" mt={2}>
+            <FieldSetLegend
+              legendTitle={
+                <Trans id="controls.select.column.chart.type">Chart Type</Trans>
+              }
             />
-            <ChartOptionField
-              label="grouped"
-              field={field}
-              path="type"
-              value={"grouped"}
-              disabled={disabled}
-            />
-          </Flex>
-        </Box>
+            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+              <ChartOptionField
+                label="stacked"
+                field={field}
+                path="type"
+                value={"stacked"}
+                disabled={disabled}
+              />
+              <ChartOptionField
+                label="grouped"
+                field={field}
+                path="type"
+                value={"grouped"}
+                disabled={disabled}
+              />
+            </Flex>
+          </Box>
+        )}
+      {encodingOptions?.map((e) => e.field).includes("color") && (
+        <ColorPalette disabled={disabled} field={field}></ColorPalette>
       )}
-      <ColorPalette disabled={disabled} field={field}></ColorPalette>
     </>
   );
 };
