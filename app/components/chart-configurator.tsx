@@ -19,6 +19,7 @@ import { Loading } from "./hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { DataCubeMetadata } from "../graphql/types";
+import { chartConfigOptionsSpec } from "../domain/chart-config-options";
 
 export const ChartConfigurator = ({
   state,
@@ -109,27 +110,21 @@ const ColumnChartFields = ({
   const { dimensions, measures } = metaData;
 
   const components = [...dimensions, ...measures];
-
   return (
     <>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.y.componentIri
-        )}
-        value={"y"}
-      ></ControlTabField>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.x.componentIri
-        )}
-        value={"x"}
-      ></ControlTabField>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.segment?.componentIri
-        )}
-        value={"segment"}
-      ></ControlTabField>
+      {chartConfigOptionsSpec["column"].encodings.map((encoding) => {
+        const encodingField = encoding.field as "x" | "y" | "segment";
+        // console.log(chartConfig.fields[encodingField]);
+        return (
+          <ControlTabField
+            key={encoding.field}
+            component={components.find(
+              (d) => d.iri === chartConfig.fields[encodingField]?.componentIri
+            )}
+            value={encoding.field}
+          />
+        );
+      })}
     </>
   );
 };
