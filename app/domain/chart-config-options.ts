@@ -5,18 +5,17 @@ import { ChartType } from "./config-types";
 // cf also: getPossibleChartType
 // cf also: config-types
 
-/**
- * Dimension types: "TemporalDimension" | "NominalDimension" | "OrdinalDimension" | "Measure"
- */
-
+// FIXME: This should match graphQL Schema?
 export type DimensionType =
   | "TemporalDimension"
   | "NominalDimension"
   | "OrdinalDimension"
   | "Measure"
   | "Attribute";
+
+export type EncodingField = "x" | "y" | "segment";
 export interface EncodingSpec {
-  field: string;
+  field: EncodingField;
   optional: boolean;
   values: DimensionType[];
   filters: boolean;
@@ -29,11 +28,11 @@ export interface ChartSpec {
 
 interface ChartSpecs {
   column: ChartSpec;
-  bar: {};
-  line: {};
-  area: {};
-  scatterplot: {};
-  pie: {};
+  bar: ChartSpec;
+  line: ChartSpec;
+  area: ChartSpec;
+  scatterplot: ChartSpec;
+  pie: ChartSpec;
 }
 export const chartConfigOptionsSpec: ChartSpecs = {
   column: {
@@ -53,21 +52,107 @@ export const chartConfigOptionsSpec: ChartSpecs = {
         filters: true,
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
-          { field: "color", values: ["none", "palette"] },
+          { field: "color", values: ["palette"] },
         ],
       },
     ],
   },
-  bar: {},
+  bar: {
+    chartType: "bar",
+    encodings: [
+      {
+        field: "y",
+        optional: false,
+        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        filters: true,
+      },
+      { field: "x", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "segment",
+        optional: true,
+        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        filters: true,
+        options: [
+          { field: "chartSubType", values: ["stacked", "grouped"] },
+          { field: "color", values: ["palette"] },
+        ],
+      },
+    ],
+  },
   line: {
     chartType: "line",
-    encodings: {
-      field: "x",
-      values: ["TemporalDimension"],
-    },
+    encodings: [
+      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "x",
+        optional: false,
+        values: ["TemporalDimension"],
+        filters: true,
+      },
+      {
+        field: "segment",
+        optional: true,
+        values: ["NominalDimension", "OrdinalDimension"],
+        filters: true,
+        options: [{ field: "color", values: ["palette"] }],
+      },
+    ],
   },
 
-  area: {},
-  scatterplot: {},
-  pie: {},
+  area: {
+    chartType: "area",
+    encodings: [
+      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "x",
+        optional: false,
+        values: ["TemporalDimension"],
+        filters: true,
+      },
+      {
+        field: "segment",
+        optional: true,
+        values: ["NominalDimension", "OrdinalDimension"],
+        filters: true,
+        options: [{ field: "color", values: ["palette"] }],
+      },
+    ],
+  },
+  scatterplot: {
+    chartType: "scatterplot",
+    encodings: [
+      {
+        field: "x",
+        optional: false,
+        values: ["Measure"],
+        filters: false,
+      },
+      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "segment",
+        optional: true,
+        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        filters: true,
+        options: [{ field: "color", values: ["palette"] }],
+      },
+    ],
+  },
+  pie: {
+    chartType: "pie",
+    encodings: [
+      {
+        field: "y",
+        optional: false,
+        values: ["Measure"],
+        filters: false,
+      },
+      {
+        field: "segment",
+        optional: false,
+        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        filters: true,
+        options: [{ field: "color", values: ["palette"] }],
+      },
+    ],
+  },
 };
