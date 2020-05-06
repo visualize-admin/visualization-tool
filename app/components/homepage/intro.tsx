@@ -7,7 +7,7 @@ export const Intro = ({
   hint,
   title,
   teaser,
-  buttonLabel
+  buttonLabel,
 }: {
   hint: string;
   title: string;
@@ -24,13 +24,13 @@ export const Intro = ({
           backgroundImage: [
             'url("chart_icons_s.jpg")',
             'url("chart_icons.jpg")',
-            'url("chart_icons.jpg")'
+            'url("chart_icons.jpg")',
           ],
           backgroundSize: "contain",
           backgroundRepeat: "no-repeat",
           mx: 4,
           pt: ["62px", "88px"],
-          pb: [7, 8]
+          pb: [7, 8],
         }}
       >
         <Box sx={{ maxWidth: 768, m: "0 auto" }}>
@@ -63,7 +63,8 @@ export const Title = ({ children }: { children: React.ReactNode }) => (
       lineHeight: 1.2,
       fontWeight: "bold",
       fontSize: [8, "3.5rem", "3.5rem"],
-      mb: [4]
+      hyphens: "auto",
+      mb: [4],
     }}
   >
     {children}
@@ -76,7 +77,7 @@ export const Teaser = ({ children }: { children: React.ReactNode }) => (
       fontSize: [4, 4, 4],
       textAlign: "center",
       color: "monochrome700",
-      mb: [6, 5]
+      mb: [6, 5],
     }}
   >
     {children}
