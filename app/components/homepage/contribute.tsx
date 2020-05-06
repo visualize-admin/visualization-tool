@@ -4,7 +4,7 @@ import { Box, Button, Flex, Text, Link } from "@theme-ui/components";
 export const Contribute = ({
   headline,
   description,
-  buttonLabel
+  buttonLabel,
 }: {
   headline: string;
   description: string;
@@ -20,7 +20,7 @@ export const Contribute = ({
                 fontSize: [6, 6, 7],
                 lineHeight: 1.25,
                 fontFamily: "body",
-                mb: 3
+                mb: 3,
               }}
             >
               {headline}
@@ -31,10 +31,15 @@ export const Contribute = ({
             sx={{
               justifyContent: "center",
               alignItems: "center",
-              width: ["100%", "100%", "30%"]
+              width: ["100%", "50%", "30%"],
             }}
           >
-            <Link href="https://lindas-data.ch/">
+            <Link
+              href="https://lindas-data.ch/"
+              sx={{
+                flexGrow: [1, 0, 0],
+              }}
+            >
               <Button variant="inverted">{buttonLabel}</Button>
             </Link>
           </Flex>
