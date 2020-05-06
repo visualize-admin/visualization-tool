@@ -35,12 +35,10 @@ export const TooltipBox = ({
         left: x! + margins.left,
         top: mxYOffset(y!, placement) + margins.top,
         pointerEvents: "none",
+        transform: mkTranslation(placement),
       }}
     >
       <Box
-        style={{
-          transform: mkTranslation(placement),
-        }}
         sx={{
           width: "fit-content",
           padding: 3,
