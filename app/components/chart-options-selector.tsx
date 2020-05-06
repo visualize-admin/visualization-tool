@@ -29,6 +29,7 @@ import { ColorPalette } from "./chart-controls/color-palette";
 import {
   chartConfigOptionsSpec,
   EncodingSpec,
+  EncodingField,
 } from "../domain/chart-config-options";
 
 export const ChartOptionsSelector = ({
@@ -75,7 +76,7 @@ const ActiveFieldSwitchReworked = ({
   const { activeField } = state;
 
   const encodings =
-    chartConfigOptionsSpec[state.chartConfig.chartType as "column"].encodings;
+    chartConfigOptionsSpec[state.chartConfig.chartType].encodings;
   const encoding = encodings.find(
     (e) => e.field === activeField
   ) as EncodingSpec;
@@ -89,8 +90,9 @@ const ActiveFieldSwitchReworked = ({
   );
 
   // It's a dimension which is not mapped to an encoding field, so we show the filter!
+  // FIXME: activeField and encodingField should match? remove type assertion
   if (
-    !encodings.map((e) => e.field).includes(activeField) &&
+    !encodings.map((e) => e.field).includes(activeField as EncodingField) &&
     !activeFieldComponentIri
   ) {
     return <Filter state={state} metaData={metaData} />;
@@ -149,7 +151,7 @@ const EncodingOptionsPanel = ({
         <ControlSectionContent side="right">
           <ChartFieldField
             field={encoding.field}
-            label={getFieldLabelHint[encoding.field as "x"]} // FIXME: add other hints and remove type assertion
+            label={getFieldLabelHint[encoding.field]}
             optional={encoding.optional}
             options={getDimensionsByDimensionType({
               dimensionTypes: encoding.values,
@@ -193,195 +195,6 @@ const EncodingOptionsPanel = ({
     </div>
   );
 };
-
-// const ActiveFieldSwitch = ({
-//   state,
-//   metaData,
-// }: {
-//   state: ConfiguratorStateConfiguringChart;
-//   metaData: DataCubeMetadata;
-// }) => {
-//   const { activeField } = state;
-
-//   if (!activeField) {
-//     return null;
-//   }
-//   // TODO: what to do with optional fields?
-//   const activeFieldComponentIri = getFieldComponentIri(
-//     state.chartConfig.fields,
-//     activeField
-//   );
-//   // state.chartConfig.fields[activeField];
-
-//   // It's an optional field
-//   if (!activeFieldComponentIri && activeField === "segment") {
-//     return (
-//       <DimensionPanel
-//         field={activeField}
-//         chartType={state.chartConfig.chartType}
-//         metaData={metaData}
-//         dimension={undefined}
-//       />
-//     );
-//   }
-
-//   // It's a dimension which is not mapped to a field, so we show the filter!
-//   if (!activeFieldComponentIri) {
-//     return <Filter state={state} metaData={metaData} />;
-//   }
-
-//   const component = [...metaData.dimensions, ...metaData.measures].find(
-//     (d) => d.iri === activeFieldComponentIri
-//   );
-
-//   return component?.__typename === "Measure" ? (
-//     <MeasurePanel field={activeField} metaData={metaData} />
-//   ) : (
-//     <DimensionPanel
-//       field={activeField}
-//       chartType={state.chartConfig.chartType}
-//       metaData={metaData}
-//       dimension={component}
-//     />
-//   );
-// };
-
-// const DimensionPanel = ({
-//   field,
-//   chartType,
-//   dimension,
-//   metaData,
-// }: {
-//   field: string;
-//   chartType: ChartType;
-//   dimension: { iri: string; label: string } | undefined;
-//   metaData: DataCubeMetadata;
-// }) => {
-//   const { dimensions } = metaData;
-//   const panelRef = useRef<HTMLDivElement>(null);
-
-//   useEffect(() => {
-//     if (panelRef && panelRef.current) {
-//       panelRef.current.focus();
-//     }
-//   }, [field]);
-//   // const dimzzz = getDimensionsByDimensionType({
-//   //   dimensionTypes: ["TemporalDimension", "Measure"],
-//   //   measures,
-//   //   dimensions,
-//   // });
-//   // console.log({ dimensions });
-//   // console.log({ measures });
-//   // console.log({ dimzzz });
-//   return (
-//     <div
-//       key={`control-panel-${field}`}
-//       role="tabpanel"
-//       id={`control-panel-${field}`}
-//       aria-labelledby={`tab-${field}`}
-//       ref={panelRef}
-//       tabIndex={-1}
-//     >
-//       <ControlSection>
-//         <SectionTitle iconName={field as IconName}>
-//           {getFieldLabel(field)}
-//         </SectionTitle>
-//         <ControlSectionContent side="right">
-//           <ChartFieldField
-//             field={field}
-//             label={
-//               <Trans id="controls.select.dimension">Select a dimension</Trans>
-//             }
-//             optional={chartType !== "pie" && field === "segment"} // FIXME: Should be a more robust optional tag
-//             options={
-//               field === "x" && (chartType === "line" || chartType === "area")
-//                 ? dimensions.flatMap((dimension) => {
-//                     return dimension.__typename === "TemporalDimension"
-//                       ? [
-//                           {
-//                             value: dimension.iri,
-//                             label: dimension.label,
-//                           },
-//                         ]
-//                       : [];
-//                   })
-//                 : dimensions.map((dimension) => ({
-//                     value: dimension.iri,
-//                     label: dimension.label,
-//                   }))
-//             }
-//             dataSetMetadata={metaData}
-//           />
-//           {field === "segment" && (
-//             <ChartFieldOptions
-//               disabled={!dimension}
-//               field={field}
-//               chartType={chartType}
-//             />
-//           )}
-//         </ControlSectionContent>
-//       </ControlSection>
-//       <ControlSection>
-//         <SectionTitle disabled={!dimension} iconName="filter">
-//           <Trans id="controls.section.filter">Filter</Trans>
-//         </SectionTitle>
-//         <ControlSectionContent side="right" as="fieldset">
-//           <legend style={{ display: "none" }}>
-//             <Trans id="controls.section.filter">Filter</Trans>
-//           </legend>
-//           {dimension && (
-//             <DimensionValuesMultiFilter
-//               key={dimension.iri}
-//               dimensionIri={dimension.iri}
-//               dataSetIri={metaData.iri}
-//             />
-//           )}
-//         </ControlSectionContent>
-//       </ControlSection>
-//     </div>
-//   );
-// };
-
-// const MeasurePanel = ({
-//   field,
-//   metaData,
-// }: {
-//   field: string;
-//   metaData: DataCubeMetadata;
-// }) => {
-//   const { measures } = metaData;
-//   const panelRef = useRef<HTMLDivElement>(null);
-//   useEffect(() => {
-//     if (panelRef && panelRef.current) {
-//       panelRef.current.focus();
-//     }
-//   }, [field]);
-//   return (
-//     <div
-//       role="tabpanel"
-//       id={`control-panel-${field}`}
-//       aria-labelledby={`tab-${field}`}
-//       ref={panelRef}
-//       tabIndex={-1}
-//       key={`control-panel-${field}`}
-//     >
-//       <ControlSection>
-//         <SectionTitle iconName="y">{getFieldLabel(field)}</SectionTitle>
-//         <ControlSectionContent side="right">
-//           <ChartFieldField
-//             field={field}
-//             label={<Trans id="controls.select.measure">Select a measure</Trans>}
-//             options={measures.map((measure) => ({
-//               value: measure.iri,
-//               label: measure.label,
-//             }))}
-//             dataSetMetadata={metaData}
-//           />
-//         </ControlSectionContent>
-//       </ControlSection>
-//     </div>
-//   );
-// };
 
 const Filter = ({
   state,
@@ -429,6 +242,7 @@ const Filter = ({
   );
 };
 
+// FIXME: update with new chart specs
 const ChartFieldOptions = ({
   field,
   chartType,
