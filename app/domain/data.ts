@@ -1,5 +1,9 @@
 import { Literal, NamedNode } from "rdf-js";
-import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
+import {
+  DimensionFieldsWithValuesFragment,
+  ComponentFieldsFragment,
+} from "../graphql/query-hooks";
+import { DimensionType } from "./chart-config-options";
 
 export type RawObservationValue = {
   value: Literal | NamedNode;
@@ -57,7 +61,7 @@ const parseRDFLiteral = (value: Literal): ObservationValue => {
  */
 export const parseObservationValue = ({
   label,
-  value
+  value,
 }: RawObservationValue): ObservationValue => {
   // Prefer the label – if it's not empty (which is currently the case for years)
   if (label && label.value !== "") {
@@ -76,7 +80,7 @@ export const parseObservationValue = ({
 export const parseObservations = (
   observations: RawObservation[]
 ): Observation[] =>
-  observations.map(d => {
+  observations.map((d) => {
     let parsedOperation: Observation = {};
     for (const [k, v] of Object.entries(d)) {
       parsedOperation[k] = parseObservationValue(v);
@@ -89,7 +93,7 @@ export const parseObservations = (
  */
 export const getTimeDimensions = (
   dimensions: DimensionFieldsWithValuesFragment[]
-) => dimensions.filter(d => d.__typename === "TemporalDimension");
+) => dimensions.filter((d) => d.__typename === "TemporalDimension");
 /**
  * @fixme use metadata to filter categorical dimension!
  */
@@ -97,6 +101,19 @@ export const getCategoricalDimensions = (
   dimensions: DimensionFieldsWithValuesFragment[]
 ) =>
   dimensions.filter(
-    d =>
+    (d) =>
       d.__typename === "NominalDimension" || d.__typename === "OrdinalDimension"
+  );
+
+export const getDimensionsByDimensionType = ({
+  dimensionTypes,
+  dimensions,
+  measures,
+}: {
+  dimensionTypes: DimensionType[];
+  dimensions: DimensionFieldsWithValuesFragment[];
+  measures: ComponentFieldsFragment[];
+}) =>
+  [...measures, ...dimensions].filter((component) =>
+    dimensionTypes.includes(component.__typename)
   );
