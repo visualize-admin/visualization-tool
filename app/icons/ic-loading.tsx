@@ -9,9 +9,9 @@ export const IconLoading = ({ size = 64, color = "currentColor" }) => (
     fill="none"
     fillRule="evenodd"
     stroke={color}
-    stroke-width="3"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
     <g>
       {/* <circle stroke-opacity="25%" cx="32" cy="32" r="20"></circle> */}
