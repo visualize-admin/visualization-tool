@@ -1,0 +1,20 @@
+name: Docker Build (Dev)
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/build-push-action@v1
+      with:
+        registry: docker.pkg.github.com
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        repository: ${{ github.repository }}/visualization-tool
+        tags: release
+        tag_with_ref: true
