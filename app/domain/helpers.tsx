@@ -140,6 +140,11 @@ export const getFieldLabel = (field: string): React.ReactNode => {
   }
 };
 
+export const getFieldLabelHint = {
+  x: <Trans id="controls.select.dimension">Select a dimension</Trans>,
+  y: <Trans id="controls.select.measure">Select a measure</Trans>,
+  segment: <Trans id="controls.select.dimension">Select a dimension</Trans>,
+};
 export const getPalette = (
   palette: string | undefined
 ): ReadonlyArray<string> => {
