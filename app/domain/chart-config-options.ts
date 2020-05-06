@@ -14,12 +14,16 @@ export type DimensionType =
   | "Attribute";
 
 export type EncodingField = "x" | "y" | "segment";
+export type EncodingOption = "chartSubType" | "color";
+export type EncodingOptions =
+  | undefined
+  | { field: EncodingOption; values: string[] }[];
 export interface EncodingSpec {
   field: EncodingField;
   optional: boolean;
   values: DimensionType[];
   filters: boolean;
-  options?: undefined | { field: string; values: string[] }[];
+  options?: EncodingOptions;
 }
 export interface ChartSpec {
   chartType: ChartType;
