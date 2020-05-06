@@ -19,7 +19,7 @@ import { Loading } from "./hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { DataCubeMetadata } from "../graphql/types";
-import { chartConfigOptionsSpec } from "../domain/chart-config-options";
+import { chartConfigOptionsUISpec } from "../domain/chart-config-ui-options";
 
 export const ChartConfigurator = ({
   state,
@@ -112,7 +112,7 @@ const ColumnChartFields = ({
   const components = [...dimensions, ...measures];
   return (
     <>
-      {chartConfigOptionsSpec["column"].encodings.map((encoding) => {
+      {chartConfigOptionsUISpec["column"].encodings.map((encoding) => {
         const encodingField = encoding.field as "x" | "y" | "segment";
         // console.log(chartConfig.fields[encodingField]);
         return (

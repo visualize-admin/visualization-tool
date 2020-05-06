@@ -27,11 +27,11 @@ import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
-  chartConfigOptionsSpec,
+  chartConfigOptionsUISpec,
   EncodingSpec,
   EncodingField,
   EncodingOptions,
-} from "../domain/chart-config-options";
+} from "../domain/chart-config-ui-options";
 
 export const ChartOptionsSelector = ({
   state,
@@ -77,7 +77,7 @@ const ActiveFieldSwitch = ({
   const { activeField } = state;
 
   const encodings =
-    chartConfigOptionsSpec[state.chartConfig.chartType].encodings;
+    chartConfigOptionsUISpec[state.chartConfig.chartType].encodings;
   const encoding = encodings.find(
     (e) => e.field === activeField
   ) as EncodingSpec;

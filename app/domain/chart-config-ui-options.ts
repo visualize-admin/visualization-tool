@@ -44,7 +44,7 @@ interface ChartSpecs {
  * - Differentiate sorting within chart vs. sorting legend/tooltip only
  */
 
-export const chartConfigOptionsSpec: ChartSpecs = {
+export const chartConfigOptionsUISpec: ChartSpecs = {
   column: {
     chartType: "column",
     encodings: [
