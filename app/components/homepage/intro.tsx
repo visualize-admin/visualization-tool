@@ -42,7 +42,7 @@ export const Intro = ({
           backgroundSize: "contain",
           backgroundRepeat: "no-repeat",
           mx: 4,
-          pt: ["62px", "88px"],
+          // pt: ["62px", "88px"],
           pb: [7, 8]
         }}
       >
