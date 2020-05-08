@@ -254,7 +254,10 @@ const ChartFieldSorting = ({
             path="sorting.sortingField"
             options={encodingSortingOptions
               ?.map((s) => s.sortingField)
-              .map((opt) => ({ value: opt, label: opt }))}
+              .map((opt) => ({
+                value: opt,
+                label: opt, // getFieldLabel(`sorting.${opt}`),
+              }))}
             disabled={disabled}
           />
         </Box>
@@ -262,7 +265,7 @@ const ChartFieldSorting = ({
           {sortingOrderOptions &&
             sortingOrderOptions.map((opt) => (
               <ChartOptionRadioField
-                label={opt}
+                label={`${activeSortingField}.${opt}`}
                 field={field}
                 path="sorting.sortingOrder"
                 value={opt}
