@@ -109,6 +109,13 @@ const BarFields = t.intersection([
       componentIri: t.string,
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
       palette: t.string,
+      sorting: t.type({
+        sortingField: t.union([
+          t.literal("alphabetical"),
+          t.literal("totalSize"),
+        ]),
+        sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+      }),
     }),
   }),
 ]);
@@ -139,6 +146,13 @@ const ColumnFields = t.intersection([
       componentIri: t.string,
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
       palette: t.string,
+      sorting: t.type({
+        sortingField: t.union([
+          t.literal("alphabetical"),
+          t.literal("totalSize"),
+        ]),
+        sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+      }),
     }),
   }),
 ]);
@@ -147,6 +161,8 @@ const ColumnConfig = t.type(
     chartType: t.literal("column"),
     filters: Filters,
     fields: ColumnFields,
+    // FIXME: Should the sorting settings be at the ChartConfig level?
+    // sorting: [{sortByField: "x", sortingField: "y", sortingOrder: "asc", }]
   },
   "ColumnConfig"
 );
