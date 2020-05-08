@@ -9,7 +9,7 @@ import {
   useChartTypeSelectorField,
   useMetaField,
   useSingleFilterField,
-  useChartSortingField,
+  useChartOptionSelectField,
 } from "../domain/config-form";
 import { getFieldLabel } from "../domain/helpers";
 import {
@@ -281,7 +281,7 @@ export const ChartFieldField = ({
 //----------------------------------------
 // FIXME: Can maybe be renamed ChartOptionSelectField
 // to make it reusable for any select menu changing an option.
-export const ChartSortingField = ({
+export const ChartOptionSelectField = ({
   label,
   field,
   path,
@@ -294,14 +294,14 @@ export const ChartSortingField = ({
   options: Option[];
   disabled?: boolean;
 }) => {
-  const fieldProps = useChartSortingField({
+  const fieldProps = useChartOptionSelectField({
     field,
     path,
   });
 
   return (
     <Select
-      key={`select-${field}-${path}-dimension`}
+      key={`select-${field}-${path}`}
       id={field}
       label={label}
       disabled={disabled}

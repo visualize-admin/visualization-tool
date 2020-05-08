@@ -21,7 +21,7 @@ import { EmptyRightPanel } from "./empty-right-panel";
 import {
   ChartFieldField,
   ChartOptionRadioField,
-  ChartSortingField,
+  ChartOptionSelectField,
 } from "./field";
 import {
   DimensionValuesMultiFilter,
@@ -248,7 +248,7 @@ const ChartFieldSorting = ({
       </SectionTitle>
       <ControlSectionContent side="right" as="fieldset">
         <Box mt={2}>
-          <ChartSortingField
+          <ChartOptionSelectField
             label="Sort by"
             field={field}
             path="sorting.sortingField"

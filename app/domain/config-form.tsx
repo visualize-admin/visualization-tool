@@ -160,7 +160,7 @@ export const useChartFieldField = ({
 //----------------------------------------
 // FIXME: Can maybe be renamed useChartOptionSelectField
 // to make it reusable for any select menu changing an option.
-export const useChartSortingField = ({
+export const useChartOptionSelectField = ({
   field,
   path,
 }: {
