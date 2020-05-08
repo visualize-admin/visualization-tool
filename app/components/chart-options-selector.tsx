@@ -265,6 +265,7 @@ const ChartFieldSorting = ({
           {sortingOrderOptions &&
             sortingOrderOptions.map((opt) => (
               <ChartOptionRadioField
+                key={opt}
                 label={`${activeSortingField}.${opt}`}
                 field={field}
                 path="sorting.sortingOrder"
