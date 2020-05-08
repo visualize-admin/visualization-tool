@@ -18,7 +18,11 @@ import {
   ControlSection,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
-import { ChartFieldField, ChartOptionField, ChartSortingField } from "./field";
+import {
+  ChartFieldField,
+  ChartOptionRadioField,
+  ChartSortingField,
+} from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
@@ -33,6 +37,7 @@ import {
   EncodingOptions,
   EncodingSortingOption,
 } from "../domain/chart-config-ui-options";
+import get from "lodash/get";
 
 export const ChartOptionsSelector = ({
   state,
@@ -107,6 +112,7 @@ const ActiveFieldSwitch = ({
   return (
     <EncodingOptionsPanel
       encoding={encoding}
+      state={state}
       field={activeField} // FIXME: or encoding.field?
       chartType={state.chartConfig.chartType}
       metaData={metaData}
@@ -117,12 +123,14 @@ const ActiveFieldSwitch = ({
 
 const EncodingOptionsPanel = ({
   encoding,
+  state,
   field,
   chartType,
   dimension,
   metaData,
 }: {
   encoding: EncodingSpec;
+  state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
   dimension: { iri: string; label: string } | undefined;
@@ -178,6 +186,7 @@ const EncodingOptionsPanel = ({
 
       {encoding.sorting && (
         <ChartFieldSorting
+          state={state}
           disabled={!dimension}
           field={encoding.field}
           encodingSortingOptions={encoding.sorting}
@@ -209,17 +218,28 @@ const EncodingOptionsPanel = ({
 };
 
 const ChartFieldSorting = ({
+  state,
   field,
   // chartType,
   encodingSortingOptions,
   disabled = false,
 }: {
+  state: ConfiguratorStateConfiguringChart;
   field: string;
   // chartType: ChartType;
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
 }) => {
   console.log({ encodingSortingOptions });
+  const activeSortingField = get(
+    state,
+    `chartConfig.fields.${field}.sorting.sortingField`,
+    ""
+  );
+
+  const sortingOrderOptions = encodingSortingOptions.find(
+    (o) => o.sortingField === activeSortingField
+  )?.sortingOrder;
 
   return (
     <ControlSection>
@@ -227,19 +247,29 @@ const ChartFieldSorting = ({
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
       <ControlSectionContent side="right" as="fieldset">
-        <Box as="fieldset" mt={2}>
-          <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-            <ChartSortingField
-              label="Sort by"
-              field={field}
-              path="sorting.sortingField"
-              options={encodingSortingOptions
-                ?.map((s) => s.sortingField)
-                .map((opt) => ({ value: opt, label: opt }))}
-              disabled={disabled}
-            />
-          </Flex>
+        <Box mt={2}>
+          <ChartSortingField
+            label="Sort by"
+            field={field}
+            path="sorting.sortingField"
+            options={encodingSortingOptions
+              ?.map((s) => s.sortingField)
+              .map((opt) => ({ value: opt, label: opt }))}
+            disabled={disabled}
+          />
         </Box>
+        <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+          {sortingOrderOptions &&
+            sortingOrderOptions.map((opt) => (
+              <ChartOptionRadioField
+                label={opt}
+                field={field}
+                path="sorting.sortingOrder"
+                value={opt}
+                disabled={disabled}
+              />
+            ))}
+        </Flex>
       </ControlSectionContent>
     </ControlSection>
   );
@@ -315,14 +345,14 @@ const ChartFieldOptions = ({
               }
             />
             <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-              <ChartOptionField
+              <ChartOptionRadioField
                 label="stacked"
                 field={field}
                 path="type"
                 value={"stacked"}
                 disabled={disabled}
               />
-              <ChartOptionField
+              <ChartOptionRadioField
                 label="grouped"
                 field={field}
                 path="type"
