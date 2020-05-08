@@ -12,7 +12,6 @@ import {
   stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
-  stackOrderAppearance,
   stackOrderNone,
 } from "d3-shape";
 import * as React from "react";
@@ -43,7 +42,7 @@ export interface StackedColumnsState {
   wide: Record<string, ObservationValue>[];
   grouped: [string, Record<string, ObservationValue>[]][];
   series: $FixMe[];
-  getAnnotationInfo: (d: Observation) => Tooltip;
+  getAnnotationInfo: (d: Observation, orderedSegments: string[]) => Tooltip;
 }
 
 const useColumnsStackedState = ({
@@ -189,7 +188,7 @@ const useColumnsStackedState = ({
       [key: string]: number;
     }[]
   );
-  console.log({ series });
+
   // Dimensions
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
@@ -221,10 +220,20 @@ const useColumnsStackedState = ({
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
 
-    const tooltipValues = data.filter((j) => getX(j) === getX(datum));
+    const tooltipValues = sortedData.filter((j) => getX(j) === getX(datum));
+
+    // FIXME: This doesn't work
+    const sortedTooltipValues = sortByIndex({
+      data: tooltipValues,
+      order: segments,
+      getCategory: getSegment,
+      sortOrder: segmentSortingOrder,
+    });
 
     const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
-    const cumulativeRulerItemValues = [...tooltipValues.map(cumulativeSum)];
+    const cumulativeRulerItemValues = [
+      ...sortedTooltipValues.map(cumulativeSum),
+    ];
 
     const yRef = yScale(
       Math.max(
@@ -273,7 +282,7 @@ const useColumnsStackedState = ({
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
-      values: tooltipValues.map((td) => ({
+      values: sortedTooltipValues.map((td) => ({
         label: getSegment(td),
         value: formatNumber(getY(td)),
         color: colors(getSegment(td)) as string,
@@ -369,7 +378,12 @@ const sortData = ({
   } else if (sortingOrder === "asc" && sortingField === "alphabetical") {
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));
   } else if (sortingField === "y") {
-    const sd = sortByIndex(data, xOrder, getX, sortingOrder);
+    const sd = sortByIndex({
+      data,
+      order: xOrder,
+      getCategory: getX,
+      sortOrder: sortingOrder,
+    });
 
     return sd; //[...data].sort((a, b) => descending(getY(a), getY(b)));
   } else {
