@@ -12,7 +12,7 @@ export type DimensionType =
 
 export type EncodingField = "x" | "y" | "segment";
 export type EncodingOption = "chartSubType" | "sorting" | "color";
-export type SortingOrder = "asc" | "desc" | "1-9" | "9-1";
+export type SortingOrder = "asc" | "desc";
 export type EncodingOptions =
   | undefined
   | {
