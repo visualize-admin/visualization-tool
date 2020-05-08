@@ -115,6 +115,18 @@ export const getFieldLabel = (field: string): React.ReactNode => {
       return <Trans id="controls.column.stacked">Stacked</Trans>;
     case "grouped":
       return <Trans id="controls.column.grouped">Grouped</Trans>;
+    case "sorting.alphabetical":
+      return <Trans id="controls.sorting.alphabetical">Name</Trans>;
+    case "sorting.y":
+      return <Trans id="controls.sorting.measure">Measure</Trans>;
+    case "alphabetical.asc":
+      return <Trans id="controls.sorting.alphabetical.ascending">A → Z</Trans>;
+    case "alphabetical.desc":
+      return <Trans id="controls.sorting.alphabetical.descending">Z → A</Trans>;
+    case "y.asc":
+      return <Trans id="controls.sorting.measure.ascending">1 → 9</Trans>;
+    case "y.desc":
+      return <Trans id="controls.sorting.measure.descending">9 → 1</Trans>;
     case "column":
       return <Trans id="controls.chart.type.column">Columns</Trans>;
     case "bar":
