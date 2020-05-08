@@ -1,4 +1,4 @@
-import { ascending, group, max, min } from "d3-array";
+import { ascending, group, max, min, descending } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -19,6 +19,35 @@ import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
+import { sortByIndex } from "../../../lib/array";
+const sortData = ({
+  data,
+  getX,
+  getY,
+  sortingField,
+  sortingOrder,
+  xOrder,
+}: {
+  data: Observation[];
+  getX: (d: Observation) => string;
+  getY: (d: Observation) => number;
+  sortingField: string;
+  sortingOrder: "asc" | "desc";
+  xOrder: string[];
+}) => {
+  if (sortingOrder === "desc" && sortingField === "alphabetical") {
+    return [...data].sort((a, b) => descending(getX(a), getX(b)));
+  } else if (sortingOrder === "asc" && sortingField === "alphabetical") {
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  } else if (sortingField === "y") {
+    const sd = sortByIndex(data, xOrder, getX, sortingOrder);
+
+    return sd; //[...data].sort((a, b) => descending(getY(a), getY(b)));
+  } else {
+    // default to scending alphabetical
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  }
+};
 
 export interface StackedColumnsState {
   sortedData: Observation[];
@@ -54,29 +83,10 @@ const useColumnsStackedState = ({
   const getSegment = (d: Observation): string =>
     d[fields.segment!.componentIri] as string;
 
-  const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
-
-  // segments
-  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
-  );
-
-  // x
-  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
-  const xScale = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(PADDING_INNER)
-    .paddingOuter(PADDING_OUTER);
-  const xScaleInteraction = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(0)
-    .paddingOuter(0);
-
-  // y
+  // Groups for stack
   const xKey = fields.x.componentIri;
   const wide: Record<string, ObservationValue>[] = [];
-  const groupedMap = group(sortedData, getX);
+  const groupedMap = group(data, getX);
   for (const [key, values] of groupedMap) {
     const keyObject = values.reduce<{ [k: string]: number | string }>(
       (obj, cur) => {
@@ -96,6 +106,41 @@ const useColumnsStackedState = ({
       [xKey]: key,
     });
   }
+
+  // Sort
+  const { sortingField, sortingOrder } = fields.x.sorting;
+
+  const xOrder = wide
+    .sort((a, b) => ascending(a.total, b.total))
+    .map((d, i) => getX(d));
+
+  const sortedData = sortData({
+    data,
+    getX,
+    getY,
+    sortingField,
+    sortingOrder,
+    xOrder,
+  });
+
+  // segments
+  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
+  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
+    segments
+  );
+
+  // x
+  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
+  const xScale = scaleBand()
+    .domain(bandDomain)
+    .paddingInner(PADDING_INNER)
+    .paddingOuter(PADDING_OUTER);
+  const xScaleInteraction = scaleBand()
+    .domain(bandDomain)
+    .paddingInner(0)
+    .paddingOuter(0);
+
+  // y
   const minTotal = Math.min(
     min<$FixMe, number>(wide, (d) => d.total) as number,
     0
@@ -105,6 +150,7 @@ const useColumnsStackedState = ({
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
+
   const yScale = scaleLinear()
     .domain(yStackDomain)
     .nice();
@@ -113,7 +159,12 @@ const useColumnsStackedState = ({
   const stacked = stack()
     .offset(stackOffsetDiverging)
     .keys(segments);
-  const series = stacked(wide as { [key: string]: number }[]);
+
+  const series = stacked(
+    wide as {
+      [key: string]: number;
+    }[]
+  );
 
   // Dimensions
   const left = Math.max(
