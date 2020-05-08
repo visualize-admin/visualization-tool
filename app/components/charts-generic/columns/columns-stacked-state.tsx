@@ -9,7 +9,7 @@ import {
 } from "d3-scale";
 import { stack, stackOffsetDiverging } from "d3-shape";
 import * as React from "react";
-import { ReactNode } from "react";
+import { ReactNode, useMemo, useCallback } from "react";
 import { ColumnFields, Observation, ObservationValue } from "../../../domain";
 import { formatNumber, getPalette, isNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
@@ -78,8 +78,14 @@ const useColumnsStackedState = ({
 }): StackedColumnsState => {
   const width = useWidth();
 
-  const getX = (d: Observation): string => d[fields.x.componentIri] as string;
-  const getY = (d: Observation): number => +d[fields.y.componentIri];
+  const getX = useCallback(
+    (d: Observation): string => d[fields.x.componentIri] as string,
+    [fields.x.componentIri]
+  );
+  const getY = useCallback(
+    (d: Observation): number => +d[fields.y.componentIri],
+    [fields.y.componentIri]
+  );
   const getSegment = (d: Observation): string =>
     d[fields.segment!.componentIri] as string;
 
@@ -114,14 +120,18 @@ const useColumnsStackedState = ({
     .sort((a, b) => ascending(a.total, b.total))
     .map((d, i) => getX(d));
 
-  const sortedData = sortData({
-    data,
-    getX,
-    getY,
-    sortingField,
-    sortingOrder,
-    xOrder,
-  });
+  const sortedData = useMemo(
+    () =>
+      sortData({
+        data,
+        getX,
+        getY,
+        sortingField,
+        sortingOrder,
+        xOrder,
+      }),
+    [data, getX, getY, sortingField, sortingOrder, xOrder]
+  );
 
   // segments
   const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
