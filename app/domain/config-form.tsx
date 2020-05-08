@@ -19,7 +19,7 @@ export type FieldProps = Pick<
 >;
 
 export const useActiveFieldField = ({
-  value
+  value,
 }: {
   value: string;
 }): FieldProps & {
@@ -30,7 +30,7 @@ export const useActiveFieldField = ({
   const onClick = useCallback(() => {
     dispatch({
       type: "ACTIVE_FIELD_CHANGED",
-      value
+      value,
     });
   }, [dispatch, value]);
 
@@ -39,14 +39,14 @@ export const useActiveFieldField = ({
   return {
     value,
     checked,
-    onClick
+    onClick,
   };
 };
 
 export const useMetaField = ({
   metaKey,
   locale,
-  value
+  value,
 }: {
   metaKey: string;
   locale: Locales;
@@ -55,13 +55,13 @@ export const useMetaField = ({
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    e => {
+    (e) => {
       dispatch({
         type: "CHART_DESCRIPTION_CHANGED",
         value: {
           path: `${metaKey}.${locale}`,
-          value: e.currentTarget.value
-        }
+          value: e.currentTarget.value,
+        },
       });
     },
     [dispatch, metaKey, locale]
@@ -70,13 +70,13 @@ export const useMetaField = ({
   return {
     name: `${metaKey}-${locale}`,
     value,
-    onChange
+    onChange,
   };
 };
 
 export const useSingleFilterField = ({
   dimensionIri,
-  value
+  value,
 }: {
   value: string;
   dimensionIri: string;
@@ -84,13 +84,13 @@ export const useSingleFilterField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    e => {
+    (e) => {
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
           dimensionIri,
-          value: e.currentTarget.value
-        }
+          value: e.currentTarget.value,
+        },
       });
     },
     [dispatch, dimensionIri]
@@ -107,7 +107,7 @@ export const useSingleFilterField = ({
     name: dimensionIri,
     value: value ? value : stateValue,
     checked,
-    onChange
+    onChange,
   };
 };
 
@@ -116,7 +116,7 @@ export const FIELD_VALUE_NONE = "FIELD_VALUE_NONE";
 export const useChartFieldField = ({
   componentIri,
   field,
-  dataSetMetadata
+  dataSetMetadata,
 }: {
   field: string;
   componentIri?: string;
@@ -125,22 +125,22 @@ export const useChartFieldField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
-    e =>
+    (e) =>
       e.currentTarget.value !== FIELD_VALUE_NONE
         ? dispatch({
             type: "CHART_FIELD_CHANGED",
             value: {
               componentIri: e.currentTarget.value,
               field,
-              dataSetMetadata
-            }
+              dataSetMetadata,
+            },
           })
         : dispatch({
             type: "CHART_FIELD_DELETED",
             value: {
               field,
-              dataSetMetadata
-            }
+              dataSetMetadata,
+            },
           }),
     [dispatch, field, dataSetMetadata]
   );
@@ -153,14 +153,54 @@ export const useChartFieldField = ({
   return {
     name: field,
     value,
-    onChange
+    onChange,
   };
 };
+
+//----------------------------------------
+// FIXME: Can maybe be renamed useChartOptionSelectField
+// to make it reusable for any select menu changing an option.
+export const useChartSortingField = ({
+  field,
+  path,
+}: {
+  field: string;
+  path: string;
+}): SelectProps => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
+    (e) => {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field,
+          path,
+          value: e.currentTarget.value,
+        },
+      });
+    },
+    [dispatch, field, path]
+  );
+
+  let value: string | undefined;
+  if (state.state === "CONFIGURING_CHART") {
+    value = get(state, `chartConfig.fields.${field}.${path}`);
+  }
+  return {
+    name: path,
+    value,
+    // checked,
+    onChange,
+  };
+};
+//----------------------------------------
+
 export const useChartOptionField = ({
   field,
   path,
   label,
-  value
+  value,
 }: {
   field: string;
   path: string;
@@ -170,14 +210,14 @@ export const useChartOptionField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    e => {
+    (e) => {
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
           field,
           path,
-          value
-        }
+          value,
+        },
       });
     },
     [dispatch, field, path, value]
@@ -192,12 +232,13 @@ export const useChartOptionField = ({
     name: path,
     value,
     checked,
-    onChange
+    onChange,
   };
 };
+
 export const useChartTypeSelectorField = ({
   value,
-  metaData
+  metaData,
 }: {
   value: string;
   metaData: DataCubeMetadata;
@@ -208,15 +249,15 @@ export const useChartTypeSelectorField = ({
   const onClick = useCallback<
     (e: React.SyntheticEvent<HTMLButtonElement>) => void
   >(
-    e => {
+    (e) => {
       const chartType = e.currentTarget.value as ChartType;
 
       dispatch({
         type: "CHART_TYPE_CHANGED",
         value: {
           chartType,
-          dataSetMetadata: metaData
-        }
+          dataSetMetadata: metaData,
+        },
       });
     },
     [dispatch, metaData]
@@ -234,6 +275,6 @@ export const useChartTypeSelectorField = ({
     name: "chartType",
     value, // ? value : stateValue,
     checked,
-    onClick
+    onClick,
   };
 };
