@@ -13,6 +13,7 @@ import {
 import * as React from "react";
 import { FieldProps, Option } from "../domain/config-form";
 import { Icon } from "../icons";
+import { getFieldLabel } from "../domain/helpers";
 
 export const Label = ({
   label,

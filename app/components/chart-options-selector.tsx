@@ -1,21 +1,30 @@
 import { Trans } from "@lingui/macro";
 import { Box, Flex } from "@theme-ui/components";
+import get from "lodash/get";
 import React, { useEffect, useRef } from "react";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  getFieldComponentIri,
   getDimensionsByDimensionType,
+  getFieldComponentIri,
 } from "../domain";
+import {
+  chartConfigOptionsUISpec,
+  EncodingField,
+  EncodingOptions,
+  EncodingSortingOption,
+  EncodingSpec,
+} from "../domain/chart-config-ui-options";
 import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
+import { ColorPalette } from "./chart-controls/color-palette";
 import {
-  SectionTitle,
-  ControlSectionContent,
   ControlSection,
+  ControlSectionContent,
+  SectionTitle,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import {
@@ -29,15 +38,6 @@ import {
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
-import { ColorPalette } from "./chart-controls/color-palette";
-import {
-  chartConfigOptionsUISpec,
-  EncodingSpec,
-  EncodingField,
-  EncodingOptions,
-  EncodingSortingOption,
-} from "../domain/chart-config-ui-options";
-import get from "lodash/get";
 
 export const ChartOptionsSelector = ({
   state,
@@ -253,7 +253,7 @@ const ChartFieldSorting = ({
               ?.map((s) => s.sortingField)
               .map((opt) => ({
                 value: opt,
-                label: opt, // getFieldLabel(`sorting.${opt}`),
+                label: `sorting.${opt}`, // getFieldLabel(`sorting.${opt}`),
               }))}
             disabled={disabled}
           />

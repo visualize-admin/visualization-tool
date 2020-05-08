@@ -1,3 +1,5 @@
+import { Trans } from "@lingui/macro";
+import { format } from "d3-format";
 import {
   schemeAccent,
   schemeCategory10,
@@ -9,19 +11,17 @@ import {
   schemeSet2,
   schemeSet3,
 } from "d3-scale-chromatic";
-import { Trans } from "@lingui/macro";
-import * as React from "react";
-import { IconName } from "../icons";
-import { timeFormat, timeParse } from "d3-time-format";
 import {
   timeDay,
-  timeMinute,
   timeHour,
+  timeMinute,
   timeMonth,
   timeWeek,
   timeYear,
 } from "d3-time";
-import { format } from "d3-format";
+import { timeFormat, timeParse } from "d3-time-format";
+import * as React from "react";
+import { IconName } from "../icons";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -99,7 +99,7 @@ export const getIconName = (name: string): IconName => {
   }
 };
 
-export const getFieldLabel = (field: string): React.ReactNode => {
+export const getFieldLabel = (field: string): string | React.ReactNode => {
   switch (field) {
     case "x":
       return <Trans id="controls.axis.horizontal">Horizontal axis</Trans>;
@@ -133,6 +133,7 @@ export const getFieldLabel = (field: string): React.ReactNode => {
           Largest Bottom
         </Trans>
       );
+
     case "y.asc":
       return <Trans id="controls.sorting.measure.ascending">1 → 9</Trans>;
     case "y.desc":
