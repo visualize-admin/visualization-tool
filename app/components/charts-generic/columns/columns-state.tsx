@@ -60,9 +60,7 @@ const useColumnsState = ({
   );
 
   // Sort data
-
-  const { sorting } = fields.x;
-  const { sortingField, sortingOrder } = sorting;
+  const { sortingField, sortingOrder } = fields.x.sorting;
 
   const sortedData = useMemo(() => {
     return sortData({ data, sortingField, sortingOrder, getX, getY });

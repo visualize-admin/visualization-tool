@@ -20,7 +20,6 @@ import { ColumnChart } from "./charts-generic/columns/columns-state";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionColumns } from "./charts-generic/interaction/interaction-columns";
 import { LegendColor } from "./charts-generic/legends/color";
-import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 
 export const ChartColumnsVisualization = ({

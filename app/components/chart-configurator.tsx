@@ -128,6 +128,8 @@ const ColumnChartFields = ({
     </>
   );
 };
+
+// FIXME: We can now use a generic component based on chartConfigOptionsUISpec[chartType]
 const LineChartFields = ({
   chartConfig,
   metaData,

@@ -53,6 +53,7 @@ export const Examples = ({
               x: {
                 componentIri:
                   "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/0",
+                sorting: { sortingField: "alphabetical", sortingOrder: "asc" },
               },
               y: {
                 componentIri:
@@ -63,6 +64,7 @@ export const Examples = ({
                   "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1",
                 type: "stacked",
                 palette: "dark2",
+                sorting: { sortingField: "alphabetical", sortingOrder: "asc" },
               },
             },
             filters: {
