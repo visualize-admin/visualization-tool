@@ -138,7 +138,7 @@ const EncodingOptionsPanel = ({
 }) => {
   const { measures, dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
-  console.log({ encoding });
+
   useEffect(() => {
     if (panelRef && panelRef.current) {
       panelRef.current.focus();
@@ -220,17 +220,14 @@ const EncodingOptionsPanel = ({
 const ChartFieldSorting = ({
   state,
   field,
-  // chartType,
   encodingSortingOptions,
   disabled = false,
 }: {
   state: ConfiguratorStateConfiguringChart;
   field: string;
-  // chartType: ChartType;
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
 }) => {
-  console.log({ encodingSortingOptions });
   const activeSortingField = get(
     state,
     `chartConfig.fields.${field}.sorting.sortingField`,
@@ -261,7 +258,7 @@ const ChartFieldSorting = ({
             disabled={disabled}
           />
         </Box>
-        <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+        <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
           {sortingOrderOptions &&
             sortingOrderOptions.map((opt) => (
               <ChartOptionRadioField

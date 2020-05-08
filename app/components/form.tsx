@@ -42,9 +42,10 @@ export const Label = ({
     {label && (
       <Box
         sx={{
-          maxWidth: "75%",
+          maxWidth: "90%",
           textAlign: "left",
           fontFamily: "body",
+          mr: 1,
         }}
       >
         {label}
