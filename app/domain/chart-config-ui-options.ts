@@ -12,18 +12,23 @@ export type DimensionType =
 
 export type EncodingField = "x" | "y" | "segment";
 export type EncodingOption = "chartSubType" | "sorting" | "color";
+export type SortingOrder = "asc" | "desc" | "1-9" | "9-1";
 export type EncodingOptions =
   | undefined
   | {
       field: EncodingOption;
       values: string[] | { field: string; values?: string | string[] }[];
     }[];
+export type EncodingSortingOption = {
+  sortingField: EncodingField | "alphabetical";
+  sortingOrder: SortingOrder[];
+};
 export interface EncodingSpec {
   field: EncodingField;
   optional: boolean;
   values: DimensionType[];
   filters: boolean;
-  sorting?: { field: string; values: string | string[] }[];
+  sorting?: EncodingSortingOption[]; // { field: string; values: string | string[] }[];
   options?: EncodingOptions;
 }
 export interface ChartSpec {
@@ -56,8 +61,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
         sorting: [
-          { field: "y", values: ["1-9", "9-1"] },
-          { field: "alphabetical", values: ["asc", "desc"] },
+          { sortingField: "y", sortingOrder: ["1-9", "9-1"] },
+          { sortingField: "alphabetical", sortingOrder: ["asc", "desc"] },
         ],
       },
       {
@@ -68,13 +73,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
           { field: "color", values: ["palette"] },
-          {
-            field: "sorting",
-            values: [
-              // { field: "byValue", values: ["y"] },
-              { field: "alphabetical", values: ["asc", "desc"] },
-            ],
-          },
+          // {
+          //   field: "sorting",
+          //   values: [
+          //     // { field: "byValue", values: ["y"] },
+          //     { field: "alphabetical", values: ["asc", "desc"] },
+          //   ],
+          // },
         ],
       },
     ],
