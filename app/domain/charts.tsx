@@ -35,7 +35,10 @@ export const getInitialConfig = ({
         chartType,
         filters: {},
         fields: {
-          x: { componentIri: dimensions[0].iri },
+          x: {
+            componentIri: dimensions[0].iri,
+            sorting: { sortingField: "alphabetical", sortingOrder: "asc" },
+          },
           y: { componentIri: measures[0].iri },
         },
       };

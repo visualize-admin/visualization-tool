@@ -95,7 +95,13 @@ export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
 const BarFields = t.intersection([
   t.type({
-    x: GenericField,
+    x: t.type({
+      componentIri: t.string,
+      sorting: t.type({
+        sortingField: t.union([t.literal("alphabetical"), t.literal("y")]),
+        sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+      }),
+    }),
     y: GenericField,
   }),
   t.partial({
@@ -119,7 +125,13 @@ export type BarConfig = t.TypeOf<typeof BarConfig>;
 
 const ColumnFields = t.intersection([
   t.type({
-    x: GenericField,
+    x: t.type({
+      componentIri: t.string,
+      sorting: t.type({
+        sortingField: t.union([t.literal("alphabetical"), t.literal("y")]),
+        sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+      }),
+    }),
     y: GenericField,
   }),
   t.partial({

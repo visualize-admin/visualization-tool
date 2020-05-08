@@ -4,7 +4,7 @@ import { Box, Flex } from "theme-ui";
 import { TooltipBox } from "../components/charts-generic/annotations/tooltip-box";
 import {
   TooltipMultiple,
-  TooltipSingle
+  TooltipSingle,
 } from "../components/charts-generic/annotations/tooltip-content";
 import { ColumnChart } from "../components/charts-generic/columns/columns-state";
 import { fields, margins, measures, observations } from "./fixtures";
@@ -195,7 +195,7 @@ ${(
             segmentValues={[
               { label: "Bern", value: "235", color: "Orchid" },
               { label: "Zürich", value: "450", color: "LightSeaGreen" },
-              { label: "Lausanne", value: "435", color: "Orange" }
+              { label: "Lausanne", value: "435", color: "Orange" },
             ]}
           />
         </TooltipBox>
@@ -246,9 +246,9 @@ ${(
             label: "Lausanne",
             value: "435",
             color: "LightSeaGreen",
-            yPos: 450 - 435
+            yPos: 450 - 435,
           },
-          { label: "Bern", value: "235", color: "Orange", yPos: 450 - 235 }
+          { label: "Bern", value: "235", color: "Orange", yPos: 450 - 235 },
         ]}
         chartHeight={450}
         margins={margins}
@@ -257,7 +257,7 @@ ${(
         datum={{
           label: "Zürich",
           value: "450",
-          color: "Orchid"
+          color: "Orchid",
         }}
         placement={{ x: "right", y: "middle" }}
       />
@@ -279,7 +279,7 @@ export const Dot = () => (
       top: 100,
       transform: "translate3d(-50%, -50%, 0)",
 
-      pointerEvents: "none"
+      pointerEvents: "none",
     }}
   />
 );
