@@ -61,7 +61,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
         sorting: [
-          { sortingField: "y", sortingOrder: ["1-9", "9-1"] },
+          { sortingField: "y", sortingOrder: ["asc", "desc"] },
           { sortingField: "alphabetical", sortingOrder: ["asc", "desc"] },
         ],
       },
