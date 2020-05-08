@@ -18,7 +18,7 @@ import {
   ControlSection,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
-import { ChartFieldField, ChartOptionField } from "./field";
+import { ChartFieldField, ChartOptionField, ChartSortingField } from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
@@ -31,6 +31,7 @@ import {
   EncodingSpec,
   EncodingField,
   EncodingOptions,
+  EncodingSortingOption,
 } from "../domain/chart-config-ui-options";
 
 export const ChartOptionsSelector = ({
@@ -96,7 +97,7 @@ const ActiveFieldSwitch = ({
     !encodings.map((e) => e.field).includes(activeField as EncodingField) &&
     !activeFieldComponentIri
   ) {
-    return <Filter state={state} metaData={metaData} />;
+    return <SingleFilter state={state} metaData={metaData} />;
   }
 
   const component = [...metaData.dimensions, ...metaData.measures].find(
@@ -129,7 +130,7 @@ const EncodingOptionsPanel = ({
 }) => {
   const { measures, dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
-
+  console.log({ encoding });
   useEffect(() => {
     if (panelRef && panelRef.current) {
       panelRef.current.focus();
@@ -175,6 +176,15 @@ const EncodingOptionsPanel = ({
         </ControlSectionContent>
       </ControlSection>
 
+      {encoding.sorting && (
+        <ChartFieldSorting
+          disabled={!dimension}
+          field={encoding.field}
+          encodingSortingOptions={encoding.sorting}
+          // chartType={chartType}
+        />
+      )}
+
       {encoding.filters && (
         <ControlSection>
           <SectionTitle disabled={!dimension} iconName="filter">
@@ -198,7 +208,44 @@ const EncodingOptionsPanel = ({
   );
 };
 
-const Filter = ({
+const ChartFieldSorting = ({
+  field,
+  // chartType,
+  encodingSortingOptions,
+  disabled = false,
+}: {
+  field: string;
+  // chartType: ChartType;
+  encodingSortingOptions: EncodingSortingOption[];
+  disabled?: boolean;
+}) => {
+  console.log({ encodingSortingOptions });
+
+  return (
+    <ControlSection>
+      <SectionTitle iconName="table">
+        <Trans id="controls.section.sorting">Sort</Trans>
+      </SectionTitle>
+      <ControlSectionContent side="right" as="fieldset">
+        <Box as="fieldset" mt={2}>
+          <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+            <ChartSortingField
+              label="Sort by"
+              field={field}
+              path="sorting.sortingField"
+              options={encodingSortingOptions
+                ?.map((s) => s.sortingField)
+                .map((opt) => ({ value: opt, label: opt }))}
+              disabled={disabled}
+            />
+          </Flex>
+        </Box>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const SingleFilter = ({
   state,
   metaData,
 }: {
@@ -285,6 +332,7 @@ const ChartFieldOptions = ({
             </Flex>
           </Box>
         )}
+
       {encodingOptions?.map((e) => e.field).includes("color") && (
         <ColorPalette disabled={disabled} field={field}></ColorPalette>
       )}
