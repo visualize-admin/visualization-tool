@@ -5,7 +5,7 @@ import {
   Option,
   useActiveFieldField,
   useChartFieldField,
-  useChartOptionField,
+  useChartOptionRadioField,
   useChartTypeSelectorField,
   useMetaField,
   useSingleFilterField,
@@ -312,7 +312,7 @@ export const ChartSortingField = ({
 };
 //----------------------------------------
 
-export const ChartOptionField = ({
+export const ChartOptionRadioField = ({
   label,
   field,
   path,
@@ -325,7 +325,7 @@ export const ChartOptionField = ({
   value: string;
   disabled?: boolean;
 }) => {
-  const fieldProps = useChartOptionField({
+  const fieldProps = useChartOptionRadioField({
     path,
     field,
     label,

@@ -196,7 +196,7 @@ export const useChartSortingField = ({
 };
 //----------------------------------------
 
-export const useChartOptionField = ({
+export const useChartOptionRadioField = ({
   field,
   path,
   label,
