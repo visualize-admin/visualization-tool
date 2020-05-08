@@ -1,4 +1,4 @@
-import { ascending, max, min } from "d3-array";
+import { ascending, max, min, descending } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3-scale";
 import * as React from "react";
-import { ReactNode } from "react";
+import { ReactNode, useMemo, useCallback } from "react";
 import { ColumnFields, Observation } from "../../../domain";
 import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
@@ -45,12 +45,28 @@ const useColumnsState = ({
 }): ColumnsState => {
   const width = useWidth();
 
-  const getX = (d: Observation): string => d[fields.x.componentIri] as string;
-  const getY = (d: Observation): number => +d[fields.y.componentIri];
-  const getSegment = (d: Observation): string =>
-    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
+  const getX = useCallback(
+    (d: Observation): string => d[fields.x.componentIri] as string,
+    [fields.x.componentIri]
+  );
+  const getY = useCallback(
+    (d: Observation): number => +d[fields.y.componentIri],
+    [fields.y.componentIri]
+  );
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
+    [fields.segment]
+  );
 
-  const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  // Sort data
+
+  const { sorting } = fields.x;
+  const { sortingField, sortingOrder } = sorting;
+
+  const sortedData = useMemo(() => {
+    return sortData({ data, sortingField, sortingOrder, getX, getY });
+  }, [data, getX, getY, sortingField, sortingOrder]);
 
   // segments
   const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
@@ -219,4 +235,31 @@ export const ColumnChart = ({
       </InteractionProvider>
     </Observer>
   );
+};
+
+const sortData = ({
+  data,
+  getX,
+  getY,
+  sortingField,
+  sortingOrder,
+}: {
+  data: Observation[];
+  getX: (d: Observation) => string;
+  getY: (d: Observation) => number;
+  sortingField: string;
+  sortingOrder: string;
+}) => {
+  if (sortingOrder === "desc" && sortingField === "alphabetical") {
+    return [...data].sort((a, b) => descending(getX(a), getX(b)));
+  } else if (sortingOrder === "asc" && sortingField === "alphabetical") {
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  } else if (sortingOrder === "desc" && sortingField === "y") {
+    return [...data].sort((a, b) => descending(getY(a), getY(b)));
+  } else if (sortingOrder === "asc" && sortingField === "y") {
+    return [...data].sort((a, b) => ascending(getY(a), getY(b)));
+  } else {
+    // default to scending alphabetical
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  }
 };
