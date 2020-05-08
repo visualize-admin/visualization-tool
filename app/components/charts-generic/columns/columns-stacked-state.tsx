@@ -7,7 +7,14 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3-scale";
-import { stack, stackOffsetDiverging } from "d3-shape";
+import {
+  stack,
+  stackOffsetDiverging,
+  stackOrderAscending,
+  stackOrderDescending,
+  stackOrderAppearance,
+  stackOrderNone,
+} from "d3-shape";
 import * as React from "react";
 import { ReactNode, useMemo, useCallback } from "react";
 import { ColumnFields, Observation, ObservationValue } from "../../../domain";
@@ -20,34 +27,6 @@ import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
 import { sortByIndex } from "../../../lib/array";
-const sortData = ({
-  data,
-  getX,
-  getY,
-  sortingField,
-  sortingOrder,
-  xOrder,
-}: {
-  data: Observation[];
-  getX: (d: Observation) => string;
-  getY: (d: Observation) => number;
-  sortingField: string;
-  sortingOrder: "asc" | "desc";
-  xOrder: string[];
-}) => {
-  if (sortingOrder === "desc" && sortingField === "alphabetical") {
-    return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (sortingOrder === "asc" && sortingField === "alphabetical") {
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (sortingField === "y") {
-    const sd = sortByIndex(data, xOrder, getX, sortingOrder);
-
-    return sd; //[...data].sort((a, b) => descending(getY(a), getY(b)));
-  } else {
-    // default to scending alphabetical
-    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  }
-};
 
 export interface StackedColumnsState {
   sortedData: Observation[];
@@ -89,7 +68,7 @@ const useColumnsStackedState = ({
   const getSegment = (d: Observation): string =>
     d[fields.segment!.componentIri] as string;
 
-  // Groups for stack
+  // data / groups for stack
   const xKey = fields.x.componentIri;
   const wide: Record<string, ObservationValue>[] = [];
   const groupedMap = group(data, getX);
@@ -133,8 +112,16 @@ const useColumnsStackedState = ({
     [data, getX, getY, sortingField, sortingOrder, xOrder]
   );
 
-  // segments
-  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
+  // ordered segments
+
+  const segmentSortingType = fields.segment?.sorting.sortingField;
+  const segmentSortingOrder = fields.segment?.sorting.sortingOrder;
+  const segments = Array.from(
+    new Set(sortedData.map((d) => getSegment(d)))
+  ).sort((a, b) =>
+    segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
+  );
+
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );
@@ -165,8 +152,16 @@ const useColumnsStackedState = ({
     .domain(yStackDomain)
     .nice();
 
-  // data
+  // stack order
+  const stackOrder =
+    segmentSortingType === "totalSize" && segmentSortingOrder === "asc"
+      ? stackOrderAscending
+      : segmentSortingType === "totalSize" && segmentSortingOrder === "desc"
+      ? stackOrderDescending
+      : stackOrderNone;
+  // stack logic
   const stacked = stack()
+    .order(stackOrder)
     .offset(stackOffsetDiverging)
     .keys(segments);
 
@@ -175,7 +170,7 @@ const useColumnsStackedState = ({
       [key: string]: number;
     }[]
   );
-
+  console.log({ object });
   // Dimensions
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
@@ -333,4 +328,33 @@ export const StackedColumnsChart = ({
       </InteractionProvider>
     </Observer>
   );
+};
+
+const sortData = ({
+  data,
+  getX,
+  getY,
+  sortingField,
+  sortingOrder,
+  xOrder,
+}: {
+  data: Observation[];
+  getX: (d: Observation) => string;
+  getY: (d: Observation) => number;
+  sortingField: string;
+  sortingOrder: "asc" | "desc";
+  xOrder: string[];
+}) => {
+  if (sortingOrder === "desc" && sortingField === "alphabetical") {
+    return [...data].sort((a, b) => descending(getX(a), getX(b)));
+  } else if (sortingOrder === "asc" && sortingField === "alphabetical") {
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  } else if (sortingField === "y") {
+    const sd = sortByIndex(data, xOrder, getX, sortingOrder);
+
+    return sd; //[...data].sort((a, b) => descending(getY(a), getY(b)));
+  } else {
+    // default to scending alphabetical
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  }
 };
