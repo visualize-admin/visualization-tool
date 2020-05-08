@@ -123,6 +123,16 @@ export const getFieldLabel = (field: string): React.ReactNode => {
       return <Trans id="controls.sorting.alphabetical.ascending">A → Z</Trans>;
     case "alphabetical.desc":
       return <Trans id="controls.sorting.alphabetical.descending">Z → A</Trans>;
+    case "totalSize.asc":
+      return (
+        <Trans id="controls.sorting.totalSize.asc.ascending">Largest Top</Trans>
+      );
+    case "totalSize.desc":
+      return (
+        <Trans id="controls.sorting.totalSize.asc.descending">
+          Largest Bottom
+        </Trans>
+      );
     case "y.asc":
       return <Trans id="controls.sorting.measure.ascending">1 → 9</Trans>;
     case "y.desc":
