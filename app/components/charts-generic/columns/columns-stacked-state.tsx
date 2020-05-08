@@ -1,4 +1,4 @@
-import { ascending, group, max, min, descending } from "d3-array";
+import { ascending, group, max, min, descending, rollup, sum } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -113,14 +113,33 @@ const useColumnsStackedState = ({
   );
 
   // ordered segments
-
   const segmentSortingType = fields.segment?.sorting.sortingField;
   const segmentSortingOrder = fields.segment?.sorting.sortingOrder;
-  const segments = Array.from(
+
+  const segmentsOrderedByName = Array.from(
     new Set(sortedData.map((d) => getSegment(d)))
   ).sort((a, b) =>
     segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
   );
+
+  const segmentsOrderedByTotalValue = [
+    ...rollup(
+      sortedData,
+      (v) => sum(v, (x) => getY(x)),
+      (x) => getSegment(x)
+    ),
+  ]
+    .sort((a, b) =>
+      segmentSortingOrder === "asc"
+        ? ascending(a[1], b[1])
+        : descending(a[1], b[1])
+    )
+    .map((d) => d[0]);
+
+  const segments =
+    segmentSortingType === "alphabetical"
+      ? segmentsOrderedByName
+      : segmentsOrderedByTotalValue;
 
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
@@ -170,7 +189,7 @@ const useColumnsStackedState = ({
       [key: string]: number;
     }[]
   );
-  console.log({ object });
+  console.log({ series });
   // Dimensions
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
