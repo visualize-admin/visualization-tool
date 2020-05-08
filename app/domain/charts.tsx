@@ -40,6 +40,13 @@ export const getInitialConfig = ({
             sorting: { sortingField: "alphabetical", sortingOrder: "asc" },
           },
           y: { componentIri: measures[0].iri },
+          segment: {
+            componentIri: dimensions[0].iri, // FIXME: should not be predefined
+            type: "stacked",
+            palette: "category10",
+            // FIXME: sorting Order needs to default to something
+            sorting: { sortingField: "totalSize", sortingOrder: "asc" },
+          },
         },
       };
     case "line":
