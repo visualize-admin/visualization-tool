@@ -20,7 +20,7 @@ export type EncodingOptions =
       values: string[] | { field: string; values?: string | string[] }[];
     }[];
 export type EncodingSortingOption = {
-  sortingField: EncodingField | "alphabetical";
+  sortingField: EncodingField | "alphabetical" | "totalSize";
   sortingOrder: SortingOrder[];
 };
 export interface EncodingSpec {
@@ -70,6 +70,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
+        sorting: [
+          { sortingField: "totalSize", sortingOrder: ["asc", "desc"] },
+          { sortingField: "alphabetical", sortingOrder: ["asc", "desc"] },
+        ],
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
           { field: "color", values: ["palette"] },
