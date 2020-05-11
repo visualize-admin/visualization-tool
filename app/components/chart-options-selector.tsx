@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
 import React, { useEffect, useRef } from "react";
@@ -38,6 +38,7 @@ import {
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
+import { I18n } from "@lingui/react";
 
 export const ChartOptionsSelector = ({
   state,
@@ -245,18 +246,38 @@ const ChartFieldSorting = ({
       </SectionTitle>
       <ControlSectionContent side="right" as="fieldset">
         <Box mt={2}>
-          <ChartOptionSelectField
-            label="Sort by"
-            field={field}
-            path="sorting.sortingField"
-            options={encodingSortingOptions
-              ?.map((s) => s.sortingField)
-              .map((opt) => ({
-                value: opt,
-                label: `sorting.${opt}`, // getFieldLabel(`sorting.${opt}`),
-              }))}
-            disabled={disabled}
-          />
+          <I18n>
+            {({ i18n }) => {
+              const getSelectOptionLabel = (x: string) => {
+                switch (x) {
+                  case "sorting.alphabetical":
+                    return i18n._(
+                      t("controls.sorting.alphabetical")`Alphabetical`
+                    );
+                  case "sorting.y":
+                    return i18n._(t("controls.sorting.measure")`By measure`);
+                  case "sorting.totalSize":
+                    return i18n._(
+                      t("controls.sorting.totalSize")`By total size`
+                    );
+                }
+              };
+              return (
+                <ChartOptionSelectField
+                  label="Sort by"
+                  field={field}
+                  path="sorting.sortingField"
+                  options={encodingSortingOptions
+                    ?.map((s) => s.sortingField)
+                    .map((opt) => ({
+                      value: opt,
+                      label: getSelectOptionLabel(`sorting.${opt}`),
+                    }))}
+                  disabled={disabled}
+                />
+              );
+            }}
+          </I18n>
         </Box>
         <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
           {sortingOrderOptions &&
