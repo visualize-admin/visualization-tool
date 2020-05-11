@@ -1,4 +1,7 @@
 import React, { ChangeEvent, useCallback } from "react";
+import { I18n } from "@lingui/react";
+import { t } from "@lingui/macro";
+
 import { FilterValueSingle, MetaKey, useConfiguratorState } from "../domain";
 import {
   FIELD_VALUE_NONE,
@@ -263,18 +266,25 @@ export const ChartFieldField = ({
   });
 
   return (
-    <Select
-      key={`select-${field}-dimension`}
-      id={field}
-      label={label}
-      disabled={disabled}
-      options={
-        optional
-          ? [{ value: FIELD_VALUE_NONE, label: "None" }, ...options]
-          : options
-      }
-      {...fieldProps}
-    ></Select>
+    <I18n>
+      {({ i18n }) => {
+        const noneLabel = i18n._(t("controls.dimension.none")`None`);
+        return (
+          <Select
+            key={`select-${field}-dimension`}
+            id={field}
+            label={label}
+            disabled={disabled}
+            options={
+              optional
+                ? [{ value: FIELD_VALUE_NONE, label: noneLabel }, ...options]
+                : options
+            }
+            {...fieldProps}
+          ></Select>
+        );
+      }}
+    </I18n>
   );
 };
 

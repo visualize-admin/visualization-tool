@@ -144,7 +144,7 @@ export const Select = ({
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value || undefined}>
-          {opt.value ? opt.label : "None"}
+          {opt.label}
         </option>
       ))}
     </RebassSelect>
@@ -193,7 +193,7 @@ export const MiniSelect = ({
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value || undefined}>
-          {opt.value ? opt.label : "None"}
+          {opt.label}
         </option>
       ))}
     </RebassSelect>
