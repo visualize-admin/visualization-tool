@@ -227,12 +227,12 @@ const useColumnsStackedState = ({
 
     const tooltipValues = sortedData.filter((j) => getX(j) === getX(datum));
 
-    // FIXME: This doesn't work
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
       getCategory: getSegment,
-      sortOrder: segmentSortingOrder,
+      // Always descending to match visual order of colors of the stack
+      sortOrder: "desc",
     });
 
     const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
