@@ -83,7 +83,7 @@ export const ChartColumns = memo(
   }) => {
     return (
       <>
-        {fields.segment && fields.segment.type === "stacked" ? (
+        {fields.segment?.componentIri && fields.segment.type === "stacked" ? (
           <StackedColumnsChart
             data={observations}
             fields={fields}
@@ -100,7 +100,8 @@ export const ChartColumns = memo(
             </ChartContainer>
             <LegendColor symbol="square" />
           </StackedColumnsChart>
-        ) : fields.segment && fields.segment.type === "grouped" ? (
+        ) : fields.segment?.componentIri &&
+          fields.segment.type === "grouped" ? (
           <GroupedColumnChart
             data={observations}
             fields={fields}

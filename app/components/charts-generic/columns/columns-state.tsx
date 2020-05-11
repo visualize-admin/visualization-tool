@@ -55,7 +55,9 @@ const useColumnsState = ({
   );
   const getSegment = useCallback(
     (d: Observation): string =>
-      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
+      fields.segment && fields.segment.componentIri
+        ? (d[fields.segment.componentIri] as string)
+        : "segment",
     [fields.segment]
   );
 
@@ -162,7 +164,7 @@ const useColumnsState = ({
       placement: { x: xPlacement, y: yPlacement },
       xValue: getX(datum),
       datum: {
-        label: fields.segment && getSegment(datum),
+        label: fields.segment?.componentIri && getSegment(datum),
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },

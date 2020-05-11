@@ -106,7 +106,7 @@ const BarFields = t.intersection([
   }),
   t.partial({
     segment: t.type({
-      componentIri: t.string,
+      componentIri: t.union([t.string, t.undefined]),
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
       palette: t.string,
       sorting: t.type({
@@ -143,7 +143,7 @@ const ColumnFields = t.intersection([
   }),
   t.partial({
     segment: t.type({
-      componentIri: t.string,
+      componentIri: t.union([t.string, t.undefined]),
       type: t.union([t.literal("stacked"), t.literal("grouped")]),
       palette: t.string,
       sorting: t.type({

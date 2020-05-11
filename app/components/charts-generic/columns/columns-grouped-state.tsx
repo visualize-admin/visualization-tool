@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3-scale";
 import * as React from "react";
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import { ColumnFields, Observation, ObservationValue } from "../../../domain";
 import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
@@ -53,9 +53,13 @@ const useGroupedColumnsState = ({
 
   const getX = (d: Observation): string => d[fields.x.componentIri] as string;
   const getY = (d: Observation): number => +d[fields.y.componentIri];
-  const getSegment = (d: Observation): string =>
-    d[fields.segment!.componentIri] as string;
-
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      fields.segment && fields.segment.componentIri
+        ? (d[fields.segment.componentIri] as string)
+        : "segment",
+    [fields.segment]
+  );
   const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
 
   // segments

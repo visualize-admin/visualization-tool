@@ -41,7 +41,7 @@ export const getInitialConfig = ({
           },
           y: { componentIri: measures[0].iri },
           segment: {
-            componentIri: dimensions[0].iri, // FIXME: should not be predefined
+            componentIri: undefined, // dimensions[0].iri,
             type: "stacked",
             palette: "category10",
             // FIXME: sorting Order needs to default to something

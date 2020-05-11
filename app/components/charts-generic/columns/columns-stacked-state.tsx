@@ -64,8 +64,13 @@ const useColumnsStackedState = ({
     (d: Observation): number => +d[fields.y.componentIri],
     [fields.y.componentIri]
   );
-  const getSegment = (d: Observation): string =>
-    d[fields.segment!.componentIri] as string;
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      fields.segment && fields.segment.componentIri
+        ? (d[fields.segment.componentIri] as string)
+        : "segment",
+    [fields.segment]
+  );
 
   // data / groups for stack
   const xKey = fields.x.componentIri;
