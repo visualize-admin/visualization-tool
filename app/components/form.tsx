@@ -13,7 +13,6 @@ import {
 import * as React from "react";
 import { FieldProps, Option } from "../domain/config-form";
 import { Icon } from "../icons";
-import { getFieldLabel } from "../domain/helpers";
 
 export const Label = ({
   label,
@@ -125,7 +124,7 @@ export const Select = ({
 } & SelectProps) => (
   <Box sx={{ color: "monochrome700", pb: 2 }}>
     {label && (
-      <Label htmlFor={id} smaller>
+      <Label htmlFor={id} disabled={disabled} smaller>
         {label}
       </Label>
     )}
@@ -135,11 +134,13 @@ export const Select = ({
         fontSize: 4,
         bg: "monochrome100",
         p: 2,
+        color: disabled ? "monochrome600" : "monochrome700",
       }}
       id={id}
       name={id}
       onChange={onChange}
       value={value}
+      disabled={disabled}
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value || undefined}>
