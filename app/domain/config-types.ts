@@ -220,6 +220,13 @@ const PieFields = t.type({
   segment: t.type({
     componentIri: t.string,
     palette: t.string,
+    sorting: t.type({
+      sortingField: t.union([
+        t.literal("alphabetical"),
+        t.literal("totalSize"),
+      ]),
+      sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+    }),
   }),
 });
 const PieConfig = t.type(

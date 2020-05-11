@@ -45,7 +45,6 @@ export const getInitialConfig = ({
             componentIri: FIELD_VALUE_NONE,
             type: "stacked",
             palette: "category10",
-            // FIXME: sorting Order needs to default to something
             sorting: { sortingField: "totalSize", sortingOrder: "asc" },
           },
         },
@@ -83,6 +82,7 @@ export const getInitialConfig = ({
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10",
+            sorting: { sortingField: "totalSize", sortingOrder: "asc" },
           },
         },
       };
