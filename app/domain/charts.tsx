@@ -2,6 +2,7 @@ import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { ChartConfig, ChartType, GenericFields } from "./config-types";
 import { getCategoricalDimensions, getTimeDimensions } from "./data";
+import { FIELD_VALUE_NONE } from "./config-form";
 
 export const getInitialConfig = ({
   chartType,
@@ -41,7 +42,7 @@ export const getInitialConfig = ({
           },
           y: { componentIri: measures[0].iri },
           segment: {
-            componentIri: undefined, // dimensions[0].iri,
+            componentIri: FIELD_VALUE_NONE,
             type: "stacked",
             palette: "category10",
             // FIXME: sorting Order needs to default to something
