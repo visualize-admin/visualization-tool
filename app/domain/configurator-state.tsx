@@ -60,13 +60,13 @@ export type ConfiguratorStateAction =
         value: string;
       };
     }
-  | {
-      type: "CHART_FIELD_DELETED";
-      value: {
-        field: string;
-        dataSetMetadata: DataCubeMetadata;
-      };
-    }
+  // | {
+  //     type: "CHART_FIELD_DELETED";
+  //     value: {
+  //       field: string;
+  //       dataSetMetadata: DataCubeMetadata;
+  //     };
+  //   }
   | {
       type: "CHART_DESCRIPTION_CHANGED";
       value: { path: string | string[]; value: string };
@@ -387,16 +387,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_FIELD_DELETED":
-      if (draft.state === "CONFIGURING_CHART") {
-        delete (draft.chartConfig.fields as GenericFields)[action.value.field];
+    // case "CHART_FIELD_DELETED":
+    //   if (draft.state === "CONFIGURING_CHART") {
+    //     delete (draft.chartConfig.fields as GenericFields)[action.value.field];
 
-        deriveFiltersFromFields(
-          draft.chartConfig,
-          action.value.dataSetMetadata
-        );
-      }
-      return draft;
+    //     deriveFiltersFromFields(
+    //       draft.chartConfig,
+    //       action.value.dataSetMetadata
+    //     );
+    //   }
+    //   return draft;
 
     case "CHART_OPTION_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {

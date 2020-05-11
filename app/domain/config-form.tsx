@@ -126,22 +126,26 @@ export const useChartFieldField = ({
 
   const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
     (e) =>
-      e.currentTarget.value !== FIELD_VALUE_NONE
-        ? dispatch({
-            type: "CHART_FIELD_CHANGED",
-            value: {
-              componentIri: e.currentTarget.value,
-              field,
-              dataSetMetadata,
-            },
-          })
-        : dispatch({
-            type: "CHART_FIELD_DELETED",
-            value: {
-              field,
-              dataSetMetadata,
-            },
-          }),
+      // e.currentTarget.value !== FIELD_VALUE_NONE
+      //   ?
+      dispatch({
+        type: "CHART_FIELD_CHANGED",
+        value: {
+          field,
+          dataSetMetadata,
+          componentIri:
+            e.currentTarget.value !== FIELD_VALUE_NONE
+              ? e.currentTarget.value
+              : FIELD_VALUE_NONE,
+        },
+      }),
+    // : dispatch({
+    //     type: "CHART_FIELD_DELETED",
+    //     value: {
+    //       field,
+    //       dataSetMetadata,
+    //     },
+    //   }),
     [dispatch, field, dataSetMetadata]
   );
 
@@ -157,9 +161,6 @@ export const useChartFieldField = ({
   };
 };
 
-//----------------------------------------
-// FIXME: Can maybe be renamed useChartOptionSelectField
-// to make it reusable for any select menu changing an option.
 export const useChartOptionSelectField = ({
   field,
   path,
