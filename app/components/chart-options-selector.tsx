@@ -251,15 +251,13 @@ const ChartFieldSorting = ({
               const getSelectOptionLabel = (x: string) => {
                 switch (x) {
                   case "sorting.alphabetical":
-                    return i18n._(
-                      t("controls.sorting.alphabetical")`Alphabetical`
-                    );
+                    return i18n._(t("controls.sorting.alphabetical")`Name`);
                   case "sorting.y":
-                    return i18n._(t("controls.sorting.measure")`By measure`);
+                    return i18n._(t("controls.sorting.measure")`Measure`);
                   case "sorting.totalSize":
-                    return i18n._(
-                      t("controls.sorting.totalSize")`By total size`
-                    );
+                    return i18n._(t("controls.sorting.totalSize")`Total size`);
+                  default:
+                    return i18n._(t("controls.sorting.alphabetical")`Name`);
                 }
               };
               return (
