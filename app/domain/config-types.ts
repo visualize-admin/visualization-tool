@@ -72,6 +72,13 @@ export type GenericFields = Record<string, GenericField | undefined>;
 const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
 export type SortingOrder = t.TypeOf<typeof SortingOrder>;
 
+const SortingType = t.union([
+  t.literal("byDimensionLabel"),
+  t.literal("byMeasure"),
+  t.literal("byTotalSize"),
+]);
+export type SortingType = t.TypeOf<typeof SortingType>;
+
 const AreaFields = t.intersection([
   t.type({
     x: GenericField,
@@ -104,7 +111,7 @@ const BarFields = t.intersection([
       }),
       t.partial({
         sorting: t.type({
-          sortingField: t.union([t.literal("alphabetical"), t.literal("y")]),
+          sortingType: SortingType,
           sortingOrder: SortingOrder,
         }),
       }),
@@ -122,10 +129,7 @@ const BarFields = t.intersection([
       t.type({ palette: t.string }),
       t.partial({
         sorting: t.type({
-          sortingField: t.union([
-            t.literal("alphabetical"),
-            t.literal("totalSize"),
-          ]),
+          sortingType: SortingType,
           sortingOrder: SortingOrder,
         }),
       }),
@@ -151,7 +155,7 @@ const ColumnFields = t.intersection([
       }),
       t.partial({
         sorting: t.type({
-          sortingField: t.union([t.literal("alphabetical"), t.literal("y")]),
+          sortingType: SortingType,
           sortingOrder: SortingOrder,
         }),
       }),
@@ -169,10 +173,7 @@ const ColumnFields = t.intersection([
       t.type({ palette: t.string }),
       t.partial({
         sorting: t.type({
-          sortingField: t.union([
-            t.literal("alphabetical"),
-            t.literal("totalSize"),
-          ]),
+          sortingType: SortingType,
           sortingOrder: SortingOrder,
         }),
       }),
@@ -185,7 +186,6 @@ const ColumnConfig = t.type(
     filters: Filters,
     fields: ColumnFields,
     // FIXME: Should the sorting settings be at the ChartConfig level?
-    // sorting: [{sortByField: "x", sortingField: "y", sortingOrder: "asc", }]
   },
   "ColumnConfig"
 );
@@ -245,10 +245,7 @@ const PieFields = t.type({
     componentIri: t.string,
     palette: t.string,
     sorting: t.type({
-      sortingField: t.union([
-        t.literal("alphabetical"),
-        t.literal("totalSize"),
-      ]),
+      sortingType: SortingType,
       sortingOrder: SortingOrder,
     }),
   }),

@@ -16,7 +16,11 @@ import {
 } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useMemo, useCallback } from "react";
-import { ColumnFields, SortingOrder } from "../../../domain/config-types";
+import {
+  ColumnFields,
+  SortingOrder,
+  SortingType,
+} from "../../../domain/config-types";
 import { formatNumber, getPalette, isNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
@@ -98,7 +102,7 @@ const useColumnsStackedState = ({
   }
 
   // Sort
-  const sortingField = fields.x.sorting?.sortingField;
+  const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
   const xOrder = wide
@@ -111,15 +115,15 @@ const useColumnsStackedState = ({
         data,
         getX,
         getY,
-        sortingField,
+        sortingType,
         sortingOrder,
         xOrder,
       }),
-    [data, getX, getY, sortingField, sortingOrder, xOrder]
+    [data, getX, getY, sortingType, sortingOrder, xOrder]
   );
 
   // ordered segments
-  const segmentSortingType = fields.segment?.sorting?.sortingField;
+  const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
   const segmentsOrderedByName = Array.from(
@@ -143,7 +147,7 @@ const useColumnsStackedState = ({
     .map((d) => d[0]);
 
   const segments =
-    segmentSortingType === "alphabetical"
+    segmentSortingType === "byDimensionLabel"
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
 
@@ -179,9 +183,9 @@ const useColumnsStackedState = ({
 
   // stack order
   const stackOrder =
-    segmentSortingType === "totalSize" && segmentSortingOrder === "asc"
+    segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
       ? stackOrderAscending
-      : segmentSortingType === "totalSize" && segmentSortingOrder === "desc"
+      : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
       ? stackOrderDescending
       : stackOrderNone;
   // stack logic
@@ -369,22 +373,22 @@ const sortData = ({
   data,
   getX,
   getY,
-  sortingField,
+  sortingType,
   sortingOrder,
   xOrder,
 }: {
   data: Observation[];
   getX: (d: Observation) => string;
   getY: (d: Observation) => number;
-  sortingField: string | undefined;
+  sortingType: SortingType | undefined;
   sortingOrder: SortingOrder | undefined;
   xOrder: string[];
 }) => {
-  if (sortingOrder === "desc" && sortingField === "alphabetical") {
+  if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
     return [...data].sort((a, b) => descending(getX(a), getX(b)));
-  } else if (sortingOrder === "asc" && sortingField === "alphabetical") {
+  } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));
-  } else if (sortingField === "y") {
+  } else if (sortingType === "byMeasure") {
     const sd = sortByIndex({
       data,
       order: xOrder,
@@ -392,7 +396,7 @@ const sortData = ({
       sortOrder: sortingOrder,
     });
 
-    return sd; //[...data].sort((a, b) => descending(getY(a), getY(b)));
+    return sd;
   } else {
     // default to scending alphabetical
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));

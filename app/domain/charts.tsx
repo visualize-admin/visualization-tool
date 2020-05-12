@@ -38,14 +38,14 @@ export const getInitialConfig = ({
         fields: {
           x: {
             componentIri: dimensions[0].iri,
-            sorting: { sortingField: "alphabetical", sortingOrder: "asc" },
+            sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
           },
           y: { componentIri: measures[0].iri },
           segment: {
             componentIri: FIELD_VALUE_NONE,
             type: "stacked",
             palette: "category10",
-            sorting: { sortingField: "totalSize", sortingOrder: "asc" },
+            sorting: { sortingType: "byTotalSize", sortingOrder: "asc" },
           },
         },
       };
@@ -82,7 +82,7 @@ export const getInitialConfig = ({
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10",
-            sorting: { sortingField: "totalSize", sortingOrder: "asc" },
+            sorting: { sortingType: "byTotalSize", sortingOrder: "asc" },
           },
         },
       };

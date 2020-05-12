@@ -1,17 +1,45 @@
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { arc, PieArcDatum } from "d3-shape";
 import * as React from "react";
-import { ReactNode } from "react";
+import { ReactNode, useMemo, useCallback } from "react";
 import { Observation, PieFields } from "../../../domain";
 import { formatNumber, getPalette } from "../../../domain/helpers";
 import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
+import { descending, ascending } from "d3-array";
+
+const sortData = ({
+  data,
+  getX,
+  getY,
+  sortingType,
+  sortingOrder,
+}: {
+  data: Observation[];
+  getX: (d: Observation) => string;
+  getY: (d: Observation) => number;
+  sortingType: string;
+  sortingOrder: string;
+}) => {
+  if (sortingOrder === "desc" && sortingType === "alphabetical") {
+    return [...data].sort((a, b) => descending(getX(a), getX(b)));
+  } else if (sortingOrder === "asc" && sortingType === "alphabetical") {
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  } else if (sortingOrder === "desc" && sortingType === "y") {
+    return [...data].sort((a, b) => descending(getY(a), getY(b)));
+  } else if (sortingOrder === "asc" && sortingType === "y") {
+    return [...data].sort((a, b) => ascending(getY(a), getY(b)));
+  } else {
+    // default to scending alphabetical
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  }
+};
 
 export interface PieState {
-  data: Observation[];
   bounds: Bounds;
+  sortedData: Observation[];
   getY: (d: Observation) => number;
   getX: (d: Observation) => string;
   colors: ScaleOrdinal<string, string>;
@@ -29,12 +57,24 @@ const usePieState = ({
 }): PieState => {
   const width = useWidth();
 
-  const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
-  const getX = (d: Observation): string =>
-    d[fields.segment.componentIri] as string;
+  const getY = useCallback(
+    (d: Observation): number => +d[fields.y.componentIri] as number,
+    [fields.y.componentIri]
+  );
+  const getX = useCallback(
+    (d: Observation): string => d[fields.segment.componentIri] as string,
+    [fields.segment.componentIri]
+  );
 
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    data.map(getX)
+  // Sort data
+  const { sortingType, sortingOrder } = fields.segment.sorting;
+
+  const sortedData = useMemo(() => {
+    return sortData({ data, sortingType, sortingOrder, getX, getY });
+  }, [data, getX, getY, sortingType, sortingOrder]);
+
+  const colors = scaleOrdinal(getPalette(fields.segment.palette)).domain(
+    sortedData.map(getX)
   );
 
   // Dimensions
@@ -97,8 +137,8 @@ const usePieState = ({
     };
   };
   return {
-    data,
     bounds,
+    sortedData,
     getY,
     getX,
     colors,

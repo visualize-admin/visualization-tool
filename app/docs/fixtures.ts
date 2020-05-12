@@ -30,7 +30,7 @@ export const states: ConfiguratorState[] = [
       fields: {
         x: {
           componentIri: "foo",
-          sorting: { sortingField: "alphabetical", sortingOrder: "asc" },
+          sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
         },
         y: { componentIri: "foo" },
       },
@@ -93,7 +93,7 @@ export const fields: ColumnFields = {
   x: {
     componentIri:
       "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
-    sorting: { sortingField: "alphabetical", sortingOrder: "asc" },
+    sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
   },
   y: {
     componentIri:

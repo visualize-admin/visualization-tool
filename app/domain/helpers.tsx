@@ -116,24 +116,28 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
     case "grouped":
       return <Trans id="controls.column.grouped">Grouped</Trans>;
 
-    case "alphabetical.asc":
-      return <Trans id="controls.sorting.alphabetical.ascending">A → Z</Trans>;
-    case "alphabetical.desc":
-      return <Trans id="controls.sorting.alphabetical.descending">Z → A</Trans>;
-    case "totalSize.asc":
+    case "byDimensionLabel.asc":
       return (
-        <Trans id="controls.sorting.totalSize.asc.ascending">Largest Top</Trans>
+        <Trans id="controls.sorting.byDimensionLabel.ascending">A → Z</Trans>
       );
-    case "totalSize.desc":
+    case "byDimensionLabel.desc":
       return (
-        <Trans id="controls.sorting.totalSize.asc.descending">
+        <Trans id="controls.sorting.byDimensionLabel.descending">Z → A</Trans>
+      );
+    case "byTotalSize.asc":
+      return (
+        <Trans id="controls.sorting.byTotalSize.ascending">Largest Top</Trans>
+      );
+    case "byTotalSize.desc":
+      return (
+        <Trans id="controls.sorting.byTotalSize.descending">
           Largest Bottom
         </Trans>
       );
-    case "y.asc":
-      return <Trans id="controls.sorting.measure.ascending">1 → 9</Trans>;
-    case "y.desc":
-      return <Trans id="controls.sorting.measure.descending">9 → 1</Trans>;
+    case "byMeasure.asc":
+      return <Trans id="controls.sorting.byMeasure.ascending">1 → 9</Trans>;
+    case "byMeasure.desc":
+      return <Trans id="controls.sorting.byMeasure.descending">9 → 1</Trans>;
     case "column":
       return <Trans id="controls.chart.type.column">Columns</Trans>;
     case "bar":

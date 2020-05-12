@@ -229,14 +229,14 @@ const ChartFieldSorting = ({
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
 }) => {
-  const activeSortingField = get(
+  const activeSortingType = get(
     state,
-    `chartConfig.fields.${field}.sorting.sortingField`,
+    `chartConfig.fields.${field}.sorting.sortingType`,
     ""
   );
 
   const sortingOrderOptions = encodingSortingOptions.find(
-    (o) => o.sortingField === activeSortingField
+    (o) => o.sortingType === activeSortingType
   )?.sortingOrder;
 
   return (
@@ -250,23 +250,25 @@ const ChartFieldSorting = ({
             {({ i18n }) => {
               const getSelectOptionLabel = (x: string) => {
                 switch (x) {
-                  case "sorting.alphabetical":
-                    return i18n._(t("controls.sorting.alphabetical")`Name`);
-                  case "sorting.y":
-                    return i18n._(t("controls.sorting.measure")`Measure`);
-                  case "sorting.totalSize":
-                    return i18n._(t("controls.sorting.totalSize")`Total size`);
+                  case "sorting.byDimensionLabel":
+                    return i18n._(t("controls.sorting.byDimensionLabel")`Name`);
+                  case "sorting.byMeasure":
+                    return i18n._(t("controls.sorting.byMeasure")`Measure`);
+                  case "sorting.byTotalSize":
+                    return i18n._(
+                      t("controls.sorting.byTotalSize")`Total size`
+                    );
                   default:
-                    return i18n._(t("controls.sorting.alphabetical")`Name`);
+                    return i18n._(t("controls.sorting.byDimensionLabel")`Name`);
                 }
               };
               return (
                 <ChartOptionSelectField
                   label="Sort by"
                   field={field}
-                  path="sorting.sortingField"
+                  path="sorting.sortingType"
                   options={encodingSortingOptions
-                    ?.map((s) => s.sortingField)
+                    ?.map((s) => s.sortingType)
                     .map((opt) => ({
                       value: opt,
                       label: getSelectOptionLabel(`sorting.${opt}`),
@@ -282,7 +284,7 @@ const ChartFieldSorting = ({
             sortingOrderOptions.map((opt) => (
               <ChartOptionRadioField
                 key={opt}
-                label={`${activeSortingField}.${opt}`}
+                label={`${activeSortingType}.${opt}`}
                 field={field}
                 path="sorting.sortingOrder"
                 value={opt}
