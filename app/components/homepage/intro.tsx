@@ -16,11 +16,26 @@ import { IconLineChart } from "../../icons/ic-line-chart";
 import { IconColumnChart } from "../../icons/ic-column-chart";
 import { IconText } from "../../icons/ic-text";
 
+const ICONS = [
+  { Icon: IconX, color: "#375172" },
+  { Icon: IconY, color: "#8D5A54" },
+  { Icon: IconColumnChart, color: "#008F85" },
+  { Icon: IconScatterplot, color: "#F38B3C" },
+  { Icon: IconTable, color: "#928D88" },
+  { Icon: IconScatterplot, color: "#32B8DF" },
+  { Icon: IconAreaChart, color: "#008F85" },
+  { Icon: IconSegment, color: "#8D5A54" },
+  { Icon: IconFilter, color: "#375172" },
+  { Icon: IconText, color: "#008F85" },
+  { Icon: IconLineChart, color: "#C97146" },
+  { Icon: IconBarChart, color: "#F9C16E" },
+];
+
 export const Intro = ({
   hint,
   title,
   teaser,
-  buttonLabel
+  buttonLabel,
 }: {
   hint: string;
   title: string;
@@ -28,96 +43,93 @@ export const Intro = ({
   buttonLabel: string;
 }) => {
   return (
-    <Box sx={{ maxWidth: 1024, m: "0 auto" }}>
-      <Box sx={{ mx: 4, my: 6 }}>
-        <HintRed iconName="hintWarning">{hint}</HintRed>
+    <>
+      <Box sx={{ maxWidth: 1024, m: "0 auto" }}>
+        <Box sx={{ mx: 4, my: 6 }}>
+          <HintRed iconName="hintWarning">{hint}</HintRed>
+        </Box>
       </Box>
       <Box
         sx={{
-          // backgroundImage: [
-          //   'url("chart_icons_s.jpg")',
-          //   'url("chart_icons.jpg")',
-          //   'url("chart_icons.jpg")'
-          // ],
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
-          mx: 4,
-          // pt: ["62px", "88px"],
-          pb: [7, 8]
+          px: 4,
+          pb: [7, 8],
+          display: "grid",
+          alignItems: "center",
+          justifyItems: "center",
+          gridTemplateColumns: "repeat(16, minmax(24px, 1fr))",
+          gridTemplateRows: "repeat(5, minmax(24px, 1fr))",
+          gridTemplateAreas: [
+            // Show 6 icons
+            `'i0 . . . i1 . . . . . . i2 . . . .'
+              't t t t t t t t t t t t t t t t'
+              't t t t t t t t t t t t t t t t'
+              't t t t t t t t t t t t t t t t'
+              '. . i3 . . . . i4 . . . . . i5 . .'`,
+
+            // Show 8 icons
+            `'i0 . . . i1 . . . . . . i2 . . . .'
+              '. t t t t t t t t t t t t t t .'
+              'i6 t t t t t t t t t t t t t t .'
+              '. t t t t t t t t t t t t t t i7'
+              '. . i3 . . . . i4 . . . . . i5 . .'`,
+
+            // Show 12 icons
+            `'i0 . . . i1 . . . . . . i2 . . . i8'
+              '. . i11 t t t t t t t t t t . . .'
+              'i6 . . t t t t t t t t t t i9 . .'
+              '. . . t t t t t t t t t t . . i7'
+              '. i10 . i3 . . . i4 . . . . . i5 . .'`,
+          ],
         }}
       >
+        {ICONS.map(({ Icon, color }, i) => {
+          return (
+            <Box
+              key={i}
+              sx={{
+                gridArea: `i${i}`,
+                display: [
+                  i > 5 ? "none" : "block",
+                  i > 7 ? "none" : "block",
+                  "block",
+                ],
+                p: 3,
+                placeSelf:
+                  i % 2 === 0
+                    ? "end end"
+                    : i % 3 === 0
+                    ? "start start"
+                    : "center center",
+              }}
+            >
+              <Icon color={color} size={24} />
+            </Box>
+          );
+        })}
+
         <Box
           sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(12, minmax(24px, 1fr))",
-            gridTemplateRows: "repeat(5, minmax(60px, 1fr))",
-            justifyItems: "center",
-            alignItems: "center"
+            py: 4,
+            gridArea: "t",
+            maxWidth: 1024
           }}
         >
-          <Box sx={{ gridColumnStart: 1, gridRowStart: 1 }}>
-            <IconX color="#375172" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 5, gridRowStart: 1 }}>
-            <IconY color="#8D5A54" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 7, gridRowStart: 2 }}>
-            <IconColumnChart color="#008F85" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 3, gridRowStart: 2 }}>
-            <IconScatterplot color="#F38B3C" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 9, gridRowStart: 1 }}>
-            <IconTable color="#928D88" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 12, gridRowStart: 2 }}>
-            <IconScatterplot color="#32B8DF" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 2, gridRowStart: 3 }}>
-            <IconAreaChart color="#008F85" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 11, gridRowStart: 3 }}>
-            <IconSegment color="#8D5A54" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 1, gridRowStart: 4 }}>
-            <IconFilter color="#375172" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 12, gridRowStart: 4 }}>
-            <IconText color="#008F85" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 3, gridRowStart: 5 }}>
-            <IconLineChart color="#C97146" size={24} />
-          </Box>
-          <Box sx={{ gridColumnStart: 10, gridRowStart: 5 }}>
-            <IconBarChart color="#F9C16E" size={24} />
-          </Box>
-          <Box
-            sx={{
-              maxWidth: 768,
-              m: "0 auto",
-              gridColumnStart: 1,
-              gridColumnEnd: 13,
-              gridRowStart: 2,
-              gridRowEnd: 5
-            }}
-          >
-            <Title>{title}</Title>
-            <Teaser>{teaser}</Teaser>
-            <Flex sx={{ justifyContent: "center" }}>
-              <LocalizedLink
-                pathname="/[locale]/create/[chartId]"
-                query={{ chartId: "new" }}
-                passHref
-              >
-                <Button as="a" variant="primary">
-                  {buttonLabel}
-                </Button>
-              </LocalizedLink>
-            </Flex>
-          </Box>
+          <Title>{title}</Title>
+          <Teaser>{teaser}</Teaser>
+          <Flex sx={{ justifyContent: "center" }}>
+            <LocalizedLink
+              pathname="/[locale]/create/[chartId]"
+              query={{ chartId: "new" }}
+              passHref
+            >
+              <Button as="a" variant="primary">
+                {buttonLabel}
+              </Button>
+            </LocalizedLink>
+          </Flex>
         </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
@@ -131,8 +143,7 @@ export const Title = ({ children }: { children: React.ReactNode }) => (
       lineHeight: 1.2,
       fontWeight: "bold",
       fontSize: [8, "3.5rem", "3.5rem"],
-      hyphens: "auto",
-      mb: [4]
+      mb: [4],
     }}
   >
     {children}
@@ -145,7 +156,7 @@ export const Teaser = ({ children }: { children: React.ReactNode }) => (
       fontSize: [4, 4, 4],
       textAlign: "center",
       color: "monochrome700",
-      mb: [6, 5]
+      mb: [6, 5],
     }}
   >
     {children}
