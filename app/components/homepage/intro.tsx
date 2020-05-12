@@ -43,7 +43,7 @@ export const Intro = ({
   return (
     <>
       <Box sx={{ maxWidth: 1024, m: "0 auto" }}>
-        <Box sx={{ mx: 4, my: 6 }}>
+        <Box sx={{ mx: 4, mt: 6 }}>
           <HintRed iconName="hintWarning">{hint}</HintRed>
         </Box>
       </Box>

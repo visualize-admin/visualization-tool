@@ -1,14 +1,16 @@
+import { Box, Flex, Link, Text } from "@theme-ui/components";
 import React from "react";
-import { Box, Button, Flex, Text, Link } from "@theme-ui/components";
 
 export const Contribute = ({
   headline,
   description,
   buttonLabel,
+  buttonUrl,
 }: {
   headline: string;
   description: string;
   buttonLabel: string;
+  buttonUrl: string;
 }) => {
   return (
     <Box sx={{ bg: "primary", color: "monochrome100" }}>
@@ -29,18 +31,23 @@ export const Contribute = ({
           </Box>
           <Flex
             sx={{
-              justifyContent: "center",
+              justifyContent: "flex-end",
               alignItems: "center",
               width: ["100%", "50%", "30%"],
             }}
           >
             <Link
-              href="https://lindas-data.ch/"
+              href={buttonUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               sx={{
                 flexGrow: [1, 0, 0],
+                textDecoration: "none",
+                textAlign: "center",
               }}
+              variant="buttons.inverted"
             >
-              <Button variant="inverted">{buttonLabel}</Button>
+              {buttonLabel}
             </Link>
           </Flex>
         </Flex>
