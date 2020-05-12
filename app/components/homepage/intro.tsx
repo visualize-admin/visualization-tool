@@ -6,6 +6,7 @@ import { IconColumnChart } from "../../icons/ic-column-chart";
 import { IconFilter } from "../../icons/ic-filter";
 import { IconLineChart } from "../../icons/ic-line-chart";
 import { IconScatterplot } from "../../icons/ic-scatterplot";
+import { IconPieChart } from "../../icons/ic-pie-chart";
 import { IconSegment } from "../../icons/ic-segment";
 import { IconTable } from "../../icons/ic-table";
 import { IconText } from "../../icons/ic-text";
@@ -16,17 +17,17 @@ import { LocalizedLink } from "../links";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
-  { Icon: IconY, color: "#8D5A54" },
-  { Icon: IconColumnChart, color: "#008F85" },
-  { Icon: IconScatterplot, color: "#F38B3C" },
-  { Icon: IconTable, color: "#928D88" },
   { Icon: IconScatterplot, color: "#32B8DF" },
+  { Icon: IconColumnChart, color: "#F9C16E" },
+  { Icon: IconPieChart, color: "#F38B3C" },
   { Icon: IconAreaChart, color: "#008F85" },
+  { Icon: IconLineChart, color: "#C97146" },
+  { Icon: IconTable, color: "#928D88" },
+  { Icon: IconY, color: "#8D5A54" },
   { Icon: IconSegment, color: "#8D5A54" },
   { Icon: IconFilter, color: "#375172" },
-  { Icon: IconText, color: "#008F85" },
-  { Icon: IconLineChart, color: "#C97146" },
-  { Icon: IconBarChart, color: "#F9C16E" },
+  { Icon: IconText, color: "#32B8DF" },
+  { Icon: IconBarChart, color: "#008F85" },
 ];
 
 export const Intro = ({
@@ -42,7 +43,7 @@ export const Intro = ({
 }) => {
   return (
     <>
-      <Box sx={{ maxWidth: 1024, m: "0 auto" }}>
+      <Box sx={{ maxWidth: "64rem", m: "0 auto" }}>
         <Box sx={{ mx: 4, mt: 6 }}>
           <HintRed iconName="hintWarning">{hint}</HintRed>
         </Box>
@@ -51,6 +52,8 @@ export const Intro = ({
         sx={{
           px: 4,
           pb: [7, 8],
+          margin: "0 auto",
+          maxWidth: "105rem",
           display: "grid",
           alignItems: "center",
           justifyItems: "center",
@@ -66,16 +69,16 @@ export const Intro = ({
 
             // Show 8 icons
             `'i0 . . . i1 . . . . . . i2 . . . .'
-              '. t t t t t t t t t t t t t t .'
-              'i6 t t t t t t t t t t t t t t .'
               '. t t t t t t t t t t t t t t i7'
+              'i6 t t t t t t t t t t t t t t .'
+              '. t t t t t t t t t t t t t t .'
               '. . i3 . . . . i4 . . . . . i5 . .'`,
 
             // Show 12 icons
             `'i0 . . . i1 . . . . . . i2 . . . i8'
               '. . i11 t t t t t t t t t t . . .'
-              'i6 . . t t t t t t t t t t i9 . .'
-              '. . . t t t t t t t t t t . . i7'
+              'i6 . . t t t t t t t t t t i7 . .'
+              '. . . t t t t t t t t t t . . i9'
               '. i10 . i3 . . . i4 . . . . . i5 . .'`,
           ],
         }}
@@ -109,7 +112,7 @@ export const Intro = ({
           sx={{
             py: 4,
             gridArea: "t",
-            maxWidth: 1024,
+            maxWidth: "64rem",
           }}
         >
           <Title>{title}</Title>
