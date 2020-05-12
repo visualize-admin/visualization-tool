@@ -1,20 +1,18 @@
+import { Box, Button, Flex, Text } from "@theme-ui/components";
 import React from "react";
-import { Box, Button, Text, Flex, Grid } from "@theme-ui/components";
-import { HintRed } from "../hint";
-import { LocalizedLink } from "../links";
-import { buildExecutionContext } from "graphql/execution/execute";
-import { IconArrowDown } from "../../icons/ic-arrow-down";
-import { IconX } from "../../icons/ic-x";
-import { IconY } from "../../icons/ic-y";
-import { IconScatterplot } from "../../icons/ic-scatterplot";
-import { IconBarChart } from "../../icons/ic-bar-chart";
-import { IconTable } from "../../icons/ic-table";
 import { IconAreaChart } from "../../icons/ic-area-chart";
-import { IconSegment } from "../../icons/ic-segment";
+import { IconBarChart } from "../../icons/ic-bar-chart";
+import { IconColumnChart } from "../../icons/ic-column-chart";
 import { IconFilter } from "../../icons/ic-filter";
 import { IconLineChart } from "../../icons/ic-line-chart";
-import { IconColumnChart } from "../../icons/ic-column-chart";
+import { IconScatterplot } from "../../icons/ic-scatterplot";
+import { IconSegment } from "../../icons/ic-segment";
+import { IconTable } from "../../icons/ic-table";
 import { IconText } from "../../icons/ic-text";
+import { IconX } from "../../icons/ic-x";
+import { IconY } from "../../icons/ic-y";
+import { HintRed } from "../hint";
+import { LocalizedLink } from "../links";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
@@ -111,7 +109,7 @@ export const Intro = ({
           sx={{
             py: 4,
             gridArea: "t",
-            maxWidth: 1024
+            maxWidth: 1024,
           }}
         >
           <Title>{title}</Title>
