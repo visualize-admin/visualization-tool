@@ -9,7 +9,7 @@ import {
 } from "d3-scale";
 import * as React from "react";
 import { ReactNode, useMemo, useCallback } from "react";
-import { ColumnFields, Observation } from "../../../domain";
+import { ColumnFields, SortingOrder } from "../../../domain/config-types";
 import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
@@ -18,6 +18,7 @@ import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
+import { Observation } from "../../../domain/data";
 
 export interface ColumnsState {
   bounds: Bounds;
@@ -62,7 +63,8 @@ const useColumnsState = ({
   );
 
   // Sort data
-  const { sortingField, sortingOrder } = fields.x.sorting;
+  const sortingField = fields.x.sorting?.sortingField;
+  const sortingOrder = fields.x.sorting?.sortingOrder;
 
   const sortedData = useMemo(() => {
     return sortData({ data, sortingField, sortingOrder, getX, getY });
@@ -247,8 +249,8 @@ const sortData = ({
   data: Observation[];
   getX: (d: Observation) => string;
   getY: (d: Observation) => number;
-  sortingField: string;
-  sortingOrder: string;
+  sortingField: string | undefined;
+  sortingOrder: SortingOrder | undefined;
 }) => {
   if (sortingOrder === "desc" && sortingField === "alphabetical") {
     return [...data].sort((a, b) => descending(getX(a), getX(b)));

@@ -69,6 +69,9 @@ export type GenericField = t.TypeOf<typeof GenericField>;
 
 export type GenericFields = Record<string, GenericField | undefined>;
 
+const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
+export type SortingOrder = t.TypeOf<typeof SortingOrder>;
+
 const AreaFields = t.intersection([
   t.type({
     x: GenericField,
@@ -95,28 +98,38 @@ export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
 const BarFields = t.intersection([
   t.type({
-    x: t.type({
-      componentIri: t.string,
-      sorting: t.type({
-        sortingField: t.union([t.literal("alphabetical"), t.literal("y")]),
-        sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+    x: t.intersection([
+      t.type({
+        componentIri: t.string,
       }),
-    }),
+      t.partial({
+        sorting: t.type({
+          sortingField: t.union([t.literal("alphabetical"), t.literal("y")]),
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
     y: GenericField,
   }),
   t.partial({
-    segment: t.type({
-      componentIri: t.string,
-      type: t.union([t.literal("stacked"), t.literal("grouped")]),
-      palette: t.string,
-      sorting: t.type({
-        sortingField: t.union([
-          t.literal("alphabetical"),
-          t.literal("totalSize"),
-        ]),
-        sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+    segment: t.intersection([
+      t.type({
+        componentIri: t.string,
       }),
-    }),
+      t.type({
+        type: t.union([t.literal("stacked"), t.literal("grouped")]),
+      }),
+      t.type({ palette: t.string }),
+      t.partial({
+        sorting: t.type({
+          sortingField: t.union([
+            t.literal("alphabetical"),
+            t.literal("totalSize"),
+          ]),
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
   }),
 ]);
 const BarConfig = t.type(
@@ -132,28 +145,38 @@ export type BarConfig = t.TypeOf<typeof BarConfig>;
 
 const ColumnFields = t.intersection([
   t.type({
-    x: t.type({
-      componentIri: t.string,
-      sorting: t.type({
-        sortingField: t.union([t.literal("alphabetical"), t.literal("y")]),
-        sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+    x: t.intersection([
+      t.type({
+        componentIri: t.string,
       }),
-    }),
+      t.partial({
+        sorting: t.type({
+          sortingField: t.union([t.literal("alphabetical"), t.literal("y")]),
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
     y: GenericField,
   }),
   t.partial({
-    segment: t.type({
-      componentIri: t.string,
-      type: t.union([t.literal("stacked"), t.literal("grouped")]),
-      palette: t.string,
-      sorting: t.type({
-        sortingField: t.union([
-          t.literal("alphabetical"),
-          t.literal("totalSize"),
-        ]),
-        sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+    segment: t.intersection([
+      t.type({
+        componentIri: t.string,
       }),
-    }),
+      t.type({
+        type: t.union([t.literal("stacked"), t.literal("grouped")]),
+      }),
+      t.type({ palette: t.string }),
+      t.partial({
+        sorting: t.type({
+          sortingField: t.union([
+            t.literal("alphabetical"),
+            t.literal("totalSize"),
+          ]),
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
   }),
 ]);
 const ColumnConfig = t.type(
@@ -217,6 +240,7 @@ export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
 const PieFields = t.type({
   y: GenericField,
+  // FIXME: "segment" should be "x"
   segment: t.type({
     componentIri: t.string,
     palette: t.string,
@@ -225,7 +249,7 @@ const PieFields = t.type({
         t.literal("alphabetical"),
         t.literal("totalSize"),
       ]),
-      sortingOrder: t.union([t.literal("asc"), t.literal("desc")]),
+      sortingOrder: SortingOrder,
     }),
   }),
 });

@@ -1,4 +1,4 @@
-import { ChartType } from "./config-types";
+import { ChartType, SortingOrder } from "./config-types";
 
 // Control UI elements with chart options
 
@@ -12,7 +12,7 @@ export type DimensionType =
 
 export type EncodingField = "x" | "y" | "segment";
 export type EncodingOption = "chartSubType" | "sorting" | "color";
-export type SortingOrder = "asc" | "desc";
+
 export type EncodingOptions =
   | undefined
   | {

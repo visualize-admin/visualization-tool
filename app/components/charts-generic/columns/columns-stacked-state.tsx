@@ -16,7 +16,7 @@ import {
 } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useMemo, useCallback } from "react";
-import { ColumnFields, Observation, ObservationValue } from "../../../domain";
+import { ColumnFields, SortingOrder } from "../../../domain/config-types";
 import { formatNumber, getPalette, isNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
@@ -26,6 +26,7 @@ import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
 import { sortByIndex } from "../../../lib/array";
+import { ObservationValue, Observation } from "../../../domain/data";
 
 export interface StackedColumnsState {
   sortedData: Observation[];
@@ -97,7 +98,8 @@ const useColumnsStackedState = ({
   }
 
   // Sort
-  const { sortingField, sortingOrder } = fields.x.sorting;
+  const sortingField = fields.x.sorting?.sortingField;
+  const sortingOrder = fields.x.sorting?.sortingOrder;
 
   const xOrder = wide
     .sort((a, b) => ascending(a.total, b.total))
@@ -117,8 +119,8 @@ const useColumnsStackedState = ({
   );
 
   // ordered segments
-  const segmentSortingType = fields.segment?.sorting.sortingField;
-  const segmentSortingOrder = fields.segment?.sorting.sortingOrder;
+  const segmentSortingType = fields.segment?.sorting?.sortingField;
+  const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
   const segmentsOrderedByName = Array.from(
     new Set(sortedData.map((d) => getSegment(d)))
@@ -374,8 +376,8 @@ const sortData = ({
   data: Observation[];
   getX: (d: Observation) => string;
   getY: (d: Observation) => number;
-  sortingField: string;
-  sortingOrder: "asc" | "desc";
+  sortingField: string | undefined;
+  sortingOrder: SortingOrder | undefined;
   xOrder: string[];
 }) => {
   if (sortingOrder === "desc" && sortingField === "alphabetical") {
