@@ -9,14 +9,10 @@ export const IconLoading = ({ size = 64, color = "currentColor" }) => (
     fill="none"
     fillRule="evenodd"
     stroke={color}
-    stroke-width="3"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
-    <g>
-      {/* <circle stroke-opacity="25%" cx="32" cy="32" r="20"></circle> */}
-      {/* <path d="M52,32 C52,20.954305 43.045695,12 32,12"></path> */}
-      <path d="M32,12 C20.954305,12 12,20.954305 12,32 C12,43.045695 20.954305,52 32,52 C43.045695,52 52,43.045695 52,32"></path>
-    </g>
+    <path d="M32,12 C20.954305,12 12,20.954305 12,32 C12,43.045695 20.954305,52 32,52 C43.045695,52 52,43.045695 52,32"></path>
   </svg>
 );
