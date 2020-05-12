@@ -10,7 +10,7 @@ import { Success } from "../../../components/hint";
 import { ContentLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { PublishActions } from "../../../components/publish-actions";
-import { fetchConfig } from "../../../config-api";
+import { getConfig } from "../../../db/config";
 import { Config } from "../../../domain/config-types";
 import { useLocale } from "../../../lib/use-locale";
 
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   query,
   res,
 }) => {
-  const config = await fetchConfig(query.chartId as string);
+  const config = await getConfig(query.chartId as string);
 
   if (config && config.data) {
     // TODO validate configuration
