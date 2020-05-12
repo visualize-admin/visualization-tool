@@ -4,9 +4,10 @@ import React, { useEffect, useRef } from "react";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  getFieldComponentIri
+  getFieldComponentIri,
+  getDimensionsByDimensionType,
 } from "../domain";
-import { getFieldLabel } from "../domain/helpers";
+import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
@@ -14,26 +15,32 @@ import { useLocale } from "../lib/use-locale";
 import {
   SectionTitle,
   ControlSectionContent,
-  ControlSection
+  ControlSection,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { ChartFieldField, ChartOptionField } from "./field";
 import {
   DimensionValuesMultiFilter,
-  DimensionValuesSingleFilter
+  DimensionValuesSingleFilter,
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
 import { ColorPalette } from "./chart-controls/color-palette";
+import {
+  chartConfigOptionsUISpec,
+  EncodingSpec,
+  EncodingField,
+  EncodingOptions,
+} from "../domain/chart-config-ui-options";
 
 export const ChartOptionsSelector = ({
-  state
+  state,
 }: {
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale }
+    variables: { iri: state.dataSet, locale },
   });
 
   if (data?.dataCubeByIri) {
@@ -44,8 +51,8 @@ export const ChartOptionsSelector = ({
         sx={{
           // we need these overflow parameters to allow iOS scrolling
           overflowX: "hidden",
-          overflowY: "scroll",
-          mb: 7
+          overflowY: "auto",
+          mb: 7,
         }}
       >
         {state.activeField ? (
@@ -62,49 +69,44 @@ export const ChartOptionsSelector = ({
 
 const ActiveFieldSwitch = ({
   state,
-  metaData
+  metaData,
 }: {
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
 }) => {
   const { activeField } = state;
 
+  const encodings =
+    chartConfigOptionsUISpec[state.chartConfig.chartType].encodings;
+  const encoding = encodings.find(
+    (e) => e.field === activeField
+  ) as EncodingSpec;
+
   if (!activeField) {
     return null;
   }
-  // TODO: what to do with optional fields?
   const activeFieldComponentIri = getFieldComponentIri(
     state.chartConfig.fields,
     activeField
   );
-  // state.chartConfig.fields[activeField];
 
-  // It's an optional field
-  if (!activeFieldComponentIri && activeField === "segment") {
-    return (
-      <DimensionPanel
-        field={activeField}
-        chartType={state.chartConfig.chartType}
-        metaData={metaData}
-        dimension={undefined}
-      />
-    );
-  }
-
-  // It's a dimension which is not mapped to a field, so we show the filter!
-  if (!activeFieldComponentIri) {
+  // It's a dimension which is not mapped to an encoding field, so we show the filter!
+  // FIXME: activeField and encodingField should match? remove type assertion
+  if (
+    !encodings.map((e) => e.field).includes(activeField as EncodingField) &&
+    !activeFieldComponentIri
+  ) {
     return <Filter state={state} metaData={metaData} />;
   }
 
   const component = [...metaData.dimensions, ...metaData.measures].find(
-    d => d.iri === activeFieldComponentIri
+    (d) => d.iri === activeFieldComponentIri
   );
 
-  return component?.__typename === "Measure" ? (
-    <MeasurePanel field={activeField} metaData={metaData} />
-  ) : (
-    <DimensionPanel
-      field={activeField}
+  return (
+    <EncodingOptionsPanel
+      encoding={encoding}
+      field={activeField} // FIXME: or encoding.field?
       chartType={state.chartConfig.chartType}
       metaData={metaData}
       dimension={component}
@@ -112,18 +114,20 @@ const ActiveFieldSwitch = ({
   );
 };
 
-const DimensionPanel = ({
+const EncodingOptionsPanel = ({
+  encoding,
   field,
   chartType,
   dimension,
-  metaData
+  metaData,
 }: {
+  encoding: EncodingSpec;
   field: string;
   chartType: ChartType;
   dimension: { iri: string; label: string } | undefined;
   metaData: DataCubeMetadata;
 }) => {
-  const { dimensions } = metaData;
+  const { measures, dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -134,110 +138,77 @@ const DimensionPanel = ({
 
   return (
     <div
-      key={`control-panel-${field}`}
+      key={`control-panel-${encoding.field}`}
       role="tabpanel"
-      id={`control-panel-${field}`}
-      aria-labelledby={`tab-${field}`}
+      id={`control-panel-${encoding.field}`}
+      aria-labelledby={`tab-${encoding.field}`}
       ref={panelRef}
       tabIndex={-1}
     >
       <ControlSection>
-        <SectionTitle iconName={field as IconName}>
-          {getFieldLabel(field)}
+        <SectionTitle iconName={encoding.field as IconName}>
+          {getFieldLabel(encoding.field)}
         </SectionTitle>
         <ControlSectionContent side="right">
           <ChartFieldField
-            field={field}
-            label={
-              <Trans id="controls.select.dimension">Select a dimension</Trans>
-            }
-            optional={chartType !== "pie" && field === "segment"} // FIXME: Should be a more robust optional tag
-            options={dimensions.map((dimension) => ({
+            field={encoding.field}
+            label={getFieldLabelHint[encoding.field]}
+            optional={encoding.optional}
+            options={getDimensionsByDimensionType({
+              dimensionTypes: encoding.values,
+              dimensions,
+              measures,
+            }).map((dimension) => ({
               value: dimension.iri,
               label: dimension.label,
             }))}
             dataSetMetadata={metaData}
           />
-          {field === "segment" && (
+          {encoding.options && (
             <ChartFieldOptions
               disabled={!dimension}
-              field={field}
+              field={encoding.field}
+              encodingOptions={encoding.options}
               chartType={chartType}
             />
           )}
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection>
-        <SectionTitle disabled={!dimension} iconName="filter">
-          <Trans id="controls.section.filter">Filter</Trans>
-        </SectionTitle>
-        <ControlSectionContent side="right" as="fieldset">
-          <legend style={{ display: "none" }}>
-            <Trans id="controls.section.filter">Filter</Trans>
-          </legend>
-          {dimension && (
-            <DimensionValuesMultiFilter
-              key={dimension.iri}
-              dimensionIri={dimension.iri}
-              dataSetIri={metaData.iri}
-            />
-          )}
-        </ControlSectionContent>
-      </ControlSection>
-    </div>
-  );
-};
 
-const MeasurePanel = ({
-  field,
-  metaData
-}: {
-  field: string;
-  metaData: DataCubeMetadata;
-}) => {
-  const { measures } = metaData;
-  const panelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (panelRef && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [field]);
-  return (
-    <div
-      role="tabpanel"
-      id={`control-panel-${field}`}
-      aria-labelledby={`tab-${field}`}
-      ref={panelRef}
-      tabIndex={-1}
-      key={`control-panel-${field}`}
-    >
-      <ControlSection>
-        <SectionTitle iconName="y">{getFieldLabel(field)}</SectionTitle>
-        <ControlSectionContent side="right">
-          <ChartFieldField
-            field={field}
-            label={<Trans id="controls.select.measure">Select a measure</Trans>}
-            options={measures.map(measure => ({
-              value: measure.iri,
-              label: measure.label
-            }))}
-            dataSetMetadata={metaData}
-          />
-        </ControlSectionContent>
-      </ControlSection>
+      {encoding.filters && (
+        <ControlSection>
+          <SectionTitle disabled={!dimension} iconName="filter">
+            <Trans id="controls.section.filter">Filter</Trans>
+          </SectionTitle>
+          <ControlSectionContent side="right" as="fieldset">
+            <legend style={{ display: "none" }}>
+              <Trans id="controls.section.filter">Filter</Trans>
+            </legend>
+            {dimension && (
+              <DimensionValuesMultiFilter
+                key={dimension.iri}
+                dimensionIri={dimension.iri}
+                dataSetIri={metaData.iri}
+              />
+            )}
+          </ControlSectionContent>
+        </ControlSection>
+      )}
     </div>
   );
 };
 
 const Filter = ({
   state,
-  metaData
+  metaData,
 }: {
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
 }) => {
   const { dimensions } = metaData;
-  const activeDimension = dimensions.find(dim => dim.iri === state.activeField);
+  const activeDimension = dimensions.find(
+    (dim) => dim.iri === state.activeField
+  );
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (panelRef && panelRef.current) {
@@ -276,40 +247,47 @@ const Filter = ({
 const ChartFieldOptions = ({
   field,
   chartType,
-  disabled = false
+  encodingOptions,
+  disabled = false,
 }: {
   field: string;
   chartType: ChartType;
+  encodingOptions: EncodingOptions;
   disabled?: boolean;
 }) => {
   return (
     <>
-      {chartType === "column" && (
-        <Box as="fieldset" mt={2}>
-          <FieldSetLegend
-            legendTitle={
-              <Trans id="controls.select.column.chart.type">Chart Type</Trans>
-            }
-          />
-          <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-            <ChartOptionField
-              label="stacked"
-              field={field}
-              path="type"
-              value={"stacked"}
-              disabled={disabled}
+      {/* FIXME: improve use of encodingOptions to get chart options */}
+      {/* TODO: Add sorting options */}
+      {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
+        chartType === "column" && (
+          <Box as="fieldset" mt={2}>
+            <FieldSetLegend
+              legendTitle={
+                <Trans id="controls.select.column.chart.type">Chart Type</Trans>
+              }
             />
-            <ChartOptionField
-              label="grouped"
-              field={field}
-              path="type"
-              value={"grouped"}
-              disabled={disabled}
-            />
-          </Flex>
-        </Box>
+            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+              <ChartOptionField
+                label="stacked"
+                field={field}
+                path="type"
+                value={"stacked"}
+                disabled={disabled}
+              />
+              <ChartOptionField
+                label="grouped"
+                field={field}
+                path="type"
+                value={"grouped"}
+                disabled={disabled}
+              />
+            </Flex>
+          </Box>
+        )}
+      {encodingOptions?.map((e) => e.field).includes("color") && (
+        <ColorPalette disabled={disabled} field={field}></ColorPalette>
       )}
-      <ColorPalette disabled={disabled} field={field}></ColorPalette>
     </>
   );
 };

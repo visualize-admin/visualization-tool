@@ -275,7 +275,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           fontFamily: "body",
           fontSize: 4,
           minWidth: 160,
-          overflowX: "scroll",
+          overflowX: "auto",
           borderTopLedftRadius: "default",
           borderBottomLedftRadius: "default",
           borderTopRightRadius: 0,

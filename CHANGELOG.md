@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Only allow temporal dimensions for line and area chart x-axis
+- Only show scrollbars when necessary
+
 ## [0.5.2] – 2020-05-04
 
 ### Added
 - To prevent search indexing of staging environments, the header `X-Robots-Tag` will be set to `noindex, nofollow` unless the env variable `ALLOW_SEARCH_BOTS=true` is set.
+
+### Fixed
+- Disabled compilation of dependencies in node_modules with Babel. This resolves some build issues.
 
 ## [0.5.1] – 2020-04-29
 

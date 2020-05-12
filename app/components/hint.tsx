@@ -64,7 +64,7 @@ export const Loading = () => (
   >
     <Box
       sx={{
-        animation: `1s linear infinite ${spin}`
+        animation: `1s linear infinite ${spin}`,
       }}
     >
       <Icon name="loading" size={48} />

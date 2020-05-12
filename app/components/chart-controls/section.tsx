@@ -19,7 +19,7 @@ export const ControlSection = ({
         borderTopWidth: "1px",
         borderTopStyle: "solid",
         overflowX: "hidden",
-        overflowY: "scroll",
+        overflowY: "auto",
 
         "&:first-of-type": {
           borderTopWidth: 0
