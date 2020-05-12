@@ -8,10 +8,6 @@ const withPreconstruct = require("@preconstruct/next");
 const VERSION = `v${pkg.version}`;
 
 const publicRuntimeConfig = {
-  // SPARQL_ENDPOINT: "https://ld.stadt-zuerich.ch/query"
-  SPARQL_ENDPOINT:
-    process.env.SPARQL_ENDPOINT || "https://int.lindas.admin.ch/query",
-  GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT || "/api/graphql",
   PUBLIC_URL: process.env.PUBLIC_URL
     ? process.env.PUBLIC_URL.replace(/\/$/, "")
     : "",
