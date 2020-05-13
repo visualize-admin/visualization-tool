@@ -7,6 +7,7 @@ import {
   ConfiguratorStateConfiguringChart,
   getDimensionsByDimensionType,
   getFieldComponentIri,
+  SortingType,
 } from "../domain";
 import {
   chartConfigOptionsUISpec,
@@ -248,13 +249,13 @@ const ChartFieldSorting = ({
         <Box mt={2}>
           <I18n>
             {({ i18n }) => {
-              const getSelectOptionLabel = (x: string) => {
-                switch (x) {
-                  case "sorting.byDimensionLabel":
+              const getSortingTypeLabel = (type: SortingType) => {
+                switch (type) {
+                  case "byDimensionLabel":
                     return i18n._(t("controls.sorting.byDimensionLabel")`Name`);
-                  case "sorting.byMeasure":
+                  case "byMeasure":
                     return i18n._(t("controls.sorting.byMeasure")`Measure`);
-                  case "sorting.byTotalSize":
+                  case "byTotalSize":
                     return i18n._(
                       t("controls.sorting.byTotalSize")`Total size`
                     );
@@ -271,7 +272,7 @@ const ChartFieldSorting = ({
                     ?.map((s) => s.sortingType)
                     .map((opt) => ({
                       value: opt,
-                      label: getSelectOptionLabel(`sorting.${opt}`),
+                      label: getSortingTypeLabel(opt),
                     }))}
                   disabled={disabled}
                 />
