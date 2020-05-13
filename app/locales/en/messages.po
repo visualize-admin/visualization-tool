@@ -6,6 +6,24 @@ msgstr ""
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: visualize.admin.ch\n"
 "Language: en\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: app/components/chart-preview.tsx:32
+msgid "annotation.add.description"
+msgstr "[ Add description here ]"
+
+#: app/components/chart-preview.tsx:26
+msgid "annotation.add.title"
+msgstr "[ Insert title here ]"
+
+#: app/pages/[locale]/v/[chartId].tsx:83
+msgid "button.copy.visualization"
+msgstr "Copy Visualization"
 
 #: app/components/data-download.tsx:43
 msgid "button.download.data"
@@ -14,6 +32,15 @@ msgstr "Download data"
 #: app/components/publish-actions.tsx:134
 msgid "button.embed"
 msgstr "Embed"
+
+#: app/components/publish-actions.tsx:156
+#: app/components/publish-actions.tsx:159
+msgid "button.hint.click.to.copy"
+msgstr "Click to copy"
+
+#: app/components/publish-actions.tsx:182
+msgid "button.hint.copied"
+msgstr "Copied!"
 
 #: app/pages/[locale]/v/[chartId].tsx:78
 msgid "button.new.visualization"
@@ -39,23 +66,27 @@ msgstr "Share"
 msgid "controls.axis.horizontal"
 msgstr "Horizontal axis"
 
-#: app/domain/helpers.tsx:93
+#: app/domain/helpers.tsx:107
 msgid "controls.chart.type.area"
 msgstr "Areas"
 
-#: app/domain/helpers.tsx:89
+#: app/domain/helpers.tsx:103
 msgid "controls.chart.type.bar"
 msgstr "Bars"
 
-#: app/domain/helpers.tsx:87
+#: app/domain/helpers.tsx:101
 msgid "controls.chart.type.column"
 msgstr "Columns"
 
-#: app/domain/helpers.tsx:91
+#: app/domain/helpers.tsx:105
 msgid "controls.chart.type.line"
 msgstr "Lines"
 
-#: app/domain/helpers.tsx:95
+#: app/domain/helpers.tsx:111
+msgid "controls.chart.type.pie"
+msgstr "Pie"
+
+#: app/domain/helpers.tsx:109
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
@@ -75,160 +106,13 @@ msgstr "stacked"
 msgid "controls.description"
 msgstr "Description"
 
+#: app/components/field.tsx:116
+msgid "controls.dimension.none"
+msgstr "None"
+
 #: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
 msgstr "Select all"
-
-#: app/domain/helpers.tsx:75
-msgid "controls.measure"
-msgstr "Measure"
-
-#: app/components/chart-configurator.tsx:29
-msgid "controls.section.data"
-msgstr "Data"
-
-#: app/components/chart-annotator.tsx:8
-msgid "controls.section.description"
-msgstr "Annotate"
-
-#: app/components/chart-configurator.tsx:21
-msgid "controls.section.design"
-msgstr "Design"
-
-#: app/components/chart-options-selector.tsx:80
-#: app/components/chart-options-selector.tsx:84
-msgid "controls.section.filter"
-msgstr "Filter"
-
-#: app/components/chart-type-selector.tsx:31
-#: app/components/chart-type-selector.tsx:34
-msgid "controls.select.chart.type"
-msgstr "Chart type"
-
-#: app/components/chart-options-selector.tsx:137
-msgid "controls.select.column.chart.type"
-msgstr "Chart type"
-
-#: app/components/chart-options-selector.tsx:70
-msgid "controls.select.dimension"
-msgstr "Select a dimension"
-
-#: app/components/chart-options-selector.tsx:103
-msgid "controls.select.measure"
-msgstr "Select a measure"
-
-#: app/domain/helpers.tsx:79
-msgid "controls.title"
-msgstr "Title"
-
-#: app/components/dataset-preview.tsx:44
-msgid "datatable.showing.first.rows"
-msgstr "Showing first 10 rows"
-
-#: app/pages/[locale]/v/[chartId].tsx:69
-msgid "hint.create.your.own.chart"
-msgstr "Create your own version of this visualization by copying it, or start from scratch and make a new visualization using Swiss Open Government Data."
-
-#: app/pages/[locale]/v/[chartId].tsx:65
-msgid "hint.how.to.share"
-msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
-
-#: app/components/hint.tsx:55
-msgid "hint.loading.data"
-msgstr "Loading data..."
-
-#: app/components/chart-type-selector.tsx:38
-msgid "hint.no.visualization.with.dataset"
-msgstr "No visualization can be created with the selected dataset."
-
-#: app/components/hint.tsx:135
-msgid "hint.publication.success"
-msgstr "Your visualization is now published. Share it by copying the URL or using the embedding-options."
-
-#: app/components/hint.tsx:71
-msgid "hint.select.dataset"
-msgstr "Select a dataset"
-
-#: app/components/hint.tsx:74
-msgid "hint.select.dataset.to.preview"
-msgstr "Select a dataset to preview its structure and content."
-
-#: app/components/header.tsx:72
-#: app/components/header.tsx:83
-msgid "logo.swiss.confederation"
-msgstr "Logo of the Swiss Confederation"
-
-#: app/components/chart-footnotes.tsx:47
-msgid "metadata.dataset"
-msgstr "Dataset"
-
-#: app/components/chart-footnotes.tsx:35
-msgid "metadata.filter"
-msgstr "Filterset"
-
-#: app/components/chart-footnotes.tsx:52
-msgid "metadata.source"
-msgstr "Source"
-
-#: app/components/publish-actions.tsx:144
-msgid "publication.embed.AEM"
-msgstr "Embed Code for AEM \"External Application\":"
-
-#: app/components/publish-actions.tsx:139
-msgid "publication.embed.iframe"
-msgstr "Embed Code:"
-
-#: app/components/publish-actions.tsx:95
-msgid "publication.popup.share"
-msgstr "Share"
-
-#: app/components/publish-actions.tsx:109
-msgid "publication.share.chart.url"
-msgstr "Chart URL:"
-
-#: app/components/publish-actions.tsx:102
-msgid "publication.share.mail.body"
-msgstr "Here is a visualization I created using visualize.admin.ch"
-
-#: app/components/publish-actions.tsx:102
-msgid "publication.share.mail.subject"
-msgstr "visualize.admin.ch"
-
-#: app/components/stepper.tsx:124
-msgid "step.adjust"
-msgstr "Adjust"
-
-#: app/components/stepper.tsx:131
-msgid "step.annotate"
-msgstr "Annotate"
-
-#: app/components/stepper.tsx:110
-msgid "step.dataset"
-msgstr "Dataset"
-
-#: app/components/stepper.tsx:117
-msgid "step.visualization.type"
-msgstr "Chart Type"
-
-#: app/components/footer.tsx:35
-msgid "footer.institution.name"
-msgstr "Federal Office for the Environment FOEN"
-
-#: app/components/chart-preview.tsx:32
-msgid "annotation.add.description"
-msgstr "[ Add description here ]"
-
-#: app/components/chart-preview.tsx:26
-msgid "annotation.add.title"
-msgstr "[ Insert title here ]"
-
-#: app/pages/[locale]/v/[chartId].tsx:83
-msgid "button.copy.visualization"
-msgstr "Copy Visualization"
-
-#: app/domain/helpers.tsx:97
-msgid "controls.chart.type.pie"
-msgstr "Pie"
 
 #: app/components/filters.tsx:46
 msgid "controls.filter.select.none"
@@ -242,21 +126,25 @@ msgstr "Select a design element or a data dimension to modify its options."
 msgid "controls.hint.describing.chart"
 msgstr "Select an annotation field to modify its content."
 
-#: app/domain/helpers.tsx:99
+#: app/domain/helpers.tsx:113
 msgid "controls.language.english"
 msgstr "English"
 
-#: app/domain/helpers.tsx:103
+#: app/domain/helpers.tsx:117
 msgid "controls.language.french"
 msgstr "French"
 
-#: app/domain/helpers.tsx:101
+#: app/domain/helpers.tsx:115
 msgid "controls.language.german"
 msgstr "German"
 
-#: app/domain/helpers.tsx:105
+#: app/domain/helpers.tsx:119
 msgid "controls.language.italian"
 msgstr "Italian"
+
+#: app/domain/helpers.tsx:75
+msgid "controls.measure"
+msgstr "Measure"
 
 #: app/domain/helpers.tsx:77
 msgid "controls.partition"
@@ -265,6 +153,90 @@ msgstr "Partition"
 #: app/components/chart-controls/control-tab.tsx:8
 msgid "controls.partition.add"
 msgstr "Add…"
+
+#: app/components/form.tsx:109
+msgid "controls.search.clear"
+msgstr "Clear search field"
+
+#: app/components/chart-configurator.tsx:30
+msgid "controls.section.data"
+msgstr "Data"
+
+#: app/components/chart-annotator.tsx:8
+msgid "controls.section.description"
+msgstr "Annotate"
+
+#: app/components/chart-configurator.tsx:22
+msgid "controls.section.design"
+msgstr "Design"
+
+#: app/components/chart-options-selector.tsx:87
+#: app/components/chart-options-selector.tsx:91
+msgid "controls.section.filter"
+msgstr "Filter"
+
+#: app/components/chart-options-selector.tsx:104
+msgid "controls.section.sorting"
+msgstr "Sort"
+
+#: app/components/chart-type-selector.tsx:31
+#: app/components/chart-type-selector.tsx:34
+msgid "controls.select.chart.type"
+msgstr "Chart type"
+
+#: app/components/chart-options-selector.tsx:167
+msgid "controls.select.column.chart.type"
+msgstr "Chart type"
+
+#: app/domain/helpers.tsx:125
+#: app/domain/helpers.tsx:127
+msgid "controls.select.dimension"
+msgstr "Select a dimension"
+
+#: app/domain/helpers.tsx:126
+msgid "controls.select.measure"
+msgstr "Select a measure"
+
+#: app/components/chart-options-selector.tsx:114
+#: app/components/chart-options-selector.tsx:120
+msgid "controls.sorting.byDimensionLabel"
+msgstr "Name"
+
+#: app/domain/helpers.tsx:87
+msgid "controls.sorting.byDimensionLabel.ascending"
+msgstr "A → Z"
+
+#: app/domain/helpers.tsx:89
+msgid "controls.sorting.byDimensionLabel.descending"
+msgstr "Z → A"
+
+#: app/components/chart-options-selector.tsx:116
+msgid "controls.sorting.byMeasure"
+msgstr "Measure"
+
+#: app/domain/helpers.tsx:97
+msgid "controls.sorting.byMeasure.ascending"
+msgstr "1 → 9"
+
+#: app/domain/helpers.tsx:99
+msgid "controls.sorting.byMeasure.descending"
+msgstr "9 → 1"
+
+#: app/components/chart-options-selector.tsx:118
+msgid "controls.sorting.byTotalSize"
+msgstr "Total size"
+
+#: app/domain/helpers.tsx:91
+msgid "controls.sorting.byTotalSize.ascending"
+msgstr "Largest Top"
+
+#: app/domain/helpers.tsx:93
+msgid "controls.sorting.byTotalSize.descending"
+msgstr "Largest Bottom"
+
+#: app/domain/helpers.tsx:79
+msgid "controls.title"
+msgstr "Title"
 
 #: app/components/dataset-metadata.tsx:32
 msgid "dataset.metadata.date.created"
@@ -294,9 +266,37 @@ msgstr "Title"
 msgid "dataset.results"
 msgstr "{0, plural, =0 {No results} =1 {# result} other {# results}}"
 
+#: app/components/dataset-selector.tsx:49
+msgid "dataset.search.label"
+msgstr "Search datasets"
+
 #: app/components/dataset-selector.tsx:87
 msgid "dataset.sortby"
 msgstr "Sort by"
+
+#: app/components/dataset-preview.tsx:44
+msgid "datatable.showing.first.rows"
+msgstr "Showing first 10 rows"
+
+#: app/components/footer.tsx:35
+msgid "footer.institution.name"
+msgstr "Federal Office for the Environment FOEN"
+
+#: app/pages/[locale]/v/[chartId].tsx:69
+msgid "hint.create.your.own.chart"
+msgstr "Create your own version of this visualization by copying it, or start from scratch and make a new visualization using Swiss Open Government Data."
+
+#: app/pages/[locale]/v/[chartId].tsx:65
+msgid "hint.how.to.share"
+msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
+
+#: app/components/hint.tsx:55
+msgid "hint.loading.data"
+msgstr "Loading data..."
+
+#: app/components/chart-type-selector.tsx:38
+msgid "hint.no.visualization.with.dataset"
+msgstr "No visualization can be created with the selected dataset."
 
 #: app/components/hint.tsx:96
 msgid "hint.nodata.message"
@@ -305,6 +305,63 @@ msgstr "No data for your filter selection."
 #: app/components/hint.tsx:93
 msgid "hint.nodata.title"
 msgstr "No data"
+
+#: app/components/hint.tsx:117
+msgid "hint.only.negative.data.message"
+msgstr "Negative data values cannot be displayed with this chart type."
+
+#: app/components/hint.tsx:114
+msgid "hint.only.negative.data.title"
+msgstr "Negative Values"
+
+#: app/components/hint.tsx:134
+msgid "hint.publication.success"
+msgstr "Your visualization is now published. Share it by copying the URL or using the embedding-options."
+
+#: app/components/hint.tsx:71
+msgid "hint.select.dataset"
+msgstr "Select a dataset"
+
+#: app/components/hint.tsx:74
+msgid "hint.select.dataset.to.preview"
+msgstr "Select a dataset to preview its structure and content."
+
+#: app/components/header.tsx:72
+#: app/components/header.tsx:83
+msgid "logo.swiss.confederation"
+msgstr "Logo of the Swiss Confederation"
+
+#: app/components/chart-footnotes.tsx:47
+msgid "metadata.dataset"
+msgstr "Dataset"
+
+#: app/components/chart-footnotes.tsx:35
+msgid "metadata.filter"
+msgstr "Filterset"
+
+#: app/components/chart-footnotes.tsx:77
+msgid "metadata.link.created.with.visualize"
+msgstr "Created with visualize.admin.ch"
+
+#: app/components/chart-footnotes.tsx:52
+msgid "metadata.source"
+msgstr "Source"
+
+#: app/components/publish-actions.tsx:144
+msgid "publication.embed.AEM"
+msgstr "Embed Code for AEM \"External Application\":"
+
+#: app/components/publish-actions.tsx:139
+msgid "publication.embed.iframe"
+msgstr "Embed Code:"
+
+#: app/components/publish-actions.tsx:95
+msgid "publication.popup.share"
+msgstr "Share"
+
+#: app/components/publish-actions.tsx:109
+msgid "publication.share.chart.url"
+msgstr "Chart URL:"
 
 #: app/components/publish-actions.tsx:100
 msgid "publication.share.linktitle.facebook"
@@ -318,36 +375,26 @@ msgstr "Share via Email"
 msgid "publication.share.linktitle.twitter"
 msgstr "Share on Twitter"
 
-#: app/components/publish-actions.tsx:156
-#: app/components/publish-actions.tsx:159
-msgid "button.hint.click.to.copy"
-msgstr "Click to copy"
+#: app/components/publish-actions.tsx:102
+msgid "publication.share.mail.body"
+msgstr "Here is a visualization I created using visualize.admin.ch"
 
-#: app/components/publish-actions.tsx:182
-msgid "button.hint.copied"
-msgstr "Copied!"
+#: app/components/publish-actions.tsx:102
+msgid "publication.share.mail.subject"
+msgstr "visualize.admin.ch"
 
-#: app/components/dataset-selector.tsx:15
-msgid "controls.select.dataset"
-msgstr "Select dataset"
+#: app/components/stepper.tsx:124
+msgid "step.adjust"
+msgstr "Adjust"
 
-#: app/components/chart-footnotes.tsx:77
-msgid "metadata.link.created.with.visualize"
-msgstr "Created with visualize.admin.ch"
+#: app/components/stepper.tsx:131
+msgid "step.annotate"
+msgstr "Annotate"
 
-#: app/components/form.tsx:107
-msgid "controls.search.clear"
-msgstr "Clear search field"
+#: app/components/stepper.tsx:110
+msgid "step.dataset"
+msgstr "Dataset"
 
-#: app/components/dataset-selector.tsx:49
-msgid "dataset.search.label"
-msgstr "Search datasets"
-
-#: app/components/hint.tsx:117
-msgid "hint.only.negative.data.message"
-msgstr "Negative data values cannot be displayed with this chart type."
-
-#: app/components/hint.tsx:114
-msgid "hint.only.negative.data.title"
-msgstr "Negative Values"
-
+#: app/components/stepper.tsx:117
+msgid "step.visualization.type"
+msgstr "Chart Type"
