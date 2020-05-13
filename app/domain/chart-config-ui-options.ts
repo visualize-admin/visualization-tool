@@ -151,6 +151,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         values: ["NominalDimension", "OrdinalDimension"],
         filters: true,
+        sorting: [
+          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+        ],
         options: [{ field: "color", values: ["palette"] }],
       },
     ],

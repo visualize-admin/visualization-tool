@@ -79,30 +79,6 @@ const SortingType = t.union([
 ]);
 export type SortingType = t.TypeOf<typeof SortingType>;
 
-const AreaFields = t.intersection([
-  t.type({
-    x: GenericField,
-    y: GenericField,
-  }),
-  t.partial({
-    segment: t.type({
-      componentIri: t.string,
-      palette: t.string,
-    }),
-  }),
-]);
-const AreaConfig = t.type(
-  {
-    chartType: t.literal("area"),
-    filters: Filters,
-    fields: AreaFields,
-  },
-  "AreaConfig"
-);
-
-export type AreaFields = t.TypeOf<typeof AreaFields>;
-export type AreaConfig = t.TypeOf<typeof AreaConfig>;
-
 const BarFields = t.intersection([
   t.type({
     x: t.intersection([
@@ -214,6 +190,39 @@ const LineConfig = t.type(
 );
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
+
+const AreaFields = t.intersection([
+  t.type({
+    x: GenericField,
+    y: GenericField,
+  }),
+
+  t.partial({
+    segment: t.intersection([
+      t.type({
+        componentIri: t.string,
+        palette: t.string,
+      }),
+      t.partial({
+        sorting: t.type({
+          sortingType: SortingType,
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
+  }),
+]);
+const AreaConfig = t.type(
+  {
+    chartType: t.literal("area"),
+    filters: Filters,
+    fields: AreaFields,
+  },
+  "AreaConfig"
+);
+
+export type AreaFields = t.TypeOf<typeof AreaFields>;
+export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
 const ScatterPlotFields = t.intersection([
   t.type({

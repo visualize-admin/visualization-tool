@@ -70,6 +70,11 @@ export const getInitialConfig = ({
             componentIri: getTimeDimensions(dimensions)[0].iri,
           },
           y: { componentIri: measures[0].iri },
+          segment: {
+            componentIri: FIELD_VALUE_NONE,
+            palette: "category10",
+            sorting: { sortingType: "byTotalSize", sortingOrder: "asc" },
+          },
         },
       };
 
