@@ -240,15 +240,19 @@ export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
 const PieFields = t.type({
   y: GenericField,
-  // FIXME: "segment" should be "x"
-  segment: t.type({
-    componentIri: t.string,
-    palette: t.string,
-    sorting: t.type({
-      sortingType: SortingType,
-      sortingOrder: SortingOrder,
+  // FIXME: "segment" should be "x" for consistency
+  segment: t.intersection([
+    t.type({
+      componentIri: t.string,
+      palette: t.string,
     }),
-  }),
+    t.partial({
+      sorting: t.type({
+        sortingType: SortingType,
+        sortingOrder: SortingOrder,
+      }),
+    }),
+  ]),
 });
 const PieConfig = t.type(
   {
