@@ -95,7 +95,6 @@ export const ChartAreas = memo(
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
-          <HoverDotMultiple />
         </ChartContainer>
         {fields.segment && fields.segment.componentIri !== FIELD_VALUE_NONE && (
           <LegendColor symbol="square" />
