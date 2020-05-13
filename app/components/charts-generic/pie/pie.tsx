@@ -1,4 +1,4 @@
-import { arc, pie, PieArcDatum } from "d3-shape";
+import { arc, PieArcDatum } from "d3-shape";
 import * as React from "react";
 import { Observation } from "../../../domain";
 import { useChartState } from "../use-chart-state";
@@ -8,18 +8,12 @@ import { PieState } from "./pie-state";
 export const Pie = () => {
   const {
     sortedData,
-    getY,
+    getPieData,
     getX,
     colors,
     bounds,
   } = useChartState() as PieState;
   const { width, height, chartWidth, chartHeight } = bounds;
-
-  const getPieData = pie<Observation>()
-    .value((d) => getY(d))
-    .sortValues(function(a, b) {
-      return a - b;
-    });
 
   const arcs = getPieData(sortedData);
 
