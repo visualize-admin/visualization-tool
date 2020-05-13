@@ -50,15 +50,14 @@ export const Intro = ({
       </Box>
       <Box
         sx={{
-          px: 4,
           pb: [7, 8],
           margin: "0 auto",
           maxWidth: "105rem",
           display: "grid",
           alignItems: "center",
           justifyItems: "center",
-          gridTemplateColumns: "repeat(16, minmax(24px, 1fr))",
-          gridTemplateRows: "repeat(5, minmax(24px, 1fr))",
+          gridTemplateColumns: "repeat(16, minmax(16px, 1fr))",
+          gridTemplateRows: "repeat(5, minmax(72px, auto))",
           gridTemplateAreas: [
             // Show 6 icons
             `'i0 . . . i1 . . . . . . i2 . . . .'
@@ -94,7 +93,6 @@ export const Intro = ({
                   i > 7 ? "none" : "block",
                   "block",
                 ],
-                p: 3,
                 placeSelf:
                   i % 2 === 0
                     ? "end end"
@@ -110,7 +108,7 @@ export const Intro = ({
 
         <Box
           sx={{
-            py: 4,
+            p: 4,
             gridArea: "t",
             maxWidth: "64rem",
           }}
