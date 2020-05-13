@@ -9,8 +9,8 @@
   "license": "BSD-3-Clause",
   "private": true,
   "scripts": {
-    "dev": "preconstruct dev && DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool next ./app",
-    "dev:mitmproxy": "preconstruct dev && DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool HTTP_PROXY=http://localhost:8080 NODE_EXTRA_CA_CERTS=~/.mitmproxy/mitmproxy-ca-cert.pem GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next ./app",
+    "dev": "preconstruct dev && next ./app",
+    "dev:mitmproxy": "preconstruct dev && HTTP_PROXY=http://localhost:8080 NODE_EXTRA_CA_CERTS=~/.mitmproxy/mitmproxy-ca-cert.pem GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next ./app",
     "dev:rollup": "rollup -c rollup.config.js --watch",
     "db:migrate:dev": "DATABASE_URL=postgres://postgres@localhost:5432/visualization_tool scripts/db-migrate.js",
     "db:migrate": "scripts/db-migrate.js",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "next": "^9.3.2",
+    "next": "^9.4.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },

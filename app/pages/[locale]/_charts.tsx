@@ -1,11 +1,11 @@
 import { Box, Flex, Link } from "@theme-ui/components";
 import { NextPage } from "next";
+import { ChartPanel } from "../../components/chart-panel";
 import { ChartPublished } from "../../components/chart-published";
 import { ContentLayout } from "../../components/layout";
-import { Config } from "../../domain/config-types";
-import { fetchAllConfigs } from "../../config-api";
 import { LocalizedLink } from "../../components/links";
-import { ChartPanel } from "../../components/chart-panel";
+import { getAllConfigs } from "../../db/config";
+import { Config } from "../../domain/config-types";
 
 type PageProps = {
   configs: {
@@ -72,7 +72,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
 };
 
 export const getServerSideProps = async () => {
-  const configs = await fetchAllConfigs();
+  const configs = await getAllConfigs();
 
   return {
     props: {

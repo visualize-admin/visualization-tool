@@ -2,7 +2,7 @@ import "iframe-resizer/js/iframeResizer.contentWindow.js";
 import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 import { ChartPublished } from "../../../components/chart-published";
-import { fetchConfig } from "../../../config-api";
+import { getConfig } from "../../../db/config";
 import { Config } from "../../../domain/config-types";
 
 type PageProps =
@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   query,
   res,
 }) => {
-  const config = await fetchConfig(query.chartId as string);
+  const config = await getConfig(query.chartId as string);
 
   if (config && config.data) {
     // TODO validate configuration
