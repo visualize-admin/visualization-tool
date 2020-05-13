@@ -77,13 +77,6 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
           { field: "color", values: ["palette"] },
-          // {
-          //   field: "sorting",
-          //   values: [
-          //     // { field: "byValue", values: ["y"] },
-          //     { field: "byDimensionLabel", values: ["asc", "desc"] },
-          //   ],
-          // },
         ],
       },
     ],
