@@ -253,8 +253,8 @@ const sortData = ({
   data: Observation[];
   getX: (d: Observation) => string;
   getY: (d: Observation) => number;
-  sortingType: SortingType | undefined;
-  sortingOrder: SortingOrder | undefined;
+  sortingType?: SortingType;
+  sortingOrder?: SortingOrder;
 }) => {
   if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
     return [...data].sort((a, b) => descending(getX(a), getX(b)));
@@ -265,7 +265,7 @@ const sortData = ({
   } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
     return [...data].sort((a, b) => ascending(getY(a), getY(b)));
   } else {
-    // default to scending alphabetical
+    // default to ascending alphabetical
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));
   }
 };
