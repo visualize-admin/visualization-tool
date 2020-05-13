@@ -224,7 +224,6 @@ const useAreasState = ({
       // Always descending to match visual order of colors of the stack
       sortOrder: "desc",
     });
-    console.log({ sortedTooltipValues });
     const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
     const cumulativeRulerItemValues = [
       ...sortedTooltipValues.map(cumulativeSum),
