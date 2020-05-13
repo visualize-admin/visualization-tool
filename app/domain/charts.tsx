@@ -45,7 +45,7 @@ export const getInitialConfig = ({
             componentIri: FIELD_VALUE_NONE,
             type: "stacked",
             palette: "category10",
-            sorting: { sortingType: "byTotalSize", sortingOrder: "asc" },
+            sorting: { sortingType: "byTotalSize", sortingOrder: "desc" },
           },
         },
       };
@@ -73,7 +73,7 @@ export const getInitialConfig = ({
           segment: {
             componentIri: FIELD_VALUE_NONE,
             palette: "category10",
-            sorting: { sortingType: "byTotalSize", sortingOrder: "asc" },
+            sorting: { sortingType: "byTotalSize", sortingOrder: "desc" },
           },
         },
       };
