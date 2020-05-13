@@ -114,8 +114,19 @@ const usePieState = ({
   // Pie data
   const getPieData = pie<Observation>()
     .value((d) => getY(d))
-    .sortValues(function(a, b) {
-      return b - a;
+    .sort((a, b) => {
+      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
+        return descending(getX(a), getX(b));
+      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
+        return ascending(getX(a), getX(b));
+      } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
+        return descending(getY(a), getY(b));
+      } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
+        return ascending(getY(a), getY(b));
+      } else {
+        // default to ascending byDimensionLabel
+        return ascending(getX(a), getX(b));
+      }
     });
 
   // Tooltip

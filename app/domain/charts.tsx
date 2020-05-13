@@ -82,7 +82,7 @@ export const getInitialConfig = ({
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10",
-            sorting: { sortingType: "byTotalSize", sortingOrder: "asc" },
+            sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
           },
         },
       };
