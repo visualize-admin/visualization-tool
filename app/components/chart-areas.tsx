@@ -18,7 +18,6 @@ import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Loading, NoDataHint } from "./hint";
-import { HoverDotMultiple } from "./charts-generic/annotations/hover-dots-multiple";
 import { FIELD_VALUE_NONE } from "../domain";
 
 export const ChartAreasVisualization = ({
