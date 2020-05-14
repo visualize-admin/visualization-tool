@@ -118,6 +118,12 @@ const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
     return acc;
   }, {});
 
+  filters["https://energy.ld.admin.ch/sfoe/energyproduction/datetime"] = {
+    type: "range",
+    from: "2014-01-01T00:00:00Z",
+    to: "2014-02-01T00:00:00Z",
+  };
+
   const filterEntries = await Promise.all(
     Object.entries(filters).map(async ([dimIri, filter]) => {
       const dimension = dimensionsByIri[dimIri];
@@ -127,6 +133,20 @@ const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
       }
 
       const dataType = await getDataTypeOfDimension(cube, dimension);
+
+      console.log(dimension.iri.value, dataType);
+
+      if (filter.type === "range") {
+        
+        return [
+          dimension.gte(
+            literal(filter.from, "http://www.w3.org/2001/XMLSchema#dateTime")
+          ),
+          dimension.lt(
+            literal(filter.to, "http://www.w3.org/2001/XMLSchema#dateTime")
+          ),
+        ];
+      }
 
       const selectedValues =
         filter.type === "single"
@@ -161,7 +181,8 @@ const Query: QueryResolvers = {
       description: dataCube.extraMetadata.get("description")?.value ?? "",
       created: dataCube.extraMetadata.get("dateCreated")?.value ?? "",
       dataCube,
-    }));
+    }))
+    .filter(d => d.dataCube.iri === "https://energy.ld.admin.ch/sfoe/energyproduction/dataset");
 
     if (query) {
       /**
@@ -304,7 +325,32 @@ const dimensionResolvers = {
   iri: ({ dimension }: ResolvedDimension) => dimension.iri.value,
   label: ({ dimension }: ResolvedDimension) => dimension.label.value,
   values: async ({ dataCube, dimension }: ResolvedDimension) => {
+    if (dimension.iri.value === "https://energy.ld.admin.ch/sfoe/energyproduction/datetime") {
+      return [
+        {
+          value: "2014-01-01T00:00Z",
+          label: "2014-01-01T00:00Z",
+        },
+        {
+          value: "2037-01-01T00:00Z",
+          label: "2037-01-01T00:00Z",
+        }
+      ]
+    }
+
+    // const { min, max } = await dataCube.componentMinMax(dimension);
+
+    // if (min && max) {
+    //   return [min, max].map(({ value }) => {
+    //     return {
+    //       value: value,
+    //       label: value,
+    //     };
+    //   });
+    // }
+    console.time("Values " + dimension.iri.value)
     const values = await dataCube.componentValues(dimension);
+    console.timeEnd("Values " + dimension.iri.value)
     return values.map(({ value, label }) => {
       return {
         value: value.value,
