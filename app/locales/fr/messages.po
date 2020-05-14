@@ -170,12 +170,12 @@ msgstr "Annoter"
 msgid "controls.section.design"
 msgstr "Design"
 
-#: app/components/chart-options-selector.tsx:89
-#: app/components/chart-options-selector.tsx:93
+#: app/components/chart-options-selector.tsx:95
+#: app/components/chart-options-selector.tsx:99
 msgid "controls.section.filter"
 msgstr "Filtre"
 
-#: app/components/chart-options-selector.tsx:106
+#: app/components/chart-options-selector.tsx:112
 msgid "controls.section.sorting"
 msgstr ""
 
@@ -184,7 +184,7 @@ msgstr ""
 msgid "controls.select.chart.type"
 msgstr "Type de graphique"
 
-#: app/components/chart-options-selector.tsx:168
+#: app/components/chart-options-selector.tsx:174
 msgid "controls.select.column.chart.type"
 msgstr "Type de graphique"
 
@@ -197,8 +197,8 @@ msgstr "Sélectionner une dimension"
 msgid "controls.select.measure"
 msgstr "Sélectionner une variable"
 
-#: app/components/chart-options-selector.tsx:116
 #: app/components/chart-options-selector.tsx:122
+#: app/components/chart-options-selector.tsx:128
 msgid "controls.sorting.byDimensionLabel"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgstr ""
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:118
+#: app/components/chart-options-selector.tsx:124
 msgid "controls.sorting.byMeasure"
 msgstr ""
 
@@ -222,7 +222,7 @@ msgstr ""
 msgid "controls.sorting.byMeasure.descending"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:120
+#: app/components/chart-options-selector.tsx:126
 msgid "controls.sorting.byTotalSize"
 msgstr ""
 
