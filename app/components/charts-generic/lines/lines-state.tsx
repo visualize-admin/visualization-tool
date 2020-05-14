@@ -24,6 +24,7 @@ import { LEFT_MARGIN_OFFSET } from "../constants";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
+import { sortByIndex } from "../../../lib/array";
 
 export interface LinesState {
   data: Observation[];
@@ -66,22 +67,28 @@ const useLinesState = ({
   const getSegment = (d: Observation): string =>
     fields.segment ? (d[fields.segment.componentIri] as string) : "fixme";
 
+  // data
+  const sortedData = useMemo(
+    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
+    [data, getX]
+  );
+
   // x
-  const xUniqueValues = data
+  const xUniqueValues = sortedData
     .map((d) => getX(d))
     .filter(
       (date, i, self) =>
         self.findIndex((d) => d.getTime() === date.getTime()) === i
     );
-  const xDomain = extent(data, (d) => getX(d)) as [Date, Date];
+  const xDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
 
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
   // y
-  const minValue = Math.min(mkNumber(min(data, getY)), 0);
-  const maxValue = max(data, getY) as number;
+  const minValue = Math.min(mkNumber(min(sortedData, getY)), 0);
+  const maxValue = max(sortedData, getY) as number;
   const yDomain = [minValue, maxValue];
 
   const yScale = scaleLinear()
@@ -92,16 +99,13 @@ const useLinesState = ({
     fields.y.componentIri;
 
   // segments
-  const segments = [...new Set(data.map(getSegment))];
+  const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
+    ascending(a, b)
+  );
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );
 
-  // data
-  const sortedData = useMemo(
-    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
-    [data, getX]
-  );
   const xKey = fields.x.componentIri;
 
   const grouped = group(sortedData, getSegment);
@@ -153,6 +157,12 @@ const useLinesState = ({
     const tooltipValues = data.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
+    const sortedTooltipValues = sortByIndex({
+      data: tooltipValues,
+      order: segments,
+      getCategory: getSegment,
+      sortOrder: "asc",
+    });
 
     const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
 
@@ -173,7 +183,7 @@ const useLinesState = ({
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
-      values: tooltipValues.map((td) => ({
+      values: sortedTooltipValues.map((td) => ({
         label: getSegment(td),
         value: formatNumber(getY(td)),
         color:
