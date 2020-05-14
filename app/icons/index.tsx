@@ -29,6 +29,7 @@ import { IconFilter } from "./ic-filter";
 import { IconX } from "./ic-x";
 import { IconY } from "./ic-y";
 import { IconShare } from "./ic-share";
+import { IconSort } from "./ic-sort";
 import { IconCopy } from "./ic-copy";
 import { IconEmbed } from "./ic-embed";
 import { IconFacebook } from "./ic-facebook";
@@ -71,6 +72,7 @@ export const Icons = {
   segment: IconSegment,
   filter: IconFilter,
   share: IconShare,
+  sort: IconSort,
   copy: IconCopy,
   embed: IconEmbed,
   facebook: IconFacebook,
@@ -80,7 +82,7 @@ export const Icons = {
   text: IconText,
   info: IconInfo,
   arrowRight: IconArrowRight,
-  arrowDown: IconArrowDown,
+  arrowDown: IconArrowDown
 };
 
 export type IconName = keyof typeof Icons;
