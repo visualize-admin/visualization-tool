@@ -1,25 +1,21 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
 import {
-  AreaConfig,
-  ColumnConfig,
+  ChartConfig,
   ConfiguratorStateConfiguringChart,
-  LineConfig,
-  ScatterPlotConfig,
   getFieldComponentIris,
-  PieConfig,
 } from "../domain";
+import { chartConfigOptionsUISpec } from "../domain/chart-config-ui-options";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+import { DataCubeMetadata } from "../graphql/types";
+import { useLocale } from "../lib/use-locale";
 import {
   ControlSection,
-  SectionTitle,
   ControlSectionContent,
+  SectionTitle,
 } from "./chart-controls/section";
 import { ControlTabField, FilterTabField } from "./field";
 import { Loading } from "./hint";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
-import { DataCubeMetadata } from "../graphql/types";
-import { chartConfigOptionsUISpec } from "../domain/chart-config-ui-options";
 
 export const ChartConfigurator = ({
   state,
@@ -47,32 +43,10 @@ export const ChartConfigurator = ({
             role="tablist"
             aria-labelledby="controls-design"
           >
-            {state.chartConfig.chartType === "column" ? (
-              <ColumnChartFields
-                chartConfig={state.chartConfig}
-                metaData={data.dataCubeByIri}
-              />
-            ) : state.chartConfig.chartType === "line" ? (
-              <LineChartFields
-                chartConfig={state.chartConfig}
-                metaData={data.dataCubeByIri}
-              />
-            ) : state.chartConfig.chartType === "area" ? (
-              <AreaChartFields
-                chartConfig={state.chartConfig}
-                metaData={data.dataCubeByIri}
-              />
-            ) : state.chartConfig.chartType === "scatterplot" ? (
-              <ScatterPlotChartFields
-                chartConfig={state.chartConfig}
-                metaData={data.dataCubeByIri}
-              />
-            ) : state.chartConfig.chartType === "pie" ? (
-              <PieChartFields
-                chartConfig={state.chartConfig}
-                metaData={data.dataCubeByIri}
-              />
-            ) : null}
+            <ChartFields
+              chartConfig={state.chartConfig}
+              metaData={data.dataCubeByIri}
+            />
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
@@ -100,160 +74,36 @@ export const ChartConfigurator = ({
   }
 };
 
-const ColumnChartFields = ({
+const ChartFields = ({
   chartConfig,
   metaData,
 }: {
-  chartConfig: ColumnConfig;
+  chartConfig: ChartConfig;
   metaData: DataCubeMetadata;
 }) => {
   const { dimensions, measures } = metaData;
 
   const components = [...dimensions, ...measures];
+
+  const { chartType } = chartConfig;
   return (
     <>
-      {chartConfigOptionsUISpec["column"].encodings.map((encoding) => {
-        const encodingField = encoding.field as "x" | "y" | "segment";
-        // console.log(chartConfig.fields[encodingField]);
+      {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
+        const encodingField = encoding.field;
+
         return (
           <ControlTabField
             key={encoding.field}
             component={components.find(
-              (d) => d.iri === chartConfig.fields[encodingField]?.componentIri
+              (d) =>
+                d.iri ===
+                chartConfig.fields[encodingField as "y" | "segment"]
+                  ?.componentIri
             )}
             value={encoding.field}
           />
         );
       })}
-    </>
-  );
-};
-
-// FIXME: We can now use a generic component based on chartConfigOptionsUISpec[chartType]
-const LineChartFields = ({
-  chartConfig,
-  metaData,
-}: {
-  chartConfig: LineConfig;
-  metaData: DataCubeMetadata;
-}) => {
-  const { dimensions, measures } = metaData;
-
-  const components = [...dimensions, ...measures];
-  return (
-    <>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.y.componentIri
-        )}
-        value={"y"}
-      ></ControlTabField>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.x.componentIri
-        )}
-        value={"x"}
-      ></ControlTabField>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.segment?.componentIri
-        )}
-        value={"segment"}
-      ></ControlTabField>
-    </>
-  );
-};
-const AreaChartFields = ({
-  chartConfig,
-  metaData,
-}: {
-  chartConfig: AreaConfig;
-  metaData: DataCubeMetadata;
-}) => {
-  const { dimensions, measures } = metaData;
-
-  const components = [...dimensions, ...measures];
-  return (
-    <>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.y.componentIri
-        )}
-        value={"y"}
-      ></ControlTabField>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.x.componentIri
-        )}
-        value={"x"}
-      ></ControlTabField>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.segment?.componentIri
-        )}
-        value={"segment"}
-      ></ControlTabField>
-    </>
-  );
-};
-const ScatterPlotChartFields = ({
-  chartConfig,
-  metaData,
-}: {
-  chartConfig: ScatterPlotConfig;
-  metaData: DataCubeMetadata;
-}) => {
-  const { dimensions, measures } = metaData;
-
-  const components = [...dimensions, ...measures];
-  return (
-    <>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.y.componentIri
-        )}
-        value={"y"}
-      ></ControlTabField>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.x.componentIri
-        )}
-        value={"x"}
-      ></ControlTabField>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.segment?.componentIri
-        )}
-        value={"segment"}
-      ></ControlTabField>
-    </>
-  );
-};
-const PieChartFields = ({
-  chartConfig,
-  metaData,
-}: {
-  chartConfig: PieConfig;
-  metaData: DataCubeMetadata;
-}) => {
-  const { dimensions, measures } = metaData;
-
-  const components = [...dimensions, ...measures];
-  return (
-    <>
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.y.componentIri
-        )}
-        value={"y"}
-      ></ControlTabField>
-
-      <ControlTabField
-        component={components.find(
-          (d) => d.iri === chartConfig.fields.segment?.componentIri
-        )}
-        value={"segment"}
-      ></ControlTabField>
     </>
   );
 };
