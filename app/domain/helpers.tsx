@@ -124,14 +124,14 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
       return (
         <Trans id="controls.sorting.byDimensionLabel.descending">Z → A</Trans>
       );
-    case "byTotalSize.asc":
+    case "columbyTotalSize.asc":
       return (
-        <Trans id="controls.sorting.byTotalSize.ascending">Largest Top</Trans>
+        <Trans id="controls.sorting.byTotalSize.ascending">Largest last</Trans>
       );
     case "byTotalSize.desc":
       return (
         <Trans id="controls.sorting.byTotalSize.descending">
-          Largest Bottom
+          Largest first
         </Trans>
       );
     case "byMeasure.asc":
