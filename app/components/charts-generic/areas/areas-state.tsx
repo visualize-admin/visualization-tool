@@ -24,7 +24,7 @@ import {
 } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
-import { AreaFields, Observation, FIELD_VALUE_NONE } from "../../../domain";
+import { AreaFields, Observation } from "../../../domain";
 import {
   formatNumber,
   formatDateAuto,
@@ -71,8 +71,7 @@ const useAreasState = ({
 
   const width = useWidth();
 
-  const hasSegment =
-    fields.segment && fields.segment.componentIri !== FIELD_VALUE_NONE;
+  const hasSegment = fields.segment;
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
@@ -82,9 +81,7 @@ const useAreasState = ({
   );
   const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
   const getSegment = (d: Observation): string =>
-    fields.segment && fields.segment.componentIri !== FIELD_VALUE_NONE
-      ? (d[fields.segment.componentIri] as string)
-      : "segment";
+    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
 
   // data / groups for stack
   // Always sort by x first (TemporalDimension)

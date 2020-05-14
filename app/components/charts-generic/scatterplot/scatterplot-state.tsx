@@ -116,6 +116,7 @@ const useScatterplotState = ({
         : yAnchor < chartHeight * 0.66
         ? "bottom"
         : "middle";
+
     return {
       xAnchor,
       yAnchor,

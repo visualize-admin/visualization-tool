@@ -18,7 +18,6 @@ import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Loading, NoDataHint } from "./hint";
-import { FIELD_VALUE_NONE } from "../domain";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
@@ -95,9 +94,7 @@ export const ChartAreas = memo(
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
         </ChartContainer>
-        {fields.segment && fields.segment.componentIri !== FIELD_VALUE_NONE && (
-          <LegendColor symbol="square" />
-        )}
+        {fields.segment && <LegendColor symbol="square" />}
       </AreaChart>
     );
   }

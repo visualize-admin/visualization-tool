@@ -2,7 +2,6 @@ import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { ChartConfig, ChartType, GenericFields } from "./config-types";
 import { getCategoricalDimensions, getTimeDimensions } from "./data";
-import { FIELD_VALUE_NONE } from "./config-form";
 
 export const getInitialConfig = ({
   chartType,
@@ -41,12 +40,6 @@ export const getInitialConfig = ({
             sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
           },
           y: { componentIri: measures[0].iri },
-          segment: {
-            componentIri: FIELD_VALUE_NONE,
-            type: "stacked",
-            palette: "category10",
-            sorting: { sortingType: "byTotalSize", sortingOrder: "desc" },
-          },
         },
       };
     case "line":
@@ -70,11 +63,6 @@ export const getInitialConfig = ({
             componentIri: getTimeDimensions(dimensions)[0].iri,
           },
           y: { componentIri: measures[0].iri },
-          segment: {
-            componentIri: FIELD_VALUE_NONE,
-            palette: "category10",
-            sorting: { sortingType: "byTotalSize", sortingOrder: "desc" },
-          },
         },
       };
 

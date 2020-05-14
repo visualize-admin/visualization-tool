@@ -246,7 +246,7 @@ const ChartFieldSorting = ({
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
       <ControlSectionContent side="right" as="fieldset">
-        <Box mt={2}>
+        <Box>
           <I18n>
             {({ i18n }) => {
               const getSortingTypeLabel = (type: SortingType) => {
@@ -358,7 +358,6 @@ const ChartFieldOptions = ({
   return (
     <>
       {/* FIXME: improve use of encodingOptions to get chart options */}
-      {/* TODO: Add sorting options */}
       {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
         chartType === "column" && (
           <Box as="fieldset" mt={2}>

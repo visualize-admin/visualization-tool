@@ -126,26 +126,22 @@ export const useChartFieldField = ({
 
   const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
     (e) =>
-      // e.currentTarget.value !== FIELD_VALUE_NONE
-      //   ?
-      dispatch({
-        type: "CHART_FIELD_CHANGED",
-        value: {
-          field,
-          dataSetMetadata,
-          componentIri:
-            e.currentTarget.value !== FIELD_VALUE_NONE
-              ? e.currentTarget.value
-              : FIELD_VALUE_NONE,
-        },
-      }),
-    // : dispatch({
-    //     type: "CHART_FIELD_DELETED",
-    //     value: {
-    //       field,
-    //       dataSetMetadata,
-    //     },
-    //   }),
+      e.currentTarget.value !== FIELD_VALUE_NONE
+        ? dispatch({
+            type: "CHART_FIELD_CHANGED",
+            value: {
+              field,
+              dataSetMetadata,
+              componentIri: e.currentTarget.value,
+            },
+          })
+        : dispatch({
+            type: "CHART_FIELD_DELETED",
+            value: {
+              field,
+              dataSetMetadata,
+            },
+          }),
     [dispatch, field, dataSetMetadata]
   );
 
