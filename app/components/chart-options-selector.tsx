@@ -242,7 +242,7 @@ const ChartFieldSorting = ({
 
   return (
     <ControlSection>
-      <SectionTitle disabled={disabled} iconName="table">
+      <SectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
       <ControlSectionContent side="right" as="fieldset">
