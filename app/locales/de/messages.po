@@ -170,12 +170,12 @@ msgstr "Beschreiben"
 msgid "controls.section.design"
 msgstr "Design"
 
-#: app/components/chart-options-selector.tsx:87
-#: app/components/chart-options-selector.tsx:91
+#: app/components/chart-options-selector.tsx:89
+#: app/components/chart-options-selector.tsx:93
 msgid "controls.section.filter"
 msgstr "Filter"
 
-#: app/components/chart-options-selector.tsx:104
+#: app/components/chart-options-selector.tsx:106
 msgid "controls.section.sorting"
 msgstr ""
 
@@ -184,7 +184,7 @@ msgstr ""
 msgid "controls.select.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/components/chart-options-selector.tsx:167
+#: app/components/chart-options-selector.tsx:168
 msgid "controls.select.column.chart.type"
 msgstr "Diagrammtyp"
 
@@ -197,8 +197,8 @@ msgstr "Dimension auswählen"
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/components/chart-options-selector.tsx:114
-#: app/components/chart-options-selector.tsx:120
+#: app/components/chart-options-selector.tsx:116
+#: app/components/chart-options-selector.tsx:122
 msgid "controls.sorting.byDimensionLabel"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgstr ""
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:116
+#: app/components/chart-options-selector.tsx:118
 msgid "controls.sorting.byMeasure"
 msgstr ""
 
@@ -222,7 +222,7 @@ msgstr ""
 msgid "controls.sorting.byMeasure.descending"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:118
+#: app/components/chart-options-selector.tsx:120
 msgid "controls.sorting.byTotalSize"
 msgstr ""
 
@@ -314,7 +314,7 @@ msgstr "Negative Datenwerte können mit diesem Diagrammtyp nicht dargestellt wer
 msgid "hint.only.negative.data.title"
 msgstr "Negative Werte"
 
-#: app/components/hint.tsx:134
+#: app/components/hint.tsx:137
 msgid "hint.publication.success"
 msgstr "Die Visualisierung ist jetzt veröffentlicht und kann geteilt werden, indem Sie die URL kopieren oder die Einbettungsoptionen verwenden."
 
