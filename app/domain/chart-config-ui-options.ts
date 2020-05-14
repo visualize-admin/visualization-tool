@@ -71,8 +71,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
         sorting: [
-          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["desc", "asc"] },
         ],
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
@@ -102,8 +102,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
         sorting: [
-          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["desc", "asc"] },
         ],
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
@@ -152,8 +152,8 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         values: ["NominalDimension", "OrdinalDimension"],
         filters: true,
         sorting: [
-          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["desc", "asc"] },
         ],
         options: [{ field: "color", values: ["palette"] }],
       },
