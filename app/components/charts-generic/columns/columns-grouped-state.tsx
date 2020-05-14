@@ -1,4 +1,4 @@
-import { ascending, group, max, min } from "d3-array";
+import { ascending, group, max, min, rollup, sum, descending } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -8,8 +8,14 @@ import {
   scaleOrdinal,
 } from "d3-scale";
 import * as React from "react";
-import { ReactNode, useCallback } from "react";
-import { ColumnFields, Observation, ObservationValue } from "../../../domain";
+import { ReactNode, useCallback, useMemo } from "react";
+import {
+  ColumnFields,
+  Observation,
+  ObservationValue,
+  SortingType,
+  SortingOrder,
+} from "../../../domain";
 import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
@@ -22,6 +28,7 @@ import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
+import { sortByIndex } from "../../../lib/array";
 
 export interface GroupedColumnsState {
   sortedData: Observation[];
@@ -51,8 +58,14 @@ const useGroupedColumnsState = ({
 }): GroupedColumnsState => {
   const width = useWidth();
 
-  const getX = (d: Observation): string => d[fields.x.componentIri] as string;
-  const getY = (d: Observation): number => +d[fields.y.componentIri];
+  const getX = useCallback(
+    (d: Observation): string => d[fields.x.componentIri] as string,
+    [fields.x.componentIri]
+  );
+  const getY = useCallback(
+    (d: Observation): number => +d[fields.y.componentIri],
+    [fields.y.componentIri]
+  );
   const getSegment = useCallback(
     (d: Observation): string =>
       fields.segment && fields.segment.componentIri
@@ -60,10 +73,61 @@ const useGroupedColumnsState = ({
         : "segment",
     [fields.segment]
   );
-  const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
 
+  // Sort
+  const xSortingType = fields.x.sorting?.sortingType;
+  const xSortingOrder = fields.x.sorting?.sortingOrder;
+
+  const xOrder = [
+    ...rollup(
+      data,
+      (v) => sum(v, (x) => getY(x)),
+      (x) => getX(x)
+    ),
+  ]
+    .sort((a, b) => ascending(a[1], b[1]))
+    .map((d) => d[0]);
+
+  const sortedData = useMemo(
+    () =>
+      sortData({
+        data,
+        getX,
+        xSortingType,
+        xSortingOrder,
+        xOrder,
+      }),
+    [data, getX, xSortingType, xSortingOrder, xOrder]
+  );
   // segments
-  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
+  const segmentSortingType = fields.segment?.sorting?.sortingType;
+  const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
+  const segmentsOrderedByName = Array.from(
+    new Set(sortedData.map((d) => getSegment(d)))
+  ).sort((a, b) =>
+    segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
+  );
+
+  const segmentsOrderedByTotalValue = [
+    ...rollup(
+      sortedData,
+      (v) => sum(v, (x) => getY(x)),
+      (x) => getSegment(x)
+    ),
+  ]
+    .sort((a, b) =>
+      segmentSortingOrder === "asc"
+        ? ascending(a[1], b[1])
+        : descending(a[1], b[1])
+    )
+    .map((d) => d[0]);
+
+  const segments =
+    segmentSortingType === "byDimensionLabel"
+      ? segmentsOrderedByName
+      : segmentsOrderedByTotalValue;
+
+  // const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );
@@ -79,9 +143,9 @@ const useGroupedColumnsState = ({
     .paddingInner(0)
     .paddingOuter(0);
 
-  const inBandDomain = [...new Set(data.map(getSegment))];
+  // const inBandDomain = [...new Set(sortedData.map(getSegment))];
   const xScaleIn = scaleBand()
-    .domain(inBandDomain)
+    .domain(segments)
     .padding(PADDING_WITHIN);
 
   // y
@@ -94,8 +158,22 @@ const useGroupedColumnsState = ({
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
+  // Group
   const groupedMap = group(sortedData, getX);
   const grouped = [...groupedMap];
+
+  // sort by segments
+  grouped.forEach((group) => {
+    return [
+      group[0],
+      sortByIndex({
+        data: group[1],
+        order: segments,
+        getCategory: getSegment,
+        sortOrder: segmentSortingOrder,
+      }),
+    ];
+  });
 
   // Dimensions
   const left = Math.max(
@@ -132,6 +210,13 @@ const useGroupedColumnsState = ({
     const yAnchor = yRef;
 
     const tooltipValues = data.filter((j) => getX(j) === getX(datum));
+    const sortedTooltipValues = sortByIndex({
+      data: tooltipValues,
+      order: segments,
+      getCategory: getSegment,
+      // Always ascending to match visual order of colors of the stack
+      sortOrder: "asc",
+    });
 
     const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
 
@@ -173,7 +258,7 @@ const useGroupedColumnsState = ({
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
-      values: tooltipValues.map((td) => ({
+      values: sortedTooltipValues.map((td) => ({
         label: getSegment(td),
         value: formatNumber(getY(td)),
         color: colors(getSegment(td)) as string,
@@ -246,4 +331,35 @@ export const GroupedColumnChart = ({
       </InteractionProvider>
     </Observer>
   );
+};
+
+const sortData = ({
+  data,
+  getX,
+  xSortingType,
+  xSortingOrder,
+  xOrder,
+}: {
+  data: Observation[];
+  getX: (d: Observation) => string;
+  xSortingType: SortingType | undefined;
+  xSortingOrder: SortingOrder | undefined;
+  xOrder: string[];
+}) => {
+  if (xSortingOrder === "desc" && xSortingType === "byDimensionLabel") {
+    return [...data].sort((a, b) => descending(getX(a), getX(b)));
+  } else if (xSortingOrder === "asc" && xSortingType === "byDimensionLabel") {
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  } else if (xSortingType === "byMeasure") {
+    const sd = sortByIndex({
+      data,
+      order: xOrder,
+      getCategory: getX,
+      sortOrder: xSortingOrder,
+    });
+    return sd;
+  } else {
+    // default to scending alphabetical
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  }
 };
