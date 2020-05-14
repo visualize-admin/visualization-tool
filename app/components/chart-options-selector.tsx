@@ -232,7 +232,7 @@ const ChartFieldSorting = ({
 }) => {
   const activeSortingType = get(
     state,
-    `chartConfig.fields.${field}.sorting.sortingType`,
+    ["chartConfig", "fields", field, "sorting", "sortingType"],
     ""
   );
 
