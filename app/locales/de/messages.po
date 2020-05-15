@@ -66,27 +66,27 @@ msgstr "Teilen"
 msgid "controls.axis.horizontal"
 msgstr "Horizontale Achse"
 
-#: app/domain/helpers.tsx:107
+#: app/domain/helpers.tsx:129
 msgid "controls.chart.type.area"
 msgstr "Flächen"
 
-#: app/domain/helpers.tsx:103
+#: app/domain/helpers.tsx:125
 msgid "controls.chart.type.bar"
 msgstr "Balken"
 
-#: app/domain/helpers.tsx:101
+#: app/domain/helpers.tsx:123
 msgid "controls.chart.type.column"
 msgstr "Säulen"
 
-#: app/domain/helpers.tsx:105
+#: app/domain/helpers.tsx:127
 msgid "controls.chart.type.line"
 msgstr "Linien"
 
-#: app/domain/helpers.tsx:111
+#: app/domain/helpers.tsx:133
 msgid "controls.chart.type.pie"
 msgstr "Kreis"
 
-#: app/domain/helpers.tsx:109
+#: app/domain/helpers.tsx:131
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
@@ -106,7 +106,7 @@ msgstr "gestapelt"
 msgid "controls.description"
 msgstr "Beschreibung"
 
-#: app/components/field.tsx:116
+#: app/components/field.tsx:114
 msgid "controls.dimension.none"
 msgstr ""
 
@@ -126,19 +126,19 @@ msgstr "Bitte eine Designoption oder Datendimension auswählen, um diese zu bear
 msgid "controls.hint.describing.chart"
 msgstr "Bitte einen Inhaltsbereich auswählen, um diesen zu bearbeiten."
 
-#: app/domain/helpers.tsx:113
+#: app/domain/helpers.tsx:135
 msgid "controls.language.english"
 msgstr "Englisch"
 
-#: app/domain/helpers.tsx:117
+#: app/domain/helpers.tsx:139
 msgid "controls.language.french"
 msgstr "Französisch"
 
-#: app/domain/helpers.tsx:115
+#: app/domain/helpers.tsx:137
 msgid "controls.language.german"
 msgstr "Deutsch"
 
-#: app/domain/helpers.tsx:119
+#: app/domain/helpers.tsx:141
 msgid "controls.language.italian"
 msgstr "Italienisch"
 
@@ -170,12 +170,12 @@ msgstr "Beschreiben"
 msgid "controls.section.design"
 msgstr "Design"
 
+#: app/components/chart-options-selector.tsx:91
 #: app/components/chart-options-selector.tsx:95
-#: app/components/chart-options-selector.tsx:99
 msgid "controls.section.filter"
 msgstr "Filter"
 
-#: app/components/chart-options-selector.tsx:112
+#: app/components/chart-options-selector.tsx:108
 msgid "controls.section.sorting"
 msgstr ""
 
@@ -188,50 +188,58 @@ msgstr "Diagrammtyp"
 msgid "controls.select.column.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/domain/helpers.tsx:125
-#: app/domain/helpers.tsx:127
+#: app/domain/helpers.tsx:147
+#: app/domain/helpers.tsx:149
 msgid "controls.select.dimension"
 msgstr "Dimension auswählen"
 
-#: app/domain/helpers.tsx:126
+#: app/domain/helpers.tsx:148
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/components/chart-options-selector.tsx:122
-#: app/components/chart-options-selector.tsx:128
+#: app/components/chart-options-selector.tsx:118
+#: app/components/chart-options-selector.tsx:124
 msgid "controls.sorting.byDimensionLabel"
 msgstr ""
 
-#: app/domain/helpers.tsx:87
+#: app/domain/helpers.tsx:91
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr ""
 
-#: app/domain/helpers.tsx:89
+#: app/domain/helpers.tsx:97
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:124
+#: app/components/chart-options-selector.tsx:120
 msgid "controls.sorting.byMeasure"
 msgstr ""
 
-#: app/domain/helpers.tsx:97
+#: app/domain/helpers.tsx:116
 msgid "controls.sorting.byMeasure.ascending"
 msgstr ""
 
-#: app/domain/helpers.tsx:99
+#: app/domain/helpers.tsx:121
 msgid "controls.sorting.byMeasure.descending"
 msgstr ""
 
-#: app/components/chart-options-selector.tsx:126
+#: app/components/chart-options-selector.tsx:122
 msgid "controls.sorting.byTotalSize"
 msgstr ""
 
-#: app/domain/helpers.tsx:91
+#: app/domain/helpers.tsx:99
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr ""
 
-#: app/domain/helpers.tsx:93
-msgid "controls.sorting.byTotalSize.descending"
+#: app/domain/helpers.tsx:109
+msgid "controls.sorting.byTotalSize.largestBottom"
+msgstr ""
+
+#: app/domain/helpers.tsx:101
+msgid "controls.sorting.byTotalSize.largestFirst"
+msgstr ""
+
+#: app/domain/helpers.tsx:106
+msgid "controls.sorting.byTotalSize.largestTop"
 msgstr ""
 
 #: app/domain/helpers.tsx:79

@@ -66,27 +66,27 @@ msgstr "Share"
 msgid "controls.axis.horizontal"
 msgstr "Horizontal axis"
 
-#: app/domain/helpers.tsx:107
+#: app/domain/helpers.tsx:129
 msgid "controls.chart.type.area"
 msgstr "Areas"
 
-#: app/domain/helpers.tsx:103
+#: app/domain/helpers.tsx:125
 msgid "controls.chart.type.bar"
 msgstr "Bars"
 
-#: app/domain/helpers.tsx:101
+#: app/domain/helpers.tsx:123
 msgid "controls.chart.type.column"
 msgstr "Columns"
 
-#: app/domain/helpers.tsx:105
+#: app/domain/helpers.tsx:127
 msgid "controls.chart.type.line"
 msgstr "Lines"
 
-#: app/domain/helpers.tsx:111
+#: app/domain/helpers.tsx:133
 msgid "controls.chart.type.pie"
 msgstr "Pie"
 
-#: app/domain/helpers.tsx:109
+#: app/domain/helpers.tsx:131
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
@@ -106,7 +106,7 @@ msgstr "stacked"
 msgid "controls.description"
 msgstr "Description"
 
-#: app/components/field.tsx:116
+#: app/components/field.tsx:114
 msgid "controls.dimension.none"
 msgstr "None"
 
@@ -126,19 +126,19 @@ msgstr "Select a design element or a data dimension to modify its options."
 msgid "controls.hint.describing.chart"
 msgstr "Select an annotation field to modify its content."
 
-#: app/domain/helpers.tsx:113
+#: app/domain/helpers.tsx:135
 msgid "controls.language.english"
 msgstr "English"
 
-#: app/domain/helpers.tsx:117
+#: app/domain/helpers.tsx:139
 msgid "controls.language.french"
 msgstr "French"
 
-#: app/domain/helpers.tsx:115
+#: app/domain/helpers.tsx:137
 msgid "controls.language.german"
 msgstr "German"
 
-#: app/domain/helpers.tsx:119
+#: app/domain/helpers.tsx:141
 msgid "controls.language.italian"
 msgstr "Italian"
 
@@ -170,12 +170,12 @@ msgstr "Annotate"
 msgid "controls.section.design"
 msgstr "Design"
 
+#: app/components/chart-options-selector.tsx:91
 #: app/components/chart-options-selector.tsx:95
-#: app/components/chart-options-selector.tsx:99
 msgid "controls.section.filter"
 msgstr "Filter"
 
-#: app/components/chart-options-selector.tsx:112
+#: app/components/chart-options-selector.tsx:108
 msgid "controls.section.sorting"
 msgstr "Sort"
 
@@ -188,51 +188,59 @@ msgstr "Chart type"
 msgid "controls.select.column.chart.type"
 msgstr "Chart type"
 
-#: app/domain/helpers.tsx:125
-#: app/domain/helpers.tsx:127
+#: app/domain/helpers.tsx:147
+#: app/domain/helpers.tsx:149
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
 
-#: app/domain/helpers.tsx:126
+#: app/domain/helpers.tsx:148
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
-#: app/components/chart-options-selector.tsx:122
-#: app/components/chart-options-selector.tsx:128
+#: app/components/chart-options-selector.tsx:118
+#: app/components/chart-options-selector.tsx:124
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
-#: app/domain/helpers.tsx:87
+#: app/domain/helpers.tsx:91
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/domain/helpers.tsx:89
+#: app/domain/helpers.tsx:97
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/components/chart-options-selector.tsx:124
+#: app/components/chart-options-selector.tsx:120
 msgid "controls.sorting.byMeasure"
 msgstr "Measure"
 
-#: app/domain/helpers.tsx:97
+#: app/domain/helpers.tsx:116
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/domain/helpers.tsx:99
+#: app/domain/helpers.tsx:121
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/components/chart-options-selector.tsx:126
+#: app/components/chart-options-selector.tsx:122
 msgid "controls.sorting.byTotalSize"
 msgstr "Total size"
 
-#: app/domain/helpers.tsx:91
+#: app/domain/helpers.tsx:99
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Largest last"
 
-#: app/domain/helpers.tsx:93
-msgid "controls.sorting.byTotalSize.descending"
+#: app/domain/helpers.tsx:109
+msgid "controls.sorting.byTotalSize.largestBottom"
+msgstr "Largest bottom"
+
+#: app/domain/helpers.tsx:101
+msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Largest first"
+
+#: app/domain/helpers.tsx:106
+msgid "controls.sorting.byTotalSize.largestTop"
+msgstr "Largest top"
 
 #: app/domain/helpers.tsx:79
 msgid "controls.title"
