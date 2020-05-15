@@ -24,6 +24,7 @@ export const ChartPieVisualization = ({
   chartConfig: PieConfig;
 }) => {
   const locale = useLocale();
+
   const [{ data }] = useDataCubeObservationsQuery({
     variables: {
       locale,

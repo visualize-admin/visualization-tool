@@ -36,7 +36,6 @@ import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { useTheme } from "../../../themes";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { LEFT_MARGIN_OFFSET } from "../constants";
 import { sortByIndex } from "../../../lib/array";
@@ -67,8 +66,6 @@ const useAreasState = ({
   fields: AreaFields;
   aspectRatio: number;
 }): AreasState => {
-  const theme = useTheme();
-
   const width = useWidth();
 
   const hasSegment = fields.segment;
