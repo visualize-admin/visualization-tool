@@ -69,41 +69,47 @@ export type GenericField = t.TypeOf<typeof GenericField>;
 
 export type GenericFields = Record<string, GenericField | undefined>;
 
-const AreaFields = t.intersection([
-  t.type({
-    x: GenericField,
-    y: GenericField,
-  }),
-  t.partial({
-    segment: t.type({
-      componentIri: t.string,
-      palette: t.string,
-    }),
-  }),
-]);
-const AreaConfig = t.type(
-  {
-    chartType: t.literal("area"),
-    filters: Filters,
-    fields: AreaFields,
-  },
-  "AreaConfig"
-);
+const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
+export type SortingOrder = t.TypeOf<typeof SortingOrder>;
 
-export type AreaFields = t.TypeOf<typeof AreaFields>;
-export type AreaConfig = t.TypeOf<typeof AreaConfig>;
+const SortingType = t.union([
+  t.literal("byDimensionLabel"),
+  t.literal("byMeasure"),
+  t.literal("byTotalSize"),
+]);
+export type SortingType = t.TypeOf<typeof SortingType>;
 
 const BarFields = t.intersection([
   t.type({
-    x: GenericField,
+    x: t.intersection([
+      t.type({
+        componentIri: t.string,
+      }),
+      t.partial({
+        sorting: t.type({
+          sortingType: SortingType,
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
     y: GenericField,
   }),
   t.partial({
-    segment: t.type({
-      componentIri: t.string,
-      type: t.union([t.literal("stacked"), t.literal("grouped")]),
-      palette: t.string,
-    }),
+    segment: t.intersection([
+      t.type({
+        componentIri: t.string,
+      }),
+      t.type({
+        type: t.union([t.literal("stacked"), t.literal("grouped")]),
+      }),
+      t.type({ palette: t.string }),
+      t.partial({
+        sorting: t.type({
+          sortingType: SortingType,
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
   }),
 ]);
 const BarConfig = t.type(
@@ -119,15 +125,35 @@ export type BarConfig = t.TypeOf<typeof BarConfig>;
 
 const ColumnFields = t.intersection([
   t.type({
-    x: GenericField,
+    x: t.intersection([
+      t.type({
+        componentIri: t.string,
+      }),
+      t.partial({
+        sorting: t.type({
+          sortingType: SortingType,
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
     y: GenericField,
   }),
   t.partial({
-    segment: t.type({
-      componentIri: t.string,
-      type: t.union([t.literal("stacked"), t.literal("grouped")]),
-      palette: t.string,
-    }),
+    segment: t.intersection([
+      t.type({
+        componentIri: t.string,
+      }),
+      t.type({
+        type: t.union([t.literal("stacked"), t.literal("grouped")]),
+      }),
+      t.type({ palette: t.string }),
+      t.partial({
+        sorting: t.type({
+          sortingType: SortingType,
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
   }),
 ]);
 const ColumnConfig = t.type(
@@ -164,6 +190,39 @@ const LineConfig = t.type(
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
+const AreaFields = t.intersection([
+  t.type({
+    x: GenericField,
+    y: GenericField,
+  }),
+
+  t.partial({
+    segment: t.intersection([
+      t.type({
+        componentIri: t.string,
+        palette: t.string,
+      }),
+      t.partial({
+        sorting: t.type({
+          sortingType: SortingType,
+          sortingOrder: SortingOrder,
+        }),
+      }),
+    ]),
+  }),
+]);
+const AreaConfig = t.type(
+  {
+    chartType: t.literal("area"),
+    filters: Filters,
+    fields: AreaFields,
+  },
+  "AreaConfig"
+);
+
+export type AreaFields = t.TypeOf<typeof AreaFields>;
+export type AreaConfig = t.TypeOf<typeof AreaConfig>;
+
 const ScatterPlotFields = t.intersection([
   t.type({
     x: GenericField,
@@ -189,10 +248,19 @@ export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
 const PieFields = t.type({
   y: GenericField,
-  segment: t.type({
-    componentIri: t.string,
-    palette: t.string,
-  }),
+  // FIXME: "segment" should be "x" for consistency
+  segment: t.intersection([
+    t.type({
+      componentIri: t.string,
+      palette: t.string,
+    }),
+    t.partial({
+      sorting: t.type({
+        sortingType: SortingType,
+        sortingOrder: SortingOrder,
+      }),
+    }),
+  ]),
 });
 const PieConfig = t.type(
   {

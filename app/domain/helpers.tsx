@@ -1,3 +1,5 @@
+import { Trans } from "@lingui/macro";
+import { format } from "d3-format";
 import {
   schemeAccent,
   schemeCategory10,
@@ -9,19 +11,17 @@ import {
   schemeSet2,
   schemeSet3,
 } from "d3-scale-chromatic";
-import { Trans } from "@lingui/macro";
-import * as React from "react";
-import { IconName } from "../icons";
-import { timeFormat, timeParse } from "d3-time-format";
 import {
   timeDay,
-  timeMinute,
   timeHour,
+  timeMinute,
   timeMonth,
   timeWeek,
   timeYear,
 } from "d3-time";
-import { format } from "d3-format";
+import { timeFormat, timeParse } from "d3-time-format";
+import * as React from "react";
+import { IconName } from "../icons";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -99,7 +99,7 @@ export const getIconName = (name: string): IconName => {
   }
 };
 
-export const getFieldLabel = (field: string): React.ReactNode => {
+export const getFieldLabel = (field: string): string | React.ReactNode => {
   switch (field) {
     case "x":
       return <Trans id="controls.axis.horizontal">Horizontal axis</Trans>;
@@ -115,6 +115,55 @@ export const getFieldLabel = (field: string): React.ReactNode => {
       return <Trans id="controls.column.stacked">Stacked</Trans>;
     case "grouped":
       return <Trans id="controls.column.grouped">Grouped</Trans>;
+
+    case "column..byDimensionLabel.asc":
+    case "column.stacked.byDimensionLabel.asc":
+    case "column.grouped.byDimensionLabel.asc":
+    case "area.stacked.byDimensionLabel.asc":
+    case "pie..byDimensionLabel.asc":
+      return (
+        <Trans id="controls.sorting.byDimensionLabel.ascending">A → Z</Trans>
+      );
+    case "column..byDimensionLabel.desc":
+    case "column.stacked.byDimensionLabel.desc":
+    case "column.grouped.byDimensionLabel.desc":
+    case "area.stacked.byDimensionLabel.desc":
+    case "pie..byDimensionLabel.desc":
+      return (
+        <Trans id="controls.sorting.byDimensionLabel.descending">Z → A</Trans>
+      );
+    case "column.grouped.byTotalSize.asc":
+      return (
+        <Trans id="controls.sorting.byTotalSize.ascending">Largest last</Trans>
+      );
+    case "column.grouped.byTotalSize.desc":
+      return (
+        <Trans id="controls.sorting.byTotalSize.largestFirst">
+          Largest first
+        </Trans>
+      );
+    case "area.stacked.byTotalSize.asc":
+    case "column.stacked.byTotalSize.asc":
+      return (
+        <Trans id="controls.sorting.byTotalSize.largestTop">Largest top</Trans>
+      );
+    case "area.stacked.byTotalSize.desc":
+    case "column.stacked.byTotalSize.desc":
+      return (
+        <Trans id="controls.sorting.byTotalSize.largestBottom">
+          Largest bottom
+        </Trans>
+      );
+    case "column..byMeasure.asc":
+    case "column.stacked.byMeasure.asc":
+    case "column.grouped.byMeasure.asc":
+    case "pie..byMeasure.asc":
+      return <Trans id="controls.sorting.byMeasure.ascending">1 → 9</Trans>;
+    case "column..byMeasure.desc":
+    case "column.stacked.byMeasure.desc":
+    case "column.grouped.byMeasure.desc":
+    case "pie..byMeasure.desc":
+      return <Trans id="controls.sorting.byMeasure.descending">9 → 1</Trans>;
     case "column":
       return <Trans id="controls.chart.type.column">Columns</Trans>;
     case "bar":

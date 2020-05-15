@@ -1,19 +1,23 @@
 import React, { ChangeEvent, useCallback } from "react";
+import { I18n } from "@lingui/react";
+import { t } from "@lingui/macro";
+
 import { FilterValueSingle, MetaKey, useConfiguratorState } from "../domain";
 import {
   FIELD_VALUE_NONE,
   Option,
   useActiveFieldField,
   useChartFieldField,
-  useChartOptionField,
+  useChartOptionRadioField,
   useChartTypeSelectorField,
   useMetaField,
-  useSingleFilterField
+  useSingleFilterField,
+  useChartOptionSelectField,
 } from "../domain/config-form";
 import { getFieldLabel } from "../domain/helpers";
 import {
   ComponentFieldsFragment,
-  DimensionFieldsWithValuesFragment
+  DimensionFieldsWithValuesFragment,
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { Locales } from "../locales/locales";
@@ -21,21 +25,21 @@ import { ChartTypeSelectionButton } from "./chart-controls/chart-type-radio-butt
 import {
   AnnotatorTab,
   ControlTab,
-  FilterTab
+  FilterTab,
 } from "./chart-controls/control-tab";
 import { Checkbox, Input, Radio, Select } from "./form";
 
 export const ControlTabField = ({
   component,
   value,
-  disabled
+  disabled,
 }: {
   component?: ComponentFieldsFragment;
   value: string;
   disabled?: boolean;
 }) => {
   const field = useActiveFieldField({
-    value
+    value,
   });
 
   return (
@@ -52,14 +56,14 @@ export const ControlTabField = ({
 export const FilterTabField = ({
   component,
   value,
-  disabled
+  disabled,
 }: {
   component: DimensionFieldsWithValuesFragment;
   value: string;
   disabled?: boolean;
 }) => {
   const field = useActiveFieldField({
-    value
+    value,
   });
   const [state] = useConfiguratorState();
 
@@ -68,7 +72,7 @@ export const FilterTabField = ({
     state.chartConfig.filters[value].type === "single"
       ? (state.chartConfig.filters[value] as FilterValueSingle).value
       : "";
-  const filterValue = component.values.find(v => v.value === filterValueIri)!
+  const filterValue = component.values.find((v) => v.value === filterValueIri)!
     .label;
   return (
     <FilterTab
@@ -84,13 +88,13 @@ export const FilterTabField = ({
 
 export const AnnotatorTabField = ({
   value,
-  disabled
+  disabled,
 }: {
   value: string;
   disabled?: boolean;
 }) => {
   const field = useActiveFieldField({
-    value
+    value,
   });
 
   return (
@@ -120,7 +124,7 @@ export const MetaInputField = ({
   const field = useMetaField({
     metaKey,
     locale,
-    value
+    value,
   });
 
   return <Input label={label} {...field} disabled={disabled}></Input>;
@@ -143,7 +147,7 @@ export const MetaTextarea = ({
   const field = useMetaField({
     metaKey,
     locale,
-    value
+    value,
   });
 
   return <Input label={label} {...field} disabled={disabled}></Input>;
@@ -157,7 +161,7 @@ export const MultiFilterField = ({
   allValues,
   checked,
   onChange,
-  checkAction
+  checkAction,
 }: {
   dimensionIri: string;
   label: string;
@@ -171,7 +175,7 @@ export const MultiFilterField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const onFieldChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    e => {
+    (e) => {
       if (e.currentTarget.checked) {
         dispatch({
           type:
@@ -181,8 +185,8 @@ export const MultiFilterField = ({
           value: {
             dimensionIri,
             value,
-            allValues
-          }
+            allValues,
+          },
         });
       } else {
         dispatch({
@@ -190,8 +194,8 @@ export const MultiFilterField = ({
           value: {
             dimensionIri,
             value,
-            allValues
-          }
+            allValues,
+          },
         });
       }
       // Call onChange prop
@@ -223,7 +227,7 @@ export const SingleFilterField = ({
   dimensionIri,
   label,
   value,
-  disabled
+  disabled,
 }: {
   dimensionIri: string;
   label: string;
@@ -232,7 +236,7 @@ export const SingleFilterField = ({
 }) => {
   const field = useSingleFilterField({
     dimensionIri,
-    value
+    value,
   });
 
   return <Radio label={label} disabled={disabled} {...field}></Radio>;
@@ -245,7 +249,7 @@ export const ChartFieldField = ({
   options,
   optional,
   disabled,
-  dataSetMetadata
+  dataSetMetadata,
 }: {
   componentIri?: string;
   label: string | React.ReactNode;
@@ -256,56 +260,90 @@ export const ChartFieldField = ({
   dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartFieldField({
-    componentIri,
     field,
-    dataSetMetadata
+    dataSetMetadata,
+  });
+
+  return (
+    <I18n>
+      {({ i18n }) => {
+        const noneLabel = i18n._(t("controls.dimension.none")`None`);
+        return (
+          <Select
+            key={`select-${field}-dimension`}
+            id={field}
+            label={label}
+            disabled={disabled}
+            options={
+              optional
+                ? [
+                    {
+                      value: FIELD_VALUE_NONE,
+                      label: noneLabel,
+                    },
+                    ...options,
+                  ]
+                : options
+            }
+            {...fieldProps}
+          ></Select>
+        );
+      }}
+    </I18n>
+  );
+};
+
+export const ChartOptionSelectField = ({
+  label,
+  field,
+  path,
+  options,
+  disabled = false,
+}: {
+  label: string;
+  field: string;
+  path: string;
+  options: Option[];
+  disabled?: boolean;
+}) => {
+  const fieldProps = useChartOptionSelectField({
+    field,
+    path,
   });
 
   return (
     <Select
-      key={`select-${field}-dimension`}
+      key={`select-${field}-${path}`}
       id={field}
       label={label}
       disabled={disabled}
-      options={
-        optional
-          ? [{ value: FIELD_VALUE_NONE, label: "None" }, ...options]
-          : options
-      }
+      options={options}
       {...fieldProps}
     ></Select>
   );
 };
 
-export const ChartOptionField = ({
+export const ChartOptionRadioField = ({
   label,
   field,
   path,
   value,
-  disabled = false
+  disabled = false,
 }: {
-  label: string;
+  label: string | React.ReactNode;
   field: string;
   path: string;
   value: string;
   disabled?: boolean;
 }) => {
-  const fieldProps = useChartOptionField({
+  const fieldProps = useChartOptionRadioField({
     path,
     field,
-    label,
-    value
+    value,
   });
 
-  return (
-    <Radio
-      disabled={disabled}
-      label={getFieldLabel(label)}
-      {...fieldProps}
-    ></Radio>
-  );
+  return <Radio disabled={disabled} label={label} {...fieldProps}></Radio>;
 };
-
 export const ChartTypeSelectorField = ({
   label,
   value,
@@ -320,7 +358,7 @@ export const ChartTypeSelectorField = ({
 }) => {
   const field = useChartTypeSelectorField({
     value,
-    metaData
+    metaData,
   });
 
   return (

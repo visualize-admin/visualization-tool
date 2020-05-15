@@ -1,4 +1,12 @@
-import { ascending, extent, group, max } from "d3-array";
+import {
+  ascending,
+  extent,
+  group,
+  max,
+  descending,
+  rollup,
+  sum,
+} from "d3-array";
 import {
   ScaleLinear,
   scaleLinear,
@@ -7,7 +15,13 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3-scale";
-import { stack, stackOrderNone } from "d3-shape";
+import {
+  stack,
+  stackOrderNone,
+  stackOffsetDiverging,
+  stackOrderAscending,
+  stackOrderDescending,
+} from "d3-shape";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
 import { AreaFields, Observation } from "../../../domain";
@@ -22,9 +36,9 @@ import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { useTheme } from "../../../themes";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { LEFT_MARGIN_OFFSET } from "../constants";
+import { sortByIndex } from "../../../lib/array";
 
 export interface AreasState {
   data: Observation[];
@@ -52,9 +66,9 @@ const useAreasState = ({
   fields: AreaFields;
   aspectRatio: number;
 }): AreasState => {
-  const theme = useTheme();
-
   const width = useWidth();
+
+  const hasSegment = fields.segment;
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
@@ -66,12 +80,8 @@ const useAreasState = ({
   const getSegment = (d: Observation): string =>
     fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
 
-  const yAxisLabel =
-    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
-    fields.y.componentIri;
-
-  const segments = Array.from(new Set(data.map((d) => getSegment(d))));
-
+  // data / groups for stack
+  // Always sort by x first (TemporalDimension)
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
 
@@ -79,7 +89,6 @@ const useAreasState = ({
   );
 
   const xKey = fields.x.componentIri;
-
   const wide: { [key: string]: number | string }[] = [];
   const groupedMap = group(sortedData, getGroups);
 
@@ -103,11 +112,53 @@ const useAreasState = ({
     });
   }
 
+  const yAxisLabel =
+    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
+    fields.y.componentIri;
+
+  // ordered segments
+  const segmentSortingType = fields.segment?.sorting?.sortingType;
+  const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
+
+  const segmentsOrderedByName = Array.from(
+    new Set(sortedData.map((d) => getSegment(d)))
+  ).sort((a, b) =>
+    segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
+  );
+
+  const segmentsOrderedByTotalValue = [
+    ...rollup(
+      sortedData,
+      (v) => sum(v, (x) => getY(x)),
+      (x) => getSegment(x)
+    ),
+  ]
+    .sort((a, b) =>
+      segmentSortingOrder === "asc"
+        ? ascending(a[1], b[1])
+        : descending(a[1], b[1])
+    )
+    .map((d) => d[0]);
+
+  const segments =
+    segmentSortingType === "byDimensionLabel"
+      ? segmentsOrderedByName
+      : segmentsOrderedByTotalValue;
+
   const maxTotal = max<$FixMe, number>(wide, (d) => d.total) as number;
   const yDomain = [0, maxTotal] as [number, number];
 
+  // stack order
+  const stackOrder =
+    segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
+      ? stackOrderAscending
+      : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
+      ? stackOrderDescending
+      : stackOrderNone;
+  // Sstack logic
   const stacked = stack()
-    .order(stackOrderNone)
+    .order(stackOrder)
+    .offset(stackOffsetDiverging)
     .keys(segments);
   const series = stacked(wide as { [key: string]: number }[]);
 
@@ -155,18 +206,22 @@ const useAreasState = ({
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): Tooltip => {
-    const datumIndex = wide.findIndex(
-      (w) => getX(w).getTime() === getX(datum).getTime()
-    );
-
     const xAnchor = xScale(getX(datum));
 
-    const tooltipValues = data.filter(
+    const tooltipValues = sortedData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
-
+    const sortedTooltipValues = sortByIndex({
+      data: tooltipValues,
+      order: segments,
+      getCategory: getSegment,
+      // Always descending to match visual order of colors of the stack
+      sortOrder: "desc",
+    });
     const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
-    const cumulativeRulerItemValues = [...tooltipValues.map(cumulativeSum)];
+    const cumulativeRulerItemValues = [
+      ...sortedTooltipValues.map(cumulativeSum),
+    ];
 
     const yAnchor = yScale(
       cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1]
@@ -187,19 +242,17 @@ const useAreasState = ({
       placement: { x: xPlacement, y: yPlacement },
       xValue: formatDateAuto(getX(datum)),
       datum: {
-        label: fields.segment && getSegment(datum),
+        label: hasSegment ? getSegment(datum) : undefined,
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
-      values: series.map((serie) => ({
-        label: serie.key,
-        value: formatNumber(serie[datumIndex].data[serie.key]),
-        color:
-          segments.length > 1
-            ? (colors(serie.key) as string)
-            : theme.colors.primary,
-        yPos: yScale(serie[datumIndex][1]),
-      })),
+      values: hasSegment
+        ? sortedTooltipValues.map((td) => ({
+            label: getSegment(td),
+            value: formatNumber(getY(td)),
+            color: colors(getSegment(td)) as string,
+          }))
+        : undefined,
     };
   };
 

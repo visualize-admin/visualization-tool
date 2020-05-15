@@ -2,11 +2,10 @@ import React, { useMemo } from "react";
 import { Button, Flex, Text, Box } from "@theme-ui/components";
 import {
   useConfiguratorState,
-  ConfiguratorStateAction
+  ConfiguratorStateAction,
 } from "../domain/configurator-state";
 import { Icon } from "../icons";
 import { Trans } from "@lingui/macro";
-import { theme } from "../themes/federal";
 import { useTheme } from "../themes";
 
 export type StepStatus = "past" | "current" | "future";
@@ -20,7 +19,7 @@ const steps: Array<StepState> = [
   "SELECTING_DATASET",
   "SELECTING_CHART_TYPE",
   "CONFIGURING_CHART",
-  "DESCRIBING_CHART"
+  "DESCRIBING_CHART",
 ];
 
 export const Stepper = () => {
@@ -38,14 +37,14 @@ export const Stepper = () => {
           borderBottomWidth: "1px",
           borderBottomStyle: "solid",
           borderBottomColor: "monochrome500",
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         <Flex
           sx={{
             position: "relative",
             justifyContent: "center",
-            alignItems: "flex-start"
+            alignItems: "flex-start",
           }}
         >
           <Box
@@ -58,7 +57,7 @@ export const Stepper = () => {
               borderBottomWidth: "1px",
               borderBottomStyle: "solid",
               borderBottomColor: "monochrome300",
-              zIndex: 3
+              zIndex: 3,
             }}
           />
           {steps.map((step, i) => (
@@ -86,7 +85,7 @@ export const Step = ({
   stepState,
   stepNumber,
   status,
-  dispatch
+  dispatch,
 }: {
   stepState: StepState;
   stepNumber: number;
@@ -98,7 +97,7 @@ export const Step = ({
     if (status === "past" && dispatch) {
       dispatch({
         type: "STEP_PREVIOUS",
-        to: stepState
+        to: stepState,
       });
     }
   }, [status, stepState, dispatch]);
@@ -114,7 +113,7 @@ export const Step = ({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        cursor: status === "past" ? "pointer" : undefined
+        cursor: status === "past" ? "pointer" : undefined,
       }}
       disabled={status !== "past"}
       onClick={onClick}
@@ -126,7 +125,7 @@ export const Step = ({
           zIndex: 5,
           justifyContent: "center",
           alignItems: "center",
-          px: 4
+          px: 4,
         }}
       >
         <Flex
@@ -145,7 +144,7 @@ export const Step = ({
                 ? "monochrome800"
                 : status === "current"
                 ? "brand"
-                : "monochrome600"
+                : "monochrome600",
           }}
         >
           {status === "past" ? (
@@ -163,7 +162,7 @@ export const Step = ({
 
 export const StepLabel = ({
   stepState,
-  highlight
+  highlight,
 }: {
   stepState: StepState;
   highlight: boolean;
@@ -174,7 +173,7 @@ export const StepLabel = ({
         <Text
           sx={{
             color: highlight ? "monochrome800" : "monochrome700",
-            fontWeight: highlight ? "bold" : "regular"
+            fontWeight: highlight ? "bold" : "regular",
           }}
           variant="paragraph2"
         >
@@ -186,7 +185,7 @@ export const StepLabel = ({
         <Text
           sx={{
             color: highlight ? "monochrome800" : "monochrome700",
-            fontWeight: highlight ? "bold" : "regular"
+            fontWeight: highlight ? "bold" : "regular",
           }}
           variant="paragraph2"
         >
@@ -198,7 +197,7 @@ export const StepLabel = ({
         <Text
           sx={{
             color: highlight ? "monochrome800" : "monochrome700",
-            fontWeight: highlight ? "bold" : "regular"
+            fontWeight: highlight ? "bold" : "regular",
           }}
           variant="paragraph2"
         >
@@ -210,7 +209,7 @@ export const StepLabel = ({
         <Text
           sx={{
             color: highlight ? "monochrome800" : "monochrome700",
-            fontWeight: highlight ? "bold" : "regular"
+            fontWeight: highlight ? "bold" : "regular",
           }}
           variant="paragraph2"
         >

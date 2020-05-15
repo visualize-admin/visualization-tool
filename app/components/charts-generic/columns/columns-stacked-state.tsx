@@ -1,4 +1,4 @@
-import { ascending, group, max, min } from "d3-array";
+import { ascending, group, max, min, descending, rollup, sum } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -7,10 +7,20 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3-scale";
-import { stack, stackOffsetDiverging } from "d3-shape";
+import {
+  stack,
+  stackOffsetDiverging,
+  stackOrderAscending,
+  stackOrderDescending,
+  stackOrderNone,
+} from "d3-shape";
 import * as React from "react";
-import { ReactNode } from "react";
-import { ColumnFields, Observation, ObservationValue } from "../../../domain";
+import { ReactNode, useMemo, useCallback } from "react";
+import {
+  ColumnFields,
+  SortingOrder,
+  SortingType,
+} from "../../../domain/config-types";
 import { formatNumber, getPalette, isNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
@@ -19,6 +29,8 @@ import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
+import { sortByIndex } from "../../../lib/array";
+import { ObservationValue, Observation } from "../../../domain/data";
 
 export interface StackedColumnsState {
   sortedData: Observation[];
@@ -35,7 +47,7 @@ export interface StackedColumnsState {
   wide: Record<string, ObservationValue>[];
   grouped: [string, Record<string, ObservationValue>[]][];
   series: $FixMe[];
-  getAnnotationInfo: (d: Observation) => Tooltip;
+  getAnnotationInfo: (d: Observation, orderedSegments: string[]) => Tooltip;
 }
 
 const useColumnsStackedState = ({
@@ -49,34 +61,26 @@ const useColumnsStackedState = ({
 }): StackedColumnsState => {
   const width = useWidth();
 
-  const getX = (d: Observation): string => d[fields.x.componentIri] as string;
-  const getY = (d: Observation): number => +d[fields.y.componentIri];
-  const getSegment = (d: Observation): string =>
-    d[fields.segment!.componentIri] as string;
-
-  const sortedData = [...data].sort((a, b) => ascending(getX(a), getX(b)));
-
-  // segments
-  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
+  const getX = useCallback(
+    (d: Observation): string => d[fields.x.componentIri] as string,
+    [fields.x.componentIri]
+  );
+  const getY = useCallback(
+    (d: Observation): number => +d[fields.y.componentIri],
+    [fields.y.componentIri]
+  );
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      fields.segment && fields.segment.componentIri
+        ? (d[fields.segment.componentIri] as string)
+        : "segment",
+    [fields.segment]
   );
 
-  // x
-  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
-  const xScale = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(PADDING_INNER)
-    .paddingOuter(PADDING_OUTER);
-  const xScaleInteraction = scaleBand()
-    .domain(bandDomain)
-    .paddingInner(0)
-    .paddingOuter(0);
-
-  // y
+  // data / groups for stack
   const xKey = fields.x.componentIri;
   const wide: Record<string, ObservationValue>[] = [];
-  const groupedMap = group(sortedData, getX);
+  const groupedMap = group(data, getX);
   for (const [key, values] of groupedMap) {
     const keyObject = values.reduce<{ [k: string]: number | string }>(
       (obj, cur) => {
@@ -96,6 +100,73 @@ const useColumnsStackedState = ({
       [xKey]: key,
     });
   }
+
+  // Sort
+  const sortingType = fields.x.sorting?.sortingType;
+  const sortingOrder = fields.x.sorting?.sortingOrder;
+
+  const xOrder = wide
+    .sort((a, b) => ascending(a.total, b.total))
+    .map((d, i) => getX(d));
+
+  const sortedData = useMemo(
+    () =>
+      sortData({
+        data,
+        getX,
+        getY,
+        sortingType,
+        sortingOrder,
+        xOrder,
+      }),
+    [data, getX, getY, sortingType, sortingOrder, xOrder]
+  );
+
+  // ordered segments
+  const segmentSortingType = fields.segment?.sorting?.sortingType;
+  const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
+
+  const segmentsOrderedByName = Array.from(
+    new Set(sortedData.map((d) => getSegment(d)))
+  ).sort((a, b) =>
+    segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
+  );
+
+  const segmentsOrderedByTotalValue = [
+    ...rollup(
+      sortedData,
+      (v) => sum(v, (x) => getY(x)),
+      (x) => getSegment(x)
+    ),
+  ]
+    .sort((a, b) =>
+      segmentSortingOrder === "asc"
+        ? ascending(a[1], b[1])
+        : descending(a[1], b[1])
+    )
+    .map((d) => d[0]);
+
+  const segments =
+    segmentSortingType === "byDimensionLabel"
+      ? segmentsOrderedByName
+      : segmentsOrderedByTotalValue;
+
+  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
+    segments
+  );
+
+  // x
+  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
+  const xScale = scaleBand()
+    .domain(bandDomain)
+    .paddingInner(PADDING_INNER)
+    .paddingOuter(PADDING_OUTER);
+  const xScaleInteraction = scaleBand()
+    .domain(bandDomain)
+    .paddingInner(0)
+    .paddingOuter(0);
+
+  // y
   const minTotal = Math.min(
     min<$FixMe, number>(wide, (d) => d.total) as number,
     0
@@ -105,15 +176,29 @@ const useColumnsStackedState = ({
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
+
   const yScale = scaleLinear()
     .domain(yStackDomain)
     .nice();
 
-  // data
+  // stack order
+  const stackOrder =
+    segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
+      ? stackOrderAscending
+      : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
+      ? stackOrderDescending
+      : stackOrderNone;
+  // stack logic
   const stacked = stack()
+    .order(stackOrder)
     .offset(stackOffsetDiverging)
     .keys(segments);
-  const series = stacked(wide as { [key: string]: number }[]);
+
+  const series = stacked(
+    wide as {
+      [key: string]: number;
+    }[]
+  );
 
   // Dimensions
   const left = Math.max(
@@ -146,10 +231,20 @@ const useColumnsStackedState = ({
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
 
-    const tooltipValues = data.filter((j) => getX(j) === getX(datum));
+    const tooltipValues = sortedData.filter((j) => getX(j) === getX(datum));
+
+    const sortedTooltipValues = sortByIndex({
+      data: tooltipValues,
+      order: segments,
+      getCategory: getSegment,
+      // Always descending to match visual order of colors of the stack
+      sortOrder: "desc",
+    });
 
     const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
-    const cumulativeRulerItemValues = [...tooltipValues.map(cumulativeSum)];
+    const cumulativeRulerItemValues = [
+      ...sortedTooltipValues.map(cumulativeSum),
+    ];
 
     const yRef = yScale(
       Math.max(
@@ -198,7 +293,7 @@ const useColumnsStackedState = ({
         value: formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
-      values: tooltipValues.map((td) => ({
+      values: sortedTooltipValues.map((td) => ({
         label: getSegment(td),
         value: formatNumber(getY(td)),
         color: colors(getSegment(td)) as string,
@@ -272,4 +367,38 @@ export const StackedColumnsChart = ({
       </InteractionProvider>
     </Observer>
   );
+};
+
+const sortData = ({
+  data,
+  getX,
+  getY,
+  sortingType,
+  sortingOrder,
+  xOrder,
+}: {
+  data: Observation[];
+  getX: (d: Observation) => string;
+  getY: (d: Observation) => number;
+  sortingType: SortingType | undefined;
+  sortingOrder: SortingOrder | undefined;
+  xOrder: string[];
+}) => {
+  if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
+    return [...data].sort((a, b) => descending(getX(a), getX(b)));
+  } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  } else if (sortingType === "byMeasure") {
+    const sd = sortByIndex({
+      data,
+      order: xOrder,
+      getCategory: getX,
+      sortOrder: sortingOrder,
+    });
+
+    return sd;
+  } else {
+    // default to scending alphabetical
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  }
 };

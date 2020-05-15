@@ -1,8 +1,11 @@
-import { ChartType } from "./config-types";
+import { ChartType, SortingOrder } from "./config-types";
 
-// Control UI elements with chart options
+/**
+ * This module controls chart controls displayed in the UI.
+ * Related to config-types.ts.
+ */
 
-// FIXME: This should match graphQL Schema?
+// This should match graphQL Schema
 export type DimensionType =
   | "TemporalDimension"
   | "NominalDimension"
@@ -12,17 +15,23 @@ export type DimensionType =
 
 export type EncodingField = "x" | "y" | "segment";
 export type EncodingOption = "chartSubType" | "sorting" | "color";
+
 export type EncodingOptions =
   | undefined
   | {
       field: EncodingOption;
       values: string[] | { field: string; values?: string | string[] }[];
     }[];
+export type EncodingSortingOption = {
+  sortingType: "byDimensionLabel" | "byTotalSize" | "byMeasure";
+  sortingOrder: SortingOrder[];
+};
 export interface EncodingSpec {
   field: EncodingField;
   optional: boolean;
   values: DimensionType[];
   filters: boolean;
+  sorting?: EncodingSortingOption[]; // { field: string; values: string | string[] }[];
   options?: EncodingOptions;
 }
 export interface ChartSpec {
@@ -54,14 +63,9 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
-        options: [
-          {
-            field: "sorting",
-            values: [
-              { field: "byValue", values: ["y"] },
-              { field: "alphabetical", values: ["asc", "desc"] },
-            ],
-          },
+        sorting: [
+          { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
         ],
       },
       {
@@ -69,16 +73,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
+        sorting: [
+          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+        ],
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
           { field: "color", values: ["palette"] },
-          {
-            field: "sorting",
-            values: [
-              // { field: "byValue", values: ["y"] },
-              { field: "alphabetical", values: ["asc", "desc"] },
-            ],
-          },
         ],
       },
     ],
@@ -97,31 +98,19 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         values: ["Measure"],
         filters: false,
-        options: [
-          {
-            field: "sorting",
-            values: [
-              { field: "byValue", values: ["y"] },
-              { field: "alphabetical", values: ["asc", "desc"] },
-            ],
-          },
-        ],
       },
       {
         field: "segment",
         optional: true,
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
+        sorting: [
+          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+        ],
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
           { field: "color", values: ["palette"] },
-          {
-            field: "sorting",
-            values: [
-              // { field: "byValue", values: ["y"] },
-              { field: "alphabetical", values: ["asc", "desc"] },
-            ],
-          },
         ],
       },
     ],
@@ -141,17 +130,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         values: ["NominalDimension", "OrdinalDimension"],
         filters: true,
-        options: [
-          { field: "color", values: ["palette"] },
-          {
-            field: "sorting",
-            values: [
-              // { field: "byValue", values: ["y"] },
-              // { field: "variability", values: ["y"] },
-              { field: "alphabetical", values: ["asc", "desc"] },
-            ],
-          },
-        ],
+        // sorting: [
+        //   { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
+        //   { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+        // ],
+        options: [{ field: "color", values: ["palette"] }],
       },
     ],
   },
@@ -171,17 +154,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: true,
         values: ["NominalDimension", "OrdinalDimension"],
         filters: true,
-        options: [
-          { field: "color", values: ["palette"] },
-          {
-            field: "sorting",
-            values: [
-              // { field: "byValue", values: ["y"] },
-              // { field: "variability", values: ["y"] },
-              { field: "alphabetical", values: ["asc", "desc"] },
-            ],
-          },
+        sorting: [
+          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
         ],
+        options: [{ field: "color", values: ["palette"] }],
       },
     ],
   },
@@ -218,16 +195,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
         filters: true,
-        options: [
-          { field: "color", values: ["palette"] },
-          {
-            field: "sorting",
-            values: [
-              { field: "byValue", values: ["y"] },
-              { field: "alphabetical", values: ["asc", "desc"] },
-            ],
-          },
+        sorting: [
+          { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
+          { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
         ],
+        options: [{ field: "color", values: ["palette"] }],
       },
     ],
   },

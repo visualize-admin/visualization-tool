@@ -42,9 +42,10 @@ export const Label = ({
     {label && (
       <Box
         sx={{
-          maxWidth: "75%",
+          maxWidth: "90%",
           textAlign: "left",
           fontFamily: "body",
+          mr: 1,
         }}
       >
         {label}
@@ -123,7 +124,7 @@ export const Select = ({
 } & SelectProps) => (
   <Box sx={{ color: "monochrome700", pb: 2 }}>
     {label && (
-      <Label htmlFor={id} smaller>
+      <Label htmlFor={id} disabled={disabled} smaller>
         {label}
       </Label>
     )}
@@ -133,15 +134,21 @@ export const Select = ({
         fontSize: 4,
         bg: "monochrome100",
         p: 2,
+        color: disabled ? "monochrome600" : "monochrome700",
       }}
       id={id}
       name={id}
       onChange={onChange}
       value={value}
+      disabled={disabled}
     >
       {options.map((opt) => (
-        <option key={opt.value} value={opt.value || undefined}>
-          {opt.value ? opt.label : "None"}
+        <option
+          key={opt.value}
+          disabled={opt.disabled}
+          value={opt.value || undefined}
+        >
+          {opt.label}
         </option>
       ))}
     </RebassSelect>
@@ -190,7 +197,7 @@ export const MiniSelect = ({
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value || undefined}>
-          {opt.value ? opt.label : "None"}
+          {opt.label}
         </option>
       ))}
     </RebassSelect>

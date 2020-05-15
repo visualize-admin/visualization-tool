@@ -1,4 +1,4 @@
-import { max, min } from "d3-array";
+import { max, min, ascending } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import * as React from "react";
 import { ReactNode } from "react";
@@ -42,11 +42,16 @@ const useScatterplotState = ({
   const getY = (d: Observation): number => +d[fields.y.componentIri];
   const getSegment = (d: Observation): string =>
     fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
+
+  // Sort data by segment
+  const sortedData = data.sort((a, b) =>
+    ascending(getSegment(a), getSegment(b))
+  );
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.y.componentIri;
-  const xMinValue = Math.min(mkNumber(min(data, (d) => getX(d))), 0);
-  const xMaxValue = max(data, (d) => getX(d)) as number;
+  const xMinValue = Math.min(mkNumber(min(sortedData, (d) => getX(d))), 0);
+  const xMaxValue = max(sortedData, (d) => getX(d)) as number;
   const xDomain = [xMinValue, xMaxValue];
   const xScale = scaleLinear()
     .domain(xDomain)
@@ -55,16 +60,17 @@ const useScatterplotState = ({
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
-  const yMinValue = Math.min(mkNumber(min(data, (d) => getY(d))), 0);
-  const yMaxValue = max(data, getY) as number;
+  const yMinValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
+  const yMaxValue = max(sortedData, getY) as number;
   const yDomain = [yMinValue, yMaxValue];
   const yScale = scaleLinear()
     .domain(yDomain)
     .nice();
 
   const hasSegment = fields.segment ? true : false;
+  const segments = sortedData.map(getSegment);
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    data.map(getSegment)
+    segments
   );
 
   // Dimensions
@@ -110,6 +116,7 @@ const useScatterplotState = ({
         : yAnchor < chartHeight * 0.66
         ? "bottom"
         : "middle";
+
     return {
       xAnchor,
       yAnchor,
@@ -132,7 +139,7 @@ const useScatterplotState = ({
   };
 
   return {
-    data,
+    data: sortedData,
     bounds,
     getX,
     xScale,

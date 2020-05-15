@@ -35,7 +35,10 @@ export const getInitialConfig = ({
         chartType,
         filters: {},
         fields: {
-          x: { componentIri: dimensions[0].iri },
+          x: {
+            componentIri: dimensions[0].iri,
+            sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+          },
           y: { componentIri: measures[0].iri },
         },
       };
@@ -72,6 +75,7 @@ export const getInitialConfig = ({
           segment: {
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10",
+            sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
           },
         },
       };

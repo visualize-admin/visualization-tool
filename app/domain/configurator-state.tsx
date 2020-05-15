@@ -5,7 +5,7 @@ import {
   Dispatch,
   ReactNode,
   useContext,
-  useEffect
+  useEffect,
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
 import { createChartId } from "./chart-id";
@@ -18,7 +18,7 @@ import {
   ConfiguratorStateSelectingDataSet,
   decodeConfiguratorState,
   GenericFields,
-  FilterValueMultiValues
+  FilterValueMultiValues,
 } from "./config-types";
 import { getInitialConfig, getFieldComponentIris } from "./charts";
 import { useLocale } from "../lib/use-locale";
@@ -109,7 +109,7 @@ export const getLocalStorageKey = (chartId: string) =>
 const INITIAL_STATE: ConfiguratorState = {
   state: "INITIAL",
   dataSet: undefined,
-  activeField: undefined
+  activeField: undefined,
 };
 
 const emptyState: ConfiguratorStateSelectingDataSet = {
@@ -121,16 +121,16 @@ const emptyState: ConfiguratorStateSelectingDataSet = {
       de: "",
       fr: "",
       it: "",
-      en: ""
+      en: "",
     },
     description: {
       de: "",
       fr: "",
       it: "",
-      en: ""
-    }
+      en: "",
+    },
   },
-  activeField: undefined
+  activeField: undefined,
 };
 
 export const getFilterValue = (
@@ -156,7 +156,7 @@ const deriveFiltersFromFields = (
 
   const isField = (iri: string) => fieldDimensionIris.has(iri);
 
-  dimensions.forEach(dimension => {
+  dimensions.forEach((dimension) => {
     if (filters[dimension.iri] !== undefined) {
       // Fix wrong filter type
       if (isField(dimension.iri) && filters[dimension.iri].type === "single") {
@@ -168,7 +168,7 @@ const deriveFiltersFromFields = (
       ) {
         filters[dimension.iri] = {
           type: "single",
-          value: dimension.values[0].value
+          value: dimension.values[0].value,
         };
       }
     } else {
@@ -176,7 +176,7 @@ const deriveFiltersFromFields = (
       if (!isField(dimension.iri)) {
         filters[dimension.iri] = {
           type: "single",
-          value: dimension.values[0].value
+          value: dimension.values[0].value,
         };
       }
     }
@@ -195,7 +195,7 @@ const transitionStepNext = (
         const chartConfig = getInitialConfig({
           chartType: "column",
           dimensions: dataSetMetadata.dimensions,
-          measures: dataSetMetadata.measures
+          measures: dataSetMetadata.measures,
         });
 
         deriveFiltersFromFields(chartConfig, dataSetMetadata);
@@ -205,7 +205,7 @@ const transitionStepNext = (
           dataSet: draft.dataSet,
           meta: draft.meta,
           activeField: undefined,
-          chartConfig
+          chartConfig,
         };
       }
       break;
@@ -213,19 +213,19 @@ const transitionStepNext = (
       return {
         ...draft,
         activeField: undefined,
-        state: "CONFIGURING_CHART"
+        state: "CONFIGURING_CHART",
       };
     case "CONFIGURING_CHART":
       return {
         ...draft,
         activeField: undefined,
-        state: "DESCRIBING_CHART"
+        state: "DESCRIBING_CHART",
       };
     case "DESCRIBING_CHART":
       return {
         ...draft,
         activeField: undefined,
-        state: "PUBLISHING"
+        state: "PUBLISHING",
       };
     case "INITIAL":
     case "PUBLISHING":
@@ -293,25 +293,25 @@ const transitionStepPrevious = (
         ...draft,
         activeField: undefined,
         chartConfig: undefined,
-        state: stepTo
+        state: stepTo,
       };
     case "SELECTING_CHART_TYPE":
       return {
         ...draft,
         activeField: undefined,
-        state: stepTo
+        state: stepTo,
       };
     case "CONFIGURING_CHART":
       return {
         ...draft,
         activeField: undefined,
-        state: stepTo
+        state: stepTo,
       };
     case "DESCRIBING_CHART":
       return {
         ...draft,
         activeField: undefined,
-        state: stepTo
+        state: stepTo,
       };
     default:
       return draft;
@@ -329,6 +329,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
 ) => {
+  console.log(action.type);
   switch (action.type) {
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
@@ -346,7 +347,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         draft.chartConfig = getInitialConfig({
           chartType,
           dimensions: dataSetMetadata.dimensions,
-          measures: dataSetMetadata.measures
+          measures: dataSetMetadata.measures,
         });
         draft.activeField = undefined;
 
@@ -369,10 +370,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ];
         if (!f) {
           if (action.value.field === "segment") {
+            // FIXME: This should be more chart specific
+            // (no "stacked" for scatterplots for instance)
             draft.chartConfig.fields.segment = {
               componentIri: action.value.componentIri,
               palette: "category10",
-              type: "stacked"
+              type: "stacked",
+              sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
             };
           }
         } else {
@@ -426,7 +430,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const { dimensionIri, value } = action.value;
         draft.chartConfig.filters[dimensionIri] = {
           type: "multi",
-          values: { [value]: true }
+          values: { [value]: true },
         };
       }
       return draft;
@@ -438,13 +442,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         if (f && f.type === "multi") {
           f.values = { ...f.values, [value]: true };
           // If all values are selected, we remove the filter again!
-          if (allValues.every(v => v in f.values)) {
+          if (allValues.every((v) => v in f.values)) {
             delete draft.chartConfig.filters[dimensionIri];
           }
         } else {
           draft.chartConfig.filters[dimensionIri] = {
             type: "multi",
-            values: { [value]: true }
+            values: { [value]: true },
           };
         }
       }
@@ -471,7 +475,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           );
           draft.chartConfig.filters[dimensionIri] = {
             type: "multi",
-            values
+            values,
           };
         }
       }
@@ -489,7 +493,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const { dimensionIri } = action.value;
         draft.chartConfig.filters[dimensionIri] = {
           type: "multi",
-          values: {}
+          values: {},
         };
       }
       return draft;
@@ -523,7 +527,7 @@ const ConfiguratorStateContext = createContext<
 const ConfiguratorStateProviderInternal = ({
   chartId,
   children,
-  initialState = INITIAL_STATE
+  initialState = INITIAL_STATE,
 }: {
   key: string;
   chartId: string;
@@ -542,9 +546,9 @@ const ConfiguratorStateProviderInternal = ({
     const initialize = async () => {
       try {
         if (chartId === "new" && query.from) {
-          const config = await fetch(`/api/config/${query.from}`).then(result =>
-            result.json()
-          );
+          const config = await fetch(
+            `/api/config/${query.from}`
+          ).then((result) => result.json());
           if (config && config.data) {
             const { dataSet, meta, chartConfig } = config.data;
             stateToInitialize = {
@@ -552,7 +556,7 @@ const ConfiguratorStateProviderInternal = ({
               dataSet,
               meta,
               chartConfig,
-              activeField: undefined
+              activeField: undefined,
             };
           }
         }
@@ -616,7 +620,7 @@ const ConfiguratorStateProviderInternal = ({
               await push(
                 {
                   pathname: `/[locale]/v/[chartId]`,
-                  query: { publishSuccess: true }
+                  query: { publishSuccess: true },
                 },
                 `/${locale}/v/${result.key}`
               );
@@ -646,20 +650,20 @@ const save = async (state: ConfiguratorStatePublishing): Promise<ReturnVal> => {
   return fetch("/api/config", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       dataSet: state.dataSet,
       meta: state.meta,
-      chartConfig: state.chartConfig
-    })
-  }).then(res => res.json());
+      chartConfig: state.chartConfig,
+    }),
+  }).then((res) => res.json());
 };
 
 export const ConfiguratorStateProvider = ({
   chartId,
   children,
-  initialState
+  initialState,
 }: {
   chartId: string;
   children?: ReactNode;

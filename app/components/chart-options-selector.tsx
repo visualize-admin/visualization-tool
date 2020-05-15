@@ -1,37 +1,45 @@
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { Box, Flex } from "@theme-ui/components";
+import get from "lodash/get";
 import React, { useEffect, useRef } from "react";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  getFieldComponentIri,
   getDimensionsByDimensionType,
+  getFieldComponentIri,
+  SortingType,
 } from "../domain";
+import {
+  chartConfigOptionsUISpec,
+  EncodingField,
+  EncodingOptions,
+  EncodingSortingOption,
+  EncodingSpec,
+} from "../domain/chart-config-ui-options";
 import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
+import { ColorPalette } from "./chart-controls/color-palette";
 import {
-  SectionTitle,
-  ControlSectionContent,
   ControlSection,
+  ControlSectionContent,
+  SectionTitle,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
-import { ChartFieldField, ChartOptionField } from "./field";
+import {
+  ChartFieldField,
+  ChartOptionRadioField,
+  ChartOptionSelectField,
+} from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
-import { ColorPalette } from "./chart-controls/color-palette";
-import {
-  chartConfigOptionsUISpec,
-  EncodingSpec,
-  EncodingField,
-  EncodingOptions,
-} from "../domain/chart-config-ui-options";
+import { I18n } from "@lingui/react";
 
 export const ChartOptionsSelector = ({
   state,
@@ -91,12 +99,12 @@ const ActiveFieldSwitch = ({
   );
 
   // It's a dimension which is not mapped to an encoding field, so we show the filter!
-  // FIXME: activeField and encodingField should match? remove type assertion
+  // FIXME: activeField and encodingField should match? to remove type assertion
   if (
     !encodings.map((e) => e.field).includes(activeField as EncodingField) &&
     !activeFieldComponentIri
   ) {
-    return <Filter state={state} metaData={metaData} />;
+    return <SingleFilter state={state} metaData={metaData} />;
   }
 
   const component = [...metaData.dimensions, ...metaData.measures].find(
@@ -106,6 +114,7 @@ const ActiveFieldSwitch = ({
   return (
     <EncodingOptionsPanel
       encoding={encoding}
+      state={state}
       field={activeField} // FIXME: or encoding.field?
       chartType={state.chartConfig.chartType}
       metaData={metaData}
@@ -116,12 +125,14 @@ const ActiveFieldSwitch = ({
 
 const EncodingOptionsPanel = ({
   encoding,
+  state,
   field,
   chartType,
   dimension,
   metaData,
 }: {
   encoding: EncodingSpec;
+  state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
   dimension: { iri: string; label: string } | undefined;
@@ -135,6 +146,15 @@ const EncodingOptionsPanel = ({
       panelRef.current.focus();
     }
   }, [field]);
+
+  const { fields } = state.chartConfig;
+  type AnyField = "y";
+  const otherFields = Object.keys(fields).filter(
+    (f) => fields[f as AnyField].hasOwnProperty("componentIri") && field !== f
+  );
+  const otherFieldsIris = otherFields.map(
+    (f) => fields[f as AnyField].componentIri
+  );
 
   return (
     <div
@@ -161,6 +181,7 @@ const EncodingOptionsPanel = ({
             }).map((dimension) => ({
               value: dimension.iri,
               label: dimension.label,
+              disabled: otherFieldsIris.includes(dimension.iri),
             }))}
             dataSetMetadata={metaData}
           />
@@ -174,6 +195,16 @@ const EncodingOptionsPanel = ({
           )}
         </ControlSectionContent>
       </ControlSection>
+
+      {encoding.sorting && (
+        <ChartFieldSorting
+          state={state}
+          disabled={!dimension}
+          field={encoding.field}
+          encodingSortingOptions={encoding.sorting}
+          // chartType={chartType}
+        />
+      )}
 
       {encoding.filters && (
         <ControlSection>
@@ -198,7 +229,96 @@ const EncodingOptionsPanel = ({
   );
 };
 
-const Filter = ({
+const ChartFieldSorting = ({
+  state,
+  field,
+  encodingSortingOptions,
+  disabled = false,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  field: string;
+  encodingSortingOptions: EncodingSortingOption[];
+  disabled?: boolean;
+}) => {
+  const activeSortingType = get(
+    state,
+    ["chartConfig", "fields", field, "sorting", "sortingType"],
+    ""
+  );
+
+  const sortingOrderOptions = encodingSortingOptions.find(
+    (o) => o.sortingType === activeSortingType
+  )?.sortingOrder;
+
+  return (
+    <ControlSection>
+      <SectionTitle disabled={disabled} iconName="sort">
+        <Trans id="controls.section.sorting">Sort</Trans>
+      </SectionTitle>
+      <ControlSectionContent side="right" as="fieldset">
+        <Box>
+          <I18n>
+            {({ i18n }) => {
+              const getSortingTypeLabel = (type: SortingType) => {
+                switch (type) {
+                  case "byDimensionLabel":
+                    return i18n._(t("controls.sorting.byDimensionLabel")`Name`);
+                  case "byMeasure":
+                    return i18n._(t("controls.sorting.byMeasure")`Measure`);
+                  case "byTotalSize":
+                    return i18n._(
+                      t("controls.sorting.byTotalSize")`Total size`
+                    );
+                  default:
+                    return i18n._(t("controls.sorting.byDimensionLabel")`Name`);
+                }
+              };
+              return (
+                <ChartOptionSelectField
+                  label="Sort by"
+                  field={field}
+                  path="sorting.sortingType"
+                  options={encodingSortingOptions
+                    ?.map((s) => s.sortingType)
+                    .map((opt) => ({
+                      value: opt,
+                      label: getSortingTypeLabel(opt),
+                    }))}
+                  disabled={disabled}
+                />
+              );
+            }}
+          </I18n>
+        </Box>
+        <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
+          {sortingOrderOptions &&
+            sortingOrderOptions.map((opt) => {
+              const subType = get(
+                state,
+                ["chartConfig", "fields", "segment", "type"],
+                ""
+              );
+              const chartSubType = `${state.chartConfig.chartType}.${subType}`;
+              return (
+                <ChartOptionRadioField
+                  key={opt}
+                  label={getFieldLabel(
+                    `${chartSubType}.${activeSortingType}.${opt}`
+                  )}
+                  field={field}
+                  path="sorting.sortingOrder"
+                  value={opt}
+                  disabled={disabled}
+                />
+              );
+            })}
+        </Flex>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const SingleFilter = ({
   state,
   metaData,
 }: {
@@ -258,7 +378,6 @@ const ChartFieldOptions = ({
   return (
     <>
       {/* FIXME: improve use of encodingOptions to get chart options */}
-      {/* TODO: Add sorting options */}
       {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
         chartType === "column" && (
           <Box as="fieldset" mt={2}>
@@ -268,14 +387,14 @@ const ChartFieldOptions = ({
               }
             />
             <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-              <ChartOptionField
+              <ChartOptionRadioField
                 label="stacked"
                 field={field}
                 path="type"
                 value={"stacked"}
                 disabled={disabled}
               />
-              <ChartOptionField
+              <ChartOptionRadioField
                 label="grouped"
                 field={field}
                 path="type"
@@ -285,6 +404,7 @@ const ChartFieldOptions = ({
             </Flex>
           </Box>
         )}
+
       {encodingOptions?.map((e) => e.field).includes("color") && (
         <ColorPalette disabled={disabled} field={field}></ColorPalette>
       )}

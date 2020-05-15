@@ -1,4 +1,4 @@
-import { arc, pie, PieArcDatum } from "d3-shape";
+import { arc, PieArcDatum } from "d3-shape";
 import * as React from "react";
 import { Observation } from "../../../domain";
 import { useChartState } from "../use-chart-state";
@@ -6,12 +6,16 @@ import { useInteraction } from "../use-interaction";
 import { PieState } from "./pie-state";
 
 export const Pie = () => {
-  const { data, getY, getX, colors, bounds } = useChartState() as PieState;
+  const {
+    sortedData,
+    getPieData,
+    getX,
+    colors,
+    bounds,
+  } = useChartState() as PieState;
   const { width, height, chartWidth, chartHeight } = bounds;
 
-  const getPieData = pie<Observation>().value(d => getY(d));
-
-  const arcs = getPieData(data);
+  const arcs = getPieData(sortedData);
 
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 
@@ -40,7 +44,7 @@ const Arc = ({
   arcDatum,
   innerRadius,
   outerRadius,
-  color
+  color,
 }: {
   arcDatum: PieArcDatum<Observation>;
   innerRadius: number;
@@ -60,14 +64,14 @@ const Arc = ({
       value: {
         annotation: {
           visible: true,
-          d: (d as unknown) as Observation // FIXME
-        }
-      }
+          d: (d as unknown) as Observation, // FIXME
+        },
+      },
     });
   };
   const handleMouseLeave = () => {
     dispatch({
-      type: "ANNOTATION_HIDE"
+      type: "ANNOTATION_HIDE",
     });
   };
   return (

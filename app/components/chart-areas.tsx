@@ -18,7 +18,6 @@ import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Loading, NoDataHint } from "./hint";
-import { HoverDotMultiple } from "./charts-generic/annotations/hover-dots-multiple";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
@@ -94,7 +93,6 @@ export const ChartAreas = memo(
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
-          <HoverDotMultiple />
         </ChartContainer>
         {fields.segment && <LegendColor symbol="square" />}
       </AreaChart>

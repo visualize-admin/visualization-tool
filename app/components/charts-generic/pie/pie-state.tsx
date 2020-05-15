@@ -1,17 +1,51 @@
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
-import { arc, PieArcDatum } from "d3-shape";
+import { arc, PieArcDatum, pie, Pie } from "d3-shape";
 import * as React from "react";
-import { ReactNode } from "react";
-import { Observation, PieFields } from "../../../domain";
+import { ReactNode, useMemo, useCallback } from "react";
+import {
+  Observation,
+  PieFields,
+  SortingType,
+  SortingOrder,
+} from "../../../domain";
 import { formatNumber, getPalette } from "../../../domain/helpers";
 import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
+import { descending, ascending } from "d3-array";
+
+const sortData = ({
+  data,
+  getX,
+  getY,
+  sortingType,
+  sortingOrder,
+}: {
+  data: Observation[];
+  getX: (d: Observation) => string;
+  getY: (d: Observation) => number;
+  sortingType?: SortingType;
+  sortingOrder?: SortingOrder;
+}) => {
+  if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
+    return [...data].sort((a, b) => descending(getX(a), getX(b)));
+  } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
+    return [...data].sort((a, b) => descending(getY(a), getY(b)));
+  } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
+    return [...data].sort((a, b) => ascending(getY(a), getY(b)));
+  } else {
+    // default to ascending byDimensionLabel
+    return [...data].sort((a, b) => ascending(getX(a), getX(b)));
+  }
+};
 
 export interface PieState {
-  data: Observation[];
   bounds: Bounds;
+  sortedData: Observation[];
+  getPieData: Pie<$IntentionalAny, Observation>;
   getY: (d: Observation) => number;
   getX: (d: Observation) => string;
   colors: ScaleOrdinal<string, string>;
@@ -29,12 +63,27 @@ const usePieState = ({
 }): PieState => {
   const width = useWidth();
 
-  const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
-  const getX = (d: Observation): string =>
-    d[fields.segment.componentIri] as string;
+  const getY = useCallback(
+    (d: Observation): number => +d[fields.y.componentIri] as number,
+    [fields.y.componentIri]
+  );
+  const getX = useCallback(
+    (d: Observation): string => d[fields.segment.componentIri] as string,
+    [fields.segment.componentIri]
+  );
 
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    data.map(getX)
+  // Sort data
+  const sortingType = fields.segment.sorting?.sortingType;
+  const sortingOrder = fields.segment.sorting?.sortingOrder;
+
+  // FIXME: We don't really need to sort data here (later sorted in pie())
+  // Currently useful to sort the legend items.
+  const sortedData = useMemo(() => {
+    return sortData({ data, sortingType, sortingOrder, getX, getY });
+  }, [data, getX, getY, sortingType, sortingOrder]);
+
+  const colors = scaleOrdinal(getPalette(fields.segment.palette)).domain(
+    sortedData.map(getX)
   );
 
   // Dimensions
@@ -63,6 +112,24 @@ const usePieState = ({
   const arcGenerator = arc<Observation, PieArcDatum<Observation>>()
     .innerRadius(innerRadius)
     .outerRadius(outerRadius);
+
+  // Pie data
+  const getPieData = pie<Observation>()
+    .value((d) => getY(d))
+    .sort((a, b) => {
+      if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
+        return descending(getX(a), getX(b));
+      } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
+        return ascending(getX(a), getX(b));
+      } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
+        return descending(getY(a), getY(b));
+      } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
+        return ascending(getY(a), getY(b));
+      } else {
+        // default to ascending byDimensionLabel
+        return ascending(getX(a), getX(b));
+      }
+    });
 
   // Tooltip
   const getAnnotationInfo = (arcDatum: PieArcDatum<Observation>): Tooltip => {
@@ -97,8 +164,9 @@ const usePieState = ({
     };
   };
   return {
-    data,
     bounds,
+    sortedData,
+    getPieData,
     getY,
     getX,
     colors,

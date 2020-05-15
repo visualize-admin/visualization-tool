@@ -6,6 +6,24 @@ msgstr ""
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: visualize.admin.ch\n"
 "Language: fr\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: app/components/chart-preview.tsx:32
+msgid "annotation.add.description"
+msgstr "[ Ajouter une description ici ]"
+
+#: app/components/chart-preview.tsx:26
+msgid "annotation.add.title"
+msgstr "[ Insérer un titre ici ]"
+
+#: app/pages/[locale]/v/[chartId].tsx:83
+msgid "button.copy.visualization"
+msgstr "Copier la visualisation"
 
 #: app/components/data-download.tsx:43
 msgid "button.download.data"
@@ -14,6 +32,15 @@ msgstr "Télécharger les données"
 #: app/components/publish-actions.tsx:134
 msgid "button.embed"
 msgstr "Intégrer"
+
+#: app/components/publish-actions.tsx:156
+#: app/components/publish-actions.tsx:159
+msgid "button.hint.click.to.copy"
+msgstr "Cliquer pour copier"
+
+#: app/components/publish-actions.tsx:182
+msgid "button.hint.copied"
+msgstr "Copié!"
 
 #: app/pages/[locale]/v/[chartId].tsx:78
 msgid "button.new.visualization"
@@ -39,23 +66,27 @@ msgstr "Partager"
 msgid "controls.axis.horizontal"
 msgstr "Axe horizontal"
 
-#: app/domain/helpers.tsx:93
+#: app/domain/helpers.tsx:129
 msgid "controls.chart.type.area"
 msgstr "Surfaces"
 
-#: app/domain/helpers.tsx:89
+#: app/domain/helpers.tsx:125
 msgid "controls.chart.type.bar"
 msgstr "Barres"
 
-#: app/domain/helpers.tsx:87
+#: app/domain/helpers.tsx:123
 msgid "controls.chart.type.column"
 msgstr "Colonnes"
 
-#: app/domain/helpers.tsx:91
+#: app/domain/helpers.tsx:127
 msgid "controls.chart.type.line"
 msgstr "Lignes"
 
-#: app/domain/helpers.tsx:95
+#: app/domain/helpers.tsx:133
+msgid "controls.chart.type.pie"
+msgstr "Secteurs"
+
+#: app/domain/helpers.tsx:131
 msgid "controls.chart.type.scatterplot"
 msgstr "Nuage de points"
 
@@ -75,160 +106,13 @@ msgstr "empilées"
 msgid "controls.description"
 msgstr "Description"
 
+#: app/components/field.tsx:114
+msgid "controls.dimension.none"
+msgstr ""
+
 #: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
 msgstr "Tout sélectionner"
-
-#: app/domain/helpers.tsx:75
-msgid "controls.measure"
-msgstr "Variable mesurée"
-
-#: app/components/chart-configurator.tsx:29
-msgid "controls.section.data"
-msgstr "Données"
-
-#: app/components/chart-annotator.tsx:8
-msgid "controls.section.description"
-msgstr "Annoter"
-
-#: app/components/chart-configurator.tsx:21
-msgid "controls.section.design"
-msgstr "Design"
-
-#: app/components/chart-options-selector.tsx:80
-#: app/components/chart-options-selector.tsx:84
-msgid "controls.section.filter"
-msgstr "Filtre"
-
-#: app/components/chart-type-selector.tsx:31
-#: app/components/chart-type-selector.tsx:34
-msgid "controls.select.chart.type"
-msgstr "Type de graphique"
-
-#: app/components/chart-options-selector.tsx:137
-msgid "controls.select.column.chart.type"
-msgstr "Type de graphique"
-
-#: app/components/chart-options-selector.tsx:70
-msgid "controls.select.dimension"
-msgstr "Sélectionner une dimension"
-
-#: app/components/chart-options-selector.tsx:103
-msgid "controls.select.measure"
-msgstr "Sélectionner une variable"
-
-#: app/domain/helpers.tsx:79
-msgid "controls.title"
-msgstr "Titre"
-
-#: app/components/dataset-preview.tsx:44
-msgid "datatable.showing.first.rows"
-msgstr "Seules les 10 premières lignes sont affichées"
-
-#: app/pages/[locale]/v/[chartId].tsx:69
-msgid "hint.create.your.own.chart"
-msgstr "Créez votre propre visualisation à partie de celle-ci en la copiant, ou bien créez une nouvelle visualization avec les données ouvertes de l'administration publique suisse."
-
-#: app/pages/[locale]/v/[chartId].tsx:65
-msgid "hint.how.to.share"
-msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intégrant sur votre site Web. Vous pouvez également créer une toute nouvelle visualisation, ou bien copier et modifier la visualisation ci-dessus."
-
-#: app/components/hint.tsx:55
-msgid "hint.loading.data"
-msgstr "Chargement des données..."
-
-#: app/components/chart-type-selector.tsx:38
-msgid "hint.no.visualization.with.dataset"
-msgstr "Aucune visualisation ne peut être créée avec le jeu de données sélectionné."
-
-#: app/components/hint.tsx:135
-msgid "hint.publication.success"
-msgstr "Votre visualisation est à présent publiée. Partagez-là en copiant l'URL ou en utilisant les options d'intégration."
-
-#: app/components/hint.tsx:71
-msgid "hint.select.dataset"
-msgstr "Sélectionner un jeu de données"
-
-#: app/components/hint.tsx:74
-msgid "hint.select.dataset.to.preview"
-msgstr "Sélectionner un jeu de données pour prévisualiser sa structure et son contenu."
-
-#: app/components/header.tsx:72
-#: app/components/header.tsx:83
-msgid "logo.swiss.confederation"
-msgstr "Logo de la Confédération Suisse"
-
-#: app/components/chart-footnotes.tsx:47
-msgid "metadata.dataset"
-msgstr "Jeu de données"
-
-#: app/components/chart-footnotes.tsx:35
-msgid "metadata.filter"
-msgstr "Filtres"
-
-#: app/components/chart-footnotes.tsx:52
-msgid "metadata.source"
-msgstr "Source"
-
-#: app/components/publish-actions.tsx:144
-msgid "publication.embed.AEM"
-msgstr "Code pour intégrer sur AEM comme \"External Application\":"
-
-#: app/components/publish-actions.tsx:139
-msgid "publication.embed.iframe"
-msgstr "Code pour intégrer:"
-
-#: app/components/publish-actions.tsx:95
-msgid "publication.popup.share"
-msgstr "Partager"
-
-#: app/components/publish-actions.tsx:109
-msgid "publication.share.chart.url"
-msgstr "URL du graphique:"
-
-#: app/components/publish-actions.tsx:102
-msgid "publication.share.mail.body"
-msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
-
-#: app/components/publish-actions.tsx:102
-msgid "publication.share.mail.subject"
-msgstr "visualize.admin.ch"
-
-#: app/components/stepper.tsx:124
-msgid "step.adjust"
-msgstr "Ajuster"
-
-#: app/components/stepper.tsx:131
-msgid "step.annotate"
-msgstr "Annoter"
-
-#: app/components/stepper.tsx:110
-msgid "step.dataset"
-msgstr "Données"
-
-#: app/components/stepper.tsx:117
-msgid "step.visualization.type"
-msgstr "Type de graphique"
-
-#: app/components/footer.tsx:35
-msgid "footer.institution.name"
-msgstr "Office fédéral de l'environnement OFEV"
-
-#: app/components/chart-preview.tsx:32
-msgid "annotation.add.description"
-msgstr "[ Ajouter une description ici ]"
-
-#: app/components/chart-preview.tsx:26
-msgid "annotation.add.title"
-msgstr "[ Insérer un titre ici ]"
-
-#: app/pages/[locale]/v/[chartId].tsx:83
-msgid "button.copy.visualization"
-msgstr "Copier la visualisation"
-
-#: app/domain/helpers.tsx:97
-msgid "controls.chart.type.pie"
-msgstr "Secteurs"
 
 #: app/components/filters.tsx:46
 msgid "controls.filter.select.none"
@@ -242,21 +126,25 @@ msgstr "Sélectionnez un élément de design ou une dimension du jeu de données
 msgid "controls.hint.describing.chart"
 msgstr "Sélectionnez une des annotations proposées pour la modifier."
 
-#: app/domain/helpers.tsx:99
+#: app/domain/helpers.tsx:135
 msgid "controls.language.english"
 msgstr "Anglais"
 
-#: app/domain/helpers.tsx:103
+#: app/domain/helpers.tsx:139
 msgid "controls.language.french"
 msgstr "Français"
 
-#: app/domain/helpers.tsx:101
+#: app/domain/helpers.tsx:137
 msgid "controls.language.german"
 msgstr "Allemand"
 
-#: app/domain/helpers.tsx:105
+#: app/domain/helpers.tsx:141
 msgid "controls.language.italian"
 msgstr "Italien"
+
+#: app/domain/helpers.tsx:75
+msgid "controls.measure"
+msgstr "Variable mesurée"
 
 #: app/domain/helpers.tsx:77
 msgid "controls.partition"
@@ -265,6 +153,98 @@ msgstr "Ventiler"
 #: app/components/chart-controls/control-tab.tsx:8
 msgid "controls.partition.add"
 msgstr "Ajouter..."
+
+#: app/components/form.tsx:109
+msgid "controls.search.clear"
+msgstr "Effacer la recherche"
+
+#: app/components/chart-configurator.tsx:30
+msgid "controls.section.data"
+msgstr "Données"
+
+#: app/components/chart-annotator.tsx:8
+msgid "controls.section.description"
+msgstr "Annoter"
+
+#: app/components/chart-configurator.tsx:22
+msgid "controls.section.design"
+msgstr "Design"
+
+#: app/components/chart-options-selector.tsx:91
+#: app/components/chart-options-selector.tsx:95
+msgid "controls.section.filter"
+msgstr "Filtre"
+
+#: app/components/chart-options-selector.tsx:108
+msgid "controls.section.sorting"
+msgstr ""
+
+#: app/components/chart-type-selector.tsx:31
+#: app/components/chart-type-selector.tsx:34
+msgid "controls.select.chart.type"
+msgstr "Type de graphique"
+
+#: app/components/chart-options-selector.tsx:174
+msgid "controls.select.column.chart.type"
+msgstr "Type de graphique"
+
+#: app/domain/helpers.tsx:147
+#: app/domain/helpers.tsx:149
+msgid "controls.select.dimension"
+msgstr "Sélectionner une dimension"
+
+#: app/domain/helpers.tsx:148
+msgid "controls.select.measure"
+msgstr "Sélectionner une variable"
+
+#: app/components/chart-options-selector.tsx:118
+#: app/components/chart-options-selector.tsx:124
+msgid "controls.sorting.byDimensionLabel"
+msgstr ""
+
+#: app/domain/helpers.tsx:91
+msgid "controls.sorting.byDimensionLabel.ascending"
+msgstr ""
+
+#: app/domain/helpers.tsx:97
+msgid "controls.sorting.byDimensionLabel.descending"
+msgstr ""
+
+#: app/components/chart-options-selector.tsx:120
+msgid "controls.sorting.byMeasure"
+msgstr ""
+
+#: app/domain/helpers.tsx:116
+msgid "controls.sorting.byMeasure.ascending"
+msgstr ""
+
+#: app/domain/helpers.tsx:121
+msgid "controls.sorting.byMeasure.descending"
+msgstr ""
+
+#: app/components/chart-options-selector.tsx:122
+msgid "controls.sorting.byTotalSize"
+msgstr ""
+
+#: app/domain/helpers.tsx:99
+msgid "controls.sorting.byTotalSize.ascending"
+msgstr ""
+
+#: app/domain/helpers.tsx:109
+msgid "controls.sorting.byTotalSize.largestBottom"
+msgstr ""
+
+#: app/domain/helpers.tsx:101
+msgid "controls.sorting.byTotalSize.largestFirst"
+msgstr ""
+
+#: app/domain/helpers.tsx:106
+msgid "controls.sorting.byTotalSize.largestTop"
+msgstr ""
+
+#: app/domain/helpers.tsx:79
+msgid "controls.title"
+msgstr "Titre"
 
 #: app/components/dataset-metadata.tsx:32
 msgid "dataset.metadata.date.created"
@@ -294,9 +274,37 @@ msgstr "Titre"
 msgid "dataset.results"
 msgstr "{0, plural, =0 {Aucun résultat} =1 {# résultat} other {# résultats}}"
 
+#: app/components/dataset-selector.tsx:49
+msgid "dataset.search.label"
+msgstr "Chercher un jeu de données"
+
 #: app/components/dataset-selector.tsx:87
 msgid "dataset.sortby"
 msgstr "Trier par"
+
+#: app/components/dataset-preview.tsx:44
+msgid "datatable.showing.first.rows"
+msgstr "Seules les 10 premières lignes sont affichées"
+
+#: app/components/footer.tsx:35
+msgid "footer.institution.name"
+msgstr "Office fédéral de l'environnement OFEV"
+
+#: app/pages/[locale]/v/[chartId].tsx:69
+msgid "hint.create.your.own.chart"
+msgstr "Créez votre propre visualisation à partie de celle-ci en la copiant, ou bien créez une nouvelle visualization avec les données ouvertes de l'administration publique suisse."
+
+#: app/pages/[locale]/v/[chartId].tsx:65
+msgid "hint.how.to.share"
+msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intégrant sur votre site Web. Vous pouvez également créer une toute nouvelle visualisation, ou bien copier et modifier la visualisation ci-dessus."
+
+#: app/components/hint.tsx:55
+msgid "hint.loading.data"
+msgstr "Chargement des données..."
+
+#: app/components/chart-type-selector.tsx:38
+msgid "hint.no.visualization.with.dataset"
+msgstr "Aucune visualisation ne peut être créée avec le jeu de données sélectionné."
 
 #: app/components/hint.tsx:96
 msgid "hint.nodata.message"
@@ -305,6 +313,63 @@ msgstr "Il n'y a pas de données correspondant aux filtres sélectionnés."
 #: app/components/hint.tsx:93
 msgid "hint.nodata.title"
 msgstr "Aucune donnée"
+
+#: app/components/hint.tsx:117
+msgid "hint.only.negative.data.message"
+msgstr "Ce type de graphique ne permet pas de représenter des données négatives."
+
+#: app/components/hint.tsx:114
+msgid "hint.only.negative.data.title"
+msgstr "Valeurs négatives"
+
+#: app/components/hint.tsx:137
+msgid "hint.publication.success"
+msgstr "Votre visualisation est à présent publiée. Partagez-là en copiant l'URL ou en utilisant les options d'intégration."
+
+#: app/components/hint.tsx:71
+msgid "hint.select.dataset"
+msgstr "Sélectionner un jeu de données"
+
+#: app/components/hint.tsx:74
+msgid "hint.select.dataset.to.preview"
+msgstr "Sélectionner un jeu de données pour prévisualiser sa structure et son contenu."
+
+#: app/components/header.tsx:72
+#: app/components/header.tsx:83
+msgid "logo.swiss.confederation"
+msgstr "Logo de la Confédération Suisse"
+
+#: app/components/chart-footnotes.tsx:47
+msgid "metadata.dataset"
+msgstr "Jeu de données"
+
+#: app/components/chart-footnotes.tsx:35
+msgid "metadata.filter"
+msgstr "Filtres"
+
+#: app/components/chart-footnotes.tsx:77
+msgid "metadata.link.created.with.visualize"
+msgstr "Créé avec visualize.admin.ch"
+
+#: app/components/chart-footnotes.tsx:52
+msgid "metadata.source"
+msgstr "Source"
+
+#: app/components/publish-actions.tsx:144
+msgid "publication.embed.AEM"
+msgstr "Code pour intégrer sur AEM comme \"External Application\":"
+
+#: app/components/publish-actions.tsx:139
+msgid "publication.embed.iframe"
+msgstr "Code pour intégrer:"
+
+#: app/components/publish-actions.tsx:95
+msgid "publication.popup.share"
+msgstr "Partager"
+
+#: app/components/publish-actions.tsx:109
+msgid "publication.share.chart.url"
+msgstr "URL du graphique:"
 
 #: app/components/publish-actions.tsx:100
 msgid "publication.share.linktitle.facebook"
@@ -318,36 +383,26 @@ msgstr "Partager par courriel"
 msgid "publication.share.linktitle.twitter"
 msgstr "Partager sur Twitter"
 
-#: app/components/publish-actions.tsx:156
-#: app/components/publish-actions.tsx:159
-msgid "button.hint.click.to.copy"
-msgstr "Cliquer pour copier"
+#: app/components/publish-actions.tsx:102
+msgid "publication.share.mail.body"
+msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
 
-#: app/components/publish-actions.tsx:182
-msgid "button.hint.copied"
-msgstr "Copié!"
+#: app/components/publish-actions.tsx:102
+msgid "publication.share.mail.subject"
+msgstr "visualize.admin.ch"
 
-#: app/components/dataset-selector.tsx:15
-msgid "controls.select.dataset"
-msgstr "Sélectionner un jeu de données"
+#: app/components/stepper.tsx:124
+msgid "step.adjust"
+msgstr "Ajuster"
 
-#: app/components/chart-footnotes.tsx:77
-msgid "metadata.link.created.with.visualize"
-msgstr "Créé avec visualize.admin.ch"
+#: app/components/stepper.tsx:131
+msgid "step.annotate"
+msgstr "Annoter"
 
-#: app/components/form.tsx:107
-msgid "controls.search.clear"
-msgstr "Effacer la recherche"
+#: app/components/stepper.tsx:110
+msgid "step.dataset"
+msgstr "Données"
 
-#: app/components/dataset-selector.tsx:49
-msgid "dataset.search.label"
-msgstr "Chercher un jeu de données"
-
-#: app/components/hint.tsx:117
-msgid "hint.only.negative.data.message"
-msgstr "Ce type de graphique ne permet pas de représenter des données négatives."
-
-#: app/components/hint.tsx:114
-msgid "hint.only.negative.data.title"
-msgstr "Valeurs négatives"
-
+#: app/components/stepper.tsx:117
+msgid "step.visualization.type"
+msgstr "Type de graphique"

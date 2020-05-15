@@ -20,7 +20,6 @@ import { ColumnChart } from "./charts-generic/columns/columns-state";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionColumns } from "./charts-generic/interaction/interaction-columns";
 import { LegendColor } from "./charts-generic/legends/color";
-import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 
 export const ChartColumnsVisualization = ({
@@ -84,7 +83,8 @@ export const ChartColumns = memo(
   }) => {
     return (
       <>
-        {fields.segment && fields.segment.type === "stacked" ? (
+        {/* FIXME: These checks should probably be handled somewhere else */}
+        {fields.segment?.componentIri && fields.segment.type === "stacked" ? (
           <StackedColumnsChart
             data={observations}
             fields={fields}
@@ -101,7 +101,8 @@ export const ChartColumns = memo(
             </ChartContainer>
             <LegendColor symbol="square" />
           </StackedColumnsChart>
-        ) : fields.segment && fields.segment.type === "grouped" ? (
+        ) : fields.segment?.componentIri &&
+          fields.segment.type === "grouped" ? (
           <GroupedColumnChart
             data={observations}
             fields={fields}
