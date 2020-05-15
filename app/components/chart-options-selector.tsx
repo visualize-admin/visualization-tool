@@ -40,7 +40,6 @@ import {
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
 import { I18n } from "@lingui/react";
-import { has } from "immer/dist/internal";
 
 export const ChartOptionsSelector = ({
   state,
