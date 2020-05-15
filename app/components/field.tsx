@@ -276,7 +276,13 @@ export const ChartFieldField = ({
             disabled={disabled}
             options={
               optional
-                ? [{ value: FIELD_VALUE_NONE, label: noneLabel }, ...options]
+                ? [
+                    {
+                      value: FIELD_VALUE_NONE,
+                      label: noneLabel,
+                    },
+                    ...options,
+                  ]
                 : options
             }
             {...fieldProps}

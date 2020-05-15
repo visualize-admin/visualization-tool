@@ -11,7 +11,11 @@ import { DataCubeMetadata } from "../graphql/types";
 //   name: HTMLInputElement["name"]
 //   onChange: [];
 // }
-export type Option = { value: string | $FixMe; label: string | $FixMe };
+export type Option = {
+  value: string | $FixMe;
+  label: string | $FixMe;
+  disabled?: boolean;
+};
 
 export type FieldProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,

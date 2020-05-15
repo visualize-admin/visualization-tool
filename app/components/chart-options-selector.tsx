@@ -40,6 +40,7 @@ import {
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
 import { I18n } from "@lingui/react";
+import { has } from "immer/dist/internal";
 
 export const ChartOptionsSelector = ({
   state,
@@ -147,6 +148,15 @@ const EncodingOptionsPanel = ({
     }
   }, [field]);
 
+  const { fields } = state.chartConfig;
+  type AnyField = "y";
+  const otherFields = Object.keys(fields).filter(
+    (f) => fields[f as AnyField].hasOwnProperty("componentIri") && field !== f
+  );
+  const otherFieldsIris = otherFields.map(
+    (f) => fields[f as AnyField].componentIri
+  );
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -172,6 +182,7 @@ const EncodingOptionsPanel = ({
             }).map((dimension) => ({
               value: dimension.iri,
               label: dimension.label,
+              disabled: otherFieldsIris.includes(dimension.iri),
             }))}
             dataSetMetadata={metaData}
           />

@@ -143,7 +143,11 @@ export const Select = ({
       disabled={disabled}
     >
       {options.map((opt) => (
-        <option key={opt.value} value={opt.value || undefined}>
+        <option
+          key={opt.value}
+          disabled={opt.disabled}
+          value={opt.value || undefined}
+        >
           {opt.label}
         </option>
       ))}
