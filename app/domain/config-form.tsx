@@ -114,12 +114,10 @@ export const useSingleFilterField = ({
 export const FIELD_VALUE_NONE = "FIELD_VALUE_NONE";
 
 export const useChartFieldField = ({
-  componentIri,
   field,
   dataSetMetadata,
 }: {
   field: string;
-  componentIri?: string;
   dataSetMetadata: DataCubeMetadata;
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();

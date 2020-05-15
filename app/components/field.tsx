@@ -260,7 +260,6 @@ export const ChartFieldField = ({
   dataSetMetadata: DataCubeMetadata;
 }) => {
   const fieldProps = useChartFieldField({
-    componentIri,
     field,
     dataSetMetadata,
   });
