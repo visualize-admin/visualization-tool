@@ -329,7 +329,7 @@ export const ChartOptionRadioField = ({
   value,
   disabled = false,
 }: {
-  label: string;
+  label: string | React.ReactNode;
   field: string;
   path: string;
   value: string;
@@ -341,13 +341,7 @@ export const ChartOptionRadioField = ({
     value,
   });
 
-  return (
-    <Radio
-      disabled={disabled}
-      label={getFieldLabel(label)}
-      {...fieldProps}
-    ></Radio>
-  );
+  return <Radio disabled={disabled} label={label} {...fieldProps}></Radio>;
 };
 export const ChartTypeSelectorField = ({
   label,

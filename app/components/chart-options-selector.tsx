@@ -282,16 +282,18 @@ const ChartFieldSorting = ({
         </Box>
         <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
           {sortingOrderOptions &&
-            sortingOrderOptions.map((opt) => (
-              <ChartOptionRadioField
-                key={opt}
-                label={`${activeSortingType}.${opt}`}
-                field={field}
-                path="sorting.sortingOrder"
-                value={opt}
-                disabled={disabled}
-              />
-            ))}
+            sortingOrderOptions.map((opt) => {
+              return (
+                <ChartOptionRadioField
+                  key={opt}
+                  label={getFieldLabel(`${activeSortingType}.${opt}`)}
+                  field={field}
+                  path="sorting.sortingOrder"
+                  value={opt}
+                  disabled={disabled}
+                />
+              );
+            })}
         </Flex>
       </ControlSectionContent>
     </ControlSection>
