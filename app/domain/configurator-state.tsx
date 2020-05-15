@@ -370,6 +370,8 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ];
         if (!f) {
           if (action.value.field === "segment") {
+            // FIXME: This should be more chart specific
+            // (no "stacked" for scatterplots for instance)
             draft.chartConfig.fields.segment = {
               componentIri: action.value.componentIri,
               palette: "category10",
