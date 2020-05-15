@@ -338,7 +338,6 @@ export const ChartOptionRadioField = ({
   const fieldProps = useChartOptionRadioField({
     path,
     field,
-    label,
     value,
   });
 

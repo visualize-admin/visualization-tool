@@ -196,12 +196,10 @@ export const useChartOptionSelectField = ({
 export const useChartOptionRadioField = ({
   field,
   path,
-  label,
   value,
 }: {
   field: string;
   path: string;
-  label: string;
   value: string;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
