@@ -116,27 +116,53 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
     case "grouped":
       return <Trans id="controls.column.grouped">Grouped</Trans>;
 
-    case "byDimensionLabel.asc":
+    case "column..byDimensionLabel.asc":
+    case "column.stacked.byDimensionLabel.asc":
+    case "column.grouped.byDimensionLabel.asc":
+    case "area.stacked.byDimensionLabel.asc":
+    case "pie..byDimensionLabel.asc":
       return (
         <Trans id="controls.sorting.byDimensionLabel.ascending">A → Z</Trans>
       );
-    case "byDimensionLabel.desc":
+    case "column..byDimensionLabel.desc":
+    case "column.stacked.byDimensionLabel.desc":
+    case "column.grouped.byDimensionLabel.desc":
+    case "area.stacked.byDimensionLabel.desc":
+    case "pie..byDimensionLabel.desc":
       return (
         <Trans id="controls.sorting.byDimensionLabel.descending">Z → A</Trans>
       );
-    case "byTotalSize.asc":
+    case "column.grouped.byTotalSize.asc":
       return (
         <Trans id="controls.sorting.byTotalSize.ascending">Largest last</Trans>
       );
-    case "byTotalSize.desc":
+    case "column.grouped.byTotalSize.desc":
       return (
-        <Trans id="controls.sorting.byTotalSize.descending">
+        <Trans id="controls.sorting.byTotalSize.largestFirst">
           Largest first
         </Trans>
       );
-    case "byMeasure.asc":
+    case "area.stacked.byTotalSize.asc":
+    case "column.stacked.byTotalSize.asc":
+      return (
+        <Trans id="controls.sorting.byTotalSize.largestTop">Largest top</Trans>
+      );
+    case "area.stacked.byTotalSize.desc":
+    case "column.stacked.byTotalSize.desc":
+      return (
+        <Trans id="controls.sorting.byTotalSize.largestBottom">
+          Largest bottom
+        </Trans>
+      );
+    case "column..byMeasure.asc":
+    case "column.stacked.byMeasure.asc":
+    case "column.grouped.byMeasure.asc":
+    case "pie..byMeasure.asc":
       return <Trans id="controls.sorting.byMeasure.ascending">1 → 9</Trans>;
-    case "byMeasure.desc":
+    case "column..byMeasure.desc":
+    case "column.stacked.byMeasure.desc":
+    case "column.grouped.byMeasure.desc":
+    case "pie..byMeasure.desc":
       return <Trans id="controls.sorting.byMeasure.descending">9 → 1</Trans>;
     case "column":
       return <Trans id="controls.chart.type.column">Columns</Trans>;

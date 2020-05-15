@@ -283,10 +283,18 @@ const ChartFieldSorting = ({
         <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
           {sortingOrderOptions &&
             sortingOrderOptions.map((opt) => {
+              const subType = get(
+                state,
+                ["chartConfig", "fields", "segment", "type"],
+                ""
+              );
+              const chartSubType = `${state.chartConfig.chartType}.${subType}`;
               return (
                 <ChartOptionRadioField
                   key={opt}
-                  label={getFieldLabel(`${activeSortingType}.${opt}`)}
+                  label={getFieldLabel(
+                    `${chartSubType}.${activeSortingType}.${opt}`
+                  )}
                   field={field}
                   path="sorting.sortingOrder"
                   value={opt}

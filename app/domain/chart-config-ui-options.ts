@@ -72,7 +72,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byTotalSize", sortingOrder: ["desc", "asc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
         ],
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
@@ -103,7 +103,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byTotalSize", sortingOrder: ["desc", "asc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
         ],
         options: [
           { field: "chartSubType", values: ["stacked", "grouped"] },
@@ -153,7 +153,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
-          { sortingType: "byTotalSize", sortingOrder: ["desc", "asc"] },
+          { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
         ],
         options: [{ field: "color", values: ["palette"] }],
       },
