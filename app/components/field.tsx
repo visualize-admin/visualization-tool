@@ -293,9 +293,6 @@ export const ChartFieldField = ({
   );
 };
 
-//----------------------------------------
-// FIXME: Can maybe be renamed ChartOptionSelectField
-// to make it reusable for any select menu changing an option.
 export const ChartOptionSelectField = ({
   label,
   field,
@@ -325,7 +322,6 @@ export const ChartOptionSelectField = ({
     ></Select>
   );
 };
-//----------------------------------------
 
 export const ChartOptionRadioField = ({
   label,

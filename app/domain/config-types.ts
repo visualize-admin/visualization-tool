@@ -161,7 +161,6 @@ const ColumnConfig = t.type(
     chartType: t.literal("column"),
     filters: Filters,
     fields: ColumnFields,
-    // FIXME: Should the sorting settings be at the ChartConfig level?
   },
   "ColumnConfig"
 );

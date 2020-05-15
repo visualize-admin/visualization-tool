@@ -1,8 +1,11 @@
 import { ChartType, SortingOrder } from "./config-types";
 
-// Control UI elements with chart options
+/**
+ * This module controls chart controls displayed in the UI.
+ * Related to config-types.ts.
+ */
 
-// FIXME: This should match graphQL Schema?
+// This should match graphQL Schema
 export type DimensionType =
   | "TemporalDimension"
   | "NominalDimension"

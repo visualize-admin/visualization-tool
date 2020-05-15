@@ -16,11 +16,8 @@ import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
-import { HoverLine } from "./charts-generic/lines/hover-line";
-import { HoverLineValues } from "./charts-generic/lines/hover-line-values";
 import { Lines } from "./charts-generic/lines/lines";
 import { LineChart } from "./charts-generic/lines/lines-state";
-import { DataDownload } from "./data-download";
 import { Loading, NoDataHint } from "./hint";
 
 export const ChartLinesVisualization = ({
