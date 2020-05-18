@@ -61,6 +61,23 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_PALETTE_CHANGED";
+      value: {
+        path: string;
+        field: string;
+        value: string;
+        colorMapping: {};
+      };
+    }
+  | {
+      type: "CHART_COLOR_CHANGED";
+      value: {
+        field: string;
+        value: string;
+        color: string;
+      };
+    }
+  | {
       type: "CHART_FIELD_DELETED";
       value: {
         field: string;
@@ -407,6 +424,41 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft,
           `chartConfig.fields.${action.value.field}.${action.value.path}`,
           action.value.value,
+          Object
+        );
+      }
+      return draft;
+
+    case "CHART_PALETTE_CHANGED":
+      if (draft.state === "CONFIGURING_CHART") {
+        setWith(
+          draft,
+          `chartConfig.fields.${action.value.field}.palette`,
+          action.value.value,
+          Object
+        );
+        setWith(
+          draft,
+          `chartConfig.fields.${action.value.field}.colorMapping`,
+          action.value.colorMapping,
+          Object
+        );
+      }
+      return draft;
+
+    case "CHART_COLOR_CHANGED":
+      if (draft.state === "CONFIGURING_CHART") {
+        setWith(
+          draft,
+          [
+            "chartConfig",
+            "fields",
+            action.value.field,
+            "colorMapping",
+            action.value.value,
+          ],
+          // `chartConfig.fields.${action.value.field}.colorMapping.${action.value.value}`,
+          action.value.color,
           Object
         );
       }
