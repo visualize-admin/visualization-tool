@@ -1,5 +1,5 @@
 import { color as d3Color } from "d3-color";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Box, Grid, Input } from "theme-ui";
 import { Menu, MenuButton, MenuPopover } from "@reach/menu-button";
 
@@ -44,15 +44,21 @@ type Props = {
 };
 
 export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
-  const [color, setColor] = useState(selectedColor);
-  useEffect(() => {
-    // Make sure onChange is only called with valid colors
-    const c = d3Color(color);
-    if (c) {
-      // Type defs of d3-color are not up-to-date
-      onChange?.((c as $Unexpressable).formatHex());
-    }
-  }, [color, onChange]);
+  const [inputColorValue, setInputColorValue] = useState(selectedColor);
+
+  const selectColor = useCallback(
+    (_color) => {
+      setInputColorValue(_color);
+      // Make sure onChange is only called with valid colors
+      const c = d3Color(_color);
+      if (c) {
+        // Type defs of d3-color are not up-to-date
+        onChange?.((c as $Unexpressable).formatHex());
+      }
+    },
+    [onChange, setInputColorValue]
+  );
+
   return (
     <Box
       sx={{
@@ -76,7 +82,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             color={color}
             selected={color === selectedColor}
             onClick={() => {
-              setColor(color);
+              selectColor(color);
             }}
           />
         ))}
@@ -91,9 +97,9 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             ":focus": { outline: "none", borderColor: "primary" },
           }}
           maxLength={7}
-          value={`#${color.replace(/^#/, "")}`}
+          value={`#${inputColorValue.replace(/^#/, "")}`}
           onChange={(e) => {
-            setColor(e.currentTarget.value);
+            selectColor(e.currentTarget.value);
           }}
         />
       </Box>
