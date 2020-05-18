@@ -45,6 +45,9 @@ const Filters = t.record(t.string, FilterValue, "Filters");
 
 export type Filters = t.TypeOf<typeof Filters>;
 
+const ColorMapping = t.record(t.string, t.string);
+export type ColorMapping = t.TypeOf<typeof ColorMapping>;
+
 // Meta
 const Title = t.type({
   de: t.string,
@@ -104,6 +107,9 @@ const BarFields = t.intersection([
       }),
       t.type({ palette: t.string }),
       t.partial({
+        colorMapping: ColorMapping,
+      }),
+      t.partial({
         sorting: t.type({
           sortingType: SortingType,
           sortingOrder: SortingOrder,
@@ -148,6 +154,9 @@ const ColumnFields = t.intersection([
       }),
       t.type({ palette: t.string }),
       t.partial({
+        colorMapping: ColorMapping,
+      }),
+      t.partial({
         sorting: t.type({
           sortingType: SortingType,
           sortingOrder: SortingOrder,
@@ -173,10 +182,15 @@ const LineFields = t.intersection([
     y: GenericField,
   }),
   t.partial({
-    segment: t.type({
-      componentIri: t.string,
-      palette: t.string,
-    }),
+    segment: t.intersection([
+      t.type({
+        componentIri: t.string,
+      }),
+      t.type({ palette: t.string }),
+      t.partial({
+        colorMapping: ColorMapping,
+      }),
+    ]),
   }),
 ]);
 const LineConfig = t.type(
@@ -200,7 +214,10 @@ const AreaFields = t.intersection([
     segment: t.intersection([
       t.type({
         componentIri: t.string,
-        palette: t.string,
+      }),
+      t.type({ palette: t.string }),
+      t.partial({
+        colorMapping: ColorMapping,
       }),
       t.partial({
         sorting: t.type({
@@ -229,10 +246,13 @@ const ScatterPlotFields = t.intersection([
     y: GenericField,
   }),
   t.partial({
-    segment: t.type({
-      componentIri: t.string,
-      palette: t.string,
-    }),
+    segment: t.intersection([
+      t.type({ componentIri: t.string }),
+      t.type({ palette: t.string }),
+      t.partial({
+        colorMapping: ColorMapping,
+      }),
+    ]),
   }),
 ]);
 const ScatterPlotConfig = t.type(
@@ -253,6 +273,9 @@ const PieFields = t.type({
     t.type({
       componentIri: t.string,
       palette: t.string,
+    }),
+    t.partial({
+      colorMapping: ColorMapping,
     }),
     t.partial({
       sorting: t.type({
