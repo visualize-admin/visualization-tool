@@ -1,6 +1,6 @@
-import { Box, Grid, Input, Button } from "theme-ui";
 import { color as d3Color } from "d3-color";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Box, Grid, Input } from "theme-ui";
 
 const Swatch = ({
   color,
@@ -16,11 +16,11 @@ const Swatch = ({
     <Box
       style={{
         borderColor: selected ? borderColor : undefined,
+        boxShadow: selected ? `0 0 0.5rem 0 ${color}` : undefined,
       }}
       sx={{
-        boxShadow: selected ? "tooltip" : undefined,
-        width: 24,
-        height: 24,
+        width: "1.5rem",
+        height: "1.5rem",
         bg: color,
         borderWidth: 1,
         borderStyle: "solid",
@@ -64,7 +64,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
       <Grid
         sx={{
           // width: 120,
-          gridTemplateColumns: "repeat(4, 24px)",
+          gridTemplateColumns: "repeat(auto-fill, minmax(1.5rem, 1fr))",
           gap: 2,
           mb: 2,
         }}
