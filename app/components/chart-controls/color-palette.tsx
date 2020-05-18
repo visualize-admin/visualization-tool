@@ -7,6 +7,10 @@ import { getPalette } from "../../domain/helpers";
 import { Icon } from "../../icons";
 import { Label } from "../form";
 import { scaleOrdinal } from "d3-scale";
+import {
+  DimensionFieldsWithValuesFragment,
+  ComponentFieldsFragment,
+} from "../../graphql/query-hooks";
 
 const vegaPalettes: Array<{
   label: string;
@@ -40,7 +44,8 @@ export const ColorPalette = ({
 }: {
   field: string;
   disabled?: boolean;
-  component: { iri: string; label: string; values: { value: string }[] };
+  component: DimensionFieldsWithValuesFragment | undefined;
+  //  { iri: string; label: string; values: { value: string }[] };
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -55,7 +60,7 @@ export const ColorPalette = ({
     items: vegaPalettes,
     defaultSelectedItem: vegaPalettes[0], // Probably should use `selectedItem` here …
     onSelectedItemChange: ({ selectedItem }) => {
-      if (selectedItem) {
+      if (selectedItem && component) {
         const colorScale = scaleOrdinal()
           .domain(component?.values.map((dv) => dv.value))
           .range(getPalette(selectedItem.value));

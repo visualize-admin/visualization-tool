@@ -17,7 +17,11 @@ import {
   EncodingSpec,
 } from "../domain/chart-config-ui-options";
 import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+import {
+  useDataCubeMetadataWithComponentValuesQuery,
+  DimensionFieldsWithValuesFragment,
+  ComponentFieldsFragment,
+} from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
@@ -107,7 +111,7 @@ const ActiveFieldSwitch = ({
     return <SingleFilter state={state} metaData={metaData} />;
   }
 
-  const component = [...metaData.dimensions, ...metaData.measures].find(
+  const component = [...metaData.dimensions].find(
     (d) => d.iri === activeFieldComponentIri
   );
 
@@ -135,7 +139,7 @@ const EncodingOptionsPanel = ({
   state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
-  component: { iri: string; label: string; values?: $FixMe } | undefined;
+  component: DimensionFieldsWithValuesFragment | undefined;
   metaData: DataCubeMetadata;
 }) => {
   const { measures, dimensions } = metaData;
