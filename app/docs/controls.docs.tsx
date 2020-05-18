@@ -6,7 +6,7 @@ import {
   SectionTitle,
 } from "../components/chart-controls/section";
 import { Checkbox, Input, Radio, Select } from "../components/form";
-import { ColorPicker } from "../components/chart-controls/color-picker";
+import { ColorPicker, ColorPickerMenu } from "../components/chart-controls/color-picker";
 import { getPalette } from "../domain/helpers";
 import { useState } from "react";
 import { Box } from "theme-ui";
@@ -169,6 +169,19 @@ ${(
   </ReactSpecimen>
 )}
 
-
+${(
+  <ReactSpecimen span={2}>
+    <>
+      <Box sx={{ p: 4, mb: 2, color: "white", bg: currentColor }}>
+        Current (valid) color: {currentColor}
+      </Box>
+      <ColorPickerMenu
+        colors={getPalette("accent")}
+        selectedColor={currentColor}
+        onChange={(color) => setCurrentColor(color)}
+      />
+    </>
+  </ReactSpecimen>
+)}
 `;
 };

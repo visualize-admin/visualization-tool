@@ -1,6 +1,7 @@
 import { color as d3Color } from "d3-color";
 import { useEffect, useState } from "react";
 import { Box, Grid, Input } from "theme-ui";
+import { Menu, MenuButton, MenuPopover } from "@reach/menu-button";
 
 const Swatch = ({
   color,
@@ -99,3 +100,12 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
     </Box>
   );
 };
+
+export const ColorPickerMenu = (props: Props) => (
+  <Menu>
+    <MenuButton>YYY</MenuButton>
+    <MenuPopover>
+      <ColorPicker {...props} />
+    </MenuPopover>
+  </Menu>
+);

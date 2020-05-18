@@ -18,6 +18,7 @@
     "@next/bundle-analyzer": "^9.4.0",
     "@next/mdx": "^9.4.0",
     "@preconstruct/next": "^1.0.1",
+    "@reach/menu-button": "^0.10.2",
     "@reach/visually-hidden": "^0.10.0",
     "@theme-ui/components": "^0.3.1",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
