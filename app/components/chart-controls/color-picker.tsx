@@ -1,7 +1,8 @@
-import { color as d3Color } from "d3-color";
-import { useEffect, useState, useCallback } from "react";
-import { Box, Grid, Input } from "theme-ui";
 import { Menu, MenuButton, MenuPopover } from "@reach/menu-button";
+import VisuallyHidden from "@reach/visually-hidden";
+import { color as d3Color } from "d3-color";
+import { useCallback, useState } from "react";
+import { Box, Grid, Input } from "theme-ui";
 
 const Swatch = ({
   color,
@@ -109,9 +110,32 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
 
 export const ColorPickerMenu = (props: Props) => (
   <Menu>
-    <MenuButton>YYY</MenuButton>
-    <MenuPopover>
-      <ColorPicker {...props} />
-    </MenuPopover>
+    <Box
+      sx={{
+        "> button": {
+          bg: "monochrome100",
+          borderRadius: "default",
+          borderWidth: 1,
+          borderStyle: "solid",
+          borderColor: "monochrome500",
+          p: 1,
+        },
+        "> button[aria-expanded]": {
+          borderColor: "primaryActive",
+        },
+      }}
+    >
+      <MenuButton className="menu-button">
+        <VisuallyHidden>SELECT</VisuallyHidden>
+        <Box aria-hidden>
+          <Box
+            sx={{ bg: props.selectedColor, width: "2rem", height: "1.5rem" }}
+          ></Box>
+        </Box>
+      </MenuButton>
+      <MenuPopover>
+        <ColorPicker {...props} />
+      </MenuPopover>
+    </Box>
   </Menu>
 );
