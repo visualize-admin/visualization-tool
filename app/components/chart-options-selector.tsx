@@ -193,6 +193,9 @@ const EncodingOptionsPanel = ({
               chartType={chartType}
             />
           )}
+          {encoding.options?.map((e) => e.field).includes("color") && (
+            <ColorPalette disabled={!component} field={field}></ColorPalette>
+          )}
         </ControlSectionContent>
       </ControlSection>
 
@@ -227,6 +230,50 @@ const EncodingOptionsPanel = ({
         </ControlSection>
       )}
     </div>
+  );
+};
+
+const ChartFieldOptions = ({
+  field,
+  chartType,
+  encodingOptions,
+  disabled = false,
+}: {
+  field: string;
+  chartType: ChartType;
+  encodingOptions: EncodingOptions;
+  disabled?: boolean;
+}) => {
+  return (
+    <>
+      {/* FIXME: improve use of encodingOptions to get chart options */}
+      {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
+        chartType === "column" && (
+          <Box as="fieldset" mt={2}>
+            <FieldSetLegend
+              legendTitle={
+                <Trans id="controls.select.column.chart.type">Chart Type</Trans>
+              }
+            />
+            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+              <ChartOptionRadioField
+                label="stacked"
+                field={field}
+                path="type"
+                value={"stacked"}
+                disabled={disabled}
+              />
+              <ChartOptionRadioField
+                label="grouped"
+                field={field}
+                path="type"
+                value={"grouped"}
+                disabled={disabled}
+              />
+            </Flex>
+          </Box>
+        )}
+    </>
   );
 };
 
@@ -362,53 +409,5 @@ const SingleFilter = ({
         </ControlSectionContent>
       </ControlSection>
     </div>
-  );
-};
-
-const ChartFieldOptions = ({
-  field,
-  chartType,
-  encodingOptions,
-  disabled = false,
-}: {
-  field: string;
-  chartType: ChartType;
-  encodingOptions: EncodingOptions;
-  disabled?: boolean;
-}) => {
-  return (
-    <>
-      {/* FIXME: improve use of encodingOptions to get chart options */}
-      {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
-        chartType === "column" && (
-          <Box as="fieldset" mt={2}>
-            <FieldSetLegend
-              legendTitle={
-                <Trans id="controls.select.column.chart.type">Chart Type</Trans>
-              }
-            />
-            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-              <ChartOptionRadioField
-                label="stacked"
-                field={field}
-                path="type"
-                value={"stacked"}
-                disabled={disabled}
-              />
-              <ChartOptionRadioField
-                label="grouped"
-                field={field}
-                path="type"
-                value={"grouped"}
-                disabled={disabled}
-              />
-            </Flex>
-          </Box>
-        )}
-
-      {encodingOptions?.map((e) => e.field).includes("color") && (
-        <ColorPalette disabled={disabled} field={field}></ColorPalette>
-      )}
-    </>
   );
 };
