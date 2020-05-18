@@ -135,7 +135,7 @@ const EncodingOptionsPanel = ({
   state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
-  component: { iri: string; label: string } | undefined;
+  component: { iri: string; label: string; values?: $FixMe } | undefined;
   metaData: DataCubeMetadata;
 }) => {
   const { measures, dimensions } = metaData;
@@ -148,6 +148,7 @@ const EncodingOptionsPanel = ({
   }, [field]);
 
   const { fields } = state.chartConfig;
+
   type AnyField = "y";
   const otherFields = Object.keys(fields).filter(
     (f) => fields[f as AnyField].hasOwnProperty("componentIri") && field !== f
@@ -194,7 +195,11 @@ const EncodingOptionsPanel = ({
             />
           )}
           {encoding.options?.map((e) => e.field).includes("color") && (
-            <ColorPalette disabled={!component} field={field}></ColorPalette>
+            <ColorPalette
+              disabled={!component}
+              field={field}
+              component={component}
+            ></ColorPalette>
           )}
         </ControlSectionContent>
       </ControlSection>
