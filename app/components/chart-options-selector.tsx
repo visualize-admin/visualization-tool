@@ -118,7 +118,7 @@ const ActiveFieldSwitch = ({
       field={activeField} // FIXME: or encoding.field?
       chartType={state.chartConfig.chartType}
       metaData={metaData}
-      dimension={component}
+      component={component}
     />
   );
 };
@@ -128,14 +128,14 @@ const EncodingOptionsPanel = ({
   state,
   field,
   chartType,
-  dimension,
+  component,
   metaData,
 }: {
   encoding: EncodingSpec;
   state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
-  dimension: { iri: string; label: string } | undefined;
+  component: { iri: string; label: string } | undefined;
   metaData: DataCubeMetadata;
 }) => {
   const { measures, dimensions } = metaData;
@@ -187,7 +187,7 @@ const EncodingOptionsPanel = ({
           />
           {encoding.options && (
             <ChartFieldOptions
-              disabled={!dimension}
+              disabled={!component}
               field={encoding.field}
               encodingOptions={encoding.options}
               chartType={chartType}
@@ -199,7 +199,7 @@ const EncodingOptionsPanel = ({
       {encoding.sorting && (
         <ChartFieldSorting
           state={state}
-          disabled={!dimension}
+          disabled={!component}
           field={encoding.field}
           encodingSortingOptions={encoding.sorting}
           // chartType={chartType}
@@ -208,17 +208,18 @@ const EncodingOptionsPanel = ({
 
       {encoding.filters && (
         <ControlSection>
-          <SectionTitle disabled={!dimension} iconName="filter">
+          <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
           <ControlSectionContent side="right" as="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {dimension && (
+            {component && (
               <DimensionValuesMultiFilter
-                key={dimension.iri}
-                dimensionIri={dimension.iri}
+                // state={state}
+                key={component.iri}
+                dimensionIri={component.iri}
                 dataSetIri={metaData.iri}
               />
             )}
