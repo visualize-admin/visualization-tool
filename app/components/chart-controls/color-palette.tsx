@@ -6,6 +6,7 @@ import { useConfiguratorState } from "../../domain";
 import { getPalette } from "../../domain/helpers";
 import { Icon } from "../../icons";
 import { Label } from "../form";
+import { scaleOrdinal } from "d3-scale";
 
 const vegaPalettes: Array<{
   label: string;
@@ -15,7 +16,7 @@ const vegaPalettes: Array<{
   {
     label: "category10",
     value: "category10",
-    colors: getPalette("category10")
+    colors: getPalette("category10"),
   },
   { label: "accent", value: "accent", colors: getPalette("accent") },
   // { label: "category20", value: "category20", colors: getPalette("category20") },
@@ -27,41 +28,55 @@ const vegaPalettes: Array<{
   { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
   { label: "set1", value: "set1", colors: getPalette("set1") },
   { label: "set2", value: "set2", colors: getPalette("set2") },
-  { label: "set3", value: "set3", colors: getPalette("set3") }
+  { label: "set3", value: "set3", colors: getPalette("set3") },
   // { label: "tableau10", value: "tableau10", colors: scheme("tableau10") }
   // { label: "tableau20", value: "tableau20", colors: scheme("tableau20") }
 ];
 
 export const ColorPalette = ({
   field,
-  disabled
+  disabled,
+  component,
 }: {
   field: string;
   disabled?: boolean;
+  component: { iri: string; label: string; values: { value: string }[] };
 }) => {
   const [state, dispatch] = useConfiguratorState();
+
   const {
     isOpen,
     getToggleButtonProps,
     getLabelProps,
     getMenuProps,
     highlightedIndex,
-    getItemProps
+    getItemProps,
   } = useSelect({
     items: vegaPalettes,
     defaultSelectedItem: vegaPalettes[0], // Probably should use `selectedItem` here …
     onSelectedItemChange: ({ selectedItem }) => {
       if (selectedItem) {
+        const colorScale = scaleOrdinal()
+          .domain(component?.values.map((dv) => dv.value))
+          .range(getPalette(selectedItem.value));
+        const colorMapping = {} as $FixMe;
+
+        component?.values.forEach((dv) => {
+          colorMapping[`${dv.value}`] = colorScale(dv.value);
+        });
+        console.log(colorMapping);
+
         dispatch({
-          type: "CHART_OPTION_CHANGED",
+          type: "CHART_PALETTE_CHANGED",
           value: {
             field,
             path: "palette",
-            value: selectedItem.value
-          }
+            value: selectedItem.value,
+            colorMapping,
+          },
         });
       }
-    }
+    },
   });
 
   return (
@@ -83,15 +98,15 @@ export const ColorPalette = ({
           borderStyle: "solid",
           borderColor: "monochrome500",
           ":hover": {
-            bg: "monochrome100"
+            bg: "monochrome100",
           },
           ":active": {
-            bg: "monochrome100"
+            bg: "monochrome100",
           },
           ":disabled": {
             cursor: "initial",
-            bg: "muted"
-          }
+            bg: "muted",
+          },
         }}
       >
         {state.state === "CONFIGURING_CHART" && (
@@ -114,7 +129,9 @@ export const ColorPalette = ({
                 p: 1,
                 cursor: "pointer",
                 backgroundColor:
-                  highlightedIndex === index ? "monochrome200" : "monochrome100"
+                  highlightedIndex === index
+                    ? "monochrome200"
+                    : "monochrome100",
               }}
             >
               <Text variant="meta">{palette.label}</Text>
@@ -123,11 +140,11 @@ export const ColorPalette = ({
                   backgroundColor:
                     highlightedIndex === index
                       ? "monochrome200"
-                      : "monochrome100"
+                      : "monochrome100",
                 }}
                 {...getItemProps({ item: palette, index })}
               >
-                {palette.colors.map(color => (
+                {palette.colors.map((color) => (
                   <ColorSquare
                     key={`option-${color}`}
                     color={color}
@@ -146,7 +163,7 @@ export const ColorPalette = ({
 
 const ColorSquare = ({
   disabled,
-  color
+  color,
 }: {
   disabled?: boolean;
   color: string;
@@ -164,12 +181,12 @@ const ColorSquare = ({
       borderStyle: "solid",
       "&:first-of-type": {
         borderTopLeftRadius: "bigger",
-        borderBottomLeftRadius: "bigger"
+        borderBottomLeftRadius: "bigger",
       },
       "&:last-of-type": {
         borderTopRightRadius: "bigger",
-        borderBottomRightRadius: "bigger"
-      }
+        borderBottomRightRadius: "bigger",
+      },
     }}
   />
 );
