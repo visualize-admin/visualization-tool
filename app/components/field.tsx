@@ -14,7 +14,6 @@ import {
   useSingleFilterField,
   useChartOptionSelectField,
 } from "../domain/config-form";
-import { getFieldLabel } from "../domain/helpers";
 import {
   ComponentFieldsFragment,
   DimensionFieldsWithValuesFragment,
@@ -28,6 +27,7 @@ import {
   FilterTab,
 } from "./chart-controls/control-tab";
 import { Checkbox, Input, Radio, Select } from "./form";
+import { Button } from "@theme-ui/components";
 
 export const ControlTabField = ({
   component,
@@ -162,6 +162,7 @@ export const MultiFilterField = ({
   checked,
   onChange,
   checkAction,
+  color,
 }: {
   dimensionIri: string;
   label: string;
@@ -171,6 +172,7 @@ export const MultiFilterField = ({
   checked?: boolean;
   onChange?: () => void;
   checkAction: "ADD" | "SET";
+  color?: string;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -204,6 +206,19 @@ export const MultiFilterField = ({
     [dispatch, dimensionIri, allValues, value, onChange, checkAction]
   );
 
+  const updateColor = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) =>
+      dispatch({
+        type: "CHART_COLOR_CHANGED",
+        value: {
+          field: "segment",
+          value,
+          color: e.currentTarget.value,
+        },
+      }),
+    [dispatch, value]
+  );
+
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
@@ -213,14 +228,31 @@ export const MultiFilterField = ({
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 
   return (
-    <Checkbox
-      name={dimensionIri}
-      value={value}
-      label={label}
-      disabled={disabled}
-      onChange={onFieldChange}
-      checked={checked ?? fieldChecked}
-    ></Checkbox>
+    <>
+      <Checkbox
+        name={dimensionIri}
+        value={value}
+        label={label}
+        disabled={disabled}
+        onChange={onFieldChange}
+        checked={checked ?? fieldChecked}
+      ></Checkbox>
+      {color && (
+        <Button
+          sx={{
+            width: 32,
+            minWidth: 0,
+            height: 16,
+            bg: color,
+            borderStyle: "solid",
+            borderWidth: "3px",
+            borderColor: "monochrome400",
+          }}
+          value="#FF6666"
+          onClick={updateColor}
+        />
+      )}
+    </>
   );
 };
 export const SingleFilterField = ({
@@ -344,6 +376,7 @@ export const ChartOptionRadioField = ({
 
   return <Radio disabled={disabled} label={label} {...fieldProps}></Radio>;
 };
+
 export const ChartTypeSelectorField = ({
   label,
   value,
