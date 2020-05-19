@@ -94,6 +94,7 @@ export const ChartScatterplot = memo(
       <ScatterplotChart
         data={observations}
         fields={fields}
+        dimensions={dimensions}
         measures={measures}
         aspectRatio={1}
       >
