@@ -3,9 +3,13 @@ import { ChartTypeSelectionButton } from "../components/chart-controls/chart-typ
 import { ControlList } from "../components/chart-controls/list";
 import {
   ControlSection,
-  SectionTitle
+  SectionTitle,
 } from "../components/chart-controls/section";
 import { Checkbox, Input, Radio, Select } from "../components/form";
+import { ColorPicker, ColorPickerMenu } from "../components/chart-controls/color-picker";
+import { getPalette } from "../domain/helpers";
+import { useState } from "react";
+import { Box } from "theme-ui";
 
 // const vegaPalettes: Array<{ id: vega.ColorScheme; values: Array<string> }> = [
 //   { id: "category10", values: vega.scheme("category10") },
@@ -16,7 +20,10 @@ import { Checkbox, Input, Radio, Select } from "../components/form";
 // ];
 
 // const palettes = ["category10", "accent", "pastel1", "pastel2", "dark2"];
-export default () => markdown`
+export default () => {
+  const [currentColor, setCurrentColor] = useState(getPalette("accent")[0]);
+
+  return markdown`
 
 > Controls are a composition of layout components and form elements, used throughout the application to configurate charts.
 
@@ -27,7 +34,7 @@ export default () => markdown`
         label={"line"}
         name={"Linien"}
         value={"Linien"}
-        onClick={e => {
+        onClick={(e) => {
           console.log(e.currentTarget.value);
         }}
       />
@@ -40,7 +47,7 @@ export default () => markdown`
         name={"Scatterplot"}
         value={"Scatterplot"}
         checked={true}
-        onClick={e => {
+        onClick={(e) => {
           console.log(e.currentTarget.value);
         }}
       />
@@ -58,14 +65,14 @@ ${(
           id="foo"
           options={[
             { label: "Kanton", value: "Kanton" },
-            { label: "Eigentümertyp", value: "Eigentümertyp" }
+            { label: "Eigentümertyp", value: "Eigentümertyp" },
           ]}
         />
         <Select
           id="bar"
           options={[
             { label: "Kanton", value: "Kanton" },
-            { label: "Eigentümertyp", value: "Eigentümertyp" }
+            { label: "Eigentümertyp", value: "Eigentümertyp" },
           ]}
         />
       </ControlList>
@@ -145,5 +152,36 @@ ${(
   </ReactSpecimen>
 )}
 
+## Color Picker
 
+${(
+  <ReactSpecimen span={2}>
+    <>
+      <Box sx={{ p: 4, mb: 2, color: "white", bg: currentColor }}>
+        Current (valid) color: {currentColor}
+      </Box>
+      <ColorPicker
+        colors={getPalette("accent")}
+        selectedColor={currentColor}
+        onChange={(color) => setCurrentColor(color)}
+      />
+    </>
+  </ReactSpecimen>
+)}
+
+${(
+  <ReactSpecimen span={2}>
+    <>
+      <Box sx={{ p: 4, mb: 2, color: "white", bg: currentColor }}>
+        Current (valid) color: {currentColor}
+      </Box>
+      <ColorPickerMenu
+        colors={getPalette("accent")}
+        selectedColor={currentColor}
+        onChange={(color) => setCurrentColor(color)}
+      />
+    </>
+  </ReactSpecimen>
+)}
 `;
+};
