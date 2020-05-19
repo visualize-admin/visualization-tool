@@ -112,7 +112,7 @@ query DataCubeObservations(
     description
     contact
     dimensions {
-      ...componentFields
+      ...dimensionFieldsWithValues
     }
     measures {
       ...componentFields
