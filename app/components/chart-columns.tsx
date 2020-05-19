@@ -88,6 +88,7 @@ export const ChartColumns = memo(
           <StackedColumnsChart
             data={observations}
             fields={fields}
+            dimensions={dimensions}
             measures={measures}
             aspectRatio={0.4}
           >
