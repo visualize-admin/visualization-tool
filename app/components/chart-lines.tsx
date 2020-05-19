@@ -83,6 +83,7 @@ export const ChartLines = memo(
       <LineChart
         data={observations}
         fields={fields}
+        dimensions={dimensions}
         measures={measures}
         aspectRatio={0.4}
       >
