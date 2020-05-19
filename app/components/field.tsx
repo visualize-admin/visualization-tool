@@ -242,7 +242,7 @@ export const MultiFilterField = ({
       {color && (checked ?? fieldChecked) && (
         <Box>
           <ColorPickerMenu
-            colors={getPalette("accent")}
+            colors={getPalette(state.chartConfig.fields.segment?.palette)}
             selectedColor={color}
             onChange={(c) => updateColor(c)}
           />
