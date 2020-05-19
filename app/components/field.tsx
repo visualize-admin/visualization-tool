@@ -27,7 +27,9 @@ import {
   FilterTab,
 } from "./chart-controls/control-tab";
 import { Checkbox, Input, Radio, Select } from "./form";
-import { Button } from "@theme-ui/components";
+import { Flex, Box } from "@theme-ui/components";
+import { ColorPickerMenu } from "./chart-controls/color-picker";
+import { getPalette } from "../domain/helpers";
 
 export const ControlTabField = ({
   component,
@@ -207,13 +209,13 @@ export const MultiFilterField = ({
   );
 
   const updateColor = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) =>
+    (color: string) =>
       dispatch({
         type: "CHART_COLOR_CHANGED",
         value: {
           field: "segment",
           value,
-          color: e.currentTarget.value,
+          color,
         },
       }),
     [dispatch, value]
@@ -228,7 +230,7 @@ export const MultiFilterField = ({
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 
   return (
-    <>
+    <Flex sx={{ width: "100%", justifyContent: "space-between" }}>
       <Checkbox
         name={dimensionIri}
         value={value}
@@ -238,21 +240,15 @@ export const MultiFilterField = ({
         checked={checked ?? fieldChecked}
       ></Checkbox>
       {color && (
-        <Button
-          sx={{
-            width: 32,
-            minWidth: 0,
-            height: 16,
-            bg: color,
-            borderStyle: "solid",
-            borderWidth: "3px",
-            borderColor: "monochrome400",
-          }}
-          value="#FF6666"
-          onClick={updateColor}
-        />
+        <Box>
+          <ColorPickerMenu
+            colors={getPalette("accent")}
+            selectedColor={color}
+            onChange={(c) => updateColor(c)}
+          />
+        </Box>
       )}
-    </>
+    </Flex>
   );
 };
 export const SingleFilterField = ({
