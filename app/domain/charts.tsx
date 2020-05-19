@@ -2,6 +2,7 @@ import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { ChartConfig, ChartType, GenericFields } from "./config-types";
 import { getCategoricalDimensions, getTimeDimensions } from "./data";
+import { mapColorsToComponentValuesIris } from "./helpers";
 
 export const getInitialConfig = ({
   chartType,
@@ -76,6 +77,10 @@ export const getInitialConfig = ({
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10",
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+            colorMapping: mapColorsToComponentValuesIris({
+              palette: "category10",
+              component: getCategoricalDimensions(dimensions)[0],
+            }),
           },
         },
       };

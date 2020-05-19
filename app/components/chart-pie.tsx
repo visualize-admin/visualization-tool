@@ -83,6 +83,7 @@ export const ChartPie = memo(
       <PieChart
         data={observations}
         fields={fields}
+        dimensions={dimensions}
         measures={measures}
         aspectRatio={0.5}
       >
