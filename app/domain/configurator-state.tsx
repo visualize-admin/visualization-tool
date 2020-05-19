@@ -19,6 +19,8 @@ import {
   decodeConfiguratorState,
   GenericFields,
   FilterValueMultiValues,
+  SegmentField,
+  SegmentFields,
 } from "./config-types";
 import { getInitialConfig, getFieldComponentIris } from "./charts";
 import { useLocale } from "../lib/use-locale";
@@ -387,17 +389,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.field
         ];
         if (!f) {
+          // The field was not defined before
           if (action.value.field === "segment") {
             const component = action.value.dataSetMetadata.dimensions.find(
               (dim) => dim.iri === action.value.componentIri
             );
-            const colorMapping = component
-              ? mapColorsToComponentValuesIris({
-                  palette: "category10",
-                  component,
-                })
-              : {};
-
+            const colorMapping =
+              component &&
+              mapColorsToComponentValuesIris({
+                palette: "category10",
+                component,
+              });
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
             draft.chartConfig.fields.segment = {
@@ -405,11 +407,32 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               palette: "category10",
               type: "stacked",
               sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
-              colorMapping,
+              colorMapping: colorMapping,
             };
           }
         } else {
-          f.componentIri = action.value.componentIri;
+          // The field is being updated
+          if (
+            action.value.field === "segment" &&
+            draft.chartConfig.fields.segment
+          ) {
+            const component = action.value.dataSetMetadata.dimensions.find(
+              (dim) => dim.iri === action.value.componentIri
+            );
+            const colorMapping =
+              component &&
+              mapColorsToComponentValuesIris({
+                palette:
+                  draft.chartConfig.fields.segment?.palette || "category10",
+                component,
+              });
+
+            draft.chartConfig.fields.segment.componentIri =
+              action.value.componentIri;
+            draft.chartConfig.fields.segment.colorMapping = colorMapping;
+          } else {
+            f.componentIri = action.value.componentIri;
+          }
         }
 
         deriveFiltersFromFields(
