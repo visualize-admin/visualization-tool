@@ -20,7 +20,6 @@ import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
 import {
   useDataCubeMetadataWithComponentValuesQuery,
   DimensionFieldsWithValuesFragment,
-  ComponentFieldsFragment,
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
@@ -203,7 +202,7 @@ const EncodingOptionsPanel = ({
               disabled={!component}
               field={field}
               component={component}
-            ></ColorPalette>
+            />
           )}
         </ControlSectionContent>
       </ControlSection>

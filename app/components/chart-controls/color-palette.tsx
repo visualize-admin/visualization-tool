@@ -2,7 +2,10 @@ import { Trans } from "@lingui/macro";
 import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { useSelect } from "downshift";
 import * as React from "react";
-import { useConfiguratorState } from "../../domain";
+import {
+  useConfiguratorState,
+  ConfiguratorStateConfiguringChart,
+} from "../../domain";
 import {
   getPalette,
   mapColorsToComponentValuesIris,
@@ -10,8 +13,9 @@ import {
 import { Icon } from "../../icons";
 import { Label } from "../form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
+import { useCallback } from "react";
 
-const vegaPalettes: Array<{
+const palettes: Array<{
   label: string;
   value: string;
   colors: ReadonlyArray<string>;
@@ -55,8 +59,8 @@ export const ColorPalette = ({
     highlightedIndex,
     getItemProps,
   } = useSelect({
-    items: vegaPalettes,
-    defaultSelectedItem: vegaPalettes[0], // Probably should use `selectedItem` here …
+    items: palettes,
+    defaultSelectedItem: palettes[0], // Probably should use `selectedItem` here …
     onSelectedItemChange: ({ selectedItem }) => {
       if (selectedItem && component) {
         dispatch({
@@ -118,7 +122,7 @@ export const ColorPalette = ({
       </Button>
       <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
         {isOpen &&
-          vegaPalettes.map((palette, index) => (
+          palettes.map((palette, index) => (
             <Box
               key={`${palette.value}${index}`}
               sx={{
@@ -151,6 +155,9 @@ export const ColorPalette = ({
             </Box>
           ))}
       </Box>
+      {component && state.state === "CONFIGURING_CHART" && (
+        <ColorPaletteReset field={field} component={component} state={state} />
+      )}
       {/* if you Tab from menu, focus goes on button, and it shouldn't. only happens here. */}
       <div tabIndex={0} />
     </Box>
@@ -186,3 +193,35 @@ const ColorSquare = ({
     }}
   />
 );
+
+const ColorPaletteReset = ({
+  field,
+  component,
+  state,
+}: {
+  field: string;
+  component: DimensionFieldsWithValuesFragment;
+  state: ConfiguratorStateConfiguringChart;
+}) => {
+  const [, dispatch] = useConfiguratorState();
+  const resetColorPalette = useCallback(
+    () =>
+      dispatch({
+        type: "CHART_PALETTE_RESET",
+        value: {
+          field,
+          path: "colorMapping",
+          colorMapping: mapColorsToComponentValuesIris({
+            palette: state.chartConfig?.fields.segment?.palette || "category10",
+            component,
+          }),
+        },
+      }),
+    [component, dispatch, field, state.chartConfig]
+  );
+  return (
+    <Button onClick={resetColorPalette} variant="inline" sx={{ mt: 2 }}>
+      <Trans id="controls.color.palette.reset">Reset color palette</Trans>
+    </Button>
+  );
+};

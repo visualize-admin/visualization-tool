@@ -19,8 +19,6 @@ import {
   decodeConfiguratorState,
   GenericFields,
   FilterValueMultiValues,
-  SegmentField,
-  SegmentFields,
 } from "./config-types";
 import { getInitialConfig, getFieldComponentIris } from "./charts";
 import { useLocale } from "../lib/use-locale";
@@ -69,6 +67,14 @@ export type ConfiguratorStateAction =
         path: string;
         field: string;
         value: string;
+        colorMapping: {};
+      };
+    }
+  | {
+      type: "CHART_PALETTE_RESET";
+      value: {
+        path: string;
+        field: string;
         colorMapping: {};
       };
     }
@@ -475,6 +481,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         setWith(
           draft,
           `chartConfig.fields.${action.value.field}.colorMapping`,
+          action.value.colorMapping,
+          Object
+        );
+      }
+      return draft;
+    case "CHART_PALETTE_RESET":
+      if (draft.state === "CONFIGURING_CHART") {
+        setWith(
+          draft,
+          `chartConfig.fields.${action.value.field}.${action.value.path}`,
           action.value.colorMapping,
           Object
         );
