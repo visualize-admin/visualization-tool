@@ -13,9 +13,7 @@ const Swatch = ({
   selected: boolean;
   onClick: React.MouseEventHandler<HTMLDivElement>;
 }) => {
-  const borderColor = d3Color(color)
-    ?.darker()
-    .toString();
+  const borderColor = d3Color(color)?.darker().toString();
   return (
     <Box
       style={{
@@ -65,7 +63,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
   return (
     <Box
       sx={{
-        minWidth: 160,
+        width: 160,
         bg: "monochrome100",
         borderRadius: "default",
         boxShadow: "tooltip",
@@ -111,34 +109,42 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
   );
 };
 
-export const ColorPickerMenu = (props: Props) => (
-  <Menu>
-    <Box
-      sx={{
-        "> button": {
-          bg: "monochrome100",
-          borderRadius: "default",
-          borderWidth: 1,
-          borderStyle: "solid",
-          borderColor: "monochrome500",
-          p: 1,
-        },
-        "> button[aria-expanded]": {
-          borderColor: "primaryActive",
-        },
-      }}
-    >
-      <MenuButton className="menu-button">
-        <VisuallyHidden>SELECT</VisuallyHidden>
-        <Box aria-hidden>
-          <Box
-            sx={{ bg: props.selectedColor, width: "2rem", height: "1.5rem" }}
-          ></Box>
-        </Box>
-      </MenuButton>
-      <MenuPopover>
-        <ColorPicker {...props} />
-      </MenuPopover>
-    </Box>
-  </Menu>
-);
+export const ColorPickerMenu = (props: Props) => {
+  const borderColor = d3Color(props.selectedColor)?.darker().toString();
+
+  return (
+    <Menu>
+      <Box
+        sx={{
+          "> button": {
+            bg: "monochrome100",
+            borderRadius: "default",
+            borderWidth: 1,
+            borderStyle: "solid",
+            borderColor: "monochrome500",
+            p: 1,
+          },
+          "> button:hover": {
+            borderColor,
+            cursor: "pointer",
+          },
+          "> button[aria-expanded]": {
+            borderColor: "primaryActive",
+          },
+        }}
+      >
+        <MenuButton className="menu-button">
+          <VisuallyHidden>SELECT</VisuallyHidden>
+          <Box aria-hidden>
+            <Box
+              sx={{ bg: props.selectedColor, width: "2rem", height: "1.5rem" }}
+            ></Box>
+          </Box>
+        </MenuButton>
+        <MenuPopover>
+          <ColorPicker {...props} />
+        </MenuPopover>
+      </Box>
+    </Menu>
+  );
+};
