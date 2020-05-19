@@ -24,6 +24,7 @@ import { getInitialConfig, getFieldComponentIris } from "./charts";
 import { useLocale } from "../lib/use-locale";
 import { unreachableError } from "../lib/unreachable";
 import { DataCubeMetadata } from "../graphql/types";
+import { mapColorsToComponentValuesIris } from "./helpers";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -387,6 +388,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ];
         if (!f) {
           if (action.value.field === "segment") {
+            const component = action.value.dataSetMetadata.dimensions.find(
+              (dim) => dim.iri === action.value.componentIri
+            );
+            const colorMapping = component
+              ? mapColorsToComponentValuesIris({
+                  palette: "category10",
+                  component,
+                })
+              : {};
+
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
             draft.chartConfig.fields.segment = {
@@ -394,6 +405,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               palette: "category10",
               type: "stacked",
               sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+              colorMapping,
             };
           }
         } else {
