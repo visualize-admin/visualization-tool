@@ -13,7 +13,9 @@ const Swatch = ({
   selected: boolean;
   onClick: React.MouseEventHandler<HTMLDivElement>;
 }) => {
-  const borderColor = d3Color(color)?.darker().toString();
+  const borderColor = d3Color(color)
+    ?.darker()
+    .toString();
   return (
     <Box
       style={{
@@ -63,6 +65,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
   return (
     <Box
       sx={{
+        minWidth: 160,
         bg: "monochrome100",
         borderRadius: "default",
         boxShadow: "tooltip",
