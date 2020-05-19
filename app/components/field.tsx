@@ -239,7 +239,7 @@ export const MultiFilterField = ({
         onChange={onFieldChange}
         checked={checked ?? fieldChecked}
       ></Checkbox>
-      {color && (
+      {color && (checked ?? fieldChecked) && (
         <Box>
           <ColorPickerMenu
             colors={getPalette("accent")}
