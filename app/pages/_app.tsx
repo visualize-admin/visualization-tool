@@ -13,6 +13,9 @@ import { LocaleProvider } from "../lib/use-locale";
 import { catalogs, Locales, parseLocaleString } from "../locales/locales";
 import { loadTheme, Theme } from "../themes/index";
 
+// Used for color-picker component. Must include here because of next.js constraints about global CSS imports
+import "@reach/menu-button/styles.css";
+
 Router.events.on("routeChangeComplete", path => analyticsPageView(path));
 
 class MyApp extends App<{
