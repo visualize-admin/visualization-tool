@@ -22,6 +22,8 @@ import {
 import { timeFormat, timeParse } from "d3-time-format";
 import * as React from "react";
 import { IconName } from "../icons";
+import { scaleOrdinal } from "d3-scale";
+import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -219,4 +221,22 @@ export const getPalette = (
     default:
       return schemeCategory10;
   }
+};
+
+export const mapColorsToComponentValuesIris = ({
+  palette,
+  component,
+}: {
+  palette: string;
+  component: DimensionFieldsWithValuesFragment;
+}) => {
+  const colorScale = scaleOrdinal()
+    .domain(component.values.map((dv) => dv.value))
+    .range(getPalette(palette));
+  const colorMapping = {} as { [x: string]: string };
+
+  component.values.forEach((dv) => {
+    colorMapping[`${dv.value}` as string] = colorScale(dv.value) as string;
+  });
+  return colorMapping;
 };

@@ -3,14 +3,13 @@ import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { useSelect } from "downshift";
 import * as React from "react";
 import { useConfiguratorState } from "../../domain";
-import { getPalette } from "../../domain/helpers";
+import {
+  getPalette,
+  mapColorsToComponentValuesIris,
+} from "../../domain/helpers";
 import { Icon } from "../../icons";
 import { Label } from "../form";
-import { scaleOrdinal } from "d3-scale";
-import {
-  DimensionFieldsWithValuesFragment,
-  ComponentFieldsFragment,
-} from "../../graphql/query-hooks";
+import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 
 const vegaPalettes: Array<{
   label: string;
@@ -45,7 +44,6 @@ export const ColorPalette = ({
   field: string;
   disabled?: boolean;
   component: DimensionFieldsWithValuesFragment | undefined;
-  //  { iri: string; label: string; values: { value: string }[] };
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -61,23 +59,16 @@ export const ColorPalette = ({
     defaultSelectedItem: vegaPalettes[0], // Probably should use `selectedItem` here …
     onSelectedItemChange: ({ selectedItem }) => {
       if (selectedItem && component) {
-        const colorScale = scaleOrdinal()
-          .domain(component?.values.map((dv) => dv.value))
-          .range(getPalette(selectedItem.value));
-        const colorMapping = {} as $FixMe;
-
-        component?.values.forEach((dv) => {
-          colorMapping[`${dv.value}`] = colorScale(dv.value);
-        });
-        console.log(colorMapping);
-
         dispatch({
           type: "CHART_PALETTE_CHANGED",
           value: {
             field,
             path: "palette",
             value: selectedItem.value,
-            colorMapping,
+            colorMapping: mapColorsToComponentValuesIris({
+              palette: selectedItem.value,
+              component,
+            }),
           },
         });
       }
