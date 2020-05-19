@@ -107,6 +107,7 @@ export const ChartColumns = memo(
           <GroupedColumnChart
             data={observations}
             fields={fields}
+            dimensions={dimensions}
             measures={measures}
             aspectRatio={0.4}
           >
