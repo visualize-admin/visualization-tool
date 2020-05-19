@@ -60,9 +60,10 @@ export interface AreasState {
 const useAreasState = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: AreaFields;
   aspectRatio: number;
 }): AreasState => {
@@ -173,13 +174,32 @@ const useAreasState = ({
 
   const xScale = scaleTime().domain(xDomain);
 
-  const yScale = scaleLinear()
-    .domain(yDomain)
-    .nice();
+  const yScale = scaleLinear().domain(yDomain).nice();
 
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
-  );
+  // Map ordered segments to colors
+  const colors = scaleOrdinal<string, string>();
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  ) as $FixMe;
+
+  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const dvIri = segmentDimension.values.find(
+        (s: $FixMe) => s.label === segment
+      ).value;
+
+      return {
+        label: segment,
+        color: fields.segment?.colorMapping![dvIri] || "#006699",
+      };
+    });
+
+    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+  } else {
+    colors.domain(segments);
+    colors.range(getPalette(fields.segment?.palette));
+  }
 
   // Dimensions
   const left = Math.max(
@@ -278,15 +298,17 @@ const AreaChartProvider = ({
   data,
   fields,
   measures,
+  dimensions,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "fields" | "dimensions" | "measures"> & {
   children: ReactNode;
   aspectRatio: number;
 } & { fields: AreaFields }) => {
   const state = useAreasState({
     data,
     fields,
+    dimensions,
     measures,
     aspectRatio,
   });
@@ -299,9 +321,10 @@ export const AreaChart = ({
   data,
   fields,
   measures,
+  dimensions,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "fields" | "measures"> & {
+}: Pick<ChartProps, "data" | "fields" | "dimensions" | "measures"> & {
   children: ReactNode;
   fields: AreaFields;
   aspectRatio: number;
@@ -312,6 +335,7 @@ export const AreaChart = ({
         <AreaChartProvider
           data={data}
           fields={fields}
+          dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}
         >
