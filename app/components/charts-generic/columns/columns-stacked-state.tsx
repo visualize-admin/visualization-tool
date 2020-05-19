@@ -199,9 +199,7 @@ const useColumnsStackedState = ({
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
-  const yScale = scaleLinear()
-    .domain(yStackDomain)
-    .nice();
+  const yScale = scaleLinear().domain(yStackDomain).nice();
 
   // stack order
   const stackOrder =

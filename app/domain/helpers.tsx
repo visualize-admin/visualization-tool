@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { format } from "d3-format";
+import { scaleOrdinal } from "d3-scale";
 import {
   schemeAccent,
   schemeCategory10,
@@ -21,9 +22,8 @@ import {
 } from "d3-time";
 import { timeFormat, timeParse } from "d3-time-format";
 import * as React from "react";
-import { IconName } from "../icons";
-import { scaleOrdinal } from "d3-scale";
 import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
+import { IconName } from "../icons";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");

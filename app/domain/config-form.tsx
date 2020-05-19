@@ -1,11 +1,11 @@
+import { SelectProps } from "@theme-ui/components";
 import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
+import { DataCubeMetadata } from "../graphql/types";
+import { Locales } from "../locales/locales";
+import { getFieldComponentIri } from "./charts";
 import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
-import { Locales } from "../locales/locales";
-import { SelectProps } from "@theme-ui/components";
-import { getFieldComponentIri } from "./charts";
-import { DataCubeMetadata } from "../graphql/types";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]

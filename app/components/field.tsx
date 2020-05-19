@@ -1,7 +1,7 @@
-import React, { ChangeEvent, useCallback } from "react";
-import { I18n } from "@lingui/react";
 import { t } from "@lingui/macro";
-
+import { I18n } from "@lingui/react";
+import { Box, Flex } from "@theme-ui/components";
+import React, { ChangeEvent, useCallback } from "react";
 import { FilterValueSingle, MetaKey, useConfiguratorState } from "../domain";
 import {
   FIELD_VALUE_NONE,
@@ -9,11 +9,12 @@ import {
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
+  useChartOptionSelectField,
   useChartTypeSelectorField,
   useMetaField,
   useSingleFilterField,
-  useChartOptionSelectField,
 } from "../domain/config-form";
+import { getPalette } from "../domain/helpers";
 import {
   ComponentFieldsFragment,
   DimensionFieldsWithValuesFragment,
@@ -21,15 +22,13 @@ import {
 import { DataCubeMetadata } from "../graphql/types";
 import { Locales } from "../locales/locales";
 import { ChartTypeSelectionButton } from "./chart-controls/chart-type-radio-button";
+import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
   FilterTab,
 } from "./chart-controls/control-tab";
 import { Checkbox, Input, Radio, Select } from "./form";
-import { Flex, Box } from "@theme-ui/components";
-import { ColorPickerMenu } from "./chart-controls/color-picker";
-import { getPalette } from "../domain/helpers";
 
 export const ControlTabField = ({
   component,
@@ -238,7 +237,7 @@ export const MultiFilterField = ({
         disabled={disabled}
         onChange={onFieldChange}
         checked={checked ?? fieldChecked}
-      ></Checkbox>
+      />
       {color && (checked ?? fieldChecked) && (
         <Box>
           <ColorPickerMenu

@@ -77,8 +77,8 @@ const usePieState = ({
   const sortingType = fields.segment.sorting?.sortingType;
   const sortingOrder = fields.segment.sorting?.sortingOrder;
 
-  // FIXME: We don't really need to sort data here (later sorted in pie())
-  // Currently useful to sort the legend items.
+  // Data actually sorted in pie(),
+  // Sorting here only useful to legend items.
   const sortedData = useMemo(() => {
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);

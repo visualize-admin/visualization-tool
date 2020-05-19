@@ -8,22 +8,22 @@ import {
   useEffect,
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
+import { DataCubeMetadata } from "../graphql/types";
+import { unreachableError } from "../lib/unreachable";
+import { useLocale } from "../lib/use-locale";
 import { createChartId } from "./chart-id";
+import { getFieldComponentIris, getInitialConfig } from "./charts";
 import {
-  ConfiguratorState,
-  ConfiguratorStatePublishing,
-  FilterValue,
   ChartConfig,
   ChartType,
+  ConfiguratorState,
+  ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   decodeConfiguratorState,
-  GenericFields,
+  FilterValue,
   FilterValueMultiValues,
+  GenericFields,
 } from "./config-types";
-import { getInitialConfig, getFieldComponentIris } from "./charts";
-import { useLocale } from "../lib/use-locale";
-import { unreachableError } from "../lib/unreachable";
-import { DataCubeMetadata } from "../graphql/types";
 import { mapColorsToComponentValuesIris } from "./helpers";
 
 export type ConfiguratorStateAction =

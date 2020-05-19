@@ -254,7 +254,6 @@ const ChartFieldOptions = ({
 }) => {
   return (
     <>
-      {/* FIXME: improve use of encodingOptions to get chart options */}
       {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
         chartType === "column" && (
           <Box as="fieldset" mt={2}>

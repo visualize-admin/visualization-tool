@@ -95,6 +95,8 @@ export const DimensionValuesMultiFilter = ({
                 />
               </Flex>
             );
+          } else {
+            return null;
           }
         })}
       </>

@@ -1,6 +1,6 @@
-import * as t from "io-ts";
-import { pipe } from "fp-ts/lib/pipeable";
 import { fold } from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/pipeable";
+import * as t from "io-ts";
 
 // Filters
 const FilterValueMulti = t.type(
