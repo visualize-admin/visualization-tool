@@ -229,23 +229,30 @@ export const MultiFilterField = ({
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 
   return (
-    <Flex sx={{ width: "100%", justifyContent: "space-between" }}>
-      <Checkbox
-        name={dimensionIri}
-        value={value}
-        label={label}
-        disabled={disabled}
-        onChange={onFieldChange}
-        checked={checked ?? fieldChecked}
-      />
+    <Flex
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: 2,
+        height: "2rem",
+      }}
+    >
+      <Box sx={{ maxWidth: "80%" }}>
+        <Checkbox
+          name={dimensionIri}
+          value={value}
+          label={label}
+          disabled={disabled}
+          onChange={onFieldChange}
+          checked={checked ?? fieldChecked}
+        />
+      </Box>
       {color && (checked ?? fieldChecked) && (
-        <Box>
-          <ColorPickerMenu
-            colors={getPalette(state.chartConfig.fields.segment?.palette)}
-            selectedColor={color}
-            onChange={(c) => updateColor(c)}
-          />
-        </Box>
+        <ColorPickerMenu
+          colors={getPalette(state.chartConfig.fields.segment?.palette)}
+          selectedColor={color}
+          onChange={(c) => updateColor(c)}
+        />
       )}
     </Flex>
   );

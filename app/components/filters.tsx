@@ -81,19 +81,16 @@ export const DimensionValuesMultiFilter = ({
               state.chartConfig.fields.segment?.colorMapping &&
               state.chartConfig.fields.segment?.colorMapping[dv.value];
             return (
-              <Flex key={dv.value} sx={{ justifyContent: "space-between" }}>
-                <MultiFilterField
-                  dimensionIri={dimensionIri}
-                  label={dv.label}
-                  value={dv.value}
-                  allValues={dimension.values.map((d) => d.value)}
-                  checked={selectionState === "ALL_SELECTED" ? true : undefined}
-                  checkAction={
-                    selectionState === "NONE_SELECTED" ? "SET" : "ADD"
-                  }
-                  color={color}
-                />
-              </Flex>
+              <MultiFilterField
+                key={dv.value}
+                dimensionIri={dimensionIri}
+                label={dv.label}
+                value={dv.value}
+                allValues={dimension.values.map((d) => d.value)}
+                checked={selectionState === "ALL_SELECTED" ? true : undefined}
+                checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
+                color={color}
+              />
             );
           } else {
             return null;
