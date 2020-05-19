@@ -1,4 +1,4 @@
-import { ascending, group, max, min, descending, rollup, sum } from "d3-array";
+import { ascending, descending, group, max, min, rollup, sum } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -15,25 +15,22 @@ import {
   stackOrderNone,
 } from "d3-shape";
 import * as React from "react";
-import { ReactNode, useMemo, useCallback } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import {
   ColumnFields,
   SortingOrder,
   SortingType,
 } from "../../../domain/config-types";
+import { Observation, ObservationValue } from "../../../domain/data";
 import { formatNumber, getPalette, isNumber } from "../../../domain/helpers";
+import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
 import { PADDING_INNER, PADDING_OUTER } from "../columns/constants";
-import { Bounds, Observer, useWidth } from "../use-width";
+import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
-import { sortByIndex } from "../../../lib/array";
-import { ObservationValue, Observation } from "../../../domain/data";
-import { useDimensionValuesQuery } from "../../../graphql/query-hooks";
-import { useLocale } from "../../../lib/use-locale";
-import { useConfiguratorState } from "../../../domain/configurator-state";
+import { Bounds, Observer, useWidth } from "../use-width";
 
 export interface StackedColumnsState {
   sortedData: Observation[];
@@ -62,21 +59,6 @@ const useColumnsStackedState = ({
   fields: ColumnFields;
   aspectRatio: number;
 }): StackedColumnsState => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const locale = useLocale();
-  const meta = useDimensionValuesQuery({
-    variables: {
-      dimensionIri: fields.segment?.componentIri
-        ? fields.segment?.componentIri
-        : "dvsr",
-      locale,
-      dataCubeIri: state.dataSet ? state.dataSet : "kjb",
-    },
-  });
-
-  const allSegmentValues = meta[0].data?.dataCubeByIri?.dimensionByIri?.values;
-
   const width = useWidth();
 
   const getX = useCallback(
@@ -145,13 +127,7 @@ const useColumnsStackedState = ({
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
   const segmentsOrderedByName = Array.from(
-    new Set(
-      sortedData.map((d) => {
-        // console.log(d);
-        // return { iri: "", label: getSegment(d) };
-        return getSegment(d);
-      })
-    )
+    new Set(sortedData.map((d) => getSegment(d)))
   ).sort((a, b) =>
     segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
   );
@@ -176,20 +152,7 @@ const useColumnsStackedState = ({
       : segmentsOrderedByTotalValue;
 
   const colors = scaleOrdinal().domain(segments);
-  if (fields.segment?.colorMapping) {
-    const colorsBySegment = segments.map(
-      (segm) =>
-        // @ts-ignore
-        fields.segment?.colorMapping[
-          // @ts-ignore
-          `${allSegmentValues?.find((asv) => asv.label === segm).value}`
-        ]
-    );
-    console.log({ colorsBySegment });
-    colors.range(colorsBySegment);
-  } else {
-    colors.range(getPalette(fields.segment?.palette));
-  }
+  colors.range(getPalette(fields.segment?.palette));
 
   // x
   const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
