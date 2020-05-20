@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { Box } from "theme-ui";
 import { LineConfig, LineFields } from "../domain/config-types";
 import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
@@ -18,7 +19,7 @@ import { InteractionHorizontal } from "./charts-generic/interaction/interaction-
 import { LegendColor } from "./charts-generic/legends/color";
 import { Lines } from "./charts-generic/lines/lines";
 import { LineChart } from "./charts-generic/lines/lines-state";
-import { Loading, NoDataHint } from "./hint";
+import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
@@ -28,7 +29,7 @@ export const ChartLinesVisualization = ({
   chartConfig: LineConfig;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeObservationsQuery({
+  const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
@@ -42,7 +43,7 @@ export const ChartLinesVisualization = ({
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
-      <>
+      <Box sx={{ position: "relative" }}>
         <A11yTable
           title={title}
           observations={observations.data}
@@ -56,7 +57,8 @@ export const ChartLinesVisualization = ({
           measures={measures}
           fields={chartConfig.fields}
         />
-      </>
+        {fetching && <LoadingOverlay />}
+      </Box>
     ) : (
       <NoDataHint />
     );
