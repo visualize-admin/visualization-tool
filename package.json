@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "next": "^9.4.0",
+    "next": "^9.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
@@ -79,6 +79,7 @@
     "@types/theme-ui__components": "^0.2.2",
     "@typescript-eslint/eslint-plugin": "2.31.0",
     "@typescript-eslint/parser": "2.31.0",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "10.x",
     "babel-jest": "^26.0.1",
     "babel-plugin-macros": "^2.8.0",
