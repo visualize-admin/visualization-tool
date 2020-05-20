@@ -3,6 +3,7 @@ import VisuallyHidden from "@reach/visually-hidden";
 import { color as d3Color } from "d3-color";
 import { useCallback, useState } from "react";
 import { Box, Grid, Input } from "theme-ui";
+import { Trans } from "@lingui/macro";
 
 const Swatch = ({
   color,
@@ -134,7 +135,9 @@ export const ColorPickerMenu = (props: Props) => {
         }}
       >
         <MenuButton className="menu-button">
-          <VisuallyHidden>SELECT</VisuallyHidden>
+          <VisuallyHidden>
+            <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
+          </VisuallyHidden>
           <Box aria-hidden>
             <Box
               sx={{

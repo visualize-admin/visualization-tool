@@ -94,9 +94,14 @@ msgstr "Nuage de points"
 msgid "controls.color.palette"
 msgstr "Couleurs"
 
-#: app/components/chart-controls/color-palette.tsx:149
+#: app/components/chart-controls/color-palette.tsx:150
+#: app/components/chart-controls/color-palette.tsx:155
 msgid "controls.color.palette.reset"
 msgstr "Réinitialiser la palette de couleurs"
+
+#: app/components/chart-controls/color-picker.tsx:91
+msgid "controls.colorpicker.open"
+msgstr ""
 
 #: app/domain/helpers.tsx:86
 msgid "controls.column.grouped"
