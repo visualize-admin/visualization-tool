@@ -1,4 +1,5 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
+import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
 import React, { useEffect, useRef } from "react";
@@ -18,8 +19,8 @@ import {
 } from "../domain/chart-config-ui-options";
 import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
 import {
-  useDataCubeMetadataWithComponentValuesQuery,
   DimensionFieldsWithValuesFragment,
+  useDataCubeMetadataWithComponentValuesQuery,
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
@@ -42,7 +43,6 @@ import {
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
-import { I18n } from "@lingui/react";
 
 export const ChartOptionsSelector = ({
   state,
@@ -228,7 +228,6 @@ const EncodingOptionsPanel = ({
             </legend>
             {component && (
               <DimensionValuesMultiFilter
-                // state={state}
                 key={component.iri}
                 dimensionIri={component.iri}
                 dataSetIri={metaData.iri}

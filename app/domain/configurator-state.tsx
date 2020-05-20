@@ -355,7 +355,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
 ) => {
-  console.log(action.type);
   switch (action.type) {
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
@@ -508,7 +507,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             "colorMapping",
             action.value.value,
           ],
-          // `chartConfig.fields.${action.value.field}.colorMapping.${action.value.value}`,
           action.value.color,
           Object
         );
