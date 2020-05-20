@@ -192,6 +192,10 @@ msgstr "Chart type"
 msgid "controls.select.column.chart.type"
 msgstr "Chart type"
 
+#: app/components/dataset-selector.tsx:15
+#~ msgid "controls.select.dataset"
+#~ msgstr "Select dataset"
+
 #: app/domain/helpers.tsx:148
 #: app/domain/helpers.tsx:150
 msgid "controls.select.dimension"

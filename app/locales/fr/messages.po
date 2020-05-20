@@ -96,7 +96,7 @@ msgstr "Couleurs"
 
 #: app/components/chart-controls/color-palette.tsx:149
 msgid "controls.color.palette.reset"
-msgstr ""
+msgstr "Réinitialiser la palette de couleurs"
 
 #: app/domain/helpers.tsx:86
 msgid "controls.column.grouped"
@@ -112,7 +112,7 @@ msgstr "Description"
 
 #: app/components/field.tsx:135
 msgid "controls.dimension.none"
-msgstr ""
+msgstr "Aucune"
 
 #: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
@@ -181,7 +181,7 @@ msgstr "Filtre"
 
 #: app/components/chart-options-selector.tsx:123
 msgid "controls.section.sorting"
-msgstr ""
+msgstr "Trier"
 
 #: app/components/chart-type-selector.tsx:31
 #: app/components/chart-type-selector.tsx:34
@@ -191,6 +191,10 @@ msgstr "Type de graphique"
 #: app/components/chart-options-selector.tsx:109
 msgid "controls.select.column.chart.type"
 msgstr "Type de graphique"
+
+#: app/components/dataset-selector.tsx:15
+#~ msgid "controls.select.dataset"
+#~ msgstr "Sélectionner un jeu de données"
 
 #: app/domain/helpers.tsx:148
 #: app/domain/helpers.tsx:150
@@ -204,47 +208,47 @@ msgstr "Sélectionner une variable"
 #: app/components/chart-options-selector.tsx:133
 #: app/components/chart-options-selector.tsx:139
 msgid "controls.sorting.byDimensionLabel"
-msgstr ""
+msgstr "Nom"
 
 #: app/domain/helpers.tsx:92
 msgid "controls.sorting.byDimensionLabel.ascending"
-msgstr ""
+msgstr "A → Z"
 
 #: app/domain/helpers.tsx:98
 msgid "controls.sorting.byDimensionLabel.descending"
-msgstr ""
+msgstr "Z → A"
 
 #: app/components/chart-options-selector.tsx:135
 msgid "controls.sorting.byMeasure"
-msgstr ""
+msgstr "Mesure"
 
 #: app/domain/helpers.tsx:117
 msgid "controls.sorting.byMeasure.ascending"
-msgstr ""
+msgstr "1 → 9"
 
 #: app/domain/helpers.tsx:122
 msgid "controls.sorting.byMeasure.descending"
-msgstr ""
+msgstr "9 → 1"
 
 #: app/components/chart-options-selector.tsx:137
 msgid "controls.sorting.byTotalSize"
-msgstr ""
+msgstr "Taille totale"
 
 #: app/domain/helpers.tsx:100
 msgid "controls.sorting.byTotalSize.ascending"
-msgstr ""
+msgstr "Croissant"
 
 #: app/domain/helpers.tsx:110
 msgid "controls.sorting.byTotalSize.largestBottom"
-msgstr ""
+msgstr "Décroissant de bas en haut"
 
 #: app/domain/helpers.tsx:102
 msgid "controls.sorting.byTotalSize.largestFirst"
-msgstr ""
+msgstr "Décroissant"
 
 #: app/domain/helpers.tsx:107
 msgid "controls.sorting.byTotalSize.largestTop"
-msgstr ""
+msgstr "Décroissant de haut en bas"
 
 #: app/domain/helpers.tsx:80
 msgid "controls.title"
