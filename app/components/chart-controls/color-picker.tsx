@@ -61,6 +61,18 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
     [onChange, setInputColorValue]
   );
 
+  const formatInputColor = useCallback(
+    (_color) => {
+      // Make sure onChange is only called with valid colors
+      const c = d3Color(_color);
+      if (c) {
+        // Type defs of d3-color are not up-to-date
+        setInputColorValue((c as $Unexpressable).formatHex());
+      }
+    },
+    [setInputColorValue]
+  );
+
   return (
     <Box
       sx={{
@@ -103,6 +115,9 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
           value={`#${inputColorValue.replace(/^#/, "")}`}
           onChange={(e) => {
             selectColor(e.currentTarget.value);
+          }}
+          onBlur={(e) => {
+            formatInputColor(e.currentTarget.value);
           }}
         />
       </Box>
