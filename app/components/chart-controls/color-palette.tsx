@@ -217,25 +217,36 @@ const ColorPaletteReset = ({
     [component, dispatch, field, state.chartConfig]
   );
 
-  // Compare palette colors & colorMapping colors
-  const currentPalette = getPalette(state.chartConfig.fields.segment?.palette);
-  const colorMappingColors = Object.values(
-    state.chartConfig.fields.segment?.colorMapping!
-  );
-  const nbMatchedColors = colorMappingColors.length;
-  const matchedColorsInPalette = currentPalette.slice(0, nbMatchedColors);
-  const same = matchedColorsInPalette.every(
-    (pc, i) => pc === colorMappingColors[i]
-  );
+  if (state.chartConfig.fields.segment?.colorMapping) {
+    // Compare palette colors & colorMapping colors
+    const currentPalette = getPalette(
+      state.chartConfig.fields.segment?.palette
+    );
+    const colorMappingColors = Object.values(
+      state.chartConfig.fields.segment?.colorMapping
+    );
 
-  return (
-    <Button
-      disabled={same}
-      onClick={resetColorPalette}
-      variant="inline"
-      sx={{ mt: 2 }}
-    >
-      <Trans id="controls.color.palette.reset">Reset color palette</Trans>
-    </Button>
-  );
+    const nbMatchedColors = colorMappingColors.length;
+    const matchedColorsInPalette = currentPalette.slice(0, nbMatchedColors);
+    const same = matchedColorsInPalette.every(
+      (pc, i) => pc === colorMappingColors[i]
+    );
+
+    return (
+      <Button
+        disabled={same}
+        onClick={resetColorPalette}
+        variant="inline"
+        sx={{ mt: 2 }}
+      >
+        <Trans id="controls.color.palette.reset">Reset color palette</Trans>
+      </Button>
+    );
+  } else {
+    return (
+      <Button disabled={true} variant="inline" sx={{ mt: 2 }}>
+        <Trans id="controls.color.palette.reset">Reset color palette</Trans>
+      </Button>
+    );
+  }
 };
