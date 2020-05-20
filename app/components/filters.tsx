@@ -3,7 +3,7 @@ import { Box, Button } from "@theme-ui/components";
 import React, { useCallback } from "react";
 import {
   getFilterValue,
-  useConfiguratorState
+  useConfiguratorState,
 } from "../domain/configurator-state";
 import { useDimensionValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
@@ -14,7 +14,7 @@ type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 
 export const DimensionValuesMultiFilter = ({
   dataSetIri,
-  dimensionIri
+  dimensionIri,
 }: {
   dataSetIri: string;
   dimensionIri: string;
@@ -22,22 +22,22 @@ export const DimensionValuesMultiFilter = ({
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri }
+    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
   const selectAll = useCallback(() => {
     dispatch({
       type: "CHART_CONFIG_FILTER_RESET_MULTI",
       value: {
-        dimensionIri
-      }
+        dimensionIri,
+      },
     });
   }, [dispatch, dimensionIri]);
 
   const selectNone = useCallback(() => {
     dispatch({
       type: "CHART_CONFIG_FILTER_SET_NONE_MULTI",
-      value: { dimensionIri }
+      value: { dimensionIri },
     });
   }, [dispatch, dimensionIri]);
 
@@ -75,18 +75,26 @@ export const DimensionValuesMultiFilter = ({
           </Button>
         </Box>
 
-        {dimension.values.map(dv => {
-          return (
-            <MultiFilterField
-              key={dv.value}
-              dimensionIri={dimensionIri}
-              label={dv.label}
-              value={dv.value}
-              allValues={dimension.values.map(d => d.value)}
-              checked={selectionState === "ALL_SELECTED" ? true : undefined}
-              checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
-            />
-          );
+        {dimension.values.map((dv) => {
+          if (state.state === "CONFIGURING_CHART") {
+            const color =
+              state.chartConfig.fields.segment?.colorMapping &&
+              state.chartConfig.fields.segment?.colorMapping[dv.value];
+            return (
+              <MultiFilterField
+                key={dv.value}
+                dimensionIri={dimensionIri}
+                label={dv.label}
+                value={dv.value}
+                allValues={dimension.values.map((d) => d.value)}
+                checked={selectionState === "ALL_SELECTED" ? true : undefined}
+                checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
+                color={color}
+              />
+            );
+          } else {
+            return null;
+          }
         })}
       </>
     );
@@ -97,14 +105,14 @@ export const DimensionValuesMultiFilter = ({
 
 export const DimensionValuesSingleFilter = ({
   dataSetIri,
-  dimensionIri
+  dimensionIri,
 }: {
   dataSetIri: string;
   dimensionIri: string;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri }
+    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
   if (data?.dataCubeByIri?.dimensionByIri) {
@@ -112,7 +120,7 @@ export const DimensionValuesSingleFilter = ({
 
     return (
       <>
-        {dimension.values.map(dv => {
+        {dimension.values.map((dv) => {
           return (
             <SingleFilterField
               key={dv.value}

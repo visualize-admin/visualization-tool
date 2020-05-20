@@ -62,53 +62,57 @@ msgstr "Veröffentlichen"
 msgid "button.share"
 msgstr "Teilen"
 
-#: app/domain/helpers.tsx:73
+#: app/domain/helpers.tsx:74
 msgid "controls.axis.horizontal"
 msgstr "Horizontale Achse"
 
-#: app/domain/helpers.tsx:129
+#: app/domain/helpers.tsx:130
 msgid "controls.chart.type.area"
 msgstr "Flächen"
 
-#: app/domain/helpers.tsx:125
+#: app/domain/helpers.tsx:126
 msgid "controls.chart.type.bar"
 msgstr "Balken"
 
-#: app/domain/helpers.tsx:123
+#: app/domain/helpers.tsx:124
 msgid "controls.chart.type.column"
 msgstr "Säulen"
 
-#: app/domain/helpers.tsx:127
+#: app/domain/helpers.tsx:128
 msgid "controls.chart.type.line"
 msgstr "Linien"
 
-#: app/domain/helpers.tsx:133
+#: app/domain/helpers.tsx:134
 msgid "controls.chart.type.pie"
 msgstr "Kreis"
 
-#: app/domain/helpers.tsx:131
+#: app/domain/helpers.tsx:132
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/components/chart-controls/color-palette.tsx:50
+#: app/components/chart-controls/color-palette.tsx:53
 msgid "controls.color.palette"
 msgstr "Farbpalette"
 
-#: app/domain/helpers.tsx:85
+#: app/components/chart-controls/color-palette.tsx:149
+msgid "controls.color.palette.reset"
+msgstr "Farbpalette zurücksetzen"
+
+#: app/domain/helpers.tsx:86
 msgid "controls.column.grouped"
 msgstr "gruppiert"
 
-#: app/domain/helpers.tsx:83
+#: app/domain/helpers.tsx:84
 msgid "controls.column.stacked"
 msgstr "gestapelt"
 
-#: app/domain/helpers.tsx:81
+#: app/domain/helpers.tsx:82
 msgid "controls.description"
 msgstr "Beschreibung"
 
-#: app/components/field.tsx:114
+#: app/components/field.tsx:135
 msgid "controls.dimension.none"
-msgstr ""
+msgstr "Keine"
 
 #: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
@@ -126,27 +130,27 @@ msgstr "Bitte eine Designoption oder Datendimension auswählen, um diese zu bear
 msgid "controls.hint.describing.chart"
 msgstr "Bitte einen Inhaltsbereich auswählen, um diesen zu bearbeiten."
 
-#: app/domain/helpers.tsx:135
+#: app/domain/helpers.tsx:136
 msgid "controls.language.english"
 msgstr "Englisch"
 
-#: app/domain/helpers.tsx:139
+#: app/domain/helpers.tsx:140
 msgid "controls.language.french"
 msgstr "Französisch"
 
-#: app/domain/helpers.tsx:137
+#: app/domain/helpers.tsx:138
 msgid "controls.language.german"
 msgstr "Deutsch"
 
-#: app/domain/helpers.tsx:141
+#: app/domain/helpers.tsx:142
 msgid "controls.language.italian"
 msgstr "Italienisch"
 
-#: app/domain/helpers.tsx:75
+#: app/domain/helpers.tsx:76
 msgid "controls.measure"
 msgstr "Messwert"
 
-#: app/domain/helpers.tsx:77
+#: app/domain/helpers.tsx:78
 msgid "controls.partition"
 msgstr "Segmentierung"
 
@@ -154,7 +158,7 @@ msgstr "Segmentierung"
 msgid "controls.partition.add"
 msgstr "Hinzufügen…"
 
-#: app/components/form.tsx:109
+#: app/components/form.tsx:110
 msgid "controls.search.clear"
 msgstr "Suche zurücksetzen"
 
@@ -170,79 +174,83 @@ msgstr "Beschreiben"
 msgid "controls.section.design"
 msgstr "Design"
 
-#: app/components/chart-options-selector.tsx:91
-#: app/components/chart-options-selector.tsx:95
+#: app/components/chart-options-selector.tsx:93
+#: app/components/chart-options-selector.tsx:97
 msgid "controls.section.filter"
 msgstr "Filter"
 
-#: app/components/chart-options-selector.tsx:108
+#: app/components/chart-options-selector.tsx:123
 msgid "controls.section.sorting"
-msgstr ""
+msgstr "Sortieren"
 
 #: app/components/chart-type-selector.tsx:31
 #: app/components/chart-type-selector.tsx:34
 msgid "controls.select.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/components/chart-options-selector.tsx:174
+#: app/components/chart-options-selector.tsx:109
 msgid "controls.select.column.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/domain/helpers.tsx:147
-#: app/domain/helpers.tsx:149
+#: app/components/dataset-selector.tsx:15
+#~ msgid "controls.select.dataset"
+#~ msgstr "Datensatz auswählen"
+
+#: app/domain/helpers.tsx:148
+#: app/domain/helpers.tsx:150
 msgid "controls.select.dimension"
 msgstr "Dimension auswählen"
 
-#: app/domain/helpers.tsx:148
+#: app/domain/helpers.tsx:149
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/components/chart-options-selector.tsx:118
-#: app/components/chart-options-selector.tsx:124
+#: app/components/chart-options-selector.tsx:133
+#: app/components/chart-options-selector.tsx:139
 msgid "controls.sorting.byDimensionLabel"
-msgstr ""
+msgstr "Name"
 
-#: app/domain/helpers.tsx:91
+#: app/domain/helpers.tsx:92
 msgid "controls.sorting.byDimensionLabel.ascending"
-msgstr ""
+msgstr "A → Z"
 
-#: app/domain/helpers.tsx:97
+#: app/domain/helpers.tsx:98
 msgid "controls.sorting.byDimensionLabel.descending"
-msgstr ""
+msgstr "Z → A"
 
-#: app/components/chart-options-selector.tsx:120
+#: app/components/chart-options-selector.tsx:135
 msgid "controls.sorting.byMeasure"
-msgstr ""
+msgstr "Messwert"
 
-#: app/domain/helpers.tsx:116
+#: app/domain/helpers.tsx:117
 msgid "controls.sorting.byMeasure.ascending"
-msgstr ""
+msgstr "1 → 9"
 
-#: app/domain/helpers.tsx:121
+#: app/domain/helpers.tsx:122
 msgid "controls.sorting.byMeasure.descending"
-msgstr ""
+msgstr "9 → 1"
 
-#: app/components/chart-options-selector.tsx:122
+#: app/components/chart-options-selector.tsx:137
 msgid "controls.sorting.byTotalSize"
-msgstr ""
+msgstr "Gesamtgrösse"
 
-#: app/domain/helpers.tsx:99
+#: app/domain/helpers.tsx:100
 msgid "controls.sorting.byTotalSize.ascending"
-msgstr ""
+msgstr "Kleinste zuerst"
 
-#: app/domain/helpers.tsx:109
+#: app/domain/helpers.tsx:110
 msgid "controls.sorting.byTotalSize.largestBottom"
-msgstr ""
+msgstr "Grösste unten"
 
-#: app/domain/helpers.tsx:101
+#: app/domain/helpers.tsx:102
 msgid "controls.sorting.byTotalSize.largestFirst"
-msgstr ""
+msgstr "Grösste zuerst"
 
-#: app/domain/helpers.tsx:106
+#: app/domain/helpers.tsx:107
 msgid "controls.sorting.byTotalSize.largestTop"
-msgstr ""
+msgstr "Kleinste unten"
 
-#: app/domain/helpers.tsx:79
+#: app/domain/helpers.tsx:80
 msgid "controls.title"
 msgstr "Titel"
 

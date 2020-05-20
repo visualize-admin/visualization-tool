@@ -55,9 +55,10 @@ export interface PieState {
 const usePieState = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: PieFields;
   aspectRatio: number;
 }): PieState => {
@@ -76,15 +77,37 @@ const usePieState = ({
   const sortingType = fields.segment.sorting?.sortingType;
   const sortingOrder = fields.segment.sorting?.sortingOrder;
 
-  // FIXME: We don't really need to sort data here (later sorted in pie())
-  // Currently useful to sort the legend items.
+  // Data actually sorted in pie(),
+  // Sorting here only useful to legend items.
   const sortedData = useMemo(() => {
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
-  const colors = scaleOrdinal(getPalette(fields.segment.palette)).domain(
-    sortedData.map(getX)
-  );
+  // Map ordered segments to colors
+  const segments = Array.from(new Set(sortedData.map((d) => getX(d))));
+  const colors = scaleOrdinal<string, string>();
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  ) as $FixMe;
+
+  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const dvIri = segmentDimension.values.find(
+        (s: $FixMe) => s.label === segment
+      ).value;
+
+      return {
+        label: segment,
+        color: fields.segment?.colorMapping![dvIri] || "#006699",
+      };
+    });
+
+    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+  } else {
+    colors.domain(segments);
+    colors.range(getPalette(fields.segment?.palette));
+  }
 
   // Dimensions
   const margins = {
@@ -177,11 +200,11 @@ const usePieState = ({
 const PieChartProvider = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
-
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
   fields: PieFields;
   aspectRatio: number;
@@ -189,6 +212,7 @@ const PieChartProvider = ({
   const state = usePieState({
     data,
     fields,
+    dimensions,
     measures,
     aspectRatio,
   });
@@ -201,9 +225,10 @@ export const PieChart = ({
   data,
   fields,
   measures,
+  dimensions,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
   fields: PieFields;
   children: ReactNode;
@@ -214,6 +239,7 @@ export const PieChart = ({
         <PieChartProvider
           data={data}
           fields={fields}
+          dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}
         >

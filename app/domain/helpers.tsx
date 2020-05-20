@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { format } from "d3-format";
+import { scaleOrdinal } from "d3-scale";
 import {
   schemeAccent,
   schemeCategory10,
@@ -21,6 +22,7 @@ import {
 } from "d3-time";
 import { timeFormat, timeParse } from "d3-time-format";
 import * as React from "react";
+import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 import { IconName } from "../icons";
 
 // FIXME: We should cover more time format
@@ -219,4 +221,22 @@ export const getPalette = (
     default:
       return schemeCategory10;
   }
+};
+
+export const mapColorsToComponentValuesIris = ({
+  palette,
+  component,
+}: {
+  palette: string;
+  component: DimensionFieldsWithValuesFragment;
+}) => {
+  const colorScale = scaleOrdinal()
+    .domain(component.values.map((dv) => dv.value))
+    .range(getPalette(palette));
+  const colorMapping = {} as { [x: string]: string };
+
+  component.values.forEach((dv) => {
+    colorMapping[`${dv.value}` as string] = colorScale(dv.value) as string;
+  });
+  return colorMapping;
 };

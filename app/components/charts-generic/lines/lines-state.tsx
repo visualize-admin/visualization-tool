@@ -48,9 +48,10 @@ export interface LinesState {
 const useLinesState = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: LineFields;
   aspectRatio: number;
 }): LinesState => {
@@ -91,9 +92,7 @@ const useLinesState = ({
   const maxValue = max(sortedData, getY) as number;
   const yDomain = [minValue, maxValue];
 
-  const yScale = scaleLinear()
-    .domain(yDomain)
-    .nice();
+  const yScale = scaleLinear().domain(yDomain).nice();
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
@@ -102,9 +101,30 @@ const useLinesState = ({
   const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
     ascending(a, b)
   );
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
-  );
+  // Map ordered segments to colors
+  const colors = scaleOrdinal<string, string>();
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  ) as $FixMe;
+
+  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const dvIri = segmentDimension.values.find(
+        (s: $FixMe) => s.label === segment
+      ).value;
+
+      return {
+        label: segment,
+        color: fields.segment?.colorMapping![dvIri] || "#006699",
+      };
+    });
+
+    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+  } else {
+    colors.domain(segments);
+    colors.range(getPalette(fields.segment?.palette));
+  }
 
   const xKey = fields.x.componentIri;
 
@@ -217,10 +237,11 @@ const useLinesState = ({
 const LineChartProvider = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
   fields: LineFields;
   aspectRatio: number;
@@ -228,6 +249,7 @@ const LineChartProvider = ({
   const state = useLinesState({
     data,
     fields,
+    dimensions,
     measures,
     aspectRatio,
   });
@@ -239,10 +261,11 @@ const LineChartProvider = ({
 export const LineChart = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
   fields: LineFields;
   children: ReactNode;
@@ -253,6 +276,7 @@ export const LineChart = ({
         <LineChartProvider
           data={data}
           fields={fields}
+          dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}
         >

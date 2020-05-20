@@ -2,6 +2,7 @@ import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { ChartConfig, ChartType, GenericFields } from "./config-types";
 import { getCategoricalDimensions, getTimeDimensions } from "./data";
+import { mapColorsToComponentValuesIris } from "./helpers";
 
 export const getInitialConfig = ({
   chartType,
@@ -13,22 +14,6 @@ export const getInitialConfig = ({
   measures: DataCubeMetadata["measures"];
 }): ChartConfig => {
   switch (chartType) {
-    case "scatterplot":
-      return {
-        chartType: "scatterplot",
-        filters: {},
-        fields: {
-          x: { componentIri: measures[0].iri },
-          y: {
-            componentIri:
-              measures.length > 1 ? measures[1].iri : measures[0].iri,
-          },
-          segment: {
-            componentIri: getCategoricalDimensions(dimensions)[0].iri,
-            palette: "category10",
-          },
-        },
-      };
     case "bar":
     case "column":
       return {
@@ -65,7 +50,26 @@ export const getInitialConfig = ({
           y: { componentIri: measures[0].iri },
         },
       };
-
+    case "scatterplot":
+      return {
+        chartType: "scatterplot",
+        filters: {},
+        fields: {
+          x: { componentIri: measures[0].iri },
+          y: {
+            componentIri:
+              measures.length > 1 ? measures[1].iri : measures[0].iri,
+          },
+          segment: {
+            componentIri: getCategoricalDimensions(dimensions)[0].iri,
+            palette: "category10",
+            colorMapping: mapColorsToComponentValuesIris({
+              palette: "category10",
+              component: getCategoricalDimensions(dimensions)[0],
+            }),
+          },
+        },
+      };
     case "pie":
       return {
         chartType,
@@ -76,6 +80,10 @@ export const getInitialConfig = ({
             componentIri: getCategoricalDimensions(dimensions)[0].iri,
             palette: "category10",
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+            colorMapping: mapColorsToComponentValuesIris({
+              palette: "category10",
+              component: getCategoricalDimensions(dimensions)[0],
+            }),
           },
         },
       };

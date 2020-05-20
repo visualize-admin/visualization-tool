@@ -50,9 +50,10 @@ export interface GroupedColumnsState {
 const useGroupedColumnsState = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: ColumnFields;
   aspectRatio: number;
 }): GroupedColumnsState => {
@@ -127,10 +128,30 @@ const useGroupedColumnsState = ({
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
 
-  // const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
-  );
+  // Map ordered segments to colors
+  const colors = scaleOrdinal<string, string>();
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  ) as $FixMe;
+
+  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const dvIri = segmentDimension.values.find(
+        (s: $FixMe) => s.label === segment
+      ).value;
+
+      return {
+        label: segment,
+        color: fields.segment?.colorMapping![dvIri] || "#006699",
+      };
+    });
+
+    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+  } else {
+    colors.domain(segments);
+    colors.range(getPalette(fields.segment?.palette));
+  }
 
   // x
   const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
@@ -144,9 +165,7 @@ const useGroupedColumnsState = ({
     .paddingOuter(0);
 
   // const inBandDomain = [...new Set(sortedData.map(getSegment))];
-  const xScaleIn = scaleBand()
-    .domain(segments)
-    .padding(PADDING_WITHIN);
+  const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
 
   // y
   const minValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
@@ -287,10 +306,11 @@ const useGroupedColumnsState = ({
 const GroupedColumnChartProvider = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -298,6 +318,7 @@ const GroupedColumnChartProvider = ({
   const state = useGroupedColumnsState({
     data,
     fields,
+    dimensions,
     measures,
     aspectRatio,
   });
@@ -309,10 +330,11 @@ const GroupedColumnChartProvider = ({
 export const GroupedColumnChart = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -323,6 +345,7 @@ export const GroupedColumnChart = ({
         <GroupedColumnChartProvider
           data={data}
           fields={fields}
+          dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}
         >

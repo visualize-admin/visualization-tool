@@ -8,22 +8,23 @@ import {
   useEffect,
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
+import { DataCubeMetadata } from "../graphql/types";
+import { unreachableError } from "../lib/unreachable";
+import { useLocale } from "../lib/use-locale";
 import { createChartId } from "./chart-id";
+import { getFieldComponentIris, getInitialConfig } from "./charts";
 import {
-  ConfiguratorState,
-  ConfiguratorStatePublishing,
-  FilterValue,
   ChartConfig,
   ChartType,
+  ConfiguratorState,
+  ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   decodeConfiguratorState,
-  GenericFields,
+  FilterValue,
   FilterValueMultiValues,
+  GenericFields,
 } from "./config-types";
-import { getInitialConfig, getFieldComponentIris } from "./charts";
-import { useLocale } from "../lib/use-locale";
-import { unreachableError } from "../lib/unreachable";
-import { DataCubeMetadata } from "../graphql/types";
+import { mapColorsToComponentValuesIris } from "./helpers";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -58,6 +59,31 @@ export type ConfiguratorStateAction =
         path: string;
         field: string;
         value: string;
+      };
+    }
+  | {
+      type: "CHART_PALETTE_CHANGED";
+      value: {
+        path: string;
+        field: string;
+        value: string;
+        colorMapping: {};
+      };
+    }
+  | {
+      type: "CHART_PALETTE_RESET";
+      value: {
+        path: string;
+        field: string;
+        colorMapping: {};
+      };
+    }
+  | {
+      type: "CHART_COLOR_CHANGED";
+      value: {
+        field: string;
+        value: string;
+        color: string;
       };
     }
   | {
@@ -329,7 +355,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   draft,
   action
 ) => {
-  console.log(action.type);
   switch (action.type) {
     case "INITIALIZED":
       // Never restore from an UNINITIALIZED state
@@ -369,7 +394,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.field
         ];
         if (!f) {
+          // The field was not defined before
           if (action.value.field === "segment") {
+            const component = action.value.dataSetMetadata.dimensions.find(
+              (dim) => dim.iri === action.value.componentIri
+            );
+            const colorMapping =
+              component &&
+              mapColorsToComponentValuesIris({
+                palette: "category10",
+                component,
+              });
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
             draft.chartConfig.fields.segment = {
@@ -377,10 +412,32 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               palette: "category10",
               type: "stacked",
               sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+              colorMapping: colorMapping,
             };
           }
         } else {
-          f.componentIri = action.value.componentIri;
+          // The field is being updated
+          if (
+            action.value.field === "segment" &&
+            draft.chartConfig.fields.segment
+          ) {
+            const component = action.value.dataSetMetadata.dimensions.find(
+              (dim) => dim.iri === action.value.componentIri
+            );
+            const colorMapping =
+              component &&
+              mapColorsToComponentValuesIris({
+                palette:
+                  draft.chartConfig.fields.segment?.palette || "category10",
+                component,
+              });
+
+            draft.chartConfig.fields.segment.componentIri =
+              action.value.componentIri;
+            draft.chartConfig.fields.segment.colorMapping = colorMapping;
+          } else {
+            f.componentIri = action.value.componentIri;
+          }
         }
 
         deriveFiltersFromFields(
@@ -407,6 +464,50 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           draft,
           `chartConfig.fields.${action.value.field}.${action.value.path}`,
           action.value.value,
+          Object
+        );
+      }
+      return draft;
+
+    case "CHART_PALETTE_CHANGED":
+      if (draft.state === "CONFIGURING_CHART") {
+        setWith(
+          draft,
+          `chartConfig.fields.${action.value.field}.palette`,
+          action.value.value,
+          Object
+        );
+        setWith(
+          draft,
+          `chartConfig.fields.${action.value.field}.colorMapping`,
+          action.value.colorMapping,
+          Object
+        );
+      }
+      return draft;
+    case "CHART_PALETTE_RESET":
+      if (draft.state === "CONFIGURING_CHART") {
+        setWith(
+          draft,
+          `chartConfig.fields.${action.value.field}.${action.value.path}`,
+          action.value.colorMapping,
+          Object
+        );
+      }
+      return draft;
+
+    case "CHART_COLOR_CHANGED":
+      if (draft.state === "CONFIGURING_CHART") {
+        setWith(
+          draft,
+          [
+            "chartConfig",
+            "fields",
+            action.value.field,
+            "colorMapping",
+            action.value.value,
+          ],
+          action.value.color,
           Object
         );
       }

@@ -82,6 +82,7 @@ export const ChartAreas = memo(
       <AreaChart
         data={observations}
         fields={fields}
+        dimensions={dimensions}
         measures={measures}
         aspectRatio={0.4}
       >

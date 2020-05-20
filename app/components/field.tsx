@@ -1,7 +1,7 @@
-import React, { ChangeEvent, useCallback } from "react";
-import { I18n } from "@lingui/react";
 import { t } from "@lingui/macro";
-
+import { I18n } from "@lingui/react";
+import { Box, Flex } from "@theme-ui/components";
+import React, { ChangeEvent, useCallback } from "react";
 import { FilterValueSingle, MetaKey, useConfiguratorState } from "../domain";
 import {
   FIELD_VALUE_NONE,
@@ -9,12 +9,12 @@ import {
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
+  useChartOptionSelectField,
   useChartTypeSelectorField,
   useMetaField,
   useSingleFilterField,
-  useChartOptionSelectField,
 } from "../domain/config-form";
-import { getFieldLabel } from "../domain/helpers";
+import { getPalette } from "../domain/helpers";
 import {
   ComponentFieldsFragment,
   DimensionFieldsWithValuesFragment,
@@ -22,6 +22,7 @@ import {
 import { DataCubeMetadata } from "../graphql/types";
 import { Locales } from "../locales/locales";
 import { ChartTypeSelectionButton } from "./chart-controls/chart-type-radio-button";
+import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
@@ -162,6 +163,7 @@ export const MultiFilterField = ({
   checked,
   onChange,
   checkAction,
+  color,
 }: {
   dimensionIri: string;
   label: string;
@@ -171,6 +173,7 @@ export const MultiFilterField = ({
   checked?: boolean;
   onChange?: () => void;
   checkAction: "ADD" | "SET";
+  color?: string;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -204,6 +207,19 @@ export const MultiFilterField = ({
     [dispatch, dimensionIri, allValues, value, onChange, checkAction]
   );
 
+  const updateColor = useCallback(
+    (color: string) =>
+      dispatch({
+        type: "CHART_COLOR_CHANGED",
+        value: {
+          field: "segment",
+          value,
+          color,
+        },
+      }),
+    [dispatch, value]
+  );
+
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
@@ -213,14 +229,32 @@ export const MultiFilterField = ({
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
 
   return (
-    <Checkbox
-      name={dimensionIri}
-      value={value}
-      label={label}
-      disabled={disabled}
-      onChange={onFieldChange}
-      checked={checked ?? fieldChecked}
-    ></Checkbox>
+    <Flex
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: 2,
+        height: "2rem",
+      }}
+    >
+      <Box sx={{ maxWidth: "82%" }}>
+        <Checkbox
+          name={dimensionIri}
+          value={value}
+          label={label}
+          disabled={disabled}
+          onChange={onFieldChange}
+          checked={checked ?? fieldChecked}
+        />
+      </Box>
+      {color && (checked ?? fieldChecked) && (
+        <ColorPickerMenu
+          colors={getPalette(state.chartConfig.fields.segment?.palette)}
+          selectedColor={color}
+          onChange={(c) => updateColor(c)}
+        />
+      )}
+    </Flex>
   );
 };
 export const SingleFilterField = ({
@@ -344,6 +378,7 @@ export const ChartOptionRadioField = ({
 
   return <Radio disabled={disabled} label={label} {...fieldProps}></Radio>;
 };
+
 export const ChartTypeSelectorField = ({
   label,
   value,

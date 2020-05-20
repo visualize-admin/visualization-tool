@@ -1,4 +1,5 @@
-import { Trans, t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
+import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
 import React, { useEffect, useRef } from "react";
@@ -17,7 +18,10 @@ import {
   EncodingSpec,
 } from "../domain/chart-config-ui-options";
 import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+import {
+  DimensionFieldsWithValuesFragment,
+  useDataCubeMetadataWithComponentValuesQuery,
+} from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
@@ -39,7 +43,6 @@ import {
 } from "./filters";
 import { FieldSetLegend } from "./form";
 import { Loading } from "./hint";
-import { I18n } from "@lingui/react";
 
 export const ChartOptionsSelector = ({
   state,
@@ -107,7 +110,7 @@ const ActiveFieldSwitch = ({
     return <SingleFilter state={state} metaData={metaData} />;
   }
 
-  const component = [...metaData.dimensions, ...metaData.measures].find(
+  const component = [...metaData.dimensions].find(
     (d) => d.iri === activeFieldComponentIri
   );
 
@@ -118,7 +121,7 @@ const ActiveFieldSwitch = ({
       field={activeField} // FIXME: or encoding.field?
       chartType={state.chartConfig.chartType}
       metaData={metaData}
-      dimension={component}
+      component={component}
     />
   );
 };
@@ -128,14 +131,14 @@ const EncodingOptionsPanel = ({
   state,
   field,
   chartType,
-  dimension,
+  component,
   metaData,
 }: {
   encoding: EncodingSpec;
   state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
-  dimension: { iri: string; label: string } | undefined;
+  component: DimensionFieldsWithValuesFragment | undefined;
   metaData: DataCubeMetadata;
 }) => {
   const { measures, dimensions } = metaData;
@@ -148,6 +151,7 @@ const EncodingOptionsPanel = ({
   }, [field]);
 
   const { fields } = state.chartConfig;
+
   type AnyField = "y";
   const otherFields = Object.keys(fields).filter(
     (f) => fields[f as AnyField].hasOwnProperty("componentIri") && field !== f
@@ -187,10 +191,17 @@ const EncodingOptionsPanel = ({
           />
           {encoding.options && (
             <ChartFieldOptions
-              disabled={!dimension}
+              disabled={!component}
               field={encoding.field}
               encodingOptions={encoding.options}
               chartType={chartType}
+            />
+          )}
+          {encoding.options?.map((e) => e.field).includes("color") && (
+            <ColorPalette
+              disabled={!component}
+              field={field}
+              component={component}
             />
           )}
         </ControlSectionContent>
@@ -199,7 +210,7 @@ const EncodingOptionsPanel = ({
       {encoding.sorting && (
         <ChartFieldSorting
           state={state}
-          disabled={!dimension}
+          disabled={!component}
           field={encoding.field}
           encodingSortingOptions={encoding.sorting}
           // chartType={chartType}
@@ -208,17 +219,17 @@ const EncodingOptionsPanel = ({
 
       {encoding.filters && (
         <ControlSection>
-          <SectionTitle disabled={!dimension} iconName="filter">
+          <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
           <ControlSectionContent side="right" as="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {dimension && (
+            {component && (
               <DimensionValuesMultiFilter
-                key={dimension.iri}
-                dimensionIri={dimension.iri}
+                key={component.iri}
+                dimensionIri={component.iri}
                 dataSetIri={metaData.iri}
               />
             )}
@@ -226,6 +237,49 @@ const EncodingOptionsPanel = ({
         </ControlSection>
       )}
     </div>
+  );
+};
+
+const ChartFieldOptions = ({
+  field,
+  chartType,
+  encodingOptions,
+  disabled = false,
+}: {
+  field: string;
+  chartType: ChartType;
+  encodingOptions: EncodingOptions;
+  disabled?: boolean;
+}) => {
+  return (
+    <>
+      {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
+        chartType === "column" && (
+          <Box as="fieldset" mt={2}>
+            <FieldSetLegend
+              legendTitle={
+                <Trans id="controls.select.column.chart.type">Chart Type</Trans>
+              }
+            />
+            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+              <ChartOptionRadioField
+                label="stacked"
+                field={field}
+                path="type"
+                value={"stacked"}
+                disabled={disabled}
+              />
+              <ChartOptionRadioField
+                label="grouped"
+                field={field}
+                path="type"
+                value={"grouped"}
+                disabled={disabled}
+              />
+            </Flex>
+          </Box>
+        )}
+    </>
   );
 };
 
@@ -361,53 +415,5 @@ const SingleFilter = ({
         </ControlSectionContent>
       </ControlSection>
     </div>
-  );
-};
-
-const ChartFieldOptions = ({
-  field,
-  chartType,
-  encodingOptions,
-  disabled = false,
-}: {
-  field: string;
-  chartType: ChartType;
-  encodingOptions: EncodingOptions;
-  disabled?: boolean;
-}) => {
-  return (
-    <>
-      {/* FIXME: improve use of encodingOptions to get chart options */}
-      {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
-        chartType === "column" && (
-          <Box as="fieldset" mt={2}>
-            <FieldSetLegend
-              legendTitle={
-                <Trans id="controls.select.column.chart.type">Chart Type</Trans>
-              }
-            />
-            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
-              <ChartOptionRadioField
-                label="stacked"
-                field={field}
-                path="type"
-                value={"stacked"}
-                disabled={disabled}
-              />
-              <ChartOptionRadioField
-                label="grouped"
-                field={field}
-                path="type"
-                value={"grouped"}
-                disabled={disabled}
-              />
-            </Flex>
-          </Box>
-        )}
-
-      {encodingOptions?.map((e) => e.field).includes("color") && (
-        <ColorPalette disabled={disabled} field={field}></ColorPalette>
-      )}
-    </>
   );
 };

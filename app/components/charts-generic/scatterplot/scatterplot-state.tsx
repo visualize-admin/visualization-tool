@@ -30,9 +30,10 @@ export interface ScatterplotState {
 const useScatterplotState = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: ScatterPlotFields;
   aspectRatio: number;
 }): ScatterplotState => {
@@ -53,9 +54,7 @@ const useScatterplotState = ({
   const xMinValue = Math.min(mkNumber(min(sortedData, (d) => getX(d))), 0);
   const xMaxValue = max(sortedData, (d) => getX(d)) as number;
   const xDomain = [xMinValue, xMaxValue];
-  const xScale = scaleLinear()
-    .domain(xDomain)
-    .nice();
+  const xScale = scaleLinear().domain(xDomain).nice();
 
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
@@ -63,16 +62,35 @@ const useScatterplotState = ({
   const yMinValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
   const yMaxValue = max(sortedData, getY) as number;
   const yDomain = [yMinValue, yMaxValue];
-  const yScale = scaleLinear()
-    .domain(yDomain)
-    .nice();
+  const yScale = scaleLinear().domain(yDomain).nice();
 
   const hasSegment = fields.segment ? true : false;
   const segments = sortedData.map(getSegment);
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
-  );
 
+  // Map ordered segments to colors
+  const colors = scaleOrdinal<string, string>();
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  ) as $FixMe;
+
+  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const dvIri = segmentDimension.values.find(
+        (s: $FixMe) => s.label === segment
+      ).value;
+
+      return {
+        label: segment,
+        color: fields.segment?.colorMapping![dvIri] || "#006699",
+      };
+    });
+
+    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+  } else {
+    colors.domain(segments);
+    colors.range(getPalette(fields.segment?.palette));
+  }
   // Dimensions
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
@@ -157,10 +175,11 @@ const useScatterplotState = ({
 const ScatterplotChartProvider = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
   fields: ScatterPlotFields;
   aspectRatio: number;
@@ -168,6 +187,7 @@ const ScatterplotChartProvider = ({
   const state = useScatterplotState({
     data,
     fields,
+    dimensions,
     measures,
     aspectRatio,
   });
@@ -179,10 +199,11 @@ const ScatterplotChartProvider = ({
 export const ScatterplotChart = ({
   data,
   fields,
+  dimensions,
   measures,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
   fields: ScatterPlotFields;
   children: ReactNode;
@@ -193,6 +214,7 @@ export const ScatterplotChart = ({
         <ScatterplotChartProvider
           data={data}
           fields={fields}
+          dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}
         >

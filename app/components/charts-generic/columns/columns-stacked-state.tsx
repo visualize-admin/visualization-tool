@@ -1,4 +1,4 @@
-import { ascending, group, max, min, descending, rollup, sum } from "d3-array";
+import { ascending, descending, group, max, min, rollup, sum } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -15,22 +15,22 @@ import {
   stackOrderNone,
 } from "d3-shape";
 import * as React from "react";
-import { ReactNode, useMemo, useCallback } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import {
   ColumnFields,
   SortingOrder,
   SortingType,
 } from "../../../domain/config-types";
+import { Observation, ObservationValue } from "../../../domain/data";
 import { formatNumber, getPalette, isNumber } from "../../../domain/helpers";
+import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
 import { PADDING_INNER, PADDING_OUTER } from "../columns/constants";
-import { Bounds, Observer, useWidth } from "../use-width";
+import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
-import { sortByIndex } from "../../../lib/array";
-import { ObservationValue, Observation } from "../../../domain/data";
+import { Bounds, Observer, useWidth } from "../use-width";
 
 export interface StackedColumnsState {
   sortedData: Observation[];
@@ -54,8 +54,9 @@ const useColumnsStackedState = ({
   data,
   fields,
   measures,
+  dimensions,
   aspectRatio,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: ColumnFields;
   aspectRatio: number;
 }): StackedColumnsState => {
@@ -151,9 +152,30 @@ const useColumnsStackedState = ({
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
 
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
-  );
+  // Map ordered segments to colors
+  const colors = scaleOrdinal<string, string>();
+  const segmentDimension = dimensions.find(
+    (d) => d.iri === fields.segment?.componentIri
+  ) as $FixMe;
+
+  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
+    const orderedSegmentLabelsAndColors = segments.map((segment) => {
+      const dvIri = segmentDimension.values.find(
+        (s: $FixMe) => s.label === segment
+      ).value;
+
+      return {
+        label: segment,
+        color: fields.segment?.colorMapping![dvIri] || "#006699",
+      };
+    });
+
+    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+  } else {
+    colors.domain(segments);
+    colors.range(getPalette(fields.segment?.palette));
+  }
 
   // x
   const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
@@ -177,9 +199,7 @@ const useColumnsStackedState = ({
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
-  const yScale = scaleLinear()
-    .domain(yStackDomain)
-    .nice();
+  const yScale = scaleLinear().domain(yStackDomain).nice();
 
   // stack order
   const stackOrder =
@@ -324,9 +344,10 @@ const StackedColumnsChartProvider = ({
   data,
   fields,
   measures,
+  dimensions,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -334,6 +355,7 @@ const StackedColumnsChartProvider = ({
   const state = useColumnsStackedState({
     data,
     fields,
+    dimensions,
     measures,
     aspectRatio,
   });
@@ -346,9 +368,10 @@ export const StackedColumnsChart = ({
   data,
   fields,
   measures,
+  dimensions,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -359,6 +382,7 @@ export const StackedColumnsChart = ({
         <StackedColumnsChartProvider
           data={data}
           fields={fields}
+          dimensions={dimensions}
           measures={measures}
           aspectRatio={aspectRatio}
         >

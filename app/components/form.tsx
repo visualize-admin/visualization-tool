@@ -36,16 +36,19 @@ export const Label = ({
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
       pb: smaller ? 1 : 0,
       mr: 4,
+      display: "flex",
+      alignItems: "center",
     }}
   >
     {children}
     {label && (
       <Box
         sx={{
-          maxWidth: "90%",
+          maxWidth: "88%",
           textAlign: "left",
           fontFamily: "body",
-          mr: 1,
+          pr: 1,
+          fontSize: [3, 3, 4],
         }}
       >
         {label}
@@ -90,22 +93,20 @@ export const Checkbox = ({
   disabled,
   onChange,
 }: { label: React.ReactNode; disabled?: boolean } & FieldProps) => (
-  <Box mb={4}>
-    <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
-      <RebassCheckbox
-        sx={{
-          size: 20,
-          color: checked && !disabled ? "primary" : "monochrome500",
-        }}
-        id={`${name}-${label}`}
-        name={name}
-        value={value}
-        checked={checked}
-        disabled={disabled}
-        onChange={onChange}
-      />
-    </Label>
-  </Box>
+  <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
+    <RebassCheckbox
+      sx={{
+        size: 20,
+        color: checked && !disabled ? "primary" : "monochrome500",
+      }}
+      id={`${name}-${label}`}
+      name={name}
+      value={value}
+      checked={checked}
+      disabled={disabled}
+      onChange={onChange}
+    />
+  </Label>
 );
 
 export const Select = ({
