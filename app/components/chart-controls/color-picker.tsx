@@ -137,7 +137,11 @@ export const ColorPickerMenu = (props: Props) => {
           <VisuallyHidden>SELECT</VisuallyHidden>
           <Box aria-hidden>
             <Box
-              sx={{ bg: props.selectedColor, width: "2rem", height: "1.5rem" }}
+              sx={{
+                bg: props.selectedColor,
+                width: ["1rem", "1.5rem", "2rem"],
+                height: ["0.75rem", "1.125rem", "1.5rem"],
+              }}
             ></Box>
           </Box>
         </MenuButton>

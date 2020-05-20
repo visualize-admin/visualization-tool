@@ -36,16 +36,19 @@ export const Label = ({
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
       pb: smaller ? 1 : 0,
       mr: 4,
+      display: "flex",
+      alignItems: "center",
     }}
   >
     {children}
     {label && (
       <Box
         sx={{
-          maxWidth: "90%",
+          maxWidth: "88%",
           textAlign: "left",
           fontFamily: "body",
-          mr: 1,
+          pr: 1,
+          fontSize: [3, 3, 4],
         }}
       >
         {label}

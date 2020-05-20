@@ -237,7 +237,7 @@ export const MultiFilterField = ({
         height: "2rem",
       }}
     >
-      <Box sx={{ maxWidth: "80%" }}>
+      <Box sx={{ maxWidth: "82%" }}>
         <Checkbox
           name={dimensionIri}
           value={value}
