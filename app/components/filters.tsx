@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Flex } from "@theme-ui/components";
+import { Box, Button } from "@theme-ui/components";
 import React, { useCallback } from "react";
 import {
   getFilterValue,
