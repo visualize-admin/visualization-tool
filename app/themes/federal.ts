@@ -185,11 +185,14 @@ export const theme: Theme = {
       fontFamily:
         "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
 
-      // Use momentum-based scrolling on iOS devices
-      WebkitOverflowScrolling: "touch",
-
-      // Auto-hide scrollbars in Edge
-      msOverflowStyle: "-ms-autohiding-scrollbar",
+      // Hack around type error for vendor prefixed rules
+      ...{
+        // Use momentum-based scrolling on iOS devices
+        WebkitOverflowScrolling: "touch",
+  
+        // Auto-hide scrollbars in Edge
+        msOverflowStyle: "-ms-autohiding-scrollbar",
+      },
 
       svg: {
         display: "block"
