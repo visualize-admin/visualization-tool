@@ -58,7 +58,7 @@ export type ConfiguratorStateAction =
       value: {
         path: string;
         field: string;
-        value: string;
+        value: string | Record<string, string>;
       };
     }
   | {

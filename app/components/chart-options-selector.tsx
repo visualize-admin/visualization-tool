@@ -305,16 +305,8 @@ const ChartFieldSorting = ({
         type: "CHART_OPTION_CHANGED",
         value: {
           field,
-          path: "sorting.sortingType",
-          value: sortingType,
-        },
-      });
-      dispatch({
-        type: "CHART_OPTION_CHANGED",
-        value: {
-          field,
-          path: "sorting.sortingOrder",
-          value: sortingOrder,
+          path: "sorting",
+          value: { sortingType, sortingOrder },
         },
       });
     },
