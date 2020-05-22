@@ -4,7 +4,6 @@
  * It will be loaded in _app.tsx's `getInitialProps()`, which will serialize to JSON.
  * So references to other modules, functions etc. won't work here.
  *
- * - `globalStyles` should be a plain string (NOT a Emotion `css` template string).
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
 import { Theme } from "./index";
@@ -179,6 +178,37 @@ export const theme: Theme = {
     // Overwrite default browser styles.
     root: {
       // "root" applies to "body"
+      "@font-face": [
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 700,
+          src: `url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 400,
+          src: `url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 300,
+          src: `url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "italic",
+          fontWeight: 400,
+          src: `url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-It.woff") format("woff")`,
+        },
+      ],
+
       bg: "monochrome100",
       margin: 0,
       padding: 0,
@@ -340,37 +370,3 @@ export const preloadFonts = [
   "/static/fonts/FrutigerNeueW02-Regular.woff2",
   "/static/fonts/FrutigerNeueW02-Light.woff2",
 ];
-
-/**
- * Global styles to load font files or similar things
- */
-export const globalStyles = `
-  @font-face {
-    font-family: "FrutigerNeue";
-    font-style: normal;
-    font-weight: 700;
-    src: url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
-      url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff");
-  }
-  @font-face {
-    font-family: "FrutigerNeue";
-    font-style: normal;
-    font-weight: 400;
-    src: url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
-      url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff");
-  }
-  @font-face {
-    font-family: "FrutigerNeue";
-    font-style: normal;
-    font-weight: 300;
-    src: url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
-      url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff");
-  }
-  @font-face {
-    font-family: "FrutigerNeue";
-    font-style: italic;
-    font-weight: 400;
-    src: url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
-      url("/static/fonts/FrutigerNeueW02-It.woff") format("woff");
-  }
-`;

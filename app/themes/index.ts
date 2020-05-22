@@ -32,7 +32,6 @@ export type Theme = Omit<
 
 interface ThemeModule {
   theme: Theme;
-  globalStyles?: string;
   preloadFonts?: string[];
 }
 
