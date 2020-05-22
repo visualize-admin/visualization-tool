@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "next": "^9.4.1",
+    "next": "^9.4.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
