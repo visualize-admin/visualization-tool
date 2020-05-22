@@ -75,8 +75,8 @@ export const Radio = ({
           onChange={onChange}
           checked={checked}
           disabled={disabled}
+          size={20}
           sx={{
-            size: 20,
             color: checked && !disabled ? "primary" : "monochrome500",
           }}
         />
@@ -96,7 +96,7 @@ export const Checkbox = ({
   <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
     <RebassCheckbox
       sx={{
-        size: 20,
+        // size: 20,
         color: checked && !disabled ? "primary" : "monochrome500",
       }}
       id={`${name}-${label}`}

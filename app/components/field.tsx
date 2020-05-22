@@ -400,7 +400,6 @@ export const ChartTypeSelectorField = ({
     <ChartTypeSelectionButton
       disabled={disabled}
       label={label}
-      onClick={field.onClick}
       {...field}
     ></ChartTypeSelectionButton>
   );

@@ -94,9 +94,14 @@ msgstr "Scatterplot"
 msgid "controls.color.palette"
 msgstr "Color palette"
 
-#: app/components/chart-controls/color-palette.tsx:149
+#: app/components/chart-controls/color-palette.tsx:150
+#: app/components/chart-controls/color-palette.tsx:155
 msgid "controls.color.palette.reset"
 msgstr "Reset color palette"
+
+#: app/components/chart-controls/color-picker.tsx:101
+msgid "controls.colorpicker.open"
+msgstr "Open Color Picker"
 
 #: app/domain/helpers.tsx:86
 msgid "controls.column.grouped"
@@ -191,10 +196,6 @@ msgstr "Chart type"
 #: app/components/chart-options-selector.tsx:109
 msgid "controls.select.column.chart.type"
 msgstr "Chart type"
-
-#: app/components/dataset-selector.tsx:15
-#~ msgid "controls.select.dataset"
-#~ msgstr "Select dataset"
 
 #: app/domain/helpers.tsx:148
 #: app/domain/helpers.tsx:150

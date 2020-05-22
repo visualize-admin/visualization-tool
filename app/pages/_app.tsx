@@ -16,12 +16,11 @@ import { loadTheme, Theme } from "../themes/index";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
 import "@reach/menu-button/styles.css";
 
-Router.events.on("routeChangeComplete", path => analyticsPageView(path));
+Router.events.on("routeChangeComplete", (path) => analyticsPageView(path));
 
 class MyApp extends App<{
   locale: Locales;
   theme: Theme;
-  globalStyles: string | undefined;
   preloadFonts?: string[];
   asPath: string;
 }> {
@@ -30,11 +29,11 @@ class MyApp extends App<{
     const appProps = await App.getInitialProps(appContext);
 
     const {
-      ctx: { query, asPath, pathname }
+      ctx: { query, asPath, pathname },
     } = appContext;
 
     const __theme = query.__theme ? query.__theme.toString() : undefined;
-    const { theme, globalStyles, preloadFonts } = await loadTheme(__theme);
+    const { theme, preloadFonts } = await loadTheme(__theme);
 
     /**
      * Parse locale from query OR pathname
@@ -53,9 +52,8 @@ class MyApp extends App<{
       ...appProps,
       locale,
       theme,
-      globalStyles,
       preloadFonts,
-      asPath
+      asPath,
     };
   }
 
@@ -65,9 +63,8 @@ class MyApp extends App<{
       pageProps,
       locale,
       theme,
-      globalStyles,
       preloadFonts,
-      asPath
+      asPath,
     } = this.props;
 
     return (
@@ -78,7 +75,7 @@ class MyApp extends App<{
           <meta property="og:title" content={"visualize.admin.ch"} />
           <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
           {preloadFonts &&
-            preloadFonts.map(src => (
+            preloadFonts.map((src) => (
               <link
                 key={src}
                 rel="preload"
@@ -92,11 +89,6 @@ class MyApp extends App<{
           <I18nProvider language={locale} catalogs={catalogs}>
             <GraphqlProvider>
               <ThemeProvider theme={theme}>
-                <Global
-                  styles={css`
-                    ${globalStyles}
-                  `}
-                />
                 <ContentMDXProvider>
                   <Component {...pageProps} />
                 </ContentMDXProvider>

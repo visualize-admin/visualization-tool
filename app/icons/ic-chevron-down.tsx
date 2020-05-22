@@ -10,6 +10,6 @@ export const IconChevronDown = ({ size = 24, color = "currentColor" }) => (
     fillRule="evenodd"
     stroke="none"
   >
-    <polyline points="12 13.2928932 6.5 8 5 9.5 12 16 19 9.5 17.5 8">></polyline>
+    <polyline points="12 13.2928932 6.5 8 5 9.5 12 16 19 9.5 17.5 8"></polyline>
   </svg>
 );

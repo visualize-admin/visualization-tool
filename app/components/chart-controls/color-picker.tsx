@@ -3,6 +3,7 @@ import VisuallyHidden from "@reach/visually-hidden";
 import { color as d3Color } from "d3-color";
 import { useCallback, useState } from "react";
 import { Box, Grid, Input } from "theme-ui";
+import { Trans } from "@lingui/macro";
 
 const Swatch = ({
   color,
@@ -60,6 +61,18 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
     [onChange, setInputColorValue]
   );
 
+  const formatInputColor = useCallback(
+    (_color) => {
+      // Make sure onChange is only called with valid colors
+      const c = d3Color(_color);
+      if (c) {
+        // Type defs of d3-color are not up-to-date
+        setInputColorValue((c as $Unexpressable).formatHex());
+      }
+    },
+    [setInputColorValue]
+  );
+
   return (
     <Box
       sx={{
@@ -103,6 +116,9 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
           onChange={(e) => {
             selectColor(e.currentTarget.value);
           }}
+          onBlur={(e) => {
+            formatInputColor(e.currentTarget.value);
+          }}
         />
       </Box>
     </Box>
@@ -134,7 +150,9 @@ export const ColorPickerMenu = (props: Props) => {
         }}
       >
         <MenuButton className="menu-button">
-          <VisuallyHidden>SELECT</VisuallyHidden>
+          <VisuallyHidden>
+            <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
+          </VisuallyHidden>
           <Box aria-hidden>
             <Box
               sx={{
