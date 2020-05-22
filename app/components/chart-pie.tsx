@@ -1,20 +1,25 @@
 import React, { memo } from "react";
+import { Box } from "theme-ui";
 import { PieFields } from "../domain";
 import { PieConfig } from "../domain/config-types";
 import { Observation } from "../domain/data";
-import { A11yTable } from "./a11y-table";
-
-import { ChartSvg, ChartContainer } from "./charts-generic/containers";
-import { Pie } from "./charts-generic/pie";
-import { PieChart } from "./charts-generic/pie/pie-state";
-import { Loading, NoDataHint, OnlyNegativeDataHint } from "./hint";
 import {
-  useDataCubeObservationsQuery,
   ComponentFieldsFragment,
+  useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
-import { LegendColor } from "./charts-generic/legends/color";
+import { A11yTable } from "./a11y-table";
 import { Tooltip } from "./charts-generic/annotations/tooltip";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers";
+import { LegendColor } from "./charts-generic/legends/color";
+import { Pie } from "./charts-generic/pie";
+import { PieChart } from "./charts-generic/pie/pie-state";
+import {
+  Loading,
+  LoadingOverlay,
+  NoDataHint,
+  OnlyNegativeDataHint,
+} from "./hint";
 
 export const ChartPieVisualization = ({
   dataSetIri,
@@ -25,7 +30,7 @@ export const ChartPieVisualization = ({
 }) => {
   const locale = useLocale();
 
-  const [{ data }] = useDataCubeObservationsQuery({
+  const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
@@ -42,7 +47,7 @@ export const ChartPieVisualization = ({
     );
 
     return notAllNegative && observations.data.length > 0 ? (
-      <>
+      <Box sx={{ position: "relative" }}>
         <A11yTable
           title={title}
           observations={observations.data}
@@ -56,7 +61,8 @@ export const ChartPieVisualization = ({
           measures={measures}
           fields={chartConfig.fields}
         />
-      </>
+        {fetching && <LoadingOverlay />}
+      </Box>
     ) : !notAllNegative && observations.data.length > 0 ? (
       <OnlyNegativeDataHint />
     ) : (

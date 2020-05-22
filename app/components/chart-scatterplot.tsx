@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { Box } from "theme-ui";
 import { ScatterPlotFields } from "../domain";
 import { ScatterPlotConfig } from "../domain/config-types";
 import { Observation } from "../domain/data";
@@ -9,7 +10,7 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-
+import { Tooltip } from "./charts-generic/annotations/tooltip";
 import { AxisWidthLinear, AxisWidthLinearDomain } from "./charts-generic/axis";
 import {
   AxisHeightLinear,
@@ -20,9 +21,7 @@ import { InteractionVoronoi } from "./charts-generic/interaction/interaction-vor
 import { LegendColor } from "./charts-generic/legends/color";
 import { Scatterplot } from "./charts-generic/scatterplot";
 import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";
-import { DataDownload } from "./data-download";
-import { Loading, NoDataHint } from "./hint";
-import { Tooltip } from "./charts-generic/annotations/tooltip";
+import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 
 export const ChartScatterplotVisualization = ({
   dataSetIri,
@@ -32,7 +31,7 @@ export const ChartScatterplotVisualization = ({
   chartConfig: ScatterPlotConfig;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeObservationsQuery({
+  const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
@@ -49,7 +48,7 @@ export const ChartScatterplotVisualization = ({
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
-      <>
+      <Box sx={{ position: "relative" }}>
         <A11yTable
           title={title}
           observations={observations.data}
@@ -63,7 +62,8 @@ export const ChartScatterplotVisualization = ({
           measures={measures}
           fields={chartConfig.fields}
         />
-      </>
+        {fetching && <LoadingOverlay />}
+      </Box>
     ) : (
       <NoDataHint />
     );

@@ -10,7 +10,7 @@ export const Error = ({ children }: { children: React.ReactNode }) => (
       justifyContent: "center",
       alignItems: "center",
       color: "error",
-      borderColor: "error"
+      borderColor: "error",
     }}
   >
     {children}
@@ -28,7 +28,7 @@ export const Hint = ({ children }: { children: React.ReactNode }) => (
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      flexGrow: 1
+      flexGrow: 1,
     }}
   >
     {children}
@@ -45,7 +45,7 @@ const spin = keyframes`
   100% { transform: rotate(0deg) }
 `;
 
-export const Loading = () => (
+export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
   <Flex
     sx={{
       width: "100%",
@@ -59,7 +59,7 @@ export const Loading = () => (
       flexGrow: 1,
       padding: 2,
       opacity: 0,
-      animation: `0s linear 1s forwards ${delayedShow}`
+      animation: `0s linear ${delayMs}ms forwards ${delayedShow}`,
     }}
   >
     <Box
@@ -74,6 +74,22 @@ export const Loading = () => (
     </Text>
   </Flex>
 );
+
+export const LoadingOverlay = () => (
+  <Box
+    sx={{
+      position: "absolute",
+      bg: "monochrome100",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+    }}
+  >
+    <Loading delayMs={0} />
+  </Box>
+);
+
 export const DataSetHint = () => (
   <Flex
     sx={{
@@ -85,7 +101,7 @@ export const DataSetHint = () => (
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      flexGrow: 1
+      flexGrow: 1,
     }}
   >
     <Icon name="dataset" size={64} />
@@ -111,7 +127,7 @@ export const NoDataHint = () => (
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      flexGrow: 1
+      flexGrow: 1,
     }}
   >
     <Icon name="warning" size={64} />
@@ -136,7 +152,7 @@ export const OnlyNegativeDataHint = () => (
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      flexGrow: 1
+      flexGrow: 1,
     }}
   >
     <Icon name="datasetWarning" size={64} />
@@ -162,7 +178,7 @@ export const Success = () => (
       bg: "successLight",
       color: "success",
       justifyContent: "flex-start",
-      alignItems: "center"
+      alignItems: "center",
     }}
   >
     <Box sx={{ width: 64, pr: 4, flexShrink: 0 }}>
@@ -178,7 +194,7 @@ export const Success = () => (
 );
 export const HintBlue = ({
   iconName,
-  children
+  children,
 }: {
   iconName: IconName;
   children: React.ReactNode;
@@ -194,7 +210,7 @@ export const HintBlue = ({
       color: "primary",
       textAlign: "center",
       justifyContent: "flex-start",
-      alignItems: ["flex-start", "center"]
+      alignItems: ["flex-start", "center"],
     }}
   >
     <Box sx={{ width: 24, pr: 4 }}>
@@ -207,7 +223,7 @@ export const HintBlue = ({
 );
 export const HintRed = ({
   iconName,
-  children
+  children,
 }: {
   iconName: IconName;
   children: React.ReactNode;
@@ -223,7 +239,7 @@ export const HintRed = ({
       color: "alert",
       textAlign: "center",
       justifyContent: "flex-start",
-      alignItems: ["flex-start", "center"]
+      alignItems: ["flex-start", "center"],
     }}
   >
     <Box sx={{ width: 24, pr: 4 }}>

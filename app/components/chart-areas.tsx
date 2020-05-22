@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { Box } from "theme-ui";
 import { AreaConfig, AreaFields } from "../domain/config-types";
 import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
@@ -17,7 +18,7 @@ import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
-import { Loading, NoDataHint } from "./hint";
+import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
@@ -27,7 +28,7 @@ export const ChartAreasVisualization = ({
   chartConfig: AreaConfig;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeObservationsQuery({
+  const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
@@ -41,7 +42,7 @@ export const ChartAreasVisualization = ({
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
-      <>
+      <Box sx={{ position: "relative" }}>
         <A11yTable
           title={title}
           observations={observations.data}
@@ -55,7 +56,8 @@ export const ChartAreasVisualization = ({
           measures={measures}
           fields={chartConfig.fields}
         />
-      </>
+        {fetching && <LoadingOverlay />}
+      </Box>
     ) : (
       <NoDataHint />
     );
