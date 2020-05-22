@@ -329,11 +329,6 @@ const ChartFieldSorting = ({
     sortingOrderOptions?.[0] ?? "asc"
   );
 
-  console.log({
-    activeSortingType,
-    activeSortingOrder,
-  });
-
   return (
     <ControlSection>
       <SectionTitle disabled={disabled} iconName="sort">
