@@ -131,7 +131,7 @@ export const useChartOptionRadioField = ({
     state.state === "CONFIGURING_CHART"
       ? get(state, `chartConfig.fields.${field}.${path}`, "")
       : "";
-  const checked = stateValue === value;
+  const checked = stateValue ? stateValue === value : undefined;
 
   return {
     name: path,

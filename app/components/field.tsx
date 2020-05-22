@@ -9,7 +9,6 @@ import {
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
-  useChartOptionSelectField,
   useChartTypeSelectorField,
   useMetaField,
   useSingleFilterField,
@@ -327,47 +326,19 @@ export const ChartFieldField = ({
   );
 };
 
-export const ChartOptionSelectField = ({
-  label,
-  field,
-  path,
-  options,
-  disabled = false,
-}: {
-  label: string;
-  field: string;
-  path: string;
-  options: Option[];
-  disabled?: boolean;
-}) => {
-  const fieldProps = useChartOptionSelectField({
-    field,
-    path,
-  });
-
-  return (
-    <Select
-      key={`select-${field}-${path}`}
-      id={field}
-      label={label}
-      disabled={disabled}
-      options={options}
-      {...fieldProps}
-    ></Select>
-  );
-};
-
 export const ChartOptionRadioField = ({
   label,
   field,
   path,
   value,
+  defaultChecked,
   disabled = false,
 }: {
   label: string | React.ReactNode;
   field: string;
   path: string;
   value: string;
+  defaultChecked?: boolean;
   disabled?: boolean;
 }) => {
   const fieldProps = useChartOptionRadioField({
@@ -376,7 +347,14 @@ export const ChartOptionRadioField = ({
     value,
   });
 
-  return <Radio disabled={disabled} label={label} {...fieldProps}></Radio>;
+  return (
+    <Radio
+      disabled={disabled}
+      label={label}
+      {...fieldProps}
+      checked={fieldProps.checked ?? defaultChecked}
+    ></Radio>
+  );
 };
 
 export const ChartTypeSelectorField = ({

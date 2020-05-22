@@ -2,13 +2,14 @@ import { t, Trans } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   getDimensionsByDimensionType,
   getFieldComponentIri,
   SortingType,
+  useConfiguratorState,
 } from "../domain";
 import {
   chartConfigOptionsUISpec,
@@ -32,16 +33,12 @@ import {
   SectionTitle,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
-import {
-  ChartFieldField,
-  ChartOptionRadioField,
-  ChartOptionSelectField,
-} from "./field";
+import { ChartFieldField, ChartOptionRadioField } from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
 } from "./filters";
-import { FieldSetLegend } from "./form";
+import { FieldSetLegend, Radio, Select } from "./form";
 import { Loading } from "./hint";
 
 export const ChartOptionsSelector = ({
@@ -206,8 +203,9 @@ const EncodingOptionsPanel = ({
           )}
         </ControlSectionContent>
       </ControlSection>
-
-      {encoding.sorting && (
+      {/* Only nominal dimensions are sortable!
+          Temporal and Ordinal dimensions already have a defined order. */}
+      {encoding.sorting && component?.__typename === "NominalDimension" && (
         <ChartFieldSorting
           state={state}
           disabled={!component}
@@ -216,7 +214,6 @@ const EncodingOptionsPanel = ({
           // chartType={chartType}
         />
       )}
-
       {encoding.filters && (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
@@ -294,15 +291,56 @@ const ChartFieldSorting = ({
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
 }) => {
+  const [, dispatch] = useConfiguratorState();
+
+  // Always update BOTH
+  const updateSortingOption = useCallback<
+    (args: {
+      sortingType: EncodingSortingOption["sortingType"];
+      sortingOrder: "asc" | "desc";
+    }) => void
+  >(
+    ({ sortingType, sortingOrder }) => {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field,
+          path: "sorting.sortingType",
+          value: sortingType,
+        },
+      });
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field,
+          path: "sorting.sortingOrder",
+          value: sortingOrder,
+        },
+      });
+    },
+    [dispatch, field]
+  );
+
   const activeSortingType = get(
     state,
     ["chartConfig", "fields", field, "sorting", "sortingType"],
-    ""
+    "byDimensionLabel"
   );
 
+  // FIXME: Remove this once it's properly encoded in chart-config-ui-options
   const sortingOrderOptions = encodingSortingOptions.find(
     (o) => o.sortingType === activeSortingType
   )?.sortingOrder;
+  const activeSortingOrder = get(
+    state,
+    ["chartConfig", "fields", field, "sorting", "sortingOrder"],
+    sortingOrderOptions?.[0] ?? "asc"
+  );
+
+  console.log({
+    activeSortingType,
+    activeSortingOrder,
+  });
 
   return (
     <ControlSection>
@@ -328,17 +366,24 @@ const ChartFieldSorting = ({
                 }
               };
               return (
-                <ChartOptionSelectField
+                <Select
+                  id="sort-by"
                   label="Sort by"
-                  field={field}
-                  path="sorting.sortingType"
                   options={encodingSortingOptions
                     ?.map((s) => s.sortingType)
                     .map((opt) => ({
                       value: opt,
                       label: getSortingTypeLabel(opt),
                     }))}
+                  value={activeSortingType}
                   disabled={disabled}
+                  onChange={(e) => {
+                    updateSortingOption({
+                      sortingType: e.currentTarget
+                        .value as EncodingSortingOption["sortingType"],
+                      sortingOrder: activeSortingOrder,
+                    });
+                  }}
                 />
               );
             }}
@@ -346,23 +391,31 @@ const ChartFieldSorting = ({
         </Box>
         <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
           {sortingOrderOptions &&
-            sortingOrderOptions.map((opt) => {
+            sortingOrderOptions.map((sortingOrder) => {
               const subType = get(
                 state,
                 ["chartConfig", "fields", "segment", "type"],
                 ""
               );
               const chartSubType = `${state.chartConfig.chartType}.${subType}`;
+
               return (
-                <ChartOptionRadioField
-                  key={opt}
+                <Radio
+                  key={sortingOrder}
                   label={getFieldLabel(
-                    `${chartSubType}.${activeSortingType}.${opt}`
+                    `${chartSubType}.${activeSortingType}.${sortingOrder}`
                   )}
-                  field={field}
-                  path="sorting.sortingOrder"
-                  value={opt}
+                  value={sortingOrder}
+                  checked={sortingOrder === activeSortingOrder}
                   disabled={disabled}
+                  onChange={(e) => {
+                    if (e.currentTarget.checked) {
+                      updateSortingOption({
+                        sortingType: activeSortingType,
+                        sortingOrder,
+                      });
+                    }
+                  }}
                 />
               );
             })}
