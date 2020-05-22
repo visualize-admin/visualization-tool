@@ -99,9 +99,9 @@ msgstr "Palette di colori"
 msgid "controls.color.palette.reset"
 msgstr "Ripristina la tavolozza dei colori"
 
-#: app/components/chart-controls/color-picker.tsx:91
+#: app/components/chart-controls/color-picker.tsx:101
 msgid "controls.colorpicker.open"
-msgstr ""
+msgstr "Apri il selettore di colore"
 
 #: app/domain/helpers.tsx:86
 msgid "controls.column.grouped"
@@ -196,10 +196,6 @@ msgstr "Tipo di grafico"
 #: app/components/chart-options-selector.tsx:109
 msgid "controls.select.column.chart.type"
 msgstr "Tipo di grafico"
-
-#: app/components/dataset-selector.tsx:15
-#~ msgid "controls.select.dataset"
-#~ msgstr "Seleziona un dataset"
 
 #: app/domain/helpers.tsx:148
 #: app/domain/helpers.tsx:150
