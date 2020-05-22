@@ -4,7 +4,6 @@
  * It will be loaded in _app.tsx's `getInitialProps()`, which will serialize to JSON.
  * So references to other modules, functions etc. won't work here.
  *
- * - `globalStyles` should be a plain string (NOT a Emotion `css` template string).
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
 import { Theme } from "./index";
@@ -23,7 +22,7 @@ export const theme: Theme = {
     "1.5rem",
     "2rem",
     "4rem",
-    "4.5rem"
+    "4.5rem",
   ],
   colors: {
     text: "monochrome100",
@@ -67,12 +66,12 @@ export const theme: Theme = {
     missing: "#EFEFEF",
 
     alert: "#DC0018",
-    alertLight: "#ffe6e1"
+    alertLight: "#ffe6e1",
   },
   fonts: {
     body:
       "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-    monospace: "Menlo, monospace"
+    monospace: "Menlo, monospace",
   },
   fontSizes: [
     "0rem",
@@ -86,13 +85,13 @@ export const theme: Theme = {
     "2.5rem",
     "3rem",
     "4.5rem",
-    "5.5rem"
+    "5.5rem",
   ],
   fontWeights: {
     light: 300,
     regular: 400,
     heading: 700,
-    bold: 700
+    bold: 700,
   },
   // FIXME: should it be relative values? 1.5, etc.
   lineHeights: [
@@ -106,111 +105,145 @@ export const theme: Theme = {
     "2.250rem",
     "3rem",
     "4rem",
-    "4.5rem"
+    "4.5rem",
   ],
   radii: {
     default: 3,
     bigger: 4,
-    circle: 99999
+    circle: 99999,
   },
   shadows: {
     primary: "0 3px 5px 0 rgba(255,255,255,0.10)",
     rightSide: "2px 0 4px 0 rgba(255,255,255,0.05)",
     leftSide: "-2px 0 2px 0 rgba(255,255,255,0.05)",
-    tooltip: "0 2px 8px rgba(255, 255, 255, 0.25)"
+    tooltip: "0 2px 8px rgba(255, 255, 255, 0.25)",
   },
   text: {
     giga: {
       fontFamily: "body",
       lineHeight: [9, 10, 10],
       fontWeight: "light",
-      fontSize: [8, 9, 9]
+      fontSize: [8, 9, 9],
     },
     heading1: {
       fontFamily: "body",
       lineHeight: [7, 8, 8],
       fontWeight: "bold",
-      fontSize: [6, 7, 7]
+      fontSize: [6, 7, 7],
     },
     heading2: {
       fontFamily: "body",
       lineHeight: [6, 7, 7],
       fontWeight: "regular",
-      fontSize: [5, 6, 6]
+      fontSize: [5, 6, 6],
     },
     heading3: {
       fontFamily: "body",
       lineHeight: [5, 6, 6],
       fontWeight: "bold",
-      fontSize: [4, 5, 5]
+      fontSize: [4, 5, 5],
     },
     lead: {
       fontFamily: "body",
       lineHeight: [4, 5, 5],
       fontWeight: "bold",
-      fontSize: [3, 4, 4]
+      fontSize: [3, 4, 4],
     },
     paragraph1: {
       fontFamily: "body",
       lineHeight: [4, 5, 5],
       fontWeight: "regular",
-      fontSize: [3, 4, 4]
+      fontSize: [3, 4, 4],
     },
     paragraph2: {
       fontFamily: "body",
       lineHeight: [2, 4, 3],
       fontWeight: "regular",
-      fontSize: [2, 3, 3]
+      fontSize: [2, 3, 3],
     },
     table: {
       fontFamily: "body",
       lineHeight: [2, 4, 4],
       fontWeight: "regular",
-      fontSize: [2, 3, 3]
+      fontSize: [2, 3, 3],
     },
     meta: {
       fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
-      fontSize: [1, 2, 2]
-    }
+      fontSize: [1, 2, 2],
+    },
   },
   styles: {
     // Overwrite default browser styles.
     root: {
       // "root" applies to "body"
+      "@font-face": [
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 700,
+          src: `url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 400,
+          src: `url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 300,
+          src: `url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "italic",
+          fontWeight: 400,
+          src: `url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-It.woff") format("woff")`,
+        },
+      ],
+
       bg: "monochrome100",
       margin: 0,
       padding: 0,
       fontFamily:
         "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
 
-      // Use momentum-based scrolling on iOS devices
-      WebkitOverflowScrolling: "touch",
+      // Hack around type error for vendor prefixed rules
+      ...{
+        // Use momentum-based scrolling on iOS devices
+        WebkitOverflowScrolling: "touch",
 
-      // Auto-hide scrollbars in Edge
-      msOverflowStyle: "-ms-autohiding-scrollbar",
+        // Auto-hide scrollbars in Edge
+        msOverflowStyle: "-ms-autohiding-scrollbar",
+      },
 
       svg: {
-        display: "block"
+        display: "block",
       },
 
       "*:focus": {
-        outline: "3px solid #ddd"
+        outline: "3px solid #ddd",
       },
 
       fieldset: {
         border: 0,
         padding: "0.01em 0 0 0",
         margin: 0,
-        minWidth: 0
-      }
-    }
+        minWidth: 0,
+      },
+    },
   },
   buttons: {
     reset: {
       background: "transparent",
-      border: "none"
+      border: "none",
     },
     primary: {
       bg: "primary",
@@ -225,29 +258,29 @@ export const theme: Theme = {
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        bg: "primaryHover"
+        bg: "primaryHover",
       },
       ":active": {
-        bg: "primaryHover"
+        bg: "primaryHover",
       },
       ":disabled": {
         cursor: "initial",
-        bg: "primaryDisabled"
-      }
+        bg: "primaryDisabled",
+      },
     },
     success: {
       variant: "buttons.primary",
       bg: "successBase",
       ":hover": {
-        bg: "successHover"
+        bg: "successHover",
       },
       ":active": {
-        bg: "successHover"
+        bg: "successHover",
       },
       ":disabled": {
         cursor: "initial",
-        bg: "successDisabled"
-      }
+        bg: "successDisabled",
+      },
     },
     outline: {
       variant: "buttons.primary",
@@ -258,29 +291,29 @@ export const theme: Theme = {
       borderStyle: "solid",
       borderColor: "primary",
       ":hover": {
-        bg: "muted"
+        bg: "muted",
       },
       ":active": {
-        bg: "muted"
+        bg: "muted",
       },
       ":disabled": {
         cursor: "initial",
-        bg: "muted"
-      }
+        bg: "muted",
+      },
     },
     secondary: {
       variant: "buttons.primary",
       bg: "secondary",
       ":hover": {
-        bg: "secondaryHover"
+        bg: "secondaryHover",
       },
       ":active": {
-        bg: "secondaryHover"
+        bg: "secondaryHover",
       },
       ":disabled": {
         cursor: "initial",
-        bg: "secondaryDisabled"
-      }
+        bg: "secondaryDisabled",
+      },
     },
     inverted: {
       bg: "monochrome100",
@@ -295,16 +328,16 @@ export const theme: Theme = {
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        bg: "monochrome300"
+        bg: "monochrome300",
       },
       ":active": {
-        bg: "monochrome400"
+        bg: "monochrome400",
       },
       ":disabled": {
         cursor: "initial",
         color: "monochrome600",
-        bg: "monochrome300"
-      }
+        bg: "monochrome300",
+      },
     },
     inline: {
       background: "transparent",
@@ -318,14 +351,14 @@ export const theme: Theme = {
       mb: 4,
       p: 0,
       ":hover": {
-        color: "primaryHover"
+        color: "primaryHover",
       },
       ":disabled": {
         cursor: "initial",
-        color: "monochrome500"
-      }
-    }
-  }
+        color: "monochrome500",
+      },
+    },
+  },
 };
 
 /**
@@ -335,39 +368,5 @@ export const theme: Theme = {
 export const preloadFonts = [
   "/static/fonts/FrutigerNeueW02-Bd.woff2",
   "/static/fonts/FrutigerNeueW02-Regular.woff2",
-  "/static/fonts/FrutigerNeueW02-Light.woff2"
+  "/static/fonts/FrutigerNeueW02-Light.woff2",
 ];
-
-/**
- * Global styles to load font files or similar things
- */
-export const globalStyles = `
-  @font-face {
-    font-family: "FrutigerNeue";
-    font-style: normal;
-    font-weight: 700;
-    src: url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
-      url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff");
-  }
-  @font-face {
-    font-family: "FrutigerNeue";
-    font-style: normal;
-    font-weight: 400;
-    src: url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
-      url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff");
-  }
-  @font-face {
-    font-family: "FrutigerNeue";
-    font-style: normal;
-    font-weight: 300;
-    src: url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
-      url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff");
-  }
-  @font-face {
-    font-family: "FrutigerNeue";
-    font-style: italic;
-    font-weight: 400;
-    src: url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
-      url("/static/fonts/FrutigerNeueW02-It.woff") format("woff");
-  }
-`;

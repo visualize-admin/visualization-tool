@@ -3,7 +3,7 @@ import * as React from "react";
 import { Observation } from "../domain";
 import {
   ComponentFieldsFragment,
-  useDataCubePreviewObservationsQuery
+  useDataCubePreviewObservationsQuery,
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { Loading } from "./hint";
@@ -14,7 +14,7 @@ type Header = ComponentFieldsFragment;
 const Table = ({
   title,
   headers,
-  observations
+  observations,
 }: {
   title: string;
   headers: Header[];
@@ -25,7 +25,7 @@ const Table = ({
       as="table"
       sx={{
         minWidth: "100%",
-        borderCollapse: "collapse"
+        borderCollapse: "collapse",
       }}
     >
       <caption style={{ display: "none" }}>{title}</caption>
@@ -39,7 +39,7 @@ const Table = ({
             color: "monochrome700",
             borderBottomColor: "monochrome700",
             borderBottomWidth: "1px",
-            borderBottomStyle: "solid"
+            borderBottomStyle: "solid",
           }}
         >
           {headers.map(({ iri, label, __typename }) => {
@@ -48,12 +48,13 @@ const Table = ({
                 as="th"
                 role="columnheader"
                 key={iri}
+                // @ts-expect-error `scope` is valid on th, but not on div
+                scope="col"
                 sx={{
-                  scope: "col",
                   textAlign: __typename === "Measure" ? "right" : "left",
                   px: 2,
                   py: 3,
-                  minWidth: 128
+                  minWidth: 128,
                 }}
               >
                 {label}
@@ -71,7 +72,7 @@ const Table = ({
                 color: "monochrome800",
                 borderBottomColor: "monochrome400",
                 borderBottomWidth: "1px",
-                borderBottomStyle: "solid"
+                borderBottomStyle: "solid",
               }}
               key={i}
             >
@@ -83,7 +84,7 @@ const Table = ({
                     textAlign: __typename === "Measure" ? "right" : "left",
                     px: 2,
                     py: 3,
-                    minWidth: 128
+                    minWidth: 128,
                   }}
                 >
                   {__typename === "Measure"
@@ -103,7 +104,7 @@ export const DataTable = ({
   title,
   dataSetIri,
   dimensions,
-  measures
+  measures,
 }: {
   title: string;
   dataSetIri: string;
@@ -115,8 +116,8 @@ export const DataTable = ({
     variables: {
       iri: dataSetIri,
       locale,
-      measures: measures.map(m => m.iri)
-    }
+      measures: measures.map((m) => m.iri),
+    },
   });
 
   if (!fetching && data?.dataCubeByIri) {

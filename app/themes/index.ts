@@ -32,7 +32,6 @@ export type Theme = Omit<
 
 interface ThemeModule {
   theme: Theme;
-  globalStyles?: string;
   preloadFonts?: string[];
 }
 
@@ -48,4 +47,4 @@ export const loadTheme = async (theme: string = "federal") => {
   return themeModule;
 };
 
-export const useTheme = () => useThemeUI().theme as Theme;
+export const useTheme = () => useThemeUI().theme as unknown as Theme;
