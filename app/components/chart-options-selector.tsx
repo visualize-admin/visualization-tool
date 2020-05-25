@@ -355,7 +355,7 @@ const ChartFieldSorting = ({
               return (
                 <Select
                   id="sort-by"
-                  label="Sort by"
+                  label={getFieldLabel("sortBy")}
                   options={encodingSortingOptions
                     ?.map((s) => s.sortingType)
                     .map((opt) => ({

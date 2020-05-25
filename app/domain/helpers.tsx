@@ -117,6 +117,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
       return <Trans id="controls.column.stacked">Stacked</Trans>;
     case "grouped":
       return <Trans id="controls.column.grouped">Grouped</Trans>;
+    case "sortBy":
+      return <Trans id="controls.sorting.sortBy">Sort by</Trans>;
 
     case "column..byDimensionLabel.asc":
     case "column.stacked.byDimensionLabel.asc":
