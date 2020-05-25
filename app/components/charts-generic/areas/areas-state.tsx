@@ -1,9 +1,9 @@
 import {
   ascending,
+  descending,
   extent,
   group,
   max,
-  descending,
   rollup,
   sum,
 } from "d3-array";
@@ -17,28 +17,28 @@ import {
 } from "d3-scale";
 import {
   stack,
-  stackOrderNone,
   stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
+  stackOrderReverse,
 } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
 import { AreaFields, Observation } from "../../../domain";
 import {
-  formatNumber,
   formatDateAuto,
+  formatNumber,
   getPalette,
   isNumber,
   parseDate,
 } from "../../../domain/helpers";
+import { sortByIndex } from "../../../lib/array";
+import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
-import { Bounds, Observer, useWidth } from "../use-width";
+import { LEFT_MARGIN_OFFSET } from "../constants";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { LEFT_MARGIN_OFFSET } from "../constants";
-import { sortByIndex } from "../../../lib/array";
+import { Bounds, Observer, useWidth } from "../use-width";
 
 export interface AreasState {
   data: Observation[];
@@ -155,7 +155,7 @@ const useAreasState = ({
       ? stackOrderAscending
       : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
       ? stackOrderDescending
-      : stackOrderNone;
+      : stackOrderReverse;
   // Sstack logic
   const stacked = stack()
     .order(stackOrder)
@@ -235,8 +235,7 @@ const useAreasState = ({
       data: tooltipValues,
       order: segments,
       getCategory: getSegment,
-      // Always descending to match visual order of colors of the stack
-      sortOrder: "desc",
+      sortOrder: "asc",
     });
     const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
     const cumulativeRulerItemValues = [

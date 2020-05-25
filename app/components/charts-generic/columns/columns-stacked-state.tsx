@@ -12,7 +12,7 @@ import {
   stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
-  stackOrderNone,
+  stackOrderReverse,
 } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
@@ -207,7 +207,8 @@ const useColumnsStackedState = ({
       ? stackOrderAscending
       : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
       ? stackOrderDescending
-      : stackOrderNone;
+      : // Reverse segments here, so they're sorted from top to bottom
+        stackOrderReverse;
   // stack logic
   const stacked = stack()
     .order(stackOrder)
@@ -257,8 +258,7 @@ const useColumnsStackedState = ({
       data: tooltipValues,
       order: segments,
       getCategory: getSegment,
-      // Always descending to match visual order of colors of the stack
-      sortOrder: "desc",
+      sortOrder: "asc",
     });
 
     const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);

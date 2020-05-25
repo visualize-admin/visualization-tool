@@ -58,7 +58,7 @@ export type ConfiguratorStateAction =
       value: {
         path: string;
         field: string;
-        value: string;
+        value: string | Record<string, string>;
       };
     }
   | {
@@ -436,7 +436,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               action.value.componentIri;
             draft.chartConfig.fields.segment.colorMapping = colorMapping;
           } else {
-            f.componentIri = action.value.componentIri;
+            // Reset other field options
+            (draft.chartConfig.fields as GenericFields)[action.value.field] = {
+              componentIri: action.value.componentIri,
+            };
           }
         }
 
