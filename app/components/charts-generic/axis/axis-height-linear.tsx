@@ -8,6 +8,8 @@ import { ColumnsState } from "../columns/columns-state";
 import { LinesState } from "../lines/lines-state";
 import { AreasState } from "../areas/areas-state";
 
+const TICK_MIN_HEIGHT = 50;
+
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
 
@@ -16,22 +18,16 @@ export const AxisHeightLinear = () => {
     | LinesState
     | AreasState;
 
+  const ticks = Math.min(bounds.chartHeight / TICK_MIN_HEIGHT, 4);
+
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const tickValues = yScale.ticks(4).concat(yScale.domain());
-
-    g.call(
-      axisLeft(yScale)
-        .tickValues(tickValues)
-        .tickSizeInner(-bounds.chartWidth)
-    );
+    g.call(axisLeft(yScale).ticks(ticks).tickSizeInner(-bounds.chartWidth));
 
     g.select(".domain").remove();
 
-    g.selectAll(".tick line")
-      .attr("stroke", gridColor)
-      .attr("stroke-width", 1);
+    g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
       .attr("font-family", fontFamily)
