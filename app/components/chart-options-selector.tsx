@@ -260,14 +260,14 @@ const ChartFieldOptions = ({
             />
             <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
               <ChartOptionRadioField
-                label="stacked"
+                label={getFieldLabel("stacked")}
                 field={field}
                 path="type"
                 value={"stacked"}
                 disabled={disabled}
               />
               <ChartOptionRadioField
-                label="grouped"
+                label={getFieldLabel("grouped")}
                 field={field}
                 path="type"
                 value={"grouped"}
