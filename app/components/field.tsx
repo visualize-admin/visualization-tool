@@ -127,30 +127,7 @@ export const MetaInputField = ({
     value,
   });
 
-  return <Input label={label} {...field} disabled={disabled}></Input>;
-};
-
-export const MetaTextarea = ({
-  label,
-  metaKey,
-  locale,
-  value,
-  disabled,
-  ...props
-}: {
-  label: string;
-  metaKey: MetaKey;
-  locale: Locales;
-  value?: string;
-  disabled?: boolean;
-}) => {
-  const field = useMetaField({
-    metaKey,
-    locale,
-    value,
-  });
-
-  return <Input label={label} {...field} disabled={disabled}></Input>;
+  return <Input label={label} {...field} disabled={disabled} />;
 };
 
 export const MultiFilterField = ({
