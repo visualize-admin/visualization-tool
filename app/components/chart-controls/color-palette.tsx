@@ -84,13 +84,13 @@ export const ColorPalette = ({ field, disabled, component }: Props) => {
       <Button
         {...getToggleButtonProps()}
         sx={{
-          width: ["100%"],
           color: "monochrome700",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           bg: "monochrome100",
           p: 1,
+          height: "40px",
           borderWidth: "1px",
           borderStyle: "solid",
           borderColor: "monochrome500",
@@ -175,17 +175,17 @@ const ColorSquare = ({
       margin: 0,
       padding: 0,
       width: 16,
-      height: 24,
+      height: 28,
       borderColor: "monochrome100",
       borderWidth: "1px",
       borderStyle: "solid",
       "&:first-of-type": {
-        borderTopLeftRadius: "bigger",
-        borderBottomLeftRadius: "bigger",
+        borderTopLeftRadius: "default",
+        borderBottomLeftRadius: "default",
       },
       "&:last-of-type": {
-        borderTopRightRadius: "bigger",
-        borderBottomRightRadius: "bigger",
+        borderTopRightRadius: "default",
+        borderBottomRightRadius: "default",
       },
     }}
   />
