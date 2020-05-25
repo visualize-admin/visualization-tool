@@ -135,6 +135,7 @@ export const Select = ({
         fontSize: 4,
         bg: "monochrome100",
         p: 2,
+        height: "40px",
         color: disabled ? "monochrome600" : "monochrome700",
       }}
       id={id}
@@ -223,7 +224,7 @@ export const Input = ({
       </Label>
     )}
     <RebassInput
-      sx={{ borderColor: "monochrome500", bg: "monochrome100" }}
+      sx={{ borderColor: "monochrome500", bg: "monochrome100", height: "40px" }}
       id={name}
       name={name}
       value={value}
