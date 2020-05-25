@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.6.0] - 2020-05-25
+
+### Added
+
+- Option for sorting elements in charts (e.g. sorting column charts by value instead of alphabetically)
+- Option for defining custom colors for individual values. 
+
 ### Fixed
 - Only allow temporal dimensions for line and area chart x-axis
 - Only show scrollbars when necessary
+- Show loading indicator in editor when data is reloading
 
 ## [0.5.2] – 2020-05-04
 
