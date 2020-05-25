@@ -6,13 +6,13 @@ import { locales } from "../locales/locales";
 import {
   ControlSection,
   ControlSectionContent,
-  SectionTitle
+  SectionTitle,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { MetaInputField } from "./field";
 
 export const ChartAnnotationsSelector = ({
-  state
+  state,
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
@@ -41,14 +41,16 @@ export const ChartAnnotationsSelector = ({
           </SectionTitle>
           <ControlSectionContent side="right">
             {state.activeField &&
-              locales.map(locale => (
-                <MetaInputField
-                  key={`${locale}-${state.activeField!}`}
-                  metaKey={state.activeField!}
-                  locale={locale}
-                  label={getFieldLabel(locale)}
-                  value={state.meta[af][locale]}
-                />
+              locales.map((locale) => (
+                <Box sx={{ ":not(:first-of-type)": { mt: 3 } }}>
+                  <MetaInputField
+                    key={`${locale}-${state.activeField!}`}
+                    metaKey={state.activeField!}
+                    locale={locale}
+                    label={getFieldLabel(locale)}
+                    value={state.meta[af][locale]}
+                  />
+                </Box>
               ))}
           </ControlSectionContent>
         </ControlSection>
