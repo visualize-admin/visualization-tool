@@ -2,6 +2,7 @@ import { Box } from "@theme-ui/components";
 import React, { memo, useMemo } from "react";
 import { ChartFields, Observation } from "../domain";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
+import VisuallyHidden from "@reach/visually-hidden";
 
 export const A11yTable = memo(
   ({
@@ -23,29 +24,31 @@ export const A11yTable = memo(
     }, [dimensions, measures, observations]);
 
     return (
-      <table>
-        <caption>{title}</caption>
-        <tbody>
-          <tr>
-            {headers.map(({ iri, label }) => {
+      <VisuallyHidden>
+        <table>
+          <caption>{title}</caption>
+          <tbody>
+            <tr>
+              {headers.map(({ iri, label }) => {
+                return (
+                  <th role="columnheader" scope="col" key={iri}>
+                    <Box>{label}</Box>
+                  </th>
+                );
+              })}
+            </tr>
+            {observations.map((obs, i) => {
               return (
-                <th role="columnheader" scope="col" key={iri}>
-                  <Box>{label}</Box>
-                </th>
+                <tr key={i}>
+                  {headers.map(({ iri }) => (
+                    <td key={iri}>{obs[iri]}</td>
+                  ))}
+                </tr>
               );
             })}
-          </tr>
-          {observations.map((obs, i) => {
-            return (
-              <tr key={i}>
-                {headers.map(({ iri }) => (
-                  <td key={iri}>{obs[iri]}</td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </VisuallyHidden>
     );
   }
 );
