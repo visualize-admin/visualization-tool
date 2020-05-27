@@ -25,6 +25,7 @@ export const AxisWidthLinear = () => {
         .tickValues(tickValues)
         .tickSizeInner(-chartHeight)
         .tickSizeOuter(-chartHeight)
+        .tickFormat(formatNumber)
     );
 
     g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);

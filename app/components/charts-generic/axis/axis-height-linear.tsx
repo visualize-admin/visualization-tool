@@ -7,11 +7,13 @@ import { useChartTheme } from "../use-chart-theme";
 import { ColumnsState } from "../columns/columns-state";
 import { LinesState } from "../lines/lines-state";
 import { AreasState } from "../areas/areas-state";
+import { useFormatNumber } from "../../../domain/helpers";
 
 const TICK_MIN_HEIGHT = 50;
 
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
+  const formatNumber = useFormatNumber();
 
   const { yScale, yAxisLabel, bounds } = useChartState() as
     | ColumnsState
@@ -23,7 +25,12 @@ export const AxisHeightLinear = () => {
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.call(axisLeft(yScale).ticks(ticks).tickSizeInner(-bounds.chartWidth));
+    g.call(
+      axisLeft(yScale)
+        .ticks(ticks)
+        .tickSizeInner(-bounds.chartWidth)
+        .tickFormat(formatNumber)
+    );
 
     g.select(".domain").remove();
 
