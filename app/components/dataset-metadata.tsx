@@ -5,10 +5,11 @@ import { ReactNode } from "react";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { Loading } from "./hint";
-import { formatDate } from "../domain/helpers";
+import { useFormatFullDateAuto } from "../domain/helpers";
 
 export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
+  const formatDate = useFormatFullDateAuto();
   const [{ data }] = useDataCubeMetadataQuery({
     variables: { iri: dataSetIri, locale },
   });

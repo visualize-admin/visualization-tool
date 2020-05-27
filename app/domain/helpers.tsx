@@ -44,35 +44,6 @@ export const isNumber = (x: $IntentionalAny): boolean =>
   typeof x === "number" && !isNaN(x);
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
-// const formatLocale = d3TimeFormatLocales[locale];
-
-export const formatDate = timeFormat("%B %d, %Y");
-
-export const formatDateAuto = (date: Date, locale: Locales) => {
-  const { format } = d3TimeFormatLocales[locale];
-  const formatSecond = timeFormat(":%S");
-  const formatMinute = timeFormat("%I:%M");
-  const formatHour = timeFormat("%I %p");
-  const formatDay = timeFormat("%d %B %Y");
-  const formatWeek = timeFormat("%b %d");
-  const formatMonth = timeFormat("%B");
-  const formatYear = timeFormat("%Y");
-
-  return (timeMinute(date) < date
-    ? formatSecond
-    : timeHour(date) < date
-    ? formatMinute
-    : timeDay(date) < date
-    ? formatHour
-    : timeMonth(date) < date
-    ? timeWeek(date) < date
-      ? format("%d.%m.%Y")
-      : formatWeek
-    : timeYear(date) < date
-    ? formatMonth
-    : formatYear)(date);
-};
-
 /**
  * Formats dates automatically based on their precision in LONG form.
  *
@@ -83,9 +54,9 @@ export const useFormatFullDateAuto = () => {
   const formatter = React.useMemo(() => {
     const { format } = d3TimeFormatLocales[locale];
 
-    const formatSecond = format("%H:%M:%S %d.%m.%Y");
-    const formatMinute = format("%H:%M %d.%m.%Y");
-    const formatHour = format("%H:%M %d.%m.%Y");
+    const formatSecond = format("%d.%m.%Y %H:%M:%S");
+    const formatMinute = format("%d.%m.%Y %H:%M");
+    const formatHour = format("%d.%m.%Y %H:%M");
     const formatDay = format("%d.%m.%Y");
     const formatMonth = format("%m.%Y");
     const formatYear = format("%Y");
