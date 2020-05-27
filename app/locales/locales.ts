@@ -1,16 +1,15 @@
 // If translations get too big, we should load them dynamically. But for now it's fine.
-import catalogDe from "./de/messages.js";
-import catalogFr from "./fr/messages.js";
-import catalogIt from "./it/messages.js";
-import catalogEn from "./en/messages.js";
-
-import timeFormatDe from "d3-time-format/locale/de-CH.json";
-import timeFormatFr from "d3-time-format/locale/fr-FR.json";
-import timeFormatIt from "d3-time-format/locale/it-IT.json";
-import timeFormatEn from "d3-time-format/locale/en-GB.json";
-
 // Use the same number format in each language
 import numberFormatCh from "d3-format/locale/de-CH.json";
+import { timeFormatLocale, TimeLocaleDefinition } from "d3-time-format";
+import timeFormatDe from "d3-time-format/locale/de-CH.json";
+import timeFormatEn from "d3-time-format/locale/en-GB.json";
+import timeFormatFr from "d3-time-format/locale/fr-FR.json";
+import timeFormatIt from "d3-time-format/locale/it-IT.json";
+import catalogDe from "./de/messages.js";
+import catalogEn from "./en/messages.js";
+import catalogFr from "./fr/messages.js";
+import catalogIt from "./it/messages.js";
 
 export const defaultLocale = "de";
 
@@ -33,19 +32,19 @@ export const catalogs = {
   de: catalogDe,
   fr: catalogFr,
   it: catalogIt,
-  en: catalogEn
+  en: catalogEn,
 } as const;
 
 export const d3TimeFormatLocales = {
-  de: timeFormatDe,
-  fr: timeFormatFr,
-  it: timeFormatIt,
-  en: timeFormatEn
+  de: timeFormatLocale(timeFormatDe as TimeLocaleDefinition),
+  fr: timeFormatLocale(timeFormatFr as TimeLocaleDefinition),
+  it: timeFormatLocale(timeFormatIt as TimeLocaleDefinition),
+  en: timeFormatLocale(timeFormatEn as TimeLocaleDefinition),
 } as const;
 
 export const d3FormatLocales = {
   de: numberFormatCh,
   fr: numberFormatCh,
   it: numberFormatCh,
-  en: numberFormatCh
+  en: numberFormatCh,
 } as const;

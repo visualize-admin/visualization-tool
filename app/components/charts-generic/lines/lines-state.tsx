@@ -11,20 +11,20 @@ import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
 import { LineFields, Observation, ObservationValue } from "../../../domain";
 import {
-  formatDateAuto,
   formatNumber,
   getPalette,
   mkNumber,
   parseDate,
+  useFormatFullDateAuto,
 } from "../../../domain/helpers";
+import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { useTheme } from "../../../themes";
 import { Tooltip } from "../annotations/tooltip";
 import { LEFT_MARGIN_OFFSET } from "../constants";
-import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { sortByIndex } from "../../../lib/array";
+import { Bounds, Observer, useWidth } from "../use-width";
 
 export interface LinesState {
   data: Observation[];
@@ -57,6 +57,7 @@ const useLinesState = ({
 }): LinesState => {
   const theme = useTheme();
   const width = useWidth();
+  const formatDateAuto = useFormatFullDateAuto();
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
