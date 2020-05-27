@@ -11,11 +11,11 @@ import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
 import { LineFields, Observation, ObservationValue } from "../../../domain";
 import {
-  formatNumber,
   getPalette,
   mkNumber,
   parseDate,
   useFormatFullDateAuto,
+  useFormatNumber,
 } from "../../../domain/helpers";
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
@@ -57,6 +57,7 @@ const useLinesState = ({
 }): LinesState => {
   const theme = useTheme();
   const width = useWidth();
+  const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
 
   const getGroups = (d: Observation): string =>

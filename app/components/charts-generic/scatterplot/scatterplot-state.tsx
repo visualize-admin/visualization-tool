@@ -3,7 +3,7 @@ import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import * as React from "react";
 import { ReactNode } from "react";
 import { Observation, ScatterPlotFields } from "../../../domain";
-import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
+import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
 import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
@@ -38,6 +38,7 @@ const useScatterplotState = ({
   aspectRatio: number;
 }): ScatterplotState => {
   const width = useWidth();
+  const formatNumber = useFormatNumber();
 
   const getX = (d: Observation): number => +d[fields.x.componentIri];
   const getY = (d: Observation): number => +d[fields.y.componentIri];

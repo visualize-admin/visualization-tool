@@ -16,7 +16,7 @@ import {
   SortingType,
   SortingOrder,
 } from "../../../domain";
-import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
+import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
 import {
@@ -58,6 +58,7 @@ const useGroupedColumnsState = ({
   aspectRatio: number;
 }): GroupedColumnsState => {
   const width = useWidth();
+  const formatNumber = useFormatNumber();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
