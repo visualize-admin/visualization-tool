@@ -25,7 +25,9 @@ export const AxisTime = () => {
 
   const hasNegativeValues = yScale.domain()[0] < 0;
 
-  const maxLabelLength = estimateTextWidth("99.99.9999") || 70;
+  // Approximate the longest date format we're using for
+  // Roughly equivalent to estimateTextWidth("99.99.9999", 12);
+  const maxLabelLength = 70;
 
   // This could be useful: use data points as tick values,
   // but it does not solve the problem of overlapping.
@@ -34,8 +36,6 @@ export const AxisTime = () => {
   //     ? xUniqueValues
   //     : null;
   const ticks = bounds.chartWidth / (maxLabelLength + 20);
-
-  console.log({ ticks });
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     g.call(
