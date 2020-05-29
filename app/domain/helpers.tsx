@@ -24,6 +24,8 @@ import { timeFormat, timeParse } from "d3-time-format";
 import * as React from "react";
 import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 import { IconName } from "../icons";
+import { useLocale } from "../lib/use-locale";
+import { d3TimeFormatLocales, Locales, d3FormatLocales } from "../locales/locales";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -42,35 +44,86 @@ export const isNumber = (x: $IntentionalAny): boolean =>
   typeof x === "number" && !isNaN(x);
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
-// const formatLocale = d3TimeFormatLocales[locale];
+/**
+ * Formats dates automatically based on their precision in LONG form.
+ *
+ * Use wherever dates are displayed without being in context of other dates (e.g. in tooltips)
+ */
+export const useFormatFullDateAuto = () => {
+  const locale = useLocale();
+  const formatter = React.useMemo(() => {
+    const { format } = d3TimeFormatLocales[locale];
 
-export const formatDate = timeFormat("%B %d, %Y");
+    const formatSecond = format("%d.%m.%Y %H:%M:%S");
+    const formatMinute = format("%d.%m.%Y %H:%M");
+    const formatHour = format("%d.%m.%Y %H:%M");
+    const formatDay = format("%d.%m.%Y");
+    const formatMonth = format("%m.%Y");
+    const formatYear = format("%Y");
 
-const formatSecond = timeFormat(":%S");
-const formatMinute = timeFormat("%I:%M");
-const formatHour = timeFormat("%I %p");
-const formatDay = timeFormat("%a %d");
-const formatWeek = timeFormat("%b %d");
-const formatMonth = timeFormat("%B");
-const formatYear = timeFormat("%Y");
+    return (date: Date) => {
+      return (timeMinute(date) < date
+        ? formatSecond
+        : timeHour(date) < date
+        ? formatMinute
+        : timeDay(date) < date
+        ? formatHour
+        : timeMonth(date) < date
+        ? formatDay
+        : timeYear(date) < date
+        ? formatMonth
+        : formatYear)(date);
+    };
+  }, [locale]);
 
-export const formatDateAuto = (date: Date) => {
-  return (timeMinute(date) < date
-    ? formatSecond
-    : timeHour(date) < date
-    ? formatMinute
-    : timeDay(date) < date
-    ? formatHour
-    : timeMonth(date) < date
-    ? timeWeek(date) < date
-      ? formatDay
-      : formatWeek
-    : timeYear(date) < date
-    ? formatMonth
-    : formatYear)(date);
+  return formatter;
 };
 
-export const formatNumber = (x: number): string => format(",.2~f")(x);
+/**
+ * Formats dates automatically based on their precision in SHORT form.
+ *
+ * Use wherever dates are displayed in context of other dates (e.g. on time axes)
+ */
+export const useFormatShortDateAuto = () => {
+  const locale = useLocale();
+  const formatter = React.useMemo(() => {
+    const { format } = d3TimeFormatLocales[locale];
+
+    const formatSecond = format(":%S");
+    const formatMinute = format("%H:%M");
+    const formatHour = format("%H");
+    const formatDay = format("%d");
+    const formatMonth = format("%b");
+    const formatYear = format("%Y");
+
+    return (date: Date) => {
+      return (timeMinute(date) < date
+        ? formatSecond
+        : timeHour(date) < date
+        ? formatMinute
+        : timeDay(date) < date
+        ? formatHour
+        : timeMonth(date) < date
+        ? formatDay
+        : timeYear(date) < date
+        ? formatMonth
+        : formatYear)(date);
+    };
+  }, [locale]);
+
+  return formatter;
+};
+
+// export const formatNumber = (x: number): string => format(",.2~f")(x);
+
+export const useFormatNumber = () => {
+  const locale = useLocale();
+  const formatter = React.useMemo(() => {
+    const { format } = d3FormatLocales[locale];
+    return format(",.2~f")
+  }, [locale]);
+  return formatter;
+}
 
 export const getIconName = (name: string): IconName => {
   switch (name) {

@@ -2,20 +2,18 @@ import { axisBottom } from "d3-axis";
 import { select, Selection } from "d3-selection";
 import * as React from "react";
 import { useEffect, useRef } from "react";
-import { useChartTheme } from "../use-chart-theme";
-import { useChartState } from "../use-chart-state";
-import { LinesState } from "../lines/lines-state";
-import { AreasState } from "../areas/areas-state";
-import { formatDateAuto } from "../../../domain/helpers";
+import { useFormatShortDateAuto } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { max } from "d3-array";
+import { AreasState } from "../areas/areas-state";
+import { LinesState } from "../lines/lines-state";
+import { useChartState } from "../use-chart-state";
+import { useChartTheme } from "../use-chart-theme";
 
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
+  const formatDateAuto = useFormatShortDateAuto();
 
-  const { xScale, yScale, bounds, xUniqueValues } = useChartState() as
-    | LinesState
-    | AreasState;
+  const { xScale, yScale, bounds } = useChartState() as LinesState | AreasState;
 
   const {
     labelColor,
@@ -27,10 +25,9 @@ export const AxisTime = () => {
 
   const hasNegativeValues = yScale.domain()[0] < 0;
 
-  const labelLengths = xUniqueValues.map((v) =>
-    estimateTextWidth(formatDateAuto(v))
-  );
-  const maxLabelLength = max(labelLengths, (d) => d) || 70;
+  // Approximate the longest date format we're using for
+  // Roughly equivalent to estimateTextWidth("99.99.9999", 12);
+  const maxLabelLength = 70;
 
   // This could be useful: use data points as tick values,
   // but it does not solve the problem of overlapping.
@@ -38,17 +35,13 @@ export const AxisTime = () => {
   //   bounds.chartWidth / (maxLabelLength + 20) > xUniqueValues.length
   //     ? xUniqueValues
   //     : null;
-  const ticks = Math.min(
-    xUniqueValues.length,
-    bounds.chartWidth / (maxLabelLength + 20)
-  );
+  const ticks = bounds.chartWidth / (maxLabelLength + 20);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     g.call(
       axisBottom(xScale)
         .ticks(ticks)
         .tickFormat((x) => formatDateAuto(x as Date))
-      // .tickValues(tickValues as $FixMe)
     );
     g.select(".domain").remove();
     g.selectAll(".tick line").attr(
@@ -69,8 +62,9 @@ export const AxisTime = () => {
   return (
     <g
       ref={ref}
-      transform={`translate(${bounds.margins.left}, ${bounds.chartHeight +
-        bounds.margins.top})`}
+      transform={`translate(${bounds.margins.left}, ${
+        bounds.chartHeight + bounds.margins.top
+      })`}
     />
   );
 };
@@ -99,8 +93,9 @@ export const AxisTimeDomain = () => {
   return (
     <g
       ref={ref}
-      transform={`translate(${bounds.margins.left}, ${bounds.chartHeight +
-        bounds.margins.top})`}
+      transform={`translate(${bounds.margins.left}, ${
+        bounds.chartHeight + bounds.margins.top
+      })`}
     />
   );
 };

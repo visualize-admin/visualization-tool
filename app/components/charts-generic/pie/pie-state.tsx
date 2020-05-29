@@ -8,7 +8,7 @@ import {
   SortingType,
   SortingOrder,
 } from "../../../domain";
-import { formatNumber, getPalette } from "../../../domain/helpers";
+import { getPalette, useFormatNumber } from "../../../domain/helpers";
 import { Tooltip } from "../annotations/tooltip";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
@@ -63,6 +63,7 @@ const usePieState = ({
   aspectRatio: number;
 }): PieState => {
   const width = useWidth();
+  const formatNumber = useFormatNumber();
 
   const getY = useCallback(
     (d: Observation): number => +d[fields.y.componentIri] as number,

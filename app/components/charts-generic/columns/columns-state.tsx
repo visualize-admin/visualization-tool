@@ -14,7 +14,7 @@ import {
   SortingOrder,
   SortingType,
 } from "../../../domain/config-types";
-import { formatNumber, getPalette, mkNumber } from "../../../domain/helpers";
+import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
 import { PADDING_INNER, PADDING_OUTER } from "../columns/constants";
@@ -49,6 +49,7 @@ const useColumnsState = ({
   aspectRatio: number;
 }): ColumnsState => {
   const width = useWidth();
+  const formatNumber = useFormatNumber();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,

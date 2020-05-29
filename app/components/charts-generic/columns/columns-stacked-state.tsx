@@ -22,7 +22,7 @@ import {
   SortingType,
 } from "../../../domain/config-types";
 import { Observation, ObservationValue } from "../../../domain/data";
-import { formatNumber, getPalette, isNumber } from "../../../domain/helpers";
+import { getPalette, isNumber, useFormatNumber } from "../../../domain/helpers";
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../annotations/tooltip";
@@ -61,6 +61,7 @@ const useColumnsStackedState = ({
   aspectRatio: number;
 }): StackedColumnsState => {
   const width = useWidth();
+  const formatNumber = useFormatNumber();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,

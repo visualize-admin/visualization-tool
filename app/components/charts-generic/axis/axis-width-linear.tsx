@@ -6,9 +6,10 @@ import { useChartState } from "../use-chart-state";
 import { useChartTheme } from "../use-chart-theme";
 import { ScatterplotState } from "../scatterplot/scatterplot-state";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { formatNumber } from "../../../domain/helpers";
+import { useFormatNumber } from "../../../domain/helpers";
 
 export const AxisWidthLinear = () => {
+  const formatNumber = useFormatNumber();
   const { xScale, bounds, xAxisLabel } = useChartState() as ScatterplotState;
   const { chartWidth, chartHeight, margins } = bounds;
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
@@ -24,11 +25,10 @@ export const AxisWidthLinear = () => {
         .tickValues(tickValues)
         .tickSizeInner(-chartHeight)
         .tickSizeOuter(-chartHeight)
+        .tickFormat(formatNumber)
     );
 
-    g.selectAll(".tick line")
-      .attr("stroke", gridColor)
-      .attr("stroke-width", 1);
+    g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
       .attr("font-family", fontFamily)
