@@ -18,7 +18,7 @@ export type Scalars = {
 
 
 export type ObservationsQuery = {
-   __typename: 'ObservationsQuery';
+  __typename: 'ObservationsQuery';
   /** Observations with their values parsed to native JS types */
   data: Array<Scalars['Observation']>;
   /** Observations with their original RDF-y type */
@@ -28,7 +28,7 @@ export type ObservationsQuery = {
 };
 
 export type DataCube = {
-   __typename: 'DataCube';
+  __typename: 'DataCube';
   iri: Scalars['String'];
   title: Scalars['String'];
   contact?: Maybe<Scalars['String']>;
@@ -54,7 +54,7 @@ export type DataCubeDimensionByIriArgs = {
 };
 
 export type DimensionValue = {
-   __typename: 'DimensionValue';
+  __typename: 'DimensionValue';
   value: Scalars['String'];
   label: Scalars['String'];
 };
@@ -71,40 +71,40 @@ export type Dimension = {
 };
 
 export type NominalDimension = Component & Dimension & {
-   __typename: 'NominalDimension';
+  __typename: 'NominalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
   values: Array<DimensionValue>;
 };
 
 export type OrdinalDimension = Component & Dimension & {
-   __typename: 'OrdinalDimension';
+  __typename: 'OrdinalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
   values: Array<DimensionValue>;
 };
 
 export type TemporalDimension = Component & Dimension & {
-   __typename: 'TemporalDimension';
+  __typename: 'TemporalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
   values: Array<DimensionValue>;
 };
 
 export type Measure = Component & {
-   __typename: 'Measure';
+  __typename: 'Measure';
   iri: Scalars['String'];
   label: Scalars['String'];
 };
 
 export type Attribute = Component & {
-   __typename: 'Attribute';
+  __typename: 'Attribute';
   iri: Scalars['String'];
   label: Scalars['String'];
 };
 
 export type DataCubeResult = {
-   __typename: 'DataCubeResult';
+  __typename: 'DataCubeResult';
   score?: Maybe<Scalars['Float']>;
   highlightedTitle?: Maybe<Scalars['String']>;
   highlightedDescription?: Maybe<Scalars['String']>;
@@ -118,7 +118,7 @@ export enum DataCubeResultOrder {
 }
 
 export type Query = {
-   __typename: 'Query';
+  __typename: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
 };
