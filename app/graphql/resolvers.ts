@@ -78,7 +78,8 @@ const getEntryPoint = (
     ],
   });
 
-  entryPointCache.set(locale, entry);
+  // TODO: Re-enable caching with TTL
+  // entryPointCache.set(locale, entry);
 
   return entry;
 };
