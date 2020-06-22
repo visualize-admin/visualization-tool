@@ -327,10 +327,13 @@ export const resolvers: Resolvers = {
       // TODO: Optimize Performance
       const fullyQualifiedObservations = observations.map((obs) => {
         return Object.fromEntries(
-          Object.entries(obs).map(([k, v]) => [
-            selectedFields.find(([selK]) => selK === k)![1].iri.value,
-            parseObservationValue(v),
-          ])
+          Object.entries(obs).map(([k, v]) => {
+            return [
+              selectedFields.find(([selK]) => selK === k)![1].iri.value,
+              // FIXME: This undefined check should not be necessary but prevents breaking on some malformed RDF(?) values
+              v && v.value !== undefined ? parseObservationValue(v) : 0,
+            ];
+          })
         );
       });
 
