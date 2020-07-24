@@ -32,7 +32,7 @@ const getEntryPoint = (
   }
 
   entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
-    languages: [locale, ...locales.filter((l) => l !== locale), ""],
+    languages: ["de", "en", ""],
     extraMetadata: [
       {
         variable: "contact",
@@ -137,7 +137,6 @@ const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
       console.log(dimension.iri.value, dataType);
 
       if (filter.type === "range") {
-        
         return [
           dimension.gte(
             literal(filter.from, "http://www.w3.org/2001/XMLSchema#dateTime")
@@ -176,13 +175,18 @@ const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order }) => {
     const dataCubes = await getEntryPoint(locale).dataCubes();
 
-    const dataCubeCandidates = dataCubes.map((dataCube) => ({
-      title: dataCube.label.value,
-      description: dataCube.extraMetadata.get("description")?.value ?? "",
-      created: dataCube.extraMetadata.get("dateCreated")?.value ?? "",
-      dataCube,
-    }))
-    .filter(d => d.dataCube.iri === "https://energy.ld.admin.ch/sfoe/energyproduction/dataset");
+    const dataCubeCandidates = dataCubes
+      .map((dataCube) => ({
+        title: dataCube.label.value,
+        description: dataCube.extraMetadata.get("description")?.value ?? "",
+        created: dataCube.extraMetadata.get("dateCreated")?.value ?? "",
+        dataCube,
+      }))
+      .filter(
+        (d) =>
+          d.dataCube.iri ===
+          "https://energy.ld.admin.ch/sfoe/energyproduction/dataset"
+      );
 
     if (query) {
       /**
@@ -325,7 +329,10 @@ const dimensionResolvers = {
   iri: ({ dimension }: ResolvedDimension) => dimension.iri.value,
   label: ({ dimension }: ResolvedDimension) => dimension.label.value,
   values: async ({ dataCube, dimension }: ResolvedDimension) => {
-    if (dimension.iri.value === "https://energy.ld.admin.ch/sfoe/energyproduction/datetime") {
+    if (
+      dimension.iri.value ===
+      "https://energy.ld.admin.ch/sfoe/energyproduction/datetime"
+    ) {
       return [
         {
           value: "2014-01-01T00:00Z",
@@ -334,8 +341,8 @@ const dimensionResolvers = {
         {
           value: "2037-01-01T00:00Z",
           label: "2037-01-01T00:00Z",
-        }
-      ]
+        },
+      ];
     }
 
     // const { min, max } = await dataCube.componentMinMax(dimension);
@@ -348,9 +355,9 @@ const dimensionResolvers = {
     //     };
     //   });
     // }
-    console.time("Values " + dimension.iri.value)
+    console.time("Values " + dimension.iri.value);
     const values = await dataCube.componentValues(dimension);
-    console.timeEnd("Values " + dimension.iri.value)
+    console.timeEnd("Values " + dimension.iri.value);
     return values.map(({ value, label }) => {
       return {
         value: value.value,
@@ -368,6 +375,7 @@ export const resolvers: Resolvers = {
   DataCube,
   ObservationsQuery: {
     data: async ({ query, selectedFields }) => {
+      console.log(await query.toSparql());
       const observations = await query.execute();
       // TODO: Optimize Performance
       const fullyQualifiedObservations = observations.map((obs) => {
