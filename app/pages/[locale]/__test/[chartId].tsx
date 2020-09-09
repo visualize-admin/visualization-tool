@@ -27,7 +27,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const config = await loadFixtureConfig(params?.chartId.toString() ?? "");
+  const config = await loadFixtureConfig(params?.chartId?.toString() ?? "");
 
   return {
     props: { config },

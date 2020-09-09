@@ -25,7 +25,7 @@ class MyDocument extends Document<{ locale: string }> {
      * - and static localized pages like /en/index.mdx
      */
     const locale = /^\/\[locale\]/.test(pathname)
-      ? parseLocaleString(query.locale.toString())
+      ? parseLocaleString(query.locale?.toString() ?? "")
       : parseLocaleString(pathname.slice(1));
 
     return { ...initialProps, locale };

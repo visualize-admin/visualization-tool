@@ -25,7 +25,7 @@ const createDynamicRouteProps = ({
 
   // Replace dynamic route params in `asPath`
   for (const [k, v] of Object.entries(query)) {
-    if (dynamicParams.has(k)) {
+    if (dynamicParams.has(k) && v) {
       asPath = asPath.replace(`[${k}]`, v.toString());
     } else {
       regularQueryParams[k] = v;
