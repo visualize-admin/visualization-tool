@@ -27,6 +27,16 @@ module.exports = withPreconstruct(
       env: {
         VERSION,
       },
+      
+      redirects: async () => {
+        return [
+          {
+            source: "/",
+            destination: "/de",
+            permanent: false,
+          },
+        ];
+      },
 
       pageExtensions: ["js", "ts", "tsx", "mdx"],
 
