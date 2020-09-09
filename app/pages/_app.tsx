@@ -11,13 +11,18 @@ import { analyticsPageView } from "../domain/analytics";
 import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
 import { LocaleProvider } from "../lib/use-locale";
+import { useNProgress } from "../lib/use-nprogress";
 import { catalogs, parseLocaleString } from "../locales/locales";
 import * as defaultTheme from "../themes/federal";
 import { loadTheme, ThemeModule } from "../themes/index";
 
+import "../lib/nprogress.css";
+
 export default function App({ Component, pageProps }: AppProps) {
   const { pathname, query, events: routerEvents, asPath } = useRouter();
   const [themeModule, setThemeModule] = useState<ThemeModule>(defaultTheme);
+
+  useNProgress();
 
   /**
    * Parse locale from query OR pathname

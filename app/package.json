@@ -55,6 +55,7 @@
     "lodash": "^4.17.20",
     "micro-cors": "^0.1.1",
     "nanoid": "^3.1.12",
+    "nprogress": "^0.2.0",
     "pg": "^8.3.3",
     "pg-connection-string": "^2.3.0",
     "postgres-migrations": "^5.0.0",
@@ -71,5 +72,8 @@
   },
   "preconstruct": {
     "source": "index"
+  },
+  "devDependencies": {
+    "@types/nprogress": "^0.2.0"
   }
 }
