@@ -27,7 +27,7 @@ module.exports = withPreconstruct(
       env: {
         VERSION,
       },
-      
+
       redirects: async () => {
         return [
           {
@@ -36,6 +36,24 @@ module.exports = withPreconstruct(
             permanent: false,
           },
         ];
+      },
+
+      headers: async () => {
+        let headers = [];
+
+        if (process.env.ALLOW_SEARCH_BOTS !== "true") {
+          headers.push({
+            source: "/:path*",
+            headers: [
+              {
+                key: "X-Robots-Tag",
+                value: "noindex, nofollow",
+              },
+            ],
+          });
+        }
+
+        return headers;
       },
 
       pageExtensions: ["js", "ts", "tsx", "mdx"],
