@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   return { props: { status: "notfound" } };
 };
 
-export default (props: PageProps) => {
+const EmbedPage = (props: PageProps) => {
   if (props.status === "notfound") {
     // TODO: display 404 message
     return <ErrorPage statusCode={404} />;
@@ -55,3 +55,5 @@ export default (props: PageProps) => {
     />
   );
 };
+
+export default EmbedPage
