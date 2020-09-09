@@ -14,6 +14,16 @@ type PageProps = {
   }[];
 };
 
+export const getServerSideProps = async () => {
+  const configs = await getAllConfigs();
+
+  return {
+    props: {
+      configs: configs.filter((c: $Unexpressable) => c.data && c.data.meta),
+    },
+  };
+};
+
 const Page: NextPage<PageProps> = ({ configs }) => {
   return (
     <>
@@ -69,16 +79,6 @@ const Page: NextPage<PageProps> = ({ configs }) => {
       </ContentLayout>
     </>
   );
-};
-
-export const getServerSideProps = async () => {
-  const configs = await getAllConfigs();
-
-  return {
-    props: {
-      configs: configs.filter((c: $Unexpressable) => c.data && c.data.meta),
-    },
-  };
 };
 
 export default Page;

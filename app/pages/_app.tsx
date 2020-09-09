@@ -1,102 +1,88 @@
 import { I18nProvider } from "@lingui/react";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
 import "@reach/menu-button/styles.css";
-import App, { AppContext } from "next/app";
+import { AppProps } from "next/app";
 import Head from "next/head";
-import Router from "next/router";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { ThemeProvider } from "theme-ui";
 import { ContentMDXProvider } from "../components/content-mdx-provider";
 import { analyticsPageView } from "../domain/analytics";
 import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
 import { LocaleProvider } from "../lib/use-locale";
-import { catalogs, Locales, parseLocaleString } from "../locales/locales";
-import { loadTheme, Theme } from "../themes/index";
+import { catalogs, parseLocaleString } from "../locales/locales";
+import * as defaultTheme from "../themes/federal";
+import { loadTheme, ThemeModule } from "../themes/index";
 
-Router.events.on("routeChangeComplete", (path) => analyticsPageView(path));
+export default function App({ Component, pageProps }: AppProps) {
+  const { pathname, query, events: routerEvents, asPath } = useRouter();
+  const [themeModule, setThemeModule] = useState<ThemeModule>(defaultTheme);
 
-class MyApp extends App<{
-  locale: Locales;
-  theme: Theme;
-  preloadFonts?: string[];
-  asPath: string;
-}> {
-  static async getInitialProps(appContext: AppContext) {
-    // calls page's `getInitialProps` and fills `appProps.pageProps`
-    const appProps = await App.getInitialProps(appContext);
+  /**
+   * Parse locale from query OR pathname
+   * - so we can have dynamic locale query params like /[locale]/create/...
+   * - and static localized pages like /en/index.mdx
+   */
+  const locale = /^\/\[locale\]/.test(pathname)
+    ? parseLocaleString(query.locale?.toString() ?? "")
+    : parseLocaleString(pathname.slice(1));
 
-    const {
-      ctx: { query, asPath, pathname },
-    } = appContext;
+  useEffect(() => {
+    document.querySelector("html")?.setAttribute("lang", locale);
+  }, [locale]);
 
-    const __theme = query.__theme ? query.__theme.toString() : undefined;
-    const { theme, preloadFonts } = await loadTheme(__theme);
-
-    /**
-     * Parse locale from query OR pathname
-     * - so we can have dynamic locale query params like /[locale]/create/...
-     * - and static localized pages like /en/index.mdx
-     */
-    const locale = /^\/\[locale\]/.test(pathname)
-      ? parseLocaleString(query.locale?.toString() ?? "")
-      : parseLocaleString(pathname.slice(1));
-
-    if (typeof document !== "undefined") {
-      document.querySelector("html")?.setAttribute("lang", locale);
+  // Load custom theme
+  const __theme = query.__theme ? query.__theme.toString() : undefined;
+  useEffect(() => {
+    if (__theme) {
+      (async () => {
+        const customTheme = await loadTheme(__theme);
+        setThemeModule(customTheme);
+      })();
     }
+  }, [__theme]);
 
-    return {
-      ...appProps,
-      locale,
-      theme,
-      preloadFonts,
-      asPath,
+  // Initialize analytics
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      analyticsPageView(url);
     };
-  }
 
-  render() {
-    const {
-      Component,
-      pageProps,
-      locale,
-      theme,
-      preloadFonts,
-      asPath,
-    } = this.props;
+    routerEvents.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      routerEvents.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [routerEvents]);
 
-    return (
-      <>
-        <Head>
-          <title>visualize.admin.ch</title>
-          <meta property="og:type" content="website" />
-          <meta property="og:title" content={"visualize.admin.ch"} />
-          <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
-          {preloadFonts &&
-            preloadFonts.map((src) => (
-              <link
-                key={src}
-                rel="preload"
-                href={src}
-                as="font"
-                crossOrigin="anonymous"
-              />
-            ))}
-        </Head>
-        <LocaleProvider value={locale}>
-          <I18nProvider language={locale} catalogs={catalogs}>
-            <GraphqlProvider>
-              <ThemeProvider theme={theme}>
-                <ContentMDXProvider>
-                  <Component {...pageProps} />
-                </ContentMDXProvider>
-              </ThemeProvider>
-            </GraphqlProvider>
-          </I18nProvider>
-        </LocaleProvider>
-      </>
-    );
-  }
+  return (
+    <>
+      <Head>
+        <title>visualize.admin.ch</title>
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={"visualize.admin.ch"} />
+        <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
+        {themeModule.preloadFonts?.map((src) => (
+          <link
+            key={src}
+            rel="preload"
+            href={src}
+            as="font"
+            crossOrigin="anonymous"
+          />
+        ))}
+      </Head>
+      <LocaleProvider value={locale}>
+        <I18nProvider language={locale} catalogs={catalogs}>
+          <GraphqlProvider>
+            <ThemeProvider theme={themeModule.theme}>
+              <ContentMDXProvider>
+                <Component {...pageProps} />
+              </ContentMDXProvider>
+            </ThemeProvider>
+          </GraphqlProvider>
+        </I18nProvider>
+      </LocaleProvider>
+    </>
+  );
 }
-
-export default MyApp;
