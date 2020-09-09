@@ -1,5 +1,5 @@
 import { Delaunay } from "d3-delaunay";
-import { clientPoint } from "d3-selection";
+import { pointer } from "d3-selection";
 import * as React from "react";
 import { useRef } from "react";
 import { useChartState } from "../use-chart-state";
@@ -34,7 +34,7 @@ export const InteractionVoronoi = React.memo(
     const voronoi = delaunay.voronoi([0, 0, chartWidth, chartHeight]);
 
     const findLocation = (e: React.MouseEvent) => {
-      const [x, y] = clientPoint(ref.current!, e);
+      const [x, y] = pointer(e,ref.current!);
 
       const location = delaunay.find(x, y);
       const d = data[location];

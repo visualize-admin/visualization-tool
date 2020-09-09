@@ -1,5 +1,6 @@
-import { css, Global } from "@emotion/core";
 import { I18nProvider } from "@lingui/react";
+// Used for color-picker component. Must include here because of next.js constraints about global CSS imports
+import "@reach/menu-button/styles.css";
 import App, { AppContext } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
@@ -12,9 +13,6 @@ import { GraphqlProvider } from "../graphql/context";
 import { LocaleProvider } from "../lib/use-locale";
 import { catalogs, Locales, parseLocaleString } from "../locales/locales";
 import { loadTheme, Theme } from "../themes/index";
-
-// Used for color-picker component. Must include here because of next.js constraints about global CSS imports
-import "@reach/menu-button/styles.css";
 
 Router.events.on("routeChangeComplete", (path) => analyticsPageView(path));
 

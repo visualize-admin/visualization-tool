@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Button, Flex, Input, Link, Text } from "@theme-ui/components";
-import clipboard from "clipboard-polyfill";
+import * as clipboard from "clipboard-polyfill/text";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import React, { ReactNode, useEffect, useState } from "react";
 import { Icon, IconName } from "../icons";

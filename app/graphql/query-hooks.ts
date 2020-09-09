@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -136,11 +137,11 @@ export type QueryDataCubesArgs = {
   order?: Maybe<DataCubeResultOrder>;
 };
 
-export type DataCubesQueryVariables = {
+export type DataCubesQueryVariables = Exact<{
   locale: Scalars['String'];
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
-};
+}>;
 
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string> } }> };
@@ -165,10 +166,10 @@ type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'Tempo
 
 export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment;
 
-export type DataCubePreviewQueryVariables = {
+export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
-};
+}>;
 
 
 export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, dimensions: Array<(
@@ -185,27 +186,27 @@ export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
       & ComponentFields_Measure_Fragment
     )> }> };
 
-export type DataCubePreviewObservationsQueryVariables = {
+export type DataCubePreviewObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
   measures: Array<Scalars['String']>;
-};
+}>;
 
 
 export type DataCubePreviewObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', observations: { __typename: 'ObservationsQuery', data: Array<any>, sparql: string } }> };
 
-export type DataCubeMetadataQueryVariables = {
+export type DataCubeMetadataQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
-};
+}>;
 
 
 export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, source?: Maybe<string>, dateCreated?: Maybe<string> }> };
 
-export type DataCubeMetadataWithComponentsQueryVariables = {
+export type DataCubeMetadataWithComponentsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
-};
+}>;
 
 
 export type DataCubeMetadataWithComponentsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, dimensions: Array<(
@@ -222,10 +223,10 @@ export type DataCubeMetadataWithComponentsQuery = { __typename: 'Query', dataCub
       & ComponentFields_Measure_Fragment
     )> }> };
 
-export type DataCubeMetadataWithComponentValuesQueryVariables = {
+export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
-};
+}>;
 
 
 export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, source?: Maybe<string>, dimensions: Array<(
@@ -242,11 +243,11 @@ export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', da
       & ComponentFields_Measure_Fragment
     )> }> };
 
-export type DimensionValuesQueryVariables = {
+export type DimensionValuesQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
   locale: Scalars['String'];
-};
+}>;
 
 
 export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<(
@@ -260,12 +261,12 @@ export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
       & DimensionFieldsWithValues_TemporalDimension_Fragment
     )> }> };
 
-export type DataCubeObservationsQueryVariables = {
+export type DataCubeObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
   measures: Array<Scalars['String']>;
   filters?: Maybe<Scalars['Filters']>;
-};
+}>;
 
 
 export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, contact?: Maybe<string>, dimensions: Array<(

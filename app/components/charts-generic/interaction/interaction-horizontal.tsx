@@ -1,5 +1,5 @@
 import { bisector } from "d3-array";
-import { clientPoint } from "d3-selection";
+import { pointer } from "d3-selection";
 import * as React from "react";
 import { useRef } from "react";
 import { Observation } from "../../../domain";
@@ -17,7 +17,7 @@ export const InteractionHorizontal = React.memo(
     const { chartWidth, chartHeight, margins } = bounds;
 
     const findDatum = (e: React.MouseEvent) => {
-      const [x, y] = clientPoint(ref.current!, e);
+      const [x, y] = pointer(e, ref.current!);
 
       const bisectDate = bisector(
         (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
