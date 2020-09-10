@@ -47,7 +47,7 @@ export const ChartPieVisualization = ({
     );
 
     return notAllNegative && observations.data.length > 0 ? (
-      <Box sx={{ position: "relative" }}>
+      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
         <A11yTable
           title={title}
           observations={observations.data}

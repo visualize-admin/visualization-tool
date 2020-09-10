@@ -14,27 +14,42 @@ const FIXTURES_DIR = path.join(
   "dev"
 );
 
+const CY_FIXTURES_DIR = path.join(
+  __dirname,
+  "..",
+  "cypress",
+  "fixtures",
+  "dev"
+);
+
 const run = async () => {
   console.log("Fetching configs from", ENDPOINT);
   const res = await fetch(ENDPOINT);
   const configs = await res.json();
 
   await fs.ensureDir(FIXTURES_DIR);
+  await fs.ensureDir(CY_FIXTURES_DIR);
   await fs.emptyDir(FIXTURES_DIR);
 
+  const validConfigs = configs
+    .filter((c) => c.data && c.data.meta)
+    .slice(0, 10);
+
   await Promise.all(
-    configs
-      .filter(c => c.data && c.data.meta)
-      .slice(0, 10)
-      .map(async config => {
-        return fs.writeJSON(
-          path.join(FIXTURES_DIR, `${config.key}.json`),
-          config
-        );
-      })
+    validConfigs.map(async (config) => {
+      return fs.writeJSON(
+        path.join(FIXTURES_DIR, `${config.key}.json`),
+        config
+      );
+    })
+  );
+
+  await fs.writeJSON(
+    path.join(CY_FIXTURES_DIR, `config-keys.json`),
+    validConfigs.map((c) => c.key)
   );
 
   console.log("Wrote configs to", FIXTURES_DIR);
 };
 
-run().catch(e => console.error(e));
+run().catch((e) => console.error(e));
