@@ -12,7 +12,7 @@ describe("Chart Snapshots", () => {
       cy.viewport("ipad-mini", "portrait");
       cy.visit(`/en/__test/${id}`);
       cy.get(`[data-chart-loaded="true"]`, { timeout: 10000 });
-
+      cy.wait(100);
       cy.document().toMatchImageSnapshot({ name: `snapshot-${id}` });
     });
   });
