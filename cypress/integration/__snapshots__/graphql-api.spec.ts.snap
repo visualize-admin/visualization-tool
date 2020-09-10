@@ -1,0 +1,4 @@
+exports[`GraphQL API > Matches test snapshot #0`] =
+{
+  "hello": "world"
+};

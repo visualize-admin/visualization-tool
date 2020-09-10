@@ -25,7 +25,8 @@
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "postversion": "git push --follow-tags",
     "release:npm": "yarn build:npm && yarn publish app",
-    "test": "jest --runInBand"
+    "e2e:dev": "CYPRESS_BASE_URL=http://localhost:3000 cypress open",
+    "e2e": "start-test 'yarn dev -p 3333' 3333 'yarn cypress run'"
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
@@ -52,6 +53,8 @@
     "babel-eslint": "10.x",
     "babel-jest": "^26.3.0",
     "babel-plugin-macros": "^2.8.0",
+    "cypress": "^5.1.0",
+    "cypress-plugin-snapshots": "^1.4.4",
     "eslint": "7.8.1",
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "^5.2.0",
@@ -71,6 +74,7 @@
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-terser": "^7.0.2",
+    "start-server-and-test": "^1.11.3",
     "typescript": "^4.0.2"
   },
   "workspaces": [
