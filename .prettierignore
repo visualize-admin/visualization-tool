@@ -1,0 +1,7 @@
+.next
+.yarn
+node_modules
+__fixtures
+fixtures
+build
+dist

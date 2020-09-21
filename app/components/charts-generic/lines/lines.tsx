@@ -13,14 +13,14 @@ export const Lines = () => {
     yScale,
     grouped,
     colors,
-    bounds
+    bounds,
   } = useChartState() as LinesState;
   const theme = useTheme();
 
   const lineGenerator = line<Observation>()
     // .defined(d => !isNaN(d))
-    .x(d => xScale(getX(d)))
-    .y(d => yScale(getY(d)));
+    .x((d) => xScale(getX(d)))
+    .y((d) => yScale(getY(d)));
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>

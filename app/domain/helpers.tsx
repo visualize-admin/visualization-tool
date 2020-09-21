@@ -25,7 +25,11 @@ import * as React from "react";
 import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 import { IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
-import { d3TimeFormatLocales, Locales, d3FormatLocales } from "../locales/locales";
+import {
+  d3TimeFormatLocales,
+  Locales,
+  d3FormatLocales,
+} from "../locales/locales";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -120,10 +124,10 @@ export const useFormatNumber = () => {
   const locale = useLocale();
   const formatter = React.useMemo(() => {
     const { format } = d3FormatLocales[locale];
-    return format(",.2~f")
+    return format(",.2~f");
   }, [locale]);
   return formatter;
-}
+};
 
 export const getIconName = (name: string): IconName => {
   switch (name) {

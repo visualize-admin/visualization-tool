@@ -8,12 +8,11 @@ import { useEffect } from "react";
  *
  * Don't forget to include a global `nprogress.css` in _app.tsx!
  */
-export const useNProgress = (
-) => {
+export const useNProgress = () => {
   const { events: routerEvents } = useRouter();
 
   useEffect(() => {
-    NProgress.configure({showSpinner:false});
+    NProgress.configure({ showSpinner: false });
     const startProgress = () => NProgress.start();
     const stopProgress = () => NProgress.done();
 

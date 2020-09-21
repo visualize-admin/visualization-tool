@@ -10,7 +10,7 @@ export const Tutorial = ({
   headline,
   step1,
   step2,
-  step3
+  step3,
 }: {
   headline: string;
   step1: string;
@@ -26,7 +26,7 @@ export const Tutorial = ({
         sx={{
           flexDirection: ["column", "column", "row"],
           justifyContent: ["flex-start", "flex-start", "space-around"],
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
@@ -58,7 +58,7 @@ const HomepageTutorialStep = ({ children }: { children: React.ReactNode }) => (
       fontSize: 5,
       fontFamily: "body",
       mt: 4,
-      mb: 2
+      mb: 2,
     }}
   >
     {children}
@@ -72,7 +72,7 @@ const Arrow = () => (
         display: ["none", "none", "block"],
         zIndex: 12,
         mb: [4, 4, 6],
-        mx: [0, 0, "-8px"]
+        mx: [0, 0, "-8px"],
       }}
     >
       <Icon size={32} name="arrowRight"></Icon>
@@ -82,7 +82,7 @@ const Arrow = () => (
         display: ["block", "block", "none"],
         zIndex: 12,
         mb: [4, 4, 6],
-        mx: [0, 0, "-8px"]
+        mx: [0, 0, "-8px"],
       }}
     >
       <Icon size={32} name="arrowDown"></Icon>

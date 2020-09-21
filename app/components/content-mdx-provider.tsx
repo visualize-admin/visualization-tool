@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 
 const Wrapper = ({
   contentId,
-  children
+  children,
 }: {
   contentId: unknown;
   children: ReactNode;
@@ -28,11 +28,11 @@ const defaultMDXComponents = {
   Intro,
   Tutorial,
   Examples,
-  Contribute
+  Contribute,
 };
 
 export const ContentMDXProvider = ({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) => {

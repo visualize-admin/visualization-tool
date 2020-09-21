@@ -4,7 +4,7 @@
 
 export {
   useConfiguratorState,
-  ConfiguratorStateProvider
+  ConfiguratorStateProvider,
 } from "./domain/configurator-state";
 
 export { ChartEditor } from "./components/editor/chart-editor";
@@ -17,5 +17,5 @@ export {
   catalogs,
   defaultLocale,
   locales,
-  parseLocaleString
+  parseLocaleString,
 } from "./locales/locales";

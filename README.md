@@ -46,7 +46,7 @@ yarn dev:rollup
 
 #### Database migrations
 
-Database migrations are run automatically when the *production* app starts. In *development*, you'll have to run them manually:
+Database migrations are run automatically when the _production_ app starts. In _development_, you'll have to run them manually:
 
 ```sh
 yarn db:migrate:dev
@@ -86,7 +86,7 @@ With your Abraxas credentials ...
 
 1. Log in to https://uvek.abx-ras.ch/
 2. This will prompt to open the F5 VPN client (you can download the client software once logged in). The VPN connection will be opened automatically.
-3. Use [Microsoft Remote Desktop](https://apps.apple.com/us/app/microsoft-remote-desktop-10/id1295203466?mt=12) to log in to the Abraxas Jump Server: 
+3. Use [Microsoft Remote Desktop](https://apps.apple.com/us/app/microsoft-remote-desktop-10/id1295203466?mt=12) to log in to the Abraxas Jump Server:
    - Remote address: `192.168.99.9`
    - User: `cmb\<YOUR_USER_NAME>`
 4. Once logged in, you should find yourself on a Windows desktop.
@@ -100,7 +100,6 @@ Useful commands to use:
 - `sudo /usr/local/bin/docker-compose up -d` -> Rebuild services and restart after a configuration change
 - `sudo /usr/local/bin/docker-compose pull web` -> Pull latest web image manually (should not be needed much)
 - etc. (remember to use `sudo` for all Docker commands)
-
 
 ### Docker (anywhere)
 
@@ -124,8 +123,7 @@ services:
     ports:
       - "80:3000"
     restart: always
-    env:
-      DATABASE_URL=postgres://postgres@db:5432/visualization_tool
+    env: DATABASE_URL=postgres://postgres@db:5432/visualization_tool
   db:
     image: "postgres:11"
     ports:

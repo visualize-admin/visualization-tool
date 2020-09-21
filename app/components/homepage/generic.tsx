@@ -2,7 +2,7 @@ import { Text } from "@theme-ui/components";
 import * as React from "react";
 
 export const HomepageSection = ({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) => (
@@ -14,7 +14,7 @@ export const HomepageSection = ({
       fontSize: [6, 7, 7],
       color: "monochrome800",
       mb: 6,
-      textAlign: "center"
+      textAlign: "center",
     }}
   >
     {children}

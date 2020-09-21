@@ -19,14 +19,14 @@ export default {
     intro: "var global = typeof self !== undefined ? self : this;",
     file: "app/public/dist/embed.js",
     format: "iife",
-    name: "VisualizeEmbed"
+    name: "VisualizeEmbed",
   },
   plugins: [
     replace({ "process.env.NODE_ENV": JSON.stringify("production") }),
     resolve({
       mainFields: ["browser", "module", "main"],
       preferBuiltins: true,
-      extensions
+      extensions,
     }),
     builtins(),
     commonjs({
@@ -44,7 +44,7 @@ export default {
           "useRef",
           "createContext",
           "Component",
-          "memo"
+          "memo",
         ],
         "next/router": ["useRouter"],
         "@rdfjs/data-model": [
@@ -52,11 +52,11 @@ export default {
           "literal",
           "variable",
           "blankNode",
-          "defaultGraph"
+          "defaultGraph",
         ],
         sparqljs: ["Generator"],
-        "@lingui/react": ["Trans"]
-      }
+        "@lingui/react": ["Trans"],
+      },
     }),
     json(),
     babel({
@@ -64,8 +64,8 @@ export default {
       include: ["embed/**/*", "app/**/*"],
       exclude: "node_modules/**",
       configFile: "./babel.config.js",
-      runtimeHelpers: true
+      runtimeHelpers: true,
     }),
     terser(),
-  ]
+  ],
 };

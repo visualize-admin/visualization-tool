@@ -26,10 +26,10 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         width: ["100%", "auto"],
         bg: ["monochrome300", "transparent"],
         order: [1, 2],
-        justifyContent: "flex-end"
+        justifyContent: "flex-end",
       }}
     >
-      {localesOrder.map(locale => {
+      {localesOrder.map((locale) => {
         const alternate = alternates?.[locale];
 
         const linkEl = (
@@ -49,15 +49,15 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
                   ? ["monochrome500", "monochrome300"]
                   : "transparent",
               ":hover": {
-                color: "primary"
+                color: "primary",
               },
               ":active": {
-                color: "primaryActive"
+                color: "primaryActive",
               },
               ":disabled": {
                 cursor: "initial",
-                color: "primaryDisabled"
-              }
+                color: "primaryDisabled",
+              },
             }}
           >
             {locale}

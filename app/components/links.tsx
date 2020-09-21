@@ -7,7 +7,7 @@ import { IconName, Icon } from "../icons";
 import { Link as UILink } from "@theme-ui/components";
 const createDynamicRouteProps = ({
   pathname,
-  query
+  query,
 }: {
   pathname: string;
   query: qs.ParsedUrlQuery;
@@ -39,7 +39,7 @@ const createDynamicRouteProps = ({
 
   return {
     href: { pathname, query },
-    as: asPath
+    as: asPath,
   };
 };
 
@@ -58,7 +58,7 @@ export const LocalizedLink = ({
       {...rest}
       {...createDynamicRouteProps({
         pathname,
-        query: query ? { ...query, locale } : { locale }
+        query: query ? { ...query, locale } : { locale },
       })}
     />
   );
@@ -92,7 +92,7 @@ export const CurrentPageLink = ({
         {...rest}
         {...createDynamicRouteProps({
           pathname: pathname.replace(/^\/(en|de|fr|it)/, `/${locale}`),
-          query
+          query,
         })}
       />
     );
@@ -103,7 +103,7 @@ export const CurrentPageLink = ({
       {...rest}
       {...createDynamicRouteProps({
         pathname,
-        query: { ...query, locale }
+        query: { ...query, locale },
       })}
     />
   );
@@ -113,7 +113,7 @@ export const IconLink = ({
   iconName,
   href,
   title,
-  disabled = false
+  disabled = false,
 }: {
   iconName: IconName;
   title?: string;
@@ -130,17 +130,17 @@ export const IconLink = ({
       ml: 4,
       color: "primary",
       "&:disabled": {
-        color: "primaryDisabled"
+        color: "primaryDisabled",
       },
       "&:hover": {
-        color: "primaryHover"
+        color: "primaryHover",
       },
       "&:active": {
-        color: "primaryActive"
+        color: "primaryActive",
       },
       "&:visited": {
-        color: "primary"
-      }
+        color: "primary",
+      },
     }}
   >
     <Icon name={iconName}></Icon>

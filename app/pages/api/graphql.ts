@@ -13,13 +13,13 @@ const server = new ApolloServer({
   resolvers,
   // Enable playground in production
   introspection: true,
-  playground: true
+  playground: true,
 });
 
 export const config = {
   api: {
-    bodyParser: false
-  }
+    bodyParser: false,
+  },
 };
 
 const handler = server.createHandler({ path: "/api/graphql" });

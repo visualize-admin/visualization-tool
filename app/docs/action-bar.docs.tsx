@@ -20,8 +20,8 @@ import { ActionBar } from "./components/action-bar"
 
 ## Action Bar in different states
 
-${states.map(state => (
-  <Box key={state.state} my={4} sx={{width: "100%"}}>
+${states.map((state) => (
+  <Box key={state.state} my={4} sx={{ width: "100%" }}>
     <Text>{state.state}</Text>
     <ConfiguratorStateProvider chartId={state.state} initialState={state}>
       <ReactSpecimen>

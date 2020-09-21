@@ -56,4 +56,4 @@ const EmbedPage = (props: PageProps) => {
   );
 };
 
-export default EmbedPage
+export default EmbedPage;

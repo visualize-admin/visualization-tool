@@ -12,7 +12,7 @@ import {
   TypeSpecimen,
   DownloadSpecimen,
   Page,
-  Markdown
+  Markdown,
 } from "catalog";
 import { MDXProvider } from "@mdx-js/react";
 import { useEffect, useState } from "react";
@@ -22,12 +22,12 @@ const pages: ConfigPageOrGroup[] = [
   {
     path: "/branding",
     title: "Branding",
-    content: require("../docs/branding.mdx")
+    content: require("../docs/branding.mdx"),
   },
   {
     path: "/accessibility",
     title: "Accessibility",
-    content: require("../docs/accessibility.mdx")
+    content: require("../docs/accessibility.mdx"),
   },
   {
     title: "Theming",
@@ -35,29 +35,29 @@ const pages: ConfigPageOrGroup[] = [
       {
         path: "/theming",
         title: "Overview",
-        content: require("../docs/theming.mdx")
+        content: require("../docs/theming.mdx"),
       },
       {
         path: "/colors",
         title: "Colors",
-        content: require("../docs/colors.mdx")
+        content: require("../docs/colors.mdx"),
       },
       {
         path: "/typography",
         title: "Typography",
-        content: require("../docs/typography.mdx")
+        content: require("../docs/typography.mdx"),
       },
       {
         path: "/iconography",
         title: "Iconography",
-        content: require("../docs/icons.docs.tsx")
+        content: require("../docs/icons.docs.tsx"),
       },
       {
         path: "/layout",
         title: "Layout",
-        content: require("../docs/layout.mdx")
-      }
-    ]
+        content: require("../docs/layout.mdx"),
+      },
+    ],
   },
   {
     title: "Design Concept",
@@ -65,14 +65,14 @@ const pages: ConfigPageOrGroup[] = [
       {
         path: "/mockups",
         title: "Mockups",
-        content: require("../docs/mockups")
+        content: require("../docs/mockups"),
       },
       {
         path: "/chart-config",
         title: "Chart-Config",
-        content: require("../docs/chart-config")
-      }
-    ]
+        content: require("../docs/chart-config"),
+      },
+    ],
   },
   {
     title: "Charts",
@@ -80,9 +80,9 @@ const pages: ConfigPageOrGroup[] = [
       {
         path: "/charts/annotations",
         title: "Annotations",
-        content: require("../docs/annotations.docs")
-      }
-    ]
+        content: require("../docs/annotations.docs"),
+      },
+    ],
   },
   {
     title: "Components",
@@ -90,74 +90,75 @@ const pages: ConfigPageOrGroup[] = [
       {
         path: "/components/intro",
         title: "Introduction",
-        content: require("../docs/components")
+        content: require("../docs/components"),
       },
       {
         path: "/components/action-bar",
         title: "Action Bar",
-        content: require("../docs/action-bar.docs")
+        content: require("../docs/action-bar.docs"),
       },
       {
         path: "/components/button",
         title: "Button",
-        content: require("../docs/button.docs")
+        content: require("../docs/button.docs"),
       },
       {
         path: "/components/controls",
         title: "Controls",
-        content: require("../docs/controls.docs")
+        content: require("../docs/controls.docs"),
       },
       {
         path: "/components/dataset-list",
         title: "Datasets List",
-        content: require("../docs/dataset-list.docs")
+        content: require("../docs/dataset-list.docs"),
       },
       {
         path: "/components/footer",
         title: "Footer",
-        content: require("../docs/footer.docs")
+        content: require("../docs/footer.docs"),
       },
       {
         path: "/components/form",
         title: "Form",
-        content: require("../docs/form.docs")
+        content: require("../docs/form.docs"),
       },
       {
         path: "/components/header",
         title: "Header",
-        content: require("../docs/header.docs")
+        content: require("../docs/header.docs"),
       },
       {
         path: "/components/hints",
         title: "Hints",
-        content: require("../docs/hint.docs")
+        content: require("../docs/hint.docs"),
       },
       {
         path: "/components/homepage",
         title: "Homepage",
-        content: require("../docs/homepage.docs")
+        content: require("../docs/homepage.docs"),
       },
       {
         path: "/components/publish-actions",
         title: "Publish actions",
-        content: require("../docs/publish-actions.docs")
+        content: require("../docs/publish-actions.docs"),
       },
 
       {
         path: "/components/steps",
         title: "Stepper",
-        content: require("../docs/steps.docs")
+        content: require("../docs/steps.docs"),
       },
       {
         path: "/components/text",
         title: "Text",
-        content: require("../docs/text.docs")
-      }
-    ]
-  },{
+        content: require("../docs/text.docs"),
+      },
+    ],
+  },
+  {
     path: "/testing",
     title: "Testing",
-    content: require("../docs/testing.mdx")
+    content: require("../docs/testing.mdx"),
   },
 ];
 
@@ -204,7 +205,7 @@ const mdxComponents = {
   HintSpecimen,
   TableSpecimen,
   TypeSpecimen,
-  DownloadSpecimen
+  DownloadSpecimen,
 };
 
 export default () => {
@@ -227,7 +228,7 @@ export default () => {
           linkColor: "rgb(255,95,85)",
           sidebarColorTextActive: "rgb(255,95,85)",
           background: "#F5F5F5",
-          pageHeadingBackground: "#156896"
+          pageHeadingBackground: "#156896",
         }}
       />
     </MDXProvider>

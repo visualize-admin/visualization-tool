@@ -17,7 +17,7 @@ export const AxisWidthBand = () => {
     gridColor,
     labelFontSize,
     fontFamily,
-    domainColor
+    domainColor,
   } = useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {

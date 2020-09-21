@@ -53,7 +53,7 @@ ${(
         color: "ø",
         group: "ø",
         size: "ø",
-        label: "ø"
+        label: "ø",
       },
       {
         "Chart type": "**stacked bar chart**",
@@ -62,7 +62,7 @@ ${(
         color: "category",
         group: "ø",
         size: "ø",
-        label: "ø"
+        label: "ø",
       },
       {
         "Chart type": "**grouped bar chart**",
@@ -71,7 +71,7 @@ ${(
         color: "ø",
         group: "category",
         size: "ø",
-        label: "ø"
+        label: "ø",
       },
       {
         "Chart type": "**small multiple bar charts**",
@@ -80,7 +80,7 @@ ${(
         color: "category",
         group: "category",
         size: "ø",
-        label: "ø"
+        label: "ø",
       },
       {
         "Chart type": "**line chart**",
@@ -89,7 +89,7 @@ ${(
         color: "ø",
         group: "ø",
         size: "ø",
-        label: "ø"
+        label: "ø",
       },
       {
         "Chart type": "**multi-line chart**",
@@ -98,7 +98,7 @@ ${(
         color: "category",
         group: "ø",
         size: "ø",
-        label: "ø"
+        label: "ø",
       },
       {
         "Chart type": "**small multiple line chart**",
@@ -107,7 +107,7 @@ ${(
         color: "category",
         group: "category",
         size: "ø",
-        label: "ø"
+        label: "ø",
       },
       {
         "Chart type": "**scatterplot**",
@@ -116,8 +116,8 @@ ${(
         color: "category",
         group: "ø",
         size: "number",
-        label: "any"
-      }
+        label: "any",
+      },
     ]}
   />
 )}

@@ -2,12 +2,12 @@ import { Text } from "@theme-ui/components";
 import * as React from "react";
 import {
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart
+  ConfiguratorStateDescribingChart,
 } from "../domain";
 import { Trans } from "@lingui/macro";
 
 export const EmptyRightPanel = ({
-  state
+  state,
 }: {
   state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
 }) => (

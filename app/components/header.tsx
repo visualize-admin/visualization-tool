@@ -6,7 +6,7 @@ import { HomeLink } from "./links";
 
 export const Header = ({
   pageType = "app",
-  contentId
+  contentId,
 }: {
   pageType?: "content" | "app";
   contentId?: string;
@@ -25,7 +25,7 @@ export const Header = ({
               borderBottomColor: "brand",
               bg: "monochrome100",
               color: "monochrome700",
-              flexDirection: ["column", "row"]
+              flexDirection: ["column", "row"],
             }
           : {
               px: [0, 4, 4],
@@ -44,7 +44,7 @@ export const Header = ({
               left: 0,
               width: "100%",
               overflowY: "hidden",
-              zIndex: 13
+              zIndex: 13,
             }
       }
     >
@@ -64,7 +64,7 @@ export const Logo = () => {
           alignItems: ["center", "flex-start"],
           cursor: "pointer",
           textDecoration: "none",
-          color: "monochrome900"
+          color: "monochrome900",
         }}
       >
         <Box
@@ -83,7 +83,7 @@ export const Logo = () => {
             borderRightWidth: "1px",
             borderRightStyle: "solid",
             borderRightColor: "monochrome300",
-            color: "monochrome900"
+            color: "monochrome900",
           }}
         >
           <LogoDesktop />

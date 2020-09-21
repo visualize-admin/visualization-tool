@@ -34,7 +34,7 @@ const run = async () => {
   }
 };
 
-run().catch(e => {
+run().catch((e) => {
   console.log("[ db-migrate ] Something unexpected happened");
 
   console.error(e);

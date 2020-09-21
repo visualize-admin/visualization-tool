@@ -21,7 +21,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         flexDirection: "column",
         justifyContent: "space-between",
         flexGrow: 1,
-        color: "monochrome800"
+        color: "monochrome800",
       }}
     >
       {(state.state === "SELECTING_CHART_TYPE" ||
@@ -51,7 +51,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             sx={{
               flexDirection: "column",
               justifyContent: "space-between",
-              flexGrow: 1
+              flexGrow: 1,
             }}
           >
             {/* // FIXME: we shouldn't need this condition because the states must be these */}

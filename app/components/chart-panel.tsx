@@ -11,7 +11,7 @@ export const ChartPanel = ({ children }: { children: ReactNode }) => (
       minHeight: [150, 300, 500],
       borderWidth: "1px",
       borderStyle: "solid",
-      borderColor: "monochrome300"
+      borderColor: "monochrome300",
     }}
   >
     {children}

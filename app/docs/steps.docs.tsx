@@ -13,7 +13,7 @@ export default () => markdown`
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "white"
+          backgroundColor: "white",
         }}
       >
         <Step stepNumber={1} stepState="CONFIGURING_CHART" status="past" />
@@ -27,7 +27,7 @@ export default () => markdown`
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "white"
+          backgroundColor: "white",
         }}
       >
         <Step stepNumber={3} stepState="CONFIGURING_CHART" status="current" />
@@ -41,7 +41,7 @@ export default () => markdown`
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "white"
+          backgroundColor: "white",
         }}
       >
         <Step stepNumber={4} stepState="CONFIGURING_CHART" status="future" />

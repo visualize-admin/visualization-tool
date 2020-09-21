@@ -8,12 +8,12 @@ export default () => markdown`
 
 ${(
   <TableSpecimen
-    rows={Object.keys(Icons).map(k => ({
+    rows={Object.keys(Icons).map((k) => ({
       Icon: <Icon name={k as IconName} size={24} />,
       "Icon (color)": <Icon name={k as IconName} size={24} color="#006699" />,
       "Icon (3rem)": <Icon name={k as IconName} size={48} />,
       "Icon (4rem)": <Icon name={k as IconName} size={64} />,
-      Name: k
+      Name: k,
     }))}
   />
 )}

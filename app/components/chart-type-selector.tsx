@@ -4,7 +4,7 @@ import React from "react";
 import { getPossibleChartType } from "../domain";
 import {
   ChartType,
-  ConfiguratorStateSelectingChartType
+  ConfiguratorStateSelectingChartType,
 } from "../domain/config-types";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
@@ -17,16 +17,16 @@ const chartTypes: ChartType[] = [
   "line",
   "area",
   "scatterplot",
-  "pie"
+  "pie",
 ];
 export const ChartTypeSelector = ({
-  state
+  state,
 }: {
   state: ConfiguratorStateSelectingChartType;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale }
+    variables: { iri: state.dataSet, locale },
   });
 
   if (data?.dataCubeByIri) {
@@ -34,7 +34,7 @@ export const ChartTypeSelector = ({
 
     const possibleChartTypes = getPossibleChartType({
       chartTypes,
-      meta: metaData
+      meta: metaData,
     });
 
     return (

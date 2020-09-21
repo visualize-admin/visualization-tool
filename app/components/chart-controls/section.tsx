@@ -6,7 +6,7 @@ import { useTheme } from "../../themes";
 
 export const ControlSection = ({
   role,
-  children
+  children,
 }: {
   role?: string;
   children: ReactNode;
@@ -22,8 +22,8 @@ export const ControlSection = ({
         overflowY: "auto",
 
         "&:first-of-type": {
-          borderTopWidth: 0
-        }
+          borderTopWidth: 0,
+        },
       }}
     >
       {children}
@@ -35,7 +35,7 @@ export const ControlSectionContent = ({
   as,
   role,
   ariaLabelledBy,
-  children
+  children,
 }: {
   side: "left" | "right";
   as?: ElementType;
@@ -59,7 +59,7 @@ export const SectionTitle = ({
   iconName,
   titleId,
   disabled,
-  children
+  children,
 }: {
   iconName?: IconName;
   titleId?: string;
@@ -79,7 +79,7 @@ export const SectionTitle = ({
         width: "100%",
         border: "none",
         justifyContent: "flex-start",
-        color: disabled ? "monochrome600" : "monochrome800"
+        color: disabled ? "monochrome600" : "monochrome800",
       }}
     >
       {iconName && (

@@ -16,7 +16,6 @@ Additional attributes:
 
 The technical implementation of the Visualization Tool is based on https://styled-system.com which in turn implements the concepts described in https://system-ui.com/theme. This ensures a flexible and interoperable theming approach which integrates well with the codebase.
 
-
 ## Theming the Visualization Tool
 
 The Visualization Tool will initially only need to support one theme which implements the Federal brand guidelines.
@@ -28,7 +27,6 @@ For example:
 - visualize.admin.ch → uses the `federal` theme
 - some-other-domain.ch → uses `dark` theme
 
-
 ## Theming Charts
 
 By default, published charts will use the same theme as the Visualization Tool instance they were created with.
@@ -37,9 +35,11 @@ There may be a need to apply a different theme (fonts, colors) to charts. For ex
 
 <HintSpecimen>
 
+
 Chart-specific theming will not be implemented in the initial version of the Visualization Tool.
 
 </HintSpecimen>
+
 
 ### Option 1: User-selectable theme during chart creation.
 
@@ -51,7 +51,7 @@ Chart-specific theming will not be implemented in the initial version of the Vis
 For example: when a chart is embedded anywhere under the bafu.admin.ch domain, the BAFU theme will be applied automatically
 
 - Advantage: No misuse possible by unauthorized users
-- Disadvantage: No way to “see” the exact output during the chart creation process (unless there is a way to preview – but not select – the BAFU theme). 
+- Disadvantage: No way to “see” the exact output during the chart creation process (unless there is a way to preview – but not select – the BAFU theme).
 - Disadvantage: No custom theme for the non-embedded stand-alone view of a chart.
 
 ### Option 3: User-selectable individual theme attributes (NOT RECOMMENDED)

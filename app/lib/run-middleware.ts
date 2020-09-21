@@ -13,7 +13,7 @@ export const runMiddleware = (
   ) => void
 ) => {
   return new Promise((resolve, reject) => {
-    fn(req, res, result => {
+    fn(req, res, (result) => {
       if (result instanceof Error) {
         return reject(result);
       }

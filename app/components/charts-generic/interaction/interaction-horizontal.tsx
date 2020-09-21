@@ -43,16 +43,16 @@ export const InteractionHorizontal = React.memo(
               mouse: { x, y },
               d: data.find(
                 // FIXME: we should also filter on y
-                d => getX(closestDatum).getTime() === getX(d).getTime()
-              )
-            }
-          }
+                (d) => getX(closestDatum).getTime() === getX(d).getTime()
+              ),
+            },
+          },
         });
       }
     };
     const hideTooltip = () => {
       dispatch({
-        type: "ANNOTATION_HIDE"
+        type: "ANNOTATION_HIDE",
       });
     };
 
