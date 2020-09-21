@@ -4,11 +4,11 @@ import * as React from "react";
 import { ReactNode } from "react";
 import { Observation, ScatterPlotFields } from "../../../domain";
 import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
-import { Tooltip } from "../annotations/tooltip";
+import { Tooltip } from "../interaction/tooltip";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { TooltipScatterplot } from "../annotations/tooltip-content";
+import { TooltipScatterplot } from "../interaction/tooltip-content";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { LEFT_MARGIN_OFFSET } from "../constants";
 

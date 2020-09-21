@@ -9,8 +9,8 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { Ruler } from "./charts-generic/annotations/ruler";
-import { Tooltip } from "./charts-generic/annotations/tooltip";
+import { Ruler } from "./charts-generic/interaction/ruler";
+import { Tooltip } from "./charts-generic/interaction/tooltip";
 import { Areas } from "./charts-generic/areas/areas";
 import { AreaChart } from "./charts-generic/areas/areas-state";
 import { AxisTime, AxisTimeDomain } from "./charts-generic/axis";

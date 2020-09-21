@@ -25,7 +25,7 @@ import { Observation, ObservationValue } from "../../../domain/data";
 import { getPalette, isNumber, useFormatNumber } from "../../../domain/helpers";
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { Tooltip } from "../annotations/tooltip";
+import { Tooltip } from "../interaction/tooltip";
 import { PADDING_INNER, PADDING_OUTER } from "../columns/constants";
 import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
 import { ChartContext, ChartProps } from "../use-chart-state";

@@ -9,9 +9,9 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { HoverDotMultiple } from "./charts-generic/annotations/hover-dots-multiple";
-import { Ruler } from "./charts-generic/annotations/ruler";
-import { Tooltip } from "./charts-generic/annotations/tooltip";
+import { HoverDotMultiple } from "./charts-generic/interaction/hover-dots-multiple";
+import { Ruler } from "./charts-generic/interaction/ruler";
+import { Tooltip } from "./charts-generic/interaction/tooltip";
 import { AxisTime, AxisTimeDomain } from "./charts-generic/axis";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";

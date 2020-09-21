@@ -9,7 +9,7 @@ import {
   SortingOrder,
 } from "../../../domain";
 import { getPalette, useFormatNumber } from "../../../domain/helpers";
-import { Tooltip } from "../annotations/tooltip";
+import { Tooltip } from "../interaction/tooltip";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";

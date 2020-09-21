@@ -20,7 +20,7 @@ import {
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { useTheme } from "../../../themes";
-import { Tooltip } from "../annotations/tooltip";
+import { Tooltip } from "../interaction/tooltip";
 import { LEFT_MARGIN_OFFSET } from "../constants";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";

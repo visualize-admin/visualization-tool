@@ -10,7 +10,7 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { Tooltip } from "./charts-generic/annotations/tooltip";
+import { Tooltip } from "./charts-generic/interaction/tooltip";
 import { AxisWidthLinear, AxisWidthLinearDomain } from "./charts-generic/axis";
 import {
   AxisHeightLinear,

@@ -18,7 +18,7 @@ import {
 } from "../../../domain";
 import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { Tooltip } from "../annotations/tooltip";
+import { Tooltip } from "../interaction/tooltip";
 import {
   PADDING_INNER,
   PADDING_OUTER,
