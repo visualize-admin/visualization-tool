@@ -17,7 +17,7 @@ import {
   AxisHeightLinearDomain,
 } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
-import { InteractionVoronoi } from "./charts-generic/interaction/interaction-voronoi";
+import { InteractionVoronoi } from "./charts-generic/overlay/overlay-voronoi";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Scatterplot } from "./charts-generic/scatterplot";
 import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";

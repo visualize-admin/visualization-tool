@@ -19,7 +19,7 @@ import { ColumnsStacked } from "./charts-generic/columns/columns-stacked";
 import { StackedColumnsChart } from "./charts-generic/columns/columns-stacked-state";
 import { ColumnChart } from "./charts-generic/columns/columns-state";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
-import { InteractionColumns } from "./charts-generic/interaction/interaction-columns";
+import { InteractionColumns } from "./charts-generic/overlay/overlay-columns";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 
