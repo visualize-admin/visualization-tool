@@ -7,7 +7,7 @@
       "imageConfig": {
         "createDiffImage": true,
         "resizeDevicePixelRatio": true,
-        "threshold": 0.1,
+        "threshold": 0.5,
         "thresholdType": "percent"
       }
     }
