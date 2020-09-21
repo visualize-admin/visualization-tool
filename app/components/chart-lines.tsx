@@ -12,7 +12,7 @@ import { A11yTable } from "./a11y-table";
 import { HoverDotMultiple } from "./charts-generic/interaction/hover-dots-multiple";
 import { Ruler } from "./charts-generic/interaction/ruler";
 import { Tooltip } from "./charts-generic/interaction/tooltip";
-import { AxisTime, AxisTimeDomain } from "./charts-generic/axis";
+import { AxisTime, AxisTimeDomain } from "./charts-generic/axis/axis-width-time";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
 import { ChartContainer, ChartSvg } from "./charts-generic/containers";
 import { InteractionHorizontal } from "./charts-generic/overlay/overlay-horizontal";
