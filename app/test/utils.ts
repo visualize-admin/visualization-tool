@@ -2,7 +2,7 @@ import * as fs from "fs-extra";
 import * as path from "path";
 
 // Needs to be relative to CWD because webpack will replace __dirname with "/"
-const FIXTURES_DIR = path.join("app", "test", "__fixtures", "dev");
+const FIXTURES_DIR = path.join("app", "test", "__fixtures", "prod");
 
 export const loadFixtureConfigIds = async () => {
   const configFiles = await fs.readdir(FIXTURES_DIR);

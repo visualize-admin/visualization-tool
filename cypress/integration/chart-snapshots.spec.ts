@@ -1,4 +1,4 @@
-import configIds from "../fixtures/dev/config-keys.json";
+import configIds from "../fixtures/prod/config-keys.json";
 
 describe("Chart Snapshots", () => {
   configIds.forEach((id: string) => {
@@ -11,7 +11,7 @@ describe("Chart Snapshots", () => {
 
       cy.viewport("ipad-mini", "portrait");
       cy.visit(`/en/__test/${id}`);
-      cy.get(`[data-chart-loaded="true"]`, { timeout: 10000 });
+      cy.get(`[data-chart-loaded="true"]`, { timeout: 20000 });
       cy.wait(100);
       cy.document().toMatchImageSnapshot({ name: `snapshot-${id}` });
     });

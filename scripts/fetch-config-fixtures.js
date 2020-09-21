@@ -4,14 +4,14 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // TODO: Change to prod endpoint once this API route is deployed there
-const ENDPOINT = "https://dev.visualize.admin.ch/api/config/all";
+const ENDPOINT = "https://visualize.admin.ch/api/config/all";
 const FIXTURES_DIR = path.join(
   __dirname,
   "..",
   "app",
   "test",
   "__fixtures",
-  "dev"
+  "prod"
 );
 
 const CY_FIXTURES_DIR = path.join(
@@ -19,7 +19,7 @@ const CY_FIXTURES_DIR = path.join(
   "..",
   "cypress",
   "fixtures",
-  "dev"
+  "prod"
 );
 
 const run = async () => {
