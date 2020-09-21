@@ -23,11 +23,13 @@ import {
   PADDING_INNER,
   PADDING_OUTER,
   PADDING_WITHIN,
-} from "../columns/constants";
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET
+} from "./constants";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
+
 import { sortByIndex } from "../../../lib/array";
 
 export interface GroupedColumnsState {

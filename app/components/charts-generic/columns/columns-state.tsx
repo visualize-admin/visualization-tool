@@ -21,7 +21,7 @@ import { PADDING_INNER, PADDING_OUTER } from "../columns/constants";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "../constants";
+import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "./constants";
 import { Observation } from "../../../domain/data";
 
 export interface ColumnsState {

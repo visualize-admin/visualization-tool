@@ -10,7 +10,7 @@ import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { TooltipScatterplot } from "../interaction/tooltip-content";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { LEFT_MARGIN_OFFSET } from "../constants";
+import { LEFT_MARGIN_OFFSET } from "./constants";
 
 export interface ScatterplotState {
   data: Observation[];
