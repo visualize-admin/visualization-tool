@@ -10,16 +10,16 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { Tooltip } from "./charts-generic/annotations/tooltip";
-import { AxisWidthLinear, AxisWidthLinearDomain } from "./charts-generic/axis";
+import { Tooltip } from "./charts-generic/interaction/tooltip";
+import { AxisWidthLinear, AxisWidthLinearDomain } from "./charts-generic/axis/axis-width-linear";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
 } from "./charts-generic/axis/axis-height-linear";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers";
-import { InteractionVoronoi } from "./charts-generic/interaction/interaction-voronoi";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
+import { InteractionVoronoi } from "./charts-generic/overlay/overlay-voronoi";
 import { LegendColor } from "./charts-generic/legends/color";
-import { Scatterplot } from "./charts-generic/scatterplot";
+import { Scatterplot } from "./charts-generic/scatterplot/scatterplot-simple";
 import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";
 import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 

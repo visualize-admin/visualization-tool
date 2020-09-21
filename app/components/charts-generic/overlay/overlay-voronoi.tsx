@@ -41,9 +41,9 @@ export const InteractionVoronoi = React.memo(
 
       if (typeof location !== "undefined") {
         dispatch({
-          type: "ANNOTATION_UPDATE",
+          type: "INTERACTION_UPDATE",
           value: {
-            annotation: {
+            interaction: {
               visible: true,
               d,
             },
@@ -53,7 +53,7 @@ export const InteractionVoronoi = React.memo(
     };
     const hideTooltip = () => {
       dispatch({
-        type: "ANNOTATION_HIDE",
+        type: "INTERACTION_HIDE",
       });
     };
 

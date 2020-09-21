@@ -8,27 +8,27 @@ import React, {
 } from "react";
 import { Observation } from "../../domain";
 
-export interface AnnotationState {
+export interface InteractionElement {
   visible: boolean;
   mouse?: { x: number; y: number } | undefined;
   d: Observation | undefined;
 }
 
 interface InteractionState {
-  annotation: AnnotationState;
+  interaction: InteractionElement;
 }
 
 type InteractionStateAction =
   | {
-      type: "ANNOTATION_UPDATE";
-      value: Pick<InteractionState, "annotation">;
+      type: "INTERACTION_UPDATE";
+      value: Pick<InteractionState, "interaction">;
     }
   | {
-      type: "ANNOTATION_HIDE";
+      type: "INTERACTION_HIDE";
     };
 
 const INTERACTION_INITIAL_STATE: InteractionState = {
-  annotation: {
+  interaction: {
     visible: false,
     mouse: undefined,
     d: undefined,
@@ -41,25 +41,25 @@ const InteractionStateReducer = (
   action: InteractionStateAction
 ) => {
   switch (action.type) {
-    case "ANNOTATION_UPDATE":
+    case "INTERACTION_UPDATE":
       return {
         ...state,
-        annotation: {
-          visible: action.value.annotation.visible,
-          mouse: action.value.annotation.mouse
+        interaction: {
+          visible: action.value.interaction.visible,
+          mouse: action.value.interaction.mouse
             ? {
-                x: action.value.annotation.mouse.x,
-                y: action.value.annotation.mouse.y,
+                x: action.value.interaction.mouse.x,
+                y: action.value.interaction.mouse.y,
               }
             : undefined,
-          d: action.value.annotation.d,
+          d: action.value.interaction.d,
         },
       };
-    case "ANNOTATION_HIDE":
+    case "INTERACTION_HIDE":
       return {
         ...state,
-        annotation: {
-          ...state.annotation,
+        interaction: {
+          ...state.interaction,
           visible: false,
           mouse: undefined,
         },
@@ -79,7 +79,7 @@ export const useInteraction = () => {
   const ctx = useContext(InteractionStateContext);
   if (ctx === undefined) {
     throw Error(
-      "You need to wrap your component in <Chart /> to useChartState()"
+      "You need to wrap your component in <InteractionProvider /> to useInteraction()"
     );
   }
   return ctx;

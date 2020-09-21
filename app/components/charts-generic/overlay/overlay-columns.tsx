@@ -17,13 +17,13 @@ export const InteractionColumns = () => {
 
   const showTooltip = (d: Observation) => {
     dispatch({
-      type: "ANNOTATION_UPDATE",
-      value: { annotation: { visible: true, d } },
+      type: "INTERACTION_UPDATE",
+      value: { interaction: { visible: true, d } },
     });
   };
   const hideTooltip = () => {
     dispatch({
-      type: "ANNOTATION_HIDE",
+      type: "INTERACTION_HIDE",
     });
   };
   return (

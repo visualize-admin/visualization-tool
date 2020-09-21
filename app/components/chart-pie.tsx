@@ -9,10 +9,10 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { Tooltip } from "./charts-generic/annotations/tooltip";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers";
+import { Tooltip } from "./charts-generic/interaction/tooltip";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
 import { LegendColor } from "./charts-generic/legends/color";
-import { Pie } from "./charts-generic/pie";
+import { Pie } from "./charts-generic/pie/pie";
 import { PieChart } from "./charts-generic/pie/pie-state";
 import {
   Loading,

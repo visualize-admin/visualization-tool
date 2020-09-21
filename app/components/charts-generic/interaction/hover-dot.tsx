@@ -8,7 +8,7 @@ import { Observation } from "../../../domain/data";
 export const HoverDot = () => {
   const [state] = useInteraction();
 
-  const { visible, d } = state.annotation;
+  const { visible, d } = state.interaction;
 
   return <>{visible && d && <DotInner d={d} />}</>;
 };

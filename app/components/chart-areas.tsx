@@ -9,14 +9,14 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { Ruler } from "./charts-generic/annotations/ruler";
-import { Tooltip } from "./charts-generic/annotations/tooltip";
+import { Ruler } from "./charts-generic/interaction/ruler";
+import { Tooltip } from "./charts-generic/interaction/tooltip";
 import { Areas } from "./charts-generic/areas/areas";
 import { AreaChart } from "./charts-generic/areas/areas-state";
-import { AxisTime, AxisTimeDomain } from "./charts-generic/axis";
+import { AxisTime, AxisTimeDomain } from "./charts-generic/axis/axis-width-time";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers";
-import { InteractionHorizontal } from "./charts-generic/interaction/interaction-horizontal";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
+import { InteractionHorizontal } from "./charts-generic/overlay/overlay-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 

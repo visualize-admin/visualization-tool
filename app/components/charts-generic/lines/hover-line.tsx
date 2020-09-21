@@ -17,7 +17,7 @@ export const HoverLine = () => {
     bounds,
   } = useChartState() as LinesState;
   const [state] = useInteraction();
-  const { visible } = state.annotation;
+  const { visible } = state.interaction;
 
   const lineGenerator = line<Observation>()
     .x((d) => xScale(getX(d)))

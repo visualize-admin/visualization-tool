@@ -9,7 +9,7 @@ import { TooltipValue, TooltipPlacement } from "./tooltip";
 
 export const Ruler = () => {
   const [state] = useInteraction();
-  const { visible, d } = state.annotation;
+  const { visible, d } = state.interaction;
   return <>{visible && d && <RulerInner d={d} />}</>;
 };
 

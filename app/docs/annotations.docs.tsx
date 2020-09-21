@@ -1,14 +1,14 @@
 import { markdown, ReactSpecimen } from "catalog";
 import { ReactNode } from "react";
 import { Box, Flex } from "theme-ui";
-import { TooltipBox } from "../components/charts-generic/annotations/tooltip-box";
+import { TooltipBox } from "../components/charts-generic/interaction/tooltip-box";
 import {
   TooltipMultiple,
   TooltipSingle,
-} from "../components/charts-generic/annotations/tooltip-content";
+} from "../components/charts-generic/interaction/tooltip-content";
 import { ColumnChart } from "../components/charts-generic/columns/columns-state";
 import { fields, margins, measures, observations } from "./fixtures";
-import { RulerContent } from "../components/charts-generic/annotations/ruler";
+import { RulerContent } from "../components/charts-generic/interaction/ruler";
 
 export default () => markdown`
 
