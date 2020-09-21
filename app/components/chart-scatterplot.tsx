@@ -19,7 +19,7 @@ import {
 import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
 import { InteractionVoronoi } from "./charts-generic/overlay/overlay-voronoi";
 import { LegendColor } from "./charts-generic/legends/color";
-import { Scatterplot } from "./charts-generic/scatterplot";
+import { Scatterplot } from "./charts-generic/scatterplot/scatterplot-simple";
 import { ScatterplotChart } from "./charts-generic/scatterplot/scatterplot-state";
 import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 
