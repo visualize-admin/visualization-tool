@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Button, Flex, Input, Link, Text } from "@theme-ui/components";
-import clipboard from "clipboard-polyfill";
+import * as clipboard from "clipboard-polyfill/text";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import React, { ReactNode, useEffect, useState } from "react";
 import { Icon, IconName } from "../icons";
@@ -23,7 +23,7 @@ export const PublishActions = ({ configKey }: { configKey: string }) => {
 const PopUp = ({
   triggerLabel,
   triggerIconName,
-  children
+  children,
 }: {
   triggerLabel: string | ReactNode;
   triggerIconName: IconName;
@@ -42,21 +42,21 @@ const PopUp = ({
         toggle(!menuIsOpen);
         return {
           ...changes,
-          isOpen: menuIsOpen
+          isOpen: menuIsOpen,
         };
       case Downshift.stateChangeTypes.keyDownEnter:
       case Downshift.stateChangeTypes.clickItem:
         toggle(true);
         return {
           ...changes,
-          isOpen: menuIsOpen
+          isOpen: menuIsOpen,
         };
       case Downshift.stateChangeTypes.blurInput:
       case Downshift.stateChangeTypes.keyDownEscape:
         toggle(false);
         return {
           ...changes,
-          isOpen: false
+          isOpen: false,
         };
       default:
         return changes;
@@ -90,15 +90,15 @@ const PopUp = ({
               transition: "background-color .2s",
               cursor: "pointer",
               ":hover": {
-                color: "primaryHover"
+                color: "primaryHover",
               },
               ":active": {
-                color: "primaryActive"
+                color: "primaryActive",
               },
               ":disabled": {
                 cursor: "initial",
-                color: "primaryDisabled"
-              }
+                color: "primaryDisabled",
+              },
             }}
             {...getToggleButtonProps()}
           >
@@ -133,7 +133,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               borderBottomStyle: "solid",
               borderBottomColor: "monochrome500",
               justifyContent: "space-between",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Text variant="paragraph1" color="monochrome700">
@@ -190,7 +190,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
                   color: "primary",
                   textDecoration: "underline",
                   cursor: "pointer",
-                  mr: 4
+                  mr: 4,
                 }}
               >
                 {shareUrl}
@@ -282,7 +282,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           borderBottomRightRadius: 0,
           borderWidth: "1px",
           borderStyle: "solid",
-          borderColor: "monochrome500"
+          borderColor: "monochrome500",
         }}
         type="text"
         value={iFrameCode}
@@ -296,7 +296,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           updateTooltipContent(<Trans id="button.hint.copied">copied!</Trans>)
         }
         onMouseLeave={handleMouseLeave}
-        onClick={e => handleClick(e, iFrameCode)}
+        onClick={(e) => handleClick(e, iFrameCode)}
         sx={{
           color: "monochrome600",
           bg: "monochrome200",
@@ -316,16 +316,16 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
 
           ":hover": {
             bg: "monochrome300",
-            color: "monochrome700"
+            color: "monochrome700",
           },
           ":active": {
             bg: "monochrome400",
-            color: "monochrome800"
+            color: "monochrome800",
           },
           ":disabled": {
             cursor: "initial",
-            color: "monochrome300"
-          }
+            color: "monochrome300",
+          },
         }}
       >
         <Icon name="copy" size={16} />
@@ -377,8 +377,8 @@ const PublishActionModal = ({ children }: { children: ReactNode }) => (
         // maxWidth: 340,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "monochrome500"
-      }
+        borderColor: "monochrome500",
+      },
     }}
   >
     {children}
@@ -396,7 +396,7 @@ const PublishActionOverlay = () => (
       position: "fixed",
       top: 0,
       left: 0,
-      pointerEvents: "none"
+      pointerEvents: "none",
     }}
   />
 );
@@ -437,8 +437,8 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
         left: "50%",
         top: "100%",
         zIndex: -1,
-        transform: "translateX(-50%)"
-      }
+        transform: "translateX(-50%)",
+      },
     }}
   >
     {children}

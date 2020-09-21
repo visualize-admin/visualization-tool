@@ -28,7 +28,7 @@ export const ChartEditor = () => {
         position: "fixed",
         // FIXME replace 96px with actual header size
         top: "96px",
-        height: "calc(100vh - 96px)"
+        height: "calc(100vh - 96px)",
       }}
     >
       <Box as="section" role="navigation" sx={{ gridArea: "header" }}>
@@ -46,7 +46,7 @@ export const ChartEditor = () => {
           borderRightColor: "monochrome500",
           borderRightWidth: "1px",
           borderRightStyle: "solid",
-          gridArea: "left"
+          gridArea: "left",
         }}
       >
         <PanelLeft />
@@ -63,7 +63,7 @@ export const ChartEditor = () => {
           borderLeftColor: "monochrome500",
           borderLeftWidth: "1px",
           borderLeftStyle: "solid",
-          gridArea: "right"
+          gridArea: "right",
         }}
       >
         {state.state === "SELECTING_DATASET" && state.dataSet && (
@@ -83,7 +83,7 @@ export const ChartEditor = () => {
           overflowX: "hidden",
           overflowY: "auto",
           p: 4,
-          gridArea: "middle"
+          gridArea: "middle",
         }}
       >
         <PanelMiddle dataSetPreviewIri={state.dataSet} />

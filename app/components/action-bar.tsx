@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import {
   canTransitionToNextStep,
   canTransitionToPreviousStep,
-  useConfiguratorState
+  useConfiguratorState,
 } from "../domain/configurator-state";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
@@ -14,21 +14,21 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: dataSetIri ?? "", locale }
+    variables: { iri: dataSetIri ?? "", locale },
   });
 
   const goNext = useCallback(() => {
     if (data?.dataCubeByIri) {
       dispatch({
         type: "STEP_NEXT",
-        dataSetMetadata: data?.dataCubeByIri
+        dataSetMetadata: data?.dataCubeByIri,
       });
     }
   }, [data, dispatch]);
 
   const goPrevious = useCallback(() => {
     dispatch({
-      type: "STEP_PREVIOUS"
+      type: "STEP_PREVIOUS",
     });
   }, [dispatch]);
 

@@ -3,7 +3,7 @@ import React from "react";
 import {
   SectionTitle,
   ControlSectionContent,
-  ControlSection
+  ControlSection,
 } from "./chart-controls/section";
 import { AnnotatorTabField } from "./field";
 

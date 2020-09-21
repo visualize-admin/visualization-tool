@@ -11,19 +11,19 @@ export const InteractionColumns = () => {
     sortedData,
     bounds,
     getX,
-    xScaleInteraction
+    xScaleInteraction,
   } = useChartState() as ColumnsState;
   const { margins, chartHeight } = bounds;
 
   const showTooltip = (d: Observation) => {
     dispatch({
       type: "ANNOTATION_UPDATE",
-      value: { annotation: { visible: true, d } }
+      value: { annotation: { visible: true, d } },
     });
   };
   const hideTooltip = () => {
     dispatch({
-      type: "ANNOTATION_HIDE"
+      type: "ANNOTATION_HIDE",
     });
   };
   return (

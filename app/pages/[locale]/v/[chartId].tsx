@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   return { props: { status: "notfound" } };
 };
 
-export default (props: PageProps) => {
+const VisualizationPage = (props: PageProps) => {
   const locale = useLocale();
   const { query } = useRouter();
 
@@ -133,3 +133,5 @@ export default (props: PageProps) => {
     </>
   );
 };
+
+export default VisualizationPage;

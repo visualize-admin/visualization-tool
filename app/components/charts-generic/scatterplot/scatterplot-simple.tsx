@@ -13,7 +13,7 @@ export const Scatterplot = () => {
     yScale,
     hasSegment,
     getSegment,
-    colors
+    colors,
   } = useChartState() as ScatterplotState;
 
   const theme = useTheme();

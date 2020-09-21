@@ -6,7 +6,10 @@ import {
   SectionTitle,
 } from "../components/chart-controls/section";
 import { Checkbox, Input, Radio, Select } from "../components/form";
-import { ColorPicker, ColorPickerMenu } from "../components/chart-controls/color-picker";
+import {
+  ColorPicker,
+  ColorPickerMenu,
+} from "../components/chart-controls/color-picker";
 import { getPalette } from "../domain/helpers";
 import { useState } from "react";
 import { Box } from "theme-ui";

@@ -14,6 +14,6 @@ export const useChartTheme = () => {
     domainColor,
     gridColor,
     legendLabelColor,
-    fontFamily
+    fontFamily,
   };
 };

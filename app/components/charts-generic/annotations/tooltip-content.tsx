@@ -6,7 +6,7 @@ import { TooltipValue } from "./tooltip";
 export const TooltipSingle = ({
   xValue,
   segment,
-  yValue
+  yValue,
 }: {
   xValue?: string;
   segment?: string;
@@ -27,7 +27,7 @@ export const TooltipSingle = ({
 
 export const TooltipMultiple = ({
   xValue,
-  segmentValues
+  segmentValues,
 }: {
   xValue?: string;
   segmentValues: TooltipValue[];
@@ -55,7 +55,7 @@ export const TooltipMultiple = ({
 export const TooltipScatterplot = ({
   firstLine,
   secondLine,
-  thirdLine
+  thirdLine,
 }: {
   firstLine?: string;
   secondLine?: string;

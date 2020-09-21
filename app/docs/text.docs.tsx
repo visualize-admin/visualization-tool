@@ -35,7 +35,7 @@ ${(
           <Text variant={key} as="h1">
             The quick brown fox...
           </Text>
-        )
+        ),
         // "font-sizes": textStyle.fontSize.map(fs => theme.fontSizes[fs])
       };
     })}
@@ -50,7 +50,7 @@ ${(
     rows={theme.fontSizes.map((d: $FixMe, i: number) => ({
       index: i,
       "font-size (rem)": d,
-      "font-size (px)": `${+(d as string).split("rem")[0] * pixelSize}px`
+      "font-size (px)": `${+(d as string).split("rem")[0] * pixelSize}px`,
     }))}
   ></TableSpecimen>
 )}
@@ -60,7 +60,7 @@ ${(
     rows={theme.lineHeights.map((d: $FixMe, i: number) => ({
       index: i,
       "line-height (rem)": d,
-      "line-height (px)": `${+(d as string).split("rem")[0] * pixelSize}px`
+      "line-height (px)": `${+(d as string).split("rem")[0] * pixelSize}px`,
     }))}
   ></TableSpecimen>
 )}

@@ -14,14 +14,14 @@ export const HoverLine = () => {
     yScale,
     grouped,
     colors,
-    bounds
+    bounds,
   } = useChartState() as LinesState;
   const [state] = useInteraction();
   const { visible } = state.annotation;
 
   const lineGenerator = line<Observation>()
-    .x(d => xScale(getX(d)))
-    .y(d => yScale(getY(d)));
+    .x((d) => xScale(getX(d)))
+    .y((d) => yScale(getY(d)));
 
   // const segmentData = segment && grouped.get(segment);
 

@@ -45,10 +45,12 @@ export const getConfig = async (
  *
  * @param key Get data from DB with this key
  */
-export const getAllConfigs = async (): Promise<{
-  key: string;
-  data: $Unexpressable;
-}[]> => {
+export const getAllConfigs = async (): Promise<
+  {
+    key: string;
+    data: $Unexpressable;
+  }[]
+> => {
   const result = await pool.query<{ key: string; data: $Unexpressable }>(
     `SELECT key,data FROM config ORDER BY created_at DESC`
   );

@@ -9,7 +9,7 @@ export const ChartTypeSelectionButton = ({
   value,
   checked,
   disabled,
-  onClick
+  onClick,
 }: {
   label: string;
   disabled?: boolean;
@@ -49,8 +49,8 @@ export const ChartTypeSelectionButton = ({
             ? "mutedColored"
             : checked
             ? "primary"
-            : "mutedDarker"
-        }
+            : "mutedDarker",
+        },
       }}
     >
       <Icon name={getIconName(label)} />
@@ -62,7 +62,7 @@ export const ChartTypeSelectionButton = ({
             : checked
             ? "monochrome100"
             : "monochrome700",
-          fontSize: [2, 2, 2]
+          fontSize: [2, 2, 2],
         }}
       >
         {getFieldLabel(label)}

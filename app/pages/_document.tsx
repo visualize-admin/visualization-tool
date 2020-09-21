@@ -12,12 +12,7 @@ class MyDocument extends Document<{ locale: string }> {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx);
 
-    const { query, pathname, res } = ctx;
-
-    // TODO: Move this to next.config.js once custom routes are out of experimental status
-    if (!process.env.ALLOW_SEARCH_BOTS) {
-      res?.setHeader("X-Robots-Tag", "noindex, nofollow");
-    }
+    const { query, pathname } = ctx;
 
     /**
      * Parse locale from query OR pathname
@@ -25,7 +20,7 @@ class MyDocument extends Document<{ locale: string }> {
      * - and static localized pages like /en/index.mdx
      */
     const locale = /^\/\[locale\]/.test(pathname)
-      ? parseLocaleString(query.locale.toString())
+      ? parseLocaleString(query.locale?.toString() ?? "")
       : parseLocaleString(pathname.slice(1));
 
     return { ...initialProps, locale };

@@ -45,7 +45,7 @@ export const ChartColumnsVisualization = ({
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
-      <Box sx={{ position: "relative" }}>
+      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
         <A11yTable
           title={title}
           observations={observations.data}

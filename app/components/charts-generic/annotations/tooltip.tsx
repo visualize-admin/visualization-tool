@@ -41,7 +41,7 @@ export interface Tooltip {
 const TooltipInner = ({
   d,
   mouse,
-  type
+  type,
 }: {
   d: Observation;
   mouse?: { x: number; y: number };
@@ -56,7 +56,7 @@ const TooltipInner = ({
     xValue,
     tooltipContent,
     datum,
-    values
+    values,
   } = getAnnotationInfo(d);
 
   return (

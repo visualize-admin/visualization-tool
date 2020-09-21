@@ -8,7 +8,7 @@ import { DataSetHint } from "./hint";
 import { ChartPanel } from "./chart-panel";
 
 export const PanelMiddle = ({
-  dataSetPreviewIri
+  dataSetPreviewIri,
 }: {
   dataSetPreviewIri?: string;
 }) => {
@@ -27,7 +27,7 @@ export const PanelMiddle = ({
               sx={{
                 flexDirection: "column",
                 justifyContent: "center",
-                alignItems: "center"
+                alignItems: "center",
               }}
             >
               <DataSetHint />

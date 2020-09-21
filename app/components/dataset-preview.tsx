@@ -13,7 +13,7 @@ export interface Preview {
 export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
   const [{ data: metaData }] = useDataCubePreviewQuery({
-    variables: { iri: dataSetIri, locale }
+    variables: { iri: dataSetIri, locale },
   });
   if (metaData && metaData.dataCubeByIri) {
     const { dataCubeByIri } = metaData;
@@ -23,7 +23,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           flexGrow: 1,
           flexDirection: "column",
           justifyContent: "space-between",
-          p: 5
+          p: 5,
         }}
       >
         <Text variant="heading2" sx={{ mb: 1, color: "monochrome700" }}>
@@ -40,7 +40,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             width: "100%",
             position: "relative",
             overflowX: "auto",
-            mt: 6
+            mt: 6,
           }}
         >
           <DataTable
@@ -57,7 +57,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             color: "monochrome600",
             width: "100%",
             textAlign: "center",
-            fontWeight: "light"
+            fontWeight: "light",
           }}
         >
           <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
@@ -71,7 +71,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           flexDirection: "column",
           justifyContent: "space-between",
           flexGrow: 1,
-          p: 5
+          p: 5,
         }}
       >
         <Loading />

@@ -10,7 +10,7 @@ export const Columns = () => {
     getX,
     xScale,
     getY,
-    yScale
+    yScale,
   } = useChartState() as ColumnsState;
   const theme = useTheme();
   const { margins } = bounds;
@@ -39,7 +39,7 @@ const Column = React.memo(
     y,
     width,
     height,
-    color
+    color,
   }: {
     x: number;
     y: number;

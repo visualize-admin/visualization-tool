@@ -28,6 +28,34 @@ module.exports = withPreconstruct(
         VERSION,
       },
 
+      redirects: async () => {
+        return [
+          {
+            source: "/",
+            destination: "/de",
+            permanent: false,
+          },
+        ];
+      },
+
+      headers: async () => {
+        let headers = [];
+
+        if (process.env.ALLOW_SEARCH_BOTS !== "true") {
+          headers.push({
+            source: "/:path*",
+            headers: [
+              {
+                key: "X-Robots-Tag",
+                value: "noindex, nofollow",
+              },
+            ],
+          });
+        }
+
+        return headers;
+      },
+
       pageExtensions: ["js", "ts", "tsx", "mdx"],
 
       webpack(config, { dev, isServer, defaultLoaders }) {

@@ -10,7 +10,7 @@ type PageProps = {
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     fallback: false,
-    paths: [{ params: { locale: "en" } }, { params: { locale: "de" } }]
+    paths: [{ params: { locale: "en" } }, { params: { locale: "de" } }],
   };
 };
 
@@ -18,7 +18,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const ids = await loadFixtureConfigIds();
 
   return {
-    props: { locale: params?.locale, ids }
+    props: { locale: params?.locale, ids },
   };
 };
 
@@ -27,7 +27,7 @@ const Page: NextPage<PageProps> = ({ ids, locale }) => {
     <div style={{ padding: "2rem" }}>
       <h1>Test Charts</h1>
       <ul>
-        {ids.map(id => (
+        {ids.map((id) => (
           <li>
             <Link
               href="/[locale]/__test/[chartId]"

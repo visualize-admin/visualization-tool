@@ -1,4 +1,4 @@
 export default {
   languageData: $IntentionalAny,
-  messages: $IntentionalAny
+  messages: $IntentionalAny,
 };

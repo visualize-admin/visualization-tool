@@ -4,7 +4,7 @@ import React, {
   ReactNode,
   Reducer,
   useContext,
-  useReducer
+  useReducer,
 } from "react";
 import { Observation } from "../../domain";
 
@@ -31,8 +31,8 @@ const INTERACTION_INITIAL_STATE: InteractionState = {
   annotation: {
     visible: false,
     mouse: undefined,
-    d: undefined
-  }
+    d: undefined,
+  },
 };
 
 // Reducer
@@ -49,11 +49,11 @@ const InteractionStateReducer = (
           mouse: action.value.annotation.mouse
             ? {
                 x: action.value.annotation.mouse.x,
-                y: action.value.annotation.mouse.y
+                y: action.value.annotation.mouse.y,
               }
             : undefined,
-          d: action.value.annotation.d
-        }
+          d: action.value.annotation.d,
+        },
       };
     case "ANNOTATION_HIDE":
       return {
@@ -61,8 +61,8 @@ const InteractionStateReducer = (
         annotation: {
           ...state.annotation,
           visible: false,
-          mouse: undefined
-        }
+          mouse: undefined,
+        },
       };
 
     default:

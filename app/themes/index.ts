@@ -30,7 +30,7 @@ export type Theme = Omit<
     variants?: SystemStyleObject;
   };
 
-interface ThemeModule {
+export interface ThemeModule {
   theme: Theme;
   preloadFonts?: string[];
 }
@@ -47,4 +47,4 @@ export const loadTheme = async (theme: string = "federal") => {
   return themeModule;
 };
 
-export const useTheme = () => useThemeUI().theme as unknown as Theme;
+export const useTheme = () => (useThemeUI().theme as unknown) as Theme;

@@ -1,8 +1,8 @@
 /**
  * Use to assert exhaustiveness in TS.
- * 
+ *
  * @param x Whatever
- * 
+ *
  * @example
  * switch (sth) {
  *   case "X": // do something

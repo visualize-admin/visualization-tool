@@ -19,7 +19,7 @@ export const Footer = () => {
         bg: "monochrome200",
         borderTopWidth: "1px",
         borderTopStyle: "solid",
-        borderTopColor: "monochrome100"
+        borderTopColor: "monochrome100",
       }}
     >
       <Box
@@ -27,7 +27,7 @@ export const Footer = () => {
           width: ["100%", "auto"],
           px: 4,
           py: 5,
-          color: ["monochrome900", "monochrome700"]
+          color: ["monochrome900", "monochrome700"],
         }}
       >
         <Trans id="footer.institution.name">
@@ -38,7 +38,7 @@ export const Footer = () => {
       <Flex
         sx={{
           flexDirection: ["column", "row"],
-          alignItems: ["flex-start", "center"]
+          alignItems: ["flex-start", "center"],
         }}
       >
         <Flex sx={{ flexDirection: ["column", "row"] }} pb={[4, 0]}>
@@ -61,7 +61,7 @@ export const Footer = () => {
             borderTopStyle: "solid",
             borderBottomStyle: "solid",
             borderTopColor: "monochrome500",
-            borderBottomColor: "monochrome500"
+            borderBottomColor: "monochrome500",
           }}
         >
           <Logo />
@@ -97,15 +97,15 @@ const FooterLink = ({ children, ...props }: { children: ReactNode }) => (
       textDecoration: "none",
       cursor: "pointer",
       ":hover": {
-        color: "primaryHover"
+        color: "primaryHover",
       },
       ":active": {
-        color: "primaryHover"
+        color: "primaryHover",
       },
       ":disabled": {
         cursor: "initial",
-        color: "primaryDisabled"
-      }
+        color: "primaryDisabled",
+      },
     }}
   >
     {children}
@@ -131,15 +131,15 @@ const FooterLinkBottom = React.forwardRef<
       textDecoration: "none",
       cursor: "pointer",
       ":hover": {
-        color: "primaryHover"
+        color: "primaryHover",
       },
       ":active": {
-        color: "primaryHover"
+        color: "primaryHover",
       },
       ":disabled": {
         cursor: "initial",
-        color: "primaryDisabled"
-      }
+        color: "primaryDisabled",
+      },
     }}
   >
     {children}

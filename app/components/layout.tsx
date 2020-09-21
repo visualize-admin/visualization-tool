@@ -19,7 +19,7 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => (
 
 export const ContentLayout = ({
   children,
-  contentId
+  contentId,
 }: {
   children?: ReactNode;
   contentId?: string;
@@ -29,7 +29,7 @@ export const ContentLayout = ({
       sx={{
         minHeight: "100vh",
         flexDirection: "column",
-        bg: contentId === "home" ? "monochrome100" : "muted"
+        bg: contentId === "home" ? "monochrome100" : "muted",
       }}
     >
       <Header pageType="content" contentId={contentId} />
@@ -39,7 +39,7 @@ export const ContentLayout = ({
         sx={{
           flexDirection: "column",
           flex: 1,
-          width: "100%"
+          width: "100%",
         }}
       >
         {children}
@@ -51,7 +51,7 @@ export const ContentLayout = ({
 
 export const StaticContentLayout = ({
   children,
-  contentId
+  contentId,
 }: {
   children?: ReactNode;
   contentId?: string;
@@ -61,7 +61,7 @@ export const StaticContentLayout = ({
       sx={{
         minHeight: "100vh",
         flexDirection: "column",
-        bg: "monochrome100"
+        bg: "monochrome100",
       }}
     >
       <Header pageType="content" contentId={contentId} />
@@ -74,7 +74,7 @@ export const StaticContentLayout = ({
           width: "100%",
           maxWidth: 1024,
           mx: [0, 0, "auto"],
-          px: 4
+          px: 4,
         }}
       >
         {children}

@@ -4,14 +4,22 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // TODO: Change to prod endpoint once this API route is deployed there
-const ENDPOINT = "https://dev.visualize.admin.ch/api/config/all";
+const ENDPOINT = "https://visualize.admin.ch/api/config/all";
 const FIXTURES_DIR = path.join(
   __dirname,
   "..",
   "app",
   "test",
   "__fixtures",
-  "dev"
+  "prod"
+);
+
+const CY_FIXTURES_DIR = path.join(
+  __dirname,
+  "..",
+  "cypress",
+  "fixtures",
+  "prod"
 );
 
 const run = async () => {
@@ -20,21 +28,28 @@ const run = async () => {
   const configs = await res.json();
 
   await fs.ensureDir(FIXTURES_DIR);
+  await fs.ensureDir(CY_FIXTURES_DIR);
   await fs.emptyDir(FIXTURES_DIR);
 
+  const validConfigs = configs
+    .filter((c) => c.data && c.data.meta)
+    .slice(0, 10);
+
   await Promise.all(
-    configs
-      .filter(c => c.data && c.data.meta)
-      .slice(0, 10)
-      .map(async config => {
-        return fs.writeJSON(
-          path.join(FIXTURES_DIR, `${config.key}.json`),
-          config
-        );
-      })
+    validConfigs.map(async (config) => {
+      return fs.writeJSON(
+        path.join(FIXTURES_DIR, `${config.key}.json`),
+        config
+      );
+    })
+  );
+
+  await fs.writeJSON(
+    path.join(CY_FIXTURES_DIR, `config-keys.json`),
+    validConfigs.map((c) => c.key)
   );
 
   console.log("Wrote configs to", FIXTURES_DIR);
 };
 
-run().catch(e => console.error(e));
+run().catch((e) => console.error(e));

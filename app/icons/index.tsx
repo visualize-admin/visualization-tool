@@ -82,7 +82,7 @@ export const Icons = {
   text: IconText,
   info: IconInfo,
   arrowRight: IconArrowRight,
-  arrowDown: IconArrowDown
+  arrowDown: IconArrowDown,
 };
 
 export type IconName = keyof typeof Icons;

@@ -11,14 +11,14 @@ export const Areas = () => {
     xScale,
     yScale,
     colors,
-    series
+    series,
   } = useChartState() as AreasState;
   const theme = useTheme();
   const areaGenerator = area<$FixMe>()
     // .defined(d => !isNaN(d))
-    .x(d => xScale(getX(d.data)))
-    .y0(d => yScale(d[0]))
-    .y1(d => yScale(d[1]));
+    .x((d) => xScale(getX(d.data)))
+    .y0((d) => yScale(d[0]))
+    .y1((d) => yScale(d[1]));
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>

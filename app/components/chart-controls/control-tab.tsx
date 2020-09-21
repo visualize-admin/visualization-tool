@@ -12,7 +12,7 @@ export const ControlTab = ({
   value,
   disabled,
   onClick,
-  checked
+  checked,
 }: {
   component?: ComponentFieldsFragment;
   disabled?: boolean;
@@ -48,7 +48,7 @@ export const FilterTab = ({
   checked,
   disabled,
   onClick,
-  filterValue
+  filterValue,
 }: {
   label: string;
   disabled?: boolean;
@@ -74,7 +74,7 @@ export const FilterTab = ({
 export const AnnotatorTab = ({
   value,
   checked,
-  onClick
+  onClick,
 }: {
   disabled?: boolean;
   onClick: (x: string) => void;
@@ -100,7 +100,7 @@ const ControlTabButton = ({
   checked,
   value,
   onClick,
-  children
+  children,
 }: {
   checked?: boolean;
   value: string;
@@ -131,15 +131,15 @@ const ControlTabButton = ({
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        bg: "mutedDarker"
+        bg: "mutedDarker",
       },
       ":active": {
-        bg: "mutedDarker"
+        bg: "mutedDarker",
       },
       ":disabled": {
         cursor: "initial",
-        bg: "muted"
-      }
+        bg: "muted",
+      },
     }}
   >
     {children}
@@ -151,7 +151,7 @@ const ControlTabButtonInner = ({
   upperLabel,
   lowerLabel,
   checked,
-  optional = false
+  optional = false,
 }: {
   iconName: IconName;
   upperLabel?: string | React.ReactNode;
@@ -174,7 +174,7 @@ const ControlTabButtonInner = ({
             ? "monochrome600"
             : checked
             ? "monochrome100"
-            : "monochrome700"
+            : "monochrome700",
       }}
     >
       <Icon size={24} name={iconName} />
@@ -193,7 +193,7 @@ const ControlTabButtonInner = ({
         sx={{
           color: optional && !checked ? "monochrome600" : "monochrome800",
           lineHeight: [1, 1, 1],
-          textAlign: "left"
+          textAlign: "left",
         }}
       >
         {lowerLabel}

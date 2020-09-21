@@ -1,5 +1,5 @@
 import { Delaunay } from "d3-delaunay";
-import { clientPoint } from "d3-selection";
+import { pointer } from "d3-selection";
 import * as React from "react";
 import { useRef } from "react";
 import { useChartState } from "../use-chart-state";
@@ -20,7 +20,7 @@ export const InteractionVoronoi = React.memo(
       yScale,
       getSegment,
       colors,
-      bounds
+      bounds,
     } = useChartState() as LinesState | AreasState | ScatterplotState;
 
     const { chartWidth, chartHeight, margins } = bounds;
@@ -28,13 +28,13 @@ export const InteractionVoronoi = React.memo(
     // FIXME: delaunay/voronoi calculation could be memoized
     const delaunay = Delaunay.from(
       data,
-      d => xScale(getX(d)),
-      d => yScale(getY(d))
+      (d) => xScale(getX(d)),
+      (d) => yScale(getY(d))
     );
     const voronoi = delaunay.voronoi([0, 0, chartWidth, chartHeight]);
 
     const findLocation = (e: React.MouseEvent) => {
-      const [x, y] = clientPoint(ref.current!, e);
+      const [x, y] = pointer(e, ref.current!);
 
       const location = delaunay.find(x, y);
       const d = data[location];
@@ -45,15 +45,15 @@ export const InteractionVoronoi = React.memo(
           value: {
             annotation: {
               visible: true,
-              d
-            }
-          }
+              d,
+            },
+          },
         });
       }
     };
     const hideTooltip = () => {
       dispatch({
-        type: "ANNOTATION_HIDE"
+        type: "ANNOTATION_HIDE",
       });
     };
 
