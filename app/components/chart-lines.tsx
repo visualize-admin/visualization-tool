@@ -14,7 +14,7 @@ import { Ruler } from "./charts-generic/interaction/ruler";
 import { Tooltip } from "./charts-generic/interaction/tooltip";
 import { AxisTime, AxisTimeDomain } from "./charts-generic/axis/axis-width-time";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers";
+import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
 import { InteractionHorizontal } from "./charts-generic/overlay/overlay-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Lines } from "./charts-generic/lines/lines";
