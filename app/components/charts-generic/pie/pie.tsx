@@ -60,9 +60,9 @@ const Arc = ({
 
   const handleMouseEnter = (d: PieArcDatum<Observation>) => {
     dispatch({
-      type: "ANNOTATION_UPDATE",
+      type: "INTERACTION_UPDATE",
       value: {
-        annotation: {
+        interaction: {
           visible: true,
           d: (d as unknown) as Observation, // FIXME
         },
@@ -71,7 +71,7 @@ const Arc = ({
   };
   const handleMouseLeave = () => {
     dispatch({
-      type: "ANNOTATION_HIDE",
+      type: "INTERACTION_HIDE",
     });
   };
   return (

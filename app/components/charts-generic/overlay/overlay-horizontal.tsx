@@ -36,9 +36,9 @@ export const InteractionHorizontal = React.memo(
 
       if (closestDatum) {
         dispatch({
-          type: "ANNOTATION_UPDATE",
+          type: "INTERACTION_UPDATE",
           value: {
-            annotation: {
+            interaction: {
               visible: true,
               mouse: { x, y },
               d: data.find(
@@ -52,7 +52,7 @@ export const InteractionHorizontal = React.memo(
     };
     const hideTooltip = () => {
       dispatch({
-        type: "ANNOTATION_HIDE",
+        type: "INTERACTION_HIDE",
       });
     };
 

@@ -8,7 +8,7 @@ import { useInteraction } from "../use-interaction";
 export const HoverDotMultiple = () => {
   const [state] = useInteraction();
 
-  const { visible, d } = state.annotation;
+  const { visible, d } = state.interaction;
 
   return <>{visible && d && <HoverDots d={d} />}</>;
 };
