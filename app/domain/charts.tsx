@@ -108,7 +108,7 @@ export const getPossibleChartType = ({
     (dim) => dim.__typename === "TemporalDimension"
   );
 
-  const catBased: ChartType[] = ["column", "pie"];
+  const catBased: ChartType[] = ["bar", "column", "pie"];
   const multipleQ: ChartType[] = ["scatterplot"];
   const timeBased: ChartType[] = ["line", "area"];
 
