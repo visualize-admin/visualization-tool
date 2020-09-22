@@ -1,8 +1,5 @@
 import * as React from "react";
-import { useFormatCurrency } from "../../../domain/helpers";
-import { getLocalizedLabel } from "../../../domain/translation";
-import { useI18n } from "../../i18n-context";
-import { BAR_AXIS_OFFSET, BAR_SPACE_ON_TOP } from "../constants";
+import { BAR_AXIS_OFFSET, BAR_SPACE_ON_TOP } from "./constants";
 import { useChartState } from "../use-chart-state";
 import { useChartTheme } from "../use-chart-theme";
 import { GroupedBarsState } from "./bars-grouped-state";
@@ -17,10 +14,7 @@ export const BarsGrouped = () => {
     getY,
     yScale,
     getSegment,
-    getColor,
-    getOpacity,
     colors,
-    opacityScale,
     grouped,
   } = useChartState() as GroupedBarsState;
   const { margins } = bounds;
@@ -31,8 +25,6 @@ export const BarsGrouped = () => {
     axisLabelFontWeight,
     axisLabelColor,
   } = useChartTheme();
-
-  const i18n = useI18n();
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -52,8 +44,7 @@ export const BarsGrouped = () => {
                   x={0}
                   width={xScale(Math.max(0, getX(d)))}
                   height={yScaleIn.bandwidth()}
-                  color={colors(getColor(d))}
-                  fillOpacity={opacityScale(getOpacity(d))}
+                  color={colors(getSegment(d))}
                   stroke={markBorderColor}
                 />
               ))}
@@ -71,9 +62,9 @@ export const BarsGrouped = () => {
               fontSize={axisLabelFontSize}
               fontWeight={axisLabelFontWeight}
               fill={axisLabelColor}
+              dx={6}
             >
-              {/* FIXME: the label shouldn't be localized here */}
-              {getLocalizedLabel({ i18n, id: segment[0] })}
+              {segment[0]}
             </text>
           </g>
         );
@@ -89,12 +80,10 @@ export const BarsGroupedLabels = () => {
     getX,
     yScale,
     getSegment,
-    getLabel,
     grouped,
   } = useChartState() as GroupedBarsState;
   const { margins } = bounds;
   const { axisLabelColor, labelFontSize, fontFamily } = useChartTheme();
-  const formatCurrency = useFormatCurrency();
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -120,8 +109,7 @@ export const BarsGroupedLabels = () => {
                   dx={6}
                   dy={labelFontSize * 1.5}
                 >
-                  <tspan fontWeight="bold">{formatCurrency(getX(d))}</tspan>{" "}
-                  {getLabel(d)}
+                  <tspan fontWeight="bold">{getX(d)}</tspan> {getSegment(d)}
                 </text>
               ))}
             </g>

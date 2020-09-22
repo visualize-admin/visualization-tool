@@ -9,19 +9,19 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
-import {
-  AxisWidthBand,
-  AxisWidthBandDomain,
-} from "./charts-generic/axis/axis-width-band";
+import { AxisHeightBandDomain } from "./charts-generic/axis/axis-height-band";
 import { AxisWidthLinear } from "./charts-generic/axis/axis-width-linear";
-import { BarLabels, Bars } from "./charts-generic/bars/bars-simple";
+import {
+  BarsGrouped,
+  BarsGroupedLabels,
+} from "./charts-generic/bars/bars-grouped";
+import { GroupedBarsChart } from "./charts-generic/bars/bars-grouped-state";
+import { Bars } from "./charts-generic/bars/bars-simple";
 import { BarChart } from "./charts-generic/bars/bars-state";
 import {
   ChartContainer,
   ChartSvg,
 } from "./charts-generic/containers/containers";
-import { Tooltip } from "./charts-generic/interaction/tooltip";
 import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 
 export const ChartBarsVisualization = ({
@@ -86,19 +86,33 @@ export const ChartBars = memo(
   }) => {
     return (
       <>
-        <BarChart data={observations} fields={fields} measures={measures}>
-          <ChartContainer>
-            <ChartSvg>
-              {/* <AxisHeightLinear /> <AxisWidthBand /> */}
-              <Bars />
-              <AxisWidthLinear />
-              <BarLabels />
-              {/* <AxisWidthBandDomain /> */}
-              {/* <InteractionBars /> */}
-            </ChartSvg>
-            {/* <Tooltip type="single" /> */}
-          </ChartContainer>
-        </BarChart>
+        {fields.segment?.componentIri ? (
+          <GroupedBarsChart
+            data={observations}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+          >
+            <ChartContainer>
+              <ChartSvg>
+                <AxisWidthLinear />
+                <BarsGrouped />
+                {/* <BarsGroupedLabels /> */}
+                <AxisHeightBandDomain />
+              </ChartSvg>
+            </ChartContainer>
+          </GroupedBarsChart>
+        ) : (
+          <BarChart data={observations} fields={fields} measures={measures}>
+            <ChartContainer>
+              <ChartSvg>
+                <AxisWidthLinear />
+                <Bars />
+                <AxisHeightBandDomain />
+              </ChartSvg>
+            </ChartContainer>
+          </BarChart>
+        )}
       </>
     );
   }
