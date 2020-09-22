@@ -9,6 +9,7 @@ import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
 import { ChartPieVisualization } from "./chart-pie";
+import { ChartBarsVisualization } from "./chart-bars";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -57,6 +58,12 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             {/* // FIXME: we shouldn't need this condition because the states must be these */}
             {state.chartConfig.chartType === "column" && (
               <ChartColumnsVisualization
+                dataSetIri={dataSetIri}
+                chartConfig={state.chartConfig}
+              />
+            )}
+            {state.chartConfig.chartType === "bar" && (
+              <ChartBarsVisualization
                 dataSetIri={dataSetIri}
                 chartConfig={state.chartConfig}
               />

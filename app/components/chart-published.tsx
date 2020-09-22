@@ -3,6 +3,7 @@ import { ChartConfig, Meta } from "../domain/config-types";
 import { useLocale } from "../lib/use-locale";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartColumnsVisualization } from "./chart-columns";
+import { ChartBarsVisualization } from "./chart-bars";
 import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "./chart-lines";
 import { ChartScatterplotVisualization } from "./chart-scatterplot";
@@ -48,6 +49,12 @@ export const ChartPublished = ({
           flexGrow: 1,
         }}
       >
+        {chartConfig.chartType === "bar" && (
+          <ChartBarsVisualization
+            dataSetIri={dataSet}
+            chartConfig={chartConfig}
+          />
+        )}
         {chartConfig.chartType === "column" && (
           <ChartColumnsVisualization
             dataSetIri={dataSet}
