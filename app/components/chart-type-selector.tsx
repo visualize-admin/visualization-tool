@@ -13,6 +13,7 @@ import { ChartTypeSelectorField } from "./field";
 import { Hint, Loading } from "./hint";
 
 const chartTypes: ChartType[] = [
+  "bar",
   "column",
   "line",
   "area",
