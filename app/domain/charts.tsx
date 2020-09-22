@@ -15,6 +15,17 @@ export const getInitialConfig = ({
 }): ChartConfig => {
   switch (chartType) {
     case "bar":
+      return {
+        chartType,
+        filters: {},
+        fields: {
+          x: { componentIri: measures[0].iri },
+          y: {
+            componentIri: dimensions[0].iri,
+            sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+          },
+        },
+      };
     case "column":
       return {
         chartType,
