@@ -8,6 +8,7 @@ import { PieState } from "./pie/pie-state";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { StackedColumnsState } from "./columns/columns-stacked-state";
 import { GroupedColumnsState } from "./columns/columns-grouped-state";
+import { BarsState } from "./bars/bars-state";
 
 export interface ChartProps {
   data: Observation[];
@@ -17,6 +18,7 @@ export interface ChartProps {
 }
 
 export type ChartState =
+  | BarsState
   | ColumnsState
   | StackedColumnsState
   | GroupedColumnsState
