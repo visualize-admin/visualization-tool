@@ -1,5 +1,5 @@
 export const LEFT_MARGIN_OFFSET = 5;
-export const BOTTOM_MARGIN_OFFSET = 10;
+export const BOTTOM_MARGIN_OFFSET = 20;
 export const VERTICAL_PADDING = 0.5;
 export const VERTICAL_PADDING_OUTER = 0.5;
 export const VERTICAL_PADDING_INNER = 0.5;

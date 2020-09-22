@@ -14,7 +14,8 @@ import {
   AxisWidthBand,
   AxisWidthBandDomain,
 } from "./charts-generic/axis/axis-width-band";
-import { Bars } from "./charts-generic/bars/bars-simple";
+import { AxisWidthLinear } from "./charts-generic/axis/axis-width-linear";
+import { BarLabels, Bars } from "./charts-generic/bars/bars-simple";
 import { BarChart } from "./charts-generic/bars/bars-state";
 import {
   ChartContainer,
@@ -90,6 +91,8 @@ export const ChartBars = memo(
             <ChartSvg>
               {/* <AxisHeightLinear /> <AxisWidthBand /> */}
               <Bars />
+              <AxisWidthLinear />
+              <BarLabels />
               {/* <AxisWidthBandDomain /> */}
               {/* <InteractionBars /> */}
             </ChartSvg>
