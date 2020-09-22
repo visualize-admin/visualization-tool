@@ -27,7 +27,6 @@ export const AxisWidthLinear = () => {
         .tickSizeOuter(-chartHeight)
         .tickFormat(formatNumber)
     );
-
     g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
@@ -38,6 +37,13 @@ export const AxisWidthLinear = () => {
       .attr("text-anchor", "middle");
 
     g.select("path.domain").attr("stroke", gridColor);
+
+    // Styles for bar chart
+    // g.select(".tick:first-of-type line")
+    //   .attr("stroke", "black")
+    //   .attr("stroke-width", 2);
+    // g.select(".tick:first-of-type text").remove();
+    // g.select("path.domain").remove();
   };
 
   useEffect(() => {
