@@ -11,10 +11,7 @@ import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
 import { AxisHeightBandDomain } from "./charts-generic/axis/axis-height-band";
 import { AxisWidthLinear } from "./charts-generic/axis/axis-width-linear";
-import {
-  BarsGrouped,
-  BarsGroupedLabels,
-} from "./charts-generic/bars/bars-grouped";
+import { BarsGrouped } from "./charts-generic/bars/bars-grouped";
 import { GroupedBarsChart } from "./charts-generic/bars/bars-grouped-state";
 import { Bars } from "./charts-generic/bars/bars-simple";
 import { BarChart } from "./charts-generic/bars/bars-state";
@@ -22,6 +19,7 @@ import {
   ChartContainer,
   ChartSvg,
 } from "./charts-generic/containers/containers";
+import { LegendColor } from "./charts-generic/legends/color";
 import { Loading, LoadingOverlay, NoDataHint } from "./hint";
 
 export const ChartBarsVisualization = ({
@@ -97,10 +95,10 @@ export const ChartBars = memo(
               <ChartSvg>
                 <AxisWidthLinear />
                 <BarsGrouped />
-                {/* <BarsGroupedLabels /> */}
                 <AxisHeightBandDomain />
               </ChartSvg>
             </ChartContainer>
+            <LegendColor symbol="square" />
           </GroupedBarsChart>
         ) : (
           <BarChart data={observations} fields={fields} measures={measures}>
