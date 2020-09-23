@@ -9,6 +9,7 @@ import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { StackedColumnsState } from "./columns/columns-stacked-state";
 import { GroupedColumnsState } from "./columns/columns-grouped-state";
 import { BarsState } from "./bars/bars-state";
+import { GroupedBarsState } from "./bars/bars-grouped-state";
 
 export interface ChartProps {
   data: Observation[];
@@ -19,6 +20,7 @@ export interface ChartProps {
 
 export type ChartState =
   | BarsState
+  | GroupedBarsState
   | ColumnsState
   | StackedColumnsState
   | GroupedColumnsState
