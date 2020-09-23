@@ -53,7 +53,7 @@ export const AxisWidthLinear = () => {
     if (chartType === "bar") {
       g.select(".tick:first-of-type line")
         .attr("stroke", domainColor)
-        .attr("stroke-width", 2);
+        .attr("stroke-width", 1);
       g.select(".tick:first-of-type text").remove();
       g.select("path.domain").remove();
     }
