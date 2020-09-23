@@ -27,6 +27,7 @@ import { InteractionProvider } from "../use-interaction";
 import { Bounds, Observer, useWidth } from "../use-width";
 
 export interface BarsState {
+  chartType: "bar";
   bounds: Bounds;
   sortedData: Observation[];
   getX: (d: Observation) => number;
@@ -115,6 +116,7 @@ const useBarsState = ({
   xScale.range([0, chartWidth]);
 
   return {
+    chartType: "bar",
     bounds,
     sortedData,
     getX,

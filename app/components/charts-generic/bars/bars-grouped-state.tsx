@@ -27,6 +27,7 @@ import { InteractionProvider } from "../use-interaction";
 import { Bounds, Observer, useWidth } from "../use-width";
 
 export interface GroupedBarsState {
+  chartType: string;
   sortedData: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => number;
@@ -92,7 +93,7 @@ const useGroupedBarsState = ({
         ySortingOrder,
         yOrder,
       }),
-    [data, getX, ySortingType, ySortingOrder, yOrder]
+    [data, getY, ySortingType, ySortingOrder, yOrder]
   );
   // segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;
@@ -201,6 +202,7 @@ const useGroupedBarsState = ({
   xScale.range([0, chartWidth]);
 
   return {
+    chartType: "bar",
     sortedData,
     bounds,
     getX,
