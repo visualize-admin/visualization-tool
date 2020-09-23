@@ -199,6 +199,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
     case "sortBy":
       return <Trans id="controls.sorting.sortBy">Sort by</Trans>;
 
+    case "bar.stacked.byDimensionLabel.asc":
+    case "bar.grouped.byDimensionLabel.asc":
     case "column..byDimensionLabel.asc":
     case "column.stacked.byDimensionLabel.asc":
     case "column.grouped.byDimensionLabel.asc":
@@ -207,6 +209,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
       return (
         <Trans id="controls.sorting.byDimensionLabel.ascending">A → Z</Trans>
       );
+    case "bar.stacked.byDimensionLabel.desc":
+    case "bar.grouped.byDimensionLabel.desc":
     case "column..byDimensionLabel.desc":
     case "column.stacked.byDimensionLabel.desc":
     case "column.grouped.byDimensionLabel.desc":
@@ -215,11 +219,15 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
       return (
         <Trans id="controls.sorting.byDimensionLabel.descending">Z → A</Trans>
       );
+    case "bar.stacked.byTotalSize.desc":
+    case "bar.grouped.byTotalSize.desc":
     case "column.grouped.byTotalSize.asc":
       return (
         <Trans id="controls.sorting.byTotalSize.ascending">Largest last</Trans>
       );
     case "column.grouped.byTotalSize.desc":
+    case "bar.stacked.byTotalSize.asc":
+    case "bar.grouped.byTotalSize.asc":
       return (
         <Trans id="controls.sorting.byTotalSize.largestFirst">
           Largest first
