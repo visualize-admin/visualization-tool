@@ -9,7 +9,6 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
-import { AxisHeightBandDomain } from "./charts-generic/axis/axis-height-band";
 import { AxisWidthLinear } from "./charts-generic/axis/axis-width-linear";
 import { BarsGrouped } from "./charts-generic/bars/bars-grouped";
 import { GroupedBarsChart } from "./charts-generic/bars/bars-grouped-state";
@@ -93,9 +92,8 @@ export const ChartBars = memo(
           >
             <ChartContainer>
               <ChartSvg>
-                <AxisWidthLinear />
                 <BarsGrouped />
-                <AxisHeightBandDomain />
+                <AxisWidthLinear />
               </ChartSvg>
             </ChartContainer>
             <LegendColor symbol="square" />
@@ -104,9 +102,8 @@ export const ChartBars = memo(
           <BarChart data={observations} fields={fields} measures={measures}>
             <ChartContainer>
               <ChartSvg>
-                <AxisWidthLinear />
                 <Bars />
-                <AxisHeightBandDomain />
+                <AxisWidthLinear />
               </ChartSvg>
             </ChartContainer>
           </BarChart>
