@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: visualize.admin.ch\n"
 "Language: de\n"
 
-#: app/components/data-download.tsx:43
+#: app/components/data-download.tsx:42
 msgid "button.download.data"
 msgstr "Daten herunterladen"
 
@@ -19,15 +19,15 @@ msgstr "Einbetten"
 msgid "button.new.visualization"
 msgstr "Visualisierung erstellen"
 
-#: app/components/action-bar.tsx:33
+#: app/components/action-bar.tsx:31
 msgid "button.next"
 msgstr "Weiter"
 
-#: app/components/action-bar.tsx:32
+#: app/components/action-bar.tsx:30
 msgid "button.previous"
 msgstr "Zurück"
 
-#: app/components/action-bar.tsx:33
+#: app/components/action-bar.tsx:31
 msgid "button.publish"
 msgstr "Veröffentlichen"
 
@@ -35,27 +35,27 @@ msgstr "Veröffentlichen"
 msgid "button.share"
 msgstr "Teilen"
 
-#: app/domain/helpers.tsx:74
+#: app/domain/helpers.tsx:126
 msgid "controls.axis.horizontal"
 msgstr "Horizontale Achse"
 
-#: app/domain/helpers.tsx:132
+#: app/domain/helpers.tsx:209
 msgid "controls.chart.type.area"
 msgstr "Flächen"
 
-#: app/domain/helpers.tsx:128
+#: app/domain/helpers.tsx:205
 msgid "controls.chart.type.bar"
 msgstr "Balken"
 
-#: app/domain/helpers.tsx:126
+#: app/domain/helpers.tsx:203
 msgid "controls.chart.type.column"
 msgstr "Säulen"
 
-#: app/domain/helpers.tsx:130
+#: app/domain/helpers.tsx:207
 msgid "controls.chart.type.line"
 msgstr "Linien"
 
-#: app/domain/helpers.tsx:134
+#: app/domain/helpers.tsx:211
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
@@ -63,15 +63,15 @@ msgstr "Scatterplot"
 msgid "controls.color.palette"
 msgstr "Farbpalette"
 
-#: app/domain/helpers.tsx:86
+#: app/domain/helpers.tsx:154
 msgid "controls.column.grouped"
 msgstr "gruppiert"
 
-#: app/domain/helpers.tsx:84
+#: app/domain/helpers.tsx:152
 msgid "controls.column.stacked"
 msgstr "gestapelt"
 
-#: app/domain/helpers.tsx:82
+#: app/domain/helpers.tsx:149
 msgid "controls.description"
 msgstr "Beschreibung"
 
@@ -79,11 +79,11 @@ msgstr "Beschreibung"
 msgid "controls.filter.select.all"
 msgstr "Alle auswählen"
 
-#: app/domain/helpers.tsx:76
+#: app/domain/helpers.tsx:135
 msgid "controls.measure"
 msgstr "Messwert"
 
-#: app/components/chart-configurator.tsx:30
+#: app/components/chart-configurator.tsx:29
 msgid "controls.section.data"
 msgstr "Daten"
 
@@ -91,12 +91,12 @@ msgstr "Daten"
 msgid "controls.section.description"
 msgstr "Beschreiben"
 
-#: app/components/chart-configurator.tsx:22
+#: app/components/chart-configurator.tsx:21
 msgid "controls.section.design"
 msgstr "Design"
 
-#: app/components/chart-options-selector.tsx:92
-#: app/components/chart-options-selector.tsx:96
+#: app/components/chart-options-selector.tsx:91
+#: app/components/chart-options-selector.tsx:95
 msgid "controls.section.filter"
 msgstr "Filter"
 
@@ -105,20 +105,21 @@ msgstr "Filter"
 msgid "controls.select.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/components/chart-options-selector.tsx:108
+#: app/components/chart-options-selector.tsx:106
 msgid "controls.select.column.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/domain/helpers.tsx:150
-#: app/domain/helpers.tsx:152
+#: app/components/dataset-selector.tsx:15
+#: app/domain/helpers.tsx:228
+#: app/domain/helpers.tsx:230
 msgid "controls.select.dimension"
 msgstr "Dimension auswählen"
 
-#: app/domain/helpers.tsx:151
+#: app/domain/helpers.tsx:229
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/domain/helpers.tsx:80
+#: app/domain/helpers.tsx:147
 msgid "controls.title"
 msgstr "Titel"
 
@@ -159,15 +160,15 @@ msgstr "Bitte Datensatz auswählen, um eine Vorschau anzuzeigen."
 msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerische Eidgenossenschaft"
 
-#: app/components/chart-footnotes.tsx:47
+#: app/components/chart-footnotes.tsx:42
 msgid "metadata.dataset"
 msgstr "Datensatz"
 
-#: app/components/chart-footnotes.tsx:35
+#: app/components/chart-footnotes.tsx:33
 msgid "metadata.filter"
 msgstr "Filterset"
 
-#: app/components/chart-footnotes.tsx:52
+#: app/components/chart-footnotes.tsx:47
 msgid "metadata.source"
 msgstr "Quelle"
 
@@ -215,11 +216,11 @@ msgstr "Diagrammtyp"
 msgid "footer.institution.name"
 msgstr "Bundesamt für Umwelt BAFU"
 
-#: app/components/chart-preview.tsx:32
+#: app/components/chart-preview.tsx:33
 msgid "annotation.add.description"
 msgstr "[ Hier Beschreibung hinzufügen ]"
 
-#: app/components/chart-preview.tsx:26
+#: app/components/chart-preview.tsx:27
 msgid "annotation.add.title"
 msgstr "[ Hier Titel einfügen ]"
 
@@ -227,7 +228,7 @@ msgstr "[ Hier Titel einfügen ]"
 msgid "button.copy.visualization"
 msgstr "Visualisierung kopieren"
 
-#: app/domain/helpers.tsx:136
+#: app/domain/helpers.tsx:213
 msgid "controls.chart.type.pie"
 msgstr "Kreis"
 
@@ -243,23 +244,23 @@ msgstr "Bitte eine Designoption oder Datendimension auswählen, um diese zu bear
 msgid "controls.hint.describing.chart"
 msgstr "Bitte einen Inhaltsbereich auswählen, um diesen zu bearbeiten."
 
-#: app/domain/helpers.tsx:138
+#: app/domain/helpers.tsx:216
 msgid "controls.language.english"
 msgstr "Englisch"
 
-#: app/domain/helpers.tsx:142
+#: app/domain/helpers.tsx:220
 msgid "controls.language.french"
 msgstr "Französisch"
 
-#: app/domain/helpers.tsx:140
+#: app/domain/helpers.tsx:218
 msgid "controls.language.german"
 msgstr "Deutsch"
 
-#: app/domain/helpers.tsx:144
+#: app/domain/helpers.tsx:222
 msgid "controls.language.italian"
 msgstr "Italienisch"
 
-#: app/domain/helpers.tsx:78
+#: app/domain/helpers.tsx:145
 msgid "controls.partition"
 msgstr "Segmentierung"
 
@@ -332,7 +333,7 @@ msgstr "Kopiert!"
 msgid "controls.select.dataset"
 msgstr "Datensatz auswählen"
 
-#: app/components/chart-footnotes.tsx:77
+#: app/components/chart-footnotes.tsx:72
 msgid "metadata.link.created.with.visualize"
 msgstr "Erstellt mit visualize.admin.ch"
 
@@ -357,64 +358,68 @@ msgstr "Negative Werte"
 msgid "controls.color.palette.reset"
 msgstr "Farbpalette zurücksetzen"
 
-#: app/components/field.tsx:126
+#: app/components/field.tsx:125
 msgid "controls.dimension.none"
 msgstr "Keine"
 
-#: app/components/chart-options-selector.tsx:136
+#: app/components/chart-options-selector.tsx:134
 msgid "controls.section.sorting"
 msgstr "Sortieren"
 
-#: app/components/chart-options-selector.tsx:146
-#: app/components/chart-options-selector.tsx:152
+#: app/components/chart-options-selector.tsx:143
+#: app/components/chart-options-selector.tsx:149
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
-#: app/domain/helpers.tsx:94
+#: app/domain/helpers.tsx:164
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/domain/helpers.tsx:100
+#: app/domain/helpers.tsx:172
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/components/chart-options-selector.tsx:148
+#: app/components/chart-options-selector.tsx:145
 msgid "controls.sorting.byMeasure"
 msgstr "Messwert"
 
-#: app/domain/helpers.tsx:119
+#: app/domain/helpers.tsx:195
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/domain/helpers.tsx:124
+#: app/domain/helpers.tsx:200
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/components/chart-options-selector.tsx:150
+#: app/components/chart-options-selector.tsx:147
 msgid "controls.sorting.byTotalSize"
 msgstr "Gesamtgrösse"
 
-#: app/domain/helpers.tsx:102
+#: app/domain/helpers.tsx:176
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Kleinste zuerst"
 
-#: app/domain/helpers.tsx:112
+#: app/domain/helpers.tsx:188
 msgid "controls.sorting.byTotalSize.largestBottom"
 msgstr "Grösste unten"
 
-#: app/domain/helpers.tsx:104
+#: app/domain/helpers.tsx:180
 msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Grösste zuerst"
 
-#: app/domain/helpers.tsx:109
+#: app/domain/helpers.tsx:185
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Kleinste unten"
 
-#: app/components/chart-controls/color-picker.tsx:101
+#: app/components/chart-controls/color-picker.tsx:100
 msgid "controls.colorpicker.open"
 msgstr "Farbwähler öffnen"
 
-#: app/domain/helpers.tsx:88
+#: app/domain/helpers.tsx:156
 msgid "controls.sorting.sortBy"
 msgstr "Sortieren nach"
+
+#: app/domain/helpers.tsx:137
+msgid "controls.axis.vertical"
+msgstr "Vertikale Achse"
 
