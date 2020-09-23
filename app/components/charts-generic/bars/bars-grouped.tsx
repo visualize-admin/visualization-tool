@@ -32,6 +32,16 @@ export const BarsGrouped = () => {
             key={`${segment[0]}-${i}`}
             transform={`translate(0, ${yScale(segment[0])})`}
           >
+            <text
+              x={xScale(0)}
+              y={BAR_SPACE_ON_TOP * (1 / 2)}
+              fontSize={axisLabelFontSize}
+              fontWeight={axisLabelFontWeight}
+              fill={axisLabelColor}
+              dx={6}
+            >
+              {segment[0]}
+            </text>
             <g
               transform={`translate(0, ${BAR_SPACE_ON_TOP - BAR_AXIS_OFFSET})`}
             >
@@ -47,16 +57,6 @@ export const BarsGrouped = () => {
                 />
               ))}
             </g>
-            <text
-              x={xScale(0)}
-              y={BAR_SPACE_ON_TOP * (1 / 2)}
-              fontSize={axisLabelFontSize}
-              fontWeight={axisLabelFontWeight}
-              fill={axisLabelColor}
-              dx={6}
-            >
-              {segment[0]}
-            </text>
           </g>
         );
       })}

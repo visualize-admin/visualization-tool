@@ -15,7 +15,11 @@ export const Bars = () => {
     yScale,
   } = useChartState() as BarsState;
   const theme = useTheme();
-  const { labelColor, labelFontSize, fontFamily } = useChartTheme();
+  const {
+    axisLabelFontSize,
+    axisLabelFontWeight,
+    axisLabelColor,
+  } = useChartTheme();
   const { margins } = bounds;
 
   return (
@@ -26,11 +30,9 @@ export const Bars = () => {
             <text
               x={xScale(0)}
               y={BAR_SPACE_ON_TOP * (1 / 2)}
-              style={{
-                fontFamily,
-                fill: labelColor,
-                fontSize: labelFontSize,
-              }}
+              fontSize={axisLabelFontSize}
+              fontWeight={axisLabelFontWeight}
+              fill={axisLabelColor}
               dx={6}
             >
               {getY(d)}
