@@ -8,8 +8,8 @@ export const useChartTheme = () => {
   const gridColor = theme.colors.monochrome300;
   const labelFontSize = 12;
   const fontFamily = theme.fonts.body;
-  const axisLabelFontSize = 16;
-  const axisLabelFontWeight = "bold";
+  const axisLabelFontSize = 14;
+  const axisLabelFontWeight = 500;
   const axisLabelColor = theme.colors.monochrome800;
   const markBorderColor = theme.colors.monochrome100;
 
