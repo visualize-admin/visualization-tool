@@ -160,16 +160,38 @@ export const getIconName = (name: string): IconName => {
 
 export const getFieldLabel = (field: string): string | React.ReactNode => {
   switch (field) {
+    // Visual encodings (left column)
+    case "column.x":
+    case "line.x":
+    case "area.x":
+    case "pie.x":
     case "x":
       return <Trans id="controls.axis.horizontal">Horizontal axis</Trans>;
+    case "bar.x":
+    case "scatterplot.x":
+    case "scatterplot.y":
+    case "column.y":
+    case "line.y":
+    case "area.y":
+    case "pie.y":
     case "y":
       return <Trans id="controls.measure">Measure</Trans>;
+    case "bar.y":
+      return <Trans id="controls.axis.vertical">Vertical axis</Trans>;
+    case "bar.segment":
+    case "column.segment":
+    case "line.segment":
+    case "area.segment":
+    case "scatterplot.segment":
+    case "pie.segment":
     case "segment":
       return <Trans id="controls.partition">Partition</Trans>;
     case "title":
       return <Trans id="controls.title">Title</Trans>;
     case "description":
       return <Trans id="controls.description">Description</Trans>;
+
+    // Encoding Options  (right column)
     case "stacked":
       return <Trans id="controls.column.stacked">Stacked</Trans>;
     case "grouped":
@@ -225,6 +247,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
     case "column.grouped.byMeasure.desc":
     case "pie..byMeasure.desc":
       return <Trans id="controls.sorting.byMeasure.descending">9 → 1</Trans>;
+
+    // Chart Types
     case "column":
       return <Trans id="controls.chart.type.column">Columns</Trans>;
     case "bar":
@@ -237,6 +261,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
       return <Trans id="controls.chart.type.scatterplot">Scatterplot</Trans>;
     case "pie":
       return <Trans id="controls.chart.type.pie">Pie</Trans>;
+
+    // Languages
     case "en":
       return <Trans id="controls.language.english">English</Trans>;
     case "de":

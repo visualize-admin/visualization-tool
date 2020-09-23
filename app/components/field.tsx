@@ -2,7 +2,11 @@ import { t } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import React, { ChangeEvent, useCallback } from "react";
-import { FilterValueSingle, MetaKey, useConfiguratorState } from "../domain";
+import {
+  FilterValueSingle,
+
+  useConfiguratorState
+} from "../domain";
 import {
   FIELD_VALUE_NONE,
   Option,
@@ -11,12 +15,12 @@ import {
   useChartOptionRadioField,
   useChartTypeSelectorField,
   useMetaField,
-  useSingleFilterField,
+  useSingleFilterField
 } from "../domain/config-form";
 import { getPalette } from "../domain/helpers";
 import {
   ComponentFieldsFragment,
-  DimensionFieldsWithValuesFragment,
+  DimensionFieldsWithValuesFragment
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { Locales } from "../locales/locales";
@@ -25,7 +29,7 @@ import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
-  FilterTab,
+  FilterTab
 } from "./chart-controls/control-tab";
 import { Checkbox, Input, Radio, Select } from "./form";
 
@@ -33,19 +37,22 @@ export const ControlTabField = ({
   component,
   value,
   disabled,
+  labelId,
 }: {
   component?: ComponentFieldsFragment;
   value: string;
   disabled?: boolean;
+  labelId: string;
 }) => {
   const field = useActiveFieldField({
     value,
   });
-
+  console.log({ component });
   return (
     <ControlTab
       component={component}
       value={`${field.value}`}
+      labelId={labelId}
       checked={field.checked}
       disabled={disabled}
       onClick={field.onClick}
