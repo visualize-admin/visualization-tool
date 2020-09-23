@@ -36,6 +36,7 @@ export interface GroupedBarsState {
   yScaleIn: ScaleBand<string>;
   getSegment: (d: Observation) => string;
   segments: string[];
+  xAxisLabel: string;
   colors: ScaleOrdinal<string, string>;
   grouped: [string, Record<string, ObservationValue>[]][];
 }
@@ -65,10 +66,13 @@ const useGroupedBarsState = ({
     [fields.segment]
   );
 
+  const xAxisLabel =
+    measures.find((d) => d.iri === fields.x.componentIri)?.label ??
+    fields.y.componentIri;
+
   // Sort
   const ySortingType = fields.y.sorting?.sortingType;
   const ySortingOrder = fields.y.sorting?.sortingOrder;
-
   const yOrder = [
     ...rollup(
       data,
@@ -206,6 +210,7 @@ const useGroupedBarsState = ({
     yScaleIn,
     getSegment,
     segments,
+    xAxisLabel,
     colors,
     grouped,
   };

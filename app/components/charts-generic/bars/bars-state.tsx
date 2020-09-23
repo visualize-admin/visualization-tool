@@ -35,6 +35,7 @@ export interface BarsState {
   yScale: ScaleBand<string>;
   getSegment: (d: Observation) => string;
   segments: string[];
+  xAxisLabel: string;
   colors: ScaleOrdinal<string, string>;
 }
 
@@ -63,6 +64,11 @@ const useBarsState = ({
         : "segment",
     [fields.segment]
   );
+
+  const xAxisLabel =
+    measures.find((d) => d.iri === fields.x.componentIri)?.label ??
+    fields.y.componentIri;
+
   // Sort data
   const sortingType = fields.y.sorting?.sortingType;
   const sortingOrder = fields.y.sorting?.sortingOrder;
@@ -117,6 +123,7 @@ const useBarsState = ({
     yScale,
     getSegment,
     segments,
+    xAxisLabel,
     colors,
   };
 };

@@ -7,10 +7,13 @@ import { useChartTheme } from "../use-chart-theme";
 import { ScatterplotState } from "../scatterplot/scatterplot-state";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { useFormatNumber } from "../../../domain/helpers";
+import { BarsState } from "../bars/bars-state";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel } = useChartState() as ScatterplotState;
+  const { xScale, bounds, xAxisLabel } = useChartState() as
+    | ScatterplotState
+    | BarsState;
   const { chartWidth, chartHeight, margins } = bounds;
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
   const xAxisRef = useRef<SVGGElement>(null);
