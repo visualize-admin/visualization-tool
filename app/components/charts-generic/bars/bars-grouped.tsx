@@ -11,7 +11,6 @@ export const BarsGrouped = () => {
     xScale,
     yScaleIn,
     getX,
-    getY,
     yScale,
     getSegment,
     colors,
@@ -19,7 +18,6 @@ export const BarsGrouped = () => {
   } = useChartState() as GroupedBarsState;
   const { margins } = bounds;
   const {
-    domainColor,
     markBorderColor,
     axisLabelFontSize,
     axisLabelFontWeight,
@@ -49,13 +47,6 @@ export const BarsGrouped = () => {
                 />
               ))}
             </g>
-            <line
-              x1={0}
-              y1={BAR_SPACE_ON_TOP - BAR_AXIS_OFFSET * 2}
-              x2={0}
-              y2={yScale.bandwidth()}
-              stroke={domainColor}
-            />
             <text
               x={0}
               y={BAR_SPACE_ON_TOP * (1 / 2)}

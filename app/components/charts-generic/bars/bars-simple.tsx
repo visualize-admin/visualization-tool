@@ -15,12 +15,7 @@ export const Bars = () => {
     yScale,
   } = useChartState() as BarsState;
   const theme = useTheme();
-  const {
-    labelColor,
-    labelFontSize,
-    fontFamily,
-    domainColor,
-  } = useChartTheme();
+  const { labelColor, labelFontSize, fontFamily } = useChartTheme();
   const { margins } = bounds;
 
   return (
@@ -28,13 +23,6 @@ export const Bars = () => {
       {sortedData.map((d, i) => {
         return (
           <g transform={`translate(0, ${yScale(getY(d))})`} key={i}>
-            {/* <line
-              x1={0}
-              y1={BAR_SPACE_ON_TOP - BAR_AXIS_OFFSET * 2}
-              x2={0}
-              y2={yScale.bandwidth()}
-              stroke={domainColor}
-            /> */}
             <text
               x={0}
               y={BAR_SPACE_ON_TOP * (1 / 2)}
@@ -69,7 +57,6 @@ export const BarLabels = () => {
     sortedData,
     bounds,
     getX,
-    xScale,
     getY,
     yScale,
   } = useChartState() as BarsState;
