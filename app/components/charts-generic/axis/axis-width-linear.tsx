@@ -7,12 +7,21 @@ import { useChartTheme } from "../use-chart-theme";
 import { ScatterplotState } from "../scatterplot/scatterplot-state";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { useFormatNumber } from "../../../domain/helpers";
+import { BarsState } from "../bars/bars-state";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel } = useChartState() as ScatterplotState;
+  const { xScale, bounds, xAxisLabel, chartType } = useChartState() as
+    | ScatterplotState
+    | BarsState;
   const { chartWidth, chartHeight, margins } = bounds;
-  const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
+  const {
+    domainColor,
+    labelColor,
+    labelFontSize,
+    gridColor,
+    fontFamily,
+  } = useChartTheme();
   const xAxisRef = useRef<SVGGElement>(null);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
@@ -28,6 +37,7 @@ export const AxisWidthLinear = () => {
         .tickFormat(formatNumber)
     );
 
+    // Default styles (scatterplot)
     g.selectAll(".tick line").attr("stroke", gridColor).attr("stroke-width", 1);
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
@@ -38,6 +48,15 @@ export const AxisWidthLinear = () => {
       .attr("text-anchor", "middle");
 
     g.select("path.domain").attr("stroke", gridColor);
+
+    // Styles for bar chart
+    if (chartType === "bar") {
+      g.select(".tick:first-of-type line")
+        .attr("stroke", domainColor)
+        .attr("stroke-width", 1);
+      g.select(".tick:first-of-type text").remove();
+      g.select("path.domain").remove();
+    }
   };
 
   useEffect(() => {

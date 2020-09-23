@@ -109,7 +109,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
         ],
         options: [
-          { field: "chartSubType", values: ["stacked", "grouped"] },
+          { field: "chartSubType", values: ["grouped"] },
           { field: "color", values: ["palette"] },
         ],
       },

@@ -101,6 +101,7 @@ const ChartFields = ({
                   ?.componentIri
             )}
             value={encoding.field}
+            labelId={`${chartConfig.chartType}.${encoding.field}`}
           />
         );
       })}

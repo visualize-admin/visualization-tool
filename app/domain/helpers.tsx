@@ -160,16 +160,38 @@ export const getIconName = (name: string): IconName => {
 
 export const getFieldLabel = (field: string): string | React.ReactNode => {
   switch (field) {
+    // Visual encodings (left column)
+    case "column.x":
+    case "line.x":
+    case "area.x":
+    case "pie.x":
     case "x":
       return <Trans id="controls.axis.horizontal">Horizontal axis</Trans>;
+    case "bar.x":
+    case "scatterplot.x":
+    case "scatterplot.y":
+    case "column.y":
+    case "line.y":
+    case "area.y":
+    case "pie.y":
     case "y":
       return <Trans id="controls.measure">Measure</Trans>;
+    case "bar.y":
+      return <Trans id="controls.axis.vertical">Vertical axis</Trans>;
+    case "bar.segment":
+    case "column.segment":
+    case "line.segment":
+    case "area.segment":
+    case "scatterplot.segment":
+    case "pie.segment":
     case "segment":
       return <Trans id="controls.partition">Partition</Trans>;
     case "title":
       return <Trans id="controls.title">Title</Trans>;
     case "description":
       return <Trans id="controls.description">Description</Trans>;
+
+    // Encoding Options  (right column)
     case "stacked":
       return <Trans id="controls.column.stacked">Stacked</Trans>;
     case "grouped":
@@ -177,6 +199,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
     case "sortBy":
       return <Trans id="controls.sorting.sortBy">Sort by</Trans>;
 
+    case "bar.stacked.byDimensionLabel.asc":
+    case "bar.grouped.byDimensionLabel.asc":
     case "column..byDimensionLabel.asc":
     case "column.stacked.byDimensionLabel.asc":
     case "column.grouped.byDimensionLabel.asc":
@@ -185,6 +209,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
       return (
         <Trans id="controls.sorting.byDimensionLabel.ascending">A → Z</Trans>
       );
+    case "bar.stacked.byDimensionLabel.desc":
+    case "bar.grouped.byDimensionLabel.desc":
     case "column..byDimensionLabel.desc":
     case "column.stacked.byDimensionLabel.desc":
     case "column.grouped.byDimensionLabel.desc":
@@ -193,11 +219,15 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
       return (
         <Trans id="controls.sorting.byDimensionLabel.descending">Z → A</Trans>
       );
+    case "bar.stacked.byTotalSize.desc":
+    case "bar.grouped.byTotalSize.desc":
     case "column.grouped.byTotalSize.asc":
       return (
         <Trans id="controls.sorting.byTotalSize.ascending">Largest last</Trans>
       );
     case "column.grouped.byTotalSize.desc":
+    case "bar.stacked.byTotalSize.asc":
+    case "bar.grouped.byTotalSize.asc":
       return (
         <Trans id="controls.sorting.byTotalSize.largestFirst">
           Largest first
@@ -225,6 +255,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
     case "column.grouped.byMeasure.desc":
     case "pie..byMeasure.desc":
       return <Trans id="controls.sorting.byMeasure.descending">9 → 1</Trans>;
+
+    // Chart Types
     case "column":
       return <Trans id="controls.chart.type.column">Columns</Trans>;
     case "bar":
@@ -237,6 +269,8 @@ export const getFieldLabel = (field: string): string | React.ReactNode => {
       return <Trans id="controls.chart.type.scatterplot">Scatterplot</Trans>;
     case "pie":
       return <Trans id="controls.chart.type.pie">Pie</Trans>;
+
+    // Languages
     case "en":
       return <Trans id="controls.language.english">English</Trans>;
     case "de":

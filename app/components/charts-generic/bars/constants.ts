@@ -1,0 +1,9 @@
+export const LEFT_MARGIN_OFFSET = 5;
+export const BOTTOM_MARGIN_OFFSET = 60;
+export const VERTICAL_PADDING = 0.5;
+export const VERTICAL_PADDING_OUTER = 0.5;
+export const VERTICAL_PADDING_INNER = 0.5;
+export const VERTICAL_PADDING_WITHIN = 0.1;
+export const BAR_HEIGHT = 24;
+export const BAR_SPACE_ON_TOP = 50;
+export const BAR_AXIS_OFFSET = 8;

@@ -13,6 +13,7 @@ import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
 export interface ScatterplotState {
+  chartType: string;
   data: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => number;
@@ -158,6 +159,7 @@ const useScatterplotState = ({
   };
 
   return {
+    chartType: "scatterplot",
     data: sortedData,
     bounds,
     getX,

@@ -13,11 +13,13 @@ export const ControlTab = ({
   disabled,
   onClick,
   checked,
+  labelId,
 }: {
   component?: ComponentFieldsFragment;
   disabled?: boolean;
   value: string;
   onClick: (x: string) => void;
+  labelId: string;
 } & FieldProps) => {
   return (
     <ControlTabButton
@@ -27,7 +29,7 @@ export const ControlTab = ({
     >
       <ControlTabButtonInner
         iconName={getIconName(value)}
-        upperLabel={getFieldLabel(value)}
+        upperLabel={getFieldLabel(labelId)}
         lowerLabel={
           component ? (
             component.label
