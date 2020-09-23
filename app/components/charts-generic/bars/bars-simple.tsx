@@ -24,7 +24,7 @@ export const Bars = () => {
         return (
           <g transform={`translate(0, ${yScale(getY(d))})`} key={i}>
             <text
-              x={0}
+              x={xScale(0)}
               y={BAR_SPACE_ON_TOP * (1 / 2)}
               style={{
                 fontFamily,
@@ -37,8 +37,8 @@ export const Bars = () => {
             </text>
             <Bar
               key={i}
-              x={0}
-              width={xScale(getX(d))}
+              x={xScale(Math.min(0, getX(d)))}
+              width={Math.abs(xScale(getX(d)) - xScale(0))}
               y={BAR_SPACE_ON_TOP - BAR_AXIS_OFFSET}
               height={BAR_HEIGHT}
               color={

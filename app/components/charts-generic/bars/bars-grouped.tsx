@@ -39,8 +39,8 @@ export const BarsGrouped = () => {
                 <Bar
                   key={i}
                   y={yScaleIn(getSegment(d)) as number}
-                  x={0}
-                  width={xScale(Math.max(0, getX(d)))}
+                  x={xScale(Math.min(0, getX(d)))}
+                  width={Math.abs(xScale(getX(d)) - xScale(0))}
                   height={yScaleIn.bandwidth()}
                   color={colors(getSegment(d))}
                   stroke={markBorderColor}
@@ -48,7 +48,7 @@ export const BarsGrouped = () => {
               ))}
             </g>
             <text
-              x={0}
+              x={xScale(0)}
               y={BAR_SPACE_ON_TOP * (1 / 2)}
               fontSize={axisLabelFontSize}
               fontWeight={axisLabelFontWeight}
