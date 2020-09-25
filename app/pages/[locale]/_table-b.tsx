@@ -1,4 +1,13 @@
-import { Box, Button, Checkbox, Grid, Label } from "@theme-ui/components";
+// @ts-nocheck
+import {
+  Box,
+  Button,
+  Checkbox,
+  Grid,
+  Text,
+  Label,
+  Select,
+} from "@theme-ui/components";
 import { NextPage } from "next";
 import { ContentLayout } from "../../components/layout";
 import * as React from "react";
@@ -6,6 +15,7 @@ import { useMemo } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
 import ds from "../../data/holzernte.json";
 
+const encodings = ["Grouping", "Sorting"];
 type Data = { [x: string]: string | number };
 // interface Data  {
 //   taxonLabel: string;
@@ -25,29 +35,40 @@ const Page: NextPage = () => {
   );
   const data = useMemo(() => ds.slice(0, 200), []);
 
-  const [activeColumn, setActiveColumn] = React.useState("");
-  const [groupColumnIds, setGroupColumnIds] = React.useState([]);
+  const [activeEncoding, setActiveEncoding] = React.useState("");
+  const [groupingIds, setGroupingIds] = React.useState([]);
+  const [sortingIds, setSortingIds] = React.useState([]);
 
+  // const updateGroupings = (g: string, groupingLevel: 0 | 1) => {
+  //   if (groupingIds.includes(g)) {
+  //     const newGroupIds = groupingIds.filter((id) => id !== g);
+  //     setGroupingIds(newGroupIds);
+  //   } else {
+  //     const newGroupIds = groupingIds;
+  //     groupingLevel === 0 ? newGroupIds.unshift(g) : newGroupIds.push(g);
+  //     setGroupingIds(newGroupIds);
+  //   }
+  // };
   const updateGroupings = (g: string) => {
-    if (groupColumnIds.includes(g)) {
-      const newGroupIds = groupColumnIds.filter((id) => id !== g);
-      setGroupColumnIds(newGroupIds);
+    if (groupingIds.includes(g)) {
+      const newGroupIds = groupingIds.filter((id) => id !== g);
+      setGroupingIds(newGroupIds);
     } else {
-      setGroupColumnIds([...groupColumnIds, g]);
+      setGroupingIds([...groupingIds, g]);
     }
   };
   const tableInstance = useTable<Data>(
     {
       columns,
       data,
-      // initialState: { groupBy: ["Kanton"] },
+      // initialState: { groupBy: ["Kanton", "Organisationstyp"] },
       useControlledState: (state) => {
         return React.useMemo(
           () => ({
             ...state,
-            groupBy: groupColumnIds,
+            groupBy: groupingIds,
           }),
-          [state, groupColumnIds]
+          [state, groupingIds]
         );
       },
     },
@@ -63,8 +84,7 @@ const Page: NextPage = () => {
     prepareRow,
     state: { groupBy, expanded },
   } = tableInstance;
-
-  console.log({ groupColumnIds });
+  console.log({ groupingIds });
   return (
     <>
       <ContentLayout>
@@ -76,18 +96,26 @@ const Page: NextPage = () => {
           >
             {/* Left Column */}
             <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
-              {columns.map((dim, i) => (
+              {encodings.map((encoding, i) => (
                 <Button
                   variant="outline"
-                  onClick={() => setActiveColumn(dim.accessor)}
+                  onClick={() => setActiveEncoding(encoding)}
                   sx={{
                     width: ["100%", "100%", "100%"],
                     textAlign: "left",
                     mb: 3,
+                    height: "4rem",
                   }}
                 >
-                  <Box sx={{ color: "gray" }}>{`Column ${i + 1}`}</Box>
-                  <Box>{`${dim.Header}`}</Box>
+                  <Box sx={{ color: "gray" }}>{`${encoding}`}</Box>
+                  <Box>
+                    {encoding === "Grouping"
+                      ? groupingIds.map((gId) => gId)
+                      : "None"}
+                    {encoding === "Sorting"
+                      ? sortingIds.map((gId) => gId)
+                      : "None"}
+                  </Box>
                 </Button>
               ))}
             </Box>
@@ -207,16 +235,27 @@ const Page: NextPage = () => {
             </Box>
             {/* Right Column */}
             <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
-              <Box sx={{ m: 2 }}>{activeColumn}</Box>
-              <Box>
-                <Label>
-                  <Checkbox
-                    checked={groupColumnIds.includes(activeColumn)}
-                    onClick={() => updateGroupings(activeColumn)}
-                  />
-                  Use as group
-                </Label>
-              </Box>
+              {activeEncoding && (
+                <>
+                  <Text variant="heading2" sx={{ m: 2 }}>
+                    {activeEncoding}
+                  </Text>
+                  <Box>
+                    <Text variant="paragraph" sx={{ mb: 1 }}>
+                      1st grouping level
+                    </Text>
+                    <Select
+                      defaultValue="none"
+                      onChange={(e) => updateGroupings(e.currentTarget.value)}
+                    >
+                      {columns.map((col) => (
+                        <option value={col.accessor}>{col.accessor}</option>
+                      ))}
+                    </Select>
+                    {/* <Text variant="paragraph">2nd grouping level</Text> */}
+                  </Box>
+                </>
+              )}
             </Box>
           </Grid>
         </Box>
