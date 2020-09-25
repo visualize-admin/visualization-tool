@@ -1,4 +1,4 @@
-import { Box, Grid } from "@theme-ui/components";
+import { Box, Button, Checkbox, Grid, Label } from "@theme-ui/components";
 import { NextPage } from "next";
 import { ContentLayout } from "../../components/layout";
 import * as React from "react";
@@ -23,13 +23,38 @@ const Page: NextPage = () => {
     () => Object.keys(ds[0]).map((c) => ({ Header: c, accessor: c })),
     []
   );
-  const data = useMemo(() => ds.slice(0, 50), []);
+  const data = useMemo(() => ds.slice(0, 200), []);
+
+  const [activeColumn, setActiveColumn] = React.useState("");
+  const [groupColumnIds, setGroupColumnIds] = React.useState([]);
+
+  const updateGroupings = (g: string) => {
+    if (groupColumnIds.includes(g)) {
+      const newGroupIds = groupColumnIds.filter((id) => id !== g);
+      setGroupColumnIds(newGroupIds);
+    } else {
+      setGroupColumnIds([...groupColumnIds, g]);
+    }
+  };
   const tableInstance = useTable<Data>(
-    { columns, data },
+    {
+      columns,
+      data,
+      // initialState: { groupBy: ["Kanton"] },
+      useControlledState: (state) => {
+        return React.useMemo(
+          () => ({
+            ...state,
+            groupBy: groupColumnIds,
+          }),
+          [state, groupColumnIds]
+        );
+      },
+    },
     useGroupBy,
     useExpanded
   );
-
+  // const groupBy = ["Kanton"];
   const {
     getTableProps,
     getTableBodyProps,
@@ -39,6 +64,7 @@ const Page: NextPage = () => {
     state: { groupBy, expanded },
   } = tableInstance;
 
+  console.log({ groupColumnIds });
   return (
     <>
       <ContentLayout>
@@ -49,7 +75,22 @@ const Page: NextPage = () => {
             }}
           >
             {/* Left Column */}
-            <Box sx={{ m: 4, border: "1px solid gray" }}></Box>
+            <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
+              {columns.map((dim, i) => (
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveColumn(dim.accessor)}
+                  sx={{
+                    width: ["100%", "100%", "100%"],
+                    textAlign: "left",
+                    mb: 3,
+                  }}
+                >
+                  <Box sx={{ color: "gray" }}>{`Column ${i + 1}`}</Box>
+                  <Box>{`${dim.Header}`}</Box>
+                </Button>
+              ))}
+            </Box>
             {/* Table */}
             <Box sx={{ m: 4, p: 2 }}>
               <table
@@ -90,7 +131,7 @@ const Page: NextPage = () => {
                 <tbody {...getTableBodyProps()}>
                   {rows.map((row) => {
                     prepareRow(row); // What does this do?
-                    console.log({ row });
+                    // console.log({ row });
                     return (
                       <>
                         <tr
@@ -114,7 +155,7 @@ const Page: NextPage = () => {
                         {row.subRows &&
                           row.subRows.map((subRow) => {
                             prepareRow(subRow);
-                            console.log({ subRow });
+                            // console.log({ subRow });
 
                             return (
                               <>
@@ -165,7 +206,18 @@ const Page: NextPage = () => {
               </table>
             </Box>
             {/* Right Column */}
-            <Box sx={{ m: 4, border: "1px solid gray" }}></Box>
+            <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
+              <Box sx={{ m: 2 }}>{activeColumn}</Box>
+              <Box>
+                <Label>
+                  <Checkbox
+                    checked={groupColumnIds.includes(activeColumn)}
+                    onClick={() => updateGroupings(activeColumn)}
+                  />
+                  Use as group
+                </Label>
+              </Box>
+            </Box>
           </Grid>
         </Box>
       </ContentLayout>
