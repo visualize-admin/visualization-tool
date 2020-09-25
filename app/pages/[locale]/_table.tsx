@@ -99,10 +99,14 @@ const Page: NextPage = () => {
                             fontWeight: row.isGrouped ? 600 : 400,
                           }}
                         >
-                          {row.cells.map((cell) => {
+                          {row.cells.map((cell, i) => {
                             return (
                               <td {...cell.getCellProps()}>
-                                {cell.render("Cell")}
+                                {row.isGrouped && i === 0
+                                  ? cell.render("Cell")
+                                  : !row.isGrouped
+                                  ? cell.render("Cell")
+                                  : null}
                               </td>
                             );
                           })}
@@ -113,20 +117,45 @@ const Page: NextPage = () => {
                             console.log({ subRow });
 
                             return (
-                              <tr
-                                {...subRow.getRowProps()}
-                                style={{
-                                  color: "crimson",
-                                }}
-                              >
-                                {subRow.cells.map((cell) => {
-                                  return (
-                                    <td {...cell.getCellProps()}>
-                                      {cell.render("Cell")}
-                                    </td>
-                                  );
-                                })}
-                              </tr>
+                              <>
+                                <tr
+                                  {...subRow.getRowProps()}
+                                  style={{
+                                    color: "sienna",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  {subRow.cells.map((cell) => {
+                                    return (
+                                      <td {...cell.getCellProps()}>
+                                        {cell.render("Cell")}
+                                      </td>
+                                    );
+                                  })}
+                                </tr>
+                                {subRow.subRows &&
+                                  subRow.subRows.map((subSubRow) => {
+                                    prepareRow(subSubRow);
+
+                                    return (
+                                      <tr
+                                        {...subSubRow.getRowProps()}
+                                        style={{
+                                          color: "slategray",
+                                          fontWeight: 400,
+                                        }}
+                                      >
+                                        {subSubRow.cells.map((cell) => {
+                                          return (
+                                            <td {...cell.getCellProps()}>
+                                              {cell.render("Cell")}
+                                            </td>
+                                          );
+                                        })}
+                                      </tr>
+                                    );
+                                  })}
+                              </>
                             );
                           })}
                       </>
