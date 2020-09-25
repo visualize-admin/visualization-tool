@@ -4,7 +4,7 @@ import { ContentLayout } from "../../components/layout";
 import * as React from "react";
 import { useMemo } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
-import roteListe from "../../data/rote-listen-with-labels.json";
+import ds from "../../data/holzernte.json";
 
 type Data = { [x: string]: string | number };
 // interface Data  {
@@ -20,10 +20,10 @@ interface Column {
 }
 const Page: NextPage = () => {
   const columns: Column[] = useMemo(
-    () => Object.keys(roteListe[0]).map((c) => ({ Header: c, accessor: c })),
+    () => Object.keys(ds[0]).map((c) => ({ Header: c, accessor: c })),
     []
   );
-  const data = useMemo(() => roteListe, []);
+  const data = useMemo(() => ds.slice(0, 50), []);
   const tableInstance = useTable<Data>(
     { columns, data },
     useGroupBy,
@@ -39,8 +39,6 @@ const Page: NextPage = () => {
     state: { groupBy, expanded },
   } = tableInstance;
 
-  console.log({ tableInstance });
-
   return (
     <>
       <ContentLayout>
@@ -53,8 +51,11 @@ const Page: NextPage = () => {
             {/* Left Column */}
             <Box sx={{ m: 4, border: "1px solid gray" }}></Box>
             {/* Table */}
-            <Box sx={{ m: 4, p: 2, border: "1px solid gray" }}>
-              <table {...getTableProps()}>
+            <Box sx={{ m: 4, p: 2 }}>
+              <table
+                {...getTableProps()}
+                style={{ borderSpacing: 0, border: "1px solid black" }}
+              >
                 <thead>
                   {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
@@ -89,32 +90,46 @@ const Page: NextPage = () => {
                 <tbody {...getTableBodyProps()}>
                   {rows.map((row) => {
                     prepareRow(row); // What does this do?
+                    console.log({ row });
                     return (
-                      <tr {...row.getRowProps()}>
-                        {row.cells.map((cell) => {
-                          return (
-                            <td {...cell.getCellProps()}>
-                              {cell.isGrouped ? (
-                                // If it's a grouped cell, add an expander and row count
-                                <>
-                                  <span {...row.getToggleRowExpandedProps()}>
-                                    {row.isExpanded ? "▼" : "►"}
-                                  </span>{" "}
-                                  {cell.render("Cell")} ({row.subRows.length})
-                                </>
-                              ) : cell.isAggregated ? (
-                                // If the cell is aggregated, use the Aggregated
-                                // renderer for cell
-                                cell.render("Aggregated")
-                              ) : cell.isPlaceholder ? null : ( // For cells with repeated values, render null
-                                // Otherwise, just render the regular cell
-                                <>{cell.render("Cell")}</>
-                              )}
-                              {/* {cell.render("Cell")} */}
-                            </td>
-                          );
-                        })}
-                      </tr>
+                      <>
+                        <tr
+                          {...row.getRowProps()}
+                          style={{
+                            fontWeight: row.isGrouped ? 600 : 400,
+                          }}
+                        >
+                          {row.cells.map((cell) => {
+                            return (
+                              <td {...cell.getCellProps()}>
+                                {cell.render("Cell")}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                        {row.subRows &&
+                          row.subRows.map((subRow) => {
+                            prepareRow(subRow);
+                            console.log({ subRow });
+
+                            return (
+                              <tr
+                                {...subRow.getRowProps()}
+                                style={{
+                                  color: "crimson",
+                                }}
+                              >
+                                {subRow.cells.map((cell) => {
+                                  return (
+                                    <td {...cell.getCellProps()}>
+                                      {cell.render("Cell")}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            );
+                          })}
+                      </>
                     );
                   })}
                 </tbody>
