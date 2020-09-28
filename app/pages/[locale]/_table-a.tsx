@@ -1,11 +1,11 @@
-// @ts-nocheck
-import { Box, Button, Checkbox, Grid, Label } from "@theme-ui/components";
+import { Box, Button, Checkbox, Grid, Label, Text } from "@theme-ui/components";
 import { NextPage } from "next";
 import { ContentLayout } from "../../components/layout";
 import * as React from "react";
 import { useMemo } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
 import ds from "../../data/holzernte.json";
+import { ButtonNone } from "../../components/data-table.tsx/button-none";
 
 type Data = { [x: string]: string | number };
 // interface Data  {
@@ -27,14 +27,15 @@ const Page: NextPage = () => {
   const data = useMemo(() => ds.slice(0, 200), []);
 
   const [activeColumn, setActiveColumn] = React.useState("");
-  const [groupColumnIds, setGroupColumnIds] = React.useState([]);
+  const [groupingIds, setGroupingIds] = React.useState([]);
+  const [hiddenIds, setHiddenIds] = React.useState([]);
 
   const updateGroupings = (g: string) => {
-    if (groupColumnIds.includes(g)) {
-      const newGroupIds = groupColumnIds.filter((id) => id !== g);
-      setGroupColumnIds(newGroupIds);
+    if (groupingIds.includes(g)) {
+      const newGroupIds = groupingIds.filter((id) => id !== g);
+      setGroupingIds(newGroupIds);
     } else {
-      setGroupColumnIds([...groupColumnIds, g]);
+      setGroupingIds([...groupingIds, g]);
     }
   };
   const tableInstance = useTable<Data>(
@@ -46,16 +47,18 @@ const Page: NextPage = () => {
         return React.useMemo(
           () => ({
             ...state,
-            groupBy: groupColumnIds,
+            groupBy: groupingIds,
           }),
-          [state, groupColumnIds]
+          [state, groupingIds]
         );
       },
     },
     useGroupBy,
     useExpanded
   );
+
   // const groupBy = ["Kanton"];
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -65,7 +68,14 @@ const Page: NextPage = () => {
     state: { groupBy, expanded },
   } = tableInstance;
 
-  console.log({ groupColumnIds });
+  console.log({ groupingIds });
+
+  const displayedColumns = columns.filter(
+    (c) => !groupingIds.includes(c.accessor)
+  );
+
+  console.log({ displayedColumns });
+
   return (
     <>
       <ContentLayout>
@@ -77,7 +87,30 @@ const Page: NextPage = () => {
           >
             {/* Left Column */}
             <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
-              {columns.map((dim, i) => (
+              <Text variant="heading3">Grouped by</Text>
+
+              {groupingIds.length > 0 ? (
+                <>
+                  {groupingIds.map((dim, i) => (
+                    <Button
+                      variant="outline"
+                      onClick={() => setActiveColumn(dim)}
+                      sx={{
+                        width: ["100%", "100%", "100%"],
+                        textAlign: "left",
+                        mb: 3,
+                      }}
+                    >
+                      <Box sx={{ color: "gray" }}>{`Column ${i + 1}`}</Box>
+                      <Box>{`${dim}`}</Box>
+                    </Button>
+                  ))}
+                </>
+              ) : (
+                <ButtonNone />
+              )}
+              <Text variant="heading3">Columns</Text>
+              {displayedColumns.map((dim, i) => (
                 <Button
                   variant="outline"
                   onClick={() => setActiveColumn(dim.accessor)}
@@ -87,11 +120,37 @@ const Page: NextPage = () => {
                     mb: 3,
                   }}
                 >
-                  <Box sx={{ color: "gray" }}>{`Column ${i + 1}`}</Box>
+                  <Box sx={{ color: "gray" }}>{`Column ${
+                    groupingIds.length + i + 1
+                  }`}</Box>
                   <Box>{`${dim.Header}`}</Box>
                 </Button>
               ))}
+
+              <Text variant="heading3">Hidden Columns</Text>
+
+              {hiddenIds.length > 0 ? (
+                <>
+                  {columns.map((dim, i) => (
+                    <Button
+                      variant="outline"
+                      onClick={() => setActiveColumn(dim.accessor)}
+                      sx={{
+                        width: ["100%", "100%", "100%"],
+                        textAlign: "left",
+                        mb: 3,
+                      }}
+                    >
+                      <Box sx={{ color: "gray" }}>{`Column ${i + 1}`}</Box>
+                      <Box>{`${dim.Header}`}</Box>
+                    </Button>
+                  ))}
+                </>
+              ) : (
+                <ButtonNone />
+              )}
             </Box>
+
             {/* Table */}
             <Box sx={{ m: 4, p: 2 }}>
               <table
@@ -101,7 +160,7 @@ const Page: NextPage = () => {
                 <thead>
                   {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
+                      {headerGroup.headers.map((column, i) => (
                         <Box
                           as="th"
                           sx={{ textAlign: "left" }}
@@ -119,7 +178,9 @@ const Page: NextPage = () => {
                               }}
                               // {...column.getGroupByToggleProps()}
                             >
-                              {column.isGrouped ? "Grouped " : ""}
+                              {column.isGrouped
+                                ? "Grouped "
+                                : `Column ${i + 1}`}
                             </Box>
                           ) : null}
                           {column.render("Header")}
@@ -208,16 +269,23 @@ const Page: NextPage = () => {
             </Box>
             {/* Right Column */}
             <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
-              <Box sx={{ m: 2 }}>{activeColumn}</Box>
-              <Box>
-                <Label>
-                  <Checkbox
-                    checked={groupColumnIds.includes(activeColumn)}
-                    onClick={() => updateGroupings(activeColumn)}
-                  />
-                  Use as group
-                </Label>
-              </Box>
+              {activeColumn !== "" && (
+                <>
+                  <Text variant="heading2" sx={{ m: 3 }}>
+                    {activeColumn}
+                  </Text>
+
+                  <Box sx={{ m: 3 }}>
+                    <Label>
+                      <Checkbox
+                        checked={groupingIds.includes(activeColumn)}
+                        onClick={() => updateGroupings(activeColumn)}
+                      />
+                      Use as group
+                    </Label>
+                  </Box>
+                </>
+              )}
             </Box>
           </Grid>
         </Box>
