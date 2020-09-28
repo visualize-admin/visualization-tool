@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Box, Button, Checkbox, Grid, Label, Text } from "@theme-ui/components";
 import { NextPage } from "next";
 import { ContentLayout } from "../../components/layout";
@@ -38,6 +39,15 @@ const Page: NextPage = () => {
       setGroupingIds([...groupingIds, g]);
     }
   };
+  const updateHiddenIds = (h: string) => {
+    if (hiddenIds.includes(h)) {
+      const newGroupIds = hiddenIds.filter((id) => id !== h);
+      setHiddenIds(newGroupIds);
+    } else {
+      setHiddenIds([...hiddenIds, h]);
+    }
+  };
+
   const tableInstance = useTable<Data>(
     {
       columns,
@@ -87,7 +97,9 @@ const Page: NextPage = () => {
           >
             {/* Left Column */}
             <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
-              <Text variant="heading3">Grouped by</Text>
+              <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
+                Grouped by
+              </Text>
 
               {groupingIds.length > 0 ? (
                 <>
@@ -109,7 +121,9 @@ const Page: NextPage = () => {
               ) : (
                 <ButtonNone />
               )}
-              <Text variant="heading3">Columns</Text>
+              <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
+                Columns
+              </Text>
               {displayedColumns.map((dim, i) => (
                 <Button
                   variant="outline"
@@ -127,7 +141,9 @@ const Page: NextPage = () => {
                 </Button>
               ))}
 
-              <Text variant="heading3">Hidden Columns</Text>
+              <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
+                Hide & filter (Columns)
+              </Text>
 
               {hiddenIds.length > 0 ? (
                 <>
@@ -282,6 +298,15 @@ const Page: NextPage = () => {
                         onClick={() => updateGroupings(activeColumn)}
                       />
                       Use as group
+                    </Label>
+                  </Box>
+                  <Box sx={{ m: 3 }}>
+                    <Label>
+                      <Checkbox
+                        checked={hiddenIds.includes(activeColumn)}
+                        onClick={() => updateHiddenIds(activeColumn)}
+                      />
+                      Hide
                     </Label>
                   </Box>
                 </>
