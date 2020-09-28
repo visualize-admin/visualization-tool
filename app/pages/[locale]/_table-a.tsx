@@ -8,6 +8,8 @@ import { useExpanded, useGroupBy, useTable } from "react-table";
 import ds from "../../data/holzernte.json";
 import { ButtonNone } from "../../components/data-table.tsx/button-none";
 
+const GROUPED_COLOR = "#DFDFDF";
+
 type Data = { [x: string]: string | number };
 // interface Data  {
 //   taxonLabel: string;
@@ -31,6 +33,7 @@ const Page: NextPage = () => {
   const [groupingIds, setGroupingIds] = React.useState([]);
   const [hiddenIds, setHiddenIds] = React.useState([]);
 
+  // Control functions
   const updateGroupings = (g: string) => {
     if (groupingIds.includes(g)) {
       const newGroupIds = groupingIds.filter((id) => id !== g);
@@ -48,6 +51,13 @@ const Page: NextPage = () => {
     }
   };
 
+  const displayedColumns = columns.filter(
+    (c) => !groupingIds.includes(c.accessor)
+  );
+
+  console.log({ displayedColumns });
+
+  // Table instance
   const tableInstance = useTable<Data>(
     {
       columns,
@@ -67,8 +77,6 @@ const Page: NextPage = () => {
     useExpanded
   );
 
-  // const groupBy = ["Kanton"];
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -77,14 +85,6 @@ const Page: NextPage = () => {
     prepareRow,
     state: { groupBy, expanded },
   } = tableInstance;
-
-  console.log({ groupingIds });
-
-  const displayedColumns = columns.filter(
-    (c) => !groupingIds.includes(c.accessor)
-  );
-
-  console.log({ displayedColumns });
 
   return (
     <>
@@ -111,6 +111,7 @@ const Page: NextPage = () => {
                         width: ["100%", "100%", "100%"],
                         textAlign: "left",
                         mb: 3,
+                        bg: GROUPED_COLOR,
                       }}
                     >
                       <Box sx={{ color: "gray" }}>{`Column ${i + 1}`}</Box>
@@ -220,7 +221,15 @@ const Page: NextPage = () => {
                         >
                           {row.cells.map((cell, i) => {
                             return (
-                              <td {...cell.getCellProps()}>
+                              <td
+                                {...cell.getCellProps()}
+                                style={{
+                                  background:
+                                    cell.isGrouped || cell.isPlaceholder
+                                      ? GROUPED_COLOR
+                                      : "white",
+                                }}
+                              >
                                 {row.isGrouped && i === 0
                                   ? cell.render("Cell")
                                   : !row.isGrouped
@@ -244,9 +253,17 @@ const Page: NextPage = () => {
                                     fontWeight: 500,
                                   }}
                                 >
-                                  {subRow.cells.map((cell) => {
+                                  {subRow.cells.map((cell, i) => {
                                     return (
-                                      <td {...cell.getCellProps()}>
+                                      <td
+                                        style={{
+                                          background:
+                                            cell.isGrouped || cell.isPlaceholder
+                                              ? GROUPED_COLOR
+                                              : "white",
+                                        }}
+                                        {...cell.getCellProps()}
+                                      >
                                         {cell.render("Cell")}
                                       </td>
                                     );
@@ -266,7 +283,16 @@ const Page: NextPage = () => {
                                       >
                                         {subSubRow.cells.map((cell) => {
                                           return (
-                                            <td {...cell.getCellProps()}>
+                                            <td
+                                              style={{
+                                                background:
+                                                  cell.isGrouped ||
+                                                  cell.isPlaceholder
+                                                    ? GROUPED_COLOR
+                                                    : "white",
+                                              }}
+                                              {...cell.getCellProps()}
+                                            >
                                               {cell.render("Cell")}
                                             </td>
                                           );

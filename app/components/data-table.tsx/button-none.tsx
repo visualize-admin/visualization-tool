@@ -8,9 +8,10 @@ export const ButtonNone = () => (
       width: ["100%", "100%", "100%"],
       textAlign: "left",
       mb: 3,
+      borderColor: "monochrome500",
     }}
   >
     <Box sx={{ color: "gray" }}> </Box>
-    <Box>None</Box>
+    <Box sx={{ color: "gray" }}>None</Box>
   </Button>
 );
