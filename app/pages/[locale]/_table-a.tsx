@@ -51,25 +51,36 @@ const Page: NextPage = () => {
     }
   };
 
-  const displayedColumns = columns.filter(
-    (c) => !groupingIds.includes(c.accessor)
-  );
+  // Column variables
+  const displayedColumns = columns
+    .filter((c) => !groupingIds.includes(c.accessor))
+    .filter((c) => !hiddenIds.includes(c.accessor));
 
+  const hiddenColumns = columns.filter((c) => hiddenIds.includes(c.accessor));
+
+  console.log({ hiddenIds });
   console.log({ displayedColumns });
 
   // Table instance
+  const tableColumns = useMemo(
+    () => columns.filter((c) => hiddenIds.includes(c)),
+    [columns, hiddenIds]
+  );
+  console.log({ tableColumns });
   const tableInstance = useTable<Data>(
     {
       columns,
       data,
       // initialState: { groupBy: ["Kanton"] },
       useControlledState: (state) => {
+        console.log({ state });
         return React.useMemo(
           () => ({
             ...state,
             groupBy: groupingIds,
+            hiddenColumns: hiddenIds,
           }),
-          [state, groupingIds]
+          [state, groupingIds, hiddenIds]
         );
       },
     },
@@ -83,6 +94,8 @@ const Page: NextPage = () => {
     headerGroups,
     rows,
     prepareRow,
+    allColumns,
+    getToggleHideAllColumnsProps,
     state: { groupBy, expanded },
   } = tableInstance;
 
@@ -148,7 +161,7 @@ const Page: NextPage = () => {
 
               {hiddenIds.length > 0 ? (
                 <>
-                  {columns.map((dim, i) => (
+                  {hiddenColumns.map((dim, i) => (
                     <Button
                       variant="outline"
                       onClick={() => setActiveColumn(dim.accessor)}
@@ -323,18 +336,24 @@ const Page: NextPage = () => {
                         checked={groupingIds.includes(activeColumn)}
                         onClick={() => updateGroupings(activeColumn)}
                       />
-                      Use as group
+                      {groupingIds.includes(activeColumn) ? (
+                        <>Ungroup</>
+                      ) : (
+                        <>Use as group</>
+                      )}
                     </Label>
                   </Box>
-                  <Box sx={{ m: 3 }}>
-                    <Label>
-                      <Checkbox
-                        checked={hiddenIds.includes(activeColumn)}
-                        onClick={() => updateHiddenIds(activeColumn)}
-                      />
-                      Hide
-                    </Label>
-                  </Box>
+                  {!groupingIds.includes(activeColumn) && (
+                    <Box sx={{ m: 3 }}>
+                      <Label>
+                        <Checkbox
+                          checked={hiddenIds.includes(activeColumn)}
+                          onClick={() => updateHiddenIds(activeColumn)}
+                        />
+                        Hide
+                      </Label>
+                    </Box>
+                  )}
                 </>
               )}
             </Box>
