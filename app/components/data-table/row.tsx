@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as React from "react";
 import { Row } from "react-table";
 import { Data, GROUPED_COLOR } from "../../pages/[locale]/_table-a";
