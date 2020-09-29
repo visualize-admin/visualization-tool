@@ -1,16 +1,33 @@
 // @ts-nocheck
-import { Box, Button, Checkbox, Grid, Label, Text } from "@theme-ui/components";
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Label,
+  Text,
+  Checkbox,
+  Radio,
+} from "@theme-ui/components";
 import { NextPage } from "next";
-import { ContentLayout } from "../../components/layout";
 import * as React from "react";
 import { useMemo } from "react";
-import { useExpanded, useGroupBy, useTable } from "react-table";
+import {
+  useExpanded,
+  useFilters,
+  useGlobalFilter,
+  useGroupBy,
+  useTable,
+} from "react-table";
+import { ButtonNone } from "../../components/data-table/button-none";
+import { RowUI } from "../../components/data-table/row";
+
+import { ContentLayout } from "../../components/layout";
 import ds from "../../data/holzernte.json";
-import { ButtonNone } from "../../components/data-table.tsx/button-none";
 
-const GROUPED_COLOR = "#DFDFDF";
+export const GROUPED_COLOR = "#F5F5F5";
 
-type Data = { [x: string]: string | number };
+export type Data = { [x: string]: string | number };
 // interface Data  {
 //   taxonLabel: string;
 //   artenGruppeLabel: string;
@@ -23,15 +40,22 @@ interface Column {
   accessor: string;
 }
 const Page: NextPage = () => {
-  const columns: Column[] = useMemo(
-    () => Object.keys(ds[0]).map((c) => ({ Header: c, accessor: c })),
-    []
-  );
-  const data = useMemo(() => ds.slice(0, 200), []);
-
   const [activeColumn, setActiveColumn] = React.useState("");
   const [groupingIds, setGroupingIds] = React.useState([]);
   const [hiddenIds, setHiddenIds] = React.useState([]);
+  const [filters, setFilters] = React.useState([]);
+
+  // Data
+  const columns: Column[] = useMemo(
+    () =>
+      Object.keys(ds[0]).map((c) => ({
+        Header: c,
+        accessor: c,
+      })),
+    []
+  );
+
+  const data = useMemo(() => ds.slice(0, 200), []);
 
   // Control functions
   const updateGroupings = (g: string) => {
@@ -58,32 +82,47 @@ const Page: NextPage = () => {
 
   const hiddenColumns = columns.filter((c) => hiddenIds.includes(c.accessor));
 
-  console.log({ hiddenIds });
-  console.log({ displayedColumns });
+  // console.log({ hiddenIds });
+  // console.log({ displayedColumns });
+
+  const activeColumnValues = [...new Set(data.map((d) => d[activeColumn]))];
 
   // Table instance
-  const tableColumns = useMemo(
-    () => columns.filter((c) => hiddenIds.includes(c)),
-    [columns, hiddenIds]
-  );
-  console.log({ tableColumns });
+  // const initialFilters = useMemo(
+  //   () => [
+  //     // { id: "Eigentümertyp", value: ["Öffentliche Wälder"] },
+  //     // { id: "Organisationstyp", value: "Kleinwald" },
+
+  //     // { id: "Kanton", value: "Luzern" },
+  //     // { id: "Kanton", value: ["Ticino"] },
+  //     { id: "Kanton", value: ["Ticino", "Luzern"] },
+  //   ],
+  //   []
+  // );
   const tableInstance = useTable<Data>(
     {
       columns,
       data,
-      // initialState: { groupBy: ["Kanton"] },
+      // defaultColumn: ["Kanton"],
+      // filterTypes,
+      // initialState: {
+      //   filters: [{ id: "Eigentümertyp", value: "Öffentliche Wälder" }],
+      // },
       useControlledState: (state) => {
-        console.log({ state });
         return React.useMemo(
           () => ({
             ...state,
             groupBy: groupingIds,
             hiddenColumns: hiddenIds,
+            // filters,
+            // filters: initialFilters,
           }),
           [state, groupingIds, hiddenIds]
         );
       },
     },
+    // useFilters,
+    // useGlobalFilter,
     useGroupBy,
     useExpanded
   );
@@ -94,18 +133,15 @@ const Page: NextPage = () => {
     headerGroups,
     rows,
     prepareRow,
-    allColumns,
-    getToggleHideAllColumnsProps,
-    state: { groupBy, expanded },
   } = tableInstance;
-
+  console.log({ groupingIds });
   return (
     <>
       <ContentLayout>
         <Box sx={{ px: 4, bg: "muted", mb: "auto" }}>
           <Grid
             sx={{
-              gridTemplateColumns: "1fr 5fr 1fr",
+              gridTemplateColumns: "1.5fr 5fr 1.5fr",
             }}
           >
             {/* Left Column */}
@@ -146,6 +182,16 @@ const Page: NextPage = () => {
                     width: ["100%", "100%", "100%"],
                     textAlign: "left",
                     mb: 3,
+                    bg:
+                      dim.accessor === activeColumn
+                        ? "primaryLight"
+                        : "monochrome000",
+                    ":hover": {
+                      bg:
+                        dim.accessor === activeColumn
+                          ? "primaryLight"
+                          : "monochrome300",
+                    },
                   }}
                 >
                   <Box sx={{ color: "gray" }}>{`Column ${
@@ -197,7 +243,6 @@ const Page: NextPage = () => {
                           {...column.getHeaderProps()}
                         >
                           {column.canGroupBy ? (
-                            // If the column can be grouped, let's add a toggle
                             <Box
                               sx={{
                                 fontSize: 1,
@@ -222,106 +267,12 @@ const Page: NextPage = () => {
 
                 <tbody {...getTableBodyProps()}>
                   {rows.map((row) => {
-                    prepareRow(row); // What does this do?
-                    // console.log({ row });
-                    return (
-                      <>
-                        <tr
-                          {...row.getRowProps()}
-                          style={{
-                            fontWeight: row.isGrouped ? 600 : 400,
-                          }}
-                        >
-                          {row.cells.map((cell, i) => {
-                            return (
-                              <td
-                                {...cell.getCellProps()}
-                                style={{
-                                  background:
-                                    cell.isGrouped || cell.isPlaceholder
-                                      ? GROUPED_COLOR
-                                      : "white",
-                                }}
-                              >
-                                {row.isGrouped && i === 0
-                                  ? cell.render("Cell")
-                                  : !row.isGrouped
-                                  ? cell.render("Cell")
-                                  : null}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                        {row.subRows &&
-                          row.subRows.map((subRow) => {
-                            prepareRow(subRow);
-                            // console.log({ subRow });
-
-                            return (
-                              <>
-                                <tr
-                                  {...subRow.getRowProps()}
-                                  style={{
-                                    color: "sienna",
-                                    fontWeight: 500,
-                                  }}
-                                >
-                                  {subRow.cells.map((cell, i) => {
-                                    return (
-                                      <td
-                                        style={{
-                                          background:
-                                            cell.isGrouped || cell.isPlaceholder
-                                              ? GROUPED_COLOR
-                                              : "white",
-                                        }}
-                                        {...cell.getCellProps()}
-                                      >
-                                        {cell.render("Cell")}
-                                      </td>
-                                    );
-                                  })}
-                                </tr>
-                                {subRow.subRows &&
-                                  subRow.subRows.map((subSubRow) => {
-                                    prepareRow(subSubRow);
-
-                                    return (
-                                      <tr
-                                        {...subSubRow.getRowProps()}
-                                        style={{
-                                          color: "slategray",
-                                          fontWeight: 400,
-                                        }}
-                                      >
-                                        {subSubRow.cells.map((cell) => {
-                                          return (
-                                            <td
-                                              style={{
-                                                background:
-                                                  cell.isGrouped ||
-                                                  cell.isPlaceholder
-                                                    ? GROUPED_COLOR
-                                                    : "white",
-                                              }}
-                                              {...cell.getCellProps()}
-                                            >
-                                              {cell.render("Cell")}
-                                            </td>
-                                          );
-                                        })}
-                                      </tr>
-                                    );
-                                  })}
-                              </>
-                            );
-                          })}
-                      </>
-                    );
+                    return <RowUI row={row} prepareRow={prepareRow} />;
                   })}
                 </tbody>
               </table>
             </Box>
+
             {/* Right Column */}
             <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
               {activeColumn !== "" && (
@@ -330,30 +281,75 @@ const Page: NextPage = () => {
                     {activeColumn}
                   </Text>
 
-                  <Box sx={{ m: 3 }}>
+                  <Box sx={{ mx: 3 }}>
                     <Label>
                       <Checkbox
                         checked={groupingIds.includes(activeColumn)}
-                        onClick={() => updateGroupings(activeColumn)}
+                        onClick={() => {
+                          console.log("grouping");
+                          updateGroupings(activeColumn);
+                        }}
                       />
-                      {groupingIds.includes(activeColumn) ? (
-                        <>Ungroup</>
-                      ) : (
-                        <>Use as group</>
-                      )}
+                      Use as group
                     </Label>
-                  </Box>
-                  {!groupingIds.includes(activeColumn) && (
-                    <Box sx={{ m: 3 }}>
+                    <Box sx={{ ml: 3 }}>
                       <Label>
                         <Checkbox
+                          sx={{
+                            color: !groupingIds.includes(activeColumn)
+                              ? "monochrome300"
+                              : "text",
+                          }}
+                          disabled={!groupingIds.includes(activeColumn)}
                           checked={hiddenIds.includes(activeColumn)}
                           onClick={() => updateHiddenIds(activeColumn)}
                         />
                         Hide
                       </Label>
                     </Box>
+                  </Box>
+                  {!groupingIds.includes(activeColumn) && (
+                    <Box sx={{ mx: 3 }}>
+                      <Label>
+                        <Checkbox
+                          checked={hiddenIds.includes(activeColumn)}
+                          onClick={() => updateHiddenIds(activeColumn)}
+                        />
+                        Remove from table
+                      </Label>
+                    </Box>
                   )}
+
+                  <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
+                    Sort rows by this column
+                  </Text>
+                  {/* <Flex sx={{ mx: 3, mb: 2 }}>
+                    <Radio
+                      label={"1 → 9"}
+                      name={"ascending"}
+                      value={"ascending"}
+                      onChange={() => updateSorting(activeColumn, "ascending")}
+                    />
+                    <Radio
+                      label={"9 → 1"}
+                      name={"descending"}
+                      value={"descending"}
+                      onChange={() => updateSorting(activeColumn, "descending")}
+                    />
+                  </Flex> */}
+
+                  {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
+                    Filter rows
+                  </Text>
+                  {activeColumnValues.map((v) => (
+                    <Label sx={{ mx: 3 }}>
+                      <Checkbox
+                        checked={false}
+                        onClick={() => updateFilterIds(activeColumn, v)}
+                      />
+                      {v}
+                    </Label>
+                  ))}*/}
                 </>
               )}
             </Box>
