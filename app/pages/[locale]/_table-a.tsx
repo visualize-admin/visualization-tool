@@ -18,6 +18,7 @@ import {
   useGlobalFilter,
   useGroupBy,
   useTable,
+  useSortBy,
 } from "react-table";
 import { ButtonNone } from "../../components/data-table/button-none";
 import { RowUI } from "../../components/data-table/row";
@@ -44,7 +45,6 @@ const Page: NextPage = () => {
   const [groupingIds, setGroupingIds] = React.useState([]);
   const [hiddenIds, setHiddenIds] = React.useState([]);
   const [filters, setFilters] = React.useState([]);
-
   // Data
   const columns: Column[] = useMemo(
     () =>
@@ -56,6 +56,13 @@ const Page: NextPage = () => {
   );
 
   const data = useMemo(() => ds.slice(0, 200), []);
+  const columnsToSort = columns.filter((c) => !hiddenIds.includes(c.accessor));
+
+  const initialSortingIds = useMemo(
+    () => columnsToSort.map((c) => ({ id: c.accessor, desc: false })),
+    []
+  );
+  const [sortingIds, setSortingIds] = React.useState(initialSortingIds);
 
   // Control functions
   const updateGroupings = (g: string) => {
@@ -75,30 +82,20 @@ const Page: NextPage = () => {
     }
   };
 
-  // Column variables
+  const updateSortingIds = (id: string, desc: boolean) => {
+    console.log({ id });
+    const idToUpdate = sortingIds.findIndex((sId) => sId.id === id);
+    console.log({ idToUpdate });
+    let newSortingIds = [...sortingIds];
+    newSortingIds[idToUpdate] = { id, desc };
+    setSortingIds(newSortingIds);
+  };
+
   const displayedColumns = columns
     .filter((c) => !groupingIds.includes(c.accessor))
     .filter((c) => !hiddenIds.includes(c.accessor));
-
   const hiddenColumns = columns.filter((c) => hiddenIds.includes(c.accessor));
 
-  // console.log({ hiddenIds });
-  // console.log({ displayedColumns });
-
-  const activeColumnValues = [...new Set(data.map((d) => d[activeColumn]))];
-
-  // Table instance
-  // const initialFilters = useMemo(
-  //   () => [
-  //     // { id: "Eigentümertyp", value: ["Öffentliche Wälder"] },
-  //     // { id: "Organisationstyp", value: "Kleinwald" },
-
-  //     // { id: "Kanton", value: "Luzern" },
-  //     // { id: "Kanton", value: ["Ticino"] },
-  //     { id: "Kanton", value: ["Ticino", "Luzern"] },
-  //   ],
-  //   []
-  // );
   const tableInstance = useTable<Data>(
     {
       columns,
@@ -106,7 +103,7 @@ const Page: NextPage = () => {
       // defaultColumn: ["Kanton"],
       // filterTypes,
       // initialState: {
-      //   filters: [{ id: "Eigentümertyp", value: "Öffentliche Wälder" }],
+      //   sortBy: initialSortingIds,
       // },
       useControlledState: (state) => {
         return React.useMemo(
@@ -114,16 +111,18 @@ const Page: NextPage = () => {
             ...state,
             groupBy: groupingIds,
             hiddenColumns: hiddenIds,
+            sortBy: sortingIds,
             // filters,
             // filters: initialFilters,
           }),
-          [state, groupingIds, hiddenIds]
+          [state, groupingIds, hiddenIds, sortingIds]
         );
       },
     },
     // useFilters,
     // useGlobalFilter,
     useGroupBy,
+    useSortBy,
     useExpanded
   );
 
@@ -135,6 +134,8 @@ const Page: NextPage = () => {
     prepareRow,
   } = tableInstance;
   console.log({ groupingIds });
+  console.log({ sortingIds });
+
   return (
     <>
       <ContentLayout>
@@ -323,20 +324,31 @@ const Page: NextPage = () => {
                   <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                     Sort rows by this column
                   </Text>
-                  {/* <Flex sx={{ mx: 3, mb: 2 }}>
-                    <Radio
-                      label={"1 → 9"}
-                      name={"ascending"}
-                      value={"ascending"}
-                      onChange={() => updateSorting(activeColumn, "ascending")}
-                    />
-                    <Radio
-                      label={"9 → 1"}
-                      name={"descending"}
-                      value={"descending"}
-                      onChange={() => updateSorting(activeColumn, "descending")}
-                    />
-                  </Flex> */}
+                  <Flex sx={{ mx: 3, mb: 2 }}>
+                    <Label>
+                      <Radio
+                        name="ascending"
+                        value="ascending"
+                        checked={
+                          sortingIds.find((d) => d.id === activeColumn).desc ===
+                          false
+                        }
+                        onClick={(e) => updateSortingIds(activeColumn, false)}
+                      />
+                      1 → 9
+                    </Label>
+                    <Label>
+                      <Radio
+                        name="descending"
+                        value="descending"
+                        checked={
+                          sortingIds.find((d) => d.id === activeColumn).desc
+                        }
+                        onClick={(e) => updateSortingIds(activeColumn, true)}
+                      />
+                      9 → 1
+                    </Label>
+                  </Flex>
 
                   {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                     Filter rows
@@ -352,6 +364,7 @@ const Page: NextPage = () => {
                   ))}*/}
                 </>
               )}
+              <Box sx={{ mx: 3 }}>{JSON.stringify(sortingIds)}</Box>
             </Box>
           </Grid>
         </Box>
