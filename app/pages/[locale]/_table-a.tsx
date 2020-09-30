@@ -36,13 +36,6 @@ import ds from "../../data/holzernte.json";
 export const GROUPED_COLOR = "#F5F5F5";
 
 export type Data = { [x: string]: string | number };
-// interface Data  {
-//   taxonLabel: string;
-//   artenGruppeLabel: string;
-//   status: string;
-//   year: string;
-//   totalSpecies: number;
-// };
 interface Column {
   Header: string;
   accessor: string;
@@ -93,7 +86,6 @@ const Page: NextPage = () => {
       setHiddenIds([...hiddenIds, h]);
     }
   };
-
   const updateSortingIds = (id: string, desc: boolean) => {
     console.log({ id });
     const idToUpdate = sortingIds.findIndex((sId) => sId.id === id);
@@ -103,12 +95,14 @@ const Page: NextPage = () => {
     setSortingIds(newSortingIds);
   };
 
-  const displayedColumns = columns
-    .filter((c) => !groupingIds.includes(c.accessor))
-    .filter((c) => !hiddenIds.includes(c.accessor));
-  const hiddenColumns = columns.filter((c) => hiddenIds.includes(c.accessor));
-
-  const tableInstance = useTable<Data>(
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    setColumnOrder,
+  } = useTable<Data>(
     {
       columns,
       data,
@@ -137,31 +131,25 @@ const Page: NextPage = () => {
     useExpanded
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    setColumnOrder,
-  } = tableInstance;
-
+  // Ordering
   const reorderColumns = (oldPosition, newPosition) => {
     const newOrdering = moveColumn(columnOrderIds, oldPosition, newPosition);
-
     setColumnOrderIds(newOrdering); // component state
     setColumnOrder(newOrdering); // table instance state
   };
-  console.log({ columnOrderIds });
+  const displayedColumns = useMemo(
+    () => columnOrderIds.filter((c) => !hiddenIds.includes(c)),
+    [columnOrderIds, hiddenIds]
+  );
+  const hiddenColumns = columns.filter((c) => hiddenIds.includes(c.accessor));
 
   return (
     <>
       <ContentLayout>
         <Box sx={{ px: 4, bg: "muted", mb: "auto" }}>
-          {/* <Button onClick={() => reorderColumns()}>Reorder Columns</Button> */}
           <Grid
             sx={{
-              gridTemplateColumns: "1.5fr 5fr 1.5fr",
+              gridTemplateColumns: "350px auto 350px",
             }}
           >
             {/* Left Column */}
@@ -194,32 +182,36 @@ const Page: NextPage = () => {
               <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
                 Columns
               </Text>
-              {displayedColumns.map((dim, i) => (
-                <Button
-                  variant="outline"
-                  onClick={() => setActiveColumn(dim.accessor)}
-                  sx={{
-                    width: ["100%", "100%", "100%"],
-                    textAlign: "left",
-                    mb: 3,
-                    bg:
-                      dim.accessor === activeColumn
-                        ? "primaryLight"
-                        : "monochrome000",
-                    ":hover": {
-                      bg:
-                        dim.accessor === activeColumn
-                          ? "primaryLight"
-                          : "monochrome300",
-                    },
-                  }}
-                >
-                  <Box sx={{ color: "gray" }}>{`Column ${
-                    groupingIds.length + i + 1
-                  }`}</Box>
-                  <Box>{`${dim.Header}`}</Box>
-                </Button>
-              ))}
+              {displayedColumns
+                .filter((dim) => !groupingIds.includes(dim))
+                .map((dim, i) => {
+                  return (
+                    <Button
+                      variant="outline"
+                      onClick={() => setActiveColumn(dim)}
+                      sx={{
+                        width: ["100%", "100%", "100%"],
+                        textAlign: "left",
+                        mb: 3,
+                        bg:
+                          dim === activeColumn
+                            ? "primaryLight"
+                            : "monochrome000",
+                        ":hover": {
+                          bg:
+                            dim === activeColumn
+                              ? "primaryLight"
+                              : "monochrome300",
+                        },
+                      }}
+                    >
+                      <Box sx={{ color: "gray" }}>{`Column ${
+                        groupingIds.length + i + 1
+                      }`}</Box>
+                      <Box>{`${dim}`}</Box>
+                    </Button>
+                  );
+                })}
 
               <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
                 Hide & filter (Columns)
@@ -370,6 +362,7 @@ const Page: NextPage = () => {
                     activeColumn={activeColumn}
                     columnOrderIds={columnOrderIds}
                     reorderColumns={reorderColumns}
+                    disabled={groupingIds.includes(activeColumn)}
                   />
 
                   <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>

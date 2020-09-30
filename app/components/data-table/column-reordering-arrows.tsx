@@ -31,10 +31,12 @@ export const ColumnReorderingArrows = React.memo(
     activeColumn,
     columnOrderIds,
     reorderColumns,
+    disabled,
   }: {
     activeColumn: string;
     columnOrderIds: string[];
     reorderColumns: (currentPosition: number, newPosition: number) => void;
+    disabled: boolean;
   }) => {
     const currentPosition = columnOrderIds.findIndex((d) => d === activeColumn);
 
@@ -43,17 +45,17 @@ export const ColumnReorderingArrows = React.memo(
         <Text variant="heading3" sx={{ mb: 2 }}>
           Column position in the table
         </Text>
-        <Text>Current: {currentPosition + 1}</Text>
         <Flex>
           <Button
             variant="reset"
             sx={{
-              pointerEvents: currentPosition === 0 ? "none" : "unset",
+              pointerEvents:
+                disabled || currentPosition === 0 ? "none" : "unset",
               mx: 2,
-              color: currentPosition === 0 ? "monochrome400" : "primary",
+              color:
+                disabled || currentPosition === 0 ? "monochrome400" : "primary",
             }}
             onClick={() => {
-              const newPosition = currentPosition - 1;
               reorderColumns(currentPosition, currentPosition - 1);
             }}
           >
@@ -63,18 +65,17 @@ export const ColumnReorderingArrows = React.memo(
             variant="reset"
             sx={{
               pointerEvents:
-                currentPosition === columnOrderIds.length - 1
+                disabled || currentPosition === columnOrderIds.length - 1
                   ? "none"
                   : "unset",
               mx: 2,
               color:
-                currentPosition === columnOrderIds.length - 1
+                disabled || currentPosition === columnOrderIds.length - 1
                   ? "monochrome400"
                   : "primary",
             }}
             onClick={() => {
-              const newPosition = currentPosition + 1;
-              reorderColumns(currentPosition, newPosition);
+              reorderColumns(currentPosition, currentPosition + 1);
             }}
           >
             ⮕
