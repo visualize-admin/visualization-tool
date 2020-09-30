@@ -8,6 +8,7 @@ import {
   Text,
   Checkbox,
   Radio,
+  Select,
 } from "@theme-ui/components";
 import { NextPage } from "next";
 import * as React from "react";
@@ -18,8 +19,10 @@ import {
   useGlobalFilter,
   useGroupBy,
   useTable,
+  useColumnOrder,
   useSortBy,
 } from "react-table";
+
 import { ButtonNone } from "../../components/data-table/button-none";
 import { RowUI } from "../../components/data-table/row";
 
@@ -60,10 +63,14 @@ const Page: NextPage = () => {
 
   const initialSortingIds = useMemo(
     () => columnsToSort.map((c) => ({ id: c.accessor, desc: false })),
-    []
+    [columnsToSort]
   );
+
+  // Oreder & sorting
   const [sortingIds, setSortingIds] = React.useState(initialSortingIds);
-  const [columnOrder, setColumnOrder] = React.useState(columnsToSort);
+  const [columnOrderIds, setColumnOrderIds] = React.useState(
+    columnsToSort.map((d) => d.accessor)
+  );
 
   // Control functions
   const updateGroupings = (g: string) => {
@@ -122,6 +129,7 @@ const Page: NextPage = () => {
     },
     // useFilters,
     // useGlobalFilter,
+    useColumnOrder,
     useGroupBy,
     useSortBy,
     useExpanded
@@ -133,15 +141,27 @@ const Page: NextPage = () => {
     headerGroups,
     rows,
     prepareRow,
+    setColumnOrder,
   } = tableInstance;
-  console.log({ groupingIds });
-  console.log({ sortingIds });
-  console.log({ columnOrder });
+  // console.log({ groupingIds });
+  // console.log({ sortingIds });
+  console.log({ columnOrderIds });
+
+  const reorderColumns = (columnId, oldPosition, newPosition) => {
+    console.log({ oldPosition, newPosition });
+
+    const newOrdering = [...columnOrderIds];
+    newOrdering.splice(oldPosition, 1);
+    newOrdering.splice(newPosition, 0, columnId);
+    setColumnOrderIds(newOrdering);
+    setColumnOrder(newOrdering);
+  };
 
   return (
     <>
       <ContentLayout>
         <Box sx={{ px: 4, bg: "muted", mb: "auto" }}>
+          {/* <Button onClick={() => reorderColumns()}>Reorder Columns</Button> */}
           <Grid
             sx={{
               gridTemplateColumns: "1.5fr 5fr 1.5fr",
@@ -240,7 +260,7 @@ const Page: NextPage = () => {
                   {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column, i) => {
-                        console.log({ column });
+                        // console.log({ column });
                         return (
                           <Box
                             as="th"
@@ -349,7 +369,59 @@ const Page: NextPage = () => {
                     </Box>
                   )}
 
-                  <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
+                  <Box sx={{ mt: 5, mx: 3 }}>
+                    <Text variant="heading3" sx={{ mb: 2 }}>
+                      Column position in the table
+                    </Text>
+                    <Text>
+                      Current:{" "}
+                      {columnOrderIds.findIndex((d) => d === activeColumn) + 1}
+                    </Text>
+                    <Flex>
+                      <Button
+                        variant="reset"
+                        sx={{
+                          mx: 2,
+                          color: "monochrome800",
+                        }}
+                        onClick={() => {
+                          const currentPosition = columnOrderIds.findIndex(
+                            (d) => d === activeColumn
+                          );
+                          const newPosition = currentPosition - 1;
+                          reorderColumns(
+                            activeColumn,
+                            currentPosition,
+                            newPosition
+                          );
+                        }}
+                      >
+                        ⬅
+                      </Button>
+                      <Button
+                        variant="reset"
+                        sx={{
+                          mx: 2,
+                          color: "monochrome800",
+                        }}
+                        onClick={() => {
+                          const currentPosition = displayedColumns.findIndex(
+                            (d) => d.accessor === activeColumn
+                          );
+                          const newPosition = currentPosition + 1;
+                          reorderColumns(
+                            activeColumn,
+                            currentPosition,
+                            newPosition
+                          );
+                        }}
+                      >
+                        ⮕
+                      </Button>
+                    </Flex>
+                  </Box>
+
+                  <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                     Sort rows by this column
                   </Text>
                   <Flex sx={{ mx: 3, mb: 2 }}>
