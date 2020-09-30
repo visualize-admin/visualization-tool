@@ -44,6 +44,7 @@ const Page: NextPage = () => {
   const [activeColumn, setActiveColumn] = React.useState("");
   const [groupingIds, setGroupingIds] = React.useState([]);
   const [hiddenIds, setHiddenIds] = React.useState([]);
+  const [sortingIds, setSortingIds] = React.useState([]);
 
   // Data
   const columns: Column[] = useMemo(
@@ -58,13 +59,7 @@ const Page: NextPage = () => {
   const data = useMemo(() => ds.slice(0, 200), []);
   const columnsToSort = columns.filter((c) => !hiddenIds.includes(c.accessor));
 
-  const initialSortingIds = useMemo(
-    () => columnsToSort.map((c) => ({ id: c.accessor, desc: false })),
-    [columnsToSort]
-  );
-
   // Oreder & sorting
-  const [sortingIds, setSortingIds] = React.useState(initialSortingIds);
   const [columnOrderIds, setColumnOrderIds] = React.useState(
     columnsToSort.map((d) => d.accessor)
   );
@@ -86,15 +81,28 @@ const Page: NextPage = () => {
       setHiddenIds([...hiddenIds, h]);
     }
   };
-  const updateSortingIds = (id: string, desc: boolean) => {
-    console.log({ id });
-    const idToUpdate = sortingIds.findIndex((sId) => sId.id === id);
-    console.log({ idToUpdate });
+  const updateSortingIds = (columnId: string) => {
+    console.log({ columnId });
+    const sortingIdList = sortingIds.map((d) => d.id);
+    if (!sortingIdList.includes(columnId)) {
+      let newSortingIds = [...sortingIds, { id: columnId, desc: false }];
+      setSortingIds(newSortingIds);
+    } else {
+      const columnIdPosition = sortingIds.findIndex((d) => d.id === columnId);
+      let newSortingIds = [...sortingIds];
+      newSortingIds.splice(columnIdPosition, 1);
+      setSortingIds(newSortingIds);
+    }
+  };
+  const updateSortingOrder = (columnId: string, desc: boolean) => {
+    console.log({ columnId });
+
+    const columnIdPosition = sortingIds.findIndex((d) => d.id === columnId);
     let newSortingIds = [...sortingIds];
-    newSortingIds[idToUpdate] = { id, desc };
+    newSortingIds[columnIdPosition] = { id: columnId, desc };
     setSortingIds(newSortingIds);
   };
-
+  console.log({ sortingIds });
   const {
     getTableProps,
     getTableBodyProps,
@@ -142,7 +150,7 @@ const Page: NextPage = () => {
     [columnOrderIds, hiddenIds]
   );
   const hiddenColumns = columns.filter((c) => hiddenIds.includes(c.accessor));
-
+  console.log({ columnOrderIds });
   return (
     <>
       <ContentLayout>
@@ -324,7 +332,6 @@ const Page: NextPage = () => {
                       <Checkbox
                         checked={groupingIds.includes(activeColumn)}
                         onClick={() => {
-                          console.log("grouping");
                           updateGroupings(activeColumn);
                         }}
                       />
@@ -368,27 +375,60 @@ const Page: NextPage = () => {
                   <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                     Sort rows by this column
                   </Text>
+                  <Label sx={{ mx: 3, my: 2 }}>
+                    <Checkbox
+                      checked={sortingIds
+                        .map((d) => d.id)
+                        .includes(activeColumn)}
+                      onClick={() => updateSortingIds(activeColumn)}
+                    />
+                    Sort by the colum {activeColumn}
+                  </Label>
                   <Flex sx={{ mx: 3, mb: 2 }}>
-                    <Label>
+                    <Label
+                      sx={{
+                        color: !sortingIds
+                          .map((d) => d.id)
+                          .includes(activeColumn)
+                          ? "monochrome300"
+                          : "monochrome900",
+                      }}
+                    >
                       <Radio
+                        disabled={
+                          !sortingIds.map((d) => d.id).includes(activeColumn)
+                        }
                         name="ascending"
                         value="ascending"
                         checked={
+                          sortingIds.find((d) => d.id === activeColumn) &&
                           sortingIds.find((d) => d.id === activeColumn).desc ===
-                          false
+                            false
                         }
-                        onClick={(e) => updateSortingIds(activeColumn, false)}
+                        onClick={(e) => updateSortingOrder(activeColumn, false)}
                       />
                       1 → 9
                     </Label>
-                    <Label>
+                    <Label
+                      sx={{
+                        color: !sortingIds
+                          .map((d) => d.id)
+                          .includes(activeColumn)
+                          ? "monochrome300"
+                          : "monochrome900",
+                      }}
+                    >
                       <Radio
+                        disabled={
+                          !sortingIds.map((d) => d.id).includes(activeColumn)
+                        }
                         name="descending"
                         value="descending"
                         checked={
+                          sortingIds.find((d) => d.id === activeColumn) &&
                           sortingIds.find((d) => d.id === activeColumn).desc
                         }
-                        onClick={(e) => updateSortingIds(activeColumn, true)}
+                        onClick={(e) => updateSortingOrder(activeColumn, true)}
                       />
                       9 → 1
                     </Label>
