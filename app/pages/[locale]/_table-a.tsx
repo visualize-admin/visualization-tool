@@ -23,6 +23,10 @@ import {
   useSortBy,
 } from "react-table";
 
+import {
+  moveColumn,
+  ColumnReorderingArrows,
+} from "../../components/data-table/column-reordering-arrows";
 import { ButtonNone } from "../../components/data-table/button-none";
 import { RowUI } from "../../components/data-table/row";
 
@@ -47,7 +51,7 @@ const Page: NextPage = () => {
   const [activeColumn, setActiveColumn] = React.useState("");
   const [groupingIds, setGroupingIds] = React.useState([]);
   const [hiddenIds, setHiddenIds] = React.useState([]);
-  const [filters, setFilters] = React.useState([]);
+
   // Data
   const columns: Column[] = useMemo(
     () =>
@@ -127,8 +131,6 @@ const Page: NextPage = () => {
         );
       },
     },
-    // useFilters,
-    // useGlobalFilter,
     useColumnOrder,
     useGroupBy,
     useSortBy,
@@ -143,19 +145,14 @@ const Page: NextPage = () => {
     prepareRow,
     setColumnOrder,
   } = tableInstance;
-  // console.log({ groupingIds });
-  // console.log({ sortingIds });
-  console.log({ columnOrderIds });
 
-  const reorderColumns = (columnId, oldPosition, newPosition) => {
-    console.log({ oldPosition, newPosition });
+  const reorderColumns = (oldPosition, newPosition) => {
+    const newOrdering = moveColumn(columnOrderIds, oldPosition, newPosition);
 
-    const newOrdering = [...columnOrderIds];
-    newOrdering.splice(oldPosition, 1);
-    newOrdering.splice(newPosition, 0, columnId);
-    setColumnOrderIds(newOrdering);
-    setColumnOrder(newOrdering);
+    setColumnOrderIds(newOrdering); // component state
+    setColumnOrder(newOrdering); // table instance state
   };
+  console.log({ columnOrderIds });
 
   return (
     <>
@@ -369,57 +366,11 @@ const Page: NextPage = () => {
                     </Box>
                   )}
 
-                  <Box sx={{ mt: 5, mx: 3 }}>
-                    <Text variant="heading3" sx={{ mb: 2 }}>
-                      Column position in the table
-                    </Text>
-                    <Text>
-                      Current:{" "}
-                      {columnOrderIds.findIndex((d) => d === activeColumn) + 1}
-                    </Text>
-                    <Flex>
-                      <Button
-                        variant="reset"
-                        sx={{
-                          mx: 2,
-                          color: "monochrome800",
-                        }}
-                        onClick={() => {
-                          const currentPosition = columnOrderIds.findIndex(
-                            (d) => d === activeColumn
-                          );
-                          const newPosition = currentPosition - 1;
-                          reorderColumns(
-                            activeColumn,
-                            currentPosition,
-                            newPosition
-                          );
-                        }}
-                      >
-                        ⬅
-                      </Button>
-                      <Button
-                        variant="reset"
-                        sx={{
-                          mx: 2,
-                          color: "monochrome800",
-                        }}
-                        onClick={() => {
-                          const currentPosition = displayedColumns.findIndex(
-                            (d) => d.accessor === activeColumn
-                          );
-                          const newPosition = currentPosition + 1;
-                          reorderColumns(
-                            activeColumn,
-                            currentPosition,
-                            newPosition
-                          );
-                        }}
-                      >
-                        ⮕
-                      </Button>
-                    </Flex>
-                  </Box>
+                  <ColumnReorderingArrows
+                    activeColumn={activeColumn}
+                    columnOrderIds={columnOrderIds}
+                    reorderColumns={reorderColumns}
+                  />
 
                   <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                     Sort rows by this column
@@ -464,7 +415,7 @@ const Page: NextPage = () => {
                   ))}*/}
                 </>
               )}
-              <Box sx={{ mx: 3 }}>{JSON.stringify(sortingIds)}</Box>
+              {/* <Box sx={{ mx: 3 }}>{JSON.stringify(sortingIds)}</Box> */}
             </Box>
           </Grid>
         </Box>
