@@ -150,7 +150,7 @@ const Page: NextPage = () => {
     [columnOrderIds, hiddenIds]
   );
   const hiddenColumns = columns.filter((c) => hiddenIds.includes(c.accessor));
-  console.log({ columnOrderIds });
+
   return (
     <>
       <ContentLayout>
@@ -249,6 +249,15 @@ const Page: NextPage = () => {
 
             {/* Table */}
             <Box sx={{ m: 4, p: 2 }}>
+              <Box sx={{ my: 3 }}>
+                SORTING:
+                {sortingIds.map((s, i) => (
+                  <Box>
+                    {i + 1} - {s.id} in {s.desc ? "descending" : "ascending"}{" "}
+                    order{" "}
+                  </Box>
+                ))}
+              </Box>
               <table
                 {...getTableProps()}
                 style={{ borderSpacing: 0, border: "1px solid black" }}
