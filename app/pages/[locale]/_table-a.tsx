@@ -63,6 +63,7 @@ const Page: NextPage = () => {
     []
   );
   const [sortingIds, setSortingIds] = React.useState(initialSortingIds);
+  const [columnOrder, setColumnOrder] = React.useState(columnsToSort);
 
   // Control functions
   const updateGroupings = (g: string) => {
@@ -135,6 +136,7 @@ const Page: NextPage = () => {
   } = tableInstance;
   console.log({ groupingIds });
   console.log({ sortingIds });
+  console.log({ columnOrder });
 
   return (
     <>
@@ -237,31 +239,57 @@ const Page: NextPage = () => {
                 <thead>
                   {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column, i) => (
-                        <Box
-                          as="th"
-                          sx={{ textAlign: "left" }}
-                          {...column.getHeaderProps()}
-                        >
-                          {column.canGroupBy ? (
-                            <Box
-                              sx={{
-                                fontSize: 1,
-                                color: column.isGrouped
-                                  ? "primary"
-                                  : "monochrome700",
-                                fontWeight: column.isGrouped ? 800 : 500,
-                              }}
-                              // {...column.getGroupByToggleProps()}
-                            >
-                              {column.isGrouped
-                                ? "Grouped "
-                                : `Column ${i + 1}`}
-                            </Box>
-                          ) : null}
-                          {column.render("Header")}
-                        </Box>
-                      ))}
+                      {headerGroup.headers.map((column, i) => {
+                        console.log({ column });
+                        return (
+                          <Box
+                            as="th"
+                            sx={{ textAlign: "left" }}
+                            {...column.getHeaderProps()}
+                          >
+                            {column.canGroupBy ? (
+                              <Box
+                                sx={{
+                                  fontSize: 1,
+                                  color: column.isGrouped
+                                    ? "primary"
+                                    : "monochrome700",
+                                  fontWeight: column.isGrouped ? 800 : 500,
+                                }}
+                                // {...column.getGroupByToggleProps()}
+                              >
+                                {column.isGrouped
+                                  ? "Grouped "
+                                  : `Column ${i + 1}`}
+                              </Box>
+                            ) : null}
+                            {column.isSorted ? (
+                              <Box
+                                sx={{
+                                  fontSize: 1,
+                                  color: column.isSorted
+                                    ? "success"
+                                    : "monochrome700",
+                                  fontWeight: column.isSorted ? 800 : 500,
+                                }}
+                              >
+                                {column.isSorted ? "Sorted " : " "}{" "}
+                                <Box
+                                  as="span"
+                                  sx={{
+                                    color: column.isSortedDesc
+                                      ? "alert"
+                                      : "success",
+                                  }}
+                                >
+                                  {column.isSortedDesc ? " ↑" : " ↓"}
+                                </Box>
+                              </Box>
+                            ) : null}
+                            {column.render("Header")}
+                          </Box>
+                        );
+                      })}
                     </tr>
                   ))}
                 </thead>
