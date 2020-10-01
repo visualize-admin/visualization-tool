@@ -1,34 +1,27 @@
 // @ts-nocheck
 import {
   Box,
-  Button,
+  Checkbox,
   Flex,
   Grid,
   Label,
-  Text,
-  Checkbox,
   Radio,
-  Select,
+  Text,
 } from "@theme-ui/components";
-
 import * as React from "react";
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  useExpanded,
-  useFilters,
-  useGlobalFilter,
-  useGroupBy,
-  useTable,
-  useColumnOrder,
-  useSortBy,
   Column,
+  useColumnOrder,
+  useExpanded,
+  useGroupBy,
+  useSortBy,
+  useTable,
 } from "react-table";
-
-import { moveColumn, ColumnReorderingArrows } from "./column-reordering-arrows";
-import { ColumnDimension } from "./column-dimensions";
-import { ButtonNone } from "./button-none";
-import { RowUI } from "./row";
 import { Data } from "../../pages/[locale]/_table-a";
+import { ColumnDimension } from "./column-dimensions";
+import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";
+import { RowUI } from "./row";
 
 export const GROUPED_COLOR = "#F5F5F5";
 
@@ -43,8 +36,7 @@ export const Table = ({
   const [groupingIds, setGroupingIds] = useState([]);
   const [hiddenIds, setHiddenIds] = useState([]);
   const [sortingIds, setSortingIds] = useState([]);
-  const [displayedColumns, setDisplayedColumns] = useState([]); //columnOrderIds.filter((c) => !hiddenIds.includes(c));
-  // const [hiddenColumns, setHiddenColumns] = useState([]); //columnOrderIds.filter((c) => !hiddenIds.includes(c));
+  const [displayedColumns, setDisplayedColumns] = useState([]);
   const [columnOrderIds, setColumnOrderIds] = useState();
 
   useEffect(() => {
@@ -52,17 +44,9 @@ export const Table = ({
     setColumnOrderIds(columns.map((d) => d.accessor));
     setGroupingIds([]);
     setSortingIds([]);
+    setActiveColumn("");
   }, [data, columns]);
-  // const displayedColumns = columnOrderIds.filter((c) => !hiddenIds.includes(c));
-  // const hiddenColumns = useMemo(
-  //   () => columns.filter((c) => hiddenIds.includes(c.accessor)),
-  //   [columns, hiddenIds]
-  // );
-  // const columnsToSort = columns.filter((c) => !hiddenIds.includes(c.accessor));
 
-  // Order & sorting
-
-  // Control functions
   const updateGroupings = (g: string) => {
     if (groupingIds.includes(g)) {
       const newGroupIds = groupingIds.filter((id) => id !== g);
@@ -109,11 +93,6 @@ export const Table = ({
     {
       columns,
       data,
-      // defaultColumn: ["Kanton"],
-      // filterTypes,
-      // initialState: {
-      //   sortBy: initialSortingIds,
-      // },
       useControlledState: (state) => {
         return useMemo(
           () => ({
@@ -121,8 +100,6 @@ export const Table = ({
             groupBy: groupingIds,
             hiddenColumns: hiddenIds,
             sortBy: sortingIds,
-            // filters,
-            // filters: initialFilters,
           }),
           [state, groupingIds, hiddenIds, sortingIds]
         );
@@ -151,7 +128,7 @@ export const Table = ({
   return (
     <Grid
       sx={{
-        gridTemplateColumns: "350px auto 350px",
+        gridTemplateColumns: "1.5fr 5fr 1.5fr",
       }}
     >
       {/* Left Column */}
@@ -171,7 +148,7 @@ export const Table = ({
           Sortiert nach:
           {sortingIds.length > 0
             ? sortingIds.map((s, i) => (
-                <Box>
+                <Box as="span" sx={{ mr: 2 }}>
                   {i + 1} - {s.id},{" "}
                   {s.desc ? "absteigend (9 → 1)" : "aufsteigend (1 → 9)"}{" "}
                 </Box>
@@ -180,7 +157,10 @@ export const Table = ({
         </Box>
         <table
           {...getTableProps()}
-          style={{ borderSpacing: 0, border: "1px solid black" }}
+          style={{
+            borderSpacing: 0,
+            border: "1px solid black",
+          }}
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -362,7 +342,6 @@ export const Table = ({
                   ))}*/}
           </>
         )}
-        {/* <Box sx={{ mx: 3 }}>{JSON.stringify(sortingIds)}</Box> */}
       </Box>
     </Grid>
   );
