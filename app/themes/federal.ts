@@ -256,7 +256,8 @@ export const theme: Theme = {
           m: 0,
           p: 2,
           borderBottom: "1px solid black",
-          borderRight: "1px solid black",
+          borderRight: 0,
+          // borderRight: "1px solid black",
 
           ":last-child": {
             borderRight: 0,
@@ -266,7 +267,8 @@ export const theme: Theme = {
           m: 0,
           p: 2,
           borderBottom: "1px solid black",
-          borderRight: "1px solid black",
+          borderRight: 0,
+          // borderRight: "1px solid black",
 
           ":last-child": {
             borderRight: 0,

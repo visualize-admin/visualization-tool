@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Box, Label, Radio } from "@theme-ui/components";
+import { Box, Label, Radio, Flex } from "@theme-ui/components";
 import { NextPage } from "next";
 import * as React from "react";
 import { useMemo } from "react";
@@ -42,9 +42,16 @@ const Page: NextPage = () => {
     <>
       <ContentLayout>
         <Box sx={{ px: 4, bg: "muted", mb: "auto" }}>
-          <Box sx={{ m: 4, bg: "monochrome000", p: 2 }}>
+          <Flex
+            sx={{
+              m: 4,
+              bg: "monochrome000",
+              p: 2,
+              justifyContent: "flex-start",
+            }}
+          >
             Dataset:
-            <Label>
+            <Label sx={{ mr: 3, width: "auto" }}>
               <Radio
                 name="holzernte"
                 value="holzernte"
@@ -53,7 +60,7 @@ const Page: NextPage = () => {
               />
               holzernte
             </Label>
-            <Label>
+            <Label sx={{ mr: 3, width: "auto" }}>
               <Radio
                 name="roteListen"
                 value="roteListen"
@@ -62,7 +69,8 @@ const Page: NextPage = () => {
               />
               roteListen
             </Label>
-          </Box>
+          </Flex>
+
           <Table data={data} columns={columns} />
         </Box>
       </ContentLayout>

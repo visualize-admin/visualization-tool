@@ -22,6 +22,9 @@ export const ColumnDimension = React.memo(
     console.log(groupingIds);
     return (
       <>
+        <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
+          Gruppierung
+        </Text>
         {groupingIds.length > 0 ? (
           <>
             {groupingIds.map((dim, i) => (
@@ -35,7 +38,7 @@ export const ColumnDimension = React.memo(
                   bg: GROUPED_COLOR,
                 }}
               >
-                <Box sx={{ color: "gray" }}>{`Column ${i + 1}`}</Box>
+                <Box sx={{ color: "gray" }}>{`Spalte ${i + 1}`}</Box>
                 <Box>{`${dim}`}</Box>
               </Button>
             ))}
@@ -44,7 +47,7 @@ export const ColumnDimension = React.memo(
           <ButtonNone />
         )}
         <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
-          Columns
+          Spalten
         </Text>
         {displayedColumns
           .filter((dim) => !groupingIds.includes(dim.accessor))
@@ -69,7 +72,7 @@ export const ColumnDimension = React.memo(
                   },
                 }}
               >
-                <Box sx={{ color: "gray" }}>{`Column ${
+                <Box sx={{ color: "gray" }}>{`Spalte ${
                   groupingIds.length + i + 1
                 }`}</Box>
                 <Box>{`${dim.Header}`}</Box>
@@ -78,7 +81,7 @@ export const ColumnDimension = React.memo(
           })}
 
         <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
-          Hide & filter (Columns)
+          Filter
         </Text>
 
         {hiddenIds.length > 0 ? (
@@ -95,7 +98,7 @@ export const ColumnDimension = React.memo(
                     mb: 3,
                   }}
                 >
-                  <Box sx={{ color: "gray" }}>{`Column ${i + 1}`}</Box>
+                  <Box sx={{ color: "gray" }}>{`Entfernte Spalte`}</Box>
                   <Box>{`${dim.Header}`}</Box>
                 </Button>
               ))}

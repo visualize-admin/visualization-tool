@@ -131,6 +131,8 @@ export const Table = ({
   console.log({ groupingIds });
   console.log({ hiddenIds });
 
+  console.log("number of rows", rows.length);
+
   return (
     <Grid
       sx={{
