@@ -3,15 +3,23 @@ import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { Row } from "react-table";
 import { Data, GROUPED_COLOR } from "../../pages/[locale]/_table-a";
+
+type ColumnStyle = {
+  columnId: string;
+  style: string;
+  textStyle: "regular" | "bold";
+};
 export const RowUI = ({
   row,
   prepareRow,
+  columnStyles,
 }: {
   row: Row<Data>;
   prepareRow: (row: Row<Data>) => void;
+  columnStyles: ColumnStyle[];
 }) => {
   prepareRow(row);
-
+  console.log(row);
   return (
     <>
       <tr
@@ -31,6 +39,11 @@ export const RowUI = ({
                       cell.isGrouped || cell.isPlaceholder
                         ? GROUPED_COLOR
                         : "white",
+                    fontWeight:
+                      columnStyles.find((c) => c.id === cell.column.id)
+                        ?.textStyle === "bold"
+                        ? 800
+                        : 500,
                   }}
                   {...cell.getCellProps()}
                 >

@@ -6,6 +6,7 @@ import {
   Grid,
   Label,
   Radio,
+  Select,
   Text,
 } from "@theme-ui/components";
 import * as React from "react";
@@ -39,13 +40,20 @@ export const Table = ({
   const [sortingIds, setSortingIds] = useState([]);
   const [displayedColumns, setDisplayedColumns] = useState([]);
   const [columnOrderIds, setColumnOrderIds] = useState([]);
-
+  const [columnStyles, setColumnStyles] = useState([]);
   useEffect(() => {
     setDisplayedColumns(columns);
     setColumnOrderIds(columns.map((d) => d.accessor));
     setGroupingIds([]);
     setSortingIds([]);
     setActiveColumn("");
+    setColumnStyles(
+      columns.map((c) => ({
+        id: c.accessor,
+        style: "text",
+        textStyle: "regular",
+      }))
+    );
   }, [data, columns]);
 
   const updateGroupings = (g: string) => {
@@ -82,7 +90,29 @@ export const Table = ({
     newSortingIds[columnIdPosition] = { id: columnId, desc };
     setSortingIds(newSortingIds);
   };
-
+  const updateColumnStyle = ({
+    columnId,
+    style,
+    textStyle,
+  }: {
+    columnId: string;
+    style: string;
+    textStyle: string;
+  }) => {
+    const columnStylesList = columnStyles.map((d) => d.id);
+    if (!columnStylesList.includes(columnId)) {
+      let newColumnStyles = [
+        ...columnStyles,
+        { id: columnId, style, textStyle },
+      ];
+      setColumnStyles(newColumnStyles);
+    } else {
+      const columnIdPosition = columnStyles.findIndex((d) => d.id === columnId);
+      let newColumnStyles = [...columnStyles];
+      newColumnStyles[columnIdPosition] = { id: columnId, style, textStyle };
+      setColumnStyles(newColumnStyles);
+    }
+  };
   const {
     getTableProps,
     getTableBodyProps,
@@ -131,6 +161,7 @@ export const Table = ({
   console.log({ sortingIds });
   console.log({ groupingIds });
   console.log({ hiddenIds });
+  console.log({ columnStyles });
 
   console.log("number of rows", rows.length);
 
@@ -226,13 +257,19 @@ export const Table = ({
 
           <tbody {...getTableBodyProps()}>
             {rows.map((row) => {
-              return <RowUI row={row} prepareRow={prepareRow} />;
+              return (
+                <RowUI
+                  row={row}
+                  prepareRow={prepareRow}
+                  columnStyles={columnStyles}
+                />
+              );
             })}
           </tbody>
         </table>
       </Box>
 
-      {/* Right Column */}
+      {/* Right Column -------------------------------------------------------------------------------------------------------------------------------------- */}
       <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
         {activeColumn !== "" && (
           <>
@@ -290,7 +327,72 @@ export const Table = ({
               updateSortingIds={updateSortingIds}
               updateSortingOrder={updateSortingOrder}
             />
-
+            <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
+              Spalten Formatierung
+            </Text>
+            <Select
+              onChange={(e) =>
+                updateColumnStyle({
+                  columnId: activeColumn,
+                  style: e.currentTarget.value,
+                  textStyle: "regular",
+                })
+              }
+            >
+              <option value="text">Text</option>
+              <option value="category">Kategorie</option>
+            </Select>
+            {columnStyles.find((c) => c.id === activeColumn) &&
+              columnStyles.find((c) => c.id === activeColumn).style ===
+                "text" && (
+                <Flex sx={{ mx: 3, my: 2 }}>
+                  Schriftgewicht
+                  <Label>
+                    <Radio
+                      disabled={
+                        !columnStyles.map((d) => d.id).includes(activeColumn)
+                      }
+                      name="regular"
+                      value="regular"
+                      checked={
+                        columnStyles.find((d) => d.id === activeColumn) &&
+                        columnStyles.find((d) => d.id === activeColumn)
+                          .textStyle === "regular"
+                      }
+                      onClick={() =>
+                        updateColumnStyle({
+                          columnId: activeColumn,
+                          style: "text",
+                          textStyle: "regular",
+                        })
+                      }
+                    />
+                    Regular
+                  </Label>
+                  <Label>
+                    <Radio
+                      disabled={
+                        !columnStyles.map((d) => d.id).includes(activeColumn)
+                      }
+                      name="bold"
+                      value="bold"
+                      checked={
+                        columnStyles.find((d) => d.id === activeColumn) &&
+                        columnStyles.find((d) => d.id === activeColumn)
+                          .textStyle === "bold"
+                      }
+                      onClick={() =>
+                        updateColumnStyle({
+                          columnId: activeColumn,
+                          style: "text",
+                          textStyle: "bold",
+                        })
+                      }
+                    />
+                    Bold
+                  </Label>
+                </Flex>
+              )}
             {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                   Filter rows
                 </Text>
