@@ -37,7 +37,7 @@ export const Table = ({
   const [hiddenIds, setHiddenIds] = useState([]);
   const [sortingIds, setSortingIds] = useState([]);
   const [displayedColumns, setDisplayedColumns] = useState([]);
-  const [columnOrderIds, setColumnOrderIds] = useState();
+  const [columnOrderIds, setColumnOrderIds] = useState([]);
 
   useEffect(() => {
     setDisplayedColumns(columns);
@@ -116,6 +116,12 @@ export const Table = ({
     const newOrdering = moveColumn(columnOrderIds, oldPosition, newPosition);
     setColumnOrderIds(newOrdering); // component state
     setColumnOrder(newOrdering); // table instance state
+    const newOrderedColums = [...columns];
+    newOrderedColums.sort(
+      (a, b) =>
+        newOrdering.indexOf(a.accessor) - newOrdering.indexOf(b.accessor)
+    );
+    setDisplayedColumns(newOrderedColums);
   };
 
   console.log({ data });
@@ -166,7 +172,6 @@ export const Table = ({
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column, i) => {
-                  // console.log({ column });
                   return (
                     <Box
                       as="th"
@@ -329,17 +334,17 @@ export const Table = ({
             </Flex>
 
             {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
-                    Filter rows
-                  </Text>
-                  {activeColumnValues.map((v) => (
-                    <Label sx={{ mx: 3 }}>
-                      <Checkbox
-                        checked={false}
-                        onClick={() => updateFilterIds(activeColumn, v)}
-                      />
-                      {v}
-                    </Label>
-                  ))}*/}
+                  Filter rows
+                </Text>
+                {activeColumnValues.map((v) => (
+                  <Label sx={{ mx: 3 }}>
+                    <Checkbox
+                      checked={false}
+                      onClick={() => updateFilterIds(activeColumn, v)}
+                    />
+                    {v}
+                  </Label>
+                ))}*/}
           </>
         )}
       </Box>
