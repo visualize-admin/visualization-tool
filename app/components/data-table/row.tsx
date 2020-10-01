@@ -1,16 +1,8 @@
 // @ts-nocheck
+import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { Row } from "react-table";
 import { Data, GROUPED_COLOR } from "../../pages/[locale]/_table-a";
-import {
-  Box,
-  Checkbox,
-  Flex,
-  Grid,
-  Label,
-  Radio,
-  Text,
-} from "@theme-ui/components";
 export const RowUI = ({
   row,
   prepareRow,
@@ -19,8 +11,6 @@ export const RowUI = ({
   prepareRow: (row: Row<Data>) => void;
 }) => {
   prepareRow(row);
-
-  console.log(row.depth);
 
   return (
     <>

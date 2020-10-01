@@ -21,6 +21,7 @@ import {
 import { Data } from "../../pages/[locale]/_table-a";
 import { ColumnDimension } from "./column-dimensions";
 import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";
+import { ColumnSorting } from "./column-sorting";
 import { RowUI } from "./row";
 
 export const GROUPED_COLOR = "#F5F5F5";
@@ -191,7 +192,7 @@ export const Table = ({
                           }}
                           // {...column.getGroupByToggleProps()}
                         >
-                          {column.isGrouped ? "Grouped " : `Column ${i + 1}`}
+                          {column.isGrouped ? "Gruppiert " : `Spalte ${i + 1}`}
                         </Box>
                       ) : null}
                       {column.isSorted ? (
@@ -204,7 +205,7 @@ export const Table = ({
                             fontWeight: column.isSorted ? 800 : 500,
                           }}
                         >
-                          {column.isSorted ? "Sorted " : " "}{" "}
+                          {column.isSorted ? "Sortiert " : " "}{" "}
                           <Box
                             as="span"
                             sx={{
@@ -247,7 +248,7 @@ export const Table = ({
                     updateGroupings(activeColumn);
                   }}
                 />
-                Use as group
+                Als Gruppe verwenden
               </Label>
               <Box sx={{ ml: 3 }}>
                 <Label>
@@ -261,7 +262,7 @@ export const Table = ({
                     checked={hiddenIds.includes(activeColumn)}
                     onClick={() => updateHiddenIds(activeColumn)}
                   />
-                  Hide
+                  Spalte ausblenden
                 </Label>
               </Box>
             </Box>
@@ -272,7 +273,7 @@ export const Table = ({
                     checked={hiddenIds.includes(activeColumn)}
                     onClick={() => updateHiddenIds(activeColumn)}
                   />
-                  Remove from table
+                  Spalte entfernen
                 </Label>
               </Box>
             )}
@@ -283,57 +284,12 @@ export const Table = ({
               reorderColumns={reorderColumns}
               disabled={groupingIds.includes(activeColumn)}
             />
-
-            <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
-              Sort rows by this column
-            </Text>
-            <Label sx={{ mx: 3, my: 2 }}>
-              <Checkbox
-                checked={sortingIds.map((d) => d.id).includes(activeColumn)}
-                onClick={() => updateSortingIds(activeColumn)}
-              />
-              Sort by the colum {activeColumn}
-            </Label>
-            <Flex sx={{ mx: 3, mb: 2 }}>
-              <Label
-                sx={{
-                  color: !sortingIds.map((d) => d.id).includes(activeColumn)
-                    ? "monochrome300"
-                    : "monochrome900",
-                }}
-              >
-                <Radio
-                  disabled={!sortingIds.map((d) => d.id).includes(activeColumn)}
-                  name="ascending"
-                  value="ascending"
-                  checked={
-                    sortingIds.find((d) => d.id === activeColumn) &&
-                    sortingIds.find((d) => d.id === activeColumn).desc === false
-                  }
-                  onClick={(e) => updateSortingOrder(activeColumn, false)}
-                />
-                1 → 9
-              </Label>
-              <Label
-                sx={{
-                  color: !sortingIds.map((d) => d.id).includes(activeColumn)
-                    ? "monochrome300"
-                    : "monochrome900",
-                }}
-              >
-                <Radio
-                  disabled={!sortingIds.map((d) => d.id).includes(activeColumn)}
-                  name="descending"
-                  value="descending"
-                  checked={
-                    sortingIds.find((d) => d.id === activeColumn) &&
-                    sortingIds.find((d) => d.id === activeColumn).desc
-                  }
-                  onClick={(e) => updateSortingOrder(activeColumn, true)}
-                />
-                9 → 1
-              </Label>
-            </Flex>
+            <ColumnSorting
+              activeColumn={activeColumn}
+              sortingIds={sortingIds}
+              updateSortingIds={updateSortingIds}
+              updateSortingOrder={updateSortingOrder}
+            />
 
             {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                   Filter rows

@@ -42,8 +42,8 @@ export const ColumnReorderingArrows = React.memo(
 
     return (
       <Box sx={{ mt: 5, mx: 3 }}>
-        <Text variant="heading3" sx={{ mb: 2 }}>
-          Column position in the table
+        <Text variant="heading3" sx={{ my: 2 }}>
+          Spalten Position
         </Text>
         <Flex>
           <Button
