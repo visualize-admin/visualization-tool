@@ -2,6 +2,8 @@
 import { Box, Flex, Label, Radio, Select, Text } from "@theme-ui/components";
 import * as React from "react";
 import { ColorPickerMenu } from "../chart-controls/color-picker";
+import { getPalette } from "../../domain/helpers";
+import { scaleOrdinal } from "d3-scale";
 
 const bafuColors = [
   "#F9C16E",
@@ -28,6 +30,7 @@ export type ColumnStyle = {
   style: string;
   textStyle: "regular" | "bold";
 };
+
 export const ColumnFormatting = React.memo(
   ({
     activeColumn,
@@ -48,19 +51,45 @@ export const ColumnFormatting = React.memo(
         <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
           Spalten Formatierung
         </Text>
+        Visualisierungsstil
         <Select
+          sx={{ mx: 3, my: 2, p: 3 }}
           onChange={(e) =>
             updateColumnStyle({
               columnId: activeColumn,
               style: e.currentTarget.value,
-              property: "textStyle",
-              value: "regular",
+              property: "style",
+              value: e.currentTarget.value,
             })
           }
         >
           <option value="text">Text</option>
           <option value="category">Kategorie</option>
         </Select>
+        {columnStyles.find((c) => c.id === activeColumn) &&
+          columnStyles.find((c) => c.id === activeColumn).style ===
+            "category" && (
+            <>
+              Kategorical Farben
+              <Select
+                sx={{ mx: 3, my: 2, p: 3 }}
+                onChange={(e) =>
+                  updateColumnStyle({
+                    columnId: activeColumn,
+                    style: "category",
+                    property: "colorRange",
+                    value: scaleOrdinal().range(
+                      getPalette(e.currentTarget.value)
+                    ),
+                  })
+                }
+              >
+                <option value="accent">accent</option>
+                <option value="category10">category10</option>
+                <option value="set1">set1</option>
+              </Select>
+            </>
+          )}
         {columnStyles.find((c) => c.id === activeColumn) &&
           columnStyles.find((c) => c.id === activeColumn).style === "text" && (
             <>

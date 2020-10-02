@@ -9,12 +9,15 @@ export const RowUI = ({
   row,
   prepareRow,
   columnStyles,
-}: {
+}: // colorDomains,
+{
   row: Row<Data>;
   prepareRow: (row: Row<Data>) => void;
   columnStyles: ColumnStyle[];
+  // colorDomains: { id: string; domain: string[] }[];
 }) => {
   prepareRow(row);
+
   return (
     <>
       <tr
@@ -27,36 +30,77 @@ export const RowUI = ({
         {row.subRows.length === 0 ? (
           <>
             {row.cells.map((cell, i) => {
+              const cellTextColor =
+                columnStyles.find((c) => c.id === cell.column.id) &&
+                columnStyles.find((c) => c.id === cell.column.id)?.textColor
+                  ? columnStyles.find((c) => c.id === cell.column.id)?.textColor
+                  : "#333333";
+              const cellBgColor =
+                cell.isGrouped || cell.isPlaceholder
+                  ? GROUPED_COLOR
+                  : columnStyles.find((c) => c.id === cell.column.id) &&
+                    columnStyles.find((c) => c.id === cell.column.id)
+                      ?.columnColor
+                  ? columnStyles.find((c) => c.id === cell.column.id)
+                      ?.columnColor
+                  : "white";
+              const cellTagColor =
+                columnStyles.find((c) => c.id === cell.column.id) &&
+                columnStyles.find((c) => c.id === cell.column.id)?.colorRange &&
+                columnStyles.find((c) => c.id === cell.column.id)?.colorDomain
+                  ? columnStyles
+                      .find((c) => c.id === cell.column.id)
+                      ?.colorRange(cell.value)
+                  : "#333333";
               return (
-                <td
-                  style={{
-                    color:
-                      columnStyles.find((c) => c.id === cell.column.id) &&
-                      columnStyles.find((c) => c.id === cell.column.id)
-                        ?.textColor
-                        ? columnStyles.find((c) => c.id === cell.column.id)
-                            ?.textColor
-                        : "#333333",
-                    background:
-                      cell.isGrouped || cell.isPlaceholder
-                        ? GROUPED_COLOR
-                        : columnStyles.find((c) => c.id === cell.column.id) &&
+                <>
+                  {columnStyles.find((c) => c.id === cell.column.id) &&
+                  columnStyles.find((c) => c.id === cell.column.id)?.style ===
+                    "text" ? (
+                    <td
+                      style={{
+                        color: cellTextColor,
+                        background: cellBgColor,
+                        fontWeight:
+                          columnStyles.find((c) => c.id === cell.column.id) &&
                           columnStyles.find((c) => c.id === cell.column.id)
-                            ?.columnColor
-                        ? columnStyles.find((c) => c.id === cell.column.id)
-                            ?.columnColor
-                        : "white",
-                    fontWeight:
-                      columnStyles.find((c) => c.id === cell.column.id) &&
-                      columnStyles.find((c) => c.id === cell.column.id)
-                        ?.textStyle === "bold"
-                        ? 800
-                        : 400,
-                  }}
-                  {...cell.getCellProps()}
-                >
-                  {cell.render("Cell")}
-                </td>
+                            ?.textStyle === "bold"
+                            ? 800
+                            : 400,
+                      }}
+                      {...cell.getCellProps()}
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  ) : (
+                    <td
+                      style={{
+                        color: "#333333",
+                        background: "white",
+                        fontWeight:
+                          columnStyles.find((c) => c.id === cell.column.id) &&
+                          columnStyles.find((c) => c.id === cell.column.id)
+                            ?.textStyle === "bold"
+                            ? 800
+                            : 400,
+                      }}
+                      {...cell.getCellProps()}
+                    >
+                      <Box
+                        as="span"
+                        sx={{
+                          background: cellTagColor,
+                          borderRadius: "15px",
+                          px: 3,
+                          py: 1,
+                          my: 1,
+                        }}
+                      >
+                        {cell.render("Cell")}
+                      </Box>
+                    </td>
+                  )}
+                </>
               );
             })}
           </>

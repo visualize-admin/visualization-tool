@@ -26,6 +26,8 @@ import { ColumnSorting } from "./column-sorting";
 import { RowUI } from "./row";
 import { ColumnFormatting } from "./column-formatting";
 import { setWith } from "lodash";
+import { getPalette } from "../../domain/helpers";
+import { scaleOrdinal } from "d3-scale";
 
 export const GROUPED_COLOR = "#F5F5F5";
 
@@ -43,6 +45,8 @@ export const Table = ({
   const [displayedColumns, setDisplayedColumns] = useState([]);
   const [columnOrderIds, setColumnOrderIds] = useState([]);
   const [columnStyles, setColumnStyles] = useState([]);
+  // const [colorDomains, setColorDomains] = useState([]);
+
   useEffect(() => {
     setDisplayedColumns(columns);
     setColumnOrderIds(columns.map((d) => d.accessor));
@@ -56,10 +60,21 @@ export const Table = ({
         textStyle: "regular",
         textColor: "#333333",
         columnColor: "#ffffff",
+        colorRange: scaleOrdinal().range(getPalette("accent")),
+        colorDomain: [...new Set(data.map((d) => d[c.accessor]))],
       }))
     );
+    // setColorDomains(
+    //   columns.map((c) => ({
+    //     id: c.accessor,
+    //     domain: [...new Set(data.map((d) => d[c.accessor]))],
+    //   }))
+    // );
   }, [data, columns]);
 
+  const updateActiveColumn = (columnId: string) => {
+    setActiveColumn(columnId);
+  };
   const updateGroupings = (g: string) => {
     if (groupingIds.includes(g)) {
       const newGroupIds = groupingIds.filter((id) => id !== g);
@@ -113,13 +128,11 @@ export const Table = ({
     style,
     property,
     value,
-  }: // textStyle,
-  {
+  }: {
     columnId: string;
     style: string;
     property: string;
     value: string;
-    // textStyle: string;
   }) => {
     const columnStylesList = columnStyles.map((d) => d.id);
     if (!columnStylesList.includes(columnId)) {
@@ -131,14 +144,11 @@ export const Table = ({
     } else {
       const columnIdPosition = columnStyles.findIndex((d) => d.id === columnId);
       const thisColumnStyle = columnStyles.find((d) => d.id === columnId);
-      // console.log({ thisColumnStyle });
       setWith(thisColumnStyle, property, value, Object);
-      // console.log({ thisColumnStyle });
       let newColumnStyles = [...columnStyles];
       newColumnStyles.map((c, i) =>
         i === columnIdPosition ? thisColumnStyle : { ...c }
       );
-      // newColumnStyles[columnIdPosition] = { id: columnId, style, textStyle };
       setColumnStyles(newColumnStyles);
     }
   };
@@ -179,6 +189,7 @@ export const Table = ({
   console.log({ groupingIds });
   console.log({ hiddenIds });
   console.log({ columnStyles });
+  // console.log({ colorDomains });
 
   console.log("number of rows", rows.length);
 
@@ -194,7 +205,7 @@ export const Table = ({
           groupingIds={groupingIds}
           displayedColumns={displayedColumns}
           activeColumn={activeColumn}
-          setActiveColumn={setActiveColumn}
+          setActiveColumn={updateActiveColumn}
           hiddenIds={hiddenIds}
         />
       </Box>
@@ -279,6 +290,7 @@ export const Table = ({
                   row={row}
                   prepareRow={prepareRow}
                   columnStyles={columnStyles}
+                  // colorDomains={colorDomains}
                 />
               );
             })}
