@@ -61,6 +61,8 @@ export const RowUI = ({
                       style={{
                         color: cellTextColor,
                         background: cellBgColor,
+                        textAlign:
+                          typeof cell.value === "number" ? "right" : "left",
                         fontWeight:
                           columnStyles.find((c) => c.id === cell.column.id) &&
                           columnStyles.find((c) => c.id === cell.column.id)
