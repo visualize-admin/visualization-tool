@@ -62,7 +62,7 @@ export const Table = ({
             ? scaleLinear()
                 .range(["white", "red"])
                 .domain(extent(data, (d) => d[c.accessor]))
-            : scaleOrdinal().range(getPalette("accent")),
+            : scaleOrdinal().range(getPalette("set3")),
         domain:
           typeof data[0][c.accessor] === "number"
             ? extent(data, (d) => d[c.accessor])
@@ -194,7 +194,11 @@ export const Table = ({
   return (
     <Grid
       sx={{
-        gridTemplateColumns: "1.5fr 5fr 1.5fr",
+        gridTemplateColumns: [
+          "250px auto 250px",
+          "250px auto 250px",
+          "1.5fr 5fr 1.5fr",
+        ],
       }}
     >
       {/* Left Column */}

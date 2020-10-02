@@ -56,9 +56,15 @@ export const ColumnFormatting = React.memo(
     return (
       <>
         <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
-          Spalten Formatierung
+          Formatierung
         </Text>
-        Visualisierungsstil
+        <Text
+          variant="paragraph2"
+          sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+        >
+          Visualisierungsstil
+        </Text>
+
         <Select
           sx={{ mx: 3, my: 2, p: 3 }}
           value={
@@ -88,7 +94,12 @@ export const ColumnFormatting = React.memo(
                 columnStyles={columnStyles}
                 updateColumnStyle={updateColumnStyle}
               />
-              Kategorical Farben
+              <Text
+                variant="paragraph2"
+                sx={{ mx: 3, color: "monochrome700", mt: 2 }}
+              >
+                Farbpalette
+              </Text>
               <Select
                 sx={{ mx: 3, my: 2, p: 3 }}
                 onChange={(e) =>
@@ -118,7 +129,12 @@ export const ColumnFormatting = React.memo(
                 columnStyles={columnStyles}
                 updateColumnStyle={updateColumnStyle}
               />
-              Kategorical Farben
+              <Text
+                variant="paragraph2"
+                sx={{ mx: 3, color: "monochrome700", mt: 2 }}
+              >
+                Farbpalette
+              </Text>
               <Select
                 sx={{ mx: 3, my: 2, p: 3 }}
                 disabled
@@ -287,7 +303,9 @@ const FontWeightFormatting = ({
 }) => {
   return (
     <Box sx={{ mx: 3, my: 2 }}>
-      Schriftgewicht:
+      <Text variant="paragraph2" sx={{ color: "monochrome700", mt: 2 }}>
+        Schriftgewicht
+      </Text>
       <Flex sx={{ mx: 3, my: 2 }}>
         <Label>
           <Radio

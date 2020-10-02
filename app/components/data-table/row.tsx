@@ -113,6 +113,7 @@ export const RowUI = ({
                         style={{
                           color: "#000000",
                           background: thisCell.colorRange(cell.value),
+                          textAlign: "right",
                           fontWeight:
                             thisCell && thisCell?.textStyle === "bold"
                               ? 800
@@ -120,9 +121,7 @@ export const RowUI = ({
                         }}
                         {...cell.getCellProps()}
                       >
-                        {typeof cell.value === "number"
-                          ? formatNumber(cell.value)
-                          : cell.value}
+                        {formatNumber(cell.value)}
                       </td>
                     )
                   }
