@@ -36,7 +36,7 @@ export const RowUI = ({
                         ?.textColor
                         ? columnStyles.find((c) => c.id === cell.column.id)
                             ?.textColor
-                        : "gray",
+                        : "#333333",
                     background:
                       cell.isGrouped || cell.isPlaceholder
                         ? GROUPED_COLOR

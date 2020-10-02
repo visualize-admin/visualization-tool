@@ -54,8 +54,8 @@ export const Table = ({
         id: c.accessor,
         style: "text",
         textStyle: "regular",
-        textColor: "gray",
-        columnColor: "white",
+        textColor: "#333333",
+        columnColor: "#ffffff",
       }))
     );
   }, [data, columns]);

@@ -1,7 +1,27 @@
 // @ts-nocheck
 import { Box, Flex, Label, Radio, Select, Text } from "@theme-ui/components";
 import * as React from "react";
-import { ColorPicker } from "../chart-controls/color-picker";
+import { ColorPickerMenu } from "../chart-controls/color-picker";
+
+const bafuColors = [
+  "#F9C16E",
+  "#F38B3C",
+  "#375172",
+  "#62A8E5",
+  "#32B8DF",
+  "#008F85",
+  "#6ECD9C",
+  "#93B479",
+  "#C97146",
+  "#8D5A54",
+  "#FFFFFF",
+  "#F5F5F5",
+  "#CCCCCC",
+  "#757575",
+  "#454545",
+  "#333333",
+  "#000000",
+];
 
 export type ColumnStyle = {
   columnId: string;
@@ -95,11 +115,24 @@ export const ColumnFormatting = React.memo(
                   </Label>
                 </Flex>
               </Box>
-              <Box sx={{ mx: 3, my: 2 }}>
+              <Flex
+                sx={{
+                  mx: 3,
+                  my: 2,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 Text Farbe:
-                <ColorPicker
-                  selectedColor={"white"}
-                  colors={["white", "orange", "steelblue", "gray", "black"]}
+                <ColorPickerMenu
+                  selectedColor={
+                    columnStyles.find((d) => d.id === activeColumn) &&
+                    columnStyles.find((d) => d.id === activeColumn).textColor
+                      ? columnStyles.find((d) => d.id === activeColumn)
+                          .textColor
+                      : "#333333"
+                  }
+                  colors={bafuColors}
                   onChange={(c) =>
                     updateColumnStyle({
                       columnId: activeColumn,
@@ -109,12 +142,25 @@ export const ColumnFormatting = React.memo(
                     })
                   }
                 />
-              </Box>
-              <Box sx={{ mx: 3, my: 2 }}>
-                Spalten Farbe:
-                <ColorPicker
-                  selectedColor={"white"}
-                  colors={["white", "orange", "steelblue", "gray", "black"]}
+              </Flex>
+              <Flex
+                sx={{
+                  mx: 3,
+                  my: 2,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                Spalte Farbe:
+                <ColorPickerMenu
+                  selectedColor={
+                    columnStyles.find((d) => d.id === activeColumn) &&
+                    columnStyles.find((d) => d.id === activeColumn).columnColor
+                      ? columnStyles.find((d) => d.id === activeColumn)
+                          .columnColor
+                      : "#ffffff"
+                  }
+                  colors={bafuColors}
                   onChange={(c) =>
                     updateColumnStyle({
                       columnId: activeColumn,
@@ -124,7 +170,7 @@ export const ColumnFormatting = React.memo(
                     })
                   }
                 />
-              </Box>
+              </Flex>
             </>
           )}
       </>
