@@ -4,6 +4,7 @@ import * as React from "react";
 import { Row } from "react-table";
 import { Data, GROUPED_COLOR } from "../../pages/[locale]/_table-a";
 import { ColumnStyle } from "./column-formatting";
+import { useFormatNumber } from "../../domain/helpers";
 
 export const RowUI = ({
   row,
@@ -15,6 +16,7 @@ export const RowUI = ({
   columnStyles: ColumnStyle[];
 }) => {
   prepareRow(row);
+  const formatNumber = useFormatNumber();
 
   return (
     <>
@@ -66,7 +68,9 @@ export const RowUI = ({
                       }}
                       {...cell.getCellProps()}
                     >
-                      {cell.render("Cell")}
+                      {typeof cell.value === "number"
+                        ? formatNumber(cell.value)
+                        : cell.value}
                     </td>
                   )}
 
@@ -95,7 +99,9 @@ export const RowUI = ({
                             my: 1,
                           }}
                         >
-                          {cell.render("Cell")}
+                          {typeof cell.value === "number"
+                            ? formatNumber(cell.value)
+                            : cell.value}
                         </Box>
                       </td>
                     )
@@ -105,7 +111,7 @@ export const RowUI = ({
                     thisCell && thisCell?.style === "heatmap" && (
                       <td
                         style={{
-                          color: "#333333",
+                          color: "#000000",
                           background: thisCell.colorRange(cell.value),
                           fontWeight:
                             thisCell && thisCell?.textStyle === "bold"
@@ -114,7 +120,9 @@ export const RowUI = ({
                         }}
                         {...cell.getCellProps()}
                       >
-                        {cell.render("Cell")}
+                        {typeof cell.value === "number"
+                          ? formatNumber(cell.value)
+                          : cell.value}
                       </td>
                     )
                   }
@@ -132,10 +140,10 @@ export const RowUI = ({
                         }}
                         {...cell.getCellProps()}
                       >
-                        <Box
-                        // sx={{height:"50%"}}
-                        >
-                          {cell.render("Cell")}
+                        <Box>
+                          {typeof cell.value === "number"
+                            ? formatNumber(cell.value)
+                            : cell.value}
                         </Box>
                         <Box
                           sx={{
