@@ -54,6 +54,11 @@ export const ColumnFormatting = React.memo(
         Visualisierungsstil
         <Select
           sx={{ mx: 3, my: 2, p: 3 }}
+          value={
+            (columnStyles.find((c) => c.id === activeColumn) &&
+              columnStyles.find((c) => c.id === activeColumn).style) ||
+            "text"
+          }
           onChange={(e) =>
             updateColumnStyle({
               columnId: activeColumn,
@@ -78,9 +83,14 @@ export const ColumnFormatting = React.memo(
                     columnId: activeColumn,
                     style: "category",
                     property: "colorRange",
-                    value: scaleOrdinal().range(
-                      getPalette(e.currentTarget.value)
-                    ),
+                    value:
+                      typeof data[0][c.accessor] === "number"
+                        ? scaleLinear().range(
+                            getPalette(getPalette(e.currentTarget.value))
+                          )
+                        : scaleOrdinal().range(
+                            getPalette(getPalette(e.currentTarget.value))
+                          ),
                   })
                 }
               >
