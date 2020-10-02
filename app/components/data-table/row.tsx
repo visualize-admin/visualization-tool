@@ -9,12 +9,10 @@ export const RowUI = ({
   row,
   prepareRow,
   columnStyles,
-}: // colorDomains,
-{
+}: {
   row: Row<Data>;
   prepareRow: (row: Row<Data>) => void;
   columnStyles: ColumnStyle[];
-  // colorDomains: { id: string; domain: string[] }[];
 }) => {
   prepareRow(row);
 
@@ -30,33 +28,31 @@ export const RowUI = ({
         {row.subRows.length === 0 ? (
           <>
             {row.cells.map((cell, i) => {
+              const thisCell = columnStyles.find(
+                (c) => c.id === cell.column.id
+              );
+
+              // console.log(thisCell?.colorRange.domain());
               const cellTextColor =
-                columnStyles.find((c) => c.id === cell.column.id) &&
-                columnStyles.find((c) => c.id === cell.column.id)?.textColor
-                  ? columnStyles.find((c) => c.id === cell.column.id)?.textColor
+                thisCell && thisCell?.textColor
+                  ? thisCell?.textColor
                   : "#333333";
               const cellBgColor =
                 cell.isGrouped || cell.isPlaceholder
                   ? GROUPED_COLOR
-                  : columnStyles.find((c) => c.id === cell.column.id) &&
-                    columnStyles.find((c) => c.id === cell.column.id)
-                      ?.columnColor
-                  ? columnStyles.find((c) => c.id === cell.column.id)
-                      ?.columnColor
+                  : thisCell && thisCell?.columnColor
+                  ? thisCell?.columnColor
                   : "white";
               const cellTagColor =
-                columnStyles.find((c) => c.id === cell.column.id) &&
-                columnStyles.find((c) => c.id === cell.column.id)?.colorRange &&
-                columnStyles.find((c) => c.id === cell.column.id)?.colorDomain
+                thisCell && thisCell?.colorRange && thisCell?.domain
                   ? columnStyles
                       .find((c) => c.id === cell.column.id)
                       ?.colorRange(cell.value)
                   : "#333333";
               return (
                 <>
-                  {columnStyles.find((c) => c.id === cell.column.id) &&
-                  columnStyles.find((c) => c.id === cell.column.id)?.style ===
-                    "text" ? (
+                  {/* TEXT Formatting */}
+                  {thisCell && thisCell?.style === "text" && (
                     <td
                       style={{
                         color: cellTextColor,
@@ -64,9 +60,7 @@ export const RowUI = ({
                         textAlign:
                           typeof cell.value === "number" ? "right" : "left",
                         fontWeight:
-                          columnStyles.find((c) => c.id === cell.column.id) &&
-                          columnStyles.find((c) => c.id === cell.column.id)
-                            ?.textStyle === "bold"
+                          thisCell && thisCell?.textStyle === "bold"
                             ? 800
                             : 400,
                       }}
@@ -74,34 +68,97 @@ export const RowUI = ({
                     >
                       {cell.render("Cell")}
                     </td>
-                  ) : (
-                    <td
-                      style={{
-                        color: "#333333",
-                        background: "white",
-                        fontWeight:
-                          columnStyles.find((c) => c.id === cell.column.id) &&
-                          columnStyles.find((c) => c.id === cell.column.id)
-                            ?.textStyle === "bold"
-                            ? 800
-                            : 400,
-                      }}
-                      {...cell.getCellProps()}
-                    >
-                      <Box
-                        as="span"
-                        sx={{
-                          background: cellTagColor,
-                          borderRadius: "15px",
-                          px: 3,
-                          py: 1,
-                          my: 1,
+                  )}
+
+                  {
+                    // KATEGORY FORMATTING
+                    thisCell && thisCell?.style === "category" && (
+                      <td
+                        style={{
+                          color: "#333333",
+                          background: "white",
+                          fontWeight:
+                            columnStyles.find((c) => c.id === cell.column.id) &&
+                            thisCell?.textStyle === "bold"
+                              ? 800
+                              : 400,
                         }}
+                        {...cell.getCellProps()}
+                      >
+                        <Box
+                          as="span"
+                          sx={{
+                            background: cellTagColor,
+                            borderRadius: "15px",
+                            px: 3,
+                            py: 1,
+                            my: 1,
+                          }}
+                        >
+                          {cell.render("Cell")}
+                        </Box>
+                      </td>
+                    )
+                  }
+                  {
+                    // Heatmap FORMATTING
+                    thisCell && thisCell?.style === "heatmap" && (
+                      <td
+                        style={{
+                          color: "#333333",
+                          background: thisCell.colorRange(cell.value),
+                          fontWeight:
+                            thisCell && thisCell?.textStyle === "bold"
+                              ? 800
+                              : 400,
+                        }}
+                        {...cell.getCellProps()}
                       >
                         {cell.render("Cell")}
-                      </Box>
-                    </td>
-                  )}
+                      </td>
+                    )
+                  }
+                  {
+                    // Bar Chart FORMATTING
+                    thisCell && thisCell?.style === "bar" && (
+                      <td
+                        style={{
+                          color: "#333333",
+                          background: "white",
+                          fontWeight:
+                            thisCell && thisCell?.textStyle === "bold"
+                              ? 800
+                              : 400,
+                        }}
+                        {...cell.getCellProps()}
+                      >
+                        <Box
+                        // sx={{height:"50%"}}
+                        >
+                          {cell.render("Cell")}
+                        </Box>
+                        <Box
+                          sx={{
+                            width: "100%",
+                            height: "16px",
+                            position: "relative",
+                            backgroundColor: thisCell.barBackground,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: `${thisCell.barScale(cell.value)}%`,
+                              height: "16px",
+                              backgroundColor: thisCell.barColor,
+                            }}
+                          />
+                        </Box>
+                      </td>
+                    )
+                  }
                 </>
               );
             })}

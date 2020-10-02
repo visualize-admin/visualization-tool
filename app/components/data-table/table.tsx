@@ -1,14 +1,5 @@
 // @ts-nocheck
-import {
-  Box,
-  Checkbox,
-  Flex,
-  Grid,
-  Label,
-  Radio,
-  Select,
-  Text,
-} from "@theme-ui/components";
+import { Box, Checkbox, Grid, Label, Text } from "@theme-ui/components";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -27,7 +18,8 @@ import { RowUI } from "./row";
 import { ColumnFormatting } from "./column-formatting";
 import { setWith } from "lodash";
 import { getPalette } from "../../domain/helpers";
-import { scaleOrdinal } from "d3-scale";
+import { scaleOrdinal, scaleLinear } from "d3-scale";
+import { extent } from "d3-array";
 
 export const GROUPED_COLOR = "#F5F5F5";
 
@@ -45,7 +37,6 @@ export const Table = ({
   const [displayedColumns, setDisplayedColumns] = useState([]);
   const [columnOrderIds, setColumnOrderIds] = useState([]);
   const [columnStyles, setColumnStyles] = useState([]);
-  // const [colorDomains, setColorDomains] = useState([]);
 
   useEffect(() => {
     setDisplayedColumns(columns);
@@ -56,20 +47,28 @@ export const Table = ({
     setColumnStyles(
       columns.map((c) => ({
         id: c.accessor,
+        dimensionType: typeof data[0][c.accessor],
         style: "text",
         textStyle: "regular",
         textColor: "#333333",
         columnColor: "#ffffff",
-        colorRange: scaleOrdinal().range(getPalette("accent")),
-        colorDomain: [...new Set(data.map((d) => d[c.accessor]))],
+        barColor: "#006699",
+        barBackground: "#E5E5E5",
+        barScale: scaleLinear()
+          .range([0, 100])
+          .domain(extent(data, (d) => d[c.accessor])),
+        colorRange:
+          typeof data[0][c.accessor] === "number"
+            ? scaleLinear()
+                .range(["white", "red"])
+                .domain(extent(data, (d) => d[c.accessor]))
+            : scaleOrdinal().range(getPalette("accent")),
+        domain:
+          typeof data[0][c.accessor] === "number"
+            ? extent(data, (d) => d[c.accessor])
+            : [...new Set(data.map((d) => d[c.accessor]))],
       }))
     );
-    // setColorDomains(
-    //   columns.map((c) => ({
-    //     id: c.accessor,
-    //     domain: [...new Set(data.map((d) => d[c.accessor]))],
-    //   }))
-    // );
   }, [data, columns]);
 
   const updateActiveColumn = (columnId: string) => {
@@ -189,7 +188,6 @@ export const Table = ({
   console.log({ groupingIds });
   console.log({ hiddenIds });
   console.log({ columnStyles });
-  // console.log({ colorDomains });
 
   console.log("number of rows", rows.length);
 
@@ -290,7 +288,6 @@ export const Table = ({
                   row={row}
                   prepareRow={prepareRow}
                   columnStyles={columnStyles}
-                  // colorDomains={colorDomains}
                 />
               );
             })}
