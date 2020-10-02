@@ -30,9 +30,21 @@ export const RowUI = ({
               return (
                 <td
                   style={{
+                    color:
+                      columnStyles.find((c) => c.id === cell.column.id) &&
+                      columnStyles.find((c) => c.id === cell.column.id)
+                        ?.textColor
+                        ? columnStyles.find((c) => c.id === cell.column.id)
+                            ?.textColor
+                        : "gray",
                     background:
                       cell.isGrouped || cell.isPlaceholder
                         ? GROUPED_COLOR
+                        : columnStyles.find((c) => c.id === cell.column.id) &&
+                          columnStyles.find((c) => c.id === cell.column.id)
+                            ?.columnColor
+                        ? columnStyles.find((c) => c.id === cell.column.id)
+                            ?.columnColor
                         : "white",
                     fontWeight:
                       columnStyles.find((c) => c.id === cell.column.id) &&

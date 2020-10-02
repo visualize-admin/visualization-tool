@@ -54,10 +54,12 @@ export const Table = ({
         id: c.accessor,
         style: "text",
         textStyle: "regular",
+        textColor: "gray",
+        columnColor: "white",
       }))
     );
   }, [data, columns]);
-  console.log("coucou");
+
   const updateGroupings = (g: string) => {
     if (groupingIds.includes(g)) {
       const newGroupIds = groupingIds.filter((id) => id !== g);

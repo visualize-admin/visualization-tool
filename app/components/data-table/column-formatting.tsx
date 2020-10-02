@@ -1,15 +1,8 @@
 // @ts-nocheck
-import {
-  Box,
-  Button,
-  Text,
-  Flex,
-  Label,
-  Select,
-  Checkbox,
-  Radio,
-} from "@theme-ui/components";
+import { Box, Flex, Label, Radio, Select, Text } from "@theme-ui/components";
 import * as React from "react";
+import { ColorPicker } from "../chart-controls/color-picker";
+
 export type ColumnStyle = {
   columnId: string;
   style: string;
@@ -50,57 +43,89 @@ export const ColumnFormatting = React.memo(
         </Select>
         {columnStyles.find((c) => c.id === activeColumn) &&
           columnStyles.find((c) => c.id === activeColumn).style === "text" && (
-            <Box sx={{ mx: 3, my: 2 }}>
-              Schriftgewicht:
-              <Flex sx={{ mx: 3, my: 2 }}>
-                <Label>
-                  <Radio
-                    disabled={
-                      !columnStyles.map((d) => d.id).includes(activeColumn)
-                    }
-                    name="regular"
-                    value="regular"
-                    checked={
-                      columnStyles.find((d) => d.id === activeColumn) &&
-                      columnStyles.find((d) => d.id === activeColumn)
-                        .textStyle === "regular"
-                    }
-                    onClick={() =>
-                      updateColumnStyle({
-                        columnId: activeColumn,
-                        style: "text",
-                        property: "textStyle",
-                        value: "regular",
-                      })
-                    }
-                  />
-                  Regular
-                </Label>
-                <Label>
-                  <Radio
-                    disabled={
-                      !columnStyles.map((d) => d.id).includes(activeColumn)
-                    }
-                    name="bold"
-                    value="bold"
-                    checked={
-                      columnStyles.find((d) => d.id === activeColumn) &&
-                      columnStyles.find((d) => d.id === activeColumn)
-                        .textStyle === "bold"
-                    }
-                    onClick={() =>
-                      updateColumnStyle({
-                        columnId: activeColumn,
-                        style: "text",
-                        property: "textStyle",
-                        value: "bold",
-                      })
-                    }
-                  />
-                  Bold
-                </Label>
-              </Flex>
-            </Box>
+            <>
+              <Box sx={{ mx: 3, my: 2 }}>
+                Schriftgewicht:
+                <Flex sx={{ mx: 3, my: 2 }}>
+                  <Label>
+                    <Radio
+                      disabled={
+                        !columnStyles.map((d) => d.id).includes(activeColumn)
+                      }
+                      name="regular"
+                      value="regular"
+                      checked={
+                        columnStyles.find((d) => d.id === activeColumn) &&
+                        columnStyles.find((d) => d.id === activeColumn)
+                          .textStyle === "regular"
+                      }
+                      onClick={() =>
+                        updateColumnStyle({
+                          columnId: activeColumn,
+                          style: "text",
+                          property: "textStyle",
+                          value: "regular",
+                        })
+                      }
+                    />
+                    Regular
+                  </Label>
+                  <Label>
+                    <Radio
+                      disabled={
+                        !columnStyles.map((d) => d.id).includes(activeColumn)
+                      }
+                      name="bold"
+                      value="bold"
+                      checked={
+                        columnStyles.find((d) => d.id === activeColumn) &&
+                        columnStyles.find((d) => d.id === activeColumn)
+                          .textStyle === "bold"
+                      }
+                      onClick={() =>
+                        updateColumnStyle({
+                          columnId: activeColumn,
+                          style: "text",
+                          property: "textStyle",
+                          value: "bold",
+                        })
+                      }
+                    />
+                    Bold
+                  </Label>
+                </Flex>
+              </Box>
+              <Box sx={{ mx: 3, my: 2 }}>
+                Text Farbe:
+                <ColorPicker
+                  selectedColor={"white"}
+                  colors={["white", "orange", "steelblue", "gray", "black"]}
+                  onChange={(c) =>
+                    updateColumnStyle({
+                      columnId: activeColumn,
+                      style: "text",
+                      property: "textColor",
+                      value: c,
+                    })
+                  }
+                />
+              </Box>
+              <Box sx={{ mx: 3, my: 2 }}>
+                Spalten Farbe:
+                <ColorPicker
+                  selectedColor={"white"}
+                  colors={["white", "orange", "steelblue", "gray", "black"]}
+                  onChange={(c) =>
+                    updateColumnStyle({
+                      columnId: activeColumn,
+                      style: "text",
+                      property: "columnColor",
+                      value: c,
+                    })
+                  }
+                />
+              </Box>
+            </>
           )}
       </>
     );
