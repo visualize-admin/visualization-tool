@@ -181,15 +181,14 @@ export const Table = ({
     useExpanded
   );
 
-  console.log({ data });
-  console.log({ columns });
-  console.log({ displayedColumns });
-  console.log({ sortingIds });
-  console.log({ groupingIds });
-  console.log({ hiddenIds });
-  console.log({ columnStyles });
-
-  console.log("number of rows", rows.length);
+  // console.log({ data });
+  // console.log({ columns });
+  // console.log({ displayedColumns });
+  // console.log({ sortingIds });
+  // console.log({ groupingIds });
+  // console.log({ hiddenIds });
+  // console.log({ columnStyles });
+  // console.log("number of rows", rows.length);
 
   return (
     <Grid
