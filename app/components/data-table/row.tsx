@@ -3,12 +3,8 @@ import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { Row } from "react-table";
 import { Data, GROUPED_COLOR } from "../../pages/[locale]/_table-a";
+import { ColumnStyle } from "./column-formatting";
 
-type ColumnStyle = {
-  columnId: string;
-  style: string;
-  textStyle: "regular" | "bold";
-};
 export const RowUI = ({
   row,
   prepareRow,

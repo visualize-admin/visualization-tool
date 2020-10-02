@@ -24,6 +24,8 @@ import { ColumnDimension } from "./column-dimensions";
 import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";
 import { ColumnSorting } from "./column-sorting";
 import { RowUI } from "./row";
+import { ColumnFormatting } from "./column-formatting";
+import { setWith } from "lodash";
 
 export const GROUPED_COLOR = "#F5F5F5";
 
@@ -55,7 +57,7 @@ export const Table = ({
       }))
     );
   }, [data, columns]);
-
+  console.log("coucou");
   const updateGroupings = (g: string) => {
     if (groupingIds.includes(g)) {
       const newGroupIds = groupingIds.filter((id) => id !== g);
@@ -90,14 +92,32 @@ export const Table = ({
     newSortingIds[columnIdPosition] = { id: columnId, desc };
     setSortingIds(newSortingIds);
   };
+
+  // Ordering
+  const reorderColumns = (oldPosition: number, newPosition: number) => {
+    const newOrdering = moveColumn(columnOrderIds, oldPosition, newPosition);
+    setColumnOrderIds(newOrdering); // component state
+    setColumnOrder(newOrdering); // table instance state
+    const newOrderedColums = [...columns];
+    newOrderedColums.sort(
+      (a, b) =>
+        newOrdering.indexOf(a.accessor) - newOrdering.indexOf(b.accessor)
+    );
+    setDisplayedColumns(newOrderedColums);
+  };
+
   const updateColumnStyle = ({
     columnId,
     style,
-    textStyle,
-  }: {
+    property,
+    value,
+  }: // textStyle,
+  {
     columnId: string;
     style: string;
-    textStyle: string;
+    property: string;
+    value: string;
+    // textStyle: string;
   }) => {
     const columnStylesList = columnStyles.map((d) => d.id);
     if (!columnStylesList.includes(columnId)) {
@@ -108,11 +128,19 @@ export const Table = ({
       setColumnStyles(newColumnStyles);
     } else {
       const columnIdPosition = columnStyles.findIndex((d) => d.id === columnId);
+      const thisColumnStyle = columnStyles.find((d) => d.id === columnId);
+      // console.log({ thisColumnStyle });
+      setWith(thisColumnStyle, property, value, Object);
+      // console.log({ thisColumnStyle });
       let newColumnStyles = [...columnStyles];
-      newColumnStyles[columnIdPosition] = { id: columnId, style, textStyle };
+      newColumnStyles.map((c, i) =>
+        i === columnIdPosition ? thisColumnStyle : { ...c }
+      );
+      // newColumnStyles[columnIdPosition] = { id: columnId, style, textStyle };
       setColumnStyles(newColumnStyles);
     }
   };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -141,19 +169,6 @@ export const Table = ({
     useSortBy,
     useExpanded
   );
-
-  // Ordering
-  const reorderColumns = (oldPosition: number, newPosition: number) => {
-    const newOrdering = moveColumn(columnOrderIds, oldPosition, newPosition);
-    setColumnOrderIds(newOrdering); // component state
-    setColumnOrder(newOrdering); // table instance state
-    const newOrderedColums = [...columns];
-    newOrderedColums.sort(
-      (a, b) =>
-        newOrdering.indexOf(a.accessor) - newOrdering.indexOf(b.accessor)
-    );
-    setDisplayedColumns(newOrderedColums);
-  };
 
   console.log({ data });
   console.log({ columns });
@@ -327,72 +342,11 @@ export const Table = ({
               updateSortingIds={updateSortingIds}
               updateSortingOrder={updateSortingOrder}
             />
-            <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
-              Spalten Formatierung
-            </Text>
-            <Select
-              onChange={(e) =>
-                updateColumnStyle({
-                  columnId: activeColumn,
-                  style: e.currentTarget.value,
-                  textStyle: "regular",
-                })
-              }
-            >
-              <option value="text">Text</option>
-              <option value="category">Kategorie</option>
-            </Select>
-            {columnStyles.find((c) => c.id === activeColumn) &&
-              columnStyles.find((c) => c.id === activeColumn).style ===
-                "text" && (
-                <Flex sx={{ mx: 3, my: 2 }}>
-                  Schriftgewicht
-                  <Label>
-                    <Radio
-                      disabled={
-                        !columnStyles.map((d) => d.id).includes(activeColumn)
-                      }
-                      name="regular"
-                      value="regular"
-                      checked={
-                        columnStyles.find((d) => d.id === activeColumn) &&
-                        columnStyles.find((d) => d.id === activeColumn)
-                          .textStyle === "regular"
-                      }
-                      onClick={() =>
-                        updateColumnStyle({
-                          columnId: activeColumn,
-                          style: "text",
-                          textStyle: "regular",
-                        })
-                      }
-                    />
-                    Regular
-                  </Label>
-                  <Label>
-                    <Radio
-                      disabled={
-                        !columnStyles.map((d) => d.id).includes(activeColumn)
-                      }
-                      name="bold"
-                      value="bold"
-                      checked={
-                        columnStyles.find((d) => d.id === activeColumn) &&
-                        columnStyles.find((d) => d.id === activeColumn)
-                          .textStyle === "bold"
-                      }
-                      onClick={() =>
-                        updateColumnStyle({
-                          columnId: activeColumn,
-                          style: "text",
-                          textStyle: "bold",
-                        })
-                      }
-                    />
-                    Bold
-                  </Label>
-                </Flex>
-              )}
+            <ColumnFormatting
+              activeColumn={activeColumn}
+              columnStyles={columnStyles}
+              updateColumnStyle={updateColumnStyle}
+            />
             {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                   Filter rows
                 </Text>
