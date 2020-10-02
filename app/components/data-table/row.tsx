@@ -19,7 +19,6 @@ export const RowUI = ({
   columnStyles: ColumnStyle[];
 }) => {
   prepareRow(row);
-  console.log(row);
   return (
     <>
       <tr
@@ -40,10 +39,11 @@ export const RowUI = ({
                         ? GROUPED_COLOR
                         : "white",
                     fontWeight:
+                      columnStyles.find((c) => c.id === cell.column.id) &&
                       columnStyles.find((c) => c.id === cell.column.id)
                         ?.textStyle === "bold"
                         ? 800
-                        : 500,
+                        : 400,
                   }}
                   {...cell.getCellProps()}
                 >
@@ -68,7 +68,13 @@ export const RowUI = ({
       {/* There's a subgroup */}
       {row.subRows.length > 0 &&
         row.subRows.map((subRow) => {
-          return <RowUI row={subRow} prepareRow={prepareRow} />;
+          return (
+            <RowUI
+              row={subRow}
+              prepareRow={prepareRow}
+              columnStyles={columnStyles}
+            />
+          );
         })}
     </>
   );
