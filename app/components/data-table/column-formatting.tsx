@@ -108,7 +108,7 @@ export const ColumnFormatting = React.memo(
                     style: "category",
                     property: "colorRange",
                     value: scaleOrdinal().range(
-                      getPalette(getPalette(e.currentTarget.value))
+                      getPalette(e.currentTarget.value)
                     ),
                   })
                 }
