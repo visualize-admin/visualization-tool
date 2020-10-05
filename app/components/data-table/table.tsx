@@ -62,7 +62,7 @@ export const Table = ({
             ? scaleLinear()
                 .range(["white", "red"])
                 .domain(extent(data, (d) => d[c.accessor]))
-            : scaleOrdinal().range(getPalette("set3")),
+            : scaleOrdinal().range(getPalette("pastel1")),
         domain:
           typeof data[0][c.accessor] === "number"
             ? extent(data, (d) => d[c.accessor])

@@ -113,9 +113,12 @@ export const ColumnFormatting = React.memo(
                   })
                 }
               >
-                <option value="accent">accent</option>
-                <option value="category10">category10</option>
-                <option value="set1">set1</option>
+                <option value="pastel1">pastel1</option>
+                <option value="pastel2">pastel2</option>
+                <option value="set2">set2</option>
+                <option value="set3">set3</option>
+                {/* <option value="accent">accent</option> */}
+                {/* <option value="tableau10">tableau10</option> */}
               </Select>
             </>
           )}
