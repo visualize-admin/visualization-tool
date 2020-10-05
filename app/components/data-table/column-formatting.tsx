@@ -3,7 +3,7 @@ import { Box, Flex, Label, Radio, Select, Text } from "@theme-ui/components";
 import * as React from "react";
 import { ColorPickerMenu } from "../chart-controls/color-picker";
 import { getPalette } from "../../domain/helpers";
-import { scaleOrdinal } from "d3-scale";
+import { scaleOrdinal, scaleLinear } from "d3-scale";
 
 const bafuColors = [
   "#F9C16E",
@@ -117,8 +117,6 @@ export const ColumnFormatting = React.memo(
                 <option value="pastel2">pastel2</option>
                 <option value="set2">set2</option>
                 <option value="set3">set3</option>
-                {/* <option value="accent">accent</option> */}
-                {/* <option value="tableau10">tableau10</option> */}
               </Select>
             </>
           )}
@@ -132,28 +130,28 @@ export const ColumnFormatting = React.memo(
                 columnStyles={columnStyles}
                 updateColumnStyle={updateColumnStyle}
               />
-              {/*  <Text
+              <Text
                 variant="paragraph2"
                 sx={{ mx: 3, color: "monochrome700", mt: 2 }}
               >
                 Farbpalette
               </Text>
-            <Select
+              <Select
                 sx={{ mx: 3, my: 2, p: 3 }}
-                disabled
                 onChange={(e) =>
                   updateColumnStyle({
                     columnId: activeColumn,
                     style: "heatmap",
                     property: "colorRange",
                     value: scaleLinear().range(
-                      getPalette(getPalette(e.currentTarget.value))
+                      getPalette(e.currentTarget.value)
                     ),
                   })
                 }
               >
-                <option value="one">one</option>
-              </Select> */}
+                <option value="oranges">oranges</option>
+                <option value="blues">blues</option>
+              </Select>
             </>
           )}
         {/* Bars */}

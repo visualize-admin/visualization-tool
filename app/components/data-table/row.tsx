@@ -99,9 +99,7 @@ export const RowUI = ({
                             my: 1,
                           }}
                         >
-                          {typeof cell.value === "number"
-                            ? formatNumber(cell.value)
-                            : cell.value}
+                          {cell.value}
                         </Box>
                       </td>
                     )
@@ -139,11 +137,7 @@ export const RowUI = ({
                         }}
                         {...cell.getCellProps()}
                       >
-                        <Box>
-                          {typeof cell.value === "number"
-                            ? formatNumber(cell.value)
-                            : cell.value}
-                        </Box>
+                        <Box>{formatNumber(cell.value)}</Box>
                         <Box
                           sx={{
                             width: "100%",
@@ -171,16 +165,7 @@ export const RowUI = ({
             })}
           </>
         ) : (
-          <Box
-            as="td"
-            sx={{
-              fontWeight: 900,
-              color: "#222222",
-              borderBottom: 0,
-            }}
-          >
-            {row.groupByVal}
-          </Box>
+          <GroupHeaderRow row={row} columnStyles={columnStyles} />
         )}
       </tr>
       {/* There's a subgroup */}
@@ -194,6 +179,90 @@ export const RowUI = ({
             />
           );
         })}
+    </>
+  );
+};
+
+const GroupHeaderRow = ({
+  row,
+  columnStyles,
+}: {
+  row: Row<Data>;
+  columnStyles: ColumnStyle[];
+}) => {
+  const thisCell = columnStyles.find((c) => c.id === row.groupByID);
+  console.log({ thisCell });
+  // console.log(thisCell?.colorRange.domain());
+  const cellTextColor =
+    thisCell && thisCell?.textColor ? thisCell?.textColor : "#333333";
+  const cellBgColor =
+    thisCell && thisCell?.columnColor ? thisCell?.columnColor : "muted";
+  const cellTagColor =
+    thisCell && thisCell?.colorRange && thisCell?.domain
+      ? thisCell.colorRange(row.groupByVal)
+      : "#333333";
+
+  return (
+    <>
+      {/* TEXT Formatting */}
+      {thisCell && thisCell?.style === "text" && (
+        <Box
+          as="td"
+          sx={{
+            color: cellTextColor,
+            borderBottom: 0,
+            background: "muted",
+            textAlign: "left",
+            fontWeight: thisCell && thisCell?.textStyle === "bold" ? 800 : 400,
+          }}
+          // {...row.getCellProps()}
+        >
+          {row.groupByVal}
+        </Box>
+      )}
+
+      {
+        // KATEGORY FORMATTING
+        thisCell && thisCell?.style === "category" && (
+          <Box
+            as="td"
+            sx={{
+              color: "#333333",
+              background: "muted",
+              borderBottom: 0,
+              fontWeight:
+                columnStyles.find((c) => c.id === row.groupById) &&
+                thisCell?.textStyle === "bold"
+                  ? 800
+                  : 400,
+            }}
+            // {...row.getCellProps()}
+          >
+            <Box
+              as="span"
+              sx={{
+                background: cellTagColor,
+                borderRadius: "15px",
+                px: 3,
+                py: 1,
+                my: 1,
+              }}
+            >
+              {row.groupByVal}
+            </Box>
+          </Box>
+        )
+      }
+      {/* <Box
+        as="td"
+        sx={{
+          fontWeight: 900,
+          color: "#222222",
+          borderBottom: 0,
+        }}
+      >
+        {row.groupByVal}
+      </Box> */}
     </>
   );
 };
