@@ -129,13 +129,13 @@ export const ColumnFormatting = React.memo(
                 columnStyles={columnStyles}
                 updateColumnStyle={updateColumnStyle}
               />
-              <Text
+              {/*  <Text
                 variant="paragraph2"
                 sx={{ mx: 3, color: "monochrome700", mt: 2 }}
               >
                 Farbpalette
               </Text>
-              <Select
+            <Select
                 sx={{ mx: 3, my: 2, p: 3 }}
                 disabled
                 onChange={(e) =>
@@ -150,7 +150,7 @@ export const ColumnFormatting = React.memo(
                 }
               >
                 <option value="one">one</option>
-              </Select>
+              </Select> */}
             </>
           )}
         {/* Bars */}
