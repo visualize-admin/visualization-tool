@@ -1,5 +1,14 @@
 // @ts-nocheck
-import { Box, Checkbox, Grid, Label, Text } from "@theme-ui/components";
+import {
+  Box,
+  Flex,
+  Checkbox,
+  Button,
+  Grid,
+  Label,
+  Radio,
+  Text,
+} from "@theme-ui/components";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -111,11 +120,7 @@ export const Table = ({
     setSortingIds(newSortingIds);
     setSortBy(newSortingIds);
   };
-  const updateSortingOrder = (
-    columnId: string,
-    oldPosition: number,
-    newPosition: number
-  ) => {
+  const updateSortingOrder = (oldPosition: number, newPosition: number) => {
     const newSortingIds = moveColumn(sortingIds, oldPosition, newPosition);
     setSortingIds(newSortingIds); // component state
     setSortBy(newSortingIds); // table instance state
@@ -215,7 +220,24 @@ export const Table = ({
       }}
     >
       {/* Left Column */}
-      <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
+      <Box>
+        <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>Einstellungen</Box>
+        <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
+          {" "}
+          <Button
+            variant="outline"
+            onClick={() => setActiveColumn("sortingOptions")}
+            sx={{
+              width: ["100%", "100%", "100%"],
+              textAlign: "left",
+              mb: 3,
+              bg: GROUPED_COLOR,
+            }}
+          >
+            <Box sx={{ color: "gray" }}>{`Sorting Options`}</Box>
+            <Box>{`Sorting Options`}</Box>
+          </Button>
+        </Box>
         <ColumnDimension
           groupingIds={groupingIds}
           displayedColumns={displayedColumns}
@@ -314,69 +336,130 @@ export const Table = ({
 
       {/* Right Column -------------------------------------------------------------------------------------------------------------------------------------- */}
       <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
-        {activeColumn !== "" && (
+        {activeColumn === "sortingOptions" ? (
           <>
             <Text variant="heading2" sx={{ m: 3 }}>
               {activeColumn}
             </Text>
-
-            <Box sx={{ mx: 3 }}>
-              <Label>
-                <Checkbox
-                  checked={groupingIds.includes(activeColumn)}
-                  onClick={() => {
-                    updateGroupings(activeColumn);
-                  }}
-                />
-                Als Gruppe verwenden
-              </Label>
-              <Box sx={{ ml: 3 }}>
-                <Label>
-                  <Checkbox
+            {sortingIds.map((sCol, i) => (
+              <Flex sx={{ height: 84, p: 2, m: 2, bg: "muted" }}>
+                <Box sx={{ width: 100, borderRight: "1px solid gray" }}>
+                  Priorität {i + 1}
+                </Box>
+                <Box sx={{ p: 2 }}>
+                  {sCol.id}
+                  <Flex sx={{ mx: 3, mb: 2 }}>
+                    <Label sx={{ color: "monochrome900" }}>
+                      <Radio
+                        disabled={false}
+                        name="ascending"
+                        value="ascending"
+                        checked={sCol.desc === false}
+                        onClick={() => updateSortingDirection(sCol.id, false)}
+                      />
+                      1 → 9
+                    </Label>
+                    <Label sx={{ color: "monochrome900" }}>
+                      <Radio
+                        disabled={false}
+                        name="descending"
+                        value="descending"
+                        checked={sCol.desc}
+                        onClick={() => updateSortingDirection(sCol.id, true)}
+                      />
+                      9 → 1
+                    </Label>
+                  </Flex>
+                </Box>
+                <Box sx={{ p: 2 }}>
+                  <Box
+                    onClick={() => updateSortingOrder(i, i - 1)}
                     sx={{
-                      color: !groupingIds.includes(activeColumn)
-                        ? "monochrome300"
-                        : "text",
+                      p: 1,
+                      cursor: "pointer",
+                      ":hover": { color: "primary" },
                     }}
-                    disabled={!groupingIds.includes(activeColumn)}
-                    checked={hiddenIds.includes(activeColumn)}
-                    onClick={() => updateHiddenIds(activeColumn)}
-                  />
-                  Spalte ausblenden
-                </Label>
-              </Box>
-            </Box>
-            {!groupingIds.includes(activeColumn) && (
+                  >
+                    ▲
+                  </Box>
+                  <Box
+                    onClick={() => updateSortingOrder(i, i + 1)}
+                    sx={{
+                      p: 1,
+                      cursor: "pointer",
+                      ":hover": { color: "primary" },
+                    }}
+                  >
+                    ▼
+                  </Box>
+                </Box>
+              </Flex>
+            ))}
+          </>
+        ) : (
+          activeColumn !== "" && (
+            <>
+              <Text variant="heading2" sx={{ m: 3 }}>
+                {activeColumn}
+              </Text>
+
               <Box sx={{ mx: 3 }}>
                 <Label>
                   <Checkbox
-                    checked={hiddenIds.includes(activeColumn)}
-                    onClick={() => updateHiddenIds(activeColumn)}
+                    checked={groupingIds.includes(activeColumn)}
+                    onClick={() => {
+                      updateGroupings(activeColumn);
+                    }}
                   />
-                  Spalte entfernen
+                  Als Gruppe verwenden
                 </Label>
+                <Box sx={{ ml: 3 }}>
+                  <Label>
+                    <Checkbox
+                      sx={{
+                        color: !groupingIds.includes(activeColumn)
+                          ? "monochrome300"
+                          : "text",
+                      }}
+                      disabled={!groupingIds.includes(activeColumn)}
+                      checked={hiddenIds.includes(activeColumn)}
+                      onClick={() => updateHiddenIds(activeColumn)}
+                    />
+                    Spalte ausblenden
+                  </Label>
+                </Box>
               </Box>
-            )}
+              {!groupingIds.includes(activeColumn) && (
+                <Box sx={{ mx: 3 }}>
+                  <Label>
+                    <Checkbox
+                      checked={hiddenIds.includes(activeColumn)}
+                      onClick={() => updateHiddenIds(activeColumn)}
+                    />
+                    Spalte entfernen
+                  </Label>
+                </Box>
+              )}
 
-            <ColumnReorderingArrows
-              activeColumn={activeColumn}
-              columnOrderIds={columnOrderIds}
-              reorderColumns={reorderColumns}
-              disabled={groupingIds.includes(activeColumn)}
-            />
-            <ColumnSorting
-              activeColumn={activeColumn}
-              sortingIds={sortingIds}
-              updateSortingIds={updateSortingIds}
-              updateSortingDirection={updateSortingDirection}
-              updateSortingOrder={updateSortingOrder}
-            />
-            <ColumnFormatting
-              activeColumn={activeColumn}
-              columnStyles={columnStyles}
-              updateColumnStyle={updateColumnStyle}
-            />
-            {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
+              <ColumnReorderingArrows
+                activeColumn={activeColumn}
+                columnOrderIds={columnOrderIds}
+                reorderColumns={reorderColumns}
+                disabled={groupingIds.includes(activeColumn)}
+              />
+              <ColumnSorting
+                activeColumn={activeColumn}
+                sortingIds={sortingIds}
+                updateSortingIds={updateSortingIds}
+                updateSortingDirection={updateSortingDirection}
+                updateSortingOrder={updateSortingOrder}
+              />
+              <ColumnFormatting
+                activeColumn={activeColumn}
+                columnStyles={columnStyles}
+                updateColumnStyle={updateColumnStyle}
+              />
+              {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
                   Filter rows
                 </Text>
                 {activeColumnValues.map((v) => (
@@ -388,7 +471,8 @@ export const Table = ({
                     {v}
                   </Label>
                 ))}*/}
-          </>
+            </>
+          )
         )}
       </Box>
     </Grid>

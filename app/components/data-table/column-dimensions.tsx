@@ -1,5 +1,4 @@
 // @ts-nocheck
-
 import { Box, Button, Text } from "@theme-ui/components";
 import * as React from "react";
 import { GROUPED_COLOR } from "../../pages/[locale]/_table-a";
@@ -21,7 +20,7 @@ export const ColumnDimension = React.memo(
   }) => {
     console.log(groupingIds);
     return (
-      <>
+      <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
         <Text sx={{ mt: 2, mb: 1 }} variant="heading3">
           Gruppierung
         </Text>
@@ -106,7 +105,7 @@ export const ColumnDimension = React.memo(
         ) : (
           <ButtonNone />
         )}
-      </>
+      </Box>
     );
   }
 );

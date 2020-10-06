@@ -21,11 +21,7 @@ export const ColumnSorting = React.memo(
     sortingIds: { id: string; desc: boolean }[];
     updateSortingIds: (columnId: string) => void;
     updateSortingDirection: (columnId: string, desc: boolean) => void;
-    updateSortingOrder: (
-      columnId: string,
-      oldPosition: number,
-      newPosition: number
-    ) => void;
+    updateSortingOrder: (oldPosition: number, newPosition: number) => void;
   }) => {
     return (
       <>
@@ -44,7 +40,6 @@ export const ColumnSorting = React.memo(
           value={sortingIds.findIndex((c) => c.id === activeColumn)}
           onChange={(e) =>
             updateSortingOrder(
-              activeColumn,
               sortingIds.findIndex((c) => c.id === activeColumn),
               +e.currentTarget.value
             )
