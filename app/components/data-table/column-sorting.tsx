@@ -1,12 +1,11 @@
 // @ts-nocheck
 import {
-  Box,
-  Button,
   Text,
   Flex,
   Label,
   Checkbox,
   Radio,
+  Select,
 } from "@theme-ui/components";
 import * as React from "react";
 
@@ -16,24 +15,57 @@ export const ColumnSorting = React.memo(
     sortingIds,
     updateSortingIds,
     updateSortingDirection,
+    updateSortingOrder,
   }: {
     activeColumn: string;
     sortingIds: { id: string; desc: boolean }[];
     updateSortingIds: (columnId: string) => void;
     updateSortingDirection: (columnId: string, desc: boolean) => void;
+    updateSortingOrder: (
+      columnId: string,
+      oldPosition: number,
+      newPosition: number
+    ) => void;
   }) => {
     return (
       <>
         <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
           Sortieren
         </Text>
-        <Label sx={{ mx: 3, my: 2 }}>
+        {/* <Label sx={{ mx: 3, my: 2 }}>
           <Checkbox
             checked={sortingIds.map((d) => d.id).includes(activeColumn)}
             onClick={() => updateSortingIds(activeColumn)}
           />
           Sortiert
-        </Label>
+        </Label> */}
+        <Text
+          variant="paragraph2"
+          sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+        >
+          Sorting Priority
+        </Text>
+        <Select
+          sx={{ mx: 3, my: 2, p: 3 }}
+          value={sortingIds.findIndex((c) => c.id === activeColumn)}
+          onChange={(e) =>
+            updateSortingOrder(
+              activeColumn,
+              sortingIds.findIndex((c) => c.id === activeColumn),
+              +e.currentTarget.value
+            )
+          }
+        >
+          {sortingIds.map((id, i) => (
+            <option value={i}>{`${i + 1}`}</option>
+          ))}
+        </Select>
+        <Text
+          variant="paragraph2"
+          sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+        >
+          Sorting Direction
+        </Text>
         <Flex sx={{ mx: 3, mb: 2 }}>
           <Label
             sx={{

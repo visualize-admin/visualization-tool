@@ -108,6 +108,14 @@ export const Table = ({
     newSortingIds[columnIdPosition] = { id: columnId, desc };
     setSortingIds(newSortingIds);
   };
+  const updateSortingOrder = (
+    columnId: string,
+    oldPosition: number,
+    newPosition: number
+  ) => {
+    const newOrdering = moveColumn(sortingIds, oldPosition, newPosition);
+    setSortingIds(newOrdering);
+  };
 
   // Ordering
   const reorderColumns = (oldPosition: number, newPosition: number) => {
@@ -356,6 +364,7 @@ export const Table = ({
               sortingIds={sortingIds}
               updateSortingIds={updateSortingIds}
               updateSortingDirection={updateSortingDirection}
+              updateSortingOrder={updateSortingOrder}
             />
             <ColumnFormatting
               activeColumn={activeColumn}
