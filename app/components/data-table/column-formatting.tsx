@@ -130,7 +130,7 @@ export const ColumnFormatting = React.memo(
                 columnStyles={columnStyles}
                 updateColumnStyle={updateColumnStyle}
               />
-              <Text
+              {/* <Text
                 variant="paragraph2"
                 sx={{ mx: 3, color: "monochrome700", mt: 2 }}
               >
@@ -151,7 +151,7 @@ export const ColumnFormatting = React.memo(
               >
                 <option value="oranges">oranges</option>
                 <option value="blues">blues</option>
-              </Select>
+              </Select> */}
             </>
           )}
         {/* Bars */}
