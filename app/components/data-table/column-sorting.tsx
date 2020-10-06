@@ -15,12 +15,12 @@ export const ColumnSorting = React.memo(
     activeColumn,
     sortingIds,
     updateSortingIds,
-    updateSortingOrder,
+    updateSortingDirection,
   }: {
     activeColumn: string;
     sortingIds: { id: string; desc: boolean }[];
     updateSortingIds: (columnId: string) => void;
-    updateSortingOrder: (columnId: string, desc: boolean) => void;
+    updateSortingDirection: (columnId: string, desc: boolean) => void;
   }) => {
     return (
       <>
@@ -50,7 +50,7 @@ export const ColumnSorting = React.memo(
                 sortingIds.find((d) => d.id === activeColumn) &&
                 sortingIds.find((d) => d.id === activeColumn).desc === false
               }
-              onClick={(e) => updateSortingOrder(activeColumn, false)}
+              onClick={(e) => updateSortingDirection(activeColumn, false)}
             />
             1 → 9
           </Label>
@@ -69,7 +69,7 @@ export const ColumnSorting = React.memo(
                 sortingIds.find((d) => d.id === activeColumn) &&
                 sortingIds.find((d) => d.id === activeColumn).desc
               }
-              onClick={(e) => updateSortingOrder(activeColumn, true)}
+              onClick={(e) => updateSortingDirection(activeColumn, true)}
             />
             9 → 1
           </Label>

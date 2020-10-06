@@ -42,7 +42,7 @@ export const Table = ({
     setDisplayedColumns(columns);
     setColumnOrderIds(columns.map((d) => d.accessor));
     setGroupingIds([]);
-    setSortingIds([]);
+    setSortingIds(columns.map((d) => ({ id: d.accessor, desc: false })));
     setActiveColumn("");
     setColumnStyles(
       columns.map((c) => ({
@@ -102,7 +102,7 @@ export const Table = ({
       setSortingIds(newSortingIds);
     }
   };
-  const updateSortingOrder = (columnId: string, desc: boolean) => {
+  const updateSortingDirection = (columnId: string, desc: boolean) => {
     const columnIdPosition = sortingIds.findIndex((d) => d.id === columnId);
     let newSortingIds = [...sortingIds];
     newSortingIds[columnIdPosition] = { id: columnId, desc };
@@ -181,10 +181,11 @@ export const Table = ({
     useExpanded
   );
 
+  // console.log({ headerGroups });
   // console.log({ data });
   // console.log({ columns });
   // console.log({ displayedColumns });
-  // console.log({ sortingIds });
+  console.log(sortingIds);
   // console.log({ groupingIds });
   // console.log({ hiddenIds });
   // console.log({ columnStyles });
@@ -217,7 +218,7 @@ export const Table = ({
           Sortiert nach:
           {sortingIds.length > 0
             ? sortingIds.map((s, i) => (
-                <Box as="span" sx={{ mr: 2 }}>
+                <Box sx={{ mr: 2 }}>
                   {i + 1} - {s.id},{" "}
                   {s.desc ? "absteigend (9 → 1)" : "aufsteigend (1 → 9)"}{" "}
                 </Box>
@@ -239,7 +240,7 @@ export const Table = ({
                     <Box
                       as="th"
                       sx={{ textAlign: "left" }}
-                      {...column.getHeaderProps()}
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
                     >
                       {column.canGroupBy ? (
                         <Box
@@ -354,7 +355,7 @@ export const Table = ({
               activeColumn={activeColumn}
               sortingIds={sortingIds}
               updateSortingIds={updateSortingIds}
-              updateSortingOrder={updateSortingOrder}
+              updateSortingDirection={updateSortingDirection}
             />
             <ColumnFormatting
               activeColumn={activeColumn}
