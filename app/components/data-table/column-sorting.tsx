@@ -32,13 +32,7 @@ export const ColumnSorting = React.memo(
         <Text variant="heading3" sx={{ mt: 5, mx: 3, mb: 2 }}>
           Sortieren
         </Text>
-        {/* <Label sx={{ mx: 3, my: 2 }}>
-          <Checkbox
-            checked={sortingIds.map((d) => d.id).includes(activeColumn)}
-            onClick={() => updateSortingIds(activeColumn)}
-          />
-          Sortiert
-        </Label> */}
+
         <Text
           variant="paragraph2"
           sx={{ color: "monochrome700", mt: 2, mx: 3 }}
