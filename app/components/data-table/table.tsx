@@ -95,11 +95,13 @@ export const Table = ({
     if (!sortingIdList.includes(columnId)) {
       let newSortingIds = [...sortingIds, { id: columnId, desc: false }];
       setSortingIds(newSortingIds);
+      setSortBy(newSortingIds);
     } else {
       const columnIdPosition = sortingIds.findIndex((d) => d.id === columnId);
       let newSortingIds = [...sortingIds];
       newSortingIds.splice(columnIdPosition, 1);
       setSortingIds(newSortingIds);
+      setSortBy(newSortingIds);
     }
   };
   const updateSortingDirection = (columnId: string, desc: boolean) => {
@@ -107,14 +109,16 @@ export const Table = ({
     let newSortingIds = [...sortingIds];
     newSortingIds[columnIdPosition] = { id: columnId, desc };
     setSortingIds(newSortingIds);
+    setSortBy(newSortingIds);
   };
   const updateSortingOrder = (
     columnId: string,
     oldPosition: number,
     newPosition: number
   ) => {
-    const newOrdering = moveColumn(sortingIds, oldPosition, newPosition);
-    setSortingIds(newOrdering);
+    const newSortingIds = moveColumn(sortingIds, oldPosition, newPosition);
+    setSortingIds(newSortingIds); // component state
+    setSortBy(newSortingIds); // table instance state
   };
 
   // Ordering
@@ -167,6 +171,7 @@ export const Table = ({
     rows,
     prepareRow,
     setColumnOrder,
+    setSortBy,
   } = useTable<Data>(
     {
       columns,
@@ -177,7 +182,7 @@ export const Table = ({
             ...state,
             groupBy: groupingIds,
             hiddenColumns: hiddenIds,
-            sortBy: sortingIds,
+            // sortBy: sortingIds,
           }),
           [state, groupingIds, hiddenIds, sortingIds]
         );
