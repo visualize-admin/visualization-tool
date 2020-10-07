@@ -2,6 +2,7 @@ import { Box } from "@theme-ui/components";
 import React, { useEffect, useRef } from "react";
 import { ConfiguratorStateDescribingChart } from "../domain";
 import { getFieldLabel } from "../domain/helpers";
+import { IconName } from "../icons";
 import { locales } from "../locales/locales";
 import {
   ControlSection,
@@ -36,7 +37,7 @@ export const ChartAnnotationsSelector = ({
         sx={{ overflowX: "hidden", overflowY: "auto" }}
       >
         <ControlSection>
-          <SectionTitle iconName="text">
+          <SectionTitle iconName={state.activeField as IconName}>
             {state.activeField && getFieldLabel(state.activeField)}
           </SectionTitle>
           <ControlSectionContent side="right">

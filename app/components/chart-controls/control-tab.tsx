@@ -89,7 +89,7 @@ export const AnnotatorTab = ({
       onClick={() => onClick(value)}
     >
       <ControlTabButtonInner
-        iconName={"text"}
+        iconName={value}
         lowerLabel={getFieldLabel(value)}
         checked={checked}
       />
