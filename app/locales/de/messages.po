@@ -73,7 +73,7 @@ msgstr "gestapelt"
 
 #: app/domain/helpers.tsx:149
 msgid "controls.description"
-msgstr "Beschreibung"
+msgstr "Beschreibung hinzufügen"
 
 #: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
@@ -121,7 +121,7 @@ msgstr "Messwert auswählen"
 
 #: app/domain/helpers.tsx:147
 msgid "controls.title"
-msgstr "Titel"
+msgstr "Titel hinzufügen"
 
 #: app/components/dataset-preview.tsx:44
 msgid "datatable.showing.first.rows"
@@ -218,11 +218,11 @@ msgstr "Bundesamt für Umwelt BAFU"
 
 #: app/components/chart-preview.tsx:33
 msgid "annotation.add.description"
-msgstr "[ Hier Beschreibung hinzufügen ]"
+msgstr "[ Beschreibung ]"
 
 #: app/components/chart-preview.tsx:27
 msgid "annotation.add.title"
-msgstr "[ Hier Titel einfügen ]"
+msgstr "[ Titel ]"
 
 #: app/pages/[locale]/v/[chartId].tsx:83
 msgid "button.copy.visualization"
