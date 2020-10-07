@@ -11,6 +11,8 @@ import {
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { MetaInputField } from "./field";
+import { useLocale } from "../lib/use-locale";
+import { moveItemInArray } from "../lib/array";
 
 export const ChartAnnotationsSelector = ({
   state,
@@ -23,8 +25,15 @@ export const ChartAnnotationsSelector = ({
       panelRef.current.focus();
     }
   }, [state.activeField]);
+  const locale = useLocale();
 
   const af = state.activeField === "title" ? "title" : "description";
+
+  // Reorder locales so the input field for
+  // the current locale is on top
+  const oldPosition = locales.findIndex((l) => l === locale);
+  const _locales = [...locales];
+  const orderedLocales = moveItemInArray(_locales, oldPosition, 0);
 
   if (state.activeField) {
     return (
@@ -42,7 +51,7 @@ export const ChartAnnotationsSelector = ({
           </SectionTitle>
           <ControlSectionContent side="right">
             {state.activeField &&
-              locales.map((locale) => (
+              orderedLocales.map((locale) => (
                 <Box sx={{ ":not(:first-of-type)": { mt: 3 } }}>
                   <MetaInputField
                     key={`${locale}-${state.activeField!}`}
