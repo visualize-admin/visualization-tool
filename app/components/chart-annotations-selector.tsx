@@ -12,7 +12,6 @@ import {
 import { EmptyRightPanel } from "./empty-right-panel";
 import { MetaInputField } from "./field";
 import { useLocale } from "../lib/use-locale";
-import { moveItemInArray } from "../lib/array";
 
 export const ChartAnnotationsSelector = ({
   state,
