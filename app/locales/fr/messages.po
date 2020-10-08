@@ -73,7 +73,7 @@ msgstr "empilées"
 
 #: app/domain/helpers.tsx:149
 msgid "controls.description"
-msgstr "Description"
+msgstr "Ajouter une description"
 
 #: app/components/filters.tsx:42
 msgid "controls.filter.select.all"
@@ -121,7 +121,7 @@ msgstr "Sélectionner une variable"
 
 #: app/domain/helpers.tsx:147
 msgid "controls.title"
-msgstr "Titre"
+msgstr "Ajouter un titre"
 
 #: app/components/dataset-preview.tsx:44
 msgid "datatable.showing.first.rows"
@@ -218,11 +218,11 @@ msgstr "Office fédéral de l'environnement OFEV"
 
 #: app/components/chart-preview.tsx:33
 msgid "annotation.add.description"
-msgstr "[ Ajouter une description ici ]"
+msgstr "[ Description ]"
 
 #: app/components/chart-preview.tsx:27
 msgid "annotation.add.title"
-msgstr "[ Insérer un titre ici ]"
+msgstr "[ Titre ]"
 
 #: app/pages/[locale]/v/[chartId].tsx:83
 msgid "button.copy.visualization"
