@@ -31,9 +31,7 @@ export const ChartAnnotationsSelector = ({
 
   // Reorder locales so the input field for
   // the current locale is on top
-  const oldPosition = locales.findIndex((l) => l === locale);
-  const _locales = [...locales];
-  const orderedLocales = moveItemInArray(_locales, oldPosition, 0);
+  const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
 
   if (state.activeField) {
     return (
