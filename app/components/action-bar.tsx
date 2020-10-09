@@ -51,8 +51,7 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
       sx={{
         position: "absolute",
         right: 0,
-        ml: "auto",
-        pr: 2,
+        pr: 3,
         alignItems: "center",
       }}
     >

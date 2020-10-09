@@ -32,6 +32,7 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
       <Flex
         sx={{
           justifyContent: ["flex-start", "flex-start", "center"],
+          alignItems: "center",
           position: "relative",
           py: 2,
           bg: "monochrome100",
