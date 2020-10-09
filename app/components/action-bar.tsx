@@ -47,16 +47,28 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
     );
 
   return (
-    <Flex role="navigation" sx={{ justifyContent: "space-between", my: 5 }}>
+    <Flex
+      sx={{
+        position: "absolute",
+        right: 0,
+        ml: "auto",
+        pr: 2,
+        alignItems: "center",
+      }}
+    >
       {state.state === "SELECTING_DATASET" ? (
-        <Button
-          variant="primary"
-          onClick={goNext}
-          sx={{ width: "112px", ml: "auto" }}
-          disabled={nextDisabled}
-        >
-          {nextLabel}
-        </Button>
+        <>
+          <Button disabled variant="inline" sx={{ mr: 4 }}>
+            {previousLabel}
+          </Button>
+          <Button
+            variant="primarySmall"
+            onClick={goNext}
+            disabled={nextDisabled}
+          >
+            {nextLabel}
+          </Button>
+        </>
       ) : state.state === "SELECTING_CHART_TYPE" ? (
         <>
           <LocalizedLink
@@ -64,14 +76,13 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
             query={{ chartId: "new" }}
             passHref
           >
-            <Button as="a" variant="secondary">
+            <Button as="a" variant="inline" sx={{ mr: 4 }}>
               {previousLabel}
             </Button>
           </LocalizedLink>
           <Button
-            variant="primary"
+            variant="primarySmall"
             onClick={goNext}
-            sx={{ ml: "auto" }}
             disabled={nextDisabled}
           >
             {nextLabel}
@@ -80,17 +91,16 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
       ) : (
         <>
           <Button
-            variant="secondary"
+            variant="inline"
             onClick={goPrevious}
-            sx={{ mr: "auto" }}
+            sx={{ mr: 4 }}
             disabled={previousDisabled}
           >
             {previousLabel}
           </Button>
           <Button
-            variant="primary"
+            variant="primarySmall"
             onClick={goNext}
-            sx={{ ml: "auto" }}
             disabled={nextDisabled}
           >
             {nextLabel}
