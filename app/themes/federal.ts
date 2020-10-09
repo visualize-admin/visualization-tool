@@ -348,7 +348,7 @@ export const theme: Theme = {
       fontSize: [3, 3, 3],
       border: "none",
       cursor: "pointer",
-      mb: 4,
+      m: 0,
       p: 0,
       ":hover": {
         color: "primaryHover",
