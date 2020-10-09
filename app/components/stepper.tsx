@@ -46,37 +46,39 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
         <Flex
           sx={{
             width: "100%",
-            // position: "relative",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          {/* Line */}
-          {/* <Box
-            sx={{
-              // width: "calc(100% - 156px)", // Remove: 2 * buttons.step.width / 2
-              transform: "translateY(-50%)",
-              borderBottomWidth: "1px",
-              borderBottomStyle: "solid",
-              borderBottomColor: "monochrome400",
-              zIndex: 0,
-              mb: "3px",
-            }}
-          /> */}
           {steps.map((step, i) => (
-            <Step
-              key={step}
-              stepNumber={i + 1}
-              stepState={step}
-              status={
-                currentStepIndex === i
-                  ? "current"
-                  : currentStepIndex > i || state === "PUBLISHING"
-                  ? "past"
-                  : "future"
-              }
-              dispatch={dispatch}
-            />
+            <>
+              <Step
+                key={step}
+                stepNumber={i + 1}
+                stepState={step}
+                status={
+                  currentStepIndex === i
+                    ? "current"
+                    : currentStepIndex > i || state === "PUBLISHING"
+                    ? "past"
+                    : "future"
+                }
+                dispatch={dispatch}
+              />
+              {i < steps.length - 1 && (
+                // Connection line
+                <Box
+                  sx={{
+                    width: "4rem",
+                    height: 0,
+                    borderBottomWidth: "1px",
+                    borderBottomStyle: "solid",
+                    borderBottomColor: "monochrome400",
+                    mb: "3px",
+                  }}
+                />
+              )}
+            </>
           ))}
         </Flex>
 
@@ -111,10 +113,7 @@ export const Step = ({
     <Button
       variant="reset"
       sx={{
-        bg: "monochrome100",
-        zIndex: 2,
         appearance: "none",
-        mr: [2, 3, 4],
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",
@@ -130,8 +129,7 @@ export const Step = ({
           zIndex: 5,
           justifyContent: "center",
           alignItems: "center",
-          pl: 2,
-          pr: 2,
+          px: 2,
         }}
       >
         {/* Icon */}
