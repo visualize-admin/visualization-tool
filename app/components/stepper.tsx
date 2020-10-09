@@ -31,9 +31,9 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
     return (
       <Flex
         sx={{
-          justifyContent: "center",
+          justifyContent: ["flex-start", "flex-start", "center"],
           position: "relative",
-          pt: 2,
+          py: 2,
           bg: "monochrome100",
           borderBottomWidth: "1px",
           borderBottomStyle: "solid",
@@ -44,16 +44,16 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
         {/* Stepper container */}
         <Flex
           sx={{
-            position: "relative",
+            width: "100%",
+            // position: "relative",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
           {/* Line */}
-          <Box
+          {/* <Box
             sx={{
-              position: "absolute",
-              width: "calc(100% - 156px)", // Remove: 2 * buttons.step.width / 2
+              // width: "calc(100% - 156px)", // Remove: 2 * buttons.step.width / 2
               transform: "translateY(-50%)",
               borderBottomWidth: "1px",
               borderBottomStyle: "solid",
@@ -61,7 +61,7 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
               zIndex: 0,
               mb: "3px",
             }}
-          />
+          /> */}
           {steps.map((step, i) => (
             <Step
               key={step}
@@ -78,6 +78,7 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
             />
           ))}
         </Flex>
+
         <ActionBar dataSetIri={dataSetIri} />
       </Flex>
     );
@@ -112,11 +113,11 @@ export const Step = ({
         bg: "monochrome100",
         zIndex: 2,
         appearance: "none",
-        mr: 7,
+        mr: [2, 3, 4],
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",
-        alignItems: "baseline",
+        alignItems: "center",
         cursor: status === "past" ? "pointer" : undefined,
       }}
       disabled={status !== "past"}
@@ -137,7 +138,7 @@ export const Step = ({
           sx={{
             width: "20px",
             height: "20px",
-            mb: 1,
+            // mb: 1,
             borderRadius: "circle",
             fontSize: 3,
             fontFamily: "body",
