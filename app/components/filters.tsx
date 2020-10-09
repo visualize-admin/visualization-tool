@@ -59,7 +59,7 @@ export const DimensionValuesMultiFilter = ({
           <Button
             onClick={selectAll}
             variant="inline"
-            sx={{ mr: 2 }}
+            sx={{ mr: 2, mb: 4 }}
             disabled={selectionState === "ALL_SELECTED"}
           >
             <Trans id="controls.filter.select.all">Select all</Trans>
@@ -68,7 +68,7 @@ export const DimensionValuesMultiFilter = ({
           <Button
             onClick={selectNone}
             variant="inline"
-            sx={{ ml: 2 }}
+            sx={{ ml: 2, mb: 4 }}
             disabled={selectionState === "NONE_SELECTED"}
           >
             <Trans id="controls.filter.select.none">Select none</Trans>

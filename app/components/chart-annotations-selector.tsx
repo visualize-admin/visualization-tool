@@ -2,6 +2,7 @@ import { Box } from "@theme-ui/components";
 import React, { useEffect, useRef } from "react";
 import { ConfiguratorStateDescribingChart } from "../domain";
 import { getFieldLabel } from "../domain/helpers";
+import { IconName } from "../icons";
 import { locales } from "../locales/locales";
 import {
   ControlSection,
@@ -10,6 +11,7 @@ import {
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { MetaInputField } from "./field";
+import { useLocale } from "../lib/use-locale";
 
 export const ChartAnnotationsSelector = ({
   state,
@@ -22,8 +24,13 @@ export const ChartAnnotationsSelector = ({
       panelRef.current.focus();
     }
   }, [state.activeField]);
+  const locale = useLocale();
 
   const af = state.activeField === "title" ? "title" : "description";
+
+  // Reorder locales so the input field for
+  // the current locale is on top
+  const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
 
   if (state.activeField) {
     return (
@@ -36,12 +43,12 @@ export const ChartAnnotationsSelector = ({
         sx={{ overflowX: "hidden", overflowY: "auto" }}
       >
         <ControlSection>
-          <SectionTitle iconName="text">
+          <SectionTitle iconName={state.activeField as IconName}>
             {state.activeField && getFieldLabel(state.activeField)}
           </SectionTitle>
           <ControlSectionContent side="right">
             {state.activeField &&
-              locales.map((locale) => (
+              orderedLocales.map((locale) => (
                 <Box sx={{ ":not(:first-of-type)": { mt: 3 } }}>
                   <MetaInputField
                     key={`${locale}-${state.activeField!}`}

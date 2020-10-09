@@ -46,8 +46,7 @@ export const PanelMiddle = ({
           )}
         </>
       )}
-      {/* ACTIONS */}
-      <ActionBar dataSetIri={dataSetPreviewIri} />
+
       {process.env.NODE_ENV === "development" && (
         <Box my={3} p={2} bg="muted">
           <pre>{JSON.stringify(state, null, 2)}</pre>
