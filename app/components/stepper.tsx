@@ -40,24 +40,25 @@ export const Stepper = () => {
           overflow: "hidden",
         }}
       >
+        {/* Stepper container */}
         <Flex
           sx={{
             position: "relative",
             justifyContent: "center",
-            alignItems: "flex-start",
+            alignItems: "center",
           }}
         >
+          {/* Line */}
           <Box
             sx={{
               position: "absolute",
               width: "calc(100% - 156px)", // Remove: 2 * buttons.step.width / 2
-              height: "24px",
-              mt: 2,
               transform: "translateY(-50%)",
               borderBottomWidth: "1px",
               borderBottomStyle: "solid",
-              borderBottomColor: "monochrome300",
-              zIndex: 3,
+              borderBottomColor: "monochrome400",
+              zIndex: 0,
+              mb: "3px",
             }}
           />
           {steps.map((step, i) => (
@@ -106,13 +107,14 @@ export const Step = ({
     <Button
       variant="reset"
       sx={{
-        bg: "transparent",
+        bg: "monochrome100",
+        zIndex: 2,
         appearance: "none",
-        width: "156px",
+        mr: 7,
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "baseline",
         cursor: status === "past" ? "pointer" : undefined,
       }}
       disabled={status !== "past"}
@@ -120,18 +122,19 @@ export const Step = ({
     >
       <Flex
         sx={{
-          height: "100%",
           bg: "monochrome100",
           zIndex: 5,
           justifyContent: "center",
           alignItems: "center",
-          px: 4,
+          pl: 2,
+          pr: 2,
         }}
       >
+        {/* Icon */}
         <Flex
           sx={{
-            width: "24px",
-            height: "24px",
+            width: "20px",
+            height: "20px",
             mb: 1,
             borderRadius: "circle",
             fontSize: 3,
@@ -139,6 +142,7 @@ export const Step = ({
             justifyContent: "center",
             alignItems: "center",
             color: "monochrome100",
+
             bg:
               status === "past"
                 ? "monochrome800"
