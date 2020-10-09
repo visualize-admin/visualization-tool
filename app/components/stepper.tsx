@@ -7,6 +7,7 @@ import {
 import { Icon } from "../icons";
 import { Trans } from "@lingui/macro";
 import { useTheme } from "../themes";
+import { ActionBar } from "./action-bar";
 
 export type StepStatus = "past" | "current" | "future";
 type StepState =
@@ -22,7 +23,7 @@ const steps: Array<StepState> = [
   "DESCRIBING_CHART",
 ];
 
-export const Stepper = () => {
+export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [{ state }, dispatch] = useConfiguratorState();
 
   return useMemo(() => {
@@ -77,9 +78,10 @@ export const Stepper = () => {
             />
           ))}
         </Flex>
+        <ActionBar dataSetIri={dataSetIri} />
       </Flex>
     );
-  }, [state, dispatch]);
+  }, [state, dataSetIri, dispatch]);
 };
 
 export const Step = ({
