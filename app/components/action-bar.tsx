@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Button, Flex } from "@theme-ui/components";
-import React, { useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
 import {
   canTransitionToNextStep,
   canTransitionToPreviousStep,
@@ -60,13 +60,11 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
           <Button disabled variant="inline" sx={{ mr: 4 }}>
             {previousLabel}
           </Button>
-          <Button
-            variant="primarySmall"
+          <NextButton
+            label={nextLabel}
             onClick={goNext}
             disabled={nextDisabled}
-          >
-            {nextLabel}
-          </Button>
+          />
         </>
       ) : state.state === "SELECTING_CHART_TYPE" ? (
         <>
@@ -79,13 +77,11 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
               {previousLabel}
             </Button>
           </LocalizedLink>
-          <Button
-            variant="primarySmall"
+          <NextButton
+            label={nextLabel}
             onClick={goNext}
             disabled={nextDisabled}
-          >
-            {nextLabel}
-          </Button>
+          />
         </>
       ) : (
         <>
@@ -97,15 +93,32 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
           >
             {previousLabel}
           </Button>
-          <Button
-            variant="primarySmall"
+          <NextButton
+            label={nextLabel}
             onClick={goNext}
             disabled={nextDisabled}
-          >
-            {nextLabel}
-          </Button>
+          />
         </>
       )}
     </Flex>
   );
 };
+
+const NextButton = ({
+  label,
+  onClick,
+  disabled,
+}: {
+  label: string | ReactNode;
+  onClick: () => void;
+  disabled: boolean;
+}) => (
+  <Button
+    variant="primary"
+    sx={{ fontSize: 3, minWidth: 0, px: 4, py: 2 }}
+    onClick={onClick}
+    disabled={disabled}
+  >
+    {label}
+  </Button>
+);
