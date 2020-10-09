@@ -148,7 +148,7 @@ export const Step = ({
 
             bg:
               status === "past"
-                ? "monochrome800"
+                ? "monochrome700"
                 : status === "current"
                 ? "brand"
                 : "monochrome600",
