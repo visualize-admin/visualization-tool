@@ -268,6 +268,13 @@ export const theme: Theme = {
         bg: "primaryDisabled",
       },
     },
+    primarySmall: {
+      variant: "buttons.primary",
+      fontSize: 3,
+      minWidth: 0,
+      px: 4,
+      py: 2,
+    },
     success: {
       variant: "buttons.primary",
       bg: "successBase",
