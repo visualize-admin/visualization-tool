@@ -138,7 +138,6 @@ export const Step = ({
           sx={{
             width: "20px",
             height: "20px",
-            // mb: 1,
             borderRadius: "circle",
             fontSize: 3,
             fontFamily: "body",
@@ -177,51 +176,68 @@ export const StepLabel = ({
   switch (stepState) {
     case "SELECTING_DATASET":
       return (
-        <Text
-          sx={{
-            color: highlight ? "monochrome800" : "monochrome700",
-            fontWeight: highlight ? "bold" : "regular",
-          }}
-          variant="paragraph2"
-        >
-          <Trans id="step.dataset">Dataset</Trans>
-        </Text>
+        <StepLabelText
+          label={<Trans id="step.dataset">Dataset</Trans>}
+          highlight={highlight}
+        />
       );
     case "SELECTING_CHART_TYPE":
       return (
-        <Text
-          sx={{
-            color: highlight ? "monochrome800" : "monochrome700",
-            fontWeight: highlight ? "bold" : "regular",
-          }}
-          variant="paragraph2"
-        >
-          <Trans id="step.visualization.type">Visualization Type</Trans>
-        </Text>
+        <StepLabelText
+          label={<Trans id="step.visualization.type">Visualization Type</Trans>}
+          highlight={highlight}
+        />
       );
     case "CONFIGURING_CHART":
       return (
-        <Text
-          sx={{
-            color: highlight ? "monochrome800" : "monochrome700",
-            fontWeight: highlight ? "bold" : "regular",
-          }}
-          variant="paragraph2"
-        >
-          <Trans id="step.adjust">Adjust</Trans>
-        </Text>
+        <StepLabelText
+          label={<Trans id="step.adjust">Adjust</Trans>}
+          highlight={highlight}
+        />
       );
     case "DESCRIBING_CHART":
       return (
+        <StepLabelText
+          label={<Trans id="step.annotate">Annotate</Trans>}
+          highlight={highlight}
+        />
+      );
+  }
+};
+
+const StepLabelText = ({
+  highlight,
+  label,
+}: {
+  highlight: boolean;
+  label: React.ReactNode;
+}) => {
+  return (
+    <>
+      {/* Add background colored bold label underneath the actual
+    label, to avoid changing container's size when the text becomes bold. */}
+      <Text
+        sx={{
+          fontWeight: "bold",
+          color: "monochrome000",
+          position: "relative",
+        }}
+        variant="paragraph2"
+      >
+        {label}
         <Text
           sx={{
+            position: "absolute",
+            left: 0,
+            top: 0,
             color: highlight ? "monochrome800" : "monochrome700",
             fontWeight: highlight ? "bold" : "regular",
           }}
           variant="paragraph2"
         >
-          <Trans id="step.annotate">Annotate</Trans>
+          {label}
         </Text>
-      );
-  }
+      </Text>
+    </>
+  );
 };
