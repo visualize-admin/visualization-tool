@@ -32,7 +32,7 @@ export const ChartEditor = () => {
       }}
     >
       <Box as="section" role="navigation" sx={{ gridArea: "header" }}>
-        <Stepper />
+        <Stepper dataSetIri={state.dataSet} />
       </Box>
 
       <Box
