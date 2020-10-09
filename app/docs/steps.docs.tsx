@@ -5,47 +5,19 @@ export default () => markdown`
 > The "stepper" is used to guide users through the steps of creating a visualization.
 
 
-
   ${(
     <ReactSpecimen span={1}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "white",
-        }}
-      >
-        <Step stepNumber={1} stepState="CONFIGURING_CHART" status="past" />
-      </div>
+      <Step stepNumber={1} stepState="CONFIGURING_CHART" status="past" />
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={1}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "white",
-        }}
-      >
-        <Step stepNumber={3} stepState="CONFIGURING_CHART" status="current" />
-      </div>
+      <Step stepNumber={3} stepState="CONFIGURING_CHART" status="current" />
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={1}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "white",
-        }}
-      >
-        <Step stepNumber={4} stepState="CONFIGURING_CHART" status="future" />
-      </div>
+      <Step stepNumber={4} stepState="CONFIGURING_CHART" status="future" />
     </ReactSpecimen>
   )}
 
