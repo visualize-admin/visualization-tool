@@ -1,12 +1,5 @@
 // @ts-nocheck
-import {
-  Text,
-  Flex,
-  Label,
-  Checkbox,
-  Radio,
-  Select,
-} from "@theme-ui/components";
+import { Text, Flex, Label, Radio, Select } from "@theme-ui/components";
 import * as React from "react";
 
 export const ColumnSorting = React.memo(

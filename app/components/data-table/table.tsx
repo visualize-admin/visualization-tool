@@ -7,6 +7,7 @@ import {
   Grid,
   Label,
   Radio,
+  Select,
   Text,
 } from "@theme-ui/components";
 import * as React from "react";
@@ -43,6 +44,7 @@ export const Table = ({
   const [groupingIds, setGroupingIds] = useState([]);
   const [hiddenIds, setHiddenIds] = useState([]);
   const [sortingIds, setSortingIds] = useState([]);
+  const [customSortingIds, setCustomSortingIds] = useState([]);
   const [displayedColumns, setDisplayedColumns] = useState([]);
   const [columnOrderIds, setColumnOrderIds] = useState([]);
   const [columnStyles, setColumnStyles] = useState([]);
@@ -120,10 +122,41 @@ export const Table = ({
     setSortingIds(newSortingIds);
     setSortBy(newSortingIds);
   };
-  const updateSortingOrder = (oldPosition: number, newPosition: number) => {
+  const updateSortingOrder = (
+    columnId: string,
+    oldPosition: number,
+    newPosition: number
+  ) => {
     const newSortingIds = moveColumn(sortingIds, oldPosition, newPosition);
     setSortingIds(newSortingIds); // component state
     setSortBy(newSortingIds); // table instance state
+
+    if (customSortingIds.includes(columnId)) {
+      // const newCustomSortingIds = customSortingIds.filter(
+      //   (s) => s !== columnId
+      // );
+      const ncsIds = customSortingIds.filter((d) => d === columnId);
+      console.log({ ncsIds });
+      ncsIds[newPosition] = columnId;
+      console.log({ ncsIds });
+      // const oldCustomPosition = customSortingIds.findIndex(
+      //   (c) => c === activeColumn
+      // );
+      // const newCustomSortingIds = moveColumn(
+      //   customSortingIds,
+      //   oldCustomPosition,
+      //   newPosition
+      // );
+      setCustomSortingIds(ncsIds);
+    } else {
+      // const newCustomSortingIds = [...customSortingIds, columnId];
+      const newCustomSortingIds = moveColumn(
+        [...customSortingIds, columnId],
+        customSortingIds.length + 1,
+        newPosition
+      );
+      setCustomSortingIds(newCustomSortingIds);
+    }
   };
 
   // Ordering
@@ -203,7 +236,8 @@ export const Table = ({
   // console.log({ data });
   // console.log({ columns });
   // console.log({ displayedColumns });
-  console.log(sortingIds);
+  console.log({ sortingIds });
+  console.log({ customSortingIds });
   // console.log({ groupingIds });
   // console.log({ hiddenIds });
   // console.log({ columnStyles });
@@ -221,7 +255,21 @@ export const Table = ({
     >
       {/* Left Column */}
       <Box>
-        <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>Einstellungen</Box>
+        <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
+          <Button
+            variant="outline"
+            onClick={() => setActiveColumn("einstellungen")}
+            sx={{
+              width: ["100%", "100%", "100%"],
+              textAlign: "left",
+              mb: 3,
+              bg: GROUPED_COLOR,
+            }}
+          >
+            <Box sx={{ color: "gray" }}>{`Einstellungen`}</Box>
+            <Box>{`Hinzufügen...`}</Box>
+          </Button>
+        </Box>
         <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
           {" "}
           <Button
@@ -234,8 +282,8 @@ export const Table = ({
               bg: GROUPED_COLOR,
             }}
           >
-            <Box sx={{ color: "gray" }}>{`Sorting Options`}</Box>
-            <Box>{`Sorting Options`}</Box>
+            <Box sx={{ color: "gray" }}>{`Sortieren`}</Box>
+            <Box>{`Hinzufügen...`}</Box>
           </Button>
         </Box>
         <ColumnDimension
@@ -248,23 +296,15 @@ export const Table = ({
       </Box>
 
       {/* Table */}
+
       <Box sx={{ m: 4, p: 2 }}>
-        <Box sx={{ my: 3 }}>
-          Sortiert nach:
-          {sortingIds.length > 0
-            ? sortingIds.map((s, i) => (
-                <Box sx={{ mr: 2 }}>
-                  {i + 1} - {s.id},{" "}
-                  {s.desc ? "absteigend (9 → 1)" : "aufsteigend (1 → 9)"}{" "}
-                </Box>
-              ))
-            : " voreingestellt"}
-        </Box>
-        <table
+        <Box
+          as="table"
           {...getTableProps()}
           style={{
             borderSpacing: 0,
             border: "1px solid black",
+            display: ["none", "table", "table"],
           }}
         >
           <thead>
@@ -275,7 +315,10 @@ export const Table = ({
                     <Box
                       as="th"
                       sx={{ textAlign: "left" }}
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      {...column.getHeaderProps(
+                        column
+                        // .getSortByToggleProps()
+                      )}
                     >
                       {column.canGroupBy ? (
                         <Box
@@ -331,7 +374,7 @@ export const Table = ({
               );
             })}
           </tbody>
-        </table>
+        </Box>
       </Box>
 
       {/* Right Column -------------------------------------------------------------------------------------------------------------------------------------- */}
@@ -341,6 +384,144 @@ export const Table = ({
             <Text variant="heading2" sx={{ m: 3 }}>
               {activeColumn}
             </Text>
+
+            {sortingIds.filter((csId) => customSortingIds.includes(csId.id))
+              .length > 0 ? (
+              <>
+                {sortingIds
+                  .filter((csId) => customSortingIds.includes(csId.id))
+                  .map((csId, i) => {
+                    return (
+                      <>
+                        <Text
+                          variant="paragraph2"
+                          sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+                        >
+                          Sortieren nach
+                        </Text>
+                        <Select
+                          sx={{ mx: 3, my: 2, p: 3 }}
+                          value={csId}
+                          onChange={(e) =>
+                            updateSortingOrder(
+                              e.currentTarget.value,
+                              sortingIds.findIndex(
+                                (c) => c.id === e.currentTarget.value
+                              ),
+                              i
+                            )
+                          }
+                        >
+                          {sortingIds.map((id, i) => (
+                            <option value={id.id}>{`${id.id}`}</option>
+                          ))}
+                        </Select>
+                      </>
+                    );
+                  })}
+                <Text
+                  variant="paragraph2"
+                  sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+                >
+                  Sortieren nach
+                </Text>
+                <Select
+                  sx={{ mx: 3, my: 2, p: 3 }}
+                  value={"Spalte Hinzufügen..."}
+                  onChange={(e) =>
+                    updateSortingOrder(
+                      e.currentTarget.value,
+                      sortingIds.findIndex(
+                        (c) => c.id === e.currentTarget.value
+                      ),
+                      sortingIds.filter((csId) =>
+                        customSortingIds.includes(csId.id)
+                      ).length + 1
+                    )
+                  }
+                >
+                  {sortingIds.map((id, i) => (
+                    <option value={id.id}>{`${id.id}`}</option>
+                  ))}
+                </Select>
+              </>
+            ) : (
+              <>
+                <Text
+                  variant="paragraph2"
+                  sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+                >
+                  Sortieren nach
+                </Text>
+                <Select
+                  sx={{ mx: 3, my: 2, p: 3 }}
+                  value={"Spalte Hinzufügen..."}
+                  onChange={(e) =>
+                    updateSortingOrder(
+                      e.currentTarget.value,
+                      sortingIds.findIndex(
+                        (c) => c.id === e.currentTarget.value
+                      ),
+                      0
+                    )
+                  }
+                >
+                  {sortingIds.map((id, i) => (
+                    <option value={id.id}>{`${id.id}`}</option>
+                  ))}
+                </Select>
+              </>
+            )}
+            {/* <Text
+              variant="paragraph2"
+              sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+            >
+              Sortieren nach
+            </Text>
+            <Select
+              sx={{ mx: 3, my: 2, p: 3 }}
+              value={customSortingIds[0] ?? "Spalte Hinzufügen..."}
+              onChange={(e) =>
+                updateSortingOrder(
+                  e.currentTarget.value,
+                  sortingIds.findIndex((c) => c.id === e.currentTarget.value),
+                  0
+                )
+              }
+            >
+              {sortingIds.map((id, i) => (
+                <option value={id.id}>{`${id.id}`}</option>
+              ))}
+            </Select> */}
+
+            {/* {customSortingIds.length > 0 && (
+              <>
+                <Text
+                  variant="paragraph2"
+                  sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+                >
+                  Sortieren nach
+                </Text>
+                <Select
+                  sx={{ mx: 3, my: 2, p: 3 }}
+                  value={customSortingIds[1] ?? "Spalte Hinzufügen..."}
+                  onChange={(e) =>
+                    updateSortingOrder(
+                      e.currentTarget.value,
+                      sortingIds.findIndex(
+                        (c) => c.id === e.currentTarget.value
+                      ),
+                      1
+                    )
+                  }
+                >
+                  {sortingIds.map((id, i) => (
+                    <option value={id.id}>{`${id.id}`}</option>
+                  ))}
+                </Select>
+              </>
+            )} */}
+            {/*
             {sortingIds.map((sCol, i) => (
               <Flex sx={{ height: 84, p: 2, m: 2, bg: "muted" }}>
                 <Box sx={{ width: 100, borderRight: "1px solid gray" }}>
@@ -394,7 +575,14 @@ export const Table = ({
                   </Box>
                 </Box>
               </Flex>
-            ))}
+            ))} */}
+          </>
+        ) : activeColumn === "einstellungen" ? (
+          <>
+            <Text variant="heading2" sx={{ m: 3 }}>
+              {activeColumn}
+            </Text>
+            <Box sx={{ mx: 3 }}>Hier kommen Einstellungen</Box>
           </>
         ) : (
           activeColumn !== "" && (
