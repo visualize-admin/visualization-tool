@@ -30,7 +30,13 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         state.state === "DESCRIBING_CHART" ||
         state.state === "PUBLISHING") && (
         <>
-          <Text variant="heading2" sx={{ mb: 2 }}>
+          <Text
+            variant="heading2"
+            sx={{
+              mb: 2,
+              color: state.meta.title[locale] === "" ? "monochrome500" : "text",
+            }}
+          >
             {state.meta.title[locale] === "" ? (
               <Trans id="annotation.add.title">
                 [You can add a title here]
@@ -39,7 +45,16 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               state.meta.title[locale]
             )}
           </Text>
-          <Text variant="paragraph1" sx={{ mb: 2 }}>
+          <Text
+            variant="paragraph1"
+            sx={{
+              mb: 2,
+              color:
+                state.meta.description[locale] === ""
+                  ? "monochrome500"
+                  : "text",
+            }}
+          >
             {state.meta.description[locale] === "" ? (
               <Trans id="annotation.add.description">
                 [You can add a description here]
