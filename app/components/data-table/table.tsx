@@ -472,55 +472,7 @@ export const Table = ({
                 </Select>
               </>
             )}
-            {/* <Text
-              variant="paragraph2"
-              sx={{ color: "monochrome700", mt: 2, mx: 3 }}
-            >
-              Sortieren nach
-            </Text>
-            <Select
-              sx={{ mx: 3, my: 2, p: 3 }}
-              value={customSortingIds[0] ?? "Spalte Hinzufügen..."}
-              onChange={(e) =>
-                updateSortingOrder(
-                  e.currentTarget.value,
-                  sortingIds.findIndex((c) => c.id === e.currentTarget.value),
-                  0
-                )
-              }
-            >
-              {sortingIds.map((id, i) => (
-                <option value={id.id}>{`${id.id}`}</option>
-              ))}
-            </Select> */}
 
-            {/* {customSortingIds.length > 0 && (
-              <>
-                <Text
-                  variant="paragraph2"
-                  sx={{ color: "monochrome700", mt: 2, mx: 3 }}
-                >
-                  Sortieren nach
-                </Text>
-                <Select
-                  sx={{ mx: 3, my: 2, p: 3 }}
-                  value={customSortingIds[1] ?? "Spalte Hinzufügen..."}
-                  onChange={(e) =>
-                    updateSortingOrder(
-                      e.currentTarget.value,
-                      sortingIds.findIndex(
-                        (c) => c.id === e.currentTarget.value
-                      ),
-                      1
-                    )
-                  }
-                >
-                  {sortingIds.map((id, i) => (
-                    <option value={id.id}>{`${id.id}`}</option>
-                  ))}
-                </Select>
-              </>
-            )} */}
             {/*
             {sortingIds.map((sCol, i) => (
               <Flex sx={{ height: 84, p: 2, m: 2, bg: "muted" }}>
@@ -647,18 +599,6 @@ export const Table = ({
                 columnStyles={columnStyles}
                 updateColumnStyle={updateColumnStyle}
               />
-              {/* <Text variant="paragraph3" sx={{ mt: 5, mx: 3, mb: 2 }}>
-                  Filter rows
-                </Text>
-                {activeColumnValues.map((v) => (
-                  <Label sx={{ mx: 3 }}>
-                    <Checkbox
-                      checked={false}
-                      onClick={() => updateFilterIds(activeColumn, v)}
-                    />
-                    {v}
-                  </Label>
-                ))}*/}
             </>
           )
         )}
