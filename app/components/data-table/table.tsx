@@ -425,7 +425,7 @@ export const Table = ({
                             disabled={false}
                             name="ascending"
                             value="ascending"
-                            checked={csId.desc}
+                            checked={!csId.desc}
                             onClick={() =>
                               updateSortingDirection(csId.id, false)
                             }
