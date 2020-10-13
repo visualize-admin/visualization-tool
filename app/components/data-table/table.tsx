@@ -145,6 +145,19 @@ export const Table = ({
     }
   };
 
+  const removeCustomSortingId = (columnId) => {
+    const newSortingIds = [
+      ...sortingIds.filter((d) => d.id !== columnId),
+      { id: columnId, desc: false },
+    ];
+    setSortingIds(newSortingIds); // component state
+    setSortBy(newSortingIds); // table instance state
+    const newCustomSortingIds = [
+      ...customSortingIds.filter((d) => d !== columnId),
+    ];
+    setCustomSortingIds(newCustomSortingIds);
+  };
+
   // Ordering
   const reorderColumns = (oldPosition: number, newPosition: number) => {
     const newOrdering = moveColumn(columnOrderIds, oldPosition, newPosition);
@@ -412,7 +425,7 @@ export const Table = ({
                             disabled={false}
                             name="ascending"
                             value="ascending"
-                            checked={csId.desc === false}
+                            checked={csId.desc}
                             onClick={() =>
                               updateSortingDirection(csId.id, false)
                             }
@@ -432,6 +445,12 @@ export const Table = ({
                           9 → 1
                         </Label>
                       </Flex>
+                      <Button
+                        variant="inline"
+                        onClick={() => removeCustomSortingId(csId.id)}
+                      >
+                        Löschen
+                      </Button>
                     </Box>
                   )}
                 </>

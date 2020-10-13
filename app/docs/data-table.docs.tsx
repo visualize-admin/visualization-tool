@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Box } from "@theme-ui/components";
 import { markdown, ReactSpecimen } from "catalog";
 import * as React from "react";
