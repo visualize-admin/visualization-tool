@@ -1,3 +1,4 @@
+import "core-js/features/array/flat-map";
 import { I18nProvider } from "@lingui/react";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
 import "@reach/menu-button/styles.css";
