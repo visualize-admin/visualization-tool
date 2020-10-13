@@ -387,7 +387,7 @@ export const Table = ({
 
             {sortingIds.map((csId, i) => {
               return (
-                <>
+                <Box key={csId.id}>
                   {customSortingIds.includes(csId.id) && (
                     <Box
                       sx={{
@@ -419,6 +419,7 @@ export const Table = ({
                           <option value={id.id}>{`${id.id}`}</option>
                         ))}
                       </Select>
+
                       <Flex sx={{ mx: 3, mb: 2 }}>
                         <Label sx={{ color: "monochrome900" }}>
                           <Radio
@@ -447,21 +448,22 @@ export const Table = ({
                       </Flex>
                       <Button
                         variant="inline"
+                        sx={{ mx: 3, my: 2 }}
                         onClick={() => removeCustomSortingId(csId.id)}
                       >
                         Löschen
                       </Button>
                     </Box>
                   )}
-                </>
+                </Box>
               );
             })}
 
             <Text
               variant="paragraph2"
-              sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+              sx={{ color: "monochrome700", mt: 4, mx: 3 }}
             >
-              Sortieren, Spalte hinzufügen:
+              Spalte hinzufügen:
             </Text>
             <Select
               sx={{ mx: 3, my: 2, p: 3 }}
@@ -537,13 +539,13 @@ export const Table = ({
                 reorderColumns={reorderColumns}
                 disabled={groupingIds.includes(activeColumn)}
               />
-              <ColumnSorting
+              {/* <ColumnSorting
                 activeColumn={activeColumn}
                 sortingIds={sortingIds}
                 updateSortingIds={updateSortingIds}
                 updateSortingDirection={updateSortingDirection}
                 updateSortingOrder={updateSortingOrder}
-              />
+              /> */}
               <ColumnFormatting
                 activeColumn={activeColumn}
                 columnStyles={columnStyles}
@@ -556,61 +558,3 @@ export const Table = ({
     </Grid>
   );
 };
-
-{
-  /*
-            {sortingIds.map((sCol, i) => (
-              <Flex sx={{ height: 84, p: 2, m: 2, bg: "muted" }}>
-                <Box sx={{ width: 100, borderRight: "1px solid gray" }}>
-                  Priorität {i + 1}
-                </Box>
-                <Box sx={{ p: 2 }}>
-                  {sCol.id}
-                  <Flex sx={{ mx: 3, mb: 2 }}>
-                    <Label sx={{ color: "monochrome900" }}>
-                      <Radio
-                        disabled={false}
-                        name="ascending"
-                        value="ascending"
-                        checked={sCol.desc === false}
-                        onClick={() => updateSortingDirection(sCol.id, false)}
-                      />
-                      1 → 9
-                    </Label>
-                    <Label sx={{ color: "monochrome900" }}>
-                      <Radio
-                        disabled={false}
-                        name="descending"
-                        value="descending"
-                        checked={sCol.desc}
-                        onClick={() => updateSortingDirection(sCol.id, true)}
-                      />
-                      9 → 1
-                    </Label>
-                  </Flex>
-                </Box>
-                <Box sx={{ p: 2 }}>
-                  <Box
-                    onClick={() => updateSortingOrder(i, i - 1)}
-                    sx={{
-                      p: 1,
-                      cursor: "pointer",
-                      ":hover": { color: "primary" },
-                    }}
-                  >
-                    ▲
-                  </Box>
-                  <Box
-                    onClick={() => updateSortingOrder(i, i + 1)}
-                    sx={{
-                      p: 1,
-                      cursor: "pointer",
-                      ":hover": { color: "primary" },
-                    }}
-                  >
-                    ▼
-                  </Box>
-                </Box>
-              </Flex>
-            ))} */
-}
