@@ -57,7 +57,7 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
     >
       {state.state === "SELECTING_DATASET" ? (
         <>
-          <Button disabled variant="inline" sx={{ mr: 4, color: "text" }}>
+          <Button disabled variant="inline" sx={{ mr: 4 }}>
             {previousLabel}
           </Button>
           <NextButton
@@ -73,7 +73,7 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
             query={{ chartId: "new" }}
             passHref
           >
-            <Button as="a" variant="inline" sx={{ mr: 4, color: "text" }}>
+            <Button as="a" variant="inline" sx={{ mr: 4 }}>
               {previousLabel}
             </Button>
           </LocalizedLink>
@@ -88,7 +88,7 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
           <Button
             variant="inline"
             onClick={goPrevious}
-            sx={{ mr: 4, color: "text" }}
+            sx={{ mr: 4 }}
             disabled={previousDisabled}
           >
             {previousLabel}
