@@ -235,9 +235,8 @@ export const Table = ({
   // console.log({ data });
   // console.log({ columns });
   // console.log({ displayedColumns });
-  console.log({ sortingIds });
-  console.log({ customSortingIds });
-
+  // console.log({ sortingIds });
+  // console.log({ customSortingIds });
   // console.log({ groupingIds });
   // console.log({ hiddenIds });
   // console.log({ columnStyles });

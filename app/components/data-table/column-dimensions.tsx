@@ -18,7 +18,6 @@ export const ColumnDimension = React.memo(
     setActiveColumn: (x: string) => void;
     hiddenIds: string[];
   }) => {
-    console.log(groupingIds);
     return (
       <Box sx={{ m: 4, bg: "monochrome100", p: 2 }}>
         <Text sx={{ mt: 2, mb: 1 }} variant="heading3">

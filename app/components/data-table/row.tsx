@@ -34,7 +34,6 @@ export const RowUI = ({
                 (c) => c.id === cell.column.id
               );
 
-              // console.log(thisCell?.colorRange.domain());
               const cellTextColor =
                 thisCell && thisCell?.textColor
                   ? thisCell?.textColor
@@ -191,8 +190,7 @@ const GroupHeaderRow = ({
   columnStyles: ColumnStyle[];
 }) => {
   const thisCell = columnStyles.find((c) => c.id === row.groupByID);
-  console.log({ thisCell });
-  // console.log(thisCell?.colorRange.domain());
+
   const cellTextColor =
     thisCell && thisCell?.textColor ? thisCell?.textColor : "#333333";
   const cellBgColor =
