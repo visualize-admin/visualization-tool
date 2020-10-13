@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { CellPropGetter, TableCellProps } from "react-table";

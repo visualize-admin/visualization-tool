@@ -131,28 +131,14 @@ export const Table = ({
     setSortingIds(newSortingIds); // component state
     setSortBy(newSortingIds); // table instance state
 
+    if (!customSortingIds.includes(columnId)) {
+      const newCustomSortingIds = [...customSortingIds, columnId];
+      setCustomSortingIds(newCustomSortingIds);
+    }
     if (customSortingIds.includes(columnId)) {
-      // const newCustomSortingIds = customSortingIds.filter(
-      //   (s) => s !== columnId
-      // );
-      const ncsIds = customSortingIds.filter((d) => d === columnId);
-      console.log({ ncsIds });
-      ncsIds[newPosition] = columnId;
-      console.log({ ncsIds });
-      // const oldCustomPosition = customSortingIds.findIndex(
-      //   (c) => c === activeColumn
-      // );
-      // const newCustomSortingIds = moveColumn(
-      //   customSortingIds,
-      //   oldCustomPosition,
-      //   newPosition
-      // );
-      setCustomSortingIds(ncsIds);
-    } else {
-      // const newCustomSortingIds = [...customSortingIds, columnId];
       const newCustomSortingIds = moveColumn(
-        [...customSortingIds, columnId],
-        customSortingIds.length + 1,
+        customSortingIds,
+        oldPosition,
         newPosition
       );
       setCustomSortingIds(newCustomSortingIds);
@@ -238,6 +224,7 @@ export const Table = ({
   // console.log({ displayedColumns });
   console.log({ sortingIds });
   console.log({ customSortingIds });
+
   // console.log({ groupingIds });
   // console.log({ hiddenIds });
   // console.log({ columnStyles });
@@ -385,149 +372,93 @@ export const Table = ({
               {activeColumn}
             </Text>
 
-            {sortingIds.filter((csId) => customSortingIds.includes(csId.id))
-              .length > 0 ? (
-              <>
-                {sortingIds
-                  .filter((csId) => customSortingIds.includes(csId.id))
-                  .map((csId, i) => {
-                    return (
-                      <>
-                        <Text
-                          variant="paragraph2"
-                          sx={{ color: "monochrome700", mt: 2, mx: 3 }}
-                        >
-                          Sortieren nach
-                        </Text>
-                        <Select
-                          sx={{ mx: 3, my: 2, p: 3 }}
-                          value={csId}
-                          onChange={(e) =>
-                            updateSortingOrder(
-                              e.currentTarget.value,
-                              sortingIds.findIndex(
-                                (c) => c.id === e.currentTarget.value
-                              ),
-                              i
-                            )
-                          }
-                        >
-                          {sortingIds.map((id, i) => (
-                            <option value={id.id}>{`${id.id}`}</option>
-                          ))}
-                        </Select>
-                      </>
-                    );
-                  })}
-                <Text
-                  variant="paragraph2"
-                  sx={{ color: "monochrome700", mt: 2, mx: 3 }}
-                >
-                  Sortieren nach
-                </Text>
-                <Select
-                  sx={{ mx: 3, my: 2, p: 3 }}
-                  value={"Spalte Hinzufügen..."}
-                  onChange={(e) =>
-                    updateSortingOrder(
-                      e.currentTarget.value,
-                      sortingIds.findIndex(
-                        (c) => c.id === e.currentTarget.value
-                      ),
-                      sortingIds.filter((csId) =>
-                        customSortingIds.includes(csId.id)
-                      ).length + 1
-                    )
-                  }
-                >
-                  {sortingIds.map((id, i) => (
-                    <option value={id.id}>{`${id.id}`}</option>
-                  ))}
-                </Select>
-              </>
-            ) : (
-              <>
-                <Text
-                  variant="paragraph2"
-                  sx={{ color: "monochrome700", mt: 2, mx: 3 }}
-                >
-                  Sortieren nach
-                </Text>
-                <Select
-                  sx={{ mx: 3, my: 2, p: 3 }}
-                  value={"Spalte Hinzufügen..."}
-                  onChange={(e) =>
-                    updateSortingOrder(
-                      e.currentTarget.value,
-                      sortingIds.findIndex(
-                        (c) => c.id === e.currentTarget.value
-                      ),
-                      0
-                    )
-                  }
-                >
-                  {sortingIds.map((id, i) => (
-                    <option value={id.id}>{`${id.id}`}</option>
-                  ))}
-                </Select>
-              </>
-            )}
+            {sortingIds.map((csId, i) => {
+              return (
+                <>
+                  {customSortingIds.includes(csId.id) && (
+                    <Box
+                      sx={{
+                        borderBottom: "1px solid",
+                        borderBottomColor: "monochrome300",
+                        mt: 2,
+                      }}
+                    >
+                      <Text
+                        variant="paragraph2"
+                        sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+                      >
+                        Sortieren nach
+                      </Text>
+                      <Select
+                        sx={{ mx: 3, my: 2, p: 3 }}
+                        value={csId.id}
+                        onChange={(e) =>
+                          updateSortingOrder(
+                            e.currentTarget.value,
+                            sortingIds.findIndex(
+                              (c) => c.id === e.currentTarget.value
+                            ),
+                            i
+                          )
+                        }
+                      >
+                        {sortingIds.map((id, i) => (
+                          <option value={id.id}>{`${id.id}`}</option>
+                        ))}
+                      </Select>
+                      <Flex sx={{ mx: 3, mb: 2 }}>
+                        <Label sx={{ color: "monochrome900" }}>
+                          <Radio
+                            disabled={false}
+                            name="ascending"
+                            value="ascending"
+                            checked={csId.desc === false}
+                            onClick={() =>
+                              updateSortingDirection(csId.id, false)
+                            }
+                          />
+                          1 → 9
+                        </Label>
+                        <Label sx={{ color: "monochrome900" }}>
+                          <Radio
+                            disabled={false}
+                            name="descending"
+                            value="descending"
+                            checked={csId.desc}
+                            onClick={() =>
+                              updateSortingDirection(csId.id, true)
+                            }
+                          />
+                          9 → 1
+                        </Label>
+                      </Flex>
+                    </Box>
+                  )}
+                </>
+              );
+            })}
 
-            {/*
-            {sortingIds.map((sCol, i) => (
-              <Flex sx={{ height: 84, p: 2, m: 2, bg: "muted" }}>
-                <Box sx={{ width: 100, borderRight: "1px solid gray" }}>
-                  Priorität {i + 1}
-                </Box>
-                <Box sx={{ p: 2 }}>
-                  {sCol.id}
-                  <Flex sx={{ mx: 3, mb: 2 }}>
-                    <Label sx={{ color: "monochrome900" }}>
-                      <Radio
-                        disabled={false}
-                        name="ascending"
-                        value="ascending"
-                        checked={sCol.desc === false}
-                        onClick={() => updateSortingDirection(sCol.id, false)}
-                      />
-                      1 → 9
-                    </Label>
-                    <Label sx={{ color: "monochrome900" }}>
-                      <Radio
-                        disabled={false}
-                        name="descending"
-                        value="descending"
-                        checked={sCol.desc}
-                        onClick={() => updateSortingDirection(sCol.id, true)}
-                      />
-                      9 → 1
-                    </Label>
-                  </Flex>
-                </Box>
-                <Box sx={{ p: 2 }}>
-                  <Box
-                    onClick={() => updateSortingOrder(i, i - 1)}
-                    sx={{
-                      p: 1,
-                      cursor: "pointer",
-                      ":hover": { color: "primary" },
-                    }}
-                  >
-                    ▲
-                  </Box>
-                  <Box
-                    onClick={() => updateSortingOrder(i, i + 1)}
-                    sx={{
-                      p: 1,
-                      cursor: "pointer",
-                      ":hover": { color: "primary" },
-                    }}
-                  >
-                    ▼
-                  </Box>
-                </Box>
-              </Flex>
-            ))} */}
+            <Text
+              variant="paragraph2"
+              sx={{ color: "monochrome700", mt: 2, mx: 3 }}
+            >
+              Sortieren, Spalte hinzufügen:
+            </Text>
+            <Select
+              sx={{ mx: 3, my: 2, p: 3 }}
+              value={undefined}
+              onChange={(e) =>
+                updateSortingOrder(
+                  e.currentTarget.value,
+                  sortingIds.findIndex((c) => c.id === e.currentTarget.value),
+                  customSortingIds.length
+                )
+              }
+            >
+              {sortingIds.map((id, i) => (
+                <option value={id.id}>{`${id.id}`}</option>
+              ))}
+            </Select>
           </>
         ) : activeColumn === "einstellungen" ? (
           <>
@@ -606,3 +537,61 @@ export const Table = ({
     </Grid>
   );
 };
+
+{
+  /*
+            {sortingIds.map((sCol, i) => (
+              <Flex sx={{ height: 84, p: 2, m: 2, bg: "muted" }}>
+                <Box sx={{ width: 100, borderRight: "1px solid gray" }}>
+                  Priorität {i + 1}
+                </Box>
+                <Box sx={{ p: 2 }}>
+                  {sCol.id}
+                  <Flex sx={{ mx: 3, mb: 2 }}>
+                    <Label sx={{ color: "monochrome900" }}>
+                      <Radio
+                        disabled={false}
+                        name="ascending"
+                        value="ascending"
+                        checked={sCol.desc === false}
+                        onClick={() => updateSortingDirection(sCol.id, false)}
+                      />
+                      1 → 9
+                    </Label>
+                    <Label sx={{ color: "monochrome900" }}>
+                      <Radio
+                        disabled={false}
+                        name="descending"
+                        value="descending"
+                        checked={sCol.desc}
+                        onClick={() => updateSortingDirection(sCol.id, true)}
+                      />
+                      9 → 1
+                    </Label>
+                  </Flex>
+                </Box>
+                <Box sx={{ p: 2 }}>
+                  <Box
+                    onClick={() => updateSortingOrder(i, i - 1)}
+                    sx={{
+                      p: 1,
+                      cursor: "pointer",
+                      ":hover": { color: "primary" },
+                    }}
+                  >
+                    ▲
+                  </Box>
+                  <Box
+                    onClick={() => updateSortingOrder(i, i + 1)}
+                    sx={{
+                      p: 1,
+                      cursor: "pointer",
+                      ":hover": { color: "primary" },
+                    }}
+                  >
+                    ▼
+                  </Box>
+                </Box>
+              </Flex>
+            ))} */
+}
