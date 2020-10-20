@@ -342,7 +342,7 @@ export const Switch = ({
   >
     <RebassLabel
       htmlFor={`${name}-${label}`}
-      sx={{ ":active div:after": { width: "16px" } }}
+      sx={{ ":active div:after": { width: disabled ? "12px" : "16px" } }}
     >
       <RebassCheckbox
         id={`${name}-${label}`}
