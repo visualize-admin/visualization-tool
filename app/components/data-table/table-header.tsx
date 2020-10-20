@@ -11,55 +11,57 @@ export const TableHeader = ({
 }) => {
   return (
     <thead>
-      {headerGroups.map((headerGroup) => (
-        <tr {...headerGroup.getHeaderGroupProps()}>
-          {headerGroup.headers.map((column, i) => {
-            return (
-              <Box
-                as="th"
-                sx={{ textAlign: "left" }}
-                {...column
-                  .getHeaderProps
-                  // column.getSortByToggleProps()
-                  ()}
-              >
-                {column.canGroupBy ? (
-                  <Box
-                    sx={{
-                      fontSize: 1,
-                      color: column.isGrouped ? "primary" : "monochrome700",
-                      fontWeight: column.isGrouped ? 800 : 500,
-                    }}
-                    // {...column.getGroupByToggleProps()}
-                  >
-                    {column.isGrouped ? "Gruppiert " : `Spalte ${i + 1}`}
-                  </Box>
-                ) : null}
-                {column.isSorted ? (
-                  <Box
-                    sx={{
-                      fontSize: 1,
-                      color: column.isSorted ? "success" : "monochrome700",
-                      fontWeight: column.isSorted ? 800 : 500,
-                    }}
-                  >
-                    {column.isSorted ? "Sortiert " : " "}{" "}
+      {headerGroups.map((headerGroup) => {
+        return (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column, i) => {
+              return (
+                <Box
+                  as="th"
+                  sx={{ textAlign: "left" }}
+                  {...column
+                    .getHeaderProps
+                    // column.getSortByToggleProps()
+                    ()}
+                >
+                  {column.canGroupBy ? (
                     <Box
-                      as="span"
                       sx={{
-                        color: column.isSortedDesc ? "alert" : "success",
+                        fontSize: 1,
+                        color: column.isGrouped ? "primary" : "monochrome700",
+                        fontWeight: column.isGrouped ? 800 : 500,
+                      }}
+                      // {...column.getGroupByToggleProps()}
+                    >
+                      {column.isGrouped ? "Gruppiert " : `Spalte ${i + 1}`}
+                    </Box>
+                  ) : null}
+                  {column.isSorted ? (
+                    <Box
+                      sx={{
+                        fontSize: 1,
+                        color: column.isSorted ? "success" : "monochrome700",
+                        fontWeight: column.isSorted ? 800 : 500,
                       }}
                     >
-                      {column.isSortedDesc ? " ↑" : " ↓"}
+                      {column.isSorted ? "Sortiert " : " "}{" "}
+                      <Box
+                        as="span"
+                        sx={{
+                          color: column.isSortedDesc ? "alert" : "success",
+                        }}
+                      >
+                        {column.isSortedDesc ? " ↑" : " ↓"}
+                      </Box>
                     </Box>
-                  </Box>
-                ) : null}
-                {column.render("Header")}
-              </Box>
-            );
-          })}
-        </tr>
-      ))}
+                  ) : null}
+                  {column.render("Header")}
+                </Box>
+              );
+            })}
+          </tr>
+        );
+      })}
     </thead>
   );
 };

@@ -23,13 +23,14 @@ import {
 import { Data } from "../../pages/[locale]/_table-a";
 import { ColumnDimension } from "./column-dimensions";
 import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";
-import { ColumnSorting } from "./column-sorting";
+
 import { RowUI } from "./row";
 import { ColumnFormatting } from "./column-formatting";
 import { setWith } from "lodash";
 import { getPalette } from "../../domain/helpers";
 import { scaleOrdinal, scaleLinear } from "d3-scale";
 import { extent } from "d3-array";
+import { TableHeader } from "../data-table/table-header";
 
 export const GROUPED_COLOR = "#F5F5F5";
 
@@ -306,61 +307,7 @@ export const Table = ({
             display: ["none", "table", "table"],
           }}
         >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, i) => {
-                  return (
-                    <Box
-                      as="th"
-                      sx={{ textAlign: "left" }}
-                      {...column.getHeaderProps(
-                        column
-                        // .getSortByToggleProps()
-                      )}
-                    >
-                      {column.canGroupBy ? (
-                        <Box
-                          sx={{
-                            fontSize: 1,
-                            color: column.isGrouped
-                              ? "primary"
-                              : "monochrome700",
-                            fontWeight: column.isGrouped ? 800 : 500,
-                          }}
-                          // {...column.getGroupByToggleProps()}
-                        >
-                          {column.isGrouped ? "Gruppiert " : `Spalte ${i + 1}`}
-                        </Box>
-                      ) : null}
-                      {column.isSorted ? (
-                        <Box
-                          sx={{
-                            fontSize: 1,
-                            color: column.isSorted
-                              ? "success"
-                              : "monochrome700",
-                            fontWeight: column.isSorted ? 800 : 500,
-                          }}
-                        >
-                          {column.isSorted ? "Sortiert " : " "}{" "}
-                          <Box
-                            as="span"
-                            sx={{
-                              color: column.isSortedDesc ? "alert" : "success",
-                            }}
-                          >
-                            {column.isSortedDesc ? " ↑" : " ↓"}
-                          </Box>
-                        </Box>
-                      ) : null}
-                      {column.render("Header")}
-                    </Box>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
+          <TableHeader headerGroups={headerGroups} />
 
           <tbody {...getTableBodyProps()}>
             {rows.map((row) => {
@@ -538,13 +485,7 @@ export const Table = ({
                 reorderColumns={reorderColumns}
                 disabled={groupingIds.includes(activeColumn)}
               />
-              {/* <ColumnSorting
-                activeColumn={activeColumn}
-                sortingIds={sortingIds}
-                updateSortingIds={updateSortingIds}
-                updateSortingDirection={updateSortingDirection}
-                updateSortingOrder={updateSortingOrder}
-              /> */}
+
               <ColumnFormatting
                 activeColumn={activeColumn}
                 columnStyles={columnStyles}
