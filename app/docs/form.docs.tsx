@@ -1,4 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
+import React, { useState } from "react";
 import {
   Radio,
   Checkbox,
@@ -6,7 +7,22 @@ import {
   Input,
   MiniSelect,
   SearchField,
+  Switch,
 } from "../components/form";
+
+const SwitchExample = () => {
+  const [checked, toggle] = useState(false);
+
+  return (
+    <Switch
+      label={"foo"}
+      name={"foo"}
+      value={"foo"}
+      checked={checked}
+      onChange={() => toggle(!checked)}
+    />
+  );
+};
 
 export default () => markdown`
 > Form elements are used throughout the _Visualization Tool_ whenever user input is needed.
@@ -63,6 +79,27 @@ ${(
     </ReactSpecimen>
   )}
 
+## Switch
+
+  ${(
+    <ReactSpecimen span={2}>
+      <SwitchExample />
+    </ReactSpecimen>
+  )}
+
+  ${(
+    <ReactSpecimen span={2}>
+      <Switch
+        label={"disabled"}
+        name={"disabled"}
+        value={"disabled"}
+        checked={false}
+        disabled
+        onChange={() => {}}
+      />
+    </ReactSpecimen>
+  )}
+
   ## Select
 
   ${(
@@ -100,9 +137,9 @@ ${(
       <Input label="Title einfügen" />
     </ReactSpecimen>
   )}
-  
+
   ## Search Field
-  
+
     ${(
       <ReactSpecimen span={2}>
         <SearchField id="search-ex-1" label="Title einfügen" />
