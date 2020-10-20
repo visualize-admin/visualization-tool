@@ -5,51 +5,47 @@ import { SystemStyleObject } from "@styled-system/css";
 
 export const TextCell = ({
   value,
-  color,
-  bg,
-  textAlign,
-  fontWeight,
+  styles,
   cellProps,
 }: {
   value: string | number;
-  color: SystemStyleObject;
-  bg: SystemStyleObject;
-  textAlign: SystemStyleObject;
-  fontWeight: SystemStyleObject;
+  styles: SystemStyleObject; // Pick<SystemStyleObject, "color" | "bg" | "textAlign" | "fontWeight">;
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
 }) => (
-  <Box as="td" sx={{ color, bg, textAlign, fontWeight }} {...cellProps}>
+  <Box as="td" sx={{ ...styles }} {...cellProps}>
     {value}
   </Box>
 );
+
 export const TagCell = ({
   value,
-  color,
-  fontWeight,
+  styles,
   tagColor,
   cellProps,
 }: {
   value: string | number;
-  color: SystemStyleObject;
-  fontWeight: SystemStyleObject;
-  tagColor: SystemStyleObject;
+  styles: { color: string; fontWeight: string };
+  tagColor: string;
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
-}) => (
-  <Box as="td" sx={{ color, fontWeight }} {...cellProps}>
-    <Box
-      as="span"
-      sx={{
-        bg: tagColor,
-        borderRadius: "15px",
-        px: 3,
-        py: 1,
-        my: 1,
-      }}
-    >
-      {value}
+}) => {
+  const { color, fontWeight } = styles;
+  return (
+    <Box as="td" sx={{ color, fontWeight }} {...cellProps}>
+      <Box
+        as="span"
+        sx={{
+          bg: tagColor,
+          borderRadius: "15px",
+          px: 3,
+          py: 1,
+          my: 1,
+        }}
+      >
+        {value}
+      </Box>
     </Box>
-  </Box>
-);
+  );
+};
 
 export const BarCell = ({
   value,
@@ -59,8 +55,8 @@ export const BarCell = ({
   cellProps,
 }: {
   value: string | number;
-  barColor: string | false;
-  barBackground: string | false;
+  barColor: string;
+  barBackground: string;
   barWidth: number; // as percentage
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
 }) => (
