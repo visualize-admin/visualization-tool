@@ -21,7 +21,6 @@
     "@reach/menu-button": "^0.11.2",
     "@reach/visually-hidden": "^0.11.1",
     "@theme-ui/components": "^0.3.1",
-    "@types/react-table": "^7.0.23",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
     "apollo-server-micro": "^2.17.0",
     "catalog": "^4.0.1-canary.2",
@@ -108,6 +107,7 @@
     "@types/node": "^14.6.4",
     "@types/nprogress": "^0.2.0",
     "@types/pg": "^7.14.4",
+    "@types/react-table": "^7.0.24",
     "@types/theme-ui": "^0.3.6",
     "babel-core": "^7.0.0-bridge.0"
   }
