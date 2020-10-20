@@ -3,7 +3,7 @@ import { Box, Label, Radio, Flex } from "@theme-ui/components";
 import { NextPage } from "next";
 import * as React from "react";
 import { useMemo } from "react";
-import { Table } from "../../components/data-table/table";
+import { Table } from "../../components/data-table-prototype/table";
 import { ContentLayout } from "../../components/layout";
 import holzernte from "../../data/holzernte.json";
 import roteListen from "../../data/rote-listen-with-labels.json";
