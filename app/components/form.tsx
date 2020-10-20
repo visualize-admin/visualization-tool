@@ -358,6 +358,7 @@ export const Switch = ({
         }}
       />
       <Box
+        aria-hidden
         sx={{
           position: "absolute",
           cursor: disabled ? "default" : "pointer",
