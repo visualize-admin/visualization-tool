@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Observation } from "../../../domain";
 import { LinesState } from "../lines/lines-state";
 import { useChartState } from "../use-chart-state";

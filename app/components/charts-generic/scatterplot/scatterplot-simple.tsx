@@ -1,4 +1,4 @@
-import * as React from "react";
+import { memo } from "react";
 import { useTheme } from "../../../themes";
 import { useChartState } from "../use-chart-state";
 import { ScatterplotState } from "./scatterplot-state";
@@ -35,7 +35,7 @@ export const Scatterplot = () => {
   );
 };
 
-const Dot = React.memo(
+const Dot = memo(
   ({ cx, cy, color }: { cx: number; cy: number; color: string }) => {
     return <circle cx={cx} cy={cy} r={4} fill={color} stroke="none" />;
   }

@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Box } from "@theme-ui/components";
-import * as React from "react";
+
 import { ReactNode } from "react";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { Fragment } from "react";
 import { Box } from "theme-ui";
 import { Observation } from "../../../domain/data";
 import { LinesState } from "../lines/lines-state";
@@ -22,7 +22,7 @@ const HoverDots = ({ d }: { d: Observation }) => {
     <>
       {values &&
         values.map((value, i) => (
-          <React.Fragment key={i}>
+          <Fragment key={i}>
             <Box
               style={{
                 backgroundColor: value.color,
@@ -41,7 +41,7 @@ const HoverDots = ({ d }: { d: Observation }) => {
                 pointerEvents: "none",
               }}
             />
-          </React.Fragment>
+          </Fragment>
         ))}
     </>
   );

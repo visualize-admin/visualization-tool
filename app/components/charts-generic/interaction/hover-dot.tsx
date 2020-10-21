@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Box } from "theme-ui";
 import { useInteraction } from "../use-interaction";
 import { useChartState } from "../use-chart-state";

@@ -1,15 +1,16 @@
 import { t } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
-import React, { ChangeEvent, useCallback } from "react";
-import { FilterValueSingle, useConfiguratorState } from "../configurator";
+import { ChangeEvent, ReactNode, useCallback } from "react";
 import {
   FIELD_VALUE_NONE,
+  FilterValueSingle,
   Option,
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
   useChartTypeSelectorField,
+  useConfiguratorState,
   useMetaField,
   useSingleFilterField,
 } from "../configurator";
@@ -118,7 +119,7 @@ export const MetaInputField = ({
   disabled,
   ...props
 }: {
-  label: string | React.ReactNode;
+  label: string | ReactNode;
   metaKey: string;
   locale: Locales;
   value?: string;
@@ -265,7 +266,7 @@ export const ChartFieldField = ({
   dataSetMetadata,
 }: {
   componentIri?: string;
-  label: string | React.ReactNode;
+  label: string | ReactNode;
   field: string;
   options: Option[];
   optional?: boolean;
@@ -314,7 +315,7 @@ export const ChartOptionRadioField = ({
   defaultChecked,
   disabled = false,
 }: {
-  label: string | React.ReactNode;
+  label: string | ReactNode;
   field: string;
   path: string;
   value: string;

@@ -1,9 +1,9 @@
+import { Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuPopover } from "@reach/menu-button";
 import VisuallyHidden from "@reach/visually-hidden";
 import { color as d3Color } from "d3-color";
-import { useCallback, useState } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 import { Box, Grid, Input } from "theme-ui";
-import { Trans } from "@lingui/macro";
 
 const Swatch = ({
   color,
@@ -12,7 +12,7 @@ const Swatch = ({
 }: {
   color: string;
   selected: boolean;
-  onClick: React.MouseEventHandler<HTMLDivElement>;
+  onClick: MouseEventHandler<HTMLDivElement>;
 }) => {
   const borderColor = d3Color(color)?.darker().toString();
   return (

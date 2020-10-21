@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Button, Flex, Text } from "@theme-ui/components";
-import * as React from "react";
+
 import { FieldProps } from "../../configurator";
 import { getFieldLabel, getIconName } from "../../domain/helpers";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
@@ -156,8 +156,8 @@ const ControlTabButtonInner = ({
   optional = false,
 }: {
   iconName: IconName;
-  upperLabel?: string | React.ReactNode;
-  lowerLabel: string | React.ReactNode;
+  upperLabel?: string | ReactNode;
+  lowerLabel: string | ReactNode;
   checked?: boolean;
   optional?: boolean;
 }) => (

@@ -1,8 +1,8 @@
-import * as React from "react";
 import { Button, Text } from "@theme-ui/components";
+import { SyntheticEvent } from "react";
 import { FieldProps } from "../../configurator";
+import { getFieldLabel, getIconName } from "../../domain/helpers";
 import { Icon } from "../../icons";
-import { getIconName, getFieldLabel } from "../../domain/helpers";
 
 export const ChartTypeSelectionButton = ({
   label,
@@ -13,7 +13,7 @@ export const ChartTypeSelectionButton = ({
 }: {
   label: string;
   disabled?: boolean;
-  onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
+  onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
 } & FieldProps) => {
   return (
     <Button

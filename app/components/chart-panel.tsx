@@ -1,5 +1,5 @@
 import { Flex } from "@theme-ui/components";
-import * as React from "react";
+
 import { ReactNode } from "react";
 
 export const ChartPanel = ({ children }: { children: ReactNode }) => (

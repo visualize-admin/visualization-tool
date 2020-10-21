@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import { Box } from "theme-ui";
 import { PieConfig, PieFields } from "../configurator";
 import { Observation } from "../domain/data";

@@ -22,7 +22,7 @@ import {
   stackOrderDescending,
   stackOrderReverse,
 } from "d3-shape";
-import * as React from "react";
+
 import { ReactNode, useCallback, useMemo } from "react";
 import { AreaFields } from "../../../configurator";
 import { Observation } from "../../../domain";

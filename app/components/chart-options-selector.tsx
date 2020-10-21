@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
-import React, { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,

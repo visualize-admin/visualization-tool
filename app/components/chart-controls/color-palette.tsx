@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { useSelect } from "downshift";
-import * as React from "react";
+
 import {
   useConfiguratorState,
   ConfiguratorStateConfiguringChart,

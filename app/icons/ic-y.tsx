@@ -1,4 +1,3 @@
-import * as React from "react";
 export const IconY = ({ size = 24, color = "currentColor" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24">
     <g stroke="none" strokeWidth={1} fill="none" fillRule="evenodd">

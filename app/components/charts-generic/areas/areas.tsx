@@ -1,8 +1,8 @@
 import { area } from "d3-shape";
-import * as React from "react";
+import { memo } from "react";
+import { useTheme } from "../../../themes";
 import { useChartState } from "../use-chart-state";
 import { AreasState } from "./areas-state";
-import { useTheme } from "../../../themes";
 
 export const Areas = () => {
   const {
@@ -35,6 +35,6 @@ export const Areas = () => {
   );
 };
 
-const Area = React.memo(({ path, color }: { path: string; color: string }) => {
+const Area = memo(({ path, color }: { path: string; color: string }) => {
   return <path d={path} fill={color} stroke="none" />;
 });

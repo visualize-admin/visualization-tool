@@ -1,4 +1,4 @@
-import * as React from "react";
+import { memo } from "react";
 import { useTheme } from "../../../themes";
 import { useChartState } from "../use-chart-state";
 import { ColumnsState } from "./columns-state";
@@ -33,7 +33,7 @@ export const Columns = () => {
   );
 };
 
-const Column = React.memo(
+const Column = memo(
   ({
     x,
     y,

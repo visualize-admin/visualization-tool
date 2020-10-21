@@ -1,6 +1,6 @@
 import { axisLeft } from "d3-axis";
 import { select, Selection } from "d3-selection";
-import * as React from "react";
+
 import { useEffect, useRef } from "react";
 import { BarsState } from "../bars/bars-state";
 import { useChartState } from "../use-chart-state";

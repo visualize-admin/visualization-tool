@@ -1,9 +1,9 @@
-import * as React from "react";
 import { useTheme } from "../../../themes";
 import { BAR_AXIS_OFFSET, BAR_HEIGHT, BAR_SPACE_ON_TOP } from "./constants";
 import { useChartState } from "../use-chart-state";
 import { useChartTheme } from "../use-chart-theme";
 import { BarsState } from "./bars-state";
+import { memo } from "react";
 
 export const Bars = () => {
   const {
@@ -91,7 +91,7 @@ export const BarLabels = () => {
   );
 };
 
-export const Bar = React.memo(
+export const Bar = memo(
   ({
     x,
     y,

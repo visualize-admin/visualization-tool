@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from "@theme-ui/components";
-import React from "react";
+import { ReactNode } from "react";
 import { ChartPublished } from "../chart-published";
 import { HomepageSection } from "./generic";
 
@@ -182,7 +182,7 @@ const Example = ({
   headline: string;
   description: string;
   reverse?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) => (
   <Flex
     sx={{

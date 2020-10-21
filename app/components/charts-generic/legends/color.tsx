@@ -1,4 +1,3 @@
-import * as React from "react";
 import { memo } from "react";
 import { Flex } from "theme-ui";
 import { useChartState } from "../use-chart-state";

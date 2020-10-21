@@ -1,6 +1,6 @@
 import { axisBottom } from "d3-axis";
 import { select, Selection } from "d3-selection";
-import * as React from "react";
+
 import { useEffect, useRef } from "react";
 import { useChartState } from "../use-chart-state";
 import { useChartTheme } from "../use-chart-theme";

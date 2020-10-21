@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button } from "@theme-ui/components";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { getFilterValue, useConfiguratorState } from "../configurator";
 import { useDimensionValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";

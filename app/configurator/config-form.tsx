@@ -1,9 +1,14 @@
 import { SelectProps } from "@theme-ui/components";
 import get from "lodash/get";
-import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
+import {
+  ChangeEvent,
+  InputHTMLAttributes,
+  SyntheticEvent,
+  useCallback,
+} from "react";
+import { getFieldComponentIri } from "../domain/charts";
 import { DataCubeMetadata } from "../graphql/types";
 import { Locales } from "../locales/locales";
-import { getFieldComponentIri } from "../domain/charts";
 import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
 
@@ -174,12 +179,10 @@ export const useChartTypeSelectorField = ({
   value: string;
   metaData: DataCubeMetadata;
 }): FieldProps & {
-  onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
+  onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
 } => {
   const [state, dispatch] = useConfiguratorState();
-  const onClick = useCallback<
-    (e: React.SyntheticEvent<HTMLButtonElement>) => void
-  >(
+  const onClick = useCallback<(e: SyntheticEvent<HTMLButtonElement>) => void>(
     (e) => {
       const chartType = e.currentTarget.value as ChartType;
 

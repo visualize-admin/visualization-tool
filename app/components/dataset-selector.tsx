@@ -1,7 +1,7 @@
 import { Plural, t, Trans } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Button, Flex, Text } from "@theme-ui/components";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "../configurator";
 import { DataCubeResultOrder, useDataCubesQuery } from "../graphql/query-hooks";

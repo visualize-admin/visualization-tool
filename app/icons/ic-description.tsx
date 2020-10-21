@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export const IconDescription = ({ size = 24, color = "currentColor" }) => {
   return (
     <svg width={size} height={size} viewBox="0 0 26 24">

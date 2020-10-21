@@ -7,7 +7,7 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3-scale";
-import * as React from "react";
+
 import { ReactNode, useCallback, useMemo } from "react";
 import { Observation, ObservationValue } from "../../../domain";
 import {

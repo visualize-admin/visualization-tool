@@ -1,5 +1,5 @@
 import { Box } from "@theme-ui/components";
-import * as React from "react";
+
 import { Observation } from "../domain";
 import {
   ComponentFieldsFragment,

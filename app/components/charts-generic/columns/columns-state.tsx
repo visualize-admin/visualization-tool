@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3-scale";
-import * as React from "react";
+
 import { ReactNode, useMemo, useCallback } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../../configurator";
 import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";

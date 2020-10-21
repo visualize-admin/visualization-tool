@@ -1,8 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Flex, Link } from "@theme-ui/components";
 import NextLink from "next/link";
-import * as React from "react";
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 import contentRoutes from "../content-routes.json";
 import { useLocale } from "../lib/use-locale";
 
@@ -112,39 +111,38 @@ const FooterLink = ({ children, ...props }: { children: ReactNode }) => (
   </Link>
 );
 
-const FooterLinkBottom = React.forwardRef<
-  HTMLAnchorElement,
-  { children: ReactNode }
->(({ children, ...props }, ref) => (
-  <Link
-    ref={ref}
-    {...props}
-    sx={{
-      px: [4, 3],
-      py: [3, 4],
-      color: "primary",
-      fontSize: 3,
-      fontFamily: "body",
-      borderLeftWidth: ["1px", 0],
-      borderLeftStyle: "solid",
-      borderLeftColor: "monochrome500",
-      textDecoration: "none",
-      cursor: "pointer",
-      ":hover": {
-        color: "primaryHover",
-      },
-      ":active": {
-        color: "primaryHover",
-      },
-      ":disabled": {
-        cursor: "initial",
-        color: "primaryDisabled",
-      },
-    }}
-  >
-    {children}
-  </Link>
-));
+const FooterLinkBottom = forwardRef<HTMLAnchorElement, { children: ReactNode }>(
+  ({ children, ...props }, ref) => (
+    <Link
+      ref={ref}
+      {...props}
+      sx={{
+        px: [4, 3],
+        py: [3, 4],
+        color: "primary",
+        fontSize: 3,
+        fontFamily: "body",
+        borderLeftWidth: ["1px", 0],
+        borderLeftStyle: "solid",
+        borderLeftColor: "monochrome500",
+        textDecoration: "none",
+        cursor: "pointer",
+        ":hover": {
+          color: "primaryHover",
+        },
+        ":active": {
+          color: "primaryHover",
+        },
+        ":disabled": {
+          cursor: "initial",
+          color: "primaryDisabled",
+        },
+      }}
+    >
+      {children}
+    </Link>
+  )
+);
 
 const Logo = () => (
   <svg width="222px" height="54px" viewBox="0 0 222 54">

@@ -1,10 +1,10 @@
-import * as React from "react";
 import { useChartState } from "../use-chart-state";
 import { line } from "d3-shape";
 import { Observation } from "../../../domain";
 import { LinesState } from "./lines-state";
 
 import { useInteraction } from "../use-interaction";
+import { memo } from "react";
 
 export const HoverLine = () => {
   const {
@@ -56,6 +56,6 @@ export const HoverLine = () => {
     </>
   );
 };
-const Line = React.memo(({ path, color }: { path: string; color?: string }) => {
+const Line = memo(({ path, color }: { path: string; color?: string }) => {
   return <path d={path} strokeWidth={2} stroke={color} fill="none" />;
 });

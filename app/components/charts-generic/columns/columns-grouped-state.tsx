@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3-scale";
-import * as React from "react";
+
 import { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../../configurator";
 import { Observation, ObservationValue } from "../../../domain";

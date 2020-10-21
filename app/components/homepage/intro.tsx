@@ -1,12 +1,12 @@
 import { Box, Button, Flex, Text } from "@theme-ui/components";
-import React from "react";
+import { ReactNode } from "react";
 import { IconAreaChart } from "../../icons/ic-area-chart";
 import { IconBarChart } from "../../icons/ic-bar-chart";
 import { IconColumnChart } from "../../icons/ic-column-chart";
 import { IconFilter } from "../../icons/ic-filter";
 import { IconLineChart } from "../../icons/ic-line-chart";
-import { IconScatterplot } from "../../icons/ic-scatterplot";
 import { IconPieChart } from "../../icons/ic-pie-chart";
+import { IconScatterplot } from "../../icons/ic-scatterplot";
 import { IconSegment } from "../../icons/ic-segment";
 import { IconTable } from "../../icons/ic-table";
 import { IconText } from "../../icons/ic-text";
@@ -132,7 +132,7 @@ export const Intro = ({
   );
 };
 
-export const Title = ({ children }: { children: React.ReactNode }) => (
+export const Title = ({ children }: { children: ReactNode }) => (
   <Text
     as="h1"
     sx={{
@@ -148,7 +148,7 @@ export const Title = ({ children }: { children: React.ReactNode }) => (
     {children}
   </Text>
 );
-export const Teaser = ({ children }: { children: React.ReactNode }) => (
+export const Teaser = ({ children }: { children: ReactNode }) => (
   <Text
     variant="paragraph1"
     sx={{

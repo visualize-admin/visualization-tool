@@ -1,11 +1,7 @@
 import { Text } from "@theme-ui/components";
-import * as React from "react";
+import { ReactNode } from "react";
 
-export const HomepageSection = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => (
+export const HomepageSection = ({ children }: { children: ReactNode }) => (
   <Text
     sx={{
       fontFamily: "body",

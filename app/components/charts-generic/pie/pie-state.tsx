@@ -1,7 +1,7 @@
 import { ascending, descending } from "d3-array";
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { arc, pie, Pie, PieArcDatum } from "d3-shape";
-import * as React from "react";
+
 import { ReactNode, useCallback, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../../configurator";
 import { Observation } from "../../../domain";

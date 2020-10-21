@@ -31,11 +31,7 @@ const defaultMDXComponents = {
   Contribute,
 };
 
-export const ContentMDXProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const ContentMDXProvider = ({ children }: { children: ReactNode }) => {
   return (
     <MDXProvider components={defaultMDXComponents}>{children}</MDXProvider>
   );

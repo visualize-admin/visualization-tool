@@ -1,10 +1,10 @@
-import React from "react";
-import { Box, Text, Flex } from "@theme-ui/components";
+import { Box, Flex, Text } from "@theme-ui/components";
+import { ReactNode } from "react";
+import { Icon } from "../../icons";
+import { HomepageSection } from "./generic";
 import { Step1 } from "./step1";
 import { Step2 } from "./step2";
 import { Step3 } from "./step3";
-import { Icon } from "../../icons";
-import { HomepageSection } from "./generic";
 
 export const Tutorial = ({
   headline,
@@ -52,7 +52,7 @@ export const Tutorial = ({
   );
 };
 
-const HomepageTutorialStep = ({ children }: { children: React.ReactNode }) => (
+const HomepageTutorialStep = ({ children }: { children: ReactNode }) => (
   <Text
     sx={{
       fontSize: 5,

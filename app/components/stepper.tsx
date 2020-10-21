@@ -1,8 +1,8 @@
-import React, { Fragment, useMemo } from "react";
-import { Button, Flex, Text, Box } from "@theme-ui/components";
-import { useConfiguratorState, ConfiguratorStateAction } from "../configurator";
-import { Icon } from "../icons";
 import { Trans } from "@lingui/macro";
+import { Box, Button, Flex, Text } from "@theme-ui/components";
+import { Dispatch, Fragment, ReactNode, useCallback, useMemo } from "react";
+import { ConfiguratorStateAction, useConfiguratorState } from "../configurator";
+import { Icon } from "../icons";
 import { useTheme } from "../themes";
 import { ActionBar } from "./action-bar";
 
@@ -93,10 +93,10 @@ export const Step = ({
   stepState: StepState;
   stepNumber: number;
   status: StepStatus;
-  dispatch?: React.Dispatch<ConfiguratorStateAction>;
+  dispatch?: Dispatch<ConfiguratorStateAction>;
 }) => {
   const theme = useTheme();
-  const onClick = React.useCallback(() => {
+  const onClick = useCallback(() => {
     if (status === "past" && dispatch) {
       dispatch({
         type: "STEP_PREVIOUS",
@@ -205,7 +205,7 @@ const StepLabelText = ({
   label,
 }: {
   highlight: boolean;
-  label: React.ReactNode;
+  label: ReactNode;
 }) => {
   return (
     <>

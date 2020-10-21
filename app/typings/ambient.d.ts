@@ -20,8 +20,8 @@ declare module "*.mdx" {
 
 declare module "@mdx-js/react" {
   interface MDXProps {
-    children: React.ReactNode;
-    components: Record<string, React.ComponentType<$IntentionalAny>>;
+    children: ReactNode;
+    components: Record<string, ComponentType<$IntentionalAny>>;
   }
   export class MDXProvider extends React.Component<MDXProps> {}
 }

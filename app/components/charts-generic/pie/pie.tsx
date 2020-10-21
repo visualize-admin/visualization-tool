@@ -1,5 +1,5 @@
 import { arc, PieArcDatum } from "d3-shape";
-import * as React from "react";
+
 import { Observation } from "../../../domain";
 import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";

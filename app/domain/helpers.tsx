@@ -13,7 +13,7 @@ import {
 } from "d3-scale-chromatic";
 import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
 import { timeParse } from "d3-time-format";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 import { IconName } from "../icons";
 import { useLocale } from "../lib/use-locale";
@@ -146,7 +146,7 @@ export const getIconName = (name: string): IconName => {
   }
 };
 
-export const getFieldLabel = (field: string): string | React.ReactNode => {
+export const getFieldLabel = (field: string): ReactNode => {
   switch (field) {
     // Visual encodings (left column)
     case "column.x":

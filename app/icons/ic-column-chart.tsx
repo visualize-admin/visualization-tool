@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export const IconColumnChart = ({ size = 48, color = "currentColor" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

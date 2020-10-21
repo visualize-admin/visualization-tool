@@ -1,10 +1,10 @@
+import { Trans } from "@lingui/macro";
 import { Text } from "@theme-ui/components";
-import * as React from "react";
+import { ReactNode } from "react";
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
 } from "../configurator";
-import { Trans } from "@lingui/macro";
 
 export const EmptyRightPanel = ({
   state,
@@ -16,7 +16,7 @@ export const EmptyRightPanel = ({
   </Text>
 );
 
-const getRightPanelHint = (state: string): React.ReactNode => {
+const getRightPanelHint = (state: string): ReactNode => {
   switch (state) {
     case "CONFIGURING_CHART":
       return (

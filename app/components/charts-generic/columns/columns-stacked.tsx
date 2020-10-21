@@ -1,4 +1,4 @@
-import * as React from "react";
+import { memo } from "react";
 import { useChartState } from "../use-chart-state";
 import { StackedColumnsState } from "./columns-stacked-state";
 
@@ -31,7 +31,7 @@ export const ColumnsStacked = () => {
   );
 };
 
-const Column = React.memo(
+const Column = memo(
   ({
     x,
     y,

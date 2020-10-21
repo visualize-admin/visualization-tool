@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import { Box } from "theme-ui";
 import { ScatterPlotFields } from "../configurator";
 import { ScatterPlotConfig } from "../configurator";

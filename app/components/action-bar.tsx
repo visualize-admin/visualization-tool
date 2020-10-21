@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Button, Flex } from "@theme-ui/components";
-import React, { ReactNode, useCallback } from "react";
+import { ReactNode, useCallback } from "react";
 import {
   canTransitionToNextStep,
   canTransitionToPreviousStep,

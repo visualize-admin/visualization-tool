@@ -4,7 +4,7 @@ import "@reach/menu-button/styles.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ThemeProvider } from "theme-ui";
 import { ContentMDXProvider } from "../components/content-mdx-provider";
 import { analyticsPageView } from "../domain/analytics";

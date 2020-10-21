@@ -1,4 +1,4 @@
-import * as React from "react";
+import { memo } from "react";
 import { useChartState } from "../use-chart-state";
 import { GroupedColumnsState } from "./columns-grouped-state";
 
@@ -35,7 +35,7 @@ export const ColumnsGrouped = () => {
   );
 };
 
-const Column = React.memo(
+const Column = memo(
   ({
     x,
     y,
