@@ -57,9 +57,6 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
     >
       {state.state === "SELECTING_DATASET" ? (
         <>
-          <Button disabled variant="inline" sx={{ mr: 4 }}>
-            {previousLabel}
-          </Button>
           <NextButton
             label={nextLabel}
             onClick={goNext}
