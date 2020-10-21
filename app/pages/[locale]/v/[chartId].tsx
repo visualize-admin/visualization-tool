@@ -12,7 +12,7 @@ import { LocalizedLink } from "../../../components/links";
 import { PublishActions } from "../../../components/publish-actions";
 import { getConfig } from "../../../db/config";
 import { Config } from "../../../configurator";
-import { useLocale } from "../../../lib/use-locale";
+import { useLocale } from "../../../locales/use-locale";
 
 type PageProps =
   | {

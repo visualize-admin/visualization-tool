@@ -3,7 +3,7 @@ import { Box } from "@theme-ui/components";
 
 import { ReactNode } from "react";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { Loading } from "./hint";
 import { useFormatFullDateAuto } from "../domain/helpers";
 

@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "../configurator";
 import { DataCubeResultOrder, useDataCubesQuery } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { MiniSelect, SearchField } from "./form";
 import { Loading } from "./hint";
 

@@ -11,7 +11,7 @@ import {
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "../configurator/components/empty-right-panel";
 import { MetaInputField } from "./field";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 
 export const ChartAnnotationsSelector = ({
   state,

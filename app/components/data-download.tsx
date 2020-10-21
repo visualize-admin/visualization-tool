@@ -9,7 +9,7 @@ import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 
 export interface ChartFieldsWithLabel {
   [x: string]: string;

@@ -7,7 +7,7 @@ import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { A11yTable } from "./a11y-table";
 import { AxisWidthLinear } from "./charts-generic/axis/axis-width-linear";
 import { BarsGrouped } from "./charts-generic/bars/bars-grouped";

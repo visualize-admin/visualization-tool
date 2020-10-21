@@ -16,7 +16,7 @@ import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
 import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 import { IconName } from "../icons";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { d3FormatLocales, d3TimeFormatLocales } from "../locales/locales";
 
 // FIXME: We should cover more time format

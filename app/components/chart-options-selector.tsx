@@ -25,7 +25,7 @@ import {
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { IconName } from "../icons";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
   ControlSection,

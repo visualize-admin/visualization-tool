@@ -8,7 +8,7 @@ import { chartConfigOptionsUISpec } from "../charts/chart-config-ui-options";
 import { getFieldComponentIris } from "../charts";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import {
   ControlSection,
   ControlSectionContent,

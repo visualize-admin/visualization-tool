@@ -10,7 +10,7 @@ import {
 import { Reducer, useImmerReducer } from "use-immer";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { createChartId } from "../lib/create-chart-id";
 import { getFieldComponentIris, getInitialConfig } from "../charts";
 import {

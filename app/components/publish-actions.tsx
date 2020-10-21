@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { Icon, IconName } from "../icons";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { IconLink } from "./links";
 
 export const PublishActions = ({ configKey }: { configKey: string }) => {

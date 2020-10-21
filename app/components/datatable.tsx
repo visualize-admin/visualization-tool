@@ -5,7 +5,7 @@ import {
   ComponentFieldsFragment,
   useDataCubePreviewObservationsQuery,
 } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { Loading } from "./hint";
 import { useFormatNumber } from "../domain/helpers";
 

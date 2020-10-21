@@ -7,7 +7,7 @@ import {
   ConfiguratorStateSelectingChartType,
 } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { SectionTitle } from "./chart-controls/section";
 import { ChartTypeSelectorField } from "./field";
 import { Hint, Loading } from "./hint";

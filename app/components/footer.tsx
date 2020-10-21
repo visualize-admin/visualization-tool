@@ -3,7 +3,7 @@ import { Box, Flex, Link } from "@theme-ui/components";
 import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
 import contentRoutes from "../content-routes.json";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 
 export const Footer = () => {
   const locale = useLocale();

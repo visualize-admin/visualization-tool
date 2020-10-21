@@ -1,6 +1,6 @@
 import { Flex, Text } from "@theme-ui/components";
 import { ChartConfig, Meta } from "../configurator";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartColumnsVisualization } from "./chart-columns";
 import { ChartBarsVisualization } from "./chart-bars";

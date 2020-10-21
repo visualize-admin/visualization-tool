@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Flex, Text } from "@theme-ui/components";
 import React from "react";
 import { useConfiguratorState } from "../configurator";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { ChartAreasVisualization } from "./chart-areas";
 import { ChartColumnsVisualization } from "./chart-columns";
 import { ChartFootnotes } from "./chart-footnotes";

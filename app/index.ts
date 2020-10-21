@@ -8,7 +8,7 @@ export {
   ConfiguratorStateProvider,
   useConfiguratorState,
 } from "./configurator";
-export { LocaleProvider, useLocale } from "./lib/use-locale";
+export { LocaleProvider, useLocale } from "./locales/use-locale";
 export {
   catalogs,
   defaultLocale,

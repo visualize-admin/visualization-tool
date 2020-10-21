@@ -7,7 +7,7 @@ import {
   useConfiguratorState,
 } from "..";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
-import { useLocale } from "../../lib/use-locale";
+import { useLocale } from "../../locales/use-locale";
 import { LocalizedLink } from "../../components/links";
 
 export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {

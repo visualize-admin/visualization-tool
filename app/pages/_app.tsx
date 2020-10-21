@@ -10,7 +10,7 @@ import { ContentMDXProvider } from "../components/content-mdx-provider";
 import { analyticsPageView } from "../lib/googleAnalytics";
 import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
-import { LocaleProvider } from "../lib/use-locale";
+import { LocaleProvider } from "../locales/use-locale";
 import { useNProgress } from "../lib/use-nprogress";
 import { catalogs, parseLocaleString } from "../locales/locales";
 import * as defaultTheme from "../themes/federal";
