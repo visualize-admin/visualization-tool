@@ -2,17 +2,13 @@
  * Entry point for app package
  */
 
-export {
-  useConfiguratorState,
-  ConfiguratorStateProvider,
-} from "./configurator";
-
-export { Configurator as ChartEditor } from "./configurator/components/configurator";
-
-export { useLocale, LocaleProvider } from "./lib/use-locale";
-
 export { I18nProvider } from "@lingui/react";
-
+export {
+  Configurator,
+  ConfiguratorStateProvider,
+  useConfiguratorState,
+} from "./configurator";
+export { LocaleProvider, useLocale } from "./lib/use-locale";
 export {
   catalogs,
   defaultLocale,
