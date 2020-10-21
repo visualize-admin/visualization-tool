@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@theme-ui/components";
 import { ReactNode } from "react";
-import { ChartPublished } from "../chart-published";
+import { ChartPublished } from "../components/chart-published";
 import { HomepageSection } from "./generic";
 
 export const Examples = ({

@@ -1,6 +1,6 @@
 import { MDXProvider } from "@mdx-js/react";
 import { ContentLayout, StaticContentLayout } from "./layout";
-import { Intro, Tutorial, Examples, Contribute } from "../components/homepage";
+import { Intro, Tutorial, Examples, Contribute } from "../homepage";
 import { Box } from "@theme-ui/components";
 import { ReactNode } from "react";
 

@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@theme-ui/components";
 import { ReactNode } from "react";
-import { Icon } from "../../icons";
+import { Icon } from "../icons";
 import { HomepageSection } from "./generic";
 import { Step1 } from "./step1";
 import { Step2 } from "./step2";

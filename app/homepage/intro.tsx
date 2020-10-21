@@ -1,19 +1,19 @@
 import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { ReactNode } from "react";
-import { IconAreaChart } from "../../icons/ic-area-chart";
-import { IconBarChart } from "../../icons/ic-bar-chart";
-import { IconColumnChart } from "../../icons/ic-column-chart";
-import { IconFilter } from "../../icons/ic-filter";
-import { IconLineChart } from "../../icons/ic-line-chart";
-import { IconPieChart } from "../../icons/ic-pie-chart";
-import { IconScatterplot } from "../../icons/ic-scatterplot";
-import { IconSegment } from "../../icons/ic-segment";
-import { IconTable } from "../../icons/ic-table";
-import { IconText } from "../../icons/ic-text";
-import { IconX } from "../../icons/ic-x";
-import { IconY } from "../../icons/ic-y";
-import { HintRed } from "../hint";
-import { LocalizedLink } from "../links";
+import { IconAreaChart } from "../icons/ic-area-chart";
+import { IconBarChart } from "../icons/ic-bar-chart";
+import { IconColumnChart } from "../icons/ic-column-chart";
+import { IconFilter } from "../icons/ic-filter";
+import { IconLineChart } from "../icons/ic-line-chart";
+import { IconPieChart } from "../icons/ic-pie-chart";
+import { IconScatterplot } from "../icons/ic-scatterplot";
+import { IconSegment } from "../icons/ic-segment";
+import { IconTable } from "../icons/ic-table";
+import { IconText } from "../icons/ic-text";
+import { IconX } from "../icons/ic-x";
+import { IconY } from "../icons/ic-y";
+import { HintRed } from "../components/hint";
+import { LocalizedLink } from "../components/links";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
