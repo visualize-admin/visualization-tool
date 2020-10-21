@@ -1,9 +1,9 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { Dispatch, Fragment, ReactNode, useCallback, useMemo } from "react";
-import { ConfiguratorStateAction, useConfiguratorState } from "../configurator";
-import { Icon } from "../icons";
-import { useTheme } from "../themes";
+import { ConfiguratorStateAction, useConfiguratorState } from "..";
+import { Icon } from "../../icons";
+import { useTheme } from "../../themes";
 import { ActionBar } from "./action-bar";
 
 export type StepStatus = "past" | "current" | "future";

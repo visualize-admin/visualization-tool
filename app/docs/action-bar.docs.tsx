@@ -1,5 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { ActionBar } from "../components/action-bar";
+import { ActionBar } from "../configurator/components/action-bar";
 import { ConfiguratorStateProvider } from "../configurator";
 import { states } from "./fixtures";
 import { Text, Box } from "@theme-ui/components";

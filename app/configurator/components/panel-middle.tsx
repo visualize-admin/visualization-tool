@@ -1,11 +1,9 @@
-import React from "react";
-import { Box, Flex } from "@theme-ui/components";
-import { useConfiguratorState } from "../configurator";
-import { ActionBar } from "./action-bar";
-import { ChartPreview } from "./chart-preview";
-import { DataSetPreview } from "./dataset-preview";
-import { DataSetHint } from "./hint";
-import { ChartPanel } from "./chart-panel";
+import { Box } from "@theme-ui/components";
+import { useConfiguratorState } from "..";
+import { ChartPanel } from "../../components/chart-panel";
+import { ChartPreview } from "../../components/chart-preview";
+import { DataSetPreview } from "../../components/dataset-preview";
+import { DataSetHint } from "../../components/hint";
 
 export const PanelMiddle = ({
   dataSetPreviewIri,

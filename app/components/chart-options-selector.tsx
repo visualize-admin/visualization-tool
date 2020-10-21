@@ -32,7 +32,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "./chart-controls/section";
-import { EmptyRightPanel } from "./empty-right-panel";
+import { EmptyRightPanel } from "../configurator/components/empty-right-panel";
 import { ChartFieldField, ChartOptionRadioField } from "./field";
 import {
   DimensionValuesMultiFilter,

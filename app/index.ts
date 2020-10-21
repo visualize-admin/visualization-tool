@@ -7,7 +7,7 @@ export {
   ConfiguratorStateProvider,
 } from "./configurator";
 
-export { ChartEditor } from "./components/editor/chart-editor";
+export { Configurator as ChartEditor } from "./configurator/components/configurator";
 
 export { useLocale, LocaleProvider } from "./lib/use-locale";
 

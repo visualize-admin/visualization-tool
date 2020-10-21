@@ -1,9 +1,9 @@
 import React from "react";
-import { useConfiguratorState } from "../configurator";
-import { ChartAnnotator } from "./chart-annotator";
-import { ChartConfigurator } from "./chart-configurator";
-import { ChartTypeSelector } from "./chart-type-selector";
-import { DataSetList } from "./dataset-selector";
+import { useConfiguratorState } from "..";
+import { ChartAnnotator } from "../../components/chart-annotator";
+import { ChartConfigurator } from "../../components/chart-configurator";
+import { ChartTypeSelector } from "../../components/chart-type-selector";
+import { DataSetList } from "../../components/dataset-selector";
 
 export const PanelLeft = () => {
   const [state] = useConfiguratorState();
