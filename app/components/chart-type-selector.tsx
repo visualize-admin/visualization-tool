@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Grid } from "@theme-ui/components";
 import React from "react";
-import { getPossibleChartType } from "../domain";
+import { getPossibleChartType } from "../charts";
 import {
   ChartType,
   ConfiguratorStateSelectingChartType,

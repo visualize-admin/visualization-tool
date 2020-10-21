@@ -3,20 +3,21 @@ import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
 import { useCallback, useEffect, useRef } from "react";
+import { getFieldComponentIri } from "../charts";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   SortingType,
   useConfiguratorState,
 } from "../configurator";
-import { getDimensionsByDimensionType, getFieldComponentIri } from "../domain";
+import { getDimensionsByDimensionType } from "../domain";
 import {
   chartConfigOptionsUISpec,
   EncodingField,
   EncodingOptions,
   EncodingSortingOption,
   EncodingSpec,
-} from "../domain/chart-config-ui-options";
+} from "../charts/chart-config-ui-options";
 import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
 import {
   DimensionFieldsWithValuesFragment,

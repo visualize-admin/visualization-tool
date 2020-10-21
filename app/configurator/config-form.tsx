@@ -6,7 +6,7 @@ import {
   SyntheticEvent,
   useCallback,
 } from "react";
-import { getFieldComponentIri } from "../domain/charts";
+import { getFieldComponentIri } from "../charts";
 import { DataCubeMetadata } from "../graphql/types";
 import { Locales } from "../locales/locales";
 import { ChartType } from "./config-types";

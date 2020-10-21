@@ -4,8 +4,8 @@ import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
 } from "../configurator";
-import { chartConfigOptionsUISpec } from "../domain/chart-config-ui-options";
-import { getFieldComponentIris } from "../domain/charts";
+import { chartConfigOptionsUISpec } from "../charts/chart-config-ui-options";
+import { getFieldComponentIris } from "../charts";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { useLocale } from "../lib/use-locale";

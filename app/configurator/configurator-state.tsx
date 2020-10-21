@@ -12,7 +12,7 @@ import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { useLocale } from "../lib/use-locale";
 import { createChartId } from "../domain/chart-id";
-import { getFieldComponentIris, getInitialConfig } from "../domain/charts";
+import { getFieldComponentIris, getInitialConfig } from "../charts";
 import {
   ChartConfig,
   ChartType,

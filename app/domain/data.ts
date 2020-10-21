@@ -3,7 +3,7 @@ import {
   DimensionFieldsWithValuesFragment,
   ComponentFieldsFragment,
 } from "../graphql/query-hooks";
-import { DimensionType } from "./chart-config-ui-options";
+import { DimensionType } from "../charts/chart-config-ui-options";
 
 export type RawObservationValue = {
   value: Literal | NamedNode;
