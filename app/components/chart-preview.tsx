@@ -3,13 +3,13 @@ import { Flex, Text } from "@theme-ui/components";
 import React from "react";
 import { useConfiguratorState } from "../configurator";
 import { useLocale } from "../locales/use-locale";
-import { ChartAreasVisualization } from "./chart-areas";
-import { ChartColumnsVisualization } from "./chart-columns";
+import { ChartAreasVisualization } from "../charts/area/chart-area";
+import { ChartColumnsVisualization } from "../charts/column/chart-column";
 import { ChartFootnotes } from "./chart-footnotes";
-import { ChartLinesVisualization } from "./chart-lines";
-import { ChartScatterplotVisualization } from "./chart-scatterplot";
-import { ChartPieVisualization } from "./chart-pie";
-import { ChartBarsVisualization } from "./chart-bars";
+import { ChartLinesVisualization } from "../charts/line/chart-lines";
+import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
+import { ChartPieVisualization } from "../charts/pie/chart-pie";
+import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
