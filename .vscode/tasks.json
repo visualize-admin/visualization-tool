@@ -64,7 +64,7 @@
     },
     {
       "label": "dev",
-      "dependsOn": ["dev-server", "dev-db"],
+      "dependsOn": ["dev-server", "dev-db", "tsc"],
       "group": {
         "kind": "build",
         "isDefault": true
