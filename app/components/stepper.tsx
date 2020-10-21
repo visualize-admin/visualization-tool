@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import { Button, Flex, Text, Box } from "@theme-ui/components";
 import {
   useConfiguratorState,
@@ -51,9 +51,8 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
           }}
         >
           {steps.map((step, i) => (
-            <>
+            <Fragment key={step}>
               <Step
-                key={step}
                 stepNumber={i + 1}
                 stepState={step}
                 status={
@@ -78,7 +77,7 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
                   }}
                 />
               )}
-            </>
+            </Fragment>
           ))}
         </Flex>
 
