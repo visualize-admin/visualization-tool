@@ -3,7 +3,7 @@ import Head from "next/head";
 import React from "react";
 import { ChartEditor } from "../../../components/editor/chart-editor";
 import { AppLayout } from "../../../components/layout";
-import { ConfiguratorStateProvider } from "../../../domain/configurator-state";
+import { ConfiguratorStateProvider } from "../../../configurator";
 
 type PageProps = {
   locale: string;

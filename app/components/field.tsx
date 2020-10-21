@@ -2,7 +2,7 @@ import { t } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import React, { ChangeEvent, useCallback } from "react";
-import { FilterValueSingle, useConfiguratorState } from "../domain";
+import { FilterValueSingle, useConfiguratorState } from "../configurator";
 import {
   FIELD_VALUE_NONE,
   Option,
@@ -12,7 +12,7 @@ import {
   useChartTypeSelectorField,
   useMetaField,
   useSingleFilterField,
-} from "../domain/config-form";
+} from "../configurator";
 import { getPalette } from "../domain/helpers";
 import {
   ComponentFieldsFragment,

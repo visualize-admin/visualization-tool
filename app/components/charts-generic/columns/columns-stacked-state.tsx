@@ -16,17 +16,18 @@ import {
 } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
-import {
-  ColumnFields,
-  SortingOrder,
-  SortingType,
-} from "../../../domain/config-types";
+import { ColumnFields, SortingOrder, SortingType } from "../../../configurator";
 import { Observation, ObservationValue } from "../../../domain/data";
 import { getPalette, isNumber, useFormatNumber } from "../../../domain/helpers";
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../interaction/tooltip";
-import { PADDING_INNER, PADDING_OUTER ,BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET} from "./constants";
+import {
+  PADDING_INNER,
+  PADDING_OUTER,
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET,
+} from "./constants";
 
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";

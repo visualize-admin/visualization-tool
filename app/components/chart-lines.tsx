@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { LineConfig, LineFields } from "../domain/config-types";
+import { LineConfig, LineFields } from "../configurator";
 import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import {
@@ -12,9 +12,15 @@ import { A11yTable } from "./a11y-table";
 import { HoverDotMultiple } from "./charts-generic/interaction/hover-dots-multiple";
 import { Ruler } from "./charts-generic/interaction/ruler";
 import { Tooltip } from "./charts-generic/interaction/tooltip";
-import { AxisTime, AxisTimeDomain } from "./charts-generic/axis/axis-width-time";
+import {
+  AxisTime,
+  AxisTimeDomain,
+} from "./charts-generic/axis/axis-width-time";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
+import {
+  ChartContainer,
+  ChartSvg,
+} from "./charts-generic/containers/containers";
 import { InteractionHorizontal } from "./charts-generic/overlay/overlay-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Lines } from "./charts-generic/lines/lines";

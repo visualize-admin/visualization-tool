@@ -9,11 +9,7 @@ import {
 } from "d3-scale";
 import * as React from "react";
 import { ReactNode, useMemo, useCallback } from "react";
-import {
-  ColumnFields,
-  SortingOrder,
-  SortingType,
-} from "../../../domain/config-types";
+import { ColumnFields, SortingOrder, SortingType } from "../../../configurator";
 import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../interaction/tooltip";

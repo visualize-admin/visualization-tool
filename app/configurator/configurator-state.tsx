@@ -11,8 +11,8 @@ import { Reducer, useImmerReducer } from "use-immer";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { useLocale } from "../lib/use-locale";
-import { createChartId } from "./chart-id";
-import { getFieldComponentIris, getInitialConfig } from "./charts";
+import { createChartId } from "../domain/chart-id";
+import { getFieldComponentIris, getInitialConfig } from "../domain/charts";
 import {
   ChartConfig,
   ChartType,
@@ -24,7 +24,7 @@ import {
   FilterValueMultiValues,
   GenericFields,
 } from "./config-types";
-import { mapColorsToComponentValuesIris } from "./helpers";
+import { mapColorsToComponentValuesIris } from "../domain/helpers";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }

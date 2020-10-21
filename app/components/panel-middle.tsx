@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Flex } from "@theme-ui/components";
-import { useConfiguratorState } from "../domain/configurator-state";
+import { useConfiguratorState } from "../configurator";
 import { ActionBar } from "./action-bar";
 import { ChartPreview } from "./chart-preview";
 import { DataSetPreview } from "./dataset-preview";

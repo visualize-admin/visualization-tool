@@ -1,5 +1,5 @@
 import { Box } from "theme-ui";
-import { useConfiguratorState } from "../../domain";
+import { useConfiguratorState } from "../../configurator";
 import { ChartAnnotationsSelector } from "../chart-annotations-selector";
 import { ChartOptionsSelector } from "../chart-options-selector";
 import { DataSetMetadata } from "../dataset-metadata";

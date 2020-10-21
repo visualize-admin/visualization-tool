@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Button, Flex, Text } from "@theme-ui/components";
 import * as React from "react";
-import { FieldProps } from "../../domain/config-form";
+import { FieldProps } from "../../configurator";
 import { getFieldLabel, getIconName } from "../../domain/helpers";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { Icon, IconName } from "../../icons";

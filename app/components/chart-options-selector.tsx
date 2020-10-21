@@ -6,11 +6,10 @@ import React, { useCallback, useEffect, useRef } from "react";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
-  getDimensionsByDimensionType,
-  getFieldComponentIri,
   SortingType,
   useConfiguratorState,
-} from "../domain";
+} from "../configurator";
+import { getDimensionsByDimensionType, getFieldComponentIri } from "../domain";
 import {
   chartConfigOptionsUISpec,
   EncodingField,

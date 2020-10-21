@@ -1,4 +1,4 @@
-import { ConfiguratorState, ColumnFields } from "../domain";
+import { ConfiguratorState, ColumnFields } from "../configurator";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const states: ConfiguratorState[] = [

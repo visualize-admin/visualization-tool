@@ -8,7 +8,8 @@ import {
 import { descending } from "d3-array";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { Filters, parseObservationValue } from "../domain";
+import { Filters } from "../configurator";
+import { parseObservationValue } from "../domain";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { locales, parseLocaleString } from "../locales/locales";
 import {

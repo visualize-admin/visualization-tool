@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { ScatterPlotFields } from "../domain";
-import { ScatterPlotConfig } from "../domain/config-types";
+import { ScatterPlotFields } from "../configurator";
+import { ScatterPlotConfig } from "../configurator";
 import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import {
@@ -11,12 +11,18 @@ import {
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
 import { Tooltip } from "./charts-generic/interaction/tooltip";
-import { AxisWidthLinear, AxisWidthLinearDomain } from "./charts-generic/axis/axis-width-linear";
+import {
+  AxisWidthLinear,
+  AxisWidthLinearDomain,
+} from "./charts-generic/axis/axis-width-linear";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
 } from "./charts-generic/axis/axis-height-linear";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
+import {
+  ChartContainer,
+  ChartSvg,
+} from "./charts-generic/containers/containers";
 import { InteractionVoronoi } from "./charts-generic/overlay/overlay-voronoi";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Scatterplot } from "./charts-generic/scatterplot/scatterplot-simple";

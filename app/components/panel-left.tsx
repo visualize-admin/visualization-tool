@@ -1,5 +1,5 @@
 import React from "react";
-import { useConfiguratorState } from "../domain/configurator-state";
+import { useConfiguratorState } from "../configurator";
 import { ChartAnnotator } from "./chart-annotator";
 import { ChartConfigurator } from "./chart-configurator";
 import { ChartTypeSelector } from "./chart-type-selector";

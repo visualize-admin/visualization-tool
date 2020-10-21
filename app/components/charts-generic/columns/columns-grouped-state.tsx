@@ -1,4 +1,4 @@
-import { ascending, group, max, min, rollup, sum, descending } from "d3-array";
+import { ascending, descending, group, max, min, rollup, sum } from "d3-array";
 import {
   scaleBand,
   ScaleBand,
@@ -9,28 +9,22 @@ import {
 } from "d3-scale";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
-import {
-  ColumnFields,
-  Observation,
-  ObservationValue,
-  SortingType,
-  SortingOrder,
-} from "../../../domain";
+import { ColumnFields, SortingOrder, SortingType } from "../../../configurator";
+import { Observation, ObservationValue } from "../../../domain";
 import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
+import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../interaction/tooltip";
+import { ChartContext, ChartProps } from "../use-chart-state";
+import { InteractionProvider } from "../use-interaction";
+import { Bounds, Observer, useWidth } from "../use-width";
 import {
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET,
   PADDING_INNER,
   PADDING_OUTER,
   PADDING_WITHIN,
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET
 } from "./constants";
-import { Bounds, Observer, useWidth } from "../use-width";
-import { ChartContext, ChartProps } from "../use-chart-state";
-import { InteractionProvider } from "../use-interaction";
-
-import { sortByIndex } from "../../../lib/array";
 
 export interface GroupedColumnsState {
   sortedData: Observation[];

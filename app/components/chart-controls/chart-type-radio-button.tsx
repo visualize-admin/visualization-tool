@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button, Text } from "@theme-ui/components";
-import { FieldProps } from "../../domain/config-form";
+import { FieldProps } from "../../configurator";
 import { Icon } from "../../icons";
 import { getIconName, getFieldLabel } from "../../domain/helpers";
 

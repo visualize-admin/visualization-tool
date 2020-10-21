@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Link, Text } from "@theme-ui/components";
 import React, { useEffect, useState } from "react";
-import { ChartConfig } from "../domain";
+import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { DataDownload } from "./data-download";

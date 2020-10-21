@@ -9,7 +9,7 @@ import {
 } from "d3-scale";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
-import { LineFields, Observation, ObservationValue } from "../../../domain";
+import { Observation, ObservationValue } from "../../../domain";
 import {
   getPalette,
   mkNumber,
@@ -25,6 +25,7 @@ import { LEFT_MARGIN_OFFSET } from "./constants";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { Bounds, Observer, useWidth } from "../use-width";
+import { LineFields } from "../../../configurator";
 
 export interface LinesState {
   data: Observation[];

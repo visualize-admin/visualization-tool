@@ -5,7 +5,7 @@ import * as React from "react";
 import {
   useConfiguratorState,
   ConfiguratorStateConfiguringChart,
-} from "../../domain";
+} from "../../configurator";
 import {
   getPalette,
   mapColorsToComponentValuesIris,

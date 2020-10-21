@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { BarConfig, BarFields } from "../domain/config-types";
+import { BarConfig, BarFields } from "../configurator";
 import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import {

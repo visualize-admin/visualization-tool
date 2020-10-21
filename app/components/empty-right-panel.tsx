@@ -3,7 +3,7 @@ import * as React from "react";
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
-} from "../domain";
+} from "../configurator";
 import { Trans } from "@lingui/macro";
 
 export const EmptyRightPanel = ({

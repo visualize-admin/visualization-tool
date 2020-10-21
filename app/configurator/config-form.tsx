@@ -3,7 +3,7 @@ import get from "lodash/get";
 import { ChangeEvent, InputHTMLAttributes, useCallback } from "react";
 import { DataCubeMetadata } from "../graphql/types";
 import { Locales } from "../locales/locales";
-import { getFieldComponentIri } from "./charts";
+import { getFieldComponentIri } from "../domain/charts";
 import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
 

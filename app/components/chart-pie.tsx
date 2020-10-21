@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { PieFields } from "../domain";
-import { PieConfig } from "../domain/config-types";
+import { PieConfig, PieFields } from "../configurator";
 import { Observation } from "../domain/data";
 import {
   ComponentFieldsFragment,
@@ -9,8 +8,11 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { A11yTable } from "./a11y-table";
+import {
+  ChartContainer,
+  ChartSvg,
+} from "./charts-generic/containers/containers";
 import { Tooltip } from "./charts-generic/interaction/tooltip";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Pie } from "./charts-generic/pie/pie";
 import { PieChart } from "./charts-generic/pie/pie-state";

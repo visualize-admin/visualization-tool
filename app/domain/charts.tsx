@@ -1,6 +1,6 @@
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
-import { ChartConfig, ChartType, GenericFields } from "./config-types";
+import { ChartConfig, ChartType, GenericFields } from "../configurator";
 import { getCategoricalDimensions, getTimeDimensions } from "./data";
 import { mapColorsToComponentValuesIris } from "./helpers";
 

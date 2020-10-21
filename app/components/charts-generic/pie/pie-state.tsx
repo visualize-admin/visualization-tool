@@ -1,19 +1,15 @@
+import { ascending, descending } from "d3-array";
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
-import { arc, PieArcDatum, pie, Pie } from "d3-shape";
+import { arc, pie, Pie, PieArcDatum } from "d3-shape";
 import * as React from "react";
-import { ReactNode, useMemo, useCallback } from "react";
-import {
-  Observation,
-  PieFields,
-  SortingType,
-  SortingOrder,
-} from "../../../domain";
+import { ReactNode, useCallback, useMemo } from "react";
+import { PieFields, SortingOrder, SortingType } from "../../../configurator";
+import { Observation } from "../../../domain";
 import { getPalette, useFormatNumber } from "../../../domain/helpers";
 import { Tooltip } from "../interaction/tooltip";
-import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
-import { descending, ascending } from "d3-array";
+import { Bounds, Observer, useWidth } from "../use-width";
 
 const sortData = ({
   data,

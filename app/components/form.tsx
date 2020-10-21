@@ -11,7 +11,7 @@ import {
   SelectProps,
 } from "@theme-ui/components";
 import * as React from "react";
-import { FieldProps, Option } from "../domain/config-form";
+import { FieldProps, Option } from "../configurator";
 import { Icon } from "../icons";
 
 export const Label = ({

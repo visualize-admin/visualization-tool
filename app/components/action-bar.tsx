@@ -5,7 +5,7 @@ import {
   canTransitionToNextStep,
   canTransitionToPreviousStep,
   useConfiguratorState,
-} from "../domain/configurator-state";
+} from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../lib/use-locale";
 import { LocalizedLink } from "./links";

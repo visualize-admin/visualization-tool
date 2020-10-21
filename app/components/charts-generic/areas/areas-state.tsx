@@ -24,7 +24,8 @@ import {
 } from "d3-shape";
 import * as React from "react";
 import { ReactNode, useCallback, useMemo } from "react";
-import { AreaFields, Observation } from "../../../domain";
+import { AreaFields } from "../../../configurator";
+import { Observation } from "../../../domain";
 import {
   getPalette,
   isNumber,
@@ -35,10 +36,10 @@ import {
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { Tooltip } from "../interaction/tooltip";
-import { LEFT_MARGIN_OFFSET } from "./constants";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { Bounds, Observer, useWidth } from "../use-width";
+import { LEFT_MARGIN_OFFSET } from "./constants";
 
 export interface AreasState {
   data: Observation[];

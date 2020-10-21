@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { AreaConfig, AreaFields } from "../domain/config-types";
+import { AreaConfig, AreaFields } from "../configurator";
 import { Observation } from "../domain/data";
 import { isNumber } from "../domain/helpers";
 import {
@@ -13,9 +13,15 @@ import { Ruler } from "./charts-generic/interaction/ruler";
 import { Tooltip } from "./charts-generic/interaction/tooltip";
 import { Areas } from "./charts-generic/areas/areas";
 import { AreaChart } from "./charts-generic/areas/areas-state";
-import { AxisTime, AxisTimeDomain } from "./charts-generic/axis/axis-width-time";
+import {
+  AxisTime,
+  AxisTimeDomain,
+} from "./charts-generic/axis/axis-width-time";
 import { AxisHeightLinear } from "./charts-generic/axis/axis-height-linear";
-import { ChartContainer, ChartSvg } from "./charts-generic/containers/containers";
+import {
+  ChartContainer,
+  ChartSvg,
+} from "./charts-generic/containers/containers";
 import { InteractionHorizontal } from "./charts-generic/overlay/overlay-horizontal";
 import { LegendColor } from "./charts-generic/legends/color";
 import { Loading, LoadingOverlay, NoDataHint } from "./hint";

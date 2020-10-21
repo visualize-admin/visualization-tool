@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 import { ChartPublished } from "../../../components/chart-published";
 import { getConfig } from "../../../db/config";
-import { Config } from "../../../domain/config-types";
+import { Config } from "../../../configurator";
 
 type PageProps =
   | {

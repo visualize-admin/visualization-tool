@@ -5,7 +5,7 @@
 export {
   useConfiguratorState,
   ConfiguratorStateProvider,
-} from "./domain/configurator-state";
+} from "./configurator";
 
 export { ChartEditor } from "./components/editor/chart-editor";
 

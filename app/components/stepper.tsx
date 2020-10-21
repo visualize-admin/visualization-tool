@@ -1,9 +1,6 @@
 import React, { Fragment, useMemo } from "react";
 import { Button, Flex, Text, Box } from "@theme-ui/components";
-import {
-  useConfiguratorState,
-  ConfiguratorStateAction,
-} from "../domain/configurator-state";
+import { useConfiguratorState, ConfiguratorStateAction } from "../configurator";
 import { Icon } from "../icons";
 import { Trans } from "@lingui/macro";
 import { useTheme } from "../themes";

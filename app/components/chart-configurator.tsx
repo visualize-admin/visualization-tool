@@ -3,9 +3,9 @@ import React from "react";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
-  getFieldComponentIris,
-} from "../domain";
+} from "../configurator";
 import { chartConfigOptionsUISpec } from "../domain/chart-config-ui-options";
+import { getFieldComponentIris } from "../domain/charts";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { useLocale } from "../lib/use-locale";

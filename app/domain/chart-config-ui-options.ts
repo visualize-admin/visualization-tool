@@ -1,4 +1,4 @@
-import { ChartType, SortingOrder } from "./config-types";
+import { ChartType, SortingOrder } from "../configurator";
 
 /**
  * This module controls chart controls displayed in the UI.
