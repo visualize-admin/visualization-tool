@@ -1,13 +1,13 @@
 import { Box } from "@theme-ui/components";
 
-import { Observation } from "../domain/data";
+import { Observation } from "../../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubePreviewObservationsQuery,
-} from "../graphql/query-hooks";
-import { useLocale } from "../locales/use-locale";
-import { Loading } from "./hint";
-import { useFormatNumber } from "../domain/helpers";
+} from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
+import { Loading } from "../../components/hint";
+import { useFormatNumber } from "../../domain/helpers";
 
 type Header = ComponentFieldsFragment;
 

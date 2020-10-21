@@ -3,11 +3,14 @@ import { I18n } from "@lingui/react";
 import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
-import { useConfiguratorState } from "../configurator";
-import { DataCubeResultOrder, useDataCubesQuery } from "../graphql/query-hooks";
-import { useLocale } from "../locales/use-locale";
-import { MiniSelect, SearchField } from "./form";
-import { Loading } from "./hint";
+import { useConfiguratorState } from "..";
+import {
+  DataCubeResultOrder,
+  useDataCubesQuery,
+} from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
+import { MiniSelect, SearchField } from "../../components/form";
+import { Loading } from "../../components/hint";
 
 export const DataSetList = () => {
   const locale = useLocale();

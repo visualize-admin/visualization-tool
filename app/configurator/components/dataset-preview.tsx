@@ -1,10 +1,10 @@
 import React from "react";
 import { Box, Text, Flex } from "@theme-ui/components";
-import { Loading } from "./hint";
+import { Loading } from "../../components/hint";
 import { DataTable } from "./datatable";
 import { Trans } from "@lingui/macro";
-import { useDataCubePreviewQuery } from "../graphql/query-hooks";
-import { useLocale } from "../locales/use-locale";
+import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
 
 export interface Preview {
   iri: string;

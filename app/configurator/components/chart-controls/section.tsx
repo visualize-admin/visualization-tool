@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from "@theme-ui/components";
 
 import { ElementType, ReactNode } from "react";
-import { Icon, IconName } from "../../icons";
-import { useTheme } from "../../themes";
+import { Icon, IconName } from "../../../icons";
+import { useTheme } from "../../../themes";
 
 export const ControlSection = ({
   role,

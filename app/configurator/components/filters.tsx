@@ -1,11 +1,11 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button } from "@theme-ui/components";
 import { useCallback } from "react";
-import { getFilterValue, useConfiguratorState } from "../configurator";
-import { useDimensionValuesQuery } from "../graphql/query-hooks";
-import { useLocale } from "../locales/use-locale";
+import { getFilterValue, useConfiguratorState } from "..";
+import { useDimensionValuesQuery } from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
 import { MultiFilterField, SingleFilterField } from "./field";
-import { Loading } from "./hint";
+import { Loading } from "../../components/hint";
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 

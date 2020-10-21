@@ -1,8 +1,8 @@
 import { Box } from "theme-ui";
 import { useConfiguratorState } from "..";
-import { ChartAnnotationsSelector } from "../../components/chart-annotations-selector";
-import { ChartOptionsSelector } from "../../components/chart-options-selector";
-import { DataSetMetadata } from "../../components/dataset-metadata";
+import { ChartAnnotationsSelector } from "./chart-annotations-selector";
+import { ChartOptionsSelector } from "./chart-options-selector";
+import { DataSetMetadata } from "./dataset-metadata";
 import { PanelLeft } from "./panel-left";
 import { PanelMiddle } from "./panel-middle";
 import { Stepper } from "./stepper";

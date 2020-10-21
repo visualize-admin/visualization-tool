@@ -1,21 +1,18 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import {
-  ChartConfig,
-  ConfiguratorStateConfiguringChart,
-} from "../configurator";
-import { chartConfigOptionsUISpec } from "../charts/chart-config-ui-options";
-import { getFieldComponentIris } from "../charts";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
-import { DataCubeMetadata } from "../graphql/types";
-import { useLocale } from "../locales/use-locale";
+import { ChartConfig, ConfiguratorStateConfiguringChart } from "..";
+import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
+import { getFieldComponentIris } from "../../charts";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
+import { DataCubeMetadata } from "../../graphql/types";
+import { useLocale } from "../../locales/use-locale";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
 } from "./chart-controls/section";
 import { ControlTabField, FilterTabField } from "./field";
-import { Loading } from "./hint";
+import { Loading } from "../../components/hint";
 
 export const ChartConfigurator = ({
   state,

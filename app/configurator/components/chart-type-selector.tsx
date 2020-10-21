@@ -1,16 +1,13 @@
 import { Trans } from "@lingui/macro";
 import { Box, Grid } from "@theme-ui/components";
 import React from "react";
-import { getPossibleChartType } from "../charts";
-import {
-  ChartType,
-  ConfiguratorStateSelectingChartType,
-} from "../configurator";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
-import { useLocale } from "../locales/use-locale";
+import { getPossibleChartType } from "../../charts";
+import { ChartType, ConfiguratorStateSelectingChartType } from "..";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
 import { SectionTitle } from "./chart-controls/section";
 import { ChartTypeSelectorField } from "./field";
-import { Hint, Loading } from "./hint";
+import { Hint, Loading } from "../../components/hint";
 
 const chartTypes: ChartType[] = [
   // "bar",

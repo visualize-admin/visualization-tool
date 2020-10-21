@@ -1,10 +1,10 @@
 import { Trans } from "@lingui/macro";
 import { Button, Flex, Text } from "@theme-ui/components";
 
-import { FieldProps } from "../../configurator";
-import { getFieldLabel, getIconName } from "../../domain/helpers";
-import { ComponentFieldsFragment } from "../../graphql/query-hooks";
-import { Icon, IconName } from "../../icons";
+import { FieldProps } from "../..";
+import { getFieldLabel, getIconName } from "../../../domain/helpers";
+import { ComponentFieldsFragment } from "../../../graphql/query-hooks";
+import { Icon, IconName } from "../../../icons";
 import { ReactNode } from "react";
 
 export const ControlTab = ({

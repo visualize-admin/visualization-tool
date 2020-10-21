@@ -3,43 +3,43 @@ import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
 import { useCallback, useEffect, useRef } from "react";
-import { getFieldComponentIri } from "../charts";
+import { getFieldComponentIri } from "../../charts";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   SortingType,
   useConfiguratorState,
-} from "../configurator";
-import { getDimensionsByDimensionType } from "../domain/data";
+} from "..";
+import { getDimensionsByDimensionType } from "../../domain/data";
 import {
   chartConfigOptionsUISpec,
   EncodingField,
   EncodingOptions,
   EncodingSortingOption,
   EncodingSpec,
-} from "../charts/chart-config-ui-options";
-import { getFieldLabel, getFieldLabelHint } from "../domain/helpers";
+} from "../../charts/chart-config-ui-options";
+import { getFieldLabel, getFieldLabelHint } from "../../domain/helpers";
 import {
   DimensionFieldsWithValuesFragment,
   useDataCubeMetadataWithComponentValuesQuery,
-} from "../graphql/query-hooks";
-import { DataCubeMetadata } from "../graphql/types";
-import { IconName } from "../icons";
-import { useLocale } from "../locales/use-locale";
+} from "../../graphql/query-hooks";
+import { DataCubeMetadata } from "../../graphql/types";
+import { IconName } from "../../icons";
+import { useLocale } from "../../locales/use-locale";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
 } from "./chart-controls/section";
-import { EmptyRightPanel } from "../configurator/components/empty-right-panel";
+import { EmptyRightPanel } from "./empty-right-panel";
 import { ChartFieldField, ChartOptionRadioField } from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
 } from "./filters";
-import { FieldSetLegend, Radio, Select } from "./form";
-import { Loading } from "./hint";
+import { FieldSetLegend, Radio, Select } from "../../components/form";
+import { Loading } from "../../components/hint";
 
 export const ChartOptionsSelector = ({
   state,

@@ -1,17 +1,17 @@
 import { Box } from "@theme-ui/components";
 import { useEffect, useRef } from "react";
-import { ConfiguratorStateDescribingChart } from "../configurator";
-import { getFieldLabel } from "../domain/helpers";
-import { IconName } from "../icons";
-import { locales } from "../locales/locales";
+import { ConfiguratorStateDescribingChart } from "..";
+import { getFieldLabel } from "../../domain/helpers";
+import { IconName } from "../../icons";
+import { locales } from "../../locales/locales";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
 } from "./chart-controls/section";
-import { EmptyRightPanel } from "../configurator/components/empty-right-panel";
+import { EmptyRightPanel } from "./empty-right-panel";
 import { MetaInputField } from "./field";
-import { useLocale } from "../locales/use-locale";
+import { useLocale } from "../../locales/use-locale";
 
 export const ChartAnnotationsSelector = ({
   state,

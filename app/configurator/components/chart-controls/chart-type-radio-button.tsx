@@ -1,8 +1,8 @@
 import { Button, Text } from "@theme-ui/components";
 import { SyntheticEvent } from "react";
-import { FieldProps } from "../../configurator";
-import { getFieldLabel, getIconName } from "../../domain/helpers";
-import { Icon } from "../../icons";
+import { FieldProps } from "../..";
+import { getFieldLabel, getIconName } from "../../../domain/helpers";
+import { Icon } from "../../../icons";
 
 export const ChartTypeSelectionButton = ({
   label,

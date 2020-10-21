@@ -2,17 +2,14 @@ import { Trans } from "@lingui/macro";
 import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { useSelect } from "downshift";
 
-import {
-  useConfiguratorState,
-  ConfiguratorStateConfiguringChart,
-} from "../../configurator";
+import { useConfiguratorState, ConfiguratorStateConfiguringChart } from "../..";
 import {
   getPalette,
   mapColorsToComponentValuesIris,
-} from "../../domain/helpers";
-import { Icon } from "../../icons";
-import { Label } from "../form";
-import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
+} from "../../../domain/helpers";
+import { Icon } from "../../../icons";
+import { Label } from "../../../components/form";
+import { DimensionFieldsWithValuesFragment } from "../../../graphql/query-hooks";
 import { useCallback } from "react";
 
 const palettes: Array<{

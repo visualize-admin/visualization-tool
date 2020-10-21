@@ -13,14 +13,14 @@ import {
   useConfiguratorState,
   useMetaField,
   useSingleFilterField,
-} from "../configurator";
-import { getPalette } from "../domain/helpers";
+} from "..";
+import { getPalette } from "../../domain/helpers";
 import {
   ComponentFieldsFragment,
   DimensionFieldsWithValuesFragment,
-} from "../graphql/query-hooks";
-import { DataCubeMetadata } from "../graphql/types";
-import { Locales } from "../locales/locales";
+} from "../../graphql/query-hooks";
+import { DataCubeMetadata } from "../../graphql/types";
+import { Locales } from "../../locales/locales";
 import { ChartTypeSelectionButton } from "./chart-controls/chart-type-radio-button";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
@@ -28,7 +28,7 @@ import {
   ControlTab,
   FilterTab,
 } from "./chart-controls/control-tab";
-import { Checkbox, Input, Radio, Select } from "./form";
+import { Checkbox, Input, Radio, Select } from "../../components/form";
 
 export const ControlTabField = ({
   component,

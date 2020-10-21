@@ -2,10 +2,10 @@ import { Trans } from "@lingui/macro";
 import { Box } from "@theme-ui/components";
 
 import { ReactNode } from "react";
-import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
-import { useLocale } from "../locales/use-locale";
-import { Loading } from "./hint";
-import { useFormatFullDateAuto } from "../domain/helpers";
+import { useDataCubeMetadataQuery } from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
+import { Loading } from "../../components/hint";
+import { useFormatFullDateAuto } from "../../domain/helpers";
 
 export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
