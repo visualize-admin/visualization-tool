@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "theme-ui";
 import { ContentMDXProvider } from "../components/content-mdx-provider";
-import { analyticsPageView } from "../domain/analytics";
+import { analyticsPageView } from "../lib/googleAnalytics";
 import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
 import { LocaleProvider } from "../lib/use-locale";

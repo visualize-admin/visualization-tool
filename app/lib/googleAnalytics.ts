@@ -1,4 +1,4 @@
-import { GA_TRACKING_ID } from "./env";
+import { GA_TRACKING_ID } from "../domain/env";
 
 declare global {
   interface Window {
