@@ -9,6 +9,7 @@ import {
   Radio,
   Select,
   Text,
+  Input,
 } from "@theme-ui/components";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
@@ -23,6 +24,7 @@ import {
 import { Data } from "../../pages/[locale]/_table-a";
 import { ColumnDimension } from "./column-dimensions";
 import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";
+import FlexSearch from "flexsearch";
 
 import { RowUI } from "./row";
 import { ColumnFormatting } from "./column-formatting";
@@ -33,7 +35,12 @@ import { extent } from "d3-array";
 import { TableHeader } from "../data-table/table-header";
 
 export const GROUPED_COLOR = "#F5F5F5";
-
+const fakeData = [
+  { id: 0, content: "blabla" },
+  { id: 2, content: "lololo" },
+  { id: 3, content: "merci" },
+  { id: 4, content: "bye" },
+];
 export const Table = ({
   data,
   columns,
@@ -49,6 +56,35 @@ export const Table = ({
   const [displayedColumns, setDisplayedColumns] = useState([]);
   const [columnOrderIds, setColumnOrderIds] = useState([]);
   const [columnStyles, setColumnStyles] = useState([]);
+
+  // Search & filter data
+  const [searchTerm, setSearchTerm] = React.useState("");
+
+  const searchIndex = useMemo(() => {
+    console.log("index being created");
+    const index = new FlexSearch({
+      tokenize: "full",
+      doc: {
+        id: "id",
+        field: columns.map((c) => c.accessor),
+      },
+    });
+
+    index.add(data);
+
+    return index;
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    const searchResult =
+      searchTerm !== ""
+        ? searchIndex.search({
+            query: `${searchTerm}`,
+            // suggest: true
+          })
+        : data;
+    return searchResult;
+  }, [data, searchTerm, searchIndex]);
 
   useEffect(() => {
     setDisplayedColumns(columns);
@@ -81,7 +117,7 @@ export const Table = ({
             : [...new Set(data.map((d) => d[c.accessor]))],
       }))
     );
-  }, [data, columns]);
+  }, [data, filteredData, columns]);
 
   const updateActiveColumn = (columnId: string) => {
     setActiveColumn(columnId);
@@ -213,7 +249,7 @@ export const Table = ({
   } = useTable<Data>(
     {
       columns,
-      data,
+      data: filteredData,
       useControlledState: (state) => {
         return useMemo(
           () => ({
@@ -222,7 +258,7 @@ export const Table = ({
             hiddenColumns: hiddenIds,
             // sortBy: sortingIds,
           }),
-          [state, groupingIds, hiddenIds, sortingIds]
+          [state, groupingIds, hiddenIds, sortingIds, filteredData]
         );
       },
     },
@@ -242,6 +278,8 @@ export const Table = ({
   // console.log({ hiddenIds });
   // console.log({ columnStyles });
   // console.log("number of rows", rows.length);
+  // console.log({ searchTerm });
+  // console.log({ searchIndex });
 
   return (
     <Grid
@@ -296,8 +334,15 @@ export const Table = ({
       </Box>
 
       {/* Table */}
-
       <Box sx={{ m: 4, p: 2 }}>
+        <Label sx={{ my: 3, width: 300 }}>
+          <Input
+            sx={{ width: 300 }}
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.currentTarget.value)}
+          />
+        </Label>
         <Box
           as="table"
           {...getTableProps()}

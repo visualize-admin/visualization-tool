@@ -71,7 +71,10 @@ const Page: NextPage = () => {
             </Label>
           </Flex>
 
-          <Table data={data} columns={columns} />
+          <Table
+            data={data.map((d, i) => ({ id: i, ...d }))}
+            columns={[{ Header: "id", accessor: "id" }, ...columns]}
+          />
         </Box>
       </ContentLayout>
     </>
