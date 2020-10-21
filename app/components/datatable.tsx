@@ -1,6 +1,6 @@
 import { Box } from "@theme-ui/components";
 
-import { Observation } from "../domain";
+import { Observation } from "../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubePreviewObservationsQuery,

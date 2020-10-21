@@ -1,7 +1,7 @@
 import { bisector } from "d3-array";
 import { pointer } from "d3-selection";
 import { memo, useRef, MouseEvent } from "react";
-import { Observation } from "../../../domain";
+import { Observation } from "../../../domain/data";
 import { AreasState } from "../areas/areas-state";
 import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";

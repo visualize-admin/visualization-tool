@@ -4,7 +4,7 @@ import { csvFormat } from "d3-dsv";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
 import { ChartConfig, ChartFields } from "../configurator";
-import { Observation } from "../domain";
+import { Observation } from "../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,

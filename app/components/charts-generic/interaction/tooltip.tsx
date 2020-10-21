@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Observation } from "../../../domain";
+import { Observation } from "../../../domain/data";
 import { LinesState } from "../lines/lines-state";
 import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";
@@ -28,7 +28,7 @@ export interface TooltipValue {
   color: string;
   yPos?: number;
 }
-export interface Tooltip {
+export interface TooltipInfo {
   xAnchor: number;
   yAnchor: number;
   placement: TooltipPlacement;

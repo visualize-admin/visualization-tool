@@ -9,7 +9,7 @@ import {
 } from "d3-scale";
 
 import { ReactNode, useCallback, useMemo } from "react";
-import { Observation, ObservationValue } from "../../../domain";
+import { Observation, ObservationValue } from "../../../domain/data";
 import {
   getPalette,
   mkNumber,
@@ -20,7 +20,7 @@ import {
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
 import { useTheme } from "../../../themes";
-import { Tooltip } from "../interaction/tooltip";
+import { TooltipInfo } from "../interaction/tooltip";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
@@ -43,7 +43,7 @@ export interface LinesState {
   grouped: Map<string, Observation[]>;
   wide: ArrayLike<Record<string, ObservationValue>>;
   xKey: string;
-  getAnnotationInfo: (d: Observation) => Tooltip;
+  getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
 const useLinesState = ({
@@ -173,7 +173,7 @@ const useLinesState = ({
   yScale.range([chartHeight, 0]);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): Tooltip => {
+  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
     const yAnchor = yScale(getY(datum));
 

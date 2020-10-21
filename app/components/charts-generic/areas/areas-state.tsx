@@ -25,7 +25,7 @@ import {
 
 import { ReactNode, useCallback, useMemo } from "react";
 import { AreaFields } from "../../../configurator";
-import { Observation } from "../../../domain";
+import { Observation } from "../../../domain/data";
 import {
   getPalette,
   isNumber,
@@ -35,7 +35,7 @@ import {
 } from "../../../domain/helpers";
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { Tooltip } from "../interaction/tooltip";
+import { TooltipInfo } from "../interaction/tooltip";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { Bounds, Observer, useWidth } from "../use-width";
@@ -55,7 +55,7 @@ export interface AreasState {
   yAxisLabel: string;
   wide: { [key: string]: number | string }[];
   series: $FixMe[];
-  getAnnotationInfo: (d: Observation) => Tooltip;
+  getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
 const useAreasState = ({
@@ -228,7 +228,7 @@ const useAreasState = ({
   yScale.range([chartHeight, 0]);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): Tooltip => {
+  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
 
     const tooltipValues = sortedData.filter(

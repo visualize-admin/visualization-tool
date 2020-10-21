@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import { ChartFields } from "../../configurator";
-import { Observation } from "../../domain";
+import { Observation } from "../../domain/data";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { AreasState } from "./areas/areas-state";
 import { GroupedBarsState } from "./bars/bars-grouped-state";

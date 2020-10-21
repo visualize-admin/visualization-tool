@@ -2,10 +2,10 @@ import { ascending, max, min } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { ReactNode } from "react";
 import { ScatterPlotFields } from "../../../configurator";
-import { Observation } from "../../../domain";
+import { Observation } from "../../../domain/data";
 import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { Tooltip } from "../interaction/tooltip";
+import { TooltipInfo } from "../interaction/tooltip";
 import { TooltipScatterplot } from "../interaction/tooltip-content";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
@@ -25,7 +25,7 @@ export interface ScatterplotState {
   colors: ScaleOrdinal<string, string>;
   xAxisLabel: string;
   yAxisLabel: string;
-  getAnnotationInfo: (d: Observation, values: Observation[]) => Tooltip;
+  getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
 }
 
 const useScatterplotState = ({
@@ -117,7 +117,7 @@ const useScatterplotState = ({
   yScale.range([chartHeight, 0]);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): Tooltip => {
+  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum));
     const yRef = yScale(getY(datum));
     const xAnchor = xRef;

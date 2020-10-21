@@ -11,7 +11,7 @@ import { Reducer, useImmerReducer } from "use-immer";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { useLocale } from "../lib/use-locale";
-import { createChartId } from "../domain/chart-id";
+import { createChartId } from "../lib/create-chart-id";
 import { getFieldComponentIris, getInitialConfig } from "../charts";
 import {
   ChartConfig,

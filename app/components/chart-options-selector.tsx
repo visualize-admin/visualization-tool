@@ -10,7 +10,7 @@ import {
   SortingType,
   useConfiguratorState,
 } from "../configurator";
-import { getDimensionsByDimensionType } from "../domain";
+import { getDimensionsByDimensionType } from "../domain/data";
 import {
   chartConfigOptionsUISpec,
   EncodingField,

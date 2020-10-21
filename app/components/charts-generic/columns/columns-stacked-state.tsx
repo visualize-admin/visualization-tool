@@ -21,7 +21,7 @@ import { Observation, ObservationValue } from "../../../domain/data";
 import { getPalette, isNumber, useFormatNumber } from "../../../domain/helpers";
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { Tooltip } from "../interaction/tooltip";
+import { TooltipInfo } from "../interaction/tooltip";
 import {
   PADDING_INNER,
   PADDING_OUTER,
@@ -48,7 +48,7 @@ export interface StackedColumnsState {
   wide: Record<string, ObservationValue>[];
   grouped: [string, Record<string, ObservationValue>[]][];
   series: $FixMe[];
-  getAnnotationInfo: (d: Observation, orderedSegments: string[]) => Tooltip;
+  getAnnotationInfo: (d: Observation, orderedSegments: string[]) => TooltipInfo;
 }
 
 const useColumnsStackedState = ({
@@ -250,7 +250,7 @@ const useColumnsStackedState = ({
   yScale.range([chartHeight, 0]);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): Tooltip => {
+  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
 

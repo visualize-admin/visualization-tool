@@ -10,11 +10,11 @@ import {
 
 import { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../../configurator";
-import { Observation, ObservationValue } from "../../../domain";
+import { Observation, ObservationValue } from "../../../domain/data";
 import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
 import { sortByIndex } from "../../../lib/array";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { Tooltip } from "../interaction/tooltip";
+import { TooltipInfo } from "../interaction/tooltip";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { Bounds, Observer, useWidth } from "../use-width";
@@ -40,7 +40,7 @@ export interface GroupedColumnsState {
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
   grouped: [string, Record<string, ObservationValue>[]][];
-  getAnnotationInfo: (d: Observation) => Tooltip;
+  getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
 const useGroupedColumnsState = ({
@@ -219,7 +219,7 @@ const useGroupedColumnsState = ({
   yScale.range([chartHeight, 0]);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): Tooltip => {
+  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
     const yRef = yScale(getY(datum));

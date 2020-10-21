@@ -1,4 +1,4 @@
-import { Observation } from "../../../domain";
+import { Observation } from "../../../domain/data";
 import { useChartState } from "../use-chart-state";
 import { useInteraction } from "../use-interaction";
 import { ColumnsState } from "../columns/columns-state";

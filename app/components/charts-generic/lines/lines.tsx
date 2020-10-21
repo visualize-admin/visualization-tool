@@ -1,6 +1,6 @@
 import { useChartState } from "../use-chart-state";
 import { line } from "d3-shape";
-import { Observation } from "../../../domain";
+import { Observation } from "../../../domain/data";
 import { LinesState } from "./lines-state";
 import { useTheme } from "../../../themes";
 import { memo } from "react";

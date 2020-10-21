@@ -2,7 +2,7 @@ import VisuallyHidden from "@reach/visually-hidden";
 import { Box } from "@theme-ui/components";
 import { memo, useMemo } from "react";
 import { ChartFields } from "../configurator";
-import { Observation } from "../domain";
+import { Observation } from "../domain/data";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const A11yTable = memo(

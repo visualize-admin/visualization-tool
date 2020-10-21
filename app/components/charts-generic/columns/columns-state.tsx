@@ -12,7 +12,7 @@ import { ReactNode, useMemo, useCallback } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../../configurator";
 import { getPalette, mkNumber, useFormatNumber } from "../../../domain/helpers";
 import { estimateTextWidth } from "../../../lib/estimate-text-width";
-import { Tooltip } from "../interaction/tooltip";
+import { TooltipInfo } from "../interaction/tooltip";
 import { PADDING_INNER, PADDING_OUTER } from "../columns/constants";
 import { Bounds, Observer, useWidth } from "../use-width";
 import { ChartContext, ChartProps } from "../use-chart-state";
@@ -32,7 +32,7 @@ export interface ColumnsState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  getAnnotationInfo: (d: Observation) => Tooltip;
+  getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
 const useColumnsState = ({
@@ -125,7 +125,7 @@ const useColumnsState = ({
   yScale.range([chartHeight, 0]);
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): Tooltip => {
+  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
     const yRef = yScale(Math.max(getY(datum), 0));

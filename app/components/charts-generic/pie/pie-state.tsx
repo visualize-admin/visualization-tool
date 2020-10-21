@@ -4,9 +4,9 @@ import { arc, pie, Pie, PieArcDatum } from "d3-shape";
 
 import { ReactNode, useCallback, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../../configurator";
-import { Observation } from "../../../domain";
+import { Observation } from "../../../domain/data";
 import { getPalette, useFormatNumber } from "../../../domain/helpers";
-import { Tooltip } from "../interaction/tooltip";
+import { TooltipInfo } from "../interaction/tooltip";
 import { ChartContext, ChartProps } from "../use-chart-state";
 import { InteractionProvider } from "../use-interaction";
 import { Bounds, Observer, useWidth } from "../use-width";
@@ -45,7 +45,7 @@ export interface PieState {
   getY: (d: Observation) => number;
   getX: (d: Observation) => string;
   colors: ScaleOrdinal<string, string>;
-  getAnnotationInfo: (d: PieArcDatum<Observation>) => Tooltip;
+  getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
 }
 
 const usePieState = ({
@@ -152,7 +152,9 @@ const usePieState = ({
     });
 
   // Tooltip
-  const getAnnotationInfo = (arcDatum: PieArcDatum<Observation>): Tooltip => {
+  const getAnnotationInfo = (
+    arcDatum: PieArcDatum<Observation>
+  ): TooltipInfo => {
     const [x, y] = arcGenerator.centroid(arcDatum);
     const datum = arcDatum.data;
 
