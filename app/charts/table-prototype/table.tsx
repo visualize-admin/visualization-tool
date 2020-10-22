@@ -1,20 +1,15 @@
-
+// @ts-nocheck
 import {
   Box,
-
-
-  Button, Checkbox, Flex,
-
-
+  Button,
+  Checkbox,
+  Flex,
   Grid,
-
-
-
-
-  Input, Label,
+  Input,
+  Label,
   Radio,
   Select,
-  Text
+  Text,
 } from "@theme-ui/components";
 import { extent } from "d3-array";
 import { scaleLinear, scaleOrdinal } from "d3-scale";
@@ -28,24 +23,18 @@ import {
   useExpanded,
   useGroupBy,
   useSortBy,
-  useTable
+  useTable,
 } from "react-table";
 import { getPalette } from "../../domain/helpers";
-import { Data } from "../../pages/[locale]/_table-a";
-import { TableHeader } from "../data-table/table-header";
+import { Data } from "../../pages/[locale]/_table-prototype";
+import { TableHeader } from "../table/table-header";
 import { ColumnDimension } from "./column-dimensions";
 import { ColumnFormatting } from "./column-formatting";
 import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";
 import { RowUI } from "./row";
 
-
 export const GROUPED_COLOR = "#F5F5F5";
-const fakeData = [
-  { id: 0, content: "blabla" },
-  { id: 2, content: "lololo" },
-  { id: 3, content: "merci" },
-  { id: 4, content: "bye" },
-];
+
 export const Table = ({
   data,
   columns,

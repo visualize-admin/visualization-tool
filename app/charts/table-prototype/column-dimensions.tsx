@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Box, Button, Text } from "@theme-ui/components";
 import * as React from "react";
-import { GROUPED_COLOR } from "../../pages/[locale]/_table-a";
+import { GROUPED_COLOR } from "../../pages/[locale]/_table-prototype";
 import { ButtonNone } from "./button-none";
 
 export const ColumnDimension = React.memo(

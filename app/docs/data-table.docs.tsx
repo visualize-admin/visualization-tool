@@ -1,7 +1,7 @@
 import { Box } from "@theme-ui/components";
 import { markdown, ReactSpecimen } from "catalog";
 import * as React from "react";
-import { BarCell, TagCell, TextCell } from "../components/data-table/cell";
+import { BarCell, TagCell, TextCell } from "../charts/table/cell";
 
 export const Docs = () => markdown`
 

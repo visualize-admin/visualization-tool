@@ -2,7 +2,7 @@
 import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { Row } from "react-table";
-import { Data, GROUPED_COLOR } from "../../pages/[locale]/_table-a";
+import { Data, GROUPED_COLOR } from "../../pages/[locale]/_table-prototype";
 import { ColumnStyle } from "./column-formatting";
 import { useFormatNumber } from "../../domain/helpers";
 
