@@ -11,8 +11,8 @@ import { ContentLayout } from "../../../components/layout";
 import { LocalizedLink } from "../../../components/links";
 import { PublishActions } from "../../../components/publish-actions";
 import { getConfig } from "../../../db/config";
-import { Config } from "../../../domain/config-types";
-import { useLocale } from "../../../lib/use-locale";
+import { Config } from "../../../configurator";
+import { useLocale } from "../../../locales/use-locale";
 
 type PageProps =
   | {

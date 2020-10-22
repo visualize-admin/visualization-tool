@@ -1,5 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Step } from "../components/stepper";
+import { Step } from "../configurator/components/stepper";
 
 export default () => markdown`
 > The "stepper" is used to guide users through the steps of creating a visualization.

@@ -1,6 +1,6 @@
 import { Observation } from "../domain/data";
 import { RawObservation } from "../domain/data";
-import { Filters } from "../domain/config-types";
+import { Filters } from "../configurator";
 import {
   GraphQLResolveInfo,
   GraphQLScalarType,

@@ -2,13 +2,14 @@ import { Trans } from "@lingui/macro";
 import { Button } from "@theme-ui/components";
 import { csvFormat } from "d3-dsv";
 import { saveAs } from "file-saver";
-import React, { memo, ReactNode, useMemo } from "react";
-import { ChartConfig, ChartFields, Observation } from "../domain";
+import { memo, ReactNode, useMemo } from "react";
+import { ChartConfig, ChartFields } from "../configurator";
+import { Observation } from "../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 
 export interface ChartFieldsWithLabel {
   [x: string]: string;

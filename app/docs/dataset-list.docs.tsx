@@ -1,6 +1,6 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { DatasetButton } from "../components/dataset-selector";
-import { ConfiguratorStateProvider } from "../domain/configurator-state";
+import { DatasetButton } from "../configurator/components/dataset-selector";
+import { ConfiguratorStateProvider } from "../configurator";
 import { states } from "./fixtures";
 
 export default () => markdown`

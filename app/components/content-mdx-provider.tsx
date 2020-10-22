@@ -1,6 +1,6 @@
 import { MDXProvider } from "@mdx-js/react";
 import { ContentLayout, StaticContentLayout } from "./layout";
-import { Intro, Tutorial, Examples, Contribute } from "../components/homepage";
+import { Intro, Tutorial, Examples, Contribute } from "../homepage";
 import { Box } from "@theme-ui/components";
 import { ReactNode } from "react";
 
@@ -31,11 +31,7 @@ const defaultMDXComponents = {
   Contribute,
 };
 
-export const ContentMDXProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const ContentMDXProvider = ({ children }: { children: ReactNode }) => {
   return (
     <MDXProvider components={defaultMDXComponents}>{children}</MDXProvider>
   );

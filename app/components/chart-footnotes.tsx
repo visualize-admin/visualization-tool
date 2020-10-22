@@ -1,9 +1,9 @@
 import { Trans } from "@lingui/macro";
 import { Box, Link, Text } from "@theme-ui/components";
-import React, { useEffect, useState } from "react";
-import { ChartConfig } from "../domain";
+import { Fragment, useEffect, useState } from "react";
+import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { DataDownload } from "./data-download";
 
 export const ChartFootnotes = ({
@@ -54,11 +54,11 @@ export const ChartFootnotes = ({
         <Text variant="meta" color="monochrome800" sx={{ my: 2 }}>
           <Trans id="metadata.filter">Filterset</Trans>:
           {namedFilters.map(({ dimension, value }, i) => (
-            <React.Fragment key={dimension.iri}>
+            <Fragment key={dimension.iri}>
               {" "}
               <span>{dimension.label}</span> (<span>{value?.label}</span>)
               {i < namedFilters.length - 1 && ","}
-            </React.Fragment>
+            </Fragment>
           ))}
         </Text>
 

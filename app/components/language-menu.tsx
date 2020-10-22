@@ -1,5 +1,5 @@
 import { CurrentPageLink } from "./links";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { Link, Box, Flex } from "@theme-ui/components";
 import NextLink from "next/link";
 import contentRoutes from "../content-routes.json";

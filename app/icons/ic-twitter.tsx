@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export const IconTwitter = ({ size = 24, color = "currentColor" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24">
     <path
