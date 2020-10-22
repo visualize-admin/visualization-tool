@@ -82,6 +82,11 @@ const pages: ConfigPageOrGroup[] = [
         title: "Annotations",
         content: require("../docs/annotations.docs"),
       },
+      {
+        path: "/charts/data-table",
+        title: "Data Table",
+        content: require("../docs/data-table.docs"),
+      },
     ],
   },
   {

@@ -10,6 +10,7 @@ import {
   schemeSet1,
   schemeSet2,
   schemeSet3,
+  schemeTableau10,
 } from "d3-scale-chromatic";
 import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
 import { timeParse } from "d3-time-format";
@@ -299,6 +300,8 @@ export const getPalette = (
       return schemeSet2;
     case "set3":
       return schemeSet3;
+    case "tableau10":
+      return schemeTableau10;
     default:
       return schemeCategory10;
   }
