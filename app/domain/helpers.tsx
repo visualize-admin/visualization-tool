@@ -1,5 +1,4 @@
 import { Trans } from "@lingui/macro";
-import { format } from "d3-format";
 import { scaleOrdinal } from "d3-scale";
 import {
   schemeAccent,
@@ -13,24 +12,13 @@ import {
   schemeSet3,
   schemeTableau10,
 } from "d3-scale-chromatic";
-import {
-  timeDay,
-  timeHour,
-  timeMinute,
-  timeMonth,
-  timeWeek,
-  timeYear,
-} from "d3-time";
-import { timeFormat, timeParse } from "d3-time-format";
-import * as React from "react";
+import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
+import { timeParse } from "d3-time-format";
+import { ReactNode, useMemo } from "react";
 import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 import { IconName } from "../icons";
-import { useLocale } from "../lib/use-locale";
-import {
-  d3TimeFormatLocales,
-  Locales,
-  d3FormatLocales,
-} from "../locales/locales";
+import { useLocale } from "../locales/use-locale";
+import { d3FormatLocales, d3TimeFormatLocales } from "../locales/locales";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -56,7 +44,7 @@ export const mkNumber = (x: $IntentionalAny): number => +x;
  */
 export const useFormatFullDateAuto = () => {
   const locale = useLocale();
-  const formatter = React.useMemo(() => {
+  const formatter = useMemo(() => {
     const { format } = d3TimeFormatLocales[locale];
 
     const formatSecond = format("%d.%m.%Y %H:%M:%S");
@@ -91,7 +79,7 @@ export const useFormatFullDateAuto = () => {
  */
 export const useFormatShortDateAuto = () => {
   const locale = useLocale();
-  const formatter = React.useMemo(() => {
+  const formatter = useMemo(() => {
     const { format } = d3TimeFormatLocales[locale];
 
     const formatSecond = format(":%S");
@@ -123,7 +111,7 @@ export const useFormatShortDateAuto = () => {
 
 export const useFormatNumber = () => {
   const locale = useLocale();
-  const formatter = React.useMemo(() => {
+  const formatter = useMemo(() => {
     const { format } = d3FormatLocales[locale];
     return format(",.2~f");
   }, [locale]);
@@ -159,7 +147,7 @@ export const getIconName = (name: string): IconName => {
   }
 };
 
-export const getFieldLabel = (field: string): string | React.ReactNode => {
+export const getFieldLabel = (field: string): ReactNode => {
   switch (field) {
     // Visual encodings (left column)
     case "column.x":

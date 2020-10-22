@@ -1,5 +1,5 @@
 import { pool } from "./pg-pool";
-import { createChartId } from "../domain/chart-id";
+import { createChartId } from "../lib/create-chart-id";
 
 /**
  * Store data in the DB.

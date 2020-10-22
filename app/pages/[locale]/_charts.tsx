@@ -5,7 +5,7 @@ import { ChartPublished } from "../../components/chart-published";
 import { ContentLayout } from "../../components/layout";
 import { LocalizedLink } from "../../components/links";
 import { getAllConfigs } from "../../db/config";
-import { Config } from "../../domain/config-types";
+import { Config } from "../../configurator";
 
 type PageProps = {
   configs: {

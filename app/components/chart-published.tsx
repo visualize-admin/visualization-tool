@@ -1,13 +1,13 @@
 import { Flex, Text } from "@theme-ui/components";
-import { ChartConfig, Meta } from "../domain/config-types";
-import { useLocale } from "../lib/use-locale";
-import { ChartAreasVisualization } from "./chart-areas";
-import { ChartColumnsVisualization } from "./chart-columns";
-import { ChartBarsVisualization } from "./chart-bars";
+import { ChartConfig, Meta } from "../configurator";
+import { useLocale } from "../locales/use-locale";
+import { ChartAreasVisualization } from "../charts/area/chart-area";
+import { ChartColumnsVisualization } from "../charts/column/chart-column";
+import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 import { ChartFootnotes } from "./chart-footnotes";
-import { ChartLinesVisualization } from "./chart-lines";
-import { ChartScatterplotVisualization } from "./chart-scatterplot";
-import { ChartPieVisualization } from "./chart-pie";
+import { ChartLinesVisualization } from "../charts/line/chart-lines";
+import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
+import { ChartPieVisualization } from "../charts/pie/chart-pie";
 
 export const ChartPublished = ({
   dataSet,

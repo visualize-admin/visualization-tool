@@ -1,10 +1,10 @@
-import * as React from "react";
-import { Flex, Text, Box } from "@theme-ui/components";
-import { Trans } from "@lingui/macro";
-import { Icon, IconName } from "../icons";
 import { keyframes } from "@emotion/core";
+import { Trans } from "@lingui/macro";
+import { Box, Flex, Text } from "@theme-ui/components";
+import { ReactNode } from "react";
+import { Icon, IconName } from "../icons";
 
-export const Error = ({ children }: { children: React.ReactNode }) => (
+export const Error = ({ children }: { children: ReactNode }) => (
   <Flex
     sx={{
       justifyContent: "center",
@@ -17,7 +17,7 @@ export const Error = ({ children }: { children: React.ReactNode }) => (
   </Flex>
 );
 
-export const Hint = ({ children }: { children: React.ReactNode }) => (
+export const Hint = ({ children }: { children: ReactNode }) => (
   <Flex
     sx={{
       width: "100%",
@@ -197,7 +197,7 @@ export const HintBlue = ({
   children,
 }: {
   iconName: IconName;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => (
   <Flex
     sx={{
@@ -226,7 +226,7 @@ export const HintRed = ({
   children,
 }: {
   iconName: IconName;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => (
   <Flex
     sx={{

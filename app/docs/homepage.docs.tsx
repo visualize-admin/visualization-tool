@@ -1,5 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Teaser } from "../components/homepage/intro";
+import { Teaser } from "../homepage/intro";
 
 export default () => markdown`
 ## Teaser

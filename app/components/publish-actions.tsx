@@ -3,9 +3,14 @@ import { I18n } from "@lingui/react";
 import { Box, Button, Flex, Input, Link, Text } from "@theme-ui/components";
 import * as clipboard from "clipboard-polyfill/text";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
-import React, { ReactNode, useEffect, useState } from "react";
+import {
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 import { Icon, IconName } from "../icons";
-import { useLocale } from "../lib/use-locale";
+import { useLocale } from "../locales/use-locale";
 import { IconLink } from "./links";
 
 export const PublishActions = ({ configKey }: { configKey: string }) => {
@@ -260,7 +265,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
     );
   };
   const handleClick = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    e: ReactMouseEvent<HTMLButtonElement, MouseEvent>,
     iFrameCode: string
   ) => {
     e.preventDefault();

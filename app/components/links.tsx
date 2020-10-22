@@ -1,10 +1,10 @@
-import React from "react";
-import Link, { LinkProps } from "next/link";
-import { useLocale } from "../lib/use-locale";
-import * as qs from "querystring";
-import { useRouter } from "next/router";
-import { IconName, Icon } from "../icons";
 import { Link as UILink } from "@theme-ui/components";
+import Link, { LinkProps } from "next/link";
+import { useRouter } from "next/router";
+import * as qs from "querystring";
+import { ReactNode } from "react";
+import { Icon, IconName } from "../icons";
+import { useLocale } from "../locales/use-locale";
 const createDynamicRouteProps = ({
   pathname,
   query,
@@ -50,7 +50,7 @@ export const LocalizedLink = ({
 }: Omit<LinkProps, "href" | "as"> & {
   pathname: string;
   query?: qs.ParsedUrlQuery;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) => {
   const locale = useLocale();
   return (
@@ -66,7 +66,7 @@ export const LocalizedLink = ({
 
 export const HomeLink = (
   props: Omit<LinkProps, "href" | "as"> & {
-    children?: React.ReactNode;
+    children?: ReactNode;
   }
 ) => {
   const locale = useLocale();
@@ -79,7 +79,7 @@ export const CurrentPageLink = ({
 }: {
   locale: string;
   passHref?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   const { pathname, query } = useRouter();
 

@@ -1,15 +1,15 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { ChartTypeSelectionButton } from "../components/chart-controls/chart-type-radio-button";
-import { ControlList } from "../components/chart-controls/list";
+import { ChartTypeSelectionButton } from "../configurator/components/chart-controls/chart-type-radio-button";
+import { ControlList } from "../configurator/components/chart-controls/list";
 import {
   ControlSection,
   SectionTitle,
-} from "../components/chart-controls/section";
+} from "../configurator/components/chart-controls/section";
 import { Checkbox, Input, Radio, Select } from "../components/form";
 import {
   ColorPicker,
   ColorPickerMenu,
-} from "../components/chart-controls/color-picker";
+} from "../configurator/components/chart-controls/color-picker";
 import { getPalette } from "../domain/helpers";
 import { useState } from "react";
 import { Box } from "theme-ui";

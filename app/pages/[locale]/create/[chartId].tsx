@@ -1,9 +1,8 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import React from "react";
-import { ChartEditor } from "../../../components/editor/chart-editor";
 import { AppLayout } from "../../../components/layout";
-import { ConfiguratorStateProvider } from "../../../domain/configurator-state";
+import { Configurator, ConfiguratorStateProvider } from "../../../configurator";
 
 type PageProps = {
   locale: string;
@@ -30,7 +29,7 @@ const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
       </Head>
       <AppLayout>
         <ConfiguratorStateProvider chartId={chartId}>
-          <ChartEditor />
+          <Configurator />
         </ConfiguratorStateProvider>
       </AppLayout>
     </>

@@ -11,8 +11,8 @@ import {
   Select as RebassSelect,
   SelectProps,
 } from "@theme-ui/components";
-import * as React from "react";
-import { FieldProps, Option } from "../domain/config-form";
+import { ReactNode } from "react";
+import { FieldProps, Option } from "../configurator";
 import { Icon } from "../icons";
 
 export const Label = ({
@@ -22,11 +22,11 @@ export const Label = ({
   smaller = false,
   children,
 }: {
-  label?: string | React.ReactNode;
+  label?: string | ReactNode;
   htmlFor: string;
   disabled?: boolean;
   smaller?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => (
   <RebassLabel
     htmlFor={htmlFor}
@@ -65,7 +65,7 @@ export const Radio = ({
   checked,
   disabled,
   onChange,
-}: { label: string | React.ReactNode; disabled?: boolean } & FieldProps) => {
+}: { label: string | ReactNode; disabled?: boolean } & FieldProps) => {
   return (
     <Box mb={2}>
       <Label label={label} htmlFor={`${name}-${value}`} disabled={disabled}>
@@ -93,7 +93,7 @@ export const Checkbox = ({
   checked,
   disabled,
   onChange,
-}: { label: React.ReactNode; disabled?: boolean } & FieldProps) => (
+}: { label: ReactNode; disabled?: boolean } & FieldProps) => (
   <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
     <RebassCheckbox
       sx={{
@@ -121,7 +121,7 @@ export const Select = ({
 }: {
   id: string;
   options: Option[];
-  label?: React.ReactNode;
+  label?: ReactNode;
   disabled?: boolean;
 } & SelectProps) => (
   <Box sx={{ color: "monochrome700", pb: 2 }}>
@@ -169,7 +169,7 @@ export const MiniSelect = ({
 }: {
   id: string;
   options: Option[];
-  label?: React.ReactNode;
+  label?: ReactNode;
   disabled?: boolean;
 } & SelectProps) => (
   <Box sx={{ color: "monochrome800" }}>
@@ -215,7 +215,7 @@ export const Input = ({
   disabled,
   onChange,
 }: {
-  label?: string | React.ReactNode;
+  label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
   <Box sx={{ color: "monochrome700", fontSize: 4 }}>
@@ -243,7 +243,7 @@ export const SearchField = ({
   onReset,
 }: {
   id: string;
-  label?: string | React.ReactNode;
+  label?: string | ReactNode;
   disabled?: boolean;
   value?: string;
   placeholder?: string;
@@ -308,7 +308,7 @@ export const SearchField = ({
 export const FieldSetLegend = ({
   legendTitle,
 }: {
-  legendTitle: string | React.ReactNode;
+  legendTitle: string | ReactNode;
 }) => (
   <Box
     sx={{

@@ -1,15 +1,15 @@
 import { Trans } from "@lingui/macro";
 import { Flex, Text } from "@theme-ui/components";
 import React from "react";
-import { useConfiguratorState } from "../domain/configurator-state";
-import { useLocale } from "../lib/use-locale";
-import { ChartAreasVisualization } from "./chart-areas";
-import { ChartColumnsVisualization } from "./chart-columns";
+import { useConfiguratorState } from "../configurator";
+import { useLocale } from "../locales/use-locale";
+import { ChartAreasVisualization } from "../charts/area/chart-area";
+import { ChartColumnsVisualization } from "../charts/column/chart-column";
 import { ChartFootnotes } from "./chart-footnotes";
-import { ChartLinesVisualization } from "./chart-lines";
-import { ChartScatterplotVisualization } from "./chart-scatterplot";
-import { ChartPieVisualization } from "./chart-pie";
-import { ChartBarsVisualization } from "./chart-bars";
+import { ChartLinesVisualization } from "../charts/line/chart-lines";
+import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
+import { ChartPieVisualization } from "../charts/pie/chart-pie";
+import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -30,7 +30,13 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         state.state === "DESCRIBING_CHART" ||
         state.state === "PUBLISHING") && (
         <>
-          <Text variant="heading2" sx={{ mb: 2 }}>
+          <Text
+            variant="heading2"
+            sx={{
+              mb: 2,
+              color: state.meta.title[locale] === "" ? "monochrome500" : "text",
+            }}
+          >
             {state.meta.title[locale] === "" ? (
               <Trans id="annotation.add.title">
                 [You can add a title here]
@@ -39,7 +45,16 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               state.meta.title[locale]
             )}
           </Text>
-          <Text variant="paragraph1" sx={{ mb: 2 }}>
+          <Text
+            variant="paragraph1"
+            sx={{
+              mb: 2,
+              color:
+                state.meta.description[locale] === ""
+                  ? "monochrome500"
+                  : "text",
+            }}
+          >
             {state.meta.description[locale] === "" ? (
               <Trans id="annotation.add.description">
                 [You can add a description here]
