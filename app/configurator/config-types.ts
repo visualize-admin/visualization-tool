@@ -285,6 +285,66 @@ const PieConfig = t.type(
 export type PieFields = t.TypeOf<typeof PieFields>;
 export type PieConfig = t.TypeOf<typeof PieConfig>;
 
+const ColumnStyle = t.union([
+  t.literal("text"),
+  t.literal("category"),
+  t.literal("heatmap"),
+  t.literal("bar"),
+]);
+const TableColumn = t.intersection([
+  t.type({
+    componentIri: t.string,
+    isGroup: t.boolean,
+    isHidden: t.boolean,
+    textStyle: t.union([t.literal("regular"), t.literal("bold")]),
+    columnStyle: ColumnStyle,
+  }),
+  t.partial({
+    // text
+    textColor: t.string,
+    columnColor: t.string,
+  }),
+  t.partial({
+    // heatmap
+    palette: t.string,
+  }),
+  t.partial({
+    // category
+    palette: t.string,
+    colorMapping: ColorMapping,
+  }),
+  t.partial({
+    // bar
+    barColorPositive: t.string,
+    barColorNegative: t.string,
+    barColorBackground: t.string,
+    barShowBackground: t.boolean,
+  }),
+]);
+const TableFields = t.type({
+  settings: t.type({
+    showSearch: t.boolean,
+    showAllRows: t.boolean,
+  }),
+  sorting: t.array(
+    t.type({
+      sortingType: SortingType,
+      sortingOrder: SortingOrder,
+    })
+  ),
+  columns: t.array(TableColumn),
+});
+const TableConfig = t.type(
+  {
+    chartType: t.literal("pie"),
+    filters: Filters,
+    fields: TableFields,
+  },
+  "TableConfig"
+);
+export type TableFields = t.TypeOf<typeof TableFields>;
+export type TableConfig = t.TypeOf<typeof TableConfig>;
+
 export type ChartFields =
   | ColumnFields
   | BarFields
