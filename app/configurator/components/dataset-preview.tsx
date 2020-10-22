@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text, Flex } from "@theme-ui/components";
 import { Loading } from "../../components/hint";
-import { DataTable } from "./datatable";
+import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
 import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -43,7 +43,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             mt: 6,
           }}
         >
-          <DataTable
+          <DataSetPreviewTable
             title={dataCubeByIri.title}
             dataSetIri={dataCubeByIri.iri}
             dimensions={dataCubeByIri.dimensions}
