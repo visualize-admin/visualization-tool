@@ -1,9 +1,9 @@
 // @ts-nocheck
 import { Box, Flex, Label, Radio, Select, Text } from "@theme-ui/components";
 import * as React from "react";
-import { ColorPickerMenu } from "../chart-controls/color-picker";
 import { getPalette } from "../../domain/helpers";
 import { scaleOrdinal } from "d3-scale";
+import { ColorPickerMenu } from "../../configurator/components/chart-controls/color-picker";
 
 const bafuColors = [
   "#F9C16E",

@@ -1,16 +1,25 @@
-// @ts-nocheck
+
 import {
   Box,
-  Flex,
-  Checkbox,
-  Button,
+
+
+  Button, Checkbox, Flex,
+
+
   Grid,
-  Label,
+
+
+
+
+  Input, Label,
   Radio,
   Select,
-  Text,
-  Input,
+  Text
 } from "@theme-ui/components";
+import { extent } from "d3-array";
+import { scaleLinear, scaleOrdinal } from "d3-scale";
+import FlexSearch from "flexsearch";
+import { setWith } from "lodash";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -19,20 +28,16 @@ import {
   useExpanded,
   useGroupBy,
   useSortBy,
-  useTable,
+  useTable
 } from "react-table";
-import { Data } from "../../pages/[locale]/_table-a";
-import { ColumnDimension } from "./column-dimensions";
-import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";
-import FlexSearch from "flexsearch";
-
-import { RowUI } from "./row";
-import { ColumnFormatting } from "./column-formatting";
-import { setWith } from "lodash";
 import { getPalette } from "../../domain/helpers";
-import { scaleOrdinal, scaleLinear } from "d3-scale";
-import { extent } from "d3-array";
+import { Data } from "../../pages/[locale]/_table-a";
 import { TableHeader } from "../data-table/table-header";
+import { ColumnDimension } from "./column-dimensions";
+import { ColumnFormatting } from "./column-formatting";
+import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";
+import { RowUI } from "./row";
+
 
 export const GROUPED_COLOR = "#F5F5F5";
 const fakeData = [
