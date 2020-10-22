@@ -11,6 +11,7 @@ import { ColumnsState } from "../column/columns-state";
 import { LinesState } from "../line/lines-state";
 import { PieState } from "../pie/pie-state";
 import { ScatterplotState } from "../scatterplot/scatterplot-state";
+import { TableState } from "../table/table-state";
 
 export interface ChartProps {
   data: Observation[];
@@ -29,6 +30,7 @@ export type ChartState =
   | AreasState
   | ScatterplotState
   | PieState
+  | TableState
   | undefined;
 
 export const ChartContext = createContext<ChartState>(undefined);
