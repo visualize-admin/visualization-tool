@@ -73,7 +73,7 @@ export const Table = ({
     index.add(data);
 
     return index;
-  }, [data]);
+  }, [columns, data]);
 
   const filteredData = useMemo(() => {
     const searchResult =
@@ -117,7 +117,7 @@ export const Table = ({
             : [...new Set(data.map((d) => d[c.accessor]))],
       }))
     );
-  }, [data, filteredData, columns]);
+  }, [columns, data]);
 
   const updateActiveColumn = (columnId: string) => {
     setActiveColumn(columnId);
