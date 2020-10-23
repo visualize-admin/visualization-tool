@@ -27,7 +27,7 @@ import {
 } from "react-table";
 import { getPalette } from "../../domain/helpers";
 import { Data } from "../../pages/[locale]/_table-prototype";
-import { TableHeader } from "../table/table-header";
+import { TableHeader } from "../table/header";
 import { ColumnDimension } from "./column-dimensions";
 import { ColumnFormatting } from "./column-formatting";
 import { ColumnReorderingArrows, moveColumn } from "./column-reordering-arrows";

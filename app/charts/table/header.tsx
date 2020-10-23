@@ -1,13 +1,12 @@
 import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
-
-export type Data = { [x: string]: string | number };
+import { Observation } from "../../domain/data";
 
 export const TableHeader = ({
   headerGroups,
 }: {
-  headerGroups: HeaderGroup<Data>[];
+  headerGroups: HeaderGroup<Observation>[];
 }) => {
   return (
     <thead>
