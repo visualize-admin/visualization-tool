@@ -1,12 +1,45 @@
 import { Box } from "@theme-ui/components";
 import { markdown, ReactSpecimen } from "catalog";
 import * as React from "react";
+import { Bars } from "../charts/bar/bars-simple";
+import { BarChart } from "../charts/bar/bars-state";
+import { AxisWidthLinear } from "../charts/shared/axis-width-linear";
+import { ChartContainer, ChartSvg } from "../charts/shared/containers";
+import { Table } from "../charts/table/table";
 import { BarCell, TagCell, TextCell } from "../charts/table/cell";
+import { ex1 } from "../charts/table/example-props";
+import { TableChart } from "../charts/table/table-state";
+import { ChartFields, TableFields } from "../configurator/config-types";
+import {
+  fields,
+  measures,
+  observations,
+  tableDimensions,
+  tableFields,
+  tableMeasures,
+  tableObservations,
+} from "./fixtures";
+import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const Docs = () => markdown`
 
 ## Data Table
 
+
+${(
+  <ReactSpecimen>
+    <TableChart
+      data={tableObservations}
+      fields={tableFields as TableFields}
+      dimensions={tableDimensions as ComponentFieldsFragment[]}
+      measures={tableMeasures as ComponentFieldsFragment[]}
+    >
+      <ChartContainer>
+        <Table></Table>
+      </ChartContainer>
+    </TableChart>
+  </ReactSpecimen>
+)}
 ### Cell as text
 
   ${(
