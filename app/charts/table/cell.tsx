@@ -24,13 +24,13 @@ export const TagCell = ({
   cellProps,
 }: {
   value: string | number;
-  styles: { color: string; fontWeight: string };
+  styles: { fontWeight: string };
   tagColor: string;
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
 }) => {
-  const { color, fontWeight } = styles;
+  const { fontWeight } = styles;
   return (
-    <Box as="td" sx={{ color, fontWeight }} {...cellProps}>
+    <Box as="td" sx={{ fontWeight }} {...cellProps}>
       <Box
         as="span"
         sx={{
