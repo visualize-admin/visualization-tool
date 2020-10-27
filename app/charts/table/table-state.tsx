@@ -1,16 +1,34 @@
+import { extent } from "d3-array";
+import {
+  ScaleLinear,
+  scaleLinear,
+  ScaleOrdinal,
+  scaleOrdinal,
+  ScaleSequential,
+  scaleSequential,
+} from "d3-scale";
 import { ReactNode, useMemo } from "react";
 import { Column, Row } from "react-table";
 import { TableColumn, TableFields } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
+import { getColorInterpolator, getPalette } from "../../domain/helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 
+interface TableColumnMetadata extends TableColumn {
+  label: string;
+  colorScale:
+    | ScaleOrdinal<string, string>
+    | ScaleSequential<string>
+    | undefined;
+}
 export interface TableChartState {
   chartType: "table";
   bounds: Bounds;
   data: Observation[];
   // tableColumns: Column<Observation | ((r: Row<Observation>) => ObservationValue)>[];
   tableColumns: Column<$FixMe>[];
+  columnWithMetadata: TableColumnMetadata;
   columnStyles: Record<string, Omit<TableColumn, "isGroup" | "isHidden">[]>;
 }
 
@@ -42,34 +60,50 @@ const useTableState = ({
   };
 
   // Columns & data
-  const columnWithLabels = useMemo(
+  const columnWithMetadata = useMemo(
     () =>
-      fields.columns.map((col) => ({
-        label:
-          [...dimensions, ...measures].find((d) => d.iri === col.componentIri)
-            ?.label || col.componentIri,
-        ...col,
-      })),
-    [dimensions, fields.columns, measures]
+      fields.columns.map((col) => {
+        const colorScale =
+          col.columnStyle === "heatmap"
+            ? scaleSequential(getColorInterpolator(col.palette)).domain(
+                (extent(data, (d) => +d[col.componentIri]) as [
+                  number,
+                  number
+                ]) || [0, 1]
+              )
+            : col.columnStyle === "category"
+            ? scaleOrdinal()
+                .domain([...new Set(data, (d) => `${d[col.componentIri]}`)])
+                .range(getPalette(col.palette))
+            : undefined;
+        return {
+          label:
+            [...dimensions, ...measures].find((d) => d.iri === col.componentIri)
+              ?.label || col.componentIri,
+          colorScale,
+          ...col,
+        };
+      }),
+    [data, dimensions, fields.columns, measures]
   );
   const memoizedData = useMemo(() => data, [data]);
 
-  console.log({ columnWithLabels });
+  console.log({ columnWithLabels: columnWithMetadata });
 
   const memoizedTableColumns = useMemo(
     () =>
-      columnWithLabels.map((c) => ({
+      columnWithMetadata.map((c) => ({
         Header: c.label,
         // We need a function here to avoid URI's "." to be parsed as JS property accessor.
         accessor: (r: Row<Observation>): ObservationValue =>
           r[`${c.componentIri}`],
       })),
 
-    [columnWithLabels]
+    [columnWithMetadata]
   );
 
   // ColumnStyles
-  const columnStyles = columnWithLabels.reduce(
+  const columnStyles = columnWithMetadata.reduce(
     (obj, col) => ({
       ...obj,
       [col.label]: col,
@@ -83,6 +117,7 @@ const useTableState = ({
     bounds,
     data: memoizedData,
     tableColumns: memoizedTableColumns,
+    columnWithMetadata,
     columnStyles,
   };
 };
@@ -123,7 +158,6 @@ export const TableChart = ({
 }) => {
   return (
     <Observer>
-      {/* <InteractionProvider> */}
       <TableChartProvider
         data={data}
         fields={fields}
@@ -132,7 +166,6 @@ export const TableChart = ({
       >
         {children}
       </TableChartProvider>
-      {/* </InteractionProvider> */}
     </Observer>
   );
 };
