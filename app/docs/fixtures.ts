@@ -761,7 +761,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -771,7 +771,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "hotpink",
       columnColor: "#fff",
     },
     {
@@ -780,8 +780,8 @@ export const tableFields = {
       isGroup: false,
       isHidden: false,
       columnStyle: "text",
-      textStyle: "regular",
-      textColor: "#333",
+      textStyle: "bold",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -791,8 +791,8 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
-      columnColor: "#fff",
+      textColor: "monochrome700",
+      columnColor: "aliceblue",
     },
     {
       componentIri:
@@ -801,7 +801,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -811,7 +811,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -821,7 +821,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -831,7 +831,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -841,7 +841,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -851,7 +851,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -861,7 +861,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -871,7 +871,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -881,7 +881,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
     {
@@ -891,7 +891,7 @@ export const tableFields = {
       isHidden: false,
       columnStyle: "text",
       textStyle: "regular",
-      textColor: "#333",
+      textColor: "monochrome700",
       columnColor: "#fff",
     },
   ],
