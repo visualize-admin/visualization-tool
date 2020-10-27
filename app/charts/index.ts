@@ -1,6 +1,13 @@
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
-import { ChartConfig, ChartType, GenericFields } from "../configurator";
+import {
+  ChartConfig,
+  ChartType,
+  ColumnFields,
+  GenericFields,
+  TableColumn,
+  TableFields,
+} from "../configurator";
 import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
 import { mapColorsToComponentValuesIris } from "../domain/helpers";
 
@@ -107,7 +114,22 @@ export const getInitialConfig = ({
           showAllRows: false,
         },
         sorting: [],
-        fields: {},
+        fields: Object.fromEntries<TableColumn>(
+          [...dimensions, ...measures].map((d, i) => [
+            i,
+            {
+              componentIri: d.iri,
+              isGroup: false,
+              isHidden: false,
+              textStyle: "regular",
+              columnStyle: {
+                type: "text",
+                textColor: "#000",
+                columnColor: "#fff",
+              },
+            },
+          ])
+        ),
       };
 
     // This code *should* be unreachable! If it's not, it means we haven't checked all cases (and we should get a TS error).
