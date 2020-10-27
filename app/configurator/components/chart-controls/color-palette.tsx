@@ -11,6 +11,7 @@ import { Icon } from "../../../icons";
 import { Label } from "../../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../../graphql/query-hooks";
 import { useCallback } from "react";
+import { SegmentField } from "../../config-types";
 
 const palettes: Array<{
   label: string;
@@ -106,7 +107,8 @@ export const ColorPalette = ({ field, disabled, component }: Props) => {
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
             {getPalette(
-              state.chartConfig.fields.segment?.palette || "category10"
+              (state.chartConfig.fields.segment as SegmentField)?.palette ||
+                "category10"
             ).map((color: string) => (
               <ColorSquare key={color} color={color} disabled={disabled} />
             ))}
@@ -206,7 +208,9 @@ const ColorPaletteReset = ({
           field,
           path: "colorMapping",
           colorMapping: mapColorsToComponentValuesIris({
-            palette: state.chartConfig?.fields.segment?.palette || "category10",
+            palette:
+              (state.chartConfig?.fields.segment as SegmentField)?.palette ||
+              "category10",
             component,
           }),
         },
@@ -214,13 +218,13 @@ const ColorPaletteReset = ({
     [component, dispatch, field, state.chartConfig]
   );
 
-  if (state.chartConfig.fields.segment?.colorMapping) {
+  if ((state.chartConfig.fields.segment as SegmentField)?.colorMapping) {
     // Compare palette colors & colorMapping colors
     const currentPalette = getPalette(
-      state.chartConfig.fields.segment?.palette
+      (state.chartConfig.fields.segment as SegmentField)?.palette
     );
     const colorMappingColors = Object.values(
-      state.chartConfig.fields.segment?.colorMapping
+      (state.chartConfig.fields.segment as SegmentField)?.colorMapping ?? {}
     );
 
     const nbMatchedColors = colorMappingColors.length;

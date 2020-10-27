@@ -98,6 +98,17 @@ export const getInitialConfig = ({
           },
         },
       };
+    case "table":
+      return {
+        chartType,
+        filters: {},
+        settings: {
+          showSearch: false,
+          showAllRows: false,
+        },
+        sorting: [],
+        fields: {},
+      };
 
     // This code *should* be unreachable! If it's not, it means we haven't checked all cases (and we should get a TS error).
     default:

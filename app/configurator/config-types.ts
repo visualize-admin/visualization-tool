@@ -82,7 +82,8 @@ export type ColorMapping = t.TypeOf<typeof ColorMapping>;
 const GenericField = t.type({ componentIri: t.string });
 export type GenericField = t.TypeOf<typeof GenericField>;
 
-export type GenericFields = Record<string, GenericField | undefined>;
+const GenericFields = t.record(t.string, t.union([GenericField, t.undefined]));
+export type GenericFields = t.TypeOf<typeof GenericFields>;
 
 const SegmentField = t.intersection([
   t.type({
@@ -287,62 +288,51 @@ export type PieFields = t.TypeOf<typeof PieFields>;
 export type PieConfig = t.TypeOf<typeof PieConfig>;
 
 const ColumnStyle = t.union([
-  t.literal("text"),
-  t.literal("category"),
-  t.literal("heatmap"),
-  t.literal("bar"),
-]);
-const TableColumn = t.intersection([
   t.type({
-    componentIri: t.string,
-    isGroup: t.boolean,
-    isHidden: t.boolean,
-    textStyle: t.union([t.literal("regular"), t.literal("bold")]),
-    columnStyle: ColumnStyle,
-  }),
-  t.partial({
-    // text
+    type: t.literal("text"),
     textColor: t.string,
     columnColor: t.string,
   }),
-  t.partial({
-    // heatmap
-    palette: t.string,
-  }),
-  t.partial({
-    // category
+  t.type({
+    type: t.literal("category"),
     palette: t.string,
     colorMapping: ColorMapping,
   }),
-  t.partial({
-    // bar
+  t.type({ type: t.literal("heatmap"), palette: t.string }),
+  t.type({
+    type: t.literal("bar"),
     barColorPositive: t.string,
     barColorNegative: t.string,
     barColorBackground: t.string,
     barShowBackground: t.boolean,
   }),
 ]);
+const TableColumn = t.type({
+  componentIri: t.string,
+  isGroup: t.boolean,
+  isHidden: t.boolean,
+  textStyle: t.union([t.literal("regular"), t.literal("bold")]),
+  columnStyle: ColumnStyle,
+});
 
 export type TableColumn = t.TypeOf<typeof TableColumn>;
 
-const TableFields = t.type({
-  settings: t.type({
-    showSearch: t.boolean,
-    showAllRows: t.boolean,
-  }),
-  sorting: t.array(
-    t.type({
-      sortingType: SortingType,
-      sortingOrder: SortingOrder,
-    })
-  ),
-  columns: t.array(TableColumn),
-});
+const TableFields = t.record(t.string, TableColumn);
 const TableConfig = t.type(
   {
     chartType: t.literal("table"),
-    filters: Filters,
     fields: TableFields,
+    filters: Filters,
+    settings: t.type({
+      showSearch: t.boolean,
+      showAllRows: t.boolean,
+    }),
+    sorting: t.array(
+      t.type({
+        componentIri: t.string,
+        sortingOrder: SortingOrder,
+      })
+    ),
   },
   "TableConfig"
 );
