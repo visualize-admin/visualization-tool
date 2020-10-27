@@ -5,7 +5,7 @@ import { Data } from "../../pages/[locale]/_table-prototype";
 
 import { useFormatNumber } from "../../domain/helpers";
 import { Observation } from "../../domain/data";
-import { TextCell } from "./cell";
+import { TagCell, TextCell } from "./cell";
 import { useChartState } from "../shared/use-chart-state";
 import { ColumnStyle } from "../table-prototype/column-formatting";
 import { TableChartState } from "./table-state";
@@ -25,24 +25,65 @@ export const RowUI = ({
   return (
     <tr {...row.getRowProps()}>
       {row.cells.map((cell, i) => {
-        const { textStyle, textColor, columnColor } = columnStyles[
-          "".concat(`${cell.column.Header}`)
-        ];
+        const {
+          columnStyle,
+          textStyle,
+          textColor,
+          columnColor,
+          colorScale,
+        } = columnStyles["".concat(`${cell.column.Header}`)];
         return (
-          <TextCell
-            value={
-              typeof cell.value === "number"
-                ? formatNumber(cell.value)
-                : cell.value
-            }
-            styles={{
-              color: textColor,
-              bg: columnColor,
-              textAlign: "left",
-              fontWeight: textStyle,
-            }}
-            {...cell.getCellProps()}
-          />
+          <>
+            {columnStyle === "text" ? (
+              <TextCell
+                value={
+                  typeof cell.value === "number"
+                    ? formatNumber(cell.value)
+                    : cell.value
+                }
+                styles={{
+                  color: textColor,
+                  bg: columnColor,
+                  textAlign: typeof cell.value === "number" ? "right" : "left",
+                  fontWeight: textStyle,
+                }}
+                {...cell.getCellProps()}
+              />
+            ) : columnStyle === "category" ? (
+              <TagCell
+                value={cell.value}
+                styles={{ fontWeight: textStyle }}
+                tagColor={colorScale(cell.value)}
+                {...cell.getCellProps()}
+              />
+            ) : columnStyle === "heatmap" ? (
+              <TextCell
+                value={formatNumber(cell.value)}
+                styles={{
+                  color: textColor,
+                  bg: colorScale(cell.value),
+                  textAlign: "right",
+                  fontWeight: textStyle,
+                }}
+                {...cell.getCellProps()}
+              />
+            ) : (
+              <TextCell
+                value={
+                  typeof cell.value === "number"
+                    ? formatNumber(cell.value)
+                    : cell.value
+                }
+                styles={{
+                  color: textColor,
+                  bg: columnColor,
+                  textAlign: typeof cell.value === "number" ? "right" : "left",
+                  fontWeight: textStyle,
+                }}
+                {...cell.getCellProps()}
+              />
+            )}
+          </>
         );
       })}
     </tr>
