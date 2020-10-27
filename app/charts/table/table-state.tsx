@@ -17,10 +17,11 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 
 interface TableColumnMetadata extends TableColumn {
   label: string;
-  colorScale:
+  colorScale?:
     | ScaleOrdinal<string, string>
     | ScaleSequential<string>
     | undefined;
+  widthScale?: ScaleLinear<number, number>;
 }
 export interface TableChartState {
   chartType: "table";
@@ -28,8 +29,8 @@ export interface TableChartState {
   data: Observation[];
   // tableColumns: Column<Observation | ((r: Row<Observation>) => ObservationValue)>[];
   tableColumns: Column<$FixMe>[];
-  columnWithMetadata: TableColumnMetadata;
-  columnStyles: Record<string, Omit<TableColumn, "isGroup" | "isHidden">[]>;
+  // columnWithMetadata: TableColumnMetadata[];
+  columnStyles: Record<string, TableColumnMetadata>;
 }
 
 const useTableState = ({
@@ -63,6 +64,14 @@ const useTableState = ({
   const columnWithMetadata = useMemo(
     () =>
       fields.columns.map((col) => {
+        const widthScale =
+          col.columnStyle === "bar"
+            ? scaleLinear()
+                .domain(
+                  extent(data, (d) => +d[col.componentIri]) as [number, number]
+                )
+                .range([0, 100])
+            : undefined;
         const colorScale =
           col.columnStyle === "heatmap"
             ? scaleSequential(getColorInterpolator(col.palette)).domain(
@@ -80,6 +89,7 @@ const useTableState = ({
           label:
             [...dimensions, ...measures].find((d) => d.iri === col.componentIri)
               ?.label || col.componentIri,
+          widthScale,
           colorScale,
           ...col,
         };
@@ -88,7 +98,7 @@ const useTableState = ({
   );
   const memoizedData = useMemo(() => data, [data]);
 
-  console.log({ columnWithLabels: columnWithMetadata });
+  console.log({ columnWithMetadata });
 
   const memoizedTableColumns = useMemo(
     () =>
@@ -111,13 +121,12 @@ const useTableState = ({
     {}
   );
 
-  console.log(columnStyles);
   return {
     chartType: "table",
     bounds,
     data: memoizedData,
     tableColumns: memoizedTableColumns,
-    columnWithMetadata,
+    // columnWithMetadata,
     columnStyles,
   };
 };

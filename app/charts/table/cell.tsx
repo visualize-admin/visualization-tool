@@ -49,25 +49,27 @@ export const TagCell = ({
 
 export const BarCell = ({
   value,
-  barColor,
-  barBackground,
+  barColorPositive,
+  barColorNegative,
+  barColorBackground,
   barWidth,
   cellProps,
 }: {
   value: string | number;
-  barColor: string;
-  barBackground: string;
+  barColorPositive: string;
+  barColorNegative: string;
+  barColorBackground: string;
   barWidth: number; // as percentage
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
 }) => (
-  <Box as="td" sx={{ textAlign: "right", width: "100%" }} {...cellProps}>
+  <Box as="td" sx={{ width: "100%" }} {...cellProps}>
     <Box>{value}</Box>
     <Box
       sx={{
         width: "100%",
         height: "16px",
         position: "relative",
-        bg: barBackground,
+        bg: barColorBackground,
       }}
     >
       <Box
@@ -77,7 +79,7 @@ export const BarCell = ({
           left: 0,
           width: `${barWidth}%`,
           height: "16px",
-          bg: barColor,
+          bg: value > 0 ? barColorPositive : barColorNegative,
         }}
       />
     </Box>

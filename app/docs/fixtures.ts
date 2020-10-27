@@ -1,4 +1,4 @@
-import { ConfiguratorState, ColumnFields } from "../configurator";
+import { ConfiguratorState, ColumnFields, TableFields } from "../configurator";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const states: ConfiguratorState[] = [
@@ -747,11 +747,11 @@ export const tableDimensions = [
     __typename: "NominalDimension",
   },
 ];
-export const tableFields = {
+export const tableFields: TableFields = {
   settings: { showSearch: true, showAllRows: true },
   sorting: [
-    { componentIri: "one", sortingOrder: "ascending" },
-    { componentIri: "two", sortingOrder: "descending" },
+    { componentIri: "one", sortingOrder: "asc" },
+    { componentIri: "two", sortingOrder: "desc" },
   ],
   columns: [
     {
@@ -782,8 +782,6 @@ export const tableFields = {
       columnStyle: "category",
       palette: "set3",
       textStyle: "bold",
-      textColor: "monochrome700",
-      columnColor: "#fff",
     },
     {
       componentIri:
@@ -823,8 +821,6 @@ export const tableFields = {
       columnStyle: "heatmap",
       palette: "oranges",
       textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
     },
     {
       componentIri:
@@ -851,10 +847,12 @@ export const tableFields = {
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
+      columnStyle: "bar",
       textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
+      barColorPositive: "hotpink",
+      barColorNegative: "LightSeaGreen",
+      barColorBackground: "#ccc",
+      barShowBackground: true,
     },
     {
       componentIri:
@@ -864,8 +862,6 @@ export const tableFields = {
       columnStyle: "heatmap",
       palette: "turbo",
       textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
     },
     {
       componentIri:
@@ -875,8 +871,6 @@ export const tableFields = {
       columnStyle: "heatmap",
       palette: "cividis",
       textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
     },
     {
       componentIri:

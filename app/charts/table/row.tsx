@@ -5,7 +5,7 @@ import { Data } from "../../pages/[locale]/_table-prototype";
 
 import { useFormatNumber } from "../../domain/helpers";
 import { Observation } from "../../domain/data";
-import { TagCell, TextCell } from "./cell";
+import { BarCell, TagCell, TextCell } from "./cell";
 import { useChartState } from "../shared/use-chart-state";
 import { ColumnStyle } from "../table-prototype/column-formatting";
 import { TableChartState } from "./table-state";
@@ -21,7 +21,7 @@ export const RowUI = ({
   const formatNumber = useFormatNumber();
 
   prepareRow(row);
-
+  console.log("columnStyles", columnStyles);
   return (
     <tr {...row.getRowProps()}>
       {row.cells.map((cell, i) => {
@@ -31,6 +31,11 @@ export const RowUI = ({
           textColor,
           columnColor,
           colorScale,
+          barColorPositive,
+          barColorNegative,
+          barColorBackground,
+          barShowBackground,
+          widthScale,
         } = columnStyles["".concat(`${cell.column.Header}`)];
         return (
           <>
@@ -49,14 +54,14 @@ export const RowUI = ({
                 }}
                 {...cell.getCellProps()}
               />
-            ) : columnStyle === "category" ? (
+            ) : columnStyle === "category" && colorScale ? (
               <TagCell
                 value={cell.value}
                 styles={{ fontWeight: textStyle }}
                 tagColor={colorScale(cell.value)}
                 {...cell.getCellProps()}
               />
-            ) : columnStyle === "heatmap" ? (
+            ) : columnStyle === "heatmap" && colorScale ? (
               <TextCell
                 value={formatNumber(cell.value)}
                 styles={{
@@ -65,6 +70,21 @@ export const RowUI = ({
                   textAlign: "right",
                   fontWeight: textStyle,
                 }}
+                {...cell.getCellProps()}
+              />
+            ) : columnStyle === "bar" &&
+              barColorPositive &&
+              barColorNegative &&
+              barColorBackground &&
+              widthScale ? (
+              <BarCell
+                value={cell.value}
+                barColorPositive={barColorPositive}
+                barColorNegative={barColorNegative}
+                barColorBackground={
+                  barShowBackground ? barColorBackground : "monochrome100"
+                }
+                barWidth={widthScale(cell.value)} // FIXME: handle negative values
                 {...cell.getCellProps()}
               />
             ) : (
