@@ -1,6 +1,20 @@
 import { Trans } from "@lingui/macro";
 import { scaleOrdinal } from "d3-scale";
 import {
+  interpolateBlues,
+  interpolateCividis,
+  interpolateCool,
+  interpolateGreens,
+  interpolateGreys,
+  interpolateInferno,
+  interpolateMagma,
+  interpolateOranges,
+  interpolatePlasma,
+  interpolatePurples,
+  interpolateReds,
+  interpolateTurbo,
+  interpolateViridis,
+  interpolateWarm,
   schemeAccent,
   schemeCategory10,
   schemeDark2,
@@ -302,8 +316,46 @@ export const getPalette = (
       return schemeSet3;
     case "tableau10":
       return schemeTableau10;
+
     default:
       return schemeCategory10;
+  }
+};
+export const getColorInterpolator = (
+  palette: string | undefined
+): ((t: number) => string) => {
+  switch (palette) {
+    case "blues":
+      return interpolateBlues;
+    case "greens":
+      return interpolateGreens;
+    case "greys":
+      return interpolateGreys;
+    case "oranges":
+      return interpolateOranges;
+    case "purples":
+      return interpolatePurples;
+    case "reds":
+      return interpolateReds;
+    case "turbo":
+      return interpolateTurbo;
+    case "viridis":
+      return interpolateViridis;
+    case "inferno":
+      return interpolateInferno;
+    case "magma":
+      return interpolateMagma;
+    case "plasma":
+      return interpolatePlasma;
+    case "cividis":
+      return interpolateCividis;
+    case "warm":
+      return interpolateWarm;
+    case "cool":
+      return interpolateCool;
+
+    default:
+      return interpolateBlues;
   }
 };
 
