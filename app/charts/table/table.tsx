@@ -17,13 +17,14 @@ import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { TableHeader } from "./header";
 import { RowUI } from "./row";
-import { TableState } from "./table-state";
+import { TableChartState } from "./table-state";
 
 export const Table = () => {
-  const { bounds, data, columns } = useChartState() as TableState;
-  const { width } = bounds;
+  const { data, tableColumns } = useChartState() as TableChartState;
+
   console.log({ data });
-  console.log({ columns });
+  console.log({ tableColumns });
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -33,7 +34,7 @@ export const Table = () => {
     setColumnOrder,
     setSortBy,
   } = useTable<Observation>({
-    columns,
+    columns: tableColumns,
     data,
   });
 
@@ -67,10 +68,11 @@ const tableStyles = {
   border: "none",
 
   th: {
-    m: 0,
-    pr: 6,
     minWidth: 100,
+    m: 0,
     py: 2,
+    pr: 6,
+    pl: 3,
     borderTop: "1px solid",
     borderTopColor: "monochrome700",
     borderBottom: "1px solid",
@@ -96,6 +98,7 @@ const tableStyles = {
     m: 0,
     py: 2,
     pr: 6,
+    pl: 3,
     borderBottom: "1px solid",
     borderBottomColor: "monochrome400",
   },
