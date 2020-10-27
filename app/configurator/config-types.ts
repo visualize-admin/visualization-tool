@@ -340,7 +340,7 @@ const TableFields = t.type({
 });
 const TableConfig = t.type(
   {
-    chartType: t.literal("pie"),
+    chartType: t.literal("table"),
     filters: Filters,
     fields: TableFields,
   },
