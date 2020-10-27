@@ -1,16 +1,17 @@
 import { ReactNode, useMemo } from "react";
 import { Column, Row } from "react-table";
-import { TableFields } from "../../configurator";
+import { TableColumn, TableFields } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 
-export interface TableState {
+export interface TableChartState {
   chartType: "table";
   bounds: Bounds;
   data: Observation[];
-  // columns: Column<Observation | ((r: Row<Observation>) => ObservationValue)>[];
-  columns: Column<$FixMe>[];
+  // tableColumns: Column<Observation | ((r: Row<Observation>) => ObservationValue)>[];
+  tableColumns: Column<$FixMe>[];
+  columnStyles: Record<string, Omit<TableColumn, "isGroup" | "isHidden">[]>;
 }
 
 const useTableState = ({
@@ -20,7 +21,7 @@ const useTableState = ({
   fields,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: TableFields;
-}): TableState => {
+}): TableChartState => {
   const width = useWidth();
 
   // Dimensions
@@ -30,8 +31,8 @@ const useTableState = ({
     bottom: 10,
     left: 10,
   };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = 600;
+  const chartWidth = width - margins.left - margins.right; // We probably don't need this
+  const chartHeight = 800;
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
@@ -39,14 +40,6 @@ const useTableState = ({
     chartWidth,
     chartHeight,
   };
-
-  console.log(
-    [...dimensions, ...measures].find(
-      (d) =>
-        d.iri ===
-        "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0"
-    )
-  );
 
   // Columns & data
   const columnWithLabels = useMemo(
@@ -60,8 +53,10 @@ const useTableState = ({
     [dimensions, fields.columns, measures]
   );
   const memoizedData = useMemo(() => data, [data]);
+
   console.log({ columnWithLabels });
-  const memoizedColumns = useMemo(
+
+  const memoizedTableColumns = useMemo(
     () =>
       columnWithLabels.map((c) => ({
         Header: c.label,
@@ -72,15 +67,23 @@ const useTableState = ({
 
     [columnWithLabels]
   );
-  console.log(
-    "in state",
-    data[0]["http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6"]
+
+  // ColumnStyles
+  const columnStyles = columnWithLabels.reduce(
+    (obj, col) => ({
+      ...obj,
+      [col.label]: col,
+    }),
+    {}
   );
+
+  console.log(columnStyles);
   return {
     chartType: "table",
     bounds,
     data: memoizedData,
-    columns: memoizedColumns,
+    tableColumns: memoizedTableColumns,
+    columnStyles,
   };
 };
 

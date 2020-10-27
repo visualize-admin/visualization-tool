@@ -6,6 +6,9 @@ import { Data } from "../../pages/[locale]/_table-prototype";
 import { useFormatNumber } from "../../domain/helpers";
 import { Observation } from "../../domain/data";
 import { TextCell } from "./cell";
+import { useChartState } from "../shared/use-chart-state";
+import { ColumnStyle } from "../table-prototype/column-formatting";
+import { TableChartState } from "./table-state";
 
 export const RowUI = ({
   row,
@@ -14,43 +17,32 @@ export const RowUI = ({
   row: Row<Observation>;
   prepareRow: (row: Row<Observation>) => void;
 }) => {
-  prepareRow(row);
+  const { columnStyles } = useChartState() as TableChartState;
   const formatNumber = useFormatNumber();
-  // console.log({ row });
+
+  prepareRow(row);
+
   return (
     <tr {...row.getRowProps()}>
       {row.cells.map((cell, i) => {
-        // console.log(cell.value);
+        const { textStyle, textColor, columnColor } = columnStyles[
+          "".concat(`${cell.column.Header}`)
+        ];
         return (
-          <Box
-            as="td"
-            sx={
-              {
-                // color: cellTextColor,
-                // background: cellBgColor,
-                // textAlign: typeof cell.value === "number" ? "right" : "left",
-                // fontWeight:
-                //   thisCell && thisCell?.textStyle === "bold" ? 800 : 400,
-              }
+          <TextCell
+            value={
+              typeof cell.value === "number"
+                ? formatNumber(cell.value)
+                : cell.value
             }
+            styles={{
+              color: textColor,
+              bg: columnColor,
+              textAlign: "left",
+              fontWeight: textStyle,
+            }}
             {...cell.getCellProps()}
-          >
-            {cell.render("Cell")}
-            {/* // <TextCell
-          //   value={
-          //     typeof cell.value === "number"
-          //       ? formatNumber(cell.value)
-          //       : cell.value
-          //   }
-          //   styles={{
-          //     color: "#333333",
-          //     bg: "#F5F5F5",
-          //     textAlign: "left",
-          //     fontWeight: "regular",
-          //   }}
-          //   {...cell.getCellProps()}
-          // /> */}
-          </Box>
+          />
         );
       })}
     </tr>
