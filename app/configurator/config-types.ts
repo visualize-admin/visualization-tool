@@ -330,7 +330,7 @@ const TableFields = t.type({
   }),
   sorting: t.array(
     t.type({
-      sortingType: SortingType,
+      componentIri: t.string,
       sortingOrder: SortingOrder,
     })
   ),
