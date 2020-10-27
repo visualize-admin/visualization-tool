@@ -321,6 +321,8 @@ const TableColumn = t.intersection([
     barShowBackground: t.boolean,
   }),
 ]);
+export type TableColumn = t.TypeOf<typeof TableColumn>;
+
 const TableFields = t.type({
   settings: t.type({
     showSearch: t.boolean,
