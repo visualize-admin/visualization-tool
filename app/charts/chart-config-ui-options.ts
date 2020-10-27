@@ -46,6 +46,7 @@ interface ChartSpecs {
   area: ChartSpec;
   scatterplot: ChartSpec;
   pie: ChartSpec;
+  table: ChartSpec;
 }
 
 /**
@@ -202,5 +203,9 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [{ field: "color", values: ["palette"] }],
       },
     ],
+  },
+  table: {
+    chartType: "table",
+    encodings: [],
   },
 };

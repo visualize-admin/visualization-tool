@@ -1,3 +1,4 @@
+import get from "lodash/get";
 import { Trans } from "@lingui/macro";
 import { Box, Button } from "@theme-ui/components";
 import { useCallback } from "react";
@@ -74,9 +75,11 @@ export const DimensionValuesMultiFilter = ({
 
         {dimension.values.map((dv) => {
           if (state.state === "CONFIGURING_CHART") {
-            const color =
-              state.chartConfig.fields.segment?.colorMapping &&
-              state.chartConfig.fields.segment?.colorMapping[dv.value];
+            const color = get(state.chartConfig.fields, [
+              "segment",
+              "colorMapping",
+              dv.value,
+            ]);
             return (
               <MultiFilterField
                 key={dv.value}

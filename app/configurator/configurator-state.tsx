@@ -407,19 +407,27 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               });
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
-            draft.chartConfig.fields.segment = {
-              componentIri: action.value.componentIri,
-              palette: "category10",
-              type: "stacked",
-              sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
-              colorMapping: colorMapping,
-            };
+            // Filter for table to make TS happy :/
+            if (draft.chartConfig.chartType !== "table") {
+              draft.chartConfig.fields.segment = {
+                componentIri: action.value.componentIri,
+                palette: "category10",
+                type: "stacked",
+                sorting: {
+                  sortingType: "byDimensionLabel",
+                  sortingOrder: "asc",
+                },
+                colorMapping: colorMapping,
+              };
+            }
           }
         } else {
           // The field is being updated
           if (
             action.value.field === "segment" &&
-            draft.chartConfig.fields.segment
+            "segment" in draft.chartConfig.fields &&
+            draft.chartConfig.fields.segment &&
+            "palette" in draft.chartConfig.fields.segment
           ) {
             const component = action.value.dataSetMetadata.dimensions.find(
               (dim) => dim.iri === action.value.componentIri
@@ -428,7 +436,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               component &&
               mapColorsToComponentValuesIris({
                 palette:
-                  draft.chartConfig.fields.segment?.palette || "category10",
+                  draft.chartConfig.fields.segment.palette || "category10",
                 component,
               });
 

@@ -29,6 +29,7 @@ import {
   FilterTab,
 } from "./chart-controls/control-tab";
 import { Checkbox, Input, Radio, Select } from "../../components/form";
+import { SegmentField } from "../config-types";
 
 export const ControlTabField = ({
   component,
@@ -229,7 +230,9 @@ export const MultiFilterField = ({
       </Box>
       {color && (checked ?? fieldChecked) && (
         <ColorPickerMenu
-          colors={getPalette(state.chartConfig.fields.segment?.palette)}
+          colors={getPalette(
+            (state.chartConfig.fields.segment as SegmentField)?.palette
+          )}
           selectedColor={color}
           onChange={(c) => updateColor(c)}
         />
