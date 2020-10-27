@@ -71,7 +71,7 @@ export const ChartTypeSelectionButton = ({
         },
       }}
     >
-      <Icon name={getIconName(label)} />
+      <Icon size={48} name={getIconName(label)} />
       <Text
         variant="paragraph2"
         sx={{

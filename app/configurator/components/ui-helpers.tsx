@@ -142,6 +142,8 @@ export const getFieldLabel = (field: string): ReactNode => {
       return <Trans id="controls.chart.type.scatterplot">Scatterplot</Trans>;
     case "pie":
       return <Trans id="controls.chart.type.pie">Pie</Trans>;
+    case "table":
+      return <Trans id="controls.chart.type.table">Table</Trans>;
 
     // Languages
     case "en":
