@@ -18,7 +18,7 @@ import {
   EncodingSortingOption,
   EncodingSpec,
 } from "../../charts/chart-config-ui-options";
-import { getFieldLabel, getFieldLabelHint } from "../../domain/helpers";
+import { getFieldLabel, getFieldLabelHint } from "./ui-helpers";
 import {
   DimensionFieldsWithValuesFragment,
   useDataCubeMetadataWithComponentValuesQuery,

@@ -9,11 +9,11 @@ import {
   useActiveFieldField,
   useChartFieldField,
   useChartOptionRadioField,
-  useChartTypeSelectorField,
   useConfiguratorState,
   useMetaField,
   useSingleFilterField,
 } from "..";
+import { Checkbox, Input, Radio, Select } from "../../components/form";
 import { getPalette } from "../../domain/helpers";
 import {
   ComponentFieldsFragment,
@@ -21,15 +21,13 @@ import {
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Locales } from "../../locales/locales";
-import { ChartTypeSelectionButton } from "./chart-controls/chart-type-radio-button";
+import { SegmentField } from "../config-types";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
   FilterTab,
 } from "./chart-controls/control-tab";
-import { Checkbox, Input, Radio, Select } from "../../components/form";
-import { SegmentField } from "../config-types";
 
 export const ControlTabField = ({
   component,
@@ -338,31 +336,5 @@ export const ChartOptionRadioField = ({
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
     ></Radio>
-  );
-};
-
-export const ChartTypeSelectorField = ({
-  label,
-  value,
-  metaData,
-  disabled,
-  ...props
-}: {
-  label: string;
-  value: string;
-  metaData: DataCubeMetadata;
-  disabled?: boolean;
-}) => {
-  const field = useChartTypeSelectorField({
-    value,
-    metaData,
-  });
-
-  return (
-    <ChartTypeSelectionButton
-      disabled={disabled}
-      label={label}
-      {...field}
-    ></ChartTypeSelectionButton>
   );
 };
