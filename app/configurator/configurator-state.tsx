@@ -54,6 +54,13 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_FIELDS_CHANGED";
+      value: {
+        fields: Record<string, GenericFields>;
+        // dataSetMetadata: DataCubeMetadata;
+      };
+    }
+  | {
       type: "CHART_OPTION_CHANGED";
       value: {
         path: string;
@@ -467,6 +474,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.dataSetMetadata
         );
       }
+      return draft;
+
+    case "CHART_FIELDS_CHANGED":
+      if (draft.state === "CONFIGURING_CHART") {
+        // setWith(draft,
+        //   `chartConfig.fields`,action.value.fields,Object)
+
+        (draft.chartConfig.fields as GenericFields) = action.value.fields;
+      }
+
       return draft;
 
     case "CHART_OPTION_CHANGED":
