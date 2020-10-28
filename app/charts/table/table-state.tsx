@@ -8,29 +8,31 @@ import {
   scaleSequential,
 } from "d3-scale";
 import { ReactNode, useMemo } from "react";
-import { Column, Row } from "react-table";
-import { TableColumn, TableFields } from "../../configurator";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Column } from "react-table";
+import {
+  ColumnStyleBar,
+  ColumnStyleCategory,
+  ColumnStyleHeatmap,
+  ColumnStyleText,
+  TableFields,
+} from "../../configurator";
+import { Observation } from "../../domain/data";
 import { getColorInterpolator, getPalette } from "../../domain/helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 
-interface TableColumnMetadata extends TableColumn {
-  label: string;
-  colorScale?:
-    | ScaleOrdinal<string, string>
-    | ScaleSequential<string>
-    | undefined;
-  widthScale?: ScaleLinear<number, number>;
-}
+export type ColumnMeta =
+  | (ColumnStyleHeatmap & { colorScale: ScaleSequential<string> })
+  | ColumnStyleText
+  | (ColumnStyleCategory & { colorScale: ScaleOrdinal<string, string> })
+  | (ColumnStyleBar & { widthScale: ScaleLinear<number, number> });
+
 export interface TableChartState {
   chartType: "table";
   bounds: Bounds;
   data: Observation[];
-  // tableColumns: Column<Observation | ((r: Row<Observation>) => ObservationValue)>[];
   tableColumns: Column<$FixMe>[];
-  // columnWithMetadata: TableColumnMetadata[];
-  columnStyles: Record<string, TableColumnMetadata>;
+  tableColumnsMeta: ColumnMeta[];
 }
 
 const useTableState = ({
@@ -60,74 +62,79 @@ const useTableState = ({
     chartHeight,
   };
 
-  // Columns & data
-  const columnWithMetadata = useMemo(
-    () =>
-      fields.columns.map((col) => {
-        const widthScale =
-          col.columnStyle === "bar"
-            ? scaleLinear()
-                .domain(
-                  extent(data, (d) => +d[col.componentIri]) as [number, number]
-                )
-                .range([0, 100])
-            : undefined;
-        const colorScale =
-          col.columnStyle === "heatmap"
-            ? scaleSequential(getColorInterpolator(col.palette)).domain(
-                (extent(data, (d) => +d[col.componentIri]) as [
-                  number,
-                  number
-                ]) || [0, 1]
-              )
-            : col.columnStyle === "category"
-            ? scaleOrdinal()
-                .domain([...new Set(data, (d) => `${d[col.componentIri]}`)])
-                .range(getPalette(col.palette))
-            : undefined;
-        return {
-          label:
-            [...dimensions, ...measures].find((d) => d.iri === col.componentIri)
-              ?.label || col.componentIri,
-          widthScale,
-          colorScale,
-          ...col,
-        };
-      }),
-    [data, dimensions, fields.columns, measures]
-  );
   const memoizedData = useMemo(() => data, [data]);
 
-  console.log({ columnWithMetadata });
-
-  const memoizedTableColumns = useMemo(
+  const tableColumns = useMemo(
     () =>
-      columnWithMetadata.map((c) => ({
-        Header: c.label,
-        // We need a function here to avoid URI's "." to be parsed as JS property accessor.
-        accessor: (r: Row<Observation>): ObservationValue =>
-          r[`${c.componentIri}`],
-      })),
+      Object.keys(fields).map((colIndex) => {
+        const iri = fields[colIndex].componentIri;
 
-    [columnWithMetadata]
+        return {
+          Header:
+            [...dimensions, ...measures].find((dim) => dim.iri === iri)
+              ?.label || iri,
+          // We need a function here to avoid URI's "." to be parsed as JS property accessor.
+          accessor: (r: Observation) => r[iri],
+        };
+      }),
+
+    [dimensions, fields, measures]
   );
 
-  // ColumnStyles
-  const columnStyles = columnWithMetadata.reduce(
-    (obj, col) => ({
-      ...obj,
-      [col.label]: col,
-    }),
-    {}
+  const tableColumnsMeta = useMemo(
+    () =>
+      Object.keys(fields).map((colIndex) => {
+        const iri = fields[colIndex].componentIri;
+        const columnStyleType = fields[colIndex].columnStyle.type;
+
+        if (columnStyleType === "text") {
+          return fields[colIndex].columnStyle;
+        } else if (columnStyleType === "category") {
+          const colorScale = scaleOrdinal()
+            .domain([...new Set(data.map((d) => `${d[iri]}`))])
+            .range(
+              getPalette(
+                (fields[colIndex].columnStyle as ColumnStyleCategory).palette
+              )
+            );
+          return {
+            colorScale,
+            ...fields[colIndex].columnStyle,
+          };
+        } else if (columnStyleType === "heatmap") {
+          const colorScale = scaleSequential(
+            getColorInterpolator(
+              (fields[colIndex].columnStyle as ColumnStyleHeatmap).palette
+            )
+          ).domain(
+            (extent(data, (d) => +d[iri]) as [number, number]) || [0, 1]
+          );
+          return {
+            colorScale,
+            ...fields[colIndex].columnStyle,
+          };
+        } else if (columnStyleType === "bar") {
+          const widthScale = scaleLinear()
+            .domain(extent(data, (d) => +d[iri]) as [number, number])
+            .range([0, 100]);
+          return {
+            widthScale,
+            ...fields[colIndex].columnStyle,
+          };
+        } else {
+          return fields[colIndex].columnStyle;
+        }
+      }),
+
+    [data, fields]
   );
 
   return {
     chartType: "table",
     bounds,
     data: memoizedData,
-    tableColumns: memoizedTableColumns,
-    // columnWithMetadata,
-    columnStyles,
+    tableColumns,
+    tableColumnsMeta,
   };
 };
 

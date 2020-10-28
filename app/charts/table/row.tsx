@@ -8,7 +8,8 @@ import { Observation } from "../../domain/data";
 import { BarCell, TagCell, TextCell } from "./cell";
 import { useChartState } from "../shared/use-chart-state";
 import { ColumnStyle } from "../table-prototype/column-formatting";
-import { TableChartState } from "./table-state";
+import { ColumnMeta, TableChartState } from "./table-state";
+import { ColumnStyleBar } from "../../configurator/config-types";
 
 export const RowUI = ({
   row,
@@ -17,16 +18,16 @@ export const RowUI = ({
   row: Row<Observation>;
   prepareRow: (row: Row<Observation>) => void;
 }) => {
-  const { columnStyles } = useChartState() as TableChartState;
+  const { tableColumnsMeta } = useChartState() as TableChartState;
   const formatNumber = useFormatNumber();
-
+  console.log("tableColumnsMeta in row", tableColumnsMeta);
   prepareRow(row);
-  console.log("columnStyles", columnStyles);
+
   return (
     <tr {...row.getRowProps()}>
       {row.cells.map((cell, i) => {
         const {
-          columnStyle,
+          type,
           textStyle,
           textColor,
           columnColor,
@@ -36,10 +37,10 @@ export const RowUI = ({
           barColorBackground,
           barShowBackground,
           widthScale,
-        } = columnStyles["".concat(`${cell.column.Header}`)];
+        } = tableColumnsMeta[i];
         return (
           <>
-            {columnStyle === "text" ? (
+            {type === "text" ? (
               <TextCell
                 value={
                   typeof cell.value === "number"
@@ -54,14 +55,14 @@ export const RowUI = ({
                 }}
                 {...cell.getCellProps()}
               />
-            ) : columnStyle === "category" && colorScale ? (
+            ) : type === "category" && colorScale ? (
               <TagCell
                 value={cell.value}
                 styles={{ fontWeight: textStyle }}
                 tagColor={colorScale(cell.value)}
                 {...cell.getCellProps()}
               />
-            ) : columnStyle === "heatmap" && colorScale ? (
+            ) : type === "heatmap" && colorScale ? (
               <TextCell
                 value={formatNumber(cell.value)}
                 styles={{
@@ -72,7 +73,7 @@ export const RowUI = ({
                 }}
                 {...cell.getCellProps()}
               />
-            ) : columnStyle === "bar" &&
+            ) : type === "bar" &&
               barColorPositive &&
               barColorNegative &&
               barColorBackground &&
