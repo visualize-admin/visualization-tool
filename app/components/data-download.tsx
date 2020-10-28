@@ -24,11 +24,19 @@ export const DataDownload = memo(
     chartConfig: ChartConfig;
   }) => {
     const locale = useLocale();
+    const measures =
+      "y" in chartConfig.fields ? [chartConfig.fields.y.componentIri] : [];
+    // FIXME for table downloads
+    if (measures.length === 0) {
+      console.warn(
+        "DataDownload: no measures selected (not implemented to for table charts)"
+      );
+    }
     const [{ data }] = useDataCubeObservationsQuery({
       variables: {
         locale,
         iri: dataSetIri,
-        measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+        measures, // FIXME: Other fields may also be measures
         filters: chartConfig.filters,
       },
     });
