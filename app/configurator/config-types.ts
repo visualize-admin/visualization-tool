@@ -288,40 +288,50 @@ export type PieFields = t.TypeOf<typeof PieFields>;
 export type PieConfig = t.TypeOf<typeof PieConfig>;
 
 const ColumnTextStyle = t.union([t.literal("regular"), t.literal("bold")]);
+
+const ColumnStyleText = t.type({
+  type: t.literal("text"),
+  textStyle: ColumnTextStyle,
+  textColor: t.string,
+  columnColor: t.string,
+});
+const ColumnStyleCategory = t.type({
+  type: t.literal("category"),
+  textStyle: ColumnTextStyle,
+  palette: t.string,
+  colorMapping: ColorMapping,
+});
+const ColumnStyleHeatmap = t.type({
+  type: t.literal("heatmap"),
+  textStyle: ColumnTextStyle,
+  palette: t.string,
+});
+const ColumnStyleBar = t.type({
+  type: t.literal("bar"),
+  textStyle: ColumnTextStyle,
+  barColorPositive: t.string,
+  barColorNegative: t.string,
+  barColorBackground: t.string,
+  barShowBackground: t.boolean,
+});
 const ColumnStyle = t.union([
-  t.type({
-    type: t.literal("text"),
-    textStyle: ColumnTextStyle,
-    textColor: t.string,
-    columnColor: t.string,
-  }),
-  t.type({
-    type: t.literal("category"),
-    textStyle: ColumnTextStyle,
-    palette: t.string,
-    colorMapping: ColorMapping,
-  }),
-  t.type({
-    type: t.literal("heatmap"),
-    textStyle: ColumnTextStyle,
-    palette: t.string,
-  }),
-  t.type({
-    type: t.literal("bar"),
-    textStyle: ColumnTextStyle,
-    barColorPositive: t.string,
-    barColorNegative: t.string,
-    barColorBackground: t.string,
-    barShowBackground: t.boolean,
-  }),
+  ColumnStyleText,
+  ColumnStyleCategory,
+  ColumnStyleHeatmap,
+  ColumnStyleBar,
 ]);
+
+export type ColumnStyleText = t.TypeOf<typeof ColumnStyleText>;
+export type ColumnStyleCategory = t.TypeOf<typeof ColumnStyleCategory>;
+export type ColumnStyleHeatmap = t.TypeOf<typeof ColumnStyleHeatmap>;
+export type ColumnStyleBar = t.TypeOf<typeof ColumnStyleBar>;
+
 const TableColumn = t.type({
   componentIri: t.string,
   isGroup: t.boolean,
   isHidden: t.boolean,
   columnStyle: ColumnStyle,
 });
-
 export type TableColumn = t.TypeOf<typeof TableColumn>;
 
 const TableFields = t.record(t.string, TableColumn);
