@@ -1,4 +1,9 @@
-import { ConfiguratorState, ColumnFields, TableFields } from "../configurator";
+import {
+  ConfiguratorState,
+  ColumnFields,
+  TableFields,
+  TableConfig,
+} from "../configurator";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const states: ConfiguratorState[] = [
@@ -747,150 +752,177 @@ export const tableDimensions = [
     __typename: "NominalDimension",
   },
 ];
-export const tableFields: TableFields = {
+export const tableConfig: TableConfig = {
+  chartType: "table",
+  filters: {},
   settings: { showSearch: true, showAllRows: true },
   sorting: [
     { componentIri: "one", sortingOrder: "asc" },
     { componentIri: "two", sortingOrder: "desc" },
   ],
-  columns: [
-    {
+  fields: {
+    "0": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "monochrome700",
+        columnColor: "#fff",
+      },
     },
-    {
+    "1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "hotpink",
-      columnColor: "#fff",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "hotpink",
+        columnColor: "#fff",
+      },
     },
-    {
+    "2": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       isGroup: false,
       isHidden: false,
-      columnStyle: "category",
-      palette: "set3",
-      textStyle: "bold",
+      columnStyle: {
+        type: "category",
+        palette: "set3",
+        textStyle: "bold",
+        colorMapping: {},
+      },
     },
-    {
+    "3": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "aliceblue",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "monochrome700",
+        columnColor: "aliceblue",
+      },
     },
-    {
+    "4": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "monochrome700",
+        columnColor: "#fff",
+      },
     },
-    {
+    "5": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "monochrome700",
+        columnColor: "#fff",
+      },
     },
-    {
+    "6": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
       isGroup: false,
       isHidden: false,
-      columnStyle: "heatmap",
-      palette: "oranges",
-      textStyle: "regular",
+      columnStyle: {
+        type: "heatmap",
+        palette: "oranges",
+        textStyle: "regular",
+      },
     },
-    {
+    "7": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "monochrome700",
+        columnColor: "#fff",
+      },
     },
-    {
+    "8": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "monochrome700",
+        columnColor: "#fff",
+      },
     },
-    {
+    "9": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
       isGroup: false,
       isHidden: false,
-      columnStyle: "bar",
-      textStyle: "regular",
-      barColorPositive: "hotpink",
-      barColorNegative: "LightSeaGreen",
-      barColorBackground: "#ccc",
-      barShowBackground: true,
+      columnStyle: {
+        type: "bar",
+        textStyle: "regular",
+        barColorPositive: "hotpink",
+        barColorNegative: "LightSeaGreen",
+        barColorBackground: "#ccc",
+        barShowBackground: true,
+      },
     },
-    {
+    "10": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
       isGroup: false,
       isHidden: false,
-      columnStyle: "heatmap",
-      palette: "turbo",
-      textStyle: "regular",
+      columnStyle: { type: "heatmap", palette: "turbo", textStyle: "regular" },
     },
-    {
+    "11": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
       isGroup: false,
       isHidden: false,
-      columnStyle: "heatmap",
-      palette: "cividis",
-      textStyle: "regular",
+      columnStyle: {
+        type: "heatmap",
+        textStyle: "regular",
+        palette: "cividis",
+      },
     },
-    {
+    "12": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "monochrome700",
+        columnColor: "#fff",
+      },
     },
-    {
+    "13": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
       isGroup: false,
       isHidden: false,
-      columnStyle: "text",
-      textStyle: "regular",
-      textColor: "monochrome700",
-      columnColor: "#fff",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "monochrome700",
+        columnColor: "#fff",
+      },
     },
-  ],
+  },
 };
