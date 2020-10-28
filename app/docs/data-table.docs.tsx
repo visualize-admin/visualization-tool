@@ -11,11 +11,8 @@ import { ex1 } from "../charts/table/example-props";
 import { TableChart } from "../charts/table/table-state";
 import { ChartFields, TableFields } from "../configurator/config-types";
 import {
-  fields,
-  measures,
-  observations,
   tableDimensions,
-  tableFields,
+  tableConfig,
   tableMeasures,
   tableObservations,
 } from "./fixtures";
@@ -27,10 +24,10 @@ export const Docs = () => markdown`
 
 
 ${(
-  <ReactSpecimen>
+  <ReactSpecimen span={6}>
     <TableChart
       data={tableObservations}
-      fields={tableFields as TableFields}
+      fields={tableConfig.fields}
       dimensions={tableDimensions as ComponentFieldsFragment[]}
       measures={tableMeasures as ComponentFieldsFragment[]}
     >
