@@ -287,20 +287,28 @@ const PieConfig = t.type(
 export type PieFields = t.TypeOf<typeof PieFields>;
 export type PieConfig = t.TypeOf<typeof PieConfig>;
 
+const ColumnTextStyle = t.union([t.literal("regular"), t.literal("bold")]);
 const ColumnStyle = t.union([
   t.type({
     type: t.literal("text"),
+    textStyle: ColumnTextStyle,
     textColor: t.string,
     columnColor: t.string,
   }),
   t.type({
     type: t.literal("category"),
+    textStyle: ColumnTextStyle,
     palette: t.string,
     colorMapping: ColorMapping,
   }),
-  t.type({ type: t.literal("heatmap"), palette: t.string }),
+  t.type({
+    type: t.literal("heatmap"),
+    textStyle: ColumnTextStyle,
+    palette: t.string,
+  }),
   t.type({
     type: t.literal("bar"),
+    textStyle: ColumnTextStyle,
     barColorPositive: t.string,
     barColorNegative: t.string,
     barColorBackground: t.string,
@@ -311,7 +319,6 @@ const TableColumn = t.type({
   componentIri: t.string,
   isGroup: t.boolean,
   isHidden: t.boolean,
-  textStyle: t.union([t.literal("regular"), t.literal("bold")]),
   columnStyle: ColumnStyle,
 });
 
