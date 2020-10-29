@@ -65,7 +65,7 @@ export type ConfiguratorStateAction =
       value: {
         path: string;
         field: string;
-        value: string | boolean | Record<string, string>;
+        value: string | boolean | Record<string, string> | undefined;
       };
     }
   | {

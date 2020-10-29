@@ -27,7 +27,7 @@ import {
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import { TableFields } from "../config-types";
+import { ColumnStyle, TableFields } from "../config-types";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
   ControlSection,
@@ -39,6 +39,7 @@ import {
   ChartFieldField,
   ChartOptionCheckboxField,
   ChartOptionRadioField,
+  ChartOptionSelectField,
 } from "./field";
 import {
   DimensionValuesMultiFilter,
@@ -519,6 +520,62 @@ const TableColumnOptions = ({
             label="isGroup"
             field={activeFieldKey}
             path="isGroup"
+          />
+        </ControlSectionContent>
+      </ControlSection>
+
+      <ControlSection>
+        <SectionTitle iconName={"image"}>
+          <Trans id="controls.section.columnstyle">Column Style</Trans>
+        </SectionTitle>
+        <ControlSectionContent side="right">
+          <ChartOptionSelectField<ColumnStyle>
+            id={"columnStyle"}
+            label={<Trans id="controls.select.columnStyle">Column Style</Trans>}
+            options={[
+              { value: "text", label: "text" },
+              { value: "category", label: "category" },
+              { value: "heatmap", label: "heatmap" },
+              { value: "bar", label: "bar" },
+            ]}
+            getValue={(type) => {
+              switch (type) {
+                case "text":
+                  return {
+                    type: "text",
+                    textStyle: "regular",
+                    textColor: "#000",
+                    columnColor: "#fff",
+                  };
+                case "category":
+                  return {
+                    type: "category",
+                    textStyle: "regular",
+                    palette: "viridis",
+                    colorMapping: {},
+                  };
+                case "heatmap":
+                  return {
+                    type: "heatmap",
+                    textStyle: "regular",
+                    palette: "viridis",
+                  };
+                case "bar":
+                  return {
+                    type: "bar",
+                    textStyle: "regular",
+                    barColorPositive: "blue",
+                    barColorNegative: "red",
+                    barColorBackground: "red",
+                    barShowBackground: false,
+                  };
+                default:
+                  return undefined;
+              }
+            }}
+            getKey={(d) => d.type}
+            field={activeFieldKey}
+            path="columnStyle"
           />
         </ControlSectionContent>
       </ControlSection>
