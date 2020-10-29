@@ -3,14 +3,13 @@ import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
 import { useCallback, useEffect, useRef } from "react";
-import { getFieldComponentIri } from "../../charts";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
   SortingType,
   useConfiguratorState,
 } from "..";
-import { getDimensionsByDimensionType } from "../../domain/data";
+import { getFieldComponentIri } from "../../charts";
 import {
   chartConfigOptionsUISpec,
   EncodingField,
@@ -18,7 +17,9 @@ import {
   EncodingSortingOption,
   EncodingSpec,
 } from "../../charts/chart-config-ui-options";
-import { getFieldLabel, getFieldLabelHint } from "./ui-helpers";
+import { FieldSetLegend, Radio, Select } from "../../components/form";
+import { Loading } from "../../components/hint";
+import { getDimensionsByDimensionType } from "../../domain/data";
 import {
   DimensionFieldsWithValuesFragment,
   useDataCubeMetadataWithComponentValuesQuery,
@@ -26,6 +27,7 @@ import {
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
+import { TableFields } from "../config-types";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
   ControlSection,
@@ -42,9 +44,7 @@ import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
 } from "./filters";
-import { FieldSetLegend, Radio, Select } from "../../components/form";
-import { Loading } from "../../components/hint";
-import { ColumnFields, TableFields } from "../config-types";
+import { getFieldLabel, getFieldLabelHint } from "./ui-helpers";
 
 export const ChartOptionsSelector = ({
   state,
@@ -522,6 +522,28 @@ const TableColumnOptions = ({
           />
         </ControlSectionContent>
       </ControlSection>
+
+      {(component.__typename === "NominalDimension" ||
+        component.__typename === "OrdinalDimension" ||
+        component.__typename === "TemporalDimension") && (
+        <ControlSection>
+          <SectionTitle disabled={!component} iconName="filter">
+            <Trans id="controls.section.filter">Filter</Trans>
+          </SectionTitle>
+          <ControlSectionContent side="right" as="fieldset">
+            <legend style={{ display: "none" }}>
+              <Trans id="controls.section.filter">Filter</Trans>
+            </legend>
+            {component && (
+              <DimensionValuesMultiFilter
+                key={component.iri}
+                dimensionIri={component.iri}
+                dataSetIri={metaData.iri}
+              />
+            )}
+          </ControlSectionContent>
+        </ControlSection>
+      )}
     </div>
   );
 };
