@@ -27,9 +27,9 @@ export const Table = () => {
     groupingHeaders,
   } = useChartState() as TableChartState;
 
-  console.log({ data });
-  console.log({ tableColumns });
-  console.log("in Table", { groupingHeaders });
+  // console.log({ data });
+  // console.log({ tableColumns });
+  // console.log("in Table", { groupingHeaders });
   const {
     getTableProps,
     getTableBodyProps,
