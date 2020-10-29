@@ -1,11 +1,29 @@
 import { memo } from "react";
 import { Flex } from "theme-ui";
+import { AreasState } from "../area/areas-state";
+import { GroupedBarsState } from "../bar/bars-grouped-state";
+import { BarsState } from "../bar/bars-state";
+import { GroupedColumnsState } from "../column/columns-grouped-state";
+import { StackedColumnsState } from "../column/columns-stacked-state";
+import { ColumnsState } from "../column/columns-state";
+import { LinesState } from "../line/lines-state";
+import { PieState } from "../pie/pie-state";
+import { ScatterplotState } from "../scatterplot/scatterplot-state";
 import { useChartState } from "./use-chart-state";
 
 type LegendSymbol = "square" | "line" | "circle";
 
 export const LegendColor = memo(({ symbol }: { symbol: LegendSymbol }) => {
-  const { colors } = useChartState();
+  const { colors } = useChartState() as
+    | BarsState
+    | GroupedBarsState
+    | ColumnsState
+    | StackedColumnsState
+    | GroupedColumnsState
+    | LinesState
+    | AreasState
+    | ScatterplotState
+    | PieState;
 
   return (
     <Flex

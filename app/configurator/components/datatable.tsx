@@ -11,7 +11,7 @@ import { useFormatNumber } from "../../domain/helpers";
 
 type Header = ComponentFieldsFragment;
 
-const Table = ({
+const PreviewTable = ({
   title,
   headers,
   observations,
@@ -101,7 +101,7 @@ const Table = ({
   );
 };
 
-export const DataTable = ({
+export const DataSetPreviewTable = ({
   title,
   dataSetIri,
   dimensions,
@@ -124,7 +124,7 @@ export const DataTable = ({
   if (!fetching && data?.dataCubeByIri) {
     const headers = [...dimensions, ...measures];
     return (
-      <Table
+      <PreviewTable
         title={title}
         headers={headers}
         observations={data.dataCubeByIri.observations.data}

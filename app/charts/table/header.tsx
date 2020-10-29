@@ -1,13 +1,12 @@
 import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
-
-export type Data = { [x: string]: string | number };
+import { Observation } from "../../domain/data";
 
 export const TableHeader = ({
   headerGroups,
 }: {
-  headerGroups: HeaderGroup<Data>[];
+  headerGroups: HeaderGroup<Observation>[];
 }) => {
   return (
     <thead>
@@ -24,7 +23,7 @@ export const TableHeader = ({
                     // column.getSortByToggleProps()
                     ()}
                 >
-                  {column.canGroupBy ? (
+                  {/* {column.canGroupBy ? (
                     <Box
                       sx={{
                         fontSize: 1,
@@ -35,7 +34,7 @@ export const TableHeader = ({
                     >
                       {column.isGrouped ? "Gruppiert " : `Spalte ${i + 1}`}
                     </Box>
-                  ) : null}
+                  ) : null} */}
                   {column.isSorted ? (
                     <Box
                       sx={{
