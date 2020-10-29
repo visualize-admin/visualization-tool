@@ -118,44 +118,27 @@ export const ChartConfiguratorTable = ({
           </ControlSectionContent>
         </ControlSection>
         <DragDropContext onDragEnd={onDragEnd}>
-          <ControlSection>
-            <SectionTitle>
-              <Trans id="controls.section.groups">Groups</Trans>
-            </SectionTitle>
-            <ControlSectionContent
-              side="left"
-              role="tablist"
-              aria-labelledby="controls-groups"
-            >
-              <TabDropZone
-                id="groups"
-                items={Object.entries(state.chartConfig.fields).flatMap(
-                  ([i, field]) => {
-                    return field?.isGroup ? [{ id: field?.componentIri }] : [];
-                  }
-                )}
-              ></TabDropZone>
-            </ControlSectionContent>
-          </ControlSection>
-          <ControlSection>
-            <SectionTitle>
-              <Trans id="controls.section.columns">Columns</Trans>
-            </SectionTitle>
-            <ControlSectionContent
-              side="left"
-              role="tablist"
-              aria-labelledby="controls-columns"
-            >
-              <TabDropZone
-                id="columns"
-                items={Object.entries(state.chartConfig.fields).flatMap(
-                  ([i, field]) => {
-                    return !field?.isGroup ? [{ id: field?.componentIri }] : [];
-                  }
-                )}
-              ></TabDropZone>
-            </ControlSectionContent>
-          </ControlSection>
+          <TabDropZone
+            id="groups"
+            title={<Trans id="controls.section.groups">Groups</Trans>}
+            metaData={data.dataCubeByIri}
+            items={Object.entries(state.chartConfig.fields).flatMap(
+              ([i, field]) => {
+                return field?.isGroup ? [{ id: field?.componentIri }] : [];
+              }
+            )}
+          ></TabDropZone>
+
+          <TabDropZone
+            id="columns"
+            title={<Trans id="controls.section.columns">Columns</Trans>}
+            metaData={data.dataCubeByIri}
+            items={Object.entries(state.chartConfig.fields).flatMap(
+              ([i, field]) => {
+                return !field?.isGroup ? [{ id: field?.componentIri }] : [];
+              }
+            )}
+          ></TabDropZone>
         </DragDropContext>
 
         <ControlSection>

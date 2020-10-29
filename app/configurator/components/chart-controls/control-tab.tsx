@@ -10,13 +10,11 @@ import { ReactNode } from "react";
 export const ControlTab = ({
   component,
   value,
-  disabled,
   onClick,
   checked,
   labelId,
 }: {
   component?: ComponentFieldsFragment;
-  disabled?: boolean;
   value: string;
   onClick: (x: string) => void;
   labelId: string;
@@ -91,6 +89,35 @@ export const AnnotatorTab = ({
       <ControlTabButtonInner
         iconName={value as IconName}
         lowerLabel={getFieldLabel(value)}
+        checked={checked}
+      />
+    </ControlTabButton>
+  );
+};
+
+export const DraggableTab = ({
+  component,
+  value,
+  checked,
+  onClick,
+  labelId,
+}: {
+  component: ComponentFieldsFragment;
+  disabled?: boolean;
+  onClick: (x: string) => void;
+  value: string;
+  labelId: string;
+} & FieldProps) => {
+  return (
+    <ControlTabButton
+      checked={checked}
+      value={value}
+      onClick={() => onClick(value)}
+    >
+      <ControlTabButtonInner
+        iconName={getIconName(value)}
+        upperLabel={getFieldLabel(labelId)}
+        lowerLabel={component.label}
         checked={checked}
       />
     </ControlTabButton>

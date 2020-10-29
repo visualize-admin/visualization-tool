@@ -26,6 +26,7 @@ import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
+  DraggableTab,
   FilterTab,
 } from "./chart-controls/control-tab";
 
@@ -50,7 +51,6 @@ export const ControlTabField = ({
       value={`${field.value}`}
       labelId={labelId}
       checked={field.checked}
-      disabled={disabled}
       onClick={field.onClick}
     ></ControlTab>
   );

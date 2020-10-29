@@ -1,58 +1,139 @@
+import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Box } from "theme-ui";
+import { ComponentFieldsFragment } from "../../../graphql/query-hooks";
+import { DataCubeMetadata } from "../../../graphql/types";
+import { Icon } from "../../../icons";
+import { useActiveFieldField } from "../../config-form";
+import { DraggableTab } from "./control-tab";
+import { ControlSection, ControlSectionContent, SectionTitle } from "./section";
 
 type Props = {
   id: string;
+  title: ReactNode;
   items: { id: string }[];
+  metaData: DataCubeMetadata;
 };
-export const TabDropZone = ({ id, items }: Props) => {
+export const TabDropZone = ({ id, items, title, metaData }: Props) => {
+  const { dimensions, measures } = metaData;
+
+  const components = [...dimensions, ...measures];
+
   return (
     <Droppable droppableId={id}>
-      {({ innerRef, placeholder }, { isDraggingOver }) => {
+      {({ innerRef, placeholder }, { isDraggingOver, isUsingPlaceholder }) => {
         return (
-          <div
-            ref={innerRef}
-            style={{
-              background: isDraggingOver ? "hotpink" : "teal",
-              padding: 10,
-            }}
-          >
-            {items.map((item, i) => {
-              return (
-                <Draggable key={item.id} draggableId={item.id} index={i}>
-                  {(
-                    { innerRef, draggableProps, dragHandleProps },
-                    { isDragging }
-                  ) => {
-                    return (
-                      <div
-                        ref={innerRef}
-                        {...draggableProps}
-                        // {...dragHandleProps}
-                        style={{
-                          background: isDragging ? "darkblue" : "#ccc",
-                          ...draggableProps.style,
-                        }}
-                      >
-                        Item {item.id}
-                        <div
-                          style={{
-                            background: "black",
-                            width: 20,
-                            height: 20,
-                            display: "inline-block",
-                          }}
-                          {...dragHandleProps}
-                        ></div>
-                      </div>
-                    );
+          <ControlSection isHighlighted={isDraggingOver}>
+            <SectionTitle>{title}</SectionTitle>
+            <ControlSectionContent
+              side="left"
+              role="tablist"
+              aria-labelledby={`controls-${id}`}
+            >
+              <Box
+                sx={{ p: 0, minHeight: 60, position: "relative" }}
+                ref={innerRef}
+              >
+                {/* <Box
+                  sx={{
+                    height: 48,
+                    borderColor: "monochrome300",
+                    borderWidth: 2,
+                    borderStyle: "dashed",
+                    position: "absolute",
+                    right: 0,
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    m: 2,
                   }}
-                </Draggable>
-              );
-            })}
-            {placeholder}
-          </div>
+                >
+                  &nbsp;
+                </Box> */}
+                {items.map((item, i) => {
+                  return (
+                    <Draggable key={item.id} draggableId={item.id} index={i}>
+                      {(
+                        { innerRef, draggableProps, dragHandleProps },
+                        { isDragging }
+                      ) => {
+                        return (
+                          <Box
+                            ref={innerRef}
+                            sx={{
+                              position: "relative",
+                            }}
+                            {...draggableProps}
+                            // {...dragHandleProps}
+                            style={{
+                              ...draggableProps.style,
+                            }}
+                          >
+                            <DraggableTabField
+                              key={item.id}
+                              component={
+                                components.find((d) => d.iri === item.id)!
+                              }
+                              value={`${i}`}
+                              labelId={`table.column`}
+                            />
+                            <Box
+                              sx={{
+                                width: 24,
+                                height: 24,
+                                position: "absolute",
+                                top: "50%",
+                                right: 3,
+                                marginTop: -12,
+                                color: isDragging
+                                  ? "secondaryActive"
+                                  : "secondaryDisabled",
+                                ":hover": {
+                                  color: "secondaryHover",
+                                },
+                              }}
+                              {...dragHandleProps}
+                            >
+                              <Icon name="dragndrop" />
+                            </Box>
+                          </Box>
+                        );
+                      }}
+                    </Draggable>
+                  );
+                })}
+                {placeholder}
+              </Box>
+            </ControlSectionContent>
+          </ControlSection>
         );
       }}
     </Droppable>
+  );
+};
+
+const DraggableTabField = ({
+  component,
+  value,
+  disabled,
+  labelId,
+}: {
+  component: ComponentFieldsFragment;
+  value: string;
+  disabled?: boolean;
+  labelId: string;
+}) => {
+  const field = useActiveFieldField({
+    value,
+  });
+
+  return (
+    <DraggableTab
+      component={component}
+      value={`${field.value}`}
+      labelId={labelId}
+      checked={field.checked}
+      onClick={field.onClick}
+    ></DraggableTab>
   );
 };
