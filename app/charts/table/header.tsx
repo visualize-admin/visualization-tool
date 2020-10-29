@@ -23,7 +23,7 @@ export const TableHeader = ({
                     // column.getSortByToggleProps()
                     ()}
                 >
-                  {column.canGroupBy ? (
+                  {/* {column.canGroupBy ? (
                     <Box
                       sx={{
                         fontSize: 1,
@@ -34,7 +34,7 @@ export const TableHeader = ({
                     >
                       {column.isGrouped ? "Gruppiert " : `Spalte ${i + 1}`}
                     </Box>
-                  ) : null}
+                  ) : null} */}
                   {column.isSorted ? (
                     <Box
                       sx={{
