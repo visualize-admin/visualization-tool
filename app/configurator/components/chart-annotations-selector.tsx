@@ -1,7 +1,7 @@
 import { Box } from "@theme-ui/components";
 import { useEffect, useRef } from "react";
 import { ConfiguratorStateDescribingChart } from "..";
-import { getFieldLabel } from "../../domain/helpers";
+import { getFieldLabel } from "./ui-helpers";
 import { IconName } from "../../icons";
 import { locales } from "../../locales/locales";
 import {

@@ -23,7 +23,7 @@ generates:
       scalars:
         Observation: "../domain/data#Observation"
         RawObservation: "../domain/data#RawObservation"
-        Filters: "../domain/config-types#Filters"
+        Filters: "../configurator#Filters"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

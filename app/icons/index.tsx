@@ -41,6 +41,7 @@ import { IconUnfold } from "./ic-unfold";
 import { IconWarning } from "./ic-warning";
 import { IconX } from "./ic-x";
 import { IconY } from "./ic-y";
+import { IconDragndrop } from "./ic-dragndrop";
 
 export const Icons = {
   check: IconCheck,
@@ -86,6 +87,7 @@ export const Icons = {
   arrowDown: IconArrowDown,
   title: IconText,
   description: IconDescription,
+  dragndrop: IconDragndrop,
 };
 
 export type IconName = keyof typeof Icons;

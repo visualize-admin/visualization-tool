@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/macro";
-import { Button, Flex, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Text } from "@theme-ui/components";
 
 import { FieldProps } from "../..";
-import { getFieldLabel, getIconName } from "../../../domain/helpers";
+import { getFieldLabel, getIconName } from "../ui-helpers";
 import { ComponentFieldsFragment } from "../../../graphql/query-hooks";
 import { Icon, IconName } from "../../../icons";
 import { ReactNode } from "react";
@@ -10,37 +10,43 @@ import { ReactNode } from "react";
 export const ControlTab = ({
   component,
   value,
-  disabled,
   onClick,
   checked,
   labelId,
 }: {
   component?: ComponentFieldsFragment;
-  disabled?: boolean;
   value: string;
   onClick: (x: string) => void;
   labelId: string;
 } & FieldProps) => {
   return (
-    <ControlTabButton
-      checked={checked}
-      value={value}
-      onClick={() => onClick(value)}
+    <Box
+      sx={{
+        width: "100%",
+        borderRadius: "default",
+        my: "2px",
+      }}
     >
-      <ControlTabButtonInner
-        iconName={getIconName(value)}
-        upperLabel={getFieldLabel(labelId)}
-        lowerLabel={
-          component ? (
-            component.label
-          ) : (
-            <Trans id="controls.partition.add">Add ...</Trans>
-          )
-        }
+      <ControlTabButton
         checked={checked}
-        optional={!component}
-      />
-    </ControlTabButton>
+        value={value}
+        onClick={() => onClick(value)}
+      >
+        <ControlTabButtonInner
+          iconName={getIconName(value)}
+          upperLabel={getFieldLabel(labelId)}
+          lowerLabel={
+            component ? (
+              component.label
+            ) : (
+              <Trans id="controls.partition.add">Add ...</Trans>
+            )
+          }
+          checked={checked}
+          optional={!component}
+        />
+      </ControlTabButton>
+    </Box>
   );
 };
 
@@ -59,18 +65,27 @@ export const FilterTab = ({
   value: string;
 } & FieldProps) => {
   return (
-    <ControlTabButton
-      checked={checked}
-      value={value}
-      onClick={() => onClick(value)}
+    <Box
+      sx={{
+        width: "100%",
+        borderRadius: "default",
+        my: "2px",
+      }}
     >
-      <ControlTabButtonInner
-        iconName={"table"}
-        upperLabel={label}
-        lowerLabel={filterValue}
+      {" "}
+      <ControlTabButton
         checked={checked}
-      />
-    </ControlTabButton>
+        value={value}
+        onClick={() => onClick(value)}
+      >
+        <ControlTabButtonInner
+          iconName={"table"}
+          upperLabel={label}
+          lowerLabel={filterValue}
+          checked={checked}
+        />
+      </ControlTabButton>
+    </Box>
   );
 };
 export const AnnotatorTab = ({
@@ -83,17 +98,65 @@ export const AnnotatorTab = ({
   value: string;
 } & FieldProps) => {
   return (
-    <ControlTabButton
-      checked={checked}
-      value={value}
-      onClick={() => onClick(value)}
+    <Box
+      sx={{
+        width: "100%",
+        borderRadius: "default",
+        my: "2px",
+      }}
     >
-      <ControlTabButtonInner
-        iconName={value as IconName}
-        lowerLabel={getFieldLabel(value)}
+      <ControlTabButton
         checked={checked}
-      />
-    </ControlTabButton>
+        value={value}
+        onClick={() => onClick(value)}
+      >
+        <ControlTabButtonInner
+          iconName={value as IconName}
+          lowerLabel={getFieldLabel(value)}
+          checked={checked}
+        />
+      </ControlTabButton>
+    </Box>
+  );
+};
+
+export const DraggableTab = ({
+  component,
+  value,
+  checked,
+  onClick,
+  isDragging,
+  upperLabel,
+}: {
+  component: ComponentFieldsFragment;
+  disabled?: boolean;
+  onClick: (x: string) => void;
+  value: string;
+  isDragging: boolean;
+  upperLabel: string;
+} & FieldProps) => {
+  return (
+    <Box
+      sx={{
+        boxShadow: isDragging ? "tooltip" : undefined,
+        width: "100%",
+        borderRadius: "default",
+        my: "2px",
+      }}
+    >
+      <ControlTabButton
+        checked={checked}
+        value={value}
+        onClick={() => onClick(value)}
+      >
+        <ControlTabButtonInner
+          iconName={getIconName(value)}
+          upperLabel={upperLabel}
+          lowerLabel={component.label}
+          checked={checked}
+        />
+      </ControlTabButton>
+    </Box>
   );
 };
 
@@ -124,8 +187,6 @@ const ControlTabButton = ({
       borderRadius: "default",
       width: "100%",
       minWidth: 160,
-      maxWidth: 300,
-      my: "2px",
       px: 2,
       py: 3,
       fontFamily: "body",

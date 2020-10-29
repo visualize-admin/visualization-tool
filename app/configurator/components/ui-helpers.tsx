@@ -29,10 +29,10 @@ import {
 import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
-import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
-import { IconName } from "../icons";
-import { useLocale } from "../locales/use-locale";
-import { d3FormatLocales, d3TimeFormatLocales } from "../locales/locales";
+import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
+import { IconName } from "../../icons";
+import { d3FormatLocales, d3TimeFormatLocales } from "../../locales/locales";
+import { useLocale } from "../../locales/use-locale";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -272,6 +272,8 @@ export const getFieldLabel = (field: string): ReactNode => {
       return <Trans id="controls.chart.type.scatterplot">Scatterplot</Trans>;
     case "pie":
       return <Trans id="controls.chart.type.pie">Pie</Trans>;
+    case "table":
+      return <Trans id="controls.chart.type.table">Table</Trans>;
 
     // Languages
     case "en":
