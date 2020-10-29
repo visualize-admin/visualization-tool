@@ -121,8 +121,8 @@ export const getInitialConfig = ({
               componentIri: d.iri,
               isGroup: false,
               isHidden: false,
-              textStyle: "regular",
               columnStyle: {
+                textStyle: "regular",
                 type: "text",
                 textColor: "#000",
                 columnColor: "#fff",
