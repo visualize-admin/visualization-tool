@@ -326,7 +326,6 @@ export type ColumnStyleText = t.TypeOf<typeof ColumnStyleText>;
 export type ColumnStyleCategory = t.TypeOf<typeof ColumnStyleCategory>;
 export type ColumnStyleHeatmap = t.TypeOf<typeof ColumnStyleHeatmap>;
 export type ColumnStyleBar = t.TypeOf<typeof ColumnStyleBar>;
-export type ColumnStyle = t.TypeOf<typeof ColumnStyle>;
 
 const TableColumn = t.type({
   componentIri: t.string,
