@@ -65,7 +65,14 @@ export type ConfiguratorStateAction =
       value: {
         path: string;
         field: string;
-        value: string | Record<string, string>;
+        value: string | boolean | Record<string, string>;
+      };
+    }
+  | {
+      type: "CHART_CONFIG_CHANGED";
+      value: {
+        path: string;
+        value: $IntentionalAny;
       };
     }
   | {
@@ -490,6 +497,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         setWith(
           draft,
           `chartConfig.fields.${action.value.field}.${action.value.path}`,
+          action.value.value,
+          Object
+        );
+      }
+      return draft;
+
+    case "CHART_CONFIG_CHANGED":
+      if (draft.state === "CONFIGURING_CHART") {
+        setWith(
+          draft,
+          `chartConfig.${action.value.path}`,
           action.value.value,
           Object
         );

@@ -70,12 +70,6 @@ export const ChartConfiguratorTable = ({
         return;
       }
 
-      console.log(source.index, destination.index);
-
-      if (destination.droppableId === "groups") {
-        console.log("Grupss");
-      }
-
       const fields = reorderFields({
         fields: state.chartConfig.fields as TableFields,
         source,
@@ -119,8 +113,8 @@ export const ChartConfiguratorTable = ({
             id="groups"
             title={<Trans id="controls.section.groups">Groups</Trans>}
             metaData={data.dataCubeByIri}
-            items={Object.entries(fields).flatMap(([i, field]) => {
-              return field.isGroup ? [{ id: field.componentIri }] : [];
+            items={Object.entries(fields).flatMap(([key, field]) => {
+              return field.isGroup ? [{ iri: field.componentIri }] : [];
             })}
           ></TabDropZone>
 
@@ -128,8 +122,8 @@ export const ChartConfiguratorTable = ({
             id="columns"
             title={<Trans id="controls.section.columns">Columns</Trans>}
             metaData={data.dataCubeByIri}
-            items={Object.entries(fields).flatMap(([i, field]) => {
-              return !field.isGroup ? [{ id: field.componentIri }] : [];
+            items={Object.entries(fields).flatMap(([key, field]) => {
+              return !field.isGroup ? [{ iri: field.componentIri }] : [];
             })}
           ></TabDropZone>
         </DragDropContext>

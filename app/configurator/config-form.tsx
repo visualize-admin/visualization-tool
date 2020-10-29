@@ -146,6 +146,41 @@ export const useChartOptionRadioField = ({
   };
 };
 
+export const useChartOptionBooleanField = ({
+  path,
+  field,
+}: {
+  path: string;
+  field: string;
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          path,
+          field,
+          value: e.currentTarget.checked,
+        },
+      });
+    },
+    [dispatch, path, field]
+  );
+  const stateValue =
+    state.state === "CONFIGURING_CHART"
+      ? get(state, `chartConfig.fields.${field}.${path}`, "")
+      : "";
+  const checked = stateValue ? stateValue : false;
+
+  return {
+    name: path,
+    checked,
+    onChange,
+  };
+};
+
 export const useActiveFieldField = ({
   value,
 }: {

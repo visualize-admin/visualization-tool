@@ -21,6 +21,7 @@ import {
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Locales } from "../../locales/locales";
+import { useChartOptionBooleanField } from "../config-form";
 import { SegmentField } from "../config-types";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
@@ -335,5 +336,33 @@ export const ChartOptionRadioField = ({
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
     ></Radio>
+  );
+};
+
+export const ChartOptionCheckboxField = ({
+  label,
+  field,
+  path,
+  defaultChecked,
+  disabled = false,
+}: {
+  label: string | ReactNode;
+  field: string;
+  path: string;
+  defaultChecked?: boolean;
+  disabled?: boolean;
+}) => {
+  const fieldProps = useChartOptionBooleanField({
+    field,
+    path,
+  });
+
+  return (
+    <Checkbox
+      disabled={disabled}
+      label={label}
+      {...fieldProps}
+      checked={fieldProps.checked ?? defaultChecked}
+    ></Checkbox>
   );
 };

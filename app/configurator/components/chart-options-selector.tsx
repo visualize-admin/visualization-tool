@@ -33,13 +33,18 @@ import {
   SectionTitle,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
-import { ChartFieldField, ChartOptionRadioField } from "./field";
+import {
+  ChartFieldField,
+  ChartOptionCheckboxField,
+  ChartOptionRadioField,
+} from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
 } from "./filters";
 import { FieldSetLegend, Radio, Select } from "../../components/form";
 import { Loading } from "../../components/hint";
+import { ColumnFields, TableFields } from "../config-types";
 
 export const ChartOptionsSelector = ({
   state,
@@ -64,7 +69,11 @@ export const ChartOptionsSelector = ({
         }}
       >
         {state.activeField ? (
-          <ActiveFieldSwitch state={state} metaData={meta} />
+          state.chartConfig.chartType === "table" ? (
+            <TableColumnOptions state={state} metaData={meta} />
+          ) : (
+            <ActiveFieldSwitch state={state} metaData={meta} />
+          )
         ) : (
           <EmptyRightPanel state={state} />
         )}
@@ -452,6 +461,65 @@ const SingleFilter = ({
               dimensionIri={activeDimension.iri}
             />
           )}
+        </ControlSectionContent>
+      </ControlSection>
+    </div>
+  );
+};
+
+const TableColumnOptions = ({
+  state,
+  metaData,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  metaData: DataCubeMetadata;
+}) => {
+  const { activeField } = state;
+
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (panelRef && panelRef.current) {
+      panelRef.current.focus();
+    }
+  }, [activeField]);
+
+  if (!activeField) {
+    return null;
+  }
+
+  // Active field is always a component IRI, like in filters
+  const component = [...metaData.dimensions, ...metaData.measures].find(
+    (d) => d.iri === activeField
+  );
+
+  const activeFieldKey = Object.entries(
+    state.chartConfig.fields as TableFields
+  ).find(([key, field]) => field.componentIri === activeField)?.[0];
+
+  if (!component || !activeFieldKey) {
+    return <div>`No component ${activeField}`</div>;
+  }
+
+  return (
+    <div
+      key={`control-panel-table-column-${activeField}`}
+      role="tabpanel"
+      id={`control-panel-table-column-${activeField}`}
+      aria-labelledby={`tab-${activeField}`}
+      ref={panelRef}
+      tabIndex={-1}
+    >
+      <ControlSection>
+        <SectionTitle iconName={"table"}>
+          {getFieldLabel("table.column")}
+        </SectionTitle>
+        <ControlSectionContent side="right">
+          <ChartOptionCheckboxField
+            label="isGroup"
+            field={activeFieldKey}
+            path="isGroup"
+          />
         </ControlSectionContent>
       </ControlSection>
     </div>
