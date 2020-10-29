@@ -68,13 +68,10 @@ export const Table = () => {
 };
 
 const tableStyles = {
-  width: "100%",
-  height: "100%",
   borderSpacing: 0,
   border: "none",
 
   th: {
-    minWidth: 100,
     m: 0,
     py: 2,
     pr: 6,
@@ -88,6 +85,7 @@ const tableStyles = {
     fontWeight: "bold",
 
     color: "monochrome700",
+
     ":last-child": {
       borderRight: 0,
     },
@@ -100,7 +98,6 @@ const tableStyles = {
   },
 
   td: {
-    minWidth: 100,
     m: 0,
     py: 2,
     pr: 6,
