@@ -502,6 +502,20 @@ const TableColumnOptions = ({
     return <div>`No component ${activeField}`</div>;
   }
 
+  const columnStyleOptions =
+    component.__typename === "NominalDimension" ||
+    component.__typename === "OrdinalDimension" ||
+    component.__typename === "TemporalDimension"
+      ? [
+          { value: "text", label: "text" },
+          { value: "category", label: "category" },
+        ]
+      : [
+          { value: "text", label: "text" },
+          { value: "heatmap", label: "heatmap" },
+          { value: "bar", label: "bar" },
+        ];
+
   return (
     <div
       key={`control-panel-table-column-${activeField}`}
@@ -532,12 +546,7 @@ const TableColumnOptions = ({
           <ChartOptionSelectField<ColumnStyle>
             id={"columnStyle"}
             label={<Trans id="controls.select.columnStyle">Column Style</Trans>}
-            options={[
-              { value: "text", label: "text" },
-              { value: "category", label: "category" },
-              { value: "heatmap", label: "heatmap" },
-              { value: "bar", label: "bar" },
-            ]}
+            options={columnStyleOptions}
             getValue={(type) => {
               switch (type) {
                 case "text":
