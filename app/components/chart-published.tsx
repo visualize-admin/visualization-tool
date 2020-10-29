@@ -8,6 +8,7 @@ import { ChartFootnotes } from "./chart-footnotes";
 import { ChartLinesVisualization } from "../charts/line/chart-lines";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
+import { ChartTableVisualization } from "../charts/table/chart-table";
 
 export const ChartPublished = ({
   dataSet,
@@ -81,6 +82,12 @@ export const ChartPublished = ({
         )}
         {chartConfig.chartType === "pie" && (
           <ChartPieVisualization
+            dataSetIri={dataSet}
+            chartConfig={chartConfig}
+          />
+        )}
+        {chartConfig.chartType === "table" && (
+          <ChartTableVisualization
             dataSetIri={dataSet}
             chartConfig={chartConfig}
           />
