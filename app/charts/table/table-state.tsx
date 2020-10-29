@@ -16,8 +16,11 @@ import {
   ColumnStyleText,
   TableFields,
 } from "../../configurator";
+import {
+  getColorInterpolator,
+  getPalette,
+} from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import { getColorInterpolator, getPalette } from "../../domain/helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 
