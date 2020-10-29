@@ -1,5 +1,4 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { ChartTypeSelectionButton } from "../configurator/components/chart-controls/chart-type-radio-button";
 import { ControlList } from "../configurator/components/chart-controls/list";
 import {
   ControlSection,
@@ -13,6 +12,7 @@ import {
 import { getPalette } from "../domain/helpers";
 import { useState } from "react";
 import { Box } from "theme-ui";
+import { ChartTypeSelectionButton } from "../configurator/components/chart-type-selector";
 
 // const vegaPalettes: Array<{ id: vega.ColorScheme; values: Array<string> }> = [
 //   { id: "category10", values: vega.scheme("category10") },

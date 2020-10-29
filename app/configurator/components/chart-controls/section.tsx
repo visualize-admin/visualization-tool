@@ -1,18 +1,20 @@
 import { Box, Flex, Text } from "@theme-ui/components";
 
-import { ElementType, ReactNode } from "react";
+import { ElementType, forwardRef, ReactNode } from "react";
 import { Icon, IconName } from "../../../icons";
 import { useTheme } from "../../../themes";
 
-export const ControlSection = ({
-  role,
-  children,
-}: {
-  role?: string;
-  children: ReactNode;
-}) => {
+export const ControlSection = forwardRef<
+  HTMLDivElement,
+  {
+    role?: string;
+    children: ReactNode;
+    isHighlighted?: boolean;
+  }
+>(({ role, children, isHighlighted }, ref) => {
   return (
     <Box
+      ref={ref}
       role={role}
       sx={{
         borderTopColor: "monochrome500",
@@ -20,6 +22,7 @@ export const ControlSection = ({
         borderTopStyle: "solid",
         overflowX: "hidden",
         overflowY: "auto",
+        backgroundColor: isHighlighted ? "primaryLight" : "monochrome100",
 
         "&:first-of-type": {
           borderTopWidth: 0,
@@ -29,7 +32,8 @@ export const ControlSection = ({
       {children}
     </Box>
   );
-};
+});
+
 export const ControlSectionContent = ({
   side,
   as,
