@@ -2,7 +2,6 @@ import { extent } from "d3-array";
 import {
   ScaleLinear,
   scaleLinear,
-  ScaleOrdinal,
   scaleOrdinal,
   ScaleSequential,
   scaleSequential,
@@ -10,10 +9,8 @@ import {
 import { ReactNode, useMemo } from "react";
 import { Column } from "react-table";
 import {
-  ColumnStyleBar,
   ColumnStyleCategory,
   ColumnStyleHeatmap,
-  ColumnStyleText,
   TableFields,
 } from "../../configurator";
 import {
@@ -25,11 +22,22 @@ import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { TABLE_HEIGHT } from "./constants";
 
-export type ColumnMeta =
-  | (ColumnStyleHeatmap & { colorScale: ScaleSequential<string> })
-  | ColumnStyleText
-  | (ColumnStyleCategory & { colorScale: ScaleOrdinal<string, string> })
-  | (ColumnStyleBar & { widthScale: ScaleLinear<number, number> });
+export interface ColumnMeta {
+  colorScale?: ScaleSequential<string>;
+  widthScale?: ScaleLinear<number, number>;
+  type: string;
+  textStyle: string;
+  textColor: string;
+  columnColor: string;
+  barColorPositive: string;
+  barColorNegative: string;
+  barColorBackground: string;
+  barShowBackground: boolean;
+}
+// | (ColumnStyleHeatmap & { colorScale?: ScaleSequential<string> })
+// | ColumnStyleText
+// | (ColumnStyleCategory & { colorScale: ScaleOrdinal<string, string> })
+// | (ColumnStyleBar & { widthScale?: ScaleLinear<number, number> });
 
 export interface TableChartState {
   chartType: "table";
@@ -134,7 +142,7 @@ const useTableState = ({
       }),
 
     [data, fields]
-  );
+  ) as ColumnMeta[];
 
   // Groupings
   const groupingHeaders = useMemo(

@@ -55,7 +55,7 @@ export const CellContent = ({
         <TagCell
           value={cell.value}
           styles={{ fontWeight: textStyle }}
-          tagColor={colorScale(cell.value)}
+          tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}
           {...cell.getCellProps()}
         >
           {children}
@@ -67,7 +67,7 @@ export const CellContent = ({
           value={formatNumber(cell.value)}
           styles={{
             color: textColor,
-            bg: colorScale(cell.value),
+            bg: colorScale ? colorScale(cell.value) : "primaryLight",
             textAlign: "right",
             fontWeight: textStyle,
           }}
@@ -85,7 +85,7 @@ export const CellContent = ({
           barColorBackground={
             barShowBackground ? barColorBackground : "monochrome100"
           }
-          barWidth={widthScale(cell.value)} // FIXME: handle negative values
+          barWidth={widthScale ? widthScale(cell.value) : 0} // FIXME: handle negative values
           {...cell.getCellProps()}
         >
           {children}

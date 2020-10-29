@@ -11,15 +11,12 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
   return (
     <>
       {row.cells.map((cell, i) => {
-        if (cell.isGrouped) {
-          console.log(tableColumnsMeta[i]);
-        }
         return (
           <>
             {cell.isGrouped ? (
               <CellContent cell={cell} columnMeta={tableColumnsMeta[i]}>
                 <>
-                  <span {...row.getToggleRowExpandedProps()}>{">"}</span>
+                  <span {...row.getToggleRowExpandedProps()}>{"> "}</span>
                   {cell.render("Cell")}
                 </>
               </CellContent>

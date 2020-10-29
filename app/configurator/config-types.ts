@@ -320,6 +320,7 @@ const ColumnStyle = t.union([
   ColumnStyleHeatmap,
   ColumnStyleBar,
 ]);
+export type ColumnStyle = t.TypeOf<typeof ColumnStyle>;
 
 export type ColumnStyleText = t.TypeOf<typeof ColumnStyleText>;
 export type ColumnStyleCategory = t.TypeOf<typeof ColumnStyleCategory>;

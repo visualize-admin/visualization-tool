@@ -1,15 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Flex,
-  Grid,
-  Input,
-  Label,
-  Radio,
-  Select,
-  Text,
-} from "@theme-ui/components";
+import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { useMemo } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
