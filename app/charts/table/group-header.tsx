@@ -11,17 +11,26 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
   return (
     <>
       {row.cells.map((cell, i) => {
-        const { type, textStyle, textColor, colorScale } = tableColumnsMeta[i];
+        if (cell.isGrouped) {
+          console.log(tableColumnsMeta[i]);
+        }
         return (
-          <Box
-            as="td"
-            sx={{
-              fontWeight: 900,
-              color: "#222222",
-            }}
-          >
-            {cell.render("Cell")}
-          </Box>
+          <>
+            {cell.isGrouped ? (
+              <CellContent cell={cell} columnMeta={tableColumnsMeta[i]}>
+                <>
+                  <span {...row.getToggleRowExpandedProps()}>{">"}</span>
+                  {cell.render("Cell")}
+                </>
+              </CellContent>
+            ) : cell.isAggregated ? (
+              // Nothing to display
+              <td>{cell.render("Cell")}</td>
+            ) : (
+              // Nothing to display
+              <td>{cell.render("Cell")}</td>
+            )}
+          </>
         );
       })}
     </>
