@@ -12,7 +12,7 @@ import {
 } from "@theme-ui/components";
 import * as React from "react";
 import { useMemo } from "react";
-import { useTable } from "react-table";
+import { useExpanded, useGroupBy, useTable } from "react-table";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { TableHeader } from "./header";
@@ -20,23 +20,39 @@ import { RowUI } from "./row";
 import { TableChartState } from "./table-state";
 
 export const Table = () => {
-  const { data, tableColumns } = useChartState() as TableChartState;
+  const {
+    data,
+    tableColumns,
+    groupingHeaders,
+  } = useChartState() as TableChartState;
 
   console.log({ data });
   console.log({ tableColumns });
-
+  console.log("in Table", { groupingHeaders });
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow,
-    setColumnOrder,
-    setSortBy,
-  } = useTable<Observation>({
-    columns: tableColumns,
-    data,
-  });
+  } = useTable<Observation>(
+    {
+      columns: tableColumns,
+      data,
+      useControlledState: (state) => {
+        return useMemo(
+          () => ({
+            ...state,
+            groupBy: groupingHeaders,
+          }),
+          [state, groupingHeaders]
+        );
+      },
+    },
+
+    useGroupBy,
+    useExpanded
+  );
 
   return (
     <Box

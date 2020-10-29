@@ -1,15 +1,10 @@
-import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { Row } from "react-table";
-import { Data } from "../../pages/[locale]/_table-prototype";
-
-import { useFormatNumber } from "../../domain/helpers";
 import { Observation } from "../../domain/data";
-import { BarCell, CellContent, TagCell, TextCell } from "./cell";
 import { useChartState } from "../shared/use-chart-state";
-import { ColumnStyle } from "../table-prototype/column-formatting";
-import { ColumnMeta, TableChartState } from "./table-state";
-import { ColumnStyleBar } from "../../configurator/config-types";
+import { CellContent } from "./cell";
+import { GroupHeader } from "./group-header";
+import { TableChartState } from "./table-state";
 
 export const RowUI = ({
   row,
@@ -21,95 +16,28 @@ export const RowUI = ({
   const { tableColumnsMeta } = useChartState() as TableChartState;
 
   prepareRow(row);
-
-  return (
-    <tr {...row.getRowProps()}>
-      {row.cells.map((cell, i) => {
-        return <CellContent cell={cell} columnMeta={tableColumnsMeta[i]} />;
-      })}
-    </tr>
-  );
-};
-
-const GroupHeaderRow = ({
-  row,
-  columnStyles,
-}: {
-  row: Row<Data>;
-  columnStyles: ColumnStyle[];
-}) => {
-  const thisCell = columnStyles.find((c) => c.id === row.groupByID);
-
-  const cellTextColor =
-    thisCell && thisCell?.textColor ? thisCell?.textColor : "#333333";
-  const cellBgColor =
-    thisCell && thisCell?.columnColor ? thisCell?.columnColor : "muted";
-  const cellTagColor =
-    thisCell && thisCell?.colorRange && thisCell?.domain
-      ? thisCell.colorRange(row.groupByVal)
-      : "#333333";
-
   return (
     <>
-      {/* TEXT Formatting */}
-      {thisCell && thisCell?.style === "text" && (
-        <Box
-          as="td"
-          sx={{
-            color: cellTextColor,
-            borderBottom: 0,
-            background: "muted",
-            textAlign: "left",
-            fontWeight: thisCell && thisCell?.textStyle === "bold" ? 800 : 400,
-          }}
-          // {...row.getCellProps()}
-        >
-          {row.groupByVal}
-        </Box>
-      )}
-
-      {
-        // KATEGORY FORMATTING
-        thisCell && thisCell?.style === "category" && (
-          <Box
-            as="td"
-            sx={{
-              color: "#333333",
-              background: "muted",
-              borderBottom: 0,
-              fontWeight:
-                columnStyles.find((c) => c.id === row.groupById) &&
-                thisCell?.textStyle === "bold"
-                  ? 800
-                  : 400,
-            }}
-            // {...row.getCellProps()}
-          >
-            <Box
-              as="span"
-              sx={{
-                background: cellTagColor,
-                borderRadius: "15px",
-                px: 3,
-                py: 1,
-                my: 1,
-              }}
-            >
-              {row.groupByVal}
-            </Box>
-          </Box>
-        )
-      }
-      {/* <Box
-        as="td"
-        sx={{
-          fontWeight: 900,
-          color: "#222222",
-          borderBottom: 0,
-        }}
-      >
-        {row.groupByVal}
-      </Box> */}
+      <tr {...row.getRowProps()}>
+        {row.subRows.length === 0 ? (
+          <>
+            {row.cells.map((cell, i) => {
+              return (
+                <CellContent cell={cell} columnMeta={tableColumnsMeta[i]}>
+                  {cell.render("Cell")}
+                </CellContent>
+              );
+            })}
+          </>
+        ) : (
+          <GroupHeader row={row} />
+        )}
+      </tr>
+      {/* Display rows within a group by recursively calling RowUI  */}
+      {row.subRows.length > 0 &&
+        row.subRows.map((subRow) => {
+          return <RowUI row={subRow} prepareRow={prepareRow} />;
+        })}
     </>
   );
 };
