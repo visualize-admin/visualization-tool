@@ -1,19 +1,131 @@
 import { Box } from "@theme-ui/components";
 import * as React from "react";
-import { CellPropGetter, TableCellProps } from "react-table";
+import { Cell, CellPropGetter, TableCellProps } from "react-table";
 import { SystemStyleObject } from "@styled-system/css";
+import { ColumnMeta } from "./table-state";
+import { Observation } from "../../domain/data";
+import { useFormatNumber } from "../../domain/helpers";
+import { ReactNode } from "react";
+
+export const CellContent = ({
+  cell,
+  columnMeta,
+  children,
+}: {
+  cell: Cell<Observation>; //string | number;
+  columnMeta: ColumnMeta;
+  children: ReactNode;
+}) => {
+  const formatNumber = useFormatNumber();
+  const {
+    type,
+    textStyle,
+    textColor,
+    columnColor,
+    colorScale,
+    barColorPositive,
+    barColorNegative,
+    barColorBackground,
+    barShowBackground,
+    widthScale,
+  } = columnMeta;
+
+  switch (type) {
+    case "text":
+      return (
+        <TextCell
+          value={
+            typeof cell.value === "number"
+              ? formatNumber(cell.value)
+              : cell.value
+          }
+          styles={{
+            color: textColor,
+            bg: columnColor,
+            textAlign: typeof cell.value === "number" ? "right" : "left",
+            fontWeight: textStyle,
+          }}
+          {...cell.getCellProps()}
+        >
+          {children}
+        </TextCell>
+      );
+    case "category":
+      return (
+        <TagCell
+          value={cell.value}
+          styles={{ fontWeight: textStyle }}
+          tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}
+          {...cell.getCellProps()}
+        >
+          {children}
+        </TagCell>
+      );
+    case "heatmap":
+      return (
+        <TextCell
+          value={formatNumber(cell.value)}
+          styles={{
+            color: textColor,
+            bg: colorScale ? colorScale(cell.value) : "primaryLight",
+            textAlign: "right",
+            fontWeight: textStyle,
+          }}
+          {...cell.getCellProps()}
+        >
+          {children}
+        </TextCell>
+      );
+    case "bar":
+      return (
+        <BarCell
+          value={cell.value}
+          barColorPositive={barColorPositive}
+          barColorNegative={barColorNegative}
+          barColorBackground={
+            barShowBackground ? barColorBackground : "monochrome100"
+          }
+          barWidth={widthScale ? widthScale(cell.value) : 0} // FIXME: handle negative values
+          {...cell.getCellProps()}
+        >
+          {children}
+        </BarCell>
+      );
+    default:
+      return (
+        <TextCell
+          value={
+            typeof cell.value === "number"
+              ? formatNumber(cell.value)
+              : cell.value
+          }
+          styles={{
+            color: textColor,
+            bg: columnColor,
+            textAlign: typeof cell.value === "number" ? "right" : "left",
+            fontWeight: textStyle,
+          }}
+          {...cell.getCellProps()}
+        >
+          {children}
+        </TextCell>
+      );
+  }
+};
 
 export const TextCell = ({
   value,
   styles,
   cellProps,
+  children,
 }: {
   value: string | number;
-  styles: SystemStyleObject; // Pick<SystemStyleObject, "color" | "bg" | "textAlign" | "fontWeight">;
+  styles: SystemStyleObject;
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
+  children: ReactNode;
 }) => (
   <Box as="td" sx={{ ...styles }} {...cellProps}>
-    {value}
+    {children}
   </Box>
 );
 
@@ -22,15 +134,17 @@ export const TagCell = ({
   styles,
   tagColor,
   cellProps,
+  children,
 }: {
   value: string | number;
-  styles: { color: string; fontWeight: string };
+  styles: { fontWeight: string };
   tagColor: string;
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
+  children: ReactNode;
 }) => {
-  const { color, fontWeight } = styles;
+  const { fontWeight } = styles;
   return (
-    <Box as="td" sx={{ color, fontWeight }} {...cellProps}>
+    <Box as="td" sx={{ fontWeight }} {...cellProps}>
       <Box
         as="span"
         sx={{
@@ -41,7 +155,7 @@ export const TagCell = ({
           my: 1,
         }}
       >
-        {value}
+        {children}
       </Box>
     </Box>
   );
@@ -49,25 +163,29 @@ export const TagCell = ({
 
 export const BarCell = ({
   value,
-  barColor,
-  barBackground,
+  barColorPositive,
+  barColorNegative,
+  barColorBackground,
   barWidth,
   cellProps,
+  children,
 }: {
   value: string | number;
-  barColor: string;
-  barBackground: string;
+  barColorPositive: string;
+  barColorNegative: string;
+  barColorBackground: string;
   barWidth: number; // as percentage
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
+  children: ReactNode;
 }) => (
-  <Box as="td" sx={{ textAlign: "right", width: "100%" }} {...cellProps}>
-    <Box>{value}</Box>
+  <Box as="td" sx={{ width: "100%" }} {...cellProps}>
+    <Box>{children}</Box>
     <Box
       sx={{
         width: "100%",
         height: "16px",
         position: "relative",
-        bg: barBackground,
+        bg: barColorBackground,
       }}
     >
       <Box
@@ -77,7 +195,7 @@ export const BarCell = ({
           left: 0,
           width: `${barWidth}%`,
           height: "16px",
-          bg: barColor,
+          bg: value > 0 ? barColorPositive : barColorNegative,
         }}
       />
     </Box>

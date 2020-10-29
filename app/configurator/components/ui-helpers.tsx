@@ -1,6 +1,136 @@
 import { Trans } from "@lingui/macro";
-import { ReactNode } from "react";
+import { scaleOrdinal } from "d3-scale";
+import {
+  interpolateBlues,
+  interpolateCividis,
+  interpolateCool,
+  interpolateGreens,
+  interpolateGreys,
+  interpolateInferno,
+  interpolateMagma,
+  interpolateOranges,
+  interpolatePlasma,
+  interpolatePurples,
+  interpolateReds,
+  interpolateTurbo,
+  interpolateViridis,
+  interpolateWarm,
+  schemeAccent,
+  schemeCategory10,
+  schemeDark2,
+  schemePaired,
+  schemePastel1,
+  schemePastel2,
+  schemeSet1,
+  schemeSet2,
+  schemeSet3,
+  schemeTableau10,
+} from "d3-scale-chromatic";
+import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
+import { timeParse } from "d3-time-format";
+import { ReactNode, useMemo } from "react";
+import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
+import { d3FormatLocales, d3TimeFormatLocales } from "../../locales/locales";
+import { useLocale } from "../../locales/use-locale";
+
+// FIXME: We should cover more time format
+const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
+const parseDay = timeParse("%Y-%m-%d");
+const parseMonth = timeParse("%Y-%m");
+const parseYear = timeParse("%Y");
+export const parseDate = (dateStr: string): Date =>
+  parseTime(dateStr) ??
+  parseDay(dateStr) ??
+  parseMonth(dateStr) ??
+  parseYear(dateStr) ??
+  // This should probably not happen
+  new Date(dateStr);
+
+export const isNumber = (x: $IntentionalAny): boolean =>
+  typeof x === "number" && !isNaN(x);
+export const mkNumber = (x: $IntentionalAny): number => +x;
+
+/**
+ * Formats dates automatically based on their precision in LONG form.
+ *
+ * Use wherever dates are displayed without being in context of other dates (e.g. in tooltips)
+ */
+export const useFormatFullDateAuto = () => {
+  const locale = useLocale();
+  const formatter = useMemo(() => {
+    const { format } = d3TimeFormatLocales[locale];
+
+    const formatSecond = format("%d.%m.%Y %H:%M:%S");
+    const formatMinute = format("%d.%m.%Y %H:%M");
+    const formatHour = format("%d.%m.%Y %H:%M");
+    const formatDay = format("%d.%m.%Y");
+    const formatMonth = format("%m.%Y");
+    const formatYear = format("%Y");
+
+    return (date: Date) => {
+      return (timeMinute(date) < date
+        ? formatSecond
+        : timeHour(date) < date
+        ? formatMinute
+        : timeDay(date) < date
+        ? formatHour
+        : timeMonth(date) < date
+        ? formatDay
+        : timeYear(date) < date
+        ? formatMonth
+        : formatYear)(date);
+    };
+  }, [locale]);
+
+  return formatter;
+};
+
+/**
+ * Formats dates automatically based on their precision in SHORT form.
+ *
+ * Use wherever dates are displayed in context of other dates (e.g. on time axes)
+ */
+export const useFormatShortDateAuto = () => {
+  const locale = useLocale();
+  const formatter = useMemo(() => {
+    const { format } = d3TimeFormatLocales[locale];
+
+    const formatSecond = format(":%S");
+    const formatMinute = format("%H:%M");
+    const formatHour = format("%H");
+    const formatDay = format("%d");
+    const formatMonth = format("%b");
+    const formatYear = format("%Y");
+
+    return (date: Date) => {
+      return (timeMinute(date) < date
+        ? formatSecond
+        : timeHour(date) < date
+        ? formatMinute
+        : timeDay(date) < date
+        ? formatHour
+        : timeMonth(date) < date
+        ? formatDay
+        : timeYear(date) < date
+        ? formatMonth
+        : formatYear)(date);
+    };
+  }, [locale]);
+
+  return formatter;
+};
+
+// export const formatNumber = (x: number): string => format(",.2~f")(x);
+
+export const useFormatNumber = () => {
+  const locale = useLocale();
+  const formatter = useMemo(() => {
+    const { format } = d3FormatLocales[locale];
+    return format(",.2~f");
+  }, [locale]);
+  return formatter;
+};
 
 export const getIconName = (name: string): IconName => {
   switch (name) {
@@ -163,4 +293,88 @@ export const getFieldLabelHint = {
   x: <Trans id="controls.select.dimension">Select a dimension</Trans>,
   y: <Trans id="controls.select.measure">Select a measure</Trans>,
   segment: <Trans id="controls.select.dimension">Select a dimension</Trans>,
+};
+export const getPalette = (
+  palette: string | undefined
+): ReadonlyArray<string> => {
+  switch (palette) {
+    case "accent":
+      return schemeAccent;
+    case "category10":
+      return schemeCategory10;
+    case "dark2":
+      return schemeDark2;
+    case "paired":
+      return schemePaired;
+    case "pastel1":
+      return schemePastel1;
+    case "pastel2":
+      return schemePastel2;
+    case "set1":
+      return schemeSet1;
+    case "set2":
+      return schemeSet2;
+    case "set3":
+      return schemeSet3;
+    case "tableau10":
+      return schemeTableau10;
+
+    default:
+      return schemeCategory10;
+  }
+};
+export const getColorInterpolator = (
+  palette: string | undefined
+): ((t: number) => string) => {
+  switch (palette) {
+    case "blues":
+      return interpolateBlues;
+    case "greens":
+      return interpolateGreens;
+    case "greys":
+      return interpolateGreys;
+    case "oranges":
+      return interpolateOranges;
+    case "purples":
+      return interpolatePurples;
+    case "reds":
+      return interpolateReds;
+    case "turbo":
+      return interpolateTurbo;
+    case "viridis":
+      return interpolateViridis;
+    case "inferno":
+      return interpolateInferno;
+    case "magma":
+      return interpolateMagma;
+    case "plasma":
+      return interpolatePlasma;
+    case "cividis":
+      return interpolateCividis;
+    case "warm":
+      return interpolateWarm;
+    case "cool":
+      return interpolateCool;
+
+    default:
+      return interpolateBlues;
+  }
+};
+
+export const mapColorsToComponentValuesIris = ({
+  palette,
+  component,
+}: {
+  palette: string;
+  component: DimensionFieldsWithValuesFragment;
+}) => {
+  const colorScale = scaleOrdinal()
+    .domain(component.values.map((dv) => dv.value))
+    .range(getPalette(palette));
+  const colorMapping = {} as { [x: string]: string };
+
+  component.values.forEach((dv) => {
+    colorMapping[`${dv.value}` as string] = colorScale(dv.value) as string;
+  });
+  return colorMapping;
 };

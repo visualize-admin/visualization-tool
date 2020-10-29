@@ -238,43 +238,6 @@ export const theme: Theme = {
         margin: 0,
         minWidth: 0,
       },
-
-      // FIXME: remove these global table styles, just here for helping testing
-      table: {
-        borderSpacing: 0,
-        border: "1px solid black",
-
-        tr: {
-          " :last-child": {
-            td: {
-              borderBottom: 0,
-            },
-          },
-        },
-
-        th: {
-          m: 0,
-          p: 2,
-          borderBottom: "1px solid black",
-          borderRight: 0,
-          // borderRight: "1px solid black",
-
-          ":last-child": {
-            borderRight: 0,
-          },
-        },
-        td: {
-          m: 0,
-          p: 2,
-          borderBottom: "1px solid black",
-          borderRight: 0,
-          // borderRight: "1px solid black",
-
-          ":last-child": {
-            borderRight: 0,
-          },
-        },
-      },
     },
   },
   buttons: {

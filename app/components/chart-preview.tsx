@@ -10,6 +10,7 @@ import { ChartLinesVisualization } from "../charts/line/chart-lines";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
+import { ChartTableVisualization } from "../charts/table/chart-table";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -103,6 +104,12 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             )}
             {state.chartConfig.chartType === "pie" && (
               <ChartPieVisualization
+                dataSetIri={dataSetIri}
+                chartConfig={state.chartConfig}
+              />
+            )}
+            {state.chartConfig.chartType === "table" && (
+              <ChartTableVisualization
                 dataSetIri={dataSetIri}
                 chartConfig={state.chartConfig}
               />
