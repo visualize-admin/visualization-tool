@@ -5,6 +5,7 @@ import { ComponentFieldsFragment } from "../../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../../graphql/types";
 import { Icon } from "../../../icons";
 import { useActiveFieldField } from "../../config-form";
+import { getFieldLabel } from "../ui-helpers";
 import { DraggableTab } from "./control-tab";
 import { ControlSection, ControlSectionContent, SectionTitle } from "./section";
 
@@ -75,7 +76,10 @@ export const TabDropZone = ({ id, items, title, metaData }: Props) => {
                                 components.find((d) => d.iri === item.id)!
                               }
                               value={`${i}`}
-                              labelId={`table.column`}
+                              upperLabel={`${getFieldLabel(`table.column`)} ${
+                                i + 1
+                              }`}
+                              isDragging={isDragging}
                             />
                             <Box
                               sx={{
@@ -115,13 +119,14 @@ export const TabDropZone = ({ id, items, title, metaData }: Props) => {
 const DraggableTabField = ({
   component,
   value,
-  disabled,
-  labelId,
+  isDragging,
+  upperLabel,
 }: {
   component: ComponentFieldsFragment;
   value: string;
   disabled?: boolean;
-  labelId: string;
+  isDragging: boolean;
+  upperLabel: string;
 }) => {
   const field = useActiveFieldField({
     value,
@@ -131,9 +136,10 @@ const DraggableTabField = ({
     <DraggableTab
       component={component}
       value={`${field.value}`}
-      labelId={labelId}
+      upperLabel={upperLabel}
       checked={field.checked}
       onClick={field.onClick}
+      isDragging={isDragging}
     ></DraggableTab>
   );
 };
