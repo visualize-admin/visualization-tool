@@ -34,10 +34,10 @@ export const RowUI = ({
         )}
       </tr>
       {/* Display rows within a group by recursively calling RowUI  */}
-      {row.subRows.length > 0 &&
+      {/* {row.subRows.length > 0 &&
         row.subRows.map((subRow) => {
           return <RowUI row={subRow} prepareRow={prepareRow} />;
-        })}
+        })} */}
     </>
   );
 };
