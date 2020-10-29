@@ -5,7 +5,7 @@ import { Data } from "../../pages/[locale]/_table-prototype";
 
 import { useFormatNumber } from "../../domain/helpers";
 import { Observation } from "../../domain/data";
-import { BarCell, TagCell, TextCell } from "./cell";
+import { BarCell, CellContent, TagCell, TextCell } from "./cell";
 import { useChartState } from "../shared/use-chart-state";
 import { ColumnStyle } from "../table-prototype/column-formatting";
 import { ColumnMeta, TableChartState } from "./table-state";
@@ -19,93 +19,13 @@ export const RowUI = ({
   prepareRow: (row: Row<Observation>) => void;
 }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
-  const formatNumber = useFormatNumber();
-  console.log("tableColumnsMeta in row", tableColumnsMeta);
+
   prepareRow(row);
 
   return (
     <tr {...row.getRowProps()}>
       {row.cells.map((cell, i) => {
-        const {
-          type,
-          textStyle,
-          textColor,
-          columnColor,
-          colorScale,
-          barColorPositive,
-          barColorNegative,
-          barColorBackground,
-          barShowBackground,
-          widthScale,
-        } = tableColumnsMeta[i];
-        return (
-          <>
-            {type === "text" ? (
-              <TextCell
-                value={
-                  typeof cell.value === "number"
-                    ? formatNumber(cell.value)
-                    : cell.value
-                }
-                styles={{
-                  color: textColor,
-                  bg: columnColor,
-                  textAlign: typeof cell.value === "number" ? "right" : "left",
-                  fontWeight: textStyle,
-                }}
-                {...cell.getCellProps()}
-              />
-            ) : type === "category" && colorScale ? (
-              <TagCell
-                value={cell.value}
-                styles={{ fontWeight: textStyle }}
-                tagColor={colorScale(cell.value)}
-                {...cell.getCellProps()}
-              />
-            ) : type === "heatmap" && colorScale ? (
-              <TextCell
-                value={formatNumber(cell.value)}
-                styles={{
-                  color: textColor,
-                  bg: colorScale(cell.value),
-                  textAlign: "right",
-                  fontWeight: textStyle,
-                }}
-                {...cell.getCellProps()}
-              />
-            ) : type === "bar" &&
-              barColorPositive &&
-              barColorNegative &&
-              barColorBackground &&
-              widthScale ? (
-              <BarCell
-                value={cell.value}
-                barColorPositive={barColorPositive}
-                barColorNegative={barColorNegative}
-                barColorBackground={
-                  barShowBackground ? barColorBackground : "monochrome100"
-                }
-                barWidth={widthScale(cell.value)} // FIXME: handle negative values
-                {...cell.getCellProps()}
-              />
-            ) : (
-              <TextCell
-                value={
-                  typeof cell.value === "number"
-                    ? formatNumber(cell.value)
-                    : cell.value
-                }
-                styles={{
-                  color: textColor,
-                  bg: columnColor,
-                  textAlign: typeof cell.value === "number" ? "right" : "left",
-                  fontWeight: textStyle,
-                }}
-                {...cell.getCellProps()}
-              />
-            )}
-          </>
-        );
+        return <CellContent cell={cell} columnMeta={tableColumnsMeta[i]} />;
       })}
     </tr>
   );

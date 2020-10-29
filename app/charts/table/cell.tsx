@@ -1,7 +1,104 @@
 import { Box } from "@theme-ui/components";
 import * as React from "react";
-import { CellPropGetter, TableCellProps } from "react-table";
+import { Cell, CellPropGetter, TableCellProps } from "react-table";
 import { SystemStyleObject } from "@styled-system/css";
+import { ColumnMeta } from "./table-state";
+import { Observation } from "../../domain/data";
+import { useFormatNumber } from "../../domain/helpers";
+
+export const CellContent = ({
+  cell,
+  columnMeta,
+}: {
+  cell: Cell<Observation>; //string | number;
+  columnMeta: ColumnMeta;
+}) => {
+  const formatNumber = useFormatNumber();
+  const {
+    type,
+    textStyle,
+    textColor,
+    columnColor,
+    colorScale,
+    barColorPositive,
+    barColorNegative,
+    barColorBackground,
+    barShowBackground,
+    widthScale,
+  } = columnMeta;
+
+  switch (type) {
+    case "text":
+      return (
+        <TextCell
+          value={
+            typeof cell.value === "number"
+              ? formatNumber(cell.value)
+              : cell.value
+          }
+          styles={{
+            color: textColor,
+            bg: columnColor,
+            textAlign: typeof cell.value === "number" ? "right" : "left",
+            fontWeight: textStyle,
+          }}
+          {...cell.getCellProps()}
+        />
+      );
+    case "category":
+      return (
+        <TagCell
+          value={cell.value}
+          styles={{ fontWeight: textStyle }}
+          tagColor={colorScale(cell.value)}
+          {...cell.getCellProps()}
+        />
+      );
+    case "heatmap":
+      return (
+        <TextCell
+          value={formatNumber(cell.value)}
+          styles={{
+            color: textColor,
+            bg: colorScale(cell.value),
+            textAlign: "right",
+            fontWeight: textStyle,
+          }}
+          {...cell.getCellProps()}
+        />
+      );
+    case "bar":
+      return (
+        <BarCell
+          value={cell.value}
+          barColorPositive={barColorPositive}
+          barColorNegative={barColorNegative}
+          barColorBackground={
+            barShowBackground ? barColorBackground : "monochrome100"
+          }
+          barWidth={widthScale(cell.value)} // FIXME: handle negative values
+          {...cell.getCellProps()}
+        />
+      );
+    default:
+      return (
+        <TextCell
+          value={
+            typeof cell.value === "number"
+              ? formatNumber(cell.value)
+              : cell.value
+          }
+          styles={{
+            color: textColor,
+            bg: columnColor,
+            textAlign: typeof cell.value === "number" ? "right" : "left",
+            fontWeight: textStyle,
+          }}
+          {...cell.getCellProps()}
+        />
+      );
+  }
+};
 
 export const TextCell = ({
   value,
@@ -9,10 +106,10 @@ export const TextCell = ({
   cellProps,
 }: {
   value: string | number;
-  styles: SystemStyleObject; // Pick<SystemStyleObject, "color" | "bg" | "textAlign" | "fontWeight">;
+  styles: SystemStyleObject;
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
 }) => (
-  <Box as="td" sx={{ ...styles }} {...cellProps}>
+  <Box as="td" sx={{ ...styles }}>
     {value}
   </Box>
 );
@@ -30,7 +127,7 @@ export const TagCell = ({
 }) => {
   const { fontWeight } = styles;
   return (
-    <Box as="td" sx={{ fontWeight }} {...cellProps}>
+    <Box as="td" sx={{ fontWeight }}>
       <Box
         as="span"
         sx={{
@@ -62,7 +159,7 @@ export const BarCell = ({
   barWidth: number; // as percentage
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
 }) => (
-  <Box as="td" sx={{ width: "100%" }} {...cellProps}>
+  <Box as="td" sx={{ width: "100%" }}>
     <Box>{value}</Box>
     <Box
       sx={{
