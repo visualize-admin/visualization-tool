@@ -124,7 +124,7 @@ export const TextCell = ({
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
   children: ReactNode;
 }) => (
-  <Box as="td" sx={{ ...styles }}>
+  <Box as="td" sx={{ ...styles }} {...cellProps}>
     {children}
   </Box>
 );
@@ -144,7 +144,7 @@ export const TagCell = ({
 }) => {
   const { fontWeight } = styles;
   return (
-    <Box as="td" sx={{ fontWeight }}>
+    <Box as="td" sx={{ fontWeight }} {...cellProps}>
       <Box
         as="span"
         sx={{
@@ -178,7 +178,7 @@ export const BarCell = ({
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
   children: ReactNode;
 }) => (
-  <Box as="td" sx={{ width: "100%" }}>
+  <Box as="td" sx={{ width: "100%" }} {...cellProps}>
     <Box>{children}</Box>
     <Box
       sx={{
