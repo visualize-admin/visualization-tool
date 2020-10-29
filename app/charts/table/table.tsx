@@ -15,6 +15,7 @@ import { useMemo } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
+import { TABLE_HEIGHT } from "./constants";
 import { TableHeader } from "./header";
 import { RowUI } from "./row";
 import { TableChartState } from "./table-state";
@@ -58,10 +59,10 @@ export const Table = () => {
     <Box
       sx={{
         width: "100%",
+        height: TABLE_HEIGHT,
         position: "relative",
-        overflowX: "auto",
+        overflow: "auto",
         bg: "monochrome100",
-        p: 4, // FIXME
       }}
     >
       <Box as="table" {...getTableProps()} sx={{ ...tableStyles }}>

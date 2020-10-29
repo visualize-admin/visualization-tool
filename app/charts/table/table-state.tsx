@@ -23,6 +23,7 @@ import {
 import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
+import { TABLE_HEIGHT } from "./constants";
 
 export type ColumnMeta =
   | (ColumnStyleHeatmap & { colorScale: ScaleSequential<string> })
@@ -57,7 +58,7 @@ const useTableState = ({
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
-  const chartHeight = 800;
+  const chartHeight = TABLE_HEIGHT;
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
