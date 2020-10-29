@@ -26,7 +26,6 @@ import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
-  DraggableTab,
   FilterTab,
 } from "./chart-controls/control-tab";
 

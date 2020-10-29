@@ -1,40 +1,34 @@
 import { Trans } from "@lingui/macro";
 import React, { useCallback } from "react";
-import { ChartConfig, ConfiguratorStateConfiguringChart } from "..";
-import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
-import { getFieldComponentIris } from "../../charts";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
-import { DataCubeMetadata } from "../../graphql/types";
-import { useLocale } from "../../locales/use-locale";
-import {
-  ControlSection,
-  ControlSectionContent,
-  SectionTitle,
-} from "./chart-controls/section";
-import { ControlTabField, FilterTabField } from "./field";
-import { Loading } from "../../components/hint";
-import { TabDropZone } from "./chart-controls/drag-and-drop-tab";
 import {
   DragDropContext,
   DraggableLocation,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
+import { ConfiguratorStateConfiguringChart } from "..";
+import { getFieldComponentIris } from "../../charts";
+import { Loading } from "../../components/hint";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
+import { GenericFields, TableFields } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
-import { string } from "io-ts";
-import { number } from "@lingui/core";
-import { GenericField, GenericFields } from "../config-types";
-
-type DropSection = "groups" | "columns";
+import { TabDropZone } from "./chart-controls/drag-and-drop-tab";
+import {
+  ControlSection,
+  ControlSectionContent,
+  SectionTitle,
+} from "./chart-controls/section";
+import { FilterTabField } from "./field";
 
 const reorderFields = ({
   fields,
   source,
   destination,
 }: {
-  fields: GenericFields;
+  fields: TableFields;
   source: DraggableLocation;
   destination: DraggableLocation;
-}): GenericFields => {
+}): TableFields => {
   const fieldsArray = Object.values(fields); // We assume this is ordered?
   let groupFields = [...fieldsArray.filter((f) => f.isGroup)];
   let columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
@@ -83,7 +77,7 @@ export const ChartConfiguratorTable = ({
       }
 
       const fields = reorderFields({
-        fields: state.chartConfig.fields,
+        fields: state.chartConfig.fields as TableFields,
         source,
         destination,
       });
@@ -91,7 +85,7 @@ export const ChartConfiguratorTable = ({
       dispatch({
         type: "CHART_FIELDS_CHANGED",
         value: {
-          fields,
+          fields: fields as GenericFields,
         },
       });
     },
@@ -103,6 +97,9 @@ export const ChartConfiguratorTable = ({
     const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
       (dim) => !mappedIris.has(dim.iri)
     );
+
+    const fields = state.chartConfig.fields as TableFields;
+
     return (
       <>
         <ControlSection>
@@ -122,22 +119,18 @@ export const ChartConfiguratorTable = ({
             id="groups"
             title={<Trans id="controls.section.groups">Groups</Trans>}
             metaData={data.dataCubeByIri}
-            items={Object.entries(state.chartConfig.fields).flatMap(
-              ([i, field]) => {
-                return field?.isGroup ? [{ id: field?.componentIri }] : [];
-              }
-            )}
+            items={Object.entries(fields).flatMap(([i, field]) => {
+              return field.isGroup ? [{ id: field.componentIri }] : [];
+            })}
           ></TabDropZone>
 
           <TabDropZone
             id="columns"
             title={<Trans id="controls.section.columns">Columns</Trans>}
             metaData={data.dataCubeByIri}
-            items={Object.entries(state.chartConfig.fields).flatMap(
-              ([i, field]) => {
-                return !field?.isGroup ? [{ id: field?.componentIri }] : [];
-              }
-            )}
+            items={Object.entries(fields).flatMap(([i, field]) => {
+              return !field.isGroup ? [{ id: field.componentIri }] : [];
+            })}
           ></TabDropZone>
         </DragDropContext>
 
@@ -164,39 +157,4 @@ export const ChartConfiguratorTable = ({
   } else {
     return <Loading />;
   }
-};
-
-const ChartFields = ({
-  chartConfig,
-  metaData,
-}: {
-  chartConfig: ChartConfig;
-  metaData: DataCubeMetadata;
-}) => {
-  const { dimensions, measures } = metaData;
-
-  const components = [...dimensions, ...measures];
-
-  const { chartType } = chartConfig;
-  return (
-    <>
-      {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
-        const encodingField = encoding.field;
-
-        return (
-          <ControlTabField
-            key={encoding.field}
-            component={components.find(
-              (d) =>
-                d.iri ===
-                chartConfig.fields[encodingField as "y" | "segment"]
-                  ?.componentIri
-            )}
-            value={encoding.field}
-            labelId={`${chartConfig.chartType}.${encoding.field}`}
-          />
-        );
-      })}
-    </>
-  );
 };

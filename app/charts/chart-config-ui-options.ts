@@ -210,22 +210,22 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
   },
 };
 
-const tableOptions = {
-  chartType: "table",
-  settings: [
-    { field: "showSearch", optional: false, type: "boolean", default: false },
-    { field: "showAllRows", optional: false, type: "boolean", default: false },
-  ],
-  encodings: [
-    {
-      type: "section",
-      title: "groups",
-      encodings: [],
-    },
-    {
-      type: "section",
-      title: "columns",
-      encodings: [],
-    },
-  ],
-};
+// const tableOptions = {
+//   chartType: "table",
+//   settings: [
+//     { field: "showSearch", optional: false, type: "boolean", default: false },
+//     { field: "showAllRows", optional: false, type: "boolean", default: false },
+//   ],
+//   encodings: [
+//     {
+//       type: "section",
+//       title: "groups",
+//       encodings: [],
+//     },
+//     {
+//       type: "section",
+//       title: "columns",
+//       encodings: [],
+//     },
+//   ],
+// };

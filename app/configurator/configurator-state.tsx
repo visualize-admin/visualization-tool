@@ -56,7 +56,7 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_FIELDS_CHANGED";
       value: {
-        fields: Record<string, GenericFields>;
+        fields: GenericFields;
         // dataSetMetadata: DataCubeMetadata;
       };
     }
@@ -478,10 +478,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_FIELDS_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
-        // setWith(draft,
-        //   `chartConfig.fields`,action.value.fields,Object)
+        setWith(draft, `chartConfig.fields`, action.value.fields, Object);
 
-        (draft.chartConfig.fields as GenericFields) = action.value.fields;
+        // (draft.chartConfig.fields as GenericFields) = action.value.fields;
       }
 
       return draft;
