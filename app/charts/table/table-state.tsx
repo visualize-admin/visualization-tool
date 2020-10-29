@@ -31,8 +31,9 @@ export interface TableChartState {
   chartType: "table";
   bounds: Bounds;
   data: Observation[];
-  tableColumns: Column<$FixMe>[];
+  tableColumns: Column<Observation>[];
   tableColumnsMeta: ColumnMeta[];
+  groupingHeaders: string[];
 }
 
 const useTableState = ({
@@ -64,6 +65,7 @@ const useTableState = ({
 
   const memoizedData = useMemo(() => data, [data]);
 
+  // Columns for the table instance
   const tableColumns = useMemo(
     () =>
       Object.keys(fields).map((colIndex) => {
@@ -81,6 +83,7 @@ const useTableState = ({
     [dimensions, fields, measures]
   );
 
+  // Column styles
   const tableColumnsMeta = useMemo(
     () =>
       Object.keys(fields).map((colIndex) => {
@@ -129,12 +132,30 @@ const useTableState = ({
     [data, fields]
   );
 
+  // Groupings
+  const groupingHeaders = useMemo(
+    () =>
+      Object.keys(fields).reduce((iris, colIndex) => {
+        if (fields[colIndex].isGroup) {
+          const iri = fields[colIndex].componentIri;
+          const Header =
+            [...dimensions, ...measures].find((dim) => dim.iri === iri)
+              ?.label || iri;
+          return [...iris, Header];
+        } else {
+          return iris;
+        }
+      }, [] as string[]),
+    [dimensions, fields, measures]
+  );
+
   return {
     chartType: "table",
     bounds,
     data: memoizedData,
     tableColumns,
     tableColumnsMeta,
+    groupingHeaders,
   };
 };
 
