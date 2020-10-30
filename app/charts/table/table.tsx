@@ -6,6 +6,7 @@ import { useExpanded, useGroupBy, useTable } from "react-table";
 import { Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
+import { TABLE_STYLES } from "./constants";
 import { TableHeader } from "./header";
 import { RowMobile, RowUI } from "./row";
 import { TableChartState } from "./table-state";
@@ -25,6 +26,7 @@ export const Table = () => {
   // console.log({ data });
   // console.log({ tableColumns });
   // console.log("in Table", { groupingHeaders });
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -81,7 +83,7 @@ export const Table = () => {
           bg: "monochrome100",
         }}
       >
-        <Box as="table" sx={tableStyles} {...getTableProps()}>
+        <Box as="table" sx={TABLE_STYLES} {...getTableProps()}>
           <TableHeader headerGroups={headerGroups} />
 
           <tbody {...getTableBodyProps()}>
@@ -112,40 +114,4 @@ export const Table = () => {
       </Box>
     </>
   );
-};
-
-const tableStyles = {
-  borderSpacing: 0,
-  border: "none",
-  tableLayout: "fixed",
-
-  fontSize: 3,
-  color: "monochrome700",
-  th: {
-    m: 0,
-    py: 2,
-    pr: 6,
-    pl: 3,
-    borderTop: "1px solid",
-    borderTopColor: "monochrome700",
-    borderBottom: "1px solid",
-    borderBottomColor: "monochrome700",
-    borderRight: 0,
-    borderLeft: 0,
-    fontWeight: "bold",
-
-    color: "monochrome700",
-    ":last-child": {
-      borderRight: 0,
-    },
-  },
-
-  td: {
-    m: 0,
-    py: 2,
-    pr: 6,
-    pl: 3,
-    borderBottom: "1px solid",
-    borderBottomColor: "monochrome400",
-  },
 };
