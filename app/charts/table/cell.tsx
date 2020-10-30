@@ -3,7 +3,7 @@ import * as React from "react";
 import { Cell, CellPropGetter, TableCellProps } from "react-table";
 import { SystemStyleObject } from "@styled-system/css";
 import { ColumnMeta } from "./table-state";
-import { Observation } from "../../domain/data";
+import { Observation, ObservationValue } from "../../domain/data";
 import { useFormatNumber } from "../../domain/helpers";
 import { ReactNode } from "react";
 
@@ -12,7 +12,7 @@ export const CellContent = ({
   columnMeta,
   children,
 }: {
-  cell: Cell<Observation>; //string | number;
+  cell: Cell<Observation>;
   columnMeta: ColumnMeta;
   children: ReactNode;
 }) => {
@@ -145,18 +145,7 @@ export const TagCell = ({
   const { fontWeight } = styles;
   return (
     <Box as="td" sx={{ fontWeight }} {...cellProps}>
-      <Box
-        as="span"
-        sx={{
-          bg: tagColor,
-          borderRadius: "15px",
-          px: 3,
-          py: 1,
-          my: 1,
-        }}
-      >
-        {children}
-      </Box>
+      <Tag tagColor={tagColor}>{value}</Tag>
     </Box>
   );
 };
@@ -199,5 +188,28 @@ export const BarCell = ({
         }}
       />
     </Box>
+  </Box>
+);
+
+export const Tag = ({
+  tagColor,
+  small = false,
+  children,
+}: {
+  tagColor: string;
+  small?: boolean;
+  children: ReactNode;
+}) => (
+  <Box
+    as="span"
+    sx={{
+      bg: tagColor,
+      borderRadius: "15px",
+      px: small ? 2 : 3,
+      py: small ? "0.125rem" : 1,
+      my: small ? 0 : 1,
+    }}
+  >
+    {children}
   </Box>
 );

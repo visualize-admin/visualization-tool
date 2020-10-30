@@ -4,13 +4,13 @@ import { useMemo } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
-import { TABLE_HEIGHT } from "./constants";
 import { TableHeader } from "./header";
-import { RowUI } from "./row";
+import { RowMobile, RowUI } from "./row";
 import { TableChartState } from "./table-state";
 
 export const Table = () => {
   const {
+    bounds,
     data,
     tableColumns,
     groupingHeaders,
@@ -45,32 +45,55 @@ export const Table = () => {
   );
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: TABLE_HEIGHT,
-        position: "relative",
-        overflow: "auto",
-        bg: "monochrome100",
-      }}
-    >
-      <Box as="table" {...getTableProps()} sx={{ ...tableStyles }}>
-        <TableHeader headerGroups={headerGroups} />
+    <>
+      {/* Desktop */}
+      <Box
+        sx={{
+          display: ["none", "block", "block"],
+          width: "100%",
+          height: bounds.chartHeight,
+          position: "relative",
+          overflow: "auto",
+          bg: "monochrome100",
+        }}
+      >
+        <Box as="table" sx={tableStyles} {...getTableProps()}>
+          <TableHeader headerGroups={headerGroups} />
 
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            return <RowUI row={row} prepareRow={prepareRow} />;
-          })}
-        </tbody>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row) => {
+              return <RowUI row={row} prepareRow={prepareRow} />;
+            })}
+          </tbody>
+        </Box>
       </Box>
-    </Box>
+
+      {/* Mobile */}
+      <Box
+        sx={{
+          display: ["block", "none", "none"],
+          width: "100%",
+          height: bounds.chartHeight,
+          position: "relative",
+          overflow: "auto",
+          bg: "monochrome100",
+        }}
+      >
+        {rows.map((row) => (
+          <RowMobile row={row} prepareRow={prepareRow} />
+        ))}
+      </Box>
+    </>
   );
 };
 
 const tableStyles = {
   borderSpacing: 0,
   border: "none",
+  tableLayout: "fixed",
 
+  fontSize: 3,
+  color: "monochrome700",
   th: {
     m: 0,
     py: 2,
@@ -88,12 +111,6 @@ const tableStyles = {
     ":last-child": {
       borderRight: 0,
     },
-  },
-
-  tr: {
-    color: "monochrome700",
-    borderBottom: "1px solid",
-    borderBottomColor: "monochrome400",
   },
 
   td: {

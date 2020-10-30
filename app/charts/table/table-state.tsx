@@ -20,7 +20,7 @@ import {
 import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { TABLE_HEIGHT } from "./constants";
+import { ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
 
 export interface ColumnMeta {
   colorScale?: ScaleSequential<string>;
@@ -66,7 +66,7 @@ const useTableState = ({
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
-  const chartHeight = TABLE_HEIGHT;
+  const chartHeight = Math.min(TABLE_HEIGHT, data.length * ROW_HEIGHT);
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
