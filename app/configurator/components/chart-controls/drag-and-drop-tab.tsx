@@ -12,7 +12,7 @@ import { ControlSection, ControlSectionContent, SectionTitle } from "./section";
 type Props = {
   id: string;
   title: ReactNode;
-  items: { id: string }[];
+  items: { iri: string }[];
   metaData: DataCubeMetadata;
 };
 export const TabDropZone = ({ id, items, title, metaData }: Props) => {
@@ -53,7 +53,7 @@ export const TabDropZone = ({ id, items, title, metaData }: Props) => {
                 </Box> */}
                 {items.map((item, i) => {
                   return (
-                    <Draggable key={item.id} draggableId={item.id} index={i}>
+                    <Draggable key={item.iri} draggableId={item.iri} index={i}>
                       {(
                         { innerRef, draggableProps, dragHandleProps },
                         { isDragging }
@@ -71,11 +71,11 @@ export const TabDropZone = ({ id, items, title, metaData }: Props) => {
                             }}
                           >
                             <DraggableTabField
-                              key={item.id}
+                              key={item.iri}
                               component={
-                                components.find((d) => d.iri === item.id)!
+                                components.find((d) => d.iri === item.iri)!
                               }
-                              value={`${i}`}
+                              value={`${item.iri}`}
                               upperLabel={`${getFieldLabel(`table.column`)} ${
                                 i + 1
                               }`}
