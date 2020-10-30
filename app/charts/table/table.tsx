@@ -1,21 +1,25 @@
+import FlexSearch from "flexsearch";
 import { Trans } from "@lingui/macro";
 import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { useMemo, useState } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
-import { Switch } from "../../components/form";
+import { Input, Label, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { TABLE_STYLES } from "./constants";
 import { TableHeader } from "./header";
 import { RowMobile, RowUI } from "./row";
 import { TableChartState } from "./table-state";
+import slugify from "slugify";
 
 export const Table = () => {
   const {
     bounds,
     data,
+    showSearch,
     tableColumns,
+    tableColumnsMeta,
     groupingHeaders,
   } = useChartState() as TableChartState;
 
@@ -23,8 +27,41 @@ export const Table = () => {
     false
   );
 
-  // console.log({ data });
-  // console.log({ tableColumns });
+  // Search & filter data
+  const [searchTerm, setSearchTerm] = useState("");
+  const searchIndex = useMemo(() => {
+    const searchFields = tableColumnsMeta.map((c) =>
+      slugify(c.iri, { remove: /[.:]/g })
+    );
+    console.log("index being created");
+    console.log(searchFields);
+    const index = FlexSearch.create({
+      tokenize: "full",
+      doc: {
+        id: searchFields[0],
+        field: searchFields,
+      },
+    });
+
+    index.add(data);
+
+    return index;
+  }, [tableColumnsMeta, data]);
+
+  const filteredData = useMemo(() => {
+    const searchResult =
+      searchTerm !== ""
+        ? searchIndex.search({
+            query: `${searchTerm}`,
+            // suggest: true
+          })
+        : data;
+    return searchResult as Observation[];
+  }, [data, searchTerm, searchIndex]);
+
+  console.log({ data });
+  console.log({ tableColumns });
+  console.log({ filteredData });
   // console.log("in Table", { groupingHeaders });
 
   const {
@@ -36,7 +73,7 @@ export const Table = () => {
   } = useTable<Observation>(
     {
       columns: tableColumns,
-      data,
+      data: filteredData,
       useControlledState: (state) => {
         return useMemo(
           () => ({
@@ -54,6 +91,16 @@ export const Table = () => {
 
   return (
     <>
+      {showSearch && (
+        <Box sx={{ my: 5, width: "min(100%, 300px)" }}>
+          <Input
+            type="text"
+            name="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.currentTarget.value)}
+          />
+        </Box>
+      )}
       <Box sx={{ display: ["block", "none", "none"], my: 3 }}>
         <Switch
           label={

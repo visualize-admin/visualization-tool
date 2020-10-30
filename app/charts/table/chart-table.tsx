@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { TableConfig, TableFields } from "../../configurator";
+import { TableConfig, TableFields, TableSettings } from "../../configurator";
 
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../domain/helpers";
@@ -79,6 +79,7 @@ export const ChartTableVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          settings={chartConfig.settings}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -98,11 +99,13 @@ export const ChartTable = memo(
     dimensions,
     measures,
     fields,
+    settings,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: TableFields;
+    settings: TableSettings;
   }) => {
     return (
       <TableChart
@@ -110,6 +113,7 @@ export const ChartTable = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        settings={settings}
       >
         <ChartContainer>
           <Table></Table>

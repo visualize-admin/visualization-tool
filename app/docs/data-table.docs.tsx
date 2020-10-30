@@ -20,9 +20,10 @@ ${(
   <ReactSpecimen span={6}>
     <TableChart
       data={tableObservations}
-      fields={tableConfig.fields}
       dimensions={tableDimensions as ComponentFieldsFragment[]}
       measures={tableMeasures as ComponentFieldsFragment[]}
+      fields={tableConfig.fields}
+      settings={tableConfig.settings}
     >
       <ChartContainer>
         <Table></Table>

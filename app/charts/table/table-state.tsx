@@ -12,6 +12,7 @@ import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
   TableFields,
+  TableSettings,
 } from "../../configurator";
 import {
   getColorInterpolator,
@@ -23,6 +24,7 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
 
 export interface ColumnMeta {
+  iri: string;
   colorScale?: ScaleSequential<string>;
   widthScale?: ScaleLinear<number, number>;
   type: string;
@@ -42,6 +44,7 @@ export interface ColumnMeta {
 export interface TableChartState {
   chartType: "table";
   bounds: Bounds;
+  showSearch: boolean;
   data: Observation[];
   tableColumns: Column<Observation>[];
   tableColumnsMeta: ColumnMeta[];
@@ -53,11 +56,14 @@ const useTableState = ({
   dimensions,
   measures,
   fields,
+  settings,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: TableFields;
+  settings: TableSettings;
 }): TableChartState => {
   const width = useWidth();
 
+  const showSearch = fields.settin;
   // Dimensions
   const margins = {
     top: 10,
@@ -103,7 +109,7 @@ const useTableState = ({
         const columnStyleType = fields[colIndex].columnStyle.type;
 
         if (columnStyleType === "text") {
-          return fields[colIndex].columnStyle;
+          return { iri, ...fields[colIndex].columnStyle };
         } else if (columnStyleType === "category") {
           const colorScale = scaleOrdinal()
             .domain([...new Set(data.map((d) => `${d[iri]}`))])
@@ -114,6 +120,7 @@ const useTableState = ({
             );
           return {
             colorScale,
+            iri,
             ...fields[colIndex].columnStyle,
           };
         } else if (columnStyleType === "heatmap") {
@@ -126,6 +133,7 @@ const useTableState = ({
           );
           return {
             colorScale,
+            iri,
             ...fields[colIndex].columnStyle,
           };
         } else if (columnStyleType === "bar") {
@@ -134,10 +142,11 @@ const useTableState = ({
             .range([0, 100]);
           return {
             widthScale,
+            iri,
             ...fields[colIndex].columnStyle,
           };
         } else {
-          return fields[colIndex].columnStyle;
+          return { iri, ...fields[colIndex].columnStyle };
         }
       }),
 
@@ -164,6 +173,7 @@ const useTableState = ({
   return {
     chartType: "table",
     bounds,
+    showSearch: settings.showSearch,
     data: memoizedData,
     tableColumns,
     tableColumnsMeta,
@@ -180,15 +190,18 @@ const TableChartProvider = ({
   dimensions,
   measures,
   children,
+  settings,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
   fields: TableFields;
+  settings: TableSettings;
 }) => {
   const state = useTableState({
     data,
     dimensions,
     measures,
     fields,
+    settings,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -201,9 +214,11 @@ export const TableChart = ({
   dimensions,
   measures,
   children,
+  settings,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
   fields: TableFields;
+  settings: TableSettings;
 }) => {
   return (
     <Observer>
@@ -212,6 +227,7 @@ export const TableChart = ({
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        settings={settings}
       >
         {children}
       </TableChartProvider>

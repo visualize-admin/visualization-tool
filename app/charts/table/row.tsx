@@ -55,7 +55,7 @@ export const RowMobile = ({
   const { tableColumnsMeta } = useChartState() as TableChartState;
 
   prepareRow(row);
-  console.log("row mobile", row);
+
   const headingLevel = row.depth === 0 ? "h2" : row.depth === 1 ? "h3" : "p";
   return (
     <Box>
@@ -86,7 +86,6 @@ export const RowMobile = ({
               </Box>
               <Box as="dd" sx={{ flex: "1 1 100%", ml: 1 }}>
                 <DDContent cell={cell} columnMeta={tableColumnsMeta[i]}>
-                  {" "}
                   {cell.render("Cell")}
                 </DDContent>
               </Box>
