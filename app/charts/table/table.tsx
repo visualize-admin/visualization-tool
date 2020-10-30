@@ -85,7 +85,6 @@ const tableStyles = {
     fontWeight: "bold",
 
     color: "monochrome700",
-
     ":last-child": {
       borderRight: 0,
     },

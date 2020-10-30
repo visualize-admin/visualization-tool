@@ -21,6 +21,10 @@ import {
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Locales } from "../../locales/locales";
+import {
+  useChartOptionBooleanField,
+  useChartOptionSelectField,
+} from "../config-form";
 import { SegmentField } from "../config-types";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
@@ -335,5 +339,70 @@ export const ChartOptionRadioField = ({
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
     ></Radio>
+  );
+};
+
+export const ChartOptionCheckboxField = ({
+  label,
+  field,
+  path,
+  defaultChecked,
+  disabled = false,
+}: {
+  label: string | ReactNode;
+  field: string;
+  path: string;
+  defaultChecked?: boolean;
+  disabled?: boolean;
+}) => {
+  const fieldProps = useChartOptionBooleanField({
+    field,
+    path,
+  });
+
+  return (
+    <Checkbox
+      disabled={disabled}
+      label={label}
+      {...fieldProps}
+      checked={fieldProps.checked ?? defaultChecked}
+    ></Checkbox>
+  );
+};
+
+export const ChartOptionSelectField = <ValueType extends {} = string>({
+  id,
+  label,
+  field,
+  path,
+  disabled = false,
+  options,
+  getValue,
+  getKey,
+}: {
+  id: string;
+  label: string | ReactNode;
+  field: string;
+  path: string;
+  disabled?: boolean;
+  options: Option[];
+  getValue: (x: string) => ValueType | undefined;
+  getKey: (x: ValueType) => string;
+}) => {
+  const fieldProps = useChartOptionSelectField({
+    field,
+    path,
+    getValue,
+    getKey,
+  });
+
+  return (
+    <Select
+      id={id}
+      disabled={disabled}
+      label={label}
+      options={options}
+      {...fieldProps}
+    ></Select>
   );
 };

@@ -73,12 +73,16 @@ export const useChartFieldField = ({
   };
 };
 
-export const useChartOptionSelectField = ({
+export const useChartOptionSelectField = <ValueType extends {} = string>({
   field,
   path,
+  getValue,
+  getKey,
 }: {
   field: string;
   path: string;
+  getValue?: (key: string) => ValueType | undefined;
+  getKey?: (value: ValueType) => string;
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -89,20 +93,22 @@ export const useChartOptionSelectField = ({
         value: {
           field,
           path,
-          value: e.currentTarget.value,
+          value: getValue
+            ? getValue(e.currentTarget.value)
+            : e.currentTarget.value,
         },
       });
     },
-    [dispatch, field, path]
+    [dispatch, field, path, getValue]
   );
 
-  let value: string | undefined;
+  let value: ValueType | undefined;
   if (state.state === "CONFIGURING_CHART") {
     value = get(state, `chartConfig.fields.${field}.${path}`);
   }
   return {
     name: path,
-    value,
+    value: getKey ? getKey(value!) : ((value as unknown) as string),
     // checked,
     onChange,
   };
@@ -141,6 +147,41 @@ export const useChartOptionRadioField = ({
   return {
     name: path,
     value,
+    checked,
+    onChange,
+  };
+};
+
+export const useChartOptionBooleanField = ({
+  path,
+  field,
+}: {
+  path: string;
+  field: string;
+}): FieldProps => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          path,
+          field,
+          value: e.currentTarget.checked,
+        },
+      });
+    },
+    [dispatch, path, field]
+  );
+  const stateValue =
+    state.state === "CONFIGURING_CHART"
+      ? get(state, `chartConfig.fields.${field}.${path}`, "")
+      : "";
+  const checked = stateValue ? stateValue : false;
+
+  return {
+    name: path,
     checked,
     onChange,
   };
