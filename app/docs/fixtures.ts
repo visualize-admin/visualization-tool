@@ -775,18 +775,6 @@ export const tableConfig: TableConfig = {
     },
     "1": {
       componentIri:
-        "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
-      isGroup: false,
-      isHidden: false,
-      columnStyle: {
-        type: "text",
-        textStyle: "regular",
-        textColor: "hotpink",
-        columnColor: "#fff",
-      },
-    },
-    "2": {
-      componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       isGroup: true,
       isHidden: false,
@@ -797,16 +785,28 @@ export const tableConfig: TableConfig = {
         colorMapping: {},
       },
     },
+    "2": {
+      componentIri:
+        "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
+      isGroup: true,
+      isHidden: false,
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "hotpink",
+        columnColor: "#fff",
+      },
+    },
     "3": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
-      isGroup: false,
+      isGroup: true,
       isHidden: false,
       columnStyle: {
         type: "text",
         textStyle: "regular",
         textColor: "monochrome700",
-        columnColor: "aliceblue",
+        columnColor: "pink",
       },
     },
     "4": {

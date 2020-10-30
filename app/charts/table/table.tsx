@@ -1,7 +1,9 @@
+import { Trans } from "@lingui/macro";
 import { Box } from "@theme-ui/components";
 import * as React from "react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
+import { Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { TableHeader } from "./header";
@@ -15,6 +17,10 @@ export const Table = () => {
     tableColumns,
     groupingHeaders,
   } = useChartState() as TableChartState;
+
+  const [useAlternativeMobileView, toggleAlternativeMobileView] = useState(
+    false
+  );
 
   // console.log({ data });
   // console.log({ tableColumns });
@@ -46,10 +52,28 @@ export const Table = () => {
 
   return (
     <>
+      <Box sx={{ display: ["block", "none", "none"], my: 3 }}>
+        <Switch
+          label={
+            <Trans id="chart.published.toggle.mobile.view">
+              Toggle alternative mobile view
+            </Trans>
+          }
+          name={"Toggle alternative mobile view"}
+          checked={useAlternativeMobileView}
+          disabled={false}
+          onChange={() =>
+            toggleAlternativeMobileView(!useAlternativeMobileView)
+          }
+        />
+      </Box>
+
       {/* Desktop */}
       <Box
         sx={{
-          display: ["none", "block", "block"],
+          display: useAlternativeMobileView
+            ? ["none", "block", "block"]
+            : "block",
           width: "100%",
           height: bounds.chartHeight,
           position: "relative",
@@ -68,10 +92,13 @@ export const Table = () => {
         </Box>
       </Box>
 
-      {/* Mobile */}
+      {/* Alternative Mobile View */}
+
       <Box
         sx={{
-          display: ["block", "none", "none"],
+          display: useAlternativeMobileView
+            ? ["block", "none", "none"]
+            : "none",
           width: "100%",
           height: bounds.chartHeight,
           position: "relative",
