@@ -123,18 +123,7 @@ const DDContent = ({
   columnMeta: ColumnMeta;
   children: ReactNode;
 }) => {
-  const {
-    type,
-    textStyle,
-    textColor,
-    columnColor,
-    colorScale,
-    barColorPositive,
-    barColorNegative,
-    barColorBackground,
-    barShowBackground,
-    widthScale,
-  } = columnMeta;
+  const { type, textStyle, textColor, colorScale } = columnMeta;
 
   switch (type) {
     case "text":
@@ -144,8 +133,6 @@ const DDContent = ({
           sx={{
             width: "100%",
             color: textColor,
-            bg: columnColor,
-            textAlign: typeof cell.value === "number" ? "right" : "left",
             fontWeight: textStyle,
           }}
         >
@@ -167,8 +154,6 @@ const DDContent = ({
           as="span"
           sx={{
             color: textColor,
-            bg: columnColor,
-            textAlign: typeof cell.value === "number" ? "right" : "left",
             fontWeight: textStyle,
           }}
         >
