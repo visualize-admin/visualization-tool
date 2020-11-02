@@ -8,6 +8,7 @@ import {
 } from "d3-scale";
 import { ReactNode, useMemo } from "react";
 import { Column } from "react-table";
+import slugify from "slugify";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
@@ -81,7 +82,16 @@ const useTableState = ({
     chartHeight,
   };
 
-  const memoizedData = useMemo(() => data, [data]);
+  const memoizedData = useMemo(
+    () =>
+      data.map((d, i) =>
+        Object.keys(d).reduce(
+          (obj, k) => ({ ...obj, [slugify(k, { remove: /[.:]/g })]: d[k] }),
+          { id: i }
+        )
+      ),
+    [data]
+  );
 
   // Columns for the table instance
   const tableColumns = useMemo(
@@ -94,7 +104,7 @@ const useTableState = ({
             [...dimensions, ...measures].find((dim) => dim.iri === iri)
               ?.label || iri,
           // We need a function here to avoid URI's "." to be parsed as JS property accessor.
-          accessor: (r: Observation) => r[iri],
+          accessor: (r: Observation) => r[slugify(iri, { remove: /[.:]/g })],
         };
       }),
 
@@ -105,7 +115,7 @@ const useTableState = ({
   const tableColumnsMeta = useMemo(
     () =>
       Object.keys(fields).map((colIndex) => {
-        const iri = fields[colIndex].componentIri;
+        const iri = slugify(fields[colIndex].componentIri, { remove: /[.:]/g });
         const columnStyleType = fields[colIndex].columnStyle.type;
 
         if (columnStyleType === "text") {

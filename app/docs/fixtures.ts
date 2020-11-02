@@ -776,7 +776,7 @@ export const tableConfig: TableConfig = {
     "1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
-      isGroup: true,
+      isGroup: false,
       isHidden: false,
       columnStyle: {
         type: "category",
@@ -788,7 +788,7 @@ export const tableConfig: TableConfig = {
     "2": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
-      isGroup: true,
+      isGroup: false,
       isHidden: false,
       columnStyle: {
         type: "text",

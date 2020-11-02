@@ -4,14 +4,13 @@ import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { useMemo, useState } from "react";
 import { useExpanded, useGroupBy, useTable } from "react-table";
-import { Input, Label, Switch } from "../../components/form";
+import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { TABLE_STYLES } from "./constants";
 import { TableHeader } from "./header";
 import { RowMobile, RowUI } from "./row";
 import { TableChartState } from "./table-state";
-import slugify from "slugify";
 
 export const Table = () => {
   const {
@@ -30,15 +29,12 @@ export const Table = () => {
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
   const searchIndex = useMemo(() => {
-    const searchFields = tableColumnsMeta.map((c) =>
-      slugify(c.iri, { remove: /[.:]/g })
-    );
-    console.log("index being created");
-    console.log(searchFields);
+    const searchFields = tableColumnsMeta.map((c) => c.iri);
+
     const index = FlexSearch.create({
       tokenize: "full",
       doc: {
-        id: searchFields[0],
+        id: "id",
         field: searchFields,
       },
     });
@@ -80,7 +76,7 @@ export const Table = () => {
             ...state,
             groupBy: groupingHeaders,
           }),
-          [state, groupingHeaders]
+          [state, tableColumns, groupingHeaders, filteredData]
         );
       },
     },
