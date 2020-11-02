@@ -494,11 +494,7 @@ const TableColumnOptions = ({
     (d) => d.iri === activeField
   );
 
-  const activeFieldKey = Object.entries(
-    state.chartConfig.fields as TableFields
-  ).find(([key, field]) => field.componentIri === activeField)?.[0];
-
-  if (!component || !activeFieldKey) {
+  if (!component) {
     return <div>`No component ${activeField}`</div>;
   }
 
@@ -532,7 +528,7 @@ const TableColumnOptions = ({
         <ControlSectionContent side="right">
           <ChartOptionCheckboxField
             label="isGroup"
-            field={activeFieldKey}
+            field={activeField}
             path="isGroup"
           />
         </ControlSectionContent>
@@ -553,8 +549,8 @@ const TableColumnOptions = ({
                   return {
                     type: "text",
                     textStyle: "regular",
-                    textColor: "#000",
-                    columnColor: "#fff",
+                    textColor: "text",
+                    columnColor: "transparent",
                   };
                 case "category":
                   return {
@@ -583,7 +579,7 @@ const TableColumnOptions = ({
               }
             }}
             getKey={(d) => d.type}
-            field={activeFieldKey}
+            field={activeField}
             path="columnStyle"
           />
         </ControlSectionContent>
