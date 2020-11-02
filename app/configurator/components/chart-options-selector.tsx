@@ -27,7 +27,7 @@ import {
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import { ColumnStyle, TableFields } from "../config-types";
+import { ColumnStyle } from "../config-types";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
   ControlSection,
@@ -526,11 +526,21 @@ const TableColumnOptions = ({
           {getFieldLabel("table.column")}
         </SectionTitle>
         <ControlSectionContent side="right">
-          <ChartOptionCheckboxField
-            label="isGroup"
-            field={activeField}
-            path="isGroup"
-          />
+          {component.__typename !== "Measure" && (
+            <ChartOptionCheckboxField
+              label="isGroup"
+              field={activeField}
+              path="isGroup"
+            />
+          )}
+
+          {component.__typename === "Measure" && (
+            <ChartOptionCheckboxField
+              label="isHidden"
+              field={activeField}
+              path="isHidden"
+            />
+          )}
         </ControlSectionContent>
       </ControlSection>
 
