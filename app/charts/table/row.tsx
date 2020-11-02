@@ -63,6 +63,7 @@ export const RowMobile = ({
         row.cells.map((cell, i) => {
           return (
             <Flex
+              key={i}
               as="dl"
               sx={{
                 color: "monochrome800",
@@ -104,8 +105,8 @@ export const RowMobile = ({
           </Text>
           {/* Display rows within a group by recursively calling RowMobile  */}
           {row.subRows.length > 0 &&
-            row.subRows.map((subRow) => {
-              return <RowMobile row={subRow} prepareRow={prepareRow} />;
+            row.subRows.map((subRow, i) => {
+              return <RowMobile key={i} row={subRow} prepareRow={prepareRow} />;
             })}
         </>
       )}

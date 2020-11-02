@@ -134,8 +134,8 @@ export const Table = () => {
           <TableHeader headerGroups={headerGroups} />
 
           <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              return <RowUI row={row} prepareRow={prepareRow} />;
+            {rows.map((row, i) => {
+              return <RowUI key={i} row={row} prepareRow={prepareRow} />;
             })}
           </tbody>
         </Box>
@@ -155,8 +155,8 @@ export const Table = () => {
           bg: "monochrome100",
         }}
       >
-        {rows.map((row) => (
-          <RowMobile row={row} prepareRow={prepareRow} />
+        {rows.map((row, i) => (
+          <RowMobile key={i} row={row} prepareRow={prepareRow} />
         ))}
       </Box>
     </>
