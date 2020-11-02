@@ -496,7 +496,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         setWith(
           draft,
-          `chartConfig.fields.${action.value.field}.${action.value.path}`,
+          `chartConfig.fields["${action.value.field}"].${action.value.path}`,
           action.value.value,
           Object
         );
@@ -518,13 +518,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         setWith(
           draft,
-          `chartConfig.fields.${action.value.field}.palette`,
+          `chartConfig.fields["${action.value.field}"].palette`,
           action.value.value,
           Object
         );
         setWith(
           draft,
-          `chartConfig.fields.${action.value.field}.colorMapping`,
+          `chartConfig.fields["${action.value.field}"].colorMapping`,
           action.value.colorMapping,
           Object
         );
@@ -534,7 +534,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         setWith(
           draft,
-          `chartConfig.fields.${action.value.field}.${action.value.path}`,
+          `chartConfig.fields["${action.value.field}"].${action.value.path}`,
           action.value.colorMapping,
           Object
         );
