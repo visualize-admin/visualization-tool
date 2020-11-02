@@ -9,24 +9,8 @@ export const TABLE_STYLES: SystemStyleObject = {
 
   fontSize: 3,
   color: "monochrome700",
-  th: {
-    m: 0,
-    py: 2,
-    pr: 6,
-    pl: 3,
-    borderTop: "1px solid",
-    borderTopColor: "monochrome700",
-    borderBottom: "1px solid",
-    borderBottomColor: "monochrome700",
-    borderRight: 0,
-    borderLeft: 0,
-    fontWeight: "bold",
 
-    color: "monochrome700",
-    ":last-child": {
-      borderRight: 0,
-    },
-  },
+  th: {},
 
   td: {
     m: 0,

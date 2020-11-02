@@ -10,9 +10,44 @@ import { TableChartState } from "./table-state";
 
 export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
+
   return (
     <>
       {row.cells.map((cell, i) => {
+        return (
+          <React.Fragment key={i}>
+            {cell.isGrouped && (
+              <th
+                colSpan={row.cells.length}
+                {...row.getToggleRowExpandedProps()}
+                // {...cell.getCellProps()}
+              >
+                <Flex
+                  sx={{
+                    alignItems: "center",
+                    // marginLeft: `${row.depth * 12}px`,
+                    borderBottom: "1px solid",
+                    borderBottomColor: "monochrome400",
+                    m: `0 0 0 ${row.depth * 24}px`,
+                    py: 2,
+                    pr: 6,
+                    pl: 3,
+                  }}
+                >
+                  <Box
+                    as="span"
+                    sx={{ width: 24, mr: 0, color: "monochrome600" }}
+                  >
+                    <Icon name={row.isExpanded ? "chevrondown" : "chevronup"} />
+                  </Box>
+                  {cell.render("Cell")}
+                </Flex>
+              </th>
+            )}
+          </React.Fragment>
+        );
+      })}
+      {/* {row.cells.map((cell, i) => {
         const {
           type,
           textStyle,
@@ -51,7 +86,7 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
             )}
           </>
         );
-      })}
+      })} */}
     </>
   );
 };

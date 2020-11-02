@@ -800,7 +800,7 @@ export const tableConfig: TableConfig = {
     "3": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
-      isGroup: true,
+      isGroup: false,
       isHidden: false,
       columnStyle: {
         type: "text",
