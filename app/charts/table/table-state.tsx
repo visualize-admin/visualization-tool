@@ -26,6 +26,7 @@ import { ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
 
 export interface ColumnMeta {
   iri: string;
+  slugifiedIri: string;
   colorScale?: ScaleSequential<string>;
   widthScale?: ScaleLinear<number, number>;
   type: string;
@@ -48,7 +49,7 @@ export interface TableChartState {
   showSearch: boolean;
   data: Observation[];
   tableColumns: Column<Observation>[];
-  tableColumnsMeta: ColumnMeta[];
+  tableColumnsMeta: Record<string, ColumnMeta>;
   groupingHeaders: string[];
 }
 
@@ -63,8 +64,6 @@ const useTableState = ({
   settings: TableSettings;
 }): TableChartState => {
   const width = useWidth();
-
-  const showSearch = fields.settin;
   // Dimensions
   const margins = {
     top: 10,
@@ -104,6 +103,7 @@ const useTableState = ({
             [...dimensions, ...measures].find((dim) => dim.iri === iri)
               ?.label || iri,
           // We need a function here to avoid URI's "." to be parsed as JS property accessor.
+          // accessor: slugify(iri, { remove: /[.:]/g }),
           accessor: (r: Observation) => r[slugify(iri, { remove: /[.:]/g })],
         };
       }),
@@ -111,57 +111,55 @@ const useTableState = ({
     [dimensions, fields, measures]
   );
 
-  // Column styles
   const tableColumnsMeta = useMemo(
     () =>
-      Object.keys(fields).map((colIndex) => {
-        const iri = slugify(fields[colIndex].componentIri, { remove: /[.:]/g });
-        const columnStyleType = fields[colIndex].columnStyle.type;
-
+      Object.keys(fields).reduce((acc, iri, i) => {
+        const columnMeta = fields[iri];
+        const slugifiedIri = slugify(iri, {
+          remove: /[.:]/g,
+        });
+        const columnStyle = columnMeta.columnStyle;
+        const columnStyleType = columnStyle.type;
         if (columnStyleType === "text") {
-          return { iri, ...fields[colIndex].columnStyle };
+          return {
+            ...acc,
+            [iri]: { slugifiedIri, ...columnStyle },
+          };
         } else if (columnStyleType === "category") {
           const colorScale = scaleOrdinal()
             .domain([...new Set(data.map((d) => `${d[iri]}`))])
-            .range(
-              getPalette(
-                (fields[colIndex].columnStyle as ColumnStyleCategory).palette
-              )
-            );
+            .range(getPalette((columnStyle as ColumnStyleCategory).palette));
           return {
-            colorScale,
-            iri,
-            ...fields[colIndex].columnStyle,
+            ...acc,
+            [iri]: { slugifiedIri, colorScale, ...columnStyle },
           };
         } else if (columnStyleType === "heatmap") {
           const colorScale = scaleSequential(
-            getColorInterpolator(
-              (fields[colIndex].columnStyle as ColumnStyleHeatmap).palette
-            )
+            getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
           ).domain(
             (extent(data, (d) => +d[iri]) as [number, number]) || [0, 1]
           );
           return {
-            colorScale,
-            iri,
-            ...fields[colIndex].columnStyle,
+            ...acc,
+            [iri]: { slugifiedIri, colorScale, ...columnStyle },
           };
         } else if (columnStyleType === "bar") {
           const widthScale = scaleLinear()
             .domain(extent(data, (d) => +d[iri]) as [number, number])
             .range([0, 100]);
           return {
-            widthScale,
-            iri,
-            ...fields[colIndex].columnStyle,
+            ...acc,
+            [iri]: { slugifiedIri, widthScale, ...columnStyle },
           };
         } else {
-          return { iri, ...fields[colIndex].columnStyle };
+          return {
+            ...acc,
+            [iri]: { slugifiedIri, ...columnStyle },
+          };
         }
-      }),
-
+      }, {}),
     [data, fields]
-  ) as ColumnMeta[];
+  );
 
   // Groupings
   const groupingHeaders = useMemo(

@@ -29,7 +29,9 @@ export const Table = () => {
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
   const searchIndex = useMemo(() => {
-    const searchFields = tableColumnsMeta.map((c) => c.iri);
+    const searchFields = Object.values(tableColumnsMeta).map(
+      (m) => m.slugifiedIri
+    );
 
     const index = FlexSearch.create({
       tokenize: "full",
