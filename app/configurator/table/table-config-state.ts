@@ -15,32 +15,30 @@ export const moveFields = produce(
     }
   ): TableConfig => {
     const fieldsArray = getOrderedTableColumns(chartConfig.fields);
-    let groupFields = [...fieldsArray.filter((f) => f.isGroup)];
-    let columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
+    let groupFields = fieldsArray.filter((f) => f.isGroup);
+    let columnFields = fieldsArray.filter((f) => !f.isGroup);
 
     let sourceFields =
       source.droppableId === "columns" ? columnFields : groupFields;
     let destinationFields =
       destination.droppableId === "columns" ? columnFields : groupFields;
 
+    // Move from source to destination
     destinationFields.splice(
       destination.index,
       0,
       sourceFields.splice(source.index, 1)[0]
     );
 
-    const allFields = [
-      ...groupFields.map((f, i) => ({ ...f, isGroup: true, position: i })),
-      ...columnFields.map((f, i) => ({
-        ...f,
-        isGroup: false,
-        position: groupFields.length + i,
-      })),
-    ];
-
-    chartConfig.fields = Object.fromEntries(
-      allFields.map((f) => [f.componentIri, f])
-    );
+    // Update positions and isGroup status for each field after moving
+    groupFields.forEach((f, i) => {
+      f.position = i;
+      f.isGroup = true;
+    });
+    columnFields.forEach((f, i) => {
+      f.position = groupFields.length + i;
+      f.isGroup = false;
+    });
 
     return chartConfig;
   }
@@ -63,33 +61,30 @@ export const updateIsGroup = produce(
     if (!chartConfig.fields[field]) {
       return chartConfig;
     }
-    // We assume all groups come first in the array!
-    const fieldsArray = getOrderedTableColumns(chartConfig.fields);
-    let groupFields = [...fieldsArray.filter((f) => f.isGroup)];
-    let columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
 
-    if (value === true) {
-      // If value is true, move to the _bottom_ of the groups section
-      groupFields.push(chartConfig.fields[field]);
-      columnFields.splice(columnFields.indexOf(chartConfig.fields[field]), 1);
-    } else {
-      // If value is false, move to the _top_ of the columns section
-      groupFields.splice(columnFields.indexOf(chartConfig.fields[field]), 1);
-      columnFields.unshift(chartConfig.fields[field]);
-    }
+    // Update field
+    chartConfig.fields[field].isGroup = value;
+
+    // Get fields _without_ field that is updated
+    const fieldsArray = getOrderedTableColumns(chartConfig.fields);
+    const groupFields = fieldsArray.filter(
+      (f) => f.isGroup && f !== chartConfig.fields[field]
+    );
+    const columnFields = fieldsArray.filter(
+      (f) => !f.isGroup && f !== chartConfig.fields[field]
+    );
 
     const allFields = [
-      ...groupFields.map((f, i) => ({ ...f, isGroup: true, position: i })),
-      ...columnFields.map((f, i) => ({
-        ...f,
-        isGroup: false,
-        position: groupFields.length + i,
-      })),
+      ...groupFields,
+      // Always place between groups and columns (it will end up at the bottom of the groups or top of columns)
+      chartConfig.fields[field],
+      ...columnFields,
     ];
 
-    chartConfig.fields = Object.fromEntries(
-      allFields.map((f) => [f.componentIri, f])
-    );
+    // Update position for each field
+    allFields.forEach((f, i) => {
+      f.position = i;
+    });
 
     return chartConfig;
   }
