@@ -84,7 +84,7 @@ export const ChartConfiguratorTable = ({
 
     return (
       <>
-        <ControlSection>
+        {/* <ControlSection>
           <SectionTitle>
             <Trans id="controls.section.settings">Settings</Trans>
           </SectionTitle>
@@ -95,7 +95,7 @@ export const ChartConfiguratorTable = ({
           >
             settings and sorting
           </ControlSectionContent>
-        </ControlSection>
+        </ControlSection> */}
         <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <TabDropZone
             id="groups"

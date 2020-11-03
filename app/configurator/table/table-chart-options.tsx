@@ -16,7 +16,6 @@ import {
 } from "../components/chart-controls/section";
 import { ChartOptionSelectField } from "../components/field";
 import { DimensionValuesMultiFilter } from "../components/filters";
-import { getFieldLabel } from "../components/ui-helpers";
 import { FieldProps } from "../config-form";
 import {
   ColumnStyle,
@@ -153,12 +152,14 @@ export const TableColumnOptions = ({
     >
       <ControlSection>
         <SectionTitle iconName={"table"}>
-          {getFieldLabel("table.column")}
+          <Trans id="controls.section.table.column">Column</Trans>
         </SectionTitle>
         <ControlSectionContent side="right">
           {component.__typename !== "Measure" && (
             <ChartOptionCheckboxField
-              label="isGroup"
+              label={
+                <Trans id="controls.table.column.group">Use to group</Trans>
+              }
               field={activeField}
               path="isGroup"
             />
@@ -166,7 +167,7 @@ export const TableColumnOptions = ({
 
           {component.__typename === "Measure" && (
             <ChartOptionCheckboxField
-              label="isHidden"
+              label={<Trans id="controls.table.column.hide">Hide column</Trans>}
               field={activeField}
               path="isHidden"
             />

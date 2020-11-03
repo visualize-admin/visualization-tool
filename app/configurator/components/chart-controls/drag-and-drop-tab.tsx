@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { Box } from "theme-ui";
@@ -5,14 +6,14 @@ import { ComponentFieldsFragment } from "../../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../../graphql/types";
 import { Icon } from "../../../icons";
 import { useActiveFieldField } from "../../config-form";
-import { getFieldLabel } from "../ui-helpers";
+import { TableColumn } from "../../config-types";
 import { DraggableTab } from "./control-tab";
 import { ControlSection, ControlSectionContent, SectionTitle } from "./section";
 
 type Props = {
   id: string;
   title: ReactNode;
-  items: { componentIri: string }[];
+  items: TableColumn[];
   metaData: DataCubeMetadata;
   isDropDisabled?: boolean;
 };
@@ -61,7 +62,7 @@ export const TabDropZone = ({
                 >
                   &nbsp;
                 </Box> */}
-                {items.map(({ componentIri }, i) => {
+                {items.map(({ componentIri, index }, i) => {
                   return (
                     <Draggable
                       key={componentIri}
@@ -90,9 +91,11 @@ export const TabDropZone = ({
                                 components.find((d) => d.iri === componentIri)!
                               }
                               value={`${componentIri}`}
-                              upperLabel={`${getFieldLabel(`table.column`)} ${
-                                i + 1
-                              }`}
+                              upperLabel={
+                                <Trans id="table.column.no">
+                                  Column {index + 1}
+                                </Trans>
+                              }
                               isDragging={isDragging}
                             />
                             <Box
@@ -140,7 +143,7 @@ const DraggableTabField = ({
   value: string;
   disabled?: boolean;
   isDragging: boolean;
-  upperLabel: string;
+  upperLabel: ReactNode;
 }) => {
   const field = useActiveFieldField({
     value,
