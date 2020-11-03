@@ -109,11 +109,10 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               />
             )}
             {state.chartConfig.chartType === "table" && (
-              <div>TODO</div>
-              // <ChartTableVisualization
-              //   dataSetIri={dataSetIri}
-              //   chartConfig={state.chartConfig}
-              // />
+              <ChartTableVisualization
+                dataSetIri={dataSetIri}
+                chartConfig={state.chartConfig}
+              />
             )}
           </Flex>
         </>
