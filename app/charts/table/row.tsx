@@ -19,6 +19,7 @@ export const RowUI = ({
   const { tableColumnsMeta } = useChartState() as TableChartState;
 
   prepareRow(row);
+
   return (
     <>
       <tr {...row.getRowProps()}>
@@ -26,13 +27,15 @@ export const RowUI = ({
           <>
             {row.cells.map((cell, i) => {
               return (
-                <CellContent
-                  key={i}
-                  cell={cell}
-                  columnMeta={tableColumnsMeta[i]}
-                >
-                  {cell.render("Cell")}
-                </CellContent>
+                <>
+                  <CellContent
+                    key={i}
+                    cell={cell}
+                    columnMeta={tableColumnsMeta[cell.column.id]}
+                  >
+                    {cell.render("Cell")}
+                  </CellContent>
+                </>
               );
             })}
           </>
@@ -40,7 +43,9 @@ export const RowUI = ({
           <GroupHeader row={row} />
         )}
       </tr>
+
       {/* Display rows within a group by recursively calling RowUI  */}
+
       {/* {row.subRows.length > 0 &&
         row.subRows.map((subRow) => {
           return <RowUI row={subRow} prepareRow={prepareRow} />;
@@ -90,7 +95,10 @@ export const RowMobile = ({
                 {cell.column.Header}
               </Box>
               <Box as="dd" sx={{ flex: "1 1 100%", ml: 1 }}>
-                <DDContent cell={cell} columnMeta={tableColumnsMeta[i]}>
+                <DDContent
+                  cell={cell}
+                  columnMeta={tableColumnsMeta[cell.column.id]}
+                >
                   {cell.render("Cell")}
                 </DDContent>
               </Box>
@@ -127,7 +135,7 @@ const DDContent = ({
   columnMeta: ColumnMeta;
   children: ReactNode;
 }) => {
-  const { type, textStyle, textColor, colorScale } = columnMeta;
+  const { type, textStyle, textColor, columnColor, colorScale } = columnMeta;
 
   switch (type) {
     case "text":
@@ -138,6 +146,7 @@ const DDContent = ({
             width: "100%",
             color: textColor,
             fontWeight: textStyle,
+            bg: columnColor,
           }}
         >
           {children}
