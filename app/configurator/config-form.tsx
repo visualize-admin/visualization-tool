@@ -104,7 +104,7 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
 
   let value: ValueType | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    value = get(state, `chartConfig.fields.${field}.${path}`);
+    value = get(state, `chartConfig.fields["${field}"].${path}`);
   }
   return {
     name: path,
@@ -140,7 +140,7 @@ export const useChartOptionRadioField = ({
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
-      ? get(state, `chartConfig.fields.${field}.${path}`, "")
+      ? get(state, `chartConfig.fields["${field}"].${path}`, "")
       : "";
   const checked = stateValue ? stateValue === value : undefined;
 
@@ -176,7 +176,7 @@ export const useChartOptionBooleanField = ({
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
-      ? get(state, `chartConfig.fields.${field}.${path}`, "")
+      ? get(state, `chartConfig.fields["${field}"].${path}`, "")
       : "";
   const checked = stateValue ? stateValue : false;
 

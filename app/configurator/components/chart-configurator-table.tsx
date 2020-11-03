@@ -19,6 +19,7 @@ import {
   SectionTitle,
 } from "./chart-controls/section";
 import { FilterTabField } from "./field";
+import { getOrderedTableColumns } from "./ui-helpers";
 
 const reorderFields = ({
   fields,
@@ -29,7 +30,7 @@ const reorderFields = ({
   source: DraggableLocation;
   destination: DraggableLocation;
 }): TableFields => {
-  const fieldsArray = Object.values(fields); // We assume this is ordered?
+  const fieldsArray = getOrderedTableColumns(fields);
   let groupFields = [...fieldsArray.filter((f) => f.isGroup)];
   let columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
 
@@ -45,11 +46,15 @@ const reorderFields = ({
   );
 
   const allFields = [
-    ...groupFields.map((f) => ({ ...f, isGroup: true })),
-    ...columnFields.map((f) => ({ ...f, isGroup: false })),
+    ...groupFields.map((f, i) => ({ ...f, isGroup: true, position: i })),
+    ...columnFields.map((f, i) => ({
+      ...f,
+      isGroup: false,
+      position: groupFields.length + i,
+    })),
   ];
 
-  return Object.fromEntries(allFields.map((f, i) => [i, f]));
+  return Object.fromEntries(allFields.map((f) => [f.componentIri, f]));
 };
 
 export const ChartConfiguratorTable = ({
@@ -94,6 +99,10 @@ export const ChartConfiguratorTable = ({
 
     const fields = state.chartConfig.fields as TableFields;
 
+    const fieldsArray = getOrderedTableColumns(fields);
+    const groupFields = [...fieldsArray.filter((f) => f.isGroup)];
+    const columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
+
     return (
       <>
         <ControlSection>
@@ -113,18 +122,14 @@ export const ChartConfiguratorTable = ({
             id="groups"
             title={<Trans id="controls.section.groups">Groups</Trans>}
             metaData={data.dataCubeByIri}
-            items={Object.entries(fields).flatMap(([key, field]) => {
-              return field.isGroup ? [{ iri: field.componentIri }] : [];
-            })}
+            items={groupFields}
           ></TabDropZone>
 
           <TabDropZone
             id="columns"
             title={<Trans id="controls.section.columns">Columns</Trans>}
             metaData={data.dataCubeByIri}
-            items={Object.entries(fields).flatMap(([key, field]) => {
-              return !field.isGroup ? [{ iri: field.componentIri }] : [];
-            })}
+            items={columnFields}
           ></TabDropZone>
         </DragDropContext>
 
