@@ -133,7 +133,7 @@ export const DraggableTab = ({
   onClick: (x: string) => void;
   value: string;
   isDragging: boolean;
-  upperLabel: string;
+  upperLabel: ReactNode;
 } & FieldProps) => {
   return (
     <Box
