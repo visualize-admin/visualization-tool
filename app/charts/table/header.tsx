@@ -20,7 +20,7 @@ export const TableHeader = ({
                   sx={{
                     m: 0,
                     py: 2,
-                    pr: 6,
+                    pr: 3,
                     pl: 3,
                     textAlign: "left",
                     borderTop: "1px solid",
