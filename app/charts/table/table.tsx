@@ -130,6 +130,7 @@ export const Table = () => {
           position: "relative",
           overflow: "auto",
           bg: "monochrome100",
+          mb: 5,
         }}
       >
         <Box as="table" sx={TABLE_STYLES} {...getTableProps()}>
