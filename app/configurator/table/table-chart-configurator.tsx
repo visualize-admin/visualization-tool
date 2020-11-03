@@ -12,14 +12,14 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query
 import { useLocale } from "../../locales/use-locale";
 import { GenericFields, TableFields } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
-import { TabDropZone } from "./chart-controls/drag-and-drop-tab";
+import { TabDropZone } from "../components/chart-controls/drag-and-drop-tab";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "./chart-controls/section";
-import { FilterTabField } from "./field";
-import { getOrderedTableColumns } from "./ui-helpers";
+} from "../components/chart-controls/section";
+import { FilterTabField } from "../components/field";
+import { getOrderedTableColumns } from "../components/ui-helpers";
 
 const reorderFields = ({
   fields,
