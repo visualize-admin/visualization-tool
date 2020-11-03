@@ -17,6 +17,7 @@ import {
 } from "../../configurator";
 import {
   getColorInterpolator,
+  getOrderedTableColumns,
   getPalette,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
@@ -80,7 +81,7 @@ const useTableState = ({
     chartWidth,
     chartHeight,
   };
-
+  const orderedTableColumns = getOrderedTableColumns(fields);
   const memoizedData = useMemo(
     () =>
       data.map((d, i) =>
@@ -95,9 +96,7 @@ const useTableState = ({
   // Columns for the table instance
   const tableColumns = useMemo(
     () =>
-      Object.keys(fields).map((colIndex) => {
-        const iri = fields[colIndex].componentIri;
-
+      orderedTableColumns.map((c) => {
         return {
           Header:
             [...dimensions, ...measures].find(
@@ -108,7 +107,7 @@ const useTableState = ({
         };
       }),
 
-    [dimensions, fields, measures]
+    [dimensions, orderedTableColumns, measures]
   );
 
   const tableColumnsMeta = useMemo(
