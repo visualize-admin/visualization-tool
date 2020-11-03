@@ -15,15 +15,13 @@ export const Docs = () => markdown`
 
 ## Data Table
 
-
 ${(
   <ReactSpecimen span={6}>
     <TableChart
       data={tableObservations}
       dimensions={tableDimensions as ComponentFieldsFragment[]}
       measures={tableMeasures as ComponentFieldsFragment[]}
-      fields={tableConfig.fields}
-      settings={tableConfig.settings}
+      chartConfig={tableConfig}
     >
       <ChartContainer>
         <Table></Table>
