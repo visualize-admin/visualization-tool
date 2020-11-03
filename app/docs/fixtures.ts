@@ -752,8 +752,16 @@ export const tableConfig: TableConfig = {
   filters: {},
   settings: { showSearch: true, showAllRows: true },
   sorting: [
-    { componentIri: "one", sortingOrder: "asc" },
-    { componentIri: "two", sortingOrder: "desc" },
+    {
+      componentIri:
+        "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      sortingOrder: "desc",
+    },
+    {
+      componentIri:
+        "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
+      sortingOrder: "asc",
+    },
   ],
   fields: {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0": {
