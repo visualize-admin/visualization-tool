@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { ascending } from "d3-array";
 import { scaleOrdinal } from "d3-scale";
 import {
   interpolateBlues,
@@ -33,6 +34,7 @@ import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import { d3FormatLocales, d3TimeFormatLocales } from "../../locales/locales";
 import { useLocale } from "../../locales/use-locale";
+import { TableColumn, TableFields } from "../config-types";
 
 // FIXME: We should cover more time format
 const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -377,4 +379,10 @@ export const mapColorsToComponentValuesIris = ({
     colorMapping[`${dv.value}` as string] = colorScale(dv.value) as string;
   });
   return colorMapping;
+};
+
+export const getOrderedTableColumns = (fields: TableFields): TableColumn[] => {
+  return Object.values(fields).sort((a, b) =>
+    ascending(a.position, b.position)
+  );
 };

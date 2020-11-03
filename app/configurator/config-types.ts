@@ -3,6 +3,16 @@ import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
 
+const ComponentType = t.union([
+  t.literal("Attribute"),
+  t.literal("Measure"),
+  t.literal("TemporalDimension"),
+  t.literal("NominalDimension"),
+  t.literal("OrdinalDimension"),
+]);
+
+export type ComponentType = t.TypeOf<typeof ComponentType>;
+
 // Filters
 const FilterValueMulti = t.type(
   {
@@ -329,6 +339,8 @@ export type ColumnStyleBar = t.TypeOf<typeof ColumnStyleBar>;
 
 const TableColumn = t.type({
   componentIri: t.string,
+  componentType: ComponentType,
+  position: t.number,
   isGroup: t.boolean,
   isHidden: t.boolean,
   columnStyle: ColumnStyle,

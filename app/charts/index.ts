@@ -1,15 +1,13 @@
-import { DataCubeMetadata } from "../graphql/types";
-import { unreachableError } from "../lib/unreachable";
 import {
   ChartConfig,
   ChartType,
-  ColumnFields,
   GenericFields,
   TableColumn,
-  TableFields,
 } from "../configurator";
 import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
 import { mapColorsToComponentValuesIris } from "../domain/helpers";
+import { DataCubeMetadata } from "../graphql/types";
+import { unreachableError } from "../lib/unreachable";
 
 export const getInitialConfig = ({
   chartType,
@@ -116,16 +114,18 @@ export const getInitialConfig = ({
         sorting: [],
         fields: Object.fromEntries<TableColumn>(
           [...dimensions, ...measures].map((d, i) => [
-            i,
+            d.iri,
             {
               componentIri: d.iri,
+              componentType: d.__typename,
+              position: i,
               isGroup: false,
               isHidden: false,
               columnStyle: {
                 textStyle: "regular",
                 type: "text",
-                textColor: "#000",
-                columnColor: "#fff",
+                textColor: "text",
+                columnColor: "transparent",
               },
             },
           ])

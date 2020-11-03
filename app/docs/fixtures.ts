@@ -1,9 +1,4 @@
-import {
-  ConfiguratorState,
-  ColumnFields,
-  TableFields,
-  TableConfig,
-} from "../configurator";
+import { ColumnFields, ConfiguratorState, TableConfig } from "../configurator";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const states: ConfiguratorState[] = [
@@ -761,11 +756,13 @@ export const tableConfig: TableConfig = {
     { componentIri: "two", sortingOrder: "desc" },
   ],
   fields: {
-    "0": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
+      position: 1,
       isGroup: false,
       isHidden: false,
+      componentType: "NominalDimension",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -773,11 +770,13 @@ export const tableConfig: TableConfig = {
         columnColor: "#fff",
       },
     },
-    "1": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
+      position: 2,
       isGroup: false,
       isHidden: false,
+      componentType: "NominalDimension",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -785,11 +784,13 @@ export const tableConfig: TableConfig = {
         columnColor: "#fff",
       },
     },
-    "2": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      position: 3,
       isGroup: true,
       isHidden: false,
+      componentType: "NominalDimension",
       columnStyle: {
         type: "category",
         palette: "set3",
@@ -797,11 +798,13 @@ export const tableConfig: TableConfig = {
         colorMapping: {},
       },
     },
-    "3": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
+      position: 4,
       isGroup: false,
       isHidden: false,
+      componentType: "NominalDimension",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -809,11 +812,13 @@ export const tableConfig: TableConfig = {
         columnColor: "aliceblue",
       },
     },
-    "4": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
+      position: 5,
       isGroup: false,
       isHidden: false,
+      componentType: "NominalDimension",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -821,11 +826,13 @@ export const tableConfig: TableConfig = {
         columnColor: "#fff",
       },
     },
-    "5": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
+      position: 6,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -833,22 +840,26 @@ export const tableConfig: TableConfig = {
         columnColor: "#fff",
       },
     },
-    "6": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
+      position: 7,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: {
         type: "heatmap",
         palette: "oranges",
         textStyle: "regular",
       },
     },
-    "7": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
+      position: 8,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -856,11 +867,13 @@ export const tableConfig: TableConfig = {
         columnColor: "#fff",
       },
     },
-    "8": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
+      position: 9,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -868,11 +881,13 @@ export const tableConfig: TableConfig = {
         columnColor: "#fff",
       },
     },
-    "9": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
+      position: 10,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: {
         type: "bar",
         textStyle: "regular",
@@ -882,29 +897,35 @@ export const tableConfig: TableConfig = {
         barShowBackground: true,
       },
     },
-    "10": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
+      position: 11,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: { type: "heatmap", palette: "turbo", textStyle: "regular" },
     },
-    "11": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
+      position: 12,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: {
         type: "heatmap",
         textStyle: "regular",
         palette: "cividis",
       },
     },
-    "12": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
+      position: 13,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -912,11 +933,13 @@ export const tableConfig: TableConfig = {
         columnColor: "#fff",
       },
     },
-    "13": {
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
+      position: 14,
       isGroup: false,
       isHidden: false,
+      componentType: "Measure",
       columnStyle: {
         type: "text",
         textStyle: "regular",
