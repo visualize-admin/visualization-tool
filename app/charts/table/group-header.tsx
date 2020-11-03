@@ -9,8 +9,6 @@ import { CellContent, Tag } from "./cell";
 import { TableChartState } from "./table-state";
 
 export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
-  const { tableColumnsMeta } = useChartState() as TableChartState;
-
   return (
     <>
       {row.cells.map((cell, i) => {

@@ -781,7 +781,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
-      index: 2,
+      index: 7,
       isGroup: false,
       isHidden: false,
       componentType: "NominalDimension",
@@ -796,14 +796,14 @@ export const tableConfig: TableConfig = {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       index: 3,
-      isGroup: true,
+      isGroup: false,
       isHidden: false,
       componentType: "NominalDimension",
       columnStyle: {
         type: "text",
         textStyle: "regular",
         textColor: "hotpink",
-        columnColor: "#fff",
+        columnColor: "gold",
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3": {
@@ -851,7 +851,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
-      index: 7,
+      index: 2,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",

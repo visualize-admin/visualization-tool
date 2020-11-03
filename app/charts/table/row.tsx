@@ -27,15 +27,13 @@ export const RowUI = ({
           <>
             {row.cells.map((cell, i) => {
               return (
-                <>
-                  <CellContent
-                    key={i}
-                    cell={cell}
-                    columnMeta={tableColumnsMeta[cell.column.id]}
-                  >
-                    {cell.render("Cell")}
-                  </CellContent>
-                </>
+                <CellContent
+                  key={i}
+                  cell={cell}
+                  columnMeta={tableColumnsMeta[cell.column.id]}
+                >
+                  {cell.render("Cell")}
+                </CellContent>
               );
             })}
           </>
