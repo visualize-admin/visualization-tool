@@ -100,11 +100,11 @@ const useTableState = ({
 
         return {
           Header:
-            [...dimensions, ...measures].find((dim) => dim.iri === iri)
-              ?.label || iri,
-          // We need a function here to avoid URI's "." to be parsed as JS property accessor.
-          // accessor: slugify(iri, { remove: /[.:]/g }),
-          accessor: (r: Observation) => r[slugify(iri, { remove: /[.:]/g })],
+            [...dimensions, ...measures].find(
+              (dim) => dim.iri === c.componentIri
+            )?.label || c.componentIri,
+          // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
+          accessor: slugify(c.componentIri, { remove: /[.:]/g }),
         };
       }),
 
