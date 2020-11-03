@@ -759,7 +759,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0",
-      position: 1,
+      index: 1,
       isGroup: false,
       isHidden: false,
       componentType: "NominalDimension",
@@ -773,7 +773,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
-      position: 2,
+      index: 2,
       isGroup: false,
       isHidden: false,
       componentType: "NominalDimension",
@@ -787,7 +787,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
-      position: 3,
+      index: 3,
       isGroup: true,
       isHidden: false,
       componentType: "NominalDimension",
@@ -801,7 +801,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
-      position: 4,
+      index: 4,
       isGroup: false,
       isHidden: false,
       componentType: "NominalDimension",
@@ -815,7 +815,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
-      position: 5,
+      index: 5,
       isGroup: false,
       isHidden: false,
       componentType: "NominalDimension",
@@ -829,7 +829,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/0",
-      position: 6,
+      index: 6,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
@@ -843,7 +843,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
-      position: 7,
+      index: 7,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
@@ -856,7 +856,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/2",
-      position: 8,
+      index: 8,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
@@ -870,7 +870,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/3",
-      position: 9,
+      index: 9,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
@@ -884,7 +884,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/4",
-      position: 10,
+      index: 10,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
@@ -900,7 +900,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
-      position: 11,
+      index: 11,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
@@ -909,7 +909,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6",
-      position: 12,
+      index: 12,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
@@ -922,7 +922,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7",
-      position: 13,
+      index: 13,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
@@ -936,7 +936,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/8",
-      position: 14,
+      index: 14,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",

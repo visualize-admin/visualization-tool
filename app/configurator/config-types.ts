@@ -340,7 +340,7 @@ export type ColumnStyleBar = t.TypeOf<typeof ColumnStyleBar>;
 const TableColumn = t.type({
   componentIri: t.string,
   componentType: ComponentType,
-  position: t.number,
+  index: t.number,
   isGroup: t.boolean,
   isHidden: t.boolean,
   columnStyle: ColumnStyle,

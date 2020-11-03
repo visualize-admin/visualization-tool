@@ -30,13 +30,13 @@ export const moveFields = produce(
       sourceFields.splice(source.index, 1)[0]
     );
 
-    // Update positions and isGroup status for each field after moving
+    // Update indexes and isGroup status for each field after moving
     groupFields.forEach((f, i) => {
-      f.position = i;
+      f.index = i;
       f.isGroup = true;
     });
     columnFields.forEach((f, i) => {
-      f.position = groupFields.length + i;
+      f.index = groupFields.length + i;
       f.isGroup = false;
     });
 
@@ -81,9 +81,9 @@ export const updateIsGroup = produce(
       ...columnFields,
     ];
 
-    // Update position for each field
+    // Update index for each field
     allFields.forEach((f, i) => {
-      f.position = i;
+      f.index = i;
     });
 
     return chartConfig;
