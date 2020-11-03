@@ -1,4 +1,4 @@
-import { extent } from "d3-array";
+import { extent, max, min } from "d3-array";
 import {
   ScaleLinear,
   scaleLinear,
@@ -174,7 +174,10 @@ const useTableState = ({
           const colorScale = scaleSequential(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
           ).domain(
-            (extent(data, (d) => +d[iri]) as [number, number]) || [0, 1]
+            ([max(data, (d) => +d[iri]), min(data, (d) => +d[iri])] as [
+              number,
+              number
+            ]) || [1, 0]
           );
           return {
             ...acc,
