@@ -1,17 +1,11 @@
 import { Trans } from "@lingui/macro";
-import React, { useCallback } from "react";
-import {
-  DragDropContext,
-  DraggableLocation,
-  OnDragEndResponder,
-} from "react-beautiful-dnd";
+import { useCallback } from "react";
+import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
 import { ConfiguratorStateConfiguringChart } from "..";
 import { getFieldComponentIris } from "../../charts";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-import { GenericFields, TableFields } from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
 import { TabDropZone } from "../components/chart-controls/drag-and-drop-tab";
 import {
   ControlSection,
@@ -20,42 +14,9 @@ import {
 } from "../components/chart-controls/section";
 import { FilterTabField } from "../components/field";
 import { getOrderedTableColumns } from "../components/ui-helpers";
-
-const reorderFields = ({
-  fields,
-  source,
-  destination,
-}: {
-  fields: TableFields;
-  source: DraggableLocation;
-  destination: DraggableLocation;
-}): TableFields => {
-  const fieldsArray = getOrderedTableColumns(fields);
-  let groupFields = [...fieldsArray.filter((f) => f.isGroup)];
-  let columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
-
-  let sourceFields =
-    source.droppableId === "columns" ? columnFields : groupFields;
-  let destinationFields =
-    destination.droppableId === "columns" ? columnFields : groupFields;
-
-  destinationFields.splice(
-    destination.index,
-    0,
-    sourceFields.splice(source.index, 1)[0]
-  );
-
-  const allFields = [
-    ...groupFields.map((f, i) => ({ ...f, isGroup: true, position: i })),
-    ...columnFields.map((f, i) => ({
-      ...f,
-      isGroup: false,
-      position: groupFields.length + i,
-    })),
-  ];
-
-  return Object.fromEntries(allFields.map((f) => [f.componentIri, f]));
-};
+import { TableFields } from "../config-types";
+import { useConfiguratorState } from "../configurator-state";
+import { moveFields } from "./table-config-state";
 
 export const ChartConfiguratorTable = ({
   state,
@@ -71,20 +32,19 @@ export const ChartConfiguratorTable = ({
 
   const onDragEnd = useCallback<OnDragEndResponder>(
     ({ source, destination }) => {
-      if (!destination) {
+      if (!destination || state.chartConfig.chartType !== "table") {
         return;
       }
 
-      const fields = reorderFields({
-        fields: state.chartConfig.fields as TableFields,
+      const chartConfig = moveFields(state.chartConfig, {
         source,
         destination,
       });
 
       dispatch({
-        type: "CHART_FIELDS_CHANGED",
+        type: "CHART_CONFIG_REPLACED",
         value: {
-          fields: fields as GenericFields,
+          chartConfig,
         },
       });
     },
