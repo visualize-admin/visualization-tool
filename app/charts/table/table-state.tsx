@@ -50,7 +50,7 @@ export interface TableChartState {
   tableColumns: Column<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
   groupingHeaders: string[];
-  sortingIds: { id: string; desc: boolean }[];
+  sortingIris: { id: string; desc: boolean }[];
 }
 
 const useTableState = ({
@@ -130,7 +130,7 @@ const useTableState = ({
   );
 
   // Sorting used by react-table
-  const sortingIds = useMemo(
+  const sortingIris = useMemo(
     () =>
       sorting.map((s) => ({
         id: getSlugifiedIri(s.componentIri),
@@ -138,7 +138,6 @@ const useTableState = ({
       })),
     [sorting]
   );
-  console.log(sortingIds);
 
   // Columns with style
   // This is not use by react table to manage state, only for styling.
@@ -197,7 +196,7 @@ const useTableState = ({
     tableColumns,
     tableColumnsMeta,
     groupingHeaders,
-    sortingIds,
+    sortingIris,
   };
 };
 

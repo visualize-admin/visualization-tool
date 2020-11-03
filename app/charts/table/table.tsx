@@ -3,7 +3,7 @@ import { Trans } from "@lingui/macro";
 import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { useMemo, useState } from "react";
-import { useExpanded, useGroupBy, useTable } from "react-table";
+import { useExpanded, useGroupBy, useSortBy, useTable } from "react-table";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
@@ -20,11 +20,14 @@ export const Table = () => {
     tableColumns,
     tableColumnsMeta,
     groupingHeaders,
+    sortingIris,
   } = useChartState() as TableChartState;
 
   const [useAlternativeMobileView, toggleAlternativeMobileView] = useState(
     false
   );
+
+  // const [sortingIds, updateSortingIds] = useState(sortingIris);
 
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,9 +60,9 @@ export const Table = () => {
     return searchResult as Observation[];
   }, [data, searchTerm, searchIndex]);
 
-  console.log({ data });
-  console.log({ tableColumns });
-  console.log({ filteredData });
+  // console.log({ data });
+  // console.log({ tableColumns });
+  // console.log({ filteredData });
   // console.log("in Table", { groupingHeaders });
 
   const {
@@ -67,6 +70,7 @@ export const Table = () => {
     getTableBodyProps,
     headerGroups,
     rows,
+    setSortBy,
     prepareRow,
   } = useTable<Observation>(
     {
@@ -77,13 +81,14 @@ export const Table = () => {
           () => ({
             ...state,
             groupBy: groupingHeaders,
+            sortBy: sortingIris,
           }),
-          [state, tableColumns, groupingHeaders, filteredData]
+          [state, tableColumns, groupingHeaders, filteredData, sortingIris]
         );
       },
     },
-
     useGroupBy,
+    useSortBy,
     useExpanded
   );
 
