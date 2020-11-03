@@ -1,6 +1,10 @@
 import { Trans } from "@lingui/macro";
-import { useCallback } from "react";
-import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
+import { useCallback, useState } from "react";
+import {
+  DragDropContext,
+  OnDragEndResponder,
+  OnDragStartResponder,
+} from "react-beautiful-dnd";
 import { ConfiguratorStateConfiguringChart } from "..";
 import { getFieldComponentIris } from "../../charts";
 import { Loading } from "../../components/hint";
@@ -30,8 +34,14 @@ export const ChartConfiguratorTable = ({
 
   const [, dispatch] = useConfiguratorState();
 
+  const [currentDraggableId, setCurrentDraggableId] = useState<string | null>(
+    null
+  );
+
   const onDragEnd = useCallback<OnDragEndResponder>(
     ({ source, destination }) => {
+      setCurrentDraggableId(null);
+
       if (!destination || state.chartConfig.chartType !== "table") {
         return;
       }
@@ -51,6 +61,10 @@ export const ChartConfiguratorTable = ({
     [state, dispatch]
   );
 
+  const onDragStart = useCallback<OnDragStartResponder>(({ draggableId }) => {
+    setCurrentDraggableId(draggableId);
+  }, []);
+
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
     const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
@@ -62,6 +76,11 @@ export const ChartConfiguratorTable = ({
     const fieldsArray = getOrderedTableColumns(fields);
     const groupFields = [...fieldsArray.filter((f) => f.isGroup)];
     const columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
+
+    const currentDraggedField =
+      currentDraggableId !== null ? fields[currentDraggableId] : null;
+    const isGroupsDropDisabled =
+      currentDraggedField?.componentType === "Measure";
 
     return (
       <>
@@ -77,12 +96,13 @@ export const ChartConfiguratorTable = ({
             settings and sorting
           </ControlSectionContent>
         </ControlSection>
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <TabDropZone
             id="groups"
             title={<Trans id="controls.section.groups">Groups</Trans>}
             metaData={data.dataCubeByIri}
             items={groupFields}
+            isDropDisabled={isGroupsDropDisabled}
           ></TabDropZone>
 
           <TabDropZone

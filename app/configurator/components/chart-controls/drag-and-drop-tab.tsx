@@ -14,15 +14,25 @@ type Props = {
   title: ReactNode;
   items: { componentIri: string }[];
   metaData: DataCubeMetadata;
+  isDropDisabled?: boolean;
 };
-export const TabDropZone = ({ id, items, title, metaData }: Props) => {
+export const TabDropZone = ({
+  id,
+  items,
+  title,
+  metaData,
+  isDropDisabled,
+}: Props) => {
   const { dimensions, measures } = metaData;
 
   const components = [...dimensions, ...measures];
 
   return (
-    <Droppable droppableId={id}>
-      {({ innerRef, placeholder }, { isDraggingOver, isUsingPlaceholder }) => {
+    <Droppable droppableId={id} isDropDisabled={isDropDisabled}>
+      {(
+        { innerRef, placeholder },
+        { isDraggingOver, isUsingPlaceholder, draggingOverWith }
+      ) => {
         return (
           <ControlSection isHighlighted={isDraggingOver}>
             <SectionTitle>{title}</SectionTitle>
