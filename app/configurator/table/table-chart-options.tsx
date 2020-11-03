@@ -197,7 +197,7 @@ export const TableColumnOptions = ({
                   return {
                     type: "category",
                     textStyle: "regular",
-                    palette: "viridis",
+                    palette: "set3",
                     colorMapping: {},
                   };
                 case "heatmap":

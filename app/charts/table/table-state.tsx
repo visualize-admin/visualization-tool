@@ -11,18 +11,21 @@ import { Column } from "react-table";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
-  TableFields,
+  TableConfig,
 } from "../../configurator";
 import {
   getColorInterpolator,
+  getOrderedTableColumns,
   getPalette,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { TABLE_HEIGHT } from "./constants";
+import { getSlugifiedIri, ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
 
 export interface ColumnMeta {
+  iri: string;
+  slugifiedIri: string;
   colorScale?: ScaleSequential<string>;
   widthScale?: ScaleLinear<number, number>;
   type: string;
@@ -42,23 +45,26 @@ export interface ColumnMeta {
 export interface TableChartState {
   chartType: "table";
   bounds: Bounds;
+  showSearch: boolean;
   data: Observation[];
   tableColumns: Column<Observation>[];
-  tableColumnsMeta: ColumnMeta[];
-  groupingHeaders: string[];
+  tableColumnsMeta: Record<string, ColumnMeta>;
+  groupingIris: string[];
+  sortingIris: { id: string; desc: boolean }[];
 }
 
 const useTableState = ({
   data,
   dimensions,
   measures,
-  fields,
+  chartConfig,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  fields: TableFields;
+  chartConfig: TableConfig;
 }): TableChartState => {
-  const width = useWidth();
+  const { fields, settings, sorting } = chartConfig;
 
   // Dimensions
+  const width = useWidth();
   const margins = {
     top: 10,
     right: 10,
@@ -66,7 +72,7 @@ const useTableState = ({
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
-  const chartHeight = TABLE_HEIGHT;
+  const chartHeight = Math.min(TABLE_HEIGHT, data.length * ROW_HEIGHT);
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
@@ -75,99 +81,119 @@ const useTableState = ({
     chartHeight,
   };
 
-  const memoizedData = useMemo(() => data, [data]);
+  const orderedTableColumns = getOrderedTableColumns(fields);
 
-  // Columns for the table instance
+  // Data used by react-table
+  const memoizedData = useMemo(
+    () =>
+      data.map((d, i) =>
+        Object.keys(d).reduce(
+          (obj, k) => ({ ...obj, [getSlugifiedIri(k)]: d[k] }),
+          { id: i }
+        )
+      ),
+    [data]
+  );
+
+  // Columns used by react-table
   const tableColumns = useMemo(
     () =>
-      Object.keys(fields).map((colIndex) => {
-        const iri = fields[colIndex].componentIri;
-
+      orderedTableColumns.map((c) => {
         return {
           Header:
-            [...dimensions, ...measures].find((dim) => dim.iri === iri)
-              ?.label || iri,
-          // We need a function here to avoid URI's "." to be parsed as JS property accessor.
-          accessor: (r: Observation) => r[iri],
+            [...dimensions, ...measures].find(
+              (dim) => dim.iri === c.componentIri
+            )?.label || c.componentIri,
+          // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
+          accessor: getSlugifiedIri(c.componentIri),
         };
       }),
 
-    [dimensions, fields, measures]
+    [dimensions, orderedTableColumns, measures]
   );
 
-  // Column styles
+  // Groupings used by react-table
+  const groupingIris = useMemo(
+    () =>
+      Object.keys(fields).reduce((iris, colIndex) => {
+        if (fields[colIndex].isGroup) {
+          const iri = getSlugifiedIri(fields[colIndex].componentIri);
+          return [...iris, iri];
+        } else {
+          return iris;
+        }
+      }, [] as string[]),
+    [fields]
+  );
+
+  // Sorting used by react-table
+  const sortingIris = useMemo(
+    () =>
+      sorting.map((s) => ({
+        id: getSlugifiedIri(s.componentIri),
+        desc: s.sortingOrder === "desc",
+      })),
+    [sorting]
+  );
+
+  // Columns with style
+  // This is not use by react table to manage state, only for styling.
   const tableColumnsMeta = useMemo(
     () =>
-      Object.keys(fields).map((colIndex) => {
-        const iri = fields[colIndex].componentIri;
-        const columnStyleType = fields[colIndex].columnStyle.type;
-
+      Object.keys(fields).reduce((acc, iri, i) => {
+        const columnMeta = fields[iri];
+        const slugifiedIri = getSlugifiedIri(iri);
+        const columnStyle = columnMeta.columnStyle;
+        const columnStyleType = columnStyle.type;
         if (columnStyleType === "text") {
-          return fields[colIndex].columnStyle;
+          return {
+            ...acc,
+            [slugifiedIri]: { slugifiedIri, ...columnStyle },
+          };
         } else if (columnStyleType === "category") {
           const colorScale = scaleOrdinal()
             .domain([...new Set(data.map((d) => `${d[iri]}`))])
-            .range(
-              getPalette(
-                (fields[colIndex].columnStyle as ColumnStyleCategory).palette
-              )
-            );
+            .range(getPalette((columnStyle as ColumnStyleCategory).palette));
           return {
-            colorScale,
-            ...fields[colIndex].columnStyle,
+            ...acc,
+            [slugifiedIri]: { slugifiedIri, colorScale, ...columnStyle },
           };
         } else if (columnStyleType === "heatmap") {
           const colorScale = scaleSequential(
-            getColorInterpolator(
-              (fields[colIndex].columnStyle as ColumnStyleHeatmap).palette
-            )
+            getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
           ).domain(
             (extent(data, (d) => +d[iri]) as [number, number]) || [0, 1]
           );
           return {
-            colorScale,
-            ...fields[colIndex].columnStyle,
+            ...acc,
+            [slugifiedIri]: { slugifiedIri, colorScale, ...columnStyle },
           };
         } else if (columnStyleType === "bar") {
           const widthScale = scaleLinear()
             .domain(extent(data, (d) => +d[iri]) as [number, number])
             .range([0, 100]);
           return {
-            widthScale,
-            ...fields[colIndex].columnStyle,
+            ...acc,
+            [slugifiedIri]: { slugifiedIri, widthScale, ...columnStyle },
           };
         } else {
-          return fields[colIndex].columnStyle;
+          return {
+            ...acc,
+            [slugifiedIri]: { slugifiedIri, ...columnStyle },
+          };
         }
-      }),
-
+      }, {}),
     [data, fields]
-  ) as ColumnMeta[];
-
-  // Groupings
-  const groupingHeaders = useMemo(
-    () =>
-      Object.keys(fields).reduce((iris, colIndex) => {
-        if (fields[colIndex].isGroup) {
-          const iri = fields[colIndex].componentIri;
-          const Header =
-            [...dimensions, ...measures].find((dim) => dim.iri === iri)
-              ?.label || iri;
-          return [...iris, Header];
-        } else {
-          return iris;
-        }
-      }, [] as string[]),
-    [dimensions, fields, measures]
   );
-
   return {
     chartType: "table",
     bounds,
+    showSearch: settings.showSearch,
     data: memoizedData,
     tableColumns,
     tableColumnsMeta,
-    groupingHeaders,
+    groupingIris,
+    sortingIris,
   };
 };
 
@@ -176,19 +202,19 @@ const useTableState = ({
 
 const TableChartProvider = ({
   data,
-  fields,
   dimensions,
   measures,
   children,
+  chartConfig,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
-  fields: TableFields;
+  chartConfig: TableConfig;
 }) => {
   const state = useTableState({
     data,
     dimensions,
     measures,
-    fields,
+    chartConfig,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -197,21 +223,21 @@ const TableChartProvider = ({
 
 export const TableChart = ({
   data,
-  fields,
   dimensions,
   measures,
+  chartConfig,
   children,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
-  fields: TableFields;
+  chartConfig: TableConfig;
 }) => {
   return (
     <Observer>
       <TableChartProvider
         data={data}
-        fields={fields}
         dimensions={dimensions}
         measures={measures}
+        chartConfig={chartConfig}
       >
         {children}
       </TableChartProvider>

@@ -17,7 +17,6 @@ const SwitchExample = () => {
     <Switch
       label={"foo"}
       name={"foo"}
-      value={"foo"}
       checked={checked}
       onChange={() => toggle(!checked)}
     />

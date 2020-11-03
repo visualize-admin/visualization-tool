@@ -328,7 +328,6 @@ export const FieldSetLegend = ({
 export const Switch = ({
   label,
   name,
-  value,
   checked,
   disabled,
   onChange,
@@ -347,7 +346,6 @@ export const Switch = ({
       <RebassCheckbox
         id={`${name}-${label}`}
         name={name}
-        value={value}
         checked={checked}
         disabled={disabled}
         onChange={onChange}

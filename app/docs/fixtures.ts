@@ -752,8 +752,16 @@ export const tableConfig: TableConfig = {
   filters: {},
   settings: { showSearch: true, showAllRows: true },
   sorting: [
-    { componentIri: "one", sortingOrder: "asc" },
-    { componentIri: "two", sortingOrder: "desc" },
+    {
+      componentIri:
+        "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      sortingOrder: "desc",
+    },
+    {
+      componentIri:
+        "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
+      sortingOrder: "asc",
+    },
   ],
   fields: {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/0": {
@@ -773,22 +781,8 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1",
-      index: 2,
+      index: 7,
       isGroup: false,
-      isHidden: false,
-      componentType: "NominalDimension",
-      columnStyle: {
-        type: "text",
-        textStyle: "regular",
-        textColor: "hotpink",
-        columnColor: "#fff",
-      },
-    },
-    "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2": {
-      componentIri:
-        "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
-      index: 3,
-      isGroup: true,
       isHidden: false,
       componentType: "NominalDimension",
       columnStyle: {
@@ -796,6 +790,20 @@ export const tableConfig: TableConfig = {
         palette: "set3",
         textStyle: "bold",
         colorMapping: {},
+      },
+    },
+    "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2": {
+      componentIri:
+        "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      index: 3,
+      isGroup: false,
+      isHidden: false,
+      componentType: "NominalDimension",
+      columnStyle: {
+        type: "text",
+        textStyle: "regular",
+        textColor: "hotpink",
+        columnColor: "gold",
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3": {
@@ -809,7 +817,7 @@ export const tableConfig: TableConfig = {
         type: "text",
         textStyle: "regular",
         textColor: "monochrome700",
-        columnColor: "aliceblue",
+        columnColor: "pink",
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4": {
@@ -843,7 +851,7 @@ export const tableConfig: TableConfig = {
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1": {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/1",
-      index: 7,
+      index: 2,
       isGroup: false,
       isHidden: false,
       componentType: "Measure",

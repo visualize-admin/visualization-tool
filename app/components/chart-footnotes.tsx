@@ -51,16 +51,18 @@ export const ChartFootnotes = ({
 
     return (
       <>
-        <Text variant="meta" color="monochrome800" sx={{ my: 2 }}>
-          <Trans id="metadata.filter">Filterset</Trans>:
-          {namedFilters.map(({ dimension, value }, i) => (
-            <Fragment key={dimension.iri}>
-              {" "}
-              <span>{dimension.label}</span> (<span>{value?.label}</span>)
-              {i < namedFilters.length - 1 && ","}
-            </Fragment>
-          ))}
-        </Text>
+        {namedFilters.length > 0 && (
+          <Text variant="meta" color="monochrome800" sx={{ my: 2 }}>
+            <Trans id="metadata.filter">Filterset</Trans>:
+            {namedFilters.map(({ dimension, value }, i) => (
+              <Fragment key={dimension.iri}>
+                {" "}
+                <span>{dimension.label}</span> (<span>{value?.label}</span>)
+                {i < namedFilters.length - 1 && ","}
+              </Fragment>
+            ))}
+          </Text>
+        )}
 
         <Text variant="meta" color="monochrome600">
           <Trans id="metadata.dataset">Dataset</Trans>:{" "}

@@ -346,17 +346,18 @@ const TableColumn = t.type({
   columnStyle: ColumnStyle,
 });
 export type TableColumn = t.TypeOf<typeof TableColumn>;
-
+const TableSettings = t.type({
+  showSearch: t.boolean,
+  showAllRows: t.boolean,
+});
+export type TableSettings = t.TypeOf<typeof TableSettings>;
 const TableFields = t.record(t.string, TableColumn);
 const TableConfig = t.type(
   {
     chartType: t.literal("table"),
     fields: TableFields,
     filters: Filters,
-    settings: t.type({
-      showSearch: t.boolean,
-      showAllRows: t.boolean,
-    }),
+    settings: TableSettings,
     sorting: t.array(
       t.type({
         componentIri: t.string,
