@@ -112,6 +112,10 @@ export type ConfiguratorStateAction =
       value: { path: string | string[]; value: string };
     }
   | {
+      type: "CHART_CONFIG_REPLACED";
+      value: { chartConfig: ChartConfig };
+    }
+  | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
       value: { dimensionIri: string; value: string };
     }
@@ -561,6 +565,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_DESCRIPTION_CHANGED":
       if (draft.state === "DESCRIBING_CHART") {
         setWith(draft, `meta.${action.value.path}`, action.value.value, Object);
+      }
+      return draft;
+
+    case "CHART_CONFIG_REPLACED":
+      if (draft.state === "CONFIGURING_CHART") {
+        draft.chartConfig = action.value.chartConfig;
       }
       return draft;
 

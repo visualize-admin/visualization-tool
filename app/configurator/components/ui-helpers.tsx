@@ -382,7 +382,5 @@ export const mapColorsToComponentValuesIris = ({
 };
 
 export const getOrderedTableColumns = (fields: TableFields): TableColumn[] => {
-  return Object.values(fields).sort((a, b) =>
-    ascending(a.position, b.position)
-  );
+  return Object.values(fields).sort((a, b) => ascending(a.index, b.index));
 };

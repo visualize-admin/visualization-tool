@@ -118,7 +118,7 @@ export const getInitialConfig = ({
             {
               componentIri: d.iri,
               componentType: d.__typename,
-              position: i,
+              index: i,
               isGroup: false,
               isHidden: false,
               columnStyle: {
