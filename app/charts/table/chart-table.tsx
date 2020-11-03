@@ -56,8 +56,7 @@ export const ChartTableVisualization = ({
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
-          fields={chartConfig.fields}
-          settings={chartConfig.settings}
+          chartConfig={chartConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -76,22 +75,19 @@ export const ChartTable = memo(
     observations,
     dimensions,
     measures,
-    fields,
-    settings,
+    chartConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
-    fields: TableFields;
-    settings: TableSettings;
+    chartConfig: TableConfig;
   }) => {
     return (
       <TableChart
         data={observations.slice(0, 200)}
-        fields={fields}
         dimensions={dimensions}
         measures={measures}
-        settings={settings}
+        chartConfig={chartConfig}
       >
         <ChartContainer>
           <Table></Table>

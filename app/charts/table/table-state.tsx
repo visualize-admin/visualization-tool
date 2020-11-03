@@ -12,8 +12,7 @@ import slugify from "slugify";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
-  TableFields,
-  TableSettings,
+  TableConfig,
 } from "../../configurator";
 import {
   getColorInterpolator,
@@ -58,14 +57,14 @@ const useTableState = ({
   data,
   dimensions,
   measures,
-  fields,
-  settings,
+  chartConfig,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
-  fields: TableFields;
-  settings: TableSettings;
+  chartConfig: TableConfig;
 }): TableChartState => {
-  const width = useWidth();
+  const { fields, settings, sorting } = chartConfig;
+
   // Dimensions
+  const width = useWidth();
   const margins = {
     top: 10,
     right: 10,
@@ -194,22 +193,19 @@ const useTableState = ({
 
 const TableChartProvider = ({
   data,
-  fields,
   dimensions,
   measures,
   children,
-  settings,
+  chartConfig,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
-  fields: TableFields;
-  settings: TableSettings;
+  chartConfig: TableConfig;
 }) => {
   const state = useTableState({
     data,
     dimensions,
     measures,
-    fields,
-    settings,
+    chartConfig,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -218,24 +214,21 @@ const TableChartProvider = ({
 
 export const TableChart = ({
   data,
-  fields,
   dimensions,
   measures,
+  chartConfig,
   children,
-  settings,
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   children: ReactNode;
-  fields: TableFields;
-  settings: TableSettings;
+  chartConfig: TableConfig;
 }) => {
   return (
     <Observer>
       <TableChartProvider
         data={data}
-        fields={fields}
         dimensions={dimensions}
         measures={measures}
-        settings={settings}
+        chartConfig={chartConfig}
       >
         {children}
       </TableChartProvider>
