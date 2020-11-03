@@ -51,6 +51,7 @@ export interface TableChartState {
   tableColumns: Column<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
   groupingHeaders: string[];
+  sortingIds: { id: string; desc: boolean }[];
 }
 
 const useTableState = ({
@@ -80,7 +81,10 @@ const useTableState = ({
     chartWidth,
     chartHeight,
   };
+
   const orderedTableColumns = getOrderedTableColumns(fields);
+
+  // Data used by react-table
   const memoizedData = useMemo(
     () =>
       data.map((d, i) =>
@@ -92,7 +96,7 @@ const useTableState = ({
     [data]
   );
 
-  // Columns for the table instance
+  // Columns used by react-table
   const tableColumns = useMemo(
     () =>
       orderedTableColumns.map((c) => {
@@ -109,7 +113,36 @@ const useTableState = ({
     [dimensions, orderedTableColumns, measures]
   );
 
+  // Groupings used by react-table
+  const groupingHeaders = useMemo(
+    () =>
+      Object.keys(fields).reduce((iris, colIndex) => {
+        if (fields[colIndex].isGroup) {
+          const iri = fields[colIndex].componentIri;
+          const Header =
+            [...dimensions, ...measures].find((dim) => dim.iri === iri)
+              ?.label || iri;
+          return [...iris, Header];
+        } else {
+          return iris;
+        }
+      }, [] as string[]),
+    [dimensions, fields, measures]
+  );
+
+  // Sorting used by react-table
+  const sortingIds = useMemo(
+    () =>
+      sorting.map((s) => ({
+        id: slugify(s.componentIri, { remove: /[.:]/g }),
+        desc: s.sortingOrder === "desc",
+      })),
+    [sorting]
+  );
+  console.log(sortingIds);
+
   // Columns with style
+  // This is not use by react table to manage state, only for styling.
   const tableColumnsMeta = useMemo(
     () =>
       Object.keys(fields).reduce((acc, iri, i) => {
@@ -159,24 +192,6 @@ const useTableState = ({
       }, {}),
     [data, fields]
   );
-
-  // Groupings
-  const groupingHeaders = useMemo(
-    () =>
-      Object.keys(fields).reduce((iris, colIndex) => {
-        if (fields[colIndex].isGroup) {
-          const iri = fields[colIndex].componentIri;
-          const Header =
-            [...dimensions, ...measures].find((dim) => dim.iri === iri)
-              ?.label || iri;
-          return [...iris, Header];
-        } else {
-          return iris;
-        }
-      }, [] as string[]),
-    [dimensions, fields, measures]
-  );
-
   return {
     chartType: "table",
     bounds,
@@ -185,6 +200,7 @@ const useTableState = ({
     tableColumns,
     tableColumnsMeta,
     groupingHeaders,
+    sortingIds,
   };
 };
 
