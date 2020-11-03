@@ -8,7 +8,6 @@ import {
 } from "d3-scale";
 import { ReactNode, useMemo } from "react";
 import { Column } from "react-table";
-import slugify from "slugify";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
@@ -22,7 +21,7 @@ import {
 import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
+import { getSlugifiedIri, ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
 
 export interface ColumnMeta {
   iri: string;
@@ -89,7 +88,7 @@ const useTableState = ({
     () =>
       data.map((d, i) =>
         Object.keys(d).reduce(
-          (obj, k) => ({ ...obj, [slugify(k, { remove: /[.:]/g })]: d[k] }),
+          (obj, k) => ({ ...obj, [getSlugifiedIri(k)]: d[k] }),
           { id: i }
         )
       ),
@@ -106,7 +105,7 @@ const useTableState = ({
               (dim) => dim.iri === c.componentIri
             )?.label || c.componentIri,
           // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
-          accessor: slugify(c.componentIri, { remove: /[.:]/g }),
+          accessor: getSlugifiedIri(c.componentIri),
         };
       }),
 
@@ -134,7 +133,7 @@ const useTableState = ({
   const sortingIds = useMemo(
     () =>
       sorting.map((s) => ({
-        id: slugify(s.componentIri, { remove: /[.:]/g }),
+        id: getSlugifiedIri(s.componentIri),
         desc: s.sortingOrder === "desc",
       })),
     [sorting]
@@ -147,9 +146,7 @@ const useTableState = ({
     () =>
       Object.keys(fields).reduce((acc, iri, i) => {
         const columnMeta = fields[iri];
-        const slugifiedIri = slugify(iri, {
-          remove: /[.:]/g,
-        });
+        const slugifiedIri = getSlugifiedIri(iri);
         const columnStyle = columnMeta.columnStyle;
         const columnStyleType = columnStyle.type;
         if (columnStyleType === "text") {
