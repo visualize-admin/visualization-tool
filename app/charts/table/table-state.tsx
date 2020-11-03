@@ -49,7 +49,7 @@ export interface TableChartState {
   data: Observation[];
   tableColumns: Column<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
-  groupingHeaders: string[];
+  groupingIris: string[];
   sortingIris: { id: string; desc: boolean }[];
 }
 
@@ -113,20 +113,17 @@ const useTableState = ({
   );
 
   // Groupings used by react-table
-  const groupingHeaders = useMemo(
+  const groupingIris = useMemo(
     () =>
       Object.keys(fields).reduce((iris, colIndex) => {
         if (fields[colIndex].isGroup) {
-          const iri = fields[colIndex].componentIri;
-          const Header =
-            [...dimensions, ...measures].find((dim) => dim.iri === iri)
-              ?.label || iri;
-          return [...iris, Header];
+          const iri = getSlugifiedIri(fields[colIndex].componentIri);
+          return [...iris, iri];
         } else {
           return iris;
         }
       }, [] as string[]),
-    [dimensions, fields, measures]
+    [fields]
   );
 
   // Sorting used by react-table
@@ -195,7 +192,7 @@ const useTableState = ({
     data: memoizedData,
     tableColumns,
     tableColumnsMeta,
-    groupingHeaders,
+    groupingIris,
     sortingIris,
   };
 };

@@ -19,7 +19,7 @@ export const Table = () => {
     showSearch,
     tableColumns,
     tableColumnsMeta,
-    groupingHeaders,
+    groupingIris,
     sortingIris,
   } = useChartState() as TableChartState;
 
@@ -63,7 +63,6 @@ export const Table = () => {
   // console.log({ data });
   // console.log({ tableColumns });
   // console.log({ filteredData });
-  // console.log("in Table", { groupingHeaders });
 
   const {
     getTableProps,
@@ -80,10 +79,10 @@ export const Table = () => {
         return useMemo(
           () => ({
             ...state,
-            groupBy: groupingHeaders,
+            groupBy: groupingIris,
             sortBy: sortingIris,
           }),
-          [state, tableColumns, groupingHeaders, filteredData, sortingIris]
+          [state, tableColumns, groupingIris, filteredData, sortingIris]
         );
       },
     },
