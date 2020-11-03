@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { TableConfig, TableFields, TableSettings } from "../../configurator";
+import { TableConfig } from "../../configurator";
 
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../domain/helpers";
@@ -29,7 +29,7 @@ export const ChartTableVisualization = ({
       chartConfig.fields[key].componentType === "Measure" &&
       !chartConfig.fields[key].isHidden
   );
-  console.log({ measures });
+
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       locale,
@@ -89,9 +89,7 @@ export const ChartTable = memo(
         measures={measures}
         chartConfig={chartConfig}
       >
-        <ChartContainer>
-          <Table></Table>
-        </ChartContainer>
+        <Table />
       </TableChart>
     );
   }

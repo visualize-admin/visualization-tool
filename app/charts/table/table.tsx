@@ -155,6 +155,7 @@ export const Table = () => {
           position: "relative",
           overflow: "auto",
           bg: "monochrome100",
+          mb: 5,
         }}
       >
         {rows.map((row, i) => (
