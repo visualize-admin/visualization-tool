@@ -110,6 +110,7 @@ const useTableState = ({
     [dimensions, orderedTableColumns, measures]
   );
 
+  // Columns with style
   const tableColumnsMeta = useMemo(
     () =>
       Object.keys(fields).reduce((acc, iri, i) => {
@@ -122,7 +123,7 @@ const useTableState = ({
         if (columnStyleType === "text") {
           return {
             ...acc,
-            [iri]: { slugifiedIri, ...columnStyle },
+            [slugifiedIri]: { slugifiedIri, ...columnStyle },
           };
         } else if (columnStyleType === "category") {
           const colorScale = scaleOrdinal()
@@ -130,7 +131,7 @@ const useTableState = ({
             .range(getPalette((columnStyle as ColumnStyleCategory).palette));
           return {
             ...acc,
-            [iri]: { slugifiedIri, colorScale, ...columnStyle },
+            [slugifiedIri]: { slugifiedIri, colorScale, ...columnStyle },
           };
         } else if (columnStyleType === "heatmap") {
           const colorScale = scaleSequential(
@@ -140,7 +141,7 @@ const useTableState = ({
           );
           return {
             ...acc,
-            [iri]: { slugifiedIri, colorScale, ...columnStyle },
+            [slugifiedIri]: { slugifiedIri, colorScale, ...columnStyle },
           };
         } else if (columnStyleType === "bar") {
           const widthScale = scaleLinear()
@@ -148,12 +149,12 @@ const useTableState = ({
             .range([0, 100]);
           return {
             ...acc,
-            [iri]: { slugifiedIri, widthScale, ...columnStyle },
+            [slugifiedIri]: { slugifiedIri, widthScale, ...columnStyle },
           };
         } else {
           return {
             ...acc,
-            [iri]: { slugifiedIri, ...columnStyle },
+            [slugifiedIri]: { slugifiedIri, ...columnStyle },
           };
         }
       }, {}),
