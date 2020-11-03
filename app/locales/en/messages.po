@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/chart-preview.tsx:41
+#: app/components/chart-preview.tsx:42
 msgid "annotation.add.description"
 msgstr "[ Description ]"
 
-#: app/components/chart-preview.tsx:30
+#: app/components/chart-preview.tsx:31
 msgid "annotation.add.title"
 msgstr "[ Title ]"
 
@@ -61,6 +61,10 @@ msgstr "Publish"
 #: app/components/publish-actions.tsx:82
 msgid "button.share"
 msgstr "Share"
+
+#: app/charts/table/table.tsx:53
+msgid "chart.published.toggle.mobile.view"
+msgstr "Toggle alternative mobile view"
 
 #: app/configurator/components/ui-helpers.tsx:127
 msgid "controls.axis.horizontal"
