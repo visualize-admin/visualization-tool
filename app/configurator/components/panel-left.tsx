@@ -2,7 +2,7 @@ import React from "react";
 import { useConfiguratorState } from "..";
 import { ChartAnnotator } from "./chart-annotator";
 import { ChartConfigurator } from "./chart-configurator";
-import { ChartConfiguratorTable } from "./chart-configurator-table";
+import { ChartConfiguratorTable } from "../table/table-chart-configurator";
 import { ChartTypeSelector } from "./chart-type-selector";
 import { DataSetList } from "./dataset-selector";
 

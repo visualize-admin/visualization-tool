@@ -27,7 +27,7 @@ import {
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import { ColumnStyle } from "../config-types";
+import { TableColumnOptions } from "../table/table-chart-options";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
   ControlSection,
@@ -35,12 +35,7 @@ import {
   SectionTitle,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
-import {
-  ChartFieldField,
-  ChartOptionCheckboxField,
-  ChartOptionRadioField,
-  ChartOptionSelectField,
-} from "./field";
+import { ChartFieldField, ChartOptionRadioField } from "./field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
@@ -464,158 +459,6 @@ const SingleFilter = ({
           )}
         </ControlSectionContent>
       </ControlSection>
-    </div>
-  );
-};
-
-const TableColumnOptions = ({
-  state,
-  metaData,
-}: {
-  state: ConfiguratorStateConfiguringChart;
-  metaData: DataCubeMetadata;
-}) => {
-  const { activeField } = state;
-
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (panelRef && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [activeField]);
-
-  if (!activeField) {
-    return null;
-  }
-
-  // Active field is always a component IRI, like in filters
-  const component = [...metaData.dimensions, ...metaData.measures].find(
-    (d) => d.iri === activeField
-  );
-
-  if (!component) {
-    return <div>`No component ${activeField}`</div>;
-  }
-
-  const columnStyleOptions =
-    component.__typename === "NominalDimension" ||
-    component.__typename === "OrdinalDimension" ||
-    component.__typename === "TemporalDimension"
-      ? [
-          { value: "text", label: "text" },
-          { value: "category", label: "category" },
-        ]
-      : [
-          { value: "text", label: "text" },
-          { value: "heatmap", label: "heatmap" },
-          { value: "bar", label: "bar" },
-        ];
-
-  return (
-    <div
-      key={`control-panel-table-column-${activeField}`}
-      role="tabpanel"
-      id={`control-panel-table-column-${activeField}`}
-      aria-labelledby={`tab-${activeField}`}
-      ref={panelRef}
-      tabIndex={-1}
-    >
-      <ControlSection>
-        <SectionTitle iconName={"table"}>
-          {getFieldLabel("table.column")}
-        </SectionTitle>
-        <ControlSectionContent side="right">
-          {component.__typename !== "Measure" && (
-            <ChartOptionCheckboxField
-              label="isGroup"
-              field={activeField}
-              path="isGroup"
-            />
-          )}
-
-          {component.__typename === "Measure" && (
-            <ChartOptionCheckboxField
-              label="isHidden"
-              field={activeField}
-              path="isHidden"
-            />
-          )}
-        </ControlSectionContent>
-      </ControlSection>
-
-      <ControlSection>
-        <SectionTitle iconName={"image"}>
-          <Trans id="controls.section.columnstyle">Column Style</Trans>
-        </SectionTitle>
-        <ControlSectionContent side="right">
-          <ChartOptionSelectField<ColumnStyle>
-            id={"columnStyle"}
-            label={<Trans id="controls.select.columnStyle">Column Style</Trans>}
-            options={columnStyleOptions}
-            getValue={(type) => {
-              switch (type) {
-                case "text":
-                  return {
-                    type: "text",
-                    textStyle: "regular",
-                    textColor: "text",
-                    columnColor: "transparent",
-                  };
-                case "category":
-                  return {
-                    type: "category",
-                    textStyle: "regular",
-                    palette: "viridis",
-                    colorMapping: {},
-                  };
-                case "heatmap":
-                  return {
-                    type: "heatmap",
-                    textStyle: "regular",
-                    palette: "viridis",
-                  };
-                case "bar":
-                  return {
-                    type: "bar",
-                    textStyle: "regular",
-                    barColorPositive: "blue",
-                    barColorNegative: "red",
-                    barColorBackground: "red",
-                    barShowBackground: false,
-                  };
-                default:
-                  return undefined;
-              }
-            }}
-            getKey={(d) => d.type}
-            field={activeField}
-            path="columnStyle"
-          />
-        </ControlSectionContent>
-      </ControlSection>
-
-      {(component.__typename === "NominalDimension" ||
-        component.__typename === "OrdinalDimension" ||
-        component.__typename === "TemporalDimension") && (
-        <ControlSection>
-          <SectionTitle disabled={!component} iconName="filter">
-            <Trans id="controls.section.filter">Filter</Trans>
-          </SectionTitle>
-          <ControlSectionContent side="right" as="fieldset">
-            <legend style={{ display: "none" }}>
-              <Trans id="controls.section.filter">Filter</Trans>
-            </legend>
-            {component && (
-              <DimensionValuesMultiFilter
-                key={component.iri}
-                dimensionIri={component.iri}
-                dataSetIri={metaData.iri}
-              />
-            )}
-          </ControlSectionContent>
-        </ControlSection>
-      )}
     </div>
   );
 };

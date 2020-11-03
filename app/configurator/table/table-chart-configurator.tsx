@@ -1,61 +1,26 @@
 import { Trans } from "@lingui/macro";
-import React, { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   DragDropContext,
-  DraggableLocation,
   OnDragEndResponder,
+  OnDragStartResponder,
 } from "react-beautiful-dnd";
 import { ConfiguratorStateConfiguringChart } from "..";
 import { getFieldComponentIris } from "../../charts";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-import { GenericFields, TableFields } from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
-import { TabDropZone } from "./chart-controls/drag-and-drop-tab";
+import { TabDropZone } from "../components/chart-controls/drag-and-drop-tab";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "./chart-controls/section";
-import { FilterTabField } from "./field";
-import { getOrderedTableColumns } from "./ui-helpers";
-
-const reorderFields = ({
-  fields,
-  source,
-  destination,
-}: {
-  fields: TableFields;
-  source: DraggableLocation;
-  destination: DraggableLocation;
-}): TableFields => {
-  const fieldsArray = getOrderedTableColumns(fields);
-  let groupFields = [...fieldsArray.filter((f) => f.isGroup)];
-  let columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
-
-  let sourceFields =
-    source.droppableId === "columns" ? columnFields : groupFields;
-  let destinationFields =
-    destination.droppableId === "columns" ? columnFields : groupFields;
-
-  destinationFields.splice(
-    destination.index,
-    0,
-    sourceFields.splice(source.index, 1)[0]
-  );
-
-  const allFields = [
-    ...groupFields.map((f, i) => ({ ...f, isGroup: true, position: i })),
-    ...columnFields.map((f, i) => ({
-      ...f,
-      isGroup: false,
-      position: groupFields.length + i,
-    })),
-  ];
-
-  return Object.fromEntries(allFields.map((f) => [f.componentIri, f]));
-};
+} from "../components/chart-controls/section";
+import { FilterTabField } from "../components/field";
+import { getOrderedTableColumns } from "../components/ui-helpers";
+import { TableFields } from "../config-types";
+import { useConfiguratorState } from "../configurator-state";
+import { moveFields } from "./table-config-state";
 
 export const ChartConfiguratorTable = ({
   state,
@@ -69,27 +34,36 @@ export const ChartConfiguratorTable = ({
 
   const [, dispatch] = useConfiguratorState();
 
+  const [currentDraggableId, setCurrentDraggableId] = useState<string | null>(
+    null
+  );
+
   const onDragEnd = useCallback<OnDragEndResponder>(
     ({ source, destination }) => {
-      if (!destination) {
+      setCurrentDraggableId(null);
+
+      if (!destination || state.chartConfig.chartType !== "table") {
         return;
       }
 
-      const fields = reorderFields({
-        fields: state.chartConfig.fields as TableFields,
+      const chartConfig = moveFields(state.chartConfig, {
         source,
         destination,
       });
 
       dispatch({
-        type: "CHART_FIELDS_CHANGED",
+        type: "CHART_CONFIG_REPLACED",
         value: {
-          fields: fields as GenericFields,
+          chartConfig,
         },
       });
     },
     [state, dispatch]
   );
+
+  const onDragStart = useCallback<OnDragStartResponder>(({ draggableId }) => {
+    setCurrentDraggableId(draggableId);
+  }, []);
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
@@ -102,6 +76,11 @@ export const ChartConfiguratorTable = ({
     const fieldsArray = getOrderedTableColumns(fields);
     const groupFields = [...fieldsArray.filter((f) => f.isGroup)];
     const columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
+
+    const currentDraggedField =
+      currentDraggableId !== null ? fields[currentDraggableId] : null;
+    const isGroupsDropDisabled =
+      currentDraggedField?.componentType === "Measure";
 
     return (
       <>
@@ -117,12 +96,13 @@ export const ChartConfiguratorTable = ({
             settings and sorting
           </ControlSectionContent>
         </ControlSection>
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <TabDropZone
             id="groups"
             title={<Trans id="controls.section.groups">Groups</Trans>}
             metaData={data.dataCubeByIri}
             items={groupFields}
+            isDropDisabled={isGroupsDropDisabled}
           ></TabDropZone>
 
           <TabDropZone
