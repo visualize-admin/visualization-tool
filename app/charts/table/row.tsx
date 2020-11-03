@@ -8,6 +8,7 @@ import { GroupHeader } from "./group-header";
 import { ColumnMeta, TableChartState } from "./table-state";
 import { Tag } from "./cell";
 import { ReactNode } from "react";
+import { useFormatNumber } from "../../domain/helpers";
 
 export const RowUI = ({
   row,
@@ -17,22 +18,25 @@ export const RowUI = ({
   prepareRow: (row: Row<Observation>) => void;
 }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
+  const formatNumber = useFormatNumber();
 
   prepareRow(row);
-
   return (
     <>
       <tr {...row.getRowProps()}>
         {row.subRows.length === 0 ? (
           <>
             {row.cells.map((cell, i) => {
+              const { columnComponentType } = tableColumnsMeta[cell.column.id];
               return (
                 <CellContent
                   key={i}
                   cell={cell}
                   columnMeta={tableColumnsMeta[cell.column.id]}
                 >
-                  {cell.render("Cell")}
+                  {columnComponentType === "Measure"
+                    ? formatNumber(cell.value)
+                    : cell.render("Cell")}
                 </CellContent>
               );
             })}

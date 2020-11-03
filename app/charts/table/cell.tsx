@@ -1,11 +1,10 @@
+import { SystemStyleObject } from "@styled-system/css";
 import { Box } from "@theme-ui/components";
 import * as React from "react";
-import { Cell, CellPropGetter, TableCellProps } from "react-table";
-import { SystemStyleObject } from "@styled-system/css";
-import { ColumnMeta } from "./table-state";
-import { Observation, ObservationValue } from "../../domain/data";
-import { useFormatNumber } from "../../domain/helpers";
 import { ReactNode } from "react";
+import { Cell, CellPropGetter, TableCellProps } from "react-table";
+import { Observation } from "../../domain/data";
+import { ColumnMeta } from "./table-state";
 
 export const CellContent = ({
   cell,
@@ -16,7 +15,6 @@ export const CellContent = ({
   columnMeta: ColumnMeta;
   children: ReactNode;
 }) => {
-  const formatNumber = useFormatNumber();
   const {
     type,
     textStyle,
@@ -34,11 +32,6 @@ export const CellContent = ({
     case "text":
       return (
         <TextCell
-          value={
-            typeof cell.value === "number"
-              ? formatNumber(cell.value)
-              : cell.value
-          }
           styles={{
             color: textColor,
             bg: columnColor,
@@ -64,7 +57,6 @@ export const CellContent = ({
     case "heatmap":
       return (
         <TextCell
-          value={formatNumber(cell.value)}
           styles={{
             color: textColor,
             bg: colorScale ? colorScale(cell.value) : "primaryLight",
@@ -94,11 +86,6 @@ export const CellContent = ({
     default:
       return (
         <TextCell
-          value={
-            typeof cell.value === "number"
-              ? formatNumber(cell.value)
-              : cell.value
-          }
           styles={{
             color: textColor,
             bg: columnColor,
@@ -114,12 +101,10 @@ export const CellContent = ({
 };
 
 export const TextCell = ({
-  value,
   styles,
   cellProps,
   children,
 }: {
-  value: string | number;
   styles: SystemStyleObject;
   cellProps?: (propGetter?: CellPropGetter<$FixMe>) => TableCellProps;
   children: ReactNode;
