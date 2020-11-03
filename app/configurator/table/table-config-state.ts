@@ -109,9 +109,20 @@ export const updateIsHidden = produce(
       value: boolean;
     }
   ): TableConfig => {
-    if (chartConfig.fields[field]) {
-      chartConfig.fields[field].isHidden = value;
+    if (!chartConfig.fields[field]) {
+      return chartConfig;
     }
+
+    chartConfig.fields[field].isHidden = value;
+
+    // If field is _not_ a measure, add/remove it to/from the filters
+    // if (chartConfig.fields[field].componentType !== "Measure") {
+    //   if (value === true) {
+    //     chartConfig.filters[field] = { type: "single", value: "TODO" };
+    //   } else {
+    //     delete chartConfig.filters[field];
+    //   }
+    // }
 
     return chartConfig;
   }
