@@ -18,11 +18,15 @@ export const TableHeader = ({
                 <Box
                   as="th"
                   sx={{
+                    position: "sticky",
+                    top: 0,
+
                     m: 0,
                     py: 2,
                     pr: 3,
                     pl: 3,
                     textAlign: "left",
+
                     borderTop: "1px solid",
                     borderTopColor: "monochrome700",
                     borderBottom: "1px solid",
@@ -31,6 +35,7 @@ export const TableHeader = ({
                     borderLeft: 0,
                     fontWeight: "bold",
 
+                    bg: "monochrome100",
                     color: "monochrome700",
 
                     ":last-child": {
