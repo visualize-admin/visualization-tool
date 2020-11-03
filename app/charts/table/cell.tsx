@@ -1,5 +1,6 @@
 import { SystemStyleObject } from "@styled-system/css";
 import { Box } from "@theme-ui/components";
+import { hcl } from "d3-color";
 import * as React from "react";
 import { ReactNode } from "react";
 import { Cell, CellPropGetter, TableCellProps } from "react-table";
@@ -58,7 +59,10 @@ export const CellContent = ({
       return (
         <TextCell
           styles={{
-            color: textColor,
+            color:
+              hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
+                ? "#fff"
+                : "#000",
             bg: colorScale ? colorScale(cell.value) : "primaryLight",
             textAlign: "right",
             fontWeight: textStyle,
