@@ -8,7 +8,6 @@ import { isNumber } from "../../domain/helpers";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
-  useDataCubePreviewQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
@@ -16,47 +15,26 @@ import { ChartContainer } from "../shared/containers";
 import { Table } from "./table";
 import { TableChart } from "./table-state";
 
-// export const ChartTableVisualizationData = ({
-//   dataSetIri,
-//   chartConfig,
-// }: {
-//   dataSetIri: string;
-//   chartConfig: TableConfig;
-// }) => {
-//   const locale = useLocale();
-
-//   const [{ data: metaData }] = useDataCubePreviewQuery({
-//     variables: { iri: dataSetIri, locale },
-//   });
-
-//   if (metaData && metaData.dataCubeByIri) {
-//     return (
-//       <ChartTableVisualization
-//         dataSetIri={dataSetIri}
-//         chartConfig={chartConfig}
-//         measures={metaData.dataCubeByIri.measures}
-//       />
-//     );
-//   } else {
-//     return <Loading />;
-//   }
-// };
 export const ChartTableVisualization = ({
   dataSetIri,
   chartConfig,
-}: // measures,
-{
+}: {
   dataSetIri: string;
   chartConfig: TableConfig;
-  // measures: ComponentFieldsFragment[];
 }) => {
   const locale = useLocale();
 
+  const measures = Object.keys(chartConfig.fields).filter(
+    (key) =>
+      chartConfig.fields[key].componentType === "Measure" &&
+      !chartConfig.fields[key].isHidden
+  );
+  console.log({ measures });
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [], //measures.map((d) => d.iri),
+      measures,
       filters: chartConfig.filters,
     },
   });
