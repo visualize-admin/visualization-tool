@@ -1,6 +1,6 @@
 import FlexSearch from "flexsearch";
 import { Trans } from "@lingui/macro";
-import { Box } from "@theme-ui/components";
+import { Box, Text } from "@theme-ui/components";
 import * as React from "react";
 import { useMemo, useState } from "react";
 import { useExpanded, useGroupBy, useSortBy, useTable } from "react-table";
@@ -130,7 +130,7 @@ export const Table = () => {
           position: "relative",
           overflow: "auto",
           bg: "monochrome100",
-          mb: 5,
+          mb: 4,
         }}
       >
         <Box as="table" sx={TABLE_STYLES} {...getTableProps()}>
@@ -145,7 +145,6 @@ export const Table = () => {
       </Box>
 
       {/* Alternative Mobile View */}
-
       <Box
         sx={{
           display: useAlternativeMobileView
@@ -163,6 +162,20 @@ export const Table = () => {
           <RowMobile key={i} row={row} prepareRow={prepareRow} />
         ))}
       </Box>
+
+      {/* Number of lines */}
+      <Text
+        variant="paragraph2"
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          mb: 5,
+          color: "monochrome600",
+        }}
+      >
+        <Trans id="chart.table.number.of.lines">Total number of lines: </Trans>
+        {rows.length}
+      </Text>
     </>
   );
 };

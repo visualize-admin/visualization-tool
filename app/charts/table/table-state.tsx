@@ -1,4 +1,4 @@
-import { extent } from "d3-array";
+import { extent, max, min } from "d3-array";
 import {
   ScaleLinear,
   scaleLinear,
@@ -11,6 +11,7 @@ import { Column } from "react-table";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
+  ComponentType,
   TableConfig,
 } from "../../configurator";
 import {
@@ -26,6 +27,7 @@ import { getSlugifiedIri, ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
 export interface ColumnMeta {
   iri: string;
   slugifiedIri: string;
+  columnComponentType: ComponentType;
   colorScale?: ScaleSequential<string>;
   widthScale?: ScaleLinear<number, number>;
   type: string;
@@ -145,10 +147,15 @@ const useTableState = ({
         const slugifiedIri = getSlugifiedIri(iri);
         const columnStyle = columnMeta.columnStyle;
         const columnStyleType = columnStyle.type;
+        const columnComponentType = columnMeta.componentType;
         if (columnStyleType === "text") {
           return {
             ...acc,
-            [slugifiedIri]: { slugifiedIri, ...columnStyle },
+            [slugifiedIri]: {
+              slugifiedIri,
+              columnComponentType,
+              ...columnStyle,
+            },
           };
         } else if (columnStyleType === "category") {
           const colorScale = scaleOrdinal()
@@ -156,17 +163,30 @@ const useTableState = ({
             .range(getPalette((columnStyle as ColumnStyleCategory).palette));
           return {
             ...acc,
-            [slugifiedIri]: { slugifiedIri, colorScale, ...columnStyle },
+            [slugifiedIri]: {
+              slugifiedIri,
+              columnComponentType,
+              colorScale,
+              ...columnStyle,
+            },
           };
         } else if (columnStyleType === "heatmap") {
           const colorScale = scaleSequential(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
           ).domain(
-            (extent(data, (d) => +d[iri]) as [number, number]) || [0, 1]
+            ([max(data, (d) => +d[iri]), min(data, (d) => +d[iri])] as [
+              number,
+              number
+            ]) || [1, 0]
           );
           return {
             ...acc,
-            [slugifiedIri]: { slugifiedIri, colorScale, ...columnStyle },
+            [slugifiedIri]: {
+              slugifiedIri,
+              columnComponentType,
+              colorScale,
+              ...columnStyle,
+            },
           };
         } else if (columnStyleType === "bar") {
           const widthScale = scaleLinear()
@@ -174,12 +194,21 @@ const useTableState = ({
             .range([0, 100]);
           return {
             ...acc,
-            [slugifiedIri]: { slugifiedIri, widthScale, ...columnStyle },
+            [slugifiedIri]: {
+              slugifiedIri,
+              columnComponentType,
+              widthScale,
+              ...columnStyle,
+            },
           };
         } else {
           return {
             ...acc,
-            [slugifiedIri]: { slugifiedIri, ...columnStyle },
+            [slugifiedIri]: {
+              slugifiedIri,
+              columnComponentType,
+              ...columnStyle,
+            },
           };
         }
       }, {}),

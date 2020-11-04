@@ -16,7 +16,7 @@ export const TABLE_STYLES: SystemStyleObject = {
   td: {
     m: 0,
     py: 2,
-    pr: 6,
+    pr: 3,
     pl: 3,
     borderBottom: "1px solid",
     borderBottomColor: "monochrome400",
