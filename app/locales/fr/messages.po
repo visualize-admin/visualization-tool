@@ -66,6 +66,10 @@ msgstr "Partager"
 msgid "chart.published.toggle.mobile.view"
 msgstr ""
 
+#: app/charts/table/table.tsx:103
+msgid "chart.table.number.of.lines"
+msgstr ""
+
 #: app/configurator/components/ui-helpers.tsx:127
 msgid "controls.axis.horizontal"
 msgstr "Axe horizontal"

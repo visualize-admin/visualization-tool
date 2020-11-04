@@ -66,6 +66,10 @@ msgstr "Share"
 msgid "chart.published.toggle.mobile.view"
 msgstr "Toggle alternative mobile view"
 
+#: app/charts/table/table.tsx:103
+msgid "chart.table.number.of.lines"
+msgstr "Total number of lines:"
+
 #: app/configurator/components/ui-helpers.tsx:127
 msgid "controls.axis.horizontal"
 msgstr "Horizontal axis"
