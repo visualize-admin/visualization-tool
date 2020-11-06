@@ -64,6 +64,7 @@ export const RowMobile = ({
   prepareRow: (row: Row<Observation>) => void;
 }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
+  const formatNumber = useFormatNumber();
 
   prepareRow(row);
 
@@ -72,6 +73,8 @@ export const RowMobile = ({
     <Box>
       {row.subRows.length === 0 ? (
         row.cells.map((cell, i) => {
+          const { columnComponentType } = tableColumnsMeta[cell.column.id];
+
           return (
             <Flex
               key={i}
@@ -101,7 +104,9 @@ export const RowMobile = ({
                   cell={cell}
                   columnMeta={tableColumnsMeta[cell.column.id]}
                 >
-                  {cell.render("Cell")}
+                  {columnComponentType === "Measure"
+                    ? formatNumber(cell.value)
+                    : cell.render("Cell")}
                 </DDContent>
               </Box>
             </Flex>
