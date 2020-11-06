@@ -9,7 +9,7 @@ import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { TABLE_STYLES } from "./constants";
 import { TableHeader } from "./header";
-import { RowMobile, RowUI } from "./row";
+import { RowMobile, RowDesktop } from "./row";
 import { TableChartState } from "./table-state";
 
 export const Table = () => {
@@ -138,7 +138,7 @@ export const Table = () => {
 
           <tbody {...getTableBodyProps()}>
             {rows.map((row, i) => {
-              return <RowUI key={i} row={row} prepareRow={prepareRow} />;
+              return <RowDesktop key={i} row={row} prepareRow={prepareRow} />;
             })}
           </tbody>
         </Box>
@@ -173,7 +173,7 @@ export const Table = () => {
           color: "monochrome600",
         }}
       >
-        <Trans id="chart.table.number.of.lines">Total number of lines: </Trans>
+        <Trans id="chart.table.number.of.lines">Total number of lines:</Trans>{" "}
         {rows.length}
       </Text>
     </>

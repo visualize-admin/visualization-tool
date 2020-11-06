@@ -10,7 +10,7 @@ import { Tag } from "./cell";
 import { ReactNode } from "react";
 import { useFormatNumber } from "../../domain/helpers";
 
-export const RowUI = ({
+export const RowDesktop = ({
   row,
   prepareRow,
 }: {
