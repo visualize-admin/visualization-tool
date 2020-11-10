@@ -3,7 +3,7 @@ import * as React from "react";
 import { Cell, Row } from "react-table";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
-import { CellContent } from "./cell";
+import { CellDesktop } from "./cell";
 import { GroupHeader } from "./group-header";
 import { ColumnMeta, TableChartState } from "./table-state";
 import { Tag } from "./cell";
@@ -29,15 +29,15 @@ export const RowDesktop = ({
             {row.cells.map((cell, i) => {
               const { columnComponentType } = tableColumnsMeta[cell.column.id];
               return (
-                <CellContent
+                <CellDesktop
                   key={i}
                   cell={cell}
                   columnMeta={tableColumnsMeta[cell.column.id]}
                 >
-                  {columnComponentType === "Measure"
+                  {/* {columnComponentType === "Measure"
                     ? formatNumber(cell.value)
-                    : cell.render("Cell")}
-                </CellContent>
+                    : cell.render("Cell")} */}
+                </CellDesktop>
               );
             })}
           </>
