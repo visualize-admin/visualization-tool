@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 import {
   useBlockLayout,
   useExpanded,
+  useFlexLayout,
   useGroupBy,
   useSortBy,
   useTable,
@@ -17,8 +18,10 @@ import { TABLE_STYLES } from "./constants";
 import { TableHeader } from "./header";
 import { RowMobile, RowDesktop } from "./row";
 import { TableChartState } from "./table-state";
-import { FixedSizeList } from "react-window";
+import { FixedSizeList, VariableSizeList } from "react-window";
 import { scrollbarWidth } from "./helpers";
+import { CellDesktop } from "./cell";
+import { useFormatNumber } from "../../configurator/components/ui-helpers";
 
 export const Table = () => {
   const {
@@ -30,6 +33,7 @@ export const Table = () => {
     groupingIris,
     sortingIris,
   } = useChartState() as TableChartState;
+  const formatNumber = useFormatNumber();
 
   const [useAlternativeMobileView, toggleAlternativeMobileView] = useState(
     false
@@ -95,7 +99,8 @@ export const Table = () => {
         );
       },
     },
-    useBlockLayout,
+    // useBlockLayout,
+    useFlexLayout,
     useGroupBy,
     useSortBy,
     useExpanded
@@ -107,26 +112,23 @@ export const Table = () => {
       const row = rows[index];
       prepareRow(row);
       return (
-        <>
-          {/* <RowDesktop row={row} prepareRow={prepareRow} /> */}
-          <div
-            {...row.getRowProps({
-              style,
-            })}
-            className="tr"
-          >
-            {row.cells.map((cell) => {
-              return (
-                <div {...cell.getCellProps()} className="td">
-                  {cell.render("Cell")}
-                </div>
-              );
-            })}
-          </div>
-        </>
+        <div
+          {...row.getRowProps({
+            style,
+          })}
+        >
+          {row.cells.map((cell, i) => {
+            return (
+              <CellDesktop
+                cell={cell}
+                columnMeta={tableColumnsMeta[cell.column.id]}
+              />
+            );
+          })}
+        </div>
       );
     },
-    [prepareRow, rows]
+    [prepareRow, rows, tableColumnsMeta]
   );
   return (
     <>
@@ -175,37 +177,34 @@ export const Table = () => {
           sx={{
             display: "inline-block",
             borderSpacing: 0,
-            border: "1px solid black",
           }}
           {...getTableProps()}
         >
           {/* <TableHeader headerGroups={headerGroups} /> */}
-          <div>
+          <Box
+            sx={{ position: "sticky", top: 0, bg: "monochrome100", zIndex: 12 }}
+          >
             {headerGroups.map((headerGroup) => (
-              <div {...headerGroup.getHeaderGroupProps()} className="tr">
+              <div {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <div {...column.getHeaderProps()} className="th">
+                  <div {...column.getHeaderProps()}>
                     {column.render("Header")}
                   </div>
                 ))}
               </div>
             ))}
-          </div>
+          </Box>
           <div {...getTableBodyProps()}>
-            <FixedSizeList
+            <VariableSizeList
               height={bounds.chartHeight}
               itemCount={rows.length}
-              itemSize={35}
+              itemSize={() => 50}
+              estimatedItemSize={50}
               width={totalColumnsWidth + scrollBarSize}
             >
               {renderRow}
-            </FixedSizeList>
+            </VariableSizeList>
           </div>
-          {/* <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              return <RowDesktop key={i} row={row} prepareRow={prepareRow} />;
-            })}
-          </tbody> */}
         </Box>
       </Box>
 
