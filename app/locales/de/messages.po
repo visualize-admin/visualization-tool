@@ -131,7 +131,7 @@ msgstr "gestapelt"
 msgid "controls.description"
 msgstr "Beschreibung hinzufügen"
 
-#: app/configurator/components/field.tsx:124
+#: app/configurator/components/field.tsx:150
 msgid "controls.dimension.none"
 msgstr "Keine"
 
@@ -187,7 +187,7 @@ msgstr "Suche zurücksetzen"
 msgid "controls.section.columns"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:88
+#: app/configurator/table/table-chart-options.tsx:91
 msgid "controls.section.columnstyle"
 msgstr ""
 
@@ -205,8 +205,8 @@ msgstr "Design"
 
 #: app/configurator/components/chart-options-selector.tsx:94
 #: app/configurator/components/chart-options-selector.tsx:98
-#: app/configurator/table/table-chart-options.tsx:133
 #: app/configurator/table/table-chart-options.tsx:137
+#: app/configurator/table/table-chart-options.tsx:141
 msgid "controls.section.filter"
 msgstr "Filter"
 
@@ -222,7 +222,7 @@ msgstr ""
 msgid "controls.section.sorting"
 msgstr "Sortieren"
 
-#: app/configurator/table/table-chart-options.tsx:77
+#: app/configurator/table/table-chart-options.tsx:80
 msgid "controls.section.table.column"
 msgstr ""
 
@@ -235,8 +235,20 @@ msgstr "Diagrammtyp"
 msgid "controls.select.column.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/table/table-chart-options.tsx:91
+#: app/configurator/table/table-chart-options.tsx:94
 msgid "controls.select.columnStyle"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:159
+msgid "controls.select.columnStyle.columnColor"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:156
+msgid "controls.select.columnStyle.textColor"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:151
+msgid "controls.select.columnStyle.textStyle"
 msgstr ""
 
 #: app/components/dataset-selector.tsx:15
@@ -301,11 +313,11 @@ msgstr "Kleinste unten"
 msgid "controls.sorting.sortBy"
 msgstr "Sortieren nach"
 
-#: app/configurator/table/table-chart-options.tsx:80
+#: app/configurator/table/table-chart-options.tsx:83
 msgid "controls.table.column.group"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:82
+#: app/configurator/table/table-chart-options.tsx:85
 msgid "controls.table.column.hide"
 msgstr ""
 

@@ -117,7 +117,7 @@ export const useFormatNumber = () => {
 };
 
 export const getPalette = (
-  palette: string | undefined
+  palette?: string | undefined
 ): ReadonlyArray<string> => {
   switch (palette) {
     case "accent":

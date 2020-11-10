@@ -1,6 +1,7 @@
 import { t } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
+import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback } from "react";
 import {
   FIELD_VALUE_NONE,
@@ -260,6 +261,56 @@ export const SingleFilterField = ({
   return <Radio label={label} disabled={disabled} {...field}></Radio>;
 };
 
+export const ColorPickerField = ({
+  field,
+  path,
+  label,
+}: {
+  field: string;
+  path: string;
+  label: ReactNode;
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const updateColor = useCallback(
+    (value: string) =>
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field,
+          path,
+          value,
+        },
+      }),
+    [dispatch, field, path]
+  );
+
+  if (state.state !== "CONFIGURING_CHART") {
+    return null;
+  }
+
+  const color = get(state, `chartConfig.fields["${field}"].${path}`);
+
+  return (
+    <Flex
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: 2,
+        height: "2rem",
+        width: "100%",
+      }}
+    >
+      <Box>{label}</Box>
+      <ColorPickerMenu
+        colors={getPalette()}
+        selectedColor={color}
+        onChange={(c) => updateColor(c)}
+      />
+    </Flex>
+  );
+};
+
 export const ChartFieldField = ({
   componentIri,
   label,
@@ -386,8 +437,8 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
   path: string;
   disabled?: boolean;
   options: Option[];
-  getValue: (x: string) => ValueType | undefined;
-  getKey: (x: ValueType) => string;
+  getValue?: (x: string) => ValueType | undefined;
+  getKey?: (x: ValueType) => string;
 }) => {
   const fieldProps = useChartOptionSelectField({
     field,

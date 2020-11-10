@@ -14,12 +14,13 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
-import { ChartOptionSelectField } from "../components/field";
+import { ChartOptionSelectField, ColorPickerField } from "../components/field";
 import { DimensionValuesMultiFilter } from "../components/filters";
 import { FieldProps } from "../config-form";
 import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
+  TableConfig,
 } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import { updateIsGroup, updateIsHidden } from "./table-config-state";
@@ -127,6 +128,10 @@ export const TableColumnOptions = ({
     return <div>`No component ${activeField}`</div>;
   }
 
+  if (state.chartConfig.chartType !== "table") {
+    return null;
+  }
+
   const columnStyleOptions =
     component.__typename === "NominalDimension" ||
     component.__typename === "OrdinalDimension" ||
@@ -223,6 +228,10 @@ export const TableColumnOptions = ({
             field={activeField}
             path="columnStyle"
           />
+          <ColumnStyleSubOptions
+            chartConfig={state.chartConfig}
+            activeField={activeField}
+          />
         </ControlSectionContent>
       </ControlSection>
 
@@ -248,5 +257,60 @@ export const TableColumnOptions = ({
         </ControlSection>
       )}
     </div>
+  );
+};
+
+const ColumnStyleSubOptions = ({
+  chartConfig,
+  activeField,
+}: {
+  chartConfig: TableConfig;
+  activeField: string;
+}) => {
+  const type = chartConfig.fields[activeField].columnStyle.type;
+
+  return (
+    <>
+      <ChartOptionSelectField<string>
+        id="columnStyle.textStyle"
+        label={
+          <Trans id="controls.select.columnStyle.textStyle">Text Style</Trans>
+        }
+        options={[
+          { value: "regular", label: "regular" },
+          { value: "bold", label: "bold" },
+        ]}
+        field={activeField}
+        path="columnStyle.textStyle"
+      />
+      {type === "text" ? (
+        <>
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.textColor">
+                Text Color
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.textColor"
+          />
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.columnColor">
+                Column Color
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.columnColor"
+          />
+        </>
+      ) : type === "category" ? (
+        <> cat optz </>
+      ) : type === "heatmap" ? (
+        <> heatmap optz</>
+      ) : type === "bar" ? (
+        <> bar optz</>
+      ) : null}
+    </>
   );
 };
