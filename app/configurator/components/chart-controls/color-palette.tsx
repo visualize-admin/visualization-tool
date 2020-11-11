@@ -1,17 +1,16 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Flex, Text } from "@theme-ui/components";
 import { useSelect } from "downshift";
-
-import { useConfiguratorState, ConfiguratorStateConfiguringChart } from "../..";
+import get from "lodash/get";
+import { useCallback } from "react";
+import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "../..";
+import { Label } from "../../../components/form";
 import {
   getPalette,
   mapColorsToComponentValuesIris,
 } from "../../../domain/helpers";
-import { Icon } from "../../../icons";
-import { Label } from "../../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../../graphql/query-hooks";
-import { useCallback } from "react";
-import { SegmentField } from "../../config-types";
+import { Icon } from "../../../icons";
 
 const palettes: Array<{
   label: string;
@@ -41,10 +40,16 @@ const palettes: Array<{
 type Props = {
   field: string;
   disabled?: boolean;
+  colorConfigPath?: string;
   component: DimensionFieldsWithValuesFragment | undefined;
 };
 
-export const ColorPalette = ({ field, disabled, component }: Props) => {
+export const ColorPalette = ({
+  field,
+  disabled,
+  colorConfigPath,
+  component,
+}: Props) => {
   const [state, dispatch] = useConfiguratorState();
   const {
     isOpen,
@@ -62,8 +67,8 @@ export const ColorPalette = ({ field, disabled, component }: Props) => {
           type: "CHART_PALETTE_CHANGED",
           value: {
             field,
-            path: "palette",
-            value: selectedItem.value,
+            colorConfigPath,
+            palette: selectedItem.value,
             colorMapping: mapColorsToComponentValuesIris({
               palette: selectedItem.value,
               component,
@@ -107,8 +112,13 @@ export const ColorPalette = ({ field, disabled, component }: Props) => {
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
             {getPalette(
-              (state.chartConfig.fields.segment as SegmentField)?.palette ||
+              get(
+                state,
+                `chartConfig.fields["${state.activeField}"].${
+                  colorConfigPath ? `${colorConfigPath}.` : ""
+                }palette`,
                 "category10"
+              )
             ).map((color: string) => (
               <ColorSquare key={color} color={color} disabled={disabled} />
             ))}
@@ -152,7 +162,12 @@ export const ColorPalette = ({ field, disabled, component }: Props) => {
           ))}
       </Box>
       {component && state.state === "CONFIGURING_CHART" && (
-        <ColorPaletteReset field={field} component={component} state={state} />
+        <ColorPaletteReset
+          field={field}
+          component={component}
+          state={state}
+          colorConfigPath={colorConfigPath}
+        />
       )}
       {/* if you Tab from menu, focus goes on button, and it shouldn't. only happens here. */}
       <div tabIndex={0} />
@@ -192,40 +207,52 @@ const ColorSquare = ({
 
 const ColorPaletteReset = ({
   field,
+  colorConfigPath,
   component,
   state,
 }: {
   field: string;
+  colorConfigPath?: string;
   component: DimensionFieldsWithValuesFragment;
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const [, dispatch] = useConfiguratorState();
+
+  const palette = get(
+    state,
+    `chartConfig.fields["${field}"].${
+      colorConfigPath ? `${colorConfigPath}.` : ""
+    }palette`,
+    "category10"
+  ) as string;
+
+  const colorMapping = get(
+    state,
+    `chartConfig.fields["${field}"].${
+      colorConfigPath ? `${colorConfigPath}.` : ""
+    }colorMapping`
+  ) as Record<string, string> | undefined;
+
   const resetColorPalette = useCallback(
     () =>
       dispatch({
         type: "CHART_PALETTE_RESET",
         value: {
           field,
-          path: "colorMapping",
+          colorConfigPath,
           colorMapping: mapColorsToComponentValuesIris({
-            palette:
-              (state.chartConfig?.fields.segment as SegmentField)?.palette ||
-              "category10",
+            palette,
             component,
           }),
         },
       }),
-    [component, dispatch, field, state.chartConfig]
+    [colorConfigPath, component, dispatch, field, palette]
   );
 
-  if ((state.chartConfig.fields.segment as SegmentField)?.colorMapping) {
+  if (colorMapping) {
     // Compare palette colors & colorMapping colors
-    const currentPalette = getPalette(
-      (state.chartConfig.fields.segment as SegmentField)?.palette
-    );
-    const colorMappingColors = Object.values(
-      (state.chartConfig.fields.segment as SegmentField)?.colorMapping ?? {}
-    );
+    const currentPalette = getPalette(palette);
+    const colorMappingColors = Object.values(colorMapping);
 
     const nbMatchedColors = colorMappingColors.length;
     const matchedColorsInPalette = currentPalette.slice(0, nbMatchedColors);

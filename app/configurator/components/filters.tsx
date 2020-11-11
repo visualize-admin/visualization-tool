@@ -13,9 +13,11 @@ type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 export const DimensionValuesMultiFilter = ({
   dataSetIri,
   dimensionIri,
+  colorConfigPath,
 }: {
   dataSetIri: string;
   dimensionIri: string;
+  colorConfigPath?: string;
 }) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
@@ -75,11 +77,16 @@ export const DimensionValuesMultiFilter = ({
 
         {dimension.values.map((dv) => {
           if (state.state === "CONFIGURING_CHART") {
-            const color = get(state.chartConfig.fields, [
-              "segment",
-              "colorMapping",
-              dv.value,
-            ]);
+            const path = colorConfigPath ? `${colorConfigPath}.` : "";
+            console.log(
+              `chartConfig.fields["${state.activeField}"].${path}colorMapping["${dv.value}"]`
+            );
+            const color = get(
+              state,
+              `chartConfig.fields["${state.activeField}"].${path}colorMapping["${dv.value}"]`
+            );
+
+            console.log(color);
             return (
               <MultiFilterField
                 key={dv.value}
@@ -90,6 +97,7 @@ export const DimensionValuesMultiFilter = ({
                 checked={selectionState === "ALL_SELECTED" ? true : undefined}
                 checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
                 color={color}
+                colorConfigPath={colorConfigPath}
               />
             );
           } else {

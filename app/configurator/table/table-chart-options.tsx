@@ -8,7 +8,9 @@ import React, {
   useRef,
 } from "react";
 import { Checkbox } from "../../components/form";
+import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
+import { ColorPalette } from "../components/chart-controls/color-palette";
 import {
   ControlSection,
   ControlSectionContent,
@@ -16,6 +18,7 @@ import {
 } from "../components/chart-controls/section";
 import { ChartOptionSelectField, ColorPickerField } from "../components/field";
 import { DimensionValuesMultiFilter } from "../components/filters";
+import { mapColorsToComponentValuesIris } from "../components/ui-helpers";
 import { FieldProps } from "../config-form";
 import {
   ColumnStyle,
@@ -203,7 +206,10 @@ export const TableColumnOptions = ({
                     type: "category",
                     textStyle: "regular",
                     palette: "set3",
-                    colorMapping: {},
+                    colorMapping: mapColorsToComponentValuesIris({
+                      palette: "set3",
+                      component: component as DimensionFieldsWithValuesFragment,
+                    }),
                   };
                 case "heatmap":
                   return {
@@ -231,6 +237,7 @@ export const TableColumnOptions = ({
           <ColumnStyleSubOptions
             chartConfig={state.chartConfig}
             activeField={activeField}
+            component={component as DimensionFieldsWithValuesFragment}
           />
         </ControlSectionContent>
       </ControlSection>
@@ -251,6 +258,7 @@ export const TableColumnOptions = ({
                 key={component.iri}
                 dimensionIri={component.iri}
                 dataSetIri={metaData.iri}
+                colorConfigPath="columnStyle"
               />
             )}
           </ControlSectionContent>
@@ -263,9 +271,11 @@ export const TableColumnOptions = ({
 const ColumnStyleSubOptions = ({
   chartConfig,
   activeField,
+  component,
 }: {
   chartConfig: TableConfig;
   activeField: string;
+  component: DimensionFieldsWithValuesFragment;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
 
@@ -305,7 +315,13 @@ const ColumnStyleSubOptions = ({
           />
         </>
       ) : type === "category" ? (
-        <> cat optz </>
+        <>
+          <ColorPalette
+            field={activeField}
+            colorConfigPath={"columnStyle"}
+            component={component}
+          />
+        </>
       ) : type === "heatmap" ? (
         <> heatmap optz</>
       ) : type === "bar" ? (

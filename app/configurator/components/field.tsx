@@ -26,7 +26,6 @@ import {
   useChartOptionBooleanField,
   useChartOptionSelectField,
 } from "../config-form";
-import { SegmentField } from "../config-types";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
@@ -147,6 +146,7 @@ export const MultiFilterField = ({
   onChange,
   checkAction,
   color,
+  colorConfigPath,
 }: {
   dimensionIri: string;
   label: string;
@@ -157,6 +157,7 @@ export const MultiFilterField = ({
   onChange?: () => void;
   checkAction: "ADD" | "SET";
   color?: string;
+  colorConfigPath?: string;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -191,16 +192,20 @@ export const MultiFilterField = ({
   );
 
   const updateColor = useCallback(
-    (color: string) =>
-      dispatch({
-        type: "CHART_COLOR_CHANGED",
-        value: {
-          field: "segment",
-          value,
-          color,
-        },
-      }),
-    [dispatch, value]
+    (color: string) => {
+      if (state.activeField) {
+        dispatch({
+          type: "CHART_COLOR_CHANGED",
+          value: {
+            field: state.activeField,
+            colorConfigPath,
+            color,
+            value,
+          },
+        });
+      }
+    },
+    [colorConfigPath, dispatch, state.activeField, value]
   );
 
   if (state.state !== "CONFIGURING_CHART") {
@@ -233,7 +238,12 @@ export const MultiFilterField = ({
       {color && (checked ?? fieldChecked) && (
         <ColorPickerMenu
           colors={getPalette(
-            (state.chartConfig.fields.segment as SegmentField)?.palette
+            get(
+              state,
+              `chartConfig.fields["${state.activeField}"].${
+                colorConfigPath ?? ""
+              }.palette`
+            )
           )}
           selectedColor={color}
           onChange={(c) => updateColor(c)}
