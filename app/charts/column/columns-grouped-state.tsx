@@ -11,7 +11,11 @@ import {
 import { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
-import { getPalette, mkNumber, useFormatNumber } from "../../domain/helpers";
+import {
+  getPalette,
+  mkNumber,
+  useFormatNumber,
+} from "../../configurator/components/ui-helpers";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { TooltipInfo } from "../shared/interaction/tooltip";

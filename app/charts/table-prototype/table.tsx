@@ -25,7 +25,7 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
-import { getPalette } from "../../domain/helpers";
+import { getPalette } from "../../configurator/components/ui-helpers";
 import { Data } from "../../pages/[locale]/_table-prototype";
 import { TableHeader } from "../table/table-header";
 import { ColumnDimension } from "./column-dimensions";

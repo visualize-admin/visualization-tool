@@ -8,7 +8,7 @@ import { GroupHeader } from "./group-header";
 import { ColumnMeta, TableChartState } from "./table-state";
 import { Tag } from "./cell";
 import { ReactNode } from "react";
-import { useFormatNumber } from "../../domain/helpers";
+import { useFormatNumber } from "../../configurator/components/ui-helpers";
 
 export const RowDesktop = ({
   row,

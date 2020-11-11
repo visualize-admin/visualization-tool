@@ -4,7 +4,7 @@ import * as React from "react";
 import { Row } from "react-table";
 import { Data, GROUPED_COLOR } from "../../pages/[locale]/_table-prototype";
 import { ColumnStyle } from "./column-formatting";
-import { useFormatNumber } from "../../domain/helpers";
+import { useFormatNumber } from "../../configurator/components/ui-helpers";
 
 export const RowUI = ({
   row,

@@ -9,7 +9,7 @@ import {
   ColorPicker,
   ColorPickerMenu,
 } from "../configurator/components/chart-controls/color-picker";
-import { getPalette } from "../domain/helpers";
+import { getPalette } from "../configurator/components/ui-helpers";
 import { useState } from "react";
 import { Box } from "theme-ui";
 import { ChartTypeSelectionButton } from "../configurator/components/chart-type-selector";

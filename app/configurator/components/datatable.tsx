@@ -7,7 +7,7 @@ import {
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { Loading } from "../../components/hint";
-import { useFormatNumber } from "../../domain/helpers";
+import { useFormatNumber } from "../../configurator/components/ui-helpers";
 
 type Header = ComponentFieldsFragment;
 
