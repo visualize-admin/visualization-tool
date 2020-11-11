@@ -92,7 +92,7 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          <Box>{cell.render("Cell")}</Box>
+          <Box>{formatNumber(cell.value)}</Box>
           <Box
             sx={{
               width: "100%",
