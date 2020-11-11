@@ -37,7 +37,7 @@ export const Table = () => {
   );
 
   // const [sortingIds, updateSortingIds] = useState(sortingIris);
-
+  const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
   const searchIndex = useMemo(() => {
@@ -90,20 +90,21 @@ export const Table = () => {
           () => ({
             ...state,
             groupBy: groupingIris,
-            sortBy: sortingIris,
+            // sortBy: sortingIris,
           }),
           [state, tableColumns, groupingIris, filteredData, sortingIris]
         );
       },
     },
-    // useBlockLayout,
     useFlexLayout,
     useGroupBy,
     useSortBy,
     useExpanded
   );
 
-  const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
+  React.useEffect(() => {
+    setSortBy(sortingIris);
+  }, [setSortBy, sortingIris]);
 
   const renderRow = useCallback(
     ({ index, style }) => {
