@@ -3,7 +3,7 @@ import { Box } from "theme-ui";
 import { ScatterPlotFields } from "../../configurator";
 import { ScatterPlotConfig } from "../../configurator";
 import { Observation } from "../../domain/data";
-import { isNumber } from "../../domain/helpers";
+import { isNumber } from "../../configurator/components/ui-helpers";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,

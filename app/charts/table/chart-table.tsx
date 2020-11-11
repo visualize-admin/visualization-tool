@@ -4,7 +4,7 @@ import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import { TableConfig } from "../../configurator";
 
 import { Observation } from "../../domain/data";
-import { isNumber } from "../../domain/helpers";
+import { isNumber } from "../../configurator/components/ui-helpers";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,

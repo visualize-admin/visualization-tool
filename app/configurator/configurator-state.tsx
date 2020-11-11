@@ -24,7 +24,7 @@ import {
   FilterValueMultiValues,
   GenericFields,
 } from "./config-types";
-import { mapColorsToComponentValuesIris } from "../domain/helpers";
+import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -78,24 +78,25 @@ export type ConfiguratorStateAction =
   | {
       type: "CHART_PALETTE_CHANGED";
       value: {
-        path: string;
         field: string;
-        value: string;
-        colorMapping: {};
+        colorConfigPath?: string;
+        palette: string;
+        colorMapping: Record<string, string>;
       };
     }
   | {
       type: "CHART_PALETTE_RESET";
       value: {
-        path: string;
         field: string;
-        colorMapping: {};
+        colorConfigPath?: string;
+        colorMapping: Record<string, string>;
       };
     }
   | {
       type: "CHART_COLOR_CHANGED";
       value: {
         field: string;
+        colorConfigPath?: string;
         value: string;
         color: string;
       };
@@ -522,13 +523,21 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         setWith(
           draft,
-          `chartConfig.fields["${action.value.field}"].palette`,
-          action.value.value,
+          `chartConfig.fields["${action.value.field}"].${
+            action.value.colorConfigPath
+              ? `${action.value.colorConfigPath}.`
+              : ""
+          }palette`,
+          action.value.palette,
           Object
         );
         setWith(
           draft,
-          `chartConfig.fields["${action.value.field}"].colorMapping`,
+          `chartConfig.fields["${action.value.field}"].${
+            action.value.colorConfigPath
+              ? `${action.value.colorConfigPath}.`
+              : ""
+          }colorMapping`,
           action.value.colorMapping,
           Object
         );
@@ -538,7 +547,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         setWith(
           draft,
-          `chartConfig.fields["${action.value.field}"].${action.value.path}`,
+          `chartConfig.fields["${action.value.field}"].${
+            action.value.colorConfigPath
+              ? `${action.value.colorConfigPath}.`
+              : ""
+          }colorMapping`,
           action.value.colorMapping,
           Object
         );
@@ -549,13 +562,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         setWith(
           draft,
-          [
-            "chartConfig",
-            "fields",
-            action.value.field,
-            "colorMapping",
-            action.value.value,
-          ],
+          `chartConfig.fields["${action.value.field}"].${
+            action.value.colorConfigPath
+              ? `${action.value.colorConfigPath}.`
+              : ""
+          }colorMapping["${action.value.value}"]`,
           action.value.color,
           Object
         );

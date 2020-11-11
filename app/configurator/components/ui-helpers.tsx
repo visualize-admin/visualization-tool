@@ -2,20 +2,10 @@ import { Trans } from "@lingui/macro";
 import { ascending } from "d3-array";
 import { scaleOrdinal } from "d3-scale";
 import {
-  interpolateBlues,
-  interpolateCividis,
-  interpolateCool,
-  interpolateGreens,
-  interpolateGreys,
-  interpolateInferno,
-  interpolateMagma,
-  interpolateOranges,
-  interpolatePlasma,
-  interpolatePurples,
-  interpolateReds,
-  interpolateTurbo,
-  interpolateViridis,
-  interpolateWarm,
+  interpolateBrBG,
+  interpolatePiYG,
+  interpolatePRGn,
+  interpolatePuOr,
   schemeAccent,
   schemeCategory10,
   schemeDark2,
@@ -30,7 +20,10 @@ import {
 import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
-import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
+import {
+  ComponentFieldsFragment,
+  DimensionFieldsWithValuesFragment,
+} from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import { d3FormatLocales, d3TimeFormatLocales } from "../../locales/locales";
 import { useLocale } from "../../locales/use-locale";
@@ -296,9 +289,8 @@ export const getFieldLabelHint = {
   y: <Trans id="controls.select.measure">Select a measure</Trans>,
   segment: <Trans id="controls.select.dimension">Select a dimension</Trans>,
 };
-export const getPalette = (
-  palette: string | undefined
-): ReadonlyArray<string> => {
+
+export const getPalette = (palette?: string): ReadonlyArray<string> => {
   switch (palette) {
     case "accent":
       return schemeAccent;
@@ -326,50 +318,99 @@ export const getPalette = (
   }
 };
 export const getColorInterpolator = (
-  palette: string | undefined
+  palette?: string
 ): ((t: number) => string) => {
   switch (palette) {
-    case "blues":
-      return interpolateBlues;
-    case "greens":
-      return interpolateGreens;
-    case "greys":
-      return interpolateGreys;
-    case "oranges":
-      return interpolateOranges;
-    case "purples":
-      return interpolatePurples;
-    case "reds":
-      return interpolateReds;
-    case "turbo":
-      return interpolateTurbo;
-    case "viridis":
-      return interpolateViridis;
-    case "inferno":
-      return interpolateInferno;
-    case "magma":
-      return interpolateMagma;
-    case "plasma":
-      return interpolatePlasma;
-    case "cividis":
-      return interpolateCividis;
-    case "warm":
-      return interpolateWarm;
-    case "cool":
-      return interpolateCool;
+    case "BrBG":
+      return interpolateBrBG;
+    case "PRGn":
+      return interpolatePRGn;
+    case "PiYG":
+      return interpolatePiYG;
+    case "PuOR":
+      return interpolatePuOr;
+    // Etc.
 
     default:
-      return interpolateBlues;
+      return interpolateBrBG;
   }
 };
+
+export const categoricalPalettes: Array<{
+  label: string;
+  value: string;
+  colors: ReadonlyArray<string>;
+}> = [
+  {
+    label: "category10",
+    value: "category10",
+    colors: getPalette("category10"),
+  },
+  { label: "accent", value: "accent", colors: getPalette("accent") },
+  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
+  { label: "paired", value: "paired", colors: getPalette("paired") },
+  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
+  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
+  { label: "set1", value: "set1", colors: getPalette("set1") },
+  { label: "set2", value: "set2", colors: getPalette("set2") },
+  { label: "set3", value: "set3", colors: getPalette("set3") },
+];
+
+export const getDefaultCategoricalPalette = () => categoricalPalettes[0];
+
+const sequentialPaletteSteps = [
+  0,
+  0.1,
+  0.2,
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  0.7,
+  0.8,
+  0.9,
+  1,
+];
+export const sequentialPalettes: Array<{
+  label: string;
+  value: string;
+  colors: ReadonlyArray<string>;
+}> = [
+  {
+    label: "BrBG",
+    value: "BrBG",
+    colors: sequentialPaletteSteps.map((d) => getColorInterpolator("BrBG")(d)),
+  },
+  {
+    label: "PRGn",
+    value: "PRGn",
+    colors: sequentialPaletteSteps.map((d) => getColorInterpolator("PRGn")(d)),
+  },
+  {
+    label: "PiYG",
+    value: "PiYG",
+    colors: sequentialPaletteSteps.map((d) => getColorInterpolator("PiYG")(d)),
+  },
+  {
+    label: "PuOr",
+    value: "PuOr",
+    colors: sequentialPaletteSteps.map((d) => getColorInterpolator("PuOr")(d)),
+  },
+];
+
+export const getDefaultSequentialPalette = () => sequentialPalettes[0];
 
 export const mapColorsToComponentValuesIris = ({
   palette,
   component,
 }: {
   palette: string;
-  component: DimensionFieldsWithValuesFragment;
+  component: DimensionFieldsWithValuesFragment | ComponentFieldsFragment;
 }) => {
+  if (!("values" in component)) {
+    return {};
+  }
+
   const colorScale = scaleOrdinal()
     .domain(component.values.map((dv) => dv.value))
     .range(getPalette(palette));

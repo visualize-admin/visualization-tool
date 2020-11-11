@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Box } from "theme-ui";
 import { AreaConfig, AreaFields } from "../../configurator";
 import { Observation } from "../../domain/data";
-import { isNumber } from "../../domain/helpers";
+import { isNumber } from "../../configurator/components/ui-helpers";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,

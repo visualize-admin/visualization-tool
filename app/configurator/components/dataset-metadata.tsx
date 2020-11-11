@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import { useDataCubeMetadataQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { Loading } from "../../components/hint";
-import { useFormatFullDateAuto } from "../../domain/helpers";
+import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
 
 export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();

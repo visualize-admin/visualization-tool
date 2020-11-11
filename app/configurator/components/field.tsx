@@ -1,6 +1,7 @@
 import { t } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
+import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback } from "react";
 import {
   FIELD_VALUE_NONE,
@@ -13,8 +14,7 @@ import {
   useMetaField,
   useSingleFilterField,
 } from "..";
-import { Checkbox, Input, Radio, Select } from "../../components/form";
-import { getPalette } from "../../domain/helpers";
+import { Checkbox, Input, Label, Radio, Select } from "../../components/form";
 import {
   ComponentFieldsFragment,
   DimensionFieldsWithValuesFragment,
@@ -25,13 +25,13 @@ import {
   useChartOptionBooleanField,
   useChartOptionSelectField,
 } from "../config-form";
-import { SegmentField } from "../config-types";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
   FilterTab,
 } from "./chart-controls/control-tab";
+import { getPalette } from "./ui-helpers";
 
 export const ControlTabField = ({
   component,
@@ -146,6 +146,7 @@ export const MultiFilterField = ({
   onChange,
   checkAction,
   color,
+  colorConfigPath,
 }: {
   dimensionIri: string;
   label: string;
@@ -156,6 +157,7 @@ export const MultiFilterField = ({
   onChange?: () => void;
   checkAction: "ADD" | "SET";
   color?: string;
+  colorConfigPath?: string;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -190,16 +192,20 @@ export const MultiFilterField = ({
   );
 
   const updateColor = useCallback(
-    (color: string) =>
-      dispatch({
-        type: "CHART_COLOR_CHANGED",
-        value: {
-          field: "segment",
-          value,
-          color,
-        },
-      }),
-    [dispatch, value]
+    (color: string) => {
+      if (state.activeField) {
+        dispatch({
+          type: "CHART_COLOR_CHANGED",
+          value: {
+            field: state.activeField,
+            colorConfigPath,
+            color,
+            value,
+          },
+        });
+      }
+    },
+    [colorConfigPath, dispatch, state.activeField, value]
   );
 
   if (state.state !== "CONFIGURING_CHART") {
@@ -232,7 +238,12 @@ export const MultiFilterField = ({
       {color && (checked ?? fieldChecked) && (
         <ColorPickerMenu
           colors={getPalette(
-            (state.chartConfig.fields.segment as SegmentField)?.palette
+            get(
+              state,
+              `chartConfig.fields["${state.activeField}"].${
+                colorConfigPath ?? ""
+              }.palette`
+            )
           )}
           selectedColor={color}
           onChange={(c) => updateColor(c)}
@@ -258,6 +269,56 @@ export const SingleFilterField = ({
   });
 
   return <Radio label={label} disabled={disabled} {...field}></Radio>;
+};
+
+export const ColorPickerField = ({
+  field,
+  path,
+  label,
+}: {
+  field: string;
+  path: string;
+  label: ReactNode;
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const updateColor = useCallback(
+    (value: string) =>
+      dispatch({
+        type: "CHART_OPTION_CHANGED",
+        value: {
+          field,
+          path,
+          value,
+        },
+      }),
+    [dispatch, field, path]
+  );
+
+  if (state.state !== "CONFIGURING_CHART") {
+    return null;
+  }
+
+  const color = get(state, `chartConfig.fields["${field}"].${path}`);
+
+  return (
+    <Flex
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: 2,
+        height: "2rem",
+        width: "100%",
+      }}
+    >
+      <Label htmlFor="xyz">{label}</Label>
+      <ColorPickerMenu
+        colors={getPalette()}
+        selectedColor={color}
+        onChange={(c) => updateColor(c)}
+      />
+    </Flex>
+  );
 };
 
 export const ChartFieldField = ({
@@ -386,8 +447,8 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
   path: string;
   disabled?: boolean;
   options: Option[];
-  getValue: (x: string) => ValueType | undefined;
-  getKey: (x: ValueType) => string;
+  getValue?: (x: string) => ValueType | undefined;
+  getKey?: (x: ValueType) => string;
 }) => {
   const fieldProps = useChartOptionSelectField({
     field,

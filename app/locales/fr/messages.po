@@ -70,6 +70,31 @@ msgstr ""
 msgid "chart.table.number.of.lines"
 msgstr ""
 
+#: app/configurator/table/table-chart-options.tsx:88
+msgid "columnStyle.bar"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:77
+msgid "columnStyle.categories"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:84
+msgid "columnStyle.heatmap"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:74
+#: app/configurator/table/table-chart-options.tsx:81
+msgid "columnStyle.text"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:185
+msgid "columnStyle.textStyle.bold"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:181
+msgid "columnStyle.textStyle.regular"
+msgstr ""
+
 #: app/configurator/components/ui-helpers.tsx:127
 msgid "controls.axis.horizontal"
 msgstr "Axe horizontal"
@@ -106,12 +131,12 @@ msgstr "Nuage de points"
 msgid "controls.chart.type.table"
 msgstr ""
 
-#: app/configurator/components/chart-controls/color-palette.tsx:52
+#: app/configurator/components/chart-controls/color-palette.tsx:40
 msgid "controls.color.palette"
 msgstr "Couleurs"
 
-#: app/configurator/components/chart-controls/color-palette.tsx:151
-#: app/configurator/components/chart-controls/color-palette.tsx:156
+#: app/configurator/components/chart-controls/color-palette.tsx:135
+#: app/configurator/components/chart-controls/color-palette.tsx:140
 msgid "controls.color.palette.reset"
 msgstr "Réinitialiser la palette de couleurs"
 
@@ -131,7 +156,7 @@ msgstr "empilées"
 msgid "controls.description"
 msgstr "Ajouter une description"
 
-#: app/configurator/components/field.tsx:124
+#: app/configurator/components/field.tsx:155
 msgid "controls.dimension.none"
 msgstr "Aucune"
 
@@ -187,7 +212,7 @@ msgstr "Effacer la recherche"
 msgid "controls.section.columns"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:88
+#: app/configurator/table/table-chart-options.tsx:107
 msgid "controls.section.columnstyle"
 msgstr ""
 
@@ -205,8 +230,8 @@ msgstr "Design"
 
 #: app/configurator/components/chart-options-selector.tsx:94
 #: app/configurator/components/chart-options-selector.tsx:98
-#: app/configurator/table/table-chart-options.tsx:133
-#: app/configurator/table/table-chart-options.tsx:137
+#: app/configurator/table/table-chart-options.tsx:158
+#: app/configurator/table/table-chart-options.tsx:162
 msgid "controls.section.filter"
 msgstr "Filtre"
 
@@ -222,7 +247,7 @@ msgstr ""
 msgid "controls.section.sorting"
 msgstr "Trier"
 
-#: app/configurator/table/table-chart-options.tsx:77
+#: app/configurator/table/table-chart-options.tsx:94
 msgid "controls.section.table.column"
 msgstr ""
 
@@ -235,8 +260,36 @@ msgstr "Type de graphique"
 msgid "controls.select.column.chart.type"
 msgstr "Type de graphique"
 
-#: app/configurator/table/table-chart-options.tsx:91
+#: app/configurator/table/table-chart-options.tsx:110
 msgid "controls.select.columnStyle"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:206
+msgid "controls.select.columnStyle.barColorBackground"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:203
+msgid "controls.select.columnStyle.barColorNegative"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:200
+msgid "controls.select.columnStyle.barColorPositive"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:209
+msgid "controls.select.columnStyle.barShowBackground"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:192
+msgid "controls.select.columnStyle.columnColor"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:189
+msgid "controls.select.columnStyle.textColor"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:176
+msgid "controls.select.columnStyle.textStyle"
 msgstr ""
 
 #: app/components/dataset-selector.tsx:15
@@ -301,11 +354,11 @@ msgstr "Décroissant de haut en bas"
 msgid "controls.sorting.sortBy"
 msgstr "Trier par"
 
-#: app/configurator/table/table-chart-options.tsx:80
+#: app/configurator/table/table-chart-options.tsx:97
 msgid "controls.table.column.group"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:82
+#: app/configurator/table/table-chart-options.tsx:101
 msgid "controls.table.column.hide"
 msgstr ""
 

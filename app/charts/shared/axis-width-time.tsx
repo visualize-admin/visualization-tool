@@ -2,7 +2,7 @@ import { axisBottom } from "d3-axis";
 import { select, Selection } from "d3-selection";
 
 import { useEffect, useRef } from "react";
-import { useFormatShortDateAuto } from "../../domain/helpers";
+import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
 import { AreasState } from "../area/areas-state";
 import { LinesState } from "../line/lines-state";
 import { useChartState } from "./use-chart-state";

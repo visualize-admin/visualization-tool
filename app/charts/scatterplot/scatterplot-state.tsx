@@ -3,7 +3,11 @@ import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { ReactNode } from "react";
 import { ScatterPlotFields } from "../../configurator";
 import { Observation } from "../../domain/data";
-import { getPalette, mkNumber, useFormatNumber } from "../../domain/helpers";
+import {
+  getPalette,
+  mkNumber,
+  useFormatNumber,
+} from "../../configurator/components/ui-helpers";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { TooltipScatterplot } from "../shared/interaction/tooltip-content";
