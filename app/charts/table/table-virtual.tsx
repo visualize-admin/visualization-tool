@@ -1,29 +1,30 @@
 import { Trans } from "@lingui/macro";
 import { Box, Text } from "@theme-ui/components";
-import { max } from "d3-array";
 import FlexSearch from "flexsearch";
 import * as React from "react";
 import { useCallback, useMemo, useState } from "react";
 import {
+  useBlockLayout,
   useExpanded,
   useFlexLayout,
-  useBlockLayout,
   useGroupBy,
   useSortBy,
   useTable,
 } from "react-table";
-import { FixedSizeList, VariableSizeList } from "react-window";
+import { VariableSizeList } from "react-window";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell";
-import { TableHeader } from "./header";
 import { scrollbarWidth } from "./helpers";
 import { RowMobile } from "./row";
 import { TableChartState } from "./table-state";
+import { useVirtual } from "react-virtual";
+import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { max } from "d3-array";
 
 export const Table = () => {
+  const parentRef = React.useRef();
   const {
     bounds,
     data,
@@ -98,8 +99,7 @@ export const Table = () => {
         );
       },
     },
-    // useBlockLayout,
-    useFlexLayout,
+    useBlockLayout,
     useGroupBy,
     useSortBy,
     useExpanded
@@ -108,30 +108,50 @@ export const Table = () => {
   const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
 
   const renderRow = useCallback(
-    ({ index, style }) => {
+    ({ index, virtualRow }) => {
       const row = rows[index];
       prepareRow(row);
       return (
-        <Box
+        <div
           {...row.getRowProps({
-            style,
+            // style,
           })}
-          sx={{ borderBottom: "1px solid", borderBottomColor: "monochrome400" }}
         >
           {row.cells.map((cell, i) => {
             return (
-              <CellDesktop
-                key={i}
-                cell={cell}
-                columnMeta={tableColumnsMeta[cell.column.id]}
-              />
+              <>
+                <CellDesktop
+                  cell={cell}
+                  columnMeta={tableColumnsMeta[cell.column.id]}
+                />
+              </>
             );
           })}
-        </Box>
+        </div>
       );
     },
     [prepareRow, rows, tableColumnsMeta]
   );
+
+  // const rowVirtualizer = useVirtual({
+  //   size: rows.length,
+  //   parentRef,
+  //   estimateSize: React.useCallback((i) => columnWidths[i] || 150, [
+  //     columnWidths,
+  //   ]),
+  //   overscan: 5,
+  // });
+  const rowVirtualizer = useVirtual({
+    size: rows.length,
+    parentRef,
+  });
+
+  const columnVirtualizer = useVirtual({
+    horizontal: true,
+    size: tableColumns.length,
+    parentRef,
+  });
+
   return (
     <>
       {showSearch && (
@@ -163,6 +183,7 @@ export const Table = () => {
       {/* Desktop */}
       {!useAlternativeMobileView && (
         <Box
+          ref={parentRef}
           sx={{
             display: useAlternativeMobileView
               ? ["none", "block", "block"]
@@ -180,21 +201,76 @@ export const Table = () => {
             sx={{
               display: "inline-block",
               borderSpacing: 0,
+              height: `${rowVirtualizer.totalSize}px`,
+              width: `${columnVirtualizer.totalSize}px`,
             }}
             {...getTableProps()}
           >
-            <TableHeader headerGroups={headerGroups} />
-
-            <div {...getTableBodyProps()}>
-              <FixedSizeList
-                height={bounds.chartHeight}
-                itemCount={rows.length}
-                itemSize={40} // FIXME: Should it be 56px when a column is "bar"?
-                // estimatedItemSize={40}
-                width={totalColumnsWidth + scrollBarSize}
-              >
-                {renderRow}
-              </FixedSizeList>
+            {/* <Box
+              sx={{
+                position: "sticky",
+                top: 0,
+                bg: "monochrome100",
+                zIndex: 12,
+              }}
+            >
+              {headerGroups.map((headerGroup) => (
+                <div {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
+                    <div {...column.getHeaderProps()}>
+                      {column.render("Header")}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </Box> */}
+            <div {...getTableBodyProps()} style={{ position: "relative" }}>
+              {/* {rowVirtualizer.virtualItems.map((virtualRow) => (
+                <React.Fragment key={virtualRow.index}>
+                  {columnVirtualizer.virtualItems.map((virtualColumn) => (
+                    <div
+                      key={virtualColumn.index}
+                      // ref={(el) => {
+                      //   virtualRow.measureRef(el);
+                      //   virtualColumn.measureRef(el);
+                      // }}
+                      className={
+                        virtualColumn.index % 2
+                          ? virtualRow.index % 2 === 0
+                            ? "ListItemOdd"
+                            : "ListItemEven"
+                          : virtualRow.index % 2
+                          ? "ListItemOdd"
+                          : "ListItemEven"
+                      }
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: `${columnWidths[virtualColumn.index]}px`,
+                        height: `${rows[virtualRow.index]}px`,
+                        transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`,
+                      }}
+                    >
+                      {filteredData[virtualRow.index]}
+                    </div>
+                  ))}
+                </React.Fragment>
+              ))} */}
+              {rowVirtualizer.virtualItems.map((virtualRow) => (
+                <React.Fragment key={virtualRow.index}>
+                  {renderRow({ index: virtualRow.index, virtualRow })}
+                  {/* {rows[virtualRow.index].cells.map((cell, i) => {
+                    return (
+                      <CellDesktop
+                        cellWidth={columnWidths[i] || 150}
+                        cell={cell}
+                        columnMeta={tableColumnsMeta[cell.column.id]}
+                      />
+                    );
+                  })} */}
+                </React.Fragment>
+              ))}
             </div>
           </Box>
         </Box>
