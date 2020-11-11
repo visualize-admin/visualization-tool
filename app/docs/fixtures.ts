@@ -796,7 +796,7 @@ export const tableConfig: TableConfig = {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
       index: 3,
-      isGroup: false,
+      isGroup: true,
       isHidden: false,
       componentType: "NominalDimension",
       columnStyle: {

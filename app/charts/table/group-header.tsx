@@ -43,7 +43,9 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
                     as="span"
                     sx={{ width: 24, mr: 0, color: "monochrome600" }}
                   >
-                    <Icon name={row.isExpanded ? "chevrondown" : "chevronup"} />
+                    <Icon
+                      name={row.isExpanded ? "chevrondown" : "chevronright"}
+                    />
                   </Box>
                   {type === "category" ? (
                     <Tag

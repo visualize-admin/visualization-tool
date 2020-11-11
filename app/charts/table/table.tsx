@@ -15,6 +15,7 @@ import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell";
+import { GroupHeader } from "./group-header";
 import { TableHeader } from "./header";
 import { scrollbarWidth } from "./helpers";
 import { RowMobile } from "./row";
@@ -115,15 +116,19 @@ export const Table = () => {
           })}
           sx={{ borderBottom: "1px solid", borderBottomColor: "monochrome400" }}
         >
-          {row.cells.map((cell, i) => {
-            return (
-              <CellDesktop
-                key={i}
-                cell={cell}
-                columnMeta={tableColumnsMeta[cell.column.id]}
-              />
-            );
-          })}
+          {row.subRows.length === 0 ? (
+            row.cells.map((cell, i) => {
+              return (
+                <CellDesktop
+                  key={i}
+                  cell={cell}
+                  columnMeta={tableColumnsMeta[cell.column.id]}
+                />
+              );
+            })
+          ) : (
+            <GroupHeader row={row} />
+          )}
         </Box>
       );
     },
