@@ -2,11 +2,14 @@ import { Box } from "@theme-ui/components";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
 import { Observation } from "../../domain/data";
+import { ColumnMeta } from "./table-state";
 
 export const TableHeader = ({
   headerGroups,
+  tableColumnsMeta,
 }: {
   headerGroups: HeaderGroup<Observation>[];
+  tableColumnsMeta: Record<string, ColumnMeta>;
 }) => {
   return (
     <thead>
@@ -14,6 +17,7 @@ export const TableHeader = ({
         return (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, i) => {
+              const { columnComponentType } = tableColumnsMeta[column.id];
               return (
                 <Box
                   as="th"
@@ -25,22 +29,17 @@ export const TableHeader = ({
                     py: 2,
                     pr: 3,
                     pl: 3,
-                    textAlign: "left",
+                    textAlign:
+                      columnComponentType === "Measure" ? "right" : "left",
 
                     borderTop: "1px solid",
                     borderTopColor: "monochrome700",
                     borderBottom: "1px solid",
                     borderBottomColor: "monochrome700",
-                    borderRight: 0,
-                    borderLeft: 0,
                     fontWeight: "bold",
 
                     bg: "monochrome100",
                     color: "monochrome700",
-
-                    ":last-child": {
-                      borderRight: 0,
-                    },
                   }}
                   {...column
                     .getHeaderProps

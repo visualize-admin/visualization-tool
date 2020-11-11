@@ -178,21 +178,22 @@ export const Table = () => {
           }}
         >
           <Box
-            // as="table"
             sx={{
               display: "inline-block",
               borderSpacing: 0,
             }}
             {...getTableProps()}
           >
-            <TableHeader headerGroups={headerGroups} />
+            <TableHeader
+              headerGroups={headerGroups}
+              tableColumnsMeta={tableColumnsMeta}
+            />
 
             <div {...getTableBodyProps()}>
               <FixedSizeList
                 height={bounds.chartHeight}
                 itemCount={rows.length}
                 itemSize={40} // FIXME: Should it be 56px when a column is "bar"?
-                // estimatedItemSize={40}
                 width={totalColumnsWidth + scrollBarSize}
               >
                 {renderRow}
