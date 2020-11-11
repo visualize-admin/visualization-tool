@@ -14,7 +14,7 @@ import {
   useMetaField,
   useSingleFilterField,
 } from "..";
-import { Checkbox, Input, Radio, Select } from "../../components/form";
+import { Checkbox, Input, Label, Radio, Select } from "../../components/form";
 import {
   ComponentFieldsFragment,
   DimensionFieldsWithValuesFragment,
@@ -311,7 +311,7 @@ export const ColorPickerField = ({
         width: "100%",
       }}
     >
-      <Box>{label}</Box>
+      <Label htmlFor="xyz">{label}</Label>
       <ColorPickerMenu
         colors={getPalette()}
         selectedColor={color}

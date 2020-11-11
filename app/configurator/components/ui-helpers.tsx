@@ -356,6 +356,8 @@ export const categoricalPalettes: Array<{
   { label: "set3", value: "set3", colors: getPalette("set3") },
 ];
 
+export const getDefaultCategoricalPalette = () => categoricalPalettes[0];
+
 const sequentialPaletteSteps = [
   0,
   0.1,
@@ -395,6 +397,8 @@ export const sequentialPalettes: Array<{
     colors: sequentialPaletteSteps.map((d) => getColorInterpolator("PuOr")(d)),
   },
 ];
+
+export const getDefaultSequentialPalette = () => sequentialPalettes[0];
 
 export const mapColorsToComponentValuesIris = ({
   palette,

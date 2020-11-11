@@ -1,4 +1,5 @@
-import { Trans } from "@lingui/react";
+import { t } from "@lingui/macro";
+import { I18n, Trans } from "@lingui/react";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
@@ -22,7 +23,11 @@ import {
   ColorPickerField,
 } from "../components/field";
 import { DimensionValuesMultiFilter } from "../components/filters";
-import { mapColorsToComponentValuesIris } from "../components/ui-helpers";
+import {
+  getDefaultCategoricalPalette,
+  getDefaultSequentialPalette,
+  mapColorsToComponentValuesIris,
+} from "../components/ui-helpers";
 import { FieldProps } from "../config-form";
 import {
   ColumnStyle,
@@ -112,7 +117,7 @@ export const TableColumnOptions = ({
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
 }) => {
-  const { activeField } = state;
+  const { activeField, chartConfig } = state;
 
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -135,140 +140,163 @@ export const TableColumnOptions = ({
     return <div>`No component ${activeField}`</div>;
   }
 
-  if (state.chartConfig.chartType !== "table") {
+  if (chartConfig.chartType !== "table") {
     return null;
   }
 
-  const columnStyleOptions =
-    component.__typename === "NominalDimension" ||
-    component.__typename === "OrdinalDimension" ||
-    component.__typename === "TemporalDimension"
-      ? [
-          { value: "text", label: "text" },
-          { value: "category", label: "category" },
-        ]
-      : [
-          { value: "text", label: "text" },
-          { value: "heatmap", label: "heatmap" },
-          { value: "bar", label: "bar" },
-        ];
-
   return (
-    <div
-      key={`control-panel-table-column-${activeField}`}
-      role="tabpanel"
-      id={`control-panel-table-column-${activeField}`}
-      aria-labelledby={`tab-${activeField}`}
-      ref={panelRef}
-      tabIndex={-1}
-    >
-      <ControlSection>
-        <SectionTitle iconName={"table"}>
-          <Trans id="controls.section.table.column">Column</Trans>
-        </SectionTitle>
-        <ControlSectionContent side="right">
-          {component.__typename !== "Measure" && (
-            <ChartOptionGroupHiddenField
-              label={
-                <Trans id="controls.table.column.group">Use to group</Trans>
-              }
-              field={activeField}
-              path="isGroup"
-            />
-          )}
+    <I18n>
+      {({ i18n }) => {
+        const columnStyleOptions =
+          component.__typename === "NominalDimension" ||
+          component.__typename === "OrdinalDimension" ||
+          component.__typename === "TemporalDimension"
+            ? [
+                { value: "text", label: i18n._(t("columnStyle.text")`Text`) },
+                {
+                  value: "category",
+                  label: i18n._(t("columnStyle.categories")`Categories`),
+                },
+              ]
+            : [
+                { value: "text", label: i18n._(t("columnStyle.text")`Text`) },
+                {
+                  value: "heatmap",
+                  label: i18n._(t("columnStyle.heatmap")`Heat Map`),
+                },
+                {
+                  value: "bar",
+                  label: i18n._(t("columnStyle.bar")`Bar Chart`),
+                },
+              ];
 
-          {component.__typename === "Measure" && (
-            <ChartOptionGroupHiddenField
-              label={<Trans id="controls.table.column.hide">Hide column</Trans>}
-              field={activeField}
-              path="isHidden"
-            />
-          )}
-        </ControlSectionContent>
-      </ControlSection>
+        return (
+          <div
+            key={`control-panel-table-column-${activeField}`}
+            role="tabpanel"
+            id={`control-panel-table-column-${activeField}`}
+            aria-labelledby={`tab-${activeField}`}
+            ref={panelRef}
+            tabIndex={-1}
+          >
+            <ControlSection>
+              <SectionTitle iconName={"table"}>
+                <Trans id="controls.section.table.column">Column</Trans>
+              </SectionTitle>
+              <ControlSectionContent side="right">
+                {component.__typename !== "Measure" && (
+                  <ChartOptionGroupHiddenField
+                    label={
+                      <Trans id="controls.table.column.group">
+                        Use to group
+                      </Trans>
+                    }
+                    field={activeField}
+                    path="isGroup"
+                  />
+                )}
 
-      <ControlSection>
-        <SectionTitle iconName={"image"}>
-          <Trans id="controls.section.columnstyle">Column Style</Trans>
-        </SectionTitle>
-        <ControlSectionContent side="right">
-          <ChartOptionSelectField<ColumnStyle>
-            id={"columnStyle"}
-            label={<Trans id="controls.select.columnStyle">Column Style</Trans>}
-            options={columnStyleOptions}
-            getValue={(type) => {
-              switch (type) {
-                case "text":
-                  return {
-                    type: "text",
-                    textStyle: "regular",
-                    textColor: "text",
-                    columnColor: "transparent",
-                  };
-                case "category":
-                  return {
-                    type: "category",
-                    textStyle: "regular",
-                    palette: "set3",
-                    colorMapping: mapColorsToComponentValuesIris({
-                      palette: "set3",
-                      component: component as DimensionFieldsWithValuesFragment,
-                    }),
-                  };
-                case "heatmap":
-                  return {
-                    type: "heatmap",
-                    textStyle: "regular",
-                    palette: "gnBu",
-                  };
-                case "bar":
-                  return {
-                    type: "bar",
-                    textStyle: "regular",
-                    barColorPositive: "blue",
-                    barColorNegative: "red",
-                    barColorBackground: "red",
-                    barShowBackground: false,
-                  };
-                default:
-                  return undefined;
-              }
-            }}
-            getKey={(d) => d.type}
-            field={activeField}
-            path="columnStyle"
-          />
-          <ColumnStyleSubOptions
-            chartConfig={state.chartConfig}
-            activeField={activeField}
-            component={component as DimensionFieldsWithValuesFragment}
-          />
-        </ControlSectionContent>
-      </ControlSection>
+                {component.__typename === "Measure" && (
+                  <ChartOptionGroupHiddenField
+                    label={
+                      <Trans id="controls.table.column.hide">Hide column</Trans>
+                    }
+                    field={activeField}
+                    path="isHidden"
+                  />
+                )}
+              </ControlSectionContent>
+            </ControlSection>
 
-      {(component.__typename === "NominalDimension" ||
-        component.__typename === "OrdinalDimension" ||
-        component.__typename === "TemporalDimension") && (
-        <ControlSection>
-          <SectionTitle disabled={!component} iconName="filter">
-            <Trans id="controls.section.filter">Filter</Trans>
-          </SectionTitle>
-          <ControlSectionContent side="right" as="fieldset">
-            <legend style={{ display: "none" }}>
-              <Trans id="controls.section.filter">Filter</Trans>
-            </legend>
-            {component && (
-              <DimensionValuesMultiFilter
-                key={component.iri}
-                dimensionIri={component.iri}
-                dataSetIri={metaData.iri}
-                colorConfigPath="columnStyle"
-              />
+            <ControlSection>
+              <SectionTitle iconName={"image"}>
+                <Trans id="controls.section.columnstyle">Column Style</Trans>
+              </SectionTitle>
+              <ControlSectionContent side="right">
+                <ChartOptionSelectField<ColumnStyle>
+                  id={"columnStyle"}
+                  label={
+                    <Trans id="controls.select.columnStyle">Column Style</Trans>
+                  }
+                  options={columnStyleOptions}
+                  getValue={(type) => {
+                    switch (type) {
+                      case "text":
+                        return {
+                          type: "text",
+                          textStyle: "regular",
+                          textColor: "#333",
+                          columnColor: "#fff",
+                        };
+                      case "category":
+                        return {
+                          type: "category",
+                          textStyle: "regular",
+                          palette: getDefaultCategoricalPalette().value,
+                          colorMapping: mapColorsToComponentValuesIris({
+                            palette: getDefaultCategoricalPalette().value,
+                            component: component as DimensionFieldsWithValuesFragment,
+                          }),
+                        };
+                      case "heatmap":
+                        return {
+                          type: "heatmap",
+                          textStyle: "regular",
+                          palette: getDefaultSequentialPalette().value,
+                        };
+                      case "bar":
+                        return {
+                          type: "bar",
+                          textStyle: "regular",
+                          barColorPositive: getDefaultCategoricalPalette()
+                            .colors[0],
+                          barColorNegative: getDefaultCategoricalPalette()
+                            .colors[1],
+                          barColorBackground: "#ccc",
+                          barShowBackground: false,
+                        };
+                      default:
+                        return undefined;
+                    }
+                  }}
+                  getKey={(d) => d.type}
+                  field={activeField}
+                  path="columnStyle"
+                />
+                <ColumnStyleSubOptions
+                  chartConfig={chartConfig}
+                  activeField={activeField}
+                  component={component as DimensionFieldsWithValuesFragment}
+                />
+              </ControlSectionContent>
+            </ControlSection>
+
+            {(component.__typename === "NominalDimension" ||
+              component.__typename === "OrdinalDimension" ||
+              component.__typename === "TemporalDimension") && (
+              <ControlSection>
+                <SectionTitle disabled={!component} iconName="filter">
+                  <Trans id="controls.section.filter">Filter</Trans>
+                </SectionTitle>
+                <ControlSectionContent side="right" as="fieldset">
+                  <legend style={{ display: "none" }}>
+                    <Trans id="controls.section.filter">Filter</Trans>
+                  </legend>
+                  {component && (
+                    <DimensionValuesMultiFilter
+                      key={component.iri}
+                      dimensionIri={component.iri}
+                      dataSetIri={metaData.iri}
+                      colorConfigPath="columnStyle"
+                    />
+                  )}
+                </ControlSectionContent>
+              </ControlSection>
             )}
-          </ControlSectionContent>
-        </ControlSection>
-      )}
-    </div>
+          </div>
+        );
+      }}
+    </I18n>
   );
 };
 
@@ -282,98 +310,111 @@ const ColumnStyleSubOptions = ({
   component: DimensionFieldsWithValuesFragment;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
-
   return (
-    <>
-      <ChartOptionSelectField<string>
-        id="columnStyle.textStyle"
-        label={
-          <Trans id="controls.select.columnStyle.textStyle">Text Style</Trans>
-        }
-        options={[
-          { value: "regular", label: "regular" },
-          { value: "bold", label: "bold" },
-        ]}
-        field={activeField}
-        path="columnStyle.textStyle"
-      />
-      {type === "text" ? (
-        <>
-          <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.textColor">
-                Text Color
-              </Trans>
-            }
-            field={activeField}
-            path="columnStyle.textColor"
-          />
-          <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.columnColor">
-                Column Color
-              </Trans>
-            }
-            field={activeField}
-            path="columnStyle.columnColor"
-          />
-        </>
-      ) : type === "category" ? (
-        <>
-          <ColorPalette
-            field={activeField}
-            colorConfigPath={"columnStyle"}
-            component={component}
-          />
-        </>
-      ) : type === "heatmap" ? (
-        <>
-          <ColorPalette
-            field={activeField}
-            colorConfigPath={"columnStyle"}
-            component={component}
-          />
-        </>
-      ) : type === "bar" ? (
-        <>
-          <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.barColorPositive">
-                Positive bar color
-              </Trans>
-            }
-            field={activeField}
-            path="columnStyle.barColorPositive"
-          />
-          <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.barColorNegative">
-                Negative bar color
-              </Trans>
-            }
-            field={activeField}
-            path="columnStyle.barColorNegative"
-          />
-          <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.barColorBackground">
-                Background color
-              </Trans>
-            }
-            field={activeField}
-            path="columnStyle.barColorBackground"
-          />
-          <ChartOptionCheckboxField
-            label={
-              <Trans id="controls.select.columnStyle.barShowBackground">
-                Show bar background
-              </Trans>
-            }
-            field={activeField}
-            path="columnStyle.barShowBackground"
-          />
-        </>
-      ) : null}
-    </>
+    <I18n>
+      {({ i18n }) => {
+        return (
+          <>
+            <ChartOptionSelectField<string>
+              id="columnStyle.textStyle"
+              label={
+                <Trans id="controls.select.columnStyle.textStyle">
+                  Text Style
+                </Trans>
+              }
+              options={[
+                {
+                  value: "regular",
+                  label: i18n._(t("columnStyle.textStyle.regular")`Regular`),
+                },
+                {
+                  value: "bold",
+                  label: i18n._(t("columnStyle.textStyle.bold")`Bold`),
+                },
+              ]}
+              field={activeField}
+              path="columnStyle.textStyle"
+            />
+            {type === "text" ? (
+              <>
+                <ColorPickerField
+                  label={
+                    <Trans id="controls.select.columnStyle.textColor">
+                      Text Color
+                    </Trans>
+                  }
+                  field={activeField}
+                  path="columnStyle.textColor"
+                />
+                <ColorPickerField
+                  label={
+                    <Trans id="controls.select.columnStyle.columnColor">
+                      Column Background
+                    </Trans>
+                  }
+                  field={activeField}
+                  path="columnStyle.columnColor"
+                />
+              </>
+            ) : type === "category" ? (
+              <>
+                <ColorPalette
+                  field={activeField}
+                  colorConfigPath={"columnStyle"}
+                  component={component}
+                />
+              </>
+            ) : type === "heatmap" ? (
+              <>
+                <ColorPalette
+                  field={activeField}
+                  colorConfigPath={"columnStyle"}
+                  component={component}
+                />
+              </>
+            ) : type === "bar" ? (
+              <>
+                <ColorPickerField
+                  label={
+                    <Trans id="controls.select.columnStyle.barColorPositive">
+                      Positive Bar Color
+                    </Trans>
+                  }
+                  field={activeField}
+                  path="columnStyle.barColorPositive"
+                />
+                <ColorPickerField
+                  label={
+                    <Trans id="controls.select.columnStyle.barColorNegative">
+                      Negative Bar Color
+                    </Trans>
+                  }
+                  field={activeField}
+                  path="columnStyle.barColorNegative"
+                />
+                <ColorPickerField
+                  label={
+                    <Trans id="controls.select.columnStyle.barColorBackground">
+                      Bar Background
+                    </Trans>
+                  }
+                  field={activeField}
+                  path="columnStyle.barColorBackground"
+                />
+                <ChartOptionCheckboxField
+                  label={
+                    <Trans id="controls.select.columnStyle.barShowBackground">
+                      Show Bar Background
+                    </Trans>
+                  }
+                  field={activeField}
+                  path="columnStyle.barShowBackground"
+                />
+              </>
+            ) : null}
+          </>
+        );
+      }}
+    </I18n>
   );
 };
