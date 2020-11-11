@@ -40,9 +40,11 @@ import { updateIsGroup, updateIsHidden } from "./table-config-state";
 const useTableColumnGroupHiddenField = ({
   path,
   field,
+  metaData,
 }: {
   path: "isGroup" | "isHidden";
   field: string;
+  metaData: DataCubeMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -63,11 +65,12 @@ const useTableColumnGroupHiddenField = ({
           type: "CHART_CONFIG_REPLACED",
           value: {
             chartConfig,
+            dataSetMetadata: metaData,
           },
         });
       }
     },
-    [state, path, field, dispatch]
+    [state, path, field, dispatch, metaData]
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
@@ -88,16 +91,19 @@ const ChartOptionGroupHiddenField = ({
   path,
   defaultChecked,
   disabled = false,
+  metaData,
 }: {
   label: string | ReactNode;
   field: string;
   path: "isGroup" | "isHidden";
   defaultChecked?: boolean;
   disabled?: boolean;
+  metaData: DataCubeMetadata;
 }) => {
   const fieldProps = useTableColumnGroupHiddenField({
     field,
     path,
+    metaData,
   });
 
   return (
@@ -185,15 +191,19 @@ export const TableColumnOptions = ({
               </SectionTitle>
               <ControlSectionContent side="right">
                 {component.__typename !== "Measure" && (
-                  <ChartOptionGroupHiddenField
-                    label={
-                      <Trans id="controls.table.column.group">
-                        Use to group
-                      </Trans>
-                    }
-                    field={activeField}
-                    path="isGroup"
-                  />
+                  <>
+                    <ChartOptionGroupHiddenField
+                      label={
+                        <Trans id="controls.table.column.group">
+                          Use to group
+                        </Trans>
+                      }
+                      field={activeField}
+                      path="isGroup"
+                      metaData={metaData}
+                    />
+                    Remove column
+                  </>
                 )}
 
                 {component.__typename === "Measure" && (
@@ -203,6 +213,7 @@ export const TableColumnOptions = ({
                     }
                     field={activeField}
                     path="isHidden"
+                    metaData={metaData}
                   />
                 )}
               </ControlSectionContent>

@@ -54,25 +54,11 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_FIELDS_CHANGED";
-      value: {
-        fields: GenericFields;
-        // dataSetMetadata: DataCubeMetadata;
-      };
-    }
-  | {
       type: "CHART_OPTION_CHANGED";
       value: {
         path: string;
         field: string;
         value: string | boolean | Record<string, string> | undefined;
-      };
-    }
-  | {
-      type: "CHART_CONFIG_CHANGED";
-      value: {
-        path: string;
-        value: $IntentionalAny;
       };
     }
   | {
@@ -114,7 +100,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "CHART_CONFIG_REPLACED";
-      value: { chartConfig: ChartConfig };
+      value: { chartConfig: ChartConfig; dataSetMetadata: DataCubeMetadata };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
@@ -488,31 +474,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_FIELDS_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
-        setWith(draft, `chartConfig.fields`, action.value.fields, Object);
-
-        // (draft.chartConfig.fields as GenericFields) = action.value.fields;
-      }
-
-      return draft;
-
     case "CHART_OPTION_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         setWith(
           draft,
           `chartConfig.fields["${action.value.field}"].${action.value.path}`,
-          action.value.value,
-          Object
-        );
-      }
-      return draft;
-
-    case "CHART_CONFIG_CHANGED":
-      if (draft.state === "CONFIGURING_CHART") {
-        setWith(
-          draft,
-          `chartConfig.${action.value.path}`,
           action.value.value,
           Object
         );
@@ -582,6 +548,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_REPLACED":
       if (draft.state === "CONFIGURING_CHART") {
         draft.chartConfig = action.value.chartConfig;
+
+        deriveFiltersFromFields(
+          draft.chartConfig,
+          action.value.dataSetMetadata
+        );
       }
       return draft;
 

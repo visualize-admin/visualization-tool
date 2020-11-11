@@ -32,6 +32,8 @@ export const ChartConfiguratorTable = ({
     variables: { iri: state.dataSet, locale },
   });
 
+  const metaData = data?.dataCubeByIri;
+
   const [, dispatch] = useConfiguratorState();
 
   const [currentDraggableId, setCurrentDraggableId] = useState<string | null>(
@@ -42,7 +44,11 @@ export const ChartConfiguratorTable = ({
     ({ source, destination }) => {
       setCurrentDraggableId(null);
 
-      if (!destination || state.chartConfig.chartType !== "table") {
+      if (
+        !destination ||
+        state.chartConfig.chartType !== "table" ||
+        !metaData
+      ) {
         return;
       }
 
@@ -55,10 +61,11 @@ export const ChartConfiguratorTable = ({
         type: "CHART_CONFIG_REPLACED",
         value: {
           chartConfig,
+          dataSetMetadata: metaData,
         },
       });
     },
-    [state, dispatch]
+    [state, dispatch, metaData]
   );
 
   const onDragStart = useCallback<OnDragStartResponder>(({ draggableId }) => {

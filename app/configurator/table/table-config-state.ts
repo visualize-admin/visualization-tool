@@ -122,3 +122,21 @@ export const updateIsHidden = produce(
     return chartConfig;
   }
 );
+
+export const removeColumn = produce(
+  (chartConfig: TableConfig, { field }: { field: string }): TableConfig => {
+    if (!chartConfig.fields[field]) {
+      return chartConfig;
+    }
+
+    delete chartConfig.fields[field];
+
+    // Update index for each field
+    const fieldsArray = getOrderedTableColumns(chartConfig.fields);
+    fieldsArray.forEach((f, i) => {
+      f.index = i;
+    });
+
+    return chartConfig;
+  }
+);
