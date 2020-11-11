@@ -1,4 +1,4 @@
-import { Box } from "@theme-ui/components";
+import { Box, Flex } from "@theme-ui/components";
 import { hcl } from "d3-color";
 import * as React from "react";
 import { ReactNode } from "react";
@@ -33,37 +33,40 @@ export const CellDesktop = ({
   switch (type) {
     case "text":
       return (
-        <Box
+        <Flex
           sx={{
+            alignItems: "center",
+            justifyContent:
+              columnComponentType === "Measure" ? "flex-end" : "flex-start",
             color: textColor,
             bg: columnColor,
-            textAlign: columnComponentType === "Measure" ? "right" : "left",
             fontWeight: textStyle,
-            py: 2,
-            pr: 3,
+            px: 3,
           }}
           {...cell.getCellProps()}
         >
           {columnComponentType === "Measure"
             ? formatNumber(cell.value)
             : cell.render("Cell")}
-        </Box>
+        </Flex>
       );
     case "category":
       return (
-        <Box
-          sx={{ fontWeight: textStyle, py: 2, pr: 3 }}
+        <Flex
+          sx={{ alignItems: "center", fontWeight: textStyle, px: 3 }}
           {...cell.getCellProps()}
         >
           <Tag tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}>
             {cell.render("Cell")}
           </Tag>
-        </Box>
+        </Flex>
       );
     case "heatmap":
       return (
-        <Box
+        <Flex
           sx={{
+            alignItems: "center",
+            justifyContent: "flex-end",
             color:
               hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
                 ? "#fff"
@@ -71,22 +74,29 @@ export const CellDesktop = ({
             bg: colorScale ? colorScale(cell.value) : "primaryLight",
             textAlign: "right",
             fontWeight: textStyle,
-            py: 2,
-            pr: 3,
+
+            px: 3,
           }}
           {...cell.getCellProps()}
         >
           {formatNumber(cell.value)}
-        </Box>
+        </Flex>
       );
     case "bar":
       return (
-        <Box sx={{ width: "100%", py: 2, pr: 3 }} {...cell.getCellProps()}>
+        <Flex
+          sx={{
+            flexDirection: "column",
+            justifyContent: "center",
+            px: 3,
+          }}
+          {...cell.getCellProps()}
+        >
           <Box>{cell.render("Cell")}</Box>
           <Box
             sx={{
               width: "100%",
-              height: "16px",
+              height: "12px",
               position: "relative",
               bg: barShowBackground ? barColorBackground : "monochrome100",
             }}
@@ -97,30 +107,32 @@ export const CellDesktop = ({
                 top: 0,
                 left: 0,
                 width: `${widthScale ? widthScale(cell.value) : 0}%`, // FIXME: handle negative values
-                height: "16px",
+                height: "12px",
                 bg: cell.value > 0 ? barColorPositive : barColorNegative,
               }}
             />
           </Box>
-        </Box>
+        </Flex>
       );
     default:
       return (
-        <Box
+        <Flex
           sx={{
+            alignItems: "center",
+            justifyContent:
+              columnComponentType === "Measure" ? "flex-end" : "flex-start",
             color: textColor,
             bg: columnColor,
             textAlign: columnComponentType === "Measure" ? "right" : "left",
             fontWeight: textStyle,
-            py: 2,
-            pr: 3,
+            px: 3,
           }}
           {...cell.getCellProps()}
         >
           {columnComponentType === "Measure"
             ? formatNumber(cell.value)
             : cell.render("Cell")}
-        </Box>
+        </Flex>
       );
   }
 };
