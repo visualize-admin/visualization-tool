@@ -42,6 +42,8 @@ import { IconWarning } from "./ic-warning";
 import { IconX } from "./ic-x";
 import { IconY } from "./ic-y";
 import { IconDragndrop } from "./ic-dragndrop";
+import { IconSortAscending } from "./ic-sort-ascending";
+import { IconSortDescending } from "./ic-sort-descending";
 
 export const Icons = {
   check: IconCheck,
@@ -88,6 +90,8 @@ export const Icons = {
   title: IconText,
   description: IconDescription,
   dragndrop: IconDragndrop,
+  sortAscending: IconSortAscending,
+  sortDescending: IconSortDescending,
 };
 
 export type IconName = keyof typeof Icons;
