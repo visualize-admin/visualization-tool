@@ -1,7 +1,8 @@
-import { Box } from "@theme-ui/components";
+import { Box, Flex } from "@theme-ui/components";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
 import { Observation } from "../../domain/data";
+import { Icon } from "../../icons";
 import { ColumnMeta } from "./table-state";
 
 export const TableHeader = ({
@@ -29,8 +30,9 @@ export const TableHeader = ({
                     py: 2,
                     pr: 3,
                     pl: 3,
-                    textAlign:
-                      columnComponentType === "Measure" ? "right" : "left",
+                    textAlign: "left",
+                    // textAlign:
+                    //   columnComponentType === "Measure" ? "right" : "left",
 
                     borderTop: "1px solid",
                     borderTopColor: "monochrome700",
@@ -41,43 +43,23 @@ export const TableHeader = ({
                     bg: "monochrome100",
                     color: "monochrome700",
                   }}
-                  {...column
-                    .getHeaderProps
-                    // column.getSortByToggleProps()
-                    ()}
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
-                  {/* {column.canGroupBy ? (
-                    <Box
-                      sx={{
-                        fontSize: 1,
-                        color: column.isGrouped ? "primary" : "monochrome700",
-                        fontWeight: column.isGrouped ? 800 : 500,
-                      }}
-                      // {...column.getGroupByToggleProps()}
-                    >
-                      {column.isGrouped ? "Gruppiert " : `Spalte ${i + 1}`}
-                    </Box>
-                  ) : null} */}
-                  {column.isSorted ? (
-                    <Box
-                      sx={{
-                        fontSize: 1,
-                        color: column.isSorted ? "success" : "monochrome700",
-                        fontWeight: column.isSorted ? 800 : 500,
-                      }}
-                    >
-                      {column.isSorted ? "Sortiert " : " "}{" "}
-                      <Box
-                        as="span"
-                        sx={{
-                          color: column.isSortedDesc ? "alert" : "success",
-                        }}
-                      >
-                        {column.isSortedDesc ? " ↑" : " ↓"}
+                  <Flex sx={{ minHeight: 32, alignItems: "center" }}>
+                    {column.render("Header")}
+                    {column.isSorted && (
+                      <Box sx={{ width: 32 }}>
+                        <Icon
+                          name={
+                            column.isSortedDesc
+                              ? "sortDescending"
+                              : "sortAscending"
+                          }
+                          size={32}
+                        />
                       </Box>
-                    </Box>
-                  ) : null}
-                  {column.render("Header")}
+                    )}
+                  </Flex>
                 </Box>
               );
             })}
