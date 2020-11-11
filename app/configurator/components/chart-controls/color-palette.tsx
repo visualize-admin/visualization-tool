@@ -6,42 +6,25 @@ import { useCallback } from "react";
 import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "../..";
 import { Label } from "../../../components/form";
 import {
+  categoricalPalettes,
   getPalette,
   mapColorsToComponentValuesIris,
-} from "../../../domain/helpers";
-import { DimensionFieldsWithValuesFragment } from "../../../graphql/query-hooks";
+  sequentialPalettes,
+} from "../ui-helpers";
+import {
+  ComponentFieldsFragment,
+  DimensionFieldsWithValuesFragment,
+} from "../../../graphql/query-hooks";
 import { Icon } from "../../../icons";
-
-const palettes: Array<{
-  label: string;
-  value: string;
-  colors: ReadonlyArray<string>;
-}> = [
-  {
-    label: "category10",
-    value: "category10",
-    colors: getPalette("category10"),
-  },
-  { label: "accent", value: "accent", colors: getPalette("accent") },
-  // { label: "category20", value: "category20", colors: getPalette("category20") },
-  // { label: "category20b", value: "category20b", colors: getPalette("category20b") },
-  // { label: "category20c", value: "category20c", colors: getPalette("category20c") },
-  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
-  { label: "paired", value: "paired", colors: getPalette("paired") },
-  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
-  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
-  { label: "set1", value: "set1", colors: getPalette("set1") },
-  { label: "set2", value: "set2", colors: getPalette("set2") },
-  { label: "set3", value: "set3", colors: getPalette("set3") },
-  // { label: "tableau10", value: "tableau10", colors: scheme("tableau10") }
-  // { label: "tableau20", value: "tableau20", colors: scheme("tableau20") }
-];
 
 type Props = {
   field: string;
   disabled?: boolean;
   colorConfigPath?: string;
-  component: DimensionFieldsWithValuesFragment | undefined;
+  component:
+    | DimensionFieldsWithValuesFragment
+    | ComponentFieldsFragment
+    | undefined;
 };
 
 export const ColorPalette = ({
@@ -51,6 +34,22 @@ export const ColorPalette = ({
   component,
 }: Props) => {
   const [state, dispatch] = useConfiguratorState();
+
+  const palettes =
+    component?.__typename === "Measure"
+      ? sequentialPalettes
+      : categoricalPalettes;
+
+  const currentPaletteName = get(
+    state,
+    `chartConfig.fields["${state.activeField}"].${
+      colorConfigPath ? `${colorConfigPath}.` : ""
+    }palette`
+  );
+
+  const currentPalette =
+    palettes.find((p) => p.value === currentPaletteName) ?? palettes[0];
+
   const {
     isOpen,
     getToggleButtonProps,
@@ -111,15 +110,7 @@ export const ColorPalette = ({
       >
         {state.state === "CONFIGURING_CHART" && (
           <Flex>
-            {getPalette(
-              get(
-                state,
-                `chartConfig.fields["${state.activeField}"].${
-                  colorConfigPath ? `${colorConfigPath}.` : ""
-                }palette`,
-                "category10"
-              )
-            ).map((color: string) => (
+            {currentPalette.colors.map((color: string) => (
               <ColorSquare key={color} color={color} disabled={disabled} />
             ))}
           </Flex>
@@ -213,7 +204,7 @@ const ColorPaletteReset = ({
 }: {
   field: string;
   colorConfigPath?: string;
-  component: DimensionFieldsWithValuesFragment;
+  component: DimensionFieldsWithValuesFragment | ComponentFieldsFragment;
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const [, dispatch] = useConfiguratorState();

@@ -16,7 +16,7 @@ import {
   parseDate,
   useFormatFullDateAuto,
   useFormatNumber,
-} from "../../domain/helpers";
+} from "../../configurator/components/ui-helpers";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";

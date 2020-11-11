@@ -219,7 +219,7 @@ export const TableColumnOptions = ({
                   return {
                     type: "heatmap",
                     textStyle: "regular",
-                    palette: "viridis",
+                    palette: "gnBu",
                   };
                 case "bar":
                   return {
@@ -327,7 +327,13 @@ const ColumnStyleSubOptions = ({
           />
         </>
       ) : type === "heatmap" ? (
-        <> heatmap optz</>
+        <>
+          <ColorPalette
+            field={activeField}
+            colorConfigPath={"columnStyle"}
+            component={component}
+          />
+        </>
       ) : type === "bar" ? (
         <>
           <ColorPickerField

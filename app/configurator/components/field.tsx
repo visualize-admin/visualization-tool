@@ -15,7 +15,6 @@ import {
   useSingleFilterField,
 } from "..";
 import { Checkbox, Input, Radio, Select } from "../../components/form";
-import { getPalette } from "../../domain/helpers";
 import {
   ComponentFieldsFragment,
   DimensionFieldsWithValuesFragment,
@@ -32,6 +31,7 @@ import {
   ControlTab,
   FilterTab,
 } from "./chart-controls/control-tab";
+import { getPalette } from "./ui-helpers";
 
 export const ControlTabField = ({
   component,

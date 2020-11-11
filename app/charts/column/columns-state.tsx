@@ -10,7 +10,11 @@ import {
 
 import { ReactNode, useMemo, useCallback } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
-import { getPalette, mkNumber, useFormatNumber } from "../../domain/helpers";
+import {
+  getPalette,
+  mkNumber,
+  useFormatNumber,
+} from "../../configurator/components/ui-helpers";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { PADDING_INNER, PADDING_OUTER } from "./constants";

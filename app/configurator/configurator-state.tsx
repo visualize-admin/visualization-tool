@@ -24,7 +24,7 @@ import {
   FilterValueMultiValues,
   GenericFields,
 } from "./config-types";
-import { mapColorsToComponentValuesIris } from "../domain/helpers";
+import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }

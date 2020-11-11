@@ -7,7 +7,7 @@ import { useChartTheme } from "./use-chart-theme";
 import { ColumnsState } from "../column/columns-state";
 import { LinesState } from "../line/lines-state";
 import { AreasState } from "../area/areas-state";
-import { useFormatNumber } from "../../domain/helpers";
+import { useFormatNumber } from "../../configurator/components/ui-helpers";
 
 const TICK_MIN_HEIGHT = 50;
 

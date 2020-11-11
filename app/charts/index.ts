@@ -5,7 +5,7 @@ import {
   TableColumn,
 } from "../configurator";
 import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
-import { mapColorsToComponentValuesIris } from "../domain/helpers";
+import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 

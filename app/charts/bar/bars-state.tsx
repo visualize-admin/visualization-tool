@@ -11,7 +11,7 @@ import {
 import { ReactNode, useCallback, useMemo } from "react";
 import { BarFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation } from "../../domain/data";
-import { getPalette, mkNumber } from "../../domain/helpers";
+import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
 import {
   BAR_HEIGHT,
   BOTTOM_MARGIN_OFFSET,

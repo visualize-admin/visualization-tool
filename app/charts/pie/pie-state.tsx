@@ -5,7 +5,10 @@ import { arc, pie, Pie, PieArcDatum } from "d3-shape";
 import { ReactNode, useCallback, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation } from "../../domain/data";
-import { getPalette, useFormatNumber } from "../../domain/helpers";
+import {
+  getPalette,
+  useFormatNumber,
+} from "../../configurator/components/ui-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
