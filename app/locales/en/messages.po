@@ -110,8 +110,8 @@ msgstr "Table"
 msgid "controls.color.palette"
 msgstr "Color palette"
 
-#: app/configurator/components/chart-controls/color-palette.tsx:151
-#: app/configurator/components/chart-controls/color-palette.tsx:156
+#: app/configurator/components/chart-controls/color-palette.tsx:147
+#: app/configurator/components/chart-controls/color-palette.tsx:152
 msgid "controls.color.palette.reset"
 msgstr "Reset color palette"
 
@@ -131,7 +131,7 @@ msgstr "stacked"
 msgid "controls.description"
 msgstr "Add a description"
 
-#: app/configurator/components/field.tsx:150
+#: app/configurator/components/field.tsx:155
 msgid "controls.dimension.none"
 msgstr "None"
 
@@ -187,7 +187,7 @@ msgstr "Clear search field"
 msgid "controls.section.columns"
 msgstr "Columns"
 
-#: app/configurator/table/table-chart-options.tsx:91
+#: app/configurator/table/table-chart-options.tsx:93
 msgid "controls.section.columnstyle"
 msgstr "Column Style"
 
@@ -205,8 +205,8 @@ msgstr "Design"
 
 #: app/configurator/components/chart-options-selector.tsx:94
 #: app/configurator/components/chart-options-selector.tsx:98
-#: app/configurator/table/table-chart-options.tsx:137
-#: app/configurator/table/table-chart-options.tsx:141
+#: app/configurator/table/table-chart-options.tsx:142
+#: app/configurator/table/table-chart-options.tsx:146
 msgid "controls.section.filter"
 msgstr "Filter"
 
@@ -222,7 +222,7 @@ msgstr "Groups"
 msgid "controls.section.sorting"
 msgstr "Sort"
 
-#: app/configurator/table/table-chart-options.tsx:80
+#: app/configurator/table/table-chart-options.tsx:82
 msgid "controls.section.table.column"
 msgstr "Column"
 
@@ -235,19 +235,35 @@ msgstr "Chart type"
 msgid "controls.select.column.chart.type"
 msgstr "Chart type"
 
-#: app/configurator/table/table-chart-options.tsx:94
+#: app/configurator/table/table-chart-options.tsx:96
 msgid "controls.select.columnStyle"
 msgstr "Column Style"
 
-#: app/configurator/table/table-chart-options.tsx:159
+#: app/configurator/table/table-chart-options.tsx:176
+msgid "controls.select.columnStyle.barColorBackground"
+msgstr "Background color"
+
+#: app/configurator/table/table-chart-options.tsx:173
+msgid "controls.select.columnStyle.barColorNegative"
+msgstr "Negative bar color"
+
+#: app/configurator/table/table-chart-options.tsx:170
+msgid "controls.select.columnStyle.barColorPositive"
+msgstr "Positive bar color"
+
+#: app/configurator/table/table-chart-options.tsx:179
+msgid "controls.select.columnStyle.barShowBackground"
+msgstr "Show bar background"
+
+#: app/configurator/table/table-chart-options.tsx:164
 msgid "controls.select.columnStyle.columnColor"
 msgstr "Column Color"
 
-#: app/configurator/table/table-chart-options.tsx:156
+#: app/configurator/table/table-chart-options.tsx:161
 msgid "controls.select.columnStyle.textColor"
 msgstr "Text Color"
 
-#: app/configurator/table/table-chart-options.tsx:151
+#: app/configurator/table/table-chart-options.tsx:156
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Text Style"
 
@@ -313,11 +329,11 @@ msgstr "Largest top"
 msgid "controls.sorting.sortBy"
 msgstr "Sort by"
 
-#: app/configurator/table/table-chart-options.tsx:83
+#: app/configurator/table/table-chart-options.tsx:85
 msgid "controls.table.column.group"
 msgstr "Use to group"
 
-#: app/configurator/table/table-chart-options.tsx:85
+#: app/configurator/table/table-chart-options.tsx:87
 msgid "controls.table.column.hide"
 msgstr "Hide column"
 
