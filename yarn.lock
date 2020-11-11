@@ -2451,7 +2451,7 @@
     prop-types "^15.7.2"
     tslib "^2.0.0"
 
-"@reach/observe-rect@1.2.0":
+"@reach/observe-rect@1.2.0", "@reach/observe-rect@^1.1.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@reach/observe-rect/-/observe-rect-1.2.0.tgz#d7a6013b8aafcc64c778a0ccb83355a11204d3b2"
   integrity sha512-Ba7HmkFgfQxZqqaeIWWkNK0rEhpxVQHIoVyW1YDSkGsGIXzcaW4deC8B0pZrNSSyLTdIk7y+5olKt5+g0GmFIQ==
@@ -11098,6 +11098,14 @@ react-table@^7.5.1:
   resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.5.1.tgz#b6a9b46e52c0f37ff91717ac478f430c6a357e41"
   integrity sha512-rprrUElCqvj79lyY2XbUoYLzwA5Mm4CGS8ElQ8OyzocvmkvCcmunvvfbpIg9Jm9HnMBjVZcVyPFPZ1BFelIBKw==
 
+react-virtual@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/react-virtual/-/react-virtual-2.3.1.tgz#86fd2004e7c43a628d4c1531b42fd6557e9cf451"
+  integrity sha512-yCDeyCtd2cuVEusZY76I3AbIiQyHI36bnAa7mfExHBcHiZH9GhVssgZ6fe+NJM5hR3I2FoNv0TQD90MvrA2j7w==
+  dependencies:
+    "@reach/observe-rect" "^1.1.0"
+    ts-toolbelt "^6.4.2"
+
 react-window@^1.8.6:
   version "1.8.6"
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.6.tgz#d011950ac643a994118632665aad0c6382e2a112"
@@ -12835,6 +12843,11 @@ ts-pnp@^1.1.6:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
+
+ts-toolbelt@^6.4.2:
+  version "6.15.5"
+  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.15.5.tgz#cb3b43ed725cb63644782c64fbcad7d8f28c0a83"
+  integrity sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A==
 
 tsconfig-paths@^3.9.0:
   version "3.9.0"
