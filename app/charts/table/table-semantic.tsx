@@ -8,7 +8,7 @@ import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { TABLE_STYLES } from "./constants";
-import { TableHeader } from "./header";
+import { TableHeader } from "./table-header";
 import { RowMobile, RowDesktop } from "./row";
 import { TableChartState } from "./table-state";
 

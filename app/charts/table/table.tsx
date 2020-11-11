@@ -16,7 +16,7 @@ import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell";
 import { GroupHeader } from "./group-header";
-import { TableHeader } from "./header";
+import { TableHeader } from "./table-header";
 import { scrollbarWidth } from "./helpers";
 import { RowMobile } from "./row";
 import { TableChartState } from "./table-state";
