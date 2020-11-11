@@ -122,7 +122,7 @@ const useTableState = ({
         };
       }),
 
-    [orderedTableColumns, data, dimensions, measures]
+    [orderedTableColumns, data, dimensions, measures, formatNumber]
   );
 
   // Groupings used by react-table

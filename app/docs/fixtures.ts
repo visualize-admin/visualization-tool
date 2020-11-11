@@ -801,7 +801,7 @@ export const tableConfig: TableConfig = {
       componentType: "NominalDimension",
       columnStyle: {
         type: "text",
-        textStyle: "regular",
+        textStyle: "bold",
         textColor: "hotpink",
         columnColor: "gold",
       },

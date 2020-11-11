@@ -1,21 +1,18 @@
 import { Trans } from "@lingui/macro";
 import { Box, Text } from "@theme-ui/components";
-import { max } from "d3-array";
 import FlexSearch from "flexsearch";
 import * as React from "react";
 import { useCallback, useMemo, useState } from "react";
 import {
   useExpanded,
   useFlexLayout,
-  useBlockLayout,
   useGroupBy,
   useSortBy,
   useTable,
 } from "react-table";
-import { FixedSizeList, VariableSizeList } from "react-window";
+import { FixedSizeList } from "react-window";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell";
 import { TableHeader } from "./header";

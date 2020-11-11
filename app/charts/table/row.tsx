@@ -18,8 +18,6 @@ export const RowDesktop = ({
   prepareRow: (row: Row<Observation>) => void;
 }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
-  const formatNumber = useFormatNumber();
-
   prepareRow(row);
   return (
     <>
@@ -27,17 +25,12 @@ export const RowDesktop = ({
         {row.subRows.length === 0 ? (
           <>
             {row.cells.map((cell, i) => {
-              const { columnComponentType } = tableColumnsMeta[cell.column.id];
               return (
                 <CellDesktop
                   key={i}
                   cell={cell}
                   columnMeta={tableColumnsMeta[cell.column.id]}
-                >
-                  {/* {columnComponentType === "Measure"
-                    ? formatNumber(cell.value)
-                    : cell.render("Cell")} */}
-                </CellDesktop>
+                ></CellDesktop>
               );
             })}
           </>
