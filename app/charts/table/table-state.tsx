@@ -18,8 +18,10 @@ import {
   getColorInterpolator,
   getOrderedTableColumns,
   getPalette,
+  useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
+import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { getSlugifiedIri, ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
@@ -64,6 +66,7 @@ const useTableState = ({
   chartConfig: TableConfig;
 }): TableChartState => {
   const { fields, settings, sorting } = chartConfig;
+  const formatNumber = useFormatNumber();
 
   // Dimensions
   const width = useWidth();
@@ -101,6 +104,13 @@ const useTableState = ({
   const tableColumns = useMemo(
     () =>
       orderedTableColumns.map((c) => {
+        const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
+        const columnItemSizes = columnItems.map((item) => {
+          const itemAsString =
+            c.componentType === "Measure" ? formatNumber(item as number) : item;
+          return estimateTextWidth(`${itemAsString}`) + 80;
+        });
+        const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
         return {
           Header:
             [...dimensions, ...measures].find(
@@ -108,10 +118,11 @@ const useTableState = ({
             )?.label || c.componentIri,
           // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
           accessor: getSlugifiedIri(c.componentIri),
+          width,
         };
       }),
 
-    [dimensions, orderedTableColumns, measures]
+    [orderedTableColumns, data, dimensions, measures]
   );
 
   // Groupings used by react-table
