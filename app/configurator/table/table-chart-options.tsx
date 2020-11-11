@@ -16,7 +16,11 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
-import { ChartOptionSelectField, ColorPickerField } from "../components/field";
+import {
+  ChartOptionCheckboxField,
+  ChartOptionSelectField,
+  ColorPickerField,
+} from "../components/field";
 import { DimensionValuesMultiFilter } from "../components/filters";
 import { mapColorsToComponentValuesIris } from "../components/ui-helpers";
 import { FieldProps } from "../config-form";
@@ -28,7 +32,7 @@ import {
 import { useConfiguratorState } from "../configurator-state";
 import { updateIsGroup, updateIsHidden } from "./table-config-state";
 
-const useTableColumnOptionField = ({
+const useTableColumnGroupHiddenField = ({
   path,
   field,
 }: {
@@ -73,7 +77,7 @@ const useTableColumnOptionField = ({
   };
 };
 
-const ChartOptionCheckboxField = ({
+const ChartOptionGroupHiddenField = ({
   label,
   field,
   path,
@@ -86,7 +90,7 @@ const ChartOptionCheckboxField = ({
   defaultChecked?: boolean;
   disabled?: boolean;
 }) => {
-  const fieldProps = useTableColumnOptionField({
+  const fieldProps = useTableColumnGroupHiddenField({
     field,
     path,
   });
@@ -164,7 +168,7 @@ export const TableColumnOptions = ({
         </SectionTitle>
         <ControlSectionContent side="right">
           {component.__typename !== "Measure" && (
-            <ChartOptionCheckboxField
+            <ChartOptionGroupHiddenField
               label={
                 <Trans id="controls.table.column.group">Use to group</Trans>
               }
@@ -174,7 +178,7 @@ export const TableColumnOptions = ({
           )}
 
           {component.__typename === "Measure" && (
-            <ChartOptionCheckboxField
+            <ChartOptionGroupHiddenField
               label={<Trans id="controls.table.column.hide">Hide column</Trans>}
               field={activeField}
               path="isHidden"
@@ -325,7 +329,44 @@ const ColumnStyleSubOptions = ({
       ) : type === "heatmap" ? (
         <> heatmap optz</>
       ) : type === "bar" ? (
-        <> bar optz</>
+        <>
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.barColorPositive">
+                Positive bar color
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.barColorPositive"
+          />
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.barColorNegative">
+                Negative bar color
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.barColorNegative"
+          />
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.barColorBackground">
+                Background color
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.barColorBackground"
+          />
+          <ChartOptionCheckboxField
+            label={
+              <Trans id="controls.select.columnStyle.barShowBackground">
+                Show bar background
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.barShowBackground"
+          />
+        </>
       ) : null}
     </>
   );
