@@ -178,6 +178,14 @@ export const getFieldComponentIris = (fields: GenericFields) => {
   );
 };
 
+export const getHiddenFieldIris = (fields: GenericFields) => {
+  return new Set(
+    Object.values(fields).flatMap((f) =>
+      f && (f as $IntentionalAny).isHidden ? [f.componentIri] : []
+    )
+  );
+};
+
 export const getFieldComponentIri = (fields: GenericFields, field: string) => {
   return fields[field]?.componentIri;
 };

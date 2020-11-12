@@ -12,7 +12,11 @@ import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 import { useLocale } from "../locales/use-locale";
 import { createChartId } from "../lib/create-chart-id";
-import { getFieldComponentIris, getInitialConfig } from "../charts";
+import {
+  getFieldComponentIris,
+  getHiddenFieldIris,
+  getInitialConfig,
+} from "../charts";
 import {
   ChartConfig,
   ChartType,
@@ -185,27 +189,28 @@ const deriveFiltersFromFields = (
   const { fields, filters } = chartConfig;
 
   const fieldDimensionIris = getFieldComponentIris(fields);
+  const hiddenFieldIris = getHiddenFieldIris(fields);
 
   const isField = (iri: string) => fieldDimensionIris.has(iri);
+  const isHidden = (iri: string) => hiddenFieldIris.has(iri);
+  const isFiltered = (iri: string) => !isField(iri) || isHidden(iri);
 
   dimensions.forEach((dimension) => {
-    if (filters[dimension.iri] !== undefined) {
+    const f = filters[dimension.iri];
+    if (f !== undefined) {
       // Fix wrong filter type
-      if (isField(dimension.iri) && filters[dimension.iri].type === "single") {
+      if (!isFiltered(dimension.iri) && f.type === "single") {
         // Remove filter
         delete filters[dimension.iri];
-      } else if (
-        !isField(dimension.iri) &&
-        filters[dimension.iri].type === "multi"
-      ) {
+      } else if (isFiltered(dimension.iri) && f.type === "multi") {
         filters[dimension.iri] = {
           type: "single",
-          value: dimension.values[0].value,
+          value: Object.keys(f.values)[0],
         };
       }
     } else {
       // Add filter for this dim if it's not one of the selected multi filter fields
-      if (!isField(dimension.iri)) {
+      if (isFiltered(dimension.iri)) {
         filters[dimension.iri] = {
           type: "single",
           value: dimension.values[0].value,
