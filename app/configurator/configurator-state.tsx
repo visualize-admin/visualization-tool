@@ -25,6 +25,7 @@ import {
   GenericFields,
 } from "./config-types";
 import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
+import { createDraft } from "immer";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -547,7 +548,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_REPLACED":
       if (draft.state === "CONFIGURING_CHART") {
-        draft.chartConfig = action.value.chartConfig;
+        draft.chartConfig = createDraft(action.value.chartConfig);
 
         deriveFiltersFromFields(
           draft.chartConfig,
