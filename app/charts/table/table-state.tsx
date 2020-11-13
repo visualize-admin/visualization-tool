@@ -41,10 +41,6 @@ export interface ColumnMeta {
   barColorBackground: string;
   barShowBackground: boolean;
 }
-// | (ColumnStyleHeatmap & { colorScale?: ScaleSequential<string> })
-// | ColumnStyleText
-// | (ColumnStyleCategory & { colorScale: ScaleOrdinal<string, string> })
-// | (ColumnStyleBar & { widthScale?: ScaleLinear<number, number> });
 
 export interface TableChartState {
   chartType: "table";
@@ -169,9 +165,29 @@ const useTableState = ({
             },
           };
         } else if (columnStyleType === "category") {
-          const colorScale = scaleOrdinal()
-            .domain([...new Set(data.map((d) => `${d[iri]}`))])
-            .range(getPalette((columnStyle as ColumnStyleCategory).palette));
+          const { colorMapping } = columnStyle as ColumnStyleCategory;
+          const dimensionValues = dimensions.find((d) => d.iri === iri);
+
+          // Color scale (always from colorMappings)
+          const colorScale = scaleOrdinal();
+
+          // get label (translated) matched with color
+          const labelsAndColor = Object.keys(colorMapping).map(
+            (colorMappingIri) => {
+              const dvLabel = dimensionValues.values.find((s) => {
+                return s.value === colorMappingIri;
+              }).label;
+
+              return {
+                label: dvLabel,
+                color: colorMapping![colorMappingIri] || "#006699",
+              };
+            }
+          );
+
+          colorScale.domain(labelsAndColor.map((s) => s.label));
+          colorScale.range(labelsAndColor.map((s) => s.color));
+
           return {
             ...acc,
             [slugifiedIri]: {
@@ -225,6 +241,8 @@ const useTableState = ({
       }, {}),
     [data, fields]
   );
+
+  console.log({ tableColumnsMeta });
   return {
     chartType: "table",
     bounds,
