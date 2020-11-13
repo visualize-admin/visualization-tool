@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import { Cell } from "react-table";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
+import { BAR_CELL_PADDING } from "./constants";
 import { ColumnMeta } from "./table-state";
 
 export const CellDesktop = ({
@@ -87,7 +88,9 @@ export const CellDesktop = ({
           sx={{
             flexDirection: "column",
             justifyContent: "center",
-            px: 3,
+            // Padding is a constant accounted for in the
+            // widthScale domain (see table sate).
+            px: BAR_CELL_PADDING,
           }}
           {...cell.getCellProps()}
         >
@@ -104,8 +107,10 @@ export const CellDesktop = ({
               sx={{
                 position: "absolute",
                 top: 0,
-                left: 0,
-                width: `${widthScale ? widthScale(cell.value) : 0}%`, // FIXME: handle negative values
+                left: widthScale ? widthScale(Math.min(0, cell.value)) : 0,
+                width: widthScale
+                  ? Math.abs(widthScale(cell.value) - widthScale(0))
+                  : 0,
                 height: "20px",
                 bg: cell.value > 0 ? barColorPositive : barColorNegative,
               }}

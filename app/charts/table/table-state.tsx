@@ -24,7 +24,7 @@ import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { getSlugifiedIri, TABLE_HEIGHT } from "./constants";
+import { BAR_CELL_PADDING, getSlugifiedIri, TABLE_HEIGHT } from "./constants";
 
 export interface ColumnMeta {
   iri: string;
@@ -107,6 +107,8 @@ const useTableState = ({
   const tableColumns = useMemo(
     () =>
       orderedTableColumns.map((c) => {
+        // The column width depends on the estimated width of the
+        // longest value in the column, with a minimum of 150px.
         const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
         const columnItemSizes = columnItems.map((item) => {
           const itemAsString =
@@ -114,6 +116,7 @@ const useTableState = ({
           return estimateTextWidth(`${itemAsString}`) + 80;
         });
         const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
+
         return {
           Header:
             [...dimensions, ...measures].find(
@@ -121,6 +124,7 @@ const useTableState = ({
             )?.label || c.componentIri,
           // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
           accessor: getSlugifiedIri(c.componentIri),
+
           width,
           // If sort type is not "basic", react-table default to "alphanumeric"
           // which doesn't sort negative values properly.
@@ -155,8 +159,9 @@ const useTableState = ({
     [sorting]
   );
 
-  // Columns with style
-  // This is not use by react table to manage state, only for styling.
+  // This object contains styles for columns/cell components.
+  // It is not use by react-table (which is a headless hook),
+  // only for custom styling.
   const tableColumnsMeta = useMemo(
     () =>
       Object.keys(fields).reduce((acc, iri, i) => {
@@ -165,6 +170,7 @@ const useTableState = ({
         const columnStyle = columnMeta.columnStyle;
         const columnStyleType = columnStyle.type;
         const columnComponentType = columnMeta.componentType;
+
         if (columnStyleType === "text") {
           return {
             ...acc,
@@ -228,9 +234,26 @@ const useTableState = ({
             },
           };
         } else if (columnStyleType === "bar") {
+          // The column width depends on the estimated width of the
+          // longest value in the column, with a minimum of 150px.
+          const columnItems = [...new Set(data.map((d) => d[iri]))];
+          const columnItemSizes = columnItems.map((item) => {
+            const itemAsString =
+              columnComponentType === "Measure"
+                ? formatNumber(item as number)
+                : item;
+            return estimateTextWidth(`${itemAsString}`) + 80;
+          });
+          const width =
+            Math.max(max(columnItemSizes, (d) => d) || 150, 150) -
+            BAR_CELL_PADDING * 2;
+          console.log(width);
+          // const hasNegativeValue =
+          //   (min(data, (d) => Math.abs(+d[iri])) || 0) < 0;
+
           const widthScale = scaleLinear()
             .domain(extent(data, (d) => +d[iri]) as [number, number])
-            .range([0, 100]);
+            .range([0, width]); // FIXME: use actual cell width
           return {
             ...acc,
             [slugifiedIri]: {
