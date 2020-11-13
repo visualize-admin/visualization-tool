@@ -5,7 +5,6 @@ import {
   scaleLinear,
   scaleOrdinal,
   ScaleSequential,
-  scaleSequential,
 } from "d3-scale";
 import { ReactNode, useMemo } from "react";
 import { Column } from "react-table";
@@ -25,7 +24,7 @@ import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { getSlugifiedIri, ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
+import { getSlugifiedIri, TABLE_HEIGHT } from "./constants";
 
 export interface ColumnMeta {
   iri: string;
@@ -46,6 +45,7 @@ export interface ColumnMeta {
 export interface TableChartState {
   chartType: "table";
   bounds: Bounds;
+  rowHeight: number;
   showSearch: boolean;
   data: Observation[];
   tableColumns: Column<Observation>[];
@@ -65,6 +65,12 @@ const useTableState = ({
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
 
+  const hasBar = Object.values(fields)
+    .map((fValue) => fValue.columnStyle.type)
+    .some((d) => d === "bar");
+  console.log({ hasBar });
+  const rowHeight = hasBar ? 56 : 40;
+
   // Dimensions
   const width = useWidth();
   const margins = {
@@ -74,7 +80,7 @@ const useTableState = ({
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
-  const chartHeight = Math.min(TABLE_HEIGHT, data.length * ROW_HEIGHT);
+  const chartHeight = Math.min(TABLE_HEIGHT, data.length * rowHeight);
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
@@ -116,6 +122,8 @@ const useTableState = ({
           // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
           accessor: getSlugifiedIri(c.componentIri),
           width,
+          // If sort type is not "basic", react-table default to "alphanumeric"
+          // which doesn't sort negative values properly.
           sortType: "basic",
         };
       }),
@@ -246,10 +254,10 @@ const useTableState = ({
     [data, dimensions, fields]
   );
 
-  console.log({ tableColumnsMeta });
   return {
     chartType: "table",
     bounds,
+    rowHeight,
     showSearch: settings.showSearch,
     data: memoizedData,
     tableColumns,

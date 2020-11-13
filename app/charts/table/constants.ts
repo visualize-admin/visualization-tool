@@ -2,7 +2,6 @@ import { SystemStyleObject } from "@styled-system/css";
 import slugify from "slugify";
 
 export const TABLE_HEIGHT = 600;
-export const ROW_HEIGHT = 40;
 export const TABLE_STYLES: SystemStyleObject = {
   borderSpacing: 0,
   border: "none",

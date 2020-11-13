@@ -24,6 +24,7 @@ import { TableChartState } from "./table-state";
 export const Table = () => {
   const {
     bounds,
+    rowHeight,
     data,
     showSearch,
     tableColumns,
@@ -194,7 +195,7 @@ export const Table = () => {
               <FixedSizeList
                 height={bounds.chartHeight}
                 itemCount={rows.length}
-                itemSize={40} // FIXME: Should it be 56px when a column is "bar"?
+                itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
                 width={totalColumnsWidth + scrollBarSize}
               >
                 {renderRow}

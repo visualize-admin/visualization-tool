@@ -74,7 +74,6 @@ export const CellDesktop = ({
             bg: colorScale ? colorScale(cell.value) : "primaryLight",
             textAlign: "right",
             fontWeight: textStyle,
-
             px: 3,
           }}
           {...cell.getCellProps()}
@@ -96,7 +95,7 @@ export const CellDesktop = ({
           <Box
             sx={{
               width: "100%",
-              height: "12px",
+              height: "20px",
               position: "relative",
               bg: barShowBackground ? barColorBackground : "monochrome100",
             }}
@@ -107,7 +106,7 @@ export const CellDesktop = ({
                 top: 0,
                 left: 0,
                 width: `${widthScale ? widthScale(cell.value) : 0}%`, // FIXME: handle negative values
-                height: "12px",
+                height: "20px",
                 bg: cell.value > 0 ? barColorPositive : barColorNegative,
               }}
             />
