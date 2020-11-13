@@ -59,8 +59,8 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
                   <Box
                     as="span"
                     sx={{
-                      color: textColor,
-                      bg: columnColor,
+                      color: textColor, // FIXME: should we allow to change text color in group header?
+                      bg: "monochrome100",
                       textAlign: "left",
                       fontWeight: textStyle,
                     }}
