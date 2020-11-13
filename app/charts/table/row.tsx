@@ -1,4 +1,5 @@
 import { Box, Flex, Text } from "@theme-ui/components";
+import { hcl } from "d3-color";
 import * as React from "react";
 import { ReactNode } from "react";
 import { Cell, Row } from "react-table";
@@ -17,7 +18,6 @@ export const RowMobile = ({
   prepareRow: (row: Row<Observation>) => void;
 }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
-  const formatNumber = useFormatNumber();
 
   prepareRow(row);
 
@@ -26,8 +26,6 @@ export const RowMobile = ({
     <Box>
       {row.subRows.length === 0 ? (
         row.cells.map((cell, i) => {
-          const { columnComponentType } = tableColumnsMeta[cell.column.id];
-
           return (
             <Flex
               key={i}
@@ -56,11 +54,7 @@ export const RowMobile = ({
                 <DDContent
                   cell={cell}
                   columnMeta={tableColumnsMeta[cell.column.id]}
-                >
-                  {columnComponentType === "Measure"
-                    ? formatNumber(cell.value)
-                    : cell.render("Cell")}
-                </DDContent>
+                />
               </Box>
             </Flex>
           );
@@ -94,13 +88,20 @@ export const RowMobile = ({
 const DDContent = ({
   cell,
   columnMeta,
-  children,
 }: {
   cell: Cell<Observation>;
   columnMeta: ColumnMeta;
-  children: ReactNode;
 }) => {
-  const { type, textStyle, textColor, columnColor, colorScale } = columnMeta;
+  const formatNumber = useFormatNumber();
+
+  const {
+    columnComponentType,
+    type,
+    textStyle,
+    textColor,
+    columnColor,
+    colorScale,
+  } = columnMeta;
 
   switch (type) {
     case "text":
@@ -114,7 +115,9 @@ const DDContent = ({
             bg: columnColor,
           }}
         >
-          {children}
+          {columnComponentType === "Measure"
+            ? formatNumber(cell.value)
+            : cell.render("Cell")}
         </Box>
       );
     case "category":
@@ -123,8 +126,27 @@ const DDContent = ({
           tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}
           small
         >
-          {children}
+          {cell.render("Cell")}
         </Tag>
+      );
+    case "heatmap":
+      return (
+        <Box
+          sx={{
+            color:
+              hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
+                ? "#fff"
+                : "#000",
+            bg: colorScale ? colorScale(cell.value) : "primaryLight",
+            fontWeight: textStyle,
+            px: 1,
+            width: "fit-content",
+            borderRadius: "2px",
+          }}
+          // {...cell.getCellProps()}
+        >
+          {formatNumber(cell.value)}
+        </Box>
       );
     default:
       return (
@@ -135,7 +157,9 @@ const DDContent = ({
             fontWeight: textStyle,
           }}
         >
-          {children}
+          {columnComponentType === "Measure"
+            ? formatNumber(cell.value)
+            : cell.render("Cell")}
         </Box>
       );
   }
