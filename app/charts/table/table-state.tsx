@@ -115,6 +115,7 @@ const useTableState = ({
           // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
           accessor: getSlugifiedIri(c.componentIri),
           width,
+          sortType: "basic",
         };
       }),
 
