@@ -51,6 +51,7 @@ export interface TableChartState {
   tableColumns: Column<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
   groupingIris: string[];
+  hiddenIris: string[];
   sortingIris: { id: string; desc: boolean }[];
 }
 
@@ -65,10 +66,10 @@ const useTableState = ({
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
 
-  const hasBar = Object.values(fields)
-    .map((fValue) => fValue.columnStyle.type)
-    .some((d) => d === "bar");
-  console.log({ hasBar });
+  const hasBar = Object.values(fields).some(
+    (fValue) => fValue.columnStyle.type === "bar"
+  );
+  // .some((d) => d === "bar");
   const rowHeight = hasBar ? 56 : 40;
 
   // Dimensions
@@ -90,6 +91,12 @@ const useTableState = ({
   };
 
   const orderedTableColumns = getOrderedTableColumns(fields);
+
+  /**
+   * REACT-TABLE CONFIGURATION
+   * React-table is a headless hook, the following code
+   * is used to manage its internal state from the editor.
+   */
 
   // Data used by react-table
   const memoizedData = useMemo(
@@ -159,9 +166,24 @@ const useTableState = ({
     [sorting]
   );
 
-  // This object contains styles for columns/cell components.
-  // It is not use by react-table (which is a headless hook),
-  // only for custom styling.
+  const hiddenIris = useMemo(
+    () =>
+      Object.keys(fields).reduce((iris, colIndex) => {
+        if (fields[colIndex].isHidden) {
+          const iri = getSlugifiedIri(fields[colIndex].componentIri);
+          return [...iris, iri];
+        } else {
+          return iris;
+        }
+      }, [] as string[]),
+    [fields]
+  );
+
+  /**
+   * TABLE FORMATTING
+   * tableColumnsMeta contains styles for columns/cell components.
+   * It is not used by react-table, only for custom styling.
+   */
   const tableColumnsMeta = useMemo(
     () =>
       Object.keys(fields).reduce((acc, iri, i) => {
@@ -247,13 +269,12 @@ const useTableState = ({
           const width =
             Math.max(max(columnItemSizes, (d) => d) || 150, 150) -
             BAR_CELL_PADDING * 2;
-          console.log(width);
           // const hasNegativeValue =
           //   (min(data, (d) => Math.abs(+d[iri])) || 0) < 0;
 
           const widthScale = scaleLinear()
             .domain(extent(data, (d) => +d[iri]) as [number, number])
-            .range([0, width]); // FIXME: use actual cell width
+            .range([0, width]);
           return {
             ...acc,
             [slugifiedIri]: {
@@ -274,7 +295,7 @@ const useTableState = ({
           };
         }
       }, {}),
-    [data, dimensions, fields]
+    [data, dimensions, fields, formatNumber]
   );
 
   return {
@@ -286,6 +307,7 @@ const useTableState = ({
     tableColumns,
     tableColumnsMeta,
     groupingIris,
+    hiddenIris,
     sortingIris,
   };
 };

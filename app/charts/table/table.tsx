@@ -30,6 +30,7 @@ export const Table = () => {
     tableColumns,
     tableColumnsMeta,
     groupingIris,
+    hiddenIris,
     sortingIris,
   } = useChartState() as TableChartState;
 
@@ -91,9 +92,17 @@ export const Table = () => {
           () => ({
             ...state,
             groupBy: groupingIris,
+            hiddenColumns: hiddenIris,
             // sortBy: sortingIris,
           }),
-          [state, tableColumns, groupingIris, filteredData, sortingIris]
+          [
+            state,
+            tableColumns,
+            groupingIris,
+            filteredData,
+            sortingIris,
+            hiddenIris,
+          ]
         );
       },
     },
@@ -103,6 +112,8 @@ export const Table = () => {
     useExpanded
   );
 
+  // This effect allows to sort rows
+  // both from the table state and the table UI.
   React.useEffect(() => {
     setSortBy(sortingIris);
   }, [setSortBy, sortingIris]);
