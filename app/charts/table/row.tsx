@@ -11,43 +11,7 @@ import { ReactNode } from "react";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 
 export const RowDesktop = ({
-  row,
-  prepareRow,
-}: {
-  row: Row<Observation>;
-  prepareRow: (row: Row<Observation>) => void;
-}) => {
-  const { tableColumnsMeta } = useChartState() as TableChartState;
-  prepareRow(row);
-  return (
-    <>
-      <tr {...row.getRowProps()}>
-        {row.subRows.length === 0 ? (
-          <>
-            {row.cells.map((cell, i) => {
-              return (
-                <CellDesktop
-                  key={i}
-                  cell={cell}
-                  columnMeta={tableColumnsMeta[cell.column.id]}
-                ></CellDesktop>
-              );
-            })}
-          </>
-        ) : (
-          <GroupHeader row={row} />
-        )}
-      </tr>
-
-      {/* Display rows within a group by recursively calling RowUI  */}
-
-      {/* {row.subRows.length > 0 &&
-        row.subRows.map((subRow) => {
-          return <RowUI row={subRow} prepareRow={prepareRow} />;
-        })} */}
-    </>
-  );
-};
+import { ColumnMeta, TableChartState } from "./table-state";
 
 export const RowMobile = ({
   row,
