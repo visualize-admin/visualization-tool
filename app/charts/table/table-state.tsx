@@ -17,10 +17,10 @@ import {
 import {
   getColorInterpolator,
   getOrderedTableColumns,
-  getPalette,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
+import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -166,7 +166,9 @@ const useTableState = ({
           };
         } else if (columnStyleType === "category") {
           const { colorMapping } = columnStyle as ColumnStyleCategory;
-          const dimensionValues = dimensions.find((d) => d.iri === iri);
+          const dimensionValues = dimensions.find(
+            (d) => d.iri === iri
+          ) as DimensionFieldsWithValuesFragment;
 
           // Color scale (always from colorMappings)
           const colorScale = scaleOrdinal();
@@ -174,9 +176,11 @@ const useTableState = ({
           // get label (translated) matched with color
           const labelsAndColor = Object.keys(colorMapping).map(
             (colorMappingIri) => {
-              const dvLabel = dimensionValues.values.find((s) => {
-                return s.value === colorMappingIri;
-              }).label;
+              const dvLabel = (
+                dimensionValues.values.find((s) => {
+                  return s.value === colorMappingIri;
+                }) || { label: "unknown" }
+              ).label;
 
               return {
                 label: dvLabel,
@@ -239,7 +243,7 @@ const useTableState = ({
           };
         }
       }, {}),
-    [data, fields]
+    [data, dimensions, fields]
   );
 
   console.log({ tableColumnsMeta });
