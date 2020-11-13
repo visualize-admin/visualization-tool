@@ -4,7 +4,7 @@ import { Row } from "react-table";
 import { Observation } from "../../domain/data";
 import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
-import { Tag } from "./cell";
+import { Tag } from "./cell-desktop";
 import { TableChartState } from "./table-state";
 
 export const GroupHeader = ({ row }: { row: Row<Observation> }) => {

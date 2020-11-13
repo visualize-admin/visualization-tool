@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Text } from "@theme-ui/components";
+import { Box, Flex, Text } from "@theme-ui/components";
 import FlexSearch from "flexsearch";
 import * as React from "react";
 import { useCallback, useMemo, useState } from "react";
@@ -14,11 +14,11 @@ import { FixedSizeList } from "react-window";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
-import { CellDesktop } from "./cell";
+import { CellDesktop } from "./cell-desktop";
 import { GroupHeader } from "./group-header";
 import { TableHeader } from "./table-header";
 import { scrollbarWidth } from "./helpers";
-import { RowMobile } from "./row";
+import { DDContent, RowMobile } from "./cell-mobile";
 import { TableChartState } from "./table-state";
 
 export const Table = () => {
@@ -95,14 +95,7 @@ export const Table = () => {
             hiddenColumns: hiddenIris,
             // sortBy: sortingIris,
           }),
-          [
-            state,
-            tableColumns,
-            groupingIris,
-            filteredData,
-            sortingIris,
-            hiddenIris,
-          ]
+          [state, tableColumns, groupingIris, filteredData, hiddenIris]
         );
       },
     },
@@ -118,7 +111,7 @@ export const Table = () => {
     setSortBy(sortingIris);
   }, [setSortBy, sortingIris]);
 
-  const renderRow = useCallback(
+  const renderDesktopRow = useCallback(
     ({ index, style }) => {
       const row = rows[index];
       prepareRow(row);
@@ -143,6 +136,72 @@ export const Table = () => {
             <GroupHeader row={row} />
           )}
         </Box>
+      );
+    },
+    [prepareRow, rows, tableColumnsMeta]
+  );
+  const renderMobileRow = useCallback(
+    ({ index, style }) => {
+      const row = rows[index];
+      prepareRow(row);
+      const headingLevel =
+        row.depth === 0 ? "h2" : row.depth === 1 ? "h3" : "p";
+
+      return (
+        <>
+          <Box
+          // {...row.getRowProps({
+          //   style,
+          // })
+          // }
+          >
+            {row.subRows.length === 0 ? (
+              row.cells.map((cell, i) => {
+                return (
+                  <Flex
+                    key={i}
+                    as="dl"
+                    sx={{
+                      color: "monochrome800",
+                      fontSize: 2,
+                      width: "100%",
+                      height: "100%",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      my: 2,
+                      "&:first-of-type": {
+                        pt: 2,
+                      },
+                      "&:last-of-type": {
+                        borderBottom: "1px solid",
+                        borderBottomColor: "monochrome400",
+                        pb: 3,
+                      },
+                    }}
+                  >
+                    <Box
+                      as="dt"
+                      sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
+                    >
+                      {cell.column.Header}
+                    </Box>
+                    <Box
+                      as="dd"
+                      sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
+                    >
+                      <DDContent
+                        cell={cell}
+                        columnMeta={tableColumnsMeta[cell.column.id]}
+                      />
+                    </Box>
+                  </Flex>
+                );
+              })
+            ) : (
+              <GroupHeader row={row} />
+            )}
+          </Box>
+        </>
       );
     },
     [prepareRow, rows, tableColumnsMeta]
@@ -179,9 +238,6 @@ export const Table = () => {
       {!useAlternativeMobileView && (
         <Box
           sx={{
-            display: useAlternativeMobileView
-              ? ["none", "block", "block"]
-              : "block",
             width: "100%",
             height: bounds.chartHeight,
             position: "relative",
@@ -209,7 +265,7 @@ export const Table = () => {
                 itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
                 width={totalColumnsWidth + scrollBarSize}
               >
-                {renderRow}
+                {renderDesktopRow}
               </FixedSizeList>
             </div>
           </Box>
@@ -220,9 +276,6 @@ export const Table = () => {
       {useAlternativeMobileView && (
         <Box
           sx={{
-            display: useAlternativeMobileView
-              ? ["block", "none", "none"]
-              : "none",
             width: "100%",
             height: bounds.chartHeight,
             position: "relative",
@@ -231,6 +284,15 @@ export const Table = () => {
             mb: 5,
           }}
         >
+          {/* <FixedSizeList
+            height={bounds.chartHeight}
+            itemCount={rows.length}
+            itemSize={tableColumns.length * 40}
+            width={bounds.chartWidth}
+          >
+            {renderMobileRow}
+          </FixedSizeList> */}
+
           {rows.map((row, i) => (
             <RowMobile key={i} row={row} prepareRow={prepareRow} />
           ))}

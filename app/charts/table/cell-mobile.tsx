@@ -1,14 +1,12 @@
 import { Box, Flex, Text } from "@theme-ui/components";
 import { hcl } from "d3-color";
 import * as React from "react";
-import { ReactNode } from "react";
 import { Cell, Row } from "react-table";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
-import { Tag } from "./cell";
-import { BAR_CELL_PADDING } from "./constants";
+import { Tag } from "./cell-desktop";
 import { ColumnMeta, TableChartState } from "./table-state";
 
 export const RowMobile = ({
@@ -89,7 +87,7 @@ export const RowMobile = ({
   );
 };
 
-const DDContent = ({
+export const DDContent = ({
   cell,
   columnMeta,
 }: {
@@ -98,7 +96,7 @@ const DDContent = ({
 }) => {
   const { bounds } = useChartState();
   const { chartWidth } = bounds;
-  console.log({ chartWidth });
+
   const formatNumber = useFormatNumber();
 
   const {
@@ -158,8 +156,9 @@ const DDContent = ({
         </Box>
       );
     case "bar":
+      // Reset widthscale range based on current viewport
       widthScale?.range([0, chartWidth / 2]);
-      console.log(widthScale?.range());
+
       return (
         <Flex
           sx={{
