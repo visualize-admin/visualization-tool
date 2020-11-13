@@ -1,5 +1,6 @@
 import { extent, max, min } from "d3-array";
 import {
+  scaleDiverging,
   ScaleLinear,
   scaleLinear,
   scaleOrdinal,
@@ -203,14 +204,12 @@ const useTableState = ({
             },
           };
         } else if (columnStyleType === "heatmap") {
-          const colorScale = scaleSequential(
+          const absMinValue = min(data, (d) => Math.abs(+d[iri])) || 0;
+          const absMaxValue = max(data, (d) => Math.abs(+d[iri])) || 1;
+          const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
+          const colorScale = scaleDiverging(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
-          ).domain(
-            ([max(data, (d) => +d[iri]), min(data, (d) => +d[iri])] as [
-              number,
-              number
-            ]) || [1, 0]
-          );
+          ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue] || [-1, 0, 1]);
           return {
             ...acc,
             [slugifiedIri]: {
