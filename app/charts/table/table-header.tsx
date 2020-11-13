@@ -13,15 +13,15 @@ export const TableHeader = ({
   tableColumnsMeta: Record<string, ColumnMeta>;
 }) => {
   return (
-    <thead>
+    <Box>
       {headerGroups.map((headerGroup) => {
         return (
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          <Box {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, i) => {
               const { columnComponentType } = tableColumnsMeta[column.id];
               return (
                 <Box
-                  as="th"
+                  // as="th"
                   sx={{
                     position: "sticky",
                     top: 0,
@@ -45,10 +45,19 @@ export const TableHeader = ({
                   }}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
-                  <Flex sx={{ minHeight: 32, alignItems: "center" }}>
-                    {column.render("Header")}
-                    {column.isSorted && (
-                      <Box sx={{ width: 32 }}>
+                  <Flex
+                    sx={{
+                      minHeight: 32,
+                      alignItems: "center",
+                      justifyContent:
+                        columnComponentType === "Measure"
+                          ? "flex-end"
+                          : "flex-start",
+                    }}
+                  >
+                    <Box>{column.render("Header")}</Box>
+                    <Box sx={{ width: 32 }}>
+                      {column.isSorted && (
                         <Icon
                           name={
                             column.isSortedDesc
@@ -57,15 +66,15 @@ export const TableHeader = ({
                           }
                           size={32}
                         />
-                      </Box>
-                    )}
+                      )}
+                    </Box>
                   </Flex>
                 </Box>
               );
             })}
-          </tr>
+          </Box>
         );
       })}
-    </thead>
+    </Box>
   );
 };
