@@ -98,7 +98,7 @@ export const CellDesktop = ({
           <Box
             sx={{
               width: "100%",
-              height: "20px",
+              height: 18,
               position: "relative",
               bg: barShowBackground ? barColorBackground : "monochrome100",
             }}
@@ -111,10 +111,31 @@ export const CellDesktop = ({
                 width: widthScale
                   ? Math.abs(widthScale(cell.value) - widthScale(0))
                   : 0,
-                height: "20px",
+                height: 18,
                 bg: cell.value > 0 ? barColorPositive : barColorNegative,
               }}
             />
+            <Box
+              sx={{
+                position: "absolute",
+                top: "-2px",
+                left: widthScale ? widthScale(0) : 0,
+                width: "1px",
+                height: 22,
+                bg: "monochrome700",
+              }}
+            />
+            {/* <Box
+              sx={{
+                position: "absolute",
+                top: 12,
+                left: (widthScale ? widthScale(0) : 0) + 2,
+                color: "monochrome700",
+                fontSize: 1,
+              }}
+            >
+              0
+            </Box> */}
           </Box>
         </Flex>
       );
