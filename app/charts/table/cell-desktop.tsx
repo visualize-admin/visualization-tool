@@ -1,12 +1,12 @@
 import { Box, Flex } from "@theme-ui/components";
 import { hcl } from "d3-color";
 import * as React from "react";
-import { ReactNode } from "react";
 import { Cell } from "react-table";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { BAR_CELL_PADDING } from "./constants";
 import { ColumnMeta } from "./table-state";
+import { Tag } from "./tag";
 
 export const CellDesktop = ({
   cell,
@@ -161,26 +161,3 @@ export const CellDesktop = ({
       );
   }
 };
-
-export const Tag = ({
-  tagColor,
-  small = false,
-  children,
-}: {
-  tagColor: string;
-  small?: boolean;
-  children: ReactNode;
-}) => (
-  <Box
-    as="span"
-    sx={{
-      bg: tagColor,
-      borderRadius: "15px",
-      px: small ? 2 : 3,
-      py: small ? "0.125rem" : 1,
-      my: small ? 0 : 1,
-    }}
-  >
-    {children}
-  </Box>
-);

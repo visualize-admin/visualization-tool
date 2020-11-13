@@ -6,7 +6,7 @@ import { useFormatNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
-import { Tag } from "./cell-desktop";
+import { Tag } from "./tag";
 import { ColumnMeta, TableChartState } from "./table-state";
 
 export const RowMobile = ({
