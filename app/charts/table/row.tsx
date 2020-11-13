@@ -8,6 +8,7 @@ import { Observation } from "../../domain/data";
 import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { Tag } from "./cell";
+import { BAR_CELL_PADDING } from "./constants";
 import { ColumnMeta, TableChartState } from "./table-state";
 
 export const RowMobile = ({
@@ -40,17 +41,20 @@ export const RowMobile = ({
                 "&:first-of-type": {
                   pt: 2,
                 },
-                // "&:last-of-type": {
-                //   borderBottom: "1px solid",
-                //   borderBottomColor: "monochrome400",
-                //   pb: 3,
-                // },
+                "&:last-of-type": {
+                  borderBottom: "1px solid",
+                  borderBottomColor: "monochrome400",
+                  pb: 3,
+                },
               }}
             >
-              <Box as="dt" sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 1 }}>
+              <Box as="dt" sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}>
                 {cell.column.Header}
               </Box>
-              <Box as="dd" sx={{ flex: "1 1 100%", ml: 1 }}>
+              <Box
+                as="dd"
+                sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
+              >
                 <DDContent
                   cell={cell}
                   columnMeta={tableColumnsMeta[cell.column.id]}
@@ -92,6 +96,9 @@ const DDContent = ({
   cell: Cell<Observation>;
   columnMeta: ColumnMeta;
 }) => {
+  const { bounds } = useChartState();
+  const { chartWidth } = bounds;
+  console.log({ chartWidth });
   const formatNumber = useFormatNumber();
 
   const {
@@ -99,8 +106,12 @@ const DDContent = ({
     type,
     textStyle,
     textColor,
-    columnColor,
     colorScale,
+    barShowBackground,
+    barColorBackground,
+    barColorNegative,
+    barColorPositive,
+    widthScale,
   } = columnMeta;
 
   switch (type) {
@@ -112,7 +123,6 @@ const DDContent = ({
             width: "100%",
             color: textColor,
             fontWeight: textStyle,
-            bg: columnColor,
           }}
         >
           {columnComponentType === "Measure"
@@ -143,11 +153,56 @@ const DDContent = ({
             width: "fit-content",
             borderRadius: "2px",
           }}
-          // {...cell.getCellProps()}
         >
           {formatNumber(cell.value)}
         </Box>
       );
+    case "bar":
+      widthScale?.range([0, chartWidth / 2]);
+      console.log(widthScale?.range());
+      return (
+        <Flex
+          sx={{
+            flexDirection: "column",
+            justifyContent: "center",
+            width: chartWidth / 2,
+          }}
+        >
+          <Box sx={{ width: chartWidth / 2 }}>{formatNumber(cell.value)}</Box>
+          <Box
+            sx={{
+              width: chartWidth / 2,
+              height: 14,
+              position: "relative",
+              bg: barShowBackground ? barColorBackground : "monochrome100",
+            }}
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: widthScale ? widthScale(Math.min(0, cell.value)) : 0,
+                width: widthScale
+                  ? Math.abs(widthScale(cell.value) - widthScale(0))
+                  : 0,
+                height: 14,
+                bg: cell.value > 0 ? barColorPositive : barColorNegative,
+              }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                top: "-2px",
+                left: widthScale ? widthScale(0) : 0,
+                width: "1px",
+                height: 18,
+                bg: "monochrome700",
+              }}
+            />
+          </Box>
+        </Flex>
+      );
+
     default:
       return (
         <Box
