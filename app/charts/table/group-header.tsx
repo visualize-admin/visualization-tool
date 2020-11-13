@@ -1,4 +1,4 @@
-import { Box } from "@theme-ui/components";
+import { Box, Flex } from "@theme-ui/components";
 import * as React from "react";
 import { Row } from "react-table";
 import { Observation } from "../../domain/data";
@@ -13,32 +13,20 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
   return (
     <>
       {row.cells.map((cell, i) => {
-        const {
-          type,
-          textStyle,
-          textColor,
-          columnColor,
-          colorScale,
-        } = tableColumnsMeta[cell.column.id];
+        const { type, textStyle, textColor, colorScale } = tableColumnsMeta[
+          cell.column.id
+        ];
         return (
           <React.Fragment key={i}>
             {cell.isGrouped && (
-              <th
-                colSpan={row.cells.length}
+              <Flex
                 {...row.getToggleRowExpandedProps()}
-                style={{
-                  display: "flex",
+                sx={{
+                  width: "100%",
                   alignItems: "center",
                   cursor: "pointer",
                 }}
               >
-                {/* <Flex
-                  sx={{
-                    m: `0 0 0 ${row.depth * 24}px`,
-                    pr: 6,
-                    pl: 3,
-                  }}
-                > */}
                 <Box
                   as="span"
                   sx={{ width: 24, mr: 0, color: "monochrome600" }}
@@ -68,8 +56,7 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
                     {cell.render("Cell")}
                   </Box>
                 )}
-                {/* </Flex> */}
-              </th>
+              </Flex>
             )}
           </React.Fragment>
         );
