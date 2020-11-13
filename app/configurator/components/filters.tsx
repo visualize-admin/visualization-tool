@@ -1,12 +1,12 @@
-import get from "lodash/get";
 import { Trans } from "@lingui/macro";
 import { Box, Button } from "@theme-ui/components";
+import get from "lodash/get";
 import { useCallback } from "react";
 import { getFilterValue, useConfiguratorState } from "..";
+import { Loading } from "../../components/hint";
 import { useDimensionValuesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { MultiFilterField, SingleFilterField } from "./field";
-import { Loading } from "../../components/hint";
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 
@@ -78,15 +78,12 @@ export const DimensionValuesMultiFilter = ({
         {dimension.values.map((dv) => {
           if (state.state === "CONFIGURING_CHART") {
             const path = colorConfigPath ? `${colorConfigPath}.` : "";
-            console.log(
-              `chartConfig.fields["${state.activeField}"].${path}colorMapping["${dv.value}"]`
-            );
+
             const color = get(
               state,
               `chartConfig.fields["${state.activeField}"].${path}colorMapping["${dv.value}"]`
             );
 
-            console.log(color);
             return (
               <MultiFilterField
                 key={dv.value}

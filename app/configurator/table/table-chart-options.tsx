@@ -8,6 +8,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
+import { Button } from "theme-ui";
 import { Checkbox } from "../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -22,7 +23,10 @@ import {
   ChartOptionSelectField,
   ColorPickerField,
 } from "../components/field";
-import { DimensionValuesMultiFilter } from "../components/filters";
+import {
+  DimensionValuesMultiFilter,
+  DimensionValuesSingleFilter,
+} from "../components/filters";
 import {
   getDefaultCategoricalPalette,
   getDefaultSequentialPalette,
@@ -35,14 +39,20 @@ import {
   TableConfig,
 } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
-import { updateIsGroup, updateIsHidden } from "./table-config-state";
+import {
+  removeColumn,
+  updateIsGroup,
+  updateIsHidden,
+} from "./table-config-state";
 
 const useTableColumnGroupHiddenField = ({
   path,
   field,
+  metaData,
 }: {
   path: "isGroup" | "isHidden";
   field: string;
+  metaData: DataCubeMetadata;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -63,11 +73,12 @@ const useTableColumnGroupHiddenField = ({
           type: "CHART_CONFIG_REPLACED",
           value: {
             chartConfig,
+            dataSetMetadata: metaData,
           },
         });
       }
     },
-    [state, path, field, dispatch]
+    [state, path, field, dispatch, metaData]
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
@@ -88,16 +99,19 @@ const ChartOptionGroupHiddenField = ({
   path,
   defaultChecked,
   disabled = false,
+  metaData,
 }: {
   label: string | ReactNode;
   field: string;
   path: "isGroup" | "isHidden";
   defaultChecked?: boolean;
   disabled?: boolean;
+  metaData: DataCubeMetadata;
 }) => {
   const fieldProps = useTableColumnGroupHiddenField({
     field,
     path,
+    metaData,
   });
 
   return (
@@ -131,6 +145,17 @@ export const TableColumnOptions = ({
     return null;
   }
 
+  if (chartConfig.chartType !== "table") {
+    return null;
+  }
+
+  const activeFieldComponentIri = chartConfig.fields[activeField]?.componentIri;
+  // It's a dimension which is not mapped to an encoding field, so we show the filter!
+  // FIXME: activeField and encodingField should match? to remove type assertion
+  if (!activeFieldComponentIri) {
+    return <TableSingleFilter state={state} metaData={metaData} />;
+  }
+
   // Active field is always a component IRI, like in filters
   const component = [...metaData.dimensions, ...metaData.measures].find(
     (d) => d.iri === activeField
@@ -138,10 +163,6 @@ export const TableColumnOptions = ({
 
   if (!component) {
     return <div>`No component ${activeField}`</div>;
-  }
-
-  if (chartConfig.chartType !== "table") {
-    return null;
   }
 
   return (
@@ -185,15 +206,22 @@ export const TableColumnOptions = ({
               </SectionTitle>
               <ControlSectionContent side="right">
                 {component.__typename !== "Measure" && (
-                  <ChartOptionGroupHiddenField
-                    label={
-                      <Trans id="controls.table.column.group">
-                        Use to group
-                      </Trans>
-                    }
-                    field={activeField}
-                    path="isGroup"
-                  />
+                  <>
+                    <ChartOptionGroupHiddenField
+                      label={
+                        <Trans id="controls.table.column.group">
+                          Use to group
+                        </Trans>
+                      }
+                      field={activeField}
+                      path="isGroup"
+                      metaData={metaData}
+                    />
+                    <RemoveColumnButton
+                      field={activeField}
+                      metaData={metaData}
+                    />
+                  </>
                 )}
 
                 {component.__typename === "Measure" && (
@@ -203,6 +231,7 @@ export const TableColumnOptions = ({
                     }
                     field={activeField}
                     path="isHidden"
+                    metaData={metaData}
                   />
                 )}
               </ControlSectionContent>
@@ -416,5 +445,82 @@ const ColumnStyleSubOptions = ({
         );
       }}
     </I18n>
+  );
+};
+
+const RemoveColumnButton = ({
+  field,
+  metaData,
+}: {
+  field: string;
+  metaData: DataCubeMetadata;
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+  const onClick = useCallback(() => {
+    if (
+      state.state !== "CONFIGURING_CHART" ||
+      state.chartConfig.chartType !== "table"
+    ) {
+      return;
+    }
+    dispatch({
+      type: "CHART_CONFIG_REPLACED",
+      value: {
+        chartConfig: removeColumn(state.chartConfig, { field }),
+        dataSetMetadata: metaData,
+      },
+    });
+  }, [dispatch, field, metaData, state]);
+
+  return (
+    <Button variant="inline" onClick={onClick}>
+      Remove column
+    </Button>
+  );
+};
+
+const TableSingleFilter = ({
+  state,
+  metaData,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  metaData: DataCubeMetadata;
+}) => {
+  const { dimensions } = metaData;
+  const activeDimension = dimensions.find(
+    (dim) => dim.iri === state.activeField
+  );
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (panelRef && panelRef.current) {
+      panelRef.current.focus();
+    }
+  }, [state.activeField]);
+  return (
+    <div
+      key={`filter-panel-${state.activeField}`}
+      role="tabpanel"
+      id={`filter-panel-${state.activeField}`}
+      aria-labelledby={`tab-${state.activeField}`}
+      ref={panelRef}
+      tabIndex={-1}
+    >
+      <ControlSection>
+        <SectionTitle iconName="table">
+          {activeDimension && activeDimension.label}
+        </SectionTitle>
+        <ControlSectionContent side="right" as="fieldset">
+          <legend style={{ display: "none" }}>
+            {activeDimension && activeDimension.label}
+          </legend>
+          {activeDimension && (
+            <DimensionValuesSingleFilter
+              dataSetIri={metaData.iri}
+              dimensionIri={activeDimension.iri}
+            />
+          )}
+        </ControlSectionContent>
+      </ControlSection>
+    </div>
   );
 };

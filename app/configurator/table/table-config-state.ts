@@ -1,4 +1,4 @@
-import produce from "immer";
+import produce, { current } from "immer";
 import { DraggableLocation } from "react-beautiful-dnd";
 import { getOrderedTableColumns } from "../components/ui-helpers";
 import { TableConfig } from "../config-types";
@@ -118,6 +118,26 @@ export const updateIsHidden = produce(
     //     delete chartConfig.filters[field];
     //   }
     // }
+
+    return chartConfig;
+  }
+);
+
+export const removeColumn = produce(
+  (chartConfig: TableConfig, { field }: { field: string }): TableConfig => {
+    if (!chartConfig.fields[field]) {
+      return chartConfig;
+    }
+
+    delete chartConfig.fields[field];
+
+    console.log(current(chartConfig.fields));
+
+    // Update index for each field
+    const fieldsArray = getOrderedTableColumns(chartConfig.fields);
+    fieldsArray.forEach((f, i) => {
+      f.index = i;
+    });
 
     return chartConfig;
   }
