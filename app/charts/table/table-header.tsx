@@ -34,7 +34,7 @@ export const TableHeader = ({
                     textAlign: "left",
                     // textAlign:
                     //   columnComponentType === "Measure" ? "right" : "left",
-
+                    wordBreak: "break-word",
                     borderTop: "1px solid",
                     borderTopColor: "monochrome700",
                     borderBottom: "1px solid",
