@@ -87,6 +87,7 @@ export const Table = () => {
     {
       columns: tableColumns,
       data: filteredData,
+      autoResetExpanded: false,
       useControlledState: (state) => {
         return useMemo(
           () => ({
