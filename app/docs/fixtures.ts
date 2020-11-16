@@ -789,7 +789,20 @@ export const tableConfig: TableConfig = {
         type: "category",
         palette: "set3",
         textStyle: "bold",
-        colorMapping: {},
+        colorMapping: {
+          "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/0":
+            "#ff0055",
+          "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/1":
+            "#fdcdac",
+          "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/2":
+            "#ff6600",
+          "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/3":
+            "#f4cae4",
+          "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/4":
+            "#e6f5c9",
+          "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/1/5":
+            "#fff2ae",
+        },
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2": {
@@ -801,7 +814,7 @@ export const tableConfig: TableConfig = {
       componentType: "NominalDimension",
       columnStyle: {
         type: "text",
-        textStyle: "regular",
+        textStyle: "bold",
         textColor: "hotpink",
         columnColor: "gold",
       },

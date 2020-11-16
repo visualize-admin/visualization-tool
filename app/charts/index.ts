@@ -108,7 +108,7 @@ export const getInitialConfig = ({
         chartType,
         filters: {},
         settings: {
-          showSearch: false,
+          showSearch: true,
           showAllRows: false,
         },
         sorting: [],
