@@ -3,6 +3,7 @@ import * as React from "react";
 import { HeaderGroup } from "react-table";
 import { Observation } from "../../domain/data";
 import { Icon } from "../../icons";
+import { SORTING_ARROW_WIDTH } from "./constants";
 import { ColumnMeta } from "./table-state";
 
 export const TableHeader = ({
@@ -39,7 +40,7 @@ export const TableHeader = ({
                     borderBottom: "1px solid",
                     borderBottomColor: "monochrome700",
                     fontWeight: "bold",
-
+                    fontSize: 3,
                     bg: "monochrome100",
                     color: "monochrome700",
                   }}
@@ -47,7 +48,7 @@ export const TableHeader = ({
                 >
                   <Flex
                     sx={{
-                      minHeight: 32,
+                      minHeight: SORTING_ARROW_WIDTH,
                       alignItems: "center",
                       justifyContent:
                         columnComponentType === "Measure"
@@ -56,7 +57,7 @@ export const TableHeader = ({
                     }}
                   >
                     <Box>{column.render("Header")}</Box>
-                    <Box sx={{ width: 32 }}>
+                    <Box sx={{ width: SORTING_ARROW_WIDTH }}>
                       {column.isSorted && (
                         <Icon
                           name={
@@ -64,7 +65,7 @@ export const TableHeader = ({
                               ? "sortDescending"
                               : "sortAscending"
                           }
-                          size={32}
+                          size={SORTING_ARROW_WIDTH}
                         />
                       )}
                     </Box>

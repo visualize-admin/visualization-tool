@@ -250,6 +250,7 @@ export const Table = () => {
             sx={{
               display: "inline-block",
               borderSpacing: 0,
+              fontSize: 3,
             }}
             {...getTableProps()}
           >
