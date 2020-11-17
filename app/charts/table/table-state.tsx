@@ -22,6 +22,7 @@ import {
 import { Observation } from "../../domain/data";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { useTheme } from "../../themes";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
@@ -68,6 +69,7 @@ const useTableState = ({
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   chartConfig: TableConfig;
 }): TableChartState => {
+  const theme = useTheme();
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
 
@@ -233,7 +235,7 @@ const useTableState = ({
 
               return {
                 label: dvLabel,
-                color: colorMapping![colorMappingIri] || "#006699",
+                color: colorMapping![colorMappingIri] || theme.colors.primary,
               };
             }
           );

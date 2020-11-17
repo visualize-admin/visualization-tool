@@ -17,7 +17,7 @@ import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell-desktop";
 import { GroupHeader } from "./group-header";
 import { TableHeader } from "./table-header";
-import { scrollbarWidth } from "./helpers";
+import { scrollbarWidth } from "./table-helpers";
 import { DDContent, RowMobile } from "./cell-mobile";
 import { TableChartState } from "./table-state";
 
