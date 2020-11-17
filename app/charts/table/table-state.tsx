@@ -26,10 +26,10 @@ import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   BAR_CELL_PADDING,
-  getSlugifiedIri,
   SORTING_ARROW_WIDTH,
   TABLE_HEIGHT,
 } from "./constants";
+import { getSlugifiedIri } from "./table-helpers";
 
 export interface ColumnMeta {
   iri: string;

@@ -10,3 +10,6 @@ export const scrollbarWidth = () => {
   document.body.removeChild(scrollDiv);
   return scrollbarWidth;
 };
+
+const SlugRe = /\W+/g;
+export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");
