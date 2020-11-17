@@ -6,6 +6,7 @@ import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { Tag } from "./tag";
 import { TableChartState } from "./table-state";
+import { hcl } from "d3-color";
 
 export const GroupHeader = ({
   row,
@@ -23,6 +24,7 @@ export const GroupHeader = ({
         const { type, textColor, colorScale } = tableColumnsMeta[
           cell.column.id
         ];
+        const bg = getGroupLevelBackgroundColor(groupingLevels - depth);
         return (
           <React.Fragment key={i}>
             {cell.isGrouped && (
@@ -32,7 +34,7 @@ export const GroupHeader = ({
                   width: "100%",
                   alignItems: "center",
                   cursor: "pointer",
-                  bg: getGroupLevelBackgroundColor(groupingLevels - depth),
+                  bg,
                 }}
               >
                 <Box
@@ -55,7 +57,7 @@ export const GroupHeader = ({
                   <Box
                     as="span"
                     sx={{
-                      color: textColor, // FIXME: should we allow to change text color in group header?
+                      color: hcl(bg).l < 55 ? "monochrome100" : "monochrome900",
                       fontWeight: "bold",
                       textAlign: "left",
                     }}
@@ -82,6 +84,12 @@ const getGroupLevelBackgroundColor = (x: number) => {
       return "monochrome200";
     case 3:
       return "monochrome300";
+    case 4:
+      return "monochrome400";
+    case 5:
+      return "monochrome500";
+    case 6:
+      return "monochrome600";
     default:
       return "monochrome100";
   }
