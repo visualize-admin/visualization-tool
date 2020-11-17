@@ -132,9 +132,9 @@ const useTableState = ({
               c.componentType === "Measure"
                 ? formatNumber(item as number)
                 : item;
-            return estimateTextWidth(`${itemAsString}`, 16) + 40;
+            return estimateTextWidth(`${itemAsString}`, 16) + 20;
           }),
-          headerLabelSize,
+          // headerLabelSize,
         ];
         const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
 

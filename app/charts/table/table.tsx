@@ -87,6 +87,7 @@ export const Table = () => {
     {
       columns: tableColumns,
       data: filteredData,
+      autoResetExpanded: false,
       useControlledState: (state) => {
         return useMemo(
           () => ({
@@ -310,8 +311,8 @@ export const Table = () => {
           color: "monochrome600",
         }}
       >
-        <Trans id="chart.table.number.of.lines">Total number of lines:</Trans>{" "}
-        {rows.length}
+        <Trans id="chart.table.number.of.lines">Total number of rows:</Trans>{" "}
+        {filteredData.length}
       </Text>
     </>
   );

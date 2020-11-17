@@ -43,6 +43,12 @@ export const CellDesktop = ({
             bg: columnColor,
             fontWeight: textStyle,
             px: 3,
+            "&:first-of-type": {
+              pl: 0,
+            },
+            "&:last-of-type": {
+              pr: 0,
+            },
           }}
           {...cell.getCellProps()}
         >
@@ -151,6 +157,12 @@ export const CellDesktop = ({
             textAlign: columnComponentType === "Measure" ? "right" : "left",
             fontWeight: textStyle,
             px: 3,
+            "&:first-of-type": {
+              pl: 0,
+            },
+            "&:last-of-type": {
+              pr: 0,
+            },
           }}
           {...cell.getCellProps()}
         >

@@ -22,7 +22,6 @@ export const TableHeader = ({
               const { columnComponentType } = tableColumnsMeta[column.id];
               return (
                 <Box
-                  // as="th"
                   sx={{
                     position: "sticky",
                     top: 0,
@@ -34,7 +33,7 @@ export const TableHeader = ({
                     textAlign: "left",
                     // textAlign:
                     //   columnComponentType === "Measure" ? "right" : "left",
-
+                    wordBreak: "break-word",
                     borderTop: "1px solid",
                     borderTopColor: "monochrome700",
                     borderBottom: "1px solid",
@@ -43,6 +42,12 @@ export const TableHeader = ({
                     fontSize: 3,
                     bg: "monochrome100",
                     color: "monochrome700",
+                    "&:first-of-type": {
+                      pl: 0,
+                    },
+                    "&:last-of-type": {
+                      pr: 0,
+                    },
                   }}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
