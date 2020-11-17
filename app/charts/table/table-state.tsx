@@ -104,13 +104,20 @@ const useTableState = ({
 
   // Data used by react-table
   const memoizedData = useMemo(
-    () =>
-      data.map((d, i) =>
-        Object.keys(d).reduce(
-          (obj, k) => ({ ...obj, [getSlugifiedIri(k)]: d[k] }),
-          { id: i }
-        )
-      ),
+    function replaceKeys() {
+      //Only read keys once
+      const keys = Object.keys(data[0]);
+      const slugifiedKeys = keys.map(getSlugifiedIri);
+
+      return data.map((d, index) => {
+        let o = { id: index } as $IntentionalAny;
+        // This is run often, so let's optimize it
+        for (let i = 0; i < keys.length; i++) {
+          o[slugifiedKeys[i]] = d[keys[i]];
+        }
+        return o;
+      });
+    },
     [data]
   );
 
