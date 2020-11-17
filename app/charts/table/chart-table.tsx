@@ -2,15 +2,13 @@ import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import { TableConfig } from "../../configurator";
-
-import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-import { A11yTable } from "../shared/a11y-table";
 import { Table } from "./table";
 import { TableChart } from "./table-state";
 
@@ -41,16 +39,9 @@ export const ChartTableVisualization = ({
   const observations = data?.dataCubeByIri?.observations.data;
 
   if (data?.dataCubeByIri) {
-    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
+    const { dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
       <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-        />
         <ChartTable
           observations={observations.data}
           dimensions={dimensions}
