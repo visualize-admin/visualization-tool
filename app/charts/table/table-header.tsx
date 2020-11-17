@@ -41,12 +41,6 @@ export const TableHeader = ({
                     fontSize: 3,
                     bg: "monochrome100",
                     color: "monochrome700",
-                    "&:first-of-type": {
-                      pl: 0,
-                    },
-                    "&:last-of-type": {
-                      pr: 0,
-                    },
                   }}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
