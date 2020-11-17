@@ -77,11 +77,11 @@ const getGroupLevelBackgroundColor = (x: number) => {
     case 0:
       return "monochrome100";
     case 1:
-      return "monochrome200";
+      return "monochrome100";
     case 2:
-      return "monochrome300";
+      return "monochrome200";
     case 3:
-      return "monochrome400";
+      return "monochrome300";
     default:
       return "monochrome100";
   }
