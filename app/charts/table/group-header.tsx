@@ -17,13 +17,11 @@ export const GroupHeader = ({
 }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
   const { depth } = row;
-  console.log(depth);
+
   return (
     <>
       {row.cells.map((cell, i) => {
-        const { type, textColor, colorScale } = tableColumnsMeta[
-          cell.column.id
-        ];
+        const { type, colorScale } = tableColumnsMeta[cell.column.id];
         const bg = getGroupLevelBackgroundColor(groupingLevels - depth);
         return (
           <React.Fragment key={i}>

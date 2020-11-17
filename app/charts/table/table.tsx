@@ -71,10 +71,6 @@ export const Table = () => {
     return searchResult as Observation[];
   }, [data, searchTerm, searchIndex]);
 
-  // console.log({ data });
-  // console.log({ tableColumns });
-  // console.log({ filteredData });
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -139,7 +135,7 @@ export const Table = () => {
         </Box>
       );
     },
-    [prepareRow, rows, tableColumnsMeta]
+    [groupingIris.length, prepareRow, rows, tableColumnsMeta]
   );
   const renderMobileRow = useCallback(
     ({ index, style }) => {
@@ -205,7 +201,7 @@ export const Table = () => {
         </>
       );
     },
-    [prepareRow, rows, tableColumnsMeta]
+    [groupingIris.length, prepareRow, rows, tableColumnsMeta]
   );
   return (
     <>

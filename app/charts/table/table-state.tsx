@@ -25,11 +25,7 @@ import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import {
-  BAR_CELL_PADDING,
-  SORTING_ARROW_WIDTH,
-  TABLE_HEIGHT,
-} from "./constants";
+import { BAR_CELL_PADDING, TABLE_HEIGHT } from "./constants";
 import { getSlugifiedIri } from "./table-helpers";
 
 export interface ColumnMeta {
@@ -123,8 +119,7 @@ const useTableState = ({
         const headerLabel =
           [...dimensions, ...measures].find((dim) => dim.iri === c.componentIri)
             ?.label || c.componentIri;
-        const headerLabelSize =
-          estimateTextWidth(headerLabel, 16) + SORTING_ARROW_WIDTH;
+
         // The column width depends on the estimated width of the
         // longest value in the column, with a minimum of 150px.
         const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
@@ -136,7 +131,6 @@ const useTableState = ({
                 : item;
             return estimateTextWidth(`${itemAsString}`, 16) + 20;
           }),
-          // headerLabelSize,
         ];
         const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
 
@@ -163,7 +157,7 @@ const useTableState = ({
         .map((c) => getSlugifiedIri(c.componentIri)),
     [orderedTableColumns]
   );
-  console.log({ groupingIris });
+
   // Sorting used by react-table
   const sortingIris = useMemo(
     () =>
@@ -303,7 +297,7 @@ const useTableState = ({
           };
         }
       }, {}),
-    [data, dimensions, fields, formatNumber]
+    [data, dimensions, fields, formatNumber, theme.colors.primary]
   );
 
   return {
