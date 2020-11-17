@@ -1,5 +1,4 @@
 import { SystemStyleObject } from "@styled-system/css";
-import slugify from "slugify";
 
 export const TABLE_HEIGHT = 600;
 export const BAR_CELL_PADDING = 12;
@@ -24,5 +23,5 @@ export const TABLE_STYLES: SystemStyleObject = {
   },
 };
 
-export const getSlugifiedIri = (iri: string) =>
-  slugify(iri, { remove: /[.:]/g });
+const SlugRe = /\W+/g;
+export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");
