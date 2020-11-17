@@ -240,9 +240,9 @@ export const Table = () => {
         <Box
           sx={{
             width: "100%",
-            height: bounds.chartHeight,
             position: "relative",
-            overflow: "auto",
+            overflowY: "hidden",
+            overflowX: "scroll",
             bg: "monochrome100",
             mb: 4,
           }}
