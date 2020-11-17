@@ -83,7 +83,7 @@ export const ChartTable = memo(
   }) => {
     return (
       <TableChart
-        data={observations.slice(0, 200)}
+        data={observations}
         dimensions={dimensions}
         measures={measures}
         chartConfig={chartConfig}
