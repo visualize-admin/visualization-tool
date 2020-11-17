@@ -8,7 +8,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { Button } from "theme-ui";
+import { Box } from "theme-ui";
 import { Checkbox } from "../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -40,7 +40,7 @@ import {
 } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import {
-  removeColumn,
+  updateIsFiltered,
   updateIsGroup,
   updateIsHidden,
 } from "./table-config-state";
@@ -50,7 +50,7 @@ const useTableColumnGroupHiddenField = ({
   field,
   metaData,
 }: {
-  path: "isGroup" | "isHidden";
+  path: "isGroup" | "isHidden" | "isFiltered";
   field: string;
   metaData: DataCubeMetadata;
 }): FieldProps => {
@@ -62,7 +62,12 @@ const useTableColumnGroupHiddenField = ({
         state.state === "CONFIGURING_CHART" &&
         state.chartConfig.chartType === "table"
       ) {
-        const updater = path === "isGroup" ? updateIsGroup : updateIsHidden;
+        const updater =
+          path === "isGroup"
+            ? updateIsGroup
+            : path === "isHidden"
+            ? updateIsHidden
+            : updateIsFiltered;
 
         const chartConfig = updater(state.chartConfig, {
           field,
@@ -103,7 +108,7 @@ const ChartOptionGroupHiddenField = ({
 }: {
   label: string | ReactNode;
   field: string;
-  path: "isGroup" | "isHidden";
+  path: "isGroup" | "isHidden" | "isFiltered";
   defaultChecked?: boolean;
   disabled?: boolean;
   metaData: DataCubeMetadata;
@@ -165,6 +170,8 @@ export const TableColumnOptions = ({
     return <div>`No component ${activeField}`</div>;
   }
 
+  const { isGroup, isFiltered } = chartConfig.fields[activeField];
+
   return (
     <I18n>
       {({ i18n }) => {
@@ -201,12 +208,20 @@ export const TableColumnOptions = ({
             tabIndex={-1}
           >
             <ControlSection>
-              <SectionTitle iconName={"table"}>
-                <Trans id="controls.section.table.column">Column</Trans>
-              </SectionTitle>
+              <SectionTitle iconName={"table"}>{component.label}</SectionTitle>
               <ControlSectionContent side="right">
                 {component.__typename !== "Measure" && (
                   <>
+                    <ChartOptionGroupHiddenField
+                      label={
+                        <Trans id="controls.table.column.hidefilter">
+                          Hide and filter
+                        </Trans>
+                      }
+                      field={activeField}
+                      path="isFiltered"
+                      metaData={metaData}
+                    />
                     <ChartOptionGroupHiddenField
                       label={
                         <Trans id="controls.table.column.group">
@@ -214,13 +229,23 @@ export const TableColumnOptions = ({
                         </Trans>
                       }
                       field={activeField}
+                      disabled={isFiltered}
                       path="isGroup"
                       metaData={metaData}
                     />
-                    <RemoveColumnButton
-                      field={activeField}
-                      metaData={metaData}
-                    />
+                    <Box sx={{ pl: 6, ml: "-2px" }}>
+                      <ChartOptionGroupHiddenField
+                        label={
+                          <Trans id="controls.table.column.hide">
+                            Hide column
+                          </Trans>
+                        }
+                        disabled={!isGroup || isFiltered}
+                        field={activeField}
+                        path="isHidden"
+                        metaData={metaData}
+                      />
+                    </Box>
                   </>
                 )}
 
@@ -236,69 +261,73 @@ export const TableColumnOptions = ({
                 )}
               </ControlSectionContent>
             </ControlSection>
-
-            <ControlSection>
-              <SectionTitle iconName={"image"}>
-                <Trans id="controls.section.columnstyle">Column Style</Trans>
-              </SectionTitle>
-              <ControlSectionContent side="right">
-                <ChartOptionSelectField<ColumnStyle>
-                  id={"columnStyle"}
-                  label={
-                    <Trans id="controls.select.columnStyle">Column Style</Trans>
-                  }
-                  options={columnStyleOptions}
-                  getValue={(type) => {
-                    switch (type) {
-                      case "text":
-                        return {
-                          type: "text",
-                          textStyle: "regular",
-                          textColor: "#333",
-                          columnColor: "#fff",
-                        };
-                      case "category":
-                        return {
-                          type: "category",
-                          textStyle: "regular",
-                          palette: getDefaultCategoricalPalette().value,
-                          colorMapping: mapColorsToComponentValuesIris({
-                            palette: getDefaultCategoricalPalette().value,
-                            component: component as DimensionFieldsWithValuesFragment,
-                          }),
-                        };
-                      case "heatmap":
-                        return {
-                          type: "heatmap",
-                          textStyle: "regular",
-                          palette: getDefaultSequentialPalette().value,
-                        };
-                      case "bar":
-                        return {
-                          type: "bar",
-                          textStyle: "regular",
-                          barColorPositive: getDefaultCategoricalPalette()
-                            .colors[0],
-                          barColorNegative: getDefaultCategoricalPalette()
-                            .colors[1],
-                          barColorBackground: "#ccc",
-                          barShowBackground: false,
-                        };
-                      default:
-                        return undefined;
+            {!isFiltered && (
+              <ControlSection>
+                <SectionTitle iconName={"image"}>
+                  <Trans id="controls.section.columnstyle">Column Style</Trans>
+                </SectionTitle>
+                <ControlSectionContent side="right">
+                  <ChartOptionSelectField<ColumnStyle>
+                    id={"columnStyle"}
+                    label={
+                      <Trans id="controls.select.columnStyle">
+                        Column Style
+                      </Trans>
                     }
-                  }}
-                  getKey={(d) => d.type}
-                  field={activeField}
-                  path="columnStyle"
-                />
-                <ColumnStyleSubOptions
-                  chartConfig={chartConfig}
-                  activeField={activeField}
-                  component={component as DimensionFieldsWithValuesFragment}
-                />
-              </ControlSectionContent>
-            </ControlSection>
+                    options={columnStyleOptions}
+                    getValue={(type) => {
+                      switch (type) {
+                        case "text":
+                          return {
+                            type: "text",
+                            textStyle: "regular",
+                            textColor: "#333",
+                            columnColor: "#fff",
+                          };
+                        case "category":
+                          return {
+                            type: "category",
+                            textStyle: "regular",
+                            palette: getDefaultCategoricalPalette().value,
+                            colorMapping: mapColorsToComponentValuesIris({
+                              palette: getDefaultCategoricalPalette().value,
+                              component: component as DimensionFieldsWithValuesFragment,
+                            }),
+                          };
+                        case "heatmap":
+                          return {
+                            type: "heatmap",
+                            textStyle: "regular",
+                            palette: getDefaultSequentialPalette().value,
+                          };
+                        case "bar":
+                          return {
+                            type: "bar",
+                            textStyle: "regular",
+                            barColorPositive: getDefaultCategoricalPalette()
+                              .colors[0],
+                            barColorNegative: getDefaultCategoricalPalette()
+                              .colors[1],
+                            barColorBackground: "#ccc",
+                            barShowBackground: false,
+                          };
+                        default:
+                          return undefined;
+                      }
+                    }}
+                    getKey={(d) => d.type}
+                    field={activeField}
+                    path="columnStyle"
+                  />
+
+                  <ColumnStyleSubOptions
+                    chartConfig={chartConfig}
+                    activeField={activeField}
+                    component={component as DimensionFieldsWithValuesFragment}
+                  />
+                </ControlSectionContent>
+              </ControlSection>
+            )}
 
             {(component.__typename === "NominalDimension" ||
               component.__typename === "OrdinalDimension" ||
@@ -311,7 +340,12 @@ export const TableColumnOptions = ({
                   <legend style={{ display: "none" }}>
                     <Trans id="controls.section.filter">Filter</Trans>
                   </legend>
-                  {component && (
+                  {isFiltered ? (
+                    <DimensionValuesSingleFilter
+                      dataSetIri={metaData.iri}
+                      dimensionIri={component.iri}
+                    />
+                  ) : (
                     <DimensionValuesMultiFilter
                       key={component.iri}
                       dimensionIri={component.iri}
@@ -445,37 +479,6 @@ const ColumnStyleSubOptions = ({
         );
       }}
     </I18n>
-  );
-};
-
-const RemoveColumnButton = ({
-  field,
-  metaData,
-}: {
-  field: string;
-  metaData: DataCubeMetadata;
-}) => {
-  const [state, dispatch] = useConfiguratorState();
-  const onClick = useCallback(() => {
-    if (
-      state.state !== "CONFIGURING_CHART" ||
-      state.chartConfig.chartType !== "table"
-    ) {
-      return;
-    }
-    dispatch({
-      type: "CHART_CONFIG_REPLACED",
-      value: {
-        chartConfig: removeColumn(state.chartConfig, { field }),
-        dataSetMetadata: metaData,
-      },
-    });
-  }, [dispatch, field, metaData, state]);
-
-  return (
-    <Button variant="inline" onClick={onClick}>
-      Remove column
-    </Button>
   );
 };
 

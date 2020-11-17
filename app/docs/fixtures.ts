@@ -770,6 +770,7 @@ export const tableConfig: TableConfig = {
       index: 1,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "NominalDimension",
       columnStyle: {
         type: "text",
@@ -784,6 +785,7 @@ export const tableConfig: TableConfig = {
       index: 7,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "NominalDimension",
       columnStyle: {
         type: "category",
@@ -811,6 +813,7 @@ export const tableConfig: TableConfig = {
       index: 3,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "NominalDimension",
       columnStyle: {
         type: "text",
@@ -825,6 +828,7 @@ export const tableConfig: TableConfig = {
       index: 4,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "NominalDimension",
       columnStyle: {
         type: "text",
@@ -839,6 +843,7 @@ export const tableConfig: TableConfig = {
       index: 5,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "NominalDimension",
       columnStyle: {
         type: "text",
@@ -853,6 +858,7 @@ export const tableConfig: TableConfig = {
       index: 6,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: {
         type: "text",
@@ -867,6 +873,7 @@ export const tableConfig: TableConfig = {
       index: 2,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: {
         type: "heatmap",
@@ -880,6 +887,7 @@ export const tableConfig: TableConfig = {
       index: 8,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: {
         type: "text",
@@ -894,6 +902,7 @@ export const tableConfig: TableConfig = {
       index: 9,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: {
         type: "text",
@@ -908,6 +917,7 @@ export const tableConfig: TableConfig = {
       index: 10,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: {
         type: "bar",
@@ -924,6 +934,7 @@ export const tableConfig: TableConfig = {
       index: 11,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: { type: "heatmap", palette: "turbo", textStyle: "regular" },
     },
@@ -933,6 +944,7 @@ export const tableConfig: TableConfig = {
       index: 12,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: {
         type: "heatmap",
@@ -946,6 +958,7 @@ export const tableConfig: TableConfig = {
       index: 13,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: {
         type: "text",
@@ -960,6 +973,7 @@ export const tableConfig: TableConfig = {
       index: 14,
       isGroup: false,
       isHidden: false,
+      isFiltered: false,
       componentType: "Measure",
       columnStyle: {
         type: "text",

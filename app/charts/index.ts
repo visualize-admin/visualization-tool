@@ -121,6 +121,7 @@ export const getInitialConfig = ({
               index: i,
               isGroup: false,
               isHidden: false,
+              isFiltered: false,
               columnStyle: {
                 textStyle: "regular",
                 type: "text",
@@ -175,6 +176,14 @@ export const getPossibleChartType = ({
 export const getFieldComponentIris = (fields: GenericFields) => {
   return new Set(
     Object.values(fields).flatMap((f) => (f ? [f.componentIri] : []))
+  );
+};
+
+export const getFilteredFieldIris = (fields: GenericFields) => {
+  return new Set(
+    Object.values(fields).flatMap((f) =>
+      f && (f as $IntentionalAny).isFiltered ? [f.componentIri] : []
+    )
   );
 };
 

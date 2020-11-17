@@ -1,4 +1,4 @@
-import produce, { current } from "immer";
+import produce from "immer";
 import { DraggableLocation } from "react-beautiful-dnd";
 import { getOrderedTableColumns } from "../components/ui-helpers";
 import { TableConfig } from "../config-types";
@@ -22,6 +22,13 @@ export const moveFields = produce(
       source.droppableId === "columns" ? columnFields : groupFields;
     let destinationFields =
       destination.droppableId === "columns" ? columnFields : groupFields;
+
+    // Reset isHidden prop if field is being grouped/ungrouped
+    if (source.droppableId !== destination.droppableId) {
+      const movedField = sourceFields[source.index];
+      movedField.isHidden = false;
+      // movedField.isFiltered = false;
+    }
 
     // Move from source to destination
     destinationFields.splice(
@@ -64,6 +71,9 @@ export const updateIsGroup = produce(
 
     // Update field
     chartConfig.fields[field].isGroup = value;
+    // Reset other field states
+    chartConfig.fields[field].isHidden = false;
+    // chartConfig.fields[field].isFiltered = false;
 
     // Get fields _without_ field that is updated
     const fieldsArray = getOrderedTableColumns(chartConfig.fields);
@@ -110,34 +120,25 @@ export const updateIsHidden = produce(
 
     chartConfig.fields[field].isHidden = value;
 
-    // If field is _not_ a measure, add/remove it to/from the filters
-    // if (chartConfig.fields[field].componentType !== "Measure") {
-    //   if (value === true) {
-    //     chartConfig.filters[field] = { type: "single", value: "TODO" };
-    //   } else {
-    //     delete chartConfig.filters[field];
-    //   }
-    // }
-
     return chartConfig;
   }
 );
-
-export const removeColumn = produce(
-  (chartConfig: TableConfig, { field }: { field: string }): TableConfig => {
+export const updateIsFiltered = produce(
+  (
+    chartConfig: TableConfig,
+    {
+      field,
+      value,
+    }: {
+      field: string;
+      value: boolean;
+    }
+  ): TableConfig => {
     if (!chartConfig.fields[field]) {
       return chartConfig;
     }
 
-    delete chartConfig.fields[field];
-
-    console.log(current(chartConfig.fields));
-
-    // Update index for each field
-    const fieldsArray = getOrderedTableColumns(chartConfig.fields);
-    fieldsArray.forEach((f, i) => {
-      f.index = i;
-    });
+    chartConfig.fields[field].isFiltered = value;
 
     return chartConfig;
   }
