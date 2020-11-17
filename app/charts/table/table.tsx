@@ -134,7 +134,7 @@ export const Table = () => {
               );
             })
           ) : (
-            <GroupHeader row={row} />
+            <GroupHeader row={row} groupingLevels={groupingIris.length} />
           )}
         </Box>
       );

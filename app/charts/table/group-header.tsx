@@ -7,13 +7,20 @@ import { useChartState } from "../shared/use-chart-state";
 import { Tag } from "./tag";
 import { TableChartState } from "./table-state";
 
-export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
+export const GroupHeader = ({
+  row,
+  groupingLevels,
+}: {
+  row: Row<Observation>;
+  groupingLevels: number;
+}) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
-
+  const { depth } = row;
+  console.log(depth);
   return (
     <>
       {row.cells.map((cell, i) => {
-        const { type, textStyle, textColor, colorScale } = tableColumnsMeta[
+        const { type, textColor, colorScale } = tableColumnsMeta[
           cell.column.id
         ];
         return (
@@ -25,6 +32,7 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
                   width: "100%",
                   alignItems: "center",
                   cursor: "pointer",
+                  bg: getGroupLevelBackgroundColor(groupingLevels - depth),
                 }}
               >
                 <Box
@@ -48,7 +56,6 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
                     as="span"
                     sx={{
                       color: textColor, // FIXME: should we allow to change text color in group header?
-                      bg: "monochrome100",
                       fontWeight: "bold",
                       textAlign: "left",
                     }}
@@ -63,4 +70,19 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
       })}
     </>
   );
+};
+
+const getGroupLevelBackgroundColor = (x: number) => {
+  switch (x) {
+    case 0:
+      return "monochrome100";
+    case 1:
+      return "monochrome200";
+    case 2:
+      return "monochrome300";
+    case 3:
+      return "monochrome400";
+    default:
+      return "monochrome100";
+  }
 };
