@@ -49,8 +49,8 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
                     sx={{
                       color: textColor, // FIXME: should we allow to change text color in group header?
                       bg: "monochrome100",
+                      fontWeight: "bold",
                       textAlign: "left",
-                      fontWeight: textStyle,
                     }}
                   >
                     {cell.render("Cell")}
