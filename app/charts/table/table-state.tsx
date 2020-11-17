@@ -1,10 +1,10 @@
 import { extent, max, min } from "d3-array";
 import {
+  scaleDiverging,
   ScaleLinear,
   scaleLinear,
   scaleOrdinal,
   ScaleSequential,
-  scaleSequential,
 } from "d3-scale";
 import { ReactNode, useMemo } from "react";
 import { Column } from "react-table";
@@ -17,12 +17,19 @@ import {
 import {
   getColorInterpolator,
   getOrderedTableColumns,
-  getPalette,
+  useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
+import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
+import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { getSlugifiedIri, ROW_HEIGHT, TABLE_HEIGHT } from "./constants";
+import {
+  BAR_CELL_PADDING,
+  getSlugifiedIri,
+  SORTING_ARROW_WIDTH,
+  TABLE_HEIGHT,
+} from "./constants";
 
 export interface ColumnMeta {
   iri: string;
@@ -39,19 +46,17 @@ export interface ColumnMeta {
   barColorBackground: string;
   barShowBackground: boolean;
 }
-// | (ColumnStyleHeatmap & { colorScale?: ScaleSequential<string> })
-// | ColumnStyleText
-// | (ColumnStyleCategory & { colorScale: ScaleOrdinal<string, string> })
-// | (ColumnStyleBar & { widthScale?: ScaleLinear<number, number> });
 
 export interface TableChartState {
   chartType: "table";
   bounds: Bounds;
+  rowHeight: number;
   showSearch: boolean;
   data: Observation[];
   tableColumns: Column<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
   groupingIris: string[];
+  hiddenIris: string[];
   sortingIris: { id: string; desc: boolean }[];
 }
 
@@ -64,6 +69,12 @@ const useTableState = ({
   chartConfig: TableConfig;
 }): TableChartState => {
   const { fields, settings, sorting } = chartConfig;
+  const formatNumber = useFormatNumber();
+
+  const hasBar = Object.values(fields).some(
+    (fValue) => fValue.columnStyle.type === "bar"
+  );
+  const rowHeight = hasBar ? 56 : 40;
 
   // Dimensions
   const width = useWidth();
@@ -74,7 +85,7 @@ const useTableState = ({
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right; // We probably don't need this
-  const chartHeight = Math.min(TABLE_HEIGHT, data.length * ROW_HEIGHT);
+  const chartHeight = Math.min(TABLE_HEIGHT, data.length * rowHeight);
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
@@ -84,6 +95,12 @@ const useTableState = ({
   };
 
   const orderedTableColumns = getOrderedTableColumns(fields);
+
+  /**
+   * REACT-TABLE CONFIGURATION
+   * React-table is a headless hook, the following code
+   * is used to manage its internal state from the editor.
+   */
 
   // Data used by react-table
   const memoizedData = useMemo(
@@ -101,17 +118,39 @@ const useTableState = ({
   const tableColumns = useMemo(
     () =>
       orderedTableColumns.map((c) => {
+        const headerLabel =
+          [...dimensions, ...measures].find((dim) => dim.iri === c.componentIri)
+            ?.label || c.componentIri;
+        const headerLabelSize =
+          estimateTextWidth(headerLabel, 16) + SORTING_ARROW_WIDTH;
+        // The column width depends on the estimated width of the
+        // longest value in the column, with a minimum of 150px.
+        const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
+        const columnItemSizes = [
+          ...columnItems.map((item) => {
+            const itemAsString =
+              c.componentType === "Measure"
+                ? formatNumber(item as number)
+                : item;
+            return estimateTextWidth(`${itemAsString}`, 16) + 20;
+          }),
+          // headerLabelSize,
+        ];
+        const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
+
         return {
-          Header:
-            [...dimensions, ...measures].find(
-              (dim) => dim.iri === c.componentIri
-            )?.label || c.componentIri,
+          Header: headerLabel,
           // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
           accessor: getSlugifiedIri(c.componentIri),
+
+          width,
+          // If sort type is not "basic", react-table default to "alphanumeric"
+          // which doesn't sort negative values properly.
+          sortType: "basic",
         };
       }),
 
-    [dimensions, orderedTableColumns, measures]
+    [orderedTableColumns, data, dimensions, measures, formatNumber]
   );
 
   // Groupings used by react-table
@@ -127,7 +166,7 @@ const useTableState = ({
       }, [] as string[]),
     [fields]
   );
-
+  console.log({ groupingIris });
   // Sorting used by react-table
   const sortingIris = useMemo(
     () =>
@@ -138,8 +177,24 @@ const useTableState = ({
     [sorting]
   );
 
-  // Columns with style
-  // This is not use by react table to manage state, only for styling.
+  const hiddenIris = useMemo(
+    () =>
+      Object.keys(fields).reduce((iris, colIndex) => {
+        if (fields[colIndex].isHidden) {
+          const iri = getSlugifiedIri(fields[colIndex].componentIri);
+          return [...iris, iri];
+        } else {
+          return iris;
+        }
+      }, [] as string[]),
+    [fields]
+  );
+
+  /**
+   * TABLE FORMATTING
+   * tableColumnsMeta contains styles for columns/cell components.
+   * It is not used by react-table, only for custom styling.
+   */
   const tableColumnsMeta = useMemo(
     () =>
       Object.keys(fields).reduce((acc, iri, i) => {
@@ -148,6 +203,7 @@ const useTableState = ({
         const columnStyle = columnMeta.columnStyle;
         const columnStyleType = columnStyle.type;
         const columnComponentType = columnMeta.componentType;
+
         if (columnStyleType === "text") {
           return {
             ...acc,
@@ -158,9 +214,33 @@ const useTableState = ({
             },
           };
         } else if (columnStyleType === "category") {
-          const colorScale = scaleOrdinal()
-            .domain([...new Set(data.map((d) => `${d[iri]}`))])
-            .range(getPalette((columnStyle as ColumnStyleCategory).palette));
+          const { colorMapping } = columnStyle as ColumnStyleCategory;
+          const dimensionValues = dimensions.find(
+            (d) => d.iri === iri
+          ) as DimensionFieldsWithValuesFragment;
+
+          // Color scale (always from colorMappings)
+          const colorScale = scaleOrdinal();
+
+          // get label (translated) matched with color
+          const labelsAndColor = Object.keys(colorMapping).map(
+            (colorMappingIri) => {
+              const dvLabel = (
+                dimensionValues.values.find((s) => {
+                  return s.value === colorMappingIri;
+                }) || { label: "unknown" }
+              ).label;
+
+              return {
+                label: dvLabel,
+                color: colorMapping![colorMappingIri] || "#006699",
+              };
+            }
+          );
+
+          colorScale.domain(labelsAndColor.map((s) => s.label));
+          colorScale.range(labelsAndColor.map((s) => s.color));
+
           return {
             ...acc,
             [slugifiedIri]: {
@@ -171,14 +251,12 @@ const useTableState = ({
             },
           };
         } else if (columnStyleType === "heatmap") {
-          const colorScale = scaleSequential(
+          const absMinValue = min(data, (d) => Math.abs(+d[iri])) || 0;
+          const absMaxValue = max(data, (d) => Math.abs(+d[iri])) || 1;
+          const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
+          const colorScale = scaleDiverging(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
-          ).domain(
-            ([max(data, (d) => +d[iri]), min(data, (d) => +d[iri])] as [
-              number,
-              number
-            ]) || [1, 0]
-          );
+          ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue] || [-1, 0, 1]);
           return {
             ...acc,
             [slugifiedIri]: {
@@ -189,9 +267,25 @@ const useTableState = ({
             },
           };
         } else if (columnStyleType === "bar") {
+          // The column width depends on the estimated width of the
+          // longest value in the column, with a minimum of 150px.
+          const columnItems = [...new Set(data.map((d) => d[iri]))];
+          const columnItemSizes = columnItems.map((item) => {
+            const itemAsString =
+              columnComponentType === "Measure"
+                ? formatNumber(item as number)
+                : item;
+            return estimateTextWidth(`${itemAsString}`, 16) + 80;
+          });
+          const width =
+            Math.max(max(columnItemSizes, (d) => d) || 150, 150) -
+            BAR_CELL_PADDING * 2;
+          // const hasNegativeValue =
+          //   (min(data, (d) => Math.abs(+d[iri])) || 0) < 0;
+
           const widthScale = scaleLinear()
             .domain(extent(data, (d) => +d[iri]) as [number, number])
-            .range([0, 100]);
+            .range([0, width]);
           return {
             ...acc,
             [slugifiedIri]: {
@@ -212,16 +306,19 @@ const useTableState = ({
           };
         }
       }, {}),
-    [data, fields]
+    [data, dimensions, fields, formatNumber]
   );
+
   return {
     chartType: "table",
     bounds,
+    rowHeight,
     showSearch: settings.showSearch,
     data: memoizedData,
     tableColumns,
     tableColumnsMeta,
     groupingIris,
+    hiddenIris,
     sortingIris,
   };
 };

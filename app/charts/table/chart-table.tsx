@@ -11,7 +11,6 @@ import {
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
-import { ChartContainer } from "../shared/containers";
 import { Table } from "./table";
 import { TableChart } from "./table-state";
 
@@ -84,7 +83,7 @@ export const ChartTable = memo(
   }) => {
     return (
       <TableChart
-        data={observations.slice(0, 200)}
+        data={observations}
         dimensions={dimensions}
         measures={measures}
         chartConfig={chartConfig}
