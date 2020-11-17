@@ -158,15 +158,10 @@ const useTableState = ({
   // Groupings used by react-table
   const groupingIris = useMemo(
     () =>
-      Object.keys(fields).reduce((iris, colIndex) => {
-        if (fields[colIndex].isGroup) {
-          const iri = getSlugifiedIri(fields[colIndex].componentIri);
-          return [...iris, iri];
-        } else {
-          return iris;
-        }
-      }, [] as string[]),
-    [fields]
+      orderedTableColumns
+        .filter((c) => c.isGroup)
+        .map((c) => getSlugifiedIri(c.componentIri)),
+    [orderedTableColumns]
   );
   console.log({ groupingIris });
   // Sorting used by react-table
