@@ -6,10 +6,11 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
 } from "react";
 import { Box } from "theme-ui";
-import { Checkbox } from "../../components/form";
+import { Checkbox, Select } from "../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { ColorPalette } from "../components/chart-controls/color-palette";
@@ -30,6 +31,7 @@ import {
 import {
   getDefaultCategoricalPalette,
   getDefaultSequentialPalette,
+  getOrderedTableColumns,
   mapColorsToComponentValuesIris,
 } from "../components/ui-helpers";
 import { FieldProps } from "../config-form";
@@ -40,6 +42,7 @@ import {
 } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import {
+  addSortingOption,
   updateIsFiltered,
   updateIsGroup,
   updateIsHidden,
@@ -129,25 +132,6 @@ const ChartOptionGroupHiddenField = ({
   );
 };
 
-const TableSettings = () => {
-  return (
-    <ControlSection>
-      <SectionTitle iconName={"table"}>
-        <Trans id="controls.section.tableSettings">Table Settings</Trans>
-      </SectionTitle>
-      <ControlSectionContent side="right">
-        <ChartOptionCheckboxField
-          label={
-            <Trans id="controls.tableSettings.showSearch">Show Search</Trans>
-          }
-          field={null}
-          path="settings.showSearch"
-        />
-      </ControlSectionContent>
-    </ControlSection>
-  );
-};
-
 export const TableColumnOptions = ({
   state,
   metaData,
@@ -173,7 +157,7 @@ export const TableColumnOptions = ({
     return <TableSettings />;
   }
   if (activeField === "table-sorting") {
-    return <>"sortzz"</>;
+    return <TableSorting state={state} metaData={metaData} />;
   }
 
   const activeFieldComponentIri = chartConfig.fields[activeField]?.componentIri;
@@ -547,5 +531,135 @@ const TableSingleFilter = ({
         </ControlSectionContent>
       </ControlSection>
     </div>
+  );
+};
+
+const TableSettings = () => {
+  return (
+    <ControlSection>
+      <SectionTitle iconName={"table"}>
+        <Trans id="controls.section.tableSettings">Table Settings</Trans>
+      </SectionTitle>
+      <ControlSectionContent side="right">
+        <ChartOptionCheckboxField
+          label={
+            <Trans id="controls.tableSettings.showSearch">Show Search</Trans>
+          }
+          field={null}
+          path="settings.showSearch"
+        />
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const TableSortingOption = ({
+  componentIri,
+  sortingOrder,
+}: {
+  componentIri: string;
+  sortingOrder: "asc" | "desc";
+}) => {
+  return (
+    <Box>
+      {componentIri}
+      {sortingOrder}
+    </Box>
+  );
+};
+
+const AddTableSortingOption = ({
+  metaData,
+  chartConfig,
+}: {
+  metaData: DataCubeMetadata;
+  chartConfig: TableConfig;
+}) => {
+  const [, dispatch] = useConfiguratorState();
+  const options = useMemo(() => {
+    const columns = getOrderedTableColumns(chartConfig.fields);
+
+    return [
+      { value: "-", label: "Add a dimension …", disabled: true },
+      ...columns.map((c) => {
+        return {
+          value: c.componentIri,
+          label: c.componentIri,
+        };
+      }),
+    ];
+  }, [chartConfig]);
+
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLSelectElement>) => {
+      const { value } = e.currentTarget;
+
+      const component =
+        metaData.dimensions.find(({ iri }) => iri === value) ??
+        metaData.measures.find(({ iri }) => iri === value);
+
+      if (component) {
+        dispatch({
+          type: "CHART_CONFIG_REPLACED",
+          value: {
+            chartConfig: addSortingOption(chartConfig, {
+              componentIri: component.iri,
+              componentType: component.__typename,
+              sortingOrder: "asc",
+            }),
+            dataSetMetadata: metaData,
+          },
+        });
+      }
+    },
+    [chartConfig, dispatch, metaData]
+  );
+
+  return (
+    <Box>
+      <Select
+        id="add-tablesorting"
+        value="-"
+        options={options}
+        label="Sort by"
+        onChange={onChange}
+      />
+    </Box>
+  );
+};
+
+const TableSorting = ({
+  state,
+  metaData,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  metaData: DataCubeMetadata;
+}) => {
+  const { activeField, chartConfig } = state;
+
+  if (!activeField || chartConfig.chartType !== "table") {
+    return null;
+  }
+
+  const { sorting } = chartConfig;
+
+  return (
+    <ControlSection>
+      <SectionTitle iconName={"table"}>
+        <Trans id="controls.section.tableSorting">Table Sorting</Trans>
+      </SectionTitle>
+      <ControlSectionContent side="right">
+        {sorting.map(({ componentIri, sortingOrder }) => {
+          return (
+            <TableSortingOption
+              key={componentIri}
+              componentIri={componentIri}
+              sortingOrder={sortingOrder}
+            />
+          );
+        })}
+        <AddTableSortingOption metaData={metaData} chartConfig={chartConfig} />
+      </ControlSectionContent>
+    </ControlSection>
   );
 };

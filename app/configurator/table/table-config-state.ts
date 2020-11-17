@@ -1,7 +1,7 @@
 import produce from "immer";
 import { DraggableLocation } from "react-beautiful-dnd";
 import { getOrderedTableColumns } from "../components/ui-helpers";
-import { TableConfig } from "../config-types";
+import { TableConfig, TableSortingOption } from "../config-types";
 
 export const moveFields = produce(
   (
@@ -139,6 +139,14 @@ export const updateIsFiltered = produce(
     }
 
     chartConfig.fields[field].isFiltered = value;
+
+    return chartConfig;
+  }
+);
+
+export const addSortingOption = produce(
+  (chartConfig: TableConfig, option: TableSortingOption): TableConfig => {
+    chartConfig.sorting.push(option);
 
     return chartConfig;
   }
