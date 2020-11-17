@@ -14,7 +14,7 @@ import { useLocale } from "../locales/use-locale";
 import { createChartId } from "../lib/create-chart-id";
 import {
   getFieldComponentIris,
-  getHiddenFieldIris,
+  getFilteredFieldIris,
   getInitialConfig,
 } from "../charts";
 import {
@@ -189,11 +189,11 @@ const deriveFiltersFromFields = (
   const { fields, filters } = chartConfig;
 
   const fieldDimensionIris = getFieldComponentIris(fields);
-  const hiddenFieldIris = getHiddenFieldIris(fields);
+  const filteredFieldIris = getFilteredFieldIris(fields);
 
   const isField = (iri: string) => fieldDimensionIris.has(iri);
-  const isHidden = (iri: string) => hiddenFieldIris.has(iri);
-  const isFiltered = (iri: string) => !isField(iri) || isHidden(iri);
+  const isPreFiltered = (iri: string) => filteredFieldIris.has(iri);
+  const isFiltered = (iri: string) => !isField(iri) || isPreFiltered(iri);
 
   dimensions.forEach((dimension) => {
     const f = filters[dimension.iri];

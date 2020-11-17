@@ -6,7 +6,6 @@ import {
   OnDragStartResponder,
 } from "react-beautiful-dnd";
 import { ConfiguratorStateConfiguringChart } from "..";
-import { getFieldComponentIris } from "../../charts";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -16,7 +15,6 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
-import { FilterTabField } from "../components/field";
 import { getOrderedTableColumns } from "../components/ui-helpers";
 import { TableFields } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
@@ -73,11 +71,6 @@ export const ChartConfiguratorTable = ({
   }, []);
 
   if (data?.dataCubeByIri) {
-    const mappedIris = getFieldComponentIris(state.chartConfig.fields);
-    const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
-      (dim) => !mappedIris.has(dim.iri)
-    );
-
     const fields = state.chartConfig.fields as TableFields;
 
     const fieldsArray = getOrderedTableColumns(fields);
@@ -91,7 +84,7 @@ export const ChartConfiguratorTable = ({
 
     return (
       <>
-        {/* <ControlSection>
+        <ControlSection>
           <SectionTitle>
             <Trans id="controls.section.settings">Settings</Trans>
           </SectionTitle>
@@ -102,7 +95,7 @@ export const ChartConfiguratorTable = ({
           >
             settings and sorting
           </ControlSectionContent>
-        </ControlSection> */}
+        </ControlSection>
         <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <TabDropZone
             id="groups"
@@ -119,25 +112,6 @@ export const ChartConfiguratorTable = ({
             items={columnFields}
           ></TabDropZone>
         </DragDropContext>
-
-        <ControlSection>
-          <SectionTitle>
-            <Trans id="controls.section.filters">Filters</Trans>
-          </SectionTitle>
-          <ControlSectionContent
-            side="left"
-            role="tablist"
-            aria-labelledby="controls-filters"
-          >
-            {unMappedDimensions.map((dimension, i) => (
-              <FilterTabField
-                key={dimension.iri}
-                component={dimension}
-                value={dimension.iri}
-              ></FilterTabField>
-            ))}
-          </ControlSectionContent>
-        </ControlSection>
       </>
     );
   } else {
