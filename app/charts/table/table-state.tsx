@@ -22,14 +22,11 @@ import {
 import { Observation } from "../../domain/data";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { useTheme } from "../../themes";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import {
-  BAR_CELL_PADDING,
-  getSlugifiedIri,
-  SORTING_ARROW_WIDTH,
-  TABLE_HEIGHT,
-} from "./constants";
+import { BAR_CELL_PADDING, TABLE_HEIGHT } from "./constants";
+import { getSlugifiedIri } from "./table-helpers";
 
 export interface ColumnMeta {
   iri: string;
@@ -68,6 +65,7 @@ const useTableState = ({
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   chartConfig: TableConfig;
 }): TableChartState => {
+  const theme = useTheme();
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
 
@@ -128,8 +126,7 @@ const useTableState = ({
         const headerLabel =
           [...dimensions, ...measures].find((dim) => dim.iri === c.componentIri)
             ?.label || c.componentIri;
-        const headerLabelSize =
-          estimateTextWidth(headerLabel, 16) + SORTING_ARROW_WIDTH;
+
         // The column width depends on the estimated width of the
         // longest value in the column, with a minimum of 150px.
         const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
@@ -141,7 +138,6 @@ const useTableState = ({
                 : item;
             return estimateTextWidth(`${itemAsString}`, 16) + 20;
           }),
-          // headerLabelSize,
         ];
         const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
 
@@ -163,17 +159,12 @@ const useTableState = ({
   // Groupings used by react-table
   const groupingIris = useMemo(
     () =>
-      Object.keys(fields).reduce((iris, colIndex) => {
-        if (fields[colIndex].isGroup) {
-          const iri = getSlugifiedIri(fields[colIndex].componentIri);
-          return [...iris, iri];
-        } else {
-          return iris;
-        }
-      }, [] as string[]),
-    [fields]
+      orderedTableColumns
+        .filter((c) => c.isGroup)
+        .map((c) => getSlugifiedIri(c.componentIri)),
+    [orderedTableColumns]
   );
-  console.log({ groupingIris });
+
   // Sorting used by react-table
   const sortingIris = useMemo(
     () =>
@@ -240,7 +231,7 @@ const useTableState = ({
 
               return {
                 label: dvLabel,
-                color: colorMapping![colorMappingIri] || "#006699",
+                color: colorMapping![colorMappingIri] || theme.colors.primary,
               };
             }
           );
@@ -313,7 +304,7 @@ const useTableState = ({
           };
         }
       }, {}),
-    [data, dimensions, fields, formatNumber]
+    [data, dimensions, fields, formatNumber, theme.colors.primary]
   );
 
   return {

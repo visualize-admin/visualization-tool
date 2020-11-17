@@ -17,7 +17,7 @@ import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell-desktop";
 import { GroupHeader } from "./group-header";
 import { TableHeader } from "./table-header";
-import { scrollbarWidth } from "./helpers";
+import { scrollbarWidth } from "./table-helpers";
 import { DDContent, RowMobile } from "./cell-mobile";
 import { TableChartState } from "./table-state";
 
@@ -70,10 +70,6 @@ export const Table = () => {
         : data;
     return searchResult as Observation[];
   }, [data, searchTerm, searchIndex]);
-
-  // console.log({ data });
-  // console.log({ tableColumns });
-  // console.log({ filteredData });
 
   const {
     getTableProps,
@@ -134,12 +130,12 @@ export const Table = () => {
               );
             })
           ) : (
-            <GroupHeader row={row} />
+            <GroupHeader row={row} groupingLevels={groupingIris.length} />
           )}
         </Box>
       );
     },
-    [prepareRow, rows, tableColumnsMeta]
+    [groupingIris.length, prepareRow, rows, tableColumnsMeta]
   );
   const renderMobileRow = useCallback(
     ({ index, style }) => {
@@ -199,13 +195,13 @@ export const Table = () => {
                 );
               })
             ) : (
-              <GroupHeader row={row} />
+              <GroupHeader row={row} groupingLevels={groupingIris.length} />
             )}
           </Box>
         </>
       );
     },
-    [prepareRow, rows, tableColumnsMeta]
+    [groupingIris.length, prepareRow, rows, tableColumnsMeta]
   );
   return (
     <>
@@ -240,9 +236,9 @@ export const Table = () => {
         <Box
           sx={{
             width: "100%",
-            height: bounds.chartHeight,
             position: "relative",
-            overflow: "auto",
+            overflowY: "hidden",
+            overflowX: "scroll",
             bg: "monochrome100",
             mb: 4,
           }}

@@ -22,6 +22,3 @@ export const TABLE_STYLES: SystemStyleObject = {
     borderBottomColor: "monochrome400",
   },
 };
-
-const SlugRe = /\W+/g;
-export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");

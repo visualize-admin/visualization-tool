@@ -6,16 +6,23 @@ import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { Tag } from "./tag";
 import { TableChartState } from "./table-state";
+import { hcl } from "d3-color";
 
-export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
+export const GroupHeader = ({
+  row,
+  groupingLevels,
+}: {
+  row: Row<Observation>;
+  groupingLevels: number;
+}) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
+  const { depth } = row;
 
   return (
     <>
       {row.cells.map((cell, i) => {
-        const { type, textStyle, textColor, colorScale } = tableColumnsMeta[
-          cell.column.id
-        ];
+        const { type, colorScale } = tableColumnsMeta[cell.column.id];
+        const bg = getGroupLevelBackgroundColor(groupingLevels - depth);
         return (
           <React.Fragment key={i}>
             {cell.isGrouped && (
@@ -25,6 +32,7 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
                   width: "100%",
                   alignItems: "center",
                   cursor: "pointer",
+                  bg,
                 }}
               >
                 <Box
@@ -47,10 +55,9 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
                   <Box
                     as="span"
                     sx={{
-                      color: textColor, // FIXME: should we allow to change text color in group header?
-                      bg: "monochrome100",
+                      color: hcl(bg).l < 55 ? "monochrome100" : "monochrome900",
+                      fontWeight: "bold",
                       textAlign: "left",
-                      fontWeight: textStyle,
                     }}
                   >
                     {cell.render("Cell")}
@@ -63,4 +70,25 @@ export const GroupHeader = ({ row }: { row: Row<Observation> }) => {
       })}
     </>
   );
+};
+
+const getGroupLevelBackgroundColor = (x: number) => {
+  switch (x) {
+    case 0:
+      return "monochrome100";
+    case 1:
+      return "monochrome100";
+    case 2:
+      return "monochrome200";
+    case 3:
+      return "monochrome300";
+    case 4:
+      return "monochrome400";
+    case 5:
+      return "monochrome500";
+    case 6:
+      return "monochrome600";
+    default:
+      return "monochrome100";
+  }
 };
