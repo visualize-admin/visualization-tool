@@ -10,7 +10,7 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
-import { FixedSizeList } from "react-window";
+import { FixedSizeList, VariableSizeList } from "react-window";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
@@ -20,6 +20,7 @@ import { TableHeader } from "./table-header";
 import { scrollbarWidth } from "./table-helpers";
 import { DDContent, RowMobile } from "./cell-mobile";
 import { TableChartState } from "./table-state";
+import { Icon } from "../../icons";
 
 export const Table = () => {
   const {
@@ -141,16 +142,16 @@ export const Table = () => {
     ({ index, style }) => {
       const row = rows[index];
       prepareRow(row);
+
       const headingLevel =
         row.depth === 0 ? "h2" : row.depth === 1 ? "h3" : "p";
 
       return (
         <>
           <Box
-          // {...row.getRowProps({
-          //   style,
-          // })
-          // }
+            {...row.getRowProps({
+              style: { ...style, flexDirection: "column" },
+            })}
           >
             {row.subRows.length === 0 ? (
               row.cells.map((cell, i) => {
@@ -162,10 +163,10 @@ export const Table = () => {
                       color: "monochrome800",
                       fontSize: 2,
                       width: "100%",
-                      height: "100%",
+                      height: 32,
                       justifyContent: "space-between",
                       alignItems: "center",
-                      my: 2,
+                      // my: 2,
                       "&:first-of-type": {
                         pt: 2,
                       },
@@ -195,14 +196,37 @@ export const Table = () => {
                 );
               })
             ) : (
-              <GroupHeader row={row} groupingLevels={groupingIris.length} />
+              // Group
+              <Flex
+                sx={{
+                  borderTop: "1px solid",
+                  borderTopColor: "monochrome400",
+                  color: "monochrome600",
+                  py: 2,
+                  ml: `${row.depth * 12}px`,
+                }}
+              >
+                <Icon name={row.isExpanded ? "chevrondown" : "chevronright"} />
+                <Text
+                  as={headingLevel}
+                  variant="paragraph1"
+                  sx={{ color: "monochrome900" }}
+                  {...row.getToggleRowExpandedProps()}
+                >
+                  {`${row.groupByVal}`}
+                </Text>
+              </Flex>
             )}
           </Box>
         </>
       );
     },
-    [groupingIris.length, prepareRow, rows, tableColumnsMeta]
+    [prepareRow, rows, tableColumnsMeta]
   );
+
+  console.log({ rows });
+  const getMobileItemSize = (index: number) =>
+    rows[index].isGrouped ? 32 : tableColumns.length * 32;
   return (
     <>
       {showSearch && (
@@ -269,31 +293,30 @@ export const Table = () => {
           </Box>
         </Box>
       )}
-
       {/* Alternative Mobile View */}
       {useAlternativeMobileView && (
         <Box
           sx={{
             width: "100%",
-            height: bounds.chartHeight,
+            // height: bounds.chartHeight,
             position: "relative",
             overflow: "auto",
             bg: "monochrome100",
             mb: 5,
           }}
         >
-          {/* <FixedSizeList
+          <VariableSizeList
             height={bounds.chartHeight}
             itemCount={rows.length}
-            itemSize={tableColumns.length * 40}
-            width={bounds.chartWidth}
+            itemSize={getMobileItemSize}
+            width={bounds.width}
           >
             {renderMobileRow}
-          </FixedSizeList> */}
+          </VariableSizeList>
 
-          {rows.map((row, i) => (
+          {/* {rows.map((row, i) => (
             <RowMobile key={i} row={row} prepareRow={prepareRow} />
-          ))}
+          ))} */}
         </Box>
       )}
 
