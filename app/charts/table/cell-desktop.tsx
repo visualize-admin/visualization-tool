@@ -54,7 +54,7 @@ export const CellDesktop = ({
     case "category":
       return (
         <Flex
-          sx={{ alignItems: "center", fontWeight: textStyle, pr: 3 }}
+          sx={{ alignItems: "center", fontWeight: textStyle, pl: 1, pr: 3 }}
           {...cell.getCellProps()}
         >
           <Tag tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}>
