@@ -62,7 +62,7 @@ export type ConfiguratorStateAction =
       type: "CHART_OPTION_CHANGED";
       value: {
         path: string;
-        field: string;
+        field: string | null;
         value: string | boolean | Record<string, string> | undefined;
       };
     }
@@ -484,7 +484,9 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         setWith(
           draft,
-          `chartConfig.fields["${action.value.field}"].${action.value.path}`,
+          action.value.field === null
+            ? `chartConfig.${action.value.path}`
+            : `chartConfig.fields["${action.value.field}"].${action.value.path}`,
           action.value.value,
           Object
         );

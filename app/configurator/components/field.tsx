@@ -20,6 +20,7 @@ import {
   DimensionFieldsWithValuesFragment,
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
+import { IconName } from "../../icons";
 import { Locales } from "../../locales/locales";
 import {
   useChartOptionBooleanField,
@@ -94,21 +95,23 @@ export const FilterTabField = ({
 
 export const AnnotatorTabField = ({
   value,
-  disabled,
+  ...tabProps
 }: {
   value: string;
   disabled?: boolean;
+  icon: IconName;
+  label: ReactNode;
 }) => {
-  const field = useActiveFieldField({
+  const fieldProps = useActiveFieldField({
     value,
   });
 
   return (
     <AnnotatorTab
-      value={`${field.value}`}
-      checked={field.checked}
-      disabled={disabled}
-      onClick={field.onClick}
+      {...tabProps}
+      value={`${fieldProps.value}`}
+      checked={fieldProps.checked}
+      onClick={fieldProps.onClick}
     ></AnnotatorTab>
   );
 };
@@ -411,7 +414,7 @@ export const ChartOptionCheckboxField = ({
   disabled = false,
 }: {
   label: string | ReactNode;
-  field: string;
+  field: string | null;
   path: string;
   defaultChecked?: boolean;
   disabled?: boolean;

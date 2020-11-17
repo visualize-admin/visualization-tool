@@ -129,6 +129,25 @@ const ChartOptionGroupHiddenField = ({
   );
 };
 
+const TableSettings = () => {
+  return (
+    <ControlSection>
+      <SectionTitle iconName={"table"}>
+        <Trans id="controls.section.tableSettings">Table Settings</Trans>
+      </SectionTitle>
+      <ControlSectionContent side="right">
+        <ChartOptionCheckboxField
+          label={
+            <Trans id="controls.tableSettings.showSearch">Show Search</Trans>
+          }
+          field={null}
+          path="settings.showSearch"
+        />
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
 export const TableColumnOptions = ({
   state,
   metaData,
@@ -146,12 +165,15 @@ export const TableColumnOptions = ({
     }
   }, [activeField]);
 
-  if (!activeField) {
+  if (!activeField || chartConfig.chartType !== "table") {
     return null;
   }
 
-  if (chartConfig.chartType !== "table") {
-    return null;
+  if (activeField === "table-settings") {
+    return <TableSettings />;
+  }
+  if (activeField === "table-sorting") {
+    return <>"sortzz"</>;
   }
 
   const activeFieldComponentIri = chartConfig.fields[activeField]?.componentIri;

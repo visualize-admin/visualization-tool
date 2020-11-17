@@ -6,6 +6,7 @@ import {
   ControlSection,
 } from "./chart-controls/section";
 import { AnnotatorTabField } from "./field";
+import { getFieldLabel } from "./ui-helpers";
 
 export const ChartAnnotator = () => {
   return (
@@ -14,8 +15,16 @@ export const ChartAnnotator = () => {
         <Trans id="controls.section.description">Annotate</Trans>
       </SectionTitle>
       <ControlSectionContent side="left">
-        <AnnotatorTabField value={"title"}></AnnotatorTabField>
-        <AnnotatorTabField value={"description"}></AnnotatorTabField>
+        <AnnotatorTabField
+          value={"title"}
+          icon="title"
+          label={getFieldLabel("title")}
+        ></AnnotatorTabField>
+        <AnnotatorTabField
+          value={"description"}
+          icon="description"
+          label={getFieldLabel("description")}
+        ></AnnotatorTabField>
       </ControlSectionContent>
     </ControlSection>
   );

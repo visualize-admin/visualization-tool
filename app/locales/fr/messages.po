@@ -62,36 +62,36 @@ msgstr "Publier"
 msgid "button.share"
 msgstr "Partager"
 
-#: app/charts/table/table.tsx:53
+#: app/charts/table/table.tsx:106
 msgid "chart.published.toggle.mobile.view"
 msgstr ""
 
-#: app/charts/table/table.tsx:103
+#: app/charts/table/table.tsx:157
 msgid "chart.table.number.of.lines"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:103
+#: app/configurator/table/table-chart-options.tsx:116
 msgid "columnStyle.bar"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:92
+#: app/configurator/table/table-chart-options.tsx:105
 msgid "columnStyle.categories"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:99
+#: app/configurator/table/table-chart-options.tsx:112
 msgid "columnStyle.heatmap"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:89
-#: app/configurator/table/table-chart-options.tsx:96
+#: app/configurator/table/table-chart-options.tsx:102
+#: app/configurator/table/table-chart-options.tsx:109
 msgid "columnStyle.text"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:210
+#: app/configurator/table/table-chart-options.tsx:223
 msgid "columnStyle.textStyle.bold"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:206
+#: app/configurator/table/table-chart-options.tsx:219
 msgid "columnStyle.textStyle.regular"
 msgstr ""
 
@@ -156,7 +156,7 @@ msgstr "empilées"
 msgid "controls.description"
 msgstr "Ajouter une description"
 
-#: app/configurator/components/field.tsx:155
+#: app/configurator/components/field.tsx:156
 msgid "controls.dimension.none"
 msgstr "Aucune"
 
@@ -208,11 +208,11 @@ msgstr "Ajouter..."
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
-#: app/configurator/table/table-chart-configurator.tsx:61
+#: app/configurator/table/table-chart-configurator.tsx:63
 msgid "controls.section.columns"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:129
+#: app/configurator/table/table-chart-options.tsx:142
 msgid "controls.section.columnstyle"
 msgstr ""
 
@@ -220,7 +220,7 @@ msgstr ""
 msgid "controls.section.data"
 msgstr "Données"
 
-#: app/configurator/components/chart-annotator.tsx:8
+#: app/configurator/components/chart-annotator.tsx:9
 msgid "controls.section.description"
 msgstr "Annoter"
 
@@ -230,8 +230,8 @@ msgstr "Design"
 
 #: app/configurator/components/chart-options-selector.tsx:94
 #: app/configurator/components/chart-options-selector.tsx:98
-#: app/configurator/table/table-chart-options.tsx:183
-#: app/configurator/table/table-chart-options.tsx:187
+#: app/configurator/table/table-chart-options.tsx:196
+#: app/configurator/table/table-chart-options.tsx:200
 msgid "controls.section.filter"
 msgstr "Filtre"
 
@@ -239,13 +239,13 @@ msgstr "Filtre"
 #~ msgid "controls.section.filters"
 #~ msgstr ""
 
-#: app/configurator/table/table-chart-configurator.tsx:59
+#: app/configurator/table/table-chart-configurator.tsx:61
 msgid "controls.section.groups"
 msgstr ""
 
 #: app/configurator/table/table-chart-configurator.tsx:52
-msgid "controls.section.settings"
-msgstr ""
+#~ msgid "controls.section.settings"
+#~ msgstr ""
 
 #: app/configurator/components/chart-options-selector.tsx:137
 msgid "controls.section.sorting"
@@ -254,6 +254,14 @@ msgstr "Trier"
 #: app/configurator/table/table-chart-options.tsx:109
 #~ msgid "controls.section.table.column"
 #~ msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:59
+msgid "controls.section.tableSettings"
+msgstr ""
+
+#: app/configurator/table/table-chart-configurator.tsx:53
+msgid "controls.section.tableoptions"
+msgstr ""
 
 #: app/configurator/components/chart-type-selector.tsx:93
 #: app/configurator/components/chart-type-selector.tsx:96
@@ -264,35 +272,35 @@ msgstr "Type de graphique"
 msgid "controls.select.column.chart.type"
 msgstr "Type de graphique"
 
-#: app/configurator/table/table-chart-options.tsx:132
+#: app/configurator/table/table-chart-options.tsx:145
 msgid "controls.select.columnStyle"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:231
+#: app/configurator/table/table-chart-options.tsx:244
 msgid "controls.select.columnStyle.barColorBackground"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:228
+#: app/configurator/table/table-chart-options.tsx:241
 msgid "controls.select.columnStyle.barColorNegative"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:225
+#: app/configurator/table/table-chart-options.tsx:238
 msgid "controls.select.columnStyle.barColorPositive"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:234
+#: app/configurator/table/table-chart-options.tsx:247
 msgid "controls.select.columnStyle.barShowBackground"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:217
+#: app/configurator/table/table-chart-options.tsx:230
 msgid "controls.select.columnStyle.columnColor"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:214
+#: app/configurator/table/table-chart-options.tsx:227
 msgid "controls.select.columnStyle.textColor"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:201
+#: app/configurator/table/table-chart-options.tsx:214
 msgid "controls.select.columnStyle.textStyle"
 msgstr ""
 
@@ -358,17 +366,29 @@ msgstr "Décroissant de haut en bas"
 msgid "controls.sorting.sortBy"
 msgstr "Trier par"
 
-#: app/configurator/table/table-chart-options.tsx:114
+#: app/configurator/table/table-chart-options.tsx:127
 msgid "controls.table.column.group"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:118
-#: app/configurator/table/table-chart-options.tsx:124
+#: app/configurator/table/table-chart-options.tsx:131
+#: app/configurator/table/table-chart-options.tsx:137
 msgid "controls.table.column.hide"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:111
+#: app/configurator/table/table-chart-options.tsx:124
 msgid "controls.table.column.hidefilter"
+msgstr ""
+
+#: app/configurator/table/table-chart-configurator.tsx:56
+msgid "controls.table.settings"
+msgstr ""
+
+#: app/configurator/table/table-chart-configurator.tsx:57
+msgid "controls.table.sorting"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:62
+msgid "controls.tableSettings.showSearch"
 msgstr ""
 
 #: app/configurator/components/ui-helpers.tsx:148
@@ -468,19 +488,19 @@ msgstr "Sélectionner un jeu de données pour prévisualiser sa structure et son
 msgid "logo.swiss.confederation"
 msgstr "Logo de la Confédération Suisse"
 
-#: app/components/chart-footnotes.tsx:42
+#: app/components/chart-footnotes.tsx:45
 msgid "metadata.dataset"
 msgstr "Jeu de données"
 
-#: app/components/chart-footnotes.tsx:33
+#: app/components/chart-footnotes.tsx:36
 msgid "metadata.filter"
 msgstr "Filtres"
 
-#: app/components/chart-footnotes.tsx:72
+#: app/components/chart-footnotes.tsx:75
 msgid "metadata.link.created.with.visualize"
 msgstr "Créé avec visualize.admin.ch"
 
-#: app/components/chart-footnotes.tsx:47
+#: app/components/chart-footnotes.tsx:50
 msgid "metadata.source"
 msgstr "Source"
 
