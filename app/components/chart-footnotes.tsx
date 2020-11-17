@@ -37,8 +37,12 @@ export const ChartFootnotes = ({
           return [];
         }
 
-        const dimension = dimensions.find((d) => d.iri === iri)!;
+        const dimension = dimensions.find((d) => d.iri === iri);
         const value = dimension?.values.find((v) => v.value === f.value);
+
+        if (!dimension) {
+          return [];
+        }
 
         return [
           {
