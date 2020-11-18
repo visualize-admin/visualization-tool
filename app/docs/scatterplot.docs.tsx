@@ -170,7 +170,7 @@ const scatterplotMeasures = [
   },
 ] as ComponentFieldsFragment[];
 
-const scatterplotDimensions = [
+const scatterplotDimensions = ([
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
     label: "Jahr",
@@ -456,7 +456,7 @@ const scatterplotDimensions = [
     ],
     __typename: "NominalDimension",
   },
-] as ComponentFieldsFragment[];
+] as unknown) as ComponentFieldsFragment[];
 const scatterplotObservations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":
