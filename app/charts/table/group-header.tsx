@@ -20,6 +20,7 @@ export const GroupHeader = ({
 
   return (
     <>
+      {/* Here we use `allCells` so that group headers are shown even if the column is hidden */}
       {row.allCells.map((cell, i) => {
         const { type, colorScale } = tableColumnsMeta[cell.column.id];
         const bg = getGroupLevelBackgroundColor(groupingLevels - depth);

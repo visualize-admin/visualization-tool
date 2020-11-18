@@ -13,14 +13,14 @@ import {
 import { FixedSizeList, VariableSizeList } from "react-window";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
+import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell-desktop";
+import { DDContent } from "./cell-mobile";
 import { GroupHeader } from "./group-header";
 import { TableHeader } from "./table-header";
 import { scrollbarWidth } from "./table-helpers";
-import { DDContent, RowMobile } from "./cell-mobile";
 import { TableChartState } from "./table-state";
-import { Icon } from "../../icons";
 
 export const Table = () => {
   const {
@@ -39,8 +39,8 @@ export const Table = () => {
     false
   );
 
-  // const [sortingIds, updateSortingIds] = useState(sortingIris);
   const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
+
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
   const searchIndex = useMemo(() => {
@@ -63,15 +63,11 @@ export const Table = () => {
 
   const filteredData = useMemo(() => {
     const searchResult =
-      searchTerm !== ""
-        ? searchIndex.search({
-            query: `${searchTerm}`,
-            // suggest: true
-          })
-        : data;
+      searchTerm !== "" ? searchIndex.search({ query: `${searchTerm}` }) : data;
     return searchResult as Observation[];
   }, [data, searchTerm, searchIndex]);
 
+  // Table Instance
   const {
     getTableProps,
     getTableBodyProps,
@@ -80,6 +76,7 @@ export const Table = () => {
     setSortBy,
     totalColumnsWidth,
     prepareRow,
+    visibleColumns,
   } = useTable<Observation>(
     {
       columns: tableColumns,
@@ -91,7 +88,6 @@ export const Table = () => {
             ...state,
             groupBy: groupingIris,
             hiddenColumns: hiddenIris,
-            // sortBy: sortingIris,
           }),
           [state, tableColumns, groupingIris, filteredData, hiddenIris]
         );
@@ -109,6 +105,11 @@ export const Table = () => {
     setSortBy(sortingIris);
   }, [setSortBy, sortingIris]);
 
+  // React.useEffect(() => {
+  //   bounds.width > 700 && toggleAlternativeMobileView(false);
+  // }, [bounds.width]);
+
+  // Desktop row
   const renderDesktopRow = useCallback(
     ({ index, style }) => {
       const row = rows[index];
@@ -138,6 +139,15 @@ export const Table = () => {
     },
     [groupingIris.length, prepareRow, rows, tableColumnsMeta]
   );
+
+  // Mobile row
+  const MOBILE_ROW_HEIGHT = 32;
+  const getMobileItemSize = (index: number) => {
+    return rows[index].isGrouped
+      ? MOBILE_ROW_HEIGHT
+      : visibleColumns.length * MOBILE_ROW_HEIGHT;
+  };
+
   const renderMobileRow = useCallback(
     ({ index, style }) => {
       const row = rows[index];
@@ -163,17 +173,17 @@ export const Table = () => {
                       color: "monochrome800",
                       fontSize: 2,
                       width: "100%",
-                      height: 32,
+                      height: MOBILE_ROW_HEIGHT,
                       justifyContent: "space-between",
                       alignItems: "center",
                       // my: 2,
-                      "&:first-of-type": {
-                        pt: 2,
-                      },
+                      // "&:first-of-type": {
+                      //   pt: 2,
+                      // },
                       "&:last-of-type": {
                         borderBottom: "1px solid",
                         borderBottomColor: "monochrome400",
-                        pb: 3,
+                        // pb: 3,
                       },
                     }}
                   >
@@ -199,10 +209,11 @@ export const Table = () => {
               // Group
               <Flex
                 sx={{
+                  height: MOBILE_ROW_HEIGHT,
                   borderTop: "1px solid",
                   borderTopColor: "monochrome400",
                   color: "monochrome600",
-                  py: 2,
+                  // py: 2,
                   ml: `${row.depth * 12}px`,
                 }}
               >
@@ -224,9 +235,6 @@ export const Table = () => {
     [prepareRow, rows, tableColumnsMeta]
   );
 
-  console.log({ rows });
-  const getMobileItemSize = (index: number) =>
-    rows[index].isGrouped ? 32 : tableColumns.length * 32;
   return (
     <>
       {showSearch && (
@@ -293,14 +301,16 @@ export const Table = () => {
           </Box>
         </Box>
       )}
+
       {/* Alternative Mobile View */}
       {useAlternativeMobileView && (
         <Box
           sx={{
             width: "100%",
-            // height: bounds.chartHeight,
+            height: bounds.chartHeight,
             position: "relative",
-            overflow: "auto",
+            overflowY: "hidden",
+            overflowX: "scroll",
             bg: "monochrome100",
             mb: 5,
           }}
@@ -313,10 +323,6 @@ export const Table = () => {
           >
             {renderMobileRow}
           </VariableSizeList>
-
-          {/* {rows.map((row, i) => (
-            <RowMobile key={i} row={row} prepareRow={prepareRow} />
-          ))} */}
         </Box>
       )}
 
