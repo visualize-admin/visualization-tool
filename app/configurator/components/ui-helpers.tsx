@@ -429,3 +429,9 @@ export const mapColorsToComponentValuesIris = ({
 export const getOrderedTableColumns = (fields: TableFields): TableColumn[] => {
   return Object.values(fields).sort((a, b) => ascending(a.index, b.index));
 };
+
+export const useOrderedTableColumns = (fields: TableFields): TableColumn[] => {
+  return useMemo(() => {
+    return getOrderedTableColumns(fields);
+  }, [fields]);
+};

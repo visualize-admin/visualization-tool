@@ -60,7 +60,7 @@ export const ChartTableVisualization = ({
   }
 };
 
-export const ChartTable = memo(
+const ChartTable = memo(
   ({
     observations,
     dimensions,

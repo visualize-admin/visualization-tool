@@ -1,3 +1,4 @@
+import produce from "immer";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
 import {
@@ -8,15 +9,16 @@ import {
   useEffect,
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
-import { DataCubeMetadata } from "../graphql/types";
-import { unreachableError } from "../lib/unreachable";
-import { useLocale } from "../locales/use-locale";
-import { createChartId } from "../lib/create-chart-id";
 import {
   getFieldComponentIris,
   getFilteredFieldIris,
   getInitialConfig,
 } from "../charts";
+import { DataCubeMetadata } from "../graphql/types";
+import { createChartId } from "../lib/create-chart-id";
+import { unreachableError } from "../lib/unreachable";
+import { useLocale } from "../locales/use-locale";
+import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
 import {
   ChartConfig,
   ChartType,
@@ -28,8 +30,6 @@ import {
   FilterValueMultiValues,
   GenericFields,
 } from "./config-types";
-import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
-import { createDraft } from "immer";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -178,49 +178,48 @@ export const getFilterValue = (
     : undefined;
 };
 
-const deriveFiltersFromFields = (
-  chartConfig: ChartConfig,
-  { dimensions }: DataCubeMetadata
-) => {
-  // 1. we need filters for all dimensions
-  // 2. if a dimension is mapped to a field, it should be a multi filter, otherwise a single filter
-  // 3a. if the filter type is correct, we leave it alone
-  // 3b. if there's a mis-match, then we try to convert multi -> single and single -> multi
-  const { fields, filters } = chartConfig;
+const deriveFiltersFromFields = produce(
+  (chartConfig: ChartConfig, { dimensions }: DataCubeMetadata) => {
+    // 1. we need filters for all dimensions
+    // 2. if a dimension is mapped to a field, it should be a multi filter, otherwise a single filter
+    // 3a. if the filter type is correct, we leave it alone
+    // 3b. if there's a mis-match, then we try to convert multi -> single and single -> multi
+    const { fields, filters } = chartConfig;
 
-  const fieldDimensionIris = getFieldComponentIris(fields);
-  const filteredFieldIris = getFilteredFieldIris(fields);
+    const fieldDimensionIris = getFieldComponentIris(fields);
+    const filteredFieldIris = getFilteredFieldIris(fields);
 
-  const isField = (iri: string) => fieldDimensionIris.has(iri);
-  const isPreFiltered = (iri: string) => filteredFieldIris.has(iri);
-  const isFiltered = (iri: string) => !isField(iri) || isPreFiltered(iri);
+    const isField = (iri: string) => fieldDimensionIris.has(iri);
+    const isPreFiltered = (iri: string) => filteredFieldIris.has(iri);
+    const isFiltered = (iri: string) => !isField(iri) || isPreFiltered(iri);
 
-  dimensions.forEach((dimension) => {
-    const f = filters[dimension.iri];
-    if (f !== undefined) {
-      // Fix wrong filter type
-      if (!isFiltered(dimension.iri) && f.type === "single") {
-        // Remove filter
-        delete filters[dimension.iri];
-      } else if (isFiltered(dimension.iri) && f.type === "multi") {
-        filters[dimension.iri] = {
-          type: "single",
-          value: Object.keys(f.values)[0],
-        };
+    dimensions.forEach((dimension) => {
+      const f = filters[dimension.iri];
+      if (f !== undefined) {
+        // Fix wrong filter type
+        if (!isFiltered(dimension.iri) && f.type === "single") {
+          // Remove filter
+          delete filters[dimension.iri];
+        } else if (isFiltered(dimension.iri) && f.type === "multi") {
+          filters[dimension.iri] = {
+            type: "single",
+            value: Object.keys(f.values)[0],
+          };
+        }
+      } else {
+        // Add filter for this dim if it's not one of the selected multi filter fields
+        if (isFiltered(dimension.iri)) {
+          filters[dimension.iri] = {
+            type: "single",
+            value: dimension.values[0].value,
+          };
+        }
       }
-    } else {
-      // Add filter for this dim if it's not one of the selected multi filter fields
-      if (isFiltered(dimension.iri)) {
-        filters[dimension.iri] = {
-          type: "single",
-          value: dimension.values[0].value,
-        };
-      }
-    }
-  });
+    });
 
-  return chartConfig;
-};
+    return chartConfig;
+  }
+);
 
 const transitionStepNext = (
   draft: ConfiguratorState,
@@ -229,13 +228,14 @@ const transitionStepNext = (
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (draft.dataSet) {
-        const chartConfig = getInitialConfig({
-          chartType: "column",
-          dimensions: dataSetMetadata.dimensions,
-          measures: dataSetMetadata.measures,
-        });
-
-        deriveFiltersFromFields(chartConfig, dataSetMetadata);
+        const chartConfig = deriveFiltersFromFields(
+          getInitialConfig({
+            chartType: "column",
+            dimensions: dataSetMetadata.dimensions,
+            measures: dataSetMetadata.measures,
+          }),
+          dataSetMetadata
+        );
 
         return {
           state: "SELECTING_CHART_TYPE",
@@ -387,7 +387,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         });
         draft.activeField = undefined;
 
-        deriveFiltersFromFields(draft.chartConfig, dataSetMetadata);
+        draft.chartConfig = deriveFiltersFromFields(
+          draft.chartConfig,
+          dataSetMetadata
+        );
       }
       return draft;
 
@@ -462,7 +465,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           }
         }
 
-        deriveFiltersFromFields(
+        draft.chartConfig = deriveFiltersFromFields(
           draft.chartConfig,
           action.value.dataSetMetadata
         );
@@ -473,7 +476,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "CONFIGURING_CHART") {
         delete (draft.chartConfig.fields as GenericFields)[action.value.field];
 
-        deriveFiltersFromFields(
+        draft.chartConfig = deriveFiltersFromFields(
           draft.chartConfig,
           action.value.dataSetMetadata
         );
@@ -555,10 +558,8 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_REPLACED":
       if (draft.state === "CONFIGURING_CHART") {
-        draft.chartConfig = createDraft(action.value.chartConfig);
-
-        deriveFiltersFromFields(
-          draft.chartConfig,
+        draft.chartConfig = deriveFiltersFromFields(
+          action.value.chartConfig,
           action.value.dataSetMetadata
         );
       }

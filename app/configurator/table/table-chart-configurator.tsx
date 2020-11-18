@@ -16,7 +16,7 @@ import {
   SectionTitle,
 } from "../components/chart-controls/section";
 import { AnnotatorTabField } from "../components/field";
-import { getOrderedTableColumns } from "../components/ui-helpers";
+import { useOrderedTableColumns } from "../components/ui-helpers";
 import { TableFields } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import { moveFields } from "./table-config-state";
@@ -71,10 +71,10 @@ export const ChartConfiguratorTable = ({
     setCurrentDraggableId(draggableId);
   }, []);
 
-  if (data?.dataCubeByIri) {
-    const fields = state.chartConfig.fields as TableFields;
+  const fields = state.chartConfig.fields as TableFields;
+  const fieldsArray = useOrderedTableColumns(fields);
 
-    const fieldsArray = getOrderedTableColumns(fields);
+  if (data?.dataCubeByIri) {
     const groupFields = [...fieldsArray.filter((f) => f.isGroup)];
     const columnFields = [...fieldsArray.filter((f) => !f.isGroup)];
 
