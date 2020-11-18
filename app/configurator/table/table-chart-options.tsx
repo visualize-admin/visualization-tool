@@ -1,5 +1,6 @@
 import { t } from "@lingui/macro";
 import { I18n, Trans } from "@lingui/react";
+import VisuallyHidden from "@reach/visually-hidden";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
@@ -9,10 +10,17 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { Box, Button, Flex } from "theme-ui";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { Checkbox, Radio, Select } from "../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
+import { Icon } from "../../icons";
 import { ColorPalette } from "../components/chart-controls/color-palette";
 import {
   ControlSection,
@@ -46,6 +54,7 @@ import { useConfiguratorState } from "../configurator-state";
 import {
   addSortingOption,
   changeSortingOptionOrder,
+  moveSortingOptions,
   removeSortingOption,
   updateIsFiltered,
   updateIsGroup,
@@ -607,26 +616,71 @@ const TableSortingOptionItem = ({
     component?.__typename === "Measure" ? "byMeasure" : "byDimensionLabel";
 
   return component ? (
-    <Box>
-      {component.label}
+    <Box
+      sx={{
+        bg: "monochrome100",
+        py: 4,
+        pl: 4,
+        pr: 6,
 
-      <Flex>
-        <Radio
-          name={`${index}-sortingOrder`}
-          value="asc"
-          checked={sortingOrder === "asc"}
-          onChange={onChangeSortingOrder}
-          label={getFieldLabel(`sorting.${sortingType}.asc`)}
-        />
-        <Radio
-          name={`${index}-sortingOrder`}
-          value="desc"
-          checked={sortingOrder === "desc"}
-          onChange={onChangeSortingOrder}
-          label={getFieldLabel(`sorting.${sortingType}.desc`)}
-        />
-      </Flex>
-      <Button onClick={onRemove}>X</Button>
+        borderTopColor: "monochrome500",
+        borderTopStyle: "solid",
+        borderTopWidth: 1,
+      }}
+    >
+      <Box sx={{ pr: 2 }}>
+        <Text
+          variant="paragraph1"
+          sx={{
+            color: "monochrome800",
+            lineHeight: [1, 1, 1],
+            textAlign: "left",
+            mb: 3,
+          }}
+        >
+          {component.label}
+        </Text>
+        <Flex sx={{ mt: 2, mb: -1, width: "100%", alignItems: "center" }}>
+          <Radio
+            name={`${componentIri}-sortingOrder`}
+            value="asc"
+            checked={sortingOrder === "asc"}
+            onChange={onChangeSortingOrder}
+            label={getFieldLabel(`sorting.${sortingType}.asc`)}
+          />
+          <Radio
+            name={`${componentIri}-sortingOrder`}
+            value="desc"
+            checked={sortingOrder === "desc"}
+            onChange={onChangeSortingOrder}
+            label={getFieldLabel(`sorting.${sortingType}.desc`)}
+          />
+          <Button
+            variant="reset"
+            sx={{
+              p: 0,
+              cursor: "pointer",
+              ml: "auto",
+              mb: 2,
+              top: "2px",
+              position: "relative",
+            }}
+            onClick={onRemove}
+          >
+            <VisuallyHidden>
+              <Trans id="controls.sorting.removeOption">
+                Remove sorting dimension
+              </Trans>
+            </VisuallyHidden>
+            <Box
+              aria-hidden="true"
+              sx={{ borderRadius: "circle", bg: "monochrome600" }}
+            >
+              <Icon name="clear" size={20} />
+            </Box>
+          </Button>
+        </Flex>
+      </Box>
     </Box>
   ) : null;
 };
@@ -695,7 +749,15 @@ const AddTableSortingOption = ({
   );
 
   return (
-    <Box>
+    <Box
+      sx={{
+        py: 4,
+        px: 4,
+        borderTopColor: "monochrome500",
+        borderTopStyle: "solid",
+        borderTopWidth: 1,
+      }}
+    >
       <Select
         id="add-tablesorting"
         value="-"
@@ -714,7 +776,32 @@ const TableSorting = ({
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
 }) => {
+  const [, dispatch] = useConfiguratorState();
   const { activeField, chartConfig } = state;
+
+  const onDragEnd = useCallback<OnDragEndResponder>(
+    ({ source, destination }) => {
+      if (
+        !destination ||
+        state.chartConfig.chartType !== "table" ||
+        !metaData
+      ) {
+        return;
+      }
+
+      dispatch({
+        type: "CHART_CONFIG_REPLACED",
+        value: {
+          chartConfig: moveSortingOptions(state.chartConfig, {
+            source,
+            destination,
+          }),
+          dataSetMetadata: metaData,
+        },
+      });
+    },
+    [state, dispatch, metaData]
+  );
 
   if (!activeField || chartConfig.chartType !== "table") {
     return null;
@@ -723,24 +810,84 @@ const TableSorting = ({
   const { sorting } = chartConfig;
 
   return (
-    <ControlSection>
-      <SectionTitle iconName={"table"}>
-        <Trans id="controls.section.tableSorting">Table Sorting</Trans>
-      </SectionTitle>
-      <ControlSectionContent side="right">
-        {sorting.map((option, i) => {
-          return (
-            <TableSortingOptionItem
-              {...option}
-              index={i}
-              key={option.componentIri}
-              metaData={metaData}
-              chartConfig={chartConfig}
-            />
-          );
-        })}
-        <AddTableSortingOption metaData={metaData} chartConfig={chartConfig} />
-      </ControlSectionContent>
-    </ControlSection>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <ControlSection>
+        <SectionTitle iconName={"table"}>
+          <Trans id="controls.section.tableSorting">Table Sorting</Trans>
+        </SectionTitle>
+        <Droppable droppableId="table-sorting" type="table-sorting">
+          {(
+            { innerRef, placeholder },
+            { isDraggingOver, isUsingPlaceholder, draggingOverWith }
+          ) => {
+            return (
+              <Box>
+                <Box ref={innerRef}>
+                  {sorting.map((option, i) => {
+                    return (
+                      <Draggable
+                        key={option.componentIri}
+                        draggableId={option.componentIri}
+                        index={i}
+                      >
+                        {(
+                          { innerRef, draggableProps, dragHandleProps },
+                          { isDragging }
+                        ) => {
+                          return (
+                            <Box
+                              ref={innerRef}
+                              {...draggableProps}
+                              sx={{
+                                position: "relative",
+                                boxShadow: isDragging ? "tooltip" : undefined,
+                              }}
+                              style={{
+                                ...draggableProps.style,
+                              }}
+                            >
+                              <TableSortingOptionItem
+                                {...option}
+                                index={i}
+                                metaData={metaData}
+                                chartConfig={chartConfig}
+                              />
+                              <Box
+                                sx={{
+                                  width: 24,
+                                  height: 24,
+                                  position: "absolute",
+                                  top: "50%",
+                                  right: 2,
+                                  marginTop: -12,
+                                  color: isDragging
+                                    ? "secondaryActive"
+                                    : "secondaryDisabled",
+                                  ":hover": {
+                                    color: "secondaryHover",
+                                  },
+                                }}
+                                {...dragHandleProps}
+                              >
+                                <Icon name="dragndrop" />
+                              </Box>
+                            </Box>
+                          );
+                        }}
+                      </Draggable>
+                    );
+                  })}
+                </Box>
+                {placeholder}
+                <AddTableSortingOption
+                  metaData={metaData}
+                  chartConfig={chartConfig}
+                />
+              </Box>
+            );
+          }}
+        </Droppable>
+      </ControlSection>
+    </DragDropContext>
   );
 };

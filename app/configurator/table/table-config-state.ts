@@ -172,3 +172,25 @@ export const changeSortingOptionOrder = produce(
     return chartConfig;
   }
 );
+
+export const moveSortingOptions = produce(
+  (
+    chartConfig: TableConfig,
+    {
+      source,
+      destination,
+    }: {
+      source: DraggableLocation;
+      destination: DraggableLocation;
+    }
+  ): TableConfig => {
+    // Move from source to destination
+    chartConfig.sorting.splice(
+      destination.index,
+      0,
+      chartConfig.sorting.splice(source.index, 1)[0]
+    );
+
+    return chartConfig;
+  }
+);
