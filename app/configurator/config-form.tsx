@@ -157,7 +157,7 @@ export const useChartOptionBooleanField = ({
   field,
 }: {
   path: string;
-  field: string;
+  field: string | null;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -176,7 +176,13 @@ export const useChartOptionBooleanField = ({
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
-      ? get(state, `chartConfig.fields["${field}"].${path}`, "")
+      ? get(
+          state,
+          field === null
+            ? `chartConfig.${path}`
+            : `chartConfig.fields["${field}"].${path}`,
+          ""
+        )
       : "";
   const checked = stateValue ? stateValue : false;
 

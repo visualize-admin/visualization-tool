@@ -755,11 +755,13 @@ export const tableConfig: TableConfig = {
     {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
+      componentType: "NominalDimension",
       sortingOrder: "desc",
     },
     {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/5",
+      componentType: "Measure",
       sortingOrder: "asc",
     },
   ],
