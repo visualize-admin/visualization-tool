@@ -37,10 +37,12 @@ const InteractiveFiltersStateReducer = (
         [action.value.segment]: true,
       };
     case "REMOVE_INTERACTIVE_FILTER":
-      return {
-        ...state,
-        [action.value.segment]: false,
-      };
+      const draftState = { ...state };
+
+      delete (draftState as InteractiveFiltersState)[
+        action.value.segment as keyof InteractiveFiltersState
+      ];
+      return { ...draftState };
 
     default:
       throw new Error();

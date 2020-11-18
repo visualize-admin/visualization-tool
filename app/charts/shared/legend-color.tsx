@@ -21,9 +21,7 @@ export const InteractiveLegendColor = ({
   symbol: LegendSymbol;
 }) => {
   const [state, dispatch] = useInteractiveFilters();
-  const activeInteractiveFilters = Object.keys(state).filter(
-    (key) => state[key]
-  );
+  const activeInteractiveFilters = Object.keys(state);
   const { colors } = useChartState() as
     | BarsState
     | GroupedBarsState
