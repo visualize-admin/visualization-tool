@@ -22,7 +22,7 @@ export const Observer = ({ children }: { children: ReactNode }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
 
   return (
-    <div ref={resizeRef} aria-hidden="true">
+    <div ref={resizeRef}>
       {width > 1 ? (
         <ChartObserverContext.Provider value={width}>
           {children}
