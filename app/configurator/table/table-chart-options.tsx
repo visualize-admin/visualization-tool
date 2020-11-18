@@ -1,5 +1,5 @@
-import { t } from "@lingui/macro";
-import { I18n, Trans } from "@lingui/react";
+import { t, Trans } from "@lingui/macro";
+import { I18n } from "@lingui/react";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
@@ -39,6 +39,7 @@ import {
   TableConfig,
 } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
+import { TableSortingOptions } from "./table-chart-sorting-options";
 import {
   updateIsFiltered,
   updateIsGroup,
@@ -146,12 +147,15 @@ export const TableColumnOptions = ({
     }
   }, [activeField]);
 
-  if (!activeField) {
+  if (!activeField || chartConfig.chartType !== "table") {
     return null;
   }
 
-  if (chartConfig.chartType !== "table") {
-    return null;
+  if (activeField === "table-settings") {
+    return <TableSettings />;
+  }
+  if (activeField === "table-sorting") {
+    return <TableSortingOptions state={state} metaData={metaData} />;
   }
 
   const activeFieldComponentIri = chartConfig.fields[activeField]?.componentIri;
@@ -525,5 +529,24 @@ const TableSingleFilter = ({
         </ControlSectionContent>
       </ControlSection>
     </div>
+  );
+};
+
+const TableSettings = () => {
+  return (
+    <ControlSection>
+      <SectionTitle iconName={"table"}>
+        <Trans id="controls.section.tableSettings">Table Settings</Trans>
+      </SectionTitle>
+      <ControlSectionContent side="right">
+        <ChartOptionCheckboxField
+          label={
+            <Trans id="controls.tableSettings.showSearch">Show Search</Trans>
+          }
+          field={null}
+          path="settings.showSearch"
+        />
+      </ControlSectionContent>
+    </ControlSection>
   );
 };

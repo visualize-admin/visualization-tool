@@ -353,18 +353,21 @@ const TableSettings = t.type({
 });
 export type TableSettings = t.TypeOf<typeof TableSettings>;
 const TableFields = t.record(t.string, TableColumn);
+
+const TableSortingOption = t.type({
+  componentIri: t.string,
+  componentType: ComponentType,
+  sortingOrder: SortingOrder,
+});
+export type TableSortingOption = t.TypeOf<typeof TableSortingOption>;
+
 const TableConfig = t.type(
   {
     chartType: t.literal("table"),
     fields: TableFields,
     filters: Filters,
     settings: TableSettings,
-    sorting: t.array(
-      t.type({
-        componentIri: t.string,
-        sortingOrder: SortingOrder,
-      })
-    ),
+    sorting: t.array(TableSortingOption),
   },
   "TableConfig"
 );

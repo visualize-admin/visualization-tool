@@ -15,6 +15,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
+import { AnnotatorTabField } from "../components/field";
 import { getOrderedTableColumns } from "../components/ui-helpers";
 import { TableFields } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
@@ -86,14 +87,25 @@ export const ChartConfiguratorTable = ({
       <>
         <ControlSection>
           <SectionTitle>
-            <Trans id="controls.section.settings">Settings</Trans>
+            <Trans id="controls.section.tableoptions">Table Options</Trans>
           </SectionTitle>
           <ControlSectionContent
             side="left"
             role="tablist"
             aria-labelledby="controls-settings"
           >
-            settings and sorting
+            <AnnotatorTabField
+              key={"settings"}
+              value={"table-settings"}
+              icon="table"
+              label={<Trans id="controls.table.settings">Settings</Trans>}
+            />
+            <AnnotatorTabField
+              key={"sorting"}
+              value={"table-sorting"}
+              icon="sort"
+              label={<Trans id="controls.table.sorting">Sorting</Trans>}
+            />
           </ControlSectionContent>
         </ControlSection>
         <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>

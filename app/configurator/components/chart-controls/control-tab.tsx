@@ -92,10 +92,14 @@ export const AnnotatorTab = ({
   value,
   checked,
   onClick,
+  icon,
+  label,
 }: {
   disabled?: boolean;
   onClick: (x: string) => void;
   value: string;
+  icon: IconName;
+  label: ReactNode;
 } & FieldProps) => {
   return (
     <Box
@@ -111,8 +115,8 @@ export const AnnotatorTab = ({
         onClick={() => onClick(value)}
       >
         <ControlTabButtonInner
-          iconName={value as IconName}
-          lowerLabel={getFieldLabel(value)}
+          iconName={icon}
+          lowerLabel={label}
           checked={checked}
         />
       </ControlTabButton>

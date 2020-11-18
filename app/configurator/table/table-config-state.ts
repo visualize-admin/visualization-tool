@@ -1,7 +1,7 @@
 import produce from "immer";
 import { DraggableLocation } from "react-beautiful-dnd";
 import { getOrderedTableColumns } from "../components/ui-helpers";
-import { TableConfig } from "../config-types";
+import { SortingOrder, TableConfig, TableSortingOption } from "../config-types";
 
 export const moveFields = produce(
   (
@@ -139,6 +139,57 @@ export const updateIsFiltered = produce(
     }
 
     chartConfig.fields[field].isFiltered = value;
+
+    return chartConfig;
+  }
+);
+
+export const addSortingOption = produce(
+  (chartConfig: TableConfig, option: TableSortingOption): TableConfig => {
+    chartConfig.sorting.push(option);
+
+    return chartConfig;
+  }
+);
+
+export const removeSortingOption = produce(
+  (chartConfig: TableConfig, { index }: { index: number }): TableConfig => {
+    chartConfig.sorting.splice(index, 1);
+
+    return chartConfig;
+  }
+);
+
+export const changeSortingOptionOrder = produce(
+  (
+    chartConfig: TableConfig,
+    { index, sortingOrder }: { index: number; sortingOrder: SortingOrder }
+  ): TableConfig => {
+    if (chartConfig.sorting[index]) {
+      chartConfig.sorting[index].sortingOrder = sortingOrder;
+    }
+
+    return chartConfig;
+  }
+);
+
+export const moveSortingOptions = produce(
+  (
+    chartConfig: TableConfig,
+    {
+      source,
+      destination,
+    }: {
+      source: DraggableLocation;
+      destination: DraggableLocation;
+    }
+  ): TableConfig => {
+    // Move from source to destination
+    chartConfig.sorting.splice(
+      destination.index,
+      0,
+      chartConfig.sorting.splice(source.index, 1)[0]
+    );
 
     return chartConfig;
   }
