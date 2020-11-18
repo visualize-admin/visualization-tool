@@ -39,6 +39,7 @@ import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
   TableConfig,
+  TableSortingOption,
 } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import {
@@ -553,19 +554,23 @@ const TableSettings = () => {
   );
 };
 
-const TableSortingOption = ({
+const TableSortingOptionItem = ({
   componentIri,
+  componentType,
   sortingOrder,
-}: {
-  componentIri: string;
-  sortingOrder: "asc" | "desc";
-}) => {
-  return (
+  metaData,
+}: { metaData: DataCubeMetadata } & TableSortingOption) => {
+  const component =
+    metaData.dimensions.find(({ iri }) => iri === componentIri) ??
+    metaData.measures.find(({ iri }) => iri === componentIri);
+
+  return component ? (
     <Box>
       {componentIri}
+      {component.label}
       {sortingOrder}
     </Box>
-  );
+  ) : null;
 };
 
 const AddTableSortingOption = ({
@@ -581,14 +586,30 @@ const AddTableSortingOption = ({
 
     return [
       { value: "-", label: "Add a dimension …", disabled: true },
-      ...columns.map((c) => {
-        return {
-          value: c.componentIri,
-          label: c.componentIri,
-        };
+      ...columns.flatMap((c) => {
+        if (
+          chartConfig.sorting.some(
+            ({ componentIri }) => componentIri === c.componentIri
+          )
+        ) {
+          return [];
+        }
+
+        const component =
+          metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
+          metaData.measures.find(({ iri }) => iri === c.componentIri);
+
+        return component
+          ? [
+              {
+                value: component.iri,
+                label: component.label,
+              },
+            ]
+          : [];
       }),
     ];
-  }, [chartConfig]);
+  }, [chartConfig, metaData]);
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
@@ -649,12 +670,12 @@ const TableSorting = ({
         <Trans id="controls.section.tableSorting">Table Sorting</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">
-        {sorting.map(({ componentIri, sortingOrder }) => {
+        {sorting.map((option) => {
           return (
-            <TableSortingOption
-              key={componentIri}
-              componentIri={componentIri}
-              sortingOrder={sortingOrder}
+            <TableSortingOptionItem
+              {...option}
+              key={option.componentIri}
+              metaData={metaData}
             />
           );
         })}
