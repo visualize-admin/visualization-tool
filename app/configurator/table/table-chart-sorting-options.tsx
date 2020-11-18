@@ -64,7 +64,6 @@ const TableSortingOptionItem = ({
 
   const onChangeSortingOrder = useCallback(
     (e) => {
-      console.log(e.currentTarget.value);
       dispatch({
         type: "CHART_CONFIG_REPLACED",
         value: {
