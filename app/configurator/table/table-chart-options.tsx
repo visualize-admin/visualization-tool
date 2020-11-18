@@ -9,7 +9,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { Box } from "theme-ui";
+import { Box, Button } from "theme-ui";
 import { Checkbox, Select } from "../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -44,6 +44,7 @@ import {
 import { useConfiguratorState } from "../configurator-state";
 import {
   addSortingOption,
+  removeSortingOption,
   updateIsFiltered,
   updateIsGroup,
   updateIsHidden,
@@ -557,18 +558,38 @@ const TableSettings = () => {
 const TableSortingOptionItem = ({
   componentIri,
   componentType,
+  index,
   sortingOrder,
   metaData,
-}: { metaData: DataCubeMetadata } & TableSortingOption) => {
+  chartConfig,
+}: {
+  metaData: DataCubeMetadata;
+  index: number;
+  chartConfig: TableConfig;
+} & TableSortingOption) => {
+  const [, dispatch] = useConfiguratorState();
   const component =
     metaData.dimensions.find(({ iri }) => iri === componentIri) ??
     metaData.measures.find(({ iri }) => iri === componentIri);
+
+  const onRemove = useCallback(() => {
+    dispatch({
+      type: "CHART_CONFIG_REPLACED",
+      value: {
+        chartConfig: removeSortingOption(chartConfig, {
+          index,
+        }),
+        dataSetMetadata: metaData,
+      },
+    });
+  }, [chartConfig, dispatch, index, metaData]);
 
   return component ? (
     <Box>
       {componentIri}
       {component.label}
       {sortingOrder}
+      <Button onClick={onRemove}>X</Button>
     </Box>
   ) : null;
 };
@@ -670,12 +691,14 @@ const TableSorting = ({
         <Trans id="controls.section.tableSorting">Table Sorting</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">
-        {sorting.map((option) => {
+        {sorting.map((option, i) => {
           return (
             <TableSortingOptionItem
               {...option}
+              index={i}
               key={option.componentIri}
               metaData={metaData}
+              chartConfig={chartConfig}
             />
           );
         })}

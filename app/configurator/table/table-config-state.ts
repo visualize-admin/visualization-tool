@@ -151,3 +151,11 @@ export const addSortingOption = produce(
     return chartConfig;
   }
 );
+
+export const removeSortingOption = produce(
+  (chartConfig: TableConfig, { index }: { index: number }): TableConfig => {
+    chartConfig.sorting.splice(index, 1);
+
+    return chartConfig;
+  }
+);
