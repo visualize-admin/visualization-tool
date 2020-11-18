@@ -9,8 +9,8 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { Box, Button } from "theme-ui";
-import { Checkbox, Select } from "../../components/form";
+import { Box, Button, Flex } from "theme-ui";
+import { Checkbox, Radio, Select } from "../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { ColorPalette } from "../components/chart-controls/color-palette";
@@ -31,6 +31,7 @@ import {
 import {
   getDefaultCategoricalPalette,
   getDefaultSequentialPalette,
+  getFieldLabel,
   getOrderedTableColumns,
   mapColorsToComponentValuesIris,
 } from "../components/ui-helpers";
@@ -44,6 +45,7 @@ import {
 import { useConfiguratorState } from "../configurator-state";
 import {
   addSortingOption,
+  changeSortingOptionOrder,
   removeSortingOption,
   updateIsFiltered,
   updateIsGroup,
@@ -584,11 +586,46 @@ const TableSortingOptionItem = ({
     });
   }, [chartConfig, dispatch, index, metaData]);
 
+  const onChangeSortingOrder = useCallback(
+    (e) => {
+      console.log(e.currentTarget.value);
+      dispatch({
+        type: "CHART_CONFIG_REPLACED",
+        value: {
+          chartConfig: changeSortingOptionOrder(chartConfig, {
+            index,
+            sortingOrder: e.currentTarget.value,
+          }),
+          dataSetMetadata: metaData,
+        },
+      });
+    },
+    [chartConfig, dispatch, index, metaData]
+  );
+
+  const sortingType =
+    component?.__typename === "Measure" ? "byMeasure" : "byDimensionLabel";
+
   return component ? (
     <Box>
-      {componentIri}
       {component.label}
-      {sortingOrder}
+
+      <Flex>
+        <Radio
+          name={`${index}-sortingOrder`}
+          value="asc"
+          checked={sortingOrder === "asc"}
+          onChange={onChangeSortingOrder}
+          label={getFieldLabel(`sorting.${sortingType}.asc`)}
+        />
+        <Radio
+          name={`${index}-sortingOrder`}
+          value="desc"
+          checked={sortingOrder === "desc"}
+          onChange={onChangeSortingOrder}
+          label={getFieldLabel(`sorting.${sortingType}.desc`)}
+        />
+      </Flex>
       <Button onClick={onRemove}>X</Button>
     </Box>
   ) : null;
