@@ -62,7 +62,7 @@ export const TabDropZone = ({
                 >
                   &nbsp;
                 </Box> */}
-                {items.map(({ componentIri, index }, i) => {
+                {items.map(({ componentIri, index, isFiltered }, i) => {
                   return (
                     <Draggable
                       key={componentIri}
@@ -97,6 +97,7 @@ export const TabDropZone = ({
                                 </Trans>
                               }
                               isDragging={isDragging}
+                              disabled={isFiltered}
                             />
                             <Box
                               sx={{
@@ -138,6 +139,7 @@ const DraggableTabField = ({
   value,
   isDragging,
   upperLabel,
+  disabled,
 }: {
   component: ComponentFieldsFragment;
   value: string;
@@ -157,6 +159,7 @@ const DraggableTabField = ({
       checked={field.checked}
       onClick={field.onClick}
       isDragging={isDragging}
+      disabled={disabled}
     ></DraggableTab>
   );
 };
