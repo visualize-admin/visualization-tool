@@ -20,7 +20,7 @@ export const GroupHeader = ({
 
   return (
     <>
-      {row.cells.map((cell, i) => {
+      {row.allCells.map((cell, i) => {
         const { type, colorScale } = tableColumnsMeta[cell.column.id];
         const bg = getGroupLevelBackgroundColor(groupingLevels - depth);
         return (
