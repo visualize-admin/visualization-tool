@@ -253,6 +253,9 @@ const ScatterPlotFields = t.intersection([
       t.partial({
         colorMapping: ColorMapping,
       }),
+      // t.partial({
+      //   interactiveFilterPresets: t.record(t.string, t.string),
+      // }),
     ]),
   }),
 ]);
