@@ -57,15 +57,6 @@ export const InteractionVoronoi = memo(({ debug }: { debug?: boolean }) => {
 
   return (
     <g ref={ref} transform={`translate(${margins.left} ${margins.top})`}>
-      <rect
-        fillOpacity={0}
-        width={chartWidth}
-        height={chartHeight}
-        onMouseOut={hideTooltip}
-        onMouseOver={findLocation}
-        onMouseMove={findLocation}
-      />
-
       {debug &&
         data.map((d, i) => (
           <path
@@ -77,6 +68,14 @@ export const InteractionVoronoi = memo(({ debug }: { debug?: boolean }) => {
             strokeOpacity={1}
           />
         ))}
+      <rect
+        fillOpacity={0}
+        width={chartWidth}
+        height={chartHeight}
+        onMouseOut={hideTooltip}
+        onMouseOver={findLocation}
+        onMouseMove={findLocation}
+      />
     </g>
   );
 });
