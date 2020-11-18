@@ -173,7 +173,7 @@ const useTableState = ({
   const hiddenIris = useMemo(
     () =>
       orderedTableColumns
-        .filter((c) => c.isHidden)
+        .filter((c) => c.isHidden || c.isFiltered)
         .map((c) => getSlugifiedIri(c.componentIri)),
     [orderedTableColumns]
   );

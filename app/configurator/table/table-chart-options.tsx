@@ -218,16 +218,6 @@ export const TableColumnOptions = ({
                   <>
                     <ChartOptionGroupHiddenField
                       label={
-                        <Trans id="controls.table.column.hidefilter">
-                          Hide and filter
-                        </Trans>
-                      }
-                      field={activeField}
-                      path="isFiltered"
-                      metaData={metaData}
-                    />
-                    <ChartOptionGroupHiddenField
-                      label={
                         <Trans id="controls.table.column.group">
                           Use to group
                         </Trans>
@@ -237,23 +227,22 @@ export const TableColumnOptions = ({
                       path="isGroup"
                       metaData={metaData}
                     />
-                    <Box sx={{ pl: 6, ml: "-2px" }}>
+                    {!isGroup && (
                       <ChartOptionGroupHiddenField
                         label={
-                          <Trans id="controls.table.column.hide">
-                            Hide column
+                          <Trans id="controls.table.column.hidefilter">
+                            Hide and filter column
                           </Trans>
                         }
-                        disabled={!isGroup || isFiltered}
                         field={activeField}
-                        path="isHidden"
+                        path="isFiltered"
                         metaData={metaData}
                       />
-                    </Box>
+                    )}
                   </>
                 )}
 
-                {component.__typename === "Measure" && (
+                {(component.__typename === "Measure" || isGroup) && (
                   <ChartOptionGroupHiddenField
                     label={
                       <Trans id="controls.table.column.hide">Hide column</Trans>
