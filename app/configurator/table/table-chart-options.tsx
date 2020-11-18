@@ -1,5 +1,5 @@
-import { t } from "@lingui/macro";
-import { I18n, Trans } from "@lingui/react";
+import { t, Trans } from "@lingui/macro";
+import { I18n } from "@lingui/react";
 import VisuallyHidden from "@reach/visually-hidden";
 import get from "lodash/get";
 import React, {
@@ -7,7 +7,6 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
 } from "react";
 import {
@@ -693,35 +692,6 @@ const AddTableSortingOption = ({
   chartConfig: TableConfig;
 }) => {
   const [, dispatch] = useConfiguratorState();
-  const options = useMemo(() => {
-    const columns = getOrderedTableColumns(chartConfig.fields);
-
-    return [
-      { value: "-", label: "Add a dimension …", disabled: true },
-      ...columns.flatMap((c) => {
-        if (
-          chartConfig.sorting.some(
-            ({ componentIri }) => componentIri === c.componentIri
-          )
-        ) {
-          return [];
-        }
-
-        const component =
-          metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
-          metaData.measures.find(({ iri }) => iri === c.componentIri);
-
-        return component
-          ? [
-              {
-                value: component.iri,
-                label: component.label,
-              },
-            ]
-          : [];
-      }),
-    ];
-  }, [chartConfig, metaData]);
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
@@ -749,23 +719,63 @@ const AddTableSortingOption = ({
   );
 
   return (
-    <Box
-      sx={{
-        py: 4,
-        px: 4,
-        borderTopColor: "monochrome500",
-        borderTopStyle: "solid",
-        borderTopWidth: 1,
+    <I18n>
+      {({ i18n }) => {
+        const columns = getOrderedTableColumns(chartConfig.fields);
+
+        const options = [
+          {
+            value: "-",
+            label: i18n._(
+              t("controls.sorting.selectDimension")`Select a dimension …`
+            ),
+            disabled: true,
+          },
+          ...columns.flatMap((c) => {
+            if (
+              chartConfig.sorting.some(
+                ({ componentIri }) => componentIri === c.componentIri
+              )
+            ) {
+              return [];
+            }
+
+            const component =
+              metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
+              metaData.measures.find(({ iri }) => iri === c.componentIri);
+
+            return component
+              ? [
+                  {
+                    value: component.iri,
+                    label: component.label,
+                  },
+                ]
+              : [];
+          }),
+        ];
+
+        return (
+          <Box
+            sx={{
+              py: 4,
+              px: 4,
+              borderTopColor: "monochrome500",
+              borderTopStyle: "solid",
+              borderTopWidth: 1,
+            }}
+          >
+            <Select
+              id="add-tablesorting"
+              value="-"
+              options={options}
+              label={i18n._(t("controls.sorting.addDimension")`Add dimension`)}
+              onChange={onChange}
+            />
+          </Box>
+        );
       }}
-    >
-      <Select
-        id="add-tablesorting"
-        value="-"
-        options={options}
-        label="Sort by"
-        onChange={onChange}
-      />
-    </Box>
+    </I18n>
   );
 };
 

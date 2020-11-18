@@ -70,28 +70,28 @@ msgstr ""
 msgid "chart.table.number.of.lines"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:116
+#: app/configurator/table/table-chart-options.tsx:109
 msgid "columnStyle.bar"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:105
+#: app/configurator/table/table-chart-options.tsx:98
 msgid "columnStyle.categories"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:112
+#: app/configurator/table/table-chart-options.tsx:105
 msgid "columnStyle.heatmap"
 msgstr ""
 
+#: app/configurator/table/table-chart-options.tsx:95
 #: app/configurator/table/table-chart-options.tsx:102
-#: app/configurator/table/table-chart-options.tsx:109
 msgid "columnStyle.text"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:223
+#: app/configurator/table/table-chart-options.tsx:216
 msgid "columnStyle.textStyle.bold"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:219
+#: app/configurator/table/table-chart-options.tsx:212
 msgid "columnStyle.textStyle.regular"
 msgstr ""
 
@@ -103,31 +103,31 @@ msgstr "Horizontale Achse"
 msgid "controls.axis.vertical"
 msgstr "Vertikale Achse"
 
-#: app/configurator/components/ui-helpers.tsx:210
+#: app/configurator/components/ui-helpers.tsx:214
 msgid "controls.chart.type.area"
 msgstr "Flächen"
 
-#: app/configurator/components/ui-helpers.tsx:206
+#: app/configurator/components/ui-helpers.tsx:210
 msgid "controls.chart.type.bar"
 msgstr "Balken"
 
-#: app/configurator/components/ui-helpers.tsx:204
+#: app/configurator/components/ui-helpers.tsx:208
 msgid "controls.chart.type.column"
 msgstr "Säulen"
 
-#: app/configurator/components/ui-helpers.tsx:208
+#: app/configurator/components/ui-helpers.tsx:212
 msgid "controls.chart.type.line"
 msgstr "Linien"
 
-#: app/configurator/components/ui-helpers.tsx:214
+#: app/configurator/components/ui-helpers.tsx:218
 msgid "controls.chart.type.pie"
 msgstr "Kreis"
 
-#: app/configurator/components/ui-helpers.tsx:212
+#: app/configurator/components/ui-helpers.tsx:216
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/configurator/components/ui-helpers.tsx:216
+#: app/configurator/components/ui-helpers.tsx:220
 msgid "controls.chart.type.table"
 msgstr ""
 
@@ -176,19 +176,19 @@ msgstr "Bitte eine Designoption oder Datendimension auswählen, um diese zu bear
 msgid "controls.hint.describing.chart"
 msgstr "Bitte einen Inhaltsbereich auswählen, um diesen zu bearbeiten."
 
-#: app/configurator/components/ui-helpers.tsx:219
+#: app/configurator/components/ui-helpers.tsx:223
 msgid "controls.language.english"
 msgstr "Englisch"
 
-#: app/configurator/components/ui-helpers.tsx:223
+#: app/configurator/components/ui-helpers.tsx:227
 msgid "controls.language.french"
 msgstr "Französisch"
 
-#: app/configurator/components/ui-helpers.tsx:221
+#: app/configurator/components/ui-helpers.tsx:225
 msgid "controls.language.german"
 msgstr "Deutsch"
 
-#: app/configurator/components/ui-helpers.tsx:225
+#: app/configurator/components/ui-helpers.tsx:229
 msgid "controls.language.italian"
 msgstr "Italienisch"
 
@@ -212,7 +212,7 @@ msgstr "Suche zurücksetzen"
 msgid "controls.section.columns"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:142
+#: app/configurator/table/table-chart-options.tsx:135
 msgid "controls.section.columnstyle"
 msgstr ""
 
@@ -230,8 +230,8 @@ msgstr "Design"
 
 #: app/configurator/components/chart-options-selector.tsx:94
 #: app/configurator/components/chart-options-selector.tsx:98
-#: app/configurator/table/table-chart-options.tsx:196
-#: app/configurator/table/table-chart-options.tsx:200
+#: app/configurator/table/table-chart-options.tsx:189
+#: app/configurator/table/table-chart-options.tsx:193
 msgid "controls.section.filter"
 msgstr "Filter"
 
@@ -255,8 +255,12 @@ msgstr "Sortieren"
 #~ msgid "controls.section.table.column"
 #~ msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:59
+#: app/configurator/table/table-chart-options.tsx:274
 msgid "controls.section.tableSettings"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:436
+msgid "controls.section.tableSorting"
 msgstr ""
 
 #: app/configurator/table/table-chart-configurator.tsx:53
@@ -272,35 +276,35 @@ msgstr "Diagrammtyp"
 msgid "controls.select.column.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/table/table-chart-options.tsx:145
+#: app/configurator/table/table-chart-options.tsx:138
 msgid "controls.select.columnStyle"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:244
+#: app/configurator/table/table-chart-options.tsx:237
 msgid "controls.select.columnStyle.barColorBackground"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:241
+#: app/configurator/table/table-chart-options.tsx:234
 msgid "controls.select.columnStyle.barColorNegative"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:238
+#: app/configurator/table/table-chart-options.tsx:231
 msgid "controls.select.columnStyle.barColorPositive"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:247
+#: app/configurator/table/table-chart-options.tsx:240
 msgid "controls.select.columnStyle.barShowBackground"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:230
+#: app/configurator/table/table-chart-options.tsx:223
 msgid "controls.select.columnStyle.columnColor"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:227
+#: app/configurator/table/table-chart-options.tsx:220
 msgid "controls.select.columnStyle.textColor"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:214
+#: app/configurator/table/table-chart-options.tsx:207
 msgid "controls.select.columnStyle.textStyle"
 msgstr ""
 
@@ -308,25 +312,29 @@ msgstr ""
 #~ msgid "controls.select.dataset"
 #~ msgstr "Datensatz auswählen"
 
-#: app/configurator/components/ui-helpers.tsx:231
-#: app/configurator/components/ui-helpers.tsx:233
+#: app/configurator/components/ui-helpers.tsx:235
+#: app/configurator/components/ui-helpers.tsx:237
 msgid "controls.select.dimension"
 msgstr "Dimension auswählen"
 
-#: app/configurator/components/ui-helpers.tsx:232
+#: app/configurator/components/ui-helpers.tsx:236
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
+
+#: app/configurator/table/table-chart-options.tsx:404
+msgid "controls.sorting.addDimension"
+msgstr ""
 
 #: app/configurator/components/chart-options-selector.tsx:146
 #: app/configurator/components/chart-options-selector.tsx:152
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
-#: app/configurator/components/ui-helpers.tsx:165
+#: app/configurator/components/ui-helpers.tsx:166
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/configurator/components/ui-helpers.tsx:173
+#: app/configurator/components/ui-helpers.tsx:175
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
@@ -334,11 +342,11 @@ msgstr "Z → A"
 msgid "controls.sorting.byMeasure"
 msgstr "Messwert"
 
-#: app/configurator/components/ui-helpers.tsx:196
+#: app/configurator/components/ui-helpers.tsx:199
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/configurator/components/ui-helpers.tsx:201
+#: app/configurator/components/ui-helpers.tsx:205
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
@@ -346,36 +354,44 @@ msgstr "9 → 1"
 msgid "controls.sorting.byTotalSize"
 msgstr "Gesamtgrösse"
 
-#: app/configurator/components/ui-helpers.tsx:177
+#: app/configurator/components/ui-helpers.tsx:179
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Kleinste zuerst"
 
-#: app/configurator/components/ui-helpers.tsx:189
+#: app/configurator/components/ui-helpers.tsx:191
 msgid "controls.sorting.byTotalSize.largestBottom"
 msgstr "Grösste unten"
 
-#: app/configurator/components/ui-helpers.tsx:181
+#: app/configurator/components/ui-helpers.tsx:183
 msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Grösste zuerst"
 
-#: app/configurator/components/ui-helpers.tsx:186
+#: app/configurator/components/ui-helpers.tsx:188
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Kleinste unten"
+
+#: app/configurator/table/table-chart-options.tsx:340
+msgid "controls.sorting.removeOption"
+msgstr ""
+
+#: app/configurator/table/table-chart-options.tsx:378
+msgid "controls.sorting.selectDimension"
+msgstr ""
 
 #: app/configurator/components/ui-helpers.tsx:157
 msgid "controls.sorting.sortBy"
 msgstr "Sortieren nach"
 
-#: app/configurator/table/table-chart-options.tsx:127
+#: app/configurator/table/table-chart-options.tsx:120
 msgid "controls.table.column.group"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:131
-#: app/configurator/table/table-chart-options.tsx:137
+#: app/configurator/table/table-chart-options.tsx:124
+#: app/configurator/table/table-chart-options.tsx:130
 msgid "controls.table.column.hide"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:124
+#: app/configurator/table/table-chart-options.tsx:117
 msgid "controls.table.column.hidefilter"
 msgstr ""
 
@@ -387,7 +403,7 @@ msgstr ""
 msgid "controls.table.sorting"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:62
+#: app/configurator/table/table-chart-options.tsx:277
 msgid "controls.tableSettings.showSearch"
 msgstr ""
 
