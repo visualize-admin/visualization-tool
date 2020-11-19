@@ -29,7 +29,10 @@ import {
   PADDING_OUTER,
   PADDING_WITHIN,
 } from "./constants";
-import { InteractiveFiltersProvider } from "../shared/use-interactive-filters";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
 
 export interface GroupedColumnsState {
   sortedData: Observation[];
@@ -60,6 +63,7 @@ const useGroupedColumnsState = ({
 }): GroupedColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
@@ -223,6 +227,12 @@ const useGroupedColumnsState = ({
   xScaleIn.range([0, xScale.bandwidth()]);
   yScale.range([chartHeight, 0]);
 
+  // Interactive Filters
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const interactivelyFilteredData = sortedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
@@ -230,7 +240,9 @@ const useGroupedColumnsState = ({
     const yRef = yScale(getY(datum));
     const yAnchor = yRef;
 
-    const tooltipValues = data.filter((j) => getX(j) === getX(datum));
+    const tooltipValues = interactivelyFilteredData.filter(
+      (j) => getX(j) === getX(datum)
+    );
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
