@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { BarConfig, BarFields } from "../../configurator";
 import { Observation } from "../../domain/data";
@@ -15,7 +15,7 @@ import { GroupedBarsChart } from "./bars-grouped-state";
 import { Bars } from "./bars-simple";
 import { BarChart } from "./bars-state";
 import { ChartContainer, ChartSvg } from "../shared/containers";
-import { LegendColor } from "../shared/legend-color";
+import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 
 export const ChartBarsVisualization = ({
@@ -93,7 +93,7 @@ export const ChartBars = memo(
                 <AxisWidthLinear />
               </ChartSvg>
             </ChartContainer>
-            <LegendColor symbol="square" />
+            <InteractiveLegendColor symbol="square" />
           </GroupedBarsChart>
         ) : (
           <BarChart data={observations} fields={fields} measures={measures}>

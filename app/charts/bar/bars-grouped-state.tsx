@@ -7,20 +7,20 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3-scale";
-
-import { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { BarFields, SortingOrder, SortingType } from "../../configurator";
-import { Observation, ObservationValue } from "../../domain/data";
 import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
+import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
+import { ChartContext, ChartProps } from "../shared/use-chart-state";
+import { InteractionProvider } from "../shared/use-interaction";
+import { InteractiveFiltersProvider } from "../shared/use-interactive-filters";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   BAR_HEIGHT,
   BAR_SPACE_ON_TOP,
   BOTTOM_MARGIN_OFFSET,
 } from "./constants";
-import { ChartContext, ChartProps } from "../shared/use-chart-state";
-import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
 
 export interface GroupedBarsState {
   chartType: string;
@@ -249,14 +249,16 @@ export const GroupedBarsChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <GroupedBarsChartProvider
-          data={data}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-        >
-          {children}
-        </GroupedBarsChartProvider>
+        <InteractiveFiltersProvider>
+          <GroupedBarsChartProvider
+            data={data}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+          >
+            {children}
+          </GroupedBarsChartProvider>
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );

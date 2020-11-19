@@ -3,6 +3,7 @@ import { useChartState } from "../shared/use-chart-state";
 import { useChartTheme } from "../shared/use-chart-theme";
 import { GroupedBarsState } from "./bars-grouped-state";
 import { Bar } from "./bars-simple";
+import { useInteractiveFilters } from "../shared/use-interactive-filters";
 
 export const BarsGrouped = () => {
   const {
@@ -22,6 +23,8 @@ export const BarsGrouped = () => {
     axisLabelFontWeight,
     axisLabelColor,
   } = useChartTheme();
+  const [interactiveFilters] = useInteractiveFilters();
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -49,7 +52,11 @@ export const BarsGrouped = () => {
                   key={i}
                   y={yScaleIn(getSegment(d)) as number}
                   x={xScale(Math.min(0, getX(d)))}
-                  width={Math.abs(xScale(getX(d)) - xScale(0))}
+                  width={
+                    activeInteractiveFilters.includes(getSegment(d))
+                      ? 0
+                      : Math.abs(xScale(getX(d)) - xScale(0))
+                  }
                   height={yScaleIn.bandwidth()}
                   color={colors(getSegment(d))}
                   stroke={markBorderColor}
