@@ -1,7 +1,7 @@
 import { Box, Flex } from "@theme-ui/components";
 import * as React from "react";
-import { HeaderGroup, SortingRule } from "react-table";
-import { Observation, ObservationValue } from "../../domain/data";
+import { HeaderGroup } from "react-table";
+import { Observation } from "../../domain/data";
 import { Icon } from "../../icons";
 import { SORTING_ARROW_WIDTH } from "./constants";
 import { ColumnMeta } from "./table-state";
