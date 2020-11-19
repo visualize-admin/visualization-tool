@@ -161,14 +161,26 @@ const useTableState = ({
   );
 
   // Sorting used by react-table
-  const sortingIris = useMemo(
-    () =>
-      sorting.map((s) => ({
+  const sortingIris = useMemo(() => {
+    return [
+      // Prioritize the configured sorting
+      ...sorting.map((s) => ({
         id: getSlugifiedIri(s.componentIri),
         desc: s.sortingOrder === "desc",
       })),
-    [sorting]
-  );
+      // Add the remaining table columns to the sorting
+      ...orderedTableColumns.flatMap((c) => {
+        return sorting.some((s) => s.componentIri === c.componentIri)
+          ? []
+          : [
+              {
+                id: getSlugifiedIri(c.componentIri),
+                desc: false,
+              },
+            ];
+      }),
+    ];
+  }, [sorting, orderedTableColumns]);
 
   const hiddenIris = useMemo(
     () =>

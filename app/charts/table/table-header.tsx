@@ -1,7 +1,7 @@
 import { Box, Flex } from "@theme-ui/components";
 import * as React from "react";
-import { HeaderGroup } from "react-table";
-import { Observation } from "../../domain/data";
+import { HeaderGroup, SortingRule } from "react-table";
+import { Observation, ObservationValue } from "../../domain/data";
 import { Icon } from "../../icons";
 import { SORTING_ARROW_WIDTH } from "./constants";
 import { ColumnMeta } from "./table-state";
@@ -9,9 +9,11 @@ import { ColumnMeta } from "./table-state";
 export const TableHeader = ({
   headerGroups,
   tableColumnsMeta,
+  customSortCount,
 }: {
   headerGroups: HeaderGroup<Observation>[];
   tableColumnsMeta: Record<string, ColumnMeta>;
+  customSortCount: number;
 }) => {
   return (
     <Box>
@@ -20,6 +22,10 @@ export const TableHeader = ({
           <Box {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, i) => {
               const { columnComponentType } = tableColumnsMeta[column.id];
+
+              // We assume that the customSortCount items are at the beginning of the sorted array, so any item with a lower index must be a custom sorted one
+              const isCustomSorted = column.sortedIndex < customSortCount;
+
               return (
                 <Box
                   sx={{
@@ -49,9 +55,9 @@ export const TableHeader = ({
                       alignItems: "center",
                     }}
                   >
-                    <Box>{column.render("Header")}</Box>
-                    {column.isSorted && (
-                      <Box sx={{ width: SORTING_ARROW_WIDTH }}>
+                    <Box sx={{ flexGrow: 1 }}>{column.render("Header")}</Box>
+                    {isCustomSorted && (
+                      <Box sx={{ width: SORTING_ARROW_WIDTH, flexShrink: 0 }}>
                         <Icon
                           name={
                             column.isSortedDesc

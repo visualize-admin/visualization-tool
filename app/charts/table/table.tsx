@@ -76,12 +76,15 @@ export const Table = () => {
     rows,
     totalColumnsWidth,
     prepareRow,
-    visibleColumns,
+    state: tableState,
   } = useTable<Observation>(
     {
       columns: tableColumns,
       data: filteredData,
       autoResetExpanded: false,
+      initialState: {
+        sortBy: sortingIris,
+      },
       useControlledState: (state) => {
         return useMemo(
           () => ({
@@ -99,6 +102,9 @@ export const Table = () => {
     useSortBy,
     useExpanded
   );
+
+  // If the table has a custom sort, the tableState.sortBy has these items prepended.
+  const customSortCount = tableState.sortBy.length - sortingIris.length;
 
   // React.useEffect(() => {
   //   bounds.width > 700 && toggleAlternativeMobileView(false);
@@ -279,6 +285,7 @@ export const Table = () => {
             {...getTableProps()}
           >
             <TableHeader
+              customSortCount={customSortCount}
               headerGroups={headerGroups}
               tableColumnsMeta={tableColumnsMeta}
             />
