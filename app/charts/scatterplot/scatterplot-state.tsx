@@ -173,10 +173,10 @@ const useScatterplotState = ({
   const interactivelyFilteredData = sortedData.filter(
     (d) => !activeInteractiveFilters.includes(getSegment(d))
   );
-  console.log("interactivelyFilteredData", interactivelyFilteredData);
+
   return {
     chartType: "scatterplot",
-    data: interactivelyFilteredData, // sortedData,
+    data: interactivelyFilteredData, // sortedData + filtered data,
     bounds,
     getX,
     xScale,
@@ -240,7 +240,7 @@ export const ScatterplotChart = ({
           >
             {children}
           </ScatterplotChartProvider>
-        </InteractiveFiltersProvider>{" "}
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );

@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { ScatterPlotFields } from "../../configurator";
 import { ScatterPlotConfig } from "../../configurator";
@@ -21,7 +21,7 @@ import {
 } from "../shared/axis-height-linear";
 import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionVoronoi } from "../shared/overlay-voronoi";
-import { LegendColor } from "../shared/legend-color";
+import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Scatterplot } from "./scatterplot-simple";
 import { ScatterplotChart } from "./scatterplot-state";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
@@ -112,7 +112,7 @@ export const ChartScatterplot = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && <LegendColor symbol="circle" />}
+        {fields.segment && <InteractiveLegendColor symbol="circle" />}
       </ScatterplotChart>
     );
   }
