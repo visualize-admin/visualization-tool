@@ -3,7 +3,7 @@ import { line } from "d3-shape";
 import { Observation } from "../../domain/data";
 import { LinesState } from "./lines-state";
 import { useTheme } from "../../themes";
-import { memo } from "react";
+import { Fragment, memo } from "react";
 import { useInteractiveFilters } from "../shared/use-interactive-filters";
 
 export const Lines = () => {
@@ -30,7 +30,7 @@ export const Lines = () => {
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
       {Array.from(grouped).map((observation, index) => {
         return (
-          <>
+          <Fragment key={observation[0]}>
             {!activeInteractiveFilters.includes(observation[0]) && (
               <Line
                 key={index}
@@ -42,7 +42,7 @@ export const Lines = () => {
                 }
               />
             )}
-          </>
+          </Fragment>
         );
       })}
     </g>
