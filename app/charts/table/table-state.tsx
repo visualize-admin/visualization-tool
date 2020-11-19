@@ -136,7 +136,12 @@ const useTableState = ({
           return estimateTextWidth(`${itemAsString}`, 16) + 20;
         }),
       ];
-      const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
+
+      const width = Math.max(
+        50,
+        estimateTextWidth(headerLabel, 16) + 44,
+        ...columnItemSizes
+      );
 
       return {
         Header: headerLabel,
