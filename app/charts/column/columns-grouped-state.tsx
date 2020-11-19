@@ -106,6 +106,7 @@ const useGroupedColumnsState = ({
       }),
     [data, getX, xSortingType, xSortingOrder, xOrder]
   );
+
   // segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
@@ -159,8 +160,21 @@ const useGroupedColumnsState = ({
     colors.range(getPalette(fields.segment?.palette));
   }
 
+  // Apply end-user-activated interactive filters to the stack
+  // We use segments and sorted data to display legend and axis
+  // but filtered segments and data in the chart itself (band domain + tooltips).
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const activeSegments = segments.filter(
+    (s) => !activeInteractiveFilters.includes(s)
+  );
+  const interactivelyFilteredData = sortedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
+
   // x
-  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
+  const bandDomain = [
+    ...new Set(interactivelyFilteredData.map((d) => getX(d) as string)),
+  ];
   const xScale = scaleBand()
     .domain(bandDomain)
     .paddingInner(PADDING_INNER)
@@ -170,8 +184,7 @@ const useGroupedColumnsState = ({
     .paddingInner(0)
     .paddingOuter(0);
 
-  // const inBandDomain = [...new Set(sortedData.map(getSegment))];
-  const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
+  const xScaleIn = scaleBand().domain(activeSegments).padding(PADDING_WITHIN);
 
   // y
   const minValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
@@ -226,12 +239,6 @@ const useGroupedColumnsState = ({
   xScaleInteraction.range([0, chartWidth]);
   xScaleIn.range([0, xScale.bandwidth()]);
   yScale.range([chartHeight, 0]);
-
-  // Interactive Filters
-  const activeInteractiveFilters = Object.keys(interactiveFilters);
-  const interactivelyFilteredData = sortedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
