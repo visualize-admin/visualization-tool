@@ -33,7 +33,7 @@ export const Label = ({
     mb={1}
     sx={{
       width: "auto",
-      color: disabled ? "monochrome600" : "monochrome700",
+      color: disabled ? "monochrome500" : "monochrome700",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
       pb: smaller ? 1 : 0,
       mr: 4,
@@ -143,7 +143,7 @@ export const Select = ({
         bg: "monochrome100",
         p: 2,
         height: "40px",
-        color: disabled ? "monochrome600" : "monochrome700",
+        color: disabled ? "monochrome500" : "monochrome700",
       }}
       id={id}
       name={id}

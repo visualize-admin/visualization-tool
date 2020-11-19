@@ -16,8 +16,8 @@ import {
 } from "../../configurator";
 import {
   getColorInterpolator,
-  getOrderedTableColumns,
   useFormatNumber,
+  useOrderedTableColumns,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
@@ -92,7 +92,7 @@ const useTableState = ({
     chartHeight,
   };
 
-  const orderedTableColumns = getOrderedTableColumns(fields);
+  const orderedTableColumns = useOrderedTableColumns(fields);
 
   /**
    * REACT-TABLE CONFIGURATION
@@ -120,41 +120,36 @@ const useTableState = ({
   );
 
   // Columns used by react-table
-  const tableColumns = useMemo(
-    () =>
-      orderedTableColumns.map((c) => {
-        const headerLabel =
-          [...dimensions, ...measures].find((dim) => dim.iri === c.componentIri)
-            ?.label || c.componentIri;
+  const tableColumns = useMemo(() => {
+    return orderedTableColumns.map((c) => {
+      const headerLabel =
+        [...dimensions, ...measures].find((dim) => dim.iri === c.componentIri)
+          ?.label || c.componentIri;
 
-        // The column width depends on the estimated width of the
-        // longest value in the column, with a minimum of 150px.
-        const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
-        const columnItemSizes = [
-          ...columnItems.map((item) => {
-            const itemAsString =
-              c.componentType === "Measure"
-                ? formatNumber(item as number)
-                : item;
-            return estimateTextWidth(`${itemAsString}`, 16) + 20;
-          }),
-        ];
-        const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
+      // The column width depends on the estimated width of the
+      // longest value in the column, with a minimum of 150px.
+      const columnItems = [...new Set(data.map((d) => d[c.componentIri]))];
+      const columnItemSizes = [
+        ...columnItems.map((item) => {
+          const itemAsString =
+            c.componentType === "Measure" ? formatNumber(item as number) : item;
+          return estimateTextWidth(`${itemAsString}`, 16) + 20;
+        }),
+      ];
+      const width = Math.max(max(columnItemSizes, (d) => d) || 150, 150);
 
-        return {
-          Header: headerLabel,
-          // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
-          accessor: getSlugifiedIri(c.componentIri),
+      return {
+        Header: headerLabel,
+        // Slugify accessor to avoid IRI's "." to be parsed as JS object notation.
+        accessor: getSlugifiedIri(c.componentIri),
 
-          width,
-          // If sort type is not "basic", react-table default to "alphanumeric"
-          // which doesn't sort negative values properly.
-          sortType: "basic",
-        };
-      }),
-
-    [orderedTableColumns, data, dimensions, measures, formatNumber]
-  );
+        width,
+        // If sort type is not "basic", react-table default to "alphanumeric"
+        // which doesn't sort negative values properly.
+        sortType: "basic",
+      };
+    });
+  }, [orderedTableColumns, data, dimensions, measures, formatNumber]);
 
   // Groupings used by react-table
   const groupingIris = useMemo(
@@ -178,7 +173,7 @@ const useTableState = ({
   const hiddenIris = useMemo(
     () =>
       orderedTableColumns
-        .filter((c) => c.isHidden)
+        .filter((c) => c.isHidden || c.isFiltered)
         .map((c) => getSlugifiedIri(c.componentIri)),
     [orderedTableColumns]
   );

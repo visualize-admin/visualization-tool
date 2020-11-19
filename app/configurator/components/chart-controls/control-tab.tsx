@@ -131,6 +131,7 @@ export const DraggableTab = ({
   onClick,
   isDragging,
   upperLabel,
+  disabled,
 }: {
   component: ComponentFieldsFragment;
   disabled?: boolean;
@@ -158,6 +159,7 @@ export const DraggableTab = ({
           upperLabel={upperLabel}
           lowerLabel={component.label}
           checked={checked}
+          optional={disabled}
         />
       </ControlTabButton>
     </Box>
@@ -238,7 +240,7 @@ const ControlTabButtonInner = ({
         bg: checked ? "primary" : "monochrome100",
         color:
           optional && !checked
-            ? "monochrome600"
+            ? "monochrome500"
             : checked
             ? "monochrome100"
             : "monochrome700",

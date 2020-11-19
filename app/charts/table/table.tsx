@@ -44,8 +44,9 @@ export const Table = () => {
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
   const searchIndex = useMemo(() => {
-    const searchFields = Object.values(tableColumnsMeta).map(
-      (m) => m.slugifiedIri
+    // Don't index measure columns
+    const searchFields = Object.values(tableColumnsMeta).flatMap((m) =>
+      m.columnComponentType === "Measure" ? [] : [m.slugifiedIri]
     );
 
     const index = FlexSearch.create({

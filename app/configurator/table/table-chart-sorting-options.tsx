@@ -18,7 +18,7 @@ import {
 } from "../components/chart-controls/section";
 import {
   getFieldLabel,
-  getOrderedTableColumns,
+  useOrderedTableColumns,
 } from "../components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
@@ -64,7 +64,6 @@ const TableSortingOptionItem = ({
 
   const onChangeSortingOrder = useCallback(
     (e) => {
-      console.log(e.currentTarget.value);
       dispatch({
         type: "CHART_CONFIG_REPLACED",
         value: {
@@ -186,11 +185,11 @@ const AddTableSortingOption = ({
     [chartConfig, dispatch, metaData]
   );
 
+  const columns = useOrderedTableColumns(chartConfig.fields);
+
   return (
     <I18n>
       {({ i18n }) => {
-        const columns = getOrderedTableColumns(chartConfig.fields);
-
         const options = [
           {
             value: "-",
