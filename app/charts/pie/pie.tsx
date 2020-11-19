@@ -7,7 +7,7 @@ import { PieState } from "./pie-state";
 
 export const Pie = () => {
   const {
-    sortedData,
+    data,
     getPieData,
     getX,
     colors,
@@ -15,7 +15,7 @@ export const Pie = () => {
   } = useChartState() as PieState;
   const { width, height, chartWidth, chartHeight } = bounds;
 
-  const arcs = getPieData(sortedData);
+  const arcs = getPieData(data);
 
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 

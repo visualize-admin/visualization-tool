@@ -43,7 +43,7 @@ const sortData = ({
 
 export interface PieState {
   bounds: Bounds;
-  sortedData: Observation[];
+  data: Observation[];
   getPieData: Pie<$IntentionalAny, Observation>;
   getY: (d: Observation) => number;
   getX: (d: Observation) => string;
@@ -190,7 +190,7 @@ const usePieState = ({
   };
   return {
     bounds,
-    sortedData,
+    data,
     getPieData,
     getY,
     getX,
