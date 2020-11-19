@@ -104,7 +104,9 @@ const useAreasState = ({
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
-  // ordered segments
+  /*******************
+   * Ordered segments
+   */
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
@@ -133,9 +135,9 @@ const useAreasState = ({
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
 
-  /***********
+  /**************
    * Prepare data
-   * ********/
+   **/
 
   // All data sent to the front-end
   const xKey = fields.x.componentIri;
@@ -162,9 +164,6 @@ const useAreasState = ({
     });
   }
 
-  const maxTotal = max<$FixMe, number>(wide, (d) => d.total) as number;
-  const yDomain = [0, maxTotal] as [number, number];
-
   // Stack order
   const stackOrder =
     segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
@@ -173,7 +172,7 @@ const useAreasState = ({
       ? stackOrderDescending
       : stackOrderReverse;
 
-  // Apply end-user-activated interactive Filters to the stack
+  // Apply end-user-activated interactive filters to the stack
   const activeInteractiveFilters = Object.keys(interactiveFilters);
   const interactivelyFilteredData = sortedData.filter(
     (d) => !activeInteractiveFilters.includes(getSegment(d))
@@ -182,13 +181,19 @@ const useAreasState = ({
     (s) => !activeInteractiveFilters.includes(s)
   );
 
-  // Stack logic
   const stacked = stack()
     .order(stackOrder)
     .offset(stackOffsetDiverging)
     .keys(activeSegments);
 
   const series = stacked(wide as { [key: string]: number }[]);
+
+  /********
+   * Scales
+   */
+
+  const maxTotal = max<$FixMe, number>(wide, (d) => d.total) as number;
+  const yDomain = [0, maxTotal] as [number, number];
 
   const xUniqueValues = data
     .map((d) => getX(d))
@@ -228,9 +233,9 @@ const useAreasState = ({
     colors.range(getPalette(fields.segment?.palette));
   }
 
-  /***********
+  /************
    * Dimensions
-   * ********/
+   **/
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
     estimateTextWidth(formatNumber(yScale.domain()[1]))
@@ -253,9 +258,9 @@ const useAreasState = ({
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  /***********
+  /**********
    * Tooltip
-   * ********/
+   **/
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
 

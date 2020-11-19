@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { ColumnConfig, ColumnFields } from "../../configurator";
 import { Observation } from "../../domain/data";
@@ -20,7 +20,7 @@ import { StackedColumnsChart } from "./columns-stacked-state";
 import { ColumnChart } from "./columns-state";
 import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionColumns } from "./overlay-columns";
-import { LegendColor } from "../shared/legend-color";
+import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 
 export const ChartColumnsVisualization = ({
@@ -102,7 +102,7 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-            <LegendColor symbol="square" />
+            <InteractiveLegendColor symbol="square" />
           </StackedColumnsChart>
         ) : fields.segment?.componentIri &&
           fields.segment.type === "grouped" ? (
@@ -122,7 +122,7 @@ export const ChartColumns = memo(
               <Tooltip type="multiple" />
             </ChartContainer>
 
-            <LegendColor symbol="square" />
+            <InteractiveLegendColor symbol="square" />
           </GroupedColumnChart>
         ) : (
           <ColumnChart

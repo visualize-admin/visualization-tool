@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3-scale";
 
-import { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
@@ -29,6 +29,7 @@ import {
   PADDING_OUTER,
   PADDING_WITHIN,
 } from "./constants";
+import { InteractiveFiltersProvider } from "../shared/use-interactive-filters";
 
 export interface GroupedColumnsState {
   sortedData: Observation[];
@@ -343,15 +344,17 @@ export const GroupedColumnChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <GroupedColumnChartProvider
-          data={data}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </GroupedColumnChartProvider>
+        <InteractiveFiltersProvider>
+          <GroupedColumnChartProvider
+            data={data}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+            aspectRatio={aspectRatio}
+          >
+            {children}
+          </GroupedColumnChartProvider>
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );

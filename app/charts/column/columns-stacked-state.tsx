@@ -15,7 +15,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 
-import { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
@@ -36,6 +36,10 @@ import {
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
 
 export interface StackedColumnsState {
   sortedData: Observation[];
@@ -67,6 +71,7 @@ const useColumnsStackedState = ({
 }): StackedColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
@@ -84,7 +89,9 @@ const useColumnsStackedState = ({
     [fields.segment]
   );
 
-  // data / groups for stack
+  /**************
+   * Prepare data
+   **/
   const xKey = fields.x.componentIri;
   const wide: Record<string, ObservationValue>[] = [];
   const groupedMap = group(data, getX);
@@ -129,7 +136,9 @@ const useColumnsStackedState = ({
     [data, getX, getY, sortingType, sortingOrder, xOrder]
   );
 
-  // ordered segments
+  /*******************
+   * Ordered segments
+   */
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
@@ -157,6 +166,10 @@ const useColumnsStackedState = ({
     segmentSortingType === "byDimensionLabel"
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
+
+  /********
+   * Scales
+   */
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
@@ -215,11 +228,19 @@ const useColumnsStackedState = ({
       ? stackOrderDescending
       : // Reverse segments here, so they're sorted from top to bottom
         stackOrderReverse;
-  // stack logic
+
+  // Apply end-user-activated interactive filters to the stack
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const interactivelyFilteredData = sortedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
+  const activeSegments = segments.filter(
+    (s) => !activeInteractiveFilters.includes(s)
+  );
   const stacked = stack()
     .order(stackOrder)
     .offset(stackOffsetDiverging)
-    .keys(segments);
+    .keys(activeSegments);
 
   const series = stacked(
     wide as {
@@ -227,7 +248,9 @@ const useColumnsStackedState = ({
     }[]
   );
 
-  // Dimensions
+  /************
+   * Dimensions
+   **/
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
     estimateTextWidth(formatNumber(yScale.domain()[1]))
@@ -253,12 +276,16 @@ const useColumnsStackedState = ({
   xScaleInteraction.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  // Tooltip
+  /**********
+   * Tooltip
+   **/
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
 
-    const tooltipValues = sortedData.filter((j) => getX(j) === getX(datum));
+    const tooltipValues = interactivelyFilteredData.filter(
+      (j) => getX(j) === getX(datum)
+    );
 
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
@@ -289,7 +316,6 @@ const useColumnsStackedState = ({
           ? "left"
           : "center";
       } else {
-        // yPlacement === "middle"
         return xRef < chartWidth * 0.5 ? "right" : "left";
       }
     };
@@ -303,7 +329,6 @@ const useColumnsStackedState = ({
           ? xRef + xOffset
           : xRef + xOffset * 2;
       } else {
-        // yPlacement === "middle"
         return xPlacement === "right" ? xRef + xOffset * 2 : xRef;
       }
     };
@@ -385,15 +410,17 @@ export const StackedColumnsChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <StackedColumnsChartProvider
-          data={data}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </StackedColumnsChartProvider>
+        <InteractiveFiltersProvider>
+          <StackedColumnsChartProvider
+            data={data}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+            aspectRatio={aspectRatio}
+          >
+            {children}
+          </StackedColumnsChartProvider>
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );
