@@ -1,0 +1,17 @@
+name: Niquis
+on: [push, pull_request]
+
+jobs:
+  niquis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+      - run: yarn --frozen-lockfile
+      - run: yarn run build
+      - uses: niquis/action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NIQUIS_TOKEN: ${{ secrets.NIQUIS_TOKEN }}
