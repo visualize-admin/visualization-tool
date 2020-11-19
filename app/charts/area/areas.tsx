@@ -12,6 +12,7 @@ export const Areas = () => {
     yScale,
     colors,
     series,
+    segments,
   } = useChartState() as AreasState;
   const theme = useTheme();
   const areaGenerator = area<$FixMe>()
@@ -19,7 +20,6 @@ export const Areas = () => {
     .x((d) => xScale(getX(d.data)))
     .y0((d) => yScale(d[0]))
     .y1((d) => yScale(d[1]));
-
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
       {series.map((d, i) => {
@@ -27,7 +27,7 @@ export const Areas = () => {
           <Area
             key={`${d.key}-${i}`}
             path={areaGenerator(d) as string}
-            color={series.length > 1 ? colors(d.key) : theme.colors.primary}
+            color={segments.length > 1 ? colors(d.key) : theme.colors.primary}
           />
         );
       })}
