@@ -23,7 +23,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 
-import { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { AreaFields } from "../../configurator";
 import { Observation } from "../../domain/data";
 import {
@@ -40,6 +40,10 @@ import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
 
 export interface AreasState {
   data: Observation[];
@@ -71,6 +75,7 @@ const useAreasState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
+  const [interactiveFilters] = useInteractiveFilters();
 
   const hasSegment = fields.segment;
 
@@ -81,40 +86,19 @@ const useAreasState = ({
     [fields.x.componentIri]
   );
   const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
-  const getSegment = (d: Observation): string =>
-    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
-
-  // data / groups for stack
-  // Always sort by x first (TemporalDimension)
-  const sortedData = useMemo(
-    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
-
-    [data, getX]
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
+    [fields.segment]
   );
 
-  const xKey = fields.x.componentIri;
-  const wide: { [key: string]: number | string }[] = [];
-  const groupedMap = group(sortedData, getGroups);
-
-  for (const [key, values] of groupedMap) {
-    const keyObject = values.reduce<{ [k: string]: number | string }>(
-      (obj, cur) => {
-        const currentKey = getSegment(cur);
-        const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
-        const total = currentY + (obj.total as number);
-        return {
-          ...obj,
-          [currentKey]: getY(cur),
-          total,
-        };
-      },
-      { total: 0 }
-    );
-    wide.push({
-      ...keyObject,
-      [xKey]: key,
-    });
-  }
+  const sortedData = useMemo(
+    () =>
+      [...data]
+        // Always sort by x first (TemporalDimension)
+        .sort((a, b) => ascending(getX(a), getX(b))),
+    [data, getX]
+  );
 
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
@@ -149,21 +133,61 @@ const useAreasState = ({
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
 
+  /***********
+   * Prepare data
+   * ********/
+
+  // All data sent to the front-end
+  const xKey = fields.x.componentIri;
+  const wide: { [key: string]: number | string }[] = [];
+  const groupedMap = group(sortedData, getGroups);
+
+  for (const [key, values] of groupedMap) {
+    const keyObject = values.reduce<{ [k: string]: number | string }>(
+      (obj, cur) => {
+        const currentKey = getSegment(cur);
+        const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
+        const total = currentY + (obj.total as number);
+        return {
+          ...obj,
+          [currentKey]: getY(cur),
+          total,
+        };
+      },
+      { total: 0 }
+    );
+    wide.push({
+      ...keyObject,
+      [xKey]: key,
+    });
+  }
+
   const maxTotal = max<$FixMe, number>(wide, (d) => d.total) as number;
   const yDomain = [0, maxTotal] as [number, number];
 
-  // stack order
+  // Stack order
   const stackOrder =
     segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
       ? stackOrderAscending
       : segmentSortingType === "byTotalSize" && segmentSortingOrder === "desc"
       ? stackOrderDescending
       : stackOrderReverse;
-  // Sstack logic
+
+  // Apply end-user-activated interactive Filters to the stack
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const interactivelyFilteredData = sortedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
+  const activeSegments = segments.filter(
+    (s) => !activeInteractiveFilters.includes(s)
+  );
+
+  // Stack logic
   const stacked = stack()
     .order(stackOrder)
     .offset(stackOffsetDiverging)
-    .keys(segments);
+    .keys(activeSegments);
+
   const series = stacked(wide as { [key: string]: number }[]);
 
   const xUniqueValues = data
@@ -204,7 +228,9 @@ const useAreasState = ({
     colors.range(getPalette(fields.segment?.palette));
   }
 
-  // Dimensions
+  /***********
+   * Dimensions
+   * ********/
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
     estimateTextWidth(formatNumber(yScale.domain()[1]))
@@ -227,11 +253,13 @@ const useAreasState = ({
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  // Tooltip
+  /***********
+   * Tooltip
+   * ********/
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
 
-    const tooltipValues = sortedData.filter(
+    const tooltipValues = interactivelyFilteredData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({
@@ -252,11 +280,6 @@ const useAreasState = ({
     const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
 
     const yPlacement = "middle";
-    // yAnchor > chartHeight * 0.33
-    //   ? "top"
-    //   : yAnchor < chartHeight * 0.66
-    //   ? "bottom"
-    //   : "middle";
 
     return {
       xAnchor,
@@ -334,15 +357,17 @@ export const AreaChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <AreaChartProvider
-          data={data}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </AreaChartProvider>
+        <InteractiveFiltersProvider>
+          <AreaChartProvider
+            data={data}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+            aspectRatio={aspectRatio}
+          >
+            {children}
+          </AreaChartProvider>
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );
