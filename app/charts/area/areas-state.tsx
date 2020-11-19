@@ -23,7 +23,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { AreaFields } from "../../configurator";
 import { Observation } from "../../domain/data";
 import {
@@ -75,7 +75,15 @@ const useAreasState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
-  const [interactiveFilters] = useInteractiveFilters();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
 
   const hasSegment = fields.segment;
 

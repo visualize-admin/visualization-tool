@@ -7,14 +7,17 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3-scale";
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { BarFields, SortingOrder, SortingType } from "../../configurator";
 import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { InteractiveFiltersProvider } from "../shared/use-interactive-filters";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   BAR_HEIGHT,
@@ -47,6 +50,13 @@ const useGroupedBarsState = ({
   fields: BarFields;
 }): GroupedBarsState => {
   const width = useWidth();
+  const [, dispatchInteractiveFilters] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
+
   const getX = useCallback(
     (d: Observation) => d[fields.x.componentIri] as number,
     [fields.x.componentIri]

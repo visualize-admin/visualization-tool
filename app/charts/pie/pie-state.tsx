@@ -2,7 +2,7 @@ import { ascending, descending } from "d3-array";
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { arc, pie, Pie, PieArcDatum } from "d3-shape";
 
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation } from "../../domain/data";
 import {
@@ -67,7 +67,15 @@ const usePieState = ({
 }): PieState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const [interactiveFilters] = useInteractiveFilters();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
 
   const getY = useCallback(
     (d: Observation): number => +d[fields.y.componentIri] as number,

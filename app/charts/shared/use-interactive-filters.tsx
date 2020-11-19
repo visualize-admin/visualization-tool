@@ -21,6 +21,9 @@ type InteractiveFiltersStateAction =
   | {
       type: "REMOVE_INTERACTIVE_FILTER";
       value: { segment: string };
+    }
+  | {
+      type: "RESET_INTERACTIVE_FILTERS";
     };
 
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {};
@@ -43,6 +46,8 @@ const InteractiveFiltersStateReducer = (
         action.value.segment as keyof InteractiveFiltersState
       ];
       return { ...draftState };
+    case "RESET_INTERACTIVE_FILTERS":
+      return {};
 
     default:
       throw new Error();

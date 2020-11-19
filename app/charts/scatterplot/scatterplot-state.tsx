@@ -1,6 +1,6 @@
 import { ascending, max, min } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { ScatterPlotFields } from "../../configurator";
 import { Observation } from "../../domain/data";
 import {
@@ -46,7 +46,15 @@ const useScatterplotState = ({
   fields: ScatterPlotFields;
   aspectRatio: number;
 }): ScatterplotState => {
-  const [interactiveFilters] = useInteractiveFilters();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
 
   const width = useWidth();
   const formatNumber = useFormatNumber();

@@ -8,7 +8,7 @@ import {
   scaleTime,
 } from "d3-scale";
 
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
   getPalette,
@@ -64,7 +64,15 @@ const useLinesState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
-  const [interactiveFilters] = useInteractiveFilters();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;

@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3-scale";
 
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
@@ -63,7 +63,15 @@ const useGroupedColumnsState = ({
 }): GroupedColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const [interactiveFilters] = useInteractiveFilters();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
@@ -171,6 +179,7 @@ const useGroupedColumnsState = ({
     (d) => !activeInteractiveFilters.includes(getSegment(d))
   );
 
+  console.log({ activeInteractiveFilters });
   // x
   const bandDomain = [
     ...new Set(interactivelyFilteredData.map((d) => getX(d) as string)),

@@ -15,7 +15,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
@@ -71,7 +71,15 @@ const useColumnsStackedState = ({
 }): StackedColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const [interactiveFilters] = useInteractiveFilters();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
