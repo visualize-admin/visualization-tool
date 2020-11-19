@@ -74,10 +74,9 @@ export const Table = () => {
     getTableBodyProps,
     headerGroups,
     rows,
-    setSortBy,
     totalColumnsWidth,
     prepareRow,
-    visibleColumns,
+    state: tableState,
   } = useTable<Observation>(
     {
       columns: tableColumns,
@@ -87,10 +86,11 @@ export const Table = () => {
         return useMemo(
           () => ({
             ...state,
+            sortBy: [...state.sortBy, ...sortingIris],
             groupBy: groupingIris,
             hiddenColumns: hiddenIris,
           }),
-          [state, tableColumns, groupingIris, filteredData, hiddenIris]
+          [state, groupingIris, hiddenIris, sortingIris]
         );
       },
     },
@@ -100,11 +100,8 @@ export const Table = () => {
     useExpanded
   );
 
-  // This effect allows to sort rows
-  // both from the table state and the table UI.
-  React.useEffect(() => {
-    setSortBy(sortingIris);
-  }, [setSortBy, sortingIris]);
+  // If the table has a custom sort, the tableState.sortBy has these items prepended.
+  const customSortCount = tableState.sortBy.length - sortingIris.length;
 
   // React.useEffect(() => {
   //   bounds.width > 700 && toggleAlternativeMobileView(false);
@@ -285,6 +282,7 @@ export const Table = () => {
             {...getTableProps()}
           >
             <TableHeader
+              customSortCount={customSortCount}
               headerGroups={headerGroups}
               tableColumnsMeta={tableColumnsMeta}
             />
