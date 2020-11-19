@@ -83,7 +83,6 @@ export const Table = () => {
       data: filteredData,
       autoResetExpanded: false,
       useControlledState: (state) => {
-        console.log("c", state.sortBy.length);
         return useMemo(
           () => ({
             ...state,
