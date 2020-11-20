@@ -37,6 +37,7 @@ export interface LinesState {
   segments: string[];
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
+  xEntireScale: ScaleTime<number, number>;
   xUniqueValues: Date[];
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
@@ -84,28 +85,43 @@ const useLinesState = ({
   const getSegment = (d: Observation): string =>
     fields.segment ? (d[fields.segment.componentIri] as string) : "fixme";
 
-  // data
+  /** Prepare Data */
+  const { from, to } = interactiveFilters.time;
+  console.log("from", from?.getFullYear());
+  console.log("to", to?.getFullYear());
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
+  const preparedData = useMemo(() => {
+    const prepData =
+      from && to
+        ? sortedData.filter(
+            (d) => from && to && getX(d) >= from && getX(d) <= to
+          )
+        : sortedData;
+    return prepData;
+  }, [from, to, sortedData, getX]);
 
   // x
-  const xUniqueValues = sortedData
+  const xUniqueValues = preparedData
     .map((d) => getX(d))
     .filter(
       (date, i, self) =>
         self.findIndex((d) => d.getTime() === date.getTime()) === i
     );
-  const xDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
+
+  const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
+  const xEntireDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
+  const xEntireScale = scaleTime().domain(xEntireDomain);
 
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
   // y
-  const minValue = Math.min(mkNumber(min(sortedData, getY)), 0);
-  const maxValue = max(sortedData, getY) as number;
+  const minValue = Math.min(mkNumber(min(preparedData, getY)), 0);
+  const maxValue = max(preparedData, getY) as number;
   const yDomain = [minValue, maxValue];
 
   const yScale = scaleLinear().domain(yDomain).nice();
@@ -114,7 +130,7 @@ const useLinesState = ({
     fields.y.componentIri;
 
   // segments
-  const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
+  const segments = [...new Set(preparedData.map(getSegment))].sort((a, b) =>
     ascending(a, b)
   );
   // Map ordered segments to colors
@@ -144,8 +160,8 @@ const useLinesState = ({
 
   const xKey = fields.x.componentIri;
 
-  const grouped = group(sortedData, getSegment);
-  const groupedMap = group(sortedData, getGroups);
+  const grouped = group(preparedData, getSegment);
+  const groupedMap = group(preparedData, getGroups);
   const wide = [];
 
   for (const [key, values] of groupedMap) {
@@ -170,7 +186,7 @@ const useLinesState = ({
   const margins = {
     top: 50,
     right: 40,
-    bottom: 40,
+    bottom: 100,
     left: left + LEFT_MARGIN_OFFSET,
   };
   const chartWidth = width - margins.left - margins.right;
@@ -183,13 +199,14 @@ const useLinesState = ({
     chartHeight,
   };
   xScale.range([0, chartWidth]);
+  xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Apply end-user-activated interactive filters to the stack
   const { categories } = interactiveFilters;
   const activeInteractiveFilters = Object.keys(categories);
 
-  const interactivelyFilteredData = sortedData.filter(
+  const interactivelyFilteredData = preparedData.filter(
     (d) => !activeInteractiveFilters.includes(getSegment(d))
   );
 
@@ -238,6 +255,7 @@ const useLinesState = ({
     bounds,
     getX,
     xScale,
+    xEntireScale,
     xUniqueValues,
     getY,
     yScale,
