@@ -8,6 +8,10 @@ import { LinesState } from "../line/lines-state";
 import { useChartState } from "./use-chart-state";
 import { useChartTheme } from "./use-chart-theme";
 
+// Approximate the longest date format we're using for
+// Roughly equivalent to estimateTextWidth("99.99.9999", 12);
+const MAX_DATE_LABEL_LENGHT = 70;
+
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
   const formatDateAuto = useFormatShortDateAuto();
@@ -24,17 +28,13 @@ export const AxisTime = () => {
 
   const hasNegativeValues = yScale.domain()[0] < 0;
 
-  // Approximate the longest date format we're using for
-  // Roughly equivalent to estimateTextWidth("99.99.9999", 12);
-  const maxLabelLength = 70;
-
   // This could be useful: use data points as tick values,
   // but it does not solve the problem of overlapping.
   // const tickValues =
-  //   bounds.chartWidth / (maxLabelLength + 20) > xUniqueValues.length
+  //   bounds.chartWidth / (MAX_DATE_LABEL_LENGHT + 20) > xUniqueValues.length
   //     ? xUniqueValues
   //     : null;
-  const ticks = bounds.chartWidth / (maxLabelLength + 20);
+  const ticks = bounds.chartWidth / (MAX_DATE_LABEL_LENGHT + 20);
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     g.call(
