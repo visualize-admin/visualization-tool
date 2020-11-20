@@ -104,6 +104,7 @@ export const Brush = () => {
     const g = select(ref.current);
     if (from && to && brushedIsEnded) {
       const coord = [xEntireScale(from), xEntireScale(to)];
+      // @ts-ignore
       g.transition().call(brush.move, coord);
     }
   }, [brush.move, from, to, xEntireScale, brushedIsEnded]);
@@ -121,24 +122,14 @@ export const Brush = () => {
         })`}
       >
         {from && (
-          <Box
-            as="text"
-            sx={{ fontSize: 1, textAnchor: "middle" }}
-            x={xEntireScale(from)}
-            y={10}
-          >
+          <text fontSize={10} textAnchor="middle" x={xEntireScale(from)} y={10}>
             {formatDateAuto(from)}
-          </Box>
+          </text>
         )}
         {to && (
-          <Box
-            as="text"
-            sx={{ fontSize: 1, textAnchor: "middle" }}
-            x={xEntireScale(to)}
-            y={10}
-          >
+          <text fontSize={10} textAnchor="middle" x={xEntireScale(to)} y={10}>
             {formatDateAuto(to)}
-          </Box>
+          </text>
         )}
       </g>
       {/* Date Start and End */}
@@ -153,14 +144,9 @@ export const Brush = () => {
         })`}
       >
         {xEntireScale.domain().map((date) => (
-          <Box
-            as="text"
-            sx={{ fontSize: 1, textAnchor: "middle" }}
-            x={xEntireScale(date)}
-            y={10}
-          >
+          <text fontSize={10} textAnchor="middle" x={xEntireScale(date)} y={10}>
             {formatDateAuto(date)}
-          </Box>
+          </text>
         ))}
       </g>
       {/* Date ticks */}

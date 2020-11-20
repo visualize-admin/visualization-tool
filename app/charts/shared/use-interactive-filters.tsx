@@ -85,9 +85,11 @@ export const InteractiveFiltersProvider = ({
 }) => {
   const [state, dispatch] = useImmerReducer<
     Reducer<InteractiveFiltersState, InteractiveFiltersStateAction>
+    // @ts-ignore
   >(InteractiveFiltersStateReducer, INTERACTIVE_FILTERS_INITIAL_STATE);
 
   return (
+    // @ts-ignore
     <InteractiveFiltersStateContext.Provider value={[state, dispatch]}>
       {children}
     </InteractiveFiltersStateContext.Provider>
