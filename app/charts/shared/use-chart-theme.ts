@@ -12,6 +12,9 @@ export const useChartTheme = () => {
   const axisLabelFontWeight = 500;
   const axisLabelColor = theme.colors.monochrome800;
   const markBorderColor = theme.colors.monochrome100;
+  const brushOverlayColor = theme.colors.monochrome300;
+  const brushSelectionColor = theme.colors.monochrome600;
+  const brushHandleColor = theme.colors.monochrome800;
 
   return {
     axisLabelFontSize,
@@ -24,5 +27,8 @@ export const useChartTheme = () => {
     legendLabelColor,
     fontFamily,
     markBorderColor,
+    brushOverlayColor,
+    brushSelectionColor,
+    brushHandleColor,
   };
 };
