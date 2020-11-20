@@ -31,6 +31,7 @@ import {
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
 import { getWideData } from "../shared/chart-helpers";
+import { BRUSH_HEIGHT } from "../shared/brush";
 
 export interface LinesState {
   data: Observation[];
@@ -103,7 +104,12 @@ const useLinesState = ({
     getY,
     xKey,
   });
-
+  const xUniqueValues = sortedData
+    .map((d) => getX(d))
+    .filter(
+      (date, i, self) =>
+        self.findIndex((d) => d.getTime() === date.getTime()) === i
+    );
   /** Prepare Data for use in chart
    * !== data used in some other components like Brush
    * based on *all* data observations.
@@ -132,13 +138,6 @@ const useLinesState = ({
   );
 
   // x
-  const xUniqueValues = preparedData
-    .map((d) => getX(d))
-    .filter(
-      (date, i, self) =>
-        self.findIndex((d) => d.getTime() === date.getTime()) === i
-    );
-
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
 
@@ -202,7 +201,7 @@ const useLinesState = ({
   const chartHeight = chartWidth * aspectRatio;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom,
+    height: chartHeight + margins.top + margins.bottom + BRUSH_HEIGHT,
     margins,
     chartWidth,
     chartHeight,

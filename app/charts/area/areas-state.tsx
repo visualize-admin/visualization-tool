@@ -44,6 +44,7 @@ import {
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
 import { getWideData } from "../shared/chart-helpers";
+import { BRUSH_HEIGHT } from "../shared/brush";
 
 export interface AreasState {
   data: Observation[];
@@ -121,6 +122,13 @@ const useAreasState = ({
     getY,
     xKey,
   });
+  const xUniqueValues = sortedData
+    .map((d) => getX(d))
+    .filter(
+      (date, i, self) =>
+        self.findIndex((d) => d.getTime() === date.getTime()) === i
+    );
+
   /** Prepare Data for use in chart
    * !== data used in some other components like Brush
    * based on *all* data observations.
@@ -149,9 +157,7 @@ const useAreasState = ({
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
-  /*******************
-   * Ordered segments
-   */
+  /** Ordered segments */
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
@@ -199,19 +205,9 @@ const useAreasState = ({
 
   const series = stacked(chartWideData as { [key: string]: number }[]);
 
-  /********
-   * Scales
-   */
-
+  /** Scales */
   const maxTotal = max<$FixMe, number>(chartWideData, (d) => d.total) as number;
   const yDomain = [0, maxTotal] as [number, number];
-
-  const xUniqueValues = preparedData
-    .map((d) => getX(d))
-    .filter(
-      (date, i, self) =>
-        self.findIndex((d) => d.getTime() === date.getTime()) === i
-    );
 
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
@@ -246,9 +242,7 @@ const useAreasState = ({
     colors.range(getPalette(fields.segment?.palette));
   }
 
-  /************
-   * Dimensions
-   **/
+  /** Dimensions */
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
     estimateTextWidth(formatNumber(yScale.domain()[1]))
@@ -263,7 +257,7 @@ const useAreasState = ({
   const chartHeight = chartWidth * aspectRatio;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom,
+    height: chartHeight + margins.top + margins.bottom + BRUSH_HEIGHT,
     margins,
     chartWidth,
     chartHeight,
@@ -271,9 +265,7 @@ const useAreasState = ({
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  /**********
-   * Tooltip
-   **/
+  /** Tooltip */
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
 
