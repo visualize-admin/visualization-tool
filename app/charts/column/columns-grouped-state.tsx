@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3-scale";
 
-import { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
@@ -29,6 +29,10 @@ import {
   PADDING_OUTER,
   PADDING_WITHIN,
 } from "./constants";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
 
 export interface GroupedColumnsState {
   sortedData: Observation[];
@@ -59,6 +63,15 @@ const useGroupedColumnsState = ({
 }): GroupedColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
@@ -101,6 +114,7 @@ const useGroupedColumnsState = ({
       }),
     [data, getX, xSortingType, xSortingOrder, xOrder]
   );
+
   // segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
@@ -154,8 +168,22 @@ const useGroupedColumnsState = ({
     colors.range(getPalette(fields.segment?.palette));
   }
 
+  // Apply end-user-activated interactive filters to the stack
+  // We use segments and sorted data to display legend and axis
+  // but filtered segments and data in the chart itself (band domain + tooltips).
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const activeSegments = segments.filter(
+    (s) => !activeInteractiveFilters.includes(s)
+  );
+  const interactivelyFilteredData = sortedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
+
+  console.log({ activeInteractiveFilters });
   // x
-  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
+  const bandDomain = [
+    ...new Set(interactivelyFilteredData.map((d) => getX(d) as string)),
+  ];
   const xScale = scaleBand()
     .domain(bandDomain)
     .paddingInner(PADDING_INNER)
@@ -165,8 +193,7 @@ const useGroupedColumnsState = ({
     .paddingInner(0)
     .paddingOuter(0);
 
-  // const inBandDomain = [...new Set(sortedData.map(getSegment))];
-  const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
+  const xScaleIn = scaleBand().domain(activeSegments).padding(PADDING_WITHIN);
 
   // y
   const minValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
@@ -229,7 +256,9 @@ const useGroupedColumnsState = ({
     const yRef = yScale(getY(datum));
     const yAnchor = yRef;
 
-    const tooltipValues = data.filter((j) => getX(j) === getX(datum));
+    const tooltipValues = interactivelyFilteredData.filter(
+      (j) => getX(j) === getX(datum)
+    );
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
@@ -343,15 +372,17 @@ export const GroupedColumnChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <GroupedColumnChartProvider
-          data={data}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </GroupedColumnChartProvider>
+        <InteractiveFiltersProvider>
+          <GroupedColumnChartProvider
+            data={data}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+            aspectRatio={aspectRatio}
+          >
+            {children}
+          </GroupedColumnChartProvider>
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );

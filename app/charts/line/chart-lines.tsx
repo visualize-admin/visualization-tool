@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { LineConfig, LineFields } from "../../configurator";
 import { Observation } from "../../domain/data";
@@ -16,7 +16,7 @@ import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
 import { AxisHeightLinear } from "../shared/axis-height-linear";
 import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionHorizontal } from "../shared/overlay-horizontal";
-import { LegendColor } from "../shared/legend-color";
+import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Lines } from "./lines";
 import { LineChart } from "./lines-state";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
@@ -106,7 +106,7 @@ export const ChartLines = memo(
           <Tooltip type={fields.segment ? "multiple" : "single"} />
         </ChartContainer>
 
-        {fields.segment && <LegendColor symbol="line" />}
+        {fields.segment && <InteractiveLegendColor symbol="line" />}
       </LineChart>
     );
   }

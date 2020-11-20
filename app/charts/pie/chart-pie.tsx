@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { PieConfig, PieFields } from "../../configurator";
 import { Observation } from "../../domain/data";
@@ -10,7 +10,7 @@ import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
 import { ChartContainer, ChartSvg } from "../shared/containers";
 import { Tooltip } from "../shared/interaction/tooltip";
-import { LegendColor } from "../shared/legend-color";
+import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Pie } from "./pie";
 import { PieChart } from "./pie-state";
 import {
@@ -98,7 +98,7 @@ export const ChartPie = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && <LegendColor symbol="square" />}
+        {fields.segment && <InteractiveLegendColor symbol="square" />}
       </PieChart>
     );
   }

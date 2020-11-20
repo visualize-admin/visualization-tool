@@ -87,6 +87,11 @@ const pages: ConfigPageOrGroup[] = [
         title: "Data Table",
         content: require("../docs/data-table.docs"),
       },
+      {
+        path: "/charts/scatterplot",
+        title: "Scatterplot",
+        content: require("../docs/scatterplot.docs"),
+      },
     ],
   },
   {

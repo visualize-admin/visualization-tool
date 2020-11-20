@@ -3,7 +3,8 @@ import { line } from "d3-shape";
 import { Observation } from "../../domain/data";
 import { LinesState } from "./lines-state";
 import { useTheme } from "../../themes";
-import { memo } from "react";
+import { Fragment, memo } from "react";
+import { useInteractiveFilters } from "../shared/use-interactive-filters";
 
 export const Lines = () => {
   const {
@@ -17,6 +18,9 @@ export const Lines = () => {
   } = useChartState() as LinesState;
   const theme = useTheme();
 
+  const [interactiveFilters] = useInteractiveFilters();
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
+
   const lineGenerator = line<Observation>()
     // .defined(d => !isNaN(d))
     .x((d) => xScale(getX(d)))
@@ -26,15 +30,19 @@ export const Lines = () => {
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
       {Array.from(grouped).map((observation, index) => {
         return (
-          <Line
-            key={index}
-            path={lineGenerator(observation[1]) as string}
-            color={
-              Array.from(grouped).length > 1
-                ? colors(observation[0])
-                : theme.colors.primary
-            }
-          />
+          <Fragment key={observation[0]}>
+            {!activeInteractiveFilters.includes(observation[0]) && (
+              <Line
+                key={index}
+                path={lineGenerator(observation[1]) as string}
+                color={
+                  Array.from(grouped).length > 1
+                    ? colors(observation[0])
+                    : theme.colors.primary
+                }
+              />
+            )}
+          </Fragment>
         );
       })}
     </g>

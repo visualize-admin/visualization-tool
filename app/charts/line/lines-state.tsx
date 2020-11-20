@@ -8,7 +8,7 @@ import {
   scaleTime,
 } from "d3-scale";
 
-import { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
   getPalette,
@@ -26,6 +26,10 @@ import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LineFields } from "../../configurator";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
 
 export interface LinesState {
   data: Observation[];
@@ -60,6 +64,15 @@ const useLinesState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
@@ -172,12 +185,18 @@ const useLinesState = ({
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  // Apply end-user-activated interactive filters to the stack
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const interactivelyFilteredData = sortedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
     const yAnchor = yScale(getY(datum));
 
-    const tooltipValues = data.filter(
+    const tooltipValues = interactivelyFilteredData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({
@@ -190,11 +209,6 @@ const useLinesState = ({
     const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
 
     const yPlacement = "middle";
-    // yAnchor > chartHeight * 0.2
-    //   ? "top"
-    //   : yAnchor < chartHeight * 0.8
-    //   ? "bottom"
-    // :  "middle";
 
     return {
       xAnchor,
@@ -276,15 +290,17 @@ export const LineChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <LineChartProvider
-          data={data}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </LineChartProvider>
+        <InteractiveFiltersProvider>
+          <LineChartProvider
+            data={data}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+            aspectRatio={aspectRatio}
+          >
+            {children}
+          </LineChartProvider>
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );

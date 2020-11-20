@@ -1,6 +1,6 @@
 import { ascending, max, min } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
-import { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { ScatterPlotFields } from "../../configurator";
 import { Observation } from "../../domain/data";
 import {
@@ -15,6 +15,10 @@ import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
 
 export interface ScatterplotState {
   chartType: string;
@@ -42,6 +46,16 @@ const useScatterplotState = ({
   fields: ScatterPlotFields;
   aspectRatio: number;
 }): ScatterplotState => {
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
+
+  useEffect(
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    [dispatchInteractiveFilters, fields.segment]
+  );
+
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
@@ -162,9 +176,15 @@ const useScatterplotState = ({
     };
   };
 
+  // Interactive Filters
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const interactivelyFilteredData = sortedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
+
   return {
     chartType: "scatterplot",
-    data: sortedData,
+    data: interactivelyFilteredData, // sortedData + filtered data,
     bounds,
     getX,
     xScale,
@@ -218,15 +238,17 @@ export const ScatterplotChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <ScatterplotChartProvider
-          data={data}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </ScatterplotChartProvider>
+        <InteractiveFiltersProvider>
+          <ScatterplotChartProvider
+            data={data}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+            aspectRatio={aspectRatio}
+          >
+            {children}
+          </ScatterplotChartProvider>
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );

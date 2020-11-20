@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { useChartState } from "../shared/use-chart-state";
+import { useInteractiveFilters } from "../shared/use-interactive-filters";
 import { GroupedColumnsState } from "./columns-grouped-state";
 
 export const ColumnsGrouped = () => {
@@ -14,6 +15,8 @@ export const ColumnsGrouped = () => {
     grouped,
   } = useChartState() as GroupedColumnsState;
   const { margins } = bounds;
+  const [interactiveFilters] = useInteractiveFilters();
+  const activeInteractiveFilters = Object.keys(interactiveFilters);
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -25,7 +28,11 @@ export const ColumnsGrouped = () => {
               x={xScaleIn(getSegment(d)) as number}
               y={yScale(Math.max(0, getY(d)))}
               width={xScaleIn.bandwidth()}
-              height={Math.abs(yScale(getY(d)) - yScale(0))}
+              height={
+                activeInteractiveFilters.includes(getSegment(d))
+                  ? 0
+                  : Math.abs(yScale(getY(d)) - yScale(0))
+              }
               color={colors(getSegment(d))}
             />
           ))}

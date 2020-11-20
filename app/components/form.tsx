@@ -93,12 +93,18 @@ export const Checkbox = ({
   checked,
   disabled,
   onChange,
-}: { label: ReactNode; disabled?: boolean } & FieldProps) => (
+  color,
+}: { label: ReactNode; disabled?: boolean; color?: string } & FieldProps) => (
   <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
     <RebassCheckbox
+      data-name="checkbox-component"
       sx={{
         // size: 20,
         color: checked && !disabled ? "primary" : "monochrome500",
+        "> *": {
+          color:
+            color && checked ? color : checked ? "primary" : "monochrome500",
+        },
       }}
       id={`${name}-${label}`}
       name={name}
