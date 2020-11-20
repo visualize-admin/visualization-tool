@@ -1,33 +1,42 @@
+import "d3-transition";
 import { Box } from "@theme-ui/components";
 import { bisector } from "d3-array";
 import { brushX } from "d3-brush";
 import { select, Selection } from "d3-selection";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
 import { LinesState } from "../line/lines-state";
 import { useChartState } from "./use-chart-state";
+import { useChartTheme } from "./use-chart-theme";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
-const BRUSH_HEIGHT = 60;
+export const BRUSH_HEIGHT = 20;
 
 export const Brush = () => {
   const ref = useRef<SVGGElement>(null);
+  const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
+  console.log({ brushedIsEnded });
+  // const axisRef = useRef<SVGGElement>(null);
   const [state, dispatch] = useInteractiveFilters();
   const formatDateAuto = useFormatShortDateAuto();
+  const {
+    brushOverlayColor,
+    brushSelectionColor,
+    brushHandleColor,
+  } = useChartTheme();
   const { from, to } = state.time;
-  const { xEntireScale, getX, bounds, allDataWide } = useChartState() as
-    | LinesState
-    | AreasState;
-
-  const brushed = ({
-    selection,
-    mode,
-  }: {
-    selection: [number, number];
-    mode: string;
-  }) => {
+  const {
+    xEntireScale,
+    getX,
+    bounds,
+    allDataWide,
+    xUniqueValues,
+  } = useChartState() as LinesState | AreasState;
+  console.log(xUniqueValues);
+  const brushed = ({ selection }: { selection: [number, number] }) => {
+    updateBrushEndedStatus(false);
     if (selection) {
       const [xStart, xEnd] = selection.map((s) => xEntireScale.invert(s));
 
@@ -56,53 +65,59 @@ export const Brush = () => {
         getX(dEndRight).getTime() - xEnd.getTime()
           ? dEndRight
           : dEndLeft;
+
+      // Update interactive filters state
       dispatch({
         type: "ADD_TIME_FILTER",
         value: [getX(startClosestDatum), getX(endClosestDatum)],
       });
     }
   };
-  const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    // Creates 1-Dimensional brush
-    const brush = brushX()
-      .extent([
-        [0, 30],
-        [bounds.chartWidth, BRUSH_HEIGHT],
-      ])
-      .on("start brush end", brushed);
 
+  // Creates a 1-dimensional brush
+  const brush = brushX()
+    .extent([
+      [0, 0],
+      [bounds.chartWidth, BRUSH_HEIGHT],
+    ])
+    .on("start brush", brushed)
+    .on("end", () => updateBrushEndedStatus(true));
+
+  const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+    g.select(".overlay")
+      .attr("fill", brushOverlayColor)
+      .attr("fill-opacity", 0.9);
+    g.select(".selection").attr("fill", brushSelectionColor);
+    g.selectAll(".handle").attr("fill", brushHandleColor);
     // Apply brush to selected group
     g.call(brush);
-
-    // Styling
-    g.select(".overlay").attr("fill", "moccasin").attr("fill-opacity", 0.3);
-    g.select(".selection").attr("fill", "darkorange");
   };
 
   useEffect(() => {
     const g = select(ref.current);
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-    // mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
   });
+
+  // This effect allow "snapping" to actual data points
+  // after brush is ended and interactive-filters state is updated
+  useEffect(() => {
+    const g = select(ref.current);
+    if (from && to && brushedIsEnded) {
+      const coord = [xEntireScale(from), xEntireScale(to)];
+      g.transition().call(brush.move, coord);
+    }
+  }, [brush.move, from, to, xEntireScale, brushedIsEnded]);
 
   return (
     <>
+      {/* Handle Dates */}
       <g
-        ref={ref}
         transform={`translate(${bounds.margins.left}, ${
-          bounds.chartHeight + bounds.margins.top + BRUSH_HEIGHT
-        })`}
-      >
-        {xEntireScale.domain().map((date, i) => (
-          <text key={i} x={xEntireScale(date)} y={10}>
-            {formatDateAuto(date)}
-          </text>
-        ))}
-      </g>
-      <g
-        ref={ref}
-        transform={`translate(${bounds.margins.left}, ${
-          bounds.chartHeight + bounds.margins.top + BRUSH_HEIGHT
+          bounds.chartHeight +
+          bounds.margins.top +
+          bounds.margins.bottom / 2 +
+          BRUSH_HEIGHT +
+          4
         })`}
       >
         {from && (
@@ -126,10 +141,44 @@ export const Brush = () => {
           </Box>
         )}
       </g>
+      {/* Date Start and End */}
+
+      <g
+        transform={`translate(${bounds.margins.left}, ${
+          bounds.chartHeight +
+          bounds.margins.top +
+          bounds.margins.bottom / 2 +
+          BRUSH_HEIGHT +
+          4
+        })`}
+      >
+        {xEntireScale.domain().map((date) => (
+          <Box
+            as="text"
+            sx={{ fontSize: 1, textAnchor: "middle" }}
+            x={xEntireScale(date)}
+            y={10}
+          >
+            {formatDateAuto(date)}
+          </Box>
+        ))}
+      </g>
+      {/* Date ticks */}
+      <g
+        transform={`translate(${bounds.margins.left}, ${
+          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
+        })`}
+      >
+        {xUniqueValues.map((date) => (
+          <rect x={xEntireScale(date)} y={0} width={1} height={BRUSH_HEIGHT} />
+        ))}
+      </g>
+
+      {/* Brush */}
       <g
         ref={ref}
         transform={`translate(${bounds.margins.left}, ${
-          bounds.chartHeight + bounds.margins.top
+          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
         })`}
       />
     </>
