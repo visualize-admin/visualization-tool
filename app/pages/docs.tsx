@@ -88,6 +88,11 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/data-table.docs"),
       },
       {
+        path: "/charts/line-chart",
+        title: "Lines",
+        content: require("../docs/lines.docs"),
+      },
+      {
         path: "/charts/scatterplot",
         title: "Scatterplot",
         content: require("../docs/scatterplot.docs"),
