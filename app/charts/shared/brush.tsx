@@ -17,13 +17,9 @@ export const Brush = () => {
   const [state, dispatch] = useInteractiveFilters();
   const formatDateAuto = useFormatShortDateAuto();
   const { from, to } = state.time;
-  const {
-    xEntireScale,
-    getX,
-    bounds,
-    allDataWide,
-  } = useChartState() as LinesState;
-  // | AreasState;
+  const { xEntireScale, getX, bounds, allDataWide } = useChartState() as
+    | LinesState
+    | AreasState;
 
   const brushed = ({
     selection,

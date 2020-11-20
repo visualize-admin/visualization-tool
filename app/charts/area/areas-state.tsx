@@ -25,10 +25,9 @@ import {
 
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { AreaFields } from "../../configurator";
-import { Observation } from "../../domain/data";
+import { Observation, ObservationValue } from "../../domain/data";
 import {
   getPalette,
-  isNumber,
   parseDate,
   useFormatFullDateAuto,
   useFormatNumber,
@@ -44,12 +43,14 @@ import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
+import { getWideData } from "../shared/chart-helpers";
 
 export interface AreasState {
   data: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
+  xEntireScale: ScaleTime<number, number>;
   xUniqueValues: Date[];
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
@@ -57,7 +58,8 @@ export interface AreasState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  wide: { [key: string]: number | string }[];
+  chartWideData: ArrayLike<Record<string, ObservationValue>>;
+  allDataWide: ArrayLike<Record<string, ObservationValue>>;
   series: $FixMe[];
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
@@ -100,12 +102,47 @@ const useAreasState = ({
     [fields.segment]
   );
 
+  const xKey = fields.x.componentIri;
+
+  /** Data
+   * Contains *all* observations, used for brushing
+   */
   const sortedData = useMemo(
     () =>
       [...data]
         // Always sort by x first (TemporalDimension)
         .sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
+  );
+  const allDataGroupedMap = group(sortedData, getGroups);
+  const allDataWide = getWideData({
+    groupedMap: allDataGroupedMap,
+    getSegment,
+    getY,
+    xKey,
+  });
+  /** Prepare Data for use in chart
+   * !== data used in some other components like Brush
+   * based on *all* data observations.
+   */
+  const { from, to } = interactiveFilters.time;
+  const preparedData = useMemo(() => {
+    const prepData =
+      from && to
+        ? sortedData.filter(
+            (d) => from && to && getX(d) >= from && getX(d) <= to
+          )
+        : sortedData;
+    return prepData;
+  }, [from, to, sortedData, getX]);
+  const groupedMap = group(preparedData, getGroups);
+  const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
+
+  // Apply "categories" end-user-activated interactive filters to the stack
+  const { categories } = interactiveFilters;
+  const activeInteractiveFilters = Object.keys(categories);
+  const interactivelyFilteredData = preparedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
   );
 
   const yAxisLabel =
@@ -119,14 +156,14 @@ const useAreasState = ({
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
   const segmentsOrderedByName = Array.from(
-    new Set(sortedData.map((d) => getSegment(d)))
+    new Set(preparedData.map((d) => getSegment(d)))
   ).sort((a, b) =>
     segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
   );
 
   const segmentsOrderedByTotalValue = [
     ...rollup(
-      sortedData,
+      preparedData,
       (v) => sum(v, (x) => getY(x)),
       (x) => getSegment(x)
     ),
@@ -143,34 +180,9 @@ const useAreasState = ({
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
 
-  /**************
-   * Prepare data
-   **/
-
-  // All data sent to the front-end
-  const xKey = fields.x.componentIri;
-  const wide: { [key: string]: number | string }[] = [];
-  const groupedMap = group(sortedData, getGroups);
-
-  for (const [key, values] of groupedMap) {
-    const keyObject = values.reduce<{ [k: string]: number | string }>(
-      (obj, cur) => {
-        const currentKey = getSegment(cur);
-        const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
-        const total = currentY + (obj.total as number);
-        return {
-          ...obj,
-          [currentKey]: getY(cur),
-          total,
-        };
-      },
-      { total: 0 }
-    );
-    wide.push({
-      ...keyObject,
-      [xKey]: key,
-    });
-  }
+  const activeSegments = segments.filter(
+    (s) => !activeInteractiveFilters.includes(s)
+  );
 
   // Stack order
   const stackOrder =
@@ -180,40 +192,32 @@ const useAreasState = ({
       ? stackOrderDescending
       : stackOrderReverse;
 
-  // Apply end-user-activated interactive filters to the stack
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-  const interactivelyFilteredData = sortedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
-  const activeSegments = segments.filter(
-    (s) => !activeInteractiveFilters.includes(s)
-  );
-
   const stacked = stack()
     .order(stackOrder)
     .offset(stackOffsetDiverging)
     .keys(activeSegments);
 
-  const series = stacked(wide as { [key: string]: number }[]);
+  const series = stacked(chartWideData as { [key: string]: number }[]);
 
   /********
    * Scales
    */
 
-  const maxTotal = max<$FixMe, number>(wide, (d) => d.total) as number;
+  const maxTotal = max<$FixMe, number>(chartWideData, (d) => d.total) as number;
   const yDomain = [0, maxTotal] as [number, number];
 
-  const xUniqueValues = data
+  const xUniqueValues = preparedData
     .map((d) => getX(d))
     .filter(
       (date, i, self) =>
         self.findIndex((d) => d.getTime() === date.getTime()) === i
     );
 
-  const xDomain = extent(data, (d) => getX(d)) as [Date, Date];
-
+  const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
+
+  const xEntireDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
+  const xEntireScale = scaleTime().domain(xEntireDomain);
 
   const yScale = scaleLinear().domain(yDomain).nice();
 
@@ -320,6 +324,7 @@ const useAreasState = ({
     bounds,
     getX,
     xScale,
+    xEntireScale,
     xUniqueValues,
     getY,
     yScale,
@@ -327,7 +332,8 @@ const useAreasState = ({
     yAxisLabel,
     segments,
     colors,
-    wide,
+    chartWideData,
+    allDataWide,
     series,
     getAnnotationInfo,
   };

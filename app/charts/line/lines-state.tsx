@@ -30,34 +30,7 @@ import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
-
-const getWideData = ({
-  xKey,
-  groupedMap,
-  getSegment,
-  getY,
-}: {
-  xKey: string;
-  groupedMap: Map<string, Record<string, ObservationValue>[]>;
-  getSegment: (d: Observation) => string;
-  getY: (d: Observation) => number;
-}) => {
-  const wideArray = [];
-  for (const [key, values] of groupedMap) {
-    const keyObject = values.reduce((obj, cur) => {
-      const currentKey = getSegment(cur);
-      return {
-        ...obj,
-        [currentKey]: getY(cur),
-      };
-    }, {});
-    wideArray.push({
-      ...keyObject,
-      [xKey]: key,
-    });
-  }
-  return wideArray;
-};
+import { getWideData } from "../shared/chart-helpers";
 
 export interface LinesState {
   data: Observation[];
@@ -124,7 +97,6 @@ const useLinesState = ({
     [data, getX]
   );
   const allDataGroupedMap = group(sortedData, getGroups);
-
   const allDataWide = getWideData({
     groupedMap: allDataGroupedMap,
     getSegment,
@@ -151,7 +123,7 @@ const useLinesState = ({
   const groupedMap = group(preparedData, getGroups);
   const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
 
-  // Apply end-user-activated interactive filters to the stack
+  // Apply "categories" end-user-activated interactive filters to the stack
   const { categories } = interactiveFilters;
   const activeInteractiveFilters = Object.keys(categories);
 
@@ -168,8 +140,9 @@ const useLinesState = ({
     );
 
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
-  const xEntireDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
+
+  const xEntireDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
   const xEntireScale = scaleTime().domain(xEntireDomain);
 
   const xAxisLabel =
