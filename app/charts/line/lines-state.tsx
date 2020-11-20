@@ -31,6 +31,34 @@ import {
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
 
+const getWideData = ({
+  xKey,
+  groupedMap,
+  getSegment,
+  getY,
+}: {
+  xKey: string;
+  groupedMap: Map<string, Record<string, ObservationValue>[]>;
+  getSegment: (d: Observation) => string;
+  getY: (d: Observation) => number;
+}) => {
+  const wideArray = [];
+  for (const [key, values] of groupedMap) {
+    const keyObject = values.reduce((obj, cur) => {
+      const currentKey = getSegment(cur);
+      return {
+        ...obj,
+        [currentKey]: getY(cur),
+      };
+    }, {});
+    wideArray.push({
+      ...keyObject,
+      [xKey]: key,
+    });
+  }
+  return wideArray;
+};
+
 export interface LinesState {
   data: Observation[];
   bounds: Bounds;
@@ -46,7 +74,8 @@ export interface LinesState {
   xAxisLabel: string;
   yAxisLabel: string;
   grouped: Map<string, Observation[]>;
-  wide: ArrayLike<Record<string, ObservationValue>>;
+  chartWideData: ArrayLike<Record<string, ObservationValue>>;
+  allDataWide: ArrayLike<Record<string, ObservationValue>>;
   xKey: string;
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
@@ -85,14 +114,29 @@ const useLinesState = ({
   const getSegment = (d: Observation): string =>
     fields.segment ? (d[fields.segment.componentIri] as string) : "fixme";
 
-  /** Prepare Data */
-  const { from, to } = interactiveFilters.time;
-  console.log("from", from?.getFullYear());
-  console.log("to", to?.getFullYear());
+  const xKey = fields.x.componentIri;
+
+  /** Data
+   * Contains *all* observations, used for brushing
+   */
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
+  const allDataGroupedMap = group(sortedData, getGroups);
+
+  const allDataWide = getWideData({
+    groupedMap: allDataGroupedMap,
+    getSegment,
+    getY,
+    xKey,
+  });
+
+  /** Prepare Data for use in chart
+   * !== data used in some other components like Brush
+   * based on *all* data observations.
+   */
+  const { from, to } = interactiveFilters.time;
   const preparedData = useMemo(() => {
     const prepData =
       from && to
@@ -102,6 +146,18 @@ const useLinesState = ({
         : sortedData;
     return prepData;
   }, [from, to, sortedData, getX]);
+
+  const grouped = group(preparedData, getSegment);
+  const groupedMap = group(preparedData, getGroups);
+  const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
+
+  // Apply end-user-activated interactive filters to the stack
+  const { categories } = interactiveFilters;
+  const activeInteractiveFilters = Object.keys(categories);
+
+  const interactivelyFilteredData = preparedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
 
   // x
   const xUniqueValues = preparedData
@@ -158,26 +214,6 @@ const useLinesState = ({
     colors.range(getPalette(fields.segment?.palette));
   }
 
-  const xKey = fields.x.componentIri;
-
-  const grouped = group(preparedData, getSegment);
-  const groupedMap = group(preparedData, getGroups);
-  const wide = [];
-
-  for (const [key, values] of groupedMap) {
-    const keyObject = values.reduce((obj, cur) => {
-      const currentKey = getSegment(cur);
-      return {
-        ...obj,
-        [currentKey]: getY(cur),
-      };
-    }, {});
-    wide.push({
-      ...keyObject,
-      [xKey]: key,
-    });
-  }
-
   // Dimensions
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
@@ -201,14 +237,6 @@ const useLinesState = ({
   xScale.range([0, chartWidth]);
   xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
-
-  // Apply end-user-activated interactive filters to the stack
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-
-  const interactivelyFilteredData = preparedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -265,7 +293,8 @@ const useLinesState = ({
     segments,
     colors,
     grouped,
-    wide,
+    chartWideData,
+    allDataWide,
     xKey,
     getAnnotationInfo,
   };

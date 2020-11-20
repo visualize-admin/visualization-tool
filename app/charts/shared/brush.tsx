@@ -1,7 +1,8 @@
+import { Box } from "@theme-ui/components";
 import { bisector } from "d3-array";
 import { brushX } from "d3-brush";
 import { select, Selection } from "d3-selection";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
@@ -15,23 +16,32 @@ export const Brush = () => {
   const ref = useRef<SVGGElement>(null);
   const [state, dispatch] = useInteractiveFilters();
   const formatDateAuto = useFormatShortDateAuto();
-
-  const { xEntireScale, getX, bounds, wide } = useChartState() as LinesState;
+  const { from, to } = state.time;
+  const {
+    xEntireScale,
+    getX,
+    bounds,
+    allDataWide,
+  } = useChartState() as LinesState;
   // | AreasState;
 
-  const brushed = ({ selection }: { selection: [number, number] }) => {
+  const brushed = ({
+    selection,
+    mode,
+  }: {
+    selection: [number, number];
+    mode: string;
+  }) => {
     if (selection) {
       const [xStart, xEnd] = selection.map((s) => xEntireScale.invert(s));
-      const bisectDate = bisector(
-        (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
-      ).left;
 
       // Start date
-      const startIndex = bisectDate(wide, xStart, 1);
-      // FIXME: should it de just Index (to be encompassed by the brush)
-      const dStartLeft = wide[startIndex - 1];
-      const dStartRight = wide[startIndex] || dStartLeft;
-
+      const bisectDateLeft = bisector(
+        (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
+      ).left;
+      const startIndex = bisectDateLeft(allDataWide, xStart, 1);
+      const dStartLeft = allDataWide[startIndex - 1];
+      const dStartRight = allDataWide[startIndex] || dStartLeft;
       const startClosestDatum =
         xStart.getTime() - getX(dStartLeft).getTime() >
         getX(dStartRight).getTime() - xStart.getTime()
@@ -39,15 +49,17 @@ export const Brush = () => {
           : dStartLeft;
 
       // End date
-      const endIndex = bisectDate(wide, xEnd, 1);
-      const dEndLeft = wide[endIndex - 1];
-      const dEndRight = wide[endIndex] || dEndLeft;
+      const bisectDateRight = bisector(
+        (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
+      ).right;
+      const endIndex = bisectDateRight(allDataWide, xEnd, 1);
+      const dEndLeft = allDataWide[endIndex - 1];
+      const dEndRight = allDataWide[endIndex] || dEndLeft;
       const endClosestDatum =
         xEnd.getTime() - getX(dEndLeft).getTime() >
         getX(dEndRight).getTime() - xEnd.getTime()
           ? dEndRight
           : dEndLeft;
-
       dispatch({
         type: "ADD_TIME_FILTER",
         value: [getX(startClosestDatum), getX(endClosestDatum)],
@@ -61,7 +73,7 @@ export const Brush = () => {
         [0, 30],
         [bounds.chartWidth, BRUSH_HEIGHT],
       ])
-      .on("brush", brushed);
+      .on("start brush end", brushed);
 
     // Apply brush to selected group
     g.call(brush);
@@ -90,6 +102,33 @@ export const Brush = () => {
             {formatDateAuto(date)}
           </text>
         ))}
+      </g>
+      <g
+        ref={ref}
+        transform={`translate(${bounds.margins.left}, ${
+          bounds.chartHeight + bounds.margins.top + BRUSH_HEIGHT
+        })`}
+      >
+        {from && (
+          <Box
+            as="text"
+            sx={{ fontSize: 1, textAnchor: "middle" }}
+            x={xEntireScale(from)}
+            y={10}
+          >
+            {formatDateAuto(from)}
+          </Box>
+        )}
+        {to && (
+          <Box
+            as="text"
+            sx={{ fontSize: 1, textAnchor: "middle" }}
+            x={xEntireScale(to)}
+            y={10}
+          >
+            {formatDateAuto(to)}
+          </Box>
+        )}
       </g>
       <g
         ref={ref}

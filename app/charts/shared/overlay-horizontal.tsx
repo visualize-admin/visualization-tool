@@ -3,6 +3,7 @@ import { pointer } from "d3-selection";
 import { memo, useRef, MouseEvent } from "react";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
+import { LinesState } from "../line/lines-state";
 import { useChartState } from "./use-chart-state";
 import { useInteraction } from "./use-interaction";
 
@@ -10,7 +11,9 @@ export const InteractionHorizontal = memo(({ debug }: { debug?: boolean }) => {
   const [, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 
-  const { data, bounds, getX, xScale, wide } = useChartState() as AreasState;
+  const { data, bounds, getX, xScale, chartWideData } = useChartState() as
+    | AreasState
+    | LinesState;
 
   const { chartWidth, chartHeight, margins } = bounds;
 
@@ -22,9 +25,9 @@ export const InteractionHorizontal = memo(({ debug }: { debug?: boolean }) => {
     ).left;
 
     const thisDate = xScale.invert(x);
-    const i = bisectDate(wide, thisDate, 1);
-    const dLeft = wide[i - 1];
-    const dRight = wide[i] || dLeft;
+    const i = bisectDate(chartWideData, thisDate, 1);
+    const dLeft = chartWideData[i - 1];
+    const dRight = chartWideData[i] || dLeft;
 
     const closestDatum =
       thisDate.getTime() - getX(dLeft).getTime() >
