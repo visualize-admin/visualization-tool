@@ -1,53 +1,48 @@
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  Reducer,
-  useContext,
-  useReducer,
-} from "react";
+import { Reducer, useImmerReducer } from "use-immer";
+import { createContext, Dispatch, ReactNode, useContext } from "react";
 
-type InteractiveFiltersState =
-  | {
-      segment: string;
-    }
-  | {};
+type InteractiveFiltersState = $FixMe;
+// {
+//   categories: $FixMe;
+// };
 
 type InteractiveFiltersStateAction =
   | {
       type: "ADD_INTERACTIVE_FILTER";
-      value: { segment: string };
+      value: string;
     }
   | {
       type: "REMOVE_INTERACTIVE_FILTER";
-      value: { segment: string };
+      value: string;
     }
   | {
       type: "RESET_INTERACTIVE_FILTERS";
     };
 
-const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {};
+const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
+  categories: {},
+};
 
 // Reducer
 const InteractiveFiltersStateReducer = (
-  state: InteractiveFiltersState,
+  draft: InteractiveFiltersState,
   action: InteractiveFiltersStateAction
 ) => {
   switch (action.type) {
     case "ADD_INTERACTIVE_FILTER":
       return {
-        ...state,
-        [action.value.segment]: true,
+        ...draft,
+        categories: { ...draft.categories, [action.value]: true },
       };
     case "REMOVE_INTERACTIVE_FILTER":
-      const draftState = { ...state };
+      // const draftSegmentState = { ...state };
 
-      delete (draftState as InteractiveFiltersState)[
-        action.value.segment as keyof InteractiveFiltersState
+      delete (draft as InteractiveFiltersState).categories[
+        action.value as keyof InteractiveFiltersState
       ];
-      return { ...draftState };
+      return draft;
     case "RESET_INTERACTIVE_FILTERS":
-      return {};
+      return { ...draft, categories: {} };
 
     default:
       throw new Error();
@@ -75,7 +70,7 @@ export const InteractiveFiltersProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [state, dispatch] = useReducer<
+  const [state, dispatch] = useImmerReducer<
     Reducer<InteractiveFiltersState, InteractiveFiltersStateAction>
   >(InteractiveFiltersStateReducer, INTERACTIVE_FILTERS_INITIAL_STATE);
 

@@ -21,7 +21,8 @@ export const InteractiveLegendColor = ({
   symbol: LegendSymbol;
 }) => {
   const [state, dispatch] = useInteractiveFilters();
-  const activeInteractiveFilters = Object.keys(state);
+  const { categories } = state;
+  const activeInteractiveFilters = Object.keys(categories);
   const { colors } = useChartState() as
     | BarsState
     | GroupedBarsState
@@ -33,16 +34,16 @@ export const InteractiveLegendColor = ({
     | ScatterplotState
     | PieState;
 
-  const setFilter = (segment: string) => {
-    if (activeInteractiveFilters.includes(segment)) {
+  const setFilter = (item: string) => {
+    if (activeInteractiveFilters.includes(item)) {
       dispatch({
         type: "REMOVE_INTERACTIVE_FILTER",
-        value: { segment },
+        value: item,
       });
     } else {
       dispatch({
         type: "ADD_INTERACTIVE_FILTER",
-        value: { segment },
+        value: item,
       });
     }
   };

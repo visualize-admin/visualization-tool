@@ -177,7 +177,8 @@ const useScatterplotState = ({
   };
 
   // Interactive Filters
-  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const { categories } = interactiveFilters;
+  const activeInteractiveFilters = Object.keys(categories);
   const interactivelyFilteredData = sortedData.filter(
     (d) => !activeInteractiveFilters.includes(getSegment(d))
   );
