@@ -7,19 +7,21 @@ import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
 import { LinesState } from "../line/lines-state";
 import { useChartState } from "./use-chart-state";
+import { useInteractiveFilters } from "./use-interactive-filters";
 
 const BRUSH_HEIGHT = 60;
 
 export const Brush = () => {
   const ref = useRef<SVGGElement>(null);
+  const [state, dispatch] = useInteractiveFilters();
+  const formatDateAuto = useFormatShortDateAuto();
 
-  const { xScale, getX, bounds, wide } = useChartState() as
-    | LinesState
-    | AreasState;
+  const { xEntireScale, getX, bounds, wide } = useChartState() as LinesState;
+  // | AreasState;
 
   const brushed = ({ selection }: { selection: [number, number] }) => {
     if (selection) {
-      const [xStart, xEnd] = selection.map((s) => xScale.invert(s));
+      const [xStart, xEnd] = selection.map((s) => xEntireScale.invert(s));
       const bisectDate = bisector(
         (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
       ).left;
@@ -45,8 +47,11 @@ export const Brush = () => {
         getX(dEndRight).getTime() - xEnd.getTime()
           ? dEndRight
           : dEndLeft;
-      // console.log("startClosestDatum", startClosestDatum);
-      // console.log("endClosestDatum", endClosestDatum);
+
+      dispatch({
+        type: "ADD_TIME_FILTER",
+        value: [getX(startClosestDatum), getX(endClosestDatum)],
+      });
     }
   };
   const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
@@ -62,21 +67,36 @@ export const Brush = () => {
     g.call(brush);
 
     // Styling
-    g.select(".overlay").attr("fill", "moccasin");
+    g.select(".overlay").attr("fill", "moccasin").attr("fill-opacity", 0.3);
     g.select(".selection").attr("fill", "darkorange");
   };
 
   useEffect(() => {
     const g = select(ref.current);
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
+    // mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
   });
 
   return (
-    <g
-      ref={ref}
-      transform={`translate(${bounds.margins.left}, ${
-        bounds.chartHeight + bounds.margins.top
-      })`}
-    />
+    <>
+      <g
+        ref={ref}
+        transform={`translate(${bounds.margins.left}, ${
+          bounds.chartHeight + bounds.margins.top + BRUSH_HEIGHT
+        })`}
+      >
+        {xEntireScale.domain().map((date, i) => (
+          <text key={i} x={xEntireScale(date)} y={10}>
+            {formatDateAuto(date)}
+          </text>
+        ))}
+      </g>
+      <g
+        ref={ref}
+        transform={`translate(${bounds.margins.left}, ${
+          bounds.chartHeight + bounds.margins.top
+        })`}
+      />
+    </>
   );
 };

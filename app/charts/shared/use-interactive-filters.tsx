@@ -1,10 +1,10 @@
 import { Reducer, useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
 
-type InteractiveFiltersState = $FixMe;
-// {
-//   categories: $FixMe;
-// };
+type InteractiveFiltersState = {
+  categories: $FixMe; //{}; // { [x: string]: boolean };
+  time: { from: Date | undefined; to: Date | undefined };
+};
 
 type InteractiveFiltersStateAction =
   | {
@@ -16,11 +16,16 @@ type InteractiveFiltersStateAction =
       value: string;
     }
   | {
+      type: "ADD_TIME_FILTER";
+      value: [Date, Date];
+    }
+  | {
       type: "RESET_INTERACTIVE_FILTERS";
     };
 
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
+  time: { from: undefined, to: undefined },
 };
 
 // Reducer
@@ -35,14 +40,22 @@ const InteractiveFiltersStateReducer = (
         categories: { ...draft.categories, [action.value]: true },
       };
     case "REMOVE_INTERACTIVE_FILTER":
-      // const draftSegmentState = { ...state };
+      const { categories } = draft;
+      const category = categories[action.value];
 
-      delete (draft as InteractiveFiltersState).categories[
-        action.value as keyof InteractiveFiltersState
-      ];
+      if (category) delete categories[action.value];
       return draft;
+    case "ADD_TIME_FILTER":
+      return {
+        ...draft,
+        time: { from: action.value[0], to: action.value[1] },
+      };
     case "RESET_INTERACTIVE_FILTERS":
-      return { ...draft, categories: {} };
+      return {
+        ...draft,
+        categories: {},
+        time: { from: undefined, to: undefined },
+      };
 
     default:
       throw new Error();
