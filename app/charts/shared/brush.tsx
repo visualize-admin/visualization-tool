@@ -1,9 +1,8 @@
-import "d3-transition";
-import { Box } from "@theme-ui/components";
 import { bisector } from "d3-array";
 import { brushX } from "d3-brush";
 import { select, Selection } from "d3-selection";
-import React, { ReactEventHandler, useEffect, useRef, useState } from "react";
+import "d3-transition";
+import React, { useEffect, useRef, useState } from "react";
 import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
@@ -17,7 +16,7 @@ export const BRUSH_HEIGHT = 20;
 export const Brush = () => {
   const ref = useRef<SVGGElement>(null);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
-  // const axisRef = useRef<SVGGElement>(null);
+
   const [state, dispatch] = useInteractiveFilters();
 
   const formatDateAuto = useFormatShortDateAuto();
