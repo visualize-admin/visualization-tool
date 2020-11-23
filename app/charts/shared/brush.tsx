@@ -251,7 +251,7 @@ export const Brush = () => {
       </g>
       {/* Date Start and End */}
 
-      <g
+      {/* <g
         transform={`translate(${bounds.margins.left}, ${
           bounds.chartHeight +
           bounds.margins.top +
@@ -271,7 +271,7 @@ export const Brush = () => {
             {formatDateAuto(date)}
           </text>
         ))}
-      </g>
+      </g> */}
       {/* Date ticks */}
       {/* <g
         transform={`translate(${bounds.margins.left}, ${
