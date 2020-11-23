@@ -3,7 +3,7 @@ import { createContext, Dispatch, ReactNode, useContext } from "react";
 
 type InteractiveFiltersState = {
   categories: $FixMe; //{}; // { [x: string]: boolean };
-  time: { from: Date; to: Date };
+  time: $FixMe;
 };
 
 type InteractiveFiltersStateAction =
@@ -25,7 +25,7 @@ type InteractiveFiltersStateAction =
 
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
-  time: { from: undefined, to: undefined },
+  time: {},
 };
 
 // Reducer
