@@ -45,6 +45,20 @@ import { IconDragndrop } from "./ic-dragndrop";
 import { IconSortAscending } from "./ic-sort-ascending";
 import { IconSortDescending } from "./ic-sort-descending";
 
+// Generated
+import { default as IconFormatting } from "./components/ic-formatting";
+import { default as IconTrash } from "./components/ic-trash";
+import { default as IconSettings } from "./components/ic-settings";
+
+import { default as IconCategorical } from "./components/ic-categorical-2";
+import { default as IconCategoricalHidden } from "./components/ic-categorical-2-hidden";
+import { default as IconNumerical } from "./components/ic-numerical-2";
+import { default as IconNumericalHidden } from "./components/ic-numerical-2-hidden";
+import { default as IconLocations } from "./components/ic-locations-2";
+import { default as IconLocationsHidden } from "./components/ic-locations-2-hidden";
+import { default as IconTime } from "./components/ic-time-2";
+import { default as IconTimeHidden } from "./components/ic-time-2-hidden";
+
 export const Icons = {
   check: IconCheck,
   add: IconAdd,
@@ -92,12 +106,25 @@ export const Icons = {
   dragndrop: IconDragndrop,
   sortAscending: IconSortAscending,
   sortDescending: IconSortDescending,
+
+  // Generated icons
+  formatting: IconFormatting,
+  trash: IconTrash,
+  settings: IconSettings,
+  tableColumnCategorical: IconCategorical,
+  tableColumnCategoricalHidden: IconCategoricalHidden,
+  tableColumnNumerical: IconNumerical,
+  tableColumnNumericalHidden: IconNumericalHidden,
+  tableColumnLocations: IconLocations,
+  tableColumnLocationsHidden: IconLocationsHidden,
+  tableColumnTime: IconTime,
+  tableColumnTimeHidden: IconTimeHidden,
 };
 
 export type IconName = keyof typeof Icons;
 
 export const Icon = ({
-  size,
+  size = 24,
   color,
   name,
   ...props
@@ -107,5 +134,13 @@ export const Icon = ({
   name: IconName;
 } & ComponentProps<"svg">) => {
   const IconComponent = Icons[name];
-  return <IconComponent size={size} color={color} {...props} />;
+  return (
+    <IconComponent
+      size={size}
+      width={size}
+      height={size}
+      color={color}
+      {...props}
+    />
+  );
 };

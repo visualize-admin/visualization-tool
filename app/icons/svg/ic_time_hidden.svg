@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/24dp/ic_time_hidden</title>
+    <g id="Icons/IXT/24dp/ic_time_hidden" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_calendar_hidden">
+            <rect id="Container" x="0" y="0" width="24" height="24"></rect>
+            <path d="M2.0524531,1.58578644 L22.5857864,22.1191198 L21.1191198,23.5857864 L18.5327864,20.9997864 L5,21 C3.89699984,21 3,20.1030006 3,19 L3,7 C3,6.56724395 3.13807896,6.16619841 3.37250379,5.83859643 L0.585786438,3.0524531 L2.0524531,1.58578644 Z M8.53378644,10.9997864 L5,11 L5,19 L16.5327864,18.9997864 L12.5327864,14.9997864 L7,15 L7,13 L10.5337864,12.9997864 L8.53378644,10.9997864 Z M9,3 L9,5 L15,5 L15,3 L17,3 L17,5 L19,5 C20.1030006,5 21,5.89699984 21,7 L21,18.293 L19.001,16.294 L19.0005722,11 L13.707,11 L11.707,9 L19,9 L19,7 L9.707,7 L7,4.293 L7,3 L9,3 Z M17,13 L17,14.293 L15.707,13 L17,13 Z M6.53378644,8.99978644 L4.99978644,7.46578644 L5,9 L6.53378644,8.99978644 Z" id="Combined-Shape" fill="#454545"></path>
+        </g>
+    </g>
+</svg>

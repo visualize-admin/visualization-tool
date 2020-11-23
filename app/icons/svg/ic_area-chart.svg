@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/Chart-Types/48dp/ic_area-chart</title>
+    <g id="Icons/IXT/Chart-Types/48dp/ic_area-chart" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="area-chart">
+            <rect id="Container" x="0" y="0" width="48" height="48"></rect>
+            <g id="chart" transform="translate(2.000000, 8.000000)" fill="#006699">
+                <path d="M44,18 L44,34 L0,34 L0,31 L14,22 L28,27 L44,18 Z M44,0 L44,16 L28,25 L14,20 L0,29 L0,25 L14,11 L28,15 L44,0 Z" id="Opacity-100"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/24dp/ic_categorical</title>
+    <g id="Icons/IXT/24dp/ic_categorical" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_categorical">
+            <rect id="Container" x="0" y="0" width="24" height="24"></rect>
+            <path d="M20.6625,12.3375 L11.6625,3.3375 C11.4375,3.1125 11.2125,3 10.875,3 L4.125,3 C3.45,3 3,3.45 3,4.125 L3,10.875 C3,11.2125 3.1125,11.4375 3.3375,11.6625 L12.3375,20.6625 C12.5625,20.8875 12.7875,21 13.125,21 C13.4625,21 13.6875,20.8875 13.9125,20.6625 L20.6625,13.9125 C21.1125,13.4625 21.1125,12.7875 20.6625,12.3375 Z M7.5,9 C6.6,9 6,8.4 6,7.5 C6,6.6 6.6,6 7.5,6 C8.4,6 9,6.6 9,7.5 C9,8.4 8.4,9 7.5,9 Z" id="Shape" fill="#454545"></path>
+        </g>
+    </g>
+</svg>

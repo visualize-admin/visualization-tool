@@ -30,7 +30,7 @@ export const GroupHeader = ({
               <Flex
                 {...row.getToggleRowExpandedProps()}
                 sx={{
-                  width: "100%",
+                  minWidth: "100%",
                   alignItems: "center",
                   cursor: "pointer",
                   bg,

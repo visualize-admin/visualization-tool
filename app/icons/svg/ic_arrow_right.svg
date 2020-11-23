@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/24dp/ic_arrow_right</title>
+    <g id="Icons/IXT/24dp/ic_arrow_right" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M12.7071068,4 L12.707,15.585 L18,10.2928932 L19.4142136,11.7071068 L11.7071068,19.4142136 L4,11.7071068 L5.41421356,10.2928932 L10.707,15.585 L10.7071068,4 L12.7071068,4 Z" id="Icon" fill="#454545" transform="translate(11.707107, 11.707107) rotate(-90.000000) translate(-11.707107, -11.707107) "></path>
+    </g>
+</svg>

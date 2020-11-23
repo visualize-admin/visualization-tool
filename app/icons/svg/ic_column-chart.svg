@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/Chart-Types/48dp/ic_column-chart</title>
+    <g id="Icons/IXT/Chart-Types/48dp/ic_column-chart" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="column-chart">
+            <rect id="Container" x="0" y="0" width="48" height="48"></rect>
+            <g id="chart" transform="translate(2.000000, 8.000000)" fill="#006699">
+                <path d="M11,22 L11,34 L3,34 L3,22 L11,22 Z M21,10 L21,34 L13,34 L13,10 L21,10 Z M31,0 L31,34 L23,34 L23,0 L31,0 Z M41,18 L41,34 L33,34 L33,18 L41,18 Z" id="Opacity-100"></path>
+            </g>
+        </g>
+    </g>
+</svg>

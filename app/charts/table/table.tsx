@@ -1,8 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Box, Flex, Text } from "@theme-ui/components";
 import FlexSearch from "flexsearch";
-import * as React from "react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, forwardRef } from "react";
 import {
   useExpanded,
   useFlexLayout,
@@ -10,13 +9,14 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
-import { FixedSizeList, VariableSizeList } from "react-window";
+import { FixedSizeList } from "react-window";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell-desktop";
 import { DDContent } from "./cell-mobile";
+import { TABLE_HEIGHT } from "./constants";
 import { GroupHeader } from "./group-header";
 import { TableHeader } from "./table-header";
 import { scrollbarWidth } from "./table-helpers";
@@ -38,8 +38,6 @@ export const Table = () => {
   const [useAlternativeMobileView, toggleAlternativeMobileView] = useState(
     false
   );
-
-  const scrollBarSize = React.useMemo(() => scrollbarWidth(), []);
 
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
@@ -115,7 +113,7 @@ export const Table = () => {
       return (
         <Box
           {...row.getRowProps({
-            style,
+            style: { ...style, minWidth: "100%" },
           })}
           sx={{ borderBottom: "1px solid", borderBottomColor: "monochrome400" }}
         >
@@ -233,6 +231,36 @@ export const Table = () => {
   //   [prepareRow, rows, tableColumnsMeta]
   // );
 
+  const TableContentWrapper = useMemo(() => {
+    return forwardRef<HTMLDivElement, $FixMe>(({ children, ...props }, ref) => {
+      return (
+        <Box
+          ref={ref}
+          {...props}
+          style={{
+            ...props.style,
+            height: props.style.height + 42,
+          }}
+        >
+          <TableHeader
+            customSortCount={customSortCount}
+            headerGroups={headerGroups}
+            tableColumnsMeta={tableColumnsMeta}
+          />
+          <Box
+            sx={{
+              position: "relative",
+              minWidth: totalColumnsWidth,
+              width: "100%",
+            }}
+          >
+            {children}
+          </Box>
+        </Box>
+      );
+    });
+  }, [customSortCount, headerGroups, tableColumnsMeta, totalColumnsWidth]);
+
   return (
     <>
       {showSearch && (
@@ -265,39 +293,27 @@ export const Table = () => {
       {!useAlternativeMobileView && (
         <Box
           sx={{
-            width: "100%",
             position: "relative",
-            overflowY: "hidden",
-            overflowX: "scroll",
             bg: "monochrome100",
             mb: 4,
+            fontSize: 3,
           }}
+          {...getTableProps({ style: { minWidth: "100%" } })}
         >
-          <Box
-            sx={{
-              display: "inline-block",
-              borderSpacing: 0,
-              fontSize: 3,
-            }}
-            {...getTableProps()}
-          >
-            <TableHeader
-              customSortCount={customSortCount}
-              headerGroups={headerGroups}
-              tableColumnsMeta={tableColumnsMeta}
-            />
-
-            <div {...getTableBodyProps()}>
-              <FixedSizeList
-                height={bounds.chartHeight}
-                itemCount={rows.length}
-                itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
-                width={totalColumnsWidth + scrollBarSize}
-              >
-                {renderDesktopRow}
-              </FixedSizeList>
-            </div>
-          </Box>
+          <div {...getTableBodyProps()}>
+            <FixedSizeList
+              outerElementType={TableContentWrapper}
+              height={Math.min(
+                TABLE_HEIGHT,
+                rows.length * rowHeight + scrollbarWidth()
+              )}
+              itemCount={rows.length}
+              itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
+              width="100%"
+            >
+              {renderDesktopRow}
+            </FixedSizeList>
+          </div>
         </Box>
       )}
 

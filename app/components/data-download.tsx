@@ -25,13 +25,14 @@ export const DataDownload = memo(
   }) => {
     const locale = useLocale();
     const measures =
-      "y" in chartConfig.fields ? [chartConfig.fields.y.componentIri] : [];
-    // FIXME for table downloads
-    if (measures.length === 0) {
-      console.warn(
-        "DataDownload: no measures selected (not implemented to for table charts)"
-      );
-    }
+      "y" in chartConfig.fields
+        ? [chartConfig.fields.y.componentIri]
+        : chartConfig.chartType === "table"
+        ? Object.values(chartConfig.fields).flatMap((f) =>
+            f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
+          )
+        : [];
+
     const [{ data }] = useDataCubeObservationsQuery({
       variables: {
         locale,

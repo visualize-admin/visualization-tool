@@ -16,7 +16,7 @@ export const TableHeader = ({
   customSortCount: number;
 }) => {
   return (
-    <Box>
+    <Box sx={{ position: "sticky", top: 0, zIndex: 1 }}>
       {headerGroups.map((headerGroup) => {
         return (
           <Box {...headerGroup.getHeaderGroupProps()}>
@@ -29,15 +29,9 @@ export const TableHeader = ({
               return (
                 <Box
                   sx={{
-                    position: "sticky",
-                    top: 0,
-
                     m: 0,
                     py: 2,
-                    pr: 3,
-                    pl: 3,
-                    textAlign:
-                      columnComponentType === "Measure" ? "right" : "left",
+                    px: 3,
                     borderTop: "1px solid",
                     borderTopColor: "monochrome700",
                     borderBottom: "1px solid",
@@ -53,11 +47,21 @@ export const TableHeader = ({
                     sx={{
                       minHeight: SORTING_ARROW_WIDTH,
                       alignItems: "center",
+                      justifyContent:
+                        columnComponentType === "Measure"
+                          ? "flex-end"
+                          : "flex-start",
                     }}
                   >
-                    <Box sx={{ flexGrow: 1 }}>{column.render("Header")}</Box>
+                    <Box>{column.render("Header")}</Box>
                     {isCustomSorted && (
-                      <Box sx={{ width: SORTING_ARROW_WIDTH, flexShrink: 0 }}>
+                      <Box
+                        sx={{
+                          width: SORTING_ARROW_WIDTH,
+                          flexShrink: 0,
+                          mr: "-11px",
+                        }}
+                      >
                         <Icon
                           name={
                             column.isSortedDesc

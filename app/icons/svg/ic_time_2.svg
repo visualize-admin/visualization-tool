@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/24dp/ic_time_2</title>
+    <g id="Icons/IXT/24dp/ic_time_2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_time_2">
+            <rect id="Container" x="0" y="0" width="24" height="24"></rect>
+            <path d="M15,9 L15,11 L19,11 L19,9 L21,9 L21,11 L22,11 C22.5522847,11 23,11.4477153 23,12 L23,12 L23,20 C23,20.5522847 22.5522847,21 22,21 L22,21 L12,21 C11.4477153,21 11,20.5522847 11,20 L11,20 L11,12 C11,11.4477153 11.4477153,11 12,11 L12,11 L13,11 L13,9 L15,9 Z M9,17 L9,20 L2,20 L2,17 L9,17 Z M21,14 L13,14 L13,19 L21,19 L21,14 Z M9,13 L9,16 L2,16 L2,13 L9,13 Z M9,9 L9,12 L2,12 L2,9 L9,9 Z M22,4 L22,8 L2,8 L2,4 L22,4 Z" id="Combined-Shape" fill="#454545"></path>
+        </g>
+    </g>
+</svg>
