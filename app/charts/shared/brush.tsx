@@ -2,7 +2,7 @@ import { bisector } from "d3-array";
 import { brushX } from "d3-brush";
 import { select, Selection } from "d3-selection";
 import "d3-transition";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
@@ -28,13 +28,9 @@ export const Brush = () => {
     brushHandleFillColor,
   } = useChartTheme();
   const { from, to } = state.time;
-  const {
-    xEntireScale,
-    getX,
-    bounds,
-    allDataWide,
-    xUniqueValues,
-  } = useChartState() as LinesState | AreasState;
+  const { xEntireScale, getX, bounds, allDataWide } = useChartState() as
+    | LinesState
+    | AreasState;
 
   const updateBrushStatus = (event: $FixMe) => {
     const selection = event.selection;
@@ -93,40 +89,131 @@ export const Brush = () => {
     .on("start brush", brushed)
     .on("end", updateBrushStatus);
 
-  const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.select(".overlay")
-      .attr("fill", brushOverlayColor)
-      .attr("fill-opacity", 0.9);
-    g.select(".selection")
-      .attr("fill", brushSelectionColor)
-      .attr("fill-opacity", 1)
-      .attr("stroke", "none");
-    g.selectAll(".handle")
-      .attr("fill", brushHandleFillColor)
-      .attr("stroke", brushHandleStrokeColor)
-      .attr("stroke-width", 2)
-      .style("y", `-${HANDLE_HEIGHT / 2}px`)
-      .style("transform", `translateX(-${HANDLE_HEIGHT / 2}px)`)
-      .style("width", `${HANDLE_HEIGHT}px`)
-      .style("height", `${HANDLE_HEIGHT}px`)
-      .attr("rx", `${HANDLE_HEIGHT}px`);
+  /** Keyboard support */
+  const moveBrushOnKeyPress = useCallback(
+    (event: $FixMe, handleDirection: "w" | "e") => {
+      updateBrushEndedStatus(false);
 
-    // g.select(".handle--w")
-    //   .attr("tabindex", 0)
-    //   .on("keydown", () => {
-    //     console.log("left pressed");
-    //   });
-    // g.select(".handle--e").on("focus", () => {
-    //   console.log("right");
-    // });
-    // Apply brush to selected group
-    g.call(brush);
-  };
+      const bisectDateLeft = bisector(
+        (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
+      ).left;
+      const bisectDateRight = bisector(
+        (ds: Observation, date: Date) => getX(ds).getTime() - date.getTime()
+      ).right;
+
+      if (event.keyCode === 37 && handleDirection === "w") {
+        // west handle, moving left
+        const index = bisectDateLeft(allDataWide, from, 1);
+        const indexLeft = allDataWide[index - 1];
+
+        if (getX(indexLeft).getTime() < to.getTime()) {
+          // new lower than "to"
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [getX(indexLeft), to],
+          });
+        } else {
+          // new too high, don't do anything
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, to],
+          });
+        }
+      } else if (event.keyCode === 39 && handleDirection === "w") {
+        // west handle, moving right
+        const index = bisectDateRight(allDataWide, from, 1);
+        const indexRight = allDataWide[index];
+        if (getX(indexRight).getTime() < to.getTime()) {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [getX(indexRight), to],
+          });
+        } else {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, to],
+          });
+        }
+      } else if (event.keyCode === 37 && handleDirection === "e") {
+        // east handle, moving left
+        const index = bisectDateLeft(allDataWide, to, 1);
+        const indexLeft = allDataWide[index - 1];
+
+        if (getX(indexLeft).getTime() > from.getTime()) {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, getX(indexLeft)],
+          });
+        } else {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, to],
+          });
+        }
+      } else if (event.keyCode === 39 && handleDirection === "e") {
+        // east handle, moving right
+        const index = bisectDateRight(allDataWide, to, 1);
+        const indexLeft = allDataWide[index];
+
+        if (indexLeft && getX(indexLeft).getTime() > from.getTime()) {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, getX(indexLeft)],
+          });
+        } else {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, to],
+          });
+        }
+      }
+      updateBrushEndedStatus(true);
+    },
+    [allDataWide, dispatch, from, getX, to]
+  );
+  const mkBrush = useCallback(
+    (g: Selection<SVGGElement, unknown, null, undefined>) => {
+      g.select(".overlay")
+        .attr("fill", brushOverlayColor)
+        .attr("fill-opacity", 0.9);
+      g.select(".selection")
+        .attr("fill", brushSelectionColor)
+        .attr("fill-opacity", 1)
+        .attr("stroke", "none");
+      g.selectAll(".handle")
+        .attr("fill", brushHandleFillColor)
+        .attr("stroke", brushHandleStrokeColor)
+        .attr("stroke-width", 2)
+        .style("y", `-${HANDLE_HEIGHT / 2}px`)
+        .style("transform", `translateX(-${HANDLE_HEIGHT / 2}px)`)
+        .style("width", `${HANDLE_HEIGHT}px`)
+        .style("height", `${HANDLE_HEIGHT}px`)
+        .attr("rx", `${HANDLE_HEIGHT}px`);
+
+      g.select(".handle--w")
+        .attr("tabindex", 0)
+        .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "w"));
+      g.select(".handle--e")
+        .attr("tabindex", 0)
+        .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
+
+      // Apply brush to selected group
+      g.call(brush);
+    },
+    [
+      brush,
+      brushHandleFillColor,
+      brushHandleStrokeColor,
+      brushOverlayColor,
+      brushSelectionColor,
+      moveBrushOnKeyPress,
+    ]
+  );
 
   useEffect(() => {
     const g = select(ref.current);
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-  });
+  }, [mkBrush]);
 
   // This effect allow "snapping" to actual data points
   // after brush is ended and interactive-filters state is updated

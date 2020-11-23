@@ -40,7 +40,7 @@ export interface LinesState {
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
   xEntireScale: ScaleTime<number, number>;
-  xUniqueValues: Date[];
+  // xUniqueValues: Date[];
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
@@ -74,7 +74,7 @@ const useLinesState = ({
   ] = useInteractiveFilters();
 
   useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
     [dispatchInteractiveFilters, fields.segment]
   );
 
@@ -104,12 +104,13 @@ const useLinesState = ({
     getY,
     xKey,
   });
-  const xUniqueValues = sortedData
-    .map((d) => getX(d))
-    .filter(
-      (date, i, self) =>
-        self.findIndex((d) => d.getTime() === date.getTime()) === i
-    );
+  // const xUniqueValues = sortedData
+  //   .map((d) => getX(d))
+  //   .filter(
+  //     (date, i, self) =>
+  //       self.findIndex((d) => d.getTime() === date.getTime()) === i
+  //   );
+
   /** Prepare Data for use in chart
    * !== data used in some other components like Brush
    * based on *all* data observations.
@@ -141,8 +142,21 @@ const useLinesState = ({
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
 
-  const xEntireDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
+  const xEntireDomain = useMemo(
+    () => extent(sortedData, (d) => getX(d)) as [Date, Date],
+    [sortedData, getX]
+  );
   const xEntireScale = scaleTime().domain(xEntireDomain);
+
+  // This effect initiates the interactive time filter
+  // and resets interactive categories filtering
+  // FIXME: use presets
+  useEffect(() => {
+    dispatchInteractiveFilters({
+      type: "ADD_TIME_FILTER",
+      value: xEntireDomain,
+    });
+  }, [dispatchInteractiveFilters, xEntireDomain]);
 
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
@@ -256,7 +270,7 @@ const useLinesState = ({
     getX,
     xScale,
     xEntireScale,
-    xUniqueValues,
+    // xUniqueValues,
     getY,
     yScale,
     getSegment,
