@@ -14,7 +14,8 @@ export const useChartTheme = () => {
   const markBorderColor = theme.colors.monochrome100;
   const brushOverlayColor = theme.colors.monochrome300;
   const brushSelectionColor = theme.colors.monochrome600;
-  const brushHandleColor = theme.colors.monochrome800;
+  const brushHandleStrokeColor = theme.colors.monochrome700;
+  const brushHandleFillColor = theme.colors.monochrome100;
 
   return {
     axisLabelFontSize,
@@ -29,6 +30,7 @@ export const useChartTheme = () => {
     markBorderColor,
     brushOverlayColor,
     brushSelectionColor,
-    brushHandleColor,
+    brushHandleStrokeColor,
+    brushHandleFillColor,
   };
 };

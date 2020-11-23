@@ -23,7 +23,8 @@ export const Brush = () => {
   const {
     brushOverlayColor,
     brushSelectionColor,
-    brushHandleColor,
+    brushHandleStrokeColor,
+    brushHandleFillColor,
   } = useChartTheme();
   const { from, to } = state.time;
   const {
@@ -96,7 +97,15 @@ export const Brush = () => {
       .attr("fill", brushOverlayColor)
       .attr("fill-opacity", 0.9);
     g.select(".selection").attr("fill", brushSelectionColor);
-    g.selectAll(".handle").attr("fill", brushHandleColor);
+    g.selectAll(".handle")
+      .attr("fill", brushHandleFillColor)
+      .attr("stroke", brushHandleStrokeColor)
+      .attr("stroke-width", 2)
+      .style("y", 0)
+      .style("transform", `translateX(-${BRUSH_HEIGHT / 2}px)`)
+      .style("width", BRUSH_HEIGHT)
+      .style("height", BRUSH_HEIGHT)
+      .style("rx", BRUSH_HEIGHT);
     // Apply brush to selected group
     g.call(brush);
   };
