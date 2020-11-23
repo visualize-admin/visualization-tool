@@ -84,7 +84,7 @@ const useAreasState = ({
   ] = useInteractiveFilters();
 
   useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
     [dispatchInteractiveFilters, fields.segment]
   );
 

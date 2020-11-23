@@ -166,6 +166,8 @@ const useLinesState = ({
   const maxValue = max(preparedData, getY) as number;
   const yDomain = [minValue, maxValue];
 
+  const entireMaxValue = max(sortedData, getY) as number;
+
   const yScale = scaleLinear().domain(yDomain).nice();
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
@@ -203,7 +205,9 @@ const useLinesState = ({
   // Dimensions
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
-    estimateTextWidth(formatNumber(yScale.domain()[1]))
+    estimateTextWidth(formatNumber(yScale.domain()[1])),
+    estimateTextWidth(formatNumber(entireMaxValue)),
+    estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
   );
   const margins = {
     top: 50,
