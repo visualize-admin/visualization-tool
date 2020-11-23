@@ -3,7 +3,7 @@ import { Box } from "@theme-ui/components";
 import { bisector } from "d3-array";
 import { brushX } from "d3-brush";
 import { select, Selection } from "d3-selection";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactEventHandler, useEffect, useRef, useState } from "react";
 import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
@@ -17,9 +17,9 @@ export const BRUSH_HEIGHT = 20;
 export const Brush = () => {
   const ref = useRef<SVGGElement>(null);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
-  console.log({ brushedIsEnded });
   // const axisRef = useRef<SVGGElement>(null);
   const [state, dispatch] = useInteractiveFilters();
+
   const formatDateAuto = useFormatShortDateAuto();
   const {
     brushOverlayColor,
@@ -34,7 +34,16 @@ export const Brush = () => {
     allDataWide,
     xUniqueValues,
   } = useChartState() as LinesState | AreasState;
-  console.log(xUniqueValues);
+
+  const updateBrushStatus = (event: $FixMe) => {
+    const selection = event.selection;
+    if (!event.sourceEvent || !selection) {
+      updateBrushEndedStatus(false);
+    } else {
+      updateBrushEndedStatus(true);
+    }
+  };
+
   const brushed = ({ selection }: { selection: [number, number] }) => {
     updateBrushEndedStatus(false);
     if (selection) {
@@ -81,7 +90,7 @@ export const Brush = () => {
       [bounds.chartWidth, BRUSH_HEIGHT],
     ])
     .on("start brush", brushed)
-    .on("end", () => updateBrushEndedStatus(true));
+    .on("end", updateBrushStatus);
 
   const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     g.select(".overlay")
@@ -143,8 +152,14 @@ export const Brush = () => {
           4
         })`}
       >
-        {xEntireScale.domain().map((date) => (
-          <text fontSize={10} textAnchor="middle" x={xEntireScale(date)} y={10}>
+        {xEntireScale.domain().map((date, i) => (
+          <text
+            key={i}
+            fontSize={10}
+            textAnchor="middle"
+            x={xEntireScale(date)}
+            y={10}
+          >
             {formatDateAuto(date)}
           </text>
         ))}
@@ -155,8 +170,14 @@ export const Brush = () => {
           bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
         })`}
       >
-        {xUniqueValues.map((date) => (
-          <rect x={xEntireScale(date)} y={0} width={1} height={BRUSH_HEIGHT} />
+        {xUniqueValues.map((date, i) => (
+          <rect
+            key={i}
+            x={xEntireScale(date)}
+            y={0}
+            width={1}
+            height={BRUSH_HEIGHT}
+          />
         ))}
       </g>
 
