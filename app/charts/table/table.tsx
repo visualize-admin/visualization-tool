@@ -16,8 +16,10 @@ import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell-desktop";
 import { DDContent } from "./cell-mobile";
+import { TABLE_HEIGHT } from "./constants";
 import { GroupHeader } from "./group-header";
 import { TableHeader } from "./table-header";
+import { scrollbarWidth } from "./table-helpers";
 import { TableChartState } from "./table-state";
 
 export const Table = () => {
@@ -301,7 +303,10 @@ export const Table = () => {
           <div {...getTableBodyProps()}>
             <FixedSizeList
               outerElementType={TableContentWrapper}
-              height={bounds.chartHeight}
+              height={Math.min(
+                TABLE_HEIGHT,
+                rows.length * rowHeight + scrollbarWidth()
+              )}
               itemCount={rows.length}
               itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
               width="100%"
