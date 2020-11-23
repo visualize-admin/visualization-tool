@@ -125,8 +125,8 @@ export const getInitialConfig = ({
               columnStyle: {
                 textStyle: "regular",
                 type: "text",
-                textColor: "text",
-                columnColor: "transparent",
+                textColor: "#000",
+                columnColor: "#fff",
               },
             },
           ])

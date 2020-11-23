@@ -25,8 +25,8 @@ export const theme: Theme = {
     "4.5rem",
   ],
   colors: {
-    text: "monochrome900",
-    background: "monochrome100",
+    text: "#000000",
+    background: "#FFFFFF",
 
     brand: "#DC0018",
     monochrome100: "#FFFFFF",
