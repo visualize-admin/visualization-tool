@@ -106,6 +106,15 @@ export const Brush = () => {
       .style("width", BRUSH_HEIGHT)
       .style("height", BRUSH_HEIGHT)
       .style("rx", BRUSH_HEIGHT);
+
+    // g.select(".handle--w")
+    //   .attr("tabindex", 0)
+    //   .on("keydown", () => {
+    //     console.log("left pressed");
+    //   });
+    // g.select(".handle--e").on("focus", () => {
+    //   console.log("right");
+    // });
     // Apply brush to selected group
     g.call(brush);
   };
@@ -192,6 +201,8 @@ export const Brush = () => {
       {/* Brush */}
       <g
         ref={ref}
+        // tabIndex={0}
+        // focusable="true"
         transform={`translate(${bounds.margins.left}, ${
           bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
         })`}
