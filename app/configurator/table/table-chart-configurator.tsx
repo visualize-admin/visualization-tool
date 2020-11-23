@@ -97,7 +97,7 @@ export const ChartConfiguratorTable = ({
             <AnnotatorTabField
               key={"settings"}
               value={"table-settings"}
-              icon="table"
+              icon="settings"
               label={<Trans id="controls.table.settings">Settings</Trans>}
             />
             <AnnotatorTabField

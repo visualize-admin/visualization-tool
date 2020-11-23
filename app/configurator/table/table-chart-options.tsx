@@ -8,7 +8,6 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { Box } from "theme-ui";
 import { Checkbox } from "../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -30,6 +29,7 @@ import {
 import {
   getDefaultCategoricalPalette,
   getDefaultSequentialPalette,
+  getIconName,
   mapColorsToComponentValuesIris,
 } from "../components/ui-helpers";
 import { FieldProps } from "../config-form";
@@ -162,7 +162,7 @@ export const TableColumnOptions = ({
   // It's a dimension which is not mapped to an encoding field, so we show the filter!
   // FIXME: activeField and encodingField should match? to remove type assertion
   if (!activeFieldComponentIri) {
-    return <TableSingleFilter state={state} metaData={metaData} />;
+    return null;
   }
 
   // Active field is always a component IRI, like in filters
@@ -212,7 +212,11 @@ export const TableColumnOptions = ({
             tabIndex={-1}
           >
             <ControlSection>
-              <SectionTitle iconName={"table"}>{component.label}</SectionTitle>
+              <SectionTitle
+                iconName={getIconName(`tableColumn${component.__typename}`)}
+              >
+                {component.label}
+              </SectionTitle>
               <ControlSectionContent side="right">
                 {component.__typename !== "Measure" && (
                   <>
@@ -475,56 +479,10 @@ const ColumnStyleSubOptions = ({
   );
 };
 
-const TableSingleFilter = ({
-  state,
-  metaData,
-}: {
-  state: ConfiguratorStateConfiguringChart;
-  metaData: DataCubeMetadata;
-}) => {
-  const { dimensions } = metaData;
-  const activeDimension = dimensions.find(
-    (dim) => dim.iri === state.activeField
-  );
-  const panelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (panelRef && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [state.activeField]);
-  return (
-    <div
-      key={`filter-panel-${state.activeField}`}
-      role="tabpanel"
-      id={`filter-panel-${state.activeField}`}
-      aria-labelledby={`tab-${state.activeField}`}
-      ref={panelRef}
-      tabIndex={-1}
-    >
-      <ControlSection>
-        <SectionTitle iconName="table">
-          {activeDimension && activeDimension.label}
-        </SectionTitle>
-        <ControlSectionContent side="right" as="fieldset">
-          <legend style={{ display: "none" }}>
-            {activeDimension && activeDimension.label}
-          </legend>
-          {activeDimension && (
-            <DimensionValuesSingleFilter
-              dataSetIri={metaData.iri}
-              dimensionIri={activeDimension.iri}
-            />
-          )}
-        </ControlSectionContent>
-      </ControlSection>
-    </div>
-  );
-};
-
 const TableSettings = () => {
   return (
     <ControlSection>
-      <SectionTitle iconName={"table"}>
+      <SectionTitle iconName={"settings"}>
         <Trans id="controls.section.tableSettings">Table Settings</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">

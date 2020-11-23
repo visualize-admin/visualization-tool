@@ -48,6 +48,7 @@ import { IconSortDescending } from "./ic-sort-descending";
 // Generated
 import { default as IconFormatting } from "./components/ic-formatting";
 import { default as IconTrash } from "./components/ic-trash";
+import { default as IconSettings } from "./components/ic-settings";
 
 import { default as IconCategorical } from "./components/ic-categorical-2";
 import { default as IconCategoricalHidden } from "./components/ic-categorical-2-hidden";
@@ -109,6 +110,7 @@ export const Icons = {
   // Generated icons
   formatting: IconFormatting,
   trash: IconTrash,
+  settings: IconSettings,
   tableColumnCategorical: IconCategorical,
   tableColumnCategoricalHidden: IconCategoricalHidden,
   tableColumnNumerical: IconNumerical,

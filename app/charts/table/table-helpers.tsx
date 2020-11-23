@@ -1,5 +1,3 @@
-import { useLayoutEffect } from "react";
-
 let _scrollbarWidth: number | undefined = undefined;
 export const scrollbarWidth = (): number => {
   if (_scrollbarWidth !== undefined) {

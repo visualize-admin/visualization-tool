@@ -292,7 +292,7 @@ export const TableSortingOptions = ({
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <ControlSection>
-        <SectionTitle iconName={"table"}>
+        <SectionTitle iconName={"sort"}>
           <Trans id="controls.section.tableSorting">Table Sorting</Trans>
         </SectionTitle>
         <Droppable droppableId="table-sorting" type="table-sorting">

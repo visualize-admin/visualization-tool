@@ -155,10 +155,6 @@ const DraggableTabField = ({
   const iconName = getIconName(
     `tableColumn${component.__typename}${disabled ? "Hidden" : ""}`
   );
-  console.log(
-    `tableColumn${component.__typename}${disabled ? "Hidden" : ""}`,
-    iconName
-  );
 
   return (
     <DraggableTab
