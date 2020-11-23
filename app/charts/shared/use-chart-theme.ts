@@ -13,7 +13,7 @@ export const useChartTheme = () => {
   const axisLabelColor = theme.colors.monochrome800;
   const markBorderColor = theme.colors.monochrome100;
   const brushOverlayColor = theme.colors.monochrome300;
-  const brushSelectionColor = theme.colors.monochrome600;
+  const brushSelectionColor = theme.colors.monochrome700;
   const brushHandleStrokeColor = theme.colors.monochrome700;
   const brushHandleFillColor = theme.colors.monochrome100;
 

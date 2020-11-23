@@ -11,7 +11,8 @@ import { useChartState } from "./use-chart-state";
 import { useChartTheme } from "./use-chart-theme";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
-export const BRUSH_HEIGHT = 20;
+export const HANDLE_HEIGHT = 20;
+export const BRUSH_HEIGHT = 3;
 
 export const Brush = () => {
   const ref = useRef<SVGGElement>(null);
@@ -96,16 +97,19 @@ export const Brush = () => {
     g.select(".overlay")
       .attr("fill", brushOverlayColor)
       .attr("fill-opacity", 0.9);
-    g.select(".selection").attr("fill", brushSelectionColor);
+    g.select(".selection")
+      .attr("fill", brushSelectionColor)
+      .attr("fill-opacity", 1)
+      .attr("stroke", "none");
     g.selectAll(".handle")
       .attr("fill", brushHandleFillColor)
       .attr("stroke", brushHandleStrokeColor)
       .attr("stroke-width", 2)
-      .style("y", 0)
-      .style("transform", `translateX(-${BRUSH_HEIGHT / 2}px)`)
-      .style("width", BRUSH_HEIGHT)
-      .style("height", BRUSH_HEIGHT)
-      .style("rx", BRUSH_HEIGHT);
+      .style("y", `-${HANDLE_HEIGHT / 2}px`)
+      .style("transform", `translateX(-${HANDLE_HEIGHT / 2}px)`)
+      .style("width", `${HANDLE_HEIGHT}px`)
+      .style("height", `${HANDLE_HEIGHT}px`)
+      .attr("rx", `${HANDLE_HEIGHT}px`);
 
     // g.select(".handle--w")
     //   .attr("tabindex", 0)
@@ -143,7 +147,7 @@ export const Brush = () => {
           bounds.chartHeight +
           bounds.margins.top +
           bounds.margins.bottom / 2 +
-          BRUSH_HEIGHT +
+          HANDLE_HEIGHT / 2 +
           4
         })`}
       >
@@ -165,7 +169,7 @@ export const Brush = () => {
           bounds.chartHeight +
           bounds.margins.top +
           bounds.margins.bottom / 2 +
-          BRUSH_HEIGHT +
+          HANDLE_HEIGHT / 2 +
           4
         })`}
       >
@@ -182,7 +186,7 @@ export const Brush = () => {
         ))}
       </g>
       {/* Date ticks */}
-      <g
+      {/* <g
         transform={`translate(${bounds.margins.left}, ${
           bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
         })`}
@@ -196,7 +200,7 @@ export const Brush = () => {
             height={BRUSH_HEIGHT}
           />
         ))}
-      </g>
+      </g> */}
 
       {/* Brush */}
       <g
