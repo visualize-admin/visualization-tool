@@ -206,8 +206,10 @@ const useLinesState = ({
   const left = Math.max(
     estimateTextWidth(formatNumber(yScale.domain()[0])),
     estimateTextWidth(formatNumber(yScale.domain()[1])),
-    estimateTextWidth(formatNumber(entireMaxValue)),
-    estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
+    // prevents update when using interactive time filter
+    estimateTextWidth(formatNumber(entireMaxValue))
+    // Account for width of time slider selection
+    // estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
   );
   const margins = {
     top: 50,
