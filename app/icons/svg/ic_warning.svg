@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/64dp/ic_warning</title>
+    <g id="Icons/IXT/64dp/ic_warning" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="warning">
+            <rect id="Container" x="0" y="0" width="64" height="64"></rect>
+            <path d="M32,11 L54,53 L10,53 L32,11 Z M32,15 L13,51 L51,51 L32,15 Z M32,43 C33.1045695,43 34,43.8954305 34,45 C34,46.1045695 33.1045695,47 32,47 C30.8954305,47 30,46.1045695 30,45 C30,43.8954305 30.8954305,43 32,43 Z M33,27 L33,39 L31,39 L31,27 L33,27 Z" id="Icon" fill="#757575"></path>
+        </g>
+    </g>
+</svg>

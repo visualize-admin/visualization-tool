@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/64dp/ic_loading</title>
+    <g id="Icons/IXT/64dp/ic_loading" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Container" x="0" y="0" width="64" height="64"></rect>
+        <g id="ic_loading_spinner" transform="translate(2.928932, 7.000000)" stroke="#757575" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+            <path d="M29.0710678,5 C18.0253728,5 9.07106781,13.954305 9.07106781,25 C9.07106781,36.045695 18.0253728,45 29.0710678,45 C40.1167628,45 49.0710678,36.045695 49.0710678,25" id="ic_spinner_c"></path>
+        </g>
+    </g>
+</svg>

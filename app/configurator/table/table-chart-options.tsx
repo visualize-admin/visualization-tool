@@ -256,7 +256,7 @@ export const TableColumnOptions = ({
             </ControlSection>
             {!isFiltered && (
               <ControlSection>
-                <SectionTitle iconName={"image"}>
+                <SectionTitle iconName={"formatting"}>
                   <Trans id="controls.section.columnstyle">Column Style</Trans>
                 </SectionTitle>
                 <ControlSectionContent side="right">

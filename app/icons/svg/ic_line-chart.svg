@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/Chart-Types/48dp/ic_line-chart</title>
+    <g id="Icons/IXT/Chart-Types/48dp/ic_line-chart" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="line-chart">
+            <rect id="Container" x="0" y="0" width="48" height="48"></rect>
+            <g id="chart" transform="translate(2.000000, 6.000000)">
+                <g id="Opacity-50" transform="translate(0.000000, 38.000000)"></g>
+                <path d="M40.5857864,16.5857864 L43.4142136,19.4142136 L28,34.8284271 L14.4147864,21.2425729 L17.2427864,18.4145729 L28,29.1715729 L40.5857864,16.5857864 Z M40.5857864,0.585786438 L43.4142136,3.41421356 L26,20.8284271 L19,13.8284271 L3.41421356,29.4142136 L0.585786438,26.5857864 L19,8.17157288 L26,15.1715729 L40.5857864,0.585786438 Z M6,7.17157288 L11.5847864,12.7565729 L8.75678644,15.5845729 L6,12.8284271 L3.41421356,15.4142136 L0.585786438,12.5857864 L6,7.17157288 Z" id="Opacity-100" fill="#006699"></path>
+            </g>
+        </g>
+    </g>
+</svg>

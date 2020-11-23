@@ -106,7 +106,7 @@ const TableSortingOptionItem = ({
         >
           {component.label}
         </Text>
-        <Flex sx={{ mt: 2, mb: -1, width: "100%", alignItems: "center" }}>
+        <Flex sx={{ mt: 2, mb: -1, width: "100%", alignItems: "flex-start" }}>
           <Radio
             name={`${componentIri}-sortingOrder`}
             value="asc"
@@ -140,9 +140,12 @@ const TableSortingOptionItem = ({
             </VisuallyHidden>
             <Box
               aria-hidden="true"
-              sx={{ borderRadius: "circle", bg: "monochrome600" }}
+              sx={{
+                color: "secondaryDisabled",
+                ":hover": { color: "secondary" },
+              }}
             >
-              <Icon name="clear" size={20} />
+              <Icon name="trash" size={20} />
             </Box>
           </Button>
         </Flex>

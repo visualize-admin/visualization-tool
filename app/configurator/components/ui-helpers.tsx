@@ -151,6 +151,22 @@ export const getIconName = (name: string): IconName => {
       return "scatterplot";
     case "pie":
       return "pie";
+    case "tableColumnMeasure":
+      return "tableColumnNumerical";
+    case "tableColumnMeasureHidden":
+      return "tableColumnNumericalHidden";
+    case "tableColumnNominalDimension":
+      return "tableColumnCategorical";
+    case "tableColumnNominalDimensionHidden":
+      return "tableColumnCategoricalHidden";
+    case "tableColumnOrdinalDimension":
+      return "tableColumnCategorical";
+    case "tableColumnOrdinalDimensionHidden":
+      return "tableColumnCategoricalHidden";
+    case "tableColumnTemporalDimension":
+      return "tableColumnTime";
+    case "tableColumnTemporalDimensionHidden":
+      return "tableColumnTimeHidden";
     default:
       return "table";
   }

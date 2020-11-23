@@ -7,6 +7,7 @@ import { DataCubeMetadata } from "../../../graphql/types";
 import { Icon } from "../../../icons";
 import { useActiveFieldField } from "../../config-form";
 import { TableColumn } from "../../config-types";
+import { getIconName } from "../ui-helpers";
 import { DraggableTab } from "./control-tab";
 import { ControlSection, ControlSectionContent, SectionTitle } from "./section";
 
@@ -151,6 +152,14 @@ const DraggableTabField = ({
     value,
   });
 
+  const iconName = getIconName(
+    `tableColumn${component.__typename}${disabled ? "Hidden" : ""}`
+  );
+  console.log(
+    `tableColumn${component.__typename}${disabled ? "Hidden" : ""}`,
+    iconName
+  );
+
   return (
     <DraggableTab
       component={component}
@@ -160,6 +169,7 @@ const DraggableTabField = ({
       onClick={field.onClick}
       isDragging={isDragging}
       disabled={disabled}
+      iconName={iconName}
     ></DraggableTab>
   );
 };

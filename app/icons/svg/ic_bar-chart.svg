@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/IXT/Chart-Types/48dp/ic_bar-chart</title>
+    <g id="Icons/IXT/Chart-Types/48dp/ic_bar-chart" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="bar-chart">
+            <rect id="Container" x="0" y="0" width="48" height="48"></rect>
+            <g id="chart" transform="translate(2.000000, 2.000000)" fill="#006699">
+                <path d="M24,33 L24,41 L4,41 L4,33 L24,33 Z M38,23 L38,31 L4,31 L4,23 L38,23 Z M30,13 L30,21 L4,21 L4,13 L30,13 Z M18,3 L18,11 L4,11 L4,3 L18,3 Z" id="Opacity-100"></path>
+            </g>
+        </g>
+    </g>
+</svg>

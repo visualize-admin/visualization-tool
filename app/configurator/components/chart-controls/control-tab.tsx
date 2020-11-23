@@ -132,6 +132,7 @@ export const DraggableTab = ({
   isDragging,
   upperLabel,
   disabled,
+  iconName,
 }: {
   component: ComponentFieldsFragment;
   disabled?: boolean;
@@ -139,6 +140,7 @@ export const DraggableTab = ({
   value: string;
   isDragging: boolean;
   upperLabel: ReactNode;
+  iconName?: IconName;
 } & FieldProps) => {
   return (
     <Box
@@ -155,7 +157,7 @@ export const DraggableTab = ({
         onClick={() => onClick(value)}
       >
         <ControlTabButtonInner
-          iconName={getIconName(value)}
+          iconName={iconName ?? getIconName(value)}
           upperLabel={upperLabel}
           lowerLabel={component.label}
           checked={checked}
