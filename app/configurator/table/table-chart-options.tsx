@@ -174,7 +174,7 @@ export const TableColumnOptions = ({
     return <div>`No component ${activeField}`</div>;
   }
 
-  const { isGroup, isFiltered } = chartConfig.fields[activeField];
+  const { isGroup, isFiltered, isHidden } = chartConfig.fields[activeField];
 
   return (
     <I18n>
@@ -258,7 +258,7 @@ export const TableColumnOptions = ({
                 )}
               </ControlSectionContent>
             </ControlSection>
-            {!isFiltered && (
+            {!isFiltered && (!isHidden || isGroup) && (
               <ControlSection>
                 <SectionTitle iconName={"formatting"}>
                   <Trans id="controls.section.columnstyle">Column Style</Trans>
