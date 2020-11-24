@@ -11,7 +11,7 @@ import { useChartState } from "./use-chart-state";
 import { useChartTheme } from "./use-chart-theme";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
-export const HANDLE_HEIGHT = 20;
+export const HANDLE_HEIGHT = 14;
 export const BRUSH_HEIGHT = 3;
 
 export const Brush = () => {
@@ -186,7 +186,7 @@ export const Brush = () => {
         .attr("stroke", brushHandleStrokeColor)
         .attr("stroke-width", 2)
         .style("y", `-${HANDLE_HEIGHT / 2}px`)
-        .style("transform", `translateX(-${HANDLE_HEIGHT / 2}px)`)
+        // .style("transform", `translateX(-${0}px)`)
         .style("width", `${HANDLE_HEIGHT}px`)
         .style("height", `${HANDLE_HEIGHT}px`)
         .attr("rx", `${HANDLE_HEIGHT}px`);
