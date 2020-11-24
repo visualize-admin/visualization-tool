@@ -1,4 +1,4 @@
-import { Box, Flex, Link } from "@theme-ui/components";
+import { Box, Flex, Link } from "theme-ui";
 import { NextPage } from "next";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPublished } from "../../components/chart-published";

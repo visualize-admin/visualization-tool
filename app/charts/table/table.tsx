@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Flex, Text } from "@theme-ui/components";
+import { Box, Flex, Text } from "theme-ui";
 import FlexSearch from "flexsearch";
 import { useCallback, useMemo, useState, forwardRef } from "react";
 import {

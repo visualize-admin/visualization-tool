@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@theme-ui/components";
+import { Box, Flex, Text } from "theme-ui";
 import { ReactNode } from "react";
 import { ChartPublished } from "../components/chart-published";
 import { HomepageSection } from "./generic";

@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Button } from "@theme-ui/components";
+import { Button } from "theme-ui";
 import { csvFormat } from "d3-dsv";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";

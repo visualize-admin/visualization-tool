@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box } from "@theme-ui/components";
+import { Box } from "theme-ui";
 
 import { ReactNode } from "react";
 import { useDataCubeMetadataQuery } from "../../graphql/query-hooks";

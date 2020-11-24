@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { I18n } from "@lingui/react";
-import { Box, Flex } from "@theme-ui/components";
+import { Box, Flex } from "theme-ui";
 import get from "lodash/get";
 import { useCallback, useEffect, useRef } from "react";
 import {

@@ -1,4 +1,4 @@
-import { Button } from "@theme-ui/components";
+import { Button } from "theme-ui";
 import { markdown, ReactSpecimen } from "catalog";
 
 export default () => markdown`
@@ -40,7 +40,7 @@ There are four basic styles that are styles defined in \`rebass\`'s \`variants\`
   ## How to use
 
 ~~~
-import { Button } from "@theme-ui/components"
+import { Button } from "theme-ui"
 
 <Button variant="primary">
   Primary button

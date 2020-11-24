@@ -1,4 +1,4 @@
-import { Flex, Text } from "@theme-ui/components";
+import { Flex, Text } from "theme-ui";
 import { ChartConfig, Meta } from "../configurator";
 import { useLocale } from "../locales/use-locale";
 import { ChartAreasVisualization } from "../charts/area/chart-area";

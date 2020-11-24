@@ -1,4 +1,4 @@
-import { Box } from "@theme-ui/components";
+import { Box } from "theme-ui";
 import { useEffect, useRef } from "react";
 import { ConfiguratorStateDescribingChart } from "..";
 import { getFieldLabel } from "./ui-helpers";

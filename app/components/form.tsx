@@ -10,7 +10,7 @@ import {
   Radio as RebassRadio,
   Select as RebassSelect,
   SelectProps,
-} from "@theme-ui/components";
+} from "theme-ui";
 import { ReactNode } from "react";
 import { FieldProps, Option } from "../configurator";
 import { Icon } from "../icons";

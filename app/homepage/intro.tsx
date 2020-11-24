@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { ReactNode } from "react";
 import { IconAreaChart } from "../icons/ic-area-chart";
 import { IconBarChart } from "../icons/ic-bar-chart";

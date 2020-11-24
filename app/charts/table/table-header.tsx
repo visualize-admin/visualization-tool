@@ -1,4 +1,4 @@
-import { Box, Flex } from "@theme-ui/components";
+import { Box, Flex } from "theme-ui";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
 import { Observation } from "../../domain/data";

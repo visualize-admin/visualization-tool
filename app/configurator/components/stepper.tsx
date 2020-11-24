@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Flex, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { Dispatch, Fragment, ReactNode, useCallback, useMemo } from "react";
 import { ConfiguratorStateAction, useConfiguratorState } from "..";
 import { Icon } from "../../icons";

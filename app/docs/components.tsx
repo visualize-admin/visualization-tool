@@ -10,7 +10,7 @@ export default () => markdown`
 Basic components come with variants. For instance, a button can be styled as a "primary" button by defining this variant on the base Button component:
 
 ~~~
-import { Button } from "@theme-ui/components"
+import { Button } from "theme-ui"
 
 <Button variant="primary">
   Click me!

@@ -20,7 +20,6 @@
     "@preconstruct/next": "^1.0.1",
     "@reach/menu-button": "^0.11.2",
     "@reach/visually-hidden": "^0.11.1",
-    "@theme-ui/components": "^0.3.1",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
     "apollo-server-micro": "^2.17.0",
     "catalog": "^4.0.1-canary.2",

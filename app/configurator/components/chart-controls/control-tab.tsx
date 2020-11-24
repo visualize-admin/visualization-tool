@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Flex, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Text } from "theme-ui";
 
 import { FieldProps } from "../..";
 import { getFieldLabel, getIconName } from "../ui-helpers";

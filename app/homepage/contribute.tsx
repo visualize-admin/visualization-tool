@@ -1,4 +1,4 @@
-import { Box, Flex, Link, Text } from "@theme-ui/components";
+import { Box, Flex, Link, Text } from "theme-ui";
 import React from "react";
 
 export const Contribute = ({

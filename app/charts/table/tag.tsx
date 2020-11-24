@@ -1,4 +1,4 @@
-import { Box } from "@theme-ui/components";
+import { Box } from "theme-ui";
 import { hcl } from "d3-color";
 import * as React from "react";
 import { ReactNode } from "react";

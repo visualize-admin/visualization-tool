@@ -1,5 +1,5 @@
 import VisuallyHidden from "@reach/visually-hidden";
-import { Box } from "@theme-ui/components";
+import { Box } from "theme-ui";
 import { memo, useMemo } from "react";
 import { ChartFields } from "../../configurator";
 import { Observation } from "../../domain/data";

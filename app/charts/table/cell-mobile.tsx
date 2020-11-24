@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@theme-ui/components";
+import { Box, Flex, Text } from "theme-ui";
 import { hcl } from "d3-color";
 import * as React from "react";
 import { Cell, Row } from "react-table";
