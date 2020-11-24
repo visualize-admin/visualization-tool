@@ -26,6 +26,7 @@ export const Brush = () => {
     brushSelectionColor,
     brushHandleStrokeColor,
     brushHandleFillColor,
+    labelFontSize,
   } = useChartTheme();
   const { from, to } = state.time;
   const { xEntireScale, getX, bounds, allDataWide } = useChartState() as
@@ -228,6 +229,24 @@ export const Brush = () => {
 
   return (
     <>
+      {/* Selected Dates */}
+      <g
+        transform={`translate(0, ${
+          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
+        })`}
+      >
+        {from && to && (
+          <text
+            fontSize={labelFontSize}
+            textAnchor="start"
+            x={0}
+            y={0}
+            dy={labelFontSize / 2}
+          >
+            {`${formatDateAuto(from)} - ${formatDateAuto(to)}`}
+          </text>
+        )}
+      </g>
       {/* Handle Dates */}
       <g
         transform={`translate(${bounds.margins.left}, ${
