@@ -74,6 +74,33 @@ const Meta = t.type({ title: Title, description: Description });
 export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
+// Interactive Filters
+// interactiveFilters: {
+// 	legend: {
+// 		active: true,
+// 		componentIri: "dim/0",
+//   },
+//   time: {
+//     active:false,
+//     componentIri:"dim/1",
+//     preset: { // any componentIRI e.g. "dim/0"
+//         type: "range",
+// 	      from: "2008",
+// 	      to: "2010"
+//     }
+//   }
+//   dataFilter: {active:true, componentIris: ["dim/3","dim/4"]}
+// }
+const InteractiveFiltersLegend = t.type({
+  active: t.boolean,
+  componentIri: t.string,
+});
+export type InteractiveFiltersLegend = t.TypeOf<
+  typeof InteractiveFiltersLegend
+>;
+const InteractiveFilters = t.type({ legend: InteractiveFiltersLegend });
+export type InteractiveFilters = t.TypeOf<typeof InteractiveFilters>;
+
 // Chart Config
 
 const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
@@ -198,6 +225,7 @@ const LineConfig = t.type(
   {
     chartType: t.literal("line"),
     filters: Filters,
+    interactiveFilters: InteractiveFilters,
     fields: LineFields,
   },
   "LineConfig"
