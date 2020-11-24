@@ -32,7 +32,7 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
 // FIXME: get this from chart config
-const WITH_TIME_BRUSH = false;
+const WITH_TIME_BRUSH = true;
 export interface LinesState {
   data: Observation[];
   bounds: Bounds;

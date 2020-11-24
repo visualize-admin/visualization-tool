@@ -96,7 +96,7 @@ export const ChartLines = memo(
             <Lines />
             {/* <HoverLine /> <HoverLineValues /> */}
             <InteractionHorizontal />
-            {/* <Brush /> */}
+            <Brush />
           </ChartSvg>
 
           <Ruler />
