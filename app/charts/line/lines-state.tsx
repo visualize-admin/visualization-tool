@@ -32,7 +32,7 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
 // FIXME: get this from chart config
-const WITH_TIME_BRUSH = false;
+const WITH_TIME_BRUSH = true;
 export interface LinesState {
   data: Observation[];
   bounds: Bounds;
@@ -210,7 +210,7 @@ const useLinesState = ({
     ? Math.max(
         estimateTextWidth(formatNumber(entireMaxValue)),
         // Account for width of time slider selection
-        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
       )
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
