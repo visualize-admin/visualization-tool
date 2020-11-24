@@ -6,6 +6,7 @@ import { getFieldLabel, getIconName } from "../ui-helpers";
 import { ComponentFieldsFragment } from "../../../graphql/query-hooks";
 import { Icon, IconName } from "../../../icons";
 import { ReactNode } from "react";
+import { Switch } from "../../../components/form";
 
 export const ControlTab = ({
   component,
@@ -169,7 +170,7 @@ export const DraggableTab = ({
 };
 
 // Generic component
-const ControlTabButton = ({
+export const ControlTabButton = ({
   checked,
   value,
   onClick,
@@ -217,58 +218,64 @@ const ControlTabButton = ({
   </Button>
 );
 
-const ControlTabButtonInner = ({
+export const ControlTabButtonInner = ({
   iconName,
   upperLabel,
   lowerLabel,
   checked,
   optional = false,
+  withCheckbox = false,
 }: {
   iconName: IconName;
   upperLabel?: string | ReactNode;
   lowerLabel: string | ReactNode;
   checked?: boolean;
   optional?: boolean;
+  withCheckbox?: boolean;
 }) => (
-  <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
-    <Flex
-      sx={{
-        width: 32,
-        height: 32,
-        minWidth: 32,
-        borderRadius: "bigger",
-        justifyContent: "center",
-        alignItems: "center",
-        bg: checked ? "primary" : "monochrome100",
-        color:
-          optional && !checked
-            ? "monochrome500"
-            : checked
-            ? "monochrome100"
-            : "monochrome700",
-      }}
-    >
-      <Icon size={24} name={iconName} />
-    </Flex>
-    <Flex sx={{ flexDirection: "column", alignItems: "flex-start", mx: 3 }}>
-      {upperLabel && (
-        <Text
-          variant="meta"
-          sx={{ color: "monochrome600", lineHeight: [1, 1, 1] }}
-        >
-          {upperLabel}
-        </Text>
-      )}
-      <Text
-        variant="paragraph1"
+  <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
+    <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
+      <Flex
         sx={{
-          color: optional && !checked ? "monochrome600" : "monochrome800",
-          lineHeight: [1, 1, 1],
-          textAlign: "left",
+          width: 32,
+          height: 32,
+          minWidth: 32,
+          borderRadius: "bigger",
+          justifyContent: "center",
+          alignItems: "center",
+          bg: checked ? "primary" : "monochrome100",
+          color:
+            optional && !checked
+              ? "monochrome500"
+              : checked
+              ? "monochrome100"
+              : "monochrome700",
         }}
       >
-        {lowerLabel}
-      </Text>
+        <Icon size={24} name={iconName} />
+      </Flex>
+
+      <Flex sx={{ flexDirection: "column", alignItems: "flex-start", mx: 3 }}>
+        {upperLabel && (
+          <Text
+            variant="meta"
+            sx={{ color: "monochrome600", lineHeight: [1, 1, 1] }}
+          >
+            {upperLabel}
+          </Text>
+        )}
+        <Text
+          variant="paragraph1"
+          sx={{
+            color: optional && !checked ? "monochrome600" : "monochrome800",
+            lineHeight: [1, 1, 1],
+            textAlign: "left",
+          }}
+        >
+          {lowerLabel}
+        </Text>
+      </Flex>
     </Flex>
+    {withCheckbox && <Switch label="" checked={checked}></Switch>}
   </Flex>
 );

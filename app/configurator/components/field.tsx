@@ -2,7 +2,7 @@ import { t } from "@lingui/macro";
 import { I18n } from "@lingui/react";
 import { Box, Flex } from "@theme-ui/components";
 import get from "lodash/get";
-import { ChangeEvent, ReactNode, useCallback } from "react";
+import React, { ChangeEvent, ReactNode, useCallback } from "react";
 import {
   FIELD_VALUE_NONE,
   FilterValueSingle,
@@ -25,11 +25,14 @@ import { Locales } from "../../locales/locales";
 import {
   useChartOptionBooleanField,
   useChartOptionSelectField,
+  useInteractiveFilterField,
 } from "../config-form";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
+  ControlTabButton,
+  ControlTabButtonInner,
   FilterTab,
 } from "./chart-controls/control-tab";
 import { getPalette } from "./ui-helpers";
@@ -113,6 +116,45 @@ export const AnnotatorTabField = ({
       checked={fieldProps.checked}
       onClick={fieldProps.onClick}
     ></AnnotatorTab>
+  );
+};
+
+export const InteractiveFilterCategoryTabField = ({
+  icon,
+  label,
+  value,
+  ...tabProps
+}: {
+  value: boolean;
+  disabled?: boolean;
+  icon: IconName;
+  label: ReactNode;
+}) => {
+  const fieldProps = useInteractiveFilterField({
+    value,
+  });
+
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        borderRadius: "default",
+        my: "2px",
+      }}
+    >
+      <ControlTabButton
+        checked={fieldProps.checked}
+        value={`${fieldProps.value}`}
+        onClick={() => fieldProps.onClick(`${fieldProps.value}`)}
+      >
+        <ControlTabButtonInner
+          iconName={icon}
+          lowerLabel={label}
+          checked={fieldProps.checked}
+          withCheckbox
+        />
+      </ControlTabButton>
+    </Box>
   );
 };
 
