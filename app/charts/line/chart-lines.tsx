@@ -20,6 +20,7 @@ import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Lines } from "./lines";
 import { LineChart } from "./lines-state";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
+import { Brush } from "../shared/brush";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
@@ -95,6 +96,7 @@ export const ChartLines = memo(
             <Lines />
             {/* <HoverLine /> <HoverLineValues /> */}
             <InteractionHorizontal />
+            {/* <Brush /> */}
           </ChartSvg>
 
           <Ruler />

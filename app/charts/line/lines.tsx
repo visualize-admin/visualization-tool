@@ -19,7 +19,8 @@ export const Lines = () => {
   const theme = useTheme();
 
   const [interactiveFilters] = useInteractiveFilters();
-  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const { categories } = interactiveFilters;
+  const activeInteractiveFilters = Object.keys(categories);
 
   const lineGenerator = line<Observation>()
     // .defined(d => !isNaN(d))

@@ -1,53 +1,60 @@
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  Reducer,
-  useContext,
-  useReducer,
-} from "react";
+import { Reducer, useImmerReducer } from "use-immer";
+import { createContext, Dispatch, ReactNode, useContext } from "react";
 
-type InteractiveFiltersState =
-  | {
-      segment: string;
-    }
-  | {};
+type InteractiveFiltersState = {
+  categories: $FixMe; //{}; // { [x: string]: boolean };
+  time: $FixMe;
+};
 
 type InteractiveFiltersStateAction =
   | {
       type: "ADD_INTERACTIVE_FILTER";
-      value: { segment: string };
+      value: string;
     }
   | {
       type: "REMOVE_INTERACTIVE_FILTER";
-      value: { segment: string };
+      value: string;
     }
   | {
-      type: "RESET_INTERACTIVE_FILTERS";
+      type: "ADD_TIME_FILTER";
+      value: Date[];
+    }
+  | {
+      type: "RESET_INTERACTIVE_CATEGORIES";
     };
 
-const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {};
+const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
+  categories: {},
+  time: {},
+};
 
 // Reducer
 const InteractiveFiltersStateReducer = (
-  state: InteractiveFiltersState,
+  draft: InteractiveFiltersState,
   action: InteractiveFiltersStateAction
 ) => {
   switch (action.type) {
     case "ADD_INTERACTIVE_FILTER":
       return {
-        ...state,
-        [action.value.segment]: true,
+        ...draft,
+        categories: { ...draft.categories, [action.value]: true },
       };
     case "REMOVE_INTERACTIVE_FILTER":
-      const draftState = { ...state };
+      const { categories } = draft;
+      const category = categories[action.value];
 
-      delete (draftState as InteractiveFiltersState)[
-        action.value.segment as keyof InteractiveFiltersState
-      ];
-      return { ...draftState };
-    case "RESET_INTERACTIVE_FILTERS":
-      return {};
+      if (category) delete categories[action.value];
+      return draft;
+    case "ADD_TIME_FILTER":
+      return {
+        ...draft,
+        time: { from: action.value[0], to: action.value[1] },
+      };
+    case "RESET_INTERACTIVE_CATEGORIES":
+      return {
+        ...draft,
+        categories: {},
+      };
 
     default:
       throw new Error();
@@ -75,11 +82,13 @@ export const InteractiveFiltersProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [state, dispatch] = useReducer<
+  const [state, dispatch] = useImmerReducer<
     Reducer<InteractiveFiltersState, InteractiveFiltersStateAction>
+    // @ts-ignore
   >(InteractiveFiltersStateReducer, INTERACTIVE_FILTERS_INITIAL_STATE);
 
   return (
+    // @ts-ignore
     <InteractiveFiltersStateContext.Provider value={[state, dispatch]}>
       {children}
     </InteractiveFiltersStateContext.Provider>

@@ -77,7 +77,7 @@ const useColumnsStackedState = ({
   ] = useInteractiveFilters();
 
   useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
     [dispatchInteractiveFilters, fields.segment]
   );
 
@@ -238,7 +238,8 @@ const useColumnsStackedState = ({
         stackOrderReverse;
 
   // Apply end-user-activated interactive filters to the stack
-  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const { categories } = interactiveFilters;
+  const activeInteractiveFilters = Object.keys(categories);
   const interactivelyFilteredData = sortedData.filter(
     (d) => !activeInteractiveFilters.includes(getSegment(d))
   );

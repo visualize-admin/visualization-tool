@@ -7,9 +7,8 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3-scale";
-
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
-import { Observation, ObservationValue } from "../../domain/data";
+import { LineFields } from "../../configurator";
 import {
   getPalette,
   mkNumber,
@@ -17,27 +16,31 @@ import {
   useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
+import { getWideData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
-import { LEFT_MARGIN_OFFSET } from "./constants";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { LineFields } from "../../configurator";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
+import { LEFT_MARGIN_OFFSET } from "./constants";
 
+// FIXME: get this from chart config
+const WITH_TIME_BRUSH = false;
 export interface LinesState {
   data: Observation[];
   bounds: Bounds;
   segments: string[];
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
-  xUniqueValues: Date[];
+  xEntireScale: ScaleTime<number, number>;
+  // xUniqueValues: Date[];
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
@@ -45,7 +48,8 @@ export interface LinesState {
   xAxisLabel: string;
   yAxisLabel: string;
   grouped: Map<string, Observation[]>;
-  wide: ArrayLike<Record<string, ObservationValue>>;
+  chartWideData: ArrayLike<Record<string, ObservationValue>>;
+  allDataWide: ArrayLike<Record<string, ObservationValue>>;
   xKey: string;
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
@@ -69,8 +73,11 @@ const useLinesState = ({
     dispatchInteractiveFilters,
   ] = useInteractiveFilters();
 
+  // Reset categories to avoid categories with the same
+  // name to persist as filters across different dimensions
+  // i.e. Jura as forest zone != Jura as canton.
   useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_FILTERS" }),
+    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
     [dispatchInteractiveFilters, fields.segment]
   );
 
@@ -84,29 +91,85 @@ const useLinesState = ({
   const getSegment = (d: Observation): string =>
     fields.segment ? (d[fields.segment.componentIri] as string) : "fixme";
 
-  // data
+  const xKey = fields.x.componentIri;
+
+  /** Data
+   * Contains *all* observations, used for brushing
+   */
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
+  const allDataGroupedMap = group(sortedData, getGroups);
+  const allDataWide = getWideData({
+    groupedMap: allDataGroupedMap,
+    getSegment,
+    getY,
+    xKey,
+  });
+  // const xUniqueValues = sortedData
+  //   .map((d) => getX(d))
+  //   .filter(
+  //     (date, i, self) =>
+  //       self.findIndex((d) => d.getTime() === date.getTime()) === i
+  //   );
+
+  /** Prepare Data for use in chart
+   * !== data used in some other components like Brush
+   * based on *all* data observations.
+   */
+  const { from, to } = interactiveFilters.time;
+  const preparedData = useMemo(() => {
+    const prepData =
+      from && to
+        ? sortedData.filter(
+            (d) => from && to && getX(d) >= from && getX(d) <= to
+          )
+        : sortedData;
+    return prepData;
+  }, [from, to, sortedData, getX]);
+
+  const grouped = group(preparedData, getSegment);
+  const groupedMap = group(preparedData, getGroups);
+  const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
+
+  // Apply "categories" end-user-activated interactive filters to the stack
+  const { categories } = interactiveFilters;
+  const activeInteractiveFilters = Object.keys(categories);
+
+  const interactivelyFilteredData = preparedData.filter(
+    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  );
 
   // x
-  const xUniqueValues = sortedData
-    .map((d) => getX(d))
-    .filter(
-      (date, i, self) =>
-        self.findIndex((d) => d.getTime() === date.getTime()) === i
-    );
-  const xDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
+  const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
+
+  const xEntireDomain = useMemo(
+    () => extent(sortedData, (d) => getX(d)) as [Date, Date],
+    [sortedData, getX]
+  );
+  const xEntireScale = scaleTime().domain(xEntireDomain);
+
+  // This effect initiates the interactive time filter
+  // and resets interactive categories filtering
+  // FIXME: use presets
+  useEffect(() => {
+    dispatchInteractiveFilters({
+      type: "ADD_TIME_FILTER",
+      value: xEntireDomain,
+    });
+  }, [dispatchInteractiveFilters, xEntireDomain]);
 
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
   // y
-  const minValue = Math.min(mkNumber(min(sortedData, getY)), 0);
-  const maxValue = max(sortedData, getY) as number;
+  const minValue = Math.min(mkNumber(min(preparedData, getY)), 0);
+  const maxValue = max(preparedData, getY) as number;
   const yDomain = [minValue, maxValue];
+
+  const entireMaxValue = max(sortedData, getY) as number;
 
   const yScale = scaleLinear().domain(yDomain).nice();
   const yAxisLabel =
@@ -114,7 +177,7 @@ const useLinesState = ({
     fields.y.componentIri;
 
   // segments
-  const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
+  const segments = [...new Set(preparedData.map(getSegment))].sort((a, b) =>
     ascending(a, b)
   );
   // Map ordered segments to colors
@@ -142,35 +205,22 @@ const useLinesState = ({
     colors.range(getPalette(fields.segment?.palette));
   }
 
-  const xKey = fields.x.componentIri;
-
-  const grouped = group(sortedData, getSegment);
-  const groupedMap = group(sortedData, getGroups);
-  const wide = [];
-
-  for (const [key, values] of groupedMap) {
-    const keyObject = values.reduce((obj, cur) => {
-      const currentKey = getSegment(cur);
-      return {
-        ...obj,
-        [currentKey]: getY(cur),
-      };
-    }, {});
-    wide.push({
-      ...keyObject,
-      [xKey]: key,
-    });
-  }
-
   // Dimensions
-  const left = Math.max(
-    estimateTextWidth(formatNumber(yScale.domain()[0])),
-    estimateTextWidth(formatNumber(yScale.domain()[1]))
-  );
+  const left = WITH_TIME_BRUSH
+    ? Math.max(
+        estimateTextWidth(formatNumber(entireMaxValue)),
+        // Account for width of time slider selection
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
+      )
+    : Math.max(
+        estimateTextWidth(formatNumber(yScale.domain()[0])),
+        estimateTextWidth(formatNumber(yScale.domain()[1]))
+      );
+  const bottom = WITH_TIME_BRUSH ? 100 : 40;
   const margins = {
     top: 50,
     right: 40,
-    bottom: 40,
+    bottom: bottom,
     left: left + LEFT_MARGIN_OFFSET,
   };
   const chartWidth = width - margins.left - margins.right;
@@ -183,13 +233,8 @@ const useLinesState = ({
     chartHeight,
   };
   xScale.range([0, chartWidth]);
+  xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
-
-  // Apply end-user-activated interactive filters to the stack
-  const activeInteractiveFilters = Object.keys(interactiveFilters);
-  const interactivelyFilteredData = sortedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -236,7 +281,8 @@ const useLinesState = ({
     bounds,
     getX,
     xScale,
-    xUniqueValues,
+    xEntireScale,
+    // xUniqueValues,
     getY,
     yScale,
     getSegment,
@@ -245,7 +291,8 @@ const useLinesState = ({
     segments,
     colors,
     grouped,
-    wide,
+    chartWideData,
+    allDataWide,
     xKey,
     getAnnotationInfo,
   };

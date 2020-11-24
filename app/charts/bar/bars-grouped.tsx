@@ -24,7 +24,8 @@ export const BarsGrouped = () => {
     axisLabelColor,
   } = useChartTheme();
   const [interactiveFilters] = useInteractiveFilters();
-  const activeInteractiveFilters = Object.keys(interactiveFilters);
+  const { categories } = interactiveFilters;
+  const activeInteractiveFilters = Object.keys(categories);
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>

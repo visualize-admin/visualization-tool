@@ -19,6 +19,7 @@ import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionHorizontal } from "../shared/overlay-horizontal";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
+import { Brush } from "../shared/brush";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
@@ -93,6 +94,7 @@ export const ChartAreas = memo(
             <AxisTime /> <AxisHeightLinear />
             <Areas /> <AxisTimeDomain />
             <InteractionHorizontal />
+            {/* <Brush /> */}
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
