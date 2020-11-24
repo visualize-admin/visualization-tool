@@ -94,7 +94,7 @@ export const ChartAreas = memo(
             <AxisTime /> <AxisHeightLinear />
             <Areas /> <AxisTimeDomain />
             <InteractionHorizontal />
-            <Brush />
+            {/* <Brush /> */}
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
