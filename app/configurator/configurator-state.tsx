@@ -104,6 +104,10 @@ export type ConfiguratorStateAction =
       value: { path: string | string[]; value: string };
     }
   | {
+      type: "INTERACTIVE_FILTER_LEGEND_CHANGED";
+      value: boolean;
+    }
+  | {
       type: "CHART_CONFIG_REPLACED";
       value: { chartConfig: ChartConfig; dataSetMetadata: DataCubeMetadata };
     }
@@ -553,6 +557,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_DESCRIPTION_CHANGED":
       if (draft.state === "DESCRIBING_CHART") {
         setWith(draft, `meta.${action.value.path}`, action.value.value, Object);
+      }
+      return draft;
+    case "INTERACTIVE_FILTER_LEGEND_CHANGED":
+      if (draft.state === "DESCRIBING_CHART") {
+        setWith(
+          draft,
+          `chartConfig.interactiveFilters.legend.active`,
+          action.value,
+          Object
+        );
       }
       return draft;
 
