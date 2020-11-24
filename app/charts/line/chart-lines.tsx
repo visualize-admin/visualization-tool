@@ -1,6 +1,11 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { LineConfig, LineFields } from "../../configurator";
+import {
+  InteractiveFilters,
+  InteractiveFiltersLegend,
+  LineConfig,
+  LineFields,
+} from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
 import {
@@ -57,6 +62,7 @@ export const ChartLinesVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          interactiveFilters={chartConfig.interactiveFilters}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -76,11 +82,13 @@ export const ChartLines = memo(
     dimensions,
     measures,
     fields,
+    interactiveFilters,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: LineFields;
+    interactiveFilters: InteractiveFilters;
   }) => {
     return (
       <LineChart
@@ -108,7 +116,11 @@ export const ChartLines = memo(
           <Tooltip type={fields.segment ? "multiple" : "single"} />
         </ChartContainer>
 
-        {fields.segment && <InteractiveLegendColor symbol="line" />}
+        {fields.segment && interactiveFilters.legend.active === true ? (
+          <InteractiveLegendColor symbol="line" />
+        ) : fields.segment ? (
+          <LegendColor symbol="line" />
+        ) : null}
       </LineChart>
     );
   }
