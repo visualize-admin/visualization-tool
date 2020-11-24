@@ -22,6 +22,7 @@ import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionColumns } from "./overlay-columns";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
+import { BrushOrdinal } from "../shared/brush";
 
 export const ChartColumnsVisualization = ({
   dataSetIri,
@@ -136,6 +137,7 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <Columns /> <AxisWidthBandDomain />
                 <InteractionColumns />
+                <BrushOrdinal />
               </ChartSvg>
               <Tooltip type="single" />
             </ChartContainer>

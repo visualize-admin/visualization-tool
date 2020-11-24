@@ -8,7 +8,7 @@ import {
   scaleOrdinal,
 } from "d3-scale";
 
-import { ReactNode, useMemo, useCallback } from "react";
+import { ReactNode, useMemo, useCallback, useEffect } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -23,12 +23,18 @@ import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "./constants";
 import { Observation } from "../../domain/data";
-
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
+const WITH_TIME_BRUSH = true;
+const BRUSH_SPACE = 100;
 export interface ColumnsState {
   bounds: Bounds;
   sortedData: Observation[];
   getX: (d: Observation) => string;
   xScale: ScaleBand<string>;
+  xEntireScale: ScaleBand<string>;
   xScaleInteraction: ScaleBand<string>;
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
@@ -50,6 +56,10 @@ const useColumnsState = ({
 }): ColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const [
+    interactiveFilters,
+    dispatchInteractiveFilters,
+  ] = useInteractiveFilters();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
@@ -71,18 +81,26 @@ const useColumnsState = ({
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
+  /** Data: *all* observations, used for brushing
+   */
   const sortedData = useMemo(() => {
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
-  // segments
-  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
-  );
-
+  /** Prepare Data for use in chart
+   * !== data used in some other components like Brush
+   * based on *all* data observations.
+   */
+  const { from, to } = interactiveFilters.time;
+  console.log("from to in column state", from, to);
+  const preparedData = useMemo(() => {
+    const prepData = from && to ? sortedData.slice(from, to) : sortedData;
+    return prepData;
+  }, [from, to, sortedData]);
+  console.log("preparedData", preparedData);
+  
   // x
-  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
+  const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
   const xScale = scaleBand()
     .domain(bandDomain)
     .paddingInner(PADDING_INNER)
@@ -92,9 +110,30 @@ const useColumnsState = ({
     .paddingInner(0)
     .paddingOuter(0);
 
+  const bandEntireDomain = useMemo(
+    () => [...new Set(sortedData.map((d) => getX(d) as string))],
+    [getX, sortedData]
+  );
+  const xEntireScale = scaleBand()
+    .domain(bandEntireDomain)
+    .paddingInner(0)
+    .paddingOuter(0);
+
+  // This effect initiates the interactive time filter
+  // and resets interactive categories filtering
+  // FIXME: use presets
+  useEffect(() => {
+    dispatchInteractiveFilters({
+      type: "ADD_TIME_FILTER",
+      value: [0, bandEntireDomain.length - 1],
+    });
+  }, [dispatchInteractiveFilters, bandEntireDomain]);
+
   // y
-  const minValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
-  const maxValue = max(sortedData, (d) => getY(d)) as number;
+  const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
+  const maxValue = max(preparedData, (d) => getY(d)) as number;
+  const entireMaxValue = max(sortedData, getY) as number;
+
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
     .nice();
@@ -103,10 +142,16 @@ const useColumnsState = ({
     fields.y.componentIri;
 
   // Dimensions
-  const left = Math.max(
-    estimateTextWidth(formatNumber(yScale.domain()[0])),
-    estimateTextWidth(formatNumber(yScale.domain()[1]))
-  );
+  const left = WITH_TIME_BRUSH
+    ? Math.max(
+        estimateTextWidth(formatNumber(entireMaxValue)),
+        // Account for width of time slider selection
+        estimateTextWidth(xEntireScale.domain()[0], 12) * 2 + 20
+      )
+    : Math.max(
+        estimateTextWidth(formatNumber(yScale.domain()[0])),
+        estimateTextWidth(formatNumber(yScale.domain()[1]))
+      );
   const bottom = max(bandDomain, (d) => estimateTextWidth(d)) || 70;
   const margins = {
     top: 50,
@@ -118,7 +163,7 @@ const useColumnsState = ({
   const chartHeight = chartWidth * aspectRatio;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom,
+    height: chartHeight + margins.top + margins.bottom + BRUSH_SPACE,
     margins,
     chartWidth,
     chartHeight,
@@ -126,7 +171,14 @@ const useColumnsState = ({
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
+  xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
+
+  // segments
+  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
+  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
+    segments
+  );
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
@@ -184,6 +236,7 @@ const useColumnsState = ({
     sortedData,
     getX,
     xScale,
+    xEntireScale,
     xScaleInteraction,
     getY,
     yScale,
@@ -231,14 +284,16 @@ export const ColumnChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <ColumnChartProvider
-          data={data}
-          fields={fields}
-          measures={measures}
-          aspectRatio={aspectRatio}
-        >
-          {children}
-        </ColumnChartProvider>
+        <InteractiveFiltersProvider>
+          <ColumnChartProvider
+            data={data}
+            fields={fields}
+            measures={measures}
+            aspectRatio={aspectRatio}
+          >
+            {children}
+          </ColumnChartProvider>
+        </InteractiveFiltersProvider>
       </InteractionProvider>
     </Observer>
   );
