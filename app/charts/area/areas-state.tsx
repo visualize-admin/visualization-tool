@@ -22,29 +22,30 @@ import {
   stackOrderDescending,
   stackOrderReverse,
 } from "d3-shape";
-
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { AreaFields } from "../../configurator";
-import { Observation, ObservationValue } from "../../domain/data";
 import {
   getPalette,
   parseDate,
   useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { getWideData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { LEFT_MARGIN_OFFSET } from "./constants";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
-import { getWideData } from "../shared/chart-helpers";
-import { BRUSH_HEIGHT } from "../shared/brush";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
+import { LEFT_MARGIN_OFFSET } from "./constants";
+
+// FIXME: get this from chart config
+const WITH_TIME_BRUSH = true;
 
 export interface AreasState {
   data: Observation[];
@@ -208,14 +209,31 @@ const useAreasState = ({
   /** Scales */
   const maxTotal = max<$FixMe, number>(chartWideData, (d) => d.total) as number;
   const yDomain = [0, maxTotal] as [number, number];
+  const entireMaxTotalValue = max<$FixMe, number>(
+    allDataWide,
+    (d) => d.total
+  ) as number;
 
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
 
-  const xEntireDomain = extent(sortedData, (d) => getX(d)) as [Date, Date];
+  const xEntireDomain = useMemo(
+    () => extent(sortedData, (d) => getX(d)) as [Date, Date],
+    [sortedData, getX]
+  );
   const xEntireScale = scaleTime().domain(xEntireDomain);
 
   const yScale = scaleLinear().domain(yDomain).nice();
+
+  // This effect initiates the interactive time filter
+  // and resets interactive categories filtering
+  // FIXME: use presets
+  useEffect(() => {
+    dispatchInteractiveFilters({
+      type: "ADD_TIME_FILTER",
+      value: xEntireDomain,
+    });
+  }, [dispatchInteractiveFilters, xEntireDomain]);
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
@@ -243,26 +261,34 @@ const useAreasState = ({
   }
 
   /** Dimensions */
-  const left = Math.max(
-    estimateTextWidth(formatNumber(yScale.domain()[0])),
-    estimateTextWidth(formatNumber(yScale.domain()[1]))
-  );
+  const left = WITH_TIME_BRUSH
+    ? Math.max(
+        estimateTextWidth(formatNumber(entireMaxTotalValue)),
+        // Account for width of time slider selection
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
+      )
+    : Math.max(
+        estimateTextWidth(formatNumber(yScale.domain()[0])),
+        estimateTextWidth(formatNumber(yScale.domain()[1]))
+      );
+  const bottom = WITH_TIME_BRUSH ? 100 : 40;
   const margins = {
     top: 50,
     right: 40,
-    bottom: 40,
+    bottom: bottom,
     left: left + LEFT_MARGIN_OFFSET,
   };
   const chartWidth = width - margins.left - margins.right;
   const chartHeight = chartWidth * aspectRatio;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom + BRUSH_HEIGHT,
+    height: chartHeight + margins.top + margins.bottom,
     margins,
     chartWidth,
     chartHeight,
   };
   xScale.range([0, chartWidth]);
+  xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   /** Tooltip */

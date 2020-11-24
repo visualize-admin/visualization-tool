@@ -7,9 +7,8 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3-scale";
-
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
-import { Observation, ObservationValue } from "../../domain/data";
+import { LineFields } from "../../configurator";
 import {
   getPalette,
   mkNumber,
@@ -17,22 +16,23 @@ import {
   useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
+import { getWideData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
-import { LEFT_MARGIN_OFFSET } from "./constants";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { LineFields } from "../../configurator";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
-import { getWideData } from "../shared/chart-helpers";
-import { BRUSH_HEIGHT } from "../shared/brush";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
+import { LEFT_MARGIN_OFFSET } from "./constants";
 
+// FIXME: get this from chart config
+const WITH_TIME_BRUSH = true;
 export interface LinesState {
   data: Observation[];
   bounds: Bounds;
@@ -73,6 +73,9 @@ const useLinesState = ({
     dispatchInteractiveFilters,
   ] = useInteractiveFilters();
 
+  // Reset categories to avoid categories with the same
+  // name to persist as filters across different dimensions
+  // i.e. Jura as forest zone != Jura as canton.
   useEffect(
     () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
     [dispatchInteractiveFilters, fields.segment]
@@ -203,25 +206,28 @@ const useLinesState = ({
   }
 
   // Dimensions
-  const left = Math.max(
-    estimateTextWidth(formatNumber(yScale.domain()[0])),
-    estimateTextWidth(formatNumber(yScale.domain()[1])),
-    // prevents update when using interactive time filter
-    estimateTextWidth(formatNumber(entireMaxValue))
-    // Account for width of time slider selection
-    // estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
-  );
+  const left = WITH_TIME_BRUSH
+    ? Math.max(
+        estimateTextWidth(formatNumber(entireMaxValue)),
+        // Account for width of time slider selection
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
+      )
+    : Math.max(
+        estimateTextWidth(formatNumber(yScale.domain()[0])),
+        estimateTextWidth(formatNumber(yScale.domain()[1]))
+      );
+  const bottom = WITH_TIME_BRUSH ? 100 : 40;
   const margins = {
     top: 50,
     right: 40,
-    bottom: 100,
+    bottom: bottom,
     left: left + LEFT_MARGIN_OFFSET,
   };
   const chartWidth = width - margins.left - margins.right;
   const chartHeight = chartWidth * aspectRatio;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom + BRUSH_HEIGHT,
+    height: chartHeight + margins.top + margins.bottom,
     margins,
     chartWidth,
     chartHeight,
