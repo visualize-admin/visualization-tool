@@ -230,24 +230,6 @@ export const BrushTime = () => {
 
   return (
     <>
-      {/* Selected Dates */}
-      <g
-        transform={`translate(0, ${
-          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
-        })`}
-      >
-        {from && to && (
-          <text
-            fontSize={labelFontSize}
-            textAnchor="start"
-            x={0}
-            y={0}
-            dy={labelFontSize / 2}
-          >
-            {`${formatDateAuto(from)} - ${formatDateAuto(to)}`}
-          </text>
-        )}
-      </g>
       {/* Handle Dates */}
       {/* <g
         transform={`translate(${bounds.margins.left}, ${
@@ -269,6 +251,24 @@ export const BrushTime = () => {
           </text>
         )}
       </g> */}
+      {/* Selected Dates */}
+      <g
+        transform={`translate(0, ${
+          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
+        })`}
+      >
+        {from && to && (
+          <text
+            fontSize={labelFontSize}
+            textAnchor="start"
+            x={0}
+            y={0}
+            dy={labelFontSize / 2}
+          >
+            {`${formatDateAuto(from)} - ${formatDateAuto(to)}`}
+          </text>
+        )}
+      </g>
       {/* Date Start and End */}
 
       {/* <g

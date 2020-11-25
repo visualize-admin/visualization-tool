@@ -1,7 +1,14 @@
 import { Trans } from "@lingui/macro";
 import { Box, Flex, Text } from "theme-ui";
 import FlexSearch from "flexsearch";
-import { useCallback, useMemo, useState, forwardRef } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  forwardRef,
+  useEffect,
+  createContext,
+} from "react";
 import {
   useExpanded,
   useFlexLayout,
@@ -18,9 +25,26 @@ import { CellDesktop } from "./cell-desktop";
 import { DDContent } from "./cell-mobile";
 import { TABLE_HEIGHT } from "./constants";
 import { GroupHeader } from "./group-header";
-import { TableHeader } from "./table-header";
+import { TableContent, TableContentProvider } from "./table-header";
 import { scrollbarWidth } from "./table-helpers";
 import { TableChartState } from "./table-state";
+
+const TableContentWrapper = forwardRef<HTMLDivElement, $FixMe>(
+  ({ children, ...props }, ref) => {
+    return (
+      <Box
+        ref={ref}
+        {...props}
+        style={{
+          ...props.style,
+          height: props.style.height + 42,
+        }}
+      >
+        <TableContent>{children}</TableContent>
+      </Box>
+    );
+  }
+);
 
 export const Table = () => {
   const {
@@ -231,36 +255,6 @@ export const Table = () => {
   //   [prepareRow, rows, tableColumnsMeta]
   // );
 
-  const TableContentWrapper = useMemo(() => {
-    return forwardRef<HTMLDivElement, $FixMe>(({ children, ...props }, ref) => {
-      return (
-        <Box
-          ref={ref}
-          {...props}
-          style={{
-            ...props.style,
-            height: props.style.height + 42,
-          }}
-        >
-          <TableHeader
-            customSortCount={customSortCount}
-            headerGroups={headerGroups}
-            tableColumnsMeta={tableColumnsMeta}
-          />
-          <Box
-            sx={{
-              position: "relative",
-              minWidth: totalColumnsWidth,
-              width: "100%",
-            }}
-          >
-            {children}
-          </Box>
-        </Box>
-      );
-    });
-  }, [customSortCount, headerGroups, tableColumnsMeta, totalColumnsWidth]);
-
   return (
     <>
       {showSearch && (
@@ -301,18 +295,25 @@ export const Table = () => {
           {...getTableProps({ style: { minWidth: "100%" } })}
         >
           <div {...getTableBodyProps()}>
-            <FixedSizeList
-              outerElementType={TableContentWrapper}
-              height={Math.min(
-                TABLE_HEIGHT,
-                rows.length * rowHeight + scrollbarWidth()
-              )}
-              itemCount={rows.length}
-              itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
-              width="100%"
+            <TableContentProvider
+              headerGroups={headerGroups}
+              tableColumnsMeta={tableColumnsMeta}
+              customSortCount={customSortCount}
+              totalColumnsWidth={totalColumnsWidth}
             >
-              {renderDesktopRow}
-            </FixedSizeList>
+              <FixedSizeList
+                outerElementType={TableContentWrapper}
+                height={Math.min(
+                  TABLE_HEIGHT,
+                  rows.length * rowHeight + scrollbarWidth()
+                )}
+                itemCount={rows.length}
+                itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
+                width="100%"
+              >
+                {renderDesktopRow}
+              </FixedSizeList>
+            </TableContentProvider>
           </div>
         </Box>
       )}
