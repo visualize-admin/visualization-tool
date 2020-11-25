@@ -1,11 +1,11 @@
-import { extent, max, min } from "d3-array";
+import { extent, max, min } from "d3";
 import {
   scaleDiverging,
   ScaleLinear,
   scaleLinear,
   scaleOrdinal,
   ScaleSequential,
-} from "d3-scale";
+} from "d3";
 import { ReactNode, useMemo } from "react";
 import { Column } from "react-table";
 import {

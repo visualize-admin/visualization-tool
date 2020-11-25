@@ -1,5 +1,5 @@
-import { ascending, max, min } from "d3-array";
-import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
+import { ascending, max, min } from "d3";
+import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3";
 import React, { ReactNode, useEffect } from "react";
 import { ScatterPlotFields } from "../../configurator";
 import { Observation } from "../../domain/data";

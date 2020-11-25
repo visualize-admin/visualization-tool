@@ -1,5 +1,5 @@
 import { Box } from "theme-ui";
-import { hcl } from "d3-color";
+import { hcl } from "d3";
 import * as React from "react";
 import { ReactNode } from "react";
 

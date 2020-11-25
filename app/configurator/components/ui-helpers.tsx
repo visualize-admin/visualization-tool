@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { ascending } from "d3-array";
-import { scaleOrdinal } from "d3-scale";
+import { ascending } from "d3";
+import { scaleOrdinal } from "d3";
 import {
   interpolateBrBG,
   interpolatePiYG,
@@ -17,7 +17,7 @@ import {
   schemeSet3,
   schemeTableau10,
 } from "d3-scale-chromatic";
-import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
+import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3";
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
 import {
