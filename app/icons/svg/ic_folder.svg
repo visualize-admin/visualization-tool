@@ -1,10 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Icons/IXT/24dp/ic_folder</title>
-    <g id="Icons/IXT/24dp/ic_folder" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="ic_folder">
-            <rect id="Container" x="0" y="0" width="24" height="24"></rect>
-            <path d="M22,11 L22,20 C22,20.5522847 21.5522847,21 21,21 L3,21 C2.44771525,21 2,20.5522847 2,20 L2,11 L22,11 Z M9.12092957,4 L10.621,5.29 L21,5.29029423 C21.5522737,5.29033824 21.9999717,5.7380489 22,6.29032258 L22,6.29032258 L22,10 L2,10 L2,5 C2,4.44771525 2.44771525,4 3,4 L3,4 L9.12092957,4 Z" id="Icon" fill="#454545"></path>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path fill="#454545" d="M22 11v9a1 1 0 01-1 1H3a1 1 0 01-1-1v-9h20zM9.12 4l1.501 1.29H21a1 1 0 011 1V10H2V5a1 1 0 011-1h6.12z"/></g></svg>
