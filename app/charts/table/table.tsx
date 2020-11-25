@@ -25,7 +25,7 @@ import { CellDesktop } from "./cell-desktop";
 import { DDContent } from "./cell-mobile";
 import { TABLE_HEIGHT } from "./constants";
 import { GroupHeader } from "./group-header";
-import { TableContent, TableContentProvider } from "./table-header";
+import { TableContent, TableContentProvider } from "./table-content";
 import { scrollbarWidth } from "./table-helpers";
 import { TableChartState } from "./table-state";
 
