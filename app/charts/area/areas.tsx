@@ -1,4 +1,4 @@
-import { area } from "d3-shape";
+import { area } from "d3";
 import { memo } from "react";
 import { useTheme } from "../../themes";
 import { useChartState } from "../shared/use-chart-state";

@@ -1,6 +1,6 @@
-import { bisector } from "d3-array";
-import { brushX } from "d3-brush";
-import { select, Selection } from "d3-selection";
+import { bisector } from "d3";
+import { brushX } from "d3";
+import { select, Selection } from "d3";
 import "d3-transition";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";

@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuPopover } from "@reach/menu-button";
 import VisuallyHidden from "@reach/visually-hidden";
-import { color as d3Color } from "d3-color";
+import { color as d3Color } from "d3";
 import { MouseEventHandler, useCallback, useState } from "react";
 import { Box, Grid, Input } from "theme-ui";
 

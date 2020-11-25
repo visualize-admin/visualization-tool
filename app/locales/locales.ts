@@ -1,6 +1,6 @@
 // If translations get too big, we should load them dynamically. But for now it's fine.
 // Use the same number format in each language
-import { formatLocale, FormatLocaleDefinition } from "d3-format";
+import { formatLocale, FormatLocaleDefinition } from "d3";
 import numberFormatCh from "d3-format/locale/de-CH.json";
 import { timeFormatLocale, TimeLocaleDefinition } from "d3-time-format";
 import timeFormatDe from "d3-time-format/locale/de-CH.json";
