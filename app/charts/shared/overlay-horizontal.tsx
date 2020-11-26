@@ -1,5 +1,5 @@
-import { bisector } from "d3-array";
-import { pointer } from "d3-selection";
+import { bisector } from "d3";
+import { pointer } from "d3";
 import { memo, useRef, MouseEvent } from "react";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";

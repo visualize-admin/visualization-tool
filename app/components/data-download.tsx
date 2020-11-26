@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Button } from "theme-ui";
-import { csvFormat } from "d3-dsv";
+import { csvFormat } from "d3";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
 import { ChartConfig, ChartFields } from "../configurator";

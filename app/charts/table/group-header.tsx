@@ -6,7 +6,7 @@ import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { Tag } from "./tag";
 import { TableChartState } from "./table-state";
-import { hcl } from "d3-color";
+import { hcl } from "d3";
 
 export const GroupHeader = ({
   row,

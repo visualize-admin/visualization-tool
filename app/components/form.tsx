@@ -99,10 +99,9 @@ export const Checkbox = ({
     <RebassCheckbox
       data-name="checkbox-component"
       sx={{
-        // size: 20,
         color: checked && !disabled ? "primary" : "monochrome500",
         "> *": {
-          color:
+          fill:
             color && checked ? color : checked ? "primary" : "monochrome500",
         },
       }}

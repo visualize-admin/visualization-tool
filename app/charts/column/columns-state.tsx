@@ -1,4 +1,4 @@
-import { ascending, max, min, descending } from "d3-array";
+import { ascending, max, min, descending } from "d3";
 import {
   scaleBand,
   ScaleBand,
@@ -6,7 +6,7 @@ import {
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
-} from "d3-scale";
+} from "d3";
 
 import { ReactNode, useMemo, useCallback, useEffect } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";

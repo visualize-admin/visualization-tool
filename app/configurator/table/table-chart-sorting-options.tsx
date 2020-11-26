@@ -28,6 +28,7 @@ import {
 import { useConfiguratorState } from "../configurator-state";
 import {
   addSortingOption,
+  changeSortingOption,
   changeSortingOptionOrder,
   moveSortingOptions,
   removeSortingOption,
@@ -104,7 +105,11 @@ const TableSortingOptionItem = ({
             mb: 3,
           }}
         >
-          {component.label}
+          <ChangeTableSortingOption
+            index={index}
+            metaData={metaData}
+            chartConfig={chartConfig}
+          />
         </Text>
         <Flex sx={{ mt: 2, mb: -1, width: "100%", alignItems: "flex-start" }}>
           <Radio
@@ -226,23 +231,88 @@ const AddTableSortingOption = ({
         ];
 
         return (
-          <Box
-            sx={{
-              py: 4,
-              px: 4,
-              borderTopColor: "monochrome500",
-              borderTopStyle: "solid",
-              borderTopWidth: 1,
-            }}
-          >
-            <Select
-              id="add-tablesorting"
-              value="-"
-              options={options}
-              label={i18n._(t("controls.sorting.addDimension")`Add dimension`)}
-              onChange={onChange}
-            />
-          </Box>
+          <Select
+            id="add-tablesorting"
+            value="-"
+            options={options}
+            label={i18n._(t("controls.sorting.addDimension")`Add dimension`)}
+            onChange={onChange}
+          />
+        );
+      }}
+    </I18n>
+  );
+};
+
+const ChangeTableSortingOption = ({
+  metaData,
+  chartConfig,
+  index,
+}: {
+  metaData: DataCubeMetadata;
+  chartConfig: TableConfig;
+  index: number;
+}) => {
+  const [, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLSelectElement>) => {
+      const { value } = e.currentTarget;
+
+      const component =
+        metaData.dimensions.find(({ iri }) => iri === value) ??
+        metaData.measures.find(({ iri }) => iri === value);
+
+      if (component) {
+        dispatch({
+          type: "CHART_CONFIG_REPLACED",
+          value: {
+            chartConfig: changeSortingOption(chartConfig, {
+              index,
+              option: {
+                componentIri: component.iri,
+                componentType: component.__typename,
+                sortingOrder: "asc",
+              },
+            }),
+            dataSetMetadata: metaData,
+          },
+        });
+      }
+    },
+    [chartConfig, dispatch, index, metaData]
+  );
+
+  const columns = useOrderedTableColumns(chartConfig.fields);
+
+  const { componentIri } = chartConfig.sorting[index];
+
+  return (
+    <I18n>
+      {({ i18n }) => {
+        const options = columns.flatMap((c) => {
+          const component =
+            metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
+            metaData.measures.find(({ iri }) => iri === c.componentIri);
+
+          return component
+            ? [
+                {
+                  value: component.iri,
+                  label: component.label,
+                },
+              ]
+            : [];
+        });
+
+        return (
+          <Select
+            id={`change-sorting-option-${index}`}
+            value={componentIri}
+            options={options}
+            label={i18n._(t("controls.sorting.sortBy")`Sort by`)}
+            onChange={onChange}
+          />
         );
       }}
     </I18n>
@@ -359,10 +429,20 @@ export const TableSortingOptions = ({
                   })}
                 </Box>
                 {placeholder}
-                <AddTableSortingOption
-                  metaData={metaData}
-                  chartConfig={chartConfig}
-                />
+                <Box
+                  sx={{
+                    py: 4,
+                    px: 4,
+                    borderTopColor: "monochrome500",
+                    borderTopStyle: "solid",
+                    borderTopWidth: 1,
+                  }}
+                >
+                  <AddTableSortingOption
+                    metaData={metaData}
+                    chartConfig={chartConfig}
+                  />
+                </Box>
               </Box>
             );
           }}
