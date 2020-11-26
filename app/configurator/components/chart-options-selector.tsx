@@ -40,7 +40,7 @@ import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
 } from "./filters";
-import { getFieldLabel, getFieldLabelHint } from "./ui-helpers";
+import { getFieldLabel, getFieldLabelHint, getIconName } from "./ui-helpers";
 
 export const ChartOptionsSelector = ({
   state,
@@ -172,7 +172,7 @@ const EncodingOptionsPanel = ({
       tabIndex={-1}
     >
       <ControlSection>
-        <SectionTitle iconName={encoding.field as IconName}>
+        <SectionTitle iconName={getIconName(encoding.field)}>
           {getFieldLabel(encoding.field)}
         </SectionTitle>
         <ControlSectionContent side="right">

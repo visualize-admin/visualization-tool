@@ -1,11 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Icons/IXT/64dp/ic_dataset</title>
-    <g id="Icons/IXT/64dp/ic_dataset" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="ic_dataset">
-            <rect id="Container" x="0" y="0" width="64" height="64"></rect>
-            <g id="icon_org" transform="translate(8.000000, 2.000000)"></g>
-            <path d="M44.4142136,1 L57,13.5857864 L57,63 L7,63 L7,1 L44.4142136,1 Z M43,3 L9,3 L9,61 L55,61 L55,15 L43,15 L43,3 Z M45,4.415 L45,13 L53.586,13 L45,4.415 Z M51,32 L51,44 L43,44 L43,32 L51,32 Z M41,20 L41,44 L33,44 L33,20 L41,20 Z M31,28 L31,44 L23,44 L23,28 L31,28 Z M21,36 L21,44 L13,44 L13,36 L21,36 Z M49,34 L45,34 L45,42 L49,42 L49,34 Z M39,22 L35,22 L35,42 L39,42 L39,22 Z M29,30 L25,30 L25,42 L29,42 L29,30 Z M19,38 L15,38 L15,42 L19,42 L19,38 Z" fill="#757575"></path>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path fill="#454545" d="M16.655.375l4.72 4.72v18.53H2.625V.375h14.03zm-.53.75H3.375v21.75h17.25V5.625h-4.5v-4.5zm.75.53v3.22h3.22l-3.22-3.22zM19.125 12v4.5h-3V12h3zm-3.75-4.5v9h-3v-9h3zm-3.75 3v6h-3v-6h3zm-3.75 3v3h-3v-3h3zm10.5-.75h-1.5v3h1.5v-3zm-3.75-4.5h-1.5v7.5h1.5v-7.5zm-3.75 3h-1.5v4.5h1.5v-4.5zm-3.75 3h-1.5v1.5h1.5v-1.5z"/></g></svg>
