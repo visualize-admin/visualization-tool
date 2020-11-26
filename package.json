@@ -22,7 +22,7 @@
     "locales:compile": "lingui compile --verbose",
     "graphql:codegen": "graphql-codegen --config codegen.yml",
     "graphql:codegen:dev": "graphql-codegen --config codegen.yml --watch",
-    "icons": "rm -f app/icons/components/*.tsx && svgr -d app/icons/components app/icons/svg --replace-attr-values '#000=currentColor,#454545=currentColor' --icon --typescript --filename-case=kebab",
+    "icons": "rm -f app/icons/components/*.tsx && svgr -d app/icons/components app/icons/svg",
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "postversion": "git push --follow-tags",
     "release:npm": "yarn build:npm && yarn publish app",

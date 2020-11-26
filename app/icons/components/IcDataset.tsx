@@ -1,6 +1,6 @@
 import * as React from "react";
 
-function SvgIcDatase(props: React.SVGProps<SVGSVGElement>) {
+function SvgIcDataset(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -20,4 +20,4 @@ function SvgIcDatase(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default SvgIcDatase;
+export default SvgIcDataset;

@@ -72,7 +72,7 @@ export const RowMobile = ({
             ml: `${row.depth * 12}px`,
           }}
         >
-          <Icon name={row.isExpanded ? "chevrondown" : "chevronright"} />
+          <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
           <Text
             as={headingLevel}
             variant="paragraph1"

@@ -17,7 +17,7 @@ export const ChartAnnotator = () => {
       <ControlSectionContent side="left">
         <AnnotatorTabField
           value={"title"}
-          icon="title"
+          icon="text"
           label={getFieldLabel("title")}
         ></AnnotatorTabField>
         <AnnotatorTabField

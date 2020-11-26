@@ -1,6 +1,6 @@
 import * as React from "react";
 
-function SvgIcEmail(props: React.SVGProps<SVGSVGElement>) {
+function SvgIcMail(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -18,4 +18,4 @@ function SvgIcEmail(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default SvgIcEmail;
+export default SvgIcMail;
