@@ -94,11 +94,12 @@ const useColumnsState = ({
   const { from, to } = interactiveFilters.time;
   console.log("from to in column state", from, to);
   const preparedData = useMemo(() => {
-    const prepData = from && to ? sortedData.slice(from, to) : sortedData;
+    const prepData =
+      (from || from === 0) && to ? sortedData.slice(from, to + 1) : sortedData;
     return prepData;
   }, [from, to, sortedData]);
   console.log("preparedData", preparedData);
-  
+
   // x
   const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
   const xScale = scaleBand()
@@ -116,8 +117,8 @@ const useColumnsState = ({
   );
   const xEntireScale = scaleBand()
     .domain(bandEntireDomain)
-    .paddingInner(0)
-    .paddingOuter(0);
+    .paddingInner(PADDING_INNER)
+    .paddingOuter(PADDING_OUTER);
 
   // This effect initiates the interactive time filter
   // and resets interactive categories filtering
