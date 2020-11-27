@@ -1,127 +1,10 @@
 import { ComponentProps } from "react";
-import { IconAdd } from "./ic-add";
-import { IconAreaChart } from "./ic-area-chart";
-import { IconArrowDown } from "./ic-arrow-down";
-import { IconArrowRight } from "./ic-arrow-right";
-import { IconBarChart } from "./ic-bar-chart";
-import { IconCaretDown } from "./ic-caret-down";
-import { IconCaretRight } from "./ic-caret-right";
-import { IconCheck } from "./ic-check";
-import { IconChevronDown } from "./ic-chevron-down";
-import { IconChevronLeft } from "./ic-chevron-left";
-import { IconChevronRight } from "./ic-chevron-right";
-import { IconChevronUp } from "./ic-chevron-up";
-import { IconClear } from "./ic-clear";
-import { IconColumnChart } from "./ic-column-chart";
-import { IconCopy } from "./ic-copy";
-import { IconDataset } from "./ic-dataset";
-import { IconDatasetPublished } from "./ic-dataset-published";
-import { IconDatasetWarning } from "./ic-dataset-warning";
-import { IconDescription } from "./ic-description";
-import { IconEmbed } from "./ic-embed";
-import { IconFacebook } from "./ic-facebook";
-import { IconFilter } from "./ic-filter";
-import { IconHintWarning } from "./ic-hint-warning";
-import { IconImage } from "./ic-image";
-import { IconInfo } from "./ic-info";
-import { IconLineChart } from "./ic-line-chart";
-import { IconLoading } from "./ic-loading";
-import { IconMail } from "./ic-mail";
-import { IconPieChart } from "./ic-pie-chart";
-import { IconResize } from "./ic-resize";
-import { IconScatterplot } from "./ic-scatterplot";
-import { IconSearch } from "./ic-search";
-import { IconSegment } from "./ic-segment";
-import { IconShare } from "./ic-share";
-import { IconSort } from "./ic-sort";
-import { IconTable } from "./ic-table";
-import { IconText } from "./ic-text";
-import { IconTwitter } from "./ic-twitter";
-import { IconUnfold } from "./ic-unfold";
-import { IconWarning } from "./ic-warning";
-import { IconX } from "./ic-x";
-import { IconY } from "./ic-y";
-import { IconDragndrop } from "./ic-dragndrop";
-import { IconSortAscending } from "./ic-sort-ascending";
-import { IconSortDescending } from "./ic-sort-descending";
 
-// Generated
-import { default as IconFormatting } from "./components/ic-formatting";
-import { default as IconTrash } from "./components/ic-trash";
-import { default as IconSettings } from "./components/ic-settings";
+import { Icons, IconName } from "./components";
 
-import { default as IconCategorical } from "./components/ic-categorical-2";
-import { default as IconCategoricalHidden } from "./components/ic-categorical-2-hidden";
-import { default as IconNumerical } from "./components/ic-numerical-2";
-import { default as IconNumericalHidden } from "./components/ic-numerical-2-hidden";
-import { default as IconLocations } from "./components/ic-locations-2";
-import { default as IconLocationsHidden } from "./components/ic-locations-2-hidden";
-import { default as IconTime } from "./components/ic-time-2";
-import { default as IconTimeHidden } from "./components/ic-time-2-hidden";
+export { Icons } from "./components";
 
-export const Icons = {
-  check: IconCheck,
-  add: IconAdd,
-  clear: IconClear,
-  search: IconSearch,
-  chevronup: IconChevronUp,
-  chevrondown: IconChevronDown,
-  chevronleft: IconChevronLeft,
-  chevronright: IconChevronRight,
-  caretdown: IconCaretDown,
-  caretright: IconCaretRight,
-  unfold: IconUnfold,
-  bar: IconBarChart,
-  column: IconColumnChart,
-  line: IconLineChart,
-  area: IconAreaChart,
-  pie: IconPieChart,
-  scatterplot: IconScatterplot,
-  dataset: IconDataset,
-  datasetWarning: IconDatasetWarning,
-  published: IconDatasetPublished,
-  loading: IconLoading,
-  warning: IconWarning,
-  hintWarning: IconHintWarning,
-  resize: IconResize,
-  table: IconTable,
-  x: IconX,
-  y: IconY,
-  segment: IconSegment,
-  filter: IconFilter,
-  share: IconShare,
-  sort: IconSort,
-  copy: IconCopy,
-  embed: IconEmbed,
-  facebook: IconFacebook,
-  image: IconImage,
-  mail: IconMail,
-  twitter: IconTwitter,
-  text: IconText,
-  info: IconInfo,
-  arrowRight: IconArrowRight,
-  arrowDown: IconArrowDown,
-  title: IconText,
-  description: IconDescription,
-  dragndrop: IconDragndrop,
-  sortAscending: IconSortAscending,
-  sortDescending: IconSortDescending,
-
-  // Generated icons
-  formatting: IconFormatting,
-  trash: IconTrash,
-  settings: IconSettings,
-  tableColumnCategorical: IconCategorical,
-  tableColumnCategoricalHidden: IconCategoricalHidden,
-  tableColumnNumerical: IconNumerical,
-  tableColumnNumericalHidden: IconNumericalHidden,
-  tableColumnLocations: IconLocations,
-  tableColumnLocationsHidden: IconLocationsHidden,
-  tableColumnTime: IconTime,
-  tableColumnTimeHidden: IconTimeHidden,
-};
-
-export type IconName = keyof typeof Icons;
+export type { IconName } from "./components";
 
 export const Icon = ({
   size = 24,
@@ -134,13 +17,11 @@ export const Icon = ({
   name: IconName;
 } & ComponentProps<"svg">) => {
   const IconComponent = Icons[name];
-  return (
-    <IconComponent
-      size={size}
-      width={size}
-      height={size}
-      color={color}
-      {...props}
-    />
-  );
+
+  if (!IconComponent) {
+    console.warn("No icon", name);
+    return null;
+  }
+
+  return <IconComponent width={size} height={size} color={color} {...props} />;
 };

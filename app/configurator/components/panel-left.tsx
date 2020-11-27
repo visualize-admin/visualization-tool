@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { useConfiguratorState } from "..";
 import { ChartAnnotator } from "./chart-annotator";
 import { ChartConfigurator } from "./chart-configurator";

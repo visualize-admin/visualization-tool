@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import React from "react";
+import * as React from "react";
 import { AppLayout } from "../../../components/layout";
 import { Configurator, ConfiguratorStateProvider } from "../../../configurator";
 

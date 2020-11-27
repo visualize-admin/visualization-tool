@@ -3,12 +3,12 @@ import VisuallyHidden from "@reach/visually-hidden";
 import {
   Box,
   Button,
-  Checkbox as RebassCheckbox,
+  Checkbox as TUICheckbox,
   Flex,
-  Input as RebassInput,
-  Label as RebassLabel,
-  Radio as RebassRadio,
-  Select as RebassSelect,
+  Input as TUIInput,
+  Label as TUILabel,
+  Radio as TUIRadio,
+  Select as TUISelect,
   SelectProps,
 } from "theme-ui";
 import { ReactNode } from "react";
@@ -28,7 +28,7 @@ export const Label = ({
   smaller?: boolean;
   children: ReactNode;
 }) => (
-  <RebassLabel
+  <TUILabel
     htmlFor={htmlFor}
     mb={1}
     sx={{
@@ -55,7 +55,7 @@ export const Label = ({
         {label}
       </Box>
     )}
-  </RebassLabel>
+  </TUILabel>
 );
 
 export const Radio = ({
@@ -69,7 +69,7 @@ export const Radio = ({
   return (
     <Box mb={2}>
       <Label label={label} htmlFor={`${name}-${value}`} disabled={disabled}>
-        <RebassRadio
+        <TUIRadio
           name={name}
           id={`${name}-${value}`}
           value={value}
@@ -96,7 +96,7 @@ export const Checkbox = ({
   color,
 }: { label: ReactNode; disabled?: boolean; color?: string } & FieldProps) => (
   <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
-    <RebassCheckbox
+    <TUICheckbox
       data-name="checkbox-component"
       sx={{
         color: checked && !disabled ? "primary" : "monochrome500",
@@ -135,7 +135,7 @@ export const Select = ({
         {label}
       </Label>
     )}
-    <RebassSelect
+    <TUISelect
       sx={{
         borderColor: "monochrome500",
         fontSize: 4,
@@ -159,7 +159,7 @@ export const Select = ({
           {opt.label}
         </option>
       ))}
-    </RebassSelect>
+    </TUISelect>
   </Box>
 );
 
@@ -183,7 +183,7 @@ export const MiniSelect = ({
         {label}
       </Label>
     )}
-    <RebassSelect
+    <TUISelect
       sx={{
         borderColor: "transparent",
         fontSize: [1, 2, 2],
@@ -208,7 +208,7 @@ export const MiniSelect = ({
           {opt.label}
         </option>
       ))}
-    </RebassSelect>
+    </TUISelect>
   </Box>
 );
 
@@ -229,7 +229,7 @@ export const Input = ({
         {label}
       </Label>
     )}
-    <RebassInput
+    <TUIInput
       sx={{ borderColor: "monochrome500", bg: "monochrome100", height: "40px" }}
       id={name}
       name={name}
@@ -267,7 +267,7 @@ export const SearchField = ({
       >
         <Icon name="search" size={16} />
       </Box>
-      <RebassInput
+      <TUIInput
         sx={{
           borderColor: "monochrome500",
           bg: "monochrome100",
@@ -344,11 +344,11 @@ export const Switch = ({
       alignItems: "center",
     }}
   >
-    <RebassLabel
+    <TUILabel
       htmlFor={`${name}-${label}`}
       sx={{ ":active div:after": { width: disabled ? "12px" : "16px" } }}
     >
-      <RebassCheckbox
+      <TUICheckbox
         id={`${name}-${label}`}
         name={name}
         checked={checked}
@@ -409,6 +409,6 @@ export const Switch = ({
       >
         {label}
       </Box>
-    </RebassLabel>
+    </TUILabel>
   </Flex>
 );

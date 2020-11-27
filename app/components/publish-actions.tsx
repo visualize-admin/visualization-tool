@@ -126,7 +126,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
   return (
     <PopUp
       triggerLabel={<Trans id="button.share">Share</Trans>}
-      triggerIconName="share"
+      triggerIconName="linkExternal"
     >
       <>
         <PublishActionOverlay />

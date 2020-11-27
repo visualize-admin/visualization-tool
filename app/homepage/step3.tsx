@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 export const Step3 = () => (
   <svg width={288} height={200} viewBox="0 0 288 200">

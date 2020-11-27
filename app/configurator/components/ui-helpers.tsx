@@ -130,27 +130,31 @@ export const useFormatNumber = () => {
 export const getIconName = (name: string): IconName => {
   switch (name) {
     case "x":
-      return "x";
+      return "xAxis";
     case "y":
-      return "y";
+      return "yAxis";
     case "segment":
-      return "segment";
+      return "segments";
     case "table":
       return "table";
     case "filter":
       return "filter";
     case "column":
-      return "column";
+      return "chartColumn";
     case "bar":
-      return "bar";
+      return "chartBar";
     case "line":
-      return "line";
+      return "chartLine";
     case "area":
-      return "area";
+      return "chartArea";
     case "scatterplot":
-      return "scatterplot";
+      return "chartScatterplot";
     case "pie":
-      return "pie";
+      return "chartPie";
+    case "title":
+      return "text";
+    case "description":
+      return "description";
     case "tableColumnMeasure":
       return "tableColumnNumerical";
     case "tableColumnMeasureHidden":

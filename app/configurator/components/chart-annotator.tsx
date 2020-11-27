@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import React from "react";
+import * as React from "react";
 import {
   SectionTitle,
   ControlSectionContent,
@@ -17,7 +17,7 @@ export const ChartAnnotator = () => {
       <ControlSectionContent side="left">
         <AnnotatorTabField
           value={"title"}
-          icon="title"
+          icon="text"
           label={getFieldLabel("title")}
         ></AnnotatorTabField>
         <AnnotatorTabField
