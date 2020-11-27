@@ -380,87 +380,79 @@ export const BrushOrdinal = ({ debug = false }: { debug?: boolean }) => {
     .on("end.snap", updateBrushStatus);
 
   /** Keyboard support */
-  // const moveBrushOnKeyPress = useCallback(
-  //   (event: $FixMe, handleDirection: "w" | "e") => {
-  //     updateBrushEndedStatus(false);
+  const moveBrushOnKeyPress = useCallback(
+    (event: $FixMe, handleDirection: "w" | "e") => {
+      updateBrushEndedStatus(false);
 
-  //     const bisectDateLeft = bisector(
-  //       (ds: Observation, date: Date) => getX(ds) - date
-  //     ).left;
-  //     const bisectDateRight = bisector(
-  //       (ds: Observation, date: Date) => getX(ds) - date
-  //     ).right;
+      if (event.keyCode === 37 && handleDirection === "w") {
+        // west handle, moving left
 
-  //     if (event.keyCode === 37 && handleDirection === "w") {
-  //       // west handle, moving left
-  //       const index = bisectDateLeft(sortedData, from, 1);
-  //       const indexLeft = sortedData[index - 1];
+        const indexLeft = from > 0 ? from - 1 : 0;
 
-  //       if (getX(indexLeft) < to) {
-  //         // new lower than "to"
-  //         dispatch({
-  //           type: "ADD_TIME_FILTER",
-  //           value: [getX(indexLeft), to],
-  //         });
-  //       } else {
-  //         // new too high, don't do anything
-  //         dispatch({
-  //           type: "ADD_TIME_FILTER",
-  //           value: [from, to],
-  //         });
-  //       }
-  //     } else if (event.keyCode === 39 && handleDirection === "w") {
-  //       // west handle, moving right
-  //       const index = bisectDateRight(sortedData, from, 1);
-  //       const indexRight = sortedData[index];
-  //       if (getX(indexRight) < to) {
-  //         dispatch({
-  //           type: "ADD_TIME_FILTER",
-  //           value: [getX(indexRight), to],
-  //         });
-  //       } else {
-  //         dispatch({
-  //           type: "ADD_TIME_FILTER",
-  //           value: [from, to],
-  //         });
-  //       }
-  //     } else if (event.keyCode === 37 && handleDirection === "e") {
-  //       // east handle, moving left
-  //       const index = bisectDateLeft(sortedData, to, 1);
-  //       const indexLeft = sortedData[index - 1];
+        if (indexLeft < to) {
+          // new lower than "to"
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [indexLeft, to],
+          });
+        } else {
+          // new too high, don't do anything
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, to],
+          });
+        }
+      } else if (event.keyCode === 39 && handleDirection === "w") {
+        // west handle, moving right
 
-  //       if (getX(indexLeft) > from) {
-  //         dispatch({
-  //           type: "ADD_TIME_FILTER",
-  //           value: [from, getX(indexLeft)],
-  //         });
-  //       } else {
-  //         dispatch({
-  //           type: "ADD_TIME_FILTER",
-  //           value: [from, to],
-  //         });
-  //       }
-  //     } else if (event.keyCode === 39 && handleDirection === "e") {
-  //       // east handle, moving right
-  //       const index = bisectDateRight(sortedData, to, 1);
-  //       const indexLeft = sortedData[index];
+        const indexRight = from + 1;
+        if (indexRight < to) {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [indexRight, to],
+          });
+        } else {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, to],
+          });
+        }
+      } else if (event.keyCode === 37 && handleDirection === "e") {
+        // east handle, moving left
 
-  //       if (indexLeft && getX(indexLeft) > from) {
-  //         dispatch({
-  //           type: "ADD_TIME_FILTER",
-  //           value: [from, getX(indexLeft)],
-  //         });
-  //       } else {
-  //         dispatch({
-  //           type: "ADD_TIME_FILTER",
-  //           value: [from, to],
-  //         });
-  //       }
-  //     }
-  //     updateBrushEndedStatus(true);
-  //   },
-  //   [sortedData, dispatch, from, getX, to]
-  // );
+        const indexLeft = to - 1;
+
+        if (indexLeft > from) {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, indexLeft],
+          });
+        } else {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, to],
+          });
+        }
+      } else if (event.keyCode === 39 && handleDirection === "e") {
+        // east handle, moving right
+        const indexRight = to < sortedData.length - 1 ? to + 1 : to;
+
+        if (indexRight && indexRight > from) {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, indexRight],
+          });
+        } else {
+          dispatch({
+            type: "ADD_TIME_FILTER",
+            value: [from, to],
+          });
+        }
+      }
+      updateBrushEndedStatus(true);
+    },
+    [xEntireScale, from, to, dispatch, sortedData.length]
+  );
   const mkBrush = useCallback(
     (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
@@ -482,12 +474,12 @@ export const BrushOrdinal = ({ debug = false }: { debug?: boolean }) => {
         .style("height", `${HANDLE_HEIGHT}px`)
         .attr("rx", `${HANDLE_HEIGHT}px`);
 
-      // g.select(".handle--w")
-      //   .attr("tabindex", 0)
-      //   .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "w"));
-      // g.select(".handle--e")
-      //   .attr("tabindex", 0)
-      //   .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
+      g.select(".handle--w")
+        .attr("tabindex", 0)
+        .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "w"));
+      g.select(".handle--e")
+        .attr("tabindex", 0)
+        .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
 
       // Apply brush to selected group
       g.call(brush);
@@ -498,6 +490,7 @@ export const BrushOrdinal = ({ debug = false }: { debug?: boolean }) => {
       brushHandleStrokeColor,
       brushOverlayColor,
       brushSelectionColor,
+      moveBrushOnKeyPress,
     ]
   );
 
