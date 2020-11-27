@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import React from "react";
+import * as React from "react";
 import { ChartConfig, ConfiguratorStateConfiguringChart } from "..";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { getFieldComponentIris } from "../../charts";

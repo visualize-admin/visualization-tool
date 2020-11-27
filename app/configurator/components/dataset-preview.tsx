@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Box, Text, Flex } from "theme-ui";
 import { Loading } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
