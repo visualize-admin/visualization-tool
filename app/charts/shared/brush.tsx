@@ -1,4 +1,4 @@
-import { bisectLeft, bisectRight, bisector } from "d3";
+import { bisectLeft, bisectRight, bisector, Transition } from "d3";
 import { brushX } from "d3";
 import { select, Selection } from "d3";
 import "d3-transition";
@@ -173,6 +173,7 @@ export const BrushTime = () => {
     },
     [allDataWide, dispatch, from, getX, to]
   );
+
   const mkBrush = useCallback(
     (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
@@ -322,13 +323,13 @@ export const BrushTime = () => {
   );
 };
 
-export const BrushOrdinal = () => {
+export const BrushOrdinal = ({ debug = false }: { debug?: boolean }) => {
   const ref = useRef<SVGGElement>(null);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
 
   const [state, dispatch] = useInteractiveFilters();
   const { from, to } = state.time;
-  console.log("from to initial state", from, to);
+
   const {
     brushOverlayColor,
     brushSelectionColor,
@@ -376,7 +377,7 @@ export const BrushOrdinal = () => {
       [bounds.chartWidth, BRUSH_HEIGHT],
     ])
     .on("start brush", brushed)
-    .on("end", updateBrushStatus);
+    .on("end.snap", updateBrushStatus);
 
   /** Keyboard support */
   // const moveBrushOnKeyPress = useCallback(
@@ -469,12 +470,14 @@ export const BrushOrdinal = () => {
         .attr("fill", brushSelectionColor)
         .attr("fill-opacity", 1)
         .attr("stroke", "none");
+      // .style("transform", `translateX(${xEntireScale.step() / 2}px)`);
+
       g.selectAll(".handle")
         .attr("fill", brushHandleFillColor)
         .attr("stroke", brushHandleStrokeColor)
         .attr("stroke-width", 2)
         .style("y", `-${HANDLE_HEIGHT / 2}px`)
-        // .style("transform", `translateX(-${0}px)`)
+        // .style("transform", `translateX(${xEntireScale.step() / 2}px)`)
         .style("width", `${HANDLE_HEIGHT}px`)
         .style("height", `${HANDLE_HEIGHT}px`)
         .attr("rx", `${HANDLE_HEIGHT}px`);
@@ -495,7 +498,6 @@ export const BrushOrdinal = () => {
       brushHandleStrokeColor,
       brushOverlayColor,
       brushSelectionColor,
-      // moveBrushOnKeyPress,
     ]
   );
 
@@ -508,13 +510,20 @@ export const BrushOrdinal = () => {
   // after brush is ended and interactive-filters state is updated
   useEffect(() => {
     const g = select(ref.current);
-    if (from && to && brushedIsEnded) {
+    if ((from || from === 0) && to && brushedIsEnded) {
       const coord = [
         xEntireScale(getX(sortedData[from])),
-        xEntireScale(getX(sortedData[to])),
+        // Add the width of one step to mimic the visual behavior of BrushTime
+        // - 1 to avoid trigerring a state change
+        (xEntireScale(getX(sortedData[to])) || 0) + xEntireScale.step() - 1,
       ];
-      // @ts-ignore
-      g.transition().call(brush.move, coord);
+
+      (g.transition() as Transition<
+        SVGGElement,
+        unknown,
+        null,
+        undefined
+      >).call(brush.move, coord);
     }
   }, [brush.move, from, to, xEntireScale, brushedIsEnded, getX, sortedData]);
 
@@ -526,7 +535,7 @@ export const BrushOrdinal = () => {
           bounds.chartHeight + bounds.margins.top + bounds.margins.bottom
         })`}
       >
-        {from && to && (
+        {(from || from === 0) && to && (
           <text
             fontSize={labelFontSize}
             textAnchor="start"
@@ -539,11 +548,43 @@ export const BrushOrdinal = () => {
         )}
       </g>
 
+      {/* Data point location */}
+      {debug && (
+        <g
+          transform={`translate(${bounds.margins.left}, ${
+            bounds.chartHeight + bounds.margins.top + bounds.margins.bottom
+          })`}
+        >
+          {xEntireScale
+            .domain()
+            .map(xEntireScale)
+            .map((d, i) => (
+              <>
+                <rect
+                  x={d}
+                  y={0}
+                  width={xEntireScale.step()}
+                  height={BRUSH_HEIGHT}
+                  fill={"crimson"}
+                  stroke={"white"}
+                />
+                <text
+                  fontSize={7}
+                  textAnchor="middle"
+                  x={(d ?? 0) + xEntireScale.step() / 2}
+                  y={10}
+                  dy={BRUSH_HEIGHT}
+                  fill="crimson"
+                >
+                  {`${getX(sortedData[i])}`}
+                </text>
+              </>
+            ))}
+        </g>
+      )}
       {/* Brush */}
       <g
         ref={ref}
-        // tabIndex={0}
-        // focusable="true"
         transform={`translate(${bounds.margins.left}, ${
           bounds.chartHeight + bounds.margins.top + bounds.margins.bottom
         })`}
