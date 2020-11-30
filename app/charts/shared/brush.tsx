@@ -224,8 +224,13 @@ export const BrushTime = () => {
     const g = select(ref.current);
     if (from && to && brushedIsEnded) {
       const coord = [xEntireScale(from), xEntireScale(to)];
-      // @ts-ignore
-      g.transition().call(brush.move, coord);
+
+      (g.transition() as Transition<
+        SVGGElement,
+        unknown,
+        null,
+        undefined
+      >).call(brush.move, coord);
     }
   }, [brush.move, from, to, xEntireScale, brushedIsEnded]);
 
