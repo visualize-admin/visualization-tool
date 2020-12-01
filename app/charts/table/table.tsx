@@ -12,7 +12,6 @@ import { FixedSizeList, VariableSizeList } from "react-window";
 import { Box, Flex, Text } from "theme-ui";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
-import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { CellDesktop } from "./cell-desktop";
 import { DDContent } from "./cell-mobile";
@@ -21,6 +20,8 @@ import { GroupHeader } from "./group-header";
 import { TableContent, TableContentProvider } from "./table-content";
 import { scrollbarWidth } from "./table-helpers";
 import { TableChartState } from "./table-state";
+
+const MOBILE_VIEW_THRESHOLD = 384;
 
 const TableContentWrapper = forwardRef<HTMLDivElement, $FixMe>(
   ({ children, ...props }, ref) => {
@@ -52,9 +53,10 @@ export const Table = () => {
     sortingIris,
   } = useChartState() as TableChartState;
 
-  const [useAlternativeMobileView, toggleAlternativeMobileView] = useState(
-    false
-  );
+  const [compactMobileViewEnabled, setCompactMobileView] = useState(false);
+
+  const showCompactMobileView =
+    bounds.width < MOBILE_VIEW_THRESHOLD && compactMobileViewEnabled;
 
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
@@ -119,10 +121,6 @@ export const Table = () => {
   // If the table has a custom sort, the tableState.sortBy has these items prepended.
   const customSortCount = tableState.sortBy.length - sortingIris.length;
 
-  useEffect(() => {
-    bounds.width > 700 && toggleAlternativeMobileView(false);
-  }, [bounds.width]);
-
   // Desktop row
   const renderDesktopRow = useCallback(
     ({ index, style }) => {
@@ -159,10 +157,10 @@ export const Table = () => {
   const getMobileItemSize = useCallback(
     (index: number) => {
       return rows[index].isGrouped
-        ? MOBILE_ROW_HEIGHT
+        ? rowHeight
         : visibleColumns.length * MOBILE_ROW_HEIGHT;
     },
-    [visibleColumns.length, rows]
+    [rows, rowHeight, visibleColumns.length]
   );
 
   const renderMobileRow = useCallback(
@@ -170,12 +168,17 @@ export const Table = () => {
       const row = rows[index];
       prepareRow(row);
 
-      const headingLevel =
-        row.depth === 0 ? "h2" : row.depth === 1 ? "h3" : "p";
-
       return (
         <>
           <Box
+            sx={{
+              borderBottom: "1px solid",
+              borderBottomColor: "monochrome400",
+              "&:first-of-type": {
+                borderTop: "1px solid",
+                borderTopColor: "monochrome400",
+              },
+            }}
             {...row.getRowProps({
               style: { ...style, flexDirection: "column" },
             })}
@@ -193,15 +196,6 @@ export const Table = () => {
                       height: MOBILE_ROW_HEIGHT,
                       justifyContent: "space-between",
                       alignItems: "center",
-                      // my: 2,
-                      // "&:first-of-type": {
-                      //   pt: 2,
-                      // },
-                      "&:last-of-type": {
-                        borderBottom: "1px solid",
-                        borderBottomColor: "monochrome400",
-                        // pb: 3,
-                      },
                     }}
                   >
                     <Box
@@ -226,30 +220,21 @@ export const Table = () => {
               // Group
               <Flex
                 sx={{
-                  height: MOBILE_ROW_HEIGHT,
-                  borderTop: "1px solid",
-                  borderTopColor: "monochrome400",
+                  height: rowHeight,
+
                   color: "monochrome600",
                   // py: 2,
                   ml: `${row.depth * 12}px`,
                 }}
               >
-                <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
-                <Text
-                  as={headingLevel}
-                  variant="paragraph1"
-                  sx={{ color: "monochrome900" }}
-                  {...row.getToggleRowExpandedProps()}
-                >
-                  {`${row.groupByVal}`}
-                </Text>
+                <GroupHeader row={row} groupingLevels={groupingIris.length} />
               </Flex>
             )}
           </Box>
         </>
       );
     },
-    [prepareRow, rows, tableColumnsMeta]
+    [groupingIris.length, prepareRow, rowHeight, rows, tableColumnsMeta]
   );
 
   return (
@@ -264,24 +249,46 @@ export const Table = () => {
           />
         </Box>
       )}
-      <Box sx={{ display: ["block", "none", "none"], my: 3 }}>
+      <Box
+        sx={{ my: 3 }}
+        style={{
+          display: bounds.width < MOBILE_VIEW_THRESHOLD ? "block" : "none",
+        }}
+      >
         <Switch
           label={
-            <Trans id="chart.published.toggle.mobile.view">
-              Toggle alternative mobile view
-            </Trans>
+            <Trans id="chart.published.toggle.mobile.view">Compact view</Trans>
           }
-          name={"Toggle alternative mobile view"}
-          checked={useAlternativeMobileView}
+          name={"Compact view"}
+          checked={compactMobileViewEnabled}
           disabled={false}
-          onChange={() =>
-            toggleAlternativeMobileView(!useAlternativeMobileView)
-          }
+          onChange={() => setCompactMobileView(!compactMobileViewEnabled)}
         />
       </Box>
 
-      {/* Desktop */}
-      {!useAlternativeMobileView && (
+      {showCompactMobileView ? (
+        /* Compact Mobile View */
+        <Box
+          sx={{
+            width: "100%",
+            position: "relative",
+            bg: "monochrome100",
+            mb: 4,
+            fontSize: 3,
+          }}
+        >
+          <VariableSizeList
+            key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
+            height={TABLE_HEIGHT}
+            itemCount={rows.length}
+            itemSize={getMobileItemSize}
+            width={bounds.width}
+          >
+            {renderMobileRow}
+          </VariableSizeList>
+        </Box>
+      ) : (
+        /* Regular table view */
         <Box
           sx={{
             position: "relative",
@@ -312,28 +319,6 @@ export const Table = () => {
               </FixedSizeList>
             </TableContentProvider>
           </div>
-        </Box>
-      )}
-
-      {/* Alternative Mobile View */}
-      {useAlternativeMobileView && (
-        <Box
-          sx={{
-            width: "100%",
-            position: "relative",
-            bg: "monochrome100",
-            mb: 5,
-          }}
-        >
-          <VariableSizeList
-            key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
-            height={TABLE_HEIGHT}
-            itemCount={rows.length}
-            itemSize={getMobileItemSize}
-            width={bounds.width}
-          >
-            {renderMobileRow}
-          </VariableSizeList>
         </Box>
       )}
 
