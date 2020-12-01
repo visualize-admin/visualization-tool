@@ -9,7 +9,7 @@ export const toggleInteractiveFilter = produce(
     if (!IFConfig[path]) {
       return IFConfig;
     }
-    IFConfig[path].active = !value;
+    IFConfig[path].active = value;
     return IFConfig;
   }
 );
