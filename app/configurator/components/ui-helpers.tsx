@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { ascending } from "d3-array";
-import { scaleOrdinal } from "d3-scale";
+import { ascending } from "d3";
+import { scaleOrdinal } from "d3";
 import {
   interpolateBrBG,
   interpolatePiYG,
@@ -17,7 +17,7 @@ import {
   schemeSet3,
   schemeTableau10,
 } from "d3-scale-chromatic";
-import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3-time";
+import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3";
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
 import {
@@ -130,27 +130,31 @@ export const useFormatNumber = () => {
 export const getIconName = (name: string): IconName => {
   switch (name) {
     case "x":
-      return "x";
+      return "xAxis";
     case "y":
-      return "y";
+      return "yAxis";
     case "segment":
-      return "segment";
+      return "segments";
     case "table":
       return "table";
     case "filter":
       return "filter";
     case "column":
-      return "column";
+      return "chartColumn";
     case "bar":
-      return "bar";
+      return "chartBar";
     case "line":
-      return "line";
+      return "chartLine";
     case "area":
-      return "area";
+      return "chartArea";
     case "scatterplot":
-      return "scatterplot";
+      return "chartScatterplot";
     case "pie":
-      return "pie";
+      return "chartPie";
+    case "title":
+      return "text";
+    case "description":
+      return "description";
     case "tableColumnMeasure":
       return "tableColumnNumerical";
     case "tableColumnMeasureHidden":

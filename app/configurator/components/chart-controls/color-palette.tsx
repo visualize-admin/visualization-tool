@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Flex, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { useSelect } from "downshift";
 import get from "lodash/get";
 import { useCallback } from "react";

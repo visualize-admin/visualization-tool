@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Icons/IXT/24dp/ic_description</title>
-    <g id="Icons/IXT/24dp/ic_description" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Icon">
-            <rect id="Container" x="0" y="0" width="24" height="24"></rect>
-            <g id="Description" transform="translate(4.000000, 5.000000)" fill="#454545">
-                <path d="M10,12 L10,14 L0,14 L0,12 L10,12 Z M16,8 L16,10 L0,10 L0,8 L16,8 Z M16,4 L16,6 L0,6 L0,4 L16,4 Z M16,0 L16,2 L0,2 L0,0 L16,0 Z" id="Icon"></path>
-            </g>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path fill="#454545" d="M14 17v2H4v-2h10zm6-4v2H4v-2h16zm0-4v2H4V9h16zm0-4v2H4V5h16z"/></g></svg>

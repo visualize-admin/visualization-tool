@@ -1,5 +1,5 @@
-import { Box, Flex, Text } from "@theme-ui/components";
-import { hcl } from "d3-color";
+import { Box, Flex, Text } from "theme-ui";
+import { hcl } from "d3";
 import * as React from "react";
 import { Cell, Row } from "react-table";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
@@ -72,7 +72,7 @@ export const RowMobile = ({
             ml: `${row.depth * 12}px`,
           }}
         >
-          <Icon name={row.isExpanded ? "chevrondown" : "chevronright"} />
+          <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
           <Text
             as={headingLevel}
             variant="paragraph1"

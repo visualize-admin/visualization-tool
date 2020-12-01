@@ -1,6 +1,6 @@
-import { ascending, descending } from "d3-array";
-import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
-import { arc, pie, Pie, PieArcDatum } from "d3-shape";
+import { ascending, descending } from "d3";
+import { ScaleOrdinal, scaleOrdinal } from "d3";
+import { arc, pie, Pie, PieArcDatum } from "d3";
 
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../configurator";

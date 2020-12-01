@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Link, Text } from "@theme-ui/components";
+import { Box, Link, Text } from "theme-ui";
 import { Fragment, useEffect, useState } from "react";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";

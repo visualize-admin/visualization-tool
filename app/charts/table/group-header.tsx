@@ -1,4 +1,4 @@
-import { Box, Flex } from "@theme-ui/components";
+import { Box, Flex } from "theme-ui";
 import * as React from "react";
 import { Row } from "react-table";
 import { Observation } from "../../domain/data";
@@ -6,7 +6,7 @@ import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { Tag } from "./tag";
 import { TableChartState } from "./table-state";
-import { hcl } from "d3-color";
+import { hcl } from "d3";
 
 export const GroupHeader = ({
   row,
@@ -41,7 +41,7 @@ export const GroupHeader = ({
                   sx={{ width: 24, mr: 0, color: "monochrome600" }}
                 >
                   <Icon
-                    name={row.isExpanded ? "chevrondown" : "chevronright"}
+                    name={row.isExpanded ? "chevronDown" : "chevronRight"}
                   />
                 </Box>
                 {type === "category" ? (

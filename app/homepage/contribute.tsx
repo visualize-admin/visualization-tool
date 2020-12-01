@@ -1,5 +1,5 @@
-import { Box, Flex, Link, Text } from "@theme-ui/components";
-import React from "react";
+import { Box, Flex, Link, Text } from "theme-ui";
+import * as React from "react";
 
 export const Contribute = ({
   headline,

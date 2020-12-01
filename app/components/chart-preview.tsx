@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Flex, Text } from "@theme-ui/components";
+import { Flex, Text } from "theme-ui";
 import { useConfiguratorState } from "../configurator";
 import { useLocale } from "../locales/use-locale";
 import { ChartAreasVisualization } from "../charts/area/chart-area";

@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@theme-ui/components";
+import { Box, Flex, Text } from "theme-ui";
 
 import { ElementType, forwardRef, ReactNode } from "react";
 import { Icon, IconName } from "../../../icons";

@@ -1,4 +1,4 @@
-import { Flex } from "@theme-ui/components";
+import { Flex } from "theme-ui";
 import { ReactNode } from "react";
 import { Footer } from "./footer";
 import { Header } from "./header";

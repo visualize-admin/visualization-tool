@@ -5,7 +5,7 @@ import {
   Dimension as RDFDimension,
   Measure as RDFMeasure,
 } from "@zazuko/query-rdf-data-cube";
-import { descending } from "d3-array";
+import { descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { Filters } from "../configurator";

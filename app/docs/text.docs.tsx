@@ -1,5 +1,5 @@
 import { markdown, TableSpecimen } from "catalog";
-import { Text } from "@theme-ui/components";
+import { Text } from "theme-ui";
 import { useTheme } from "../themes/index";
 const pixelSize = 16;
 
@@ -16,7 +16,7 @@ The variants only refer to styles, they don't generate HTML semantics. For acces
 
 Example of a heading \`h1\` with the style \`heading1\`.
 ~~~
-import { Text } from "@theme-ui/components"
+import { Text } from "theme-ui"
 
 <Text variant="heading1" as="h1" >
  Heading 1

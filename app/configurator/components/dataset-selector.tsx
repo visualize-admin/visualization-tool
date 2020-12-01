@@ -1,6 +1,6 @@
 import { Plural, t, Trans } from "@lingui/macro";
 import { I18n } from "@lingui/react";
-import { Box, Button, Flex, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";

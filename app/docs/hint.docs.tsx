@@ -37,7 +37,7 @@ ${(
 Hints are variants of the \`Box\` components. As a convenience, they are also available as components with semantic names.
 
 ~~~
-import { Box } from "@theme-ui/components"
+import { Box } from "theme-ui"
 
 <Box variant="error">
   An error occurred!

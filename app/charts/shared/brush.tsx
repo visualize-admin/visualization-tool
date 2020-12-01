@@ -1,6 +1,6 @@
-import { bisector } from "d3-array";
-import { brushX } from "d3-brush";
-import { select, Selection } from "d3-selection";
+import { bisector } from "d3";
+import { brushX } from "d3";
+import { select, Selection } from "d3";
 import "d3-transition";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
@@ -11,7 +11,7 @@ import { useChartState } from "./use-chart-state";
 import { useChartTheme } from "./use-chart-theme";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
-export const HANDLE_HEIGHT = 20;
+export const HANDLE_HEIGHT = 14;
 export const BRUSH_HEIGHT = 3;
 
 export const Brush = () => {
@@ -26,6 +26,7 @@ export const Brush = () => {
     brushSelectionColor,
     brushHandleStrokeColor,
     brushHandleFillColor,
+    labelFontSize,
   } = useChartTheme();
   const { from, to } = state.time;
   const { xEntireScale, getX, bounds, allDataWide } = useChartState() as
@@ -229,7 +230,7 @@ export const Brush = () => {
   return (
     <>
       {/* Handle Dates */}
-      <g
+      {/* <g
         transform={`translate(${bounds.margins.left}, ${
           bounds.chartHeight +
           bounds.margins.top +
@@ -246,6 +247,24 @@ export const Brush = () => {
         {to && (
           <text fontSize={10} textAnchor="middle" x={xEntireScale(to)} y={10}>
             {formatDateAuto(to)}
+          </text>
+        )}
+      </g> */}
+      {/* Selected Dates */}
+      <g
+        transform={`translate(0, ${
+          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
+        })`}
+      >
+        {from && to && (
+          <text
+            fontSize={labelFontSize}
+            textAnchor="start"
+            x={0}
+            y={0}
+            dy={labelFontSize / 2}
+          >
+            {`${formatDateAuto(from)} - ${formatDateAuto(to)}`}
           </text>
         )}
       </g>

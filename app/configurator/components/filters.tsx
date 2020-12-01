@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button } from "@theme-ui/components";
+import { Box, Button } from "theme-ui";
 import get from "lodash/get";
 import { useCallback } from "react";
 import { getFilterValue, useConfiguratorState } from "..";

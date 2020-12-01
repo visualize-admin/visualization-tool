@@ -1,4 +1,4 @@
-import { ascending, extent, group, max, min } from "d3-array";
+import { ascending, extent, group, max, min } from "d3";
 import {
   ScaleLinear,
   scaleLinear,
@@ -6,7 +6,7 @@ import {
   scaleOrdinal,
   ScaleTime,
   scaleTime,
-} from "d3-scale";
+} from "d3";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {

@@ -1,5 +1,5 @@
-import { Delaunay } from "d3-delaunay";
-import { pointer } from "d3-selection";
+import { Delaunay } from "d3";
+import { pointer } from "d3";
 import { memo, useRef, MouseEvent as ReactMouseEvent } from "react";
 import { AreasState } from "../area/areas-state";
 import { LinesState } from "../line/lines-state";

@@ -1,12 +1,4 @@
-import {
-  ascending,
-  descending,
-  extent,
-  group,
-  max,
-  rollup,
-  sum,
-} from "d3-array";
+import { ascending, descending, extent, group, max, rollup, sum } from "d3";
 import {
   ScaleLinear,
   scaleLinear,
@@ -14,14 +6,14 @@ import {
   scaleOrdinal,
   ScaleTime,
   scaleTime,
-} from "d3-scale";
+} from "d3";
 import {
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
   stackOrderReverse,
-} from "d3-shape";
+} from "d3";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { AreaFields } from "../../configurator";
 import {
@@ -45,7 +37,7 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
 // FIXME: get this from chart config
-const WITH_TIME_BRUSH = false;
+const WITH_TIME_BRUSH = true;
 
 export interface AreasState {
   data: Observation[];

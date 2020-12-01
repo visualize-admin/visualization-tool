@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Text } from "@theme-ui/components";
+import { Text } from "theme-ui";
 import { ReactNode } from "react";
 import {
   ConfiguratorStateConfiguringChart,

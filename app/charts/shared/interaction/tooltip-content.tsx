@@ -1,4 +1,4 @@
-import { Box, Text } from "@theme-ui/components";
+import { Box, Text } from "theme-ui";
 import { LegendItem } from "../legend-color";
 import { TooltipValue } from "./tooltip";
 

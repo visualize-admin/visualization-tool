@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { I18n } from "@lingui/react";
-import { Box, Button, Flex, Input, Link, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Input, Link, Text } from "theme-ui";
 import * as clipboard from "clipboard-polyfill/text";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import {
@@ -126,7 +126,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
   return (
     <PopUp
       triggerLabel={<Trans id="button.share">Share</Trans>}
-      triggerIconName="share"
+      triggerIconName="linkExternal"
     >
       <>
         <PublishActionOverlay />

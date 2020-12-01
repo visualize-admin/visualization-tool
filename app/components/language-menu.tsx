@@ -1,6 +1,6 @@
 import { CurrentPageLink } from "./links";
 import { useLocale } from "../locales/use-locale";
-import { Link, Box, Flex } from "@theme-ui/components";
+import { Link, Box, Flex } from "theme-ui";
 import NextLink from "next/link";
 import contentRoutes from "../content-routes.json";
 

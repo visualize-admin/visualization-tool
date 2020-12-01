@@ -1,4 +1,4 @@
-import { Link as UILink } from "@theme-ui/components";
+import { Link as UILink } from "theme-ui";
 import Link, { LinkProps } from "next/link";
 import { useRouter } from "next/router";
 import * as qs from "querystring";

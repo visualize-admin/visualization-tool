@@ -1,6 +1,6 @@
 import { t } from "@lingui/macro";
 import { I18n } from "@lingui/react";
-import { Box, Flex } from "@theme-ui/components";
+import { Box, Flex } from "theme-ui";
 import get from "lodash/get";
 import React, { ChangeEvent, ReactNode, useCallback } from "react";
 import {

@@ -1,4 +1,4 @@
-import { SelectProps } from "@theme-ui/components";
+import { SelectProps } from "theme-ui";
 import get from "lodash/get";
 import {
   ChangeEvent,

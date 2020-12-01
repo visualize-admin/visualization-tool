@@ -1,17 +1,17 @@
-import { Box, Button, Flex, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { ReactNode } from "react";
-import { IconAreaChart } from "../icons/ic-area-chart";
-import { IconBarChart } from "../icons/ic-bar-chart";
-import { IconColumnChart } from "../icons/ic-column-chart";
-import { IconFilter } from "../icons/ic-filter";
-import { IconLineChart } from "../icons/ic-line-chart";
-import { IconPieChart } from "../icons/ic-pie-chart";
-import { IconScatterplot } from "../icons/ic-scatterplot";
-import { IconSegment } from "../icons/ic-segment";
-import { IconTable } from "../icons/ic-table";
-import { IconText } from "../icons/ic-text";
-import { IconX } from "../icons/ic-x";
-import { IconY } from "../icons/ic-y";
+import { default as IconAreaChart } from "../icons/components/IcChartArea";
+import { default as IconBarChart } from "../icons/components/IcChartBar";
+import { default as IconColumnChart } from "../icons/components/IcChartColumn";
+import { default as IconFilter } from "../icons/components/IcFilter";
+import { default as IconLineChart } from "../icons/components/IcChartLine";
+import { default as IconPieChart } from "../icons/components/IcChartPie";
+import { default as IconScatterplot } from "../icons/components/IcChartScatterplot";
+import { default as IconSegment } from "../icons/components/IcSegments";
+import { default as IconTable } from "../icons/components/IcTable";
+import { default as IconText } from "../icons/components/IcText";
+import { default as IconX } from "../icons/components/IcXAxis";
+import { default as IconY } from "../icons/components/IcYAxis";
 import { HintRed } from "../components/hint";
 import { LocalizedLink } from "../components/links";
 
@@ -101,7 +101,7 @@ export const Intro = ({
                     : "center center",
               }}
             >
-              <Icon color={color} size={24} />
+              <Icon color={color} width={24} height={24} />
             </Box>
           );
         })}

@@ -1,6 +1,6 @@
 import { keyframes } from "@emotion/core";
 import { Trans } from "@lingui/macro";
-import { Box, Flex, Text } from "@theme-ui/components";
+import { Box, Flex, Text } from "theme-ui";
 import { ReactNode } from "react";
 import { Icon, IconName } from "../icons";
 
@@ -155,7 +155,7 @@ export const OnlyNegativeDataHint = () => (
       flexGrow: 1,
     }}
   >
-    <Icon name="datasetWarning" size={64} />
+    <Icon name="datasetError" size={64} />
     <Text variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.only.negative.data.title">Negative Values</Trans>
     </Text>
@@ -182,7 +182,7 @@ export const Success = () => (
     }}
   >
     <Box sx={{ width: 64, pr: 4, flexShrink: 0 }}>
-      <Icon name="published" size={64} />
+      <Icon name="datasetSuccess" size={64} />
     </Box>
     <Text variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
       <Trans id="hint.publication.success">

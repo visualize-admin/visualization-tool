@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Grid, Text } from "@theme-ui/components";
+import { Box, Button, Grid, Text } from "theme-ui";
 import React, { SyntheticEvent } from "react";
 import { getPossibleChartType } from "../../charts";
 import { ChartType, ConfiguratorStateSelectingChartType } from "..";

@@ -1,4 +1,4 @@
-import { Text } from "@theme-ui/components";
+import { Text } from "theme-ui";
 import { ReactNode } from "react";
 
 export const HomepageSection = ({ children }: { children: ReactNode }) => (

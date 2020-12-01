@@ -1,9 +1,10 @@
-import { Box } from "@theme-ui/components";
 import { useEffect, useRef } from "react";
+import { Box } from "theme-ui";
 import { ConfiguratorStateDescribingChart } from "..";
-import { getFieldLabel } from "./ui-helpers";
 import { IconName } from "../../icons";
 import { locales } from "../../locales/locales";
+import { useLocale } from "../../locales/use-locale";
+import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-options";
 import {
   ControlSection,
   ControlSectionContent,
@@ -11,8 +12,7 @@ import {
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { MetaInputField } from "./field";
-import { useLocale } from "../../locales/use-locale";
-import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-options";
+import { getFieldLabel } from "./ui-helpers";
 
 export const ChartAnnotationsSelector = ({
   state,

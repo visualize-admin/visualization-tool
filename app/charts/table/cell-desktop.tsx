@@ -1,5 +1,5 @@
-import { Box, Flex } from "@theme-ui/components";
-import { hcl } from "d3-color";
+import { Box, Flex } from "theme-ui";
+import { hcl } from "d3";
 import * as React from "react";
 import { Cell } from "react-table";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
