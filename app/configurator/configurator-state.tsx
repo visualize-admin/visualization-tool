@@ -29,6 +29,7 @@ import {
   FilterValue,
   FilterValueMultiValues,
   GenericFields,
+  InteractiveFilters,
 } from "./config-types";
 
 export type ConfiguratorStateAction =
@@ -106,6 +107,10 @@ export type ConfiguratorStateAction =
   | {
       type: "INTERACTIVE_FILTER_LEGEND_CHANGED";
       value: boolean;
+    }
+  | {
+      type: "INTERACTIVE_FILTER_CHANGED";
+      value: InteractiveFilters;
     }
   | {
       type: "CHART_CONFIG_REPLACED";
@@ -559,14 +564,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         setWith(draft, `meta.${action.value.path}`, action.value.value, Object);
       }
       return draft;
-    case "INTERACTIVE_FILTER_LEGEND_CHANGED":
+
+    case "INTERACTIVE_FILTER_CHANGED":
       if (draft.state === "DESCRIBING_CHART") {
-        setWith(
-          draft,
-          `chartConfig.interactiveFilters.legend.active`,
-          action.value,
-          Object
-        );
+        setWith(draft, `chartConfig.interactiveFilters`, action.value, Object);
       }
       return draft;
 
