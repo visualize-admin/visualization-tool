@@ -21,11 +21,9 @@ import {
 } from "../components/chart-controls/section";
 import { getIconName } from "../components/ui-helpers";
 
-import {
-  ConfiguratorStateDescribingChart,
-  InteractiveFilters,
-} from "../config-types";
+import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
+import { toggleInteractiveFilter } from "./interactive-filters-state";
 
 export const InteractiveFiltersConfigurator = ({
   state,
@@ -147,17 +145,3 @@ const InteractiveFilterTabField = ({
     </Box>
   );
 };
-
-// Actions
-const toggleInteractiveFilter = produce(
-  (
-    IFConfig: InteractiveFilters,
-    { path, value }: { path: "legend" | "time"; value: boolean }
-  ): InteractiveFilters => {
-    if (!IFConfig[path]) {
-      return IFConfig;
-    }
-    IFConfig[path].active = !value;
-    return IFConfig;
-  }
-);
