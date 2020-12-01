@@ -1,5 +1,4 @@
 import { t } from "@lingui/macro";
-import { I18n } from "@lingui/react";
 import { Box, Flex } from "theme-ui";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback } from "react";
@@ -33,6 +32,7 @@ import {
   FilterTab,
 } from "./chart-controls/control-tab";
 import { getPalette } from "./ui-helpers";
+import { useI18n } from "../../lib/use-i18n";
 
 export const ControlTabField = ({
   component,
@@ -341,37 +341,33 @@ export const ChartFieldField = ({
   disabled?: boolean;
   dataSetMetadata: DataCubeMetadata;
 }) => {
+  const i18n = useI18n();
   const fieldProps = useChartFieldField({
     field,
     dataSetMetadata,
   });
 
+  const noneLabel = t({ id: "controls.dimension.none", message: `None` });
+
   return (
-    <I18n>
-      {({ i18n }) => {
-        const noneLabel = i18n._(t("controls.dimension.none")`None`);
-        return (
-          <Select
-            key={`select-${field}-dimension`}
-            id={field}
-            label={label}
-            disabled={disabled}
-            options={
-              optional
-                ? [
-                    {
-                      value: FIELD_VALUE_NONE,
-                      label: noneLabel,
-                    },
-                    ...options,
-                  ]
-                : options
-            }
-            {...fieldProps}
-          ></Select>
-        );
-      }}
-    </I18n>
+    <Select
+      key={`select-${field}-dimension`}
+      id={field}
+      label={label}
+      disabled={disabled}
+      options={
+        optional
+          ? [
+              {
+                value: FIELD_VALUE_NONE,
+                label: noneLabel,
+              },
+              ...options,
+            ]
+          : options
+      }
+      {...fieldProps}
+    ></Select>
   );
 };
 

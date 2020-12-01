@@ -13,7 +13,7 @@ import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
 import { LocaleProvider } from "../locales/use-locale";
 import { useNProgress } from "../lib/use-nprogress";
-import { catalogs, parseLocaleString } from "../locales/locales";
+import { i18n, parseLocaleString } from "../locales/locales";
 import * as defaultTheme from "../themes/federal";
 import { loadTheme, ThemeModule } from "../themes/index";
 
@@ -36,6 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     document.querySelector("html")?.setAttribute("lang", locale);
+    i18n.activate(locale);
   }, [locale]);
 
   // Load custom theme
@@ -79,7 +80,7 @@ export default function App({ Component, pageProps }: AppProps) {
         ))}
       </Head>
       <LocaleProvider value={locale}>
-        <I18nProvider language={locale} catalogs={catalogs}>
+        <I18nProvider i18n={i18n}>
           <GraphqlProvider>
             <ThemeProvider theme={themeModule.theme}>
               <ContentMDXProvider>

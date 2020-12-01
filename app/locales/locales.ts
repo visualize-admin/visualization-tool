@@ -11,11 +11,22 @@ import catalogDe from "./de/messages.js";
 import catalogEn from "./en/messages.js";
 import catalogFr from "./fr/messages.js";
 import catalogIt from "./it/messages.js";
+import { i18n } from "@lingui/core";
 
 export const defaultLocale = "de";
 
 // The order specified here will determine the fallback order when strings are not available in the preferred language
-export const locales = ["en", "de", "fr", "it"] as const;
+export const locales = ["de", "fr", "it", "en"] as const;
+
+i18n.load({
+  de: catalogDe,
+  fr: catalogFr,
+  it: catalogIt,
+  en: catalogEn,
+});
+i18n.activate(defaultLocale);
+
+export { i18n };
 
 export type Locales = "de" | "fr" | "it" | "en";
 
@@ -28,13 +39,6 @@ export const parseLocaleString = (localeString: string): Locales => {
   const result = /^(de|fr|it|en)/.exec(localeString);
   return result ? (result[1] as Locales) : defaultLocale;
 };
-
-export const catalogs = {
-  de: catalogDe,
-  fr: catalogFr,
-  it: catalogIt,
-  en: catalogEn,
-} as const;
 
 export const d3TimeFormatLocales = {
   de: timeFormatLocale(timeFormatDe as TimeLocaleDefinition),

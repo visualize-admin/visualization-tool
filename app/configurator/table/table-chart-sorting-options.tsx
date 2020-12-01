@@ -1,5 +1,4 @@
 import { t, Trans } from "@lingui/macro";
-import { I18n } from "@lingui/react";
 import VisuallyHidden from "@reach/visually-hidden";
 import React, { ChangeEvent, useCallback } from "react";
 import {
@@ -12,6 +11,7 @@ import { Box, Button, Flex, Text } from "theme-ui";
 import { Radio, Select } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
+import { useI18n } from "../../lib/use-i18n";
 import {
   ControlSection,
   SectionTitle,
@@ -166,6 +166,7 @@ const AddTableSortingOption = ({
   metaData: DataCubeMetadata;
   chartConfig: TableConfig;
 }) => {
+  const i18n = useI18n();
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(
@@ -195,52 +196,49 @@ const AddTableSortingOption = ({
 
   const columns = useOrderedTableColumns(chartConfig.fields);
 
+  const options = [
+    {
+      value: "-",
+      label: t({
+        id: "controls.sorting.selectDimension",
+        message: `Select a dimension …`,
+      }),
+      disabled: true,
+    },
+    ...columns.flatMap((c) => {
+      if (
+        chartConfig.sorting.some(
+          ({ componentIri }) => componentIri === c.componentIri
+        )
+      ) {
+        return [];
+      }
+
+      const component =
+        metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
+        metaData.measures.find(({ iri }) => iri === c.componentIri);
+
+      return component
+        ? [
+            {
+              value: component.iri,
+              label: component.label,
+            },
+          ]
+        : [];
+    }),
+  ];
   return (
-    <I18n>
-      {({ i18n }) => {
-        const options = [
-          {
-            value: "-",
-            label: i18n._(
-              t("controls.sorting.selectDimension")`Select a dimension …`
-            ),
-            disabled: true,
-          },
-          ...columns.flatMap((c) => {
-            if (
-              chartConfig.sorting.some(
-                ({ componentIri }) => componentIri === c.componentIri
-              )
-            ) {
-              return [];
-            }
-
-            const component =
-              metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
-              metaData.measures.find(({ iri }) => iri === c.componentIri);
-
-            return component
-              ? [
-                  {
-                    value: component.iri,
-                    label: component.label,
-                  },
-                ]
-              : [];
-          }),
-        ];
-
-        return (
-          <Select
-            id="add-tablesorting"
-            value="-"
-            options={options}
-            label={i18n._(t("controls.sorting.addDimension")`Add dimension`)}
-            onChange={onChange}
-          />
-        );
-      }}
-    </I18n>
+    <Select
+      id="add-tablesorting"
+      value="-"
+      options={options}
+      label={t({
+        id: "controls.sorting.addDimension",
+        message: `Add dimension`,
+      })}
+      onChange={onChange}
+    />
   );
 };
 
@@ -253,6 +251,7 @@ const ChangeTableSortingOption = ({
   chartConfig: TableConfig;
   index: number;
 }) => {
+  const i18n = useI18n();
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(
@@ -287,35 +286,28 @@ const ChangeTableSortingOption = ({
 
   const { componentIri } = chartConfig.sorting[index];
 
+  const options = columns.flatMap((c) => {
+    const component =
+      metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
+      metaData.measures.find(({ iri }) => iri === c.componentIri);
+
+    return component
+      ? [
+          {
+            value: component.iri,
+            label: component.label,
+          },
+        ]
+      : [];
+  });
   return (
-    <I18n>
-      {({ i18n }) => {
-        const options = columns.flatMap((c) => {
-          const component =
-            metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
-            metaData.measures.find(({ iri }) => iri === c.componentIri);
-
-          return component
-            ? [
-                {
-                  value: component.iri,
-                  label: component.label,
-                },
-              ]
-            : [];
-        });
-
-        return (
-          <Select
-            id={`change-sorting-option-${index}`}
-            value={componentIri}
-            options={options}
-            label={i18n._(t("controls.sorting.sortBy")`Sort by`)}
-            onChange={onChange}
-          />
-        );
-      }}
-    </I18n>
+    <Select
+      id={`change-sorting-option-${index}`}
+      value={componentIri}
+      options={options}
+      label={t({ id: "controls.sorting.sortBy", message: `Sort by` })}
+      onChange={onChange}
+    />
   );
 };
 

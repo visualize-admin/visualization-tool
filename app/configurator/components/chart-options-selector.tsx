@@ -1,5 +1,4 @@
 import { t, Trans } from "@lingui/macro";
-import { I18n } from "@lingui/react";
 import { Box, Flex } from "theme-ui";
 import get from "lodash/get";
 import { useCallback, useEffect, useRef } from "react";
@@ -41,6 +40,7 @@ import {
   DimensionValuesSingleFilter,
 } from "./filters";
 import { getFieldLabel, getFieldLabelHint, getIconName } from "./ui-helpers";
+import { useI18n } from "../../lib/use-i18n";
 
 export const ChartOptionsSelector = ({
   state,
@@ -296,7 +296,21 @@ const ChartFieldSorting = ({
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
 }) => {
+  const i18n = useI18n();
   const [, dispatch] = useConfiguratorState();
+
+  const getSortingTypeLabel = (type: SortingType) => {
+    switch (type) {
+      case "byDimensionLabel":
+        return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
+      case "byMeasure":
+        return t({ id: "controls.sorting.byMeasure", message: `Measure` });
+      case "byTotalSize":
+        return t({ id: "controls.sorting.byTotalSize", message: `Total size` });
+      default:
+        return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
+    }
+  };
 
   // Always update BOTH
   const updateSortingOption = useCallback<
@@ -341,45 +355,25 @@ const ChartFieldSorting = ({
       </SectionTitle>
       <ControlSectionContent side="right" as="fieldset">
         <Box>
-          <I18n>
-            {({ i18n }) => {
-              const getSortingTypeLabel = (type: SortingType) => {
-                switch (type) {
-                  case "byDimensionLabel":
-                    return i18n._(t("controls.sorting.byDimensionLabel")`Name`);
-                  case "byMeasure":
-                    return i18n._(t("controls.sorting.byMeasure")`Measure`);
-                  case "byTotalSize":
-                    return i18n._(
-                      t("controls.sorting.byTotalSize")`Total size`
-                    );
-                  default:
-                    return i18n._(t("controls.sorting.byDimensionLabel")`Name`);
-                }
-              };
-              return (
-                <Select
-                  id="sort-by"
-                  label={getFieldLabel("sortBy")}
-                  options={encodingSortingOptions
-                    ?.map((s) => s.sortingType)
-                    .map((opt) => ({
-                      value: opt,
-                      label: getSortingTypeLabel(opt),
-                    }))}
-                  value={activeSortingType}
-                  disabled={disabled}
-                  onChange={(e) => {
-                    updateSortingOption({
-                      sortingType: e.currentTarget
-                        .value as EncodingSortingOption["sortingType"],
-                      sortingOrder: activeSortingOrder,
-                    });
-                  }}
-                />
-              );
+          <Select
+            id="sort-by"
+            label={getFieldLabel("sortBy")}
+            options={encodingSortingOptions
+              ?.map((s) => s.sortingType)
+              .map((opt) => ({
+                value: opt,
+                label: getSortingTypeLabel(opt),
+              }))}
+            value={activeSortingType}
+            disabled={disabled}
+            onChange={(e) => {
+              updateSortingOption({
+                sortingType: e.currentTarget
+                  .value as EncodingSortingOption["sortingType"],
+                sortingOrder: activeSortingOrder,
+              });
             }}
-          </I18n>
+          />
         </Box>
         <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
           {sortingOrderOptions &&

@@ -1,9 +1,26 @@
 {
-  "localeDir": "app/locales/",
-  "srcPathDirs": ["app/"],
-  "srcPathIgnorePatterns": ["/node_modules/", "/.next/"],
+  "catalogs": [
+    {
+      "path": "<rootDir>/app/locales/{locale}/messages",
+      "include": [
+        "<rootDir>/app"
+      ],
+      "exclude": [
+        "**/node_modules/**",
+        "**/.next/**"
+      ]
+    }
+  ],
+  "locales": [
+    "de",
+    "fr",
+    "it",
+    "en"
+  ],
   "format": "po",
   "compileNamespace": "es",
   "sourceLocale": "en",
-  "fallbackLocale": "en"
+  "fallbackLocales": {
+    "default": "en"
+  }
 }
