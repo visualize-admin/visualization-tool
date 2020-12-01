@@ -1,24 +1,14 @@
 import { Trans } from "@lingui/macro";
-import React, {
-  ChangeEvent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import React, { ReactNode, useEffect, useRef } from "react";
 import { Box } from "theme-ui";
 import { Checkbox } from "../../components/form";
-import { DataCubeMetadata } from "../../graphql/types";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
-import get from "lodash/get";
-
 import { ConfiguratorStateDescribingChart } from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
-import { toggleInteractiveFilter } from "./interactive-filters-state";
+import { useInteractiveFiltersToggle } from "./interactive-filters-actions";
 
 export const InteractiveFiltersOptions = ({
   state,
@@ -49,7 +39,6 @@ export const InteractiveFiltersOptions = ({
       />
     );
   } else if (activeField === "time") {
-    // const isActive = chartConfig.interactiveFilters.time.active;
     return (
       <ControlSection>
         <SectionTitle iconName="filter">
@@ -123,38 +112,4 @@ const InteractiveFiltersLegendOptions = ({
       </ControlSectionContent>
     </ControlSection>
   );
-};
-
-const useInteractiveFiltersToggle = ({ path }: { path: "legend" | "time" }) => {
-  const [state, dispatch] = useConfiguratorState();
-  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    (e) => {
-      if (
-        state.state === "DESCRIBING_CHART" &&
-        state.chartConfig.chartType === "line"
-      ) {
-        const newIFConfig = toggleInteractiveFilter(
-          state.chartConfig.interactiveFilters,
-          { path, value: e.currentTarget.checked }
-        );
-
-        dispatch({
-          type: "INTERACTIVE_FILTER_CHANGED",
-          value: newIFConfig,
-        });
-      }
-    },
-    [dispatch, path, state]
-  );
-  const stateValue =
-    state.state === "DESCRIBING_CHART"
-      ? get(state, `chartConfig.interactiveFilters.${path}.active`, "")
-      : "";
-  console.log(stateValue);
-  const checked = stateValue ? stateValue : false;
-  return {
-    name: path,
-    checked,
-    onChange,
-  };
 };
