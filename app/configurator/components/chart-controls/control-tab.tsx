@@ -223,14 +223,16 @@ export const ControlTabButtonInner = ({
   lowerLabel,
   checked,
   optional = false,
-  withCheckbox = false,
+  isActive = false,
+  showIsActive = false,
 }: {
   iconName: IconName;
   upperLabel?: string | ReactNode;
   lowerLabel: string | ReactNode;
   checked?: boolean;
   optional?: boolean;
-  withCheckbox?: boolean;
+  isActive?: boolean;
+  showIsActive?: boolean;
 }) => (
   <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
     <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
@@ -275,6 +277,10 @@ export const ControlTabButtonInner = ({
         </Text>
       </Flex>
     </Flex>
-    {withCheckbox && <Switch label="" checked={checked}></Switch>}
+    {showIsActive && isActive === false ? (
+      <Trans id="controls.option.isNotActive">Off</Trans>
+    ) : showIsActive && isActive ? (
+      <Trans id="controls.option.isActive">On</Trans>
+    ) : null}
   </Flex>
 );
