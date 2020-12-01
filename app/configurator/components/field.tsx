@@ -119,7 +119,7 @@ export const AnnotatorTabField = ({
   );
 };
 
-export const InteractiveFilterCategoryTabField = ({
+export const InteractiveFilterLegendTabField = ({
   icon,
   label,
   value,
