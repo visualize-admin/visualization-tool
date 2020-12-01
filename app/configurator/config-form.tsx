@@ -218,32 +218,6 @@ export const useActiveFieldField = ({
   };
 };
 
-// export const useInteractiveFilterField = ({
-//   value,
-// }: {
-//   value: boolean;
-// }): FieldProps & {
-//   value: boolean;
-//   onClick: (x: string) => void;
-// } => {
-//   const [, dispatch] = useConfiguratorState();
-
-//   const onClick = useCallback(() => {
-//     dispatch({
-//       type: "INTERACTIVE_FILTER_LEGEND_CHANGED",
-//       value: !value,
-//     });
-//   }, [dispatch, value]);
-
-//   const checked = value === true;
-
-//   return {
-//     value,
-//     checked,
-//     onClick,
-//   };
-// };
-
 // Specific ------------------------------------------------------------------
 export const useChartTypeSelectorField = ({
   value,

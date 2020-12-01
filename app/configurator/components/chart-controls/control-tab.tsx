@@ -73,7 +73,6 @@ export const FilterTab = ({
         my: "2px",
       }}
     >
-      {" "}
       <ControlTabButton
         checked={checked}
         value={value}

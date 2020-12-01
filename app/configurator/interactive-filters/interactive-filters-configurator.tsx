@@ -19,6 +19,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
+import { getIconName } from "../components/ui-helpers";
 
 import {
   ConfiguratorStateDescribingChart,
@@ -88,18 +89,6 @@ export const InteractiveFiltersConfigurator = ({
   }
 };
 
-const toggleInteractiveFilter = produce(
-  (
-    IFConfig: InteractiveFilters,
-    { path, value }: { path: "legend" | "time"; value: boolean }
-  ): InteractiveFilters => {
-    if (!IFConfig[path]) {
-      return IFConfig;
-    }
-    IFConfig[path].active = !value;
-    return IFConfig;
-  }
-);
 const InteractiveFilterTabField = ({
   path,
   icon,
@@ -124,6 +113,13 @@ const InteractiveFilterTabField = ({
         state.chartConfig.interactiveFilters,
         { path, value }
       );
+
+      // update active field (right side)
+      dispatch({
+        type: "ACTIVE_FIELD_CHANGED",
+        value: path,
+      });
+      // Activate and update config
       dispatch({
         type: "INTERACTIVE_FILTER_CHANGED",
         value: newIFConfig,
@@ -142,7 +138,7 @@ const InteractiveFilterTabField = ({
     >
       <ControlTabButton checked={checked} value={`${value}`} onClick={onClick}>
         <ControlTabButtonInner
-          iconName={icon}
+          iconName={getIconName(icon)}
           lowerLabel={label}
           checked={checked}
           withCheckbox
@@ -151,3 +147,17 @@ const InteractiveFilterTabField = ({
     </Box>
   );
 };
+
+// Actions
+const toggleInteractiveFilter = produce(
+  (
+    IFConfig: InteractiveFilters,
+    { path, value }: { path: "legend" | "time"; value: boolean }
+  ): InteractiveFilters => {
+    if (!IFConfig[path]) {
+      return IFConfig;
+    }
+    IFConfig[path].active = !value;
+    return IFConfig;
+  }
+);

@@ -35,7 +35,7 @@ export const InteractiveFiltersOptions = ({
   if (activeField === "legend") {
     return (
       <InteractiveFiltersLegendOptions
-        disabled={chartConfig.interactiveFilters.legend.active}
+        isActive={chartConfig.interactiveFilters.legend.active}
       />
     );
   } else if (activeField === "time") {
