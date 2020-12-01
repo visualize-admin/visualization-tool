@@ -98,7 +98,20 @@ const InteractiveFiltersLegend = t.type({
 export type InteractiveFiltersLegend = t.TypeOf<
   typeof InteractiveFiltersLegend
 >;
-const InteractiveFilters = t.type({ legend: InteractiveFiltersLegend });
+const InteractiveFiltersTime = t.type({
+  active: t.boolean,
+  componentIri: t.string,
+  presets: t.type({
+    type: t.literal("range"),
+    from: t.string,
+    to: t.string,
+  }),
+});
+export type InteractiveFiltersTime = t.TypeOf<typeof InteractiveFiltersTime>;
+const InteractiveFilters = t.type({
+  legend: InteractiveFiltersLegend,
+  time: InteractiveFiltersTime,
+});
 export type InteractiveFilters = t.TypeOf<typeof InteractiveFilters>;
 
 // Chart Config
