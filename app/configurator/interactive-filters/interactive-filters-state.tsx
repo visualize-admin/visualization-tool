@@ -1,11 +1,11 @@
 import produce from "immer";
-import { InteractiveFilters } from "../config-types";
+import { InteractiveFiltersConfig } from "../config-types";
 
 export const toggleInteractiveFilter = produce(
   (
-    IFConfig: InteractiveFilters,
+    IFConfig: InteractiveFiltersConfig,
     { path, value }: { path: "legend" | "time"; value: boolean }
-  ): InteractiveFilters => {
+  ): InteractiveFiltersConfig => {
     if (!IFConfig[path]) {
       return IFConfig;
     }

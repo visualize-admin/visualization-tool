@@ -29,7 +29,7 @@ import {
   FilterValue,
   FilterValueMultiValues,
   GenericFields,
-  InteractiveFilters,
+  InteractiveFiltersConfig,
 } from "./config-types";
 
 export type ConfiguratorStateAction =
@@ -106,7 +106,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "INTERACTIVE_FILTER_CHANGED";
-      value: InteractiveFilters;
+      value: InteractiveFiltersConfig;
     }
   | {
       type: "CHART_CONFIG_REPLACED";

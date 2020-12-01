@@ -108,11 +108,13 @@ const InteractiveFiltersTime = t.type({
   }),
 });
 export type InteractiveFiltersTime = t.TypeOf<typeof InteractiveFiltersTime>;
-const InteractiveFilters = t.type({
+const InteractiveFiltersConfig = t.type({
   legend: InteractiveFiltersLegend,
   time: InteractiveFiltersTime,
 });
-export type InteractiveFilters = t.TypeOf<typeof InteractiveFilters>;
+export type InteractiveFiltersConfig = t.TypeOf<
+  typeof InteractiveFiltersConfig
+>;
 
 // Chart Config
 
@@ -238,7 +240,7 @@ const LineConfig = t.type(
   {
     chartType: t.literal("line"),
     filters: Filters,
-    interactiveFilters: InteractiveFilters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: LineFields,
   },
   "LineConfig"
