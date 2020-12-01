@@ -58,26 +58,24 @@ export const InteractiveFiltersConfigurator = ({
             Add interactive filters
           </Trans>
         </SectionTitle>
-        {/* Time */}
-        {timeDimension && state.chartConfig.chartType === "line" && (
-          <ControlSectionContent side="left">
+        <ControlSectionContent side="left">
+          {/* Time */}
+          {timeDimension && state.chartConfig.chartType === "line" && (
             <InteractiveFilterTabField
               value="time"
               icon="x"
               label={timeDimension.label}
             ></InteractiveFilterTabField>
-          </ControlSectionContent>
-        )}
-        {/* legend */}
-        {segmentDimension && state.chartConfig.chartType === "line" && (
-          <ControlSectionContent side="left">
+          )}
+          {/* legend */}
+          {segmentDimension && state.chartConfig.chartType === "line" && (
             <InteractiveFilterTabField
               value="legend"
               icon="segment"
               label={segmentDimension.label}
             ></InteractiveFilterTabField>
-          </ControlSectionContent>
-        )}
+          )}
+        </ControlSectionContent>
       </ControlSection>
     );
   } else {
