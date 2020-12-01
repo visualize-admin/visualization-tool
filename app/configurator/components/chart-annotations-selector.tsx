@@ -34,19 +34,18 @@ export const ChartAnnotationsSelector = ({
   const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
 
   if (state.activeField) {
-    if (state.activeField === "time" || state.activeField === "legend") {
-      // Interactive filters
-      return <InteractiveFiltersOptions state={state} />;
-    } else {
-      return (
-        <Box
-          role="tabpanel"
-          id={`annotation-panel-${state.activeField}`}
-          aria-labelledby={`annotation-tab-${state.activeField}`}
-          ref={panelRef}
-          tabIndex={-1}
-          sx={{ overflowX: "hidden", overflowY: "auto" }}
-        >
+    return (
+      <Box
+        role="tabpanel"
+        id={`annotation-panel-${state.activeField}`}
+        aria-labelledby={`annotation-tab-${state.activeField}`}
+        ref={panelRef}
+        tabIndex={-1}
+        sx={{ overflowX: "hidden", overflowY: "auto" }}
+      >
+        {state.activeField === "time" || state.activeField === "legend" ? (
+          <InteractiveFiltersOptions state={state} />
+        ) : (
           <ControlSection>
             <SectionTitle iconName={state.activeField as IconName}>
               {state.activeField && getFieldLabel(state.activeField)}
@@ -66,9 +65,9 @@ export const ChartAnnotationsSelector = ({
                 ))}
             </ControlSectionContent>
           </ControlSection>
-        </Box>
-      );
-    }
+        )}
+      </Box>
+    );
   } else {
     return <EmptyRightPanel state={state} />;
   }
