@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-no-undef */
 import { Trans } from "@lingui/macro";
+import produce from "immer";
 import { ReactNode, useCallback } from "react";
 
 import { Box } from "theme-ui";
@@ -18,9 +19,11 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
-import { useInteractiveFilterField } from "../config-form";
 
-import { ConfiguratorStateDescribingChart } from "../config-types";
+import {
+  ConfiguratorStateDescribingChart,
+  InteractiveFilters,
+} from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 
 export const InteractiveFiltersConfigurator = ({
@@ -33,11 +36,15 @@ export const InteractiveFiltersConfigurator = ({
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: state.dataSet, locale },
   });
+  const timeDimensionIri = getFieldComponentIri(state.chartConfig.fields, "x");
   const segmentDimensionIri = getFieldComponentIri(
     state.chartConfig.fields,
     "segment"
   );
   if (data?.dataCubeByIri) {
+    const timeDimension = data?.dataCubeByIri.dimensions.find(
+      (dim) => dim.iri === timeDimensionIri
+    );
     const segmentDimension = data?.dataCubeByIri.dimensions.find(
       (dim) => dim.iri === segmentDimensionIri
     );
@@ -53,23 +60,25 @@ export const InteractiveFiltersConfigurator = ({
           </Trans>
         </SectionTitle>
         {/* Time */}
-        {state.chartConfig.chartType === "line" && (
+        {timeDimension && state.chartConfig.chartType === "line" && (
           <ControlSectionContent side="left">
-            {/* <InteractiveFilterLegendTabField
-            value={state.chartConfig.interactiveFilters.legend.active}
-            icon="segment"
-            label={segmentDimension.label}
-          ></InteractiveFilterLegendTabField> */}
+            <InteractiveFilterTabField
+              path="time"
+              value={state.chartConfig.interactiveFilters.time.active}
+              icon="x"
+              label={timeDimension.label}
+            ></InteractiveFilterTabField>
           </ControlSectionContent>
         )}
         {/* legend */}
         {segmentDimension && state.chartConfig.chartType === "line" && (
           <ControlSectionContent side="left">
-            <InteractiveFilterLegendTabField
+            <InteractiveFilterTabField
+              path="legend"
               value={state.chartConfig.interactiveFilters.legend.active}
               icon="segment"
               label={segmentDimension.label}
-            ></InteractiveFilterLegendTabField>
+            ></InteractiveFilterTabField>
           </ControlSectionContent>
         )}
       </ControlSection>
@@ -79,25 +88,48 @@ export const InteractiveFiltersConfigurator = ({
   }
 };
 
-const InteractiveFilterLegendTabField = ({
+const toggleInteractiveFilter = produce(
+  (
+    IFConfig: InteractiveFilters,
+    { path, value }: { path: "legend" | "time"; value: boolean }
+  ): InteractiveFilters => {
+    if (!IFConfig[path]) {
+      return IFConfig;
+    }
+    IFConfig[path].active = !value;
+    return IFConfig;
+  }
+);
+const InteractiveFilterTabField = ({
+  path,
   icon,
   label,
   value,
   ...tabProps
 }: {
+  path: "legend" | "time";
   value: boolean;
   disabled?: boolean;
   icon: IconName;
   label: ReactNode;
 }) => {
-  const [, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState();
 
   const onClick = useCallback(() => {
-    dispatch({
-      type: "INTERACTIVE_FILTER_LEGEND_CHANGED",
-      value: !value,
-    });
-  }, [dispatch, value]);
+    if (
+      state.state === "DESCRIBING_CHART" &&
+      state.chartConfig.chartType === "line"
+    ) {
+      const newIFConfig = toggleInteractiveFilter(
+        state.chartConfig.interactiveFilters,
+        { path, value }
+      );
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newIFConfig,
+      });
+    }
+  }, [dispatch, path, state, value]);
 
   const checked = value === true;
   return (

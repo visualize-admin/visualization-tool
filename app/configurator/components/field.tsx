@@ -12,28 +12,27 @@ import {
   useChartOptionRadioField,
   useConfiguratorState,
   useMetaField,
-  useSingleFilterField,
+  useSingleFilterField
 } from "..";
 import { Checkbox, Input, Label, Radio, Select } from "../../components/form";
 import {
   ComponentFieldsFragment,
-  DimensionFieldsWithValuesFragment,
+  DimensionFieldsWithValuesFragment
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import { Locales } from "../../locales/locales";
 import {
   useChartOptionBooleanField,
-  useChartOptionSelectField,
-  useInteractiveFilterField,
+  useChartOptionSelectField
 } from "../config-form";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
-  ControlTabButton,
-  ControlTabButtonInner,
-  FilterTab,
+
+
+  FilterTab
 } from "./chart-controls/control-tab";
 import { getPalette } from "./ui-helpers";
 
