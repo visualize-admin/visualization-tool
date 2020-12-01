@@ -62,8 +62,7 @@ export const InteractiveFiltersConfigurator = ({
         {timeDimension && state.chartConfig.chartType === "line" && (
           <ControlSectionContent side="left">
             <InteractiveFilterTabField
-              path="time"
-              value={state.chartConfig.interactiveFilters.time.active}
+              value="time"
               icon="x"
               label={timeDimension.label}
             ></InteractiveFilterTabField>
@@ -73,8 +72,7 @@ export const InteractiveFiltersConfigurator = ({
         {segmentDimension && state.chartConfig.chartType === "line" && (
           <ControlSectionContent side="left">
             <InteractiveFilterTabField
-              path="legend"
-              value={state.chartConfig.interactiveFilters.legend.active}
+              value="legend"
               icon="segment"
               label={segmentDimension.label}
             ></InteractiveFilterTabField>
@@ -88,14 +86,12 @@ export const InteractiveFiltersConfigurator = ({
 };
 
 const InteractiveFilterTabField = ({
-  path,
+  value,
   icon,
   label,
-  value,
   ...tabProps
 }: {
-  path: "legend" | "time";
-  value: boolean;
+  value: "legend" | "time";
   disabled?: boolean;
   icon: IconName;
   label: ReactNode;
@@ -103,29 +99,14 @@ const InteractiveFilterTabField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const onClick = useCallback(() => {
-    if (
-      state.state === "DESCRIBING_CHART" &&
-      state.chartConfig.chartType === "line"
-    ) {
-      const newIFConfig = toggleInteractiveFilter(
-        state.chartConfig.interactiveFilters,
-        { path, value }
-      );
+    dispatch({
+      type: "ACTIVE_FIELD_CHANGED",
+      value,
+    });
+  }, [dispatch, value]);
 
-      // update active field (right side)
-      dispatch({
-        type: "ACTIVE_FIELD_CHANGED",
-        value: path,
-      });
-      // Activate and update config
-      dispatch({
-        type: "INTERACTIVE_FILTER_CHANGED",
-        value: newIFConfig,
-      });
-    }
-  }, [dispatch, path, state, value]);
+  const checked = state.activeField === value;
 
-  const checked = value === true;
   return (
     <Box
       sx={{
@@ -139,7 +120,8 @@ const InteractiveFilterTabField = ({
           iconName={getIconName(icon)}
           lowerLabel={label}
           checked={checked}
-          withCheckbox
+          isActive
+          showIsActive
         />
       </ControlTabButton>
     </Box>
