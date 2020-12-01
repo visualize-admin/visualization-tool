@@ -6,7 +6,6 @@ import { getFieldLabel, getIconName } from "../ui-helpers";
 import { ComponentFieldsFragment } from "../../../graphql/query-hooks";
 import { Icon, IconName } from "../../../icons";
 import { ReactNode } from "react";
-import { Switch } from "../../../components/form";
 
 export const ControlTab = ({
   component,
@@ -278,9 +277,13 @@ export const ControlTabButtonInner = ({
       </Flex>
     </Flex>
     {showIsActive && isActive === false ? (
-      <Trans id="controls.option.isNotActive">Off</Trans>
+      <Box sx={{ mr: 3 }}>
+        <Trans id="controls.option.isNotActive">Off</Trans>
+      </Box>
     ) : showIsActive && isActive ? (
-      <Trans id="controls.option.isActive">On</Trans>
+      <Box sx={{ mr: 3, color: "primary" }}>
+        <Trans id="controls.option.isActive">On</Trans>
+      </Box>
     ) : null}
   </Flex>
 );
