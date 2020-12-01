@@ -1,14 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { Box, Flex, Text } from "theme-ui";
 import FlexSearch from "flexsearch";
-import {
-  useCallback,
-  useMemo,
-  useState,
-  forwardRef,
-  useEffect,
-  createContext,
-} from "react";
+import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import {
   useExpanded,
   useFlexLayout,
@@ -16,7 +8,8 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
-import { FixedSizeList } from "react-window";
+import { FixedSizeList, VariableSizeList } from "react-window";
+import { Box, Flex, Text } from "theme-ui";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { Icon } from "../../icons";
@@ -98,6 +91,7 @@ export const Table = () => {
     rows,
     totalColumnsWidth,
     prepareRow,
+    visibleColumns,
     state: tableState,
   } = useTable<Observation>(
     {
@@ -125,9 +119,9 @@ export const Table = () => {
   // If the table has a custom sort, the tableState.sortBy has these items prepended.
   const customSortCount = tableState.sortBy.length - sortingIris.length;
 
-  // React.useEffect(() => {
-  //   bounds.width > 700 && toggleAlternativeMobileView(false);
-  // }, [bounds.width]);
+  useEffect(() => {
+    bounds.width > 700 && toggleAlternativeMobileView(false);
+  }, [bounds.width]);
 
   // Desktop row
   const renderDesktopRow = useCallback(
@@ -161,99 +155,102 @@ export const Table = () => {
   );
 
   // Mobile row
-  // const MOBILE_ROW_HEIGHT = 32;
-  // const getMobileItemSize = (index: number) => {
-  //   return rows[index].isGrouped
-  //     ? MOBILE_ROW_HEIGHT
-  //     : visibleColumns.length * MOBILE_ROW_HEIGHT;
-  // };
+  const MOBILE_ROW_HEIGHT = 32;
+  const getMobileItemSize = useCallback(
+    (index: number) => {
+      return rows[index].isGrouped
+        ? MOBILE_ROW_HEIGHT
+        : visibleColumns.length * MOBILE_ROW_HEIGHT;
+    },
+    [visibleColumns.length, rows]
+  );
 
-  // const renderMobileRow = useCallback(
-  //   ({ index, style }) => {
-  //     const row = rows[index];
-  //     prepareRow(row);
+  const renderMobileRow = useCallback(
+    ({ index, style }) => {
+      const row = rows[index];
+      prepareRow(row);
 
-  //     const headingLevel =
-  //       row.depth === 0 ? "h2" : row.depth === 1 ? "h3" : "p";
+      const headingLevel =
+        row.depth === 0 ? "h2" : row.depth === 1 ? "h3" : "p";
 
-  //     return (
-  //       <>
-  //         <Box
-  //           {...row.getRowProps({
-  //             style: { ...style, flexDirection: "column" },
-  //           })}
-  //         >
-  //           {row.subRows.length === 0 ? (
-  //             row.cells.map((cell, i) => {
-  //               return (
-  //                 <Flex
-  //                   key={i}
-  //                   as="dl"
-  //                   sx={{
-  //                     color: "monochrome800",
-  //                     fontSize: 2,
-  //                     width: "100%",
-  //                     height: MOBILE_ROW_HEIGHT,
-  //                     justifyContent: "space-between",
-  //                     alignItems: "center",
-  //                     // my: 2,
-  //                     // "&:first-of-type": {
-  //                     //   pt: 2,
-  //                     // },
-  //                     "&:last-of-type": {
-  //                       borderBottom: "1px solid",
-  //                       borderBottomColor: "monochrome400",
-  //                       // pb: 3,
-  //                     },
-  //                   }}
-  //                 >
-  //                   <Box
-  //                     as="dt"
-  //                     sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
-  //                   >
-  //                     {cell.column.Header}
-  //                   </Box>
-  //                   <Box
-  //                     as="dd"
-  //                     sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
-  //                   >
-  //                     <DDContent
-  //                       cell={cell}
-  //                       columnMeta={tableColumnsMeta[cell.column.id]}
-  //                     />
-  //                   </Box>
-  //                 </Flex>
-  //               );
-  //             })
-  //           ) : (
-  //             // Group
-  //             <Flex
-  //               sx={{
-  //                 height: MOBILE_ROW_HEIGHT,
-  //                 borderTop: "1px solid",
-  //                 borderTopColor: "monochrome400",
-  //                 color: "monochrome600",
-  //                 // py: 2,
-  //                 ml: `${row.depth * 12}px`,
-  //               }}
-  //             >
-  //               <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
-  //               <Text
-  //                 as={headingLevel}
-  //                 variant="paragraph1"
-  //                 sx={{ color: "monochrome900" }}
-  //                 {...row.getToggleRowExpandedProps()}
-  //               >
-  //                 {`${row.groupByVal}`}
-  //               </Text>
-  //             </Flex>
-  //           )}
-  //         </Box>
-  //       </>
-  //     );
-  //   },
-  //   [prepareRow, rows, tableColumnsMeta]
-  // );
+      return (
+        <>
+          <Box
+            {...row.getRowProps({
+              style: { ...style, flexDirection: "column" },
+            })}
+          >
+            {row.subRows.length === 0 ? (
+              row.cells.map((cell, i) => {
+                return (
+                  <Flex
+                    key={i}
+                    as="dl"
+                    sx={{
+                      color: "monochrome800",
+                      fontSize: 2,
+                      width: "100%",
+                      height: MOBILE_ROW_HEIGHT,
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      // my: 2,
+                      // "&:first-of-type": {
+                      //   pt: 2,
+                      // },
+                      "&:last-of-type": {
+                        borderBottom: "1px solid",
+                        borderBottomColor: "monochrome400",
+                        // pb: 3,
+                      },
+                    }}
+                  >
+                    <Box
+                      as="dt"
+                      sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
+                    >
+                      {cell.column.Header}
+                    </Box>
+                    <Box
+                      as="dd"
+                      sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
+                    >
+                      <DDContent
+                        cell={cell}
+                        columnMeta={tableColumnsMeta[cell.column.id]}
+                      />
+                    </Box>
+                  </Flex>
+                );
+              })
+            ) : (
+              // Group
+              <Flex
+                sx={{
+                  height: MOBILE_ROW_HEIGHT,
+                  borderTop: "1px solid",
+                  borderTopColor: "monochrome400",
+                  color: "monochrome600",
+                  // py: 2,
+                  ml: `${row.depth * 12}px`,
+                }}
+              >
+                <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
+                <Text
+                  as={headingLevel}
+                  variant="paragraph1"
+                  sx={{ color: "monochrome900" }}
+                  {...row.getToggleRowExpandedProps()}
+                >
+                  {`${row.groupByVal}`}
+                </Text>
+              </Flex>
+            )}
+          </Box>
+        </>
+      );
+    },
+    [prepareRow, rows, tableColumnsMeta]
+  );
 
   return (
     <>
@@ -267,7 +264,7 @@ export const Table = () => {
           />
         </Box>
       )}
-      {/* <Box sx={{ display: ["block", "none", "none"], my: 3 }}>
+      <Box sx={{ display: ["block", "none", "none"], my: 3 }}>
         <Switch
           label={
             <Trans id="chart.published.toggle.mobile.view">
@@ -281,7 +278,7 @@ export const Table = () => {
             toggleAlternativeMobileView(!useAlternativeMobileView)
           }
         />
-      </Box> */}
+      </Box>
 
       {/* Desktop */}
       {!useAlternativeMobileView && (
@@ -319,20 +316,18 @@ export const Table = () => {
       )}
 
       {/* Alternative Mobile View */}
-      {/* {useAlternativeMobileView && (
+      {useAlternativeMobileView && (
         <Box
           sx={{
             width: "100%",
-            height: bounds.chartHeight,
             position: "relative",
-            overflowY: "hidden",
-            overflowX: "scroll",
             bg: "monochrome100",
             mb: 5,
           }}
         >
           <VariableSizeList
-            height={bounds.chartHeight}
+            key={rows.length} // Reset when groups are toggled because itemSize remains cached per index
+            height={TABLE_HEIGHT}
             itemCount={rows.length}
             itemSize={getMobileItemSize}
             width={bounds.width}
@@ -340,7 +335,7 @@ export const Table = () => {
             {renderMobileRow}
           </VariableSizeList>
         </Box>
-      )} */}
+      )}
 
       {/* Number of lines */}
       <Text
