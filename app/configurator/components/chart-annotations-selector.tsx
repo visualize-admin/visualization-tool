@@ -12,6 +12,7 @@ import {
 import { EmptyRightPanel } from "./empty-right-panel";
 import { MetaInputField } from "./field";
 import { useLocale } from "../../locales/use-locale";
+import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-options";
 
 export const ChartAnnotationsSelector = ({
   state,
@@ -33,36 +34,41 @@ export const ChartAnnotationsSelector = ({
   const orderedLocales = [locale, ...locales.filter((l) => l !== locale)];
 
   if (state.activeField) {
-    return (
-      <Box
-        role="tabpanel"
-        id={`annotation-panel-${state.activeField}`}
-        aria-labelledby={`annotation-tab-${state.activeField}`}
-        ref={panelRef}
-        tabIndex={-1}
-        sx={{ overflowX: "hidden", overflowY: "auto" }}
-      >
-        <ControlSection>
-          <SectionTitle iconName={state.activeField as IconName}>
-            {state.activeField && getFieldLabel(state.activeField)}
-          </SectionTitle>
-          <ControlSectionContent side="right">
-            {state.activeField &&
-              orderedLocales.map((locale) => (
-                <Box sx={{ ":not(:first-of-type)": { mt: 3 } }}>
-                  <MetaInputField
-                    key={`${locale}-${state.activeField!}`}
-                    metaKey={state.activeField!}
-                    locale={locale}
-                    label={getFieldLabel(locale)}
-                    value={state.meta[af][locale]}
-                  />
-                </Box>
-              ))}
-          </ControlSectionContent>
-        </ControlSection>
-      </Box>
-    );
+    if (state.activeField === "time" || state.activeField === "legend") {
+      // Interactive filters
+      return <InteractiveFiltersOptions state={state} />;
+    } else {
+      return (
+        <Box
+          role="tabpanel"
+          id={`annotation-panel-${state.activeField}`}
+          aria-labelledby={`annotation-tab-${state.activeField}`}
+          ref={panelRef}
+          tabIndex={-1}
+          sx={{ overflowX: "hidden", overflowY: "auto" }}
+        >
+          <ControlSection>
+            <SectionTitle iconName={state.activeField as IconName}>
+              {state.activeField && getFieldLabel(state.activeField)}
+            </SectionTitle>
+            <ControlSectionContent side="right">
+              {state.activeField &&
+                orderedLocales.map((locale) => (
+                  <Box sx={{ ":not(:first-of-type)": { mt: 3 } }}>
+                    <MetaInputField
+                      key={`${locale}-${state.activeField!}`}
+                      metaKey={state.activeField!}
+                      locale={locale}
+                      label={getFieldLabel(locale)}
+                      value={state.meta[af][locale]}
+                    />
+                  </Box>
+                ))}
+            </ControlSectionContent>
+          </ControlSection>
+        </Box>
+      );
+    }
   } else {
     return <EmptyRightPanel state={state} />;
   }
