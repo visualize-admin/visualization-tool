@@ -119,45 +119,6 @@ export const AnnotatorTabField = ({
   );
 };
 
-export const InteractiveFilterLegendTabField = ({
-  icon,
-  label,
-  value,
-  ...tabProps
-}: {
-  value: boolean;
-  disabled?: boolean;
-  icon: IconName;
-  label: ReactNode;
-}) => {
-  const fieldProps = useInteractiveFilterField({
-    value,
-  });
-
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        borderRadius: "default",
-        my: "2px",
-      }}
-    >
-      <ControlTabButton
-        checked={fieldProps.checked}
-        value={`${fieldProps.value}`}
-        onClick={() => fieldProps.onClick(`${fieldProps.value}`)}
-      >
-        <ControlTabButtonInner
-          iconName={icon}
-          lowerLabel={label}
-          checked={fieldProps.checked}
-          withCheckbox
-        />
-      </ControlTabButton>
-    </Box>
-  );
-};
-
 export const MetaInputField = ({
   label,
   metaKey,
