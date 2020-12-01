@@ -53,9 +53,11 @@ export const ChartAnnotationsSelector = ({
             <ControlSectionContent side="right">
               {state.activeField &&
                 orderedLocales.map((locale) => (
-                  <Box sx={{ ":not(:first-of-type)": { mt: 3 } }}>
+                  <Box
+                    key={`${locale}-${state.activeField!}`}
+                    sx={{ ":not(:first-of-type)": { mt: 3 } }}
+                  >
                     <MetaInputField
-                      key={`${locale}-${state.activeField!}`}
                       metaKey={state.activeField!}
                       locale={locale}
                       label={getFieldLabel(locale)}
