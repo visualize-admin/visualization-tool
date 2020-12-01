@@ -34,9 +34,25 @@ export const InteractiveFiltersOptions = ({
 
   if (activeField === "legend") {
     return (
-      <InteractiveFiltersLegendOptions
-        isActive={chartConfig.interactiveFilters.legend.active}
-      />
+      <ControlSection>
+        <SectionTitle iconName="filter">
+          <Trans id="controls.section.interactiveFilters.legend">
+            Interactive Legend
+          </Trans>
+        </SectionTitle>
+        <ControlSectionContent side="right">
+          <InteractiveFiltersToggle
+            label={
+              <Trans id="controls.interactiveFilters.legend.toggleInteractiveLegend">
+                Show interactive legend
+              </Trans>
+            }
+            path="legend"
+            defaultChecked={false}
+            disabled={false}
+          ></InteractiveFiltersToggle>
+        </ControlSectionContent>
+      </ControlSection>
     );
   } else if (activeField === "time") {
     return (
@@ -45,7 +61,7 @@ export const InteractiveFiltersOptions = ({
           <Trans id="controls.section.interactiveFilters.time">Filter</Trans>
         </SectionTitle>
         <ControlSectionContent side="right">
-          <InteractiveFiltersTimeToggle
+          <InteractiveFiltersToggle
             label={
               <Trans id="controls.interactiveFilters.time.toggleTimeFilter">
                 Show time filter
@@ -54,7 +70,7 @@ export const InteractiveFiltersOptions = ({
             path="time"
             defaultChecked={false}
             disabled={false}
-          ></InteractiveFiltersTimeToggle>
+          ></InteractiveFiltersToggle>
         </ControlSectionContent>
       </ControlSection>
     );
@@ -64,7 +80,7 @@ export const InteractiveFiltersOptions = ({
 };
 
 // Time
-const InteractiveFiltersTimeToggle = ({
+const InteractiveFiltersToggle = ({
   label,
   path,
   defaultChecked,
@@ -88,28 +104,5 @@ const InteractiveFiltersTimeToggle = ({
       {...fieldProps}
       checked={fieldProps.checked ?? defaultChecked}
     ></Checkbox>
-  );
-};
-// Legend
-const InteractiveFiltersLegendOptions = ({
-  isActive,
-}: {
-  isActive: boolean;
-}) => {
-  return (
-    <ControlSection>
-      <SectionTitle disabled={isActive} iconName="filter">
-        <Trans id="controls.section.interactiveFilters.legend">
-          Interactive Legend
-        </Trans>
-      </SectionTitle>
-      <ControlSectionContent side="right">
-        <Trans id="controls.hint.interactiveFilters.legend">
-          Mit Aktivierung dieses Filters erlauben Sie dem Enduser mit Klick auf
-          die Forstzonen-Labels diese im veröffentlichten Diagrammtyp nach
-          Belieben ein- und auszublenden
-        </Trans>
-      </ControlSectionContent>
-    </ControlSection>
   );
 };
