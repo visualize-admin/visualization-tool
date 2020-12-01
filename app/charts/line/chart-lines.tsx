@@ -1,8 +1,7 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
 import {
-  InteractiveFilters,
-  InteractiveFiltersLegend,
+  InteractiveFiltersConfig,
   LineConfig,
   LineFields,
 } from "../../configurator";
@@ -88,7 +87,7 @@ export const ChartLines = memo(
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: LineFields;
-    interactiveFilters: InteractiveFilters;
+    interactiveFilters: InteractiveFiltersConfig;
   }) => {
     return (
       <LineChart
@@ -96,6 +95,7 @@ export const ChartLines = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={interactiveFilters}
         aspectRatio={0.4}
       >
         <ChartContainer>
@@ -104,7 +104,7 @@ export const ChartLines = memo(
             <Lines />
             {/* <HoverLine /> <HoverLineValues /> */}
             <InteractionHorizontal />
-            {/* <Brush /> */}
+            {interactiveFilters.time.active === true && <Brush />}
           </ChartSvg>
 
           <Ruler />

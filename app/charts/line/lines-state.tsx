@@ -31,8 +31,6 @@ import {
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
-// FIXME: get this from chart config
-const WITH_TIME_BRUSH = false;
 export interface LinesState {
   data: Observation[];
   bounds: Bounds;
@@ -59,8 +57,12 @@ const useLinesState = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: LineFields;
   aspectRatio: number;
 }): LinesState => {
@@ -93,6 +95,8 @@ const useLinesState = ({
 
   const xKey = fields.x.componentIri;
 
+  const hasInteractiveTimeFilter = interactiveFiltersConfig?.time.active;
+
   /** Data
    * Contains *all* observations, used for brushing
    */
@@ -118,6 +122,7 @@ const useLinesState = ({
    * !== data used in some other components like Brush
    * based on *all* data observations.
    */
+  // FIXME: only prepare data if interactive filters are active "time" & "legend"
   const { from, to } = interactiveFilters.time;
   const preparedData = useMemo(() => {
     const prepData =
@@ -206,7 +211,7 @@ const useLinesState = ({
   }
 
   // Dimensions
-  const left = WITH_TIME_BRUSH
+  const left = hasInteractiveTimeFilter
     ? Math.max(
         estimateTextWidth(formatNumber(entireMaxValue)),
         // Account for width of time slider selection
@@ -216,7 +221,7 @@ const useLinesState = ({
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = WITH_TIME_BRUSH ? 100 : 40;
+  const bottom = hasInteractiveTimeFilter ? 100 : 40;
   const margins = {
     top: 50,
     right: 40,
@@ -303,9 +308,13 @@ const LineChartProvider = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: LineFields;
   aspectRatio: number;
@@ -315,6 +324,7 @@ const LineChartProvider = ({
     fields,
     dimensions,
     measures,
+    interactiveFiltersConfig,
     aspectRatio,
   });
   return (
@@ -327,9 +337,13 @@ export const LineChart = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   fields: LineFields;
   children: ReactNode;
@@ -343,6 +357,7 @@ export const LineChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}
