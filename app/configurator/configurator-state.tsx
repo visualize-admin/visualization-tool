@@ -105,10 +105,6 @@ export type ConfiguratorStateAction =
       value: { path: string | string[]; value: string };
     }
   | {
-      type: "INTERACTIVE_FILTER_LEGEND_CHANGED";
-      value: boolean;
-    }
-  | {
       type: "INTERACTIVE_FILTER_CHANGED";
       value: InteractiveFilters;
     }
