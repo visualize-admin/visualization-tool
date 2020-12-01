@@ -1,10 +1,7 @@
-/* eslint-disable react/jsx-no-undef */
 import { Trans } from "@lingui/macro";
-import produce from "immer";
+import get from "lodash/get";
 import { ReactNode, useCallback } from "react";
-
 import { Box } from "theme-ui";
-
 import { getFieldComponentIri } from "../../charts";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
@@ -20,10 +17,8 @@ import {
   SectionTitle,
 } from "../components/chart-controls/section";
 import { getIconName } from "../components/ui-helpers";
-
 import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
-import { toggleInteractiveFilter } from "./interactive-filters-state";
 
 export const InteractiveFiltersConfigurator = ({
   state,
@@ -87,7 +82,6 @@ const InteractiveFilterTabField = ({
   value,
   icon,
   label,
-  ...tabProps
 }: {
   value: "legend" | "time";
   disabled?: boolean;
@@ -105,6 +99,11 @@ const InteractiveFilterTabField = ({
 
   const checked = state.activeField === value;
 
+  const optionActive =
+    state.state === "DESCRIBING_CHART"
+      ? get(state, `chartConfig.interactiveFilters["${value}"].active`, "")
+      : "";
+
   return (
     <Box
       sx={{
@@ -118,7 +117,7 @@ const InteractiveFilterTabField = ({
           iconName={getIconName(icon)}
           lowerLabel={label}
           checked={checked}
-          isActive
+          isActive={optionActive}
           showIsActive
         />
       </ControlTabButton>
