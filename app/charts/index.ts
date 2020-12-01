@@ -47,7 +47,14 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFilters: { legend: { active: false, componentIri: "" } },
+        interactiveFilters: {
+          legend: { active: false, componentIri: "" },
+          time: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+        },
         fields: {
           x: {
             componentIri: getTimeDimensions(dimensions)[0].iri,
