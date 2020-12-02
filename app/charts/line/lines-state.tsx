@@ -21,13 +21,16 @@ import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { getWideData, prepareData } from "../shared/chart-helpers";
+import {
+  applyLegendInteractiveFilter,
+  getWideData,
+  prepareData,
+} from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import {
   InteractiveFiltersProvider,
-  InteractiveFiltersState,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -126,14 +129,18 @@ const useLinesState = ({
   const preparedData = useMemo(
     () =>
       prepareData({
+        legendFilterActive: interactiveFiltersConfig?.legend.active,
         timeFilterActive: interactiveFiltersConfig?.time.active,
         sortedData,
         interactiveFilters,
         getX,
+        getSegment,
       }),
     [
+      getSegment,
       getX,
       interactiveFilters,
+      interactiveFiltersConfig?.legend.active,
       interactiveFiltersConfig?.time.active,
       sortedData,
     ]
@@ -144,11 +151,23 @@ const useLinesState = ({
   const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
 
   // Apply "categories" end-user-activated interactive filters to the stack
+  // FIXME: Should these filters be applied in "prepareData" (would update chart domains)
   const { categories } = interactiveFilters;
   const activeInteractiveFilters = Object.keys(categories);
-
-  const interactivelyFilteredData = preparedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
+  const interactivelyFilteredData = useMemo(
+    () =>
+      applyLegendInteractiveFilter({
+        legendFilterActive: interactiveFiltersConfig?.legend.active,
+        preparedData,
+        activeInteractiveFilters,
+        getSegment,
+      }),
+    [
+      activeInteractiveFilters,
+      getSegment,
+      interactiveFiltersConfig?.legend.active,
+      preparedData,
+    ]
   );
 
   // x
@@ -187,7 +206,7 @@ const useLinesState = ({
     fields.y.componentIri;
 
   // segments
-  const segments = [...new Set(preparedData.map(getSegment))].sort((a, b) =>
+  const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
     ascending(a, b)
   );
   // Map ordered segments to colors
