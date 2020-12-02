@@ -37,9 +37,6 @@ import {
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
-// FIXME: get this from chart config
-const WITH_TIME_BRUSH = true;
-
 export interface AreasState {
   data: Observation[];
   bounds: Bounds;
@@ -64,8 +61,12 @@ const useAreasState = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: AreaFields;
   aspectRatio: number;
 }): AreasState => {
@@ -98,6 +99,10 @@ const useAreasState = ({
   );
 
   const xKey = fields.x.componentIri;
+  const hasInteractiveTimeFilter = useMemo(
+    () => interactiveFiltersConfig?.time.active,
+    [interactiveFiltersConfig?.time.active]
+  );
 
   /** Data
    * Contains *all* observations, used for brushing
@@ -254,7 +259,7 @@ const useAreasState = ({
   }
 
   /** Dimensions */
-  const left = WITH_TIME_BRUSH
+  const left = hasInteractiveTimeFilter
     ? Math.max(
         estimateTextWidth(formatNumber(entireMaxTotalValue)),
         // Account for width of time slider selection
@@ -264,7 +269,8 @@ const useAreasState = ({
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = WITH_TIME_BRUSH ? BRUSH_BOTTOM_SPACE : 40;
+  const bottom = hasInteractiveTimeFilter ? BRUSH_BOTTOM_SPACE : 40;
+
   const margins = {
     top: 50,
     right: 40,
@@ -355,9 +361,13 @@ const AreaChartProvider = ({
   fields,
   measures,
   dimensions,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "fields" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "fields" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   aspectRatio: number;
 } & { fields: AreaFields }) => {
@@ -366,6 +376,7 @@ const AreaChartProvider = ({
     fields,
     dimensions,
     measures,
+    interactiveFiltersConfig,
     aspectRatio,
   });
   return (
@@ -378,9 +389,13 @@ export const AreaChart = ({
   fields,
   measures,
   dimensions,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "fields" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "fields" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: AreaFields;
   aspectRatio: number;
@@ -394,6 +409,7 @@ export const AreaChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}
