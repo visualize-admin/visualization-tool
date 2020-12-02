@@ -56,8 +56,12 @@ const useGroupedColumnsState = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: ColumnFields;
   aspectRatio: number;
 }): GroupedColumnsState => {
@@ -339,9 +343,13 @@ const GroupedColumnChartProvider = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -351,6 +359,7 @@ const GroupedColumnChartProvider = ({
     fields,
     dimensions,
     measures,
+    interactiveFiltersConfig,
     aspectRatio,
   });
   return (
@@ -363,9 +372,13 @@ export const GroupedColumnChart = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -379,6 +392,7 @@ export const GroupedColumnChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}

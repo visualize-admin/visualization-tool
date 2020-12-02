@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { ChartFields } from "../../configurator";
+import { ChartFields, InteractiveFiltersConfig } from "../../configurator";
 import { Observation } from "../../domain/data";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { AreasState } from "../area/areas-state";
@@ -16,6 +16,7 @@ import { TableChartState } from "../table/table-state";
 export interface ChartProps {
   data: Observation[];
   fields: ChartFields;
+  interactiveFiltersConfig?: InteractiveFiltersConfig;
   dimensions: ComponentFieldsFragment[];
   measures: ComponentFieldsFragment[];
 }

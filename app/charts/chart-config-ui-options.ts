@@ -26,6 +26,7 @@ export type EncodingSortingOption = {
   sortingType: "byDimensionLabel" | "byTotalSize" | "byMeasure";
   sortingOrder: SortingOrder[];
 };
+type InteractiveFilterType = "legend" | "time";
 export interface EncodingSpec {
   field: EncodingField;
   optional: boolean;
@@ -37,6 +38,7 @@ export interface EncodingSpec {
 export interface ChartSpec {
   chartType: ChartType;
   encodings: EncodingSpec[];
+  interactiveFilters: InteractiveFilterType[];
 }
 
 interface ChartSpecs {
@@ -84,6 +86,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
+    interactiveFilters: ["legend", "time"],
   },
   bar: {
     chartType: "bar",
@@ -115,6 +118,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         ],
       },
     ],
+    interactiveFilters: ["legend", "time"],
   },
   line: {
     chartType: "line",
@@ -138,6 +142,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [{ field: "color", values: ["palette"] }],
       },
     ],
+    interactiveFilters: ["legend", "time"],
   },
 
   area: {
@@ -162,6 +167,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [{ field: "color", values: ["palette"] }],
       },
     ],
+    interactiveFilters: ["legend", "time"],
   },
   scatterplot: {
     chartType: "scatterplot",
@@ -181,6 +187,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [{ field: "color", values: ["palette"] }],
       },
     ],
+    interactiveFilters: ["legend"],
   },
   pie: {
     chartType: "pie",
@@ -203,10 +210,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
         options: [{ field: "color", values: ["palette"] }],
       },
     ],
+    interactiveFilters: ["legend"],
   },
   table: {
     chartType: "table",
     encodings: [],
+    interactiveFilters: [],
   },
 };
 
