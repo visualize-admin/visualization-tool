@@ -7,22 +7,60 @@ import { InteractiveFiltersState } from "./use-interactive-filters";
 // interactive filters may be applied.
 export const prepareData = ({
   timeFilterActive,
+  legendFilterActive,
   sortedData,
   interactiveFilters,
   getX,
+  getSegment,
 }: {
   timeFilterActive: boolean | undefined;
+  legendFilterActive: boolean | undefined;
   sortedData: Observation[];
   interactiveFilters: InteractiveFiltersState;
   getX: (d: Observation) => Date;
+  getSegment: (d: Observation) => string;
 }) => {
-  if (!timeFilterActive) {
+  const { from, to } = interactiveFilters.time;
+  const { categories } = interactiveFilters;
+  const activeInteractiveFilters = Object.keys(categories);
+
+  if (!timeFilterActive && !legendFilterActive) {
     return sortedData;
-  } else {
-    const { from, to } = interactiveFilters.time;
+  } else if (timeFilterActive && !legendFilterActive) {
     return from && to
       ? sortedData.filter((d) => from && to && getX(d) >= from && getX(d) <= to)
       : sortedData;
+  } else if (!timeFilterActive && legendFilterActive) {
+    return sortedData.filter(
+      (d) => !activeInteractiveFilters.includes(getSegment(d))
+    );
+  } else if (timeFilterActive && legendFilterActive) {
+    return from && to && activeInteractiveFilters
+      ? sortedData
+          .filter((d) => from && to && getX(d) >= from && getX(d) <= to)
+          .filter((d) => !activeInteractiveFilters.includes(getSegment(d)))
+      : sortedData;
+  } else {
+    return sortedData;
+  }
+};
+export const applyLegendInteractiveFilter = ({
+  legendFilterActive,
+  preparedData,
+  activeInteractiveFilters,
+  getSegment,
+}: {
+  legendFilterActive: boolean | undefined;
+  preparedData: Observation[];
+  activeInteractiveFilters: string[];
+  getSegment: (d: Observation) => string;
+}) => {
+  if (!legendFilterActive) {
+    return preparedData;
+  } else {
+    return preparedData.filter(
+      (d) => !activeInteractiveFilters.includes(getSegment(d))
+    );
   }
 };
 
