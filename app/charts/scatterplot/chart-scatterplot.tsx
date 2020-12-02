@@ -105,6 +105,7 @@ export const ChartScatterplot = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={interactiveFilters}
         aspectRatio={1}
       >
         <ChartContainer>
