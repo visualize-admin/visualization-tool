@@ -34,9 +34,11 @@ export default function App({ Component, pageProps }: AppProps) {
     ? parseLocaleString(query.locale?.toString() ?? "")
     : parseLocaleString(pathname.slice(1));
 
+  // Immediately activate locale to avoid re-render
+  i18n.activate(locale);
+
   useEffect(() => {
     document.querySelector("html")?.setAttribute("lang", locale);
-    i18n.activate(locale);
   }, [locale]);
 
   // Load custom theme
