@@ -58,7 +58,7 @@ export const InteractiveFiltersConfigurator = ({
           {timeDimension && state.chartConfig.chartType === "line" && (
             <InteractiveFilterTabField
               value="time"
-              icon="x"
+              icon="xAxis"
               label={timeDimension.label}
             ></InteractiveFilterTabField>
           )}
@@ -66,7 +66,7 @@ export const InteractiveFiltersConfigurator = ({
           {segmentDimension && state.chartConfig.chartType === "line" && (
             <InteractiveFilterTabField
               value="legend"
-              icon="segment"
+              icon="segments"
               label={segmentDimension.label}
             ></InteractiveFilterTabField>
           )}
