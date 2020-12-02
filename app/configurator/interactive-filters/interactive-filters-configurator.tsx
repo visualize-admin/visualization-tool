@@ -6,7 +6,6 @@ import { getFieldComponentIri } from "../../charts";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
-import { IconName } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
 import {
   ControlTabButton,
@@ -76,7 +75,7 @@ export const InteractiveFiltersConfigurator = ({
           {segmentDimension && canFilterLegend && (
             <InteractiveFilterTabField
               value="legend"
-              icon="segments"
+              icon="segment"
               label={segmentDimension.label}
             ></InteractiveFilterTabField>
           )}
@@ -95,7 +94,7 @@ const InteractiveFilterTabField = ({
 }: {
   value: "legend" | "time";
   disabled?: boolean;
-  icon: IconName;
+  icon: string;
   label: ReactNode;
 }) => {
   const [state, dispatch] = useConfiguratorState();
