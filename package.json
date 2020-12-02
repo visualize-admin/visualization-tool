@@ -37,7 +37,7 @@
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
+    "@babel/core": "^7.12.9",
     "@preconstruct/cli": "^1.1.27",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
@@ -50,7 +50,7 @@
     "@typescript-eslint/parser": "4.1.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "10.x",
-    "babel-plugin-macros": "^2.8.0",
+    "babel-plugin-macros": "^3.0.0",
     "cypress": "^5.2.0",
     "cypress-plugin-snapshots": "^1.4.4",
     "eslint": "7.9.0",
