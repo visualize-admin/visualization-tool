@@ -37,7 +37,10 @@ export const ChartAnnotator = ({
       </ControlSection>
 
       {/* Filters */}
-      <InteractiveFiltersConfigurator state={state} />
+      {(state.chartConfig.chartType === "line" ||
+        state.chartConfig.chartType === "area") && (
+        <InteractiveFiltersConfigurator state={state} />
+      )}
     </>
   );
 };
