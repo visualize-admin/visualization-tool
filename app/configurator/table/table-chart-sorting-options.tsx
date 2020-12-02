@@ -11,7 +11,6 @@ import { Box, Button, Flex, Text } from "theme-ui";
 import { Radio, Select } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
-import { useI18n } from "../../lib/use-i18n";
 import {
   ControlSection,
   SectionTitle,
@@ -166,7 +165,6 @@ const AddTableSortingOption = ({
   metaData: DataCubeMetadata;
   chartConfig: TableConfig;
 }) => {
-  const i18n = useI18n();
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(
@@ -251,7 +249,6 @@ const ChangeTableSortingOption = ({
   chartConfig: TableConfig;
   index: number;
 }) => {
-  const i18n = useI18n();
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(

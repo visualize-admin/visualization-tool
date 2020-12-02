@@ -1,7 +1,7 @@
 import { t } from "@lingui/macro";
-import { Box, Flex } from "theme-ui";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback } from "react";
+import { Box, Flex } from "theme-ui";
 import {
   FIELD_VALUE_NONE,
   FilterValueSingle,
@@ -32,7 +32,6 @@ import {
   FilterTab,
 } from "./chart-controls/control-tab";
 import { getPalette } from "./ui-helpers";
-import { useI18n } from "../../lib/use-i18n";
 
 export const ControlTabField = ({
   component,
@@ -341,7 +340,6 @@ export const ChartFieldField = ({
   disabled?: boolean;
   dataSetMetadata: DataCubeMetadata;
 }) => {
-  const i18n = useI18n();
   const fieldProps = useChartFieldField({
     field,
     dataSetMetadata,

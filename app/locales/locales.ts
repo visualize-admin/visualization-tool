@@ -7,17 +7,29 @@ import timeFormatDe from "d3-time-format/locale/de-CH.json";
 import timeFormatEn from "d3-time-format/locale/en-GB.json";
 import timeFormatFr from "d3-time-format/locale/fr-FR.json";
 import timeFormatIt from "d3-time-format/locale/it-IT.json";
-import catalogDe from "./de/messages.js";
-import catalogEn from "./en/messages.js";
-import catalogFr from "./fr/messages.js";
-import catalogIt from "./it/messages.js";
+import { messages as catalogDe } from "./de/messages";
+import { messages as catalogEn } from "./en/messages";
+import { messages as catalogFr } from "./fr/messages";
+import { messages as catalogIt } from "./it/messages";
 import { i18n } from "@lingui/core";
+import {
+  de as pluralsDe,
+  fr as pluralsFr,
+  it as pluralsIt,
+  en as pluralsEn,
+} from "make-plural/plurals";
 
 export const defaultLocale = "de";
 
 // The order specified here will determine the fallback order when strings are not available in the preferred language
 export const locales = ["de", "fr", "it", "en"] as const;
 
+i18n.loadLocaleData({
+  de: { plurals: pluralsDe },
+  fr: { plurals: pluralsFr },
+  it: { plurals: pluralsIt },
+  en: { plurals: pluralsEn },
+});
 i18n.load({
   de: catalogDe,
   fr: catalogFr,

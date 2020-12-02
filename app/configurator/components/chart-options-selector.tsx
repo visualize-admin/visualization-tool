@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Flex } from "theme-ui";
 import get from "lodash/get";
 import { useCallback, useEffect, useRef } from "react";
+import { Box, Flex } from "theme-ui";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
@@ -24,7 +24,6 @@ import {
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
-import { IconName } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
 import { TableColumnOptions } from "../table/table-chart-options";
 import { ColorPalette } from "./chart-controls/color-palette";
@@ -40,7 +39,6 @@ import {
   DimensionValuesSingleFilter,
 } from "./filters";
 import { getFieldLabel, getFieldLabelHint, getIconName } from "./ui-helpers";
-import { useI18n } from "../../lib/use-i18n";
 
 export const ChartOptionsSelector = ({
   state,
@@ -296,7 +294,6 @@ const ChartFieldSorting = ({
   encodingSortingOptions: EncodingSortingOption[];
   disabled?: boolean;
 }) => {
-  const i18n = useI18n();
   const [, dispatch] = useConfiguratorState();
 
   const getSortingTypeLabel = (type: SortingType) => {

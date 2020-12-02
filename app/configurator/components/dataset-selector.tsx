@@ -1,20 +1,18 @@
 import { Plural, t, Trans } from "@lingui/macro";
-import { Box, Button, Flex, Text } from "theme-ui";
 import { useRef, useState } from "react";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";
+import { MiniSelect, SearchField } from "../../components/form";
+import { Loading } from "../../components/hint";
 import {
   DataCubeResultOrder,
   useDataCubesQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-import { MiniSelect, SearchField } from "../../components/form";
-import { Loading } from "../../components/hint";
-import { useI18n } from "../../lib/use-i18n";
 
 export const DataSetList = () => {
   const locale = useLocale();
-  const i18n = useI18n();
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 150, { leading: true });
   const [order, setOrder] = useState<DataCubeResultOrder>(

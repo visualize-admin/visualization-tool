@@ -10,7 +10,6 @@ import React, {
 import { Checkbox } from "../../components/form";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
-import { useI18n } from "../../lib/use-i18n";
 import { ColorPalette } from "../components/chart-controls/color-palette";
 import {
   ControlSection,
@@ -138,7 +137,6 @@ export const TableColumnOptions = ({
   metaData: DataCubeMetadata;
 }) => {
   const { activeField, chartConfig } = state;
-  const i18n = useI18n();
 
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -363,7 +361,6 @@ const ColumnStyleSubOptions = ({
   activeField: string;
   component: DimensionFieldsWithValuesFragment;
 }) => {
-  const i18n = useI18n();
   const type = chartConfig.fields[activeField].columnStyle.type;
   return (
     <>
