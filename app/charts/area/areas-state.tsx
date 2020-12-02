@@ -1,18 +1,22 @@
-import { ascending, descending, extent, group, max, rollup, sum } from "d3";
 import {
+  ascending,
+  descending,
+  extent,
+  group,
+  max,
+  rollup,
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
   ScaleTime,
   scaleTime,
-} from "d3";
-import {
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
   stackOrderReverse,
+  sum,
 } from "d3";
 import { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { AreaFields } from "../../configurator";
@@ -151,15 +155,9 @@ const useAreasState = ({
       sortedData,
     ]
   );
+
   const groupedMap = group(preparedData, getGroups);
   const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
-
-  // Apply "categories" end-user-activated interactive filters to the stack
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-  const interactivelyFilteredData = preparedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
 
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
@@ -170,14 +168,14 @@ const useAreasState = ({
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
   const segmentsOrderedByName = Array.from(
-    new Set(preparedData.map((d) => getSegment(d)))
+    new Set(sortedData.map((d) => getSegment(d)))
   ).sort((a, b) =>
     segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
   );
 
   const segmentsOrderedByTotalValue = [
     ...rollup(
-      preparedData,
+      sortedData,
       (v) => sum(v, (x) => getY(x)),
       (x) => getSegment(x)
     ),
@@ -194,10 +192,6 @@ const useAreasState = ({
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
 
-  const activeSegments = segments.filter(
-    (s) => !activeInteractiveFilters.includes(s)
-  );
-
   // Stack order
   const stackOrder =
     segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"
@@ -209,7 +203,7 @@ const useAreasState = ({
   const stacked = stack()
     .order(stackOrder)
     .offset(stackOffsetDiverging)
-    .keys(activeSegments);
+    .keys(segments);
 
   const series = stacked(chartWideData as { [key: string]: number }[]);
 
@@ -303,7 +297,7 @@ const useAreasState = ({
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
 
-    const tooltipValues = interactivelyFilteredData.filter(
+    const tooltipValues = preparedData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({

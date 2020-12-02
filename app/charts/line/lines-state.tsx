@@ -1,5 +1,9 @@
-import { ascending, extent, group, max, min } from "d3";
 import {
+  ascending,
+  extent,
+  group,
+  max,
+  min,
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
@@ -21,11 +25,7 @@ import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import {
-  applyLegendInteractiveFilter,
-  getWideData,
-  prepareData,
-} from "../shared/chart-helpers";
+import { getWideData, prepareData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -153,26 +153,6 @@ const useLinesState = ({
   const groupedMap = group(preparedData, getGroups);
   const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
 
-  // Apply "categories" end-user-activated interactive filters to the stack
-  // FIXME: Should these filters be applied in "prepareData" (would update chart domains)
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-  const interactivelyFilteredData = useMemo(
-    () =>
-      applyLegendInteractiveFilter({
-        legendFilterActive: interactiveFiltersConfig?.legend.active,
-        preparedData,
-        activeInteractiveFilters,
-        getSegment,
-      }),
-    [
-      activeInteractiveFilters,
-      getSegment,
-      interactiveFiltersConfig?.legend.active,
-      preparedData,
-    ]
-  );
-
   // x
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
@@ -273,7 +253,7 @@ const useLinesState = ({
     const xAnchor = xScale(getX(datum));
     const yAnchor = yScale(getY(datum));
 
-    const tooltipValues = interactivelyFilteredData.filter(
+    const tooltipValues = preparedData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({
