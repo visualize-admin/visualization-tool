@@ -3,6 +3,7 @@ import get from "lodash/get";
 import { ReactNode, useCallback } from "react";
 import { Box } from "theme-ui";
 import { getFieldComponentIri } from "../../charts";
+import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
@@ -17,19 +18,8 @@ import {
   SectionTitle,
 } from "../components/chart-controls/section";
 import { getIconName } from "../components/ui-helpers";
-import { ChartType, ConfiguratorStateDescribingChart } from "../config-types";
+import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
-
-// FIXME: Should this come from chart-ui-config-options
-const CAN_FILTER_TIME: ChartType[] = ["line", "area"];
-const CAN_FILTER_LEGEND: ChartType[] = [
-  "column",
-  "bar",
-  "line",
-  "area",
-  "scatterplot",
-  "pie",
-];
 
 export const InteractiveFiltersConfigurator = ({
   state,
@@ -47,12 +37,21 @@ export const InteractiveFiltersConfigurator = ({
     "segment"
   );
   if (data?.dataCubeByIri) {
+    // Are dimensions available?
     const timeDimension = data?.dataCubeByIri.dimensions.find(
       (dim) => dim.iri === timeDimensionIri
     );
     const segmentDimension = data?.dataCubeByIri.dimensions.find(
       (dim) => dim.iri === segmentDimensionIri
     );
+
+    // Can chart type have these options?
+    const canFilterLegend = chartConfigOptionsUISpec[
+      state.chartConfig.chartType
+    ].interactiveFilters.includes("legend");
+    const canFilterTime = chartConfigOptionsUISpec[
+      state.chartConfig.chartType
+    ].interactiveFilters.includes("time");
 
     return (
       <ControlSection
@@ -66,23 +65,21 @@ export const InteractiveFiltersConfigurator = ({
         </SectionTitle>
         <ControlSectionContent side="left">
           {/* Time */}
-          {timeDimension &&
-            CAN_FILTER_TIME.includes(state.chartConfig.chartType) && (
-              <InteractiveFilterTabField
-                value="time"
-                icon="time"
-                label={timeDimension.label}
-              ></InteractiveFilterTabField>
-            )}
+          {timeDimension && canFilterTime && (
+            <InteractiveFilterTabField
+              value="time"
+              icon="time"
+              label={timeDimension.label}
+            ></InteractiveFilterTabField>
+          )}
           {/* legend */}
-          {segmentDimension &&
-            CAN_FILTER_LEGEND.includes(state.chartConfig.chartType) && (
-              <InteractiveFilterTabField
-                value="legend"
-                icon="segments"
-                label={segmentDimension.label}
-              ></InteractiveFilterTabField>
-            )}
+          {segmentDimension && canFilterLegend && (
+            <InteractiveFilterTabField
+              value="legend"
+              icon="segments"
+              label={segmentDimension.label}
+            ></InteractiveFilterTabField>
+          )}
         </ControlSectionContent>
       </ControlSection>
     );

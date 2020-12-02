@@ -25,7 +25,6 @@ import {
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
-import { IconName } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
 import { TableColumnOptions } from "../table/table-chart-options";
 import { ColorPalette } from "./chart-controls/color-palette";
