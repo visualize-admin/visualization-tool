@@ -2,7 +2,7 @@ import { bisector } from "d3";
 import { brushX } from "d3";
 import { select, Selection } from "d3";
 import "d3-transition";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
@@ -11,6 +11,9 @@ import { useChartState } from "./use-chart-state";
 import { useChartTheme } from "./use-chart-theme";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
+// Space used in chart states as bottom margin
+export const BRUSH_BOTTOM_SPACE = 100;
+// Brush constants
 export const HANDLE_HEIGHT = 14;
 export const BRUSH_HEIGHT = 3;
 
