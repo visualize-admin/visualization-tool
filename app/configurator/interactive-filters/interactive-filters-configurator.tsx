@@ -17,8 +17,11 @@ import {
   SectionTitle,
 } from "../components/chart-controls/section";
 import { getIconName } from "../components/ui-helpers";
-import { ConfiguratorStateDescribingChart } from "../config-types";
+import { ChartType, ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
+
+const CAN_FILTER_TIME: ChartType[] = ["line", "area"];
+const CAN_FILTER_LEGEND: ChartType[] = ["line", "area"];
 
 export const InteractiveFiltersConfigurator = ({
   state,
@@ -55,21 +58,23 @@ export const InteractiveFiltersConfigurator = ({
         </SectionTitle>
         <ControlSectionContent side="left">
           {/* Time */}
-          {timeDimension && state.chartConfig.chartType === "line" && (
-            <InteractiveFilterTabField
-              value="time"
-              icon="xAxis"
-              label={timeDimension.label}
-            ></InteractiveFilterTabField>
-          )}
+          {timeDimension &&
+            CAN_FILTER_TIME.includes(state.chartConfig.chartType) && (
+              <InteractiveFilterTabField
+                value="time"
+                icon="xAxis"
+                label={timeDimension.label}
+              ></InteractiveFilterTabField>
+            )}
           {/* legend */}
-          {segmentDimension && state.chartConfig.chartType === "line" && (
-            <InteractiveFilterTabField
-              value="legend"
-              icon="segments"
-              label={segmentDimension.label}
-            ></InteractiveFilterTabField>
-          )}
+          {segmentDimension &&
+            CAN_FILTER_LEGEND.includes(state.chartConfig.chartType) && (
+              <InteractiveFilterTabField
+                value="legend"
+                icon="segments"
+                label={segmentDimension.label}
+              ></InteractiveFilterTabField>
+            )}
         </ControlSectionContent>
       </ControlSection>
     );
