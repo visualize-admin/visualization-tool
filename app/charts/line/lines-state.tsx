@@ -95,8 +95,11 @@ const useLinesState = ({
     [fields.x.componentIri]
   );
   const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
-  const getSegment = (d: Observation): string =>
-    fields.segment ? (d[fields.segment.componentIri] as string) : "fixme";
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
+    [fields.segment]
+  );
 
   const xKey = fields.x.componentIri;
 

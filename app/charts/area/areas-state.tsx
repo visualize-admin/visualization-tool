@@ -135,14 +135,18 @@ const useAreasState = ({
   const preparedData = useMemo(
     () =>
       prepareData({
+        legendFilterActive: interactiveFiltersConfig?.legend.active,
         timeFilterActive: interactiveFiltersConfig?.time.active,
         sortedData,
         interactiveFilters,
         getX,
+        getSegment,
       }),
     [
+      getSegment,
       getX,
       interactiveFilters,
+      interactiveFiltersConfig?.legend.active,
       interactiveFiltersConfig?.time.active,
       sortedData,
     ]
