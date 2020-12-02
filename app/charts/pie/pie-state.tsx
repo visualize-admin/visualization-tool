@@ -17,6 +17,7 @@ import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
+import { prepareData } from "../shared/chart-helpers";
 
 const sortData = ({
   data,
@@ -60,8 +61,12 @@ const usePieState = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: PieFields;
   aspectRatio: number;
 }): PieState => {
@@ -97,10 +102,20 @@ const usePieState = ({
   }, [data, getX, getY, sortingType, sortingOrder]);
 
   // Apply end-user-activated interactive filters to the stack
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-  const interactivelyFilteredData = sortedData.filter(
-    (d) => !activeInteractiveFilters.includes(getX(d))
+  const preparedData = useMemo(
+    () =>
+      prepareData({
+        legendFilterActive: interactiveFiltersConfig?.legend.active,
+        sortedData,
+        interactiveFilters,
+        getSegment: getX,
+      }),
+    [
+      getX,
+      interactiveFilters,
+      interactiveFiltersConfig?.legend.active,
+      sortedData,
+    ]
   );
 
   // Map ordered segments to colors
@@ -210,7 +225,7 @@ const usePieState = ({
   };
   return {
     bounds,
-    data: interactivelyFilteredData,
+    data: preparedData,
     getPieData,
     getY,
     getX,
@@ -224,9 +239,13 @@ const PieChartProvider = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: PieFields;
   aspectRatio: number;
@@ -236,6 +255,7 @@ const PieChartProvider = ({
     fields,
     dimensions,
     measures,
+    interactiveFiltersConfig,
     aspectRatio,
   });
   return (
@@ -249,8 +269,12 @@ export const PieChart = ({
   measures,
   dimensions,
   aspectRatio,
+  interactiveFiltersConfig,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   fields: PieFields;
   children: ReactNode;
@@ -264,6 +288,7 @@ export const PieChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}

@@ -97,6 +97,7 @@ export const ChartPie = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={interactiveFilters}
         aspectRatio={0.5}
       >
         <ChartContainer>
