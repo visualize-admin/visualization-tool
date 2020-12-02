@@ -143,6 +143,14 @@ export const Examples = ({
                 palette: "set2",
               },
             },
+            interactiveFilters: {
+              legend: { active: false, componentIri: "" },
+              time: {
+                active: false,
+                componentIri: "",
+                presets: { type: "range", from: "", to: "" },
+              },
+            },
             filters: {
               "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1": {
                 type: "multi",
