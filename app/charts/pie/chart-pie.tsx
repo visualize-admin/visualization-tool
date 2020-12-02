@@ -1,6 +1,10 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { PieConfig, PieFields } from "../../configurator";
+import {
+  InteractiveFiltersConfig,
+  PieConfig,
+  PieFields,
+} from "../../configurator";
 import { Observation } from "../../domain/data";
 import {
   ComponentFieldsFragment,
@@ -59,6 +63,7 @@ export const ChartPieVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          interactiveFilters={chartConfig.interactiveFilters}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -78,11 +83,13 @@ export const ChartPie = memo(
     dimensions,
     measures,
     fields,
+    interactiveFilters,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: PieFields;
+    interactiveFilters: InteractiveFiltersConfig;
   }) => {
     return (
       <PieChart
@@ -90,6 +97,7 @@ export const ChartPie = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={interactiveFilters}
         aspectRatio={0.5}
       >
         <ChartContainer>
@@ -98,7 +106,11 @@ export const ChartPie = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && <InteractiveLegendColor symbol="square" />}
+        {fields.segment && interactiveFilters.legend.active === true ? (
+          <InteractiveLegendColor symbol="line" />
+        ) : fields.segment ? (
+          <LegendColor symbol="line" />
+        ) : null}{" "}
       </PieChart>
     );
   }

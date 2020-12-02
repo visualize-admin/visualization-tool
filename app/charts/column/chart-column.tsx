@@ -1,6 +1,10 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { ColumnConfig, ColumnFields } from "../../configurator";
+import {
+  ColumnConfig,
+  ColumnFields,
+  InteractiveFiltersConfig,
+} from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
 import {
@@ -59,6 +63,7 @@ export const ChartColumnsVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          interactiveFilters={chartConfig.interactiveFilters}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -78,10 +83,12 @@ export const ChartColumns = memo(
     dimensions,
     measures,
     fields,
+    interactiveFilters,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
+    interactiveFilters: InteractiveFiltersConfig;
     fields: ColumnFields;
   }) => {
     return (
@@ -93,6 +100,7 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFilters}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -103,7 +111,11 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-            <InteractiveLegendColor symbol="square" />
+            {fields.segment && interactiveFilters.legend.active === true ? (
+              <InteractiveLegendColor symbol="line" />
+            ) : fields.segment ? (
+              <LegendColor symbol="line" />
+            ) : null}
           </StackedColumnsChart>
         ) : fields.segment?.componentIri &&
           fields.segment.type === "grouped" ? (
@@ -112,6 +124,7 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFilters}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -123,7 +136,11 @@ export const ChartColumns = memo(
               <Tooltip type="multiple" />
             </ChartContainer>
 
-            <InteractiveLegendColor symbol="square" />
+            {fields.segment && interactiveFilters.legend.active === true ? (
+              <InteractiveLegendColor symbol="line" />
+            ) : fields.segment ? (
+              <LegendColor symbol="line" />
+            ) : null}
           </GroupedColumnChart>
         ) : (
           <ColumnChart

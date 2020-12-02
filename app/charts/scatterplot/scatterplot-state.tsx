@@ -1,6 +1,6 @@
 import { ascending, max, min } from "d3";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3";
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { ScatterPlotFields } from "../../configurator";
 import { Observation } from "../../domain/data";
 import {
@@ -19,6 +19,7 @@ import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
+import { prepareData } from "../shared/chart-helpers";
 
 export interface ScatterplotState {
   chartType: string;
@@ -41,8 +42,12 @@ const useScatterplotState = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: ScatterPlotFields;
   aspectRatio: number;
 }): ScatterplotState => {
@@ -61,31 +66,51 @@ const useScatterplotState = ({
 
   const getX = (d: Observation): number => +d[fields.x.componentIri];
   const getY = (d: Observation): number => +d[fields.y.componentIri];
-  const getSegment = (d: Observation): string =>
-    fields.segment ? (d[fields.segment.componentIri] as string) : "segment";
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
+    [fields.segment]
+  );
 
   // Sort data by segment
   const sortedData = data.sort((a, b) =>
     ascending(getSegment(a), getSegment(b))
   );
+  /** Prepare Data for use in chart   */
+  const preparedData = useMemo(
+    () =>
+      prepareData({
+        legendFilterActive: interactiveFiltersConfig?.legend.active,
+        sortedData,
+        interactiveFilters,
+        getSegment,
+      }),
+    [
+      getSegment,
+      interactiveFilters,
+      interactiveFiltersConfig?.legend.active,
+      sortedData,
+    ]
+  );
+
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.y.componentIri;
-  const xMinValue = Math.min(mkNumber(min(sortedData, (d) => getX(d))), 0);
-  const xMaxValue = max(sortedData, (d) => getX(d)) as number;
+  const xMinValue = Math.min(mkNumber(min(preparedData, (d) => getX(d))), 0);
+  const xMaxValue = max(preparedData, (d) => getX(d)) as number;
   const xDomain = [xMinValue, xMaxValue];
   const xScale = scaleLinear().domain(xDomain).nice();
 
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
-  const yMinValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
-  const yMaxValue = max(sortedData, getY) as number;
+  const yMinValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
+  const yMaxValue = max(preparedData, getY) as number;
   const yDomain = [yMinValue, yMaxValue];
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const hasSegment = fields.segment ? true : false;
-  const segments = sortedData.map(getSegment);
+  const segments = sortedData.map(getSegment); // get *all* segments
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
@@ -176,16 +201,9 @@ const useScatterplotState = ({
     };
   };
 
-  // Interactive Filters
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-  const interactivelyFilteredData = sortedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
-
   return {
     chartType: "scatterplot",
-    data: interactivelyFilteredData, // sortedData + filtered data,
+    data: preparedData, // sortedData + filtered data,
     bounds,
     getX,
     xScale,
@@ -205,9 +223,13 @@ const ScatterplotChartProvider = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: ScatterPlotFields;
   aspectRatio: number;
@@ -217,6 +239,7 @@ const ScatterplotChartProvider = ({
     fields,
     dimensions,
     measures,
+    interactiveFiltersConfig,
     aspectRatio,
   });
   return (
@@ -229,9 +252,13 @@ export const ScatterplotChart = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   fields: ScatterPlotFields;
   children: ReactNode;
@@ -245,6 +272,7 @@ export const ScatterplotChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}

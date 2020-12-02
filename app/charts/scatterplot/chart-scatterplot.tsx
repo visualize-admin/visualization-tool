@@ -1,6 +1,9 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { ScatterPlotFields } from "../../configurator";
+import {
+  InteractiveFiltersConfig,
+  ScatterPlotFields,
+} from "../../configurator";
 import { ScatterPlotConfig } from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
@@ -64,6 +67,7 @@ export const ChartScatterplotVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          interactiveFilters={chartConfig.interactiveFilters}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -87,11 +91,13 @@ export const ChartScatterplot = memo(
     dimensions,
     measures,
     fields,
+    interactiveFilters,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: ScatterPlotFields;
+    interactiveFilters: InteractiveFiltersConfig;
   }) => {
     return (
       <ScatterplotChart
@@ -99,6 +105,7 @@ export const ChartScatterplot = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={interactiveFilters}
         aspectRatio={1}
       >
         <ChartContainer>
@@ -112,7 +119,11 @@ export const ChartScatterplot = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && <InteractiveLegendColor symbol="circle" />}
+        {fields.segment && interactiveFilters.legend.active === true ? (
+          <InteractiveLegendColor symbol="line" />
+        ) : fields.segment ? (
+          <LegendColor symbol="line" />
+        ) : null}{" "}
       </ScatterplotChart>
     );
   }

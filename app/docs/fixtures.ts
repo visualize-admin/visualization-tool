@@ -35,6 +35,14 @@ export const states: ConfiguratorState[] = [
         y: { componentIri: "foo" },
       },
       filters: {},
+      interactiveFilters: {
+        legend: { active: false, componentIri: "" },
+        time: {
+          active: false,
+          componentIri: "",
+          presets: { type: "range", from: "", to: "" },
+        },
+      },
     },
     meta: {
       title: {

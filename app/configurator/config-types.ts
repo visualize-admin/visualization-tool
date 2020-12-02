@@ -74,6 +74,48 @@ const Meta = t.type({ title: Title, description: Description });
 export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
+// Interactive Filters
+// interactiveFilters: {
+// 	legend: {
+// 		active: true,
+// 		componentIri: "dim/0",
+//   },
+//   time: {
+//     active:false,
+//     componentIri:"dim/1",
+//     preset: { // any componentIRI e.g. "dim/0"
+//         type: "range",
+// 	      from: "2008",
+// 	      to: "2010"
+//     }
+//   }
+//   dataFilter: {active:true, componentIris: ["dim/3","dim/4"]}
+// }
+const InteractiveFiltersLegend = t.type({
+  active: t.boolean,
+  componentIri: t.string,
+});
+export type InteractiveFiltersLegend = t.TypeOf<
+  typeof InteractiveFiltersLegend
+>;
+const InteractiveFiltersTime = t.type({
+  active: t.boolean,
+  componentIri: t.string,
+  presets: t.type({
+    type: t.literal("range"),
+    from: t.string,
+    to: t.string,
+  }),
+});
+export type InteractiveFiltersTime = t.TypeOf<typeof InteractiveFiltersTime>;
+const InteractiveFiltersConfig = t.type({
+  legend: InteractiveFiltersLegend,
+  time: InteractiveFiltersTime,
+});
+export type InteractiveFiltersConfig = t.TypeOf<
+  typeof InteractiveFiltersConfig
+>;
+
 // Chart Config
 
 const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
@@ -140,6 +182,7 @@ const BarConfig = t.type(
   {
     chartType: t.literal("bar"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: BarFields,
   },
   "BarConfig"
@@ -170,6 +213,7 @@ const ColumnConfig = t.type(
   {
     chartType: t.literal("column"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: ColumnFields,
   },
   "ColumnConfig"
@@ -198,6 +242,7 @@ const LineConfig = t.type(
   {
     chartType: t.literal("line"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: LineFields,
   },
   "LineConfig"
@@ -233,6 +278,7 @@ const AreaConfig = t.type(
   {
     chartType: t.literal("area"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: AreaFields,
   },
   "AreaConfig"
@@ -263,6 +309,7 @@ const ScatterPlotConfig = t.type(
   {
     chartType: t.literal("scatterplot"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: ScatterPlotFields,
   },
   "ScatterPlotConfig"
@@ -292,6 +339,7 @@ const PieFields = t.type({
 const PieConfig = t.type(
   {
     chartType: t.literal("pie"),
+    interactiveFilters: InteractiveFiltersConfig,
     filters: Filters,
     fields: PieFields,
   },
