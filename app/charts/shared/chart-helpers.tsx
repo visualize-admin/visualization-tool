@@ -1,6 +1,32 @@
 import { isNumber } from "util";
 import { ObservationValue, Observation } from "../../domain/data";
+import { InteractiveFiltersState } from "./use-interactive-filters";
 
+// Prepare data used in charts.
+// Different than the whole dataset because
+// interactive filters may be applied.
+export const prepareData = ({
+  timeFilterActive,
+  sortedData,
+  interactiveFilters,
+  getX,
+}: {
+  timeFilterActive: boolean | undefined;
+  sortedData: Observation[];
+  interactiveFilters: InteractiveFiltersState;
+  getX: (d: Observation) => Date;
+}) => {
+  if (!timeFilterActive) {
+    return sortedData;
+  } else {
+    const { from, to } = interactiveFilters.time;
+    return from && to
+      ? sortedData.filter((d) => from && to && getX(d) >= from && getX(d) <= to)
+      : sortedData;
+  }
+};
+
+// Helper to pivot a dataset to a wider format (used in stacked charts)
 export const getWideData = ({
   xKey,
   groupedMap,

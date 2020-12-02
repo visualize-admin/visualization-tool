@@ -1,7 +1,7 @@
 import { Reducer, useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
 
-type InteractiveFiltersState = {
+export type InteractiveFiltersState = {
   categories: $FixMe; //{}; // { [x: string]: boolean };
   time: $FixMe;
 };

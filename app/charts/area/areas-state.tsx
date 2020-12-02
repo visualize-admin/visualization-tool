@@ -26,7 +26,7 @@ import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { getWideData } from "../shared/chart-helpers";
+import { getWideData, prepareData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -132,16 +132,21 @@ const useAreasState = ({
    * !== data used in some other components like Brush
    * based on *all* data observations.
    */
-  const { from, to } = interactiveFilters.time;
-  const preparedData = useMemo(() => {
-    const prepData =
-      from && to
-        ? sortedData.filter(
-            (d) => from && to && getX(d) >= from && getX(d) <= to
-          )
-        : sortedData;
-    return prepData;
-  }, [from, to, sortedData, getX]);
+  const preparedData = useMemo(
+    () =>
+      prepareData({
+        timeFilterActive: interactiveFiltersConfig?.time.active,
+        sortedData,
+        interactiveFilters,
+        getX,
+      }),
+    [
+      getX,
+      interactiveFilters,
+      interactiveFiltersConfig?.time.active,
+      sortedData,
+    ]
+  );
   const groupedMap = group(preparedData, getGroups);
   const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
 

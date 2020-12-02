@@ -21,12 +21,13 @@ import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { getWideData } from "../shared/chart-helpers";
+import { getWideData, prepareData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import {
   InteractiveFiltersProvider,
+  InteractiveFiltersState,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -99,8 +100,7 @@ const useLinesState = ({
   const hasInteractiveTimeFilter = interactiveFiltersConfig?.time.active;
 
   /** Data
-   * Contains *all* observations, used for brushing
-   */
+   * => Contains *all* observations, used for brushing */
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
@@ -123,17 +123,21 @@ const useLinesState = ({
    * !== data used in some other components like Brush
    * based on *all* data observations.
    */
-  // FIXME: only prepare data if interactive filters are active "time" & "legend"
-  const { from, to } = interactiveFilters.time;
-  const preparedData = useMemo(() => {
-    const prepData =
-      from && to
-        ? sortedData.filter(
-            (d) => from && to && getX(d) >= from && getX(d) <= to
-          )
-        : sortedData;
-    return prepData;
-  }, [from, to, sortedData, getX]);
+  const preparedData = useMemo(
+    () =>
+      prepareData({
+        timeFilterActive: interactiveFiltersConfig?.time.active,
+        sortedData,
+        interactiveFilters,
+        getX,
+      }),
+    [
+      getX,
+      interactiveFilters,
+      interactiveFiltersConfig?.time.active,
+      sortedData,
+    ]
+  );
 
   const grouped = group(preparedData, getSegment);
   const groupedMap = group(preparedData, getGroups);
