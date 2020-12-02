@@ -14,7 +14,7 @@ import {
   stackOrderDescending,
   stackOrderReverse,
 } from "d3";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { AreaFields } from "../../configurator";
 import {
   getPalette,
@@ -25,6 +25,7 @@ import {
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import { getWideData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -263,7 +264,7 @@ const useAreasState = ({
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = WITH_TIME_BRUSH ? 100 : 40;
+  const bottom = WITH_TIME_BRUSH ? BRUSH_BOTTOM_SPACE : 40;
   const margins = {
     top: 50,
     right: 40,

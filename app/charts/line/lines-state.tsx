@@ -7,7 +7,7 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {
   getPalette,
@@ -20,6 +20,7 @@ import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import { getWideData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -221,7 +222,7 @@ const useLinesState = ({
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = hasInteractiveTimeFilter ? 100 : 40;
+  const bottom = hasInteractiveTimeFilter ? BRUSH_BOTTOM_SPACE : 40;
   const margins = {
     top: 50,
     right: 40,
