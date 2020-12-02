@@ -3,7 +3,7 @@ import { ObservationValue, Observation } from "../../domain/data";
 import { InteractiveFiltersState } from "./use-interactive-filters";
 
 // Prepare data used in charts.
-// Different than the whole dataset because
+// Different than the full dataset because
 // interactive filters may be applied.
 export const prepareData = ({
   timeFilterActive,
@@ -13,11 +13,11 @@ export const prepareData = ({
   getX,
   getSegment,
 }: {
-  timeFilterActive: boolean | undefined;
-  legendFilterActive: boolean | undefined;
+  timeFilterActive?: boolean;
+  legendFilterActive?: boolean;
   sortedData: Observation[];
   interactiveFilters: InteractiveFiltersState;
-  getX: (d: Observation) => Date;
+  getX?: (d: Observation) => Date;
   getSegment: (d: Observation) => string;
 }) => {
   const { from, to } = interactiveFilters.time;
@@ -27,7 +27,7 @@ export const prepareData = ({
   if (!timeFilterActive && !legendFilterActive) {
     return sortedData;
   } else if (timeFilterActive && !legendFilterActive) {
-    return from && to
+    return from && to && getX
       ? sortedData.filter((d) => from && to && getX(d) >= from && getX(d) <= to)
       : sortedData;
   } else if (!timeFilterActive && legendFilterActive) {
@@ -35,32 +35,13 @@ export const prepareData = ({
       (d) => !activeInteractiveFilters.includes(getSegment(d))
     );
   } else if (timeFilterActive && legendFilterActive) {
-    return from && to && activeInteractiveFilters
+    return from && to && getX && activeInteractiveFilters
       ? sortedData
           .filter((d) => from && to && getX(d) >= from && getX(d) <= to)
           .filter((d) => !activeInteractiveFilters.includes(getSegment(d)))
       : sortedData;
   } else {
     return sortedData;
-  }
-};
-export const applyLegendInteractiveFilter = ({
-  legendFilterActive,
-  preparedData,
-  activeInteractiveFilters,
-  getSegment,
-}: {
-  legendFilterActive: boolean | undefined;
-  preparedData: Observation[];
-  activeInteractiveFilters: string[];
-  getSegment: (d: Observation) => string;
-}) => {
-  if (!legendFilterActive) {
-    return preparedData;
-  } else {
-    return preparedData.filter(
-      (d) => !activeInteractiveFilters.includes(getSegment(d))
-    );
   }
 };
 
