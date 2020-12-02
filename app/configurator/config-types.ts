@@ -276,6 +276,7 @@ const AreaConfig = t.type(
   {
     chartType: t.literal("area"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: AreaFields,
   },
   "AreaConfig"
