@@ -99,6 +99,7 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFilters}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -122,6 +123,7 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFilters}
             aspectRatio={0.4}
           >
             <ChartContainer>

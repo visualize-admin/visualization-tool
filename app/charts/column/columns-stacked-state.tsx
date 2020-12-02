@@ -64,8 +64,12 @@ const useColumnsStackedState = ({
   fields,
   measures,
   dimensions,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: ColumnFields;
   aspectRatio: number;
 }): StackedColumnsState => {
@@ -385,9 +389,13 @@ const StackedColumnsChartProvider = ({
   fields,
   measures,
   dimensions,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -396,6 +404,7 @@ const StackedColumnsChartProvider = ({
     data,
     fields,
     dimensions,
+    interactiveFiltersConfig,
     measures,
     aspectRatio,
   });
@@ -409,9 +418,13 @@ export const StackedColumnsChart = ({
   fields,
   measures,
   dimensions,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -425,6 +438,7 @@ export const StackedColumnsChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}

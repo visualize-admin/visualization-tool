@@ -109,8 +109,7 @@ const useAreasState = ({
   );
 
   /** Data
-   * Contains *all* observations, used for brushing
-   */
+   * Contains *all* observations, used for brushing */
   const sortedData = useMemo(
     () =>
       [...data]
