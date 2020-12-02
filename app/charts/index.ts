@@ -23,6 +23,14 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
+        interactiveFilters: {
+          legend: { active: false, componentIri: "" },
+          time: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+        },
         fields: {
           x: { componentIri: measures[0].iri },
           y: {
@@ -35,6 +43,14 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
+        interactiveFilters: {
+          legend: { active: false, componentIri: "" },
+          time: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+        },
         fields: {
           x: {
             componentIri: dimensions[0].iri,
@@ -86,6 +102,14 @@ export const getInitialConfig = ({
       return {
         chartType: "scatterplot",
         filters: {},
+        interactiveFilters: {
+          legend: { active: false, componentIri: "" },
+          time: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+        },
         fields: {
           x: { componentIri: measures[0].iri },
           y: {
@@ -106,6 +130,14 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
+        interactiveFilters: {
+          legend: { active: false, componentIri: "" },
+          time: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+        },
         fields: {
           y: { componentIri: measures[0].iri },
           segment: {

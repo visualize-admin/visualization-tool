@@ -1,6 +1,10 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { BarConfig, BarFields } from "../../configurator";
+import {
+  BarConfig,
+  BarFields,
+  InteractiveFiltersConfig,
+} from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
 import {
@@ -53,6 +57,7 @@ export const ChartBarsVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          interactiveFilters={chartConfig.interactiveFilters}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -72,11 +77,13 @@ export const ChartBars = memo(
     dimensions,
     measures,
     fields,
+    interactiveFilters,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: BarFields;
+    interactiveFilters: InteractiveFiltersConfig;
   }) => {
     return (
       <>
@@ -93,7 +100,11 @@ export const ChartBars = memo(
                 <AxisWidthLinear />
               </ChartSvg>
             </ChartContainer>
-            <InteractiveLegendColor symbol="square" />
+            {fields.segment && interactiveFilters.legend.active === true ? (
+              <InteractiveLegendColor symbol="line" />
+            ) : fields.segment ? (
+              <LegendColor symbol="line" />
+            ) : null}
           </GroupedBarsChart>
         ) : (
           <BarChart data={observations} fields={fields} measures={measures}>

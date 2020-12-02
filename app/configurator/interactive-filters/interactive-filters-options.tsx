@@ -28,7 +28,7 @@ export const InteractiveFiltersOptions = ({
   }, [activeField]);
 
   // FIXME: add other chart types
-  if (!activeField || chartConfig.chartType !== "line") {
+  if (!activeField) {
     return null;
   }
 

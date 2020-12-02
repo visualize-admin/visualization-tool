@@ -20,8 +20,16 @@ import { getIconName } from "../components/ui-helpers";
 import { ChartType, ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 
+// FIXME: Should this come from chart-ui-config-options
 const CAN_FILTER_TIME: ChartType[] = ["line", "area"];
-const CAN_FILTER_LEGEND: ChartType[] = ["line", "area"];
+const CAN_FILTER_LEGEND: ChartType[] = [
+  "column",
+  "bar",
+  "line",
+  "area",
+  "scatterplot",
+  "pie",
+];
 
 export const InteractiveFiltersConfigurator = ({
   state,
@@ -62,7 +70,7 @@ export const InteractiveFiltersConfigurator = ({
             CAN_FILTER_TIME.includes(state.chartConfig.chartType) && (
               <InteractiveFilterTabField
                 value="time"
-                icon="xAxis"
+                icon="time"
                 label={timeDimension.label}
               ></InteractiveFilterTabField>
             )}

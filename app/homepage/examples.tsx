@@ -65,6 +65,14 @@ export const Examples = ({
                 palette: "dark2",
               },
             },
+            interactiveFilters: {
+              legend: { active: false, componentIri: "" },
+              time: {
+                active: false,
+                componentIri: "",
+                presets: { type: "range", from: "", to: "" },
+              },
+            },
             filters: {
               "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/0": {
                 type: "multi",

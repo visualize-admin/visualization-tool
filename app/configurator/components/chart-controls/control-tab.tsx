@@ -230,6 +230,7 @@ export const ControlTabButtonInner = ({
   lowerLabel: string | ReactNode;
   checked?: boolean;
   optional?: boolean;
+  // On / Off indicator
   isActive?: boolean;
   showIsActive?: boolean;
 }) => (

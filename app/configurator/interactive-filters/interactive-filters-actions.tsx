@@ -13,8 +13,8 @@ export const useInteractiveFiltersToggle = ({
     (e) => {
       if (
         state.state === "DESCRIBING_CHART" &&
-        (state.chartConfig.chartType === "line" ||
-          state.chartConfig.chartType === "area")
+        // All charts except "table" can have interactive filters
+        state.chartConfig.chartType !== "table"
       ) {
         const newIFConfig = toggleInteractiveFilter(
           state.chartConfig.interactiveFilters,

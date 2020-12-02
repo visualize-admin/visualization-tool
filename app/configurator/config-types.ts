@@ -182,6 +182,7 @@ const BarConfig = t.type(
   {
     chartType: t.literal("bar"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: BarFields,
   },
   "BarConfig"
@@ -212,6 +213,7 @@ const ColumnConfig = t.type(
   {
     chartType: t.literal("column"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: ColumnFields,
   },
   "ColumnConfig"
@@ -307,6 +309,7 @@ const ScatterPlotConfig = t.type(
   {
     chartType: t.literal("scatterplot"),
     filters: Filters,
+    interactiveFilters: InteractiveFiltersConfig,
     fields: ScatterPlotFields,
   },
   "ScatterPlotConfig"
@@ -336,6 +339,7 @@ const PieFields = t.type({
 const PieConfig = t.type(
   {
     chartType: t.literal("pie"),
+    interactiveFilters: InteractiveFiltersConfig,
     filters: Filters,
     fields: PieFields,
   },
