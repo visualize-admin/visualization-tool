@@ -1,8 +1,12 @@
 // If translations get too big, we should load them dynamically. But for now it's fine.
 // Use the same number format in each language
-import { formatLocale, FormatLocaleDefinition } from "d3";
+import { formatLocale, FormatLocaleDefinition, FormatLocaleObject } from "d3";
 import numberFormatCh from "d3-format/locale/de-CH.json";
-import { timeFormatLocale, TimeLocaleDefinition } from "d3-time-format";
+import {
+  timeFormatLocale,
+  TimeLocaleDefinition,
+  TimeLocaleObject,
+} from "d3-time-format";
 import timeFormatDe from "d3-time-format/locale/de-CH.json";
 import timeFormatEn from "d3-time-format/locale/en-GB.json";
 import timeFormatFr from "d3-time-format/locale/fr-FR.json";
@@ -19,10 +23,12 @@ import {
   en as pluralsEn,
 } from "make-plural/plurals";
 
+// Keep up-to-date with actual locales!
 export const defaultLocale = "de";
-
 // The order specified here will determine the fallback order when strings are not available in the preferred language
 export const locales = ["de", "fr", "it", "en"] as const;
+
+export type Locale = typeof locales[number];
 
 i18n.loadLocaleData({
   de: { plurals: pluralsDe },
@@ -40,28 +46,32 @@ i18n.activate(defaultLocale);
 
 export { i18n };
 
-export type Locales = "de" | "fr" | "it" | "en";
-
 /**
  * Parses a valid app locale from a locale string (e.g. a Accept-Language header).
  * If unparseable, returns default locale.
  * @param localeString locale string, e.g. de,en-US;q=0.7,en;q=0.3
  */
-export const parseLocaleString = (localeString: string): Locales => {
+export const parseLocaleString = (localeString: string): Locale => {
   const result = /^(de|fr|it|en)/.exec(localeString);
-  return result ? (result[1] as Locales) : defaultLocale;
+  return result ? (result[1] as Locale) : defaultLocale;
 };
 
-export const d3TimeFormatLocales = {
+const d3TimeFormatLocales: { [locale: string]: TimeLocaleObject } = {
   de: timeFormatLocale(timeFormatDe as TimeLocaleDefinition),
   fr: timeFormatLocale(timeFormatFr as TimeLocaleDefinition),
   it: timeFormatLocale(timeFormatIt as TimeLocaleDefinition),
   en: timeFormatLocale(timeFormatEn as TimeLocaleDefinition),
-} as const;
+};
 
-export const d3FormatLocales = {
+export const getD3TimeFormatLocale = (locale: string): TimeLocaleObject =>
+  d3TimeFormatLocales[locale] ?? d3TimeFormatLocales.de;
+
+const d3FormatLocales: { [locale: string]: FormatLocaleObject } = {
   de: formatLocale(numberFormatCh as FormatLocaleDefinition),
-  fr: formatLocale(numberFormatCh as FormatLocaleDefinition),
-  it: formatLocale(numberFormatCh as FormatLocaleDefinition),
-  en: formatLocale(numberFormatCh as FormatLocaleDefinition),
-} as const;
+  // fr: formatLocale(numberFormatCh as FormatLocaleDefinition),
+  // it: formatLocale(numberFormatCh as FormatLocaleDefinition),
+  // en: formatLocale(numberFormatCh as FormatLocaleDefinition),
+};
+
+export const getD3FormatLocale = (locale: string): FormatLocaleObject =>
+  d3FormatLocales.de;

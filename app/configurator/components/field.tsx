@@ -20,7 +20,6 @@ import {
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
-import { Locales } from "../../locales/locales";
 import {
   useChartOptionBooleanField,
   useChartOptionSelectField,
@@ -125,7 +124,7 @@ export const MetaInputField = ({
 }: {
   label: string | ReactNode;
   metaKey: string;
-  locale: Locales;
+  locale: string;
   value?: string;
   disabled?: boolean;
 }) => {

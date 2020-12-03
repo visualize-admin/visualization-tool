@@ -1,4 +1,7 @@
+const { locales } = require("./app/locales/locales.json");
+
 module.exports = {
+  locales,
   catalogs: [
     {
       path: "<rootDir>/app/locales/{locale}/messages",
@@ -6,7 +9,6 @@ module.exports = {
       exclude: ["**/node_modules/**", "**/.next/**"],
     },
   ],
-  locales: ["de", "fr", "it", "en"],
   format: "po",
   compileNamespace: "cjs",
   sourceLocale: "en",
