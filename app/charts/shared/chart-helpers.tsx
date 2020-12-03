@@ -26,7 +26,6 @@ export const usePreparedData = ({
   const activeInteractiveFilters = Object.keys(categories);
 
   const preparedData = useMemo(() => {
-    console.log("preparing data");
     if (!timeFilterActive && !legendFilterActive) {
       return sortedData;
     } else if (timeFilterActive && !legendFilterActive && getX) {
@@ -60,46 +59,6 @@ export const usePreparedData = ({
   ]);
   return preparedData;
 };
-export const prepareData = ({
-  timeFilterActive,
-  legendFilterActive,
-  sortedData,
-  interactiveFilters,
-  getX,
-  getSegment,
-}: {
-  timeFilterActive?: boolean;
-  legendFilterActive?: boolean;
-  sortedData: Observation[];
-  interactiveFilters: InteractiveFiltersState;
-  getX?: (d: Observation) => Date;
-  getSegment: (d: Observation) => string;
-}) => {
-  const { from, to } = interactiveFilters.time;
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-
-  if (!timeFilterActive && !legendFilterActive) {
-    return sortedData;
-  } else if (timeFilterActive && !legendFilterActive) {
-    return from && to && getX
-      ? sortedData.filter((d) => from && to && getX(d) >= from && getX(d) <= to)
-      : sortedData;
-  } else if (!timeFilterActive && legendFilterActive) {
-    return sortedData.filter(
-      (d) => !activeInteractiveFilters.includes(getSegment(d))
-    );
-  } else if (timeFilterActive && legendFilterActive) {
-    return from && to && getX && activeInteractiveFilters
-      ? sortedData
-          .filter((d) => from && to && getX(d) >= from && getX(d) <= to)
-          .filter((d) => !activeInteractiveFilters.includes(getSegment(d)))
-      : sortedData;
-  } else {
-    return sortedData;
-  }
-};
-
 // Helper to pivot a dataset to a wider format (used in stacked charts)
 export const getWideData = ({
   xKey,

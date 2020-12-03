@@ -30,7 +30,7 @@ import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { getWideData, prepareData } from "../shared/chart-helpers";
+import { getWideData, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -48,7 +48,6 @@ export interface AreasState {
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
   xEntireScale: ScaleTime<number, number>;
-  xUniqueValues: Date[];
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
@@ -109,8 +108,7 @@ const useAreasState = ({
     [interactiveFiltersConfig?.time.active]
   );
 
-  /** Data
-   * Contains *all* observations, used for brushing */
+  // All Data (used for brushing)
   const sortedData = useMemo(
     () =>
       [...data]
@@ -125,36 +123,16 @@ const useAreasState = ({
     getY,
     xKey,
   });
-  const xUniqueValues = sortedData
-    .map((d) => getX(d))
-    .filter(
-      (date, i, self) =>
-        self.findIndex((d) => d.getTime() === date.getTime()) === i
-    );
 
-  /** Prepare Data for use in chart
-   * !== data used in some other components like Brush
-   * based on *all* data observations.
-   */
-  const preparedData = useMemo(
-    () =>
-      prepareData({
-        legendFilterActive: interactiveFiltersConfig?.legend.active,
-        timeFilterActive: interactiveFiltersConfig?.time.active,
-        sortedData,
-        interactiveFilters,
-        getX,
-        getSegment,
-      }),
-    [
-      getSegment,
-      getX,
-      interactiveFilters,
-      interactiveFiltersConfig?.legend.active,
-      interactiveFiltersConfig?.time.active,
-      sortedData,
-    ]
-  );
+  // Data for chart
+  const preparedData = usePreparedData({
+    legendFilterActive: interactiveFiltersConfig?.legend.active,
+    timeFilterActive: interactiveFiltersConfig?.time.active,
+    sortedData,
+    interactiveFilters,
+    getX,
+    getSegment,
+  });
 
   const groupedMap = group(preparedData, getGroups);
   const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
@@ -346,7 +324,6 @@ const useAreasState = ({
     getX,
     xScale,
     xEntireScale,
-    xUniqueValues,
     getY,
     yScale,
     getSegment,

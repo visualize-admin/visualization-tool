@@ -1,23 +1,29 @@
-import { ascending, descending } from "d3";
-import { ScaleOrdinal, scaleOrdinal } from "d3";
-import { arc, pie, Pie, PieArcDatum } from "d3";
-
+import {
+  arc,
+  ascending,
+  descending,
+  pie,
+  Pie,
+  PieArcDatum,
+  ScaleOrdinal,
+  scaleOrdinal,
+} from "d3";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../configurator";
-import { Observation } from "../../domain/data";
 import {
   getPalette,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
+import { usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
-import { prepareData } from "../shared/chart-helpers";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
 
 const sortData = ({
   data,
@@ -102,21 +108,12 @@ const usePieState = ({
   }, [data, getX, getY, sortingType, sortingOrder]);
 
   // Apply end-user-activated interactive filters to the stack
-  const preparedData = useMemo(
-    () =>
-      prepareData({
-        legendFilterActive: interactiveFiltersConfig?.legend.active,
-        sortedData,
-        interactiveFilters,
-        getSegment: getX,
-      }),
-    [
-      getX,
-      interactiveFilters,
-      interactiveFiltersConfig?.legend.active,
-      sortedData,
-    ]
-  );
+  const preparedData = usePreparedData({
+    legendFilterActive: interactiveFiltersConfig?.legend.active,
+    sortedData,
+    interactiveFilters,
+    getSegment: getX,
+  });
 
   // Map ordered segments to colors
   const segments = Array.from(new Set(sortedData.map((d) => getX(d))));

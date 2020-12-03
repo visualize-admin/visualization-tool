@@ -1,25 +1,32 @@
-import { ascending, max, min } from "d3";
-import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import {
+  ascending,
+  max,
+  min,
+  ScaleLinear,
+  scaleLinear,
+  ScaleOrdinal,
+  scaleOrdinal,
+} from "d3";
+import React, { ReactNode, useCallback, useEffect } from "react";
 import { ScatterPlotFields } from "../../configurator";
-import { Observation } from "../../domain/data";
 import {
   getPalette,
   mkNumber,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { TooltipScatterplot } from "../shared/interaction/tooltip-content";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { LEFT_MARGIN_OFFSET } from "./constants";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
-import { prepareData } from "../shared/chart-helpers";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
+import { LEFT_MARGIN_OFFSET } from "./constants";
 
 export interface ScatterplotState {
   chartType: string;
@@ -72,26 +79,18 @@ const useScatterplotState = ({
     [fields.segment]
   );
 
-  // Sort data by segment
+  // All data, sort by segment
   const sortedData = data.sort((a, b) =>
     ascending(getSegment(a), getSegment(b))
   );
-  /** Prepare Data for use in chart   */
-  const preparedData = useMemo(
-    () =>
-      prepareData({
-        legendFilterActive: interactiveFiltersConfig?.legend.active,
-        sortedData,
-        interactiveFilters,
-        getSegment,
-      }),
-    [
-      getSegment,
-      interactiveFilters,
-      interactiveFiltersConfig?.legend.active,
-      sortedData,
-    ]
-  );
+
+  // Data for chart
+  const preparedData = usePreparedData({
+    legendFilterActive: interactiveFiltersConfig?.legend.active,
+    sortedData,
+    interactiveFilters,
+    getSegment,
+  });
 
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
