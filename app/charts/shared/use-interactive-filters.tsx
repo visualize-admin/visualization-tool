@@ -17,7 +17,7 @@ type InteractiveFiltersStateAction =
     }
   | {
       type: "ADD_TIME_FILTER";
-      value: Date[];
+      value: Date[] | number[];
     }
   | {
       type: "RESET_INTERACTIVE_CATEGORIES";

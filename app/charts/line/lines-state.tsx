@@ -25,7 +25,7 @@ import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { getWideData, prepareData } from "../shared/chart-helpers";
+import { getWideData, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -37,6 +37,7 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
 export interface LinesState {
+  chartType: "line";
   data: Observation[];
   bounds: Bounds;
   segments: string[];
@@ -103,8 +104,6 @@ const useLinesState = ({
 
   const xKey = fields.x.componentIri;
 
-  const hasInteractiveTimeFilter = interactiveFiltersConfig?.time.active;
-
   /** Data
    * => Contains *all* observations, used for brushing */
   const sortedData = useMemo(
@@ -118,36 +117,16 @@ const useLinesState = ({
     getY,
     xKey,
   });
-  // const xUniqueValues = sortedData
-  //   .map((d) => getX(d))
-  //   .filter(
-  //     (date, i, self) =>
-  //       self.findIndex((d) => d.getTime() === date.getTime()) === i
-  //   );
 
-  /** Prepare Data for use in chart
-   * !== data used in some other components like Brush
-   * based on *all* data observations.
-   */
-  const preparedData = useMemo(
-    () =>
-      prepareData({
-        legendFilterActive: interactiveFiltersConfig?.legend.active,
-        timeFilterActive: interactiveFiltersConfig?.time.active,
-        sortedData,
-        interactiveFilters,
-        getX,
-        getSegment,
-      }),
-    [
-      getSegment,
-      getX,
-      interactiveFilters,
-      interactiveFiltersConfig?.legend.active,
-      interactiveFiltersConfig?.time.active,
-      sortedData,
-    ]
-  );
+  // All Data
+  const preparedData = usePreparedData({
+    legendFilterActive: interactiveFiltersConfig?.legend.active,
+    timeFilterActive: interactiveFiltersConfig?.time.active,
+    sortedData,
+    interactiveFilters,
+    getX,
+    getSegment,
+  });
 
   const grouped = group(preparedData, getSegment);
   const groupedMap = group(preparedData, getGroups);
@@ -218,17 +197,19 @@ const useLinesState = ({
   }
 
   // Dimensions
-  const left = hasInteractiveTimeFilter
+  const left = interactiveFiltersConfig?.time.active
     ? Math.max(
         estimateTextWidth(formatNumber(entireMaxValue)),
         // Account for width of time slider selection
-        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
       )
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = hasInteractiveTimeFilter ? BRUSH_BOTTOM_SPACE : 40;
+  const bottom = interactiveFiltersConfig?.time.active
+    ? BRUSH_BOTTOM_SPACE
+    : 40;
   const margins = {
     top: 50,
     right: 40,
@@ -289,6 +270,7 @@ const useLinesState = ({
     };
   };
   return {
+    chartType: "line",
     data,
     bounds,
     getX,
