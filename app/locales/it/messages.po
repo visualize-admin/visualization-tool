@@ -95,39 +95,39 @@ msgstr ""
 msgid "columnStyle.textStyle.regular"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:147
+#: app/configurator/components/ui-helpers.tsx:149
 msgid "controls.axis.horizontal"
 msgstr "Asse orizzontale"
 
-#: app/configurator/components/ui-helpers.tsx:158
+#: app/configurator/components/ui-helpers.tsx:160
 msgid "controls.axis.vertical"
 msgstr "Asse verticale"
 
-#: app/configurator/components/ui-helpers.tsx:234
+#: app/configurator/components/ui-helpers.tsx:236
 msgid "controls.chart.type.area"
 msgstr "Aree"
 
-#: app/configurator/components/ui-helpers.tsx:230
+#: app/configurator/components/ui-helpers.tsx:232
 msgid "controls.chart.type.bar"
 msgstr "Barre"
 
-#: app/configurator/components/ui-helpers.tsx:228
+#: app/configurator/components/ui-helpers.tsx:230
 msgid "controls.chart.type.column"
 msgstr "Colonne"
 
-#: app/configurator/components/ui-helpers.tsx:232
+#: app/configurator/components/ui-helpers.tsx:234
 msgid "controls.chart.type.line"
 msgstr "Linee"
 
-#: app/configurator/components/ui-helpers.tsx:238
+#: app/configurator/components/ui-helpers.tsx:240
 msgid "controls.chart.type.pie"
 msgstr "Torta"
 
-#: app/configurator/components/ui-helpers.tsx:236
+#: app/configurator/components/ui-helpers.tsx:238
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/configurator/components/ui-helpers.tsx:240
+#: app/configurator/components/ui-helpers.tsx:242
 msgid "controls.chart.type.table"
 msgstr ""
 
@@ -144,15 +144,15 @@ msgstr "Ripristina la tavolozza dei colori"
 msgid "controls.colorpicker.open"
 msgstr "Apri il selettore di colore"
 
-#: app/configurator/components/ui-helpers.tsx:175
+#: app/configurator/components/ui-helpers.tsx:177
 msgid "controls.column.grouped"
 msgstr "raggruppate"
 
-#: app/configurator/components/ui-helpers.tsx:173
+#: app/configurator/components/ui-helpers.tsx:175
 msgid "controls.column.stacked"
 msgstr "impilate"
 
-#: app/configurator/components/ui-helpers.tsx:170
+#: app/configurator/components/ui-helpers.tsx:172
 msgid "controls.description"
 msgstr "Aggiungi una descrizione"
 
@@ -176,27 +176,43 @@ msgstr "Seleziona un elemento di design o una dimensione dei dati per modificarn
 msgid "controls.hint.describing.chart"
 msgstr "Seleziona una delle annotazioni proposte per modificarla."
 
-#: app/configurator/components/ui-helpers.tsx:243
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:27
+msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
+msgstr ""
+
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:39
+msgid "controls.interactiveFilters.time.toggleTimeFilter"
+msgstr ""
+
+#: app/configurator/components/ui-helpers.tsx:245
 msgid "controls.language.english"
 msgstr "Inglese"
 
-#: app/configurator/components/ui-helpers.tsx:247
+#: app/configurator/components/ui-helpers.tsx:249
 msgid "controls.language.french"
 msgstr "Francese"
 
-#: app/configurator/components/ui-helpers.tsx:245
+#: app/configurator/components/ui-helpers.tsx:247
 msgid "controls.language.german"
 msgstr "Tedesco"
 
-#: app/configurator/components/ui-helpers.tsx:249
+#: app/configurator/components/ui-helpers.tsx:251
 msgid "controls.language.italian"
 msgstr "Italiano"
 
-#: app/configurator/components/ui-helpers.tsx:156
+#: app/configurator/components/ui-helpers.tsx:158
 msgid "controls.measure"
 msgstr "Misura"
 
-#: app/configurator/components/ui-helpers.tsx:166
+#: app/configurator/components/chart-controls/control-tab.tsx:112
+msgid "controls.option.isActive"
+msgstr ""
+
+#: app/configurator/components/chart-controls/control-tab.tsx:110
+msgid "controls.option.isNotActive"
+msgstr ""
+
+#: app/configurator/components/ui-helpers.tsx:168
 msgid "controls.partition"
 msgstr "Ripartizione"
 
@@ -216,11 +232,11 @@ msgstr ""
 msgid "controls.section.columnstyle"
 msgstr ""
 
-#: app/configurator/components/chart-configurator.tsx:29
+#: app/configurator/components/chart-configurator.tsx:30
 msgid "controls.section.data"
 msgstr "Dati"
 
-#: app/configurator/components/chart-annotator.tsx:9
+#: app/configurator/components/chart-annotator.tsx:12
 msgid "controls.section.description"
 msgstr "Annota"
 
@@ -241,6 +257,18 @@ msgstr "Filtro"
 
 #: app/configurator/table/table-chart-configurator.tsx:61
 msgid "controls.section.groups"
+msgstr ""
+
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:30
+msgid "controls.section.interactive.filters"
+msgstr ""
+
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:22
+msgid "controls.section.interactiveFilters.legend"
+msgstr ""
+
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:36
+msgid "controls.section.interactiveFilters.time"
 msgstr ""
 
 #: app/configurator/table/table-chart-configurator.tsx:52
@@ -312,12 +340,12 @@ msgstr ""
 #~ msgid "controls.select.dataset"
 #~ msgstr "Seleziona un dataset"
 
-#: app/configurator/components/ui-helpers.tsx:255
 #: app/configurator/components/ui-helpers.tsx:257
+#: app/configurator/components/ui-helpers.tsx:259
 msgid "controls.select.dimension"
 msgstr "Seleziona una dimensione"
 
-#: app/configurator/components/ui-helpers.tsx:256
+#: app/configurator/components/ui-helpers.tsx:258
 msgid "controls.select.measure"
 msgstr "Seleziona una misura"
 
@@ -330,11 +358,11 @@ msgstr ""
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Nome"
 
-#: app/configurator/components/ui-helpers.tsx:186
+#: app/configurator/components/ui-helpers.tsx:188
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/configurator/components/ui-helpers.tsx:195
+#: app/configurator/components/ui-helpers.tsx:197
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
@@ -342,11 +370,11 @@ msgstr "Z → A"
 msgid "controls.sorting.byMeasure"
 msgstr "Misura"
 
-#: app/configurator/components/ui-helpers.tsx:219
+#: app/configurator/components/ui-helpers.tsx:221
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/configurator/components/ui-helpers.tsx:225
+#: app/configurator/components/ui-helpers.tsx:227
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
@@ -354,19 +382,19 @@ msgstr "9 → 1"
 msgid "controls.sorting.byTotalSize"
 msgstr "Grandezza totale"
 
-#: app/configurator/components/ui-helpers.tsx:199
+#: app/configurator/components/ui-helpers.tsx:201
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Il più grande per ultimo"
 
-#: app/configurator/components/ui-helpers.tsx:211
+#: app/configurator/components/ui-helpers.tsx:213
 msgid "controls.sorting.byTotalSize.largestBottom"
 msgstr "Il più grande sotto"
 
-#: app/configurator/components/ui-helpers.tsx:203
+#: app/configurator/components/ui-helpers.tsx:205
 msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Il più grande per primo"
 
-#: app/configurator/components/ui-helpers.tsx:208
+#: app/configurator/components/ui-helpers.tsx:210
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Il più grande sopra"
 
@@ -378,7 +406,7 @@ msgstr ""
 msgid "controls.sorting.selectDimension"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:177
+#: app/configurator/components/ui-helpers.tsx:179
 #: app/configurator/table/table-chart-sorting-options.tsx:174
 msgid "controls.sorting.sortBy"
 msgstr "Ordina per"
@@ -407,7 +435,7 @@ msgstr ""
 msgid "controls.tableSettings.showSearch"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:168
+#: app/configurator/components/ui-helpers.tsx:170
 msgid "controls.title"
 msgstr "Aggiungi un titolo"
 
