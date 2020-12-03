@@ -133,6 +133,7 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <ColumnsGrouped /> <AxisWidthBandDomain />
                 <InteractionColumns />
+                {interactiveFilters.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>

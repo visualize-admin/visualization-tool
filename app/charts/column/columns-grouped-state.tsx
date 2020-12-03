@@ -1,4 +1,15 @@
-import { ascending, descending, group, max, min, rollup, sum } from "d3";
+import {
+  ascending,
+  descending,
+  extent,
+  group,
+  max,
+  min,
+  rollup,
+  scaleTime,
+  ScaleTime,
+  sum,
+} from "d3";
 import {
   scaleBand,
   ScaleBand,
@@ -14,6 +25,8 @@ import { Observation, ObservationValue } from "../../domain/data";
 import {
   getPalette,
   mkNumber,
+  parseDate,
+  useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { sortByIndex } from "../../lib/array";
@@ -33,14 +46,19 @@ import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
+import { usePreparedData } from "../shared/chart-helpers";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 
 export interface GroupedColumnsState {
+  chartType: "column";
   sortedData: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => string;
+  getXAsDate: (d: Observation) => Date;
   xScale: ScaleBand<string>;
   xScaleInteraction: ScaleBand<string>;
   xScaleIn: ScaleBand<string>;
+  xEntireScale: ScaleTime<number, number>;
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
@@ -67,6 +85,8 @@ const useGroupedColumnsState = ({
 }): GroupedColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const formatDateAuto = useFormatFullDateAuto();
+
   const [
     interactiveFilters,
     dispatchInteractiveFilters,
@@ -79,6 +99,10 @@ const useGroupedColumnsState = ({
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
+    [fields.x.componentIri]
+  );
+  const getXAsDate = useCallback(
+    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
     [fields.x.componentIri]
   );
   const getY = useCallback(
@@ -107,6 +131,7 @@ const useGroupedColumnsState = ({
     .sort((a, b) => ascending(a[1], b[1]))
     .map((d) => d[0]);
 
+  // All data
   const sortedData = useMemo(
     () =>
       sortData({
@@ -118,6 +143,16 @@ const useGroupedColumnsState = ({
       }),
     [data, getX, xSortingType, xSortingOrder, xOrder]
   );
+
+  // Data for chart
+  const preparedData = usePreparedData({
+    legendFilterActive: interactiveFiltersConfig?.legend.active,
+    timeFilterActive: interactiveFiltersConfig?.time.active,
+    sortedData,
+    interactiveFilters,
+    getX: getXAsDate,
+    getSegment,
+  });
 
   // segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;
@@ -175,20 +210,18 @@ const useGroupedColumnsState = ({
   // Apply end-user-activated interactive filters to the stack
   // We use segments and sorted data to display legend and axis
   // but filtered segments and data in the chart itself (band domain + tooltips).
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-  const activeSegments = segments.filter(
-    (s) => !activeInteractiveFilters.includes(s)
-  );
-  const interactivelyFilteredData = sortedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
+  // const { categories } = interactiveFilters;
+  // const activeInteractiveFilters = Object.keys(categories);
+  // const activeSegments = segments.filter(
+  //   (s) => !activeInteractiveFilters.includes(s)
+  // );
+  // const interactivelyFilteredData = sortedData.filter(
+  //   (d) => !activeInteractiveFilters.includes(getSegment(d))
+  // );
 
-  console.log({ activeInteractiveFilters });
+  // console.log({ activeInteractiveFilters });
   // x
-  const bandDomain = [
-    ...new Set(interactivelyFilteredData.map((d) => getX(d) as string)),
-  ];
+  const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
   const xScale = scaleBand()
     .domain(bandDomain)
     .paddingInner(PADDING_INNER)
@@ -197,12 +230,29 @@ const useGroupedColumnsState = ({
     .domain(bandDomain)
     .paddingInner(0)
     .paddingOuter(0);
+  const xScaleIn = scaleBand().domain(segments).padding(PADDING_WITHIN);
 
-  const xScaleIn = scaleBand().domain(activeSegments).padding(PADDING_WITHIN);
+  // x as time, needs to be memoized!
+  const xEntireDomainAsTime = useMemo(
+    () => extent(sortedData, (d) => getXAsDate(d)) as [Date, Date],
+    [getXAsDate, sortedData]
+  );
+  const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+  // This effect initiates the interactive time filter
+  // and resets interactive categories filtering
+  // FIXME: use presets
+  // useEffect(() => {
+  //   dispatchInteractiveFilters({
+  //     type: "ADD_TIME_FILTER",
+  //     value: xEntireDomainAsTime,
+  //   });
+  // }, [dispatchInteractiveFilters, xEntireDomainAsTime]);
 
   // y
-  const minValue = Math.min(mkNumber(min(sortedData, (d) => getY(d))), 0);
-  const maxValue = max(sortedData, (d) => getY(d)) as number;
+  const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
+  const maxValue = max(preparedData, (d) => getY(d)) as number;
+  const entireMaxValue = max(sortedData, getY) as number;
+
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
     .nice();
@@ -211,7 +261,7 @@ const useGroupedColumnsState = ({
     fields.y.componentIri;
 
   // Group
-  const groupedMap = group(sortedData, getX);
+  const groupedMap = group(preparedData, getX);
   const grouped = [...groupedMap];
 
   // sort by segments
@@ -228,11 +278,19 @@ const useGroupedColumnsState = ({
   });
 
   // Dimensions
-  const left = Math.max(
-    estimateTextWidth(formatNumber(yScale.domain()[0])),
-    estimateTextWidth(formatNumber(yScale.domain()[1]))
-  );
-  const bottom = max(bandDomain, (d) => estimateTextWidth(d)) || 70;
+  const left = interactiveFiltersConfig?.time.active
+    ? Math.max(
+        estimateTextWidth(formatNumber(entireMaxValue)),
+        // Account for width of time slider selection
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
+      )
+    : Math.max(
+        estimateTextWidth(formatNumber(yScale.domain()[0])),
+        estimateTextWidth(formatNumber(yScale.domain()[1]))
+      );
+  const bottom = interactiveFiltersConfig?.time.active
+    ? (max(bandDomain, (d) => estimateTextWidth(d)) || 70) + BRUSH_BOTTOM_SPACE
+    : max(bandDomain, (d) => estimateTextWidth(d)) || 70;
   const margins = {
     top: 50,
     right: 40,
@@ -252,6 +310,7 @@ const useGroupedColumnsState = ({
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
   xScaleIn.range([0, xScale.bandwidth()]);
+  xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   // Tooltip
@@ -261,9 +320,7 @@ const useGroupedColumnsState = ({
     const yRef = yScale(getY(datum));
     const yAnchor = yRef;
 
-    const tooltipValues = interactivelyFilteredData.filter(
-      (j) => getX(j) === getX(datum)
-    );
+    const tooltipValues = preparedData.filter((j) => getX(j) === getX(datum));
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
       order: segments,
@@ -321,12 +378,15 @@ const useGroupedColumnsState = ({
   };
 
   return {
+    chartType: "column",
     sortedData,
     bounds,
     getX,
+    getXAsDate,
     xScale,
     xScaleInteraction,
     xScaleIn,
+    xEntireScale,
     getY,
     yScale,
     getSegment,
