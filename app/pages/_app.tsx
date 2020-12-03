@@ -35,7 +35,9 @@ export default function App({ Component, pageProps }: AppProps) {
     : parseLocaleString(pathname.slice(1));
 
   // Immediately activate locale to avoid re-render
-  i18n.activate(locale);
+  if (i18n.locale !== locale) {
+    i18n.activate(locale);
+  }
 
   useEffect(() => {
     document.querySelector("html")?.setAttribute("lang", locale);
@@ -58,8 +60,17 @@ export default function App({ Component, pageProps }: AppProps) {
       analyticsPageView(url);
     };
 
+    const handleRouteStart = (url: string) => {
+      const locale = parseLocaleString(url.slice(1));
+      if (i18n.locale !== locale) {
+        i18n.activate(locale);
+      }
+    };
+
+    routerEvents.on("routeChangeStart", handleRouteStart);
     routerEvents.on("routeChangeComplete", handleRouteChange);
     return () => {
+      routerEvents.off("routeChangeStart", handleRouteStart);
       routerEvents.off("routeChangeComplete", handleRouteChange);
     };
   }, [routerEvents]);
