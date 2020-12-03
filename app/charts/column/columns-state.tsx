@@ -39,8 +39,7 @@ import {
 } from "../shared/use-interactive-filters";
 import { usePreparedData } from "../shared/chart-helpers";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-const WITH_TIME_BRUSH = true;
-const BRUSH_SPACE = 100;
+
 export interface ColumnsState {
   chartType: "column";
   bounds: Bounds;
@@ -155,7 +154,7 @@ const useColumnsState = ({
     fields.y.componentIri;
 
   // Dimensions
-  const left = WITH_TIME_BRUSH
+  const left = interactiveFiltersConfig?.time.active
     ? Math.max(
         estimateTextWidth(formatNumber(entireMaxValue)),
         // Account for width of time slider selection
@@ -179,7 +178,7 @@ const useColumnsState = ({
   const chartHeight = chartWidth * aspectRatio;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom + BRUSH_SPACE,
+    height: chartHeight + margins.top + margins.bottom,
     margins,
     chartWidth,
     chartHeight,
