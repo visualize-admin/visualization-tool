@@ -1,5 +1,9 @@
-import { ascending, extent, group, max, min } from "d3";
 import {
+  ascending,
+  extent,
+  group,
+  max,
+  min,
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
@@ -7,7 +11,7 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {
   getPalette,
@@ -20,7 +24,8 @@ import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
-import { getWideData } from "../shared/chart-helpers";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+import { getWideData, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -31,9 +36,8 @@ import {
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
-// FIXME: get this from chart config
-const WITH_TIME_BRUSH = true;
 export interface LinesState {
+  chartType: "line";
   data: Observation[];
   bounds: Bounds;
   segments: string[];
@@ -59,8 +63,12 @@ const useLinesState = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: LineFields;
   aspectRatio: number;
 }): LinesState => {
@@ -88,14 +96,16 @@ const useLinesState = ({
     [fields.x.componentIri]
   );
   const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
-  const getSegment = (d: Observation): string =>
-    fields.segment ? (d[fields.segment.componentIri] as string) : "fixme";
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
+    [fields.segment]
+  );
 
   const xKey = fields.x.componentIri;
 
   /** Data
-   * Contains *all* observations, used for brushing
-   */
+   * => Contains *all* observations, used for brushing */
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
@@ -107,39 +117,20 @@ const useLinesState = ({
     getY,
     xKey,
   });
-  // const xUniqueValues = sortedData
-  //   .map((d) => getX(d))
-  //   .filter(
-  //     (date, i, self) =>
-  //       self.findIndex((d) => d.getTime() === date.getTime()) === i
-  //   );
 
-  /** Prepare Data for use in chart
-   * !== data used in some other components like Brush
-   * based on *all* data observations.
-   */
-  const { from, to } = interactiveFilters.time;
-  const preparedData = useMemo(() => {
-    const prepData =
-      from && to
-        ? sortedData.filter(
-            (d) => from && to && getX(d) >= from && getX(d) <= to
-          )
-        : sortedData;
-    return prepData;
-  }, [from, to, sortedData, getX]);
+  // All Data
+  const preparedData = usePreparedData({
+    legendFilterActive: interactiveFiltersConfig?.legend.active,
+    timeFilterActive: interactiveFiltersConfig?.time.active,
+    sortedData,
+    interactiveFilters,
+    getX,
+    getSegment,
+  });
 
   const grouped = group(preparedData, getSegment);
   const groupedMap = group(preparedData, getGroups);
   const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
-
-  // Apply "categories" end-user-activated interactive filters to the stack
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-
-  const interactivelyFilteredData = preparedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
 
   // x
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
@@ -177,7 +168,7 @@ const useLinesState = ({
     fields.y.componentIri;
 
   // segments
-  const segments = [...new Set(preparedData.map(getSegment))].sort((a, b) =>
+  const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
     ascending(a, b)
   );
   // Map ordered segments to colors
@@ -206,17 +197,19 @@ const useLinesState = ({
   }
 
   // Dimensions
-  const left = WITH_TIME_BRUSH
+  const left = interactiveFiltersConfig?.time.active
     ? Math.max(
         estimateTextWidth(formatNumber(entireMaxValue)),
         // Account for width of time slider selection
-        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
       )
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = WITH_TIME_BRUSH ? 100 : 40;
+  const bottom = interactiveFiltersConfig?.time.active
+    ? BRUSH_BOTTOM_SPACE
+    : 40;
   const margins = {
     top: 50,
     right: 40,
@@ -241,7 +234,7 @@ const useLinesState = ({
     const xAnchor = xScale(getX(datum));
     const yAnchor = yScale(getY(datum));
 
-    const tooltipValues = interactivelyFilteredData.filter(
+    const tooltipValues = preparedData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
     );
     const sortedTooltipValues = sortByIndex({
@@ -277,6 +270,7 @@ const useLinesState = ({
     };
   };
   return {
+    chartType: "line",
     data,
     bounds,
     getX,
@@ -303,9 +297,13 @@ const LineChartProvider = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: LineFields;
   aspectRatio: number;
@@ -315,6 +313,7 @@ const LineChartProvider = ({
     fields,
     dimensions,
     measures,
+    interactiveFiltersConfig,
     aspectRatio,
   });
   return (
@@ -327,9 +326,13 @@ export const LineChart = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   fields: LineFields;
   children: ReactNode;
@@ -343,6 +346,7 @@ export const LineChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}

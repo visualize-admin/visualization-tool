@@ -4,7 +4,7 @@ import { Lines } from "../charts/line/lines";
 import { LineChart } from "../charts/line/lines-state";
 import { AxisHeightLinear } from "../charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "../charts/shared/axis-width-time";
-import { Brush } from "../charts/shared/brush";
+import { BrushTime } from "../charts/shared/brush";
 import { ChartContainer, ChartSvg } from "../charts/shared/containers";
 import { HoverDotMultiple } from "../charts/shared/interaction/hover-dots-multiple";
 import { Ruler } from "../charts/shared/interaction/ruler";
@@ -28,7 +28,7 @@ ${(
     >
       <ChartContainer>
         <ChartSvg>
-          <Brush />
+          <BrushTime />
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
           <Lines />
           {/* <InteractionHorizontal /> */}

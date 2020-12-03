@@ -1,22 +1,29 @@
-import { ascending, descending } from "d3";
-import { ScaleOrdinal, scaleOrdinal } from "d3";
-import { arc, pie, Pie, PieArcDatum } from "d3";
-
+import {
+  arc,
+  ascending,
+  descending,
+  pie,
+  Pie,
+  PieArcDatum,
+  ScaleOrdinal,
+  scaleOrdinal,
+} from "d3";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../configurator";
-import { Observation } from "../../domain/data";
 import {
   getPalette,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
+import { usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
 
 const sortData = ({
   data,
@@ -60,8 +67,12 @@ const usePieState = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: PieFields;
   aspectRatio: number;
 }): PieState => {
@@ -97,11 +108,12 @@ const usePieState = ({
   }, [data, getX, getY, sortingType, sortingOrder]);
 
   // Apply end-user-activated interactive filters to the stack
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-  const interactivelyFilteredData = sortedData.filter(
-    (d) => !activeInteractiveFilters.includes(getX(d))
-  );
+  const preparedData = usePreparedData({
+    legendFilterActive: interactiveFiltersConfig?.legend.active,
+    sortedData,
+    interactiveFilters,
+    getSegment: getX,
+  });
 
   // Map ordered segments to colors
   const segments = Array.from(new Set(sortedData.map((d) => getX(d))));
@@ -210,7 +222,7 @@ const usePieState = ({
   };
   return {
     bounds,
-    data: interactivelyFilteredData,
+    data: preparedData,
     getPieData,
     getY,
     getX,
@@ -224,9 +236,13 @@ const PieChartProvider = ({
   fields,
   dimensions,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: PieFields;
   aspectRatio: number;
@@ -236,6 +252,7 @@ const PieChartProvider = ({
     fields,
     dimensions,
     measures,
+    interactiveFiltersConfig,
     aspectRatio,
   });
   return (
@@ -249,8 +266,12 @@ export const PieChart = ({
   measures,
   dimensions,
   aspectRatio,
+  interactiveFiltersConfig,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   fields: PieFields;
   children: ReactNode;
@@ -264,6 +285,7 @@ export const PieChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}

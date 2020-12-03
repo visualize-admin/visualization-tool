@@ -46,6 +46,7 @@ export const ChartConfigurator = ({
             />
           </ControlSectionContent>
         </ControlSection>
+
         <ControlSection>
           <SectionTitle>
             <Trans id="controls.section.data">Data</Trans>

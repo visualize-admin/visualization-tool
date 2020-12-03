@@ -1,4 +1,15 @@
-import { ascending, descending, group, max, min, rollup, sum } from "d3";
+import {
+  ascending,
+  descending,
+  extent,
+  group,
+  max,
+  min,
+  rollup,
+  ScaleTime,
+  scaleTime,
+  sum,
+} from "d3";
 import {
   scaleBand,
   ScaleBand,
@@ -20,7 +31,8 @@ import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
   getPalette,
-  isNumber,
+  parseDate,
+  useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { sortByIndex } from "../../lib/array";
@@ -40,20 +52,26 @@ import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
+import { getWideData, usePreparedData } from "../shared/chart-helpers";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 
 export interface StackedColumnsState {
+  chartType: "column";
   sortedData: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => string;
+  getXAsDate: (d: Observation) => Date;
   xScale: ScaleBand<string>;
   xScaleInteraction: ScaleBand<string>;
+  xEntireScale: ScaleTime<number, number>;
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  wide: Record<string, ObservationValue>[];
+  chartWideData: ArrayLike<Record<string, ObservationValue>>;
+  allDataWide: ArrayLike<Record<string, ObservationValue>>;
   grouped: [string, Record<string, ObservationValue>[]][];
   series: $FixMe[];
   getAnnotationInfo: (d: Observation, orderedSegments: string[]) => TooltipInfo;
@@ -64,13 +82,19 @@ const useColumnsStackedState = ({
   fields,
   measures,
   dimensions,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   fields: ColumnFields;
   aspectRatio: number;
 }): StackedColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const formatDateAuto = useFormatFullDateAuto();
+
   const [
     interactiveFilters,
     dispatchInteractiveFilters,
@@ -85,6 +109,10 @@ const useColumnsStackedState = ({
     (d: Observation): string => d[fields.x.componentIri] as string,
     [fields.x.componentIri]
   );
+  const getXAsDate = useCallback(
+    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
+    [fields.x.componentIri]
+  );
   const getY = useCallback(
     (d: Observation): number => +d[fields.y.componentIri],
     [fields.y.componentIri]
@@ -96,38 +124,20 @@ const useColumnsStackedState = ({
         : "segment",
     [fields.segment]
   );
-
-  /**************
-   * Prepare data
-   **/
   const xKey = fields.x.componentIri;
-  const wide: Record<string, ObservationValue>[] = [];
-  const groupedMap = group(data, getX);
-  for (const [key, values] of groupedMap) {
-    const keyObject = values.reduce<{ [k: string]: number | string }>(
-      (obj, cur) => {
-        const currentKey = getSegment(cur);
-        const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
-        const total = currentY + (obj.total as number);
-        return {
-          ...obj,
-          [currentKey]: getY(cur),
-          total,
-        };
-      },
-      { total: 0 }
-    );
-    wide.push({
-      ...keyObject,
-      [xKey]: key,
-    });
-  }
 
-  // Sort
+  // All Data
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
-  const xOrder = wide
+  const allDataGroupedMap = group(data, getX);
+  const allDataWide = getWideData({
+    groupedMap: allDataGroupedMap,
+    getSegment,
+    getY,
+    xKey,
+  });
+  const xOrder = allDataWide
     .sort((a, b) => ascending(a.total, b.total))
     .map((d, i) => getX(d));
 
@@ -144,9 +154,20 @@ const useColumnsStackedState = ({
     [data, getX, getY, sortingType, sortingOrder, xOrder]
   );
 
-  /*******************
-   * Ordered segments
-   */
+  // Data for Chart
+  const preparedData = usePreparedData({
+    legendFilterActive: interactiveFiltersConfig?.legend.active,
+    timeFilterActive: interactiveFiltersConfig?.time.active,
+    sortedData,
+    interactiveFilters,
+    getX: getXAsDate,
+    getSegment,
+  });
+
+  const groupedMap = group(preparedData, getX);
+  const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
+
+  //Ordered segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
@@ -175,10 +196,7 @@ const useColumnsStackedState = ({
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
 
-  /********
-   * Scales
-   */
-
+  // Scales
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
   const segmentDimension = dimensions.find(
@@ -205,7 +223,7 @@ const useColumnsStackedState = ({
   }
 
   // x
-  const bandDomain = [...new Set(sortedData.map((d) => getX(d) as string))];
+  const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
   const xScale = scaleBand()
     .domain(bandDomain)
     .paddingInner(PADDING_INNER)
@@ -215,18 +233,40 @@ const useColumnsStackedState = ({
     .paddingInner(0)
     .paddingOuter(0);
 
+  // x as time, needs to be memoized!
+  const xEntireDomainAsTime = useMemo(
+    () => extent(sortedData, (d) => getXAsDate(d)) as [Date, Date],
+    [getXAsDate, sortedData]
+  );
+  const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+
   // y
   const minTotal = Math.min(
-    min<$FixMe, number>(wide, (d) => d.total) as number,
+    min<$FixMe, number>(chartWideData, (d) => d.total) as number,
     0
   );
-  const maxTotal = max<$FixMe, number>(wide, (d) => d.total) as number;
+  const maxTotal = max<$FixMe, number>(chartWideData, (d) => d.total) as number;
   const yStackDomain = [minTotal, maxTotal] as [number, number];
+  const entireMaxTotalValue = max<$FixMe, number>(
+    allDataWide,
+    (d) => d.total
+  ) as number;
+
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
 
   const yScale = scaleLinear().domain(yStackDomain).nice();
+
+  // This effect initiates the interactive time filter
+  // and resets interactive categories filtering
+  // FIXME: use presets
+  // useEffect(() => {
+  //   dispatchInteractiveFilters({
+  //     type: "ADD_TIME_FILTER",
+  //     value: xEntireDomainAsTime,
+  //   });
+  // }, [dispatchInteractiveFilters, xEntireDomainAsTime]);
 
   // stack order
   const stackOrder =
@@ -237,34 +277,31 @@ const useColumnsStackedState = ({
       : // Reverse segments here, so they're sorted from top to bottom
         stackOrderReverse;
 
-  // Apply end-user-activated interactive filters to the stack
-  const { categories } = interactiveFilters;
-  const activeInteractiveFilters = Object.keys(categories);
-  const interactivelyFilteredData = sortedData.filter(
-    (d) => !activeInteractiveFilters.includes(getSegment(d))
-  );
-  const activeSegments = segments.filter(
-    (s) => !activeInteractiveFilters.includes(s)
-  );
   const stacked = stack()
     .order(stackOrder)
     .offset(stackOffsetDiverging)
-    .keys(activeSegments);
+    .keys(segments);
 
   const series = stacked(
-    wide as {
+    chartWideData as {
       [key: string]: number;
     }[]
   );
 
-  /************
-   * Dimensions
-   **/
-  const left = Math.max(
-    estimateTextWidth(formatNumber(yScale.domain()[0])),
-    estimateTextWidth(formatNumber(yScale.domain()[1]))
-  );
-  const bottom = max(bandDomain, (d) => estimateTextWidth(d)) || 70;
+  // Dimensions
+  const left = interactiveFiltersConfig?.time.active
+    ? Math.max(
+        estimateTextWidth(formatNumber(entireMaxTotalValue)),
+        // Account for width of time slider selection
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
+      )
+    : Math.max(
+        estimateTextWidth(formatNumber(yScale.domain()[0])),
+        estimateTextWidth(formatNumber(yScale.domain()[1]))
+      );
+  const bottom = interactiveFiltersConfig?.time.active
+    ? (max(bandDomain, (d) => estimateTextWidth(d)) || 70) + BRUSH_BOTTOM_SPACE
+    : max(bandDomain, (d) => estimateTextWidth(d)) || 70;
   const margins = {
     top: 50,
     right: 40,
@@ -283,18 +320,15 @@ const useColumnsStackedState = ({
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
+  xEntireScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
-  /**********
-   * Tooltip
-   **/
+  // Tooltips
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
 
-    const tooltipValues = interactivelyFilteredData.filter(
-      (j) => getX(j) === getX(datum)
-    );
+    const tooltipValues = preparedData.filter((j) => getX(j) === getX(datum));
 
     const sortedTooltipValues = sortByIndex({
       data: tooltipValues,
@@ -362,18 +396,22 @@ const useColumnsStackedState = ({
   };
 
   return {
+    chartType: "column",
     sortedData,
     bounds,
     getX,
+    getXAsDate,
     xScale,
     xScaleInteraction,
+    xEntireScale,
     getY,
     yScale,
     getSegment,
     yAxisLabel,
     segments,
     colors,
-    wide,
+    chartWideData,
+    allDataWide,
     grouped: [...groupedMap],
     series,
     getAnnotationInfo,
@@ -385,9 +423,13 @@ const StackedColumnsChartProvider = ({
   fields,
   measures,
   dimensions,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -396,6 +438,7 @@ const StackedColumnsChartProvider = ({
     data,
     fields,
     dimensions,
+    interactiveFiltersConfig,
     measures,
     aspectRatio,
   });
@@ -409,9 +452,13 @@ export const StackedColumnsChart = ({
   fields,
   measures,
   dimensions,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<
+  ChartProps,
+  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -425,6 +472,7 @@ export const StackedColumnsChart = ({
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}

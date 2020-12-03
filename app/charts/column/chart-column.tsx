@@ -1,6 +1,10 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { ColumnConfig, ColumnFields } from "../../configurator";
+import {
+  ColumnConfig,
+  ColumnFields,
+  InteractiveFiltersConfig,
+} from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
 import {
@@ -22,6 +26,7 @@ import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionColumns } from "./overlay-columns";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
+import { BrushTime } from "../shared/brush";
 
 export const ChartColumnsVisualization = ({
   dataSetIri,
@@ -58,6 +63,7 @@ export const ChartColumnsVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          interactiveFilters={chartConfig.interactiveFilters}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -77,10 +83,12 @@ export const ChartColumns = memo(
     dimensions,
     measures,
     fields,
+    interactiveFilters,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
+    interactiveFilters: InteractiveFiltersConfig;
     fields: ColumnFields;
   }) => {
     return (
@@ -92,6 +100,7 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFilters}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -99,10 +108,15 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <ColumnsStacked /> <AxisWidthBandDomain />
                 <InteractionColumns />
+                {interactiveFilters.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-            <InteractiveLegendColor symbol="square" />
+            {fields.segment && interactiveFilters.legend.active ? (
+              <InteractiveLegendColor symbol="line" />
+            ) : fields.segment ? (
+              <LegendColor symbol="line" />
+            ) : null}
           </StackedColumnsChart>
         ) : fields.segment?.componentIri &&
           fields.segment.type === "grouped" ? (
@@ -111,6 +125,7 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
+            interactiveFiltersConfig={interactiveFilters}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -118,17 +133,23 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <ColumnsGrouped /> <AxisWidthBandDomain />
                 <InteractionColumns />
+                {interactiveFilters.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
 
-            <InteractiveLegendColor symbol="square" />
+            {fields.segment && interactiveFilters.legend.active ? (
+              <InteractiveLegendColor symbol="line" />
+            ) : fields.segment ? (
+              <LegendColor symbol="line" />
+            ) : null}
           </GroupedColumnChart>
         ) : (
           <ColumnChart
             data={observations}
             fields={fields}
             measures={measures}
+            interactiveFiltersConfig={interactiveFilters}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -136,6 +157,7 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <Columns /> <AxisWidthBandDomain />
                 <InteractionColumns />
+                {interactiveFilters.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="single" />
             </ChartContainer>

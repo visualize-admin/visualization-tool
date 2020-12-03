@@ -154,7 +154,7 @@ export const getIconName = (name: string): IconName => {
       return "chartScatterplot";
     case "pie":
       return "chartPie";
-    case "title":
+    case "text":
       return "text";
     case "description":
       return "description";
@@ -174,6 +174,9 @@ export const getIconName = (name: string): IconName => {
       return "tableColumnTime";
     case "tableColumnTemporalDimensionHidden":
       return "tableColumnTimeHidden";
+    case "time":
+      return "time";
+
     default:
       return "table";
   }

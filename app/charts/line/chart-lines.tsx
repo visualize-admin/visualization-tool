@@ -1,6 +1,10 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { LineConfig, LineFields } from "../../configurator";
+import {
+  InteractiveFiltersConfig,
+  LineConfig,
+  LineFields,
+} from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
 import {
@@ -20,7 +24,7 @@ import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Lines } from "./lines";
 import { LineChart } from "./lines-state";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { Brush } from "../shared/brush";
+import { BrushTime } from "../shared/brush";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
@@ -57,6 +61,7 @@ export const ChartLinesVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          interactiveFilters={chartConfig.interactiveFilters}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -76,11 +81,13 @@ export const ChartLines = memo(
     dimensions,
     measures,
     fields,
+    interactiveFilters,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: LineFields;
+    interactiveFilters: InteractiveFiltersConfig;
   }) => {
     return (
       <LineChart
@@ -88,6 +95,7 @@ export const ChartLines = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={interactiveFilters}
         aspectRatio={0.4}
       >
         <ChartContainer>
@@ -96,7 +104,7 @@ export const ChartLines = memo(
             <Lines />
             {/* <HoverLine /> <HoverLineValues /> */}
             <InteractionHorizontal />
-            <Brush />
+            {interactiveFilters.time.active === true && <BrushTime />}
           </ChartSvg>
 
           <Ruler />
@@ -108,7 +116,11 @@ export const ChartLines = memo(
           <Tooltip type={fields.segment ? "multiple" : "single"} />
         </ChartContainer>
 
-        {fields.segment && <InteractiveLegendColor symbol="line" />}
+        {fields.segment && interactiveFilters.legend.active === true ? (
+          <InteractiveLegendColor symbol="line" />
+        ) : fields.segment ? (
+          <LegendColor symbol="line" />
+        ) : null}
       </LineChart>
     );
   }

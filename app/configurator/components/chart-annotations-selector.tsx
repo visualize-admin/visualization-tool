@@ -1,9 +1,10 @@
-import { Box } from "theme-ui";
 import { useEffect, useRef } from "react";
+import { Box } from "theme-ui";
 import { ConfiguratorStateDescribingChart } from "..";
-import { getFieldLabel, getIconName } from "./ui-helpers";
 import { IconName } from "../../icons";
 import { locales } from "../../locales/locales";
+import { useLocale } from "../../locales/use-locale";
+import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-options";
 import {
   ControlSection,
   ControlSectionContent,
@@ -11,7 +12,7 @@ import {
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { MetaInputField } from "./field";
-import { useLocale } from "../../locales/use-locale";
+import { getFieldLabel } from "./ui-helpers";
 
 export const ChartAnnotationsSelector = ({
   state,
@@ -42,25 +43,31 @@ export const ChartAnnotationsSelector = ({
         tabIndex={-1}
         sx={{ overflowX: "hidden", overflowY: "auto" }}
       >
-        <ControlSection>
-          <SectionTitle iconName={getIconName(state.activeField)}>
-            {state.activeField && getFieldLabel(state.activeField)}
-          </SectionTitle>
-          <ControlSectionContent side="right">
-            {state.activeField &&
-              orderedLocales.map((locale) => (
-                <Box sx={{ ":not(:first-of-type)": { mt: 3 } }}>
-                  <MetaInputField
+        {state.activeField === "time" || state.activeField === "legend" ? (
+          <InteractiveFiltersOptions state={state} />
+        ) : (
+          <ControlSection>
+            <SectionTitle iconName={state.activeField as IconName}>
+              {state.activeField && getFieldLabel(state.activeField)}
+            </SectionTitle>
+            <ControlSectionContent side="right">
+              {state.activeField &&
+                orderedLocales.map((locale) => (
+                  <Box
                     key={`${locale}-${state.activeField!}`}
-                    metaKey={state.activeField!}
-                    locale={locale}
-                    label={getFieldLabel(locale)}
-                    value={state.meta[af][locale]}
-                  />
-                </Box>
-              ))}
-          </ControlSectionContent>
-        </ControlSection>
+                    sx={{ ":not(:first-of-type)": { mt: 3 } }}
+                  >
+                    <MetaInputField
+                      metaKey={state.activeField!}
+                      locale={locale}
+                      label={getFieldLabel(locale)}
+                      value={state.meta[af][locale]}
+                    />
+                  </Box>
+                ))}
+            </ControlSectionContent>
+          </ControlSection>
+        )}
       </Box>
     );
   } else {

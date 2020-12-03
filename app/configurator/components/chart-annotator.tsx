@@ -1,31 +1,45 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
+import { ConfiguratorStateDescribingChart } from "../config-types";
+import { InteractiveFiltersConfigurator } from "../interactive-filters/interactive-filters-configurator";
 import {
-  SectionTitle,
-  ControlSectionContent,
   ControlSection,
+  ControlSectionContent,
+  SectionTitle,
 } from "./chart-controls/section";
 import { AnnotatorTabField } from "./field";
 import { getFieldLabel } from "./ui-helpers";
 
-export const ChartAnnotator = () => {
+export const ChartAnnotator = ({
+  state,
+}: {
+  state: ConfiguratorStateDescribingChart;
+}) => {
   return (
-    <ControlSection role="tablist" aria-labelledby="controls-design">
-      <SectionTitle>
-        <Trans id="controls.section.description">Annotate</Trans>
-      </SectionTitle>
-      <ControlSectionContent side="left">
-        <AnnotatorTabField
-          value={"title"}
-          icon="text"
-          label={getFieldLabel("title")}
-        ></AnnotatorTabField>
-        <AnnotatorTabField
-          value={"description"}
-          icon="description"
-          label={getFieldLabel("description")}
-        ></AnnotatorTabField>
-      </ControlSectionContent>
-    </ControlSection>
+    <>
+      {/* Title & Description */}
+      <ControlSection role="tablist" aria-labelledby="controls-design">
+        <SectionTitle titleId="controls-design">
+          <Trans id="controls.section.description">Annotate</Trans>
+        </SectionTitle>
+        <ControlSectionContent side="left">
+          <AnnotatorTabField
+            value={"title"}
+            icon="text"
+            label={getFieldLabel("title")}
+          ></AnnotatorTabField>
+          <AnnotatorTabField
+            value={"description"}
+            icon="description"
+            label={getFieldLabel("description")}
+          ></AnnotatorTabField>
+        </ControlSectionContent>
+      </ControlSection>
+
+      {/* Filters */}
+      {state.chartConfig.chartType !== "table" && (
+        <InteractiveFiltersConfigurator state={state} />
+      )}
+    </>
   );
 };

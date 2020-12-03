@@ -1,6 +1,10 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { AreaConfig, AreaFields } from "../../configurator";
+import {
+  AreaConfig,
+  AreaFields,
+  InteractiveFiltersConfig,
+} from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
 import {
@@ -19,7 +23,7 @@ import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionHorizontal } from "../shared/overlay-horizontal";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { Brush } from "../shared/brush";
+import { BrushTime } from "../shared/brush";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
@@ -56,6 +60,7 @@ export const ChartAreasVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
+          interactiveFilters={chartConfig.interactiveFilters}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -75,11 +80,13 @@ export const ChartAreas = memo(
     dimensions,
     measures,
     fields,
+    interactiveFilters,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: AreaFields;
+    interactiveFilters: InteractiveFiltersConfig;
   }) => {
     return (
       <AreaChart
@@ -87,6 +94,7 @@ export const ChartAreas = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={interactiveFilters}
         aspectRatio={0.4}
       >
         <ChartContainer>
@@ -94,12 +102,16 @@ export const ChartAreas = memo(
             <AxisTime /> <AxisHeightLinear />
             <Areas /> <AxisTimeDomain />
             <InteractionHorizontal />
-            <Brush />
+            {interactiveFilters.time.active === true && <BrushTime />}
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
         </ChartContainer>
-        {fields.segment && <InteractiveLegendColor symbol="square" />}
+        {fields.segment && interactiveFilters.legend.active === true ? (
+          <InteractiveLegendColor symbol="line" />
+        ) : fields.segment ? (
+          <LegendColor symbol="line" />
+        ) : null}
       </AreaChart>
     );
   }

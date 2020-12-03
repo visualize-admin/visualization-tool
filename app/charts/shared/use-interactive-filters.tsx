@@ -1,7 +1,7 @@
 import { Reducer, useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
 
-type InteractiveFiltersState = {
+export type InteractiveFiltersState = {
   categories: $FixMe; //{}; // { [x: string]: boolean };
   time: $FixMe;
 };
@@ -17,7 +17,7 @@ type InteractiveFiltersStateAction =
     }
   | {
       type: "ADD_TIME_FILTER";
-      value: Date[];
+      value: Date[] | number[];
     }
   | {
       type: "RESET_INTERACTIVE_CATEGORIES";
