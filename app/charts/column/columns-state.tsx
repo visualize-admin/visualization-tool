@@ -1,4 +1,12 @@
-import { ascending, max, min, descending } from "d3";
+import {
+  ascending,
+  max,
+  min,
+  descending,
+  extent,
+  scaleTime,
+  ScaleTime,
+} from "d3";
 import {
   scaleBand,
   ScaleBand,
@@ -13,6 +21,8 @@ import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   mkNumber,
+  parseDate,
+  useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
@@ -27,14 +37,18 @@ import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
+import { usePreparedData } from "../shared/chart-helpers";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 const WITH_TIME_BRUSH = true;
 const BRUSH_SPACE = 100;
 export interface ColumnsState {
+  chartType: "column";
   bounds: Bounds;
   sortedData: Observation[];
   getX: (d: Observation) => string;
+  getXAsDate: (d: Observation) => Date;
   xScale: ScaleBand<string>;
-  xEntireScale: ScaleBand<string>;
+  xEntireScale: ScaleTime<number, number>;
   xScaleInteraction: ScaleBand<string>;
   getY: (d: Observation) => number;
   yScale: ScaleLinear<number, number>;
@@ -49,13 +63,16 @@ const useColumnsState = ({
   data,
   fields,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures" | "interactiveFiltersConfig"> & {
   fields: ColumnFields;
   aspectRatio: number;
 }): ColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const formatDateAuto = useFormatFullDateAuto();
+
   const [
     interactiveFilters,
     dispatchInteractiveFilters,
@@ -63,6 +80,10 @@ const useColumnsState = ({
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
+    [fields.x.componentIri]
+  );
+  const getXAsDate = useCallback(
+    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
     [fields.x.componentIri]
   );
   const getY = useCallback(
@@ -77,28 +98,21 @@ const useColumnsState = ({
     [fields.segment]
   );
 
-  // Sort data
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
-  /** Data: *all* observations, used for brushing
-   */
+  // All data
   const sortedData = useMemo(() => {
     return sortData({ data, sortingType, sortingOrder, getX, getY });
   }, [data, getX, getY, sortingType, sortingOrder]);
 
-  /** Prepare Data for use in chart
-   * !== data used in some other components like Brush
-   * based on *all* data observations.
-   */
-  const { from, to } = interactiveFilters.time;
-  console.log("from to in column state", from, to);
-  const preparedData = useMemo(() => {
-    const prepData =
-      (from || from === 0) && to ? sortedData.slice(from, to + 1) : sortedData;
-    return prepData;
-  }, [from, to, sortedData]);
-  console.log("preparedData", preparedData);
+  // Data for chart
+  const preparedData = usePreparedData({
+    timeFilterActive: interactiveFiltersConfig?.time.active,
+    sortedData,
+    interactiveFilters,
+    getX: getXAsDate,
+  });
 
   // x
   const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
@@ -111,14 +125,12 @@ const useColumnsState = ({
     .paddingInner(0)
     .paddingOuter(0);
 
-  const bandEntireDomain = useMemo(
-    () => [...new Set(sortedData.map((d) => getX(d) as string))],
-    [getX, sortedData]
+  // x as time, needs to be memoized!
+  const xEntireDomainAsTime = useMemo(
+    () => extent(sortedData, (d) => getXAsDate(d)) as [Date, Date],
+    [getXAsDate, sortedData]
   );
-  const xEntireScale = scaleBand()
-    .domain(bandEntireDomain)
-    .paddingInner(PADDING_INNER)
-    .paddingOuter(PADDING_OUTER);
+  const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // This effect initiates the interactive time filter
   // and resets interactive categories filtering
@@ -126,9 +138,9 @@ const useColumnsState = ({
   useEffect(() => {
     dispatchInteractiveFilters({
       type: "ADD_TIME_FILTER",
-      value: [0, bandEntireDomain.length - 1],
+      value: xEntireDomainAsTime,
     });
-  }, [dispatchInteractiveFilters, bandEntireDomain]);
+  }, [dispatchInteractiveFilters, xEntireDomainAsTime]);
 
   // y
   const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
@@ -147,13 +159,16 @@ const useColumnsState = ({
     ? Math.max(
         estimateTextWidth(formatNumber(entireMaxValue)),
         // Account for width of time slider selection
-        estimateTextWidth(xEntireScale.domain()[0], 12) * 2 + 20
+        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
       )
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = max(bandDomain, (d) => estimateTextWidth(d)) || 70;
+
+  const bottom = interactiveFiltersConfig?.time.active
+    ? (max(bandDomain, (d) => estimateTextWidth(d)) || 70) + BRUSH_BOTTOM_SPACE
+    : max(bandDomain, (d) => estimateTextWidth(d)) || 70;
   const margins = {
     top: 50,
     right: 40,
@@ -233,11 +248,13 @@ const useColumnsState = ({
   };
 
   return {
+    chartType: "column",
     bounds,
     sortedData,
     getX,
+    getXAsDate,
     xScale,
-    xEntireScale,
+    xEntireScale: xEntireScale,
     xScaleInteraction,
     getY,
     yScale,
@@ -253,9 +270,10 @@ const ColumnChartProvider = ({
   data,
   fields,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures" | "interactiveFiltersConfig"> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -264,6 +282,7 @@ const ColumnChartProvider = ({
     data,
     fields,
     measures,
+    interactiveFiltersConfig,
     aspectRatio,
   });
   return (
@@ -275,9 +294,10 @@ export const ColumnChart = ({
   data,
   fields,
   measures,
+  interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures" | "interactiveFiltersConfig"> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -290,6 +310,7 @@ export const ColumnChart = ({
             data={data}
             fields={fields}
             measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={aspectRatio}
           >
             {children}

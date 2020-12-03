@@ -26,7 +26,7 @@ import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionColumns } from "./overlay-columns";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { BrushOrdinal } from "../shared/brush";
+import { BrushTime } from "../shared/brush";
 
 export const ChartColumnsVisualization = ({
   dataSetIri,
@@ -111,7 +111,7 @@ export const ChartColumns = memo(
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-            {fields.segment && interactiveFilters.legend.active === true ? (
+            {fields.segment && interactiveFilters.legend.active ? (
               <InteractiveLegendColor symbol="line" />
             ) : fields.segment ? (
               <LegendColor symbol="line" />
@@ -136,7 +136,7 @@ export const ChartColumns = memo(
               <Tooltip type="multiple" />
             </ChartContainer>
 
-            {fields.segment && interactiveFilters.legend.active === true ? (
+            {fields.segment && interactiveFilters.legend.active ? (
               <InteractiveLegendColor symbol="line" />
             ) : fields.segment ? (
               <LegendColor symbol="line" />
@@ -147,6 +147,7 @@ export const ChartColumns = memo(
             data={observations}
             fields={fields}
             measures={measures}
+            interactiveFiltersConfig={interactiveFilters}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -154,7 +155,7 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <Columns /> <AxisWidthBandDomain />
                 <InteractionColumns />
-                <BrushOrdinal />
+                {interactiveFilters.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="single" />
             </ChartContainer>
