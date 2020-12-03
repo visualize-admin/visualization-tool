@@ -6,22 +6,18 @@ import {
   max,
   min,
   rollup,
-  scaleTime,
-  ScaleTime,
-  sum,
-} from "d3";
-import {
   scaleBand,
   ScaleBand,
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
+  scaleTime,
+  ScaleTime,
+  sum,
 } from "d3";
-
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
-import { Observation, ObservationValue } from "../../domain/data";
 import {
   getPalette,
   mkNumber,
@@ -29,11 +25,18 @@ import {
   useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+import { usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -42,12 +45,6 @@ import {
   PADDING_OUTER,
   PADDING_WITHIN,
 } from "./constants";
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "../shared/use-interactive-filters";
-import { usePreparedData } from "../shared/chart-helpers";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 
 export interface GroupedColumnsState {
   chartType: "column";

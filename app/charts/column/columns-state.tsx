@@ -253,7 +253,7 @@ const useColumnsState = ({
     getX,
     getXAsDate,
     xScale,
-    xEntireScale: xEntireScale,
+    xEntireScale,
     xScaleInteraction,
     getY,
     yScale,

@@ -25,6 +25,7 @@ export const usePreparedData = ({
   const { categories } = interactiveFilters;
   const activeInteractiveFilters = Object.keys(categories);
 
+  // FIXME: we should compare timestamps, how does this even work?
   const preparedData = useMemo(() => {
     if (!timeFilterActive && !legendFilterActive) {
       return sortedData;
