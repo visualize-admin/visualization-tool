@@ -37,6 +37,7 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
 export interface LinesState {
+  chartType: "line";
   data: Observation[];
   bounds: Bounds;
   segments: string[];
@@ -102,8 +103,6 @@ const useLinesState = ({
   );
 
   const xKey = fields.x.componentIri;
-
-  const hasInteractiveTimeFilter = interactiveFiltersConfig?.time.active;
 
   /** Data
    * => Contains *all* observations, used for brushing */
@@ -218,7 +217,7 @@ const useLinesState = ({
   }
 
   // Dimensions
-  const left = hasInteractiveTimeFilter
+  const left = interactiveFiltersConfig?.time.active
     ? Math.max(
         estimateTextWidth(formatNumber(entireMaxValue)),
         // Account for width of time slider selection
@@ -228,7 +227,9 @@ const useLinesState = ({
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
       );
-  const bottom = hasInteractiveTimeFilter ? BRUSH_BOTTOM_SPACE : 40;
+  const bottom = interactiveFiltersConfig?.time.active
+    ? BRUSH_BOTTOM_SPACE
+    : 40;
   const margins = {
     top: 50,
     right: 40,
@@ -289,6 +290,7 @@ const useLinesState = ({
     };
   };
   return {
+    chartType: "line",
     data,
     bounds,
     getX,

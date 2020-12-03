@@ -42,6 +42,7 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
 export interface AreasState {
+  chartType: "area";
   data: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => Date;
@@ -339,6 +340,7 @@ const useAreasState = ({
   };
 
   return {
+    chartType: "area",
     data,
     bounds,
     getX,
