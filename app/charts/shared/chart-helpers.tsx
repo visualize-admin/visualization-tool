@@ -1,7 +1,36 @@
 import { useMemo } from "react";
 import { isNumber } from "util";
+import { Filters } from "../../configurator";
 import { ObservationValue, Observation } from "../../domain/data";
 import { InteractiveFiltersState } from "./use-interactive-filters";
+
+export const useQueryFilters = ({
+  filters,
+  interactiveFiltersIsActive,
+}: {
+  filters: Filters;
+  interactiveFiltersIsActive: boolean;
+}): Filters => {
+  const queryFilters = useMemo(() => {
+    const filtersWithoutInteractiveFilters = Object.keys(filters).reduce(
+      (notSkippedFilters, key) => {
+        if (filters[key].skip) {
+          return { ...notSkippedFilters };
+        } else if (!filters[key].skip) {
+          return { ...notSkippedFilters, [key]: filters[key] };
+        } else {
+          return { ...notSkippedFilters, [key]: filters[key] };
+        }
+      },
+      {}
+    );
+
+    return interactiveFiltersIsActive
+      ? filtersWithoutInteractiveFilters
+      : filters;
+  }, [filters, interactiveFiltersIsActive]);
+  return queryFilters;
+};
 
 // Prepare data used in charts.
 // Different than the full dataset because
@@ -60,6 +89,7 @@ export const usePreparedData = ({
   ]);
   return preparedData;
 };
+
 // Helper to pivot a dataset to a wider format (used in stacked charts)
 export const getWideData = ({
   xKey,
