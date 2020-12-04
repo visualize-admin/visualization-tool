@@ -63,7 +63,7 @@ export const ChartPieVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          interactiveFilters={chartConfig.interactiveFilters}
+          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -83,13 +83,13 @@ export const ChartPie = memo(
     dimensions,
     measures,
     fields,
-    interactiveFilters,
+    interactiveFiltersConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: PieFields;
-    interactiveFilters: InteractiveFiltersConfig;
+    interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {
     return (
       <PieChart
@@ -97,7 +97,7 @@ export const ChartPie = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFilters}
+        interactiveFiltersConfig={interactiveFiltersConfig}
         aspectRatio={0.5}
       >
         <ChartContainer>
@@ -106,7 +106,7 @@ export const ChartPie = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && interactiveFilters.legend.active === true ? (
+        {fields.segment && interactiveFiltersConfig.legend.active === true ? (
           <InteractiveLegendColor symbol="line" />
         ) : fields.segment ? (
           <LegendColor symbol="line" />

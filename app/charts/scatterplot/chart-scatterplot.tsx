@@ -67,7 +67,7 @@ export const ChartScatterplotVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          interactiveFilters={chartConfig.interactiveFilters}
+          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -91,13 +91,13 @@ export const ChartScatterplot = memo(
     dimensions,
     measures,
     fields,
-    interactiveFilters,
+    interactiveFiltersConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: ScatterPlotFields;
-    interactiveFilters: InteractiveFiltersConfig;
+    interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {
     return (
       <ScatterplotChart
@@ -105,7 +105,7 @@ export const ChartScatterplot = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFilters}
+        interactiveFiltersConfig={interactiveFiltersConfig}
         aspectRatio={1}
       >
         <ChartContainer>
@@ -119,7 +119,7 @@ export const ChartScatterplot = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && interactiveFilters.legend.active === true ? (
+        {fields.segment && interactiveFiltersConfig.legend.active === true ? (
           <InteractiveLegendColor symbol="line" />
         ) : fields.segment ? (
           <LegendColor symbol="line" />

@@ -60,7 +60,7 @@ export const ChartAreasVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          interactiveFilters={chartConfig.interactiveFilters}
+          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -80,13 +80,13 @@ export const ChartAreas = memo(
     dimensions,
     measures,
     fields,
-    interactiveFilters,
+    interactiveFiltersConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: AreaFields;
-    interactiveFilters: InteractiveFiltersConfig;
+    interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {
     return (
       <AreaChart
@@ -94,7 +94,7 @@ export const ChartAreas = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFilters}
+        interactiveFiltersConfig={interactiveFiltersConfig}
         aspectRatio={0.4}
       >
         <ChartContainer>
@@ -102,12 +102,12 @@ export const ChartAreas = memo(
             <AxisTime /> <AxisHeightLinear />
             <Areas /> <AxisTimeDomain />
             <InteractionHorizontal />
-            {interactiveFilters.time.active === true && <BrushTime />}
+            {interactiveFiltersConfig.time.active === true && <BrushTime />}
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
         </ChartContainer>
-        {fields.segment && interactiveFilters.legend.active === true ? (
+        {fields.segment && interactiveFiltersConfig.legend.active === true ? (
           <InteractiveLegendColor symbol="line" />
         ) : fields.segment ? (
           <LegendColor symbol="line" />

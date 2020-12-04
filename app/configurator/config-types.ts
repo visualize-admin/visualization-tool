@@ -95,10 +95,7 @@ export type InteractiveFiltersTime = t.TypeOf<typeof InteractiveFiltersTime>;
 
 const InteractiveFiltersData = t.type({
   active: t.boolean,
-  values: t.union([
-    t.record(t.string, t.type({ type: t.literal("single"), value: t.string })),
-    t.undefined,
-  ]),
+  componentIris: t.union([t.array(t.string), t.undefined]),
 });
 export type InteractiveFiltersData = t.TypeOf<typeof InteractiveFiltersData>;
 
@@ -176,7 +173,7 @@ const BarConfig = t.type(
   {
     chartType: t.literal("bar"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: BarFields,
   },
   "BarConfig"
@@ -207,7 +204,7 @@ const ColumnConfig = t.type(
   {
     chartType: t.literal("column"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: ColumnFields,
   },
   "ColumnConfig"
@@ -236,7 +233,7 @@ const LineConfig = t.type(
   {
     chartType: t.literal("line"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: LineFields,
   },
   "LineConfig"
@@ -272,7 +269,7 @@ const AreaConfig = t.type(
   {
     chartType: t.literal("area"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: AreaFields,
   },
   "AreaConfig"
@@ -303,7 +300,7 @@ const ScatterPlotConfig = t.type(
   {
     chartType: t.literal("scatterplot"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: ScatterPlotFields,
   },
   "ScatterPlotConfig"
@@ -333,7 +330,7 @@ const PieFields = t.type({
 const PieConfig = t.type(
   {
     chartType: t.literal("pie"),
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     filters: Filters,
     fields: PieFields,
   },

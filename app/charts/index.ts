@@ -23,7 +23,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFilters: {
+        interactiveFiltersConfig: {
           legend: { active: false, componentIri: "" },
           time: {
             active: false,
@@ -32,7 +32,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            values: undefined,
+            componentIris: undefined,
           },
         },
         fields: {
@@ -47,7 +47,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFilters: {
+        interactiveFiltersConfig: {
           legend: { active: false, componentIri: "" },
           time: {
             active: false,
@@ -56,7 +56,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            values: undefined,
+            componentIris: undefined,
           },
         },
         fields: {
@@ -71,7 +71,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFilters: {
+        interactiveFiltersConfig: {
           legend: { active: false, componentIri: "" },
           time: {
             active: false,
@@ -80,7 +80,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            values: undefined,
+            componentIris: undefined,
           },
         },
         fields: {
@@ -95,7 +95,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFilters: {
+        interactiveFiltersConfig: {
           legend: { active: false, componentIri: "" },
           time: {
             active: false,
@@ -104,7 +104,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            values: undefined,
+            componentIris: undefined,
           },
         },
         fields: {
@@ -118,7 +118,7 @@ export const getInitialConfig = ({
       return {
         chartType: "scatterplot",
         filters: {},
-        interactiveFilters: {
+        interactiveFiltersConfig: {
           legend: { active: false, componentIri: "" },
           time: {
             active: false,
@@ -127,7 +127,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            values: undefined,
+            componentIris: undefined,
           },
         },
         fields: {
@@ -150,7 +150,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFilters: {
+        interactiveFiltersConfig: {
           legend: { active: false, componentIri: "" },
           time: {
             active: false,
@@ -159,7 +159,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            values: undefined,
+            componentIris: undefined,
           },
         },
         fields: {
