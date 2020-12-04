@@ -4,6 +4,7 @@ import { createContext, Dispatch, ReactNode, useContext } from "react";
 export type InteractiveFiltersState = {
   categories: $FixMe; //{}; // { [x: string]: boolean };
   time: $FixMe;
+  dataFilters: $FixMe;
 };
 
 type InteractiveFiltersStateAction =
@@ -20,12 +21,17 @@ type InteractiveFiltersStateAction =
       value: Date[] | number[];
     }
   | {
+      type: "ADD_DATA_FILTER";
+      value: { dimensionIri: string; dimensionValueIri: string };
+    }
+  | {
       type: "RESET_INTERACTIVE_CATEGORIES";
     };
 
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
   time: {},
+  dataFilters: {},
 };
 
 // Reducer
@@ -49,6 +55,14 @@ const InteractiveFiltersStateReducer = (
       return {
         ...draft,
         time: { from: action.value[0], to: action.value[1] },
+      };
+    case "ADD_DATA_FILTER":
+      return {
+        ...draft,
+        dataFilters: {
+          ...draft.dataFilters,
+          [action.value.dimensionIri]: action.value.dimensionValueIri,
+        },
       };
     case "RESET_INTERACTIVE_CATEGORIES":
       return {
