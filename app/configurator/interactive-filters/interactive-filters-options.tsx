@@ -1,23 +1,34 @@
 import { Trans } from "@lingui/macro";
 import React, { ReactNode, useEffect, useRef } from "react";
 import { Box } from "theme-ui";
+import { getFieldComponentIris } from "../../charts";
+import { useInteractiveFilters } from "../../charts/shared/use-interactive-filters";
 import { Checkbox } from "../../components/form";
+import { Loading } from "../../components/hint";
+import {
+  useDataCubeMetadataWithComponentValuesQuery,
+  useDimensionValuesQuery,
+} from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
 import { ConfiguratorStateDescribingChart } from "../config-types";
-import { useInteractiveFiltersToggle } from "./interactive-filters-actions";
+import {
+  useInteractiveDataFilterDimensionToggle,
+  useInteractiveFiltersToggle,
+} from "./interactive-filters-actions";
+import { InteractveFilterType } from "./interactive-filters-configurator";
 
 export const InteractiveFiltersOptions = ({
   state,
-}: // metaData,
-{
+}: {
   state: ConfiguratorStateDescribingChart;
-  // metaData: DataCubeMetadata;
 }) => {
   const { activeField, chartConfig } = state;
+  console.log(chartConfig);
 
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -26,11 +37,6 @@ export const InteractiveFiltersOptions = ({
       panelRef.current.focus();
     }
   }, [activeField]);
-
-  // FIXME: add other chart types
-  if (!activeField) {
-    return null;
-  }
 
   if (activeField === "legend") {
     return (
@@ -58,7 +64,9 @@ export const InteractiveFiltersOptions = ({
     return (
       <ControlSection>
         <SectionTitle iconName="filter">
-          <Trans id="controls.section.interactiveFilters.time">Filter</Trans>
+          <Trans id="controls.section.interactiveFilters.time">
+            Filter time span
+          </Trans>
         </SectionTitle>
         <ControlSectionContent side="right">
           <InteractiveFiltersToggle
@@ -74,24 +82,45 @@ export const InteractiveFiltersOptions = ({
         </ControlSectionContent>
       </ControlSection>
     );
+  } else if (activeField === "dataFilters") {
+    return (
+      <ControlSection>
+        <SectionTitle iconName="filter">
+          <Trans id="controls.section.interactiveFilters.dataFilters">
+            Data filters
+          </Trans>
+        </SectionTitle>
+        <ControlSectionContent side="right">
+          <InteractiveFiltersToggle
+            label={
+              <Trans id="controls.interactiveFilters.dataFilters.toggledataFilters">
+                Show data filters
+              </Trans>
+            }
+            path="dataFilters"
+            defaultChecked={false}
+            disabled={false}
+          ></InteractiveFiltersToggle>
+
+          <InteractiveDataFilterOptions state={state} />
+        </ControlSectionContent>
+      </ControlSection>
+    );
   } else {
-    return <Box>NOTHING</Box>;
+    return <Box></Box>;
   }
 };
 
-// Time
 const InteractiveFiltersToggle = ({
   label,
   path,
   defaultChecked,
   disabled = false,
-}: // metaData,
-{
+}: {
   label: string | ReactNode;
-  path: "legend" | "time";
+  path: InteractveFilterType;
   defaultChecked?: boolean;
   disabled?: boolean;
-  // metaData: DataCubeMetadata;
 }) => {
   const fieldProps = useInteractiveFiltersToggle({
     path,
@@ -105,4 +134,42 @@ const InteractiveFiltersToggle = ({
       checked={fieldProps.checked ?? defaultChecked}
     ></Checkbox>
   );
+};
+
+const InteractiveDataFilterOptions = ({
+  state,
+}: {
+  state: ConfiguratorStateDescribingChart;
+}) => {
+  const fieldProps = useInteractiveDataFilterDimensionToggle({
+    path: "dataFilters",
+  });
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: { iri: state.dataSet, locale },
+  });
+  const { chartConfig } = state;
+  if (chartConfig.chartType !== "table" && data?.dataCubeByIri) {
+    const mappedIris = getFieldComponentIris(state.chartConfig.fields);
+    const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
+      (dim) => !mappedIris.has(dim.iri)
+    );
+
+    return (
+      <Box sx={{ my: 3 }}>
+        {/* Get unencoded dimensions */}
+        {unMappedDimensions.map((d) => (
+          <Checkbox
+            disabled={chartConfig.interactiveFiltersConfig.dataFilters.active}
+            label={d.label}
+            value={d.iri}
+            {...fieldProps}
+            checked={true}
+          ></Checkbox>
+        ))}
+      </Box>
+    );
+  } else {
+    return <Loading />;
+  }
 };
