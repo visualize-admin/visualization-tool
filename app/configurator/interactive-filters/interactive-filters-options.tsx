@@ -202,6 +202,19 @@ const InteractiveDataFilterOptionsCheckbox = ({
           type: "INTERACTIVE_FILTER_CHANGED",
           value: newIFConfig,
         });
+
+        const skipFilterInQueryFilter = !state.chartConfig.interactiveFiltersConfig.dataFilters.componentIris?.includes(
+          value
+        );
+        dispatch({
+          type: "CHART_CONFIG_FILTER_SET_SKIP",
+          value: {
+            dimensionIri: value,
+            value: skipFilterInQueryFilter ?? false,
+          },
+        });
+        // Swap iris between hard data filters (what is queried),
+        // and data filters made available to end-users
       }
     },
     [dispatch, state]
