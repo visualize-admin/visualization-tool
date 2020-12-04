@@ -1,5 +1,11 @@
 import { Trans } from "@lingui/macro";
-import React, { ReactNode, useEffect, useRef } from "react";
+import React, {
+  ChangeEvent,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { Box } from "theme-ui";
 import { getFieldComponentIris } from "../../charts";
 import { useInteractiveFilters } from "../../charts/shared/use-interactive-filters";
@@ -16,11 +22,10 @@ import {
   SectionTitle,
 } from "../components/chart-controls/section";
 import { ConfiguratorStateDescribingChart } from "../config-types";
-import {
-  useInteractiveDataFilterDimensionToggle,
-  useInteractiveFiltersToggle,
-} from "./interactive-filters-actions";
+import { useConfiguratorState } from "../configurator-state";
+import { useInteractiveFiltersToggle } from "./interactive-filters-actions";
 import { InteractveFilterType } from "./interactive-filters-configurator";
+import { toggleInteractiveFilterDataDimension } from "./interactive-filters-state";
 
 export const InteractiveFiltersOptions = ({
   state,
@@ -141,9 +146,6 @@ const InteractiveDataFilterOptions = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
-  const fieldProps = useInteractiveDataFilterDimensionToggle({
-    path: "dataFilters",
-  });
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: state.dataSet, locale },
@@ -151,25 +153,74 @@ const InteractiveDataFilterOptions = ({
   const { chartConfig } = state;
   if (chartConfig.chartType !== "table" && data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
+    // Dimensions that are not encoded in the visualization
     const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
       (dim) => !mappedIris.has(dim.iri)
     );
 
     return (
       <Box sx={{ my: 3 }}>
-        {/* Get unencoded dimensions */}
         {unMappedDimensions.map((d) => (
-          <Checkbox
-            disabled={chartConfig.interactiveFiltersConfig.dataFilters.active}
+          <InteractiveDataFilterOptionsCheckbox
             label={d.label}
             value={d.iri}
-            {...fieldProps}
-            checked={true}
-          ></Checkbox>
+            disabled={!chartConfig.interactiveFiltersConfig.dataFilters.active}
+          />
         ))}
       </Box>
     );
   } else {
     return <Loading />;
   }
+};
+
+const InteractiveDataFilterOptionsCheckbox = ({
+  value,
+  label,
+  disabled,
+}: {
+  value: string;
+  label: string;
+  disabled: boolean;
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      console.log(e.currentTarget.value);
+      if (
+        state.state === "DESCRIBING_CHART" &&
+        // All charts except "table" can have interactive filters
+        state.chartConfig.chartType !== "table"
+      ) {
+        const newIFConfig = toggleInteractiveFilterDataDimension(
+          state.chartConfig.interactiveFiltersConfig,
+          e.currentTarget.value
+        );
+        console.log("newIFConfig", newIFConfig);
+        dispatch({
+          type: "INTERACTIVE_FILTER_CHANGED",
+          value: newIFConfig,
+        });
+      }
+    },
+    [dispatch, state]
+  );
+  const checked =
+    state.state === "DESCRIBING_CHART" &&
+    state.chartConfig.chartType !== "table"
+      ? state.chartConfig.interactiveFiltersConfig.dataFilters.componentIris?.includes(
+          value
+        )
+      : false;
+
+  return (
+    <Checkbox
+      disabled={disabled}
+      label={label}
+      value={value}
+      checked={checked}
+      onChange={onChange}
+    ></Checkbox>
+  );
 };

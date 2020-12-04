@@ -124,7 +124,11 @@ const InteractiveFilterTabField = ({
 
   const optionActive =
     state.state === "DESCRIBING_CHART"
-      ? get(state, `chartConfig.interactiveFilters["${value}"].active`, "")
+      ? get(
+          state,
+          `chartConfig.interactiveFiltersConfig["${value}"].active`,
+          ""
+        )
       : "";
 
   return (
