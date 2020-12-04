@@ -30,6 +30,10 @@ export const getInitialConfig = ({
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
           },
+          dataFilters: {
+            active: false,
+            values: undefined,
+          },
         },
         fields: {
           x: { componentIri: measures[0].iri },
@@ -49,6 +53,10 @@ export const getInitialConfig = ({
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
+          },
+          dataFilters: {
+            active: false,
+            values: undefined,
           },
         },
         fields: {
@@ -70,6 +78,10 @@ export const getInitialConfig = ({
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
           },
+          dataFilters: {
+            active: false,
+            values: undefined,
+          },
         },
         fields: {
           x: {
@@ -90,6 +102,10 @@ export const getInitialConfig = ({
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
           },
+          dataFilters: {
+            active: false,
+            values: undefined,
+          },
         },
         fields: {
           x: {
@@ -108,6 +124,10 @@ export const getInitialConfig = ({
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
+          },
+          dataFilters: {
+            active: false,
+            values: undefined,
           },
         },
         fields: {
@@ -136,6 +156,10 @@ export const getInitialConfig = ({
             active: false,
             componentIri: "",
             presets: { type: "range", from: "", to: "" },
+          },
+          dataFilters: {
+            active: false,
+            values: undefined,
           },
         },
         fields: {
