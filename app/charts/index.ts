@@ -32,7 +32,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            componentIris: undefined,
+            componentIris: [],
           },
         },
         fields: {
@@ -56,7 +56,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            componentIris: undefined,
+            componentIris: [],
           },
         },
         fields: {
@@ -80,7 +80,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            componentIris: undefined,
+            componentIris: [],
           },
         },
         fields: {
@@ -104,7 +104,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            componentIris: undefined,
+            componentIris: [],
           },
         },
         fields: {
@@ -127,7 +127,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            componentIris: undefined,
+            componentIris: [],
           },
         },
         fields: {
@@ -159,7 +159,7 @@ export const getInitialConfig = ({
           },
           dataFilters: {
             active: false,
-            componentIris: undefined,
+            componentIris: [],
           },
         },
         fields: {
