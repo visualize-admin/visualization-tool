@@ -102,16 +102,18 @@ const InteractiveFiltersTime = t.type({
 });
 export type InteractiveFiltersTime = t.TypeOf<typeof InteractiveFiltersTime>;
 
-const InteractiveFiltersData = t.type({
+const InteractiveFiltersDataConfig = t.type({
   active: t.boolean,
-  componentIris: t.union([t.array(t.string), t.undefined]),
+  componentIris: t.array(t.string),
 });
-export type InteractiveFiltersData = t.TypeOf<typeof InteractiveFiltersData>;
+export type InteractiveFiltersDataConfig = t.TypeOf<
+  typeof InteractiveFiltersDataConfig
+>;
 
 const InteractiveFiltersConfig = t.type({
   legend: InteractiveFiltersLegend,
   time: InteractiveFiltersTime,
-  dataFilters: InteractiveFiltersData,
+  dataFilters: InteractiveFiltersDataConfig,
 });
 export type InteractiveFiltersConfig = t.TypeOf<
   typeof InteractiveFiltersConfig
