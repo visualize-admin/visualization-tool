@@ -74,23 +74,6 @@ const Meta = t.type({ title: Title, description: Description });
 export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
-// Interactive Filters
-// interactiveFilters: {
-// 	legend: {
-// 		active: true,
-// 		componentIri: "dim/0",
-//   },
-//   time: {
-//     active:false,
-//     componentIri:"dim/1",
-//     preset: { // any componentIRI e.g. "dim/0"
-//         type: "range",
-// 	      from: "2008",
-// 	      to: "2010"
-//     }
-//   }
-//   dataFilter: {active:true, componentIris: ["dim/3","dim/4"]}
-// }
 const InteractiveFiltersLegend = t.type({
   active: t.boolean,
   componentIri: t.string,
@@ -98,6 +81,7 @@ const InteractiveFiltersLegend = t.type({
 export type InteractiveFiltersLegend = t.TypeOf<
   typeof InteractiveFiltersLegend
 >;
+
 const InteractiveFiltersTime = t.type({
   active: t.boolean,
   componentIri: t.string,
@@ -108,16 +92,26 @@ const InteractiveFiltersTime = t.type({
   }),
 });
 export type InteractiveFiltersTime = t.TypeOf<typeof InteractiveFiltersTime>;
+
+const InteractiveFiltersData = t.type({
+  active: t.boolean,
+  values: t.union([
+    t.record(t.string, t.type({ type: t.literal("single"), value: t.string })),
+    t.undefined,
+  ]),
+});
+export type InteractiveFiltersData = t.TypeOf<typeof InteractiveFiltersData>;
+
 const InteractiveFiltersConfig = t.type({
   legend: InteractiveFiltersLegend,
   time: InteractiveFiltersTime,
+  dataFilters: InteractiveFiltersData,
 });
 export type InteractiveFiltersConfig = t.TypeOf<
   typeof InteractiveFiltersConfig
 >;
 
 // Chart Config
-
 const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
 export type SortingOrder = t.TypeOf<typeof SortingOrder>;
 
