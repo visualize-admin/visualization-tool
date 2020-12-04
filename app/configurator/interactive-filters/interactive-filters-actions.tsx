@@ -26,6 +26,10 @@ export const useInteractiveFiltersToggle = ({
           type: "INTERACTIVE_FILTER_CHANGED",
           value: newIFConfig,
         });
+
+        // FIXME:
+        // If path === "dataFilters"
+        // Also reset all query filters to not skip any
       }
     },
     [dispatch, path, state]

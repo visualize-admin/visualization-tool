@@ -33,7 +33,6 @@ export const InteractiveFiltersOptions = ({
   state: ConfiguratorStateDescribingChart;
 }) => {
   const { activeField, chartConfig } = state;
-  console.log(chartConfig);
 
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -187,17 +186,17 @@ const InteractiveDataFilterOptionsCheckbox = ({
 
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      console.log(e.currentTarget.value);
       if (
         state.state === "DESCRIBING_CHART" &&
         // All charts except "table" can have interactive filters
         state.chartConfig.chartType !== "table"
       ) {
+        const { interactiveFiltersConfig } = state.chartConfig;
         const newIFConfig = toggleInteractiveFilterDataDimension(
-          state.chartConfig.interactiveFiltersConfig,
+          interactiveFiltersConfig,
           e.currentTarget.value
         );
-        console.log("newIFConfig", newIFConfig);
+
         dispatch({
           type: "INTERACTIVE_FILTER_CHANGED",
           value: newIFConfig,
@@ -217,7 +216,7 @@ const InteractiveDataFilterOptionsCheckbox = ({
         // and data filters made available to end-users
       }
     },
-    [dispatch, state]
+    [dispatch, state, value]
   );
   const checked =
     state.state === "DESCRIBING_CHART" &&

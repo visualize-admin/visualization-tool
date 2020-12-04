@@ -14,16 +14,14 @@ export const toggleInteractiveFilter = produce(
     return IFConfig;
   }
 );
+
+// Add or remove a dimension from the interactive
+// data filters dimensions list
 export const toggleInteractiveFilterDataDimension = produce(
   (
     IFConfig: InteractiveFiltersConfig,
     cIri: string
   ): InteractiveFiltersConfig => {
-    console.log("cIri", cIri);
-    console.log(
-      "IFConfig.dataFilters.componentIris",
-      IFConfig.dataFilters.componentIris
-    );
     if (!IFConfig.dataFilters || !IFConfig.dataFilters.componentIris) {
       return IFConfig;
     }
@@ -42,7 +40,7 @@ export const toggleInteractiveFilterDataDimension = produce(
         ...IFConfig.dataFilters,
         componentIris: newComponentIris,
       };
-      console.log("add filter", newDataFilters);
+
       return { ...IFConfig, dataFilters: newDataFilters };
     } else {
       return IFConfig;
