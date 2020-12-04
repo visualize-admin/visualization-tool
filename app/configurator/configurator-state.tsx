@@ -563,7 +563,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "INTERACTIVE_FILTER_CHANGED":
       if (draft.state === "DESCRIBING_CHART") {
-        setWith(draft, `chartConfig.interactiveFilters`, action.value, Object);
+        setWith(
+          draft,
+          `chartConfig.interactiveFiltersConfig`,
+          action.value,
+          Object
+        );
       }
       return draft;
 
