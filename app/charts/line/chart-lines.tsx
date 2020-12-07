@@ -59,13 +59,16 @@ export const ChartLinesVisualization = ({
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return observations.data.length > 0 ? (
       <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
+        {/* FIXME: Should the interactive data filter state provider be wrapped
+        around the a11y table so that it is also filtered? It would help for
+        performance also */}
+        {/* <A11yTable
           title={title}
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-        />
+        /> */}
         <ChartLines
           observations={observations.data}
           dimensions={dimensions}
