@@ -25,6 +25,8 @@ import { Lines } from "./lines";
 import { LineChart } from "./lines-state";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import { BrushTime } from "../shared/brush";
+import { InteractiveDataFilters } from "../shared/interactive-data-filters";
+import { useQueryFilters } from "../shared/chart-helpers";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
@@ -34,12 +36,20 @@ export const ChartLinesVisualization = ({
   chartConfig: LineConfig;
 }) => {
   const locale = useLocale();
+  const { filters } = chartConfig;
+
+  const queryFilters = useQueryFilters({
+    filters,
+    interactiveFiltersIsActive:
+      chartConfig.interactiveFiltersConfig.dataFilters.active,
+  });
+
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters,
+      filters: queryFilters,
     },
   });
 
