@@ -24,6 +24,15 @@ ${(
       fields={fields}
       dimensions={dimensions}
       measures={measures}
+      interactiveFiltersConfig={{
+        legend: { active: false, componentIri: "" },
+        time: {
+          active: false,
+          componentIri: "",
+          presets: { type: "range", from: "", to: "" },
+        },
+        dataFilters: { active: false, componentIris: [] },
+      }}
       aspectRatio={0.4}
     >
       <ChartContainer>

@@ -25,6 +25,15 @@ ${(
       data={observations}
       fields={fields}
       measures={measures}
+      interactiveFiltersConfig={{
+        legend: { active: false, componentIri: "" },
+        time: {
+          active: false,
+          componentIri: "",
+          presets: { type: "range", from: "", to: "" },
+        },
+        dataFilters: { active: false, componentIris: [] },
+      }}
       aspectRatio={0.4}
     >
       <Flex>
@@ -153,6 +162,15 @@ ${(
       data={observations}
       fields={fields}
       measures={measures}
+      interactiveFiltersConfig={{
+        legend: { active: false, componentIri: "" },
+        time: {
+          active: false,
+          componentIri: "",
+          presets: { type: "range", from: "", to: "" },
+        },
+        dataFilters: { active: false, componentIris: [] },
+      }}
       aspectRatio={0.4}
     >
       <div style={{ width: 200, height: 150, position: "relative" }}>
@@ -180,6 +198,15 @@ ${(
       data={observations}
       fields={fields}
       measures={measures}
+      interactiveFiltersConfig={{
+        legend: { active: false, componentIri: "" },
+        time: {
+          active: false,
+          componentIri: "",
+          presets: { type: "range", from: "", to: "" },
+        },
+        dataFilters: { active: false, componentIris: [] },
+      }}
       aspectRatio={0.4}
     >
       <div style={{ width: 200, height: 150, position: "relative" }}>
