@@ -404,7 +404,7 @@ msgstr "Remove sorting dimension"
 
 #: app/configurator/table/table-chart-sorting-options.tsx:109
 msgid "controls.sorting.selectDimension"
-msgstr "Select a dimension …<<<<<<< HEAD"
+msgstr "Select a dimension …"
 
 #: app/configurator/components/ui-helpers.tsx:179
 #: app/configurator/table/table-chart-sorting-options.tsx:173

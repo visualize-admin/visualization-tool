@@ -404,7 +404,7 @@ msgstr ""
 
 #: app/configurator/table/table-chart-sorting-options.tsx:109
 msgid "controls.sorting.selectDimension"
-msgstr "<<<<<<< HEAD"
+msgstr ""
 
 #: app/configurator/components/ui-helpers.tsx:179
 #: app/configurator/table/table-chart-sorting-options.tsx:173
