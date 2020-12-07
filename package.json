@@ -17,7 +17,7 @@
     "build": "NODE_OPTIONS=--max_old_space_size=2048 yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && next build ./app",
     "build:npm": "yarn graphql:codegen && lingui compile && BABEL_ENV=NPM_PACKAGE preconstruct build",
     "start": "yarn db:migrate && GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next start ./app -p $PORT",
-    "lint": "tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
+    "lint": "lingui compile && tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
     "locales:extract": "lingui extract --verbose",
     "locales:compile": "lingui compile --verbose",
     "graphql:codegen": "graphql-codegen --config codegen.yml",
