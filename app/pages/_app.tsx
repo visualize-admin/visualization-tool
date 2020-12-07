@@ -20,7 +20,13 @@ import { loadTheme, ThemeModule } from "../themes/index";
 import "../lib/nprogress.css";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const { pathname, query, events: routerEvents, asPath } = useRouter();
+  const {
+    pathname,
+    query,
+    events: routerEvents,
+    asPath,
+    locale: routerLocale,
+  } = useRouter();
   const [themeModule, setThemeModule] = useState<ThemeModule>(defaultTheme);
 
   useNProgress();
@@ -30,8 +36,8 @@ export default function App({ Component, pageProps }: AppProps) {
    * - so we can have dynamic locale query params like /[locale]/create/...
    * - and static localized pages like /en/index.mdx
    */
-  const locale = /^\/\[locale\]/.test(pathname)
-    ? parseLocaleString(query.locale?.toString() ?? "")
+  const locale = routerLocale
+    ? parseLocaleString(routerLocale)
     : parseLocaleString(pathname.slice(1));
 
   // Immediately activate locale to avoid re-render

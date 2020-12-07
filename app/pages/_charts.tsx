@@ -1,11 +1,11 @@
 import { Box, Flex, Link } from "theme-ui";
 import { NextPage } from "next";
-import { ChartPanel } from "../../components/chart-panel";
-import { ChartPublished } from "../../components/chart-published";
-import { ContentLayout } from "../../components/layout";
-import { LocalizedLink } from "../../components/links";
-import { getAllConfigs } from "../../db/config";
-import { Config } from "../../configurator";
+import { ChartPanel } from "../components/chart-panel";
+import { ChartPublished } from "../components/chart-published";
+import { ContentLayout } from "../components/layout";
+import { LocalizedLink } from "../components/links";
+import { getAllConfigs } from "../db/config";
+import { Config } from "../configurator";
 
 type PageProps = {
   configs: {

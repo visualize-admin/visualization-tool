@@ -67,12 +67,20 @@ export const Footer = () => {
         </Box>
 
         <Flex sx={{ justifyContent: "flex-end", width: ["100%", "auto"] }}>
-          <NextLink href={contentRoutes.legal[locale].path} passHref>
+          <NextLink
+            href={contentRoutes.legal[locale].path}
+            passHref
+            locale={false}
+          >
             <FooterLinkBottom>
               {contentRoutes.legal[locale].title}
             </FooterLinkBottom>
           </NextLink>
-          <NextLink href={contentRoutes.imprint[locale].path} passHref>
+          <NextLink
+            href={contentRoutes.imprint[locale].path}
+            passHref
+            locale={false}
+          >
             <FooterLinkBottom>
               {contentRoutes.imprint[locale].title}
             </FooterLinkBottom>

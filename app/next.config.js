@@ -5,6 +5,8 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 });
 const withPreconstruct = require("@preconstruct/next");
 
+const { locales, defaultLocale } = require("./locales/locales.json");
+
 const VERSION = `v${pkg.version}`;
 
 const publicRuntimeConfig = {
@@ -28,14 +30,9 @@ module.exports = withPreconstruct(
         VERSION,
       },
 
-      redirects: async () => {
-        return [
-          {
-            source: "/",
-            destination: "/de",
-            permanent: false,
-          },
-        ];
+      i18n: {
+        locales,
+        defaultLocale,
       },
 
       headers: async () => {
