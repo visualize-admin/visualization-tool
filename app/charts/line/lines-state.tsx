@@ -104,11 +104,20 @@ const useLinesState = ({
 
   const xKey = fields.x.componentIri;
 
-  /** Data
-   * => Contains *all* observations, used for brushing */
+  // Apply interactive data filters (additional data not visually encoded)
+  const { componentIris } = interactiveFiltersConfig.dataFilters;
+  const { dataFilters } = interactiveFilters.dataFilters;
+
+  const filteredData = data;
+  // data.filter((d) =>
+  //   componentIris.every((dim) => {
+  //     return d[dim] === dataFilters[dim];
+  //   })
+  // );
+
   const sortedData = useMemo(
-    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
-    [data, getX]
+    () => [...filteredData].sort((a, b) => ascending(getX(a), getX(b))),
+    [filteredData, getX]
   );
   const allDataGroupedMap = group(sortedData, getGroups);
   const allDataWide = getWideData({
