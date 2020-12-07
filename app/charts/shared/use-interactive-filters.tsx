@@ -21,7 +21,7 @@ type InteractiveFiltersStateAction =
       value: Date[] | number[];
     }
   | {
-      type: "ADD_DATA_FILTER";
+      type: "UPDATE_DATA_FILTER";
       value: { dimensionIri: string; dimensionValueIri: string };
     }
   | {
@@ -56,7 +56,7 @@ const InteractiveFiltersStateReducer = (
         ...draft,
         time: { from: action.value[0], to: action.value[1] },
       };
-    case "ADD_DATA_FILTER":
+    case "UPDATE_DATA_FILTER":
       return {
         ...draft,
         dataFilters: {
