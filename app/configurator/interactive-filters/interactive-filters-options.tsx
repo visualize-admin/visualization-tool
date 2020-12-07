@@ -212,8 +212,6 @@ const InteractiveDataFilterOptionsCheckbox = ({
             value: skipFilterInQueryFilter ?? false,
           },
         });
-        // Swap iris between hard data filters (what is queried),
-        // and data filters made available to end-users
       }
     },
     [dispatch, state, value]

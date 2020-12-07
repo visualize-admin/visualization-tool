@@ -4,6 +4,9 @@ import { Filters } from "../../configurator";
 import { ObservationValue, Observation } from "../../domain/data";
 import { InteractiveFiltersState } from "./use-interactive-filters";
 
+// Prepare filters used in data query,
+// merges publisher-defined filters (editor)
+// and user-defined filters (interactive)
 export const useQueryFilters = ({
   filters,
   interactiveFiltersIsActive,

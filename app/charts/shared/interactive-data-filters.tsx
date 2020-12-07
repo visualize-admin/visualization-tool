@@ -11,16 +11,16 @@ import { useLocale } from "../../locales/use-locale";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
 export const InteractiveDataFilters = ({
-  dataFilters,
+  dataFiltersConfig,
 }: {
-  dataFilters: InteractiveFiltersDataConfig;
+  dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
   const [{ dataSet }] = useConfiguratorState();
 
   return (
     <Box sx={{ my: 4 }}>
       {dataSet &&
-        dataFilters.componentIris.map((d, i) => (
+        dataFiltersConfig.componentIris.map((d, i) => (
           <DataFilterDropdown key={i} dataSetIri={dataSet} dimensionIri={d} />
         ))}
     </Box>
@@ -34,15 +34,15 @@ const DataFilterDropdown = ({
   dimensionIri: string;
   dataSetIri: string;
 }) => {
-  const [state, dispatch] = useInteractiveFilters();
+  const [, dispatch] = useInteractiveFilters();
   const locale = useLocale();
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
-  console.log("interactive state", state.dataFilters);
+
   const setDataFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch({
-      type: "ADD_DATA_FILTER",
+      type: "UPDATE_DATA_FILTER",
       value: { dimensionIri, dimensionValueIri: e.currentTarget.value },
     });
   };
@@ -66,7 +66,6 @@ const DataFilterDropdown = ({
             label: v.label,
             value: v.label,
           }))}
-          // value={activeSortingType}
           disabled={false}
           onChange={setDataFilter}
         />
