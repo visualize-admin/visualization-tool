@@ -75,7 +75,6 @@ export const ChartLinesVisualization = ({
           measures={measures}
           fields={chartConfig.fields}
           interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-          chartConfig={chartConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -96,14 +95,12 @@ export const ChartLines = memo(
     measures,
     fields,
     interactiveFiltersConfig,
-    chartConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: LineFields;
     interactiveFiltersConfig: InteractiveFiltersConfig;
-    chartConfig: LineConfig;
   }) => {
     return (
       <LineChart
@@ -114,6 +111,11 @@ export const ChartLines = memo(
         interactiveFiltersConfig={interactiveFiltersConfig}
         aspectRatio={0.4}
       >
+        {interactiveFiltersConfig.dataFilters.active && (
+          <InteractiveDataFilters
+            dataFiltersConfig={interactiveFiltersConfig.dataFilters}
+          />
+        )}
         <ChartContainer>
           <ChartSvg>
             <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
