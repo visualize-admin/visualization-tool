@@ -13,7 +13,7 @@ import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
 import { LocaleProvider } from "../locales/use-locale";
 import { useNProgress } from "../lib/use-nprogress";
-import { catalogs, parseLocaleString } from "../locales/locales";
+import { i18n, parseLocaleString } from "../locales/locales";
 import * as defaultTheme from "../themes/federal";
 import { loadTheme, ThemeModule } from "../themes/index";
 
@@ -33,6 +33,11 @@ export default function App({ Component, pageProps }: AppProps) {
   const locale = /^\/\[locale\]/.test(pathname)
     ? parseLocaleString(query.locale?.toString() ?? "")
     : parseLocaleString(pathname.slice(1));
+
+  // Immediately activate locale to avoid re-render
+  if (i18n.locale !== locale) {
+    i18n.activate(locale);
+  }
 
   useEffect(() => {
     document.querySelector("html")?.setAttribute("lang", locale);
@@ -55,8 +60,17 @@ export default function App({ Component, pageProps }: AppProps) {
       analyticsPageView(url);
     };
 
+    const handleRouteStart = (url: string) => {
+      const locale = parseLocaleString(url.slice(1));
+      if (i18n.locale !== locale) {
+        i18n.activate(locale);
+      }
+    };
+
+    routerEvents.on("routeChangeStart", handleRouteStart);
     routerEvents.on("routeChangeComplete", handleRouteChange);
     return () => {
+      routerEvents.off("routeChangeStart", handleRouteStart);
       routerEvents.off("routeChangeComplete", handleRouteChange);
     };
   }, [routerEvents]);
@@ -79,7 +93,7 @@ export default function App({ Component, pageProps }: AppProps) {
         ))}
       </Head>
       <LocaleProvider value={locale}>
-        <I18nProvider language={locale} catalogs={catalogs}>
+        <I18nProvider i18n={i18n}>
           <GraphqlProvider>
             <ThemeProvider theme={themeModule.theme}>
               <ContentMDXProvider>

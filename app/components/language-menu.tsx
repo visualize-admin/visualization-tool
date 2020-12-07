@@ -3,8 +3,7 @@ import { useLocale } from "../locales/use-locale";
 import { Link, Box, Flex } from "theme-ui";
 import NextLink from "next/link";
 import contentRoutes from "../content-routes.json";
-
-const localesOrder = ["de", "fr", "it", "en"];
+import { locales } from "../locales/locales.json";
 
 export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
   const currentLocale = useLocale();
@@ -29,7 +28,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         justifyContent: "flex-end",
       }}
     >
-      {localesOrder.map((locale) => {
+      {locales.map((locale) => {
         const alternate = alternates?.[locale];
 
         const linkEl = (
