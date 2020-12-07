@@ -160,7 +160,9 @@ const InteractiveDataFilterOptions = ({
     return (
       <Box sx={{ my: 3 }}>
         {unMappedDimensions.map((d) => (
+        {unMappedDimensions.map((d, i) => (
           <InteractiveDataFilterOptionsCheckbox
+            key={i}
             label={d.label}
             value={d.iri}
             disabled={!chartConfig.interactiveFiltersConfig.dataFilters.active}
