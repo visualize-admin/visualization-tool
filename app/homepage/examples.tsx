@@ -72,7 +72,7 @@ export const Examples = ({
                 componentIri: "",
                 presets: { type: "range", from: "", to: "" },
               },
-              dataFilters: { active: false, componentIris: undefined },
+              dataFilters: { active: false, componentIris: [] },
             },
             filters: {
               "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/0": {
@@ -159,7 +159,7 @@ export const Examples = ({
                 componentIri: "",
                 presets: { type: "range", from: "", to: "" },
               },
-              dataFilters: { active: false, componentIris: undefined },
+              dataFilters: { active: false, componentIris: [] },
             },
             filters: {
               "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1": {

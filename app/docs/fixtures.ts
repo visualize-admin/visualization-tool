@@ -42,7 +42,7 @@ export const states: ConfiguratorState[] = [
           componentIri: "",
           presets: { type: "range", from: "", to: "" },
         },
-        dataFilters: { active: false, componentIris: undefined },
+        dataFilters: { active: false, componentIris: [] },
       },
     },
     meta: {
