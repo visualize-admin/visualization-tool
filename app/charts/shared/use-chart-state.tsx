@@ -16,7 +16,7 @@ import { TableChartState } from "../table/table-state";
 export interface ChartProps {
   data: Observation[];
   fields: ChartFields;
-  interactiveFiltersConfig?: InteractiveFiltersConfig;
+  interactiveFiltersConfig: InteractiveFiltersConfig;
   dimensions: ComponentFieldsFragment[];
   measures: ComponentFieldsFragment[];
 }
