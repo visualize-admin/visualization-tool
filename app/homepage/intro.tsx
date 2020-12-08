@@ -13,7 +13,7 @@ import { default as IconText } from "../icons/components/IcText";
 import { default as IconX } from "../icons/components/IcXAxis";
 import { default as IconY } from "../icons/components/IcYAxis";
 import { HintRed } from "../components/hint";
-import { LocalizedLink } from "../components/links";
+import NextLink from "next/link";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
@@ -116,15 +116,11 @@ export const Intro = ({
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <Flex sx={{ justifyContent: "center" }}>
-            <LocalizedLink
-              pathname="/[locale]/create/[chartId]"
-              query={{ chartId: "new" }}
-              passHref
-            >
+            <NextLink href="/create/new" passHref>
               <Button as="a" variant="primary">
                 {buttonLabel}
               </Button>
-            </LocalizedLink>
+            </NextLink>
           </Flex>
         </Box>
       </Box>

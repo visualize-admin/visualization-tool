@@ -4,16 +4,15 @@ import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { ChartPanel } from "../../../components/chart-panel";
-import { ChartPublished } from "../../../components/chart-published";
-import { Success } from "../../../components/hint";
-import { ContentLayout } from "../../../components/layout";
-import { LocalizedLink } from "../../../components/links";
-import { PublishActions } from "../../../components/publish-actions";
-import { getConfig } from "../../../db/config";
-import { Config } from "../../../configurator";
-import { useLocale } from "../../../locales/use-locale";
-
+import { ChartPanel } from "../../components/chart-panel";
+import { ChartPublished } from "../../components/chart-published";
+import { Success } from "../../components/hint";
+import { ContentLayout } from "../../components/layout";
+import { PublishActions } from "../../components/publish-actions";
+import { getConfig } from "../../db/config";
+import { Config } from "../../configurator";
+import { useLocale } from "../../locales/use-locale";
+import NextLink from "next/link";
 type PageProps =
   | {
       status: "notfound";
@@ -109,24 +108,19 @@ const VisualizationPage = (props: PageProps) => {
               )}
             </Text>
 
-            <LocalizedLink
-              pathname="/[locale]/create/[chartId]"
-              query={{ chartId: "new" }}
-              passHref
-            >
+            <NextLink href="/create/new" passHref>
               <Button as="a" variant="primary" sx={{ mb: 4 }}>
                 <Trans id="button.new.visualization">New Visualization</Trans>
               </Button>
-            </LocalizedLink>
-            <LocalizedLink
-              pathname="/[locale]/create/[chartId]"
-              query={{ chartId: "new", from: key }}
+            </NextLink>
+            <NextLink
+              href={{ pathname: "/create/new", query: { from: key } }}
               passHref
             >
               <Button as="a" variant="outline" sx={{ mb: 4, ml: [0, 4] }}>
                 <Trans id="button.copy.visualization">Copy Visualization</Trans>
               </Button>
-            </LocalizedLink>
+            </NextLink>
           </Box>
         </Box>
       </ContentLayout>
