@@ -21,7 +21,6 @@ import "../lib/nprogress.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   const {
-    pathname,
     query,
     events: routerEvents,
     asPath,
@@ -31,14 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useNProgress();
 
-  /**
-   * Parse locale from query OR pathname
-   * - so we can have dynamic locale query params like /[locale]/create/...
-   * - and static localized pages like /en/index.mdx
-   */
-  const locale = routerLocale
-    ? parseLocaleString(routerLocale)
-    : parseLocaleString(pathname.slice(1));
+  const locale = parseLocaleString(routerLocale ?? "");
 
   // Immediately activate locale to avoid re-render
   if (i18n.locale !== locale) {

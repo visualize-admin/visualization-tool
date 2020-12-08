@@ -66,7 +66,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         return (
           <Box as="li" key={locale} sx={{ ml: 1, p: 0 }}>
             {alternate ? (
-              <NextLink href={alternate.path} passHref>
+              <NextLink href={alternate.path} passHref locale={false}>
                 {linkEl}
               </NextLink>
             ) : (

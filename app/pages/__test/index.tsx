@@ -4,35 +4,31 @@ import { loadFixtureConfigIds } from "../../test/utils";
 
 type PageProps = {
   ids: string[];
-  locale: string;
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
   return {
     fallback: false,
-    paths: [{ params: { locale: "en" } }, { params: { locale: "de" } }],
+    paths: locales?.map((locale) => ({ params: {}, locale })) ?? [],
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({ params, locale }) => {
   const ids = await loadFixtureConfigIds();
 
   return {
-    props: { locale: params?.locale, ids },
+    props: { locale, ids },
   };
 };
 
-const Page: NextPage<PageProps> = ({ ids, locale }) => {
+const Page: NextPage<PageProps> = ({ ids }) => {
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Test Charts</h1>
       <ul>
         {ids.map((id) => (
-          <li>
-            <Link
-              href="/[locale]/__test/[chartId]"
-              as={`/${locale}/__test/${id}`}
-            >
+          <li key={id}>
+            <Link href={`/__test/${id}`}>
               <a>{id}</a>
             </Link>
           </li>
