@@ -1,6 +1,9 @@
 import { Trans } from "@lingui/macro";
 import { Flex, Text } from "theme-ui";
-import { useConfiguratorState } from "../configurator";
+import {
+  ConfiguratorStateConfiguringChart,
+  useConfiguratorState,
+} from "../configurator";
 import { useLocale } from "../locales/use-locale";
 import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartColumnsVisualization } from "../charts/column/chart-column";
@@ -10,6 +13,13 @@ import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatt
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 import { ChartTableVisualization } from "../charts/table/chart-table";
+import * as React from "react";
+import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../charts/shared/use-interactive-filters";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -58,68 +68,101 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             {state.meta.description[locale] === "" ? (
               <Trans id="annotation.add.description">
                 [You can add a description here]
-              </Trans> // dataSet.extraMetadata.get("description")!.value
+              </Trans>
             ) : (
               state.meta.description[locale]
             )}
           </Text>
-          <Flex
-            sx={{
-              flexDirection: "column",
-              justifyContent: "space-between",
-              flexGrow: 1,
-            }}
-          >
-            {/* // FIXME: we shouldn't need this condition because the states must be these */}
-            {state.chartConfig.chartType === "column" && (
-              <ChartColumnsVisualization
-                dataSetIri={dataSetIri}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "bar" && (
-              <ChartBarsVisualization
-                dataSetIri={dataSetIri}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "line" && (
-              <ChartLinesVisualization
-                dataSetIri={dataSetIri}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "area" && (
-              <ChartAreasVisualization
-                dataSetIri={dataSetIri}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "scatterplot" && (
-              <ChartScatterplotVisualization
-                dataSetIri={dataSetIri}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "pie" && (
-              <ChartPieVisualization
-                dataSetIri={dataSetIri}
-                chartConfig={state.chartConfig}
-              />
-            )}
-            {state.chartConfig.chartType === "table" && (
-              <ChartTableVisualization
-                dataSetIri={dataSetIri}
-                chartConfig={state.chartConfig}
-              />
-            )}
-          </Flex>
         </>
       )}
+      <InteractiveFiltersProvider>
+        <Chart state={state} />
+      </InteractiveFiltersProvider>
 
       {state.state !== "INITIAL" && state.chartConfig && (
         <ChartFootnotes
           dataSetIri={dataSetIri}
+          chartConfig={state.chartConfig}
+        />
+      )}
+    </Flex>
+  );
+};
+
+const Chart = ({ state }: { state: ConfiguratorStateConfiguringChart }) => {
+  const { dataSet, chartConfig } = state;
+  const { filters } = state.chartConfig;
+  const [interactiveFiltersState] = useInteractiveFilters();
+
+  const interactiveFiltersIsActive =
+    chartConfig.chartType !== "table" &&
+    chartConfig.interactiveFiltersConfig.dataFilters.active;
+
+  // Combine filters from config + interactive filters
+  const queryFilters = useQueryFilters({
+    filters,
+    interactiveFiltersIsActive,
+    interactiveDataFilters: interactiveFiltersState.dataFilters,
+  });
+
+  return (
+    <Flex
+      sx={{
+        flexDirection: "column",
+        justifyContent: "space-between",
+        flexGrow: 1,
+      }}
+    >
+      {/* INTERACTIVE FILTERS */}
+      {state.chartConfig.chartType !== "table" &&
+        state.chartConfig.interactiveFiltersConfig.dataFilters.active && (
+          <InteractiveDataFilters
+            dataFiltersConfig={
+              state.chartConfig.interactiveFiltersConfig.dataFilters
+            }
+          />
+        )}
+      {/* // FIXME: we shouldn't need this condition because the states must be these */}
+      {state.chartConfig.chartType === "column" && (
+        <ChartColumnsVisualization
+          dataSetIri={dataSet}
+          chartConfig={state.chartConfig}
+        />
+      )}
+      {state.chartConfig.chartType === "bar" && (
+        <ChartBarsVisualization
+          dataSetIri={dataSet}
+          chartConfig={state.chartConfig}
+        />
+      )}
+      {state.chartConfig.chartType === "line" && (
+        <ChartLinesVisualization
+          dataSetIri={dataSet}
+          chartConfig={state.chartConfig}
+          queryFilters={queryFilters}
+        />
+      )}
+      {state.chartConfig.chartType === "area" && (
+        <ChartAreasVisualization
+          dataSetIri={dataSet}
+          chartConfig={state.chartConfig}
+        />
+      )}
+      {state.chartConfig.chartType === "scatterplot" && (
+        <ChartScatterplotVisualization
+          dataSetIri={dataSet}
+          chartConfig={state.chartConfig}
+        />
+      )}
+      {state.chartConfig.chartType === "pie" && (
+        <ChartPieVisualization
+          dataSetIri={dataSet}
+          chartConfig={state.chartConfig}
+        />
+      )}
+      {state.chartConfig.chartType === "table" && (
+        <ChartTableVisualization
+          dataSetIri={dataSet}
           chartConfig={state.chartConfig}
         />
       )}
