@@ -1,3 +1,4 @@
+const { IgnorePlugin } = require("webpack");
 const pkg = require("../package.json");
 const withMDX = require("@next/mdx")();
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
@@ -84,6 +85,9 @@ module.exports = withPreconstruct(
             }
           }
         }
+
+        // For some reason these need to be ignored for serverless target
+        config.plugins.push(new IgnorePlugin(/^(pg-native|vue)$/));
 
         return config;
       },
