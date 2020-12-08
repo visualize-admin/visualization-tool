@@ -1,15 +1,16 @@
 import { Plural, t, Trans } from "@lingui/macro";
-import { useRef, useState } from "react";
+import { I18n } from "@lingui/react";
 import { Box, Button, Flex, Text } from "theme-ui";
+import { useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";
-import { MiniSelect, SearchField } from "../../components/form";
-import { Loading } from "../../components/hint";
 import {
   DataCubeResultOrder,
   useDataCubesQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
+import { MiniSelect, SearchField } from "../../components/form";
+import { Loading } from "../../components/hint";
 
 export const DataSetList = () => {
   const locale = useLocale();
@@ -25,26 +26,6 @@ export const DataSetList = () => {
   // Use the debounced query value here only!
   const [{ data }] = useDataCubesQuery({
     variables: { locale, query: debouncedQuery, order },
-  });
-
-  const options = [
-    {
-      value: DataCubeResultOrder.Score,
-      label: t({ id: "dataset.order.relevance", message: `Relevance` }),
-    },
-    {
-      value: DataCubeResultOrder.TitleAsc,
-      label: t({ id: "dataset.order.title", message: `Title` }),
-    },
-    {
-      value: DataCubeResultOrder.CreatedDesc,
-      label: t({ id: "dataset.order.newest", message: `Newest` }),
-    },
-  ];
-
-  const searchLabel = t({
-    id: "dataset.search.label",
-    message: `Search datasets`,
   });
 
   const isSearching = query !== "";
@@ -66,82 +47,111 @@ export const DataSetList = () => {
             borderBottomColor: "monochrome300",
           }}
         >
-          {/* <SectionTitle>
+          <I18n>
+            {({ i18n }) => {
+              const options = [
+                {
+                  value: DataCubeResultOrder.Score,
+                  label: i18n._(t("dataset.order.relevance")`Relevance`),
+                },
+                {
+                  value: DataCubeResultOrder.TitleAsc,
+                  label: i18n._(t("dataset.order.title")`Title`),
+                },
+                {
+                  value: DataCubeResultOrder.CreatedDesc,
+                  label: i18n._(t("dataset.order.newest")`Newest`),
+                },
+              ];
+
+              const searchLabel = i18n._(
+                t("dataset.search.label")`Search datasets`
+              );
+
+              return (
+                <>
+                  {/* <SectionTitle>
             <Trans id="controls.select.dataset">Select Dataset</Trans>
           </SectionTitle> */}
-          <Box
-            sx={{
-              px: 4,
-              pt: 4,
+                  <Box
+                    sx={{
+                      px: 4,
+                      pt: 4,
+                    }}
+                  >
+                    <SearchField
+                      id="datasetSearch"
+                      label={searchLabel}
+                      value={query}
+                      onChange={(e) => {
+                        setQuery(e.currentTarget.value);
+                        if (query === "" && e.currentTarget.value !== "") {
+                          previousOrderRef.current = order;
+                          setOrder(DataCubeResultOrder.Score);
+                        }
+                        if (query !== "" && e.currentTarget.value === "") {
+                          setOrder(previousOrderRef.current);
+                        }
+                      }}
+                      onReset={() => {
+                        setQuery("");
+                        setOrder(previousOrderRef.current);
+                      }}
+                      placeholder={searchLabel}
+                    ></SearchField>
+                  </Box>
+
+                  <Flex sx={{ px: 4, py: 2, justifyContent: "space-between" }}>
+                    <Text
+                      color="secondary"
+                      sx={{
+                        fontFamily: "body",
+                        fontSize: [2, 2, 2],
+                        lineHeight: "24px",
+                      }}
+                      aria-live="polite"
+                    >
+                      <Plural
+                        id="dataset.results"
+                        value={data.dataCubes.length}
+                        _0="No results"
+                        _1="# result"
+                        other="# results"
+                      />
+                    </Text>
+
+                    <Flex sx={{}}>
+                      <label htmlFor="datasetSort">
+                        <Text
+                          color="secondary"
+                          sx={{
+                            fontFamily: "body",
+                            fontSize: [1, 2, 2],
+                            lineHeight: "24px",
+                          }}
+                        >
+                          <Trans id="dataset.sortby">Sort by</Trans>
+                        </Text>
+                      </label>
+
+                      <MiniSelect
+                        id="datasetSort"
+                        value={order}
+                        options={isSearching ? options : options.slice(1)}
+                        onChange={(e) => {
+                          previousOrderRef.current = e.currentTarget
+                            .value as DataCubeResultOrder;
+                          setOrder(
+                            e.currentTarget.value as DataCubeResultOrder
+                          );
+                        }}
+                      ></MiniSelect>
+                    </Flex>
+                  </Flex>
+                </>
+              );
             }}
-          >
-            <SearchField
-              id="datasetSearch"
-              label={searchLabel}
-              value={query}
-              onChange={(e) => {
-                setQuery(e.currentTarget.value);
-                if (query === "" && e.currentTarget.value !== "") {
-                  previousOrderRef.current = order;
-                  setOrder(DataCubeResultOrder.Score);
-                }
-                if (query !== "" && e.currentTarget.value === "") {
-                  setOrder(previousOrderRef.current);
-                }
-              }}
-              onReset={() => {
-                setQuery("");
-                setOrder(previousOrderRef.current);
-              }}
-              placeholder={searchLabel}
-            ></SearchField>
-          </Box>
-
-          <Flex sx={{ px: 4, py: 2, justifyContent: "space-between" }}>
-            <Text
-              color="secondary"
-              sx={{
-                fontFamily: "body",
-                fontSize: [2, 2, 2],
-                lineHeight: "24px",
-              }}
-              aria-live="polite"
-            >
-              <Plural
-                id="dataset.results"
-                value={data.dataCubes.length}
-                zero="No results"
-                one="# result"
-                other="# results"
-              />
-            </Text>
-
-            <Flex sx={{}}>
-              <label htmlFor="datasetSort">
-                <Text
-                  color="secondary"
-                  sx={{
-                    fontFamily: "body",
-                    fontSize: [1, 2, 2],
-                    lineHeight: "24px",
-                  }}
-                >
-                  <Trans id="dataset.sortby">Sort by</Trans>
-                </Text>
-              </label>
-
-              <MiniSelect
-                id="datasetSort"
-                value={order}
-                options={isSearching ? options : options.slice(1)}
-                onChange={(e) => {
-                  previousOrderRef.current = e.currentTarget
-                    .value as DataCubeResultOrder;
-                  setOrder(e.currentTarget.value as DataCubeResultOrder);
-                }}
-              ></MiniSelect>
-            </Flex>
-          </Flex>
+          </I18n>
         </Box>
 
         <Box

@@ -13,29 +13,26 @@ import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
 import { LocaleProvider } from "../locales/use-locale";
 import { useNProgress } from "../lib/use-nprogress";
-import { i18n, parseLocaleString } from "../locales/locales";
+import { catalogs, parseLocaleString } from "../locales/locales";
 import * as defaultTheme from "../themes/federal";
 import { loadTheme, ThemeModule } from "../themes/index";
 
 import "../lib/nprogress.css";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const {
-    query,
-    events: routerEvents,
-    asPath,
-    locale: routerLocale,
-  } = useRouter();
+  const { pathname, query, events: routerEvents, asPath } = useRouter();
   const [themeModule, setThemeModule] = useState<ThemeModule>(defaultTheme);
 
   useNProgress();
 
-  const locale = parseLocaleString(routerLocale ?? "");
-
-  // Immediately activate locale to avoid re-render
-  if (i18n.locale !== locale) {
-    i18n.activate(locale);
-  }
+  /**
+   * Parse locale from query OR pathname
+   * - so we can have dynamic locale query params like /[locale]/create/...
+   * - and static localized pages like /en/index.mdx
+   */
+  const locale = /^\/\[locale\]/.test(pathname)
+    ? parseLocaleString(query.locale?.toString() ?? "")
+    : parseLocaleString(pathname.slice(1));
 
   useEffect(() => {
     document.querySelector("html")?.setAttribute("lang", locale);
@@ -58,17 +55,8 @@ export default function App({ Component, pageProps }: AppProps) {
       analyticsPageView(url);
     };
 
-    const handleRouteStart = (url: string) => {
-      const locale = parseLocaleString(url.slice(1));
-      if (i18n.locale !== locale) {
-        i18n.activate(locale);
-      }
-    };
-
-    routerEvents.on("routeChangeStart", handleRouteStart);
     routerEvents.on("routeChangeComplete", handleRouteChange);
     return () => {
-      routerEvents.off("routeChangeStart", handleRouteStart);
       routerEvents.off("routeChangeComplete", handleRouteChange);
     };
   }, [routerEvents]);
@@ -91,7 +79,7 @@ export default function App({ Component, pageProps }: AppProps) {
         ))}
       </Head>
       <LocaleProvider value={locale}>
-        <I18nProvider i18n={i18n}>
+        <I18nProvider language={locale} catalogs={catalogs}>
           <GraphqlProvider>
             <ThemeProvider theme={themeModule.theme}>
               <ContentMDXProvider>

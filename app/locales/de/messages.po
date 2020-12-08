@@ -21,7 +21,7 @@ msgstr "[ Beschreibung ]"
 msgid "annotation.add.title"
 msgstr "[ Titel ]"
 
-#: app/pages/v/[chartId].tsx:83
+#: app/pages/[locale]/v/[chartId].tsx:83
 msgid "button.copy.visualization"
 msgstr "Visualisierung kopieren"
 
@@ -29,20 +29,20 @@ msgstr "Visualisierung kopieren"
 msgid "button.download.data"
 msgstr "Daten herunterladen"
 
-#: app/components/publish-actions.tsx:146
+#: app/components/publish-actions.tsx:134
 msgid "button.embed"
 msgstr "Einbetten"
 
-#: app/components/publish-actions.tsx:168
-#: app/components/publish-actions.tsx:171
+#: app/components/publish-actions.tsx:156
+#: app/components/publish-actions.tsx:159
 msgid "button.hint.click.to.copy"
 msgstr "Kopieren"
 
-#: app/components/publish-actions.tsx:194
+#: app/components/publish-actions.tsx:182
 msgid "button.hint.copied"
 msgstr "Kopiert!"
 
-#: app/pages/v/[chartId].tsx:78
+#: app/pages/[locale]/v/[chartId].tsx:78
 msgid "button.new.visualization"
 msgstr "Visualisierung erstellen"
 
@@ -58,7 +58,7 @@ msgstr "Zurück"
 msgid "button.publish"
 msgstr "Veröffentlichen"
 
-#: app/components/publish-actions.tsx:83
+#: app/components/publish-actions.tsx:82
 msgid "button.share"
 msgstr "Teilen"
 
@@ -70,7 +70,7 @@ msgstr ""
 msgid "chart.table.number.of.lines"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:109
+#: app/configurator/table/table-chart-options.tsx:106
 msgid "columnStyle.bar"
 msgstr ""
 
@@ -78,20 +78,20 @@ msgstr ""
 msgid "columnStyle.categories"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:105
+#: app/configurator/table/table-chart-options.tsx:102
 msgid "columnStyle.heatmap"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:91
-#: app/configurator/table/table-chart-options.tsx:101
+#: app/configurator/table/table-chart-options.tsx:92
+#: app/configurator/table/table-chart-options.tsx:99
 msgid "columnStyle.text"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:206
+#: app/configurator/table/table-chart-options.tsx:210
 msgid "columnStyle.textStyle.bold"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:199
+#: app/configurator/table/table-chart-options.tsx:206
 msgid "columnStyle.textStyle.regular"
 msgstr ""
 
@@ -156,7 +156,7 @@ msgstr "gestapelt"
 msgid "controls.description"
 msgstr "Beschreibung hinzufügen"
 
-#: app/configurator/components/field.tsx:153
+#: app/configurator/components/field.tsx:156
 msgid "controls.dimension.none"
 msgstr "Keine"
 
@@ -228,7 +228,7 @@ msgstr "Suche zurücksetzen"
 msgid "controls.section.columns"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:130
+#: app/configurator/table/table-chart-options.tsx:129
 msgid "controls.section.columnstyle"
 msgstr ""
 
@@ -244,10 +244,10 @@ msgstr "Beschreiben"
 msgid "controls.section.design"
 msgstr "Design"
 
-#: app/configurator/components/chart-options-selector.tsx:93
-#: app/configurator/components/chart-options-selector.tsx:97
-#: app/configurator/table/table-chart-options.tsx:182
-#: app/configurator/table/table-chart-options.tsx:186
+#: app/configurator/components/chart-options-selector.tsx:94
+#: app/configurator/components/chart-options-selector.tsx:98
+#: app/configurator/table/table-chart-options.tsx:183
+#: app/configurator/table/table-chart-options.tsx:187
 msgid "controls.section.filter"
 msgstr "Filter"
 
@@ -275,7 +275,7 @@ msgstr ""
 #~ msgid "controls.section.settings"
 #~ msgstr ""
 
-#: app/configurator/components/chart-options-selector.tsx:148
+#: app/configurator/components/chart-options-selector.tsx:137
 msgid "controls.section.sorting"
 msgstr "Sortieren"
 
@@ -283,11 +283,11 @@ msgstr "Sortieren"
 #~ msgid "controls.section.table.column"
 #~ msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:239
+#: app/configurator/table/table-chart-options.tsx:245
 msgid "controls.section.tableSettings"
 msgstr ""
 
-#: app/configurator/table/table-chart-sorting-options.tsx:202
+#: app/configurator/table/table-chart-sorting-options.tsx:205
 msgid "controls.section.tableSorting"
 msgstr ""
 
@@ -300,39 +300,39 @@ msgstr ""
 msgid "controls.select.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/components/chart-options-selector.tsx:108
+#: app/configurator/components/chart-options-selector.tsx:109
 msgid "controls.select.column.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/table/table-chart-options.tsx:133
+#: app/configurator/table/table-chart-options.tsx:132
 msgid "controls.select.columnStyle"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:227
+#: app/configurator/table/table-chart-options.tsx:231
 msgid "controls.select.columnStyle.barColorBackground"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:224
+#: app/configurator/table/table-chart-options.tsx:228
 msgid "controls.select.columnStyle.barColorNegative"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:221
+#: app/configurator/table/table-chart-options.tsx:225
 msgid "controls.select.columnStyle.barColorPositive"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:230
+#: app/configurator/table/table-chart-options.tsx:234
 msgid "controls.select.columnStyle.barShowBackground"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:213
+#: app/configurator/table/table-chart-options.tsx:217
 msgid "controls.select.columnStyle.columnColor"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:210
+#: app/configurator/table/table-chart-options.tsx:214
 msgid "controls.select.columnStyle.textColor"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:196
+#: app/configurator/table/table-chart-options.tsx:201
 msgid "controls.select.columnStyle.textStyle"
 msgstr ""
 
@@ -353,8 +353,8 @@ msgstr "Messwert auswählen"
 msgid "controls.sorting.addDimension"
 msgstr ""
 
-#: app/configurator/components/chart-options-selector.tsx:122
-#: app/configurator/components/chart-options-selector.tsx:128
+#: app/configurator/components/chart-options-selector.tsx:146
+#: app/configurator/components/chart-options-selector.tsx:152
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
@@ -366,7 +366,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx:124
+#: app/configurator/components/chart-options-selector.tsx:148
 msgid "controls.sorting.byMeasure"
 msgstr "Messwert"
 
@@ -378,7 +378,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx:126
+#: app/configurator/components/chart-options-selector.tsx:150
 msgid "controls.sorting.byTotalSize"
 msgstr "Gesamtgrösse"
 
@@ -398,28 +398,28 @@ msgstr "Grösste zuerst"
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Kleinste unten"
 
-#: app/configurator/table/table-chart-sorting-options.tsx:70
+#: app/configurator/table/table-chart-sorting-options.tsx:71
 msgid "controls.sorting.removeOption"
 msgstr ""
 
-#: app/configurator/table/table-chart-sorting-options.tsx:109
+#: app/configurator/table/table-chart-sorting-options.tsx:112
 msgid "controls.sorting.selectDimension"
 msgstr ""
 
 #: app/configurator/components/ui-helpers.tsx:179
-#: app/configurator/table/table-chart-sorting-options.tsx:173
+#: app/configurator/table/table-chart-sorting-options.tsx:174
 msgid "controls.sorting.sortBy"
 msgstr "Sortieren nach"
 
-#: app/configurator/table/table-chart-options.tsx:119
+#: app/configurator/table/table-chart-options.tsx:116
 msgid "controls.table.column.group"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:125
+#: app/configurator/table/table-chart-options.tsx:124
 msgid "controls.table.column.hide"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:120
+#: app/configurator/table/table-chart-options.tsx:119
 msgid "controls.table.column.hidefilter"
 msgstr ""
 
@@ -431,7 +431,7 @@ msgstr ""
 msgid "controls.table.sorting"
 msgstr ""
 
-#: app/configurator/table/table-chart-options.tsx:242
+#: app/configurator/table/table-chart-options.tsx:248
 msgid "controls.tableSettings.showSearch"
 msgstr ""
 
@@ -451,27 +451,27 @@ msgstr "Quelle"
 msgid "dataset.metadata.title"
 msgstr "Titel"
 
-#: app/configurator/components/dataset-selector.tsx:31
+#: app/configurator/components/dataset-selector.tsx:46
 msgid "dataset.order.newest"
 msgstr "Neueste"
 
-#: app/configurator/components/dataset-selector.tsx:23
+#: app/configurator/components/dataset-selector.tsx:38
 msgid "dataset.order.relevance"
 msgstr "Relevanz"
 
-#: app/configurator/components/dataset-selector.tsx:27
+#: app/configurator/components/dataset-selector.tsx:42
 msgid "dataset.order.title"
 msgstr "Titel"
 
-#: app/configurator/components/dataset-selector.tsx:76
+#: app/configurator/components/dataset-selector.tsx:77
 msgid "dataset.results"
 msgstr "{0, plural, =0 {Keine Treffer} =1 {# Treffer} other {# Treffer}}"
 
-#: app/configurator/components/dataset-selector.tsx:34
+#: app/configurator/components/dataset-selector.tsx:49
 msgid "dataset.search.label"
 msgstr "Datensätze suchen"
 
-#: app/configurator/components/dataset-selector.tsx:86
+#: app/configurator/components/dataset-selector.tsx:87
 msgid "dataset.sortby"
 msgstr "Sortieren nach"
 
@@ -483,11 +483,11 @@ msgstr "Erste 10 Zeilen"
 msgid "footer.institution.name"
 msgstr "Bundesamt für Umwelt BAFU"
 
-#: app/pages/v/[chartId].tsx:69
+#: app/pages/[locale]/v/[chartId].tsx:69
 msgid "hint.create.your.own.chart"
 msgstr "Sie können diese Visualisierung duplizieren, um eine neue Kopie zu bearbeiten. Oder erstellen Sie eine völlig neue Visualisierung, basierend auf offenen und frei nutzbaren Schweizer Verwaltungsdaten."
 
-#: app/pages/v/[chartId].tsx:65
+#: app/pages/[locale]/v/[chartId].tsx:65
 msgid "hint.how.to.share"
 msgstr "Sie können diese Visualisierung teilen, indem Sie die URL kopieren oder die Einbettungsoptionen verwenden. Zudem können Sie eine neue Visualisierung erstellen oder die gezeigte Visualisierung duplizieren, um deren Kopie zu bearbeiten."
 
@@ -548,39 +548,39 @@ msgstr "Erstellt mit visualize.admin.ch"
 msgid "metadata.source"
 msgstr "Quelle"
 
-#: app/components/publish-actions.tsx:156
+#: app/components/publish-actions.tsx:144
 msgid "publication.embed.AEM"
 msgstr "Einbett-Code für AEM «Externe Applikation»:"
 
-#: app/components/publish-actions.tsx:151
+#: app/components/publish-actions.tsx:139
 msgid "publication.embed.iframe"
 msgstr "Einbett-Code"
 
-#: app/components/publish-actions.tsx:96
+#: app/components/publish-actions.tsx:95
 msgid "publication.popup.share"
 msgstr "Teilen"
 
-#: app/components/publish-actions.tsx:121
+#: app/components/publish-actions.tsx:109
 msgid "publication.share.chart.url"
 msgstr "Diagramm-URL"
 
-#: app/components/publish-actions.tsx:99
+#: app/components/publish-actions.tsx:100
 msgid "publication.share.linktitle.facebook"
 msgstr "Teilen via Facebook"
 
-#: app/components/publish-actions.tsx:107
+#: app/components/publish-actions.tsx:102
 msgid "publication.share.linktitle.mail"
 msgstr "Versenden via E-Mail"
 
-#: app/components/publish-actions.tsx:103
+#: app/components/publish-actions.tsx:101
 msgid "publication.share.linktitle.twitter"
 msgstr "Teilen via Twitter"
 
-#: app/components/publish-actions.tsx:113
+#: app/components/publish-actions.tsx:102
 msgid "publication.share.mail.body"
 msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt habe"
 
-#: app/components/publish-actions.tsx:110
+#: app/components/publish-actions.tsx:102
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 

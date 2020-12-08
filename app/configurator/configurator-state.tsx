@@ -744,7 +744,7 @@ const ConfiguratorStateProviderInternal = ({
               window.localStorage.removeItem(getLocalStorageKey(chartId));
             }
           } else {
-            replace(`/create/new`);
+            replace(`/[locale]/create/[chartId]`, `/${locale}/create/new`);
           }
         }
       } catch {
@@ -767,7 +767,10 @@ const ConfiguratorStateProviderInternal = ({
               getLocalStorageKey(newChartId),
               JSON.stringify(state)
             );
-            push(`/create/${newChartId}`);
+            push(
+              `/[locale]/create/[chartId]`,
+              `/${locale}/create/${newChartId}`
+            );
           } else {
             // Store current state in localstorage
             window.localStorage.setItem(
@@ -782,10 +785,10 @@ const ConfiguratorStateProviderInternal = ({
               const result = await save(state);
               await push(
                 {
-                  pathname: `/v/${result.key}`,
+                  pathname: `/[locale]/v/[chartId]`,
                   query: { publishSuccess: true },
                 },
-                `/v/${result.key}` // Hide publishSuccess=true from URL
+                `/${locale}/v/${result.key}`
               );
             } catch (e) {
               console.error(e);

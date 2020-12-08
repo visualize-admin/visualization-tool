@@ -1,9 +1,10 @@
 import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { Locales } from "../locales/locales";
 import { PUBLIC_URL } from "../domain/env";
 
 type Props = {
-  locale: string;
+  locale: Locales;
   chartId: string;
 };
 

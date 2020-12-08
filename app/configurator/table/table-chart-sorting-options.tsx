@@ -1,4 +1,5 @@
 import { t, Trans } from "@lingui/macro";
+import { I18n } from "@lingui/react";
 import VisuallyHidden from "@reach/visually-hidden";
 import React, { ChangeEvent, useCallback } from "react";
 import {
@@ -194,49 +195,52 @@ const AddTableSortingOption = ({
 
   const columns = useOrderedTableColumns(chartConfig.fields);
 
-  const options = [
-    {
-      value: "-",
-      label: t({
-        id: "controls.sorting.selectDimension",
-        message: `Select a dimension …`,
-      }),
-      disabled: true,
-    },
-    ...columns.flatMap((c) => {
-      if (
-        chartConfig.sorting.some(
-          ({ componentIri }) => componentIri === c.componentIri
-        )
-      ) {
-        return [];
-      }
-
-      const component =
-        metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
-        metaData.measures.find(({ iri }) => iri === c.componentIri);
-
-      return component
-        ? [
-            {
-              value: component.iri,
-              label: component.label,
-            },
-          ]
-        : [];
-    }),
-  ];
   return (
-    <Select
-      id="add-tablesorting"
-      value="-"
-      options={options}
-      label={t({
-        id: "controls.sorting.addDimension",
-        message: `Add dimension`,
-      })}
-      onChange={onChange}
-    />
+    <I18n>
+      {({ i18n }) => {
+        const options = [
+          {
+            value: "-",
+            label: i18n._(
+              t("controls.sorting.selectDimension")`Select a dimension …`
+            ),
+            disabled: true,
+          },
+          ...columns.flatMap((c) => {
+            if (
+              chartConfig.sorting.some(
+                ({ componentIri }) => componentIri === c.componentIri
+              )
+            ) {
+              return [];
+            }
+
+            const component =
+              metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
+              metaData.measures.find(({ iri }) => iri === c.componentIri);
+
+            return component
+              ? [
+                  {
+                    value: component.iri,
+                    label: component.label,
+                  },
+                ]
+              : [];
+          }),
+        ];
+
+        return (
+          <Select
+            id="add-tablesorting"
+            value="-"
+            options={options}
+            label={i18n._(t("controls.sorting.addDimension")`Add dimension`)}
+            onChange={onChange}
+          />
+        );
+      }}
+    </I18n>
   );
 };
 
@@ -283,28 +287,35 @@ const ChangeTableSortingOption = ({
 
   const { componentIri } = chartConfig.sorting[index];
 
-  const options = columns.flatMap((c) => {
-    const component =
-      metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
-      metaData.measures.find(({ iri }) => iri === c.componentIri);
-
-    return component
-      ? [
-          {
-            value: component.iri,
-            label: component.label,
-          },
-        ]
-      : [];
-  });
   return (
-    <Select
-      id={`change-sorting-option-${index}`}
-      value={componentIri}
-      options={options}
-      label={t({ id: "controls.sorting.sortBy", message: `Sort by` })}
-      onChange={onChange}
-    />
+    <I18n>
+      {({ i18n }) => {
+        const options = columns.flatMap((c) => {
+          const component =
+            metaData.dimensions.find(({ iri }) => iri === c.componentIri) ??
+            metaData.measures.find(({ iri }) => iri === c.componentIri);
+
+          return component
+            ? [
+                {
+                  value: component.iri,
+                  label: component.label,
+                },
+              ]
+            : [];
+        });
+
+        return (
+          <Select
+            id={`change-sorting-option-${index}`}
+            value={componentIri}
+            options={options}
+            label={i18n._(t("controls.sorting.sortBy")`Sort by`)}
+            onChange={onChange}
+          />
+        );
+      }}
+    </I18n>
   );
 };
 

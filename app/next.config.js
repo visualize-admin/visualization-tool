@@ -1,12 +1,9 @@
-const { IgnorePlugin } = require("webpack");
 const pkg = require("../package.json");
 const withMDX = require("@next/mdx")();
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 const withPreconstruct = require("@preconstruct/next");
-
-const { locales, defaultLocale } = require("./locales/locales.json");
 
 const VERSION = `v${pkg.version}`;
 
@@ -26,16 +23,19 @@ module.exports = withPreconstruct(
     withMDX({
       publicRuntimeConfig,
 
-      ...(process.env.NETLIFY === "true" ? { target: "serverless" } : {}),
-
       // Build-time env variables
       env: {
         VERSION,
       },
 
-      i18n: {
-        locales,
-        defaultLocale,
+      redirects: async () => {
+        return [
+          {
+            source: "/",
+            destination: "/de",
+            permanent: false,
+          },
+        ];
       },
 
       headers: async () => {
@@ -85,9 +85,6 @@ module.exports = withPreconstruct(
             }
           }
         }
-
-        // For some reason these need to be ignored for serverless target
-        config.plugins.push(new IgnorePlugin(/^(pg-native|vue)$/));
 
         return config;
       },

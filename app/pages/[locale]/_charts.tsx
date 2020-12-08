@@ -1,11 +1,11 @@
-import { NextPage } from "next";
-import NextLink from "next/link";
 import { Box, Flex, Link } from "theme-ui";
-import { ChartPanel } from "../components/chart-panel";
-import { ChartPublished } from "../components/chart-published";
-import { ContentLayout } from "../components/layout";
-import { Config } from "../configurator";
-import { getAllConfigs } from "../db/config";
+import { NextPage } from "next";
+import { ChartPanel } from "../../components/chart-panel";
+import { ChartPublished } from "../../components/chart-published";
+import { ContentLayout } from "../../components/layout";
+import { LocalizedLink } from "../../components/links";
+import { getAllConfigs } from "../../db/config";
+import { Config } from "../../configurator";
 
 type PageProps = {
   configs: {
@@ -44,7 +44,10 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                       meta={meta}
                       configKey={key}
                     />
-                    <NextLink href={`/v/${key}`}>
+                    <LocalizedLink
+                      pathname={`/[locale]/v/[chartId]`}
+                      query={{ chartId: key }}
+                    >
                       <Link
                         sx={{
                           background: "transparent",
@@ -66,7 +69,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                       >
                         →
                       </Link>
-                    </NextLink>
+                    </LocalizedLink>
                   </ChartPanel>
                 </Box>
               );

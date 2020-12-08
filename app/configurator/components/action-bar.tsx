@@ -1,7 +1,6 @@
 import { Trans } from "@lingui/macro";
-import NextLink from "next/link";
-import { ReactNode, useCallback } from "react";
 import { Button, Flex } from "theme-ui";
+import { ReactNode, useCallback } from "react";
 import {
   canTransitionToNextStep,
   canTransitionToPreviousStep,
@@ -9,6 +8,7 @@ import {
 } from "..";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
+import { LocalizedLink } from "../../components/links";
 
 export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [state, dispatch] = useConfiguratorState();
@@ -65,11 +65,15 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
         </>
       ) : state.state === "SELECTING_CHART_TYPE" ? (
         <>
-          <NextLink href="/create/new" passHref>
+          <LocalizedLink
+            pathname="/[locale]/create/[chartId]"
+            query={{ chartId: "new" }}
+            passHref
+          >
             <Button as="a" variant="inline" sx={{ mr: 4 }}>
               {previousLabel}
             </Button>
-          </NextLink>
+          </LocalizedLink>
           <NextButton
             label={nextLabel}
             onClick={goNext}

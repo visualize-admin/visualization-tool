@@ -10,7 +10,7 @@ export {
 } from "./configurator";
 export { LocaleProvider, useLocale } from "./locales/use-locale";
 export {
-  i18n,
+  catalogs,
   defaultLocale,
   locales,
   parseLocaleString,

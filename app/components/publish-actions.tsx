@@ -1,4 +1,5 @@
 import { t, Trans } from "@lingui/macro";
+import { I18n } from "@lingui/react";
 import { Box, Button, Flex, Input, Link, Text } from "theme-ui";
 import * as clipboard from "clipboard-polyfill/text";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
@@ -11,7 +12,6 @@ import {
 import { Icon, IconName } from "../icons";
 import { useLocale } from "../locales/use-locale";
 import { IconLink } from "./links";
-import { useI18n } from "../lib/use-i18n";
 
 export const PublishActions = ({ configKey }: { configKey: string }) => {
   const locale = useLocale();
@@ -120,7 +120,6 @@ const PopUp = ({
 
 export const Share = ({ configKey, locale }: EmbedShareProps) => {
   const [shareUrl, setShareUrl] = useState("");
-  const i18n = useI18n();
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
   }, [configKey, locale]);
@@ -146,46 +145,43 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               <Trans id="publication.popup.share">Share</Trans>:
             </Text>
             <Flex color="primary">
-              <IconLink
-                iconName="facebook"
-                title={i18n._(
-                  t({
-                    id: "publication.share.linktitle.facebook",
-                    message: `Share on Facebook`,
-                  })
+              <I18n>
+                {({ i18n }) => (
+                  <>
+                    <IconLink
+                      iconName="facebook"
+                      title={i18n._(
+                        t(
+                          "publication.share.linktitle.facebook"
+                        )`Share on Facebook`
+                      )}
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                    ></IconLink>
+                    <IconLink
+                      iconName="twitter"
+                      title={i18n._(
+                        t(
+                          "publication.share.linktitle.twitter"
+                        )`Share on Twitter`
+                      )}
+                      href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
+                    ></IconLink>
+                    <IconLink
+                      iconName="mail"
+                      title={i18n._(
+                        t("publication.share.linktitle.mail")`Share via email`
+                      )}
+                      href={`mailto:?subject=${i18n._(
+                        t("publication.share.mail.subject")`visualize.admin.ch`
+                      )}&body=${i18n._(
+                        t(
+                          "publication.share.mail.body"
+                        )`Here is a link to a visualization I created on visualize.admin.ch`
+                      )}: ${shareUrl}`}
+                    ></IconLink>
+                  </>
                 )}
-                href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-              ></IconLink>
-              <IconLink
-                iconName="twitter"
-                title={i18n._(
-                  t({
-                    id: "publication.share.linktitle.twitter",
-                    message: `Share on Twitter`,
-                  })
-                )}
-                href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
-              ></IconLink>
-              <IconLink
-                iconName="mail"
-                title={i18n._(
-                  t({
-                    id: "publication.share.linktitle.mail",
-                    message: `Share via email`,
-                  })
-                )}
-                href={`mailto:?subject=${i18n._(
-                  t({
-                    id: "publication.share.mail.subject",
-                    message: `visualize.admin.ch`,
-                  })
-                )}&body=${i18n._(
-                  t({
-                    id: "publication.share.mail.body",
-                    message: `Here is a link to a visualization I created on visualize.admin.ch`,
-                  })
-                )}: ${shareUrl}`}
-              ></IconLink>
+              </I18n>
             </Flex>
           </Flex>
           <Box mt={2}>

@@ -1,23 +1,10 @@
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import { ReactNode } from "react";
-import { Box, Flex, Link } from "theme-ui";
-import contentRoutes from "../content-routes.json";
-import { locales } from "../locales/locales.json";
+import { CurrentPageLink } from "./links";
 import { useLocale } from "../locales/use-locale";
+import { Link, Box, Flex } from "theme-ui";
+import NextLink from "next/link";
+import contentRoutes from "../content-routes.json";
 
-const CurrentPageLink = ({
-  locale,
-  ...rest
-}: {
-  locale: string;
-  passHref?: boolean;
-  children: ReactNode;
-}) => {
-  const { pathname, query } = useRouter();
-
-  return <NextLink {...rest} href={{ pathname, query }} locale={locale} />;
-};
+const localesOrder = ["de", "fr", "it", "en"];
 
 export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
   const currentLocale = useLocale();
@@ -42,7 +29,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         justifyContent: "flex-end",
       }}
     >
-      {locales.map((locale) => {
+      {localesOrder.map((locale) => {
         const alternate = alternates?.[locale];
 
         const linkEl = (
@@ -80,7 +67,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         return (
           <Box as="li" key={locale} sx={{ ml: 1, p: 0 }}>
             {alternate ? (
-              <NextLink href={alternate.path} passHref locale={false}>
+              <NextLink href={alternate.path} passHref>
                 {linkEl}
               </NextLink>
             ) : (

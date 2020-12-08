@@ -1,7 +1,8 @@
 import { t } from "@lingui/macro";
-import get from "lodash/get";
-import { ChangeEvent, ReactNode, useCallback } from "react";
+import { I18n } from "@lingui/react";
 import { Box, Flex } from "theme-ui";
+import get from "lodash/get";
+import React, { ChangeEvent, ReactNode, useCallback } from "react";
 import {
   FIELD_VALUE_NONE,
   FilterValueSingle,
@@ -11,24 +12,27 @@ import {
   useChartOptionRadioField,
   useConfiguratorState,
   useMetaField,
-  useSingleFilterField,
+  useSingleFilterField
 } from "..";
 import { Checkbox, Input, Label, Radio, Select } from "../../components/form";
 import {
   ComponentFieldsFragment,
-  DimensionFieldsWithValuesFragment,
+  DimensionFieldsWithValuesFragment
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
+import { Locales } from "../../locales/locales";
 import {
   useChartOptionBooleanField,
-  useChartOptionSelectField,
+  useChartOptionSelectField
 } from "../config-form";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
-  FilterTab,
+
+
+  FilterTab
 } from "./chart-controls/control-tab";
 import { getPalette } from "./ui-helpers";
 
@@ -124,7 +128,7 @@ export const MetaInputField = ({
 }: {
   label: string | ReactNode;
   metaKey: string;
-  locale: string;
+  locale: Locales;
   value?: string;
   disabled?: boolean;
 }) => {
@@ -344,27 +348,32 @@ export const ChartFieldField = ({
     dataSetMetadata,
   });
 
-  const noneLabel = t({ id: "controls.dimension.none", message: `None` });
-
   return (
-    <Select
-      key={`select-${field}-dimension`}
-      id={field}
-      label={label}
-      disabled={disabled}
-      options={
-        optional
-          ? [
-              {
-                value: FIELD_VALUE_NONE,
-                label: noneLabel,
-              },
-              ...options,
-            ]
-          : options
-      }
-      {...fieldProps}
-    ></Select>
+    <I18n>
+      {({ i18n }) => {
+        const noneLabel = i18n._(t("controls.dimension.none")`None`);
+        return (
+          <Select
+            key={`select-${field}-dimension`}
+            id={field}
+            label={label}
+            disabled={disabled}
+            options={
+              optional
+                ? [
+                    {
+                      value: FIELD_VALUE_NONE,
+                      label: noneLabel,
+                    },
+                    ...options,
+                  ]
+                : options
+            }
+            {...fieldProps}
+          ></Select>
+        );
+      }}
+    </I18n>
   );
 };
 
