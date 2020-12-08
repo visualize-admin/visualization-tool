@@ -1,9 +1,23 @@
-import { CurrentPageLink } from "./links";
-import { useLocale } from "../locales/use-locale";
-import { Link, Box, Flex } from "theme-ui";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
+import { ReactNode } from "react";
+import { Box, Flex, Link } from "theme-ui";
 import contentRoutes from "../content-routes.json";
 import { locales } from "../locales/locales.json";
+import { useLocale } from "../locales/use-locale";
+
+const CurrentPageLink = ({
+  locale,
+  ...rest
+}: {
+  locale: string;
+  passHref?: boolean;
+  children: ReactNode;
+}) => {
+  const { pathname, query } = useRouter();
+
+  return <NextLink {...rest} href={{ pathname, query }} locale={locale} />;
+};
 
 export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
   const currentLocale = useLocale();
