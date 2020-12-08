@@ -1,14 +1,18 @@
+import * as React from "react";
 import { Flex, Text } from "theme-ui";
+import { ChartAreasVisualization } from "../charts/area/chart-area";
+import { ChartBarsVisualization } from "../charts/bar/chart-bar";
+import { ChartColumnsVisualization } from "../charts/column/chart-column";
+import { ChartLinesVisualization } from "../charts/line/chart-lines";
+import { ChartPieVisualization } from "../charts/pie/chart-pie";
+import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
+import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
+import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
+import { ChartTableVisualization } from "../charts/table/chart-table";
 import { ChartConfig, Meta } from "../configurator";
 import { useLocale } from "../locales/use-locale";
-import { ChartAreasVisualization } from "../charts/area/chart-area";
-import { ChartColumnsVisualization } from "../charts/column/chart-column";
-import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 import { ChartFootnotes } from "./chart-footnotes";
-import { ChartLinesVisualization } from "../charts/line/chart-lines";
-import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
-import { ChartPieVisualization } from "../charts/pie/chart-pie";
-import { ChartTableVisualization } from "../charts/table/chart-table";
 
 export const ChartPublished = ({
   dataSet,
@@ -24,80 +28,132 @@ export const ChartPublished = ({
   const locale = useLocale();
 
   return (
-    <Flex
-      p={5}
-      sx={{
-        flexGrow: 1,
-        color: "monochrome800",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
-      {meta.title[locale] !== "" && (
-        <Text variant="heading2" mb={2}>
-          {meta.title[locale]}
-        </Text>
-      )}
-      {meta.description[locale] && (
-        <Text variant="paragraph1" mb={2}>
-          {meta.description[locale]}
-        </Text>
-      )}
+    <>
       <Flex
+        p={5}
         sx={{
+          flexGrow: 1,
+          color: "monochrome800",
           flexDirection: "column",
           justifyContent: "space-between",
-          flexGrow: 1,
         }}
       >
-        {chartConfig.chartType === "bar" && (
-          <ChartBarsVisualization
-            dataSetIri={dataSet}
-            chartConfig={chartConfig}
-          />
+        {meta.title[locale] !== "" && (
+          <Text variant="heading2" mb={2}>
+            {meta.title[locale]}
+          </Text>
         )}
-        {chartConfig.chartType === "column" && (
-          <ChartColumnsVisualization
-            dataSetIri={dataSet}
-            chartConfig={chartConfig}
-          />
+        {meta.description[locale] && (
+          <Text variant="paragraph1" mb={2}>
+            {meta.description[locale]}
+          </Text>
         )}
-        {chartConfig.chartType === "line" && (
-          <ChartLinesVisualization
-            dataSetIri={dataSet}
-            chartConfig={chartConfig}
-          />
-        )}
-        {chartConfig.chartType === "area" && (
-          <ChartAreasVisualization
-            dataSetIri={dataSet}
-            chartConfig={chartConfig}
-          />
-        )}
-        {chartConfig.chartType === "scatterplot" && (
-          <ChartScatterplotVisualization
-            dataSetIri={dataSet}
-            chartConfig={chartConfig}
-          />
-        )}
-        {chartConfig.chartType === "pie" && (
-          <ChartPieVisualization
-            dataSetIri={dataSet}
-            chartConfig={chartConfig}
-          />
-        )}
-        {chartConfig.chartType === "table" && (
-          <ChartTableVisualization
-            dataSetIri={dataSet}
-            chartConfig={chartConfig}
-          />
-        )}
+        <InteractiveFiltersProvider>
+          <ChartWithFilters dataSet={dataSet} chartConfig={chartConfig} />
+          {chartConfig && (
+            <ChartFootnotes
+              dataSetIri={dataSet}
+              chartConfig={chartConfig}
+              configKey={configKey}
+            />
+          )}
+        </InteractiveFiltersProvider>
       </Flex>
-      <ChartFootnotes
-        dataSetIri={dataSet}
-        chartConfig={chartConfig}
-        configKey={configKey}
-      />
+    </>
+  );
+};
+
+const ChartWithFilters = ({
+  dataSet,
+  chartConfig,
+}: {
+  dataSet: string;
+  chartConfig: ChartConfig;
+}) => {
+  return (
+    <Flex
+      sx={{
+        flexDirection: "column",
+        justifyContent: "space-between",
+        flexGrow: 1,
+      }}
+    >
+      {/* INTERACTIVE FILTERS */}
+      {chartConfig.chartType !== "table" &&
+        chartConfig.interactiveFiltersConfig.dataFilters.active && (
+          <InteractiveDataFilters
+            dataSet={dataSet}
+            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
+            chartConfig={chartConfig}
+          />
+        )}
+      <Chart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>
+  );
+};
+
+const Chart = ({
+  dataSet,
+  chartConfig,
+}: {
+  dataSet: string;
+  chartConfig: ChartConfig;
+}) => {
+  const { filters } = chartConfig;
+
+  const interactiveFiltersIsActive =
+    chartConfig.chartType !== "table" &&
+    chartConfig.interactiveFiltersConfig.dataFilters.active;
+
+  // Combine filters from config + interactive filters
+  const queryFilters = useQueryFilters({
+    filters,
+    interactiveFiltersIsActive,
+  });
+
+  return (
+    <>
+      {/* CHARTS */}
+      {chartConfig.chartType === "column" && (
+        <ChartColumnsVisualization
+          dataSetIri={dataSet}
+          chartConfig={chartConfig}
+        />
+      )}
+      {chartConfig.chartType === "bar" && (
+        <ChartBarsVisualization
+          dataSetIri={dataSet}
+          chartConfig={chartConfig}
+        />
+      )}
+      {chartConfig.chartType === "line" && (
+        <ChartLinesVisualization
+          dataSetIri={dataSet}
+          chartConfig={chartConfig}
+          queryFilters={queryFilters}
+        />
+      )}
+      {chartConfig.chartType === "area" && (
+        <ChartAreasVisualization
+          dataSetIri={dataSet}
+          chartConfig={chartConfig}
+        />
+      )}
+      {chartConfig.chartType === "scatterplot" && (
+        <ChartScatterplotVisualization
+          dataSetIri={dataSet}
+          chartConfig={chartConfig}
+        />
+      )}
+      {chartConfig.chartType === "pie" && (
+        <ChartPieVisualization dataSetIri={dataSet} chartConfig={chartConfig} />
+      )}
+      {chartConfig.chartType === "table" && (
+        <ChartTableVisualization
+          dataSetIri={dataSet}
+          chartConfig={chartConfig}
+        />
+      )}
+    </>
   );
 };

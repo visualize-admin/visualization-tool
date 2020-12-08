@@ -1,10 +1,7 @@
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
-import {
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
-} from "../config-types";
+import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import { InteractveFilterType } from "./interactive-filters-configurator";
 import {

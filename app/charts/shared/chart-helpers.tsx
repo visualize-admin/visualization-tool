@@ -1,12 +1,7 @@
 import { useMemo } from "react";
 import { isNumber } from "util";
-import {
-  ConfiguratorStateConfiguringChart,
-  Filters,
-  InteractiveFiltersConfig,
-  useConfiguratorState,
-} from "../../configurator";
-import { ObservationValue, Observation } from "../../domain/data";
+import { Filters, useConfiguratorState } from "../../configurator";
+import { Observation, ObservationValue } from "../../domain/data";
 import {
   InteractiveFiltersState,
   useInteractiveFilters,

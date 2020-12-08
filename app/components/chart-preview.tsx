@@ -11,13 +11,7 @@ import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 import { ChartTableVisualization } from "../charts/table/chart-table";
-import {
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStateDescribingChart,
-  ConfiguratorStatePublishing,
-  ConfiguratorStateSelectingChartType,
-  useConfiguratorState,
-} from "../configurator";
+import { ChartConfig, useConfiguratorState } from "../configurator";
 import { useLocale } from "../locales/use-locale";
 import { ChartFootnotes } from "./chart-footnotes";
 
@@ -77,7 +71,10 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             </Text>
           </>
           <InteractiveFiltersProvider>
-            <ChartWithFilters state={state} />
+            <ChartWithFilters
+              dataSet={state.dataSet}
+              chartConfig={state.chartConfig}
+            />
             {state.chartConfig && (
               <ChartFootnotes
                 dataSetIri={dataSetIri}
@@ -91,13 +88,11 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   );
 };
 const ChartWithFilters = ({
-  state,
+  dataSet,
+  chartConfig,
 }: {
-  state:
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing
-    | ConfiguratorStateSelectingChartType;
+  dataSet: string;
+  chartConfig: ChartConfig;
 }) => {
   return (
     <Flex
@@ -108,35 +103,31 @@ const ChartWithFilters = ({
       }}
     >
       {/* INTERACTIVE FILTERS */}
-      {state.chartConfig.chartType !== "table" &&
-        state.chartConfig.interactiveFiltersConfig.dataFilters.active && (
+      {chartConfig.chartType !== "table" &&
+        chartConfig.interactiveFiltersConfig.dataFilters.active && (
           <InteractiveDataFilters
-            dataFiltersConfig={
-              state.chartConfig.interactiveFiltersConfig.dataFilters
-            }
-            state={state}
+            dataSet={dataSet}
+            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
+            chartConfig={chartConfig}
           />
         )}
-      <Chart state={state} />
+      <Chart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>
   );
 };
 
 const Chart = ({
-  state,
+  dataSet,
+  chartConfig,
 }: {
-  state:
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateDescribingChart
-    | ConfiguratorStatePublishing
-    | ConfiguratorStateSelectingChartType;
+  dataSet: string;
+  chartConfig: ChartConfig;
 }) => {
-  const { dataSet } = state;
-  const { filters } = state.chartConfig;
+  const { filters } = chartConfig;
 
   const interactiveFiltersIsActive =
-    state.chartConfig.chartType !== "table" &&
-    state.chartConfig.interactiveFiltersConfig.dataFilters.active;
+    chartConfig.chartType !== "table" &&
+    chartConfig.interactiveFiltersConfig.dataFilters.active;
 
   // Combine filters from config + interactive filters
   const queryFilters = useQueryFilters({
@@ -147,47 +138,44 @@ const Chart = ({
   return (
     <>
       {/* CHARTS */}
-      {state.chartConfig.chartType === "column" && (
+      {chartConfig.chartType === "column" && (
         <ChartColumnsVisualization
           dataSetIri={dataSet}
-          chartConfig={state.chartConfig}
+          chartConfig={chartConfig}
         />
       )}
-      {state.chartConfig.chartType === "bar" && (
+      {chartConfig.chartType === "bar" && (
         <ChartBarsVisualization
           dataSetIri={dataSet}
-          chartConfig={state.chartConfig}
+          chartConfig={chartConfig}
         />
       )}
-      {state.chartConfig.chartType === "line" && (
+      {chartConfig.chartType === "line" && (
         <ChartLinesVisualization
           dataSetIri={dataSet}
-          chartConfig={state.chartConfig}
+          chartConfig={chartConfig}
           queryFilters={queryFilters}
         />
       )}
-      {state.chartConfig.chartType === "area" && (
+      {chartConfig.chartType === "area" && (
         <ChartAreasVisualization
           dataSetIri={dataSet}
-          chartConfig={state.chartConfig}
+          chartConfig={chartConfig}
         />
       )}
-      {state.chartConfig.chartType === "scatterplot" && (
+      {chartConfig.chartType === "scatterplot" && (
         <ChartScatterplotVisualization
           dataSetIri={dataSet}
-          chartConfig={state.chartConfig}
+          chartConfig={chartConfig}
         />
       )}
-      {state.chartConfig.chartType === "pie" && (
-        <ChartPieVisualization
-          dataSetIri={dataSet}
-          chartConfig={state.chartConfig}
-        />
+      {chartConfig.chartType === "pie" && (
+        <ChartPieVisualization dataSetIri={dataSet} chartConfig={chartConfig} />
       )}
-      {state.chartConfig.chartType === "table" && (
+      {chartConfig.chartType === "table" && (
         <ChartTableVisualization
           dataSetIri={dataSet}
-          chartConfig={state.chartConfig}
+          chartConfig={chartConfig}
         />
       )}
     </>
