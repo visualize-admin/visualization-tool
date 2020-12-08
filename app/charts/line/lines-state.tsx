@@ -104,20 +104,9 @@ const useLinesState = ({
 
   const xKey = fields.x.componentIri;
 
-  // Apply interactive data filters (additional data not visually encoded)
-  const { componentIris } = interactiveFiltersConfig.dataFilters;
-  const { dataFilters } = interactiveFilters.dataFilters;
-
-  const filteredData = data;
-  // data.filter((d) =>
-  //   componentIris.every((dim) => {
-  //     return d[dim] === dataFilters[dim];
-  //   })
-  // );
-
   const sortedData = useMemo(
-    () => [...filteredData].sort((a, b) => ascending(getX(a), getX(b))),
-    [filteredData, getX]
+    () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
+    [data, getX]
   );
   const allDataGroupedMap = group(sortedData, getGroups);
   const allDataWide = getWideData({
@@ -349,18 +338,18 @@ export const LineChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <InteractiveFiltersProvider>
-          <LineChartProvider
-            data={data}
-            fields={fields}
-            dimensions={dimensions}
-            measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
-            aspectRatio={aspectRatio}
-          >
-            {children}
-          </LineChartProvider>
-        </InteractiveFiltersProvider>
+        {/* <InteractiveFiltersProvider> */}
+        <LineChartProvider
+          data={data}
+          fields={fields}
+          dimensions={dimensions}
+          measures={measures}
+          interactiveFiltersConfig={interactiveFiltersConfig}
+          aspectRatio={aspectRatio}
+        >
+          {children}
+        </LineChartProvider>
+        {/* </InteractiveFiltersProvider> */}
       </InteractionProvider>
     </Observer>
   );
