@@ -18,7 +18,7 @@ export const InteractiveDataFilters = ({
   const [{ dataSet }] = useConfiguratorState();
 
   return (
-    <Box sx={{ my: 4 }}>
+    <Box>
       {dataSet &&
         dataFiltersConfig.componentIris.map((d, i) => (
           <DataFilterDropdown key={i} dataSetIri={dataSet} dimensionIri={d} />
@@ -64,7 +64,7 @@ const DataFilterDropdown = ({
           label={dimension.label}
           options={dimension.values.map((v) => ({
             label: v.label,
-            value: v.label,
+            value: v.value,
           }))}
           disabled={false}
           onChange={setDataFilter}
