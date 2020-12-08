@@ -25,6 +25,8 @@ module.exports = withPreconstruct(
     withMDX({
       publicRuntimeConfig,
 
+      ...(process.env.NETLIFY === "true" ? { target: "serverless" } : {}),
+
       // Build-time env variables
       env: {
         VERSION,
