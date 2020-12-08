@@ -14,41 +14,35 @@ const ComponentType = t.union([
 export type ComponentType = t.TypeOf<typeof ComponentType>;
 
 // Filters
-const FilterValueMulti = t.intersection([
-  t.type(
-    {
-      type: t.literal("multi"),
-      values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
-    },
-    "FilterValueMulti"
-  ),
-  t.partial({ skip: t.boolean }),
-]);
+const FilterValueMulti = t.type(
+  {
+    type: t.literal("multi"),
+    values: t.record(t.string, t.literal(true)), // undefined values will be removed when serializing to JSON
+  },
+  "FilterValueMulti"
+);
+
 export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
 
-const FilterValueSingle = t.intersection([
-  t.type(
-    {
-      type: t.literal("single"),
-      value: t.string,
-    },
-    "FilterValueSingle"
-  ),
-  t.partial({ skip: t.boolean }),
-]);
+const FilterValueSingle = t.type(
+  {
+    type: t.literal("single"),
+    value: t.string,
+  },
+  "FilterValueSingle"
+);
+
 export type FilterValueSingle = t.TypeOf<typeof FilterValueSingle>;
 
-const FilterValueRange = t.intersection([
-  t.type(
-    {
-      type: t.literal("range"),
-      from: t.string,
-      to: t.string,
-    },
-    "FilterValueRange"
-  ),
-  t.partial({ skip: t.boolean }),
-]);
+const FilterValueRange = t.type(
+  {
+    type: t.literal("range"),
+    from: t.string,
+    to: t.string,
+  },
+  "FilterValueRange"
+);
+
 export type FilterValueRange = t.TypeOf<typeof FilterValueRange>;
 
 const FilterValue = t.union(
