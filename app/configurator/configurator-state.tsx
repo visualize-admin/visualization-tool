@@ -736,7 +736,7 @@ const ConfiguratorStateProviderInternal = ({
               window.localStorage.removeItem(getLocalStorageKey(chartId));
             }
           } else {
-            replace(`/create/new`, undefined);
+            replace(`/create/new`);
           }
         }
       } catch {
