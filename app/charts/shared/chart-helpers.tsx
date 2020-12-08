@@ -1,8 +1,16 @@
 import { useMemo } from "react";
 import { isNumber } from "util";
-import { Filters } from "../../configurator";
+import {
+  ConfiguratorStateConfiguringChart,
+  Filters,
+  InteractiveFiltersConfig,
+  useConfiguratorState,
+} from "../../configurator";
 import { ObservationValue, Observation } from "../../domain/data";
-import { InteractiveFiltersState } from "./use-interactive-filters";
+import {
+  InteractiveFiltersState,
+  useInteractiveFilters,
+} from "./use-interactive-filters";
 
 // Prepare filters used in data query,
 // merges publisher-defined filters (editor)
@@ -10,51 +18,27 @@ import { InteractiveFiltersState } from "./use-interactive-filters";
 export const useQueryFilters = ({
   filters,
   interactiveFiltersIsActive,
-  interactiveDataFilters,
 }: {
   filters: Filters;
   interactiveFiltersIsActive: boolean;
-  interactiveDataFilters: Filters;
 }): Filters => {
-  const queryFilters = useMemo(
-    () =>
-      interactiveFiltersIsActive
-        ? { ...filters, ...interactiveDataFilters }
-        : filters,
-    [filters, interactiveDataFilters, interactiveFiltersIsActive]
-  );
-  console.log("queryFilters in hook", queryFilters);
+  const [configState] = useConfiguratorState();
+  const [IFstate] = useInteractiveFilters();
 
-  return queryFilters;
+  if (
+    (configState.state === "CONFIGURING_CHART" ||
+      configState.state === "DESCRIBING_CHART") &&
+    configState.chartConfig.chartType !== "table"
+  ) {
+    const queryFilters = interactiveFiltersIsActive
+      ? { ...filters, ...IFstate.dataFilters }
+      : filters;
+
+    return queryFilters;
+  } else {
+    return filters;
+  }
 };
-
-// export const useQueryFiltersOld = ({
-//   filters,
-//   interactiveFiltersIsActive,
-// }: {
-//   filters: Filters;
-//   interactiveFiltersIsActive: boolean;
-// }): Filters => {
-//   const queryFilters = useMemo(() => {
-//     const filtersWithoutInteractiveFilters = Object.keys(filters).reduce(
-//       (notSkippedFilters, key) => {
-//         if (filters[key].skip) {
-//           return { ...notSkippedFilters };
-//         } else if (!filters[key].skip) {
-//           return { ...notSkippedFilters, [key]: filters[key] };
-//         } else {
-//           return { ...notSkippedFilters, [key]: filters[key] };
-//         }
-//       },
-//       {}
-//     );
-
-//     return interactiveFiltersIsActive
-//       ? filtersWithoutInteractiveFilters
-//       : filters;
-//   }, [filters, interactiveFiltersIsActive]);
-//   return queryFilters;
-// };
 
 // Prepare data used in charts.
 // Different than the full dataset because
