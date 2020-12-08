@@ -116,12 +116,14 @@ const Chart = ({
         <ChartColumnsVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
+          queryFilters={queryFilters}
         />
       )}
       {chartConfig.chartType === "bar" && (
         <ChartBarsVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
+          queryFilters={queryFilters}
         />
       )}
       {chartConfig.chartType === "line" && (
@@ -135,16 +137,22 @@ const Chart = ({
         <ChartAreasVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
+          queryFilters={queryFilters}
         />
       )}
       {chartConfig.chartType === "scatterplot" && (
         <ChartScatterplotVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
+          queryFilters={queryFilters}
         />
       )}
       {chartConfig.chartType === "pie" && (
-        <ChartPieVisualization dataSetIri={dataSet} chartConfig={chartConfig} />
+        <ChartPieVisualization
+          dataSetIri={dataSet}
+          chartConfig={chartConfig}
+          queryFilters={queryFilters}
+        />
       )}
       {chartConfig.chartType === "table" && (
         <ChartTableVisualization

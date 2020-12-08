@@ -1,6 +1,13 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
 import {
+  Loading,
+  LoadingOverlay,
+  NoDataHint,
+  OnlyNegativeDataHint,
+} from "../../components/hint";
+import {
+  Filters,
   InteractiveFiltersConfig,
   PieConfig,
   PieFields,
@@ -17,19 +24,15 @@ import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Pie } from "./pie";
 import { PieChart } from "./pie-state";
-import {
-  Loading,
-  LoadingOverlay,
-  NoDataHint,
-  OnlyNegativeDataHint,
-} from "../../components/hint";
 
 export const ChartPieVisualization = ({
   dataSetIri,
   chartConfig,
+  queryFilters,
 }: {
   dataSetIri: string;
   chartConfig: PieConfig;
+  queryFilters: Filters;
 }) => {
   const locale = useLocale();
 
@@ -38,7 +41,7 @@ export const ChartPieVisualization = ({
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters,
+      filters: queryFilters,
     },
   });
 

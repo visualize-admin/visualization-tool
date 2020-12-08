@@ -1,31 +1,31 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
+import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import {
   Filters,
   InteractiveFiltersConfig,
   LineConfig,
   LineFields,
 } from "../../configurator";
-import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
+import { AxisHeightLinear } from "../shared/axis-height-linear";
+import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
+import { BrushTime } from "../shared/brush";
+import { ChartContainer, ChartSvg } from "../shared/containers";
 import { HoverDotMultiple } from "../shared/interaction/hover-dots-multiple";
 import { Ruler } from "../shared/interaction/ruler";
 import { Tooltip } from "../shared/interaction/tooltip";
-import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
-import { AxisHeightLinear } from "../shared/axis-height-linear";
-import { ChartContainer, ChartSvg } from "../shared/containers";
-import { InteractionHorizontal } from "../shared/overlay-horizontal";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
+import { InteractionHorizontal } from "../shared/overlay-horizontal";
 import { Lines } from "./lines";
 import { LineChart } from "./lines-state";
-import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { BrushTime } from "../shared/brush";
 
 export const ChartLinesVisualization = ({
   dataSetIri,

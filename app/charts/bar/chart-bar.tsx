@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
 import {
+  Filters,
   BarConfig,
   BarFields,
   InteractiveFiltersConfig,
@@ -25,9 +26,11 @@ import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 export const ChartBarsVisualization = ({
   dataSetIri,
   chartConfig,
+  queryFilters,
 }: {
   dataSetIri: string;
   chartConfig: BarConfig;
+  queryFilters: Filters;
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeObservationsQuery({
@@ -35,7 +38,7 @@ export const ChartBarsVisualization = ({
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.x.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters,
+      filters: queryFilters,
     },
   });
 

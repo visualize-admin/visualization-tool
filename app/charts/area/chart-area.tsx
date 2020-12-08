@@ -1,36 +1,39 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
+import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import {
   AreaConfig,
   AreaFields,
+  Filters,
   InteractiveFiltersConfig,
 } from "../../configurator";
-import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
+import { AxisHeightLinear } from "../shared/axis-height-linear";
+import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
+import { BrushTime } from "../shared/brush";
+import { ChartContainer, ChartSvg } from "../shared/containers";
 import { Ruler } from "../shared/interaction/ruler";
 import { Tooltip } from "../shared/interaction/tooltip";
+import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
+import { InteractionHorizontal } from "../shared/overlay-horizontal";
 import { Areas } from "./areas";
 import { AreaChart } from "./areas-state";
-import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
-import { AxisHeightLinear } from "../shared/axis-height-linear";
-import { ChartContainer, ChartSvg } from "../shared/containers";
-import { InteractionHorizontal } from "../shared/overlay-horizontal";
-import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
-import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { BrushTime } from "../shared/brush";
 
 export const ChartAreasVisualization = ({
   dataSetIri,
   chartConfig,
+  queryFilters,
 }: {
   dataSetIri: string;
   chartConfig: AreaConfig;
+  queryFilters: Filters;
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeObservationsQuery({
@@ -38,7 +41,7 @@ export const ChartAreasVisualization = ({
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters,
+      filters: queryFilters,
     },
   });
 
