@@ -1,25 +1,25 @@
 import { Trans } from "@lingui/macro";
+import * as React from "react";
 import { Flex, Text } from "theme-ui";
+import { ChartAreasVisualization } from "../charts/area/chart-area";
+import { ChartBarsVisualization } from "../charts/bar/chart-bar";
+import { ChartColumnsVisualization } from "../charts/column/chart-column";
+import { ChartLinesVisualization } from "../charts/line/chart-lines";
+import { ChartPieVisualization } from "../charts/pie/chart-pie";
+import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
+import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
+import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
+import { ChartTableVisualization } from "../charts/table/chart-table";
 import {
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
+  ConfiguratorStatePublishing,
+  ConfiguratorStateSelectingChartType,
   useConfiguratorState,
 } from "../configurator";
 import { useLocale } from "../locales/use-locale";
-import { ChartAreasVisualization } from "../charts/area/chart-area";
-import { ChartColumnsVisualization } from "../charts/column/chart-column";
 import { ChartFootnotes } from "./chart-footnotes";
-import { ChartLinesVisualization } from "../charts/line/chart-lines";
-import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
-import { ChartPieVisualization } from "../charts/pie/chart-pie";
-import { ChartBarsVisualization } from "../charts/bar/chart-bar";
-import { ChartTableVisualization } from "../charts/table/chart-table";
-import * as React from "react";
-import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "../charts/shared/use-interactive-filters";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
@@ -40,71 +40,65 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         state.state === "DESCRIBING_CHART" ||
         state.state === "PUBLISHING") && (
         <>
-          <Text
-            variant="heading2"
-            sx={{
-              mb: 2,
-              color: state.meta.title[locale] === "" ? "monochrome500" : "text",
-            }}
-          >
-            {state.meta.title[locale] === "" ? (
-              <Trans id="annotation.add.title">
-                [You can add a title here]
-              </Trans> // dataSet.label.value
-            ) : (
-              state.meta.title[locale]
+          <>
+            <Text
+              variant="heading2"
+              sx={{
+                mb: 2,
+                color:
+                  state.meta.title[locale] === "" ? "monochrome500" : "text",
+              }}
+            >
+              {state.meta.title[locale] === "" ? (
+                <Trans id="annotation.add.title">
+                  [You can add a title here]
+                </Trans> // dataSet.label.value
+              ) : (
+                state.meta.title[locale]
+              )}
+            </Text>
+            <Text
+              variant="paragraph1"
+              sx={{
+                mb: 2,
+                color:
+                  state.meta.description[locale] === ""
+                    ? "monochrome500"
+                    : "text",
+              }}
+            >
+              {state.meta.description[locale] === "" ? (
+                <Trans id="annotation.add.description">
+                  [You can add a description here]
+                </Trans>
+              ) : (
+                state.meta.description[locale]
+              )}
+            </Text>
+          </>
+          <InteractiveFiltersProvider>
+            <ChartWithFilters state={state} />
+            {state.chartConfig && (
+              <ChartFootnotes
+                dataSetIri={dataSetIri}
+                chartConfig={state.chartConfig}
+              />
             )}
-          </Text>
-          <Text
-            variant="paragraph1"
-            sx={{
-              mb: 2,
-              color:
-                state.meta.description[locale] === ""
-                  ? "monochrome500"
-                  : "text",
-            }}
-          >
-            {state.meta.description[locale] === "" ? (
-              <Trans id="annotation.add.description">
-                [You can add a description here]
-              </Trans>
-            ) : (
-              state.meta.description[locale]
-            )}
-          </Text>
+          </InteractiveFiltersProvider>
         </>
-      )}
-      <InteractiveFiltersProvider>
-        <Chart state={state} />
-      </InteractiveFiltersProvider>
-
-      {state.state !== "INITIAL" && state.chartConfig && (
-        <ChartFootnotes
-          dataSetIri={dataSetIri}
-          chartConfig={state.chartConfig}
-        />
       )}
     </Flex>
   );
 };
-
-const Chart = ({ state }: { state: ConfiguratorStateConfiguringChart }) => {
-  const { dataSet, chartConfig } = state;
-  const { filters } = state.chartConfig;
-  const [interactiveFiltersState] = useInteractiveFilters();
-
-  const interactiveFiltersIsActive =
-    chartConfig.chartType !== "table" &&
-    chartConfig.interactiveFiltersConfig.dataFilters.active;
-
-  // Combine filters from config + interactive filters
-  const queryFilters = useQueryFilters({
-    filters,
-    interactiveFiltersIsActive,
-    interactiveDataFilters: interactiveFiltersState.dataFilters,
-  });
-
+const ChartWithFilters = ({
+  state,
+}: {
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateDescribingChart
+    | ConfiguratorStatePublishing
+    | ConfiguratorStateSelectingChartType;
+}) => {
   return (
     <Flex
       sx={{
@@ -120,9 +114,39 @@ const Chart = ({ state }: { state: ConfiguratorStateConfiguringChart }) => {
             dataFiltersConfig={
               state.chartConfig.interactiveFiltersConfig.dataFilters
             }
+            state={state}
           />
         )}
-      {/* // FIXME: we shouldn't need this condition because the states must be these */}
+      <Chart state={state} />
+    </Flex>
+  );
+};
+
+const Chart = ({
+  state,
+}: {
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateDescribingChart
+    | ConfiguratorStatePublishing
+    | ConfiguratorStateSelectingChartType;
+}) => {
+  const { dataSet } = state;
+  const { filters } = state.chartConfig;
+
+  const interactiveFiltersIsActive =
+    state.chartConfig.chartType !== "table" &&
+    state.chartConfig.interactiveFiltersConfig.dataFilters.active;
+
+  // Combine filters from config + interactive filters
+  const queryFilters = useQueryFilters({
+    filters,
+    interactiveFiltersIsActive,
+  });
+
+  return (
+    <>
+      {/* CHARTS */}
       {state.chartConfig.chartType === "column" && (
         <ChartColumnsVisualization
           dataSetIri={dataSet}
@@ -166,6 +190,6 @@ const Chart = ({ state }: { state: ConfiguratorStateConfiguringChart }) => {
           chartConfig={state.chartConfig}
         />
       )}
-    </Flex>
+    </>
   );
 };
