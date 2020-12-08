@@ -21,7 +21,7 @@ msgstr "[ Description ]"
 msgid "annotation.add.title"
 msgstr "[ Titre ]"
 
-#: app/pages/[locale]/v/[chartId].tsx:83
+#: app/pages/v/[chartId].tsx:83
 msgid "button.copy.visualization"
 msgstr "Copier la visualisation"
 
@@ -42,7 +42,7 @@ msgstr "Cliquer pour copier"
 msgid "button.hint.copied"
 msgstr "Copié!"
 
-#: app/pages/[locale]/v/[chartId].tsx:78
+#: app/pages/v/[chartId].tsx:78
 msgid "button.new.visualization"
 msgstr "Nouvelle visualisation"
 
@@ -483,11 +483,11 @@ msgstr "Seules les 10 premières lignes sont affichées"
 msgid "footer.institution.name"
 msgstr "Office fédéral de l'environnement OFEV"
 
-#: app/pages/[locale]/v/[chartId].tsx:69
+#: app/pages/v/[chartId].tsx:69
 msgid "hint.create.your.own.chart"
 msgstr "Créez votre propre visualisation à partie de celle-ci en la copiant, ou bien créez une nouvelle visualization avec les données ouvertes de l'administration publique suisse."
 
-#: app/pages/[locale]/v/[chartId].tsx:65
+#: app/pages/v/[chartId].tsx:65
 msgid "hint.how.to.share"
 msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intégrant sur votre site Web. Vous pouvez également créer une toute nouvelle visualisation, ou bien copier et modifier la visualisation ci-dessus."
 

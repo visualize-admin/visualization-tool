@@ -21,7 +21,7 @@ msgstr "[ Description ]"
 msgid "annotation.add.title"
 msgstr "[ Title ]"
 
-#: app/pages/[locale]/v/[chartId].tsx:83
+#: app/pages/v/[chartId].tsx:83
 msgid "button.copy.visualization"
 msgstr "Copy Visualization"
 
@@ -42,7 +42,7 @@ msgstr "Click to copy"
 msgid "button.hint.copied"
 msgstr "Copied!"
 
-#: app/pages/[locale]/v/[chartId].tsx:78
+#: app/pages/v/[chartId].tsx:78
 msgid "button.new.visualization"
 msgstr "New Visualization"
 
@@ -483,11 +483,11 @@ msgstr "Showing first 10 rows"
 msgid "footer.institution.name"
 msgstr "Federal Office for the Environment FOEN"
 
-#: app/pages/[locale]/v/[chartId].tsx:69
+#: app/pages/v/[chartId].tsx:69
 msgid "hint.create.your.own.chart"
 msgstr "Create your own version of this visualization by copying it, or start from scratch and make a new visualization using Swiss Open Government Data."
 
-#: app/pages/[locale]/v/[chartId].tsx:65
+#: app/pages/v/[chartId].tsx:65
 msgid "hint.how.to.share"
 msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
 

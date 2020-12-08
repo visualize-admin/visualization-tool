@@ -21,7 +21,7 @@ msgstr "[ Beschreibung ]"
 msgid "annotation.add.title"
 msgstr "[ Titel ]"
 
-#: app/pages/[locale]/v/[chartId].tsx:83
+#: app/pages/v/[chartId].tsx:83
 msgid "button.copy.visualization"
 msgstr "Visualisierung kopieren"
 
@@ -42,7 +42,7 @@ msgstr "Kopieren"
 msgid "button.hint.copied"
 msgstr "Kopiert!"
 
-#: app/pages/[locale]/v/[chartId].tsx:78
+#: app/pages/v/[chartId].tsx:78
 msgid "button.new.visualization"
 msgstr "Visualisierung erstellen"
 
@@ -483,11 +483,11 @@ msgstr "Erste 10 Zeilen"
 msgid "footer.institution.name"
 msgstr "Bundesamt für Umwelt BAFU"
 
-#: app/pages/[locale]/v/[chartId].tsx:69
+#: app/pages/v/[chartId].tsx:69
 msgid "hint.create.your.own.chart"
 msgstr "Sie können diese Visualisierung duplizieren, um eine neue Kopie zu bearbeiten. Oder erstellen Sie eine völlig neue Visualisierung, basierend auf offenen und frei nutzbaren Schweizer Verwaltungsdaten."
 
-#: app/pages/[locale]/v/[chartId].tsx:65
+#: app/pages/v/[chartId].tsx:65
 msgid "hint.how.to.share"
 msgstr "Sie können diese Visualisierung teilen, indem Sie die URL kopieren oder die Einbettungsoptionen verwenden. Zudem können Sie eine neue Visualisierung erstellen oder die gezeigte Visualisierung duplizieren, um deren Kopie zu bearbeiten."
 
