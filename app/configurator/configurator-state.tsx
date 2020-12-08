@@ -777,7 +777,7 @@ const ConfiguratorStateProviderInternal = ({
                   pathname: `/v/${result.key}`,
                   query: { publishSuccess: true },
                 },
-                `/${locale}/v/${result.key}`
+                `/v/${result.key}` // Hide publishSuccess=true from URL
               );
             } catch (e) {
               console.error(e);
