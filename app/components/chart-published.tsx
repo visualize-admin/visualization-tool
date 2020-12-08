@@ -99,15 +99,13 @@ const Chart = ({
   dataSet: string;
   chartConfig: ChartConfig;
 }) => {
-  const { filters } = chartConfig;
-
   const interactiveFiltersIsActive =
     chartConfig.chartType !== "table" &&
     chartConfig.interactiveFiltersConfig.dataFilters.active;
 
   // Combine filters from config + interactive filters
   const queryFilters = useQueryFilters({
-    filters,
+    chartConfig,
     interactiveFiltersIsActive,
   });
 

@@ -28,7 +28,7 @@ export const ChartFootnotes = ({
   });
 
   const queryFilters = useQueryFilters({
-    filters: chartConfig.filters,
+    chartConfig,
     interactiveFiltersIsActive:
       chartConfig.chartType !== "table" &&
       chartConfig.interactiveFiltersConfig.dataFilters.active,

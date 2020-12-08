@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { isNumber } from "util";
-import { Filters, useConfiguratorState } from "../../configurator";
+import { ChartConfig, Filters } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
   InteractiveFiltersState,
@@ -11,20 +11,15 @@ import {
 // merges publisher-defined filters (editor)
 // and user-defined filters (interactive)
 export const useQueryFilters = ({
-  filters,
+  chartConfig,
   interactiveFiltersIsActive,
 }: {
-  filters: Filters;
+  chartConfig: ChartConfig;
   interactiveFiltersIsActive: boolean;
 }): Filters => {
-  const [configState] = useConfiguratorState();
   const [IFstate] = useInteractiveFilters();
-
-  if (
-    (configState.state === "CONFIGURING_CHART" ||
-      configState.state === "DESCRIBING_CHART") &&
-    configState.chartConfig.chartType !== "table"
-  ) {
+  const { filters } = chartConfig;
+  if (chartConfig.chartType !== "table") {
     const queryFilters = interactiveFiltersIsActive
       ? { ...filters, ...IFstate.dataFilters }
       : filters;
