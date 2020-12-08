@@ -1,11 +1,11 @@
 import { Reducer, useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
-import { Filters } from "../../configurator";
+import { FilterValueSingle } from "../../configurator";
 
 export type InteractiveFiltersState = {
   categories: $FixMe; //{}; // { [x: string]: boolean };
   time: $FixMe;
-  dataFilters: Filters;
+  dataFilters: FilterValueSingle | $FixMe;
 };
 
 type InteractiveFiltersStateAction =
@@ -20,6 +20,10 @@ type InteractiveFiltersStateAction =
   | {
       type: "ADD_TIME_FILTER";
       value: Date[] | number[];
+    }
+  | {
+      type: "INIT_DATA_FILTER";
+      value: FilterValueSingle;
     }
   | {
       type: "UPDATE_DATA_FILTER";
@@ -56,6 +60,11 @@ const InteractiveFiltersStateReducer = (
       return {
         ...draft,
         time: { from: action.value[0], to: action.value[1] },
+      };
+    case "INIT_DATA_FILTER":
+      return {
+        ...draft,
+        dataFilters: action.value,
       };
     case "UPDATE_DATA_FILTER":
       return {
