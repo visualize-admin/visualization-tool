@@ -1,10 +1,11 @@
 import { Reducer, useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
+import { Filters } from "../../configurator";
 
 export type InteractiveFiltersState = {
   categories: $FixMe; //{}; // { [x: string]: boolean };
   time: $FixMe;
-  dataFilters: $FixMe;
+  dataFilters: Filters;
 };
 
 type InteractiveFiltersStateAction =
@@ -61,7 +62,10 @@ const InteractiveFiltersStateReducer = (
         ...draft,
         dataFilters: {
           ...draft.dataFilters,
-          [action.value.dimensionIri]: action.value.dimensionValueIri,
+          [action.value.dimensionIri]: {
+            type: "single",
+            value: action.value.dimensionValueIri,
+          },
         },
       };
     case "RESET_INTERACTIVE_CATEGORIES":
