@@ -106,7 +106,9 @@ const DataFilterDropdown = ({
             label: v.label,
             value: v.value,
           }))}
-          value={state.dataFilters[dimension.iri].value}
+          value={
+            state.dataFilters[dimension.iri].value ?? dimension.values[0].value
+          }
           disabled={false}
           onChange={setDataFilter}
         />
