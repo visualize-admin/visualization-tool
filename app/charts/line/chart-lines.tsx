@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
 import {
+  Filters,
   InteractiveFiltersConfig,
   LineConfig,
   LineFields,
@@ -25,24 +26,17 @@ import { Lines } from "./lines";
 import { LineChart } from "./lines-state";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import { BrushTime } from "../shared/brush";
-import { InteractiveDataFilters } from "../shared/interactive-data-filters";
-import { useQueryFilters } from "../shared/chart-helpers";
 
 export const ChartLinesVisualization = ({
   dataSetIri,
   chartConfig,
+  queryFilters,
 }: {
   dataSetIri: string;
   chartConfig: LineConfig;
+  queryFilters: Filters;
 }) => {
   const locale = useLocale();
-  const { filters } = chartConfig;
-
-  const queryFilters = useQueryFilters({
-    filters,
-    interactiveFiltersIsActive:
-      chartConfig.interactiveFiltersConfig.dataFilters.active,
-  });
 
   const [{ data, fetching }] = useDataCubeObservationsQuery({
     variables: {
@@ -57,18 +51,16 @@ export const ChartLinesVisualization = ({
 
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
+
     return observations.data.length > 0 ? (
       <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        {/* FIXME: Should the interactive data filter state provider be wrapped
-        around the a11y table so that it is also filtered? It would help for
-        performance also */}
-        {/* <A11yTable
+        <A11yTable
           title={title}
           observations={observations.data}
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-        /> */}
+        />
         <ChartLines
           observations={observations.data}
           dimensions={dimensions}
@@ -111,11 +103,6 @@ export const ChartLines = memo(
         interactiveFiltersConfig={interactiveFiltersConfig}
         aspectRatio={0.4}
       >
-        {interactiveFiltersConfig.dataFilters.active && (
-          <InteractiveDataFilters
-            dataFiltersConfig={interactiveFiltersConfig.dataFilters}
-          />
-        )}
         <ChartContainer>
           <ChartSvg>
             <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
