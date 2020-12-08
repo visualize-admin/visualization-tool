@@ -116,10 +116,6 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_FILTER_SET_SINGLE";
       value: { dimensionIri: string; value: string };
     }
-  // | {
-  //     type: "CHART_CONFIG_FILTER_SET_SKIP";
-  //     value: { dimensionIri: string; value: boolean };
-  //   }
   | {
       type: "CHART_CONFIG_FILTER_SET_MULTI";
       value: { dimensionIri: string; value: string; allValues: string[] };
@@ -594,20 +590,6 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         };
       }
       return draft;
-    // case "CHART_CONFIG_FILTER_SET_SKIP":
-    //   if (
-    //     draft.state === "CONFIGURING_CHART" ||
-    //     draft.state === "DESCRIBING_CHART"
-    //   ) {
-    //     const { dimensionIri, value } = action.value;
-    //     const f = draft.chartConfig.filters[dimensionIri];
-    //     draft.chartConfig.filters[dimensionIri] = {
-    //       ...f,
-    //       skip: value,
-    //     };
-    //   }
-
-    //   return draft;
 
     case "CHART_CONFIG_FILTER_SET_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
