@@ -15,7 +15,7 @@ interface ContentPageProps {
 }
 
 export default function ContentPage({ staticPage }: ContentPageProps) {
-  const Component = staticPages[staticPage].component;
+  const Component = staticPages[staticPage]?.component;
 
   return Component ? <Component /> : "NOT FOUND";
 }

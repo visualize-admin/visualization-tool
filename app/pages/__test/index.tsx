@@ -1,16 +1,9 @@
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 import { loadFixtureConfigIds } from "../../test/utils";
 
 type PageProps = {
   ids: string[];
-};
-
-export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
-  return {
-    fallback: false,
-    paths: locales?.map((locale) => ({ params: {}, locale })) ?? [],
-  };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params, locale }) => {

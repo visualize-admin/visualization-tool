@@ -1,4 +1,4 @@
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetStaticProps } from "next";
 import { staticPages } from "../static-pages";
 
 /**
@@ -15,21 +15,10 @@ interface ContentPageProps {
 }
 
 export default function ContentPage({ staticPage }: ContentPageProps) {
-  const Component = staticPages[staticPage].component;
+  const Component = staticPages[staticPage]?.component;
 
   return Component ? <Component /> : "NOT FOUND";
 }
-
-export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
-  return {
-    paths:
-      locales?.map((locale) => ({
-        params: {},
-        locale,
-      })) ?? [],
-    fallback: false,
-  };
-};
 
 export const getStaticProps: GetStaticProps<ContentPageProps> = async ({
   locale,
