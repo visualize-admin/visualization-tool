@@ -10,30 +10,51 @@ import { InteractiveFiltersState } from "./use-interactive-filters";
 export const useQueryFilters = ({
   filters,
   interactiveFiltersIsActive,
+  interactiveDataFilters,
 }: {
   filters: Filters;
   interactiveFiltersIsActive: boolean;
+  interactiveDataFilters: Filters;
 }): Filters => {
-  const queryFilters = useMemo(() => {
-    const filtersWithoutInteractiveFilters = Object.keys(filters).reduce(
-      (notSkippedFilters, key) => {
-        if (filters[key].skip) {
-          return { ...notSkippedFilters };
-        } else if (!filters[key].skip) {
-          return { ...notSkippedFilters, [key]: filters[key] };
-        } else {
-          return { ...notSkippedFilters, [key]: filters[key] };
-        }
-      },
-      {}
-    );
+  const queryFilters = useMemo(
+    () =>
+      interactiveFiltersIsActive
+        ? { ...filters, ...interactiveDataFilters }
+        : filters,
+    [filters, interactiveDataFilters, interactiveFiltersIsActive]
+  );
+  console.log("queryFilters in hook", queryFilters);
 
-    return interactiveFiltersIsActive
-      ? filtersWithoutInteractiveFilters
-      : filters;
-  }, [filters, interactiveFiltersIsActive]);
   return queryFilters;
 };
+
+// export const useQueryFiltersOld = ({
+//   filters,
+//   interactiveFiltersIsActive,
+// }: {
+//   filters: Filters;
+//   interactiveFiltersIsActive: boolean;
+// }): Filters => {
+//   const queryFilters = useMemo(() => {
+//     const filtersWithoutInteractiveFilters = Object.keys(filters).reduce(
+//       (notSkippedFilters, key) => {
+//         if (filters[key].skip) {
+//           return { ...notSkippedFilters };
+//         } else if (!filters[key].skip) {
+//           return { ...notSkippedFilters, [key]: filters[key] };
+//         } else {
+//           return { ...notSkippedFilters, [key]: filters[key] };
+//         }
+//       },
+//       {}
+//     );
+
+//     return interactiveFiltersIsActive
+//       ? filtersWithoutInteractiveFilters
+//       : filters;
+//   }, [filters, interactiveFiltersIsActive]);
+//   return queryFilters;
+// };
 
 // Prepare data used in charts.
 // Different than the full dataset because
