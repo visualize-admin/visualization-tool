@@ -74,7 +74,7 @@ const DataFilterDropdown = ({
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
-
+  console.log(state.dataFilters);
   const setDataFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch({
       type: "UPDATE_DATA_FILTER",
@@ -107,7 +107,10 @@ const DataFilterDropdown = ({
             value: v.value,
           }))}
           value={
-            state.dataFilters[dimension.iri].value ?? dimension.values[0].value
+            state.dataFilters[dimension.iri] &&
+            state.dataFilters[dimension.iri].value
+              ? state.dataFilters[dimension.iri].value
+              : dimension.values[0].value
           }
           disabled={false}
           onChange={setDataFilter}
