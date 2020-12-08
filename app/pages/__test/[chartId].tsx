@@ -1,7 +1,7 @@
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
-import { ChartPublished } from "../../../components/chart-published";
-import { Config } from "../../../configurator";
-import { loadFixtureConfigIds, loadFixtureConfig } from "../../../test/utils";
+import { ChartPublished } from "../../components/chart-published";
+import { Config } from "../../configurator";
+import { loadFixtureConfigIds, loadFixtureConfig } from "../../test/utils";
 
 type PageProps = {
   statusCode?: number;
@@ -12,16 +12,13 @@ type PageProps = {
   publishSuccess?: string;
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
   const ids = await loadFixtureConfigIds();
 
   return {
     fallback: false,
     paths: ids.flatMap((chartId) => {
-      return [
-        { params: { locale: "en", chartId } },
-        { params: { locale: "de", chartId } },
-      ];
+      return locales?.map((locale) => ({ params: { chartId }, locale })) ?? [];
     }),
   };
 };

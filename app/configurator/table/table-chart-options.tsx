@@ -1,5 +1,4 @@
 import { t, Trans } from "@lingui/macro";
-import { I18n } from "@lingui/react";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
@@ -176,187 +175,180 @@ export const TableColumnOptions = ({
 
   const { isGroup, isFiltered, isHidden } = chartConfig.fields[activeField];
 
+  const columnStyleOptions =
+    component.__typename === "NominalDimension" ||
+    component.__typename === "OrdinalDimension" ||
+    component.__typename === "TemporalDimension"
+      ? [
+          {
+            value: "text",
+            label: t({ id: "columnStyle.text", message: `Text` }),
+          },
+          {
+            value: "category",
+            label: t({ id: "columnStyle.categories", message: `Categories` }),
+          },
+        ]
+      : [
+          {
+            value: "text",
+            label: t({ id: "columnStyle.text", message: `Text` }),
+          },
+          {
+            value: "heatmap",
+            label: t({ id: "columnStyle.heatmap", message: `Heat Map` }),
+          },
+          {
+            value: "bar",
+            label: t({ id: "columnStyle.bar", message: `Bar Chart` }),
+          },
+        ];
   return (
-    <I18n>
-      {({ i18n }) => {
-        const columnStyleOptions =
-          component.__typename === "NominalDimension" ||
-          component.__typename === "OrdinalDimension" ||
-          component.__typename === "TemporalDimension"
-            ? [
-                { value: "text", label: i18n._(t("columnStyle.text")`Text`) },
-                {
-                  value: "category",
-                  label: i18n._(t("columnStyle.categories")`Categories`),
-                },
-              ]
-            : [
-                { value: "text", label: i18n._(t("columnStyle.text")`Text`) },
-                {
-                  value: "heatmap",
-                  label: i18n._(t("columnStyle.heatmap")`Heat Map`),
-                },
-                {
-                  value: "bar",
-                  label: i18n._(t("columnStyle.bar")`Bar Chart`),
-                },
-              ];
+    <div
+      key={`control-panel-table-column-${activeField}`}
+      role="tabpanel"
+      id={`control-panel-table-column-${activeField}`}
+      aria-labelledby={`tab-${activeField}`}
+      ref={panelRef}
+      tabIndex={-1}
+    >
+      <ControlSection>
+        <SectionTitle
+          iconName={getIconName(`tableColumn${component.__typename}`)}
+        >
+          {component.label}
+        </SectionTitle>
+        <ControlSectionContent side="right">
+          {component.__typename !== "Measure" && (
+            <>
+              <ChartOptionGroupHiddenField
+                label={
+                  <Trans id="controls.table.column.group">Use to group</Trans>
+                }
+                field={activeField}
+                disabled={isFiltered}
+                path="isGroup"
+                metaData={metaData}
+              />
+              {!isGroup && (
+                <ChartOptionGroupHiddenField
+                  label={
+                    <Trans id="controls.table.column.hidefilter">
+                      Hide and filter column
+                    </Trans>
+                  }
+                  field={activeField}
+                  path="isFiltered"
+                  metaData={metaData}
+                />
+              )}
+            </>
+          )}
 
-        return (
-          <div
-            key={`control-panel-table-column-${activeField}`}
-            role="tabpanel"
-            id={`control-panel-table-column-${activeField}`}
-            aria-labelledby={`tab-${activeField}`}
-            ref={panelRef}
-            tabIndex={-1}
-          >
-            <ControlSection>
-              <SectionTitle
-                iconName={getIconName(`tableColumn${component.__typename}`)}
-              >
-                {component.label}
-              </SectionTitle>
-              <ControlSectionContent side="right">
-                {component.__typename !== "Measure" && (
-                  <>
-                    <ChartOptionGroupHiddenField
-                      label={
-                        <Trans id="controls.table.column.group">
-                          Use to group
-                        </Trans>
-                      }
-                      field={activeField}
-                      disabled={isFiltered}
-                      path="isGroup"
-                      metaData={metaData}
-                    />
-                    {!isGroup && (
-                      <ChartOptionGroupHiddenField
-                        label={
-                          <Trans id="controls.table.column.hidefilter">
-                            Hide and filter column
-                          </Trans>
-                        }
-                        field={activeField}
-                        path="isFiltered"
-                        metaData={metaData}
-                      />
-                    )}
-                  </>
-                )}
+          {(component.__typename === "Measure" || isGroup) && (
+            <ChartOptionGroupHiddenField
+              label={<Trans id="controls.table.column.hide">Hide column</Trans>}
+              field={activeField}
+              path="isHidden"
+              metaData={metaData}
+            />
+          )}
+        </ControlSectionContent>
+      </ControlSection>
+      {!isFiltered && (!isHidden || isGroup) && (
+        <ControlSection>
+          <SectionTitle iconName={"formatting"}>
+            <Trans id="controls.section.columnstyle">Column Style</Trans>
+          </SectionTitle>
+          <ControlSectionContent side="right">
+            <ChartOptionSelectField<ColumnStyle>
+              id={"columnStyle"}
+              label={
+                <Trans id="controls.select.columnStyle">Column Style</Trans>
+              }
+              options={columnStyleOptions}
+              getValue={(type) => {
+                switch (type) {
+                  case "text":
+                    return {
+                      type: "text",
+                      textStyle: "regular",
+                      textColor: "#333",
+                      columnColor: "#fff",
+                    };
+                  case "category":
+                    return {
+                      type: "category",
+                      textStyle: "regular",
+                      palette: getDefaultCategoricalPalette().value,
+                      colorMapping: mapColorsToComponentValuesIris({
+                        palette: getDefaultCategoricalPalette().value,
+                        component: component as DimensionFieldsWithValuesFragment,
+                      }),
+                    };
+                  case "heatmap":
+                    return {
+                      type: "heatmap",
+                      textStyle: "regular",
+                      palette: getDefaultSequentialPalette().value,
+                    };
+                  case "bar":
+                    return {
+                      type: "bar",
+                      textStyle: "regular",
+                      barColorPositive: getDefaultCategoricalPalette()
+                        .colors[0],
+                      barColorNegative: getDefaultCategoricalPalette()
+                        .colors[1],
+                      barColorBackground: "#ccc",
+                      barShowBackground: false,
+                    };
+                  default:
+                    return undefined;
+                }
+              }}
+              getKey={(d) => d.type}
+              field={activeField}
+              path="columnStyle"
+            />
 
-                {(component.__typename === "Measure" || isGroup) && (
-                  <ChartOptionGroupHiddenField
-                    label={
-                      <Trans id="controls.table.column.hide">Hide column</Trans>
-                    }
-                    field={activeField}
-                    path="isHidden"
-                    metaData={metaData}
-                  />
-                )}
-              </ControlSectionContent>
-            </ControlSection>
-            {!isFiltered && (!isHidden || isGroup) && (
-              <ControlSection>
-                <SectionTitle iconName={"formatting"}>
-                  <Trans id="controls.section.columnstyle">Column Style</Trans>
-                </SectionTitle>
-                <ControlSectionContent side="right">
-                  <ChartOptionSelectField<ColumnStyle>
-                    id={"columnStyle"}
-                    label={
-                      <Trans id="controls.select.columnStyle">
-                        Column Style
-                      </Trans>
-                    }
-                    options={columnStyleOptions}
-                    getValue={(type) => {
-                      switch (type) {
-                        case "text":
-                          return {
-                            type: "text",
-                            textStyle: "regular",
-                            textColor: "#333",
-                            columnColor: "#fff",
-                          };
-                        case "category":
-                          return {
-                            type: "category",
-                            textStyle: "regular",
-                            palette: getDefaultCategoricalPalette().value,
-                            colorMapping: mapColorsToComponentValuesIris({
-                              palette: getDefaultCategoricalPalette().value,
-                              component: component as DimensionFieldsWithValuesFragment,
-                            }),
-                          };
-                        case "heatmap":
-                          return {
-                            type: "heatmap",
-                            textStyle: "regular",
-                            palette: getDefaultSequentialPalette().value,
-                          };
-                        case "bar":
-                          return {
-                            type: "bar",
-                            textStyle: "regular",
-                            barColorPositive: getDefaultCategoricalPalette()
-                              .colors[0],
-                            barColorNegative: getDefaultCategoricalPalette()
-                              .colors[1],
-                            barColorBackground: "#ccc",
-                            barShowBackground: false,
-                          };
-                        default:
-                          return undefined;
-                      }
-                    }}
-                    getKey={(d) => d.type}
-                    field={activeField}
-                    path="columnStyle"
-                  />
+            <ColumnStyleSubOptions
+              chartConfig={chartConfig}
+              activeField={activeField}
+              component={component as DimensionFieldsWithValuesFragment}
+            />
+          </ControlSectionContent>
+        </ControlSection>
+      )}
 
-                  <ColumnStyleSubOptions
-                    chartConfig={chartConfig}
-                    activeField={activeField}
-                    component={component as DimensionFieldsWithValuesFragment}
-                  />
-                </ControlSectionContent>
-              </ControlSection>
+      {(component.__typename === "NominalDimension" ||
+        component.__typename === "OrdinalDimension" ||
+        component.__typename === "TemporalDimension") && (
+        <ControlSection>
+          <SectionTitle disabled={!component} iconName="filter">
+            <Trans id="controls.section.filter">Filter</Trans>
+          </SectionTitle>
+          <ControlSectionContent side="right" as="fieldset">
+            <legend style={{ display: "none" }}>
+              <Trans id="controls.section.filter">Filter</Trans>
+            </legend>
+            {isFiltered ? (
+              <DimensionValuesSingleFilter
+                dataSetIri={metaData.iri}
+                dimensionIri={component.iri}
+              />
+            ) : (
+              <DimensionValuesMultiFilter
+                key={component.iri}
+                dimensionIri={component.iri}
+                dataSetIri={metaData.iri}
+                colorConfigPath="columnStyle"
+              />
             )}
-
-            {(component.__typename === "NominalDimension" ||
-              component.__typename === "OrdinalDimension" ||
-              component.__typename === "TemporalDimension") && (
-              <ControlSection>
-                <SectionTitle disabled={!component} iconName="filter">
-                  <Trans id="controls.section.filter">Filter</Trans>
-                </SectionTitle>
-                <ControlSectionContent side="right" as="fieldset">
-                  <legend style={{ display: "none" }}>
-                    <Trans id="controls.section.filter">Filter</Trans>
-                  </legend>
-                  {isFiltered ? (
-                    <DimensionValuesSingleFilter
-                      dataSetIri={metaData.iri}
-                      dimensionIri={component.iri}
-                    />
-                  ) : (
-                    <DimensionValuesMultiFilter
-                      key={component.iri}
-                      dimensionIri={component.iri}
-                      dataSetIri={metaData.iri}
-                      colorConfigPath="columnStyle"
-                    />
-                  )}
-                </ControlSectionContent>
-              </ControlSection>
-            )}
-          </div>
-        );
-      }}
-    </I18n>
+          </ControlSectionContent>
+        </ControlSection>
+      )}
+    </div>
   );
 };
 
@@ -371,111 +363,106 @@ const ColumnStyleSubOptions = ({
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
   return (
-    <I18n>
-      {({ i18n }) => {
-        return (
-          <>
-            <ChartOptionSelectField<string>
-              id="columnStyle.textStyle"
-              label={
-                <Trans id="controls.select.columnStyle.textStyle">
-                  Text Style
-                </Trans>
-              }
-              options={[
-                {
-                  value: "regular",
-                  label: i18n._(t("columnStyle.textStyle.regular")`Regular`),
-                },
-                {
-                  value: "bold",
-                  label: i18n._(t("columnStyle.textStyle.bold")`Bold`),
-                },
-              ]}
-              field={activeField}
-              path="columnStyle.textStyle"
-            />
-            {type === "text" ? (
-              <>
-                <ColorPickerField
-                  label={
-                    <Trans id="controls.select.columnStyle.textColor">
-                      Text Color
-                    </Trans>
-                  }
-                  field={activeField}
-                  path="columnStyle.textColor"
-                />
-                <ColorPickerField
-                  label={
-                    <Trans id="controls.select.columnStyle.columnColor">
-                      Column Background
-                    </Trans>
-                  }
-                  field={activeField}
-                  path="columnStyle.columnColor"
-                />
-              </>
-            ) : type === "category" ? (
-              <>
-                <ColorPalette
-                  field={activeField}
-                  colorConfigPath={"columnStyle"}
-                  component={component}
-                />
-              </>
-            ) : type === "heatmap" ? (
-              <>
-                <ColorPalette
-                  field={activeField}
-                  colorConfigPath={"columnStyle"}
-                  component={component}
-                />
-              </>
-            ) : type === "bar" ? (
-              <>
-                <ColorPickerField
-                  label={
-                    <Trans id="controls.select.columnStyle.barColorPositive">
-                      Positive Bar Color
-                    </Trans>
-                  }
-                  field={activeField}
-                  path="columnStyle.barColorPositive"
-                />
-                <ColorPickerField
-                  label={
-                    <Trans id="controls.select.columnStyle.barColorNegative">
-                      Negative Bar Color
-                    </Trans>
-                  }
-                  field={activeField}
-                  path="columnStyle.barColorNegative"
-                />
-                <ColorPickerField
-                  label={
-                    <Trans id="controls.select.columnStyle.barColorBackground">
-                      Bar Background
-                    </Trans>
-                  }
-                  field={activeField}
-                  path="columnStyle.barColorBackground"
-                />
-                <ChartOptionCheckboxField
-                  label={
-                    <Trans id="controls.select.columnStyle.barShowBackground">
-                      Show Bar Background
-                    </Trans>
-                  }
-                  field={activeField}
-                  path="columnStyle.barShowBackground"
-                />
-              </>
-            ) : null}
-          </>
-        );
-      }}
-    </I18n>
+    <>
+      <ChartOptionSelectField<string>
+        id="columnStyle.textStyle"
+        label={
+          <Trans id="controls.select.columnStyle.textStyle">Text Style</Trans>
+        }
+        options={[
+          {
+            value: "regular",
+            label: t({
+              id: "columnStyle.textStyle.regular",
+              message: `Regular`,
+            }),
+          },
+          {
+            value: "bold",
+            label: t({ id: "columnStyle.textStyle.bold", message: `Bold` }),
+          },
+        ]}
+        field={activeField}
+        path="columnStyle.textStyle"
+      />
+      {type === "text" ? (
+        <>
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.textColor">
+                Text Color
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.textColor"
+          />
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.columnColor">
+                Column Background
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.columnColor"
+          />
+        </>
+      ) : type === "category" ? (
+        <>
+          <ColorPalette
+            field={activeField}
+            colorConfigPath={"columnStyle"}
+            component={component}
+          />
+        </>
+      ) : type === "heatmap" ? (
+        <>
+          <ColorPalette
+            field={activeField}
+            colorConfigPath={"columnStyle"}
+            component={component}
+          />
+        </>
+      ) : type === "bar" ? (
+        <>
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.barColorPositive">
+                Positive Bar Color
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.barColorPositive"
+          />
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.barColorNegative">
+                Negative Bar Color
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.barColorNegative"
+          />
+          <ColorPickerField
+            label={
+              <Trans id="controls.select.columnStyle.barColorBackground">
+                Bar Background
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.barColorBackground"
+          />
+          <ChartOptionCheckboxField
+            label={
+              <Trans id="controls.select.columnStyle.barShowBackground">
+                Show Bar Background
+              </Trans>
+            }
+            field={activeField}
+            path="columnStyle.barShowBackground"
+          />
+        </>
+      ) : null}
+    </>
   );
 };
 

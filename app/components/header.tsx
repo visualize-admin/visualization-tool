@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 
 import { Box, Flex, Text } from "theme-ui";
 import { LanguageMenu } from "./language-menu";
-import { HomeLink } from "./links";
+import NextLink from "next/link";
 
 export const Header = ({
   pageType = "app",
@@ -56,7 +56,7 @@ export const Header = ({
 
 export const Logo = () => {
   return (
-    <HomeLink passHref>
+    <NextLink href="/" passHref>
       <Flex
         as="a"
         sx={{
@@ -96,7 +96,7 @@ export const Logo = () => {
           visualize.admin.ch
         </Text>
       </Flex>
-    </HomeLink>
+    </NextLink>
   );
 };
 
