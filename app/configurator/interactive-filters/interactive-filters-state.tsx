@@ -1,4 +1,5 @@
 import produce from "immer";
+import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { InteractiveFiltersConfig } from "../config-types";
 import { InteractveFilterType } from "./interactive-filters-configurator";
 
@@ -11,6 +12,31 @@ export const toggleInteractiveFilter = produce(
       return IFConfig;
     }
     IFConfig[path].active = value;
+    return IFConfig;
+  }
+);
+export const toggleInteractiveDataFilter = produce(
+  (
+    IFConfig: InteractiveFiltersConfig,
+    {
+      path,
+      value,
+      dimensions,
+    }: {
+      path: "dataFilters";
+      value: boolean;
+      dimensions: ComponentFieldsFragment[];
+    }
+  ): InteractiveFiltersConfig => {
+    if (!IFConfig[path]) {
+      return IFConfig;
+    }
+    // Toggle filters on/off
+    IFConfig[path].active = value;
+    // Default: Check dimensions if none is selected, but they are set to true
+    if (value && IFConfig[path].componentIris.length === 0) {
+      IFConfig[path].componentIris = dimensions.map((d) => d.iri);
+    }
     return IFConfig;
   }
 );

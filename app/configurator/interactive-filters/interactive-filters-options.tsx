@@ -8,12 +8,11 @@ import React, {
 } from "react";
 import { Box } from "theme-ui";
 import { getFieldComponentIris } from "../../charts";
-import { useInteractiveFilters } from "../../charts/shared/use-interactive-filters";
 import { Checkbox } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
+  ComponentFieldsFragment,
   useDataCubeMetadataWithComponentValuesQuery,
-  useDimensionValuesQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import {
@@ -23,7 +22,10 @@ import {
 } from "../components/chart-controls/section";
 import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
-import { useInteractiveFiltersToggle } from "./interactive-filters-actions";
+import {
+  useInteractiveDataFiltersToggle,
+  useInteractiveFiltersToggle,
+} from "./interactive-filters-actions";
 import { InteractveFilterType } from "./interactive-filters-configurator";
 import { toggleInteractiveFilterDataDimension } from "./interactive-filters-state";
 
@@ -95,17 +97,6 @@ export const InteractiveFiltersOptions = ({
           </Trans>
         </SectionTitle>
         <ControlSectionContent side="right">
-          <InteractiveFiltersToggle
-            label={
-              <Trans id="controls.interactiveFilters.dataFilters.toggledataFilters">
-                Show data filters
-              </Trans>
-            }
-            path="dataFilters"
-            defaultChecked={false}
-            disabled={false}
-          ></InteractiveFiltersToggle>
-
           <InteractiveDataFilterOptions state={state} />
         </ControlSectionContent>
       </ControlSection>
@@ -139,6 +130,33 @@ const InteractiveFiltersToggle = ({
     ></Checkbox>
   );
 };
+const InteractiveDataFiltersToggle = ({
+  label,
+  path,
+  defaultChecked,
+  disabled = false,
+  dimensions,
+}: {
+  label: string | ReactNode;
+  path: "dataFilters";
+  defaultChecked?: boolean;
+  disabled?: boolean;
+  dimensions: ComponentFieldsFragment[];
+}) => {
+  const fieldProps = useInteractiveDataFiltersToggle({
+    path,
+    dimensions,
+  });
+
+  return (
+    <Checkbox
+      disabled={disabled}
+      label={label}
+      {...fieldProps}
+      checked={fieldProps.checked ?? defaultChecked}
+    ></Checkbox>
+  );
+};
 
 const InteractiveDataFilterOptions = ({
   state,
@@ -158,17 +176,31 @@ const InteractiveDataFilterOptions = ({
     );
 
     return (
-      <Box sx={{ my: 3 }}>
-        {unMappedDimensions.map((d) => (
-        {unMappedDimensions.map((d, i) => (
-          <InteractiveDataFilterOptionsCheckbox
-            key={i}
-            label={d.label}
-            value={d.iri}
-            disabled={!chartConfig.interactiveFiltersConfig.dataFilters.active}
-          />
-        ))}
-      </Box>
+      <>
+        <InteractiveDataFiltersToggle
+          label={
+            <Trans id="controls.interactiveFilters.dataFilters.toggledataFilters">
+              Show data filters
+            </Trans>
+          }
+          path="dataFilters"
+          defaultChecked={false}
+          disabled={false}
+          dimensions={unMappedDimensions}
+        ></InteractiveDataFiltersToggle>
+        <Box sx={{ my: 3 }}>
+          {unMappedDimensions.map((d, i) => (
+            <InteractiveDataFilterOptionsCheckbox
+              key={i}
+              label={d.label}
+              value={d.iri}
+              disabled={
+                !chartConfig.interactiveFiltersConfig.dataFilters.active
+              }
+            />
+          ))}
+        </Box>
+      </>
     );
   } else {
     return <Loading />;
@@ -203,20 +235,9 @@ const InteractiveDataFilterOptionsCheckbox = ({
           type: "INTERACTIVE_FILTER_CHANGED",
           value: newIFConfig,
         });
-
-        const skipFilterInQueryFilter = !state.chartConfig.interactiveFiltersConfig.dataFilters.componentIris?.includes(
-          value
-        );
-        dispatch({
-          type: "CHART_CONFIG_FILTER_SET_SKIP",
-          value: {
-            dimensionIri: value,
-            value: skipFilterInQueryFilter ?? false,
-          },
-        });
       }
     },
-    [dispatch, state, value]
+    [dispatch, state]
   );
   const checked =
     state.state === "DESCRIBING_CHART" &&
