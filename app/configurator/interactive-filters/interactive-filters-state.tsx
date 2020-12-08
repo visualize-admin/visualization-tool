@@ -28,11 +28,13 @@ export const toggleInteractiveDataFilter = produce(
       dimensions: ComponentFieldsFragment[];
     }
   ): InteractiveFiltersConfig => {
-    if (!IFConfig || IFConfig[path]) {
+    if (!IFConfig || !IFConfig[path]) {
       return IFConfig;
     }
+
     // Toggle filters on/off
     IFConfig[path].active = value;
+
     // Default: toggle dimensions if none is selected, but they are set to true
     if (value && IFConfig[path].componentIris.length === 0) {
       IFConfig[path].componentIris = dimensions.map((d) => d.iri);
