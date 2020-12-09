@@ -1,0 +1,4 @@
+{
+  "stack": "heroku-20",
+  "addons": ["heroku-postgresql:hobby-dev"]
+}
