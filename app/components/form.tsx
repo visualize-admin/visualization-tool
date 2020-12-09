@@ -99,10 +99,21 @@ export const Checkbox = ({
     <TUICheckbox
       data-name="checkbox-component"
       sx={{
-        color: checked && !disabled ? "primary" : "monochrome500",
+        color:
+          checked && !disabled
+            ? "primary"
+            : checked && disabled
+            ? "primaryDisabled"
+            : "monochrome500",
         "> *": {
           fill:
-            color && checked ? color : checked ? "primary" : "monochrome500",
+            color && checked
+              ? color
+              : checked && !disabled
+              ? "primary"
+              : checked && disabled
+              ? "primaryDisabled"
+              : "monochrome500",
         },
       }}
       id={`${name}-${label}`}
