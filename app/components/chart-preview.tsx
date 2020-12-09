@@ -99,7 +99,7 @@ const ChartWithFilters = ({
   chartConfig: ChartConfig;
 }) => {
   const [, dispatch] = useInteractiveFilters();
-
+  // Reset Filters if chart type changes
   useEffect(() => {
     dispatch({
       type: "RESET_DATA_FILTER",
@@ -117,11 +117,7 @@ const ChartWithFilters = ({
       {/* INTERACTIVE FILTERS */}
       {chartConfig.chartType !== "table" &&
         chartConfig.interactiveFiltersConfig.dataFilters.active && (
-          <InteractiveDataFilters
-            dataSet={dataSet}
-            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
-            chartConfig={chartConfig}
-          />
+          <InteractiveDataFilters dataSet={dataSet} chartConfig={chartConfig} />
         )}
       <Chart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>

@@ -3,11 +3,7 @@ import { useEffect } from "react";
 import { Flex } from "theme-ui";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
-import {
-  ChartConfig,
-  FilterValueSingle,
-  InteractiveFiltersDataConfig,
-} from "../../configurator";
+import { ChartConfig, FilterValueSingle } from "../../configurator";
 import { useDimensionValuesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { useInteractiveFilters } from "./use-interactive-filters";
@@ -15,11 +11,9 @@ import { useInteractiveFilters } from "./use-interactive-filters";
 export const InteractiveDataFilters = ({
   dataSet,
   chartConfig,
-  dataFiltersConfig,
 }: {
   dataSet: string;
   chartConfig: ChartConfig;
-  dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
   const [interactiveFiltersState, dispatch] = useInteractiveFilters();
   const interactiveFiltersIsActive =
@@ -55,9 +49,12 @@ export const InteractiveDataFilters = ({
   return (
     <Flex sx={{ justifyContent: "space-between" }}>
       {dataSet &&
-        dataFiltersConfig.componentIris.map((d, i) => (
-          <DataFilterDropdown key={i} dataSetIri={dataSet} dimensionIri={d} />
-        ))}
+        chartConfig.chartType !== "table" &&
+        chartConfig.interactiveFiltersConfig.dataFilters.componentIris.map(
+          (d, i) => (
+            <DataFilterDropdown key={i} dataSetIri={dataSet} dimensionIri={d} />
+          )
+        )}
     </Flex>
   );
 };
