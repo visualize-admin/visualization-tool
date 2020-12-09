@@ -3,7 +3,11 @@ import { useEffect } from "react";
 import { Flex } from "theme-ui";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
-import { ChartConfig, FilterValueSingle } from "../../configurator";
+import {
+  ChartConfig,
+  FilterValueSingle,
+  InteractiveFiltersDataConfig,
+} from "../../configurator";
 import { useDimensionValuesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { useInteractiveFilters } from "./use-interactive-filters";
@@ -11,16 +15,18 @@ import { useInteractiveFilters } from "./use-interactive-filters";
 export const InteractiveDataFilters = ({
   dataSet,
   chartConfig,
+  dataFiltersConfig,
 }: {
   dataSet: string;
   chartConfig: ChartConfig;
+  dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
   const [interactiveFiltersState, dispatch] = useInteractiveFilters();
-  const interactiveFiltersIsActive =
-    chartConfig.chartType !== "table" &&
-    chartConfig.interactiveFiltersConfig.dataFilters.active;
+  const interactiveFiltersIsActive = dataFiltersConfig.active;
+  const { componentIris } = dataFiltersConfig;
 
-  // On first render, init interactive filters with filter values (editor filters)
+  // On first render, initialize interactive filters
+  // with "editor" filters values.
   useEffect(() => {
     if (
       chartConfig.chartType !== "table" &&
@@ -30,7 +36,7 @@ export const InteractiveDataFilters = ({
       interactiveFiltersState.dataFilters.constructor === Object
     ) {
       // Use the filters defined in the editor as defaults for the interactive filters
-      const initialInteractiveFilters = chartConfig.interactiveFiltersConfig.dataFilters.componentIris.reduce(
+      const initialInteractiveFilters = componentIris.reduce(
         (f, dimIri) => ({
           ...f,
           [dimIri]: chartConfig.filters[dimIri],
@@ -50,11 +56,9 @@ export const InteractiveDataFilters = ({
     <Flex sx={{ justifyContent: "space-between" }}>
       {dataSet &&
         chartConfig.chartType !== "table" &&
-        chartConfig.interactiveFiltersConfig.dataFilters.componentIris.map(
-          (d, i) => (
-            <DataFilterDropdown key={i} dataSetIri={dataSet} dimensionIri={d} />
-          )
-        )}
+        componentIris.map((d, i) => (
+          <DataFilterDropdown key={i} dataSetIri={dataSet} dimensionIri={d} />
+        ))}
     </Flex>
   );
 };
@@ -71,7 +75,7 @@ const DataFilterDropdown = ({
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
-  console.log(state.dataFilters);
+
   const setDataFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch({
       type: "UPDATE_DATA_FILTER",

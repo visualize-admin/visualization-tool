@@ -117,7 +117,11 @@ const ChartWithFilters = ({
       {/* INTERACTIVE FILTERS */}
       {chartConfig.chartType !== "table" &&
         chartConfig.interactiveFiltersConfig.dataFilters.active && (
-          <InteractiveDataFilters dataSet={dataSet} chartConfig={chartConfig} />
+          <InteractiveDataFilters
+            dataSet={dataSet}
+            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
+            chartConfig={chartConfig}
+          />
         )}
       <Chart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>
