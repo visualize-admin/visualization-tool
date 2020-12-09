@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
+import { useEffect } from "react";
 import { Flex, Text } from "theme-ui";
 import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
@@ -9,7 +10,10 @@ import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
-import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../charts/shared/use-interactive-filters";
 import { ChartTableVisualization } from "../charts/table/chart-table";
 import { ChartConfig, useConfiguratorState } from "../configurator";
 import { useLocale } from "../locales/use-locale";
@@ -94,6 +98,14 @@ const ChartWithFilters = ({
   dataSet: string;
   chartConfig: ChartConfig;
 }) => {
+  const [, dispatch] = useInteractiveFilters();
+
+  useEffect(() => {
+    dispatch({
+      type: "RESET_DATA_FILTER",
+    });
+  }, [chartConfig.chartType]);
+
   return (
     <Flex
       sx={{

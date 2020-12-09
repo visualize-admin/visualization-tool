@@ -22,6 +22,9 @@ type InteractiveFiltersStateAction =
       value: Date[] | number[];
     }
   | {
+      type: "RESET_DATA_FILTER";
+    }
+  | {
       type: "INIT_DATA_FILTER";
       value: FilterValueSingle;
     }
@@ -60,6 +63,11 @@ const InteractiveFiltersStateReducer = (
       return {
         ...draft,
         time: { from: action.value[0], to: action.value[1] },
+      };
+    case "RESET_DATA_FILTER":
+      return {
+        ...draft,
+        dataFilters: {},
       };
     case "INIT_DATA_FILTER":
       return {
