@@ -28,12 +28,10 @@ export const InteractiveDataFilters = ({
   const [interactiveFiltersState, dispatch] = useInteractiveFilters();
   const interactiveFiltersIsActive = dataFiltersConfig.active;
   const { componentIris } = dataFiltersConfig;
-
   // On first render, initialize interactive filters
   // with "editor" filters values.
   useEffect(() => {
     if (
-      chartConfig.chartType !== "table" &&
       interactiveFiltersIsActive &&
       interactiveFiltersState.dataFilters &&
       Object.keys(interactiveFiltersState.dataFilters).length === 0 &&
@@ -56,16 +54,21 @@ export const InteractiveDataFilters = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    dispatch({ type: "UPDATE_DATA_FILTER_LIST", value: componentIris });
+  }, [componentIris, dispatch]);
+
   return (
     <>
       {dataSet && chartConfig.chartType !== "table" && (
-        <Flex sx={{ flexDirection: "column", mb: 3 }}>
+        <Flex sx={{ flexDirection: "column", my: 4 }}>
           <Button
             variant="inline"
             sx={{
               alignSelf: "flex-end",
               display: "flex",
               fontSize: 2,
+              mb: 4,
             }}
             onClick={() => toggleFilters(!filtersAreHidden)}
           >

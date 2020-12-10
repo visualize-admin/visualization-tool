@@ -7,9 +7,9 @@ import {
   useInteractiveFilters,
 } from "./use-interactive-filters";
 
-// Prepare filters used in data query,
-// merges publisher-defined filters (editor)
-// and user-defined filters (interactive)
+// Prepare filters used in data query:
+// merges in-editor publisher-defined data filters
+// and interactive user-defined data filters (if applicable)
 export const useQueryFilters = ({
   chartConfig,
   interactiveFiltersIsActive,
@@ -32,7 +32,7 @@ export const useQueryFilters = ({
 
 // Prepare data used in charts.
 // Different than the full dataset because
-// interactive filters may be applied.
+// interactive filters may be applied (legend + brush)
 export const usePreparedData = ({
   timeFilterActive,
   legendFilterActive,

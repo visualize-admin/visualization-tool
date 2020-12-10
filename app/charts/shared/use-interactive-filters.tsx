@@ -1,3 +1,5 @@
+import pick from "lodash/pick";
+
 import { Reducer, useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
 import { FilterValueSingle } from "../../configurator";
@@ -31,6 +33,10 @@ type InteractiveFiltersStateAction =
   | {
       type: "UPDATE_DATA_FILTER";
       value: { dimensionIri: string; dimensionValueIri: string };
+    }
+  | {
+      type: "UPDATE_DATA_FILTER_LIST";
+      value: string[];
     }
   | {
       type: "RESET_INTERACTIVE_CATEGORIES";
@@ -85,6 +91,8 @@ const InteractiveFiltersStateReducer = (
           },
         },
       };
+    case "UPDATE_DATA_FILTER_LIST":
+      return { ...draft, dataFilters: pick(draft.dataFilters, action.value) };
     case "RESET_INTERACTIVE_CATEGORIES":
       return {
         ...draft,
