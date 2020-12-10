@@ -204,19 +204,6 @@ const useGroupedColumnsState = ({
     colors.range(getPalette(fields.segment?.palette));
   }
 
-  // Apply end-user-activated interactive filters to the stack
-  // We use segments and sorted data to display legend and axis
-  // but filtered segments and data in the chart itself (band domain + tooltips).
-  // const { categories } = interactiveFilters;
-  // const activeInteractiveFilters = Object.keys(categories);
-  // const activeSegments = segments.filter(
-  //   (s) => !activeInteractiveFilters.includes(s)
-  // );
-  // const interactivelyFilteredData = sortedData.filter(
-  //   (d) => !activeInteractiveFilters.includes(getSegment(d))
-  // );
-
-  // console.log({ activeInteractiveFilters });
   // x
   const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
   const xScale = scaleBand()

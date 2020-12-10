@@ -58,7 +58,7 @@ export const InteractiveDataFilters = ({
   useEffect(() => {
     dispatch({ type: "UPDATE_DATA_FILTER_LIST", value: componentIris });
   }, [componentIris, dispatch]);
-  console.log(interactiveFiltersState);
+
   return (
     <>
       {dataSet && chartConfig.chartType !== "table" && (
