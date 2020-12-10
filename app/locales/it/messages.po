@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/chart-preview.tsx:46
+#: app/components/chart-preview.tsx:47
 msgid "annotation.add.description"
 msgstr "[ Descrizione ]"
 
-#: app/components/chart-preview.tsx:35
+#: app/components/chart-preview.tsx:36
 msgid "annotation.add.title"
 msgstr "[ Titolo ]"
 
@@ -228,7 +228,7 @@ msgstr "Ripartizione"
 msgid "controls.partition.add"
 msgstr "Aggiungi..."
 
-#: app/components/form.tsx:111
+#: app/components/form.tsx:121
 msgid "controls.search.clear"
 msgstr "Cancella la ricerca"
 
@@ -540,6 +540,14 @@ msgstr "Seleziona un dataset"
 #: app/components/hint.tsx:83
 msgid "hint.select.dataset.to.preview"
 msgstr "Seleziona un dataset per vedere l'anteprima della sua struttura e del suo contenuto."
+
+#: app/charts/shared/interactive-data-filters.tsx:43
+msgid "interactive.data.filters.hide"
+msgstr ""
+
+#: app/charts/shared/interactive-data-filters.tsx:43
+msgid "interactive.data.filters.show"
+msgstr ""
 
 #: app/components/header.tsx:71
 #: app/components/header.tsx:82
