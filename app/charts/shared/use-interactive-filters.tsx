@@ -1,9 +1,13 @@
+import pick from "lodash/pick";
+
 import { Reducer, useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
+import { FilterValueSingle } from "../../configurator";
 
 export type InteractiveFiltersState = {
-  categories: $FixMe; //{}; // { [x: string]: boolean };
-  time: $FixMe;
+  categories: { [x: string]: boolean };
+  time: { from: Date | undefined; to: Date | undefined };
+  dataFilters: { [x: string]: FilterValueSingle };
 };
 
 type InteractiveFiltersStateAction =
@@ -17,7 +21,22 @@ type InteractiveFiltersStateAction =
     }
   | {
       type: "ADD_TIME_FILTER";
-      value: Date[] | number[];
+      value: Date[];
+    }
+  | {
+      type: "RESET_DATA_FILTER";
+    }
+  | {
+      type: "INIT_DATA_FILTER";
+      value: FilterValueSingle;
+    }
+  | {
+      type: "UPDATE_DATA_FILTER";
+      value: { dimensionIri: string; dimensionValueIri: string };
+    }
+  | {
+      type: "UPDATE_DATA_FILTER_LIST";
+      value: string[];
     }
   | {
       type: "RESET_INTERACTIVE_CATEGORIES";
@@ -25,7 +44,8 @@ type InteractiveFiltersStateAction =
 
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
-  time: {},
+  time: { from: undefined, to: undefined },
+  dataFilters: {},
 };
 
 // Reducer
@@ -41,15 +61,39 @@ const InteractiveFiltersStateReducer = (
       };
     case "REMOVE_INTERACTIVE_FILTER":
       const { categories } = draft;
-      const category = categories[action.value];
-
-      if (category) delete categories[action.value];
+      if (categories) {
+        const category = categories[action.value];
+        if (category) delete categories[action.value];
+      }
       return draft;
     case "ADD_TIME_FILTER":
       return {
         ...draft,
         time: { from: action.value[0], to: action.value[1] },
       };
+    case "RESET_DATA_FILTER":
+      return {
+        ...draft,
+        dataFilters: undefined,
+      };
+    case "INIT_DATA_FILTER":
+      return {
+        ...draft,
+        dataFilters: action.value,
+      };
+    case "UPDATE_DATA_FILTER":
+      return {
+        ...draft,
+        dataFilters: {
+          ...draft.dataFilters,
+          [action.value.dimensionIri]: {
+            type: "single",
+            value: action.value.dimensionValueIri,
+          },
+        },
+      };
+    case "UPDATE_DATA_FILTER_LIST":
+      return { ...draft, dataFilters: pick(draft.dataFilters, action.value) };
     case "RESET_INTERACTIVE_CATEGORIES":
       return {
         ...draft,
@@ -83,12 +127,12 @@ export const InteractiveFiltersProvider = ({
   children: ReactNode;
 }) => {
   const [state, dispatch] = useImmerReducer<
-    Reducer<InteractiveFiltersState, InteractiveFiltersStateAction>
+    InteractiveFiltersState,
+    InteractiveFiltersStateAction
     // @ts-ignore
   >(InteractiveFiltersStateReducer, INTERACTIVE_FILTERS_INITIAL_STATE);
 
   return (
-    // @ts-ignore
     <InteractiveFiltersStateContext.Provider value={[state, dispatch]}>
       {children}
     </InteractiveFiltersStateContext.Provider>

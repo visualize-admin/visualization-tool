@@ -438,11 +438,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                 },
                 colorMapping: colorMapping,
               };
+
+              // Remove this component from the interactive filter, if it is there
+              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                (c) => c !== action.value.componentIri
+              );
             }
           }
         } else {
           // The field is being updated
           if (
+            draft.chartConfig.chartType !== "table" &&
             action.value.field === "segment" &&
             "segment" in draft.chartConfig.fields &&
             draft.chartConfig.fields.segment &&
@@ -462,6 +468,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             draft.chartConfig.fields.segment.componentIri =
               action.value.componentIri;
             draft.chartConfig.fields.segment.colorMapping = colorMapping;
+
+            // Remove this component from the interactive filter, if it is there
+            draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+              (c) => c !== action.value.componentIri
+            );
           } else {
             // Reset other field options
             (draft.chartConfig.fields as GenericFields)[action.value.field] = {
@@ -563,7 +574,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "INTERACTIVE_FILTER_CHANGED":
       if (draft.state === "DESCRIBING_CHART") {
-        setWith(draft, `chartConfig.interactiveFilters`, action.value, Object);
+        setWith(
+          draft,
+          `chartConfig.interactiveFiltersConfig`,
+          action.value,
+          Object
+        );
       }
       return draft;
 
@@ -579,7 +595,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_FILTER_SET_SINGLE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, value } = action.value;
-        draft.chartConfig.filters[dimensionIri] = { type: "single", value };
+        draft.chartConfig.filters[dimensionIri] = {
+          type: "single",
+          value,
+        };
       }
       return draft;
 

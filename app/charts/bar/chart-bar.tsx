@@ -1,9 +1,11 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
 import {
+  Filters,
   BarConfig,
   BarFields,
   InteractiveFiltersConfig,
+  FilterValueSingle,
 } from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
@@ -25,9 +27,11 @@ import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 export const ChartBarsVisualization = ({
   dataSetIri,
   chartConfig,
+  queryFilters,
 }: {
   dataSetIri: string;
   chartConfig: BarConfig;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeObservationsQuery({
@@ -35,7 +39,7 @@ export const ChartBarsVisualization = ({
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.x.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters,
+      filters: queryFilters,
     },
   });
 
@@ -57,7 +61,7 @@ export const ChartBarsVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          interactiveFilters={chartConfig.interactiveFilters}
+          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -77,13 +81,13 @@ export const ChartBars = memo(
     dimensions,
     measures,
     fields,
-    interactiveFilters,
+    interactiveFiltersConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: BarFields;
-    interactiveFilters: InteractiveFiltersConfig;
+    interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {
     return (
       <>
@@ -100,7 +104,8 @@ export const ChartBars = memo(
                 <AxisWidthLinear />
               </ChartSvg>
             </ChartContainer>
-            {fields.segment && interactiveFilters.legend.active === true ? (
+            {fields.segment &&
+            interactiveFiltersConfig.legend.active === true ? (
               <InteractiveLegendColor symbol="line" />
             ) : fields.segment ? (
               <LegendColor symbol="line" />

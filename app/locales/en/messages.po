@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/chart-preview.tsx:41
+#: app/components/chart-preview.tsx:47
 msgid "annotation.add.description"
 msgstr "[ Description ]"
 
-#: app/components/chart-preview.tsx:30
+#: app/components/chart-preview.tsx:36
 msgid "annotation.add.title"
 msgstr "[ Title ]"
 
@@ -176,11 +176,19 @@ msgstr "Select a design element or a data dimension to modify its options."
 msgid "controls.hint.describing.chart"
 msgstr "Select an annotation field to modify its content."
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:27
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:41
+msgid "controls.interactive.filters.dataFilter"
+msgstr "Filter Data"
+
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:91
+msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
+msgstr "Show data filters"
+
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:29
 msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
 msgstr "Show interactive legend"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:39
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:43
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Show time filter"
 
@@ -220,7 +228,7 @@ msgstr "Partition"
 msgid "controls.partition.add"
 msgstr "Add…"
 
-#: app/components/form.tsx:111
+#: app/components/form.tsx:121
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
@@ -259,15 +267,19 @@ msgstr "Filter"
 msgid "controls.section.groups"
 msgstr "Groups"
 
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:30
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:31
 msgid "controls.section.interactive.filters"
 msgstr "Add interactive filters"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:22
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:52
+msgid "controls.section.interactiveFilters.dataFilters"
+msgstr "Data filters"
+
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:24
 msgid "controls.section.interactiveFilters.legend"
 msgstr "Interactive Legend"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:36
+#: app/configurator/interactive-filters/interactive-filters-options.tsx:38
 msgid "controls.section.interactiveFilters.time"
 msgstr "Filter"
 
@@ -527,24 +539,32 @@ msgstr "Select a dataset"
 msgid "hint.select.dataset.to.preview"
 msgstr "Select a dataset to preview its structure and content."
 
+#: app/charts/shared/interactive-data-filters.tsx:43
+msgid "interactive.data.filters.hide"
+msgstr "Hide Filters"
+
+#: app/charts/shared/interactive-data-filters.tsx:43
+msgid "interactive.data.filters.show"
+msgstr "Show Filters"
+
 #: app/components/header.tsx:71
 #: app/components/header.tsx:82
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
-#: app/components/chart-footnotes.tsx:45
+#: app/components/chart-footnotes.tsx:51
 msgid "metadata.dataset"
 msgstr "Dataset"
 
-#: app/components/chart-footnotes.tsx:36
+#: app/components/chart-footnotes.tsx:42
 msgid "metadata.filter"
 msgstr "Filterset"
 
-#: app/components/chart-footnotes.tsx:75
+#: app/components/chart-footnotes.tsx:81
 msgid "metadata.link.created.with.visualize"
 msgstr "Created with visualize.admin.ch"
 
-#: app/components/chart-footnotes.tsx:50
+#: app/components/chart-footnotes.tsx:56
 msgid "metadata.source"
 msgstr "Source"
 

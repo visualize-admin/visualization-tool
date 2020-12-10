@@ -105,82 +105,86 @@ export const BrushTime = () => {
   /** Keyboard support */
   const moveBrushOnKeyPress = useCallback(
     (event: $FixMe, handleDirection: "w" | "e") => {
-      updateBrushEndedStatus(false);
+      if (from && to) {
+        updateBrushEndedStatus(false);
 
-      const bisectDateLeft = bisector(
-        (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
-      ).left;
-      const bisectDateRight = bisector(
-        (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
-      ).right;
+        const bisectDateLeft = bisector(
+          (ds: Observation, date: Date) =>
+            getDate(ds).getTime() - date.getTime()
+        ).left;
+        const bisectDateRight = bisector(
+          (ds: Observation, date: Date) =>
+            getDate(ds).getTime() - date.getTime()
+        ).right;
 
-      if (event.keyCode === 37 && handleDirection === "w") {
-        // west handle, moving left
-        const index = bisectDateLeft(allData, from, 1);
-        const indexLeft = allData[index - 1];
+        if (event.keyCode === 37 && handleDirection === "w") {
+          // west handle, moving left
+          const index = bisectDateLeft(allData, from, 1);
+          const indexLeft = allData[index - 1];
 
-        if (getDate(indexLeft).getTime() < to.getTime()) {
-          // new lower than "to"
-          dispatch({
-            type: "ADD_TIME_FILTER",
-            value: [getDate(indexLeft), to],
-          });
-        } else {
-          // new too high, don't do anything
-          dispatch({
-            type: "ADD_TIME_FILTER",
-            value: [from, to],
-          });
+          if (getDate(indexLeft).getTime() < to.getTime()) {
+            // new lower than "to"
+            dispatch({
+              type: "ADD_TIME_FILTER",
+              value: [getDate(indexLeft), to],
+            });
+          } else {
+            // new too high, don't do anything
+            dispatch({
+              type: "ADD_TIME_FILTER",
+              value: [from, to],
+            });
+          }
+        } else if (event.keyCode === 39 && handleDirection === "w") {
+          // west handle, moving right
+          const index = bisectDateRight(allData, from, 1);
+          const indexRight = allData[index];
+          if (getDate(indexRight).getTime() < to.getTime()) {
+            dispatch({
+              type: "ADD_TIME_FILTER",
+              value: [getDate(indexRight), to],
+            });
+          } else {
+            dispatch({
+              type: "ADD_TIME_FILTER",
+              value: [from, to],
+            });
+          }
+        } else if (event.keyCode === 37 && handleDirection === "e") {
+          // east handle, moving left
+          const index = bisectDateLeft(allData, to, 1);
+          const indexLeft = allData[index - 1];
+
+          if (getDate(indexLeft).getTime() > from.getTime()) {
+            dispatch({
+              type: "ADD_TIME_FILTER",
+              value: [from, getDate(indexLeft)],
+            });
+          } else {
+            dispatch({
+              type: "ADD_TIME_FILTER",
+              value: [from, to],
+            });
+          }
+        } else if (event.keyCode === 39 && handleDirection === "e") {
+          // east handle, moving right
+          const index = bisectDateRight(allData, to, 1);
+          const indexLeft = allData[index];
+
+          if (indexLeft && getDate(indexLeft).getTime() > from.getTime()) {
+            dispatch({
+              type: "ADD_TIME_FILTER",
+              value: [from, getDate(indexLeft)],
+            });
+          } else {
+            dispatch({
+              type: "ADD_TIME_FILTER",
+              value: [from, to],
+            });
+          }
         }
-      } else if (event.keyCode === 39 && handleDirection === "w") {
-        // west handle, moving right
-        const index = bisectDateRight(allData, from, 1);
-        const indexRight = allData[index];
-        if (getDate(indexRight).getTime() < to.getTime()) {
-          dispatch({
-            type: "ADD_TIME_FILTER",
-            value: [getDate(indexRight), to],
-          });
-        } else {
-          dispatch({
-            type: "ADD_TIME_FILTER",
-            value: [from, to],
-          });
-        }
-      } else if (event.keyCode === 37 && handleDirection === "e") {
-        // east handle, moving left
-        const index = bisectDateLeft(allData, to, 1);
-        const indexLeft = allData[index - 1];
-
-        if (getDate(indexLeft).getTime() > from.getTime()) {
-          dispatch({
-            type: "ADD_TIME_FILTER",
-            value: [from, getDate(indexLeft)],
-          });
-        } else {
-          dispatch({
-            type: "ADD_TIME_FILTER",
-            value: [from, to],
-          });
-        }
-      } else if (event.keyCode === 39 && handleDirection === "e") {
-        // east handle, moving right
-        const index = bisectDateRight(allData, to, 1);
-        const indexLeft = allData[index];
-
-        if (indexLeft && getDate(indexLeft).getTime() > from.getTime()) {
-          dispatch({
-            type: "ADD_TIME_FILTER",
-            value: [from, getDate(indexLeft)],
-          });
-        } else {
-          dispatch({
-            type: "ADD_TIME_FILTER",
-            value: [from, to],
-          });
-        }
+        updateBrushEndedStatus(true);
       }
-      updateBrushEndedStatus(true);
     },
     [allData, dispatch, from, getDate, to]
   );

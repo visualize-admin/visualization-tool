@@ -1,40 +1,44 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
+import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import {
+  Filters,
+  FilterValueSingle,
   InteractiveFiltersConfig,
+  ScatterPlotConfig,
   ScatterPlotFields,
 } from "../../configurator";
-import { ScatterPlotConfig } from "../../configurator";
-import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
-import { Tooltip } from "../shared/interaction/tooltip";
-import {
-  AxisWidthLinear,
-  AxisWidthLinearDomain,
-} from "../shared/axis-width-linear";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
 } from "../shared/axis-height-linear";
+import {
+  AxisWidthLinear,
+  AxisWidthLinearDomain,
+} from "../shared/axis-width-linear";
 import { ChartContainer, ChartSvg } from "../shared/containers";
-import { InteractionVoronoi } from "../shared/overlay-voronoi";
+import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
+import { InteractionVoronoi } from "../shared/overlay-voronoi";
 import { Scatterplot } from "./scatterplot-simple";
 import { ScatterplotChart } from "./scatterplot-state";
-import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 
 export const ChartScatterplotVisualization = ({
   dataSetIri,
   chartConfig,
+  queryFilters,
 }: {
   dataSetIri: string;
   chartConfig: ScatterPlotConfig;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeObservationsQuery({
@@ -45,7 +49,7 @@ export const ChartScatterplotVisualization = ({
         chartConfig.fields.x.componentIri,
         chartConfig.fields.y.componentIri,
       ], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters,
+      filters: queryFilters,
     },
   });
 
@@ -67,7 +71,7 @@ export const ChartScatterplotVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          interactiveFilters={chartConfig.interactiveFilters}
+          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -91,13 +95,13 @@ export const ChartScatterplot = memo(
     dimensions,
     measures,
     fields,
-    interactiveFilters,
+    interactiveFiltersConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: ScatterPlotFields;
-    interactiveFilters: InteractiveFiltersConfig;
+    interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {
     return (
       <ScatterplotChart
@@ -105,7 +109,7 @@ export const ChartScatterplot = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFilters}
+        interactiveFiltersConfig={interactiveFiltersConfig}
         aspectRatio={1}
       >
         <ChartContainer>
@@ -119,7 +123,7 @@ export const ChartScatterplot = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && interactiveFilters.legend.active === true ? (
+        {fields.segment && interactiveFiltersConfig.legend.active === true ? (
           <InteractiveLegendColor symbol="line" />
         ) : fields.segment ? (
           <LegendColor symbol="line" />

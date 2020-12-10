@@ -5,6 +5,7 @@ import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
 import { DataDownload } from "./data-download";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -26,32 +27,36 @@ export const ChartFootnotes = ({
     variables: { iri: dataSetIri, locale },
   });
 
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    interactiveFiltersIsActive:
+      chartConfig.chartType !== "table" &&
+      chartConfig.interactiveFiltersConfig.dataFilters.active,
+  });
   if (data?.dataCubeByIri) {
     const {
       dataCubeByIri: { dimensions },
     } = data;
 
-    const namedFilters = Object.entries(chartConfig.filters).flatMap(
-      ([iri, f]) => {
-        if (f.type !== "single") {
-          return [];
-        }
-
-        const dimension = dimensions.find((d) => d.iri === iri);
-        const value = dimension?.values.find((v) => v.value === f.value);
-
-        if (!dimension) {
-          return [];
-        }
-
-        return [
-          {
-            dimension,
-            value,
-          },
-        ];
+    const namedFilters = Object.entries(queryFilters).flatMap(([iri, f]) => {
+      if (f.type !== "single") {
+        return [];
       }
-    );
+
+      const dimension = dimensions.find((d) => d.iri === iri);
+      const value = dimension?.values.find((v) => v.value === f.value);
+
+      if (!dimension) {
+        return [];
+      }
+
+      return [
+        {
+          dimension,
+          value,
+        },
+      ];
+    });
 
     return (
       <>

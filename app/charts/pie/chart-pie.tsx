@@ -1,6 +1,14 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
 import {
+  Loading,
+  LoadingOverlay,
+  NoDataHint,
+  OnlyNegativeDataHint,
+} from "../../components/hint";
+import {
+  Filters,
+  FilterValueSingle,
   InteractiveFiltersConfig,
   PieConfig,
   PieFields,
@@ -17,19 +25,15 @@ import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { Pie } from "./pie";
 import { PieChart } from "./pie-state";
-import {
-  Loading,
-  LoadingOverlay,
-  NoDataHint,
-  OnlyNegativeDataHint,
-} from "../../components/hint";
 
 export const ChartPieVisualization = ({
   dataSetIri,
   chartConfig,
+  queryFilters,
 }: {
   dataSetIri: string;
   chartConfig: PieConfig;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
 
@@ -38,7 +42,7 @@ export const ChartPieVisualization = ({
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters,
+      filters: queryFilters,
     },
   });
 
@@ -63,7 +67,7 @@ export const ChartPieVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          interactiveFilters={chartConfig.interactiveFilters}
+          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -83,13 +87,13 @@ export const ChartPie = memo(
     dimensions,
     measures,
     fields,
-    interactiveFilters,
+    interactiveFiltersConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
     fields: PieFields;
-    interactiveFilters: InteractiveFiltersConfig;
+    interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {
     return (
       <PieChart
@@ -97,7 +101,7 @@ export const ChartPie = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFilters}
+        interactiveFiltersConfig={interactiveFiltersConfig}
         aspectRatio={0.5}
       >
         <ChartContainer>
@@ -106,7 +110,7 @@ export const ChartPie = memo(
           </ChartSvg>
           <Tooltip type="single" />
         </ChartContainer>
-        {fields.segment && interactiveFilters.legend.active === true ? (
+        {fields.segment && interactiveFiltersConfig.legend.active === true ? (
           <InteractiveLegendColor symbol="line" />
         ) : fields.segment ? (
           <LegendColor symbol="line" />

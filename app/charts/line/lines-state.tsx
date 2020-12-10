@@ -104,8 +104,6 @@ const useLinesState = ({
 
   const xKey = fields.x.componentIri;
 
-  /** Data
-   * => Contains *all* observations, used for brushing */
   const sortedData = useMemo(
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
@@ -340,18 +338,18 @@ export const LineChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <InteractiveFiltersProvider>
-          <LineChartProvider
-            data={data}
-            fields={fields}
-            dimensions={dimensions}
-            measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
-            aspectRatio={aspectRatio}
-          >
-            {children}
-          </LineChartProvider>
-        </InteractiveFiltersProvider>
+        {/* <InteractiveFiltersProvider> */}
+        <LineChartProvider
+          data={data}
+          fields={fields}
+          dimensions={dimensions}
+          measures={measures}
+          interactiveFiltersConfig={interactiveFiltersConfig}
+          aspectRatio={aspectRatio}
+        >
+          {children}
+        </LineChartProvider>
+        {/* </InteractiveFiltersProvider> */}
       </InteractionProvider>
     </Observer>
   );

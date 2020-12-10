@@ -20,6 +20,8 @@ import { getIconName } from "../components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 
+export type InteractveFilterType = "legend" | "time" | "dataFilters";
+
 export const InteractiveFiltersConfigurator = ({
   state,
 }: {
@@ -44,14 +46,14 @@ export const InteractiveFiltersConfigurator = ({
       (dim) => dim.iri === segmentDimensionIri
     );
 
-    // Can chart type have these options?
+    // Can chart type have these filter options?
     const canFilterLegend = chartConfigOptionsUISpec[
       state.chartConfig.chartType
     ].interactiveFilters.includes("legend");
     const canFilterTime = chartConfigOptionsUISpec[
       state.chartConfig.chartType
     ].interactiveFilters.includes("time");
-
+    const canFilterData = Object.keys(state.chartConfig.filters).length > 0;
     return (
       <ControlSection
         role="tablist"
@@ -71,12 +73,24 @@ export const InteractiveFiltersConfigurator = ({
               label={timeDimension.label}
             ></InteractiveFilterTabField>
           )}
-          {/* legend */}
+          {/* Legend */}
           {segmentDimension && canFilterLegend && (
             <InteractiveFilterTabField
               value="legend"
               icon="segment"
               label={segmentDimension.label}
+            ></InteractiveFilterTabField>
+          )}
+          {/* Data Filters */}
+          {canFilterData && (
+            <InteractiveFilterTabField
+              value="dataFilters"
+              icon="filter"
+              label={
+                <Trans id="controls.interactive.filters.dataFilter">
+                  Filter Data
+                </Trans>
+              }
             ></InteractiveFilterTabField>
           )}
         </ControlSectionContent>
@@ -92,7 +106,7 @@ const InteractiveFilterTabField = ({
   icon,
   label,
 }: {
-  value: "legend" | "time";
+  value: InteractveFilterType;
   disabled?: boolean;
   icon: string;
   label: ReactNode;
@@ -110,7 +124,11 @@ const InteractiveFilterTabField = ({
 
   const optionActive =
     state.state === "DESCRIBING_CHART"
-      ? get(state, `chartConfig.interactiveFilters["${value}"].active`, "")
+      ? get(
+          state,
+          `chartConfig.interactiveFiltersConfig["${value}"].active`,
+          ""
+        )
       : "";
 
   return (

@@ -30,6 +30,15 @@ ${(
       fields={scatterplotFields}
       dimensions={scatterplotDimensions}
       measures={scatterplotMeasures}
+      interactiveFiltersConfig={{
+        legend: { active: false, componentIri: "" },
+        time: {
+          active: false,
+          componentIri: "",
+          presets: { type: "range", from: "", to: "" },
+        },
+        dataFilters: { active: false, componentIris: [] },
+      }}
       aspectRatio={1}
     >
       <ChartContainer>

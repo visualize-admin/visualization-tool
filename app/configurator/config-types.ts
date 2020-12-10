@@ -21,6 +21,7 @@ const FilterValueMulti = t.type(
   },
   "FilterValueMulti"
 );
+
 export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
 
 const FilterValueSingle = t.type(
@@ -30,6 +31,7 @@ const FilterValueSingle = t.type(
   },
   "FilterValueSingle"
 );
+
 export type FilterValueSingle = t.TypeOf<typeof FilterValueSingle>;
 
 const FilterValueRange = t.type(
@@ -40,6 +42,7 @@ const FilterValueRange = t.type(
   },
   "FilterValueRange"
 );
+
 export type FilterValueRange = t.TypeOf<typeof FilterValueRange>;
 
 const FilterValue = t.union(
@@ -74,23 +77,6 @@ const Meta = t.type({ title: Title, description: Description });
 export type Meta = t.TypeOf<typeof Meta>;
 export type MetaKey = keyof Meta;
 
-// Interactive Filters
-// interactiveFilters: {
-// 	legend: {
-// 		active: true,
-// 		componentIri: "dim/0",
-//   },
-//   time: {
-//     active:false,
-//     componentIri:"dim/1",
-//     preset: { // any componentIRI e.g. "dim/0"
-//         type: "range",
-// 	      from: "2008",
-// 	      to: "2010"
-//     }
-//   }
-//   dataFilter: {active:true, componentIris: ["dim/3","dim/4"]}
-// }
 const InteractiveFiltersLegend = t.type({
   active: t.boolean,
   componentIri: t.string,
@@ -98,6 +84,7 @@ const InteractiveFiltersLegend = t.type({
 export type InteractiveFiltersLegend = t.TypeOf<
   typeof InteractiveFiltersLegend
 >;
+
 const InteractiveFiltersTime = t.type({
   active: t.boolean,
   componentIri: t.string,
@@ -108,16 +95,25 @@ const InteractiveFiltersTime = t.type({
   }),
 });
 export type InteractiveFiltersTime = t.TypeOf<typeof InteractiveFiltersTime>;
+
+const InteractiveFiltersDataConfig = t.type({
+  active: t.boolean,
+  componentIris: t.array(t.string),
+});
+export type InteractiveFiltersDataConfig = t.TypeOf<
+  typeof InteractiveFiltersDataConfig
+>;
+
 const InteractiveFiltersConfig = t.type({
   legend: InteractiveFiltersLegend,
   time: InteractiveFiltersTime,
+  dataFilters: InteractiveFiltersDataConfig,
 });
 export type InteractiveFiltersConfig = t.TypeOf<
   typeof InteractiveFiltersConfig
 >;
 
 // Chart Config
-
 const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
 export type SortingOrder = t.TypeOf<typeof SortingOrder>;
 
@@ -182,7 +178,7 @@ const BarConfig = t.type(
   {
     chartType: t.literal("bar"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: BarFields,
   },
   "BarConfig"
@@ -213,7 +209,7 @@ const ColumnConfig = t.type(
   {
     chartType: t.literal("column"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: ColumnFields,
   },
   "ColumnConfig"
@@ -242,7 +238,7 @@ const LineConfig = t.type(
   {
     chartType: t.literal("line"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: LineFields,
   },
   "LineConfig"
@@ -278,7 +274,7 @@ const AreaConfig = t.type(
   {
     chartType: t.literal("area"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: AreaFields,
   },
   "AreaConfig"
@@ -309,7 +305,7 @@ const ScatterPlotConfig = t.type(
   {
     chartType: t.literal("scatterplot"),
     filters: Filters,
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: ScatterPlotFields,
   },
   "ScatterPlotConfig"
@@ -339,7 +335,7 @@ const PieFields = t.type({
 const PieConfig = t.type(
   {
     chartType: t.literal("pie"),
-    interactiveFilters: InteractiveFiltersConfig,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
     filters: Filters,
     fields: PieFields,
   },

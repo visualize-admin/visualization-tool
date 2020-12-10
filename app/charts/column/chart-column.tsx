@@ -1,39 +1,43 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
+import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import {
   ColumnConfig,
   ColumnFields,
+  Filters,
+  FilterValueSingle,
   InteractiveFiltersConfig,
 } from "../../configurator";
-import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import {
   ComponentFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
-import { Tooltip } from "../shared/interaction/tooltip";
-import { AxisWidthBand, AxisWidthBandDomain } from "../shared/axis-width-band";
 import { AxisHeightLinear } from "../shared/axis-height-linear";
+import { AxisWidthBand, AxisWidthBandDomain } from "../shared/axis-width-band";
+import { BrushTime } from "../shared/brush";
+import { ChartContainer, ChartSvg } from "../shared/containers";
+import { Tooltip } from "../shared/interaction/tooltip";
+import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { ColumnsGrouped } from "./columns-grouped";
 import { GroupedColumnChart } from "./columns-grouped-state";
 import { Columns } from "./columns-simple";
 import { ColumnsStacked } from "./columns-stacked";
 import { StackedColumnsChart } from "./columns-stacked-state";
 import { ColumnChart } from "./columns-state";
-import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractionColumns } from "./overlay-columns";
-import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
-import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { BrushTime } from "../shared/brush";
 
 export const ChartColumnsVisualization = ({
   dataSetIri,
   chartConfig,
+  queryFilters,
 }: {
   dataSetIri: string;
   chartConfig: ColumnConfig;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeObservationsQuery({
@@ -41,7 +45,7 @@ export const ChartColumnsVisualization = ({
       locale,
       iri: dataSetIri,
       measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
-      filters: chartConfig.filters,
+      filters: queryFilters,
     },
   });
 
@@ -63,7 +67,7 @@ export const ChartColumnsVisualization = ({
           dimensions={dimensions}
           measures={measures}
           fields={chartConfig.fields}
-          interactiveFilters={chartConfig.interactiveFilters}
+          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -83,12 +87,12 @@ export const ChartColumns = memo(
     dimensions,
     measures,
     fields,
-    interactiveFilters,
+    interactiveFiltersConfig,
   }: {
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
-    interactiveFilters: InteractiveFiltersConfig;
+    interactiveFiltersConfig: InteractiveFiltersConfig;
     fields: ColumnFields;
   }) => {
     return (
@@ -100,7 +104,7 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
-            interactiveFiltersConfig={interactiveFilters}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -108,11 +112,11 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <ColumnsStacked /> <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFilters.time.active && <BrushTime />}
+                {interactiveFiltersConfig.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-            {fields.segment && interactiveFilters.legend.active ? (
+            {fields.segment && interactiveFiltersConfig.legend.active ? (
               <InteractiveLegendColor symbol="line" />
             ) : fields.segment ? (
               <LegendColor symbol="line" />
@@ -125,7 +129,7 @@ export const ChartColumns = memo(
             fields={fields}
             dimensions={dimensions}
             measures={measures}
-            interactiveFiltersConfig={interactiveFilters}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -133,12 +137,12 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <ColumnsGrouped /> <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFilters.time.active && <BrushTime />}
+                {interactiveFiltersConfig.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
 
-            {fields.segment && interactiveFilters.legend.active ? (
+            {fields.segment && interactiveFiltersConfig.legend.active ? (
               <InteractiveLegendColor symbol="line" />
             ) : fields.segment ? (
               <LegendColor symbol="line" />
@@ -149,7 +153,7 @@ export const ChartColumns = memo(
             data={observations}
             fields={fields}
             measures={measures}
-            interactiveFiltersConfig={interactiveFilters}
+            interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
           >
             <ChartContainer>
@@ -157,7 +161,7 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <Columns /> <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFilters.time.active && <BrushTime />}
+                {interactiveFiltersConfig.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="single" />
             </ChartContainer>

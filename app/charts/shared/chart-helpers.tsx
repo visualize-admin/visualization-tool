@@ -1,11 +1,38 @@
 import { useMemo } from "react";
 import { isNumber } from "util";
-import { ObservationValue, Observation } from "../../domain/data";
-import { InteractiveFiltersState } from "./use-interactive-filters";
+import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
+import { Observation, ObservationValue } from "../../domain/data";
+import {
+  InteractiveFiltersState,
+  useInteractiveFilters,
+} from "./use-interactive-filters";
+
+// Prepare filters used in data query:
+// merges in-editor publisher-defined data filters
+// and interactive user-defined data filters (if applicable)
+export const useQueryFilters = ({
+  chartConfig,
+  interactiveFiltersIsActive,
+}: {
+  chartConfig: ChartConfig;
+  interactiveFiltersIsActive: boolean;
+}): Filters | FilterValueSingle => {
+  const [IFstate] = useInteractiveFilters();
+  const { filters } = chartConfig;
+  if (chartConfig.chartType !== "table") {
+    const queryFilters = interactiveFiltersIsActive
+      ? { ...filters, ...IFstate.dataFilters }
+      : filters;
+
+    return queryFilters;
+  } else {
+    return filters;
+  }
+};
 
 // Prepare data used in charts.
 // Different than the full dataset because
-// interactive filters may be applied.
+// interactive filters may be applied (legend + brush)
 export const usePreparedData = ({
   timeFilterActive,
   legendFilterActive,
@@ -60,6 +87,7 @@ export const usePreparedData = ({
   ]);
   return preparedData;
 };
+
 // Helper to pivot a dataset to a wider format (used in stacked charts)
 export const getWideData = ({
   xKey,
