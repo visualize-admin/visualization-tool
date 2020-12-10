@@ -25,7 +25,10 @@ import {
   DimensionFieldsWithValuesFragment,
 } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
-import { d3FormatLocales, d3TimeFormatLocales } from "../../locales/locales";
+import {
+  getD3FormatLocale,
+  getD3TimeFormatLocale,
+} from "../../locales/locales";
 import { useLocale } from "../../locales/use-locale";
 import { TableColumn, TableFields } from "../config-types";
 
@@ -54,7 +57,7 @@ export const mkNumber = (x: $IntentionalAny): number => +x;
 export const useFormatFullDateAuto = () => {
   const locale = useLocale();
   const formatter = useMemo(() => {
-    const { format } = d3TimeFormatLocales[locale];
+    const { format } = getD3TimeFormatLocale(locale);
 
     const formatSecond = format("%d.%m.%Y %H:%M:%S");
     const formatMinute = format("%d.%m.%Y %H:%M");
@@ -89,7 +92,7 @@ export const useFormatFullDateAuto = () => {
 export const useFormatShortDateAuto = () => {
   const locale = useLocale();
   const formatter = useMemo(() => {
-    const { format } = d3TimeFormatLocales[locale];
+    const { format } = getD3TimeFormatLocale(locale);
 
     const formatSecond = format(":%S");
     const formatMinute = format("%H:%M");
@@ -121,7 +124,7 @@ export const useFormatShortDateAuto = () => {
 export const useFormatNumber = () => {
   const locale = useLocale();
   const formatter = useMemo(() => {
-    const { format } = d3FormatLocales[locale];
+    const { format } = getD3FormatLocale(locale);
     return format(",.2~f");
   }, [locale]);
   return formatter;
