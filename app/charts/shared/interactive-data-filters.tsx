@@ -1,6 +1,7 @@
+import { Trans } from "@lingui/macro";
 import * as React from "react";
-import { useEffect } from "react";
-import { Flex } from "theme-ui";
+import { useEffect, useState } from "react";
+import { Box, Button, Flex } from "theme-ui";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
@@ -9,6 +10,7 @@ import {
   InteractiveFiltersDataConfig,
 } from "../../configurator";
 import { useDimensionValuesQuery } from "../../graphql/query-hooks";
+import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
@@ -21,6 +23,8 @@ export const InteractiveDataFilters = ({
   chartConfig: ChartConfig;
   dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
+  const [filtersAreHidden, toggleFilters] = useState(false);
+
   const [interactiveFiltersState, dispatch] = useInteractiveFilters();
   const interactiveFiltersIsActive = dataFiltersConfig.active;
   const { componentIris } = dataFiltersConfig;
@@ -53,13 +57,42 @@ export const InteractiveDataFilters = ({
   }, []);
 
   return (
-    <Flex sx={{ justifyContent: "space-between" }}>
-      {dataSet &&
-        chartConfig.chartType !== "table" &&
-        componentIris.map((d, i) => (
-          <DataFilterDropdown key={i} dataSetIri={dataSet} dimensionIri={d} />
-        ))}
-    </Flex>
+    <>
+      {dataSet && chartConfig.chartType !== "table" && (
+        <Flex sx={{ flexDirection: "column", mb: 3 }}>
+          <Button
+            variant="inline"
+            sx={{
+              alignSelf: "flex-end",
+              display: "flex",
+              fontSize: 2,
+            }}
+            onClick={() => toggleFilters(!filtersAreHidden)}
+          >
+            {filtersAreHidden ? (
+              <Trans id="interactive.data.filters.show">Show Filters</Trans>
+            ) : (
+              <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
+            )}
+            <Icon name={filtersAreHidden ? "add" : "close"} size={20}></Icon>
+          </Button>
+          <Box
+            sx={{
+              display: filtersAreHidden ? "none" : "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            {componentIris.map((d, i) => (
+              <DataFilterDropdown
+                key={i}
+                dataSetIri={dataSet}
+                dimensionIri={d}
+              />
+            ))}
+          </Box>
+        </Flex>
+      )}
+    </>
   );
 };
 
