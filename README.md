@@ -73,7 +73,7 @@ This will prompt for a new version. The `postversion` script will automatically 
 If a Heroku app is set up (as Git remote `heroku`), deploy with
 
 ```sh
-git push heroku master -f
+git push heroku main -f
 ```
 
 Build instructions are defined in `heroku.yml`.
@@ -109,8 +109,8 @@ To pull the latest image from the GitLab registry, run:
 docker login registry.ldbar.ch -u <username> -p <deploy_token>
 
 # Pull/Run manually
-docker pull registry.ldbar.ch/interactivethings/visualization-tool:master
-docker run -it registry.ldbar.ch/interactivethings/visualization-tool:master
+docker pull registry.ldbar.ch/interactivethings/visualization-tool:main
+docker run -it registry.ldbar.ch/interactivethings/visualization-tool:main
 ```
 
 Or use `docker-compose`. Simplified example `docker-compose.yml`:
@@ -119,7 +119,7 @@ Or use `docker-compose`. Simplified example `docker-compose.yml`:
 version: "3"
 services:
   web:
-    image: "registry.ldbar.ch/interactivethings/visualization-tool:master"
+    image: "registry.ldbar.ch/interactivethings/visualization-tool:main"
     ports:
       - "80:3000"
     restart: always
