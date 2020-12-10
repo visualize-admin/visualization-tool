@@ -28,6 +28,7 @@ export const InteractiveDataFilters = ({
   const [interactiveFiltersState, dispatch] = useInteractiveFilters();
   const interactiveFiltersIsActive = dataFiltersConfig.active;
   const { componentIris } = dataFiltersConfig;
+
   // On first render, initialize interactive filters
   // with "editor" filters values.
   useEffect(() => {
@@ -48,7 +49,7 @@ export const InteractiveDataFilters = ({
 
       dispatch({
         type: "INIT_DATA_FILTER",
-        value: (initialInteractiveFilters as unknown) as FilterValueSingle,
+        value: initialInteractiveFilters,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,7 +58,7 @@ export const InteractiveDataFilters = ({
   useEffect(() => {
     dispatch({ type: "UPDATE_DATA_FILTER_LIST", value: componentIris });
   }, [componentIris, dispatch]);
-
+  console.log(interactiveFiltersState);
   return (
     <>
       {dataSet && chartConfig.chartType !== "table" && (
@@ -107,7 +108,10 @@ const DataFilterDropdown = ({
   dataSetIri: string;
 }) => {
   const [state, dispatch] = useInteractiveFilters();
+  const { dataFilters } = state;
+
   const locale = useLocale();
+
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
@@ -118,10 +122,7 @@ const DataFilterDropdown = ({
       value: { dimensionIri, dimensionValueIri: e.currentTarget.value },
     });
   };
-  if (
-    data?.dataCubeByIri?.dimensionByIri &&
-    Object.keys(state.dataFilters).length !== 0
-  ) {
+  if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
 
     return (
@@ -144,9 +145,10 @@ const DataFilterDropdown = ({
             value: v.value,
           }))}
           value={
-            state.dataFilters[dimension.iri] &&
-            state.dataFilters[dimension.iri].value
-              ? state.dataFilters[dimension.iri].value
+            dataFilters &&
+            dataFilters[dimension.iri] &&
+            dataFilters[dimension.iri].value
+              ? dataFilters[dimension.iri].value
               : dimension.values[0].value
           }
           disabled={false}

@@ -3,6 +3,7 @@ import { Box } from "theme-ui";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import {
   Filters,
+  FilterValueSingle,
   InteractiveFiltersConfig,
   LineConfig,
   LineFields,
@@ -34,7 +35,7 @@ export const ChartLinesVisualization = ({
 }: {
   dataSetIri: string;
   chartConfig: LineConfig;
-  queryFilters: Filters;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
 

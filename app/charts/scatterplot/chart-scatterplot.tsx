@@ -3,6 +3,7 @@ import { Box } from "theme-ui";
 import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import {
   Filters,
+  FilterValueSingle,
   InteractiveFiltersConfig,
   ScatterPlotConfig,
   ScatterPlotFields,
@@ -37,7 +38,7 @@ export const ChartScatterplotVisualization = ({
 }: {
   dataSetIri: string;
   chartConfig: ScatterPlotConfig;
-  queryFilters: Filters;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeObservationsQuery({

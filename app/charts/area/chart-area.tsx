@@ -5,6 +5,7 @@ import {
   AreaConfig,
   AreaFields,
   Filters,
+  FilterValueSingle,
   InteractiveFiltersConfig,
 } from "../../configurator";
 import { isNumber } from "../../configurator/components/ui-helpers";
@@ -33,7 +34,7 @@ export const ChartAreasVisualization = ({
 }: {
   dataSetIri: string;
   chartConfig: AreaConfig;
-  queryFilters: Filters;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeObservationsQuery({

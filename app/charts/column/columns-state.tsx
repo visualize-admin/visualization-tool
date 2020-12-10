@@ -77,6 +77,11 @@ const useColumnsState = ({
     dispatchInteractiveFilters,
   ] = useInteractiveFilters();
 
+  const { categories, time, dataFilters } = interactiveFilters;
+  console.log("categories", categories);
+  console.log("time", time);
+  console.log("dataFilters", dataFilters);
+
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
     [fields.x.componentIri]

@@ -8,6 +8,7 @@ import {
 } from "../../components/hint";
 import {
   Filters,
+  FilterValueSingle,
   InteractiveFiltersConfig,
   PieConfig,
   PieFields,
@@ -32,7 +33,7 @@ export const ChartPieVisualization = ({
 }: {
   dataSetIri: string;
   chartConfig: PieConfig;
-  queryFilters: Filters;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
 

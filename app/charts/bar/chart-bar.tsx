@@ -5,6 +5,7 @@ import {
   BarConfig,
   BarFields,
   InteractiveFiltersConfig,
+  FilterValueSingle,
 } from "../../configurator";
 import { Observation } from "../../domain/data";
 import { isNumber } from "../../configurator/components/ui-helpers";
@@ -30,7 +31,7 @@ export const ChartBarsVisualization = ({
 }: {
   dataSetIri: string;
   chartConfig: BarConfig;
-  queryFilters: Filters;
+  queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
   const [{ data, fetching }] = useDataCubeObservationsQuery({

@@ -104,6 +104,7 @@ const ChartWithFilters = ({
     dispatch({
       type: "RESET_DATA_FILTER",
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chartConfig.chartType]);
 
   return (

@@ -5,9 +5,9 @@ import { createContext, Dispatch, ReactNode, useContext } from "react";
 import { FilterValueSingle } from "../../configurator";
 
 export type InteractiveFiltersState = {
-  categories: $FixMe; //{}; // { [x: string]: boolean };
-  time: $FixMe;
-  dataFilters: FilterValueSingle | $FixMe;
+  categories: { [x: string]: boolean };
+  time: { from: Date | undefined; to: Date | undefined };
+  dataFilters: { [x: string]: FilterValueSingle };
 };
 
 type InteractiveFiltersStateAction =
@@ -21,7 +21,7 @@ type InteractiveFiltersStateAction =
     }
   | {
       type: "ADD_TIME_FILTER";
-      value: Date[] | number[];
+      value: Date[];
     }
   | {
       type: "RESET_DATA_FILTER";
@@ -44,7 +44,7 @@ type InteractiveFiltersStateAction =
 
 const INTERACTIVE_FILTERS_INITIAL_STATE: InteractiveFiltersState = {
   categories: {},
-  time: {},
+  time: { from: undefined, to: undefined },
   dataFilters: {},
 };
 
@@ -61,9 +61,10 @@ const InteractiveFiltersStateReducer = (
       };
     case "REMOVE_INTERACTIVE_FILTER":
       const { categories } = draft;
-      const category = categories[action.value];
-
-      if (category) delete categories[action.value];
+      if (categories) {
+        const category = categories[action.value];
+        if (category) delete categories[action.value];
+      }
       return draft;
     case "ADD_TIME_FILTER":
       return {
@@ -73,7 +74,7 @@ const InteractiveFiltersStateReducer = (
     case "RESET_DATA_FILTER":
       return {
         ...draft,
-        dataFilters: {},
+        dataFilters: undefined,
       };
     case "INIT_DATA_FILTER":
       return {
@@ -126,12 +127,12 @@ export const InteractiveFiltersProvider = ({
   children: ReactNode;
 }) => {
   const [state, dispatch] = useImmerReducer<
-    Reducer<InteractiveFiltersState, InteractiveFiltersStateAction>
+    InteractiveFiltersState,
+    InteractiveFiltersStateAction
     // @ts-ignore
   >(InteractiveFiltersStateReducer, INTERACTIVE_FILTERS_INITIAL_STATE);
 
   return (
-    // @ts-ignore
     <InteractiveFiltersStateContext.Provider value={[state, dispatch]}>
       {children}
     </InteractiveFiltersStateContext.Provider>

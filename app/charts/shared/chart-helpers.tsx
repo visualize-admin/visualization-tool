@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { isNumber } from "util";
-import { ChartConfig, Filters } from "../../configurator";
+import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
   InteractiveFiltersState,
@@ -16,7 +16,7 @@ export const useQueryFilters = ({
 }: {
   chartConfig: ChartConfig;
   interactiveFiltersIsActive: boolean;
-}): Filters => {
+}): Filters | FilterValueSingle => {
   const [IFstate] = useInteractiveFilters();
   const { filters } = chartConfig;
   if (chartConfig.chartType !== "table") {
