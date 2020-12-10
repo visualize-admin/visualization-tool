@@ -117,7 +117,7 @@ const ChartWithFilters = ({
     >
       {/* INTERACTIVE FILTERS */}
       {chartConfig.chartType !== "table" &&
-        chartConfig.interactiveFiltersConfig.dataFilters.active && (
+        chartConfig.interactiveFiltersConfig?.dataFilters.active && (
           <InteractiveDataFilters
             dataSet={dataSet}
             dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
@@ -137,8 +137,7 @@ const Chart = ({
   chartConfig: ChartConfig;
 }) => {
   const interactiveFiltersIsActive =
-    chartConfig.chartType !== "table" &&
-    chartConfig.interactiveFiltersConfig.dataFilters.active;
+    chartConfig.interactiveFiltersConfig?.dataFilters.active ?? false;
 
   // Combine filters from config + interactive filters
   const queryFilters = useQueryFilters({

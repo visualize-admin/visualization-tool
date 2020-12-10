@@ -30,8 +30,7 @@ export const ChartFootnotes = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     interactiveFiltersIsActive:
-      chartConfig.chartType !== "table" &&
-      chartConfig.interactiveFiltersConfig.dataFilters.active,
+      chartConfig.interactiveFiltersConfig?.dataFilters.active ?? false,
   });
   if (data?.dataCubeByIri) {
     const {

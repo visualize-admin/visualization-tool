@@ -110,7 +110,7 @@ export const ChartLines = memo(
             <Lines />
             {/* <HoverLine /> <HoverLineValues /> */}
             <InteractionHorizontal />
-            {interactiveFiltersConfig.time.active && <BrushTime />}
+            {interactiveFiltersConfig?.time.active && <BrushTime />}
           </ChartSvg>
 
           <Ruler />
@@ -122,7 +122,7 @@ export const ChartLines = memo(
           <Tooltip type={fields.segment ? "multiple" : "single"} />
         </ChartContainer>
 
-        {fields.segment && interactiveFiltersConfig.legend.active ? (
+        {fields.segment && interactiveFiltersConfig?.legend.active ? (
           <InteractiveLegendColor symbol="line" />
         ) : fields.segment ? (
           <LegendColor symbol="line" />

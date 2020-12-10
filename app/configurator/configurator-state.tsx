@@ -440,9 +440,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               };
 
               // Remove this component from the interactive filter, if it is there
-              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                (c) => c !== action.value.componentIri
-              );
+              if (draft.chartConfig.interactiveFiltersConfig) {
+                draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                  (c) => c !== action.value.componentIri
+                );
+              }
             }
           }
         } else {
@@ -470,9 +472,11 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             draft.chartConfig.fields.segment.colorMapping = colorMapping;
 
             // Remove this component from the interactive filter, if it is there
-            draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-              (c) => c !== action.value.componentIri
-            );
+            if (draft.chartConfig.interactiveFiltersConfig) {
+              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                (c) => c !== action.value.componentIri
+              );
+            }
           } else {
             // Reset other field options
             (draft.chartConfig.fields as GenericFields)[action.value.field] = {

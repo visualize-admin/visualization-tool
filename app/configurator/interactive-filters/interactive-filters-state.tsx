@@ -8,7 +8,7 @@ export const toggleInteractiveFilter = produce(
     IFConfig: InteractiveFiltersConfig,
     { path, value }: { path: InteractveFilterType; value: boolean }
   ): InteractiveFiltersConfig => {
-    if (!IFConfig[path]) {
+    if (!IFConfig?.[path]) {
       return IFConfig;
     }
     IFConfig[path].active = value;
@@ -28,7 +28,7 @@ export const toggleInteractiveDataFilter = produce(
       dimensions: ComponentFieldsFragment[];
     }
   ): InteractiveFiltersConfig => {
-    if (!IFConfig || !IFConfig[path]) {
+    if (!IFConfig?.[path]) {
       return IFConfig;
     }
 
@@ -50,7 +50,7 @@ export const toggleInteractiveFilterDataDimension = produce(
     IFConfig: InteractiveFiltersConfig,
     cIri: string
   ): InteractiveFiltersConfig => {
-    if (!IFConfig.dataFilters || !IFConfig.dataFilters.componentIris) {
+    if (!IFConfig?.dataFilters.componentIris) {
       return IFConfig;
     }
     if (IFConfig.dataFilters.componentIris.includes(cIri)) {

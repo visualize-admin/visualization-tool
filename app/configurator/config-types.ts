@@ -104,11 +104,14 @@ export type InteractiveFiltersDataConfig = t.TypeOf<
   typeof InteractiveFiltersDataConfig
 >;
 
-const InteractiveFiltersConfig = t.type({
-  legend: InteractiveFiltersLegend,
-  time: InteractiveFiltersTime,
-  dataFilters: InteractiveFiltersDataConfig,
-});
+const InteractiveFiltersConfig = t.union([
+  t.type({
+    legend: InteractiveFiltersLegend,
+    time: InteractiveFiltersTime,
+    dataFilters: InteractiveFiltersDataConfig,
+  }),
+  t.undefined,
+]);
 export type InteractiveFiltersConfig = t.TypeOf<
   typeof InteractiveFiltersConfig
 >;
@@ -415,6 +418,7 @@ const TableConfig = t.type(
     filters: Filters,
     settings: TableSettings,
     sorting: t.array(TableSortingOption),
+    interactiveFiltersConfig: t.undefined,
   },
   "TableConfig"
 );

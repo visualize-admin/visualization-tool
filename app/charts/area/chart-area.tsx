@@ -106,12 +106,12 @@ export const ChartAreas = memo(
             <AxisTime /> <AxisHeightLinear />
             <Areas /> <AxisTimeDomain />
             <InteractionHorizontal />
-            {interactiveFiltersConfig.time.active === true && <BrushTime />}
+            {interactiveFiltersConfig?.time.active === true && <BrushTime />}
           </ChartSvg>
           <Tooltip type={fields.segment ? "multiple" : "single"} />
           <Ruler />
         </ChartContainer>
-        {fields.segment && interactiveFiltersConfig.legend.active === true ? (
+        {fields.segment && interactiveFiltersConfig?.legend.active === true ? (
           <InteractiveLegendColor symbol="line" />
         ) : fields.segment ? (
           <LegendColor symbol="line" />

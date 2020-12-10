@@ -179,6 +179,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
+        interactiveFiltersConfig: undefined,
         settings: {
           showSearch: true,
           showAllRows: false,

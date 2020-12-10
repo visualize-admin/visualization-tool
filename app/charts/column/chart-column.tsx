@@ -112,11 +112,11 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <ColumnsStacked /> <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFiltersConfig.time.active && <BrushTime />}
+                {interactiveFiltersConfig?.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
-            {fields.segment && interactiveFiltersConfig.legend.active ? (
+            {fields.segment && interactiveFiltersConfig?.legend.active ? (
               <InteractiveLegendColor symbol="line" />
             ) : fields.segment ? (
               <LegendColor symbol="line" />
@@ -137,12 +137,12 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <ColumnsGrouped /> <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFiltersConfig.time.active && <BrushTime />}
+                {interactiveFiltersConfig?.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="multiple" />
             </ChartContainer>
 
-            {fields.segment && interactiveFiltersConfig.legend.active ? (
+            {fields.segment && interactiveFiltersConfig?.legend.active ? (
               <InteractiveLegendColor symbol="line" />
             ) : fields.segment ? (
               <LegendColor symbol="line" />
@@ -161,7 +161,7 @@ export const ChartColumns = memo(
                 <AxisHeightLinear /> <AxisWidthBand />
                 <Columns /> <AxisWidthBandDomain />
                 <InteractionColumns />
-                {interactiveFiltersConfig.time.active && <BrushTime />}
+                {interactiveFiltersConfig?.time.active && <BrushTime />}
               </ChartSvg>
               <Tooltip type="single" />
             </ChartContainer>

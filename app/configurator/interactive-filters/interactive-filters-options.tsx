@@ -195,7 +195,7 @@ const InteractiveDataFilterOptions = ({
               label={d.label}
               value={d.iri}
               disabled={
-                !chartConfig.interactiveFiltersConfig.dataFilters.active
+                !chartConfig.interactiveFiltersConfig?.dataFilters.active
               }
             />
           ))}
@@ -242,7 +242,7 @@ const InteractiveDataFilterOptionsCheckbox = ({
   const checked =
     state.state === "DESCRIBING_CHART" &&
     state.chartConfig.chartType !== "table"
-      ? state.chartConfig.interactiveFiltersConfig.dataFilters.componentIris?.includes(
+      ? state.chartConfig.interactiveFiltersConfig?.dataFilters.componentIris?.includes(
           value
         )
       : false;

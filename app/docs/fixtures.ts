@@ -759,6 +759,7 @@ export const tableDimensions = [
 export const tableConfig: TableConfig = {
   chartType: "table",
   filters: {},
+  interactiveFiltersConfig: undefined,
   settings: { showSearch: true, showAllRows: true },
   sorting: [
     {

@@ -105,7 +105,7 @@ export const ChartBars = memo(
               </ChartSvg>
             </ChartContainer>
             {fields.segment &&
-            interactiveFiltersConfig.legend.active === true ? (
+            interactiveFiltersConfig?.legend.active === true ? (
               <InteractiveLegendColor symbol="line" />
             ) : fields.segment ? (
               <LegendColor symbol="line" />
