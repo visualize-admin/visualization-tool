@@ -3,7 +3,12 @@ import { brushX } from "d3";
 import { select, Selection } from "d3";
 import "d3-transition";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
+import {
+  parseDate,
+  useFormatShortDateAuto,
+} from "../../configurator/components/ui-helpers";
+import { ConfiguratorStateDescribingChart } from "../../configurator/config-types";
+import { useConfiguratorState } from "../../configurator/configurator-state";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
 import { ColumnsState } from "../column/columns-state";
@@ -22,8 +27,14 @@ export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const formatDateAuto = useFormatShortDateAuto();
+  const [configState] = useConfiguratorState();
+  const {
+    interactiveFiltersConfig,
+  } = (configState as ConfiguratorStateDescribingChart).chartConfig;
 
   const [state, dispatch] = useInteractiveFilters();
+
+  console.log("IFstate", state);
   const { from, to } = state.time;
 
   const {
@@ -53,13 +64,10 @@ export const BrushTime = () => {
     }
   };
 
-  const brushed = ({ selection }: { selection: [number, number] }) => {
-    updateBrushEndedStatus(false);
+  const getClosestObservationFromRangeDates = useCallback(
+    (rangeDates: [Date, Date]): [Date, Date] => {
+      const [xStart, xEnd] = rangeDates;
 
-    if (selection) {
-      const [xStart, xEnd] = selection.map((s) => xEntireScale.invert(s));
-
-      // Start date
       const bisectDateLeft = bisector(
         (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
       ).left;
@@ -85,10 +93,22 @@ export const BrushTime = () => {
           ? dEndRight
           : dEndLeft;
 
+      return [getDate(startClosestDatum), getDate(endClosestDatum)];
+    },
+    [allData, getDate]
+  );
+
+  const brushed = ({ selection }: { selection: [number, number] }) => {
+    updateBrushEndedStatus(false);
+
+    if (selection) {
+      const [xStart, xEnd] = selection.map((s) => xEntireScale.invert(s));
+      const newDates = getClosestObservationFromRangeDates([xStart, xEnd]);
+
       // Update interactive filters state
       dispatch({
         type: "ADD_TIME_FILTER",
-        value: [getDate(startClosestDatum), getDate(endClosestDatum)],
+        value: newDates,
       });
     }
   };
@@ -247,7 +267,39 @@ export const BrushTime = () => {
         undefined
       >).call(brush.move, coord);
     }
-  }, [brush.move, from, to, xEntireScale, brushedIsEnded]);
+  }, [
+    brush.move,
+    from,
+    to,
+    xEntireScale,
+    brushedIsEnded,
+    interactiveFiltersConfig,
+    getClosestObservationFromRangeDates,
+    dispatch,
+  ]);
+
+  useEffect(() => {
+    // use config presets as defaults for the brush
+    if (!from && !to && interactiveFiltersConfig) {
+      const presetFrom = parseDate(
+        interactiveFiltersConfig?.time.presets.from.toString()
+      );
+      const presetTo = parseDate(
+        interactiveFiltersConfig?.time.presets.to.toString()
+      );
+      console.log("[presetFrom, presetTo]", [presetFrom, presetTo]);
+      const coord = getClosestObservationFromRangeDates([presetFrom, presetTo]);
+
+      console.log(coord);
+      dispatch({ type: "ADD_TIME_FILTER", value: coord });
+    }
+  }, [
+    dispatch,
+    from,
+    getClosestObservationFromRangeDates,
+    interactiveFiltersConfig,
+    to,
+  ]);
 
   return (
     <>
