@@ -48,6 +48,45 @@ export const useInteractiveFiltersToggle = ({
   };
 };
 
+export const useInteractiveTimeFiltersToggle = ({
+  path,
+  timeExtent,
+}: {
+  path: "time";
+  timeExtent: string[];
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const { chartConfig } = state as ConfiguratorStateDescribingChart;
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      if (timeExtent && state.state === "DESCRIBING_CHART") {
+        const newIFConfig = toggleInteractiveTimeFilter(
+          chartConfig.interactiveFiltersConfig,
+          { path, value: e.currentTarget.checked, timeExtent }
+        );
+
+        dispatch({
+          type: "INTERACTIVE_FILTER_CHANGED",
+          value: newIFConfig,
+        });
+      }
+    },
+    [state, chartConfig, path, timeExtent, dispatch]
+  );
+  const stateValue =
+    state.state === "DESCRIBING_CHART"
+      ? get(state, `chartConfig.interactiveFiltersConfig.${path}.active`, "")
+      : "";
+
+  const checked = stateValue ? stateValue : false;
+  return {
+    name: path,
+    checked,
+    onChange,
+  };
+};
+
 export const useInteractiveDataFiltersToggle = ({
   path,
   dimensions,

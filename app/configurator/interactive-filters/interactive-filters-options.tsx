@@ -106,21 +106,22 @@ export const InteractiveFiltersOptions = ({
   }
 };
 
-const InteractiveFiltersToggle = ({
+// Time Filter
+
+const InteractiveTimeFilterToggle = ({
   label,
   path,
   defaultChecked,
   disabled = false,
+  timeExtent,
 }: {
   label: string | ReactNode;
-  path: InteractveFilterType;
+  path: "time";
   defaultChecked?: boolean;
   disabled?: boolean;
+  timeExtent: string[];
 }) => {
-  const fieldProps = useInteractiveFiltersToggle({
-    path,
-  });
-
+  const fieldProps = useInteractiveTimeFiltersToggle({ path, timeExtent });
   return (
     <Checkbox
       disabled={disabled}
@@ -130,6 +131,72 @@ const InteractiveFiltersToggle = ({
     ></Checkbox>
   );
 };
+
+const InteractiveTimeFilterOptions = ({
+  state,
+}: {
+  state: ConfiguratorStateDescribingChart;
+}) => {
+  const locale = useLocale();
+  const formatDateAuto = useFormatFullDateAuto();
+
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: { iri: state.dataSet, locale },
+  });
+
+  // FIXME: this binds "time" to field "x"
+  const timeDimensionIri = getFieldComponentIri(state.chartConfig.fields, "x");
+
+  if (data?.dataCubeByIri) {
+    const timeDimension = data?.dataCubeByIri.dimensions.find(
+      (dim) => dim.iri === timeDimensionIri
+    );
+
+    const timeExtent = timeDimension?.values
+      ? extent(timeDimension?.values, (d) => parseDate(d.value.toString()))
+      : undefined;
+
+    return (
+      <>
+        {timeExtent && timeExtent[0] && timeExtent[1] ? (
+          <>
+            <InteractiveTimeFilterToggle
+              label={
+                <Trans id="controls.interactiveFilters.time.toggleTimeFilter">
+                  Show time filter
+                </Trans>
+              }
+              path="time"
+              defaultChecked={false}
+              disabled={false}
+              timeExtent={[
+                formatDateAuto(timeExtent[0]),
+                formatDateAuto(timeExtent[1]),
+              ]}
+            ></InteractiveTimeFilterToggle>
+
+            {
+              // Mini Brush
+              <Box sx={{ my: 3 }}>
+                <EditorBrush timeExtent={timeExtent} />
+              </Box>
+            }
+          </>
+        ) : (
+          <Box>
+            <Trans id="controls.interactiveFilters.time.noTimeDimension">
+              There is no time dimension!
+            </Trans>
+          </Box>
+        )}
+      </>
+    );
+  } else {
+    return <Loading />;
+  }
+};
+
+// Data Filters
 const InteractiveDataFiltersToggle = ({
   label,
   path,
@@ -254,6 +321,32 @@ const InteractiveDataFilterOptionsCheckbox = ({
       value={value}
       checked={checked}
       onChange={onChange}
+    ></Checkbox>
+  );
+};
+
+// Generic toggle
+const InteractiveFiltersToggle = ({
+  label,
+  path,
+  defaultChecked,
+  disabled = false,
+}: {
+  label: string | ReactNode;
+  path: InteractveFilterType;
+  defaultChecked?: boolean;
+  disabled?: boolean;
+}) => {
+  const fieldProps = useInteractiveFiltersToggle({
+    path,
+  });
+
+  return (
+    <Checkbox
+      disabled={disabled}
+      label={label}
+      {...fieldProps}
+      checked={fieldProps.checked ?? defaultChecked}
     ></Checkbox>
   );
 };
