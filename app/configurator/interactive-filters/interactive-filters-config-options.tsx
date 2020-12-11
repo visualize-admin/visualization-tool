@@ -29,9 +29,9 @@ import {
   useInteractiveDataFiltersToggle,
   useInteractiveFiltersToggle,
   useInteractiveTimeFiltersToggle,
-} from "./interactive-filters-actions";
+} from "./interactive-filters-config-actions";
 import { InteractveFilterType } from "./interactive-filters-configurator";
-import { toggleInteractiveFilterDataDimension } from "./interactive-filters-state";
+import { toggleInteractiveFilterDataDimension } from "./interactive-filters-config-state";
 
 export const InteractiveFiltersOptions = ({
   state,

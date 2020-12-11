@@ -8,7 +8,7 @@ import {
   toggleInteractiveDataFilter,
   toggleInteractiveFilter,
   toggleInteractiveTimeFilter,
-} from "./interactive-filters-state";
+} from "./interactive-filters-config-state";
 
 export const useInteractiveFiltersToggle = ({
   path,
