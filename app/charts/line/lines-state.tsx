@@ -29,10 +29,7 @@ import { getWideData, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "../shared/use-interactive-filters";
+import { useInteractiveFilters } from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { LEFT_MARGIN_OFFSET } from "./constants";
 
@@ -141,7 +138,6 @@ const useLinesState = ({
   const xEntireScale = scaleTime().domain(xEntireDomain);
 
   // This effect initiates the interactive time filter
-  // and resets interactive categories filtering
   // FIXME: use presets
   useEffect(() => {
     dispatchInteractiveFilters({
