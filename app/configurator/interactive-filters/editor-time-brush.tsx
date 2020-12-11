@@ -4,7 +4,10 @@ import { useCallback, useEffect, useRef } from "react";
 import { Box } from "theme-ui";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
+import { useFormatFullDateAuto } from "../components/ui-helpers";
+import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
+import { updateInteractiveTimeFilter } from "./interactive-filters-state";
 
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;
@@ -20,22 +23,31 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
   const brushRef = useRef<SVGGElement>(null);
   const theme = useTheme();
   const brushWidth = width - MARGINS.left - MARGINS.right;
+
+  const formatDateAuto = useFormatFullDateAuto();
+
   const [state, dispatch] = useConfiguratorState();
+  const { chartConfig } = state as ConfiguratorStateDescribingChart;
+
   const timeScale = scaleTime().domain(timeExtent).range([0, brushWidth]);
 
-  console.log(width);
   const brushed = ({ selection }: { selection: [number, number] }) => {
     if (selection) {
       const [xStart, xEnd] = selection.map((s) => timeScale.invert(s));
 
-      console.log("xStart", xStart);
-      console.log("xEnd", xEnd);
-
       // Update interactive brush presets
-      // dispatch({
-      //   type: "",
-      //   value: [getDate(startClosestDatum), getDate(endClosestDatum)],
-      // });
+      // The dates don't correspond to a data point.
+      const newIFConfig = updateInteractiveTimeFilter(
+        chartConfig.interactiveFiltersConfig,
+        {
+          path: "time",
+          timeExtent: [formatDateAuto(xStart), formatDateAuto(xEnd)],
+        }
+      );
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newIFConfig,
+      });
     }
   };
 

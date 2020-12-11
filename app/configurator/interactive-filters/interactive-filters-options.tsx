@@ -38,7 +38,7 @@ export const InteractiveFiltersOptions = ({
 }: {
   state: ConfiguratorStateDescribingChart;
 }) => {
-  const { activeField, chartConfig } = state;
+  const { activeField } = state;
 
   const panelRef = useRef<HTMLDivElement>(null);
 
