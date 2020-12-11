@@ -4,10 +4,9 @@ import { useCallback, useEffect, useRef } from "react";
 import { Box } from "theme-ui";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
-import { useFormatFullDateAuto } from "../components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
-import { updateInteractiveTimeFilter } from "./interactive-filters-state";
+import { updateInteractiveTimeFilter } from "./interactive-filters-config-state";
 
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;
@@ -24,8 +23,6 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
   const theme = useTheme();
   const brushWidth = width - MARGINS.left - MARGINS.right;
 
-  const formatDateAuto = useFormatFullDateAuto();
-
   const [state, dispatch] = useConfiguratorState();
   const { chartConfig } = state as ConfiguratorStateDescribingChart;
 
@@ -41,7 +38,7 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
         chartConfig.interactiveFiltersConfig,
         {
           path: "time",
-          timeExtent: [formatDateAuto(xStart), formatDateAuto(xEnd)],
+          timeExtent: [xStart.toISOString(), xEnd.toISOString()],
         }
       );
       dispatch({
@@ -56,7 +53,7 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
       [0, 0],
       [brushWidth, BRUSH_HEIGHT],
     ])
-    .on("start brush", brushed);
+    .on("end", brushed);
   // .on("end", updateBrushStatus);
 
   const mkBrush = useCallback(
