@@ -1,7 +1,7 @@
 import { bisector, brushX, select, Selection, Transition } from "d3";
 import "d3-transition";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
+import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
 import { ColumnsState } from "../column/columns-state";
@@ -19,7 +19,7 @@ export const BRUSH_HEIGHT = 3;
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
-  const formatDateAuto = useFormatShortDateAuto();
+  const formatDateAuto = useFormatFullDateAuto();
 
   const [state, dispatch] = useInteractiveFilters();
 
