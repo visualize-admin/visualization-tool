@@ -1,6 +1,6 @@
 import { brushX, scaleTime, select, Selection } from "d3";
 import "d3-transition";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Box } from "theme-ui";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
@@ -21,7 +21,8 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
   const theme = useTheme();
-  const brushWidth = width - MARGINS.left - MARGINS.right;
+  // FIXME: make component responsive (currently triggers infinite loop)
+  const brushWidth = 267; //width - MARGINS.left - MARGINS.right;
 
   const [state, dispatch] = useConfiguratorState();
   const { chartConfig } = state as ConfiguratorStateDescribingChart;
@@ -47,17 +48,16 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
       });
     }
   };
-
   const brush = brushX()
     .extent([
       [0, 0],
       [brushWidth, BRUSH_HEIGHT],
     ])
     .on("end", brushed);
-  // .on("end", updateBrushStatus);
 
-  const mkBrush = useCallback(
-    (g: Selection<SVGGElement, unknown, null, undefined>) => {
+  useEffect(() => {
+    const g = select(brushRef.current);
+    const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
         .attr("fill", theme.colors.monochrome300)
         .attr("fill-opacity", 0.9);
@@ -68,7 +68,6 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
       g.selectAll(".handle")
         .attr("fill", theme.colors.primary)
         .style("y", `-${HANDLE_HEIGHT / 2}px`)
-        // .style("transform", `translateX(-${0}px)`)
         .style("width", `${HANDLE_HEIGHT}px`)
         .style("height", `${HANDLE_HEIGHT}px`)
         .attr("rx", `${HANDLE_HEIGHT}px`);
@@ -81,15 +80,22 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
       //   .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
 
       // Apply brush to selected group
-      g.call(brush);
-    },
-    [brush, theme.colors.monochrome300, theme.colors.primary]
-  );
 
-  useEffect(() => {
-    const g = select(brushRef.current);
+      g.call(brush);
+    };
+
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-  }, [mkBrush]);
+  }, [brush, theme.colors.monochrome300, theme.colors.primary]);
+
+  // Set default selection to full extent
+  useEffect(() => {
+    const defaultSelection = timeExtent.map((d) => timeScale(d));
+    const g = select(brushRef.current);
+    (g as Selection<SVGGElement, unknown, null, undefined>).call(
+      brush.move,
+      defaultSelection
+    );
+  }, []);
 
   return (
     <Box ref={resizeRef}>
