@@ -183,7 +183,10 @@ const InteractiveTimeFilterOptions = ({
             {
               // Mini Brush
               <Box sx={{ my: 3 }}>
-                <EditorBrush timeExtent={timeExtent} />
+                <EditorBrush
+                  timeExtent={timeExtent}
+                  timeDataPoints={timeDimension?.values}
+                />
               </Box>
             }
           </>

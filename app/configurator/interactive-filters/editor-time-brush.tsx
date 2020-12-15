@@ -1,9 +1,12 @@
-import { brushX, scaleTime, select, Selection } from "d3";
+import { Trans } from "@lingui/macro";
+import { bisector, brushX, scaleTime, select, Selection } from "d3";
 import "d3-transition";
-import { useEffect, useRef } from "react";
-import { Box } from "theme-ui";
+import React, { useCallback, useEffect, useRef } from "react";
+import { Flex, Box, Text } from "theme-ui";
+import { Label } from "../../components/form";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
+import { parseDate, useFormatFullDateAuto } from "../components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import { updateInteractiveTimeFilter } from "./interactive-filters-config-state";
@@ -12,15 +15,27 @@ const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;
 const MARGINS = {
   top: HANDLE_HEIGHT / 2,
-  right: HANDLE_HEIGHT / 2,
+  right: 8,
   bottom: HANDLE_HEIGHT / 2,
-  left: HANDLE_HEIGHT / 2,
+  left: 8,
 };
 
-export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
+export const EditorBrush = ({
+  timeExtent,
+  timeDataPoints,
+}: {
+  timeExtent: Date[];
+  timeDataPoints?: {
+    __typename: "DimensionValue";
+    value: string;
+    label: string;
+  }[];
+}) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
   const theme = useTheme();
+  const formatDateAuto = useFormatFullDateAuto();
+
   // FIXME: make component responsive (currently triggers infinite loop)
   const brushWidth = 267; //width - MARGINS.left - MARGINS.right;
 
@@ -28,6 +43,32 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
   const { chartConfig } = state as ConfiguratorStateDescribingChart;
 
   const timeScale = scaleTime().domain(timeExtent).range([0, brushWidth]);
+
+  const getClosestDimensionValue = useCallback(
+    (date: Date): Date => {
+      if (timeDataPoints) {
+        const dimensionValues = timeDataPoints.map((d) => parseDate(d.value));
+
+        const bisectDateLeft = bisector(
+          (dvs: Date, date: Date) => dvs.getTime() - date.getTime()
+        ).left;
+
+        const startIndex = bisectDateLeft(dimensionValues, date, 1);
+        const dStartLeft = dimensionValues[startIndex - 1];
+        const dStartRight = dimensionValues[startIndex] || dStartLeft;
+        const closestDatum =
+          date.getTime() - dStartLeft.getTime() >
+          dStartRight.getTime() - date.getTime()
+            ? dStartRight
+            : dStartLeft;
+
+        return closestDatum;
+      } else {
+        return date;
+      }
+    },
+    [timeDataPoints]
+  );
 
   const brushed = ({ selection }: { selection: [number, number] }) => {
     if (selection) {
@@ -98,18 +139,47 @@ export const EditorBrush = ({ timeExtent }: { timeExtent: Date[] }) => {
   }, []);
 
   return (
-    <Box ref={resizeRef}>
-      {width && (
-        <svg
-          width={width + MARGINS.left + MARGINS.right}
-          height={BRUSH_HEIGHT + MARGINS.top + MARGINS.bottom}
-        >
-          <g
-            ref={brushRef}
-            transform={`translate(${MARGINS.left}, ${MARGINS.top})`}
-          />
-        </svg>
-      )}
+    <Box sx={{ mt: 4 }}>
+      <Label smaller htmlFor="editor-brush">
+        <Trans id="controls..interactiveFilters.time.defaultSettings">
+          Default Settings
+        </Trans>
+      </Label>
+      <Box ref={resizeRef} id="editor-brush">
+        {width > 0 && (
+          <svg
+            width={width + MARGINS.left + MARGINS.right}
+            height={BRUSH_HEIGHT + MARGINS.top + MARGINS.bottom}
+          >
+            <g
+              ref={brushRef}
+              transform={`translate(${MARGINS.left}, ${MARGINS.top})`}
+            />
+          </svg>
+        )}
+      </Box>
+      <Flex sx={{ justifyContent: "space-between" }}>
+        <Text variant="meta">
+          {chartConfig &&
+            chartConfig.interactiveFiltersConfig?.time.presets.from &&
+            formatDateAuto(
+              getClosestDimensionValue(
+                parseDate(
+                  chartConfig.interactiveFiltersConfig?.time.presets.from
+                )
+              )
+            )}
+        </Text>
+        <Text variant="meta">
+          {chartConfig &&
+            chartConfig.interactiveFiltersConfig?.time.presets.to &&
+            formatDateAuto(
+              getClosestDimensionValue(
+                parseDate(chartConfig.interactiveFiltersConfig?.time.presets.to)
+              )
+            )}
+        </Text>
+      </Flex>
     </Box>
   );
 };
