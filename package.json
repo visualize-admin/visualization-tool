@@ -51,7 +51,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "10.x",
     "babel-plugin-macros": "^3.0.0",
-    "cypress": "^5.2.0",
+    "cypress": "^6.1.0",
     "cypress-plugin-snapshots": "^1.4.4",
     "eslint": "7.9.0",
     "eslint-config-react-app": "^5.2.1",
