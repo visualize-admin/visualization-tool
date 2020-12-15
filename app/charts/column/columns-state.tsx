@@ -16,7 +16,7 @@ import {
   scaleOrdinal,
 } from "d3";
 
-import { ReactNode, useMemo, useCallback, useEffect } from "react";
+import { ReactNode, useMemo, useCallback } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -72,10 +72,7 @@ const useColumnsState = ({
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
 
-  const [
-    interactiveFilters,
-    dispatchInteractiveFilters,
-  ] = useInteractiveFilters();
+  const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
@@ -130,16 +127,6 @@ const useColumnsState = ({
     [getXAsDate, sortedData]
   );
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
-
-  // This effect initiates the interactive time filter
-  // and resets interactive categories filtering
-  // FIXME: use presets
-  useEffect(() => {
-    dispatchInteractiveFilters({
-      type: "ADD_TIME_FILTER",
-      value: xEntireDomainAsTime,
-    });
-  }, [dispatchInteractiveFilters, xEntireDomainAsTime]);
 
   // y
   const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);

@@ -258,16 +258,6 @@ const useColumnsStackedState = ({
 
   const yScale = scaleLinear().domain(yStackDomain).nice();
 
-  // This effect initiates the interactive time filter
-  // and resets interactive categories filtering
-  // FIXME: use presets
-  // useEffect(() => {
-  //   dispatchInteractiveFilters({
-  //     type: "ADD_TIME_FILTER",
-  //     value: xEntireDomainAsTime,
-  //   });
-  // }, [dispatchInteractiveFilters, xEntireDomainAsTime]);
-
   // stack order
   const stackOrder =
     segmentSortingType === "byTotalSize" && segmentSortingOrder === "asc"

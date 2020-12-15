@@ -1,9 +1,7 @@
-import { bisector, Transition } from "d3";
-import { brushX } from "d3";
-import { select, Selection } from "d3";
+import { bisector, brushX, select, Selection, Transition } from "d3";
 import "d3-transition";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { AreasState } from "../area/areas-state";
 import { ColumnsState } from "../column/columns-state";
@@ -21,9 +19,10 @@ export const BRUSH_HEIGHT = 3;
 export const BrushTime = () => {
   const ref = useRef<SVGGElement>(null);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
-  const formatDateAuto = useFormatShortDateAuto();
+  const formatDateAuto = useFormatFullDateAuto();
 
   const [state, dispatch] = useInteractiveFilters();
+
   const { from, to } = state.time;
 
   const {
@@ -53,16 +52,14 @@ export const BrushTime = () => {
     }
   };
 
-  const brushed = ({ selection }: { selection: [number, number] }) => {
-    updateBrushEndedStatus(false);
+  const getClosestObservationFromRangeDates = useCallback(
+    (rangeDates: [Date, Date]): [Date, Date] => {
+      const [xStart, xEnd] = rangeDates;
 
-    if (selection) {
-      const [xStart, xEnd] = selection.map((s) => xEntireScale.invert(s));
-
-      // Start date
       const bisectDateLeft = bisector(
         (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
       ).left;
+
       const startIndex = bisectDateLeft(allData, xStart, 1);
       const dStartLeft = allData[startIndex - 1];
       const dStartRight = allData[startIndex] || dStartLeft;
@@ -85,10 +82,30 @@ export const BrushTime = () => {
           ? dEndRight
           : dEndLeft;
 
+      return [getDate(startClosestDatum), getDate(endClosestDatum)];
+    },
+    [allData, getDate]
+  );
+
+  const [closestFrom, closestTo] = useMemo(() => {
+    if (from && to) {
+      return getClosestObservationFromRangeDates([from, to]);
+    } else {
+      return [xEntireScale.domain()[0], xEntireScale.domain()[1]];
+    }
+  }, [from, getClosestObservationFromRangeDates, to, xEntireScale]);
+
+  const brushed = ({ selection }: { selection: [number, number] }) => {
+    updateBrushEndedStatus(false);
+
+    if (selection) {
+      const [xStart, xEnd] = selection.map((s) => xEntireScale.invert(s));
+      const newDates = getClosestObservationFromRangeDates([xStart, xEnd]);
+
       // Update interactive filters state
       dispatch({
         type: "ADD_TIME_FILTER",
-        value: [getDate(startClosestDatum), getDate(endClosestDatum)],
+        value: newDates,
       });
     }
   };
@@ -189,8 +206,9 @@ export const BrushTime = () => {
     [allData, dispatch, from, getDate, to]
   );
 
-  const mkBrush = useCallback(
-    (g: Selection<SVGGElement, unknown, null, undefined>) => {
+  useEffect(() => {
+    const g = select(ref.current);
+    const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
         .attr("fill", brushOverlayColor)
         .attr("fill-opacity", 0.9);
@@ -217,37 +235,54 @@ export const BrushTime = () => {
 
       // Apply brush to selected group
       g.call(brush);
-    },
-    [
-      brush,
-      brushHandleFillColor,
-      brushHandleStrokeColor,
-      brushOverlayColor,
-      brushSelectionColor,
-      moveBrushOnKeyPress,
-    ]
-  );
-
-  useEffect(() => {
-    const g = select(ref.current);
+    };
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-  }, [mkBrush]);
+  }, [
+    brush,
+    brushHandleFillColor,
+    brushHandleStrokeColor,
+    brushOverlayColor,
+    brushSelectionColor,
+    moveBrushOnKeyPress,
+  ]);
 
   // This effect allow "snapping" to actual data points
   // after brush is ended and interactive-filters state is updated
   useEffect(() => {
     const g = select(ref.current);
-    if (from && to && brushedIsEnded) {
-      const coord = [xEntireScale(from), xEntireScale(to)];
-
+    if (closestFrom && closestTo && brushedIsEnded) {
+      const coord = [xEntireScale(closestFrom), xEntireScale(closestTo)];
       (g.transition() as Transition<
         SVGGElement,
         unknown,
         null,
         undefined
       >).call(brush.move, coord);
+
+      updateBrushEndedStatus(false);
     }
-  }, [brush.move, from, to, xEntireScale, brushedIsEnded]);
+  }, [
+    xEntireScale,
+    brushedIsEnded,
+    dispatch,
+    closestFrom?.toString(),
+    closestTo?.toString(),
+  ]);
+
+  // This effect reset brush defaults to editor values
+  // without transition
+  useEffect(() => {
+    const g = select(ref.current);
+
+    const defaultSelection = [
+      xEntireScale(closestFrom),
+      xEntireScale(closestTo),
+    ];
+    (g as Selection<SVGGElement, unknown, null, undefined>).call(
+      brush.move,
+      defaultSelection
+    );
+  }, [closestFrom.toString(), closestTo.toString()]);
 
   return (
     <>
@@ -278,7 +313,7 @@ export const BrushTime = () => {
           bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
         })`}
       >
-        {from && to && (
+        {closestFrom && closestTo && (
           <text
             fontSize={labelFontSize}
             textAnchor="start"
@@ -286,7 +321,7 @@ export const BrushTime = () => {
             y={0}
             dy={labelFontSize / 2}
           >
-            {`${formatDateAuto(from)} - ${formatDateAuto(to)}`}
+            {`${formatDateAuto(closestFrom)} - ${formatDateAuto(closestTo)}`}
           </text>
         )}
       </g>

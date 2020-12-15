@@ -15,6 +15,59 @@ export const toggleInteractiveFilter = produce(
     return IFConfig;
   }
 );
+
+// Time
+export const toggleInteractiveTimeFilter = produce(
+  (
+    IFConfig: InteractiveFiltersConfig,
+    {
+      path,
+      value,
+      timeExtent,
+    }: {
+      path: "time";
+      value: boolean;
+      timeExtent: string[];
+    }
+  ): InteractiveFiltersConfig => {
+    if (!IFConfig?.[path]) {
+      return IFConfig;
+    }
+
+    // Toggle time brush on/off
+    IFConfig[path].active = value;
+
+    // set min and max date as default presets for time brush
+    if (value && !IFConfig[path].presets.from && !IFConfig[path].presets.to) {
+      IFConfig[path].presets.from = timeExtent[0];
+      IFConfig[path].presets.to = timeExtent[1];
+    }
+    return IFConfig;
+  }
+);
+export const updateInteractiveTimeFilter = produce(
+  (
+    IFConfig: InteractiveFiltersConfig,
+    {
+      path,
+      timeExtent,
+    }: {
+      path: "time";
+      timeExtent: string[];
+    }
+  ): InteractiveFiltersConfig => {
+    if (!IFConfig?.[path]) {
+      return IFConfig;
+    }
+
+    IFConfig[path].presets.from = timeExtent[0];
+    IFConfig[path].presets.to = timeExtent[1];
+
+    return IFConfig;
+  }
+);
+
+// Data filters
 export const toggleInteractiveDataFilter = produce(
   (
     IFConfig: InteractiveFiltersConfig,

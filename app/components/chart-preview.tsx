@@ -16,6 +16,7 @@ import {
 } from "../charts/shared/use-interactive-filters";
 import { ChartTableVisualization } from "../charts/table/chart-table";
 import { ChartConfig, useConfiguratorState } from "../configurator";
+import { parseDate } from "../configurator/components/ui-helpers";
 import { useLocale } from "../locales/use-locale";
 import { ChartFootnotes } from "./chart-footnotes";
 
@@ -75,7 +76,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             </Text>
           </>
           <InteractiveFiltersProvider>
-            <ChartWithFilters
+            <ChartWithInteractiveFilters
               dataSet={state.dataSet}
               chartConfig={state.chartConfig}
             />
@@ -91,21 +92,38 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
     </Flex>
   );
 };
-const ChartWithFilters = ({
+
+const ChartWithInteractiveFilters = ({
   dataSet,
   chartConfig,
 }: {
   dataSet: string;
   chartConfig: ChartConfig;
 }) => {
-  const [, dispatch] = useInteractiveFilters();
-  // Reset Filters if chart type changes
+  const [IFstate, dispatch] = useInteractiveFilters();
+  const { interactiveFiltersConfig } = chartConfig;
+
+  const presetFrom =
+    interactiveFiltersConfig?.time.presets.from &&
+    parseDate(interactiveFiltersConfig?.time.presets.from.toString());
+  const presetTo =
+    interactiveFiltersConfig?.time.presets.to &&
+    parseDate(interactiveFiltersConfig?.time.presets.to.toString());
+
+  // Reset data filters if chart type changes
   useEffect(() => {
     dispatch({
       type: "RESET_DATA_FILTER",
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chartConfig.chartType]);
+
+  // Editor time presets supersede interactive state
+  useEffect(() => {
+    if (presetFrom && presetTo) {
+      dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
+    }
+  }, [dispatch, presetFrom?.toString(), presetTo?.toString()]);
 
   return (
     <Flex

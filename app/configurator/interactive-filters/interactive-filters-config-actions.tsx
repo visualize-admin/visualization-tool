@@ -7,7 +7,8 @@ import { InteractveFilterType } from "./interactive-filters-configurator";
 import {
   toggleInteractiveDataFilter,
   toggleInteractiveFilter,
-} from "./interactive-filters-state";
+  toggleInteractiveTimeFilter,
+} from "./interactive-filters-config-state";
 
 export const useInteractiveFiltersToggle = ({
   path,
@@ -17,11 +18,7 @@ export const useInteractiveFiltersToggle = ({
   const [state, dispatch] = useConfiguratorState();
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (
-        state.state === "DESCRIBING_CHART" &&
-        // All charts except "table" can have interactive filters
-        state.chartConfig.chartType !== "table"
-      ) {
+      if (state.state === "DESCRIBING_CHART") {
         const newIFConfig = toggleInteractiveFilter(
           state.chartConfig.interactiveFiltersConfig,
           { path, value: e.currentTarget.checked }
@@ -48,6 +45,45 @@ export const useInteractiveFiltersToggle = ({
   };
 };
 
+export const useInteractiveTimeFiltersToggle = ({
+  path,
+  timeExtent,
+}: {
+  path: "time";
+  timeExtent: string[];
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const { chartConfig } = state as ConfiguratorStateDescribingChart;
+  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      if (timeExtent && state.state === "DESCRIBING_CHART") {
+        const newIFConfig = toggleInteractiveTimeFilter(
+          chartConfig.interactiveFiltersConfig,
+          { path, value: e.currentTarget.checked, timeExtent }
+        );
+
+        dispatch({
+          type: "INTERACTIVE_FILTER_CHANGED",
+          value: newIFConfig,
+        });
+      }
+    },
+    [state, chartConfig, path, timeExtent, dispatch]
+  );
+  const stateValue =
+    state.state === "DESCRIBING_CHART"
+      ? get(state, `chartConfig.interactiveFiltersConfig.${path}.active`, "")
+      : "";
+
+  const checked = stateValue ? stateValue : false;
+  return {
+    name: path,
+    checked,
+    onChange,
+  };
+};
+
 export const useInteractiveDataFiltersToggle = ({
   path,
   dimensions,
@@ -60,11 +96,7 @@ export const useInteractiveDataFiltersToggle = ({
   const { chartConfig } = state as ConfiguratorStateDescribingChart;
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      if (
-        state.state === "DESCRIBING_CHART" &&
-        // All charts except "table" can have interactive filters
-        chartConfig.chartType !== "table"
-      ) {
+      if (state.state === "DESCRIBING_CHART") {
         const newIFConfig = toggleInteractiveDataFilter(
           chartConfig.interactiveFiltersConfig,
           { path, value: e.currentTarget.checked, dimensions }
