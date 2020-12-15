@@ -16,7 +16,7 @@ import {
   scaleOrdinal,
 } from "d3";
 
-import { ReactNode, useMemo, useCallback, useEffect } from "react";
+import { ReactNode, useMemo, useCallback } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -72,10 +72,7 @@ const useColumnsState = ({
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
 
-  const [
-    interactiveFilters,
-    dispatchInteractiveFilters,
-  ] = useInteractiveFilters();
+  const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
