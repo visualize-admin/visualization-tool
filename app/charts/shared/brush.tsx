@@ -220,7 +220,7 @@ export const BrushTime = () => {
         .attr("fill", brushHandleFillColor)
         .attr("stroke", brushHandleStrokeColor)
         .attr("stroke-width", 2)
-        .style("y", `-${HANDLE_HEIGHT / 2}px`)
+        .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
         // .style("transform", `translateX(-${0}px)`)
         .style("width", `${HANDLE_HEIGHT}px`)
         .style("height", `${HANDLE_HEIGHT}px`)

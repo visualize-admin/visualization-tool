@@ -108,7 +108,7 @@ export const EditorBrush = ({
         .attr("stroke", "none");
       g.selectAll(".handle")
         .attr("fill", theme.colors.primary)
-        .style("y", `-${HANDLE_HEIGHT / 2}px`)
+        .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
         .style("width", `${HANDLE_HEIGHT}px`)
         .style("height", `${HANDLE_HEIGHT}px`)
         .attr("rx", `${HANDLE_HEIGHT}px`);
