@@ -3,7 +3,7 @@ import { Box } from "theme-ui";
 import { ConfiguratorStateDescribingChart } from "..";
 import { locales } from "../../locales/locales";
 import { useLocale } from "../../locales/use-locale";
-import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-options";
+import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-config-options";
 import {
   ControlSection,
   ControlSectionContent,
