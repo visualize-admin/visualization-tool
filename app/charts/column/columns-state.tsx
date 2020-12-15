@@ -131,16 +131,6 @@ const useColumnsState = ({
   );
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
-  // This effect initiates the interactive time filter
-  // and resets interactive categories filtering
-  // FIXME: use presets
-  useEffect(() => {
-    dispatchInteractiveFilters({
-      type: "ADD_TIME_FILTER",
-      value: xEntireDomainAsTime,
-    });
-  }, [dispatchInteractiveFilters, xEntireDomainAsTime]);
-
   // y
   const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
   const maxValue = max(preparedData, (d) => getY(d)) as number;

@@ -137,15 +137,6 @@ const useLinesState = ({
   );
   const xEntireScale = scaleTime().domain(xEntireDomain);
 
-  // This effect initiates the interactive time filter
-  // FIXME: use presets
-  useEffect(() => {
-    dispatchInteractiveFilters({
-      type: "ADD_TIME_FILTER",
-      value: xEntireDomain,
-    });
-  }, [dispatchInteractiveFilters, xEntireDomain]);
-
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;

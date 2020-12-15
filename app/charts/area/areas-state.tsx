@@ -204,16 +204,6 @@ const useAreasState = ({
 
   const yScale = scaleLinear().domain(yDomain).nice();
 
-  // This effect initiates the interactive time filter
-  // and resets interactive categories filtering
-  // FIXME: use presets
-  useEffect(() => {
-    dispatchInteractiveFilters({
-      type: "ADD_TIME_FILTER",
-      value: xEntireDomain,
-    });
-  }, [dispatchInteractiveFilters, xEntireDomain]);
-
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
   const segmentDimension = dimensions.find(
