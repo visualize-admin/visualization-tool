@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button } from "theme-ui";
 import get from "lodash/get";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import { Box, Button } from "theme-ui";
 import { getFilterValue, useConfiguratorState } from "..";
 import { Loading } from "../../components/hint";
 import { useDimensionValuesQuery } from "../../graphql/query-hooks";
@@ -41,6 +41,16 @@ export const DimensionValuesMultiFilter = ({
     });
   }, [dispatch, dimensionIri]);
 
+  const dimension = data?.dataCubeByIri?.dimensionByIri;
+
+  const sortedDimensionValues = useMemo(() => {
+    return dimension?.values
+      ? [...dimension.values].sort((a, b) =>
+          a.label.localeCompare(b.label, locale)
+        )
+      : [];
+  }, [dimension?.values, locale]);
+
   if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
 
@@ -75,7 +85,7 @@ export const DimensionValuesMultiFilter = ({
           </Button>
         </Box>
 
-        {dimension.values.map((dv) => {
+        {sortedDimensionValues.map((dv) => {
           if (state.state === "CONFIGURING_CHART") {
             const path = colorConfigPath ? `${colorConfigPath}.` : "";
 
@@ -120,12 +130,20 @@ export const DimensionValuesSingleFilter = ({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
-  if (data?.dataCubeByIri?.dimensionByIri) {
-    const dimension = data?.dataCubeByIri?.dimensionByIri;
+  const dimension = data?.dataCubeByIri?.dimensionByIri;
 
+  const sortedDimensionValues = useMemo(() => {
+    return dimension?.values
+      ? [...dimension.values].sort((a, b) =>
+          a.label.localeCompare(b.label, locale)
+        )
+      : [];
+  }, [dimension?.values, locale]);
+
+  if (dimension) {
     return (
       <>
-        {dimension.values.map((dv) => {
+        {sortedDimensionValues.map((dv) => {
           return (
             <SingleFilterField
               key={dv.value}

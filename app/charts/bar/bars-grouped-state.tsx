@@ -12,6 +12,7 @@ import { BarFields, SortingOrder, SortingType } from "../../configurator";
 import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
+import { useLocale } from "../../locales/use-locale";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import {
@@ -49,6 +50,7 @@ const useGroupedBarsState = ({
 }: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   fields: BarFields;
 }): GroupedBarsState => {
+  const locale = useLocale();
   const width = useWidth();
   const [, dispatchInteractiveFilters] = useInteractiveFilters();
 
@@ -107,7 +109,9 @@ const useGroupedBarsState = ({
   const segmentsOrderedByName = Array.from(
     new Set(sortedData.map((d) => getSegment(d)))
   ).sort((a, b) =>
-    segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
+    segmentSortingOrder === "asc"
+      ? a.localeCompare(b, locale)
+      : b.localeCompare(a, locale)
   );
 
   const segmentsOrderedByTotalValue = [

@@ -29,6 +29,7 @@ import {
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import { getWideData, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -74,6 +75,7 @@ const useAreasState = ({
   fields: AreaFields;
   aspectRatio: number;
 }): AreasState => {
+  const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
@@ -148,7 +150,9 @@ const useAreasState = ({
   const segmentsOrderedByName = Array.from(
     new Set(sortedData.map((d) => getSegment(d)))
   ).sort((a, b) =>
-    segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
+    segmentSortingOrder === "asc"
+      ? a.localeCompare(b, locale)
+      : b.localeCompare(a, locale)
   );
 
   const segmentsOrderedByTotalValue = [

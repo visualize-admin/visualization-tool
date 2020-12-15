@@ -28,6 +28,7 @@ import {
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import { usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -80,6 +81,7 @@ const useGroupedColumnsState = ({
   fields: ColumnFields;
   aspectRatio: number;
 }): GroupedColumnsState => {
+  const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
@@ -157,7 +159,9 @@ const useGroupedColumnsState = ({
   const segmentsOrderedByName = Array.from(
     new Set(sortedData.map((d) => getSegment(d)))
   ).sort((a, b) =>
-    segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
+    segmentSortingOrder === "asc"
+      ? a.localeCompare(b, locale)
+      : b.localeCompare(a, locale)
   );
 
   const segmentsOrderedByTotalValue = [

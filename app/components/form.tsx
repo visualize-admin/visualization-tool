@@ -11,10 +11,11 @@ import {
   Select as TUISelect,
   SelectProps,
 } from "theme-ui";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { FieldProps, Option } from "../configurator";
 import { Icon } from "../icons";
 import { useId } from "@reach/auto-id";
+import { useLocale } from "../locales/use-locale";
 
 export const Label = ({
   label,
@@ -140,44 +141,51 @@ export const Select = ({
   options: Option[];
   label?: ReactNode;
   disabled?: boolean;
-} & SelectProps) => (
-  <Box sx={{ color: "monochrome700", pb: 2 }}>
-    {label && (
-      <Label htmlFor={id} disabled={disabled} smaller>
-        {label}
-      </Label>
-    )}
-    <TUISelect
-      sx={{
-        borderColor: "monochrome500",
-        fontSize: 4,
-        bg: "monochrome100",
-        pt: 2,
-        pb: 2,
-        pl: 2,
-        pr: 5,
-        height: "40px",
-        color: disabled ? "monochrome500" : "monochrome700",
-        textOverflow: "ellipsis",
-      }}
-      id={id}
-      name={id}
-      onChange={onChange}
-      value={value}
-      disabled={disabled}
-    >
-      {options.map((opt) => (
-        <option
-          key={opt.value}
-          disabled={opt.disabled}
-          value={opt.value || undefined}
-        >
-          {opt.label}
-        </option>
-      ))}
-    </TUISelect>
-  </Box>
-);
+} & SelectProps) => {
+  const locale = useLocale();
+  const sortedOptions = useMemo(() => {
+    return [...options].sort((a, b) => a.label.localeCompare(b.label, locale));
+  }, [options, locale]);
+
+  return (
+    <Box sx={{ color: "monochrome700", pb: 2 }}>
+      {label && (
+        <Label htmlFor={id} disabled={disabled} smaller>
+          {label}
+        </Label>
+      )}
+      <TUISelect
+        sx={{
+          borderColor: "monochrome500",
+          fontSize: 4,
+          bg: "monochrome100",
+          pt: 2,
+          pb: 2,
+          pl: 2,
+          pr: 5,
+          height: "40px",
+          color: disabled ? "monochrome500" : "monochrome700",
+          textOverflow: "ellipsis",
+        }}
+        id={id}
+        name={id}
+        onChange={onChange}
+        value={value}
+        disabled={disabled}
+      >
+        {sortedOptions.map((opt) => (
+          <option
+            key={opt.value}
+            disabled={opt.disabled}
+            value={opt.value || undefined}
+          >
+            {opt.label}
+          </option>
+        ))}
+      </TUISelect>
+    </Box>
+  );
+};
 
 export const MiniSelect = ({
   label,

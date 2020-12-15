@@ -6,54 +6,49 @@ import {
   max,
   min,
   rollup,
-  ScaleTime,
-  scaleTime,
-  sum,
-} from "d3";
-import {
   scaleBand,
   ScaleBand,
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
-} from "d3";
-import {
+  ScaleTime,
+  scaleTime,
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
   stackOrderReverse,
+  sum,
 } from "d3";
-
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
-import { Observation, ObservationValue } from "../../domain/data";
 import {
   getPalette,
   parseDate,
   useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { useLocale } from "../../locales/use-locale";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+import { getWideData, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
-import {
-  PADDING_INNER,
-  PADDING_OUTER,
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET,
-} from "./constants";
-
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../shared/use-interactive-filters";
-import { getWideData, usePreparedData } from "../shared/chart-helpers";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
+import {
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET,
+  PADDING_INNER,
+  PADDING_OUTER,
+} from "./constants";
 
 export interface StackedColumnsState {
   chartType: "column";
@@ -91,6 +86,7 @@ const useColumnsStackedState = ({
   fields: ColumnFields;
   aspectRatio: number;
 }): StackedColumnsState => {
+  const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
@@ -174,7 +170,9 @@ const useColumnsStackedState = ({
   const segmentsOrderedByName = Array.from(
     new Set(sortedData.map((d) => getSegment(d)))
   ).sort((a, b) =>
-    segmentSortingOrder === "asc" ? ascending(a, b) : descending(a, b)
+    segmentSortingOrder === "asc"
+      ? a.localeCompare(b, locale)
+      : b.localeCompare(a, locale)
   );
 
   const segmentsOrderedByTotalValue = [
