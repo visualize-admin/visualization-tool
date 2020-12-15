@@ -14,6 +14,7 @@ import {
 import { ReactNode } from "react";
 import { FieldProps, Option } from "../configurator";
 import { Icon } from "../icons";
+import { useId } from "@reach/auto-id";
 
 export const Label = ({
   label,
@@ -342,84 +343,92 @@ export const FieldSetLegend = ({
 );
 
 export const Switch = ({
+  id,
   label,
   name,
   checked,
   disabled,
   onChange,
-}: { label: React.ReactNode; disabled?: boolean } & FieldProps) => (
-  <Flex
-    sx={{
-      position: "relative",
-      height: "16px",
-      alignItems: "center",
-    }}
-  >
-    <TUILabel
-      htmlFor={`${name}-${label}`}
-      sx={{ ":active div:after": { width: disabled ? "12px" : "16px" } }}
+}: {
+  id?: string;
+  label: React.ReactNode;
+  disabled?: boolean;
+} & FieldProps) => {
+  const genId = `switch-${useId(id)}`;
+  return (
+    <Flex
+      sx={{
+        position: "relative",
+        height: "16px",
+        alignItems: "center",
+      }}
     >
-      <TUICheckbox
-        id={`${name}-${label}`}
-        name={name}
-        checked={checked}
-        disabled={disabled}
-        onChange={onChange}
-        sx={{
-          opacity: 0,
-          width: 0,
-          height: 0,
-        }}
-      />
-      <Box
-        aria-hidden
-        sx={{
-          position: "absolute",
-          cursor: disabled ? "default" : "pointer",
-          pointerEvents: disabled ? "none" : "unset",
-          width: "32px",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          bg: checked ? "primary" : "monochrome100",
-          borderRadius: "12px",
-          border: "1px solid",
-          borderColor: checked ? "primary" : "monochrome500",
-
-          transition: "300ms",
-
-          ":after": {
-            position: "absolute",
-            content: "''",
-            height: "12px",
-            width: "12px",
-            left: checked ? "calc(100% - 1px)" : "1px",
-            bottom: "1px",
-            bg: checked
-              ? "monochrome100"
-              : disabled
-              ? "monochrome500"
-              : "monochrome600",
-            borderRadius: "12px",
-            transition: "300ms",
-            transform: checked ? "translateX(-100%)" : "unset",
-          },
-        }}
-      ></Box>
-
-      <Box
-        as="span"
-        sx={{
-          fontSize: 2,
-          ml: "32px",
-          color: "monochrome700",
-          cursor: disabled ? "default" : "pointer",
-          pointerEvents: disabled ? "none" : "unset",
-        }}
+      <TUILabel
+        htmlFor={genId}
+        sx={{ ":active div:after": { width: disabled ? "12px" : "16px" } }}
       >
-        {label}
-      </Box>
-    </TUILabel>
-  </Flex>
-);
+        <TUICheckbox
+          id={genId}
+          name={name}
+          checked={checked}
+          disabled={disabled}
+          onChange={onChange}
+          sx={{
+            opacity: 0,
+            width: 0,
+            height: 0,
+          }}
+        />
+        <Box
+          aria-hidden
+          sx={{
+            position: "absolute",
+            cursor: disabled ? "default" : "pointer",
+            pointerEvents: disabled ? "none" : "unset",
+            width: "32px",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bg: checked ? "primary" : "monochrome100",
+            borderRadius: "12px",
+            border: "1px solid",
+            borderColor: checked ? "primary" : "monochrome500",
+
+            transition: "300ms",
+
+            ":after": {
+              position: "absolute",
+              content: "''",
+              height: "12px",
+              width: "12px",
+              left: checked ? "calc(100% - 1px)" : "1px",
+              bottom: "1px",
+              bg: checked
+                ? "monochrome100"
+                : disabled
+                ? "monochrome500"
+                : "monochrome600",
+              borderRadius: "12px",
+              transition: "300ms",
+              transform: checked ? "translateX(-100%)" : "unset",
+            },
+          }}
+        ></Box>
+
+        <Box
+          as="span"
+          sx={{
+            fontSize: 2,
+            ml: "32px",
+            color: "monochrome700",
+            cursor: disabled ? "default" : "pointer",
+            pointerEvents: disabled ? "none" : "unset",
+          }}
+        >
+          {label}
+        </Box>
+      </TUILabel>
+    </Flex>
+  );
+};

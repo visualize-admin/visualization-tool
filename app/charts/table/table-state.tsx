@@ -1,5 +1,7 @@
-import { extent, max, min } from "d3";
 import {
+  extent,
+  max,
+  min,
   scaleDiverging,
   ScaleLinear,
   scaleLinear,
@@ -23,10 +25,10 @@ import { Observation } from "../../domain/data";
 import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
+import { getSlugifiedIri } from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "./constants";
-import { getSlugifiedIri } from "./table-helpers";
 
 export interface ColumnMeta {
   iri: string;

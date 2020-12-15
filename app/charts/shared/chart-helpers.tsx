@@ -122,3 +122,6 @@ export const getWideData = ({
   }
   return wideArray;
 };
+
+const SlugRe = /\W+/g;
+export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");

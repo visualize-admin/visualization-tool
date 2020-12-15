@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import FlexSearch from "flexsearch";
-import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import { forwardRef, useCallback, useMemo, useState } from "react";
 import {
   useExpanded,
   useFlexLayout,
