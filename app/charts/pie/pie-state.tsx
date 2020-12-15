@@ -19,10 +19,7 @@ import { usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "../shared/use-interactive-filters";
+import { useInteractiveFilters } from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 
 const sortData = ({
@@ -279,18 +276,16 @@ export const PieChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <InteractiveFiltersProvider>
-          <PieChartProvider
-            data={data}
-            fields={fields}
-            dimensions={dimensions}
-            measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
-            aspectRatio={aspectRatio}
-          >
-            {children}
-          </PieChartProvider>
-        </InteractiveFiltersProvider>
+        <PieChartProvider
+          data={data}
+          fields={fields}
+          dimensions={dimensions}
+          measures={measures}
+          interactiveFiltersConfig={interactiveFiltersConfig}
+          aspectRatio={aspectRatio}
+        >
+          {children}
+        </PieChartProvider>
       </InteractionProvider>
     </Observer>
   );

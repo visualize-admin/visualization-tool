@@ -34,10 +34,7 @@ import { usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "../shared/use-interactive-filters";
+import { useInteractiveFilters } from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -425,18 +422,16 @@ export const GroupedColumnChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <InteractiveFiltersProvider>
-          <GroupedColumnChartProvider
-            data={data}
-            fields={fields}
-            dimensions={dimensions}
-            measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
-            aspectRatio={aspectRatio}
-          >
-            {children}
-          </GroupedColumnChartProvider>
-        </InteractiveFiltersProvider>
+        <GroupedColumnChartProvider
+          data={data}
+          fields={fields}
+          dimensions={dimensions}
+          measures={measures}
+          interactiveFiltersConfig={interactiveFiltersConfig}
+          aspectRatio={aspectRatio}
+        >
+          {children}
+        </GroupedColumnChartProvider>
       </InteractionProvider>
     </Observer>
   );

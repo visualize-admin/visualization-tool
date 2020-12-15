@@ -1,22 +1,19 @@
 import {
   ascending,
-  max,
-  min,
   descending,
   extent,
-  scaleTime,
-  ScaleTime,
-} from "d3";
-import {
+  max,
+  min,
   scaleBand,
   ScaleBand,
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
+  scaleTime,
+  ScaleTime,
 } from "d3";
-
-import { ReactNode, useMemo, useCallback } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -25,20 +22,21 @@ import {
   useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+import { usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
-import { PADDING_INNER, PADDING_OUTER } from "./constants";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import { BOTTOM_MARGIN_OFFSET, LEFT_MARGIN_OFFSET } from "./constants";
-import { Observation } from "../../domain/data";
+import { useInteractiveFilters } from "../shared/use-interactive-filters";
+import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "../shared/use-interactive-filters";
-import { usePreparedData } from "../shared/chart-helpers";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET,
+  PADDING_INNER,
+  PADDING_OUTER,
+} from "./constants";
 
 export interface ColumnsState {
   chartType: "column";
@@ -291,17 +289,15 @@ export const ColumnChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <InteractiveFiltersProvider>
-          <ColumnChartProvider
-            data={data}
-            fields={fields}
-            measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
-            aspectRatio={aspectRatio}
-          >
-            {children}
-          </ColumnChartProvider>
-        </InteractiveFiltersProvider>
+        <ColumnChartProvider
+          data={data}
+          fields={fields}
+          measures={measures}
+          interactiveFiltersConfig={interactiveFiltersConfig}
+          aspectRatio={aspectRatio}
+        >
+          {children}
+        </ColumnChartProvider>
       </InteractionProvider>
     </Observer>
   );

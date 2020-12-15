@@ -325,7 +325,6 @@ export const LineChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        {/* <InteractiveFiltersProvider> */}
         <LineChartProvider
           data={data}
           fields={fields}
@@ -336,7 +335,6 @@ export const LineChart = ({
         >
           {children}
         </LineChartProvider>
-        {/* </InteractiveFiltersProvider> */}
       </InteractionProvider>
     </Observer>
   );

@@ -38,10 +38,7 @@ import { getWideData, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "../shared/use-interactive-filters";
+import { useInteractiveFilters } from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   BOTTOM_MARGIN_OFFSET,
@@ -454,18 +451,16 @@ export const StackedColumnsChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <InteractiveFiltersProvider>
-          <StackedColumnsChartProvider
-            data={data}
-            fields={fields}
-            dimensions={dimensions}
-            measures={measures}
-            interactiveFiltersConfig={interactiveFiltersConfig}
-            aspectRatio={aspectRatio}
-          >
-            {children}
-          </StackedColumnsChartProvider>
-        </InteractiveFiltersProvider>
+        <StackedColumnsChartProvider
+          data={data}
+          fields={fields}
+          dimensions={dimensions}
+          measures={measures}
+          interactiveFiltersConfig={interactiveFiltersConfig}
+          aspectRatio={aspectRatio}
+        >
+          {children}
+        </StackedColumnsChartProvider>
       </InteractionProvider>
     </Observer>
   );
