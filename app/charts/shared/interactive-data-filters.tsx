@@ -23,7 +23,7 @@ export const InteractiveDataFilters = ({
   chartConfig: ChartConfig;
   dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
-  const [filtersAreHidden, toggleFilters] = useState(false);
+  const [filtersAreHidden, toggleFilters] = useState(true);
 
   const [interactiveFiltersState, dispatch] = useInteractiveFilters();
   const interactiveFiltersIsActive = dataFiltersConfig.active;
@@ -68,8 +68,9 @@ export const InteractiveDataFilters = ({
             sx={{
               alignSelf: "flex-end",
               display: "flex",
-              fontSize: 2,
-              mb: 4,
+              fontSize: [2, 2, 2],
+              alignItems: "flex-end",
+              // mb: 4,
             }}
             onClick={() => toggleFilters(!filtersAreHidden)}
           >
@@ -78,7 +79,7 @@ export const InteractiveDataFilters = ({
             ) : (
               <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
             )}
-            <Icon name={filtersAreHidden ? "add" : "close"} size={20}></Icon>
+            <Icon name={filtersAreHidden ? "add" : "close"} size={15}></Icon>
           </Button>
           <Box
             sx={{
