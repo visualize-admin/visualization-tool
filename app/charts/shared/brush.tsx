@@ -286,27 +286,6 @@ export const BrushTime = () => {
 
   return (
     <>
-      {/* Handle Dates */}
-      {/* <g
-        transform={`translate(${bounds.margins.left}, ${
-          bounds.chartHeight +
-          bounds.margins.top +
-          bounds.margins.bottom / 2 +
-          HANDLE_HEIGHT / 2 +
-          4
-        })`}
-      >
-        {from && (
-          <text fontSize={10} textAnchor="middle" x={xEntireScale(from)} y={10}>
-            {formatDateAuto(from)}
-          </text>
-        )}
-        {to && (
-          <text fontSize={10} textAnchor="middle" x={xEntireScale(to)} y={10}>
-            {formatDateAuto(to)}
-          </text>
-        )}
-      </g> */}
       {/* Selected Dates */}
       <g
         transform={`translate(0, ${
@@ -325,51 +304,10 @@ export const BrushTime = () => {
           </text>
         )}
       </g>
-      {/* Date Start and End */}
-
-      {/* <g
-        transform={`translate(${bounds.margins.left}, ${
-          bounds.chartHeight +
-          bounds.margins.top +
-          bounds.margins.bottom / 2 +
-          HANDLE_HEIGHT / 2 +
-          4
-        })`}
-      >
-        {xEntireScale.domain().map((date, i) => (
-          <text
-            key={i}
-            fontSize={10}
-            textAnchor="middle"
-            x={xEntireScale(date)}
-            y={10}
-          >
-            {formatDateAuto(date)}
-          </text>
-        ))}
-      </g> */}
-      {/* Date ticks */}
-      {/* <g
-        transform={`translate(${bounds.margins.left}, ${
-          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
-        })`}
-      >
-        {xUniqueValues.map((date, i) => (
-          <rect
-            key={i}
-            x={xEntireScale(date)}
-            y={0}
-            width={1}
-            height={BRUSH_HEIGHT}
-          />
-        ))}
-      </g> */}
 
       {/* Brush */}
       <g
         ref={ref}
-        // tabIndex={0}
-        // focusable="true"
         transform={`translate(${bounds.margins.left}, ${
           bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
         })`}
