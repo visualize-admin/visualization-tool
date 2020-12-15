@@ -82,13 +82,15 @@ export const InteractiveDataFilters = ({
           </Button>
           <Box
             sx={{
-              display: filtersAreHidden ? "none" : "flex",
-              justifyContent: "space-between",
+              display: filtersAreHidden ? "none" : "grid",
+              columnGap: 3,
+              rowGap: 2,
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
             }}
           >
             {componentIris.map((d, i) => (
               <DataFilterDropdown
-                key={i}
+                key={d}
                 dataSetIri={dataSet}
                 dimensionIri={d}
               />
