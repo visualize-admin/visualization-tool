@@ -5,7 +5,7 @@ import {
   Dimension as RDFDimension,
   Measure as RDFMeasure,
 } from "@zazuko/query-rdf-data-cube";
-import { descending } from "d3";
+import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { Filters } from "../configurator";
@@ -307,12 +307,14 @@ const dimensionResolvers = {
   label: ({ dimension }: ResolvedDimension) => dimension.label.value,
   values: async ({ dataCube, dimension }: ResolvedDimension) => {
     const values = await dataCube.componentValues(dimension);
-    return values.map(({ value, label }) => {
-      return {
-        value: value.value,
-        label: label.value !== "" ? label.value : value.value,
-      };
-    });
+    return values
+      .map(({ value, label }) => {
+        return {
+          value: value.value,
+          label: label.value !== "" ? label.value : value.value,
+        };
+      })
+      .sort((a, b) => ascending(a.value, b.value));
   },
 };
 
