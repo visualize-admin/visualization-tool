@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect } from "react";
 import { Flex, Text } from "theme-ui";
 import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
@@ -8,9 +9,13 @@ import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
-import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
+import {
+  InteractiveFiltersProvider,
+  useInteractiveFilters,
+} from "../charts/shared/use-interactive-filters";
 import { ChartTableVisualization } from "../charts/table/chart-table";
 import { ChartConfig, Meta } from "../configurator";
+import { parseDate } from "../configurator/components/ui-helpers";
 import { useLocale } from "../locales/use-locale";
 import { ChartFootnotes } from "./chart-footnotes";
 
@@ -49,7 +54,10 @@ export const ChartPublished = ({
           </Text>
         )}
         <InteractiveFiltersProvider>
-          <ChartWithFilters dataSet={dataSet} chartConfig={chartConfig} />
+          <ChartWithInteractiveFilters
+            dataSet={dataSet}
+            chartConfig={chartConfig}
+          />
           {chartConfig && (
             <ChartFootnotes
               dataSetIri={dataSet}
@@ -63,13 +71,38 @@ export const ChartPublished = ({
   );
 };
 
-const ChartWithFilters = ({
+const ChartWithInteractiveFilters = ({
   dataSet,
   chartConfig,
 }: {
   dataSet: string;
   chartConfig: ChartConfig;
 }) => {
+  const [IFstate, dispatch] = useInteractiveFilters();
+  const { interactiveFiltersConfig } = chartConfig;
+
+  const presetFrom =
+    interactiveFiltersConfig?.time.presets.from &&
+    parseDate(interactiveFiltersConfig?.time.presets.from.toString());
+  const presetTo =
+    interactiveFiltersConfig?.time.presets.to &&
+    parseDate(interactiveFiltersConfig?.time.presets.to.toString());
+
+  // Reset data filters if chart type changes
+  useEffect(() => {
+    dispatch({
+      type: "RESET_DATA_FILTER",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chartConfig.chartType]);
+
+  // Editor time presets supersede interactive state
+  useEffect(() => {
+    if (presetFrom && presetTo) {
+      dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
+    }
+  }, [dispatch, presetFrom?.toString(), presetTo?.toString()]);
+
   return (
     <Flex
       sx={{
