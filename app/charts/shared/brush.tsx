@@ -40,10 +40,10 @@ export const BrushTime = () => {
     | AreasState
     | ColumnsState;
   const { getX, allDataWide } = useChartState() as LinesState | AreasState;
-  const { getXAsDate, sortedData } = useChartState() as ColumnsState;
+  const { getXAsDate, allData } = useChartState() as ColumnsState;
 
   const getDate = chartType === "column" ? getXAsDate : getX;
-  const allData = chartType === "column" ? sortedData : allDataWide;
+  const fullData = chartType === "column" ? allData : allDataWide;
 
   // Brush dimensions
   const brushLabelsWidth =
@@ -71,9 +71,9 @@ export const BrushTime = () => {
         (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
       ).left;
 
-      const startIndex = bisectDateLeft(allData, xStart, 1);
-      const dStartLeft = allData[startIndex - 1];
-      const dStartRight = allData[startIndex] || dStartLeft;
+      const startIndex = bisectDateLeft(fullData, xStart, 1);
+      const dStartLeft = fullData[startIndex - 1];
+      const dStartRight = fullData[startIndex] || dStartLeft;
       const startClosestDatum =
         xStart.getTime() - getDate(dStartLeft).getTime() >
         getDate(dStartRight).getTime() - xStart.getTime()
@@ -84,9 +84,9 @@ export const BrushTime = () => {
       const bisectDateRight = bisector(
         (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
       ).right;
-      const endIndex = bisectDateRight(allData, xEnd, 1);
-      const dEndLeft = allData[endIndex - 1];
-      const dEndRight = allData[endIndex] || dEndLeft;
+      const endIndex = bisectDateRight(fullData, xEnd, 1);
+      const dEndLeft = fullData[endIndex - 1];
+      const dEndRight = fullData[endIndex] || dEndLeft;
       const endClosestDatum =
         xEnd.getTime() - getDate(dEndLeft).getTime() >
         getDate(dEndRight).getTime() - xEnd.getTime()
@@ -95,7 +95,7 @@ export const BrushTime = () => {
 
       return [getDate(startClosestDatum), getDate(endClosestDatum)];
     },
-    [allData, getDate]
+    [fullData, getDate]
   );
 
   const [closestFrom, closestTo] = useMemo(() => {
@@ -147,8 +147,8 @@ export const BrushTime = () => {
 
         if (event.keyCode === 37 && handleDirection === "w") {
           // west handle, moving left
-          const index = bisectDateLeft(allData, from, 1);
-          const indexLeft = allData[index - 1];
+          const index = bisectDateLeft(fullData, from, 1);
+          const indexLeft = fullData[index - 1];
 
           if (getDate(indexLeft).getTime() < to.getTime()) {
             // new lower than "to"
@@ -165,8 +165,8 @@ export const BrushTime = () => {
           }
         } else if (event.keyCode === 39 && handleDirection === "w") {
           // west handle, moving right
-          const index = bisectDateRight(allData, from, 1);
-          const indexRight = allData[index];
+          const index = bisectDateRight(fullData, from, 1);
+          const indexRight = fullData[index];
           if (getDate(indexRight).getTime() < to.getTime()) {
             dispatch({
               type: "ADD_TIME_FILTER",
@@ -180,8 +180,8 @@ export const BrushTime = () => {
           }
         } else if (event.keyCode === 37 && handleDirection === "e") {
           // east handle, moving left
-          const index = bisectDateLeft(allData, to, 1);
-          const indexLeft = allData[index - 1];
+          const index = bisectDateLeft(fullData, to, 1);
+          const indexLeft = fullData[index - 1];
 
           if (getDate(indexLeft).getTime() > from.getTime()) {
             dispatch({
@@ -196,8 +196,8 @@ export const BrushTime = () => {
           }
         } else if (event.keyCode === 39 && handleDirection === "e") {
           // east handle, moving right
-          const index = bisectDateRight(allData, to, 1);
-          const indexLeft = allData[index];
+          const index = bisectDateRight(fullData, to, 1);
+          const indexLeft = fullData[index];
 
           if (indexLeft && getDate(indexLeft).getTime() > from.getTime()) {
             dispatch({
@@ -214,7 +214,7 @@ export const BrushTime = () => {
         updateBrushEndedStatus(true);
       }
     },
-    [allData, dispatch, from, getDate, to]
+    [fullData, dispatch, from, getDate, to]
   );
 
   useEffect(() => {

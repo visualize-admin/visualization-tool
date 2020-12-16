@@ -48,7 +48,8 @@ import {
 
 export interface StackedColumnsState {
   chartType: "column";
-  sortedData: Observation[];
+  preparedData: Observation[];
+  allData: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => string;
   getXAsDate: (d: Observation) => Date;
@@ -376,7 +377,8 @@ const useColumnsStackedState = ({
 
   return {
     chartType: "column",
-    sortedData,
+    preparedData,
+    allData: sortedData,
     bounds,
     getX,
     getXAsDate,
