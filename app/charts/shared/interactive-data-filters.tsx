@@ -1,14 +1,10 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box, Button, Flex } from "theme-ui";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
-import {
-  ChartConfig,
-  FilterValueSingle,
-  InteractiveFiltersDataConfig,
-} from "../../configurator";
+import { ChartConfig, InteractiveFiltersDataConfig } from "../../configurator";
 import { useDimensionValuesQuery } from "../../graphql/query-hooks";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
@@ -24,44 +20,11 @@ export const InteractiveDataFilters = ({
   dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
   const [filtersAreHidden, toggleFilters] = useState(true);
-
-  const [interactiveFiltersState, dispatch] = useInteractiveFilters();
-  const interactiveFiltersIsActive = dataFiltersConfig.active;
   const { componentIris } = dataFiltersConfig;
-
-  // On first render, initialize interactive filters
-  // with "editor" filters values.
-  useEffect(() => {
-    if (
-      interactiveFiltersIsActive &&
-      interactiveFiltersState.dataFilters &&
-      Object.keys(interactiveFiltersState.dataFilters).length === 0 &&
-      interactiveFiltersState.dataFilters.constructor === Object
-    ) {
-      // Use the filters defined in the editor as defaults for the interactive filters
-      const initialInteractiveFilters = componentIris.reduce(
-        (f, dimIri) => ({
-          ...f,
-          [dimIri]: chartConfig.filters[dimIri],
-        }),
-        {} as FilterValueSingle
-      );
-
-      dispatch({
-        type: "INIT_DATA_FILTER",
-        value: initialInteractiveFilters,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    dispatch({ type: "UPDATE_DATA_FILTER_LIST", value: componentIris });
-  }, [componentIris, dispatch]);
 
   return (
     <>
-      {dataSet && chartConfig.chartType !== "table" && (
+      {dataSet && (
         <Flex sx={{ flexDirection: "column", my: 4 }}>
           <Button
             variant="inline"
@@ -70,7 +33,6 @@ export const InteractiveDataFilters = ({
               display: "flex",
               fontSize: [2, 2, 2],
               alignItems: "flex-end",
-              // mb: 4,
             }}
             onClick={() => toggleFilters(!filtersAreHidden)}
           >

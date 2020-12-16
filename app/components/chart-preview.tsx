@@ -15,7 +15,11 @@ import {
   useInteractiveFilters,
 } from "../charts/shared/use-interactive-filters";
 import { ChartTableVisualization } from "../charts/table/chart-table";
-import { ChartConfig, useConfiguratorState } from "../configurator";
+import {
+  ChartConfig,
+  FilterValueSingle,
+  useConfiguratorState,
+} from "../configurator";
 import { parseDate } from "../configurator/components/ui-helpers";
 import { useLocale } from "../locales/use-locale";
 import { ChartFootnotes } from "./chart-footnotes";
@@ -103,27 +107,37 @@ const ChartWithInteractiveFilters = ({
   const [IFstate, dispatch] = useInteractiveFilters();
   const { interactiveFiltersConfig } = chartConfig;
 
+  // Time filter
   const presetFrom =
     interactiveFiltersConfig?.time.presets.from &&
     parseDate(interactiveFiltersConfig?.time.presets.from.toString());
   const presetTo =
     interactiveFiltersConfig?.time.presets.to &&
     parseDate(interactiveFiltersConfig?.time.presets.to.toString());
-
-  // Reset data filters if chart type changes
   useEffect(() => {
-    dispatch({
-      type: "RESET_DATA_FILTER",
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chartConfig.chartType]);
-
-  // Editor time presets supersede interactive state
-  useEffect(() => {
+    // Editor time presets supersede interactive state
     if (presetFrom && presetTo) {
       dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
     }
   }, [dispatch, presetFrom?.toString(), presetTo?.toString()]);
+
+  // Data Filters
+  const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;
+  useEffect(() => {
+    if (componentIris) {
+      // If dimension is already in use as interactive filter, use it,
+      // otherwise, default to editor config filter dimension value.
+      const newInteractiveDataFilters = componentIris.reduce((obj, iri) => {
+        if (Object.keys(IFstate.dataFilters).includes(iri)) {
+          return { ...obj, [iri]: IFstate.dataFilters[iri] };
+        } else {
+          return { ...obj, [iri]: chartConfig.filters[iri] };
+        }
+      }, {} as FilterValueSingle);
+
+      dispatch({ type: "SET_DATA_FILTER", value: newInteractiveDataFilters });
+    }
+  }, [componentIris, dispatch]);
 
   return (
     <Flex

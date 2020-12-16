@@ -225,7 +225,7 @@ const useColumnsState = ({
       values: undefined,
     };
   };
-  console.log("prepared data", preparedData);
+
   return {
     chartType: "column",
     bounds,
