@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/chart-preview.tsx:47
+#: app/components/chart-preview.tsx:48
 msgid "annotation.add.description"
 msgstr "[ Description ]"
 
-#: app/components/chart-preview.tsx:36
+#: app/components/chart-preview.tsx:37
 msgid "annotation.add.title"
 msgstr "[ Title ]"
 
@@ -95,6 +95,10 @@ msgstr "Bold"
 msgid "columnStyle.textStyle.regular"
 msgstr "Regular"
 
+#: app/configurator/interactive-filters/editor-time-brush.tsx:104
+msgid "controls..interactiveFilters.time.defaultSettings"
+msgstr "Default Settings"
+
 #: app/configurator/components/ui-helpers.tsx:149
 msgid "controls.axis.horizontal"
 msgstr "Horizontal axis"
@@ -160,11 +164,11 @@ msgstr "Add a description"
 msgid "controls.dimension.none"
 msgstr "None"
 
-#: app/configurator/components/filters.tsx:43
+#: app/configurator/components/filters.tsx:48
 msgid "controls.filter.select.all"
 msgstr "Select all"
 
-#: app/configurator/components/filters.tsx:47
+#: app/configurator/components/filters.tsx:52
 msgid "controls.filter.select.none"
 msgstr "Select none"
 
@@ -180,15 +184,19 @@ msgstr "Select an annotation field to modify its content."
 msgid "controls.interactive.filters.dataFilter"
 msgstr "Filter Data"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:91
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:130
 msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
 msgstr "Show data filters"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:29
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:32
 msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
 msgstr "Show interactive legend"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:43
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:100
+msgid "controls.interactiveFilters.time.noTimeDimension"
+msgstr "There is no time dimension!"
+
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:87
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Show time filter"
 
@@ -228,7 +236,7 @@ msgstr "Partition"
 msgid "controls.partition.add"
 msgstr "Add…"
 
-#: app/components/form.tsx:121
+#: app/components/form.tsx:134
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
@@ -271,15 +279,15 @@ msgstr "Groups"
 msgid "controls.section.interactive.filters"
 msgstr "Add interactive filters"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:52
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:54
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Data filters"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:24
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:27
 msgid "controls.section.interactiveFilters.legend"
 msgstr "Interactive Legend"
 
-#: app/configurator/interactive-filters/interactive-filters-options.tsx:38
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:41
 msgid "controls.section.interactiveFilters.time"
 msgstr "Filter"
 
