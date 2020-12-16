@@ -232,11 +232,7 @@ const useAreasState = ({
 
   /** Dimensions */
   const left = hasInteractiveTimeFilter
-    ? Math.max(
-        estimateTextWidth(formatNumber(entireMaxTotalValue)),
-        // Account for width of time slider selection
-        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0])) * 2
-      )
+    ? estimateTextWidth(formatNumber(entireMaxTotalValue))
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))

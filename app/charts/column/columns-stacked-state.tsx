@@ -26,7 +26,6 @@ import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   parseDate,
-  useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
@@ -86,7 +85,6 @@ const useColumnsStackedState = ({
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const formatDateAuto = useFormatFullDateAuto();
 
   const [
     interactiveFilters,
@@ -275,11 +273,7 @@ const useColumnsStackedState = ({
 
   // Dimensions
   const left = interactiveFiltersConfig?.time.active
-    ? Math.max(
-        estimateTextWidth(formatNumber(entireMaxTotalValue)),
-        // Account for width of time slider selection
-        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
-      )
+    ? estimateTextWidth(formatNumber(entireMaxTotalValue))
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))

@@ -22,7 +22,6 @@ import {
   getPalette,
   mkNumber,
   parseDate,
-  useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
@@ -81,7 +80,6 @@ const useGroupedColumnsState = ({
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const formatDateAuto = useFormatFullDateAuto();
 
   const [
     interactiveFilters,
@@ -255,11 +253,7 @@ const useGroupedColumnsState = ({
 
   // Dimensions
   const left = interactiveFiltersConfig?.time.active
-    ? Math.max(
-        estimateTextWidth(formatNumber(entireMaxValue)),
-        // Account for width of time slider selection
-        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
-      )
+    ? estimateTextWidth(formatNumber(entireMaxValue))
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))

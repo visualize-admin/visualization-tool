@@ -19,7 +19,6 @@ import {
   getPalette,
   mkNumber,
   parseDate,
-  useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
@@ -68,7 +67,6 @@ const useColumnsState = ({
 }): ColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const formatDateAuto = useFormatFullDateAuto();
 
   const [interactiveFilters] = useInteractiveFilters();
 
@@ -140,11 +138,7 @@ const useColumnsState = ({
 
   // Dimensions
   const left = interactiveFiltersConfig?.time.active
-    ? Math.max(
-        estimateTextWidth(formatNumber(entireMaxValue)),
-        // Account for width of time slider selection
-        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
-      )
+    ? estimateTextWidth(formatNumber(entireMaxValue))
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))

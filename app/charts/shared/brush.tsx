@@ -3,6 +3,7 @@ import "d3-transition";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
+import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { AreasState } from "../area/areas-state";
 import { ColumnsState } from "../column/columns-state";
 import { LinesState } from "../line/lines-state";
@@ -12,6 +13,7 @@ import { useInteractiveFilters } from "./use-interactive-filters";
 
 // Space used in chart states as bottom margin
 export const BRUSH_BOTTOM_SPACE = 100;
+
 // Brush constants
 export const HANDLE_HEIGHT = 14;
 export const BRUSH_HEIGHT = 3;
@@ -42,6 +44,15 @@ export const BrushTime = () => {
 
   const getDate = chartType === "column" ? getXAsDate : getX;
   const allData = chartType === "column" ? sortedData : allDataWide;
+
+  // Brush dimensions
+  const brushLabelsWidth =
+    estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), labelFontSize) *
+      2 +
+    20;
+  const brushWidth = bounds.width - brushLabelsWidth - bounds.margins.right;
+  const brushWidthScale = xEntireScale.copy();
+  brushWidthScale.range([0, brushWidth]);
 
   const updateBrushStatus = (event: $FixMe) => {
     const selection = event.selection;
@@ -91,15 +102,15 @@ export const BrushTime = () => {
     if (from && to) {
       return getClosestObservationFromRangeDates([from, to]);
     } else {
-      return [xEntireScale.domain()[0], xEntireScale.domain()[1]];
+      return [brushWidthScale.domain()[0], brushWidthScale.domain()[1]];
     }
-  }, [from, getClosestObservationFromRangeDates, to, xEntireScale]);
+  }, [from, getClosestObservationFromRangeDates, to, brushWidthScale]);
 
   const brushed = ({ selection }: { selection: [number, number] }) => {
     updateBrushEndedStatus(false);
 
     if (selection) {
-      const [xStart, xEnd] = selection.map((s) => xEntireScale.invert(s));
+      const [xStart, xEnd] = selection.map((s) => brushWidthScale.invert(s));
       const newDates = getClosestObservationFromRangeDates([xStart, xEnd]);
 
       // Update interactive filters state
@@ -114,7 +125,7 @@ export const BrushTime = () => {
   const brush = brushX()
     .extent([
       [0, 0],
-      [bounds.chartWidth, BRUSH_HEIGHT],
+      [brushWidth, BRUSH_HEIGHT],
     ])
     .on("start brush", brushed)
     .on("end", updateBrushStatus);
@@ -246,12 +257,12 @@ export const BrushTime = () => {
     moveBrushOnKeyPress,
   ]);
 
-  // This effect allow "snapping" to actual data points
+  // This effect allows "snapping" to actual data points
   // after brush is ended and interactive-filters state is updated
   useEffect(() => {
     const g = select(ref.current);
     if (closestFrom && closestTo && brushedIsEnded) {
-      const coord = [xEntireScale(closestFrom), xEntireScale(closestTo)];
+      const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
       (g.transition() as Transition<
         SVGGElement,
         unknown,
@@ -262,21 +273,21 @@ export const BrushTime = () => {
       updateBrushEndedStatus(false);
     }
   }, [
-    xEntireScale,
+    brushWidthScale,
     brushedIsEnded,
     dispatch,
     closestFrom?.toString(),
     closestTo?.toString(),
   ]);
 
-  // This effect reset brush defaults to editor values
+  // This effect resets brush defaults to editor values
   // without transition
   useEffect(() => {
     const g = select(ref.current);
 
     const defaultSelection = [
-      xEntireScale(closestFrom),
-      xEntireScale(closestTo),
+      brushWidthScale(closestFrom),
+      brushWidthScale(closestTo),
     ];
     (g as Selection<SVGGElement, unknown, null, undefined>).call(
       brush.move,
@@ -308,7 +319,7 @@ export const BrushTime = () => {
       {/* Brush */}
       <g
         ref={ref}
-        transform={`translate(${bounds.margins.left}, ${
+        transform={`translate(${brushLabelsWidth}, ${
           bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
         })`}
       />

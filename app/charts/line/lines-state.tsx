@@ -183,11 +183,7 @@ const useLinesState = ({
 
   // Dimensions
   const left = interactiveFiltersConfig?.time.active
-    ? Math.max(
-        estimateTextWidth(formatNumber(entireMaxValue)),
-        // Account for width of time slider selection
-        estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), 12) * 2 + 20
-      )
+    ? estimateTextWidth(formatNumber(entireMaxValue))
     : Math.max(
         estimateTextWidth(formatNumber(yScale.domain()[0])),
         estimateTextWidth(formatNumber(yScale.domain()[1]))
