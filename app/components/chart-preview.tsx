@@ -139,6 +139,14 @@ const ChartWithInteractiveFilters = ({
     }
   }, [componentIris, dispatch]);
 
+  // Interactive legend
+  // Reset categories to avoid categories with the same
+  // name to persist as filters across different dimensions
+  // i.e. Jura as forest zone != Jura as canton.
+  useEffect(() => dispatch({ type: "RESET_INTERACTIVE_CATEGORIES" }), [
+    dispatch,
+    chartConfig.fields.segment,
+  ]);
   return (
     <Flex
       sx={{
