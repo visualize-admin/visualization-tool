@@ -18,7 +18,7 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import { AreaFields } from "../../configurator";
 import {
   getPalette,
@@ -76,15 +76,7 @@ const useAreasState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
-  const [
-    interactiveFilters,
-    dispatchInteractiveFilters,
-  ] = useInteractiveFilters();
-
-  useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatchInteractiveFilters, fields.segment]
-  );
+  const [interactiveFilters] = useInteractiveFilters();
 
   const hasSegment = fields.segment;
 

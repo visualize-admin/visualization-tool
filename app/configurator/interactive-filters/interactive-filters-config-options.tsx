@@ -79,16 +79,6 @@ export const InteractiveFiltersOptions = ({
           </Trans>
         </SectionTitle>
         <ControlSectionContent side="right">
-          {/* <InteractiveFiltersToggle
-            label={
-              <Trans id="controls.interactiveFilters.time.toggleTimeFilter">
-                Show time filter
-              </Trans>
-            }
-            path="time"
-            defaultChecked={false}
-            disabled={false}
-          ></InteractiveFiltersToggle> */}
           <InteractiveTimeFilterOptions state={state} />
         </ControlSectionContent>
       </ControlSection>
@@ -112,7 +102,6 @@ export const InteractiveFiltersOptions = ({
 };
 
 // Time Filter
-
 const InteractiveTimeFilterToggle = ({
   label,
   path,
@@ -180,15 +169,12 @@ const InteractiveTimeFilterOptions = ({
               ]}
             ></InteractiveTimeFilterToggle>
 
-            {
-              // Mini Brush
-              <Box sx={{ my: 3 }}>
-                <EditorBrush
-                  timeExtent={timeExtent}
-                  timeDataPoints={timeDimension?.values}
-                />
-              </Box>
-            }
+            <Box sx={{ my: 3 }}>
+              <EditorBrush
+                timeExtent={timeExtent}
+                timeDataPoints={timeDimension?.values}
+              />
+            </Box>
           </>
         ) : (
           <Box>

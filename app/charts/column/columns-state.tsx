@@ -40,7 +40,8 @@ import {
 export interface ColumnsState {
   chartType: "column";
   bounds: Bounds;
-  sortedData: Observation[];
+  preparedData: Observation[];
+  allData: Observation[];
   getX: (d: Observation) => string;
   getXAsDate: (d: Observation) => Date;
   xScale: ScaleBand<string>;
@@ -228,7 +229,8 @@ const useColumnsState = ({
   return {
     chartType: "column",
     bounds,
-    sortedData,
+    preparedData,
+    allData: sortedData,
     getX,
     getXAsDate,
     xScale,

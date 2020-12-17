@@ -66,13 +66,15 @@ export const InteractiveFiltersConfigurator = ({
         </SectionTitle>
         <ControlSectionContent side="left">
           {/* Time */}
-          {timeDimension && canFilterTime && (
-            <InteractiveFilterTabField
-              value="time"
-              icon="time"
-              label={timeDimension.label}
-            ></InteractiveFilterTabField>
-          )}
+          {timeDimension &&
+            timeDimension.__typename === "TemporalDimension" &&
+            canFilterTime && (
+              <InteractiveFilterTabField
+                value="time"
+                icon="time"
+                label={timeDimension.label}
+              ></InteractiveFilterTabField>
+            )}
           {/* Legend */}
           {segmentDimension && canFilterLegend && (
             <InteractiveFilterTabField

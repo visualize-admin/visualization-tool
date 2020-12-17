@@ -1,13 +1,19 @@
-import { ascending, descending, group, max, min, rollup, sum } from "d3";
 import {
+  ascending,
+  descending,
+  group,
+  max,
+  min,
+  rollup,
   scaleBand,
   ScaleBand,
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
   scaleOrdinal,
+  sum,
 } from "d3";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { BarFields, SortingOrder, SortingType } from "../../configurator";
 import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
@@ -15,10 +21,7 @@ import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
-import {
-  InteractiveFiltersProvider,
-  useInteractiveFilters,
-} from "../shared/use-interactive-filters";
+import { InteractiveFiltersProvider } from "../shared/use-interactive-filters";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import {
   BAR_HEIGHT,
@@ -52,12 +55,6 @@ const useGroupedBarsState = ({
 }): GroupedBarsState => {
   const locale = useLocale();
   const width = useWidth();
-  const [, dispatchInteractiveFilters] = useInteractiveFilters();
-
-  useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatchInteractiveFilters, fields.segment]
-  );
 
   const getX = useCallback(
     (d: Observation) => d[fields.x.componentIri] as number,

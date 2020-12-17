@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import React, { ReactNode, useCallback, useEffect } from "react";
+import React, { ReactNode, useCallback } from "react";
 import { ScatterPlotFields } from "../../configurator";
 import {
   getPalette,
@@ -55,15 +55,7 @@ const useScatterplotState = ({
   fields: ScatterPlotFields;
   aspectRatio: number;
 }): ScatterplotState => {
-  const [
-    interactiveFilters,
-    dispatchInteractiveFilters,
-  ] = useInteractiveFilters();
-
-  useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatchInteractiveFilters, fields.segment]
-  );
+  const [interactiveFilters] = useInteractiveFilters();
 
   const width = useWidth();
   const formatNumber = useFormatNumber();
