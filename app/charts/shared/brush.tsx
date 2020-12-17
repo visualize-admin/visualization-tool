@@ -46,11 +46,12 @@ export const BrushTime = () => {
   const fullData = chartType === "column" ? allData : allDataWide;
 
   // Brush dimensions
+  const { width, margins, chartHeight } = bounds;
   const brushLabelsWidth =
     estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), labelFontSize) *
       2 +
     20;
-  const brushWidth = bounds.width - brushLabelsWidth - bounds.margins.right;
+  const brushWidth = width - brushLabelsWidth - margins.right;
   const brushWidthScale = xEntireScale.copy();
   brushWidthScale.range([0, brushWidth]);
 
@@ -221,8 +222,9 @@ export const BrushTime = () => {
     const g = select(ref.current);
     const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
-        .attr("fill", brushOverlayColor)
-        .attr("fill-opacity", 0.9);
+        .attr("fill-opacity", 0)
+        .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
+        .style("height", HANDLE_HEIGHT);
       g.select(".selection")
         .attr("fill", brushSelectionColor)
         .attr("fill-opacity", 1)
@@ -300,7 +302,7 @@ export const BrushTime = () => {
       {/* Selected Dates */}
       <g
         transform={`translate(0, ${
-          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
+          chartHeight + margins.top + margins.bottom / 2
         })`}
       >
         {closestFrom && closestTo && (
@@ -318,9 +320,24 @@ export const BrushTime = () => {
 
       {/* Brush */}
       <g
+        transform={`translate(${brushLabelsWidth}, ${
+          chartHeight + margins.top + margins.bottom / 2
+        })`}
+      >
+        {/* Visual overlay (functional overlay is managed by d3) */}
+        <rect
+          x={0}
+          y={0}
+          width={brushWidth}
+          height={BRUSH_HEIGHT}
+          fill={brushOverlayColor}
+        />
+      </g>
+      {/* actual Brush */}
+      <g
         ref={ref}
         transform={`translate(${brushLabelsWidth}, ${
-          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
+          chartHeight + margins.top + margins.bottom / 2
         })`}
       />
     </>
