@@ -53,6 +53,7 @@ export const BrushTime = () => {
     20;
   const brushWidth = width - brushLabelsWidth - margins.right;
   const brushWidthScale = xEntireScale.copy();
+
   brushWidthScale.range([0, brushWidth]);
 
   const updateBrushStatus = (event: $FixMe) => {
@@ -296,6 +297,17 @@ export const BrushTime = () => {
       defaultSelection
     );
   }, [closestFrom.toString(), closestTo.toString()]);
+
+  // This effect makes the brush responsive
+  useEffect(() => {
+    const g = select(ref.current);
+
+    const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
+    (g as Selection<SVGGElement, unknown, null, undefined>).call(
+      brush.move,
+      coord
+    );
+  }, [brushWidth, BRUSH_HEIGHT]);
 
   return (
     <>
