@@ -499,6 +499,12 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                 Object
               );
             }
+            // Remove this component from the interactive filter, if it is there
+            if (draft.chartConfig.interactiveFiltersConfig) {
+              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                (c) => c !== action.value.componentIri
+              );
+            }
           }
         }
 
