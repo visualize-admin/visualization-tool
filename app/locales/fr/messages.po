@@ -180,11 +180,11 @@ msgstr "Sélectionnez un élément de design ou une dimension du jeu de données
 msgid "controls.hint.describing.chart"
 msgstr "Sélectionnez une des annotations proposées pour la modifier."
 
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:41
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx:43
 msgid "controls.interactive.filters.dataFilter"
 msgstr ""
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:130
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:127
 msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
 msgstr ""
 
@@ -192,11 +192,11 @@ msgstr ""
 msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
 msgstr ""
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:100
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:97
 msgid "controls.interactiveFilters.time.noTimeDimension"
 msgstr ""
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:87
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:86
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr ""
 
@@ -267,10 +267,6 @@ msgstr "Design"
 msgid "controls.section.filter"
 msgstr "Filtre"
 
-#: app/configurator/table/table-chart-configurator.tsx:59
-#~ msgid "controls.section.filters"
-#~ msgstr ""
-
 #: app/configurator/table/table-chart-configurator.tsx:61
 msgid "controls.section.groups"
 msgstr ""
@@ -279,7 +275,7 @@ msgstr ""
 msgid "controls.section.interactive.filters"
 msgstr ""
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:54
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:53
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr ""
 
@@ -291,17 +287,9 @@ msgstr ""
 msgid "controls.section.interactiveFilters.time"
 msgstr ""
 
-#: app/configurator/table/table-chart-configurator.tsx:52
-#~ msgid "controls.section.settings"
-#~ msgstr ""
-
 #: app/configurator/components/chart-options-selector.tsx:148
 msgid "controls.section.sorting"
 msgstr "Trier"
-
-#: app/configurator/table/table-chart-options.tsx:109
-#~ msgid "controls.section.table.column"
-#~ msgstr ""
 
 #: app/configurator/table/table-chart-options.tsx:239
 msgid "controls.section.tableSettings"
@@ -355,10 +343,6 @@ msgstr ""
 #: app/configurator/table/table-chart-options.tsx:196
 msgid "controls.select.columnStyle.textStyle"
 msgstr ""
-
-#: app/components/dataset-selector.tsx:15
-#~ msgid "controls.select.dataset"
-#~ msgstr "Sélectionner un jeu de données"
 
 #: app/configurator/components/ui-helpers.tsx:257
 #: app/configurator/components/ui-helpers.tsx:259
@@ -547,11 +531,11 @@ msgstr "Sélectionner un jeu de données"
 msgid "hint.select.dataset.to.preview"
 msgstr "Sélectionner un jeu de données pour prévisualiser sa structure et son contenu."
 
-#: app/charts/shared/interactive-data-filters.tsx:43
+#: app/charts/shared/interactive-data-filters.tsx:22
 msgid "interactive.data.filters.hide"
 msgstr ""
 
-#: app/charts/shared/interactive-data-filters.tsx:43
+#: app/charts/shared/interactive-data-filters.tsx:22
 msgid "interactive.data.filters.show"
 msgstr ""
 
