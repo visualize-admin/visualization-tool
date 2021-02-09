@@ -23,6 +23,7 @@ const MARGINS = {
 export const EditorBrush = ({
   timeExtent,
   timeDataPoints,
+  disabled,
 }: {
   timeExtent: Date[];
   timeDataPoints?: {
@@ -30,6 +31,7 @@ export const EditorBrush = ({
     value: string;
     label: string;
   }[];
+  disabled: boolean;
 }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
@@ -100,14 +102,23 @@ export const EditorBrush = ({
     const g = select(brushRef.current);
     const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
+        .attr("pointer-events", disabled && "none")
         .attr("fill", theme.colors.monochrome300)
         .attr("fill-opacity", 0.9);
       g.select(".selection")
-        .attr("fill", theme.colors.primary)
+        .attr("pointer-events", disabled && "none")
+        .attr(
+          "fill",
+          disabled ? theme.colors.monochrome500 : theme.colors.primary
+        )
         .attr("fill-opacity", 1)
         .attr("stroke", "none");
       g.selectAll(".handle")
-        .attr("fill", theme.colors.primary)
+        .attr("pointer-events", disabled && "none")
+        .attr(
+          "fill",
+          disabled ? theme.colors.monochrome500 : theme.colors.primary
+        )
         .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
         .style("width", `${HANDLE_HEIGHT}px`)
         .style("height", `${HANDLE_HEIGHT}px`)

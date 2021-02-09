@@ -183,6 +183,10 @@ const InteractiveTimeFilterOptions = ({
               <EditorBrush
                 timeExtent={timeExtent}
                 timeDataPoints={timeDimension?.values}
+                disabled={
+                  !state.chartConfig.interactiveFiltersConfig?.time.active ??
+                  true
+                }
               />
             </Box>
           </>
