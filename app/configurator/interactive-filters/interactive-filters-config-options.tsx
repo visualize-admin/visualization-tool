@@ -146,7 +146,17 @@ const InteractiveTimeFilterOptions = ({
       (dim) => dim.iri === timeDimensionIri
     );
 
-    const timeExtent = timeDimension?.values
+    const hardFilters =
+      timeDimensionIri && state.chartConfig.filters[timeDimensionIri];
+    const hardFiltersValues =
+      hardFilters && hardFilters?.type === "multi"
+        ? hardFilters?.values ?? false
+        : false;
+    // Time extent uses the "hard filters" (filters applied before fetching data)
+    // and defaults to full time extent (from dimension metadata).
+    const timeExtent = hardFiltersValues
+      ? extent(Object.keys(hardFiltersValues), (d) => parseDate(d.toString()))
+      : timeDimension
       ? extent(timeDimension?.values, (d) => parseDate(d.value.toString()))
       : undefined;
 
@@ -173,6 +183,10 @@ const InteractiveTimeFilterOptions = ({
               <EditorBrush
                 timeExtent={timeExtent}
                 timeDataPoints={timeDimension?.values}
+                disabled={
+                  !state.chartConfig.interactiveFiltersConfig?.time.active ??
+                  true
+                }
               />
             </Box>
           </>
