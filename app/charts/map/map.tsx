@@ -1,12 +1,8 @@
-import { MapController, WebMercatorViewport } from "@deck.gl/core";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
-import { scaleThreshold, schemePurples, color, scaleQuantize } from "d3";
+import { color, scaleQuantize } from "d3";
 import { useEffect, useState } from "react";
-import {
-  feature as topojsonFeature,
-  mesh as topojsonMesh,
-} from "topojson-client";
+import { feature as topojsonFeature } from "topojson-client";
 import { Error, Loading } from "../../components/hint";
 // import data from "/one-person-households.json"
 const INITIAL_VIEW_STATE = {
@@ -95,9 +91,9 @@ export const MapComponent = () => {
   }, []);
 
   const getColor = (v: number | undefined) => {
-    const colorScale = scaleQuantize<number, string>()
+    const colorScale = scaleQuantize<number, $FixMe>()
       .domain([0, 1000000])
-      .range(["pink", "hotpink", "red"]);
+      .range(["#FFdddd", "#FFaaaa", "#FF5555"] as $FixMe[]);
     if (v === undefined) {
       return [0, 0, 0];
     }
@@ -127,7 +123,7 @@ export const MapComponent = () => {
               extruded={false}
               autoHighlight={true}
               getFillColor={(d: $FixMe) => {
-                const obs = data.ds.find((x) => x.Id === d.id);
+                const obs = data.ds.find((x: $FixMe) => x.Id === d.id);
                 console.log(obs);
                 console.log("vlaue", obs["Holzernte...Total"]);
                 console.log(getColor(obs["Holzernte...Total"]));
