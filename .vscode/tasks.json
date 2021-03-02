@@ -29,7 +29,7 @@
     {
       "label": "dev-server",
       "type": "shell",
-      "command": "yarn dev",
+      "command": "yarn && yarn dev",
       "options": {
         "shell": {
           "executable": "nix-shell",
