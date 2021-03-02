@@ -70,7 +70,7 @@ export const getCubes = async ({ locale }: { locale: string }) => {
   // See https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
   const cubes = _cubes.map((c) => {
     return {
-      iri: c.term.value,
+      iri: c.term?.value,
       identifier: c.out(dcterms.identifier, outOpts)?.value,
       title: c.out(dcterms.title, outOpts)?.value,
       description: c.out(dcterms.description, outOpts)?.value,
@@ -85,7 +85,7 @@ export const getCubes = async ({ locale }: { locale: string }) => {
     cubes: cubesSchema.safeParse(cubes),
     dimensionsByCube: _cubes.map((cube) => {
       return {
-        cubeIri: cube.term.value,
+        cubeIri: cube.term?.value,
         dimensions: getDimensions({ cube, locale }),
       };
     }),
