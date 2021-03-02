@@ -318,6 +318,8 @@ export const getFieldLabel = (field: string): ReactNode => {
       return <Trans id="controls.chart.type.pie">Pie</Trans>;
     case "table":
       return <Trans id="controls.chart.type.table">Table</Trans>;
+    case "map":
+      return <Trans id="controls.chart.type.map">Map</Trans>;
 
     // Languages
     case "en":
