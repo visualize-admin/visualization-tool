@@ -9,6 +9,7 @@ import { GroupedColumnsState } from "../column/columns-grouped-state";
 import { StackedColumnsState } from "../column/columns-stacked-state";
 import { ColumnsState } from "../column/columns-state";
 import { LinesState } from "../line/lines-state";
+import { MapState } from "../map/map-state";
 import { PieState } from "../pie/pie-state";
 import { ScatterplotState } from "../scatterplot/scatterplot-state";
 import { TableChartState } from "../table/table-state";
@@ -32,6 +33,7 @@ export type ChartState =
   | ScatterplotState
   | PieState
   | TableChartState
+  | MapState
   | undefined;
 
 export const ChartContext = createContext<ChartState>(undefined);
