@@ -20,6 +20,7 @@ const chartTypes: ChartType[] = [
   "scatterplot",
   "pie",
   "table",
+  "map",
 ];
 
 export const ChartTypeSelectionButton = ({

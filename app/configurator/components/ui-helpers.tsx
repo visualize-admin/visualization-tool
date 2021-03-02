@@ -171,6 +171,8 @@ export const getIconName = (name: string): IconName => {
       return "chartScatterplot";
     case "pie":
       return "chartPie";
+    case "map":
+      return "chartMap";
     case "text":
       return "text";
     case "description":
