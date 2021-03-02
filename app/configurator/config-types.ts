@@ -429,7 +429,10 @@ export type TableConfig = t.TypeOf<typeof TableConfig>;
 const MapFields = t.intersection([
   t.type({
     x: GenericField,
-    y: GenericField,
+    y: t.type({
+      componentIri: t.string,
+      palette: t.string,
+    }),
   }),
 
   t.partial({

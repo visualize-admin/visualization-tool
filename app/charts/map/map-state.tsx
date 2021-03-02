@@ -1,7 +1,9 @@
-import { color, ScaleQuantize, scaleQuantize } from "d3";
-import { String } from "lodash";
+import { color, scaleQuantize } from "d3";
 import { ReactNode } from "react";
-import { useFormatNumber } from "../../configurator/components/ui-helpers";
+import {
+  getSingleHueSequentialPalette,
+  useFormatNumber,
+} from "../../configurator/components/ui-helpers";
 import { MapFields } from "../../configurator/config-types";
 import { Observation } from "../../domain/data";
 import { useTheme } from "../../themes";
@@ -36,10 +38,13 @@ Pick<
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
+  const { palette } = fields.y;
   const getColor = (v: number | undefined) => {
-    const colorScale = scaleQuantize<number, $FixMe>()
+    const colorScale = scaleQuantize<number, string>()
       .domain([0, 1000000])
-      .range(["#FFdddd", "#FFaaaa", "#FF5555"] as $FixMe[]);
+      .range(
+        getSingleHueSequentialPalette({ palette, nbClass: 5 }) as $FixMe[]
+      );
     if (v === undefined) {
       return [0, 0, 0];
     }
