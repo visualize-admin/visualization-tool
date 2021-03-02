@@ -66,6 +66,8 @@ export const theme: Theme = {
 
     alert: "#DC0018",
     alertLight: "#ffe6e1",
+    warning: "#8a6d3b",
+    warningLight: "#fffab2",
   },
   fonts: {
     body:
