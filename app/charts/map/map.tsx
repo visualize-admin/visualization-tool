@@ -1,9 +1,8 @@
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import { color, scaleQuantize } from "d3";
-import { useEffect, useState } from "react";
-import { feature as topojsonFeature } from "topojson-client";
-import { Error, Loading } from "../../components/hint";
+import { useChartState } from "../shared/use-chart-state";
+import { MapState } from "./map-state";
 // import data from "/one-person-households.json"
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
@@ -14,81 +13,9 @@ const INITIAL_VIEW_STATE = {
   pitch: 0,
   bearing: 0,
 };
-type GeoDataState =
-  | {
-      state: "fetching";
-    }
-  | {
-      state: "error";
-    }
-  | {
-      state: "loaded";
-      municipalities: GeoJSON.FeatureCollection | GeoJSON.Feature;
-      cantons: GeoJSON.FeatureCollection | GeoJSON.Feature;
-      // municipalityMesh: GeoJSON.MultiLineString;
-      // cantonMesh: GeoJSON.MultiLineString;
-      // lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
-    };
-type DataState =
-  | {
-      state: "fetching";
-    }
-  | {
-      state: "error";
-    }
-  | {
-      state: "loaded";
-      ds: $FixMe;
-    };
 
 export const MapComponent = () => {
-  const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
-  const [data, setData] = useState<DataState>({ state: "fetching" });
-  console.log(data);
-
-  // const observationsByMunicipalityId = useMemo(() => {
-  //   return group(observations, (d) => d.municipality);
-  // }, [observations]);
-
-  useEffect(() => {
-    const loadGeoData = async () => {
-      try {
-        const res = await fetch(`/topojson/ch-2020.json`);
-        const topo = await res.json();
-
-        const municipalities = topojsonFeature(
-          topo,
-          topo.objects.municipalities
-        );
-        const cantons = topojsonFeature(topo, topo.objects.cantons);
-
-        setGeoData({
-          state: "loaded",
-          municipalities,
-          cantons,
-        });
-      } catch (e) {
-        setGeoData({ state: "error" });
-      }
-    };
-    loadGeoData();
-  }, []);
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const res = await fetch(`/data/holzernte.json`);
-        const ds = await res.json();
-
-        setData({
-          state: "loaded",
-          ds,
-        });
-      } catch (e) {
-        setData({ state: "error" });
-      }
-    };
-    loadData();
-  }, []);
+  const { bounds, data, features } = useChartState() as MapState;
 
   const getColor = (v: number | undefined) => {
     const colorScale = scaleQuantize<number, $FixMe>()
@@ -105,40 +32,26 @@ export const MapComponent = () => {
 
   return (
     <div>
-      MAP!
-      {geoData.state === "fetching" || data.state === "fetching" ? (
-        <Loading />
-      ) : geoData.state === "error" ? (
-        <Error>No geo data was found!</Error>
-      ) : (
-        data.state === "loaded" &&
-        data.ds && (
-          <DeckGL initialViewState={INITIAL_VIEW_STATE} controller={true}>
-            <GeoJsonLayer
-              id="municipalities"
-              data={geoData.cantons}
-              pickable={true}
-              stroked={true}
-              filled={true}
-              extruded={false}
-              autoHighlight={true}
-              getFillColor={(d: $FixMe) => {
-                const obs = data.ds.find((x: $FixMe) => x.Id === d.id);
-                console.log(obs);
-                console.log("vlaue", obs["Holzernte...Total"]);
-                console.log(getColor(obs["Holzernte...Total"]));
-                return obs
-                  ? getColor(+obs["Holzernte...Total"])
-                  : [0, 0, 0, 20];
-              }}
-              highlightColor={[0, 0, 0, 50]}
-              // getFillColor={() => [0, 0, 0, 20]}
-              getRadius={100}
-              getLineWidth={1}
-            />
-          </DeckGL>
-        )
-      )}
+      <DeckGL initialViewState={INITIAL_VIEW_STATE} controller={true}>
+        <GeoJsonLayer
+          id="municipalities"
+          data={features}
+          pickable={true}
+          stroked={true}
+          filled={true}
+          extruded={false}
+          autoHighlight={true}
+          getFillColor={(d: $FixMe) => {
+            const obs = data.find((x: $FixMe) => x.Id === d.id);
+
+            return obs ? getColor(+obs["Holzernte...Total"]) : [0, 0, 0, 20];
+          }}
+          highlightColor={[0, 0, 0, 50]}
+          // getFillColor={() => [0, 0, 0, 20]}
+          getRadius={100}
+          getLineWidth={1}
+        />
+      </DeckGL>
     </div>
   );
 };
