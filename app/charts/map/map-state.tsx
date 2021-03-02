@@ -49,7 +49,7 @@ Pick<
       return [0, 0, 0];
     }
     const c = colorScale && colorScale(v);
-    const rgb = c && color(c)?.rgb();
+    const rgb = c && color(`${c}`)?.rgb();
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
