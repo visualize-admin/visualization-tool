@@ -14,15 +14,15 @@ import {
   scaleOrdinal,
   scaleTime,
   ScaleTime,
-  sum,
+  sum
 } from "d3";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   mkNumber,
   parseDate,
-  useFormatNumber,
+  useFormatNumber
 } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
@@ -40,12 +40,13 @@ import {
   LEFT_MARGIN_OFFSET,
   PADDING_INNER,
   PADDING_OUTER,
-  PADDING_WITHIN,
+  PADDING_WITHIN
 } from "./constants";
 
 export interface GroupedColumnsState {
   chartType: "column";
-  sortedData: Observation[];
+  preparedData: Observation[];
+  allData: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => string;
   getXAsDate: (d: Observation) => Date;
@@ -81,15 +82,7 @@ const useGroupedColumnsState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
-  const [
-    interactiveFilters,
-    dispatchInteractiveFilters,
-  ] = useInteractiveFilters();
-
-  useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatchInteractiveFilters, fields.segment]
-  );
+  const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
@@ -349,7 +342,8 @@ const useGroupedColumnsState = ({
 
   return {
     chartType: "column",
-    sortedData,
+    preparedData,
+    allData: sortedData,
     bounds,
     getX,
     getXAsDate,

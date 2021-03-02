@@ -62,7 +62,8 @@ export const useChartFieldField = ({
 
   let value: string | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    value = getFieldComponentIri(state.chartConfig.fields, field);
+    value =
+      getFieldComponentIri(state.chartConfig.fields, field) ?? FIELD_VALUE_NONE;
   }
 
   return {

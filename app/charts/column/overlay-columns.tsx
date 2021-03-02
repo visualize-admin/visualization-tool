@@ -7,7 +7,7 @@ export const InteractionColumns = () => {
   const [, dispatch] = useInteraction();
 
   const {
-    sortedData,
+    preparedData,
     bounds,
     getX,
     xScaleInteraction,
@@ -27,7 +27,7 @@ export const InteractionColumns = () => {
   };
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {sortedData.map((d, i) => (
+      {preparedData.map((d, i) => (
         <rect
           key={i}
           x={xScaleInteraction(getX(d)) as number}

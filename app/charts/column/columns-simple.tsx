@@ -5,7 +5,7 @@ import { ColumnsState } from "./columns-state";
 
 export const Columns = () => {
   const {
-    sortedData,
+    preparedData,
     bounds,
     getX,
     xScale,
@@ -17,7 +17,7 @@ export const Columns = () => {
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {sortedData.map((d, i) => (
+      {preparedData.map((d, i) => (
         <Column
           key={i}
           x={xScale(getX(d)) as number}

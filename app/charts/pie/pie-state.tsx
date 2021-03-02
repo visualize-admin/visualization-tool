@@ -8,7 +8,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -75,15 +75,7 @@ const usePieState = ({
 }): PieState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const [
-    interactiveFilters,
-    dispatchInteractiveFilters,
-  ] = useInteractiveFilters();
-
-  useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatchInteractiveFilters, fields.segment]
-  );
+  const [interactiveFilters] = useInteractiveFilters();
 
   const getY = useCallback(
     (d: Observation): number => +d[fields.y.componentIri] as number,

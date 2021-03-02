@@ -21,7 +21,7 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -48,7 +48,8 @@ import {
 
 export interface StackedColumnsState {
   chartType: "column";
-  sortedData: Observation[];
+  preparedData: Observation[];
+  allData: Observation[];
   bounds: Bounds;
   getX: (d: Observation) => string;
   getXAsDate: (d: Observation) => Date;
@@ -86,15 +87,7 @@ const useColumnsStackedState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
-  const [
-    interactiveFilters,
-    dispatchInteractiveFilters,
-  ] = useInteractiveFilters();
-
-  useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatchInteractiveFilters, fields.segment]
-  );
+  const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
     (d: Observation): string => d[fields.x.componentIri] as string,
@@ -376,7 +369,8 @@ const useColumnsStackedState = ({
 
   return {
     chartType: "column",
-    sortedData,
+    preparedData,
+    allData: sortedData,
     bounds,
     getX,
     getXAsDate,

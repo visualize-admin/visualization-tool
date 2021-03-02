@@ -11,7 +11,7 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
-import { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {
   getPalette,
@@ -73,18 +73,7 @@ const useLinesState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
-  const [
-    interactiveFilters,
-    dispatchInteractiveFilters,
-  ] = useInteractiveFilters();
-
-  // Reset categories to avoid categories with the same
-  // name to persist as filters across different dimensions
-  // i.e. Jura as forest zone != Jura as canton.
-  useEffect(
-    () => dispatchInteractiveFilters({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatchInteractiveFilters, fields.segment]
-  );
+  const [interactiveFilters] = useInteractiveFilters();
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;

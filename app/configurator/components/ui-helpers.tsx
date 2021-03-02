@@ -357,7 +357,7 @@ export const getColorInterpolator = (
       return interpolatePRGn;
     case "PiYG":
       return interpolatePiYG;
-    case "PuOR":
+    case "PuOr":
       return interpolatePuOr;
     // Etc.
 

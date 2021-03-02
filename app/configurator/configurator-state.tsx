@@ -427,30 +427,30 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
             // Filter for table to make TS happy :/
-            if (draft.chartConfig.chartType !== "table") {
-              draft.chartConfig.fields.segment = {
-                componentIri: action.value.componentIri,
-                palette: "category10",
-                type: "stacked",
-                sorting: {
-                  sortingType: "byDimensionLabel",
-                  sortingOrder: "asc",
-                },
-                colorMapping: colorMapping,
-              };
+            // if (draft.chartConfig.chartType !== "table") {
+            draft.chartConfig.fields.segment = {
+              componentIri: action.value.componentIri,
+              palette: "category10",
+              type: "stacked",
+              sorting: {
+                sortingType: "byDimensionLabel",
+                sortingOrder: "asc",
+              },
+              colorMapping: colorMapping,
+            };
 
-              // Remove this component from the interactive filter, if it is there
-              if (draft.chartConfig.interactiveFiltersConfig) {
-                draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                  (c) => c !== action.value.componentIri
-                );
-              }
+            // Remove this component from the interactive filter, if it is there
+            if (draft.chartConfig.interactiveFiltersConfig) {
+              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                (c) => c !== action.value.componentIri
+              );
             }
+            // }
           }
         } else {
           // The field is being updated
           if (
-            draft.chartConfig.chartType !== "table" &&
+            // draft.chartConfig.chartType !== "table" &&
             action.value.field === "segment" &&
             "segment" in draft.chartConfig.fields &&
             draft.chartConfig.fields.segment &&
@@ -478,10 +478,33 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               );
             }
           } else {
+            const component = action.value.dataSetMetadata.dimensions.find(
+              (dim) => dim.iri === action.value.componentIri
+            );
             // Reset other field options
             (draft.chartConfig.fields as GenericFields)[action.value.field] = {
               componentIri: action.value.componentIri,
             };
+            // if x !== time, also deactivate interactive time filter
+            if (
+              draft.chartConfig.chartType === "column" &&
+              action.value.field === "x" &&
+              component?.__typename !== "TemporalDimension" &&
+              draft.chartConfig.interactiveFiltersConfig
+            ) {
+              setWith(
+                draft,
+                `chartConfig.interactiveFiltersConfig.time.active`,
+                false,
+                Object
+              );
+            }
+            // Remove this component from the interactive filter, if it is there
+            if (draft.chartConfig.interactiveFiltersConfig) {
+              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                (c) => c !== action.value.componentIri
+              );
+            }
           }
         }
 

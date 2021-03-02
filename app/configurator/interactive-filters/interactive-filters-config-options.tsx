@@ -79,16 +79,6 @@ export const InteractiveFiltersOptions = ({
           </Trans>
         </SectionTitle>
         <ControlSectionContent side="right">
-          {/* <InteractiveFiltersToggle
-            label={
-              <Trans id="controls.interactiveFilters.time.toggleTimeFilter">
-                Show time filter
-              </Trans>
-            }
-            path="time"
-            defaultChecked={false}
-            disabled={false}
-          ></InteractiveFiltersToggle> */}
           <InteractiveTimeFilterOptions state={state} />
         </ControlSectionContent>
       </ControlSection>
@@ -112,7 +102,6 @@ export const InteractiveFiltersOptions = ({
 };
 
 // Time Filter
-
 const InteractiveTimeFilterToggle = ({
   label,
   path,
@@ -157,7 +146,17 @@ const InteractiveTimeFilterOptions = ({
       (dim) => dim.iri === timeDimensionIri
     );
 
-    const timeExtent = timeDimension?.values
+    const hardFilters =
+      timeDimensionIri && state.chartConfig.filters[timeDimensionIri];
+    const hardFiltersValues =
+      hardFilters && hardFilters?.type === "multi"
+        ? hardFilters?.values ?? false
+        : false;
+    // Time extent uses the "hard filters" (filters applied before fetching data)
+    // and defaults to full time extent (from dimension metadata).
+    const timeExtent = hardFiltersValues
+      ? extent(Object.keys(hardFiltersValues), (d) => parseDate(d.toString()))
+      : timeDimension
       ? extent(timeDimension?.values, (d) => parseDate(d.value.toString()))
       : undefined;
 
@@ -180,15 +179,16 @@ const InteractiveTimeFilterOptions = ({
               ]}
             ></InteractiveTimeFilterToggle>
 
-            {
-              // Mini Brush
-              <Box sx={{ my: 3 }}>
-                <EditorBrush
-                  timeExtent={timeExtent}
-                  timeDataPoints={timeDimension?.values}
-                />
-              </Box>
-            }
+            <Box sx={{ my: 3 }}>
+              <EditorBrush
+                timeExtent={timeExtent}
+                timeDataPoints={timeDimension?.values}
+                disabled={
+                  !state.chartConfig.interactiveFiltersConfig?.time.active ??
+                  true
+                }
+              />
+            </Box>
           </>
         ) : (
           <Box>

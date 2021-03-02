@@ -40,18 +40,20 @@ export const BrushTime = () => {
     | AreasState
     | ColumnsState;
   const { getX, allDataWide } = useChartState() as LinesState | AreasState;
-  const { getXAsDate, sortedData } = useChartState() as ColumnsState;
+  const { getXAsDate, allData } = useChartState() as ColumnsState;
 
   const getDate = chartType === "column" ? getXAsDate : getX;
-  const allData = chartType === "column" ? sortedData : allDataWide;
+  const fullData = chartType === "column" ? allData : allDataWide;
 
   // Brush dimensions
+  const { width, margins, chartHeight } = bounds;
   const brushLabelsWidth =
     estimateTextWidth(formatDateAuto(xEntireScale.domain()[0]), labelFontSize) *
       2 +
     20;
-  const brushWidth = bounds.width - brushLabelsWidth - bounds.margins.right;
+  const brushWidth = width - brushLabelsWidth - margins.right;
   const brushWidthScale = xEntireScale.copy();
+
   brushWidthScale.range([0, brushWidth]);
 
   const updateBrushStatus = (event: $FixMe) => {
@@ -71,9 +73,9 @@ export const BrushTime = () => {
         (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
       ).left;
 
-      const startIndex = bisectDateLeft(allData, xStart, 1);
-      const dStartLeft = allData[startIndex - 1];
-      const dStartRight = allData[startIndex] || dStartLeft;
+      const startIndex = bisectDateLeft(fullData, xStart, 1);
+      const dStartLeft = fullData[startIndex - 1];
+      const dStartRight = fullData[startIndex] || dStartLeft;
       const startClosestDatum =
         xStart.getTime() - getDate(dStartLeft).getTime() >
         getDate(dStartRight).getTime() - xStart.getTime()
@@ -84,9 +86,9 @@ export const BrushTime = () => {
       const bisectDateRight = bisector(
         (ds: Observation, date: Date) => getDate(ds).getTime() - date.getTime()
       ).right;
-      const endIndex = bisectDateRight(allData, xEnd, 1);
-      const dEndLeft = allData[endIndex - 1];
-      const dEndRight = allData[endIndex] || dEndLeft;
+      const endIndex = bisectDateRight(fullData, xEnd, 1);
+      const dEndLeft = fullData[endIndex - 1];
+      const dEndRight = fullData[endIndex] || dEndLeft;
       const endClosestDatum =
         xEnd.getTime() - getDate(dEndLeft).getTime() >
         getDate(dEndRight).getTime() - xEnd.getTime()
@@ -95,7 +97,7 @@ export const BrushTime = () => {
 
       return [getDate(startClosestDatum), getDate(endClosestDatum)];
     },
-    [allData, getDate]
+    [fullData, getDate]
   );
 
   const [closestFrom, closestTo] = useMemo(() => {
@@ -147,8 +149,8 @@ export const BrushTime = () => {
 
         if (event.keyCode === 37 && handleDirection === "w") {
           // west handle, moving left
-          const index = bisectDateLeft(allData, from, 1);
-          const indexLeft = allData[index - 1];
+          const index = bisectDateLeft(fullData, from, 1);
+          const indexLeft = fullData[index - 1];
 
           if (getDate(indexLeft).getTime() < to.getTime()) {
             // new lower than "to"
@@ -165,8 +167,8 @@ export const BrushTime = () => {
           }
         } else if (event.keyCode === 39 && handleDirection === "w") {
           // west handle, moving right
-          const index = bisectDateRight(allData, from, 1);
-          const indexRight = allData[index];
+          const index = bisectDateRight(fullData, from, 1);
+          const indexRight = fullData[index];
           if (getDate(indexRight).getTime() < to.getTime()) {
             dispatch({
               type: "ADD_TIME_FILTER",
@@ -180,8 +182,8 @@ export const BrushTime = () => {
           }
         } else if (event.keyCode === 37 && handleDirection === "e") {
           // east handle, moving left
-          const index = bisectDateLeft(allData, to, 1);
-          const indexLeft = allData[index - 1];
+          const index = bisectDateLeft(fullData, to, 1);
+          const indexLeft = fullData[index - 1];
 
           if (getDate(indexLeft).getTime() > from.getTime()) {
             dispatch({
@@ -196,8 +198,8 @@ export const BrushTime = () => {
           }
         } else if (event.keyCode === 39 && handleDirection === "e") {
           // east handle, moving right
-          const index = bisectDateRight(allData, to, 1);
-          const indexLeft = allData[index];
+          const index = bisectDateRight(fullData, to, 1);
+          const indexLeft = fullData[index];
 
           if (indexLeft && getDate(indexLeft).getTime() > from.getTime()) {
             dispatch({
@@ -214,15 +216,16 @@ export const BrushTime = () => {
         updateBrushEndedStatus(true);
       }
     },
-    [allData, dispatch, from, getDate, to]
+    [fullData, dispatch, from, getDate, to]
   );
 
   useEffect(() => {
     const g = select(ref.current);
     const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
-        .attr("fill", brushOverlayColor)
-        .attr("fill-opacity", 0.9);
+        .attr("fill-opacity", 0)
+        .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
+        .style("height", HANDLE_HEIGHT);
       g.select(".selection")
         .attr("fill", brushSelectionColor)
         .attr("fill-opacity", 1)
@@ -295,12 +298,23 @@ export const BrushTime = () => {
     );
   }, [closestFrom.toString(), closestTo.toString()]);
 
+  // This effect makes the brush responsive
+  useEffect(() => {
+    const g = select(ref.current);
+
+    const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
+    (g as Selection<SVGGElement, unknown, null, undefined>).call(
+      brush.move,
+      coord
+    );
+  }, [brushWidth, BRUSH_HEIGHT]);
+
   return (
     <>
       {/* Selected Dates */}
       <g
         transform={`translate(0, ${
-          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
+          chartHeight + margins.top + margins.bottom / 2
         })`}
       >
         {closestFrom && closestTo && (
@@ -318,9 +332,24 @@ export const BrushTime = () => {
 
       {/* Brush */}
       <g
+        transform={`translate(${brushLabelsWidth}, ${
+          chartHeight + margins.top + margins.bottom / 2
+        })`}
+      >
+        {/* Visual overlay (functional overlay is managed by d3) */}
+        <rect
+          x={0}
+          y={0}
+          width={brushWidth}
+          height={BRUSH_HEIGHT}
+          fill={brushOverlayColor}
+        />
+      </g>
+      {/* actual Brush */}
+      <g
         ref={ref}
         transform={`translate(${brushLabelsWidth}, ${
-          bounds.chartHeight + bounds.margins.top + bounds.margins.bottom / 2
+          chartHeight + margins.top + margins.bottom / 2
         })`}
       />
     </>
