@@ -1,8 +1,8 @@
 import * as React from "react";
-import { MapComponent } from "../charts/map/map";
+import { ChartMapVisualization } from "../charts/map/chart-map-prototype";
 
 function Map() {
-  return <MapComponent />;
+  return <ChartMapVisualization />;
 }
 
 export default Map;
