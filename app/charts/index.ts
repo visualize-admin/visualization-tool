@@ -247,6 +247,7 @@ export const getPossibleChartType = ({
     (dim) => dim.__typename === "TemporalDimension"
   );
 
+  const geoBased: ChartType[] = ["map"];
   const catBased: ChartType[] = ["bar", "column", "pie", "table"];
   const multipleQ: ChartType[] = ["scatterplot"];
   const timeBased: ChartType[] = ["line", "area"];
@@ -254,13 +255,13 @@ export const getPossibleChartType = ({
   let possibles: ChartType[] | null = [];
 
   if (hasMultipleQ && hasTime) {
-    possibles = [...multipleQ, ...timeBased, ...catBased];
+    possibles = [...multipleQ, ...timeBased, ...catBased, ...geoBased];
   } else if (hasMultipleQ && !hasTime) {
-    possibles = [...multipleQ, ...catBased];
+    possibles = [...multipleQ, ...catBased, ...geoBased];
   } else if (!hasMultipleQ && hasTime) {
-    possibles = [...catBased, ...timeBased];
+    possibles = [...catBased, ...timeBased, ...geoBased];
   } else if (!hasMultipleQ && !hasTime) {
-    possibles = [...catBased];
+    possibles = [...catBased, ...geoBased];
   } else {
     possibles = null;
   }
