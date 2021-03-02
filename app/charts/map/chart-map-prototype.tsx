@@ -54,6 +54,7 @@ export const ChartMapVisualization = () => {
   const locale = useLocale();
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
   const [data, setData] = useState<DataState>({ state: "fetching" });
+  const [palette, setPalette] = useState("oranges");
   console.log("geoData", geoData);
   console.log("data", data);
 
@@ -113,21 +114,24 @@ export const ChartMapVisualization = () => {
       label: d,
     })) as ComponentFieldsFragment[];
 
-    console.log(dimensions);
     return (
-      <Box data-chart-loaded={true} sx={{ position: "relative" }}>
-        <ChartMap
-          observations={data.ds}
-          features={geoData.cantons}
-          fields={{
-            x: { componentIri: "a" },
-            y: { componentIri: "b" },
-            segment: { componentIri: "c" },
-          }}
-          dimensions={dimensions}
-          measures={measures}
-        />
-      </Box>
+      <>
+        <Box sx={{ bg: "monochrome100" }}></Box>
+        <Box sx={{ m: 4, border: "1px solid hotpink", bg: "#FFFFFF" }}>
+          <ChartMap
+            observations={data.ds}
+            features={geoData.cantons}
+            fields={{
+              x: { componentIri: "a" },
+              y: { componentIri: "b", palette },
+              segment: { componentIri: "c" },
+            }}
+            dimensions={dimensions}
+            measures={measures}
+          />
+        </Box>
+        <Box sx={{ bg: "monochrome100" }}></Box>
+      </>
     );
   }
 };
