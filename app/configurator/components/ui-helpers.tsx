@@ -13,8 +13,6 @@ import {
   schemeOranges,
   schemePurples,
   schemeReds,
-} from "d3";
-import {
   interpolateBrBG,
   interpolatePiYG,
   interpolatePRGn,
@@ -35,7 +33,7 @@ import {
   schemeSet2,
   schemeSet3,
   schemeTableau10,
-} from "d3-scale-chromatic";
+} from "d3";
 
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
@@ -367,28 +365,28 @@ export const getPalette = (palette?: string): ReadonlyArray<string> => {
   }
 };
 export const getSingleHueSequentialPalette = ({
-  nbClass = 5,
+  nbSteps = 5,
   palette,
 }: {
-  nbClass: number;
+  nbSteps: number;
   palette?: string;
 }): ReadonlyArray<string> => {
   switch (palette) {
     case "blues":
-      return schemeBlues[nbClass];
+      return schemeBlues[nbSteps];
     case "greens":
-      return schemeGreens[nbClass];
+      return schemeGreens[nbSteps];
     case "oranges":
-      return schemeOranges[nbClass];
+      return schemeOranges[nbSteps];
     case "greys":
-      return schemeGreys[nbClass];
+      return schemeGreys[nbSteps];
     case "reds":
-      return schemeReds[nbClass];
+      return schemeReds[nbSteps];
     case "purples":
-      return schemePurples[nbClass];
+      return schemePurples[nbSteps];
 
     default:
-      return schemeOranges[nbClass];
+      return schemeOranges[nbSteps];
   }
 };
 export const getColorInterpolator = (

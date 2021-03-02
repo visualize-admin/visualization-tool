@@ -38,13 +38,11 @@ Pick<
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
-  const { palette } = fields.y;
+  const { palette, nbSteps } = fields.y;
   const getColor = (v: number | undefined) => {
     const colorScale = scaleQuantize<number, string>()
       .domain([0, 1000000])
-      .range(
-        getSingleHueSequentialPalette({ palette, nbClass: 5 }) as $FixMe[]
-      );
+      .range(getSingleHueSequentialPalette({ palette, nbSteps }) as $FixMe[]);
     if (v === undefined) {
       return [0, 0, 0];
     }
