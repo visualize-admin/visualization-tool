@@ -11,6 +11,8 @@ import { FieldProps, useChartTypeSelectorField } from "../config-form";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { getFieldLabel, getIconName } from "./ui-helpers";
+import Link from "next/link";
+import { useTheme } from "../../themes";
 
 const chartTypes: ChartType[] = [
   // "bar",
@@ -20,7 +22,7 @@ const chartTypes: ChartType[] = [
   "scatterplot",
   "pie",
   "table",
-  "map",
+  // "map",
 ];
 
 export const ChartTypeSelectionButton = ({
@@ -121,6 +123,7 @@ export const ChartTypeSelector = ({
 }: {
   state: ConfiguratorStateSelectingChartType;
 }) => {
+  const theme = useTheme();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: state.dataSet, locale },
@@ -167,9 +170,88 @@ export const ChartTypeSelector = ({
             ))}
           </Grid>
         )}
+        {/* Experimental features */}
+        <Box sx={{ mt: 4, color: "warning" }}>
+          <SectionTitle color={theme.colors.warning}>
+            <Trans id="controls.select.chart.type.experimental">
+              Experimental Features
+            </Trans>
+          </SectionTitle>
+          <Box sx={{ mx: 4, fontSize: 3 }}>
+            <Trans id="controls.select.chart.type.experimental.description">
+              Preview the upcoming map feature with a limited subset of datasets
+              (link to a new page).
+            </Trans>
+          </Box>
+        </Box>
+        <Grid
+          sx={{
+            gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+            mx: 4,
+          }}
+        >
+          <TemporaryLinkToMapPrototype label={"map"} value={"map"} />
+        </Grid>
       </Box>
     );
   } else {
     return <Loading />;
   }
+};
+
+const TemporaryLinkToMapPrototype = ({
+  value,
+  label,
+}: {
+  value: string;
+  label: string;
+}) => {
+  return (
+    <Link href="/map" passHref>
+      <a style={{ textDecoration: "none" }}>
+        <Button
+          variant="reset"
+          tabIndex={0}
+          value={value}
+          sx={{
+            width: "86px",
+            height: "86px",
+            mt: 4,
+            borderRadius: "default",
+
+            backgroundColor: "monochrome100",
+            color: "warning",
+
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+
+            cursor: "pointer",
+            pointerEvents: "initial",
+
+            // border: "1px solid",
+            // borderColor: "warningLight",
+
+            transition: "all .2s",
+
+            ":hover": {
+              backgroundColor: "warningLight",
+            },
+          }}
+        >
+          <Icon size={48} name={getIconName(label)} />
+          <Text
+            variant="paragraph2"
+            sx={{
+              color: "warning",
+              fontSize: [2, 2, 2],
+            }}
+          >
+            {getFieldLabel(label)}
+          </Text>
+        </Button>
+      </a>
+    </Link>
+  );
 };
