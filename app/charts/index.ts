@@ -205,6 +205,27 @@ export const getInitialConfig = ({
           ])
         ),
       };
+    case "map":
+      return {
+        chartType,
+        filters: {},
+        interactiveFiltersConfig: {
+          legend: { active: false, componentIri: "" },
+          time: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+          dataFilters: {
+            active: false,
+            componentIris: [],
+          },
+        },
+        fields: {
+          x: { componentIri: dimensions[0].iri },
+          y: { componentIri: measures[0].iri },
+        },
+      };
 
     // This code *should* be unreachable! If it's not, it means we haven't checked all cases (and we should get a TS error).
     default:
