@@ -7,7 +7,7 @@ import { MapState } from "./map-state";
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
-  zoom: 2,
+  zoom: 7,
   maxZoom: 16,
   minZoom: 2,
   pitch: 0,
@@ -15,20 +15,7 @@ const INITIAL_VIEW_STATE = {
 };
 
 export const MapComponent = () => {
-  const { bounds, data, features } = useChartState() as MapState;
-
-  const getColor = (v: number | undefined) => {
-    const colorScale = scaleQuantize<number, $FixMe>()
-      .domain([0, 1000000])
-      .range(["#FFdddd", "#FFaaaa", "#FF5555"] as $FixMe[]);
-    if (v === undefined) {
-      return [0, 0, 0];
-    }
-    const c = colorScale && colorScale(v);
-    console.log({ c });
-    const rgb = c && color(c)?.rgb();
-    return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
-  };
+  const { bounds, data, features, getColor } = useChartState() as MapState;
 
   return (
     <div>
@@ -43,11 +30,9 @@ export const MapComponent = () => {
           autoHighlight={true}
           getFillColor={(d: $FixMe) => {
             const obs = data.find((x: $FixMe) => x.Id === d.id);
-
             return obs ? getColor(+obs["Holzernte...Total"]) : [0, 0, 0, 20];
           }}
           highlightColor={[0, 0, 0, 50]}
-          // getFillColor={() => [0, 0, 0, 20]}
           getRadius={100}
           getLineWidth={1}
         />

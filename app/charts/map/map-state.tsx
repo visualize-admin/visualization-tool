@@ -1,3 +1,5 @@
+import { color, ScaleQuantize, scaleQuantize } from "d3";
+import { String } from "lodash";
 import { ReactNode } from "react";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 import { MapFields } from "../../configurator/config-types";
@@ -10,9 +12,10 @@ import { Bounds, Observer, useWidth } from "../shared/use-width";
 export type GeoData = GeoJSON.FeatureCollection | GeoJSON.Feature;
 export interface MapState {
   chartType: "map";
+  bounds: Bounds;
   data: Observation[];
   features: GeoData;
-  bounds: Bounds;
+  getColor: (x: number | undefined) => number[];
 }
 
 const useMapState = ({
@@ -32,6 +35,19 @@ Pick<
   const theme = useTheme();
   const width = useWidth();
   const formatNumber = useFormatNumber();
+
+  const getColor = (v: number | undefined) => {
+    const colorScale = scaleQuantize<number, $FixMe>()
+      .domain([0, 1000000])
+      .range(["#FFdddd", "#FFaaaa", "#FF5555"] as $FixMe[]);
+    if (v === undefined) {
+      return [0, 0, 0];
+    }
+    const c = colorScale && colorScale(v);
+    const rgb = c && color(c)?.rgb();
+    return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
+  };
+
   const margins = {
     top: 40,
     right: 40,
@@ -39,7 +55,7 @@ Pick<
     left: 40,
   };
   const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth;
+  const chartHeight = chartWidth / 2;
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
@@ -51,6 +67,7 @@ Pick<
     chartType: "map",
     data,
     features,
+    getColor,
     bounds,
   };
 };
