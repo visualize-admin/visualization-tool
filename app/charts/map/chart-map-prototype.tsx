@@ -1,29 +1,15 @@
 import React, { memo, useEffect, useState } from "react";
 import { Box } from "theme-ui";
-import {
-  Error,
-  Loading,
-  LoadingOverlay,
-  NoDataHint,
-} from "../../components/hint";
-import {
-  Filters,
-  FilterValueSingle,
-  InteractiveFiltersConfig,
-  MapConfig,
-  MapFields,
-} from "../../configurator";
-import { isNumber } from "../../configurator/components/ui-helpers";
+import { feature as topojsonFeature } from "topojson-client";
+import { Select } from "../../components/form";
+import { LoadingOverlay, NoDataHint } from "../../components/hint";
+import { MapFields } from "../../configurator";
 import { Observation } from "../../domain/data";
-import {
-  ComponentFieldsFragment,
-  useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
+import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { ChartContainer } from "../shared/containers";
-import { GeoData, MapChart } from "./map-state";
-import { feature as topojsonFeature } from "topojson-client";
 import { MapComponent } from "./map";
+import { GeoData, MapChart } from "./map-state";
 type GeoDataState =
   | {
       state: "fetching";
@@ -116,7 +102,7 @@ export const ChartMapVisualization = () => {
 
     return (
       <>
-        <Box sx={{ bg: "monochrome100" }}></Box>
+        <Box sx={{ bg: "monochrome100" }}>MAP!! 🤩🤩🤩🤩 xoxo</Box>
         <Box sx={{ m: 4, border: "1px solid hotpink", bg: "#FFFFFF" }}>
           <ChartMap
             observations={data.ds}
@@ -130,7 +116,20 @@ export const ChartMapVisualization = () => {
             measures={measures}
           />
         </Box>
-        <Box sx={{ bg: "monochrome100" }}></Box>
+        <Box sx={{ bg: "monochrome100" }}>
+          <Select
+            label={"palette"}
+            id={"palette"}
+            name={"palette"}
+            value={palette}
+            disabled={false}
+            options={[
+              { value: "oranges", label: "oranges" },
+              { value: "reds", label: "reds" },
+            ]}
+            onChange={(e) => setPalette(e.currentTarget.value)}
+          ></Select>
+        </Box>
       </>
     );
   }

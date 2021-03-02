@@ -223,7 +223,7 @@ export const getInitialConfig = ({
         },
         fields: {
           x: { componentIri: dimensions[0].iri },
-          y: { componentIri: measures[0].iri },
+          y: { componentIri: measures[0].iri, palette: "oranges" },
         },
       };
 
