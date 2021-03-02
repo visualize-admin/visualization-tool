@@ -1,11 +1,30 @@
 import { Trans } from "@lingui/macro";
-import { ascending } from "d3";
-import { scaleOrdinal } from "d3";
+import {
+  timeDay,
+  timeHour,
+  timeMinute,
+  timeMonth,
+  timeYear,
+  scaleOrdinal,
+  ascending,
+  schemeBlues,
+  schemeGreens,
+  schemeGreys,
+  schemeOranges,
+  schemePurples,
+  schemeReds,
+} from "d3";
 import {
   interpolateBrBG,
   interpolatePiYG,
   interpolatePRGn,
   interpolatePuOr,
+  interpolateBlues,
+  interpolateGreens,
+  interpolateOranges,
+  interpolatePurples,
+  interpolateGreys,
+  interpolateReds,
   schemeAccent,
   schemeCategory10,
   schemeDark2,
@@ -17,7 +36,7 @@ import {
   schemeSet3,
   schemeTableau10,
 } from "d3-scale-chromatic";
-import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3";
+
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
 import {
@@ -347,6 +366,31 @@ export const getPalette = (palette?: string): ReadonlyArray<string> => {
       return schemeCategory10;
   }
 };
+export const getSingleHueSequentialPalette = ({
+  nbClass = 5,
+  palette,
+}: {
+  nbClass: number;
+  palette?: string;
+}): ReadonlyArray<string> => {
+  switch (palette) {
+    case "blues":
+      return schemeBlues[nbClass];
+    case "greens":
+      return schemeGreens[nbClass];
+    case "oranges":
+      return schemeOranges[nbClass];
+    case "greys":
+      return schemeGreys[nbClass];
+    case "reds":
+      return schemeReds[nbClass];
+    case "purples":
+      return schemePurples[nbClass];
+
+    default:
+      return schemeOranges[nbClass];
+  }
+};
 export const getColorInterpolator = (
   palette?: string
 ): ((t: number) => string) => {
@@ -359,10 +403,21 @@ export const getColorInterpolator = (
       return interpolatePiYG;
     case "PuOr":
       return interpolatePuOr;
-    // Etc.
+    case "blues":
+      return interpolateBlues;
+    case "greens":
+      return interpolateGreens;
+    case "greys":
+      return interpolateGreys;
+    case "oranges":
+      return interpolateOranges;
+    case "purples":
+      return interpolatePurples;
+    case "reds":
+      return interpolateReds;
 
     default:
-      return interpolateBrBG;
+      return interpolateOranges;
   }
 };
 
