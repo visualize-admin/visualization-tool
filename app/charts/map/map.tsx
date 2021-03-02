@@ -35,6 +35,7 @@ export const MapComponent = () => {
           highlightColor={[0, 0, 0, 50]}
           getRadius={100}
           getLineWidth={1}
+          updateTriggers={{ getFillColor: getColor }}
         />
       </DeckGL>
     </div>
