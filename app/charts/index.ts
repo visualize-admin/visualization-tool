@@ -255,13 +255,13 @@ export const getPossibleChartType = ({
   let possibles: ChartType[] | null = [];
 
   if (hasMultipleQ && hasTime) {
-    possibles = [...multipleQ, ...timeBased, ...catBased, ...geoBased];
+    possibles = [...multipleQ, ...timeBased, ...catBased];
   } else if (hasMultipleQ && !hasTime) {
-    possibles = [...multipleQ, ...catBased, ...geoBased];
+    possibles = [...multipleQ, ...catBased];
   } else if (!hasMultipleQ && hasTime) {
-    possibles = [...catBased, ...timeBased, ...geoBased];
+    possibles = [...catBased, ...timeBased];
   } else if (!hasMultipleQ && !hasTime) {
-    possibles = [...catBased, ...geoBased];
+    possibles = [...catBased];
   } else {
     possibles = null;
   }
