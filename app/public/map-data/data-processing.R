@@ -16,13 +16,14 @@ data <- raw %>% fill(Jahr, Forstzone_id, Forstzone, Kanton_id, Kanton, Eigentüm
 # Rename column names to include a tag for dimension types
 # D_ for dimensions (categorical variables)
 # M_ for measures (quantitative variables)
+# A_ for attributes (labels)
 # Also remove uneeded columns
 # use Kanton Id as global id.
 data <- data %>% select(id = Kanton_id, 
+                        A_Kanton = Kanton,
                         D_Jahr = Jahr, 
                         # D_Forstone_id = Forstzone_id, 
                         D_Forstzone = Forstzone, 
-                        D_Kanton = Kanton,
                         # D_Eigentümertyp_id = Eigentümertyp_id, 
                         D_Eigentümertyp = Eigentümertyp,
                         #D_Holzartengruppe_id = Holzartengruppe_id,
