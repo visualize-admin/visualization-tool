@@ -1,12 +1,8 @@
 import { color, scaleQuantize } from "d3";
 import { ReactNode } from "react";
-import {
-  getSingleHueSequentialPalette,
-  useFormatNumber,
-} from "../../configurator/components/ui-helpers";
+import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
 import { MapFields } from "../../configurator/config-types";
 import { Observation } from "../../domain/data";
-import { useTheme } from "../../themes";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -34,15 +30,19 @@ Pick<
   features: GeoData;
   fields: MapFields;
 }): MapState => {
-  const theme = useTheme();
   const width = useWidth();
-  const formatNumber = useFormatNumber();
 
-  const { palette, nbSteps } = fields.y;
+  const { palette, nbSteps, paletteType } = fields.y;
+
   const getColor = (v: number | undefined) => {
     const colorScale = scaleQuantize<number, string>()
       .domain([0, 1000000])
-      .range(getSingleHueSequentialPalette({ palette, nbSteps }) as $FixMe[]);
+      .range(
+        getSingleHueSequentialPalette({
+          palette,
+          nbSteps: paletteType === "continuous" ? 9 : nbSteps,
+        }) as $FixMe[]
+      );
     if (v === undefined) {
       return [0, 0, 0];
     }
