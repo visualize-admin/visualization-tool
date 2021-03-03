@@ -12,6 +12,7 @@ import { useLocale } from "../../locales/use-locale";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
 import { GeoData, MapChart } from "./map-state";
+
 type GeoDataState =
   | {
       state: "fetching";
@@ -42,12 +43,12 @@ type PaletteType = "continuous" | "discrete";
 export const ChartMapVisualization = () => {
   const locale = useLocale();
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
-  const [data, setData] = useState<DataState>({ state: "fetching" });
+  const [dataset, loadDataset] = useState<DataState>({ state: "fetching" });
   const [palette, setPalette] = useState("oranges");
   const [nbSteps, setNbSteps] = useState(5);
   const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
   console.log("geoData", geoData);
-  console.log("data", data);
+  console.log("data", dataset);
 
   useEffect(() => {
     const loadGeoData = async () => {
@@ -72,45 +73,51 @@ export const ChartMapVisualization = () => {
     };
     loadGeoData();
   }, []);
+
   useEffect(() => {
     const loadData = async () => {
       try {
         const res = await fetch(`/data/holzernte.json`);
         const ds = await res.json();
 
-        setData({
+        loadDataset({
           state: "loaded",
           ds,
         });
       } catch (e) {
-        setData({ state: "error" });
+        loadDataset({ state: "error" });
       }
     };
     loadData();
   }, []);
 
-  if (geoData.state === "fetching" || data.state === "fetching") {
+  // useEffect(() => {
+  //   const dimensions =
+
+  // }, )
+
+  if (geoData.state === "fetching" || dataset.state === "fetching") {
     return <LoadingOverlay />;
-  } else if (geoData.state === "error" || data.state === "error") {
+  } else if (geoData.state === "error" || dataset.state === "error") {
     return <NoDataHint />;
   } else {
-    const dimensions = Object.keys(data.ds[0]).map((d) => ({
+    const dimensions = Object.keys(dataset.ds[0]).map((d) => ({
       __typename: "NominalDimension",
       iri: d,
       label: d,
     })) as ComponentFieldsFragment[];
-    const measures = Object.keys(data.ds[0]).map((d) => ({
+    const measures = Object.keys(dataset.ds[0]).map((d) => ({
       __typename: "Measure",
       iri: d,
       label: d,
     })) as ComponentFieldsFragment[];
-    console.log(paletteType);
+
     return (
       <>
         <Box sx={{ bg: "monochrome100" }}></Box>
         <Box sx={{ m: 4, border: "1px solid hotpink", bg: "#FFFFFF" }}>
           <ChartMap
-            observations={data.ds}
+            observations={dataset.ds}
             features={geoData.cantons}
             fields={{
               x: { componentIri: "a" },
