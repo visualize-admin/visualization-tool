@@ -15,7 +15,13 @@ const INITIAL_VIEW_STATE = {
 };
 
 export const MapComponent = () => {
-  const { bounds, data, features, getColor } = useChartState() as MapState;
+  const {
+    bounds,
+    data,
+    features,
+    getColor,
+    getMeasure,
+  } = useChartState() as MapState;
 
   return (
     <div>
@@ -29,8 +35,8 @@ export const MapComponent = () => {
           extruded={false}
           autoHighlight={true}
           getFillColor={(d: $FixMe) => {
-            const obs = data.find((x: $FixMe) => x.Id === d.id);
-            return obs ? getColor(+obs["Holzernte...Total"]) : [0, 0, 0, 20];
+            const obs = data.find((x: $FixMe) => x.id === d.id);
+            return obs ? getColor(getMeasure(obs)) : [0, 0, 0, 20];
           }}
           highlightColor={[0, 0, 0, 50]}
           getRadius={100}

@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from "react";
-import { Box } from "theme-ui";
+import { Box, Flex } from "theme-ui";
 import { feature as topojsonFeature } from "topojson-client";
 import { Radio, Select } from "../../components/form";
 import { LoadingOverlay, NoDataHint } from "../../components/hint";
@@ -7,7 +7,10 @@ import { MapFields } from "../../configurator";
 import { ColorRamp } from "../../configurator/components/chart-controls/color-ramp";
 import { getColorInterpolator } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import { ComponentFieldsFragment } from "../../graphql/query-hooks";
+import {
+  ComponentFieldsFragment,
+  DataCubeMetadataDocument,
+} from "../../graphql/query-hooks";
 
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
@@ -37,7 +40,7 @@ type DataState =
     }
   | {
       state: "loaded";
-      ds: $FixMe;
+      ds: Observation[];
     };
 type PaletteType = "continuous" | "discrete";
 
@@ -75,7 +78,7 @@ export const ChartMapVisualization = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch(`/map-data/tidy/holzernte-simple.json`);
+        const res = await fetch(`/map-data/tidy/holzernte.json`);
         const ds = await res.json();
 
         loadDataset({
@@ -94,8 +97,31 @@ export const ChartMapVisualization = () => {
   } else if (geoData.state === "error" || dataset.state === "error") {
     return <NoDataHint />;
   } else {
+    const dimensions = Object.keys(dataset.ds[0])
+      .filter((d) => d.startsWith("D_"))
+      .map((d) => ({
+        __typename: "NominalDimension",
+        iri: d,
+        label: d,
+        dimensionValues: [...new Set(dataset.ds.map((datum) => datum[d]))],
+      })) as Array<ComponentFieldsFragment & { dimensionValues: string[] }>;
+    const measures = Object.keys(dataset.ds[0])
+      .filter((d) => d.startsWith("M_"))
+      .map((d) => ({
+        __typename: "Measure",
+        iri: d,
+        label: d,
+      })) as ComponentFieldsFragment[];
+
+    console.log({ dimensions });
+    console.log({ measures });
     return (
-      <ChartMapPrototype dataset={dataset.ds} features={geoData.cantons} />
+      <ChartMapPrototype
+        dataset={dataset.ds}
+        features={geoData.cantons}
+        dimensions={dimensions}
+        measures={measures}
+      />
     );
   }
 };
@@ -103,58 +129,97 @@ export const ChartMapVisualization = () => {
 export const ChartMapPrototype = ({
   dataset,
   features,
+  dimensions,
+  measures,
 }: {
   dataset: Observation[];
   features: GeoData;
+  dimensions: Array<ComponentFieldsFragment & { dimensionValues: string[] }>;
+  measures: ComponentFieldsFragment[];
 }) => {
   const [palette, setPalette] = useState("oranges");
   const [nbSteps, setNbSteps] = useState(512);
   const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
-  const [dimensions, setDimensions] = useState<ComponentFieldsFragment[]>();
-  const [measures, setMeasures] = useState<ComponentFieldsFragment[]>();
-  // const [data, setData] = useState<Observation[]>();
+  const [data, setData] = useState<Observation[]>();
+  const [measure, setMeasure] = useState(measures[0].iri);
+  const [filters, setFilters] = useState(
+    dimensions.reduce(
+      (obj, dim, i) => ({ ...obj, [dim.iri]: dim.dimensionValues[0] }),
+      {}
+    )
+  );
+
+  const updateFilters = (filterKey: string, filterValue: string) => {
+    setFilters({ ...filters, ...{ [filterKey]: filterValue } });
+  };
+
+  // Apply filters to data used on the map
   useEffect(() => {
-    const dimensions = Object.keys(dataset[0])
-      .filter((d) => d.startsWith("D_"))
-      .map((d) => ({
-        __typename: "NominalDimension",
-        iri: d,
-        label: d,
-      })) as ComponentFieldsFragment[];
-    setDimensions(dimensions);
+    const filterfunctions = Object.keys(
+      filters
+    ).map((filterKey) => (x: Observation) =>
+      x[filterKey] === filters[filterKey]
+    );
+    const data = filterfunctions.reduce((d, f) => d.filter(f), dataset);
+    setData(data);
+  }, [dataset, dimensions, filters]);
 
-    const measures = Object.keys(dataset[0])
-      .filter((d) => d.startsWith("M_"))
-      .map((d) => ({
-        __typename: "Measure",
-        iri: d,
-        label: d,
-      })) as ComponentFieldsFragment[];
-    setMeasures(measures);
-  }, [dataset]);
-
-  // useEffect(() => {
-  //   const data = data.filter(d => dimensions?.map(dim => d[]))
-  // }, [dataset, dimensions])
   return (
     <>
-      <Box sx={{ bg: "monochrome100" }}></Box>
-      <Box sx={{ m: 4, border: "1px solid hotpink", bg: "#FFFFFF" }}>
-        {dimensions && measures && (
-          <ChartMap
-            observations={dataset}
-            features={features}
-            fields={{
-              x: { componentIri: "a" },
-              y: { componentIri: "b", palette, nbSteps, paletteType },
-              segment: { componentIri: "c" },
-            }}
-            dimensions={dimensions}
-            measures={measures}
-          />
-        )}
+      <Box sx={{ bg: "monochrome100", p: 4 }}></Box>
+      <Box sx={{ m: 4 }}>
+        <Box sx={{ bg: "monochrome100", p: 4 }}>
+          <Box>Data Filters</Box>
+          <Flex sx={{ flexWrap: "wrap" }}>
+            {dimensions.map((dim) => (
+              <Box sx={{ mr: 2, minWidth: ["50%", "50%", "33%"] }}>
+                <Select
+                  label={dim.label.split("_")[1]}
+                  id={dim.label}
+                  name={dim.label}
+                  value={filters[dim]}
+                  disabled={false}
+                  options={dim.dimensionValues.map((value) => ({
+                    value,
+                    label: value,
+                  }))}
+                  onChange={(e) =>
+                    updateFilters(dim.iri, e.currentTarget.value)
+                  }
+                />
+              </Box>
+            ))}
+          </Flex>
+        </Box>
+        <Box sx={{ my: 4, border: "1px solid hotpink", bg: "#FFFFFF" }}>
+          {dimensions && measures && data && (
+            <ChartMap
+              observations={data}
+              features={features}
+              fields={{
+                x: { componentIri: "a" },
+                y: { componentIri: measure, palette, nbSteps, paletteType },
+                segment: { componentIri: "c" },
+              }}
+              dimensions={dimensions}
+              measures={measures}
+            />
+          )}
+        </Box>
       </Box>
       <Box sx={{ bg: "monochrome100", p: 4 }}>
+        <Select
+          label={"Select a measure to map"}
+          id={"measure-select"}
+          name={"measure-select"}
+          value={measure}
+          disabled={false}
+          options={measures.map((m) => ({
+            value: m.iri,
+            label: m.label,
+          }))}
+          onChange={(e) => setMeasure(e.currentTarget.value)}
+        />
         <Select
           label={"Farbpalette"}
           id={"palette"}
@@ -179,7 +244,6 @@ export const ChartMapPrototype = ({
           disabled={false}
           onChange={(e) => {
             setPaletteType(e.currentTarget.value as PaletteType);
-            // setNbSteps(null)
           }}
         />
         <Radio
