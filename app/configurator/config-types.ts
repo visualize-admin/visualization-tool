@@ -432,6 +432,7 @@ const MapFields = t.intersection([
     y: t.type({
       componentIri: t.string,
       palette: t.string,
+      paletteType: t.string,
       nbSteps: t.number,
     }),
   }),

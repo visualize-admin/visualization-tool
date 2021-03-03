@@ -223,7 +223,12 @@ export const getInitialConfig = ({
         },
         fields: {
           x: { componentIri: dimensions[0].iri },
-          y: { componentIri: measures[0].iri, palette: "oranges", nbSteps: 5 },
+          y: {
+            componentIri: measures[0].iri,
+            palette: "oranges",
+            nbSteps: 5,
+            paletteType: "continuous",
+          },
         },
       };
 
@@ -247,7 +252,7 @@ export const getPossibleChartType = ({
     (dim) => dim.__typename === "TemporalDimension"
   );
 
-  const geoBased: ChartType[] = ["map"];
+  // const geoBased: ChartType[] = ["map"];
   const catBased: ChartType[] = ["bar", "column", "pie", "table"];
   const multipleQ: ChartType[] = ["scatterplot"];
   const timeBased: ChartType[] = ["line", "area"];
