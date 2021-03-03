@@ -11,21 +11,13 @@ import { Literal, NamedNode } from "rdf-js";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { locales } from "../locales/locales";
 import ParsingClient from "sparql-http-client/ParsingClient";
-import { dcterms, dcat, schema } from "@tpluscode/rdf-ns-builders";
+import { dcterms, dcat, schema, vcard } from "@tpluscode/rdf-ns-builders";
 import * as z from "zod";
 
 const ns = {
-  // dct: namespace("http://purl.org/dc/terms/"),
-  energyPricing: namespace(
-    "https://energy.ld.admin.ch/elcom/electricity-price/dimension/"
-  ),
-  energyPricingValue: namespace(
-    "https://energy.ld.admin.ch/elcom/electricity-price/"
-  ),
-  rdf: namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
-  xsd: namespace("http://www.w3.org/2001/XMLSchema#"),
   classifications: namespace("http://classifications.data.admin.ch/"),
   schemaAdmin: namespace("https://schema.ld.admin.ch/"),
+  adminTerm: namespace("https://ld.admin.ch/definedTerm"),
 };
 
 const getQueryLocales = (locale: string): string[] => [
@@ -34,10 +26,8 @@ const getQueryLocales = (locale: string): string[] => [
   "*",
 ];
 
-console.log(SPARQL_ENDPOINT);
-
 const client = new ParsingClient({
-  endpointUrl: "https://test.lindas.admin.ch/query",
+  endpointUrl: SPARQL_ENDPOINT,
 });
 
 const cubeSchema = z.object({
@@ -48,6 +38,7 @@ const cubeSchema = z.object({
   publisher: z.string().optional(),
   theme: z.string().optional(),
   status: z.enum(["Draft", "Published"]).optional(),
+  versionHistory: z.string().optional(),
 });
 
 const cubesSchema = z.array(cubeSchema);
@@ -55,15 +46,30 @@ const cubesSchema = z.array(cubeSchema);
 const createSource = () =>
   new Source({
     sourceGraph: "https://lindas.admin.ch/foen/cube",
-    endpointUrl: "https://test.lindas.admin.ch/query",
+    endpointUrl: SPARQL_ENDPOINT,
     // user: '',
     // password: ''
   });
 
-export const getCubes = async ({ locale }: { locale: string }) => {
+export const getCubes = async ({
+  includeDrafts = true,
+  locale,
+}: {
+  includeDrafts?: boolean;
+  locale: string;
+}) => {
   const source = createSource();
 
-  const _cubes = await source.cubes();
+  const _cubes = await source.cubes({
+    filters: [
+      // Deprecated cubes have a schema.org/validThrough property; Only show cubes that don't have it
+      Cube.filter.noValidThrough(),
+    ].concat(
+      includeDrafts
+        ? []
+        : Cube.filter.status(ns.adminTerm("CreativeWorkStatus/Published"))
+    ),
+  });
 
   const outOpts = { language: getQueryLocales(locale) };
 
@@ -71,22 +77,26 @@ export const getCubes = async ({ locale }: { locale: string }) => {
   const cubes = _cubes.map((c) => {
     return {
       iri: c.term?.value,
-      identifier: c.out(dcterms.identifier, outOpts)?.value,
+      identifier: c.out(dcterms.identifier)?.value,
       title: c.out(dcterms.title, outOpts)?.value,
       description: c.out(dcterms.description, outOpts)?.value,
-      status: c.out(schema.creativeWorkStatus, outOpts)?.value,
-      publisher: c.out(dcterms.publisher, outOpts)?.value,
-      theme: c.out(dcat.theme, outOpts)?.value,
-      _cube: c,
+      status: c.out(schema.creativeWorkStatus)?.value,
+      theme: c.out(dcat.theme)?.value,
+      versionHistory: c.in(schema.hasPart)?.value,
+      contactPoint: c.out(dcat.contactPoint)?.out(vcard.fn)?.value,
+      keywords: c.out(dcat.keyword)?.values,
+      // _cube: c,
     };
   });
 
   return {
-    cubes: cubesSchema.safeParse(cubes),
+    // cubes: cubesSchema.safeParse(cubes),
+    cubeCount: cubes.length,
+    allCubes: cubes,
     dimensionsByCube: _cubes.map((cube) => {
       return {
         cubeIri: cube.term?.value,
-        dimensions: getDimensions({ cube, locale }),
+        // dimensions: getDimensions({ cube, locale }),
       };
     }),
   };

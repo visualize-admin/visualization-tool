@@ -11,11 +11,17 @@ declare module "rdf-cube-view-query" {
     ptr: Clownface;
     term: AnyPointer["term"];
     out: AnyPointer["out"];
+    in: AnyPointer["in"];
     dataset: AnyPointer["dataset"];
     clear(): void;
   }
 
   export class Cube extends Node {
+    static filter: {
+      isPartOf: (container: $FixMe) => $FixMe;
+      noValidThrough: () => $FixMe;
+      status: (values: Term) => $FixMe;
+    };
     dimensions: CubeDimension[];
   }
 
@@ -89,7 +95,7 @@ declare module "rdf-cube-view-query" {
       }
     );
     async cube(term: Term | string): Promise<Cube | null>;
-    async cubes(): Promise<Cube[]>;
+    async cubes(options?: { filters: $FixMe }): Promise<Cube[]>;
     client: ParsingClient;
   }
   export class LookupSource extends Source {
