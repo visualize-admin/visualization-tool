@@ -22,9 +22,9 @@ export const ColorRamp = ({
       canvas.style.height = `${height}px`;
       canvas.style.imageRendering = "-moz-crisp-edges";
       canvas.style.imageRendering = "pixelated";
+      context.clearRect(0, 0, width, height);
       for (let i = 0; i < nbSteps; ++i) {
         context.fillStyle = colorInterpolator(i / (nbSteps - 1));
-
         context.fillRect((width / nbSteps) * i, 0, width / nbSteps, height);
       }
     }
