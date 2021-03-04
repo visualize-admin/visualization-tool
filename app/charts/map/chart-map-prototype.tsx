@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
 import { feature as topojsonFeature } from "topojson-client";
 import { Radio, Select } from "../../components/form";
@@ -138,7 +138,6 @@ export const ChartMapPrototype = ({
   const [palette, setPalette] = useState("oranges");
   const [nbSteps, setNbSteps] = useState(5);
   const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
-  const [data, setData] = useState<Observation[]>();
   const [measure, setMeasure] = useState(measures[0].iri);
   const [filters, setFilters] = useState<{ [x: string]: string }>(
     dimensions.reduce(
@@ -152,14 +151,13 @@ export const ChartMapPrototype = ({
   };
 
   // Apply filters to data used on the map
-  useEffect(() => {
+  const data = useMemo(() => {
     const filterfunctions = Object.keys(
       filters
     ).map((filterKey) => (x: Observation) =>
       x[filterKey] === filters[filterKey]
     );
-    const data = filterfunctions.reduce((d, f) => d.filter(f), dataset);
-    setData(data);
+    return filterfunctions.reduce((d, f) => d.filter(f), dataset);
   }, [dataset, filters]);
 
   return (
