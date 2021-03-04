@@ -1,7 +1,8 @@
 import * as React from "react";
-import { ChartMapVisualization } from "../charts/map/chart-map-prototype";
-import { AppLayout } from "../components/layout";
+
 import { Box } from "theme-ui";
+import { ChartMapVisualization } from "../../charts/map/chart-map-prototype";
+import { AppLayout } from "../../components/layout";
 
 function Map() {
   return (
