@@ -26,15 +26,14 @@ declare module "rdf-cube-view-query" {
   }
 
   export class CubeDimension {
-    path: Term;
+    path?: Term;
     datatype: NamedNode;
-    minExclusive: Term;
-    minInclusive: Term;
-    maxExclusive: Term;
-    maxInclusive: Term;
-    in: Term[];
+    minExclusive?: Literal | NamedNode;
+    minInclusive?: Literal | NamedNode;
+    maxExclusive?: Literal | NamedNode;
+    maxInclusive?: Literal | NamedNode;
+    in?: (Literal | NamedNode)[];
     out: AnyPointer["out"];
-    term: AnyPointer["term"];
   }
 
   export class Dimension extends Node {

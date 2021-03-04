@@ -13,6 +13,7 @@ import { locales } from "../locales/locales";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { dcterms, dcat, schema, vcard } from "@tpluscode/rdf-ns-builders";
 import * as z from "zod";
+import { parseObservationValue } from "../domain/data";
 
 const ns = {
   classifications: namespace("http://classifications.data.admin.ch/"),
@@ -112,19 +113,26 @@ export const getCubeDimensions = ({
 }) => {
   const outOpts = { language: getQueryLocales(locale) };
 
-  const dimensions = cube.dimensions.map((dim) => {
+  const dimensions = cube.dimensions.flatMap((dim) => {
+    const isNoDimension = [
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "https://cube.link/observedBy",
+    ].includes(dim.path?.value ?? "");
+
     const isLiteral = dim.datatype ? true : false;
 
-    console.log(dim);
+    return isNoDimension
+      ? []
+      : [
+          {
+            iri: dim.path?.value,
+            isLiteral,
+            datatype: dim.datatype?.value,
+            name: dim.out(schema.name, outOpts)?.value,
 
-    return {
-      iri: dim.path?.value,
-      isLiteral,
-      datatype: dim.datatype?.value,
-      name: dim.out(schema.name, outOpts)?.value,
-
-      values: getCubeDimensionValues({ dimension: dim }),
-    };
+            values: getCubeDimensionValues({ dimension: dim }),
+          },
+        ];
   });
 
   return { dimensions };
@@ -136,8 +144,12 @@ const getCubeDimensionValues = ({
   dimension: CubeDimension;
 }) => {
   return {
-    minInclusive: dimension.minInclusive,
-    maxInclusive: dimension.maxInclusive,
-    values: dimension.in,
+    minInclusive: dimension.minInclusive
+      ? parseObservationValue({ value: dimension.minInclusive })
+      : undefined,
+    maxInclusive: dimension.maxInclusive
+      ? parseObservationValue({ value: dimension.maxInclusive })
+      : undefined,
+    values: dimension.in?.map((v) => parseObservationValue({ value: v })),
   };
 };
