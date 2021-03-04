@@ -84,6 +84,7 @@ export const getCubes = async ({
       theme: c.out(dcat.theme)?.value,
       versionHistory: c.in(schema.hasPart)?.value,
       contactPoint: c.out(dcat.contactPoint)?.out(vcard.fn)?.value,
+      landingPage: c.out(dcat.landingPage)?.value,
       keywords: c.out(dcat.keyword)?.values,
       // _cube: c,
     };
@@ -96,13 +97,13 @@ export const getCubes = async ({
     dimensionsByCube: _cubes.map((cube) => {
       return {
         cubeIri: cube.term?.value,
-        // dimensions: getDimensions({ cube, locale }),
+        dimensions: getCubeDimensions({ cube, locale }),
       };
     }),
   };
 };
 
-export const getDimensions = ({
+export const getCubeDimensions = ({
   cube,
   locale,
 }: {
@@ -112,12 +113,31 @@ export const getDimensions = ({
   const outOpts = { language: getQueryLocales(locale) };
 
   const dimensions = cube.dimensions.map((dim) => {
+    const isLiteral = dim.datatype ? true : false;
+
+    console.log(dim);
+
     return {
-      iri: dim.term?.value,
+      iri: dim.path?.value,
+      isLiteral,
       datatype: dim.datatype?.value,
       name: dim.out(schema.name, outOpts)?.value,
+
+      values: getCubeDimensionValues({ dimension: dim }),
     };
   });
 
   return { dimensions };
+};
+
+const getCubeDimensionValues = ({
+  dimension,
+}: {
+  dimension: CubeDimension;
+}) => {
+  return {
+    minInclusive: dimension.minInclusive,
+    maxInclusive: dimension.maxInclusive,
+    values: dimension.in,
+  };
 };
