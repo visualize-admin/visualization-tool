@@ -207,7 +207,7 @@ const TemporaryLinkToMapPrototype = ({
   label: string;
 }) => {
   return (
-    <Link href="/map" passHref>
+    <Link href="/experimental/map">
       <a style={{ textDecoration: "none" }}>
         <Button
           variant="reset"
