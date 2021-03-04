@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getCubes } from "../../graphql/rdf-cube-queries";
+import { getCubes } from "../../rdf/queries";
 
 /**
  * Endpoint to write configuration to.

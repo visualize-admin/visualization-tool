@@ -1,4 +1,4 @@
-import namespace from "@rdfjs/namespace";
+import { dcat, dcterms, rdf, schema, vcard } from "@tpluscode/rdf-ns-builders";
 import {
   Cube,
   CubeDimension,
@@ -6,30 +6,19 @@ import {
   Source,
   View,
 } from "rdf-cube-view-query";
-import rdf from "rdf-ext";
-import { Literal, NamedNode } from "rdf-js";
-import { SPARQL_ENDPOINT } from "../domain/env";
-import { locales } from "../locales/locales";
-import ParsingClient from "sparql-http-client/ParsingClient";
-import { dcterms, dcat, schema, vcard } from "@tpluscode/rdf-ns-builders";
+import { Quad, Term } from "rdf-js";
 import * as z from "zod";
 import { parseObservationValue } from "../domain/data";
-
-const ns = {
-  classifications: namespace("http://classifications.data.admin.ch/"),
-  schemaAdmin: namespace("https://schema.ld.admin.ch/"),
-  adminTerm: namespace("https://ld.admin.ch/definedTerm"),
-};
+import { SPARQL_ENDPOINT } from "../domain/env";
+import { locales } from "../locales/locales";
+import * as ns from "./namespace";
+import { loadResourceLabels } from "./query-labels";
 
 const getQueryLocales = (locale: string): string[] => [
   locale,
   ...locales.filter((l) => l !== locale),
   "*",
 ];
-
-const client = new ParsingClient({
-  endpointUrl: SPARQL_ENDPOINT,
-});
 
 const cubeSchema = z.object({
   iri: z.string().url(),
@@ -95,16 +84,18 @@ export const getCubes = async ({
     // cubes: cubesSchema.safeParse(cubes),
     cubeCount: cubes.length,
     allCubes: cubes,
-    dimensionsByCube: _cubes.map((cube) => {
-      return {
-        cubeIri: cube.term?.value,
-        dimensions: getCubeDimensions({ cube, locale }),
-      };
-    }),
+    dimensionsByCube: await Promise.all(
+      _cubes.map(async (cube) => {
+        return {
+          cubeIri: cube.term?.value,
+          dimensions: await getCubeDimensions({ cube, locale }),
+        };
+      })
+    ),
   };
 };
 
-export const getCubeDimensions = ({
+export const getCubeDimensions = async ({
   cube,
   locale,
 }: {
@@ -113,35 +104,36 @@ export const getCubeDimensions = ({
 }) => {
   const outOpts = { language: getQueryLocales(locale) };
 
-  const dimensions = cube.dimensions.flatMap((dim) => {
-    const isNoDimension = [
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-      "https://cube.link/observedBy",
-    ].includes(dim.path?.value ?? "");
+  const dimensions = await Promise.all(
+    cube.dimensions
+      .filter(
+        (dim) =>
+          ![rdf.type.value, ns.cube.observedBy.value].includes(
+            dim.path?.value ?? ""
+          )
+      )
+      .map(async (dim) => {
+        const isLiteral = dim.datatype ? true : false;
 
-    const isLiteral = dim.datatype ? true : false;
+        return {
+          iri: dim.path?.value,
+          isLiteral,
+          datatype: dim.datatype?.value,
+          name: dim.out(schema.name, outOpts)?.value,
+          values: await getCubeDimensionValues({ dimension: dim, cube }),
+        };
+      })
+  );
 
-    return isNoDimension
-      ? []
-      : [
-          {
-            iri: dim.path?.value,
-            isLiteral,
-            datatype: dim.datatype?.value,
-            name: dim.out(schema.name, outOpts)?.value,
-
-            values: getCubeDimensionValues({ dimension: dim }),
-          },
-        ];
-  });
-
-  return { dimensions };
+  return dimensions;
 };
 
-const getCubeDimensionValues = ({
+const getCubeDimensionValues = async ({
   dimension,
+  cube,
 }: {
   dimension: CubeDimension;
+  cube: Cube;
 }) => {
   return {
     minInclusive: dimension.minInclusive
@@ -151,5 +143,56 @@ const getCubeDimensionValues = ({
       ? parseObservationValue({ value: dimension.maxInclusive })
       : undefined,
     values: dimension.in?.map((v) => parseObservationValue({ value: v })),
+    valuesWithLabels: await getCubeDimensionValuesWithLabels({
+      dimension,
+      cube,
+    }),
   };
+};
+
+const getCubeDimensionValuesWithLabels = async ({
+  dimension,
+  cube,
+}: {
+  dimension: CubeDimension;
+  cube: Cube;
+}) => {
+  // try {
+  //   const view = View.fromCube(cube);
+  //   const viewDimension = view.dimension({ cubeDimension: dimension })!;
+
+  //   const source = createSource();
+  //   const lookupSource = LookupSource.fromSource(source);
+  //   const lookupView = new View({ parent: source });
+
+  //   const labelDimension = lookupView.createDimension({
+  //     source: lookupSource,
+  //     path: schema.name,
+  //     join: viewDimension,
+  //     as: ns.visualizeAdmin("dimensionValueLabel"),
+  //   });
+
+  //   lookupView.addDimension(viewDimension).addDimension(labelDimension);
+
+  //   console.log(lookupView.observationsQuery().query.toString());
+  // } catch (e) {
+  //   console.log("Could not look up labels");
+  //   console.error(e);
+  // }
+
+  const dimensionValueIris = dimension.in?.filter(
+    (v) => v.termType === "NamedNode"
+  );
+
+  const dimensionValueLabels =
+    dimensionValueIris && dimensionValueIris?.length > 0
+      ? await loadResourceLabels(dimensionValueIris)
+      : [];
+
+  return dimensionValueLabels.map((vl) => {
+    return {
+      iri: vl.iri.value,
+      label: vl.label.value,
+    };
+  });
 };
