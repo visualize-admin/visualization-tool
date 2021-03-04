@@ -1,14 +1,13 @@
+import { Trans } from "@lingui/macro";
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
 import { feature as topojsonFeature } from "topojson-client";
 import { Radio, Select } from "../../components/form";
-import { LoadingOverlay, NoDataHint } from "../../components/hint";
+import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
 import { MapFields } from "../../configurator";
-import { ColorRamp } from "../../configurator/components/chart-controls/color-ramp";
-import { getColorInterpolator } from "../../configurator/components/ui-helpers";
+import { ControlSection } from "../../configurator/components/chart-controls/section";
 import { Observation } from "../../domain/data";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
-
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
@@ -163,7 +162,7 @@ export const ChartMapPrototype = ({
   return (
     <>
       <Box sx={{ bg: "monochrome100", p: 4 }}>
-        <Box>Data Filters</Box>
+        <Box sx={{ mb: 4 }}>Data Filters</Box>
         <Flex sx={{ flexDirection: "column" }}>
           {dimensions.map((dim) => (
             <Box sx={{ mb: 2 }}>
@@ -183,86 +182,104 @@ export const ChartMapPrototype = ({
           ))}
         </Flex>
       </Box>
-
-      <Box sx={{ m: 4, border: "1px solid hotpink", bg: "#FFFFFF" }}>
-        {dimensions && measures && data && (
-          <ChartMap
-            observations={data}
-            features={features}
-            fields={{
-              x: { componentIri: "a" },
-              y: { componentIri: measure, palette, nbSteps, paletteType },
-              segment: { componentIri: "c" },
-            }}
-            dimensions={dimensions}
-            measures={measures}
-          />
-        )}
+      <Box>
+        <HintBlue iconName="hintWarning">
+          <Trans id="chart.map.warning.prototype">
+            This is a prototype, don't use in production!
+          </Trans>
+        </HintBlue>
+        <Box sx={{ m: 4, bg: "#FFFFFF", border: "1px solid #eeeeee" }}>
+          {dimensions && measures && data && (
+            <ChartMap
+              observations={data}
+              features={features}
+              fields={{
+                x: { componentIri: "a" },
+                y: { componentIri: measure, palette, nbSteps, paletteType },
+                segment: { componentIri: "c" },
+              }}
+              dimensions={dimensions}
+              measures={measures}
+              // Additional props (prototype only)
+              measure={measure.split("_")[1]}
+            />
+          )}
+        </Box>
       </Box>
-      <Box sx={{ bg: "monochrome100", p: 4 }}>
-        <Select
-          label={"Select a measure to map"}
-          id={"measure-select"}
-          name={"measure-select"}
-          value={measure}
-          disabled={false}
-          options={measures.map((m) => ({
-            value: m.iri,
-            label: m.label.split("_")[1],
-          }))}
-          onChange={(e) => setMeasure(e.currentTarget.value)}
-        />
-        <Select
-          label={"Farbpalette"}
-          id={"palette"}
-          name={"palette"}
-          value={palette}
-          disabled={false}
-          options={[
-            { value: "oranges", label: "oranges" },
-            { value: "reds", label: "reds" },
-            { value: "purples", label: "purples" },
-            { value: "greens", label: "greens" },
-            { value: "blues", label: "blues" },
-            { value: "greys", label: "greys" },
-          ]}
-          onChange={(e) => setPalette(e.currentTarget.value)}
-        ></Select>
-        <Radio
-          label={"Kontinuerlich"}
-          name={"continuous"}
-          value={"continuous"}
-          checked={paletteType === "continuous"}
-          disabled={false}
-          onChange={(e) => {
-            setPaletteType(e.currentTarget.value as PaletteType);
-          }}
-        />
-        <Radio
-          label={"Sequentiell"}
-          name={"discrete"}
-          value={"discrete"}
-          checked={paletteType === "discrete"}
-          disabled={false}
-          onChange={(e) => setPaletteType(e.currentTarget.value as PaletteType)}
-        />
-        <Select
-          label={"Anzahl Schritte"}
-          id={"nbSteps"}
-          name={"nbSteps"}
-          value={`${nbSteps}`}
-          disabled={paletteType === "continuous"}
-          options={[
-            { value: "3", label: "3" },
-            { value: "4", label: "4" },
-            { value: "5", label: "5" },
-            { value: "6", label: "6" },
-            { value: "7", label: "7" },
-            { value: "8", label: "8" },
-            { value: "9", label: "9" },
-          ]}
-          onChange={(e) => setNbSteps(+e.currentTarget.value)}
-        ></Select>
+      <Box sx={{ bg: "monochrome100" }}>
+        <ControlSection>
+          <Box sx={{ p: 4 }}>
+            <Select
+              label={"Select a measure to map"}
+              id={"measure-select"}
+              name={"measure-select"}
+              value={measure}
+              disabled={false}
+              options={measures.map((m) => ({
+                value: m.iri,
+                label: m.label.split("_")[1],
+              }))}
+              onChange={(e) => setMeasure(e.currentTarget.value)}
+            />
+          </Box>
+        </ControlSection>
+        <ControlSection>
+          <Box sx={{ p: 4 }}>
+            <Select
+              label={"Farbpalette"}
+              id={"palette"}
+              name={"palette"}
+              value={palette}
+              disabled={false}
+              options={[
+                { value: "oranges", label: "oranges" },
+                { value: "reds", label: "reds" },
+                { value: "purples", label: "purples" },
+                { value: "greens", label: "greens" },
+                { value: "blues", label: "blues" },
+                { value: "greys", label: "greys" },
+              ]}
+              onChange={(e) => setPalette(e.currentTarget.value)}
+            ></Select>
+            <Radio
+              label={"Kontinuerlich"}
+              name={"continuous"}
+              value={"continuous"}
+              checked={paletteType === "continuous"}
+              disabled={false}
+              onChange={(e) => {
+                setPaletteType(e.currentTarget.value as PaletteType);
+              }}
+            />
+            <Radio
+              label={"Sequentiell"}
+              name={"discrete"}
+              value={"discrete"}
+              checked={paletteType === "discrete"}
+              disabled={false}
+              onChange={(e) =>
+                setPaletteType(e.currentTarget.value as PaletteType)
+              }
+            />
+            <Select
+              label={"Anzahl Schritte"}
+              id={"nbSteps"}
+              name={"nbSteps"}
+              value={`${nbSteps}`}
+              disabled={paletteType === "continuous"}
+              options={[
+                { value: "3", label: "3" },
+                { value: "4", label: "4" },
+                { value: "5", label: "5" },
+                { value: "6", label: "6" },
+                { value: "7", label: "7" },
+                { value: "8", label: "8" },
+                { value: "9", label: "9" },
+              ]}
+              onChange={(e) => setNbSteps(+e.currentTarget.value)}
+            ></Select>
+          </Box>
+        </ControlSection>
       </Box>
     </>
   );
@@ -275,8 +292,8 @@ export const ChartMap = memo(
     dimensions,
     measures,
     fields,
-  }: // interactiveFiltersConfig,
-  {
+    measure,
+  }: {
     features: GeoData;
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
