@@ -1,7 +1,7 @@
 import { color, extent, scaleQuantize } from "d3";
 import { ReactNode, useCallback } from "react";
 import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
-import { MapFields } from "../../configurator/config-types";
+import { MapFields, PaletteType } from "../../configurator/config-types";
 import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -15,6 +15,9 @@ export interface MapState {
   features: GeoData;
   getColor: (x: number | undefined) => number[];
   getValue: (d: Observation) => number;
+  paletteType: PaletteType;
+  palette: string;
+  nbSteps: number;
 }
 
 const useMapState = ({
@@ -82,6 +85,9 @@ Pick<
     getColor,
     getValue,
     bounds,
+    paletteType,
+    palette,
+    nbSteps,
   };
 };
 

@@ -1,5 +1,6 @@
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
+import { Box } from "theme-ui";
 import { useChartState } from "../shared/use-chart-state";
 import { MapState } from "./map-state";
 
@@ -23,7 +24,14 @@ export const MapComponent = () => {
   } = useChartState() as MapState;
 
   return (
-    <div>
+    <Box
+    // sx={{
+    //   mt: bounds.margins.top,
+    //   mr: bounds.margins.right,
+    //   mb: bounds.margins.bottom,
+    //   ml: bounds.margins.left,
+    // }}
+    >
       <DeckGL initialViewState={INITIAL_VIEW_STATE} controller={true}>
         <GeoJsonLayer
           id="municipalities"
@@ -43,6 +51,6 @@ export const MapComponent = () => {
           updateTriggers={{ getFillColor: getColor }}
         />
       </DeckGL>
-    </div>
+    </Box>
   );
 };
