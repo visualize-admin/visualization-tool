@@ -1,4 +1,4 @@
-import { color, scaleQuantize } from "d3";
+import { color, extent, scaleQuantize } from "d3";
 import { ReactNode, useCallback } from "react";
 import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
 import { MapFields } from "../../configurator/config-types";
@@ -14,7 +14,7 @@ export interface MapState {
   data: Observation[];
   features: GeoData;
   getColor: (x: number | undefined) => number[];
-  getMeasure: (d: Observation) => number;
+  getValue: (d: Observation) => number;
 }
 
 const useMapState = ({
@@ -34,7 +34,7 @@ Pick<
   const width = useWidth();
 
   const { palette, nbSteps, paletteType } = fields.y;
-  const getMeasure = useCallback(
+  const getValue = useCallback(
     (d: Observation): number => +d[fields.y.componentIri],
     [fields.y.componentIri]
   );
@@ -80,7 +80,7 @@ Pick<
     data,
     features,
     getColor,
-    getMeasure,
+    getValue,
     bounds,
   };
 };

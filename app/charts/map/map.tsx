@@ -1,9 +1,8 @@
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
-import { color, scaleQuantize } from "d3";
 import { useChartState } from "../shared/use-chart-state";
 import { MapState } from "./map-state";
-// import data from "/one-person-households.json"
+
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
@@ -20,7 +19,7 @@ export const MapComponent = () => {
     data,
     features,
     getColor,
-    getMeasure,
+    getValue,
   } = useChartState() as MapState;
 
   return (
@@ -36,7 +35,7 @@ export const MapComponent = () => {
           autoHighlight={true}
           getFillColor={(d: $FixMe) => {
             const obs = data.find((x: $FixMe) => x.id === d.id);
-            return obs ? getColor(getMeasure(obs)) : [0, 0, 0, 20];
+            return obs ? getColor(getValue(obs)) : [0, 0, 0, 20];
           }}
           highlightColor={[0, 0, 0, 50]}
           getRadius={100}
