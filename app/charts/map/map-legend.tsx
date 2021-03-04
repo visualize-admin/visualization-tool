@@ -1,4 +1,12 @@
-import { interpolateOranges, scaleLinear } from "d3";
+import {
+  axisBottom,
+  interpolateOranges,
+  range,
+  scaleBand,
+  scaleLinear,
+  select,
+  Selection,
+} from "d3";
 import * as React from "react";
 import { useEffect, useRef } from "react";
 import { Box, Flex, Text } from "theme-ui";
@@ -8,19 +16,47 @@ import {
 } from "../../configurator/components/ui-helpers";
 import { useChartState } from "../shared/use-chart-state";
 import { MapState } from "./map-state";
-
+const WIDTH = 256;
+const COLOR_RAMP_HEIGHT = 10;
+const LABELS_SPACE = 26;
+const MARGINS = {
+  top: 0,
+  right: 20,
+  bottom: 0,
+  left: 20,
+};
 export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
   const {
     paletteType,
     palette,
     nbSteps,
     dataDomain,
+    colorScale,
   } = useChartState() as MapState;
   const formatNumber = useFormatNumber();
+  const legendAxisRef = useRef<SVGGElement>(null);
 
-  const WIDTH = 256;
-  const RAMP_HEIGHT = 12;
-  // const linearScale = scaleLinear().domain(dataDomain).range([0, WIDTH]);
+  const linearScale = scaleLinear()
+    .domain([0, colorScale.range().length])
+    .range([0, WIDTH]);
+
+  // const thresholds = colorScale.thresholds();
+
+  // const tickValues = range(thresholds.length);
+
+  // const bandScale = scaleBand()
+  //   .domain(colorScale.domain())
+  //   .rangeRound([MARGINS.left, WIDTH - MARGINS.right]);
+
+  // const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+  //   g.call(axisBottom(bandScale).tickValues(thresholds));
+  // };
+
+  // useEffect(() => {
+  //   const g = select(legendAxisRef.current);
+  //   mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+  // });
+
   return (
     <Flex
       sx={{
@@ -33,12 +69,12 @@ export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
       {legendTitle && <Text variant="meta">{legendTitle}</Text>}
       {paletteType === "continuous" && (
         <>
-          <Box sx={{ my: 1, width: WIDTH, height: RAMP_HEIGHT }}>
+          <Box sx={{ my: 1, width: WIDTH, height: COLOR_RAMP_HEIGHT }}>
             <ColorRamp
               colorInterpolator={getColorInterpolator(palette)}
               nbSteps={WIDTH}
               width={WIDTH}
-              height={RAMP_HEIGHT}
+              height={COLOR_RAMP_HEIGHT}
             />
           </Box>
           <Flex sx={{ justifyContent: "space-between" }}>
@@ -47,7 +83,56 @@ export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
           </Flex>
         </>
       )}
-      {paletteType === "discrete" && <Box></Box>}
+      {paletteType === "discrete" && (
+        <Box sx={{ my: 1 }}>
+          <svg
+            width={WIDTH + MARGINS.left + MARGINS.right}
+            height={COLOR_RAMP_HEIGHT + LABELS_SPACE}
+          >
+            {/* <g
+              ref={legendAxisRef}
+              key="legend-axis"
+              transform={`translate(${MARGINS.left}, ${COLOR_RAMP_HEIGHT})`}
+            /> */}
+            <g transform={`translate(${MARGINS.left}, 0)`}>
+              {colorScale.range().map((c, i) => (
+                <rect
+                  x={linearScale(i)}
+                  y={0}
+                  width={WIDTH / colorScale.range().length}
+                  height={COLOR_RAMP_HEIGHT}
+                  fill={`${c}`}
+                />
+              ))}
+              <g>
+                {/* FIXME: Should this be an axisBottom()? */}
+                {/* @ts-ignore */}
+                {[dataDomain[0], ...colorScale.thresholds(), dataDomain[1]].map(
+                  (t: number, i: number) => (
+                    <>
+                      <rect
+                        x={linearScale(i)}
+                        y={0}
+                        width={1}
+                        height={COLOR_RAMP_HEIGHT + 4}
+                        fill={"#000000"}
+                      />
+                      <text
+                        x={linearScale(i)}
+                        y={LABELS_SPACE}
+                        fontSize={8}
+                        textAnchor="middle"
+                      >
+                        {formatNumber(t)}
+                      </text>
+                    </>
+                  )
+                )}
+              </g>
+            </g>
+          </svg>
+        </Box>
+      )}
     </Flex>
   );
 };
