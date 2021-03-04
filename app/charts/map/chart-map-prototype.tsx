@@ -7,10 +7,7 @@ import { MapFields } from "../../configurator";
 import { ColorRamp } from "../../configurator/components/chart-controls/color-ramp";
 import { getColorInterpolator } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import {
-  ComponentFieldsFragment,
-  DataCubeMetadataDocument,
-} from "../../graphql/query-hooks";
+import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
@@ -142,7 +139,7 @@ export const ChartMapPrototype = ({
   const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
   const [data, setData] = useState<Observation[]>();
   const [measure, setMeasure] = useState(measures[0].iri);
-  const [filters, setFilters] = useState(
+  const [filters, setFilters] = useState<{ [x: string]: string }>(
     dimensions.reduce(
       (obj, dim, i) => ({ ...obj, [dim.iri]: dim.dimensionValues[0] }),
       {}
@@ -177,7 +174,7 @@ export const ChartMapPrototype = ({
                   label={dim.label.split("_")[1]}
                   id={dim.label}
                   name={dim.label}
-                  value={filters[dim]}
+                  value={filters[dim.iri]}
                   disabled={false}
                   options={dim.dimensionValues.map((value) => ({
                     value,
