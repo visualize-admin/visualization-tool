@@ -11,6 +11,8 @@ const BATCH_SIZE = 1000;
  *
  * @param ids IDs as rdf-js Terms
  * @param client SparqlClient
+ *
+ * @todo Add language filter
  */
 export async function loadResourceLabels(
   ids: Term[],

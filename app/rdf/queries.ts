@@ -1,12 +1,5 @@
 import { dcat, dcterms, rdf, schema, vcard } from "@tpluscode/rdf-ns-builders";
-import {
-  Cube,
-  CubeDimension,
-  LookupSource,
-  Source,
-  View,
-} from "rdf-cube-view-query";
-import { Quad, Term } from "rdf-js";
+import { Cube, CubeDimension, Source } from "rdf-cube-view-query";
 import * as z from "zod";
 import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
