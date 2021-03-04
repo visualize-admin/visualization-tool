@@ -136,7 +136,7 @@ export const ChartMapPrototype = ({
   measures: ComponentFieldsFragment[];
 }) => {
   const [palette, setPalette] = useState("oranges");
-  const [nbSteps, setNbSteps] = useState(512);
+  const [nbSteps, setNbSteps] = useState(5);
   const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
   const [data, setData] = useState<Observation[]>();
   const [measure, setMeasure] = useState(measures[0].iri);
