@@ -1,4 +1,4 @@
-import { color, extent, scaleQuantize } from "d3";
+import { color, extent, scaleLinear, ScaleQuantize, scaleQuantize } from "d3";
 import { ReactNode, useCallback } from "react";
 import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
 import { MapFields, PaletteType } from "../../configurator/config-types";
@@ -18,6 +18,8 @@ export interface MapState {
   paletteType: PaletteType;
   palette: string;
   nbSteps: number;
+  dataDomain: [number, number];
+  colorScale: ScaleQuantize<number, string>;
 }
 
 const useMapState = ({
@@ -42,19 +44,30 @@ Pick<
     [fields.y.componentIri]
   );
 
-  const domain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
+  const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
     number,
     number
   ];
+  console.log(
+    "hues",
+    getSingleHueSequentialPalette({
+      palette,
+      nbSteps: paletteType === "continuous" ? 9 : nbSteps,
+    })
+  );
+  // FIXME: for continuous scale, just interpolate between 2 colors?
+  const colorScale = scaleQuantize<number, string>()
+    .domain(dataDomain)
+    .range(
+      getSingleHueSequentialPalette({
+        palette,
+        nbSteps: paletteType === "continuous" ? 9 : nbSteps,
+      }) as $FixMe[]
+    );
+
   const getColor = (v: number | undefined) => {
-    const colorScale = scaleQuantize<number, string>()
-      .domain(domain)
-      .range(
-        getSingleHueSequentialPalette({
-          palette,
-          nbSteps: paletteType === "continuous" ? 9 : nbSteps,
-        }) as $FixMe[]
-      );
+    // FIXME: make this function functional
+
     if (v === undefined) {
       return [0, 0, 0];
     }
@@ -64,10 +77,10 @@ Pick<
   };
 
   const margins = {
-    top: 40,
-    right: 40,
-    bottom: 40,
-    left: 40,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
   };
   const chartWidth = width - margins.left - margins.right;
   const chartHeight = chartWidth * 0.5;
@@ -88,6 +101,8 @@ Pick<
     paletteType,
     palette,
     nbSteps,
+    dataDomain,
+    colorScale,
   };
 };
 
