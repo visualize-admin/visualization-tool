@@ -38,9 +38,14 @@ Pick<
     (d: Observation): number => +d[fields.y.componentIri],
     [fields.y.componentIri]
   );
+
+  const domain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
+    number,
+    number
+  ];
   const getColor = (v: number | undefined) => {
     const colorScale = scaleQuantize<number, string>()
-      .domain([0, 1000000])
+      .domain(domain)
       .range(
         getSingleHueSequentialPalette({
           palette,
