@@ -70,7 +70,7 @@ Pick<
     left: 40,
   };
   const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth / 1.5;
+  const chartHeight = chartWidth * 0.5;
   const bounds = {
     width,
     height: chartHeight + margins.top + margins.bottom,
