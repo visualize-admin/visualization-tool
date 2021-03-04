@@ -281,8 +281,9 @@ export const ChartMap = memo(
     observations: Observation[];
     dimensions: ComponentFieldsFragment[];
     measures: ComponentFieldsFragment[];
+    // Additional props (prototype only)
     fields: MapFields;
-    // interactiveFiltersConfig: InteractiveFiltersConfig;
+    measure: string;
   }) => {
     return (
       <MapChart
@@ -291,12 +292,11 @@ export const ChartMap = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
-        // interactiveFiltersConfig={interactiveFiltersConfig}
       >
         <ChartContainer>
           <MapComponent />
         </ChartContainer>
-        <MapLegend />
+        <MapLegend legendTitle={measure} />
       </MapChart>
     );
   }
