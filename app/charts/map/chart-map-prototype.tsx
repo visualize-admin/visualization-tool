@@ -11,6 +11,7 @@ import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
+import { MapLegend } from "./map-legend";
 import { GeoData, MapChart } from "./map-state";
 
 type GeoDataState =
@@ -159,50 +160,46 @@ export const ChartMapPrototype = ({
     );
     const data = filterfunctions.reduce((d, f) => d.filter(f), dataset);
     setData(data);
-  }, [dataset, dimensions, filters]);
+  }, [dataset, filters]);
 
   return (
     <>
-      <Box sx={{ bg: "monochrome100", p: 4 }}></Box>
-      <Box sx={{ m: 4 }}>
-        <Box sx={{ bg: "monochrome100", p: 4 }}>
-          <Box>Data Filters</Box>
-          <Flex sx={{ flexWrap: "wrap" }}>
-            {dimensions.map((dim) => (
-              <Box sx={{ mr: 2, minWidth: ["50%", "50%", "33%"] }}>
-                <Select
-                  label={dim.label.split("_")[1]}
-                  id={dim.label}
-                  name={dim.label}
-                  value={filters[dim.iri]}
-                  disabled={false}
-                  options={dim.dimensionValues.map((value) => ({
-                    value,
-                    label: value,
-                  }))}
-                  onChange={(e) =>
-                    updateFilters(dim.iri, e.currentTarget.value)
-                  }
-                />
-              </Box>
-            ))}
-          </Flex>
-        </Box>
-        <Box sx={{ my: 4, border: "1px solid hotpink", bg: "#FFFFFF" }}>
-          {dimensions && measures && data && (
-            <ChartMap
-              observations={data}
-              features={features}
-              fields={{
-                x: { componentIri: "a" },
-                y: { componentIri: measure, palette, nbSteps, paletteType },
-                segment: { componentIri: "c" },
-              }}
-              dimensions={dimensions}
-              measures={measures}
-            />
-          )}
-        </Box>
+      <Box sx={{ bg: "monochrome100", p: 4 }}>
+        <Box>Data Filters</Box>
+        <Flex sx={{ flexDirection: "column" }}>
+          {dimensions.map((dim) => (
+            <Box sx={{ mb: 2 }}>
+              <Select
+                label={dim.label.split("_")[1]}
+                id={dim.label}
+                name={dim.label}
+                value={filters[dim.iri]}
+                disabled={false}
+                options={dim.dimensionValues.map((value) => ({
+                  value,
+                  label: value,
+                }))}
+                onChange={(e) => updateFilters(dim.iri, e.currentTarget.value)}
+              />
+            </Box>
+          ))}
+        </Flex>
+      </Box>
+
+      <Box sx={{ m: 4, border: "1px solid hotpink", bg: "#FFFFFF" }}>
+        {dimensions && measures && data && (
+          <ChartMap
+            observations={data}
+            features={features}
+            fields={{
+              x: { componentIri: "a" },
+              y: { componentIri: measure, palette, nbSteps, paletteType },
+              segment: { componentIri: "c" },
+            }}
+            dimensions={dimensions}
+            measures={measures}
+          />
+        )}
       </Box>
       <Box sx={{ bg: "monochrome100", p: 4 }}>
         <Select
@@ -213,7 +210,7 @@ export const ChartMapPrototype = ({
           disabled={false}
           options={measures.map((m) => ({
             value: m.iri,
-            label: m.label,
+            label: m.label.split("_")[1],
           }))}
           onChange={(e) => setMeasure(e.currentTarget.value)}
         />
@@ -268,12 +265,6 @@ export const ChartMapPrototype = ({
           ]}
           onChange={(e) => setNbSteps(+e.currentTarget.value)}
         ></Select>
-
-        <ColorRamp
-          colorInterpolator={getColorInterpolator(palette)}
-          nbSteps={paletteType === "discrete" ? nbSteps : 512}
-          height={50}
-        />
       </Box>
     </>
   );
@@ -307,6 +298,7 @@ export const ChartMap = memo(
         <ChartContainer>
           <MapComponent />
         </ChartContainer>
+        <MapLegend />
       </MapChart>
     );
   }
