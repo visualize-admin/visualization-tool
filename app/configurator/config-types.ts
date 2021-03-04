@@ -425,14 +425,17 @@ const TableConfig = t.type(
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
-// FIXME: These MapFields types are only placeholders
+// FIXME: These MapFields types are only placeholders for the map prototype
+const PaletteType = t.union([t.literal("continuous"), t.literal("discrete")]);
+export type PaletteType = t.TypeOf<typeof PaletteType>;
+
 const MapFields = t.intersection([
   t.type({
     x: GenericField,
     y: t.type({
       componentIri: t.string,
       palette: t.string,
-      paletteType: t.string,
+      paletteType: PaletteType,
       nbSteps: t.number,
     }),
   }),
