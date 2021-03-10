@@ -4,7 +4,7 @@ import { groups } from "d3";
 import { Term } from "rdf-js";
 import { sparqlClient } from "./sparql-client";
 
-const BATCH_SIZE = 1000;
+const BATCH_SIZE = 500;
 
 /**
  * Load labels for a list of IDs (e.g. dimension values)
