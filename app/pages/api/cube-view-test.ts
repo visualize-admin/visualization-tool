@@ -13,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const result = await getCubes({ locale: "de" });
 
         // TODO: Make this 201 and set final URI as Location header
-        res.status(200).json(result);
+        res.status(200).json(result.map(({ dataCube, ...props }) => props));
       } catch (e) {
         console.error(e);
         res.status(500).json({ message: "Something went wrong!" });
