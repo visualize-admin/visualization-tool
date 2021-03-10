@@ -11583,10 +11583,10 @@ rc@^1.2.7, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-rdf-cube-view-query@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/rdf-cube-view-query/-/rdf-cube-view-query-1.1.1.tgz#7f8f813ed0a45aafbf646ad7626524a1486dd5a0"
-  integrity sha512-hmPTtD8GXcx1HmMx1Qd7LGjcmonb7HGv7O6PLnkaCvQwhLdkxEjTat/Du3w2Dcl0IRicmlh97VPlbIiaGmEUJw==
+rdf-cube-view-query@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rdf-cube-view-query/-/rdf-cube-view-query-1.2.0.tgz#3bd64897ad68b5d02bd4973075511745058e36c3"
+  integrity sha512-H1iu/Du0UYh1GwSfmRJegi6ew5pUPZJSxR2+aqoRfLArtzYlsEfVYJzWXq2JUu7rZ0s5O7lolMpokP94wizdSg==
   dependencies:
     "@rdfjs/namespace" "^1.1.0"
     "@rdfjs/term-map" "^1.0.0"
