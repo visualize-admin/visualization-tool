@@ -12,6 +12,7 @@ import { Filters } from "../configurator";
 import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { locales, parseLocaleString } from "../locales/locales";
+import { getCube, getCubes } from "../rdf/queries";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
@@ -19,71 +20,6 @@ import {
   Resolvers,
 } from "./resolver-types";
 import { ResolvedDimension, ResolvedMeasure } from "./shared-types";
-
-let entryPointCache = new Map<string, DataCubeEntryPoint>();
-const getEntryPoint = (
-  _locale: string | null | undefined
-): DataCubeEntryPoint => {
-  const locale = parseLocaleString(_locale || "");
-
-  let entry = entryPointCache.get(locale);
-
-  if (entry) {
-    return entry;
-  }
-
-  entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
-    languages: [locale, ...locales.filter((l) => l !== locale), ""],
-    extraMetadata: [
-      {
-        variable: "contact",
-        iri: "https://pcaxis.described.at/contact",
-        multilang: true,
-      },
-      {
-        variable: "source",
-        iri: "https://pcaxis.described.at/source",
-        multilang: true,
-      },
-      {
-        variable: "survey",
-        iri: "https://pcaxis.described.at/survey",
-        multilang: true,
-      },
-      {
-        variable: "database",
-        iri: "https://pcaxis.described.at/database",
-        multilang: true,
-      },
-      {
-        variable: "unit",
-        iri: "https://pcaxis.described.at/unit",
-        multilang: true,
-      },
-      {
-        variable: "note",
-        iri: "https://pcaxis.described.at/note",
-        multilang: true,
-      },
-      {
-        variable: "dateCreated",
-        iri: "http://schema.org/dateCreated",
-        multilang: false,
-      },
-      { variable: "dateModified", iri: "http://schema.org/dateModified" },
-      {
-        variable: "description",
-        iri: "http://www.w3.org/2000/01/rdf-schema#comment",
-        multilang: true,
-      },
-    ],
-  });
-
-  // TODO: Re-enable caching with TTL
-  // entryPointCache.set(locale, entry);
-
-  return entry;
-};
 
 /** Cache value data type per Dimension IRI */
 let dataTypeCache = new Map<string, string | undefined>();
@@ -156,14 +92,9 @@ const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
 
 const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order }) => {
-    const dataCubes = await getEntryPoint(locale).dataCubes();
+    const cubes = await getCubes({ locale });
 
-    const dataCubeCandidates = dataCubes.map((dataCube) => ({
-      title: dataCube.label.value,
-      description: dataCube.extraMetadata.get("description")?.value ?? "",
-      created: dataCube.extraMetadata.get("dateCreated")?.value ?? "",
-      dataCube,
-    }));
+    const dataCubeCandidates = cubes;
 
     if (query) {
       /**
@@ -227,22 +158,20 @@ const Query: QueryResolvers = {
       dataCubeCandidates.sort((a, b) => descending(a.created, b.created));
     }
 
-    return dataCubeCandidates;
+    return dataCubeCandidates.map((dataCube) => ({ dataCube }));
   },
   dataCubeByIri: async (_, { iri, locale }) => {
-    return getEntryPoint(locale).dataCubeByIri(iri);
+    return getCube({ iri, locale });
   },
 };
 
 const DataCube: DataCubeResolvers = {
-  iri: (dataCube) => dataCube.iri,
-  title: (dataCube) => dataCube.label.value,
-  contact: (dataCube) => dataCube.extraMetadata.get("contact")?.value ?? null,
-  source: (dataCube) => dataCube.extraMetadata.get("source")?.value ?? null,
-  description: (dataCube) =>
-    dataCube.extraMetadata.get("description")?.value ?? null,
-  dateCreated: (dataCube) =>
-    dataCube.extraMetadata.get("dateCreated")?.value ?? null,
+  iri: ({ iri }) => iri ?? "---",
+  title: ({ title }) => title ?? "---",
+  contact: ({ contactPoint }) => contactPoint ?? null,
+  description: ({ description }) => description ?? null,
+  source: (dataCube) => "TODO",
+  dateCreated: (dataCube) => "TODO",
   dimensions: async (dataCube) => {
     return (await dataCube.dimensions()).map((dimension) => ({
       dataCube,

@@ -1,8 +1,10 @@
 import { dcat, dcterms, rdf, schema, vcard } from "@tpluscode/rdf-ns-builders";
+import { string } from "io-ts";
 import { Cube, CubeDimension, Source } from "rdf-cube-view-query";
 import * as z from "zod";
 import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
+import { ResolvedDataCube } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
 import * as ns from "./namespace";
 import { loadResourceLabels } from "./query-labels";
@@ -40,10 +42,10 @@ export const getCubes = async ({
 }: {
   includeDrafts?: boolean;
   locale: string;
-}) => {
+}): Promise<ResolvedDataCube[]> => {
   const source = createSource();
 
-  const _cubes = await source.cubes({
+  const cubes = await source.cubes({
     filters: [
       // Deprecated cubes have a schema.org/validThrough property; Only show cubes that don't have it
       Cube.filter.noValidThrough(),
@@ -57,35 +59,52 @@ export const getCubes = async ({
   const outOpts = { language: getQueryLocales(locale) };
 
   // See https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
-  const cubes = _cubes.map((c) => {
+  return cubes.map((c) => {
     return {
-      iri: c.term?.value,
+      iri: c.term?.value ?? "---",
       identifier: c.out(dcterms.identifier)?.value,
       title: c.out(dcterms.title, outOpts)?.value,
       description: c.out(dcterms.description, outOpts)?.value,
       status: c.out(schema.creativeWorkStatus)?.value,
       theme: c.out(dcat.theme)?.value,
+      created: "2222-01-01",
       versionHistory: c.in(schema.hasPart)?.value,
       contactPoint: c.out(dcat.contactPoint)?.out(vcard.fn)?.value,
       landingPage: c.out(dcat.landingPage)?.value,
       keywords: c.out(dcat.keyword)?.values,
-      // _cube: c,
+      dataCube: c,
     };
   });
+};
 
-  return {
-    // cubes: cubesSchema.safeParse(cubes),
-    cubeCount: cubes.length,
-    allCubes: cubes,
-    dimensionsByCube: await Promise.all(
-      _cubes.map(async (cube) => {
-        return {
-          cubeIri: cube.term?.value,
-          dimensions: await getCubeDimensions({ cube, locale }),
-        };
-      })
-    ),
-  };
+export const getCube = async ({
+  iri,
+  locale,
+}: {
+  iri: string;
+  locale: string;
+}): Promise<ResolvedDataCube | undefined> => {
+  const source = createSource();
+  const outOpts = { language: getQueryLocales(locale) };
+
+  const cube = await source.cube(iri);
+
+  return cube
+    ? {
+        iri: cube.term?.value ?? "---",
+        identifier: cube.out(dcterms.identifier)?.value,
+        title: cube.out(dcterms.title, outOpts)?.value,
+        description: cube.out(dcterms.description, outOpts)?.value,
+        status: cube.out(schema.creativeWorkStatus)?.value,
+        theme: cube.out(dcat.theme)?.value,
+        created: "2222-01-01",
+        versionHistory: cube.in(schema.hasPart)?.value,
+        contactPoint: cube.out(dcat.contactPoint)?.out(vcard.fn)?.value,
+        landingPage: cube.out(dcat.landingPage)?.value,
+        keywords: cube.out(dcat.keyword)?.values,
+        dataCube: cube,
+      }
+    : undefined;
 };
 
 export const getCubeDimensions = async ({
