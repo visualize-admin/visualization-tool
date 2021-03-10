@@ -37,7 +37,7 @@ export type DataCube = {
   contact?: Maybe<Scalars['String']>;
   source?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  dateCreated?: Maybe<Scalars['String']>;
+  datePublished?: Maybe<Scalars['String']>;
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
@@ -203,7 +203,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, source?: Maybe<string>, dateCreated?: Maybe<string> }> };
+export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, source?: Maybe<string>, datePublished?: Maybe<string> }> };
 
 export type DataCubeMetadataWithComponentsQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -358,7 +358,7 @@ export const DataCubeMetadataDocument = gql`
     title
     description
     source
-    dateCreated
+    datePublished
   }
 }
     `;

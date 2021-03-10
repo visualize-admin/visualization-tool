@@ -41,7 +41,7 @@ export type DataCube = {
   contact?: Maybe<Scalars['String']>;
   source?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  dateCreated?: Maybe<Scalars['String']>;
+  datePublished?: Maybe<Scalars['String']>;
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
@@ -279,7 +279,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   contact?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   source?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  dateCreated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  datePublished?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, RequireFields<DataCubeObservationsArgs, never>>;
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>;
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>;

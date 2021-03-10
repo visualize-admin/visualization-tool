@@ -17,7 +17,7 @@ type DataCube {
   contact: String
   source: String
   description: String
-  dateCreated: String
+  datePublished: String
   observations(
     limit: Int
     measures: [String!]

@@ -171,7 +171,7 @@ const DataCube: DataCubeResolvers = {
   contact: ({ contactPoint }) => contactPoint ?? null,
   description: ({ description }) => description ?? null,
   source: (dataCube) => "TODO",
-  dateCreated: (dataCube) => "TODO",
+  datePublished: ({ datePublished }) => datePublished,
   dimensions: async (dataCube) => {
     return (await dataCube.dimensions()).map((dimension) => ({
       dataCube,

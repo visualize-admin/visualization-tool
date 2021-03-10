@@ -10,7 +10,7 @@ export type ResolvedDataCube = {
   identifier?: string;
   title?: string;
   description?: string;
-  created?: string;
+  datePublished?: string;
   status?: string;
   theme?: string;
   versionHistory?: string;

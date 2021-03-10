@@ -36,13 +36,13 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
           </>
         )}
 
-        {data.dataCubeByIri.dateCreated && (
+        {data.dataCubeByIri.datePublished && (
           <>
             <DataSetMetadataTitle>
               <Trans id="dataset.metadata.date.created">Date Created</Trans>
             </DataSetMetadataTitle>
             <DataSetMetadataBody>
-              {formatDate(new Date(data.dataCubeByIri.dateCreated))}
+              {formatDate(new Date(data.dataCubeByIri.datePublished))}
             </DataSetMetadataBody>
           </>
         )}
