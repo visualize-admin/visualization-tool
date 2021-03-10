@@ -12,7 +12,7 @@ import { Filters } from "../configurator";
 import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { locales, parseLocaleString } from "../locales/locales";
-import { getCube, getCubes } from "../rdf/queries";
+import { getCube, getCubeDimensions, getCubes } from "../rdf/queries";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
@@ -174,11 +174,8 @@ const DataCube: DataCubeResolvers = {
   description: ({ description }) => description ?? null,
   source: (dataCube) => "TODO",
   datePublished: ({ datePublished }) => datePublished ?? null,
-  dimensions: async (dataCube) => {
-    return (await dataCube.dimensions()).map((dimension) => ({
-      dataCube,
-      dimension,
-    }));
+  dimensions: async ({ dataCube }) => {
+    return await getCubeDimensions({ cube: dataCube, locale: "en" });
   },
   dimensionByIri: async (dataCube, { iri }) => {
     const dimension = (await dataCube.dimensions()).find(
@@ -234,8 +231,8 @@ const DataCube: DataCubeResolvers = {
 };
 
 const dimensionResolvers = {
-  iri: ({ dimension }: ResolvedDimension) => dimension.iri.value,
-  label: ({ dimension }: ResolvedDimension) => dimension.label.value,
+  iri: ({ iri }: ResolvedDimension) => iri,
+  label: ({ name }: ResolvedDimension) => name,
   values: async ({ dataCube, dimension }: ResolvedDimension) => {
     const values = await dataCube.componentValues(dimension);
     return values
@@ -292,24 +289,18 @@ export const resolvers: Resolvers = {
     },
   },
   Dimension: {
-    __resolveType({ dimension }) {
-      const scaleOfMeasure = dimension.extraMetadata.scaleOfMeasure;
-
+    __resolveType({ dataKind, scaleOfMeasure, dataType }) {
       if (
-        scaleOfMeasure &&
-        /cube\/scale\/Temporal\/?$/.test(scaleOfMeasure.value)
+        dataKind ===
+        "https://www.w3.org/TR/owl-time/#time:GeneralDateTimeDescription"
       ) {
         return "TemporalDimension";
       }
 
-      // FIXME: Remove this once we're sure that scaleOfMeasure always works
-      if (
-        /(Jahr|Année|Anno|Year|Zeit|Time|Temps|Tempo)/i.test(
-          dimension.label.value
-        )
-      ) {
-        return "TemporalDimension";
-      }
+      // TODO: GeoDimension
+      // if (dataKind === "https://schema.org/GeoShape") {
+      // return "GeoDimension"
+      // }
 
       return "NominalDimension";
     },

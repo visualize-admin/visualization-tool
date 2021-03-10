@@ -20,17 +20,26 @@ export type ResolvedDataCube = {
 };
 
 export type ResolvedDimension = {
-  dataCube: RDF.DataCube;
-  dimension: RDF.Dimension;
+  dataCube: Cube;
+
+  iri: string;
+  isLiteral: boolean;
+  scaleOfMeasure: "Nominal" | "Ordinal" | "Ratio" | "Interval";
+
+  dataType?: string;
+  dataKind?: string;
+  name: string;
+
+  // dimension: RDF.Dimension;
 };
 
 export type ResolvedMeasure = {
-  dataCube: RDF.DataCube;
+  dataCube: Cube;
   measure: RDF.Measure;
 };
 
 export type ResolvedObservationsQuery = {
-  dataCube: RDF.DataCube;
+  dataCube: Cube;
   query: RDF.Query;
   selectedFields: [string, RDF.Dimension | RDF.Measure | RDF.Attribute][];
 };

@@ -4,7 +4,7 @@ import { Cube, CubeDimension, Source } from "rdf-cube-view-query";
 import * as z from "zod";
 import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
-import { ResolvedDataCube } from "../graphql/shared-types";
+import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
 import * as ns from "./namespace";
 import { loadResourceLabels } from "./query-labels";
@@ -105,7 +105,7 @@ export const getCubeDimensions = async ({
 }: {
   cube: Cube;
   locale: string;
-}) => {
+}): Promise<ResolvedDimension[]> => {
   const outOpts = { language: getQueryLocales(locale) };
 
   const dimensions = await Promise.all(
@@ -120,11 +120,13 @@ export const getCubeDimensions = async ({
         const isLiteral = dim.datatype ? true : false;
 
         return {
-          iri: dim.path?.value,
+          iri: dim.path?.value ?? "---",
           isLiteral,
-          datatype: dim.datatype?.value,
-          name: dim.out(schema.name, outOpts)?.value,
-          values: await getCubeDimensionValues({ dimension: dim, cube }),
+          dataType: dim.datatype?.value,
+          name:
+            dim.out(schema.name, outOpts)?.value ?? dim.path?.value ?? "???",
+          dataKind: dim.out(ns.cube`meta/dataKind`).out(rdf.type).value,
+          // values: await getCubeDimensionValues({ dimension: dim, cube }),
         };
       })
   );
