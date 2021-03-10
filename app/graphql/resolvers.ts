@@ -92,7 +92,7 @@ const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
 
 const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order }) => {
-    const cubes = await getCubes({ locale });
+    const cubes = await getCubes({ locale: parseLocaleString(locale) });
 
     const dataCubeCandidates = cubes;
 
@@ -133,11 +133,11 @@ const Query: QueryResolvers = {
           a.title.localeCompare(b.title, locale ?? undefined)
         );
       } else if (order === DataCubeResultOrder.CreatedDesc) {
-        results.sort((a, b) => descending(a.created, b.created));
+        results.sort((a, b) => descending(a.datePublished, b.datePublished));
       }
 
       return results.map((result) => ({
-        dataCube: result.dataCube,
+        dataCube: result,
         highlightedTitle: fuzzaldrin.wrap(result.title, query, {
           wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
         }),
@@ -155,23 +155,25 @@ const Query: QueryResolvers = {
         a.title.localeCompare(b.title, locale ?? undefined)
       );
     } else if (order === DataCubeResultOrder.CreatedDesc) {
-      dataCubeCandidates.sort((a, b) => descending(a.created, b.created));
+      dataCubeCandidates.sort((a, b) =>
+        descending(a.datePublished, b.datePublished)
+      );
     }
 
     return dataCubeCandidates.map((dataCube) => ({ dataCube }));
   },
   dataCubeByIri: async (_, { iri, locale }) => {
-    return getCube({ iri, locale });
+    return getCube({ iri, locale: parseLocaleString(locale) });
   },
 };
 
 const DataCube: DataCubeResolvers = {
-  iri: ({ iri }) => iri ?? "---",
-  title: ({ title }) => title ?? "---",
+  iri: ({ iri }) => iri,
+  title: ({ title }) => title,
   contact: ({ contactPoint }) => contactPoint ?? null,
   description: ({ description }) => description ?? null,
   source: (dataCube) => "TODO",
-  datePublished: ({ datePublished }) => datePublished,
+  datePublished: ({ datePublished }) => datePublished ?? null,
   dimensions: async (dataCube) => {
     return (await dataCube.dimensions()).map((dimension) => ({
       dataCube,

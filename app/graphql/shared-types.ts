@@ -7,9 +7,9 @@ export type ResolvedDataCube = {
   dataCube: Cube;
 
   iri: string;
-  identifier?: string;
-  title?: string;
-  description?: string;
+  identifier: string;
+  title: string;
+  description: string;
   datePublished?: string;
   status?: string;
   theme?: string;

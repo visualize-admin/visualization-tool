@@ -36,6 +36,31 @@ const createSource = () =>
     // password: ''
   });
 
+const parseCube = ({
+  cube,
+  locale,
+}: {
+  cube: Cube;
+  locale: string;
+}): ResolvedDataCube => {
+  const outOpts = { language: getQueryLocales(locale) };
+
+  return {
+    iri: cube.term?.value ?? "---",
+    identifier: cube.out(dcterms.identifier)?.value ?? "---",
+    title: cube.out(dcterms.title, outOpts)?.value ?? "---",
+    description: cube.out(dcterms.description, outOpts)?.value ?? "",
+    status: cube.out(schema.creativeWorkStatus)?.value,
+    theme: cube.out(dcat.theme)?.value,
+    datePublished: cube.out(schema.datePublished)?.value,
+    versionHistory: cube.in(schema.hasPart)?.value,
+    contactPoint: cube.out(dcat.contactPoint)?.out(vcard.fn)?.value,
+    landingPage: cube.out(dcat.landingPage)?.value,
+    keywords: cube.out(dcat.keyword)?.values,
+    dataCube: cube,
+  };
+};
+
 export const getCubes = async ({
   includeDrafts = true,
   locale,
@@ -56,25 +81,8 @@ export const getCubes = async ({
     ),
   });
 
-  const outOpts = { language: getQueryLocales(locale) };
-
   // See https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
-  return cubes.map((c) => {
-    return {
-      iri: c.term?.value ?? "---",
-      identifier: c.out(dcterms.identifier)?.value,
-      title: c.out(dcterms.title, outOpts)?.value,
-      description: c.out(dcterms.description, outOpts)?.value,
-      status: c.out(schema.creativeWorkStatus)?.value,
-      theme: c.out(dcat.theme)?.value,
-      datePublished: c.out(schema.datePublished)?.value,
-      versionHistory: c.in(schema.hasPart)?.value,
-      contactPoint: c.out(dcat.contactPoint)?.out(vcard.fn)?.value,
-      landingPage: c.out(dcat.landingPage)?.value,
-      keywords: c.out(dcat.keyword)?.values,
-      dataCube: c,
-    };
-  });
+  return cubes.map((cube) => parseCube({ cube, locale }));
 };
 
 export const getCube = async ({
@@ -83,28 +91,12 @@ export const getCube = async ({
 }: {
   iri: string;
   locale: string;
-}): Promise<ResolvedDataCube | undefined> => {
+}): Promise<ResolvedDataCube | null> => {
   const source = createSource();
-  const outOpts = { language: getQueryLocales(locale) };
 
   const cube = await source.cube(iri);
 
-  return cube
-    ? {
-        iri: cube.term?.value ?? "---",
-        identifier: cube.out(dcterms.identifier)?.value,
-        title: cube.out(dcterms.title, outOpts)?.value,
-        description: cube.out(dcterms.description, outOpts)?.value,
-        status: cube.out(schema.creativeWorkStatus)?.value,
-        theme: cube.out(dcat.theme)?.value,
-        datePublished: cube.out(schema.datePublished)?.value,
-        versionHistory: cube.in(schema.hasPart)?.value,
-        contactPoint: cube.out(dcat.contactPoint)?.out(vcard.fn)?.value,
-        landingPage: cube.out(dcat.landingPage)?.value,
-        keywords: cube.out(dcat.keyword)?.values,
-        dataCube: cube,
-      }
-    : undefined;
+  return cube ? parseCube({ cube, locale }) : null;
 };
 
 export const getCubeDimensions = async ({
