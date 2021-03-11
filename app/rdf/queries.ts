@@ -1,4 +1,12 @@
-import { dcat, dcterms, rdf, schema, vcard } from "@tpluscode/rdf-ns-builders";
+import {
+  dcat,
+  dcterms,
+  qudt,
+  rdf,
+  schema,
+  vcard,
+  time,
+} from "@tpluscode/rdf-ns-builders";
 import { string } from "io-ts";
 import { Cube, CubeDimension, Source } from "rdf-cube-view-query";
 import * as z from "zod";
@@ -108,30 +116,49 @@ export const getCubeDimensions = async ({
 }): Promise<ResolvedDimension[]> => {
   const outOpts = { language: getQueryLocales(locale) };
 
-  const dimensions = await Promise.all(
-    cube.dimensions
-      .filter(
-        (dim) =>
-          ![rdf.type.value, ns.cube.observedBy.value].includes(
-            dim.path?.value ?? ""
-          )
-      )
-      .map(async (dim) => {
-        const isLiteral = dim.datatype ? true : false;
+  try {
+    const dimensions = await Promise.all(
+      cube.dimensions
+        .filter(
+          (dim) =>
+            dim.path &&
+            ![rdf.type.value, ns.cube.observedBy.value].includes(
+              dim.path.value ?? ""
+            )
+        )
+        .map(async (dim) => {
+          const isLiteral = dim.datatype ? true : false;
 
-        return {
-          iri: dim.path?.value ?? "---",
-          isLiteral,
-          dataType: dim.datatype?.value,
-          name:
-            dim.out(schema.name, outOpts)?.value ?? dim.path?.value ?? "???",
-          dataKind: dim.out(ns.cube`meta/dataKind`).out(rdf.type).value,
-          // values: await getCubeDimensionValues({ dimension: dim, cube }),
-        };
-      })
-  );
+          const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(rdf.type)
+            .term;
 
-  return dimensions;
+          const parsed: ResolvedDimension = {
+            iri: dim.path?.value!,
+            isLiteral,
+            dataType: dim.datatype?.value,
+            name:
+              dim.out(schema.name, outOpts)?.value ?? dim.path?.value ?? "???",
+            dataKind: dataKindTerm?.equals(time.GeneralDateTimeDescription)
+              ? "Time"
+              : dataKindTerm?.equals(schema.GeoCoordinates)
+              ? "GeoCoordinates"
+              : dataKindTerm?.equals(schema.GeoShape)
+              ? "GeoShape"
+              : undefined,
+            // values: await getCubeDimensionValues({ dimension: dim, cube }),
+            dataCube: cube,
+            scaleType: dim.out(qudt.scaleType).term?.value,
+            unit: dim.out(qudt.unit).term?.value,
+          };
+          return parsed;
+        })
+    );
+    return dimensions;
+  } catch (e) {
+    console.warn();
+
+    return [];
+  }
 };
 
 const getCubeDimensionValues = async ({

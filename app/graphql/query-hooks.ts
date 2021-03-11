@@ -70,6 +70,8 @@ export type Component = {
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  dataKind?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -77,6 +79,8 @@ export type NominalDimension = Component & Dimension & {
   __typename: 'NominalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  dataKind?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -84,6 +88,8 @@ export type OrdinalDimension = Component & Dimension & {
   __typename: 'OrdinalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  dataKind?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -91,6 +97,8 @@ export type TemporalDimension = Component & Dimension & {
   __typename: 'TemporalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  dataKind?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 

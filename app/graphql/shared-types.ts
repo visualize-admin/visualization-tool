@@ -24,10 +24,10 @@ export type ResolvedDimension = {
 
   iri: string;
   isLiteral: boolean;
-  scaleOfMeasure: "Nominal" | "Ordinal" | "Ratio" | "Interval";
-
+  scaleType?: string;
+  unit?: string;
   dataType?: string;
-  dataKind?: string;
+  dataKind?: "Time" | "GeoCoordinates" | "GeoShape";
   name: string;
 
   // dimension: RDF.Dimension;

@@ -289,11 +289,8 @@ export const resolvers: Resolvers = {
     },
   },
   Dimension: {
-    __resolveType({ dataKind, scaleOfMeasure, dataType }) {
-      if (
-        dataKind ===
-        "https://www.w3.org/TR/owl-time/#time:GeneralDateTimeDescription"
-      ) {
+    __resolveType({ dataKind, scaleType, dataType }) {
+      if (dataKind === "Time") {
         return "TemporalDimension";
       }
 

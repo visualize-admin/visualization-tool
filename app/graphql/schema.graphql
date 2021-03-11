@@ -41,24 +41,32 @@ interface Component {
 interface Dimension {
   iri: String!
   label: String!
+  unit: String
+  dataKind: String
   values: [DimensionValue!]!
 }
 
 type NominalDimension implements Component & Dimension {
   iri: String!
   label: String!
+  unit: String
+  dataKind: String
   values: [DimensionValue!]!
 }
 
 type OrdinalDimension implements Component & Dimension {
   iri: String!
   label: String!
+  unit: String
+  dataKind: String
   values: [DimensionValue!]!
 }
 
 type TemporalDimension implements Component & Dimension {
   iri: String!
   label: String!
+  unit: String
+  dataKind: String
   values: [DimensionValue!]!
 }
 

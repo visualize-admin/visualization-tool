@@ -74,6 +74,8 @@ export type Component = {
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  dataKind?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -81,6 +83,8 @@ export type NominalDimension = Component & Dimension & {
   __typename?: 'NominalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  dataKind?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -88,6 +92,8 @@ export type OrdinalDimension = Component & Dimension & {
   __typename?: 'OrdinalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  dataKind?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -95,6 +101,8 @@ export type TemporalDimension = Component & Dimension & {
   __typename?: 'TemporalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  dataKind?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -303,12 +311,16 @@ export type DimensionResolvers<ContextType = any, ParentType extends ResolversPa
   __resolveType: TypeResolveFn<'NominalDimension' | 'OrdinalDimension' | 'TemporalDimension', ParentType, ContextType>;
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataKind?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>;
 }>;
 
 export type NominalDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['NominalDimension'] = ResolversParentTypes['NominalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataKind?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -316,6 +328,8 @@ export type NominalDimensionResolvers<ContextType = any, ParentType extends Reso
 export type OrdinalDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrdinalDimension'] = ResolversParentTypes['OrdinalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataKind?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -323,6 +337,8 @@ export type OrdinalDimensionResolvers<ContextType = any, ParentType extends Reso
 export type TemporalDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TemporalDimension'] = ResolversParentTypes['TemporalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dataKind?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
