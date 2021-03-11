@@ -425,6 +425,39 @@ const TableConfig = t.type(
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
+// FIXME: These MapFields types are only placeholders for the map prototype
+const PaletteType = t.union([t.literal("continuous"), t.literal("discrete")]);
+export type PaletteType = t.TypeOf<typeof PaletteType>;
+
+const MapFields = t.intersection([
+  t.type({
+    x: GenericField,
+    y: t.type({
+      componentIri: t.string,
+      palette: t.string,
+      paletteType: PaletteType,
+      nbSteps: t.number,
+    }),
+  }),
+
+  t.partial({
+    segment: t.type({
+      componentIri: t.string,
+    }),
+  }),
+]);
+const MapConfig = t.type(
+  {
+    chartType: t.literal("map"),
+    interactiveFiltersConfig: InteractiveFiltersConfig,
+    filters: Filters,
+    fields: MapFields,
+  },
+  "MapConfig"
+);
+export type MapFields = t.TypeOf<typeof MapFields>;
+export type MapConfig = t.TypeOf<typeof MapConfig>;
+
 export type ChartFields =
   | ColumnFields
   | BarFields
@@ -432,7 +465,8 @@ export type ChartFields =
   | AreaFields
   | ScatterPlotFields
   | PieFields
-  | TableFields;
+  | TableFields
+  | MapFields;
 
 // interface IriBrand {
 //   readonly IRI: unique symbol;
@@ -457,6 +491,7 @@ const ChartConfig = t.union([
   ScatterPlotConfig,
   PieConfig,
   TableConfig,
+  MapConfig,
 ]);
 // t.record(t.string, t.any)
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;

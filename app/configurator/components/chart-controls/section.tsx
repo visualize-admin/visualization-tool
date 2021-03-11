@@ -60,11 +60,13 @@ export const ControlSectionContent = ({
 };
 
 export const SectionTitle = ({
+  color,
   iconName,
   titleId,
   disabled,
   children,
 }: {
+  color?: string;
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
@@ -75,7 +77,6 @@ export const SectionTitle = ({
     <Flex
       as="h2"
       id={titleId}
-      color="monochrome800"
       sx={{
         p: 4,
         bg: "transparent",
@@ -83,7 +84,7 @@ export const SectionTitle = ({
         width: "100%",
         border: "none",
         justifyContent: "flex-start",
-        color: disabled ? "monochrome600" : "monochrome800",
+        color: disabled ? "monochrome600" : color ?? "monochrome800",
       }}
     >
       {iconName && (

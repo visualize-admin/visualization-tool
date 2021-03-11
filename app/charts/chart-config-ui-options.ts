@@ -49,6 +49,7 @@ interface ChartSpecs {
   scatterplot: ChartSpec;
   pie: ChartSpec;
   table: ChartSpec;
+  map: ChartSpec;
 }
 
 /**
@@ -214,6 +215,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
   },
   table: {
     chartType: "table",
+    encodings: [],
+    interactiveFilters: [],
+  },
+  map: {
+    chartType: "map",
     encodings: [],
     interactiveFilters: [],
   },

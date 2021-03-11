@@ -1,11 +1,28 @@
 import { Trans } from "@lingui/macro";
-import { ascending } from "d3";
-import { scaleOrdinal } from "d3";
 import {
+  timeDay,
+  timeHour,
+  timeMinute,
+  timeMonth,
+  timeYear,
+  scaleOrdinal,
+  ascending,
+  schemeBlues,
+  schemeGreens,
+  schemeGreys,
+  schemeOranges,
+  schemePurples,
+  schemeReds,
   interpolateBrBG,
   interpolatePiYG,
   interpolatePRGn,
   interpolatePuOr,
+  interpolateBlues,
+  interpolateGreens,
+  interpolateOranges,
+  interpolatePurples,
+  interpolateGreys,
+  interpolateReds,
   schemeAccent,
   schemeCategory10,
   schemeDark2,
@@ -16,8 +33,8 @@ import {
   schemeSet2,
   schemeSet3,
   schemeTableau10,
-} from "d3-scale-chromatic";
-import { timeDay, timeHour, timeMinute, timeMonth, timeYear } from "d3";
+} from "d3";
+
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
 import {
@@ -154,6 +171,8 @@ export const getIconName = (name: string): IconName => {
       return "chartScatterplot";
     case "pie":
       return "chartPie";
+    case "map":
+      return "chartMap";
     case "text":
       return "text";
     case "description":
@@ -299,6 +318,8 @@ export const getFieldLabel = (field: string): ReactNode => {
       return <Trans id="controls.chart.type.pie">Pie</Trans>;
     case "table":
       return <Trans id="controls.chart.type.table">Table</Trans>;
+    case "map":
+      return <Trans id="controls.chart.type.map">Map</Trans>;
 
     // Languages
     case "en":
@@ -347,6 +368,31 @@ export const getPalette = (palette?: string): ReadonlyArray<string> => {
       return schemeCategory10;
   }
 };
+export const getSingleHueSequentialPalette = ({
+  nbSteps = 5,
+  palette,
+}: {
+  nbSteps: number;
+  palette?: string;
+}): ReadonlyArray<string> => {
+  switch (palette) {
+    case "blues":
+      return schemeBlues[nbSteps];
+    case "greens":
+      return schemeGreens[nbSteps];
+    case "oranges":
+      return schemeOranges[nbSteps];
+    case "greys":
+      return schemeGreys[nbSteps];
+    case "reds":
+      return schemeReds[nbSteps];
+    case "purples":
+      return schemePurples[nbSteps];
+
+    default:
+      return schemeOranges[nbSteps];
+  }
+};
 export const getColorInterpolator = (
   palette?: string
 ): ((t: number) => string) => {
@@ -359,10 +405,21 @@ export const getColorInterpolator = (
       return interpolatePiYG;
     case "PuOr":
       return interpolatePuOr;
-    // Etc.
+    case "blues":
+      return interpolateBlues;
+    case "greens":
+      return interpolateGreens;
+    case "greys":
+      return interpolateGreys;
+    case "oranges":
+      return interpolateOranges;
+    case "purples":
+      return interpolatePurples;
+    case "reds":
+      return interpolateReds;
 
     default:
-      return interpolateBrBG;
+      return interpolateOranges;
   }
 };
 
