@@ -2,8 +2,9 @@ import { HoverObject, MapController, WebMercatorViewport } from "@deck.gl/core";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import { useCallback, useState } from "react";
-import { Box } from "theme-ui";
+import { Box, Button } from "theme-ui";
 import { Observation } from "../../domain/data";
+import { Icon, IconName } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { MapState } from "./map-state";
@@ -101,10 +102,39 @@ export const MapComponent = () => {
     },
     [setViewState]
   );
+  const zoomIn = () => {
+    const newViewState = {
+      ...viewState,
+      zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
+    };
+    setViewState(constrainZoom(newViewState, CH_BBOX));
+  };
+  const zoomOut = () => {
+    const newViewState = {
+      ...viewState,
+      zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
+    };
+    setViewState(constrainZoom(newViewState, CH_BBOX));
+  };
   return (
     <Box>
+      <Box
+        sx={{
+          zIndex: 13,
+          position: "absolute",
+          bottom: 0,
+          right: 0,
+          mb: 3,
+          mr: 3,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <ZoomButton label="+" iconName="add" handleClick={zoomIn} />
+        <ZoomButton label="-" iconName="minus" handleClick={zoomOut} />
+      </Box>
       <DeckGL
-        initialViewState={INITIAL_VIEW_STATE}
+        // initialViewState={INITIAL_VIEW_STATE}
         viewState={viewState}
         onViewStateChange={onViewStateChange}
         onResize={onResize}
@@ -176,3 +206,42 @@ export const MapComponent = () => {
     </Box>
   );
 };
+
+const ZoomButton = ({
+  label,
+  iconName,
+  handleClick,
+}: {
+  label: string;
+  iconName: IconName;
+  handleClick: () => void;
+}) => (
+  <Button
+    variant="reset"
+    sx={{
+      width: 32,
+      height: 32,
+      borderRadius: "default",
+      border: "1px solid",
+      borderColor: "monochrome500",
+      color: "monochrome700",
+      bg: "monochrome100",
+      padding: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      "&:first-of-type": {
+        borderBottomRightRadius: 0,
+        borderBottomLeftRadius: 0,
+        borderBottom: 0,
+      },
+      "&:last-of-type": {
+        borderTopRightRadius: 0,
+        borderTopLeftRadius: 0,
+      },
+    }}
+    onClick={handleClick}
+  >
+    <Icon name={iconName} size={24} />
+  </Button>
+);
