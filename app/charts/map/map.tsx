@@ -1,5 +1,7 @@
 import { HoverObject, MapController, WebMercatorViewport } from "@deck.gl/core";
-import { GeoJsonLayer } from "@deck.gl/layers";
+import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
+
+import { TileLayer, MVTLayer } from "@deck.gl/geo-layers";
 import DeckGL from "@deck.gl/react";
 import { useCallback, useState } from "react";
 import { Box, Button } from "theme-ui";
@@ -116,6 +118,28 @@ export const MapComponent = () => {
     };
     setViewState(constrainZoom(newViewState, CH_BBOX));
   };
+
+  const TLayer = new TileLayer({
+    // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
+    // data: "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    data:
+      "http://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/20110401/21781/{z}/{x}/{y}.jpeg",
+    minZoom: 0,
+    maxZoom: 19,
+    tileSize: 256,
+
+    renderSubLayers: (props: $FixMe) => {
+      const {
+        bbox: { west, south, east, north },
+      } = props.tile;
+
+      return new BitmapLayer(props, {
+        data: null,
+        image: props.data,
+        bounds: [west, south, east, north],
+      });
+    },
+  });
   return (
     <Box>
       <Box
@@ -140,6 +164,7 @@ export const MapComponent = () => {
         onResize={onResize}
         // controller={true}
         controller={{ type: MapController }}
+        // layers={[TLayer]}
       >
         <GeoJsonLayer
           id="cantons"
@@ -176,6 +201,13 @@ export const MapComponent = () => {
           getLineWidth={1}
           updateTriggers={{ getFillColor: getColor }}
         />
+        <MVTLayer
+          data="https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf"
+          getLineColor={[192, 192, 192]}
+          getFillColor={[140, 170, 180, 0.1]}
+          lineWidthMinPixels={1}
+        />
+
         {/* <GeoJsonLayer
           id="cantons"
           data={features.cantonMesh}
