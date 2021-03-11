@@ -9,9 +9,11 @@ import { ControlSection } from "../../configurator/components/chart-controls/sec
 import { Observation } from "../../domain/data";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { ChartContainer } from "../shared/containers";
+import { Tooltip } from "../shared/interaction/tooltip";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
 import { GeoData, MapChart } from "./map-state";
+import { MapTooltip } from "./map-tooltip";
 
 type GeoDataState =
   | {
@@ -320,6 +322,7 @@ export const ChartMap = memo(
       >
         <ChartContainer>
           <MapComponent />
+          <MapTooltip />
         </ChartContainer>
         <MapLegend legendTitle={measure} />
       </MapChart>
