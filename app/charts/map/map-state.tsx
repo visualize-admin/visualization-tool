@@ -1,4 +1,4 @@
-import { color, extent, scaleLinear, ScaleQuantize, scaleQuantize } from "d3";
+import { color, extent, ScaleQuantize, scaleQuantize } from "d3";
 import { ReactNode, useCallback } from "react";
 import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
 import { MapFields, PaletteType } from "../../configurator/config-types";
@@ -13,6 +13,7 @@ export interface MapState {
   bounds: Bounds;
   data: Observation[];
   features: GeoData;
+  getLabel: (d: Observation) => string;
   getColor: (x: number | undefined) => number[];
   getValue: (d: Observation) => number;
   paletteType: PaletteType;
@@ -43,18 +44,16 @@ Pick<
     (d: Observation): number => +d[fields.y.componentIri],
     [fields.y.componentIri]
   );
+  const getLabel = useCallback(
+    (d: Observation): string => d[fields.x.componentIri] as string,
+    [fields.x.componentIri]
+  );
 
   const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
     number,
     number
   ];
-  console.log(
-    "hues",
-    getSingleHueSequentialPalette({
-      palette,
-      nbSteps: paletteType === "continuous" ? 9 : nbSteps,
-    })
-  );
+
   // FIXME: for continuous scale, just interpolate between 2 colors?
   const colorScale = scaleQuantize<number, string>()
     .domain(dataDomain)
@@ -91,10 +90,12 @@ Pick<
     chartWidth,
     chartHeight,
   };
+
   return {
     chartType: "map",
     data,
     features,
+    getLabel,
     getColor,
     getValue,
     bounds,

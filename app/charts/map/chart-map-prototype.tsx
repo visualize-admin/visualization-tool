@@ -109,15 +109,21 @@ export const ChartMapVisualization = () => {
         iri: d,
         label: d,
       })) as ComponentFieldsFragment[];
+    const attributes = Object.keys(dataset.ds[0])
+      .filter((d) => d.startsWith("A_"))
+      .map((d) => ({
+        __typename: "Attribute",
+        iri: d,
+        label: d,
+      })) as ComponentFieldsFragment[];
 
-    console.log({ dimensions });
-    console.log({ measures });
     return (
       <ChartMapPrototype
         dataset={dataset.ds}
         features={geoData.cantons}
         dimensions={dimensions}
         measures={measures}
+        attributes={attributes}
       />
     );
   }
@@ -128,11 +134,13 @@ export const ChartMapPrototype = ({
   features,
   dimensions,
   measures,
+  attributes,
 }: {
   dataset: Observation[];
   features: GeoData;
   dimensions: Array<ComponentFieldsFragment & { dimensionValues: string[] }>;
   measures: ComponentFieldsFragment[];
+  attributes: ComponentFieldsFragment[];
 }) => {
   const [palette, setPalette] = useState("oranges");
   const [nbSteps, setNbSteps] = useState(5);
@@ -194,7 +202,7 @@ export const ChartMapPrototype = ({
               observations={data}
               features={features}
               fields={{
-                x: { componentIri: "a" },
+                x: { componentIri: attributes[0].iri },
                 y: { componentIri: measure, palette, nbSteps, paletteType },
                 segment: { componentIri: "c" },
               }}
