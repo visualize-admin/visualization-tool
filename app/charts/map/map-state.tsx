@@ -7,7 +7,13 @@ import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 
-export type GeoData = GeoJSON.FeatureCollection | GeoJSON.Feature;
+export type GeoData = {
+  cantons: GeoJSON.FeatureCollection | GeoJSON.Feature;
+  municipalities?: GeoJSON.FeatureCollection | GeoJSON.Feature;
+  municipalityMesh?: GeoJSON.MultiLineString;
+  cantonMesh: GeoJSON.MultiLineString;
+  lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
+};
 export interface MapState {
   chartType: "map";
   bounds: Bounds;

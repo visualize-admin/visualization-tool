@@ -1,7 +1,10 @@
 import { Trans } from "@lingui/macro";
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
-import { feature as topojsonFeature } from "topojson-client";
+import {
+  feature as topojsonFeature,
+  mesh as topojsonMesh,
+} from "topojson-client";
 import { Radio, Select } from "../../components/form";
 import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
 import { MapFields } from "../../configurator";
@@ -9,7 +12,7 @@ import { ControlSection } from "../../configurator/components/chart-controls/sec
 import { Observation } from "../../domain/data";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { ChartContainer } from "../shared/containers";
-import { Tooltip } from "../shared/interaction/tooltip";
+
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
 import { GeoData, MapChart } from "./map-state";
@@ -22,14 +25,8 @@ type GeoDataState =
   | {
       state: "error";
     }
-  | {
-      state: "loaded";
-      municipalities: GeoJSON.FeatureCollection | GeoJSON.Feature;
-      cantons: GeoJSON.FeatureCollection | GeoJSON.Feature;
-      // municipalityMesh: GeoJSON.MultiLineString;
-      // cantonMesh: GeoJSON.MultiLineString;
-      // lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
-    };
+  | (GeoData & { state: "loaded" });
+
 type DataState =
   | {
       state: "fetching";
@@ -47,25 +44,21 @@ export const ChartMapVisualization = () => {
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
   const [dataset, loadDataset] = useState<DataState>({ state: "fetching" });
 
-  console.log("geoData", geoData);
-  console.log("data", dataset);
-
   useEffect(() => {
     const loadGeoData = async () => {
       try {
         const res = await fetch(`/topojson/ch-2020.json`);
         const topo = await res.json();
 
-        const municipalities = topojsonFeature(
-          topo,
-          topo.objects.municipalities
-        );
         const cantons = topojsonFeature(topo, topo.objects.cantons);
+        const cantonMesh = topojsonMesh(topo, topo.objects.cantons);
+        const lakes = topojsonFeature(topo, topo.objects.lakes);
 
         setGeoData({
           state: "loaded",
-          municipalities,
           cantons,
+          cantonMesh,
+          lakes,
         });
       } catch (e) {
         setGeoData({ state: "error" });
@@ -122,7 +115,7 @@ export const ChartMapVisualization = () => {
     return (
       <ChartMapPrototype
         dataset={dataset.ds}
-        features={geoData.cantons}
+        features={geoData}
         dimensions={dimensions}
         measures={measures}
         attributes={attributes}

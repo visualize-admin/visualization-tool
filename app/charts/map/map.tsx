@@ -112,8 +112,8 @@ export const MapComponent = () => {
         controller={{ type: MapController }}
       >
         <GeoJsonLayer
-          id="municipalities"
-          data={features}
+          id="cantons"
+          data={features.cantons}
           pickable={true}
           stroked={true}
           filled={true}
@@ -145,6 +145,32 @@ export const MapComponent = () => {
           getRadius={100}
           getLineWidth={1}
           updateTriggers={{ getFillColor: getColor }}
+        />
+        {/* <GeoJsonLayer
+          id="cantons"
+          data={features.cantonMesh}
+          pickable={false}
+          stroked={true}
+          filled={false}
+          extruded={false}
+          lineWidthMinPixels={1.2}
+          lineWidthMaxPixels={3.6}
+          getLineWidth={200}
+          lineMiterLimit={1}
+          getLineColor={[255, 255, 255]}
+        /> */}
+        <GeoJsonLayer
+          id="lakes"
+          data={features.lakes}
+          pickable={false}
+          stroked={true}
+          filled={true}
+          extruded={false}
+          lineWidthMinPixels={0.5}
+          lineWidthMaxPixels={1}
+          getLineWidth={100}
+          getFillColor={[102, 175, 233]}
+          getLineColor={[255, 255, 255]}
         />
       </DeckGL>
     </Box>
