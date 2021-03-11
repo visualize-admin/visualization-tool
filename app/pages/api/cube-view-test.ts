@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getCubes } from "../../rdf/queries";
+import { getCubeDimensions, getCubes } from "../../rdf/queries";
 
 /**
  * Endpoint to write configuration to.
@@ -10,10 +10,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case "GET":
       try {
-        const result = await getCubes({ locale: "de" });
+        const locale = "de";
+        const result = await getCubes({ locale });
+
+        const cubesWithDimensions = result.map(({ dataCube, ...cubeProps }) => {
+          return {
+            ...cubeProps,
+            dimensions: getCubeDimensions({ cube: dataCube, locale }).map(
+              ({ dataCube, ...dimProps }) => dimProps
+            ),
+          };
+        });
 
         // TODO: Make this 201 and set final URI as Location header
-        res.status(200).json(result.map(({ dataCube, ...props }) => props));
+        res.status(200).json(cubesWithDimensions);
       } catch (e) {
         console.error(e);
         res.status(500).json({ message: "Something went wrong!" });

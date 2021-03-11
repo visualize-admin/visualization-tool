@@ -42,7 +42,7 @@ interface Dimension {
   iri: String!
   label: String!
   unit: String
-  dataKind: String
+  scaleType: String
   values: [DimensionValue!]!
 }
 
@@ -50,7 +50,8 @@ type NominalDimension implements Component & Dimension {
   iri: String!
   label: String!
   unit: String
-  dataKind: String
+  scaleType: String
+
   values: [DimensionValue!]!
 }
 
@@ -58,7 +59,8 @@ type OrdinalDimension implements Component & Dimension {
   iri: String!
   label: String!
   unit: String
-  dataKind: String
+  scaleType: String
+
   values: [DimensionValue!]!
 }
 
@@ -66,16 +68,12 @@ type TemporalDimension implements Component & Dimension {
   iri: String!
   label: String!
   unit: String
-  dataKind: String
+  scaleType: String
+
   values: [DimensionValue!]!
 }
 
 type Measure implements Component {
-  iri: String!
-  label: String!
-}
-
-type Attribute implements Component {
   iri: String!
   label: String!
 }

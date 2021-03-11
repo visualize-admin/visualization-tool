@@ -1,40 +1,10 @@
-import {
-  dcat,
-  dcterms,
-  qudt,
-  rdf,
-  schema,
-  vcard,
-  time,
-} from "@tpluscode/rdf-ns-builders";
-import { string } from "io-ts";
 import { Cube, CubeDimension, Source } from "rdf-cube-view-query";
-import * as z from "zod";
 import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
-import { locales } from "../locales/locales";
 import * as ns from "./namespace";
+import { parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
-
-const getQueryLocales = (locale: string): string[] => [
-  locale,
-  ...locales.filter((l) => l !== locale),
-  "*",
-];
-
-const cubeSchema = z.object({
-  iri: z.string().url(),
-  identifier: z.string().optional(),
-  title: z.string().optional(),
-  description: z.string().optional(),
-  publisher: z.string().optional(),
-  theme: z.string().optional(),
-  status: z.enum(["Draft", "Published"]).optional(),
-  versionHistory: z.string().optional(),
-});
-
-const cubesSchema = z.array(cubeSchema);
 
 const createSource = () =>
   new Source({
@@ -43,31 +13,6 @@ const createSource = () =>
     // user: '',
     // password: ''
   });
-
-const parseCube = ({
-  cube,
-  locale,
-}: {
-  cube: Cube;
-  locale: string;
-}): ResolvedDataCube => {
-  const outOpts = { language: getQueryLocales(locale) };
-
-  return {
-    iri: cube.term?.value ?? "---",
-    identifier: cube.out(dcterms.identifier)?.value ?? "---",
-    title: cube.out(dcterms.title, outOpts)?.value ?? "---",
-    description: cube.out(dcterms.description, outOpts)?.value ?? "",
-    status: cube.out(schema.creativeWorkStatus)?.value,
-    theme: cube.out(dcat.theme)?.value,
-    datePublished: cube.out(schema.datePublished)?.value,
-    versionHistory: cube.in(schema.hasPart)?.value,
-    contactPoint: cube.out(dcat.contactPoint)?.out(vcard.fn)?.value,
-    landingPage: cube.out(dcat.landingPage)?.value,
-    keywords: cube.out(dcat.keyword)?.values,
-    dataCube: cube,
-  };
-};
 
 export const getCubes = async ({
   includeDrafts = true,
@@ -107,55 +52,28 @@ export const getCube = async ({
   return cube ? parseCube({ cube, locale }) : null;
 };
 
-export const getCubeDimensions = async ({
+export const getCubeDimensions = ({
   cube,
   locale,
 }: {
   cube: Cube;
   locale: string;
-}): Promise<ResolvedDimension[]> => {
-  const outOpts = { language: getQueryLocales(locale) };
-
+}): ResolvedDimension[] => {
   try {
-    const dimensions = await Promise.all(
-      cube.dimensions
-        .filter(
-          (dim) =>
-            dim.path &&
-            ![rdf.type.value, ns.cube.observedBy.value].includes(
-              dim.path.value ?? ""
-            )
-        )
-        .map(async (dim) => {
-          const isLiteral = dim.datatype ? true : false;
-
-          const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(rdf.type)
-            .term;
-
-          const parsed: ResolvedDimension = {
-            iri: dim.path?.value!,
-            isLiteral,
-            dataType: dim.datatype?.value,
-            name:
-              dim.out(schema.name, outOpts)?.value ?? dim.path?.value ?? "???",
-            dataKind: dataKindTerm?.equals(time.GeneralDateTimeDescription)
-              ? "Time"
-              : dataKindTerm?.equals(schema.GeoCoordinates)
-              ? "GeoCoordinates"
-              : dataKindTerm?.equals(schema.GeoShape)
-              ? "GeoShape"
-              : undefined,
-            // values: await getCubeDimensionValues({ dimension: dim, cube }),
-            dataCube: cube,
-            scaleType: dim.out(qudt.scaleType).term?.value,
-            unit: dim.out(qudt.unit).term?.value,
-          };
-          return parsed;
-        })
-    );
+    const dimensions = cube.dimensions
+      .filter(
+        (dim) =>
+          dim.path &&
+          ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
+            dim.path.value ?? ""
+          )
+      )
+      .map((dim) => {
+        return parseCubeDimension({ dim, cube, locale });
+      });
     return dimensions;
   } catch (e) {
-    console.warn();
+    console.error(e);
 
     return [];
   }

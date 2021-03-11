@@ -24,19 +24,17 @@ export type ResolvedDimension = {
 
   iri: string;
   isLiteral: boolean;
-  scaleType?: string;
+  isNumerical: boolean;
   unit?: string;
   dataType?: string;
   dataKind?: "Time" | "GeoCoordinates" | "GeoShape";
+  scaleType?: "Nominal" | "Ordinal" | "Ratio" | "Interval";
   name: string;
 
   // dimension: RDF.Dimension;
 };
 
-export type ResolvedMeasure = {
-  dataCube: Cube;
-  measure: RDF.Measure;
-};
+export type ResolvedMeasure = ResolvedDimension;
 
 export type ResolvedObservationsQuery = {
   dataCube: Cube;

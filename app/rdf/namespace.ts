@@ -1,5 +1,16 @@
 import namespace from "@rdfjs/namespace";
 
+export {
+  dcat,
+  dcterms,
+  qudt,
+  rdf,
+  schema,
+  vcard,
+  time,
+  xsd,
+} from "@tpluscode/rdf-ns-builders";
+
 export const classifications = namespace(
   "http://classifications.data.admin.ch/"
 );

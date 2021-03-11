@@ -71,7 +71,7 @@ export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
-  dataKind?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -80,7 +80,7 @@ export type NominalDimension = Component & Dimension & {
   iri: Scalars['String'];
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
-  dataKind?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -89,7 +89,7 @@ export type OrdinalDimension = Component & Dimension & {
   iri: Scalars['String'];
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
-  dataKind?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
@@ -98,18 +98,12 @@ export type TemporalDimension = Component & Dimension & {
   iri: Scalars['String'];
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
-  dataKind?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
   values: Array<DimensionValue>;
 };
 
 export type Measure = Component & {
   __typename: 'Measure';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-};
-
-export type Attribute = Component & {
-  __typename: 'Attribute';
   iri: Scalars['String'];
   label: Scalars['String'];
 };
@@ -164,9 +158,7 @@ type ComponentFields_TemporalDimension_Fragment = { __typename: 'TemporalDimensi
 
 type ComponentFields_Measure_Fragment = { __typename: 'Measure', iri: string, label: string };
 
-type ComponentFields_Attribute_Fragment = { __typename: 'Attribute', iri: string, label: string };
-
-export type ComponentFieldsFragment = ComponentFields_NominalDimension_Fragment | ComponentFields_OrdinalDimension_Fragment | ComponentFields_TemporalDimension_Fragment | ComponentFields_Measure_Fragment | ComponentFields_Attribute_Fragment;
+export type ComponentFieldsFragment = ComponentFields_NominalDimension_Fragment | ComponentFields_OrdinalDimension_Fragment | ComponentFields_TemporalDimension_Fragment | ComponentFields_Measure_Fragment;
 
 type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
 
