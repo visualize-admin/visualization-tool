@@ -168,7 +168,7 @@ export const ChartMapPrototype = ({
         <Box sx={{ mb: 4 }}>Data Filters</Box>
         <Flex sx={{ flexDirection: "column" }}>
           {dimensions.map((dim) => (
-            <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 2 }} key={dim.iri}>
               <Select
                 label={dim.label.split("_")[1]}
                 id={dim.label}
