@@ -1,5 +1,10 @@
 declare module "@deck.gl/core" {
   export class MapController {}
+  export class HoverObject {
+    x: number;
+    y: number;
+    object: { id: number };
+  }
   export class FlyToInterpolator {}
   export class WebMercatorViewport {
     constructor(viewState: $FixMe);

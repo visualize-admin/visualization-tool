@@ -1,9 +1,11 @@
-import { MapController, WebMercatorViewport } from "@deck.gl/core";
+import { HoverObject, MapController, WebMercatorViewport } from "@deck.gl/core";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import { useCallback, useState } from "react";
 import { Box } from "theme-ui";
+import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
+import { useInteraction } from "../shared/use-interaction";
 import { MapState } from "./map-state";
 
 const INITIAL_VIEW_STATE = {
@@ -79,11 +81,11 @@ export const MapComponent = () => {
     getColor,
     getValue,
   } = useChartState() as MapState;
+  const [, dispatch] = useInteraction();
+
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
   const onViewStateChange = useCallback(({ viewState, interactionState }) => {
-    // setHovered(undefined);
-
     if (interactionState.inTransition) {
       setViewState(viewState);
     } else {
@@ -100,14 +102,7 @@ export const MapComponent = () => {
     [setViewState]
   );
   return (
-    <Box
-    // sx={{
-    //   mt: bounds.margins.top,
-    //   mr: bounds.margins.right,
-    //   mb: bounds.margins.bottom,
-    //   ml: bounds.margins.left,
-    // }}
-    >
+    <Box>
       <DeckGL
         initialViewState={INITIAL_VIEW_STATE}
         viewState={viewState}
@@ -125,8 +120,26 @@ export const MapComponent = () => {
           extruded={false}
           autoHighlight={true}
           getFillColor={(d: $FixMe) => {
-            const obs = data.find((x: $FixMe) => x.id === d.id);
+            const obs = data.find((x: Observation) => x.id === d.id);
             return obs ? getColor(getValue(obs)) : [0, 0, 0, 20];
+          }}
+          onHover={({ x, y, object }: HoverObject) => {
+            if (object && object.id) {
+              dispatch({
+                type: "INTERACTION_UPDATE",
+                value: {
+                  interaction: {
+                    visible: true,
+                    mouse: { x, y },
+                    d: data.find((x: Observation) => x.id === object.id),
+                  },
+                },
+              });
+            } else {
+              dispatch({
+                type: "INTERACTION_HIDE",
+              });
+            }
           }}
           highlightColor={[0, 0, 0, 50]}
           getRadius={100}
