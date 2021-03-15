@@ -1,5 +1,6 @@
 import {
   axisBottom,
+  axisTop,
   interpolateOranges,
   range,
   scaleBand,
@@ -15,125 +16,190 @@ import {
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { useChartState } from "../shared/use-chart-state";
+import { useChartTheme } from "../shared/use-chart-theme";
+import { useInteraction } from "../shared/use-interaction";
+import { useWidth } from "../shared/use-width";
 import { MapState } from "./map-state";
+
 const WIDTH = 256;
 const COLOR_RAMP_HEIGHT = 10;
-const LABELS_SPACE = 26;
-const MARGINS = {
-  top: 0,
-  right: 20,
-  bottom: 0,
-  left: 20,
-};
+
 export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
-  const {
-    paletteType,
-    palette,
-    nbSteps,
-    dataDomain,
-    colorScale,
-  } = useChartState() as MapState;
-  const formatNumber = useFormatNumber();
-  const legendAxisRef = useRef<SVGGElement>(null);
-
-  const linearScale = scaleLinear()
-    .domain([0, colorScale.range().length])
-    .range([0, WIDTH]);
-
-  // const thresholds = colorScale.thresholds();
-
-  // const tickValues = range(thresholds.length);
-
-  // const bandScale = scaleBand()
-  //   .domain(colorScale.domain())
-  //   .rangeRound([MARGINS.left, WIDTH - MARGINS.right]);
-
-  // const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-  //   g.call(axisBottom(bandScale).tickValues(thresholds));
-  // };
-
-  // useEffect(() => {
-  //   const g = select(legendAxisRef.current);
-  //   mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
-  // });
+  const { paletteType } = useChartState() as MapState;
 
   return (
-    <Flex
-      sx={{
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        m: 4,
-        width: WIDTH,
-      }}
-    >
+    <Box sx={{ m: 4 }}>
       {legendTitle && <Text variant="meta">{legendTitle}</Text>}
-      {paletteType === "continuous" && (
-        <>
-          <Box sx={{ my: 1, width: WIDTH, height: COLOR_RAMP_HEIGHT }}>
-            <ColorRamp
-              colorInterpolator={getColorInterpolator(palette)}
-              nbSteps={WIDTH}
-              width={WIDTH}
-              height={COLOR_RAMP_HEIGHT}
-            />
-          </Box>
-          <Flex sx={{ justifyContent: "space-between" }}>
-            <Text variant="meta">{formatNumber(dataDomain[0])}</Text>
-            <Text variant="meta">{formatNumber(dataDomain[1])}</Text>
-          </Flex>
-        </>
-      )}
-      {paletteType === "discrete" && (
-        <Box sx={{ my: 1 }}>
-          <svg
-            width={WIDTH + MARGINS.left + MARGINS.right}
-            height={COLOR_RAMP_HEIGHT + LABELS_SPACE}
-          >
-            {/* <g
-              ref={legendAxisRef}
-              key="legend-axis"
-              transform={`translate(${MARGINS.left}, ${COLOR_RAMP_HEIGHT})`}
-            /> */}
-            <g transform={`translate(${MARGINS.left}, 0)`}>
-              {colorScale.range().map((c, i) => (
-                <rect
-                  x={linearScale(i)}
-                  y={0}
-                  width={WIDTH / colorScale.range().length}
-                  height={COLOR_RAMP_HEIGHT}
-                  fill={`${c}`}
-                />
-              ))}
-              <g>
-                {/* FIXME: Should this be an axisBottom()? */}
-                {/* @ts-ignore */}
-                {[dataDomain[0], ...colorScale.thresholds(), dataDomain[1]].map(
-                  (t: number, i: number) => (
-                    <>
-                      <rect
-                        x={linearScale(i)}
-                        y={0}
-                        width={1}
-                        height={COLOR_RAMP_HEIGHT + 4}
-                        fill={"#000000"}
-                      />
-                      <text
-                        x={linearScale(i)}
-                        y={LABELS_SPACE}
-                        fontSize={8}
-                        textAnchor="middle"
-                      >
-                        {formatNumber(t)}
-                      </text>
-                    </>
-                  )
-                )}
-              </g>
-            </g>
-          </svg>
-        </Box>
-      )}
-    </Flex>
+
+      {paletteType === "continuous" && <ContinuousColorLegend />}
+
+      {paletteType === "discrete" && <DiscreteColorLegend />}
+    </Box>
+  );
+};
+
+const DiscreteColorLegend = () => {
+  const legendAxisRef = useRef<SVGGElement>(null);
+  const {
+    axisLabelColor,
+    labelColor,
+    fontFamily,
+    labelFontSize,
+  } = useChartTheme();
+
+  const { dataDomain, colorScale, getValue } = useChartState() as MapState;
+  const [state] = useInteraction();
+  const formatNumber = useFormatNumber();
+  const width = useWidth();
+  const legendWidth = Math.min(width, WIDTH);
+  const margins = {
+    top: 6,
+    right: 4,
+    bottom: 14,
+    left: 4,
+  };
+
+  const classesScale = scaleLinear()
+    .domain([0, colorScale.range().length])
+    .range([0, legendWidth]);
+
+  const scale = scaleLinear().domain(dataDomain).range([0, legendWidth]);
+
+  // @ts-ignore
+  const thresholds = colorScale.thresholds ? colorScale.thresholds() : [];
+
+  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+    g.call(
+      axisBottom(scale)
+        .tickValues(thresholds)
+        .tickSizeInner(-COLOR_RAMP_HEIGHT - 2)
+        .tickFormat(formatNumber)
+    );
+    g.select("path.domain").remove();
+    g.selectAll(".tick line").attr("stroke", axisLabelColor);
+    g.selectAll(".tick text")
+      .attr("font-size", labelFontSize)
+      .attr("font-family", fontFamily)
+      .attr("fill", labelColor);
+  };
+
+  useEffect(() => {
+    const g = select(legendAxisRef.current);
+    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+  });
+
+  return (
+    <svg
+      width={legendWidth + margins.left + margins.right}
+      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
+    >
+      <g transform={`translate(${margins.left}, ${0})`}>
+        {state.interaction.d && state.interaction.visible && (
+          <polygon
+            fill={labelColor}
+            points="-4,0 4,0 0,5"
+            transform={`translate(${scale(getValue(state.interaction.d))}, 0)`}
+          />
+        )}
+      </g>
+      <g transform={`translate(${margins.left}, ${margins.top})`}>
+        {colorScale.range().map((c, i) => (
+          <rect
+            x={classesScale(i)}
+            y={0}
+            width={legendWidth / colorScale.range().length}
+            height={COLOR_RAMP_HEIGHT}
+            fill={`${c}`}
+          />
+        ))}
+      </g>
+      <g
+        ref={legendAxisRef}
+        key="legend-axis"
+        transform={`translate(${margins.left}, ${
+          COLOR_RAMP_HEIGHT + margins.top + 2
+        })`}
+      />
+    </svg>
+  );
+};
+
+const ContinuousColorLegend = () => {
+  const [state] = useInteraction();
+  const { palette, dataDomain, getValue } = useChartState() as MapState;
+  const {
+    legendLabelColor,
+    labelColor,
+    labelFontSize,
+    fontFamily,
+  } = useChartTheme();
+  const formatNumber = useFormatNumber();
+  const width = useWidth();
+  const legendWidth = Math.min(width, WIDTH);
+  const margins = {
+    top: 6,
+    right: 4,
+    bottom: 14,
+    left: 4,
+  };
+  const scale = scaleLinear().domain(dataDomain).range([0, legendWidth]);
+
+  return (
+    <svg
+      width={legendWidth + margins.left + margins.right}
+      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
+    >
+      <g transform={`translate(${margins.left}, ${0})`}>
+        {state.interaction.d && state.interaction.visible && (
+          <polygon
+            fill={labelColor}
+            points="-4,0 4,0 0,5"
+            transform={`translate(${scale(getValue(state.interaction.d))}, 0)`}
+          />
+        )}
+      </g>
+      <g transform={`translate(${margins.left}, ${margins.top})`}>
+        <foreignObject
+          x={0}
+          y={0}
+          width={legendWidth}
+          height={COLOR_RAMP_HEIGHT}
+        >
+          <ColorRamp
+            colorInterpolator={getColorInterpolator(palette)}
+            nbSteps={legendWidth}
+            width={legendWidth}
+            height={COLOR_RAMP_HEIGHT}
+          />
+        </foreignObject>
+      </g>
+      <g
+        transform={`translate(${margins.left}, ${
+          COLOR_RAMP_HEIGHT + margins.top + margins.bottom
+        })`}
+      >
+        <text
+          x={0}
+          y={0}
+          textAnchor="start"
+          fontSize={labelFontSize}
+          fontFamily={fontFamily}
+          fill={legendLabelColor}
+        >
+          {formatNumber(dataDomain[0])}
+        </text>
+        <text
+          x={legendWidth}
+          y={0}
+          textAnchor="end"
+          fontSize={labelFontSize}
+          fontFamily={fontFamily}
+          fill={legendLabelColor}
+        >
+          {formatNumber(dataDomain[1])}
+        </text>
+      </g>
+    </svg>
   );
 };
 
