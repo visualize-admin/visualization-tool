@@ -15,6 +15,7 @@ import { Box, Flex, Text } from "theme-ui";
 import {
   getColorInterpolator,
   useFormatNumber,
+  useFormatInteger,
 } from "../../configurator/components/ui-helpers";
 import { useChartState } from "../shared/use-chart-state";
 import { useChartTheme } from "../shared/use-chart-theme";
@@ -48,14 +49,14 @@ const DiscreteColorLegend = () => {
     labelFontSize,
   } = useChartTheme();
   const { dataDomain, colorScale } = useChartState() as MapState;
-  const formatNumber = useFormatNumber();
+  const formatNumber = useFormatInteger();
   const width = useWidth();
 
   const legendWidth = Math.min(width, WIDTH);
   const margins = {
     top: 6,
     right: 4,
-    bottom: 14,
+    bottom: 64,
     left: 4,
   };
 
@@ -80,7 +81,9 @@ const DiscreteColorLegend = () => {
     g.selectAll(".tick text")
       .attr("font-size", labelFontSize)
       .attr("font-family", fontFamily)
-      .attr("fill", labelColor);
+      .attr("fill", labelColor)
+      .attr("transform", "rotate(45)")
+      .attr("text-anchor", "start");
   };
 
   useEffect(() => {
