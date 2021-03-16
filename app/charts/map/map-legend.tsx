@@ -1,9 +1,6 @@
 import {
   axisBottom,
-  axisTop,
   interpolateOranges,
-  range,
-  scaleBand,
   ScaleLinear,
   scaleLinear,
   select,
@@ -11,11 +8,11 @@ import {
 } from "d3";
 import * as React from "react";
 import { useEffect, useRef } from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Text } from "theme-ui";
 import {
   getColorInterpolator,
-  useFormatNumber,
   useFormatInteger,
+  useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { useChartState } from "../shared/use-chart-state";
 import { useChartTheme } from "../shared/use-chart-theme";
@@ -27,15 +24,21 @@ const WIDTH = 256;
 const COLOR_RAMP_HEIGHT = 10;
 
 export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
-  const { paletteType } = useChartState() as MapState;
+  const {
+    areaLayer: { show, paletteType },
+  } = useChartState() as MapState;
 
   return (
-    <Box sx={{ m: 4 }}>
-      {legendTitle && <Text variant="meta">{legendTitle}</Text>}
+    <Box sx={{ m: 4, minHeight: 100 }}>
+      {show && (
+        <>
+          {legendTitle && <Text variant="meta">{legendTitle}</Text>}
 
-      {paletteType === "continuous" && <ContinuousColorLegend />}
+          {paletteType === "continuous" && <ContinuousColorLegend />}
 
-      {paletteType === "discrete" && <DiscreteColorLegend />}
+          {paletteType === "discrete" && <DiscreteColorLegend />}
+        </>
+      )}
     </Box>
   );
 };
@@ -48,7 +51,9 @@ const DiscreteColorLegend = () => {
     fontFamily,
     labelFontSize,
   } = useChartTheme();
-  const { dataDomain, colorScale } = useChartState() as MapState;
+  const {
+    areaLayer: { dataDomain, colorScale },
+  } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
   const width = useWidth();
 
@@ -123,7 +128,9 @@ const DiscreteColorLegend = () => {
 };
 
 const ContinuousColorLegend = () => {
-  const { palette, dataDomain } = useChartState() as MapState;
+  const {
+    areaLayer: { palette, dataDomain },
+  } = useChartState() as MapState;
   const { legendLabelColor, labelFontSize, fontFamily } = useChartTheme();
   const formatNumber = useFormatNumber();
   const width = useWidth();
@@ -195,7 +202,9 @@ const DataPointIndicator = ({
   scale: ScaleLinear<number, number>;
 }) => {
   const [state] = useInteraction();
-  const { getValue } = useChartState() as MapState;
+  const {
+    areaLayer: { getValue },
+  } = useChartState() as MapState;
   const { labelColor } = useChartTheme();
   return (
     <>

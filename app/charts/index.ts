@@ -222,12 +222,26 @@ export const getInitialConfig = ({
           },
         },
         fields: {
-          x: { componentIri: dimensions[0].iri },
-          y: {
+          baseLayer: {
+            componentIri: dimensions[0].iri,
+            relief: true,
+            lakes: true,
+          },
+          areaLayer: {
             componentIri: measures[0].iri,
+            display: false,
+            label: { componentIri: dimensions[0].iri },
             palette: "oranges",
             nbSteps: 5,
             paletteType: "continuous",
+          },
+          // FIXME: unused fields
+          x: { componentIri: dimensions[0].iri },
+          y: {
+            componentIri: measures[0].iri,
+          },
+          segment: {
+            componentIri: dimensions[0].iri,
           },
         },
       };

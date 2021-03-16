@@ -9,7 +9,9 @@ import { MapState } from "./map-state";
 
 export const MapTooltip = () => {
   const [{ interaction }] = useInteraction();
-  const { getLabel, getValue } = useChartState() as MapState;
+  const {
+    areaLayer: { getLabel, getValue },
+  } = useChartState() as MapState;
 
   const formatNumber = useFormatNumber();
 
