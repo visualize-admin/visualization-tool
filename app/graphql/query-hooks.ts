@@ -102,10 +102,13 @@ export type TemporalDimension = Component & Dimension & {
   values: Array<DimensionValue>;
 };
 
-export type Measure = Component & {
+export type Measure = Component & Dimension & {
   __typename: 'Measure';
   iri: Scalars['String'];
   label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
+  values: Array<DimensionValue>;
 };
 
 export type DataCubeResult = {
@@ -166,7 +169,9 @@ type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'Ordina
 
 type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
 
-export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment;
+type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+
+export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment | DimensionFieldsWithValues_Measure_Fragment;
 
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -183,6 +188,9 @@ export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
     ) | (
       { __typename: 'TemporalDimension' }
       & ComponentFields_TemporalDimension_Fragment
+    ) | (
+      { __typename: 'Measure' }
+      & ComponentFields_Measure_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & ComponentFields_Measure_Fragment
@@ -220,6 +228,9 @@ export type DataCubeMetadataWithComponentsQuery = { __typename: 'Query', dataCub
     ) | (
       { __typename: 'TemporalDimension' }
       & ComponentFields_TemporalDimension_Fragment
+    ) | (
+      { __typename: 'Measure' }
+      & ComponentFields_Measure_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & ComponentFields_Measure_Fragment
@@ -240,6 +251,9 @@ export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', da
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
+    ) | (
+      { __typename: 'Measure' }
+      & DimensionFieldsWithValues_Measure_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & ComponentFields_Measure_Fragment
@@ -261,6 +275,9 @@ export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
+    ) | (
+      { __typename: 'Measure' }
+      & DimensionFieldsWithValues_Measure_Fragment
     )> }> };
 
 export type DataCubeObservationsQueryVariables = Exact<{
@@ -280,6 +297,9 @@ export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: M
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
+    ) | (
+      { __typename: 'Measure' }
+      & DimensionFieldsWithValues_Measure_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & ComponentFields_Measure_Fragment

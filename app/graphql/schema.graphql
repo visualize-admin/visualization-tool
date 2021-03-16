@@ -73,9 +73,13 @@ type TemporalDimension implements Component & Dimension {
   values: [DimensionValue!]!
 }
 
-type Measure implements Component {
+type Measure implements Component & Dimension {
   iri: String!
   label: String!
+  unit: String
+  scaleType: String
+
+  values: [DimensionValue!]!
 }
 
 type DataCubeResult {

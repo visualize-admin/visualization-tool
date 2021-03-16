@@ -175,7 +175,14 @@ const DataCube: DataCubeResolvers = {
   source: (dataCube) => "TODO",
   datePublished: ({ datePublished }) => datePublished ?? null,
   dimensions: async ({ dataCube }) => {
-    return getCubeDimensions({ cube: dataCube, locale: "en" });
+    const dimensions = getCubeDimensions({ cube: dataCube, locale: "en" });
+
+    return dimensions.filter((d) => !d.isNumerical);
+  },
+  measures: async ({ dataCube }) => {
+    const dimensions = getCubeDimensions({ cube: dataCube, locale: "en" });
+
+    return dimensions.filter((d) => d.isNumerical);
   },
   dimensionByIri: async ({ dataCube }, { iri }) => {
     const dimension = getCubeDimensions({
@@ -184,11 +191,6 @@ const DataCube: DataCubeResolvers = {
     }).find((d) => iri === d.iri);
 
     return dimension ?? null;
-  },
-  measures: async ({ dataCube }) => {
-    const dimensions = getCubeDimensions({ cube: dataCube, locale: "en" });
-
-    return dimensions.filter((d) => d.isNumerical);
   },
   observations: async (dataCube, { limit, filters, measures }) => {
     const constructedFilters = filters
@@ -308,6 +310,6 @@ export const resolvers: Resolvers = {
     ...dimensionResolvers,
   },
   Measure: {
-    // ...dimensionResolvers,
+    ...dimensionResolvers,
   },
 };
