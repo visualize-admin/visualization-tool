@@ -33,6 +33,9 @@ declare module "@deck.gl/geo-layers" {
   export const TileLayer: $FixMe;
   export const MVTLayer: $FixMe;
 }
+declare module "@deck.gl/extensions" {
+  export const FillStyleExtension: $FixMe;
+}
 declare module "@deck.gl/react" {
   export const DeckGL: $FixMe;
   export default DeckGL;

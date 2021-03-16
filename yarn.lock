@@ -752,6 +752,13 @@
     mjolnir.js "^2.5.0"
     probe.gl "^3.2.1"
 
+"@deck.gl/extensions@^8.4.10":
+  version "8.4.10"
+  resolved "https://registry.yarnpkg.com/@deck.gl/extensions/-/extensions-8.4.10.tgz#3b849b885348e740c1b41a84738027f4e208b551"
+  integrity sha512-usrUfwagb0uRvaO5f+YSkLnz62gYq/eZrwG25iE9XKk1MvM2LbMWco4XstwKtFJxAmH6WhohUFADk/W0pa2e3Q==
+  dependencies:
+    "@luma.gl/shadertools" "^8.4.1"
+
 "@deck.gl/geo-layers@^8.4.10":
   version "8.4.10"
   resolved "https://registry.yarnpkg.com/@deck.gl/geo-layers/-/geo-layers-8.4.10.tgz#e50fba4c5332aa767979da592495d81e6de9ba44"
