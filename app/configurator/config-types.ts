@@ -437,7 +437,7 @@ const MapBaseLayer = t.type({
 export type MapBaseLayer = t.TypeOf<typeof MapBaseLayer>;
 
 const MapAreaLayer = t.type({
-  display: t.boolean,
+  show: t.boolean,
   label: GenericField,
   componentIri: t.string,
   palette: t.string,
@@ -446,9 +446,16 @@ const MapAreaLayer = t.type({
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
+const MapSymbolLayer = t.type({
+  show: t.boolean,
+  componentIri: t.string,
+});
+export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
+
 const MapFields = t.type({
   baseLayer: MapBaseLayer,
   areaLayer: MapAreaLayer,
+  symbolLayer: MapSymbolLayer,
   x: GenericField,
   y: GenericField,
   segment: GenericField,

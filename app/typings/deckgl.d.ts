@@ -25,6 +25,7 @@ declare module "@deck.gl/core" {
 }
 declare module "@deck.gl/layers" {
   export const GeoJsonLayer: $FixMe;
+  export const ScatterplotLayer: $FixMe;
   export const LineLayer: $FixMe;
   export const PathLayer: $FixMe;
   export const BitmapLayer: $FixMe;

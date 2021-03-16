@@ -25,12 +25,19 @@ const COLOR_RAMP_HEIGHT = 10;
 
 export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
   const {
-    areaLayer: { show, paletteType },
+    areaLayer: { showAreaLayer, paletteType },
   } = useChartState() as MapState;
 
   return (
-    <Box sx={{ m: 4, minHeight: 100 }}>
-      {show && (
+    <Box
+      sx={{
+        p: 4,
+        minHeight: 100,
+        borderTop: "1px solid",
+        borderTopColor: "monochrome200",
+      }}
+    >
+      {showAreaLayer && (
         <>
           {legendTitle && <Text variant="meta">{legendTitle}</Text>}
 

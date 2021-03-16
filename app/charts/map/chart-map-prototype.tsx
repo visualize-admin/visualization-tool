@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { geoCentroid } from "d3";
 import React, { memo, ReactNode, useEffect, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
 import {
@@ -7,7 +8,7 @@ import {
 } from "topojson-client";
 import { Select } from "../../components/form";
 import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { FieldProps, MapBaseLayer, MapFields } from "../../configurator";
+import { FieldProps, MapFields } from "../../configurator";
 import {
   ControlTabButton,
   ControlTabButtonInner,
@@ -59,11 +60,17 @@ export const ChartMapVisualization = () => {
         const cantons = topojsonFeature(topo, topo.objects.cantons);
         const cantonMesh = topojsonMesh(topo, topo.objects.cantons);
         const lakes = topojsonFeature(topo, topo.objects.lakes);
-
+        const cantonCentroids = (cantons as $FixMe).features.map(
+          (c: $FixMe) => ({
+            id: c.id,
+            coordinates: geoCentroid(c),
+          })
+        );
         setGeoData({
           state: "loaded",
           cantons,
           cantonMesh,
+          cantonCentroids,
           lakes,
         });
       } catch (e) {
@@ -130,12 +137,12 @@ export const ChartMapVisualization = () => {
   }
 };
 
-export type Control = "baseLayer" | "areaLayer" | "symboLayer";
+export type Control = "baseLayer" | "areaLayer" | "symbolLayer";
 export type ActiveLayer = {
   relief: boolean;
   lakes: boolean;
   areaLayer: boolean;
-  symboLayer: boolean;
+  symbolLayer: boolean;
 };
 export const ChartMapPrototype = ({
   dataset,
@@ -154,13 +161,14 @@ export const ChartMapPrototype = ({
     relief: true,
     lakes: true,
     areaLayer: false,
-    symboLayer: false,
+    symbolLayer: false,
   });
   const [activeControl, setActiveControl] = useState<Control>("baseLayer");
   const [palette, setPalette] = useState("oranges");
   const [nbSteps, setNbSteps] = useState(5);
   const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
   const [measure, setMeasure] = useState(measures[0].iri);
+  const [symbolMeasure, setSymbolMeasure] = useState(measures[0].iri);
   const [filters, setFilters] = useState<{ [x: string]: string }>(
     dimensions.reduce(
       (obj, dim, i) => ({ ...obj, [dim.iri]: dim.dimensionValues[0] }),
@@ -190,7 +198,13 @@ export const ChartMapPrototype = ({
 
   return (
     <>
-      <Box sx={{ bg: "monochrome100", borderRight: "1px solid #dfdfdf" }}>
+      <Box
+        sx={{
+          bg: "monochrome100",
+          borderRight: "1px solid",
+          borderRightColor: "monochrome400",
+        }}
+      >
         <ControlSection>
           <Box sx={{ p: 4 }}>
             <Box sx={{ mb: 4 }}>
@@ -215,13 +229,13 @@ export const ChartMapPrototype = ({
               disabled={false}
             />
             <Tab
-              value="symboLayer"
+              value="symbolLayer"
               onClick={(v) => setActiveControl(v)}
               iconName="mapSymbols"
               upperLabel={""}
               lowerLabel={"Symbol Layer"}
-              checked={activeControl === "symboLayer"}
-              disabled={true}
+              checked={activeControl === "symbolLayer"}
+              disabled={false}
             />
           </Box>
         </ControlSection>
@@ -260,7 +274,14 @@ export const ChartMapPrototype = ({
             This is a prototype, don't use in production!
           </Trans>
         </HintBlue>
-        <Box sx={{ m: 4, bg: "#FFFFFF", border: "1px solid #dfdfdf" }}>
+        <Box
+          sx={{
+            m: 4,
+            bg: "#FFFFFF",
+            border: "1px solid",
+            borderColor: "monochrome400",
+          }}
+        >
           {dimensions && measures && data && (
             <ChartMap
               observations={data}
@@ -273,11 +294,15 @@ export const ChartMapPrototype = ({
                 },
                 areaLayer: {
                   componentIri: measure,
-                  display: activeLayers["areaLayer"],
+                  show: activeLayers["areaLayer"],
                   label: { componentIri: attributes[0].iri },
                   palette,
                   nbSteps,
                   paletteType,
+                },
+                symbolLayer: {
+                  show: activeLayers["symbolLayer"],
+                  componentIri: symbolMeasure,
                 },
                 x: { componentIri: "a" },
                 y: { componentIri: "b" },
@@ -292,9 +317,17 @@ export const ChartMapPrototype = ({
         </Box>
       </Box>
 
-      <Box sx={{ bg: "monochrome100", borderLeft: "1px solid #dfdfdf" }}>
+      <Box
+        sx={{
+          bg: "monochrome100",
+          borderLeft: "1px solid",
+          borderLeftColor: "monochrome400",
+        }}
+      >
         <PrototypeRightControls
           activeControl={activeControl}
+          activeLayers={activeLayers}
+          updateActiveLayers={updateActiveLayers}
           measures={measures}
           measure={measure}
           setMeasure={setMeasure}
@@ -304,8 +337,8 @@ export const ChartMapPrototype = ({
           setPaletteType={setPaletteType}
           nbSteps={nbSteps}
           setNbSteps={setNbSteps}
-          activeLayers={activeLayers}
-          updateActiveLayers={updateActiveLayers}
+          symbolMeasure={symbolMeasure}
+          setSymbolMeasure={setSymbolMeasure}
         />
       </Box>
     </>

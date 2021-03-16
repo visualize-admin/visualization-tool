@@ -8,6 +8,8 @@ import { ActiveLayer, Control } from "./chart-map-prototype";
 
 export const PrototypeRightControls = ({
   activeControl,
+  activeLayers,
+  updateActiveLayers,
   measures,
   measure,
   setMeasure,
@@ -17,10 +19,12 @@ export const PrototypeRightControls = ({
   setPaletteType,
   nbSteps,
   setNbSteps,
-  activeLayers,
-  updateActiveLayers,
+  symbolMeasure,
+  setSymbolMeasure,
 }: {
   activeControl: Control;
+  activeLayers: ActiveLayer;
+  updateActiveLayers: (x: keyof ActiveLayer) => void;
   measures: ComponentFieldsFragment[];
   measure: string;
   setMeasure: (x: string) => void;
@@ -30,8 +34,8 @@ export const PrototypeRightControls = ({
   setPaletteType: (x: PaletteType) => void;
   nbSteps: number;
   setNbSteps: (x: number) => void;
-  activeLayers: ActiveLayer;
-  updateActiveLayers: (x: keyof ActiveLayer) => void;
+  symbolMeasure: string;
+  setSymbolMeasure: (x: string) => void;
 }) => {
   if (activeControl === "baseLayer") {
     return (
@@ -148,7 +152,40 @@ export const PrototypeRightControls = ({
         </ControlSection>
       </>
     );
+  } else if (activeControl === "symbolLayer") {
+    return (
+      <>
+        <ControlSection>
+          <Box sx={{ p: 4 }}>
+            <Checkbox
+              label={"Add Proportional Circles"}
+              name={"symbolLayer"}
+              value={"symbolLayer"}
+              checked={activeLayers.symbolLayer}
+              disabled={false}
+              onChange={() => updateActiveLayers("symbolLayer")}
+            />
+          </Box>
+        </ControlSection>
+        <ControlSection>
+          <Box sx={{ p: 4 }}>
+            <Select
+              label={"Select a measure"}
+              id={"symbol-measure-select"}
+              name={"symbol-measure-select"}
+              value={symbolMeasure}
+              disabled={!activeLayers.symbolLayer}
+              options={measures.map((m) => ({
+                value: m.iri,
+                label: m.label.split("_")[1],
+              }))}
+              onChange={(e) => setSymbolMeasure(e.currentTarget.value)}
+            />
+          </Box>
+        </ControlSection>
+      </>
+    );
   } else {
-    return <div>coucou</div>;
+    return <div>Nothing here</div>;
   }
 };

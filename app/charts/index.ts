@@ -229,11 +229,15 @@ export const getInitialConfig = ({
           },
           areaLayer: {
             componentIri: measures[0].iri,
-            display: false,
+            show: false,
             label: { componentIri: dimensions[0].iri },
             palette: "oranges",
             nbSteps: 5,
             paletteType: "continuous",
+          },
+          symbolLayer: {
+            show: false,
+            componentIri: measures[0].iri,
           },
           // FIXME: unused fields
           x: { componentIri: dimensions[0].iri },

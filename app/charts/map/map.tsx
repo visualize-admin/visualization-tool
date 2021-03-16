@@ -1,10 +1,9 @@
 import { HoverObject, MapController, WebMercatorViewport } from "@deck.gl/core";
-import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
 import { FillStyleExtension } from "@deck.gl/extensions";
-
-import { TileLayer, MVTLayer } from "@deck.gl/geo-layers";
+import { TileLayer } from "@deck.gl/geo-layers";
+import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Box, Button } from "theme-ui";
 import { Observation } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
@@ -87,11 +86,11 @@ const constrainZoom = (
 
 export const MapComponent = () => {
   const {
-    bounds,
     data,
     baseLayer,
     features,
-    areaLayer: { show, getColor, getValue },
+    areaLayer: { showAreaLayer, getColor, getValue },
+    symbolLayer: { showSymbolLayer, radiusScale, getRadius },
   } = useChartState() as MapState;
   const [, dispatch] = useInteraction();
 
@@ -181,7 +180,8 @@ export const MapComponent = () => {
           getFillColor={[140, 170, 180, 0.1]}
           lineWidthMinPixels={1}
         /> */}
-        {show && (
+
+        {showAreaLayer && (
           <>
             <GeoJsonLayer
               id="cantons"
@@ -259,6 +259,28 @@ export const MapComponent = () => {
             getLineWidth={100}
             getFillColor={[102, 175, 233]}
             getLineColor={[255, 255, 255]}
+          />
+        )}
+        {showSymbolLayer && (
+          <ScatterplotLayer
+            id="cantons-centroids"
+            data={features.cantonCentroids}
+            pickable={true}
+            opacity={0.8}
+            stroked={true}
+            filled={true}
+            radiusScale={10}
+            radiusMinPixels={radiusScale.range()[0]}
+            radiusMaxPixels={radiusScale.range()[1]}
+            lineWidthMinPixels={1}
+            getPosition={(d: $FixMe) => d.coordinates}
+            getRadius={(d: $FixMe) => {
+              const obs = data.find((x: Observation) => x.id === d.id);
+              return obs ? radiusScale(getRadius(obs)) : 0;
+            }}
+            getFillColor={(d: $FixMe) => [0, 102, 153]}
+            getLineColor={(d: $FixMe) => [255, 255, 255]}
+            updateTriggers={{ getRadius: [data, getRadius] }}
           />
         )}
       </DeckGL>
