@@ -14,6 +14,7 @@ import {
   getCube,
   getCubeDimensions,
   getCubeDimensionValues,
+  getCubeObservations,
   getCubes,
 } from "../rdf/queries";
 import {
@@ -202,38 +203,47 @@ const DataCube: DataCubeResolvers = {
 
     return dimension ?? null;
   },
-  observations: async (dataCube, { limit, filters, measures }) => {
-    const constructedFilters = filters
-      ? await constructFilters(dataCube, filters)
-      : [];
-
-    // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
-    const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
-      return measures?.find((iri) => iri === d.iri.value)
-        ? []
-        : ([[`dim${i}`, d]] as [string, RDFDimension][]);
+  observations: async ({ dataCube, locale }, { limit, filters, measures }) => {
+    const { query, observations } = await getCubeObservations({
+      cube: dataCube,
+      locale,
+      limit: 10,
     });
 
-    const selectedFields = [
-      ...unmappedDimensions,
-      ...(measures
-        ? measures.map(
-            (iri, i) =>
-              [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
-          )
-        : []),
-    ];
+    console.log(query);
 
-    const query = dataCube
-      .query()
-      .limit(limit ?? null)
-      .select(selectedFields)
-      .filter(constructedFilters);
+    // const constructedFilters = filters
+    //   ? await constructFilters(dataCube, filters)
+    //   : [];
+
+    // // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
+    // const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
+    //   return measures?.find((iri) => iri === d.iri.value)
+    //     ? []
+    //     : ([[`dim${i}`, d]] as [string, RDFDimension][]);
+    // });
+
+    // const selectedFields = [
+    //   ...unmappedDimensions,
+    //   ...(measures
+    //     ? measures.map(
+    //         (iri, i) =>
+    //           [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
+    //       )
+    //     : []),
+    // ];
+
+    // const query = dataCube
+    //   .query()
+    //   .limit(limit ?? null)
+    //   .select(selectedFields)
+    //   .filter(constructedFilters);
 
     return {
       dataCube,
       query,
-      selectedFields,
+      observations,
+      selectedFields: [],
     };
   },
 };
@@ -260,40 +270,36 @@ export const resolvers: Resolvers = {
   Query,
   DataCube,
   ObservationsQuery: {
-    data: async ({ query, selectedFields }) => {
-      const observations = await query.execute();
-      // TODO: Optimize Performance
-      const fullyQualifiedObservations = observations.map((obs) => {
-        return Object.fromEntries(
-          Object.entries(obs).map(([k, v]) => {
-            return [
-              selectedFields.find(([selK]) => selK === k)![1].iri.value,
-              // FIXME: This undefined check should not be necessary but prevents breaking on some malformed RDF(?) values
-              v && v.value !== undefined ? parseObservationValue(v) : 0,
-            ];
-          })
-        );
-      });
+    data: async ({ query, observations }) => {
+      // const observations = await query.execute();
+      // // TODO: Optimize Performance
+      // const fullyQualifiedObservations = observations.map((obs) => {
+      //   return Object.fromEntries(
+      //     Object.entries(obs).map(([k, v]) => {
+      //       return [
+      //         selectedFields.find(([selK]) => selK === k)![1].iri.value,
+      //         // FIXME: This undefined check should not be necessary but prevents breaking on some malformed RDF(?) values
+      //         v && v.value !== undefined ? parseObservationValue(v) : 0,
+      //       ];
+      //     })
+      //   );
+      // });
 
-      return fullyQualifiedObservations;
-    },
-    rawData: async ({ query, selectedFields }) => {
-      const observations = await query.execute();
-      // TODO: Optimize Performance
-      const fullyQualifiedObservations = observations.map((obs) => {
+      // return fullyQualifiedObservations;
+
+      return observations.map((obs) => {
         return Object.fromEntries(
           Object.entries(obs).map(([k, v]) => [
-            selectedFields.find(([selK]) => selK === k)![1].iri.value,
-            v,
+            k,
+            parseObservationValue({ value: v }),
           ])
         );
       });
-
-      return fullyQualifiedObservations;
     },
-    sparql: async ({ query }) => {
-      return query.toSparql();
+    rawData: async ({ query, observations }) => {
+      return observations;
     },
+    sparql: async ({ query }) => query.replace(/\n+/g, " "),
   },
   Dimension: {
     __resolveType({ dataKind, scaleType, dataType }) {

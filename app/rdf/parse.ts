@@ -33,9 +33,9 @@ export const parseCube = ({
   const outOpts = { language: getQueryLocales(locale) };
 
   return {
-    iri: cube.term?.value ?? "---",
-    identifier: cube.out(ns.dcterms.identifier)?.value ?? "---",
-    title: cube.out(ns.dcterms.title, outOpts)?.value ?? "---",
+    iri: cube.term?.value ?? "[NO IRI]",
+    identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
+    title: cube.out(ns.dcterms.title, outOpts)?.value ?? "[NO TITLE]",
     description: cube.out(ns.dcterms.description, outOpts)?.value ?? "",
     status: cube.out(ns.schema.creativeWorkStatus)?.value,
     theme: cube.out(ns.dcat.theme)?.value,

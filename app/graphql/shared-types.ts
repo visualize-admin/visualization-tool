@@ -40,6 +40,6 @@ export type ResolvedMeasure = ResolvedDimension;
 
 export type ResolvedObservationsQuery = {
   dataCube: Cube;
-  query: RDF.Query;
+  query: string;
   selectedFields: [string, RDF.Dimension | RDF.Measure | RDF.Attribute][];
 };

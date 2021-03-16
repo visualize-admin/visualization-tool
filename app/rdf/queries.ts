@@ -1,5 +1,5 @@
-import { Cube, CubeDimension, Source } from "rdf-cube-view-query";
-import { ObservationValue, parseObservationValue } from "../domain/data";
+import { Cube, CubeDimension, Source, View } from "rdf-cube-view-query";
+import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
@@ -150,4 +150,31 @@ const getCubeDimensionValuesWithLabels = async ({
       label: vl.label.value,
     };
   });
+};
+
+export const getCubeObservations = async ({
+  cube,
+  locale,
+  limit,
+}: {
+  cube: Cube;
+  locale: string;
+  limit?: number;
+}): Promise<{ query: string; observations: $FixMe[] }> => {
+  const view = View.fromCube(cube);
+  view.ptr.addOut(ns.cubeView.projection, (projection) => {
+    const order = projection
+      .blankNode()
+      .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
+      .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
+
+    // projection.addList(ns.cubeView.orderBy, order)
+    projection.addOut(ns.cubeView.limit, limit);
+    // projection.addOut(ns.cubeView.offset, offset)
+  });
+
+  return {
+    query: view.observationsQuery().query.toString(),
+    observations: await view.observations(),
+  };
 };
