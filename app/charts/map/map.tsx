@@ -12,6 +12,14 @@ import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { MapState } from "./map-state";
 
+type TileData = {
+  z: number;
+  x: number;
+  y: number;
+  url: string;
+  bbox: { west: number; north: number; east: number; south: number };
+  signal: { aborted: boolean };
+};
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
@@ -120,27 +128,6 @@ export const MapComponent = () => {
     setViewState(constrainZoom(newViewState, CH_BBOX));
   };
 
-  const TLayer = new TileLayer({
-    // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
-    // data: "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    data:
-      "http://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/20110401/21781/{z}/{x}/{y}.jpeg",
-    minZoom: 0,
-    maxZoom: 19,
-    tileSize: 256,
-
-    renderSubLayers: (props: $FixMe) => {
-      const {
-        bbox: { west, south, east, north },
-      } = props.tile;
-
-      return new BitmapLayer(props, {
-        data: null,
-        image: props.data,
-        bounds: [west, south, east, north],
-      });
-    },
-  });
   return (
     <Box>
       <Box
@@ -159,14 +146,39 @@ export const MapComponent = () => {
         <ZoomButton label="-" iconName="minus" handleClick={zoomOut} />
       </Box>
       <DeckGL
-        // initialViewState={INITIAL_VIEW_STATE}
         viewState={viewState}
         onViewStateChange={onViewStateChange}
         onResize={onResize}
-        // controller={true}
         controller={{ type: MapController }}
-        // layers={[TLayer]}
       >
+        {/* <TileLayer
+          getTileData={({ z, x, y }: TileData) =>
+            `https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/${z}/${x}/${y}.png`
+          }
+          pickable={true}
+          highlightColor={[60, 60, 60, 40]}
+          minZoom={2}
+          maxZoom={16}
+          tileSize={256}
+          renderSubLayers={(props: { tile: TileData; data: $FixMe }) => {
+            const {
+              bbox: { west, south, east, north },
+            } = props.tile;
+            return [
+              new BitmapLayer(props, {
+                data: null,
+                image: props.data,
+                bounds: [west, south, east, north],
+              }),
+            ];
+          }}
+        /> */}
+        {/* <MVTLayer
+          data="https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf"
+          getLineColor={[192, 192, 192]}
+          getFillColor={[140, 170, 180, 0.1]}
+          lineWidthMinPixels={1}
+        /> */}
         <GeoJsonLayer
           id="cantons"
           data={features.cantons}
@@ -209,21 +221,13 @@ export const MapComponent = () => {
           fillPatternMapping="/static/sprite/pattern.json"
           getFillPattern={(d: $FixMe) => {
             const obs = data.find((x: Observation) => x.id === d.id);
-            obs && isNaN(getValue(obs)) && console.log({ obs });
             return obs && isNaN(getValue(obs)) ? "hatch" : "fill";
           }}
-          getFillPatternScale={200}
+          getFillPatternScale={150}
           getFillPatternOffset={[0, 0]}
         />
-        <MVTLayer
-          data="https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf"
-          getLineColor={[192, 192, 192]}
-          getFillColor={[140, 170, 180, 0.1]}
-          lineWidthMinPixels={1}
-        />
-
-        {/* <GeoJsonLayer
-          id="cantons"
+        <GeoJsonLayer
+          id="cantons-mesh"
           data={features.cantonMesh}
           pickable={false}
           stroked={true}
@@ -234,7 +238,7 @@ export const MapComponent = () => {
           getLineWidth={200}
           lineMiterLimit={1}
           getLineColor={[255, 255, 255]}
-        /> */}
+        />
         <GeoJsonLayer
           id="lakes"
           data={features.lakes}
