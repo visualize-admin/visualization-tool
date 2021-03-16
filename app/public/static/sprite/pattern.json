@@ -1,12 +1,12 @@
 {
-  "p-1": {
+  "hatch": {
     "x": 132,
     "y": 4,
     "width": 120,
     "height": 120,
     "mask": true
   },
-  "p-5": {
+  "fill": {
     "x": 4,
     "y": 132,
     "width": 120,

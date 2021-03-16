@@ -205,12 +205,12 @@ export const MapComponent = () => {
           getLineWidth={1}
           updateTriggers={{ getFillColor: getColor, getFillPattern: data }}
           fillPatternMask={true}
-          fillPatternAtlas="/static/sprite/map.png"
+          fillPatternAtlas="/static/sprite/sprite.png"
           fillPatternMapping="/static/sprite/pattern.json"
           getFillPattern={(d: $FixMe) => {
             const obs = data.find((x: Observation) => x.id === d.id);
             obs && isNaN(getValue(obs)) && console.log({ obs });
-            return obs && isNaN(getValue(obs)) ? "p-5" : "p-1";
+            return obs && isNaN(getValue(obs)) ? "hatch" : "fill";
           }}
           getFillPatternScale={200}
           getFillPatternOffset={[0, 0]}
