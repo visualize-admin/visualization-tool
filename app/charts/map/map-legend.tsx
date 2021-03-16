@@ -99,6 +99,7 @@ const DiscreteColorLegend = () => {
       <g transform={`translate(${margins.left}, ${margins.top})`}>
         {colorScale.range().map((c, i) => (
           <rect
+            key={i}
             x={classesScale(i)}
             y={0}
             width={legendWidth / colorScale.range().length}
