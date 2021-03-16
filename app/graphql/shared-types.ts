@@ -1,10 +1,11 @@
 import * as RDF from "@zazuko/query-rdf-data-cube";
-import { Cube } from "rdf-cube-view-query";
+import { Cube, CubeDimension } from "rdf-cube-view-query";
 
 /** Types shared by graphql-codegen and resolver code */
 
 export type ResolvedDataCube = {
   dataCube: Cube;
+  locale: string;
 
   iri: string;
   identifier: string;
@@ -21,6 +22,7 @@ export type ResolvedDataCube = {
 
 export type ResolvedDimension = {
   dataCube: Cube;
+  dimension: CubeDimension;
 
   iri: string;
   isLiteral: boolean;

@@ -45,6 +45,7 @@ export const parseCube = ({
     landingPage: cube.out(ns.dcat.landingPage)?.value,
     keywords: cube.out(ns.dcat.keyword)?.values,
     dataCube: cube,
+    locale,
   };
 };
 
@@ -68,6 +69,7 @@ export const parseCubeDimension = ({
   const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
 
   return {
+    dimension: dim,
     iri: dim.path?.value!,
     isLiteral,
     isNumerical,

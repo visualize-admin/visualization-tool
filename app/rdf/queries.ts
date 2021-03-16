@@ -1,5 +1,5 @@
 import { Cube, CubeDimension, Source } from "rdf-cube-view-query";
-import { parseObservationValue } from "../domain/data";
+import { ObservationValue, parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
@@ -79,26 +79,30 @@ export const getCubeDimensions = ({
   }
 };
 
-const getCubeDimensionValues = async ({
+export const getCubeDimensionValues = async ({
   dimension,
   cube,
 }: {
   dimension: CubeDimension;
   cube: Cube;
-}) => {
-  return {
-    minInclusive: dimension.minInclusive
-      ? parseObservationValue({ value: dimension.minInclusive })
-      : undefined,
-    maxInclusive: dimension.maxInclusive
-      ? parseObservationValue({ value: dimension.maxInclusive })
-      : undefined,
-    values: dimension.in?.map((v) => parseObservationValue({ value: v })),
-    valuesWithLabels: await getCubeDimensionValuesWithLabels({
-      dimension,
-      cube,
-    }),
-  };
+}): Promise<{ value: string; label: string }[]> => {
+  if (
+    dimension.minInclusive !== undefined &&
+    dimension.maxInclusive !== undefined
+  ) {
+    const min = parseObservationValue({ value: dimension.minInclusive });
+    const max = parseObservationValue({ value: dimension.maxInclusive });
+    console.log({ min, max });
+    return [
+      { value: min.toString(), label: min.toString() },
+      { value: max.toString(), label: max.toString() },
+    ];
+  }
+
+  return await getCubeDimensionValuesWithLabels({
+    dimension,
+    cube,
+  });
 };
 
 const getCubeDimensionValuesWithLabels = async ({
@@ -107,7 +111,7 @@ const getCubeDimensionValuesWithLabels = async ({
 }: {
   dimension: CubeDimension;
   cube: Cube;
-}) => {
+}): Promise<{ value: string; label: string }[]> => {
   // try {
   //   const view = View.fromCube(cube);
   //   const viewDimension = view.dimension({ cubeDimension: dimension })!;
@@ -142,7 +146,7 @@ const getCubeDimensionValuesWithLabels = async ({
 
   return dimensionValueLabels.map((vl) => {
     return {
-      iri: vl.iri.value,
+      value: vl.iri.value,
       label: vl.label.value,
     };
   });

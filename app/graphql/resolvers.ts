@@ -1,7 +1,6 @@
 import { literal } from "@rdfjs/data-model";
 import {
   DataCube as RDFDataCube,
-  DataCubeEntryPoint,
   Dimension as RDFDimension,
   Measure as RDFMeasure,
 } from "@zazuko/query-rdf-data-cube";
@@ -10,16 +9,21 @@ import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { Filters } from "../configurator";
 import { parseObservationValue } from "../domain/data";
-import { SPARQL_ENDPOINT } from "../domain/env";
-import { locales, parseLocaleString } from "../locales/locales";
-import { getCube, getCubeDimensions, getCubes } from "../rdf/queries";
+import { parseLocaleString } from "../locales/locales";
+import {
+  getCube,
+  getCubeDimensions,
+  getCubeDimensionValues,
+  getCubes,
+} from "../rdf/queries";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
+  DimensionResolvers,
   QueryResolvers,
   Resolvers,
 } from "./resolver-types";
-import { ResolvedDimension, ResolvedMeasure } from "./shared-types";
+import { ResolvedDimension } from "./shared-types";
 
 /** Cache value data type per Dimension IRI */
 let dataTypeCache = new Map<string, string | undefined>();
@@ -174,20 +178,26 @@ const DataCube: DataCubeResolvers = {
   description: ({ description }) => description ?? null,
   source: (dataCube) => "TODO",
   datePublished: ({ datePublished }) => datePublished ?? null,
-  dimensions: async ({ dataCube }) => {
-    const dimensions = getCubeDimensions({ cube: dataCube, locale: "en" });
+  dimensions: async ({ dataCube, locale }) => {
+    const dimensions = getCubeDimensions({
+      cube: dataCube,
+      locale,
+    });
 
     return dimensions.filter((d) => !d.isNumerical);
   },
-  measures: async ({ dataCube }) => {
-    const dimensions = getCubeDimensions({ cube: dataCube, locale: "en" });
+  measures: async ({ dataCube, locale }) => {
+    const dimensions = getCubeDimensions({
+      cube: dataCube,
+      locale,
+    });
 
     return dimensions.filter((d) => d.isNumerical);
   },
-  dimensionByIri: async ({ dataCube }, { iri }) => {
+  dimensionByIri: async ({ dataCube, locale }, { iri }) => {
     const dimension = getCubeDimensions({
       cube: dataCube,
-      locale: "en",
+      locale,
     }).find((d) => iri === d.iri);
 
     return dimension ?? null;
@@ -231,16 +241,15 @@ const DataCube: DataCubeResolvers = {
 const dimensionResolvers = {
   iri: ({ iri }: ResolvedDimension) => iri,
   label: ({ name }: ResolvedDimension) => name,
+  unit: ({ unit }: ResolvedDimension) => unit ?? null,
+  scaleType: ({ scaleType }: ResolvedDimension) => scaleType ?? null,
   values: async ({ dataCube, dimension }: ResolvedDimension) => {
-    const values = await dataCube.componentValues(dimension);
-    return values
-      .map(({ value, label }) => {
-        return {
-          value: value.value,
-          label: label.value !== "" ? label.value : value.value,
-        };
-      })
-      .sort((a, b) => ascending(a.value, b.value));
+    const values = await getCubeDimensionValues({
+      dimension,
+      cube: dataCube,
+    });
+    // TODO min max are now just `values` with 2 elements. Handle properly!
+    return values.sort((a, b) => ascending(a.value, b.value));
   },
 };
 
