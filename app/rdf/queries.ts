@@ -1,9 +1,16 @@
-import { Cube, CubeDimension, Source, View } from "rdf-cube-view-query";
+import {
+  Cube,
+  CubeDimension,
+  CubeSource,
+  LookupSource,
+  Source,
+  View,
+} from "rdf-cube-view-query";
 import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
-import { parseCube, parseCubeDimension } from "./parse";
+import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
 
 const createSource = () =>
@@ -162,19 +169,66 @@ export const getCubeObservations = async ({
   limit?: number;
 }): Promise<{ query: string; observations: $FixMe[] }> => {
   const view = View.fromCube(cube);
-  view.ptr.addOut(ns.cubeView.projection, (projection) => {
-    const order = projection
-      .blankNode()
-      .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
-      .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
 
-    // projection.addList(ns.cubeView.orderBy, order)
-    projection.addOut(ns.cubeView.limit, limit);
-    // projection.addOut(ns.cubeView.offset, offset)
-  });
+  // Only choose dimensions that we really want
+  let dimensions = view.dimensions.filter((d) =>
+    d.cubeDimensions.every(
+      (cd) =>
+        cd.path &&
+        ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
+          cd.path.value ?? ""
+        )
+    )
+  );
 
-  return {
-    query: view.observationsQuery().query.toString(),
-    observations: await view.observations(),
+  /**
+   * Add labels to named dimensions
+   */
+
+  // Find dimensions which are NOT literal
+  const namedDimensions = getCubeDimensions({ cube, locale }).filter(
+    ({ isLiteral }) => !isLiteral
+  );
+
+  const lookupSource = LookupSource.fromSource(cube.source);
+
+  let filterDimensions = [...dimensions];
+  let filters = [];
+  for (const dimension of namedDimensions) {
+    const labelDimension = view.createDimension({
+      source: lookupSource,
+      path: ns.schema.name,
+      join: view.dimension({ cubeDimension: dimension.iri }),
+      as: dimension.iri, // Is it correct to "replace" the original dimension with the same IRI like this?
+    });
+
+    filterDimensions.push(labelDimension);
+    filters.push(labelDimension.filter.lang(getQueryLocales(locale)));
+  }
+
+  const filterView = new View({ dimensions: filterDimensions, filters });
+
+  /**
+   * Add LIMIT to query
+   */
+  if (limit !== undefined) {
+    // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
+    filterView.ptr.addOut(ns.cubeView.projection, (projection: $FixMe) => {
+      // const order = projection
+      //   .blankNode()
+      //   .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
+      //   .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
+
+      // projection.addList(ns.cubeView.orderBy, order)
+      projection.addOut(ns.cubeView.limit, limit);
+      // projection.addOut(ns.cubeView.offset, offset)
+    });
+  }
+
+  const result = {
+    query: filterView.observationsQuery().query.toString(),
+    observations: await filterView.observations(),
   };
+
+  return result;
 };

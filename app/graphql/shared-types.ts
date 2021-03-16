@@ -1,5 +1,5 @@
 import * as RDF from "@zazuko/query-rdf-data-cube";
-import { Cube, CubeDimension } from "rdf-cube-view-query";
+import { Cube, CubeDimension, CubeSource } from "rdf-cube-view-query";
 
 /** Types shared by graphql-codegen and resolver code */
 

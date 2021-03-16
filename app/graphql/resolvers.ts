@@ -207,7 +207,7 @@ const DataCube: DataCubeResolvers = {
     const { query, observations } = await getCubeObservations({
       cube: dataCube,
       locale,
-      limit: 10,
+      limit,
     });
 
     console.log(query);
@@ -299,7 +299,7 @@ export const resolvers: Resolvers = {
     rawData: async ({ query, observations }) => {
       return observations;
     },
-    sparql: async ({ query }) => query.replace(/\n+/g, " "),
+    sparql: async ({ query }) => query.replace(/\n+/g, " ").replace(/"/g, "'"),
   },
   Dimension: {
     __resolveType({ dataKind, scaleType, dataType }) {

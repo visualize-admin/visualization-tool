@@ -23,6 +23,7 @@ declare module "rdf-cube-view-query" {
       status: (values: Term) => $FixMe;
     };
     dimensions: CubeDimension[];
+    source: CubeSource;
   }
 
   export class CubeDimension {
@@ -78,7 +79,7 @@ declare module "rdf-cube-view-query" {
     static fromCube(cube: Cube): View;
     out: AnyPointer;
     dimensions: Dimension[];
-    dimension(options: { cubeDimension: NamedNode }): Dimension | null;
+    dimension(options: { cubeDimension: NamedNode | string }): Dimension | null;
     observationsQuery(): { query: $FixMe; dimensionMap: Map };
     async observations(): Promise<Record<string, Literal | NamedNode>[]>;
     addDimension(dimension: Dimension): View;

@@ -17,7 +17,7 @@ const cubeSchema = z.object({
 
 const cubesSchema = z.array(cubeSchema);
 
-const getQueryLocales = (locale: string): string[] => [
+export const getQueryLocales = (locale: string): string[] => [
   locale,
   ...locales.filter((l) => l !== locale),
   "*",
