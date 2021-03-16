@@ -4,6 +4,7 @@ import {
   interpolateOranges,
   range,
   scaleBand,
+  ScaleLinear,
   scaleLinear,
   select,
   Selection,
@@ -46,11 +47,10 @@ const DiscreteColorLegend = () => {
     fontFamily,
     labelFontSize,
   } = useChartTheme();
-
-  const { dataDomain, colorScale, getValue } = useChartState() as MapState;
-  const [state] = useInteraction();
+  const { dataDomain, colorScale } = useChartState() as MapState;
   const formatNumber = useFormatNumber();
   const width = useWidth();
+
   const legendWidth = Math.min(width, WIDTH);
   const margins = {
     top: 6,
@@ -94,13 +94,7 @@ const DiscreteColorLegend = () => {
       height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
     >
       <g transform={`translate(${margins.left}, ${0})`}>
-        {state.interaction.d && state.interaction.visible && (
-          <polygon
-            fill={labelColor}
-            points="-4,0 4,0 0,5"
-            transform={`translate(${scale(getValue(state.interaction.d))}, 0)`}
-          />
-        )}
+        <DataPointIndicator scale={scale} />
       </g>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
         {colorScale.range().map((c, i) => (
@@ -125,16 +119,11 @@ const DiscreteColorLegend = () => {
 };
 
 const ContinuousColorLegend = () => {
-  const [state] = useInteraction();
-  const { palette, dataDomain, getValue } = useChartState() as MapState;
-  const {
-    legendLabelColor,
-    labelColor,
-    labelFontSize,
-    fontFamily,
-  } = useChartTheme();
+  const { palette, dataDomain } = useChartState() as MapState;
+  const { legendLabelColor, labelFontSize, fontFamily } = useChartTheme();
   const formatNumber = useFormatNumber();
   const width = useWidth();
+
   const legendWidth = Math.min(width, WIDTH);
   const margins = {
     top: 6,
@@ -150,13 +139,7 @@ const ContinuousColorLegend = () => {
       height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
     >
       <g transform={`translate(${margins.left}, ${0})`}>
-        {state.interaction.d && state.interaction.visible && (
-          <polygon
-            fill={labelColor}
-            points="-4,0 4,0 0,5"
-            transform={`translate(${scale(getValue(state.interaction.d))}, 0)`}
-          />
-        )}
+        <DataPointIndicator scale={scale} />
       </g>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
         <foreignObject
@@ -202,7 +185,28 @@ const ContinuousColorLegend = () => {
     </svg>
   );
 };
-
+const DataPointIndicator = ({
+  scale,
+}: {
+  scale: ScaleLinear<number, number>;
+}) => {
+  const [state] = useInteraction();
+  const { getValue } = useChartState() as MapState;
+  const { labelColor } = useChartTheme();
+  return (
+    <>
+      {state.interaction.d &&
+        state.interaction.visible &&
+        !isNaN(getValue(state.interaction.d)) && (
+          <polygon
+            fill={labelColor}
+            points="-4,0 4,0 0,5"
+            transform={`translate(${scale(getValue(state.interaction.d))}, 0)`}
+          />
+        )}
+    </>
+  );
+};
 const ColorRamp = ({
   colorInterpolator = interpolateOranges,
   nbSteps,
