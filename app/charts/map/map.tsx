@@ -1,5 +1,6 @@
 import { HoverObject, MapController, WebMercatorViewport } from "@deck.gl/core";
 import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
+import { FillStyleExtension } from "@deck.gl/extensions";
 
 import { TileLayer, MVTLayer } from "@deck.gl/geo-layers";
 import DeckGL from "@deck.gl/react";
@@ -176,7 +177,9 @@ export const MapComponent = () => {
           autoHighlight={true}
           getFillColor={(d: $FixMe) => {
             const obs = data.find((x: Observation) => x.id === d.id);
-            return obs ? getColor(getValue(obs)) : [0, 0, 0, 20];
+            return obs && !isNaN(getValue(obs))
+              ? getColor(getValue(obs))
+              : [204, 204, 204, 100];
           }}
           onHover={({ x, y, object }: HoverObject) => {
             if (object && object.id) {
@@ -196,10 +199,21 @@ export const MapComponent = () => {
               });
             }
           }}
+          extensions={[new FillStyleExtension({ pattern: true })]}
           highlightColor={[0, 0, 0, 50]}
           getRadius={100}
           getLineWidth={1}
-          updateTriggers={{ getFillColor: getColor }}
+          updateTriggers={{ getFillColor: getColor, getFillPattern: data }}
+          fillPatternMask={true}
+          fillPatternAtlas="/static/sprite/map.png"
+          fillPatternMapping="/static/sprite/pattern.json"
+          getFillPattern={(d: $FixMe) => {
+            const obs = data.find((x: Observation) => x.id === d.id);
+            obs && isNaN(getValue(obs)) && console.log({ obs });
+            return obs && isNaN(getValue(obs)) ? "p-5" : "p-1";
+          }}
+          getFillPatternScale={200}
+          getFillPatternOffset={[0, 0]}
         />
         <MVTLayer
           data="https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf"
