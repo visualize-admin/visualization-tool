@@ -15,7 +15,7 @@ import { MapState } from "./map-state";
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
-  zoom: 7,
+  zoom: 5,
   maxZoom: 16,
   minZoom: 2,
   pitch: 0,
