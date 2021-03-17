@@ -377,28 +377,28 @@ export const getPalette = (palette?: string): ReadonlyArray<string> => {
   }
 };
 export const getSingleHueSequentialPalette = ({
-  nbSteps = 5,
+  nbClass = 5,
   palette,
 }: {
-  nbSteps: number;
+  nbClass: number;
   palette?: string;
 }): ReadonlyArray<string> => {
   switch (palette) {
     case "blues":
-      return schemeBlues[nbSteps];
+      return schemeBlues[nbClass];
     case "greens":
-      return schemeGreens[nbSteps];
+      return schemeGreens[nbClass];
     case "oranges":
-      return schemeOranges[nbSteps];
+      return schemeOranges[nbClass];
     case "greys":
-      return schemeGreys[nbSteps];
+      return schemeGreys[nbClass];
     case "reds":
-      return schemeReds[nbSteps];
+      return schemeReds[nbClass];
     case "purples":
-      return schemePurples[nbSteps];
+      return schemePurples[nbClass];
 
     default:
-      return schemeOranges[nbSteps];
+      return schemeOranges[nbClass];
   }
 };
 export const getColorInterpolator = (

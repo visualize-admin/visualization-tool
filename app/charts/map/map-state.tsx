@@ -5,12 +5,12 @@ import {
   ScaleLinear,
   scaleLinear,
   ScalePower,
+  ScaleQuantile,
   scaleQuantile,
   ScaleQuantize,
   scaleQuantize,
   scaleSqrt,
 } from "d3";
-import { getVariableValues } from "graphql/execution/values";
 import { ReactNode, useCallback } from "react";
 import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
 import {
@@ -18,7 +18,7 @@ import {
   MapFields,
   PaletteType,
 } from "../../configurator/config-types";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -43,9 +43,12 @@ export interface MapState {
     getValue: (d: Observation) => number;
     paletteType: PaletteType;
     palette: string;
-    nbSteps: number;
+    nbClass: number;
     dataDomain: [number, number];
-    colorScale: ScaleQuantize<string> | ScaleLinear<string>;
+    colorScale:
+      | ScaleQuantize<string>
+      | ScaleQuantile<string>
+      | ScaleLinear<string, string>;
   };
   baseLayer: MapBaseLayer;
   symbolLayer: {
@@ -60,18 +63,18 @@ const getColorScale = ({
   getValue,
   data,
   dataDomain,
-  nbSteps,
+  nbClass,
 }: {
   paletteType: PaletteType;
   palette: string;
   getValue: (x: Observation) => number;
   data: Observation[];
   dataDomain: [number, number];
-  nbSteps: number;
+  nbClass: number;
 }) => {
   const paletteDomain = getSingleHueSequentialPalette({
     palette,
-    nbSteps: 9,
+    nbClass: 9,
   });
 
   switch (paletteType) {
@@ -83,11 +86,11 @@ const getColorScale = ({
     case "discrete":
       return scaleQuantize<string>()
         .domain(dataDomain)
-        .range(getSingleHueSequentialPalette({ palette, nbSteps }));
+        .range(getSingleHueSequentialPalette({ palette, nbClass }));
     case "quantile":
       return scaleQuantile<string>()
         .domain(data.map((d) => getValue(d)))
-        .range(getSingleHueSequentialPalette({ palette, nbSteps }));
+        .range(getSingleHueSequentialPalette({ palette, nbClass }));
     default:
       return scaleLinear<string>()
         .domain(dataDomain)
@@ -106,7 +109,7 @@ const useMapState = ({
 }): MapState => {
   const width = useWidth();
 
-  const { palette, nbSteps, paletteType } = fields["areaLayer"];
+  const { palette, nbClass, paletteType } = fields["areaLayer"];
   const getValue = useCallback(
     (d: Observation): number => +d[fields["areaLayer"].componentIri],
     [fields["areaLayer"].componentIri]
@@ -132,7 +135,7 @@ const useMapState = ({
     getValue,
     data,
     dataDomain,
-    nbSteps,
+    nbClass,
   });
   const getColor = (v: number | undefined) => {
     // FIXME: make this function functional
@@ -180,7 +183,7 @@ const useMapState = ({
       getValue,
       paletteType,
       palette,
-      nbSteps,
+      nbClass: nbClass,
       dataDomain,
       colorScale,
     },

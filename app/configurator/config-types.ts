@@ -446,7 +446,7 @@ const MapAreaLayer = t.type({
   componentIri: t.string,
   palette: t.string,
   paletteType: PaletteType,
-  nbSteps: t.number,
+  nbClass: t.number,
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 

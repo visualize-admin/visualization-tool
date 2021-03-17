@@ -18,8 +18,8 @@ export const PrototypeRightControls = ({
   setPalette,
   paletteType,
   setPaletteType,
-  nbSteps,
-  setNbSteps,
+  nbClass,
+  setNbClass,
   symbolMeasure,
   setSymbolMeasure,
 }: {
@@ -33,8 +33,8 @@ export const PrototypeRightControls = ({
   setPalette: (x: string) => void;
   paletteType: string;
   setPaletteType: (x: PaletteType) => void;
-  nbSteps: number;
-  setNbSteps: (x: number) => void;
+  nbClass: number;
+  setNbClass: (x: number) => void;
   symbolMeasure: string;
   setSymbolMeasure: (x: string) => void;
 }) => {
@@ -150,9 +150,9 @@ export const PrototypeRightControls = ({
             />
             <Select
               label={"Anzahl Schritte"}
-              id={"nbSteps"}
-              name={"nbSteps"}
-              value={`${nbSteps}`}
+              id={"nbClass"}
+              name={"nbClass"}
+              value={`${nbClass}`}
               disabled={!activeLayers.areaLayer || paletteType === "continuous"}
               options={[
                 { value: "3", label: "3" },
@@ -163,7 +163,7 @@ export const PrototypeRightControls = ({
                 { value: "8", label: "8" },
                 { value: "9", label: "9" },
               ]}
-              onChange={(e) => setNbSteps(+e.currentTarget.value)}
+              onChange={(e) => setNbClass(+e.currentTarget.value)}
             ></Select>
           </Box>
         </ControlSection>

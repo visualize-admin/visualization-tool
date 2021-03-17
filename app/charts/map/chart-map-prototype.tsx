@@ -160,7 +160,7 @@ export const ChartMapPrototype = ({
   });
   const [activeControl, setActiveControl] = useState<Control>("baseLayer");
   const [palette, setPalette] = useState("oranges");
-  const [nbSteps, setNbSteps] = useState(5);
+  const [nbClass, setNbClass] = useState(5);
   const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
   const [measure, setMeasure] = useState(measures[0].iri);
   const [symbolMeasure, setSymbolMeasure] = useState(measures[0].iri);
@@ -292,7 +292,7 @@ export const ChartMapPrototype = ({
                   show: activeLayers["areaLayer"],
                   label: { componentIri: attributes[0].iri },
                   palette,
-                  nbSteps,
+                  nbClass,
                   paletteType,
                 },
                 symbolLayer: {
@@ -330,8 +330,8 @@ export const ChartMapPrototype = ({
           setPalette={setPalette}
           paletteType={paletteType}
           setPaletteType={setPaletteType}
-          nbSteps={nbSteps}
-          setNbSteps={setNbSteps}
+          nbClass={nbClass}
+          setNbClass={setNbClass}
           symbolMeasure={symbolMeasure}
           setSymbolMeasure={setSymbolMeasure}
         />
