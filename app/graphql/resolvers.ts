@@ -26,74 +26,74 @@ import {
 } from "./resolver-types";
 import { ResolvedDimension } from "./shared-types";
 
-/** Cache value data type per Dimension IRI */
-let dataTypeCache = new Map<string, string | undefined>();
-const getDataTypeOfDimension = async (
-  cube: RDFDataCube,
-  dimension: RDFDimension
-) => {
-  if (dataTypeCache.has(dimension.iri.value)) {
-    return dataTypeCache.get(dimension.iri.value);
-  }
+// /** Cache value data type per Dimension IRI */
+// let dataTypeCache = new Map<string, string | undefined>();
+// const getDataTypeOfDimension = async (
+//   cube: RDFDataCube,
+//   dimension: RDFDimension
+// ) => {
+//   if (dataTypeCache.has(dimension.iri.value)) {
+//     return dataTypeCache.get(dimension.iri.value);
+//   }
 
-  const [exampleValue] = await cube
-    .query()
-    .select({ d: dimension })
-    .limit(1)
-    .execute();
+//   const [exampleValue] = await cube
+//     .query()
+//     .select({ d: dimension })
+//     .limit(1)
+//     .execute();
 
-  const dataType =
-    exampleValue.d.value.termType === "Literal"
-      ? exampleValue.d.value.datatype.value
-      : undefined;
+//   const dataType =
+//     exampleValue.d.value.termType === "Literal"
+//       ? exampleValue.d.value.datatype.value
+//       : undefined;
 
-  dataTypeCache.set(dimension.iri.value, dataType);
+//   dataTypeCache.set(dimension.iri.value, dataType);
 
-  return dataType;
-};
+//   return dataType;
+// };
 
-const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
-  const dimensions = await cube.dimensions();
-  const dimensionsByIri = dimensions.reduce<
-    Record<string, RDFDimension | undefined>
-  >((acc, d) => {
-    acc[d.iri.value] = d;
-    return acc;
-  }, {});
+// const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
+//   const dimensions = await cube.dimensions();
+//   const dimensionsByIri = dimensions.reduce<
+//     Record<string, RDFDimension | undefined>
+//   >((acc, d) => {
+//     acc[d.iri.value] = d;
+//     return acc;
+//   }, {});
 
-  const filterEntries = await Promise.all(
-    Object.entries(filters).map(async ([dimIri, filter]) => {
-      const dimension = dimensionsByIri[dimIri];
+//   const filterEntries = await Promise.all(
+//     Object.entries(filters).map(async ([dimIri, filter]) => {
+//       const dimension = dimensionsByIri[dimIri];
 
-      if (!dimension) {
-        return [];
-      }
+//       if (!dimension) {
+//         return [];
+//       }
 
-      const dataType = await getDataTypeOfDimension(cube, dimension);
+//       const dataType = await getDataTypeOfDimension(cube, dimension);
 
-      const selectedValues =
-        filter.type === "single"
-          ? [dataType ? literal(filter.value, dataType) : filter.value]
-          : filter.type === "multi"
-          ? // If values is an empty object, we filter by something that doesn't exist
-            Object.keys(filter.values).length > 0
-            ? Object.entries(filter.values).flatMap(([value, selected]) =>
-                selected ? [dataType ? literal(value, dataType) : value] : []
-              )
-            : ["EMPTY_VALUE"]
-          : [];
+//       const selectedValues =
+//         filter.type === "single"
+//           ? [dataType ? literal(filter.value, dataType) : filter.value]
+//           : filter.type === "multi"
+//           ? // If values is an empty object, we filter by something that doesn't exist
+//             Object.keys(filter.values).length > 0
+//             ? Object.entries(filter.values).flatMap(([value, selected]) =>
+//                 selected ? [dataType ? literal(value, dataType) : value] : []
+//               )
+//             : ["EMPTY_VALUE"]
+//           : [];
 
-      // FIXME: why doesn't .equals work for date types but .in does?
-      // Temporary solution: filter everything usin .in!
-      // return selectedValues.length === 1
-      //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
-      //   :
-      return selectedValues.length > 0 ? [dimension.in(selectedValues)] : [];
-    })
-  );
+//       // FIXME: why doesn't .equals work for date types but .in does?
+//       // Temporary solution: filter everything usin .in!
+//       // return selectedValues.length === 1
+//       //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
+//       //   :
+//       return selectedValues.length > 0 ? [dimension.in(selectedValues)] : [];
+//     })
+//   );
 
-  return ([] as $Unexpressable[]).concat(...filterEntries);
-};
+//   return ([] as $Unexpressable[]).concat(...filterEntries);
+// };
 
 const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order }) => {
@@ -207,7 +207,8 @@ const DataCube: DataCubeResolvers = {
     const { query, observations } = await getCubeObservations({
       cube: dataCube,
       locale,
-      limit,
+      filters: filters ?? undefined,
+      limit: limit ?? undefined,
     });
 
     console.log(query);

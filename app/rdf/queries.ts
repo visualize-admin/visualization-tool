@@ -1,11 +1,13 @@
 import {
   Cube,
   CubeDimension,
-  CubeSource,
+  Filter,
   LookupSource,
   Source,
   View,
 } from "rdf-cube-view-query";
+import rdf from "rdf-ext";
+import { Filters } from "../configurator";
 import { parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
@@ -162,16 +164,18 @@ const getCubeDimensionValuesWithLabels = async ({
 export const getCubeObservations = async ({
   cube,
   locale,
+  filters,
   limit,
 }: {
   cube: Cube;
   locale: string;
+  filters?: Filters;
   limit?: number;
 }): Promise<{ query: string; observations: $FixMe[] }> => {
-  const view = View.fromCube(cube);
+  const cubeView = View.fromCube(cube);
 
   // Only choose dimensions that we really want
-  let dimensions = view.dimensions.filter((d) =>
+  let observationDimensions = cubeView.dimensions.filter((d) =>
     d.cubeDimensions.every(
       (cd) =>
         cd.path &&
@@ -180,6 +184,12 @@ export const getCubeObservations = async ({
         )
     )
   );
+
+  let observationFilters = filters
+    ? buildFilters({ cube, view: cubeView, filters })
+    : [];
+
+  // let observationFilters = [];
 
   /**
    * Add labels to named dimensions
@@ -192,43 +202,112 @@ export const getCubeObservations = async ({
 
   const lookupSource = LookupSource.fromSource(cube.source);
 
-  let filterDimensions = [...dimensions];
-  let filters = [];
   for (const dimension of namedDimensions) {
-    const labelDimension = view.createDimension({
+    const labelDimension = cubeView.createDimension({
       source: lookupSource,
       path: ns.schema.name,
-      join: view.dimension({ cubeDimension: dimension.iri }),
+      join: cubeView.dimension({ cubeDimension: dimension.iri }),
       as: dimension.iri, // Is it correct to "replace" the original dimension with the same IRI like this?
     });
 
-    filterDimensions.push(labelDimension);
-    filters.push(labelDimension.filter.lang(getQueryLocales(locale)));
+    observationDimensions.push(labelDimension);
+    observationFilters.push(
+      labelDimension.filter.lang(getQueryLocales(locale))
+    );
   }
 
-  const filterView = new View({ dimensions: filterDimensions, filters });
+  const observationsView = new View({
+    dimensions: observationDimensions,
+    filters: observationFilters,
+  });
 
   /**
    * Add LIMIT to query
    */
   if (limit !== undefined) {
     // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
-    filterView.ptr.addOut(ns.cubeView.projection, (projection: $FixMe) => {
-      // const order = projection
-      //   .blankNode()
-      //   .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
-      //   .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
+    observationsView.ptr.addOut(
+      ns.cubeView.projection,
+      (projection: $FixMe) => {
+        // const order = projection
+        //   .blankNode()
+        //   .addOut(ns.cubeView.dimension, view.dimensions[0].ptr)
+        //   .addOut(ns.cubeView.direction, ns.cubeView.Ascending);
 
-      // projection.addList(ns.cubeView.orderBy, order)
-      projection.addOut(ns.cubeView.limit, limit);
-      // projection.addOut(ns.cubeView.offset, offset)
-    });
+        // projection.addList(ns.cubeView.orderBy, order)
+        projection.addOut(ns.cubeView.limit, limit);
+        // projection.addOut(ns.cubeView.offset, offset)
+      }
+    );
   }
 
   const result = {
-    query: filterView.observationsQuery().query.toString(),
-    observations: await filterView.observations(),
+    query: observationsView.observationsQuery().query.toString(),
+    observations: await observationsView.observations(),
   };
 
   return result;
+};
+
+const buildFilters = ({
+  cube,
+  view,
+  filters,
+}: {
+  cube: Cube;
+  view: View;
+  filters: Filters;
+}): Filter[] => {
+  const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
+    const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);
+    if (!cubeDimension) {
+      console.log(`No cube dimension ${dimIri}`);
+      return [];
+    }
+    const dimension = view.dimension({ cubeDimension: dimIri });
+
+    if (!dimension) {
+      return [];
+    }
+
+    const dataType = cubeDimension.datatype;
+
+    const selectedValues =
+      filter.type === "single"
+        ? [
+            dimension.filter.eq(
+              dataType
+                ? rdf.literal(filter.value, dataType)
+                : rdf.namedNode(filter.value)
+            ),
+          ]
+        : filter.type === "multi"
+        ? // If values is an empty object, we filter by something that doesn't exist
+          [
+            dimension.filter.in(
+              Object.keys(filter.values).length > 0
+                ? Object.entries(filter.values).flatMap(([value, selected]) =>
+                    selected
+                      ? [
+                          dataType
+                            ? rdf.literal(value, dataType)
+                            : rdf.namedNode(value),
+                        ]
+                      : []
+                  )
+                : [rdf.namedNode("EMPTY_VALUE")]
+            ),
+          ]
+        : [];
+
+    // FIXME: why doesn't .equals work for date types but .in does?
+    // Temporary solution: filter everything usin .in!
+    // return selectedValues.length === 1
+    //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
+    //   :
+    // return selectedValues.length > 0 ? [dimension.in(selectedValues)] : [];
+    return selectedValues;
+  });
+
+  return filterEntries;
 };
