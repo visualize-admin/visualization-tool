@@ -8,7 +8,7 @@ import {
 } from "topojson-client";
 import { Select } from "../../components/form";
 import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { MapFields } from "../../configurator";
+import { MapFields, PaletteType } from "../../configurator";
 import { ControlSection } from "../../configurator/components/chart-controls/section";
 import { Observation } from "../../domain/data";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
@@ -40,7 +40,6 @@ type DataState =
       state: "loaded";
       ds: Observation[];
     };
-type PaletteType = "continuous" | "discrete";
 
 export const ChartMapVisualization = () => {
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
