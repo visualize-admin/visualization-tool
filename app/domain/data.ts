@@ -5,10 +5,7 @@ import {
 } from "../graphql/query-hooks";
 import { DimensionType } from "../charts/chart-config-ui-options";
 
-export type RawObservationValue = {
-  value: Literal | NamedNode;
-  label?: Literal;
-};
+export type RawObservationValue = Literal | NamedNode;
 
 export type RawObservation = Record<string, RawObservationValue>;
 
@@ -62,7 +59,10 @@ const parseRDFLiteral = (value: Literal): ObservationValue => {
 export const parseObservationValue = ({
   label,
   value,
-}: RawObservationValue): ObservationValue => {
+}: {
+  label?: Literal;
+  value: RawObservationValue;
+}): ObservationValue => {
   // Prefer the label – if it's not empty (which is currently the case for years)
   if (label && label.value !== "") {
     return label.value;
@@ -76,17 +76,6 @@ export const parseObservationValue = ({
   // Return the IRI of named nodes
   return value.value;
 };
-
-export const parseObservations = (
-  observations: RawObservation[]
-): Observation[] =>
-  observations.map((d) => {
-    let parsedOperation: Observation = {};
-    for (const [k, v] of Object.entries(d)) {
-      parsedOperation[k] = parseObservationValue(v);
-    }
-    return parsedOperation;
-  });
 
 /**
  * @fixme use metadata to filter time dimension!

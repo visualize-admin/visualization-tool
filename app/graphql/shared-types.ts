@@ -1,21 +1,47 @@
-import * as RDF from "@zazuko/query-rdf-data-cube";
+import { Cube, CubeDimension } from "rdf-cube-view-query";
+import { Literal, NamedNode } from "rdf-js";
+import { Observation } from "../domain/data";
 
 /** Types shared by graphql-codegen and resolver code */
 
-export type ResolvedDataCube = RDF.DataCube;
+export type ResolvedDataCube = {
+  dataCube: Cube;
+  locale: string;
+
+  iri: string;
+  identifier: string;
+  title: string;
+  description: string;
+  datePublished?: string;
+  status?: string;
+  theme?: string;
+  versionHistory?: string;
+  contactPoint?: string;
+  landingPage?: string;
+  keywords?: string[];
+};
 
 export type ResolvedDimension = {
-  dataCube: RDF.DataCube;
-  dimension: RDF.Dimension;
+  dataCube: Cube;
+  dimension: CubeDimension;
+
+  iri: string;
+  isLiteral: boolean;
+  isNumerical: boolean;
+  unit?: string;
+  dataType?: string;
+  dataKind?: "Time" | "GeoCoordinates" | "GeoShape";
+  scaleType?: "Nominal" | "Ordinal" | "Ratio" | "Interval";
+  name: string;
+
+  // dimension: RDF.Dimension;
 };
 
-export type ResolvedMeasure = {
-  dataCube: RDF.DataCube;
-  measure: RDF.Measure;
-};
+export type ResolvedMeasure = ResolvedDimension;
 
 export type ResolvedObservationsQuery = {
-  dataCube: RDF.DataCube;
-  query: RDF.Query;
-  selectedFields: [string, RDF.Dimension | RDF.Measure | RDF.Attribute][];
+  dataCube: Cube;
+  query: string;
+  observations: Observation[];
+  observationsRaw: Record<string, Literal | NamedNode>[];
 };

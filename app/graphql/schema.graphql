@@ -17,7 +17,7 @@ type DataCube {
   contact: String
   source: String
   description: String
-  dateCreated: String
+  datePublished: String
   observations(
     limit: Int
     measures: [String!]
@@ -41,35 +41,45 @@ interface Component {
 interface Dimension {
   iri: String!
   label: String!
+  unit: String
+  scaleType: String
   values: [DimensionValue!]!
 }
 
 type NominalDimension implements Component & Dimension {
   iri: String!
   label: String!
+  unit: String
+  scaleType: String
+
   values: [DimensionValue!]!
 }
 
 type OrdinalDimension implements Component & Dimension {
   iri: String!
   label: String!
+  unit: String
+  scaleType: String
+
   values: [DimensionValue!]!
 }
 
 type TemporalDimension implements Component & Dimension {
   iri: String!
   label: String!
+  unit: String
+  scaleType: String
+
   values: [DimensionValue!]!
 }
 
-type Measure implements Component {
+type Measure implements Component & Dimension {
   iri: String!
   label: String!
-}
+  unit: String
+  scaleType: String
 
-type Attribute implements Component {
-  iri: String!
-  label: String!
+  values: [DimensionValue!]!
 }
 
 type DataCubeResult {
