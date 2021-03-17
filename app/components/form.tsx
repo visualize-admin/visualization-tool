@@ -80,7 +80,20 @@ export const Radio = ({
           disabled={disabled}
           size={20}
           sx={{
-            color: checked && !disabled ? "primary" : "monochrome500",
+            color:
+              checked && !disabled
+                ? "primary"
+                : checked && disabled
+                ? "primaryDisabled"
+                : "monochrome500",
+            "> *": {
+              fill:
+                checked && !disabled
+                  ? "primary"
+                  : checked && disabled
+                  ? "primaryDisabled"
+                  : "monochrome500",
+            },
           }}
         />
       </Label>

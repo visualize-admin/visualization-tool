@@ -429,23 +429,38 @@ export type TableConfig = t.TypeOf<typeof TableConfig>;
 const PaletteType = t.union([t.literal("continuous"), t.literal("discrete")]);
 export type PaletteType = t.TypeOf<typeof PaletteType>;
 
-const MapFields = t.intersection([
-  t.type({
-    x: GenericField,
-    y: t.type({
-      componentIri: t.string,
-      palette: t.string,
-      paletteType: PaletteType,
-      nbSteps: t.number,
-    }),
-  }),
+const MapBaseLayer = t.type({
+  componentIri: t.string, // FIXME: we don't need this
+  relief: t.boolean,
+  lakes: t.boolean,
+});
+export type MapBaseLayer = t.TypeOf<typeof MapBaseLayer>;
 
-  t.partial({
-    segment: t.type({
-      componentIri: t.string,
-    }),
-  }),
-]);
+const MapAreaLayer = t.type({
+  show: t.boolean,
+  label: GenericField,
+  componentIri: t.string,
+  palette: t.string,
+  paletteType: PaletteType,
+  nbSteps: t.number,
+});
+export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
+
+const MapSymbolLayer = t.type({
+  show: t.boolean,
+  componentIri: t.string,
+});
+export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
+
+const MapFields = t.type({
+  baseLayer: MapBaseLayer,
+  areaLayer: MapAreaLayer,
+  symbolLayer: MapSymbolLayer,
+  x: GenericField,
+  y: GenericField,
+  segment: GenericField,
+});
+
 const MapConfig = t.type(
   {
     chartType: t.literal("map"),

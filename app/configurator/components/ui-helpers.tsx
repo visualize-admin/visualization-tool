@@ -146,6 +146,14 @@ export const useFormatNumber = () => {
   }, [locale]);
   return formatter;
 };
+export const useFormatInteger = () => {
+  const locale = useLocale();
+  const formatter = useMemo(() => {
+    const { format } = getD3FormatLocale(locale);
+    return format(",.0~f");
+  }, [locale]);
+  return formatter;
+};
 
 export const getIconName = (name: string): IconName => {
   switch (name) {

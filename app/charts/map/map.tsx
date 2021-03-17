@@ -1,7 +1,9 @@
 import { HoverObject, MapController, WebMercatorViewport } from "@deck.gl/core";
-import { GeoJsonLayer } from "@deck.gl/layers";
+import { FillStyleExtension } from "@deck.gl/extensions";
+import { TileLayer } from "@deck.gl/geo-layers";
+import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Box, Button } from "theme-ui";
 import { Observation } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
@@ -9,10 +11,18 @@ import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { MapState } from "./map-state";
 
+type TileData = {
+  z: number;
+  x: number;
+  y: number;
+  url: string;
+  bbox: { west: number; north: number; east: number; south: number };
+  signal: { aborted: boolean };
+};
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
-  zoom: 7,
+  zoom: 5,
   maxZoom: 16,
   minZoom: 2,
   pitch: 0,
@@ -76,11 +86,11 @@ const constrainZoom = (
 
 export const MapComponent = () => {
   const {
-    bounds,
     data,
+    baseLayer,
     features,
-    getColor,
-    getValue,
+    areaLayer: { showAreaLayer, getColor, getValue },
+    symbolLayer: { showSymbolLayer, radiusScale, getRadius },
   } = useChartState() as MapState;
   const [, dispatch] = useInteraction();
 
@@ -116,6 +126,7 @@ export const MapComponent = () => {
     };
     setViewState(constrainZoom(newViewState, CH_BBOX));
   };
+
   return (
     <Box>
       <Box
@@ -134,74 +145,144 @@ export const MapComponent = () => {
         <ZoomButton label="-" iconName="minus" handleClick={zoomOut} />
       </Box>
       <DeckGL
-        // initialViewState={INITIAL_VIEW_STATE}
         viewState={viewState}
         onViewStateChange={onViewStateChange}
         onResize={onResize}
-        // controller={true}
         controller={{ type: MapController }}
       >
-        <GeoJsonLayer
-          id="cantons"
-          data={features.cantons}
-          pickable={true}
-          stroked={true}
-          filled={true}
-          extruded={false}
-          autoHighlight={true}
-          getFillColor={(d: $FixMe) => {
-            const obs = data.find((x: Observation) => x.id === d.id);
-            return obs ? getColor(getValue(obs)) : [0, 0, 0, 20];
-          }}
-          onHover={({ x, y, object }: HoverObject) => {
-            if (object && object.id) {
-              dispatch({
-                type: "INTERACTION_UPDATE",
-                value: {
-                  interaction: {
-                    visible: true,
-                    mouse: { x, y },
-                    d: data.find((x: Observation) => x.id === object.id),
-                  },
-                },
-              });
-            } else {
-              dispatch({
-                type: "INTERACTION_HIDE",
-              });
+        {baseLayer.relief && (
+          <TileLayer
+            getTileData={({ z, x, y }: TileData) =>
+              `https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/${z}/${x}/${y}.png`
             }
-          }}
-          highlightColor={[0, 0, 0, 50]}
-          getRadius={100}
-          getLineWidth={1}
-          updateTriggers={{ getFillColor: getColor }}
-        />
-        {/* <GeoJsonLayer
-          id="cantons"
-          data={features.cantonMesh}
-          pickable={false}
-          stroked={true}
-          filled={false}
-          extruded={false}
-          lineWidthMinPixels={1.2}
-          lineWidthMaxPixels={3.6}
-          getLineWidth={200}
-          lineMiterLimit={1}
-          getLineColor={[255, 255, 255]}
+            pickable={true}
+            highlightColor={[60, 60, 60, 40]}
+            minZoom={2}
+            maxZoom={16}
+            tileSize={256}
+            renderSubLayers={(props: { tile: TileData; data: $FixMe }) => {
+              const {
+                bbox: { west, south, east, north },
+              } = props.tile;
+              return [
+                new BitmapLayer(props, {
+                  data: null,
+                  image: props.data,
+                  bounds: [west, south, east, north],
+                }),
+              ];
+            }}
+          />
+        )}
+        {/* <MVTLayer
+          data="https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf"
+          getLineColor={[192, 192, 192]}
+          getFillColor={[140, 170, 180, 0.1]}
+          lineWidthMinPixels={1}
         /> */}
-        <GeoJsonLayer
-          id="lakes"
-          data={features.lakes}
-          pickable={false}
-          stroked={true}
-          filled={true}
-          extruded={false}
-          lineWidthMinPixels={0.5}
-          lineWidthMaxPixels={1}
-          getLineWidth={100}
-          getFillColor={[102, 175, 233]}
-          getLineColor={[255, 255, 255]}
-        />
+
+        {showAreaLayer && (
+          <>
+            <GeoJsonLayer
+              id="cantons"
+              data={features.cantons}
+              pickable={true}
+              stroked={true}
+              filled={true}
+              extruded={false}
+              autoHighlight={true}
+              getFillColor={(d: $FixMe) => {
+                const obs = data.find((x: Observation) => x.id === d.id);
+                return obs && !isNaN(getValue(obs))
+                  ? getColor(getValue(obs))
+                  : [204, 204, 204, 100];
+              }}
+              onHover={({ x, y, object }: HoverObject) => {
+                if (object && object.id) {
+                  dispatch({
+                    type: "INTERACTION_UPDATE",
+                    value: {
+                      interaction: {
+                        visible: true,
+                        mouse: { x, y },
+                        d: data.find((x: Observation) => x.id === object.id),
+                      },
+                    },
+                  });
+                } else {
+                  dispatch({
+                    type: "INTERACTION_HIDE",
+                  });
+                }
+              }}
+              extensions={[new FillStyleExtension({ pattern: true })]}
+              highlightColor={[0, 0, 0, 50]}
+              getRadius={100}
+              getLineWidth={1}
+              updateTriggers={{ getFillColor: getColor, getFillPattern: data }}
+              fillPatternMask={true}
+              fillPatternAtlas="/static/sprite/sprite.png"
+              fillPatternMapping="/static/sprite/pattern.json"
+              getFillPattern={(d: $FixMe) => {
+                const obs = data.find((x: Observation) => x.id === d.id);
+                return obs && isNaN(getValue(obs)) ? "hatch" : "fill";
+              }}
+              getFillPatternScale={150}
+              getFillPatternOffset={[0, 0]}
+            />
+            <GeoJsonLayer
+              id="cantons-mesh"
+              data={features.cantonMesh}
+              pickable={false}
+              stroked={true}
+              filled={false}
+              extruded={false}
+              lineWidthMinPixels={1.2}
+              lineWidthMaxPixels={3.6}
+              getLineWidth={200}
+              lineMiterLimit={1}
+              getLineColor={[255, 255, 255]}
+            />
+          </>
+        )}
+
+        {baseLayer.lakes && (
+          <GeoJsonLayer
+            id="lakes"
+            data={features.lakes}
+            pickable={false}
+            stroked={true}
+            filled={true}
+            extruded={false}
+            lineWidthMinPixels={0.5}
+            lineWidthMaxPixels={1}
+            getLineWidth={100}
+            getFillColor={[102, 175, 233]}
+            getLineColor={[255, 255, 255]}
+          />
+        )}
+        {showSymbolLayer && (
+          <ScatterplotLayer
+            id="cantons-centroids"
+            data={features.cantonCentroids}
+            pickable={true}
+            opacity={0.8}
+            stroked={true}
+            filled={true}
+            radiusScale={10}
+            radiusMinPixels={radiusScale.range()[0]}
+            radiusMaxPixels={radiusScale.range()[1]}
+            lineWidthMinPixels={1}
+            getPosition={(d: $FixMe) => d.coordinates}
+            getRadius={(d: $FixMe) => {
+              const obs = data.find((x: Observation) => x.id === d.id);
+              return obs ? radiusScale(getRadius(obs)) : 0;
+            }}
+            getFillColor={(d: $FixMe) => [0, 102, 153]}
+            getLineColor={(d: $FixMe) => [255, 255, 255]}
+            updateTriggers={{ getRadius: [data, getRadius] }}
+          />
+        )}
       </DeckGL>
     </Box>
   );

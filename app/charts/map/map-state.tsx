@@ -1,7 +1,18 @@
-import { color, extent, ScaleQuantize, scaleQuantize } from "d3";
+import {
+  color,
+  extent,
+  ScalePower,
+  ScaleQuantize,
+  scaleQuantize,
+  scaleSqrt,
+} from "d3";
 import { ReactNode, useCallback } from "react";
 import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
-import { MapFields, PaletteType } from "../../configurator/config-types";
+import {
+  MapBaseLayer,
+  MapFields,
+  PaletteType,
+} from "../../configurator/config-types";
 import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -11,6 +22,7 @@ export type GeoData = {
   cantons: GeoJSON.FeatureCollection | GeoJSON.Feature;
   municipalities?: GeoJSON.FeatureCollection | GeoJSON.Feature;
   municipalityMesh?: GeoJSON.MultiLineString;
+  cantonCentroids: { id: number; coordinates: [number, number] }[];
   cantonMesh: GeoJSON.MultiLineString;
   lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
 };
@@ -19,14 +31,23 @@ export interface MapState {
   bounds: Bounds;
   data: Observation[];
   features: GeoData;
-  getLabel: (d: Observation) => string;
-  getColor: (x: number | undefined) => number[];
-  getValue: (d: Observation) => number;
-  paletteType: PaletteType;
-  palette: string;
-  nbSteps: number;
-  dataDomain: [number, number];
-  colorScale: ScaleQuantize<number, string>;
+  areaLayer: {
+    showAreaLayer: boolean;
+    getLabel: (d: Observation) => string;
+    getColor: (x: number | undefined) => number[];
+    getValue: (d: Observation) => number;
+    paletteType: PaletteType;
+    palette: string;
+    nbSteps: number;
+    dataDomain: [number, number];
+    colorScale: ScaleQuantize<number, string>;
+  };
+  baseLayer: MapBaseLayer;
+  symbolLayer: {
+    showSymbolLayer: boolean;
+    radiusScale: ScalePower<number, number>;
+    getRadius: (d: Observation) => number;
+  };
 }
 
 const useMapState = ({
@@ -35,24 +56,25 @@ const useMapState = ({
   fields,
   dimensions,
   measures,
-}: // interactiveFiltersConfig,
-Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" //|  "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   features: GeoData;
   fields: MapFields;
 }): MapState => {
   const width = useWidth();
 
-  const { palette, nbSteps, paletteType } = fields.y;
+  const { palette, nbSteps, paletteType } = fields["areaLayer"];
   const getValue = useCallback(
-    (d: Observation): number => +d[fields.y.componentIri],
-    [fields.y.componentIri]
+    (d: Observation): number => +d[fields["areaLayer"].componentIri],
+    [fields["areaLayer"].componentIri]
   );
   const getLabel = useCallback(
-    (d: Observation): string => d[fields.x.componentIri] as string,
-    [fields.x.componentIri]
+    (d: Observation): string =>
+      d[fields["areaLayer"].label.componentIri] as string,
+    [fields["areaLayer"].label.componentIri]
+  );
+  const getRadius = useCallback(
+    (d: Observation): number => +d[fields["symbolLayer"].componentIri],
+    [fields["symbolLayer"].componentIri]
   );
 
   const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
@@ -81,6 +103,13 @@ Pick<
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
+  const radiusExtent = extent(data, (d) => getRadius(d));
+  console.log({ radiusExtent });
+  const radiusScale = scaleSqrt()
+    .domain(radiusExtent as [number, number])
+    .range([2, 2000]);
+
+  // Dimensions
   const margins = {
     top: 0,
     right: 0,
@@ -101,15 +130,24 @@ Pick<
     chartType: "map",
     data,
     features,
-    getLabel,
-    getColor,
-    getValue,
     bounds,
-    paletteType,
-    palette,
-    nbSteps,
-    dataDomain,
-    colorScale,
+    areaLayer: {
+      showAreaLayer: fields.areaLayer.show,
+      getLabel,
+      getColor,
+      getValue,
+      paletteType,
+      palette,
+      nbSteps,
+      dataDomain,
+      colorScale,
+    },
+    baseLayer: fields["baseLayer"],
+    symbolLayer: {
+      showSymbolLayer: fields.symbolLayer.show,
+      radiusScale,
+      getRadius,
+    },
   };
 };
 
@@ -119,7 +157,6 @@ const MapChartProvider = ({
   fields,
   dimensions,
   measures,
-  // interactiveFiltersConfig,
   children,
 }: Pick<
   ChartProps,
@@ -131,7 +168,6 @@ const MapChartProvider = ({
     fields,
     dimensions,
     measures,
-    // interactiveFiltersConfig,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -144,12 +180,8 @@ export const MapChart = ({
   fields,
   dimensions,
   measures,
-  // interactiveFiltersConfig,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" //| "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
   features: GeoData;
 
   fields: MapFields;
