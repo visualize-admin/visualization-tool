@@ -1,5 +1,7 @@
 import * as RDF from "@zazuko/query-rdf-data-cube";
 import { Cube, CubeDimension, CubeSource } from "rdf-cube-view-query";
+import { Literal, NamedNode } from "rdf-js";
+import { Observation } from "../domain/data";
 
 /** Types shared by graphql-codegen and resolver code */
 
@@ -41,5 +43,6 @@ export type ResolvedMeasure = ResolvedDimension;
 export type ResolvedObservationsQuery = {
   dataCube: Cube;
   query: string;
-  selectedFields: [string, RDF.Dimension | RDF.Measure | RDF.Attribute][];
+  observations: Observation[];
+  observationsRaw: Record<string, Literal | NamedNode>[];
 };

@@ -7,8 +7,9 @@ import {
   View,
 } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
+import { Literal, NamedNode } from "rdf-js";
 import { Filters } from "../configurator";
-import { parseObservationValue } from "../domain/data";
+import { Observation, parseObservationValue } from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
@@ -171,7 +172,11 @@ export const getCubeObservations = async ({
   locale: string;
   filters?: Filters;
   limit?: number;
-}): Promise<{ query: string; observations: $FixMe[] }> => {
+}): Promise<{
+  query: string;
+  observations: Observation[];
+  observationsRaw: Record<string, Literal | NamedNode>[];
+}> => {
   const cubeView = View.fromCube(cube);
 
   // Only choose dimensions that we really want
@@ -241,9 +246,20 @@ export const getCubeObservations = async ({
     );
   }
 
+  const observationsRaw = await observationsView.observations();
+  const observations = observationsRaw.map((obs) => {
+    return Object.fromEntries(
+      Object.entries(obs).map(([k, v]) => [
+        k,
+        parseObservationValue({ value: v }),
+      ])
+    );
+  });
+
   const result = {
     query: observationsView.observationsQuery().query.toString(),
-    observations: await observationsView.observations(),
+    observations,
+    observationsRaw,
   };
 
   return result;

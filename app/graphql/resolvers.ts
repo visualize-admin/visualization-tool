@@ -204,7 +204,7 @@ const DataCube: DataCubeResolvers = {
     return dimension ?? null;
   },
   observations: async ({ dataCube, locale }, { limit, filters, measures }) => {
-    const { query, observations } = await getCubeObservations({
+    const { query, observations, observationsRaw } = await getCubeObservations({
       cube: dataCube,
       locale,
       filters: filters ?? undefined,
@@ -244,6 +244,7 @@ const DataCube: DataCubeResolvers = {
       dataCube,
       query,
       observations,
+      observationsRaw,
       selectedFields: [],
     };
   },
@@ -271,35 +272,8 @@ export const resolvers: Resolvers = {
   Query,
   DataCube,
   ObservationsQuery: {
-    data: async ({ query, observations }) => {
-      // const observations = await query.execute();
-      // // TODO: Optimize Performance
-      // const fullyQualifiedObservations = observations.map((obs) => {
-      //   return Object.fromEntries(
-      //     Object.entries(obs).map(([k, v]) => {
-      //       return [
-      //         selectedFields.find(([selK]) => selK === k)![1].iri.value,
-      //         // FIXME: This undefined check should not be necessary but prevents breaking on some malformed RDF(?) values
-      //         v && v.value !== undefined ? parseObservationValue(v) : 0,
-      //       ];
-      //     })
-      //   );
-      // });
-
-      // return fullyQualifiedObservations;
-
-      return observations.map((obs) => {
-        return Object.fromEntries(
-          Object.entries(obs).map(([k, v]) => [
-            k,
-            parseObservationValue({ value: v }),
-          ])
-        );
-      });
-    },
-    rawData: async ({ query, observations }) => {
-      return observations;
-    },
+    data: async ({ query, observations }) => observations,
+    rawData: async ({ observationsRaw }) => observationsRaw,
     sparql: async ({ query }) => query.replace(/\n+/g, " ").replace(/"/g, "'"),
   },
   Dimension: {
