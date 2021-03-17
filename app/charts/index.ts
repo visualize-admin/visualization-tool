@@ -215,6 +215,50 @@ export const getInitialConfig = ({
           ])
         ),
       };
+    case "map":
+      return {
+        chartType,
+        filters: {},
+        interactiveFiltersConfig: {
+          legend: { active: false, componentIri: "" },
+          time: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+          dataFilters: {
+            active: false,
+            componentIris: [],
+          },
+        },
+        fields: {
+          baseLayer: {
+            componentIri: dimensions[0].iri,
+            relief: true,
+            lakes: true,
+          },
+          areaLayer: {
+            componentIri: measures[0].iri,
+            show: false,
+            label: { componentIri: dimensions[0].iri },
+            palette: "oranges",
+            nbSteps: 5,
+            paletteType: "continuous",
+          },
+          symbolLayer: {
+            show: false,
+            componentIri: measures[0].iri,
+          },
+          // FIXME: unused fields
+          x: { componentIri: dimensions[0].iri },
+          y: {
+            componentIri: measures[0].iri,
+          },
+          segment: {
+            componentIri: dimensions[0].iri,
+          },
+        },
+      };
 
     // This code *should* be unreachable! If it's not, it means we haven't checked all cases (and we should get a TS error).
     default:
@@ -237,6 +281,7 @@ export const getPossibleChartType = ({
     (dim) => dim.__typename === "TemporalDimension"
   );
 
+  // const geoBased: ChartType[] = ["map"];
   const catBased: ChartType[] = ["bar", "column", "pie", "table"];
   const multipleQ: ChartType[] = ["scatterplot"];
   const timeBased: ChartType[] = ["line", "area"];

@@ -1,0 +1,132 @@
+[
+  {
+    "Kanton": "Zürich",
+    "Holzernte...Total": 512849,
+    "Id": 1
+  },
+  {
+    "Kanton": "Bern / Berne",
+    "Holzernte...Total": 992486,
+    "Id": 2
+  },
+  {
+    "Kanton": "Luzern",
+    "Holzernte...Total": 300649,
+    "Id": 3
+  },
+  {
+    "Kanton": "Uri",
+    "Holzernte...Total": 27300,
+    "Id": 4
+  },
+  {
+    "Kanton": "Schwyz",
+    "Holzernte...Total": 122367,
+    "Id": 5
+  },
+  {
+    "Kanton": "Obwalden",
+    "Holzernte...Total": 71793,
+    "Id": 6
+  },
+  {
+    "Kanton": "Nidwalden",
+    "Holzernte...Total": 26839,
+    "Id": 7
+  },
+  {
+    "Kanton": "Glarus",
+    "Holzernte...Total": 41834,
+    "Id": 8
+  },
+  {
+    "Kanton": "Zug",
+    "Holzernte...Total": 57877,
+    "Id": 9
+  },
+  {
+    "Kanton": "Fribourg / Freiburg",
+    "Holzernte...Total": 235975,
+    "Id": 10
+  },
+  {
+    "Kanton": "Solothurn",
+    "Holzernte...Total": 240930,
+    "Id": 11
+  },
+  {
+    "Kanton": "Basel-Stadt",
+    "Holzernte...Total": 3083,
+    "Id": 12
+  },
+  {
+    "Kanton": "Basel-Landschaft",
+    "Holzernte...Total": 132243,
+    "Id": 13
+  },
+  {
+    "Kanton": "Schaffhausen",
+    "Holzernte...Total": 83988,
+    "Id": 14
+  },
+  {
+    "Kanton": "Appenzell Ausserrhoden",
+    "Holzernte...Total": 52953,
+    "Id": 15
+  },
+  {
+    "Kanton": "Appenzell Innerrhoden",
+    "Holzernte...Total": 22085,
+    "Id": 16
+  },
+  {
+    "Kanton": "St. Gallen",
+    "Holzernte...Total": 314152,
+    "Id": 17
+  },
+  {
+    "Kanton": "Graubünden / Grigioni / Grischun",
+    "Holzernte...Total": 395657,
+    "Id": 18
+  },
+  {
+    "Kanton": "Aargau",
+    "Holzernte...Total": 448999,
+    "Id": 19
+  },
+  {
+    "Kanton": "Thurgau",
+    "Holzernte...Total": 172580,
+    "Id": 20
+  },
+  {
+    "Kanton": "Ticino",
+    "Holzernte...Total": 98749,
+    "Id": 21
+  },
+  {
+    "Kanton": "Vaud",
+    "Holzernte...Total": 402563,
+    "Id": 22
+  },
+  {
+    "Kanton": "Valais / Wallis",
+    "Holzernte...Total": 111959,
+    "Id": 23
+  },
+  {
+    "Kanton": "Neuchâtel",
+    "Holzernte...Total": 151210,
+    "Id": 24
+  },
+  {
+    "Kanton": "Genève",
+    "Holzernte...Total": 9067,
+    "Id": 25
+  },
+  {
+    "Kanton": "Jura",
+    "Holzernte...Total": 168015,
+    "Id": 26
+  }
+]

@@ -425,6 +425,54 @@ const TableConfig = t.type(
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
+// FIXME: These MapFields types are only placeholders for the map prototype
+const PaletteType = t.union([t.literal("continuous"), t.literal("discrete")]);
+export type PaletteType = t.TypeOf<typeof PaletteType>;
+
+const MapBaseLayer = t.type({
+  componentIri: t.string, // FIXME: we don't need this
+  relief: t.boolean,
+  lakes: t.boolean,
+});
+export type MapBaseLayer = t.TypeOf<typeof MapBaseLayer>;
+
+const MapAreaLayer = t.type({
+  show: t.boolean,
+  label: GenericField,
+  componentIri: t.string,
+  palette: t.string,
+  paletteType: PaletteType,
+  nbSteps: t.number,
+});
+export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
+
+const MapSymbolLayer = t.type({
+  show: t.boolean,
+  componentIri: t.string,
+});
+export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
+
+const MapFields = t.type({
+  baseLayer: MapBaseLayer,
+  areaLayer: MapAreaLayer,
+  symbolLayer: MapSymbolLayer,
+  x: GenericField,
+  y: GenericField,
+  segment: GenericField,
+});
+
+const MapConfig = t.type(
+  {
+    chartType: t.literal("map"),
+    interactiveFiltersConfig: InteractiveFiltersConfig,
+    filters: Filters,
+    fields: MapFields,
+  },
+  "MapConfig"
+);
+export type MapFields = t.TypeOf<typeof MapFields>;
+export type MapConfig = t.TypeOf<typeof MapConfig>;
+
 export type ChartFields =
   | ColumnFields
   | BarFields
@@ -432,7 +480,8 @@ export type ChartFields =
   | AreaFields
   | ScatterPlotFields
   | PieFields
-  | TableFields;
+  | TableFields
+  | MapFields;
 
 // interface IriBrand {
 //   readonly IRI: unique symbol;
@@ -457,6 +506,7 @@ const ChartConfig = t.union([
   ScatterPlotConfig,
   PieConfig,
   TableConfig,
+  MapConfig,
 ]);
 // t.record(t.string, t.any)
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
