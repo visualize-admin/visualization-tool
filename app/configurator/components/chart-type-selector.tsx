@@ -1,26 +1,16 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Grid, Text } from "theme-ui";
 import React, { SyntheticEvent } from "react";
-import { getPossibleChartType } from "../../charts";
-import { ChartType, ConfiguratorStateSelectingChartType } from "..";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { SectionTitle } from "./chart-controls/section";
+import { Box, Button, Grid, Text } from "theme-ui";
+import { ConfiguratorStateSelectingChartType } from "..";
+import { enabledChartTypes, getPossibleChartType } from "../../charts";
 import { Hint, Loading } from "../../components/hint";
-import { FieldProps, useChartTypeSelectorField } from "../config-form";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
+import { useLocale } from "../../locales/use-locale";
+import { FieldProps, useChartTypeSelectorField } from "../config-form";
+import { SectionTitle } from "./chart-controls/section";
 import { getFieldLabel, getIconName } from "./ui-helpers";
-
-const chartTypes: ChartType[] = [
-  // "bar",
-  "column",
-  "line",
-  "area",
-  "scatterplot",
-  "pie",
-  "table",
-];
 
 export const ChartTypeSelectionButton = ({
   label,
@@ -129,7 +119,7 @@ export const ChartTypeSelector = ({
     const metaData = data.dataCubeByIri;
 
     const possibleChartTypes = getPossibleChartType({
-      chartTypes,
+      chartTypes: enabledChartTypes,
       meta: metaData,
     });
 
@@ -155,7 +145,7 @@ export const ChartTypeSelector = ({
               mx: 4,
             }}
           >
-            {chartTypes.map((d) => (
+            {enabledChartTypes.map((d) => (
               <ChartTypeSelectorField
                 key={d}
                 label={d}
