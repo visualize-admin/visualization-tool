@@ -120,7 +120,7 @@ export const ChartMapVisualization = () => {
     const attributes = Object.keys(dataset.ds[0])
       .filter((d) => d.startsWith("A_"))
       .map((d) => ({
-        __typename: "Attribute",
+        __typename: "NominalDimension",
         iri: d,
         label: d,
       })) as ComponentFieldsFragment[];
