@@ -291,6 +291,10 @@ export const canTransitionToNextStep = (
     return false;
   }
 
+  if (dataSetMetadata.dimensions.length === 0) {
+    return false;
+  }
+
   switch (state.state) {
     case "SELECTING_DATASET":
       return state.dataSet !== undefined;
