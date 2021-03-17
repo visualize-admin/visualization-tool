@@ -1,7 +1,6 @@
 import {
   color,
   extent,
-  interpolateLab,
   ScaleLinear,
   scaleLinear,
   ScalePower,
@@ -9,12 +8,18 @@ import {
   scaleQuantile,
   ScaleQuantize,
   scaleQuantize,
+  scaleSequential,
+  ScaleSequential,
   scaleSqrt,
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
 import { ReactNode, useCallback } from "react";
-import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
+import { ckmeans } from "simple-statistics";
+import {
+  getColorInterpolator,
+  getSingleHueSequentialPalette,
+} from "../../configurator/components/ui-helpers";
 import {
   MapBaseLayer,
   MapFields,
@@ -24,7 +29,6 @@ import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { ckmeans } from "simple-statistics";
 
 export type GeoData = {
   cantons: GeoJSON.FeatureCollection | GeoJSON.Feature;
@@ -49,6 +53,7 @@ export interface MapState {
     nbClass: number;
     dataDomain: [number, number];
     colorScale:
+      | ScaleSequential<string>
       | ScaleQuantize<string>
       | ScaleQuantile<string>
       | ScaleLinear<string, string>
@@ -83,10 +88,7 @@ const getColorScale = ({
 
   switch (paletteType) {
     case "continuous":
-      return scaleLinear<string>() // FIXME -> use scaleSequential
-        .domain(dataDomain)
-        .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]])
-        .interpolate(interpolateLab);
+      return scaleSequential(getColorInterpolator(palette)).domain(dataDomain);
     case "discrete":
       return scaleQuantize<string>()
         .domain(dataDomain)

@@ -8,6 +8,9 @@ import {
   scaleLinear,
   select,
   Selection,
+  ScaleThreshold,
+  ScaleQuantile,
+  ScaleQuantize,
 } from "d3";
 
 import * as React from "react";
@@ -47,7 +50,7 @@ export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
 
           {paletteType === "continuous" && <ContinuousColorLegend />}
 
-          {paletteType === "discrete" && <DiscreteColorLegend />}
+          {paletteType === "discrete" && <QuantizeColorLegend />}
 
           {paletteType === "quantile" && <QuantileColorLegend />}
 
@@ -101,8 +104,7 @@ const JenksColorLegend = () => {
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     const tickValues = thresholds.splice(0, thresholds.length - 1);
-    console.log({ thresholds });
-    console.log({ tickValues });
+
     g.call(
       axisBottom(scale)
         .tickValues(tickValues)
@@ -133,7 +135,7 @@ const JenksColorLegend = () => {
         <DataPointIndicator scale={scale} />
       </g>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
-        {colorScale.range().map((c, i) => {
+        {(colorScale as ScaleThreshold<number, string>).range().map((c, i) => {
           return (
             <rect
               key={i}
@@ -228,7 +230,7 @@ const QuantileColorLegend = () => {
         <DataPointIndicator scale={scale} />
       </g>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
-        {colorScale.range().map((c, i) => {
+        {(colorScale as ScaleQuantile<string>).range().map((c, i) => {
           return (
             <rect
               key={i}
@@ -252,7 +254,7 @@ const QuantileColorLegend = () => {
   );
 };
 
-const DiscreteColorLegend = () => {
+const QuantizeColorLegend = () => {
   const legendAxisRef = useRef<SVGGElement>(null);
   const {
     axisLabelColor,
@@ -314,7 +316,7 @@ const DiscreteColorLegend = () => {
         <DataPointIndicator scale={scale} />
       </g>
       <g transform={`translate(${margins.left}, ${margins.top})`}>
-        {colorScale.range().map((c, i) => (
+        {(colorScale as ScaleQuantize<string>).range().map((c, i) => (
           <rect
             key={i}
             x={classesScale(i)}
