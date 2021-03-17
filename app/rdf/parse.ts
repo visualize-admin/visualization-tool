@@ -20,7 +20,7 @@ const cubesSchema = z.array(cubeSchema);
 export const getQueryLocales = (locale: string): string[] => [
   locale,
   ...locales.filter((l) => l !== locale),
-  "*",
+  "",
 ];
 
 export const parseCube = ({
