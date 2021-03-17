@@ -1,11 +1,15 @@
 import {
   axisBottom,
   interpolateOranges,
+  min,
+  max,
+  range,
   ScaleLinear,
   scaleLinear,
   select,
   Selection,
 } from "d3";
+
 import * as React from "react";
 import { useEffect, useRef } from "react";
 import { Box, Text } from "theme-ui";
@@ -44,9 +48,108 @@ export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
           {paletteType === "continuous" && <ContinuousColorLegend />}
 
           {paletteType === "discrete" && <DiscreteColorLegend />}
+
+          {paletteType === "quantile" && <QuantileColorLegend />}
         </>
       )}
     </Box>
+  );
+};
+
+const QuantileColorLegend = () => {
+  const legendAxisRef = useRef<SVGGElement>(null);
+  const {
+    axisLabelColor,
+    labelColor,
+    fontFamily,
+    labelFontSize,
+  } = useChartTheme();
+  const {
+    areaLayer: { dataDomain, colorScale },
+  } = useChartState() as MapState;
+  const formatNumber = useFormatInteger();
+  const width = useWidth();
+
+  const legendWidth = Math.min(width, WIDTH);
+  const margins = {
+    top: 6,
+    right: 4,
+    bottom: 64,
+    left: 4,
+  };
+
+  // @ts-ignore
+  const thresholds = colorScale.quantiles() ? colorScale.quantiles() : [];
+
+  // From color index to threshold value
+  const thresholdsScale = scaleLinear()
+    .domain(range(colorScale.range().length + 1))
+    .range([
+      min(dataDomain, (d) => d),
+      ...thresholds,
+      max(dataDomain, (d) => d),
+    ]);
+
+  // From threshold value to pixel value
+  const scale = scaleLinear()
+    .domain([
+      min(dataDomain, (d) => d) || 0,
+      max(dataDomain, (d) => d) || 10000,
+    ])
+    .range([0, legendWidth]);
+
+  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+    g.call(
+      axisBottom(scale)
+        .tickValues(thresholds)
+        .tickSizeInner(-COLOR_RAMP_HEIGHT - 2)
+        .tickFormat(formatNumber)
+    );
+    g.select("path.domain").remove();
+    g.selectAll(".tick line").attr("stroke", axisLabelColor);
+    g.selectAll(".tick text")
+      .attr("font-size", labelFontSize)
+      .attr("font-family", fontFamily)
+      .attr("fill", labelColor)
+      .attr("transform", "rotate(45)")
+      .attr("text-anchor", "start");
+  };
+
+  useEffect(() => {
+    const g = select(legendAxisRef.current);
+    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+  });
+
+  return (
+    <svg
+      width={legendWidth + margins.left + margins.right}
+      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
+    >
+      <g transform={`translate(${margins.left}, ${0})`}>
+        <DataPointIndicator scale={scale} />
+      </g>
+      <g transform={`translate(${margins.left}, ${margins.top})`}>
+        {colorScale.range().map((c, i) => {
+          return (
+            <rect
+              key={i}
+              x={scale(thresholdsScale(i))}
+              y={0}
+              width={scale(thresholdsScale(i + 1)) - scale(thresholdsScale(i))}
+              height={COLOR_RAMP_HEIGHT}
+              fill={`${c}`}
+            />
+          );
+        })}
+      </g>
+      <g
+        ref={legendAxisRef}
+        key="legend-axis"
+        transform={`translate(${margins.left}, ${
+          COLOR_RAMP_HEIGHT + margins.top + 2
+        })`}
+      />
+    </svg>
   );
 };
 
@@ -168,7 +271,7 @@ const ContinuousColorLegend = () => {
         >
           <ColorRamp
             colorInterpolator={getColorInterpolator(palette)}
-            nbSteps={legendWidth}
+            nbClass={legendWidth}
             width={legendWidth}
             height={COLOR_RAMP_HEIGHT}
           />
@@ -229,12 +332,12 @@ const DataPointIndicator = ({
 };
 const ColorRamp = ({
   colorInterpolator = interpolateOranges,
-  nbSteps,
+  nbClass,
   width,
   height,
 }: {
   colorInterpolator: (t: number) => string;
-  nbSteps: number;
+  nbClass: number;
   width: number;
   height: number;
 }) => {
@@ -248,8 +351,8 @@ const ColorRamp = ({
       canvas.style.imageRendering = "-moz-crisp-edges";
       canvas.style.imageRendering = "pixelated";
 
-      for (let i = 0; i < nbSteps; ++i) {
-        context.fillStyle = colorInterpolator(i / (nbSteps - 1));
+      for (let i = 0; i < nbClass; ++i) {
+        context.fillStyle = colorInterpolator(i / (nbClass - 1));
         context.fillRect(i, 0, 1, height);
       }
     }
