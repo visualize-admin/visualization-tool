@@ -1,14 +1,6 @@
-import { literal } from "@rdfjs/data-model";
-import {
-  DataCube as RDFDataCube,
-  Dimension as RDFDimension,
-  Measure as RDFMeasure,
-} from "@zazuko/query-rdf-data-cube";
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { Filters } from "../configurator";
-import { parseObservationValue } from "../domain/data";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
@@ -20,7 +12,6 @@ import {
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
-  DimensionResolvers,
   QueryResolvers,
   Resolvers,
 } from "./resolver-types";

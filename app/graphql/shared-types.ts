@@ -1,5 +1,4 @@
-import * as RDF from "@zazuko/query-rdf-data-cube";
-import { Cube, CubeDimension, CubeSource } from "rdf-cube-view-query";
+import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode } from "rdf-js";
 import { Observation } from "../domain/data";
 

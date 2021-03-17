@@ -1,21 +1,7 @@
 import { Cube, CubeDimension } from "rdf-cube-view-query";
-import * as z from "zod";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
 import * as ns from "./namespace";
-
-const cubeSchema = z.object({
-  iri: z.string().url(),
-  identifier: z.string().optional(),
-  title: z.string().optional(),
-  description: z.string().optional(),
-  publisher: z.string().optional(),
-  theme: z.string().optional(),
-  status: z.enum(["Draft", "Published"]).optional(),
-  versionHistory: z.string().optional(),
-});
-
-const cubesSchema = z.array(cubeSchema);
 
 export const getQueryLocales = (locale: string): string[] => [
   locale,
