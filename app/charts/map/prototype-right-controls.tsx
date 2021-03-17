@@ -148,6 +148,16 @@ export const PrototypeRightControls = ({
                 setPaletteType(e.currentTarget.value as PaletteType)
               }
             />
+            <Radio
+              label={"Jenks (natural breaks)"}
+              name={"jenks"}
+              value={"jenks"}
+              checked={paletteType === "jenks"}
+              disabled={!activeLayers.areaLayer}
+              onChange={(e) =>
+                setPaletteType(e.currentTarget.value as PaletteType)
+              }
+            />
             <Select
               label={"Anzahl Schritte"}
               id={"nbClass"}

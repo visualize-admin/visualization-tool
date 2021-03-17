@@ -430,6 +430,7 @@ const PaletteType = t.union([
   t.literal("continuous"),
   t.literal("discrete"),
   t.literal("quantile"),
+  t.literal("jenks"),
 ]);
 export type PaletteType = t.TypeOf<typeof PaletteType>;
 

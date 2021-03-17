@@ -10,6 +10,8 @@ import {
   ScaleQuantize,
   scaleQuantize,
   scaleSqrt,
+  ScaleThreshold,
+  scaleThreshold,
 } from "d3";
 import { ReactNode, useCallback } from "react";
 import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
@@ -22,6 +24,7 @@ import { Observation } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
+import { ckmeans } from "simple-statistics";
 
 export type GeoData = {
   cantons: GeoJSON.FeatureCollection | GeoJSON.Feature;
@@ -48,7 +51,8 @@ export interface MapState {
     colorScale:
       | ScaleQuantize<string>
       | ScaleQuantile<string>
-      | ScaleLinear<string, string>;
+      | ScaleLinear<string, string>
+      | ScaleThreshold<number, string>;
   };
   baseLayer: MapBaseLayer;
   symbolLayer: {
@@ -90,6 +94,15 @@ const getColorScale = ({
     case "quantile":
       return scaleQuantile<string>()
         .domain(data.map((d) => getValue(d)))
+        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+    case "jenks":
+      const ckMeansThresholds = ckmeans(
+        data.map((d) => getValue(d)),
+        nbClass
+      ).map((v) => v.pop() || 0);
+
+      return scaleThreshold<number, string>()
+        .domain(ckMeansThresholds)
         .range(getSingleHueSequentialPalette({ palette, nbClass }));
     default:
       return scaleLinear<string>()

@@ -50,19 +50,21 @@ export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
           {paletteType === "discrete" && <DiscreteColorLegend />}
 
           {paletteType === "quantile" && <QuantileColorLegend />}
+
+          {paletteType === "jenks" && <JenksColorLegend />}
         </>
       )}
     </Box>
   );
 };
 
-const QuantileColorLegend = () => {
+const JenksColorLegend = () => {
   const legendAxisRef = useRef<SVGGElement>(null);
   const {
     axisLabelColor,
     labelColor,
     fontFamily,
-    labelFontSize,
+    legendFontSize,
   } = useChartTheme();
   const {
     areaLayer: { dataDomain, colorScale },
@@ -78,8 +80,105 @@ const QuantileColorLegend = () => {
     left: 4,
   };
 
+  const thresholds = colorScale.domain ? colorScale.domain() : [];
+
+  // From color index to threshold value
+  const thresholdsScale = scaleLinear()
+    .domain(range(colorScale.range().length + 1))
+    .range([
+      min(dataDomain, (d) => d) || 0,
+      ...thresholds,
+      max(dataDomain, (d) => d) || 100,
+    ]);
+
+  // From threshold value to pixel value
+  const scale = scaleLinear()
+    .domain([
+      min(dataDomain, (d) => d) || 0,
+      max(dataDomain, (d) => d) || 10000,
+    ])
+    .range([0, legendWidth]);
+
+  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+    const tickValues = thresholds.splice(0, thresholds.length - 1);
+    console.log({ thresholds });
+    console.log({ tickValues });
+    g.call(
+      axisBottom(scale)
+        .tickValues(tickValues)
+        .tickSizeInner(-COLOR_RAMP_HEIGHT - 2)
+        .tickFormat(formatNumber)
+    );
+    g.select("path.domain").remove();
+    g.selectAll(".tick line").attr("stroke", axisLabelColor);
+    g.selectAll(".tick text")
+      .attr("font-size", legendFontSize)
+      .attr("font-family", fontFamily)
+      .attr("fill", labelColor)
+      .attr("transform", "rotate(45)")
+      .attr("text-anchor", "start");
+  };
+
+  useEffect(() => {
+    const g = select(legendAxisRef.current);
+    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
+  });
+
+  return (
+    <svg
+      width={legendWidth + margins.left + margins.right}
+      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
+    >
+      <g transform={`translate(${margins.left}, ${0})`}>
+        <DataPointIndicator scale={scale} />
+      </g>
+      <g transform={`translate(${margins.left}, ${margins.top})`}>
+        {colorScale.range().map((c, i) => {
+          return (
+            <rect
+              key={i}
+              x={scale(thresholdsScale(i))}
+              y={0}
+              width={scale(thresholdsScale(i + 1)) - scale(thresholdsScale(i))}
+              height={COLOR_RAMP_HEIGHT}
+              fill={`${c}`}
+            />
+          );
+        })}
+      </g>
+      <g
+        ref={legendAxisRef}
+        key="legend-axis"
+        transform={`translate(${margins.left}, ${
+          COLOR_RAMP_HEIGHT + margins.top + 2
+        })`}
+      />
+    </svg>
+  );
+};
+const QuantileColorLegend = () => {
+  const legendAxisRef = useRef<SVGGElement>(null);
+  const {
+    axisLabelColor,
+    labelColor,
+    fontFamily,
+    legendFontSize,
+  } = useChartTheme();
+  const {
+    areaLayer: { dataDomain, colorScale },
+  } = useChartState() as MapState;
+  const formatNumber = useFormatInteger();
+  const width = useWidth();
+
+  const legendWidth = Math.min(width, WIDTH);
+  const margins = {
+    top: 6,
+    right: 4,
+    bottom: 64,
+    left: 4,
+  };
   // @ts-ignore
-  const thresholds = colorScale.quantiles() ? colorScale.quantiles() : [];
+  const thresholds = colorScale.quantiles ? colorScale.quantiles() : [];
 
   // From color index to threshold value
   const thresholdsScale = scaleLinear()
@@ -108,7 +207,7 @@ const QuantileColorLegend = () => {
     g.select("path.domain").remove();
     g.selectAll(".tick line").attr("stroke", axisLabelColor);
     g.selectAll(".tick text")
-      .attr("font-size", labelFontSize)
+      .attr("font-size", legendFontSize)
       .attr("font-family", fontFamily)
       .attr("fill", labelColor)
       .attr("transform", "rotate(45)")
@@ -159,7 +258,7 @@ const DiscreteColorLegend = () => {
     axisLabelColor,
     labelColor,
     fontFamily,
-    labelFontSize,
+    legendFontSize,
   } = useChartTheme();
   const {
     areaLayer: { dataDomain, colorScale },
@@ -194,7 +293,7 @@ const DiscreteColorLegend = () => {
     g.select("path.domain").remove();
     g.selectAll(".tick line").attr("stroke", axisLabelColor);
     g.selectAll(".tick text")
-      .attr("font-size", labelFontSize)
+      .attr("font-size", legendFontSize)
       .attr("font-family", fontFamily)
       .attr("fill", labelColor)
       .attr("transform", "rotate(45)")

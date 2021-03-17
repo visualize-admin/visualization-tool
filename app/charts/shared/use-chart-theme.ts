@@ -4,6 +4,7 @@ export const useChartTheme = () => {
   const theme = useTheme();
   const labelColor = theme.colors.monochrome800;
   const legendLabelColor = theme.colors.monochrome700;
+  const legendFontSize = 10;
   const domainColor = theme.colors.monochrome800;
   const gridColor = theme.colors.monochrome300;
   const labelFontSize = 12;
@@ -23,6 +24,7 @@ export const useChartTheme = () => {
     axisLabelFontWeight,
     labelColor,
     labelFontSize,
+    legendFontSize,
     domainColor,
     gridColor,
     legendLabelColor,
