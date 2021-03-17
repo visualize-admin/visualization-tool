@@ -1,5 +1,13 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { Box, Text } from "theme-ui";
+import {
+  ControlTabButton,
+  ControlTabButtonInner,
+} from "../../configurator/components/chart-controls/control-tab";
+import { getIconName } from "../../configurator/components/ui-helpers";
+import { FieldProps } from "../../configurator/config-form";
+import { IconName } from "../../icons";
+import { Control } from "./chart-map-prototype";
 
 export const Label = ({
   label,
@@ -26,4 +34,45 @@ export const Label = ({
   >
     {label}
   </Text>
+);
+
+// Light version of ControlTab (only for prototype)
+export const Tab = ({
+  value,
+  onClick,
+  iconName,
+  upperLabel,
+  lowerLabel,
+  checked,
+  disabled,
+}: {
+  disabled?: boolean;
+  onClick: (x: Control) => void;
+  value: Control;
+  upperLabel: ReactNode;
+  lowerLabel: string;
+  iconName?: IconName;
+} & FieldProps) => (
+  <Box
+    sx={{
+      width: "100%",
+      borderRadius: "default",
+      my: "2px",
+      pointerEvents: disabled ? "none" : "unset",
+    }}
+  >
+    <ControlTabButton
+      checked={checked}
+      value={value}
+      onClick={() => onClick(value)}
+    >
+      <ControlTabButtonInner
+        iconName={iconName ?? getIconName(value)}
+        upperLabel={upperLabel}
+        lowerLabel={lowerLabel}
+        checked={checked}
+        optional={disabled}
+      />
+    </ControlTabButton>
+  </Box>
 );
