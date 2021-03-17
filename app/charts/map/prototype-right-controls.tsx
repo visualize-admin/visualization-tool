@@ -5,6 +5,7 @@ import { PaletteType } from "../../configurator";
 import { ControlSection } from "../../configurator/components/chart-controls/section";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { ActiveLayer, Control } from "./chart-map-prototype";
+import { Label } from "./prototype-components";
 
 export const PrototypeRightControls = ({
   activeControl,
@@ -111,8 +112,13 @@ export const PrototypeRightControls = ({
               ]}
               onChange={(e) => setPalette(e.currentTarget.value)}
             ></Select>
+          </Box>
+        </ControlSection>
+        <ControlSection>
+          <Box sx={{ p: 4 }}>
+            <Label label="Continuous" smaller></Label>
             <Radio
-              label={"Kontinuerlich"}
+              label={"Linear interpolation"}
               name={"continuous"}
               value={"continuous"}
               checked={paletteType === "continuous"}
@@ -121,11 +127,22 @@ export const PrototypeRightControls = ({
                 setPaletteType(e.currentTarget.value as PaletteType);
               }}
             />
+            <Label label="Discrete" smaller></Label>
             <Radio
-              label={"Sequentiell"}
+              label={"Quantize (equal intervals)"}
               name={"discrete"}
               value={"discrete"}
               checked={paletteType === "discrete"}
+              disabled={!activeLayers.areaLayer}
+              onChange={(e) =>
+                setPaletteType(e.currentTarget.value as PaletteType)
+              }
+            />
+            <Radio
+              label={"Quantiles (equal frequency)"}
+              name={"quantile"}
+              value={"quantile"}
+              checked={paletteType === "quantile"}
               disabled={!activeLayers.areaLayer}
               onChange={(e) =>
                 setPaletteType(e.currentTarget.value as PaletteType)

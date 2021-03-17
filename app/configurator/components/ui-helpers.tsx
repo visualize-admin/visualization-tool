@@ -466,6 +466,7 @@ const sequentialPaletteSteps = [
   0.9,
   1,
 ];
+// Diverging color palettes
 export const sequentialPalettes: Array<{
   label: string;
   value: string;

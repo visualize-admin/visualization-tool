@@ -426,7 +426,11 @@ export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
 // FIXME: These MapFields types are only placeholders for the map prototype
-const PaletteType = t.union([t.literal("continuous"), t.literal("discrete")]);
+const PaletteType = t.union([
+  t.literal("continuous"),
+  t.literal("discrete"),
+  t.literal("quantile"),
+]);
 export type PaletteType = t.TypeOf<typeof PaletteType>;
 
 const MapBaseLayer = t.type({

@@ -1,11 +1,16 @@
 import {
   color,
   extent,
+  interpolateLab,
+  ScaleLinear,
+  scaleLinear,
   ScalePower,
+  scaleQuantile,
   ScaleQuantize,
   scaleQuantize,
   scaleSqrt,
 } from "d3";
+import { getVariableValues } from "graphql/execution/values";
 import { ReactNode, useCallback } from "react";
 import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
 import {
@@ -13,7 +18,7 @@ import {
   MapFields,
   PaletteType,
 } from "../../configurator/config-types";
-import { Observation } from "../../domain/data";
+import { Observation, ObservationValue } from "../../domain/data";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -40,7 +45,7 @@ export interface MapState {
     palette: string;
     nbSteps: number;
     dataDomain: [number, number];
-    colorScale: ScaleQuantize<number, string>;
+    colorScale: ScaleQuantize<string> | ScaleLinear<string>;
   };
   baseLayer: MapBaseLayer;
   symbolLayer: {
@@ -49,7 +54,46 @@ export interface MapState {
     getRadius: (d: Observation) => number;
   };
 }
+const getColorScale = ({
+  paletteType,
+  palette,
+  getValue,
+  data,
+  dataDomain,
+  nbSteps,
+}: {
+  paletteType: PaletteType;
+  palette: string;
+  getValue: (x: Observation) => number;
+  data: Observation[];
+  dataDomain: [number, number];
+  nbSteps: number;
+}) => {
+  const paletteDomain = getSingleHueSequentialPalette({
+    palette,
+    nbSteps: 9,
+  });
 
+  switch (paletteType) {
+    case "continuous":
+      return scaleLinear<string>() // FIXME -> use scaleSequential
+        .domain(dataDomain)
+        .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]])
+        .interpolate(interpolateLab);
+    case "discrete":
+      return scaleQuantize<string>()
+        .domain(dataDomain)
+        .range(getSingleHueSequentialPalette({ palette, nbSteps }));
+    case "quantile":
+      return scaleQuantile<string>()
+        .domain(data.map((d) => getValue(d)))
+        .range(getSingleHueSequentialPalette({ palette, nbSteps }));
+    default:
+      return scaleLinear<string>()
+        .domain(dataDomain)
+        .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]]);
+  }
+};
 const useMapState = ({
   data,
   features,
@@ -82,16 +126,14 @@ const useMapState = ({
     number
   ];
 
-  // FIXME: for continuous scale, just interpolate between 2 colors?
-  const colorScale = scaleQuantize<number, string>()
-    .domain(dataDomain)
-    .range(
-      getSingleHueSequentialPalette({
-        palette,
-        nbSteps: paletteType === "continuous" ? 9 : nbSteps,
-      }) as $FixMe[]
-    );
-
+  const colorScale = getColorScale({
+    paletteType,
+    palette,
+    getValue,
+    data,
+    dataDomain,
+    nbSteps,
+  });
   const getColor = (v: number | undefined) => {
     // FIXME: make this function functional
 
