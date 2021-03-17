@@ -36,6 +36,6 @@ data <- data %>% select(id = Kanton_id,
                         M_X...Hack.Energieholz = X...Hack.Energieholz,
                         M_Übrige.Sortimente = Übrige.Sortimente)
 
+write.csv(data, file = "tidy/holzernte.csv", row.names = F)
 json <- toJSON(data)
-
 write(json, "tidy/holzernte.json")
