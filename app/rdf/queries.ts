@@ -92,9 +92,11 @@ export const getCubeDimensions = ({
 export const getCubeDimensionValues = async ({
   dimension,
   cube,
+  locale,
 }: {
   dimension: CubeDimension;
   cube: Cube;
+  locale: string;
 }): Promise<{ value: string; label: string }[]> => {
   if (
     dimension.minInclusive !== undefined &&
@@ -112,15 +114,18 @@ export const getCubeDimensionValues = async ({
   return await getCubeDimensionValuesWithLabels({
     dimension,
     cube,
+    locale,
   });
 };
 
 const getCubeDimensionValuesWithLabels = async ({
   dimension,
   cube,
+  locale,
 }: {
   dimension: CubeDimension;
   cube: Cube;
+  locale: string;
 }): Promise<{ value: string; label: string }[]> => {
   // try {
   //   const view = View.fromCube(cube);
@@ -151,7 +156,7 @@ const getCubeDimensionValuesWithLabels = async ({
 
   const dimensionValueLabels =
     dimensionValueIris && dimensionValueIris?.length > 0
-      ? await loadResourceLabels(dimensionValueIris)
+      ? await loadResourceLabels({ ids: dimensionValueIris, locale })
       : [];
 
   return dimensionValueLabels.map((vl) => {
@@ -199,11 +204,12 @@ export const getCubeObservations = async ({
   /**
    * Add labels to named dimensions
    */
+  const cubeDimensions = getCubeDimensions({ cube, locale });
 
   // Find dimensions which are NOT literal
-  const namedDimensions = getCubeDimensions({ cube, locale }).filter(
-    ({ isLiteral }) => !isLiteral
-  );
+  const namedDimensions = cubeDimensions.filter(({ isLiteral }) => !isLiteral);
+
+  const namedDimensionIris = new Set(namedDimensions.map((d) => d.iri));
 
   const lookupSource = LookupSource.fromSource(cube.source);
 
@@ -212,7 +218,7 @@ export const getCubeObservations = async ({
       source: lookupSource,
       path: ns.schema.name,
       join: cubeView.dimension({ cubeDimension: dimension.iri }),
-      as: dimension.iri, // Is it correct to "replace" the original dimension with the same IRI like this?
+      as: `${dimension.iri}/label`, // Is it correct to "replace" the original dimension with the same IRI like this?
     });
 
     observationDimensions.push(labelDimension);
@@ -247,12 +253,19 @@ export const getCubeObservations = async ({
   }
 
   const observationsRaw = await observationsView.observations();
+
   const observations = observationsRaw.map((obs) => {
     return Object.fromEntries(
-      Object.entries(obs).map(([k, v]) => [
-        k,
-        parseObservationValue({ value: v }),
-      ])
+      cubeDimensions.map((d) => {
+        const label = obs[`${d.iri}/label`]?.value;
+        const value = obs[d.iri]?.value;
+
+        return [
+          d.iri,
+          label ?? value,
+          // v !== undefined ? parseObservationValue({ value: v }) : null,
+        ];
+      })
     );
   });
 

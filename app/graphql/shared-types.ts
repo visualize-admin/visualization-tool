@@ -24,6 +24,7 @@ export type ResolvedDataCube = {
 export type ResolvedDimension = {
   dataCube: Cube;
   dimension: CubeDimension;
+  locale: string;
 
   iri: string;
   isLiteral: boolean;

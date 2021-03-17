@@ -57,6 +57,7 @@ export const parseCubeDimension = ({
   return {
     dimension: dim,
     iri: dim.path?.value!,
+    locale,
     isLiteral,
     isNumerical,
     dataType: dim.datatype?.value,

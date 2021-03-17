@@ -246,10 +246,11 @@ const dimensionResolvers = {
   label: ({ name }: ResolvedDimension) => name,
   unit: ({ unit }: ResolvedDimension) => unit ?? null,
   scaleType: ({ scaleType }: ResolvedDimension) => scaleType ?? null,
-  values: async ({ dataCube, dimension }: ResolvedDimension) => {
+  values: async ({ dataCube, dimension, locale }: ResolvedDimension) => {
     const values = await getCubeDimensionValues({
       dimension,
       cube: dataCube,
+      locale,
     });
     // TODO min max are now just `values` with 2 elements. Handle properly!
     return values.sort((a, b) => ascending(a.value, b.value));
