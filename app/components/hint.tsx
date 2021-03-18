@@ -141,6 +141,31 @@ export const NoDataHint = () => (
     </Text>
   </Flex>
 );
+export const LoadingDataError = () => (
+  <Flex
+    sx={{
+      width: "100%",
+      height: "100%",
+      color: "hint",
+      margin: "auto",
+      textAlign: "center",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      flexGrow: 1,
+    }}
+  >
+    <Icon name="hintWarning" size={64} />
+    <Text variant="heading2" sx={{ my: 3 }}>
+      <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
+    </Text>
+    <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+      <Trans id="hint.dataloadingerror.message">
+        The data could not be loaded.
+      </Trans>
+    </Text>
+  </Flex>
+);
 export const OnlyNegativeDataHint = () => (
   <Flex
     sx={{

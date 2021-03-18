@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { Box } from "theme-ui";
 import {
   Loading,
+  LoadingDataError,
   LoadingOverlay,
   NoDataHint,
   OnlyNegativeDataHint,
@@ -37,7 +38,7 @@ export const ChartPieVisualization = ({
 }) => {
   const locale = useLocale();
 
-  const [{ data, fetching }] = useDataCubeObservationsQuery({
+  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
@@ -76,6 +77,8 @@ export const ChartPieVisualization = ({
     ) : (
       <NoDataHint />
     );
+  } else if (error) {
+    return <LoadingDataError />;
   } else {
     return <Loading />;
   }

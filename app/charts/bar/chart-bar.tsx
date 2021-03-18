@@ -22,7 +22,12 @@ import { Bars } from "./bars-simple";
 import { BarChart } from "./bars-state";
 import { ChartContainer, ChartSvg } from "../shared/containers";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
-import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
+import {
+  Loading,
+  LoadingDataError,
+  LoadingOverlay,
+  NoDataHint,
+} from "../../components/hint";
 
 export const ChartBarsVisualization = ({
   dataSetIri,
@@ -34,7 +39,7 @@ export const ChartBarsVisualization = ({
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching }] = useDataCubeObservationsQuery({
+  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
@@ -70,6 +75,8 @@ export const ChartBarsVisualization = ({
     );
   } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
     return <NoDataHint />;
+  } else if (error) {
+    return <LoadingDataError />;
   } else {
     return <Loading />;
   }

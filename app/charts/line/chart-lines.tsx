@@ -1,6 +1,11 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
+import {
+  Loading,
+  LoadingDataError,
+  LoadingOverlay,
+  NoDataHint,
+} from "../../components/hint";
 import {
   Filters,
   FilterValueSingle,
@@ -39,7 +44,7 @@ export const ChartLinesVisualization = ({
 }) => {
   const locale = useLocale();
 
-  const [{ data, fetching }] = useDataCubeObservationsQuery({
+  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
@@ -76,6 +81,8 @@ export const ChartLinesVisualization = ({
     );
   } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
     return <NoDataHint />;
+  } else if (error) {
+    return <LoadingDataError />;
   } else {
     return <Loading />;
   }
