@@ -57,7 +57,7 @@ query DataCubeMetadata($iri: String!, $locale: String!) {
     title
     description
     source
-    dateCreated
+    datePublished
   }
 }
 

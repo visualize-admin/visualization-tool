@@ -9,6 +9,16 @@ import { mapColorsToComponentValuesIris } from "../configurator/components/ui-he
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
 
+export const enabledChartTypes: ChartType[] = [
+  // "bar",
+  "column",
+  "line",
+  "area",
+  "scatterplot",
+  "pie",
+  "table",
+];
+
 export const getInitialConfig = ({
   chartType,
   dimensions,
@@ -257,14 +267,15 @@ export const getInitialConfig = ({
 };
 
 export const getPossibleChartType = ({
-  chartTypes,
+  chartTypes = enabledChartTypes,
   meta,
 }: {
-  chartTypes: ChartType[];
+  chartTypes?: ChartType[];
   meta: DataCubeMetadata;
-}): ChartType[] | null => {
+}): ChartType[] => {
   const { measures, dimensions } = meta;
 
+  const hasZeroQ = measures.length === 0;
   const hasMultipleQ = measures.length > 1;
   const hasTime = dimensions.some(
     (dim) => dim.__typename === "TemporalDimension"
@@ -275,9 +286,10 @@ export const getPossibleChartType = ({
   const multipleQ: ChartType[] = ["scatterplot"];
   const timeBased: ChartType[] = ["line", "area"];
 
-  let possibles: ChartType[] | null = [];
-
-  if (hasMultipleQ && hasTime) {
+  let possibles: ChartType[] = [];
+  if (hasZeroQ) {
+    possibles = ["table"];
+  } else if (hasMultipleQ && hasTime) {
     possibles = [...multipleQ, ...timeBased, ...catBased];
   } else if (hasMultipleQ && !hasTime) {
     possibles = [...multipleQ, ...catBased];
@@ -286,7 +298,8 @@ export const getPossibleChartType = ({
   } else if (!hasMultipleQ && !hasTime) {
     possibles = [...catBased];
   } else {
-    possibles = null;
+    // Tables should always be possible
+    possibles = ["table"];
   }
   return possibles;
 };

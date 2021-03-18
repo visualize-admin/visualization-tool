@@ -51,7 +51,12 @@ export { i18n };
  * If unparseable, returns default locale.
  * @param localeString locale string, e.g. de,en-US;q=0.7,en;q=0.3
  */
-export const parseLocaleString = (localeString: string): Locale => {
+export const parseLocaleString = (
+  localeString: string | null | undefined
+): Locale => {
+  if (localeString == null) {
+    return defaultLocale;
+  }
   const result = /^(de|fr|it|en)/.exec(localeString);
   return result ? (result[1] as Locale) : defaultLocale;
 };

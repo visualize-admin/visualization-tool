@@ -1,169 +1,96 @@
-import { literal } from "@rdfjs/data-model";
-import {
-  DataCube as RDFDataCube,
-  DataCubeEntryPoint,
-  Dimension as RDFDimension,
-  Measure as RDFMeasure,
-} from "@zazuko/query-rdf-data-cube";
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { Filters } from "../configurator";
-import { parseObservationValue } from "../domain/data";
-import { SPARQL_ENDPOINT } from "../domain/env";
-import { locales, parseLocaleString } from "../locales/locales";
+import { parseLocaleString } from "../locales/locales";
+import {
+  getCube,
+  getCubeDimensions,
+  getCubeDimensionValues,
+  getCubeObservations,
+  getCubes,
+} from "../rdf/queries";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
   QueryResolvers,
   Resolvers,
 } from "./resolver-types";
-import { ResolvedDimension, ResolvedMeasure } from "./shared-types";
+import { ResolvedDimension } from "./shared-types";
 
-let entryPointCache = new Map<string, DataCubeEntryPoint>();
-const getEntryPoint = (
-  _locale: string | null | undefined
-): DataCubeEntryPoint => {
-  const locale = parseLocaleString(_locale || "");
+// /** Cache value data type per Dimension IRI */
+// let dataTypeCache = new Map<string, string | undefined>();
+// const getDataTypeOfDimension = async (
+//   cube: RDFDataCube,
+//   dimension: RDFDimension
+// ) => {
+//   if (dataTypeCache.has(dimension.iri.value)) {
+//     return dataTypeCache.get(dimension.iri.value);
+//   }
 
-  let entry = entryPointCache.get(locale);
+//   const [exampleValue] = await cube
+//     .query()
+//     .select({ d: dimension })
+//     .limit(1)
+//     .execute();
 
-  if (entry) {
-    return entry;
-  }
+//   const dataType =
+//     exampleValue.d.value.termType === "Literal"
+//       ? exampleValue.d.value.datatype.value
+//       : undefined;
 
-  entry = new DataCubeEntryPoint(SPARQL_ENDPOINT, {
-    languages: [locale, ...locales.filter((l) => l !== locale), ""],
-    extraMetadata: [
-      {
-        variable: "contact",
-        iri: "https://pcaxis.described.at/contact",
-        multilang: true,
-      },
-      {
-        variable: "source",
-        iri: "https://pcaxis.described.at/source",
-        multilang: true,
-      },
-      {
-        variable: "survey",
-        iri: "https://pcaxis.described.at/survey",
-        multilang: true,
-      },
-      {
-        variable: "database",
-        iri: "https://pcaxis.described.at/database",
-        multilang: true,
-      },
-      {
-        variable: "unit",
-        iri: "https://pcaxis.described.at/unit",
-        multilang: true,
-      },
-      {
-        variable: "note",
-        iri: "https://pcaxis.described.at/note",
-        multilang: true,
-      },
-      {
-        variable: "dateCreated",
-        iri: "http://schema.org/dateCreated",
-        multilang: false,
-      },
-      { variable: "dateModified", iri: "http://schema.org/dateModified" },
-      {
-        variable: "description",
-        iri: "http://www.w3.org/2000/01/rdf-schema#comment",
-        multilang: true,
-      },
-    ],
-  });
+//   dataTypeCache.set(dimension.iri.value, dataType);
 
-  // TODO: Re-enable caching with TTL
-  // entryPointCache.set(locale, entry);
+//   return dataType;
+// };
 
-  return entry;
-};
+// const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
+//   const dimensions = await cube.dimensions();
+//   const dimensionsByIri = dimensions.reduce<
+//     Record<string, RDFDimension | undefined>
+//   >((acc, d) => {
+//     acc[d.iri.value] = d;
+//     return acc;
+//   }, {});
 
-/** Cache value data type per Dimension IRI */
-let dataTypeCache = new Map<string, string | undefined>();
-const getDataTypeOfDimension = async (
-  cube: RDFDataCube,
-  dimension: RDFDimension
-) => {
-  if (dataTypeCache.has(dimension.iri.value)) {
-    return dataTypeCache.get(dimension.iri.value);
-  }
+//   const filterEntries = await Promise.all(
+//     Object.entries(filters).map(async ([dimIri, filter]) => {
+//       const dimension = dimensionsByIri[dimIri];
 
-  const [exampleValue] = await cube
-    .query()
-    .select({ d: dimension })
-    .limit(1)
-    .execute();
+//       if (!dimension) {
+//         return [];
+//       }
 
-  const dataType =
-    exampleValue.d.value.termType === "Literal"
-      ? exampleValue.d.value.datatype.value
-      : undefined;
+//       const dataType = await getDataTypeOfDimension(cube, dimension);
 
-  dataTypeCache.set(dimension.iri.value, dataType);
+//       const selectedValues =
+//         filter.type === "single"
+//           ? [dataType ? literal(filter.value, dataType) : filter.value]
+//           : filter.type === "multi"
+//           ? // If values is an empty object, we filter by something that doesn't exist
+//             Object.keys(filter.values).length > 0
+//             ? Object.entries(filter.values).flatMap(([value, selected]) =>
+//                 selected ? [dataType ? literal(value, dataType) : value] : []
+//               )
+//             : ["EMPTY_VALUE"]
+//           : [];
 
-  return dataType;
-};
+//       // FIXME: why doesn't .equals work for date types but .in does?
+//       // Temporary solution: filter everything usin .in!
+//       // return selectedValues.length === 1
+//       //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
+//       //   :
+//       return selectedValues.length > 0 ? [dimension.in(selectedValues)] : [];
+//     })
+//   );
 
-const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
-  const dimensions = await cube.dimensions();
-  const dimensionsByIri = dimensions.reduce<
-    Record<string, RDFDimension | undefined>
-  >((acc, d) => {
-    acc[d.iri.value] = d;
-    return acc;
-  }, {});
-
-  const filterEntries = await Promise.all(
-    Object.entries(filters).map(async ([dimIri, filter]) => {
-      const dimension = dimensionsByIri[dimIri];
-
-      if (!dimension) {
-        return [];
-      }
-
-      const dataType = await getDataTypeOfDimension(cube, dimension);
-
-      const selectedValues =
-        filter.type === "single"
-          ? [dataType ? literal(filter.value, dataType) : filter.value]
-          : filter.type === "multi"
-          ? // If values is an empty object, we filter by something that doesn't exist
-            Object.keys(filter.values).length > 0
-            ? Object.entries(filter.values).flatMap(([value, selected]) =>
-                selected ? [dataType ? literal(value, dataType) : value] : []
-              )
-            : ["EMPTY_VALUE"]
-          : [];
-
-      // FIXME: why doesn't .equals work for date types but .in does?
-      // Temporary solution: filter everything usin .in!
-      // return selectedValues.length === 1
-      //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
-      //   :
-      return selectedValues.length > 0 ? [dimension.in(selectedValues)] : [];
-    })
-  );
-
-  return ([] as $Unexpressable[]).concat(...filterEntries);
-};
+//   return ([] as $Unexpressable[]).concat(...filterEntries);
+// };
 
 const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order }) => {
-    const dataCubes = await getEntryPoint(locale).dataCubes();
+    const cubes = await getCubes({ locale: parseLocaleString(locale) });
 
-    const dataCubeCandidates = dataCubes.map((dataCube) => ({
-      title: dataCube.label.value,
-      description: dataCube.extraMetadata.get("description")?.value ?? "",
-      created: dataCube.extraMetadata.get("dateCreated")?.value ?? "",
-      dataCube,
-    }));
+    const dataCubeCandidates = cubes;
 
     if (query) {
       /**
@@ -202,11 +129,11 @@ const Query: QueryResolvers = {
           a.title.localeCompare(b.title, locale ?? undefined)
         );
       } else if (order === DataCubeResultOrder.CreatedDesc) {
-        results.sort((a, b) => descending(a.created, b.created));
+        results.sort((a, b) => descending(a.datePublished, b.datePublished));
       }
 
       return results.map((result) => ({
-        dataCube: result.dataCube,
+        dataCube: result,
         highlightedTitle: fuzzaldrin.wrap(result.title, query, {
           wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
         }),
@@ -224,97 +151,109 @@ const Query: QueryResolvers = {
         a.title.localeCompare(b.title, locale ?? undefined)
       );
     } else if (order === DataCubeResultOrder.CreatedDesc) {
-      dataCubeCandidates.sort((a, b) => descending(a.created, b.created));
+      dataCubeCandidates.sort((a, b) =>
+        descending(a.datePublished, b.datePublished)
+      );
     }
 
-    return dataCubeCandidates;
+    return dataCubeCandidates.map((dataCube) => ({ dataCube }));
   },
   dataCubeByIri: async (_, { iri, locale }) => {
-    return getEntryPoint(locale).dataCubeByIri(iri);
+    return getCube({ iri, locale: parseLocaleString(locale) });
   },
 };
 
 const DataCube: DataCubeResolvers = {
-  iri: (dataCube) => dataCube.iri,
-  title: (dataCube) => dataCube.label.value,
-  contact: (dataCube) => dataCube.extraMetadata.get("contact")?.value ?? null,
-  source: (dataCube) => dataCube.extraMetadata.get("source")?.value ?? null,
-  description: (dataCube) =>
-    dataCube.extraMetadata.get("description")?.value ?? null,
-  dateCreated: (dataCube) =>
-    dataCube.extraMetadata.get("dateCreated")?.value ?? null,
-  dimensions: async (dataCube) => {
-    return (await dataCube.dimensions()).map((dimension) => ({
-      dataCube,
-      dimension,
-    }));
-  },
-  dimensionByIri: async (dataCube, { iri }) => {
-    const dimension = (await dataCube.dimensions()).find(
-      (dimension) => dimension.iri.value === iri
-    );
-    return dimension
-      ? {
-          dataCube,
-          dimension,
-        }
-      : null;
-  },
-  measures: async (dataCube) => {
-    return (await dataCube.measures()).map((measure) => ({
-      dataCube,
-      measure,
-    }));
-  },
-  observations: async (dataCube, { limit, filters, measures }) => {
-    const constructedFilters = filters
-      ? await constructFilters(dataCube, filters)
-      : [];
-
-    // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
-    const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
-      return measures?.find((iri) => iri === d.iri.value)
-        ? []
-        : ([[`dim${i}`, d]] as [string, RDFDimension][]);
+  iri: ({ iri }) => iri,
+  title: ({ title }) => title,
+  contact: ({ contactPoint }) => contactPoint ?? null,
+  description: ({ description }) => description ?? null,
+  source: (dataCube) => "TODO",
+  datePublished: ({ datePublished }) => datePublished ?? null,
+  dimensions: async ({ dataCube, locale }) => {
+    const dimensions = getCubeDimensions({
+      cube: dataCube,
+      locale,
     });
 
-    const selectedFields = [
-      ...unmappedDimensions,
-      ...(measures
-        ? measures.map(
-            (iri, i) =>
-              [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
-          )
-        : []),
-    ];
+    return dimensions.filter((d) => !d.isNumerical);
+  },
+  measures: async ({ dataCube, locale }) => {
+    const dimensions = getCubeDimensions({
+      cube: dataCube,
+      locale,
+    });
 
-    const query = dataCube
-      .query()
-      .limit(limit ?? null)
-      .select(selectedFields)
-      .filter(constructedFilters);
+    return dimensions.filter((d) => d.isNumerical);
+  },
+  dimensionByIri: async ({ dataCube, locale }, { iri }) => {
+    const dimension = getCubeDimensions({
+      cube: dataCube,
+      locale,
+    }).find((d) => iri === d.iri);
+
+    return dimension ?? null;
+  },
+  observations: async ({ dataCube, locale }, { limit, filters, measures }) => {
+    const { query, observations, observationsRaw } = await getCubeObservations({
+      cube: dataCube,
+      locale,
+      filters: filters ?? undefined,
+      limit: limit ?? undefined,
+    });
+
+    console.log(query);
+
+    // const constructedFilters = filters
+    //   ? await constructFilters(dataCube, filters)
+    //   : [];
+
+    // // TODO: Selecting dimensions explicitly makes the query slower (because labels are only included for selected components). Can this be improved?
+    // const unmappedDimensions = (await dataCube.dimensions()).flatMap((d, i) => {
+    //   return measures?.find((iri) => iri === d.iri.value)
+    //     ? []
+    //     : ([[`dim${i}`, d]] as [string, RDFDimension][]);
+    // });
+
+    // const selectedFields = [
+    //   ...unmappedDimensions,
+    //   ...(measures
+    //     ? measures.map(
+    //         (iri, i) =>
+    //           [`comp${i}`, new RDFMeasure({ iri })] as [string, RDFMeasure]
+    //       )
+    //     : []),
+    // ];
+
+    // const query = dataCube
+    //   .query()
+    //   .limit(limit ?? null)
+    //   .select(selectedFields)
+    //   .filter(constructedFilters);
 
     return {
       dataCube,
       query,
-      selectedFields,
+      observations,
+      observationsRaw,
+      selectedFields: [],
     };
   },
 };
 
 const dimensionResolvers = {
-  iri: ({ dimension }: ResolvedDimension) => dimension.iri.value,
-  label: ({ dimension }: ResolvedDimension) => dimension.label.value,
-  values: async ({ dataCube, dimension }: ResolvedDimension) => {
-    const values = await dataCube.componentValues(dimension);
-    return values
-      .map(({ value, label }) => {
-        return {
-          value: value.value,
-          label: label.value !== "" ? label.value : value.value,
-        };
-      })
-      .sort((a, b) => ascending(a.value, b.value));
+  iri: ({ iri }: ResolvedDimension) => iri,
+  label: ({ name }: ResolvedDimension) => name,
+  unit: ({ unit }: ResolvedDimension) => unit ?? null,
+  scaleType: ({ scaleType }: ResolvedDimension) => scaleType ?? null,
+  values: async ({ dataCube, dimension, locale }: ResolvedDimension) => {
+    const values = await getCubeDimensionValues({
+      dimension,
+      cube: dataCube,
+      locale,
+    });
+    // TODO min max are now just `values` with 2 elements. Handle properly!
+    return values.sort((a, b) => ascending(a.value, b.value));
   },
 };
 
@@ -325,60 +264,20 @@ export const resolvers: Resolvers = {
   Query,
   DataCube,
   ObservationsQuery: {
-    data: async ({ query, selectedFields }) => {
-      const observations = await query.execute();
-      // TODO: Optimize Performance
-      const fullyQualifiedObservations = observations.map((obs) => {
-        return Object.fromEntries(
-          Object.entries(obs).map(([k, v]) => {
-            return [
-              selectedFields.find(([selK]) => selK === k)![1].iri.value,
-              // FIXME: This undefined check should not be necessary but prevents breaking on some malformed RDF(?) values
-              v && v.value !== undefined ? parseObservationValue(v) : 0,
-            ];
-          })
-        );
-      });
-
-      return fullyQualifiedObservations;
-    },
-    rawData: async ({ query, selectedFields }) => {
-      const observations = await query.execute();
-      // TODO: Optimize Performance
-      const fullyQualifiedObservations = observations.map((obs) => {
-        return Object.fromEntries(
-          Object.entries(obs).map(([k, v]) => [
-            selectedFields.find(([selK]) => selK === k)![1].iri.value,
-            v,
-          ])
-        );
-      });
-
-      return fullyQualifiedObservations;
-    },
-    sparql: async ({ query }) => {
-      return query.toSparql();
-    },
+    data: async ({ query, observations }) => observations,
+    rawData: async ({ observationsRaw }) => observationsRaw,
+    sparql: async ({ query }) => query.replace(/\n+/g, " ").replace(/"/g, "'"),
   },
   Dimension: {
-    __resolveType({ dimension }) {
-      const scaleOfMeasure = dimension.extraMetadata.scaleOfMeasure;
-
-      if (
-        scaleOfMeasure &&
-        /cube\/scale\/Temporal\/?$/.test(scaleOfMeasure.value)
-      ) {
+    __resolveType({ dataKind, scaleType, dataType }) {
+      if (dataKind === "Time") {
         return "TemporalDimension";
       }
 
-      // FIXME: Remove this once we're sure that scaleOfMeasure always works
-      if (
-        /(Jahr|Année|Anno|Year|Zeit|Time|Temps|Tempo)/i.test(
-          dimension.label.value
-        )
-      ) {
-        return "TemporalDimension";
-      }
+      // TODO: GeoDimension
+      // if (dataKind === "https://schema.org/GeoShape") {
+      // return "GeoDimension"
+      // }
 
       return "NominalDimension";
     },
@@ -393,7 +292,6 @@ export const resolvers: Resolvers = {
     ...dimensionResolvers,
   },
   Measure: {
-    iri: ({ measure }: ResolvedMeasure) => measure.iri.value,
-    label: ({ measure }: ResolvedMeasure) => measure.label.value,
+    ...dimensionResolvers,
   },
 };

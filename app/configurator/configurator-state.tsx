@@ -13,6 +13,7 @@ import {
   getFieldComponentIris,
   getFilteredFieldIris,
   getInitialConfig,
+  getPossibleChartType,
 } from "../charts";
 import { DataCubeMetadata } from "../graphql/types";
 import { createChartId } from "../lib/create-chart-id";
@@ -233,9 +234,13 @@ const transitionStepNext = (
   switch (draft.state) {
     case "SELECTING_DATASET":
       if (draft.dataSet) {
+        const possibleChartTypes = getPossibleChartType({
+          meta: dataSetMetadata,
+        });
+
         const chartConfig = deriveFiltersFromFields(
           getInitialConfig({
-            chartType: "column",
+            chartType: possibleChartTypes[0],
             dimensions: dataSetMetadata.dimensions,
             measures: dataSetMetadata.measures,
           }),
@@ -283,6 +288,10 @@ export const canTransitionToNextStep = (
   dataSetMetadata: DataCubeMetadata | null | undefined
 ): boolean => {
   if (!dataSetMetadata) {
+    return false;
+  }
+
+  if (dataSetMetadata.dimensions.length === 0) {
     return false;
   }
 
