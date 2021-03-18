@@ -16,6 +16,9 @@ import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
 
+/** Adds a suffix to an iri to mark it's label */
+const labelDimensionIri = (iri: string) => `${iri}/__label__`;
+
 const createSource = () =>
   new Source({
     sourceGraph: "https://lindas.admin.ch/foen/cube",
@@ -25,10 +28,10 @@ const createSource = () =>
   });
 
 export const getCubes = async ({
-  includeDrafts = true,
+  includeDrafts,
   locale,
 }: {
-  includeDrafts?: boolean;
+  includeDrafts: boolean;
   locale: string;
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();
@@ -209,8 +212,6 @@ export const getCubeObservations = async ({
   // Find dimensions which are NOT literal
   const namedDimensions = cubeDimensions.filter(({ isLiteral }) => !isLiteral);
 
-  const namedDimensionIris = new Set(namedDimensions.map((d) => d.iri));
-
   const lookupSource = LookupSource.fromSource(cube.source);
 
   for (const dimension of namedDimensions) {
@@ -218,7 +219,7 @@ export const getCubeObservations = async ({
       source: lookupSource,
       path: ns.schema.name,
       join: cubeView.dimension({ cubeDimension: dimension.iri }),
-      as: `${dimension.iri}/label`, // Is it correct to "replace" the original dimension with the same IRI like this?
+      as: labelDimensionIri(dimension.iri),
     });
 
     observationDimensions.push(labelDimension);
@@ -257,7 +258,7 @@ export const getCubeObservations = async ({
   const observations = observationsRaw.map((obs) => {
     return Object.fromEntries(
       cubeDimensions.map((d) => {
-        const label = obs[`${d.iri}/label`]?.value;
+        const label = obs[labelDimensionIri(d.iri)]?.value;
         const value = obs[d.iri]?.value;
 
         return [
