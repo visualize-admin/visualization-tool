@@ -15,7 +15,7 @@ import {
 
 import * as React from "react";
 import { useEffect, useRef } from "react";
-import { Box, Text } from "theme-ui";
+import { Box, Flex, Text } from "theme-ui";
 import {
   getColorInterpolator,
   useFormatInteger,
@@ -30,23 +30,24 @@ import { MapState } from "./map-state";
 const WIDTH = 256;
 const COLOR_RAMP_HEIGHT = 10;
 
-export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
+export const MapLegend = () => {
   const {
-    areaLayer: { showAreaLayer, paletteType },
+    areaLayer: { areaMeasureLabel, showAreaLayer, paletteType },
+    symbolLayer: { symbolMeasureLabel, showSymbolLayer },
   } = useChartState() as MapState;
 
   return (
-    <Box
+    <Flex
       sx={{
-        p: 4,
         minHeight: 100,
         borderTop: "1px solid",
         borderTopColor: "monochrome200",
+        flexWrap: "wrap",
       }}
     >
       {showAreaLayer && (
-        <>
-          {legendTitle && <Text variant="meta">{legendTitle}</Text>}
+        <Box sx={{ p: 4 }}>
+          {areaMeasureLabel && <Text variant="meta">{areaMeasureLabel}</Text>}
 
           {paletteType === "continuous" && <ContinuousColorLegend />}
 
@@ -55,9 +56,134 @@ export const MapLegend = ({ legendTitle }: { legendTitle?: string }) => {
           {paletteType === "quantile" && <QuantileColorLegend />}
 
           {paletteType === "jenks" && <JenksColorLegend />}
-        </>
+        </Box>
       )}
-    </Box>
+      {showSymbolLayer && (
+        <Box sx={{ p: 4 }}>
+          {symbolMeasureLabel && (
+            <Text variant="meta">{symbolMeasureLabel}</Text>
+          )}
+          <CircleLegend />
+        </Box>
+      )}
+    </Flex>
+  );
+};
+const CircleLegend = () => {
+  const width = useWidth();
+  const [state] = useInteraction();
+
+  const { axisLabelColor, legendFontSize } = useChartTheme();
+  const {
+    data,
+    getFeatureLabel,
+    symbolLayer: { getRadius, radiusScale, symbolColorScale },
+  } = useChartState() as MapState;
+  const formatNumber = useFormatInteger();
+
+  const legendWidth = Math.min(width, WIDTH);
+  const margins = {
+    top: 6,
+    right: 4,
+    bottom: 4,
+    left: 4,
+  };
+  const height = 60;
+
+  const [, maxRadius] = radiusScale.domain();
+
+  return (
+    <svg
+      width={legendWidth + margins.left + margins.right}
+      height={height + margins.top + margins.bottom}
+    >
+      <g
+        transform={`translate(${margins.left + radiusScale(maxRadius)}, ${
+          margins.top + radiusScale(maxRadius)
+        })`}
+      >
+        {radiusScale.domain().map((d) => {
+          // FIXME: Potentially a performance problem if a lot of data
+          const thisFeatureLabel = getFeatureLabel(
+            data.find((x) => getRadius(x) === d)
+          );
+          return (
+            <g
+              transform={`translate(0, ${
+                radiusScale(maxRadius) - radiusScale(d)
+              })`}
+            >
+              <circle
+                cx={0}
+                cy={0}
+                r={radiusScale(d)}
+                fill="none"
+                stroke={axisLabelColor}
+              />
+              {!state.interaction.visible && (
+                <>
+                  <line
+                    x1={0}
+                    y1={-radiusScale(d)}
+                    x2={radiusScale(maxRadius) + 4}
+                    y2={-radiusScale(d)}
+                    stroke={axisLabelColor}
+                  />
+                  <text
+                    x={radiusScale(maxRadius) + 6}
+                    y={-radiusScale(d)}
+                    dy={5}
+                    fill={axisLabelColor}
+                    textAnchor="start"
+                    fontSize={legendFontSize}
+                  >
+                    {formatNumber(d)} ({thisFeatureLabel})
+                  </text>
+                </>
+              )}
+            </g>
+          );
+        })}
+        {/* Hovered data point indicator */}
+        {state.interaction.d &&
+          state.interaction.visible &&
+          !isNaN(getRadius(state.interaction.d)) && (
+            <g
+              transform={`translate(0, ${
+                radiusScale(maxRadius) -
+                radiusScale(getRadius(state.interaction.d))
+              })`}
+            >
+              <circle
+                cx={0}
+                cy={0}
+                r={radiusScale(getRadius(state.interaction.d))}
+                fill={symbolColorScale(getRadius(state.interaction.d))}
+                stroke={symbolColorScale(getRadius(state.interaction.d))}
+                fillOpacity={0.1}
+              />
+              <line
+                x1={0}
+                y1={-radiusScale(getRadius(state.interaction.d))}
+                x2={radiusScale(maxRadius) + 4}
+                y2={-radiusScale(getRadius(state.interaction.d))}
+                stroke={symbolColorScale(getRadius(state.interaction.d))}
+              />
+              <text
+                x={radiusScale(maxRadius) + 6}
+                y={-radiusScale(getRadius(state.interaction.d))}
+                dy={5}
+                fill={symbolColorScale(getRadius(state.interaction.d))}
+                textAnchor="start"
+                fontSize={legendFontSize}
+              >
+                {formatNumber(getRadius(state.interaction.d))} (
+                {getFeatureLabel(state.interaction.d)})
+              </text>
+            </g>
+          )}
+      </g>
+    </svg>
   );
 };
 

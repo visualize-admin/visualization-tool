@@ -368,7 +368,7 @@ export const ChartMap = memo(
           <MapComponent />
           <MapTooltip />
         </ChartContainer>
-        <MapLegend legendTitle={measure} />
+        <MapLegend />
       </MapChart>
     );
   }

@@ -12,10 +12,10 @@ export const MapTooltip = () => {
   const [{ interaction }] = useInteraction();
   const {
     getFeatureLabel,
-    areaLayer: { areaMeasureLabel, showAreaLayer, getValue, colorScale },
+    areaLayer: { showAreaLayer, areaMeasureLabel, getValue, colorScale },
     symbolLayer: {
-      symbolMeasureLabel,
       showSymbolLayer,
+      symbolMeasureLabel,
       getRadius,
       symbolColorScale,
     },

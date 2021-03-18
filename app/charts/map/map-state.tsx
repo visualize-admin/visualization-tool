@@ -43,7 +43,7 @@ export interface MapState {
   bounds: Bounds;
   data: Observation[];
   features: GeoData;
-  getFeatureLabel: (d: Observation) => string;
+  getFeatureLabel: (d: Observation | undefined) => string;
   baseLayer: MapBaseLayer;
   areaLayer: {
     showAreaLayer: boolean;
@@ -136,8 +136,8 @@ const useMapState = ({
   // Maybe this should not be bound to areaLayer?
   // (also used for the proportional circles)
   const getFeatureLabel = useCallback(
-    (d: Observation): string =>
-      d[fields["areaLayer"].label.componentIri] as string,
+    (d: Observation | undefined): string =>
+      d ? (d[fields["areaLayer"].label.componentIri] as string) : "",
     [fields["areaLayer"].label.componentIri]
   );
   const getRadius = useCallback(
@@ -179,7 +179,7 @@ const useMapState = ({
 
   const radiusScale = scaleSqrt()
     .domain(radiusExtent as [number, number])
-    .range([2, 2000]);
+    .range([4, 23]);
   const symbolColorScale = (x: number) => "#006699";
 
   // Dimensions

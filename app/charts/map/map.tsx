@@ -266,10 +266,11 @@ export const MapComponent = () => {
             id="cantons-centroids"
             data={features.cantonCentroids}
             pickable={true}
-            opacity={0.8}
+            opacity={0.7}
             stroked={true}
             filled={true}
-            radiusScale={10}
+            radiusScale={1}
+            radiusUnits={"pixels"}
             radiusMinPixels={radiusScale.range()[0]}
             radiusMaxPixels={radiusScale.range()[1]}
             lineWidthMinPixels={1}
