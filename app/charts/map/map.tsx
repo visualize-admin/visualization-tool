@@ -280,6 +280,24 @@ export const MapComponent = () => {
             }}
             getFillColor={(d: $FixMe) => [0, 102, 153]}
             getLineColor={(d: $FixMe) => [255, 255, 255]}
+            onHover={({ x, y, object }: HoverObject) => {
+              if (object && object.id) {
+                dispatch({
+                  type: "INTERACTION_UPDATE",
+                  value: {
+                    interaction: {
+                      visible: true,
+                      mouse: { x, y },
+                      d: data.find((x: Observation) => x.id === object.id),
+                    },
+                  },
+                });
+              } else {
+                dispatch({
+                  type: "INTERACTION_HIDE",
+                });
+              }
+            }}
             updateTriggers={{ getRadius: [data, getRadius] }}
           />
         )}
