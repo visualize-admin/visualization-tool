@@ -44,8 +44,10 @@ export interface MapState {
   data: Observation[];
   features: GeoData;
   getFeatureLabel: (d: Observation) => string;
+  baseLayer: MapBaseLayer;
   areaLayer: {
     showAreaLayer: boolean;
+    areaMeasureLabel: string;
     getColor: (x: number | undefined) => number[];
     getValue: (d: Observation) => number;
     paletteType: PaletteType;
@@ -59,11 +61,12 @@ export interface MapState {
       | ScaleLinear<string, string>
       | ScaleThreshold<number, string>;
   };
-  baseLayer: MapBaseLayer;
   symbolLayer: {
+    symbolMeasureLabel: string;
     showSymbolLayer: boolean;
     radiusScale: ScalePower<number, number>;
     getRadius: (d: Observation) => number;
+    symbolColorScale: (x: number) => string;
   };
 }
 const getColorScale = ({
@@ -129,6 +132,9 @@ const useMapState = ({
     (d: Observation): number => +d[fields["areaLayer"].componentIri],
     [fields["areaLayer"].componentIri]
   );
+
+  // Maybe this should not be bound to areaLayer?
+  // (also used for the proportional circles)
   const getFeatureLabel = useCallback(
     (d: Observation): string =>
       d[fields["areaLayer"].label.componentIri] as string,
@@ -139,6 +145,14 @@ const useMapState = ({
     [fields["symbolLayer"].componentIri]
   );
 
+  const areaMeasureLabel =
+    measures
+      .find((m) => m.iri === fields["areaLayer"].componentIri)
+      ?.label.split("_")[1] || "";
+  const symbolMeasureLabel =
+    measures
+      .find((m) => m.iri === fields["symbolLayer"].componentIri)
+      ?.label.split("_")[1] || "";
   const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
     number,
     number
@@ -153,8 +167,6 @@ const useMapState = ({
     nbClass,
   });
   const getColor = (v: number | undefined) => {
-    // FIXME: make this function functional
-
     if (v === undefined) {
       return [0, 0, 0];
     }
@@ -164,10 +176,11 @@ const useMapState = ({
   };
 
   const radiusExtent = extent(data, (d) => getRadius(d));
-  console.log({ radiusExtent });
+
   const radiusScale = scaleSqrt()
     .domain(radiusExtent as [number, number])
     .range([2, 2000]);
+  const symbolColorScale = (x: number) => "#006699";
 
   // Dimensions
   const margins = {
@@ -192,7 +205,9 @@ const useMapState = ({
     features,
     bounds,
     getFeatureLabel,
+    baseLayer: fields["baseLayer"],
     areaLayer: {
+      areaMeasureLabel,
       showAreaLayer: fields.areaLayer.show,
       getColor,
       getValue,
@@ -202,11 +217,12 @@ const useMapState = ({
       dataDomain,
       colorScale,
     },
-    baseLayer: fields["baseLayer"],
     symbolLayer: {
+      symbolMeasureLabel,
       showSymbolLayer: fields.symbolLayer.show,
       radiusScale,
       getRadius,
+      symbolColorScale,
     },
   };
 };
