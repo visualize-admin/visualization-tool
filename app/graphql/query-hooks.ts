@@ -142,12 +142,14 @@ export type QueryDataCubesArgs = {
   locale?: Maybe<Scalars['String']>;
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
+  includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 
 export type DataCubesQueryVariables = Exact<{
   locale: Scalars['String'];
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
+  includeDrafts?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -322,8 +324,13 @@ export const DimensionFieldsWithValuesFragmentDoc = gql`
 }
     `;
 export const DataCubesDocument = gql`
-    query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder) {
-  dataCubes(locale: $locale, query: $query, order: $order) {
+    query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean) {
+  dataCubes(
+    locale: $locale
+    query: $query
+    order: $order
+    includeDrafts: $includeDrafts
+  ) {
     highlightedTitle
     highlightedDescription
     dataCube {

@@ -87,8 +87,11 @@ import { ResolvedDimension } from "./shared-types";
 // };
 
 const Query: QueryResolvers = {
-  dataCubes: async (_, { locale, query, order }) => {
-    const cubes = await getCubes({ locale: parseLocaleString(locale) });
+  dataCubes: async (_, { locale, query, order, includeDrafts }) => {
+    const cubes = await getCubes({
+      locale: parseLocaleString(locale),
+      includeDrafts: includeDrafts ? true : false,
+    });
 
     const dataCubeCandidates = cubes;
 

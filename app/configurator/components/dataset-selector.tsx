@@ -24,7 +24,7 @@ export const DataSetList = () => {
 
   // Use the debounced query value here only!
   const [{ data }] = useDataCubesQuery({
-    variables: { locale, query: debouncedQuery, order },
+    variables: { locale, query: debouncedQuery, order, includeDrafts: true },
   });
 
   const options = [

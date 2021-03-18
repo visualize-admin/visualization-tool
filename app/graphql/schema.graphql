@@ -103,5 +103,6 @@ type Query {
     locale: String
     query: String
     order: DataCubeResultOrder
+    includeDrafts: Boolean
   ): [DataCubeResult!]!
 }

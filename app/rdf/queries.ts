@@ -28,10 +28,10 @@ const createSource = () =>
   });
 
 export const getCubes = async ({
-  includeDrafts = true,
+  includeDrafts,
   locale,
 }: {
-  includeDrafts?: boolean;
+  includeDrafts: boolean;
   locale: string;
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();

@@ -11,7 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET":
       try {
         const locale = "de";
-        const result = await getCubes({ locale });
+        const result = await getCubes({ locale, includeDrafts: true });
 
         const cubesWithDimensions = result.map(({ dataCube, ...cubeProps }) => {
           return {

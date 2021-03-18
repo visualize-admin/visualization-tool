@@ -1,5 +1,15 @@
-query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder) {
-  dataCubes(locale: $locale, query: $query, order: $order) {
+query DataCubes(
+  $locale: String!
+  $query: String
+  $order: DataCubeResultOrder
+  $includeDrafts: Boolean
+) {
+  dataCubes(
+    locale: $locale
+    query: $query
+    order: $order
+    includeDrafts: $includeDrafts
+  ) {
     highlightedTitle
     highlightedDescription
     dataCube {

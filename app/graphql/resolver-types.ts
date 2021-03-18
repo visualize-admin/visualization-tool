@@ -146,6 +146,7 @@ export type QueryDataCubesArgs = {
   locale?: Maybe<Scalars['String']>;
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
+  includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
