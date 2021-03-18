@@ -108,40 +108,44 @@ const CircleLegend = () => {
             data.find((x) => getRadius(x) === d)
           );
           return (
-            <g
-              transform={`translate(0, ${
-                radiusScale(maxRadius) - radiusScale(d)
-              })`}
-            >
-              <circle
-                cx={0}
-                cy={0}
-                r={radiusScale(d)}
-                fill="none"
-                stroke={axisLabelColor}
-              />
-              {!state.interaction.visible && (
-                <>
-                  <line
-                    x1={0}
-                    y1={-radiusScale(d)}
-                    x2={radiusScale(maxRadius) + 4}
-                    y2={-radiusScale(d)}
+            <>
+              {d !== 0 && (
+                <g
+                  transform={`translate(0, ${
+                    radiusScale(maxRadius) - radiusScale(d)
+                  })`}
+                >
+                  <circle
+                    cx={0}
+                    cy={0}
+                    r={radiusScale(d)}
+                    fill="none"
                     stroke={axisLabelColor}
                   />
-                  <text
-                    x={radiusScale(maxRadius) + 6}
-                    y={-radiusScale(d)}
-                    dy={5}
-                    fill={axisLabelColor}
-                    textAnchor="start"
-                    fontSize={legendFontSize}
-                  >
-                    {formatNumber(d)} ({thisFeatureLabel})
-                  </text>
-                </>
+                  {!state.interaction.visible && (
+                    <>
+                      <line
+                        x1={0}
+                        y1={-radiusScale(d)}
+                        x2={radiusScale(maxRadius) + 4}
+                        y2={-radiusScale(d)}
+                        stroke={axisLabelColor}
+                      />
+                      <text
+                        x={radiusScale(maxRadius) + 6}
+                        y={-radiusScale(d)}
+                        dy={5}
+                        fill={axisLabelColor}
+                        textAnchor="start"
+                        fontSize={legendFontSize}
+                      >
+                        {formatNumber(d)} ({thisFeatureLabel})
+                      </text>
+                    </>
+                  )}
+                </g>
               )}
-            </g>
+            </>
           );
         })}
         {/* Hovered data point indicator */}

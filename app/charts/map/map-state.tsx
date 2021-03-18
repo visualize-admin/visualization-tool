@@ -176,10 +176,10 @@ const useMapState = ({
   };
 
   const radiusExtent = extent(data, (d) => getRadius(d));
-
+  const radiusRange = radiusExtent[0] === 0 ? [0, 23] : [4, 23];
   const radiusScale = scaleSqrt()
     .domain(radiusExtent as [number, number])
-    .range([4, 23]);
+    .range(radiusRange);
   const symbolColorScale = (x: number) => "#006699";
 
   // Dimensions
