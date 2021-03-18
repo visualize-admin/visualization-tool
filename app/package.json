@@ -68,6 +68,7 @@
     "react-table": "^7.5.1",
     "react-virtual": "^2.3.1",
     "react-window": "^1.8.6",
+    "simple-statistics": "^7.6.0",
     "sparql-http-client": "^2.2.2",
     "theme-ui": "^0.3.1",
     "topojson-client": "^3.1.0",

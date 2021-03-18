@@ -5,6 +5,7 @@ import { PaletteType } from "../../configurator";
 import { ControlSection } from "../../configurator/components/chart-controls/section";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { ActiveLayer, Control } from "./chart-map-prototype";
+import { Label } from "./prototype-components";
 
 export const PrototypeRightControls = ({
   activeControl,
@@ -17,8 +18,8 @@ export const PrototypeRightControls = ({
   setPalette,
   paletteType,
   setPaletteType,
-  nbSteps,
-  setNbSteps,
+  nbClass,
+  setNbClass,
   symbolMeasure,
   setSymbolMeasure,
 }: {
@@ -32,8 +33,8 @@ export const PrototypeRightControls = ({
   setPalette: (x: string) => void;
   paletteType: string;
   setPaletteType: (x: PaletteType) => void;
-  nbSteps: number;
-  setNbSteps: (x: number) => void;
+  nbClass: number;
+  setNbClass: (x: number) => void;
   symbolMeasure: string;
   setSymbolMeasure: (x: string) => void;
 }) => {
@@ -111,8 +112,13 @@ export const PrototypeRightControls = ({
               ]}
               onChange={(e) => setPalette(e.currentTarget.value)}
             ></Select>
+          </Box>
+        </ControlSection>
+        <ControlSection>
+          <Box sx={{ p: 4 }}>
+            <Label label="Continuous" smaller></Label>
             <Radio
-              label={"Kontinuerlich"}
+              label={"Linear interpolation"}
               name={"continuous"}
               value={"continuous"}
               checked={paletteType === "continuous"}
@@ -121,8 +127,9 @@ export const PrototypeRightControls = ({
                 setPaletteType(e.currentTarget.value as PaletteType);
               }}
             />
+            <Label label="Discrete" smaller></Label>
             <Radio
-              label={"Sequentiell"}
+              label={"Quantize (equal intervals)"}
               name={"discrete"}
               value={"discrete"}
               checked={paletteType === "discrete"}
@@ -131,11 +138,31 @@ export const PrototypeRightControls = ({
                 setPaletteType(e.currentTarget.value as PaletteType)
               }
             />
+            <Radio
+              label={"Quantiles (equal frequency)"}
+              name={"quantile"}
+              value={"quantile"}
+              checked={paletteType === "quantile"}
+              disabled={!activeLayers.areaLayer}
+              onChange={(e) =>
+                setPaletteType(e.currentTarget.value as PaletteType)
+              }
+            />
+            <Radio
+              label={"Jenks (natural breaks)"}
+              name={"jenks"}
+              value={"jenks"}
+              checked={paletteType === "jenks"}
+              disabled={!activeLayers.areaLayer}
+              onChange={(e) =>
+                setPaletteType(e.currentTarget.value as PaletteType)
+              }
+            />
             <Select
               label={"Anzahl Schritte"}
-              id={"nbSteps"}
-              name={"nbSteps"}
-              value={`${nbSteps}`}
+              id={"nbClass"}
+              name={"nbClass"}
+              value={`${nbClass}`}
               disabled={!activeLayers.areaLayer || paletteType === "continuous"}
               options={[
                 { value: "3", label: "3" },
@@ -146,7 +173,7 @@ export const PrototypeRightControls = ({
                 { value: "8", label: "8" },
                 { value: "9", label: "9" },
               ]}
-              onChange={(e) => setNbSteps(+e.currentTarget.value)}
+              onChange={(e) => setNbClass(+e.currentTarget.value)}
             ></Select>
           </Box>
         </ControlSection>

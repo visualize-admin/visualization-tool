@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { geoCentroid } from "d3";
-import React, { memo, ReactNode, useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
 import {
   feature as topojsonFeature,
@@ -8,21 +8,16 @@ import {
 } from "topojson-client";
 import { Select } from "../../components/form";
 import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { FieldProps, MapFields } from "../../configurator";
-import {
-  ControlTabButton,
-  ControlTabButtonInner,
-} from "../../configurator/components/chart-controls/control-tab";
+import { MapFields, PaletteType } from "../../configurator";
 import { ControlSection } from "../../configurator/components/chart-controls/section";
-import { getIconName } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { ComponentFieldsFragment } from "../../graphql/query-hooks";
-import { IconName } from "../../icons/components";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
 import { GeoData, MapChart } from "./map-state";
 import { MapTooltip } from "./map-tooltip";
+import { Tab } from "./prototype-components";
 import { PrototypeRightControls } from "./prototype-right-controls";
 
 type GeoDataState =
@@ -45,7 +40,6 @@ type DataState =
       state: "loaded";
       ds: Observation[];
     };
-type PaletteType = "continuous" | "discrete";
 
 export const ChartMapVisualization = () => {
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
@@ -165,7 +159,7 @@ export const ChartMapPrototype = ({
   });
   const [activeControl, setActiveControl] = useState<Control>("baseLayer");
   const [palette, setPalette] = useState("oranges");
-  const [nbSteps, setNbSteps] = useState(5);
+  const [nbClass, setNbClass] = useState(5);
   const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
   const [measure, setMeasure] = useState(measures[0].iri);
   const [symbolMeasure, setSymbolMeasure] = useState(measures[0].iri);
@@ -297,7 +291,7 @@ export const ChartMapPrototype = ({
                   show: activeLayers["areaLayer"],
                   label: { componentIri: attributes[0].iri },
                   palette,
-                  nbSteps,
+                  nbClass,
                   paletteType,
                 },
                 symbolLayer: {
@@ -335,8 +329,8 @@ export const ChartMapPrototype = ({
           setPalette={setPalette}
           paletteType={paletteType}
           setPaletteType={setPaletteType}
-          nbSteps={nbSteps}
-          setNbSteps={setNbSteps}
+          nbClass={nbClass}
+          setNbClass={setNbClass}
           symbolMeasure={symbolMeasure}
           setSymbolMeasure={setSymbolMeasure}
         />
@@ -374,49 +368,8 @@ export const ChartMap = memo(
           <MapComponent />
           <MapTooltip />
         </ChartContainer>
-        <MapLegend legendTitle={measure} />
+        <MapLegend />
       </MapChart>
     );
   }
-);
-
-// Light version of ControlTab (only for prototype)
-const Tab = ({
-  value,
-  onClick,
-  iconName,
-  upperLabel,
-  lowerLabel,
-  checked,
-  disabled,
-}: {
-  disabled?: boolean;
-  onClick: (x: Control) => void;
-  value: Control;
-  upperLabel: ReactNode;
-  lowerLabel: string;
-  iconName?: IconName;
-} & FieldProps) => (
-  <Box
-    sx={{
-      width: "100%",
-      borderRadius: "default",
-      my: "2px",
-      pointerEvents: disabled ? "none" : "unset",
-    }}
-  >
-    <ControlTabButton
-      checked={checked}
-      value={value}
-      onClick={() => onClick(value)}
-    >
-      <ControlTabButtonInner
-        iconName={iconName ?? getIconName(value)}
-        upperLabel={upperLabel}
-        lowerLabel={lowerLabel}
-        checked={checked}
-        optional={disabled}
-      />
-    </ControlTabButton>
-  </Box>
 );

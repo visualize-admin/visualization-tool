@@ -242,7 +242,7 @@ export const getInitialConfig = ({
             show: false,
             label: { componentIri: dimensions[0].iri },
             palette: "oranges",
-            nbSteps: 5,
+            nbClass: 5,
             paletteType: "continuous",
           },
           symbolLayer: {

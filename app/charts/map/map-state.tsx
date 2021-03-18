@@ -1,13 +1,25 @@
 import {
   color,
   extent,
+  ScaleLinear,
+  scaleLinear,
   ScalePower,
+  ScaleQuantile,
+  scaleQuantile,
   ScaleQuantize,
   scaleQuantize,
+  scaleSequential,
+  ScaleSequential,
   scaleSqrt,
+  ScaleThreshold,
+  scaleThreshold,
 } from "d3";
 import { ReactNode, useCallback } from "react";
-import { getSingleHueSequentialPalette } from "../../configurator/components/ui-helpers";
+import { ckmeans } from "simple-statistics";
+import {
+  getColorInterpolator,
+  getSingleHueSequentialPalette,
+} from "../../configurator/components/ui-helpers";
 import {
   MapBaseLayer,
   MapFields,
@@ -31,25 +43,78 @@ export interface MapState {
   bounds: Bounds;
   data: Observation[];
   features: GeoData;
+  getFeatureLabel: (d: Observation | undefined) => string;
+  baseLayer: MapBaseLayer;
   areaLayer: {
     showAreaLayer: boolean;
-    getLabel: (d: Observation) => string;
+    areaMeasureLabel: string;
     getColor: (x: number | undefined) => number[];
     getValue: (d: Observation) => number;
     paletteType: PaletteType;
     palette: string;
-    nbSteps: number;
+    nbClass: number;
     dataDomain: [number, number];
-    colorScale: ScaleQuantize<number, string>;
+    colorScale:
+      | ScaleSequential<string>
+      | ScaleQuantize<string>
+      | ScaleQuantile<string>
+      | ScaleLinear<string, string>
+      | ScaleThreshold<number, string>;
   };
-  baseLayer: MapBaseLayer;
   symbolLayer: {
+    symbolMeasureLabel: string;
     showSymbolLayer: boolean;
     radiusScale: ScalePower<number, number>;
     getRadius: (d: Observation) => number;
+    symbolColorScale: (x: number) => string;
   };
 }
+const getColorScale = ({
+  paletteType,
+  palette,
+  getValue,
+  data,
+  dataDomain,
+  nbClass,
+}: {
+  paletteType: PaletteType;
+  palette: string;
+  getValue: (x: Observation) => number;
+  data: Observation[];
+  dataDomain: [number, number];
+  nbClass: number;
+}) => {
+  const paletteDomain = getSingleHueSequentialPalette({
+    palette,
+    nbClass: 9,
+  });
 
+  switch (paletteType) {
+    case "continuous":
+      return scaleSequential(getColorInterpolator(palette)).domain(dataDomain);
+    case "discrete":
+      return scaleQuantize<string>()
+        .domain(dataDomain)
+        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+    case "quantile":
+      return scaleQuantile<string>()
+        .domain(data.map((d) => getValue(d)))
+        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+    case "jenks":
+      const ckMeansThresholds = ckmeans(
+        data.map((d) => getValue(d)),
+        nbClass
+      ).map((v) => v.pop() || 0);
+
+      return scaleThreshold<number, string>()
+        .domain(ckMeansThresholds)
+        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+    default:
+      return scaleLinear<string>()
+        .domain(dataDomain)
+        .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]]);
+  }
+};
 const useMapState = ({
   data,
   features,
@@ -62,14 +127,17 @@ const useMapState = ({
 }): MapState => {
   const width = useWidth();
 
-  const { palette, nbSteps, paletteType } = fields["areaLayer"];
+  const { palette, nbClass, paletteType } = fields["areaLayer"];
   const getValue = useCallback(
     (d: Observation): number => +d[fields["areaLayer"].componentIri],
     [fields["areaLayer"].componentIri]
   );
-  const getLabel = useCallback(
-    (d: Observation): string =>
-      d[fields["areaLayer"].label.componentIri] as string,
+
+  // Maybe this should not be bound to areaLayer?
+  // (also used for the proportional circles)
+  const getFeatureLabel = useCallback(
+    (d: Observation | undefined): string =>
+      d ? (d[fields["areaLayer"].label.componentIri] as string) : "",
     [fields["areaLayer"].label.componentIri]
   );
   const getRadius = useCallback(
@@ -77,24 +145,28 @@ const useMapState = ({
     [fields["symbolLayer"].componentIri]
   );
 
+  const areaMeasureLabel =
+    measures
+      .find((m) => m.iri === fields["areaLayer"].componentIri)
+      ?.label.split("_")[1] || "";
+  const symbolMeasureLabel =
+    measures
+      .find((m) => m.iri === fields["symbolLayer"].componentIri)
+      ?.label.split("_")[1] || "";
   const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
     number,
     number
   ];
 
-  // FIXME: for continuous scale, just interpolate between 2 colors?
-  const colorScale = scaleQuantize<number, string>()
-    .domain(dataDomain)
-    .range(
-      getSingleHueSequentialPalette({
-        palette,
-        nbSteps: paletteType === "continuous" ? 9 : nbSteps,
-      }) as $FixMe[]
-    );
-
+  const colorScale = getColorScale({
+    paletteType,
+    palette,
+    getValue,
+    data,
+    dataDomain,
+    nbClass,
+  });
   const getColor = (v: number | undefined) => {
-    // FIXME: make this function functional
-
     if (v === undefined) {
       return [0, 0, 0];
     }
@@ -104,10 +176,11 @@ const useMapState = ({
   };
 
   const radiusExtent = extent(data, (d) => getRadius(d));
-  console.log({ radiusExtent });
+  const radiusRange = radiusExtent[0] === 0 ? [0, 23] : [4, 23];
   const radiusScale = scaleSqrt()
     .domain(radiusExtent as [number, number])
-    .range([2, 2000]);
+    .range(radiusRange);
+  const symbolColorScale = (x: number) => "#006699";
 
   // Dimensions
   const margins = {
@@ -131,22 +204,25 @@ const useMapState = ({
     data,
     features,
     bounds,
+    getFeatureLabel,
+    baseLayer: fields["baseLayer"],
     areaLayer: {
+      areaMeasureLabel,
       showAreaLayer: fields.areaLayer.show,
-      getLabel,
       getColor,
       getValue,
       paletteType,
       palette,
-      nbSteps,
+      nbClass: nbClass,
       dataDomain,
       colorScale,
     },
-    baseLayer: fields["baseLayer"],
     symbolLayer: {
+      symbolMeasureLabel,
       showSymbolLayer: fields.symbolLayer.show,
       radiusScale,
       getRadius,
+      symbolColorScale,
     },
   };
 };
