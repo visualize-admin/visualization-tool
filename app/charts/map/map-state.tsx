@@ -43,9 +43,9 @@ export interface MapState {
   bounds: Bounds;
   data: Observation[];
   features: GeoData;
+  getFeatureLabel: (d: Observation) => string;
   areaLayer: {
     showAreaLayer: boolean;
-    getLabel: (d: Observation) => string;
     getColor: (x: number | undefined) => number[];
     getValue: (d: Observation) => number;
     paletteType: PaletteType;
@@ -129,7 +129,7 @@ const useMapState = ({
     (d: Observation): number => +d[fields["areaLayer"].componentIri],
     [fields["areaLayer"].componentIri]
   );
-  const getLabel = useCallback(
+  const getFeatureLabel = useCallback(
     (d: Observation): string =>
       d[fields["areaLayer"].label.componentIri] as string,
     [fields["areaLayer"].label.componentIri]
@@ -191,9 +191,9 @@ const useMapState = ({
     data,
     features,
     bounds,
+    getFeatureLabel,
     areaLayer: {
       showAreaLayer: fields.areaLayer.show,
-      getLabel,
       getColor,
       getValue,
       paletteType,
