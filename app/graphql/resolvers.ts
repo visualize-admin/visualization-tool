@@ -17,75 +17,6 @@ import {
 } from "./resolver-types";
 import { ResolvedDimension } from "./shared-types";
 
-// /** Cache value data type per Dimension IRI */
-// let dataTypeCache = new Map<string, string | undefined>();
-// const getDataTypeOfDimension = async (
-//   cube: RDFDataCube,
-//   dimension: RDFDimension
-// ) => {
-//   if (dataTypeCache.has(dimension.iri.value)) {
-//     return dataTypeCache.get(dimension.iri.value);
-//   }
-
-//   const [exampleValue] = await cube
-//     .query()
-//     .select({ d: dimension })
-//     .limit(1)
-//     .execute();
-
-//   const dataType =
-//     exampleValue.d.value.termType === "Literal"
-//       ? exampleValue.d.value.datatype.value
-//       : undefined;
-
-//   dataTypeCache.set(dimension.iri.value, dataType);
-
-//   return dataType;
-// };
-
-// const constructFilters = async (cube: RDFDataCube, filters: Filters) => {
-//   const dimensions = await cube.dimensions();
-//   const dimensionsByIri = dimensions.reduce<
-//     Record<string, RDFDimension | undefined>
-//   >((acc, d) => {
-//     acc[d.iri.value] = d;
-//     return acc;
-//   }, {});
-
-//   const filterEntries = await Promise.all(
-//     Object.entries(filters).map(async ([dimIri, filter]) => {
-//       const dimension = dimensionsByIri[dimIri];
-
-//       if (!dimension) {
-//         return [];
-//       }
-
-//       const dataType = await getDataTypeOfDimension(cube, dimension);
-
-//       const selectedValues =
-//         filter.type === "single"
-//           ? [dataType ? literal(filter.value, dataType) : filter.value]
-//           : filter.type === "multi"
-//           ? // If values is an empty object, we filter by something that doesn't exist
-//             Object.keys(filter.values).length > 0
-//             ? Object.entries(filter.values).flatMap(([value, selected]) =>
-//                 selected ? [dataType ? literal(value, dataType) : value] : []
-//               )
-//             : ["EMPTY_VALUE"]
-//           : [];
-
-//       // FIXME: why doesn't .equals work for date types but .in does?
-//       // Temporary solution: filter everything usin .in!
-//       // return selectedValues.length === 1
-//       //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
-//       //   :
-//       return selectedValues.length > 0 ? [dimension.in(selectedValues)] : [];
-//     })
-//   );
-
-//   return ([] as $Unexpressable[]).concat(...filterEntries);
-// };
-
 const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order, includeDrafts }) => {
     const cubes = await getCubes({
@@ -93,7 +24,7 @@ const Query: QueryResolvers = {
       includeDrafts: includeDrafts ? true : false,
     });
 
-    const dataCubeCandidates = cubes;
+    const dataCubeCandidates = cubes.map(({ data }) => data);
 
     if (query) {
       /**
@@ -135,18 +66,21 @@ const Query: QueryResolvers = {
         results.sort((a, b) => descending(a.datePublished, b.datePublished));
       }
 
-      return results.map((result) => ({
-        dataCube: result,
-        highlightedTitle: fuzzaldrin.wrap(result.title, query, {
-          wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
-        }),
-        highlightedDescription: fuzzaldrin.wrap(result.description, query, {
-          wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
-        }),
-        score:
-          fuzzaldrin.score(result.title, query) +
-          fuzzaldrin.score(result.description, query) * 0.5,
-      }));
+      return results.map((result) => {
+        const cube = cubes.find((c) => c.data.iri === result.iri)!;
+        return {
+          dataCube: cube,
+          highlightedTitle: fuzzaldrin.wrap(result.title, query, {
+            wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
+          }),
+          highlightedDescription: fuzzaldrin.wrap(result.description, query, {
+            wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
+          }),
+          score:
+            fuzzaldrin.score(result.title, query) +
+            fuzzaldrin.score(result.description, query) * 0.5,
+        };
+      });
     }
 
     if (order === DataCubeResultOrder.TitleAsc) {
@@ -159,7 +93,10 @@ const Query: QueryResolvers = {
       );
     }
 
-    return dataCubeCandidates.map((dataCube) => ({ dataCube }));
+    return dataCubeCandidates.map(({ iri }) => {
+      const cube = cubes.find((c) => c.data.iri === iri)!;
+      return { dataCube: cube };
+    });
   },
   dataCubeByIri: async (_, { iri, locale }) => {
     return getCube({ iri, locale: parseLocaleString(locale) });
@@ -167,39 +104,39 @@ const Query: QueryResolvers = {
 };
 
 const DataCube: DataCubeResolvers = {
-  iri: ({ iri }) => iri,
-  title: ({ title }) => title,
-  contact: ({ contactPoint }) => contactPoint ?? null,
-  description: ({ description }) => description ?? null,
+  iri: ({ data: { iri } }) => iri,
+  title: ({ data: { title } }) => title,
+  contact: ({ data: { contactPoint } }) => contactPoint ?? null,
+  description: ({ data: { description } }) => description ?? null,
   source: (dataCube) => "TODO",
-  datePublished: ({ datePublished }) => datePublished ?? null,
-  dimensions: async ({ dataCube, locale }) => {
+  datePublished: ({ data: { datePublished } }) => datePublished ?? null,
+  dimensions: async ({ cube, locale }) => {
     const dimensions = getCubeDimensions({
-      cube: dataCube,
+      cube,
       locale,
     });
 
-    return dimensions.filter((d) => !d.isNumerical);
+    return dimensions.filter((d) => !d.data.isNumerical);
   },
-  measures: async ({ dataCube, locale }) => {
+  measures: async ({ cube, locale }) => {
     const dimensions = getCubeDimensions({
-      cube: dataCube,
+      cube,
       locale,
     });
 
-    return dimensions.filter((d) => d.isNumerical);
+    return dimensions.filter((d) => d.data.isNumerical);
   },
-  dimensionByIri: async ({ dataCube, locale }, { iri }) => {
+  dimensionByIri: async ({ cube, locale }, { iri }) => {
     const dimension = getCubeDimensions({
-      cube: dataCube,
+      cube,
       locale,
-    }).find((d) => iri === d.iri);
+    }).find((d) => iri === d.data.iri);
 
     return dimension ?? null;
   },
-  observations: async ({ dataCube, locale }, { limit, filters, measures }) => {
+  observations: async ({ cube, locale }, { limit, filters, measures }) => {
     const { query, observations, observationsRaw } = await getCubeObservations({
-      cube: dataCube,
+      cube,
       locale,
       filters: filters ?? undefined,
       limit: limit ?? undefined,
@@ -235,24 +172,27 @@ const DataCube: DataCubeResolvers = {
     //   .filter(constructedFilters);
 
     return {
-      dataCube,
-      query,
-      observations,
-      observationsRaw,
-      selectedFields: [],
+      cube,
+      locale,
+      data: {
+        query,
+        observations,
+        observationsRaw,
+        selectedFields: [],
+      },
     };
   },
 };
 
 const dimensionResolvers = {
-  iri: ({ iri }: ResolvedDimension) => iri,
-  label: ({ name }: ResolvedDimension) => name,
-  unit: ({ unit }: ResolvedDimension) => unit ?? null,
-  scaleType: ({ scaleType }: ResolvedDimension) => scaleType ?? null,
-  values: async ({ dataCube, dimension, locale }: ResolvedDimension) => {
+  iri: ({ data: { iri } }: ResolvedDimension) => iri,
+  label: ({ data: { name } }: ResolvedDimension) => name,
+  unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
+  scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
+  values: async ({ cube, dimension, locale }: ResolvedDimension) => {
     const values = await getCubeDimensionValues({
       dimension,
-      cube: dataCube,
+      cube,
       locale,
     });
     // TODO min max are now just `values` with 2 elements. Handle properly!
@@ -267,12 +207,13 @@ export const resolvers: Resolvers = {
   Query,
   DataCube,
   ObservationsQuery: {
-    data: async ({ query, observations }) => observations,
-    rawData: async ({ observationsRaw }) => observationsRaw,
-    sparql: async ({ query }) => query.replace(/\n+/g, " ").replace(/"/g, "'"),
+    data: async ({ data: { query, observations } }) => observations,
+    rawData: async ({ data: { observationsRaw } }) => observationsRaw,
+    sparql: async ({ data: { query } }) =>
+      query.replace(/\n+/g, " ").replace(/"/g, "'"),
   },
   Dimension: {
-    __resolveType({ dataKind, scaleType, dataType }) {
+    __resolveType({ data: { dataKind, scaleType, dataType } }) {
       if (dataKind === "Time") {
         return "TemporalDimension";
       }
