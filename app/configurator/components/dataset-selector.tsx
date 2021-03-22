@@ -252,3 +252,18 @@ export const DatasetButton = ({
     </Button>
   );
 };
+
+const DatasetTag = ({ children }: { children: ReactNode }) => (
+  <Text
+    variant="paragraph2"
+    sx={{
+      bg: "primaryLight",
+      mt: 2,
+      px: 2,
+      width: "fit-content",
+      borderRadius: "default",
+    }}
+  >
+    {children}
+  </Text>
+);
