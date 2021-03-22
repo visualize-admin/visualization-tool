@@ -1,9 +1,9 @@
 import { Plural, t, Trans } from "@lingui/macro";
-import { useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";
-import { MiniSelect, SearchField } from "../../components/form";
+import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
   DataCubeResultOrder,
@@ -13,6 +13,7 @@ import { useLocale } from "../../locales/use-locale";
 
 export const DataSetList = () => {
   const locale = useLocale();
+  const [includeDrafts, toggleIncludeDrafts] = useState<boolean>(true);
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 150, { leading: true });
   const [order, setOrder] = useState<DataCubeResultOrder>(
@@ -24,7 +25,7 @@ export const DataSetList = () => {
 
   // Use the debounced query value here only!
   const [{ data }] = useDataCubesQuery({
-    variables: { locale, query: debouncedQuery, order, includeDrafts: true },
+    variables: { locale, query: debouncedQuery, order, includeDrafts },
   });
 
   const options = [
@@ -69,12 +70,7 @@ export const DataSetList = () => {
           {/* <SectionTitle>
             <Trans id="controls.select.dataset">Select Dataset</Trans>
           </SectionTitle> */}
-          <Box
-            sx={{
-              px: 4,
-              pt: 4,
-            }}
-          >
+          <Box sx={{ px: 4, pt: 4 }}>
             <SearchField
               id="datasetSearch"
               label={searchLabel}
@@ -95,6 +91,19 @@ export const DataSetList = () => {
               }}
               placeholder={searchLabel}
             ></SearchField>
+          </Box>
+
+          <Box sx={{ px: 4, pt: 4 }}>
+            <Checkbox
+              label={
+                <Trans id="dataset.includeDrafts">Include draft datasets</Trans>
+              }
+              name={"dataset-include-drafts"}
+              value={"dataset-include-drafts"}
+              checked={includeDrafts}
+              disabled={false}
+              onChange={() => toggleIncludeDrafts(!includeDrafts)}
+            />
           </Box>
 
           <Flex sx={{ px: 4, py: 2, justifyContent: "space-between" }}>
