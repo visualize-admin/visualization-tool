@@ -185,6 +185,9 @@ export const DatasetButton = ({
 
   const selected = iri === state.dataSet;
 
+  // FIXME: isDraft should be a property of datacubes
+  const isDraft = true;
+
   return (
     <Button
       variant="reset"
@@ -246,9 +249,9 @@ export const DatasetButton = ({
           description
         )}
       </Text>
-      {/* <Text variant="paragraph2" my={1} sx={{ bg: "missing" }}>
-      {"Fehlende Tags"}
-    </Text> */}
+      <DatasetTag>
+        <Trans id="dataset.tag.draft">Draft</Trans>
+      </DatasetTag>
     </Button>
   );
 };
