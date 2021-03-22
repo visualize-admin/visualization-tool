@@ -258,9 +258,11 @@ export const DatasetButton = ({
           description
         )}
       </Text>
-      <DatasetTag>
-        <Trans id="dataset.tag.draft">Draft</Trans>
-      </DatasetTag>
+      {isDraft && (
+        <DatasetTag>
+          <Trans id="dataset.tag.draft">Draft</Trans>
+        </DatasetTag>
+      )}
     </Button>
   );
 };
