@@ -5,20 +5,16 @@ import { ChartPreview } from "../../components/chart-preview";
 import { DataSetPreview } from "./dataset-preview";
 import { DataSetHint } from "../../components/hint";
 
-export const PanelMiddle = ({
-  dataSetPreviewIri,
-}: {
-  dataSetPreviewIri?: string;
-}) => {
+export const PanelMiddle = () => {
   const [state] = useConfiguratorState();
 
   return (
     <>
       {state.state === "SELECTING_DATASET" ? (
         <>
-          {dataSetPreviewIri ? (
+          {state.dataSet ? (
             <ChartPanel>
-              <DataSetPreview dataSetIri={dataSetPreviewIri} />
+              <DataSetPreview dataSetIri={state.dataSet} />
             </ChartPanel>
           ) : (
             <ChartPanel
