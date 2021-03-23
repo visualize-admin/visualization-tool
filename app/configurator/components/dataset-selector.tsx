@@ -52,49 +52,49 @@ export const DataSetList = () => {
   const isSearching = query !== "";
   console.log(data);
 
-  if (data) {
-    return (
-      <Flex
+  return (
+    <Flex
+      sx={{
+        bg: "monochrome100",
+        flexDirection: "column",
+        height: "100%",
+      }}
+      role="search"
+    >
+      <Box
         sx={{
-          bg: "monochrome100",
-          flexDirection: "column",
-          height: "100%",
+          borderBottomWidth: "1px",
+          borderBottomStyle: "solid",
+          borderBottomColor: "monochrome300",
         }}
-        role="search"
       >
-        <Box
-          sx={{
-            borderBottomWidth: "1px",
-            borderBottomStyle: "solid",
-            borderBottomColor: "monochrome300",
-          }}
-        >
-          {/* <SectionTitle>
+        {/* <SectionTitle>
             <Trans id="controls.select.dataset">Select Dataset</Trans>
           </SectionTitle> */}
-          <Box sx={{ px: 4, pt: 4 }}>
-            <SearchField
-              id="datasetSearch"
-              label={searchLabel}
-              value={query}
-              onChange={(e) => {
-                setQuery(e.currentTarget.value);
-                if (query === "" && e.currentTarget.value !== "") {
-                  previousOrderRef.current = order;
-                  setOrder(DataCubeResultOrder.Score);
-                }
-                if (query !== "" && e.currentTarget.value === "") {
-                  setOrder(previousOrderRef.current);
-                }
-              }}
-              onReset={() => {
-                setQuery("");
+        <Box sx={{ px: 4, pt: 4 }}>
+          <SearchField
+            id="datasetSearch"
+            label={searchLabel}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.currentTarget.value);
+              if (query === "" && e.currentTarget.value !== "") {
+                previousOrderRef.current = order;
+                setOrder(DataCubeResultOrder.Score);
+              }
+              if (query !== "" && e.currentTarget.value === "") {
                 setOrder(previousOrderRef.current);
-              }}
-              placeholder={searchLabel}
-            ></SearchField>
-          </Box>
+              }
+            }}
+            onReset={() => {
+              setQuery("");
+              setOrder(previousOrderRef.current);
+            }}
+            placeholder={searchLabel}
+          ></SearchField>
+        </Box>
 
+        {isSearching && ( // FIXME: only display on SearchField focus
           <Box sx={{ px: 4, pt: 4 }}>
             <Checkbox
               label={
@@ -107,17 +107,19 @@ export const DataSetList = () => {
               onChange={() => toggleIncludeDrafts(!includeDrafts)}
             />
           </Box>
+        )}
 
-          <Flex sx={{ px: 4, py: 2, justifyContent: "space-between" }}>
-            <Text
-              color="secondary"
-              sx={{
-                fontFamily: "body",
-                fontSize: [2, 2, 2],
-                lineHeight: "24px",
-              }}
-              aria-live="polite"
-            >
+        <Flex sx={{ px: 4, py: 2, justifyContent: "space-between" }}>
+          <Text
+            color="secondary"
+            sx={{
+              fontFamily: "body",
+              fontSize: [2, 2, 2],
+              lineHeight: "24px",
+            }}
+            aria-live="polite"
+          >
+            {data && (
               <Plural
                 id="dataset.results"
                 value={data.dataCubes.length}
@@ -125,41 +127,43 @@ export const DataSetList = () => {
                 one="# result"
                 other="# results"
               />
-            </Text>
+            )}
+          </Text>
 
-            <Flex sx={{}}>
-              <label htmlFor="datasetSort">
-                <Text
-                  color="secondary"
-                  sx={{
-                    fontFamily: "body",
-                    fontSize: [1, 2, 2],
-                    lineHeight: "24px",
-                  }}
-                >
-                  <Trans id="dataset.sortby">Sort by</Trans>
-                </Text>
-              </label>
-
-              <MiniSelect
-                id="datasetSort"
-                value={order}
-                options={isSearching ? options : options.slice(1)}
-                onChange={(e) => {
-                  previousOrderRef.current = e.currentTarget
-                    .value as DataCubeResultOrder;
-                  setOrder(e.currentTarget.value as DataCubeResultOrder);
+          <Flex>
+            <label htmlFor="datasetSort">
+              <Text
+                color="secondary"
+                sx={{
+                  fontFamily: "body",
+                  fontSize: [1, 2, 2],
+                  lineHeight: "24px",
                 }}
-              ></MiniSelect>
-            </Flex>
-          </Flex>
-        </Box>
+              >
+                <Trans id="dataset.sortby">Sort by</Trans>
+              </Text>
+            </label>
 
-        <Box
-          sx={{ overflowX: "hidden", overflowY: "auto", flexGrow: 1 }}
-          tabIndex={-1}
-        >
-          {data.dataCubes.map(
+            <MiniSelect
+              id="datasetSort"
+              value={order}
+              options={isSearching ? options : options.slice(1)}
+              onChange={(e) => {
+                previousOrderRef.current = e.currentTarget
+                  .value as DataCubeResultOrder;
+                setOrder(e.currentTarget.value as DataCubeResultOrder);
+              }}
+            ></MiniSelect>
+          </Flex>
+        </Flex>
+      </Box>
+
+      <Box
+        sx={{ overflowX: "hidden", overflowY: "auto", flexGrow: 1 }}
+        tabIndex={-1}
+      >
+        {data ? (
+          data.dataCubes.map(
             ({ dataCube, highlightedTitle, highlightedDescription }) => (
               <DatasetButton
                 key={dataCube.iri}
@@ -173,13 +177,13 @@ export const DataSetList = () => {
                 }
               />
             )
-          )}
-        </Box>
-      </Flex>
-    );
-  } else {
-    return <Loading />;
-  }
+          )
+        ) : (
+          <Loading />
+        )}
+      </Box>
+    </Flex>
+  );
 };
 
 export const DatasetButton = ({
