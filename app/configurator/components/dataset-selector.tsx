@@ -273,7 +273,18 @@ export const DatasetButton = ({
           title
         )}
       </Text>
-      <Text variant="paragraph2">
+      <Text
+        variant="paragraph2"
+        sx={
+          {
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            display: "-webkit-box",
+            overflow: "hidden",
+          } as $IntentionalAny
+        }
+        title={description ?? ""}
+      >
         {highlightedDescription ? (
           <Box
             as="span"
