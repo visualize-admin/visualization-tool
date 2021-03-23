@@ -16,6 +16,7 @@ query DataCubes(
       iri
       title
       description
+      publicationStatus
     }
   }
 }

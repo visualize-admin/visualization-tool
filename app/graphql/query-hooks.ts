@@ -30,6 +30,11 @@ export type ObservationsQuery = {
   sparql: Scalars['String'];
 };
 
+export enum DataCubePublicationStatus {
+  Draft = 'DRAFT',
+  Published = 'PUBLISHED'
+}
+
 export type DataCube = {
   __typename: 'DataCube';
   iri: Scalars['String'];
@@ -38,6 +43,7 @@ export type DataCube = {
   source?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
+  publicationStatus: DataCubePublicationStatus;
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
@@ -153,7 +159,7 @@ export type DataCubesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string> } }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus } }> };
 
 type ComponentFields_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string };
 
@@ -337,6 +343,7 @@ export const DataCubesDocument = gql`
       iri
       title
       description
+      publicationStatus
     }
   }
 }

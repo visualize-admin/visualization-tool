@@ -1,6 +1,7 @@
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode } from "rdf-js";
 import { Observation } from "../domain/data";
+import { DataCubePublicationStatus } from "./resolver-types";
 
 /** Types shared by graphql-codegen and resolver code */
 
@@ -13,7 +14,7 @@ export type ResolvedDataCube = {
   title: string;
   description: string;
   datePublished?: string;
-  status?: string;
+  publicationStatus: DataCubePublicationStatus;
   theme?: string;
   versionHistory?: string;
   contactPoint?: string;

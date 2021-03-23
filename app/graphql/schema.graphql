@@ -11,6 +11,11 @@ type ObservationsQuery {
   sparql: String!
 }
 
+enum DataCubePublicationStatus {
+  DRAFT
+  PUBLISHED
+}
+
 type DataCube {
   iri: String!
   title: String!
@@ -18,6 +23,7 @@ type DataCube {
   source: String
   description: String
   datePublished: String
+  publicationStatus: DataCubePublicationStatus!
   observations(
     limit: Int
     measures: [String!]
