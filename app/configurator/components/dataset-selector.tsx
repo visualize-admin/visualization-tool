@@ -9,6 +9,7 @@ import {
   DataCubeResultOrder,
   useDataCubesQuery,
 } from "../../graphql/query-hooks";
+import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import { useLocale } from "../../locales/use-locale";
 
 export const DataSetList = () => {
@@ -49,6 +50,7 @@ export const DataSetList = () => {
   });
 
   const isSearching = query !== "";
+  console.log(data);
 
   if (data) {
     return (
@@ -166,6 +168,9 @@ export const DataSetList = () => {
                 description={dataCube.description}
                 highlightedTitle={highlightedTitle}
                 highlightedDescription={highlightedDescription}
+                isDraft={
+                  dataCube.publicationStatus === DataCubePublicationStatus.Draft
+                }
               />
             )
           )}
@@ -183,19 +188,18 @@ export const DatasetButton = ({
   description,
   highlightedTitle,
   highlightedDescription,
+  isDraft,
 }: {
   iri: string;
   title: string;
   description?: string | null;
   highlightedTitle?: string | null;
   highlightedDescription?: string | null;
+  isDraft: boolean;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
   const selected = iri === state.dataSet;
-
-  // FIXME: isDraft should be a property of datacubes
-  const isDraft = true;
 
   return (
     <Button
