@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Box, Text, Flex } from "theme-ui";
-import { Loading } from "../../components/hint";
+import { HintRed, Loading } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
 import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
+import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 
 export interface Preview {
   iri: string;
@@ -15,6 +16,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [{ data: metaData }] = useDataCubePreviewQuery({
     variables: { iri: dataSetIri, locale },
   });
+
   if (metaData && metaData.dataCubeByIri) {
     const { dataCubeByIri } = metaData;
     return (
@@ -26,6 +28,18 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           p: 5,
         }}
       >
+        {metaData.dataCubeByIri.publicationStatus ===
+          DataCubePublicationStatus.Draft && (
+          <Box sx={{ mb: 4 }}>
+            <HintRed iconName="datasetError" iconSize={64}>
+              <Trans id="dataset.publicationStatus.draft.warning">
+                Careful, this dataset is only a draft.
+                <br />
+                <strong>Don't use for reporting!</strong>
+              </Trans>
+            </HintRed>
+          </Box>
+        )}
         <Text variant="heading2" sx={{ mb: 1, color: "monochrome700" }}>
           {dataCubeByIri.title}
         </Text>
