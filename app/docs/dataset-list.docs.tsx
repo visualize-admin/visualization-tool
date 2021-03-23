@@ -28,6 +28,7 @@ export default () => markdown`
             description={
               "Comptes des exploitations forestières en francs, dès 2015"
             }
+            isDraft={false}
           />
         </div>
       </ReactSpecimen>
@@ -55,6 +56,7 @@ export default () => markdown`
             description={
               "Comptes des exploitations forestières en francs, dès 2015"
             }
+            isDraft={true}
           />
         </div>
       </ReactSpecimen>
