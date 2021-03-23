@@ -86,7 +86,7 @@ export const Configurator = () => {
           gridArea: "middle",
         }}
       >
-        <PanelMiddle dataSetPreviewIri={state.dataSet} />
+        <PanelMiddle />
       </Box>
     </Box>
   );

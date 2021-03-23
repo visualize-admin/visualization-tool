@@ -1,18 +1,22 @@
 import { Plural, t, Trans } from "@lingui/macro";
-import { useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";
-import { MiniSelect, SearchField } from "../../components/form";
+import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
   DataCubeResultOrder,
+  DataCubesQuery,
   useDataCubesQuery,
 } from "../../graphql/query-hooks";
+import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import { useLocale } from "../../locales/use-locale";
 
 export const DataSetList = () => {
   const locale = useLocale();
+  const [showDraftCheckbox, toggleDraftCheckbox] = useState<boolean>(false);
+  const [includeDrafts, toggleIncludeDrafts] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 150, { leading: true });
   const [order, setOrder] = useState<DataCubeResultOrder>(
@@ -23,8 +27,8 @@ export const DataSetList = () => {
   );
 
   // Use the debounced query value here only!
-  const [{ data }] = useDataCubesQuery({
-    variables: { locale, query: debouncedQuery, order, includeDrafts: true },
+  const [{ fetching, data }] = useDataCubesQuery({
+    variables: { locale, query: debouncedQuery, order, includeDrafts },
   });
 
   const options = [
@@ -49,64 +53,76 @@ export const DataSetList = () => {
 
   const isSearching = query !== "";
 
-  if (data) {
-    return (
-      <Flex
+  return (
+    <Flex
+      sx={{
+        bg: "monochrome100",
+        flexDirection: "column",
+        height: "100%",
+      }}
+      role="search"
+    >
+      <Box
         sx={{
-          bg: "monochrome100",
-          flexDirection: "column",
-          height: "100%",
+          borderBottomWidth: "1px",
+          borderBottomStyle: "solid",
+          borderBottomColor: "monochrome300",
         }}
-        role="search"
       >
-        <Box
-          sx={{
-            borderBottomWidth: "1px",
-            borderBottomStyle: "solid",
-            borderBottomColor: "monochrome300",
-          }}
-        >
-          {/* <SectionTitle>
+        {/* <SectionTitle>
             <Trans id="controls.select.dataset">Select Dataset</Trans>
           </SectionTitle> */}
-          <Box
-            sx={{
-              px: 4,
-              pt: 4,
-            }}
-          >
-            <SearchField
-              id="datasetSearch"
-              label={searchLabel}
-              value={query}
-              onChange={(e) => {
-                setQuery(e.currentTarget.value);
-                if (query === "" && e.currentTarget.value !== "") {
-                  previousOrderRef.current = order;
-                  setOrder(DataCubeResultOrder.Score);
-                }
-                if (query !== "" && e.currentTarget.value === "") {
-                  setOrder(previousOrderRef.current);
-                }
-              }}
-              onReset={() => {
-                setQuery("");
+        <Box sx={{ px: 4, pt: 4 }}>
+          <SearchField
+            id="datasetSearch"
+            label={searchLabel}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.currentTarget.value);
+              if (query === "" && e.currentTarget.value !== "") {
+                previousOrderRef.current = order;
+                setOrder(DataCubeResultOrder.Score);
+              }
+              if (query !== "" && e.currentTarget.value === "") {
                 setOrder(previousOrderRef.current);
-              }}
-              placeholder={searchLabel}
-            ></SearchField>
-          </Box>
+              }
+            }}
+            onReset={() => {
+              setQuery("");
+              setOrder(previousOrderRef.current);
+            }}
+            placeholder={searchLabel}
+            onFocus={() => toggleDraftCheckbox(true)}
+            // onBlur={() => toggleDraftCheckbox(false)}
+          ></SearchField>
+        </Box>
 
-          <Flex sx={{ px: 4, py: 2, justifyContent: "space-between" }}>
-            <Text
-              color="secondary"
-              sx={{
-                fontFamily: "body",
-                fontSize: [2, 2, 2],
-                lineHeight: "24px",
-              }}
-              aria-live="polite"
-            >
+        {showDraftCheckbox && (
+          <Box sx={{ px: 4, pt: 4 }}>
+            <Checkbox
+              label={
+                <Trans id="dataset.includeDrafts">Include draft datasets</Trans>
+              }
+              name={"dataset-include-drafts"}
+              value={"dataset-include-drafts"}
+              checked={includeDrafts}
+              disabled={false}
+              onChange={() => toggleIncludeDrafts(!includeDrafts)}
+            />
+          </Box>
+        )}
+
+        <Flex sx={{ px: 4, py: 2, justifyContent: "space-between" }}>
+          <Text
+            color="secondary"
+            sx={{
+              fontFamily: "body",
+              fontSize: [2, 2, 2],
+              lineHeight: "24px",
+            }}
+            aria-live="polite"
+          >
+            {data && (
               <Plural
                 id="dataset.results"
                 value={data.dataCubes.length}
@@ -114,72 +130,94 @@ export const DataSetList = () => {
                 one="# result"
                 other="# results"
               />
-            </Text>
+            )}
+          </Text>
 
-            <Flex sx={{}}>
-              <label htmlFor="datasetSort">
-                <Text
-                  color="secondary"
-                  sx={{
-                    fontFamily: "body",
-                    fontSize: [1, 2, 2],
-                    lineHeight: "24px",
-                  }}
-                >
-                  <Trans id="dataset.sortby">Sort by</Trans>
-                </Text>
-              </label>
-
-              <MiniSelect
-                id="datasetSort"
-                value={order}
-                options={isSearching ? options : options.slice(1)}
-                onChange={(e) => {
-                  previousOrderRef.current = e.currentTarget
-                    .value as DataCubeResultOrder;
-                  setOrder(e.currentTarget.value as DataCubeResultOrder);
+          <Flex>
+            <label htmlFor="datasetSort">
+              <Text
+                color="secondary"
+                sx={{
+                  fontFamily: "body",
+                  fontSize: [1, 2, 2],
+                  lineHeight: "24px",
                 }}
-              ></MiniSelect>
-            </Flex>
-          </Flex>
-        </Box>
+              >
+                <Trans id="dataset.sortby">Sort by</Trans>
+              </Text>
+            </label>
 
-        <Box
-          sx={{ overflowX: "hidden", overflowY: "auto", flexGrow: 1 }}
-          tabIndex={-1}
-        >
-          {data.dataCubes.map(
-            ({ dataCube, highlightedTitle, highlightedDescription }) => (
-              <DatasetButton
-                key={dataCube.iri}
-                iri={dataCube.iri}
-                title={dataCube.title}
-                description={dataCube.description}
-                highlightedTitle={highlightedTitle}
-                highlightedDescription={highlightedDescription}
-              />
-            )
-          )}
-        </Box>
-      </Flex>
+            <MiniSelect
+              id="datasetSort"
+              value={order}
+              options={isSearching ? options : options.slice(1)}
+              onChange={(e) => {
+                previousOrderRef.current = e.currentTarget
+                  .value as DataCubeResultOrder;
+                setOrder(e.currentTarget.value as DataCubeResultOrder);
+              }}
+            ></MiniSelect>
+          </Flex>
+        </Flex>
+      </Box>
+
+      <Box
+        sx={{ overflowX: "hidden", overflowY: "auto", flexGrow: 1 }}
+        tabIndex={-1}
+      >
+        <Datasets fetching={fetching} data={data} />
+      </Box>
+    </Flex>
+  );
+};
+
+const Datasets = ({
+  fetching,
+  data,
+}: {
+  fetching: boolean;
+  data: DataCubesQuery | undefined;
+}) => {
+  if (fetching) {
+    return <Loading />;
+  } else if (!fetching && data) {
+    return (
+      <>
+        {data.dataCubes.map(
+          ({ dataCube, highlightedTitle, highlightedDescription }) => (
+            <DatasetButton
+              key={dataCube.iri}
+              iri={dataCube.iri}
+              title={dataCube.title}
+              description={dataCube.description}
+              highlightedTitle={highlightedTitle}
+              highlightedDescription={highlightedDescription}
+              isDraft={
+                dataCube.publicationStatus === DataCubePublicationStatus.Draft
+              }
+            />
+          )
+        )}
+      </>
     );
   } else {
     return <Loading />;
   }
 };
-
 export const DatasetButton = ({
   iri,
   title,
   description,
   highlightedTitle,
   highlightedDescription,
+  isDraft,
 }: {
   iri: string;
   title: string;
   description?: string | null;
   highlightedTitle?: string | null;
   highlightedDescription?: string | null;
+  isDraft: boolean;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -246,9 +284,26 @@ export const DatasetButton = ({
           description
         )}
       </Text>
-      {/* <Text variant="paragraph2" my={1} sx={{ bg: "missing" }}>
-      {"Fehlende Tags"}
-    </Text> */}
+      {isDraft && (
+        <DatasetTag>
+          <Trans id="dataset.tag.draft">Draft</Trans>
+        </DatasetTag>
+      )}
     </Button>
   );
 };
+
+const DatasetTag = ({ children }: { children: ReactNode }) => (
+  <Text
+    variant="paragraph2"
+    sx={{
+      bg: "primaryLight",
+      mt: 2,
+      px: 2,
+      width: "fit-content",
+      borderRadius: "default",
+    }}
+  >
+    {children}
+  </Text>
+);

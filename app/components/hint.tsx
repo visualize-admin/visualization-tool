@@ -248,9 +248,11 @@ export const HintBlue = ({
 export const HintRed = ({
   iconName,
   children,
+  iconSize = 24,
 }: {
   iconName: IconName;
   children: ReactNode;
+  iconSize?: number;
 }) => (
   <Flex
     sx={{
@@ -258,7 +260,7 @@ export const HintRed = ({
       height: "auto",
       borderRadius: "bigger",
       margin: "auto",
-      p: 5,
+      p: 4,
       bg: "alertLight",
       color: "alert",
       textAlign: "center",
@@ -266,8 +268,8 @@ export const HintRed = ({
       alignItems: ["flex-start", "center"],
     }}
   >
-    <Box sx={{ width: 24, pr: 4 }}>
-      <Icon name={iconName} size={24} />
+    <Box sx={{ width: iconSize, pr: 4 }}>
+      <Icon name={iconName} size={iconSize} />
     </Box>
     <Text variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
       {children}

@@ -16,6 +16,7 @@ query DataCubes(
       iri
       title
       description
+      publicationStatus
     }
   }
 }
@@ -39,6 +40,7 @@ query DataCubePreview($iri: String!, $locale: String!) {
     iri
     title
     description
+    publicationStatus
     dimensions {
       ...componentFields
     }
@@ -68,6 +70,7 @@ query DataCubeMetadata($iri: String!, $locale: String!) {
     description
     source
     datePublished
+    publicationStatus
   }
 }
 

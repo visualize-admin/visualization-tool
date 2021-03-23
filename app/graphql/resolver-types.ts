@@ -34,6 +34,11 @@ export type ObservationsQuery = {
   sparql: Scalars['String'];
 };
 
+export enum DataCubePublicationStatus {
+  Draft = 'DRAFT',
+  Published = 'PUBLISHED'
+}
+
 export type DataCube = {
   __typename?: 'DataCube';
   iri: Scalars['String'];
@@ -42,6 +47,7 @@ export type DataCube = {
   source?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
+  publicationStatus: DataCubePublicationStatus;
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
@@ -220,6 +226,7 @@ export type ResolversTypes = ResolversObject<{
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
   ObservationsQuery: ResolverTypeWrapper<ResolvedObservationsQuery>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  DataCubePublicationStatus: DataCubePublicationStatus;
   DataCube: ResolverTypeWrapper<ResolvedDataCube>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   DimensionValue: ResolverTypeWrapper<DimensionValue>;
@@ -284,6 +291,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   source?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   datePublished?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  publicationStatus?: Resolver<ResolversTypes['DataCubePublicationStatus'], ParentType, ContextType>;
   observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, RequireFields<DataCubeObservationsArgs, never>>;
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>;
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>;

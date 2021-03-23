@@ -1,6 +1,7 @@
+import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { useEffect } from "react";
-import { Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "theme-ui";
 import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 import { ChartColumnsVisualization } from "../charts/column/chart-column";
@@ -16,8 +17,11 @@ import {
 import { ChartTableVisualization } from "../charts/table/chart-table";
 import { ChartConfig, Meta } from "../configurator";
 import { parseDate } from "../configurator/components/ui-helpers";
+import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
+import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
 import { ChartFootnotes } from "./chart-footnotes";
+import { HintRed } from "./hint";
 
 export const ChartPublished = ({
   dataSet,
@@ -31,7 +35,9 @@ export const ChartPublished = ({
   configKey: string;
 }) => {
   const locale = useLocale();
-
+  const [{ data: metaData }] = useDataCubeMetadataQuery({
+    variables: { iri: dataSet, locale },
+  });
   return (
     <>
       <Flex
@@ -43,6 +49,18 @@ export const ChartPublished = ({
           justifyContent: "space-between",
         }}
       >
+        {metaData?.dataCubeByIri?.publicationStatus ===
+          DataCubePublicationStatus.Draft && (
+          <Box sx={{ mb: 4 }}>
+            <HintRed iconName="datasetError" iconSize={64}>
+              <Trans id="dataset.publicationStatus.draft.warning">
+                Careful, this dataset is only a draft.
+                <br />
+                <strong>Don't use for reporting!</strong>
+              </Trans>
+            </HintRed>
+          </Box>
+        )}
         {meta.title[locale] !== "" && (
           <Text variant="heading2" mb={2}>
             {meta.title[locale]}

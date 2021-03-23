@@ -283,6 +283,8 @@ export const SearchField = ({
   placeholder,
   onChange,
   onReset,
+  onFocus,
+  onBlur,
 }: {
   id: string;
   label?: string | ReactNode;
@@ -290,6 +292,8 @@ export const SearchField = ({
   value?: string;
   placeholder?: string;
   onReset?: () => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 } & FieldProps) => {
   return (
     <Box sx={{ color: "monochrome700", fontSize: 4, position: "relative" }}>
@@ -315,6 +319,8 @@ export const SearchField = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       {value && value !== "" && onReset && (
         <Box

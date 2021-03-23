@@ -107,6 +107,7 @@ const DataCube: DataCubeResolvers = {
   iri: ({ data: { iri } }) => iri,
   title: ({ data: { title } }) => title,
   contact: ({ data: { contactPoint } }) => contactPoint ?? null,
+  publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
   description: ({ data: { description } }) => description ?? null,
   source: (dataCube) => "TODO",
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,

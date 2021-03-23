@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { useEffect } from "react";
-import { Flex, Text } from "theme-ui";
+import { Flex, Text, Box } from "theme-ui";
 import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 import { ChartColumnsVisualization } from "../charts/column/chart-column";
@@ -21,23 +21,40 @@ import {
   useConfiguratorState,
 } from "../configurator";
 import { parseDate } from "../configurator/components/ui-helpers";
+import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
+import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
 import { ChartFootnotes } from "./chart-footnotes";
+import { HintRed } from "./hint";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
   const locale = useLocale();
-
+  const [{ data: metaData }] = useDataCubeMetadataQuery({
+    variables: { iri: dataSetIri, locale },
+  });
   return (
     <Flex
-      p={5}
       sx={{
         flexDirection: "column",
         justifyContent: "space-between",
         flexGrow: 1,
         color: "monochrome800",
+        p: 5,
       }}
     >
+      {metaData?.dataCubeByIri?.publicationStatus ===
+        DataCubePublicationStatus.Draft && (
+        <Box sx={{ mb: 4 }}>
+          <HintRed iconName="datasetError" iconSize={64}>
+            <Trans id="dataset.publicationStatus.draft.warning">
+              Careful, this dataset is only a draft.
+              <br />
+              <strong>Don't use for reporting!</strong>
+            </Trans>
+          </HintRed>
+        </Box>
+      )}
       {(state.state === "SELECTING_CHART_TYPE" ||
         state.state === "CONFIGURING_CHART" ||
         state.state === "DESCRIBING_CHART" ||

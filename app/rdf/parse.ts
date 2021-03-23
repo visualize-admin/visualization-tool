@@ -1,4 +1,5 @@
 import { Cube, CubeDimension } from "rdf-cube-view-query";
+import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
 import * as ns from "./namespace";
@@ -26,7 +27,11 @@ export const parseCube = ({
       identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
       title: cube.out(ns.dcterms.title, outOpts)?.value ?? "[NO TITLE]",
       description: cube.out(ns.dcterms.description, outOpts)?.value ?? "",
-      status: cube.out(ns.schema.creativeWorkStatus)?.value,
+      publicationStatus:
+        ns.adminTerm("CreativeWorkStatus/Published").value ===
+        cube.out(ns.schema.creativeWorkStatus)?.value
+          ? DataCubePublicationStatus.Published
+          : DataCubePublicationStatus.Draft,
       theme: cube.out(ns.dcat.theme)?.value,
       datePublished: cube.out(ns.schema.datePublished)?.value,
       versionHistory: cube.in(ns.schema.hasPart)?.value,

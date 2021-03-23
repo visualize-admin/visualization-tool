@@ -30,6 +30,11 @@ export type ObservationsQuery = {
   sparql: Scalars['String'];
 };
 
+export enum DataCubePublicationStatus {
+  Draft = 'DRAFT',
+  Published = 'PUBLISHED'
+}
+
 export type DataCube = {
   __typename: 'DataCube';
   iri: Scalars['String'];
@@ -38,6 +43,7 @@ export type DataCube = {
   source?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
+  publicationStatus: DataCubePublicationStatus;
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
@@ -153,7 +159,7 @@ export type DataCubesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string> } }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus } }> };
 
 type ComponentFields_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string };
 
@@ -181,7 +187,7 @@ export type DataCubePreviewQueryVariables = Exact<{
 }>;
 
 
-export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, dimensions: Array<(
+export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, dimensions: Array<(
       { __typename: 'NominalDimension' }
       & ComponentFields_NominalDimension_Fragment
     ) | (
@@ -213,7 +219,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, source?: Maybe<string>, datePublished?: Maybe<string> }> };
+export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, source?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
 
 export type DataCubeMetadataWithComponentsQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -337,6 +343,7 @@ export const DataCubesDocument = gql`
       iri
       title
       description
+      publicationStatus
     }
   }
 }
@@ -351,6 +358,7 @@ export const DataCubePreviewDocument = gql`
     iri
     title
     description
+    publicationStatus
     dimensions {
       ...componentFields
     }
@@ -386,6 +394,7 @@ export const DataCubeMetadataDocument = gql`
     description
     source
     datePublished
+    publicationStatus
   }
 }
     `;
