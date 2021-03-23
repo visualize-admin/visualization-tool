@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/chart-preview.tsx:48
+#: app/components/chart-preview.tsx:66
 msgid "annotation.add.description"
 msgstr "[ Description ]"
 
-#: app/components/chart-preview.tsx:37
+#: app/components/chart-preview.tsx:55
 msgid "annotation.add.title"
 msgstr "[ Title ]"
 
@@ -62,7 +62,15 @@ msgstr "Publish"
 msgid "button.share"
 msgstr "Share"
 
-#: app/charts/map/chart-map-prototype.tsx:116
+#: app/charts/map/chart-map-prototype.tsx:136
+msgid "chart.map.control.base.map"
+msgstr "Layers"
+
+#: app/charts/map/chart-map-prototype.tsx:146
+msgid "chart.map.control.data.filters"
+msgstr "Data Filters"
+
+#: app/charts/map/chart-map-prototype.tsx:162
 msgid "chart.map.warning.prototype"
 msgstr "This is a prototype, don't use in production!"
 
@@ -103,43 +111,43 @@ msgstr "Regular"
 msgid "controls..interactiveFilters.time.defaultSettings"
 msgstr "Default Settings"
 
-#: app/configurator/components/ui-helpers.tsx:148
+#: app/configurator/components/ui-helpers.tsx:156
 msgid "controls.axis.horizontal"
 msgstr "Horizontal axis"
 
-#: app/configurator/components/ui-helpers.tsx:159
+#: app/configurator/components/ui-helpers.tsx:167
 msgid "controls.axis.vertical"
 msgstr "Vertical axis"
 
-#: app/configurator/components/ui-helpers.tsx:235
+#: app/configurator/components/ui-helpers.tsx:243
 msgid "controls.chart.type.area"
 msgstr "Areas"
 
-#: app/configurator/components/ui-helpers.tsx:231
+#: app/configurator/components/ui-helpers.tsx:239
 msgid "controls.chart.type.bar"
 msgstr "Bars"
 
-#: app/configurator/components/ui-helpers.tsx:229
+#: app/configurator/components/ui-helpers.tsx:237
 msgid "controls.chart.type.column"
 msgstr "Columns"
 
-#: app/configurator/components/ui-helpers.tsx:233
+#: app/configurator/components/ui-helpers.tsx:241
 msgid "controls.chart.type.line"
 msgstr "Lines"
 
-#: app/configurator/components/ui-helpers.tsx:243
+#: app/configurator/components/ui-helpers.tsx:251
 msgid "controls.chart.type.map"
 msgstr "Map"
 
-#: app/configurator/components/ui-helpers.tsx:239
+#: app/configurator/components/ui-helpers.tsx:247
 msgid "controls.chart.type.pie"
 msgstr "Pie"
 
-#: app/configurator/components/ui-helpers.tsx:237
+#: app/configurator/components/ui-helpers.tsx:245
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/configurator/components/ui-helpers.tsx:241
+#: app/configurator/components/ui-helpers.tsx:249
 msgid "controls.chart.type.table"
 msgstr "Table"
 
@@ -156,15 +164,15 @@ msgstr "Reset color palette"
 msgid "controls.colorpicker.open"
 msgstr "Open Color Picker"
 
-#: app/configurator/components/ui-helpers.tsx:176
+#: app/configurator/components/ui-helpers.tsx:184
 msgid "controls.column.grouped"
 msgstr "grouped"
 
-#: app/configurator/components/ui-helpers.tsx:174
+#: app/configurator/components/ui-helpers.tsx:182
 msgid "controls.column.stacked"
 msgstr "stacked"
 
-#: app/configurator/components/ui-helpers.tsx:171
+#: app/configurator/components/ui-helpers.tsx:179
 msgid "controls.description"
 msgstr "Add a description"
 
@@ -208,23 +216,23 @@ msgstr "There is no time dimension!"
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Show time filter"
 
-#: app/configurator/components/ui-helpers.tsx:246
+#: app/configurator/components/ui-helpers.tsx:254
 msgid "controls.language.english"
 msgstr "English"
 
-#: app/configurator/components/ui-helpers.tsx:250
+#: app/configurator/components/ui-helpers.tsx:258
 msgid "controls.language.french"
 msgstr "French"
 
-#: app/configurator/components/ui-helpers.tsx:248
+#: app/configurator/components/ui-helpers.tsx:256
 msgid "controls.language.german"
 msgstr "German"
 
-#: app/configurator/components/ui-helpers.tsx:252
+#: app/configurator/components/ui-helpers.tsx:260
 msgid "controls.language.italian"
 msgstr "Italian"
 
-#: app/configurator/components/ui-helpers.tsx:157
+#: app/configurator/components/ui-helpers.tsx:165
 msgid "controls.measure"
 msgstr "Measure"
 
@@ -236,7 +244,7 @@ msgstr "On"
 msgid "controls.option.isNotActive"
 msgstr "Off"
 
-#: app/configurator/components/ui-helpers.tsx:167
+#: app/configurator/components/ui-helpers.tsx:175
 msgid "controls.partition"
 msgstr "Partition"
 
@@ -244,7 +252,7 @@ msgstr "Partition"
 msgid "controls.partition.add"
 msgstr "Add…"
 
-#: app/components/form.tsx:134
+#: app/components/form.tsx:145
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
@@ -311,16 +319,16 @@ msgstr "Table Sorting"
 msgid "controls.section.tableoptions"
 msgstr "Table Options"
 
-#: app/configurator/components/chart-type-selector.tsx:96
-#: app/configurator/components/chart-type-selector.tsx:99
+#: app/configurator/components/chart-type-selector.tsx:87
+#: app/configurator/components/chart-type-selector.tsx:90
 msgid "controls.select.chart.type"
 msgstr "Chart type"
 
-#: app/configurator/components/chart-type-selector.tsx:115
+#: app/configurator/components/chart-type-selector.tsx:106
 msgid "controls.select.chart.type.experimental"
 msgstr "Experimental Features"
 
-#: app/configurator/components/chart-type-selector.tsx:120
+#: app/configurator/components/chart-type-selector.tsx:111
 msgid "controls.select.chart.type.experimental.description"
 msgstr "Preview the upcoming map feature with a limited subset of datasets (link to a new page)."
 
@@ -360,12 +368,12 @@ msgstr "Text Color"
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Text Style"
 
-#: app/configurator/components/ui-helpers.tsx:258
-#: app/configurator/components/ui-helpers.tsx:260
+#: app/configurator/components/ui-helpers.tsx:266
+#: app/configurator/components/ui-helpers.tsx:268
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
 
-#: app/configurator/components/ui-helpers.tsx:259
+#: app/configurator/components/ui-helpers.tsx:267
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
@@ -378,11 +386,11 @@ msgstr "Add dimension"
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
-#: app/configurator/components/ui-helpers.tsx:187
+#: app/configurator/components/ui-helpers.tsx:195
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/configurator/components/ui-helpers.tsx:196
+#: app/configurator/components/ui-helpers.tsx:204
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
@@ -390,11 +398,11 @@ msgstr "Z → A"
 msgid "controls.sorting.byMeasure"
 msgstr "Measure"
 
-#: app/configurator/components/ui-helpers.tsx:220
+#: app/configurator/components/ui-helpers.tsx:228
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/configurator/components/ui-helpers.tsx:226
+#: app/configurator/components/ui-helpers.tsx:234
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
@@ -402,19 +410,19 @@ msgstr "9 → 1"
 msgid "controls.sorting.byTotalSize"
 msgstr "Total size"
 
-#: app/configurator/components/ui-helpers.tsx:200
+#: app/configurator/components/ui-helpers.tsx:208
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Largest last"
 
-#: app/configurator/components/ui-helpers.tsx:212
+#: app/configurator/components/ui-helpers.tsx:220
 msgid "controls.sorting.byTotalSize.largestBottom"
 msgstr "Largest bottom"
 
-#: app/configurator/components/ui-helpers.tsx:204
+#: app/configurator/components/ui-helpers.tsx:212
 msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Largest first"
 
-#: app/configurator/components/ui-helpers.tsx:209
+#: app/configurator/components/ui-helpers.tsx:217
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Largest top"
 
@@ -426,7 +434,7 @@ msgstr "Remove sorting dimension"
 msgid "controls.sorting.selectDimension"
 msgstr "Select a dimension …"
 
-#: app/configurator/components/ui-helpers.tsx:178
+#: app/configurator/components/ui-helpers.tsx:186
 #: app/configurator/table/table-chart-sorting-options.tsx:173
 msgid "controls.sorting.sortBy"
 msgstr "Sort by"
@@ -455,9 +463,13 @@ msgstr "Sorting"
 msgid "controls.tableSettings.showSearch"
 msgstr "Show Search"
 
-#: app/configurator/components/ui-helpers.tsx:169
+#: app/configurator/components/ui-helpers.tsx:177
 msgid "controls.title"
 msgstr "Add a title"
+
+#: app/configurator/components/dataset-selector.tsx:70
+msgid "dataset.includeDrafts"
+msgstr "Include draft datasets"
 
 #: app/configurator/components/dataset-metadata.tsx:31
 msgid "dataset.metadata.date.created"
@@ -471,31 +483,41 @@ msgstr "Source"
 msgid "dataset.metadata.title"
 msgstr "Title"
 
-#: app/configurator/components/dataset-selector.tsx:31
+#: app/configurator/components/dataset-selector.tsx:34
 msgid "dataset.order.newest"
 msgstr "Newest"
 
-#: app/configurator/components/dataset-selector.tsx:23
+#: app/configurator/components/dataset-selector.tsx:26
 msgid "dataset.order.relevance"
 msgstr "Relevance"
 
-#: app/configurator/components/dataset-selector.tsx:27
+#: app/configurator/components/dataset-selector.tsx:30
 msgid "dataset.order.title"
 msgstr "Title"
 
-#: app/configurator/components/dataset-selector.tsx:76
+#: app/components/chart-preview.tsx:39
+#: app/components/chart-published.tsx:37
+#: app/configurator/components/dataset-preview.tsx:25
+msgid "dataset.publicationStatus.draft.warning"
+msgstr "Careful, this dataset is only a draft.<0/><1>Don't use for reporting!</1>"
+
+#: app/configurator/components/dataset-selector.tsx:79
 msgid "dataset.results"
 msgstr "{0, plural, =0 {No results} =1 {# result} other {# results}}"
 
-#: app/configurator/components/dataset-selector.tsx:34
+#: app/configurator/components/dataset-selector.tsx:37
 msgid "dataset.search.label"
 msgstr "Search datasets"
 
-#: app/configurator/components/dataset-selector.tsx:86
+#: app/configurator/components/dataset-selector.tsx:89
 msgid "dataset.sortby"
 msgstr "Sort by"
 
-#: app/configurator/components/dataset-preview.tsx:44
+#: app/configurator/components/dataset-selector.tsx:158
+msgid "dataset.tag.draft"
+msgstr "Draft"
+
+#: app/configurator/components/dataset-preview.tsx:55
 msgid "datatable.showing.first.rows"
 msgstr "Showing first 10 rows"
 
@@ -507,6 +529,14 @@ msgstr "Federal Office for the Environment FOEN"
 msgid "hint.create.your.own.chart"
 msgstr "Create your own version of this visualization by copying it, or start from scratch and make a new visualization using Swiss Open Government Data."
 
+#: app/components/hint.tsx:126
+msgid "hint.dataloadingerror.message"
+msgstr "The data could not be loaded."
+
+#: app/components/hint.tsx:123
+msgid "hint.dataloadingerror.title"
+msgstr "Data loading error"
+
 #: app/pages/v/[chartId].tsx:65
 msgid "hint.how.to.share"
 msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
@@ -515,7 +545,7 @@ msgstr "You can share this visualization by copying the URL or by embedding it o
 msgid "hint.loading.data"
 msgstr "Loading data..."
 
-#: app/configurator/components/chart-type-selector.tsx:103
+#: app/configurator/components/chart-type-selector.tsx:94
 msgid "hint.no.visualization.with.dataset"
 msgstr "No visualization can be created with the selected dataset."
 
@@ -527,15 +557,15 @@ msgstr "No data for your filter selection."
 msgid "hint.nodata.title"
 msgstr "No data"
 
-#: app/components/hint.tsx:126
+#: app/components/hint.tsx:147
 msgid "hint.only.negative.data.message"
 msgstr "Negative data values cannot be displayed with this chart type."
 
-#: app/components/hint.tsx:123
+#: app/components/hint.tsx:144
 msgid "hint.only.negative.data.title"
 msgstr "Negative Values"
 
-#: app/components/hint.tsx:146
+#: app/components/hint.tsx:167
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. Share it by copying the URL or using the embedding-options."
 
