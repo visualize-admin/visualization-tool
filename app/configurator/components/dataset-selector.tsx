@@ -15,6 +15,7 @@ import { useLocale } from "../../locales/use-locale";
 
 export const DataSetList = () => {
   const locale = useLocale();
+  const [showDraftCheckbox, toggleDraftCheckbox] = useState<boolean>(false);
   const [includeDrafts, toggleIncludeDrafts] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 150, { leading: true });
@@ -91,10 +92,12 @@ export const DataSetList = () => {
               setOrder(previousOrderRef.current);
             }}
             placeholder={searchLabel}
+            onFocus={() => toggleDraftCheckbox(true)}
+            // onBlur={() => toggleDraftCheckbox(false)}
           ></SearchField>
         </Box>
 
-        {isSearching && ( // FIXME: only display on SearchField focus
+        {showDraftCheckbox && (
           <Box sx={{ px: 4, pt: 4 }}>
             <Checkbox
               label={
