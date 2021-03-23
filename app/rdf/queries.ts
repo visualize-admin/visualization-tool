@@ -153,21 +153,40 @@ const getCubeDimensionValuesWithLabels = async ({
   //   console.error(e);
   // }
 
-  const dimensionValueIris = dimension.in?.filter(
+  const dimensionValueNamedNodes = (dimension.in?.filter(
     (v) => v.termType === "NamedNode"
-  );
+  ) ?? []) as NamedNode[];
 
-  const dimensionValueLabels =
-    dimensionValueIris && dimensionValueIris?.length > 0
-      ? await loadResourceLabels({ ids: dimensionValueIris, locale })
+  const dimensionValueLiterals = (dimension.in?.filter(
+    (v) => v.termType === "Literal"
+  ) ?? []) as Literal[];
+
+  if (
+    dimensionValueNamedNodes.length > 0 &&
+    dimensionValueLiterals.length > 0
+  ) {
+    console.warn(
+      `WARNING: dimension with mixed literals and named nodes ${dimension.path?.value}`
+    );
+  }
+
+  if (
+    dimensionValueNamedNodes.length === 0 &&
+    dimensionValueLiterals.length === 0
+  ) {
+    console.warn(`WARNING: dimension with NO values ${dimension.path?.value}`);
+  }
+
+  const values =
+    dimensionValueNamedNodes.length > 0
+      ? (
+          await loadResourceLabels({ ids: dimensionValueNamedNodes, locale })
+        ).map((vl) => ({ value: vl.iri.value, label: vl.label.value }))
+      : dimensionValueLiterals.length > 0
+      ? dimensionValueLiterals.map((v) => ({ value: v.value, label: v.value }))
       : [];
 
-  return dimensionValueLabels.map((vl) => {
-    return {
-      value: vl.iri.value,
-      label: vl.label.value,
-    };
-  });
+  return values;
 };
 
 export const getCubeObservations = async ({
