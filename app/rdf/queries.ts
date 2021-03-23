@@ -215,6 +215,9 @@ export const getCubeObservations = async ({
   );
 
   const lookupSource = LookupSource.fromSource(cube.source);
+  // Override sourceGraph from cube source, so lookups also work outside of that graph
+  lookupSource.ptr.deleteOut(ns.cubeView.graph);
+  lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
 
   for (const dimension of namedDimensions) {
     const labelDimension = cubeView.createDimension({
