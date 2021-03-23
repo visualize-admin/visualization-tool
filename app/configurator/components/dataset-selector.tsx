@@ -7,6 +7,7 @@ import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
   DataCubeResultOrder,
+  DataCubesQuery,
   useDataCubesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
@@ -14,7 +15,7 @@ import { useLocale } from "../../locales/use-locale";
 
 export const DataSetList = () => {
   const locale = useLocale();
-  const [includeDrafts, toggleIncludeDrafts] = useState<boolean>(true);
+  const [includeDrafts, toggleIncludeDrafts] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 150, { leading: true });
   const [order, setOrder] = useState<DataCubeResultOrder>(
@@ -25,7 +26,7 @@ export const DataSetList = () => {
   );
 
   // Use the debounced query value here only!
-  const [{ data }] = useDataCubesQuery({
+  const [{ fetching, data }] = useDataCubesQuery({
     variables: { locale, query: debouncedQuery, order, includeDrafts },
   });
 
@@ -50,7 +51,6 @@ export const DataSetList = () => {
   });
 
   const isSearching = query !== "";
-  console.log(data);
 
   return (
     <Flex
@@ -162,30 +162,45 @@ export const DataSetList = () => {
         sx={{ overflowX: "hidden", overflowY: "auto", flexGrow: 1 }}
         tabIndex={-1}
       >
-        {data ? (
-          data.dataCubes.map(
-            ({ dataCube, highlightedTitle, highlightedDescription }) => (
-              <DatasetButton
-                key={dataCube.iri}
-                iri={dataCube.iri}
-                title={dataCube.title}
-                description={dataCube.description}
-                highlightedTitle={highlightedTitle}
-                highlightedDescription={highlightedDescription}
-                isDraft={
-                  dataCube.publicationStatus === DataCubePublicationStatus.Draft
-                }
-              />
-            )
-          )
-        ) : (
-          <Loading />
-        )}
+        <Datasets fetching={fetching} data={data} />
       </Box>
     </Flex>
   );
 };
 
+const Datasets = ({
+  fetching,
+  data,
+}: {
+  fetching: boolean;
+  data: DataCubesQuery | undefined;
+}) => {
+  if (fetching) {
+    return <Loading />;
+  } else if (!fetching && data) {
+    return (
+      <>
+        {data.dataCubes.map(
+          ({ dataCube, highlightedTitle, highlightedDescription }) => (
+            <DatasetButton
+              key={dataCube.iri}
+              iri={dataCube.iri}
+              title={dataCube.title}
+              description={dataCube.description}
+              highlightedTitle={highlightedTitle}
+              highlightedDescription={highlightedDescription}
+              isDraft={
+                dataCube.publicationStatus === DataCubePublicationStatus.Draft
+              }
+            />
+          )
+        )}
+      </>
+    );
+  } else {
+    return <Loading />;
+  }
+};
 export const DatasetButton = ({
   iri,
   title,
