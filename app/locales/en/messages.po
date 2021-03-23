@@ -303,7 +303,7 @@ msgstr "Interactive Legend"
 msgid "controls.section.interactiveFilters.time"
 msgstr "Filter"
 
-#: app/configurator/components/chart-options-selector.tsx:150
+#: app/configurator/components/chart-options-selector.tsx:148
 msgid "controls.section.sorting"
 msgstr "Sort"
 
@@ -333,7 +333,7 @@ msgid "controls.select.chart.type.experimental.description"
 msgstr "Preview the upcoming map feature with a limited subset of datasets (link to a new page)."
 
 #: app/configurator/components/chart-options-selector.tsx:108
-msgid "controls.select.column.column.layout"
+msgid "controls.select.column.layout"
 msgstr "Column layout"
 
 #: app/configurator/table/table-chart-options.tsx:133
@@ -381,8 +381,8 @@ msgstr "Select a measure"
 msgid "controls.sorting.addDimension"
 msgstr "Add dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:124
-#: app/configurator/components/chart-options-selector.tsx:130
+#: app/configurator/components/chart-options-selector.tsx:122
+#: app/configurator/components/chart-options-selector.tsx:128
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
@@ -394,7 +394,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx:126
+#: app/configurator/components/chart-options-selector.tsx:124
 msgid "controls.sorting.byMeasure"
 msgstr "Measure"
 
@@ -406,7 +406,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx:128
+#: app/configurator/components/chart-options-selector.tsx:126
 msgid "controls.sorting.byTotalSize"
 msgstr "Total size"
 
