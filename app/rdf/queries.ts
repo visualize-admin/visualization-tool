@@ -210,16 +210,21 @@ export const getCubeObservations = async ({
   const cubeDimensions = getCubeDimensions({ cube, locale });
 
   // Find dimensions which are NOT literal
-  const namedDimensions = cubeDimensions.filter(({ isLiteral }) => !isLiteral);
+  const namedDimensions = cubeDimensions.filter(
+    ({ data: { isLiteral } }) => !isLiteral
+  );
 
   const lookupSource = LookupSource.fromSource(cube.source);
+  // Override sourceGraph from cube source, so lookups also work outside of that graph
+  lookupSource.ptr.deleteOut(ns.cubeView.graph);
+  lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
 
   for (const dimension of namedDimensions) {
     const labelDimension = cubeView.createDimension({
       source: lookupSource,
       path: ns.schema.name,
-      join: cubeView.dimension({ cubeDimension: dimension.iri }),
-      as: labelDimensionIri(dimension.iri),
+      join: cubeView.dimension({ cubeDimension: dimension.data.iri }),
+      as: labelDimensionIri(dimension.data.iri),
     });
 
     observationDimensions.push(labelDimension);
@@ -258,11 +263,11 @@ export const getCubeObservations = async ({
   const observations = observationsRaw.map((obs) => {
     return Object.fromEntries(
       cubeDimensions.map((d) => {
-        const label = obs[labelDimensionIri(d.iri)]?.value;
-        const value = obs[d.iri]?.value;
+        const label = obs[labelDimensionIri(d.data.iri)]?.value;
+        const value = obs[d.data.iri]?.value;
 
         return [
-          d.iri,
+          d.data.iri,
           label ?? value,
           // v !== undefined ? parseObservationValue({ value: v }) : null,
         ];

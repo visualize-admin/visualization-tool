@@ -20,23 +20,25 @@ export const parseCube = ({
   const outOpts = { language: getQueryLocales(locale) };
 
   return {
-    iri: cube.term?.value ?? "[NO IRI]",
-    identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
-    title: cube.out(ns.dcterms.title, outOpts)?.value ?? "[NO TITLE]",
-    description: cube.out(ns.dcterms.description, outOpts)?.value ?? "",
-    publicationStatus:
-      ns.adminTerm("CreativeWorkStatus/Published").value ===
-      cube.out(ns.schema.creativeWorkStatus)?.value
-        ? DataCubePublicationStatus.Published
-        : DataCubePublicationStatus.Draft,
-    theme: cube.out(ns.dcat.theme)?.value,
-    datePublished: cube.out(ns.schema.datePublished)?.value,
-    versionHistory: cube.in(ns.schema.hasPart)?.value,
-    contactPoint: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,
-    landingPage: cube.out(ns.dcat.landingPage)?.value,
-    keywords: cube.out(ns.dcat.keyword)?.values,
-    dataCube: cube,
+    cube,
     locale,
+    data: {
+      iri: cube.term?.value ?? "[NO IRI]",
+      identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
+      title: cube.out(ns.dcterms.title, outOpts)?.value ?? "[NO TITLE]",
+      description: cube.out(ns.dcterms.description, outOpts)?.value ?? "",
+      publicationStatus:
+        ns.adminTerm("CreativeWorkStatus/Published").value ===
+        cube.out(ns.schema.creativeWorkStatus)?.value
+          ? DataCubePublicationStatus.Published
+          : DataCubePublicationStatus.Draft,
+      theme: cube.out(ns.dcat.theme)?.value,
+      datePublished: cube.out(ns.schema.datePublished)?.value,
+      versionHistory: cube.in(ns.schema.hasPart)?.value,
+      contactPoint: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,
+      landingPage: cube.out(ns.dcat.landingPage)?.value,
+      keywords: cube.out(ns.dcat.keyword)?.values,
+    },
   };
 };
 
@@ -60,31 +62,33 @@ export const parseCubeDimension = ({
   const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
 
   return {
+    cube,
     dimension: dim,
-    iri: dim.path?.value!,
     locale,
-    isLiteral,
-    isNumerical,
-    dataType: dim.datatype?.value,
-    name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
-    dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
-      ? "Time"
-      : dataKindTerm?.equals(ns.schema.GeoCoordinates)
-      ? "GeoCoordinates"
-      : dataKindTerm?.equals(ns.schema.GeoShape)
-      ? "GeoShape"
-      : undefined,
-    // values: await getCubeDimensionValues({ dimension: dim, cube }),
-    dataCube: cube,
-    scaleType: scaleTypeTerm?.equals(ns.qudt.NominalScale)
-      ? "Nominal"
-      : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
-      ? "Ordinal"
-      : scaleTypeTerm?.equals(ns.qudt.RatioScale)
-      ? "Ratio"
-      : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
-      ? "Interval"
-      : undefined,
-    unit: dim.out(ns.qudt.unit).value,
+
+    data: {
+      iri: dim.path?.value!,
+      isLiteral,
+      isNumerical,
+      dataType: dim.datatype?.value,
+      name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
+      dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
+        ? "Time"
+        : dataKindTerm?.equals(ns.schema.GeoCoordinates)
+        ? "GeoCoordinates"
+        : dataKindTerm?.equals(ns.schema.GeoShape)
+        ? "GeoShape"
+        : undefined,
+      scaleType: scaleTypeTerm?.equals(ns.qudt.NominalScale)
+        ? "Nominal"
+        : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
+        ? "Ordinal"
+        : scaleTypeTerm?.equals(ns.qudt.RatioScale)
+        ? "Ratio"
+        : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
+        ? "Interval"
+        : undefined,
+      unit: dim.out(ns.qudt.unit).value,
+    },
   };
 };

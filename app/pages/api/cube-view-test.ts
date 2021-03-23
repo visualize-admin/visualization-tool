@@ -13,11 +13,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const locale = "de";
         const result = await getCubes({ locale, includeDrafts: true });
 
-        const cubesWithDimensions = result.map(({ dataCube, ...cubeProps }) => {
+        const cubesWithDimensions = result.map(({ cube, locale, data }) => {
           return {
-            ...cubeProps,
-            dimensions: getCubeDimensions({ cube: dataCube, locale }).map(
-              ({ dataCube, ...dimProps }) => dimProps
+            ...data,
+            dimensions: getCubeDimensions({ cube, locale }).map(
+              ({ data }) => data
             ),
           };
         });
