@@ -252,7 +252,7 @@ export const HintRed = ({
 }: {
   iconName: IconName;
   children: ReactNode;
-  iconSize: number;
+  iconSize?: number;
 }) => (
   <Flex
     sx={{
