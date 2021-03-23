@@ -236,7 +236,7 @@ export const getFieldLabel = (field: string): ReactNode => {
     case "scatterplot.segment":
     case "pie.segment":
     case "segment":
-      return <Trans id="controls.partition">Partition</Trans>;
+      return <Trans id="controls.color">Color</Trans>;
     case "title":
       return <Trans id="controls.title">Title</Trans>;
     case "description":

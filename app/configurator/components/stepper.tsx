@@ -186,7 +186,7 @@ export const StepLabel = ({
     case "CONFIGURING_CHART":
       return (
         <StepLabelText
-          label={<Trans id="step.adjust">Adjust</Trans>}
+          label={<Trans id="step.visualize">Visualize</Trans>}
           highlight={highlight}
         />
       );
