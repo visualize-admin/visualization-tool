@@ -1,11 +1,10 @@
 import { Trans } from "@lingui/macro";
+import { useEffect, useState } from "react";
 import { Box, Link, Text } from "theme-ui";
-import { Fragment, useEffect, useState } from "react";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
 import { DataDownload } from "./data-download";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -27,62 +26,22 @@ export const ChartFootnotes = ({
     variables: { iri: dataSetIri, locale },
   });
 
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    interactiveFiltersIsActive:
-      chartConfig.interactiveFiltersConfig?.dataFilters.active ?? false,
-  });
   if (data?.dataCubeByIri) {
-    const {
-      dataCubeByIri: { dimensions },
-    } = data;
-
-    const namedFilters = Object.entries(queryFilters).flatMap(([iri, f]) => {
-      if (f.type !== "single") {
-        return [];
-      }
-
-      const dimension = dimensions.find((d) => d.iri === iri);
-      const value = dimension?.values.find((v) => v.value === f.value);
-
-      if (!dimension) {
-        return [];
-      }
-
-      return [
-        {
-          dimension,
-          value,
-        },
-      ];
-    });
+    const { dataCubeByIri } = data;
 
     return (
-      <>
-        {namedFilters.length > 0 && (
-          <Text variant="meta" color="monochrome800" sx={{ my: 2 }}>
-            {namedFilters.map(({ dimension, value }, i) => (
-              <Fragment key={dimension.iri}>
-                {" "}
-                <span>{dimension.label}</span> (<span>{value?.label}</span>)
-                {i < namedFilters.length - 1 && ","}
-              </Fragment>
-            ))}
-          </Text>
-        )}
-
+      <Box sx={{ my: 2 }}>
         <Text variant="meta" color="monochrome600">
-          <Trans id="metadata.dataset">Dataset</Trans>:{" "}
-          {data.dataCubeByIri.title}
+          <Trans id="metadata.dataset">Dataset</Trans>: {dataCubeByIri.title}
         </Text>
 
         <Text variant="meta" color="monochrome600">
           <Trans id="metadata.source">Source</Trans>:{" "}
-          {data.dataCubeByIri.source && (
+          {dataCubeByIri.source && (
             <Box
               as="span"
               sx={{ "> a": { color: "monochrome600" } }}
-              dangerouslySetInnerHTML={{ __html: data.dataCubeByIri.source }}
+              dangerouslySetInnerHTML={{ __html: dataCubeByIri.source }}
             ></Box>
           )}
         </Text>
@@ -119,7 +78,7 @@ export const ChartFootnotes = ({
             </>
           )}
         </Box>
-      </>
+      </Box>
     );
   } else {
     return null;
