@@ -183,6 +183,8 @@ export const getIconName = (name: string): IconName => {
       return "chartMap";
     case "text":
       return "text";
+    case "title":
+      return "text";
     case "description":
       return "description";
     case "tableColumnMeasure":
