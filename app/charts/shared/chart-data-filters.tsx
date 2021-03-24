@@ -30,7 +30,7 @@ export const ChartDataFilters = ({
           <Flex
             sx={{
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: "flex-start",
               minHeight: 20,
             }}
           >
@@ -48,10 +48,10 @@ export const ChartDataFilters = ({
               <Button
                 variant="inline"
                 sx={{
-                  alignSelf: "flex-end",
                   display: "flex",
                   fontSize: [2, 2, 2],
                   alignItems: "center",
+                  minWidth: "fit-content",
                 }}
                 onClick={() => toggleFilters(!filtersAreHidden)}
               >
