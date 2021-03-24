@@ -166,15 +166,22 @@ const getCubeDimensionValuesWithLabels = async ({
     dimensionValueLiterals.length > 0
   ) {
     console.warn(
-      `WARNING: dimension with mixed literals and named nodes ${dimension.path?.value}`
+      `WARNING: dimension with mixed literals and named nodes <${dimension.path?.value}>`
     );
+
+    // console.log(`Named:`);
+    // console.log(dimensionValueNamedNodes);
+    // console.log(`Literal:`);
+    // console.log(dimensionValueLiterals);
   }
 
   if (
     dimensionValueNamedNodes.length === 0 &&
     dimensionValueLiterals.length === 0
   ) {
-    console.warn(`WARNING: dimension with NO values ${dimension.path?.value}`);
+    console.warn(
+      `WARNING: dimension with NO values <${dimension.path?.value}>`
+    );
   }
 
   const values =
@@ -315,7 +322,7 @@ const buildFilters = ({
   const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
     const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);
     if (!cubeDimension) {
-      console.log(`No cube dimension ${dimIri}`);
+      console.warn(`WARNING: No cube dimension ${dimIri}`);
       return [];
     }
     const dimension = view.dimension({ cubeDimension: dimIri });
@@ -325,6 +332,12 @@ const buildFilters = ({
     }
 
     const dataType = cubeDimension.datatype;
+
+    if (ns.rdf.langString.equals(dataType)) {
+      console.warn(
+        `WARNING: Dimension <${dimIri}> has dataType 'langString'. Filtering won't work.`
+      );
+    }
 
     const selectedValues =
       filter.type === "single"
