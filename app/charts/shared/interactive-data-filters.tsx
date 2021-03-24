@@ -2,6 +2,7 @@ import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { useState } from "react";
 import { Box, Button, Flex } from "theme-ui";
+import { ChartFiltersList } from "../../components/chart-filters-list";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import { ChartConfig, InteractiveFiltersDataConfig } from "../../configurator";
@@ -10,7 +11,7 @@ import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
-export const InteractiveDataFilters = ({
+export const ChartDataFilters = ({
   dataSet,
   chartConfig,
   dataFiltersConfig,
@@ -26,39 +27,65 @@ export const InteractiveDataFilters = ({
     <>
       {dataSet && (
         <Flex sx={{ flexDirection: "column", my: 4 }}>
-          <Button
-            variant="inline"
+          <Flex
             sx={{
-              alignSelf: "flex-end",
-              display: "flex",
-              fontSize: [2, 2, 2],
-              alignItems: "flex-end",
-            }}
-            onClick={() => toggleFilters(!filtersAreHidden)}
-          >
-            {filtersAreHidden ? (
-              <Trans id="interactive.data.filters.show">Show Filters</Trans>
-            ) : (
-              <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
-            )}
-            <Icon name={filtersAreHidden ? "add" : "close"} size={15}></Icon>
-          </Button>
-          <Box
-            sx={{
-              display: filtersAreHidden ? "none" : "grid",
-              columnGap: 3,
-              rowGap: 2,
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              justifyContent: "space-between",
+              alignItems: "center",
+              minHeight: 20,
             }}
           >
-            {componentIris.map((d, i) => (
-              <DataFilterDropdown
-                key={d}
+            {(dataFiltersConfig.active && filtersAreHidden) ||
+            !dataFiltersConfig.active ? (
+              <ChartFiltersList
                 dataSetIri={dataSet}
-                dimensionIri={d}
+                chartConfig={chartConfig}
               />
-            ))}
-          </Box>
+            ) : (
+              <Box></Box>
+            )}
+
+            {dataFiltersConfig.active && (
+              <Button
+                variant="inline"
+                sx={{
+                  alignSelf: "flex-end",
+                  display: "flex",
+                  fontSize: [2, 2, 2],
+                  alignItems: "center",
+                }}
+                onClick={() => toggleFilters(!filtersAreHidden)}
+              >
+                {filtersAreHidden ? (
+                  <Trans id="interactive.data.filters.show">Show Filters</Trans>
+                ) : (
+                  <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
+                )}
+                <Icon
+                  name={filtersAreHidden ? "add" : "close"}
+                  size={15}
+                ></Icon>
+              </Button>
+            )}
+          </Flex>
+
+          {dataFiltersConfig.active && (
+            <Box
+              sx={{
+                display: filtersAreHidden ? "none" : "grid",
+                columnGap: 3,
+                rowGap: 2,
+                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              }}
+            >
+              {componentIris.map((d, i) => (
+                <DataFilterDropdown
+                  key={d}
+                  dataSetIri={dataSet}
+                  dimensionIri={d}
+                />
+              ))}
+            </Box>
+          )}
         </Flex>
       )}
     </>
