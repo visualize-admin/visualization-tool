@@ -13,6 +13,7 @@ import { Checkbox } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
   ComponentFieldsFragment,
+  useDataCubeMetadataWithComponentsQuery,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -39,6 +40,11 @@ export const InteractiveFiltersOptions = ({
   state: ConfiguratorStateDescribingChart;
 }) => {
   const { activeField } = state;
+  const locale = useLocale();
+
+  const [{ data }] = useDataCubeMetadataWithComponentsQuery({
+    variables: { iri: state.dataSet, locale },
+  });
 
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -48,14 +54,17 @@ export const InteractiveFiltersOptions = ({
     }
   }, [activeField]);
 
-  if (activeField === "legend") {
+  if (data && data?.dataCubeByIri && activeField === "legend") {
+    const segmentDimensionIri = getFieldComponentIri(
+      state.chartConfig.fields,
+      "segment"
+    );
+    const component = [...data?.dataCubeByIri.dimensions].find(
+      (d) => d.iri === segmentDimensionIri
+    );
     return (
       <ControlSection>
-        <SectionTitle iconName="filter">
-          <Trans id="controls.section.interactiveFilters.legend">
-            Interactive Legend
-          </Trans>
-        </SectionTitle>
+        <SectionTitle iconName="segments">{component?.label}</SectionTitle>
         <ControlSectionContent side="right">
           <InteractiveFiltersToggle
             label={
@@ -70,14 +79,17 @@ export const InteractiveFiltersOptions = ({
         </ControlSectionContent>
       </ControlSection>
     );
-  } else if (activeField === "time") {
+  } else if (data && data?.dataCubeByIri && activeField === "time") {
+    const timeDimensionIri = getFieldComponentIri(
+      state.chartConfig.fields,
+      "x"
+    );
+    const component = [...data?.dataCubeByIri.dimensions].find(
+      (d) => d.iri === timeDimensionIri
+    );
     return (
       <ControlSection>
-        <SectionTitle iconName="filter">
-          <Trans id="controls.section.interactiveFilters.time">
-            Filter time span
-          </Trans>
-        </SectionTitle>
+        <SectionTitle iconName="time">{component?.label}</SectionTitle>
         <ControlSectionContent side="right">
           <InteractiveTimeFilterOptions state={state} />
         </ControlSectionContent>
