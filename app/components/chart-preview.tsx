@@ -9,7 +9,7 @@ import { ChartLinesVisualization } from "../charts/line/chart-lines";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
-import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
+import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
@@ -70,9 +70,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               }}
             >
               {state.meta.title[locale] === "" ? (
-                <Trans id="annotation.add.title">
-                  [You can add a title here]
-                </Trans> // dataSet.label.value
+                <Trans id="annotation.add.title">[ Title ]</Trans>
               ) : (
                 state.meta.title[locale]
               )}
@@ -88,9 +86,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               }}
             >
               {state.meta.description[locale] === "" ? (
-                <Trans id="annotation.add.description">
-                  [You can add a description here]
-                </Trans>
+                <Trans id="annotation.add.description">[ Description ]</Trans>
               ) : (
                 state.meta.description[locale]
               )}
@@ -172,15 +168,14 @@ const ChartWithInteractiveFilters = ({
         flexGrow: 1,
       }}
     >
-      {/* INTERACTIVE FILTERS */}
-      {chartConfig.chartType !== "table" &&
-        chartConfig.interactiveFiltersConfig?.dataFilters.active && (
-          <InteractiveDataFilters
-            dataSet={dataSet}
-            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
-            chartConfig={chartConfig}
-          />
-        )}
+      {/* Filters list & Interactive filters */}
+      {chartConfig.interactiveFiltersConfig && (
+        <ChartDataFilters
+          dataSet={dataSet}
+          dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
+          chartConfig={chartConfig}
+        />
+      )}
       <Chart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>
   );
