@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/macro";
 import React from "react";
 import { Box } from "theme-ui";
 import { Checkbox, Radio, Select } from "../../components/form";
@@ -44,7 +45,7 @@ export const PrototypeRightControls = ({
         <ControlSection>
           <Box sx={{ p: 4 }}>
             <Checkbox
-              label={"Relief"}
+              label={<Trans id="chart.map.layers.base.relief">Relief</Trans>}
               name={"relief"}
               value={"relief"}
               checked={activeLayers.relief}
@@ -52,7 +53,7 @@ export const PrototypeRightControls = ({
               onChange={() => updateActiveLayers("relief")}
             />
             <Checkbox
-              label={"Lakes"}
+              label={<Trans id="chart.map.layers.base.lakes">Lakes</Trans>}
               name={"lakes"}
               value={"lakes"}
               checked={activeLayers.lakes}
@@ -69,7 +70,9 @@ export const PrototypeRightControls = ({
         <ControlSection>
           <Box sx={{ p: 4 }}>
             <Checkbox
-              label={"Map data"}
+              label={
+                <Trans id="chart.map.layers.area.add.data">Map data</Trans>
+              }
               name={"areaLayer"}
               value={"areaLayer"}
               checked={activeLayers.areaLayer}
@@ -81,7 +84,11 @@ export const PrototypeRightControls = ({
         <ControlSection>
           <Box sx={{ p: 4 }}>
             <Select
-              label={"Select a measure to map"}
+              label={
+                <Trans id="chart.map.layers.area.select.measure">
+                  Select a measure to map
+                </Trans>
+              }
               id={"measure-select"}
               name={"measure-select"}
               value={measure}
@@ -97,7 +104,11 @@ export const PrototypeRightControls = ({
         <ControlSection>
           <Box sx={{ p: 4 }}>
             <Select
-              label={"Farbpalette"}
+              label={
+                <Trans id="chart.map.layers.area.color.palette">
+                  Color palette
+                </Trans>
+              }
               id={"palette"}
               name={"palette"}
               value={palette}
@@ -118,7 +129,11 @@ export const PrototypeRightControls = ({
           <Box sx={{ p: 4 }}>
             <Label label="Continuous" smaller></Label>
             <Radio
-              label={"Linear interpolation"}
+              label={
+                <Trans id="chart.map.layers.area.discretization.linear">
+                  Linear interpolation
+                </Trans>
+              }
               name={"continuous"}
               value={"continuous"}
               checked={paletteType === "continuous"}
@@ -129,7 +144,11 @@ export const PrototypeRightControls = ({
             />
             <Label label="Discrete" smaller></Label>
             <Radio
-              label={"Quantize (equal intervals)"}
+              label={
+                <Trans id="chart.map.layers.area.discretization.quantize">
+                  Quantize (equal intervals)
+                </Trans>
+              }
               name={"discrete"}
               value={"discrete"}
               checked={paletteType === "discrete"}
@@ -139,7 +158,11 @@ export const PrototypeRightControls = ({
               }
             />
             <Radio
-              label={"Quantiles (equal frequency)"}
+              label={
+                <Trans id="chart.map.layers.area.discretization.quantiles">
+                  Quantiles (equal frequency)
+                </Trans>
+              }
               name={"quantile"}
               value={"quantile"}
               checked={paletteType === "quantile"}
@@ -149,7 +172,11 @@ export const PrototypeRightControls = ({
               }
             />
             <Radio
-              label={"Jenks (natural breaks)"}
+              label={
+                <Trans id="chart.map.layers.area.discretization.jenks">
+                  Jenks (natural breaks)
+                </Trans>
+              }
               name={"jenks"}
               value={"jenks"}
               checked={paletteType === "jenks"}
@@ -159,7 +186,11 @@ export const PrototypeRightControls = ({
               }
             />
             <Select
-              label={"Anzahl Schritte"}
+              label={
+                <Trans id="chart.map.layers.area.discretization.number.class">
+                  Number of classes
+                </Trans>
+              }
               id={"nbClass"}
               name={"nbClass"}
               value={`${nbClass}`}
@@ -185,7 +216,11 @@ export const PrototypeRightControls = ({
         <ControlSection>
           <Box sx={{ p: 4 }}>
             <Checkbox
-              label={"Add Proportional Circles"}
+              label={
+                <Trans id="chart.map.layers.symbol.add.symbols">
+                  Add proportional circles
+                </Trans>
+              }
               name={"symbolLayer"}
               value={"symbolLayer"}
               checked={activeLayers.symbolLayer}
@@ -197,7 +232,11 @@ export const PrototypeRightControls = ({
         <ControlSection>
           <Box sx={{ p: 4 }}>
             <Select
-              label={"Select a measure"}
+              label={
+                <Trans id="chart.map.layers.symbol.select.measure">
+                  Select a measure
+                </Trans>
+              }
               id={"symbol-measure-select"}
               name={"symbol-measure-select"}
               value={symbolMeasure}
@@ -213,6 +252,10 @@ export const PrototypeRightControls = ({
       </>
     );
   } else {
-    return <div>Nothing here</div>;
+    return (
+      <Trans id="chart.map.layers.no.selected">
+        Select a layer to edit in the left panel.
+      </Trans>
+    );
   }
 };
