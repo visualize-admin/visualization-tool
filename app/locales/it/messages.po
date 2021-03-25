@@ -82,23 +82,31 @@ msgstr ""
 msgid "chart.map.layers.area.color.palette"
 msgstr ""
 
-#: app/charts/map/prototype-right-controls.tsx:64
+#: app/charts/map/prototype-right-controls.tsx:51
+msgid "chart.map.layers.area.discretization.continuous"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:59
+msgid "chart.map.layers.area.discretization.discrete"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:68
 msgid "chart.map.layers.area.discretization.jenks"
 msgstr ""
 
-#: app/charts/map/prototype-right-controls.tsx:52
+#: app/charts/map/prototype-right-controls.tsx:54
 msgid "chart.map.layers.area.discretization.linear"
 msgstr ""
 
-#: app/charts/map/prototype-right-controls.tsx:67
+#: app/charts/map/prototype-right-controls.tsx:71
 msgid "chart.map.layers.area.discretization.number.class"
 msgstr ""
 
-#: app/charts/map/prototype-right-controls.tsx:61
+#: app/charts/map/prototype-right-controls.tsx:65
 msgid "chart.map.layers.area.discretization.quantiles"
 msgstr ""
 
-#: app/charts/map/prototype-right-controls.tsx:58
+#: app/charts/map/prototype-right-controls.tsx:62
 msgid "chart.map.layers.area.discretization.quantize"
 msgstr ""
 
@@ -118,7 +126,7 @@ msgstr ""
 msgid "chart.map.layers.base.relief"
 msgstr ""
 
-#: app/charts/map/prototype-right-controls.tsx:104
+#: app/charts/map/prototype-right-controls.tsx:108
 msgid "chart.map.layers.no.selected"
 msgstr ""
 
@@ -126,11 +134,11 @@ msgstr ""
 msgid "chart.map.layers.symbol"
 msgstr ""
 
-#: app/charts/map/prototype-right-controls.tsx:86
+#: app/charts/map/prototype-right-controls.tsx:90
 msgid "chart.map.layers.symbol.add.symbols"
 msgstr ""
 
-#: app/charts/map/prototype-right-controls.tsx:93
+#: app/charts/map/prototype-right-controls.tsx:97
 msgid "chart.map.layers.symbol.select.measure"
 msgstr ""
 

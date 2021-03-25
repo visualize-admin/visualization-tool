@@ -127,7 +127,14 @@ export const PrototypeRightControls = ({
         </ControlSection>
         <ControlSection>
           <Box sx={{ p: 4 }}>
-            <Label label="Continuous" smaller></Label>
+            <Label
+              label={
+                <Trans id="chart.map.layers.area.discretization.continuous">
+                  Continuous
+                </Trans>
+              }
+              smaller
+            ></Label>
             <Radio
               label={
                 <Trans id="chart.map.layers.area.discretization.linear">
@@ -142,7 +149,14 @@ export const PrototypeRightControls = ({
                 setPaletteType(e.currentTarget.value as PaletteType);
               }}
             />
-            <Label label="Discrete" smaller></Label>
+            <Label
+              label={
+                <Trans id="chart.map.layers.area.discretization.discrete">
+                  Discrete
+                </Trans>
+              }
+              smaller
+            ></Label>
             <Radio
               label={
                 <Trans id="chart.map.layers.area.discretization.quantize">
