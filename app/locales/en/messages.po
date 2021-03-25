@@ -17,7 +17,7 @@ msgstr "Embed"
 
 #: app/pages/v/[chartId].tsx:78
 msgid "button.new.visualization"
-msgstr "New Visualization"
+msgstr "Create New Visualization"
 
 #: app/configurator/components/action-bar.tsx:31
 msgid "button.next"
@@ -207,7 +207,7 @@ msgstr "[ No Title ]"
 
 #: app/pages/v/[chartId].tsx:83
 msgid "button.copy.visualization"
-msgstr "Copy Visualization"
+msgstr "Copy This Visualization"
 
 #: app/configurator/components/ui-helpers.tsx:249
 msgid "controls.chart.type.pie"
