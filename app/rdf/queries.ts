@@ -1,3 +1,5 @@
+import { sparql } from "@tpluscode/rdf-string";
+import { descending } from "d3";
 import {
   Cube,
   CubeDimension,
@@ -47,7 +49,6 @@ export const getCubes = async ({
     ),
   });
 
-  // See https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
   return cubes.map((cube) => parseCube({ cube, locale }));
 };
 
@@ -62,7 +63,77 @@ export const getCube = async ({
 
   const cube = await source.cube(iri);
 
-  return cube ? parseCube({ cube, locale }) : null;
+  if (!cube) {
+    return null;
+  }
+
+  const versionHistory = cube.in(ns.schema.hasPart)?.term;
+  const isPublished =
+    cube.out(ns.schema.creativeWorkStatus)?.value ===
+    ns.adminTerm("CreativeWorkStatus/Published").value;
+  const version = cube.out(ns.schema.version);
+
+  // console.log(`Cube <${iri}> version: ${version?.value}`);
+
+  /**
+   * Find newer cubes that satisfy these conditions:
+   * - Must have a higher version number
+   * - Are from the same version history
+   * - If original cube is published, cubes must also be published
+   */
+  const filters = [
+    Cube.filter.isPartOf(versionHistory),
+    // Custom filter for version
+    ({ cube, index }: $FixMe) => {
+      const variable = rdf.variable(`version${index}`);
+      return [
+        [cube, ns.schema.version, variable],
+        sparql`FILTER(${variable} > ${version})`,
+      ];
+    },
+  ];
+
+  const newerCubes = await source.cubes({
+    filters: isPublished
+      ? [
+          ...filters,
+          Cube.filter.status(ns.adminTerm("CreativeWorkStatus/Published")),
+        ]
+      : filters,
+  });
+
+  // console.log(
+  //   "Newer cubes",
+  //   newerCubes.map((c) => c.term?.value)
+  // );
+
+  /**
+   * Now we find the latest cube:
+   * - Try to find the latest PUBLISHED cube
+   * - Otherwise pick latest cube
+   */
+
+  if (newerCubes.length > 0) {
+    newerCubes.sort((a, b) =>
+      descending(
+        a.out(ns.schema.version)?.value,
+        b.out(ns.schema.version)?.value
+      )
+    );
+
+    const latestCube =
+      newerCubes.find(
+        (cube) =>
+          cube.out(ns.schema.creativeWorkStatus)?.value ===
+          ns.adminTerm("CreativeWorkStatus/Published").value
+      ) ?? newerCubes[0];
+
+    // console.log("Picked latest cube", latestCube.term?.value);
+
+    return parseCube({ cube: latestCube, locale });
+  }
+
+  return parseCube({ cube, locale });
 };
 
 export const getCubeDimensions = ({

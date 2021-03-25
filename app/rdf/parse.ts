@@ -19,6 +19,7 @@ export const parseCube = ({
 }): ResolvedDataCube => {
   const outOpts = { language: getQueryLocales(locale) };
 
+  // See https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
   return {
     cube,
     locale,
