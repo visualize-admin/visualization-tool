@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/chart-preview.tsx:66
+#: app/components/chart-preview.tsx:63
 msgid "annotation.add.description"
 msgstr "[ Descrizione ]"
 
@@ -62,12 +62,76 @@ msgstr "Pubblica"
 msgid "button.share"
 msgstr "Condividi"
 
-#: app/charts/map/chart-map-prototype.tsx:136
-msgid "chart.map.control.base.map"
-msgstr ""
-
 #: app/charts/map/chart-map-prototype.tsx:146
 msgid "chart.map.control.data.filters"
+msgstr ""
+
+#: app/charts/map/chart-map-prototype.tsx:136
+msgid "chart.map.control.layers"
+msgstr ""
+
+#: app/charts/map/chart-map-prototype.tsx:139
+msgid "chart.map.layers.area"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:22
+msgid "chart.map.layers.area.add.data"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:37
+msgid "chart.map.layers.area.color.palette"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:64
+msgid "chart.map.layers.area.discretization.jenks"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:52
+msgid "chart.map.layers.area.discretization.linear"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:67
+msgid "chart.map.layers.area.discretization.number.class"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:61
+msgid "chart.map.layers.area.discretization.quantiles"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:58
+msgid "chart.map.layers.area.discretization.quantize"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:27
+msgid "chart.map.layers.area.select.measure"
+msgstr ""
+
+#: app/charts/map/chart-map-prototype.tsx:138
+msgid "chart.map.layers.base"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:13
+msgid "chart.map.layers.base.lakes"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:12
+msgid "chart.map.layers.base.relief"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:104
+msgid "chart.map.layers.no.selected"
+msgstr ""
+
+#: app/charts/map/chart-map-prototype.tsx:140
+msgid "chart.map.layers.symbol"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:86
+msgid "chart.map.layers.symbol.add.symbols"
+msgstr ""
+
+#: app/charts/map/prototype-right-controls.tsx:93
+msgid "chart.map.layers.symbol.select.measure"
 msgstr ""
 
 #: app/charts/map/chart-map-prototype.tsx:162
@@ -111,47 +175,47 @@ msgstr ""
 msgid "controls..interactiveFilters.time.defaultSettings"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:156
+#: app/configurator/components/ui-helpers.tsx:158
 msgid "controls.axis.horizontal"
 msgstr "Asse orizzontale"
 
-#: app/configurator/components/ui-helpers.tsx:167
+#: app/configurator/components/ui-helpers.tsx:169
 msgid "controls.axis.vertical"
 msgstr "Asse verticale"
 
-#: app/configurator/components/ui-helpers.tsx:243
+#: app/configurator/components/ui-helpers.tsx:245
 msgid "controls.chart.type.area"
 msgstr "Aree"
 
-#: app/configurator/components/ui-helpers.tsx:239
+#: app/configurator/components/ui-helpers.tsx:241
 msgid "controls.chart.type.bar"
 msgstr "Barre"
 
-#: app/configurator/components/ui-helpers.tsx:237
+#: app/configurator/components/ui-helpers.tsx:239
 msgid "controls.chart.type.column"
 msgstr "Colonne"
 
-#: app/configurator/components/ui-helpers.tsx:241
+#: app/configurator/components/ui-helpers.tsx:243
 msgid "controls.chart.type.line"
 msgstr "Linee"
 
-#: app/configurator/components/ui-helpers.tsx:251
+#: app/configurator/components/ui-helpers.tsx:253
 msgid "controls.chart.type.map"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:247
+#: app/configurator/components/ui-helpers.tsx:249
 msgid "controls.chart.type.pie"
 msgstr "Torta"
 
-#: app/configurator/components/ui-helpers.tsx:245
+#: app/configurator/components/ui-helpers.tsx:247
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/configurator/components/ui-helpers.tsx:249
+#: app/configurator/components/ui-helpers.tsx:251
 msgid "controls.chart.type.table"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:175
+#: app/configurator/components/ui-helpers.tsx:177
 msgid "controls.color"
 msgstr ""
 
@@ -172,15 +236,15 @@ msgstr "Ripristina la tavolozza dei colori"
 msgid "controls.colorpicker.open"
 msgstr "Apri il selettore di colore"
 
-#: app/configurator/components/ui-helpers.tsx:184
+#: app/configurator/components/ui-helpers.tsx:186
 msgid "controls.column.grouped"
 msgstr "raggruppate"
 
-#: app/configurator/components/ui-helpers.tsx:182
+#: app/configurator/components/ui-helpers.tsx:184
 msgid "controls.column.stacked"
 msgstr "impilate"
 
-#: app/configurator/components/ui-helpers.tsx:179
+#: app/configurator/components/ui-helpers.tsx:181
 msgid "controls.description"
 msgstr "Aggiungi una descrizione"
 
@@ -212,7 +276,7 @@ msgstr ""
 msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
 msgstr ""
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:32
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:34
 msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
 msgstr ""
 
@@ -224,23 +288,23 @@ msgstr ""
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:254
+#: app/configurator/components/ui-helpers.tsx:256
 msgid "controls.language.english"
 msgstr "Inglese"
 
-#: app/configurator/components/ui-helpers.tsx:258
+#: app/configurator/components/ui-helpers.tsx:260
 msgid "controls.language.french"
 msgstr "Francese"
 
-#: app/configurator/components/ui-helpers.tsx:256
+#: app/configurator/components/ui-helpers.tsx:258
 msgid "controls.language.german"
 msgstr "Tedesco"
 
-#: app/configurator/components/ui-helpers.tsx:260
+#: app/configurator/components/ui-helpers.tsx:262
 msgid "controls.language.italian"
 msgstr "Italiano"
 
-#: app/configurator/components/ui-helpers.tsx:165
+#: app/configurator/components/ui-helpers.tsx:167
 msgid "controls.measure"
 msgstr "Misura"
 
@@ -293,14 +357,6 @@ msgstr ""
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:53
 msgid "controls.section.interactiveFilters.dataFilters"
-msgstr ""
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:27
-msgid "controls.section.interactiveFilters.legend"
-msgstr ""
-
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:41
-msgid "controls.section.interactiveFilters.time"
 msgstr ""
 
 #: app/configurator/components/chart-options-selector.tsx:148
@@ -368,12 +424,12 @@ msgstr ""
 msgid "controls.select.columnStyle.textStyle"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:266
 #: app/configurator/components/ui-helpers.tsx:268
+#: app/configurator/components/ui-helpers.tsx:270
 msgid "controls.select.dimension"
 msgstr "Seleziona una dimensione"
 
-#: app/configurator/components/ui-helpers.tsx:267
+#: app/configurator/components/ui-helpers.tsx:269
 msgid "controls.select.measure"
 msgstr "Seleziona una misura"
 
@@ -386,11 +442,11 @@ msgstr ""
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Nome"
 
-#: app/configurator/components/ui-helpers.tsx:195
+#: app/configurator/components/ui-helpers.tsx:197
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/configurator/components/ui-helpers.tsx:204
+#: app/configurator/components/ui-helpers.tsx:206
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
@@ -398,11 +454,11 @@ msgstr "Z → A"
 msgid "controls.sorting.byMeasure"
 msgstr "Misura"
 
-#: app/configurator/components/ui-helpers.tsx:228
+#: app/configurator/components/ui-helpers.tsx:230
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/configurator/components/ui-helpers.tsx:234
+#: app/configurator/components/ui-helpers.tsx:236
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
@@ -410,19 +466,19 @@ msgstr "9 → 1"
 msgid "controls.sorting.byTotalSize"
 msgstr "Grandezza totale"
 
-#: app/configurator/components/ui-helpers.tsx:208
+#: app/configurator/components/ui-helpers.tsx:210
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Il più grande per ultimo"
 
-#: app/configurator/components/ui-helpers.tsx:220
+#: app/configurator/components/ui-helpers.tsx:222
 msgid "controls.sorting.byTotalSize.largestBottom"
 msgstr "Il più grande sotto"
 
-#: app/configurator/components/ui-helpers.tsx:212
+#: app/configurator/components/ui-helpers.tsx:214
 msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Il più grande per primo"
 
-#: app/configurator/components/ui-helpers.tsx:217
+#: app/configurator/components/ui-helpers.tsx:219
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Il più grande sopra"
 
@@ -434,7 +490,7 @@ msgstr ""
 msgid "controls.sorting.selectDimension"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:186
+#: app/configurator/components/ui-helpers.tsx:188
 #: app/configurator/table/table-chart-sorting-options.tsx:173
 msgid "controls.sorting.sortBy"
 msgstr "Ordina per"
@@ -463,7 +519,7 @@ msgstr ""
 msgid "controls.tableSettings.showSearch"
 msgstr ""
 
-#: app/configurator/components/ui-helpers.tsx:177
+#: app/configurator/components/ui-helpers.tsx:179
 msgid "controls.title"
 msgstr "Aggiungi un titolo"
 
@@ -579,11 +635,11 @@ msgstr "Seleziona un dataset"
 msgid "hint.select.dataset.to.preview"
 msgstr "Seleziona un dataset per vedere l'anteprima della sua struttura e del suo contenuto."
 
-#: app/charts/shared/interactive-data-filters.tsx:22
+#: app/charts/shared/chart-data-filters.tsx:31
 msgid "interactive.data.filters.hide"
 msgstr ""
 
-#: app/charts/shared/interactive-data-filters.tsx:22
+#: app/charts/shared/chart-data-filters.tsx:31
 msgid "interactive.data.filters.show"
 msgstr ""
 
@@ -592,15 +648,15 @@ msgstr ""
 msgid "logo.swiss.confederation"
 msgstr "Logo della Confederazione svizzera"
 
-#: app/components/chart-footnotes.tsx:50
+#: app/components/chart-footnotes.tsx:20
 msgid "metadata.dataset"
 msgstr "Dataset"
 
-#: app/components/chart-footnotes.tsx:80
+#: app/components/chart-footnotes.tsx:49
 msgid "metadata.link.created.with.visualize"
 msgstr "Creato con visualize.admin.ch"
 
-#: app/components/chart-footnotes.tsx:55
+#: app/components/chart-footnotes.tsx:24
 msgid "metadata.source"
 msgstr "Fonte"
 
