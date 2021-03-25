@@ -63,9 +63,14 @@ export const getCube = async ({
 
   const cube = await source.cube(iri);
 
-  if (!cube) {
+  // FIXME: the 2nd condition should not be necessary but due to a but in the query lib, a inexistent cube is not actually null. See https://github.com/zazuko/rdf-cube-view-query/issues/41
+  if (!cube || (cube?.out()?.terms?.length ?? 0) === 0) {
     return null;
   }
+  // -> This should work instead:
+  // if (!cube) {
+  //   return null;
+  // }
 
   const versionHistory = cube.in(ns.schema.hasPart)?.term;
   const isPublished =
