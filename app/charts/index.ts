@@ -301,7 +301,7 @@ export const getPossibleChartType = ({
     // Tables should always be possible
     possibles = ["table"];
   }
-  return possibles;
+  return enabledChartTypes.filter((type) => possibles.includes(type));
 };
 
 export const getFieldComponentIris = (fields: GenericFields) => {
