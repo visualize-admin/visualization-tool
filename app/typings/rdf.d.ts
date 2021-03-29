@@ -41,6 +41,7 @@ declare module "rdf-cube-view-query" {
     clear(): void;
     cubeDimensions: CubeDimension[];
     filter: FilterBuilder;
+    source: Source;
   }
 
   class FilterBuilder {
@@ -92,11 +93,13 @@ declare module "rdf-cube-view-query" {
         sourceGraph?: string;
         user?: string;
         password?: string;
+        queryOperation?: "get" | "postUrlencoded" | "postDirect";
       }
     );
     async cube(term: Term | string): Promise<Cube | null>;
     async cubes(options?: { filters: $FixMe }): Promise<Cube[]>;
     client: ParsingClient;
+    queryOperation?: "get" | "postUrlencoded" | "postDirect";
   }
   export class LookupSource extends Source {
     static fromSource(source: Source): LookupSource;
