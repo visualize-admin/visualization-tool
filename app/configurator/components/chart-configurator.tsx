@@ -30,7 +30,7 @@ export const ChartConfigurator = ({
     const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
       (dim) => !mappedIris.has(dim.iri)
     );
-    console.log(unMappedDimensions);
+
     return (
       <>
         <ControlSection>
