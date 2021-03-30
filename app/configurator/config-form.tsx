@@ -260,6 +260,38 @@ export const useChartTypeSelectorField = ({
   };
 };
 
+// Used in the configurator filters
+export const useSingleFilterSelect = ({
+  dimensionIri,
+}: {
+  dimensionIri: string;
+}): SelectProps => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
+    (e) => {
+      dispatch({
+        type: "CHART_CONFIG_FILTER_SET_SINGLE",
+        value: {
+          dimensionIri,
+          value: e.currentTarget.value,
+        },
+      });
+    },
+    [dimensionIri, dispatch]
+  );
+
+  let value: string | undefined;
+  if (state.state === "CONFIGURING_CHART") {
+    value = get(state.chartConfig, ["filters", dimensionIri, "value"], "");
+  }
+  return {
+    value,
+    onChange,
+  };
+};
+
+// Used in the Table Chart options
 export const useSingleFilterField = ({
   dimensionIri,
   value,

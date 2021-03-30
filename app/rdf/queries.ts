@@ -25,6 +25,7 @@ const createSource = () =>
   new Source({
     sourceGraph: "https://lindas.admin.ch/foen/cube",
     endpointUrl: SPARQL_ENDPOINT,
+    queryOperation: "postUrlencoded",
     // user: '',
     // password: ''
   });
@@ -71,6 +72,11 @@ export const getCube = async ({
   // if (!cube) {
   //   return null;
   // }
+
+  // FIXME: Remove this workaround until https://github.com/zazuko/rdf-cube-view-query/pull/47 is merged and released
+  if (cube) {
+    cube.source.queryOperation = "postUrlencoded";
+  }
 
   const versionHistory = cube.in(ns.schema.hasPart)?.term;
   const isPublished =
@@ -288,6 +294,11 @@ export const getCubeObservations = async ({
   observationsRaw: Record<string, Literal | NamedNode>[];
 }> => {
   const cubeView = View.fromCube(cube);
+
+  // FIXME: Remove this workaround until https://github.com/zazuko/rdf-cube-view-query/pull/47 is merged and released
+  cubeView.dimensions.forEach((d) => {
+    d.source.queryOperation = "postUrlencoded";
+  });
 
   // Only choose dimensions that we really want
   let observationDimensions = cubeView.dimensions.filter((d) =>

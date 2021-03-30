@@ -1,4 +1,5 @@
 import { Cube, CubeDimension } from "rdf-cube-view-query";
+import { NamedNode } from "rdf-js";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
@@ -54,13 +55,40 @@ export const parseCubeDimension = ({
 }): ResolvedDimension => {
   const outOpts = { language: getQueryLocales(locale) };
 
-  const isLiteral = dim.datatype ? true : false;
-  const isNumerical =
-    dim.datatype?.equals(ns.xsd.int) ||
-    dim.datatype?.equals(ns.xsd.integer) ||
-    dim.datatype?.equals(ns.xsd.decimal);
   const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(ns.rdf.type).term;
   const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
+
+  let dataType = dim.datatype;
+
+  if (!dataType) {
+    // Maybe it has multiple datatypes
+    const dataTypes = [
+      ...(dim.out(ns.sh.or).list() ?? dim.out(ns.sh.or).toArray()),
+    ].flatMap((item) => {
+      return item
+        .out(ns.sh.datatype)
+        .filter((d) => !ns.cube.Undefined.equals(d.term)).terms;
+    }) as NamedNode[];
+
+    if (dataTypes.length > 1) {
+      console.warn(
+        `WARNING: dimension <${dim.path?.value}> has more than 1 non-undefined datatype`,
+        dataTypes
+      );
+    }
+
+    if (dataTypes.length > 0) {
+      dataType = dataTypes[0];
+    }
+  }
+
+  const isLiteral = dataType ? true : false;
+
+  const isNumerical =
+    dataType?.equals(ns.xsd.int) ||
+    dataType?.equals(ns.xsd.integer) ||
+    dataType?.equals(ns.xsd.decimal) ||
+    false;
 
   return {
     cube,
@@ -71,7 +99,7 @@ export const parseCubeDimension = ({
       iri: dim.path?.value!,
       isLiteral,
       isNumerical,
-      dataType: dim.datatype?.value,
+      dataType: dataType?.value,
       name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
       dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
         ? "Time"
