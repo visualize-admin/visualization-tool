@@ -33,7 +33,7 @@ export const HomeLink = ({
   locale: Locale;
   children: ReactNode;
 }) => (
-  <NextLink href={`/`} locale={locale}>
+  <NextLink href={`/`} locale={locale} passHref>
     <Link
       sx={{
         bg: "transparent",
