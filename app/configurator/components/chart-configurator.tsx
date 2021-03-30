@@ -59,10 +59,7 @@ export const ChartConfigurator = ({
                 <DataFilterSelect
                   dimensionIri={dimension.iri}
                   label={dimension.label}
-                  options={dimension.values.map((value) => ({
-                    value: value.value,
-                    label: value.label,
-                  }))}
+                  options={dimension.values}
                   disabled={false}
                 />
               </Box>
