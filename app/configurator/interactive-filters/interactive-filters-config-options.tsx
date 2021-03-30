@@ -152,7 +152,7 @@ const InteractiveTimeFilterOptions = ({
       hardFilters && hardFilters?.type === "multi"
         ? hardFilters?.values ?? false
         : false;
-    // Time extent uses the "hard filters" (filters applied before fetching data)
+    // Time extent uses the "hard filters" (filters defined in the editor)
     // and defaults to full time extent (from dimension metadata).
     const timeExtent = hardFiltersValues
       ? extent(Object.keys(hardFiltersValues), (d) => parseDate(d.toString()))

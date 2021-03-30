@@ -11,8 +11,9 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "./chart-controls/section";
-import { ControlTabField, FilterTabField } from "./field";
+import { DataFilterSelect, ControlTabField } from "./field";
 import { Loading } from "../../components/hint";
+import { Box } from "theme-ui";
 
 export const ChartConfigurator = ({
   state,
@@ -29,10 +30,11 @@ export const ChartConfigurator = ({
     const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
       (dim) => !mappedIris.has(dim.iri)
     );
+
     return (
       <>
         <ControlSection>
-          <SectionTitle>
+          <SectionTitle titleId="controls-design">
             <Trans id="controls.section.design">Design</Trans>
           </SectionTitle>
           <ControlSectionContent
@@ -48,20 +50,20 @@ export const ChartConfigurator = ({
         </ControlSection>
 
         <ControlSection>
-          <SectionTitle>
+          <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data">Data</Trans>
           </SectionTitle>
-          <ControlSectionContent
-            side="left"
-            role="tablist"
-            aria-labelledby="controls-data"
-          >
+          <ControlSectionContent side="left" aria-labelledby="controls-data">
             {unMappedDimensions.map((dimension, i) => (
-              <FilterTabField
-                key={dimension.iri}
-                component={dimension}
-                value={dimension.iri}
-              ></FilterTabField>
+              <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
+                <DataFilterSelect
+                  dimensionIri={dimension.iri}
+                  label={dimension.label}
+                  options={dimension.values}
+                  disabled={false}
+                  id={`select-single-filter-${i}`}
+                />
+              </Box>
             ))}
           </ControlSectionContent>
         </ControlSection>
@@ -99,7 +101,7 @@ const ChartFields = ({
                   ?.componentIri
             )}
             value={encoding.field}
-            labelId={`${chartConfig.chartType}.${encoding.field}`}
+            labelId={`${chartConfig.chartType}-${encoding.field}`}
           />
         );
       })}

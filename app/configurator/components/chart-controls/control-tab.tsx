@@ -50,43 +50,6 @@ export const ControlTab = ({
   );
 };
 
-export const FilterTab = ({
-  label,
-  value,
-  checked,
-  disabled,
-  onClick,
-  filterValue,
-}: {
-  label: string;
-  disabled?: boolean;
-  onClick: (x: string) => void;
-  filterValue: string;
-  value: string;
-} & FieldProps) => {
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        borderRadius: "default",
-        my: "2px",
-      }}
-    >
-      <ControlTabButton
-        checked={checked}
-        value={value}
-        onClick={() => onClick(value)}
-      >
-        <ControlTabButtonInner
-          iconName={"table"}
-          upperLabel={label}
-          lowerLabel={filterValue}
-          checked={checked}
-        />
-      </ControlTabButton>
-    </Box>
-  );
-};
 export const AnnotatorTab = ({
   value,
   checked,

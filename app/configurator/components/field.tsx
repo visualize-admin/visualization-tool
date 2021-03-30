@@ -4,7 +4,6 @@ import { ChangeEvent, ReactNode, useCallback } from "react";
 import { Box, Flex } from "theme-ui";
 import {
   FIELD_VALUE_NONE,
-  FilterValueSingle,
   Option,
   useActiveFieldField,
   useChartFieldField,
@@ -14,22 +13,16 @@ import {
   useSingleFilterField,
 } from "..";
 import { Checkbox, Input, Label, Radio, Select } from "../../components/form";
-import {
-  ComponentFieldsFragment,
-  DimensionFieldsWithValuesFragment,
-} from "../../graphql/query-hooks";
+import { ComponentFieldsFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import {
   useChartOptionBooleanField,
   useChartOptionSelectField,
+  useSingleFilterSelect,
 } from "../config-form";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
-import {
-  AnnotatorTab,
-  ControlTab,
-  FilterTab,
-} from "./chart-controls/control-tab";
+import { AnnotatorTab, ControlTab } from "./chart-controls/control-tab";
 import { getPalette } from "./ui-helpers";
 
 export const ControlTabField = ({
@@ -58,36 +51,29 @@ export const ControlTabField = ({
   );
 };
 
-export const FilterTabField = ({
-  component,
-  value,
+export const DataFilterSelect = ({
+  dimensionIri,
+  label,
+  options,
+  id,
   disabled,
 }: {
-  component: DimensionFieldsWithValuesFragment;
-  value: string;
+  dimensionIri: string;
+  label: string;
+  options: Option[];
+  id: string;
   disabled?: boolean;
 }) => {
-  const field = useActiveFieldField({
-    value,
-  });
-  const [state] = useConfiguratorState();
+  const fieldProps = useSingleFilterSelect({ dimensionIri });
 
-  const filterValueIri =
-    state.state === "CONFIGURING_CHART" &&
-    state.chartConfig.filters[value].type === "single"
-      ? (state.chartConfig.filters[value] as FilterValueSingle).value
-      : "";
-  const filterValue = component.values.find((v) => v.value === filterValueIri)!
-    .label;
   return (
-    <FilterTab
-      label={component.label}
-      value={`${field.value}`}
-      checked={field.checked}
+    <Select
+      id={id}
+      label={label}
       disabled={disabled}
-      onClick={field.onClick}
-      filterValue={filterValue}
-    ></FilterTab>
+      options={options}
+      {...fieldProps}
+    ></Select>
   );
 };
 
