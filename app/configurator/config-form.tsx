@@ -260,7 +260,7 @@ export const useChartTypeSelectorField = ({
   };
 };
 
-// Used in the "hard" filters configurator
+// Used in the configurator filters
 export const useSingleFilterSelect = ({
   dimensionIri,
 }: {

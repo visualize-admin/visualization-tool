@@ -51,7 +51,7 @@ export const ControlTabField = ({
   );
 };
 
-export const DataHardSingleFilterField = ({
+export const DataFilterSelect = ({
   dimensionIri,
   label,
   options,

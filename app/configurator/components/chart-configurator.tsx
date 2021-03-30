@@ -11,7 +11,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "./chart-controls/section";
-import { DataHardSingleFilterField, ControlTabField } from "./field";
+import { DataFilterSelect, ControlTabField } from "./field";
 import { Loading } from "../../components/hint";
 import { Box } from "theme-ui";
 
@@ -56,7 +56,7 @@ export const ChartConfigurator = ({
           <ControlSectionContent side="left" aria-labelledby="controls-data">
             {unMappedDimensions.map((dimension) => (
               <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
-                <DataHardSingleFilterField
+                <DataFilterSelect
                   dimensionIri={dimension.iri}
                   label={dimension.label}
                   options={dimension.values.map((value) => ({
