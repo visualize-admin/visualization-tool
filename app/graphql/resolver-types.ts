@@ -68,7 +68,7 @@ export type DataCubeDimensionByIriArgs = {
 
 export type DimensionValue = {
   __typename?: 'DimensionValue';
-  value: Scalars['String'];
+  value?: Maybe<Scalars['String']>;
   label: Scalars['String'];
 };
 
@@ -300,7 +300,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type DimensionValueResolvers<ContextType = any, ParentType extends ResolversParentTypes['DimensionValue'] = ResolversParentTypes['DimensionValue']> = ResolversObject<{
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

@@ -35,7 +35,7 @@ type DataCube {
 }
 
 type DimensionValue {
-  value: String!
+  value: String
   label: String!
 }
 

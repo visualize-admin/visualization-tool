@@ -196,7 +196,12 @@ const getCubeDimensionValuesWithLabels = async ({
           await loadResourceLabels({ ids: dimensionValueNamedNodes, locale })
         ).map((vl) => ({ value: vl.iri.value, label: vl.label.value }))
       : dimensionValueLiterals.length > 0
-      ? dimensionValueLiterals.map((v) => ({ value: v.value, label: v.value }))
+      ? dimensionValueLiterals.map((v) => {
+          return {
+            value: ns.cube.Undefined.equals(v.datatype) ? undefined : v.value,
+            label: v.value,
+          };
+        })
       : [];
 
   return values;
@@ -301,11 +306,16 @@ export const getCubeObservations = async ({
     return Object.fromEntries(
       cubeDimensions.map((d) => {
         const label = obs[labelDimensionIri(d.data.iri)]?.value;
-        const value = obs[d.data.iri]?.value;
+
+        console.log(obs[d.data.iri]);
+
+        const value = ns.cube.Undefined.equals(obs[d.data.iri])
+          ? undefined
+          : obs[d.data.iri]?.value;
 
         return [
           d.data.iri,
-          label ?? value,
+          value,
           // v !== undefined ? parseObservationValue({ value: v }) : null,
         ];
       })

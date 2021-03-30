@@ -64,7 +64,7 @@ export type DataCubeDimensionByIriArgs = {
 
 export type DimensionValue = {
   __typename: 'DimensionValue';
-  value: Scalars['String'];
+  value?: Maybe<Scalars['String']>;
   label: Scalars['String'];
 };
 
@@ -171,13 +171,13 @@ type ComponentFields_Measure_Fragment = { __typename: 'Measure', iri: string, la
 
 export type ComponentFieldsFragment = ComponentFields_NominalDimension_Fragment | ComponentFields_OrdinalDimension_Fragment | ComponentFields_TemporalDimension_Fragment | ComponentFields_Measure_Fragment;
 
-type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value?: Maybe<string>, label: string }> };
 
-type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value?: Maybe<string>, label: string }> };
 
-type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value?: Maybe<string>, label: string }> };
 
-type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value?: Maybe<string>, label: string }> };
 
 export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment | DimensionFieldsWithValues_Measure_Fragment;
 
