@@ -55,19 +55,20 @@ export const DataFilterSelect = ({
   dimensionIri,
   label,
   options,
+  id,
   disabled,
 }: {
   dimensionIri: string;
   label: string;
   options: Option[];
+  id: string;
   disabled?: boolean;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
   return (
     <Select
-      key={`select-single-filter-${dimensionIri}`}
-      id={`select-single-filter-${dimensionIri}`}
+      id={id}
       label={label}
       disabled={disabled}
       options={options}

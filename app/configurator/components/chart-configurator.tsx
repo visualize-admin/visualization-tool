@@ -54,13 +54,14 @@ export const ChartConfigurator = ({
             <Trans id="controls.section.data">Data</Trans>
           </SectionTitle>
           <ControlSectionContent side="left" aria-labelledby="controls-data">
-            {unMappedDimensions.map((dimension) => (
+            {unMappedDimensions.map((dimension, i) => (
               <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
                 <DataFilterSelect
                   dimensionIri={dimension.iri}
                   label={dimension.label}
                   options={dimension.values}
                   disabled={false}
+                  id={`select-single-filter-${i}`}
                 />
               </Box>
             ))}
