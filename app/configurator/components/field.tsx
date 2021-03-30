@@ -58,7 +58,7 @@ export const DataFilterSelect = ({
   disabled,
 }: {
   dimensionIri: string;
-  label: string | ReactNode;
+  label: string;
   options: Option[];
   disabled?: boolean;
 }) => {
