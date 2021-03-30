@@ -18,7 +18,7 @@ import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
 
-/** Adds a suffix to an iri to mark it's label */
+/** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 
 const createSource = () =>
