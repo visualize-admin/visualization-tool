@@ -11,8 +11,9 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "./chart-controls/section";
-import { ControlTabField, FilterTabField } from "./field";
+import { DataHardSingleFilterField, ControlTabField } from "./field";
 import { Loading } from "../../components/hint";
+import { Box } from "theme-ui";
 
 export const ChartConfigurator = ({
   state,
@@ -29,10 +30,11 @@ export const ChartConfigurator = ({
     const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
       (dim) => !mappedIris.has(dim.iri)
     );
+    console.log(unMappedDimensions);
     return (
       <>
         <ControlSection>
-          <SectionTitle>
+          <SectionTitle titleId="controls-design">
             <Trans id="controls.section.design">Design</Trans>
           </SectionTitle>
           <ControlSectionContent
@@ -48,20 +50,22 @@ export const ChartConfigurator = ({
         </ControlSection>
 
         <ControlSection>
-          <SectionTitle>
+          <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data">Data</Trans>
           </SectionTitle>
-          <ControlSectionContent
-            side="left"
-            role="tablist"
-            aria-labelledby="controls-data"
-          >
-            {unMappedDimensions.map((dimension, i) => (
-              <FilterTabField
-                key={dimension.iri}
-                component={dimension}
-                value={dimension.iri}
-              ></FilterTabField>
+          <ControlSectionContent side="left" aria-labelledby="controls-data">
+            {unMappedDimensions.map((dimension) => (
+              <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
+                <DataHardSingleFilterField
+                  dimensionIri={dimension.iri}
+                  label={dimension.label}
+                  options={dimension.values.map((value) => ({
+                    value: value.value,
+                    label: value.label,
+                  }))}
+                  disabled={false}
+                />
+              </Box>
             ))}
           </ControlSectionContent>
         </ControlSection>
