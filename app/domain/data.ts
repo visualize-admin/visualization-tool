@@ -9,7 +9,9 @@ export type RawObservationValue = Literal | NamedNode;
 
 export type RawObservation = Record<string, RawObservationValue>;
 
-export type ObservationValue = string | number | boolean | Date;
+export type ObservationValue = string | number | boolean | Date | null;
+
+export type DimensionValue = { value: ObservationValue; label: string };
 
 export type Observation = Record<string, ObservationValue>;
 

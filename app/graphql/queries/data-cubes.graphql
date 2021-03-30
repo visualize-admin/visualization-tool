@@ -29,10 +29,7 @@ fragment componentFields on Component {
 fragment dimensionFieldsWithValues on Dimension {
   iri
   label
-  values {
-    value
-    label
-  }
+  values
 }
 
 query DataCubePreview($iri: String!, $locale: String!) {

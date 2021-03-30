@@ -122,7 +122,7 @@ const useColumnsStackedState = ({
     xKey,
   });
   const xOrder = allDataWide
-    .sort((a, b) => ascending(a.total, b.total))
+    .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
     .map((d, i) => getX(d));
 
   const sortedData = useMemo(

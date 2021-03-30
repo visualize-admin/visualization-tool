@@ -9,6 +9,11 @@ import { sparqlClient } from "./sparql-client";
 
 const BATCH_SIZE = 500;
 
+interface ResouceLabel {
+  iri: Term;
+  label?: Term;
+}
+
 /**
  * Load labels for a list of IDs (e.g. dimension values)
  *
@@ -25,7 +30,7 @@ export async function loadResourceLabels({
   ids: Term[];
   locale: string;
   client?: ParsingClient;
-}): Promise<Record<string, Term>[]> {
+}): Promise<ResouceLabel[]> {
   // We query in batches because we might run into "413 – Error: Payload Too Large"
   const batched = groups(ids, (_, i) => Math.floor(i / BATCH_SIZE));
 
@@ -58,12 +63,12 @@ export async function loadResourceLabels({
         ${localesFilter}
       `;
 
-      let result: Record<string, Term>[] = [];
+      let result: ResouceLabel[] = [];
       try {
         // console.log(query.build());
-        result = await query.execute(client.query, {
+        result = ((await query.execute(client.query, {
           operation: "postUrlencoded",
-        });
+        })) as unknown) as ResouceLabel[];
       } catch (e) {
         console.log(
           `Could not query labels. First ID of ${ids.length}: <${ids[0].value}>`

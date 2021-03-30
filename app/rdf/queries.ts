@@ -11,7 +11,11 @@ import {
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { Filters } from "../configurator";
-import { Observation, parseObservationValue } from "../domain/data";
+import {
+  DimensionValue,
+  Observation,
+  parseObservationValue,
+} from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
@@ -182,17 +186,17 @@ export const getCubeDimensionValues = async ({
   dimension: CubeDimension;
   cube: Cube;
   locale: string;
-}): Promise<{ value: string; label: string }[]> => {
+}): Promise<DimensionValue[]> => {
   if (
     dimension.minInclusive !== undefined &&
     dimension.maxInclusive !== undefined
   ) {
     const min = parseObservationValue({ value: dimension.minInclusive });
     const max = parseObservationValue({ value: dimension.maxInclusive });
-    console.log({ min, max });
+
     return [
-      { value: min.toString(), label: min.toString() },
-      { value: max.toString(), label: max.toString() },
+      { value: min, label: `${min}` },
+      { value: max, label: `${max}` },
     ];
   }
 
@@ -211,30 +215,7 @@ const getCubeDimensionValuesWithLabels = async ({
   dimension: CubeDimension;
   cube: Cube;
   locale: string;
-}): Promise<{ value: string; label: string }[]> => {
-  // try {
-  //   const view = View.fromCube(cube);
-  //   const viewDimension = view.dimension({ cubeDimension: dimension })!;
-
-  //   const source = createSource();
-  //   const lookupSource = LookupSource.fromSource(source);
-  //   const lookupView = new View({ parent: source });
-
-  //   const labelDimension = lookupView.createDimension({
-  //     source: lookupSource,
-  //     path: schema.name,
-  //     join: viewDimension,
-  //     as: ns.visualizeAdmin("dimensionValueLabel"),
-  //   });
-
-  //   lookupView.addDimension(viewDimension).addDimension(labelDimension);
-
-  //   console.log(lookupView.observationsQuery().query.toString());
-  // } catch (e) {
-  //   console.log("Could not look up labels");
-  //   console.error(e);
-  // }
-
+}): Promise<DimensionValue[]> => {
   const dimensionValueNamedNodes = (dimension.in?.filter(
     (v) => v.termType === "NamedNode"
   ) ?? []) as NamedNode[];
@@ -270,11 +251,13 @@ const getCubeDimensionValuesWithLabels = async ({
     dimensionValueNamedNodes.length > 0
       ? (
           await loadResourceLabels({ ids: dimensionValueNamedNodes, locale })
-        ).map((vl) => ({ value: vl.iri.value, label: vl.label.value }))
+        ).map((vl) => {
+          return { value: vl.iri.value, label: vl.label?.value ?? "" };
+        })
       : dimensionValueLiterals.length > 0
       ? dimensionValueLiterals.map((v) => {
           return {
-            value: ns.cube.Undefined.equals(v.datatype) ? undefined : v.value,
+            value: ns.cube.Undefined.equals(v.datatype) ? null : v.value,
             label: v.value,
           };
         })
@@ -383,15 +366,15 @@ export const getCubeObservations = async ({
       cubeDimensions.map((d) => {
         const label = obs[labelDimensionIri(d.data.iri)]?.value;
 
-        console.log(obs[d.data.iri]);
-
-        const value = ns.cube.Undefined.equals(obs[d.data.iri])
-          ? undefined
-          : obs[d.data.iri]?.value;
+        const value =
+          obs[d.data.iri]?.termType === "Literal" &&
+          ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
+            ? null
+            : obs[d.data.iri]?.value;
 
         return [
           d.data.iri,
-          value,
+          label ?? value ?? null,
           // v !== undefined ? parseObservationValue({ value: v }) : null,
         ];
       })

@@ -197,13 +197,16 @@ const dimensionResolvers = {
       locale,
     });
     // TODO min max are now just `values` with 2 elements. Handle properly!
-    return values.sort((a, b) => ascending(a.value, b.value));
+    return values.sort((a, b) =>
+      ascending(a.value ?? undefined, b.value ?? undefined)
+    );
   },
 };
 
 export const resolvers: Resolvers = {
   Filters: GraphQLJSONObject,
   Observation: GraphQLJSONObject,
+  DimensionValue: GraphQLJSONObject,
   RawObservation: GraphQLJSONObject,
   Query,
   DataCube,
