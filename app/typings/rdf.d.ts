@@ -28,7 +28,7 @@ declare module "rdf-cube-view-query" {
 
   export class CubeDimension {
     path?: Term;
-    datatype: NamedNode;
+    datatype?: NamedNode;
     minExclusive?: Literal | NamedNode;
     minInclusive?: Literal | NamedNode;
     maxExclusive?: Literal | NamedNode;
