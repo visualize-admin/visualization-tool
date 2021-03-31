@@ -50,7 +50,7 @@ export const Tab = ({
   onClick: (x: Control) => void;
   value: Control;
   upperLabel: ReactNode;
-  lowerLabel: string;
+  lowerLabel: string | ReactNode;
   iconName?: IconName;
 } & FieldProps) => (
   <Box

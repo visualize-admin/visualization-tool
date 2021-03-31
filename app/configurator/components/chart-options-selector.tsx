@@ -245,7 +245,7 @@ const ChartFieldOptions = ({
           <Box as="fieldset" mt={2}>
             <FieldSetLegend
               legendTitle={
-                <Trans id="controls.select.column.chart.type">Chart Type</Trans>
+                <Trans id="controls.select.column.layout">Column layout</Trans>
               }
             />
             <Flex sx={{ justifyContent: "flex-start" }} mt={1}>

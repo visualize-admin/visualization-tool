@@ -9,7 +9,7 @@ import { ChartLinesVisualization } from "../charts/line/chart-lines";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
-import { InteractiveDataFilters } from "../charts/shared/interactive-data-filters";
+import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
@@ -129,15 +129,14 @@ const ChartWithInteractiveFilters = ({
         flexGrow: 1,
       }}
     >
-      {/* INTERACTIVE FILTERS */}
-      {chartConfig.chartType !== "table" &&
-        chartConfig.interactiveFiltersConfig?.dataFilters.active && (
-          <InteractiveDataFilters
-            dataSet={dataSet}
-            dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
-            chartConfig={chartConfig}
-          />
-        )}
+      {/* Filters list & Interactive filters */}
+      {chartConfig.interactiveFiltersConfig && (
+        <ChartDataFilters
+          dataSet={dataSet}
+          dataFiltersConfig={chartConfig.interactiveFiltersConfig.dataFilters}
+          chartConfig={chartConfig}
+        />
+      )}
       <Chart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>
   );

@@ -89,43 +89,48 @@ export const CellDesktop = ({
             flexDirection: "column",
             justifyContent: "center",
             // Padding is a constant accounted for in the
-            // widthScale domain (see table sate).
+            // widthScale domain (see table state).
             px: BAR_CELL_PADDING,
           }}
           {...cell.getCellProps()}
         >
           <Box>{formatNumber(cell.value)}</Box>
-          <Box
-            sx={{
-              width: "100%",
-              height: 18,
-              position: "relative",
-              bg: barShowBackground ? barColorBackground : "monochrome100",
-            }}
-          >
+          {widthScale && (
             <Box
               sx={{
-                position: "absolute",
-                top: 0,
-                left: widthScale ? widthScale(Math.min(0, cell.value)) : 0,
-                width: widthScale
-                  ? Math.abs(widthScale(cell.value) - widthScale(0))
-                  : 0,
+                width: "100%",
                 height: 18,
-                bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                position: "relative",
+                bg: barShowBackground ? barColorBackground : "monochrome100",
               }}
-            />
-            <Box
-              sx={{
-                position: "absolute",
-                top: "-2px",
-                left: widthScale ? widthScale(0) : 0,
-                width: "1px",
-                height: 22,
-                bg: "monochrome700",
-              }}
-            />
-            {/* <Box
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left:
+                    widthScale(Math.min(widthScale.domain()[0], cell.value)) ??
+                    0,
+                  width:
+                    Math.abs(
+                      widthScale(cell.value) -
+                        widthScale(widthScale.domain()[0])
+                    ) ?? 0,
+                  height: 18,
+                  bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "-2px",
+                  left: widthScale(widthScale.domain()[0]) ?? 0,
+                  width: "1px",
+                  height: 22,
+                  bg: "monochrome700",
+                }}
+              />
+              {/* <Box
               sx={{
                 position: "absolute",
                 top: 12,
@@ -136,7 +141,8 @@ export const CellDesktop = ({
             >
               0
             </Box> */}
-          </Box>
+            </Box>
+          )}
         </Flex>
       );
     default:
