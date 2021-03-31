@@ -300,7 +300,7 @@ export const getCubeObservations = async ({
   );
 
   let observationFilters = filters
-    ? buildFilters({ cube, view: cubeView, filters })
+    ? buildFilters({ cube, view: cubeView, filters, locale })
     : [];
 
   // let observationFilters = [];
@@ -394,10 +394,12 @@ const buildFilters = ({
   cube,
   view,
   filters,
+  locale,
 }: {
   cube: Cube;
   view: View;
   filters: Filters;
+  locale: string;
 }): Filter[] => {
   const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
     const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);
@@ -411,9 +413,17 @@ const buildFilters = ({
       return [];
     }
 
-    const dataType = cubeDimension.datatype;
+    const parsedCubeDimension = parseCubeDimension({
+      dim: cubeDimension,
+      cube,
+      locale,
+    });
 
-    if (ns.rdf.langString.equals(dataType)) {
+    // FIXME: handle dimensions with multiple datatypes
+    let dataType = parsedCubeDimension.data.dataType;
+
+    console.log(`Dimension <${dimIri}> has dataType ${dataType}`);
+    if (ns.rdf.langString.value === dataType) {
       console.warn(
         `WARNING: Dimension <${dimIri}> has dataType 'langString'. Filtering won't work.`
       );
@@ -424,7 +434,12 @@ const buildFilters = ({
         ? [
             dimension.filter.eq(
               dataType
-                ? rdf.literal(filter.value, dataType)
+                ? // We assume that ""  is of datatype "Undefined" because we don't know the exact datatype from the filter itself.
+                  // TODO: "" should probably be null
+                  parsedCubeDimension.data.hasUndefinedValues &&
+                  filter.value === ""
+                  ? rdf.literal(filter.value, ns.cube.Undefined)
+                  : rdf.literal(filter.value, dataType)
                 : rdf.namedNode(filter.value)
             ),
           ]
