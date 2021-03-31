@@ -157,7 +157,13 @@ export const useFormatInteger = () => {
   const locale = useLocale();
   const formatter = useMemo(() => {
     const { format } = getD3FormatLocale(locale);
-    return format(",.0~f");
+    const formatter = format(",.0~f");
+    return (x: NumberValue | null | undefined) => {
+      if (x === null || x === undefined) {
+        return "–";
+      }
+      return formatter(x);
+    };
   }, [locale]);
   return formatter;
 };
