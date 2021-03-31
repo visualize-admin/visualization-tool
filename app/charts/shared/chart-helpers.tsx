@@ -107,14 +107,14 @@ export const getWideData = ({
   xKey: string;
   groupedMap: Map<string, Record<string, ObservationValue>[]>;
   getSegment: (d: Observation) => string;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
 }) => {
   const wideArray = [];
   for (const [key, values] of groupedMap) {
     const keyObject = values.reduce(
       (obj, cur) => {
         const currentKey = getSegment(cur);
-        const currentY = isNumber(getY(cur)) ? getY(cur) : 0;
+        const currentY = getY(cur) ?? 0;
         const total = currentY + (obj.total as number);
         return {
           ...obj,

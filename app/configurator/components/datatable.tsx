@@ -89,7 +89,7 @@ const PreviewTable = ({
                   }}
                 >
                   {__typename === "Measure"
-                    ? formatNumber(+obs[iri])
+                    ? formatNumber(obs[iri] as number | null)
                     : obs[iri]}
                 </Box>
               ))}
