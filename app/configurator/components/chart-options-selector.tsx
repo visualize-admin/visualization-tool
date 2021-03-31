@@ -11,7 +11,6 @@ import {
 import { getFieldComponentIri } from "../../charts";
 import {
   chartConfigOptionsUISpec,
-  EncodingField,
   EncodingOptions,
   EncodingSortingOption,
   EncodingSpec,
@@ -34,10 +33,7 @@ import {
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { ChartFieldField, ChartOptionRadioField } from "./field";
-import {
-  DimensionValuesMultiFilter,
-  DimensionValuesSingleFilter,
-} from "./filters";
+import { DimensionValuesMultiFilter } from "./filters";
 import { getFieldLabel, getFieldLabelHint, getIconName } from "./ui-helpers";
 
 export const ChartOptionsSelector = ({
@@ -100,15 +96,6 @@ const ActiveFieldSwitch = ({
     state.chartConfig.fields,
     activeField
   );
-
-  // It's a dimension which is not mapped to an encoding field, so we show the filter!
-  // FIXME: activeField and encodingField should match? to remove type assertion
-  if (
-    !encodings.map((e) => e.field).includes(activeField as EncodingField) &&
-    !activeFieldComponentIri
-  ) {
-    return <SingleFilter state={state} metaData={metaData} />;
-  }
 
   const component = [...metaData.dimensions].find(
     (d) => d.iri === activeFieldComponentIri
@@ -405,51 +392,5 @@ const ChartFieldSorting = ({
         </Flex>
       </ControlSectionContent>
     </ControlSection>
-  );
-};
-
-const SingleFilter = ({
-  state,
-  metaData,
-}: {
-  state: ConfiguratorStateConfiguringChart;
-  metaData: DataCubeMetadata;
-}) => {
-  const { dimensions } = metaData;
-  const activeDimension = dimensions.find(
-    (dim) => dim.iri === state.activeField
-  );
-  const panelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (panelRef && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [state.activeField]);
-  return (
-    <div
-      key={`filter-panel-${state.activeField}`}
-      role="tabpanel"
-      id={`filter-panel-${state.activeField}`}
-      aria-labelledby={`tab-${state.activeField}`}
-      ref={panelRef}
-      tabIndex={-1}
-    >
-      <ControlSection>
-        <SectionTitle iconName="table">
-          {activeDimension && activeDimension.label}
-        </SectionTitle>
-        <ControlSectionContent side="right" as="fieldset">
-          <legend style={{ display: "none" }}>
-            {activeDimension && activeDimension.label}
-          </legend>
-          {activeDimension && (
-            <DimensionValuesSingleFilter
-              dataSetIri={metaData.iri}
-              dimensionIri={activeDimension.iri}
-            />
-          )}
-        </ControlSectionContent>
-      </ControlSection>
-    </div>
   );
 };

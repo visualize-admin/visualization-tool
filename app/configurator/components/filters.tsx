@@ -118,6 +118,7 @@ export const DimensionValuesMultiFilter = ({
   }
 };
 
+// This component is now only used in the Table Chart options.
 export const DimensionValuesSingleFilter = ({
   dataSetIri,
   dimensionIri,

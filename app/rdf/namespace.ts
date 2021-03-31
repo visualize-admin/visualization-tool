@@ -9,6 +9,7 @@ export {
   vcard,
   time,
   xsd,
+  sh,
 } from "@tpluscode/rdf-ns-builders";
 
 export const classifications = namespace(
