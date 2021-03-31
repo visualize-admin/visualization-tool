@@ -31,7 +31,7 @@ const sortData = ({
 }: {
   data: Observation[];
   getX: (d: Observation) => string;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   sortingType?: SortingType;
   sortingOrder?: SortingOrder;
 }) => {
@@ -40,9 +40,9 @@ const sortData = ({
   } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));
   } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => descending(getY(a), getY(b)));
+    return [...data].sort((a, b) => descending(getY(a) ?? NaN, getY(b) ?? NaN));
   } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => ascending(getY(a), getY(b)));
+    return [...data].sort((a, b) => ascending(getY(a) ?? NaN, getY(b) ?? NaN));
   } else {
     // default to ascending byDimensionLabel
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));
@@ -53,7 +53,7 @@ export interface PieState {
   bounds: Bounds;
   data: Observation[];
   getPieData: Pie<$IntentionalAny, Observation>;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   getX: (d: Observation) => string;
   colors: ScaleOrdinal<string, string>;
   getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
@@ -78,7 +78,10 @@ const usePieState = ({
   const [interactiveFilters] = useInteractiveFilters();
 
   const getY = useCallback(
-    (d: Observation): number => +d[fields.y.componentIri] as number,
+    (d: Observation): number | null => {
+      const v = d[fields.y.componentIri];
+      return v !== null ? +v : null;
+    },
     [fields.y.componentIri]
   );
   const getX = useCallback(
@@ -159,16 +162,16 @@ const usePieState = ({
 
   // Pie data
   const getPieData = pie<Observation>()
-    .value((d) => getY(d))
+    .value((d) => getY(d) ?? NaN)
     .sort((a, b) => {
       if (sortingOrder === "desc" && sortingType === "byDimensionLabel") {
         return descending(getX(a), getX(b));
       } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
         return ascending(getX(a), getX(b));
       } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-        return descending(getY(a), getY(b));
+        return descending(getY(a) ?? NaN, getY(b) ?? NaN);
       } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-        return ascending(getY(a), getY(b));
+        return ascending(getY(a) ?? NaN, getY(b) ?? NaN);
       } else {
         // default to ascending byDimensionLabel
         return ascending(getX(a), getX(b));
