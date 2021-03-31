@@ -1,9 +1,8 @@
 import { hcl } from "d3";
 import * as React from "react";
-import { Box, Text, Grid } from "theme-ui";
+import { Box, Grid, Text } from "theme-ui";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 import { TooltipBox } from "../shared/interaction/tooltip-box";
-import { TooltipSingle } from "../shared/interaction/tooltip-content";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { MapState } from "./map-state";
@@ -22,7 +21,6 @@ export const MapTooltip = () => {
   } = useChartState() as MapState;
 
   const formatNumber = useFormatNumber();
-
   return (
     <>
       {interaction.mouse && interaction.d && (
@@ -45,7 +43,7 @@ export const MapTooltip = () => {
                 alignItems: "center",
               }}
             >
-              {showAreaLayer && (
+              {showAreaLayer && getValue(interaction.d) !== null && (
                 <>
                   <Text variant="meta">{areaMeasureLabel}</Text>
                   <Box
@@ -56,9 +54,14 @@ export const MapTooltip = () => {
                       textAlign: "center",
                     }}
                     style={{
-                      background: colorScale(getValue(interaction.d)),
+                      background:
+                        getValue(interaction.d) !== null
+                          ? colorScale(getValue(interaction.d) as number)
+                          : "transparent",
                       color:
-                        hcl(colorScale(getValue(interaction.d))).l < 55
+                        getValue(interaction.d) !== null &&
+                        hcl(colorScale(getValue(interaction.d) as number)).l <
+                          55
                           ? "#fff"
                           : "#000",
                     }}
@@ -69,7 +72,7 @@ export const MapTooltip = () => {
                   </Box>
                 </>
               )}
-              {showSymbolLayer && (
+              {showSymbolLayer && getRadius(interaction.d) !== null && (
                 <>
                   <Text variant="meta">{symbolMeasureLabel}</Text>
                   <Box
@@ -80,7 +83,10 @@ export const MapTooltip = () => {
                       textAlign: "center",
                     }}
                     style={{
-                      background: symbolColorScale(getValue(interaction.d)),
+                      background:
+                        typeof getValue(interaction.d) === "number"
+                          ? symbolColorScale(getValue(interaction.d) as number)
+                          : "transparent",
                     }}
                   >
                     <Text variant="meta" sx={{ color: "monochrome100" }}>
