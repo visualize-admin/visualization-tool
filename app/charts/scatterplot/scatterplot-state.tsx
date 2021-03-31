@@ -29,9 +29,9 @@ export interface ScatterplotState {
   chartType: string;
   data: Observation[];
   bounds: Bounds;
-  getX: (d: Observation) => number;
+  getX: (d: Observation) => number | null;
   xScale: ScaleLinear<number, number>;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
   hasSegment: boolean;
   getSegment: (d: Observation) => string;
@@ -60,8 +60,14 @@ const useScatterplotState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
-  const getX = (d: Observation): number => +d[fields.x.componentIri];
-  const getY = (d: Observation): number => +d[fields.y.componentIri];
+  const getX = (d: Observation): number | null => {
+    const v = d[fields.x.componentIri];
+    return v !== null ? +v : null;
+  };
+  const getY = (d: Observation): number | null => {
+    const v = d[fields.y.componentIri];
+    return v !== null ? +v : null;
+  };
   const getSegment = useCallback(
     (d: Observation): string =>
       fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
@@ -149,8 +155,8 @@ const useScatterplotState = ({
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
-    const xRef = xScale(getX(datum));
-    const yRef = yScale(getY(datum));
+    const xRef = xScale(getX(datum) ?? NaN);
+    const yRef = yScale(getY(datum) ?? NaN);
     const xAnchor = xRef;
     const yAnchor = yRef;
 
