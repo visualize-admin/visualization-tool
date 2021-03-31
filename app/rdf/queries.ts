@@ -22,6 +22,8 @@ import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
 
+const NULL_DIMENSION_VALUE = "NULL";
+
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 
@@ -191,8 +193,8 @@ export const getCubeDimensionValues = async ({
     dimension.minInclusive !== undefined &&
     dimension.maxInclusive !== undefined
   ) {
-    const min = parseObservationValue({ value: dimension.minInclusive });
-    const max = parseObservationValue({ value: dimension.maxInclusive });
+    const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
+    const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
 
     return [
       { value: min, label: `${min}` },
@@ -256,10 +258,15 @@ const getCubeDimensionValuesWithLabels = async ({
         })
       : dimensionValueLiterals.length > 0
       ? dimensionValueLiterals.map((v) => {
-          return {
-            value: ns.cube.Undefined.equals(v.datatype) ? null : v.value,
-            label: v.value,
-          };
+          return ns.cube.Undefined.equals(v.datatype)
+            ? {
+                value: NULL_DIMENSION_VALUE, // We use a known string here because actual null does not work as value in UI inputs.
+                label: "–",
+              }
+            : {
+                value: v.value,
+                label: v.value,
+              };
         })
       : [];
 
@@ -429,10 +436,9 @@ const buildFilters = ({
 
     const toRDFValue = (value: string): NamedNode | Literal => {
       return dataType
-        ? // We assume that ""  is of datatype "Undefined" because we don't know the exact datatype from the filter itself.
-          // TODO: "" should probably be null
-          parsedCubeDimension.data.hasUndefinedValues && value === ""
-          ? rdf.literal(value, ns.cube.Undefined)
+        ? parsedCubeDimension.data.hasUndefinedValues &&
+          value === NULL_DIMENSION_VALUE
+          ? rdf.literal("", ns.cube.Undefined)
           : rdf.literal(value, dataType)
         : rdf.namedNode(value);
     };
