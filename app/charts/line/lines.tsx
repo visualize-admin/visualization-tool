@@ -18,9 +18,8 @@ export const Lines = () => {
   const theme = useTheme();
 
   const lineGenerator = line<Observation>()
-    // .defined(d => !isNaN(d))
     .x((d) => xScale(getX(d)))
-    .y((d) => yScale(getY(d)));
+    .y((d) => yScale(getY(d) ?? 0));
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
