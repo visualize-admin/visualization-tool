@@ -419,43 +419,34 @@ const buildFilters = ({
       locale,
     });
 
-    // FIXME: handle dimensions with multiple datatypes
-    let dataType = parsedCubeDimension.data.dataType;
+    const { dataType } = parsedCubeDimension.data;
 
-    console.log(`Dimension <${dimIri}> has dataType ${dataType}`);
     if (ns.rdf.langString.value === dataType) {
       console.warn(
         `WARNING: Dimension <${dimIri}> has dataType 'langString'. Filtering won't work.`
       );
     }
 
+    const toRDFValue = (value: string): NamedNode | Literal => {
+      return dataType
+        ? // We assume that ""  is of datatype "Undefined" because we don't know the exact datatype from the filter itself.
+          // TODO: "" should probably be null
+          parsedCubeDimension.data.hasUndefinedValues && value === ""
+          ? rdf.literal(value, ns.cube.Undefined)
+          : rdf.literal(value, dataType)
+        : rdf.namedNode(value);
+    };
+
     const selectedValues =
       filter.type === "single"
-        ? [
-            dimension.filter.eq(
-              dataType
-                ? // We assume that ""  is of datatype "Undefined" because we don't know the exact datatype from the filter itself.
-                  // TODO: "" should probably be null
-                  parsedCubeDimension.data.hasUndefinedValues &&
-                  filter.value === ""
-                  ? rdf.literal(filter.value, ns.cube.Undefined)
-                  : rdf.literal(filter.value, dataType)
-                : rdf.namedNode(filter.value)
-            ),
-          ]
+        ? [dimension.filter.eq(toRDFValue(filter.value))]
         : filter.type === "multi"
         ? // If values is an empty object, we filter by something that doesn't exist
           [
             dimension.filter.in(
               Object.keys(filter.values).length > 0
                 ? Object.entries(filter.values).flatMap(([value, selected]) =>
-                    selected
-                      ? [
-                          dataType
-                            ? rdf.literal(value, dataType)
-                            : rdf.namedNode(value),
-                        ]
-                      : []
+                    selected ? [toRDFValue(value)] : []
                   )
                 : [rdf.namedNode("EMPTY_VALUE")]
             ),
