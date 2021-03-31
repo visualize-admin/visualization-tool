@@ -47,7 +47,7 @@ export interface ColumnsState {
   xScale: ScaleBand<string>;
   xEntireScale: ScaleTime<number, number>;
   xScaleInteraction: ScaleBand<string>;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -72,21 +72,24 @@ const useColumnsState = ({
   const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
-    (d: Observation): string => d[fields.x.componentIri] as string,
+    (d: Observation): string => `${d[fields.x.componentIri]}`,
     [fields.x.componentIri]
   );
   const getXAsDate = useCallback(
-    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
+    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
     [fields.x.componentIri]
   );
   const getY = useCallback(
-    (d: Observation): number => +d[fields.y.componentIri],
+    (d: Observation): number | null => {
+      const v = d[fields.y.componentIri];
+      return v !== null ? +v : null;
+    },
     [fields.y.componentIri]
   );
   const getSegment = useCallback(
     (d: Observation): string =>
       fields.segment && fields.segment.componentIri
-        ? (d[fields.segment.componentIri] as string)
+        ? `${d[fields.segment.componentIri]}`
         : "segment",
     [fields.segment]
   );
@@ -179,7 +182,7 @@ const useColumnsState = ({
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
-    const yRef = yScale(Math.max(getY(datum), 0));
+    const yRef = yScale(Math.max(getY(datum) ?? NaN, 0));
     const yAnchor = yRef;
 
     const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
@@ -308,7 +311,7 @@ const sortData = ({
 }: {
   data: Observation[];
   getX: (d: Observation) => string;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   sortingType?: SortingType;
   sortingOrder?: SortingOrder;
 }) => {
@@ -317,9 +320,9 @@ const sortData = ({
   } else if (sortingOrder === "asc" && sortingType === "byDimensionLabel") {
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));
   } else if (sortingOrder === "desc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => descending(getY(a), getY(b)));
+    return [...data].sort((a, b) => descending(getY(a) ?? NaN, getY(b) ?? NaN));
   } else if (sortingOrder === "asc" && sortingType === "byMeasure") {
-    return [...data].sort((a, b) => ascending(getY(a), getY(b)));
+    return [...data].sort((a, b) => ascending(getY(a) ?? NaN, getY(b) ?? NaN));
   } else {
     // default to ascending alphabetical
     return [...data].sort((a, b) => ascending(getX(a), getX(b)));

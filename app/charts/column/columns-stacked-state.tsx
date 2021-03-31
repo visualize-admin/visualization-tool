@@ -56,7 +56,7 @@ export interface StackedColumnsState {
   xScale: ScaleBand<string>;
   xScaleInteraction: ScaleBand<string>;
   xEntireScale: ScaleTime<number, number>;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -90,21 +90,24 @@ const useColumnsStackedState = ({
   const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
-    (d: Observation): string => d[fields.x.componentIri] as string,
+    (d: Observation): string => `${d[fields.x.componentIri]}`,
     [fields.x.componentIri]
   );
   const getXAsDate = useCallback(
-    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
+    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
     [fields.x.componentIri]
   );
   const getY = useCallback(
-    (d: Observation): number => +d[fields.y.componentIri],
+    (d: Observation): number | null => {
+      const v = d[fields.y.componentIri];
+      return v !== null ? +v : null;
+    },
     [fields.y.componentIri]
   );
   const getSegment = useCallback(
     (d: Observation): string =>
       fields.segment && fields.segment.componentIri
-        ? (d[fields.segment.componentIri] as string)
+        ? `${d[fields.segment.componentIri]}`
         : "segment",
     [fields.segment]
   );
@@ -309,7 +312,9 @@ const useColumnsStackedState = ({
       sortOrder: "asc",
     });
 
-    const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
+    const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d) ?? 0))(
+      0
+    );
     const cumulativeRulerItemValues = [
       ...sortedTooltipValues.map(cumulativeSum),
     ];
@@ -464,7 +469,7 @@ const sortData = ({
 }: {
   data: Observation[];
   getX: (d: Observation) => string;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   sortingType: SortingType | undefined;
   sortingOrder: SortingOrder | undefined;
   xOrder: string[];
