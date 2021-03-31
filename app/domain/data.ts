@@ -11,7 +11,7 @@ export type RawObservation = Record<string, RawObservationValue>;
 
 export type ObservationValue = string | number | null;
 
-export type DimensionValue = { value: ObservationValue; label: string };
+export type DimensionValue = { value: string | number; label: string };
 
 export type Observation = Record<string, ObservationValue>;
 

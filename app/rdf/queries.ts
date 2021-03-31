@@ -22,6 +22,8 @@ import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
 
+const NULL_DIMENSION_VALUE = "NULL";
+
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 
@@ -191,8 +193,8 @@ export const getCubeDimensionValues = async ({
     dimension.minInclusive !== undefined &&
     dimension.maxInclusive !== undefined
   ) {
-    const min = parseObservationValue({ value: dimension.minInclusive });
-    const max = parseObservationValue({ value: dimension.maxInclusive });
+    const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
+    const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
 
     return [
       { value: min, label: `${min}` },
@@ -256,10 +258,15 @@ const getCubeDimensionValuesWithLabels = async ({
         })
       : dimensionValueLiterals.length > 0
       ? dimensionValueLiterals.map((v) => {
-          return {
-            value: ns.cube.Undefined.equals(v.datatype) ? null : v.value,
-            label: v.value,
-          };
+          return ns.cube.Undefined.equals(v.datatype)
+            ? {
+                value: NULL_DIMENSION_VALUE, // We use a known string here because actual null does not work as value in UI inputs.
+                label: "–",
+              }
+            : {
+                value: v.value,
+                label: v.value,
+              };
         })
       : [];
 
@@ -419,43 +426,33 @@ const buildFilters = ({
       locale,
     });
 
-    // FIXME: handle dimensions with multiple datatypes
-    let dataType = parsedCubeDimension.data.dataType;
+    const { dataType } = parsedCubeDimension.data;
 
-    console.log(`Dimension <${dimIri}> has dataType ${dataType}`);
     if (ns.rdf.langString.value === dataType) {
       console.warn(
         `WARNING: Dimension <${dimIri}> has dataType 'langString'. Filtering won't work.`
       );
     }
 
+    const toRDFValue = (value: string): NamedNode | Literal => {
+      return dataType
+        ? parsedCubeDimension.data.hasUndefinedValues &&
+          value === NULL_DIMENSION_VALUE
+          ? rdf.literal("", ns.cube.Undefined)
+          : rdf.literal(value, dataType)
+        : rdf.namedNode(value);
+    };
+
     const selectedValues =
       filter.type === "single"
-        ? [
-            dimension.filter.eq(
-              dataType
-                ? // We assume that ""  is of datatype "Undefined" because we don't know the exact datatype from the filter itself.
-                  // TODO: "" should probably be null
-                  parsedCubeDimension.data.hasUndefinedValues &&
-                  filter.value === ""
-                  ? rdf.literal(filter.value, ns.cube.Undefined)
-                  : rdf.literal(filter.value, dataType)
-                : rdf.namedNode(filter.value)
-            ),
-          ]
+        ? [dimension.filter.eq(toRDFValue(filter.value))]
         : filter.type === "multi"
         ? // If values is an empty object, we filter by something that doesn't exist
           [
             dimension.filter.in(
               Object.keys(filter.values).length > 0
                 ? Object.entries(filter.values).flatMap(([value, selected]) =>
-                    selected
-                      ? [
-                          dataType
-                            ? rdf.literal(value, dataType)
-                            : rdf.namedNode(value),
-                        ]
-                      : []
+                    selected ? [toRDFValue(value)] : []
                   )
                 : [rdf.namedNode("EMPTY_VALUE")]
             ),
