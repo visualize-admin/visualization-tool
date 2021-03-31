@@ -18,6 +18,7 @@ export const Lines = () => {
   const theme = useTheme();
 
   const lineGenerator = line<Observation>()
+    .defined((d) => !isNaN(getY(d) as $IntentionalAny))
     .x((d) => xScale(getX(d)))
     .y((d) => yScale(getY(d) ?? 0));
 
