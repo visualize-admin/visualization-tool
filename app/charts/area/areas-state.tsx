@@ -4,6 +4,7 @@ import {
   extent,
   group,
   max,
+  min,
   rollup,
   ScaleLinear,
   scaleLinear,
@@ -182,12 +183,14 @@ const useAreasState = ({
   const series = stacked(chartWideData as { [key: string]: number }[]);
 
   /** Scales */
-  const maxTotal = max<$FixMe, number>(chartWideData, (d) => d.total) as number;
-  const yDomain = [0, maxTotal] as [number, number];
-  const entireMaxTotalValue = max<$FixMe, number>(
+  const minTotal = min(series, (d) => min(d, (d) => d[0])) ?? 0;
+  const maxTotal = max(series, (d) => max(d, (d) => d[1])) ?? NaN;
+  const yDomain = [minTotal, maxTotal];
+
+  const entireMaxTotalValue = (max<$FixMe>(
     allDataWide,
-    (d) => d.total
-  ) as number;
+    (d) => d.total ?? 0
+  ) as unknown) as number;
 
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
