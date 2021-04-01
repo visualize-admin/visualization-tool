@@ -113,8 +113,8 @@ export const getWideData = ({
     const keyObject = values.reduce(
       (obj, cur) => {
         const currentKey = getSegment(cur);
-        const currentY = getY(cur) ?? 0;
-        const total = currentY + (obj.total as number);
+        const currentY = getY(cur);
+        const total = currentY ?? 0 + (obj.total as number);
         return {
           ...obj,
           [currentKey]: getY(cur),
