@@ -1,5 +1,5 @@
-import { sparql } from "@tpluscode/rdf-string";
-import { descending } from "d3";
+// import { sparql } from "@tpluscode/rdf-string";
+// import { descending } from "d3";
 import {
   Cube,
   CubeDimension,
