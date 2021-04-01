@@ -1,4 +1,5 @@
 import { Observation } from '../domain/data';
+import { DimensionValue } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { Filters } from '../configurator';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
@@ -17,9 +18,11 @@ export type Scalars = {
   Int: number;
   Float: number;
   Observation: Observation;
+  DimensionValue: DimensionValue;
   RawObservation: RawObservation;
   Filters: Filters;
 };
+
 
 
 
@@ -66,12 +69,6 @@ export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
 };
 
-export type DimensionValue = {
-  __typename?: 'DimensionValue';
-  value: Scalars['String'];
-  label: Scalars['String'];
-};
-
 export type Component = {
   iri: Scalars['String'];
   label: Scalars['String'];
@@ -82,7 +79,7 @@ export type Dimension = {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type NominalDimension = Component & Dimension & {
@@ -91,7 +88,7 @@ export type NominalDimension = Component & Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type OrdinalDimension = Component & Dimension & {
@@ -100,7 +97,7 @@ export type OrdinalDimension = Component & Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type TemporalDimension = Component & Dimension & {
@@ -109,7 +106,7 @@ export type TemporalDimension = Component & Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type Measure = Component & Dimension & {
@@ -118,7 +115,7 @@ export type Measure = Component & Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type DataCubeResult = {
@@ -222,6 +219,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Observation: ResolverTypeWrapper<Scalars['Observation']>;
+  DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   RawObservation: ResolverTypeWrapper<Scalars['RawObservation']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
   ObservationsQuery: ResolverTypeWrapper<ResolvedObservationsQuery>;
@@ -229,7 +227,6 @@ export type ResolversTypes = ResolversObject<{
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCube: ResolverTypeWrapper<ResolvedDataCube>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  DimensionValue: ResolverTypeWrapper<DimensionValue>;
   Component: ResolversTypes['NominalDimension'] | ResolversTypes['OrdinalDimension'] | ResolversTypes['TemporalDimension'] | ResolversTypes['Measure'];
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
   NominalDimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -246,13 +243,13 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Observation: Scalars['Observation'];
+  DimensionValue: Scalars['DimensionValue'];
   RawObservation: Scalars['RawObservation'];
   Filters: Scalars['Filters'];
   ObservationsQuery: ResolvedObservationsQuery;
   String: Scalars['String'];
   DataCube: ResolvedDataCube;
   Int: Scalars['Int'];
-  DimensionValue: DimensionValue;
   Component: ResolversParentTypes['NominalDimension'] | ResolversParentTypes['OrdinalDimension'] | ResolversParentTypes['TemporalDimension'] | ResolversParentTypes['Measure'];
   Dimension: ResolvedDimension;
   NominalDimension: ResolvedDimension;
@@ -267,6 +264,10 @@ export type ResolversParentTypes = ResolversObject<{
 
 export interface ObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Observation'], any> {
   name: 'Observation';
+}
+
+export interface DimensionValueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DimensionValue'], any> {
+  name: 'DimensionValue';
 }
 
 export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RawObservation'], any> {
@@ -296,12 +297,6 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>;
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>;
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DimensionValueResolvers<ContextType = any, ParentType extends ResolversParentTypes['DimensionValue'] = ResolversParentTypes['DimensionValue']> = ResolversObject<{
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -371,11 +366,11 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Observation?: GraphQLScalarType;
+  DimensionValue?: GraphQLScalarType;
   RawObservation?: GraphQLScalarType;
   Filters?: GraphQLScalarType;
   ObservationsQuery?: ObservationsQueryResolvers<ContextType>;
   DataCube?: DataCubeResolvers<ContextType>;
-  DimensionValue?: DimensionValueResolvers<ContextType>;
   Component?: ComponentResolvers<ContextType>;
   Dimension?: DimensionResolvers<ContextType>;
   NominalDimension?: NominalDimensionResolvers<ContextType>;

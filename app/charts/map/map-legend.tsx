@@ -71,7 +71,11 @@ export const MapLegend = () => {
 };
 const CircleLegend = () => {
   const width = useWidth();
-  const [state] = useInteraction();
+  const [
+    {
+      interaction: { d, visible },
+    },
+  ] = useInteraction();
 
   const { axisLabelColor, legendFontSize } = useChartTheme();
   const {
@@ -92,6 +96,14 @@ const CircleLegend = () => {
 
   const [, maxRadius] = radiusScale.domain();
 
+  const hoveredRadius =
+    d && typeof getRadius(d) === "number" ? getRadius(d) : undefined;
+
+  const hoveredColor =
+    d && typeof getRadius(d) === "number"
+      ? symbolColorScale(getRadius(d) as number)
+      : undefined;
+
   return (
     <svg
       width={legendWidth + margins.left + margins.right}
@@ -107,6 +119,7 @@ const CircleLegend = () => {
           const thisFeatureLabel = getFeatureLabel(
             data.find((x) => getRadius(x) === d)
           );
+
           return (
             <>
               {d !== 0 && (
@@ -122,7 +135,7 @@ const CircleLegend = () => {
                     fill="none"
                     stroke={axisLabelColor}
                   />
-                  {!state.interaction.visible && (
+                  {!visible && (
                     <>
                       <line
                         x1={0}
@@ -149,43 +162,39 @@ const CircleLegend = () => {
           );
         })}
         {/* Hovered data point indicator */}
-        {state.interaction.d &&
-          state.interaction.visible &&
-          !isNaN(getRadius(state.interaction.d)) && (
-            <g
-              transform={`translate(0, ${
-                radiusScale(maxRadius) -
-                radiusScale(getRadius(state.interaction.d))
-              })`}
+        {d && visible && hoveredRadius && (
+          <g
+            transform={`translate(0, ${
+              radiusScale(maxRadius) - radiusScale(hoveredRadius)
+            })`}
+          >
+            <circle
+              cx={0}
+              cy={0}
+              r={radiusScale(hoveredRadius)}
+              fill={hoveredColor}
+              stroke={hoveredColor}
+              fillOpacity={0.1}
+            />
+            <line
+              x1={0}
+              y1={-radiusScale(hoveredRadius)}
+              x2={radiusScale(maxRadius) + 4}
+              y2={-radiusScale(hoveredRadius)}
+              stroke={hoveredColor}
+            />
+            <text
+              x={radiusScale(maxRadius) + 6}
+              y={-radiusScale(hoveredRadius)}
+              dy={5}
+              fill={hoveredColor}
+              textAnchor="start"
+              fontSize={legendFontSize}
             >
-              <circle
-                cx={0}
-                cy={0}
-                r={radiusScale(getRadius(state.interaction.d))}
-                fill={symbolColorScale(getRadius(state.interaction.d))}
-                stroke={symbolColorScale(getRadius(state.interaction.d))}
-                fillOpacity={0.1}
-              />
-              <line
-                x1={0}
-                y1={-radiusScale(getRadius(state.interaction.d))}
-                x2={radiusScale(maxRadius) + 4}
-                y2={-radiusScale(getRadius(state.interaction.d))}
-                stroke={symbolColorScale(getRadius(state.interaction.d))}
-              />
-              <text
-                x={radiusScale(maxRadius) + 6}
-                y={-radiusScale(getRadius(state.interaction.d))}
-                dy={5}
-                fill={symbolColorScale(getRadius(state.interaction.d))}
-                textAnchor="start"
-                fontSize={legendFontSize}
-              >
-                {formatNumber(getRadius(state.interaction.d))} (
-                {getFeatureLabel(state.interaction.d)})
-              </text>
-            </g>
-          )}
+              {formatNumber(getRadius(d) ?? NaN)} ({getFeatureLabel(d)})
+            </text>
+          </g>
+        )}
       </g>
     </svg>
   );
@@ -551,11 +560,13 @@ const DataPointIndicator = ({
     <>
       {state.interaction.d &&
         state.interaction.visible &&
-        !isNaN(getValue(state.interaction.d)) && (
+        !isNaN(getValue(state.interaction.d) ?? NaN) && (
           <polygon
             fill={labelColor}
             points="-4,0 4,0 0,5"
-            transform={`translate(${scale(getValue(state.interaction.d))}, 0)`}
+            transform={`translate(${scale(
+              getValue(state.interaction.d) ?? 0
+            )}, 0)`}
           />
         )}
     </>

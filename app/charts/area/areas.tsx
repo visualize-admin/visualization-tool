@@ -16,7 +16,7 @@ export const Areas = () => {
   } = useChartState() as AreasState;
   const theme = useTheme();
   const areaGenerator = area<$FixMe>()
-    // .defined(d => !isNaN(d))
+    .defined((d) => d[0] !== null && d[1] !== null)
     .x((d) => xScale(getX(d.data)))
     .y0((d) => yScale(d[0]))
     .y1((d) => yScale(d[1]));

@@ -33,6 +33,7 @@ import {
   schemeSet2,
   schemeSet3,
   schemeTableau10,
+  NumberValue,
 } from "d3";
 
 import { timeParse } from "d3-time-format";
@@ -142,7 +143,13 @@ export const useFormatNumber = () => {
   const locale = useLocale();
   const formatter = useMemo(() => {
     const { format } = getD3FormatLocale(locale);
-    return format(",.2~f");
+    const formatter = format(",.2~f");
+    return (x: NumberValue | null | undefined) => {
+      if (x === null || x === undefined) {
+        return "–";
+      }
+      return formatter(x);
+    };
   }, [locale]);
   return formatter;
 };
@@ -150,7 +157,13 @@ export const useFormatInteger = () => {
   const locale = useLocale();
   const formatter = useMemo(() => {
     const { format } = getD3FormatLocale(locale);
-    return format(",.0~f");
+    const formatter = format(",.0~f");
+    return (x: NumberValue | null | undefined) => {
+      if (x === null || x === undefined) {
+        return "–";
+      }
+      return formatter(x);
+    };
   }, [locale]);
   return formatter;
 };

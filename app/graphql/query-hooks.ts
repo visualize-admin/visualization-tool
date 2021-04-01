@@ -13,9 +13,11 @@ export type Scalars = {
   Int: number;
   Float: number;
   Observation: any;
+  DimensionValue: any;
   RawObservation: any;
   Filters: any;
 };
+
 
 
 
@@ -62,12 +64,6 @@ export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
 };
 
-export type DimensionValue = {
-  __typename: 'DimensionValue';
-  value: Scalars['String'];
-  label: Scalars['String'];
-};
-
 export type Component = {
   iri: Scalars['String'];
   label: Scalars['String'];
@@ -78,7 +74,7 @@ export type Dimension = {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type NominalDimension = Component & Dimension & {
@@ -87,7 +83,7 @@ export type NominalDimension = Component & Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type OrdinalDimension = Component & Dimension & {
@@ -96,7 +92,7 @@ export type OrdinalDimension = Component & Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type TemporalDimension = Component & Dimension & {
@@ -105,7 +101,7 @@ export type TemporalDimension = Component & Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type Measure = Component & Dimension & {
@@ -114,7 +110,7 @@ export type Measure = Component & Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
-  values: Array<DimensionValue>;
+  values: Array<Scalars['DimensionValue']>;
 };
 
 export type DataCubeResult = {
@@ -171,13 +167,13 @@ type ComponentFields_Measure_Fragment = { __typename: 'Measure', iri: string, la
 
 export type ComponentFieldsFragment = ComponentFields_NominalDimension_Fragment | ComponentFields_OrdinalDimension_Fragment | ComponentFields_TemporalDimension_Fragment | ComponentFields_Measure_Fragment;
 
-type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, values: Array<any> };
 
-type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, values: Array<any> };
 
-type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, values: Array<any> };
 
-type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, values: Array<{ __typename: 'DimensionValue', value: string, label: string }> };
+type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, values: Array<any> };
 
 export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment | DimensionFieldsWithValues_Measure_Fragment;
 
@@ -323,10 +319,7 @@ export const DimensionFieldsWithValuesFragmentDoc = gql`
     fragment dimensionFieldsWithValues on Dimension {
   iri
   label
-  values {
-    value
-    label
-  }
+  values
 }
     `;
 export const DataCubesDocument = gql`

@@ -21,7 +21,7 @@ export const HoverLine = () => {
 
   const lineGenerator = line<Observation>()
     .x((d) => xScale(getX(d)))
-    .y((d) => yScale(getY(d)));
+    .y((d) => yScale(getY(d) ?? 0));
 
   // const segmentData = segment && grouped.get(segment);
 

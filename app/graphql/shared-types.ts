@@ -31,6 +31,7 @@ export type ResolvedDimension = {
     iri: string;
     isLiteral: boolean;
     isNumerical: boolean;
+    hasUndefinedValues: boolean;
     unit?: string;
     dataType?: string;
     dataKind?: "Time" | "GeoCoordinates" | "GeoShape";

@@ -193,8 +193,8 @@ export const MapComponent = () => {
               autoHighlight={true}
               getFillColor={(d: $FixMe) => {
                 const obs = data.find((x: Observation) => x.id === d.id);
-                return obs && !isNaN(getValue(obs))
-                  ? getColor(getValue(obs))
+                return obs
+                  ? getColor(getValue(obs) ?? undefined)
                   : [204, 204, 204, 100];
               }}
               onHover={({ x, y, object }: HoverObject) => {
@@ -225,7 +225,7 @@ export const MapComponent = () => {
               fillPatternMapping="/static/sprite/pattern.json"
               getFillPattern={(d: $FixMe) => {
                 const obs = data.find((x: Observation) => x.id === d.id);
-                return obs && isNaN(getValue(obs)) ? "hatch" : "fill";
+                return obs && getValue(obs) === null ? "hatch" : "fill";
               }}
               getFillPatternScale={150}
               getFillPatternOffset={[0, 0]}
@@ -267,7 +267,7 @@ export const MapComponent = () => {
             data={features.cantonCentroids}
             pickable={true}
             opacity={0.7}
-            stroked={true}
+            stroked={false}
             filled={true}
             radiusScale={1}
             radiusUnits={"pixels"}
@@ -277,7 +277,7 @@ export const MapComponent = () => {
             getPosition={(d: $FixMe) => d.coordinates}
             getRadius={(d: $FixMe) => {
               const obs = data.find((x: Observation) => x.id === d.id);
-              return obs ? radiusScale(getRadius(obs)) : 0;
+              return obs ? radiusScale(getRadius(obs) ?? 0) : 0;
             }}
             getFillColor={(d: $FixMe) => [0, 102, 153]}
             getLineColor={(d: $FixMe) => [255, 255, 255]}

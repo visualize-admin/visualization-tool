@@ -26,8 +26,8 @@ export const InteractionVoronoi = memo(({ debug }: { debug?: boolean }) => {
   // FIXME: delaunay/voronoi calculation could be memoized
   const delaunay = Delaunay.from(
     data,
-    (d) => xScale(getX(d)),
-    (d) => yScale(getY(d))
+    (d) => xScale(getX(d) ?? NaN),
+    (d) => yScale(getY(d) ?? NaN)
   );
   const voronoi = delaunay.voronoi([0, 0, chartWidth, chartHeight]);
 

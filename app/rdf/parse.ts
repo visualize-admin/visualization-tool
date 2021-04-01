@@ -59,26 +59,31 @@ export const parseCubeDimension = ({
   const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
 
   let dataType = dim.datatype;
+  let hasUndefinedValues = false;
 
   if (!dataType) {
     // Maybe it has multiple datatypes
     const dataTypes = [
       ...(dim.out(ns.sh.or).list() ?? dim.out(ns.sh.or).toArray()),
     ].flatMap((item) => {
-      return item
-        .out(ns.sh.datatype)
-        .filter((d) => !ns.cube.Undefined.equals(d.term)).terms;
+      return item.out(ns.sh.datatype).terms;
     }) as NamedNode[];
 
-    if (dataTypes.length > 1) {
+    hasUndefinedValues = dataTypes.some((d) => ns.cube.Undefined.equals(d));
+
+    const definedDataTypes = dataTypes.filter(
+      (d) => !ns.cube.Undefined.equals(d)
+    );
+
+    if (definedDataTypes.length > 1) {
       console.warn(
         `WARNING: dimension <${dim.path?.value}> has more than 1 non-undefined datatype`,
-        dataTypes
+        definedDataTypes
       );
     }
 
-    if (dataTypes.length > 0) {
-      dataType = dataTypes[0];
+    if (definedDataTypes.length > 0) {
+      dataType = definedDataTypes[0];
     }
   }
 
@@ -99,6 +104,7 @@ export const parseCubeDimension = ({
       iri: dim.path?.value!,
       isLiteral,
       isNumerical,
+      hasUndefinedValues,
       dataType: dataType?.value,
       name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
       dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)

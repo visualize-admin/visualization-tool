@@ -15,7 +15,6 @@ import { ReactNode, useCallback, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {
   getPalette,
-  mkNumber,
   parseDate,
   useFormatFullDateAuto,
   useFormatNumber,
@@ -42,7 +41,7 @@ export interface LinesState {
   xScale: ScaleTime<number, number>;
   xEntireScale: ScaleTime<number, number>;
   // xUniqueValues: Date[];
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   colors: ScaleOrdinal<string, string>;
@@ -78,10 +77,13 @@ const useLinesState = ({
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
   const getX = useCallback(
-    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
+    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
     [fields.x.componentIri]
   );
-  const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
+  const getY = (d: Observation): number | null => {
+    const v = d[fields.y.componentIri];
+    return v !== null ? +v : null;
+  };
   const getSegment = useCallback(
     (d: Observation): string =>
       fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
@@ -130,7 +132,7 @@ const useLinesState = ({
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
   // y
-  const minValue = Math.min(mkNumber(min(preparedData, getY)), 0);
+  const minValue = Math.min((min(preparedData, getY), 0));
   const maxValue = max(preparedData, getY) as number;
   const yDomain = [minValue, maxValue];
 
@@ -202,7 +204,7 @@ const useLinesState = ({
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = xScale(getX(datum));
-    const yAnchor = yScale(getY(datum));
+    const yAnchor = yScale(getY(datum) ?? 0);
 
     const tooltipValues = preparedData.filter(
       (j) => getX(j).getTime() === getX(datum).getTime()
@@ -235,7 +237,7 @@ const useLinesState = ({
           segments.length > 1
             ? (colors(getSegment(td)) as string)
             : theme.colors.primary,
-        yPos: yScale(getY(td)),
+        yPos: yScale(getY(td) ?? 0),
       })),
     };
   };
@@ -246,7 +248,6 @@ const useLinesState = ({
     getX,
     xScale,
     xEntireScale,
-    // xUniqueValues,
     getY,
     yScale,
     getSegment,

@@ -49,7 +49,7 @@ export interface MapState {
     showAreaLayer: boolean;
     areaMeasureLabel: string;
     getColor: (x: number | undefined) => number[];
-    getValue: (d: Observation) => number;
+    getValue: (d: Observation) => number | null;
     paletteType: PaletteType;
     palette: string;
     nbClass: number;
@@ -65,7 +65,7 @@ export interface MapState {
     symbolMeasureLabel: string;
     showSymbolLayer: boolean;
     radiusScale: ScalePower<number, number>;
-    getRadius: (d: Observation) => number;
+    getRadius: (d: Observation) => number | null;
     symbolColorScale: (x: number) => string;
   };
 }
@@ -79,7 +79,7 @@ const getColorScale = ({
 }: {
   paletteType: PaletteType;
   palette: string;
-  getValue: (x: Observation) => number;
+  getValue: (x: Observation) => number | null;
   data: Observation[];
   dataDomain: [number, number];
   nbClass: number;
@@ -102,7 +102,7 @@ const getColorScale = ({
         .range(getSingleHueSequentialPalette({ palette, nbClass }));
     case "jenks":
       const ckMeansThresholds = ckmeans(
-        data.map((d) => getValue(d)),
+        data.map((d) => getValue(d) ?? NaN),
         nbClass
       ).map((v) => v.pop() || 0);
 
@@ -129,20 +129,28 @@ const useMapState = ({
 
   const { palette, nbClass, paletteType } = fields["areaLayer"];
   const getValue = useCallback(
-    (d: Observation): number => +d[fields["areaLayer"].componentIri],
-    [fields["areaLayer"].componentIri]
+    (d: Observation): number | null => {
+      const v = d[fields.areaLayer.componentIri];
+      return v !== null && v !== "..." // FIXME: && v !== "..." -> only used for the prototype and mock data
+        ? +v
+        : null;
+    },
+    [fields.areaLayer.componentIri]
   );
 
-  // Maybe this should not be bound to areaLayer?
-  // (also used for the proportional circles)
   const getFeatureLabel = useCallback(
     (d: Observation | undefined): string =>
-      d ? (d[fields["areaLayer"].label.componentIri] as string) : "",
-    [fields["areaLayer"].label.componentIri]
+      d ? `${d[fields.areaLayer.label.componentIri]}` : "",
+    [fields.areaLayer.label.componentIri]
   );
   const getRadius = useCallback(
-    (d: Observation): number => +d[fields["symbolLayer"].componentIri],
-    [fields["symbolLayer"].componentIri]
+    (d: Observation): number | null => {
+      const v = d[fields.symbolLayer.componentIri];
+      return v !== null && v !== "..." // FIXME: && v !== "..." -> only used for the prototype and mock data
+        ? +v
+        : null;
+    },
+    [fields.symbolLayer.componentIri]
   );
 
   const areaMeasureLabel =
@@ -176,7 +184,7 @@ const useMapState = ({
   };
 
   const radiusExtent = extent(data, (d) => getRadius(d));
-  const radiusRange = radiusExtent[0] === 0 ? [0, 23] : [4, 23];
+  const radiusRange = radiusExtent[0] === 0 ? [0, 23] : [0, 23];
   const radiusScale = scaleSqrt()
     .domain(radiusExtent as [number, number])
     .range(radiusRange);

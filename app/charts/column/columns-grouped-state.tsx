@@ -14,7 +14,7 @@ import {
   scaleOrdinal,
   scaleTime,
   ScaleTime,
-  sum
+  sum,
 } from "d3";
 import React, { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
@@ -22,7 +22,7 @@ import {
   getPalette,
   mkNumber,
   parseDate,
-  useFormatNumber
+  useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
@@ -40,7 +40,7 @@ import {
   LEFT_MARGIN_OFFSET,
   PADDING_INNER,
   PADDING_OUTER,
-  PADDING_WITHIN
+  PADDING_WITHIN,
 } from "./constants";
 
 export interface GroupedColumnsState {
@@ -54,7 +54,7 @@ export interface GroupedColumnsState {
   xScaleInteraction: ScaleBand<string>;
   xScaleIn: ScaleBand<string>;
   xEntireScale: ScaleTime<number, number>;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -85,21 +85,21 @@ const useGroupedColumnsState = ({
   const [interactiveFilters] = useInteractiveFilters();
 
   const getX = useCallback(
-    (d: Observation): string => d[fields.x.componentIri] as string,
+    (d: Observation): string => `${d[fields.x.componentIri]}`,
     [fields.x.componentIri]
   );
   const getXAsDate = useCallback(
-    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
+    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
     [fields.x.componentIri]
   );
-  const getY = useCallback(
-    (d: Observation): number => +d[fields.y.componentIri],
-    [fields.y.componentIri]
-  );
+  const getY = (d: Observation): number | null => {
+    const v = d[fields.y.componentIri];
+    return v !== null ? +v : null;
+  };
   const getSegment = useCallback(
     (d: Observation): string =>
       fields.segment && fields.segment.componentIri
-        ? (d[fields.segment.componentIri] as string)
+        ? `${d[fields.segment.componentIri]}`
         : "segment",
     [fields.segment]
   );
@@ -280,7 +280,7 @@ const useGroupedColumnsState = ({
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum)) as number;
     const xOffset = xScale.bandwidth() / 2;
-    const yRef = yScale(getY(datum));
+    const yRef = yScale(getY(datum) ?? NaN);
     const yAnchor = yRef;
 
     const tooltipValues = preparedData.filter((j) => getX(j) === getX(datum));

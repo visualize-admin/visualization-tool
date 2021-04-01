@@ -46,7 +46,7 @@ export interface AreasState {
   getX: (d: Observation) => Date;
   xScale: ScaleTime<number, number>;
   xEntireScale: ScaleTime<number, number>;
-  getY: (d: Observation) => number;
+  getY: (d: Observation) => number | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -83,10 +83,13 @@ const useAreasState = ({
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
   const getX = useCallback(
-    (d: Observation): Date => parseDate(d[fields.x.componentIri].toString()),
+    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
     [fields.x.componentIri]
   );
-  const getY = (d: Observation): number => +d[fields.y.componentIri] as number;
+  const getY = (d: Observation): number | null => {
+    const v = d[fields.y.componentIri];
+    return v !== null ? +v : null;
+  };
   const getSegment = useCallback(
     (d: Observation): string =>
       fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
@@ -263,7 +266,9 @@ const useAreasState = ({
       getCategory: getSegment,
       sortOrder: "asc",
     });
-    const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d)))(0);
+    const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d) ?? 0))(
+      0
+    );
     const cumulativeRulerItemValues = [
       ...sortedTooltipValues.map(cumulativeSum),
     ];

@@ -1,5 +1,5 @@
 import { Box, Flex } from "theme-ui";
-import { hcl } from "d3";
+import { hcl, ScaleLinear } from "d3";
 import * as React from "react";
 import { Cell } from "react-table";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
@@ -63,16 +63,22 @@ export const CellDesktop = ({
         </Flex>
       );
     case "heatmap":
+      const isNull = cell.value === null;
       return (
         <Flex
           sx={{
             alignItems: "center",
             justifyContent: "flex-end",
-            color:
-              hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
-                ? "#fff"
-                : "#000",
-            bg: colorScale ? colorScale(cell.value) : "primaryLight",
+            color: isNull
+              ? textColor
+              : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
+              ? "#fff"
+              : "#000",
+            bg: isNull
+              ? "monochrome100"
+              : colorScale
+              ? colorScale(cell.value)
+              : "monochrome100",
             textAlign: "right",
             fontWeight: textStyle,
             px: 3,
@@ -95,10 +101,10 @@ export const CellDesktop = ({
           {...cell.getCellProps()}
         >
           <Box>{formatNumber(cell.value)}</Box>
-          {widthScale && (
+          {cell.value !== null && widthScale && (
             <Box
               sx={{
-                width: "100%",
+                width: widthScale.range()[1],
                 height: 18,
                 position: "relative",
                 bg: barShowBackground ? barColorBackground : "monochrome100",
@@ -108,14 +114,8 @@ export const CellDesktop = ({
                 sx={{
                   position: "absolute",
                   top: 0,
-                  left:
-                    widthScale(Math.min(widthScale.domain()[0], cell.value)) ??
-                    0,
-                  width:
-                    Math.abs(
-                      widthScale(cell.value) -
-                        widthScale(widthScale.domain()[0])
-                    ) ?? 0,
+                  left: getBarLeftOffset(cell.value, widthScale), //widthScale(Math.max(widthScale.domain()[0], 0)),
+                  width: getBarWidth(cell.value, widthScale), // widthScale(cell.value) - widthScale(0),
                   height: 18,
                   bg: cell.value > 0 ? barColorPositive : barColorNegative,
                 }}
@@ -124,25 +124,48 @@ export const CellDesktop = ({
                 sx={{
                   position: "absolute",
                   top: "-2px",
-                  left: widthScale(widthScale.domain()[0]) ?? 0,
+                  left:
+                    cell.value < 0
+                      ? widthScale(0)
+                      : getBarLeftOffset(cell.value, widthScale), //widthScale(Math.max(widthScale.domain()[0], 0)),
                   width: "1px",
                   height: 22,
                   bg: "monochrome700",
                 }}
               />
-              {/* <Box
-              sx={{
-                position: "absolute",
-                top: 12,
-                left: (widthScale ? widthScale(0) : 0) + 2,
-                color: "monochrome700",
-                fontSize: 1,
-              }}
-            >
-              0
-            </Box> */}
             </Box>
           )}
+          {/* {cell.value !== null && cell.value < 0 && widthScale && (
+            <Box
+              sx={{
+                width: widthScale.range()[1],
+                height: 18,
+                position: "relative",
+                bg: barShowBackground ? barColorBackground : "monochrome100",
+              }}
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: widthScale(cell.value),
+                  width: widthScale(Math.abs(cell.value)) - widthScale(0),
+                  height: 18,
+                  bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "-2px",
+                  left: widthScale(0),
+                  width: "1px",
+                  height: 22,
+                  bg: "monochrome700",
+                }}
+              />
+            </Box>
+          )} */}
         </Flex>
       );
     default:
@@ -171,5 +194,31 @@ export const CellDesktop = ({
             : cell.render("Cell")}
         </Flex>
       );
+  }
+};
+
+export const getBarLeftOffset = (
+  v: number,
+  scale: ScaleLinear<number, number>
+): number => {
+  if (v >= 0) {
+    return scale(Math.max(scale.domain()[0], 0));
+  } else if (v < 0) {
+    return scale(v);
+  } else {
+    return scale(Math.max(scale.domain()[0], 0));
+  }
+};
+
+export const getBarWidth = (
+  v: number,
+  scale: ScaleLinear<number, number>
+): number => {
+  if (v >= 0) {
+    return scale(v) - scale(Math.max(scale.domain()[0], 0));
+  } else if (v < 0) {
+    return scale(Math.abs(v)) - scale(0);
+  } else {
+    return scale(v) - scale(0);
   }
 };

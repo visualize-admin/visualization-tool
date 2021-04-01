@@ -8,6 +8,7 @@ import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { Tag } from "./tag";
 import { ColumnMeta, TableChartState } from "./table-state";
+import { getBarLeftOffset, getBarWidth } from "./cell-desktop";
 
 export const RowMobile = ({
   row,
@@ -138,14 +139,20 @@ export const DDContent = ({
         </Tag>
       );
     case "heatmap":
+      const isNull = cell.value === null;
       return (
         <Box
           sx={{
-            color:
-              hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
-                ? "#fff"
-                : "#000",
-            bg: colorScale ? colorScale(cell.value) : "primaryLight",
+            color: isNull
+              ? textColor
+              : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
+              ? "#fff"
+              : "#000",
+            bg: isNull
+              ? "monochrome100"
+              : colorScale
+              ? colorScale(cell.value)
+              : "monochrome100",
             fontWeight: textStyle,
             px: 1,
             width: "fit-content",
@@ -168,37 +175,40 @@ export const DDContent = ({
           }}
         >
           <Box sx={{ width: chartWidth / 2 }}>{formatNumber(cell.value)}</Box>
-          <Box
-            sx={{
-              width: chartWidth / 2,
-              height: 14,
-              position: "relative",
-              bg: barShowBackground ? barColorBackground : "monochrome100",
-            }}
-          >
+          {cell.value !== null && widthScale && (
             <Box
               sx={{
-                position: "absolute",
-                top: 0,
-                left: widthScale ? widthScale(Math.min(0, cell.value)) : 0,
-                width: widthScale
-                  ? Math.abs(widthScale(cell.value) - widthScale(0))
-                  : 0,
+                width: chartWidth / 2,
                 height: 14,
-                bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                position: "relative",
+                bg: barShowBackground ? barColorBackground : "monochrome100",
               }}
-            />
-            <Box
-              sx={{
-                position: "absolute",
-                top: "-2px",
-                left: widthScale ? widthScale(0) : 0,
-                width: "1px",
-                height: 18,
-                bg: "monochrome700",
-              }}
-            />
-          </Box>
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: getBarLeftOffset(cell.value, widthScale),
+                  width: getBarWidth(cell.value, widthScale),
+                  height: 14,
+                  bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "-2px",
+                  left:
+                    cell.value < 0
+                      ? widthScale(0)
+                      : getBarLeftOffset(cell.value, widthScale),
+                  width: "1px",
+                  height: 18,
+                  bg: "monochrome700",
+                }}
+              />
+            </Box>
+          )}
         </Flex>
       );
 

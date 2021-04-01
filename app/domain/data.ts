@@ -9,7 +9,9 @@ export type RawObservationValue = Literal | NamedNode;
 
 export type RawObservation = Record<string, RawObservationValue>;
 
-export type ObservationValue = string | number | boolean | Date;
+export type ObservationValue = string | number | null;
+
+export type DimensionValue = { value: string | number; label: string };
 
 export type Observation = Record<string, ObservationValue>;
 
@@ -19,9 +21,9 @@ const parseRDFLiteral = (value: Literal): ObservationValue => {
   const dt = value.datatype.value.replace(xmlSchema, "");
   switch (dt) {
     case "string":
-      return v;
     case "boolean":
-      return v === "true" ? true : false;
+      return v;
+    // return v === "true" ? true : false;
     case "float":
     case "integer":
     case "long":

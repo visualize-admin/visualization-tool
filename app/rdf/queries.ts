@@ -11,12 +11,18 @@ import {
 import rdf from "rdf-ext";
 import { Literal, NamedNode } from "rdf-js";
 import { Filters } from "../configurator";
-import { Observation, parseObservationValue } from "../domain/data";
+import {
+  DimensionValue,
+  Observation,
+  parseObservationValue,
+} from "../domain/data";
 import { SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
+
+const NULL_DIMENSION_VALUE = "NULL";
 
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
@@ -184,17 +190,17 @@ export const getCubeDimensionValues = async ({
   dimension: CubeDimension;
   cube: Cube;
   locale: string;
-}): Promise<{ value: string; label: string }[]> => {
+}): Promise<DimensionValue[]> => {
   if (
     dimension.minInclusive !== undefined &&
     dimension.maxInclusive !== undefined
   ) {
-    const min = parseObservationValue({ value: dimension.minInclusive });
-    const max = parseObservationValue({ value: dimension.maxInclusive });
-    console.log({ min, max });
+    const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
+    const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
+
     return [
-      { value: min.toString(), label: min.toString() },
-      { value: max.toString(), label: max.toString() },
+      { value: min, label: `${min}` },
+      { value: max, label: `${max}` },
     ];
   }
 
@@ -213,30 +219,7 @@ const getCubeDimensionValuesWithLabels = async ({
   dimension: CubeDimension;
   cube: Cube;
   locale: string;
-}): Promise<{ value: string; label: string }[]> => {
-  // try {
-  //   const view = View.fromCube(cube);
-  //   const viewDimension = view.dimension({ cubeDimension: dimension })!;
-
-  //   const source = createSource();
-  //   const lookupSource = LookupSource.fromSource(source);
-  //   const lookupView = new View({ parent: source });
-
-  //   const labelDimension = lookupView.createDimension({
-  //     source: lookupSource,
-  //     path: schema.name,
-  //     join: viewDimension,
-  //     as: ns.visualizeAdmin("dimensionValueLabel"),
-  //   });
-
-  //   lookupView.addDimension(viewDimension).addDimension(labelDimension);
-
-  //   console.log(lookupView.observationsQuery().query.toString());
-  // } catch (e) {
-  //   console.log("Could not look up labels");
-  //   console.error(e);
-  // }
-
+}): Promise<DimensionValue[]> => {
   const dimensionValueNamedNodes = (dimension.in?.filter(
     (v) => v.termType === "NamedNode"
   ) ?? []) as NamedNode[];
@@ -272,9 +255,21 @@ const getCubeDimensionValuesWithLabels = async ({
     dimensionValueNamedNodes.length > 0
       ? (
           await loadResourceLabels({ ids: dimensionValueNamedNodes, locale })
-        ).map((vl) => ({ value: vl.iri.value, label: vl.label.value }))
+        ).map((vl) => {
+          return { value: vl.iri.value, label: vl.label?.value ?? "" };
+        })
       : dimensionValueLiterals.length > 0
-      ? dimensionValueLiterals.map((v) => ({ value: v.value, label: v.value }))
+      ? dimensionValueLiterals.map((v) => {
+          return ns.cube.Undefined.equals(v.datatype)
+            ? {
+                value: NULL_DIMENSION_VALUE, // We use a known string here because actual null does not work as value in UI inputs.
+                label: "–",
+              }
+            : {
+                value: v.value,
+                label: v.value,
+              };
+        })
       : [];
 
   return values;
@@ -314,7 +309,7 @@ export const getCubeObservations = async ({
   );
 
   let observationFilters = filters
-    ? buildFilters({ cube, view: cubeView, filters })
+    ? buildFilters({ cube, view: cubeView, filters, locale })
     : [];
 
   // let observationFilters = [];
@@ -379,11 +374,16 @@ export const getCubeObservations = async ({
     return Object.fromEntries(
       cubeDimensions.map((d) => {
         const label = obs[labelDimensionIri(d.data.iri)]?.value;
-        const value = obs[d.data.iri]?.value;
+
+        const value =
+          obs[d.data.iri]?.termType === "Literal" &&
+          ns.cube.Undefined.equals((obs[d.data.iri] as Literal)?.datatype)
+            ? null
+            : obs[d.data.iri]?.value;
 
         return [
           d.data.iri,
-          label ?? value,
+          label ?? value ?? null,
           // v !== undefined ? parseObservationValue({ value: v }) : null,
         ];
       })
@@ -403,10 +403,12 @@ const buildFilters = ({
   cube,
   view,
   filters,
+  locale,
 }: {
   cube: Cube;
   view: View;
   filters: Filters;
+  locale: string;
 }): Filter[] => {
   const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
     const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);
@@ -420,36 +422,39 @@ const buildFilters = ({
       return [];
     }
 
-    const dataType = cubeDimension.datatype;
+    const parsedCubeDimension = parseCubeDimension({
+      dim: cubeDimension,
+      cube,
+      locale,
+    });
 
-    if (ns.rdf.langString.equals(dataType)) {
+    const { dataType } = parsedCubeDimension.data;
+
+    if (ns.rdf.langString.value === dataType) {
       console.warn(
         `WARNING: Dimension <${dimIri}> has dataType 'langString'. Filtering won't work.`
       );
     }
 
+    const toRDFValue = (value: string): NamedNode | Literal => {
+      return dataType
+        ? parsedCubeDimension.data.hasUndefinedValues &&
+          value === NULL_DIMENSION_VALUE
+          ? rdf.literal("", ns.cube.Undefined)
+          : rdf.literal(value, dataType)
+        : rdf.namedNode(value);
+    };
+
     const selectedValues =
       filter.type === "single"
-        ? [
-            dimension.filter.eq(
-              dataType
-                ? rdf.literal(filter.value, dataType)
-                : rdf.namedNode(filter.value)
-            ),
-          ]
+        ? [dimension.filter.eq(toRDFValue(filter.value))]
         : filter.type === "multi"
         ? // If values is an empty object, we filter by something that doesn't exist
           [
             dimension.filter.in(
               Object.keys(filter.values).length > 0
                 ? Object.entries(filter.values).flatMap(([value, selected]) =>
-                    selected
-                      ? [
-                          dataType
-                            ? rdf.literal(value, dataType)
-                            : rdf.namedNode(value),
-                        ]
-                      : []
+                    selected ? [toRDFValue(value)] : []
                   )
                 : [rdf.namedNode("EMPTY_VALUE")]
             ),

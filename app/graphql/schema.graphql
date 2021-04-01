@@ -1,4 +1,5 @@
 scalar Observation
+scalar DimensionValue
 scalar RawObservation
 scalar Filters
 
@@ -34,11 +35,6 @@ type DataCube {
   measures: [Measure!]!
 }
 
-type DimensionValue {
-  value: String!
-  label: String!
-}
-
 interface Component {
   iri: String!
   label: String!
@@ -57,7 +53,6 @@ type NominalDimension implements Component & Dimension {
   label: String!
   unit: String
   scaleType: String
-
   values: [DimensionValue!]!
 }
 
@@ -66,7 +61,6 @@ type OrdinalDimension implements Component & Dimension {
   label: String!
   unit: String
   scaleType: String
-
   values: [DimensionValue!]!
 }
 
@@ -75,7 +69,6 @@ type TemporalDimension implements Component & Dimension {
   label: String!
   unit: String
   scaleType: String
-
   values: [DimensionValue!]!
 }
 
@@ -84,7 +77,6 @@ type Measure implements Component & Dimension {
   label: String!
   unit: String
   scaleType: String
-
   values: [DimensionValue!]!
 }
 

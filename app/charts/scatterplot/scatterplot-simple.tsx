@@ -25,8 +25,8 @@ export const Scatterplot = () => {
         return (
           <Dot
             key={index}
-            cx={xScale(getX(d))}
-            cy={yScale(getY(d))}
+            cx={xScale(getX(d) ?? NaN)}
+            cy={yScale(getY(d) ?? NaN)}
             color={hasSegment ? colors(getSegment(d)) : theme.colors.primary}
           />
         );

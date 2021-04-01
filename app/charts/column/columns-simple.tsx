@@ -23,10 +23,14 @@ export const Columns = () => {
           x={xScale(getX(d)) as number}
           width={xScale.bandwidth()}
           // y={yScale(getY(d))}
-          y={yScale(Math.max(0, getY(d)))}
+          y={yScale(Math.max(0, getY(d) ?? NaN))}
           // height={yScale(0) - yScale(getY(d))}
-          height={Math.abs(yScale(getY(d)) - yScale(0))}
-          color={getY(d) <= 0 ? theme.colors.secondary : theme.colors.primary}
+          height={Math.abs(yScale(getY(d) ?? NaN) - yScale(0))}
+          color={
+            (getY(d) ?? NaN) <= 0
+              ? theme.colors.secondary
+              : theme.colors.primary
+          }
         />
       ))}
     </g>
