@@ -18,9 +18,9 @@ export const Lines = () => {
   const theme = useTheme();
 
   const lineGenerator = line<Observation>()
-    .defined((d) => !isNaN(getY(d) as $IntentionalAny))
+    .defined((d) => getY(d) !== null)
     .x((d) => xScale(getX(d)))
-    .y((d) => yScale(getY(d) ?? 0));
+    .y((d) => yScale(getY(d) as number));
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
