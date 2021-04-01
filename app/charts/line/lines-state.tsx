@@ -15,7 +15,6 @@ import { ReactNode, useCallback, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {
   getPalette,
-  mkNumber,
   parseDate,
   useFormatFullDateAuto,
   useFormatNumber,
@@ -133,7 +132,7 @@ const useLinesState = ({
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
   // y
-  const minValue = Math.min(mkNumber(min(preparedData, getY)), 0);
+  const minValue = Math.min((min(preparedData, getY), 0));
   const maxValue = max(preparedData, getY) as number;
   const yDomain = [minValue, maxValue];
 

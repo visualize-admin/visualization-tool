@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { isNumber } from "util";
 import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
