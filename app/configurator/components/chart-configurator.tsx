@@ -35,7 +35,7 @@ export const ChartConfigurator = ({
       <>
         <ControlSection>
           <SectionTitle titleId="controls-design">
-            <Trans id="controls.section.design">Design</Trans>
+            <Trans id="controls.section.chart.options">Chart Options</Trans>
           </SectionTitle>
           <ControlSectionContent
             side="left"
@@ -51,7 +51,7 @@ export const ChartConfigurator = ({
 
         <ControlSection>
           <SectionTitle titleId="controls-data">
-            <Trans id="controls.section.data">Data</Trans>
+            <Trans id="controls.section.data.filters">Filters</Trans>
           </SectionTitle>
           <ControlSectionContent side="left" aria-labelledby="controls-data">
             {unMappedDimensions.map((dimension, i) => (

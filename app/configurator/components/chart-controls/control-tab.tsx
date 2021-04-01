@@ -39,7 +39,7 @@ export const ControlTab = ({
             component ? (
               component.label
             ) : (
-              <Trans id="controls.partition.add">Add ...</Trans>
+              <Trans id="controls.color.add">Add ...</Trans>
             )
           }
           checked={checked}

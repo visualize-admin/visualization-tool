@@ -61,7 +61,7 @@ export const InteractiveFiltersConfigurator = ({
       >
         <SectionTitle titleId="controls-interactive-filters">
           <Trans id="controls.section.interactive.filters">
-            Add interactive filters
+            Interactive Filters
           </Trans>
         </SectionTitle>
         <ControlSectionContent side="left">

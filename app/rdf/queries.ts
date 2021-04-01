@@ -84,71 +84,73 @@ export const getCube = async ({
     cube.source.queryOperation = "postUrlencoded";
   }
 
-  const versionHistory = cube.in(ns.schema.hasPart)?.term;
-  const isPublished =
-    cube.out(ns.schema.creativeWorkStatus)?.value ===
-    ns.adminTerm("CreativeWorkStatus/Published").value;
-  const version = cube.out(ns.schema.version);
+  // TODO: Re-enable picking latest cube version once we have a solution for https://github.com/zazuko/cube-creator/issues/658
 
-  // console.log(`Cube <${iri}> version: ${version?.value}`);
+  // const versionHistory = cube.in(ns.schema.hasPart)?.term;
+  // const isPublished =
+  //   cube.out(ns.schema.creativeWorkStatus)?.value ===
+  //   ns.adminTerm("CreativeWorkStatus/Published").value;
+  // const version = cube.out(ns.schema.version);
 
-  /**
-   * Find newer cubes that satisfy these conditions:
-   * - Must have a higher version number
-   * - Are from the same version history
-   * - If original cube is published, cubes must also be published
-   */
-  const filters = [
-    Cube.filter.isPartOf(versionHistory),
-    // Custom filter for version
-    ({ cube, index }: $FixMe) => {
-      const variable = rdf.variable(`version${index}`);
-      return [
-        [cube, ns.schema.version, variable],
-        sparql`FILTER(${variable} > ${version})`,
-      ];
-    },
-  ];
+  // // console.log(`Cube <${iri}> version: ${version?.value}`);
 
-  const newerCubes = await source.cubes({
-    filters: isPublished
-      ? [
-          ...filters,
-          Cube.filter.status(ns.adminTerm("CreativeWorkStatus/Published")),
-        ]
-      : filters,
-  });
+  // /**
+  //  * Find newer cubes that satisfy these conditions:
+  //  * - Must have a higher version number
+  //  * - Are from the same version history
+  //  * - If original cube is published, cubes must also be published
+  //  */
+  // const filters = [
+  //   Cube.filter.isPartOf(versionHistory),
+  //   // Custom filter for version
+  //   ({ cube, index }: $FixMe) => {
+  //     const variable = rdf.variable(`version${index}`);
+  //     return [
+  //       [cube, ns.schema.version, variable],
+  //       sparql`FILTER(${variable} > ${version})`,
+  //     ];
+  //   },
+  // ];
 
-  // console.log(
-  //   "Newer cubes",
-  //   newerCubes.map((c) => c.term?.value)
-  // );
+  // const newerCubes = await source.cubes({
+  //   filters: isPublished
+  //     ? [
+  //         ...filters,
+  //         Cube.filter.status(ns.adminTerm("CreativeWorkStatus/Published")),
+  //       ]
+  //     : filters,
+  // });
 
-  /**
-   * Now we find the latest cube:
-   * - Try to find the latest PUBLISHED cube
-   * - Otherwise pick latest cube
-   */
+  // // console.log(
+  // //   "Newer cubes",
+  // //   newerCubes.map((c) => c.term?.value)
+  // // );
 
-  if (newerCubes.length > 0) {
-    newerCubes.sort((a, b) =>
-      descending(
-        a.out(ns.schema.version)?.value,
-        b.out(ns.schema.version)?.value
-      )
-    );
+  // /**
+  //  * Now we find the latest cube:
+  //  * - Try to find the latest PUBLISHED cube
+  //  * - Otherwise pick latest cube
+  //  */
 
-    const latestCube =
-      newerCubes.find(
-        (cube) =>
-          cube.out(ns.schema.creativeWorkStatus)?.value ===
-          ns.adminTerm("CreativeWorkStatus/Published").value
-      ) ?? newerCubes[0];
+  // if (newerCubes.length > 0) {
+  //   newerCubes.sort((a, b) =>
+  //     descending(
+  //       a.out(ns.schema.version)?.value,
+  //       b.out(ns.schema.version)?.value
+  //     )
+  //   );
 
-    // console.log("Picked latest cube", latestCube.term?.value);
+  //   const latestCube =
+  //     newerCubes.find(
+  //       (cube) =>
+  //         cube.out(ns.schema.creativeWorkStatus)?.value ===
+  //         ns.adminTerm("CreativeWorkStatus/Published").value
+  //     ) ?? newerCubes[0];
 
-    return parseCube({ cube: latestCube, locale });
-  }
+  //   // console.log("Picked latest cube", latestCube.term?.value);
+
+  //   return parseCube({ cube: latestCube, locale });
+  // }
 
   return parseCube({ cube, locale });
 };

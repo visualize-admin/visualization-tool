@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
+import { isNumber } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
   InteractiveFiltersState,
@@ -7,8 +8,8 @@ import {
 } from "./use-interactive-filters";
 
 // Prepare filters used in data query:
-// merges in-editor publisher-defined data filters
-// and interactive user-defined data filters (if applicable)
+// merges "hard" data filters (in-editor, publisher-defined)
+// and "interactive" data filters (user-defined), if applicable
 export const useQueryFilters = ({
   chartConfig,
   interactiveFiltersIsActive,

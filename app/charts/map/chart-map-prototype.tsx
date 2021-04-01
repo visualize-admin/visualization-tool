@@ -202,14 +202,14 @@ export const ChartMapPrototype = ({
         <ControlSection>
           <Box sx={{ p: 4 }}>
             <Box sx={{ mb: 4 }}>
-              <Trans id="chart.map.control.base.map">Layers</Trans>
+              <Trans id="chart.map.control.layers">Layers</Trans>
             </Box>
             <Tab
               value="baseLayer"
               onClick={(v) => setActiveControl(v)}
               iconName="mapMaptype"
               upperLabel={""}
-              lowerLabel={"Base Layer"}
+              lowerLabel={<Trans id="chart.map.layers.base">Base Layer</Trans>}
               checked={activeControl === "baseLayer"}
               disabled={false}
             />
@@ -218,7 +218,7 @@ export const ChartMapPrototype = ({
               onClick={(v) => setActiveControl(v)}
               iconName="mapRegions"
               upperLabel={""}
-              lowerLabel={"Area Layer"}
+              lowerLabel={<Trans id="chart.map.layers.area">Area Layer</Trans>}
               checked={activeControl === "areaLayer"}
               disabled={false}
             />
@@ -227,7 +227,9 @@ export const ChartMapPrototype = ({
               onClick={(v) => setActiveControl(v)}
               iconName="mapSymbols"
               upperLabel={""}
-              lowerLabel={"Symbol Layer"}
+              lowerLabel={
+                <Trans id="chart.map.layers.symbol">Symbol Layer</Trans>
+              }
               checked={activeControl === "symbolLayer"}
               disabled={false}
             />
