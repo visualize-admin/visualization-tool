@@ -232,6 +232,7 @@ const useLinesState = ({
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
+        hide: getY(td) === null,
         label: getSegment(td),
         value: formatNumber(getY(td)),
         color:

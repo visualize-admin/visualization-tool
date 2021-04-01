@@ -23,6 +23,7 @@ export type TooltipPlacement = { x: Xplacement; y: Yplacement };
 
 export type TooltipType = "single" | "multiple";
 export interface TooltipValue {
+  hide?: boolean;
   label?: string;
   value: string;
   color: string;
@@ -30,7 +31,7 @@ export interface TooltipValue {
 }
 export interface TooltipInfo {
   xAnchor: number;
-  yAnchor: number;
+  yAnchor: number | undefined;
   placement: TooltipPlacement;
   xValue: string;
   tooltipContent?: ReactNode;

@@ -23,24 +23,26 @@ const HoverDots = ({ d }: { d: Observation }) => {
       {values &&
         values.map((value, i) => (
           <Fragment key={i}>
-            <Box
-              style={{
-                backgroundColor: value.color,
-                left: xAnchor + bounds.margins.left,
-                top: value.yPos! + bounds.margins.top,
-              }}
-              sx={{
-                position: "absolute",
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                borderStyle: "solid",
-                borderWidth: 1,
-                borderColor: "monochrome100",
-                transform: "translate3d(-50%, -50%, 0)",
-                pointerEvents: "none",
-              }}
-            />
+            {!value.hide && (
+              <Box
+                style={{
+                  backgroundColor: value.color,
+                  left: xAnchor + bounds.margins.left,
+                  top: value.yPos! + bounds.margins.top,
+                }}
+                sx={{
+                  position: "absolute",
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  borderStyle: "solid",
+                  borderWidth: 1,
+                  borderColor: "monochrome100",
+                  transform: "translate3d(-50%, -50%, 0)",
+                  pointerEvents: "none",
+                }}
+              />
+            )}
           </Fragment>
         ))}
     </>

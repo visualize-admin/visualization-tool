@@ -15,14 +15,7 @@ export const Ruler = () => {
 
 const RulerInner = ({ d }: { d: Observation }) => {
   const { getAnnotationInfo, bounds } = useChartState() as LinesState;
-  const {
-    xAnchor,
-    yAnchor,
-    xValue,
-    datum,
-    placement,
-    values,
-  } = getAnnotationInfo(d);
+  const { xAnchor, xValue, datum, placement, values } = getAnnotationInfo(d);
 
   return (
     <RulerContent
@@ -31,7 +24,6 @@ const RulerInner = ({ d }: { d: Observation }) => {
       chartHeight={bounds.chartHeight}
       margins={bounds.margins}
       xAnchor={xAnchor}
-      yAnchor={yAnchor}
       datum={datum}
       placement={placement}
     />
@@ -44,7 +36,6 @@ interface RulerContentProps {
   chartHeight: number;
   margins: Margins;
   xAnchor: number;
-  yAnchor: number;
   datum: TooltipValue;
   placement: TooltipPlacement;
 }
@@ -55,7 +46,6 @@ export const RulerContent = ({
   chartHeight,
   margins,
   xAnchor,
-  yAnchor,
   datum,
   placement,
 }: RulerContentProps) => {
