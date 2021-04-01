@@ -197,7 +197,7 @@ export const CellDesktop = ({
   }
 };
 
-const getBarLeftOffset = (
+export const getBarLeftOffset = (
   v: number,
   scale: ScaleLinear<number, number>
 ): number => {
@@ -210,7 +210,10 @@ const getBarLeftOffset = (
   }
 };
 
-const getBarWidth = (v: number, scale: ScaleLinear<number, number>): number => {
+export const getBarWidth = (
+  v: number,
+  scale: ScaleLinear<number, number>
+): number => {
   if (v >= 0) {
     return scale(v) - scale(Math.max(scale.domain()[0], 0));
   } else if (v < 0) {

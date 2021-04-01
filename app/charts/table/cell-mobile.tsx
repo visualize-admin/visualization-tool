@@ -8,6 +8,7 @@ import { Icon } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { Tag } from "./tag";
 import { ColumnMeta, TableChartState } from "./table-state";
+import { getBarLeftOffset, getBarWidth } from "./cell-desktop";
 
 export const RowMobile = ({
   row,
@@ -174,7 +175,7 @@ export const DDContent = ({
           }}
         >
           <Box sx={{ width: chartWidth / 2 }}>{formatNumber(cell.value)}</Box>
-          {cell.value !== null && (
+          {cell.value !== null && widthScale && (
             <Box
               sx={{
                 width: chartWidth / 2,
@@ -187,15 +188,8 @@ export const DDContent = ({
                 sx={{
                   position: "absolute",
                   top: 0,
-                  left: widthScale
-                    ? widthScale(Math.min(widthScale.domain()[0], cell.value))
-                    : 0,
-                  width: widthScale
-                    ? Math.abs(
-                        widthScale(cell.value) -
-                          widthScale(widthScale.domain()[0])
-                      )
-                    : 0,
+                  left: getBarLeftOffset(cell.value, widthScale),
+                  width: getBarWidth(cell.value, widthScale),
                   height: 14,
                   bg: cell.value > 0 ? barColorPositive : barColorNegative,
                 }}
@@ -204,9 +198,10 @@ export const DDContent = ({
                 sx={{
                   position: "absolute",
                   top: "-2px",
-                  left: widthScale
-                    ? widthScale(Math.min(widthScale.domain()[0], cell.value))
-                    : 0,
+                  left:
+                    cell.value < 0
+                      ? widthScale(0)
+                      : getBarLeftOffset(cell.value, widthScale),
                   width: "1px",
                   height: 18,
                   bg: "monochrome700",
