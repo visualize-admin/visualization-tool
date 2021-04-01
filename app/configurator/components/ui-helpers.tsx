@@ -230,19 +230,19 @@ export const getFieldLabel = (field: string): ReactNode => {
     case "column.x":
     case "line.x":
     case "area.x":
+    case "scatterplot.x":
     case "pie.x":
     case "x":
       return <Trans id="controls.axis.horizontal">Horizontal axis</Trans>;
     case "bar.x":
-    case "scatterplot.x":
+    case "pie.y":
+      return <Trans id="controls.measure">Measure</Trans>;
     case "scatterplot.y":
     case "column.y":
     case "line.y":
     case "area.y":
-    case "pie.y":
-    case "y":
-      return <Trans id="controls.measure">Measure</Trans>;
     case "bar.y":
+    case "y":
       return <Trans id="controls.axis.vertical">Vertical axis</Trans>;
     case "bar.segment":
     case "column.segment":

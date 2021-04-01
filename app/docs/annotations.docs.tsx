@@ -280,7 +280,6 @@ ${(
         chartHeight={450}
         margins={margins}
         xAnchor={100}
-        yAnchor={350}
         datum={{
           label: "Zürich",
           value: "450",

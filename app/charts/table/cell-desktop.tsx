@@ -114,8 +114,8 @@ export const CellDesktop = ({
                 sx={{
                   position: "absolute",
                   top: 0,
-                  left: getBarLeftOffset(cell.value, widthScale), //widthScale(Math.max(widthScale.domain()[0], 0)),
-                  width: getBarWidth(cell.value, widthScale), // widthScale(cell.value) - widthScale(0),
+                  left: getBarLeftOffset(cell.value, widthScale),
+                  width: getBarWidth(cell.value, widthScale),
                   height: 18,
                   bg: cell.value > 0 ? barColorPositive : barColorNegative,
                 }}
@@ -127,7 +127,7 @@ export const CellDesktop = ({
                   left:
                     cell.value < 0
                       ? widthScale(0)
-                      : getBarLeftOffset(cell.value, widthScale), //widthScale(Math.max(widthScale.domain()[0], 0)),
+                      : getBarLeftOffset(cell.value, widthScale),
                   width: "1px",
                   height: 22,
                   bg: "monochrome700",
@@ -135,37 +135,6 @@ export const CellDesktop = ({
               />
             </Box>
           )}
-          {/* {cell.value !== null && cell.value < 0 && widthScale && (
-            <Box
-              sx={{
-                width: widthScale.range()[1],
-                height: 18,
-                position: "relative",
-                bg: barShowBackground ? barColorBackground : "monochrome100",
-              }}
-            >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: widthScale(cell.value),
-                  width: widthScale(Math.abs(cell.value)) - widthScale(0),
-                  height: 18,
-                  bg: cell.value > 0 ? barColorPositive : barColorNegative,
-                }}
-              />
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "-2px",
-                  left: widthScale(0),
-                  width: "1px",
-                  height: 22,
-                  bg: "monochrome700",
-                }}
-              />
-            </Box>
-          )} */}
         </Flex>
       );
     default:

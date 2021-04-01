@@ -103,6 +103,10 @@ const useTableState = ({
    * is used to manage its internal state from the editor.
    */
 
+  const types = [...dimensions, ...measures].reduce(
+    (obj, c) => ({ ...obj, [getSlugifiedIri(c.iri)]: c.__typename }),
+    {} as { [x: string]: ComponentType }
+  );
   // Data used by react-table
   const memoizedData = useMemo(
     function replaceKeys() {
@@ -114,14 +118,18 @@ const useTableState = ({
         let o = { id: index } as $IntentionalAny;
         // This is run often, so let's optimize it
         for (let i = 0; i < keys.length; i++) {
-          o[slugifiedKeys[i]] = d[keys[i]];
+          o[slugifiedKeys[i]] =
+            types[slugifiedKeys[i]] !== "Measure"
+              ? d[keys[i]]
+              : d[keys[i]] !== null
+              ? +d[keys[i]]!
+              : null;
         }
         return o;
       });
     },
-    [data]
+    [data, types]
   );
-
   // Columns used by react-table
   const tableColumns = useMemo(() => {
     return orderedTableColumns.map((c) => {

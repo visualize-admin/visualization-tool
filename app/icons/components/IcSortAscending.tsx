@@ -2,16 +2,10 @@ import * as React from "react";
 
 function SvgIcSortAscending(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width="1em"
-      height="1em"
-      {...props}
-    >
-      <g fill="none" fillRule="evenodd">
+    <svg width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      <g fill="none">
         <path d="M0 0h24v24H0z" />
-        <path fill="currentColor" d="M13 20h-2V9H8l4-5 4 5h-3z" />
+        <path fill="currentColor" d="M11 4h2v11h3l-4 5-4-5h3z" />
       </g>
     </svg>
   );
