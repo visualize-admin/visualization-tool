@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
-import { isNumber } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
 import {
   InteractiveFiltersState,
@@ -108,7 +107,7 @@ export const getWideData = ({
   groupedMap: Map<string, Record<string, ObservationValue>[]>;
   getSegment: (d: Observation) => string;
   getY: (d: Observation) => number | null;
-}) => {
+}): { [key: string]: ObservationValue }[] => {
   const wideArray = [];
   for (const [key, values] of groupedMap) {
     const keyObject = values.reduce(
