@@ -63,16 +63,22 @@ export const CellDesktop = ({
         </Flex>
       );
     case "heatmap":
+      const isNull = cell.value === null;
       return (
         <Flex
           sx={{
             alignItems: "center",
             justifyContent: "flex-end",
-            color:
-              hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
-                ? "#fff"
-                : "#000",
-            bg: colorScale ? colorScale(cell.value) : "primaryLight",
+            color: isNull
+              ? textColor
+              : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
+              ? "#fff"
+              : "#000",
+            bg: isNull
+              ? "monochrome100"
+              : colorScale
+              ? colorScale(cell.value)
+              : "monochrome100",
             textAlign: "right",
             fontWeight: textStyle,
             px: 3,
@@ -95,48 +101,39 @@ export const CellDesktop = ({
           {...cell.getCellProps()}
         >
           <Box>{formatNumber(cell.value)}</Box>
-          <Box
-            sx={{
-              width: "100%",
-              height: 18,
-              position: "relative",
-              bg: barShowBackground ? barColorBackground : "monochrome100",
-            }}
-          >
+          {cell.value !== null && (
             <Box
               sx={{
-                position: "absolute",
-                top: 0,
-                left: widthScale ? widthScale(Math.min(0, cell.value)) : 0,
-                width: widthScale
-                  ? Math.abs(widthScale(cell.value) - widthScale(0))
-                  : 0,
+                width: "100%",
                 height: 18,
-                bg: cell.value > 0 ? barColorPositive : barColorNegative,
-              }}
-            />
-            <Box
-              sx={{
-                position: "absolute",
-                top: "-2px",
-                left: widthScale ? widthScale(0) : 0,
-                width: "1px",
-                height: 22,
-                bg: "monochrome700",
-              }}
-            />
-            {/* <Box
-              sx={{
-                position: "absolute",
-                top: 12,
-                left: (widthScale ? widthScale(0) : 0) + 2,
-                color: "monochrome700",
-                fontSize: 1,
+                position: "relative",
+                bg: barShowBackground ? barColorBackground : "monochrome100",
               }}
             >
-              0
-            </Box> */}
-          </Box>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: widthScale ? widthScale(Math.min(0, cell.value)) : 0,
+                  width: widthScale
+                    ? Math.abs(widthScale(cell.value) - widthScale(0))
+                    : 0,
+                  height: 18,
+                  bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "-2px",
+                  left: widthScale ? widthScale(0) : 0,
+                  width: "1px",
+                  height: 22,
+                  bg: "monochrome700",
+                }}
+              />
+            </Box>
+          )}
         </Flex>
       );
     default:
