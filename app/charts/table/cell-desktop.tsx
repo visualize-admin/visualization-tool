@@ -104,7 +104,7 @@ export const CellDesktop = ({
           {cell.value !== null && (
             <Box
               sx={{
-                width: "100%",
+                width: widthScale?.range()[1] || "100%",
                 height: 18,
                 position: "relative",
                 bg: barShowBackground ? barColorBackground : "monochrome100",
@@ -114,9 +114,14 @@ export const CellDesktop = ({
                 sx={{
                   position: "absolute",
                   top: 0,
-                  left: widthScale ? widthScale(Math.min(0, cell.value)) : 0,
+                  left: widthScale
+                    ? widthScale(Math.min(widthScale.domain()[0], cell.value))
+                    : 0,
                   width: widthScale
-                    ? Math.abs(widthScale(cell.value) - widthScale(0))
+                    ? Math.abs(
+                        widthScale(cell.value) -
+                          widthScale(widthScale.domain()[0])
+                      )
                     : 0,
                   height: 18,
                   bg: cell.value > 0 ? barColorPositive : barColorNegative,
@@ -126,7 +131,7 @@ export const CellDesktop = ({
                 sx={{
                   position: "absolute",
                   top: "-2px",
-                  left: widthScale ? widthScale(0) : 0,
+                  left: widthScale ? widthScale(widthScale.domain()[0]) : 0,
                   width: "1px",
                   height: 22,
                   bg: "monochrome700",

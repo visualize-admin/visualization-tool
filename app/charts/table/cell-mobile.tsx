@@ -187,9 +187,14 @@ export const DDContent = ({
                 sx={{
                   position: "absolute",
                   top: 0,
-                  left: widthScale ? widthScale(Math.min(0, cell.value)) : 0,
+                  left: widthScale
+                    ? widthScale(Math.min(widthScale.domain()[0], cell.value))
+                    : 0,
                   width: widthScale
-                    ? Math.abs(widthScale(cell.value) - widthScale(0))
+                    ? Math.abs(
+                        widthScale(cell.value) -
+                          widthScale(widthScale.domain()[0])
+                      )
                     : 0,
                   height: 14,
                   bg: cell.value > 0 ? barColorPositive : barColorNegative,
@@ -199,7 +204,9 @@ export const DDContent = ({
                 sx={{
                   position: "absolute",
                   top: "-2px",
-                  left: widthScale ? widthScale(0) : 0,
+                  left: widthScale
+                    ? widthScale(Math.min(widthScale.domain()[0], cell.value))
+                    : 0,
                   width: "1px",
                   height: 18,
                   bg: "monochrome700",

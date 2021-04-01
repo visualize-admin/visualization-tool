@@ -18,6 +18,7 @@ import {
 } from "../../configurator";
 import {
   getColorInterpolator,
+  mkNumber,
   useFormatNumber,
   useOrderedTableColumns,
 } from "../../configurator/components/ui-helpers";
@@ -258,8 +259,14 @@ const useTableState = ({
             },
           };
         } else if (columnStyleType === "heatmap") {
-          const absMinValue = min(data, (d) => Math.abs(+d[iri])) || 0;
-          const absMaxValue = max(data, (d) => Math.abs(+d[iri])) || 1;
+          const absMinValue =
+            min(data, (d) =>
+              d[iri] !== null ? Math.abs(d[iri] as number) : 0
+            ) || 0;
+          const absMaxValue =
+            max(data, (d) =>
+              d[iri] !== null ? Math.abs(d[iri] as number) : 1
+            ) || 1;
           const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
           const colorScale = scaleDiverging(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).palette)
@@ -276,7 +283,13 @@ const useTableState = ({
         } else if (columnStyleType === "bar") {
           // The column width depends on the estimated width of the
           // longest value in the column, with a minimum of 150px.
-          const columnItems = [...new Set(data.map((d) => d[iri]))];
+          const columnItems = [
+            ...new Set(
+              data.map((d) =>
+                d !== null && d[iri] !== null ? mkNumber(d[iri]) : NaN
+              )
+            ),
+          ];
           const columnItemSizes = columnItems.map((item) => {
             const itemAsString =
               columnComponentType === "Measure"
@@ -289,10 +302,9 @@ const useTableState = ({
             BAR_CELL_PADDING * 2;
           // const hasNegativeValue =
           //   (min(data, (d) => Math.abs(+d[iri])) || 0) < 0;
+          const domain = extent(columnItems, (d) => d) as [number, number];
+          const widthScale = scaleLinear().domain(domain).range([0, width]);
 
-          const widthScale = scaleLinear()
-            .domain(extent(data, (d) => +d[iri]) as [number, number])
-            .range([0, width]);
           return {
             ...acc,
             [slugifiedIri]: {
