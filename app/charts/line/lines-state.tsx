@@ -132,12 +132,13 @@ const useLinesState = ({
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
     fields.x.componentIri;
   // y
-  const minValue = Math.min((min(preparedData, getY), 0));
+  const minValue = min(preparedData, getY)
+    ? Math.min(min(preparedData, getY) ?? 0, 0)
+    : 0;
   const maxValue = max(preparedData, getY) as number;
   const yDomain = [minValue, maxValue];
 
   const entireMaxValue = max(sortedData, getY) as number;
-
   const yScale = scaleLinear().domain(yDomain).nice();
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
