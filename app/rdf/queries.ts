@@ -29,7 +29,7 @@ const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 
 const createSource = () =>
   new Source({
-    sourceGraph: "https://lindas.admin.ch/foen/cube",
+    sourceGraph: "https://lindas.admin.ch/foen/cube/wsl",
     endpointUrl: SPARQL_ENDPOINT,
     queryOperation: "postUrlencoded",
     // user: '',
