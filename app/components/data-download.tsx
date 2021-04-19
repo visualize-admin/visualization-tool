@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Button } from "theme-ui";
+import { Box, Button, Link } from "theme-ui";
 import { csvFormat } from "d3";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
@@ -46,13 +46,46 @@ export const DataDownload = memo(
       const { title, dimensions, measures, observations } = data?.dataCubeByIri;
 
       return (
-        <DataDownloadInner
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-        />
+        <>
+          <DataDownloadInner
+            title={title}
+            observations={observations.data}
+            dimensions={dimensions}
+            measures={measures}
+            fields={chartConfig.fields}
+          />
+          {observations.sparqlEditorUrl && (
+            <>
+              <Box sx={{ display: "inline", mx: 1 }}>·</Box>
+              <Link
+                sx={{
+                  display: "inline",
+                  textDecoration: "none",
+                  color: "primary",
+                  textAlign: "left",
+                  fontFamily: "body",
+                  lineHeight: [1, 2, 2],
+                  fontWeight: "regular",
+                  fontSize: [1, 2, 2],
+                  border: "none",
+                  cursor: "pointer",
+                  mt: 2,
+                  p: 0,
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
+                }}
+                href={observations.sparqlEditorUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Trans id="button.download.runsparqlquery">
+                  Run SPARQL query
+                </Trans>
+              </Link>
+            </>
+          )}
+        </>
       );
     } else {
       return <DownloadButton onClick={() => {}}> </DownloadButton>;
@@ -123,11 +156,14 @@ export const DownloadButton = ({
       fontSize: [1, 2, 2],
       border: "none",
       cursor: "pointer",
-      mt: 2,
+      // mt: 2,
       p: 0,
       ":disabled": {
         cursor: "initial",
         color: "monochrome500",
+      },
+      "&:hover": {
+        textDecoration: "underline",
       },
     }}
     onClick={onClick}

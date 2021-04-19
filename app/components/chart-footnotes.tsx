@@ -30,7 +30,7 @@ export const ChartFootnotes = ({
     const { dataCubeByIri } = data;
 
     return (
-      <Box sx={{ my: 2 }}>
+      <Box sx={{ mt: 2 }}>
         <Text variant="meta" color="monochrome600">
           <Trans id="metadata.dataset">Dataset</Trans>: {dataCubeByIri.title}
         </Text>
@@ -46,7 +46,7 @@ export const ChartFootnotes = ({
           )}
         </Text>
 
-        <Box>
+        <Box sx={{ mt: 2 }}>
           <DataDownload dataSetIri={dataSetIri} chartConfig={chartConfig} />
           {configKey && shareUrl && (
             <>

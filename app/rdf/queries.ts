@@ -16,7 +16,7 @@ import {
   Observation,
   parseObservationValue,
 } from "../domain/data";
-import { SPARQL_ENDPOINT } from "../domain/env";
+import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
@@ -471,4 +471,14 @@ const buildFilters = ({
   });
 
   return filterEntries;
+};
+
+export const getSparqlEditorUrl = ({
+  query,
+}: {
+  query: string;
+}): string | null => {
+  return SPARQL_EDITOR
+    ? `${SPARQL_EDITOR}#query=${encodeURIComponent(query)}`
+    : null;
 };

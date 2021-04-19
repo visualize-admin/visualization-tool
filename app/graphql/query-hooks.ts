@@ -30,6 +30,8 @@ export type ObservationsQuery = {
   rawData: Array<Scalars['RawObservation']>;
   /** The generated SPARQL query string of the current query (doesn't fetch any data) */
   sparql: Scalars['String'];
+  /** The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly */
+  sparqlEditorUrl?: Maybe<Scalars['String']>;
 };
 
 export enum DataCubePublicationStatus {
@@ -307,7 +309,7 @@ export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: M
     )>, measures: Array<(
       { __typename: 'Measure' }
       & ComponentFields_Measure_Fragment
-    )>, observations: { __typename: 'ObservationsQuery', data: Array<any> } }> };
+    )>, observations: { __typename: 'ObservationsQuery', data: Array<any>, sparqlEditorUrl?: Maybe<string> } }> };
 
 export const ComponentFieldsFragmentDoc = gql`
     fragment componentFields on Component {
@@ -461,6 +463,7 @@ export const DataCubeObservationsDocument = gql`
     }
     observations(measures: $measures, filters: $filters) {
       data
+      sparqlEditorUrl
     }
   }
 }
