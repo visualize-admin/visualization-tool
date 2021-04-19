@@ -8,6 +8,7 @@ import {
   getCubeDimensionValues,
   getCubeObservations,
   getCubes,
+  getSparqlEditorUrl,
 } from "../rdf/queries";
 import {
   DataCubeResolvers,
@@ -215,6 +216,8 @@ export const resolvers: Resolvers = {
     rawData: async ({ data: { observationsRaw } }) => observationsRaw,
     sparql: async ({ data: { query } }) =>
       query.replace(/\n+/g, " ").replace(/"/g, "'"),
+    sparqlEditorUrl: async ({ data: { query } }) =>
+      getSparqlEditorUrl({ query }),
   },
   Dimension: {
     __resolveType({ data: { dataKind, scaleType, dataType } }) {

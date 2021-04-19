@@ -10,6 +10,8 @@ type ObservationsQuery {
   rawData: [RawObservation!]!
   "The generated SPARQL query string of the current query (doesn't fetch any data)"
   sparql: String!
+  "The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly"
+  sparqlEditorUrl: String
 }
 
 enum DataCubePublicationStatus {

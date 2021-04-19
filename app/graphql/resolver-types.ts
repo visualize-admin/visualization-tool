@@ -35,6 +35,8 @@ export type ObservationsQuery = {
   rawData: Array<Scalars['RawObservation']>;
   /** The generated SPARQL query string of the current query (doesn't fetch any data) */
   sparql: Scalars['String'];
+  /** The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly */
+  sparqlEditorUrl?: Maybe<Scalars['String']>;
 };
 
 export enum DataCubePublicationStatus {
@@ -282,6 +284,7 @@ export type ObservationsQueryResolvers<ContextType = any, ParentType extends Res
   data?: Resolver<Array<ResolversTypes['Observation']>, ParentType, ContextType>;
   rawData?: Resolver<Array<ResolversTypes['RawObservation']>, ParentType, ContextType>;
   sparql?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  sparqlEditorUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

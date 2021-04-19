@@ -129,6 +129,7 @@ query DataCubeObservations(
     }
     observations(measures: $measures, filters: $filters) {
       data
+      sparqlEditorUrl
     }
   }
 }
