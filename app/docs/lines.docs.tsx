@@ -6,11 +6,8 @@ import { AxisHeightLinear } from "../charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "../charts/shared/axis-width-time";
 import { BrushTime } from "../charts/shared/brush";
 import { ChartContainer, ChartSvg } from "../charts/shared/containers";
-import { HoverDotMultiple } from "../charts/shared/interaction/hover-dots-multiple";
-import { Ruler } from "../charts/shared/interaction/ruler";
-import { Tooltip } from "../charts/shared/interaction/tooltip";
 import { InteractiveLegendColor } from "../charts/shared/legend-color";
-import { InteractionHorizontal } from "../charts/shared/overlay-horizontal";
+import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const Docs = () => markdown`
@@ -19,39 +16,41 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <LineChart
-      data={observations}
-      fields={fields}
-      dimensions={dimensions}
-      measures={measures}
-      interactiveFiltersConfig={{
-        legend: { active: false, componentIri: "" },
-        time: {
-          active: false,
-          componentIri: "",
-          presets: { type: "range", from: "", to: "" },
-        },
-        dataFilters: { active: false, componentIris: [] },
-      }}
-      aspectRatio={0.4}
-    >
-      <ChartContainer>
-        <ChartSvg>
-          <BrushTime />
-          <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-          <Lines />
-          {/* <InteractionHorizontal /> */}
-        </ChartSvg>
+    <InteractiveFiltersProvider>
+      <LineChart
+        data={observations}
+        fields={fields}
+        dimensions={dimensions}
+        measures={measures}
+        interactiveFiltersConfig={{
+          legend: { active: true, componentIri: "" },
+          time: {
+            active: true,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+          dataFilters: { active: false, componentIris: [] },
+        }}
+        aspectRatio={0.4}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            <BrushTime />
+            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+            <Lines />
+            {/* <InteractionHorizontal /> */}
+          </ChartSvg>
 
-        {/* <Ruler />
+          {/* <Ruler />
 
         <HoverDotMultiple />
 
         <Tooltip type={fields.segment ? "multiple" : "single"} /> */}
-      </ChartContainer>
+        </ChartContainer>
 
-      {fields.segment && <InteractiveLegendColor symbol="line" />}
-    </LineChart>
+        {fields.segment && <InteractiveLegendColor symbol="line" />}
+      </LineChart>
+    </InteractiveFiltersProvider>
   </ReactSpecimen>
 )}
 `;

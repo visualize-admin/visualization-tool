@@ -17,6 +17,7 @@ import {
   LegendColor,
 } from "../charts/shared/legend-color";
 import { InteractionVoronoi } from "../charts/shared/overlay-voronoi";
+import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 import { ComponentFieldsFragment } from "../graphql/query-hooks";
 
 export const Docs = () => markdown`
@@ -25,35 +26,39 @@ export const Docs = () => markdown`
 
 ${(
   <ReactSpecimen span={6}>
-    <ScatterplotChart
-      data={scatterplotObservations}
-      fields={scatterplotFields}
-      dimensions={scatterplotDimensions}
-      measures={scatterplotMeasures}
-      interactiveFiltersConfig={{
-        legend: { active: false, componentIri: "" },
-        time: {
-          active: false,
-          componentIri: "",
-          presets: { type: "range", from: "", to: "" },
-        },
-        dataFilters: { active: false, componentIris: [] },
-      }}
-      aspectRatio={1}
-    >
-      <ChartContainer>
-        <ChartSvg>
-          <AxisWidthLinear />
-          <AxisHeightLinear />
-          <AxisWidthLinearDomain />
-          <AxisHeightLinearDomain />
-          <Scatterplot />
-          <InteractionVoronoi />
-        </ChartSvg>
-        <Tooltip type="single" />
-      </ChartContainer>
-      {scatterplotFields.segment && <InteractiveLegendColor symbol="circle" />}
-    </ScatterplotChart>
+    <InteractiveFiltersProvider>
+      <ScatterplotChart
+        data={scatterplotObservations}
+        fields={scatterplotFields}
+        dimensions={scatterplotDimensions}
+        measures={scatterplotMeasures}
+        interactiveFiltersConfig={{
+          legend: { active: true, componentIri: "" },
+          time: {
+            active: false,
+            componentIri: "",
+            presets: { type: "range", from: "", to: "" },
+          },
+          dataFilters: { active: false, componentIris: [] },
+        }}
+        aspectRatio={1}
+      >
+        <ChartContainer>
+          <ChartSvg>
+            <AxisWidthLinear />
+            <AxisHeightLinear />
+            <AxisWidthLinearDomain />
+            <AxisHeightLinearDomain />
+            <Scatterplot />
+            <InteractionVoronoi />
+          </ChartSvg>
+          <Tooltip type="single" />
+        </ChartContainer>
+        {scatterplotFields.segment && (
+          <InteractiveLegendColor symbol="circle" />
+        )}
+      </ScatterplotChart>
+    </InteractiveFiltersProvider>
   </ReactSpecimen>
 )}
 `;

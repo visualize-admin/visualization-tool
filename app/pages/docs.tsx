@@ -78,6 +78,11 @@ const pages: ConfigPageOrGroup[] = [
     title: "Charts",
     pages: [
       {
+        path: "/charts/types",
+        title: "Types",
+        content: require("../docs/chart-types.mdx"),
+      },
+      {
         path: "/charts/annotations",
         title: "Annotations",
         content: require("../docs/annotations.docs"),
