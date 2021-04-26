@@ -488,6 +488,6 @@ export const getSparqlEditorUrl = ({
   query: string;
 }): string | null => {
   return SPARQL_EDITOR
-    ? `${SPARQL_EDITOR}#query=${encodeURIComponent(query)}`
+    ? `${SPARQL_EDITOR}#query=${encodeURIComponent(query)}&requestMethod=POST`
     : null;
 };
