@@ -104,7 +104,7 @@ const useScatterplotState = ({
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const hasSegment = fields.segment ? true : false;
-  const segments = sortedData.map(getSegment); // get *all* segments
+  const segments = [...new Set(sortedData.map(getSegment))]; // get *all* segments
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
@@ -120,7 +120,7 @@ const useScatterplotState = ({
 
       return {
         label: segment,
-        color: fields.segment?.colorMapping![dvIri] || "#006699",
+        color: fields.segment!.colorMapping![dvIri] ?? "#006699",
       };
     });
 
