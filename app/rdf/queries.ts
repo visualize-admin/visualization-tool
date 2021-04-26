@@ -29,7 +29,6 @@ const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 
 const createSource = () =>
   new Source({
-    sourceGraph: "https://lindas.admin.ch/foen/cube",
     endpointUrl: SPARQL_ENDPOINT,
     queryOperation: "postUrlencoded",
     // user: '',
@@ -49,6 +48,16 @@ export const getCubes = async ({
     filters: [
       // Deprecated cubes have a schema.org/validThrough property; Only show cubes that don't have it
       Cube.filter.noValidThrough(),
+      // Only show cubes relevant to visualize
+      ({ cube, index }: $FixMe) => {
+        return [
+          [
+            cube,
+            ns.schema.workExample,
+            rdf.namedNode("https://ld.admin.ch/application/visualize"),
+          ],
+        ];
+      },
     ].concat(
       includeDrafts
         ? []
