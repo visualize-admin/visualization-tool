@@ -48,8 +48,10 @@ export type DataCube = {
   __typename?: 'DataCube';
   iri: Scalars['String'];
   title: Scalars['String'];
-  contact?: Maybe<Scalars['String']>;
-  source?: Maybe<Scalars['String']>;
+  version?: Maybe<Scalars['String']>;
+  contactName?: Maybe<Scalars['String']>;
+  contactEmail?: Maybe<Scalars['String']>;
+  publisher?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
   publicationStatus: DataCubePublicationStatus;
@@ -291,8 +293,10 @@ export type ObservationsQueryResolvers<ContextType = any, ParentType extends Res
 export type DataCubeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataCube'] = ResolversParentTypes['DataCube']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  contact?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  source?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  contactName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  contactEmail?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  publisher?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   datePublished?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   publicationStatus?: Resolver<ResolversTypes['DataCubePublicationStatus'], ParentType, ContextType>;

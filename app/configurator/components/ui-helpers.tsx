@@ -103,6 +103,26 @@ export const useFormatFullDateAuto = () => {
 };
 
 /**
+ * Parses and formats ISO *dates* of form 2002-01-01.
+ */
+export const useFormatDate = () => {
+  const locale = useLocale();
+  const formatter = useMemo(() => {
+    const { format, parse } = getD3TimeFormatLocale(locale);
+
+    const parseDate = parse("%Y-%m-%d");
+    const formatDate = format("%d.%m.%Y");
+
+    return (date: string) => {
+      const d = parseDate(date);
+      return d ? formatDate(d) : null;
+    };
+  }, [locale]);
+
+  return formatter;
+};
+
+/**
  * Formats dates automatically based on their precision in SHORT form.
  *
  * Use wherever dates are displayed in context of other dates (e.g. on time axes)

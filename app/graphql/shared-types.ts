@@ -13,11 +13,16 @@ export type ResolvedDataCube = {
     identifier: string;
     title: string;
     description: string;
+    version?: string;
     datePublished?: string;
     publicationStatus: DataCubePublicationStatus;
     theme?: string;
     versionHistory?: string;
-    contactPoint?: string;
+    contactPoint?: {
+      name?: string;
+      email?: string;
+    };
+    publisher?: string;
     landingPage?: string;
     keywords?: string[];
   };

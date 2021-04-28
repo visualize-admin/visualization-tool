@@ -37,11 +37,11 @@ export const ChartFootnotes = ({
 
         <Text variant="meta" color="monochrome600">
           <Trans id="metadata.source">Source</Trans>:{" "}
-          {dataCubeByIri.source && (
+          {dataCubeByIri.publisher && (
             <Box
               as="span"
               sx={{ "> a": { color: "monochrome600" } }}
-              dangerouslySetInnerHTML={{ __html: dataCubeByIri.source }}
+              dangerouslySetInnerHTML={{ __html: dataCubeByIri.publisher }}
             ></Box>
           )}
         </Text>

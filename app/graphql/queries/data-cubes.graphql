@@ -65,7 +65,10 @@ query DataCubeMetadata($iri: String!, $locale: String!) {
     iri
     title
     description
-    source
+    publisher
+    version
+    contactName
+    contactEmail
     datePublished
     publicationStatus
   }
@@ -88,7 +91,7 @@ query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
   dataCubeByIri(iri: $iri, locale: $locale) {
     iri
     title
-    source
+    publisher
     dimensions {
       ...dimensionFieldsWithValues
     }
@@ -120,7 +123,6 @@ query DataCubeObservations(
     iri
     title
     description
-    contact
     dimensions {
       ...dimensionFieldsWithValues
     }

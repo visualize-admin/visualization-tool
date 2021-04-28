@@ -43,8 +43,10 @@ export type DataCube = {
   __typename: 'DataCube';
   iri: Scalars['String'];
   title: Scalars['String'];
-  contact?: Maybe<Scalars['String']>;
-  source?: Maybe<Scalars['String']>;
+  version?: Maybe<Scalars['String']>;
+  contactName?: Maybe<Scalars['String']>;
+  contactEmail?: Maybe<Scalars['String']>;
+  publisher?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
   publicationStatus: DataCubePublicationStatus;
@@ -217,7 +219,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, source?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
+export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
 
 export type DataCubeMetadataWithComponentsQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -248,7 +250,7 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, source?: Maybe<string>, dimensions: Array<(
+export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, dimensions: Array<(
       { __typename: 'NominalDimension' }
       & DimensionFieldsWithValues_NominalDimension_Fragment
     ) | (
@@ -294,7 +296,7 @@ export type DataCubeObservationsQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, contact?: Maybe<string>, dimensions: Array<(
+export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, dimensions: Array<(
       { __typename: 'NominalDimension' }
       & DimensionFieldsWithValues_NominalDimension_Fragment
     ) | (
@@ -387,7 +389,10 @@ export const DataCubeMetadataDocument = gql`
     iri
     title
     description
-    source
+    publisher
+    version
+    contactName
+    contactEmail
     datePublished
     publicationStatus
   }
@@ -420,7 +425,7 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
   dataCubeByIri(iri: $iri, locale: $locale) {
     iri
     title
-    source
+    publisher
     dimensions {
       ...dimensionFieldsWithValues
     }
@@ -454,7 +459,6 @@ export const DataCubeObservationsDocument = gql`
     iri
     title
     description
-    contact
     dimensions {
       ...dimensionFieldsWithValues
     }

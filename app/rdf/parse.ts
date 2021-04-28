@@ -29,6 +29,7 @@ export const parseCube = ({
       identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
       title: cube.out(ns.dcterms.title, outOpts)?.value ?? "[NO TITLE]",
       description: cube.out(ns.dcterms.description, outOpts)?.value ?? "",
+      version: `${cube.out(ns.schema.version)?.value}`,
       publicationStatus:
         ns.adminTerm("CreativeWorkStatus/Published").value ===
         cube.out(ns.schema.creativeWorkStatus)?.value
@@ -37,7 +38,11 @@ export const parseCube = ({
       theme: cube.out(ns.dcat.theme)?.value,
       datePublished: cube.out(ns.schema.datePublished)?.value,
       versionHistory: cube.in(ns.schema.hasPart)?.value,
-      contactPoint: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,
+      contactPoint: {
+        name: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,
+        email: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.hasEmail)?.value,
+      },
+      publisher: cube.out(ns.dcterms.publisher)?.value,
       landingPage: cube.out(ns.dcat.landingPage)?.value,
       keywords: cube.out(ns.dcat.keyword)?.values,
     },

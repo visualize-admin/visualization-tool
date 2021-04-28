@@ -1,15 +1,14 @@
 import { Trans } from "@lingui/macro";
-import { Box } from "theme-ui";
-
 import { ReactNode } from "react";
+import { Box } from "theme-ui";
+import { Loading } from "../../components/hint";
+import { useFormatDate } from "../../configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-import { Loading } from "../../components/hint";
-import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
 
 export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
-  const formatDate = useFormatFullDateAuto();
+  const formatDate = useFormatDate();
   const [{ data }] = useDataCubeMetadataQuery({
     variables: { iri: dataSetIri, locale },
   });
@@ -22,7 +21,7 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
         </DataSetMetadataTitle>
         <DataSetMetadataBody>{data.dataCubeByIri.title}</DataSetMetadataBody>
 
-        {data.dataCubeByIri.source && (
+        {data.dataCubeByIri.publisher && (
           <>
             <DataSetMetadataTitle>
               <Trans id="dataset.metadata.source">Source</Trans>
@@ -30,7 +29,9 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
             <DataSetMetadataBody>
               <Box
                 sx={{ "> a": { color: "monochrome900" } }}
-                dangerouslySetInnerHTML={{ __html: data.dataCubeByIri.source }}
+                dangerouslySetInnerHTML={{
+                  __html: data.dataCubeByIri.publisher,
+                }}
               ></Box>
             </DataSetMetadataBody>
           </>
@@ -42,7 +43,18 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
               <Trans id="dataset.metadata.date.created">Date Created</Trans>
             </DataSetMetadataTitle>
             <DataSetMetadataBody>
-              {formatDate(new Date(data.dataCubeByIri.datePublished))}
+              {formatDate(data.dataCubeByIri.datePublished)}
+            </DataSetMetadataBody>
+          </>
+        )}
+
+        {data.dataCubeByIri.version && (
+          <>
+            <DataSetMetadataTitle>
+              <Trans id="dataset.metadata.version">Version</Trans>
+            </DataSetMetadataTitle>
+            <DataSetMetadataBody>
+              {data.dataCubeByIri.version}
             </DataSetMetadataBody>
           </>
         )}

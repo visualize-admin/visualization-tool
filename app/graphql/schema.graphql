@@ -22,8 +22,10 @@ enum DataCubePublicationStatus {
 type DataCube {
   iri: String!
   title: String!
-  contact: String
-  source: String
+  version: String
+  contactName: String
+  contactEmail: String
+  publisher: String
   description: String
   datePublished: String
   publicationStatus: DataCubePublicationStatus!
