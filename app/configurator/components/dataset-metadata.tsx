@@ -21,6 +21,13 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
         </DataSetMetadataTitle>
         <DataSetMetadataBody>{data.dataCubeByIri.title}</DataSetMetadataBody>
 
+        <DataSetMetadataTitle>
+          <Trans id="dataset.metadata.description">Description</Trans>
+        </DataSetMetadataTitle>
+        <DataSetMetadataBody>
+          {data.dataCubeByIri.description || "–"}
+        </DataSetMetadataBody>
+
         {data.dataCubeByIri.publisher && (
           <>
             <DataSetMetadataTitle>
@@ -37,27 +44,21 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
           </>
         )}
 
-        {data.dataCubeByIri.datePublished && (
-          <>
-            <DataSetMetadataTitle>
-              <Trans id="dataset.metadata.date.created">Date Created</Trans>
-            </DataSetMetadataTitle>
-            <DataSetMetadataBody>
-              {formatDate(data.dataCubeByIri.datePublished)}
-            </DataSetMetadataBody>
-          </>
-        )}
+        <DataSetMetadataTitle>
+          <Trans id="dataset.metadata.date.created">Date Created</Trans>
+        </DataSetMetadataTitle>
+        <DataSetMetadataBody>
+          {data.dataCubeByIri.datePublished
+            ? formatDate(data.dataCubeByIri.datePublished) ?? "–"
+            : "–"}
+        </DataSetMetadataBody>
 
-        {data.dataCubeByIri.version && (
-          <>
-            <DataSetMetadataTitle>
-              <Trans id="dataset.metadata.version">Version</Trans>
-            </DataSetMetadataTitle>
-            <DataSetMetadataBody>
-              {data.dataCubeByIri.version}
-            </DataSetMetadataBody>
-          </>
-        )}
+        <DataSetMetadataTitle>
+          <Trans id="dataset.metadata.version">Version</Trans>
+        </DataSetMetadataTitle>
+        <DataSetMetadataBody>
+          {data.dataCubeByIri.version ?? "–"}
+        </DataSetMetadataBody>
       </Box>
     );
   } else {

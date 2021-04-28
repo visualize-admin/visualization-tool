@@ -29,7 +29,7 @@ export const parseCube = ({
       identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
       title: cube.out(ns.dcterms.title, outOpts)?.value ?? "[NO TITLE]",
       description: cube.out(ns.dcterms.description, outOpts)?.value ?? "",
-      version: `${cube.out(ns.schema.version)?.value}`,
+      version: cube.out(ns.schema.version)?.value,
       publicationStatus:
         ns.adminTerm("CreativeWorkStatus/Published").value ===
         cube.out(ns.schema.creativeWorkStatus)?.value
