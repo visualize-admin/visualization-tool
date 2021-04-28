@@ -2,7 +2,7 @@ import { schema } from "@tpluscode/rdf-ns-builders";
 import { sparql } from "@tpluscode/rdf-string";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { groups } from "d3";
-import { NamedNode, Term } from "rdf-js";
+import { Literal, NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { getQueryLocales } from "./parse";
 import { sparqlClient } from "./sparql-client";
@@ -10,8 +10,8 @@ import { sparqlClient } from "./sparql-client";
 const BATCH_SIZE = 500;
 
 interface ResourceLabel {
-  iri: Term;
-  label?: Term;
+  iri: NamedNode;
+  label?: Literal;
 }
 
 /**
@@ -28,7 +28,7 @@ export async function loadResourceLabels({
   labelTerm = schema.name,
   client = sparqlClient,
 }: {
-  ids: Term[];
+  ids: NamedNode[];
   locale: string;
   labelTerm?: NamedNode;
   client?: ParsingClient;
