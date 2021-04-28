@@ -493,6 +493,8 @@ const buildFilters = ({
   filters: Filters;
   locale: string;
 }): Filter[] => {
+  const lookupSource = LookupSource.fromSource(cube.source);
+
   const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
     const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);
     if (!cubeDimension) {
@@ -504,6 +506,14 @@ const buildFilters = ({
     if (!dimension) {
       return [];
     }
+
+    // FIXME: Adding this dimension will make the query return nothing for dimensions that don't have it (no way to make it optional)
+    const sameAsDimension = view.createDimension({
+      source: lookupSource,
+      path: ns.schema.sameAs,
+      join: dimension,
+      as: labelDimensionIri(dimIri + "/wtf"),
+    });
 
     const parsedCubeDimension = parseCubeDimension({
       dim: cubeDimension,
@@ -530,7 +540,7 @@ const buildFilters = ({
 
     const selectedValues =
       filter.type === "single"
-        ? [dimension.filter.eq(toRDFValue(filter.value))]
+        ? [sameAsDimension.filter.eq(toRDFValue(filter.value))]
         : filter.type === "multi"
         ? // If values is an empty object, we filter by something that doesn't exist
           [
