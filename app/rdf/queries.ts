@@ -21,6 +21,7 @@ import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
+import { loadUnversionedResources } from "./query-sameas";
 
 const NULL_DIMENSION_VALUE = "NULL";
 
@@ -260,28 +261,47 @@ const getCubeDimensionValuesWithLabels = async ({
     );
   }
 
-  const values =
-    dimensionValueNamedNodes.length > 0
-      ? (
-          await loadResourceLabels({ ids: dimensionValueNamedNodes, locale })
-        ).map((vl) => {
-          return { value: vl.iri.value, label: vl.label?.value ?? "" };
-        })
-      : dimensionValueLiterals.length > 0
-      ? dimensionValueLiterals.map((v) => {
-          return ns.cube.Undefined.equals(v.datatype)
-            ? {
-                value: NULL_DIMENSION_VALUE, // We use a known string here because actual null does not work as value in UI inputs.
-                label: "–",
-              }
-            : {
-                value: v.value,
-                label: v.value,
-              };
-        })
-      : [];
+  if (dimensionValueNamedNodes.length > 0) {
+    const [labels, unversioned] = await Promise.all([
+      loadResourceLabels({ ids: dimensionValueNamedNodes, locale }),
+      loadUnversionedResources({ ids: dimensionValueNamedNodes }),
+    ]);
 
-  return values;
+    const labelLookup = new Map(
+      labels.map(({ iri, label }) => {
+        return [iri.value, label?.value];
+      })
+    );
+
+    const unversionedLookup = new Map(
+      unversioned.map(({ iri, sameAs }) => {
+        return [iri.value, sameAs?.value];
+      })
+    );
+
+    // console.log(unversioned);
+
+    return dimensionValueNamedNodes.map((iri) => {
+      return {
+        value: unversionedLookup.get(iri.value) ?? iri.value,
+        label: labelLookup.get(iri.value) ?? "",
+      };
+    });
+  } else if (dimensionValueLiterals.length > 0) {
+    return dimensionValueLiterals.map((v) => {
+      return ns.cube.Undefined.equals(v.datatype)
+        ? {
+            value: NULL_DIMENSION_VALUE, // We use a known string here because actual null does not work as value in UI inputs.
+            label: "–",
+          }
+        : {
+            value: v.value,
+            label: v.value,
+          };
+    });
+  }
+
+  return [];
 };
 
 export const getCubeObservations = async ({
