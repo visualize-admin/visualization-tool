@@ -468,14 +468,13 @@ const buildFilters = ({
                 : [rdf.namedNode("EMPTY_VALUE")]
             ),
           ]
+        : filter.type === "range"
+        ? [
+            dimension.filter.gte(toRDFValue(filter.from)),
+            dimension.filter.lte(toRDFValue(filter.to)),
+          ]
         : [];
 
-    // FIXME: why doesn't .equals work for date types but .in does?
-    // Temporary solution: filter everything usin .in!
-    // return selectedValues.length === 1
-    //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
-    //   :
-    // return selectedValues.length > 0 ? [dimension.in(selectedValues)] : [];
     return selectedValues;
   });
 
