@@ -4,9 +4,18 @@ import { useCallback, useMemo } from "react";
 import { Box, Button } from "theme-ui";
 import { getFilterValue, useConfiguratorState } from "..";
 import { Loading } from "../../components/hint";
-import { useDimensionValuesQuery } from "../../graphql/query-hooks";
+import {
+  useDimensionValuesQuery,
+  useTemporalDimensionValuesQuery,
+} from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
+import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval-brush";
 import { MultiFilterField, SingleFilterField } from "./field";
+import {
+  getTimeInterval,
+  useTimeFormatLocale,
+  useTimeParse,
+} from "./ui-helpers";
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 
@@ -112,6 +121,80 @@ export const DimensionValuesMultiFilter = ({
           }
         })}
       </>
+    );
+  } else {
+    return <Loading />;
+  }
+};
+
+export const TimeFilter = ({
+  dataSetIri,
+  dimensionIri,
+}: {
+  dataSetIri: string;
+  dimensionIri: string;
+}) => {
+  const locale = useLocale();
+  const formatLocale = useTimeFormatLocale();
+  const [state, dispatch] = useConfiguratorState();
+
+  const setFilterRange = useCallback(
+    ([from, to]: [string, string]) => {
+      dispatch({
+        type: "CHART_CONFIG_FILTER_SET_RANGE",
+        value: {
+          dimensionIri,
+          from,
+          to,
+        },
+      });
+    },
+    [dispatch, dimensionIri]
+  );
+
+  const [{ data }] = useTemporalDimensionValuesQuery({
+    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+  });
+
+  const dimension = data?.dataCubeByIri?.dimensionByIri;
+
+  if (
+    dimension &&
+    dimension.__typename === "TemporalDimension" &&
+    state.state === "CONFIGURING_CHART"
+  ) {
+    const { timeUnit, timeFormat } = dimension;
+
+    const activeFilter = getFilterValue(state, dimension.iri);
+
+    const timeInterval = getTimeInterval(timeUnit);
+
+    const parse = formatLocale.parse(timeFormat);
+    // TODO use localized time format
+    const format = formatLocale.format(timeFormat);
+
+    const from = parse(dimension.values[0].value);
+    const to = parse(dimension.values[1].value);
+
+    if (!from || !to) {
+      return null;
+    }
+
+    const timeRange =
+      activeFilter && activeFilter.type === "range"
+        ? [parse(activeFilter.from)!, parse(activeFilter.to)!]
+        : [from, to];
+
+    return (
+      <Box>
+        {format(from)} – {format(to)} ({timeUnit})
+        <EditorIntervalBrush
+          timeExtent={[from, to]}
+          timeRange={timeRange}
+          timeInterval={timeInterval}
+          onChange={([from, to]) => setFilterRange([format(from), format(to)])}
+        />
+      </Box>
     );
   } else {
     return <Loading />;

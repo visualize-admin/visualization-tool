@@ -113,6 +113,22 @@ query DimensionValues(
   }
 }
 
+query TemporalDimensionValues(
+  $dataCubeIri: String!
+  $dimensionIri: String!
+  $locale: String!
+) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
+    dimensionByIri(iri: $dimensionIri) {
+      ... on TemporalDimension {
+        ...dimensionFieldsWithValues
+        timeUnit
+        timeFormat
+      }
+    }
+  }
+}
+
 query DataCubeObservations(
   $iri: String!
   $locale: String!

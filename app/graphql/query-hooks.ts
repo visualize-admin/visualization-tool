@@ -295,6 +295,18 @@ export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
       & DimensionFieldsWithValues_Measure_Fragment
     )> }> };
 
+export type TemporalDimensionValuesQueryVariables = Exact<{
+  dataCubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  locale: Scalars['String'];
+}>;
+
+
+export type TemporalDimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'NominalDimension' } | { __typename: 'OrdinalDimension' } | (
+      { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
+      & DimensionFieldsWithValues_TemporalDimension_Fragment
+    ) | { __typename: 'Measure' }> }> };
+
 export type DataCubeObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
@@ -459,6 +471,23 @@ export const DimensionValuesDocument = gql`
 
 export function useDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<DimensionValuesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DimensionValuesQuery>({ query: DimensionValuesDocument, ...options });
+};
+export const TemporalDimensionValuesDocument = gql`
+    query TemporalDimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
+    dimensionByIri(iri: $dimensionIri) {
+      ... on TemporalDimension {
+        ...dimensionFieldsWithValues
+        timeUnit
+        timeFormat
+      }
+    }
+  }
+}
+    ${DimensionFieldsWithValuesFragmentDoc}`;
+
+export function useTemporalDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<TemporalDimensionValuesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<TemporalDimensionValuesQuery>({ query: TemporalDimensionValuesDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
     query DataCubeObservations($iri: String!, $locale: String!, $measures: [String!]!, $filters: Filters) {
