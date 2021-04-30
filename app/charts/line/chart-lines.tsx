@@ -16,7 +16,7 @@ import {
 import { isNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import {
-  ComponentFieldsFragment,
+  DimensionFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -97,8 +97,8 @@ export const ChartLines = memo(
     interactiveFiltersConfig,
   }: {
     observations: Observation[];
-    dimensions: ComponentFieldsFragment[];
-    measures: ComponentFieldsFragment[];
+    dimensions: DimensionFieldsFragment[];
+    measures: DimensionFieldsFragment[];
     fields: LineFields;
     interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {

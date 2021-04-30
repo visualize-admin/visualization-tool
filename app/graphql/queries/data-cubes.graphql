@@ -21,7 +21,7 @@ query DataCubes(
   }
 }
 
-fragment componentFields on Component {
+fragment dimensionFields on Dimension {
   iri
   label
 }
@@ -39,10 +39,10 @@ query DataCubePreview($iri: String!, $locale: String!) {
     description
     publicationStatus
     dimensions {
-      ...componentFields
+      ...dimensionFields
     }
     measures {
-      ...componentFields
+      ...dimensionFields
     }
   }
 }
@@ -79,10 +79,10 @@ query DataCubeMetadataWithComponents($iri: String!, $locale: String!) {
     iri
     title
     dimensions {
-      ...componentFields
+      ...dimensionFields
     }
     measures {
-      ...componentFields
+      ...dimensionFields
     }
   }
 }
@@ -96,7 +96,7 @@ query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
       ...dimensionFieldsWithValues
     }
     measures {
-      ...componentFields
+      ...dimensionFields
     }
   }
 }
@@ -127,7 +127,7 @@ query DataCubeObservations(
       ...dimensionFieldsWithValues
     }
     measures {
-      ...componentFields
+      ...dimensionFields
     }
     observations(measures: $measures, filters: $filters) {
       data

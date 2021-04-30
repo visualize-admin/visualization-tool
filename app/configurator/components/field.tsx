@@ -13,7 +13,7 @@ import {
   useSingleFilterField,
 } from "..";
 import { Checkbox, Input, Label, Radio, Select } from "../../components/form";
-import { ComponentFieldsFragment } from "../../graphql/query-hooks";
+import { DimensionFieldsFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import {
@@ -31,7 +31,7 @@ export const ControlTabField = ({
   disabled,
   labelId,
 }: {
-  component?: ComponentFieldsFragment;
+  component?: DimensionFieldsFragment;
   value: string;
   disabled?: boolean;
   labelId: string;

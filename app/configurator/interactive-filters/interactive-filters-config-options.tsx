@@ -12,7 +12,7 @@ import { getFieldComponentIri, getFieldComponentIris } from "../../charts";
 import { Checkbox } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
-  ComponentFieldsFragment,
+  DimensionFieldsFragment,
   useDataCubeMetadataWithComponentsQuery,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
@@ -228,7 +228,7 @@ const InteractiveDataFiltersToggle = ({
   path: "dataFilters";
   defaultChecked?: boolean;
   disabled?: boolean;
-  dimensions: ComponentFieldsFragment[];
+  dimensions: DimensionFieldsFragment[];
 }) => {
   const fieldProps = useInteractiveDataFiltersToggle({
     path,

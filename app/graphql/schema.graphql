@@ -39,11 +39,6 @@ type DataCube {
   measures: [Measure!]!
 }
 
-interface Component {
-  iri: String!
-  label: String!
-}
-
 interface Dimension {
   iri: String!
   label: String!
@@ -52,7 +47,7 @@ interface Dimension {
   values: [DimensionValue!]!
 }
 
-type NominalDimension implements Component & Dimension {
+type NominalDimension implements Dimension {
   iri: String!
   label: String!
   unit: String
@@ -60,7 +55,7 @@ type NominalDimension implements Component & Dimension {
   values: [DimensionValue!]!
 }
 
-type OrdinalDimension implements Component & Dimension {
+type OrdinalDimension implements Dimension {
   iri: String!
   label: String!
   unit: String
@@ -68,15 +63,27 @@ type OrdinalDimension implements Component & Dimension {
   values: [DimensionValue!]!
 }
 
-type TemporalDimension implements Component & Dimension {
+enum TimeUnit {
+  Year
+  Month
+  Week
+  Day
+  Hour
+  Minute
+  Second
+}
+
+type TemporalDimension implements Dimension {
   iri: String!
   label: String!
+  timeUnit: TimeUnit!
+  timeFormat: String!
   unit: String
   scaleType: String
   values: [DimensionValue!]!
 }
 
-type Measure implements Component & Dimension {
+type Measure implements Dimension {
   iri: String!
   label: String!
   unit: String

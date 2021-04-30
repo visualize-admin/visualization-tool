@@ -39,7 +39,7 @@ import {
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
 import {
-  ComponentFieldsFragment,
+  DimensionFieldsFragment,
   DimensionFieldsWithValuesFragment,
 } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
@@ -536,7 +536,7 @@ export const mapColorsToComponentValuesIris = ({
   component,
 }: {
   palette: string;
-  component: DimensionFieldsWithValuesFragment | ComponentFieldsFragment;
+  component: DimensionFieldsWithValuesFragment | DimensionFieldsFragment;
 }) => {
   if (!("values" in component)) {
     return {};
