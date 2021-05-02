@@ -11,11 +11,7 @@ import {
 import { useLocale } from "../../locales/use-locale";
 import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval-brush";
 import { MultiFilterField, SingleFilterField } from "./field";
-import {
-  getTimeInterval,
-  useTimeFormatLocale,
-  useTimeParse,
-} from "./ui-helpers";
+import { getTimeInterval, useTimeFormatLocale } from "./ui-helpers";
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 
@@ -187,7 +183,7 @@ export const TimeFilter = ({
 
     return (
       <Box>
-        {format(from)} – {format(to)} ({timeUnit})
+        {format(timeRange[0])} – {format(timeRange[1])}
         <EditorIntervalBrush
           timeExtent={[from, to]}
           timeRange={timeRange}

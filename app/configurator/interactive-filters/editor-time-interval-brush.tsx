@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
 import {
-  bisector,
   brushX,
   CountableTimeInterval,
   scaleTime,
@@ -9,14 +8,11 @@ import {
 } from "d3";
 import "d3-transition";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Flex, Box, Text } from "theme-ui";
+import { Box, Flex, Text } from "theme-ui";
 import { Label } from "../../components/form";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
-import { parseDate, useFormatFullDateAuto } from "../components/ui-helpers";
-import { ConfiguratorStateDescribingChart } from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
-import { updateInteractiveTimeFilter } from "./interactive-filters-config-state";
+import { useFormatFullDateAuto } from "../components/ui-helpers";
 
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;
@@ -32,7 +28,7 @@ export const EditorIntervalBrush = ({
   timeRange,
   timeInterval,
   onChange,
-  disabled,
+  disabled = false,
 }: {
   timeExtent: Date[];
   timeRange: Date[];
@@ -121,21 +117,22 @@ export const EditorIntervalBrush = ({
   ]);
 
   // Set default selection to full extent
+
+  const [fromPx, toPx] = timeRange.map(timeScale);
+
+  // FIXME: fix dependency array
   useEffect(() => {
-    const defaultSelection = timeRange.map((d) => timeScale(d));
     const g = select(brushRef.current);
-    (g as Selection<SVGGElement, unknown, null, undefined>).call(
-      brush.move,
-      defaultSelection
-    );
-  }, [brush.move, timeRange, timeScale]);
+    (g as Selection<SVGGElement, unknown, null, undefined>).call(brush.move, [
+      fromPx,
+      toPx,
+    ]);
+  }, [fromPx, toPx]);
 
   return (
     <Box sx={{ mt: 4 }}>
       <Label smaller htmlFor="editor-brush">
-        <Trans id="controls..interactiveFilters.time.defaultSettings">
-          Default Settings
-        </Trans>
+        <Trans id="controls.filters.time.range">Time Range</Trans>
       </Label>
       <Box ref={resizeRef} id="editor-brush">
         {width > 0 && (

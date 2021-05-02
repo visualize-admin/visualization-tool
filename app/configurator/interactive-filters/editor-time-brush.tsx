@@ -137,7 +137,13 @@ export const EditorBrush = ({
     };
 
     mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-  }, [brush, theme.colors.monochrome300, theme.colors.primary]);
+  }, [
+    brush,
+    disabled,
+    theme.colors.monochrome300,
+    theme.colors.monochrome500,
+    theme.colors.primary,
+  ]);
 
   // Set default selection to full extent
   useEffect(() => {
