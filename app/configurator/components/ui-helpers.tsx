@@ -34,13 +34,17 @@ import {
   schemeSet3,
   schemeTableau10,
   NumberValue,
+  timeWeek,
+  timeSecond,
+  CountableTimeInterval,
 } from "d3";
 
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
 import {
-  ComponentFieldsFragment,
+  DimensionFieldsFragment,
   DimensionFieldsWithValuesFragment,
+  TimeUnit,
 } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import {
@@ -120,6 +124,46 @@ export const useFormatDate = () => {
   }, [locale]);
 
   return formatter;
+};
+
+/**
+ * Parses and formats ISO *dates* of form 2002-01-01.
+ */
+export const useTimeFormatLocale = () => {
+  const locale = useLocale();
+  const formatter = useMemo(() => {
+    return getD3TimeFormatLocale(locale);
+  }, [locale]);
+
+  return formatter;
+};
+
+/**
+ * Parses date strings with the specifier into local time.
+ */
+export const useTimeParse = () => {
+  const locale = useLocale();
+  const formatter = useMemo(() => {
+    const { parse } = getD3TimeFormatLocale(locale);
+
+    return parse;
+  }, [locale]);
+
+  return formatter;
+};
+
+const timeIntervals = new Map<TimeUnit, CountableTimeInterval>([
+  [TimeUnit.Year, timeYear],
+  [TimeUnit.Month, timeMonth],
+  [TimeUnit.Week, timeWeek],
+  [TimeUnit.Day, timeDay],
+  [TimeUnit.Hour, timeHour],
+  [TimeUnit.Minute, timeMinute],
+  [TimeUnit.Second, timeSecond],
+]);
+
+export const getTimeInterval = (timeUnit: TimeUnit): CountableTimeInterval => {
+  return timeIntervals.get(timeUnit) ?? timeDay;
 };
 
 /**
@@ -536,7 +580,7 @@ export const mapColorsToComponentValuesIris = ({
   component,
 }: {
   palette: string;
-  component: DimensionFieldsWithValuesFragment | ComponentFieldsFragment;
+  component: DimensionFieldsWithValuesFragment | DimensionFieldsFragment;
 }) => {
   if (!("values" in component)) {
     return {};

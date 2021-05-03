@@ -75,7 +75,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        values: ["NominalDimension", "OrdinalDimension"],
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -107,7 +107,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        values: ["NominalDimension", "OrdinalDimension"],
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -183,7 +183,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        values: ["NominalDimension", "OrdinalDimension"],
         filters: true,
         options: [{ field: "color", values: ["palette"] }],
       },
@@ -202,7 +202,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: false,
-        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        values: ["NominalDimension", "OrdinalDimension"],
         filters: true,
         sorting: [
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },

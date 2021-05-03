@@ -6,7 +6,7 @@ import { memo, ReactNode, useMemo } from "react";
 import { ChartConfig, ChartFields } from "../configurator";
 import { Observation } from "../domain/data";
 import {
-  ComponentFieldsFragment,
+  DimensionFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
@@ -103,8 +103,8 @@ const DataDownloadInner = memo(
   }: {
     title: string;
     observations: Observation[];
-    dimensions: ComponentFieldsFragment[];
-    measures: ComponentFieldsFragment[];
+    dimensions: DimensionFieldsFragment[];
+    measures: DimensionFieldsFragment[];
     fields: ChartFields;
   }) => {
     const forCsvData = useMemo(() => {

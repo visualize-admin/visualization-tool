@@ -18,7 +18,7 @@ import {
 } from "../charts/shared/legend-color";
 import { InteractionVoronoi } from "../charts/shared/overlay-voronoi";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
-import { ComponentFieldsFragment } from "../graphql/query-hooks";
+import { DimensionFieldsFragment } from "../graphql/query-hooks";
 
 export const Docs = () => markdown`
 
@@ -182,7 +182,7 @@ const scatterplotMeasures = [
     label: "Übrige Sortimente in m3",
     __typename: "Measure",
   },
-] as ComponentFieldsFragment[];
+] as DimensionFieldsFragment[];
 
 const scatterplotDimensions = ([
   {
@@ -470,7 +470,7 @@ const scatterplotDimensions = ([
     ],
     __typename: "NominalDimension",
   },
-] as unknown) as ComponentFieldsFragment[];
+] as unknown) as DimensionFieldsFragment[];
 const scatterplotObservations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":

@@ -1,15 +1,18 @@
 import { Trans } from "@lingui/macro";
-import { bisector, brushX, scaleTime, select, Selection } from "d3";
+import {
+  brushX,
+  CountableTimeInterval,
+  scaleTime,
+  select,
+  Selection,
+} from "d3";
 import "d3-transition";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Flex, Box, Text } from "theme-ui";
+import { Box, Flex, Text } from "theme-ui";
 import { Label } from "../../components/form";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
-import { parseDate, useFormatFullDateAuto } from "../components/ui-helpers";
-import { ConfiguratorStateDescribingChart } from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
-import { updateInteractiveTimeFilter } from "./interactive-filters-config-state";
+import { useFormatFullDateAuto } from "../components/ui-helpers";
 
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;
@@ -20,18 +23,18 @@ const MARGINS = {
   left: 8,
 };
 
-export const EditorBrush = ({
+export const EditorIntervalBrush = ({
   timeExtent,
-  timeDataPoints,
-  disabled,
+  timeRange,
+  timeInterval,
+  onChange,
+  disabled = false,
 }: {
   timeExtent: Date[];
-  timeDataPoints?: {
-    __typename: "DimensionValue";
-    value: string;
-    label: string;
-  }[];
-  disabled: boolean;
+  timeRange: Date[];
+  timeInterval: CountableTimeInterval;
+  onChange: (extent: Date[]) => void;
+  disabled?: boolean;
 }) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
@@ -41,54 +44,22 @@ export const EditorBrush = ({
   // FIXME: make component responsive (currently triggers infinite loop)
   const brushWidth = 267; //width - MARGINS.left - MARGINS.right;
 
-  const [state, dispatch] = useConfiguratorState();
-  const { chartConfig } = state as ConfiguratorStateDescribingChart;
-
   const timeScale = scaleTime().domain(timeExtent).range([0, brushWidth]);
 
   const getClosestDimensionValue = useCallback(
     (date: Date): Date => {
-      if (timeDataPoints) {
-        const dimensionValues = timeDataPoints.map((d) => parseDate(d.value));
-
-        const bisectDateLeft = bisector(
-          (dvs: Date, date: Date) => dvs.getTime() - date.getTime()
-        ).left;
-
-        const startIndex = bisectDateLeft(dimensionValues, date, 1);
-        const dStartLeft = dimensionValues[startIndex - 1];
-        const dStartRight = dimensionValues[startIndex] || dStartLeft;
-        const closestDatum =
-          date.getTime() - dStartLeft.getTime() >
-          dStartRight.getTime() - date.getTime()
-            ? dStartRight
-            : dStartLeft;
-
-        return closestDatum;
-      } else {
-        return date;
-      }
+      return timeInterval.round(date);
     },
-    [timeDataPoints]
+    [timeInterval]
   );
 
   const brushed = ({ selection }: { selection: [number, number] }) => {
     if (selection) {
-      const [xStart, xEnd] = selection.map((s) => timeScale.invert(s));
-
-      // Update interactive brush presets
-      // The dates don't correspond to a data point.
-      const newIFConfig = updateInteractiveTimeFilter(
-        chartConfig.interactiveFiltersConfig,
-        {
-          path: "time",
-          timeExtent: [xStart.toISOString(), xEnd.toISOString()],
-        }
+      const [xStart, xEnd] = selection.map((s) =>
+        getClosestDimensionValue(timeScale.invert(s))
       );
-      dispatch({
-        type: "INTERACTIVE_FILTER_CHANGED",
-        value: newIFConfig,
-      });
+
+      onChange([xStart, xEnd]);
     }
   };
   const brush = brushX()
@@ -146,21 +117,22 @@ export const EditorBrush = ({
   ]);
 
   // Set default selection to full extent
+
+  const [fromPx, toPx] = timeRange.map(timeScale);
+
+  // FIXME: fix dependency array
   useEffect(() => {
-    const defaultSelection = timeExtent.map((d) => timeScale(d));
     const g = select(brushRef.current);
-    (g as Selection<SVGGElement, unknown, null, undefined>).call(
-      brush.move,
-      defaultSelection
-    );
-  }, []);
+    (g as Selection<SVGGElement, unknown, null, undefined>).call(brush.move, [
+      fromPx,
+      toPx,
+    ]);
+  }, [fromPx, toPx]);
 
   return (
     <Box sx={{ mt: 4 }}>
       <Label smaller htmlFor="editor-brush">
-        <Trans id="controls..interactiveFilters.time.defaultSettings">
-          Default Settings
-        </Trans>
+        <Trans id="controls.filters.time.range">Time Range</Trans>
       </Label>
       <Box ref={resizeRef} id="editor-brush">
         {width > 0 && (
@@ -176,26 +148,8 @@ export const EditorBrush = ({
         )}
       </Box>
       <Flex sx={{ justifyContent: "space-between" }}>
-        <Text variant="meta">
-          {chartConfig &&
-            chartConfig.interactiveFiltersConfig?.time.presets.from &&
-            formatDateAuto(
-              getClosestDimensionValue(
-                parseDate(
-                  chartConfig.interactiveFiltersConfig?.time.presets.from
-                )
-              )
-            )}
-        </Text>
-        <Text variant="meta">
-          {chartConfig &&
-            chartConfig.interactiveFiltersConfig?.time.presets.to &&
-            formatDateAuto(
-              getClosestDimensionValue(
-                parseDate(chartConfig.interactiveFiltersConfig?.time.presets.to)
-              )
-            )}
-        </Text>
+        <Text variant="meta">{formatDateAuto(timeExtent[0])}</Text>
+        <Text variant="meta">{formatDateAuto(timeExtent[1])}</Text>
       </Flex>
     </Box>
   );

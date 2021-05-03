@@ -195,11 +195,20 @@ export const getCubeDimensionValues = async ({
   dimension,
   cube,
   locale,
-}: {
-  dimension: CubeDimension;
-  cube: Cube;
-  locale: string;
-}): Promise<DimensionValue[]> => {
+  data,
+}: ResolvedDimension): Promise<DimensionValue[]> => {
+  if (data.dataKind === "Time") {
+    console.log(data.timeUnit, data.dataType);
+    // return interpolateTimeValues({
+    //   dataType: data.dataType,
+    //   timeUnit: data.timeUnit,
+    //   min: dimension.minInclusive?.value,
+    //   max: dimension.maxInclusive.value,
+    // }).map((v) => {
+    //   return { value: v, label: v };
+    // });
+  }
+
   if (
     dimension.minInclusive !== undefined &&
     dimension.maxInclusive !== undefined
@@ -219,6 +228,14 @@ export const getCubeDimensionValues = async ({
     locale,
   });
 };
+
+// const getTemporalDimensionValues = ({
+//   dimension,
+//   min,
+//   max,
+// }: ResolvedDimension) => {
+
+// };
 
 const getCubeDimensionValuesWithLabels = async ({
   dimension,
@@ -468,14 +485,13 @@ const buildFilters = ({
                 : [rdf.namedNode("EMPTY_VALUE")]
             ),
           ]
+        : filter.type === "range"
+        ? [
+            dimension.filter.gte(toRDFValue(filter.from)),
+            dimension.filter.lte(toRDFValue(filter.to)),
+          ]
         : [];
 
-    // FIXME: why doesn't .equals work for date types but .in does?
-    // Temporary solution: filter everything usin .in!
-    // return selectedValues.length === 1
-    //   ? [dimension.component.in([toTypedValue(selectedValues[0])])]
-    //   :
-    // return selectedValues.length > 0 ? [dimension.in(selectedValues)] : [];
     return selectedValues;
   });
 

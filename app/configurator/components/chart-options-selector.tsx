@@ -33,7 +33,7 @@ import {
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
 import { ChartFieldField, ChartOptionRadioField } from "./field";
-import { DimensionValuesMultiFilter } from "./filters";
+import { DimensionValuesMultiFilter, TimeFilter } from "./filters";
 import { getFieldLabel, getFieldLabelHint, getIconName } from "./ui-helpers";
 
 export const ChartOptionsSelector = ({
@@ -213,12 +213,20 @@ const EncodingOptionsPanel = ({
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {component && (
-              <DimensionValuesMultiFilter
+            {component && component.__typename === "TemporalDimension" ? (
+              <TimeFilter
                 key={component.iri}
                 dimensionIri={component.iri}
                 dataSetIri={metaData.iri}
               />
+            ) : (
+              component && (
+                <DimensionValuesMultiFilter
+                  key={component.iri}
+                  dimensionIri={component.iri}
+                  dataSetIri={metaData.iri}
+                />
+              )
             )}
           </ControlSectionContent>
         </ControlSection>

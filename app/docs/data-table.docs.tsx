@@ -3,7 +3,7 @@ import * as React from "react";
 import { ChartContainer } from "../charts/shared/containers";
 import { Table } from "../charts/table/table";
 import { TableChart } from "../charts/table/table-state";
-import { ComponentFieldsFragment } from "../graphql/query-hooks";
+import { DimensionFieldsFragment } from "../graphql/query-hooks";
 import {
   tableConfig,
   tableDimensions,
@@ -19,8 +19,8 @@ ${(
   <ReactSpecimen span={6}>
     <TableChart
       data={tableObservations}
-      dimensions={tableDimensions as ComponentFieldsFragment[]}
-      measures={tableMeasures as ComponentFieldsFragment[]}
+      dimensions={tableDimensions as DimensionFieldsFragment[]}
+      measures={tableMeasures as DimensionFieldsFragment[]}
       chartConfig={tableConfig}
     >
       <ChartContainer>

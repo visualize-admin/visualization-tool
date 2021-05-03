@@ -130,6 +130,14 @@ export type ConfiguratorStateAction =
       value: { dimensionIri: string; value: string; allValues: string[] };
     }
   | {
+      type: "CHART_CONFIG_FILTER_SET_RANGE";
+      value: { dimensionIri: string; from: string; to: string };
+    }
+  | {
+      type: "CHART_CONFIG_FILTER_RESET_RANGE";
+      value: { dimensionIri: string };
+    }
+  | {
       type: "CHART_CONFIG_FILTER_RESET_MULTI";
       value: { dimensionIri: string };
     }
@@ -695,6 +703,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTER_RESET_MULTI":
+    case "CHART_CONFIG_FILTER_RESET_RANGE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri } = action.value;
         delete draft.chartConfig.filters[dimensionIri];
@@ -707,6 +716,17 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         draft.chartConfig.filters[dimensionIri] = {
           type: "multi",
           values: {},
+        };
+      }
+      return draft;
+
+    case "CHART_CONFIG_FILTER_SET_RANGE":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { dimensionIri, from, to } = action.value;
+        draft.chartConfig.filters[dimensionIri] = {
+          type: "range",
+          from,
+          to,
         };
       }
       return draft;

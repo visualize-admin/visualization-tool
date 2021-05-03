@@ -1,6 +1,18 @@
+import {
+  CountableTimeInterval,
+  timeDay,
+  timeFormat,
+  timeHour,
+  timeMinute,
+  timeMonth,
+  timeParse,
+  timeSecond,
+  timeWeek,
+  timeYear,
+} from "d3";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode } from "rdf-js";
-import { DataCubePublicationStatus } from "../graphql/resolver-types";
+import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
 import * as ns from "./namespace";
@@ -49,6 +61,22 @@ export const parseCube = ({
   };
 };
 
+const timeUnits = new Map<string, TimeUnit>([
+  [ns.time.unitYear.value, TimeUnit.Year],
+  [ns.time.unitMonth.value, TimeUnit.Month],
+  [ns.time.unitWeek.value, TimeUnit.Week],
+  [ns.time.unitDay.value, TimeUnit.Day],
+  [ns.time.unitHour.value, TimeUnit.Hour],
+  [ns.time.unitMinute.value, TimeUnit.Minute],
+  [ns.time.unitSecond.value, TimeUnit.Second],
+]);
+
+const timeFormats = new Map<string, string>([
+  [ns.xsd.gYear.value, "%Y"],
+  [ns.xsd.date.value, "%Y-%m-%d"],
+  [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
+]);
+
 export const parseCubeDimension = ({
   dim,
   cube,
@@ -61,6 +89,8 @@ export const parseCubeDimension = ({
   const outOpts = { language: getQueryLocales(locale) };
 
   const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(ns.rdf.type).term;
+  const timeUnitTerm = dim.out(ns.cube`meta/dataKind`).out(ns.time.unitType)
+    .term;
   const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
 
   let dataType = dim.datatype;
@@ -119,6 +149,8 @@ export const parseCubeDimension = ({
         : dataKindTerm?.equals(ns.schema.GeoShape)
         ? "GeoShape"
         : undefined,
+      timeUnit: timeUnits.get(timeUnitTerm?.value ?? ""),
+      timeFormat: timeFormats.get(dataType?.value ?? ""),
       scaleType: scaleTypeTerm?.equals(ns.qudt.NominalScale)
         ? "Nominal"
         : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
@@ -131,4 +163,60 @@ export const parseCubeDimension = ({
       unit: dim.out(ns.qudt.unit).value,
     },
   };
+};
+
+const timeIntervals = new Map<string, CountableTimeInterval>([
+  [ns.time.unitYear.value, timeYear],
+  [ns.time.unitMonth.value, timeMonth],
+  [ns.time.unitWeek.value, timeWeek],
+  [ns.time.unitDay.value, timeDay],
+  [ns.time.unitHour.value, timeHour],
+  [ns.time.unitMinute.value, timeMinute],
+  [ns.time.unitSecond.value, timeSecond],
+]);
+
+const timeFormatters = new Map<string, (d: Date) => string>([
+  [ns.xsd.gYear.value, timeFormat("%Y")],
+  [ns.xsd.date.value, timeFormat("%Y-%m-%d")],
+  [ns.xsd.dateTime.value, timeFormat("%Y-%m-%dT%H:%M:%S")],
+]);
+
+const timeParsers = new Map<string, (d: string) => Date | null>([
+  [ns.xsd.gYear.value, timeParse("%Y")],
+  [ns.xsd.date.value, timeParse("%Y-%m-%d")],
+  [ns.xsd.dateTime.value, timeParse("%Y-%m-%dT%H:%M:%S")],
+]);
+
+export const interpolateTimeValues = ({
+  dataType,
+  timeUnit,
+  min,
+  max,
+}: {
+  dataType: string;
+  timeUnit: string;
+  min: string;
+  max: string;
+}) => {
+  const format = timeFormatters.get(dataType);
+  const parse = timeParsers.get(dataType);
+
+  if (!format || !parse) {
+    console.warn(`No time parser/formatter found for dataType <${dataType}>`);
+    return [];
+  }
+
+  const minDate = parse(min);
+  const maxDate = parse(max);
+  const interval = timeIntervals.get(timeUnit);
+
+  if (!minDate || !maxDate || !interval) {
+    console.warn(
+      `Couldn't parse dates ${min} or ${max}, or no interval found for timeUnit <${timeUnit}>`
+    );
+
+    return [];
+  }
+
+  return [...interval.range(minDate, maxDate), maxDate].map(format);
 };

@@ -1,7 +1,7 @@
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode } from "rdf-js";
 import { Observation } from "../domain/data";
-import { DataCubePublicationStatus } from "./resolver-types";
+import { DataCubePublicationStatus, TimeUnit } from "./resolver-types";
 
 /** Types shared by graphql-codegen and resolver code */
 
@@ -40,6 +40,8 @@ export type ResolvedDimension = {
     unit?: string;
     dataType?: string;
     dataKind?: "Time" | "GeoCoordinates" | "GeoShape";
+    timeUnit?: TimeUnit;
+    timeFormat?: string;
     scaleType?: "Nominal" | "Ordinal" | "Ratio" | "Interval";
     name: string;
   };

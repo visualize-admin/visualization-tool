@@ -1,7 +1,7 @@
 import { Literal, NamedNode } from "rdf-js";
 import {
   DimensionFieldsWithValuesFragment,
-  ComponentFieldsFragment,
+  DimensionFieldsFragment,
 } from "../graphql/query-hooks";
 import { DimensionType } from "../charts/chart-config-ui-options";
 
@@ -103,7 +103,7 @@ export const getDimensionsByDimensionType = ({
 }: {
   dimensionTypes: DimensionType[];
   dimensions: DimensionFieldsWithValuesFragment[];
-  measures: ComponentFieldsFragment[];
+  measures: DimensionFieldsFragment[];
 }) =>
   [...measures, ...dimensions].filter((component) =>
     dimensionTypes.includes(component.__typename)
