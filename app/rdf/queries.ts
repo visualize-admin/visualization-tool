@@ -21,6 +21,7 @@ import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
+import { loadUnversionedResources } from "./query-sameas";
 
 const NULL_DIMENSION_VALUE = "NULL";
 
@@ -277,28 +278,47 @@ const getCubeDimensionValuesWithLabels = async ({
     );
   }
 
-  const values =
-    dimensionValueNamedNodes.length > 0
-      ? (
-          await loadResourceLabels({ ids: dimensionValueNamedNodes, locale })
-        ).map((vl) => {
-          return { value: vl.iri.value, label: vl.label?.value ?? "" };
-        })
-      : dimensionValueLiterals.length > 0
-      ? dimensionValueLiterals.map((v) => {
-          return ns.cube.Undefined.equals(v.datatype)
-            ? {
-                value: NULL_DIMENSION_VALUE, // We use a known string here because actual null does not work as value in UI inputs.
-                label: "–",
-              }
-            : {
-                value: v.value,
-                label: v.value,
-              };
-        })
-      : [];
+  if (dimensionValueNamedNodes.length > 0) {
+    const [labels, unversioned] = await Promise.all([
+      loadResourceLabels({ ids: dimensionValueNamedNodes, locale }),
+      loadUnversionedResources({ ids: dimensionValueNamedNodes }),
+    ]);
 
-  return values;
+    const labelLookup = new Map(
+      labels.map(({ iri, label }) => {
+        return [iri.value, label?.value];
+      })
+    );
+
+    const unversionedLookup = new Map(
+      unversioned.map(({ iri, sameAs }) => {
+        return [iri.value, sameAs?.value];
+      })
+    );
+
+    // console.log(unversioned);
+
+    return dimensionValueNamedNodes.map((iri) => {
+      return {
+        value: unversionedLookup.get(iri.value) ?? iri.value,
+        label: labelLookup.get(iri.value) ?? "",
+      };
+    });
+  } else if (dimensionValueLiterals.length > 0) {
+    return dimensionValueLiterals.map((v) => {
+      return ns.cube.Undefined.equals(v.datatype)
+        ? {
+            value: NULL_DIMENSION_VALUE, // We use a known string here because actual null does not work as value in UI inputs.
+            label: "–",
+          }
+        : {
+            value: v.value,
+            label: v.value,
+          };
+    });
+  }
+
+  return [];
 };
 
 export const getCubeObservations = async ({
@@ -436,6 +456,8 @@ const buildFilters = ({
   filters: Filters;
   locale: string;
 }): Filter[] => {
+  const lookupSource = LookupSource.fromSource(cube.source);
+
   const filterEntries = Object.entries(filters).flatMap(([dimIri, filter]) => {
     const cubeDimension = cube.dimensions.find((d) => d.path?.value === dimIri);
     if (!cubeDimension) {
@@ -447,6 +469,14 @@ const buildFilters = ({
     if (!dimension) {
       return [];
     }
+
+    // FIXME: Adding this dimension will make the query return nothing for dimensions that don't have it (no way to make it optional)
+    const sameAsDimension = view.createDimension({
+      source: lookupSource,
+      path: ns.schema.sameAs,
+      join: dimension,
+      as: labelDimensionIri(dimIri + "/wtf"),
+    });
 
     const parsedCubeDimension = parseCubeDimension({
       dim: cubeDimension,
@@ -473,7 +503,7 @@ const buildFilters = ({
 
     const selectedValues =
       filter.type === "single"
-        ? [dimension.filter.eq(toRDFValue(filter.value))]
+        ? [sameAsDimension.filter.eq(toRDFValue(filter.value))]
         : filter.type === "multi"
         ? // If values is an empty object, we filter by something that doesn't exist
           [
