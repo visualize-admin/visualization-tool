@@ -130,6 +130,10 @@ export const parseCubeDimension = ({
     dataType?.equals(ns.xsd.decimal) ||
     false;
 
+  const isKeyDimension = dim
+    .out(ns.rdf.type)
+    .terms.some((t) => t.equals(ns.cube.KeyDimension));
+
   return {
     cube,
     dimension: dim,
@@ -139,6 +143,7 @@ export const parseCubeDimension = ({
       iri: dim.path?.value!,
       isLiteral,
       isNumerical,
+      isKeyDimension,
       hasUndefinedValues,
       dataType: dataType?.value,
       name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,

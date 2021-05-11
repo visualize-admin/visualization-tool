@@ -36,6 +36,7 @@ export type ResolvedDimension = {
     iri: string;
     isLiteral: boolean;
     isNumerical: boolean;
+    isKeyDimension: boolean;
     hasUndefinedValues: boolean;
     unit?: string;
     dataType?: string;

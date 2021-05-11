@@ -29,6 +29,7 @@ fragment dimensionFields on Dimension {
 fragment dimensionFieldsWithValues on Dimension {
   iri
   label
+  isKeyDimension
   values
 }
 

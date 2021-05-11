@@ -15,6 +15,7 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "../charts";
+import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { createChartId } from "../lib/create-chart-id";
 import { unreachableError } from "../lib/unreachable";
@@ -208,6 +209,8 @@ const deriveFiltersFromFields = produce(
     const isFiltered = (iri: string) => !isField(iri) || isPreFiltered(iri);
 
     dimensions.forEach((dimension) => {
+      console.log(dimension.iri, dimension.isKeyDimension);
+
       const f = filters[dimension.iri];
       if (f !== undefined) {
         // Fix wrong filter type
@@ -222,7 +225,7 @@ const deriveFiltersFromFields = produce(
         }
       } else {
         // Add filter for this dim if it's not one of the selected multi filter fields
-        if (isFiltered(dimension.iri)) {
+        if (isFiltered(dimension.iri) && dimension.isKeyDimension) {
           filters[dimension.iri] = {
             type: "single",
             value: dimension.values[0].value,

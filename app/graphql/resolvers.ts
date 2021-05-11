@@ -191,6 +191,8 @@ const DataCube: DataCubeResolvers = {
 const dimensionResolvers = {
   iri: ({ data: { iri } }: ResolvedDimension) => iri,
   label: ({ data: { name } }: ResolvedDimension) => name,
+  isKeyDimension: ({ data: { isKeyDimension } }: ResolvedDimension) =>
+    isKeyDimension,
   unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
   scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
   values: async (dimension: ResolvedDimension) => {

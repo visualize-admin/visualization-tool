@@ -73,6 +73,7 @@ export type Dimension = {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
 };
 
@@ -82,6 +83,7 @@ export type NominalDimension = Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
 };
 
@@ -91,6 +93,7 @@ export type OrdinalDimension = Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
 };
 
@@ -112,6 +115,7 @@ export type TemporalDimension = Dimension & {
   timeFormat: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
 };
 
@@ -121,6 +125,7 @@ export type Measure = Dimension & {
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   scaleType?: Maybe<Scalars['String']>;
+  isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
 };
 
@@ -178,13 +183,13 @@ type DimensionFields_Measure_Fragment = { __typename: 'Measure', iri: string, la
 
 export type DimensionFieldsFragment = DimensionFields_NominalDimension_Fragment | DimensionFields_OrdinalDimension_Fragment | DimensionFields_TemporalDimension_Fragment | DimensionFields_Measure_Fragment;
 
-type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, values: Array<any> };
+type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
-type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, values: Array<any> };
+type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
-type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, values: Array<any> };
+type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
-type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, values: Array<any> };
+type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
 export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment | DimensionFieldsWithValues_Measure_Fragment;
 
@@ -342,6 +347,7 @@ export const DimensionFieldsWithValuesFragmentDoc = gql`
     fragment dimensionFieldsWithValues on Dimension {
   iri
   label
+  isKeyDimension
   values
 }
     `;
