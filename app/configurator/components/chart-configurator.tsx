@@ -27,8 +27,11 @@ export const ChartConfigurator = ({
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
-    const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
-      (dim) => !mappedIris.has(dim.iri)
+    const requiredFilterDimensions = data?.dataCubeByIri.dimensions.filter(
+      (dim) => !mappedIris.has(dim.iri) && dim.isKeyDimension
+    );
+    const optionalFilterDimensions = data?.dataCubeByIri.dimensions.filter(
+      (dim) => !mappedIris.has(dim.iri) && !dim.isKeyDimension
     );
 
     return (
@@ -54,13 +57,25 @@ export const ChartConfigurator = ({
             <Trans id="controls.section.data.filters">Filters</Trans>
           </SectionTitle>
           <ControlSectionContent side="left" aria-labelledby="controls-data">
-            {unMappedDimensions.map((dimension, i) => (
+            {requiredFilterDimensions.map((dimension, i) => (
               <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
                 <DataFilterSelect
                   dimensionIri={dimension.iri}
                   label={dimension.label}
                   options={dimension.values}
                   disabled={false}
+                  id={`select-single-filter-${i}`}
+                />
+              </Box>
+            ))}
+            {optionalFilterDimensions.map((dimension, i) => (
+              <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
+                <DataFilterSelect
+                  dimensionIri={dimension.iri}
+                  label={dimension.label}
+                  options={dimension.values}
+                  disabled={false}
+                  isOptional
                   id={`select-single-filter-${i}`}
                 />
               </Box>

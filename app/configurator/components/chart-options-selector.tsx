@@ -34,7 +34,7 @@ import {
 import { EmptyRightPanel } from "./empty-right-panel";
 import { ChartFieldField, ChartOptionRadioField } from "./field";
 import { DimensionValuesMultiFilter, TimeFilter } from "./filters";
-import { getFieldLabel, getFieldLabelHint, getIconName } from "./ui-helpers";
+import { getFieldLabel, getIconName } from "./ui-helpers";
 
 export const ChartOptionsSelector = ({
   state,
@@ -130,6 +130,15 @@ const EncodingOptionsPanel = ({
 }) => {
   const { measures, dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const getFieldLabelHint = {
+    x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
+    y: t({ id: "controls.select.measure", message: "Select a measure" }),
+    segment: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
+  };
 
   useEffect(() => {
     if (panelRef && panelRef.current) {

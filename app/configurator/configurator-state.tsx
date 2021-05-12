@@ -15,7 +15,6 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "../charts";
-import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { createChartId } from "../lib/create-chart-id";
 import { unreachableError } from "../lib/unreachable";
@@ -33,6 +32,7 @@ import {
   GenericFields,
   InteractiveFiltersConfig,
 } from "./config-types";
+import { FIELD_VALUE_NONE } from "./constants";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -642,10 +642,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_FILTER_SET_SINGLE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, value } = action.value;
-        draft.chartConfig.filters[dimensionIri] = {
-          type: "single",
-          value,
-        };
+
+        if (value === FIELD_VALUE_NONE) {
+          delete draft.chartConfig.filters[dimensionIri];
+        } else {
+          draft.chartConfig.filters[dimensionIri] = {
+            type: "single",
+            value,
+          };
+        }
       }
       return draft;
 
