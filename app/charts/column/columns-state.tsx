@@ -129,13 +129,14 @@ const useColumnsState = ({
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // y
-  const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
-  const maxValue = max(preparedData, (d) => getY(d)) as number;
+  const minValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
+  const maxValue = max(preparedData, (d) => getY(d)) ?? 0;
   const entireMaxValue = max(sortedData, getY) as number;
 
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
     .nice();
+
   const yAxisLabel =
     measures.find((d) => d.iri === fields.y.componentIri)?.label ??
     fields.y.componentIri;
