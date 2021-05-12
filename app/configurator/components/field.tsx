@@ -1,9 +1,8 @@
 import { t } from "@lingui/macro";
 import get from "lodash/get";
-import { ChangeEvent, ReactNode, useCallback } from "react";
+import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 import { Box, Flex } from "theme-ui";
 import {
-  FIELD_VALUE_NONE,
   Option,
   useActiveFieldField,
   useChartFieldField,
@@ -21,6 +20,7 @@ import {
   useChartOptionSelectField,
   useSingleFilterSelect,
 } from "../config-form";
+import { FIELD_VALUE_NONE } from "../constants";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import { AnnotatorTab, ControlTab } from "./chart-controls/control-tab";
 import { getPalette } from "./ui-helpers";
@@ -57,21 +57,46 @@ export const DataFilterSelect = ({
   options,
   id,
   disabled,
+  isOptional,
 }: {
   dimensionIri: string;
   label: string;
   options: Option[];
   id: string;
   disabled?: boolean;
+  isOptional?: boolean;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
+
+  const noneLabel = t({
+    id: "controls.dimensionvalue.none",
+    message: `No Filter`,
+  });
+
+  const optionalLabel = t({
+    id: "controls.select.optional",
+    message: `optional`,
+  });
+
+  const allOptions = useMemo(() => {
+    return isOptional
+      ? [
+          {
+            value: FIELD_VALUE_NONE,
+            label: noneLabel,
+            isNoneValue: true,
+          },
+          ...options,
+        ]
+      : options;
+  }, [isOptional, options, noneLabel]);
 
   return (
     <Select
       id={id}
-      label={label}
+      label={isOptional ? `${label} (${optionalLabel})` : label}
       disabled={disabled}
-      options={options}
+      options={allOptions}
       {...fieldProps}
     ></Select>
   );
@@ -318,7 +343,7 @@ export const ChartFieldField = ({
   dataSetMetadata,
 }: {
   componentIri?: string;
-  label: string | ReactNode;
+  label: string;
   field: string;
   options: Option[];
   optional?: boolean;
@@ -330,13 +355,21 @@ export const ChartFieldField = ({
     dataSetMetadata,
   });
 
-  const noneLabel = t({ id: "controls.dimension.none", message: `None` });
+  const noneLabel = t({
+    id: "controls.dimension.none",
+    message: `No dimension selected`,
+  });
+
+  const optionalLabel = t({
+    id: "controls.select.optional",
+    message: `optional`,
+  });
 
   return (
     <Select
       key={`select-${field}-dimension`}
       id={field}
-      label={label}
+      label={optional ? `${label} (${optionalLabel})` : label}
       disabled={disabled}
       options={
         optional
@@ -344,6 +377,7 @@ export const ChartFieldField = ({
               {
                 value: FIELD_VALUE_NONE,
                 label: noneLabel,
+                isNoneValue: true,
               },
               ...options,
             ]

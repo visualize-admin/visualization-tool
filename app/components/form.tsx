@@ -157,7 +157,13 @@ export const Select = ({
 } & SelectProps) => {
   const locale = useLocale();
   const sortedOptions = useMemo(() => {
-    return [...options].sort((a, b) => a.label.localeCompare(b.label, locale));
+    const noneOptions = options.filter((o) => o.isNoneValue);
+    const restOptions = options.filter((o) => !o.isNoneValue);
+
+    return [
+      ...noneOptions,
+      ...restOptions.sort((a, b) => a.label.localeCompare(b.label, locale)),
+    ];
   }, [options, locale]);
 
   return (
@@ -190,7 +196,7 @@ export const Select = ({
           <option
             key={opt.value}
             disabled={opt.disabled}
-            value={opt.value || undefined}
+            value={opt.value ?? undefined}
           >
             {opt.label}
           </option>

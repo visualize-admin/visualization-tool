@@ -1,44 +1,43 @@
 import { Trans } from "@lingui/macro";
 import {
-  timeDay,
-  timeHour,
-  timeMinute,
-  timeMonth,
-  timeYear,
-  scaleOrdinal,
   ascending,
-  schemeBlues,
-  schemeGreens,
-  schemeGreys,
-  schemeOranges,
-  schemePurples,
-  schemeReds,
+  CountableTimeInterval,
+  interpolateBlues,
   interpolateBrBG,
+  interpolateGreens,
+  interpolateGreys,
+  interpolateOranges,
   interpolatePiYG,
   interpolatePRGn,
   interpolatePuOr,
-  interpolateBlues,
-  interpolateGreens,
-  interpolateOranges,
   interpolatePurples,
-  interpolateGreys,
   interpolateReds,
+  NumberValue,
+  scaleOrdinal,
   schemeAccent,
+  schemeBlues,
   schemeCategory10,
   schemeDark2,
+  schemeGreens,
+  schemeGreys,
+  schemeOranges,
   schemePaired,
   schemePastel1,
   schemePastel2,
+  schemePurples,
+  schemeReds,
   schemeSet1,
   schemeSet2,
   schemeSet3,
   schemeTableau10,
-  NumberValue,
-  timeWeek,
+  timeDay,
+  timeHour,
+  timeMinute,
+  timeMonth,
   timeSecond,
-  CountableTimeInterval,
+  timeWeek,
+  timeYear,
 } from "d3";
-
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
 import {
@@ -420,12 +419,6 @@ export const getFieldLabel = (field: string): ReactNode => {
     default:
       return field;
   }
-};
-
-export const getFieldLabelHint = {
-  x: <Trans id="controls.select.dimension">Select a dimension</Trans>,
-  y: <Trans id="controls.select.measure">Select a measure</Trans>,
-  segment: <Trans id="controls.select.dimension">Select a dimension</Trans>,
 };
 
 export const getPalette = (palette?: string): ReadonlyArray<string> => {

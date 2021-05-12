@@ -10,6 +10,7 @@ import { getFieldComponentIri } from "../charts";
 import { DataCubeMetadata } from "../graphql/types";
 import { ChartType } from "./config-types";
 import { useConfiguratorState } from "./configurator-state";
+import { FIELD_VALUE_NONE } from "./constants";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -18,6 +19,7 @@ import { useConfiguratorState } from "./configurator-state";
 export type Option = {
   value: string | $FixMe;
   label: string | $FixMe;
+  isNoneValue?: boolean;
   disabled?: boolean;
 };
 
@@ -27,8 +29,6 @@ export type FieldProps = Pick<
 >;
 
 // Generic ------------------------------------------------------------------
-
-export const FIELD_VALUE_NONE = "FIELD_VALUE_NONE";
 
 export const useChartFieldField = ({
   field,
@@ -283,7 +283,11 @@ export const useSingleFilterSelect = ({
 
   let value: string | undefined;
   if (state.state === "CONFIGURING_CHART") {
-    value = get(state.chartConfig, ["filters", dimensionIri, "value"], "");
+    value = get(
+      state.chartConfig,
+      ["filters", dimensionIri, "value"],
+      FIELD_VALUE_NONE
+    );
   }
   return {
     value,

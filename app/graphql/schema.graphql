@@ -44,6 +44,7 @@ interface Dimension {
   label: String!
   unit: String
   scaleType: String
+  isKeyDimension: Boolean!
   values: [DimensionValue!]!
 }
 
@@ -52,6 +53,7 @@ type NominalDimension implements Dimension {
   label: String!
   unit: String
   scaleType: String
+  isKeyDimension: Boolean!
   values: [DimensionValue!]!
 }
 
@@ -60,6 +62,7 @@ type OrdinalDimension implements Dimension {
   label: String!
   unit: String
   scaleType: String
+  isKeyDimension: Boolean!
   values: [DimensionValue!]!
 }
 
@@ -80,6 +83,7 @@ type TemporalDimension implements Dimension {
   timeFormat: String!
   unit: String
   scaleType: String
+  isKeyDimension: Boolean!
   values: [DimensionValue!]!
 }
 
@@ -88,6 +92,7 @@ type Measure implements Dimension {
   label: String!
   unit: String
   scaleType: String
+  isKeyDimension: Boolean!
   values: [DimensionValue!]!
 }
 

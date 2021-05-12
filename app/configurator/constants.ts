@@ -1,0 +1,1 @@
+export const FIELD_VALUE_NONE = "FIELD_VALUE_NONE";

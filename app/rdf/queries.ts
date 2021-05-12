@@ -22,7 +22,7 @@ import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
 
-const NULL_DIMENSION_VALUE = "NULL";
+const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
@@ -288,7 +288,7 @@ const getCubeDimensionValuesWithLabels = async ({
       ? dimensionValueLiterals.map((v) => {
           return ns.cube.Undefined.equals(v.datatype)
             ? {
-                value: NULL_DIMENSION_VALUE, // We use a known string here because actual null does not work as value in UI inputs.
+                value: DIMENSION_VALUE_UNDEFINED, // We use a known string here because actual null does not work as value in UI inputs.
                 label: "–",
               }
             : {
@@ -465,7 +465,7 @@ const buildFilters = ({
     const toRDFValue = (value: string): NamedNode | Literal => {
       return dataType
         ? parsedCubeDimension.data.hasUndefinedValues &&
-          value === NULL_DIMENSION_VALUE
+          value === DIMENSION_VALUE_UNDEFINED
           ? rdf.literal("", ns.cube.Undefined)
           : rdf.literal(value, dataType)
         : rdf.namedNode(value);

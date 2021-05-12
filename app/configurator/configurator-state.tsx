@@ -32,6 +32,7 @@ import {
   GenericFields,
   InteractiveFiltersConfig,
 } from "./config-types";
+import { FIELD_VALUE_NONE } from "./constants";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -208,6 +209,8 @@ const deriveFiltersFromFields = produce(
     const isFiltered = (iri: string) => !isField(iri) || isPreFiltered(iri);
 
     dimensions.forEach((dimension) => {
+      console.log(dimension.iri, dimension.isKeyDimension);
+
       const f = filters[dimension.iri];
       if (f !== undefined) {
         // Fix wrong filter type
@@ -222,7 +225,7 @@ const deriveFiltersFromFields = produce(
         }
       } else {
         // Add filter for this dim if it's not one of the selected multi filter fields
-        if (isFiltered(dimension.iri)) {
+        if (isFiltered(dimension.iri) && dimension.isKeyDimension) {
           filters[dimension.iri] = {
             type: "single",
             value: dimension.values[0].value,
@@ -639,10 +642,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_CONFIG_FILTER_SET_SINGLE":
       if (draft.state === "CONFIGURING_CHART") {
         const { dimensionIri, value } = action.value;
-        draft.chartConfig.filters[dimensionIri] = {
-          type: "single",
-          value,
-        };
+
+        if (value === FIELD_VALUE_NONE) {
+          delete draft.chartConfig.filters[dimensionIri];
+        } else {
+          draft.chartConfig.filters[dimensionIri] = {
+            type: "single",
+            value,
+          };
+        }
       }
       return draft;
 
