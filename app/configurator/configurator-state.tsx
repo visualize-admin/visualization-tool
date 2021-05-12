@@ -209,8 +209,6 @@ const deriveFiltersFromFields = produce(
     const isFiltered = (iri: string) => !isField(iri) || isPreFiltered(iri);
 
     dimensions.forEach((dimension) => {
-      console.log(dimension.iri, dimension.isKeyDimension);
-
       const f = filters[dimension.iri];
       if (f !== undefined) {
         // Fix wrong filter type
