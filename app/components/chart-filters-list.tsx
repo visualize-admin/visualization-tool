@@ -29,7 +29,7 @@ export const ChartFiltersList = ({
     } = data;
 
     const namedFilters = Object.entries(queryFilters).flatMap(([iri, f]) => {
-      if (f.type !== "single") {
+      if (f?.type !== "single") {
         return [];
       }
 

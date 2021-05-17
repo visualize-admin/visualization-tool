@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import * as React from "react";
 import { useState } from "react";
 import { Box, Button, Flex } from "theme-ui";
@@ -6,6 +6,7 @@ import { ChartFiltersList } from "../../components/chart-filters-list";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import { ChartConfig, InteractiveFiltersDataConfig } from "../../configurator";
+import { FIELD_VALUE_NONE } from "../../configurator/constants";
 import { useDimensionValuesQuery } from "../../graphql/query-hooks";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
@@ -114,8 +115,25 @@ const DataFilterDropdown = ({
       value: { dimensionIri, dimensionValueIri: e.currentTarget.value },
     });
   };
+
+  const noneLabel = t({
+    id: "controls.dimensionvalue.none",
+    message: `No Filter`,
+  });
+
   if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
+
+    const options = dimension.isKeyDimension
+      ? dimension.values
+      : [
+          {
+            value: FIELD_VALUE_NONE,
+            label: noneLabel,
+            isNoneValue: true,
+          },
+          ...dimension.values,
+        ];
 
     return (
       <Flex
@@ -132,16 +150,13 @@ const DataFilterDropdown = ({
         <Select
           id="interactiveDataFilter"
           label={dimension.label}
-          options={dimension.values.map((v) => ({
-            label: v.label,
-            value: v.value,
-          }))}
+          options={options}
           value={
             dataFilters &&
             dataFilters[dimension.iri] &&
             dataFilters[dimension.iri].value
               ? dataFilters[dimension.iri].value
-              : dimension.values[0].value
+              : FIELD_VALUE_NONE
           }
           disabled={false}
           onChange={setDataFilter}

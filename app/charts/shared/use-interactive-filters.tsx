@@ -1,6 +1,7 @@
 import { useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
 import { FilterValueSingle } from "../../configurator";
+import { FIELD_VALUE_NONE } from "../../configurator/constants";
 
 export type InteractiveFiltersState = {
   categories: { [x: string]: boolean };
@@ -76,16 +77,16 @@ const InteractiveFiltersStateReducer = (
         dataFilters: action.value,
       };
     case "UPDATE_DATA_FILTER":
-      return {
-        ...draft,
-        dataFilters: {
-          ...draft.dataFilters,
-          [action.value.dimensionIri]: {
-            type: "single",
-            value: action.value.dimensionValueIri,
-          },
-        },
-      };
+      if (action.value.dimensionValueIri === FIELD_VALUE_NONE) {
+        delete draft.dataFilters[action.value.dimensionIri];
+      } else {
+        draft.dataFilters[action.value.dimensionIri] = {
+          type: "single",
+          value: action.value.dimensionValueIri,
+        };
+      }
+
+      return draft;
 
     case "RESET_INTERACTIVE_CATEGORIES":
       return {
