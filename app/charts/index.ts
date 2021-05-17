@@ -8,6 +8,7 @@ import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
+import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
 
 export const enabledChartTypes: ChartType[] = [
   // "bar",
@@ -18,6 +19,27 @@ export const enabledChartTypes: ChartType[] = [
   "pie",
   "table",
 ];
+
+/**
+ * Finds the "best" dimension based on a preferred type (e.g. TemporalDimension) and Key Dimension
+ *
+ * @param dimensions
+ * @param preferredType
+ */
+const findPreferredDimension = (
+  dimensions: DataCubeMetadata["dimensions"],
+  preferredType?: DimensionFieldsWithValuesFragment["__typename"]
+) => {
+  const dim = preferredType
+    ? dimensions.find((d) => d.__typename === preferredType)
+    : dimensions.find((d) => d.isKeyDimension) ?? dimensions[0];
+
+  if (!dim) {
+    throw Error("No dimension found for initial config");
+  }
+
+  return dim;
+};
 
 export const getInitialConfig = ({
   chartType,
@@ -48,7 +70,10 @@ export const getInitialConfig = ({
         fields: {
           x: { componentIri: measures[0].iri },
           y: {
-            componentIri: dimensions[0].iri,
+            componentIri: findPreferredDimension(
+              dimensions,
+              "TemporalDimension"
+            ).iri,
             sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
           },
         },
@@ -71,7 +96,10 @@ export const getInitialConfig = ({
         },
         fields: {
           x: {
-            componentIri: dimensions[0].iri,
+            componentIri: findPreferredDimension(
+              dimensions,
+              "TemporalDimension"
+            ).iri,
             sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
           },
           y: { componentIri: measures[0].iri },
