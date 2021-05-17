@@ -19,6 +19,7 @@ import {
   getPalette,
   mkNumber,
   parseDate,
+  useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
@@ -44,6 +45,7 @@ export interface ColumnsState {
   allData: Observation[];
   getX: (d: Observation) => string;
   getXAsDate: (d: Observation) => Date;
+  xIsTime: boolean;
   xScale: ScaleBand<string>;
   xEntireScale: ScaleTime<number, number>;
   xScaleInteraction: ScaleBand<string>;
@@ -68,6 +70,7 @@ const useColumnsState = ({
 }): ColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
+  const formatDateAuto = useFormatFullDateAuto();
 
   const [interactiveFilters] = useInteractiveFilters();
 
@@ -111,7 +114,7 @@ const useColumnsState = ({
   });
 
   // x
-  const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
+  const bandDomain = [...new Set(preparedData.map(getX))];
   const xScale = scaleBand()
     .domain(bandDomain)
     .paddingInner(PADDING_INNER)
@@ -127,6 +130,8 @@ const useColumnsState = ({
     [getXAsDate, sortedData]
   );
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
+
+  const xIsTime = !xEntireDomainAsTime.some((d) => d === undefined);
 
   // y
   const minValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
@@ -220,7 +225,7 @@ const useColumnsState = ({
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: getX(datum),
+      xValue: xIsTime ? formatDateAuto(getX(datum)) : getX(datum),
       datum: {
         label: fields.segment?.componentIri && getSegment(datum),
         value: formatNumber(getY(datum)),
@@ -239,6 +244,7 @@ const useColumnsState = ({
     getXAsDate,
     xScale,
     xEntireScale,
+    xIsTime,
     xScaleInteraction,
     getY,
     yScale,

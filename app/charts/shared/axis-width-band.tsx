@@ -2,13 +2,16 @@ import { axisBottom } from "d3";
 import { select, Selection } from "d3";
 
 import { useEffect, useRef } from "react";
+import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
 import { ColumnsState } from "../column/columns-state";
 import { useChartState } from "./use-chart-state";
 import { useChartTheme } from "./use-chart-theme";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const { xScale, yScale, bounds } = useChartState() as ColumnsState;
+  const { xScale, yScale, bounds, xIsTime } = useChartState() as ColumnsState;
+
+  const formatDate = useFormatFullDateAuto();
 
   const { chartHeight, margins } = bounds;
 
@@ -24,13 +27,18 @@ export const AxisWidthBand = () => {
     const rotation = true; // xScale.domain().length > 6;
     const hasNegativeValues = yScale.domain()[0] < 0;
 
+    const axis = axisBottom(xScale)
+      .tickSizeOuter(0)
+      .tickSizeInner(hasNegativeValues ? -chartHeight : 6);
+
+    if (xIsTime) {
+      axis.tickFormat(formatDate);
+    }
+
     const fontSize =
       xScale.bandwidth() > labelFontSize ? labelFontSize : xScale.bandwidth();
-    g.call(
-      axisBottom(xScale)
-        .tickSizeOuter(0)
-        .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
-    );
+
+    g.call(axis);
 
     g.select(".domain").remove();
     g.selectAll(".tick line").attr(

@@ -2,7 +2,10 @@ import { Box, Flex } from "theme-ui";
 import { hcl, ScaleLinear } from "d3";
 import * as React from "react";
 import { Cell } from "react-table";
-import { useFormatNumber } from "../../configurator/components/ui-helpers";
+import {
+  useFormatFullDateAuto,
+  useFormatNumber,
+} from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { BAR_CELL_PADDING } from "./constants";
 import { ColumnMeta } from "./table-state";
@@ -16,6 +19,7 @@ export const CellDesktop = ({
   columnMeta: ColumnMeta;
 }) => {
   const formatNumber = useFormatNumber();
+  const formatDateAuto = useFormatFullDateAuto();
 
   const {
     columnComponentType,
@@ -48,6 +52,8 @@ export const CellDesktop = ({
         >
           {columnComponentType === "Measure"
             ? formatNumber(cell.value)
+            : columnComponentType === "TemporalDimension"
+            ? formatDateAuto(cell.value)
             : cell.render("Cell")}
         </Flex>
       );
@@ -58,7 +64,9 @@ export const CellDesktop = ({
           {...cell.getCellProps()}
         >
           <Tag tagColor={colorScale ? colorScale(cell.value) : "primaryLight"}>
-            {cell.render("Cell")}
+            {columnComponentType === "TemporalDimension"
+              ? formatDateAuto(cell.value)
+              : cell.render("Cell")}
           </Tag>
         </Flex>
       );
@@ -160,6 +168,8 @@ export const CellDesktop = ({
         >
           {columnComponentType === "Measure"
             ? formatNumber(cell.value)
+            : columnComponentType === "TemporalDimension"
+            ? formatDateAuto(cell.value)
             : cell.render("Cell")}
         </Flex>
       );

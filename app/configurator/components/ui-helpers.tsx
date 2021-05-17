@@ -54,12 +54,15 @@ import { useLocale } from "../../locales/use-locale";
 import { TableColumn, TableFields } from "../config-types";
 
 // FIXME: We should cover more time format
-const parseTime = timeParse("%Y-%m-%dT%H:%M:%S");
+const parseSecond = timeParse("%Y-%m-%dT%H:%M:%S");
+const parseMinute = timeParse("%Y-%m-%dT%H:%M");
 const parseDay = timeParse("%Y-%m-%d");
 const parseMonth = timeParse("%Y-%m");
 const parseYear = timeParse("%Y");
+
 export const parseDate = (dateStr: string): Date =>
-  parseTime(dateStr) ??
+  parseSecond(dateStr) ??
+  parseMinute(dateStr) ??
   parseDay(dateStr) ??
   parseMonth(dateStr) ??
   parseYear(dateStr) ??
@@ -87,7 +90,10 @@ export const useFormatFullDateAuto = () => {
     const formatMonth = format("%m.%Y");
     const formatYear = format("%Y");
 
-    return (date: Date) => {
+    return (dateInput: Date | string) => {
+      const date =
+        typeof dateInput === "string" ? parseDate(dateInput) : dateInput;
+
       return (timeMinute(date) < date
         ? formatSecond
         : timeHour(date) < date
@@ -132,20 +138,6 @@ export const useTimeFormatLocale = () => {
   const locale = useLocale();
   const formatter = useMemo(() => {
     return getD3TimeFormatLocale(locale);
-  }, [locale]);
-
-  return formatter;
-};
-
-/**
- * Parses date strings with the specifier into local time.
- */
-export const useTimeParse = () => {
-  const locale = useLocale();
-  const formatter = useMemo(() => {
-    const { parse } = getD3TimeFormatLocale(locale);
-
-    return parse;
   }, [locale]);
 
   return formatter;

@@ -7,7 +7,10 @@ import {
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { Loading } from "../../components/hint";
-import { useFormatNumber } from "../../configurator/components/ui-helpers";
+import {
+  useFormatFullDateAuto,
+  useFormatNumber,
+} from "../../configurator/components/ui-helpers";
 
 type Header = DimensionFieldsFragment;
 
@@ -21,6 +24,7 @@ const PreviewTable = ({
   observations: Observation[];
 }) => {
   const formatNumber = useFormatNumber();
+  const formatDateAuto = useFormatFullDateAuto();
   return (
     <Box
       as="table"
@@ -90,6 +94,8 @@ const PreviewTable = ({
                 >
                   {__typename === "Measure"
                     ? formatNumber(obs[iri] as number | null)
+                    : __typename === "TemporalDimension"
+                    ? formatDateAuto(obs[iri] as string)
                     : obs[iri]}
                 </Box>
               ))}

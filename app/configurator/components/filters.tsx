@@ -11,7 +11,11 @@ import {
 import { useLocale } from "../../locales/use-locale";
 import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval-brush";
 import { MultiFilterField, SingleFilterField } from "./field";
-import { getTimeInterval, useTimeFormatLocale } from "./ui-helpers";
+import {
+  getTimeInterval,
+  useFormatFullDateAuto,
+  useTimeFormatLocale,
+} from "./ui-helpers";
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 
@@ -132,6 +136,7 @@ export const TimeFilter = ({
 }) => {
   const locale = useLocale();
   const formatLocale = useTimeFormatLocale();
+  const formatHumanLocale = useFormatFullDateAuto();
   const [state, dispatch] = useConfiguratorState();
 
   const setFilterRange = useCallback(
@@ -166,8 +171,7 @@ export const TimeFilter = ({
     const timeInterval = getTimeInterval(timeUnit);
 
     const parse = formatLocale.parse(timeFormat);
-    // TODO use localized time format
-    const format = formatLocale.format(timeFormat);
+    const formatDateValue = formatLocale.format(timeFormat);
 
     const from = parse(dimension.values[0].value);
     const to = parse(dimension.values[1].value);
@@ -183,12 +187,14 @@ export const TimeFilter = ({
 
     return (
       <Box>
-        {format(timeRange[0])} – {format(timeRange[1])}
+        {formatHumanLocale(timeRange[0])} – {formatHumanLocale(timeRange[1])}
         <EditorIntervalBrush
           timeExtent={[from, to]}
           timeRange={timeRange}
           timeInterval={timeInterval}
-          onChange={([from, to]) => setFilterRange([format(from), format(to)])}
+          onChange={([from, to]) =>
+            setFilterRange([formatDateValue(from), formatDateValue(to)])
+          }
         />
       </Box>
     );
