@@ -83,6 +83,7 @@ export const ChartDataFilters = ({
                 <DataFilterDropdown
                   key={d}
                   dataSetIri={dataSet}
+                  chartConfig={chartConfig}
                   dimensionIri={d}
                 />
               ))}
@@ -97,9 +98,11 @@ export const ChartDataFilters = ({
 const DataFilterDropdown = ({
   dimensionIri,
   dataSetIri,
+  chartConfig,
 }: {
   dimensionIri: string;
   dataSetIri: string;
+  chartConfig: ChartConfig;
 }) => {
   const [state, dispatch] = useInteractiveFilters();
   const formatDateAuto = useFormatFullDateAuto();
@@ -129,7 +132,16 @@ const DataFilterDropdown = ({
     // TODO: Un-disable temporal fields
     const disabled = dimension.__typename === "TemporalDimension";
 
-    const value = dataFilters[dimension.iri]?.value ?? FIELD_VALUE_NONE;
+    const configFilter = chartConfig.filters[dimension.iri];
+    const configFilterValue =
+      configFilter && configFilter.type === "single"
+        ? configFilter.value
+        : undefined;
+
+    const value =
+      dataFilters?.[dimension.iri]?.value ??
+      configFilterValue ??
+      FIELD_VALUE_NONE;
 
     const options = disabled
       ? [{ value, label: formatDateAuto(value) }]
