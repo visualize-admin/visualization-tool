@@ -269,7 +269,7 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "monochrome700", fontSize: 4 }}>
+  <Box sx={{ color: "monochrome700", fontSize: 4, pb: 2 }}>
     {label && name && (
       <Label htmlFor={name} smaller>
         {label}

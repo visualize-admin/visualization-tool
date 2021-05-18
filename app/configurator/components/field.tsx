@@ -187,11 +187,13 @@ export const DataFilterSelectTime = ({
     formatDateAuto,
   ]);
 
+  const fullLabel = isOptional ? `${label} (${optionalLabel})` : label;
+
   if (range <= 100) {
     return (
       <Select
         id={id}
-        label={isOptional ? `${label} (${optionalLabel})` : label}
+        label={fullLabel}
         disabled={disabled}
         options={allOptions}
         sortOptions={false}
@@ -203,7 +205,7 @@ export const DataFilterSelectTime = ({
   return (
     <TimeInput
       id={id}
-      label={isOptional ? `${label} (${optionalLabel})` : label}
+      label={fullLabel}
       value={fieldProps.value}
       timeFormat={timeFormat}
       onChange={fieldProps.onChange}
@@ -224,7 +226,9 @@ const TimeInput = ({
   timeFormat: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
-  const [inputValue, setInputValue] = useState(value);
+  const [inputValue, setInputValue] = useState(
+    value === FIELD_VALUE_NONE ? undefined : value
+  );
   const formatLocale = useTimeFormatLocale();
 
   const [parseDateValue, formatDateValue] = useMemo(
@@ -248,7 +252,7 @@ const TimeInput = ({
 
   return (
     <Input
-      id={id}
+      name={id}
       label={label}
       value={inputValue}
       onChange={onInputChange}
