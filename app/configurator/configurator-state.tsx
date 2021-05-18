@@ -220,6 +220,11 @@ const deriveFiltersFromFields = produce(
             type: "single",
             value: Object.keys(f.values)[0],
           };
+        } else if (isFiltered(dimension.iri) && f.type === "range") {
+          filters[dimension.iri] = {
+            type: "single",
+            value: f.from,
+          };
         }
       } else {
         // Add filter for this dim if it's not one of the selected multi filter fields
