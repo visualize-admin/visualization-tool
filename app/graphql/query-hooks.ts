@@ -269,7 +269,7 @@ export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', da
       { __typename: 'OrdinalDimension' }
       & DimensionFieldsWithValues_OrdinalDimension_Fragment
     ) | (
-      { __typename: 'TemporalDimension' }
+      { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
     ) | (
       { __typename: 'Measure' }
@@ -293,7 +293,7 @@ export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
       { __typename: 'OrdinalDimension' }
       & DimensionFieldsWithValues_OrdinalDimension_Fragment
     ) | (
-      { __typename: 'TemporalDimension' }
+      { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
     ) | (
       { __typename: 'Measure' }
@@ -453,6 +453,10 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
     publisher
     dimensions {
       ...dimensionFieldsWithValues
+      ... on TemporalDimension {
+        timeUnit
+        timeFormat
+      }
     }
     measures {
       ...dimensionFields
@@ -470,6 +474,10 @@ export const DimensionValuesDocument = gql`
   dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
     dimensionByIri(iri: $dimensionIri) {
       ...dimensionFieldsWithValues
+      ... on TemporalDimension {
+        timeUnit
+        timeFormat
+      }
     }
   }
 }

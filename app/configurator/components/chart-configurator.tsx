@@ -11,7 +11,11 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "./chart-controls/section";
-import { DataFilterSelect, ControlTabField } from "./field";
+import {
+  DataFilterSelect,
+  ControlTabField,
+  DataFilterSelectTime,
+} from "./field";
 import { Loading } from "../../components/hint";
 import { Box } from "theme-ui";
 
@@ -59,25 +63,50 @@ export const ChartConfigurator = ({
           <ControlSectionContent side="left" aria-labelledby="controls-data">
             {requiredFilterDimensions.map((dimension, i) => (
               <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
-                <DataFilterSelect
-                  dimensionIri={dimension.iri}
-                  label={dimension.label}
-                  options={dimension.values}
-                  disabled={false}
-                  id={`select-single-filter-${i}`}
-                />
+                {dimension.__typename === "TemporalDimension" ? (
+                  <DataFilterSelectTime
+                    dimensionIri={dimension.iri}
+                    label={dimension.label}
+                    from={dimension.values[0].value}
+                    to={dimension.values[1].value}
+                    timeUnit={dimension.timeUnit}
+                    timeFormat={dimension.timeFormat}
+                    disabled={false}
+                    id={`select-single-filter-${i}`}
+                  />
+                ) : (
+                  <DataFilterSelect
+                    dimensionIri={dimension.iri}
+                    label={dimension.label}
+                    options={dimension.values}
+                    disabled={false}
+                    id={`select-single-filter-${i}`}
+                  />
+                )}
               </Box>
             ))}
             {optionalFilterDimensions.map((dimension, i) => (
               <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
-                <DataFilterSelect
-                  dimensionIri={dimension.iri}
-                  label={dimension.label}
-                  options={dimension.values}
-                  disabled={false}
-                  isOptional
-                  id={`select-single-filter-${i}`}
-                />
+                {dimension.__typename === "TemporalDimension" ? (
+                  <DataFilterSelectTime
+                    dimensionIri={dimension.iri}
+                    label={dimension.label}
+                    from={dimension.values[0].value}
+                    to={dimension.values[1].value}
+                    timeUnit={dimension.timeUnit}
+                    timeFormat={dimension.timeFormat}
+                    disabled={false}
+                    id={`select-single-filter-${i}`}
+                  />
+                ) : (
+                  <DataFilterSelect
+                    dimensionIri={dimension.iri}
+                    label={dimension.label}
+                    options={dimension.values}
+                    disabled={false}
+                    id={`select-single-filter-${i}`}
+                  />
+                )}
               </Box>
             ))}
           </ControlSectionContent>

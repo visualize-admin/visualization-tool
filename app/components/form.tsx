@@ -149,22 +149,25 @@ export const Select = ({
   disabled,
   options,
   onChange,
+  sortOptions = true,
 }: {
   id: string;
   options: Option[];
   label?: ReactNode;
   disabled?: boolean;
+  sortOptions?: boolean;
 } & SelectProps) => {
   const locale = useLocale();
   const sortedOptions = useMemo(() => {
     const noneOptions = options.filter((o) => o.isNoneValue);
     const restOptions = options.filter((o) => !o.isNoneValue);
 
-    return [
-      ...noneOptions,
-      ...restOptions.sort((a, b) => a.label.localeCompare(b.label, locale)),
-    ];
-  }, [options, locale]);
+    if (sortOptions) {
+      restOptions.sort((a, b) => a.label.localeCompare(b.label, locale));
+    }
+
+    return [...noneOptions, ...restOptions];
+  }, [options, locale, sortOptions]);
 
   return (
     <Box sx={{ color: "monochrome700", pb: 2 }}>

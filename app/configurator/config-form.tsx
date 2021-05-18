@@ -1,4 +1,3 @@
-import { SelectProps } from "theme-ui";
 import get from "lodash/get";
 import {
   ChangeEvent,
@@ -6,6 +5,7 @@ import {
   SyntheticEvent,
   useCallback,
 } from "react";
+import { SelectProps } from "theme-ui";
 import { getFieldComponentIri } from "../charts";
 import { DataCubeMetadata } from "../graphql/types";
 import { ChartType } from "./config-types";
@@ -265,10 +265,15 @@ export const useSingleFilterSelect = ({
   dimensionIri,
 }: {
   dimensionIri: string;
-}): SelectProps => {
+}): {
+  value: string | undefined;
+  onChange: (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
+} => {
   const [state, dispatch] = useConfiguratorState();
 
-  const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
+  const onChange = useCallback<
+    (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void
+  >(
     (e) => {
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
