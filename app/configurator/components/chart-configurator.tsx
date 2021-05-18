@@ -96,6 +96,7 @@ export const ChartConfigurator = ({
                     timeUnit={dimension.timeUnit}
                     timeFormat={dimension.timeFormat}
                     disabled={false}
+                    isOptional
                     id={`select-single-filter-${i}`}
                   />
                 ) : (
@@ -104,6 +105,7 @@ export const ChartConfigurator = ({
                     label={dimension.label}
                     options={dimension.values}
                     disabled={false}
+                    isOptional
                     id={`select-single-filter-${i}`}
                   />
                 )}
