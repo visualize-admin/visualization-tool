@@ -1,5 +1,7 @@
 // import { sparql } from "@tpluscode/rdf-string";
 // import { descending } from "d3";
+import { ascending, descending, rollup } from "d3";
+import { string } from "io-ts";
 import {
   Cube,
   CubeDimension,
@@ -237,6 +239,33 @@ export const getCubeDimensionValues = async ({
 
 // };
 
+type ValueWithLabel = { value: string; label: string };
+
+const groupLabelsPerValue = ({
+  values,
+  locale,
+}: {
+  values: ValueWithLabel[];
+  locale: string;
+}): ValueWithLabel[] => {
+  const grouped = rollup(
+    values,
+    (vals) => {
+      const label = vals
+        .map((v) => v.label)
+        .sort((a, b) => a.localeCompare(b, locale))
+        .join(" / ");
+      return {
+        value: vals[0].value,
+        label: label,
+      };
+    },
+    (d) => d.value
+  );
+
+  return [...grouped.values()];
+};
+
 const getCubeDimensionValuesWithLabels = async ({
   dimension,
   cube,
@@ -279,10 +308,13 @@ const getCubeDimensionValuesWithLabels = async ({
 
   const values =
     dimensionValueNamedNodes.length > 0
-      ? (
-          await loadResourceLabels({ ids: dimensionValueNamedNodes, locale })
-        ).map((vl) => {
-          return { value: vl.iri.value, label: vl.label?.value ?? "" };
+      ? groupLabelsPerValue({
+          values: (
+            await loadResourceLabels({ ids: dimensionValueNamedNodes, locale })
+          ).map((vl) => {
+            return { value: vl.iri.value, label: vl.label?.value ?? "" };
+          }),
+          locale,
         })
       : dimensionValueLiterals.length > 0
       ? dimensionValueLiterals.map((v) => {
