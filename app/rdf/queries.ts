@@ -1,7 +1,6 @@
 // import { sparql } from "@tpluscode/rdf-string";
 // import { descending } from "d3";
-import { ascending, descending, rollup } from "d3";
-import { string } from "io-ts";
+import { rollup } from "d3";
 import {
   Cube,
   CubeDimension,
