@@ -95,6 +95,10 @@ query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
     publisher
     dimensions {
       ...dimensionFieldsWithValues
+      ... on TemporalDimension {
+        timeUnit
+        timeFormat
+      }
     }
     measures {
       ...dimensionFields
@@ -110,6 +114,10 @@ query DimensionValues(
   dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
     dimensionByIri(iri: $dimensionIri) {
       ...dimensionFieldsWithValues
+      ... on TemporalDimension {
+        timeUnit
+        timeFormat
+      }
     }
   }
 }

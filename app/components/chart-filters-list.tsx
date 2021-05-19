@@ -36,11 +36,14 @@ export const ChartFiltersList = ({
       }
 
       const dimension = dimensions.find((d) => d.iri === iri);
-      const value = dimension?.values.find((v) => v.value === f.value);
-
       if (!dimension) {
         return [];
       }
+
+      const value =
+        dimension.__typename === "TemporalDimension"
+          ? { value: f.value, label: formatDateAuto(f.value) }
+          : dimension.values.find((v) => v.value === f.value);
 
       return [
         {
@@ -62,10 +65,7 @@ export const ChartFiltersList = ({
                 </Box>
 
                 <Box as="span" sx={{ fontWeight: "bold" }}>
-                  {value &&
-                    (dimension.__typename === "TemporalDimension"
-                      ? formatDateAuto(value.value)
-                      : value.label)}
+                  {value && value.label}
                 </Box>
                 {i < namedFilters.length - 1 && ", "}
               </Fragment>

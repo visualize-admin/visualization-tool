@@ -120,7 +120,7 @@ export const EditorIntervalBrush = ({
 
   const [fromPx, toPx] = timeRange.map(timeScale);
 
-  // FIXME: fix dependency array
+  // FIXME: fix dependency array but don't include brush.move!
   useEffect(() => {
     const g = select(brushRef.current);
     (g as Selection<SVGGElement, unknown, null, undefined>).call(brush.move, [

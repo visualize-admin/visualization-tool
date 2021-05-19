@@ -1,6 +1,6 @@
 import { t } from "@lingui/macro";
 import get from "lodash/get";
-import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
+import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
 import {
   Option,
@@ -12,7 +12,7 @@ import {
   useSingleFilterField,
 } from "..";
 import { Checkbox, Input, Label, Radio, Select } from "../../components/form";
-import { DimensionFieldsFragment } from "../../graphql/query-hooks";
+import { DimensionFieldsFragment, TimeUnit } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import {
@@ -23,7 +23,12 @@ import {
 import { FIELD_VALUE_NONE } from "../constants";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
 import { AnnotatorTab, ControlTab } from "./chart-controls/control-tab";
-import { getPalette } from "./ui-helpers";
+import {
+  getPalette,
+  getTimeInterval,
+  useFormatFullDateAuto,
+  useTimeFormatLocale,
+} from "./ui-helpers";
 
 export const ControlTabField = ({
   component,
@@ -99,6 +104,159 @@ export const DataFilterSelect = ({
       options={allOptions}
       {...fieldProps}
     ></Select>
+  );
+};
+
+export const DataFilterSelectTime = ({
+  dimensionIri,
+  label,
+  from,
+  to,
+  timeUnit,
+  timeFormat,
+  id,
+  disabled,
+  isOptional,
+}: {
+  dimensionIri: string;
+  label: string;
+  from: string;
+  to: string;
+  timeUnit: TimeUnit;
+  timeFormat: string;
+  id: string;
+  disabled?: boolean;
+  isOptional?: boolean;
+}) => {
+  const fieldProps = useSingleFilterSelect({ dimensionIri });
+  const formatDateAuto = useFormatFullDateAuto();
+  const formatLocale = useTimeFormatLocale();
+
+  const formatDateValue = formatLocale.format(timeFormat);
+  const parseDateValue = formatLocale.parse(timeFormat);
+
+  const fromDate = parseDateValue(from);
+  const toDate = parseDateValue(to);
+  if (!fromDate || !toDate) {
+    throw Error(`Error parsing dates ${from}, ${to}`);
+  }
+  const timeInterval = getTimeInterval(timeUnit);
+  const range = timeInterval.count(fromDate, toDate) + 1;
+
+  const noneLabel = t({
+    id: "controls.dimensionvalue.none",
+    message: `No Filter`,
+  });
+
+  const optionalLabel = t({
+    id: "controls.select.optional",
+    message: `optional`,
+  });
+
+  const allOptions = useMemo(() => {
+    if (range > 100) {
+      return [];
+    }
+
+    const options = [...timeInterval.range(fromDate, toDate), toDate].map(
+      (d) => {
+        return {
+          value: formatDateValue(d),
+          label: formatDateAuto(d),
+        };
+      }
+    );
+    return isOptional
+      ? [
+          {
+            value: FIELD_VALUE_NONE,
+            label: noneLabel,
+            isNoneValue: true,
+          },
+          ...options,
+        ]
+      : options;
+  }, [
+    range,
+    timeInterval,
+    fromDate,
+    toDate,
+    isOptional,
+    noneLabel,
+    formatDateValue,
+    formatDateAuto,
+  ]);
+
+  const fullLabel = isOptional ? `${label} (${optionalLabel})` : label;
+
+  if (range <= 100) {
+    return (
+      <Select
+        id={id}
+        label={fullLabel}
+        disabled={disabled}
+        options={allOptions}
+        sortOptions={false}
+        {...fieldProps}
+      ></Select>
+    );
+  }
+
+  return (
+    <TimeInput
+      id={id}
+      label={fullLabel}
+      value={fieldProps.value}
+      timeFormat={timeFormat}
+      onChange={fieldProps.onChange}
+    />
+  );
+};
+
+const TimeInput = ({
+  id,
+  label,
+  value,
+  timeFormat,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: string | undefined;
+  timeFormat: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  const [inputValue, setInputValue] = useState(
+    value === FIELD_VALUE_NONE ? undefined : value
+  );
+  const formatLocale = useTimeFormatLocale();
+
+  const [parseDateValue, formatDateValue] = useMemo(
+    () => [formatLocale.parse(timeFormat), formatLocale.format(timeFormat)],
+    [timeFormat, formatLocale]
+  );
+
+  const onInputChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
+    (e) => {
+      setInputValue(e.currentTarget.value);
+      const parsed = parseDateValue(e.currentTarget.value);
+      if (
+        parsed !== null &&
+        formatDateValue(parsed) === e.currentTarget.value
+      ) {
+        onChange(e);
+      }
+    },
+    [formatDateValue, onChange, parseDateValue]
+  );
+
+  return (
+    <Input
+      name={id}
+      label={label}
+      value={inputValue}
+      onChange={onInputChange}
+    ></Input>
   );
 };
 

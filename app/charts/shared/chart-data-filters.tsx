@@ -6,6 +6,7 @@ import { ChartFiltersList } from "../../components/chart-filters-list";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import { ChartConfig, InteractiveFiltersDataConfig } from "../../configurator";
+import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
 import { useDimensionValuesQuery } from "../../graphql/query-hooks";
 import { Icon } from "../../icons";
@@ -82,6 +83,7 @@ export const ChartDataFilters = ({
                 <DataFilterDropdown
                   key={d}
                   dataSetIri={dataSet}
+                  chartConfig={chartConfig}
                   dimensionIri={d}
                 />
               ))}
@@ -96,11 +98,14 @@ export const ChartDataFilters = ({
 const DataFilterDropdown = ({
   dimensionIri,
   dataSetIri,
+  chartConfig,
 }: {
   dimensionIri: string;
   dataSetIri: string;
+  chartConfig: ChartConfig;
 }) => {
   const [state, dispatch] = useInteractiveFilters();
+  const formatDateAuto = useFormatFullDateAuto();
   const { dataFilters } = state;
 
   const locale = useLocale();
@@ -124,7 +129,23 @@ const DataFilterDropdown = ({
   if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
 
-    const options = dimension.isKeyDimension
+    // TODO: Un-disable temporal fields
+    const disabled = dimension.__typename === "TemporalDimension";
+
+    const configFilter = chartConfig.filters[dimension.iri];
+    const configFilterValue =
+      configFilter && configFilter.type === "single"
+        ? configFilter.value
+        : undefined;
+
+    const value =
+      dataFilters?.[dimension.iri]?.value ??
+      configFilterValue ??
+      FIELD_VALUE_NONE;
+
+    const options = disabled
+      ? [{ value, label: formatDateAuto(value) }]
+      : dimension.isKeyDimension
       ? dimension.values
       : [
           {
@@ -151,14 +172,8 @@ const DataFilterDropdown = ({
           id="interactiveDataFilter"
           label={dimension.label}
           options={options}
-          value={
-            dataFilters &&
-            dataFilters[dimension.iri] &&
-            dataFilters[dimension.iri].value
-              ? dataFilters[dimension.iri].value
-              : FIELD_VALUE_NONE
-          }
-          disabled={false}
+          value={value}
+          disabled={disabled}
           onChange={setDataFilter}
         />
       </Flex>
