@@ -39,8 +39,8 @@ export const parseCube = ({
     data: {
       iri: cube.term?.value ?? "[NO IRI]",
       identifier: cube.out(ns.dcterms.identifier)?.value ?? "[NO IDENTIFIER]",
-      title: cube.out(ns.dcterms.title, outOpts)?.value ?? "[NO TITLE]",
-      description: cube.out(ns.dcterms.description, outOpts)?.value ?? "",
+      title: cube.out(ns.schema.name, outOpts)?.value ?? "[NO TITLE]",
+      description: cube.out(ns.schema.description, outOpts)?.value ?? "",
       version: cube.out(ns.schema.version)?.value,
       publicationStatus:
         ns.adminTerm("CreativeWorkStatus/Published").value ===
