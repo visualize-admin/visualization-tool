@@ -30,9 +30,12 @@ const findPreferredDimension = (
   dimensions: DataCubeMetadata["dimensions"],
   preferredType?: DimensionFieldsWithValuesFragment["__typename"]
 ) => {
-  const dim = preferredType
-    ? dimensions.find((d) => d.__typename === preferredType)
-    : dimensions.find((d) => d.isKeyDimension) ?? dimensions[0];
+  const dim =
+    dimensions.find(
+      (d) => d.__typename === preferredType && d.isKeyDimension
+    ) ??
+    dimensions.find((d) => d.isKeyDimension) ??
+    dimensions[0];
 
   if (!dim) {
     throw Error("No dimension found for initial config");
