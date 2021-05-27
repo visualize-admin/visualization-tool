@@ -24,8 +24,8 @@
     "@juggle/resize-observer": "^3.2.0",
     "@lingui/react": "^3.2.3",
     "@mdx-js/react": "^1.6.16",
-    "@next/bundle-analyzer": "^10.0.3",
-    "@next/mdx": "^10.0.3",
+    "@next/bundle-analyzer": "^10.2.3",
+    "@next/mdx": "^10.2.3",
     "@preconstruct/next": "^1.0.1",
     "@rdfjs/namespace": "^1.1.0",
     "@reach/auto-id": "^0.12.1",
@@ -78,7 +78,7 @@
   },
   "peerDependencies": {
     "@babel/runtime": "^7.8.4",
-    "next": "^10.0.3",
+    "next": "^10.2.3",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
   },
