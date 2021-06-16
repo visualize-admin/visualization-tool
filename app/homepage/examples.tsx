@@ -220,6 +220,7 @@ const Example = ({
       }}
     >
       <Text
+        as="h3"
         sx={{
           fontSize: [5, 5, 6],
           lineHeight: 1.5,
@@ -231,6 +232,7 @@ const Example = ({
         {headline}
       </Text>
       <Text
+        as="p"
         sx={{
           fontSize: 4,
           lineHeight: 1.5,

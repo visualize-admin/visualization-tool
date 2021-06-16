@@ -148,8 +148,12 @@ export const EditorIntervalBrush = ({
         )}
       </Box>
       <Flex sx={{ justifyContent: "space-between" }}>
-        <Text variant="meta">{formatDateAuto(timeExtent[0])}</Text>
-        <Text variant="meta">{formatDateAuto(timeExtent[1])}</Text>
+        <Text as="div" variant="meta">
+          {formatDateAuto(timeExtent[0])}
+        </Text>
+        <Text as="div" variant="meta">
+          {formatDateAuto(timeExtent[1])}
+        </Text>
       </Flex>
     </Box>
   );

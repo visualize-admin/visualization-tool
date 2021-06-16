@@ -27,7 +27,9 @@ export const Contribute = ({
             >
               {headline}
             </Text>
-            <Text variant="paragraph1">{description}</Text>
+            <Text as="div" variant="paragraph1">
+              {description}
+            </Text>
           </Box>
           <Flex
             sx={{

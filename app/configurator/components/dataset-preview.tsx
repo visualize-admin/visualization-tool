@@ -40,10 +40,18 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             </HintRed>
           </Box>
         )}
-        <Text variant="heading2" sx={{ mb: 1, color: "monochrome700" }}>
+        <Text
+          as="div"
+          variant="heading2"
+          sx={{ mb: 1, color: "monochrome700" }}
+        >
           {dataCubeByIri.title}
         </Text>
-        <Text variant="paragraph1" sx={{ mb: 4, color: "monochrome700" }}>
+        <Text
+          as="div"
+          variant="paragraph1"
+          sx={{ mb: 4, color: "monochrome700" }}
+        >
           {dataCubeByIri.description}
         </Text>
 

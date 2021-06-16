@@ -1,9 +1,9 @@
-import { SystemStyleObject } from "@styled-system/css";
+import { ThemeUICSSObject } from "theme-ui";
 
 export const TABLE_HEIGHT = 600;
 export const BAR_CELL_PADDING = 12;
 export const SORTING_ARROW_WIDTH = 24;
-export const TABLE_STYLES: SystemStyleObject = {
+export const TABLE_STYLES: ThemeUICSSObject = {
   borderSpacing: 0,
   border: "none",
   tableLayout: "fixed",

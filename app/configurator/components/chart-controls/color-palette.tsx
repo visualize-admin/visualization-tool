@@ -131,7 +131,9 @@ export const ColorPalette = ({
                     : "monochrome100",
               }}
             >
-              <Text variant="meta">{palette.label}</Text>
+              <Text as="div" variant="meta">
+                {palette.label}
+              </Text>
               <Box
                 sx={{
                   backgroundColor:

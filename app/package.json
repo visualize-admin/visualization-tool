@@ -20,7 +20,6 @@
     "@deck.gl/layers": "^8.4.8",
     "@deck.gl/mesh-layers": "^8.4.10",
     "@deck.gl/react": "^8.4.8",
-    "@emotion/core": "^10.0.35",
     "@juggle/resize-observer": "^3.2.0",
     "@lingui/react": "^3.2.3",
     "@mdx-js/react": "^1.6.16",
@@ -70,7 +69,7 @@
     "react-window": "^1.8.6",
     "simple-statistics": "^7.6.0",
     "sparql-http-client": "^2.2.2",
-    "theme-ui": "^0.3.1",
+    "theme-ui": "^0.9.1",
     "topojson-client": "^3.1.0",
     "urql": "^1.10.1",
     "use-debounce": "^4.0.0",
@@ -113,7 +112,6 @@
     "@types/react-table": "^7.0.25",
     "@types/react-window": "^1.8.2",
     "@types/sparql-http-client": "^2.2.5",
-    "@types/theme-ui": "^0.3.7",
     "babel-core": "^7.0.0-bridge.0"
   }
 }

@@ -95,7 +95,11 @@ export const SectionTitle = ({
           name={iconName}
         ></Icon>
       )}
-      <Text variant="table" sx={{ fontWeight: "bold", ml: iconName ? 2 : 0 }}>
+      <Text
+        as="div"
+        variant="table"
+        sx={{ fontWeight: "bold", ml: iconName ? 2 : 0 }}
+      >
         {children}
       </Text>
     </Flex>

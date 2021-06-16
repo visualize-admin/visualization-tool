@@ -10,7 +10,7 @@ const Page = () => (
   <ContentLayout>
     <Box sx={{ bg: "muted", my: "auto" }}>
       <ErrorPageHint>
-        <Text variant="heading2" sx={{ my: 3 }}>
+        <Text as="div" variant="heading2" sx={{ my: 3 }}>
           Diese Seite wurde nicht gefunden.
         </Text>
         <Actions>
@@ -18,7 +18,7 @@ const Page = () => (
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Text variant="heading2" sx={{ my: 3 }}>
+        <Text as="div" variant="heading2" sx={{ my: 3 }}>
           Cette page est introuvable.
         </Text>
         <Actions>
@@ -26,7 +26,7 @@ const Page = () => (
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Text variant="heading2" sx={{ my: 3 }}>
+        <Text as="div" variant="heading2" sx={{ my: 3 }}>
           Questa pagina non è stata trovata.
         </Text>
         <Actions>
@@ -34,7 +34,7 @@ const Page = () => (
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Text variant="heading2" sx={{ my: 3 }}>
+        <Text as="div" variant="heading2" sx={{ my: 3 }}>
           This page could not be found.
         </Text>
         <Actions>

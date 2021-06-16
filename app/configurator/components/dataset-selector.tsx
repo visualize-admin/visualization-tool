@@ -262,7 +262,7 @@ export const DatasetButton = ({
           }}
         ></Box>
       )}
-      <Text variant="paragraph2" sx={{ fontWeight: "bold" }} pb={1}>
+      <Text as="div" variant="paragraph2" sx={{ fontWeight: "bold" }} pb={1}>
         {highlightedTitle ? (
           <Box
             as="span"

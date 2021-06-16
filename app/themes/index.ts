@@ -1,34 +1,47 @@
-import { useThemeUI, Theme as ThemeUITheme } from "theme-ui";
-import { SystemStyleObject } from "@styled-system/css";
-
-type StyleValueMap = {
-  [k: string]: string | number | (string | number)[] | StyleValueMap;
-};
+import { Theme as ThemeUITheme, ThemeStyles, useThemeUI } from "theme-ui";
 
 /**
  * Adapted/refined from the [Theme UI Theme Specification](https://theme-ui.com/theme-spec)
  *
  * TODO: Types are still a bit wonky because the base types are not the greatest
  */
-export type Theme = Omit<
-  ThemeUITheme,
-  "colors" | "buttons" | "links" | "fontSizes" | "lineHeights" | "fonts"
-> &
-  Required<Pick<ThemeUITheme, "space" | "breakpoints">> & {
-    fontSizes: Array<string | number>;
-    lineHeights: Array<string | number>;
-    fonts: {
-      body: string;
-      monospace: string;
-    };
-    colors: Record<string, string>;
-    text: SystemStyleObject;
-    buttons: SystemStyleObject;
-    styles?: SystemStyleObject;
-    shadows?: Record<string, string>;
-    links?: SystemStyleObject;
-    variants?: SystemStyleObject;
+
+export interface Theme extends ThemeUITheme {
+  fontSizes: Array<string | number>;
+  lineHeights: Array<string | number>;
+  fonts: {
+    body: string;
+    monospace: string;
   };
+  colors: Record<string, string>;
+  shadows: {
+    primary: string;
+    rightSide: string;
+    leftSide: string;
+    tooltip: string;
+  };
+  styles: ThemeStyles;
+}
+
+// = Omit<
+//   ThemeUITheme,
+//   "colors" | "buttons" | "links" | "fontSizes" | "lineHeights" | "fonts"
+// > &
+//   Required<Pick<ThemeUITheme, "space" | "breakpoints">> & {
+//     fontSizes: Array<string | number>;
+//     lineHeights: Array<string | number>;
+//     fonts: {
+//       body: string;
+//       monospace: string;
+//     };
+//     colors: Record<string, string>;
+//     shadows: {
+//       primary: string;
+//       rightSide: string;
+//       leftSide: string;
+//       tooltip: string;
+//     };
+//   };
 
 export interface ThemeModule {
   theme: Theme;

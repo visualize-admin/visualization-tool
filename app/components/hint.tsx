@@ -1,4 +1,4 @@
-import { keyframes } from "@emotion/core";
+import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
 import { Box, Flex, Text } from "theme-ui";
 import { ReactNode } from "react";
@@ -69,7 +69,7 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
     >
       <Icon name="loading" size={48} />
     </Box>
-    <Text variant="heading4">
+    <Text as="div" variant="heading4">
       <Trans id="hint.loading.data">Loading data…</Trans>
     </Text>
   </Flex>
@@ -105,10 +105,10 @@ export const DataSetHint = () => (
     }}
   >
     <Icon name="dataset" size={64} />
-    <Text variant="heading2" sx={{ my: 3 }}>
+    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.select.dataset">Select a dataset</Trans>
     </Text>
-    <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.select.dataset.to.preview">
         Click on a dataset in the left column to preview its structure and
         content.
@@ -131,10 +131,10 @@ export const NoDataHint = () => (
     }}
   >
     <Icon name="warning" size={64} />
-    <Text variant="heading2" sx={{ my: 3 }}>
+    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.nodata.title">No data</Trans>
     </Text>
-    <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.nodata.message">
         No data was returned with the current filters.
       </Trans>
@@ -156,10 +156,10 @@ export const LoadingDataError = () => (
     }}
   >
     <Icon name="hintWarning" size={64} />
-    <Text variant="heading2" sx={{ my: 3 }}>
+    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
     </Text>
-    <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.dataloadingerror.message">
         The data could not be loaded.
       </Trans>
@@ -181,10 +181,10 @@ export const OnlyNegativeDataHint = () => (
     }}
   >
     <Icon name="datasetError" size={64} />
-    <Text variant="heading2" sx={{ my: 3 }}>
+    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.only.negative.data.title">Negative Values</Trans>
     </Text>
-    <Text variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.only.negative.data.message">
         Negative data values cannot be displayed with this chart type.
       </Trans>
@@ -209,7 +209,7 @@ export const Success = () => (
     <Box sx={{ width: 64, pr: 4, flexShrink: 0 }}>
       <Icon name="datasetSuccess" size={64} />
     </Box>
-    <Text variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
+    <Text as="p" variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
       <Trans id="hint.publication.success">
         Your visualization is now published. You can share and embed it using
         the URL or the options below.
@@ -240,7 +240,7 @@ export const HintBlue = ({
     <Box sx={{ width: 24, pr: 4 }}>
       <Icon name={iconName} size={24} />
     </Box>
-    <Text variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
+    <Text as="p" variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
       {children}
     </Text>
   </Flex>
@@ -271,7 +271,7 @@ export const HintRed = ({
     <Box sx={{ width: iconSize, pr: 4 }}>
       <Icon name={iconName} size={iconSize} />
     </Box>
-    <Text variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
+    <Text as="p" variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
       {children}
     </Text>
   </Flex>

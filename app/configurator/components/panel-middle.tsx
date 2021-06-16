@@ -17,13 +17,7 @@ export const PanelMiddle = () => {
               <DataSetPreview dataSetIri={state.dataSet} />
             </ChartPanel>
           ) : (
-            <ChartPanel
-              sx={{
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <ChartPanel>
               <DataSetHint />
             </ChartPanel>
           )}
@@ -34,7 +28,7 @@ export const PanelMiddle = () => {
             state.state === "CONFIGURING_CHART" ||
             state.state === "DESCRIBING_CHART" ||
             state.state === "PUBLISHING") && (
-            <ChartPanel sx={{ flexDirection: "column" }}>
+            <ChartPanel>
               <ChartPreview dataSetIri={state.dataSet} />
             </ChartPanel>
           )}

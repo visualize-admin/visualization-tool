@@ -37,7 +37,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                   id={`chart-${key}`}
                   sx={{ width: ["100%", "50%", "50%", "33.33%"] }}
                 >
-                  <ChartPanel sx={{ m: 2, flexDirection: "column" }}>
+                  <ChartPanel>
                     <ChartPublished
                       dataSet={dataSet}
                       chartConfig={chartConfig}

@@ -178,6 +178,7 @@ export const theme: Theme = {
     // Overwrite default browser styles.
     root: {
       // "root" applies to "body"
+      // @ts-ignore
       "@font-face": [
         {
           fontFamily: "FrutigerNeue",

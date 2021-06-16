@@ -145,15 +145,16 @@ export const Title = ({ children }: { children: ReactNode }) => (
   </Text>
 );
 export const Teaser = ({ children }: { children: ReactNode }) => (
-  <Text
-    variant="paragraph1"
-    sx={{
-      fontSize: [4, 4, 4],
-      textAlign: "center",
-      color: "monochrome700",
-      mb: [6, 5],
-    }}
-  >
-    {children}
-  </Text>
+  <Box sx={{ mb: [6, 5] }}>
+    <Text
+      variant="paragraph1"
+      sx={{
+        fontSize: [4, 4, 4],
+        textAlign: "center",
+        color: "monochrome700",
+      }}
+    >
+      {children}
+    </Text>
+  </Box>
 );

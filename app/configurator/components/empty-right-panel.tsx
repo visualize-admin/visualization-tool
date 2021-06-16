@@ -11,7 +11,7 @@ export const EmptyRightPanel = ({
 }: {
   state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
 }) => (
-  <Text variant="paragraph1" sx={{ m: 4 }}>
+  <Text as="div" variant="paragraph1" sx={{ m: 4 }}>
     {getRightPanelHint(state.state)}
   </Text>
 );

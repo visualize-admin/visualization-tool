@@ -54,6 +54,7 @@ export const Tutorial = ({
 
 const HomepageTutorialStep = ({ children }: { children: ReactNode }) => (
   <Text
+    as="div"
     sx={{
       fontSize: 5,
       fontFamily: "body",

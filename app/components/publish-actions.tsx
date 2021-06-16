@@ -142,7 +142,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               alignItems: "center",
             }}
           >
-            <Text variant="paragraph1" color="monochrome700">
+            <Text as="div" variant="paragraph1" color="monochrome700">
               <Trans id="publication.popup.share">Share</Trans>:
             </Text>
             <Flex color="primary">
@@ -189,7 +189,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             </Flex>
           </Flex>
           <Box mt={2}>
-            <Text variant="paragraph1" color="monochrome700">
+            <Text as="div" variant="paragraph1" color="monochrome700">
               <Trans id="publication.share.chart.url">Chart URL: </Trans>
             </Text>
             <Box my={1} sx={{ color: "primary" }}>
@@ -236,14 +236,14 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       <>
         <PublishActionOverlay />
         <PublishActionModal>
-          <Text variant="paragraph1" color="monochrome700" mt={2}>
+          <Text as="div" variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
           </Text>
 
           <CopyToClipboardTextInput
             iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
-          <Text variant="paragraph1" color="monochrome700" mt={2}>
+          <Text as="div" variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.AEM">
               Embed Code for AEM "External Application":{" "}
             </Trans>

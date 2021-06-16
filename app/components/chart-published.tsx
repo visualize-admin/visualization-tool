@@ -62,12 +62,12 @@ export const ChartPublished = ({
           </Box>
         )}
         {meta.title[locale] !== "" && (
-          <Text variant="heading2" mb={2}>
+          <Text as="div" variant="heading2" mb={2}>
             {meta.title[locale]}
           </Text>
         )}
         {meta.description[locale] && (
-          <Text variant="paragraph1" mb={2}>
+          <Text as="div" variant="paragraph1" mb={2}>
             {meta.description[locale]}
           </Text>
         )}

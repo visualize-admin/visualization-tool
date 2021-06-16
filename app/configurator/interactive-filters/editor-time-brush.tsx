@@ -176,7 +176,7 @@ export const EditorBrush = ({
         )}
       </Box>
       <Flex sx={{ justifyContent: "space-between" }}>
-        <Text variant="meta">
+        <Text as="div" variant="meta">
           {chartConfig &&
             chartConfig.interactiveFiltersConfig?.time.presets.from &&
             formatDateAuto(
@@ -187,7 +187,7 @@ export const EditorBrush = ({
               )
             )}
         </Text>
-        <Text variant="meta">
+        <Text as="div" variant="meta">
           {chartConfig &&
             chartConfig.interactiveFiltersConfig?.time.presets.to &&
             formatDateAuto(

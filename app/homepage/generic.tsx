@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 
 export const HomepageSection = ({ children }: { children: ReactNode }) => (
   <Text
+    as="h2"
     sx={{
       fontFamily: "body",
       lineHeight: [7, 8, 8],

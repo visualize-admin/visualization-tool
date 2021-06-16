@@ -18,7 +18,7 @@ Example of a heading \`h1\` with the style \`heading1\`.
 ~~~
 import { Text } from "theme-ui"
 
-<Text variant="heading1" as="h1" >
+<Text  variant="heading1" as="h1" >
  Heading 1
 </Text>
 ~~~

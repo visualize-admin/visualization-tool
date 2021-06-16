@@ -12,7 +12,7 @@ const Page = () => {
     <ContentLayout>
       <Box sx={{ bg: "muted", my: "auto" }}>
         <ErrorPageHint>
-          <Text variant="heading2" sx={{ my: 3 }}>
+          <Text as="div" variant="heading2" sx={{ my: 3 }}>
             Ein Fehler ist aufgetreten.{" "}
           </Text>
           <Actions>
@@ -22,7 +22,7 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Text variant="heading2" sx={{ my: 3 }}>
+          <Text as="div" variant="heading2" sx={{ my: 3 }}>
             Une erreur est survenue.{" "}
           </Text>
           <Actions>
@@ -32,7 +32,7 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Text variant="heading2" sx={{ my: 3 }}>
+          <Text as="div" variant="heading2" sx={{ my: 3 }}>
             Si è verificato un errore.{" "}
           </Text>
           <Actions>
@@ -42,7 +42,7 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Text variant="heading2" sx={{ my: 3 }}>
+          <Text as="div" variant="heading2" sx={{ my: 3 }}>
             An error occurred.{" "}
           </Text>
           <Actions>

@@ -31,7 +31,7 @@ export const MapTooltip = () => {
           margins={{ bottom: 0, left: 0, right: 0, top: 0 }}
         >
           <Box sx={{ minWidth: 200 }}>
-            <Text variant="meta" sx={{ fontWeight: "bold" }}>
+            <Text as="div" variant="meta" sx={{ fontWeight: "bold" }}>
               {getFeatureLabel(interaction.d)}
             </Text>
             <Grid
@@ -45,7 +45,9 @@ export const MapTooltip = () => {
             >
               {showAreaLayer && getValue(interaction.d) !== null && (
                 <>
-                  <Text variant="meta">{areaMeasureLabel}</Text>
+                  <Text as="div" variant="meta">
+                    {areaMeasureLabel}
+                  </Text>
                   <Box
                     sx={{
                       borderRadius: "circle",
@@ -66,7 +68,7 @@ export const MapTooltip = () => {
                           : "#000",
                     }}
                   >
-                    <Text variant="meta">
+                    <Text as="div" variant="meta">
                       {formatNumber(getValue(interaction.d))}
                     </Text>
                   </Box>
@@ -74,7 +76,9 @@ export const MapTooltip = () => {
               )}
               {showSymbolLayer && getRadius(interaction.d) !== null && (
                 <>
-                  <Text variant="meta">{symbolMeasureLabel}</Text>
+                  <Text as="div" variant="meta">
+                    {symbolMeasureLabel}
+                  </Text>
                   <Box
                     sx={{
                       borderRadius: "circle",
@@ -89,7 +93,11 @@ export const MapTooltip = () => {
                           : "transparent",
                     }}
                   >
-                    <Text variant="meta" sx={{ color: "monochrome100" }}>
+                    <Text
+                      as="div"
+                      variant="meta"
+                      sx={{ color: "monochrome100" }}
+                    >
                       {formatNumber(getRadius(interaction.d))}
                     </Text>
                   </Box>

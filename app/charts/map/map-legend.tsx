@@ -47,7 +47,11 @@ export const MapLegend = () => {
     >
       {showAreaLayer && (
         <Box sx={{ p: 4 }}>
-          {areaMeasureLabel && <Text variant="meta">{areaMeasureLabel}</Text>}
+          {areaMeasureLabel && (
+            <Text as="div" variant="meta">
+              {areaMeasureLabel}
+            </Text>
+          )}
 
           {paletteType === "continuous" && <ContinuousColorLegend />}
 
@@ -61,7 +65,9 @@ export const MapLegend = () => {
       {showSymbolLayer && (
         <Box sx={{ p: 4 }}>
           {symbolMeasureLabel && (
-            <Text variant="meta">{symbolMeasureLabel}</Text>
+            <Text as="div" variant="meta">
+              {symbolMeasureLabel}
+            </Text>
           )}
           <CircleLegend />
         </Box>
