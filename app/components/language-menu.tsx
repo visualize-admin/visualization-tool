@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { ReactNode } from "react";
 import { Box, Flex, Link } from "theme-ui";
 import contentRoutes from "../content-routes.json";
-import { locales } from "../locales/locales.json";
+import localeConfig from "../locales/locales.json";
 import { useLocale } from "../locales/use-locale";
 
 const CurrentPageLink = ({
@@ -42,7 +42,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         justifyContent: "flex-end",
       }}
     >
-      {locales.map((locale) => {
+      {localeConfig.locales.map((locale) => {
         const alternate = alternates?.[locale];
 
         const linkEl = (
