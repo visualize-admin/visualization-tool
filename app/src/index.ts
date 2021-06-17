@@ -7,11 +7,11 @@ export {
   Configurator,
   ConfiguratorStateProvider,
   useConfiguratorState,
-} from "./configurator";
-export { LocaleProvider, useLocale } from "./locales/use-locale";
+} from "../configurator";
+export { LocaleProvider, useLocale } from "../locales/use-locale";
 export {
   i18n,
   defaultLocale,
   locales,
   parseLocaleString,
-} from "./locales/locales";
+} from "../locales/locales";
