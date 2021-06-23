@@ -83,6 +83,7 @@ const VisualizationPage = (props: PageProps) => {
             <PublishActions configKey={key} />
 
             <Text
+              as="div"
               variant="heading3"
               mt={3}
               mb={5}
