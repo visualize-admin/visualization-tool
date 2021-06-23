@@ -58,6 +58,12 @@ module.exports = withPreconstruct(
 
       pageExtensions: ["js", "ts", "tsx", "mdx"],
 
+      eslint: {
+        // Warning: Dangerously allow production builds to successfully complete even if
+        // your project has ESLint errors.
+        ignoreDuringBuilds: true,
+      },
+
       webpack(config, { dev, isServer, defaultLoaders }) {
         config.module.rules.push({
           test: /\.(graphql|gql)$/,

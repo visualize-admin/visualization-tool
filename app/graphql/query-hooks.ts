@@ -12,32 +12,11 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Observation: any;
   DimensionValue: any;
-  RawObservation: any;
   Filters: any;
+  Observation: any;
+  RawObservation: any;
 };
-
-
-
-
-
-export type ObservationsQuery = {
-  __typename: 'ObservationsQuery';
-  /** Observations with their values parsed to native JS types */
-  data: Array<Scalars['Observation']>;
-  /** Observations with their original RDF-y type */
-  rawData: Array<Scalars['RawObservation']>;
-  /** The generated SPARQL query string of the current query (doesn't fetch any data) */
-  sparql: Scalars['String'];
-  /** The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly */
-  sparqlEditorUrl?: Maybe<Scalars['String']>;
-};
-
-export enum DataCubePublicationStatus {
-  Draft = 'DRAFT',
-  Published = 'PUBLISHED'
-}
 
 export type DataCube = {
   __typename: 'DataCube';
@@ -68,7 +47,38 @@ export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
 };
 
+export enum DataCubePublicationStatus {
+  Draft = 'DRAFT',
+  Published = 'PUBLISHED'
+}
+
+export type DataCubeResult = {
+  __typename: 'DataCubeResult';
+  score?: Maybe<Scalars['Float']>;
+  highlightedTitle?: Maybe<Scalars['String']>;
+  highlightedDescription?: Maybe<Scalars['String']>;
+  dataCube: DataCube;
+};
+
+export enum DataCubeResultOrder {
+  Score = 'SCORE',
+  TitleAsc = 'TITLE_ASC',
+  CreatedDesc = 'CREATED_DESC'
+}
+
 export type Dimension = {
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
+  isKeyDimension: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+};
+
+
+
+export type Measure = Dimension & {
+  __typename: 'Measure';
   iri: Scalars['String'];
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
@@ -87,6 +97,19 @@ export type NominalDimension = Dimension & {
   values: Array<Scalars['DimensionValue']>;
 };
 
+
+export type ObservationsQuery = {
+  __typename: 'ObservationsQuery';
+  /** Observations with their values parsed to native JS types */
+  data: Array<Scalars['Observation']>;
+  /** Observations with their original RDF-y type */
+  rawData: Array<Scalars['RawObservation']>;
+  /** The generated SPARQL query string of the current query (doesn't fetch any data) */
+  sparql: Scalars['String'];
+  /** The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly */
+  sparqlEditorUrl?: Maybe<Scalars['String']>;
+};
+
 export type OrdinalDimension = Dimension & {
   __typename: 'OrdinalDimension';
   iri: Scalars['String'];
@@ -96,52 +119,6 @@ export type OrdinalDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
 };
-
-export enum TimeUnit {
-  Year = 'Year',
-  Month = 'Month',
-  Week = 'Week',
-  Day = 'Day',
-  Hour = 'Hour',
-  Minute = 'Minute',
-  Second = 'Second'
-}
-
-export type TemporalDimension = Dimension & {
-  __typename: 'TemporalDimension';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-  timeUnit: TimeUnit;
-  timeFormat: Scalars['String'];
-  unit?: Maybe<Scalars['String']>;
-  scaleType?: Maybe<Scalars['String']>;
-  isKeyDimension: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
-};
-
-export type Measure = Dimension & {
-  __typename: 'Measure';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-  unit?: Maybe<Scalars['String']>;
-  scaleType?: Maybe<Scalars['String']>;
-  isKeyDimension: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
-};
-
-export type DataCubeResult = {
-  __typename: 'DataCubeResult';
-  score?: Maybe<Scalars['Float']>;
-  highlightedTitle?: Maybe<Scalars['String']>;
-  highlightedDescription?: Maybe<Scalars['String']>;
-  dataCube: DataCube;
-};
-
-export enum DataCubeResultOrder {
-  Score = 'SCORE',
-  TitleAsc = 'TITLE_ASC',
-  CreatedDesc = 'CREATED_DESC'
-}
 
 export type Query = {
   __typename: 'Query';
@@ -163,6 +140,29 @@ export type QueryDataCubesArgs = {
   includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 
+
+export type TemporalDimension = Dimension & {
+  __typename: 'TemporalDimension';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  timeUnit: TimeUnit;
+  timeFormat: Scalars['String'];
+  unit?: Maybe<Scalars['String']>;
+  scaleType?: Maybe<Scalars['String']>;
+  isKeyDimension: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+};
+
+export enum TimeUnit {
+  Year = 'Year',
+  Month = 'Month',
+  Week = 'Week',
+  Day = 'Day',
+  Hour = 'Hour',
+  Minute = 'Minute',
+  Second = 'Second'
+}
+
 export type DataCubesQueryVariables = Exact<{
   locale: Scalars['String'];
   query?: Maybe<Scalars['String']>;
@@ -173,15 +173,17 @@ export type DataCubesQueryVariables = Exact<{
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus } }> };
 
+type DimensionFields_Measure_Fragment = { __typename: 'Measure', iri: string, label: string };
+
 type DimensionFields_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string };
 
 type DimensionFields_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string };
 
 type DimensionFields_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string };
 
-type DimensionFields_Measure_Fragment = { __typename: 'Measure', iri: string, label: string };
+export type DimensionFieldsFragment = DimensionFields_Measure_Fragment | DimensionFields_NominalDimension_Fragment | DimensionFields_OrdinalDimension_Fragment | DimensionFields_TemporalDimension_Fragment;
 
-export type DimensionFieldsFragment = DimensionFields_NominalDimension_Fragment | DimensionFields_OrdinalDimension_Fragment | DimensionFields_TemporalDimension_Fragment | DimensionFields_Measure_Fragment;
+type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
 type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
@@ -189,9 +191,7 @@ type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'Ordina
 
 type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
-type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
-
-export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment | DimensionFieldsWithValues_Measure_Fragment;
+export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_Measure_Fragment | DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment;
 
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -200,6 +200,9 @@ export type DataCubePreviewQueryVariables = Exact<{
 
 
 export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, dimensions: Array<(
+      { __typename: 'Measure' }
+      & DimensionFields_Measure_Fragment
+    ) | (
       { __typename: 'NominalDimension' }
       & DimensionFields_NominalDimension_Fragment
     ) | (
@@ -208,9 +211,6 @@ export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionFields_TemporalDimension_Fragment
-    ) | (
-      { __typename: 'Measure' }
-      & DimensionFields_Measure_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & DimensionFields_Measure_Fragment
@@ -219,7 +219,7 @@ export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
 export type DataCubePreviewObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
-  measures: Array<Scalars['String']>;
+  measures: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
@@ -240,6 +240,9 @@ export type DataCubeMetadataWithComponentsQueryVariables = Exact<{
 
 
 export type DataCubeMetadataWithComponentsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, dimensions: Array<(
+      { __typename: 'Measure' }
+      & DimensionFields_Measure_Fragment
+    ) | (
       { __typename: 'NominalDimension' }
       & DimensionFields_NominalDimension_Fragment
     ) | (
@@ -248,9 +251,6 @@ export type DataCubeMetadataWithComponentsQuery = { __typename: 'Query', dataCub
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionFields_TemporalDimension_Fragment
-    ) | (
-      { __typename: 'Measure' }
-      & DimensionFields_Measure_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & DimensionFields_Measure_Fragment
@@ -263,6 +263,9 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 
 
 export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, dimensions: Array<(
+      { __typename: 'Measure' }
+      & DimensionFieldsWithValues_Measure_Fragment
+    ) | (
       { __typename: 'NominalDimension' }
       & DimensionFieldsWithValues_NominalDimension_Fragment
     ) | (
@@ -271,9 +274,6 @@ export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', da
     ) | (
       { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
-    ) | (
-      { __typename: 'Measure' }
-      & DimensionFieldsWithValues_Measure_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & DimensionFields_Measure_Fragment
@@ -287,6 +287,9 @@ export type DimensionValuesQueryVariables = Exact<{
 
 
 export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<(
+      { __typename: 'Measure' }
+      & DimensionFieldsWithValues_Measure_Fragment
+    ) | (
       { __typename: 'NominalDimension' }
       & DimensionFieldsWithValues_NominalDimension_Fragment
     ) | (
@@ -295,9 +298,6 @@ export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
     ) | (
       { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
-    ) | (
-      { __typename: 'Measure' }
-      & DimensionFieldsWithValues_Measure_Fragment
     )> }> };
 
 export type TemporalDimensionValuesQueryVariables = Exact<{
@@ -307,20 +307,23 @@ export type TemporalDimensionValuesQueryVariables = Exact<{
 }>;
 
 
-export type TemporalDimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'NominalDimension' } | { __typename: 'OrdinalDimension' } | (
+export type TemporalDimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'Measure' } | { __typename: 'NominalDimension' } | { __typename: 'OrdinalDimension' } | (
       { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
-    ) | { __typename: 'Measure' }> }> };
+    )> }> };
 
 export type DataCubeObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
-  measures: Array<Scalars['String']>;
+  measures: Array<Scalars['String']> | Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
 }>;
 
 
 export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, dimensions: Array<(
+      { __typename: 'Measure' }
+      & DimensionFieldsWithValues_Measure_Fragment
+    ) | (
       { __typename: 'NominalDimension' }
       & DimensionFieldsWithValues_NominalDimension_Fragment
     ) | (
@@ -329,9 +332,6 @@ export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: M
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionFieldsWithValues_TemporalDimension_Fragment
-    ) | (
-      { __typename: 'Measure' }
-      & DimensionFieldsWithValues_Measure_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
       & DimensionFields_Measure_Fragment

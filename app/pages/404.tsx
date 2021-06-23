@@ -22,7 +22,7 @@ const Page = () => (
           Cette page est introuvable.
         </Text>
         <Actions>
-          <HomeLink locale="fr">Retour à la page d'accueil</HomeLink>
+          <HomeLink locale="fr">Retour à la page d&apos;accueil</HomeLink>
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>

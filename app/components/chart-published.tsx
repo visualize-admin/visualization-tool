@@ -56,7 +56,7 @@ export const ChartPublished = ({
               <Trans id="dataset.publicationStatus.draft.warning">
                 Careful, this dataset is only a draft.
                 <br />
-                <strong>Don't use for reporting!</strong>
+                <strong>Don&apos;t use for reporting!</strong>
               </Trans>
             </HintRed>
           </Box>
@@ -115,11 +115,13 @@ const ChartWithInteractiveFilters = ({
   }, [chartConfig.chartType]);
 
   // Editor time presets supersede interactive state
+  const presetFromStr = presetFrom?.toString();
+  const presetToStr = presetTo?.toString();
   useEffect(() => {
     if (presetFrom && presetTo) {
       dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
     }
-  }, [dispatch, presetFrom?.toString(), presetTo?.toString()]);
+  }, [dispatch, presetFromStr, presetToStr]);
 
   return (
     <Flex

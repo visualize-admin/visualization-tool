@@ -50,7 +50,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             <Trans id="dataset.publicationStatus.draft.warning">
               Careful, this dataset is only a draft.
               <br />
-              <strong>Don't use for reporting!</strong>
+              <strong>Don&apos;t use for reporting!</strong>
             </Trans>
           </HintRed>
         </Box>
@@ -127,12 +127,15 @@ const ChartWithInteractiveFilters = ({
   const presetTo =
     interactiveFiltersConfig?.time.presets.to &&
     parseDate(interactiveFiltersConfig?.time.presets.to.toString());
+
+  const presetFromStr = presetFrom?.toString();
+  const presetToStr = presetTo?.toString();
   useEffect(() => {
     // Editor time presets supersede interactive state
     if (presetFrom && presetTo) {
       dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
     }
-  }, [dispatch, presetFrom?.toString(), presetTo?.toString()]);
+  }, [dispatch, presetFromStr, presetToStr]);
 
   // Data Filters
   const componentIris = interactiveFiltersConfig?.dataFilters.componentIris;
@@ -156,10 +159,10 @@ const ChartWithInteractiveFilters = ({
   // Reset categories to avoid categories with the same
   // name to persist as filters across different dimensions
   // i.e. Jura as forest zone != Jura as canton.
-  useEffect(() => dispatch({ type: "RESET_INTERACTIVE_CATEGORIES" }), [
-    dispatch,
-    chartConfig.fields.segment,
-  ]);
+  useEffect(
+    () => dispatch({ type: "RESET_INTERACTIVE_CATEGORIES" }),
+    [dispatch, chartConfig.fields.segment]
+  );
   return (
     <Flex
       sx={{
