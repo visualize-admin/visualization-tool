@@ -46,6 +46,7 @@ export const getCubes = async ({
   const source = createSource();
 
   const cubes = await source.cubes({
+    noShape: true,
     filters: [
       // Deprecated cubes have a schema.org/validThrough property; Only show cubes that don't have it
       Cube.filter.noValidThrough(),
@@ -80,18 +81,8 @@ export const getCube = async ({
 
   const cube = await source.cube(iri);
 
-  // FIXME: the 2nd condition should not be necessary but due to a but in the query lib, a inexistent cube is not actually null. See https://github.com/zazuko/rdf-cube-view-query/issues/41
-  if (!cube || (cube?.out()?.terms?.length ?? 0) === 0) {
+  if (!cube) {
     return null;
-  }
-  // -> This should work instead:
-  // if (!cube) {
-  //   return null;
-  // }
-
-  // FIXME: Remove this workaround until https://github.com/zazuko/rdf-cube-view-query/pull/47 is merged and released
-  if (cube) {
-    cube.source.queryOperation = "postUrlencoded";
   }
 
   // TODO: Re-enable picking latest cube version once we have a solution for https://github.com/zazuko/cube-creator/issues/658
@@ -348,11 +339,6 @@ export const getCubeObservations = async ({
   observationsRaw: Record<string, Literal | NamedNode>[];
 }> => {
   const cubeView = View.fromCube(cube);
-
-  // FIXME: Remove this workaround until https://github.com/zazuko/rdf-cube-view-query/pull/47 is merged and released
-  cubeView.dimensions.forEach((d) => {
-    d.source.queryOperation = "postUrlencoded";
-  });
 
   // Only choose dimensions that we really want
   let observationDimensions = cubeView.dimensions.filter((d) =>

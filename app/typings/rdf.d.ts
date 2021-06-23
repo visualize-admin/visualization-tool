@@ -97,7 +97,10 @@ declare module "rdf-cube-view-query" {
       }
     );
     async cube(term: Term | string): Promise<Cube | null>;
-    async cubes(options?: { filters: $FixMe }): Promise<Cube[]>;
+    async cubes(options?: {
+      noShape?: boolean;
+      filters: $FixMe;
+    }): Promise<Cube[]>;
     client: ParsingClient;
     queryOperation?: "get" | "postUrlencoded" | "postDirect";
   }
