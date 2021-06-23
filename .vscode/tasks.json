@@ -52,7 +52,8 @@
       },
       "presentation": {
         "group": "dev"
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "dev-db",
