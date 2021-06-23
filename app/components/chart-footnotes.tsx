@@ -53,6 +53,8 @@ export const ChartFootnotes = ({
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
               <Link
                 href={shareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 sx={{
                   display: "inline",
                   textDecoration: "none",
