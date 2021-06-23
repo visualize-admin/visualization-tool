@@ -120,7 +120,7 @@ const DataCube: DataCubeResolvers = {
       locale,
     });
 
-    return dimensions.filter((d) => !d.data.isNumerical);
+    return dimensions.filter((d) => !d.data.isMeasureDimension);
   },
   measures: async ({ cube, locale }) => {
     const dimensions = getCubeDimensions({
@@ -128,7 +128,7 @@ const DataCube: DataCubeResolvers = {
       locale,
     });
 
-    return dimensions.filter((d) => d.data.isNumerical);
+    return dimensions.filter((d) => d.data.isMeasureDimension);
   },
   dimensionByIri: async ({ cube, locale }, { iri }) => {
     const dimension = getCubeDimensions({

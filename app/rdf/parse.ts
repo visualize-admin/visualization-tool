@@ -136,6 +136,10 @@ export const parseCubeDimension = ({
     .out(ns.rdf.type)
     .terms.some((t) => t.equals(ns.cube.KeyDimension));
 
+  const isMeasureDimension = dim
+  .out(ns.rdf.type)
+  .terms.some((t) => t.equals(ns.cube.MeasureDimension))
+
   return {
     cube,
     dimension: dim,
@@ -146,6 +150,7 @@ export const parseCubeDimension = ({
       isLiteral,
       isNumerical,
       isKeyDimension,
+      isMeasureDimension,
       hasUndefinedValues,
       dataType: dataType?.value,
       name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
