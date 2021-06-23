@@ -128,6 +128,8 @@ export const parseCubeDimension = ({
     dataType?.equals(ns.xsd.int) ||
     dataType?.equals(ns.xsd.integer) ||
     dataType?.equals(ns.xsd.decimal) ||
+    dataType?.equals(ns.xsd.float) ||
+    dataType?.equals(ns.xsd.double) ||
     false;
 
   const isKeyDimension = dim
