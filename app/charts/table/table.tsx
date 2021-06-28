@@ -240,7 +240,7 @@ export const Table = () => {
   return (
     <>
       {showSearch && (
-        <Box sx={{ my: 5, width: "min(100%, 300px)" }}>
+        <Box sx={{ mb: 4, width: "min(100%, 300px)" }}>
           <Input
             type="text"
             name="search-input"
