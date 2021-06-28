@@ -323,34 +323,32 @@ export const TableColumnOptions = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-
       {component.__typename === "NominalDimension" ||
-        (component.__typename === "OrdinalDimension" && (
-          <ControlSection>
-            <SectionTitle disabled={!component} iconName="filter">
+      component.__typename === "OrdinalDimension" ? (
+        <ControlSection>
+          <SectionTitle disabled={!component} iconName="filter">
+            <Trans id="controls.section.filter">Filter</Trans>
+          </SectionTitle>
+          <ControlSectionContent side="right" as="fieldset">
+            <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
-            </SectionTitle>
-            <ControlSectionContent side="right" as="fieldset">
-              <legend style={{ display: "none" }}>
-                <Trans id="controls.section.filter">Filter</Trans>
-              </legend>
-              {isFiltered ? (
-                <DimensionValuesSingleFilter
-                  dataSetIri={metaData.iri}
-                  dimensionIri={component.iri}
-                />
-              ) : (
-                <DimensionValuesMultiFilter
-                  key={component.iri}
-                  dimensionIri={component.iri}
-                  dataSetIri={metaData.iri}
-                  colorConfigPath="columnStyle"
-                />
-              )}
-            </ControlSectionContent>
-          </ControlSection>
-        ))}
-      {component.__typename === "TemporalDimension" && (
+            </legend>
+            {isFiltered ? (
+              <DimensionValuesSingleFilter
+                dataSetIri={metaData.iri}
+                dimensionIri={component.iri}
+              />
+            ) : (
+              <DimensionValuesMultiFilter
+                key={component.iri}
+                dimensionIri={component.iri}
+                dataSetIri={metaData.iri}
+                colorConfigPath="columnStyle"
+              />
+            )}
+          </ControlSectionContent>
+        </ControlSection>
+      ) : component.__typename === "TemporalDimension" ? (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
@@ -379,7 +377,7 @@ export const TableColumnOptions = ({
             )}
           </ControlSectionContent>
         </ControlSection>
-      )}
+      ) : null}
     </div>
   );
 };
