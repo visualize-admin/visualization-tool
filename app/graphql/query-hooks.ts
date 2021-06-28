@@ -276,7 +276,7 @@ export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', da
       & DimensionFieldsWithValues_TemporalDimension_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
-      & DimensionFields_Measure_Fragment
+      & DimensionFieldsWithValues_Measure_Fragment
     )> }> };
 
 export type DimensionValuesQueryVariables = Exact<{
@@ -459,12 +459,11 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
       }
     }
     measures {
-      ...dimensionFields
+      ...dimensionFieldsWithValues
     }
   }
 }
-    ${DimensionFieldsWithValuesFragmentDoc}
-${DimensionFieldsFragmentDoc}`;
+    ${DimensionFieldsWithValuesFragmentDoc}`;
 
 export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentValuesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });

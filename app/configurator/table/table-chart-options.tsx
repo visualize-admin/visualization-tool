@@ -20,10 +20,12 @@ import {
   ChartOptionCheckboxField,
   ChartOptionSelectField,
   ColorPickerField,
+  DataFilterSelectTime,
 } from "../components/field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
+  TimeFilter,
 } from "../components/filters";
 import {
   getDefaultCategoricalPalette,
@@ -165,9 +167,9 @@ export const TableColumnOptions = ({
   }
 
   // Active field is always a component IRI, like in filters
-  const component = [...metaData.dimensions, ...metaData.measures].find(
-    (d) => d.iri === activeField
-  );
+  const component =
+    metaData.dimensions.find((d) => d.iri === activeField) ??
+    metaData.measures.find((d) => d.iri === activeField);
 
   if (!component) {
     return <div>`No component ${activeField}`</div>;
@@ -283,7 +285,8 @@ export const TableColumnOptions = ({
                       palette: getDefaultCategoricalPalette().value,
                       colorMapping: mapColorsToComponentValuesIris({
                         palette: getDefaultCategoricalPalette().value,
-                        component: component as DimensionFieldsWithValuesFragment,
+                        component:
+                          component as DimensionFieldsWithValuesFragment,
                       }),
                     };
                   case "heatmap":
@@ -296,10 +299,10 @@ export const TableColumnOptions = ({
                     return {
                       type: "bar",
                       textStyle: "regular",
-                      barColorPositive: getDefaultCategoricalPalette()
-                        .colors[0],
-                      barColorNegative: getDefaultCategoricalPalette()
-                        .colors[1],
+                      barColorPositive:
+                        getDefaultCategoricalPalette().colors[0],
+                      barColorNegative:
+                        getDefaultCategoricalPalette().colors[1],
                       barColorBackground: "#ccc",
                       barShowBackground: false,
                     };
@@ -321,9 +324,33 @@ export const TableColumnOptions = ({
         </ControlSection>
       )}
 
-      {(component.__typename === "NominalDimension" ||
-        component.__typename === "OrdinalDimension" ||
-        component.__typename === "TemporalDimension") && (
+      {component.__typename === "NominalDimension" ||
+        (component.__typename === "OrdinalDimension" && (
+          <ControlSection>
+            <SectionTitle disabled={!component} iconName="filter">
+              <Trans id="controls.section.filter">Filter</Trans>
+            </SectionTitle>
+            <ControlSectionContent side="right" as="fieldset">
+              <legend style={{ display: "none" }}>
+                <Trans id="controls.section.filter">Filter</Trans>
+              </legend>
+              {isFiltered ? (
+                <DimensionValuesSingleFilter
+                  dataSetIri={metaData.iri}
+                  dimensionIri={component.iri}
+                />
+              ) : (
+                <DimensionValuesMultiFilter
+                  key={component.iri}
+                  dimensionIri={component.iri}
+                  dataSetIri={metaData.iri}
+                  colorConfigPath="columnStyle"
+                />
+              )}
+            </ControlSectionContent>
+          </ControlSection>
+        ))}
+      {component.__typename === "TemporalDimension" && (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
@@ -333,16 +360,21 @@ export const TableColumnOptions = ({
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
             {isFiltered ? (
-              <DimensionValuesSingleFilter
-                dataSetIri={metaData.iri}
+              <DataFilterSelectTime
                 dimensionIri={component.iri}
+                label={component.label}
+                from={component.values[0].value}
+                to={component.values[1].value}
+                timeUnit={component.timeUnit}
+                timeFormat={component.timeFormat}
+                disabled={false}
+                id={`select-single-filter-time`}
               />
             ) : (
-              <DimensionValuesMultiFilter
+              <TimeFilter
                 key={component.iri}
                 dimensionIri={component.iri}
                 dataSetIri={metaData.iri}
-                colorConfigPath="columnStyle"
               />
             )}
           </ControlSectionContent>

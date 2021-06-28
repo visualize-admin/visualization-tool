@@ -1,11 +1,5 @@
-import {
-  DimensionFieldsWithValuesFragment,
-  DimensionFieldsFragment,
-} from "./query-hooks";
+import { DataCubeMetadataWithComponentValuesQuery } from "./query-hooks";
 
-export type DataCubeMetadata = {
-  iri: string;
-  title: string;
-  dimensions: DimensionFieldsWithValuesFragment[];
-  measures: DimensionFieldsFragment[];
-};
+export type DataCubeMetadata = NonNullable<
+  DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+>;

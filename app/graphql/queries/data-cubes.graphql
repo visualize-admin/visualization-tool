@@ -101,7 +101,7 @@ query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
       }
     }
     measures {
-      ...dimensionFields
+      ...dimensionFieldsWithValues
     }
   }
 }
