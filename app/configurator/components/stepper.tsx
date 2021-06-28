@@ -1,6 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Flex, Text } from "theme-ui";
+import NextLink from "next/link";
 import { Dispatch, Fragment, ReactNode, useCallback, useMemo } from "react";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { ConfiguratorStateAction, useConfiguratorState } from "..";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
@@ -105,20 +106,8 @@ export const Step = ({
     }
   }, [status, stepState, dispatch]);
 
-  return (
-    <Button
-      variant="reset"
-      sx={{
-        appearance: "none",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        cursor: status === "past" ? "pointer" : undefined,
-      }}
-      disabled={status !== "past"}
-      onClick={onClick}
-    >
+  const content = (
+    <>
       <Flex
         sx={{
           bg: "monochrome100",
@@ -157,6 +146,42 @@ export const Step = ({
       </Flex>
 
       <StepLabel stepState={stepState} highlight={status === "current"} />
+    </>
+  );
+
+  return stepState === "SELECTING_DATASET" ? (
+    <NextLink href="/create/new" passHref>
+      <Button
+        as="a"
+        variant="reset"
+        sx={{
+          appearance: "none",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          cursor: status === "past" ? "pointer" : undefined,
+        }}
+        disabled={status !== "past"}
+      >
+        {content}
+      </Button>
+    </NextLink>
+  ) : (
+    <Button
+      variant="reset"
+      sx={{
+        appearance: "none",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        cursor: status === "past" ? "pointer" : undefined,
+      }}
+      disabled={status !== "past"}
+      onClick={onClick}
+    >
+      {content}
     </Button>
   );
 };
