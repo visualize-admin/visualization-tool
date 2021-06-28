@@ -1,3 +1,4 @@
+import { sum } from "d3";
 import { useMemo } from "react";
 import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
@@ -110,23 +111,16 @@ export const getWideData = ({
 }): { [key: string]: ObservationValue }[] => {
   const wideArray = [];
   for (const [key, values] of groupedMap) {
-    const keyObject = values.reduce(
-      (obj, cur) => {
-        const currentKey = getSegment(cur);
-        const currentY = getY(cur);
-        const total = currentY ?? 0 + (obj.total as number);
-        return {
-          ...obj,
-          [currentKey]: getY(cur),
-          total,
-        };
-      },
-      { total: 0 }
-    );
-    wideArray.push({
-      ...keyObject,
+    let obj: { [key: string]: ObservationValue } = {
       [xKey]: key,
-    });
+      total: sum(values, getY),
+    };
+
+    for (const value of values) {
+      obj[getSegment(value)] = getY(value);
+    }
+
+    wideArray.push(obj);
   }
   return wideArray;
 };

@@ -312,9 +312,10 @@ const useColumnsStackedState = ({
       sortOrder: "asc",
     });
 
-    const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d) ?? 0))(
-      0
-    );
+    const cumulativeSum = (
+      (sum) => (d: Observation) =>
+        (sum += getY(d) ?? 0)
+    )(0);
     const cumulativeRulerItemValues = [
       ...sortedTooltipValues.map(cumulativeSum),
     ];
