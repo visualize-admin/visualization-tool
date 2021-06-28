@@ -120,36 +120,38 @@ const FooterLink = ({ children, ...props }: { children: ReactNode }) => (
 );
 
 const FooterLinkBottom = forwardRef<HTMLAnchorElement, { children: ReactNode }>(
-  ({ children, ...props }, ref) => (
-    <Link
-      ref={ref}
-      {...props}
-      sx={{
-        px: [4, 3],
-        py: [3, 4],
-        color: "primary",
-        fontSize: 3,
-        fontFamily: "body",
-        borderLeftWidth: ["1px", 0],
-        borderLeftStyle: "solid",
-        borderLeftColor: "monochrome500",
-        textDecoration: "none",
-        cursor: "pointer",
-        ":hover": {
-          color: "primaryHover",
-        },
-        ":active": {
-          color: "primaryHover",
-        },
-        ":disabled": {
-          cursor: "initial",
-          color: "primaryDisabled",
-        },
-      }}
-    >
-      {children}
-    </Link>
-  )
+  function FooterLinkBottom({ children, ...props }, ref) {
+    return (
+      <Link
+        ref={ref}
+        {...props}
+        sx={{
+          px: [4, 3],
+          py: [3, 4],
+          color: "primary",
+          fontSize: 3,
+          fontFamily: "body",
+          borderLeftWidth: ["1px", 0],
+          borderLeftStyle: "solid",
+          borderLeftColor: "monochrome500",
+          textDecoration: "none",
+          cursor: "pointer",
+          ":hover": {
+            color: "primaryHover",
+          },
+          ":active": {
+            color: "primaryHover",
+          },
+          ":disabled": {
+            cursor: "initial",
+            color: "primaryDisabled",
+          },
+        }}
+      >
+        {children}
+      </Link>
+    );
+  }
 );
 
 const Logo = () => (

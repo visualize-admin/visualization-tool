@@ -7,15 +7,8 @@ import { useInteraction } from "../shared/use-interaction";
 import { memo } from "react";
 
 export const HoverLine = () => {
-  const {
-    getX,
-    xScale,
-    getY,
-    yScale,
-    grouped,
-    colors,
-    bounds,
-  } = useChartState() as LinesState;
+  const { getX, xScale, getY, yScale, grouped, colors, bounds } =
+    useChartState() as LinesState;
   const [state] = useInteraction();
   const { visible } = state.interaction;
 
@@ -56,6 +49,12 @@ export const HoverLine = () => {
     </>
   );
 };
-const Line = memo(({ path, color }: { path: string; color?: string }) => {
+const Line = memo(function Line({
+  path,
+  color,
+}: {
+  path: string;
+  color?: string;
+}) {
   return <path d={path} strokeWidth={2} stroke={color} fill="none" />;
 });

@@ -7,7 +7,11 @@ import { LinesState } from "../line/lines-state";
 import { useChartState } from "./use-chart-state";
 import { useInteraction } from "./use-interaction";
 
-export const InteractionHorizontal = memo(({ debug }: { debug?: boolean }) => {
+export const InteractionHorizontal = memo(function InteractionHorizontal({
+  debug,
+}: {
+  debug?: boolean;
+}) {
   const [, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 

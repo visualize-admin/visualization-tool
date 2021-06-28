@@ -6,15 +6,8 @@ import { useTheme } from "../../themes";
 import { Fragment, memo } from "react";
 
 export const Lines = () => {
-  const {
-    getX,
-    xScale,
-    getY,
-    yScale,
-    grouped,
-    colors,
-    bounds,
-  } = useChartState() as LinesState;
+  const { getX, xScale, getY, yScale, grouped, colors, bounds } =
+    useChartState() as LinesState;
   const theme = useTheme();
 
   const lineGenerator = line<Observation>()
@@ -43,6 +36,12 @@ export const Lines = () => {
   );
 };
 
-const Line = memo(({ path, color }: { path: string; color: string }) => {
+const Line = memo(function Line({
+  path,
+  color,
+}: {
+  path: string;
+  color: string;
+}) {
   return <path d={path} stroke={color} fill="none" />;
 });

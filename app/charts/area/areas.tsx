@@ -5,15 +5,8 @@ import { useChartState } from "../shared/use-chart-state";
 import { AreasState } from "./areas-state";
 
 export const Areas = () => {
-  const {
-    bounds,
-    getX,
-    xScale,
-    yScale,
-    colors,
-    series,
-    segments,
-  } = useChartState() as AreasState;
+  const { bounds, getX, xScale, yScale, colors, series, segments } =
+    useChartState() as AreasState;
   const theme = useTheme();
   const areaGenerator = area<$FixMe>()
     .defined((d) => d[0] !== null && d[1] !== null)
@@ -35,6 +28,12 @@ export const Areas = () => {
   );
 };
 
-const Area = memo(({ path, color }: { path: string; color: string }) => {
+const Area = memo(function Area({
+  path,
+  color,
+}: {
+  path: string;
+  color: string;
+}) {
   return <path d={path} fill={color} stroke="none" />;
 });

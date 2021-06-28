@@ -88,53 +88,51 @@ export const ChartLinesVisualization = ({
   }
 };
 
-export const ChartLines = memo(
-  ({
-    observations,
-    dimensions,
-    measures,
-    fields,
-    interactiveFiltersConfig,
-  }: {
-    observations: Observation[];
-    dimensions: DimensionFieldsFragment[];
-    measures: DimensionFieldsFragment[];
-    fields: LineFields;
-    interactiveFiltersConfig: InteractiveFiltersConfig;
-  }) => {
-    return (
-      <LineChart
-        data={observations}
-        fields={fields}
-        dimensions={dimensions}
-        measures={measures}
-        interactiveFiltersConfig={interactiveFiltersConfig}
-        aspectRatio={0.4}
-      >
-        <ChartContainer>
-          <ChartSvg>
-            <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-            <Lines />
-            {/* <HoverLine /> <HoverLineValues /> */}
-            <InteractionHorizontal />
-            {interactiveFiltersConfig?.time.active && <BrushTime />}
-          </ChartSvg>
+export const ChartLines = memo(function ChartLines({
+  observations,
+  dimensions,
+  measures,
+  fields,
+  interactiveFiltersConfig,
+}: {
+  observations: Observation[];
+  dimensions: DimensionFieldsFragment[];
+  measures: DimensionFieldsFragment[];
+  fields: LineFields;
+  interactiveFiltersConfig: InteractiveFiltersConfig;
+}) {
+  return (
+    <LineChart
+      data={observations}
+      fields={fields}
+      dimensions={dimensions}
+      measures={measures}
+      interactiveFiltersConfig={interactiveFiltersConfig}
+      aspectRatio={0.4}
+    >
+      <ChartContainer>
+        <ChartSvg>
+          <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+          <Lines />
+          {/* <HoverLine /> <HoverLineValues /> */}
+          <InteractionHorizontal />
+          {interactiveFiltersConfig?.time.active && <BrushTime />}
+        </ChartSvg>
 
-          <Ruler />
+        <Ruler />
 
-          <HoverDotMultiple />
+        <HoverDotMultiple />
 
-          {/* <HoverDot /> */}
+        {/* <HoverDot /> */}
 
-          <Tooltip type={fields.segment ? "multiple" : "single"} />
-        </ChartContainer>
+        <Tooltip type={fields.segment ? "multiple" : "single"} />
+      </ChartContainer>
 
-        {fields.segment && interactiveFiltersConfig?.legend.active ? (
-          <InteractiveLegendColor symbol="line" />
-        ) : fields.segment ? (
-          <LegendColor symbol="line" />
-        ) : null}
-      </LineChart>
-    );
-  }
-);
+      {fields.segment && interactiveFiltersConfig?.legend.active ? (
+        <InteractiveLegendColor symbol="line" />
+      ) : fields.segment ? (
+        <LegendColor symbol="line" />
+      ) : null}
+    </LineChart>
+  );
+});

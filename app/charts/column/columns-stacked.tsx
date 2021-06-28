@@ -3,14 +3,8 @@ import { useChartState } from "../shared/use-chart-state";
 import { StackedColumnsState } from "./columns-stacked-state";
 
 export const ColumnsStacked = () => {
-  const {
-    bounds,
-    getX,
-    xScale,
-    yScale,
-    colors,
-    series,
-  } = useChartState() as StackedColumnsState;
+  const { bounds, getX, xScale, yScale, colors, series } =
+    useChartState() as StackedColumnsState;
   const { margins } = bounds;
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -33,18 +27,16 @@ export const ColumnsStacked = () => {
   );
 };
 
-const Column = memo(
-  ({
-    x,
-    y,
-    width,
-    height,
-  }: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }) => {
-    return <rect x={x} y={y} width={width} height={height} stroke="none" />;
-  }
-);
+const Column = memo(function Column({
+  x,
+  y,
+  width,
+  height,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}) {
+  return <rect x={x} y={y} width={width} height={height} stroke="none" />;
+});

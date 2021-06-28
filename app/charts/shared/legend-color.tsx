@@ -72,7 +72,11 @@ export const InteractiveLegendColor = ({
   );
 };
 
-export const LegendColor = memo(({ symbol }: { symbol: LegendSymbol }) => {
+export const LegendColor = memo(function LegendColor({
+  symbol,
+}: {
+  symbol: LegendSymbol;
+}) {
   const { colors } = useChartState() as
     | BarsState
     | GroupedBarsState

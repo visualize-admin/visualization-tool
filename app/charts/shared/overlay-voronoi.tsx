@@ -7,19 +7,15 @@ import { ScatterplotState } from "../scatterplot/scatterplot-state";
 import { useChartState } from "./use-chart-state";
 import { useInteraction } from "./use-interaction";
 
-export const InteractionVoronoi = memo(({ debug }: { debug?: boolean }) => {
+export const InteractionVoronoi = memo(function InteractionVoronoi({
+  debug,
+}: {
+  debug?: boolean;
+}) {
   const [, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
-  const {
-    data,
-    getX,
-    xScale,
-    getY,
-    yScale,
-    getSegment,
-    colors,
-    bounds,
-  } = useChartState() as LinesState | AreasState | ScatterplotState;
+  const { data, getX, xScale, getY, yScale, getSegment, colors, bounds } =
+    useChartState() as LinesState | AreasState | ScatterplotState;
 
   const { chartWidth, chartHeight, margins } = bounds;
 

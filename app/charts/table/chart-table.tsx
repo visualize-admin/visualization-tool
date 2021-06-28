@@ -67,27 +67,25 @@ export const ChartTableVisualization = ({
   }
 };
 
-const ChartTable = memo(
-  ({
-    observations,
-    dimensions,
-    measures,
-    chartConfig,
-  }: {
-    observations: Observation[];
-    dimensions: DimensionFieldsFragment[];
-    measures: DimensionFieldsFragment[];
-    chartConfig: TableConfig;
-  }) => {
-    return (
-      <TableChart
-        data={observations}
-        dimensions={dimensions}
-        measures={measures}
-        chartConfig={chartConfig}
-      >
-        <Table />
-      </TableChart>
-    );
-  }
-);
+const ChartTable = memo(function ChartTable({
+  observations,
+  dimensions,
+  measures,
+  chartConfig,
+}: {
+  observations: Observation[];
+  dimensions: DimensionFieldsFragment[];
+  measures: DimensionFieldsFragment[];
+  chartConfig: TableConfig;
+}) {
+  return (
+    <TableChart
+      data={observations}
+      dimensions={dimensions}
+      measures={measures}
+      chartConfig={chartConfig}
+    >
+      <Table />
+    </TableChart>
+  );
+});
