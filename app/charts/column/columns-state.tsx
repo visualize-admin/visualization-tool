@@ -62,9 +62,13 @@ const useColumnsState = ({
   data,
   fields,
   measures,
+  dimensions,
   interactiveFiltersConfig,
   aspectRatio,
-}: Pick<ChartProps, "data" | "measures" | "interactiveFiltersConfig"> & {
+}: Pick<
+  ChartProps,
+  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
+> & {
   fields: ColumnFields;
   aspectRatio: number;
 }): ColumnsState => {
@@ -73,6 +77,14 @@ const useColumnsState = ({
   const formatDateAuto = useFormatFullDateAuto();
 
   const [interactiveFilters] = useInteractiveFilters();
+
+  const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
+
+  if (!xDimension) {
+    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
+  }
+
+  const xIsTime = xDimension.__typename === "TemporalDimension";
 
   const getX = useCallback(
     (d: Observation): string => `${d[fields.x.componentIri]}`,
@@ -130,8 +142,6 @@ const useColumnsState = ({
     [getXAsDate, sortedData]
   );
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
-
-  const xIsTime = !xEntireDomainAsTime.some((d) => d === undefined);
 
   // y
   const minValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
@@ -260,10 +270,14 @@ const ColumnChartProvider = ({
   data,
   fields,
   measures,
+  dimensions,
   interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures" | "interactiveFiltersConfig"> & {
+}: Pick<
+  ChartProps,
+  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
+> & {
   children: ReactNode;
   fields: ColumnFields;
   aspectRatio: number;
@@ -272,6 +286,7 @@ const ColumnChartProvider = ({
     data,
     fields,
     measures,
+    dimensions,
     interactiveFiltersConfig,
     aspectRatio,
   });
@@ -284,10 +299,14 @@ export const ColumnChart = ({
   data,
   fields,
   measures,
+  dimensions,
   interactiveFiltersConfig,
   aspectRatio,
   children,
-}: Pick<ChartProps, "data" | "measures" | "interactiveFiltersConfig"> & {
+}: Pick<
+  ChartProps,
+  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
+> & {
   aspectRatio: number;
   children: ReactNode;
   fields: ColumnFields;
@@ -299,6 +318,7 @@ export const ColumnChart = ({
           data={data}
           fields={fields}
           measures={measures}
+          dimensions={dimensions}
           interactiveFiltersConfig={interactiveFiltersConfig}
           aspectRatio={aspectRatio}
         >

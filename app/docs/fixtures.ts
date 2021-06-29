@@ -110,6 +110,23 @@ export const fields: ColumnFields = {
   },
 };
 
+export const dimensions: DimensionFieldsFragment[] = [
+  {
+    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
+    label: "Jahr",
+    __typename: "TemporalDimension",
+  },
+  {
+    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/1",
+    label: "Kanton",
+    __typename: "NominalDimension",
+  },
+  {
+    iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/2",
+    label: "Forstzone",
+    __typename: "NominalDimension",
+  },
+];
 export const measures: DimensionFieldsFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",

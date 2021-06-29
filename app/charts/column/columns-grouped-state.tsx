@@ -50,6 +50,7 @@ export interface GroupedColumnsState {
   bounds: Bounds;
   getX: (d: Observation) => string;
   getXAsDate: (d: Observation) => Date;
+  xIsTime: boolean;
   xScale: ScaleBand<string>;
   xScaleInteraction: ScaleBand<string>;
   xScaleIn: ScaleBand<string>;
@@ -83,6 +84,14 @@ const useGroupedColumnsState = ({
   const formatNumber = useFormatNumber();
 
   const [interactiveFilters] = useInteractiveFilters();
+
+  const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
+
+  if (!xDimension) {
+    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
+  }
+
+  const xIsTime = xDimension.__typename === "TemporalDimension";
 
   const getX = useCallback(
     (d: Observation): string => `${d[fields.x.componentIri]}`,
@@ -359,6 +368,7 @@ const useGroupedColumnsState = ({
     colors,
     grouped,
     getAnnotationInfo,
+    xIsTime,
   };
 };
 

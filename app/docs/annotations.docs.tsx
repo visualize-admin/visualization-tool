@@ -7,7 +7,13 @@ import {
   TooltipSingle,
 } from "../charts/shared/interaction/tooltip-content";
 import { ColumnChart } from "../charts/column/columns-state";
-import { fields, margins, measures, observations } from "./fixtures";
+import {
+  fields,
+  margins,
+  measures,
+  dimensions,
+  observations,
+} from "./fixtures";
 import { RulerContent } from "../charts/shared/interaction/ruler";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 
@@ -27,6 +33,7 @@ ${(
         data={observations}
         fields={fields}
         measures={measures}
+        dimensions={dimensions}
         interactiveFiltersConfig={{
           legend: { active: false, componentIri: "" },
           time: {
@@ -166,6 +173,7 @@ ${(
         data={observations}
         fields={fields}
         measures={measures}
+        dimensions={dimensions}
         interactiveFiltersConfig={{
           legend: { active: false, componentIri: "" },
           time: {
@@ -204,6 +212,7 @@ ${(
         data={observations}
         fields={fields}
         measures={measures}
+        dimensions={dimensions}
         interactiveFiltersConfig={{
           legend: { active: false, componentIri: "" },
           time: {

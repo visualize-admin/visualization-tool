@@ -160,6 +160,7 @@ export const ChartColumns = memo(
             data={observations}
             fields={fields}
             measures={measures}
+            dimensions={dimensions}
             interactiveFiltersConfig={interactiveFiltersConfig}
             aspectRatio={0.4}
           >
