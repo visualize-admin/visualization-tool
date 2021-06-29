@@ -29,6 +29,7 @@ import {
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
+import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
@@ -190,13 +191,20 @@ const useColumnsStackedState = ({
   const colors = scaleOrdinal<string, string>();
   const segmentDimension = dimensions.find(
     (d) => d.iri === fields.segment?.componentIri
-  ) as $FixMe;
+  ) as DimensionFieldsWithValuesFragment; // FIXME: define this type properly in the query
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
-      const dvIri = segmentDimension.values.find(
-        (s: $FixMe) => s.label === segment
-      ).value;
+      // FIXME: Labels in observations can differ from dimension values because the latter can be concatenated to only appear once per value
+      // See https://github.com/visualize-admin/visualization-tool/issues/97
+      const dvIri = segmentDimension.values.find((s: $FixMe) => {
+        return s.label === segment;
+      })?.value;
+
+      // There is no way to gracefully recover here :(
+      if (!dvIri) {
+        throw Error(`Can't find color for '${segment}'.`);
+      }
 
       return {
         label: segment,
