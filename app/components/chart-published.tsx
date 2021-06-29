@@ -8,8 +8,8 @@ import { ChartColumnsVisualization } from "../charts/column/chart-column";
 import { ChartLinesVisualization } from "../charts/line/chart-lines";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
@@ -20,6 +20,7 @@ import { parseDate } from "../configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
+import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFootnotes } from "./chart-footnotes";
 import { HintRed } from "./hint";
 
@@ -39,16 +40,16 @@ export const ChartPublished = ({
     variables: { iri: dataSet, locale },
   });
   return (
-    <>
-      <Flex
-        p={5}
-        sx={{
-          flexGrow: 1,
-          color: "monochrome800",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
+    <Flex
+      p={5}
+      sx={{
+        flexGrow: 1,
+        color: "monochrome800",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
+      <ChartErrorBoundary resetKeys={[chartConfig]}>
         {metaData?.dataCubeByIri?.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
@@ -84,8 +85,8 @@ export const ChartPublished = ({
             />
           )}
         </InteractiveFiltersProvider>
-      </Flex>
-    </>
+      </ChartErrorBoundary>
+    </Flex>
   );
 };
 

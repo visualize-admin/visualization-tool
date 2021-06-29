@@ -166,6 +166,33 @@ export const LoadingDataError = () => (
     </Text>
   </Flex>
 );
+
+export const ChartUnexpectedError = () => (
+  <Flex
+    sx={{
+      width: "100%",
+      height: "100%",
+      color: "hint",
+      margin: "auto",
+      textAlign: "center",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      flexGrow: 1,
+    }}
+  >
+    <Icon name="hintWarning" size={64} />
+    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
+      <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
+    </Text>
+    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+      <Trans id="hint.chartunexpected.message">
+        An unexpected error occurred while displaying this chart.
+      </Trans>
+    </Text>
+  </Flex>
+);
+
 export const OnlyNegativeDataHint = () => (
   <Flex
     sx={{
