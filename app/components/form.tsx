@@ -330,6 +330,7 @@ export const SearchField = ({
         placeholder={placeholder}
         onFocus={onFocus}
         onBlur={onBlur}
+        autoComplete="off"
       />
       {value && value !== "" && onReset && (
         <Box
