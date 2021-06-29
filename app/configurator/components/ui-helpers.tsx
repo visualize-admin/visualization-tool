@@ -87,24 +87,26 @@ export const useFormatFullDateAuto = () => {
     const formatMinute = format("%d.%m.%Y %H:%M");
     const formatHour = format("%d.%m.%Y %H:%M");
     const formatDay = format("%d.%m.%Y");
-    const formatMonth = format("%m.%Y");
+    const formatMonth = format("%d.%m.%Y");
     const formatYear = format("%Y");
 
     return (dateInput: Date | string) => {
       const date =
         typeof dateInput === "string" ? parseDate(dateInput) : dateInput;
 
-      return (timeMinute(date) < date
-        ? formatSecond
-        : timeHour(date) < date
-        ? formatMinute
-        : timeDay(date) < date
-        ? formatHour
-        : timeMonth(date) < date
-        ? formatDay
-        : timeYear(date) < date
-        ? formatMonth
-        : formatYear)(date);
+      return (
+        timeMinute(date) < date
+          ? formatSecond
+          : timeHour(date) < date
+          ? formatMinute
+          : timeDay(date) < date
+          ? formatHour
+          : timeMonth(date) < date
+          ? formatDay
+          : timeYear(date) < date
+          ? formatMonth
+          : formatYear
+      )(date);
     };
   }, [locale]);
 
@@ -175,17 +177,19 @@ export const useFormatShortDateAuto = () => {
     const formatYear = format("%Y");
 
     return (date: Date) => {
-      return (timeMinute(date) < date
-        ? formatSecond
-        : timeHour(date) < date
-        ? formatMinute
-        : timeDay(date) < date
-        ? formatHour
-        : timeMonth(date) < date
-        ? formatDay
-        : timeYear(date) < date
-        ? formatMonth
-        : formatYear)(date);
+      return (
+        timeMinute(date) < date
+          ? formatSecond
+          : timeHour(date) < date
+          ? formatMinute
+          : timeDay(date) < date
+          ? formatHour
+          : timeMonth(date) < date
+          ? formatDay
+          : timeYear(date) < date
+          ? formatMonth
+          : formatYear
+      )(date);
     };
   }, [locale]);
 
@@ -518,17 +522,7 @@ export const categoricalPalettes: Array<{
 export const getDefaultCategoricalPalette = () => categoricalPalettes[0];
 
 const sequentialPaletteSteps = [
-  0,
-  0.1,
-  0.2,
-  0.3,
-  0.4,
-  0.5,
-  0.6,
-  0.7,
-  0.8,
-  0.9,
-  1,
+  0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1,
 ];
 // Diverging color palettes
 export const sequentialPalettes: Array<{
