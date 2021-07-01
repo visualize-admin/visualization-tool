@@ -13,7 +13,6 @@ import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval
 import { MultiFilterField, SingleFilterField } from "./field";
 import {
   getTimeInterval,
-  useFormatFullDateAuto,
   useTimeFormatLocale,
   useTimeFormatUnit,
 } from "./ui-helpers";

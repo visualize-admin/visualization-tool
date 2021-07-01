@@ -2,26 +2,22 @@ import { axisBottom } from "d3";
 import { select, Selection } from "d3";
 
 import { useEffect, useRef } from "react";
-import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
+import { useTimeFormatUnit } from "../../configurator/components/ui-helpers";
 import { ColumnsState } from "../column/columns-state";
 import { useChartState } from "./use-chart-state";
 import { useChartTheme } from "./use-chart-theme";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const { xScale, yScale, bounds, xIsTime } = useChartState() as ColumnsState;
+  const { xScale, yScale, bounds, xIsTime, timeUnit } =
+    useChartState() as ColumnsState;
 
-  const formatDate = useFormatFullDateAuto();
+  const formatDate = useTimeFormatUnit();
 
   const { chartHeight, margins } = bounds;
 
-  const {
-    labelColor,
-    gridColor,
-    labelFontSize,
-    fontFamily,
-    domainColor,
-  } = useChartTheme();
+  const { labelColor, gridColor, labelFontSize, fontFamily, domainColor } =
+    useChartTheme();
 
   const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
     const rotation = true; // xScale.domain().length > 6;
@@ -31,8 +27,8 @@ export const AxisWidthBand = () => {
       .tickSizeOuter(0)
       .tickSizeInner(hasNegativeValues ? -chartHeight : 6);
 
-    if (xIsTime) {
-      axis.tickFormat(formatDate);
+    if (xIsTime && timeUnit) {
+      axis.tickFormat((d) => formatDate(d, timeUnit));
     }
 
     const fontSize =

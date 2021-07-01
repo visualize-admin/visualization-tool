@@ -16,7 +16,7 @@ import { LineFields } from "../../configurator";
 import {
   getPalette,
   parseDate,
-  useFormatFullDateAuto,
+  useTimeFormatUnit,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
@@ -71,8 +71,17 @@ const useLinesState = ({
   const theme = useTheme();
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const formatDateAuto = useFormatFullDateAuto();
+  const timeFormatUnit = useTimeFormatUnit();
   const [interactiveFilters] = useInteractiveFilters();
+
+  const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
+
+  if (!xDimension) {
+    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
+  }
+  if (xDimension.__typename !== "TemporalDimension") {
+    throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
+  }
 
   const getGroups = (d: Observation): string =>
     d[fields.x.componentIri] as string;
@@ -225,7 +234,7 @@ const useLinesState = ({
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: formatDateAuto(getX(datum)),
+      xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: fields.segment && getSegment(datum),
         value: formatNumber(getY(datum)),

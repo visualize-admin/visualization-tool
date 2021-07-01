@@ -26,6 +26,7 @@ import {
   parseDate,
   useFormatFullDateAuto,
   useFormatNumber,
+  useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
@@ -76,8 +77,17 @@ const useAreasState = ({
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const formatDateAuto = useFormatFullDateAuto();
+  const timeFormatUnit = useTimeFormatUnit();
   const [interactiveFilters] = useInteractiveFilters();
+
+  const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
+
+  if (!xDimension) {
+    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
+  }
+  if (xDimension.__typename !== "TemporalDimension") {
+    throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
+  }
 
   const hasSegment = fields.segment;
 
@@ -187,10 +197,10 @@ const useAreasState = ({
   const maxTotal = max(series, (d) => max(d, (d) => d[1])) ?? NaN;
   const yDomain = [minTotal, maxTotal];
 
-  const entireMaxTotalValue = (max<$FixMe>(
+  const entireMaxTotalValue = max<$FixMe>(
     allDataWide,
     (d) => d.total ?? 0
-  ) as unknown) as number;
+  ) as unknown as number;
 
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
   const xScale = scaleTime().domain(xDomain);
@@ -269,9 +279,10 @@ const useAreasState = ({
       getCategory: getSegment,
       sortOrder: "asc",
     });
-    const cumulativeSum = ((sum) => (d: Observation) => (sum += getY(d) ?? 0))(
-      0
-    );
+    const cumulativeSum = (
+      (sum) => (d: Observation) =>
+        (sum += getY(d) ?? 0)
+    )(0);
     const cumulativeRulerItemValues = [
       ...sortedTooltipValues.map(cumulativeSum),
     ];
@@ -288,7 +299,7 @@ const useAreasState = ({
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: formatDateAuto(getX(datum)),
+      xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: hasSegment ? getSegment(datum) : undefined,
         value: formatNumber(getY(datum)),

@@ -19,11 +19,11 @@ import {
   getPalette,
   mkNumber,
   parseDate,
-  useFormatFullDateAuto,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
+import { TimeUnit } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import { usePreparedData } from "../shared/chart-helpers";
@@ -47,6 +47,7 @@ export interface ColumnsState {
   getX: (d: Observation) => string;
   getXAsDate: (d: Observation) => Date;
   xIsTime: boolean;
+  timeUnit: TimeUnit | undefined;
   xScale: ScaleBand<string>;
   xEntireScale: ScaleTime<number, number>;
   xScaleInteraction: ScaleBand<string>;
@@ -266,6 +267,7 @@ const useColumnsState = ({
     xScale,
     xEntireScale,
     xIsTime,
+    timeUnit,
     xScaleInteraction,
     getY,
     yScale,
