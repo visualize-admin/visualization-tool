@@ -19,7 +19,7 @@ import { FieldSetLegend, Radio, Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import { getDimensionsByDimensionType } from "../../domain/data";
 import {
-  DimensionFieldsWithValuesFragment,
+  DimensionMetaDataFragment,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -125,7 +125,7 @@ const EncodingOptionsPanel = ({
   state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
-  component: DimensionFieldsWithValuesFragment | undefined;
+  component: DimensionMetaDataFragment | undefined;
   metaData: DataCubeMetadata;
 }) => {
   const { measures, dimensions } = metaData;

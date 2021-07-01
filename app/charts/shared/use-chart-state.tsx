@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { ChartFields, InteractiveFiltersConfig } from "../../configurator";
 import { Observation } from "../../domain/data";
-import { DimensionFieldsFragment } from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { AreasState } from "../area/areas-state";
 import { GroupedBarsState } from "../bar/bars-grouped-state";
 import { BarsState } from "../bar/bars-state";
@@ -18,8 +18,8 @@ export interface ChartProps {
   data: Observation[];
   fields: ChartFields;
   interactiveFiltersConfig: InteractiveFiltersConfig;
-  dimensions: DimensionFieldsFragment[];
-  measures: DimensionFieldsFragment[];
+  dimensions: DimensionMetaDataFragment[];
+  measures: DimensionMetaDataFragment[];
 }
 
 export type ChartState =

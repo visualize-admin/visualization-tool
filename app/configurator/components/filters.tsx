@@ -15,6 +15,7 @@ import {
   getTimeInterval,
   useFormatFullDateAuto,
   useTimeFormatLocale,
+  useTimeFormatUnit,
 } from "./ui-helpers";
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
@@ -136,7 +137,7 @@ export const TimeFilter = ({
 }) => {
   const locale = useLocale();
   const formatLocale = useTimeFormatLocale();
-  const formatHumanLocale = useFormatFullDateAuto();
+  const timeFormatUnit = useTimeFormatUnit();
   const [state, dispatch] = useConfiguratorState();
 
   const setFilterRange = useCallback(
@@ -187,7 +188,8 @@ export const TimeFilter = ({
 
     return (
       <Box>
-        {formatHumanLocale(timeRange[0])} – {formatHumanLocale(timeRange[1])}
+        {timeFormatUnit(timeRange[0], timeUnit)} –{" "}
+        {timeFormatUnit(timeRange[1], timeUnit)}
         <EditorIntervalBrush
           timeExtent={[from, to]}
           timeRange={timeRange}

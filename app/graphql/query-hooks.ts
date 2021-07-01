@@ -173,25 +173,15 @@ export type DataCubesQueryVariables = Exact<{
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus } }> };
 
-type DimensionFields_Measure_Fragment = { __typename: 'Measure', iri: string, label: string };
+type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
-type DimensionFields_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string };
+type DimensionMetaData_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
-type DimensionFields_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string };
+type DimensionMetaData_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
-type DimensionFields_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string };
+type DimensionMetaData_TemporalDimension_Fragment = { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
 
-export type DimensionFieldsFragment = DimensionFields_Measure_Fragment | DimensionFields_NominalDimension_Fragment | DimensionFields_OrdinalDimension_Fragment | DimensionFields_TemporalDimension_Fragment;
-
-type DimensionFieldsWithValues_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
-
-type DimensionFieldsWithValues_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
-
-type DimensionFieldsWithValues_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
-
-type DimensionFieldsWithValues_TemporalDimension_Fragment = { __typename: 'TemporalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any> };
-
-export type DimensionFieldsWithValuesFragment = DimensionFieldsWithValues_Measure_Fragment | DimensionFieldsWithValues_NominalDimension_Fragment | DimensionFieldsWithValues_OrdinalDimension_Fragment | DimensionFieldsWithValues_TemporalDimension_Fragment;
+export type DimensionMetaDataFragment = DimensionMetaData_Measure_Fragment | DimensionMetaData_NominalDimension_Fragment | DimensionMetaData_OrdinalDimension_Fragment | DimensionMetaData_TemporalDimension_Fragment;
 
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -201,19 +191,19 @@ export type DataCubePreviewQueryVariables = Exact<{
 
 export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, dimensions: Array<(
       { __typename: 'Measure' }
-      & DimensionFields_Measure_Fragment
+      & DimensionMetaData_Measure_Fragment
     ) | (
       { __typename: 'NominalDimension' }
-      & DimensionFields_NominalDimension_Fragment
+      & DimensionMetaData_NominalDimension_Fragment
     ) | (
       { __typename: 'OrdinalDimension' }
-      & DimensionFields_OrdinalDimension_Fragment
+      & DimensionMetaData_OrdinalDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
-      & DimensionFields_TemporalDimension_Fragment
+      & DimensionMetaData_TemporalDimension_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
-      & DimensionFields_Measure_Fragment
+      & DimensionMetaData_Measure_Fragment
     )> }> };
 
 export type DataCubePreviewObservationsQueryVariables = Exact<{
@@ -233,29 +223,6 @@ export type DataCubeMetadataQueryVariables = Exact<{
 
 export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
 
-export type DataCubeMetadataWithComponentsQueryVariables = Exact<{
-  iri: Scalars['String'];
-  locale: Scalars['String'];
-}>;
-
-
-export type DataCubeMetadataWithComponentsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, dimensions: Array<(
-      { __typename: 'Measure' }
-      & DimensionFields_Measure_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionFields_NominalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionFields_OrdinalDimension_Fragment
-    ) | (
-      { __typename: 'TemporalDimension' }
-      & DimensionFields_TemporalDimension_Fragment
-    )>, measures: Array<(
-      { __typename: 'Measure' }
-      & DimensionFields_Measure_Fragment
-    )> }> };
-
 export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
@@ -264,19 +231,19 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 
 export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, dimensions: Array<(
       { __typename: 'Measure' }
-      & DimensionFieldsWithValues_Measure_Fragment
+      & DimensionMetaData_Measure_Fragment
     ) | (
       { __typename: 'NominalDimension' }
-      & DimensionFieldsWithValues_NominalDimension_Fragment
+      & DimensionMetaData_NominalDimension_Fragment
     ) | (
       { __typename: 'OrdinalDimension' }
-      & DimensionFieldsWithValues_OrdinalDimension_Fragment
+      & DimensionMetaData_OrdinalDimension_Fragment
     ) | (
-      { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
-      & DimensionFieldsWithValues_TemporalDimension_Fragment
+      { __typename: 'TemporalDimension' }
+      & DimensionMetaData_TemporalDimension_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
-      & DimensionFieldsWithValues_Measure_Fragment
+      & DimensionMetaData_Measure_Fragment
     )> }> };
 
 export type DimensionValuesQueryVariables = Exact<{
@@ -288,16 +255,16 @@ export type DimensionValuesQueryVariables = Exact<{
 
 export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<(
       { __typename: 'Measure' }
-      & DimensionFieldsWithValues_Measure_Fragment
+      & DimensionMetaData_Measure_Fragment
     ) | (
       { __typename: 'NominalDimension' }
-      & DimensionFieldsWithValues_NominalDimension_Fragment
+      & DimensionMetaData_NominalDimension_Fragment
     ) | (
       { __typename: 'OrdinalDimension' }
-      & DimensionFieldsWithValues_OrdinalDimension_Fragment
+      & DimensionMetaData_OrdinalDimension_Fragment
     ) | (
-      { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
-      & DimensionFieldsWithValues_TemporalDimension_Fragment
+      { __typename: 'TemporalDimension' }
+      & DimensionMetaData_TemporalDimension_Fragment
     )> }> };
 
 export type TemporalDimensionValuesQueryVariables = Exact<{
@@ -309,7 +276,7 @@ export type TemporalDimensionValuesQueryVariables = Exact<{
 
 export type TemporalDimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'Measure' } | { __typename: 'NominalDimension' } | { __typename: 'OrdinalDimension' } | (
       { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
-      & DimensionFieldsWithValues_TemporalDimension_Fragment
+      & DimensionMetaData_TemporalDimension_Fragment
     )> }> };
 
 export type DataCubeObservationsQueryVariables = Exact<{
@@ -322,33 +289,31 @@ export type DataCubeObservationsQueryVariables = Exact<{
 
 export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, dimensions: Array<(
       { __typename: 'Measure' }
-      & DimensionFieldsWithValues_Measure_Fragment
+      & DimensionMetaData_Measure_Fragment
     ) | (
       { __typename: 'NominalDimension' }
-      & DimensionFieldsWithValues_NominalDimension_Fragment
+      & DimensionMetaData_NominalDimension_Fragment
     ) | (
       { __typename: 'OrdinalDimension' }
-      & DimensionFieldsWithValues_OrdinalDimension_Fragment
+      & DimensionMetaData_OrdinalDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
-      & DimensionFieldsWithValues_TemporalDimension_Fragment
+      & DimensionMetaData_TemporalDimension_Fragment
     )>, measures: Array<(
       { __typename: 'Measure' }
-      & DimensionFields_Measure_Fragment
+      & DimensionMetaData_Measure_Fragment
     )>, observations: { __typename: 'ObservationsQuery', data: Array<any>, sparqlEditorUrl?: Maybe<string> } }> };
 
-export const DimensionFieldsFragmentDoc = gql`
-    fragment dimensionFields on Dimension {
-  iri
-  label
-}
-    `;
-export const DimensionFieldsWithValuesFragmentDoc = gql`
-    fragment dimensionFieldsWithValues on Dimension {
+export const DimensionMetaDataFragmentDoc = gql`
+    fragment dimensionMetaData on Dimension {
   iri
   label
   isKeyDimension
   values
+  ... on TemporalDimension {
+    timeUnit
+    timeFormat
+  }
 }
     `;
 export const DataCubesDocument = gql`
@@ -382,14 +347,14 @@ export const DataCubePreviewDocument = gql`
     description
     publicationStatus
     dimensions {
-      ...dimensionFields
+      ...dimensionMetaData
     }
     measures {
-      ...dimensionFields
+      ...dimensionMetaData
     }
   }
 }
-    ${DimensionFieldsFragmentDoc}`;
+    ${DimensionMetaDataFragmentDoc}`;
 
 export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCubePreviewQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });
@@ -427,24 +392,6 @@ export const DataCubeMetadataDocument = gql`
 export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
 };
-export const DataCubeMetadataWithComponentsDocument = gql`
-    query DataCubeMetadataWithComponents($iri: String!, $locale: String!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
-    iri
-    title
-    dimensions {
-      ...dimensionFields
-    }
-    measures {
-      ...dimensionFields
-    }
-  }
-}
-    ${DimensionFieldsFragmentDoc}`;
-
-export function useDataCubeMetadataWithComponentsQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<DataCubeMetadataWithComponentsQuery>({ query: DataCubeMetadataWithComponentsDocument, ...options });
-};
 export const DataCubeMetadataWithComponentValuesDocument = gql`
     query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
   dataCubeByIri(iri: $iri, locale: $locale) {
@@ -452,18 +399,14 @@ export const DataCubeMetadataWithComponentValuesDocument = gql`
     title
     publisher
     dimensions {
-      ...dimensionFieldsWithValues
-      ... on TemporalDimension {
-        timeUnit
-        timeFormat
-      }
+      ...dimensionMetaData
     }
     measures {
-      ...dimensionFieldsWithValues
+      ...dimensionMetaData
     }
   }
 }
-    ${DimensionFieldsWithValuesFragmentDoc}`;
+    ${DimensionMetaDataFragmentDoc}`;
 
 export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.UseQueryArgs<DataCubeMetadataWithComponentValuesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });
@@ -472,15 +415,11 @@ export const DimensionValuesDocument = gql`
     query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!) {
   dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
     dimensionByIri(iri: $dimensionIri) {
-      ...dimensionFieldsWithValues
-      ... on TemporalDimension {
-        timeUnit
-        timeFormat
-      }
+      ...dimensionMetaData
     }
   }
 }
-    ${DimensionFieldsWithValuesFragmentDoc}`;
+    ${DimensionMetaDataFragmentDoc}`;
 
 export function useDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<DimensionValuesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DimensionValuesQuery>({ query: DimensionValuesDocument, ...options });
@@ -490,14 +429,14 @@ export const TemporalDimensionValuesDocument = gql`
   dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
     dimensionByIri(iri: $dimensionIri) {
       ... on TemporalDimension {
-        ...dimensionFieldsWithValues
+        ...dimensionMetaData
         timeUnit
         timeFormat
       }
     }
   }
 }
-    ${DimensionFieldsWithValuesFragmentDoc}`;
+    ${DimensionMetaDataFragmentDoc}`;
 
 export function useTemporalDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<TemporalDimensionValuesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<TemporalDimensionValuesQuery>({ query: TemporalDimensionValuesDocument, ...options });
@@ -509,10 +448,10 @@ export const DataCubeObservationsDocument = gql`
     title
     description
     dimensions {
-      ...dimensionFieldsWithValues
+      ...dimensionMetaData
     }
     measures {
-      ...dimensionFields
+      ...dimensionMetaData
     }
     observations(measures: $measures, filters: $filters) {
       data
@@ -520,8 +459,7 @@ export const DataCubeObservationsDocument = gql`
     }
   }
 }
-    ${DimensionFieldsWithValuesFragmentDoc}
-${DimensionFieldsFragmentDoc}`;
+    ${DimensionMetaDataFragmentDoc}`;
 
 export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubeObservationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeObservationsQuery>({ query: DataCubeObservationsDocument, ...options });

@@ -21,6 +21,7 @@ import {
   parseDate,
   useFormatFullDateAuto,
   useFormatNumber,
+  useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
@@ -74,7 +75,7 @@ const useColumnsState = ({
 }): ColumnsState => {
   const width = useWidth();
   const formatNumber = useFormatNumber();
-  const formatDateAuto = useFormatFullDateAuto();
+  const timeFormatUnit = useTimeFormatUnit();
 
   const [interactiveFilters] = useInteractiveFilters();
 
@@ -85,6 +86,11 @@ const useColumnsState = ({
   }
 
   const xIsTime = xDimension.__typename === "TemporalDimension";
+
+  const timeUnit =
+    xDimension.__typename === "TemporalDimension"
+      ? xDimension.timeUnit
+      : undefined;
 
   const getX = useCallback(
     (d: Observation): string => `${d[fields.x.componentIri]}`,
@@ -231,11 +237,16 @@ const useColumnsState = ({
     };
     const xAnchor = getXAnchor();
 
+    console.log(timeUnit);
+
     return {
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      xValue: xIsTime ? formatDateAuto(getX(datum)) : getX(datum),
+      xValue:
+        xIsTime && timeUnit
+          ? timeFormatUnit(getX(datum), timeUnit)
+          : getX(datum),
       datum: {
         label: fields.segment?.componentIri && getSegment(datum),
         value: formatNumber(getY(datum)),

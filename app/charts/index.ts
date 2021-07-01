@@ -8,7 +8,7 @@ import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
-import { DimensionFieldsWithValuesFragment } from "../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 
 export const enabledChartTypes: ChartType[] = [
   // "bar",
@@ -28,7 +28,7 @@ export const enabledChartTypes: ChartType[] = [
  */
 const findPreferredDimension = (
   dimensions: DataCubeMetadata["dimensions"],
-  preferredType?: DimensionFieldsWithValuesFragment["__typename"]
+  preferredType?: DimensionMetaDataFragment["__typename"]
 ) => {
   const dim =
     dimensions.find(

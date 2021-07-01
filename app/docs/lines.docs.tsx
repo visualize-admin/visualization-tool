@@ -8,7 +8,7 @@ import { BrushTime } from "../charts/shared/brush";
 import { ChartContainer, ChartSvg } from "../charts/shared/containers";
 import { InteractiveLegendColor } from "../charts/shared/legend-color";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
-import { DimensionFieldsFragment } from "../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 
 export const Docs = () => markdown`
 
@@ -172,9 +172,9 @@ const measures = [
     label: "Übrige Sortimente in m3",
     __typename: "Measure",
   },
-] as DimensionFieldsFragment[];
+] as DimensionMetaDataFragment[];
 
-const dimensions = ([
+const dimensions = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/0",
     label: "Jahr",
@@ -460,7 +460,7 @@ const dimensions = ([
     ],
     __typename: "NominalDimension",
   },
-] as unknown) as DimensionFieldsFragment[];
+] as unknown as DimensionMetaDataFragment[];
 const observations = [
   {
     "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1":

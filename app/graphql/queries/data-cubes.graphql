@@ -21,16 +21,15 @@ query DataCubes(
   }
 }
 
-fragment dimensionFields on Dimension {
-  iri
-  label
-}
-
-fragment dimensionFieldsWithValues on Dimension {
+fragment dimensionMetaData on Dimension {
   iri
   label
   isKeyDimension
   values
+  ... on TemporalDimension {
+    timeUnit
+    timeFormat
+  }
 }
 
 query DataCubePreview($iri: String!, $locale: String!) {
@@ -40,10 +39,10 @@ query DataCubePreview($iri: String!, $locale: String!) {
     description
     publicationStatus
     dimensions {
-      ...dimensionFields
+      ...dimensionMetaData
     }
     measures {
-      ...dimensionFields
+      ...dimensionMetaData
     }
   }
 }
@@ -75,33 +74,16 @@ query DataCubeMetadata($iri: String!, $locale: String!) {
   }
 }
 
-query DataCubeMetadataWithComponents($iri: String!, $locale: String!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
-    iri
-    title
-    dimensions {
-      ...dimensionFields
-    }
-    measures {
-      ...dimensionFields
-    }
-  }
-}
-
 query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
   dataCubeByIri(iri: $iri, locale: $locale) {
     iri
     title
     publisher
     dimensions {
-      ...dimensionFieldsWithValues
-      ... on TemporalDimension {
-        timeUnit
-        timeFormat
-      }
+      ...dimensionMetaData
     }
     measures {
-      ...dimensionFieldsWithValues
+      ...dimensionMetaData
     }
   }
 }
@@ -113,11 +95,7 @@ query DimensionValues(
 ) {
   dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
     dimensionByIri(iri: $dimensionIri) {
-      ...dimensionFieldsWithValues
-      ... on TemporalDimension {
-        timeUnit
-        timeFormat
-      }
+      ...dimensionMetaData
     }
   }
 }
@@ -130,7 +108,7 @@ query TemporalDimensionValues(
   dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
     dimensionByIri(iri: $dimensionIri) {
       ... on TemporalDimension {
-        ...dimensionFieldsWithValues
+        ...dimensionMetaData
         timeUnit
         timeFormat
       }
@@ -149,10 +127,10 @@ query DataCubeObservations(
     title
     description
     dimensions {
-      ...dimensionFieldsWithValues
+      ...dimensionMetaData
     }
     measures {
-      ...dimensionFields
+      ...dimensionMetaData
     }
     observations(measures: $measures, filters: $filters) {
       data

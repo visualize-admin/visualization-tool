@@ -1,6 +1,6 @@
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
-import { DimensionFieldsFragment } from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import { InteractveFilterType } from "./interactive-filters-configurator";
@@ -89,7 +89,7 @@ export const useInteractiveDataFiltersToggle = ({
   dimensions,
 }: {
   path: "dataFilters";
-  dimensions: DimensionFieldsFragment[];
+  dimensions: DimensionMetaDataFragment[];
 }) => {
   const [state, dispatch] = useConfiguratorState();
 

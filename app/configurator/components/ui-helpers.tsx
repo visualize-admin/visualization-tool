@@ -40,11 +40,7 @@ import {
 } from "d3";
 import { timeParse } from "d3-time-format";
 import { ReactNode, useMemo } from "react";
-import {
-  DimensionFieldsFragment,
-  DimensionFieldsWithValuesFragment,
-  TimeUnit,
-} from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import {
   getD3FormatLocale,
@@ -155,8 +151,38 @@ const timeIntervals = new Map<TimeUnit, CountableTimeInterval>([
   [TimeUnit.Second, timeSecond],
 ]);
 
+const timeFormats = new Map<TimeUnit, string>([
+  [TimeUnit.Year, "%Y"],
+  [TimeUnit.Month, "%d.%m.%Y"],
+  [TimeUnit.Week, "%d.%m.%Y"],
+  [TimeUnit.Day, "%d.%m.%Y"],
+  [TimeUnit.Hour, "%d.%m.%Y %H:%M"],
+  [TimeUnit.Minute, "%d.%m.%Y %H:%M"],
+  [TimeUnit.Second, "%d.%m.%Y %H:%M:%S"],
+]);
+
 export const getTimeInterval = (timeUnit: TimeUnit): CountableTimeInterval => {
   return timeIntervals.get(timeUnit) ?? timeDay;
+};
+
+export const useTimeFormatUnit = () => {
+  const locale = useLocale();
+  const formatter = useMemo(() => {
+    const { format } = getD3TimeFormatLocale(locale);
+
+    return (dateInput: Date | string, timeUnit: TimeUnit) => {
+      const date =
+        typeof dateInput === "string" ? parseDate(dateInput) : dateInput;
+
+      const timeFormat =
+        timeFormats.get(timeUnit) ?? timeFormats.get(TimeUnit.Day)!;
+      const f = format(timeFormat);
+
+      return f(date);
+    };
+  }, [locale]);
+
+  return formatter;
 };
 
 /**
@@ -559,7 +585,7 @@ export const mapColorsToComponentValuesIris = ({
   component,
 }: {
   palette: string;
-  component: DimensionFieldsWithValuesFragment | DimensionFieldsFragment;
+  component: DimensionMetaDataFragment;
 }) => {
   if (!("values" in component)) {
     return {};

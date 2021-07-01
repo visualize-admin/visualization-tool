@@ -3,7 +3,7 @@ import { Box, Button, Flex, Text } from "theme-ui";
 
 import { FieldProps } from "../..";
 import { getFieldLabel, getIconName } from "../ui-helpers";
-import { DimensionFieldsFragment } from "../../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { Icon, IconName } from "../../../icons";
 import { ReactNode } from "react";
 
@@ -14,7 +14,7 @@ export const ControlTab = ({
   checked,
   labelId,
 }: {
-  component?: DimensionFieldsFragment;
+  component?: DimensionMetaDataFragment;
   value: string;
   onClick: (x: string) => void;
   labelId: string;
@@ -96,7 +96,7 @@ export const DraggableTab = ({
   disabled,
   iconName,
 }: {
-  component: DimensionFieldsFragment;
+  component: DimensionMetaDataFragment;
   disabled?: boolean;
   onClick: (x: string) => void;
   value: string;

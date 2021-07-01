@@ -1,8 +1,5 @@
 import { Literal, NamedNode } from "rdf-js";
-import {
-  DimensionFieldsWithValuesFragment,
-  DimensionFieldsFragment,
-} from "../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 import { DimensionType } from "../charts/chart-config-ui-options";
 
 export type RawObservationValue = Literal | NamedNode;
@@ -82,14 +79,13 @@ export const parseObservationValue = ({
 /**
  * @fixme use metadata to filter time dimension!
  */
-export const getTimeDimensions = (
-  dimensions: DimensionFieldsWithValuesFragment[]
-) => dimensions.filter((d) => d.__typename === "TemporalDimension");
+export const getTimeDimensions = (dimensions: DimensionMetaDataFragment[]) =>
+  dimensions.filter((d) => d.__typename === "TemporalDimension");
 /**
  * @fixme use metadata to filter categorical dimension!
  */
 export const getCategoricalDimensions = (
-  dimensions: DimensionFieldsWithValuesFragment[]
+  dimensions: DimensionMetaDataFragment[]
 ) =>
   dimensions.filter(
     (d) =>
@@ -102,8 +98,8 @@ export const getDimensionsByDimensionType = ({
   measures,
 }: {
   dimensionTypes: DimensionType[];
-  dimensions: DimensionFieldsWithValuesFragment[];
-  measures: DimensionFieldsFragment[];
+  dimensions: DimensionMetaDataFragment[];
+  measures: DimensionMetaDataFragment[];
 }) =>
   [...measures, ...dimensions].filter((component) =>
     dimensionTypes.includes(component.__typename)

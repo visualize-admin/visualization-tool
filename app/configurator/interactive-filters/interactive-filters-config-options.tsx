@@ -12,8 +12,7 @@ import { getFieldComponentIri, getFieldComponentIris } from "../../charts";
 import { Checkbox } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
-  DimensionFieldsFragment,
-  useDataCubeMetadataWithComponentsQuery,
+  DimensionMetaDataFragment,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -42,7 +41,7 @@ export const InteractiveFiltersOptions = ({
   const { activeField } = state;
   const locale = useLocale();
 
-  const [{ data }] = useDataCubeMetadataWithComponentsQuery({
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: state.dataSet, locale },
   });
 
@@ -228,7 +227,7 @@ const InteractiveDataFiltersToggle = ({
   path: "dataFilters";
   defaultChecked?: boolean;
   disabled?: boolean;
-  dimensions: DimensionFieldsFragment[];
+  dimensions: DimensionMetaDataFragment[];
 }) => {
   const fieldProps = useInteractiveDataFiltersToggle({
     path,

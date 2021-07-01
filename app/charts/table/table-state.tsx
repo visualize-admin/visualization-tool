@@ -23,7 +23,7 @@ import {
   useOrderedTableColumns,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { getSlugifiedIri } from "../shared/chart-helpers";
@@ -233,7 +233,7 @@ const useTableState = ({
           const { colorMapping } = columnStyle as ColumnStyleCategory;
           const dimensionValues = dimensions.find(
             (d) => d.iri === iri
-          ) as DimensionFieldsWithValuesFragment;
+          ) as DimensionMetaDataFragment;
 
           // Color scale (always from colorMappings)
           const colorScale = scaleOrdinal();

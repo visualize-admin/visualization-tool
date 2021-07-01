@@ -8,7 +8,7 @@ import React, {
   useRef,
 } from "react";
 import { Checkbox } from "../../components/form";
-import { DimensionFieldsWithValuesFragment } from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { ColorPalette } from "../components/chart-controls/color-palette";
 import {
@@ -285,8 +285,7 @@ export const TableColumnOptions = ({
                       palette: getDefaultCategoricalPalette().value,
                       colorMapping: mapColorsToComponentValuesIris({
                         palette: getDefaultCategoricalPalette().value,
-                        component:
-                          component as DimensionFieldsWithValuesFragment,
+                        component: component as DimensionMetaDataFragment,
                       }),
                     };
                   case "heatmap":
@@ -318,7 +317,7 @@ export const TableColumnOptions = ({
             <ColumnStyleSubOptions
               chartConfig={chartConfig}
               activeField={activeField}
-              component={component as DimensionFieldsWithValuesFragment}
+              component={component as DimensionMetaDataFragment}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -389,7 +388,7 @@ const ColumnStyleSubOptions = ({
 }: {
   chartConfig: TableConfig;
   activeField: string;
-  component: DimensionFieldsWithValuesFragment;
+  component: DimensionMetaDataFragment;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
   return (
