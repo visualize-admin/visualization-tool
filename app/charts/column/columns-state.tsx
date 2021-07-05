@@ -238,8 +238,6 @@ const useColumnsState = ({
     };
     const xAnchor = getXAnchor();
 
-    console.log(timeUnit);
-
     return {
       xAnchor,
       yAnchor,
