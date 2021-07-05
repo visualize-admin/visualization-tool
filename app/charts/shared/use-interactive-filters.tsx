@@ -27,7 +27,7 @@ type InteractiveFiltersStateAction =
     }
   | {
       type: "SET_DATA_FILTER";
-      value: FilterValueSingle;
+      value: { [x: string]: FilterValueSingle };
     }
   | {
       type: "UPDATE_DATA_FILTER";
@@ -50,10 +50,8 @@ const InteractiveFiltersStateReducer = (
 ) => {
   switch (action.type) {
     case "ADD_INTERACTIVE_FILTER":
-      return {
-        ...draft,
-        categories: { ...draft.categories, [action.value]: true },
-      };
+      draft.categories = { ...draft.categories, [action.value]: true };
+      return draft;
     case "REMOVE_INTERACTIVE_FILTER":
       const { categories } = draft;
       if (categories) {
@@ -62,20 +60,14 @@ const InteractiveFiltersStateReducer = (
       }
       return draft;
     case "ADD_TIME_FILTER":
-      return {
-        ...draft,
-        time: { from: action.value[0], to: action.value[1] },
-      };
+      draft.time = { from: action.value[0], to: action.value[1] };
+      return draft;
     case "RESET_DATA_FILTER":
-      return {
-        ...draft,
-        dataFilters: undefined,
-      };
+      draft.dataFilters = {};
+      return draft;
     case "SET_DATA_FILTER":
-      return {
-        ...draft,
-        dataFilters: action.value,
-      };
+      draft.dataFilters = action.value;
+      return draft;
     case "UPDATE_DATA_FILTER":
       if (action.value.dimensionValueIri === FIELD_VALUE_NONE) {
         delete draft.dataFilters[action.value.dimensionIri];
@@ -89,10 +81,8 @@ const InteractiveFiltersStateReducer = (
       return draft;
 
     case "RESET_INTERACTIVE_CATEGORIES":
-      return {
-        ...draft,
-        categories: {},
-      };
+      draft.categories = {};
+      return draft;
 
     default:
       throw new Error();

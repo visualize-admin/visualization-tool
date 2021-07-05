@@ -147,13 +147,19 @@ const ChartWithInteractiveFilters = ({
     if (componentIris) {
       // If dimension is already in use as interactive filter, use it,
       // otherwise, default to editor config filter dimension value.
-      const newInteractiveDataFilters = componentIris.reduce((obj, iri) => {
+      const newInteractiveDataFilters = componentIris.reduce<{
+        [key: string]: FilterValueSingle;
+      }>((obj, iri) => {
+        const configFilter = chartConfig.filters[iri];
+
         if (Object.keys(IFstate.dataFilters).includes(iri)) {
-          return { ...obj, [iri]: IFstate.dataFilters[iri] };
-        } else {
-          return { ...obj, [iri]: chartConfig.filters[iri] };
+          obj[iri] = IFstate.dataFilters[iri];
+        } else if (configFilter?.type === "single") {
+          obj[iri] = configFilter;
         }
-      }, {} as FilterValueSingle);
+
+        return obj;
+      }, {});
 
       dispatch({ type: "SET_DATA_FILTER", value: newInteractiveDataFilters });
     }
