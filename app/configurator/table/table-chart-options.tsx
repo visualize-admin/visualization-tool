@@ -221,7 +221,7 @@ export const TableColumnOptions = ({
           {component.label}
         </SectionTitle>
         <ControlSectionContent side="right">
-          {component.__typename !== "Measure" && (
+          {component.isKeyDimension && (
             <>
               <ChartOptionGroupHiddenField
                 label={
@@ -247,7 +247,7 @@ export const TableColumnOptions = ({
             </>
           )}
 
-          {(component.__typename === "Measure" || isGroup) && (
+          {(!component.isKeyDimension || isGroup) && (
             <ChartOptionGroupHiddenField
               label={<Trans id="controls.table.column.hide">Hide column</Trans>}
               field={activeField}
