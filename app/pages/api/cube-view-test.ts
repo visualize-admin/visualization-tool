@@ -13,14 +13,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const locale = "de";
         const result = await getCubes({ locale, includeDrafts: true });
 
-        const cubesWithDimensions = result.map(({ cube, locale, data }) => {
-          return {
-            ...data,
-            dimensions: getCubeDimensions({ cube, locale }).map(
-              ({ data }) => data
-            ),
-          };
-        });
+        const cubesWithDimensions = await Promise.all(
+          result.map(async ({ cube, locale, data }) => {
+            return {
+              ...data,
+              dimensions: (await getCubeDimensions({ cube, locale })).map(
+                ({ data }) => data
+              ),
+            };
+          })
+        );
 
         // TODO: Make this 201 and set final URI as Location header
         res.status(200).json(cubesWithDimensions);

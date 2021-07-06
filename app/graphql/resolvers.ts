@@ -115,7 +115,7 @@ const DataCube: DataCubeResolvers = {
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
   dimensions: async ({ cube, locale }) => {
-    const dimensions = getCubeDimensions({
+    const dimensions = await getCubeDimensions({
       cube,
       locale,
     });
@@ -123,7 +123,7 @@ const DataCube: DataCubeResolvers = {
     return dimensions.filter((d) => !d.data.isMeasureDimension);
   },
   measures: async ({ cube, locale }) => {
-    const dimensions = getCubeDimensions({
+    const dimensions = await getCubeDimensions({
       cube,
       locale,
     });
@@ -131,10 +131,12 @@ const DataCube: DataCubeResolvers = {
     return dimensions.filter((d) => d.data.isMeasureDimension);
   },
   dimensionByIri: async ({ cube, locale }, { iri }) => {
-    const dimension = getCubeDimensions({
-      cube,
-      locale,
-    }).find((d) => iri === d.data.iri);
+    const dimension = (
+      await getCubeDimensions({
+        cube,
+        locale,
+      })
+    ).find((d) => iri === d.data.iri);
 
     return dimension ?? null;
   },

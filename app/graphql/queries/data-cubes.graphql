@@ -26,6 +26,7 @@ fragment dimensionMetaData on Dimension {
   label
   isKeyDimension
   values
+  unit
   ... on TemporalDimension {
     timeUnit
     timeFormat

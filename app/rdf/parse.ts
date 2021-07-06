@@ -11,7 +11,7 @@ import {
   timeYear,
 } from "d3";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
-import { NamedNode } from "rdf-js";
+import { NamedNode, Term } from "rdf-js";
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
@@ -81,16 +81,19 @@ export const parseCubeDimension = ({
   dim,
   cube,
   locale,
+  units,
 }: {
   dim: CubeDimension;
   cube: Cube;
   locale: string;
+  units?: Map<string, { iri: Term; label?: Term }>;
 }): ResolvedDimension => {
   const outOpts = { language: getQueryLocales(locale) };
 
   const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(ns.rdf.type).term;
-  const timeUnitTerm = dim.out(ns.cube`meta/dataKind`).out(ns.time.unitType)
-    .term;
+  const timeUnitTerm = dim
+    .out(ns.cube`meta/dataKind`)
+    .out(ns.time.unitType).term;
   const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
 
   let dataType = dim.datatype;
@@ -137,8 +140,13 @@ export const parseCubeDimension = ({
     .terms.some((t) => t.equals(ns.cube.KeyDimension));
 
   const isMeasureDimension = dim
-  .out(ns.rdf.type)
-  .terms.some((t) => t.equals(ns.cube.MeasureDimension))
+    .out(ns.rdf.type)
+    .terms.some((t) => t.equals(ns.cube.MeasureDimension));
+
+  const unitTerm = dim.out(ns.qudt.unit).term;
+  const dimensionUnit = unitTerm
+    ? units?.get(unitTerm.value)?.label?.value
+    : undefined;
 
   return {
     cube,
@@ -172,7 +180,7 @@ export const parseCubeDimension = ({
         : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
         ? "Interval"
         : undefined,
-      unit: dim.out(ns.qudt.unit).value,
+      unit: dimensionUnit,
     },
   };
 };

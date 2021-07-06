@@ -5,6 +5,7 @@ export {
   dcterms,
   qudt,
   rdf,
+  rdfs,
   schema,
   vcard,
   time,

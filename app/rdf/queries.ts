@@ -1,6 +1,6 @@
 // import { sparql } from "@tpluscode/rdf-string";
 // import { descending } from "d3";
-import { rollup } from "d3";
+import { index, rollup } from "d3";
 import {
   Cube,
   CubeDimension,
@@ -22,6 +22,7 @@ import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
 import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
 import { loadResourceLabels } from "./query-labels";
+import { loadUnitLabels } from "./query-unit-labels";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -156,26 +157,44 @@ export const getCube = async ({
   return parseCube({ cube, locale });
 };
 
-export const getCubeDimensions = ({
+export const getCubeDimensions = async ({
   cube,
   locale,
 }: {
   cube: Cube;
   locale: string;
-}): ResolvedDimension[] => {
+}): Promise<ResolvedDimension[]> => {
   try {
-    const dimensions = cube.dimensions
-      .filter(
-        (dim) =>
-          dim.path &&
-          ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
-            dim.path.value ?? ""
-          )
-      )
-      .map((dim) => {
-        return parseCubeDimension({ dim, cube, locale });
+    const dimensions = cube.dimensions.filter(
+      (dim) =>
+        dim.path &&
+        ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
+          dim.path.value ?? ""
+        )
+    );
+    const dimensionUnits = dimensions.flatMap((d) => {
+      const t = d.out(ns.qudt.unit).term;
+      return t ? [t] : [];
+    });
+
+    const dimensionUnitLabels = index(
+      await loadUnitLabels({
+        ids: dimensionUnits,
+        locale: "en", // No other locales exist yet
+      }),
+      (d) => d.iri.value
+    );
+
+    console.log(dimensionUnitLabels, dimensionUnitLabels.size);
+
+    return dimensions.map((dim) => {
+      return parseCubeDimension({
+        dim,
+        cube,
+        locale,
+        units: dimensionUnitLabels,
       });
-    return dimensions;
+    });
   } catch (e) {
     console.error(e);
 
@@ -360,7 +379,7 @@ export const getCubeObservations = async ({
   /**
    * Add labels to named dimensions
    */
-  const cubeDimensions = getCubeDimensions({ cube, locale });
+  const cubeDimensions = await getCubeDimensions({ cube, locale });
 
   // Find dimensions which are NOT literal
   const namedDimensions = cubeDimensions.filter(

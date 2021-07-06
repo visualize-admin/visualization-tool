@@ -24,7 +24,9 @@ export const config = {
 
 const handler = server.createHandler({ path: "/api/graphql" });
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const GraphQLPage = async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, cors);
   return handler(req, res);
 };
+
+export default GraphQLPage;
