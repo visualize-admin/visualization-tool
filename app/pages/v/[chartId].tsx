@@ -68,7 +68,7 @@ const VisualizationPage = (props: PageProps) => {
       </Head>
       <ContentLayout>
         <Box px={4} bg="muted" mb="auto">
-          <Box sx={{ pt: 4, maxWidth: 696, margin: "auto" }}>
+          <Box sx={{ pt: 4, maxWidth: "105rem", margin: "auto" }}>
             {publishSuccess && <Success />}
 
             <ChartPanel>
