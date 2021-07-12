@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Flex, Link } from "theme-ui";
+import { Box, Flex, Link, Text } from "theme-ui";
 import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
 import contentRoutes from "../content-routes.json";
@@ -66,7 +66,24 @@ export const Footer = () => {
           <Logo />
         </Box>
 
-        <Flex sx={{ justifyContent: "flex-end", width: ["100%", "auto"] }}>
+        <Flex
+          sx={{
+            justifyContent: "flex-end",
+            alignItems: "center",
+            width: ["100%", "auto"],
+          }}
+        >
+          <Text
+            sx={{
+              px: [4, 3],
+              py: [3, 4],
+              color: "secondary",
+              fontSize: 3,
+              fontFamily: "body",
+            }}
+          >
+            {process.env.VERSION}
+          </Text>
           <NextLink
             href={contentRoutes.legal[locale].path}
             passHref
