@@ -26,7 +26,7 @@ import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
-import { getSlugifiedIri } from "../shared/chart-helpers";
+import { getLabelWithUnit, getSlugifiedIri } from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { BAR_CELL_PADDING, TABLE_HEIGHT } from "./constants";
@@ -133,9 +133,15 @@ const useTableState = ({
   // Columns used by react-table
   const tableColumns = useMemo(() => {
     return orderedTableColumns.map((c) => {
-      const headerLabel =
-        [...dimensions, ...measures].find((dim) => dim.iri === c.componentIri)
-          ?.label || c.componentIri;
+      const headerDimension = [...dimensions, ...measures].find(
+        (dim) => dim.iri === c.componentIri
+      );
+
+      if (!headerDimension) {
+        throw Error(`No dimension <${c.componentIri}> in cube!`);
+      }
+
+      const headerLabel = getLabelWithUnit(headerDimension);
 
       // The column width depends on the estimated width of the
       // longest value in the column, with a minimum of 150px.

@@ -24,7 +24,11 @@ import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { getWideData, usePreparedData } from "../shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  getWideData,
+  usePreparedData,
+} from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -149,9 +153,14 @@ const useLinesState = ({
 
   const entireMaxValue = max(sortedData, getY) as number;
   const yScale = scaleLinear().domain(yDomain).nice();
-  const yAxisLabel =
-    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
-    fields.y.componentIri;
+
+  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+
+  if (!yMeasure) {
+    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
+  }
+
+  const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // segments
   const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
@@ -237,13 +246,17 @@ const useLinesState = ({
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: fields.segment && getSegment(datum),
-        value: formatNumber(getY(datum)),
+        value: yMeasure.unit
+          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
+          : formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
         hide: getY(td) === null,
         label: getSegment(td),
-        value: formatNumber(getY(td)),
+        value: yMeasure.unit
+          ? `${formatNumber(getY(td))} ${yMeasure.unit}`
+          : formatNumber(getY(td)),
         color:
           segments.length > 1
             ? (colors(getSegment(td)) as string)

@@ -16,7 +16,7 @@ import {
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { usePreparedData } from "../shared/chart-helpers";
+import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { TooltipScatterplot } from "../shared/interaction/tooltip-content";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -86,18 +86,27 @@ const useScatterplotState = ({
     interactiveFilters,
     getSegment,
   });
+  const xMeasure = measures.find((d) => d.iri === fields.x.componentIri);
 
-  const xAxisLabel =
-    measures.find((d) => d.iri === fields.x.componentIri)?.label ??
-    fields.y.componentIri;
+  if (!xMeasure) {
+    throw Error(`No dimension <${fields.x.componentIri}> in cube!`);
+  }
+
+  const xAxisLabel = getLabelWithUnit(xMeasure);
+
   const xMinValue = Math.min(mkNumber(min(preparedData, (d) => getX(d))), 0);
   const xMaxValue = max(preparedData, (d) => getX(d)) as number;
   const xDomain = [xMinValue, xMaxValue];
   const xScale = scaleLinear().domain(xDomain).nice();
 
-  const yAxisLabel =
-    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
-    fields.y.componentIri;
+  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+
+  if (!yMeasure) {
+    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
+  }
+
+  const yAxisLabel = getLabelWithUnit(yMeasure);
+
   const yMinValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
   const yMaxValue = max(preparedData, getY) as number;
   const yDomain = [yMinValue, yMaxValue];
@@ -182,8 +191,20 @@ const useScatterplotState = ({
       tooltipContent: (
         <TooltipScatterplot
           firstLine={fields.segment && getSegment(datum)}
-          secondLine={`${xAxisLabel}: ${formatNumber(getX(datum))}`}
-          thirdLine={`${yAxisLabel}: ${formatNumber(getY(datum))}`}
+          secondLine={
+            xMeasure.unit
+              ? `${xMeasure.label}: ${formatNumber(getX(datum))} ${
+                  xMeasure.unit
+                }`
+              : `${xAxisLabel}: ${formatNumber(getX(datum))}`
+          }
+          thirdLine={
+            yMeasure.unit
+              ? `${yMeasure.label}: ${formatNumber(getY(datum))} ${
+                  yMeasure.unit
+                }`
+              : `${yAxisLabel}: ${formatNumber(getY(datum))}`
+          }
         />
       ),
       datum: {

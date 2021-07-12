@@ -77,6 +77,12 @@ const usePieState = ({
   const formatNumber = useFormatNumber();
   const [interactiveFilters] = useInteractiveFilters();
 
+  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+
+  if (!yMeasure) {
+    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
+  }
+
   const getY = useCallback(
     (d: Observation): number | null => {
       const v = d[fields.y.componentIri];
@@ -206,7 +212,9 @@ const usePieState = ({
       placement: { x: xPlacement, y: yPlacement },
       xValue: getX(datum),
       datum: {
-        value: formatNumber(getY(datum)),
+        value: yMeasure.unit
+          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
+          : formatNumber(getY(datum)),
         color: colors(getX(datum)) as string,
       },
       values: undefined,

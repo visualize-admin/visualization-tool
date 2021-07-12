@@ -2,6 +2,7 @@ import { sum } from "d3";
 import { useMemo } from "react";
 import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
 import { Observation, ObservationValue } from "../../domain/data";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import {
   InteractiveFiltersState,
   useInteractiveFilters,
@@ -127,3 +128,11 @@ export const getWideData = ({
 
 const SlugRe = /\W+/g;
 export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");
+
+export const getLabelWithUnit = (
+  dimension: DimensionMetaDataFragment
+): string => {
+  return dimension.unit
+    ? `${dimension.label} (${dimension.unit})`
+    : dimension.label;
+};

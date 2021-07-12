@@ -26,7 +26,7 @@ import { Observation } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { usePreparedData } from "../shared/chart-helpers";
+import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -159,9 +159,13 @@ const useColumnsState = ({
     .domain([mkNumber(minValue), mkNumber(maxValue)])
     .nice();
 
-  const yAxisLabel =
-    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
-    fields.y.componentIri;
+  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+
+  if (!yMeasure) {
+    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
+  }
+
+  const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // Dimensions
   const left = interactiveFiltersConfig?.time.active
@@ -248,7 +252,9 @@ const useColumnsState = ({
           : getX(datum),
       datum: {
         label: fields.segment?.componentIri && getSegment(datum),
-        value: formatNumber(getY(datum)),
+        value: yMeasure.unit
+          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
+          : formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: undefined,

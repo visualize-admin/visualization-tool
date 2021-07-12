@@ -47,7 +47,7 @@ const PreviewTable = ({
             borderBottomStyle: "solid",
           }}
         >
-          {headers.map(({ iri, label, __typename }) => {
+          {headers.map(({ iri, label, unit, __typename }) => {
             return (
               <Box
                 as="th"
@@ -62,7 +62,7 @@ const PreviewTable = ({
                   minWidth: 128,
                 }}
               >
-                {label}
+                {unit ? `${label} (${unit})` : label}
               </Box>
             );
           })}

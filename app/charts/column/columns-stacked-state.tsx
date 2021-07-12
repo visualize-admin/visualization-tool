@@ -34,7 +34,11 @@ import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { getWideData, usePreparedData } from "../shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  getWideData,
+  usePreparedData,
+} from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -258,9 +262,13 @@ const useColumnsStackedState = ({
     (d) => d.total
   ) as number;
 
-  const yAxisLabel =
-    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
-    fields.y.componentIri;
+  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+
+  if (!yMeasure) {
+    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
+  }
+
+  const yAxisLabel = getLabelWithUnit(yMeasure);
 
   const yScale = scaleLinear().domain(yStackDomain).nice();
 
@@ -379,12 +387,16 @@ const useColumnsStackedState = ({
       xValue: getX(datum),
       datum: {
         label: fields.segment && getSegment(datum),
-        value: formatNumber(getY(datum)),
+        value: yMeasure.unit
+          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
+          : formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: sortedTooltipValues.map((td) => ({
         label: getSegment(td),
-        value: formatNumber(getY(td)),
+        value: yMeasure.unit
+          ? `${formatNumber(getY(td))} ${yMeasure.unit}`
+          : formatNumber(getY(td)),
         color: colors(getSegment(td)) as string,
       })),
     };

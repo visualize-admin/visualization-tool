@@ -33,7 +33,11 @@ import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { getWideData, usePreparedData } from "../shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  getWideData,
+  usePreparedData,
+} from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -142,9 +146,13 @@ const useAreasState = ({
   const groupedMap = group(preparedData, getGroups);
   const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
 
-  const yAxisLabel =
-    measures.find((d) => d.iri === fields.y.componentIri)?.label ??
-    fields.y.componentIri;
+  const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
+
+  if (!yMeasure) {
+    throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
+  }
+
+  const yAxisLabel = getLabelWithUnit(yMeasure);
 
   /** Ordered segments */
   const segmentSortingType = fields.segment?.sorting?.sortingType;
@@ -288,12 +296,15 @@ const useAreasState = ({
     ];
 
     const yAnchor = yScale(
-      cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1]
+      Math.max(
+        cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1],
+        0
+      )
     );
 
     const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
 
-    const yPlacement = "middle";
+    const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
 
     return {
       xAnchor,
@@ -302,13 +313,17 @@ const useAreasState = ({
       xValue: timeFormatUnit(getX(datum), xDimension.timeUnit),
       datum: {
         label: hasSegment ? getSegment(datum) : undefined,
-        value: formatNumber(getY(datum)),
+        value: yMeasure.unit
+          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
+          : formatNumber(getY(datum)),
         color: colors(getSegment(datum)) as string,
       },
       values: hasSegment
         ? sortedTooltipValues.map((td) => ({
             label: getSegment(td),
-            value: formatNumber(getY(td)),
+            value: yMeasure.unit
+              ? `${formatNumber(getY(td))} ${yMeasure.unit}`
+              : formatNumber(getY(td)),
             color: colors(getSegment(td)) as string,
           }))
         : undefined,
