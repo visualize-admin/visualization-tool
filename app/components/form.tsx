@@ -46,13 +46,19 @@ export const Label = ({
     {children}
     {label && (
       <Box
-        sx={{
-          maxWidth: "88%",
-          textAlign: "left",
-          fontFamily: "body",
-          pr: 1,
-          fontSize: [3, 3, 4],
-        }}
+        sx={
+          {
+            textAlign: "left",
+            fontFamily: "body",
+            pr: 1,
+            fontSize: [3],
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            display: "-webkit-box",
+            overflow: "hidden",
+          } as $IntentionalAny
+        }
+        title={label}
       >
         {label}
       </Box>
