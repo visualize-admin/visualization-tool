@@ -6,7 +6,7 @@ const pages = [
   { path: "/de/rechtliche-grundlagen", locale: "de" },
 
   { path: "/fr/index", locale: "fr" },
-  { path: "/fr/empreinte", locale: "fr" },
+  { path: "/fr/impressum", locale: "fr" },
   { path: "/fr/cadre-juridique", locale: "fr" },
 
   { path: "/it/index", locale: "it" },

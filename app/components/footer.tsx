@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Flex, Link, Text } from "theme-ui";
 import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
@@ -24,14 +24,21 @@ export const Footer = () => {
       <Box
         sx={{
           width: ["100%", "auto"],
-          px: 4,
+          px: [4, 0],
           py: 5,
           color: ["monochrome900", "monochrome700"],
         }}
       >
-        <Trans id="footer.institution.name">
-          Federal Office for the Environment FOEN
-        </Trans>
+        <FooterLink
+          href={t({
+            id: "footer.institution.url",
+            message: "https://www.bafu.admin.ch/bafu/en/home.html",
+          })}
+        >
+          <Trans id="footer.institution.name">
+            Federal Office for the Environment FOEN
+          </Trans>
+        </FooterLink>
       </Box>
 
       <Flex
@@ -108,13 +115,19 @@ export const Footer = () => {
   );
 };
 
-const FooterLink = ({ children, ...props }: { children: ReactNode }) => (
+const FooterLink = ({
+  children,
+  ...props
+}: {
+  children: ReactNode;
+  href?: string;
+}) => (
   <Link
     {...props}
     sx={{
       width: ["100%", "auto"],
-      px: [4, 3],
-      py: [3, 4],
+      px: [0, 3],
+      py: [0, 4],
       color: "primary",
       fontSize: 3,
       fontFamily: "body",
@@ -136,40 +149,41 @@ const FooterLink = ({ children, ...props }: { children: ReactNode }) => (
   </Link>
 );
 
-const FooterLinkBottom = forwardRef<HTMLAnchorElement, { children: ReactNode }>(
-  function FooterLinkBottom({ children, ...props }, ref) {
-    return (
-      <Link
-        ref={ref}
-        {...props}
-        sx={{
-          px: [4, 3],
-          py: [3, 4],
-          color: "primary",
-          fontSize: 3,
-          fontFamily: "body",
-          borderLeftWidth: ["1px", 0],
-          borderLeftStyle: "solid",
-          borderLeftColor: "monochrome500",
-          textDecoration: "none",
-          cursor: "pointer",
-          ":hover": {
-            color: "primaryHover",
-          },
-          ":active": {
-            color: "primaryHover",
-          },
-          ":disabled": {
-            cursor: "initial",
-            color: "primaryDisabled",
-          },
-        }}
-      >
-        {children}
-      </Link>
-    );
-  }
-);
+const FooterLinkBottom = forwardRef<
+  HTMLAnchorElement,
+  { children: ReactNode; href?: string }
+>(function FooterLinkBottom({ children, ...props }, ref) {
+  return (
+    <Link
+      ref={ref}
+      {...props}
+      sx={{
+        px: [4, 3],
+        py: [3, 4],
+        color: "primary",
+        fontSize: 3,
+        fontFamily: "body",
+        borderLeftWidth: ["1px", 0],
+        borderLeftStyle: "solid",
+        borderLeftColor: "monochrome500",
+        textDecoration: "none",
+        cursor: "pointer",
+        ":hover": {
+          color: "primaryHover",
+        },
+        ":active": {
+          color: "primaryHover",
+        },
+        ":disabled": {
+          cursor: "initial",
+          color: "primaryDisabled",
+        },
+      }}
+    >
+      {children}
+    </Link>
+  );
+});
 
 const Logo = () => (
   <svg width="222px" height="54px" viewBox="0 0 222 54">
