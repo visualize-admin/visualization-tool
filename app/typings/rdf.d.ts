@@ -20,7 +20,7 @@ declare module "rdf-cube-view-query" {
     static filter: {
       isPartOf: (container: $FixMe) => $FixMe;
       noValidThrough: () => $FixMe;
-      status: (values: Term) => $FixMe;
+      status: (values: Term | Term[]) => $FixMe;
     };
     dimensions: CubeDimension[];
     source: CubeSource;

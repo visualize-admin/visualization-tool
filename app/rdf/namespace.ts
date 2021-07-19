@@ -18,6 +18,7 @@ export const classifications = namespace(
 );
 export const schemaAdmin = namespace("https://schema.ld.admin.ch/");
 export const adminTerm = namespace("https://ld.admin.ch/definedTerm/");
+export const adminVocabulary = namespace("https://ld.admin.ch/vocabulary/");
 export const cube = namespace("https://cube.link/");
 export const cubeView = namespace("https://cube.link/view/");
 export const cubeMeta = namespace("https://cube.link/meta/");

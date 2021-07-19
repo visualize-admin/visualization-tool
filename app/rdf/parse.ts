@@ -44,7 +44,9 @@ export const parseCube = ({
       version: cube.out(ns.schema.version)?.value,
       publicationStatus:
         ns.adminTerm("CreativeWorkStatus/Published").value ===
-        cube.out(ns.schema.creativeWorkStatus)?.value
+          cube.out(ns.schema.creativeWorkStatus)?.value ||
+        ns.adminVocabulary("CreativeWorkStatus/Published").value ===
+          cube.out(ns.schema.creativeWorkStatus)?.value
           ? DataCubePublicationStatus.Published
           : DataCubePublicationStatus.Draft,
       theme: cube.out(ns.dcat.theme)?.value,

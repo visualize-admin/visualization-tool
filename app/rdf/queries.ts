@@ -64,7 +64,10 @@ export const getCubes = async ({
     ].concat(
       includeDrafts
         ? []
-        : Cube.filter.status(ns.adminTerm("CreativeWorkStatus/Published"))
+        : Cube.filter.status([
+            ns.adminTerm("CreativeWorkStatus/Published"),
+            ns.adminVocabulary("CreativeWorkStatus/Published"),
+          ])
     ),
   });
 
@@ -91,7 +94,9 @@ export const getCube = async ({
   // const versionHistory = cube.in(ns.schema.hasPart)?.term;
   // const isPublished =
   //   cube.out(ns.schema.creativeWorkStatus)?.value ===
-  //   ns.adminTerm("CreativeWorkStatus/Published").value;
+  //   ns.adminTerm("CreativeWorkStatus/Published").value ||
+  //   cube.out(ns.schema.creativeWorkStatus)?.value ===
+  //   ns.adminVocabulary("CreativeWorkStatus/Published").value;
   // const version = cube.out(ns.schema.version);
 
   // // console.log(`Cube <${iri}> version: ${version?.value}`);
@@ -146,7 +151,9 @@ export const getCube = async ({
   //     newerCubes.find(
   //       (cube) =>
   //         cube.out(ns.schema.creativeWorkStatus)?.value ===
-  //         ns.adminTerm("CreativeWorkStatus/Published").value
+  //         ns.adminTerm("CreativeWorkStatus/Published").value ||
+  //         cube.out(ns.schema.creativeWorkStatus)?.value ===
+  //         ns.adminVocabulary("CreativeWorkStatus/Published").value
   //     ) ?? newerCubes[0];
 
   //   // console.log("Picked latest cube", latestCube.term?.value);
