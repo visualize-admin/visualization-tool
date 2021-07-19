@@ -24,7 +24,7 @@ export const Label = ({
   smaller = false,
   children,
 }: {
-  label?: string | ReactNode;
+  label?: string;
   htmlFor: string;
   disabled?: boolean;
   smaller?: boolean;
@@ -73,7 +73,7 @@ export const Radio = ({
   checked,
   disabled,
   onChange,
-}: { label: string | ReactNode; disabled?: boolean } & FieldProps) => {
+}: { label: string; disabled?: boolean } & FieldProps) => {
   return (
     <Box mb={2}>
       <Label label={label} htmlFor={`${name}-${value}`} disabled={disabled}>
@@ -115,7 +115,7 @@ export const Checkbox = ({
   disabled,
   onChange,
   color,
-}: { label: ReactNode; disabled?: boolean; color?: string } & FieldProps) => (
+}: { label: string; disabled?: boolean; color?: string } & FieldProps) => (
   <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
     <TUICheckbox
       data-name="checkbox-component"

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { geoCentroid } from "d3";
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
@@ -207,7 +207,10 @@ export const ChartMapPrototype = ({
               onClick={(v) => setActiveControl(v)}
               iconName="mapMaptype"
               upperLabel={""}
-              lowerLabel={<Trans id="chart.map.layers.base">Base Layer</Trans>}
+              lowerLabel={t({
+                id: "chart.map.layers.base",
+                message: "Base Layer",
+              })}
               checked={activeControl === "baseLayer"}
               disabled={false}
             />
@@ -216,7 +219,10 @@ export const ChartMapPrototype = ({
               onClick={(v) => setActiveControl(v)}
               iconName="mapRegions"
               upperLabel={""}
-              lowerLabel={<Trans id="chart.map.layers.area">Area Layer</Trans>}
+              lowerLabel={t({
+                id: "chart.map.layers.area",
+                message: "Area Layer",
+              })}
               checked={activeControl === "areaLayer"}
               disabled={false}
             />
@@ -225,9 +231,10 @@ export const ChartMapPrototype = ({
               onClick={(v) => setActiveControl(v)}
               iconName="mapSymbols"
               upperLabel={""}
-              lowerLabel={
-                <Trans id="chart.map.layers.symbol">Symbol Layer</Trans>
-              }
+              lowerLabel={t({
+                id: "chart.map.layers.symbol",
+                message: "Symbol Layer",
+              })}
               checked={activeControl === "symbolLayer"}
               disabled={false}
             />

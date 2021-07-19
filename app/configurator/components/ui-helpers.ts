@@ -1,4 +1,5 @@
-import { Trans } from "@lingui/macro";
+import { i18n } from "@lingui/core";
+import { defineMessage } from "@lingui/macro";
 import {
   ascending,
   CountableTimeInterval,
@@ -39,7 +40,7 @@ import {
   timeYear,
 } from "d3";
 import { timeParse } from "d3-time-format";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import {
@@ -309,7 +310,120 @@ export const getIconName = (name: string): IconName => {
   }
 };
 
-export const getFieldLabel = (field: string): ReactNode => {
+const fieldLabels = {
+  "controls.axis.horizontal": defineMessage({
+    id: "controls.axis.horizontal",
+    message: "Horizontal axis",
+  }),
+  "controls.measure": defineMessage({
+    id: "controls.measure",
+    message: "Measure",
+  }),
+  "controls.axis.vertical": defineMessage({
+    id: "controls.axis.vertical",
+    message: "Vertical axis",
+  }),
+  "controls.color": defineMessage({ id: "controls.color", message: "Color" }),
+  "controls.title": defineMessage({ id: "controls.title", message: "Title" }),
+  "controls.description": defineMessage({
+    id: "controls.description",
+    message: "Description",
+  }),
+  "controls.column.stacked": defineMessage({
+    id: "controls.column.stacked",
+    message: "Stacked",
+  }),
+  "controls.column.grouped": defineMessage({
+    id: "controls.column.grouped",
+    message: "Grouped",
+  }),
+  "controls.sorting.sortBy": defineMessage({
+    id: "controls.sorting.sortBy",
+    message: "Sort by",
+  }),
+  "controls.sorting.byDimensionLabel.ascending": defineMessage({
+    id: "controls.sorting.byDimensionLabel.ascending",
+    message: "A → Z",
+  }),
+  "controls.sorting.byDimensionLabel.descending": defineMessage({
+    id: "controls.sorting.byDimensionLabel.descending",
+    message: "Z → A",
+  }),
+  "controls.sorting.byTotalSize.ascending": defineMessage({
+    id: "controls.sorting.byTotalSize.ascending",
+    message: "Largest last",
+  }),
+  "controls.sorting.byTotalSize.largestFirst": defineMessage({
+    id: "controls.sorting.byTotalSize.largestFirst",
+    message: "Largest first",
+  }),
+  "controls.sorting.byTotalSize.largestTop": defineMessage({
+    id: "controls.sorting.byTotalSize.largestTop",
+    message: "Largest top",
+  }),
+  "controls.sorting.byTotalSize.largestBottom": defineMessage({
+    id: "controls.sorting.byTotalSize.largestBottom",
+    message: "Largest bottom",
+  }),
+  "controls.sorting.byMeasure.ascending": defineMessage({
+    id: "controls.sorting.byMeasure.ascending",
+    message: "1 → 9",
+  }),
+  "controls.sorting.byMeasure.descending": defineMessage({
+    id: "controls.sorting.byMeasure.descending",
+    message: "9 → 1",
+  }),
+  "controls.chart.type.column": defineMessage({
+    id: "controls.chart.type.column",
+    message: "Columns",
+  }),
+  "controls.chart.type.bar": defineMessage({
+    id: "controls.chart.type.bar",
+    message: "Bars",
+  }),
+  "controls.chart.type.line": defineMessage({
+    id: "controls.chart.type.line",
+    message: "Lines",
+  }),
+  "controls.chart.type.area": defineMessage({
+    id: "controls.chart.type.area",
+    message: "Areas",
+  }),
+  "controls.chart.type.scatterplot": defineMessage({
+    id: "controls.chart.type.scatterplot",
+    message: "Scatterplot",
+  }),
+  "controls.chart.type.pie": defineMessage({
+    id: "controls.chart.type.pie",
+    message: "Pie",
+  }),
+  "controls.chart.type.table": defineMessage({
+    id: "controls.chart.type.table",
+    message: "Table",
+  }),
+  "controls.chart.type.map": defineMessage({
+    id: "controls.chart.type.map",
+    message: "Map",
+  }),
+  "controls.language.english": defineMessage({
+    id: "controls.language.english",
+    message: "English",
+  }),
+  "controls.language.german": defineMessage({
+    id: "controls.language.german",
+    message: "German",
+  }),
+  "controls.language.french": defineMessage({
+    id: "controls.language.french",
+    message: "French",
+  }),
+  "controls.language.italian": defineMessage({
+    id: "controls.language.italian",
+    message: "Italian",
+  }),
+};
+
+export function getFieldLabel(field: string): string {
   switch (field) {
     // Visual encodings (left column)
     case "column.x":
@@ -318,17 +432,17 @@ export const getFieldLabel = (field: string): ReactNode => {
     case "scatterplot.x":
     case "pie.x":
     case "x":
-      return <Trans id="controls.axis.horizontal">Horizontal axis</Trans>;
+      return i18n._(fieldLabels["controls.axis.horizontal"]);
     case "bar.x":
     case "pie.y":
-      return <Trans id="controls.measure">Measure</Trans>;
+      return i18n._(fieldLabels["controls.measure"]);
     case "scatterplot.y":
     case "column.y":
     case "line.y":
     case "area.y":
     case "bar.y":
     case "y":
-      return <Trans id="controls.axis.vertical">Vertical axis</Trans>;
+      return i18n._(fieldLabels["controls.axis.vertical"]);
     case "bar.segment":
     case "column.segment":
     case "line.segment":
@@ -336,19 +450,19 @@ export const getFieldLabel = (field: string): ReactNode => {
     case "scatterplot.segment":
     case "pie.segment":
     case "segment":
-      return <Trans id="controls.color">Color</Trans>;
+      return i18n._(fieldLabels["controls.color"]);
     case "title":
-      return <Trans id="controls.title">Title</Trans>;
+      return i18n._(fieldLabels["controls.title"]);
     case "description":
-      return <Trans id="controls.description">Description</Trans>;
+      return i18n._(fieldLabels["controls.description"]);
 
     // Encoding Options  (right column)
     case "stacked":
-      return <Trans id="controls.column.stacked">Stacked</Trans>;
+      return i18n._(fieldLabels["controls.column.stacked"]);
     case "grouped":
-      return <Trans id="controls.column.grouped">Grouped</Trans>;
+      return i18n._(fieldLabels["controls.column.grouped"]);
     case "sortBy":
-      return <Trans id="controls.sorting.sortBy">Sort by</Trans>;
+      return i18n._(fieldLabels["controls.sorting.sortBy"]);
 
     case "bar.stacked.byDimensionLabel.asc":
     case "bar.grouped.byDimensionLabel.asc":
@@ -358,9 +472,7 @@ export const getFieldLabel = (field: string): ReactNode => {
     case "area.stacked.byDimensionLabel.asc":
     case "pie..byDimensionLabel.asc":
     case "sorting.byDimensionLabel.asc":
-      return (
-        <Trans id="controls.sorting.byDimensionLabel.ascending">A → Z</Trans>
-      );
+      return i18n._(fieldLabels["controls.sorting.byDimensionLabel.ascending"]);
     case "bar.stacked.byDimensionLabel.desc":
     case "bar.grouped.byDimensionLabel.desc":
     case "column..byDimensionLabel.desc":
@@ -369,79 +481,67 @@ export const getFieldLabel = (field: string): ReactNode => {
     case "area.stacked.byDimensionLabel.desc":
     case "pie..byDimensionLabel.desc":
     case "sorting.byDimensionLabel.desc":
-      return (
-        <Trans id="controls.sorting.byDimensionLabel.descending">Z → A</Trans>
+      return i18n._(
+        fieldLabels["controls.sorting.byDimensionLabel.descending"]
       );
     case "bar.stacked.byTotalSize.desc":
     case "bar.grouped.byTotalSize.desc":
     case "column.grouped.byTotalSize.asc":
-      return (
-        <Trans id="controls.sorting.byTotalSize.ascending">Largest last</Trans>
-      );
+      return i18n._(fieldLabels["controls.sorting.byTotalSize.ascending"]);
     case "column.grouped.byTotalSize.desc":
     case "bar.stacked.byTotalSize.asc":
     case "bar.grouped.byTotalSize.asc":
-      return (
-        <Trans id="controls.sorting.byTotalSize.largestFirst">
-          Largest first
-        </Trans>
-      );
+      return i18n._(fieldLabels["controls.sorting.byTotalSize.largestFirst"]);
     case "area.stacked.byTotalSize.asc":
     case "column.stacked.byTotalSize.asc":
-      return (
-        <Trans id="controls.sorting.byTotalSize.largestTop">Largest top</Trans>
-      );
+      return i18n._(fieldLabels["controls.sorting.byTotalSize.largestTop"]);
     case "area.stacked.byTotalSize.desc":
     case "column.stacked.byTotalSize.desc":
-      return (
-        <Trans id="controls.sorting.byTotalSize.largestBottom">
-          Largest bottom
-        </Trans>
-      );
+      return i18n._(fieldLabels["controls.sorting.byTotalSize.largestBottom"]);
     case "column..byMeasure.asc":
     case "column.stacked.byMeasure.asc":
     case "column.grouped.byMeasure.asc":
     case "pie..byMeasure.asc":
     case "sorting.byMeasure.asc":
-      return <Trans id="controls.sorting.byMeasure.ascending">1 → 9</Trans>;
+      return i18n._(fieldLabels["controls.sorting.byMeasure.ascending"]);
     case "column..byMeasure.desc":
     case "column.stacked.byMeasure.desc":
     case "column.grouped.byMeasure.desc":
     case "pie..byMeasure.desc":
     case "sorting.byMeasure.desc":
-      return <Trans id="controls.sorting.byMeasure.descending">9 → 1</Trans>;
+      return i18n._(fieldLabels["controls.sorting.byMeasure.descending"]);
 
     // Chart Types
     case "column":
-      return <Trans id="controls.chart.type.column">Columns</Trans>;
+      return i18n._(fieldLabels["controls.chart.type.column"]);
     case "bar":
-      return <Trans id="controls.chart.type.bar">Bars</Trans>;
+      return i18n._(fieldLabels["controls.chart.type.bar"]);
     case "line":
-      return <Trans id="controls.chart.type.line">Lines</Trans>;
+      return i18n._(fieldLabels["controls.chart.type.line"]);
     case "area":
-      return <Trans id="controls.chart.type.area">Areas</Trans>;
+      return i18n._(fieldLabels["controls.chart.type.area"]);
     case "scatterplot":
-      return <Trans id="controls.chart.type.scatterplot">Scatterplot</Trans>;
+      return i18n._(fieldLabels["controls.chart.type.scatterplot"]);
     case "pie":
-      return <Trans id="controls.chart.type.pie">Pie</Trans>;
+      return i18n._(fieldLabels["controls.chart.type.pie"]);
     case "table":
-      return <Trans id="controls.chart.type.table">Table</Trans>;
+      return i18n._(fieldLabels["controls.chart.type.table"]);
     case "map":
-      return <Trans id="controls.chart.type.map">Map</Trans>;
+      return i18n._(fieldLabels["controls.chart.type.map"]);
 
     // Languages
     case "en":
-      return <Trans id="controls.language.english">English</Trans>;
+      return i18n._(fieldLabels["controls.language.english"]);
     case "de":
-      return <Trans id="controls.language.german">German</Trans>;
+      return i18n._(fieldLabels["controls.language.german"]);
     case "fr":
-      return <Trans id="controls.language.french">French</Trans>;
+      return i18n._(fieldLabels["controls.language.french"]);
     case "it":
-      return <Trans id="controls.language.italian">Italian</Trans>;
+      return i18n._(fieldLabels["controls.language.italian"]);
     default:
       return field;
   }
-};
+}
 
 export const getPalette = (palette?: string): ReadonlyArray<string> => {
   switch (palette) {

@@ -108,7 +108,7 @@ const ChartOptionGroupHiddenField = ({
   disabled = false,
   metaData,
 }: {
-  label: string | ReactNode;
+  label: string;
   field: string;
   path: "isGroup" | "isHidden" | "isFiltered";
   defaultChecked?: boolean;
@@ -224,9 +224,10 @@ export const TableColumnOptions = ({
           {component.isKeyDimension && (
             <>
               <ChartOptionGroupHiddenField
-                label={
-                  <Trans id="controls.table.column.group">Use to group</Trans>
-                }
+                label={t({
+                  id: "controls.table.column.group",
+                  message: "Use to group",
+                })}
                 field={activeField}
                 disabled={isFiltered}
                 path="isGroup"
@@ -234,11 +235,10 @@ export const TableColumnOptions = ({
               />
               {!isGroup && (
                 <ChartOptionGroupHiddenField
-                  label={
-                    <Trans id="controls.table.column.hidefilter">
-                      Hide and filter column
-                    </Trans>
-                  }
+                  label={t({
+                    id: "controls.table.column.hidefilter",
+                    message: "Hide and filter column",
+                  })}
                   field={activeField}
                   path="isFiltered"
                   metaData={metaData}
@@ -249,7 +249,10 @@ export const TableColumnOptions = ({
 
           {(!component.isKeyDimension || isGroup) && (
             <ChartOptionGroupHiddenField
-              label={<Trans id="controls.table.column.hide">Hide column</Trans>}
+              label={t({
+                id: "controls.table.column.hide",
+                message: "Hide column",
+              })}
               field={activeField}
               path="isHidden"
               metaData={metaData}
@@ -265,9 +268,10 @@ export const TableColumnOptions = ({
           <ControlSectionContent side="right">
             <ChartOptionSelectField<ColumnStyle>
               id={"columnStyle"}
-              label={
-                <Trans id="controls.select.columnStyle">Column Style</Trans>
-              }
+              label={t({
+                id: "controls.select.columnStyle",
+                message: "Column Style",
+              })}
               options={columnStyleOptions}
               getValue={(type) => {
                 switch (type) {
@@ -395,9 +399,10 @@ const ColumnStyleSubOptions = ({
     <>
       <ChartOptionSelectField<string>
         id="columnStyle.textStyle"
-        label={
-          <Trans id="controls.select.columnStyle.textStyle">Text Style</Trans>
-        }
+        label={t({
+          id: "controls.select.columnStyle.textStyle",
+          message: "Text Style",
+        })}
         options={[
           {
             value: "regular",
@@ -417,20 +422,18 @@ const ColumnStyleSubOptions = ({
       {type === "text" ? (
         <>
           <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.textColor">
-                Text Color
-              </Trans>
-            }
+            label={t({
+              id: "controls.select.columnStyle.textColor",
+              message: "Text Color",
+            })}
             field={activeField}
             path="columnStyle.textColor"
           />
           <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.columnColor">
-                Column Background
-              </Trans>
-            }
+            label={t({
+              id: "controls.select.columnStyle.columnColor",
+              message: "Column Background",
+            })}
             field={activeField}
             path="columnStyle.columnColor"
           />
@@ -454,38 +457,34 @@ const ColumnStyleSubOptions = ({
       ) : type === "bar" ? (
         <>
           <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.barColorPositive">
-                Positive Bar Color
-              </Trans>
-            }
+            label={t({
+              id: "controls.select.columnStyle.barColorPositive",
+              message: "Positive Bar Color",
+            })}
             field={activeField}
             path="columnStyle.barColorPositive"
           />
           <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.barColorNegative">
-                Negative Bar Color
-              </Trans>
-            }
+            label={t({
+              id: "controls.select.columnStyle.barColorNegative",
+              message: "Negative Bar Color",
+            })}
             field={activeField}
             path="columnStyle.barColorNegative"
           />
           <ColorPickerField
-            label={
-              <Trans id="controls.select.columnStyle.barColorBackground">
-                Bar Background
-              </Trans>
-            }
+            label={t({
+              id: "controls.select.columnStyle.barColorBackground",
+              message: "Bar Background",
+            })}
             field={activeField}
             path="columnStyle.barColorBackground"
           />
           <ChartOptionCheckboxField
-            label={
-              <Trans id="controls.select.columnStyle.barShowBackground">
-                Show Bar Background
-              </Trans>
-            }
+            label={t({
+              id: "controls.select.columnStyle.barShowBackground",
+              message: "Show Bar Background",
+            })}
             field={activeField}
             path="columnStyle.barShowBackground"
           />
@@ -503,9 +502,10 @@ const TableSettings = () => {
       </SectionTitle>
       <ControlSectionContent side="right">
         <ChartOptionCheckboxField
-          label={
-            <Trans id="controls.tableSettings.showSearch">Show Search</Trans>
-          }
+          label={t({
+            id: "controls.tableSettings.showSearch",
+            message: "Show Search",
+          })}
           field={null}
           path="settings.showSearch"
         />

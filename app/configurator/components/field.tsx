@@ -554,7 +554,7 @@ export const ChartOptionRadioField = ({
   defaultChecked,
   disabled = false,
 }: {
-  label: string | ReactNode;
+  label: string;
   field: string;
   path: string;
   value: string;
@@ -584,7 +584,7 @@ export const ChartOptionCheckboxField = ({
   defaultChecked,
   disabled = false,
 }: {
-  label: string | ReactNode;
+  label: string;
   field: string | null;
   path: string;
   defaultChecked?: boolean;

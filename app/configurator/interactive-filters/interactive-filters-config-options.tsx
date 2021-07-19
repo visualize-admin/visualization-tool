@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { extent } from "d3";
 import React, {
   ChangeEvent,
@@ -66,11 +66,10 @@ export const InteractiveFiltersOptions = ({
         <SectionTitle iconName="segments">{component?.label}</SectionTitle>
         <ControlSectionContent side="right">
           <InteractiveFiltersToggle
-            label={
-              <Trans id="controls.interactiveFilters.legend.toggleInteractiveLegend">
-                Show interactive legend
-              </Trans>
-            }
+            label={t({
+              id: "controls.interactiveFilters.legend.toggleInteractiveLegend",
+              message: "Show interactive legend",
+            })}
             path="legend"
             defaultChecked={false}
             disabled={false}
@@ -120,7 +119,7 @@ const InteractiveTimeFilterToggle = ({
   disabled = false,
   timeExtent,
 }: {
-  label: string | ReactNode;
+  label: string;
   path: "time";
   defaultChecked?: boolean;
   disabled?: boolean;
@@ -176,11 +175,10 @@ const InteractiveTimeFilterOptions = ({
         {timeExtent && timeExtent[0] && timeExtent[1] ? (
           <>
             <InteractiveTimeFilterToggle
-              label={
-                <Trans id="controls.interactiveFilters.time.toggleTimeFilter">
-                  Show time filter
-                </Trans>
-              }
+              label={t({
+                id: "controls.interactiveFilters.time.toggleTimeFilter",
+                message: "Show time filter",
+              })}
               path="time"
               defaultChecked={false}
               disabled={false}
@@ -223,7 +221,7 @@ const InteractiveDataFiltersToggle = ({
   disabled = false,
   dimensions,
 }: {
-  label: string | ReactNode;
+  label: string;
   path: "dataFilters";
   defaultChecked?: boolean;
   disabled?: boolean;
@@ -265,11 +263,10 @@ const InteractiveDataFilterOptions = ({
     return (
       <>
         <InteractiveDataFiltersToggle
-          label={
-            <Trans id="controls.interactiveFilters.dataFilters.toggledataFilters">
-              Show data filters
-            </Trans>
-          }
+          label={t({
+            id: "controls.interactiveFilters.dataFilters.toggledataFilters",
+            message: "Show data filters",
+          })}
           path="dataFilters"
           defaultChecked={false}
           disabled={false}
@@ -347,7 +344,7 @@ const InteractiveFiltersToggle = ({
   defaultChecked,
   disabled = false,
 }: {
-  label: string | ReactNode;
+  label: string;
   path: InteractveFilterType;
   defaultChecked?: boolean;
   disabled?: boolean;

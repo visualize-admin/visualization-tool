@@ -100,9 +100,10 @@ export const DataSetList = () => {
         {showDraftCheckbox && (
           <Box sx={{ px: 4, pt: 4 }}>
             <Checkbox
-              label={
-                <Trans id="dataset.includeDrafts">Include draft datasets</Trans>
-              }
+              label={t({
+                id: "dataset.includeDrafts",
+                message: "Include draft datasets",
+              })}
               name={"dataset-include-drafts"}
               value={"dataset-include-drafts"}
               checked={includeDrafts}
