@@ -185,8 +185,6 @@ export const getCubeDimensions = async ({
       (d) => d.iri.value
     );
 
-    console.log(dimensionUnitLabels, dimensionUnitLabels.size);
-
     return dimensions.map((dim) => {
       return parseCubeDimension({
         dim,
@@ -209,7 +207,6 @@ export const getCubeDimensionValues = async ({
   data,
 }: ResolvedDimension): Promise<DimensionValue[]> => {
   if (data.dataKind === "Time") {
-    console.log(data.timeUnit, data.dataType);
     // return interpolateTimeValues({
     //   dataType: data.dataType,
     //   timeUnit: data.timeUnit,
