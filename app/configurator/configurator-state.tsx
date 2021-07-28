@@ -149,9 +149,8 @@ export type ConfiguratorStateAction =
   | { type: "PUBLISH_FAILED" }
   | { type: "PUBLISHED"; value: string };
 
-export type ActionType<
-  ConfiguratorStateAction
-> = ConfiguratorStateAction[keyof ConfiguratorStateAction];
+export type ActionType<ConfiguratorStateAction> =
+  ConfiguratorStateAction[keyof ConfiguratorStateAction];
 
 const LOCALSTORAGE_PREFIX = "vizualize-configurator-state";
 export const getLocalStorageKey = (chartId: string) =>
@@ -464,9 +463,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
             // Remove this component from the interactive filter, if it is there
             if (draft.chartConfig.interactiveFiltersConfig) {
-              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                (c) => c !== action.value.componentIri
-              );
+              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+                draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                  (c) => c !== action.value.componentIri
+                );
             }
             // }
           }
@@ -496,9 +496,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
             // Remove this component from the interactive filter, if it is there
             if (draft.chartConfig.interactiveFiltersConfig) {
-              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                (c) => c !== action.value.componentIri
-              );
+              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+                draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                  (c) => c !== action.value.componentIri
+                );
             }
           } else {
             const component = action.value.dataSetMetadata.dimensions.find(
@@ -524,9 +525,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             }
             // Remove this component from the interactive filter, if it is there
             if (draft.chartConfig.interactiveFiltersConfig) {
-              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris = draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
-                (c) => c !== action.value.componentIri
-              );
+              draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris =
+                draft.chartConfig.interactiveFiltersConfig.dataFilters.componentIris.filter(
+                  (c) => c !== action.value.componentIri
+                );
             }
           }
         }
@@ -790,9 +792,9 @@ const ConfiguratorStateProviderInternal = ({
     const initialize = async () => {
       try {
         if (chartId === "new" && query.from) {
-          const config = await fetch(
-            `/api/config/${query.from}`
-          ).then((result) => result.json());
+          const config = await fetch(`/api/config/${query.from}`).then(
+            (result) => result.json()
+          );
           if (config && config.data) {
             const { dataSet, meta, chartConfig } = config.data;
             stateToInitialize = {
@@ -858,6 +860,21 @@ const ConfiguratorStateProviderInternal = ({
           (async () => {
             try {
               const result = await save(state);
+
+              /**
+               * EXPERIMENTAL: Post back created chart ID to opener and close window.
+               *
+               * This allows the chart creation workflow to be integrated with other tools like a CMS
+               */
+
+              // FIXME: Check for more than just opener?
+              const opener = window.opener;
+              if (opener) {
+                opener.postMessage(`CHART_ID:${result.key}`, "*");
+                window.close();
+                return;
+              }
+
               await push(
                 {
                   pathname: `/v/${result.key}`,
