@@ -21,3 +21,4 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_DB: "visualization_tool"
+      POSTGRES_PASSWORD: "password"
