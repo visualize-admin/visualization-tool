@@ -6,6 +6,7 @@ export const useResizeObserver = <T extends Element>() => {
   const elRef = useRef<T>(null);
   const [width, changeWidth] = useState(1);
   const [height, changeHeight] = useState(1);
+  const currentWidth = useRef<number>(width);
 
   useEffect(() => {
     if (!elRef.current) {
@@ -22,13 +23,15 @@ export const useResizeObserver = <T extends Element>() => {
 
         const entry = entries[0];
 
-        const {
-          inlineSize: width,
-          blockSize: height,
-        } = entry.contentBoxSize[0];
+        const { inlineSize: newWidth, blockSize: newHeight } =
+          entry.contentBoxSize[0];
 
-        changeWidth(width);
-        changeHeight(height);
+        // Prevent flickering when vertical scrollbar appears and triggers another resize
+        if (Math.abs(newWidth - currentWidth.current) > 16) {
+          changeWidth(newWidth);
+          changeHeight(newHeight);
+        }
+        currentWidth.current = newWidth;
       });
     }
 
@@ -36,6 +39,7 @@ export const useResizeObserver = <T extends Element>() => {
 
     return () => {
       roRef.current?.disconnect();
+      roRef.current = undefined;
     };
   }, []);
 
