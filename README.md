@@ -14,13 +14,6 @@ To start the development environment, you need a Docker runtime, e.g. [Docker De
 yarn setup:dev
 ```
 
-4. Install Javascript dependencies
-
-```sh
-nix-shell
-yarn install
-```
-
 ### Dev server
 
 Once the application's set up, you can start the development server with
