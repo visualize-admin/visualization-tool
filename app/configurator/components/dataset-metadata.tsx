@@ -1,7 +1,6 @@
 import { Trans } from "@lingui/macro";
-import Link from "next/link";
 import { ReactNode } from "react";
-import { Box } from "theme-ui";
+import { Box, Link } from "theme-ui";
 import { Loading } from "../../components/hint";
 import { useFormatDate } from "../../configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "../../graphql/query-hooks";
@@ -66,9 +65,27 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
         </DataSetMetadataTitle>
         <DataSetMetadataBody>
           {data.dataCubeByIri.contactEmail ? (
-            <Link href={`mailto:${data.dataCubeByIri.contactEmail}`}>
-              {data.dataCubeByIri.contactEmail}
-            </Link>
+            <DatasetMetadataLink
+              href={`mailto:${data.dataCubeByIri.contactEmail}`}
+              label={
+                data.dataCubeByIri.contactName ??
+                data.dataCubeByIri.contactEmail
+              }
+            />
+          ) : (
+            "–"
+          )}
+        </DataSetMetadataBody>
+
+        <DataSetMetadataTitle>
+          <Trans id="dataset.metadata.landingPage">Further information</Trans>
+        </DataSetMetadataTitle>
+        <DataSetMetadataBody>
+          {data.dataCubeByIri.landingPage ? (
+            <DatasetMetadataLink
+              href={data.dataCubeByIri.landingPage}
+              label={data.dataCubeByIri.landingPage}
+            />
           ) : (
             "–"
           )}
@@ -106,4 +123,28 @@ const DataSetMetadataBody = ({ children }: { children: ReactNode }) => (
   >
     {children}
   </Box>
+);
+
+const DatasetMetadataLink = ({
+  href,
+  label,
+}: {
+  href: string;
+  label: string;
+}) => (
+  <Link
+    sx={{
+      color: "primary",
+      textDecoration: "none",
+      wordBreak: "break-word",
+      "&:hover": {
+        textDecoration: "underline",
+      },
+    }}
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    {label}
+  </Link>
 );
