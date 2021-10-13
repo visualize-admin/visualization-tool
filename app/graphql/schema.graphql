@@ -25,6 +25,7 @@ type DataCube {
   version: String
   contactName: String
   contactEmail: String
+  landingPage: String
   publisher: String
   description: String
   datePublished: String

@@ -111,6 +111,7 @@ const DataCube: DataCubeResolvers = {
   publisher: ({ data: { publisher } }) => publisher ?? null,
   contactName: ({ data: { contactPoint } }) => contactPoint?.name ?? null,
   contactEmail: ({ data: { contactPoint } }) => contactPoint?.email ?? null,
+  landingPage: ({ data: { landingPage } }) => landingPage ?? null,
   publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,

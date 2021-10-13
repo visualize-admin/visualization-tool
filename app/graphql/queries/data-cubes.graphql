@@ -70,6 +70,7 @@ query DataCubeMetadata($iri: String!, $locale: String!) {
     version
     contactName
     contactEmail
+    landingPage
     datePublished
     publicationStatus
   }
