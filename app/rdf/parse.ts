@@ -42,13 +42,13 @@ export const parseCube = ({
       title: cube.out(ns.schema.name, outOpts)?.value ?? "[NO TITLE]",
       description: cube.out(ns.schema.description, outOpts)?.value ?? "",
       version: cube.out(ns.schema.version)?.value,
-      publicationStatus:
-        ns.adminTerm("CreativeWorkStatus/Published").value ===
-          cube.out(ns.schema.creativeWorkStatus)?.value ||
-        ns.adminVocabulary("CreativeWorkStatus/Published").value ===
-          cube.out(ns.schema.creativeWorkStatus)?.value
-          ? DataCubePublicationStatus.Published
-          : DataCubePublicationStatus.Draft,
+      publicationStatus: cube
+        .out(ns.schema.creativeWorkStatus)
+        .terms.some((t) =>
+          t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
+        )
+        ? DataCubePublicationStatus.Published
+        : DataCubePublicationStatus.Draft,
       theme: cube.out(ns.dcat.theme)?.value,
       datePublished: cube.out(ns.schema.datePublished)?.value,
       versionHistory: cube.in(ns.schema.hasPart)?.value,
