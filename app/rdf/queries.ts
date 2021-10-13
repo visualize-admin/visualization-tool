@@ -50,8 +50,9 @@ export const getCubes = async ({
   const cubes = await source.cubes({
     noShape: true,
     filters: [
-      // Deprecated cubes have a schema.org/validThrough property; Only show cubes that don't have it
-      Cube.filter.noValidThrough(),
+      // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
+      Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
+      Cube.filter.noExpires(),
       // Only show cubes relevant to visualize
       ({ cube, index }: $FixMe) => {
         return [
