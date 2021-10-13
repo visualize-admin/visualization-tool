@@ -65,9 +65,11 @@ export const getCubes = async ({
       },
     ].concat(
       includeDrafts
-        ? []
+        ? Cube.filter.status([
+            ns.adminVocabulary("CreativeWorkStatus/Published"),
+            ns.adminVocabulary("CreativeWorkStatus/Draft"),
+          ])
         : Cube.filter.status([
-            ns.adminTerm("CreativeWorkStatus/Published"),
             ns.adminVocabulary("CreativeWorkStatus/Published"),
           ])
     ),
