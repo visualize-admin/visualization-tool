@@ -557,27 +557,31 @@ msgstr "Titel hinzufügen"
 msgid "dataset.includeDrafts"
 msgstr "Entwurfs-Datensätze anzeigen"
 
-#: app/configurator/components/dataset-metadata.tsx:49
+#: app/configurator/components/dataset-metadata.tsx:48
 msgid "dataset.metadata.date.created"
 msgstr "Erstellungsdatum"
 
-#: app/configurator/components/dataset-metadata.tsx:26
+#: app/configurator/components/dataset-metadata.tsx:25
 msgid "dataset.metadata.description"
 msgstr "Beschreibung"
 
-#: app/configurator/components/dataset-metadata.tsx:65
+#: app/configurator/components/dataset-metadata.tsx:64
 msgid "dataset.metadata.email"
 msgstr "Kontaktstellen"
 
-#: app/configurator/components/dataset-metadata.tsx:35
+#: app/configurator/components/dataset-metadata.tsx:78
+msgid "dataset.metadata.landingPage"
+msgstr "Weitere Informationen"
+
+#: app/configurator/components/dataset-metadata.tsx:34
 msgid "dataset.metadata.source"
 msgstr "Quelle"
 
-#: app/configurator/components/dataset-metadata.tsx:21
+#: app/configurator/components/dataset-metadata.tsx:20
 msgid "dataset.metadata.title"
 msgstr "Titel"
 
-#: app/configurator/components/dataset-metadata.tsx:58
+#: app/configurator/components/dataset-metadata.tsx:57
 msgid "dataset.metadata.version"
 msgstr "Version"
 
