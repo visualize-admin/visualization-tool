@@ -62,7 +62,7 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
         </DataSetMetadataBody>
 
         <DataSetMetadataTitle>
-          <Trans id="dataset.metadata.email">Contact E-mail</Trans>
+          <Trans id="dataset.metadata.email">Contact points</Trans>
         </DataSetMetadataTitle>
         <DataSetMetadataBody>
           {data.dataCubeByIri.contactEmail ? (

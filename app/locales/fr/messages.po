@@ -294,19 +294,19 @@ msgstr "Sélectionnez une des annotations proposées pour la modifier."
 msgid "controls.interactive.filters.dataFilter"
 msgstr "Filtres de données"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:263
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:266
 msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
 msgstr "Afficher les filtres de données"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:63
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:69
 msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
 msgstr "Afficher la légende filtrante"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:198
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:204
 msgid "controls.interactiveFilters.time.noTimeDimension"
 msgstr "Il n'y a pas de dimension temporelle!"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:172
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:178
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Afficher le filtre temporel"
 
@@ -379,7 +379,7 @@ msgstr "Groupes"
 msgid "controls.section.interactive.filters"
 msgstr "Filtres interactifs"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:94
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:100
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Filtres de données"
 
@@ -557,27 +557,27 @@ msgstr "Titre"
 msgid "dataset.includeDrafts"
 msgstr "Inclure les jeux de données à l'état d'ébauche"
 
-#: app/configurator/components/dataset-metadata.tsx:48
+#: app/configurator/components/dataset-metadata.tsx:49
 msgid "dataset.metadata.date.created"
 msgstr "Date de création"
 
-#: app/configurator/components/dataset-metadata.tsx:25
+#: app/configurator/components/dataset-metadata.tsx:26
 msgid "dataset.metadata.description"
 msgstr "Description"
 
-#: app/configurator/components/dataset-metadata.tsx:64
+#: app/configurator/components/dataset-metadata.tsx:65
 msgid "dataset.metadata.email"
-msgstr "Email du contact"
+msgstr "Points de contact"
 
-#: app/configurator/components/dataset-metadata.tsx:34
+#: app/configurator/components/dataset-metadata.tsx:35
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/configurator/components/dataset-metadata.tsx:20
+#: app/configurator/components/dataset-metadata.tsx:21
 msgid "dataset.metadata.title"
 msgstr "Titre"
 
-#: app/configurator/components/dataset-metadata.tsx:57
+#: app/configurator/components/dataset-metadata.tsx:58
 msgid "dataset.metadata.version"
 msgstr "Version"
 
