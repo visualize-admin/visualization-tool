@@ -1,12 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { extent } from "d3";
-import React, {
-  ChangeEvent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { Box } from "theme-ui";
 import { getFieldComponentIri, getFieldComponentIris } from "../../charts";
 import { Checkbox } from "../../components/form";
@@ -30,8 +24,8 @@ import {
   useInteractiveFiltersToggle,
   useInteractiveTimeFiltersToggle,
 } from "./interactive-filters-config-actions";
-import { InteractveFilterType } from "./interactive-filters-configurator";
 import { toggleInteractiveFilterDataDimension } from "./interactive-filters-config-state";
+import { InteractveFilterType } from "./interactive-filters-configurator";
 
 export const InteractiveFiltersOptions = ({
   state,
@@ -256,9 +250,12 @@ const InteractiveDataFilterOptions = ({
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
 
     // Dimensions that are not encoded in the visualization
-    const unMappedDimensions = data?.dataCubeByIri.dimensions.filter(
-      (dim) => !mappedIris.has(dim.iri)
-    );
+    // excluding temporal dimensions
+    const unMappedDimensionsWithoutTemporalDimensions =
+      data?.dataCubeByIri.dimensions.filter(
+        (dim) =>
+          !mappedIris.has(dim.iri) && dim.__typename !== "TemporalDimension"
+      );
 
     return (
       <>
@@ -270,10 +267,10 @@ const InteractiveDataFilterOptions = ({
           path="dataFilters"
           defaultChecked={false}
           disabled={false}
-          dimensions={unMappedDimensions}
+          dimensions={unMappedDimensionsWithoutTemporalDimensions}
         ></InteractiveDataFiltersToggle>
         <Box sx={{ my: 3 }}>
-          {unMappedDimensions.map((d, i) => (
+          {unMappedDimensionsWithoutTemporalDimensions.map((d, i) => (
             <InteractiveDataFilterOptionsCheckbox
               key={i}
               label={d.label}

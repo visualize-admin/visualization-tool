@@ -129,9 +129,6 @@ const DataFilterDropdown = ({
   if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
 
-    // TODO: Un-disable temporal fields
-    const disabled = dimension.__typename === "TemporalDimension";
-
     const configFilter = chartConfig.filters[dimension.iri];
     const configFilterValue =
       configFilter && configFilter.type === "single"
@@ -143,9 +140,7 @@ const DataFilterDropdown = ({
       configFilterValue ??
       FIELD_VALUE_NONE;
 
-    const options = disabled
-      ? [{ value, label: formatDateAuto(value) }]
-      : dimension.isKeyDimension
+    const options = dimension.isKeyDimension
       ? dimension.values
       : [
           {
@@ -173,7 +168,6 @@ const DataFilterDropdown = ({
           label={dimension.label}
           options={options}
           value={value}
-          disabled={disabled}
           onChange={setDataFilter}
         />
       </Flex>
