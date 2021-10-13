@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import Link from "next/link";
 import { ReactNode } from "react";
 import { Box } from "theme-ui";
 import { Loading } from "../../components/hint";
@@ -58,6 +59,19 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
         </DataSetMetadataTitle>
         <DataSetMetadataBody>
           {data.dataCubeByIri.version ?? "–"}
+        </DataSetMetadataBody>
+
+        <DataSetMetadataTitle>
+          <Trans id="dataset.metadata.email">Contact E-mail</Trans>
+        </DataSetMetadataTitle>
+        <DataSetMetadataBody>
+          {data.dataCubeByIri.contactEmail ? (
+            <Link href={`mailto:${data.dataCubeByIri.contactEmail}`}>
+              {data.dataCubeByIri.contactEmail}
+            </Link>
+          ) : (
+            "–"
+          )}
         </DataSetMetadataBody>
       </Box>
     );

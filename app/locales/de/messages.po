@@ -294,19 +294,19 @@ msgstr "Bitte ein Beschreibungsfeld auswählen, um dieses zu bearbeiten."
 msgid "controls.interactive.filters.dataFilter"
 msgstr "Datenfilter"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:266
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:263
 msgid "controls.interactiveFilters.dataFilters.toggledataFilters"
 msgstr "Datenfilter anzeigen"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:69
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:63
 msgid "controls.interactiveFilters.legend.toggleInteractiveLegend"
 msgstr "Filterbare Legende anzeigen"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:204
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:198
 msgid "controls.interactiveFilters.time.noTimeDimension"
 msgstr "Keine Zeitdimension verfügbar!"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:178
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:172
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Zeitfilter anzeigen"
 
@@ -379,7 +379,7 @@ msgstr "Gruppierungen"
 msgid "controls.section.interactive.filters"
 msgstr "Interaktive Filter hinzufügen"
 
-#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:100
+#: app/configurator/interactive-filters/interactive-filters-config-options.tsx:94
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Datenfilter"
 
@@ -564,6 +564,10 @@ msgstr "Erstellungsdatum"
 #: app/configurator/components/dataset-metadata.tsx:25
 msgid "dataset.metadata.description"
 msgstr "Beschreibung"
+
+#: app/configurator/components/dataset-metadata.tsx:64
+msgid "dataset.metadata.email"
+msgstr "Kontakt E-mail"
 
 #: app/configurator/components/dataset-metadata.tsx:34
 msgid "dataset.metadata.source"
