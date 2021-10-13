@@ -280,6 +280,9 @@ const groupLabelsPerValue = ({
   return [...grouped.values()];
 };
 
+const dimensionIsVersioned = (dimension: CubeDimension) =>
+  dimension.out(ns.schema.version)?.value ? true : false;
+
 const getCubeDimensionValuesWithLabels = async ({
   dimension,
   cube,
@@ -320,10 +323,17 @@ const getCubeDimensionValuesWithLabels = async ({
     );
   }
 
+  /**
+   * If the dimension is versioned, we're loading the "unversioned" values to store in the config,
+   * so cubes can be upgraded to newer versions without the filters breaking.
+   */
+
   if (dimensionValueNamedNodes.length > 0) {
     const [labels, unversioned] = await Promise.all([
       loadResourceLabels({ ids: dimensionValueNamedNodes, locale }),
-      loadUnversionedResources({ ids: dimensionValueNamedNodes }),
+      dimensionIsVersioned(dimension)
+        ? loadUnversionedResources({ ids: dimensionValueNamedNodes })
+        : [],
     ]);
 
     const labelLookup = new Map(
@@ -508,12 +518,20 @@ const buildFilters = ({
     }
 
     // FIXME: Adding this dimension will make the query return nothing for dimensions that don't have it (no way to make it optional)
-    const sameAsDimension = view.createDimension({
-      source: lookupSource,
-      path: ns.schema.sameAs,
-      join: dimension,
-      as: labelDimensionIri(dimIri + "/wtf"),
-    });
+
+    /**
+     * When dealing with a versioned dimension, the value provided from the config is unversioned
+     * The relationship is expressed with schema:sameAs, so we need to look up the *versioned* value to apply the filter
+     * If the dimension is not versioned (e.g. if its values are Literals), it can be used directly to filter
+     */
+    const filterDimension = dimensionIsVersioned(cubeDimension)
+      ? view.createDimension({
+          source: lookupSource,
+          path: ns.schema.sameAs,
+          join: dimension,
+          as: labelDimensionIri(dimIri + "/__sameAs__"), // Just a made up dimension name that is used in the generated query but nowhere else
+        })
+      : dimension;
 
     const parsedCubeDimension = parseCubeDimension({
       dim: cubeDimension,
@@ -540,11 +558,11 @@ const buildFilters = ({
 
     const selectedValues =
       filter.type === "single"
-        ? [sameAsDimension.filter.eq(toRDFValue(filter.value))]
+        ? [filterDimension.filter.eq(toRDFValue(filter.value))]
         : filter.type === "multi"
         ? // If values is an empty object, we filter by something that doesn't exist
           [
-            dimension.filter.in(
+            filterDimension.filter.in(
               Object.keys(filter.values).length > 0
                 ? Object.entries(filter.values).flatMap(([value, selected]) =>
                     selected ? [toRDFValue(value)] : []
@@ -554,8 +572,8 @@ const buildFilters = ({
           ]
         : filter.type === "range"
         ? [
-            dimension.filter.gte(toRDFValue(filter.from)),
-            dimension.filter.lte(toRDFValue(filter.to)),
+            filterDimension.filter.gte(toRDFValue(filter.from)),
+            filterDimension.filter.lte(toRDFValue(filter.to)),
           ]
         : [];
 
