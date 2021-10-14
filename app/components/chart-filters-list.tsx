@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Text, Box } from "theme-ui";
+import { Box, Text } from "theme-ui";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { useFormatFullDateAuto } from "../configurator/components/ui-helpers";
@@ -42,7 +42,7 @@ export const ChartFiltersList = ({
 
       const value =
         dimension.__typename === "TemporalDimension"
-          ? { value: f.value, label: formatDateAuto(f.value) }
+          ? { value: f.value, label: f.value }
           : dimension.values.find((v) => v.value === f.value);
 
       return [
