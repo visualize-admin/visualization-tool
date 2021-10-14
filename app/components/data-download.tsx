@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Link } from "theme-ui";
 import { csvFormat } from "d3";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
+import { Box, Button, Link } from "theme-ui";
 import { ChartConfig, ChartFields } from "../configurator";
 import { Observation } from "../domain/data";
 import {
@@ -58,23 +58,8 @@ export const DataDownload = memo(
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
               <Link
-                sx={{
-                  display: "inline",
-                  textDecoration: "none",
-                  color: "primary",
-                  textAlign: "left",
-                  fontFamily: "body",
-                  lineHeight: [1, 2, 2],
-                  fontWeight: "regular",
-                  fontSize: [1, 2, 2],
-                  border: "none",
-                  cursor: "pointer",
-                  mt: 2,
-                  p: 0,
-                  "&:hover": {
-                    textDecoration: "underline",
-                  },
-                }}
+                variant="inline"
+                sx={{ mt: 2 }}
                 href={observations.sparqlEditorUrl}
                 target="_blank"
                 rel="noopener noreferrer"

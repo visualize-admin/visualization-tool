@@ -565,6 +565,14 @@ msgstr "Date created"
 msgid "dataset.metadata.description"
 msgstr "Description"
 
+#: app/configurator/components/dataset-metadata.tsx:64
+msgid "dataset.metadata.email"
+msgstr "Contact points"
+
+#: app/configurator/components/dataset-metadata.tsx:78
+msgid "dataset.metadata.landingPage"
+msgstr "Further information"
+
 #: app/configurator/components/dataset-metadata.tsx:34
 msgid "dataset.metadata.source"
 msgstr "Source"

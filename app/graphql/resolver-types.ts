@@ -30,6 +30,7 @@ export type DataCube = {
   version?: Maybe<Scalars['String']>;
   contactName?: Maybe<Scalars['String']>;
   contactEmail?: Maybe<Scalars['String']>;
+  landingPage?: Maybe<Scalars['String']>;
   publisher?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
@@ -283,6 +284,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contactName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contactEmail?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  landingPage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   publisher?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   datePublished?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
