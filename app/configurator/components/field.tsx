@@ -238,13 +238,19 @@ const TimeInput = ({
 
   const onInputChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
-      setInputValue(e.currentTarget.value);
-      const parsed = parseDateValue(e.currentTarget.value);
-      if (
-        parsed !== null &&
-        formatDateValue(parsed) === e.currentTarget.value
-      ) {
+      if (e.currentTarget.value === "") {
+        e.currentTarget.value = FIELD_VALUE_NONE;
+        setInputValue(e.currentTarget.value);
         onChange(e);
+      } else {
+        setInputValue(e.currentTarget.value);
+        const parsed = parseDateValue(e.currentTarget.value);
+        if (
+          parsed !== null &&
+          formatDateValue(parsed) === e.currentTarget.value
+        ) {
+          onChange(e);
+        }
       }
     },
     [formatDateValue, onChange, parseDateValue]
@@ -254,7 +260,7 @@ const TimeInput = ({
     <Input
       name={id}
       label={label}
-      value={inputValue}
+      value={inputValue === FIELD_VALUE_NONE ? "" : inputValue}
       onChange={onInputChange}
     ></Input>
   );
