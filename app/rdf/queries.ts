@@ -1,6 +1,6 @@
 // import { sparql } from "@tpluscode/rdf-string";
 // import { descending } from "d3";
-import { index, rollup } from "d3";
+import { descending, index, rollup } from "d3";
 import {
   Cube,
   CubeDimension,
@@ -20,7 +20,12 @@ import {
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
-import { getQueryLocales, parseCube, parseCubeDimension } from "./parse";
+import {
+  getQueryLocales,
+  isCubePublished,
+  parseCube,
+  parseCubeDimension,
+} from "./parse";
 import { loadResourceLabels } from "./query-labels";
 import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
@@ -37,6 +42,63 @@ const createSource = () =>
     // user: '',
     // password: ''
   });
+
+const getLatestCube = async (cube: Cube): Promise<Cube> => {
+  const source = cube.source;
+
+  const versionHistory = cube.in(ns.schema.hasPart)?.term;
+  const isPublished = isCubePublished(cube);
+  const version = cube.out(ns.schema.version);
+  const isExpired = cube.out(ns.schema.expires)?.value !== undefined;
+
+  // If it's not expired, don't even try to look for newer versions
+  if (!isExpired) {
+    return cube;
+  }
+
+  const filters = [
+    // Only cubes from the same version history
+    Cube.filter.isPartOf(versionHistory),
+    // With a higher version number
+    Cube.filter.version.gt(version),
+    // If the original cube is published, only select cubes that are also published
+    Cube.filter.status(
+      isPublished
+        ? [ns.adminVocabulary("CreativeWorkStatus/Published")]
+        : [
+            ns.adminVocabulary("CreativeWorkStatus/Draft"),
+            ns.adminVocabulary("CreativeWorkStatus/Published"),
+          ]
+    ),
+  ];
+
+  const newerCubes = await source.cubes({
+    noShape: true, // Don't fetch shape on multiple cubes for performance resons. Shape is fetched on the cube that's picked below.
+    filters,
+  });
+
+  if (newerCubes.length > 0) {
+    newerCubes.sort((a, b) =>
+      descending(
+        a.out(ns.schema.version)?.value,
+        b.out(ns.schema.version)?.value
+      )
+    );
+
+    // If there's a newer cube that's published, it's preferred over drafts
+    // (this only applies if the original cube was in draft status anyway)
+    const latestCube =
+      newerCubes.find((cube) => isCubePublished(cube)) ?? newerCubes[0];
+
+    // Call cube.fetchShape() to populate dimension metadata
+    await latestCube.fetchShape();
+
+    return latestCube;
+  }
+
+  // If there are no newer cubes, return the original one
+  return cube;
+};
 
 export const getCubes = async ({
   includeDrafts,
@@ -93,79 +155,11 @@ export const getCube = async ({
     return null;
   }
 
-  // TODO: Re-enable picking latest cube version once we have a solution for https://github.com/zazuko/cube-creator/issues/658
+  // Maybe upgrading the cube version should be optional?
+  // In that case, we need to add an argument to this function and the GraphQL query
+  const latestCube = await getLatestCube(cube);
 
-  // const versionHistory = cube.in(ns.schema.hasPart)?.term;
-  // const isPublished =
-  //   cube.out(ns.schema.creativeWorkStatus)?.value ===
-  //   ns.adminTerm("CreativeWorkStatus/Published").value ||
-  //   cube.out(ns.schema.creativeWorkStatus)?.value ===
-  //   ns.adminVocabulary("CreativeWorkStatus/Published").value;
-  // const version = cube.out(ns.schema.version);
-
-  // // console.log(`Cube <${iri}> version: ${version?.value}`);
-
-  // /**
-  //  * Find newer cubes that satisfy these conditions:
-  //  * - Must have a higher version number
-  //  * - Are from the same version history
-  //  * - If original cube is published, cubes must also be published
-  //  */
-  // const filters = [
-  //   Cube.filter.isPartOf(versionHistory),
-  //   // Custom filter for version
-  //   ({ cube, index }: $FixMe) => {
-  //     const variable = rdf.variable(`version${index}`);
-  //     return [
-  //       [cube, ns.schema.version, variable],
-  //       sparql`FILTER(${variable} > ${version})`,
-  //     ];
-  //   },
-  // ];
-
-  // const newerCubes = await source.cubes({
-  //   filters: isPublished
-  //     ? [
-  //         ...filters,
-  //         Cube.filter.status(ns.adminTerm("CreativeWorkStatus/Published")),
-  //       ]
-  //     : filters,
-  // });
-
-  // // console.log(
-  // //   "Newer cubes",
-  // //   newerCubes.map((c) => c.term?.value)
-  // // );
-
-  // /**
-  //  * Now we find the latest cube:
-  //  * - Try to find the latest PUBLISHED cube
-  //  * - Otherwise pick latest cube
-  //  */
-
-  // if (newerCubes.length > 0) {
-  //   newerCubes.sort((a, b) =>
-  //     descending(
-  //       a.out(ns.schema.version)?.value,
-  //       b.out(ns.schema.version)?.value
-  //     )
-  //   );
-
-  //   const latestCube =
-  //     newerCubes.find(
-  //       (cube) =>
-  //         cube.out(ns.schema.creativeWorkStatus)?.value ===
-  //         ns.adminTerm("CreativeWorkStatus/Published").value ||
-  //         cube.out(ns.schema.creativeWorkStatus)?.value ===
-  //         ns.adminVocabulary("CreativeWorkStatus/Published").value
-  //     ) ?? newerCubes[0];
-
-  //   // console.log("Picked latest cube", latestCube.term?.value);
-
-  //   return parseCube({ cube: latestCube, locale });
-  // }
-
-  return parseCube({ cube, locale });
+  return parseCube({ cube: latestCube, locale });
 };
 
 export const getCubeDimensions = async ({

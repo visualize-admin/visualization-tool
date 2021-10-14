@@ -23,6 +23,13 @@ export const getQueryLocales = (locale: string): string[] => [
   "",
 ];
 
+export const isCubePublished = (cube: Cube): boolean =>
+  cube
+    .out(ns.schema.creativeWorkStatus)
+    .terms.some((t) =>
+      t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
+    );
+
 export const parseCube = ({
   cube,
   locale,
@@ -42,11 +49,7 @@ export const parseCube = ({
       title: cube.out(ns.schema.name, outOpts)?.value ?? "[NO TITLE]",
       description: cube.out(ns.schema.description, outOpts)?.value ?? "",
       version: cube.out(ns.schema.version)?.value,
-      publicationStatus: cube
-        .out(ns.schema.creativeWorkStatus)
-        .terms.some((t) =>
-          t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
-        )
+      publicationStatus: isCubePublished(cube)
         ? DataCubePublicationStatus.Published
         : DataCubePublicationStatus.Draft,
       theme: cube.out(ns.dcat.theme)?.value,

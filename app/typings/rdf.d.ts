@@ -21,10 +21,12 @@ declare module "rdf-cube-view-query" {
       isPartOf: (container: $FixMe) => $FixMe;
       noValidThrough: () => $FixMe;
       noExpires: () => $FixMe;
+      version: $FixMe;
       status: (values: Term | Term[]) => $FixMe;
     };
     dimensions: CubeDimension[];
     source: CubeSource;
+    async fetchShape(): Promise<void>;
   }
 
   export class CubeDimension {
