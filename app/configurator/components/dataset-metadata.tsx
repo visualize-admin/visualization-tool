@@ -132,19 +132,7 @@ const DatasetMetadataLink = ({
   href: string;
   label: string;
 }) => (
-  <Link
-    sx={{
-      color: "primary",
-      textDecoration: "none",
-      wordBreak: "break-word",
-      "&:hover": {
-        textDecoration: "underline",
-      },
-    }}
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-  >
+  <Link variant="primary" href={href} target="_blank" rel="noopener noreferrer">
     {label}
   </Link>
 );

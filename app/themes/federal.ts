@@ -70,8 +70,7 @@ export const theme: Theme = {
     warningLight: "#fffab2",
   },
   fonts: {
-    body:
-      "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+    body: "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
     monospace: "Menlo, monospace",
   },
   fontSizes: [
@@ -359,6 +358,31 @@ export const theme: Theme = {
       ":disabled": {
         cursor: "initial",
         color: "monochrome500",
+      },
+    },
+  },
+  links: {
+    primary: {
+      color: "primary",
+      textDecoration: "none",
+      wordBreak: "break-word",
+      "&:hover": {
+        textDecoration: "underline",
+      },
+    },
+    inline: {
+      display: "inline",
+      textDecoration: "none",
+      color: "primary",
+      textAlign: "left",
+      fontFamily: "body",
+      lineHeight: [1, 2, 2],
+      fontWeight: "regular",
+      fontSize: [1, 2, 2],
+      border: "none",
+      cursor: "pointer",
+      "&:hover": {
+        textDecoration: "underline",
       },
     },
   },

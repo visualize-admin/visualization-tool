@@ -52,26 +52,11 @@ export const ChartFootnotes = ({
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
               <Link
+                variant="inline"
+                sx={{ mt: 2 }}
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                sx={{
-                  display: "inline",
-                  textDecoration: "none",
-                  color: "primary",
-                  textAlign: "left",
-                  fontFamily: "body",
-                  lineHeight: [1, 2, 2],
-                  fontWeight: "regular",
-                  fontSize: [1, 2, 2],
-                  border: "none",
-                  cursor: "pointer",
-                  mt: 2,
-                  p: 0,
-                  "&:hover": {
-                    textDecoration: "underline",
-                  },
-                }}
               >
                 <Trans id="metadata.link.created.with.visualize">
                   Created with visualize.admin.ch
