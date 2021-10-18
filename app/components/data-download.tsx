@@ -3,6 +3,7 @@ import { csvFormat } from "d3";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
 import { Box, Button, Link } from "theme-ui";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig, ChartFields } from "../configurator";
 import { Observation } from "../domain/data";
 import {
@@ -32,13 +33,18 @@ export const DataDownload = memo(
             f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
           )
         : [];
+    const filters = useQueryFilters({
+      chartConfig,
+      interactiveFiltersIsActive:
+        chartConfig.interactiveFiltersConfig?.dataFilters.active ?? false,
+    });
 
     const [{ data }] = useDataCubeObservationsQuery({
       variables: {
         locale,
         iri: dataSetIri,
         measures, // FIXME: Other fields may also be measures
-        filters: chartConfig.filters,
+        filters,
       },
     });
 
