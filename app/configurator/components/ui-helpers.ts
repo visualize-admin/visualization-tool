@@ -74,6 +74,7 @@ export const mkNumber = (x: $IntentionalAny): number => +x;
 const getFormattersForLocale = memoize((locale) => {
   const { format } = getD3TimeFormatLocale(locale);
   return {
+    empty: () => '-',
     second: format("%d.%m.%Y %H:%M:%S"),
     minute: format("%d.%m.%Y %H:%M"),
     hour: format("%d.%m.%Y %H:%M"),
@@ -96,8 +97,11 @@ const useLocalFormatters = () => {
 export const useFormatFullDateAuto = () => {
   const formatters = useLocalFormatters()
   const formatter = useMemo(() => {
+    return (dateInput: Date | string | null) => {
+      if (dateInput === null) {
+        return formatters.empty()
+      }
 
-    return (dateInput: Date | string) => {
       const date =
         typeof dateInput === "string" ? parseDate(dateInput) : dateInput;
 
