@@ -1,8 +1,8 @@
 import { Fragment } from "react";
-import { Text, Box } from "theme-ui";
+import { Box, Text } from "theme-ui";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
-import { useFormatFullDateAuto } from "../configurator/components/ui-helpers";
+import { useTimeFormatUnit } from "../configurator/components/ui-helpers";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
 
@@ -14,7 +14,7 @@ export const ChartFiltersList = ({
   chartConfig: ChartConfig;
 }) => {
   const locale = useLocale();
-  const formatDateAuto = useFormatFullDateAuto();
+  const timeFormatUnit = useTimeFormatUnit();
 
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: dataSetIri, locale },
@@ -42,7 +42,10 @@ export const ChartFiltersList = ({
 
       const value =
         dimension.__typename === "TemporalDimension"
-          ? { value: f.value, label: formatDateAuto(f.value) }
+          ? {
+              value: f.value,
+              label: timeFormatUnit(f.value, f.timeUnit),
+            }
           : dimension.values.find((v) => v.value === f.value);
 
       return [

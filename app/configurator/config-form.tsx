@@ -108,7 +108,7 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
   }
   return {
     name: path,
-    value: getKey ? getKey(value!) : ((value as unknown) as string),
+    value: getKey ? getKey(value!) : (value as unknown as string),
     // checked,
     onChange,
   };
@@ -279,7 +279,10 @@ export const useSingleFilterSelect = ({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
           dimensionIri,
-          value: e.currentTarget.value,
+          value:
+            e.currentTarget.value === ""
+              ? FIELD_VALUE_NONE
+              : e.currentTarget.value,
         },
       });
     },
