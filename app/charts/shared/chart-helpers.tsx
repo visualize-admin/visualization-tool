@@ -16,7 +16,7 @@ export const useQueryFilters = ({
   interactiveFiltersIsActive,
 }: {
   chartConfig: ChartConfig;
-  interactiveFiltersIsActive: boolean;
+  interactiveFiltersIsActive: boolean | undefined;
 }): Filters | FilterValueSingle => {
   const [IFstate] = useInteractiveFilters();
   const { filters } = chartConfig;

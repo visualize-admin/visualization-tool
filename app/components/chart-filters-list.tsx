@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Text, Box } from "theme-ui";
+import { Box, Text } from "theme-ui";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { useFormatFullDateAuto } from "../configurator/components/ui-helpers";
@@ -23,7 +23,7 @@ export const ChartFiltersList = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     interactiveFiltersIsActive:
-      chartConfig.interactiveFiltersConfig?.dataFilters.active ?? false,
+      chartConfig.interactiveFiltersConfig?.dataFilters.active,
   });
   if (data?.dataCubeByIri) {
     const {
