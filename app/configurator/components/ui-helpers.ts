@@ -40,6 +40,7 @@ import {
   timeYear,
 } from "d3";
 import { timeParse } from "d3-time-format";
+import { memoize } from "lodash";
 import { useMemo } from "react";
 import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
@@ -70,22 +71,31 @@ export const isNumber = (x: $IntentionalAny): boolean =>
   typeof x === "number" && !isNaN(x);
 export const mkNumber = (x: $IntentionalAny): number => +x;
 
+const getFormattersForLocale = memoize((locale) => {
+  const { format } = getD3TimeFormatLocale(locale);
+  return {
+    second: format("%d.%m.%Y %H:%M:%S"),
+    minute: format("%d.%m.%Y %H:%M"),
+    hour: format("%d.%m.%Y %H:%M"),
+    day: format("%d.%m.%Y"),
+    month: format("%d.%m.%Y"),
+    year: format("%Y")
+  }
+})
+
+const useLocalFormatters = () => {
+  const locale = useLocale()
+  return getFormattersForLocale(locale)
+}
+
 /**
  * Formats dates automatically based on their precision in LONG form.
  *
  * Use wherever dates are displayed without being in context of other dates (e.g. in tooltips)
  */
 export const useFormatFullDateAuto = () => {
-  const locale = useLocale();
+  const formatters = useLocalFormatters()
   const formatter = useMemo(() => {
-    const { format } = getD3TimeFormatLocale(locale);
-
-    const formatSecond = format("%d.%m.%Y %H:%M:%S");
-    const formatMinute = format("%d.%m.%Y %H:%M");
-    const formatHour = format("%d.%m.%Y %H:%M");
-    const formatDay = format("%d.%m.%Y");
-    const formatMonth = format("%d.%m.%Y");
-    const formatYear = format("%Y");
 
     return (dateInput: Date | string) => {
       const date =
@@ -93,19 +103,19 @@ export const useFormatFullDateAuto = () => {
 
       return (
         timeMinute(date) < date
-          ? formatSecond
+          ? formatters.second
           : timeHour(date) < date
-          ? formatMinute
+          ? formatters.minute
           : timeDay(date) < date
-          ? formatHour
+          ? formatters.hour
           : timeMonth(date) < date
-          ? formatDay
+          ? formatters.day
           : timeYear(date) < date
-          ? formatMonth
-          : formatYear
+          ? formatters.month
+          : formatters.year
       )(date);
     };
-  }, [locale]);
+  }, [formatters]);
 
   return formatter;
 };
