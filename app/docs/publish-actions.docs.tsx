@@ -1,13 +1,20 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Embed } from "../components/publish-actions";
+import { PublishActions } from "../components/publish-actions";
 
 export default () => markdown`
-> Publish actions
+> Publish actions is used in the published charts to allow users to share and embed charts in other websites.
 
 ${(
   <ReactSpecimen span={2}>
-    <Embed configKey="123456789" locale="en" />
+    <PublishActions configKey="123456789" />
   </ReactSpecimen>
 )}
+
+## How to use
+~~~
+import { PublishActions } from "../components/publish-actions";
+
+<PublishActions configKey={configKey} />
+~~~
 
 `;
