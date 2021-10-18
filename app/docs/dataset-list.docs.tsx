@@ -12,6 +12,7 @@ export default () => markdown`
     <ConfiguratorStateProvider
       chartId={states[0].state}
       initialState={states[0]}
+      allowDefaultRedirect={false}
     >
       <ReactSpecimen span={2}>
         <div
@@ -40,6 +41,7 @@ export default () => markdown`
     <ConfiguratorStateProvider
       chartId={states[0].state}
       initialState={states[0]}
+      allowDefaultRedirect={false}
     >
       <ReactSpecimen span={2}>
         <div

@@ -774,11 +774,13 @@ const ConfiguratorStateProviderInternal = ({
   chartId,
   children,
   initialState = INITIAL_STATE,
+  allowDefaultRedirect = true,
 }: {
   key: string;
   chartId: string;
   children?: ReactNode;
   initialState?: ConfiguratorState;
+  allowDefaultRedirect?: boolean;
 }) => {
   const locale = useLocale();
   const stateAndDispatch = useImmerReducer(reducer, initialState);
@@ -824,7 +826,7 @@ const ConfiguratorStateProviderInternal = ({
               window.localStorage.removeItem(getLocalStorageKey(chartId));
             }
           } else {
-            if (!asPath.includes("/docs")) replace(`/create/new`);
+            if (allowDefaultRedirect) replace(`/create/new`);
           }
         }
       } catch {
@@ -833,7 +835,15 @@ const ConfiguratorStateProviderInternal = ({
       }
     };
     initialize();
-  }, [dispatch, chartId, replace, initialState, asPath, query, locale]);
+  }, [
+    dispatch,
+    chartId,
+    replace,
+    initialState,
+    allowDefaultRedirect,
+    query,
+    locale,
+  ]);
 
   useEffect(() => {
     try {
@@ -922,10 +932,12 @@ export const ConfiguratorStateProvider = ({
   chartId,
   children,
   initialState,
+  allowDefaultRedirect,
 }: {
   chartId: string;
   children?: ReactNode;
   initialState?: ConfiguratorState;
+  allowDefaultRedirect?: boolean;
 }) => {
   // Ensure that the state is reset by using the `chartId` as `key`
   return (
@@ -933,6 +945,7 @@ export const ConfiguratorStateProvider = ({
       key={chartId}
       chartId={chartId}
       initialState={initialState}
+      allowDefaultRedirect={allowDefaultRedirect}
     >
       {children}
     </ConfiguratorStateProviderInternal>
