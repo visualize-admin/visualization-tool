@@ -1,5 +1,6 @@
 import { area } from "d3";
 import { memo } from "react";
+import { isNumber } from "../../configurator/components/ui-helpers";
 import { useTheme } from "../../themes";
 import { useChartState } from "../shared/use-chart-state";
 import { AreasState } from "./areas-state";
@@ -9,7 +10,7 @@ export const Areas = () => {
     useChartState() as AreasState;
   const theme = useTheme();
   const areaGenerator = area<$FixMe>()
-    .defined((d) => d[0] !== null && d[1] !== null)
+    .defined((d) => isNumber(d[0]) && isNumber(d[1]))
     .x((d) => xScale(getX(d.data)))
     .y0((d) => yScale(d[0]))
     .y1((d) => yScale(d[1]));
