@@ -1,3 +1,4 @@
+import { string } from "fp-ts";
 import produce from "immer";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
@@ -9,6 +10,7 @@ import {
   useEffect,
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
+import { fetchChartConfig } from "../api";
 import {
   getFieldComponentIris,
   getFilteredFieldIris,
@@ -770,6 +772,50 @@ const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
+export const initChartStateFromExisting = async (
+  from: string
+): Promise<ConfiguratorState | undefined> => {
+  const config = await fetchChartConfig(from);
+  if (config && config.data) {
+    const { dataSet, meta, chartConfig } = config.data;
+    return {
+      state: "CONFIGURING_CHART",
+      dataSet,
+      meta,
+      chartConfig,
+      activeField: undefined,
+    };
+  }
+};
+
+/**
+ * Tries to parse state from localStorage.
+ * If state is invalid, it is removed from localStorage.
+ */
+export const initChartStateFromLocalStorage = async (
+  chartId: string
+): Promise<ConfiguratorState | undefined> => {
+  const storedState = window.localStorage.getItem(getLocalStorageKey(chartId));
+  if (storedState) {
+    let parsedState;
+    try {
+      parsedState = decodeConfiguratorState(JSON.parse(storedState));
+    } catch (e) {
+      console.error("Error while parsing stored state", e);
+      // Ignore errors since we are returning undefined and removing bad state from localStorage
+    }
+    if (parsedState) {
+      return parsedState;
+    } else {
+      console.warn(
+        "Attempted to restore invalid state. Removing from localStorage.",
+        parsedState
+      );
+      window.localStorage.removeItem(getLocalStorageKey(chartId));
+    }
+  }
+};
+
 const ConfiguratorStateProviderInternal = ({
   chartId,
   children,
@@ -793,38 +839,16 @@ const ConfiguratorStateProviderInternal = ({
 
     const initialize = async () => {
       try {
-        if (chartId === "new" && query.from) {
-          const config = await fetch(`/api/config/${query.from}`).then(
-            (result) => result.json()
-          );
-          if (config && config.data) {
-            const { dataSet, meta, chartConfig } = config.data;
-            stateToInitialize = {
-              state: "CONFIGURING_CHART",
-              dataSet,
-              meta,
-              chartConfig,
-              activeField: undefined,
-            };
+        if (chartId === "new" && query.from && typeof query.from === "string") {
+          const newChartState = await initChartStateFromExisting(query.from);
+          if (newChartState) {
+            stateToInitialize = newChartState;
           }
         }
         if (chartId !== "new") {
-          const storedState = window.localStorage.getItem(
-            getLocalStorageKey(chartId)
-          );
-          if (storedState) {
-            const parsedState = decodeConfiguratorState(
-              JSON.parse(storedState)
-            );
-            if (parsedState) {
-              stateToInitialize = parsedState;
-            } else {
-              console.warn(
-                "Attempted to restore invalid state. Removing from localStorage.",
-                parsedState
-              );
-              window.localStorage.removeItem(getLocalStorageKey(chartId));
-            }
+          const newChartState = await initChartStateFromLocalStorage(chartId);
+          if (newChartState) {
+            stateToInitialize = newChartState;
           } else {
             if (allowDefaultRedirect) replace(`/create/new`);
           }
