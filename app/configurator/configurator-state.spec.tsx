@@ -1,11 +1,13 @@
+import { Client } from "@urql/core";
 import {
   getLocalStorageKey,
-  initChartStateFromExisting,
+  initChartStateFromChart,
   initChartStateFromLocalStorage,
+  initChartStateFromDataset,
 } from "./configurator-state";
 import * as api from "../api";
-import { jsxEmptyExpression } from "@babel/types";
 import { data as fakeVizFixture } from "../test/__fixtures/prod/5BmzFXXNtE1X.json";
+import bathingWaterMetadata from "../test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -17,7 +19,7 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-describe("initChartStateFromExisting", () => {
+describe("initChartStateFromChart", () => {
   const setup = ({ chartConfig }: { chartConfig: object }) => {
     mockedApi.fetchChartConfig.mockResolvedValue(chartConfig);
   };
@@ -27,7 +29,7 @@ describe("initChartStateFromExisting", () => {
         data: fakeVizFixture,
       },
     });
-    const state = await initChartStateFromExisting("abcde");
+    const state = await initChartStateFromChart("abcde");
     expect(state).toEqual(expect.objectContaining(fakeVizFixture));
   });
 
@@ -40,7 +42,7 @@ describe("initChartStateFromExisting", () => {
         isBadState: true,
       },
     });
-    const state = await initChartStateFromExisting("abcde");
+    const state = await initChartStateFromChart("abcde");
     expect(state).toEqual(undefined);
   });
 });
@@ -63,5 +65,33 @@ describe("initChartFromLocalStorage", () => {
     const state = await initChartStateFromLocalStorage("viz1234");
     expect(state).toBeUndefined();
     expect(localStorage.getItem(getLocalStorageKey("viz1234"))).toBe(null);
+  });
+});
+
+describe("initChartStateFromDataset", () => {
+  const setup = ({ cubeMetadata }: { cubeMetadata: object }) => {
+    const client = new Client({
+      url: "https://example.com/graphql",
+    });
+
+    // @ts-ignore
+    jest.spyOn(client, "query").mockReturnValue({
+      toPromise: jest.fn().mockResolvedValue(cubeMetadata),
+    });
+
+    return { client };
+  };
+  it("should work init fields with existing dataset and go directly to 2nd step", async () => {
+    const { client } = setup({ cubeMetadata: bathingWaterMetadata });
+    const res = await initChartStateFromDataset(
+      client,
+      "https://environment.ld.admin.ch/foen/ubd0104/3/",
+      "en"
+    );
+    expect(res).toEqual(
+      expect.objectContaining({
+        state: "SELECTING_CHART_TYPE",
+      })
+    );
   });
 });
