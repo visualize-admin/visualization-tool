@@ -28,10 +28,12 @@
     "postversion": "git push --follow-tags",
     "release:npm": "yarn build:npm && yarn publish app",
     "e2e:dev": "CYPRESS_BASE_URL=http://localhost:3000 cypress open",
-    "e2e": "start-test 'yarn dev -p 3333' 3333 'yarn cypress run'"
+    "e2e": "start-test 'yarn dev -p 3333' 3333 'yarn cypress run'",
+    "cube": "NODE_ENV=development ts-node app/scripts/cube.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
+    "@cozy/cli-tree": "^0.3.0",
     "core-js": "^3.15.1",
     "next": "^11.0.1",
     "react": "^17.0.2",
