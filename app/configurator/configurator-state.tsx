@@ -10,7 +10,7 @@ import {
   useEffect,
 } from "react";
 import { Reducer, useImmerReducer } from "use-immer";
-import { fetchChartConfig } from "../api";
+import { fetchChartConfig, saveChartConfig } from "../api";
 import {
   getFieldComponentIris,
   getFilteredFieldIris,
@@ -893,7 +893,7 @@ const ConfiguratorStateProviderInternal = ({
         case "PUBLISHING":
           (async () => {
             try {
-              const result = await save(state);
+              const result = await saveChartConfig(state);
 
               /**
                * EXPERIMENTAL: Post back created chart ID to opener and close window.
@@ -933,23 +933,6 @@ const ConfiguratorStateProviderInternal = ({
       {children}
     </ConfiguratorStateContext.Provider>
   );
-};
-
-type ReturnVal = {
-  key: string;
-};
-const save = async (state: ConfiguratorStatePublishing): Promise<ReturnVal> => {
-  return fetch("/api/config", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      dataSet: state.dataSet,
-      meta: state.meta,
-      chartConfig: state.chartConfig,
-    }),
-  }).then((res) => res.json());
 };
 
 export const ConfiguratorStateProvider = ({
