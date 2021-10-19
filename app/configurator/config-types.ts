@@ -605,7 +605,7 @@ export const decodeConfiguratorState = (
     ConfiguratorState.decode(state),
     fold(
       (err) => {
-        console.log(err);
+        console.error('Error while decoding configurator state', err);
         return undefined;
       },
       (d) => d

@@ -25,7 +25,7 @@ const ChartConfiguratorPage: NextPage<PageProps> = ({ chartId }) => {
   return (
     <>
       <Head>
-        {/* Disables resoponsive scaling for this page (other pages still work) */}
+        {/* Disables responsive scaling for this page (other pages still work) */}
         <meta name="viewport" content="width=1280"></meta>
       </Head>
       <AppLayout>

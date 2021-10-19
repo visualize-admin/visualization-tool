@@ -1,3 +1,4 @@
+import { string } from "fp-ts";
 import produce from "immer";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
@@ -8,17 +9,26 @@ import {
   useContext,
   useEffect,
 } from "react";
+import { Client, createRequest, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
+import { fetchChartConfig, saveChartConfig } from "../api";
 import {
   getFieldComponentIris,
   getFilteredFieldIris,
   getInitialConfig,
   getPossibleChartType,
 } from "../charts";
+import {
+  DataCubeMetadataDocument,
+  DataCubeMetadataQuery,
+  DataCubeMetadataWithComponentValuesDocument,
+  DataCubeMetadataWithComponentValuesQuery,
+} from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { createChartId } from "../lib/create-chart-id";
 import { unreachableError } from "../lib/unreachable";
 import { useLocale } from "../locales/use-locale";
+import { getCube } from "../rdf/queries";
 import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
 import {
   ChartConfig,
@@ -770,6 +780,80 @@ const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
+type ChartId = string;
+type DatasetIri = string;
+
+export const initChartStateFromChart = async (
+  from: ChartId
+): Promise<ConfiguratorState | undefined> => {
+  const config = await fetchChartConfig(from);
+  if (config && config.data) {
+    const { dataSet, meta, chartConfig } = config.data;
+    return {
+      state: "CONFIGURING_CHART",
+      dataSet,
+      meta,
+      chartConfig,
+      activeField: undefined,
+    };
+  }
+};
+
+export const initChartStateFromDataset = async (
+  client: Client,
+  datasetIri: DatasetIri,
+  locale: string
+): Promise<ConfiguratorState | undefined> => {
+  const { data } = await client
+    .query<DataCubeMetadataWithComponentValuesQuery>(
+      DataCubeMetadataWithComponentValuesDocument,
+      {
+        iri: datasetIri,
+        locale,
+      }
+    )
+    .toPromise();
+  if (!data || !data?.dataCubeByIri) {
+    console.warn(`Could not fetch cube with iri ${datasetIri}`);
+    return;
+  }
+  return transitionStepNext(
+    {
+      ...emptyState,
+      dataSet: datasetIri,
+    },
+    data.dataCubeByIri
+  );
+};
+
+/**
+ * Tries to parse state from localStorage.
+ * If state is invalid, it is removed from localStorage.
+ */
+export const initChartStateFromLocalStorage = async (
+  chartId: string
+): Promise<ConfiguratorState | undefined> => {
+  const storedState = window.localStorage.getItem(getLocalStorageKey(chartId));
+  if (storedState) {
+    let parsedState;
+    try {
+      parsedState = decodeConfiguratorState(JSON.parse(storedState));
+    } catch (e) {
+      console.error("Error while parsing stored state", e);
+      // Ignore errors since we are returning undefined and removing bad state from localStorage
+    }
+    if (parsedState) {
+      return parsedState;
+    } else {
+      console.warn(
+        "Attempted to restore invalid state. Removing from localStorage.",
+        parsedState
+      );
+      window.localStorage.removeItem(getLocalStorageKey(chartId));
+    }
+  }
+};
+
 const ConfiguratorStateProviderInternal = ({
   chartId,
   children,
@@ -786,6 +870,7 @@ const ConfiguratorStateProviderInternal = ({
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
+  const client = useClient();
 
   // Re-initialize state on page load
   useEffect(() => {
@@ -793,43 +878,25 @@ const ConfiguratorStateProviderInternal = ({
 
     const initialize = async () => {
       try {
-        if (chartId === "new" && query.from) {
-          const config = await fetch(`/api/config/${query.from}`).then(
-            (result) => result.json()
-          );
-          if (config && config.data) {
-            const { dataSet, meta, chartConfig } = config.data;
-            stateToInitialize = {
-              state: "CONFIGURING_CHART",
-              dataSet,
-              meta,
-              chartConfig,
-              activeField: undefined,
-            };
-          }
-        }
-        if (chartId !== "new") {
-          const storedState = window.localStorage.getItem(
-            getLocalStorageKey(chartId)
-          );
-          if (storedState) {
-            const parsedState = decodeConfiguratorState(
-              JSON.parse(storedState)
+        let newChartState;
+        if (chartId === "new") {
+          if (query.from && typeof query.from === "string") {
+            newChartState = await initChartStateFromChart(query.from);
+          } else if (query.dataset && typeof query.dataset === "string") {
+            newChartState = await initChartStateFromDataset(
+              client,
+              query.dataset,
+              locale
             );
-            if (parsedState) {
-              stateToInitialize = parsedState;
-            } else {
-              console.warn(
-                "Attempted to restore invalid state. Removing from localStorage.",
-                parsedState
-              );
-              window.localStorage.removeItem(getLocalStorageKey(chartId));
-            }
-          } else {
+          }
+        } else {
+          newChartState = await initChartStateFromLocalStorage(chartId);
+          if (!newChartState) {
             if (allowDefaultRedirect) replace(`/create/new`);
           }
         }
-      } catch {
+
+        stateToInitialize = newChartState || stateToInitialize;
       } finally {
         dispatch({ type: "INITIALIZED", value: stateToInitialize });
       }
@@ -843,6 +910,7 @@ const ConfiguratorStateProviderInternal = ({
     allowDefaultRedirect,
     query,
     locale,
+    client,
   ]);
 
   useEffect(() => {
@@ -869,7 +937,7 @@ const ConfiguratorStateProviderInternal = ({
         case "PUBLISHING":
           (async () => {
             try {
-              const result = await save(state);
+              const result = await saveChartConfig(state);
 
               /**
                * EXPERIMENTAL: Post back created chart ID to opener and close window.
@@ -909,23 +977,6 @@ const ConfiguratorStateProviderInternal = ({
       {children}
     </ConfiguratorStateContext.Provider>
   );
-};
-
-type ReturnVal = {
-  key: string;
-};
-const save = async (state: ConfiguratorStatePublishing): Promise<ReturnVal> => {
-  return fetch("/api/config", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      dataSet: state.dataSet,
-      meta: state.meta,
-      chartConfig: state.chartConfig,
-    }),
-  }).then((res) => res.json());
 };
 
 export const ConfiguratorStateProvider = ({
