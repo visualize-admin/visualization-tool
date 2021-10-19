@@ -44,7 +44,7 @@ export const ChartFiltersList = ({
         dimension.__typename === "TemporalDimension"
           ? {
               value: f.value,
-              label: timeFormatUnit(f.value, f.timeUnit),
+              label: timeFormatUnit(f.value, dimension.timeUnit),
             }
           : dimension.values.find((v) => v.value === f.value);
 
