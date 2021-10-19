@@ -1,8 +1,8 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { ActionBar } from "../configurator/components/action-bar";
+import { Box, Text } from "theme-ui";
 import { ConfiguratorStateProvider } from "../configurator";
+import { ActionBar } from "../configurator/components/action-bar";
 import { states } from "./fixtures";
-import { Text, Box } from "theme-ui";
 
 export default () =>
   markdown`
@@ -23,7 +23,11 @@ import { ActionBar } from "./components/action-bar"
 ${states.map((state) => (
   <Box key={state.state} my={4} sx={{ width: "100%" }}>
     <Text>{state.state}</Text>
-    <ConfiguratorStateProvider chartId={state.state} initialState={state}>
+    <ConfiguratorStateProvider
+      chartId={state.state}
+      initialState={state}
+      allowDefaultRedirect={false}
+    >
       <ReactSpecimen>
         <ActionBar />
       </ReactSpecimen>

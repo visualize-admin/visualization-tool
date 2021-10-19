@@ -1,15 +1,18 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { DatasetButton } from "../configurator/components/dataset-selector";
 import { ConfiguratorStateProvider } from "../configurator";
+import { DatasetButton } from "../configurator/components/dataset-selector";
 import { states } from "./fixtures";
 
 export default () => markdown`
 
 ## Dataset Button
+
+> The dataset button is used to populate the dataset list shown when selecting a dataset at the beginning of the chart creation process.
   ${(
     <ConfiguratorStateProvider
       chartId={states[0].state}
       initialState={states[0]}
+      allowDefaultRedirect={false}
     >
       <ReactSpecimen span={2}>
         <div
@@ -38,6 +41,7 @@ export default () => markdown`
     <ConfiguratorStateProvider
       chartId={states[0].state}
       initialState={states[0]}
+      allowDefaultRedirect={false}
     >
       <ReactSpecimen span={2}>
         <div
