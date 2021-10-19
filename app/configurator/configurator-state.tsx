@@ -9,6 +9,7 @@ import {
   useContext,
   useEffect,
 } from "react";
+import { Client, createRequest, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 import { fetchChartConfig, saveChartConfig } from "../api";
 import {
@@ -17,10 +18,17 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "../charts";
+import {
+  DataCubeMetadataDocument,
+  DataCubeMetadataQuery,
+  DataCubeMetadataWithComponentValuesDocument,
+  DataCubeMetadataWithComponentValuesQuery,
+} from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { createChartId } from "../lib/create-chart-id";
 import { unreachableError } from "../lib/unreachable";
 import { useLocale } from "../locales/use-locale";
+import { getCube } from "../rdf/queries";
 import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
 import {
   ChartConfig,
@@ -772,8 +780,11 @@ const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 
-export const initChartStateFromExisting = async (
-  from: string
+type ChartId = string;
+type DatasetIri = string;
+
+export const initChartStateFromChart = async (
+  from: ChartId
 ): Promise<ConfiguratorState | undefined> => {
   const config = await fetchChartConfig(from);
   if (config && config.data) {
@@ -786,6 +797,33 @@ export const initChartStateFromExisting = async (
       activeField: undefined,
     };
   }
+};
+
+export const initChartStateFromDataset = async (
+  client: Client,
+  datasetIri: DatasetIri,
+  locale: string
+): Promise<ConfiguratorState | undefined> => {
+  const { data } = await client
+    .query<DataCubeMetadataWithComponentValuesQuery>(
+      DataCubeMetadataWithComponentValuesDocument,
+      {
+        iri: datasetIri,
+        locale,
+      }
+    )
+    .toPromise();
+  if (!data || !data?.dataCubeByIri) {
+    console.warn(`Could not fetch cube with iri ${datasetIri}`);
+    return;
+  }
+  return transitionStepNext(
+    {
+      ...emptyState,
+      dataSet: datasetIri,
+    },
+    data.dataCubeByIri
+  );
 };
 
 /**
@@ -832,6 +870,7 @@ const ConfiguratorStateProviderInternal = ({
   const stateAndDispatch = useImmerReducer(reducer, initialState);
   const [state, dispatch] = stateAndDispatch;
   const { asPath, push, replace, query } = useRouter();
+  const client = useClient();
 
   // Re-initialize state on page load
   useEffect(() => {
@@ -839,21 +878,25 @@ const ConfiguratorStateProviderInternal = ({
 
     const initialize = async () => {
       try {
-        if (chartId === "new" && query.from && typeof query.from === "string") {
-          const newChartState = await initChartStateFromExisting(query.from);
-          if (newChartState) {
-            stateToInitialize = newChartState;
+        let newChartState;
+        if (chartId === "new") {
+          if (query.from && typeof query.from === "string") {
+            newChartState = await initChartStateFromChart(query.from);
+          } else if (query.dataset && typeof query.dataset === "string") {
+            newChartState = await initChartStateFromDataset(
+              client,
+              query.dataset,
+              locale
+            );
           }
-        }
-        if (chartId !== "new") {
-          const newChartState = await initChartStateFromLocalStorage(chartId);
-          if (newChartState) {
-            stateToInitialize = newChartState;
-          } else {
+        } else {
+          newChartState = await initChartStateFromLocalStorage(chartId);
+          if (!newChartState) {
             if (allowDefaultRedirect) replace(`/create/new`);
           }
         }
-      } catch {
+
+        stateToInitialize = newChartState || stateToInitialize;
       } finally {
         dispatch({ type: "INITIALIZED", value: stateToInitialize });
       }
@@ -867,6 +910,7 @@ const ConfiguratorStateProviderInternal = ({
     allowDefaultRedirect,
     query,
     locale,
+    client,
   ]);
 
   useEffect(() => {
