@@ -23,7 +23,7 @@ export const ChartFiltersList = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     interactiveFiltersIsActive:
-      chartConfig.interactiveFiltersConfig?.dataFilters.active ?? false,
+      chartConfig.interactiveFiltersConfig?.dataFilters.active,
   });
   if (data?.dataCubeByIri) {
     const {

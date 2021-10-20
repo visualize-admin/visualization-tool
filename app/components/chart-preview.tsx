@@ -205,13 +205,11 @@ const Chart = ({
   dataSet: string;
   chartConfig: ChartConfig;
 }) => {
-  const interactiveFiltersIsActive =
-    chartConfig.interactiveFiltersConfig?.dataFilters.active ?? false;
-
   // Combine filters from config + interactive filters
   const queryFilters = useQueryFilters({
     chartConfig,
-    interactiveFiltersIsActive,
+    interactiveFiltersIsActive:
+      chartConfig.interactiveFiltersConfig?.dataFilters.active,
   });
 
   return (
