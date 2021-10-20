@@ -127,13 +127,12 @@ export const getCubes = async ({
       Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
       Cube.filter.noExpires(),
       isVisualizeCubeFilter,
-      Cube.filter.status(
-        [
-          ns.adminVocabulary("CreativeWorkStatus/Published"),
-          includeDrafts ? ns.adminVocabulary("CreativeWorkStatus/Draft") : null,
-        ].filter(truthy)
-      ),
-    ],
+      includeDrafts
+        ? null
+        : Cube.filter.status([
+            ns.adminVocabulary("CreativeWorkStatus/Published"),
+          ]),
+    ].filter(truthy),
   });
 
   return cubes.map((cube) => parseCube({ cube, locale }));
