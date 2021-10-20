@@ -1,4 +1,5 @@
 import { t } from "@lingui/macro";
+import { TimeLocaleObject } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
@@ -129,7 +130,7 @@ export const DataFilterSelectTime = ({
   isOptional?: boolean;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
-  const timeLocale = useTimeFormatLocale();
+  const timeFormatLocale = useTimeFormatLocale();
 
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -148,7 +149,7 @@ export const DataFilterSelectTime = ({
     to,
     timeUnit,
     timeFormat,
-    timeLocale
+    timeFormatLocale
   );
 
   const options =
@@ -186,6 +187,7 @@ export const DataFilterSelectTime = ({
       label={fullLabel}
       value={fieldProps.value}
       timeFormat={timeFormat}
+      timeFormatLocale={timeFormatLocale}
       onChange={fieldProps.onChange}
     />
   );
@@ -196,22 +198,26 @@ export const TimeInput = ({
   label,
   value,
   timeFormat,
+  timeFormatLocale,
   onChange,
 }: {
   id: string;
   label: string;
   value: string | undefined;
   timeFormat: string;
+  timeFormatLocale: TimeLocaleObject;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const [inputValue, setInputValue] = useState(
     value === FIELD_VALUE_NONE ? undefined : value
   );
-  const formatLocale = useTimeFormatLocale();
 
   const [parseDateValue, formatDateValue] = useMemo(
-    () => [formatLocale.parse(timeFormat), formatLocale.format(timeFormat)],
-    [timeFormat, formatLocale]
+    () => [
+      timeFormatLocale.parse(timeFormat),
+      timeFormatLocale.format(timeFormat),
+    ],
+    [timeFormat, timeFormatLocale]
   );
 
   const onInputChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(

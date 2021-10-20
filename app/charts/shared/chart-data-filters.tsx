@@ -1,6 +1,5 @@
 import { t, Trans } from "@lingui/macro";
 import * as React from "react";
-import { useState } from "react";
 import { Box, Button, Flex } from "theme-ui";
 import { ChartFiltersList } from "../../components/chart-filters-list";
 import { Select } from "../../components/form";
@@ -27,7 +26,7 @@ export const ChartDataFilters = ({
   chartConfig: ChartConfig;
   dataFiltersConfig: InteractiveFiltersDataConfig;
 }) => {
-  const [filtersAreHidden, toggleFilters] = useState(true);
+  const [filtersAreHidden, toggleFilters] = React.useState(true);
   const { componentIris } = dataFiltersConfig;
 
   return (
@@ -85,7 +84,7 @@ export const ChartDataFilters = ({
               }}
             >
               {componentIris.map((d, i) => (
-                <DataFilterDropdown
+                <DataFilter
                   key={d}
                   dataSetIri={dataSet}
                   chartConfig={chartConfig}
@@ -100,7 +99,7 @@ export const ChartDataFilters = ({
   );
 };
 
-const DataFilterDropdown = ({
+const DataFilter = ({
   dimensionIri,
   dataSetIri,
   chartConfig,
@@ -113,7 +112,6 @@ const DataFilterDropdown = ({
   const { dataFilters } = state;
 
   const locale = useLocale();
-  const timeLocale = useTimeFormatLocale();
 
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
@@ -147,36 +145,15 @@ const DataFilterDropdown = ({
       configFilterValue ??
       FIELD_VALUE_NONE;
 
-    let values = dimension.values,
-      showSelect = true;
-    if (
-      dimension.__typename === "TemporalDimension" &&
-      dimension.timeUnit === TimeUnit.Year
-    ) {
-      const timeIntervalWithProps = getTimeIntervalWithProps(
-        dimension.values[0].value,
-        dimension.values[1].value,
-        dimension.timeUnit,
-        dimension.timeFormat,
-        timeLocale
-      );
-
-      if (timeIntervalWithProps.range > 100) {
-        showSelect = false;
-      } else {
-        values = getTimeIntervalOptions(timeIntervalWithProps);
-      }
-    }
-
     const options = dimension.isKeyDimension
-      ? values
+      ? dimension.values
       : [
           {
             value: FIELD_VALUE_NONE,
             label: noneLabel,
             isNoneValue: true,
           },
-          ...values,
+          ...dimension.values,
         ];
 
     return (
@@ -191,26 +168,104 @@ const DataFilterDropdown = ({
           " > div": { width: "100%" },
         }}
       >
-        {dimension.__typename !== "TemporalDimension" || showSelect ? (
-          <Select
-            id="interactiveDataFilter"
+        {dimension.__typename !== "TemporalDimension" ? (
+          <DataFilterBaseDimension
             label={dimension.label}
             options={options}
             value={value}
             onChange={setDataFilter}
           />
-        ) : (
-          <TimeInput
-            id={`${Math.random()}`}
+        ) : dimension.timeUnit === TimeUnit.Year ? (
+          <DataFilterTemporalDimension
             label={dimension.label}
+            dimensionValues={dimension.values}
             value={value}
+            timeUnit={dimension.timeUnit}
             timeFormat={dimension.timeFormat}
             onChange={setDataFilter}
           />
-        )}
+        ) : null}
       </Flex>
     );
   } else {
     return <Loading />;
   }
+};
+
+const DataFilterBaseDimension = ({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: Array<{ label: string; value: string }>;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}) => {
+  return (
+    <Select
+      id="dataFilterBaseDimension"
+      label={label}
+      options={options}
+      value={value}
+      onChange={onChange}
+    />
+  );
+};
+
+const DataFilterTemporalDimension = ({
+  label,
+  dimensionValues,
+  timeUnit,
+  timeFormat,
+  value,
+  onChange,
+}: {
+  label: string;
+  dimensionValues: Array<{ label: string; value: string }>;
+  timeUnit: TimeUnit;
+  timeFormat: string;
+  value: string;
+  onChange: (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => void;
+}) => {
+  const timeFormatLocale = useTimeFormatLocale();
+  const timeIntervalWithProps = React.useMemo(
+    () =>
+      getTimeIntervalWithProps(
+        dimensionValues[0].value,
+        dimensionValues[1].value,
+        timeUnit,
+        timeFormat,
+        timeFormatLocale
+      ),
+    [dimensionValues, timeUnit, timeFormat, timeFormatLocale]
+  );
+  const timeIntervalOptions = React.useMemo(() => {
+    return getTimeIntervalOptions(timeIntervalWithProps);
+  }, [timeIntervalWithProps]);
+
+  if (timeIntervalWithProps.range < 100) {
+    return (
+      <DataFilterBaseDimension
+        label={label}
+        options={timeIntervalOptions}
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }
+
+  return (
+    <TimeInput
+      id="dataFilterTemporalDimension"
+      label={label}
+      value={value}
+      timeFormat={timeFormat}
+      timeFormatLocale={timeFormatLocale}
+      onChange={onChange}
+    />
+  );
 };
