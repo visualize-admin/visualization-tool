@@ -29,6 +29,7 @@ import {
 import { loadResourceLabels } from "./query-labels";
 import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
+import truthy from "../utils/truthy";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -100,6 +101,16 @@ const getLatestCube = async (cube: Cube): Promise<Cube> => {
   return cube;
 };
 
+const isVisualizeCubeFilter = ({ cube }: $FixMe) => {
+  return [
+    [
+      cube,
+      ns.schema.workExample,
+      rdf.namedNode("https://ld.admin.ch/application/visualize"),
+    ],
+  ];
+};
+
 export const getCubes = async ({
   includeDrafts,
   locale,
@@ -115,26 +126,13 @@ export const getCubes = async ({
       // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
       Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
       Cube.filter.noExpires(),
-      // Only show cubes relevant to visualize
-      ({ cube, index }: $FixMe) => {
-        return [
-          [
-            cube,
-            ns.schema.workExample,
-            rdf.namedNode("https://ld.admin.ch/application/visualize"),
-          ],
-        ];
-      },
-    ].concat(
+      isVisualizeCubeFilter,
       includeDrafts
-        ? Cube.filter.status([
-            ns.adminVocabulary("CreativeWorkStatus/Published"),
-            ns.adminVocabulary("CreativeWorkStatus/Draft"),
-          ])
+        ? null
         : Cube.filter.status([
             ns.adminVocabulary("CreativeWorkStatus/Published"),
-          ])
-    ),
+          ]),
+    ].filter(truthy),
   });
 
   return cubes.map((cube) => parseCube({ cube, locale }));
