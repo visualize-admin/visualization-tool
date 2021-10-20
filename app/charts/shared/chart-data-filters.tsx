@@ -195,16 +195,18 @@ const DataFilterBaseDimension = ({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
-  const allOptions = isKeyDimension
-    ? options
-    : [
-        {
-          value: FIELD_VALUE_NONE,
-          label: noneLabel,
-          isNoneValue: true,
-        },
-        ...options,
-      ];
+  const allOptions = React.useMemo(() => {
+    return isKeyDimension
+      ? options
+      : [
+          {
+            value: FIELD_VALUE_NONE,
+            label: noneLabel,
+            isNoneValue: true,
+          },
+          ...options,
+        ];
+  }, [isKeyDimension, options, noneLabel]);
 
   return (
     <Select

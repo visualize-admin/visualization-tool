@@ -144,29 +144,34 @@ export const DataFilterSelectTime = ({
 
   const fullLabel = isOptional ? `${label} (${optionalLabel})` : label;
 
-  const timeIntervalWithProps = getTimeIntervalWithProps(
-    from,
-    to,
-    timeUnit,
-    timeFormat,
-    formatLocale
-  );
+  const timeIntervalWithProps = useMemo(() => {
+    return getTimeIntervalWithProps(
+      from,
+      to,
+      timeUnit,
+      timeFormat,
+      formatLocale
+    );
+  }, [from, to, timeUnit, timeFormat, formatLocale]);
 
-  const options =
-    timeIntervalWithProps.range > 100
+  const options = useMemo(() => {
+    return timeIntervalWithProps.range > 100
       ? []
       : getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
+  }, [timeIntervalWithProps]);
 
-  const allOptions = isOptional
-    ? [
-        {
-          value: FIELD_VALUE_NONE,
-          label: noneLabel,
-          isNoneValue: true,
-        },
-        ...options,
-      ]
-    : options;
+  const allOptions = useMemo(() => {
+    return isOptional
+      ? [
+          {
+            value: FIELD_VALUE_NONE,
+            label: noneLabel,
+            isNoneValue: true,
+          },
+          ...options,
+        ]
+      : options;
+  }, [isOptional, options, noneLabel]);
 
   if (options.length) {
     return (
