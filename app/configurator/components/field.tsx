@@ -25,8 +25,8 @@ import { ColorPickerMenu } from "./chart-controls/color-picker";
 import { AnnotatorTab, ControlTab } from "./chart-controls/control-tab";
 import {
   getPalette,
-  getTimeInterval,
-  useFormatFullDateAuto,
+  getTimeIntervalOptions,
+  getTimeIntervalWithProps,
   useTimeFormatLocale,
 } from "./ui-helpers";
 
@@ -129,19 +129,7 @@ export const DataFilterSelectTime = ({
   isOptional?: boolean;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
-  const formatDateAuto = useFormatFullDateAuto();
-  const formatLocale = useTimeFormatLocale();
-
-  const formatDateValue = formatLocale.format(timeFormat);
-  const parseDateValue = formatLocale.parse(timeFormat);
-
-  const fromDate = parseDateValue(from);
-  const toDate = parseDateValue(to);
-  if (!fromDate || !toDate) {
-    throw Error(`Error parsing dates ${from}, ${to}`);
-  }
-  const timeInterval = getTimeInterval(timeUnit);
-  const range = timeInterval.count(fromDate, toDate) + 1;
+  const timeLocale = useTimeFormatLocale();
 
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -153,43 +141,33 @@ export const DataFilterSelectTime = ({
     message: `optional`,
   });
 
-  const allOptions = useMemo(() => {
-    if (range > 100) {
-      return [];
-    }
-
-    const options = [...timeInterval.range(fromDate, toDate), toDate].map(
-      (d) => {
-        return {
-          value: formatDateValue(d),
-          label: formatDateAuto(d),
-        };
-      }
-    );
-    return isOptional
-      ? [
-          {
-            value: FIELD_VALUE_NONE,
-            label: noneLabel,
-            isNoneValue: true,
-          },
-          ...options,
-        ]
-      : options;
-  }, [
-    range,
-    timeInterval,
-    fromDate,
-    toDate,
-    isOptional,
-    noneLabel,
-    formatDateValue,
-    formatDateAuto,
-  ]);
-
   const fullLabel = isOptional ? `${label} (${optionalLabel})` : label;
 
-  if (range <= 100) {
+  const timeIntervalWithProps = getTimeIntervalWithProps(
+    from,
+    to,
+    timeUnit,
+    timeFormat,
+    timeLocale
+  );
+
+  const options =
+    timeIntervalWithProps.range > 100
+      ? []
+      : getTimeIntervalOptions(timeIntervalWithProps);
+
+  const allOptions = isOptional
+    ? [
+        {
+          value: FIELD_VALUE_NONE,
+          label: noneLabel,
+          isNoneValue: true,
+        },
+        ...options,
+      ]
+    : options;
+
+  if (options.length) {
     return (
       <Select
         id={id}
@@ -213,7 +191,7 @@ export const DataFilterSelectTime = ({
   );
 };
 
-const TimeInput = ({
+export const TimeInput = ({
   id,
   label,
   value,

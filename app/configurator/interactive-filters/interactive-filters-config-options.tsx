@@ -7,6 +7,7 @@ import { Checkbox } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
   DimensionMetaDataFragment,
+  TimeUnit,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -254,7 +255,9 @@ const InteractiveDataFilterOptions = ({
     const unMappedDimensionsWithoutTemporalDimensions =
       data?.dataCubeByIri.dimensions.filter(
         (dim) =>
-          !mappedIris.has(dim.iri) && dim.__typename !== "TemporalDimension"
+          !mappedIris.has(dim.iri) &&
+          (dim.__typename !== "TemporalDimension" ||
+            dim.timeUnit === TimeUnit.Year)
       );
 
     return (
