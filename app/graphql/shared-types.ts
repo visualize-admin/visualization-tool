@@ -24,6 +24,7 @@ export type ResolvedDataCube = {
     };
     publisher?: string;
     landingPage?: string;
+    expires?: string;
     keywords?: string[];
   };
 };

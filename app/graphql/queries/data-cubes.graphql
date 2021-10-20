@@ -71,6 +71,7 @@ query DataCubeMetadata($iri: String!, $locale: String!) {
     contactName
     contactEmail
     landingPage
+    expires
     datePublished
     publicationStatus
   }

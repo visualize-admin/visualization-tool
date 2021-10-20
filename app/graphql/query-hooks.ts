@@ -29,6 +29,7 @@ export type DataCube = {
   publisher?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
+  expires?: Maybe<Scalars['String']>;
   publicationStatus: DataCubePublicationStatus;
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
@@ -222,7 +223,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
+export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
 
 export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -386,6 +387,7 @@ export const DataCubeMetadataDocument = gql`
     contactName
     contactEmail
     landingPage
+    expires
     datePublished
     publicationStatus
   }

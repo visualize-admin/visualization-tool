@@ -112,6 +112,7 @@ const DataCube: DataCubeResolvers = {
   contactName: ({ data: { contactPoint } }) => contactPoint?.name ?? null,
   contactEmail: ({ data: { contactPoint } }) => contactPoint?.email ?? null,
   landingPage: ({ data: { landingPage } }) => landingPage ?? null,
+  expires: ({ data: { expires } }) => expires ?? null,
   publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
