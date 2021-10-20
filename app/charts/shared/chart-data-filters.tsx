@@ -7,7 +7,7 @@ import { Loading } from "../../components/hint";
 import { ChartConfig, InteractiveFiltersDataConfig } from "../../configurator";
 import { TimeInput } from "../../configurator/components/field";
 import {
-  getTimeIntervalOptions,
+  getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
   useTimeFormatLocale,
 } from "../../configurator/components/ui-helpers";
@@ -126,11 +126,6 @@ const DataFilter = ({
     });
   };
 
-  const noneLabel = t({
-    id: "controls.dimensionvalue.none",
-    message: `No Filter`,
-  });
-
   if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
 
@@ -144,17 +139,6 @@ const DataFilter = ({
       dataFilters?.[dimension.iri]?.value ??
       configFilterValue ??
       FIELD_VALUE_NONE;
-
-    const options = dimension.isKeyDimension
-      ? dimension.values
-      : [
-          {
-            value: FIELD_VALUE_NONE,
-            label: noneLabel,
-            isNoneValue: true,
-          },
-          ...dimension.values,
-        ];
 
     return (
       <Flex
@@ -170,15 +154,17 @@ const DataFilter = ({
       >
         {dimension.__typename !== "TemporalDimension" ? (
           <DataFilterBaseDimension
+            isKeyDimension={dimension.isKeyDimension}
             label={dimension.label}
-            options={options}
+            options={dimension.values}
             value={value}
             onChange={setDataFilter}
           />
         ) : dimension.timeUnit === TimeUnit.Year ? (
           <DataFilterTemporalDimension
+            isKeyDimension={dimension.isKeyDimension}
             label={dimension.label}
-            dimensionValues={dimension.values}
+            options={dimension.values}
             value={value}
             timeUnit={dimension.timeUnit}
             timeFormat={dimension.timeFormat}
@@ -193,21 +179,38 @@ const DataFilter = ({
 };
 
 const DataFilterBaseDimension = ({
+  isKeyDimension,
   label,
   options,
   value,
   onChange,
 }: {
+  isKeyDimension: boolean;
   label: string;
   options: Array<{ label: string; value: string }>;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }) => {
+  const noneLabel = t({
+    id: "controls.dimensionvalue.none",
+    message: `No Filter`,
+  });
+  const allOptions = isKeyDimension
+    ? options
+    : [
+        {
+          value: FIELD_VALUE_NONE,
+          label: noneLabel,
+          isNoneValue: true,
+        },
+        ...options,
+      ];
+
   return (
     <Select
       id="dataFilterBaseDimension"
       label={label}
-      options={options}
+      options={allOptions}
       value={value}
       onChange={onChange}
     />
@@ -215,15 +218,17 @@ const DataFilterBaseDimension = ({
 };
 
 const DataFilterTemporalDimension = ({
+  isKeyDimension,
   label,
-  dimensionValues,
+  options,
   timeUnit,
   timeFormat,
   value,
   onChange,
 }: {
+  isKeyDimension: boolean;
   label: string;
-  dimensionValues: Array<{ label: string; value: string }>;
+  options: Array<{ label: string; value: string }>;
   timeUnit: TimeUnit;
   timeFormat: string;
   value: string;
@@ -231,25 +236,26 @@ const DataFilterTemporalDimension = ({
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => void;
 }) => {
-  const timeFormatLocale = useTimeFormatLocale();
+  const formatLocale = useTimeFormatLocale();
   const timeIntervalWithProps = React.useMemo(
     () =>
       getTimeIntervalWithProps(
-        dimensionValues[0].value,
-        dimensionValues[1].value,
+        options[0].value,
+        options[1].value,
         timeUnit,
         timeFormat,
-        timeFormatLocale
+        formatLocale
       ),
-    [dimensionValues, timeUnit, timeFormat, timeFormatLocale]
+    [options, timeUnit, timeFormat, formatLocale]
   );
   const timeIntervalOptions = React.useMemo(() => {
-    return getTimeIntervalOptions(timeIntervalWithProps);
+    return getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
   }, [timeIntervalWithProps]);
 
   if (timeIntervalWithProps.range < 100) {
     return (
       <DataFilterBaseDimension
+        isKeyDimension={isKeyDimension}
         label={label}
         options={timeIntervalOptions}
         value={value}
@@ -264,7 +270,7 @@ const DataFilterTemporalDimension = ({
       label={label}
       value={value}
       timeFormat={timeFormat}
-      timeFormatLocale={timeFormatLocale}
+      formatLocale={formatLocale}
       onChange={onChange}
     />
   );

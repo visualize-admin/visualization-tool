@@ -242,10 +242,10 @@ export const getTimeIntervalWithProps = (
   to: string,
   timeUnit: TimeUnit,
   timeFormat: string,
-  timeFormatLocale: TimeLocaleObject
+  formatLocale: TimeLocaleObject
 ) => {
-  const formatDateValue = timeFormatLocale.format(timeFormat);
-  const parseDateValue = timeFormatLocale.parse(timeFormat);
+  const formatDateValue = formatLocale.format(timeFormat);
+  const parseDateValue = formatLocale.parse(timeFormat);
 
   const fromDate = parseDateValue(from);
   const toDate = parseDateValue(to);
@@ -263,7 +263,7 @@ export const getTimeIntervalWithProps = (
   };
 };
 
-export const getTimeIntervalOptions = ({
+export const getTimeIntervalFormattedSelectOptions = ({
   fromDate,
   toDate,
   formatDateValue,

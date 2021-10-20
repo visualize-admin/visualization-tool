@@ -26,7 +26,7 @@ import { ColorPickerMenu } from "./chart-controls/color-picker";
 import { AnnotatorTab, ControlTab } from "./chart-controls/control-tab";
 import {
   getPalette,
-  getTimeIntervalOptions,
+  getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
   useTimeFormatLocale,
 } from "./ui-helpers";
@@ -130,7 +130,7 @@ export const DataFilterSelectTime = ({
   isOptional?: boolean;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
-  const timeFormatLocale = useTimeFormatLocale();
+  const formatLocale = useTimeFormatLocale();
 
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -149,13 +149,13 @@ export const DataFilterSelectTime = ({
     to,
     timeUnit,
     timeFormat,
-    timeFormatLocale
+    formatLocale
   );
 
   const options =
     timeIntervalWithProps.range > 100
       ? []
-      : getTimeIntervalOptions(timeIntervalWithProps);
+      : getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
 
   const allOptions = isOptional
     ? [
@@ -187,7 +187,7 @@ export const DataFilterSelectTime = ({
       label={fullLabel}
       value={fieldProps.value}
       timeFormat={timeFormat}
-      timeFormatLocale={timeFormatLocale}
+      formatLocale={formatLocale}
       onChange={fieldProps.onChange}
     />
   );
@@ -198,14 +198,14 @@ export const TimeInput = ({
   label,
   value,
   timeFormat,
-  timeFormatLocale,
+  formatLocale,
   onChange,
 }: {
   id: string;
   label: string;
   value: string | undefined;
   timeFormat: string;
-  timeFormatLocale: TimeLocaleObject;
+  formatLocale: TimeLocaleObject;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const [inputValue, setInputValue] = useState(
@@ -213,11 +213,8 @@ export const TimeInput = ({
   );
 
   const [parseDateValue, formatDateValue] = useMemo(
-    () => [
-      timeFormatLocale.parse(timeFormat),
-      timeFormatLocale.format(timeFormat),
-    ],
-    [timeFormat, timeFormatLocale]
+    () => [formatLocale.parse(timeFormat), formatLocale.format(timeFormat)],
+    [timeFormat, formatLocale]
   );
 
   const onInputChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
