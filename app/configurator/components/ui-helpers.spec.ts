@@ -41,31 +41,18 @@ describe("time intervals", () => {
     return { timeIntervalWithProps };
   };
 
-  it("should be of correct length", () => {
-    const { timeIntervalWithProps } = setup();
-    expect(timeIntervalWithProps.range).toEqual(6);
-  });
-
-  it("should be of the same length as time interval select options", () => {
-    const { timeIntervalWithProps } = setup();
-    const timeIntervalFormattedSelectOptions =
-      getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
-
-    expect(timeIntervalWithProps.range).toEqual(
-      timeIntervalFormattedSelectOptions.length
-    );
-  });
-
   it("should match values to time interval select options", () => {
     const { timeIntervalWithProps } = setup();
     const timeIntervalFormattedSelectOptions =
       getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
 
-    expect(
-      timeIntervalWithProps.formatDateValue(timeIntervalWithProps.fromDate)
-    ).toEqual(timeIntervalFormattedSelectOptions[0].value);
-    expect(
-      timeIntervalWithProps.formatDateValue(timeIntervalWithProps.toDate)
-    ).toEqual(timeIntervalFormattedSelectOptions[5].value);
+    expect(timeIntervalFormattedSelectOptions).toEqual([
+      { value: "2021-05-10", label: "2021-05-10" },
+      { value: "2021-05-11", label: "2021-05-11" },
+      { value: "2021-05-12", label: "2021-05-12" },
+      { value: "2021-05-13", label: "2021-05-13" },
+      { value: "2021-05-14", label: "2021-05-14" },
+      { value: "2021-05-15", label: "2021-05-15" },
+    ]);
   });
 });
