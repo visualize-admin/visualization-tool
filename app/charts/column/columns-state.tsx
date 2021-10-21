@@ -25,11 +25,10 @@ import {
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { getTickNumber } from "../shared/axis-height-linear";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+
 import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
+import { useChartPadding } from "../shared/padding";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { useInteractiveFilters } from "../shared/use-interactive-filters";
@@ -79,7 +78,6 @@ const useColumnsState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
-
   const [interactiveFilters] = useInteractiveFilters();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
@@ -169,29 +167,16 @@ const useColumnsState = ({
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
-  // Dimensions
-  const left = useMemo(() => {
-    // Fake ticks to compute maximum tick length as
-    // we need to take into account n between [0, 1] where numbers
-    // with decimals have greater text length than the extremes.
-    // Width * aspectRatio is taken as an approximation of chartHeight
-    // since we do not have access to chartHeight yet.
-    const fakeTicks = yScale.ticks(getTickNumber(width * aspectRatio));
-    return interactiveFiltersConfig?.time.active
-      ? estimateTextWidth(formatNumber(entireMaxValue))
-      : Math.max(...fakeTicks.map((x) => estimateTextWidth(`${x}`)));
-  }, [
-    formatNumber,
-    entireMaxValue,
-    interactiveFiltersConfig?.time.active,
+  const { left, bottom } = useChartPadding(
     yScale,
-    aspectRatio,
     width,
-  ]);
+    aspectRatio,
+    entireMaxValue,
+    interactiveFiltersConfig,
+    formatNumber,
+    bandDomain
+  );
 
-  const bottom = interactiveFiltersConfig?.time.active
-    ? (max(bandDomain, (d) => estimateTextWidth(d)) || 70) + BRUSH_BOTTOM_SPACE
-    : max(bandDomain, (d) => estimateTextWidth(d)) || 70;
   const margins = {
     top: 50,
     right: 40,
