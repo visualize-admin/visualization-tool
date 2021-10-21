@@ -39,7 +39,7 @@ import {
   timeWeek,
   timeYear,
 } from "d3";
-import { timeParse } from "d3-time-format";
+import { TimeLocaleObject, timeParse } from "d3-time-format";
 import { memoize } from "lodash";
 import { useMemo } from "react";
 import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
@@ -74,20 +74,20 @@ export const mkNumber = (x: $IntentionalAny): number => +x;
 const getFormattersForLocale = memoize((locale) => {
   const { format } = getD3TimeFormatLocale(locale);
   return {
-    empty: () => '-',
+    empty: () => "-",
     second: format("%d.%m.%Y %H:%M:%S"),
     minute: format("%d.%m.%Y %H:%M"),
     hour: format("%d.%m.%Y %H:%M"),
     day: format("%d.%m.%Y"),
     month: format("%d.%m.%Y"),
-    year: format("%Y")
-  }
-})
+    year: format("%Y"),
+  };
+});
 
 const useLocalFormatters = () => {
-  const locale = useLocale()
-  return getFormattersForLocale(locale)
-}
+  const locale = useLocale();
+  return getFormattersForLocale(locale);
+};
 
 /**
  * Formats dates automatically based on their precision in LONG form.
@@ -95,11 +95,11 @@ const useLocalFormatters = () => {
  * Use wherever dates are displayed without being in context of other dates (e.g. in tooltips)
  */
 export const useFormatFullDateAuto = () => {
-  const formatters = useLocalFormatters()
+  const formatters = useLocalFormatters();
   const formatter = useMemo(() => {
     return (dateInput: Date | string | null) => {
       if (dateInput === null) {
-        return formatters.empty()
+        return formatters.empty();
       }
 
       const date =
@@ -235,6 +235,51 @@ export const useFormatShortDateAuto = () => {
   }, [locale]);
 
   return formatter;
+};
+
+export const getTimeIntervalWithProps = (
+  from: string,
+  to: string,
+  timeUnit: TimeUnit,
+  timeFormat: string,
+  formatLocale: TimeLocaleObject
+) => {
+  const formatDateValue = formatLocale.format(timeFormat);
+  const parseDateValue = formatLocale.parse(timeFormat);
+
+  const fromDate = parseDateValue(from);
+  const toDate = parseDateValue(to);
+  if (!fromDate || !toDate) {
+    throw Error(`Error parsing dates ${from}, ${to}`);
+  }
+  const interval = getTimeInterval(timeUnit);
+
+  return {
+    fromDate,
+    toDate,
+    formatDateValue,
+    range: interval.count(fromDate, toDate) + 1,
+    interval,
+  };
+};
+
+export const getTimeIntervalFormattedSelectOptions = ({
+  fromDate,
+  toDate,
+  formatDateValue,
+  interval,
+}: {
+  fromDate: Date;
+  toDate: Date;
+  formatDateValue: (date: Date) => string;
+  interval: CountableTimeInterval;
+}) => {
+  return [...interval.range(fromDate, toDate), toDate].map((d) => {
+    return {
+      value: formatDateValue(d),
+      label: formatDateValue(d),
+    };
+  });
 };
 
 // export const formatNumber = (x: number): string => format(",.2~f")(x);

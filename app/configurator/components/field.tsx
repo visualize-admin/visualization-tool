@@ -1,4 +1,5 @@
 import { t } from "@lingui/macro";
+import { TimeLocaleObject } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { Box, Flex } from "theme-ui";
@@ -25,8 +26,8 @@ import { ColorPickerMenu } from "./chart-controls/color-picker";
 import { AnnotatorTab, ControlTab } from "./chart-controls/control-tab";
 import {
   getPalette,
-  getTimeInterval,
-  useFormatFullDateAuto,
+  getTimeIntervalFormattedSelectOptions,
+  getTimeIntervalWithProps,
   useTimeFormatLocale,
 } from "./ui-helpers";
 
@@ -129,19 +130,7 @@ export const DataFilterSelectTime = ({
   isOptional?: boolean;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
-  const formatDateAuto = useFormatFullDateAuto();
   const formatLocale = useTimeFormatLocale();
-
-  const formatDateValue = formatLocale.format(timeFormat);
-  const parseDateValue = formatLocale.parse(timeFormat);
-
-  const fromDate = parseDateValue(from);
-  const toDate = parseDateValue(to);
-  if (!fromDate || !toDate) {
-    throw Error(`Error parsing dates ${from}, ${to}`);
-  }
-  const timeInterval = getTimeInterval(timeUnit);
-  const range = timeInterval.count(fromDate, toDate) + 1;
 
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -153,19 +142,25 @@ export const DataFilterSelectTime = ({
     message: `optional`,
   });
 
-  const allOptions = useMemo(() => {
-    if (range > 100) {
-      return [];
-    }
+  const fullLabel = isOptional ? `${label} (${optionalLabel})` : label;
 
-    const options = [...timeInterval.range(fromDate, toDate), toDate].map(
-      (d) => {
-        return {
-          value: formatDateValue(d),
-          label: formatDateAuto(d),
-        };
-      }
+  const timeIntervalWithProps = useMemo(() => {
+    return getTimeIntervalWithProps(
+      from,
+      to,
+      timeUnit,
+      timeFormat,
+      formatLocale
     );
+  }, [from, to, timeUnit, timeFormat, formatLocale]);
+
+  const options = useMemo(() => {
+    return timeIntervalWithProps.range > 100
+      ? []
+      : getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
+  }, [timeIntervalWithProps]);
+
+  const allOptions = useMemo(() => {
     return isOptional
       ? [
           {
@@ -176,20 +171,9 @@ export const DataFilterSelectTime = ({
           ...options,
         ]
       : options;
-  }, [
-    range,
-    timeInterval,
-    fromDate,
-    toDate,
-    isOptional,
-    noneLabel,
-    formatDateValue,
-    formatDateAuto,
-  ]);
+  }, [isOptional, options, noneLabel]);
 
-  const fullLabel = isOptional ? `${label} (${optionalLabel})` : label;
-
-  if (range <= 100) {
+  if (options.length) {
     return (
       <Select
         id={id}
@@ -208,28 +192,30 @@ export const DataFilterSelectTime = ({
       label={fullLabel}
       value={fieldProps.value}
       timeFormat={timeFormat}
+      formatLocale={formatLocale}
       onChange={fieldProps.onChange}
     />
   );
 };
 
-const TimeInput = ({
+export const TimeInput = ({
   id,
   label,
   value,
   timeFormat,
+  formatLocale,
   onChange,
 }: {
   id: string;
   label: string;
   value: string | undefined;
   timeFormat: string;
+  formatLocale: TimeLocaleObject;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const [inputValue, setInputValue] = useState(
     value === FIELD_VALUE_NONE ? undefined : value
   );
-  const formatLocale = useTimeFormatLocale();
 
   const [parseDateValue, formatDateValue] = useMemo(
     () => [formatLocale.parse(timeFormat), formatLocale.format(timeFormat)],
