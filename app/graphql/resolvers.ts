@@ -99,8 +99,12 @@ const Query: QueryResolvers = {
       return { dataCube: cube };
     });
   },
-  dataCubeByIri: async (_, { iri, locale }) => {
-    return getCube({ iri, locale: parseLocaleString(locale) });
+  dataCubeByIri: async (_, { iri, locale, latest }) => {
+    return getCube({
+      iri,
+      locale: parseLocaleString(locale),
+      latest,
+    });
   },
 };
 
@@ -112,6 +116,7 @@ const DataCube: DataCubeResolvers = {
   contactName: ({ data: { contactPoint } }) => contactPoint?.name ?? null,
   contactEmail: ({ data: { contactPoint } }) => contactPoint?.email ?? null,
   landingPage: ({ data: { landingPage } }) => landingPage ?? null,
+  expires: ({ data: { expires } }) => expires ?? null,
   publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,

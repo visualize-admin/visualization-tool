@@ -29,6 +29,7 @@ type DataCube {
   publisher: String
   description: String
   datePublished: String
+  expires: String
   publicationStatus: DataCubePublicationStatus!
   observations(
     limit: Int
@@ -113,7 +114,7 @@ enum DataCubeResultOrder {
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
-  dataCubeByIri(locale: String, iri: String!): DataCube
+  dataCubeByIri(locale: String, iri: String!, latest: Boolean = true): DataCube
   dataCubes(
     locale: String
     query: String

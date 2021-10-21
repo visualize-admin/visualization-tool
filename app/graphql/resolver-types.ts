@@ -34,6 +34,7 @@ export type DataCube = {
   publisher?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
+  expires?: Maybe<Scalars['String']>;
   publicationStatus: DataCubePublicationStatus;
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
@@ -136,6 +137,7 @@ export type Query = {
 export type QueryDataCubeByIriArgs = {
   locale?: Maybe<Scalars['String']>;
   iri: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -288,6 +290,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   publisher?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   datePublished?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  expires?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   publicationStatus?: Resolver<ResolversTypes['DataCubePublicationStatus'], ParentType, ContextType>;
   observations?: Resolver<ResolversTypes['ObservationsQuery'], ParentType, ContextType, RequireFields<DataCubeObservationsArgs, never>>;
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>;
@@ -365,7 +368,7 @@ export type OrdinalDimensionResolvers<ContextType = any, ParentType extends Reso
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'iri'>>;
+  dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'iri' | 'latest'>>;
   dataCubes?: Resolver<Array<ResolversTypes['DataCubeResult']>, ParentType, ContextType, RequireFields<QueryDataCubesArgs, never>>;
 }>;
 

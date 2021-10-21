@@ -141,9 +141,11 @@ export const getCubes = async ({
 export const getCube = async ({
   iri,
   locale,
+  latest = true,
 }: {
   iri: string;
   locale: string;
+  latest?: boolean;
 }): Promise<ResolvedDataCube | null> => {
   const source = createSource();
 
@@ -152,11 +154,7 @@ export const getCube = async ({
   if (!cube) {
     return null;
   }
-
-  // Maybe upgrading the cube version should be optional?
-  // In that case, we need to add an argument to this function and the GraphQL query
-  const latestCube = await getLatestCube(cube);
-
+  const latestCube = latest === false ? cube : await getLatestCube(cube);
   return parseCube({ cube: latestCube, locale });
 };
 

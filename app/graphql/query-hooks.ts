@@ -29,6 +29,7 @@ export type DataCube = {
   publisher?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   datePublished?: Maybe<Scalars['String']>;
+  expires?: Maybe<Scalars['String']>;
   publicationStatus: DataCubePublicationStatus;
   observations: ObservationsQuery;
   dimensions: Array<Dimension>;
@@ -131,6 +132,7 @@ export type Query = {
 export type QueryDataCubeByIriArgs = {
   locale?: Maybe<Scalars['String']>;
   iri: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -187,6 +189,7 @@ export type DimensionMetaDataFragment = DimensionMetaData_Measure_Fragment | Dim
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -211,6 +214,7 @@ export type DataCubePreviewObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
   measures: Array<Scalars['String']> | Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -219,14 +223,16 @@ export type DataCubePreviewObservationsQuery = { __typename: 'Query', dataCubeBy
 export type DataCubeMetadataQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 }>;
 
 
-export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
+export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
 
 export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -251,6 +257,7 @@ export type DimensionValuesQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
   locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -272,6 +279,7 @@ export type TemporalDimensionValuesQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
   locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -285,6 +293,7 @@ export type DataCubeObservationsQueryVariables = Exact<{
   locale: Scalars['String'];
   measures: Array<Scalars['String']> | Scalars['String'];
   filters?: Maybe<Scalars['Filters']>;
+  latest?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -342,8 +351,8 @@ export function useDataCubesQuery(options: Omit<Urql.UseQueryArgs<DataCubesQuery
   return Urql.useQuery<DataCubesQuery>({ query: DataCubesDocument, ...options });
 };
 export const DataCubePreviewDocument = gql`
-    query DataCubePreview($iri: String!, $locale: String!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+    query DataCubePreview($iri: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
     description
@@ -362,8 +371,8 @@ export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCube
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });
 };
 export const DataCubePreviewObservationsDocument = gql`
-    query DataCubePreviewObservations($iri: String!, $locale: String!, $measures: [String!]!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+    query DataCubePreviewObservations($iri: String!, $locale: String!, $measures: [String!]!, $latest: Boolean) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     observations(limit: 10, measures: $measures) {
       data
       sparql
@@ -376,8 +385,8 @@ export function useDataCubePreviewObservationsQuery(options: Omit<Urql.UseQueryA
   return Urql.useQuery<DataCubePreviewObservationsQuery>({ query: DataCubePreviewObservationsDocument, ...options });
 };
 export const DataCubeMetadataDocument = gql`
-    query DataCubeMetadata($iri: String!, $locale: String!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+    query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
     description
@@ -386,6 +395,7 @@ export const DataCubeMetadataDocument = gql`
     contactName
     contactEmail
     landingPage
+    expires
     datePublished
     publicationStatus
   }
@@ -396,8 +406,8 @@ export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCub
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
 };
 export const DataCubeMetadataWithComponentValuesDocument = gql`
-    query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+    query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
     publisher
@@ -415,8 +425,8 @@ export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.U
   return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });
 };
 export const DimensionValuesDocument = gql`
-    query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
+    query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ...dimensionMetaData
     }
@@ -428,8 +438,8 @@ export function useDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<Dimensio
   return Urql.useQuery<DimensionValuesQuery>({ query: DimensionValuesDocument, ...options });
 };
 export const TemporalDimensionValuesDocument = gql`
-    query TemporalDimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
+    query TemporalDimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ... on TemporalDimension {
         ...dimensionMetaData
@@ -445,8 +455,8 @@ export function useTemporalDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<
   return Urql.useQuery<TemporalDimensionValuesQuery>({ query: TemporalDimensionValuesDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
-    query DataCubeObservations($iri: String!, $locale: String!, $measures: [String!]!, $filters: Filters) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+    query DataCubeObservations($iri: String!, $locale: String!, $measures: [String!]!, $filters: Filters, $latest: Boolean) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
     description

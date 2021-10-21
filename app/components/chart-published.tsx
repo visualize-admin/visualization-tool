@@ -62,6 +62,17 @@ export const ChartPublished = ({
             </HintRed>
           </Box>
         )}
+        {metaData?.dataCubeByIri?.expires && (
+          <Box sx={{ mb: 4 }}>
+            <HintRed iconName="datasetError" iconSize={64}>
+              <Trans id="dataset.publicationStatus.expires.warning">
+                Careful, the data for this chart has expired.
+                <br />
+                <strong>Don&apos;t use for reporting!</strong>
+              </Trans>
+            </HintRed>
+          </Box>
+        )}
         {meta.title[locale] !== "" && (
           <Text as="div" variant="heading2" mb={2}>
             {meta.title[locale]}
