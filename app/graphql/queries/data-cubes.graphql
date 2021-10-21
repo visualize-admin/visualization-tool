@@ -33,8 +33,8 @@ fragment dimensionMetaData on Dimension {
   }
 }
 
-query DataCubePreview($iri: String!, $locale: String!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+query DataCubePreview($iri: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
     description
@@ -52,8 +52,9 @@ query DataCubePreviewObservations(
   $iri: String!
   $locale: String!
   $measures: [String!]!
+  $latest: Boolean
 ) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     observations(limit: 10, measures: $measures) {
       data
       sparql
@@ -61,8 +62,8 @@ query DataCubePreviewObservations(
   }
 }
 
-query DataCubeMetadata($iri: String!, $locale: String!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
     description
@@ -77,8 +78,12 @@ query DataCubeMetadata($iri: String!, $locale: String!) {
   }
 }
 
-query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+query DataCubeMetadataWithComponentValues(
+  $iri: String!
+  $locale: String!
+  $latest: Boolean
+) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
     publisher
@@ -95,8 +100,9 @@ query DimensionValues(
   $dataCubeIri: String!
   $dimensionIri: String!
   $locale: String!
+  $latest: Boolean
 ) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ...dimensionMetaData
     }
@@ -107,8 +113,9 @@ query TemporalDimensionValues(
   $dataCubeIri: String!
   $dimensionIri: String!
   $locale: String!
+  $latest: Boolean
 ) {
-  dataCubeByIri(iri: $dataCubeIri, locale: $locale) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ... on TemporalDimension {
         ...dimensionMetaData
@@ -124,8 +131,9 @@ query DataCubeObservations(
   $locale: String!
   $measures: [String!]!
   $filters: Filters
+  $latest: Boolean
 ) {
-  dataCubeByIri(iri: $iri, locale: $locale) {
+  dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
     description

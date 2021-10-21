@@ -99,8 +99,12 @@ const Query: QueryResolvers = {
       return { dataCube: cube };
     });
   },
-  dataCubeByIri: async (_, { iri, locale }) => {
-    return getCube({ iri, locale: parseLocaleString(locale) });
+  dataCubeByIri: async (_, { iri, locale, latest }) => {
+    return getCube({
+      iri,
+      locale: parseLocaleString(locale),
+      latest,
+    });
   },
 };
 
