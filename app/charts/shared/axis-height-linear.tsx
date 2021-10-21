@@ -9,7 +9,11 @@ import { LinesState } from "../line/lines-state";
 import { AreasState } from "../area/areas-state";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 
-const TICK_MIN_HEIGHT = 50;
+export const TICK_MIN_HEIGHT = 50;
+
+export const getTickNumber = (height: number) => {
+  return Math.min(height / TICK_MIN_HEIGHT, 4);
+};
 
 export const AxisHeightLinear = () => {
   const ref = useRef<SVGGElement>(null);
@@ -20,7 +24,7 @@ export const AxisHeightLinear = () => {
     | LinesState
     | AreasState;
 
-  const ticks = Math.min(bounds.chartHeight / TICK_MIN_HEIGHT, 4);
+  const ticks = getTickNumber(bounds.chartHeight);
 
   const { labelColor, labelFontSize, gridColor, fontFamily } = useChartTheme();
 

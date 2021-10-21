@@ -1,5 +1,6 @@
 import {
   ascending,
+  axisLeft,
   descending,
   extent,
   max,
@@ -25,6 +26,7 @@ import {
 import { Observation } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
+import { getTickNumber } from "../shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -168,12 +170,24 @@ const useColumnsState = ({
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // Dimensions
-  const left = interactiveFiltersConfig?.time.active
-    ? estimateTextWidth(formatNumber(entireMaxValue))
-    : Math.max(
-        estimateTextWidth(formatNumber(yScale.domain()[0])),
-        estimateTextWidth(formatNumber(yScale.domain()[1]))
-      );
+  const left = useMemo(() => {
+    // Fake ticks to compute maximum tick length as
+    // we need to take into account n between [0, 1] where numbers
+    // with decimals have greater text length than the extremes.
+    // Width * aspectRatio is taken as an approximation of chartHeight
+    // since we do not have access to chartHeight yet.
+    const fakeTicks = yScale.ticks(getTickNumber(width * aspectRatio));
+    return interactiveFiltersConfig?.time.active
+      ? estimateTextWidth(formatNumber(entireMaxValue))
+      : Math.max(...fakeTicks.map((x) => estimateTextWidth(`${x}`)));
+  }, [
+    formatNumber,
+    entireMaxValue,
+    interactiveFiltersConfig?.time.active,
+    yScale,
+    aspectRatio,
+    width,
+  ]);
 
   const bottom = interactiveFiltersConfig?.time.active
     ? (max(bandDomain, (d) => estimateTextWidth(d)) || 70) + BRUSH_BOTTOM_SPACE
