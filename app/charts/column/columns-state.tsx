@@ -1,5 +1,6 @@
 import {
   ascending,
+  axisLeft,
   descending,
   extent,
   max,
@@ -24,10 +25,10 @@ import {
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+
 import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
+import { useChartPadding } from "../shared/padding";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { useInteractiveFilters } from "../shared/use-interactive-filters";
@@ -77,7 +78,6 @@ const useColumnsState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
-
   const [interactiveFilters] = useInteractiveFilters();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
@@ -167,17 +167,16 @@ const useColumnsState = ({
 
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
-  // Dimensions
-  const left = interactiveFiltersConfig?.time.active
-    ? estimateTextWidth(formatNumber(entireMaxValue))
-    : Math.max(
-        estimateTextWidth(formatNumber(yScale.domain()[0])),
-        estimateTextWidth(formatNumber(yScale.domain()[1]))
-      );
+  const { left, bottom } = useChartPadding(
+    yScale,
+    width,
+    aspectRatio,
+    entireMaxValue,
+    interactiveFiltersConfig,
+    formatNumber,
+    bandDomain
+  );
 
-  const bottom = interactiveFiltersConfig?.time.active
-    ? (max(bandDomain, (d) => estimateTextWidth(d)) || 70) + BRUSH_BOTTOM_SPACE
-    : max(bandDomain, (d) => estimateTextWidth(d)) || 70;
   const margins = {
     top: 50,
     right: 40,

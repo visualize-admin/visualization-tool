@@ -141,8 +141,10 @@ export const ChartColumns = memo(
           >
             <ChartContainer>
               <ChartSvg>
-                <AxisHeightLinear /> <AxisWidthBand />
-                <ColumnsGrouped /> <AxisWidthBandDomain />
+                <AxisHeightLinear />
+                <AxisWidthBand />
+                <ColumnsGrouped />
+                <AxisWidthBandDomain />
                 <InteractionColumns />
                 {interactiveFiltersConfig?.time.active && <BrushTime />}
               </ChartSvg>
@@ -166,8 +168,10 @@ export const ChartColumns = memo(
           >
             <ChartContainer>
               <ChartSvg>
-                <AxisHeightLinear /> <AxisWidthBand />
-                <Columns /> <AxisWidthBandDomain />
+                <AxisHeightLinear />
+                <AxisWidthBand />
+                <Columns />
+                <AxisWidthBandDomain />
                 <InteractionColumns />
                 {interactiveFiltersConfig?.time.active && <BrushTime />}
               </ChartSvg>
