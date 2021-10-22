@@ -1,6 +1,8 @@
 import { sum } from "d3";
+import { omitBy } from "lodash";
 import { useMemo } from "react";
 import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
+import { FIELD_VALUE_NONE } from "../../configurator/constants";
 import { Observation, ObservationValue } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import {
@@ -9,26 +11,37 @@ import {
 } from "./use-interactive-filters";
 
 // Prepare filters used in data query:
-// merges "hard" data filters (in-editor, publisher-defined)
-// and "interactive" data filters (user-defined), if applicable
+// - merges "hard" data filters (in-editor, publisher-defined)
+//   and "interactive" data filters (user-defined), if applicable
+// - removes none values since they should not be sent as part of the graphql query
 export const useQueryFilters = ({
   chartConfig,
   interactiveFiltersIsActive,
 }: {
   chartConfig: ChartConfig;
-  interactiveFiltersIsActive: boolean | undefined;
+  interactiveFiltersIsActive?: boolean;
 }): Filters | FilterValueSingle => {
   const [IFstate] = useInteractiveFilters();
   const { filters } = chartConfig;
-  if (chartConfig.chartType !== "table") {
-    const queryFilters = interactiveFiltersIsActive
-      ? { ...filters, ...IFstate.dataFilters }
-      : filters;
 
-    return queryFilters;
-  } else {
-    return filters;
-  }
+  return useMemo(() => {
+    let res;
+    if (chartConfig.chartType !== "table") {
+      const queryFilters = interactiveFiltersIsActive
+        ? { ...filters, ...IFstate.dataFilters }
+        : filters;
+
+      res = queryFilters;
+    } else {
+      res = filters;
+    }
+    res = omitBy(
+      res,
+      (x) => x.type === "single" && x.value === FIELD_VALUE_NONE
+    ) as typeof filters;
+
+    return res;
+  }, [IFstate.dataFilters, filters, interactiveFiltersIsActive, chartConfig]);
 };
 
 // Prepare data used in charts.
