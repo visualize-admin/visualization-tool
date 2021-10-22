@@ -1,5 +1,5 @@
-import { Box, Flex, Text } from "theme-ui";
 import { ReactNode } from "react";
+import { Box, Flex, Text } from "theme-ui";
 import { ChartPublished } from "../components/chart-published";
 import { HomepageSection } from "./generic";
 
@@ -32,19 +32,19 @@ export const Examples = ({
       <HomepageSection>{headline}</HomepageSection>
       <Example headline={example1Headline} description={example1Description}>
         <ChartPublished
-          dataSet="http://environment.ld.admin.ch/foen/px/0703010000_102/dataset"
+          dataSet="https://environment.ld.admin.ch/foen/ubd0037/3/"
           meta={{
             title: {
-              de: "",
-              fr: "",
-              it: "",
-              en: "",
+              de: "Lärmbelastung durch Verkehr",
+              fr: "Exposition au bruit du trafic",
+              it: "Esposizione al rumore del traffico",
+              en: "Traffic noise pollution",
             },
             description: {
-              de: " ",
-              fr: " ",
-              it: " ",
-              en: " ",
+              de: "Anteil der Personen mit schädlichem oder lästigem Verkehrslärm am Wohnort, in der Schweiz, 2015",
+              fr: "Proportion des personnes exposées à leur domicile à un bruit nuisible ou incommodant dû au trafic, en Suisse, en 2015",
+              it: "Percentuale di persone esposte, al loro domicilio, a rumore dannoso o molesto generato dal traffico, in Svizzera, nel 2015",
+              en: "Proportion of people exposed at home to harmful or disturbing levels of traffic noise, in Switzerland, 2015",
             },
           }}
           chartConfig={{
@@ -52,62 +52,72 @@ export const Examples = ({
             fields: {
               x: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/0",
+                  "https://environment.ld.admin.ch/foen/ubd0037/verkehrsart",
               },
               y: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/measure/0",
+                  "https://environment.ld.admin.ch/foen/ubd0037/wert",
               },
               segment: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1",
-                type: "stacked",
-                palette: "dark2",
+                  "https://environment.ld.admin.ch/foen/ubd0037/periode",
+                palette: "category10",
+                type: "grouped",
+                sorting: {
+                  sortingType: "byDimensionLabel",
+                  sortingOrder: "asc",
+                },
+                colorMapping: {
+                  "https://environment.ld.admin.ch/foen/ubd0037/periode/D":
+                    "#1f77b4",
+                  "https://environment.ld.admin.ch/foen/ubd0037/periode/N":
+                    "#ff7f0e",
+                },
               },
             },
             interactiveFiltersConfig: {
-              legend: { active: false, componentIri: "" },
+              legend: {
+                active: true,
+                componentIri: "",
+              },
               time: {
                 active: false,
                 componentIri: "",
-                presets: { type: "range", from: "", to: "" },
+                presets: {
+                  type: "range",
+                  from: "",
+                  to: "",
+                },
               },
-              dataFilters: { active: false, componentIris: [] },
+              dataFilters: {
+                active: true,
+                componentIris: [
+                  "https://environment.ld.admin.ch/foen/ubd0037/beurteilung",
+                  "https://environment.ld.admin.ch/foen/ubd0037/gemeindetype",
+                  "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteeinheit",
+                ],
+              },
             },
             filters: {
-              "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/0": {
-                type: "multi",
-                values: {
-                  "1980": true,
-                  "1985": true,
-                  "1990": true,
-                  "1995": true,
-                  "2000": true,
-                  "2005": true,
-                  "2010": true,
-                  "2015": true,
+              "https://environment.ld.admin.ch/foen/ubd0037/referenzjahr": {
+                type: "single",
+                value: "2015",
+              },
+              "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteeinheit":
+                {
+                  type: "single",
+                  value:
+                    "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteEinheit/Pers",
                 },
-              },
-              "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1": {
-                type: "multi",
-                values: {
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/1/0": true,
-                },
-              },
-              "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/2": {
+              "https://environment.ld.admin.ch/foen/ubd0037/gemeindetype": {
                 type: "single",
                 value:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/2/0",
+                  "https://environment.ld.admin.ch/foen/ubd0037/gemeindeTyp/CH",
               },
-              "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/3": {
+              "https://environment.ld.admin.ch/foen/ubd0037/beurteilung": {
                 type: "single",
                 value:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/3/0",
-              },
-              "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/4": {
-                type: "single",
-                value:
-                  "http://environment.ld.admin.ch/foen/px/0703010000_102/dimension/4/0",
+                  "https://environment.ld.admin.ch/foen/ubd0037/beurteilung/%3EIGWLSV",
               },
             },
           }}
@@ -120,19 +130,19 @@ export const Examples = ({
         reverse
       >
         <ChartPublished
-          dataSet="http://environment.ld.admin.ch/foen/px/0703030000_122/dataset"
+          dataSet="https://environment.ld.admin.ch/foen/ubd0104/3/"
           meta={{
             title: {
-              de: "",
-              fr: "",
-              it: "",
-              en: "",
+              de: "E. coli und Enterokokken in Badegewässern",
+              fr: "E. coli et entérocoques dans les eaux de baignade",
+              it: "E. coli ed enterococchi nelle acque di balneazione",
+              en: "E. coli and enterococci in Bathing water",
             },
             description: {
-              de: " ",
-              fr: " ",
-              it: " ",
-              en: " ",
+              de: "Konzentration von Escherichia coli und intestinalen Enterokokken an Badestellen, nach Beobachtungsprogramm, 2018",
+              fr: "Concentration en Escherichia coli et entérocoques intestinaux dans les sites de baignade, par programme d’observation, en 2018",
+              it: "Concentrazione di Escherichia coli ed enterococchi intestinali nei siti di balneazione, per programma di osservazione, nel 2018",
+              en: "Concentration of Escherichia coli and intestinal enterococci at bathing sites, by monitoring programme, 2018",
             },
           }}
           chartConfig={{
@@ -140,42 +150,78 @@ export const Examples = ({
             fields: {
               x: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/0",
+                  "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
+                sorting: {
+                  sortingType: "byDimensionLabel",
+                  sortingOrder: "asc",
+                },
               },
               y: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/measure/0",
+                  "https://environment.ld.admin.ch/foen/ubd0104/value",
               },
               segment: {
                 componentIri:
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1",
-                palette: "set2",
+                  "https://environment.ld.admin.ch/foen/ubd0104/station",
+                palette: "category10",
+                type: "grouped",
+                sorting: {
+                  sortingType: "byDimensionLabel",
+                  sortingOrder: "asc",
+                },
+                colorMapping: {
+                  "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24001":
+                    "#ff7f0e",
+                  "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24002":
+                    "#1f77b4",
+                },
               },
             },
             interactiveFiltersConfig: {
-              legend: { active: false, componentIri: "" },
+              legend: {
+                active: true,
+                componentIri: "",
+              },
               time: {
                 active: false,
                 componentIri: "",
-                presets: { type: "range", from: "", to: "" },
-              },
-              dataFilters: { active: false, componentIris: [] },
-            },
-            filters: {
-              "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1": {
-                type: "multi",
-                values: {
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/1": true,
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/2": true,
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/3": true,
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/1/4": true,
+                presets: {
+                  type: "range",
+                  from: "2007-05-20T22:00:00.000Z",
+                  to: "2020-09-27T22:00:00.000Z",
                 },
               },
-              "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/2": {
-                type: "single",
-                value:
-                  "http://environment.ld.admin.ch/foen/px/0703030000_122/dimension/2/0",
+              dataFilters: {
+                active: true,
+                componentIris: [
+                  "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+                ],
               },
+            },
+            filters: {
+              "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing": {
+                type: "range",
+                from: "2018-01-01",
+                to: "2018-12-31",
+              },
+              "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+                type: "single",
+                value: "E.coli",
+              },
+              "https://environment.ld.admin.ch/foen/ubd0104/station": {
+                type: "multi",
+                values: {
+                  "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24002":
+                    true,
+                  "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24001":
+                    true,
+                },
+              },
+              "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm":
+                {
+                  type: "single",
+                  value: "BAQUA_BE",
+                },
             },
           }}
           configKey={""}
