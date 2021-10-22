@@ -69,14 +69,10 @@ const InteractiveFiltersStateReducer = (
       draft.dataFilters = action.value;
       return draft;
     case "UPDATE_DATA_FILTER":
-      if (action.value.dimensionValueIri === FIELD_VALUE_NONE) {
-        delete draft.dataFilters[action.value.dimensionIri];
-      } else {
-        draft.dataFilters[action.value.dimensionIri] = {
-          type: "single",
-          value: action.value.dimensionValueIri,
-        };
-      }
+      draft.dataFilters[action.value.dimensionIri] = {
+        type: "single",
+        value: action.value.dimensionValueIri,
+      };
 
       return draft;
 

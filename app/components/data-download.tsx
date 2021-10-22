@@ -34,6 +34,7 @@ export const DataDownload = memo(
           )
         : [];
     const filters = useQueryFilters({
+      filterNone: true,
       chartConfig,
       interactiveFiltersIsActive:
         chartConfig.interactiveFiltersConfig?.dataFilters.active,
