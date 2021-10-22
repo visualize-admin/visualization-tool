@@ -35,7 +35,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               <Trans id="dataset.publicationStatus.draft.warning">
                 Careful, this dataset is only a draft.
                 <br />
-                <strong>Don't use for reporting!</strong>
+                <strong>Don&apos;t use for reporting!</strong>
               </Trans>
             </HintRed>
           </Box>
