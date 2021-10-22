@@ -42,6 +42,9 @@ describe("The Home Page", () => {
 
     cy.get('a[hreflang="fr"]').click();
 
+    // Examples data can take a long time to arrive
+    cy.get(`html[lang="fr"]`, { timeout: 20000 });
+
     cy.location("pathname").should("equal", "/fr");
 
     cy.get("html").should("have.attr", "lang", "fr");
