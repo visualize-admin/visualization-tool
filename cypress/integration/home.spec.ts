@@ -1,3 +1,5 @@
+import { ignoreUncaughtExceptions } from "./utils";
+
 describe("The Home Page", () => {
   it("default language (de) should render on /", () => {
     cy.request({
@@ -30,6 +32,12 @@ describe("The Home Page", () => {
   });
 
   it("language switch should work", () => {
+    // TODO At some point we should be able to understand what causes ResizeObserver
+    // errors when we change the language. This does not cause a problem to the user
+    // as the site continues to be functional.
+    // @see https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded
+    ignoreUncaughtExceptions(cy, /ResizeObserver/);
+
     cy.visit("/");
 
     cy.get('a[hreflang="fr"]').click();
