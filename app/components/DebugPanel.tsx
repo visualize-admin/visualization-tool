@@ -1,8 +1,10 @@
 import React from "react";
 import { Inspector } from "react-inspector";
-import { Box } from "theme-ui";
+import { Box, Link, Text } from "theme-ui";
 import { useInteractiveFilters } from "../charts/shared/use-interactive-filters";
 import { useConfiguratorState } from "../configurator";
+import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
+import { Icon } from "../icons";
 
 const DebugInteractiveFilters = () => {
   const [interactiveFiltersState] = useInteractiveFilters();
@@ -22,6 +24,44 @@ const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
   return (
     <>
+      <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+        Cube Tools
+      </Box>
+      <Box sx={{ p: 5 }}>
+        <Link
+          variant="primary"
+          href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
+            SPARQL_ENDPOINT
+          )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
+            configuratorState.dataSet ?? ""
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <Icon name="linkExternal" size={16} />
+          <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
+            Open in Cube Viewer
+          </Text>
+        </Link>
+        {SPARQL_EDITOR && (
+          <Link
+            variant="primary"
+            href={`https://int.lindas.admin.ch/sparql#query=${encodeURIComponent(
+              `#pragma describe.strategy cbd
+DESCRIBE <${configuratorState.dataSet ?? ""}>`
+            )}&requestMethod=POST`}
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ display: "flex", alignItems: "center", mt: 3 }}
+          >
+            <Icon name="linkExternal" size={16} />
+            <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
+              Cube Metadata Query
+            </Text>
+          </Link>
+        )}
+      </Box>
       <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
         Configurator State
       </Box>
