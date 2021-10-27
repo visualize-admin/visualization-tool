@@ -111,7 +111,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               <DebugPanel configurator={true} interactiveFilters={true} />
             </InteractiveFiltersProvider>
           </>
-        )}{" "}
+        )}
       </ChartErrorBoundary>
     </Flex>
   );

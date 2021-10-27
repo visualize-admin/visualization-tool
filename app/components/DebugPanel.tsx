@@ -8,7 +8,12 @@ const DebugInteractiveFilters = () => {
   const [interactiveFiltersState] = useInteractiveFilters();
   return (
     <>
-      interactive filters: <Inspector data={interactiveFiltersState} />
+      <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+        Interactive Filters State
+      </Box>
+      <Box sx={{ p: 5 }}>
+        <Inspector expandLevel={3} data={interactiveFiltersState} />
+      </Box>
     </>
   );
 };
@@ -17,7 +22,12 @@ const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
   return (
     <>
-      configurator: <Inspector data={configuratorState} />
+      <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+        Configurator State
+      </Box>
+      <Box sx={{ p: 5 }}>
+        <Inspector expandLevel={3} data={configuratorState} />
+      </Box>
     </>
   );
 };
@@ -30,7 +40,22 @@ const DebugPanel = ({
   interactiveFilters?: Boolean;
 }) => {
   return (
-    <Box my={3} p={2} bg="muted">
+    <Box
+      sx={{
+        mt: 5,
+        ml: -5,
+        mr: -5,
+        mb: -5,
+        bg: "background",
+        // boxShadow: "primary",
+        borderTopStyle: "solid",
+        borderColor: "monochrome500",
+        borderWidth: 1,
+      }}
+    >
+      <Box as="h3" variant="text.heading3" sx={{ p: 5, color: "warning" }}>
+        🚧 Debug Panel 🚧
+      </Box>
       {configurator ? <DebugConfigurator /> : null}
       {interactiveFilters ? <DebugInteractiveFilters /> : null}
     </Box>

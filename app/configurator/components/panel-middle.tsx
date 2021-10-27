@@ -22,7 +22,6 @@ export const PanelMiddle = () => {
               <DataSetHint />
             </ChartPanel>
           )}
-          <DebugPanel configurator={true} />
         </>
       ) : (
         <>
