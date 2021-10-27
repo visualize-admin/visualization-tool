@@ -71,12 +71,16 @@ const Query: QueryResolvers = {
         const cube = cubes.find((c) => c.data.iri === result.iri)!;
         return {
           dataCube: cube,
-          highlightedTitle: fuzzaldrin.wrap(result.title, query, {
-            wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
-          }),
-          highlightedDescription: fuzzaldrin.wrap(result.description, query, {
-            wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
-          }),
+          highlightedTitle: result.title
+            ? fuzzaldrin.wrap(result.title, query, {
+                wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
+              })
+            : "",
+          highlightedDescription: result.description
+            ? fuzzaldrin.wrap(result.description, query, {
+                wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
+              })
+            : "",
           score:
             fuzzaldrin.score(result.title, query) +
             fuzzaldrin.score(result.description, query) * 0.5,
