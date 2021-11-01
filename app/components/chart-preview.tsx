@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { omitBy } from "lodash";
 import * as React from "react";
 import { useEffect } from "react";
 import { Box, Flex, Text } from "theme-ui";
@@ -21,6 +22,7 @@ import {
   useConfiguratorState,
 } from "../configurator";
 import { parseDate } from "../configurator/components/ui-helpers";
+import { FIELD_VALUE_NONE } from "../configurator/constants";
 import useFilterChanges from "../configurator/use-filter-changes";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
@@ -173,22 +175,22 @@ const ChartWithInteractiveFilters = ({
     if (changes.length !== 1) {
       return;
     }
-
-    const change = changes[0];
-    if (change[2].type !== "single") {
-      return;
+    const [dimensionIri, prev, next] = changes[0];
+    if (prev?.type === "single" || next?.type === "single") {
+      dispatch({
+        type: "UPDATE_DATA_FILTER",
+        value:
+          next?.type === "single" && next?.value
+            ? {
+                dimensionIri,
+                dimensionValueIri: next.value,
+              }
+            : {
+                dimensionIri,
+                dimensionValueIri: FIELD_VALUE_NONE,
+              },
+      });
     }
-
-    // When there has been a single change on the chart config, it
-    // must be coming from the user on the chart config and be
-    // reflected in the interactive filters
-    dispatch({
-      type: "UPDATE_DATA_FILTER",
-      value: {
-        dimensionIri: change[0],
-        dimensionValueIri: change[2].value,
-      },
-    });
   }, [changes, dispatch]);
 
   // Interactive legend
@@ -236,6 +238,7 @@ const Chart = ({
     chartConfig,
     interactiveFiltersIsActive:
       chartConfig.interactiveFiltersConfig?.dataFilters.active,
+    filterNone: true,
   });
 
   return (
