@@ -6,7 +6,7 @@ import {
   initChartStateFromDataset,
 } from "./configurator-state";
 import * as api from "../api";
-import { data as fakeVizFixture } from "../test/__fixtures/prod/5BmzFXXNtE1X.json";
+import { data as fakeVizFixture } from "../test/__fixtures/prod/line-1.json";
 import bathingWaterMetadata from "../test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 
 const mockedApi = api as jest.Mocked<typeof api>;
