@@ -168,8 +168,6 @@ const Chart = ({
   // Combine filters from config + interactive filters
   const queryFilters = useQueryFilters({
     chartConfig,
-    interactiveFiltersIsActive:
-      chartConfig.interactiveFiltersConfig?.dataFilters.active,
   });
 
   return (

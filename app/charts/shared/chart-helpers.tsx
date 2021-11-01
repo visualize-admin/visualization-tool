@@ -13,15 +13,16 @@ import {
 // Prepare filters used in data query:
 // - merges "hard" data filters (in-editor, publisher-defined)
 //   and "interactive" data filters (user-defined), if applicable
-// - removes none values since they should not be sent as part of the graphql query
+// - removes none values since they should not be sent as part of the GraphQL query
 export const useQueryFilters = ({
   chartConfig,
-  interactiveFiltersIsActive,
 }: {
   chartConfig: ChartConfig;
-  interactiveFiltersIsActive?: boolean;
 }): Filters | FilterValueSingle => {
   const [IFstate] = useInteractiveFilters();
+
+  const interactiveFiltersIsActive =
+    chartConfig.interactiveFiltersConfig?.dataFilters.active;
   const { filters } = chartConfig;
 
   return useMemo(() => {
