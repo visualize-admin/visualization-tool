@@ -6,6 +6,7 @@ import { Trans } from "@lingui/macro";
 import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
+import DebugPanel from "../../components/DebugPanel";
 
 export interface Preview {
   iri: string;
@@ -35,7 +36,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               <Trans id="dataset.publicationStatus.draft.warning">
                 Careful, this dataset is only a draft.
                 <br />
-                <strong>Don't use for reporting!</strong>
+                <strong>Don&apos;t use for reporting!</strong>
               </Trans>
             </HintRed>
           </Box>
@@ -84,6 +85,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         >
           <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
         </Text>
+        <DebugPanel configurator={true} />
       </Flex>
     );
   } else {

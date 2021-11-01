@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { omitBy } from "lodash";
 import * as React from "react";
 import { useEffect } from "react";
 import { Box, Flex, Text } from "theme-ui";
@@ -21,6 +22,8 @@ import {
   useConfiguratorState,
 } from "../configurator";
 import { parseDate } from "../configurator/components/ui-helpers";
+import { FIELD_VALUE_NONE } from "../configurator/constants";
+import useFilterChanges from "../configurator/use-filter-changes";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
@@ -110,7 +113,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               <DebugPanel configurator={true} interactiveFilters={true} />
             </InteractiveFiltersProvider>
           </>
-        )}{" "}
+        )}
       </ChartErrorBoundary>
     </Flex>
   );
@@ -167,6 +170,29 @@ const ChartWithInteractiveFilters = ({
     }
   }, [componentIris, dispatch]);
 
+  const changes = useFilterChanges(chartConfig.filters);
+  useEffect(() => {
+    if (changes.length !== 1) {
+      return;
+    }
+    const [dimensionIri, prev, next] = changes[0];
+    if (prev?.type === "single" || next?.type === "single") {
+      dispatch({
+        type: "UPDATE_DATA_FILTER",
+        value:
+          next?.type === "single" && next?.value
+            ? {
+                dimensionIri,
+                dimensionValueIri: next.value,
+              }
+            : {
+                dimensionIri,
+                dimensionValueIri: FIELD_VALUE_NONE,
+              },
+      });
+    }
+  }, [changes, dispatch]);
+
   // Interactive legend
   // Reset categories to avoid categories with the same
   // name to persist as filters across different dimensions
@@ -212,6 +238,7 @@ const Chart = ({
     chartConfig,
     interactiveFiltersIsActive:
       chartConfig.interactiveFiltersConfig?.dataFilters.active,
+    filterNone: true,
   });
 
   return (
