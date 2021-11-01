@@ -28,22 +28,26 @@ const DebugConfigurator = () => {
         Cube Tools
       </Box>
       <Box sx={{ p: 5 }}>
-        <Link
-          variant="primary"
-          href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
-            SPARQL_ENDPOINT
-          )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
-            configuratorState.dataSet ?? ""
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{ display: "flex", alignItems: "center" }}
-        >
-          <Icon name="linkExternal" size={16} />
-          <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
-            Open in Cube Viewer
-          </Text>
-        </Link>
+        {configuratorState.dataSet ? (
+          <Link
+            variant="primary"
+            href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
+              SPARQL_ENDPOINT
+            )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
+              configuratorState.dataSet ?? ""
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Icon name="linkExternal" size={16} />
+            <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
+              Open in Cube Viewer
+            </Text>
+          </Link>
+        ) : (
+          <Text variant="body">Please select a dataset first</Text>
+        )}
         {SPARQL_EDITOR && (
           <Link
             variant="primary"
