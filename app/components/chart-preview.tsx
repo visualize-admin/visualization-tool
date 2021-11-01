@@ -27,6 +27,7 @@ import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFiltersList } from "./chart-filters-list";
 import { ChartFootnotes } from "./chart-footnotes";
+import DebugPanel from "./DebugPanel";
 import { HintRed } from "./hint";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
@@ -106,9 +107,10 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                   chartConfig={state.chartConfig}
                 />
               )}
+              <DebugPanel configurator={true} interactiveFilters={true} />
             </InteractiveFiltersProvider>
           </>
-        )}{" "}
+        )}
       </ChartErrorBoundary>
     </Flex>
   );
