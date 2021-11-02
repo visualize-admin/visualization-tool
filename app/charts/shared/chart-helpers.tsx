@@ -8,6 +8,8 @@ import {
   useInteractiveFilters,
 } from "./use-interactive-filters";
 
+export type QueryFilters = Filters | FilterValueSingle;
+
 // Prepare filters used in data query:
 // merges "hard" data filters (in-editor, publisher-defined)
 // and "interactive" data filters (user-defined), if applicable
@@ -17,7 +19,7 @@ export const useQueryFilters = ({
 }: {
   chartConfig: ChartConfig;
   interactiveFiltersIsActive: boolean | undefined;
-}): Filters | FilterValueSingle => {
+}): QueryFilters => {
   const [IFstate] = useInteractiveFilters();
   const { filters } = chartConfig;
   if (chartConfig.chartType !== "table") {
