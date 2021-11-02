@@ -1,4 +1,3 @@
-import { string } from "io-ts";
 import { isEqual } from "lodash";
 import { ChartConfig, FilterValue } from ".";
 import useChanges from "../utils/use-changes";
