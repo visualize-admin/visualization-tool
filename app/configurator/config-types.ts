@@ -27,7 +27,7 @@ export type FilterValueMulti = t.TypeOf<typeof FilterValueMulti>;
 const FilterValueSingle = t.type(
   {
     type: t.literal("single"),
-    value: t.string,
+    value: t.union([t.string, t.number]),
   },
   "FilterValueSingle"
 );
