@@ -799,7 +799,7 @@ export const initChartStateFromChart = async (
   }
 };
 
-export const initChartStateFromDataset = async (
+export const initChartStateFromCube = async (
   client: Client,
   datasetIri: DatasetIri,
   locale: string
@@ -882,10 +882,10 @@ const ConfiguratorStateProviderInternal = ({
         if (chartId === "new") {
           if (query.from && typeof query.from === "string") {
             newChartState = await initChartStateFromChart(query.from);
-          } else if (query.dataset && typeof query.dataset === "string") {
-            newChartState = await initChartStateFromDataset(
+          } else if (query.cube && typeof query.cube === "string") {
+            newChartState = await initChartStateFromCube(
               client,
-              query.dataset,
+              query.cube,
               locale
             );
           }
