@@ -157,7 +157,7 @@ const DataFilter = ({
             isKeyDimension={dimension.isKeyDimension}
             label={dimension.label}
             options={dimension.values}
-            value={value}
+            value={value as string}
             onChange={setDataFilter}
           />
         ) : dimension.timeUnit === TimeUnit.Year ? (
@@ -165,7 +165,7 @@ const DataFilter = ({
             isKeyDimension={dimension.isKeyDimension}
             label={dimension.label}
             options={dimension.values}
-            value={value}
+            value={value as string}
             timeUnit={dimension.timeUnit}
             timeFormat={dimension.timeFormat}
             onChange={setDataFilter}
