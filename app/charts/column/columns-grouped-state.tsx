@@ -225,8 +225,7 @@ const useGroupedColumnsState = ({
 
   // y
   const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
-  const maxValue = max(preparedData, (d) => getY(d)) as number;
-  const entireMaxValue = max(sortedData, getY) as number;
+  const maxValue = Math.max(max(preparedData, (d) => getY(d)) as number, 0);
 
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])

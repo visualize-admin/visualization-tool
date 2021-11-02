@@ -150,7 +150,7 @@ const useColumnsState = ({
 
   // y
   const minValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
-  const maxValue = max(preparedData, (d) => getY(d)) ?? 0;
+  const maxValue = Math.max(max(preparedData, (d) => getY(d)) ?? 0, 0);
   const entireMaxValue = max(sortedData, getY) as number;
 
   const yScale = scaleLinear()
