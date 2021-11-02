@@ -1,6 +1,8 @@
 import { sum } from "d3";
+import { merge, omitBy } from "lodash";
 import { useMemo } from "react";
 import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
+import { FIELD_VALUE_NONE } from "../../configurator/constants";
 import { Observation, ObservationValue } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import {
@@ -11,26 +13,45 @@ import {
 export type QueryFilters = Filters | FilterValueSingle;
 
 // Prepare filters used in data query:
-// merges "hard" data filters (in-editor, publisher-defined)
-// and "interactive" data filters (user-defined), if applicable
-export const useQueryFilters = ({
-  chartConfig,
-  interactiveFiltersIsActive,
-}: {
-  chartConfig: ChartConfig;
-  interactiveFiltersIsActive: boolean | undefined;
-}): QueryFilters => {
-  const [IFstate] = useInteractiveFilters();
-  const { filters } = chartConfig;
-  if (chartConfig.chartType !== "table") {
+// - merges publisher data filters and interactive data filters (user-defined),
+//   if applicable
+// - removes none values since they should not be sent as part of the GraphQL query
+export const prepareQueryFilters = (
+  staticConfig: ChartConfig,
+  IFState: InteractiveFiltersState
+) => {
+  const interactiveFiltersIsActive =
+    staticConfig.interactiveFiltersConfig?.dataFilters.active;
+  const { filters } = staticConfig;
+  let res;
+  if (staticConfig.chartType !== "table") {
     const queryFilters = interactiveFiltersIsActive
-      ? { ...filters, ...IFstate.dataFilters }
+      ? { ...filters, ...IFState.dataFilters }
       : filters;
 
-    return queryFilters;
+    res = queryFilters;
   } else {
-    return filters;
+    res = filters;
   }
+  res = omitBy(
+    res,
+    (x) => x.type === "single" && x.value === FIELD_VALUE_NONE
+  ) as typeof filters;
+
+  return res;
+};
+
+export const useQueryFilters = ({
+  chartConfig,
+}: {
+  chartConfig: ChartConfig;
+}): QueryFilters => {
+  const [IFState] = useInteractiveFilters();
+
+  return useMemo(
+    () => prepareQueryFilters(chartConfig, IFState),
+    [chartConfig, IFState]
+  );
 };
 
 // Prepare data used in charts.
