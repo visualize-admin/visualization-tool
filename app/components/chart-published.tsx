@@ -10,13 +10,13 @@ import { ChartLinesVisualization } from "../charts/line/chart-lines";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
+import { QueryFilters, useQueryFilters } from "../charts/shared/chart-helpers";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../charts/shared/use-interactive-filters";
 import { ChartTableVisualization } from "../charts/table/chart-table";
-import { ChartConfig, Meta } from "../configurator";
+import { ChartConfig, ChartType, Meta } from "../configurator";
 import { parseDate } from "../configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "../configurator/constants";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
@@ -158,6 +158,39 @@ const ChartWithInteractiveFilters = ({
   );
 };
 
+const getChart = ({
+  chartConfig,
+  ...props
+}: {
+  dataSetIri: string;
+  chartConfig: ChartConfig;
+  queryFilters: QueryFilters;
+}) => {
+  switch (chartConfig.chartType) {
+    case "column":
+      return <ChartColumnsVisualization {...props} chartConfig={chartConfig} />;
+    case "bar":
+      return <ChartBarsVisualization {...props} chartConfig={chartConfig} />;
+    case "line":
+      return <ChartLinesVisualization {...props} chartConfig={chartConfig} />;
+    case "area":
+      return <ChartAreasVisualization {...props} chartConfig={chartConfig} />;
+    case "scatterplot":
+      return (
+        <ChartScatterplotVisualization {...props} chartConfig={chartConfig} />
+      );
+    case "pie":
+      return <ChartPieVisualization {...props} chartConfig={chartConfig} />;
+    case "table":
+      return <ChartTableVisualization {...props} chartConfig={chartConfig} />;
+    case "map":
+      return null;
+    default:
+      const _exhaustiveCheck: never = chartConfig;
+      return _exhaustiveCheck;
+  }
+};
+
 const Chart = ({
   dataSet,
   chartConfig,
@@ -170,57 +203,9 @@ const Chart = ({
     chartConfig,
   });
 
-  return (
-    <>
-      {/* CHARTS */}
-      {chartConfig.chartType === "column" && (
-        <ChartColumnsVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {chartConfig.chartType === "bar" && (
-        <ChartBarsVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {chartConfig.chartType === "line" && (
-        <ChartLinesVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {chartConfig.chartType === "area" && (
-        <ChartAreasVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {chartConfig.chartType === "scatterplot" && (
-        <ChartScatterplotVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {chartConfig.chartType === "pie" && (
-        <ChartPieVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {chartConfig.chartType === "table" && (
-        <ChartTableVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-        />
-      )}
-    </>
-  );
+  return getChart({
+    dataSetIri: dataSet,
+    chartConfig,
+    queryFilters,
+  });
 };

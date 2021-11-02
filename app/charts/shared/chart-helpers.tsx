@@ -10,6 +10,8 @@ import {
   useInteractiveFilters,
 } from "./use-interactive-filters";
 
+export type QueryFilters = Filters | FilterValueSingle;
+
 // Prepare filters used in data query:
 // - merges publisher data filters and interactive data filters (user-defined),
 //   if applicable
@@ -43,7 +45,7 @@ export const useQueryFilters = ({
   chartConfig,
 }: {
   chartConfig: ChartConfig;
-}): Filters | FilterValueSingle => {
+}): QueryFilters => {
   const [IFState] = useInteractiveFilters();
 
   return useMemo(

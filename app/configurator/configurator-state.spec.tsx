@@ -3,7 +3,7 @@ import {
   getLocalStorageKey,
   initChartStateFromChart,
   initChartStateFromLocalStorage,
-  initChartStateFromDataset,
+  initChartStateFromCube,
 } from "./configurator-state";
 import * as api from "../api";
 import { data as fakeVizFixture } from "../test/__fixtures/prod/line-1.json";
@@ -68,7 +68,7 @@ describe("initChartFromLocalStorage", () => {
   });
 });
 
-describe("initChartStateFromDataset", () => {
+describe("initChartStateFromCube", () => {
   const setup = ({ cubeMetadata }: { cubeMetadata: object }) => {
     const client = new Client({
       url: "https://example.com/graphql",
@@ -83,7 +83,7 @@ describe("initChartStateFromDataset", () => {
   };
   it("should work init fields with existing dataset and go directly to 2nd step", async () => {
     const { client } = setup({ cubeMetadata: bathingWaterMetadata });
-    const res = await initChartStateFromDataset(
+    const res = await initChartStateFromCube(
       client,
       "https://environment.ld.admin.ch/foen/ubd0104/3/",
       "en"
