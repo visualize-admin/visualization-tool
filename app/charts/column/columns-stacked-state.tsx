@@ -250,16 +250,19 @@ const useColumnsStackedState = ({
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // y
-  const minTotal = Math.min(
-    min<$FixMe, number>(chartWideData, (d) => d.total) as number,
-    0
+  const minTotal = min<$FixMe, number>(chartWideData, (d) =>
+    segments
+      .map((s) => d[s])
+      .filter((d) => d < 0)
+      .reduce((a, b) => a + b, 0)
   );
-  const maxTotal = max<$FixMe, number>(chartWideData, (d) => d.total) as number;
+  const maxTotal = max<$FixMe, number>(chartWideData, (d) =>
+    segments
+      .map((s) => d[s])
+      .filter((d) => d >= 0)
+      .reduce((a, b) => a + b, 0)
+  );
   const yStackDomain = [minTotal, maxTotal] as [number, number];
-  const entireMaxTotalValue = max<$FixMe, number>(
-    allDataWide,
-    (d) => d.total
-  ) as number;
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
