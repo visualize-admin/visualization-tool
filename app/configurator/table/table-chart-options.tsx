@@ -222,7 +222,6 @@ export const TableColumnOptions = ({
                   message: "Use to group",
                 })}
                 field={activeField}
-                disabled={isFiltered}
                 path="isGroup"
                 metaData={metaData}
               />
