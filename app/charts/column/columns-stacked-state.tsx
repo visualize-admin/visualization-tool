@@ -31,15 +31,14 @@ import {
 import { Observation, ObservationValue } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { sortByIndex } from "../../lib/array";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
   getWideData,
   usePreparedData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
+import { useChartPadding } from "../shared/padding";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { useInteractiveFilters } from "../shared/use-interactive-filters";
@@ -251,16 +250,19 @@ const useColumnsStackedState = ({
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // y
-  const minTotal = Math.min(
-    min<$FixMe, number>(chartWideData, (d) => d.total) as number,
-    0
+  const minTotal = min<$FixMe, number>(chartWideData, (d) =>
+    segments
+      .map((s) => d[s])
+      .filter((d) => d < 0)
+      .reduce((a, b) => a + b, 0)
   );
-  const maxTotal = max<$FixMe, number>(chartWideData, (d) => d.total) as number;
+  const maxTotal = max<$FixMe, number>(chartWideData, (d) =>
+    segments
+      .map((s) => d[s])
+      .filter((d) => d >= 0)
+      .reduce((a, b) => a + b, 0)
+  );
   const yStackDomain = [minTotal, maxTotal] as [number, number];
-  const entireMaxTotalValue = max<$FixMe, number>(
-    allDataWide,
-    (d) => d.total
-  ) as number;
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
@@ -292,16 +294,15 @@ const useColumnsStackedState = ({
     }[]
   );
 
-  // Dimensions
-  const left = interactiveFiltersConfig?.time.active
-    ? estimateTextWidth(formatNumber(entireMaxTotalValue))
-    : Math.max(
-        estimateTextWidth(formatNumber(yScale.domain()[0])),
-        estimateTextWidth(formatNumber(yScale.domain()[1]))
-      );
-  const bottom = interactiveFiltersConfig?.time.active
-    ? (max(bandDomain, (d) => estimateTextWidth(d)) || 70) + BRUSH_BOTTOM_SPACE
-    : max(bandDomain, (d) => estimateTextWidth(d)) || 70;
+  const { left, bottom } = useChartPadding(
+    yScale,
+    width,
+    aspectRatio,
+    interactiveFiltersConfig,
+    formatNumber,
+    bandDomain
+  );
+
   const margins = {
     top: 50,
     right: 40,

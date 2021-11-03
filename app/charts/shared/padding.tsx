@@ -9,7 +9,6 @@ const computeChartPadding = (
   yScale: d3.ScaleLinear<number, number>,
   width: number,
   aspectRatio: number,
-  entireMaxValue: number,
   interactiveFiltersConfig: ChartProps["interactiveFiltersConfig"],
   formatNumber: (n: number) => string,
   bandDomain?: string[]
@@ -20,9 +19,9 @@ const computeChartPadding = (
   // Width * aspectRatio is taken as an approximation of chartHeight
   // since we do not have access to chartHeight yet.
   const fakeTicks = yScale.ticks(getTickNumber(width * aspectRatio));
-  const left = interactiveFiltersConfig?.time.active
-    ? estimateTextWidth(formatNumber(entireMaxValue))
-    : Math.max(...fakeTicks.map((x) => estimateTextWidth(`${x}`)));
+  const left = Math.max(
+    ...fakeTicks.map((x) => estimateTextWidth(`${formatNumber(x)}`))
+  );
 
   let bottom = interactiveFiltersConfig?.time.active ? BRUSH_BOTTOM_SPACE : 40;
   if (bandDomain && bandDomain.length) {
@@ -35,7 +34,6 @@ export const useChartPadding = (
   yScale: d3.ScaleLinear<number, number>,
   width: number,
   aspectRatio: number,
-  entireMaxValue: number,
   interactiveFiltersConfig: ChartProps["interactiveFiltersConfig"],
   formatNumber: (n: number) => string,
   bandDomain?: string[]
@@ -46,17 +44,17 @@ export const useChartPadding = (
         yScale,
         width,
         aspectRatio,
-        entireMaxValue,
         interactiveFiltersConfig,
-        formatNumber
+        formatNumber,
+        bandDomain
       ),
     [
       yScale,
       width,
       aspectRatio,
-      entireMaxValue,
       interactiveFiltersConfig,
       formatNumber,
+      bandDomain,
     ]
   );
 };

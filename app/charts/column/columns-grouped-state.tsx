@@ -26,11 +26,10 @@ import {
 } from "../../configurator/components/ui-helpers";
 import { Observation, ObservationValue } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
+import { useChartPadding } from "../shared/padding";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { useInteractiveFilters } from "../shared/use-interactive-filters";
@@ -226,8 +225,7 @@ const useGroupedColumnsState = ({
 
   // y
   const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
-  const maxValue = max(preparedData, (d) => getY(d)) as number;
-  const entireMaxValue = max(sortedData, getY) as number;
+  const maxValue = Math.max(max(preparedData, (d) => getY(d)) as number, 0);
 
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
@@ -258,16 +256,15 @@ const useGroupedColumnsState = ({
     ];
   });
 
-  // Dimensions
-  const left = interactiveFiltersConfig?.time.active
-    ? estimateTextWidth(formatNumber(entireMaxValue))
-    : Math.max(
-        estimateTextWidth(formatNumber(yScale.domain()[0])),
-        estimateTextWidth(formatNumber(yScale.domain()[1]))
-      );
-  const bottom = interactiveFiltersConfig?.time.active
-    ? (max(bandDomain, (d) => estimateTextWidth(d)) || 70) + BRUSH_BOTTOM_SPACE
-    : max(bandDomain, (d) => estimateTextWidth(d)) || 70;
+  const { left, bottom } = useChartPadding(
+    yScale,
+    width,
+    aspectRatio,
+    interactiveFiltersConfig,
+    formatNumber,
+    bandDomain
+  );
+
   const margins = {
     top: 50,
     right: 40,

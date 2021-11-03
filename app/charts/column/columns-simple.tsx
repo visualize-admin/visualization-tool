@@ -1,32 +1,26 @@
-import { memo } from "react";
 import { useTheme } from "../../themes";
 import { useChartState } from "../shared/use-chart-state";
 import { ColumnsState } from "./columns-state";
+import { Column } from "./rendering-utils";
 
 export const Columns = () => {
-  const {
-    preparedData,
-    bounds,
-    getX,
-    xScale,
-    getY,
-    yScale,
-  } = useChartState() as ColumnsState;
+  const { preparedData, bounds, getX, xScale, getY, yScale } =
+    useChartState() as ColumnsState;
   const theme = useTheme();
   const { margins } = bounds;
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
       {preparedData.map((d, i) => {
+        const y = getY(d) ?? NaN;
+
         return (
           <Column
             key={i}
             x={xScale(getX(d)) as number}
             width={xScale.bandwidth()}
-            // y={yScale(getY(d))}
-            y={yScale(Math.max(0, getY(d) ?? NaN))}
-            // height={yScale(0) - yScale(getY(d))}
-            height={Math.abs(yScale(getY(d) ?? 0) - yScale(0))}
+            y={yScale(Math.max(y, 0))}
+            height={Math.abs(yScale(y) - yScale(0))}
             color={
               (getY(d) ?? NaN) <= 0
                 ? theme.colors.secondary
@@ -38,30 +32,3 @@ export const Columns = () => {
     </g>
   );
 };
-
-const Column = memo(
-  ({
-    x,
-    y,
-    width,
-    height,
-    color,
-  }: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    color: string;
-  }) => {
-    return (
-      <rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        fill={color}
-        stroke="none"
-      />
-    );
-  }
-);
