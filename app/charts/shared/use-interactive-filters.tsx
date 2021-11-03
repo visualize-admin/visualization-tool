@@ -31,7 +31,10 @@ type InteractiveFiltersStateAction =
     }
   | {
       type: "UPDATE_DATA_FILTER";
-      value: { dimensionIri: string; dimensionValueIri: string };
+      value: {
+        dimensionIri: string;
+        dimensionValueIri: FilterValueSingle["value"];
+      };
     }
   | {
       type: "RESET_INTERACTIVE_CATEGORIES";
