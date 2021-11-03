@@ -1,12 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import get from "lodash/get";
-import React, {
-  ChangeEvent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { Checkbox } from "../../components/form";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -221,8 +215,7 @@ export const TableColumnOptions = ({
           {component.label}
         </SectionTitle>
         <ControlSectionContent side="right">
-          {component.isKeyDimension && (
-            <>
+          {component.__typename !== "Measure" && (
               <ChartOptionGroupHiddenField
                 label={t({
                   id: "controls.table.column.group",
@@ -233,7 +226,8 @@ export const TableColumnOptions = ({
                 path="isGroup"
                 metaData={metaData}
               />
-              {!isGroup && (
+          )}
+          {component.isKeyDimension ? (
                 <ChartOptionGroupHiddenField
                   label={t({
                     id: "controls.table.column.hidefilter",
@@ -243,11 +237,7 @@ export const TableColumnOptions = ({
                   path="isFiltered"
                   metaData={metaData}
                 />
-              )}
-            </>
-          )}
-
-          {(!component.isKeyDimension || isGroup) && (
+          ) : (
             <ChartOptionGroupHiddenField
               label={t({
                 id: "controls.table.column.hide",
