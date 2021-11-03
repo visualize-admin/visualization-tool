@@ -1,0 +1,90 @@
+{
+  "key": "fN15XWssFC3J",
+  "data": {
+    "meta": {
+      "title": {
+        "de": "kjdsaklfjasdkj",
+        "en": "kasdfjsdkfjasdk",
+        "fr": "jklsdjfsdkl",
+        "it": "kdsjfasdkl"
+      },
+      "description": { "de": "", "en": "", "fr": "", "it": "" }
+    },
+    "dataSet": "http://environment.ld.admin.ch/foen/px/0703030000_112/dataset",
+    "chartConfig": {
+      "fields": {
+        "x": {
+          "componentIri": "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0"
+        },
+        "y": {
+          "componentIri": "http://environment.ld.admin.ch/foen/px/0703030000_112/measure/0"
+        }
+      },
+      "filters": {
+        "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0": {
+          "type": "multi",
+          "values": {
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/0": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/1": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/5": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/6": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/7": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/8": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/9": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/10": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/11": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/12": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/13": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/14": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/15": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/16": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/17": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/18": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/19": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/20": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/21": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/22": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/23": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/24": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/25": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/26": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/27": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/28": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/29": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/30": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/31": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/32": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/33": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/34": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/35": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/36": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/37": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/38": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/39": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/40": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/41": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/42": true,
+            "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/0/43": true
+          }
+        },
+        "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/1": {
+          "type": "single",
+          "value": "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/1/0"
+        },
+        "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/2": {
+          "type": "single",
+          "value": "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/2/0"
+        },
+        "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/3": {
+          "type": "single",
+          "value": "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/3/1"
+        },
+        "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/4": {
+          "type": "single",
+          "value": "http://environment.ld.admin.ch/foen/px/0703030000_112/dimension/4/0"
+        }
+      },
+      "chartType": "line"
+    }
+  }
+}

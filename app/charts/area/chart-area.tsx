@@ -24,6 +24,7 @@ import { A11yTable } from "../shared/a11y-table";
 import { AxisHeightLinear } from "../shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
 import { BrushTime } from "../shared/brush";
+import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "../shared/containers";
 import { Ruler } from "../shared/interaction/ruler";
 import { Tooltip } from "../shared/interaction/tooltip";
@@ -39,7 +40,7 @@ export const ChartAreasVisualization = ({
 }: {
   dataSetIri: string;
   chartConfig: AreaConfig;
-  queryFilters: Filters | FilterValueSingle;
+  queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({

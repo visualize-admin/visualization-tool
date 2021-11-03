@@ -1,6 +1,5 @@
 import {
   ascending,
-  axisLeft,
   descending,
   extent,
   max,
@@ -25,7 +24,6 @@ import {
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
-
 import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { useChartPadding } from "../shared/padding";
@@ -152,7 +150,7 @@ const useColumnsState = ({
 
   // y
   const minValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
-  const maxValue = max(preparedData, (d) => getY(d)) ?? 0;
+  const maxValue = Math.max(max(preparedData, (d) => getY(d)) ?? 0, 0);
   const entireMaxValue = max(sortedData, getY) as number;
 
   const yScale = scaleLinear()
@@ -171,7 +169,6 @@ const useColumnsState = ({
     yScale,
     width,
     aspectRatio,
-    entireMaxValue,
     interactiveFiltersConfig,
     formatNumber,
     bandDomain

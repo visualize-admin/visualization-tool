@@ -551,7 +551,15 @@ const buildFilters = ({
 
     const selectedValues =
       filter.type === "single"
-        ? [filterDimension.filter.eq(toRDFValue(filter.value))]
+        ? [
+            filterDimension.filter.eq(
+              toRDFValue(
+                typeof filter.value === "number"
+                  ? filter.value.toString()
+                  : filter.value
+              )
+            ),
+          ]
         : filter.type === "multi"
         ? // If values is an empty object, we filter by something that doesn't exist
           [

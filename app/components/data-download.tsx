@@ -35,8 +35,6 @@ export const DataDownload = memo(
         : [];
     const filters = useQueryFilters({
       chartConfig,
-      interactiveFiltersIsActive:
-        chartConfig.interactiveFiltersConfig?.dataFilters.active,
     });
 
     const [{ data }] = useDataCubeObservationsQuery({

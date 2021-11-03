@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { omitBy } from "lodash";
 import * as React from "react";
 import { useEffect } from "react";
 import { Box, Flex, Text } from "theme-ui";
@@ -153,8 +154,6 @@ const Chart = ({
   // Combine filters from config + interactive filters
   const queryFilters = useQueryFilters({
     chartConfig,
-    interactiveFiltersIsActive:
-      chartConfig.interactiveFiltersConfig?.dataFilters.active,
   });
 
   return (

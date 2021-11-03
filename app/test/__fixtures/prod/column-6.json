@@ -1,0 +1,44 @@
+{
+  "key": "v71kJ5n-qKGw",
+  "data": {
+    "meta": {
+      "title": { "de": "Holz", "en": "", "fr": "", "it": "" },
+      "description": {
+        "de": "aslkslkjfsadlfkj asékfàsaék",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
+    },
+    "dataSet": "http://environment.ld.admin.ch/foen/px/0703010000_106/dataset",
+    "chartConfig": {
+      "fields": {
+        "x": {
+          "componentIri": "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/2"
+        },
+        "y": {
+          "componentIri": "http://environment.ld.admin.ch/foen/px/0703010000_106/measure/1"
+        }
+      },
+      "filters": {
+        "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/0": {
+          "type": "single",
+          "value": "2015"
+        },
+        "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/1": {
+          "type": "single",
+          "value": "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/1/0"
+        },
+        "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/3": {
+          "type": "single",
+          "value": "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/3/0"
+        },
+        "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/4": {
+          "type": "single",
+          "value": "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/4/0"
+        }
+      },
+      "chartType": "column"
+    }
+  }
+}
