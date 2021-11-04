@@ -4,7 +4,7 @@ import { Box } from "theme-ui";
 export const PanelLeftWrapper = ({
   children,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) => {
   return (
     <Box
@@ -29,7 +29,7 @@ export const PanelLeftWrapper = ({
 export const PanelRightWrapper = ({
   children,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) => {
   return (
     <Box
