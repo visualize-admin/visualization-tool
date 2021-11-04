@@ -224,14 +224,7 @@ const deriveFiltersFromFields = produce(
         if (f !== undefined) {
           // Fix wrong filter type
           if (f.type === "single") {
-            if (!hidden) {
-              delete filters[dimension.iri];
-            } else if (grouped) {
-              filters[dimension.iri] = {
-                type: "multi",
-                values: { [String(f.value)]: true },
-              };
-            }
+            delete filters[dimension.iri];
           } else if (f.type === "multi") {
             if (hidden && !grouped) {
               filters[dimension.iri] = {

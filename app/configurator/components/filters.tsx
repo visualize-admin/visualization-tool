@@ -119,7 +119,7 @@ export const DimensionValuesMultiFilter = ({
                   selectionState === "ALL_SELECTED"
                     ? true
                     : selectionState === "SOME_SELECTED"
-                    ? activeFilterValues?.includes(dv.value)
+                    ? activeFilterValues.includes(dv.value)
                     : undefined
                 }
                 checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
