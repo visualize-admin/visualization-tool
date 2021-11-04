@@ -149,3 +149,10 @@ query DataCubeObservations(
     }
   }
 }
+
+query Categories($locale: String!) {
+  categories(locale: $locale) {
+    name
+    theme
+  }
+}

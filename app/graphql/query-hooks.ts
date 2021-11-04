@@ -49,6 +49,12 @@ export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
 };
 
+export type DataCubeCategory = {
+  __typename: 'DataCubeCategory';
+  theme: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+};
+
 export enum DataCubePublicationStatus {
   Draft = 'DRAFT',
   Published = 'PUBLISHED'
@@ -126,6 +132,7 @@ export type Query = {
   __typename: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
+  categories: Array<DataCubeCategory>;
 };
 
 
@@ -141,6 +148,11 @@ export type QueryDataCubesArgs = {
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QueryCategoriesArgs = {
+  locale: Scalars['String'];
 };
 
 
@@ -314,6 +326,13 @@ export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: M
       & DimensionMetaData_Measure_Fragment
     )>, observations: { __typename: 'ObservationsQuery', data: Array<any>, sparqlEditorUrl?: Maybe<string> } }> };
 
+export type CategoriesQueryVariables = Exact<{
+  locale: Scalars['String'];
+}>;
+
+
+export type CategoriesQuery = { __typename: 'Query', categories: Array<{ __typename: 'DataCubeCategory', name?: Maybe<string>, theme: string }> };
+
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {
   iri
@@ -476,4 +495,16 @@ export const DataCubeObservationsDocument = gql`
 
 export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubeObservationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeObservationsQuery>({ query: DataCubeObservationsDocument, ...options });
+};
+export const CategoriesDocument = gql`
+    query Categories($locale: String!) {
+  categories(locale: $locale) {
+    name
+    theme
+  }
+}
+    `;
+
+export function useCategoriesQuery(options: Omit<Urql.UseQueryArgs<CategoriesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CategoriesQuery>({ query: CategoriesDocument, ...options });
 };

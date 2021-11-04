@@ -105,6 +105,11 @@ type DataCubeResult {
   dataCube: DataCube!
 }
 
+type DataCubeCategory {
+  theme: String!
+  name: String
+}
+
 enum DataCubeResultOrder {
   SCORE
   TITLE_ASC
@@ -121,4 +126,5 @@ type Query {
     order: DataCubeResultOrder
     includeDrafts: Boolean
   ): [DataCubeResult!]!
+  categories(locale: String!): [DataCubeCategory!]!
 }

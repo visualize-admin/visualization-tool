@@ -1,6 +1,7 @@
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
+import { keyBy, merge } from "lodash";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
@@ -10,6 +11,7 @@ import {
   getCubes,
   getSparqlEditorUrl,
 } from "../rdf/queries";
+import { loadCategories } from "../rdf/query-cube-metadata";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
@@ -20,10 +22,25 @@ import { ResolvedDimension } from "./shared-types";
 
 const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order, includeDrafts }) => {
-    const cubes = await getCubes({
-      locale: parseLocaleString(locale),
-      includeDrafts: includeDrafts ? true : false,
-    });
+    const categories = await loadCategories({ locale });
+
+    const categoriesByTheme = keyBy(categories, (x) => x.theme);
+    const cubes = (
+      await getCubes({
+        locale: parseLocaleString(locale),
+        includeDrafts: includeDrafts ? true : false,
+      })
+    ).map((c) =>
+      merge(
+        {},
+        c,
+        c.data.theme
+          ? {
+              data: { theme: categoriesByTheme[c.data.theme] },
+            }
+          : {}
+      )
+    );
 
     const dataCubeCandidates = cubes.map(({ data }) => data);
 
@@ -110,6 +127,9 @@ const Query: QueryResolvers = {
       latest,
     });
   },
+  categories: async (_, { locale }: { locale: string }) => {
+    return loadCategories({ locale });
+  },
 };
 
 const DataCube: DataCubeResolvers = {
@@ -157,8 +177,6 @@ const DataCube: DataCubeResolvers = {
       filters: filters ?? undefined,
       limit: limit ?? undefined,
     });
-
-    console.log(query);
 
     // const constructedFilters = filters
     //   ? await constructFilters(dataCube, filters)
