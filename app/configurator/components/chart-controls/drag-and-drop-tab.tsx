@@ -63,7 +63,7 @@ export const TabDropZone = ({
                 >
                   &nbsp;
                 </Box> */}
-                {items.map(({ componentIri, index, isFiltered }, i) => {
+                {items.map(({ componentIri, index, isHidden }, i) => {
                   return (
                     <Draggable
                       key={componentIri}
@@ -98,7 +98,7 @@ export const TabDropZone = ({
                                 </Trans>
                               }
                               isDragging={isDragging}
-                              disabled={isFiltered}
+                              disabled={isHidden}
                             />
                             <Box
                               sx={{

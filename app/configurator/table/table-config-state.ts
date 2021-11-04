@@ -113,26 +113,6 @@ export const updateIsHidden = produce(
     return chartConfig;
   }
 );
-export const updateIsFiltered = produce(
-  (
-    chartConfig: TableConfig,
-    {
-      field,
-      value,
-    }: {
-      field: string;
-      value: boolean;
-    }
-  ): TableConfig => {
-    if (!chartConfig.fields[field]) {
-      return chartConfig;
-    }
-
-    chartConfig.fields[field].isFiltered = value;
-
-    return chartConfig;
-  }
-);
 
 export const addSortingOption = produce(
   (chartConfig: TableConfig, option: TableSortingOption): TableConfig => {

@@ -235,7 +235,6 @@ export const getInitialConfig = ({
               index: i,
               isGroup: false,
               isHidden: false,
-              isFiltered: false,
               columnStyle: {
                 textStyle: "regular",
                 type: "text",
@@ -349,10 +348,10 @@ export const getGroupedFieldIris = (fields: GenericFields) => {
   );
 };
 
-export const getFilteredFieldIris = (fields: GenericFields) => {
+export const getHiddenFieldIris = (fields: GenericFields) => {
   return new Set(
     Object.values(fields).flatMap((f) =>
-      f && (f as $IntentionalAny).isFiltered ? [f.componentIri] : []
+      f && (f as $IntentionalAny).isHidden ? [f.componentIri] : []
     )
   );
 };

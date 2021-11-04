@@ -13,8 +13,8 @@ import { Reducer, useImmerReducer } from "use-immer";
 import { fetchChartConfig, saveChartConfig } from "../api";
 import {
   getFieldComponentIris,
-  getFilteredFieldIris,
   getGroupedFieldIris,
+  getHiddenFieldIris,
   getInitialConfig,
   getPossibleChartType,
 } from "../charts";
@@ -207,49 +207,55 @@ const deriveFiltersFromFields = produce(
     const { fields, filters } = chartConfig;
 
     const fieldDimensionIris = getFieldComponentIris(fields);
-    const groupedDimensionItis = getGroupedFieldIris(fields);
-    const filteredFieldIris = getFilteredFieldIris(fields);
+    const groupedDimensionIris = getGroupedFieldIris(fields);
+    const hiddenFieldIris = getHiddenFieldIris(fields);
 
     const isField = (iri: string) => fieldDimensionIris.has(iri);
-    const isGrouped = (iri: string) => groupedDimensionItis.has(iri);
-    const isPreFiltered = (iri: string) => filteredFieldIris.has(iri);
-    const isFiltered = (iri: string) => !isField(iri) || isPreFiltered(iri);
+    const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
+    const isPreHidden = (iri: string) => hiddenFieldIris.has(iri);
+    const isHidden = (iri: string) => !isField(iri) || isPreHidden(iri);
 
     dimensions.forEach((dimension) => {
-      const f = filters[dimension.iri];
-      const filtered = isFiltered(dimension.iri);
-      const grouped = isGrouped(dimension.iri);
+      if (dimension.isKeyDimension) {
+        const f = filters[dimension.iri];
+        const hidden = isHidden(dimension.iri);
+        const grouped = isGrouped(dimension.iri);
 
-      if (f !== undefined) {
-        // Fix wrong filter type
-        if (f.type === "single") {
-          if (!filtered) {
-            delete filters[dimension.iri];
-          } else if (grouped) {
+        if (f !== undefined) {
+          // Fix wrong filter type
+          if (f.type === "single") {
+            if (!hidden) {
+              delete filters[dimension.iri];
+            } else if (grouped) {
+              filters[dimension.iri] = {
+                type: "multi",
+                values: { [String(f.value)]: true },
+              };
+            }
+          } else if (f.type === "multi") {
+            if (hidden && !grouped) {
+              filters[dimension.iri] = {
+                type: "single",
+                value: Object.keys(f.values)[0],
+              };
+            }
+          } else if (f.type === "range") {
+            if (hidden) {
+              filters[dimension.iri] = {
+                type: "single",
+                value: f.from,
+              };
+            }
+          }
+        } else {
+          // Add filter for this dim if it's not one of the selected multi filter fields, but
+          // only when the dimension isn't grouped, as only then we need to switch to a single filter.
+          if (hidden && !grouped) {
             filters[dimension.iri] = {
-              type: "multi",
-              values: { [String(f.value)]: true },
+              type: "single",
+              value: dimension.values[0].value,
             };
           }
-        } else if (f.type === "multi" && filtered && !grouped) {
-          filters[dimension.iri] = {
-            type: "single",
-            value: Object.keys(f.values)[0],
-          };
-        } else if (f.type === "range" && filtered) {
-          filters[dimension.iri] = {
-            type: "single",
-            value: f.from,
-          };
-        }
-      } else {
-        // Add filter for this dim if it's not one of the selected multi filter fields, but
-        // only when the dimension isn't grouped, as only then we need to switch to a single filter.
-        if (dimension.isKeyDimension && filtered && !grouped) {
-          filters[dimension.iri] = {
-            type: "single",
-            value: dimension.values[0].value,
-          };
         }
       }
     });
