@@ -4,11 +4,11 @@ import {
   GenericFields,
   TableColumn,
 } from "../configurator";
-import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
+import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
+import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 
 export const enabledChartTypes: ChartType[] = [
   // "bar",
@@ -338,6 +338,14 @@ export const getPossibleChartType = ({
 export const getFieldComponentIris = (fields: GenericFields) => {
   return new Set(
     Object.values(fields).flatMap((f) => (f ? [f.componentIri] : []))
+  );
+};
+
+export const getGroupedFieldIris = (fields: GenericFields) => {
+  return new Set(
+    Object.values(fields).flatMap((f) =>
+      f && (f as $IntentionalAny).isGroup ? [f.componentIri] : []
+    )
   );
 };
 

@@ -1,4 +1,3 @@
-import { string } from "fp-ts";
 import produce from "immer";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
@@ -9,18 +8,17 @@ import {
   useContext,
   useEffect,
 } from "react";
-import { Client, createRequest, useClient } from "urql";
+import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 import { fetchChartConfig, saveChartConfig } from "../api";
 import {
   getFieldComponentIris,
   getFilteredFieldIris,
+  getGroupedFieldIris,
   getInitialConfig,
   getPossibleChartType,
 } from "../charts";
 import {
-  DataCubeMetadataDocument,
-  DataCubeMetadataQuery,
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
 } from "../graphql/query-hooks";
@@ -28,13 +26,11 @@ import { DataCubeMetadata } from "../graphql/types";
 import { createChartId } from "../lib/create-chart-id";
 import { unreachableError } from "../lib/unreachable";
 import { useLocale } from "../locales/use-locale";
-import { getCube } from "../rdf/queries";
 import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
 import {
   ChartConfig,
   ChartType,
   ConfiguratorState,
-  ConfiguratorStatePublishing,
   ConfiguratorStateSelectingDataSet,
   decodeConfiguratorState,
   FilterValue,
@@ -211,33 +207,45 @@ const deriveFiltersFromFields = produce(
     const { fields, filters } = chartConfig;
 
     const fieldDimensionIris = getFieldComponentIris(fields);
+    const groupedDimensionItis = getGroupedFieldIris(fields);
     const filteredFieldIris = getFilteredFieldIris(fields);
 
     const isField = (iri: string) => fieldDimensionIris.has(iri);
+    const isGrouped = (iri: string) => groupedDimensionItis.has(iri);
     const isPreFiltered = (iri: string) => filteredFieldIris.has(iri);
     const isFiltered = (iri: string) => !isField(iri) || isPreFiltered(iri);
 
     dimensions.forEach((dimension) => {
       const f = filters[dimension.iri];
+      const filtered = isFiltered(dimension.iri);
+      const grouped = isGrouped(dimension.iri);
+
       if (f !== undefined) {
         // Fix wrong filter type
-        if (!isFiltered(dimension.iri) && f.type === "single") {
-          // Remove filter
-          delete filters[dimension.iri];
-        } else if (isFiltered(dimension.iri) && f.type === "multi") {
+        if (f.type === "single") {
+          if (!filtered) {
+            delete filters[dimension.iri];
+          } else if (grouped) {
+            filters[dimension.iri] = {
+              type: "multi",
+              values: { [String(f.value)]: true },
+            };
+          }
+        } else if (f.type === "multi" && filtered && !grouped) {
           filters[dimension.iri] = {
             type: "single",
             value: Object.keys(f.values)[0],
           };
-        } else if (isFiltered(dimension.iri) && f.type === "range") {
+        } else if (f.type === "range" && filtered) {
           filters[dimension.iri] = {
             type: "single",
             value: f.from,
           };
         }
       } else {
-        // Add filter for this dim if it's not one of the selected multi filter fields
-        if (isFiltered(dimension.iri) && dimension.isKeyDimension) {
+        // Add filter for this dim if it's not one of the selected multi filter fields, but
+        // only when the dimension isn't grouped, as only then we need to switch to a single filter.
+        if (dimension.isKeyDimension && filtered && !grouped) {
           filters[dimension.iri] = {
             type: "single",
             value: dimension.values[0].value,
