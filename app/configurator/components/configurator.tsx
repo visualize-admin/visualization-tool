@@ -1,8 +1,14 @@
+import React from "react";
 import { Box } from "theme-ui";
 import { useConfiguratorState } from "..";
 import { ChartAnnotationsSelector } from "./chart-annotations-selector";
 import { ChartOptionsSelector } from "./chart-options-selector";
 import { DataSetMetadata } from "./dataset-metadata";
+import {
+  PanelLeftWrapper,
+  PanelMiddleWrapper,
+  PanelRightWrapper,
+} from "./layout";
 import { PanelLeft } from "./panel-left";
 import { PanelMiddle } from "./panel-middle";
 import { Stepper } from "./stepper";
@@ -35,59 +41,22 @@ export const Configurator = () => {
         <Stepper dataSetIri={state.dataSet} />
       </Box>
 
-      <Box
-        as="section"
-        data-name="panel-left"
-        sx={{
-          overflowX: "hidden",
-          overflowY: "auto",
-          bg: "monochrome100",
-          boxShadow: "rightSide",
-          borderRightColor: "monochrome500",
-          borderRightWidth: "1px",
-          borderRightStyle: "solid",
-          gridArea: "left",
-        }}
-      >
-        <PanelLeft />
-      </Box>
-
-      <Box
-        as="section"
-        data-name="panel-right"
-        sx={{
-          bg: "mutedColored",
-          overflowX: "hidden",
-          overflowY: "auto",
-          boxShadow: "leftSide",
-          borderLeftColor: "monochrome500",
-          borderLeftWidth: "1px",
-          borderLeftStyle: "solid",
-          gridArea: "right",
-        }}
-      >
-        {state.state === "SELECTING_DATASET" && state.dataSet && (
-          <DataSetMetadata dataSetIri={state.dataSet} />
-        )}
-        {state.state === "CONFIGURING_CHART" && (
-          <ChartOptionsSelector state={state} />
-        )}
-        {state.state === "DESCRIBING_CHART" && (
-          <ChartAnnotationsSelector state={state} />
-        )}
-      </Box>
-      <Box
-        as="section"
-        data-name="panel-middle"
-        sx={{
-          overflowX: "hidden",
-          overflowY: "auto",
-          p: 4,
-          gridArea: "middle",
-        }}
-      >
-        <PanelMiddle />
-      </Box>
+      <>
+        <PanelLeftWrapper>
+          <PanelLeft />
+        </PanelLeftWrapper>
+        <PanelRightWrapper>
+          {state.state === "CONFIGURING_CHART" && (
+            <ChartOptionsSelector state={state} />
+          )}
+          {state.state === "DESCRIBING_CHART" && (
+            <ChartAnnotationsSelector state={state} />
+          )}
+        </PanelRightWrapper>
+        <PanelMiddleWrapper>
+          <PanelMiddle />
+        </PanelMiddleWrapper>
+      </>
     </Box>
   );
 };
