@@ -1,5 +1,5 @@
 import { Plural, t, Trans } from "@lingui/macro";
-import { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useRef, useState } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";
@@ -13,24 +13,29 @@ import {
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import { useLocale } from "../../locales/use-locale";
 
-export const DataSetList = () => {
-  const locale = useLocale();
-  const [showDraftCheckbox, toggleDraftCheckbox] = useState<boolean>(false);
-  const [includeDrafts, toggleIncludeDrafts] = useState<boolean>(false);
-  const [query, setQuery] = useState<string>("");
-  const [debouncedQuery] = useDebounce(query, 150, { leading: true });
-  const [order, setOrder] = useState<DataCubeResultOrder>(
-    DataCubeResultOrder.TitleAsc
-  );
-  const previousOrderRef = useRef<DataCubeResultOrder>(
-    DataCubeResultOrder.TitleAsc
-  );
-
-  // Use the debounced query value here only!
-  const [{ fetching, data }] = useDataCubesQuery({
-    variables: { locale, query: debouncedQuery, order, includeDrafts },
-  });
-
+export const DatasetSearch = ({
+  query,
+  onTypeQuery,
+  onReset,
+  includeDrafts,
+  setIncludeDrafts,
+  showDraftCheckbox,
+  setShowDraftCheckbox,
+  order,
+  onSetOrder,
+  data,
+}: {
+  query: string;
+  includeDrafts: boolean;
+  setIncludeDrafts: (v: React.SetStateAction<boolean>) => void;
+  showDraftCheckbox: boolean;
+  setShowDraftCheckbox: (v: React.SetStateAction<boolean>) => void;
+  onReset: () => void;
+  onTypeQuery: (ev: React.ChangeEvent<HTMLInputElement>) => void;
+  order: DataCubeResultOrder;
+  onSetOrder: (v: DataCubeResultOrder) => void;
+  data?: DataCubesQuery;
+}) => {
   const options = [
     {
       value: DataCubeResultOrder.Score,
@@ -52,6 +57,10 @@ export const DataSetList = () => {
   });
 
   const isSearching = query !== "";
+
+  const onToggleIncludeDrafts = useCallback(() => {
+    setIncludeDrafts((d: boolean) => !d);
+  }, [setIncludeDrafts]);
 
   return (
     <Flex
@@ -77,22 +86,10 @@ export const DataSetList = () => {
             id="datasetSearch"
             label={searchLabel}
             value={query}
-            onChange={(e) => {
-              setQuery(e.currentTarget.value);
-              if (query === "" && e.currentTarget.value !== "") {
-                previousOrderRef.current = order;
-                setOrder(DataCubeResultOrder.Score);
-              }
-              if (query !== "" && e.currentTarget.value === "") {
-                setOrder(previousOrderRef.current);
-              }
-            }}
-            onReset={() => {
-              setQuery("");
-              setOrder(previousOrderRef.current);
-            }}
+            onChange={onTypeQuery}
+            onReset={onReset}
             placeholder={searchLabel}
-            onFocus={() => toggleDraftCheckbox(true)}
+            onFocus={() => setShowDraftCheckbox(true)}
             // onBlur={() => toggleDraftCheckbox(false)}
           ></SearchField>
         </Box>
@@ -108,7 +105,7 @@ export const DataSetList = () => {
               value={"dataset-include-drafts"}
               checked={includeDrafts}
               disabled={false}
-              onChange={() => toggleIncludeDrafts(!includeDrafts)}
+              onChange={onToggleIncludeDrafts}
             />
           </Box>
         )}
@@ -153,26 +150,17 @@ export const DataSetList = () => {
               value={order}
               options={isSearching ? options : options.slice(1)}
               onChange={(e) => {
-                previousOrderRef.current = e.currentTarget
-                  .value as DataCubeResultOrder;
-                setOrder(e.currentTarget.value as DataCubeResultOrder);
+                onSetOrder(e.currentTarget.value as DataCubeResultOrder);
               }}
             ></MiniSelect>
           </Flex>
         </Flex>
       </Box>
-
-      <Box
-        sx={{ overflowX: "hidden", overflowY: "auto", flexGrow: 1 }}
-        tabIndex={-1}
-      >
-        <Datasets fetching={fetching} data={data} />
-      </Box>
     </Flex>
   );
 };
 
-const Datasets = ({
+export const Datasets = ({
   fetching,
   data,
 }: {
