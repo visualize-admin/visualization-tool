@@ -216,26 +216,26 @@ export const TableColumnOptions = ({
         </SectionTitle>
         <ControlSectionContent side="right">
           {component.__typename !== "Measure" && (
-              <ChartOptionGroupHiddenField
-                label={t({
-                  id: "controls.table.column.group",
-                  message: "Use to group",
-                })}
-                field={activeField}
-                path="isGroup"
-                metaData={metaData}
-              />
+            <ChartOptionGroupHiddenField
+              label={t({
+                id: "controls.table.column.group",
+                message: "Use to group",
+              })}
+              field={activeField}
+              path="isGroup"
+              metaData={metaData}
+            />
           )}
           {component.isKeyDimension ? (
-                <ChartOptionGroupHiddenField
-                  label={t({
-                    id: "controls.table.column.hidefilter",
-                    message: "Hide and filter column",
-                  })}
-                  field={activeField}
-                  path="isFiltered"
-                  metaData={metaData}
-                />
+            <ChartOptionGroupHiddenField
+              label={t({
+                id: "controls.table.column.hidefilter",
+                message: "Hide and filter column",
+              })}
+              field={activeField}
+              path="isFiltered"
+              metaData={metaData}
+            />
           ) : (
             <ChartOptionGroupHiddenField
               label={t({
@@ -325,7 +325,7 @@ export const TableColumnOptions = ({
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {isFiltered ? (
+            {isFiltered && !isGroup ? (
               <DimensionValuesSingleFilter
                 dataSetIri={metaData.iri}
                 dimensionIri={component.iri}
