@@ -107,7 +107,7 @@ type DataCubeResult {
 
 type DataCubeCategory {
   theme: String!
-  name: String
+  name: String!
 }
 
 enum DataCubeResultOrder {

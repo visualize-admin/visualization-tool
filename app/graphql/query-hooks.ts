@@ -52,7 +52,7 @@ export type DataCubeDimensionByIriArgs = {
 export type DataCubeCategory = {
   __typename: 'DataCubeCategory';
   theme: Scalars['String'];
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 export enum DataCubePublicationStatus {
@@ -331,7 +331,7 @@ export type CategoriesQueryVariables = Exact<{
 }>;
 
 
-export type CategoriesQuery = { __typename: 'Query', categories: Array<{ __typename: 'DataCubeCategory', name?: Maybe<string>, theme: string }> };
+export type CategoriesQuery = { __typename: 'Query', categories: Array<{ __typename: 'DataCubeCategory', name: string, theme: string }> };
 
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {

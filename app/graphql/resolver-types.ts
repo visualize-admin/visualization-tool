@@ -57,7 +57,7 @@ export type DataCubeDimensionByIriArgs = {
 export type DataCubeCategory = {
   __typename?: 'DataCubeCategory';
   theme: Scalars['String'];
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 export enum DataCubePublicationStatus {
@@ -315,7 +315,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type DataCubeCategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataCubeCategory'] = ResolversParentTypes['DataCubeCategory']> = ResolversObject<{
   theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

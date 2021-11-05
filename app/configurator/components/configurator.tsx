@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
-import { Box } from "theme-ui";
+import { Box, Link } from "theme-ui";
 import { useDebounce } from "use-debounce";
-import { ChartConfig, ConfiguratorState, useConfiguratorState } from "..";
+import { useConfiguratorState } from "..";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPreview } from "../../components/chart-preview";
 import { DataSetHint } from "../../components/hint";
 import {
+  DataCubeCategory,
   DataCubeResultOrder,
   useDataCubesQuery,
 } from "../../graphql/query-hooks";
@@ -18,7 +19,7 @@ import { ChartOptionsSelector } from "./chart-options-selector";
 import { ChartTypeSelector } from "./chart-type-selector";
 import { DataSetMetadata } from "./dataset-metadata";
 import { DataSetPreview } from "./dataset-preview";
-import { DatasetSearch, Datasets } from "./dataset-selector";
+import { DatasetSearch, Datasets, SearchDatasetBox } from "./dataset-selector";
 import {
   PanelLeftWrapper,
   PanelMiddleWrapper,
@@ -26,7 +27,7 @@ import {
 } from "./layout";
 import { Stepper } from "./stepper";
 
-const useFilterState = () => {
+const useSearchQueryState = () => {
   const [query, setQuery] = useState<string>("");
 
   const [order, setOrder] = useState<DataCubeResultOrder>(
@@ -35,8 +36,14 @@ const useFilterState = () => {
   const previousOrderRef = useRef<DataCubeResultOrder>(
     DataCubeResultOrder.TitleAsc
   );
+  const [filterCategories, setFilterCategories] = useState<DataCubeCategory[]>(
+    []
+  );
+  const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
 
   return {
+    includeDrafts,
+    setIncludeDrafts,
     onReset: () => {
       setQuery("");
       setOrder(previousOrderRef.current);
@@ -57,19 +64,43 @@ const useFilterState = () => {
       previousOrderRef.current = order;
       setOrder(order);
     },
+    filterCategories,
+    onAddFilterCategory: (cat: DataCubeCategory) => {
+      setFilterCategories(Array.from(new Set([...filterCategories, cat])));
+    },
+    onRemoveFilterCategory: (cat: DataCubeCategory) => {
+      setFilterCategories(
+        Array.from(
+          new Set([...filterCategories.filter((c) => c.theme !== cat.theme)])
+        )
+      );
+    },
+    onToggleFilterCategory: (cat: DataCubeCategory) => {
+      if (filterCategories.find((c) => c.theme === cat.theme)) {
+        setFilterCategories(
+          Array.from(
+            new Set([...filterCategories.filter((c) => c.theme !== cat.theme)])
+          )
+        );
+      } else {
+        setFilterCategories(Array.from(new Set([...filterCategories, cat])));
+      }
+    },
   };
 };
+
+export type SearchQueryState = ReturnType<typeof useSearchQueryState>;
 
 const SelectDatasetStep = () => {
   const locale = useLocale();
 
-  const [showDraftCheckbox, setShowDraftCheckbox] = useState<boolean>(false);
-  const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
-  const { onReset, onTypeQuery, query, order, onSetOrder } = useFilterState();
+  const searchQueryState = useSearchQueryState();
+  const { query, order, includeDrafts } = searchQueryState;
 
-  const [state] = useConfiguratorState();
-  const [debouncedQuery] = useDebounce(query, 150, { leading: true });
-  console.log({ query, debouncedQuery });
+  const [state, dispatch] = useConfiguratorState();
+  const [debouncedQuery] = useDebounce(query, 150, {
+    leading: true,
+  });
 
   // Use the debounced query value here only!
   const [{ fetching, data }] = useDataCubesQuery({
@@ -82,29 +113,37 @@ const SelectDatasetStep = () => {
   return (
     <>
       <PanelLeftWrapper>
-        <DatasetSearch
-          query={query}
-          onTypeQuery={onTypeQuery}
-          onReset={onReset}
-          includeDrafts={includeDrafts}
-          setIncludeDrafts={setIncludeDrafts}
-          showDraftCheckbox={showDraftCheckbox}
-          setShowDraftCheckbox={setShowDraftCheckbox}
-          order={order}
-          onSetOrder={onSetOrder}
-        />
+        <DatasetSearch searchQueryState={searchQueryState} data={data} />
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
+        <Box mb={4}>
+          <SearchDatasetBox searchQueryState={searchQueryState} data={data} />
+        </Box>
         {state.dataSet || !data ? (
-          <ChartPanel>
-            {state.dataSet ? (
-              <>
-                <DataSetPreview dataSetIri={state.dataSet} />
-              </>
-            ) : (
-              <DataSetHint />
-            )}
-          </ChartPanel>
+          <>
+            <Box mb={2}>
+              <Link
+                onClick={(ev) => {
+                  ev.preventDefault();
+                  dispatch({
+                    type: "DATASET_SELECTED",
+                    dataSet: undefined,
+                  });
+                }}
+              >
+                Back to the list
+              </Link>
+            </Box>
+            <ChartPanel>
+              {state.dataSet ? (
+                <>
+                  <DataSetPreview dataSetIri={state.dataSet} />
+                </>
+              ) : (
+                <DataSetHint />
+              )}
+            </ChartPanel>
+          </>
         ) : (
           <ChartPanel>
             <div>
