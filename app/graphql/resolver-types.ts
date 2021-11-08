@@ -40,6 +40,7 @@ export type DataCube = {
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
   measures: Array<Measure>;
+  theme: Array<Theme>;
 };
 
 
@@ -78,6 +79,11 @@ export enum DataCubeResultOrder {
   TitleAsc = 'TITLE_ASC',
   CreatedDesc = 'CREATED_DESC'
 }
+
+export type DataCubeSearchFilter = {
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
 
 export type Dimension = {
   iri: Scalars['String'];
@@ -153,6 +159,7 @@ export type QueryDataCubesArgs = {
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Array<DataCubeSearchFilter>>;
 };
 
 
@@ -171,6 +178,12 @@ export type TemporalDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
+};
+
+export type Theme = {
+  __typename?: 'Theme';
+  name: Scalars['String'];
+  theme: Scalars['String'];
 };
 
 export enum TimeUnit {
@@ -257,6 +270,7 @@ export type ResolversTypes = ResolversObject<{
   DataCubeResult: ResolverTypeWrapper<Omit<DataCubeResult, 'dataCube'> & { dataCube: ResolversTypes['DataCube'] }>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   DataCubeResultOrder: DataCubeResultOrder;
+  DataCubeSearchFilter: DataCubeSearchFilter;
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
@@ -269,6 +283,7 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   RawObservation: ResolverTypeWrapper<Scalars['RawObservation']>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
+  Theme: ResolverTypeWrapper<Theme>;
   TimeUnit: TimeUnit;
 }>;
 
@@ -280,6 +295,7 @@ export type ResolversParentTypes = ResolversObject<{
   DataCubeCategory: DataCubeCategory;
   DataCubeResult: Omit<DataCubeResult, 'dataCube'> & { dataCube: ResolversParentTypes['DataCube'] };
   Float: Scalars['Float'];
+  DataCubeSearchFilter: DataCubeSearchFilter;
   Dimension: ResolvedDimension;
   Boolean: Scalars['Boolean'];
   DimensionValue: Scalars['DimensionValue'];
@@ -292,6 +308,7 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   RawObservation: Scalars['RawObservation'];
   TemporalDimension: ResolvedDimension;
+  Theme: Theme;
 }>;
 
 export type DataCubeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataCube'] = ResolversParentTypes['DataCube']> = ResolversObject<{
@@ -310,6 +327,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>;
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>;
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType>;
+  theme?: Resolver<Array<ResolversTypes['Theme']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -409,6 +427,12 @@ export type TemporalDimensionResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ThemeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Theme'] = ResolversParentTypes['Theme']> = ResolversObject<{
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   DataCube?: DataCubeResolvers<ContextType>;
   DataCubeCategory?: DataCubeCategoryResolvers<ContextType>;
@@ -424,6 +448,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   RawObservation?: GraphQLScalarType;
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
+  Theme?: ThemeResolvers<ContextType>;
 }>;
 
 

@@ -67,7 +67,6 @@ export async function loadResourceLabels({
 
       let result: ResourceLabel[] = [];
       try {
-        // console.log(query.build());
         result = (await query.execute(client.query, {
           operation: "postUrlencoded",
         })) as unknown as ResourceLabel[];

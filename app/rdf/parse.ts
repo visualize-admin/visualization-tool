@@ -52,7 +52,9 @@ export const parseCube = ({
       publicationStatus: isCubePublished(cube)
         ? DataCubePublicationStatus.Published
         : DataCubePublicationStatus.Draft,
-      theme: cube.out(ns.dcat.theme)?.value,
+      theme: cube.out(ns.dcat.theme)?.value
+        ? [cube.out(ns.dcat.theme)?.value]
+        : cube.out(ns.dcat.theme)?.values,
       datePublished: cube.out(ns.schema.datePublished)?.value,
       versionHistory: cube.in(ns.schema.hasPart)?.value,
       contactPoint: {

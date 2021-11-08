@@ -16,7 +16,7 @@ export type ResolvedDataCube = {
     version?: string;
     datePublished?: string;
     publicationStatus: DataCubePublicationStatus;
-    theme?: string;
+    theme?: string[];
     versionHistory?: string;
     contactPoint?: {
       name?: string;

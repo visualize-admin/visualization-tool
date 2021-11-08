@@ -35,6 +35,7 @@ export type DataCube = {
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
   measures: Array<Measure>;
+  theme: Array<Theme>;
 };
 
 
@@ -73,6 +74,11 @@ export enum DataCubeResultOrder {
   TitleAsc = 'TITLE_ASC',
   CreatedDesc = 'CREATED_DESC'
 }
+
+export type DataCubeSearchFilter = {
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
 
 export type Dimension = {
   iri: Scalars['String'];
@@ -148,6 +154,7 @@ export type QueryDataCubesArgs = {
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Array<DataCubeSearchFilter>>;
 };
 
 
@@ -168,6 +175,12 @@ export type TemporalDimension = Dimension & {
   values: Array<Scalars['DimensionValue']>;
 };
 
+export type Theme = {
+  __typename: 'Theme';
+  name: Scalars['String'];
+  theme: Scalars['String'];
+};
+
 export enum TimeUnit {
   Year = 'Year',
   Month = 'Month',
@@ -183,10 +196,11 @@ export type DataCubesQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Array<DataCubeSearchFilter> | DataCubeSearchFilter>;
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus } }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, theme: Array<{ __typename: 'Theme', name: string, theme: string }> } }> };
 
 type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
@@ -347,12 +361,13 @@ export const DimensionMetaDataFragmentDoc = gql`
 }
     `;
 export const DataCubesDocument = gql`
-    query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean) {
+    query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean, $filters: [DataCubeSearchFilter!]) {
   dataCubes(
     locale: $locale
     query: $query
     order: $order
     includeDrafts: $includeDrafts
+    filters: $filters
   ) {
     highlightedTitle
     highlightedDescription
@@ -361,6 +376,11 @@ export const DataCubesDocument = gql`
       title
       description
       publicationStatus
+      datePublished
+      theme {
+        name
+        theme
+      }
     }
   }
 }

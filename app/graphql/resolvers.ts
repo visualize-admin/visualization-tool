@@ -21,7 +21,7 @@ import {
 import { ResolvedDimension } from "./shared-types";
 
 const Query: QueryResolvers = {
-  dataCubes: async (_, { locale, query, order, includeDrafts }) => {
+  dataCubes: async (_, { locale, query, order, includeDrafts, filters }) => {
     const categories = await loadCategories({ locale });
 
     const categoriesByTheme = keyBy(categories, (x) => x.theme);
@@ -29,18 +29,17 @@ const Query: QueryResolvers = {
       await getCubes({
         locale: parseLocaleString(locale),
         includeDrafts: includeDrafts ? true : false,
+        filters: filters ? filters : undefined,
       })
-    ).map((c) =>
-      merge(
-        {},
-        c,
-        c.data.theme
-          ? {
-              data: { theme: categoriesByTheme[c.data.theme] },
-            }
-          : {}
-      )
-    );
+    ).map((c) => {
+      return merge({}, c, {
+        data: {
+          theme: c.data.theme
+            ? c.data.theme.map((theme) => categoriesByTheme[theme])
+            : undefined,
+        },
+      });
+    });
 
     const dataCubeCandidates = cubes.map(({ data }) => data);
 
@@ -144,6 +143,7 @@ const DataCube: DataCubeResolvers = {
   publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
+  theme: ({ data: { theme } }) => theme ?? null,
   dimensions: async ({ cube, locale }) => {
     const dimensions = await getCubeDimensions({
       cube,
