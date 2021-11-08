@@ -33,6 +33,7 @@ import {
   ConfiguratorState,
   ConfiguratorStateSelectingDataSet,
   decodeConfiguratorState,
+  Filters,
   FilterValue,
   FilterValueMultiValues,
   GenericFields,
@@ -215,47 +216,63 @@ const deriveFiltersFromFields = produce(
     const isPreHidden = (iri: string) => hiddenFieldIris.has(iri);
     const isHidden = (iri: string) => !isField(iri) || isPreHidden(iri);
 
-    dimensions.forEach((dimension) => {
-      if (dimension.isKeyDimension) {
-        const f = filters[dimension.iri];
-        const hidden = isHidden(dimension.iri);
-        const grouped = isGrouped(dimension.iri);
-
-        if (f !== undefined) {
-          // Fix wrong filter type
-          if (f.type === "single") {
-            delete filters[dimension.iri];
-          } else if (f.type === "multi") {
-            if (hidden && !grouped) {
-              filters[dimension.iri] = {
-                type: "single",
-                value: Object.keys(f.values)[0],
-              };
-            }
-          } else if (f.type === "range") {
-            if (hidden) {
-              filters[dimension.iri] = {
-                type: "single",
-                value: f.from,
-              };
-            }
-          }
-        } else {
-          // Add filter for this dim if it's not one of the selected multi filter fields, but
-          // only when the dimension isn't grouped, as only then we need to switch to a single filter.
-          if (hidden && !grouped) {
-            filters[dimension.iri] = {
-              type: "single",
-              value: dimension.values[0].value,
-            };
-          }
-        }
-      }
-    });
+    dimensions.forEach((dimension) =>
+      deriveFiltersFromField(
+        filters,
+        dimension.isKeyDimension,
+        dimension.iri,
+        dimension.values,
+        isHidden(dimension.iri),
+        isGrouped(dimension.iri)
+      )
+    );
 
     return chartConfig;
   }
 );
+
+export const deriveFiltersFromField = (
+  filters: Filters,
+  isKeyDimension: boolean,
+  iri: string,
+  dimensionValues: Array<any>,
+  isHidden: boolean,
+  isGrouped: boolean
+) => {
+  if (isKeyDimension) {
+    const f = filters[iri];
+
+    if (f !== undefined) {
+      // Fix wrong filter type
+      if (f.type === "single") {
+        delete filters[iri];
+      } else if (f.type === "multi") {
+        if (isHidden && !isGrouped) {
+          filters[iri] = {
+            type: "single",
+            value: Object.keys(f.values)[0],
+          };
+        }
+      } else if (f.type === "range") {
+        if (isHidden) {
+          filters[iri] = {
+            type: "single",
+            value: f.from,
+          };
+        }
+      }
+    } else {
+      // Add filter for this dim if it's not one of the selected multi filter fields, but
+      // only when the dimension isn't grouped, as only then we need to switch to a single filter.
+      if (isHidden && !isGrouped) {
+        filters[iri] = {
+          type: "single",
+          value: dimensionValues[0].value,
+        };
+      }
+    }
+  }
+};
 
 const transitionStepNext = (
   draft: ConfiguratorState,
