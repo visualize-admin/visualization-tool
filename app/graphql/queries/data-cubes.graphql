@@ -20,7 +20,8 @@ query DataCubes(
       description
       publicationStatus
       datePublished
-      theme {
+      themes
+      resolvedThemes {
         name
         theme
       }
@@ -157,8 +158,8 @@ query DataCubeObservations(
   }
 }
 
-query Categories($locale: String!) {
-  categories(locale: $locale) {
+query Themes($locale: String!) {
+  themes(locale: $locale) {
     name
     theme
   }

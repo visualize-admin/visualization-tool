@@ -30,8 +30,7 @@ import { loadResourceLabels } from "./query-labels";
 import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
 import truthy from "../utils/truthy";
-import { filter } from "lodash";
-import { DataCubeSearchFilter } from "../graphql/query-hooks";
+import { DataCubeSearchFilter, DataCubeTheme } from "../graphql/query-hooks";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -116,14 +115,16 @@ export const getCubes = async ({
   includeDrafts,
   locale,
   filters,
+  themesIndex,
 }: {
   includeDrafts: boolean;
   locale: string;
-  filters: DataCubeSearchFilter[];
+  filters?: DataCubeSearchFilter[];
+  themesIndex?: Record<string, DataCubeTheme>;
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();
 
-  const themeFilters = filters.filter((x) => x.type === "THEME");
+  const themeFilters = filters ? filters.filter((x) => x.type === "THEME") : [];
   const themeQueryFilter = Cube.filter.in(
     ns.dcat.theme,
     themeFilters.map((x) => rdf.namedNode(x.value))
@@ -141,11 +142,13 @@ export const getCubes = async ({
         ]),
     themeFilters.length > 0 ? themeQueryFilter : null,
   ].filter(truthy);
+
   const cubes = await source.cubes({
     noShape: true,
     filters: cubesFilters,
   });
-  return cubes.map((cube) => parseCube({ cube, locale }));
+
+  return cubes.map((cube) => parseCube({ cube, locale, themesIndex }));
 };
 
 export const getCube = async ({

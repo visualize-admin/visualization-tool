@@ -6,7 +6,7 @@ import { ChartPanel } from "../../components/chart-panel";
 import { ChartPreview } from "../../components/chart-preview";
 import { DataSetHint } from "../../components/hint";
 import {
-  DataCubeCategory,
+  DataCubeTheme,
   DataCubeResultOrder,
   useDataCubesQuery,
 } from "../../graphql/query-hooks";
@@ -40,7 +40,7 @@ const useSearchQueryState = () => {
   const previousOrderRef = useRef<DataCubeResultOrder>(
     DataCubeResultOrder.TitleAsc
   );
-  const [categoryFilters, setCategoryFilters] = useState<DataCubeCategory[]>(
+  const [categoryFilters, setCategoryFilters] = useState<DataCubeTheme[]>(
     []
   );
   const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
@@ -69,17 +69,17 @@ const useSearchQueryState = () => {
       setOrder(order);
     },
     categoryFilters,
-    onAddFilterCategory: (cat: DataCubeCategory) => {
+    onAddFilterTheme: (cat: DataCubeTheme) => {
       setCategoryFilters(Array.from(new Set([...categoryFilters, cat])));
     },
-    onRemoveFilterCategory: (cat: DataCubeCategory) => {
+    onRemoveFilterTheme: (cat: DataCubeTheme) => {
       setCategoryFilters(
         Array.from(
           new Set([...categoryFilters.filter((c) => c.theme !== cat.theme)])
         )
       );
     },
-    onToggleFilterCategory: (cat: DataCubeCategory) => {
+    onToggleFilterTheme: (cat: DataCubeTheme) => {
       if (categoryFilters.find((c) => c.theme === cat.theme)) {
         setCategoryFilters(
           Array.from(

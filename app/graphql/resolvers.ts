@@ -11,7 +11,7 @@ import {
   getCubes,
   getSparqlEditorUrl,
 } from "../rdf/queries";
-import { loadCategories } from "../rdf/query-cube-metadata";
+import { loadThemes } from "../rdf/query-cube-metadata";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
@@ -22,23 +22,17 @@ import { ResolvedDimension } from "./shared-types";
 
 const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order, includeDrafts, filters }) => {
-    const categories = await loadCategories({ locale });
+    // @TODO check if we can load the themes only if resolvedThemes is needed in the
+    // query. Resolvers get the query in the 4th argument of the function. graphql-fields
+    // package might be useful there.
+    const themes = await loadThemes({ locale });
+    const themesIndex = keyBy(themes, (x) => x.theme);
 
-    const categoriesByTheme = keyBy(categories, (x) => x.theme);
-    const cubes = (
-      await getCubes({
-        locale: parseLocaleString(locale),
-        includeDrafts: includeDrafts ? true : false,
-        filters: filters ? filters : undefined,
-      })
-    ).map((c) => {
-      return merge({}, c, {
-        data: {
-          theme: c.data.theme
-            ? c.data.theme.map((theme) => categoriesByTheme[theme])
-            : undefined,
-        },
-      });
+    const cubes = await getCubes({
+      locale: parseLocaleString(locale),
+      includeDrafts: includeDrafts ? true : false,
+      filters: filters ? filters : undefined,
+      themesIndex,
     });
 
     const dataCubeCandidates = cubes.map(({ data }) => data);
@@ -126,8 +120,8 @@ const Query: QueryResolvers = {
       latest,
     });
   },
-  categories: async (_, { locale }: { locale: string }) => {
-    return loadCategories({ locale });
+  themes: async (_, { locale }: { locale: string }) => {
+    return loadThemes({ locale });
   },
 };
 
@@ -143,7 +137,8 @@ const DataCube: DataCubeResolvers = {
   publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
-  theme: ({ data: { theme } }) => theme ?? null,
+  themes: ({ data: { themes } }) => themes ?? [],
+  resolvedThemes: ({ data: { resolvedThemes } }) => resolvedThemes ?? [],
   dimensions: async ({ cube, locale }) => {
     const dimensions = await getCubeDimensions({
       cube,

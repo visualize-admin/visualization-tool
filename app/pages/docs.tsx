@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import {
   Catalog,
   ConfigPageOrGroup,
@@ -128,9 +129,9 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/controls.docs"),
       },
       {
-        path: "/components/dataset-list",
-        title: "Datasets List",
-        content: require("../docs/dataset-list.docs"),
+        path: "/components/dataset-search",
+        title: "Datasets Search",
+        content: require("../docs/dataset-search.docs"),
       },
       {
         path: "/components/footer",

@@ -1,6 +1,5 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import e from "cors";
 import { keyBy } from "lodash";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
@@ -8,52 +7,14 @@ import { SearchQueryState, useConfiguratorState } from "..";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
-  DataCubeCategory,
   DataCubeResultOrder,
   DataCubesQuery,
-  useCategoriesQuery,
+  useThemesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
-import { ResolvedDataCube } from "../../graphql/shared-types";
 import { useLocale } from "../../locales/use-locale";
-import { theme } from "../../themes/federal";
-import { SectionTitle } from "./chart-controls/section";
-import { parseDate, useFormatDate } from "./ui-helpers";
-
-const Chip = ({
-  children,
-  onClose,
-}: {
-  children: React.ReactNode;
-  onClose: () => void;
-}) => {
-  return (
-    <Flex sx={{ cursor: "pointer", borderRadius: 4, p: 1, bg: "monotone500" }}>
-      {children}
-      {onClose ? (
-        <Box ml={1} onClick={onClose} sx={{ borderRadius: 100 }}>
-          X
-        </Box>
-      ) : null}
-    </Flex>
-  );
-};
-
-const Stack = ({ children }: { children: React.ReactNode }) => {
-  return <Box sx={{ "& > * + *": { mt: 2 } }}>{children}</Box>;
-};
-
-const Divider = () => {
-  return (
-    <Box
-      sx={{
-        borderBottomWidth: "1px",
-        borderBottomStyle: "solid",
-        borderBottomColor: "monochrome300",
-      }}
-    />
-  );
-};
+import Stack from "./Stack";
+import { useFormatDate } from "./ui-helpers";
 
 export const SearchDatasetBox = ({
   searchQueryState,
@@ -184,8 +145,8 @@ export const SearchFilters = ({
   searchQueryState: SearchQueryState;
 }) => {
   const locale = useLocale();
-  const { categoryFilters, onToggleFilterCategory } = searchQueryState;
-  const [{ data: allCategories }] = useCategoriesQuery({
+  const { categoryFilters, onToggleFilterTheme } = searchQueryState;
+  const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
 
@@ -205,8 +166,8 @@ export const SearchFilters = ({
       role="search"
     >
       <Stack>
-        {allCategories
-          ? allCategories.categories.map((cat) => {
+        {allThemes
+          ? allThemes.themes.map((cat) => {
               return (
                 <Checkbox
                   key={cat.theme}
@@ -215,7 +176,7 @@ export const SearchFilters = ({
                   name={cat.name}
                   value={cat.theme}
                   onChange={(ev) => {
-                    onToggleFilterCategory(cat);
+                    onToggleFilterTheme(cat);
                   }}
                 />
               );
@@ -272,13 +233,27 @@ export const DatasetResult = ({
   highlightedTitle,
   highlightedDescription,
 }: {
-  dataCube: DataCubesQuery["dataCubes"][0]["dataCube"];
+  dataCube: Pick<
+    DataCubesQuery["dataCubes"][0]["dataCube"],
+    | "iri"
+    | "publicationStatus"
+    | "title"
+    | "description"
+    | "datePublished"
+    | "resolvedThemes"
+  >;
   highlightedTitle?: string | null;
   highlightedDescription?: string | null;
 }) => {
   const [state, dispatch] = useConfiguratorState();
-  const { iri, publicationStatus, title, description, theme, datePublished } =
-    dataCube;
+  const {
+    iri,
+    publicationStatus,
+    title,
+    description,
+    resolvedThemes,
+    datePublished,
+  } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const selected = iri === state.dataSet;
 
@@ -334,7 +309,7 @@ export const DatasetResult = ({
           )}
         </Text>
         <Text variant="paragraph2" color="monochrome600">
-          <DateFormat date={datePublished} />
+          {datePublished ? <DateFormat date={datePublished} /> : null}
         </Text>
       </Flex>
       <Text
@@ -359,14 +334,16 @@ export const DatasetResult = ({
           description
         )}
       </Text>
-      <Box mt={1} sx={{ "& > * + *": { ml: 1 } }}>
+      <Stack spacing={1} direction="row">
         {isDraft && (
           <Tag>
             <Trans id="dataset.tag.draft">Draft</Trans>
           </Tag>
         )}
-        {theme ? theme.map((t) => <Tag key={t.theme}>{t.name}</Tag>) : null}
-      </Box>
+        {resolvedThemes
+          ? resolvedThemes.map((t) => <Tag key={t.theme}>{t.name}</Tag>)
+          : null}
+      </Stack>
     </Button>
   );
 };

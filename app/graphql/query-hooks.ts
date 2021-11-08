@@ -35,7 +35,8 @@ export type DataCube = {
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
   measures: Array<Measure>;
-  theme: Array<Theme>;
+  themes: Array<Scalars['String']>;
+  resolvedThemes?: Maybe<Array<DataCubeTheme>>;
 };
 
 
@@ -48,12 +49,6 @@ export type DataCubeObservationsArgs = {
 
 export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
-};
-
-export type DataCubeCategory = {
-  __typename: 'DataCubeCategory';
-  theme: Scalars['String'];
-  name: Scalars['String'];
 };
 
 export enum DataCubePublicationStatus {
@@ -78,6 +73,12 @@ export enum DataCubeResultOrder {
 export type DataCubeSearchFilter = {
   type: Scalars['String'];
   value: Scalars['String'];
+};
+
+export type DataCubeTheme = {
+  __typename: 'DataCubeTheme';
+  theme: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type Dimension = {
@@ -138,7 +139,7 @@ export type Query = {
   __typename: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
-  categories: Array<DataCubeCategory>;
+  themes: Array<DataCubeTheme>;
 };
 
 
@@ -158,7 +159,7 @@ export type QueryDataCubesArgs = {
 };
 
 
-export type QueryCategoriesArgs = {
+export type QueryThemesArgs = {
   locale: Scalars['String'];
 };
 
@@ -173,12 +174,6 @@ export type TemporalDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-};
-
-export type Theme = {
-  __typename: 'Theme';
-  name: Scalars['String'];
-  theme: Scalars['String'];
 };
 
 export enum TimeUnit {
@@ -200,7 +195,7 @@ export type DataCubesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, theme: Array<{ __typename: 'Theme', name: string, theme: string }> } }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, themes: Array<string>, resolvedThemes?: Maybe<Array<{ __typename: 'DataCubeTheme', name: string, theme: string }>> } }> };
 
 type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
@@ -340,12 +335,12 @@ export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: M
       & DimensionMetaData_Measure_Fragment
     )>, observations: { __typename: 'ObservationsQuery', data: Array<any>, sparqlEditorUrl?: Maybe<string> } }> };
 
-export type CategoriesQueryVariables = Exact<{
+export type ThemesQueryVariables = Exact<{
   locale: Scalars['String'];
 }>;
 
 
-export type CategoriesQuery = { __typename: 'Query', categories: Array<{ __typename: 'DataCubeCategory', name: string, theme: string }> };
+export type ThemesQuery = { __typename: 'Query', themes: Array<{ __typename: 'DataCubeTheme', name: string, theme: string }> };
 
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {
@@ -377,7 +372,8 @@ export const DataCubesDocument = gql`
       description
       publicationStatus
       datePublished
-      theme {
+      themes
+      resolvedThemes {
         name
         theme
       }
@@ -516,15 +512,15 @@ export const DataCubeObservationsDocument = gql`
 export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubeObservationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeObservationsQuery>({ query: DataCubeObservationsDocument, ...options });
 };
-export const CategoriesDocument = gql`
-    query Categories($locale: String!) {
-  categories(locale: $locale) {
+export const ThemesDocument = gql`
+    query Themes($locale: String!) {
+  themes(locale: $locale) {
     name
     theme
   }
 }
     `;
 
-export function useCategoriesQuery(options: Omit<Urql.UseQueryArgs<CategoriesQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<CategoriesQuery>({ query: CategoriesDocument, ...options });
+export function useThemesQuery(options: Omit<Urql.UseQueryArgs<ThemesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ThemesQuery>({ query: ThemesDocument, ...options });
 };

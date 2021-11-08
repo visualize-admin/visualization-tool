@@ -1,20 +1,18 @@
 import { SELECT } from "@tpluscode/sparql-builder";
-import { sparql } from "@tpluscode/rdf-string";
 import { schema } from "@tpluscode/rdf-ns-builders";
-import { Literal, NamedNode } from "rdf-js";
 
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { sparqlClient } from "./sparql-client";
-import { DataCubeCategory } from "../graphql/query-hooks";
+import { DataCubeTheme } from "../graphql/query-hooks";
 
-export async function loadCategories({
+export async function loadThemes({
   locale,
   client = sparqlClient,
 }: {
   locale?: string | null;
   client?: ParsingClient;
-}): Promise<DataCubeCategory[]> {
+}): Promise<DataCubeTheme[]> {
   const query = SELECT.ALL.WHERE`
     graph   <https://lindas.admin.ch/sfa/opendataswiss> {
       ?theme a ${schema.DefinedTerm} ;
@@ -30,5 +28,6 @@ export async function loadCategories({
   return results.map((r) => ({
     name: r.name.value,
     theme: r.theme.value,
-  })) as DatasetCategory[];
+    __typename: "DataCubeTheme",
+  }));
 }

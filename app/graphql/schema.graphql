@@ -19,11 +19,6 @@ enum DataCubePublicationStatus {
   PUBLISHED
 }
 
-type Theme {
-  name: String!
-  theme: String!
-}
-
 type DataCube {
   iri: String!
   title: String!
@@ -44,7 +39,8 @@ type DataCube {
   dimensions: [Dimension!]!
   dimensionByIri(iri: String!): Dimension
   measures: [Measure!]!
-  theme: [Theme!]!
+  themes: [String!]!
+  resolvedThemes: [DataCubeTheme!]
 }
 
 interface Dimension {
@@ -111,7 +107,7 @@ type DataCubeResult {
   dataCube: DataCube!
 }
 
-type DataCubeCategory {
+type DataCubeTheme {
   theme: String!
   name: String!
 }
@@ -138,5 +134,5 @@ type Query {
     includeDrafts: Boolean
     filters: [DataCubeSearchFilter!]
   ): [DataCubeResult!]!
-  categories(locale: String!): [DataCubeCategory!]!
+  themes(locale: String!): [DataCubeTheme!]!
 }
