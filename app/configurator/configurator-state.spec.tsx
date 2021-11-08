@@ -1,6 +1,7 @@
 import { Client } from "@urql/core";
-import { deriveFiltersFromField } from ".";
+import { applyDimensionToFilters } from ".";
 import * as api from "../api";
+import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 import bathingWaterMetadata from "../test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 import { data as fakeVizFixture } from "../test/__fixtures/prod/line-1.json";
 import {
@@ -108,21 +109,13 @@ describe("deriveFiltersFromField", () => {
     ],
     unit: null,
     __typename: "NominalDimension",
-  };
+  } as DimensionMetaDataFragment;
 
-  const deriveFilters = (
-    filtersState: any,
+  const _applyDimensionToFilters = (
+    filters: any,
     isHidden: boolean,
     isGrouped: boolean
-  ) =>
-    deriveFiltersFromField(
-      filtersState,
-      dimension.isKeyDimension,
-      dimension.iri,
-      dimension.values,
-      isHidden,
-      isGrouped
-    );
+  ) => applyDimensionToFilters(filters, dimension, isHidden, isGrouped);
 
   it("should remove single value filter", () => {
     const initialFiltersState = {
@@ -133,7 +126,7 @@ describe("deriveFiltersFromField", () => {
     };
     const expectedFiltersState = {};
 
-    deriveFilters(initialFiltersState, false, false);
+    _applyDimensionToFilters(initialFiltersState, false, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -146,7 +139,7 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    deriveFilters(initialFiltersState, true, false);
+    _applyDimensionToFilters(initialFiltersState, true, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -164,7 +157,7 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    deriveFilters(initialFiltersState, true, false);
+    _applyDimensionToFilters(initialFiltersState, true, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -183,7 +176,7 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    deriveFilters(initialFiltersState, true, false);
+    _applyDimensionToFilters(initialFiltersState, true, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -201,7 +194,7 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    deriveFilters(initialFiltersState, false, true);
+    _applyDimensionToFilters(initialFiltersState, false, true);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 });

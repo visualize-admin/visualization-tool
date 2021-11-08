@@ -21,6 +21,7 @@ import {
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
+  DimensionMetaDataFragment,
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { createChartId } from "../lib/create-chart-id";
@@ -217,11 +218,9 @@ const deriveFiltersFromFields = produce(
     const isHidden = (iri: string) => !isField(iri) || isPreHidden(iri);
 
     dimensions.forEach((dimension) =>
-      deriveFiltersFromField(
+      applyDimensionToFilters(
         filters,
-        dimension.isKeyDimension,
-        dimension.iri,
-        dimension.values,
+        dimension,
         isHidden(dimension.iri),
         isGrouped(dimension.iri)
       )
@@ -231,31 +230,29 @@ const deriveFiltersFromFields = produce(
   }
 );
 
-export const deriveFiltersFromField = (
+export const applyDimensionToFilters = (
   filters: Filters,
-  isKeyDimension: boolean,
-  iri: string,
-  dimensionValues: Array<any>,
+  dimension: DimensionMetaDataFragment,
   isHidden: boolean,
   isGrouped: boolean
 ) => {
-  if (isKeyDimension) {
-    const f = filters[iri];
+  if (dimension.isKeyDimension) {
+    const f = filters[dimension.iri];
 
     if (f !== undefined) {
       // Fix wrong filter type
       if (f.type === "single") {
-        delete filters[iri];
+        delete filters[dimension.iri];
       } else if (f.type === "multi") {
         if (isHidden && !isGrouped) {
-          filters[iri] = {
+          filters[dimension.iri] = {
             type: "single",
             value: Object.keys(f.values)[0],
           };
         }
       } else if (f.type === "range") {
         if (isHidden) {
-          filters[iri] = {
+          filters[dimension.iri] = {
             type: "single",
             value: f.from,
           };
@@ -265,9 +262,9 @@ export const deriveFiltersFromField = (
       // Add filter for this dim if it's not one of the selected multi filter fields, but
       // only when the dimension isn't grouped, as only then we need to switch to a single filter.
       if (isHidden && !isGrouped) {
-        filters[iri] = {
+        filters[dimension.iri] = {
           type: "single",
-          value: dimensionValues[0].value,
+          value: dimension.values[0].value,
         };
       }
     }
