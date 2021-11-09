@@ -25,6 +25,7 @@ export type DataCube = {
   version?: Maybe<Scalars['String']>;
   contactName?: Maybe<Scalars['String']>;
   contactEmail?: Maybe<Scalars['String']>;
+  creator?: Maybe<DataCubeOrganization>;
   landingPage?: Maybe<Scalars['String']>;
   publisher?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -48,6 +49,12 @@ export type DataCubeObservationsArgs = {
 
 export type DataCubeDimensionByIriArgs = {
   iri: Scalars['String'];
+};
+
+export type DataCubeOrganization = {
+  __typename: 'DataCubeOrganization';
+  iri: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
 };
 
 export enum DataCubePublicationStatus {
@@ -139,6 +146,7 @@ export type Query = {
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
   themes: Array<DataCubeTheme>;
+  organizations: Array<DataCubeOrganization>;
 };
 
 
@@ -159,6 +167,11 @@ export type QueryDataCubesArgs = {
 
 
 export type QueryThemesArgs = {
+  locale: Scalars['String'];
+};
+
+
+export type QueryOrganizationsArgs = {
   locale: Scalars['String'];
 };
 
@@ -194,7 +207,7 @@ export type DataCubesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
 type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
@@ -341,6 +354,13 @@ export type ThemesQueryVariables = Exact<{
 
 export type ThemesQuery = { __typename: 'Query', themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> };
 
+export type OrganizationsQueryVariables = Exact<{
+  locale: Scalars['String'];
+}>;
+
+
+export type OrganizationsQuery = { __typename: 'Query', organizations: Array<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> };
+
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {
   iri
@@ -368,6 +388,10 @@ export const DataCubesDocument = gql`
     dataCube {
       iri
       title
+      creator {
+        iri
+        label
+      }
       description
       publicationStatus
       datePublished
@@ -521,4 +545,16 @@ export const ThemesDocument = gql`
 
 export function useThemesQuery(options: Omit<Urql.UseQueryArgs<ThemesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<ThemesQuery>({ query: ThemesDocument, ...options });
+};
+export const OrganizationsDocument = gql`
+    query Organizations($locale: String!) {
+  organizations(locale: $locale) {
+    iri
+    label
+  }
+}
+    `;
+
+export function useOrganizationsQuery(options: Omit<Urql.UseQueryArgs<OrganizationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<OrganizationsQuery>({ query: OrganizationsDocument, ...options });
 };

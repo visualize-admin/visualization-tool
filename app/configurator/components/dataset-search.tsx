@@ -9,7 +9,7 @@ import { Loading } from "../../components/hint";
 import {
   DataCubeResultOrder,
   DataCubesQuery,
-  DataCubeTheme,
+  useOrganizationsQuery,
   useThemesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
@@ -146,15 +146,15 @@ export const SearchFilters = ({
   searchQueryState: SearchQueryState;
 }) => {
   const locale = useLocale();
-  const { categoryFilters, onToggleFilterTheme } = searchQueryState;
+  const { filters, onToggleFilter } = searchQueryState;
   const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
+  const [{ data: allOrgs }] = useOrganizationsQuery({
+    variables: { locale },
+  });
 
-  const themesByIri = useMemo(
-    () => keyBy(categoryFilters, (c) => c.iri),
-    [categoryFilters]
-  );
+  const filtersByIri = useMemo(() => keyBy(filters, (c) => c.iri), [filters]);
   return (
     <Flex
       sx={{
@@ -167,6 +167,7 @@ export const SearchFilters = ({
       role="search"
     >
       <Stack>
+        <Text>Topics</Text>
         {allThemes
           ? allThemes.themes.map((cat) => {
               if (!cat.label) {
@@ -176,11 +177,31 @@ export const SearchFilters = ({
                 <Checkbox
                   key={cat.iri}
                   label={cat.label}
-                  checked={!!themesByIri[cat.iri]}
+                  checked={!!filtersByIri[cat.iri]}
                   name={cat.label}
                   value={cat.iri}
                   onChange={(ev) => {
-                    onToggleFilterTheme(cat);
+                    onToggleFilter(cat);
+                  }}
+                />
+              );
+            })
+          : null}
+        <Text>Organizations</Text>
+        {allOrgs
+          ? allOrgs.organizations.map((org) => {
+              if (!org.label) {
+                return null;
+              }
+              return (
+                <Checkbox
+                  key={org.iri}
+                  label={org.label}
+                  checked={!!filtersByIri[org.iri]}
+                  name={org.label}
+                  value={org.iri}
+                  onChange={(ev) => {
+                    onToggleFilter(org);
                   }}
                 />
               );
@@ -245,15 +266,24 @@ export const DatasetResult = ({
     | "description"
     | "datePublished"
     | "themes"
+    | "creator"
   >;
   highlightedTitle?: string | null;
   highlightedDescription?: string | null;
 }) => {
   const [state, dispatch] = useConfiguratorState();
-  const { iri, publicationStatus, title, description, themes, datePublished } =
-    dataCube;
+  const {
+    iri,
+    publicationStatus,
+    title,
+    description,
+    themes,
+    datePublished,
+    creator,
+  } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const selected = iri === state.dataSet;
+  console.log({ creator });
 
   return (
     <Button
@@ -332,14 +362,17 @@ export const DatasetResult = ({
           description
         )}
       </Text>
-      <Stack spacing={1} direction="row">
-        {isDraft && (
-          <Tag>
-            <Trans id="dataset.tag.draft">Draft</Trans>
-          </Tag>
-        )}
-        {themes ? themes.map((t) => <Tag key={t.iri}>{t.label}</Tag>) : null}
-      </Stack>
+      <Flex sx={{ justifyContent: "space-between" }}>
+        <Stack spacing={1} direction="row">
+          {isDraft && (
+            <Tag>
+              <Trans id="dataset.tag.draft">Draft</Trans>
+            </Tag>
+          )}
+          {themes ? themes.map((t) => <Tag key={t.iri}>{t.label}</Tag>) : null}
+        </Stack>
+        {creator ? <Tag>{creator.label}</Tag> : null}
+      </Flex>
     </Button>
   );
 };

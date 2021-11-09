@@ -17,6 +17,10 @@ query DataCubes(
     dataCube {
       iri
       title
+      creator {
+        iri
+        label
+      }
       description
       publicationStatus
       datePublished
@@ -159,6 +163,13 @@ query DataCubeObservations(
 
 query Themes($locale: String!) {
   themes(locale: $locale) {
+    iri
+    label
+  }
+}
+
+query Organizations($locale: String!) {
+  organizations(locale: $locale) {
     iri
     label
   }

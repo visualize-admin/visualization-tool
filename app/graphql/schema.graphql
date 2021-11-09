@@ -25,6 +25,7 @@ type DataCube {
   version: String
   contactName: String
   contactEmail: String
+  creator: DataCubeOrganization
   landingPage: String
   publisher: String
   description: String
@@ -111,6 +112,11 @@ type DataCubeTheme {
   label: String
 }
 
+type DataCubeOrganization {
+  iri: String!
+  label: String
+}
+
 input DataCubeSearchFilter {
   type: String!
   value: String!
@@ -134,4 +140,5 @@ type Query {
     filters: [DataCubeSearchFilter!]
   ): [DataCubeResult!]!
   themes(locale: String!): [DataCubeTheme!]!
+  organizations(locale: String!): [DataCubeOrganization!]!
 }

@@ -1,3 +1,4 @@
+import { filter } from "lodash";
 import React, { useRef, useState } from "react";
 import { Box, Link, LinkProps } from "theme-ui";
 import { useDebounce } from "use-debounce";
@@ -9,6 +10,7 @@ import {
   DataCubeTheme,
   DataCubeResultOrder,
   useDataCubesQuery,
+  DataCubeOrganization,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../src";
 import { ChartConfiguratorTable } from "../table/table-chart-configurator";
@@ -31,6 +33,8 @@ import {
 } from "./layout";
 import { Stepper } from "./stepper";
 
+type Filter = DataCubeTheme | DataCubeOrganization;
+
 const useSearchQueryState = () => {
   const [query, setQuery] = useState<string>("");
 
@@ -40,7 +44,7 @@ const useSearchQueryState = () => {
   const previousOrderRef = useRef<DataCubeResultOrder>(
     DataCubeResultOrder.TitleAsc
   );
-  const [categoryFilters, setCategoryFilters] = useState<DataCubeTheme[]>([]);
+  const [filters, setFilters] = useState<Filter[]>([]);
   const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
 
   return {
@@ -66,26 +70,22 @@ const useSearchQueryState = () => {
       previousOrderRef.current = order;
       setOrder(order);
     },
-    categoryFilters,
-    onAddFilterTheme: (cat: DataCubeTheme) => {
-      setCategoryFilters(Array.from(new Set([...categoryFilters, cat])));
+    filters,
+    onAddFilter: (cat: Filter) => {
+      setFilters(Array.from(new Set([...filters, cat])));
     },
-    onRemoveFilterTheme: (cat: DataCubeTheme) => {
-      setCategoryFilters(
-        Array.from(
-          new Set([...categoryFilters.filter((c) => c.iri !== cat.iri)])
-        )
+    onRemoveFilter: (cat: Filter) => {
+      setFilters(
+        Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
       );
     },
-    onToggleFilterTheme: (cat: DataCubeTheme) => {
-      if (categoryFilters.find((c) => c.iri === cat.iri)) {
-        setCategoryFilters(
-          Array.from(
-            new Set([...categoryFilters.filter((c) => c.iri !== cat.iri)])
-          )
+    onToggleFilter: (cat: Filter) => {
+      if (filters.find((c) => c.iri === cat.iri)) {
+        setFilters(
+          Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
         );
       } else {
-        setCategoryFilters(Array.from(new Set([...categoryFilters, cat])));
+        setFilters(Array.from(new Set([...filters, cat])));
       }
     },
   };
@@ -112,7 +112,7 @@ const SelectDatasetStep = () => {
   const locale = useLocale();
 
   const searchQueryState = useSearchQueryState();
-  const { query, order, includeDrafts, categoryFilters } = searchQueryState;
+  const { query, order, includeDrafts, filters } = searchQueryState;
 
   const [state, dispatch] = useConfiguratorState();
   const [debouncedQuery] = useDebounce(query, 150, {
@@ -126,9 +126,9 @@ const SelectDatasetStep = () => {
       query: debouncedQuery,
       order,
       includeDrafts,
-      filters: categoryFilters
-        ? categoryFilters.map((catFilter) => {
-            return { type: "THEME", value: catFilter.iri };
+      filters: filters
+        ? filters.map((filter) => {
+            return { type: filter.__typename, value: filter.iri };
           })
         : [],
     },
