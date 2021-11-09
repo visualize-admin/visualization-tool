@@ -32,7 +32,7 @@ export const Examples = ({
       <HomepageSection>{headline}</HomepageSection>
       <Example headline={example1Headline} description={example1Description}>
         <ChartPublished
-          dataSet="https://environment.ld.admin.ch/foen/ubd0037/3/"
+          dataSet="https://environment.ld.admin.ch/foen/ubd0037/2/"
           meta={{
             title: {
               de: "Lärmbelastung durch Verkehr",
@@ -41,10 +41,10 @@ export const Examples = ({
               en: "Traffic noise pollution",
             },
             description: {
-              de: "Anteil der Personen mit schädlichem oder lästigem Verkehrslärm am Wohnort, in der Schweiz, 2015",
-              fr: "Proportion des personnes exposées à leur domicile à un bruit nuisible ou incommodant dû au trafic, en Suisse, en 2015",
-              it: "Percentuale di persone esposte, al loro domicilio, a rumore dannoso o molesto generato dal traffico, in Svizzera, nel 2015",
-              en: "Proportion of people exposed at home to harmful or disturbing levels of traffic noise, in Switzerland, 2015",
+              de: "",
+              fr: "",
+              it: "",
+              en: "",
             },
           }}
           chartConfig={{
@@ -53,6 +53,10 @@ export const Examples = ({
               x: {
                 componentIri:
                   "https://environment.ld.admin.ch/foen/ubd0037/verkehrsart",
+                sorting: {
+                  sortingType: "byMeasure",
+                  sortingOrder: "desc",
+                },
               },
               y: {
                 componentIri:
@@ -69,15 +73,15 @@ export const Examples = ({
                 },
                 colorMapping: {
                   "https://environment.ld.admin.ch/foen/ubd0037/periode/D":
-                    "#1f77b4",
-                  "https://environment.ld.admin.ch/foen/ubd0037/periode/N":
                     "#ff7f0e",
+                  "https://environment.ld.admin.ch/foen/ubd0037/periode/N":
+                    "#1f77b4",
                 },
               },
             },
             interactiveFiltersConfig: {
               legend: {
-                active: true,
+                active: false,
                 componentIri: "",
               },
               time: {
@@ -92,7 +96,6 @@ export const Examples = ({
               dataFilters: {
                 active: true,
                 componentIris: [
-                  "https://environment.ld.admin.ch/foen/ubd0037/beurteilung",
                   "https://environment.ld.admin.ch/foen/ubd0037/gemeindetype",
                   "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteeinheit",
                 ],
@@ -130,98 +133,74 @@ export const Examples = ({
         reverse
       >
         <ChartPublished
-          dataSet="https://environment.ld.admin.ch/foen/ubd0104/3/"
+          dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/3/"
           meta={{
             title: {
-              de: "E. coli und Enterokokken in Badegewässern",
-              fr: "E. coli et entérocoques dans les eaux de baignade",
-              it: "E. coli ed enterococchi nelle acque di balneazione",
-              en: "E. coli and enterococci in Bathing water",
+              de: "Entwicklung der Staatsrechnungen nach Ämtern",
+              en: "Evolution of state accounts by office",
+              fr: "Evolution des comptes d'état par office",
+              it: "Evoluzione dei conti dello stato per ufficio",
             },
             description: {
-              de: "Konzentration von Escherichia coli und intestinalen Enterokokken an Badestellen, nach Beobachtungsprogramm, 2018",
-              fr: "Concentration en Escherichia coli et entérocoques intestinaux dans les sites de baignade, par programme d’observation, en 2018",
-              it: "Concentrazione di Escherichia coli ed enterococchi intestinali nei siti di balneazione, per programma di osservazione, nel 2018",
-              en: "Concentration of Escherichia coli and intestinal enterococci at bathing sites, by monitoring programme, 2018",
+              de: "",
+              en: "",
+              fr: "",
+              it: "",
             },
           }}
           chartConfig={{
-            chartType: "area",
             fields: {
               x: {
-                componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
-                sorting: {
-                  sortingType: "byDimensionLabel",
-                  sortingOrder: "asc",
-                },
+                componentIri: "http://www.w3.org/2006/time#Year",
               },
               y: {
-                componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0104/value",
+                componentIri: "http://schema.org/amount",
               },
               segment: {
-                componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0104/station",
+                type: "stacked",
                 palette: "category10",
-                type: "grouped",
                 sorting: {
                   sortingType: "byDimensionLabel",
                   sortingOrder: "asc",
                 },
                 colorMapping: {
-                  "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24001":
-                    "#ff7f0e",
-                  "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24002":
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/3/OperationCharacter/OC1":
                     "#1f77b4",
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/3/OperationCharacter/OC2":
+                    "#ff7f0e",
                 },
+                componentIri:
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/operationcharacter",
               },
             },
+            filters: {
+              "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office": {
+                type: "single",
+                value:
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/3/Office/O7",
+              },
+            },
+            chartType: "area",
             interactiveFiltersConfig: {
+              time: {
+                active: true,
+                presets: {
+                  to: "2013-12-31T23:00:00.000Z",
+                  from: "1950-12-31T23:00:00.000Z",
+                  type: "range",
+                },
+                componentIri: "",
+              },
               legend: {
                 active: true,
                 componentIri: "",
               },
-              time: {
-                active: false,
-                componentIri: "",
-                presets: {
-                  type: "range",
-                  from: "2007-05-20T22:00:00.000Z",
-                  to: "2020-09-27T22:00:00.000Z",
-                },
-              },
               dataFilters: {
                 active: true,
                 componentIris: [
-                  "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office",
                 ],
               },
-            },
-            filters: {
-              "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing": {
-                type: "range",
-                from: "2018-01-01",
-                to: "2018-12-31",
-              },
-              "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
-                type: "single",
-                value: "E.coli",
-              },
-              "https://environment.ld.admin.ch/foen/ubd0104/station": {
-                type: "multi",
-                values: {
-                  "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24002":
-                    true,
-                  "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24001":
-                    true,
-                },
-              },
-              "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm":
-                {
-                  type: "single",
-                  value: "BAQUA_BE",
-                },
             },
           }}
           configKey={""}
