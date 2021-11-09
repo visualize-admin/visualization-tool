@@ -1,11 +1,12 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { keyBy } from "lodash";
+import { keyBy, sortBy } from "lodash";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
 import { SearchQueryState, useConfiguratorState } from "..";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
+import { Tab, TabContent, Tabs } from "../../components/tabs";
 import {
   DataCubeResultOrder,
   DataCubesQuery,
@@ -155,6 +156,13 @@ export const SearchFilters = ({
   });
 
   const filtersByIri = useMemo(() => keyBy(filters, (c) => c.iri), [filters]);
+
+  const [allThemesAlpha, allOrgsAlpha] = useMemo(() => {
+    return [
+      allThemes ? sortBy(allThemes.themes, (x) => x?.label) : null,
+      allOrgs ? sortBy(allOrgs.organizations, (x) => x?.label) : null,
+    ];
+  }, [allThemes, allOrgs]);
   return (
     <Flex
       sx={{
@@ -167,46 +175,54 @@ export const SearchFilters = ({
       role="search"
     >
       <Stack>
-        <Text>Topics</Text>
-        {allThemes
-          ? allThemes.themes.map((cat) => {
-              if (!cat.label) {
-                return null;
-              }
-              return (
-                <Checkbox
-                  key={cat.iri}
-                  label={cat.label}
-                  checked={!!filtersByIri[cat.iri]}
-                  name={cat.label}
-                  value={cat.iri}
-                  onChange={(ev) => {
-                    onToggleFilter(cat);
-                  }}
-                />
-              );
-            })
-          : null}
-        <Text>Organizations</Text>
-        {allOrgs
-          ? allOrgs.organizations.map((org) => {
-              if (!org.label) {
-                return null;
-              }
-              return (
-                <Checkbox
-                  key={org.iri}
-                  label={org.label}
-                  checked={!!filtersByIri[org.iri]}
-                  name={org.label}
-                  value={org.iri}
-                  onChange={(ev) => {
-                    onToggleFilter(org);
-                  }}
-                />
-              );
-            })
-          : null}
+        <Tabs initialValue="themes">
+          <Flex mb={4}>
+            <Tab value="themes">Themes</Tab>
+            <Tab value="organizations">Organizations</Tab>
+          </Flex>
+          <TabContent value="themes">
+            {allThemesAlpha
+              ? allThemesAlpha.map((cat) => {
+                  if (!cat.label) {
+                    return null;
+                  }
+                  return (
+                    <Checkbox
+                      key={cat.iri}
+                      label={cat.label}
+                      checked={!!filtersByIri[cat.iri]}
+                      name={cat.label}
+                      value={cat.iri}
+                      onChange={(ev) => {
+                        onToggleFilter(cat);
+                      }}
+                    />
+                  );
+                })
+              : null}
+          </TabContent>
+          <TabContent value="organizations">
+            {allOrgsAlpha
+              ? allOrgsAlpha.map((org) => {
+                  if (!org.label) {
+                    return null;
+                  }
+                  return (
+                    <Checkbox
+                      key={org.iri}
+                      label={org.label}
+                      checked={!!filtersByIri[org.iri]}
+                      name={org.label}
+                      value={org.iri}
+                      onChange={(ev) => {
+                        onToggleFilter(org);
+                      }}
+                    />
+                  );
+                })
+              : null}
+          </TabContent>
+        </Tabs>
       </Stack>
     </Flex>
   );
@@ -283,7 +299,6 @@ export const DatasetResult = ({
   } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const selected = iri === state.dataSet;
-  console.log({ creator });
 
   return (
     <Button
@@ -369,7 +384,11 @@ export const DatasetResult = ({
               <Trans id="dataset.tag.draft">Draft</Trans>
             </Tag>
           )}
-          {themes ? themes.map((t) => <Tag key={t.iri}>{t.label}</Tag>) : null}
+          {themes
+            ? sortBy(themes, (t) => t.label).map((t) => (
+                <Tag key={t.iri}>{t.label}</Tag>
+              ))
+            : null}
         </Stack>
         {creator ? <Tag>{creator.label}</Tag> : null}
       </Flex>
