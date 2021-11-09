@@ -62,13 +62,18 @@ export const DimensionValuesMultiFilter = ({
 
   if (data?.dataCubeByIri?.dimensionByIri) {
     const dimension = data?.dataCubeByIri?.dimensionByIri;
-
     const activeFilter = getFilterValue(state, dimension.iri);
+    const activeFilterValues = activeFilter
+      ? activeFilter.type === "single"
+        ? [String(activeFilter.value)]
+        : activeFilter.type === "multi"
+        ? Object.keys(activeFilter.values)
+        : []
+      : [];
 
     const selectionState: SelectionState = !activeFilter
       ? "ALL_SELECTED"
-      : activeFilter.type === "multi" &&
-        Object.keys(activeFilter.values).length === 0
+      : activeFilterValues.length === 0
       ? "NONE_SELECTED"
       : "SOME_SELECTED";
 
@@ -110,7 +115,13 @@ export const DimensionValuesMultiFilter = ({
                 label={dv.label}
                 value={dv.value}
                 allValues={dimension.values.map((d) => d.value)}
-                checked={selectionState === "ALL_SELECTED" ? true : undefined}
+                checked={
+                  selectionState === "ALL_SELECTED"
+                    ? true
+                    : selectionState === "SOME_SELECTED"
+                    ? activeFilterValues.includes(dv.value)
+                    : undefined
+                }
                 checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
                 color={color}
                 colorConfigPath={colorConfigPath}

@@ -1,13 +1,15 @@
 import { Client } from "@urql/core";
+import { applyDimensionToFilters } from ".";
+import * as api from "../api";
+import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import bathingWaterMetadata from "../test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
+import { data as fakeVizFixture } from "../test/__fixtures/prod/line-1.json";
 import {
   getLocalStorageKey,
   initChartStateFromChart,
-  initChartStateFromLocalStorage,
   initChartStateFromCube,
+  initChartStateFromLocalStorage,
 } from "./configurator-state";
-import * as api from "../api";
-import { data as fakeVizFixture } from "../test/__fixtures/prod/line-1.json";
-import bathingWaterMetadata from "../test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -93,5 +95,106 @@ describe("initChartStateFromCube", () => {
         state: "SELECTING_CHART_TYPE",
       })
     );
+  });
+});
+
+describe("deriveFiltersFromField", () => {
+  const dimension = {
+    iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+    label: "Parameter",
+    isKeyDimension: true,
+    values: [
+      { value: "E.coli", label: "E.coli" },
+      { value: "Enterokokken", label: "Enterokokken" },
+    ],
+    unit: null,
+    __typename: "NominalDimension",
+  } as DimensionMetaDataFragment;
+
+  const _applyDimensionToFilters = (
+    filters: any,
+    isHidden: boolean,
+    isGrouped: boolean
+  ) => applyDimensionToFilters(filters, dimension, isHidden, isGrouped);
+
+  it("should remove single value filter", () => {
+    const initialFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "single",
+        value: "E.coli",
+      },
+    };
+    const expectedFiltersState = {};
+
+    _applyDimensionToFilters(initialFiltersState, false, false);
+    expect(initialFiltersState).toEqual(expectedFiltersState);
+  });
+
+  it("should add single value filter for empty filter if hidden and not grouped", () => {
+    const initialFiltersState = {};
+    const expectedFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "single",
+        value: "E.coli",
+      },
+    };
+
+    _applyDimensionToFilters(initialFiltersState, true, false);
+    expect(initialFiltersState).toEqual(expectedFiltersState);
+  });
+
+  it("should add single value filter for multi filter if hidden and not grouped", () => {
+    const initialFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "multi",
+        values: { "E.coli": true, Enterokokken: true },
+      },
+    };
+    const expectedFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "single",
+        value: "E.coli",
+      },
+    };
+
+    _applyDimensionToFilters(initialFiltersState, true, false);
+    expect(initialFiltersState).toEqual(expectedFiltersState);
+  });
+
+  it("should add single value filter for range filter if hidden", () => {
+    const initialFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        from: "2007-05-21",
+        to: "2020-09-28",
+        type: "range",
+      },
+    };
+    const expectedFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "single",
+        value: "2007-05-21",
+      },
+    };
+
+    _applyDimensionToFilters(initialFiltersState, true, false);
+    expect(initialFiltersState).toEqual(expectedFiltersState);
+  });
+
+  it("should not modify filters for multi filter if not hidden and grouped", () => {
+    const initialFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "multi",
+        values: { "E.coli": false, Enterokokken: true },
+      },
+    };
+    const expectedFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "multi",
+        values: { "E.coli": false, Enterokokken: true },
+      },
+    };
+
+    _applyDimensionToFilters(initialFiltersState, false, true);
+    expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 });
