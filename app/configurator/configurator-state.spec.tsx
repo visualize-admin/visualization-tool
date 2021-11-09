@@ -113,11 +113,13 @@ describe("deriveFiltersFromField", () => {
 
   const _applyDimensionToFilters = (
     filters: any,
+    isField: boolean,
     isHidden: boolean,
     isGrouped: boolean
-  ) => applyDimensionToFilters(filters, dimension, isHidden, isGrouped);
+  ) =>
+    applyDimensionToFilters(filters, dimension, isField, isHidden, isGrouped);
 
-  it("should remove single value filter", () => {
+  it("non-table: should remove single value filter when a dimension is used as a field", () => {
     const initialFiltersState = {
       "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
         type: "single",
@@ -126,11 +128,11 @@ describe("deriveFiltersFromField", () => {
     };
     const expectedFiltersState = {};
 
-    _applyDimensionToFilters(initialFiltersState, false, false);
+    _applyDimensionToFilters(initialFiltersState, true, false, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
-  it("should add single value filter for empty filter if hidden and not grouped", () => {
+  it("table: should add single value filter for empty filter if hidden and not grouped", () => {
     const initialFiltersState = {};
     const expectedFiltersState = {
       "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
@@ -139,11 +141,11 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, true, false);
+    _applyDimensionToFilters(initialFiltersState, true, true, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
-  it("should add single value filter for multi filter if hidden and not grouped", () => {
+  it("table: should add single value filter for multi filter if hidden and not grouped", () => {
     const initialFiltersState = {
       "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
         type: "multi",
@@ -157,11 +159,11 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, true, false);
+    _applyDimensionToFilters(initialFiltersState, true, true, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
-  it("should add single value filter for range filter if hidden", () => {
+  it("table: should add single value filter for range filter if hidden", () => {
     const initialFiltersState = {
       "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
         from: "2007-05-21",
@@ -176,11 +178,11 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, true, false);
+    _applyDimensionToFilters(initialFiltersState, true, true, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
-  it("should not modify filters for multi filter if not hidden and grouped", () => {
+  it("table: should not modify filters for multi filter if not hidden and grouped", () => {
     const initialFiltersState = {
       "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
         type: "multi",
@@ -194,7 +196,25 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, false, true);
+    _applyDimensionToFilters(initialFiltersState, true, false, true);
+    expect(initialFiltersState).toEqual(expectedFiltersState);
+  });
+
+  it("non-table: should not modify filters if dimension is not used as a field", () => {
+    const initialFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "multi",
+        values: { "E.coli": false, Enterokokken: true },
+      },
+    };
+    const expectedFiltersState = {
+      "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+        type: "multi",
+        values: { "E.coli": false, Enterokokken: true },
+      },
+    };
+
+    _applyDimensionToFilters(initialFiltersState, false, false, false);
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 });

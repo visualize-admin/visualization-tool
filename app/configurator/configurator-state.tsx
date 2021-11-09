@@ -212,15 +212,19 @@ const deriveFiltersFromFields = produce(
     const groupedDimensionIris = getGroupedFieldIris(fields);
     const hiddenFieldIris = getHiddenFieldIris(fields);
 
+    // For tables, all dimensions are fields (chartConfig.fields).
+    // For other charts, dimension is considered a field, when it's
+    // either X, Y or segment.
     const isField = (iri: string) => fieldDimensionIris.has(iri);
+    // Below only apply to tables.
     const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
-    const isPreHidden = (iri: string) => hiddenFieldIris.has(iri);
-    const isHidden = (iri: string) => !isField(iri) || isPreHidden(iri);
+    const isHidden = (iri: string) => hiddenFieldIris.has(iri);
 
     dimensions.forEach((dimension) =>
       applyDimensionToFilters(
         filters,
         dimension,
+        isField(dimension.iri),
         isHidden(dimension.iri),
         isGrouped(dimension.iri)
       )
@@ -233,6 +237,7 @@ const deriveFiltersFromFields = produce(
 export const applyDimensionToFilters = (
   filters: Filters,
   dimension: DimensionMetaDataFragment,
+  isField: boolean,
   isHidden: boolean,
   isGrouped: boolean
 ) => {
@@ -241,7 +246,7 @@ export const applyDimensionToFilters = (
 
     if (f !== undefined) {
       // Fix wrong filter type
-      if (f.type === "single") {
+      if (f.type === "single" && isField) {
         delete filters[dimension.iri];
       } else if (f.type === "multi") {
         if (isHidden && !isGrouped) {
@@ -261,7 +266,7 @@ export const applyDimensionToFilters = (
     } else {
       // Add filter for this dim if it's not one of the selected multi filter fields, but
       // only when the dimension isn't grouped, as only then we need to switch to a single filter.
-      if (isHidden && !isGrouped) {
+      if ((isHidden || !isField) && !isGrouped) {
         filters[dimension.iri] = {
           type: "single",
           value: dimension.values[0].value,
