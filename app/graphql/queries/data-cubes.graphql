@@ -20,10 +20,9 @@ query DataCubes(
       description
       publicationStatus
       datePublished
-      themes
-      resolvedThemes {
-        name
-        theme
+      themes {
+        iri
+        label
       }
     }
   }
@@ -160,7 +159,7 @@ query DataCubeObservations(
 
 query Themes($locale: String!) {
   themes(locale: $locale) {
-    name
-    theme
+    iri
+    label
   }
 }

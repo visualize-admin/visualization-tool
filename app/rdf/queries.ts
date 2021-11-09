@@ -148,7 +148,7 @@ export const getCubes = async ({
     filters: cubesFilters,
   });
 
-  return cubes.map((cube) => parseCube({ cube, locale, themesIndex }));
+  return cubes.map((cube) => parseCube({ cube, locale }));
 };
 
 export const getCube = async ({

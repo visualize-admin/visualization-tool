@@ -5,15 +5,23 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { sparqlClient } from "./sparql-client";
 import { DataCubeTheme } from "../graphql/query-hooks";
+import { keyBy } from "lodash";
 
-export async function loadThemes({
-  locale,
-  client = sparqlClient,
-}: {
-  locale?: string | null;
-  client?: ParsingClient;
-}): Promise<DataCubeTheme[]> {
-  const query = SELECT.ALL.WHERE`
+const parseSparqlTheme = (sparqlTheme: any) => {
+  return {
+    label: sparqlTheme.name.value,
+    iri: sparqlTheme.theme.value,
+    __typename: "DataCubeTheme",
+  } as DataCubeTheme;
+};
+
+
+// Handles both batch loading and loading all themes
+// Batch loading is done by load all themes and then filtering according to given IRIs
+export const createThemeLoader =
+  ({ locale }: { locale: string }) =>
+  async (filterIris?: readonly string[]): Promise<(DataCubeTheme | null)[]> => {
+    const query = SELECT.ALL.WHERE`
     graph   <https://lindas.admin.ch/sfa/opendataswiss> {
       ?theme a ${schema.DefinedTerm} ;
         ${schema.name} ?name ;
@@ -21,13 +29,24 @@ export async function loadThemes({
       filter (langmatches(lang(?name), "${locale}"))
     }
   `;
-  const results = await query.execute(client.query, {
-    operation: "postUrlencoded",
-  });
+    const results = await query.execute(sparqlClient.query, {
+      operation: "postUrlencoded",
+    });
 
-  return results.map((r) => ({
-    name: r.name.value,
-    theme: r.theme.value,
-    __typename: "DataCubeTheme",
-  }));
-}
+    if (filterIris) {
+      const resultsByIri = keyBy(results, (x) => x.theme.value);
+      return filterIris.map((iri) => {
+        const theme = resultsByIri[iri];
+        return theme ? parseSparqlTheme(theme) : null;
+      });
+    }
+
+    const parsed = results.map(parseSparqlTheme);
+
+
+    return parsed;
+  };
+
+export const loadThemes = ({ locale }: { locale: string }) => {
+  return createThemeLoader({ locale })();
+};

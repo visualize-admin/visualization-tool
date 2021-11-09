@@ -2,6 +2,7 @@ import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { keyBy, merge } from "lodash";
+import { resolve } from "path";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
@@ -12,6 +13,7 @@ import {
   getSparqlEditorUrl,
 } from "../rdf/queries";
 import { loadThemes } from "../rdf/query-cube-metadata";
+import truthy from "../utils/truthy";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
@@ -22,17 +24,10 @@ import { ResolvedDimension } from "./shared-types";
 
 const Query: QueryResolvers = {
   dataCubes: async (_, { locale, query, order, includeDrafts, filters }) => {
-    // @TODO check if we can load the themes only if resolvedThemes is needed in the
-    // query. Resolvers get the query in the 4th argument of the function. graphql-fields
-    // package might be useful there.
-    const themes = await loadThemes({ locale });
-    const themesIndex = keyBy(themes, (x) => x.theme);
-
     const cubes = await getCubes({
       locale: parseLocaleString(locale),
       includeDrafts: includeDrafts ? true : false,
       filters: filters ? filters : undefined,
-      themesIndex,
     });
 
     const dataCubeCandidates = cubes.map(({ data }) => data);
@@ -121,7 +116,7 @@ const Query: QueryResolvers = {
     });
   },
   themes: async (_, { locale }: { locale: string }) => {
-    return loadThemes({ locale });
+    return (await loadThemes({ locale })).filter(truthy);
   },
 };
 
@@ -137,8 +132,7 @@ const DataCube: DataCubeResolvers = {
   publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
-  themes: ({ data: { themes } }) => themes ?? [],
-  resolvedThemes: ({ data: { resolvedThemes } }) => resolvedThemes ?? [],
+  themes: ({ data: { themes } }) => themes || [],
   dimensions: async ({ cube, locale }) => {
     const dimensions = await getCubeDimensions({
       cube,
@@ -236,6 +230,15 @@ export const resolvers: Resolvers = {
   RawObservation: GraphQLJSONObject,
   Query,
   DataCube,
+  DataCubeTheme: {
+    label: async (parent, _, { loaders }) => {
+      if (!parent.label) {
+        const resolvedTheme = await loaders.themes.load(parent.iri);
+        return resolvedTheme.label;
+      }
+      return parent.label;
+    },
+  },
   ObservationsQuery: {
     data: async ({ data: { query, observations } }) => observations,
     rawData: async ({ data: { observationsRaw } }) => observationsRaw,

@@ -35,18 +35,11 @@ export const isCubePublished = (cube: Cube): boolean =>
 export const parseCube = ({
   cube,
   locale,
-  themesIndex,
 }: {
   cube: Cube;
   locale: string;
-  themesIndex?: Record<string, DataCubeTheme>;
 }): ResolvedDataCube => {
   const outOpts = { language: getQueryLocales(locale) };
-  const themes = (
-    cube.out(ns.dcat.theme)?.value
-      ? [cube.out(ns.dcat.theme)?.value]
-      : cube.out(ns.dcat.theme)?.values
-  ).filter(truthy);
   // See https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
   return {
     cube,
@@ -60,11 +53,11 @@ export const parseCube = ({
       publicationStatus: isCubePublished(cube)
         ? DataCubePublicationStatus.Published
         : DataCubePublicationStatus.Draft,
-      themes,
-      resolvedThemes: themesIndex
-        ? themes.map((t) => themesIndex[t]).filter(truthy)
-        : undefined,
       datePublished: cube.out(ns.schema.datePublished)?.value,
+      themes: cube
+        .out(ns.dcat.theme)
+        ?.values.filter(truthy)
+        .map((t) => ({ iri: t, __typename: "DataCubeTheme" })),
       versionHistory: cube.in(ns.schema.hasPart)?.value,
       contactPoint: {
         name: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,

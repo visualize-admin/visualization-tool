@@ -9,6 +9,7 @@ import { Loading } from "../../components/hint";
 import {
   DataCubeResultOrder,
   DataCubesQuery,
+  DataCubeTheme,
   useThemesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
@@ -150,8 +151,8 @@ export const SearchFilters = ({
     variables: { locale },
   });
 
-  const categoryFiltersByTheme = useMemo(
-    () => keyBy(categoryFilters, (c) => c.theme),
+  const themesByIri = useMemo(
+    () => keyBy(categoryFilters, (c) => c.iri),
     [categoryFilters]
   );
   return (
@@ -168,13 +169,16 @@ export const SearchFilters = ({
       <Stack>
         {allThemes
           ? allThemes.themes.map((cat) => {
+              if (!cat.label) {
+                return null;
+              }
               return (
                 <Checkbox
-                  key={cat.theme}
-                  label={cat.name}
-                  checked={!!categoryFiltersByTheme[cat.theme]}
-                  name={cat.name}
-                  value={cat.theme}
+                  key={cat.iri}
+                  label={cat.label}
+                  checked={!!themesByIri[cat.iri]}
+                  name={cat.label}
+                  value={cat.iri}
                   onChange={(ev) => {
                     onToggleFilterTheme(cat);
                   }}
@@ -240,20 +244,14 @@ export const DatasetResult = ({
     | "title"
     | "description"
     | "datePublished"
-    | "resolvedThemes"
+    | "themes"
   >;
   highlightedTitle?: string | null;
   highlightedDescription?: string | null;
 }) => {
   const [state, dispatch] = useConfiguratorState();
-  const {
-    iri,
-    publicationStatus,
-    title,
-    description,
-    resolvedThemes,
-    datePublished,
-  } = dataCube;
+  const { iri, publicationStatus, title, description, themes, datePublished } =
+    dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const selected = iri === state.dataSet;
 
@@ -340,9 +338,7 @@ export const DatasetResult = ({
             <Trans id="dataset.tag.draft">Draft</Trans>
           </Tag>
         )}
-        {resolvedThemes
-          ? resolvedThemes.map((t) => <Tag key={t.theme}>{t.name}</Tag>)
-          : null}
+        {themes ? themes.map((t) => <Tag key={t.iri}>{t.label}</Tag>) : null}
       </Stack>
     </Button>
   );

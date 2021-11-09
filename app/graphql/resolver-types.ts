@@ -40,8 +40,7 @@ export type DataCube = {
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
   measures: Array<Measure>;
-  themes: Array<Scalars['String']>;
-  resolvedThemes?: Maybe<Array<DataCubeTheme>>;
+  themes: Array<DataCubeTheme>;
 };
 
 
@@ -82,8 +81,8 @@ export type DataCubeSearchFilter = {
 
 export type DataCubeTheme = {
   __typename?: 'DataCubeTheme';
-  theme: Scalars['String'];
-  name: Scalars['String'];
+  iri: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
 };
 
 export type Dimension = {
@@ -320,8 +319,7 @@ export type DataCubeResolvers<ContextType = any, ParentType extends ResolversPar
   dimensions?: Resolver<Array<ResolversTypes['Dimension']>, ParentType, ContextType>;
   dimensionByIri?: Resolver<Maybe<ResolversTypes['Dimension']>, ParentType, ContextType, RequireFields<DataCubeDimensionByIriArgs, 'iri'>>;
   measures?: Resolver<Array<ResolversTypes['Measure']>, ParentType, ContextType>;
-  themes?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  resolvedThemes?: Resolver<Maybe<Array<ResolversTypes['DataCubeTheme']>>, ParentType, ContextType>;
+  themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -334,8 +332,8 @@ export type DataCubeResultResolvers<ContextType = any, ParentType extends Resolv
 }>;
 
 export type DataCubeThemeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataCubeTheme'] = ResolversParentTypes['DataCubeTheme']> = ResolversObject<{
-  theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

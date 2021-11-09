@@ -40,9 +40,7 @@ const useSearchQueryState = () => {
   const previousOrderRef = useRef<DataCubeResultOrder>(
     DataCubeResultOrder.TitleAsc
   );
-  const [categoryFilters, setCategoryFilters] = useState<DataCubeTheme[]>(
-    []
-  );
+  const [categoryFilters, setCategoryFilters] = useState<DataCubeTheme[]>([]);
   const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
 
   return {
@@ -75,15 +73,15 @@ const useSearchQueryState = () => {
     onRemoveFilterTheme: (cat: DataCubeTheme) => {
       setCategoryFilters(
         Array.from(
-          new Set([...categoryFilters.filter((c) => c.theme !== cat.theme)])
+          new Set([...categoryFilters.filter((c) => c.iri !== cat.iri)])
         )
       );
     },
     onToggleFilterTheme: (cat: DataCubeTheme) => {
-      if (categoryFilters.find((c) => c.theme === cat.theme)) {
+      if (categoryFilters.find((c) => c.iri === cat.iri)) {
         setCategoryFilters(
           Array.from(
-            new Set([...categoryFilters.filter((c) => c.theme !== cat.theme)])
+            new Set([...categoryFilters.filter((c) => c.iri !== cat.iri)])
           )
         );
       } else {
@@ -130,7 +128,7 @@ const SelectDatasetStep = () => {
       includeDrafts,
       filters: categoryFilters
         ? categoryFilters.map((catFilter) => {
-            return { type: "THEME", value: catFilter.theme };
+            return { type: "THEME", value: catFilter.iri };
           })
         : [],
     },

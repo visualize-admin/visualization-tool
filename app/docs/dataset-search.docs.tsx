@@ -28,11 +28,11 @@ export default () => markdown`
           <DatasetResult
             dataCube={{
               iri: "http://example.com/iri",
-              resolvedThemes: [
+              themes: [
                 {
                   __typename: "DataCubeTheme",
-                  name: "Administration",
-                  theme: "http://lindas.com/adminstration",
+                  label: "Administration",
+                  iri: "http://lindas.com/adminstration",
                 },
               ],
               title:
@@ -46,7 +46,7 @@ export default () => markdown`
           <DatasetResult
             dataCube={{
               iri: "http://example.com/iri",
-              resolvedThemes: [],
+              themes: [],
               title:
                 "Comptes des exploitations forestières en francs selon Année, Zone forestière, Canton et Variable",
               description:

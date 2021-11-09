@@ -39,8 +39,7 @@ type DataCube {
   dimensions: [Dimension!]!
   dimensionByIri(iri: String!): Dimension
   measures: [Measure!]!
-  themes: [String!]!
-  resolvedThemes: [DataCubeTheme!]
+  themes: [DataCubeTheme!]!
 }
 
 interface Dimension {
@@ -108,8 +107,8 @@ type DataCubeResult {
 }
 
 type DataCubeTheme {
-  theme: String!
-  name: String!
+  iri: String!
+  label: String
 }
 
 input DataCubeSearchFilter {

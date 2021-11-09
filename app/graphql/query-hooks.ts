@@ -35,8 +35,7 @@ export type DataCube = {
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
   measures: Array<Measure>;
-  themes: Array<Scalars['String']>;
-  resolvedThemes?: Maybe<Array<DataCubeTheme>>;
+  themes: Array<DataCubeTheme>;
 };
 
 
@@ -77,8 +76,8 @@ export type DataCubeSearchFilter = {
 
 export type DataCubeTheme = {
   __typename: 'DataCubeTheme';
-  theme: Scalars['String'];
-  name: Scalars['String'];
+  iri: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
 };
 
 export type Dimension = {
@@ -195,7 +194,7 @@ export type DataCubesQueryVariables = Exact<{
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, themes: Array<string>, resolvedThemes?: Maybe<Array<{ __typename: 'DataCubeTheme', name: string, theme: string }>> } }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
 type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
@@ -340,7 +339,7 @@ export type ThemesQueryVariables = Exact<{
 }>;
 
 
-export type ThemesQuery = { __typename: 'Query', themes: Array<{ __typename: 'DataCubeTheme', name: string, theme: string }> };
+export type ThemesQuery = { __typename: 'Query', themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> };
 
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {
@@ -372,10 +371,9 @@ export const DataCubesDocument = gql`
       description
       publicationStatus
       datePublished
-      themes
-      resolvedThemes {
-        name
-        theme
+      themes {
+        iri
+        label
       }
     }
   }
@@ -515,8 +513,8 @@ export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<Dat
 export const ThemesDocument = gql`
     query Themes($locale: String!) {
   themes(locale: $locale) {
-    name
-    theme
+    iri
+    label
   }
 }
     `;
