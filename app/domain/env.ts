@@ -1,11 +1,36 @@
-import getConfig from "next/config";
+declare global {
+  interface Window {
+    __runtimeEnv__: Record<string, string | undefined>;
+  }
+}
 
-const config = getConfig();
+const runtimeEnv =
+  typeof window !== "undefined" ? window.__runtimeEnv__ : undefined;
 
-export const PUBLIC_URL = config?.publicRuntimeConfig?.PUBLIC_URL ?? "";
+// These values are exposed in pages/_document.tsx to the browser or read from process.env on the server-side.
+// Note: we can't destructure process.env because it's mangled in the Next.js runtime
+
+export const PUBLIC_URL =
+  runtimeEnv?.PUBLIC_URL ?? process.env.PUBLIC_URL ?? "";
+
 export const SPARQL_ENDPOINT =
-  process.env.SPARQL_ENDPOINT ?? "https://int.lindas.admin.ch/query";
-export const SPARQL_EDITOR = process.env.SPARQL_EDITOR;
+  runtimeEnv?.SPARQL_ENDPOINT ??
+  process.env.SPARQL_ENDPOINT ??
+  "https://int.lindas.admin.ch/query";
+
+export const SPARQL_EDITOR =
+  runtimeEnv?.SPARQL_EDITOR ?? process.env.SPARQL_EDITOR;
+
 export const GRAPHQL_ENDPOINT =
-  process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ?? "/api/graphql";
-export const GA_TRACKING_ID = config?.publicRuntimeConfig?.GA_TRACKING_ID;
+  runtimeEnv?.GRAPHQL_ENDPOINT ??
+  process.env.GRAPHQL_ENDPOINT ??
+  "/api/graphql";
+
+export const GA_TRACKING_ID =
+  runtimeEnv?.GA_TRACKING_ID ?? process.env.GA_TRACKING_ID;
+
+// Build-time env vars
+
+export const VERSION = process.env.NEXT_PUBLIC_VERSION;
+export const COMMIT = process.env.NEXT_PUBLIC_COMMIT;
+export const GITHUB_REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;

@@ -4,30 +4,28 @@ import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
 import contentRoutes from "../content-routes.json";
 import { useLocale } from "../locales/use-locale";
+import { COMMIT, GITHUB_REPO, VERSION } from "../domain/env";
 
 const Version = () => {
   let commitLink = null;
 
-  if (process.env.NEXT_PUBLIC_GITHUB_REPO && process.env.NEXT_PUBLIC_COMMIT) {
+  if (GITHUB_REPO && COMMIT) {
     commitLink = (
       <>
         (
-        <Link
-          variant="primary"
-          href={`${process.env.NEXT_PUBLIC_GITHUB_REPO}/commit/${process.env.NEXT_PUBLIC_COMMIT}`}
-        >
-          {process.env.NEXT_PUBLIC_COMMIT.substr(0, 7)}
+        <Link variant="primary" href={`${GITHUB_REPO}/commit/${COMMIT}`}>
+          {COMMIT.substr(0, 7)}
         </Link>
         )
       </>
     );
-  } else if (process.env.NEXT_PUBLIC_COMMIT) {
-    commitLink = `(${process.env.NEXT_PUBLIC_COMMIT.substr(0, 7)})`;
+  } else if (COMMIT) {
+    commitLink = `(${COMMIT.substr(0, 7)})`;
   }
 
   return (
     <>
-      {process.env.NEXT_PUBLIC_VERSION} {commitLink}
+      {VERSION} {commitLink}
     </>
   );
 };
