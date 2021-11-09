@@ -25,6 +25,7 @@ import {
   SearchDatasetBox,
   SearchFilters,
   DatasetResults,
+  useSearchQueryState,
 } from "./dataset-search";
 import {
   PanelLeftWrapper,
@@ -32,66 +33,6 @@ import {
   PanelRightWrapper,
 } from "./layout";
 import { Stepper } from "./stepper";
-
-type Filter = DataCubeTheme | DataCubeOrganization;
-
-const useSearchQueryState = () => {
-  const [query, setQuery] = useState<string>("");
-
-  const [order, setOrder] = useState<DataCubeResultOrder>(
-    DataCubeResultOrder.TitleAsc
-  );
-  const previousOrderRef = useRef<DataCubeResultOrder>(
-    DataCubeResultOrder.TitleAsc
-  );
-  const [filters, setFilters] = useState<Filter[]>([]);
-  const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
-
-  return {
-    includeDrafts,
-    setIncludeDrafts,
-    onReset: () => {
-      setQuery("");
-      setOrder(previousOrderRef.current);
-    },
-    onTypeQuery: (e: React.ChangeEvent<HTMLInputElement>) => {
-      setQuery(e.currentTarget.value);
-      if (query === "" && e.currentTarget.value !== "") {
-        previousOrderRef.current = order;
-        setOrder(DataCubeResultOrder.Score);
-      }
-      if (query !== "" && e.currentTarget.value === "") {
-        setOrder(previousOrderRef.current);
-      }
-    },
-    query,
-    order,
-    onSetOrder: (order: DataCubeResultOrder) => {
-      previousOrderRef.current = order;
-      setOrder(order);
-    },
-    filters,
-    onAddFilter: (cat: Filter) => {
-      setFilters(Array.from(new Set([...filters, cat])));
-    },
-    onRemoveFilter: (cat: Filter) => {
-      setFilters(
-        Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
-      );
-    },
-    onToggleFilter: (cat: Filter) => {
-      if (filters.find((c) => c.iri === cat.iri)) {
-        setFilters(
-          Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
-        );
-      } else {
-        setFilters(Array.from(new Set([...filters, cat])));
-      }
-    },
-  };
-};
-
-export type SearchQueryState = ReturnType<typeof useSearchQueryState>;
 
 const TextLink = (props: LinkProps) => {
   return (

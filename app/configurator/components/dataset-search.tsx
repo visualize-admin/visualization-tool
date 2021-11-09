@@ -1,15 +1,23 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
 import { groupBy, keyBy, mapValues, sortBy } from "lodash";
-import React, { ReactNode, useCallback, useMemo, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
-import { SearchQueryState, useConfiguratorState } from "..";
+import { useConfiguratorState } from "..";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
 import { Tab, TabContent, Tabs } from "../../components/tabs";
 import {
+  DataCubeOrganization,
   DataCubeResultOrder,
   DataCubesQuery,
+  DataCubeTheme,
   useOrganizationsQuery,
   useThemesQuery,
 } from "../../graphql/query-hooks";
@@ -17,6 +25,66 @@ import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import { useLocale } from "../../locales/use-locale";
 import Stack from "./Stack";
 import { useFormatDate } from "./ui-helpers";
+
+export type SearchFilter = DataCubeTheme | DataCubeOrganization;
+
+export const useSearchQueryState = () => {
+  const [query, setQuery] = useState<string>("");
+
+  const [order, setOrder] = useState<DataCubeResultOrder>(
+    DataCubeResultOrder.TitleAsc
+  );
+  const previousOrderRef = useRef<DataCubeResultOrder>(
+    DataCubeResultOrder.TitleAsc
+  );
+  const [filters, setFilters] = useState<SearchFilter[]>([]);
+  const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
+
+  return {
+    includeDrafts,
+    setIncludeDrafts,
+    onReset: () => {
+      setQuery("");
+      setOrder(previousOrderRef.current);
+    },
+    onTypeQuery: (e: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(e.currentTarget.value);
+      if (query === "" && e.currentTarget.value !== "") {
+        previousOrderRef.current = order;
+        setOrder(DataCubeResultOrder.Score);
+      }
+      if (query !== "" && e.currentTarget.value === "") {
+        setOrder(previousOrderRef.current);
+      }
+    },
+    query,
+    order,
+    onSetOrder: (order: DataCubeResultOrder) => {
+      previousOrderRef.current = order;
+      setOrder(order);
+    },
+    filters,
+    onAddFilter: (cat: SearchFilter) => {
+      setFilters(Array.from(new Set([...filters, cat])));
+    },
+    onRemoveFilter: (cat: SearchFilter) => {
+      setFilters(
+        Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
+      );
+    },
+    onToggleFilter: (cat: SearchFilter) => {
+      if (filters.find((c) => c.iri === cat.iri)) {
+        setFilters(
+          Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
+        );
+      } else {
+        setFilters(Array.from(new Set([...filters, cat])));
+      }
+    },
+  };
+};
+
+export type SearchQueryState = ReturnType<typeof useSearchQueryState>;
 
 export const SearchDatasetBox = ({
   searchQueryState,
