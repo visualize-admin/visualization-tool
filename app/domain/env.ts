@@ -32,6 +32,10 @@ export const GRAPHQL_ENDPOINT =
 export const GA_TRACKING_ID =
   runtimeEnv?.GA_TRACKING_ID ?? process.env.GA_TRACKING_ID;
 
+// Server-side-only values (not exposed through window)
+
+export const DATABASE_URL = process.env.DATABASE_URL;
+
 // Build-time env vars
 
 export const VERSION = process.env.NEXT_PUBLIC_VERSION;
