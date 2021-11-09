@@ -111,13 +111,24 @@ describe("deriveFiltersFromField", () => {
     __typename: "NominalDimension",
   } as DimensionMetaDataFragment;
 
-  const _applyDimensionToFilters = (
-    filters: any,
-    isField: boolean,
-    isHidden: boolean,
-    isGrouped: boolean
-  ) =>
-    applyDimensionToFilters(filters, dimension, isField, isHidden, isGrouped);
+  const _applyDimensionToFilters = ({
+    initialFiltersState,
+    isField,
+    isHidden,
+    isGrouped,
+  }: {
+    initialFiltersState: any;
+    isField: boolean;
+    isHidden: boolean;
+    isGrouped: boolean;
+  }) =>
+    applyDimensionToFilters({
+      filters: initialFiltersState,
+      dimension,
+      isField,
+      isHidden,
+      isGrouped,
+    });
 
   it("non-table: should remove single value filter when a dimension is used as a field", () => {
     const initialFiltersState = {
@@ -128,7 +139,12 @@ describe("deriveFiltersFromField", () => {
     };
     const expectedFiltersState = {};
 
-    _applyDimensionToFilters(initialFiltersState, true, false, false);
+    _applyDimensionToFilters({
+      initialFiltersState,
+      isField: true,
+      isHidden: false,
+      isGrouped: false,
+    });
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -141,7 +157,12 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, true, true, false);
+    _applyDimensionToFilters({
+      initialFiltersState,
+      isField: true,
+      isHidden: true,
+      isGrouped: false,
+    });
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -159,7 +180,12 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, true, true, false);
+    _applyDimensionToFilters({
+      initialFiltersState,
+      isField: true,
+      isHidden: true,
+      isGrouped: false,
+    });
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -178,7 +204,12 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, true, true, false);
+    _applyDimensionToFilters({
+      initialFiltersState,
+      isField: true,
+      isHidden: true,
+      isGrouped: false,
+    });
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -196,7 +227,12 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, true, false, true);
+    _applyDimensionToFilters({
+      initialFiltersState,
+      isField: true,
+      isHidden: false,
+      isGrouped: true,
+    });
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 
@@ -214,7 +250,12 @@ describe("deriveFiltersFromField", () => {
       },
     };
 
-    _applyDimensionToFilters(initialFiltersState, false, false, false);
+    _applyDimensionToFilters({
+      initialFiltersState,
+      isField: false,
+      isHidden: false,
+      isGrouped: false,
+    });
     expect(initialFiltersState).toEqual(expectedFiltersState);
   });
 });

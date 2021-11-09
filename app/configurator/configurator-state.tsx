@@ -221,26 +221,32 @@ const deriveFiltersFromFields = produce(
     const isHidden = (iri: string) => hiddenFieldIris.has(iri);
 
     dimensions.forEach((dimension) =>
-      applyDimensionToFilters(
+      applyDimensionToFilters({
         filters,
         dimension,
-        isField(dimension.iri),
-        isHidden(dimension.iri),
-        isGrouped(dimension.iri)
-      )
+        isField: isField(dimension.iri),
+        isHidden: isHidden(dimension.iri),
+        isGrouped: isGrouped(dimension.iri),
+      })
     );
 
     return chartConfig;
   }
 );
 
-export const applyDimensionToFilters = (
-  filters: Filters,
-  dimension: DimensionMetaDataFragment,
-  isField: boolean,
-  isHidden: boolean,
-  isGrouped: boolean
-) => {
+export const applyDimensionToFilters = ({
+  filters,
+  dimension,
+  isField,
+  isHidden,
+  isGrouped,
+}: {
+  filters: Filters;
+  dimension: DimensionMetaDataFragment;
+  isField: boolean;
+  isHidden: boolean;
+  isGrouped: boolean;
+}) => {
   if (dimension.isKeyDimension) {
     const f = filters[dimension.iri];
 
