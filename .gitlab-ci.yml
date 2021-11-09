@@ -23,7 +23,7 @@ build:
     - medium
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $MAIN_IMAGE_TAG .
+    - docker build --build-arg COMMIT=$CI_COMMIT_SHA -t $MAIN_IMAGE_TAG .
     - docker push $MAIN_IMAGE_TAG
   only:
     - main
@@ -35,7 +35,7 @@ release:
     - medium
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $RELEASE_IMAGE_TAG -t $CI_REGISTRY_IMAGE:$(./scripts/get-package-version.sh) .
+    - docker build --build-arg COMMIT=$CI_COMMIT_SHA -t $RELEASE_IMAGE_TAG -t $CI_REGISTRY_IMAGE:$(./scripts/get-package-version.sh) .
     - docker push $RELEASE_IMAGE_TAG
     - docker push $CI_REGISTRY_IMAGE:$(./scripts/get-package-version.sh)
   only:
