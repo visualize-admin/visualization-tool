@@ -8,7 +8,12 @@ const withPreconstruct = require("@preconstruct/next");
 
 const { locales, defaultLocale } = require("./locales/locales.json");
 
-const VERSION = `v${pkg.version}`;
+// Populate build-time variables from package.json
+process.env.NEXT_PUBLIC_VERSION = `v${pkg.version}`;
+process.env.NEXT_PUBLIC_GITHUB_REPO = pkg.repository.url.replace(
+  /(\/|\.git)$/,
+  ""
+);
 
 const publicRuntimeConfig = {
   PUBLIC_URL: process.env.PUBLIC_URL
@@ -18,7 +23,9 @@ const publicRuntimeConfig = {
 };
 
 console.log("Starting with publicRuntimeConfig\n", publicRuntimeConfig);
-console.log("Version", VERSION);
+console.log("Version", process.env.NEXT_PUBLIC_VERSION);
+console.log("Commit", process.env.NEXT_PUBLIC_COMMIT);
+console.log("GitHub Repo", process.env.NEXT_PUBLIC_GITHUB_REPO);
 console.log("Extra Certs", process.env.NODE_EXTRA_CA_CERTS);
 
 module.exports = withPreconstruct(
@@ -27,11 +34,6 @@ module.exports = withPreconstruct(
       publicRuntimeConfig,
 
       ...(process.env.NETLIFY === "true" ? { target: "serverless" } : {}),
-
-      // Build-time env variables
-      env: {
-        VERSION,
-      },
 
       i18n: {
         locales,

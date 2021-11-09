@@ -29,7 +29,7 @@ class MyDocument extends Document<{ locale: string }> {
   render() {
     return (
       <Html
-        data-app-version={`${process.env.VERSION}`}
+        data-app-version={`${process.env.NEXT_PUBLIC_VERSION}`}
         lang={this.props.locale}
       >
         <Head>

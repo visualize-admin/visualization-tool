@@ -27,7 +27,7 @@ const Version = () => {
 
   return (
     <>
-      {process.env.VERSION} {commitLink}
+      {process.env.NEXT_PUBLIC_VERSION} {commitLink}
     </>
   );
 };
