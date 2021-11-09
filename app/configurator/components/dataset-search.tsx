@@ -1,6 +1,6 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { keyBy, sortBy } from "lodash";
+import { groupBy, keyBy, mapValues, sortBy } from "lodash";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
 import { SearchQueryState, useConfiguratorState } from "..";
@@ -156,6 +156,12 @@ export const SearchFilters = ({
   });
 
   const filtersByIri = useMemo(() => keyBy(filters, (c) => c.iri), [filters]);
+  const filtersCountByTypeName = useMemo(() => {
+    return mapValues(
+      groupBy(filters, (x) => x.__typename),
+      (v) => v.length
+    );
+  }, [filters]);
 
   const [allThemesAlpha, allOrgsAlpha] = useMemo(() => {
     return [
@@ -177,8 +183,18 @@ export const SearchFilters = ({
       <Stack>
         <Tabs initialValue="themes">
           <Flex mb={4}>
-            <Tab value="themes">Themes</Tab>
-            <Tab value="organizations">Organizations</Tab>
+            <Tab value="themes">
+              Themes{" "}
+              {filtersCountByTypeName["DataCubeTheme"] ? (
+                <>({filtersCountByTypeName["DataCubeTheme"]})</>
+              ) : null}
+            </Tab>
+            <Tab value="organizations">
+              Organizations{" "}
+              {filtersCountByTypeName["DataCubeOrganization"] ? (
+                <>({filtersCountByTypeName["DataCubeOrganization"]})</>
+              ) : null}
+            </Tab>
           </Flex>
           <TabContent value="themes">
             {allThemesAlpha
