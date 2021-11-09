@@ -10,8 +10,11 @@ const runtimeEnv =
 // These values are exposed in pages/_document.tsx to the browser or read from process.env on the server-side.
 // Note: we can't destructure process.env because it's mangled in the Next.js runtime
 
-export const PUBLIC_URL =
-  runtimeEnv?.PUBLIC_URL ?? process.env.PUBLIC_URL ?? "";
+export const PUBLIC_URL = (
+  runtimeEnv?.PUBLIC_URL ??
+  process.env.PUBLIC_URL ??
+  ""
+).replace(/\/$/, "");
 
 export const SPARQL_ENDPOINT =
   runtimeEnv?.SPARQL_ENDPOINT ??

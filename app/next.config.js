@@ -15,26 +15,15 @@ process.env.NEXT_PUBLIC_GITHUB_REPO = pkg.repository.url.replace(
   ""
 );
 
-const publicRuntimeConfig = {
-  PUBLIC_URL: process.env.PUBLIC_URL
-    ? process.env.PUBLIC_URL.replace(/\/$/, "")
-    : "",
-  GA_TRACKING_ID: process.env.GA_TRACKING_ID,
-};
-
-console.log("Starting with publicRuntimeConfig\n", publicRuntimeConfig);
 console.log("Version", process.env.NEXT_PUBLIC_VERSION);
 console.log("Commit", process.env.NEXT_PUBLIC_COMMIT);
 console.log("GitHub Repo", process.env.NEXT_PUBLIC_GITHUB_REPO);
+
 console.log("Extra Certs", process.env.NODE_EXTRA_CA_CERTS);
 
 module.exports = withPreconstruct(
   withBundleAnalyzer(
     withMDX({
-      publicRuntimeConfig,
-
-      ...(process.env.NETLIFY === "true" ? { target: "serverless" } : {}),
-
       i18n: {
         locales,
         defaultLocale,
