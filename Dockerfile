@@ -9,6 +9,7 @@ COPY app/package.json ./app/
 RUN yarn install --frozen-lockfile
 
 ENV NODE_ENV production
+ENV NODE_OPTIONS=--max_old_space_size=2048
 ENV PORT 3000
 
 COPY ./ ./
