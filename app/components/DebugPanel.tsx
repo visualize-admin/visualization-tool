@@ -51,7 +51,7 @@ const DebugConfigurator = () => {
         {SPARQL_EDITOR && (
           <Link
             variant="primary"
-            href={`https://int.lindas.admin.ch/sparql#query=${encodeURIComponent(
+            href={`${SPARQL_EDITOR}#query=${encodeURIComponent(
               `#pragma describe.strategy cbd
 DESCRIBE <${configuratorState.dataSet ?? ""}>`
             )}&requestMethod=POST`}
