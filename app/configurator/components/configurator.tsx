@@ -17,21 +17,6 @@ import {
 import { SelectDatasetStep } from "./SelectDatasetStep";
 import { Stepper } from "./stepper";
 
-export const TextLink = (props: LinkProps) => {
-  return (
-    <Link
-      color="monochrome700"
-      sx={{
-        cursor: "pointer",
-        "&:hover": {
-          textDecoration: "underline",
-        },
-      }}
-      {...props}
-    />
-  );
-};
-
 const SelectChartTypeStep = () => {
   const [state] = useConfiguratorState();
   if (state.state !== "SELECTING_CHART_TYPE") {

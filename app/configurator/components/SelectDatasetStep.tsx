@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "theme-ui";
+import { Box, Link } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";
 import { ChartPanel } from "../../components/chart-panel";
@@ -19,8 +19,6 @@ import {
   PanelMiddleWrapper,
   PanelRightWrapper,
 } from "./layout";
-import { TextLink } from "./configurator";
-import { fallbackExchange } from "@urql/core/dist/types/exchanges/fallback";
 import { flag } from "./flag";
 
 export const SelectDatasetStepV2 = () => {
@@ -69,7 +67,8 @@ export const SelectDatasetStepV2 = () => {
         {state.dataSet || !data ? (
           <>
             <Box mb={4} px={4}>
-              <TextLink
+              <Link
+                variant="inline"
                 onClick={(ev) => {
                   ev.preventDefault();
                   dispatch({
@@ -79,7 +78,7 @@ export const SelectDatasetStepV2 = () => {
                 }}
               >
                 Back to the list
-              </TextLink>
+              </Link>
             </Box>
             <ChartPanel>
               {state.dataSet ? (
