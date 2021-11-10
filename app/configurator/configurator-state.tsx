@@ -202,82 +202,147 @@ export const getFilterValue = (
 
 const deriveFiltersFromFields = produce(
   (chartConfig: ChartConfig, { dimensions }: DataCubeMetadata) => {
-    // 1. we need filters for all dimensions
-    // 2. if a dimension is mapped to a field, it should be a multi filter, otherwise a single filter
-    // 3a. if the filter type is correct, we leave it alone
-    // 3b. if there's a mis-match, then we try to convert multi -> single and single -> multi
-    const { fields, filters } = chartConfig;
+    const { chartType, fields, filters } = chartConfig;
 
-    const fieldDimensionIris = getFieldComponentIris(fields);
-    const groupedDimensionIris = getGroupedFieldIris(fields);
-    const hiddenFieldIris = getHiddenFieldIris(fields);
+    if (chartType === "table") {
+      // As dimensions in tables behave differently than in other chart types,
+      // they need to be handled in a different way.
+      const hiddenFieldIris = getHiddenFieldIris(fields);
+      const groupedDimensionIris = getGroupedFieldIris(fields);
 
-    // For tables, all dimensions are fields (chartConfig.fields).
-    // For other charts, dimension is considered a field, when it's
-    // either X, Y or segment.
-    const isField = (iri: string) => fieldDimensionIris.has(iri);
-    // Below only apply to tables.
-    const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
-    const isHidden = (iri: string) => hiddenFieldIris.has(iri);
+      const isHidden = (iri: string) => hiddenFieldIris.has(iri);
+      const isGrouped = (iri: string) => groupedDimensionIris.has(iri);
 
-    dimensions.forEach((dimension) =>
-      applyDimensionToFilters({
-        filters,
-        dimension,
-        isField: isField(dimension.iri),
-        isHidden: isHidden(dimension.iri),
-        isGrouped: isGrouped(dimension.iri),
-      })
-    );
+      dimensions.forEach((dimension) =>
+        applyTableDimensionToFilters({
+          filters,
+          dimension,
+          isHidden: isHidden(dimension.iri),
+          isGrouped: isGrouped(dimension.iri),
+        })
+      );
+    } else {
+      const fieldDimensionIris = getFieldComponentIris(fields);
+      const isField = (iri: string) => fieldDimensionIris.has(iri);
+
+      dimensions.forEach((dimension) =>
+        applyNonTableDimensionToFilters({
+          filters,
+          dimension,
+          isField: isField(dimension.iri),
+        })
+      );
+    }
 
     return chartConfig;
   }
 );
 
-export const applyDimensionToFilters = ({
+export const applyTableDimensionToFilters = ({
   filters,
   dimension,
-  isField,
   isHidden,
   isGrouped,
 }: {
   filters: Filters;
   dimension: DimensionMetaDataFragment;
-  isField: boolean;
   isHidden: boolean;
   isGrouped: boolean;
 }) => {
-  if (dimension.isKeyDimension) {
-    const f = filters[dimension.iri];
+  const currentFilter = filters[dimension.iri];
+  const shouldBecomeSingleFilter = isHidden && !isGrouped;
 
-    if (f !== undefined) {
-      // Fix wrong filter type
-      if (f.type === "single" && isField) {
-        delete filters[dimension.iri];
-      } else if (f.type === "multi") {
-        if (isHidden && !isGrouped) {
+  if (currentFilter) {
+    switch (currentFilter.type) {
+      case "single":
+        if (!shouldBecomeSingleFilter) {
+          delete filters[dimension.iri];
+        }
+        break;
+      case "multi":
+        if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
           filters[dimension.iri] = {
             type: "single",
-            value: Object.keys(f.values)[0],
+            value:
+              Object.keys(currentFilter.values)[0] || dimension.values[0].value,
           };
         }
-      } else if (f.type === "range") {
-        if (isHidden) {
+        break;
+      case "range":
+        if (shouldBecomeSingleFilter) {
           filters[dimension.iri] = {
             type: "single",
-            value: f.from,
+            value: currentFilter.from,
           };
         }
-      }
-    } else {
-      // Add filter for this dim if it's not one of the selected multi filter fields, but
-      // only when the dimension isn't grouped, as only then we need to switch to a single filter.
-      if ((isHidden || !isField) && !isGrouped) {
-        filters[dimension.iri] = {
-          type: "single",
-          value: dimension.values[0].value,
-        };
-      }
+        break;
+      default:
+        throw new Error();
+    }
+  } else {
+    if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
+      filters[dimension.iri] = {
+        type: "single",
+        value: dimension.values[0].value,
+      };
+    }
+  }
+};
+
+export const applyNonTableDimensionToFilters = ({
+  filters,
+  dimension,
+  isField,
+}: {
+  filters: Filters;
+  dimension: DimensionMetaDataFragment;
+  isField: boolean;
+}) => {
+  const currentFilter = filters[dimension.iri];
+
+  if (currentFilter) {
+    switch (currentFilter.type) {
+      case "single":
+        if (isField) {
+          // When a dimension is either x, y or segment, we want to clear the filter.
+          delete filters[dimension.iri];
+        }
+        break;
+      case "multi":
+        if (!isField) {
+          // Multi-filters are not allowed in the left panel.
+          // TODO: currently, the filters are sorted by their keys, which in some
+          // cases are IRIs - so if a multi-filter is applied, the default behavior
+          // is to use the first value from selected values, which isn't the same value
+          // as expected by looking at the UI (where filters are sorted alphabetically).
+          filters[dimension.iri] = {
+            type: "single",
+            value:
+              Object.keys(currentFilter.values)[0] || dimension.values[0].value,
+          };
+        }
+        break;
+      case "range":
+        if (!isField) {
+          // Range-filters are not allowed in the left panel.
+          filters[dimension.iri] = {
+            type: "single",
+            value: currentFilter.from,
+          };
+        }
+        break;
+      default:
+        throw new Error();
+    }
+  } else {
+    if (!isField && dimension.isKeyDimension) {
+      // If this scenario appears, it means that current filter is undefined -
+      // which means it must be converted to a single-filter (if it's a keyDimension,
+      // otherwise a 'No filter' option should be selected by default).
+      filters[dimension.iri] = {
+        type: "single",
+        value: dimension.values[0].value,
+      };
     }
   }
 };
