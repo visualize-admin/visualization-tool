@@ -23,7 +23,7 @@ import {
 } from "../../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import { useLocale } from "../../locales/use-locale";
-import Stack from "./Stack";
+import Stack from "../../components/Stack";
 import { useFormatDate } from "./ui-helpers";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
