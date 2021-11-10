@@ -4,6 +4,31 @@ import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
 import contentRoutes from "../content-routes.json";
 import { useLocale } from "../locales/use-locale";
+import { COMMIT, GITHUB_REPO, VERSION } from "../domain/env";
+
+const Version = () => {
+  let commitLink = null;
+
+  if (GITHUB_REPO && COMMIT) {
+    commitLink = (
+      <>
+        (
+        <Link variant="primary" href={`${GITHUB_REPO}/commit/${COMMIT}`}>
+          {COMMIT.substr(0, 7)}
+        </Link>
+        )
+      </>
+    );
+  } else if (COMMIT) {
+    commitLink = `(${COMMIT.substr(0, 7)})`;
+  }
+
+  return (
+    <>
+      {VERSION} {commitLink}
+    </>
+  );
+};
 
 export const Footer = () => {
   const locale = useLocale();
@@ -89,7 +114,7 @@ export const Footer = () => {
               fontFamily: "body",
             }}
           >
-            {process.env.VERSION}
+            <Version />
           </Text>
           <NextLink
             href={contentRoutes.legal[locale].path}
