@@ -34,6 +34,7 @@ import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
+  getWideData,
   getLabelWithUnit,
   getWideData,
   usePreparedData,
@@ -97,8 +98,6 @@ const useAreasState = ({
 
   const hasSegment = fields.segment;
 
-  const getGroups = (d: Observation): string =>
-    d[fields.x.componentIri] as string;
   const getX = useCallback(
     (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
     [fields.x.componentIri]
@@ -127,7 +126,10 @@ const useAreasState = ({
         .sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
-  const allDataGroupedMap = group(sortedData, getGroups);
+  const allDataGroupedMap = group(
+    sortedData,
+    (d) => d[fields.x.componentIri] as string
+  );
   const allDataWide = getWideData({
     groupedMap: allDataGroupedMap,
     getSegment,
@@ -145,7 +147,10 @@ const useAreasState = ({
     getSegment,
   });
 
-  const groupedMap = group(preparedData, getGroups);
+  const groupedMap = group(
+    preparedData,
+    (d) => d[fields.x.componentIri] as string
+  );
   const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);

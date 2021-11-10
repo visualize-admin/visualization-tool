@@ -25,8 +25,8 @@ import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
-  getLabelWithUnit,
   getWideData,
+  getLabelWithUnit,
   usePreparedData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -87,8 +87,6 @@ const useLinesState = ({
     throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
   }
 
-  const getGroups = (d: Observation): string =>
-    d[fields.x.componentIri] as string;
   const getX = useCallback(
     (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
     [fields.x.componentIri]
@@ -109,7 +107,10 @@ const useLinesState = ({
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
-  const allDataGroupedMap = group(sortedData, getGroups);
+  const allDataGroupedMap = group(
+    sortedData,
+    (d) => d[fields.x.componentIri] as string
+  );
   const allDataWide = getWideData({
     groupedMap: allDataGroupedMap,
     getSegment,
@@ -128,7 +129,10 @@ const useLinesState = ({
   });
 
   const grouped = group(preparedData, getSegment);
-  const groupedMap = group(preparedData, getGroups);
+  const groupedMap = group(
+    preparedData,
+    (d) => d[fields.x.componentIri] as string
+  );
   const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
 
   // x
