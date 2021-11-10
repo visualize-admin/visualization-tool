@@ -327,7 +327,7 @@ export const TableColumnOptions = ({
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {component.isKeyDimension && isHidden ? (
+            {component.isKeyDimension && isHidden && !isGroup ? (
               <DataFilterSelectTime
                 dimensionIri={component.iri}
                 label={component.label}
