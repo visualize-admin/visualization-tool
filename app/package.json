@@ -52,7 +52,7 @@
     "graphql-tools": "^7.0.5",
     "graphql-type-json": "^0.3.2",
     "iframe-resizer": "^4.2.11",
-    "immer": "^9.0.1",
+    "immer": "^9.0.6",
     "io-ts": "^2.2.10",
     "isomorphic-unfetch": "^3.0.0",
     "lodash": "^4.17.20",
