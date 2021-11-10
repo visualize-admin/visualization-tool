@@ -19,7 +19,7 @@ import {
   useTimeFormatUnit,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
@@ -52,8 +52,8 @@ export interface LinesState {
   xAxisLabel: string;
   yAxisLabel: string;
   grouped: Map<string, Observation[]>;
-  chartWideData: ArrayLike<Record<string, ObservationValue>>;
-  allDataWide: ArrayLike<Record<string, ObservationValue>>;
+  chartWideData: ArrayLike<Observation>;
+  allDataWide: ArrayLike<Observation>;
   xKey: string;
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }

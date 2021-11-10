@@ -16,7 +16,7 @@ import {
 import React, { ReactNode, useCallback, useMemo } from "react";
 import { BarFields, SortingOrder, SortingType } from "../../configurator";
 import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -42,7 +42,7 @@ export interface GroupedBarsState {
   segments: string[];
   xAxisLabel: string;
   colors: ScaleOrdinal<string, string>;
-  grouped: [string, Record<string, ObservationValue>[]][];
+  grouped: [string, Observation[]][];
 }
 
 const useGroupedBarsState = ({

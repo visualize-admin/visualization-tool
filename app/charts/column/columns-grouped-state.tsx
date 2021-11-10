@@ -24,7 +24,7 @@ import {
   parseDate,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
@@ -60,7 +60,7 @@ export interface GroupedColumnsState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  grouped: [string, Record<string, ObservationValue>[]][];
+  grouped: [string, Observation[]][];
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 

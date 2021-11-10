@@ -28,7 +28,7 @@ import {
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
@@ -58,8 +58,8 @@ export interface AreasState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  chartWideData: ArrayLike<Record<string, ObservationValue>>;
-  allDataWide: ArrayLike<Record<string, ObservationValue>>;
+  chartWideData: ArrayLike<Observation>;
+  allDataWide: ArrayLike<Observation>;
   series: $FixMe[];
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }

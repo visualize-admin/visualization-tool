@@ -28,7 +28,7 @@ import {
   parseDate,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
@@ -67,9 +67,9 @@ export interface StackedColumnsState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  chartWideData: ArrayLike<Record<string, ObservationValue>>;
-  allDataWide: ArrayLike<Record<string, ObservationValue>>;
-  grouped: [string, Record<string, ObservationValue>[]][];
+  chartWideData: ArrayLike<Observation>;
+  allDataWide: ArrayLike<Observation>;
+  grouped: [string, Observation[]][];
   series: $FixMe[];
   getAnnotationInfo: (d: Observation, orderedSegments: string[]) => TooltipInfo;
 }
