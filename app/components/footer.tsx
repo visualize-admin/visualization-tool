@@ -4,28 +4,31 @@ import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
 import contentRoutes from "../content-routes.json";
 import { useLocale } from "../locales/use-locale";
-import { COMMIT, GITHUB_REPO, VERSION } from "../domain/env";
+import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "../domain/env";
 
 const Version = () => {
   let commitLink = null;
 
-  if (GITHUB_REPO && COMMIT) {
+  if (BUILD_GITHUB_REPO && BUILD_COMMIT) {
     commitLink = (
       <>
         (
-        <Link variant="primary" href={`${GITHUB_REPO}/commit/${COMMIT}`}>
-          {COMMIT.substr(0, 7)}
+        <Link
+          variant="primary"
+          href={`${BUILD_GITHUB_REPO}/commit/${BUILD_COMMIT}`}
+        >
+          {BUILD_COMMIT.substr(0, 7)}
         </Link>
         )
       </>
     );
-  } else if (COMMIT) {
-    commitLink = `(${COMMIT.substr(0, 7)})`;
+  } else if (BUILD_COMMIT) {
+    commitLink = `(${BUILD_COMMIT.substr(0, 7)})`;
   }
 
   return (
     <>
-      {VERSION} {commitLink}
+      {BUILD_VERSION} {commitLink}
     </>
   );
 };

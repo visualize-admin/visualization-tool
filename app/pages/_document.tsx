@@ -7,7 +7,7 @@ import Document, {
 } from "next/document";
 import { parseLocaleString } from "../locales/locales";
 
-const runtimeEnv = {
+const clientEnv = {
   GA_TRACKING_ID: process.env.GA_TRACKING_ID,
   SPARQL_EDITOR: process.env.SPARQL_EDITOR,
   SPARQL_ENDPOINT: process.env.SPARQL_ENDPOINT,
@@ -42,18 +42,18 @@ class MyDocument extends Document<{ locale: string }> {
         <Head>
           <script
             dangerouslySetInnerHTML={{
-              __html: `window.__runtimeEnv__=${JSON.stringify(runtimeEnv)}`,
+              __html: `window.__clientEnv__=${JSON.stringify(clientEnv)}`,
             }}
           />
-          {runtimeEnv.GA_TRACKING_ID && (
+          {clientEnv.GA_TRACKING_ID && (
             <>
               <script
                 async
-                src={`https://www.googletagmanager.com/gtag/js?id=${runtimeEnv.GA_TRACKING_ID}`}
+                src={`https://www.googletagmanager.com/gtag/js?id=${clientEnv.GA_TRACKING_ID}`}
               />
               <script
                 dangerouslySetInnerHTML={{
-                  __html: `window.dataLayer = window.dataLayer || [];function gtag() {window.dataLayer.push(arguments);};gtag("js", new Date());gtag("config", "${runtimeEnv.GA_TRACKING_ID}", {anonymize_ip:true});`,
+                  __html: `window.dataLayer = window.dataLayer || [];function gtag() {window.dataLayer.push(arguments);};gtag("js", new Date());gtag("config", "${clientEnv.GA_TRACKING_ID}", {anonymize_ip:true});`,
                 }}
               ></script>
             </>
