@@ -14,6 +14,33 @@ interface ResourceLabel {
   label?: Literal;
 }
 
+export const makeLocalesFilter = (
+  subjectVar: string,
+  predicate: NamedNode,
+  objectVar: string,
+  wantedLocale: string
+) => {
+  const locales = getQueryLocales(wantedLocale);
+
+  const localesFilters = locales.map((locale) =>
+    locale !== ""
+      ? sparql`OPTIONAL {
+    ${subjectVar} ${predicate} ${objectVar}_${locale}
+    FILTER (LANGMATCHES(LANG(${objectVar}_${locale}), "${locale}"))
+  }`
+      : sparql`OPTIONAL {
+    ${subjectVar} ${predicate} ${objectVar}_${locale}
+    FILTER ((LANG(${objectVar}_${locale}) = ""))
+  }`
+  );
+
+  return sparql`${localesFilters}
+  BIND(COALESCE(${locales
+    .map((locale) => `${objectVar}_${locale}`)
+    .join(",")}) as ${objectVar})
+  `;
+};
+
 /**
  * Load labels for a list of IDs (e.g. dimension values)
  *
@@ -36,26 +63,7 @@ export async function loadResourceLabels({
   // We query in batches because we might run into "413 – Error: Payload Too Large"
   const batched = groups(ids, (_, i) => Math.floor(i / BATCH_SIZE));
 
-  const locales = getQueryLocales(locale);
-
-  const localesFilters = locales.map((locale) =>
-    locale !== ""
-      ? sparql`OPTIONAL {
-    ?iri ${labelTerm} ?label_${locale}
-    FILTER (LANGMATCHES(LANG(?label_${locale}), "${locale}"))
-  }`
-      : sparql`OPTIONAL {
-    ?iri ${labelTerm} ?label_${locale}
-    FILTER ((LANG(?label_${locale}) = ""))
-  }`
-  );
-
-  const localesFilter = sparql`${localesFilters}
-  BIND(COALESCE(${locales
-    .map((locale) => `?label_${locale}`)
-    .join(",")}) as ?label)
-  `;
-
+  const localesFilter = makeLocalesFilter("?iri", labelTerm, "?label", locale);
   const results = await Promise.all(
     batched.map(async ([key, values]) => {
       const query = SELECT.DISTINCT`?iri ?label`.WHERE`

@@ -4,6 +4,7 @@ import { sparqlClient } from "./sparql-client";
 import { schema } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
 import { keyBy } from "lodash";
+import { makeLocalesFilter } from "./query-labels";
 
 type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;
 type RawDataCubeOrganization = Omit<DataCubeOrganization, "__typename">;
@@ -32,11 +33,11 @@ export const createThemeLoader =
     const query = SELECT.ALL.WHERE`
     graph   <https://lindas.admin.ch/sfa/opendataswiss> {
       ?theme a ${schema.DefinedTerm} ;
-        ${schema.name} ?name ;
-        ${schema.inDefinedTermSet} <https://register.ld.admin.ch/opendataswiss/category> .        
-      filter (langmatches(lang(?name), "${locale}"))
-    }
-  `;
+        ${
+          schema.inDefinedTermSet
+        } <https://register.ld.admin.ch/opendataswiss/category>; 
+        ${makeLocalesFilter("?theme", schema.name, "?name", locale)}
+    }`;
     const results = await query.execute(sparqlClient.query, {
       operation: "postUrlencoded",
     });
@@ -61,10 +62,9 @@ export const createOrganizationLoader =
     const query = SELECT.ALL.WHERE`
     graph   <https://lindas.admin.ch/sfa/opendataswiss> {
       ?theme a ${schema.Organization} ;
-        ${schema.name} ?name ;
-      filter (langmatches(lang(?name), "${locale}"))
-    }
-  `;
+      ${makeLocalesFilter("?theme", schema.name, "?name", locale)}
+    }`;
+    console.log(query.build());
     const results = await query.execute(sparqlClient.query, {
       operation: "postUrlencoded",
     });
