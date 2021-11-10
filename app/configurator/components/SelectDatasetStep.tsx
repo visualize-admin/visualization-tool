@@ -20,8 +20,10 @@ import {
   PanelRightWrapper,
 } from "./layout";
 import { TextLink } from "./configurator";
+import { fallbackExchange } from "@urql/core/dist/types/exchanges/fallback";
+import { flag } from "./flag";
 
-export const SelectDatasetStep = () => {
+export const SelectDatasetStepV2 = () => {
   const locale = useLocale();
 
   const searchQueryState = useSearchQueryState();
@@ -101,5 +103,85 @@ export const SelectDatasetStep = () => {
         {state.dataSet ? <DataSetMetadata dataSetIri={state.dataSet} /> : null}
       </PanelRightWrapper>
     </>
+  );
+};
+
+export const SelectDatasetStepV1 = () => {
+  const locale = useLocale();
+
+  const searchQueryState = useSearchQueryState();
+  const { query, order, includeDrafts, filters } = searchQueryState;
+
+  const [state, dispatch] = useConfiguratorState();
+  const [debouncedQuery] = useDebounce(query, 150, {
+    leading: true,
+  });
+
+  // Use the debounced query value here only!
+  const [{ fetching, data }] = useDataCubesQuery({
+    variables: {
+      locale,
+      query: debouncedQuery,
+      order,
+      includeDrafts,
+      filters: filters
+        ? filters.map((filter) => {
+            return { type: filter.__typename, value: filter.iri };
+          })
+        : [],
+    },
+  });
+
+  if (state.state !== "SELECTING_DATASET") {
+    return null;
+  }
+  return (
+    <>
+      <PanelLeftWrapper>
+        <Box mb={4}>
+          <SearchDatasetBox
+            searchQueryState={searchQueryState}
+            searchResult={data}
+          />
+        </Box>
+        <DatasetResults
+          fetching={fetching}
+          data={data}
+          resultProps={{
+            showTags: false,
+          }}
+        />
+      </PanelLeftWrapper>
+      <PanelMiddleWrapper>
+        {state.dataSet || !data ? (
+          <>
+            <ChartPanel>
+              {state.dataSet ? (
+                <>
+                  <DataSetPreview dataSetIri={state.dataSet} />
+                </>
+              ) : (
+                <DataSetHint />
+              )}
+            </ChartPanel>
+          </>
+        ) : (
+          <ChartPanel>
+            <DataSetHint />
+          </ChartPanel>
+        )}
+      </PanelMiddleWrapper>
+      <PanelRightWrapper>
+        {state.dataSet ? <DataSetMetadata dataSetIri={state.dataSet} /> : null}
+      </PanelRightWrapper>
+    </>
+  );
+};
+
+export const SelectDatasetStep = () => {
+  return flag("selectdatasetsv2") ? (
+    <SelectDatasetStepV2 />
+  ) : (
+    <SelectDatasetStepV1 />
   );
 };

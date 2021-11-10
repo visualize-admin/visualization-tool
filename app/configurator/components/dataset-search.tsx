@@ -315,9 +315,11 @@ export const SearchFilters = ({
 export const DatasetResults = ({
   fetching,
   data,
+  resultProps,
 }: {
   fetching: boolean;
   data: DataCubesQuery | undefined;
+  resultProps?: Partial<ResultProps>;
 }) => {
   if (fetching) {
     return (
@@ -331,6 +333,7 @@ export const DatasetResults = ({
         {data.dataCubes.map(
           ({ dataCube, highlightedTitle, highlightedDescription }) => (
             <DatasetResult
+              {...resultProps}
               key={dataCube.iri}
               dataCube={dataCube}
               highlightedTitle={highlightedTitle}
@@ -353,11 +356,7 @@ export const DateFormat = ({ date }: { date: string }) => {
   return <>{formatted}</>;
 };
 
-export const DatasetResult = ({
-  dataCube,
-  highlightedTitle,
-  highlightedDescription,
-}: {
+type ResultProps = {
   dataCube: Pick<
     DataCubesQuery["dataCubes"][0]["dataCube"],
     | "iri"
@@ -370,7 +369,15 @@ export const DatasetResult = ({
   >;
   highlightedTitle?: string | null;
   highlightedDescription?: string | null;
-}) => {
+  showTags?: boolean;
+};
+
+export const DatasetResult = ({
+  dataCube,
+  highlightedTitle,
+  highlightedDescription,
+  showTags,
+}: ResultProps) => {
   const [state, dispatch] = useConfiguratorState();
   const {
     iri,
@@ -468,16 +475,20 @@ export const DatasetResult = ({
               <Trans id="dataset.tag.draft">Draft</Trans>
             </Tag>
           )}
-          {themes
+          {themes && showTags
             ? sortBy(themes, (t) => t.label).map((t) => (
                 <Tag key={t.iri}>{t.label}</Tag>
               ))
             : null}
         </Stack>
-        {creator ? <Tag>{creator.label}</Tag> : null}
+        {showTags && creator ? <Tag>{creator.label}</Tag> : null}
       </Flex>
     </Button>
   );
+};
+
+DatasetResult.defaultProps = {
+  showTags: true,
 };
 
 const Tag = ({ children }: { children: ReactNode }) => (
