@@ -62,11 +62,10 @@ export const parseCube = ({
       themes: cube
         .out(ns.dcat.theme)
         ?.values.filter(truthy)
-        .map((t) => ({ iri: t, __typename: "DataCubeTheme" })),
+        .map((t) => ({ iri: t })),
       creator: creatorIri
         ? {
             iri: creatorIri,
-            __typename: "DataCubeOrganization",
           }
         : undefined,
       versionHistory: cube.in(ns.schema.hasPart)?.value,

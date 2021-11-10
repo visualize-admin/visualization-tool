@@ -17,8 +17,8 @@ export type ResolvedDataCube = {
     version?: string;
     datePublished?: string;
     publicationStatus: DataCubePublicationStatus;
-    themes?: DataCubeTheme[];
-    creator?: DataCubeOrganization;
+    themes?: Omit<DataCubeTheme, "__typename">[], ;
+    creator?: Omit<DataCubeOrganization, "__typename">;
     versionHistory?: string;
     contactPoint?: {
       name?: string;

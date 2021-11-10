@@ -1,33 +1,34 @@
 import { SELECT } from "@tpluscode/sparql-builder";
-import { schema } from "@tpluscode/rdf-ns-builders";
-
-import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { sparqlClient } from "./sparql-client";
+import { schema } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
 import { keyBy } from "lodash";
+
+type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;
+type RawDataCubeOrganization = Omit<DataCubeOrganization, "__typename">;
 
 const parseSparqlTheme = (sparqlTheme: any) => {
   return {
     label: sparqlTheme.name.value,
     iri: sparqlTheme.theme.value,
-    __typename: "DataCubeTheme",
-  } as DataCubeTheme;
+  } as RawDataCubeTheme;
 };
 
 const parseSparqlOrganization = (sparqlOrg: any) => {
   return {
     label: sparqlOrg.name.value,
     iri: sparqlOrg.theme.value,
-    __typename: "DataCubeOrganization",
-  } as DataCubeOrganization;
+  } as RawDataCubeOrganization;
 };
 
 // Handles both batch loading and loading all themes
 // Batch loading is done by load all themes and then filtering according to given IRIs
 export const createThemeLoader =
   ({ locale }: { locale: string }) =>
-  async (filterIris?: readonly string[]): Promise<(DataCubeTheme | null)[]> => {
+  async (
+    filterIris?: readonly string[]
+  ): Promise<(RawDataCubeTheme | null)[]> => {
     const query = SELECT.ALL.WHERE`
     graph   <https://lindas.admin.ch/sfa/opendataswiss> {
       ?theme a ${schema.DefinedTerm} ;
@@ -56,7 +57,7 @@ export const createOrganizationLoader =
   ({ locale }: { locale: string }) =>
   async (
     filterIris?: readonly string[]
-  ): Promise<(DataCubeOrganization | null)[]> => {
+  ): Promise<(RawDataCubeOrganization | null)[]> => {
     const query = SELECT.ALL.WHERE`
     graph   <https://lindas.admin.ch/sfa/opendataswiss> {
       ?theme a ${schema.Organization} ;
