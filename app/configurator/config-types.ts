@@ -249,6 +249,14 @@ const LineConfig = t.type(
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
+const ImputationType = t.union([
+  t.literal("none"),
+  t.literal("zeros"),
+  t.literal("linear"),
+]);
+export type ImputationType = t.TypeOf<typeof ImputationType>;
+export const imputationTypes: ImputationType[] = ["none", "zeros", "linear"];
+
 const AreaFields = t.intersection([
   t.type({
     x: GenericField,
@@ -279,6 +287,7 @@ const AreaConfig = t.type(
     filters: Filters,
     interactiveFiltersConfig: InteractiveFiltersConfig,
     fields: AreaFields,
+    imputationType: ImputationType,
   },
   "AreaConfig"
 );

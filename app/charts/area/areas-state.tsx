@@ -20,7 +20,7 @@ import {
   sum,
 } from "d3";
 import { ReactNode, useCallback, useMemo } from "react";
-import { AreaFields } from "../../configurator";
+import { AreaFields, ImputationType } from "../../configurator";
 import {
   getPalette,
   parseDate,
@@ -69,12 +69,14 @@ const useAreasState = ({
   fields,
   dimensions,
   measures,
+  imputationType,
   interactiveFiltersConfig,
   aspectRatio,
 }: Pick<
   ChartProps,
   "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
 > & {
+  imputationType: ImputationType;
   fields: AreaFields;
   aspectRatio: number;
 }): AreasState => {
@@ -356,12 +358,14 @@ const AreaChartProvider = ({
   measures,
   dimensions,
   interactiveFiltersConfig,
+  imputationType,
   aspectRatio,
   children,
 }: Pick<
   ChartProps,
   "data" | "fields" | "dimensions" | "measures" | "interactiveFiltersConfig"
 > & {
+  imputationType: ImputationType;
   children: ReactNode;
   aspectRatio: number;
 } & { fields: AreaFields }) => {
@@ -370,6 +374,7 @@ const AreaChartProvider = ({
     fields,
     dimensions,
     measures,
+    imputationType,
     interactiveFiltersConfig,
     aspectRatio,
   });
@@ -384,12 +389,14 @@ export const AreaChart = ({
   measures,
   dimensions,
   interactiveFiltersConfig,
+  imputationType,
   aspectRatio,
   children,
 }: Pick<
   ChartProps,
   "data" | "fields" | "dimensions" | "measures" | "interactiveFiltersConfig"
 > & {
+  imputationType: ImputationType;
   children: ReactNode;
   fields: AreaFields;
   aspectRatio: number;
@@ -402,6 +409,7 @@ export const AreaChart = ({
           fields={fields}
           dimensions={dimensions}
           measures={measures}
+          imputationType={imputationType}
           interactiveFiltersConfig={interactiveFiltersConfig}
           aspectRatio={aspectRatio}
         >
