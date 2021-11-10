@@ -517,6 +517,54 @@ export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
 export type ChartType = ChartConfig["chartType"];
 
+export const isAreaConfig = (
+  chartConfig: ChartConfig
+): chartConfig is AreaConfig => {
+  return chartConfig.chartType === "area";
+};
+
+export const isBarConfig = (
+  chartConfig: ChartConfig
+): chartConfig is BarConfig => {
+  return chartConfig.chartType === "bar";
+};
+
+export const isColumnConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ColumnConfig => {
+  return chartConfig.chartType === "column";
+};
+
+export const isLineConfig = (
+  chartConfig: ChartConfig
+): chartConfig is LineConfig => {
+  return chartConfig.chartType === "line";
+};
+
+export const isScatterPlotConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ScatterPlotConfig => {
+  return chartConfig.chartType === "scatterplot";
+};
+
+export const isPieConfig = (
+  chartConfig: ChartConfig
+): chartConfig is PieConfig => {
+  return chartConfig.chartType === "pie";
+};
+
+export const isTableConfig = (
+  chartConfig: ChartConfig
+): chartConfig is TableConfig => {
+  return chartConfig.chartType === "table";
+};
+
+export const isMapConfig = (
+  chartConfig: ChartConfig
+): chartConfig is MapConfig => {
+  return chartConfig.chartType === "map";
+};
+
 const Config = t.type(
   {
     dataSet: t.string,

@@ -1,8 +1,8 @@
 import * as React from "react";
-import { useConfiguratorState } from "..";
+import { isTableConfig, useConfiguratorState } from "..";
+import { ChartConfiguratorTable } from "../table/table-chart-configurator";
 import { ChartAnnotator } from "./chart-annotator";
 import { ChartConfigurator } from "./chart-configurator";
-import { ChartConfiguratorTable } from "../table/table-chart-configurator";
 import { ChartTypeSelector } from "./chart-type-selector";
 import { DataSetList } from "./dataset-selector";
 
@@ -19,7 +19,7 @@ export const PanelLeft = () => {
             <ChartTypeSelector state={state} />
           )}
           {state.state === "CONFIGURING_CHART" &&
-            (state.chartConfig.chartType === "table" ? (
+            (isTableConfig(state.chartConfig) ? (
               <ChartConfiguratorTable state={state} />
             ) : (
               <ChartConfigurator state={state} />
