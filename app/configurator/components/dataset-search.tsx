@@ -40,48 +40,51 @@ export const useSearchQueryState = () => {
   const [filters, setFilters] = useState<SearchFilter[]>([]);
   const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
 
-  return {
-    includeDrafts,
-    setIncludeDrafts,
-    onReset: () => {
-      setQuery("");
-      setOrder(previousOrderRef.current);
-    },
-    onTypeQuery: (e: React.ChangeEvent<HTMLInputElement>) => {
-      setQuery(e.currentTarget.value);
-      if (query === "" && e.currentTarget.value !== "") {
-        previousOrderRef.current = order;
-        setOrder(DataCubeResultOrder.Score);
-      }
-      if (query !== "" && e.currentTarget.value === "") {
+  return useMemo(
+    () => ({
+      includeDrafts,
+      setIncludeDrafts,
+      onReset: () => {
+        setQuery("");
         setOrder(previousOrderRef.current);
-      }
-    },
-    query,
-    order,
-    onSetOrder: (order: DataCubeResultOrder) => {
-      previousOrderRef.current = order;
-      setOrder(order);
-    },
-    filters,
-    onAddFilter: (cat: SearchFilter) => {
-      setFilters(Array.from(new Set([...filters, cat])));
-    },
-    onRemoveFilter: (cat: SearchFilter) => {
-      setFilters(
-        Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
-      );
-    },
-    onToggleFilter: (cat: SearchFilter) => {
-      if (filters.find((c) => c.iri === cat.iri)) {
+      },
+      onTypeQuery: (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.currentTarget.value);
+        if (query === "" && e.currentTarget.value !== "") {
+          previousOrderRef.current = order;
+          setOrder(DataCubeResultOrder.Score);
+        }
+        if (query !== "" && e.currentTarget.value === "") {
+          setOrder(previousOrderRef.current);
+        }
+      },
+      query,
+      order,
+      onSetOrder: (order: DataCubeResultOrder) => {
+        previousOrderRef.current = order;
+        setOrder(order);
+      },
+      filters,
+      onAddFilter: (cat: SearchFilter) => {
+        setFilters(Array.from(new Set([...filters, cat])));
+      },
+      onRemoveFilter: (cat: SearchFilter) => {
         setFilters(
           Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
         );
-      } else {
-        setFilters(Array.from(new Set([...filters, cat])));
-      }
-    },
-  };
+      },
+      onToggleFilter: (cat: SearchFilter) => {
+        if (filters.find((c) => c.iri === cat.iri)) {
+          setFilters(
+            Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
+          );
+        } else {
+          setFilters(Array.from(new Set([...filters, cat])));
+        }
+      },
+    }),
+    [filters, includeDrafts, order, query]
+  );
 };
 
 export type SearchQueryState = ReturnType<typeof useSearchQueryState>;
