@@ -277,7 +277,8 @@ export const applyTableDimensionToFilters = ({
         }
         break;
       default:
-        throw new Error();
+        const _exhaustiveCheck: never = currentFilter;
+        return _exhaustiveCheck;
     }
   } else {
     if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
@@ -332,7 +333,8 @@ export const applyNonTableDimensionToFilters = ({
         }
         break;
       default:
-        throw new Error();
+        const _exhaustiveCheck: never = currentFilter;
+        return _exhaustiveCheck;
     }
   } else {
     if (!isField && dimension.isKeyDimension) {
