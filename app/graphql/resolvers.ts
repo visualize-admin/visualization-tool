@@ -1,6 +1,8 @@
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
+import { keyBy, merge } from "lodash";
+import { resolve } from "path";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
@@ -10,6 +12,8 @@ import {
   getCubes,
   getSparqlEditorUrl,
 } from "../rdf/queries";
+import { loadThemes } from "../rdf/query-cube-metadata";
+import truthy from "../utils/truthy";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
@@ -19,10 +23,11 @@ import {
 import { ResolvedDimension } from "./shared-types";
 
 const Query: QueryResolvers = {
-  dataCubes: async (_, { locale, query, order, includeDrafts }) => {
+  dataCubes: async (_, { locale, query, order, includeDrafts, filters }) => {
     const cubes = await getCubes({
       locale: parseLocaleString(locale),
       includeDrafts: includeDrafts ? true : false,
+      filters: filters ? filters : undefined,
     });
 
     const dataCubeCandidates = cubes.map(({ data }) => data);
@@ -110,6 +115,9 @@ const Query: QueryResolvers = {
       latest,
     });
   },
+  themes: async (_, { locale }: { locale: string }) => {
+    return (await loadThemes({ locale })).filter(truthy);
+  },
 };
 
 const DataCube: DataCubeResolvers = {
@@ -124,6 +132,7 @@ const DataCube: DataCubeResolvers = {
   publicationStatus: ({ data: { publicationStatus } }) => publicationStatus,
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
+  themes: ({ data: { themes } }) => themes || [],
   dimensions: async ({ cube, locale }) => {
     const dimensions = await getCubeDimensions({
       cube,
@@ -157,8 +166,6 @@ const DataCube: DataCubeResolvers = {
       filters: filters ?? undefined,
       limit: limit ?? undefined,
     });
-
-    console.log(query);
 
     // const constructedFilters = filters
     //   ? await constructFilters(dataCube, filters)
@@ -223,6 +230,15 @@ export const resolvers: Resolvers = {
   RawObservation: GraphQLJSONObject,
   Query,
   DataCube,
+  DataCubeTheme: {
+    label: async (parent, _, { loaders }) => {
+      if (!parent.label) {
+        const resolvedTheme = await loaders.themes.load(parent.iri);
+        return resolvedTheme.label;
+      }
+      return parent.label;
+    },
+  },
   ObservationsQuery: {
     data: async ({ data: { query, observations } }) => observations,
     rawData: async ({ data: { observationsRaw } }) => observationsRaw,

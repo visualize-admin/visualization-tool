@@ -3,12 +3,14 @@ query DataCubes(
   $query: String
   $order: DataCubeResultOrder
   $includeDrafts: Boolean
+  $filters: [DataCubeSearchFilter!]
 ) {
   dataCubes(
     locale: $locale
     query: $query
     order: $order
     includeDrafts: $includeDrafts
+    filters: $filters
   ) {
     highlightedTitle
     highlightedDescription
@@ -17,6 +19,11 @@ query DataCubes(
       title
       description
       publicationStatus
+      datePublished
+      themes {
+        iri
+        label
+      }
     }
   }
 }
@@ -147,5 +154,12 @@ query DataCubeObservations(
       data
       sparqlEditorUrl
     }
+  }
+}
+
+query Themes($locale: String!) {
+  themes(locale: $locale) {
+    iri
+    label
   }
 }

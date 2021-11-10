@@ -30,6 +30,7 @@ import { loadResourceLabels } from "./query-labels";
 import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
 import truthy from "../utils/truthy";
+import { DataCubeSearchFilter, DataCubeTheme } from "../graphql/query-hooks";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -101,38 +102,50 @@ const getLatestCube = async (cube: Cube): Promise<Cube> => {
   return cube;
 };
 
-const isVisualizeCubeFilter = ({ cube }: $FixMe) => {
-  return [
-    [
-      cube,
-      ns.schema.workExample,
-      rdf.namedNode("https://ld.admin.ch/application/visualize"),
-    ],
-  ];
+const where = (predicate: NamedNode, object: NamedNode) => {
+  return ({ cube }: $FixMe) => [[cube, predicate, object]];
 };
+
+const isVisualizeCubeFilter = where(
+  ns.schema.workExample,
+  rdf.namedNode("https://ld.admin.ch/application/visualize")
+);
 
 export const getCubes = async ({
   includeDrafts,
   locale,
+  filters,
+  themesIndex,
 }: {
   includeDrafts: boolean;
   locale: string;
+  filters?: DataCubeSearchFilter[];
+  themesIndex?: Record<string, DataCubeTheme>;
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();
 
+  const themeFilters = filters ? filters.filter((x) => x.type === "THEME") : [];
+  const themeQueryFilter = Cube.filter.in(
+    ns.dcat.theme,
+    themeFilters.map((x) => rdf.namedNode(x.value))
+  );
+
+  const cubesFilters = [
+    // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
+    Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
+    Cube.filter.noExpires(),
+    isVisualizeCubeFilter,
+    includeDrafts
+      ? null
+      : Cube.filter.status([
+          ns.adminVocabulary("CreativeWorkStatus/Published"),
+        ]),
+    themeFilters.length > 0 ? themeQueryFilter : null,
+  ].filter(truthy);
+
   const cubes = await source.cubes({
     noShape: true,
-    filters: [
-      // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
-      Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
-      Cube.filter.noExpires(),
-      isVisualizeCubeFilter,
-      includeDrafts
-        ? null
-        : Cube.filter.status([
-            ns.adminVocabulary("CreativeWorkStatus/Published"),
-          ]),
-    ].filter(truthy),
+    filters: cubesFilters,
   });
 
   return cubes.map((cube) => parseCube({ cube, locale }));

@@ -35,6 +35,7 @@ export type DataCube = {
   dimensions: Array<Dimension>;
   dimensionByIri?: Maybe<Dimension>;
   measures: Array<Measure>;
+  themes: Array<DataCubeTheme>;
 };
 
 
@@ -67,6 +68,17 @@ export enum DataCubeResultOrder {
   TitleAsc = 'TITLE_ASC',
   CreatedDesc = 'CREATED_DESC'
 }
+
+export type DataCubeSearchFilter = {
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type DataCubeTheme = {
+  __typename: 'DataCubeTheme';
+  iri: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
+};
 
 export type Dimension = {
   iri: Scalars['String'];
@@ -126,6 +138,7 @@ export type Query = {
   __typename: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
+  themes: Array<DataCubeTheme>;
 };
 
 
@@ -141,6 +154,12 @@ export type QueryDataCubesArgs = {
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Array<DataCubeSearchFilter>>;
+};
+
+
+export type QueryThemesArgs = {
+  locale: Scalars['String'];
 };
 
 
@@ -171,10 +190,11 @@ export type DataCubesQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>;
   order?: Maybe<DataCubeResultOrder>;
   includeDrafts?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Array<DataCubeSearchFilter> | DataCubeSearchFilter>;
 }>;
 
 
-export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus } }> };
+export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
 type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
@@ -314,6 +334,13 @@ export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: M
       & DimensionMetaData_Measure_Fragment
     )>, observations: { __typename: 'ObservationsQuery', data: Array<any>, sparqlEditorUrl?: Maybe<string> } }> };
 
+export type ThemesQueryVariables = Exact<{
+  locale: Scalars['String'];
+}>;
+
+
+export type ThemesQuery = { __typename: 'Query', themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> };
+
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {
   iri
@@ -328,12 +355,13 @@ export const DimensionMetaDataFragmentDoc = gql`
 }
     `;
 export const DataCubesDocument = gql`
-    query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean) {
+    query DataCubes($locale: String!, $query: String, $order: DataCubeResultOrder, $includeDrafts: Boolean, $filters: [DataCubeSearchFilter!]) {
   dataCubes(
     locale: $locale
     query: $query
     order: $order
     includeDrafts: $includeDrafts
+    filters: $filters
   ) {
     highlightedTitle
     highlightedDescription
@@ -342,6 +370,11 @@ export const DataCubesDocument = gql`
       title
       description
       publicationStatus
+      datePublished
+      themes {
+        iri
+        label
+      }
     }
   }
 }
@@ -476,4 +509,16 @@ export const DataCubeObservationsDocument = gql`
 
 export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubeObservationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeObservationsQuery>({ query: DataCubeObservationsDocument, ...options });
+};
+export const ThemesDocument = gql`
+    query Themes($locale: String!) {
+  themes(locale: $locale) {
+    iri
+    label
+  }
+}
+    `;
+
+export function useThemesQuery(options: Omit<Urql.UseQueryArgs<ThemesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ThemesQuery>({ query: ThemesDocument, ...options });
 };

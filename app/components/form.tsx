@@ -34,6 +34,7 @@ export const Label = ({
     htmlFor={htmlFor}
     mb={1}
     sx={{
+      cursor: "pointer",
       width: "auto",
       color: disabled ? "monochrome500" : "monochrome700",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],

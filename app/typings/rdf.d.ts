@@ -21,6 +21,7 @@ declare module "rdf-cube-view-query" {
       isPartOf: (container: $FixMe) => $FixMe;
       noValidThrough: () => $FixMe;
       noExpires: () => $FixMe;
+      in: (predicate: NamedNode, values: NamedNode[]) => $FixMe;
       version: $FixMe;
       status: (values: Term | Term[]) => $FixMe;
     };

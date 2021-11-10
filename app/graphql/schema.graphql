@@ -39,6 +39,7 @@ type DataCube {
   dimensions: [Dimension!]!
   dimensionByIri(iri: String!): Dimension
   measures: [Measure!]!
+  themes: [DataCubeTheme!]!
 }
 
 interface Dimension {
@@ -105,6 +106,16 @@ type DataCubeResult {
   dataCube: DataCube!
 }
 
+type DataCubeTheme {
+  iri: String!
+  label: String
+}
+
+input DataCubeSearchFilter {
+  type: String!
+  value: String!
+}
+
 enum DataCubeResultOrder {
   SCORE
   TITLE_ASC
@@ -120,5 +131,7 @@ type Query {
     query: String
     order: DataCubeResultOrder
     includeDrafts: Boolean
+    filters: [DataCubeSearchFilter!]
   ): [DataCubeResult!]!
+  themes(locale: String!): [DataCubeTheme!]!
 }
