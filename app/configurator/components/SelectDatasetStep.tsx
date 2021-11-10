@@ -1,10 +1,14 @@
-import React from "react";
-import { Box, Link } from "theme-ui";
+import React, { useMemo } from "react";
+import { Box, Link, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";
 import { ChartPanel } from "../../components/chart-panel";
 import { DataSetHint } from "../../components/hint";
-import { useDataCubesQuery } from "../../graphql/query-hooks";
+import {
+  DataCubeOrganization,
+  DataCubeTheme,
+  useDataCubesQuery,
+} from "../../graphql/query-hooks";
 import { useLocale } from "../../src";
 import { DataSetMetadata } from "./dataset-metadata";
 import { DataSetPreview } from "./dataset-preview";
@@ -52,9 +56,11 @@ export const SelectDatasetStepV2 = () => {
   }
   return (
     <>
-      <PanelLeftWrapper>
-        <SearchFilters searchQueryState={searchQueryState} />
-      </PanelLeftWrapper>
+      {state.dataSet ? null : (
+        <PanelLeftWrapper raised={false}>
+          <SearchFilters searchQueryState={searchQueryState} />
+        </PanelLeftWrapper>
+      )}
       <PanelMiddleWrapper>
         {state.dataSet ? null : (
           <Box mb={4}>
