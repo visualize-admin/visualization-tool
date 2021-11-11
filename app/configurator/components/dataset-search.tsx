@@ -297,6 +297,7 @@ export const SearchFilters = ({
                         onClick={() => onToggleFilter(theme)}
                         sx={{
                           fontWeight: themeFilter === theme ? "bold" : "normal",
+                          color: themeFilter === theme ? "primary" : undefined,
                         }}
                       >
                         {theme.label}
@@ -326,6 +327,7 @@ export const SearchFilters = ({
                         onClick={() => onToggleFilter(org)}
                         sx={{
                           fontWeight: orgFilter === org ? "bold" : "normal",
+                          color: orgFilter === org ? "primary" : undefined,
                         }}
                       >
                         {org.label}
