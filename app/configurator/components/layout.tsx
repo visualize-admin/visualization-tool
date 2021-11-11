@@ -1,10 +1,14 @@
 import React from "react";
-import { Box } from "theme-ui";
+import { Box, ThemeUIStyleObject } from "theme-ui";
+
+const commonPanelStyles = {};
 
 export const PanelLeftWrapper = ({
   children,
+  raised,
 }: {
   children?: React.ReactNode;
+  raised?: boolean;
 }) => {
   return (
     <Box
@@ -13,17 +17,21 @@ export const PanelLeftWrapper = ({
       sx={{
         overflowX: "hidden",
         overflowY: "auto",
-        bg: "monochrome100",
-        boxShadow: "rightSide",
-        borderRightColor: "monochrome500",
-        borderRightWidth: "1px",
-        borderRightStyle: "solid",
+        bgColor: "blue",
+        boxShadow: raised ? "rightSide" : undefined,
+        borderRightColor: raised ? "monochrome500" : undefined,
+        borderRightWidth: raised ? "1px" : undefined,
+        borderRightStyle: raised ? "solid" : undefined,
         gridArea: "left",
       }}
     >
       {children}
     </Box>
   );
+};
+
+PanelLeftWrapper.defaultProps = {
+  raised: true,
 };
 
 export const PanelRightWrapper = ({
@@ -53,8 +61,10 @@ export const PanelRightWrapper = ({
 
 export const PanelMiddleWrapper = ({
   children,
+  sx,
 }: {
   children: React.ReactNode;
+  sx?: ThemeUIStyleObject;
 }) => {
   return (
     <Box
@@ -65,6 +75,7 @@ export const PanelMiddleWrapper = ({
         overflowY: "auto",
         p: 4,
         gridArea: "middle",
+        ...sx,
       }}
     >
       {children}

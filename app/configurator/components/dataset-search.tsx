@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Flex, Text, TextProps } from "theme-ui";
 import { useConfiguratorState } from "..";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
@@ -25,6 +25,7 @@ import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import { useLocale } from "../../locales/use-locale";
 import Stack from "../../components/Stack";
 import { useFormatDate } from "./ui-helpers";
+import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
@@ -39,6 +40,25 @@ export const useSearchQueryState = () => {
   );
   const [filters, setFilters] = useState<SearchFilter[]>([]);
   const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
+
+  const addFilter = (cat: SearchFilter) => {
+    const type = cat.__typename;
+    console.log("on add filter");
+    const existingFilterIndex = filters.findIndex((f) => f.__typename === type);
+    if (existingFilterIndex === -1) {
+      setFilters(Array.from(new Set([...filters, cat])));
+    } else {
+      setFilters(
+        Array.from(new Set([...filters.slice(0, existingFilterIndex), cat]))
+      );
+    }
+  };
+
+  const removeFilter = (cat: SearchFilter) => {
+    setFilters(
+      Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
+    );
+  };
 
   return useMemo(
     () => ({
@@ -65,21 +85,14 @@ export const useSearchQueryState = () => {
         setOrder(order);
       },
       filters,
-      onAddFilter: (cat: SearchFilter) => {
-        setFilters(Array.from(new Set([...filters, cat])));
-      },
-      onRemoveFilter: (cat: SearchFilter) => {
-        setFilters(
-          Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
-        );
-      },
+      setFilters,
+      onAddFilter: addFilter,
+      onRemoveFilter: removeFilter,
       onToggleFilter: (cat: SearchFilter) => {
         if (filters.find((c) => c.iri === cat.iri)) {
-          setFilters(
-            Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
-          );
+          removeFilter(cat);
         } else {
-          setFilters(Array.from(new Set([...filters, cat])));
+          addFilter(cat);
         }
       },
     }),
@@ -212,6 +225,19 @@ export const SearchDatasetBox = ({
   );
 };
 
+const NavItem = ({
+  children,
+  ...props
+}: { children: React.ReactNode } & TextProps) => {
+  return (
+    <Box sx={{ cursor: "pointer", mb: 2 }}>
+      <Text variant="paragraph2" {...props}>
+        {children}
+      </Text>
+    </Box>
+  );
+};
+
 export const SearchFilters = ({
   searchQueryState,
 }: {
@@ -226,13 +252,14 @@ export const SearchFilters = ({
     variables: { locale },
   });
 
-  const filtersByIri = useMemo(() => keyBy(filters, (c) => c.iri), [filters]);
-  const filtersCountByTypeName = useMemo(() => {
-    return mapValues(
-      groupBy(filters, (x) => x.__typename),
-      (v) => v.length
-    );
-  }, [filters]);
+  const themeFilter = filters.find(
+    (x) => x.__typename === ("DataCubeTheme" as DataCubeTheme["__typename"])
+  );
+  const orgFilter = filters.find(
+    (x) =>
+      x.__typename ===
+      ("DataCubeOrganization" as DataCubeOrganization["__typename"])
+  );
 
   const [allThemesAlpha, allOrgsAlpha] = useMemo(() => {
     return [
@@ -243,73 +270,72 @@ export const SearchFilters = ({
   return (
     <Flex
       sx={{
-        bg: "monochrome100",
         flexDirection: "column",
         height: "100%",
       }}
       px={4}
-      pt={4}
+      pt="2rem"
       role="search"
     >
       <Stack>
-        <Tabs initialValue="themes">
-          <Flex mb={4}>
-            <Tab value="themes">
-              Themes{" "}
-              {filtersCountByTypeName["DataCubeTheme"] ? (
-                <>({filtersCountByTypeName["DataCubeTheme"]})</>
-              ) : null}
-            </Tab>
-            <Tab value="organizations">
-              Organizations{" "}
-              {filtersCountByTypeName["DataCubeOrganization"] ? (
-                <>({filtersCountByTypeName["DataCubeOrganization"]})</>
-              ) : null}
-            </Tab>
-          </Flex>
-          <TabContent value="themes">
-            {allThemesAlpha
-              ? allThemesAlpha.map((cat) => {
-                  if (!cat.label) {
-                    return null;
-                  }
-                  return (
-                    <Checkbox
-                      key={cat.iri}
-                      label={cat.label}
-                      checked={!!filtersByIri[cat.iri]}
-                      name={cat.label}
-                      value={cat.iri}
-                      onChange={(ev) => {
-                        onToggleFilter(cat);
-                      }}
-                    />
-                  );
-                })
-              : null}
-          </TabContent>
-          <TabContent value="organizations">
-            {allOrgsAlpha
-              ? allOrgsAlpha.map((org) => {
-                  if (!org.label) {
-                    return null;
-                  }
-                  return (
-                    <Checkbox
-                      key={org.iri}
-                      label={org.label}
-                      checked={!!filtersByIri[org.iri]}
-                      name={org.label}
-                      value={org.iri}
-                      onChange={(ev) => {
-                        onToggleFilter(org);
-                      }}
-                    />
-                  );
-                })
-              : null}
-          </TabContent>
-        </Tabs>
+        <Accordion>
+          <AccordionSummary>
+            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+              Themes
+            </Text>
+          </AccordionSummary>
+          <AccordionContent>
+            <Box ml={4}>
+              {allThemesAlpha
+                ? allThemesAlpha.map((theme) => {
+                    if (!theme.label) {
+                      return null;
+                    }
+                    return (
+                      <NavItem
+                        key={theme.iri}
+                        onClick={() => onToggleFilter(theme)}
+                        sx={{
+                          fontWeight: themeFilter === theme ? "bold" : "normal",
+                        }}
+                      >
+                        {theme.label}
+                      </NavItem>
+                    );
+                  })
+                : null}
+            </Box>
+          </AccordionContent>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary>
+            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+              Organizations
+            </Text>
+          </AccordionSummary>
+          <AccordionContent>
+            <Box ml={4}>
+              {allOrgsAlpha
+                ? allOrgsAlpha.map((org) => {
+                    if (!org.label) {
+                      return null;
+                    }
+                    return (
+                      <NavItem
+                        key={org.iri}
+                        onClick={() => onToggleFilter(org)}
+                        sx={{
+                          fontWeight: orgFilter === org ? "bold" : "normal",
+                        }}
+                      >
+                        {org.label}
+                      </NavItem>
+                    );
+                  })
+                : null}
+            </Box>
+          </AccordionContent>
+        </Accordion>
       </Stack>
     </Flex>
   );

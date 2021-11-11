@@ -61,48 +61,69 @@ export const SelectDatasetStepV2 = () => {
           <SearchFilters searchQueryState={searchQueryState} />
         </PanelLeftWrapper>
       )}
-      <PanelMiddleWrapper>
-        {state.dataSet ? null : (
-          <Box mb={4}>
-            <SearchDatasetBox
-              searchQueryState={searchQueryState}
-              searchResult={data}
-            />
-          </Box>
-        )}
-        {state.dataSet || !data ? (
-          <>
-            <Box mb={4} px={4}>
-              <Link
-                variant="inline"
-                onClick={(ev) => {
-                  ev.preventDefault();
-                  dispatch({
-                    type: "DATASET_SELECTED",
-                    dataSet: undefined,
-                  });
-                }}
-              >
-                Back to the list
-              </Link>
+      <PanelMiddleWrapper
+        sx={
+          state.dataSet
+            ? {
+                gridRowStart: "left",
+                gridRowEnd: "right",
+                gridColumnStart: "left",
+                gridColumnEnd: "middle",
+                height: "auto",
+              }
+            : undefined
+        }
+      >
+        <Box sx={{ maxWidth: 1200, margin: "auto" }}>
+          {state.dataSet ? null : (
+            <Box mb={4}>
+              <>
+                <Text variant="heading1" sx={{ mb: 4 }}>
+                  {filters.length > 0
+                    ? filters[filters.length - 1].label
+                    : "Datasets"}
+                </Text>
+              </>
+              <SearchDatasetBox
+                searchQueryState={searchQueryState}
+                searchResult={data}
+              />
             </Box>
+          )}
+          {state.dataSet || !data ? (
+            <>
+              <Box mb={4} px={4}>
+                <Link
+                  variant="inline"
+                  onClick={(ev) => {
+                    ev.preventDefault();
+                    dispatch({
+                      type: "DATASET_SELECTED",
+                      dataSet: undefined,
+                    });
+                  }}
+                >
+                  Back to the list
+                </Link>
+              </Box>
+              <ChartPanel>
+                {state.dataSet ? (
+                  <>
+                    <DataSetPreview dataSetIri={state.dataSet} />
+                  </>
+                ) : (
+                  <DataSetHint />
+                )}
+              </ChartPanel>
+            </>
+          ) : (
             <ChartPanel>
-              {state.dataSet ? (
-                <>
-                  <DataSetPreview dataSetIri={state.dataSet} />
-                </>
-              ) : (
-                <DataSetHint />
-              )}
+              <div>
+                <DatasetResults fetching={fetching} data={data} />
+              </div>
             </ChartPanel>
-          </>
-        ) : (
-          <ChartPanel>
-            <div>
-              <DatasetResults fetching={fetching} data={data} />
-            </div>
-          </ChartPanel>
-        )}
+          )}
+        </Box>
       </PanelMiddleWrapper>
       <PanelRightWrapper>
         {state.dataSet ? <DataSetMetadata dataSetIri={state.dataSet} /> : null}
