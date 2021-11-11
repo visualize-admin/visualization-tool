@@ -107,19 +107,14 @@ export const SelectDatasetStepV2 = () => {
           {state.dataSet ? null : (
             <Box mb={4}>
               <>
-                {filters ? (
+                {/* {filters ? (
                   <Breadcrumbs
                     breadcrumbs={breadcrumbs}
                     Breadcrumb={BreadcrumbFilter}
                     onClickBreadcrumb={handleClickBreadcrumb}
                     mb={4}
                   />
-                ) : null}
-                <Text variant="heading1" sx={{ mb: 4 }}>
-                  {filters.length > 0
-                    ? filters[filters.length - 1].label
-                    : "Datasets"}
-                </Text>
+                ) : null} */}
               </>
               <SearchDatasetBox
                 searchQueryState={searchQueryState}
