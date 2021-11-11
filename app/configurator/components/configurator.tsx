@@ -107,14 +107,13 @@ export const Configurator = () => {
   // FIXME: for a11y, "updateDataSetPreviewIri" should also move focus to "Weiter" button (?)
   const [state] = useConfiguratorState();
 
-  return (
+  return state.state === "SELECTING_DATASET" ? (
+    <SelectDatasetStep />
+  ) : (
     <PanelLayout>
-      {state.state === "SELECTING_DATASET" ? null : (
-        <PanelHeader>
-          <Stepper dataSetIri={state.dataSet} />
-        </PanelHeader>
-      )}
-      {state.state === "SELECTING_DATASET" ? <SelectDatasetStep /> : null}
+      <PanelHeader>
+        <Stepper dataSetIri={state.dataSet} />
+      </PanelHeader>
       {state.state === "SELECTING_CHART_TYPE" ? <SelectChartTypeStep /> : null}
       {state.state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
       {state.state === "DESCRIBING_CHART" ? <DescribeChartStep /> : null}

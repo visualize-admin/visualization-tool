@@ -22,12 +22,14 @@ import {
 } from "./dataset-search";
 import {
   PanelHeader,
+  PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
   PanelRightWrapper,
 } from "./layout";
 import { flag } from "./flag";
 import Breadcrumbs from "./breadcrumbs";
+import { BrowseParams } from "../../pages/browse";
 
 const BreadcrumbFilter = ({
   breadcrumb,
@@ -72,7 +74,7 @@ export const SelectDatasetStepV2Content = () => {
     return null;
   }
   return (
-    <>
+    <PanelLayout>
       <PanelHeader>
         <Box mx={4} mt={6} mb={4}>
           <Text variant="heading1" sx={{ mb: 4 }}>
@@ -146,7 +148,7 @@ export const SelectDatasetStepV2Content = () => {
           )}
         </Box>
       </PanelMiddleWrapper>
-    </>
+    </PanelLayout>
   );
 };
 
@@ -180,7 +182,7 @@ export const SelectDatasetStepV1 = () => {
     return null;
   }
   return (
-    <>
+    <PanelLayout>
       <PanelLeftWrapper>
         <Box mb={4}>
           <SearchDatasetBox
@@ -218,7 +220,9 @@ export const SelectDatasetStepV1 = () => {
       <PanelRightWrapper>
         {state.dataSet ? <DataSetMetadata dataSetIri={state.dataSet} /> : null}
       </PanelRightWrapper>
-    </>
+    </PanelLayout>
+  );
+};
 
 export const SelectDatasetStepV2 = ({ params }: { params?: BrowseParams }) => {
   return (
