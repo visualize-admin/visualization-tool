@@ -16,8 +16,8 @@ import { LineFields } from "../../configurator";
 import {
   getPalette,
   parseDate,
-  useTimeFormatUnit,
   useFormatNumber,
+  useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
@@ -25,7 +25,7 @@ import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
-  getWideData,
+  getBaseWideData,
   getLabelWithUnit,
   usePreparedData,
 } from "../shared/chart-helpers";
@@ -111,7 +111,7 @@ const useLinesState = ({
     sortedData,
     (d) => d[fields.x.componentIri] as string
   );
-  const allDataWide = getWideData({
+  const allDataWide = getBaseWideData({
     groupedMap: allDataGroupedMap,
     getSegment,
     getY,
@@ -133,7 +133,7 @@ const useLinesState = ({
     preparedData,
     (d) => d[fields.x.componentIri] as string
   );
-  const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
+  const chartWideData = getBaseWideData({ groupedMap, getSegment, getY, xKey });
 
   // x
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];

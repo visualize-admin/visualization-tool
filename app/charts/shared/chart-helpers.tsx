@@ -1,9 +1,6 @@
 import { group, InternMap, sum } from "d3";
 import { omitBy } from "lodash";
-import {
-  useCallback,
-  useMemo
-} from "react";
+import { useCallback, useMemo } from "react";
 import {
   ChartConfig,
   Filters,
@@ -129,27 +126,36 @@ export const usePreparedData = ({
   return preparedData;
 };
 
-// Helper to pivot a dataset to a wider format (used in stacked charts)
-export const getWideData = ({
+// Helper to pivot a dataset to a wider format
+export const getBaseWideData = ({
   xKey,
   groupedMap,
   getSegment,
   getY,
 }: {
   xKey: string;
-  groupedMap: Map<string, Record<string, ObservationValue>[]>;
+  groupedMap: Map<string, Array<Observation>>;
   getSegment: (d: Observation) => string;
   getY: (d: Observation) => number | null;
 }): Array<Observation> => {
   const wideArray = [];
+
   for (const [key, values] of groupedMap) {
-    let obj: Observation = {
+    let observation: Observation = {
       [xKey]: key,
       total: sum(values, getY),
     };
 
     for (const value of values) {
-      obj[getSegment(value)] = getY(value);
+      observation[getSegment(value)] = getY(value);
+    }
+
+    wideArray.push(observation);
+  }
+
+  return wideArray;
+};
+
     }
 
     wideArray.push(obj);

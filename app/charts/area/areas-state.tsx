@@ -34,7 +34,7 @@ import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
-  getWideData,
+  getBaseWideData,
   getLabelWithUnit,
   getWideData,
   usePreparedData,
@@ -130,7 +130,7 @@ const useAreasState = ({
     sortedData,
     (d) => d[fields.x.componentIri] as string
   );
-  const allDataWide = getWideData({
+  const allDataWide = getBaseWideData({
     groupedMap: allDataGroupedMap,
     getSegment,
     getY,
@@ -151,7 +151,7 @@ const useAreasState = ({
     preparedData,
     (d) => d[fields.x.componentIri] as string
   );
-  const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
+  const chartWideData = getBaseWideData({ groupedMap, xKey, getSegment, getY });
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
