@@ -17,6 +17,7 @@ import {
   TextProps,
   Link as ThemeUILink,
   LinkProps as ThemeUILinkProps,
+  Card,
 } from "theme-ui";
 import { useRouter } from "next/router";
 
@@ -600,24 +601,27 @@ export const DatasetResult = ({
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
 
   return (
-    <Button
+    <Card
       variant="reset"
       onClick={() => dispatch({ type: "DATASET_SELECTED", dataSet: iri })}
       sx={{
         position: "relative",
         color: "monochrome700",
         cursor: "pointer",
-        width: "100%",
         textAlign: "left",
         py: 4,
-        borderRadius: 0,
-        borderBottomWidth: "1px",
-        borderBottomStyle: "solid",
-        borderBottomColor: "monochrome300",
+        px: 5,
+        borderRadius: 10,
+        boxShadow: "primary",
+        bg: "monochrome100",
+        mb: 3,
       }}
     >
-      <Flex sx={{ alignItems: "center", justifyContent: "space-between" }}>
-        <Text as="div" variant="paragraph2" sx={{ fontWeight: "bold" }} pb={1}>
+      <Stack spacing={2}>
+        <Text variant="paragraph2" color="monochrome600">
+          {datePublished ? <DateFormat date={datePublished} /> : null}
+        </Text>
+        <Text as="div" variant="paragraph1" pb={1}>
           {highlightedTitle ? (
             <Box
               as="span"
@@ -628,33 +632,28 @@ export const DatasetResult = ({
             title
           )}
         </Text>
-        <Text variant="paragraph2" color="monochrome600">
-          {datePublished ? <DateFormat date={datePublished} /> : null}
+        <Text
+          variant="paragraph2"
+          sx={
+            {
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              display: "-webkit-box",
+              overflow: "hidden",
+            } as $IntentionalAny
+          }
+          title={description ?? ""}
+        >
+          {highlightedDescription ? (
+            <Box
+              as="span"
+              sx={{ "& > strong": { bg: "primaryLight" } }}
+              dangerouslySetInnerHTML={{ __html: highlightedDescription }}
+            />
+          ) : (
+            description
+          )}
         </Text>
-      </Flex>
-      <Text
-        variant="paragraph2"
-        sx={
-          {
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            display: "-webkit-box",
-            overflow: "hidden",
-          } as $IntentionalAny
-        }
-        title={description ?? ""}
-      >
-        {highlightedDescription ? (
-          <Box
-            as="span"
-            sx={{ "& > strong": { bg: "primaryLight" } }}
-            dangerouslySetInnerHTML={{ __html: highlightedDescription }}
-          />
-        ) : (
-          description
-        )}
-      </Text>
-      <Flex sx={{ justifyContent: "space-between" }}>
         <Stack spacing={1} direction="row">
           {isDraft && (
             <Tag type="draft">
@@ -674,20 +673,20 @@ export const DatasetResult = ({
                 </Link>
               ))
             : null}
+          {creator ? (
+            <Link
+              key={creator.iri}
+              passHref
+              href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
+            >
+              <ThemeUILink variant="initial">
+                <Tag type={creator.__typename}>{creator.label}</Tag>
+              </ThemeUILink>
+            </Link>
+          ) : null}
         </Stack>
-        {showTags && creator ? (
-          <Link
-            key={creator.iri}
-            passHref
-            href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
-          >
-            <ThemeUILink variant="initial">
-              <Tag type={creator.__typename}>{creator.label}</Tag>
-            </ThemeUILink>
-          </Link>
-        ) : null}
-      </Flex>
-    </Button>
+      </Stack>
+    </Card>
   );
 };
 
