@@ -154,7 +154,6 @@ export const getInitialConfig = ({
           },
           y: { componentIri: measures[0].iri },
         },
-        imputationType: "none",
       };
     case "scatterplot":
       return {

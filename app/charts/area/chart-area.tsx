@@ -70,7 +70,7 @@ export const ChartAreasVisualization = ({
           measures={measures}
           fields={chartConfig.fields}
           interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-          imputationType={chartConfig.imputationType}
+          imputationType={chartConfig.imputationType || "none"}
         />
         {fetching && <LoadingOverlay />}
       </Box>

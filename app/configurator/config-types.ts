@@ -281,14 +281,16 @@ const AreaFields = t.intersection([
     ]),
   }),
 ]);
-const AreaConfig = t.type(
-  {
-    chartType: t.literal("area"),
-    filters: Filters,
-    interactiveFiltersConfig: InteractiveFiltersConfig,
-    fields: AreaFields,
-    imputationType: ImputationType,
-  },
+const AreaConfig = t.intersection(
+  [
+    t.type({
+      chartType: t.literal("area"),
+      filters: Filters,
+      interactiveFiltersConfig: InteractiveFiltersConfig,
+      fields: AreaFields,
+    }),
+    t.partial({ imputationType: ImputationType }),
+  ],
   "AreaConfig"
 );
 
