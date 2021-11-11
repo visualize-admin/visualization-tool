@@ -6,9 +6,11 @@ const commonPanelStyles = {};
 export const PanelLeftWrapper = ({
   children,
   raised,
+  sx,
 }: {
   children?: React.ReactNode;
   raised?: boolean;
+  sx?: BoxProps["sx"];
 }) => {
   return (
     <Box
@@ -23,6 +25,7 @@ export const PanelLeftWrapper = ({
         borderRightWidth: raised ? "1px" : undefined,
         borderRightStyle: raised ? "solid" : undefined,
         gridArea: "left",
+        ...sx,
       }}
     >
       {children}
@@ -36,8 +39,10 @@ PanelLeftWrapper.defaultProps = {
 
 export const PanelRightWrapper = ({
   children,
+  sx,
 }: {
   children?: React.ReactNode;
+  sx?: BoxProps["sx"];
 }) => {
   return (
     <Box
@@ -52,6 +57,7 @@ export const PanelRightWrapper = ({
         borderLeftWidth: "1px",
         borderLeftStyle: "solid",
         gridArea: "right",
+        ...sx,
       }}
     >
       {children}

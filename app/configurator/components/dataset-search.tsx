@@ -273,7 +273,7 @@ export const SearchDatasetBox = ({
 
   return (
     <Box>
-      <Box sx={{ px: 4, pt: 4 }}>
+      <Box sx={{ pt: 4 }}>
         <SearchField
           id="datasetSearch"
           label={searchLabel}
@@ -286,7 +286,7 @@ export const SearchDatasetBox = ({
       </Box>
 
       {showDraftCheckbox && (
-        <Box sx={{ px: 4, pt: 4 }}>
+        <Box sx={{ pt: 4 }}>
           <Checkbox
             label={t({
               id: "dataset.includeDrafts",
@@ -301,7 +301,7 @@ export const SearchDatasetBox = ({
         </Box>
       )}
 
-      <Flex sx={{ px: 4, py: 2, justifyContent: "space-between" }}>
+      <Flex sx={{ py: 2, justifyContent: "space-between" }}>
         <Text
           color="secondary"
           sx={{

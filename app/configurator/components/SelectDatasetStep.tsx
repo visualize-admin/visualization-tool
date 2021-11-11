@@ -74,18 +74,20 @@ export const SelectDatasetStepV2Content = () => {
     return null;
   }
   return (
-    <PanelLayout>
-      <PanelHeader>
-        <Box mx={4} mt={6} mb={4}>
-          <Text variant="heading1" sx={{ mb: 4 }}>
-            {filters.length > 0
-              ? filters[filters.length - 1].label
-              : "Swiss Open Government Data"}
-          </Text>
-        </Box>
-      </PanelHeader>
-
-      <PanelLeftWrapper raised={false}>
+    <PanelLayout
+      sx={{
+        width: "100%",
+        maxWidth: 1200,
+        margin: "auto",
+        left: 0,
+        right: 0,
+        position: "static",
+        // FIXME replace 96px with actual header size
+        marginTop: "96px",
+        height: "auto",
+      }}
+    >
+      <PanelLeftWrapper raised={false} sx={{ mt: 50 }}>
         <SearchFilters />
         {state.dataSet ? (
           <>
@@ -107,8 +109,18 @@ export const SelectDatasetStepV2Content = () => {
           </>
         ) : null}
       </PanelLeftWrapper>
-      <PanelMiddleWrapper>
-        <Box sx={{ maxWidth: 1200, margin: "auto" }}>
+      <PanelMiddleWrapper
+        sx={{
+          gridColumnStart: "middle",
+          gridColumnEnd: "right",
+        }}
+      >
+        <Box sx={{ maxWidth: 900, margin: "auto" }}>
+          <Text variant="heading1" sx={{ mb: 4 }}>
+            {filters.length > 0
+              ? filters[filters.length - 1].label
+              : "Swiss Open Government Data"}
+          </Text>
           {state.dataSet ? null : (
             <Box mb={4}>
               <>
@@ -140,11 +152,7 @@ export const SelectDatasetStepV2Content = () => {
               </ChartPanel>
             </>
           ) : (
-            <ChartPanel>
-              <div>
-                <DatasetResults fetching={fetching} data={data} />
-              </div>
-            </ChartPanel>
+            <DatasetResults fetching={fetching} data={data} />
           )}
         </Box>
       </PanelMiddleWrapper>
