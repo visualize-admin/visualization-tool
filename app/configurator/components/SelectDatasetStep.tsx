@@ -19,6 +19,7 @@ import {
   useSearchQueryState,
 } from "./dataset-search";
 import {
+  PanelHeader,
   PanelLeftWrapper,
   PanelMiddleWrapper,
   PanelRightWrapper,
@@ -88,6 +89,14 @@ export const SelectDatasetStepV2 = () => {
   }
   return (
     <>
+      <PanelHeader>
+        <Text variant="heading1" sx={{ mb: 4 }}>
+          {filters.length > 0
+            ? filters[filters.length - 1].label
+            : "Swiss Open Government Data"}
+        </Text>
+      </PanelHeader>
+
       {state.dataSet ? null : (
         <PanelLeftWrapper raised={false}>
           <SearchFilters searchQueryState={searchQueryState} />

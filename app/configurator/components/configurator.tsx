@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Link, LinkProps } from "theme-ui";
+import { Box, BoxOwnProps, BoxProps, Link, LinkProps } from "theme-ui";
 import { useConfiguratorState } from "..";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPreview } from "../../components/chart-preview";
@@ -10,6 +10,8 @@ import { ChartConfigurator } from "./chart-configurator";
 import { ChartOptionsSelector } from "./chart-options-selector";
 import { ChartTypeSelector } from "./chart-type-selector";
 import {
+  PanelHeader,
+  PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
   PanelRightWrapper,
@@ -106,32 +108,17 @@ export const Configurator = () => {
   const [state] = useConfiguratorState();
 
   return (
-    <Box
-      bg="muted"
-      sx={{
-        display: "grid",
-        gridTemplateColumns:
-          "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
-        gridTemplateRows: "auto minmax(0, 1fr)",
-        gridTemplateAreas: `
-        "header header header"
-        "left middle right"
-        `,
-        width: "100%",
-        position: "fixed",
-        // FIXME replace 96px with actual header size
-        top: "96px",
-        height: "calc(100vh - 96px)",
-      }}
-    >
-      <Box as="section" role="navigation" sx={{ gridArea: "header" }}>
-        <Stepper dataSetIri={state.dataSet} />
-      </Box>
+    <PanelLayout>
+      {state.state === "SELECTING_DATASET" ? null : (
+        <PanelHeader>
+          <Stepper dataSetIri={state.dataSet} />
+        </PanelHeader>
+      )}
       {state.state === "SELECTING_DATASET" ? <SelectDatasetStep /> : null}
       {state.state === "SELECTING_CHART_TYPE" ? <SelectChartTypeStep /> : null}
       {state.state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
       {state.state === "DESCRIBING_CHART" ? <DescribeChartStep /> : null}
       {state.state === "PUBLISHING" ? <PublishStep /> : null}
-    </Box>
+    </PanelLayout>
   );
 };

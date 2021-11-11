@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, ThemeUIStyleObject } from "theme-ui";
+import { Box, BoxProps, ThemeUIStyleObject } from "theme-ui";
 
 const commonPanelStyles = {};
 
@@ -53,6 +53,58 @@ export const PanelRightWrapper = ({
         borderLeftStyle: "solid",
         gridArea: "right",
       }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+export const PanelLayout = ({
+  children,
+  ...boxProps
+}: {
+  children: React.ReactNode;
+} & BoxProps) => {
+  const { sx } = boxProps;
+  return (
+    <Box
+      bg="muted"
+      {...boxProps}
+      sx={{
+        display: "grid",
+        gridTemplateColumns:
+          "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
+        gridTemplateRows: "auto minmax(0, 1fr)",
+        gridTemplateAreas: `
+        "header header header"
+        "left middle right"
+        `,
+        width: "100%",
+        position: "fixed",
+        // FIXME replace 96px with actual header size
+        top: "96px",
+        height: "calc(100vh - 96px)",
+        ...sx,
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
+
+export const PanelHeader = ({
+  children,
+  ...boxProps
+}: {
+  children: React.ReactNode;
+} & BoxProps) => {
+  const { sx } = boxProps;
+  return (
+    <Box
+      as="section"
+      role="navigation"
+      {...boxProps}
+      sx={{ gridArea: "header", ...sx }}
     >
       {children}
     </Box>
