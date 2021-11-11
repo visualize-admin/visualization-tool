@@ -5,6 +5,7 @@ import {
   ChartConfig,
   Filters,
   FilterValueSingle,
+  ImputationType,
   isAreaConfig,
 } from "../../configurator";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
@@ -156,10 +157,136 @@ export const getBaseWideData = ({
   return wideArray;
 };
 
+export const getTemporalWideDataWithImputedValues = ({
+  xKey,
+  groupedMap,
+  imputationType,
+  segmentKey,
+  segments,
+  getSegment,
+  getX,
+  getY,
+}: {
+  xKey: string;
+  groupedMap: Map<string, Array<Observation>>;
+  imputationType: ImputationType;
+  segmentKey: string;
+  segments: Array<string>;
+  getSegment: (d: Observation) => string;
+  getX: (d: Observation) => Date;
+  getY: (d: Observation) => number | null;
+}): Array<Observation> => {
+  const wideArray = [];
+  const groupedMapEntries = Array.from(groupedMap.entries());
+  const groupedMapValues = Array.from(groupedMap.values());
+
+  let baseObservation: Observation = {};
+  let imputeMissingValue:
+    | ((segment: string, currentTime: number, cutoff: number) => number)
+    | undefined = undefined;
+
+  switch (imputationType) {
+    case "none":
+      return getBaseWideData({ xKey, groupedMap, getSegment, getY });
+    case "zeros":
+      baseObservation = Object.assign(
+        {},
+        // Due to the fact we are using stackOffsetDiverging to draw stacked charts,
+        // this workaround prevents stacking zero values at zero, which makes segments
+        // overlap with each other.
+        ...segments.map((segment) => ({ [segment]: Number.MIN_VALUE }))
+      );
+      break;
+    case "linear":
+      const previousCache: { [key: string]: Observation | undefined } = {};
+      const nextCache: { [key: string]: Observation | undefined } = {};
+
+      const getPrevious = (
+        segment: string,
+        cutoff: number
+      ): Observation | undefined => {
+        return groupedMapValues
+          .slice(0, cutoff)
+          .flat()
+          .reverse()
+          .find((d) => d[segmentKey] === segment);
+      };
+
+      const getNext = (
+        segment: string,
+        cutoff: number
+      ): Observation | undefined => {
+        return groupedMapValues
+          .slice(cutoff + 1)
+          .flat()
+          .find((d) => d[segmentKey] === segment);
+      };
+
+      imputeMissingValue = (
+        segment: string,
+        currentTime: number,
+        cutoff: number
+      ) => {
+        const nextCached = nextCache[segment];
+
+        if (nextCached) {
+          if (currentTime > getX(nextCached).getTime()) {
+            previousCache[segment] = nextCached;
+            nextCache[segment] = getNext(segment, cutoff);
+          }
+        }
+
+        const previous = previousCache[segment] || getPrevious(segment, cutoff);
+
+        if (previous) {
+          const previousTime = getX(previous).getTime();
+          const previousValue = getY(previous) as number;
+          const next = nextCache[segment] || getNext(segment, cutoff);
+
+          if (next) {
+            const nextTime = getX(next).getTime();
+            const nextValue = getY(next) as number;
+            const k = (currentTime - previousTime) / (nextTime - previousTime);
+
+            return previousValue + (nextValue - previousValue) * k;
+          }
+        }
+
+        return 0;
+      };
+      break;
+    default:
+      const _exhaustiveCheck: never = imputationType;
+      return _exhaustiveCheck;
+  }
+
+  for (let i = 0; i < groupedMap.size; i++) {
+    const [date, values] = groupedMapEntries[i];
+
+    let observation = {
+      ...baseObservation,
+      [xKey]: date,
+      total: sum(values, getY),
+    };
+
+    for (const value of values) {
+      observation[getSegment(value)] = getY(value);
     }
 
-    wideArray.push(obj);
+    if (values.length !== segments.length && imputeMissingValue) {
+      const currentTime = new Date(date).getTime();
+      const segmentsToFill = segments.filter(
+        (d) => !Object.keys(observation).includes(d)
+      );
+
+      for (const segment of segmentsToFill) {
+        observation[segment] = imputeMissingValue(segment, currentTime, i);
+      }
+    }
+
+    wideArray.push(observation);
   }
+
   return wideArray;
 };
 

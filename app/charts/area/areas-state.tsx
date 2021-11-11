@@ -24,7 +24,6 @@ import { AreaFields, ImputationType } from "../../configurator";
 import {
   getPalette,
   parseDate,
-  useFormatFullDateAuto,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
@@ -36,7 +35,7 @@ import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getBaseWideData,
   getLabelWithUnit,
-  getWideData,
+  getTemporalWideDataWithImputedValues,
   usePreparedData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -106,11 +105,13 @@ const useAreasState = ({
     const v = d[fields.y.componentIri];
     return v !== null ? +v : null;
   };
+  const segmentKey = fields.segment ? fields.segment.componentIri : "segment";
   const getSegment = useCallback(
     (d: Observation): string =>
       fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
     [fields.segment]
   );
+  const allSegments = [...new Set(data.map((d) => getSegment(d)))];
 
   const xKey = fields.x.componentIri;
   const hasInteractiveTimeFilter = useMemo(
@@ -151,7 +152,17 @@ const useAreasState = ({
     preparedData,
     (d) => d[fields.x.componentIri] as string
   );
-  const chartWideData = getBaseWideData({ groupedMap, xKey, getSegment, getY });
+
+  const chartWideData = getTemporalWideDataWithImputedValues({
+    groupedMap,
+    xKey,
+    segments: allSegments,
+    imputationType,
+    segmentKey,
+    getSegment,
+    getY,
+    getX,
+  });
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
