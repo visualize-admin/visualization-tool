@@ -24,12 +24,26 @@ import {
   PanelRightWrapper,
 } from "./layout";
 import { flag } from "./flag";
+import Breadcrumbs from "./breadcrumbs";
+
+const BreadcrumbFilter = ({
+  breadcrumb,
+  ...props
+}: {
+  breadcrumb: DataCubeTheme | DataCubeOrganization;
+}) => {
+  return (
+    <Link variant="inline" {...props}>
+      {breadcrumb.label}
+    </Link>
+  );
+};
 
 export const SelectDatasetStepV2 = () => {
   const locale = useLocale();
 
   const searchQueryState = useSearchQueryState();
-  const { query, order, includeDrafts, filters } = searchQueryState;
+  const { query, order, includeDrafts, filters, setFilters } = searchQueryState;
 
   const [state, dispatch] = useConfiguratorState();
   const [debouncedQuery] = useDebounce(query, 150, {
@@ -50,6 +64,21 @@ export const SelectDatasetStepV2 = () => {
         : [],
     },
   });
+
+  const breadcrumbs = useMemo(() => {
+    return [{ label: "Datasets", __typename: "Root" }, ...filters];
+  }, [filters]);
+
+  const handleClickBreadcrumb = (breadcrumbIndex: number) => {
+    // breadcrumbs are in the form [rootNode, ...filters], this is why
+    // we need to substract 1 to breadcrumb index to get the filter index.
+    const filterIndex = breadcrumbIndex - 1;
+    if (filterIndex === filters.length - 1) {
+      setFilters([filters[filterIndex]]);
+    } else {
+      setFilters(filters.slice(0, filterIndex + 1));
+    }
+  };
 
   if (state.state !== "SELECTING_DATASET") {
     return null;
@@ -78,6 +107,14 @@ export const SelectDatasetStepV2 = () => {
           {state.dataSet ? null : (
             <Box mb={4}>
               <>
+                {filters ? (
+                  <Breadcrumbs
+                    breadcrumbs={breadcrumbs}
+                    Breadcrumb={BreadcrumbFilter}
+                    onClickBreadcrumb={handleClickBreadcrumb}
+                    mb={4}
+                  />
+                ) : null}
                 <Text variant="heading1" sx={{ mb: 4 }}>
                   {filters.length > 0
                     ? filters[filters.length - 1].label
