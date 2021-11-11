@@ -7,6 +7,7 @@ import {
   ConfiguratorStateConfiguringChart,
   ImputationType,
   imputationTypes,
+  isAreaConfig,
   isTableConfig,
   SortingType,
   useConfiguratorState,
@@ -245,12 +246,13 @@ const EncodingOptionsPanel = ({
           // chartType={chartType}
         />
       )}
-      {encoding.options?.map((e) => e.field.includes("imputationType")) && (
-        <ChartImputationType
-          state={state}
-          disabled={!imputationNeeded}
-        ></ChartImputationType>
-      )}
+      {encoding.options?.map((e) => e.field.includes("imputationType")) &&
+        isAreaConfig(state.chartConfig) && (
+          <ChartImputationType
+            state={state}
+            disabled={!imputationNeeded}
+          ></ChartImputationType>
+        )}
       {encoding.filters && (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
