@@ -41,24 +41,28 @@ export const useSearchQueryState = () => {
   const [filters, setFilters] = useState<SearchFilter[]>([]);
   const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
 
-  const addFilter = (cat: SearchFilter) => {
-    const type = cat.__typename;
-    console.log("on add filter");
-    const existingFilterIndex = filters.findIndex((f) => f.__typename === type);
-    if (existingFilterIndex === -1) {
-      setFilters(Array.from(new Set([...filters, cat])));
-    } else {
-      setFilters(
-        Array.from(new Set([...filters.slice(0, existingFilterIndex), cat]))
+  const addFilter = useCallback(
+    (cat: SearchFilter) => {
+      const type = cat.__typename;
+      const existingFilterIndex = filters.findIndex(
+        (f) => f.__typename === type
       );
-    }
-  };
+      if (existingFilterIndex === -1) {
+        setFilters(Array.from(new Set([...filters, cat])));
+      } else {
+        setFilters(
+          Array.from(new Set([...filters.slice(0, existingFilterIndex), cat]))
+        );
+      }
+    },
+    [filters]
+  );
 
-  const removeFilter = (cat: SearchFilter) => {
+  const removeFilter = useCallback((cat: SearchFilter) => {
     setFilters(
       Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
     );
-  };
+  }, []);
 
   return useMemo(
     () => ({
@@ -68,6 +72,9 @@ export const useSearchQueryState = () => {
         setQuery("");
         setOrder(previousOrderRef.current);
       },
+      onResetFilters: () => {
+        setFilters([]);
+      },
       onTypeQuery: (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.currentTarget.value);
         if (query === "" && e.currentTarget.value !== "") {
@@ -76,6 +83,16 @@ export const useSearchQueryState = () => {
         }
         if (query !== "" && e.currentTarget.value === "") {
           setOrder(previousOrderRef.current);
+        }
+      },
+      onNavigateFilter: (filter: SearchFilter) => {
+        // breadcrumbs are in the form [rootNode, ...filters], this is why
+        // we need to substract 1 to breadcrumb index to get the filter index.
+        const filterIndex = filters.findIndex((f) => f.iri === filter.iri);
+        if (filterIndex === filters.length - 1) {
+          setFilters([filters[filterIndex]]);
+        } else {
+          setFilters(filters.slice(0, filterIndex + 1));
         }
       },
       query,
@@ -96,11 +113,37 @@ export const useSearchQueryState = () => {
         }
       },
     }),
-    [filters, includeDrafts, order, query]
+    [filters, includeDrafts, order, query, removeFilter, addFilter]
   );
 };
 
 export type SearchQueryState = ReturnType<typeof useSearchQueryState>;
+const SearchStateContext = React.createContext<SearchQueryState | undefined>(
+  undefined
+);
+
+export const SearchStateProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const state = useSearchQueryState();
+  return (
+    <SearchStateContext.Provider value={state}>
+      {children}
+    </SearchStateContext.Provider>
+  );
+};
+
+export const useSearchContext = () => {
+  const ctx = useContext(SearchStateContext);
+  if (!ctx) {
+    throw new Error(
+      "To be able useSearchContext, you msut wrap it into a SearchStateProvider"
+    );
+  }
+  return ctx;
+};
 
 export const SearchDatasetBox = ({
   searchQueryState,
@@ -238,13 +281,10 @@ const NavItem = ({
   );
 };
 
-export const SearchFilters = ({
-  searchQueryState,
-}: {
-  searchQueryState: SearchQueryState;
-}) => {
+export const SearchFilters = () => {
   const locale = useLocale();
-  const { filters, onToggleFilter } = searchQueryState;
+  const { filters, onToggleFilter, onNavigateFilter, onResetFilters } =
+    useSearchContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
@@ -261,6 +301,8 @@ export const SearchFilters = ({
       ("DataCubeOrganization" as DataCubeOrganization["__typename"])
   );
 
+  const [, dispatch] = useConfiguratorState();
+
   const [allThemesAlpha, allOrgsAlpha] = useMemo(() => {
     return [
       allThemes ? sortBy(allThemes.themes, (x) => x?.label) : null,
@@ -276,68 +318,117 @@ export const SearchFilters = ({
       px={4}
       pt="2rem"
       role="search"
+      key={filters.length}
     >
       <Stack>
-        <Accordion>
-          <AccordionSummary>
-            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-              Themes
+        <Box>
+          {filters.length > -1 ? (
+            <Text
+              variant="paragraph2"
+              onClick={onResetFilters}
+              sx={{ cursor: "pointer" }}
+            >
+              Home
             </Text>
-          </AccordionSummary>
-          <AccordionContent>
-            <Box ml={4}>
-              {allThemesAlpha
-                ? allThemesAlpha.map((theme) => {
-                    if (!theme.label) {
-                      return null;
-                    }
-                    return (
-                      <NavItem
-                        key={theme.iri}
-                        onClick={() => onToggleFilter(theme)}
-                        sx={{
-                          fontWeight: themeFilter === theme ? "bold" : "normal",
-                          color: themeFilter === theme ? "primary" : undefined,
-                        }}
-                      >
-                        {theme.label}
-                      </NavItem>
-                    );
-                  })
-                : null}
+          ) : null}
+        </Box>
+        {filters.map((f, i) => {
+          return (
+            <Box key={f.iri} ml={(i + 1) * 2}>
+              <Text
+                variant="paragraph2"
+                color={i === filters.length - 1 ? "primary" : undefined}
+                sx={{
+                  cursor: "pointer",
+                  fontWeight: i === filters.length - 1 ? "bold" : "normal",
+                }}
+                onClick={() => {
+                  onToggleFilter(f);
+                  onNavigateFilter(f);
+                  dispatch({
+                    type: "DATASET_SELECTED",
+                    dataSet: undefined,
+                  });
+                }}
+              >
+                {f.label}
+              </Text>
             </Box>
-          </AccordionContent>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary>
-            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-              Organizations
-            </Text>
-          </AccordionSummary>
-          <AccordionContent>
-            <Box ml={4}>
-              {allOrgsAlpha
-                ? allOrgsAlpha.map((org) => {
-                    if (!org.label) {
-                      return null;
-                    }
-                    return (
-                      <NavItem
-                        key={org.iri}
-                        onClick={() => onToggleFilter(org)}
-                        sx={{
-                          fontWeight: orgFilter === org ? "bold" : "normal",
-                          color: orgFilter === org ? "primary" : undefined,
-                        }}
-                      >
-                        {org.label}
-                      </NavItem>
-                    );
-                  })
-                : null}
-            </Box>
-          </AccordionContent>
-        </Accordion>
+          );
+        })}
+        {themeFilter ? null : (
+          <Accordion initialExpanded={filters.length === 1}>
+            {filters.length === 1 ? null : (
+              <AccordionSummary>
+                <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+                  Themes
+                </Text>
+              </AccordionSummary>
+            )}
+            <AccordionContent>
+              <Box ml={4}>
+                {allThemesAlpha
+                  ? allThemesAlpha.map((theme) => {
+                      if (!theme.label) {
+                        return null;
+                      }
+                      return (
+                        <NavItem
+                          key={theme.iri}
+                          onClick={() => {
+                            onNavigateFilter(theme);
+                            onToggleFilter(theme);
+                          }}
+                          sx={{
+                            fontWeight:
+                              themeFilter === theme ? "bold" : "normal",
+                            color:
+                              themeFilter === theme ? "primary" : undefined,
+                          }}
+                        >
+                          {theme.label}
+                        </NavItem>
+                      );
+                    })
+                  : null}
+              </Box>
+            </AccordionContent>
+          </Accordion>
+        )}
+        {orgFilter ? null : (
+          <Accordion initialExpanded={filters.length === 1}>
+            {filters.length === 1 ? null : (
+              <AccordionSummary>
+                <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+                  Organizations
+                </Text>
+              </AccordionSummary>
+            )}
+            <AccordionContent>
+              <Box ml={4}>
+                {allOrgsAlpha
+                  ? allOrgsAlpha.map((org) => {
+                      if (!org.label) {
+                        return null;
+                      }
+                      return (
+                        <NavItem
+                          key={org.iri}
+                          onClick={() => onToggleFilter(org)}
+                          sx={{
+                            fontWeight: orgFilter === org ? "bold" : "normal",
+                            color: orgFilter === org ? "primary" : undefined,
+                          }}
+                        >
+                          {org.label}
+                        </NavItem>
+                      );
+                    })
+                  : null}
+              </Box>
+            </AccordionContent>
+          </Accordion>
+        )}
       </Stack>
     </Flex>
   );

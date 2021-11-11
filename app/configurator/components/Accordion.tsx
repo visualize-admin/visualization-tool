@@ -1,3 +1,4 @@
+import { init } from "fp-ts/lib/ReadonlyNonEmptyArray";
 import React, { useContext, useState } from "react";
 import { Box } from "theme-ui";
 
@@ -26,13 +27,23 @@ const AccordionContext = React.createContext<
   [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 >([false, () => false]);
 
-export const Accordion = ({ children }: { children: React.ReactNode }) => {
-  const accordionState = useState(false);
+export const Accordion = ({
+  children,
+  initialExpanded,
+}: {
+  children: React.ReactNode;
+  initialExpanded: boolean;
+}) => {
+  const accordionState = useState(initialExpanded);
   return (
     <AccordionContext.Provider value={accordionState}>
       {children}
     </AccordionContext.Provider>
   );
+};
+
+Accordion.defaultProps = {
+  initialExpanded: false,
 };
 
 export const AccordionSummary = ({
