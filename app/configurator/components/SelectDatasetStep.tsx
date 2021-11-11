@@ -66,7 +66,10 @@ export const SelectDatasetStepV2 = () => {
   });
 
   const breadcrumbs = useMemo(() => {
-    return [{ label: "Datasets", __typename: "Root" }, ...filters];
+    return [
+      { label: "Swiss Open Government Data", __typename: "Root" },
+      ...filters,
+    ];
   }, [filters]);
 
   const handleClickBreadcrumb = (breadcrumbIndex: number) => {
