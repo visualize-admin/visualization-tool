@@ -362,6 +362,9 @@ export const theme: Theme = {
     },
   },
   links: {
+    tag: {
+      textDecoration: "none",
+    },
     primary: {
       color: "primary",
       textDecoration: "none",

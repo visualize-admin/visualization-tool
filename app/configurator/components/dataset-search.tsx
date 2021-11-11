@@ -26,6 +26,7 @@ import { useLocale } from "../../locales/use-locale";
 import Stack from "../../components/Stack";
 import { useFormatDate } from "./ui-helpers";
 import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
+import Tag from "./Tag";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
@@ -593,17 +594,21 @@ export const DatasetResult = ({
       <Flex sx={{ justifyContent: "space-between" }}>
         <Stack spacing={1} direction="row">
           {isDraft && (
-            <Tag>
+            <Tag type="draft">
               <Trans id="dataset.tag.draft">Draft</Trans>
             </Tag>
           )}
           {themes && showTags
             ? sortBy(themes, (t) => t.label).map((t) => (
-                <Tag key={t.iri}>{t.label}</Tag>
+                <Tag key={t.iri} type={t.__typename}>
+                  {t.label}
+                </Tag>
               ))
             : null}
         </Stack>
-        {showTags && creator ? <Tag>{creator.label}</Tag> : null}
+        {showTags && creator ? (
+          <Tag type={creator.__typename}>{creator.label}</Tag>
+        ) : null}
       </Flex>
     </Button>
   );
@@ -612,18 +617,3 @@ export const DatasetResult = ({
 DatasetResult.defaultProps = {
   showTags: true,
 };
-
-const Tag = ({ children }: { children: ReactNode }) => (
-  <Text
-    variant="paragraph2"
-    sx={{
-      bg: "primaryLight",
-      mt: 2,
-      px: 2,
-      width: "fit-content",
-      borderRadius: "default",
-    }}
-  >
-    {children}
-  </Text>
-);
