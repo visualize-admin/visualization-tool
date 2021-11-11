@@ -1,23 +1,35 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { groupBy, keyBy, mapValues, sortBy } from "lodash";
+import { sortBy } from "lodash";
 import React, {
-  ReactNode,
   useCallback,
   useMemo,
   useRef,
   useState,
+  useContext,
+  useEffect,
 } from "react";
-import { Box, Button, Flex, Text, TextProps } from "theme-ui";
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  TextProps,
+  Link as ThemeUILink,
+  LinkProps as ThemeUILinkProps,
+} from "theme-ui";
+import { useRouter } from "next/router";
+
 import { useConfiguratorState } from "..";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
-import { Tab, TabContent, Tabs } from "../../components/tabs";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
   DataCubesQuery,
   DataCubeTheme,
+  OrganizationsQuery,
+  ThemesQuery,
   useOrganizationsQuery,
   useThemesQuery,
 } from "../../graphql/query-hooks";
@@ -27,6 +39,10 @@ import Stack from "../../components/Stack";
 import { useFormatDate } from "./ui-helpers";
 import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import Tag from "./Tag";
+import Link from "next/link";
+import { BrowseParams } from "../../pages/browse";
+import Inspector from "react-inspector";
+import { theme } from "../../themes/dark";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
@@ -123,14 +139,79 @@ const SearchStateContext = React.createContext<SearchQueryState | undefined>(
   undefined
 );
 
+/** Builds the state search filters from query params */
+const getFiltersFromParams = (
+  params: BrowseParams,
+  context: {
+    themes: ThemesQuery["themes"];
+    organizations: OrganizationsQuery["organizations"];
+  }
+) => {
+  const filters: SearchFilter[] = [];
+  const { type, subtype, iri, subiri } = params;
+  // A bit ugly
+  // @TODO refactor ?
+  if (type && iri) {
+    const container = context[
+      type === "theme" ? "themes" : "organizations"
+    ] as SearchFilter[];
+    const obj = container?.find((f) => iri === f.iri);
+    if (obj) {
+      filters.push(obj);
+      if (subtype && subiri) {
+        const container = context[
+          subtype === "theme" ? "themes" : "organizations"
+        ] as SearchFilter[];
+        const subobj = container?.find((f) => subiri === f.iri);
+        if (subobj) {
+          filters.push(subobj);
+        }
+      }
+    }
+  }
+  return filters;
+};
+
 export const SearchStateProvider = ({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params?: BrowseParams;
 }) => {
   const state = useSearchQueryState();
+  const locale = useLocale();
+  const [{ data: themeData }] = useThemesQuery({
+    variables: { locale },
+  });
+  const [{ data: orgData }] = useOrganizationsQuery({
+    variables: { locale },
+  });
+
+  // Connects search state to router params
+  // @TODO brings closer to router ?
+  useEffect(() => {
+    if (!params || !themeData?.themes || !orgData?.organizations) {
+      return;
+    }
+
+    const filters = getFiltersFromParams(params, {
+      themes: themeData?.themes,
+      organizations: orgData?.organizations,
+    });
+    if (filters) {
+      state.setFilters(filters);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, themeData, orgData]);
   return (
     <SearchStateContext.Provider value={state}>
+      <div style={{ position: "fixed" }}>
+        Hello
+        {typeof window !== "undefined" ? (
+          <Inspector data={state.filters} />
+        ) : null}
+      </div>
       {children}
     </SearchStateContext.Provider>
   );
@@ -271,13 +352,26 @@ export const SearchDatasetBox = ({
 
 const NavItem = ({
   children,
+  filters,
+  next,
   ...props
-}: { children: React.ReactNode } & TextProps) => {
+}: {
+  children: React.ReactNode;
+  filters: SearchFilter[];
+  next: SearchFilter;
+} & ThemeUILinkProps) => {
+  const path = [...filters, next]
+    .map((f) => {
+      return `${
+        f.__typename === "DataCubeTheme" ? "theme" : "organization"
+      }/${encodeURIComponent(f.iri)}`;
+    })
+    .join("/");
   return (
-    <Box sx={{ cursor: "pointer", mb: 2 }}>
-      <Text variant="paragraph2" {...props}>
-        {children}
-      </Text>
+    <Box sx={{ mb: 2 }}>
+      <Link href={`/browse/${path}`} passHref>
+        <ThemeUILink variant="initial">{children}</ThemeUILink>
+      </Link>
     </Box>
   );
 };
@@ -324,36 +418,37 @@ export const SearchFilters = () => {
       <Stack>
         <Box>
           {filters.length > -1 ? (
-            <Text
-              variant="paragraph2"
-              onClick={onResetFilters}
-              sx={{ cursor: "pointer" }}
-            >
-              Home
-            </Text>
+            <Link href="/browse" passHref>
+              <ThemeUILink
+                variant="initial"
+                onClick={onResetFilters}
+                sx={{ cursor: "pointer" }}
+              >
+                Home
+              </ThemeUILink>
+            </Link>
           ) : null}
         </Box>
         {filters.map((f, i) => {
           return (
             <Box key={f.iri} ml={(i + 1) * 2}>
-              <Text
-                variant="paragraph2"
-                color={i === filters.length - 1 ? "primary" : undefined}
-                sx={{
-                  cursor: "pointer",
-                  fontWeight: i === filters.length - 1 ? "bold" : "normal",
-                }}
-                onClick={() => {
-                  onToggleFilter(f);
-                  onNavigateFilter(f);
-                  dispatch({
-                    type: "DATASET_SELECTED",
-                    dataSet: undefined,
-                  });
-                }}
+              <Link
+                href={`/browse/${
+                  f.__typename === "DataCubeTheme" ? "theme" : "organization"
+                }/${encodeURIComponent(f.iri)}`}
+                passHref
               >
-                {f.label}
-              </Text>
+                <ThemeUILink
+                  variant="initial"
+                  color={i === filters.length - 1 ? "primary" : undefined}
+                  sx={{
+                    cursor: "pointer",
+                    fontWeight: i === filters.length - 1 ? "bold" : "normal",
+                  }}
+                >
+                  {f.label}
+                </ThemeUILink>
+              </Link>
             </Box>
           );
         })}
@@ -374,19 +469,7 @@ export const SearchFilters = () => {
                         return null;
                       }
                       return (
-                        <NavItem
-                          key={theme.iri}
-                          onClick={() => {
-                            onNavigateFilter(theme);
-                            onToggleFilter(theme);
-                          }}
-                          sx={{
-                            fontWeight:
-                              themeFilter === theme ? "bold" : "normal",
-                            color:
-                              themeFilter === theme ? "primary" : undefined,
-                          }}
-                        >
+                        <NavItem filters={filters} key={theme.iri} next={theme}>
                           {theme.label}
                         </NavItem>
                       );
@@ -413,16 +496,19 @@ export const SearchFilters = () => {
                         return null;
                       }
                       return (
-                        <NavItem
+                        <Link
                           key={org.iri}
-                          onClick={() => onToggleFilter(org)}
-                          sx={{
-                            fontWeight: orgFilter === org ? "bold" : "normal",
-                            color: orgFilter === org ? "primary" : undefined,
-                          }}
+                          href={`/browse/organization/${encodeURIComponent(
+                            org.iri
+                          )}`}
+                          passHref
                         >
-                          {org.label}
-                        </NavItem>
+                          <ThemeUILink variant="initial">
+                            <NavItem key={org.iri} filters={filters} next={org}>
+                              {org.label}
+                            </NavItem>
+                          </ThemeUILink>
+                        </Link>
                       );
                     })
                   : null}
@@ -512,14 +598,12 @@ export const DatasetResult = ({
     creator,
   } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
-  const selected = iri === state.dataSet;
 
   return (
     <Button
       variant="reset"
       onClick={() => dispatch({ type: "DATASET_SELECTED", dataSet: iri })}
       sx={{
-        bg: selected ? "mutedDarker" : "transparent",
         position: "relative",
         color: "monochrome700",
         cursor: "pointer",
@@ -530,29 +614,8 @@ export const DatasetResult = ({
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
         borderBottomColor: "monochrome300",
-
-        ":hover": {
-          bg: "mutedDarker",
-        },
-        ":active": {
-          bg: "mutedDarker",
-        },
       }}
     >
-      {selected && (
-        <Box
-          aria-hidden="true"
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "4px",
-            height: "calc(100% + 2px)",
-            bg: "primary",
-            marginTop: "-1px",
-          }}
-        ></Box>
-      )}
       <Flex sx={{ alignItems: "center", justifyContent: "space-between" }}>
         <Text as="div" variant="paragraph2" sx={{ fontWeight: "bold" }} pb={1}>
           {highlightedTitle ? (
@@ -600,14 +663,28 @@ export const DatasetResult = ({
           )}
           {themes && showTags
             ? sortBy(themes, (t) => t.label).map((t) => (
-                <Tag key={t.iri} type={t.__typename}>
-                  {t.label}
-                </Tag>
+                <Link
+                  key={t.iri}
+                  passHref
+                  href={`/browse/theme/${encodeURIComponent(t.iri)}`}
+                >
+                  <ThemeUILink variant="initial">
+                    <Tag type={t.__typename}>{t.label}</Tag>
+                  </ThemeUILink>
+                </Link>
               ))
             : null}
         </Stack>
         {showTags && creator ? (
-          <Tag type={creator.__typename}>{creator.label}</Tag>
+          <Link
+            key={creator.iri}
+            passHref
+            href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
+          >
+            <ThemeUILink variant="initial">
+              <Tag type={creator.__typename}>{creator.label}</Tag>
+            </ThemeUILink>
+          </Link>
         ) : null}
       </Flex>
     </Button>

@@ -362,8 +362,13 @@ export const theme: Theme = {
     },
   },
   links: {
-    tag: {
+    initial: {
+      color: "inherit",
       textDecoration: "none",
+      fontSize: "0.85rem",
+      "&:hover": {
+        textDecoration: "none",
+      },
     },
     primary: {
       color: "primary",

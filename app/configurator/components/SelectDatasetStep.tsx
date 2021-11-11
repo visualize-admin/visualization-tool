@@ -226,7 +226,7 @@ export const SelectDatasetStepV1 = () => {
 
 export const SelectDatasetStepV2 = ({ params }: { params?: BrowseParams }) => {
   return (
-    <SearchStateProvider>
+    <SearchStateProvider params={params}>
       <SelectDatasetStepV2Content />
     </SearchStateProvider>
   );
