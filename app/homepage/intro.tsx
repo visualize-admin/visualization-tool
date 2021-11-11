@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text } from "theme-ui";
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import { default as IconAreaChart } from "../icons/components/IcChartArea";
 import { default as IconBarChart } from "../icons/components/IcChartBar";
 import { default as IconColumnChart } from "../icons/components/IcChartColumn";
@@ -14,6 +14,8 @@ import { default as IconX } from "../icons/components/IcXAxis";
 import { default as IconY } from "../icons/components/IcYAxis";
 import { HintRed } from "../components/hint";
 import NextLink from "next/link";
+import SearchAutocomplete from "../components/search-autocomplete";
+import { useRouter } from "next/router";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
@@ -29,6 +31,31 @@ const ICONS = [
   { Icon: IconText, color: "#32B8DF" },
   { Icon: IconBarChart, color: "#008F85" },
 ];
+
+const SearchAutocompleteNavigator = () => {
+  const router = useRouter();
+  const handleSelectAutocompleteItem = useCallback(
+    ({ selectedItem }) => {
+      if (!selectedItem) {
+        return;
+      }
+      const { iri, __typename } = selectedItem;
+      router.push(
+        `/browse/${
+          __typename === "DataCubeTheme" ? "theme" : "organization"
+        }/${encodeURIComponent(iri)}`
+      );
+    },
+    [router]
+  );
+
+  return (
+    <SearchAutocomplete
+      placeholder="Search datasets..."
+      onSelectedItemChange={handleSelectAutocompleteItem}
+    />
+  );
+};
 
 export const Intro = ({
   hint,
@@ -116,11 +143,7 @@ export const Intro = ({
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <Flex sx={{ justifyContent: "center" }}>
-            <NextLink href="/create/new" passHref>
-              <Button as="a" variant="primary">
-                {buttonLabel}
-              </Button>
-            </NextLink>
+            <SearchAutocompleteNavigator />
           </Flex>
         </Box>
       </Box>

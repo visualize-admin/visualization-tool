@@ -23,7 +23,7 @@ import { ChartTypeSelectionButton } from "../configurator/components/chart-type-
 // ];
 
 // const palettes = ["category10", "accent", "pastel1", "pastel2", "dark2"];
-export default () => {
+const ControlsDoc = () => {
   const [currentColor, setCurrentColor] = useState(getPalette("accent")[0]);
 
   return markdown`
@@ -188,3 +188,5 @@ ${(
 )}
 `;
 };
+
+export default ControlsDoc;
