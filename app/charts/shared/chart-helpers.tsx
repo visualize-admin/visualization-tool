@@ -1,9 +1,17 @@
-import { sum } from "d3";
-import { merge, omitBy } from "lodash";
-import { useMemo } from "react";
-import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
+import { group, InternMap, sum } from "d3";
+import { omitBy } from "lodash";
+import {
+  useCallback,
+  useMemo
+} from "react";
+import {
+  ChartConfig,
+  Filters,
+  FilterValueSingle,
+  isAreaConfig,
+} from "../../configurator";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import {
   InteractiveFiltersState,
@@ -67,7 +75,7 @@ export const usePreparedData = ({
 }: {
   timeFilterActive?: boolean;
   legendFilterActive?: boolean;
-  sortedData: Observation[];
+  sortedData: Array<Observation>;
   interactiveFilters: InteractiveFiltersState;
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
@@ -132,10 +140,10 @@ export const getWideData = ({
   groupedMap: Map<string, Record<string, ObservationValue>[]>;
   getSegment: (d: Observation) => string;
   getY: (d: Observation) => number | null;
-}): { [key: string]: ObservationValue }[] => {
+}): Array<Observation> => {
   const wideArray = [];
   for (const [key, values] of groupedMap) {
-    let obj: { [key: string]: ObservationValue } = {
+    let obj: Observation = {
       [xKey]: key,
       total: sum(values, getY),
     };
@@ -160,4 +168,43 @@ export const getLabelWithUnit = (
     : dimension.label;
 };
 
+export const checkForMissingValuesInSegments = (
+  groupedMap: InternMap<string, Array<Observation>>,
+  segments: Array<string>
+): boolean => {
+  for (const value of groupedMap.values()) {
+    if (value.length !== segments.length) {
+      return true;
+    }
+  }
 
+  return false;
+};
+
+export const useImputationNeeded = ({
+  chartConfig,
+  data,
+}: {
+  chartConfig: ChartConfig;
+  data?: Array<Observation>;
+}) => {
+  const getSegment = useCallback(
+    (d: Observation): string =>
+      chartConfig.fields.segment
+        ? (d[chartConfig.fields.segment.componentIri] as string)
+        : "segment",
+    [chartConfig.fields.segment]
+  );
+
+  if (isAreaConfig(chartConfig) && data) {
+    return checkForMissingValuesInSegments(
+      group(
+        data,
+        (d: Observation) => d[chartConfig.fields.x.componentIri] as string
+      ),
+      [...new Set(data.map((d) => getSegment(d)))]
+    );
+  }
+
+  return false;
+};
