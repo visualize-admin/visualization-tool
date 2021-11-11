@@ -5,6 +5,9 @@ import { Box, Flex } from "theme-ui";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
+  ImputationType,
+  imputationTypes,
+  isTableConfig,
   SortingType,
   useConfiguratorState,
 } from "..";
@@ -15,12 +18,13 @@ import {
   EncodingSortingOption,
   EncodingSpec,
 } from "../../charts/chart-config-ui-options";
+import { useImputationNeeded } from "../../charts/shared/chart-helpers";
 import { FieldSetLegend, Radio, Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import { getDimensionsByDimensionType } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
-  useDataCubeMetadataWithComponentValuesQuery,
+  useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { useLocale } from "../../locales/use-locale";
@@ -42,8 +46,27 @@ export const ChartOptionsSelector = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+  const measures =
+    "y" in state.chartConfig.fields
+      ? [state.chartConfig.fields.y.componentIri]
+      : isTableConfig(state.chartConfig)
+      ? Object.values(state.chartConfig.fields).flatMap((f) =>
+          f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
+        )
+      : [];
+
+  const [{ data }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: state.dataSet,
+      measures,
+      filters: state.chartConfig.filters,
+    },
+  });
+
+  const imputationNeeded = useImputationNeeded({
+    chartConfig: state.chartConfig,
+    data: data?.dataCubeByIri?.observations.data,
   });
 
   if (data?.dataCubeByIri) {
@@ -59,10 +82,14 @@ export const ChartOptionsSelector = ({
         }}
       >
         {state.activeField ? (
-          state.chartConfig.chartType === "table" ? (
+          isTableConfig(state.chartConfig) ? (
             <TableColumnOptions state={state} metaData={meta} />
           ) : (
-            <ActiveFieldSwitch state={state} metaData={meta} />
+            <ActiveFieldSwitch
+              state={state}
+              metaData={meta}
+              imputationNeeded={imputationNeeded}
+            />
           )
         ) : (
           <EmptyRightPanel state={state} />
@@ -77,9 +104,11 @@ export const ChartOptionsSelector = ({
 const ActiveFieldSwitch = ({
   state,
   metaData,
+  imputationNeeded,
 }: {
   state: ConfiguratorStateConfiguringChart;
   metaData: DataCubeMetadata;
+  imputationNeeded: boolean;
 }) => {
   const { activeField } = state;
 
@@ -109,6 +138,7 @@ const ActiveFieldSwitch = ({
       chartType={state.chartConfig.chartType}
       metaData={metaData}
       component={component}
+      imputationNeeded={imputationNeeded}
     />
   );
 };
@@ -120,6 +150,7 @@ const EncodingOptionsPanel = ({
   chartType,
   component,
   metaData,
+  imputationNeeded,
 }: {
   encoding: EncodingSpec;
   state: ConfiguratorStateConfiguringChart;
@@ -127,6 +158,7 @@ const EncodingOptionsPanel = ({
   chartType: ChartType;
   component: DimensionMetaDataFragment | undefined;
   metaData: DataCubeMetadata;
+  imputationNeeded: boolean;
 }) => {
   const { measures, dimensions } = metaData;
   const panelRef = useRef<HTMLDivElement>(null);
@@ -212,6 +244,12 @@ const EncodingOptionsPanel = ({
           encodingSortingOptions={encoding.sorting}
           // chartType={chartType}
         />
+      )}
+      {encoding.options?.map((e) => e.field.includes("imputationType")) && (
+        <ChartImputationType
+          state={state}
+          disabled={!imputationNeeded}
+        ></ChartImputationType>
       )}
       {encoding.filters && (
         <ControlSection>
@@ -407,6 +445,91 @@ const ChartFieldSorting = ({
               );
             })}
         </Flex>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ChartImputationType = ({
+  state,
+  disabled,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  disabled?: boolean;
+}) => {
+  const [, dispatch] = useConfiguratorState();
+
+  const getImputationTypeLabel = (type: ImputationType) => {
+    switch (type) {
+      case "none":
+        return t({ id: "controls.imputation.type.none", message: `-` });
+      case "zeros":
+        return t({
+          id: "controls.imputation.type.zeros",
+          message: `Zeros`,
+        });
+      case "linear":
+        return t({
+          id: "controls.imputation.type.linear",
+          message: `Linear interpolation`,
+        });
+      default:
+        return t({ id: "controls.imputation.type.none", message: `-` });
+    }
+  };
+
+  const updateImputationType = useCallback<(type: ImputationType) => void>(
+    (type) => {
+      dispatch({
+        type: "IMPUTATION_TYPE_CHANGED",
+        value: {
+          type,
+        },
+      });
+    },
+    [dispatch]
+  );
+
+  if (disabled) {
+    updateImputationType("none");
+  }
+
+  const activeImputationType: ImputationType = get(
+    state,
+    ["chartConfig", "imputationType"],
+    "none"
+  );
+
+  return (
+    <ControlSection>
+      <SectionTitle disabled={disabled} iconName="info">
+        <Trans id="controls.section.imputation">Missing values</Trans>
+      </SectionTitle>
+      <ControlSectionContent side="right" as="fieldset">
+        {!disabled && (
+          <Box mb={5}>
+            <Trans id="controls.section.imputation.explanation">
+              Due to the nature of the selected chart type, some missing values
+              have been introduced. Decide on the imputation logic or switch to
+              another chart type.
+            </Trans>
+          </Box>
+        )}
+        <Box mb={1}>
+          <Select
+            id="imputation-type"
+            label={getFieldLabel("imputation")}
+            options={imputationTypes.map((d) => ({
+              value: d,
+              label: getImputationTypeLabel(d),
+            }))}
+            value={activeImputationType}
+            disabled={disabled}
+            onChange={(e) => {
+              updateImputationType(e.currentTarget.value as ImputationType);
+            }}
+          />
+        </Box>
       </ControlSectionContent>
     </ControlSection>
   );

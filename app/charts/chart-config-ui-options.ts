@@ -1,4 +1,4 @@
-import { ChartType, SortingOrder } from "../configurator";
+import { ChartType, imputationTypes, SortingOrder } from "../configurator";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -14,7 +14,11 @@ export type DimensionType =
   | "Attribute";
 
 export type EncodingField = "x" | "y" | "segment";
-export type EncodingOption = "chartSubType" | "sorting" | "color";
+export type EncodingOption =
+  | "chartSubType"
+  | "sorting"
+  | "color"
+  | "imputationType";
 
 export type EncodingOptions =
   | undefined
@@ -165,7 +169,10 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
           { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
         ],
-        options: [{ field: "color", values: ["palette"] }],
+        options: [
+          { field: "color", values: ["palette"] },
+          { field: "imputationType", values: imputationTypes },
+        ],
       },
     ],
     interactiveFilters: ["legend", "time"],
