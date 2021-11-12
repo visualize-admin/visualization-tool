@@ -1,6 +1,6 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { sortBy } from "lodash";
+import { keyBy, sortBy } from "lodash";
 import React, {
   useCallback,
   useMemo,
@@ -44,6 +44,10 @@ import Link from "next/link";
 import { BrowseParams } from "../../pages/browse";
 import Inspector from "react-inspector";
 import { theme } from "../../themes/dark";
+import {
+  queryDatasetCountByOrganization,
+  queryDatasetCountByTheme,
+} from "../../rdf/query-cube-metadata";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
@@ -355,11 +359,13 @@ const NavItem = ({
   children,
   filters,
   next,
+  count,
   ...props
 }: {
   children: React.ReactNode;
   filters: SearchFilter[];
   next: SearchFilter;
+  count?: number;
 } & ThemeUILinkProps) => {
   const path = [...filters, next]
     .map((f) => {
@@ -371,22 +377,94 @@ const NavItem = ({
   return (
     <Box sx={{ mb: 2 }}>
       <Link href={`/browse/${path}`} passHref>
-        <ThemeUILink variant="initial">{children}</ThemeUILink>
+        <ThemeUILink variant="initial">
+          {children}&nbsp;&nbsp;
+          <Text color="secondary">{count !== undefined ? `${count}` : ""}</Text>
+        </ThemeUILink>
       </Link>
     </Box>
   );
 };
 
+const useQuery = <
+  TData extends unknown,
+  TError extends unknown,
+  TOutput extends unknown = TData
+>(
+  fetcher: () => Promise<TData>,
+  transformer?: (input: TData) => TOutput
+) => {
+  const [data, setData] = useState<TData | TOutput>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<TError>();
+  useEffect(() => {
+    const load = async () => {
+      setError(undefined);
+      setLoading(true);
+      try {
+        const result = await fetcher();
+        setData(transformer ? await transformer(result) : result);
+      } catch (e) {
+        setError(e as TError);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [fetcher, transformer]);
+  return useMemo(() => ({ data, loading, error }), [data, loading, error]);
+};
+
+const countListToIndexedCount = (l: { count: number; iri: string }[]) =>
+  Object.fromEntries(l.map((o) => [o.iri, o.count]));
+
+const useDatasetCount = (filters: SearchFilter[]): Record<string, number> => {
+  const fetchOrgDatasetCount = useCallback(() => {
+    return queryDatasetCountByOrganization({
+      theme:
+        filters?.[0]?.__typename === "DataCubeTheme"
+          ? filters[0].iri
+          : undefined,
+    });
+  }, [filters]);
+  const fetchThemeDatasetCount = useCallback(() => {
+    return queryDatasetCountByTheme({
+      organization:
+        filters?.[0]?.__typename === "DataCubeOrganization"
+          ? filters[0].iri
+          : undefined,
+    });
+  }, [filters]);
+
+  const { data: datasetCountByOrganization } = useQuery(
+    fetchOrgDatasetCount,
+    countListToIndexedCount
+  );
+  const { data: datasetCountByTheme } = useQuery(
+    fetchThemeDatasetCount,
+    countListToIndexedCount
+  );
+  return useMemo(
+    () =>
+      ({ ...datasetCountByOrganization, ...datasetCountByTheme } as Record<
+        string,
+        number
+      >),
+    [datasetCountByTheme, datasetCountByOrganization]
+  );
+};
+
 export const SearchFilters = () => {
   const locale = useLocale();
-  const { filters, onToggleFilter, onNavigateFilter, onResetFilters } =
-    useSearchContext();
+  const { filters, onResetFilters } = useSearchContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
   const [{ data: allOrgs }] = useOrganizationsQuery({
     variables: { locale },
   });
+
+  const counts = useDatasetCount(filters);
 
   const themeFilter = filters.find(
     (x) => x.__typename === ("DataCubeTheme" as DataCubeTheme["__typename"])
@@ -430,6 +508,8 @@ export const SearchFilters = () => {
             </Link>
           ) : null}
         </Box>
+
+        {/* Selected filters */}
         {filters.map((f, i) => {
           return (
             <Box key={f.iri} ml={(i + 1) * 2}>
@@ -453,6 +533,8 @@ export const SearchFilters = () => {
             </Box>
           );
         })}
+
+        {/* Theme tree */}
         {themeFilter ? null : (
           <Accordion initialExpanded={filters.length === 1}>
             {filters.length === 1 ? null : (
@@ -469,8 +551,16 @@ export const SearchFilters = () => {
                       if (!theme.label) {
                         return null;
                       }
+                      if (!counts[theme.iri]) {
+                        return null;
+                      }
                       return (
-                        <NavItem filters={filters} key={theme.iri} next={theme}>
+                        <NavItem
+                          filters={filters}
+                          key={theme.iri}
+                          next={theme}
+                          count={counts[theme.iri]}
+                        >
                           {theme.label}
                         </NavItem>
                       );
@@ -480,6 +570,8 @@ export const SearchFilters = () => {
             </AccordionContent>
           </Accordion>
         )}
+
+        {/* Organization tree */}
         {orgFilter ? null : (
           <Accordion initialExpanded={filters.length === 1}>
             {filters.length === 1 ? null : (
@@ -496,6 +588,9 @@ export const SearchFilters = () => {
                       if (!org.label) {
                         return null;
                       }
+                      if (!counts[org.iri]) {
+                        return null;
+                      }
                       return (
                         <Link
                           key={org.iri}
@@ -505,7 +600,12 @@ export const SearchFilters = () => {
                           passHref
                         >
                           <ThemeUILink variant="initial">
-                            <NavItem key={org.iri} filters={filters} next={org}>
+                            <NavItem
+                              key={org.iri}
+                              filters={filters}
+                              next={org}
+                              count={counts[org.iri]}
+                            >
                               {org.label}
                             </NavItem>
                           </ThemeUILink>
