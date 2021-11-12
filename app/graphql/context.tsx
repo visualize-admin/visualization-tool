@@ -12,7 +12,7 @@ const client = createClient({
         : undefined;
     return {
       headers: {
-        "Accept-Language": lang || defaultLocale,
+        "Accept-Language": lang ? lang : defaultLocale,
       },
     };
   },
