@@ -21,7 +21,6 @@ import {
   useSearchContext,
 } from "./dataset-search";
 import {
-  PanelHeader,
   PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
@@ -77,7 +76,7 @@ export const SelectDatasetStepV2Content = () => {
     <PanelLayout
       sx={{
         width: "100%",
-        maxWidth: 1200,
+        maxWidth: 1400,
         margin: "auto",
         left: 0,
         right: 0,
@@ -85,10 +84,10 @@ export const SelectDatasetStepV2Content = () => {
         // FIXME replace 96px with actual header size
         marginTop: "96px",
         height: "auto",
+        pt: 3,
       }}
     >
       <PanelLeftWrapper raised={false} sx={{ mt: 50 }}>
-        <SearchFilters />
         {state.dataSet ? (
           <>
             <Box mb={4} px={4}>
@@ -107,7 +106,9 @@ export const SelectDatasetStepV2Content = () => {
             </Box>
             <DataSetMetadata dataSetIri={state.dataSet} />
           </>
-        ) : null}
+        ) : (
+          <SearchFilters />
+        )}
       </PanelLeftWrapper>
       <PanelMiddleWrapper
         sx={{
@@ -115,9 +116,11 @@ export const SelectDatasetStepV2Content = () => {
           gridColumnEnd: "right",
         }}
       >
-        <Box sx={{ maxWidth: 900, margin: "auto" }}>
+        <Box sx={{ maxWidth: 900 }}>
           <Text variant="heading1" sx={{ mb: 4 }}>
-            {filters.length > 0
+            {state.dataSet
+              ? null
+              : filters.length > 0
               ? filters[filters.length - 1].label
               : "Swiss Open Government Data"}
           </Text>
@@ -141,15 +144,13 @@ export const SelectDatasetStepV2Content = () => {
           )}
           {state.dataSet || !data ? (
             <>
-              <ChartPanel>
-                {state.dataSet ? (
-                  <>
-                    <DataSetPreview dataSetIri={state.dataSet} />
-                  </>
-                ) : (
-                  <DataSetHint />
-                )}
-              </ChartPanel>
+              {state.dataSet ? (
+                <Box>
+                  <DataSetPreview dataSetIri={state.dataSet} />
+                </Box>
+              ) : (
+                <DataSetHint />
+              )}
             </>
           ) : (
             <DatasetResults fetching={fetching} data={data} />

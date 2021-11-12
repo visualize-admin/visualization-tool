@@ -1,6 +1,6 @@
 import { init } from "fp-ts/lib/ReadonlyNonEmptyArray";
 import React, { useContext, useState } from "react";
-import { Box } from "theme-ui";
+import { Box, BoxProps } from "theme-ui";
 
 const AccordionArrow = ({ expanded }: { expanded?: boolean }) => {
   return (
@@ -48,14 +48,19 @@ Accordion.defaultProps = {
 
 export const AccordionSummary = ({
   children,
+  ...boxProps
 }: {
   children: React.ReactNode;
-}) => {
+} & BoxProps) => {
   const [expanded, setExpanded] = useContext(AccordionContext);
   return (
     <Box
-      style={{ cursor: "pointer" }}
       onClick={() => setExpanded((expanded) => !expanded)}
+      {...boxProps}
+      sx={{
+        cursor: "pointer",
+        ...boxProps.sx,
+      }}
     >
       <AccordionArrow expanded={expanded} /> {children}
     </Box>

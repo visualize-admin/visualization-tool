@@ -536,9 +536,9 @@ export const SearchFilters = () => {
 
         {/* Theme tree */}
         {themeFilter ? null : (
-          <Accordion initialExpanded={filters.length === 1}>
+          <Accordion initialExpanded>
             {filters.length === 1 ? null : (
-              <AccordionSummary>
+              <AccordionSummary sx={{ mb: "block" }}>
                 <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
                   Themes
                 </Text>
@@ -573,9 +573,9 @@ export const SearchFilters = () => {
 
         {/* Organization tree */}
         {orgFilter ? null : (
-          <Accordion initialExpanded={filters.length === 1}>
+          <Accordion initialExpanded>
             {filters.length === 1 ? null : (
-              <AccordionSummary>
+              <AccordionSummary sx={{ mb: 2 }}>
                 <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
                   Organizations
                 </Text>
