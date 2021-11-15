@@ -10,11 +10,15 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { BarFields, SortingOrder, SortingType } from "../../configurator";
 import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import { useSegment } from "../shared/chart-helpers";
+import {
+  useNumericVariable,
+  useSegment,
+  useStringVariable,
+} from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -48,15 +52,8 @@ const useBarsState = ({
 }): BarsState => {
   const width = useWidth();
 
-  const getX = useCallback(
-    (d: Observation) => d[fields.x.componentIri] as number,
-    [fields.x.componentIri]
-  );
-  const getY = useCallback(
-    (d: Observation) => d[fields.y.componentIri] as string,
-    [fields.y.componentIri]
-  );
-
+  const getX = useNumericVariable(fields.x.componentIri);
+  const getY = useStringVariable(fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   const xAxisLabel =

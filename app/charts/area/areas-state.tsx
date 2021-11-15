@@ -32,9 +32,10 @@ import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
+  useOptionalNumericVariable,
   usePreparedData,
   useSegment,
-  useTemporalX,
+  useTemporalVariable,
   useWideData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -92,14 +93,11 @@ const useAreasState = ({
     throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
   }
 
-  const hasSegment = fields.segment;
-
-  const getX = useTemporalX(fields.x.componentIri);
-  const getY = (d: Observation): number | null => {
-    const v = d[fields.y.componentIri];
-    return v !== null ? +v : null;
-  };
+  const getX = useTemporalVariable(fields.x.componentIri);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
+
+  const hasSegment = fields.segment;
   const allSegments = [...new Set(data.map((d) => getSegment(d)))];
 
   const xKey = fields.x.componentIri;
@@ -116,7 +114,14 @@ const useAreasState = ({
         .sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
-  const allDataWide = useWideData({ data: sortedData, getSegment, getY, xKey });
+
+  const allDataWide = useWideData({
+    data: sortedData,
+    segments: allSegments,
+    getSegment,
+    getY,
+    xKey,
+  });
 
   // Data for chart
   const preparedData = usePreparedData({
@@ -135,7 +140,6 @@ const useAreasState = ({
     imputationType: fields.y.imputationType,
     getSegment,
     getY,
-    getX,
   });
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);

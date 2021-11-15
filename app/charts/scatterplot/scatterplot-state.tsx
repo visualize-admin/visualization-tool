@@ -18,6 +18,7 @@ import { Observation } from "../../domain/data";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import {
   getLabelWithUnit,
+  useOptionalNumericVariable,
   usePreparedData,
   useSegment,
 } from "../shared/chart-helpers";
@@ -64,14 +65,8 @@ const useScatterplotState = ({
   const width = useWidth();
   const formatNumber = useFormatNumber();
 
-  const getX = (d: Observation): number | null => {
-    const v = d[fields.x.componentIri];
-    return v !== null ? +v : null;
-  };
-  const getY = (d: Observation): number | null => {
-    const v = d[fields.y.componentIri];
-    return v !== null ? +v : null;
-  };
+  const getX = useOptionalNumericVariable(fields.x.componentIri);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   // All data, sort by segment

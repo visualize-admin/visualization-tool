@@ -16,7 +16,7 @@ import {
   ScaleTime,
   sum,
 } from "d3";
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -28,9 +28,11 @@ import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import {
   getLabelWithUnit,
+  useOptionalNumericVariable,
   usePreparedData,
   useSegment,
-  useTemporalX,
+  useStringVariable,
+  useTemporalVariable,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { useChartPadding } from "../shared/padding";
@@ -96,15 +98,9 @@ const useGroupedColumnsState = ({
 
   const xIsTime = xDimension.__typename === "TemporalDimension";
 
-  const getX = useCallback(
-    (d: Observation): string => `${d[fields.x.componentIri]}`,
-    [fields.x.componentIri]
-  );
-  const getXAsDate = useTemporalX(fields.x.componentIri);
-  const getY = (d: Observation): number | null => {
-    const v = d[fields.y.componentIri];
-    return v !== null ? +v : null;
-  };
+  const getX = useStringVariable(fields.x.componentIri);
+  const getXAsDate = useTemporalVariable(fields.x.componentIri);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   // Sort

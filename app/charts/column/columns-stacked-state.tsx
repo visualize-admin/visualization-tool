@@ -21,7 +21,7 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -33,9 +33,11 @@ import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import {
   getLabelWithUnit,
+  useOptionalNumericVariable,
   usePreparedData,
   useSegment,
-  useTemporalX,
+  useStringVariable,
+  useTemporalVariable,
   useWideData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -103,26 +105,28 @@ const useColumnsStackedState = ({
 
   const xIsTime = xDimension.__typename === "TemporalDimension";
 
-  const getX = useCallback(
-    (d: Observation): string => `${d[fields.x.componentIri]}`,
-    [fields.x.componentIri]
-  );
-  const getXAsDate = useTemporalX(fields.x.componentIri);
-  const getY = useCallback(
-    (d: Observation): number | null => {
-      const v = d[fields.y.componentIri];
-      return v !== null ? +v : null;
-    },
-    [fields.y.componentIri]
-  );
+  const getX = useStringVariable(fields.x.componentIri);
+  const getXAsDate = useTemporalVariable(fields.x.componentIri);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
+
+  const allSegments = useMemo(
+    () => [...new Set(data.map((d) => getSegment(d)))],
+    [data, getSegment]
+  );
   const xKey = fields.x.componentIri;
 
   // All Data
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
-  const allDataWide = useWideData({ data, getSegment, getY, xKey });
+  const allDataWide = useWideData({
+    data,
+    segments: allSegments,
+    getSegment,
+    getY,
+    xKey,
+  });
   const xOrder = allDataWide
     .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
     .map((d, i) => getX(d));
@@ -154,6 +158,7 @@ const useColumnsStackedState = ({
   const chartWideData = useWideData({
     data: preparedData,
     xKey,
+    segments: allSegments,
     getSegment,
     getY,
   });

@@ -129,10 +129,42 @@ export const usePreparedData = ({
 };
 
 // retrieving variables
-export const useTemporalX = (xKey: string): ((d: Observation) => Date) => {
-  const getX = useCallback((d: Observation) => parseDate(`${d[xKey]}`), [xKey]);
+export const useNumericVariable = (
+  key: string
+): ((d: Observation) => number) => {
+  const getVariable = useCallback((d: Observation) => Number(d[key]), [key]);
 
-  return getX;
+  return getVariable;
+};
+
+export const useOptionalNumericVariable = (
+  key: string
+): ((d: Observation) => number | null) => {
+  const getVariable = useCallback(
+    (d: Observation) => (d[key] !== null ? Number(d[key]) : null),
+    [key]
+  );
+
+  return getVariable;
+};
+
+export const useStringVariable = (
+  key: string
+): ((d: Observation) => string) => {
+  const getVariable = useCallback((d: Observation) => `${d[key]}`, [key]);
+
+  return getVariable;
+};
+
+export const useTemporalVariable = (
+  key: string
+): ((d: Observation) => Date) => {
+  const getVariable = useCallback(
+    (d: Observation) => parseDate(`${d[key]}`),
+    [key]
+  );
+
+  return getVariable;
 };
 
 export const useSegment = (
