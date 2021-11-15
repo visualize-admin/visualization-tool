@@ -16,9 +16,10 @@ import {
   SearchDatasetBox,
   SearchFilters,
   DatasetResults,
-  useSearchQueryState,
-  SearchStateProvider,
-  useSearchContext,
+  BrowseStateProvider,
+  SearchFilter,
+  useBrowseContext,
+  useBrowseState,
 } from "./dataset-search";
 import {
   PanelLayout,
@@ -27,7 +28,6 @@ import {
   PanelRightWrapper,
 } from "./layout";
 import { flag } from "./flag";
-import Breadcrumbs from "./breadcrumbs";
 import { BrowseParams } from "../../pages/browse";
 
 const BreadcrumbFilter = ({
@@ -46,8 +46,8 @@ const BreadcrumbFilter = ({
 export const SelectDatasetStepV2Content = () => {
   const locale = useLocale();
 
-  const searchQueryState = useSearchContext();
-  const { query, order, includeDrafts, filters } = searchQueryState;
+  const browseState = useBrowseContext();
+  const { query, order, includeDrafts, filters } = browseState;
 
   const [state, dispatch] = useConfiguratorState();
   const [debouncedQuery] = useDebounce(query, 150, {
@@ -62,7 +62,7 @@ export const SelectDatasetStepV2Content = () => {
       order,
       includeDrafts,
       filters: filters
-        ? filters.map((filter) => {
+        ? filters.map((filter: SearchFilter) => {
             return { type: filter.__typename, value: filter.iri };
           })
         : [],
@@ -136,10 +136,7 @@ export const SelectDatasetStepV2Content = () => {
                   />
                 ) : null} */}
               </>
-              <SearchDatasetBox
-                searchQueryState={searchQueryState}
-                searchResult={data}
-              />
+              <SearchDatasetBox browseState={browseState} searchResult={data} />
             </Box>
           )}
           {state.dataSet || !data ? (
@@ -164,10 +161,10 @@ export const SelectDatasetStepV2Content = () => {
 export const SelectDatasetStepV1 = () => {
   const locale = useLocale();
 
-  const searchQueryState = useSearchQueryState();
-  const { query, order, includeDrafts, filters } = searchQueryState;
+  const browseState = useBrowseState();
+  const { query, order, includeDrafts, filters } = browseState;
 
-  const [state, dispatch] = useConfiguratorState();
+  const [state] = useConfiguratorState();
   const [debouncedQuery] = useDebounce(query, 150, {
     leading: true,
   });
@@ -194,10 +191,7 @@ export const SelectDatasetStepV1 = () => {
     <PanelLayout>
       <PanelLeftWrapper>
         <Box mb={4}>
-          <SearchDatasetBox
-            searchQueryState={searchQueryState}
-            searchResult={data}
-          />
+          <SearchDatasetBox browseState={browseState} searchResult={data} />
         </Box>
         <DatasetResults
           fetching={fetching}
@@ -235,9 +229,9 @@ export const SelectDatasetStepV1 = () => {
 
 export const SelectDatasetStepV2 = ({ params }: { params?: BrowseParams }) => {
   return (
-    <SearchStateProvider params={params}>
+    <BrowseStateProvider params={params}>
       <SelectDatasetStepV2Content />
-    </SearchStateProvider>
+    </BrowseStateProvider>
   );
 };
 

@@ -139,10 +139,8 @@ export const useSearchQueryState = () => {
   );
 };
 
-export type SearchQueryState = ReturnType<typeof useSearchQueryState>;
-const SearchStateContext = React.createContext<SearchQueryState | undefined>(
-  undefined
-);
+export type BrowseState = ReturnType<typeof useBrowseState>;
+const BrowseContext = React.createContext<BrowseState | undefined>(undefined);
 
 /** Builds the state search filters from query params */
 const getFiltersFromParams = (
@@ -177,14 +175,15 @@ const getFiltersFromParams = (
   return filters;
 };
 
-export const SearchStateProvider = ({
+export const BrowseStateProvider = ({
   children,
   params,
 }: {
   children: React.ReactNode;
   params?: BrowseParams;
 }) => {
-  const state = useSearchQueryState();
+  const browseState = useBrowseState();
+  const { setFilters, setNavState } = browseState;
   const locale = useLocale();
   const [{ data: themeData }] = useThemesQuery({
     variables: { locale },
@@ -193,7 +192,7 @@ export const SearchStateProvider = ({
     variables: { locale },
   });
 
-  // Connects search state to router params
+  // Connects browse state to router params
   // @TODO brings closer to router ?
   useEffect(() => {
     if (!params || !themeData?.themes || !orgData?.organizations) {
@@ -205,32 +204,32 @@ export const SearchStateProvider = ({
       organizations: orgData?.organizations,
     });
     if (filters) {
-      state.setFilters(filters);
+      setFilters(filters);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params, themeData, orgData]);
   return (
-    <SearchStateContext.Provider value={state}>
+    <BrowseContext.Provider value={browseState}>
       {children}
-    </SearchStateContext.Provider>
+    </BrowseContext.Provider>
   );
 };
 
-export const useSearchContext = () => {
-  const ctx = useContext(SearchStateContext);
+export const useBrowseContext = () => {
+  const ctx = useContext(BrowseContext);
   if (!ctx) {
     throw new Error(
-      "To be able useSearchContext, you msut wrap it into a SearchStateProvider"
+      "To be able useBrowseContext, you must wrap it into a BrowseStateProvider"
     );
   }
   return ctx;
 };
 
 export const SearchDatasetBox = ({
-  searchQueryState,
+  browseState,
   searchResult,
 }: {
-  searchQueryState: SearchQueryState;
+  browseState: BrowseState;
   searchResult: Maybe<DataCubesQuery>;
 }) => {
   const [showDraftCheckbox, setShowDraftCheckbox] = useState<boolean>(false);
@@ -243,7 +242,7 @@ export const SearchDatasetBox = ({
     setIncludeDrafts,
     order,
     onSetOrder,
-  } = searchQueryState;
+  } = browseState;
   const options = [
     {
       value: DataCubeResultOrder.Score,
@@ -450,7 +449,7 @@ const useDatasetCount = (filters: SearchFilter[]): Record<string, number> => {
 
 export const SearchFilters = () => {
   const locale = useLocale();
-  const { filters, onResetFilters } = useSearchContext();
+  const { filters, onResetFilters, navState } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
