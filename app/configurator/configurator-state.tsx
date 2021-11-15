@@ -858,7 +858,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "IMPUTATION_TYPE_CHANGED":
       if (draft.state === "CONFIGURING_CHART") {
         if (isAreaConfig(draft.chartConfig)) {
-          draft.chartConfig.imputationType = action.value.type;
+          draft.chartConfig.fields.y.imputationType = action.value.type;
         }
       }
 

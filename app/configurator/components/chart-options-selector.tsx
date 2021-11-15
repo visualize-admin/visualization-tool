@@ -498,7 +498,7 @@ const ChartImputationType = ({
 
   const activeImputationType: ImputationType = get(
     state,
-    ["chartConfig", "imputationType"],
+    ["chartConfig", "fields", "y", "imputationType"],
     "none"
   );
 

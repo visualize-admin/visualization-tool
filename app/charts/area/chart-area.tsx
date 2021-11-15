@@ -9,7 +9,6 @@ import {
 import {
   AreaConfig,
   AreaFields,
-  ImputationType,
   InteractiveFiltersConfig,
 } from "../../configurator";
 import { isNumber } from "../../configurator/components/ui-helpers";
@@ -70,7 +69,6 @@ export const ChartAreasVisualization = ({
           measures={measures}
           fields={chartConfig.fields}
           interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-          imputationType={chartConfig.imputationType || "none"}
         />
         {fetching && <LoadingOverlay />}
       </Box>
@@ -93,14 +91,12 @@ export const ChartAreas = memo(
     measures,
     fields,
     interactiveFiltersConfig,
-    imputationType,
   }: {
     observations: Observation[];
     dimensions: DimensionMetaDataFragment[];
     measures: DimensionMetaDataFragment[];
     fields: AreaFields;
     interactiveFiltersConfig: InteractiveFiltersConfig;
-    imputationType: ImputationType;
   }) => {
     return (
       <AreaChart
@@ -109,7 +105,6 @@ export const ChartAreas = memo(
         dimensions={dimensions}
         measures={measures}
         interactiveFiltersConfig={interactiveFiltersConfig}
-        imputationType={imputationType}
         aspectRatio={0.4}
       >
         <ChartContainer>

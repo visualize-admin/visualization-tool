@@ -128,7 +128,7 @@ export const usePreparedData = ({
 };
 
 // Helper to pivot a dataset to a wider format
-export const getBaseWideData = ({
+export const getWideData = ({
   xKey,
   groupedMap,
   getSegment,
@@ -187,7 +187,7 @@ export const getTemporalWideDataWithImputedValues = ({
 
   switch (imputationType) {
     case "none":
-      return getBaseWideData({ xKey, groupedMap, getSegment, getY });
+      return getWideData({ xKey, groupedMap, getSegment, getY });
     case "zeros":
       baseObservation = Object.assign(
         {},

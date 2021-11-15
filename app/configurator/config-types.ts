@@ -260,7 +260,10 @@ export const imputationTypes: ImputationType[] = ["none", "zeros", "linear"];
 const AreaFields = t.intersection([
   t.type({
     x: GenericField,
-    y: GenericField,
+    y: t.intersection([
+      GenericField,
+      t.partial({ imputationType: ImputationType }),
+    ]),
   }),
 
   t.partial({
@@ -281,19 +284,15 @@ const AreaFields = t.intersection([
     ]),
   }),
 ]);
-const AreaConfig = t.intersection(
-  [
-    t.type({
-      chartType: t.literal("area"),
-      filters: Filters,
-      interactiveFiltersConfig: InteractiveFiltersConfig,
-      fields: AreaFields,
-    }),
-    t.partial({ imputationType: ImputationType }),
-  ],
+const AreaConfig = t.type(
+  {
+    chartType: t.literal("area"),
+    filters: Filters,
+    interactiveFiltersConfig: InteractiveFiltersConfig,
+    fields: AreaFields,
+  },
   "AreaConfig"
 );
-
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 

@@ -33,8 +33,8 @@ import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import {
-  getBaseWideData,
   getLabelWithUnit,
+  getWideData,
   usePreparedData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -131,7 +131,7 @@ const useColumnsStackedState = ({
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
   const allDataGroupedMap = group(data, getX);
-  const allDataWide = getBaseWideData({
+  const allDataWide = getWideData({
     groupedMap: allDataGroupedMap,
     getSegment,
     getY,
@@ -165,7 +165,7 @@ const useColumnsStackedState = ({
   });
 
   const groupedMap = group(preparedData, getX);
-  const chartWideData = getBaseWideData({ groupedMap, xKey, getSegment, getY });
+  const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
 
   //Ordered segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;

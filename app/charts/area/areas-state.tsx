@@ -20,7 +20,7 @@ import {
   sum,
 } from "d3";
 import { ReactNode, useCallback, useMemo } from "react";
-import { AreaFields, ImputationType } from "../../configurator";
+import { AreaFields } from "../../configurator";
 import {
   getPalette,
   parseDate,
@@ -33,9 +33,9 @@ import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
-  getBaseWideData,
   getLabelWithUnit,
   getTemporalWideDataWithImputedValues,
+  getWideData,
   usePreparedData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -69,14 +69,12 @@ const useAreasState = ({
   fields,
   dimensions,
   measures,
-  imputationType,
   interactiveFiltersConfig,
   aspectRatio,
 }: Pick<
   ChartProps,
   "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
 > & {
-  imputationType: ImputationType;
   fields: AreaFields;
   aspectRatio: number;
 }): AreasState => {
@@ -131,7 +129,7 @@ const useAreasState = ({
     sortedData,
     (d) => d[fields.x.componentIri] as string
   );
-  const allDataWide = getBaseWideData({
+  const allDataWide = getWideData({
     groupedMap: allDataGroupedMap,
     getSegment,
     getY,
@@ -157,7 +155,7 @@ const useAreasState = ({
     groupedMap,
     xKey,
     segments: allSegments,
-    imputationType,
+    imputationType: fields.y.imputationType || "none",
     segmentKey,
     getSegment,
     getY,
@@ -374,14 +372,12 @@ const AreaChartProvider = ({
   measures,
   dimensions,
   interactiveFiltersConfig,
-  imputationType,
   aspectRatio,
   children,
 }: Pick<
   ChartProps,
   "data" | "fields" | "dimensions" | "measures" | "interactiveFiltersConfig"
 > & {
-  imputationType: ImputationType;
   children: ReactNode;
   aspectRatio: number;
 } & { fields: AreaFields }) => {
@@ -390,7 +386,6 @@ const AreaChartProvider = ({
     fields,
     dimensions,
     measures,
-    imputationType,
     interactiveFiltersConfig,
     aspectRatio,
   });
@@ -405,14 +400,12 @@ export const AreaChart = ({
   measures,
   dimensions,
   interactiveFiltersConfig,
-  imputationType,
   aspectRatio,
   children,
 }: Pick<
   ChartProps,
   "data" | "fields" | "dimensions" | "measures" | "interactiveFiltersConfig"
 > & {
-  imputationType: ImputationType;
   children: ReactNode;
   fields: AreaFields;
   aspectRatio: number;
@@ -425,7 +418,6 @@ export const AreaChart = ({
           fields={fields}
           dimensions={dimensions}
           measures={measures}
-          imputationType={imputationType}
           interactiveFiltersConfig={interactiveFiltersConfig}
           aspectRatio={aspectRatio}
         >

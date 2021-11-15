@@ -25,8 +25,8 @@ import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
-  getBaseWideData,
   getLabelWithUnit,
+  getWideData,
   usePreparedData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
@@ -111,7 +111,7 @@ const useLinesState = ({
     sortedData,
     (d) => d[fields.x.componentIri] as string
   );
-  const allDataWide = getBaseWideData({
+  const allDataWide = getWideData({
     groupedMap: allDataGroupedMap,
     getSegment,
     getY,
@@ -133,7 +133,7 @@ const useLinesState = ({
     preparedData,
     (d) => d[fields.x.componentIri] as string
   );
-  const chartWideData = getBaseWideData({ groupedMap, getSegment, getY, xKey });
+  const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
 
   // x
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
