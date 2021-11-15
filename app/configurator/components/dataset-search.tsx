@@ -211,12 +211,6 @@ export const SearchStateProvider = ({
   }, [params, themeData, orgData]);
   return (
     <SearchStateContext.Provider value={state}>
-      <div style={{ position: "fixed" }}>
-        Hello
-        {typeof window !== "undefined" ? (
-          <Inspector data={state.filters} />
-        ) : null}
-      </div>
       {children}
     </SearchStateContext.Provider>
   );
