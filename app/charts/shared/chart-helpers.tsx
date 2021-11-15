@@ -1,6 +1,6 @@
 import { group, InternMap, sum } from "d3";
 import { omitBy } from "lodash";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import {
   ChartConfig,
   Filters,
@@ -321,23 +321,22 @@ export const useImputationNeeded = ({
   chartConfig: ChartConfig;
   data?: Array<Observation>;
 }) => {
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      chartConfig.fields.segment
-        ? (d[chartConfig.fields.segment.componentIri] as string)
-        : "segment",
-    [chartConfig.fields.segment]
-  );
+  const imputationNeeded = useMemo(() => {
+    if (isAreaConfig(chartConfig) && data) {
+      const getSegment = (d: Observation): string =>
+        chartConfig.fields.segment
+          ? (d[chartConfig.fields.segment.componentIri] as string)
+          : "segment";
 
-  if (isAreaConfig(chartConfig) && data) {
-    return checkForMissingValuesInSegments(
-      group(
-        data,
-        (d: Observation) => d[chartConfig.fields.x.componentIri] as string
-      ),
-      [...new Set(data.map((d) => getSegment(d)))]
-    );
-  }
+      return checkForMissingValuesInSegments(
+        group(
+          data,
+          (d: Observation) => d[chartConfig.fields.x.componentIri] as string
+        ),
+        [...new Set(data.map((d) => getSegment(d)))]
+      );
+    }
+  }, [chartConfig, data]);
 
-  return false;
+  return imputationNeeded;
 };
