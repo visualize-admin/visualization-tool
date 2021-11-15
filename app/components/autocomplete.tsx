@@ -7,7 +7,7 @@ import {
 } from "downshift";
 import { useState } from "react";
 import { Box, BoxProps, Flex, FlexProps, Input } from "@theme-ui/components";
-import { Themed } from "@theme-ui/mdx";
+import { Trans } from "@lingui/macro";
 
 const menuStyles = {
   listStyleType: "none",
@@ -42,13 +42,12 @@ const AutocompleteList = React.forwardRef<HTMLDivElement>(
   }
 );
 
-type AutocompleteResultProps = { icon: React.ReactNode } & BoxProps;
+type AutocompleteResultProps = { icon?: React.ReactNode } & BoxProps;
 
 const AutocompleteResult = React.forwardRef<
   HTMLDivElement,
   AutocompleteResultProps
 >(({ icon, ...boxProps }, ref) => {
-  console.log(boxProps);
   return (
     <Flex
       ref={ref}
@@ -62,7 +61,7 @@ const AutocompleteResult = React.forwardRef<
         py: 4,
       }}
     >
-      {icon ? <Box sx={{ width: 24, height: 24 }}>{icon}</Box> : null}
+      {icon ? <Box sx={{ width: 24, height: 24, mr: 2 }}>{icon}</Box> : null}
       {boxProps.children}
     </Flex>
   );
@@ -148,19 +147,28 @@ function Autocomplete<TItem>({
         />
       </div>
       <AutocompleteList {...getMenuProps()} sx={menuStyles}>
-        {isOpen &&
-          inputItems.map((item, index) => (
-            <AutocompleteResult
-              style={
-                highlightedIndex === index ? { backgroundColor: "#bde4ff" } : {}
-              }
-              key={`${item}${index}`}
-              icon={getItemIcon ? getItemIcon(item) : null}
-              {...getItemProps({ item, index })}
-            >
-              {getItemSearchText(item)}
+        {isOpen ? (
+          inputItems.length > 0 ? (
+            inputItems.map((item, index) => (
+              <AutocompleteResult
+                style={
+                  highlightedIndex === index
+                    ? { backgroundColor: "#bde4ff" }
+                    : {}
+                }
+                key={`${item}${index}`}
+                icon={getItemIcon ? getItemIcon(item) : null}
+                {...getItemProps({ item, index })}
+              >
+                {getItemSearchText(item)}
+              </AutocompleteResult>
+            ))
+          ) : (
+            <AutocompleteResult>
+              <Trans key="autocomplete.no-result">No results</Trans>
             </AutocompleteResult>
-          ))}
+          )
+        ) : null}
       </AutocompleteList>
     </Flex>
   );
