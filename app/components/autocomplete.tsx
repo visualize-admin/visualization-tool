@@ -12,6 +12,8 @@ import { Themed } from "@theme-ui/mdx";
 const menuStyles = {
   listStyleType: "none",
   marginLeft: 0,
+  position: "absolute",
+  top: "3rem",
 };
 
 function AutocompleteList({ ...boxProps }: BoxProps) {
@@ -125,7 +127,7 @@ function Autocomplete<TItem>({
   });
 
   return (
-    <Flex sx={{ flexDirection: "column", ...sx }}>
+    <Flex sx={{ flexDirection: "column", position: "relative", ...sx }}>
       <div {...getComboboxProps()}>
         <Input
           {...getInputProps()}
