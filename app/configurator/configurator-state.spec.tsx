@@ -1,13 +1,16 @@
 import { Client } from "@urql/core";
+import * as api from "../api";
+import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import bathingWaterMetadata from "../test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
+import { data as fakeVizFixture } from "../test/__fixtures/prod/line-1.json";
 import {
+  applyNonTableDimensionToFilters,
+  applyTableDimensionToFilters,
   getLocalStorageKey,
   initChartStateFromChart,
-  initChartStateFromLocalStorage,
   initChartStateFromCube,
+  initChartStateFromLocalStorage,
 } from "./configurator-state";
-import * as api from "../api";
-import { data as fakeVizFixture } from "../test/__fixtures/prod/line-1.json";
-import bathingWaterMetadata from "../test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -93,5 +96,181 @@ describe("initChartStateFromCube", () => {
         state: "SELECTING_CHART_TYPE",
       })
     );
+  });
+});
+
+describe("applyDimensionToFilters", () => {
+  const keyDimension = {
+    iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+    label: "Parameter",
+    isKeyDimension: true,
+    values: [
+      { value: "E.coli", label: "E.coli" },
+      { value: "Enterokokken", label: "Enterokokken" },
+    ],
+    unit: null,
+    __typename: "NominalDimension",
+  } as DimensionMetaDataFragment;
+
+  const optionalDimension = {
+    iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
+    label: "Parameter",
+    isKeyDimension: false,
+    values: [
+      { value: "E.coli", label: "E.coli" },
+      { value: "Enterokokken", label: "Enterokokken" },
+    ],
+    unit: null,
+    __typename: "NominalDimension",
+  } as DimensionMetaDataFragment;
+
+  describe("applyNonTableDimensionToFilters", () => {
+    it("should remove single value filter when a keyDimension is used as a field", () => {
+      const initialFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "single",
+          value: "E.coli",
+        },
+      } as any;
+      const expectedFilters = {};
+
+      applyNonTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: keyDimension,
+        isField: true,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+
+    it("should add single value filter if switching from a field to non-field", () => {
+      const initialFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "multi",
+          values: { "E.coli": true, Enterokokken: true },
+        },
+      } as any;
+      const expectedFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "single",
+          value: "E.coli",
+        },
+      };
+
+      applyNonTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: keyDimension,
+        isField: false,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+
+    it("should not modify undefined filter for a optionalDimension", () => {
+      const initialFilters = {};
+      const expectedFilters = {};
+
+      applyNonTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: optionalDimension,
+        isField: true,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+  });
+
+  describe("applyTableDimensionToFilters", () => {
+    it("should set single value filter for a keyDimension if hidden and not grouped", () => {
+      const initialFilters = {};
+      const expectedFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "single",
+          value: "E.coli",
+        },
+      };
+
+      applyTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: keyDimension,
+        isHidden: true,
+        isGrouped: false,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+
+    it("should not modify filter for an optionalDimension if hidden and not grouped", () => {
+      const initialFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "multi",
+          values: { "E.coli": true, Enterokokken: true },
+        },
+      } as any;
+      const expectedFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "multi",
+          values: { "E.coli": true, Enterokokken: true },
+        },
+      };
+
+      applyTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: optionalDimension,
+        isHidden: true,
+        isGrouped: false,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+
+    it("should set single value filter for a keyDimension if hidden", () => {
+      const initialFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          from: "2007-05-21",
+          to: "2020-09-28",
+          type: "range",
+        },
+      } as any;
+      const expectedFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "single",
+          value: "2007-05-21",
+        },
+      };
+
+      applyTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: keyDimension,
+        isHidden: true,
+        isGrouped: false,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
+
+    it("should not modify filters for a keyDimension if not hidden and grouped", () => {
+      const initialFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "multi",
+          values: { "E.coli": false, Enterokokken: true },
+        },
+      } as any;
+      const expectedFilters = {
+        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
+          type: "multi",
+          values: { "E.coli": false, Enterokokken: true },
+        },
+      };
+
+      applyTableDimensionToFilters({
+        filters: initialFilters,
+        dimension: keyDimension,
+        isHidden: false,
+        isGrouped: true,
+      });
+
+      expect(initialFilters).toEqual(expectedFilters);
+    });
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@visualize-admin/visualization-tool",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/visualize-admin/visualization-tool.git"
@@ -14,7 +14,7 @@
     "dev:rollup": "rollup -c rollup.config.js --watch",
     "db:migrate:dev": "DATABASE_URL=postgres://postgres:password@localhost:5432/visualization_tool scripts/db-migrate.js",
     "db:migrate": "scripts/db-migrate.js",
-    "build": "NODE_OPTIONS=--max_old_space_size=2048 yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && next build ./app",
+    "build": "yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && next build ./app",
     "build:npm": "yarn graphql:codegen && lingui compile && BABEL_ENV=NPM_PACKAGE preconstruct build",
     "start": "yarn db:migrate && GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next start ./app -p $PORT",
     "lint": "lingui compile && tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
@@ -35,7 +35,7 @@
     "@babel/runtime": "^7.11.2",
     "@cozy/cli-tree": "^0.3.0",
     "core-js": "^3.15.1",
-    "next": "^11.0.1",
+    "next": "^11.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

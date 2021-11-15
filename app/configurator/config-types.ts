@@ -393,7 +393,6 @@ const TableColumn = t.type({
   index: t.number,
   isGroup: t.boolean,
   isHidden: t.boolean,
-  isFiltered: t.boolean,
   columnStyle: ColumnStyle,
 });
 export type TableColumn = t.TypeOf<typeof TableColumn>;

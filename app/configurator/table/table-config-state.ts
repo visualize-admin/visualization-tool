@@ -23,13 +23,6 @@ export const moveFields = produce(
     let destinationFields =
       destination.droppableId === "columns" ? columnFields : groupFields;
 
-    // Reset isHidden prop if field is being grouped/ungrouped
-    if (source.droppableId !== destination.droppableId) {
-      const movedField = sourceFields[source.index];
-      movedField.isHidden = false;
-      // movedField.isFiltered = false;
-    }
-
     // Move from source to destination
     destinationFields.splice(
       destination.index,
@@ -71,9 +64,6 @@ export const updateIsGroup = produce(
 
     // Update field
     chartConfig.fields[field].isGroup = value;
-    // Reset other field states
-    chartConfig.fields[field].isHidden = false;
-    // chartConfig.fields[field].isFiltered = false;
 
     // Get fields _without_ field that is updated
     const fieldsArray = getOrderedTableColumns(chartConfig.fields);
@@ -119,26 +109,6 @@ export const updateIsHidden = produce(
     }
 
     chartConfig.fields[field].isHidden = value;
-
-    return chartConfig;
-  }
-);
-export const updateIsFiltered = produce(
-  (
-    chartConfig: TableConfig,
-    {
-      field,
-      value,
-    }: {
-      field: string;
-      value: boolean;
-    }
-  ): TableConfig => {
-    if (!chartConfig.fields[field]) {
-      return chartConfig;
-    }
-
-    chartConfig.fields[field].isFiltered = value;
 
     return chartConfig;
   }

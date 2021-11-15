@@ -1,12 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import get from "lodash/get";
-import React, {
-  ChangeEvent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { Checkbox } from "../../components/form";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -41,18 +35,14 @@ import {
 } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 import { TableSortingOptions } from "./table-chart-sorting-options";
-import {
-  updateIsFiltered,
-  updateIsGroup,
-  updateIsHidden,
-} from "./table-config-state";
+import { updateIsGroup, updateIsHidden } from "./table-config-state";
 
 const useTableColumnGroupHiddenField = ({
   path,
   field,
   metaData,
 }: {
-  path: "isGroup" | "isHidden" | "isFiltered";
+  path: "isGroup" | "isHidden";
   field: string;
   metaData: DataCubeMetadata;
 }): FieldProps => {
@@ -64,13 +54,7 @@ const useTableColumnGroupHiddenField = ({
         state.state === "CONFIGURING_CHART" &&
         state.chartConfig.chartType === "table"
       ) {
-        const updater =
-          path === "isGroup"
-            ? updateIsGroup
-            : path === "isHidden"
-            ? updateIsHidden
-            : updateIsFiltered;
-
+        const updater = path === "isGroup" ? updateIsGroup : updateIsHidden;
         const chartConfig = updater(state.chartConfig, {
           field,
           value: e.currentTarget.checked,
@@ -110,7 +94,7 @@ const ChartOptionGroupHiddenField = ({
 }: {
   label: string;
   field: string;
-  path: "isGroup" | "isHidden" | "isFiltered";
+  path: "isGroup" | "isHidden";
   defaultChecked?: boolean;
   disabled?: boolean;
   metaData: DataCubeMetadata;
@@ -175,7 +159,7 @@ export const TableColumnOptions = ({
     return <div>`No component ${activeField}`</div>;
   }
 
-  const { isGroup, isFiltered, isHidden } = chartConfig.fields[activeField];
+  const { isGroup, isHidden } = chartConfig.fields[activeField];
 
   const columnStyleOptions =
     component.__typename === "NominalDimension" ||
@@ -221,46 +205,29 @@ export const TableColumnOptions = ({
           {component.label}
         </SectionTitle>
         <ControlSectionContent side="right">
-          {component.isKeyDimension && (
-            <>
-              <ChartOptionGroupHiddenField
-                label={t({
-                  id: "controls.table.column.group",
-                  message: "Use to group",
-                })}
-                field={activeField}
-                disabled={isFiltered}
-                path="isGroup"
-                metaData={metaData}
-              />
-              {!isGroup && (
-                <ChartOptionGroupHiddenField
-                  label={t({
-                    id: "controls.table.column.hidefilter",
-                    message: "Hide and filter column",
-                  })}
-                  field={activeField}
-                  path="isFiltered"
-                  metaData={metaData}
-                />
-              )}
-            </>
-          )}
-
-          {(!component.isKeyDimension || isGroup) && (
+          {component.__typename !== "Measure" && (
             <ChartOptionGroupHiddenField
               label={t({
-                id: "controls.table.column.hide",
-                message: "Hide column",
+                id: "controls.table.column.group",
+                message: "Use to group",
               })}
               field={activeField}
-              path="isHidden"
+              path="isGroup"
               metaData={metaData}
             />
           )}
+          <ChartOptionGroupHiddenField
+            label={t({
+              id: "controls.table.column.hide",
+              message: "Hide column",
+            })}
+            field={activeField}
+            path="isHidden"
+            metaData={metaData}
+          />
         </ControlSectionContent>
       </ControlSection>
-      {!isFiltered && (!isHidden || isGroup) && (
+      {(isGroup || !isHidden) && (
         <ControlSection>
           <SectionTitle iconName={"formatting"}>
             <Trans id="controls.section.columnstyle">Column Style</Trans>
@@ -336,7 +303,7 @@ export const TableColumnOptions = ({
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {isFiltered ? (
+            {component.isKeyDimension && isHidden && !isGroup ? (
               <DimensionValuesSingleFilter
                 dataSetIri={metaData.iri}
                 dimensionIri={component.iri}
@@ -360,7 +327,7 @@ export const TableColumnOptions = ({
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {isFiltered ? (
+            {component.isKeyDimension && isHidden && !isGroup ? (
               <DataFilterSelectTime
                 dimensionIri={component.iri}
                 label={component.label}
