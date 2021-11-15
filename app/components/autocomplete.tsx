@@ -14,38 +14,50 @@ const menuStyles = {
   marginLeft: 0,
   position: "absolute",
   top: "3rem",
+  left: 0,
+  right: 0,
 };
 
-function AutocompleteList({ ...boxProps }: BoxProps) {
-  return (
-    <Box
-      as="ul"
-      {...boxProps}
-      sx={{
-        pl: 0,
-        listStyleType: "none",
-        ...boxProps.sx,
-        bg: "monochrome100",
-        boxShadow: "primary",
-        borderRadius: 10,
-        overflow: "hidden",
-      }}
-    >
-      {boxProps.children}
-    </Box>
-  );
-}
+const AutocompleteList = React.forwardRef<HTMLDivElement>(
+  ({ ...boxProps }: BoxProps, ref) => {
+    return (
+      <Box
+        ref={ref}
+        as="ul"
+        {...boxProps}
+        sx={{
+          pl: 0,
+          width: "100%",
+          listStyleType: "none",
+          ...boxProps.sx,
+          bg: "monochrome100",
+          boxShadow: "primary",
+          borderRadius: 10,
+          overflow: "hidden",
+        }}
+      >
+        {boxProps.children}
+      </Box>
+    );
+  }
+);
 
-function AutocompleteResult({
-  icon,
-  ...boxProps
-}: { icon: React.ReactNode } & BoxProps) {
+type AutocompleteResultProps = { icon: React.ReactNode } & BoxProps;
+
+const AutocompleteResult = React.forwardRef<
+  HTMLDivElement,
+  AutocompleteResultProps
+>(({ icon, ...boxProps }, ref) => {
+  console.log(boxProps);
   return (
     <Flex
+      ref={ref}
       as="li"
       {...boxProps}
       sx={{
+        cursor: "pointer",
         alignItems: "center",
+        width: "100%",
         px: 4,
         py: 4,
       }}
@@ -54,7 +66,7 @@ function AutocompleteResult({
       {boxProps.children}
     </Flex>
   );
-}
+});
 
 export type AutocompleteProps<TItem> = {
   items: TItem[];
@@ -132,7 +144,7 @@ function Autocomplete<TItem>({
         <Input
           {...getInputProps()}
           placeholder={placeholder}
-          sx={{ bg: "monochrome100", borderColor: "monochrome300" }}
+          sx={{ bg: "monochrome100", width: 400, borderColor: "monochrome300" }}
         />
       </div>
       <AutocompleteList {...getMenuProps()} sx={menuStyles}>
