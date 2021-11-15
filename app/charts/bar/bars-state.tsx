@@ -1,5 +1,8 @@
-import { ascending, descending, max, min } from "d3";
 import {
+  ascending,
+  descending,
+  max,
+  min,
   scaleBand,
   ScaleBand,
   ScaleLinear,
@@ -7,20 +10,20 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-
 import { ReactNode, useCallback, useMemo } from "react";
 import { BarFields, SortingOrder, SortingType } from "../../configurator";
-import { Observation } from "../../domain/data";
 import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
-import {
-  BAR_HEIGHT,
-  BOTTOM_MARGIN_OFFSET,
-  LEFT_MARGIN_OFFSET,
-  BAR_SPACE_ON_TOP,
-} from "./constants";
+import { Observation } from "../../domain/data";
+import { useSegment } from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
+import {
+  BAR_HEIGHT,
+  BAR_SPACE_ON_TOP,
+  BOTTOM_MARGIN_OFFSET,
+  LEFT_MARGIN_OFFSET,
+} from "./constants";
 
 export interface BarsState {
   chartType: "bar";
@@ -54,13 +57,7 @@ const useBarsState = ({
     [fields.y.componentIri]
   );
 
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment && fields.segment.componentIri
-        ? (d[fields.segment.componentIri] as string)
-        : "segment",
-    [fields.segment]
-  );
+  const getSegment = useSegment(fields.segment?.componentIri);
 
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??
@@ -75,7 +72,7 @@ const useBarsState = ({
   }, [data, getX, getY, sortingType, sortingOrder]);
 
   // segments
-  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
+  const segments = [...new Set(sortedData.map((d) => getSegment(d)))];
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );

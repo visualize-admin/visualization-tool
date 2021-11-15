@@ -1,6 +1,6 @@
 import { group, InternMap, sum } from "d3";
 import { omitBy } from "lodash";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
   ChartConfig,
   Filters,
@@ -8,6 +8,7 @@ import {
   ImputationType,
   isAreaConfig,
 } from "../../configurator";
+import { parseDate } from "../../configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
 import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
@@ -127,58 +128,55 @@ export const usePreparedData = ({
   return preparedData;
 };
 
-// Helper to pivot a dataset to a wider format
-export const getWideData = ({
-  xKey,
-  groupedMap,
-  getSegment,
-  getY,
-}: {
-  xKey: string;
-  groupedMap: Map<string, Array<Observation>>;
-  getSegment: (d: Observation) => string;
-  getY: (d: Observation) => number | null;
-}): Array<Observation> => {
-  const wideArray = [];
+// retrieving variables
+export const useTemporalX = (xKey: string): ((d: Observation) => Date) => {
+  const getX = useCallback((d: Observation) => parseDate(`${d[xKey]}`), [xKey]);
 
-  for (const [key, values] of groupedMap) {
-    let observation: Observation = {
-      [xKey]: key,
-      total: sum(values, getY),
-    };
-
-    for (const value of values) {
-      observation[getSegment(value)] = getY(value);
-    }
-
-    wideArray.push(observation);
-  }
-
-  return wideArray;
+  return getX;
 };
 
-export const getTemporalWideDataWithImputedValues = ({
+export const useSegment = (
+  segmentKey: string | undefined
+): ((d: Observation) => string) => {
+  const getSegment = useCallback(
+    (d: Observation): string => (segmentKey ? `${d[segmentKey]}` : "segment"),
+    [segmentKey]
+  );
+
+  return getSegment;
+};
+
+// Helper to pivot a dataset to a wider format
+export const useWideData = ({
+  data,
+  imputationType = "none",
   xKey,
-  groupedMap,
-  imputationType,
-  segmentKey,
   segments,
   getSegment,
   getX,
   getY,
 }: {
+  data: Array<Observation>;
+  imputationType?: ImputationType;
   xKey: string;
-  groupedMap: Map<string, Array<Observation>>;
-  imputationType: ImputationType;
-  segmentKey: string;
-  segments: Array<string>;
+  segments?: Array<string>;
   getSegment: (d: Observation) => string;
-  getX: (d: Observation) => Date;
+  getX?: (d: Observation) => Date;
   getY: (d: Observation) => number | null;
 }): Array<Observation> => {
   const wideArray = [];
-  const groupedMapEntries = Array.from(groupedMap.entries());
-  const groupedMapValues = Array.from(groupedMap.values());
+
+  const groupedMap = useMemo(() => {
+    return group(data, (d) => d[xKey] as string);
+  }, [data, xKey]);
+
+  const groupedMapEntries = useMemo(() => {
+    return [...groupedMap.entries()];
+  }, [groupedMap]);
+
+  const groupedMapValues = useMemo(() => {
+    return [...groupedMap.values()];
+  }, [groupedMap]);
 
   let baseObservation: Observation = {};
   let imputeMissingValue:
@@ -187,14 +185,27 @@ export const getTemporalWideDataWithImputedValues = ({
 
   switch (imputationType) {
     case "none":
-      return getWideData({ xKey, groupedMap, getSegment, getY });
+      for (const [key, values] of groupedMap) {
+        let observation: Observation = {
+          [xKey]: key,
+          total: sum(values, getY),
+        };
+
+        for (const value of values) {
+          observation[getSegment(value)] = getY(value);
+        }
+
+        wideArray.push(observation);
+      }
+
+      return wideArray;
     case "zeros":
       baseObservation = Object.assign(
         {},
         // Due to the fact we are using stackOffsetDiverging to draw stacked charts,
         // this workaround prevents stacking zero values at zero, which makes segments
         // overlap with each other.
-        ...segments.map((segment) => ({ [segment]: Number.MIN_VALUE }))
+        ...segments!.map((segment) => ({ [segment]: Number.MIN_VALUE }))
       );
       break;
     case "linear":
@@ -209,7 +220,7 @@ export const getTemporalWideDataWithImputedValues = ({
           .slice(0, cutoff)
           .flat()
           .reverse()
-          .find((d) => d[segmentKey] === segment);
+          .find((d) => getSegment(d) === segment);
       };
 
       const getNext = (
@@ -219,7 +230,7 @@ export const getTemporalWideDataWithImputedValues = ({
         return groupedMapValues
           .slice(cutoff + 1)
           .flat()
-          .find((d) => d[segmentKey] === segment);
+          .find((d) => getSegment(d) === segment);
       };
 
       imputeMissingValue = (
@@ -230,7 +241,7 @@ export const getTemporalWideDataWithImputedValues = ({
         const nextCached = nextCache[segment];
 
         if (nextCached) {
-          if (currentTime > getX(nextCached).getTime()) {
+          if (currentTime > getX!(nextCached).getTime()) {
             previousCache[segment] = nextCached;
             nextCache[segment] = getNext(segment, cutoff);
           }
@@ -239,12 +250,12 @@ export const getTemporalWideDataWithImputedValues = ({
         const previous = previousCache[segment] || getPrevious(segment, cutoff);
 
         if (previous) {
-          const previousTime = getX(previous).getTime();
+          const previousTime = getX!(previous).getTime();
           const previousValue = getY(previous) as number;
           const next = nextCache[segment] || getNext(segment, cutoff);
 
           if (next) {
-            const nextTime = getX(next).getTime();
+            const nextTime = getX!(next).getTime();
             const nextValue = getY(next) as number;
             const k = (currentTime - previousTime) / (nextTime - previousTime);
 
@@ -273,9 +284,9 @@ export const getTemporalWideDataWithImputedValues = ({
       observation[getSegment(value)] = getY(value);
     }
 
-    if (values.length !== segments.length && imputeMissingValue) {
+    if (values.length !== segments!.length && imputeMissingValue) {
       const currentTime = new Date(date).getTime();
-      const segmentsToFill = segments.filter(
+      const segmentsToFill = segments!.filter(
         (d) => !Object.keys(observation).includes(d)
       );
 

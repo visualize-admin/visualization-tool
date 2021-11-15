@@ -19,6 +19,7 @@ import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
+import { useSegment } from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { InteractiveFiltersProvider } from "../shared/use-interactive-filters";
@@ -64,13 +65,7 @@ const useGroupedBarsState = ({
     (d: Observation) => d[fields.y.componentIri] as string,
     [fields.y.componentIri]
   );
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment && fields.segment.componentIri
-        ? (d[fields.segment.componentIri] as string)
-        : "segment",
-    [fields.segment]
-  );
+  const getSegment = useSegment(fields.segment?.componentIri);
 
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??

@@ -2,7 +2,6 @@ import {
   ascending,
   descending,
   extent,
-  group,
   max,
   min,
   rollup,
@@ -19,11 +18,10 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { AreaFields } from "../../configurator";
 import {
   getPalette,
-  parseDate,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
@@ -34,9 +32,10 @@ import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
-  getTemporalWideDataWithImputedValues,
-  getWideData,
   usePreparedData,
+  useSegment,
+  useTemporalX,
+  useWideData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -95,20 +94,12 @@ const useAreasState = ({
 
   const hasSegment = fields.segment;
 
-  const getX = useCallback(
-    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
-    [fields.x.componentIri]
-  );
+  const getX = useTemporalX(fields.x.componentIri);
   const getY = (d: Observation): number | null => {
     const v = d[fields.y.componentIri];
     return v !== null ? +v : null;
   };
-  const segmentKey = fields.segment ? fields.segment.componentIri : "segment";
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
-    [fields.segment]
-  );
+  const getSegment = useSegment(fields.segment?.componentIri);
   const allSegments = [...new Set(data.map((d) => getSegment(d)))];
 
   const xKey = fields.x.componentIri;
@@ -125,16 +116,7 @@ const useAreasState = ({
         .sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
-  const allDataGroupedMap = group(
-    sortedData,
-    (d) => d[fields.x.componentIri] as string
-  );
-  const allDataWide = getWideData({
-    groupedMap: allDataGroupedMap,
-    getSegment,
-    getY,
-    xKey,
-  });
+  const allDataWide = useWideData({ data: sortedData, getSegment, getY, xKey });
 
   // Data for chart
   const preparedData = usePreparedData({
@@ -146,17 +128,11 @@ const useAreasState = ({
     getSegment,
   });
 
-  const groupedMap = group(
-    preparedData,
-    (d) => d[fields.x.componentIri] as string
-  );
-
-  const chartWideData = getTemporalWideDataWithImputedValues({
-    groupedMap,
+  const chartWideData = useWideData({
+    data: preparedData,
     xKey,
     segments: allSegments,
-    imputationType: fields.y.imputationType || "none",
-    segmentKey,
+    imputationType: fields.y.imputationType,
     getSegment,
     getY,
     getX,

@@ -7,7 +7,7 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import React, { ReactNode, useCallback } from "react";
+import React, { ReactNode } from "react";
 import { ScatterPlotFields } from "../../configurator";
 import {
   getPalette,
@@ -16,7 +16,11 @@ import {
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  usePreparedData,
+  useSegment,
+} from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { TooltipScatterplot } from "../shared/interaction/tooltip-content";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -68,11 +72,7 @@ const useScatterplotState = ({
     const v = d[fields.y.componentIri];
     return v !== null ? +v : null;
   };
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
-    [fields.segment]
-  );
+  const getSegment = useSegment(fields.segment?.componentIri);
 
   // All data, sort by segment
   const sortedData = data.sort((a, b) =>

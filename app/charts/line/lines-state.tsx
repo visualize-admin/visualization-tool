@@ -11,11 +11,10 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {
   getPalette,
-  parseDate,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
@@ -26,8 +25,10 @@ import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
-  getWideData,
   usePreparedData,
+  useSegment,
+  useTemporalX,
+  useWideData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -87,19 +88,12 @@ const useLinesState = ({
     throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
   }
 
-  const getX = useCallback(
-    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
-    [fields.x.componentIri]
-  );
+  const getX = useTemporalX(fields.x.componentIri);
   const getY = (d: Observation): number | null => {
     const v = d[fields.y.componentIri];
     return v !== null ? +v : null;
   };
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
-    [fields.segment]
-  );
+  const getSegment = useSegment(fields.segment?.componentIri);
 
   const xKey = fields.x.componentIri;
 
@@ -107,16 +101,7 @@ const useLinesState = ({
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
-  const allDataGroupedMap = group(
-    sortedData,
-    (d) => d[fields.x.componentIri] as string
-  );
-  const allDataWide = getWideData({
-    groupedMap: allDataGroupedMap,
-    getSegment,
-    getY,
-    xKey,
-  });
+  const allDataWide = useWideData({ data: sortedData, getSegment, getY, xKey });
 
   // All Data
   const preparedData = usePreparedData({
@@ -129,11 +114,12 @@ const useLinesState = ({
   });
 
   const grouped = group(preparedData, getSegment);
-  const groupedMap = group(
-    preparedData,
-    (d) => d[fields.x.componentIri] as string
-  );
-  const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
+  const chartWideData = useWideData({
+    data: preparedData,
+    getSegment,
+    getY,
+    xKey,
+  });
 
   // x
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];

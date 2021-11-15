@@ -25,7 +25,6 @@ import React, { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
-  parseDate,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
@@ -34,8 +33,10 @@ import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import {
   getLabelWithUnit,
-  getWideData,
   usePreparedData,
+  useSegment,
+  useTemporalX,
+  useWideData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { useChartPadding } from "../shared/padding";
@@ -106,10 +107,7 @@ const useColumnsStackedState = ({
     (d: Observation): string => `${d[fields.x.componentIri]}`,
     [fields.x.componentIri]
   );
-  const getXAsDate = useCallback(
-    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
-    [fields.x.componentIri]
-  );
+  const getXAsDate = useTemporalX(fields.x.componentIri);
   const getY = useCallback(
     (d: Observation): number | null => {
       const v = d[fields.y.componentIri];
@@ -117,26 +115,14 @@ const useColumnsStackedState = ({
     },
     [fields.y.componentIri]
   );
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment && fields.segment.componentIri
-        ? `${d[fields.segment.componentIri]}`
-        : "segment",
-    [fields.segment]
-  );
+  const getSegment = useSegment(fields.segment?.componentIri);
   const xKey = fields.x.componentIri;
 
   // All Data
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
-  const allDataGroupedMap = group(data, getX);
-  const allDataWide = getWideData({
-    groupedMap: allDataGroupedMap,
-    getSegment,
-    getY,
-    xKey,
-  });
+  const allDataWide = useWideData({ data, getSegment, getY, xKey });
   const xOrder = allDataWide
     .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
     .map((d, i) => getX(d));
@@ -165,7 +151,12 @@ const useColumnsStackedState = ({
   });
 
   const groupedMap = group(preparedData, getX);
-  const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
+  const chartWideData = useWideData({
+    data: preparedData,
+    xKey,
+    getSegment,
+    getY,
+  });
 
   //Ordered segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;

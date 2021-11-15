@@ -18,13 +18,17 @@ import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   mkNumber,
-  parseDate,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
-import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  usePreparedData,
+  useSegment,
+  useTemporalX,
+} from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { useChartPadding } from "../shared/padding";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -95,10 +99,7 @@ const useColumnsState = ({
     (d: Observation): string => `${d[fields.x.componentIri]}`,
     [fields.x.componentIri]
   );
-  const getXAsDate = useCallback(
-    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
-    [fields.x.componentIri]
-  );
+  const getXAsDate = useTemporalX(fields.x.componentIri);
   const getY = useCallback(
     (d: Observation): number | null => {
       const v = d[fields.y.componentIri];
@@ -106,13 +107,7 @@ const useColumnsState = ({
     },
     [fields.y.componentIri]
   );
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment && fields.segment.componentIri
-        ? `${d[fields.segment.componentIri]}`
-        : "segment",
-    [fields.segment]
-  );
+  const getSegment = useSegment(fields.segment?.componentIri);
 
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
