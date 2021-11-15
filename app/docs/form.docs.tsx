@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { markdown, ReactSpecimen } from "catalog";
 import React, { useState } from "react";
 import {
@@ -9,6 +10,7 @@ import {
   SearchField,
   Switch,
 } from "../components/form";
+import SearchAutocomplete from "../components/search-autocomplete";
 
 const SwitchExample = () => {
   const [checked, toggle] = useState(false);
@@ -155,6 +157,21 @@ ${(
         />
       </ReactSpecimen>
     )}
+
+
+  ## Search autocomplete
+
+  ${(
+    <ReactSpecimen span={2}>
+      <>
+        <SearchAutocomplete
+          onSelectedItemChange={({ selectedItem }) =>
+            alert(`You chose ${selectedItem?.label} (${selectedItem?.iri})`)
+          }
+        />
+      </>
+    </ReactSpecimen>
+  )}
 
   # For developers
 

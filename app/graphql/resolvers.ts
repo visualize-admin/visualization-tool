@@ -12,7 +12,7 @@ import {
   getCubes,
   getSparqlEditorUrl,
 } from "../rdf/queries";
-import { loadThemes } from "../rdf/query-cube-metadata";
+import { loadOrganizations, loadThemes } from "../rdf/query-cube-metadata";
 import truthy from "../utils/truthy";
 import {
   DataCubeResolvers,
@@ -118,6 +118,9 @@ const Query: QueryResolvers = {
   themes: async (_, { locale }: { locale: string }) => {
     return (await loadThemes({ locale })).filter(truthy);
   },
+  organizations: async (_, { locale }: { locale: string }) => {
+    return (await loadOrganizations({ locale })).filter(truthy);
+  },
 };
 
 const DataCube: DataCubeResolvers = {
@@ -133,6 +136,7 @@ const DataCube: DataCubeResolvers = {
   description: ({ data: { description } }) => description ?? null,
   datePublished: ({ data: { datePublished } }) => datePublished ?? null,
   themes: ({ data: { themes } }) => themes || [],
+  creator: ({ data: { creator } }) => creator ?? null,
   dimensions: async ({ cube, locale }) => {
     const dimensions = await getCubeDimensions({
       cube,
@@ -234,6 +238,15 @@ export const resolvers: Resolvers = {
     label: async (parent, _, { loaders }) => {
       if (!parent.label) {
         const resolvedTheme = await loaders.themes.load(parent.iri);
+        return resolvedTheme.label;
+      }
+      return parent.label;
+    },
+  },
+  DataCubeOrganization: {
+    label: async (parent, _, { loaders }) => {
+      if (!parent.label) {
+        const resolvedTheme = await loaders.organizations.load(parent.iri);
         return resolvedTheme.label;
       }
       return parent.label;

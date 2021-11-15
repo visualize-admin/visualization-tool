@@ -60,4 +60,4 @@ export const loadTheme = async (theme: string = "federal") => {
   return themeModule;
 };
 
-export const useTheme = () => (useThemeUI().theme as unknown) as Theme;
+export const useTheme = () => useThemeUI().theme as unknown as Theme;

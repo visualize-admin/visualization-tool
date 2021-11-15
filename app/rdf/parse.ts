@@ -32,6 +32,11 @@ export const isCubePublished = (cube: Cube): boolean =>
       t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
     );
 
+/**
+ * Parses a cube coming from rdf-cube-view-query into a simple javascript object
+ *
+ * @see https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
+ */
 export const parseCube = ({
   cube,
   locale,
@@ -40,7 +45,7 @@ export const parseCube = ({
   locale: string;
 }): ResolvedDataCube => {
   const outOpts = { language: getQueryLocales(locale) };
-  // See https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
+  const creatorIri = cube.out(ns.dcterms.creator).value;
   return {
     cube,
     locale,
@@ -57,7 +62,12 @@ export const parseCube = ({
       themes: cube
         .out(ns.dcat.theme)
         ?.values.filter(truthy)
-        .map((t) => ({ iri: t, __typename: "DataCubeTheme" })),
+        .map((t) => ({ iri: t })),
+      creator: creatorIri
+        ? {
+            iri: creatorIri,
+          }
+        : undefined,
       versionHistory: cube.in(ns.schema.hasPart)?.value,
       contactPoint: {
         name: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,

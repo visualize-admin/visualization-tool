@@ -6,7 +6,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../lib/run-middleware";
-import { createThemeLoader } from "../../rdf/query-cube-metadata";
+import {
+  createOrganizationLoader,
+  createThemeLoader,
+} from "../../rdf/query-cube-metadata";
 
 const cors = configureCors();
 
@@ -21,6 +24,9 @@ const server = new ApolloServer({
     loaders: {
       themes: new DataLoader(
         createThemeLoader({ locale: req.headers["accept-language"] })
+      ),
+      organizations: new DataLoader(
+        createOrganizationLoader({ locale: req.headers["accept-language"] })
       ),
     },
   }),

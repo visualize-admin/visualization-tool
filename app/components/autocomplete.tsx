@@ -1,0 +1,155 @@
+import * as React from "react";
+import {
+  useCombobox,
+  UseComboboxState,
+  UseComboboxStateChangeOptions,
+  UseComboboxStateChange,
+} from "downshift";
+import { useState } from "react";
+import { Box, BoxProps, Flex, FlexProps, Input } from "@theme-ui/components";
+import { Themed } from "@theme-ui/mdx";
+
+const menuStyles = {
+  listStyleType: "none",
+  marginLeft: 0,
+};
+
+function AutocompleteList({ ...boxProps }: BoxProps) {
+  return (
+    <Box
+      as="ul"
+      {...boxProps}
+      sx={{
+        pl: 0,
+        listStyleType: "none",
+        ...boxProps.sx,
+        bg: "monochrome100",
+        boxShadow: "primary",
+        borderRadius: 10,
+        overflow: "hidden",
+      }}
+    >
+      {boxProps.children}
+    </Box>
+  );
+}
+
+function AutocompleteResult({
+  icon,
+  ...boxProps
+}: { icon: React.ReactNode } & BoxProps) {
+  return (
+    <Flex
+      as="li"
+      {...boxProps}
+      sx={{
+        alignItems: "center",
+        px: 4,
+        py: 4,
+      }}
+    >
+      {icon ? <Box sx={{ width: 24, height: 24 }}>{icon}</Box> : null}
+      {boxProps.children}
+    </Flex>
+  );
+}
+
+export type AutocompleteProps<TItem> = {
+  items: TItem[];
+  placeholder?: string;
+  getItemSearchText: (item: TItem) => string;
+  getItemIcon?: (item: TItem) => React.ReactNode;
+  onSelectedItemChange: (item: UseComboboxStateChange<TItem>) => void;
+  sx?: FlexProps["sx"];
+};
+
+function Autocomplete<TItem>({
+  items,
+  placeholder,
+  getItemSearchText,
+  getItemIcon,
+  onSelectedItemChange,
+  sx,
+}: AutocompleteProps<TItem>) {
+  const [inputItems, setInputItems] = useState(items);
+
+  const stateReducer = React.useCallback(
+    (
+      state: UseComboboxState<TItem>,
+      actionAndChanges: UseComboboxStateChangeOptions<TItem>
+    ) => {
+      const { type, changes } = actionAndChanges;
+      // returning an uppercased version of the item string.
+      switch (type) {
+        // also on selection.
+        case useCombobox.stateChangeTypes.ItemClick:
+        case useCombobox.stateChangeTypes.InputKeyDownEnter:
+        case useCombobox.stateChangeTypes.InputBlur:
+          return {
+            ...changes,
+            // if we had an item selected.
+            ...(changes.selectedItem && {
+              // we will show it uppercased.
+              inputValue: getItemSearchText(changes.selectedItem),
+            }),
+          };
+        default:
+          return changes; // otherwise business as usual.
+      }
+    },
+    [getItemSearchText]
+  );
+  const {
+    isOpen,
+    getMenuProps,
+    getInputProps,
+    getComboboxProps,
+    highlightedIndex,
+    getItemProps,
+  } = useCombobox({
+    items: inputItems,
+    stateReducer,
+    onSelectedItemChange,
+    onInputValueChange: ({ inputValue }) => {
+      if (!inputValue) {
+        return;
+      }
+      setInputItems(
+        items.filter((item) =>
+          getItemSearchText(item)
+            .toLowerCase()
+            .startsWith(inputValue.toLowerCase())
+        )
+      );
+    },
+  });
+
+  return (
+    <Flex sx={{ flexDirection: "column", ...sx }}>
+      <div {...getComboboxProps()}>
+        <Input
+          {...getInputProps()}
+          placeholder={placeholder}
+          sx={{ bg: "monochrome100", borderColor: "monochrome300" }}
+        />
+      </div>
+      <AutocompleteList {...getMenuProps()} sx={menuStyles}>
+        {isOpen &&
+          inputItems.map((item, index) => (
+            <AutocompleteResult
+              style={
+                highlightedIndex === index ? { backgroundColor: "#bde4ff" } : {}
+              }
+              key={`${item}${index}`}
+              icon={getItemIcon ? getItemIcon(item) : null}
+              {...getItemProps({ item, index })}
+            >
+              {getItemSearchText(item)}
+            </AutocompleteResult>
+          ))}
+      </AutocompleteList>
+    </Flex>
+  );
+}
+
+export default Autocomplete;

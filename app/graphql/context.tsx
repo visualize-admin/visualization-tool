@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { createClient, Provider } from "urql";
 import { GRAPHQL_ENDPOINT } from "../domain/env";
+import { defaultLocale } from "../src";
 
 const client = createClient({
   url: GRAPHQL_ENDPOINT,
@@ -11,7 +12,7 @@ const client = createClient({
         : undefined;
     return {
       headers: {
-        "Accept-Language": lang || "de",
+        "Accept-Language": lang ? lang : defaultLocale,
       },
     };
   },

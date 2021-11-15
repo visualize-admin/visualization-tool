@@ -16,18 +16,6 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   if (data?.dataCubeByIri) {
     return (
       <Box sx={{ m: 4 }}>
-        <DataSetMetadataTitle>
-          <Trans id="dataset.metadata.title">Title</Trans>
-        </DataSetMetadataTitle>
-        <DataSetMetadataBody>{data.dataCubeByIri.title}</DataSetMetadataBody>
-
-        <DataSetMetadataTitle>
-          <Trans id="dataset.metadata.description">Description</Trans>
-        </DataSetMetadataTitle>
-        <DataSetMetadataBody>
-          {data.dataCubeByIri.description || "–"}
-        </DataSetMetadataBody>
-
         {data.dataCubeByIri.publisher && (
           <>
             <DataSetMetadataTitle>

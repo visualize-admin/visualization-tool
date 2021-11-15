@@ -30,7 +30,11 @@ import { loadResourceLabels } from "./query-labels";
 import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
 import truthy from "../utils/truthy";
-import { DataCubeSearchFilter, DataCubeTheme } from "../graphql/query-hooks";
+import {
+  DataCubeOrganization,
+  DataCubeSearchFilter,
+  DataCubeTheme,
+} from "../graphql/query-hooks";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -124,10 +128,26 @@ export const getCubes = async ({
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();
 
-  const themeFilters = filters ? filters.filter((x) => x.type === "THEME") : [];
+  const themeFilters = filters
+    ? filters.filter(
+        (x) => x.type === ("DataCubeTheme" as DataCubeTheme["__typename"])
+      )
+    : [];
   const themeQueryFilter = Cube.filter.in(
     ns.dcat.theme,
     themeFilters.map((x) => rdf.namedNode(x.value))
+  );
+
+  const orgFilters = filters
+    ? filters.filter(
+        (x) =>
+          x.type ===
+          ("DataCubeOrganization" as DataCubeOrganization["__typename"])
+      )
+    : [];
+  const orgQueryFilter = Cube.filter.in(
+    ns.dcterms.creator,
+    orgFilters.map((x) => rdf.namedNode(x.value))
   );
 
   const cubesFilters = [
@@ -141,6 +161,7 @@ export const getCubes = async ({
           ns.adminVocabulary("CreativeWorkStatus/Published"),
         ]),
     themeFilters.length > 0 ? themeQueryFilter : null,
+    orgFilters.length > 0 ? orgQueryFilter : null,
   ].filter(truthy);
 
   const cubes = await source.cubes({
