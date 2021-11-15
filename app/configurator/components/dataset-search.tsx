@@ -42,8 +42,6 @@ import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import Tag from "./Tag";
 import Link from "next/link";
 import { BrowseParams } from "../../pages/browse";
-import Inspector from "react-inspector";
-import { theme } from "../../themes/dark";
 import {
   queryDatasetCountByOrganization,
   queryDatasetCountByTheme,
@@ -51,8 +49,27 @@ import {
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
-export const useSearchQueryState = () => {
+export type NavState = {
+  theme: {
+    expanded: boolean;
+  };
+  organization: {
+    expanded: boolean;
+  };
+};
+
+const defaultNavState = {
+  theme: {
+    expanded: true,
+  },
+  organization: {
+    expanded: true,
+  },
+};
+
+export const useBrowseState = () => {
   const [query, setQuery] = useState<string>("");
+  const [navState, setNavState] = useState<NavState>(defaultNavState);
 
   const [order, setOrder] = useState<DataCubeResultOrder>(
     DataCubeResultOrder.TitleAsc
@@ -134,8 +151,19 @@ export const useSearchQueryState = () => {
           addFilter(cat);
         }
       },
+      navState,
+      setNavState,
     }),
-    [filters, includeDrafts, order, query, removeFilter, addFilter]
+    [
+      filters,
+      includeDrafts,
+      order,
+      query,
+      removeFilter,
+      addFilter,
+      navState,
+      setNavState,
+    ]
   );
 };
 
@@ -205,6 +233,13 @@ export const BrowseStateProvider = ({
     });
     if (filters) {
       setFilters(filters);
+    }
+    if (params.type && !params.iri) {
+      setNavState({
+        theme: { expanded: false },
+        organization: { expanded: false },
+        [params.type]: { expanded: true },
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params, themeData, orgData]);
@@ -529,12 +564,16 @@ export const SearchFilters = () => {
 
         {/* Theme tree */}
         {themeFilter ? null : (
-          <Accordion initialExpanded>
+          <Accordion expanded={navState.theme.expanded}>
             {filters.length === 1 ? null : (
               <AccordionSummary sx={{ mb: "block" }}>
-                <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-                  Themes
-                </Text>
+                <Link passHref href="/browse/theme">
+                  <ThemeUILink variant="initial">
+                    <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+                      Themes
+                    </Text>
+                  </ThemeUILink>
+                </Link>
               </AccordionSummary>
             )}
             <AccordionContent>
@@ -566,12 +605,16 @@ export const SearchFilters = () => {
 
         {/* Organization tree */}
         {orgFilter ? null : (
-          <Accordion initialExpanded>
+          <Accordion expanded={navState.organization.expanded}>
             {filters.length === 1 ? null : (
               <AccordionSummary sx={{ mb: 2 }}>
-                <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-                  Organizations
-                </Text>
+                <Link passHref href="/browse/organization">
+                  <ThemeUILink variant="initial">
+                    <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+                      Organizations
+                    </Text>
+                  </ThemeUILink>
+                </Link>
               </AccordionSummary>
             )}
             <AccordionContent>

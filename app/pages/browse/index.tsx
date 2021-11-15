@@ -1,6 +1,6 @@
 import { mapValues, pickBy } from "lodash";
 import { useRouter } from "next/router";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { AppLayout } from "../../components/layout";
 import { SelectDatasetStepV2 } from "../../configurator/components/SelectDatasetStep";
 import { ConfiguratorStateProvider } from "../../src";

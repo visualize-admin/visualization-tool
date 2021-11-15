@@ -1,5 +1,5 @@
 import { init } from "fp-ts/lib/ReadonlyNonEmptyArray";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box, BoxProps } from "theme-ui";
 
 const AccordionArrow = ({ expanded }: { expanded?: boolean }) => {
@@ -29,12 +29,17 @@ const AccordionContext = React.createContext<
 
 export const Accordion = ({
   children,
-  initialExpanded,
+  expanded,
 }: {
   children: React.ReactNode;
-  initialExpanded: boolean;
+  expanded: boolean;
 }) => {
-  const accordionState = useState(initialExpanded);
+  const accordionState = useState(expanded);
+  useEffect(() => {
+    if (accordionState[0] !== expanded) {
+      accordionState[1](expanded);
+    }
+  }, [expanded, accordionState[0], accordionState[1]]);
   return (
     <AccordionContext.Provider value={accordionState}>
       {children}
@@ -43,7 +48,7 @@ export const Accordion = ({
 };
 
 Accordion.defaultProps = {
-  initialExpanded: false,
+  expanded: false,
 };
 
 export const AccordionSummary = ({
