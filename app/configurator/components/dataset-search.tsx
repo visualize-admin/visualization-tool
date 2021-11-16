@@ -476,7 +476,8 @@ const NavItem = ({
     <Box
       sx={{
         mb: 1,
-        px: 4,
+        pl: 4,
+        pr: 2,
         py: 1,
         justifyContent: "space-between",
         alignItems: "center",
