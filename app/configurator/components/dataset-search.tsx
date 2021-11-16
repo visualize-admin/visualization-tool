@@ -753,7 +753,7 @@ export const SearchFilters = () => {
         {/* Theme tree */}
         <Stack spacing={4}>
           {navs[0]}
-          <Box ml={filters.length > 0 ? 2 : 0}>{navs[1]}</Box>
+          {navs[1]}
         </Stack>
       </Stack>
     </Flex>
