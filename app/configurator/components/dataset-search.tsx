@@ -672,7 +672,7 @@ export const SearchFilters = () => {
               <SvgIcCategories width={24} height={24} />
             </Box>
             <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-              Themes
+              <Trans id="browse-panel.themes">Themes</Trans>
             </Text>
           </ThemeUILink>
         </Link>
@@ -725,7 +725,7 @@ export const SearchFilters = () => {
               <SvgIcOrganisations width={24} height={24} />
             </Box>
             <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-              Organizations
+              <Trans id="browse-panel.organizations">Organizations</Trans>
             </Text>
           </ThemeUILink>
         </Link>
