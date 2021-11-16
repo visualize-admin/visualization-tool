@@ -624,6 +624,40 @@ export const Subthemes = ({
   );
 };
 
+type NavBoxTheme = {
+  bg: string;
+  borderColor: string;
+};
+
+export const NavBox = ({
+  children,
+  theme,
+  ...flexProps
+}: {
+  children: React.ReactNode;
+  theme: NavBoxTheme;
+} & FlexProps) => {
+  return (
+    <Flex
+      {...flexProps}
+      sx={{
+        alignItems: "center",
+        p: 3,
+        justifyContent: "space-between",
+        cursor: "pointer",
+        // border: "1px solid",
+        // borderColor: theme.borderColor,
+        bg: theme.bg,
+        borderRadius: 4,
+        height: "2.5rem",
+        mb: 2,
+      }}
+    >
+      {children}
+    </Flex>
+  );
+};
+
 export const SearchFilters = () => {
   const locale = useLocale();
   const { filters, onResetFilters, onRemoveFilter, navState } =
@@ -654,12 +688,11 @@ export const SearchFilters = () => {
   }, [allThemes, allOrgs]);
 
   const themeNav = (
-    <Accordion
-      initialExpanded
-      expanded={navState.theme.expanded}
-      theme={{ bg: "successLight", borderColor: "categoryGreen" }}
-    >
-      <AccordionSummary sx={{ mb: "block" }}>
+    <>
+      <NavBox
+        theme={{ bg: "successLight", borderColor: "categoryGreen" }}
+        sx={{ mb: "block" }}
+      >
         <Link passHref href="/browse/theme">
           <ThemeUILink
             variant="initial"
@@ -673,46 +706,43 @@ export const SearchFilters = () => {
             </Text>
           </ThemeUILink>
         </Link>
-      </AccordionSummary>
-      <AccordionContent>
-        <Box>
-          {allThemesAlpha
-            ? allThemesAlpha.map((theme) => {
-                if (!theme.label) {
-                  return null;
-                }
-                if (!counts[theme.iri]) {
-                  return null;
-                }
-                if (themeFilter && themeFilter !== theme) {
-                  return null;
-                }
-                return (
-                  <NavItem
-                    active={themeFilter === theme}
-                    filters={filters}
-                    key={theme.iri}
-                    next={theme}
-                    count={counts[theme.iri]}
-                    theme={themeNavItemTheme}
-                  >
-                    {theme.label}
-                  </NavItem>
-                );
-              })
-            : null}
-        </Box>
-      </AccordionContent>
-    </Accordion>
+      </NavBox>
+      <Box>
+        {allThemesAlpha
+          ? allThemesAlpha.map((theme) => {
+              if (!theme.label) {
+                return null;
+              }
+              if (!counts[theme.iri]) {
+                return null;
+              }
+              if (themeFilter && themeFilter !== theme) {
+                return null;
+              }
+              return (
+                <NavItem
+                  active={themeFilter === theme}
+                  filters={filters}
+                  key={theme.iri}
+                  next={theme}
+                  count={counts[theme.iri]}
+                  theme={themeNavItemTheme}
+                >
+                  {theme.label}
+                </NavItem>
+              );
+            })
+          : null}
+      </Box>
+    </>
   );
 
   const orgNav = (
-    <Accordion
-      initialExpanded
-      expanded={navState.organization.expanded}
-      theme={{ bg: "primaryLight", borderColor: "organisationBlue" }}
-    >
-      <AccordionSummary sx={{ mb: 2 }}>
+    <>
+      <NavBox
+        theme={{ bg: "primaryLight", borderColor: "organisationBlue" }}
+        sx={{ mb: 2 }}
+      >
         <Link passHref href="/browse/organization">
           <ThemeUILink
             variant="initial"
@@ -726,44 +756,42 @@ export const SearchFilters = () => {
             </Text>
           </ThemeUILink>
         </Link>
-      </AccordionSummary>
-      <AccordionContent>
-        <Box>
-          {allOrgsAlpha
-            ? allOrgsAlpha.map((org) => {
-                if (!org.label) {
-                  return null;
-                }
-                if (!counts[org.iri] && orgFilter !== org) {
-                  return null;
-                }
-                if (orgFilter && orgFilter !== org) {
-                  return null;
-                }
-                return (
-                  <NavItem
-                    key={org.iri}
-                    filters={filters}
-                    active={orgFilter === org}
-                    next={org}
-                    count={counts[org.iri]}
-                    theme={organizationNavItemTheme}
-                  >
-                    {org.label}
-                  </NavItem>
-                );
-              })
-            : null}
-          {orgFilter && filters[0] === orgFilter ? (
-            <Subthemes
-              organization={orgFilter}
-              filters={filters}
-              counts={counts}
-            />
-          ) : null}
-        </Box>
-      </AccordionContent>
-    </Accordion>
+      </NavBox>
+      <Box>
+        {allOrgsAlpha
+          ? allOrgsAlpha.map((org) => {
+              if (!org.label) {
+                return null;
+              }
+              if (!counts[org.iri] && orgFilter !== org) {
+                return null;
+              }
+              if (orgFilter && orgFilter !== org) {
+                return null;
+              }
+              return (
+                <NavItem
+                  key={org.iri}
+                  filters={filters}
+                  active={orgFilter === org}
+                  next={org}
+                  count={counts[org.iri]}
+                  theme={organizationNavItemTheme}
+                >
+                  {org.label}
+                </NavItem>
+              );
+            })
+          : null}
+        {orgFilter && filters[0] === orgFilter ? (
+          <Subthemes
+            organization={orgFilter}
+            filters={filters}
+            counts={counts}
+          />
+        ) : null}
+      </Box>
+    </>
   );
 
   let navs = [themeNav, orgNav];
