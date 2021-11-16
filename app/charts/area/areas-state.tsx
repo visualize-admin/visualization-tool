@@ -13,7 +13,6 @@ import {
   ScaleTime,
   scaleTime,
   stack,
-  stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
   stackOrderReverse,
@@ -34,6 +33,7 @@ import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
   getWideData,
+  stackOffsetDivergingPositiveZeros,
   useOptionalNumericVariable,
   usePreparedData,
   useSegment,
@@ -221,7 +221,7 @@ const useAreasState = ({
 
   const stacked = stack()
     .order(stackOrder)
-    .offset(stackOffsetDiverging)
+    .offset(stackOffsetDivergingPositiveZeros)
     .keys(segments);
 
   const series = stacked(chartWideData as { [key: string]: number }[]);

@@ -182,6 +182,28 @@ export const useSegment = (
   return getSegment;
 };
 
+// Stacking helpers.
+// Modified from d3 source code to treat 0s as positive values and stack them correctly
+// in area charts.
+export const stackOffsetDivergingPositiveZeros = (
+  series: any,
+  order: any
+): void => {
+  const n = series.length;
+
+  if (!(n > 0)) return;
+
+  for (let i, j = 0, d, dy, yp, yn, m = series[order[0]].length; j < m; ++j) {
+    for (yp = yn = 0, i = 0; i < n; ++i) {
+      if ((dy = (d = series[order[i]][j])[1] - d[0]) >= 0) {
+        (d[0] = yp), (d[1] = yp += dy);
+      } else {
+        (d[1] = yn), (d[0] = yn += dy);
+      }
+    }
+  }
+};
+
 // Helper to pivot a dataset to a wider format.
 // Currently, imputation is only applicable to temporal charts (specifically, stacked area charts).
 export const getWideData = ({
