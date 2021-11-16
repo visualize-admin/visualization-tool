@@ -757,7 +757,7 @@ export const SearchFilters = () => {
                 );
               })
             : null}
-          {orgFilter ? (
+          {orgFilter && filters[0] === orgFilter ? (
             <Subthemes
               organization={orgFilter}
               filters={filters}
@@ -894,9 +894,16 @@ export const DatasetResult = ({
       }}
     >
       <Stack spacing={2}>
-        <Text variant="paragraph2" color="monochrome600">
-          {datePublished ? <DateFormat date={datePublished} /> : null}
-        </Text>
+        <Flex sx={{ justifyContent: "space-between" }}>
+          <Text variant="paragraph2" color="monochrome600">
+            {datePublished ? <DateFormat date={datePublished} /> : null}
+          </Text>
+          {isDraft && (
+            <Tag type="draft">
+              <Trans id="dataset.tag.draft">Draft</Trans>
+            </Tag>
+          )}
+        </Flex>
         <Text as="div" variant="paragraph1" pb={1}>
           {highlightedTitle ? (
             <Box
@@ -931,11 +938,6 @@ export const DatasetResult = ({
           )}
         </Text>
         <Stack spacing={1} direction="row">
-          {isDraft && (
-            <Tag type="draft">
-              <Trans id="dataset.tag.draft">Draft</Trans>
-            </Tag>
-          )}
           {themes && showTags
             ? sortBy(themes, (t) => t.label).map((t) => (
                 <Link
