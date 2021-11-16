@@ -23,8 +23,8 @@ const Tag = ({
       sx={{
         bg:
           type === "DataCubeTheme" || type == "draft"
-            ? "primaryLight"
-            : "successLight",
+            ? "successLight"
+            : "primaryLight",
         mt: 2,
         px: 2,
         width: "fit-content",
