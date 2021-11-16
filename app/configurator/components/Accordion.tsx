@@ -34,14 +34,15 @@ export const Accordion = ({
   children: React.ReactNode;
   expanded: boolean;
 }) => {
-  const accordionState = useState(expanded);
+  const expandedState = useState(expanded);
   useEffect(() => {
-    if (accordionState[0] !== expanded) {
-      accordionState[1](expanded);
+    if (expandedState[0] !== expanded) {
+      expandedState[1](expanded);
     }
-  }, [expanded, accordionState[0], accordionState[1]]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded]);
   return (
-    <AccordionContext.Provider value={accordionState}>
+    <AccordionContext.Provider value={expandedState}>
       {children}
     </AccordionContext.Provider>
   );
