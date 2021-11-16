@@ -1,5 +1,8 @@
 import { Box, Button, Flex, Text } from "theme-ui";
-import { ReactNode, useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
+import { useRouter } from "next/router";
+import { Trans } from "@lingui/macro";
+
 import { default as IconAreaChart } from "../icons/components/IcChartArea";
 import { default as IconBarChart } from "../icons/components/IcChartBar";
 import { default as IconColumnChart } from "../icons/components/IcChartColumn";
@@ -13,9 +16,9 @@ import { default as IconText } from "../icons/components/IcText";
 import { default as IconX } from "../icons/components/IcXAxis";
 import { default as IconY } from "../icons/components/IcYAxis";
 import { HintRed } from "../components/hint";
-import NextLink from "next/link";
 import SearchAutocomplete from "../components/search-autocomplete";
-import { useRouter } from "next/router";
+import Stack from "../components/Stack";
+import Link from "next/link";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
@@ -32,7 +35,7 @@ const ICONS = [
   { Icon: IconBarChart, color: "#008F85" },
 ];
 
-const SearchAutocompleteNavigator = () => {
+const BrowsingSection = () => {
   const router = useRouter();
   const handleSelectAutocompleteItem = useCallback(
     ({ selectedItem }) => {
@@ -50,10 +53,33 @@ const SearchAutocompleteNavigator = () => {
   );
 
   return (
-    <SearchAutocomplete
-      placeholder="Search datasets..."
-      onSelectedItemChange={handleSelectAutocompleteItem}
-    />
+    <Stack
+      direction="column"
+      spacing={2}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        width: "100%",
+      }}
+    >
+      <SearchAutocomplete
+        placeholder="Search datasets..."
+        onSelectedItemChange={handleSelectAutocompleteItem}
+      />
+      <Stack direction="row" spacing={2}>
+        <Link passHref href="/browse/category">
+          <Button as="a">
+            <Trans id="intro.browse.categories">Categories</Trans>
+          </Button>
+        </Link>
+        <Link passHref href="/browse/organization">
+          <Button as="a">
+            <Trans id="intro.browse.organizations">Organizations</Trans>
+          </Button>
+        </Link>
+      </Stack>
+    </Stack>
   );
 };
 
@@ -142,9 +168,7 @@ export const Intro = ({
         >
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
-          <Flex sx={{ justifyContent: "center" }}>
-            <SearchAutocompleteNavigator />
-          </Flex>
+          <BrowsingSection />
         </Box>
       </Box>
     </>
