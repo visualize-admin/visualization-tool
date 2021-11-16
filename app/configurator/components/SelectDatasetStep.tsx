@@ -1,14 +1,10 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Box, Link, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { useConfiguratorState } from "..";
 import { ChartPanel } from "../../components/chart-panel";
 import { DataSetHint } from "../../components/hint";
-import {
-  DataCubeOrganization,
-  DataCubeTheme,
-  useDataCubesQuery,
-} from "../../graphql/query-hooks";
+import { useDataCubesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../src";
 import { DataSetMetadata } from "./dataset-metadata";
 import { DataSetPreview } from "./dataset-preview";
@@ -29,19 +25,6 @@ import {
 } from "./layout";
 import { flag } from "./flag";
 import { BrowseParams } from "../../pages/browse";
-
-const BreadcrumbFilter = ({
-  breadcrumb,
-  ...props
-}: {
-  breadcrumb: DataCubeTheme | DataCubeOrganization;
-}) => {
-  return (
-    <Link variant="inline" {...props}>
-      {breadcrumb.label}
-    </Link>
-  );
-};
 
 export const SelectDatasetStepV2Content = () => {
   const locale = useLocale();
@@ -126,16 +109,6 @@ export const SelectDatasetStepV2Content = () => {
           </Text>
           {state.dataSet ? null : (
             <Box mb={4}>
-              <>
-                {/* {filters ? (
-                  <Breadcrumbs
-                    breadcrumbs={breadcrumbs}
-                    Breadcrumb={BreadcrumbFilter}
-                    onClickBreadcrumb={handleClickBreadcrumb}
-                    mb={4}
-                  />
-                ) : null} */}
-              </>
               <SearchDatasetBox browseState={browseState} searchResult={data} />
             </Box>
           )}
