@@ -44,10 +44,6 @@ import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import Tag from "./Tag";
 import Link from "next/link";
 import { BrowseParams } from "../../pages/browse";
-import {
-  queryDatasetCountByOrganization,
-  queryDatasetCountByTheme,
-} from "../../rdf/query-cube-metadata";
 import SvgIcClose from "../../icons/components/IcClose";
 import SvgIcOrganisations from "../../icons/components/IcOrganisations";
 import SvgIcCategories from "../../icons/components/IcCategories";
@@ -588,9 +584,11 @@ const organizationIriToTermsetParentIri = {
 export const Subthemes = ({
   organization,
   filters,
+  counts,
 }: {
   organization: DataCubeOrganization;
   filters: SearchFilter[];
+  counts: ReturnType<typeof useDatasetCount>;
 }) => {
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
   const locale = useLocale();
@@ -607,17 +605,24 @@ export const Subthemes = ({
   );
   return (
     <>
-      {alphaSubthemes.map((x) => (
-        <NavItem
-          key={x.iri}
-          next={x}
-          filters={filters}
-          theme={themeNavItemTheme}
-          active={false}
-        >
-          {x.label}
-        </NavItem>
-      ))}
+      {alphaSubthemes.map((x) => {
+        const count = counts[x.iri];
+        if (!count) {
+          return null;
+        }
+        return (
+          <NavItem
+            key={x.iri}
+            next={x}
+            filters={filters}
+            theme={organizationNavItemTheme}
+            active={false}
+            count={count}
+          >
+            {x.label}
+          </NavItem>
+        );
+      })}
     </>
   );
 };
@@ -732,7 +737,7 @@ export const SearchFilters = () => {
                 if (!org.label) {
                   return null;
                 }
-                if (!counts[org.iri]) {
+                if (!counts[org.iri] && orgFilter !== org) {
                   return null;
                 }
                 if (orgFilter && orgFilter !== org) {
@@ -753,7 +758,11 @@ export const SearchFilters = () => {
               })
             : null}
           {orgFilter ? (
-            <Subthemes organization={orgFilter} filters={filters} />
+            <Subthemes
+              organization={orgFilter}
+              filters={filters}
+              counts={counts}
+            />
           ) : null}
         </Box>
       </AccordionContent>

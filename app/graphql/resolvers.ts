@@ -17,6 +17,7 @@ import {
   loadSubthemes,
   loadThemes,
   queryDatasetCountByOrganization,
+  queryDatasetCountBySubTheme,
   queryDatasetCountByTheme,
 } from "../rdf/query-cube-metadata";
 import truthy from "../utils/truthy";
@@ -133,14 +134,18 @@ const Query: QueryResolvers = {
   organizations: async (_, { locale }: { locale: string }) => {
     return (await loadOrganizations({ locale })).filter(truthy);
   },
-  datasetcount: async (_, { organization, theme, subtheme }) => {
+  datasetcount: async (_, { organization, theme }) => {
     const byOrg = await queryDatasetCountByOrganization({
       theme: theme || undefined,
     });
     const byTheme = await queryDatasetCountByTheme({
       organization: organization || undefined,
     });
-    return [...byOrg, ...byTheme];
+    const bySubTheme = await queryDatasetCountBySubTheme({
+      theme: theme || undefined,
+      organization: organization || undefined,
+    });
+    return [...byOrg, ...byTheme, ...bySubTheme];
   },
 };
 

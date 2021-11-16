@@ -96,11 +96,7 @@ export const queryDatasetCountByOrganization = async ({
   const baseQuery = SELECT`(count(?iri) as ?count) ?creator`.WHERE`
     ?iri ${dcterms.creator} ?creator.
     ${theme ? `?iri <${dcat.theme.value}> <${theme}>.` : ``}
-    ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ?iri ${
-      schema.creativeWorkStatus
-    } <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> 
-    FILTER NOT EXISTS {?iri schema:expires ?expiryDate }
+    ${makeVisualizeDatasetFilter()}
   `.build();
   const query = `${baseQuery} GROUP BY ?creator`;
   const results = await sparqlClient.query.select(query, {
@@ -112,6 +108,14 @@ export const queryDatasetCountByOrganization = async ({
       iri: r.creator.value,
     };
   });
+};
+
+const makeVisualizeDatasetFilter = () => {
+  return `
+    ?iri <${schema.workExample.value}> <https://ld.admin.ch/application/visualize>.
+    ?iri <${schema.creativeWorkStatus.value}> <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
+    FILTER NOT EXISTS {?iri schema:expires ?expiryDate }
+  `;
 };
 
 export const queryDatasetCountByTheme = async ({
@@ -127,14 +131,10 @@ export const queryDatasetCountByTheme = async ({
       ?iri <${dcterms.creator.value}> <${organization}>.`
         : ``
     }
-    ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ?iri ${
-      schema.creativeWorkStatus
-    } <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
     ?theme ${
       schema.inDefinedTermSet
     } <https://register.ld.admin.ch/opendataswiss/category>.
-    FILTER NOT EXISTS {?iri schema:expires ?expiryDate }
+    ${makeVisualizeDatasetFilter()}
   `.build();
   const query = `${baseQuery} GROUP BY ?theme`;
   const results = await sparqlClient.query.select(query, {
@@ -144,6 +144,42 @@ export const queryDatasetCountByTheme = async ({
     return {
       count: parseInt(r.count.value, 10),
       iri: r.theme.value,
+    };
+  });
+};
+
+export const queryDatasetCountBySubTheme = async ({
+  organization,
+  theme,
+}: {
+  organization?: string;
+  theme?: string;
+}) => {
+  const baseQuery = SELECT`(count(?iri) as ?count) ?subtheme`.WHERE`
+    ?iri ${schema.about} ?subtheme.
+    ${
+      organization
+        ? ` 
+      ?iri <${dcterms.creator.value}> <${organization}>.`
+        : ``
+    }
+    ${
+      theme
+        ? ` 
+      ?iri <${dcat.theme.value}> <${theme}>.`
+        : ``
+    }
+    ?iri ${schema.about} ?subtheme. 
+    ${makeVisualizeDatasetFilter()}
+  `.build();
+  const query = `${baseQuery} GROUP BY ?subtheme`;
+  const results = await sparqlClient.query.select(query, {
+    operation: "postUrlencoded",
+  });
+  return results.map((r) => {
+    return {
+      count: parseInt(r.count.value, 10),
+      iri: r.subtheme.value,
     };
   });
 };
