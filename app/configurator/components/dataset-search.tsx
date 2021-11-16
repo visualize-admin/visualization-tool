@@ -49,6 +49,7 @@ import {
 import SvgIcClose from "../../icons/components/IcClose";
 import SvgIcOrganisations from "../../icons/components/IcOrganisations";
 import SvgIcCategories from "../../icons/components/IcCategories";
+import isTypename from "../../utils/isTypename";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
@@ -608,12 +609,10 @@ export const SearchFilters = () => {
   const counts = useDatasetCount(filters);
 
   const themeFilter = filters.find(
-    (x) => x.__typename === ("DataCubeTheme" as DataCubeTheme["__typename"])
+    isTypename("DataCubeTheme" as DataCubeTheme["__typename"])
   );
   const orgFilter = filters.find(
-    (x) =>
-      x.__typename ===
-      ("DataCubeOrganization" as DataCubeOrganization["__typename"])
+    isTypename("DataCubeOrganization" as DataCubeOrganization["__typename"])
   );
 
   const [, dispatch] = useConfiguratorState();
