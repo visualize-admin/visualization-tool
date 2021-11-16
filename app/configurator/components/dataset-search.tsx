@@ -468,9 +468,8 @@ const NavItem = ({
     return "/browse/" + newFilters.map(encodeFilter).join("/");
   }, [filters, next]);
   const removeFilterPath = useMemo(() => {
-    const newFilters = [...filters].filter(
-      (f) => f.__typename !== next.__typename
-    );
+    const nextIndex = filters.findIndex((f) => f.iri === next.iri);
+    const newFilters = nextIndex === 0 ? [] : filters.slice(0, 1);
     return "/browse/" + newFilters.map(encodeFilter).join("/");
   }, [filters, next]);
   return (
