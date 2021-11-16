@@ -2,6 +2,7 @@ import {
   ascending,
   descending,
   extent,
+  group,
   max,
   min,
   rollup,
@@ -32,11 +33,12 @@ import { useLocale } from "../../locales/use-locale";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
+  getWideData,
   useOptionalNumericVariable,
   usePreparedData,
   useSegment,
+  useStringVariable,
   useTemporalVariable,
-  useWideData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -95,10 +97,14 @@ const useAreasState = ({
 
   const getX = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const getGroups = useStringVariable(fields.x.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   const hasSegment = fields.segment;
-  const allSegments = [...new Set(data.map((d) => getSegment(d)))];
+  const allSegments = useMemo(
+    () => [...new Set(data.map((d) => getSegment(d)))],
+    [data, getSegment]
+  );
 
   const xKey = fields.x.componentIri;
   const hasInteractiveTimeFilter = useMemo(
@@ -115,13 +121,21 @@ const useAreasState = ({
     [data, getX]
   );
 
-  const allDataWide = useWideData({
-    data: sortedData,
-    segments: allSegments,
-    getSegment,
-    getY,
-    xKey,
-  });
+  const sortedDataGroupedByX = useMemo(
+    () => group(data, getGroups),
+    [data, getGroups]
+  );
+
+  const allDataWide = useMemo(
+    () =>
+      getWideData({
+        dataGroupedByX: sortedDataGroupedByX,
+        xKey,
+        getY,
+        getSegment,
+      }),
+    [sortedDataGroupedByX, xKey, getY, getSegment]
+  );
 
   // Data for chart
   const preparedData = usePreparedData({
@@ -133,14 +147,30 @@ const useAreasState = ({
     getSegment,
   });
 
-  const chartWideData = useWideData({
-    data: preparedData,
-    xKey,
-    segments: allSegments,
-    imputationType: fields.y.imputationType,
-    getSegment,
-    getY,
-  });
+  const preparedDataGroupedByX = useMemo(
+    () => group(preparedData, getGroups),
+    [preparedData, getGroups]
+  );
+
+  const chartWideData = useMemo(
+    () =>
+      getWideData({
+        dataGroupedByX: preparedDataGroupedByX,
+        xKey,
+        getY,
+        allSegments,
+        getSegment,
+        imputationType: fields.y.imputationType,
+      }),
+    [
+      preparedDataGroupedByX,
+      xKey,
+      getY,
+      allSegments,
+      getSegment,
+      fields.y.imputationType,
+    ]
+  );
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 

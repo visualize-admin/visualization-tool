@@ -25,11 +25,12 @@ import { useTheme } from "../../themes";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
+  getWideData,
   useOptionalNumericVariable,
   usePreparedData,
   useSegment,
+  useStringVariable,
   useTemporalVariable,
-  useWideData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -91,12 +92,8 @@ const useLinesState = ({
 
   const getX = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const getGroups = useStringVariable(fields.x.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
-
-  const allSegments = useMemo(
-    () => [...new Set(data.map((d) => getSegment(d)))],
-    [data, getSegment]
-  );
 
   const xKey = fields.x.componentIri;
 
@@ -104,12 +101,17 @@ const useLinesState = ({
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
-  const allDataWide = useWideData({
-    data: sortedData,
-    segments: allSegments,
-    getSegment,
-    getY,
+
+  const sortedDataGroupedByX = useMemo(
+    () => group(sortedData, getGroups),
+    [sortedData, getGroups]
+  );
+
+  const allDataWide = getWideData({
+    dataGroupedByX: sortedDataGroupedByX,
     xKey,
+    getY,
+    getSegment,
   });
 
   // All Data
@@ -122,13 +124,21 @@ const useLinesState = ({
     getSegment,
   });
 
-  const grouped = group(preparedData, getSegment);
-  const chartWideData = useWideData({
-    data: preparedData,
-    segments: allSegments,
-    getSegment,
-    getY,
+  const preparedDataGroupedBySegment = useMemo(
+    () => group(preparedData, getSegment),
+    [preparedData, getSegment]
+  );
+
+  const preparedDataGroupedByX = useMemo(
+    () => group(preparedData, getGroups),
+    [preparedData, getGroups]
+  );
+
+  const chartWideData = getWideData({
+    dataGroupedByX: preparedDataGroupedByX,
     xKey,
+    getY,
+    getSegment,
   });
 
   // x
@@ -279,7 +289,7 @@ const useLinesState = ({
     yAxisLabel,
     segments,
     colors,
-    grouped,
+    grouped: preparedDataGroupedBySegment,
     chartWideData,
     allDataWide,
     xKey,

@@ -33,12 +33,12 @@ import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import {
   getLabelWithUnit,
+  getWideData,
   useOptionalNumericVariable,
   usePreparedData,
   useSegment,
   useStringVariable,
   useTemporalVariable,
-  useWideData,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { useChartPadding } from "../shared/padding";
@@ -110,26 +110,31 @@ const useColumnsStackedState = ({
   const getY = useOptionalNumericVariable(fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
 
-  const allSegments = useMemo(
-    () => [...new Set(data.map((d) => getSegment(d)))],
-    [data, getSegment]
-  );
   const xKey = fields.x.componentIri;
 
   // All Data
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
-  const allDataWide = useWideData({
-    data,
-    segments: allSegments,
-    getSegment,
-    getY,
-    xKey,
-  });
-  const xOrder = allDataWide
-    .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
-    .map((d, i) => getX(d));
+  const allDataGroupedByX = useMemo(() => group(data, getX), [data, getX]);
+  const allDataWide = useMemo(
+    () =>
+      getWideData({
+        dataGroupedByX: allDataGroupedByX,
+        xKey,
+        getY,
+        getSegment,
+      }),
+    [allDataGroupedByX, xKey, getY, getSegment]
+  );
+
+  const xOrder = useMemo(
+    () =>
+      allDataWide
+        .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
+        .map((d) => getX(d)),
+    [allDataWide, getX]
+  );
 
   const sortedData = useMemo(
     () =>
@@ -154,13 +159,16 @@ const useColumnsStackedState = ({
     getSegment,
   });
 
-  const groupedMap = group(preparedData, getX);
-  const chartWideData = useWideData({
-    data: preparedData,
+  const preparedDataGroupedByX = useMemo(
+    () => group(preparedData, getX),
+    [preparedData, getX]
+  );
+
+  const chartWideData = getWideData({
+    dataGroupedByX: preparedDataGroupedByX,
     xKey,
-    segments: allSegments,
-    getSegment,
     getY,
+    getSegment,
   });
 
   //Ordered segments
@@ -417,7 +425,7 @@ const useColumnsStackedState = ({
     colors,
     chartWideData,
     allDataWide,
-    grouped: [...groupedMap],
+    grouped: [...preparedDataGroupedByX],
     series,
     getAnnotationInfo,
     xIsTime,

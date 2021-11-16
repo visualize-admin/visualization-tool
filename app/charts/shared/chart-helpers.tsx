@@ -13,6 +13,10 @@ import { FIELD_VALUE_NONE } from "../../configurator/constants";
 import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import {
+  imputeTemporalLinearSeries,
+  interpolateZerosValue,
+} from "./imputation";
+import {
   InteractiveFiltersState,
   useInteractiveFilters,
 } from "./use-interactive-filters";
@@ -178,159 +182,113 @@ export const useSegment = (
   return getSegment;
 };
 
-// Helper to pivot a dataset to a wider format
-export const useWideData = ({
-  data,
-  imputationType = "none",
+// Helper to pivot a dataset to a wider format.
+// Currently, imputation is only applicable to temporal charts (specifically, stacked area charts).
+export const getWideData = ({
+  dataGroupedByX,
   xKey,
-  segments,
-  getSegment,
-  getX,
   getY,
+  allSegments,
+  getSegment,
+  imputationType = "none",
 }: {
-  data: Array<Observation>;
-  imputationType?: ImputationType;
+  dataGroupedByX: InternMap<string, Array<Observation>>;
   xKey: string;
-  segments?: Array<string>;
-  getSegment: (d: Observation) => string;
-  getX?: (d: Observation) => Date;
   getY: (d: Observation) => number | null;
-}): Array<Observation> => {
-  const wideArray = [];
-
-  const groupedMap = useMemo(() => {
-    return group(data, (d) => d[xKey] as string);
-  }, [data, xKey]);
-
-  const groupedMapEntries = useMemo(() => {
-    return [...groupedMap.entries()];
-  }, [groupedMap]);
-
-  const groupedMapValues = useMemo(() => {
-    return [...groupedMap.values()];
-  }, [groupedMap]);
-
-  let baseObservation: Observation = {};
-  let imputeMissingValue:
-    | ((segment: string, currentTime: number, cutoff: number) => number)
-    | undefined = undefined;
-
+  allSegments?: Array<string>;
+  getSegment: (d: Observation) => string;
+  imputationType?: ImputationType;
+}) => {
   switch (imputationType) {
-    case "none":
-      for (const [key, values] of groupedMap) {
-        let observation: Observation = {
-          [xKey]: key,
-          total: sum(values, getY),
-        };
-
-        for (const value of values) {
-          observation[getSegment(value)] = getY(value);
-        }
-
-        wideArray.push(observation);
-      }
-
-      return wideArray;
-    case "zeros":
-      baseObservation = Object.assign(
-        {},
-        // Due to the fact we are using stackOffsetDiverging to draw stacked charts,
-        // this workaround prevents stacking zero values at zero, which makes segments
-        // overlap with each other.
-        ...segments!.map((segment) => ({ [segment]: Number.MIN_VALUE }))
-      );
-      break;
     case "linear":
-      const previousCache: { [key: string]: Observation | undefined } = {};
-      const nextCache: { [key: string]: Observation | undefined } = {};
+      if (allSegments) {
+        const dataGroupedByXEntries = [...dataGroupedByX.entries()];
+        const dataGroupedByXWithImputedValues: Array<{
+          [key: string]: number;
+        }> = Array.from({ length: dataGroupedByX.size }, () => ({}));
 
-      const getPrevious = (
-        segment: string,
-        cutoff: number
-      ): Observation | undefined => {
-        return groupedMapValues
-          .slice(0, cutoff)
-          .flat()
-          .reverse()
-          .find((d) => getSegment(d) === segment);
-      };
+        for (const segment of allSegments) {
+          const imputedSeriesValues = imputeTemporalLinearSeries({
+            dataSortedByX: dataGroupedByXEntries.map(([date, values]) => {
+              const observation = values.find((d) => getSegment(d) === segment);
 
-      const getNext = (
-        segment: string,
-        cutoff: number
-      ): Observation | undefined => {
-        return groupedMapValues
-          .slice(cutoff + 1)
-          .flat()
-          .find((d) => getSegment(d) === segment);
-      };
+              return {
+                date: new Date(date),
+                value: observation ? getY(observation) : null,
+              };
+            }),
+          });
 
-      imputeMissingValue = (
-        segment: string,
-        currentTime: number,
-        cutoff: number
-      ) => {
-        const nextCached = nextCache[segment];
-
-        if (nextCached) {
-          if (currentTime > getX!(nextCached).getTime()) {
-            previousCache[segment] = nextCached;
-            nextCache[segment] = getNext(segment, cutoff);
+          for (let i = 0; i < imputedSeriesValues.length; i++) {
+            dataGroupedByXWithImputedValues[i][segment] =
+              imputedSeriesValues[i].value;
           }
         }
 
-        const previous = previousCache[segment] || getPrevious(segment, cutoff);
-
-        if (previous) {
-          const previousTime = getX!(previous).getTime();
-          const previousValue = getY(previous) as number;
-          const next = nextCache[segment] || getNext(segment, cutoff);
-
-          if (next) {
-            const nextTime = getX!(next).getTime();
-            const nextValue = getY(next) as number;
-            const k = (currentTime - previousTime) / (nextTime - previousTime);
-
-            return previousValue + (nextValue - previousValue) * k;
-          }
-        }
-
-        return 0;
-      };
-      break;
-    default:
-      const _exhaustiveCheck: never = imputationType;
-      return _exhaustiveCheck;
-  }
-
-  for (let i = 0; i < groupedMap.size; i++) {
-    const [date, values] = groupedMapEntries[i];
-
-    let observation = {
-      ...baseObservation,
-      [xKey]: date,
-      total: sum(values, getY),
-    };
-
-    for (const value of values) {
-      observation[getSegment(value)] = getY(value);
-    }
-
-    if (values.length !== segments!.length && imputeMissingValue) {
-      const currentTime = new Date(date).getTime();
-      const segmentsToFill = segments!.filter(
-        (d) => !Object.keys(observation).includes(d)
-      );
-
-      for (const segment of segmentsToFill) {
-        observation[segment] = imputeMissingValue(segment, currentTime, i);
+        return getBaseWideData({
+          dataGroupedByX,
+          xKey,
+          getY,
+          getSegment,
+          getOptionalObservationProps: (i) =>
+            allSegments.map((d) => ({
+              [d]: dataGroupedByXWithImputedValues[i][d],
+            })),
+        });
       }
-    }
+    case "zeros":
+      if (allSegments) {
+        return getBaseWideData({
+          dataGroupedByX,
+          xKey,
+          getY,
+          getSegment,
+          getOptionalObservationProps: () =>
+            allSegments.map((d) => ({
+              [d]: interpolateZerosValue(),
+            })),
+        });
+      }
+    case "none":
+    default:
+      return getBaseWideData({ dataGroupedByX, xKey, getY, getSegment });
+  }
+};
 
-    wideArray.push(observation);
+const getBaseWideData = ({
+  dataGroupedByX,
+  xKey,
+  getY,
+  getSegment,
+  getOptionalObservationProps = () => [],
+}: {
+  dataGroupedByX: InternMap<string, Array<Observation>>;
+  xKey: string;
+  getY: (d: Observation) => number | null;
+  getSegment: (d: Observation) => string;
+  getOptionalObservationProps?: (
+    datumIndex: number
+  ) => Array<{ [key: string]: number }>;
+}): Array<Observation> => {
+  const wideData = [];
+  const dataGroupedByXEntries = [...dataGroupedByX.entries()];
+
+  for (let i = 0; i < dataGroupedByX.size; i++) {
+    const [date, values] = dataGroupedByXEntries[i];
+
+    const observation: Observation = Object.assign(
+      {
+        [xKey]: date,
+        total: sum(values, getY),
+      },
+      ...getOptionalObservationProps(i),
+      ...values.map((d) => ({ [getSegment(d)]: getY(d) }))
+    );
+
+    wideData.push(observation);
   }
 
-  return wideArray;
+  return wideData;
 };
 
 const SlugRe = /\W+/g;
@@ -345,10 +303,10 @@ export const getLabelWithUnit = (
 };
 
 export const checkForMissingValuesInSegments = (
-  groupedMap: InternMap<string, Array<Observation>>,
+  dataGroupedByX: InternMap<string, Array<Observation>>,
   segments: Array<string>
 ): boolean => {
-  for (const value of groupedMap.values()) {
+  for (const value of dataGroupedByX.values()) {
     if (value.length !== segments.length) {
       return true;
     }
@@ -363,7 +321,7 @@ export const useImputationNeeded = ({
 }: {
   chartConfig: ChartConfig;
   data?: Array<Observation>;
-}) => {
+}): boolean => {
   const imputationNeeded = useMemo(() => {
     if (isAreaConfig(chartConfig) && data) {
       const getSegment = (d: Observation): string =>
@@ -378,6 +336,8 @@ export const useImputationNeeded = ({
         ),
         [...new Set(data.map((d) => getSegment(d)))]
       );
+    } else {
+      return false;
     }
   }, [chartConfig, data]);
 
