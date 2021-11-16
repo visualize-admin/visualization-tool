@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import get from "lodash/get";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Box, Flex } from "theme-ui";
 import {
   ChartType,
@@ -47,14 +47,17 @@ export const ChartOptionsSelector = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const measures =
-    "y" in state.chartConfig.fields
-      ? [state.chartConfig.fields.y.componentIri]
-      : isTableConfig(state.chartConfig)
-      ? Object.values(state.chartConfig.fields).flatMap((f) =>
-          f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
-        )
-      : [];
+  const measures = useMemo(
+    () =>
+      "y" in state.chartConfig.fields
+        ? [state.chartConfig.fields.y.componentIri]
+        : isTableConfig(state.chartConfig)
+        ? Object.values(state.chartConfig.fields).flatMap((f) =>
+            f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
+          )
+        : [],
+    [state.chartConfig]
+  );
 
   const [{ data }] = useDataCubeObservationsQuery({
     variables: {
