@@ -1,10 +1,10 @@
 import { interpolate } from "d3-interpolate";
 
 export const interpolateZerosValue = () => {
-  return Number.MIN_VALUE;
+  return 0;
 };
 
-export const interpolateTemporalLinearValue = ({
+const interpolateTemporalLinearValue = ({
   previousValue,
   nextValue,
   previousTime,
@@ -38,24 +38,29 @@ export const imputeTemporalLinearSeries = ({
 }: {
   dataSortedByX: Array<TemporalSeriesBeforeImputationEntry>;
 }): Array<TemporalSeriesAfterImputationEntry> => {
-  const indexedData: Array<[TemporalSeriesBeforeImputationEntry, number]> =
-    dataSortedByX.map((d, i) => [d, i]);
-  const presentDataIndexes = indexedData
-    .filter((d) => d[0].value !== null)
-    .map((d) => d[1]);
-  const missingDataIndexes = indexedData
-    .filter((d) => d[0].value === null)
-    .map((d) => d[1]);
+  const presentDataIndexes = [];
+  const missingDataIndexes = [];
+
+  for (let i = 0; i < dataSortedByX.length; i++) {
+    if (dataSortedByX[i].value !== null) {
+      presentDataIndexes.push(i);
+    } else {
+      missingDataIndexes.push(i);
+    }
+  }
 
   for (const missingDataIndex of missingDataIndexes) {
-    const nextIndex = presentDataIndexes.findIndex((d) => d > missingDataIndex);
+    const nextPresentDataIndex = presentDataIndexes.findIndex(
+      (d) => d > missingDataIndex
+    );
 
-    if (nextIndex) {
-      const previousIndex = nextIndex - 1;
+    if (nextPresentDataIndex) {
+      const previousPresentDataIndex = nextPresentDataIndex - 1;
 
-      if (previousIndex >= 0) {
-        const previous = dataSortedByX[presentDataIndexes[previousIndex]];
-        const next = dataSortedByX[presentDataIndexes[nextIndex]];
+      if (previousPresentDataIndex >= 0) {
+        const previous =
+          dataSortedByX[presentDataIndexes[previousPresentDataIndex]];
+        const next = dataSortedByX[presentDataIndexes[nextPresentDataIndex]];
 
         dataSortedByX[missingDataIndex] = {
           date: dataSortedByX[missingDataIndex].date,

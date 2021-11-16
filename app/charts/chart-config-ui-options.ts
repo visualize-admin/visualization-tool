@@ -1,4 +1,5 @@
-import { ChartType, imputationTypes, SortingOrder } from "../configurator";
+import { ChartType, SortingOrder } from "../configurator";
+import { imputationTypes } from "../configurator/config-types";
 
 /**
  * This module controls chart controls displayed in the UI.
