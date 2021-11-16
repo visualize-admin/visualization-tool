@@ -1,4 +1,4 @@
-import { SELECT } from "@tpluscode/sparql-builder";
+import { SELECT, sparql } from "@tpluscode/sparql-builder";
 
 import { sparqlClient } from "./sparql-client";
 import { schema, dcat, dcterms } from "../../app/rdf/namespace";
@@ -95,7 +95,7 @@ export const queryDatasetCountByOrganization = async ({
 }) => {
   const baseQuery = SELECT`(count(?iri) as ?count) ?creator`.WHERE`
     ?iri ${dcterms.creator} ?creator.
-    ${theme ? `?iri <${dcat.theme.value}> <${theme}>.` : ``}
+    ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
     ${makeVisualizeDatasetFilter()}
   `.build();
   const query = `${baseQuery} GROUP BY ?creator`;
@@ -111,10 +111,10 @@ export const queryDatasetCountByOrganization = async ({
 };
 
 const makeVisualizeDatasetFilter = () => {
-  return `
-    ?iri <${schema.workExample.value}> <https://ld.admin.ch/application/visualize>.
-    ?iri <${schema.creativeWorkStatus.value}> <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
-    FILTER NOT EXISTS {?iri schema:expires ?expiryDate }
+  return sparql`
+    ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
+    ?iri ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
+    FILTER NOT EXISTS {?iri ${schema.expires} ?expiryDate }
   `;
 };
 
@@ -125,12 +125,7 @@ export const queryDatasetCountByTheme = async ({
 }) => {
   const baseQuery = SELECT`(count(?iri) as ?count) ?theme`.WHERE`
     ?iri ${dcat.theme} ?theme.
-    ${
-      organization
-        ? ` 
-      ?iri <${dcterms.creator.value}> <${organization}>.`
-        : ``
-    }
+    ${organization ? sparql`?iri ${dcterms.creator} <${organization}>.` : ``}
     ?theme ${
       schema.inDefinedTermSet
     } <https://register.ld.admin.ch/opendataswiss/category>.
@@ -157,18 +152,8 @@ export const queryDatasetCountBySubTheme = async ({
 }) => {
   const baseQuery = SELECT`(count(?iri) as ?count) ?subtheme`.WHERE`
     ?iri ${schema.about} ?subtheme.
-    ${
-      organization
-        ? ` 
-      ?iri <${dcterms.creator.value}> <${organization}>.`
-        : ``
-    }
-    ${
-      theme
-        ? ` 
-      ?iri <${dcat.theme.value}> <${theme}>.`
-        : ``
-    }
+    ${organization ? sparql`?iri ${dcterms.creator} <${organization}>.` : ``}
+    ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
     ?iri ${schema.about} ?subtheme. 
     ${makeVisualizeDatasetFilter()}
   `.build();
@@ -179,7 +164,7 @@ export const queryDatasetCountBySubTheme = async ({
   return results.map((r) => {
     return {
       count: parseInt(r.count.value, 10),
-      iri: r.subtheme.value,
+      iri: r.subtheme?.value,
     };
   });
 };
