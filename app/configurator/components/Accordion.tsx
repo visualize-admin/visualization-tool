@@ -1,6 +1,7 @@
-import { init } from "fp-ts/lib/ReadonlyNonEmptyArray";
-import React, { useContext, useEffect, useState } from "react";
-import { Box, BoxProps } from "theme-ui";
+import { string } from "fp-ts";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { Flex, FlexProps } from "theme-ui";
+import { theme } from "../../themes/federal";
 
 const AccordionArrow = ({ expanded }: { expanded?: boolean }) => {
   return (
@@ -23,16 +24,27 @@ const AccordionArrow = ({ expanded }: { expanded?: boolean }) => {
   );
 };
 
-const AccordionContext = React.createContext<
-  [boolean, React.Dispatch<React.SetStateAction<boolean>>]
->([false, () => false]);
+const defaultTheme = {
+  borderColor: "monochrome400",
+  bg: "monochrome300",
+};
+
+const AccordionContext = React.createContext<{
+  expandedState: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+  theme: AccordionTheme;
+}>({
+  expandedState: [false, () => false],
+  theme: defaultTheme,
+});
 
 export const Accordion = ({
   children,
   expanded,
+  theme = defaultTheme,
 }: {
   children: React.ReactNode;
   expanded: boolean;
+  theme?: AccordionTheme;
 }) => {
   const expandedState = useState(expanded);
   useEffect(() => {
@@ -41,9 +53,13 @@ export const Accordion = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded]);
+  const context = useMemo(
+    () => ({ expandedState, theme }),
+    [expandedState, theme]
+  );
   return (
-    <AccordionContext.Provider value={expandedState}>
-      {children}
+    <AccordionContext.Provider value={context}>
+      <div>{children}</div>
     </AccordionContext.Provider>
   );
 };
@@ -52,24 +68,41 @@ Accordion.defaultProps = {
   expanded: false,
 };
 
+type AccordionTheme = {
+  borderColor: string;
+  bg: string;
+};
+
 export const AccordionSummary = ({
   children,
-  ...boxProps
+  ...flexProps
 }: {
   children: React.ReactNode;
-} & BoxProps) => {
-  const [expanded, setExpanded] = useContext(AccordionContext);
+} & FlexProps) => {
+  const {
+    expandedState: [expanded, setExpanded],
+    theme,
+  } = useContext(AccordionContext);
   return (
-    <Box
+    <Flex
       onClick={() => setExpanded((expanded) => !expanded)}
-      {...boxProps}
+      {...flexProps}
       sx={{
+        alignItems: "center",
+        p: 3,
+        justifyContent: "space-between",
         cursor: "pointer",
-        ...boxProps.sx,
+        // border: "1px solid",
+        // borderColor: theme.borderColor,
+        bg: theme.bg,
+        borderRadius: 4,
+        height: "2.5rem",
+        mb: 2,
       }}
     >
-      <AccordionArrow expanded={expanded} /> {children}
-    </Box>
+      {children}
+      <AccordionArrow expanded={expanded} />
+    </Flex>
   );
 };
 
@@ -78,6 +111,8 @@ export const AccordionContent = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [expanded, setExpanded] = useContext(AccordionContext);
+  const {
+    expandedState: [expanded, setExpanded],
+  } = useContext(AccordionContext);
   return expanded ? <>{children}</> : null;
 };
