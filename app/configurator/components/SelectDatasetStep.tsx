@@ -121,7 +121,7 @@ export const SelectDatasetStepV2Content = () => {
             {state.dataSet
               ? null
               : filters.length > 0
-              ? filters[filters.length - 1].label
+              ? filters.map((f) => f.label).join(", ")
               : "Swiss Open Government Data"}
           </Text>
           {state.dataSet ? null : (
