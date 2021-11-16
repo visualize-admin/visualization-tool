@@ -19,6 +19,8 @@ import { HintRed } from "../components/hint";
 import SearchAutocomplete from "../components/search-autocomplete";
 import Stack from "../components/Stack";
 import Link from "next/link";
+import SvgIcCategories from "../icons/components/IcCategories";
+import SvgIcOrganisations from "../icons/components/IcOrganisations";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
@@ -67,15 +69,47 @@ const BrowsingSection = () => {
         placeholder="Search datasets..."
         onSelectedItemChange={handleSelectAutocompleteItem}
       />
-      <Stack direction="row" spacing={2}>
-        <Link passHref href="/browse/category">
-          <Button as="a">
-            <Trans id="intro.browse.categories">Categories</Trans>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+      >
+        <Link passHref href="/browse">
+          <Button
+            as="a"
+            sx={{
+              display: "flex",
+              bg: "primaryLight",
+              color: "primary",
+              "&:hover": {
+                bg: "primaryLight",
+                boxShadow: "primary",
+              },
+            }}
+          >
+            <Box as="span" mr={1}>
+              <SvgIcCategories width={20} height={16} />
+            </Box>
+            <Trans id="intro.browse.categories">Browse categories</Trans>
           </Button>
         </Link>
-        <Link passHref href="/browse/organization">
-          <Button as="a">
-            <Trans id="intro.browse.organizations">Organizations</Trans>
+        <Link passHref href="/browse">
+          <Button
+            as="a"
+            sx={{
+              display: "flex",
+              bg: "successLight",
+              color: "success",
+              "&:hover": {
+                bg: "successLight",
+                boxShadow: "primary",
+              },
+            }}
+          >
+            <Box as="span" mr={1}>
+              <SvgIcOrganisations width={20} height={20} />
+            </Box>
+            <Trans id="intro.browse.organizations">Browse organizations</Trans>
           </Button>
         </Link>
       </Stack>
