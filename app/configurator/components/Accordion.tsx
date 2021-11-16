@@ -40,13 +40,15 @@ const AccordionContext = React.createContext<{
 export const Accordion = ({
   children,
   expanded,
+  initialExpanded = false,
   theme = defaultTheme,
 }: {
   children: React.ReactNode;
+  initialExpanded: boolean;
   expanded: boolean;
   theme?: AccordionTheme;
 }) => {
-  const expandedState = useState(expanded);
+  const expandedState = useState(initialExpanded);
   useEffect(() => {
     if (expandedState[0] !== expanded) {
       expandedState[1](expanded);

@@ -435,13 +435,19 @@ const NavChip = ({
   );
 };
 
+const encodeFilter = (filter: SearchFilter) => {
+  const { iri, __typename } = filter;
+  return `${
+    __typename === "DataCubeTheme" ? "theme" : "organization"
+  }/${encodeURIComponent(iri)}`;
+};
+
 const NavItem = ({
   children,
   filters,
   next,
   count,
   active,
-  onRemoveFilter,
   theme = defaultNavItemTheme,
   ...props
 }: {
@@ -450,20 +456,19 @@ const NavItem = ({
   next: SearchFilter;
   count?: number;
   active: boolean;
-  onRemoveFilter: (filter: SearchFilter) => void;
   theme: typeof defaultNavItemTheme;
 } & ThemeUILinkProps) => {
   const path = useMemo(() => {
-    const encodeFilter = (filter: SearchFilter) => {
-      const { iri, __typename } = filter;
-      return `${
-        __typename === "DataCubeTheme" ? "theme" : "organization"
-      }/${encodeURIComponent(iri)}`;
-    };
     const newFilters = [...filters].filter(
       (f) => f.__typename !== next.__typename
     );
     newFilters.push(next);
+    return "/browse/" + newFilters.map(encodeFilter).join("/");
+  }, [filters, next]);
+  const removeFilterPath = useMemo(() => {
+    const newFilters = [...filters].filter(
+      (f) => f.__typename !== next.__typename
+    );
     return "/browse/" + newFilters.map(encodeFilter).join("/");
   }, [filters, next]);
   return (
@@ -484,24 +489,26 @@ const NavItem = ({
       {active ? (
         <>
           <Text variant="paragraph2">{children}</Text>
-          <Button
-            sx={{
-              bg: theme.activeBg,
-              color: theme.activeTextColor,
-              minWidth: "16px",
-              minHeight: "16px",
-              display: "block",
-              height: "auto",
-              width: "auto",
-              padding: 0,
-              "&:hover": {
-                background: "rgba(0, 0, 0, 0.25)",
-              },
-            }}
-            onClick={() => onRemoveFilter(next)}
-          >
-            <SvgIcClose width={24} height={24} />
-          </Button>
+          <Link href={removeFilterPath} passHref>
+            <Button
+              as="a"
+              sx={{
+                bg: theme.activeBg,
+                color: theme.activeTextColor,
+                minWidth: "16px",
+                minHeight: "16px",
+                display: "block",
+                height: "auto",
+                width: "auto",
+                padding: 0,
+                "&:hover": {
+                  background: "rgba(0, 0, 0, 0.25)",
+                },
+              }}
+            >
+              <SvgIcClose width={24} height={24} />
+            </Button>
+          </Link>
         </>
       ) : (
         <>
@@ -615,6 +622,108 @@ export const SearchFilters = () => {
       allOrgs ? sortBy(allOrgs.organizations, (x) => x?.label) : null,
     ];
   }, [allThemes, allOrgs]);
+
+  const themeNav = (
+    <Accordion
+      initialExpanded
+      expanded={navState.theme.expanded}
+      theme={{ bg: "successLight", borderColor: "categoryGreen" }}
+    >
+      <AccordionSummary sx={{ mb: "block" }}>
+        <Link passHref href="/browse/theme">
+          <ThemeUILink variant="initial">
+            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+              Themes
+            </Text>
+          </ThemeUILink>
+        </Link>
+      </AccordionSummary>
+      <AccordionContent>
+        <Box>
+          {allThemesAlpha
+            ? allThemesAlpha.map((theme) => {
+                if (!theme.label) {
+                  return null;
+                }
+                if (!counts[theme.iri]) {
+                  return null;
+                }
+                if (themeFilter && themeFilter !== theme) {
+                  return null;
+                }
+                return (
+                  <NavItem
+                    active={themeFilter === theme}
+                    filters={filters}
+                    key={theme.iri}
+                    next={theme}
+                    count={counts[theme.iri]}
+                    theme={themeNavItemTheme}
+                  >
+                    {theme.label}
+                  </NavItem>
+                );
+              })
+            : null}
+        </Box>
+      </AccordionContent>
+    </Accordion>
+  );
+
+  const orgNav = (
+    <Accordion
+      initialExpanded
+      expanded={navState.organization.expanded}
+      theme={{ bg: "primaryLight", borderColor: "organisationBlue" }}
+    >
+      <AccordionSummary sx={{ mb: 2 }}>
+        <Link passHref href="/browse/organization">
+          <ThemeUILink variant="initial">
+            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+              Organizations
+            </Text>
+          </ThemeUILink>
+        </Link>
+      </AccordionSummary>
+      <AccordionContent>
+        <Box>
+          {allOrgsAlpha
+            ? allOrgsAlpha.map((org) => {
+                if (!org.label) {
+                  return null;
+                }
+                if (!counts[org.iri]) {
+                  return null;
+                }
+                if (orgFilter && orgFilter !== org) {
+                  return null;
+                }
+                return (
+                  <NavItem
+                    key={org.iri}
+                    filters={filters}
+                    active={orgFilter === org}
+                    next={org}
+                    count={counts[org.iri]}
+                    theme={organizationNavItemTheme}
+                  >
+                    {org.label}
+                  </NavItem>
+                );
+              })
+            : null}
+        </Box>
+      </AccordionContent>
+    </Accordion>
+  );
+
+  let navs = [themeNav, orgNav];
+  if (filters[0]?.__typename === "DataCubeTheme") {
+    navs = [themeNav, orgNav];
+  } else if (filters[0]?.__typename === "DataCubeOrganization") {
+    navs = [orgNav, themeNav];
+  }
+
   return (
     <Flex
       sx={{
@@ -629,90 +738,8 @@ export const SearchFilters = () => {
       <Stack>
         {/* Theme tree */}
         <Stack spacing={4}>
-          <Accordion
-            expanded={navState.theme.expanded}
-            theme={{ bg: "successLight", borderColor: "categoryGreen" }}
-          >
-            <AccordionSummary sx={{ mb: "block" }}>
-              <Link passHref href="/browse/theme">
-                <ThemeUILink variant="initial">
-                  <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-                    Themes
-                  </Text>
-                </ThemeUILink>
-              </Link>
-            </AccordionSummary>
-            <AccordionContent>
-              <Box>
-                {allThemesAlpha
-                  ? allThemesAlpha.map((theme) => {
-                      if (!theme.label) {
-                        return null;
-                      }
-                      if (!counts[theme.iri]) {
-                        return null;
-                      }
-                      return (
-                        <NavItem
-                          active={themeFilter === theme}
-                          filters={filters}
-                          key={theme.iri}
-                          next={theme}
-                          count={counts[theme.iri]}
-                          theme={themeNavItemTheme}
-                          onRemoveFilter={onRemoveFilter}
-                        >
-                          {theme.label}
-                        </NavItem>
-                      );
-                    })
-                  : null}
-              </Box>
-            </AccordionContent>
-          </Accordion>
-
-          {/* Organization tree */}
-          <Accordion
-            expanded={navState.organization.expanded}
-            theme={{ bg: "primaryLight", borderColor: "organisationBlue" }}
-          >
-            <AccordionSummary sx={{ mb: 2 }}>
-              <Link passHref href="/browse/organization">
-                <ThemeUILink variant="initial">
-                  <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-                    Organizations
-                  </Text>
-                </ThemeUILink>
-              </Link>
-            </AccordionSummary>
-            <AccordionContent>
-              <Box>
-                {allOrgsAlpha
-                  ? allOrgsAlpha.map((org) => {
-                      if (!org.label) {
-                        return null;
-                      }
-                      if (!counts[org.iri]) {
-                        return null;
-                      }
-                      return (
-                        <NavItem
-                          key={org.iri}
-                          filters={filters}
-                          active={orgFilter === org}
-                          next={org}
-                          count={counts[org.iri]}
-                          theme={organizationNavItemTheme}
-                          onRemoveFilter={onRemoveFilter}
-                        >
-                          {org.label}
-                        </NavItem>
-                      );
-                    })
-                  : null}
-              </Box>
-            </AccordionContent>
-          </Accordion>
+          {navs[0]}
+          <Box ml={filters.length > 0 ? 2 : 0}>{navs[1]}</Box>
         </Stack>
       </Stack>
     </Flex>
