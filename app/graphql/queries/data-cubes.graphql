@@ -181,3 +181,14 @@ query Subthemes($locale: String!, $parentIri: String!) {
     iri
   }
 }
+
+query DatasetCount($theme: String, $organization: String, $subtheme: String) {
+  datasetcount(
+    theme: $theme
+    organization: $organization
+    subtheme: $subtheme
+  ) {
+    count
+    iri
+  }
+}

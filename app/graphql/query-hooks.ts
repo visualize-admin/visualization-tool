@@ -87,6 +87,12 @@ export type DataCubeTheme = {
   label?: Maybe<Scalars['String']>;
 };
 
+export type DatasetCount = {
+  __typename: 'DatasetCount';
+  iri: Scalars['String'];
+  count: Scalars['Int'];
+};
+
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
@@ -148,6 +154,7 @@ export type Query = {
   themes: Array<DataCubeTheme>;
   subthemes: Array<DataCubeTheme>;
   organizations: Array<DataCubeOrganization>;
+  datasetcount?: Maybe<Array<DatasetCount>>;
 };
 
 
@@ -180,6 +187,13 @@ export type QuerySubthemesArgs = {
 
 export type QueryOrganizationsArgs = {
   locale: Scalars['String'];
+};
+
+
+export type QueryDatasetcountArgs = {
+  theme?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']>;
+  subtheme?: Maybe<Scalars['String']>;
 };
 
 
@@ -375,6 +389,15 @@ export type SubthemesQueryVariables = Exact<{
 
 
 export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typename: 'DataCubeTheme', label?: Maybe<string>, iri: string }> };
+
+export type DatasetCountQueryVariables = Exact<{
+  theme?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']>;
+  subtheme?: Maybe<Scalars['String']>;
+}>;
+
+
+export type DatasetCountQuery = { __typename: 'Query', datasetcount?: Maybe<Array<{ __typename: 'DatasetCount', count: number, iri: string }>> };
 
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {
@@ -584,4 +607,16 @@ export const SubthemesDocument = gql`
 
 export function useSubthemesQuery(options: Omit<Urql.UseQueryArgs<SubthemesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<SubthemesQuery>({ query: SubthemesDocument, ...options });
+};
+export const DatasetCountDocument = gql`
+    query DatasetCount($theme: String, $organization: String, $subtheme: String) {
+  datasetcount(theme: $theme, organization: $organization, subtheme: $subtheme) {
+    count
+    iri
+  }
+}
+    `;
+
+export function useDatasetCountQuery(options: Omit<Urql.UseQueryArgs<DatasetCountQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DatasetCountQuery>({ query: DatasetCountDocument, ...options });
 };

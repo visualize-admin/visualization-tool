@@ -31,6 +31,7 @@ import {
   DataCubeTheme,
   OrganizationsQuery,
   ThemesQuery,
+  useDatasetCountQuery,
   useOrganizationsQuery,
   useSubthemesQuery,
   useThemesQuery,
@@ -563,38 +564,19 @@ const countListToIndexedCount = (l: { count: number; iri: string }[]) =>
   Object.fromEntries(l.map((o) => [o.iri, o.count]));
 
 const useDatasetCount = (filters: SearchFilter[]): Record<string, number> => {
-  const fetchOrgDatasetCount = useCallback(() => {
-    return queryDatasetCountByOrganization({
-      theme:
-        filters?.[0]?.__typename === "DataCubeTheme"
-          ? filters[0].iri
-          : undefined,
-    });
-  }, [filters]);
-  const fetchThemeDatasetCount = useCallback(() => {
-    return queryDatasetCountByTheme({
-      organization:
-        filters?.[0]?.__typename === "DataCubeOrganization"
-          ? filters[0].iri
-          : undefined,
-    });
-  }, [filters]);
+  const [{ data: datasetCounts }] = useDatasetCountQuery({
+    variables: {
+      theme: filters.find(isTypename("DataCubeTheme"))?.iri,
+      organization: filters.find(isTypename("DataCubeOrganization"))?.iri,
+    },
+  });
 
-  const { data: datasetCountByOrganization } = useQuery(
-    fetchOrgDatasetCount,
-    countListToIndexedCount
-  );
-  const { data: datasetCountByTheme } = useQuery(
-    fetchThemeDatasetCount,
-    countListToIndexedCount
-  );
   return useMemo(
     () =>
-      ({ ...datasetCountByOrganization, ...datasetCountByTheme } as Record<
-        string,
-        number
-      >),
-    [datasetCountByTheme, datasetCountByOrganization]
+      datasetCounts?.datasetcount
+        ? countListToIndexedCount(datasetCounts?.datasetcount)
+        : {},
+    [datasetCounts]
   );
 };
 
