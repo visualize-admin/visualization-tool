@@ -47,6 +47,8 @@ import {
   queryDatasetCountByTheme,
 } from "../../rdf/query-cube-metadata";
 import SvgIcClose from "../../icons/components/IcClose";
+import SvgIcOrganisations from "../../icons/components/IcOrganisations";
+import SvgIcCategories from "../../icons/components/IcCategories";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
@@ -631,7 +633,13 @@ export const SearchFilters = () => {
     >
       <AccordionSummary sx={{ mb: "block" }}>
         <Link passHref href="/browse/theme">
-          <ThemeUILink variant="initial">
+          <ThemeUILink
+            variant="initial"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Box as="span" color="categoryGreen" mr={2}>
+              <SvgIcCategories width={24} height={24} />
+            </Box>
             <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
               Themes
             </Text>
@@ -678,7 +686,13 @@ export const SearchFilters = () => {
     >
       <AccordionSummary sx={{ mb: 2 }}>
         <Link passHref href="/browse/organization">
-          <ThemeUILink variant="initial">
+          <ThemeUILink
+            variant="initial"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Box as="span" color="organizationBlue" mr={2}>
+              <SvgIcOrganisations width={24} height={24} />
+            </Box>
             <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
               Organizations
             </Text>
