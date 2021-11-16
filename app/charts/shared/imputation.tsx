@@ -4,7 +4,7 @@ export const interpolateZerosValue = () => {
   return 0;
 };
 
-const interpolateTemporalLinearValue = ({
+export const interpolateTemporalLinearValue = ({
   previousValue,
   nextValue,
   previousTime,
