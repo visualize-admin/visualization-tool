@@ -147,3 +147,25 @@ export const queryDatasetCountByTheme = async ({
     };
   });
 };
+
+export const loadSubthemes = async ({
+  parentIri,
+  locale,
+}: {
+  parentIri: string;
+  locale: string;
+}) => {
+  const query = SELECT`?iri ?label`.WHERE`
+    ?iri ${schema.inDefinedTermSet} <${parentIri}>;
+    ${makeLocalesFilter("?iri", schema.name, "?label", locale)}
+  `.build();
+  const results = await sparqlClient.query.select(query, {
+    operation: "postUrlencoded",
+  });
+  return results.map((r) => {
+    return {
+      iri: r.iri.value,
+      label: r.label.value,
+    };
+  });
+};

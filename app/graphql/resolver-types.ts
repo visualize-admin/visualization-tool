@@ -151,6 +151,7 @@ export type Query = {
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
   themes: Array<DataCubeTheme>;
+  subthemes: Array<DataCubeTheme>;
   organizations: Array<DataCubeOrganization>;
 };
 
@@ -173,6 +174,12 @@ export type QueryDataCubesArgs = {
 
 export type QueryThemesArgs = {
   locale: Scalars['String'];
+};
+
+
+export type QuerySubthemesArgs = {
+  locale: Scalars['String'];
+  parentIri: Scalars['String'];
 };
 
 
@@ -423,6 +430,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'iri' | 'latest'>>;
   dataCubes?: Resolver<Array<ResolversTypes['DataCubeResult']>, ParentType, ContextType, RequireFields<QueryDataCubesArgs, never>>;
   themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QueryThemesArgs, 'locale'>>;
+  subthemes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QuerySubthemesArgs, 'locale' | 'parentIri'>>;
   organizations?: Resolver<Array<ResolversTypes['DataCubeOrganization']>, ParentType, ContextType, RequireFields<QueryOrganizationsArgs, 'locale'>>;
 }>;
 

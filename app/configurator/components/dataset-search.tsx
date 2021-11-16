@@ -32,6 +32,7 @@ import {
   OrganizationsQuery,
   ThemesQuery,
   useOrganizationsQuery,
+  useSubthemesQuery,
   useThemesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
@@ -518,9 +519,11 @@ const NavItem = ({
           <Link href={path} passHref>
             <ThemeUILink variant="initial">{children}&nbsp;&nbsp;</ThemeUILink>
           </Link>
-          <NavChip color={theme.countColor} bg={theme.countBg}>
-            {count !== undefined ? `${count}` : ""}
-          </NavChip>
+          {count !== undefined ? (
+            <NavChip color={theme.countColor} bg={theme.countBg}>
+              {count}
+            </NavChip>
+          ) : null}
         </>
       )}
     </Box>
@@ -592,6 +595,48 @@ const useDatasetCount = (filters: SearchFilter[]): Record<string, number> => {
         number
       >),
     [datasetCountByTheme, datasetCountByOrganization]
+  );
+};
+
+const organizationIriToTermsetParentIri = {
+  "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu":
+    "https://register.ld.admin.ch/foen/theme",
+} as Record<string, string>;
+
+export const Subthemes = ({
+  organization,
+  filters,
+}: {
+  organization: DataCubeOrganization;
+  filters: SearchFilter[];
+}) => {
+  const termsetIri = organizationIriToTermsetParentIri[organization.iri];
+  const locale = useLocale();
+  const [{ data: subthemes }] = useSubthemesQuery({
+    variables: {
+      locale,
+      parentIri: termsetIri,
+    },
+    pause: !termsetIri,
+  });
+  const alphaSubthemes = useMemo(
+    () => sortBy(subthemes?.subthemes, (x) => x.label),
+    [subthemes]
+  );
+  return (
+    <>
+      {alphaSubthemes.map((x) => (
+        <NavItem
+          key={x.iri}
+          next={x}
+          filters={filters}
+          theme={themeNavItemTheme}
+          active={false}
+        >
+          {x.label}
+        </NavItem>
+      ))}
+    </>
   );
 };
 
@@ -725,6 +770,9 @@ export const SearchFilters = () => {
                 );
               })
             : null}
+          {orgFilter ? (
+            <Subthemes organization={orgFilter} filters={filters} />
+          ) : null}
         </Box>
       </AccordionContent>
     </Accordion>

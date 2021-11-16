@@ -140,5 +140,6 @@ type Query {
     filters: [DataCubeSearchFilter!]
   ): [DataCubeResult!]!
   themes(locale: String!): [DataCubeTheme!]!
+  subthemes(locale: String!, parentIri: String!): [DataCubeTheme!]!
   organizations(locale: String!): [DataCubeOrganization!]!
 }

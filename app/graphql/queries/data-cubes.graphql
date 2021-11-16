@@ -174,3 +174,10 @@ query Organizations($locale: String!) {
     label
   }
 }
+
+query Subthemes($locale: String!, $parentIri: String!) {
+  subthemes(locale: $locale, parentIri: $parentIri) {
+    label
+    iri
+  }
+}

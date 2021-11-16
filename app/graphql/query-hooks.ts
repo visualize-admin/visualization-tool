@@ -146,6 +146,7 @@ export type Query = {
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
   themes: Array<DataCubeTheme>;
+  subthemes: Array<DataCubeTheme>;
   organizations: Array<DataCubeOrganization>;
 };
 
@@ -168,6 +169,12 @@ export type QueryDataCubesArgs = {
 
 export type QueryThemesArgs = {
   locale: Scalars['String'];
+};
+
+
+export type QuerySubthemesArgs = {
+  locale: Scalars['String'];
+  parentIri: Scalars['String'];
 };
 
 
@@ -360,6 +367,14 @@ export type OrganizationsQueryVariables = Exact<{
 
 
 export type OrganizationsQuery = { __typename: 'Query', organizations: Array<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> };
+
+export type SubthemesQueryVariables = Exact<{
+  locale: Scalars['String'];
+  parentIri: Scalars['String'];
+}>;
+
+
+export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typename: 'DataCubeTheme', label?: Maybe<string>, iri: string }> };
 
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {
@@ -557,4 +572,16 @@ export const OrganizationsDocument = gql`
 
 export function useOrganizationsQuery(options: Omit<Urql.UseQueryArgs<OrganizationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<OrganizationsQuery>({ query: OrganizationsDocument, ...options });
+};
+export const SubthemesDocument = gql`
+    query Subthemes($locale: String!, $parentIri: String!) {
+  subthemes(locale: $locale, parentIri: $parentIri) {
+    label
+    iri
+  }
+}
+    `;
+
+export function useSubthemesQuery(options: Omit<Urql.UseQueryArgs<SubthemesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SubthemesQuery>({ query: SubthemesDocument, ...options });
 };
