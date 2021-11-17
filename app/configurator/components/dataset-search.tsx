@@ -14,7 +14,7 @@ import {
   Button,
   Flex,
   Text,
-  TextProps,
+  FlexProps,
   Link as ThemeUILink,
   LinkProps as ThemeUILinkProps,
   Card,
@@ -39,7 +39,6 @@ import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import { useLocale } from "../../locales/use-locale";
 import Stack from "../../components/Stack";
 import { useFormatDate } from "./ui-helpers";
-import { Accordion, AccordionSummary, AccordionContent } from "./Accordion";
 import Tag from "./Tag";
 import Link from "next/link";
 import { BrowseParams } from "../../pages/browse";
