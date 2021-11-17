@@ -13,9 +13,17 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/components/autocomplete.tsx:168
+#: app/components/search-autocomplete.tsx:69
+msgid "Browse {0}"
+msgstr "Parcourir {0}"
+
+#: app/components/autocomplete.tsx:171
 msgid "No results"
-msgstr ""
+msgstr "Aucun résultat"
+
+#: app/components/search-autocomplete.tsx:71
+msgid "Search “{0}”"
+msgstr "Chercher “{0}”"
 
 #: app/components/chart-preview.tsx:87
 msgid "annotation.add.description"
@@ -25,11 +33,11 @@ msgstr "[ Pas de description ]"
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
-#: app/configurator/components/dataset-search.tsx:728
+#: app/configurator/components/dataset-search.tsx:755
 msgid "browse-panel.organizations"
 msgstr "Organisations"
 
-#: app/configurator/components/dataset-search.tsx:675
+#: app/configurator/components/dataset-search.tsx:705
 msgid "browse-panel.themes"
 msgstr "Catégories"
 
@@ -561,7 +569,7 @@ msgstr "Afficher le champ de recherche"
 msgid "controls.title"
 msgstr "Titre"
 
-#: app/configurator/components/dataset-search.tsx:326
+#: app/configurator/components/dataset-search.tsx:343
 msgid "dataset.includeDrafts"
 msgstr ""
 
@@ -585,15 +593,15 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-search.tsx:294
+#: app/configurator/components/dataset-search.tsx:311
 msgid "dataset.order.newest"
 msgstr ""
 
-#: app/configurator/components/dataset-search.tsx:286
+#: app/configurator/components/dataset-search.tsx:303
 msgid "dataset.order.relevance"
 msgstr ""
 
-#: app/configurator/components/dataset-search.tsx:290
+#: app/configurator/components/dataset-search.tsx:307
 msgid "dataset.order.title"
 msgstr ""
 
@@ -607,19 +615,19 @@ msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'util
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/configurator/components/dataset-search.tsx:350
+#: app/configurator/components/dataset-search.tsx:367
 msgid "dataset.results"
 msgstr ""
 
-#: app/configurator/components/dataset-search.tsx:298
+#: app/configurator/components/dataset-search.tsx:315
 msgid "dataset.search.label"
 msgstr ""
 
-#: app/configurator/components/dataset-search.tsx:370
+#: app/configurator/components/dataset-search.tsx:387
 msgid "dataset.sortby"
 msgstr ""
 
-#: app/configurator/components/dataset-search.tsx:903
+#: app/configurator/components/dataset-search.tsx:928
 msgid "dataset.tag.draft"
 msgstr ""
 
@@ -703,11 +711,11 @@ msgstr "Masquer les filtres"
 msgid "interactive.data.filters.show"
 msgstr "Afficher les filtres"
 
-#: app/homepage/intro.tsx:93
+#: app/homepage/intro.tsx:102
 msgid "intro.browse.categories"
 msgstr "Parcourir les catégories"
 
-#: app/homepage/intro.tsx:112
+#: app/homepage/intro.tsx:121
 msgid "intro.browse.organizations"
 msgstr "Parcourir les organisations"
 
