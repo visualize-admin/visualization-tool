@@ -31,7 +31,6 @@ import {
   DataCubeTheme,
   OrganizationsQuery,
   ThemesQuery,
-  useDatasetCountQuery,
   useOrganizationsQuery,
   useSubthemesQuery,
   useThemesQuery,
@@ -48,6 +47,7 @@ import SvgIcClose from "../../icons/components/IcClose";
 import SvgIcOrganisations from "../../icons/components/IcOrganisations";
 import SvgIcCategories from "../../icons/components/IcCategories";
 import isTypename from "../../utils/isTypename";
+import useDatasetCount from "./use-dataset-count";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
@@ -554,26 +554,6 @@ const useQuery = <
     load();
   }, [fetcher, transformer]);
   return useMemo(() => ({ data, loading, error }), [data, loading, error]);
-};
-
-const countListToIndexedCount = (l: { count: number; iri: string }[]) =>
-  Object.fromEntries(l.map((o) => [o.iri, o.count]));
-
-const useDatasetCount = (filters: SearchFilter[]): Record<string, number> => {
-  const [{ data: datasetCounts }] = useDatasetCountQuery({
-    variables: {
-      theme: filters.find(isTypename("DataCubeTheme"))?.iri,
-      organization: filters.find(isTypename("DataCubeOrganization"))?.iri,
-    },
-  });
-
-  return useMemo(
-    () =>
-      datasetCounts?.datasetcount
-        ? countListToIndexedCount(datasetCounts?.datasetcount)
-        : {},
-    [datasetCounts]
-  );
 };
 
 const organizationIriToTermsetParentIri = {

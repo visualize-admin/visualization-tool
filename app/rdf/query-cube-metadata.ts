@@ -135,12 +135,14 @@ export const queryDatasetCountByTheme = async ({
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
   });
-  return results.map((r) => {
-    return {
-      count: parseInt(r.count.value, 10),
-      iri: r.theme.value,
-    };
-  });
+  return results
+    .map((r) => {
+      return {
+        count: parseInt(r.count.value, 10),
+        iri: r.theme?.value,
+      };
+    })
+    .filter((r) => r.iri);
 };
 
 export const queryDatasetCountBySubTheme = async ({
@@ -161,12 +163,14 @@ export const queryDatasetCountBySubTheme = async ({
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
   });
-  return results.map((r) => {
-    return {
-      count: parseInt(r.count.value, 10),
-      iri: r.subtheme?.value,
-    };
-  });
+  return results
+    .map((r) => {
+      return {
+        count: parseInt(r.count.value, 10),
+        iri: r.subtheme?.value,
+      };
+    })
+    .filter((r) => r.iri);
 };
 
 export const loadSubthemes = async ({
