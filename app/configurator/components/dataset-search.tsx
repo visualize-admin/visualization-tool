@@ -1,6 +1,6 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { keyBy, sortBy } from "lodash";
+import { keyBy, mapValues, pickBy, sortBy } from "lodash";
 import React, {
   useCallback,
   useMemo,
@@ -144,6 +144,7 @@ export const useBrowseState = () => {
       },
       filters,
       setFilters,
+      setQuery,
       onAddFilter: addFilter,
       onRemoveFilter: removeFilter,
       onToggleFilter: (cat: SearchFilter) => {
@@ -205,15 +206,17 @@ const getFiltersFromParams = (
   return filters;
 };
 
+/**
+ * Provides browse context to children below
+ * Responsible for connecting the router to the browsing state
+ */
 export const BrowseStateProvider = ({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params?: BrowseParams;
 }) => {
   const browseState = useBrowseState();
-  const { setFilters, setNavState } = browseState;
+  const { setFilters, setQuery } = browseState;
   const locale = useLocale();
   const [{ data: themeData }] = useThemesQuery({
     variables: { locale },
@@ -222,8 +225,21 @@ export const BrowseStateProvider = ({
     variables: { locale },
   });
 
+  const router = useRouter();
+  const { search } = router.query;
+
+  const params = useMemo(() => {
+    const { type, iri, subtype, subiri } = router.query;
+
+    return pickBy(
+      mapValues({ type, iri, subtype, subiri }, (v) =>
+        Array.isArray(v) ? v[0] : v
+      ),
+      Boolean
+    );
+  }, [router.query]);
+
   // Connects browse state to router params
-  // @TODO brings closer to router ?
   useEffect(() => {
     if (!params || !themeData?.themes || !orgData?.organizations) {
       return;
@@ -236,15 +252,16 @@ export const BrowseStateProvider = ({
     if (filters) {
       setFilters(filters);
     }
-    if (params.type && !params.iri) {
-      setNavState({
-        theme: { expanded: false },
-        organization: { expanded: false },
-        [params.type]: { expanded: true },
-      });
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params, themeData, orgData]);
+
+  useEffect(() => {
+    if (!search || search.length === 0) {
+      return;
+    }
+    const searchStr = Array.isArray(search) ? search[0] : search;
+    setQuery(searchStr);
+  }, [search, setQuery]);
   return (
     <BrowseContext.Provider value={browseState}>
       {children}

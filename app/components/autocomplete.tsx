@@ -74,6 +74,7 @@ export type AutocompleteProps<TItem> = {
   getItemIcon?: (item: TItem) => React.ReactNode;
   onSelectedItemChange: (item: UseComboboxStateChange<TItem>) => void;
   sx?: FlexProps["sx"];
+  generateItems?: (text: string) => TItem[];
 };
 
 function Autocomplete<TItem>({
@@ -83,6 +84,7 @@ function Autocomplete<TItem>({
   getItemIcon,
   onSelectedItemChange,
   sx,
+  generateItems,
 }: AutocompleteProps<TItem>) {
   const [inputItems, setInputItems] = useState(items);
 
@@ -119,6 +121,7 @@ function Autocomplete<TItem>({
     getComboboxProps,
     highlightedIndex,
     getItemProps,
+    inputValue,
   } = useCombobox({
     items: inputItems,
     stateReducer,
@@ -127,12 +130,12 @@ function Autocomplete<TItem>({
       if (!inputValue) {
         return;
       }
+      const inputItems = items.filter((item) => {
+        const searchText = getItemSearchText(item);
+        return searchText.toLowerCase().includes(inputValue.toLowerCase());
+      });
       setInputItems(
-        items.filter((item) =>
-          getItemSearchText(item)
-            .toLowerCase()
-            .startsWith(inputValue.toLowerCase())
-        )
+        (generateItems ? generateItems(inputValue) : []).concat(inputItems)
       );
     },
   });

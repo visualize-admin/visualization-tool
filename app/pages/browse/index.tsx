@@ -15,20 +15,10 @@ export type BrowseParams = {
 // Generic component for all browse subpages
 export const GenericBrowse = () => {
   const router = useRouter();
-  const params = useMemo(() => {
-    const { type, iri, subtype, subiri } = router.query;
-
-    return pickBy(
-      mapValues({ type, iri, subtype, subiri }, (v) =>
-        Array.isArray(v) ? v[0] : v
-      ),
-      Boolean
-    );
-  }, [router.query]);
   return (
     <AppLayout>
       <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
-        <SelectDatasetStepV2 params={params} />
+        <SelectDatasetStepV2 />
       </ConfiguratorStateProvider>
     </AppLayout>
   );

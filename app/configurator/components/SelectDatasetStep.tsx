@@ -200,9 +200,9 @@ export const SelectDatasetStepV1 = () => {
   );
 };
 
-export const SelectDatasetStepV2 = ({ params }: { params?: BrowseParams }) => {
+export const SelectDatasetStepV2 = () => {
   return (
-    <BrowseStateProvider params={params}>
+    <BrowseStateProvider>
       <SelectDatasetStepV2Content />
     </BrowseStateProvider>
   );

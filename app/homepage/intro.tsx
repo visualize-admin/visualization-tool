@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Text } from "theme-ui";
 import React, { ReactNode, useCallback } from "react";
 import { useRouter } from "next/router";
-import { Trans } from "@lingui/macro";
+import { select, Trans } from "@lingui/macro";
 
 import { default as IconAreaChart } from "../icons/components/IcChartArea";
 import { default as IconBarChart } from "../icons/components/IcChartBar";
@@ -16,7 +16,9 @@ import { default as IconText } from "../icons/components/IcText";
 import { default as IconX } from "../icons/components/IcXAxis";
 import { default as IconY } from "../icons/components/IcYAxis";
 import { HintRed } from "../components/hint";
-import SearchAutocomplete from "../components/search-autocomplete";
+import SearchAutocomplete, {
+  SearchAutocompleteItem,
+} from "../components/search-autocomplete";
 import Stack from "../components/Stack";
 import Link from "next/link";
 import SvgIcCategories from "../icons/components/IcCategories";
@@ -40,16 +42,23 @@ const ICONS = [
 const BrowsingSection = () => {
   const router = useRouter();
   const handleSelectAutocompleteItem = useCallback(
-    ({ selectedItem }) => {
+    ({ selectedItem }: { selectedItem?: SearchAutocompleteItem | null }) => {
       if (!selectedItem) {
         return;
       }
-      const { iri, __typename } = selectedItem;
-      router.push(
-        `/browse/${
-          __typename === "DataCubeTheme" ? "theme" : "organization"
-        }/${encodeURIComponent(iri)}`
-      );
+      let path: string;
+      switch (selectedItem.__typename) {
+        case "DataCubeOrganization":
+          path = `/browse/organization/${encodeURIComponent(selectedItem.iri)}`;
+          break;
+        case "DataCubeTheme":
+          path = `/browse/theme/${encodeURIComponent(selectedItem.iri)}`;
+          break;
+        case "FreeSearchItem":
+          path = `/browse?search=${encodeURIComponent(selectedItem.text)}`;
+          break;
+      }
+      router.push(path);
     },
     [router]
   );
