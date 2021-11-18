@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { SearchFilter } from "../configurator/components/dataset-search";
+import { SearchFilter } from "../configurator/components/dataset-browse";
 import {
   useDatasetCountQuery,
   useOrganizationsQuery,

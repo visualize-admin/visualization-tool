@@ -6,7 +6,7 @@ import { SelectDatasetStepV2 } from "../../configurator/components/select-datase
 import { ConfiguratorStateProvider } from "../../src";
 
 export type BrowseParams = {
-  type?: "theme" | "organization";
+  type?: "theme" | "organization" | "dataset";
   subtype?: "theme" | "organization";
   iri?: string;
   subiri?: string;

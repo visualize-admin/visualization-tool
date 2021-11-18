@@ -16,7 +16,7 @@ import {
   SearchFilter,
   useBrowseContext,
   useBrowseState,
-} from "./dataset-search";
+} from "./dataset-browse";
 import {
   PanelLayout,
   PanelLeftWrapper,

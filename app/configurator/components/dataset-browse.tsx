@@ -173,7 +173,7 @@ export type BrowseState = ReturnType<typeof useBrowseState>;
 const BrowseContext = React.createContext<BrowseState | undefined>(undefined);
 
 /** Builds the state search filters from query params */
-const getFiltersFromParams = (
+export const getFiltersFromParams = (
   params: BrowseParams,
   context: {
     themes: ThemesQuery["themes"];
@@ -182,23 +182,20 @@ const getFiltersFromParams = (
 ) => {
   const filters: SearchFilter[] = [];
   const { type, subtype, iri, subiri } = params;
-  // A bit ugly
-  // @TODO refactor ?
-  if (type && iri) {
-    const container = context[
-      type === "theme" ? "themes" : "organizations"
-    ] as SearchFilter[];
-    const obj = container?.find((f) => iri === f.iri);
-    if (obj) {
-      filters.push(obj);
-      if (subtype && subiri) {
-        const container = context[
-          subtype === "theme" ? "themes" : "organizations"
-        ] as SearchFilter[];
-        const subobj = container?.find((f) => subiri === f.iri);
-        if (subobj) {
-          filters.push(subobj);
-        }
+  for (const [t, i] of [
+    [type, iri],
+    [subtype, subiri],
+  ]) {
+    if (t && i && (t === "theme" || t === "organization")) {
+      const container = context[
+        t === "theme" ? "themes" : "organizations"
+      ] as SearchFilter[];
+      const obj = container?.find((f) => i === f.iri);
+      if (obj) {
+        filters.push(obj);
+      } else {
+        console.log("break");
+        break;
       }
     }
   }
