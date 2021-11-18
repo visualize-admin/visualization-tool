@@ -12,77 +12,70 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   const [{ data }] = useDataCubeMetadataQuery({
     variables: { iri: dataSetIri, locale },
   });
-
-  if (data?.dataCubeByIri) {
-    return (
-      <Box sx={{ m: 4 }}>
-        {data.dataCubeByIri.publisher && (
-          <>
-            <DataSetMetadataTitle>
-              <Trans id="dataset.metadata.source">Source</Trans>
-            </DataSetMetadataTitle>
-            <DataSetMetadataBody>
-              <Box
-                sx={{ "> a": { color: "monochrome900" } }}
-                dangerouslySetInnerHTML={{
-                  __html: data.dataCubeByIri.publisher,
-                }}
-              ></Box>
-            </DataSetMetadataBody>
-          </>
-        )}
-
-        <DataSetMetadataTitle>
-          <Trans id="dataset.metadata.date.created">Date Created</Trans>
-        </DataSetMetadataTitle>
-        <DataSetMetadataBody>
-          {data.dataCubeByIri.datePublished
-            ? formatDate(data.dataCubeByIri.datePublished) ?? "–"
-            : "–"}
-        </DataSetMetadataBody>
-
-        <DataSetMetadataTitle>
-          <Trans id="dataset.metadata.version">Version</Trans>
-        </DataSetMetadataTitle>
-        <DataSetMetadataBody>
-          {data.dataCubeByIri.version ?? "–"}
-        </DataSetMetadataBody>
-
-        <DataSetMetadataTitle>
-          <Trans id="dataset.metadata.email">Contact points</Trans>
-        </DataSetMetadataTitle>
-        <DataSetMetadataBody>
-          {data.dataCubeByIri.contactEmail ? (
-            <DatasetMetadataLink
-              href={`mailto:${data.dataCubeByIri.contactEmail}`}
-              label={
-                data.dataCubeByIri.contactName ??
-                data.dataCubeByIri.contactEmail
-              }
-            />
-          ) : (
-            "–"
-          )}
-        </DataSetMetadataBody>
-
-        <DataSetMetadataTitle>
-          <Trans id="dataset.metadata.landingPage">Further information</Trans>
-        </DataSetMetadataTitle>
-        <DataSetMetadataBody>
-          {data.dataCubeByIri.landingPage ? (
-            <DatasetMetadataLink
-              href={data.dataCubeByIri.landingPage}
-              label={data.dataCubeByIri.landingPage}
-            />
-          ) : (
-            "–"
-          )}
-        </DataSetMetadataBody>
-      </Box>
-    );
-  } else {
+  const cube = data?.dataCubeByIri;
+  if (!cube) {
     return <Loading />;
   }
+
+  return (
+    <Box sx={{ m: 4 }}>
+      {cube.publisher && (
+        <>
+          <DataSetMetadataTitle>
+            <Trans id="dataset.metadata.source">Source</Trans>
+          </DataSetMetadataTitle>
+          <DataSetMetadataBody>
+            <Box
+              sx={{ "> a": { color: "monochrome900" } }}
+              dangerouslySetInnerHTML={{
+                __html: cube.publisher,
+              }}
+            ></Box>
+          </DataSetMetadataBody>
+        </>
+      )}
+
+      <DataSetMetadataTitle>
+        <Trans id="dataset.metadata.date.created">Date Created</Trans>
+      </DataSetMetadataTitle>
+      <DataSetMetadataBody>
+        {cube.datePublished ? formatDate(cube.datePublished) ?? "–" : "–"}
+      </DataSetMetadataBody>
+
+      <DataSetMetadataTitle>
+        <Trans id="dataset.metadata.version">Version</Trans>
+      </DataSetMetadataTitle>
+      <DataSetMetadataBody>{cube.version ?? "–"}</DataSetMetadataBody>
+
+      <DataSetMetadataTitle>
+        <Trans id="dataset.metadata.email">Contact points</Trans>
+      </DataSetMetadataTitle>
+      <DataSetMetadataBody>
+        {cube.contactEmail ? (
+          <DatasetMetadataLink
+            href={`mailto:${cube.contactEmail}`}
+            label={cube.contactName ?? cube.contactEmail}
+          />
+        ) : (
+          "–"
+        )}
+      </DataSetMetadataBody>
+
+      <DataSetMetadataTitle>
+        <Trans id="dataset.metadata.landingPage">Further information</Trans>
+      </DataSetMetadataTitle>
+      <DataSetMetadataBody>
+        {cube.landingPage ? (
+          <DatasetMetadataLink
+            href={cube.landingPage}
+            label={cube.landingPage}
+          />
+        ) : (
+          "–"
+        )}
+      </DataSetMetadataBody>
+    </Box>
+  );
 };
 
 const DataSetMetadataTitle = ({ children }: { children: ReactNode }) => (
