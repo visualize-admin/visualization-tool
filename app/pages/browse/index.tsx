@@ -2,7 +2,7 @@ import { mapValues, pickBy } from "lodash";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo } from "react";
 import { AppLayout } from "../../components/layout";
-import { SelectDatasetStepV2 } from "../../configurator/components/SelectDatasetStep";
+import { SelectDatasetStepV2 } from "../../configurator/components/select-dataset-step";
 import { ConfiguratorStateProvider } from "../../src";
 
 export type BrowseParams = {

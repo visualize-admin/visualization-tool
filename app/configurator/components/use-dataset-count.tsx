@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useDatasetCountQuery } from "../../graphql/query-hooks";
-import isTypename from "../../utils/isTypename";
+import isTypename from "../../utils/is-typename";
 import { SearchFilter } from "./dataset-search";
 
 const countListToIndexedCount = (l: { count: number; iri: string }[]) =>

@@ -16,7 +16,7 @@ import {
   PanelMiddleWrapper,
   PanelRightWrapper,
 } from "./layout";
-import { SelectDatasetStep } from "./SelectDatasetStep";
+import { SelectDatasetStep } from "./select-dataset-step";
 import { Stepper } from "./stepper";
 
 const SelectChartTypeStep = () => {

@@ -45,7 +45,7 @@ import { BrowseParams } from "../../pages/browse";
 import SvgIcClose from "../../icons/components/IcClose";
 import SvgIcOrganisations from "../../icons/components/IcOrganisations";
 import SvgIcCategories from "../../icons/components/IcCategories";
-import isTypename from "../../utils/isTypename";
+import isTypename from "../../utils/is-typename";
 import useDatasetCount from "./use-dataset-count";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
