@@ -33,11 +33,11 @@ msgstr "[ No Description ]"
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
 
-#: app/configurator/components/dataset-search.tsx:755
+#: app/configurator/components/dataset-browse.tsx:736
 msgid "browse-panel.organizations"
 msgstr "Organizations"
 
-#: app/configurator/components/dataset-search.tsx:705
+#: app/configurator/components/dataset-browse.tsx:686
 msgid "browse-panel.themes"
 msgstr "Themes"
 
@@ -569,7 +569,11 @@ msgstr "Show search field"
 msgid "controls.title"
 msgstr "Title"
 
-#: app/configurator/components/dataset-search.tsx:343
+#: app/configurator/components/select-dataset-step.tsx:103
+msgid "dataset-preview.back-to-results"
+msgstr "Back to the list"
+
+#: app/configurator/components/dataset-browse.tsx:356
 msgid "dataset.includeDrafts"
 msgstr "Include draft datasets"
 
@@ -593,15 +597,15 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-search.tsx:311
+#: app/configurator/components/dataset-browse.tsx:324
 msgid "dataset.order.newest"
 msgstr "Newest"
 
-#: app/configurator/components/dataset-search.tsx:303
+#: app/configurator/components/dataset-browse.tsx:316
 msgid "dataset.order.relevance"
 msgstr "Relevance"
 
-#: app/configurator/components/dataset-search.tsx:307
+#: app/configurator/components/dataset-browse.tsx:320
 msgid "dataset.order.title"
 msgstr "Title"
 
@@ -615,19 +619,19 @@ msgstr "Careful, this dataset is only a draft.<0/><1>Don't use for reporting!</1
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for reporting!</1>"
 
-#: app/configurator/components/dataset-search.tsx:367
+#: app/configurator/components/dataset-browse.tsx:380
 msgid "dataset.results"
 msgstr "{0, plural, zero {No results} one {# result} other {# results}}"
 
-#: app/configurator/components/dataset-search.tsx:315
+#: app/configurator/components/dataset-browse.tsx:328
 msgid "dataset.search.label"
 msgstr "Search datasets"
 
-#: app/configurator/components/dataset-search.tsx:387
+#: app/configurator/components/dataset-browse.tsx:400
 msgid "dataset.sortby"
 msgstr "Sort by"
 
-#: app/configurator/components/dataset-search.tsx:928
+#: app/configurator/components/dataset-browse.tsx:917
 msgid "dataset.tag.draft"
 msgstr "Draft"
 

@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box, Link, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
-import { useConfiguratorState } from "..";
-import { ChartPanel } from "../../components/chart-panel";
+import NextLink from "next/link";
 import { DataSetHint } from "../../components/hint";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
-import { useLocale } from "../../src";
+import { useConfiguratorState, useLocale } from "../../src";
 import { DataSetMetadata } from "./dataset-metadata";
 import { DataSetPreview } from "./dataset-preview";
 import {
@@ -15,28 +14,53 @@ import {
   BrowseStateProvider,
   SearchFilter,
   useBrowseContext,
-  useBrowseState,
+  getFilterParamsFromQuery,
 } from "./dataset-browse";
-import {
-  PanelLayout,
-  PanelLeftWrapper,
-  PanelMiddleWrapper,
-  PanelRightWrapper,
-} from "./layout";
-import { flag } from "./flag";
-import { BrowseParams } from "../../pages/browse";
+import { PanelLayout, PanelLeftWrapper, PanelMiddleWrapper } from "./layout";
+import { Trans } from "@lingui/macro";
+import { Router, useRouter } from "next/router";
 
-export const SelectDatasetStepV2Content = () => {
+const softJSONParse = (v: string) => {
+  try {
+    return JSON.parse(v);
+  } catch (e) {
+    return null;
+  }
+};
+
+const formatBackLink = (query: Router["query"]) => {
+  const backParameters = softJSONParse(query.previous as string);
+  if (!backParameters) {
+    return "/browse";
+  }
+  const { type, iri, subtype, subiri } =
+    getFilterParamsFromQuery(backParameters);
+
+  const typePart =
+    type && iri
+      ? `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`
+      : undefined;
+  const subtypePart =
+    subtype && subiri
+      ? `${encodeURIComponent(subtype)}/${encodeURIComponent(subiri)}`
+      : undefined;
+  return ["/browse", typePart, subtypePart].filter(Boolean).join("/");
+};
+
+export const SelectDatasetStepContent = () => {
   const locale = useLocale();
 
   const browseState = useBrowseContext();
-  const { query, order, includeDrafts, filters } = browseState;
+  const { query, order, includeDrafts, filters, dataset } = browseState;
 
-  const [state, dispatch] = useConfiguratorState();
+  const [configState] = useConfiguratorState();
   const [debouncedQuery] = useDebounce(query, 150, {
     leading: true,
   });
-
+  const router = useRouter();
+  const backLink = useMemo(() => {
+    return formatBackLink(router.query);
+  }, [router.query]);
   // Use the debounced query value here only!
   const [{ fetching, data }] = useDataCubesQuery({
     variables: {
@@ -52,7 +76,7 @@ export const SelectDatasetStepV2Content = () => {
     },
   });
 
-  if (state.state !== "SELECTING_DATASET") {
+  if (configState.state !== "SELECTING_DATASET") {
     return null;
   }
   return (
@@ -71,23 +95,18 @@ export const SelectDatasetStepV2Content = () => {
       }}
     >
       <PanelLeftWrapper raised={false} sx={{ mt: 50 }}>
-        {state.dataSet ? (
+        {dataset ? (
           <>
             <Box mb={4} px={4}>
-              <Link
-                variant="inline"
-                onClick={(ev) => {
-                  ev.preventDefault();
-                  dispatch({
-                    type: "DATASET_SELECTED",
-                    dataSet: undefined,
-                  });
-                }}
-              >
-                Back to the list
-              </Link>
+              <NextLink passHref href={`${backLink}`}>
+                <Link variant="inline">
+                  <Trans id="dataset-preview.back-to-results">
+                    Back to the list
+                  </Trans>
+                </Link>
+              </NextLink>
             </Box>
-            <DataSetMetadata dataSetIri={state.dataSet} />
+            <DataSetMetadata dataSetIri={dataset} />
           </>
         ) : (
           <SearchFilters />
@@ -101,22 +120,22 @@ export const SelectDatasetStepV2Content = () => {
       >
         <Box sx={{ maxWidth: 900 }}>
           <Text variant="heading1" sx={{ mb: 4 }}>
-            {state.dataSet
+            {dataset
               ? null
               : filters.length > 0
               ? filters.map((f) => f.label).join(", ")
               : "Swiss Open Government Data"}
           </Text>
-          {state.dataSet ? null : (
+          {dataset ? null : (
             <Box mb={4}>
               <SearchDatasetBox browseState={browseState} searchResult={data} />
             </Box>
           )}
-          {state.dataSet || !data ? (
+          {dataset || !data ? (
             <>
-              {state.dataSet ? (
+              {dataset ? (
                 <Box>
-                  <DataSetPreview dataSetIri={state.dataSet} />
+                  <DataSetPreview dataSetIri={dataset} />
                 </Box>
               ) : (
                 <DataSetHint />

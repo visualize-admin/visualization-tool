@@ -33,11 +33,11 @@ msgstr "[ Pas de description ]"
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
-#: app/configurator/components/dataset-search.tsx:755
+#: app/configurator/components/dataset-browse.tsx:736
 msgid "browse-panel.organizations"
 msgstr "Organisations"
 
-#: app/configurator/components/dataset-search.tsx:705
+#: app/configurator/components/dataset-browse.tsx:686
 msgid "browse-panel.themes"
 msgstr "Catégories"
 
@@ -569,9 +569,13 @@ msgstr "Afficher le champ de recherche"
 msgid "controls.title"
 msgstr "Titre"
 
-#: app/configurator/components/dataset-search.tsx:343
+#: app/configurator/components/select-dataset-step.tsx:103
+msgid "dataset-preview.back-to-results"
+msgstr "Revenir aux résultats"
+
+#: app/configurator/components/dataset-browse.tsx:356
 msgid "dataset.includeDrafts"
-msgstr ""
+msgstr "Inclure les brouillons"
 
 #: app/configurator/components/dataset-metadata.tsx:36
 msgid "dataset.metadata.date.created"
@@ -593,15 +597,15 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-search.tsx:311
+#: app/configurator/components/dataset-browse.tsx:324
 msgid "dataset.order.newest"
 msgstr ""
 
-#: app/configurator/components/dataset-search.tsx:303
+#: app/configurator/components/dataset-browse.tsx:316
 msgid "dataset.order.relevance"
 msgstr ""
 
-#: app/configurator/components/dataset-search.tsx:307
+#: app/configurator/components/dataset-browse.tsx:320
 msgid "dataset.order.title"
 msgstr ""
 
@@ -615,21 +619,21 @@ msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'util
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/configurator/components/dataset-search.tsx:367
+#: app/configurator/components/dataset-browse.tsx:380
 msgid "dataset.results"
 msgstr ""
 
-#: app/configurator/components/dataset-search.tsx:315
+#: app/configurator/components/dataset-browse.tsx:328
 msgid "dataset.search.label"
-msgstr ""
+msgstr "Chercher"
 
-#: app/configurator/components/dataset-search.tsx:387
+#: app/configurator/components/dataset-browse.tsx:400
 msgid "dataset.sortby"
-msgstr ""
+msgstr "Trier par"
 
-#: app/configurator/components/dataset-search.tsx:928
+#: app/configurator/components/dataset-browse.tsx:917
 msgid "dataset.tag.draft"
-msgstr ""
+msgstr "Brouillon"
 
 #: app/configurator/components/dataset-preview.tsx:101
 msgid "datatable.showing.first.rows"

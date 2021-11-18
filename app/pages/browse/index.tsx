@@ -1,8 +1,7 @@
-import { mapValues, pickBy } from "lodash";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { AppLayout } from "../../components/layout";
-import { SelectDatasetStepV2 } from "../../configurator/components/select-dataset-step";
+import { SelectDatasetStep } from "../../configurator/components/select-dataset-step";
 import { ConfiguratorStateProvider } from "../../src";
 
 export type BrowseParams = {
@@ -18,7 +17,7 @@ export const GenericBrowse = () => {
   return (
     <AppLayout>
       <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
-        <SelectDatasetStepV2 />
+        <SelectDatasetStep />
       </ConfiguratorStateProvider>
     </AppLayout>
   );

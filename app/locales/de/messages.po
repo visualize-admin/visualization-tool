@@ -33,11 +33,11 @@ msgstr "[ Ohne Beschreibung ]"
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
-#: app/configurator/components/dataset-search.tsx:755
+#: app/configurator/components/dataset-browse.tsx:736
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
 
-#: app/configurator/components/dataset-search.tsx:705
+#: app/configurator/components/dataset-browse.tsx:686
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
@@ -569,9 +569,13 @@ msgstr "Suche anzeigen"
 msgid "controls.title"
 msgstr "Titel hinzufügen"
 
-#: app/configurator/components/dataset-search.tsx:343
+#: app/configurator/components/select-dataset-step.tsx:103
+msgid "dataset-preview.back-to-results"
+msgstr "Zurück zu den Ergebnissen"
+
+#: app/configurator/components/dataset-browse.tsx:356
 msgid "dataset.includeDrafts"
-msgstr ""
+msgstr "Entwürfe einschließen"
 
 #: app/configurator/components/dataset-metadata.tsx:36
 msgid "dataset.metadata.date.created"
@@ -593,17 +597,17 @@ msgstr "Quelle"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-search.tsx:311
+#: app/configurator/components/dataset-browse.tsx:324
 msgid "dataset.order.newest"
-msgstr ""
+msgstr "Neueste"
 
-#: app/configurator/components/dataset-search.tsx:303
+#: app/configurator/components/dataset-browse.tsx:316
 msgid "dataset.order.relevance"
-msgstr ""
+msgstr "Relevanz"
 
-#: app/configurator/components/dataset-search.tsx:307
+#: app/configurator/components/dataset-browse.tsx:320
 msgid "dataset.order.title"
-msgstr ""
+msgstr "Titel"
 
 #: app/components/chart-preview.tsx:48
 #: app/components/chart-published.tsx:59
@@ -615,21 +619,21 @@ msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik ni
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
-#: app/configurator/components/dataset-search.tsx:367
+#: app/configurator/components/dataset-browse.tsx:380
 msgid "dataset.results"
-msgstr ""
+msgstr "Ergebnisse"
 
-#: app/configurator/components/dataset-search.tsx:315
+#: app/configurator/components/dataset-browse.tsx:328
 msgid "dataset.search.label"
-msgstr ""
+msgstr "Suchen"
 
-#: app/configurator/components/dataset-search.tsx:387
+#: app/configurator/components/dataset-browse.tsx:400
 msgid "dataset.sortby"
-msgstr ""
+msgstr "Sortieren nach"
 
-#: app/configurator/components/dataset-search.tsx:928
+#: app/configurator/components/dataset-browse.tsx:917
 msgid "dataset.tag.draft"
-msgstr ""
+msgstr "Luftzug"
 
 #: app/configurator/components/dataset-preview.tsx:101
 msgid "datatable.showing.first.rows"

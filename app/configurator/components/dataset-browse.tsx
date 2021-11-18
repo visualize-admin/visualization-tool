@@ -1,6 +1,6 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { keyBy, mapValues, pickBy, sortBy } from "lodash";
+import { filter, keyBy, mapValues, pickBy, sortBy } from "lodash";
 import React, {
   useCallback,
   useMemo,
@@ -19,7 +19,7 @@ import {
   LinkProps as ThemeUILinkProps,
   Card,
 } from "theme-ui";
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 
 import { useConfiguratorState } from "..";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
@@ -47,6 +47,7 @@ import SvgIcOrganisations from "../../icons/components/IcOrganisations";
 import SvgIcCategories from "../../icons/components/IcCategories";
 import isTypename from "../../utils/is-typename";
 import useDatasetCount from "./use-dataset-count";
+import qs from "qs";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
@@ -70,6 +71,7 @@ const defaultNavState = {
 
 export const useBrowseState = () => {
   const [query, setQuery] = useState<string>("");
+  const [dataset, setDataset] = useState<string>();
   const [navState, setNavState] = useState<NavState>(defaultNavState);
 
   const [order, setOrder] = useState<DataCubeResultOrder>(
@@ -155,6 +157,8 @@ export const useBrowseState = () => {
       },
       navState,
       setNavState,
+      dataset,
+      setDataset,
     }),
     [
       filters,
@@ -165,6 +169,8 @@ export const useBrowseState = () => {
       addFilter,
       navState,
       setNavState,
+      dataset,
+      setDataset,
     ]
   );
 };
@@ -194,12 +200,22 @@ export const getFiltersFromParams = (
       if (obj) {
         filters.push(obj);
       } else {
-        console.log("break");
         break;
       }
     }
   }
   return filters;
+};
+
+export const getFilterParamsFromQuery = (query: Router["query"]) => {
+  const { type, iri, subtype, subiri } = query;
+
+  return pickBy(
+    mapValues({ type, iri, subtype, subiri }, (v) =>
+      Array.isArray(v) ? v[0] : v
+    ),
+    Boolean
+  );
 };
 
 /**
@@ -212,7 +228,7 @@ export const BrowseStateProvider = ({
   children: React.ReactNode;
 }) => {
   const browseState = useBrowseState();
-  const { setFilters, setQuery } = browseState;
+  const { setFilters, setQuery, setDataset } = browseState;
   const locale = useLocale();
   const [{ data: themeData }] = useThemesQuery({
     variables: { locale },
@@ -224,18 +240,12 @@ export const BrowseStateProvider = ({
   const router = useRouter();
   const { search } = router.query;
 
-  const params = useMemo(() => {
-    const { type, iri, subtype, subiri } = router.query;
+  const params = useMemo(
+    () => getFilterParamsFromQuery(router.query),
+    [router.query]
+  );
 
-    return pickBy(
-      mapValues({ type, iri, subtype, subiri }, (v) =>
-        Array.isArray(v) ? v[0] : v
-      ),
-      Boolean
-    );
-  }, [router.query]);
-
-  // Connects browse state to router params
+  // Connects browseState to router params
   useEffect(() => {
     if (!params || !themeData?.themes || !orgData?.organizations) {
       return;
@@ -248,6 +258,13 @@ export const BrowseStateProvider = ({
     if (filters) {
       setFilters(filters);
     }
+
+    if (params?.type === "dataset" && params?.iri) {
+      setDataset(params?.iri);
+    } else {
+      setDataset(undefined);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params, themeData, orgData]);
 
@@ -540,35 +557,6 @@ const NavItem = ({
   );
 };
 
-const useQuery = <
-  TData extends unknown,
-  TError extends unknown,
-  TOutput extends unknown = TData
->(
-  fetcher: () => Promise<TData>,
-  transformer?: (input: TData) => TOutput
-) => {
-  const [data, setData] = useState<TData | TOutput>();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<TError>();
-  useEffect(() => {
-    const load = async () => {
-      setError(undefined);
-      setLoading(true);
-      try {
-        const result = await fetcher();
-        setData(transformer ? await transformer(result) : result);
-      } catch (e) {
-        setError(e as TError);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [fetcher, transformer]);
-  return useMemo(() => ({ data, loading, error }), [data, loading, error]);
-};
-
 const organizationIriToTermsetParentIri = {
   "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu":
     "https://register.ld.admin.ch/foen/theme",
@@ -656,8 +644,7 @@ export const NavBox = ({
 
 export const SearchFilters = () => {
   const locale = useLocale();
-  const { filters, onResetFilters, onRemoveFilter, navState } =
-    useBrowseContext();
+  const { filters } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
@@ -673,8 +660,6 @@ export const SearchFilters = () => {
   const orgFilter = filters.find(
     isTypename("DataCubeOrganization" as DataCubeOrganization["__typename"])
   );
-
-  const [, dispatch] = useConfiguratorState();
 
   const [allThemesAlpha, allOrgsAlpha] = useMemo(() => {
     return [
@@ -885,7 +870,6 @@ export const DatasetResult = ({
   highlightedDescription,
   showTags,
 }: ResultProps) => {
-  const [state, dispatch] = useConfiguratorState();
   const {
     iri,
     publicationStatus,
@@ -896,11 +880,20 @@ export const DatasetResult = ({
     creator,
   } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
+  const router = useRouter();
 
+  const filterParams = useMemo(() => {
+    return qs.stringify({
+      previous: JSON.stringify(getFilterParamsFromQuery(router.query)),
+    });
+  }, [router.query]);
+  const handleClick = useCallback(() => {
+    router.push(`/browse/dataset/${encodeURIComponent(iri)}?${filterParams}`);
+  }, [router, iri, filterParams]);
   return (
     <Card
       variant="reset"
-      onClick={() => dispatch({ type: "DATASET_SELECTED", dataSet: iri })}
+      onClick={handleClick}
       sx={{
         position: "relative",
         color: "monochrome700",
