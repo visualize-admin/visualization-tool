@@ -11,7 +11,7 @@ import { useLocale } from "../src";
 import Autocomplete, { AutocompleteProps } from "./autocomplete";
 import { Box } from "theme-ui";
 import useDatasetCount from "../configurator/components/use-dataset-count";
-import isTypename from "../utils/is-typename";
+import isTypename from "../utils/is-attr-equal";
 import { t } from "@lingui/macro";
 import SvgIcText from "../icons/components/IcText";
 

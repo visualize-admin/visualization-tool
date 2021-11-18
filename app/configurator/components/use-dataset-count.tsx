@@ -1,15 +1,17 @@
 import { useMemo } from "react";
 import { useDatasetCountQuery } from "../../graphql/query-hooks";
-import isTypename from "../../utils/is-typename";
 import { SearchFilter } from "./dataset-browse";
+import isAttrEqual from "../../utils/is-attr-equal";
 
 const countListToIndexedCount = (l: { count: number; iri: string }[]) =>
   Object.fromEntries(l.map((o) => [o.iri, o.count]));
 const useDatasetCount = (filters: SearchFilter[]): Record<string, number> => {
   const [{ data: datasetCounts }] = useDatasetCountQuery({
     variables: {
-      theme: filters.find(isTypename("DataCubeTheme"))?.iri,
-      organization: filters.find(isTypename("DataCubeOrganization"))?.iri,
+      theme: filters.find(isAttrEqual("__typename", "DataCubeTheme"))?.iri,
+      organization: filters.find(
+        isAttrEqual("__typename", "DataCubeOrganization")
+      )?.iri,
     },
   });
 
