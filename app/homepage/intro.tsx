@@ -88,10 +88,10 @@ const BrowsingSection = () => {
             as="a"
             sx={{
               display: "flex",
-              bg: "primaryLight",
-              color: "primary",
+              bg: "categoryLight",
+              color: "category",
               "&:hover": {
-                bg: "primaryLight",
+                bg: "categoryLight",
                 boxShadow: "primary",
               },
             }}
@@ -107,10 +107,10 @@ const BrowsingSection = () => {
             as="a"
             sx={{
               display: "flex",
-              bg: "successLight",
-              color: "success",
+              bg: "organizationLight",
+              color: "organization",
               "&:hover": {
-                bg: "successLight",
+                bg: "organizationLight",
                 boxShadow: "primary",
               },
             }}
