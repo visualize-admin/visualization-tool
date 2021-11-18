@@ -432,6 +432,22 @@ const fieldLabels = {
     id: "controls.sorting.byMeasure.descending",
     message: "9 → 1",
   }),
+  "controls.imputation": defineMessage({
+    id: "controls.imputation",
+    message: "Imputation type",
+  }),
+  "controls.imputation.type.none": defineMessage({
+    id: "controls.imputation.type.none",
+    message: "-",
+  }),
+  "controls.imputation.type.zeros": defineMessage({
+    id: "controls.imputation.type.zeros",
+    message: "Zeros",
+  }),
+  "controls.imputation.type.linear": defineMessage({
+    id: "controls.imputation.type.linear",
+    message: "Linear interpolation",
+  }),
   "controls.chart.type.column": defineMessage({
     id: "controls.chart.type.column",
     message: "Columns",
@@ -515,13 +531,15 @@ export function getFieldLabel(field: string): string {
     case "description":
       return i18n._(fieldLabels["controls.description"]);
 
-    // Encoding Options  (right column)
+    // Encoding Options (right column)
     case "stacked":
       return i18n._(fieldLabels["controls.column.stacked"]);
     case "grouped":
       return i18n._(fieldLabels["controls.column.grouped"]);
     case "sortBy":
       return i18n._(fieldLabels["controls.sorting.sortBy"]);
+    case "imputation":
+      return i18n._(fieldLabels["controls.imputation"]);
 
     case "bar.stacked.byDimensionLabel.asc":
     case "bar.grouped.byDimensionLabel.asc":

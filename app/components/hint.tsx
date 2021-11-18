@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
-import { Box, Flex, Text } from "theme-ui";
 import { ReactNode } from "react";
+import { Box, Flex, Text } from "theme-ui";
 import { Icon, IconName } from "../icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
@@ -247,16 +247,17 @@ export const Success = () => (
 export const HintBlue = ({
   iconName,
   children,
+  iconSize = 24,
 }: {
   iconName: IconName;
   children: ReactNode;
+  iconSize?: number;
 }) => (
   <Flex
     sx={{
       width: "auto",
       height: "auto",
-      m: 4,
-      p: 5,
+      p: 4,
       bg: "primaryLight",
       color: "primary",
       textAlign: "center",
@@ -264,8 +265,8 @@ export const HintBlue = ({
       alignItems: ["flex-start", "center"],
     }}
   >
-    <Box sx={{ width: 24, pr: 4 }}>
-      <Icon name={iconName} size={24} />
+    <Box sx={{ width: iconSize, pr: 4 }}>
+      <Icon name={iconName} size={iconSize} />
     </Box>
     <Text as="p" variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
       {children}

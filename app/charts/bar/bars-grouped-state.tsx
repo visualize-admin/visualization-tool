@@ -13,12 +13,17 @@ import {
   scaleOrdinal,
   sum,
 } from "d3";
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { BarFields, SortingOrder, SortingType } from "../../configurator";
 import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
+import {
+  useNumericVariable,
+  useSegment,
+  useStringVariable,
+} from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { InteractiveFiltersProvider } from "../shared/use-interactive-filters";
@@ -42,7 +47,7 @@ export interface GroupedBarsState {
   segments: string[];
   xAxisLabel: string;
   colors: ScaleOrdinal<string, string>;
-  grouped: [string, Record<string, ObservationValue>[]][];
+  grouped: [string, Observation[]][];
 }
 
 const useGroupedBarsState = ({
@@ -56,21 +61,9 @@ const useGroupedBarsState = ({
   const locale = useLocale();
   const width = useWidth();
 
-  const getX = useCallback(
-    (d: Observation) => d[fields.x.componentIri] as number,
-    [fields.x.componentIri]
-  );
-  const getY = useCallback(
-    (d: Observation) => d[fields.y.componentIri] as string,
-    [fields.y.componentIri]
-  );
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment && fields.segment.componentIri
-        ? (d[fields.segment.componentIri] as string)
-        : "segment",
-    [fields.segment]
-  );
+  const getX = useNumericVariable(fields.x.componentIri);
+  const getY = useStringVariable(fields.y.componentIri);
+  const getSegment = useSegment(fields.segment?.componentIri);
 
   const xAxisLabel =
     measures.find((d) => d.iri === fields.x.componentIri)?.label ??

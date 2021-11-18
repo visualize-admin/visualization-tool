@@ -13,22 +13,19 @@ import {
   ScaleTime,
   scaleTime,
   stack,
-  stackOffsetDiverging,
   stackOrderAscending,
   stackOrderDescending,
   stackOrderReverse,
   sum,
 } from "d3";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { AreaFields } from "../../configurator";
 import {
   getPalette,
-  parseDate,
-  useFormatFullDateAuto,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
@@ -36,7 +33,12 @@ import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
   getWideData,
+  stackOffsetDivergingPositiveZeros,
+  useOptionalNumericVariable,
   usePreparedData,
+  useSegment,
+  useStringVariable,
+  useTemporalVariable,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -58,8 +60,8 @@ export interface AreasState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  chartWideData: ArrayLike<Record<string, ObservationValue>>;
-  allDataWide: ArrayLike<Record<string, ObservationValue>>;
+  chartWideData: ArrayLike<Observation>;
+  allDataWide: ArrayLike<Observation>;
   series: $FixMe[];
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
@@ -93,22 +95,15 @@ const useAreasState = ({
     throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
   }
 
-  const hasSegment = fields.segment;
+  const getX = useTemporalVariable(fields.x.componentIri);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const getGroups = useStringVariable(fields.x.componentIri);
+  const getSegment = useSegment(fields.segment?.componentIri);
 
-  const getGroups = (d: Observation): string =>
-    d[fields.x.componentIri] as string;
-  const getX = useCallback(
-    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
-    [fields.x.componentIri]
-  );
-  const getY = (d: Observation): number | null => {
-    const v = d[fields.y.componentIri];
-    return v !== null ? +v : null;
-  };
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
-    [fields.segment]
+  const hasSegment = fields.segment;
+  const allSegments = useMemo(
+    () => [...new Set(data.map((d) => getSegment(d)))],
+    [data, getSegment]
   );
 
   const xKey = fields.x.componentIri;
@@ -125,13 +120,22 @@ const useAreasState = ({
         .sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
-  const allDataGroupedMap = group(sortedData, getGroups);
-  const allDataWide = getWideData({
-    groupedMap: allDataGroupedMap,
-    getSegment,
-    getY,
-    xKey,
-  });
+
+  const sortedDataGroupedByX = useMemo(
+    () => group(data, getGroups),
+    [data, getGroups]
+  );
+
+  const allDataWide = useMemo(
+    () =>
+      getWideData({
+        dataGroupedByX: sortedDataGroupedByX,
+        xKey,
+        getY,
+        getSegment,
+      }),
+    [sortedDataGroupedByX, xKey, getY, getSegment]
+  );
 
   // Data for chart
   const preparedData = usePreparedData({
@@ -143,8 +147,30 @@ const useAreasState = ({
     getSegment,
   });
 
-  const groupedMap = group(preparedData, getGroups);
-  const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
+  const preparedDataGroupedByX = useMemo(
+    () => group(preparedData, getGroups),
+    [preparedData, getGroups]
+  );
+
+  const chartWideData = useMemo(
+    () =>
+      getWideData({
+        dataGroupedByX: preparedDataGroupedByX,
+        xKey,
+        getY,
+        allSegments,
+        getSegment,
+        imputationType: fields.y.imputationType,
+      }),
+    [
+      preparedDataGroupedByX,
+      xKey,
+      getY,
+      allSegments,
+      getSegment,
+      fields.y.imputationType,
+    ]
+  );
 
   const yMeasure = measures.find((d) => d.iri === fields.y.componentIri);
 
@@ -195,7 +221,7 @@ const useAreasState = ({
 
   const stacked = stack()
     .order(stackOrder)
-    .offset(stackOffsetDiverging)
+    .offset(stackOffsetDivergingPositiveZeros)
     .keys(segments);
 
   const series = stacked(chartWideData as { [key: string]: number }[]);

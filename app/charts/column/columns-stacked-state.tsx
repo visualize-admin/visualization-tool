@@ -21,21 +21,24 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
-  parseDate,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import {
   getLabelWithUnit,
   getWideData,
+  useOptionalNumericVariable,
   usePreparedData,
+  useSegment,
+  useStringVariable,
+  useTemporalVariable,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { useChartPadding } from "../shared/padding";
@@ -67,9 +70,9 @@ export interface StackedColumnsState {
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
-  chartWideData: ArrayLike<Record<string, ObservationValue>>;
-  allDataWide: ArrayLike<Record<string, ObservationValue>>;
-  grouped: [string, Record<string, ObservationValue>[]][];
+  chartWideData: ArrayLike<Observation>;
+  allDataWide: ArrayLike<Observation>;
+  grouped: [string, Observation[]][];
   series: $FixMe[];
   getAnnotationInfo: (d: Observation, orderedSegments: string[]) => TooltipInfo;
 }
@@ -102,44 +105,36 @@ const useColumnsStackedState = ({
 
   const xIsTime = xDimension.__typename === "TemporalDimension";
 
-  const getX = useCallback(
-    (d: Observation): string => `${d[fields.x.componentIri]}`,
-    [fields.x.componentIri]
-  );
-  const getXAsDate = useCallback(
-    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
-    [fields.x.componentIri]
-  );
-  const getY = useCallback(
-    (d: Observation): number | null => {
-      const v = d[fields.y.componentIri];
-      return v !== null ? +v : null;
-    },
-    [fields.y.componentIri]
-  );
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment && fields.segment.componentIri
-        ? `${d[fields.segment.componentIri]}`
-        : "segment",
-    [fields.segment]
-  );
+  const getX = useStringVariable(fields.x.componentIri);
+  const getXAsDate = useTemporalVariable(fields.x.componentIri);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const getSegment = useSegment(fields.segment?.componentIri);
+
   const xKey = fields.x.componentIri;
 
   // All Data
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
 
-  const allDataGroupedMap = group(data, getX);
-  const allDataWide = getWideData({
-    groupedMap: allDataGroupedMap,
-    getSegment,
-    getY,
-    xKey,
-  });
-  const xOrder = allDataWide
-    .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
-    .map((d, i) => getX(d));
+  const allDataGroupedByX = useMemo(() => group(data, getX), [data, getX]);
+  const allDataWide = useMemo(
+    () =>
+      getWideData({
+        dataGroupedByX: allDataGroupedByX,
+        xKey,
+        getY,
+        getSegment,
+      }),
+    [allDataGroupedByX, xKey, getY, getSegment]
+  );
+
+  const xOrder = useMemo(
+    () =>
+      allDataWide
+        .sort((a, b) => ascending(a.total ?? undefined, b.total ?? undefined))
+        .map((d) => getX(d)),
+    [allDataWide, getX]
+  );
 
   const sortedData = useMemo(
     () =>
@@ -164,8 +159,17 @@ const useColumnsStackedState = ({
     getSegment,
   });
 
-  const groupedMap = group(preparedData, getX);
-  const chartWideData = getWideData({ groupedMap, xKey, getSegment, getY });
+  const preparedDataGroupedByX = useMemo(
+    () => group(preparedData, getX),
+    [preparedData, getX]
+  );
+
+  const chartWideData = getWideData({
+    dataGroupedByX: preparedDataGroupedByX,
+    xKey,
+    getY,
+    getSegment,
+  });
 
   //Ordered segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;
@@ -421,7 +425,7 @@ const useColumnsStackedState = ({
     colors,
     chartWideData,
     allDataWide,
-    grouped: [...groupedMap],
+    grouped: [...preparedDataGroupedByX],
     series,
     getAnnotationInfo,
     xIsTime,

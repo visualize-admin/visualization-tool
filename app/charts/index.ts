@@ -152,7 +152,7 @@ export const getInitialConfig = ({
           x: {
             componentIri: getTimeDimensions(dimensions)[0].iri,
           },
-          y: { componentIri: measures[0].iri },
+          y: { componentIri: measures[0].iri, imputationType: "none" },
         },
       };
     case "scatterplot":

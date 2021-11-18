@@ -4,7 +4,7 @@ import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
 import { Box, Button, Link } from "theme-ui";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
-import { ChartConfig, ChartFields } from "../configurator";
+import { ChartConfig, ChartFields, isTableConfig } from "../configurator";
 import { Observation } from "../domain/data";
 import {
   DimensionMetaDataFragment,
@@ -28,7 +28,7 @@ export const DataDownload = memo(
     const measures =
       "y" in chartConfig.fields
         ? [chartConfig.fields.y.componentIri]
-        : chartConfig.chartType === "table"
+        : isTableConfig(chartConfig)
         ? Object.values(chartConfig.fields).flatMap((f) =>
             f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
           )

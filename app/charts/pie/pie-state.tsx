@@ -8,14 +8,18 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
 } from "d3";
-import React, { ReactNode, useCallback, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { PieFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import { usePreparedData } from "../shared/chart-helpers";
+import {
+  useOptionalNumericVariable,
+  usePreparedData,
+  useSegment,
+} from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
@@ -83,17 +87,8 @@ const usePieState = ({
     throw Error(`No dimension <${fields.y.componentIri}> in cube!`);
   }
 
-  const getY = useCallback(
-    (d: Observation): number | null => {
-      const v = d[fields.y.componentIri];
-      return v !== null ? +v : null;
-    },
-    [fields.y.componentIri]
-  );
-  const getX = useCallback(
-    (d: Observation): string => d[fields.segment.componentIri] as string,
-    [fields.segment.componentIri]
-  );
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const getX = useSegment(fields.segment.componentIri);
 
   // Sort data
   const sortingType = fields.segment.sorting?.sortingType;

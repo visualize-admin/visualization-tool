@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
+import { ImputationType, isAreaConfig, isColumnConfig } from ".";
 import { fetchChartConfig, saveChartConfig } from "../api";
 import {
   getFieldComponentIris,
@@ -154,6 +155,7 @@ export type ConfiguratorStateAction =
       type: "CHART_CONFIG_FILTER_SET_NONE_MULTI";
       value: { dimensionIri: string };
     }
+  | { type: "IMPUTATION_TYPE_CHANGED"; value: { type: ImputationType } }
   | { type: "PUBLISH_FAILED" }
   | { type: "PUBLISHED"; value: string };
 
@@ -620,7 +622,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             };
             // if x !== time, also deactivate interactive time filter
             if (
-              draft.chartConfig.chartType === "column" &&
+              isColumnConfig(draft.chartConfig) &&
               action.value.field === "x" &&
               component?.__typename !== "TemporalDimension" &&
               draft.chartConfig.interactiveFiltersConfig
@@ -851,6 +853,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           to,
         };
       }
+      return draft;
+
+    case "IMPUTATION_TYPE_CHANGED":
+      if (draft.state === "CONFIGURING_CHART") {
+        if (isAreaConfig(draft.chartConfig)) {
+          draft.chartConfig.fields.y.imputationType = action.value.type;
+        }
+      }
+
       return draft;
 
     // State transitions

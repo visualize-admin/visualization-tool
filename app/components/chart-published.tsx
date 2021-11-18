@@ -1,5 +1,4 @@
 import { Trans } from "@lingui/macro";
-import { omitBy } from "lodash";
 import * as React from "react";
 import { useEffect } from "react";
 import { Box, Flex, Text } from "theme-ui";
@@ -11,20 +10,20 @@ import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { QueryFilters, useQueryFilters } from "../charts/shared/chart-helpers";
+import { isUsingImputation } from "../charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../charts/shared/use-interactive-filters";
 import { ChartTableVisualization } from "../charts/table/chart-table";
-import { ChartConfig, ChartType, Meta } from "../configurator";
+import { ChartConfig, Meta } from "../configurator";
 import { parseDate } from "../configurator/components/ui-helpers";
-import { FIELD_VALUE_NONE } from "../configurator/constants";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFootnotes } from "./chart-footnotes";
-import { HintRed } from "./hint";
+import { HintBlue, HintRed } from "./hint";
 
 export const ChartPublished = ({
   dataSet,
@@ -73,6 +72,16 @@ export const ChartPublished = ({
                 <strong>Don&apos;t use for reporting!</strong>
               </Trans>
             </HintRed>
+          </Box>
+        )}
+        {isUsingImputation(chartConfig) && (
+          <Box sx={{ mb: 4 }}>
+            <HintBlue iconName="hintWarning">
+              <Trans id="dataset.hasImputedValues">
+                Some data in this dataset is missing and has been interpolated
+                to fill the gaps.
+              </Trans>
+            </HintBlue>
           </Box>
         )}
         {meta.title[locale] !== "" && (

@@ -13,18 +13,24 @@ import {
   scaleTime,
   ScaleTime,
 } from "d3";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   mkNumber,
-  parseDate,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
-import { getLabelWithUnit, usePreparedData } from "../shared/chart-helpers";
+import {
+  getLabelWithUnit,
+  useOptionalNumericVariable,
+  usePreparedData,
+  useSegment,
+  useStringVariable,
+  useTemporalVariable,
+} from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { useChartPadding } from "../shared/padding";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -91,28 +97,10 @@ const useColumnsState = ({
       ? xDimension.timeUnit
       : undefined;
 
-  const getX = useCallback(
-    (d: Observation): string => `${d[fields.x.componentIri]}`,
-    [fields.x.componentIri]
-  );
-  const getXAsDate = useCallback(
-    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
-    [fields.x.componentIri]
-  );
-  const getY = useCallback(
-    (d: Observation): number | null => {
-      const v = d[fields.y.componentIri];
-      return v !== null ? +v : null;
-    },
-    [fields.y.componentIri]
-  );
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment && fields.segment.componentIri
-        ? `${d[fields.segment.componentIri]}`
-        : "segment",
-    [fields.segment]
-  );
+  const getX = useStringVariable(fields.x.componentIri);
+  const getXAsDate = useTemporalVariable(fields.x.componentIri);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const getSegment = useSegment(fields.segment?.componentIri);
 
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;

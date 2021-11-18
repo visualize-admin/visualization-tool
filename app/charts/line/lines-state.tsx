@@ -11,15 +11,14 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {
   getPalette,
-  parseDate,
-  useTimeFormatUnit,
   useFormatNumber,
+  useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
@@ -27,7 +26,11 @@ import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
   getWideData,
+  useOptionalNumericVariable,
   usePreparedData,
+  useSegment,
+  useStringVariable,
+  useTemporalVariable,
 } from "../shared/chart-helpers";
 import { TooltipInfo } from "../shared/interaction/tooltip";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
@@ -52,8 +55,8 @@ export interface LinesState {
   xAxisLabel: string;
   yAxisLabel: string;
   grouped: Map<string, Observation[]>;
-  chartWideData: ArrayLike<Record<string, ObservationValue>>;
-  allDataWide: ArrayLike<Record<string, ObservationValue>>;
+  chartWideData: ArrayLike<Observation>;
+  allDataWide: ArrayLike<Observation>;
   xKey: string;
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
@@ -87,21 +90,10 @@ const useLinesState = ({
     throw Error(`Dimension <${fields.x.componentIri}> is not temporal!`);
   }
 
-  const getGroups = (d: Observation): string =>
-    d[fields.x.componentIri] as string;
-  const getX = useCallback(
-    (d: Observation): Date => parseDate(`${d[fields.x.componentIri]}`),
-    [fields.x.componentIri]
-  );
-  const getY = (d: Observation): number | null => {
-    const v = d[fields.y.componentIri];
-    return v !== null ? +v : null;
-  };
-  const getSegment = useCallback(
-    (d: Observation): string =>
-      fields.segment ? (d[fields.segment.componentIri] as string) : "segment",
-    [fields.segment]
-  );
+  const getX = useTemporalVariable(fields.x.componentIri);
+  const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const getGroups = useStringVariable(fields.x.componentIri);
+  const getSegment = useSegment(fields.segment?.componentIri);
 
   const xKey = fields.x.componentIri;
 
@@ -109,12 +101,17 @@ const useLinesState = ({
     () => [...data].sort((a, b) => ascending(getX(a), getX(b))),
     [data, getX]
   );
-  const allDataGroupedMap = group(sortedData, getGroups);
+
+  const sortedDataGroupedByX = useMemo(
+    () => group(sortedData, getGroups),
+    [sortedData, getGroups]
+  );
+
   const allDataWide = getWideData({
-    groupedMap: allDataGroupedMap,
-    getSegment,
-    getY,
+    dataGroupedByX: sortedDataGroupedByX,
     xKey,
+    getY,
+    getSegment,
   });
 
   // All Data
@@ -127,9 +124,22 @@ const useLinesState = ({
     getSegment,
   });
 
-  const grouped = group(preparedData, getSegment);
-  const groupedMap = group(preparedData, getGroups);
-  const chartWideData = getWideData({ groupedMap, getSegment, getY, xKey });
+  const preparedDataGroupedBySegment = useMemo(
+    () => group(preparedData, getSegment),
+    [preparedData, getSegment]
+  );
+
+  const preparedDataGroupedByX = useMemo(
+    () => group(preparedData, getGroups),
+    [preparedData, getGroups]
+  );
+
+  const chartWideData = getWideData({
+    dataGroupedByX: preparedDataGroupedByX,
+    xKey,
+    getY,
+    getSegment,
+  });
 
   // x
   const xDomain = extent(preparedData, (d) => getX(d)) as [Date, Date];
@@ -279,7 +289,7 @@ const useLinesState = ({
     yAxisLabel,
     segments,
     colors,
-    grouped,
+    grouped: preparedDataGroupedBySegment,
     chartWideData,
     allDataWide,
     xKey,

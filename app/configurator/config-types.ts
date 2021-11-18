@@ -249,10 +249,21 @@ const LineConfig = t.type(
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
+const ImputationType = t.union([
+  t.literal("none"),
+  t.literal("zeros"),
+  t.literal("linear"),
+]);
+export type ImputationType = t.TypeOf<typeof ImputationType>;
+export const imputationTypes: ImputationType[] = ["none", "zeros", "linear"];
+
 const AreaFields = t.intersection([
   t.type({
     x: GenericField,
-    y: GenericField,
+    y: t.intersection([
+      GenericField,
+      t.partial({ imputationType: ImputationType }),
+    ]),
   }),
 
   t.partial({
@@ -282,7 +293,6 @@ const AreaConfig = t.type(
   },
   "AreaConfig"
 );
-
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
@@ -516,6 +526,54 @@ const ChartConfig = t.union([
 export type ChartConfig = t.TypeOf<typeof ChartConfig>;
 
 export type ChartType = ChartConfig["chartType"];
+
+export const isAreaConfig = (
+  chartConfig: ChartConfig
+): chartConfig is AreaConfig => {
+  return chartConfig.chartType === "area";
+};
+
+export const isBarConfig = (
+  chartConfig: ChartConfig
+): chartConfig is BarConfig => {
+  return chartConfig.chartType === "bar";
+};
+
+export const isColumnConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ColumnConfig => {
+  return chartConfig.chartType === "column";
+};
+
+export const isLineConfig = (
+  chartConfig: ChartConfig
+): chartConfig is LineConfig => {
+  return chartConfig.chartType === "line";
+};
+
+export const isScatterPlotConfig = (
+  chartConfig: ChartConfig
+): chartConfig is ScatterPlotConfig => {
+  return chartConfig.chartType === "scatterplot";
+};
+
+export const isPieConfig = (
+  chartConfig: ChartConfig
+): chartConfig is PieConfig => {
+  return chartConfig.chartType === "pie";
+};
+
+export const isTableConfig = (
+  chartConfig: ChartConfig
+): chartConfig is TableConfig => {
+  return chartConfig.chartType === "table";
+};
+
+export const isMapConfig = (
+  chartConfig: ChartConfig
+): chartConfig is MapConfig => {
+  return chartConfig.chartType === "map";
+};
 
 const Config = t.type(
   {
