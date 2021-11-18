@@ -31,6 +31,7 @@ import { FieldProps } from "../config-form";
 import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
+  isTableConfig,
   TableConfig,
 } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
@@ -52,7 +53,7 @@ const useTableColumnGroupHiddenField = ({
     (e) => {
       if (
         state.state === "CONFIGURING_CHART" &&
-        state.chartConfig.chartType === "table"
+        isTableConfig(state.chartConfig)
       ) {
         const updater = path === "isGroup" ? updateIsGroup : updateIsHidden;
         const chartConfig = updater(state.chartConfig, {

@@ -9,8 +9,6 @@ import {
 import {
   AreaConfig,
   AreaFields,
-  Filters,
-  FilterValueSingle,
   InteractiveFiltersConfig,
 } from "../../configurator";
 import { isNumber } from "../../configurator/components/ui-helpers";

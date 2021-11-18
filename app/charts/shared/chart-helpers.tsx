@@ -1,10 +1,21 @@
-import { sum } from "d3";
-import { merge, omitBy } from "lodash";
-import { useMemo } from "react";
-import { ChartConfig, Filters, FilterValueSingle } from "../../configurator";
+import { group, InternMap, sum } from "d3";
+import { omitBy } from "lodash";
+import { useCallback, useMemo } from "react";
+import {
+  ChartConfig,
+  Filters,
+  FilterValueSingle,
+  ImputationType,
+  isAreaConfig,
+} from "../../configurator";
+import { parseDate } from "../../configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
-import { Observation, ObservationValue } from "../../domain/data";
+import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import {
+  imputeTemporalLinearSeries,
+  interpolateZerosValue,
+} from "./imputation";
 import {
   InteractiveFiltersState,
   useInteractiveFilters,
@@ -67,7 +78,7 @@ export const usePreparedData = ({
 }: {
   timeFilterActive?: boolean;
   legendFilterActive?: boolean;
-  sortedData: Observation[];
+  sortedData: Array<Observation>;
   interactiveFilters: InteractiveFiltersState;
   getX?: (d: Observation) => Date;
   getSegment?: (d: Observation) => string;
@@ -121,32 +132,185 @@ export const usePreparedData = ({
   return preparedData;
 };
 
-// Helper to pivot a dataset to a wider format (used in stacked charts)
-export const getWideData = ({
-  xKey,
-  groupedMap,
-  getSegment,
-  getY,
-}: {
-  xKey: string;
-  groupedMap: Map<string, Record<string, ObservationValue>[]>;
-  getSegment: (d: Observation) => string;
-  getY: (d: Observation) => number | null;
-}): { [key: string]: ObservationValue }[] => {
-  const wideArray = [];
-  for (const [key, values] of groupedMap) {
-    let obj: { [key: string]: ObservationValue } = {
-      [xKey]: key,
-      total: sum(values, getY),
-    };
+// retrieving variables
+export const useNumericVariable = (
+  key: string
+): ((d: Observation) => number) => {
+  const getVariable = useCallback((d: Observation) => Number(d[key]), [key]);
 
-    for (const value of values) {
-      obj[getSegment(value)] = getY(value);
+  return getVariable;
+};
+
+export const useOptionalNumericVariable = (
+  key: string
+): ((d: Observation) => number | null) => {
+  const getVariable = useCallback(
+    (d: Observation) => (d[key] !== null ? Number(d[key]) : null),
+    [key]
+  );
+
+  return getVariable;
+};
+
+export const useStringVariable = (
+  key: string
+): ((d: Observation) => string) => {
+  const getVariable = useCallback((d: Observation) => `${d[key]}`, [key]);
+
+  return getVariable;
+};
+
+export const useTemporalVariable = (
+  key: string
+): ((d: Observation) => Date) => {
+  const getVariable = useCallback(
+    (d: Observation) => parseDate(`${d[key]}`),
+    [key]
+  );
+
+  return getVariable;
+};
+
+export const useSegment = (
+  segmentKey: string | undefined
+): ((d: Observation) => string) => {
+  const getSegment = useCallback(
+    (d: Observation): string => (segmentKey ? `${d[segmentKey]}` : "segment"),
+    [segmentKey]
+  );
+
+  return getSegment;
+};
+
+// Stacking helpers.
+// Modified from d3 source code to treat 0s as positive values and stack them correctly
+// in area charts.
+export const stackOffsetDivergingPositiveZeros = (
+  series: any,
+  order: any
+): void => {
+  const n = series.length;
+
+  if (!(n > 0)) return;
+
+  for (let i, j = 0, d, dy, yp, yn, m = series[order[0]].length; j < m; ++j) {
+    for (yp = yn = 0, i = 0; i < n; ++i) {
+      if ((dy = (d = series[order[i]][j])[1] - d[0]) >= 0) {
+        (d[0] = yp), (d[1] = yp += dy);
+      } else {
+        (d[1] = yn), (d[0] = yn += dy);
+      }
     }
-
-    wideArray.push(obj);
   }
-  return wideArray;
+};
+
+// Helper to pivot a dataset to a wider format.
+// Currently, imputation is only applicable to temporal charts (specifically, stacked area charts).
+export const getWideData = ({
+  dataGroupedByX,
+  xKey,
+  getY,
+  allSegments,
+  getSegment,
+  imputationType = "none",
+}: {
+  dataGroupedByX: InternMap<string, Array<Observation>>;
+  xKey: string;
+  getY: (d: Observation) => number | null;
+  allSegments?: Array<string>;
+  getSegment: (d: Observation) => string;
+  imputationType?: ImputationType;
+}) => {
+  switch (imputationType) {
+    case "linear":
+      if (allSegments) {
+        const dataGroupedByXEntries = [...dataGroupedByX.entries()];
+        const dataGroupedByXWithImputedValues: Array<{
+          [key: string]: number;
+        }> = Array.from({ length: dataGroupedByX.size }, () => ({}));
+
+        for (const segment of allSegments) {
+          const imputedSeriesValues = imputeTemporalLinearSeries({
+            dataSortedByX: dataGroupedByXEntries.map(([date, values]) => {
+              const observation = values.find((d) => getSegment(d) === segment);
+
+              return {
+                date: new Date(date),
+                value: observation ? getY(observation) : null,
+              };
+            }),
+          });
+
+          for (let i = 0; i < imputedSeriesValues.length; i++) {
+            dataGroupedByXWithImputedValues[i][segment] =
+              imputedSeriesValues[i].value;
+          }
+        }
+
+        return getBaseWideData({
+          dataGroupedByX,
+          xKey,
+          getY,
+          getSegment,
+          getOptionalObservationProps: (i) =>
+            allSegments.map((d) => ({
+              [d]: dataGroupedByXWithImputedValues[i][d],
+            })),
+        });
+      }
+    case "zeros":
+      if (allSegments) {
+        return getBaseWideData({
+          dataGroupedByX,
+          xKey,
+          getY,
+          getSegment,
+          getOptionalObservationProps: () =>
+            allSegments.map((d) => ({
+              [d]: interpolateZerosValue(),
+            })),
+        });
+      }
+    case "none":
+    default:
+      return getBaseWideData({ dataGroupedByX, xKey, getY, getSegment });
+  }
+};
+
+const getBaseWideData = ({
+  dataGroupedByX,
+  xKey,
+  getY,
+  getSegment,
+  getOptionalObservationProps = () => [],
+}: {
+  dataGroupedByX: InternMap<string, Array<Observation>>;
+  xKey: string;
+  getY: (d: Observation) => number | null;
+  getSegment: (d: Observation) => string;
+  getOptionalObservationProps?: (
+    datumIndex: number
+  ) => Array<{ [key: string]: number }>;
+}): Array<Observation> => {
+  const wideData = [];
+  const dataGroupedByXEntries = [...dataGroupedByX.entries()];
+
+  for (let i = 0; i < dataGroupedByX.size; i++) {
+    const [date, values] = dataGroupedByXEntries[i];
+
+    const observation: Observation = Object.assign(
+      {
+        [xKey]: date,
+        total: sum(values, getY),
+      },
+      ...getOptionalObservationProps(i),
+      ...values.map((d) => ({ [getSegment(d)]: getY(d) }))
+    );
+
+    wideData.push(observation);
+  }
+
+  return wideData;
 };
 
 const SlugRe = /\W+/g;
@@ -158,4 +322,39 @@ export const getLabelWithUnit = (
   return dimension.unit
     ? `${dimension.label} (${dimension.unit})`
     : dimension.label;
+};
+
+export const checkForMissingValuesInSegments = (
+  dataGroupedByX: InternMap<string, Array<Observation>>,
+  segments: Array<string>
+): boolean => {
+  for (const value of dataGroupedByX.values()) {
+    if (value.length !== segments.length) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const useImputationNeeded = ({
+  chartConfig,
+  data,
+}: {
+  chartConfig: ChartConfig;
+  data?: Array<Observation>;
+}): boolean => {
+  const getSegment = useSegment(chartConfig.fields.segment?.componentIri);
+  const imputationNeeded = useMemo(() => {
+    if (isAreaConfig(chartConfig) && data) {
+      return checkForMissingValuesInSegments(
+        group(data, (d) => d[chartConfig.fields.x.componentIri] as string),
+        [...new Set(data.map((d) => getSegment(d)))]
+      );
+    } else {
+      return false;
+    }
+  }, [chartConfig, data, getSegment]);
+
+  return imputationNeeded;
 };

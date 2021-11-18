@@ -1,7 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { omitBy } from "lodash";
 import * as React from "react";
-import { useEffect } from "react";
 import { Box, Flex, Text } from "theme-ui";
 import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
@@ -14,7 +12,17 @@ import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "../charts/shared/use-sync-interactive-filters";
 import { ChartTableVisualization } from "../charts/table/chart-table";
-import { ChartConfig, useConfiguratorState } from "../configurator";
+import {
+  ChartConfig,
+  isAreaConfig,
+  isBarConfig,
+  isColumnConfig,
+  isLineConfig,
+  isPieConfig,
+  isScatterPlotConfig,
+  isTableConfig,
+  useConfiguratorState,
+} from "../configurator";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
@@ -159,49 +167,49 @@ const Chart = ({
   return (
     <>
       {/* CHARTS */}
-      {chartConfig.chartType === "column" && (
+      {isColumnConfig(chartConfig) && (
         <ChartColumnsVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
           queryFilters={queryFilters}
         />
       )}
-      {chartConfig.chartType === "bar" && (
+      {isBarConfig(chartConfig) && (
         <ChartBarsVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
           queryFilters={queryFilters}
         />
       )}
-      {chartConfig.chartType === "line" && (
+      {isLineConfig(chartConfig) && (
         <ChartLinesVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
           queryFilters={queryFilters}
         />
       )}
-      {chartConfig.chartType === "area" && (
+      {isAreaConfig(chartConfig) && (
         <ChartAreasVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
           queryFilters={queryFilters}
         />
       )}
-      {chartConfig.chartType === "scatterplot" && (
+      {isScatterPlotConfig(chartConfig) && (
         <ChartScatterplotVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
           queryFilters={queryFilters}
         />
       )}
-      {chartConfig.chartType === "pie" && (
+      {isPieConfig(chartConfig) && (
         <ChartPieVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
           queryFilters={queryFilters}
         />
       )}
-      {chartConfig.chartType === "table" && (
+      {isTableConfig(chartConfig) && (
         <ChartTableVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
