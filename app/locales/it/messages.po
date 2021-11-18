@@ -292,23 +292,23 @@ msgstr "Seleziona una delle annotazioni proposte per modificarla."
 
 #: app/configurator/components/ui-helpers.ts:435
 msgid "controls.imputation"
-msgstr ""
+msgstr "Tipo di imputazione"
 
 #: app/configurator/components/chart-options-selector.tsx:477
 #: app/configurator/components/ui-helpers.ts:447
 msgid "controls.imputation.type.linear"
-msgstr ""
+msgstr "Interpolazione lineare"
 
 #: app/configurator/components/chart-options-selector.tsx:470
 #: app/configurator/components/chart-options-selector.tsx:482
 #: app/configurator/components/ui-helpers.ts:439
 msgid "controls.imputation.type.none"
-msgstr ""
+msgstr "-"
 
 #: app/configurator/components/chart-options-selector.tsx:472
 #: app/configurator/components/ui-helpers.ts:443
 msgid "controls.imputation.type.zeros"
-msgstr ""
+msgstr "Zeri"
 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:92
 msgid "controls.interactive.filters.dataFilter"
@@ -397,11 +397,11 @@ msgstr "Gruppi"
 
 #: app/configurator/components/chart-options-selector.tsx:511
 msgid "controls.section.imputation"
-msgstr ""
+msgstr "Valori mancanti"
 
 #: app/configurator/components/chart-options-selector.tsx:516
 msgid "controls.section.imputation.explanation"
-msgstr ""
+msgstr "A causa della natura del tipo di grafico selezionato, sono stati introdotti alcuni valori mancanti. Decidere la logica di imputazione o passare a un altro tipo di grafico."
 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:63
 msgid "controls.section.interactive.filters"

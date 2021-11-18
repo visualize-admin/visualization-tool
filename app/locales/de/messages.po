@@ -292,23 +292,23 @@ msgstr "Bitte ein Beschreibungsfeld auswählen, um dieses zu bearbeiten."
 
 #: app/configurator/components/ui-helpers.ts:435
 msgid "controls.imputation"
-msgstr ""
+msgstr "Imputationstyp"
 
 #: app/configurator/components/chart-options-selector.tsx:477
 #: app/configurator/components/ui-helpers.ts:447
 msgid "controls.imputation.type.linear"
-msgstr ""
+msgstr "Lineare Interpolation"
 
 #: app/configurator/components/chart-options-selector.tsx:470
 #: app/configurator/components/chart-options-selector.tsx:482
 #: app/configurator/components/ui-helpers.ts:439
 msgid "controls.imputation.type.none"
-msgstr ""
+msgstr "-"
 
 #: app/configurator/components/chart-options-selector.tsx:472
 #: app/configurator/components/ui-helpers.ts:443
 msgid "controls.imputation.type.zeros"
-msgstr ""
+msgstr "Nullen"
 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:92
 msgid "controls.interactive.filters.dataFilter"
@@ -397,11 +397,11 @@ msgstr "Gruppierungen"
 
 #: app/configurator/components/chart-options-selector.tsx:511
 msgid "controls.section.imputation"
-msgstr ""
+msgstr "Fehlende Werte"
 
 #: app/configurator/components/chart-options-selector.tsx:516
 msgid "controls.section.imputation.explanation"
-msgstr ""
+msgstr "Aufgrund der Natur des ausgewählten Diagrammtyps wurden einige fehlende Werte eingefügt. Entscheiden Sie sich für die Imputationslogik oder wechseln Sie zu einem anderen Diagrammtyp."
 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:63
 msgid "controls.section.interactive.filters"
