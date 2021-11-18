@@ -1,6 +1,6 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { filter, keyBy, mapValues, pickBy, sortBy } from "lodash";
+import { mapValues, pickBy, sortBy } from "lodash";
 import React, {
   useCallback,
   useMemo,
@@ -21,7 +21,6 @@ import {
 } from "theme-ui";
 import { Router, useRouter } from "next/router";
 
-import { useConfiguratorState } from "..";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
@@ -51,29 +50,9 @@ import qs from "qs";
 
 export type SearchFilter = DataCubeTheme | DataCubeOrganization;
 
-export type NavState = {
-  theme: {
-    expanded: boolean;
-  };
-  organization: {
-    expanded: boolean;
-  };
-};
-
-const defaultNavState = {
-  theme: {
-    expanded: true,
-  },
-  organization: {
-    expanded: true,
-  },
-};
-
 export const useBrowseState = () => {
   const [query, setQuery] = useState<string>("");
   const [dataset, setDataset] = useState<string>();
-  const [navState, setNavState] = useState<NavState>(defaultNavState);
-
   const [order, setOrder] = useState<DataCubeResultOrder>(
     DataCubeResultOrder.TitleAsc
   );
@@ -82,29 +61,6 @@ export const useBrowseState = () => {
   );
   const [filters, setFilters] = useState<SearchFilter[]>([]);
   const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
-
-  const addFilter = useCallback(
-    (cat: SearchFilter) => {
-      const type = cat.__typename;
-      const existingFilterIndex = filters.findIndex(
-        (f) => f.__typename === type
-      );
-      if (existingFilterIndex === -1) {
-        setFilters(Array.from(new Set([...filters, cat])));
-      } else {
-        setFilters(
-          Array.from(new Set([...filters.slice(0, existingFilterIndex), cat]))
-        );
-      }
-    },
-    [filters]
-  );
-
-  const removeFilter = useCallback((cat: SearchFilter) => {
-    setFilters(
-      Array.from(new Set([...filters.filter((c) => c.iri !== cat.iri)]))
-    );
-  }, []);
 
   return useMemo(
     () => ({
@@ -127,16 +83,6 @@ export const useBrowseState = () => {
           setOrder(previousOrderRef.current);
         }
       },
-      onNavigateFilter: (filter: SearchFilter) => {
-        // breadcrumbs are in the form [rootNode, ...filters], this is why
-        // we need to substract 1 to breadcrumb index to get the filter index.
-        const filterIndex = filters.findIndex((f) => f.iri === filter.iri);
-        if (filterIndex === filters.length - 1) {
-          setFilters([filters[filterIndex]]);
-        } else {
-          setFilters(filters.slice(0, filterIndex + 1));
-        }
-      },
       query,
       order,
       onSetOrder: (order: DataCubeResultOrder) => {
@@ -146,32 +92,10 @@ export const useBrowseState = () => {
       filters,
       setFilters,
       setQuery,
-      onAddFilter: addFilter,
-      onRemoveFilter: removeFilter,
-      onToggleFilter: (cat: SearchFilter) => {
-        if (filters.find((c) => c.iri === cat.iri)) {
-          removeFilter(cat);
-        } else {
-          addFilter(cat);
-        }
-      },
-      navState,
-      setNavState,
       dataset,
       setDataset,
     }),
-    [
-      filters,
-      includeDrafts,
-      order,
-      query,
-      removeFilter,
-      addFilter,
-      navState,
-      setNavState,
-      dataset,
-      setDataset,
-    ]
+    [filters, includeDrafts, order, query, dataset, setDataset]
   );
 };
 

@@ -69,7 +69,7 @@ export const SelectDatasetStepContent = () => {
       order,
       includeDrafts,
       filters: filters
-        ? filters.map((filter: SearchFilter) => {
+        ? filters.map((filter) => {
             return { type: filter.__typename, value: filter.iri };
           })
         : [],
