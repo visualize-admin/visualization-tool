@@ -568,18 +568,18 @@ export const Subthemes = ({
   );
 };
 
-type NavBoxTheme = {
+type NavSectionTitleTheme = {
   bg: string;
   borderColor: string;
 };
 
-export const NavBox = ({
+export const NavSectionTitle = ({
   children,
   theme,
   ...flexProps
 }: {
   children: React.ReactNode;
-  theme: NavBoxTheme;
+  theme: NavSectionTitleTheme;
 } & FlexProps) => {
   return (
     <Flex
@@ -587,7 +587,6 @@ export const NavBox = ({
       sx={{
         alignItems: "center",
         p: 3,
-        justifyContent: "space-between",
         cursor: "pointer",
         // border: "1px solid",
         // borderColor: theme.borderColor,
@@ -628,24 +627,17 @@ export const SearchFilters = () => {
 
   const themeNav = (
     <div>
-      <NavBox
+      <NavSectionTitle
         theme={{ bg: "categoryLight", borderColor: "category" }}
         sx={{ mb: "block" }}
       >
-        <Link passHref href="/browse/theme">
-          <ThemeUILink
-            variant="initial"
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <Box as="span" color="category" mr={2}>
-              <SvgIcCategories width={24} height={24} />
-            </Box>
-            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-              <Trans id="browse-panel.themes">Themes</Trans>
-            </Text>
-          </ThemeUILink>
-        </Link>
-      </NavBox>
+        <Box as="span" color="category" mr={2}>
+          <SvgIcCategories width={24} height={24} />
+        </Box>
+        <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+          <Trans id="browse-panel.themes">Themes</Trans>
+        </Text>
+      </NavSectionTitle>
       <Box>
         {allThemesAlpha
           ? allThemesAlpha.map((theme) => {
@@ -678,24 +670,17 @@ export const SearchFilters = () => {
 
   const orgNav = (
     <div>
-      <NavBox
+      <NavSectionTitle
         theme={{ bg: "organizationLight", borderColor: "organization" }}
         sx={{ mb: 2 }}
       >
-        <Link passHref href="/browse/organization">
-          <ThemeUILink
-            variant="initial"
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <Box as="span" color="organization" mr={2}>
-              <SvgIcOrganisations width={24} height={24} />
-            </Box>
-            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-              <Trans id="browse-panel.organizations">Organizations</Trans>
-            </Text>
-          </ThemeUILink>
-        </Link>
-      </NavBox>
+        <Box as="span" color="organization" mr={2}>
+          <SvgIcOrganisations width={24} height={24} />
+        </Box>
+        <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+          <Trans id="browse-panel.organizations">Organizations</Trans>
+        </Text>
+      </NavSectionTitle>
       <Box>
         {allOrgsAlpha
           ? allOrgsAlpha.map((org) => {
