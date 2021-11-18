@@ -83,7 +83,7 @@ export const SelectDatasetStepContent = () => {
     <PanelLayout
       sx={{
         width: "100%",
-        maxWidth: 1400,
+        maxWidth: 1300,
         margin: "auto",
         left: 0,
         right: 0,
