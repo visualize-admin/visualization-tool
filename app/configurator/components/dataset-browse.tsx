@@ -424,19 +424,19 @@ const defaultNavItemTheme = {
 };
 
 const themeNavItemTheme = {
-  activeBg: "success",
+  activeBg: "category",
   activeTextColor: "white",
   textColor: "initial",
-  countColor: "success",
-  countBg: "successLight",
+  countColor: "category",
+  countBg: "categoryLight",
 };
 
 const organizationNavItemTheme = {
-  activeBg: "primary",
+  activeBg: "organization",
   activeTextColor: "white",
   textColor: "initial",
-  countColor: "primary",
-  countBg: "primaryLight",
+  countColor: "organization",
+  countBg: "organizationLight",
 };
 
 const NavChip = ({
@@ -671,7 +671,7 @@ export const SearchFilters = () => {
   const themeNav = (
     <>
       <NavBox
-        theme={{ bg: "successLight", borderColor: "categoryGreen" }}
+        theme={{ bg: "categoryLight", borderColor: "category" }}
         sx={{ mb: "block" }}
       >
         <Link passHref href="/browse/theme">
@@ -679,7 +679,7 @@ export const SearchFilters = () => {
             variant="initial"
             sx={{ display: "flex", alignItems: "center" }}
           >
-            <Box as="span" color="categoryGreen" mr={2}>
+            <Box as="span" color="category" mr={2}>
               <SvgIcCategories width={24} height={24} />
             </Box>
             <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
@@ -721,7 +721,7 @@ export const SearchFilters = () => {
   const orgNav = (
     <>
       <NavBox
-        theme={{ bg: "primaryLight", borderColor: "organisationBlue" }}
+        theme={{ bg: "organizationLight", borderColor: "organization" }}
         sx={{ mb: 2 }}
       >
         <Link passHref href="/browse/organization">
@@ -729,7 +729,7 @@ export const SearchFilters = () => {
             variant="initial"
             sx={{ display: "flex", alignItems: "center" }}
           >
-            <Box as="span" color="organizationBlue" mr={2}>
+            <Box as="span" color="organization" mr={2}>
               <SvgIcOrganisations width={24} height={24} />
             </Box>
             <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>

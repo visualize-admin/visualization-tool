@@ -69,8 +69,11 @@ export const theme: Theme = {
     warning: "#8a6d3b",
     warningLight: "#fffab2",
 
-    organizationBlue: "#4C859D",
-    categoryGreen: "#799D6B",
+    organization: "#006699",
+    organizationLight: "#d8e8ef", // same as primaryLight
+
+    category: "#3c763d",
+    categoryLight: "#DFF0D8", // same as successLight
   },
   fonts: {
     body: "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
