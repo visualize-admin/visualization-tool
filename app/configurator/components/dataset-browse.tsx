@@ -593,7 +593,7 @@ export const SearchFilters = () => {
   }, [allThemes, allOrgs]);
 
   const themeNav = (
-    <>
+    <div>
       <NavBox
         theme={{ bg: "categoryLight", borderColor: "category" }}
         sx={{ mb: "block" }}
@@ -639,11 +639,11 @@ export const SearchFilters = () => {
             })
           : null}
       </Box>
-    </>
+    </div>
   );
 
   const orgNav = (
-    <>
+    <div>
       <NavBox
         theme={{ bg: "organizationLight", borderColor: "organization" }}
         sx={{ mb: 2 }}
@@ -696,7 +696,7 @@ export const SearchFilters = () => {
           />
         ) : null}
       </Box>
-    </>
+    </div>
   );
 
   let navs = [themeNav, orgNav];
@@ -719,7 +719,7 @@ export const SearchFilters = () => {
     >
       <Stack>
         {/* Theme tree */}
-        <Stack spacing={4}>
+        <Stack spacing={5}>
           {navs[0]}
           {navs[1]}
         </Stack>
