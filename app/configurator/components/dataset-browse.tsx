@@ -507,7 +507,9 @@ const NavItem = ({
       ) : (
         <>
           <Link href={path} passHref>
-            <ThemeUILink variant="initial">{children}&nbsp;&nbsp;</ThemeUILink>
+            <ThemeUILink variant="initial" sx={{ flexGrow: 1 }}>
+              {children}&nbsp;&nbsp;
+            </ThemeUILink>
           </Link>
           {countChip}
         </>
