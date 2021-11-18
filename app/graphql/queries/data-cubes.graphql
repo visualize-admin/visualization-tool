@@ -3,20 +3,31 @@ query DataCubes(
   $query: String
   $order: DataCubeResultOrder
   $includeDrafts: Boolean
+  $filters: [DataCubeSearchFilter!]
 ) {
   dataCubes(
     locale: $locale
     query: $query
     order: $order
     includeDrafts: $includeDrafts
+    filters: $filters
   ) {
     highlightedTitle
     highlightedDescription
     dataCube {
       iri
       title
+      creator {
+        iri
+        label
+      }
       description
       publicationStatus
+      datePublished
+      themes {
+        iri
+        label
+      }
     }
   }
 }
@@ -75,6 +86,14 @@ query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
     expires
     datePublished
     publicationStatus
+    themes {
+      iri
+      label
+    }
+    creator {
+      iri
+      label
+    }
   }
 }
 
@@ -147,5 +166,37 @@ query DataCubeObservations(
       data
       sparqlEditorUrl
     }
+  }
+}
+
+query Themes($locale: String!) {
+  themes(locale: $locale) {
+    iri
+    label
+  }
+}
+
+query Organizations($locale: String!) {
+  organizations(locale: $locale) {
+    iri
+    label
+  }
+}
+
+query Subthemes($locale: String!, $parentIri: String!) {
+  subthemes(locale: $locale, parentIri: $parentIri) {
+    label
+    iri
+  }
+}
+
+query DatasetCount($theme: String, $organization: String, $subtheme: String) {
+  datasetcount(
+    theme: $theme
+    organization: $organization
+    subtheme: $subtheme
+  ) {
+    count
+    iri
   }
 }

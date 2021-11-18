@@ -12,9 +12,11 @@ import {
 } from "d3";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
+import { DataCubeTheme } from "../graphql/query-hooks";
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import { locales } from "../locales/locales";
+import truthy from "../utils/truthy";
 import * as ns from "./namespace";
 
 export const getQueryLocales = (locale: string): string[] => [
@@ -30,6 +32,11 @@ export const isCubePublished = (cube: Cube): boolean =>
       t.equals(ns.adminVocabulary("CreativeWorkStatus/Published"))
     );
 
+/**
+ * Parses a cube coming from rdf-cube-view-query into a simple javascript object
+ *
+ * @see https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
+ */
 export const parseCube = ({
   cube,
   locale,
@@ -38,8 +45,7 @@ export const parseCube = ({
   locale: string;
 }): ResolvedDataCube => {
   const outOpts = { language: getQueryLocales(locale) };
-
-  // See https://github.com/zazuko/cube-creator/blob/master/apis/core/bootstrap/shapes/dataset.ts for current list of cube metadata
+  const creatorIri = cube.out(ns.dcterms.creator).value;
   return {
     cube,
     locale,
@@ -52,8 +58,16 @@ export const parseCube = ({
       publicationStatus: isCubePublished(cube)
         ? DataCubePublicationStatus.Published
         : DataCubePublicationStatus.Draft,
-      theme: cube.out(ns.dcat.theme)?.value,
       datePublished: cube.out(ns.schema.datePublished)?.value,
+      themes: cube
+        .out(ns.dcat.theme)
+        ?.values.filter(truthy)
+        .map((t) => ({ iri: t })),
+      creator: creatorIri
+        ? {
+            iri: creatorIri,
+          }
+        : undefined,
       versionHistory: cube.in(ns.schema.hasPart)?.value,
       contactPoint: {
         name: cube.out(ns.dcat.contactPoint)?.out(ns.vcard.fn)?.value,

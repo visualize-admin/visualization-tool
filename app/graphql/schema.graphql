@@ -25,6 +25,7 @@ type DataCube {
   version: String
   contactName: String
   contactEmail: String
+  creator: DataCubeOrganization
   landingPage: String
   publisher: String
   description: String
@@ -39,6 +40,7 @@ type DataCube {
   dimensions: [Dimension!]!
   dimensionByIri(iri: String!): Dimension
   measures: [Measure!]!
+  themes: [DataCubeTheme!]!
 }
 
 interface Dimension {
@@ -105,10 +107,30 @@ type DataCubeResult {
   dataCube: DataCube!
 }
 
+type DataCubeTheme {
+  iri: String!
+  label: String
+}
+
+type DataCubeOrganization {
+  iri: String!
+  label: String
+}
+
+input DataCubeSearchFilter {
+  type: String!
+  value: String!
+}
+
 enum DataCubeResultOrder {
   SCORE
   TITLE_ASC
   CREATED_DESC
+}
+
+type DatasetCount {
+  iri: String!
+  count: Int!
 }
 
 # The "Query" type is special: it lists all of the available queries that
@@ -120,5 +142,14 @@ type Query {
     query: String
     order: DataCubeResultOrder
     includeDrafts: Boolean
+    filters: [DataCubeSearchFilter!]
   ): [DataCubeResult!]!
+  themes(locale: String!): [DataCubeTheme!]!
+  subthemes(locale: String!, parentIri: String!): [DataCubeTheme!]!
+  organizations(locale: String!): [DataCubeOrganization!]!
+  datasetcount(
+    theme: String
+    organization: String
+    subtheme: String
+  ): [DatasetCount!]
 }

@@ -30,6 +30,12 @@ import { loadResourceLabels } from "./query-labels";
 import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
 import truthy from "../utils/truthy";
+import {
+  DataCubeOrganization,
+  DataCubeSearchFilter,
+  DataCubeTheme,
+} from "../graphql/query-hooks";
+import isAttrEqual from "../utils/is-attr-equal";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -101,38 +107,71 @@ const getLatestCube = async (cube: Cube): Promise<Cube> => {
   return cube;
 };
 
-const isVisualizeCubeFilter = ({ cube }: $FixMe) => {
-  return [
-    [
-      cube,
-      ns.schema.workExample,
-      rdf.namedNode("https://ld.admin.ch/application/visualize"),
-    ],
-  ];
+const where = (predicate: NamedNode, object: NamedNode) => {
+  return ({ cube }: $FixMe) => [[cube, predicate, object]];
+};
+
+const isVisualizeCubeFilter = where(
+  ns.schema.workExample,
+  rdf.namedNode("https://ld.admin.ch/application/visualize")
+);
+
+const makeQueryFilter = (
+  predicate: NamedNode,
+  filters: DataCubeSearchFilter[]
+) => {
+  return filters.length > 0
+    ? Cube.filter.in(
+        predicate,
+        filters.map((x) => rdf.namedNode(x.value))
+      )
+    : null;
 };
 
 export const getCubes = async ({
   includeDrafts,
   locale,
+  filters,
+  themesIndex,
 }: {
   includeDrafts: boolean;
   locale: string;
+  filters?: DataCubeSearchFilter[];
+  themesIndex?: Record<string, DataCubeTheme>;
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();
 
+  const themeQueryFilter = makeQueryFilter(
+    ns.dcat.theme,
+    filters?.filter(isAttrEqual("type", "DataCubeTheme")) || []
+  );
+  const orgQueryFilter = makeQueryFilter(
+    ns.dcterms.creator,
+    filters?.filter(isAttrEqual("type", "DataCubeOrganization")) || []
+  );
+  const aboutQueryFilter = makeQueryFilter(
+    ns.schema.about,
+    filters?.filter(isAttrEqual("type", "DataCubeAbout")) || []
+  );
+
+  const cubesFilters = [
+    // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
+    Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
+    Cube.filter.noExpires(),
+    isVisualizeCubeFilter,
+    includeDrafts
+      ? null
+      : Cube.filter.status([
+          ns.adminVocabulary("CreativeWorkStatus/Published"),
+        ]),
+    themeQueryFilter,
+    orgQueryFilter,
+    aboutQueryFilter,
+  ].filter(truthy);
+
   const cubes = await source.cubes({
     noShape: true,
-    filters: [
-      // Cubes that have a newer version published have a schema.org/expires property; Only show cubes that don't have it
-      Cube.filter.noValidThrough(), // Keep noValidThrough for backwards compat
-      Cube.filter.noExpires(),
-      isVisualizeCubeFilter,
-      includeDrafts
-        ? null
-        : Cube.filter.status([
-            ns.adminVocabulary("CreativeWorkStatus/Published"),
-          ]),
-    ].filter(truthy),
+    filters: cubesFilters,
   });
 
   return cubes.map((cube) => parseCube({ cube, locale }));

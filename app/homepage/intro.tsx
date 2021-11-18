@@ -1,5 +1,8 @@
 import { Box, Button, Flex, Text } from "theme-ui";
-import { ReactNode } from "react";
+import React, { ReactNode, useCallback } from "react";
+import { useRouter } from "next/router";
+import { select, Trans } from "@lingui/macro";
+
 import { default as IconAreaChart } from "../icons/components/IcChartArea";
 import { default as IconBarChart } from "../icons/components/IcChartBar";
 import { default as IconColumnChart } from "../icons/components/IcChartColumn";
@@ -13,7 +16,13 @@ import { default as IconText } from "../icons/components/IcText";
 import { default as IconX } from "../icons/components/IcXAxis";
 import { default as IconY } from "../icons/components/IcYAxis";
 import { HintRed } from "../components/hint";
-import NextLink from "next/link";
+import SearchAutocomplete, {
+  SearchAutocompleteItem,
+} from "../components/search-autocomplete";
+import Stack from "../components/Stack";
+import Link from "next/link";
+import SvgIcCategories from "../icons/components/IcCategories";
+import SvgIcOrganisations from "../icons/components/IcOrganisations";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
@@ -29,6 +38,93 @@ const ICONS = [
   { Icon: IconText, color: "#32B8DF" },
   { Icon: IconBarChart, color: "#008F85" },
 ];
+
+const BrowsingSection = () => {
+  const router = useRouter();
+  const handleSelectAutocompleteItem = useCallback(
+    ({ selectedItem }: { selectedItem?: SearchAutocompleteItem | null }) => {
+      if (!selectedItem) {
+        return;
+      }
+      let path: string;
+      switch (selectedItem.__typename) {
+        case "DataCubeOrganization":
+          path = `/browse/organization/${encodeURIComponent(selectedItem.iri)}`;
+          break;
+        case "DataCubeTheme":
+          path = `/browse/theme/${encodeURIComponent(selectedItem.iri)}`;
+          break;
+        case "FreeSearchItem":
+          path = `/browse?search=${encodeURIComponent(selectedItem.text)}`;
+          break;
+      }
+      router.push(path);
+    },
+    [router]
+  );
+
+  return (
+    <Stack
+      direction="column"
+      spacing={2}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        width: "100%",
+      }}
+    >
+      <SearchAutocomplete
+        placeholder="Search datasets..."
+        onSelectedItemChange={handleSelectAutocompleteItem}
+      />
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+      >
+        <Link passHref href="/browse">
+          <Button
+            as="a"
+            sx={{
+              display: "flex",
+              bg: "categoryLight",
+              color: "category",
+              "&:hover": {
+                bg: "categoryLight",
+                boxShadow: "primary",
+              },
+            }}
+          >
+            <Box as="span" mr={1}>
+              <SvgIcCategories width={20} height={16} />
+            </Box>
+            <Trans id="intro.browse.categories">Browse categories</Trans>
+          </Button>
+        </Link>
+        <Link passHref href="/browse">
+          <Button
+            as="a"
+            sx={{
+              display: "flex",
+              bg: "organizationLight",
+              color: "organization",
+              "&:hover": {
+                bg: "organizationLight",
+                boxShadow: "primary",
+              },
+            }}
+          >
+            <Box as="span" mr={1}>
+              <SvgIcOrganisations width={20} height={20} />
+            </Box>
+            <Trans id="intro.browse.organizations">Browse organizations</Trans>
+          </Button>
+        </Link>
+      </Stack>
+    </Stack>
+  );
+};
 
 export const Intro = ({
   hint,
@@ -115,13 +211,7 @@ export const Intro = ({
         >
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
-          <Flex sx={{ justifyContent: "center" }}>
-            <NextLink href="/create/new" passHref>
-              <Button as="a" variant="primary">
-                {buttonLabel}
-              </Button>
-            </NextLink>
-          </Flex>
+          <BrowsingSection />
         </Box>
       </Box>
     </>

@@ -1,12 +1,13 @@
 import * as React from "react";
-import { Box, Text, Flex } from "theme-ui";
+import { Box, Text, Flex, Button } from "theme-ui";
 import { HintRed, Loading } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
 import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
-import DebugPanel from "../../components/DebugPanel";
+import DebugPanel from "../../components/debug-panel";
+import LinkButton from "./link-button";
 
 export interface Preview {
   iri: string;
@@ -26,7 +27,6 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           flexGrow: 1,
           flexDirection: "column",
           justifyContent: "space-between",
-          p: 5,
         }}
       >
         {metaData.dataCubeByIri.publicationStatus ===
@@ -41,51 +41,69 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             </HintRed>
           </Box>
         )}
-        <Text
-          as="div"
-          variant="heading2"
-          sx={{ mb: 1, color: "monochrome700" }}
+        <Flex
+          sx={{ alignItems: "center", justifyContent: "space-between", mb: 6 }}
         >
-          {dataCubeByIri.title}
-        </Text>
-        <Text
-          as="div"
-          variant="paragraph1"
-          sx={{ mb: 4, color: "monochrome700" }}
-        >
-          {dataCubeByIri.description}
-        </Text>
-
+          <Text as="div" variant="heading1">
+            {dataCubeByIri.title}
+          </Text>
+          <LinkButton
+            sx={{ ml: 6, whiteSpace: "nowrap", flexShrink: 0 }}
+            href={`/create/new?cube=${dataCubeByIri.iri}`}
+          >
+            Create visualization from dataset
+          </LinkButton>
+        </Flex>
         <Box
-          variant="heading3"
           sx={{
-            flexGrow: 1,
-            width: "100%",
-            position: "relative",
-            overflowX: "auto",
-            mt: 6,
+            boxShadow: "primary",
+            borderRadius: 20,
+            bg: "monochrome100",
+            py: 6,
+            px: 5,
           }}
         >
-          <DataSetPreviewTable
-            title={dataCubeByIri.title}
-            dataSetIri={dataCubeByIri.iri}
-            dimensions={dataCubeByIri.dimensions}
-            measures={dataCubeByIri.measures}
-          />
+          <Text
+            as="div"
+            variant="paragraph1"
+            sx={{ mb: 4, color: "monochrome700" }}
+          >
+            {dataCubeByIri.description}
+          </Text>
+
+          <Box
+            variant="heading3"
+            sx={{
+              flexGrow: 1,
+              width: "100%",
+              position: "relative",
+              overflowX: "auto",
+              mt: 6,
+            }}
+          >
+            <DataSetPreviewTable
+              title={dataCubeByIri.title}
+              dataSetIri={dataCubeByIri.iri}
+              dimensions={dataCubeByIri.dimensions}
+              measures={dataCubeByIri.measures}
+            />
+          </Box>
+          <Text
+            variant="table"
+            sx={{
+              mt: 4,
+              color: "monochrome600",
+              width: "100%",
+              textAlign: "center",
+              fontWeight: "light",
+            }}
+          >
+            <Trans id="datatable.showing.first.rows">
+              Showing first 10 rows
+            </Trans>
+          </Text>
+          <DebugPanel configurator={true} />
         </Box>
-        <Text
-          variant="table"
-          sx={{
-            mt: 4,
-            color: "monochrome600",
-            width: "100%",
-            textAlign: "center",
-            fontWeight: "light",
-          }}
-        >
-          <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
-        </Text>
-        <DebugPanel configurator={true} />
       </Flex>
     );
   } else {

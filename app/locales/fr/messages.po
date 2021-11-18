@@ -13,6 +13,18 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/components/search-autocomplete.tsx:69
+msgid "Browse {0}"
+msgstr "Parcourir {0}"
+
+#: app/components/autocomplete.tsx:171
+msgid "No results"
+msgstr "Aucun résultat"
+
+#: app/components/search-autocomplete.tsx:71
+msgid "Search “{0}”"
+msgstr "Chercher “{0}”"
+
 #: app/components/chart-preview.tsx:95
 msgid "annotation.add.description"
 msgstr "[ Pas de description ]"
@@ -20,6 +32,14 @@ msgstr "[ Pas de description ]"
 #: app/components/chart-preview.tsx:79
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
+
+#: app/configurator/components/dataset-browse.tsx:683
+msgid "browse-panel.organizations"
+msgstr "Organisations"
+
+#: app/configurator/components/dataset-browse.tsx:640
+msgid "browse-panel.themes"
+msgstr "Catégories"
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
@@ -358,7 +378,7 @@ msgstr "Actif"
 msgid "controls.option.isNotActive"
 msgstr "Inactif"
 
-#: app/components/form.tsx:357
+#: app/components/form.tsx:358
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
@@ -561,10 +581,6 @@ msgstr "Grouper selon cette colonne"
 msgid "controls.table.column.hide"
 msgstr "Masquer la colonne"
 
-#: app/configurator/table/table-chart-options.tsx:238
-#~ msgid "controls.table.column.hidefilter"
-#~ msgstr "Masquer et filtrer cette colonne"
-
 #: app/configurator/table/table-chart-configurator.tsx:101
 msgid "controls.table.settings"
 msgstr "Paramètres"
@@ -581,53 +597,49 @@ msgstr "Afficher le champ de recherche"
 msgid "controls.title"
 msgstr "Titre"
 
+#: app/configurator/components/select-dataset-step.tsx:103
+msgid "dataset-preview.back-to-results"
+msgstr "Revenir aux résultats"
+
 #: app/components/chart-published.tsx:80
 msgid "dataset.hasImputedValues"
 msgstr "Certaines données de cet ensemble de données sont manquantes et ont été interpolées pour combler les lacunes."
 
-#: app/configurator/components/dataset-selector.tsx:103
+#: app/configurator/components/dataset-browse.tsx:292
 msgid "dataset.includeDrafts"
-msgstr "Inclure les jeux de données à l'état d'ébauche"
+msgstr "Inclure les brouillons"
 
-#: app/configurator/components/dataset-metadata.tsx:48
+#: app/configurator/components/dataset-metadata.tsx:45
 msgid "dataset.metadata.date.created"
 msgstr "Date de création"
 
-#: app/configurator/components/dataset-metadata.tsx:25
-msgid "dataset.metadata.description"
-msgstr "Description"
-
-#: app/configurator/components/dataset-metadata.tsx:64
+#: app/configurator/components/dataset-metadata.tsx:57
 msgid "dataset.metadata.email"
 msgstr "Points de contact"
 
-#: app/configurator/components/dataset-metadata.tsx:81
+#: app/configurator/components/dataset-metadata.tsx:71
 msgid "dataset.metadata.landingPage"
 msgstr "Informations complémentaires"
 
-#: app/configurator/components/dataset-metadata.tsx:34
+#: app/configurator/components/dataset-metadata.tsx:31
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/configurator/components/dataset-metadata.tsx:20
-msgid "dataset.metadata.title"
-msgstr "Titre"
-
-#: app/configurator/components/dataset-metadata.tsx:57
+#: app/configurator/components/dataset-metadata.tsx:52
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-selector.tsx:45
+#: app/configurator/components/dataset-browse.tsx:260
 msgid "dataset.order.newest"
-msgstr "Le plus récent"
+msgstr ""
 
-#: app/configurator/components/dataset-selector.tsx:37
+#: app/configurator/components/dataset-browse.tsx:252
 msgid "dataset.order.relevance"
-msgstr "Le plus pertinent"
+msgstr ""
 
-#: app/configurator/components/dataset-selector.tsx:41
+#: app/configurator/components/dataset-browse.tsx:256
 msgid "dataset.order.title"
-msgstr "Titre"
+msgstr ""
 
 #: app/components/chart-preview.tsx:56
 #: app/components/chart-published.tsx:58
@@ -639,23 +651,23 @@ msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'util
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/configurator/components/dataset-selector.tsx:127
+#: app/configurator/components/dataset-browse.tsx:316
 msgid "dataset.results"
-msgstr "{0, plural, =0 {Aucun résultat} =1 {# résultat} other {# résultats}}"
+msgstr ""
 
-#: app/configurator/components/dataset-selector.tsx:49
+#: app/configurator/components/dataset-browse.tsx:264
 msgid "dataset.search.label"
-msgstr "Chercher un jeu de données"
+msgstr "Chercher"
 
-#: app/configurator/components/dataset-selector.tsx:147
+#: app/configurator/components/dataset-browse.tsx:336
 msgid "dataset.sortby"
 msgstr "Trier par"
 
-#: app/configurator/components/dataset-selector.tsx:301
+#: app/configurator/components/dataset-browse.tsx:862
 msgid "dataset.tag.draft"
-msgstr "Ébauche"
+msgstr "Brouillon"
 
-#: app/configurator/components/dataset-preview.tsx:86
+#: app/configurator/components/dataset-preview.tsx:101
 msgid "datatable.showing.first.rows"
 msgstr "Seules les 10 premières lignes sont affichées"
 
@@ -734,6 +746,14 @@ msgstr "Masquer les filtres"
 #: app/charts/shared/chart-data-filters.tsx:65
 msgid "interactive.data.filters.show"
 msgstr "Afficher les filtres"
+
+#: app/homepage/intro.tsx:102
+msgid "intro.browse.categories"
+msgstr "Parcourir les catégories"
+
+#: app/homepage/intro.tsx:121
+msgid "intro.browse.organizations"
+msgstr "Parcourir les organisations"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125

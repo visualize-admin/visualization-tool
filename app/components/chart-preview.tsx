@@ -29,7 +29,7 @@ import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFiltersList } from "./chart-filters-list";
 import { ChartFootnotes } from "./chart-footnotes";
-import DebugPanel from "./DebugPanel";
+import DebugPanel from "./debug-panel";
 import { HintRed } from "./hint";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {

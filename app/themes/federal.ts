@@ -68,6 +68,12 @@ export const theme: Theme = {
     alertLight: "#ffe6e1",
     warning: "#8a6d3b",
     warningLight: "#fffab2",
+
+    organization: "#006699",
+    organizationLight: "#d8e8ef", // same as primaryLight
+
+    category: "#3c763d",
+    categoryLight: "#DFF0D8", // same as successLight
   },
   fonts: {
     body: "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
@@ -362,6 +368,14 @@ export const theme: Theme = {
     },
   },
   links: {
+    initial: {
+      color: "inherit",
+      textDecoration: "none",
+      fontSize: "0.85rem",
+      "&:hover": {
+        textDecoration: "none",
+      },
+    },
     primary: {
       color: "primary",
       textDecoration: "none",

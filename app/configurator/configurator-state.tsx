@@ -52,7 +52,7 @@ export type ConfiguratorStateAction =
     }
   | {
       type: "DATASET_SELECTED";
-      dataSet: string;
+      dataSet: string | undefined;
     }
   | {
       type: "CHART_TYPE_CHANGED";

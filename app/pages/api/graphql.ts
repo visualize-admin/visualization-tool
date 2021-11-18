@@ -1,16 +1,35 @@
 import { ApolloServer } from "apollo-server-micro";
 import configureCors from "cors";
+import DataLoader from "dataloader";
 import "global-agent/bootstrap";
 import { NextApiRequest, NextApiResponse } from "next";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../lib/run-middleware";
+import {
+  createOrganizationLoader,
+  createThemeLoader,
+} from "../../rdf/query-cube-metadata";
 
 const cors = configureCors();
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  formatError: (err) => {
+    console.error(err, err?.extensions?.exception?.stacktrace);
+    return err;
+  },
+  context: ({ req }) => ({
+    loaders: {
+      themes: new DataLoader(
+        createThemeLoader({ locale: req.headers["accept-language"] })
+      ),
+      organizations: new DataLoader(
+        createOrganizationLoader({ locale: req.headers["accept-language"] })
+      ),
+    },
+  }),
   // Enable playground in production
   introspection: true,
   playground: true,
