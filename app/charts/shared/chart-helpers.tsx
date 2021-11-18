@@ -344,24 +344,17 @@ export const useImputationNeeded = ({
   chartConfig: ChartConfig;
   data?: Array<Observation>;
 }): boolean => {
+  const getSegment = useSegment(chartConfig.fields.segment?.componentIri);
   const imputationNeeded = useMemo(() => {
     if (isAreaConfig(chartConfig) && data) {
-      const getSegment = (d: Observation): string =>
-        chartConfig.fields.segment
-          ? (d[chartConfig.fields.segment.componentIri] as string)
-          : "segment";
-
       return checkForMissingValuesInSegments(
-        group(
-          data,
-          (d: Observation) => d[chartConfig.fields.x.componentIri] as string
-        ),
+        group(data, (d) => d[chartConfig.fields.x.componentIri] as string),
         [...new Set(data.map((d) => getSegment(d)))]
       );
     } else {
       return false;
     }
-  }, [chartConfig, data]);
+  }, [chartConfig, data, getSegment]);
 
   return imputationNeeded;
 };

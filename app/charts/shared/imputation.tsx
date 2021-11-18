@@ -1,4 +1,5 @@
 import { interpolate } from "d3-interpolate";
+import { ChartConfig, isAreaConfig } from "../../configurator";
 
 export const interpolateZerosValue = () => {
   return 0;
@@ -84,4 +85,14 @@ export const imputeTemporalLinearSeries = ({
   }
 
   return dataSortedByX as Array<TemporalSeriesAfterImputationEntry>;
+};
+
+export const isUsingImputation = (chartConfig: ChartConfig): boolean => {
+  if (isAreaConfig(chartConfig)) {
+    const imputationType = chartConfig.fields.y.imputationType || "";
+
+    return ["zeros", "linear"].includes(imputationType);
+  }
+
+  return false;
 };

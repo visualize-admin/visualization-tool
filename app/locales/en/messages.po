@@ -294,18 +294,18 @@ msgstr "Select an annotation field to modify its content."
 msgid "controls.imputation"
 msgstr "Imputation type"
 
-#: app/configurator/components/chart-options-selector.tsx:474
+#: app/configurator/components/chart-options-selector.tsx:477
 #: app/configurator/components/ui-helpers.ts:447
 msgid "controls.imputation.type.linear"
 msgstr "Linear interpolation"
 
-#: app/configurator/components/chart-options-selector.tsx:467
-#: app/configurator/components/chart-options-selector.tsx:479
+#: app/configurator/components/chart-options-selector.tsx:470
+#: app/configurator/components/chart-options-selector.tsx:482
 #: app/configurator/components/ui-helpers.ts:439
 msgid "controls.imputation.type.none"
 msgstr "-"
 
-#: app/configurator/components/chart-options-selector.tsx:469
+#: app/configurator/components/chart-options-selector.tsx:472
 #: app/configurator/components/ui-helpers.ts:443
 msgid "controls.imputation.type.zeros"
 msgstr "Zeros"
@@ -382,8 +382,8 @@ msgstr "Filters"
 msgid "controls.section.description"
 msgstr "Title & Description"
 
-#: app/configurator/components/chart-options-selector.tsx:259
-#: app/configurator/components/chart-options-selector.tsx:263
+#: app/configurator/components/chart-options-selector.tsx:262
+#: app/configurator/components/chart-options-selector.tsx:266
 #: app/configurator/table/table-chart-options.tsx:301
 #: app/configurator/table/table-chart-options.tsx:305
 #: app/configurator/table/table-chart-options.tsx:325
@@ -395,11 +395,11 @@ msgstr "Filter"
 msgid "controls.section.groups"
 msgstr "Groups"
 
-#: app/configurator/components/chart-options-selector.tsx:508
+#: app/configurator/components/chart-options-selector.tsx:511
 msgid "controls.section.imputation"
 msgstr "Missing values"
 
-#: app/configurator/components/chart-options-selector.tsx:513
+#: app/configurator/components/chart-options-selector.tsx:516
 msgid "controls.section.imputation.explanation"
 msgstr "Due to the nature of the selected chart type, some missing values have been introduced. Decide on the imputation logic or switch to another chart type."
 
@@ -411,7 +411,7 @@ msgstr "Interactive Filters"
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Data Filters"
 
-#: app/configurator/components/chart-options-selector.tsx:395
+#: app/configurator/components/chart-options-selector.tsx:398
 msgid "controls.section.sorting"
 msgstr "Sort"
 
@@ -440,7 +440,7 @@ msgstr "Experimental Features"
 msgid "controls.select.chart.type.experimental.description"
 msgstr "Preview upcoming features with a limited subset of data on a separate page."
 
-#: app/configurator/components/chart-options-selector.tsx:305
+#: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"
 msgstr "Column layout"
 
@@ -476,12 +476,12 @@ msgstr "Text Color"
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Text Style"
 
-#: app/configurator/components/chart-options-selector.tsx:169
 #: app/configurator/components/chart-options-selector.tsx:171
+#: app/configurator/components/chart-options-selector.tsx:173
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:170
+#: app/configurator/components/chart-options-selector.tsx:172
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
@@ -495,8 +495,8 @@ msgstr "optional"
 msgid "controls.sorting.addDimension"
 msgstr "Add dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:346
-#: app/configurator/components/chart-options-selector.tsx:352
+#: app/configurator/components/chart-options-selector.tsx:349
+#: app/configurator/components/chart-options-selector.tsx:355
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
@@ -508,7 +508,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx:348
+#: app/configurator/components/chart-options-selector.tsx:351
 msgid "controls.sorting.byMeasure"
 msgstr "Measure"
 
@@ -520,7 +520,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx:350
+#: app/configurator/components/chart-options-selector.tsx:353
 msgid "controls.sorting.byTotalSize"
 msgstr "Total size"
 
@@ -581,6 +581,10 @@ msgstr "Show search field"
 msgid "controls.title"
 msgstr "Title"
 
+#: app/components/chart-published.tsx:80
+msgid "dataset.hasImputedValues"
+msgstr "Some data in this dataset is missing and has been interpolated to fill the gaps."
+
 #: app/configurator/components/dataset-selector.tsx:103
 msgid "dataset.includeDrafts"
 msgstr "Include draft datasets"
@@ -626,12 +630,12 @@ msgid "dataset.order.title"
 msgstr "Title"
 
 #: app/components/chart-preview.tsx:56
-#: app/components/chart-published.tsx:59
+#: app/components/chart-published.tsx:58
 #: app/configurator/components/dataset-preview.tsx:36
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Careful, this dataset is only a draft.<0/><1>Don't use for reporting!</1>"
 
-#: app/components/chart-published.tsx:70
+#: app/components/chart-published.tsx:69
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for reporting!</1>"
 
