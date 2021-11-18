@@ -123,7 +123,12 @@ export const SelectDatasetStepContent = () => {
             {dataset
               ? null
               : filters.length > 0
-              ? filters.map((f) => f.label).join(", ")
+              ? filters
+                  .filter((f) => f.__typename !== "DataCubeAbout")
+                  .map((f) =>
+                    f.__typename !== "DataCubeAbout" ? f.label : null
+                  )
+                  .join(", ")
               : "Swiss Open Government Data"}
           </Text>
           {dataset ? null : (
