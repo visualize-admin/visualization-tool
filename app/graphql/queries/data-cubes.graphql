@@ -86,6 +86,14 @@ query DataCubeMetadata($iri: String!, $locale: String!, $latest: Boolean) {
     expires
     datePublished
     publicationStatus
+    themes {
+      iri
+      label
+    }
+    creator {
+      iri
+      label
+    }
   }
 }
 

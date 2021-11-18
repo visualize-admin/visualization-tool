@@ -21,10 +21,7 @@ const Tag = ({
       variant="paragraph2"
       {...props}
       sx={{
-        bg:
-          type === "DataCubeTheme" || type == "draft"
-            ? "successLight"
-            : "primaryLight",
+        bg: type === "DataCubeTheme" ? "successLight" : "primaryLight",
         mt: 2,
         px: 2,
         width: "fit-content",

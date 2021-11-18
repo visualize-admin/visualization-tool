@@ -1,11 +1,17 @@
 import { Trans } from "@lingui/macro";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { Box, Link } from "theme-ui";
+import NextLink from "next/link";
 import { Loading } from "../../components/hint";
+import Stack from "../../components/Stack";
 import { useFormatDate } from "../../configurator/components/ui-helpers";
-import { useDataCubeMetadataQuery } from "../../graphql/query-hooks";
+import {
+  DataCubeMetadataQuery,
+  useDataCubeMetadataQuery,
+} from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-
+import Tag from "./Tag";
+import truthy from "../../utils/truthy";
 export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
@@ -21,36 +27,36 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
     <Box sx={{ m: 4 }}>
       {cube.publisher && (
         <>
-          <DataSetMetadataTitle>
+          <DatasetMetadataTitle>
             <Trans id="dataset.metadata.source">Source</Trans>
-          </DataSetMetadataTitle>
-          <DataSetMetadataBody>
+          </DatasetMetadataTitle>
+          <DatasetMetadataBody>
             <Box
               sx={{ "> a": { color: "monochrome900" } }}
               dangerouslySetInnerHTML={{
                 __html: cube.publisher,
               }}
             ></Box>
-          </DataSetMetadataBody>
+          </DatasetMetadataBody>
         </>
       )}
 
-      <DataSetMetadataTitle>
+      <DatasetMetadataTitle>
         <Trans id="dataset.metadata.date.created">Date Created</Trans>
-      </DataSetMetadataTitle>
-      <DataSetMetadataBody>
+      </DatasetMetadataTitle>
+      <DatasetMetadataBody>
         {cube.datePublished ? formatDate(cube.datePublished) ?? "–" : "–"}
-      </DataSetMetadataBody>
+      </DatasetMetadataBody>
 
-      <DataSetMetadataTitle>
+      <DatasetMetadataTitle>
         <Trans id="dataset.metadata.version">Version</Trans>
-      </DataSetMetadataTitle>
-      <DataSetMetadataBody>{cube.version ?? "–"}</DataSetMetadataBody>
+      </DatasetMetadataTitle>
+      <DatasetMetadataBody>{cube.version ?? "–"}</DatasetMetadataBody>
 
-      <DataSetMetadataTitle>
+      <DatasetMetadataTitle>
         <Trans id="dataset.metadata.email">Contact points</Trans>
-      </DataSetMetadataTitle>
-      <DataSetMetadataBody>
+      </DatasetMetadataTitle>
+      <DatasetMetadataBody>
         {cube.contactEmail ? (
           <DatasetMetadataLink
             href={`mailto:${cube.contactEmail}`}
@@ -59,12 +65,12 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
         ) : (
           "–"
         )}
-      </DataSetMetadataBody>
+      </DatasetMetadataBody>
 
-      <DataSetMetadataTitle>
+      <DatasetMetadataTitle>
         <Trans id="dataset.metadata.landingPage">Further information</Trans>
-      </DataSetMetadataTitle>
-      <DataSetMetadataBody>
+      </DatasetMetadataTitle>
+      <DatasetMetadataBody>
         {cube.landingPage ? (
           <DatasetMetadataLink
             href={cube.landingPage}
@@ -73,12 +79,13 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
         ) : (
           "–"
         )}
-      </DataSetMetadataBody>
+      </DatasetMetadataBody>
+      <DatasetTags cube={cube} />
     </Box>
   );
 };
 
-const DataSetMetadataTitle = ({ children }: { children: ReactNode }) => (
+const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
   <Box
     sx={{
       fontFamily: "body",
@@ -91,7 +98,7 @@ const DataSetMetadataTitle = ({ children }: { children: ReactNode }) => (
     {children}
   </Box>
 );
-const DataSetMetadataBody = ({ children }: { children: ReactNode }) => (
+const DatasetMetadataBody = ({ children }: { children: ReactNode }) => (
   <Box
     sx={{
       fontFamily: "body",
@@ -117,3 +124,27 @@ const DatasetMetadataLink = ({
     {label}
   </Link>
 );
+
+const DatasetTags = ({
+  cube,
+}: {
+  cube: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
+}) => {
+  return (
+    <Stack spacing={1}>
+      {[cube.creator, ...cube.themes].filter(truthy).map((t) => (
+        <NextLink
+          key={t.iri}
+          href={`/browse/${
+            t.__typename === "DataCubeTheme" ? "theme" : "organization"
+          }/${encodeURIComponent(t.iri)}`}
+          passHref
+        >
+          <Tag as="a" type={t.__typename}>
+            {t.label}
+          </Tag>
+        </NextLink>
+      ))}
+    </Stack>
+  );
+};
