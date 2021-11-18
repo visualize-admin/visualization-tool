@@ -35,6 +35,7 @@ import {
   DataCubeSearchFilter,
   DataCubeTheme,
 } from "../graphql/query-hooks";
+import isAttrEqual from "../utils/is-attr-equal";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -115,6 +116,18 @@ const isVisualizeCubeFilter = where(
   rdf.namedNode("https://ld.admin.ch/application/visualize")
 );
 
+const makeQueryFilter = (
+  predicate: NamedNode,
+  filters: DataCubeSearchFilter[]
+) => {
+  return filters.length > 0
+    ? Cube.filter.in(
+        predicate,
+        filters.map((x) => rdf.namedNode(x.value))
+      )
+    : null;
+};
+
 export const getCubes = async ({
   includeDrafts,
   locale,
@@ -128,26 +141,17 @@ export const getCubes = async ({
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();
 
-  const themeFilters = filters
-    ? filters.filter(
-        (x) => x.type === ("DataCubeTheme" as DataCubeTheme["__typename"])
-      )
-    : [];
-  const themeQueryFilter = Cube.filter.in(
+  const themeQueryFilter = makeQueryFilter(
     ns.dcat.theme,
-    themeFilters.map((x) => rdf.namedNode(x.value))
+    filters?.filter(isAttrEqual("type", "DataCubeTheme")) || []
   );
-
-  const orgFilters = filters
-    ? filters.filter(
-        (x) =>
-          x.type ===
-          ("DataCubeOrganization" as DataCubeOrganization["__typename"])
-      )
-    : [];
-  const orgQueryFilter = Cube.filter.in(
+  const orgQueryFilter = makeQueryFilter(
     ns.dcterms.creator,
-    orgFilters.map((x) => rdf.namedNode(x.value))
+    filters?.filter(isAttrEqual("type", "DataCubeOrganization")) || []
+  );
+  const aboutQueryFilter = makeQueryFilter(
+    ns.schema.about,
+    filters?.filter(isAttrEqual("type", "DataCubeAbout")) || []
   );
 
   const cubesFilters = [
@@ -160,8 +164,9 @@ export const getCubes = async ({
       : Cube.filter.status([
           ns.adminVocabulary("CreativeWorkStatus/Published"),
         ]),
-    themeFilters.length > 0 ? themeQueryFilter : null,
-    orgFilters.length > 0 ? orgQueryFilter : null,
+    themeQueryFilter,
+    orgQueryFilter,
+    aboutQueryFilter,
   ].filter(truthy);
 
   const cubes = await source.cubes({

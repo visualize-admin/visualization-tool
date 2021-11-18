@@ -1,17 +1,15 @@
 import React, { useMemo } from "react";
-import { SearchFilter } from "../configurator/components/dataset-browse";
 import {
-  useDatasetCountQuery,
-  useOrganizationsQuery,
-  useThemesQuery,
-} from "../graphql/query-hooks";
+  BrowseFilter,
+  DataCubeAbout,
+} from "../configurator/components/dataset-browse";
+import { useOrganizationsQuery, useThemesQuery } from "../graphql/query-hooks";
 import SvgIcCategories from "../icons/components/IcCategories";
 import SvgIcOrganisations from "../icons/components/IcOrganisations";
 import { useLocale } from "../src";
 import Autocomplete, { AutocompleteProps } from "./autocomplete";
 import { Box } from "theme-ui";
 import useDatasetCount from "../configurator/components/use-dataset-count";
-import isTypename from "../utils/is-attr-equal";
 import { t } from "@lingui/macro";
 import SvgIcText from "../icons/components/IcText";
 
@@ -42,7 +40,9 @@ type FreeSearchItem = {
   text: string;
 };
 
-export type SearchAutocompleteItem = SearchFilter | FreeSearchItem;
+export type SearchAutocompleteItem =
+  | Exclude<BrowseFilter, DataCubeAbout>
+  | FreeSearchItem;
 
 const SearchAutocomplete = (
   autocompleteProps: Omit<

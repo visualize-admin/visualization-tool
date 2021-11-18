@@ -44,11 +44,16 @@ import { BrowseParams } from "../../pages/browse";
 import SvgIcClose from "../../icons/components/IcClose";
 import SvgIcOrganisations from "../../icons/components/IcOrganisations";
 import SvgIcCategories from "../../icons/components/IcCategories";
-import isTypename from "../../utils/is-typename";
+import isAttrEqual from "../../utils/is-attr-equal";
 import useDatasetCount from "./use-dataset-count";
 import qs from "qs";
 
-export type SearchFilter = DataCubeTheme | DataCubeOrganization;
+export type DataCubeAbout = {
+  __typename: "DataCubeAbout";
+  iri: string;
+};
+
+export type BrowseFilter = DataCubeTheme | DataCubeOrganization | DataCubeAbout;
 
 export const useBrowseState = () => {
   const [query, setQuery] = useState<string>("");
@@ -59,7 +64,7 @@ export const useBrowseState = () => {
   const previousOrderRef = useRef<DataCubeResultOrder>(
     DataCubeResultOrder.TitleAsc
   );
-  const [filters, setFilters] = useState<SearchFilter[]>([]);
+  const [filters, setFilters] = useState<BrowseFilter[]>([]);
   const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
 
   return useMemo(
@@ -110,8 +115,8 @@ export const getFiltersFromParams = (
     organizations: OrganizationsQuery["organizations"];
   }
 ) => {
-  const filters: SearchFilter[] = [];
-  const { type, subtype, iri, subiri } = params;
+  const filters: BrowseFilter[] = [];
+  const { type, subtype, iri, subiri, topic } = params;
   for (const [t, i] of [
     [type, iri],
     [subtype, subiri],
@@ -119,7 +124,7 @@ export const getFiltersFromParams = (
     if (t && i && (t === "theme" || t === "organization")) {
       const container = context[
         t === "theme" ? "themes" : "organizations"
-      ] as SearchFilter[];
+      ] as BrowseFilter[];
       const obj = container?.find((f) => i === f.iri);
       if (obj) {
         filters.push(obj);
@@ -128,14 +133,21 @@ export const getFiltersFromParams = (
       }
     }
   }
+  if (topic) {
+    filters.push({
+      __typename: "DataCubeAbout",
+      iri: topic,
+    });
+  }
+
   return filters;
 };
 
 export const getFilterParamsFromQuery = (query: Router["query"]) => {
-  const { type, iri, subtype, subiri } = query;
+  const { type, iri, subtype, subiri, topic } = query;
 
   return pickBy(
-    mapValues({ type, iri, subtype, subiri }, (v) =>
+    mapValues({ type, iri, subtype, subiri, topic }, (v) =>
       Array.isArray(v) ? v[0] : v
     ),
     Boolean
@@ -390,7 +402,7 @@ const NavChip = ({
   );
 };
 
-const encodeFilter = (filter: SearchFilter) => {
+const encodeFilter = (filter: BrowseFilter) => {
   const { iri, __typename } = filter;
   return `${
     __typename === "DataCubeTheme" ? "theme" : "organization"
@@ -404,27 +416,65 @@ const NavItem = ({
   count,
   active,
   theme = defaultNavItemTheme,
+  level = 1,
   ...props
 }: {
   children: React.ReactNode;
-  filters: SearchFilter[];
-  next: SearchFilter;
+  filters: BrowseFilter[];
+  next: BrowseFilter;
   count?: number;
   active: boolean;
   theme: typeof defaultNavItemTheme;
+  level?: number;
 } & ThemeUILinkProps) => {
   const path = useMemo(() => {
-    const newFilters = [...filters].filter(
-      (f) => f.__typename !== next.__typename
+    const newFilters = [...filters].filter((f) =>
+      level === 1 ? f.__typename !== next.__typename : true
     );
-    newFilters.push(next);
-    return "/browse/" + newFilters.map(encodeFilter).join("/");
-  }, [filters, next]);
+    if (level === 1) {
+      newFilters.push(next);
+    }
+    return (
+      "/browse/" +
+      newFilters.map(encodeFilter).join("/") +
+      (level === 2 ? `?topic=${encodeURIComponent(next.iri)}` : "")
+    );
+  }, [filters, next, level]);
+
   const removeFilterPath = useMemo(() => {
     const nextIndex = filters.findIndex((f) => f.iri === next.iri);
     const newFilters = nextIndex === 0 ? [] : filters.slice(0, 1);
     return "/browse/" + newFilters.map(encodeFilter).join("/");
   }, [filters, next]);
+
+  const removeFilterButton = (
+    <Link href={removeFilterPath} passHref>
+      <Button
+        as="a"
+        sx={{
+          bg: level === 1 ? theme.activeBg : "transparent",
+          color: level === 1 ? theme.activeTextColor : theme.activeBg,
+          minWidth: "16px",
+          minHeight: "16px",
+          display: "block",
+          height: "auto",
+          width: "auto",
+          padding: 0,
+          "&:hover": {
+            background: "rgba(0, 0, 0, 0.25)",
+          },
+        }}
+      >
+        <SvgIcClose width={24} height={24} />
+      </Button>
+    </Link>
+  );
+  const countChip =
+    count !== undefined ? (
+      <NavChip color={theme.countColor} bg={theme.countBg}>
+        {count}
+      </NavChip>
+    ) : null;
   return (
     <Box
       sx={{
@@ -437,44 +487,25 @@ const NavItem = ({
         borderRadius: 4,
         width: "100%",
         display: "flex",
-        bg: active ? theme.activeBg : "transparent",
-        color: active ? theme.activeTextColor : theme.textColor,
+        bg: active && level === 1 ? theme.activeBg : "transparent",
+        color: active
+          ? level === 1
+            ? theme.activeTextColor
+            : theme.activeBg
+          : theme.textColor,
       }}
     >
       {active ? (
         <>
           <Text variant="paragraph2">{children}</Text>
-          <Link href={removeFilterPath} passHref>
-            <Button
-              as="a"
-              sx={{
-                bg: theme.activeBg,
-                color: theme.activeTextColor,
-                minWidth: "16px",
-                minHeight: "16px",
-                display: "block",
-                height: "auto",
-                width: "auto",
-                padding: 0,
-                "&:hover": {
-                  background: "rgba(0, 0, 0, 0.25)",
-                },
-              }}
-            >
-              <SvgIcClose width={24} height={24} />
-            </Button>
-          </Link>
+          {level === 1 ? removeFilterButton : countChip}
         </>
       ) : (
         <>
           <Link href={path} passHref>
             <ThemeUILink variant="initial">{children}&nbsp;&nbsp;</ThemeUILink>
           </Link>
-          {count !== undefined ? (
-            <NavChip color={theme.countColor} bg={theme.countBg}>
-              {count}
-            </NavChip>
-          ) : null}
+          {countChip}
         </>
       )}
     </Box>
@@ -492,7 +523,7 @@ export const Subthemes = ({
   counts,
 }: {
   organization: DataCubeOrganization;
-  filters: SearchFilter[];
+  filters: BrowseFilter[];
   counts: ReturnType<typeof useDatasetCount>;
 }) => {
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
@@ -521,7 +552,8 @@ export const Subthemes = ({
             next={x}
             filters={filters}
             theme={organizationNavItemTheme}
-            active={false}
+            active={filters[filters.length - 1]?.iri === x.iri}
+            level={2}
             count={count}
           >
             {x.label}
@@ -578,11 +610,9 @@ export const SearchFilters = () => {
 
   const counts = useDatasetCount(filters);
 
-  const themeFilter = filters.find(
-    isTypename("DataCubeTheme" as DataCubeTheme["__typename"])
-  );
+  const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(
-    isTypename("DataCubeOrganization" as DataCubeOrganization["__typename"])
+    isAttrEqual("__typename", "DataCubeOrganization")
   );
 
   const [allThemesAlpha, allOrgsAlpha] = useMemo(() => {

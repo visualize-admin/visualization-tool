@@ -12,7 +12,7 @@ import {
   SearchFilters,
   DatasetResults,
   BrowseStateProvider,
-  SearchFilter,
+  BrowseFilter,
   useBrowseContext,
   getFilterParamsFromQuery,
 } from "./dataset-browse";

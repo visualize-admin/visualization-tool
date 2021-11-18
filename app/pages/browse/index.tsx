@@ -9,6 +9,7 @@ export type BrowseParams = {
   subtype?: "theme" | "organization";
   iri?: string;
   subiri?: string;
+  topic?: string;
 };
 
 // Generic component for all browse subpages
