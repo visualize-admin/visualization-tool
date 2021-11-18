@@ -488,6 +488,10 @@ const NavItem = ({
         width: "100%",
         display: "flex",
         bg: active && level === 1 ? theme.activeBg : "transparent",
+        transition: "background 0.1s ease",
+        "&:hover": {
+          background: active ? undefined : "rgba(0, 0, 0, 0.05)",
+        },
         color: active
           ? level === 1
             ? theme.activeTextColor
