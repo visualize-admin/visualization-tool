@@ -902,7 +902,12 @@ export const DatasetResult = ({
                   passHref
                   href={`/browse/theme/${encodeURIComponent(t.iri)}`}
                 >
-                  <ThemeUILink variant="initial">
+                  <ThemeUILink
+                    variant="initial"
+                    // The whole card is a link too, so we have to stop propagating the
+                    // event, otherwise we go first to <tag> page then to <result> page
+                    onClick={(ev) => ev.stopPropagation()}
+                  >
                     <Tag type={t.__typename}>{t.label}</Tag>
                   </ThemeUILink>
                 </Link>
@@ -914,7 +919,12 @@ export const DatasetResult = ({
               passHref
               href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
             >
-              <ThemeUILink variant="initial">
+              <ThemeUILink
+                variant="initial"
+                // The whole card is a link too, so we have to stop propagating the
+                // event, otherwise we go first to <tag> page then to <result> page
+                onClick={(ev) => ev.stopPropagation()}
+              >
                 <Tag type={creator.__typename}>{creator.label}</Tag>
               </ThemeUILink>
             </Link>
