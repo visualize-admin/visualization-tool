@@ -7,52 +7,65 @@ import {
 } from "downshift";
 import { useState } from "react";
 import { Box, BoxProps, Flex, FlexProps, Input } from "@theme-ui/components";
-import { Themed } from "@theme-ui/mdx";
+import { Trans } from "@lingui/macro";
 
 const menuStyles = {
   listStyleType: "none",
   marginLeft: 0,
+  position: "absolute",
+  top: "3rem",
+  left: 0,
+  right: 0,
 };
 
-function AutocompleteList({ ...boxProps }: BoxProps) {
-  return (
-    <Box
-      as="ul"
-      {...boxProps}
-      sx={{
-        pl: 0,
-        listStyleType: "none",
-        ...boxProps.sx,
-        bg: "monochrome100",
-        boxShadow: "primary",
-        borderRadius: 10,
-        overflow: "hidden",
-      }}
-    >
-      {boxProps.children}
-    </Box>
-  );
-}
+const AutocompleteList = React.forwardRef<HTMLDivElement>(
+  ({ ...boxProps }: BoxProps, ref) => {
+    return (
+      <Box
+        ref={ref}
+        as="ul"
+        {...boxProps}
+        sx={{
+          pl: 0,
+          width: "100%",
+          listStyleType: "none",
+          ...boxProps.sx,
+          bg: "monochrome100",
+          boxShadow: "primary",
+          borderRadius: 10,
+          overflow: "hidden",
+        }}
+      >
+        {boxProps.children}
+      </Box>
+    );
+  }
+);
 
-function AutocompleteResult({
-  icon,
-  ...boxProps
-}: { icon: React.ReactNode } & BoxProps) {
+type AutocompleteResultProps = { icon?: React.ReactNode } & BoxProps;
+
+const AutocompleteResult = React.forwardRef<
+  HTMLDivElement,
+  AutocompleteResultProps
+>(({ icon, ...boxProps }, ref) => {
   return (
     <Flex
+      ref={ref}
       as="li"
       {...boxProps}
       sx={{
+        cursor: "pointer",
         alignItems: "center",
+        width: "100%",
         px: 4,
         py: 4,
       }}
     >
-      {icon ? <Box sx={{ width: 24, height: 24 }}>{icon}</Box> : null}
+      {icon ? <Box sx={{ width: 24, height: 24, mr: 2 }}>{icon}</Box> : null}
       {boxProps.children}
     </Flex>
   );
-}
+});
 
 export type AutocompleteProps<TItem> = {
   items: TItem[];
@@ -61,6 +74,7 @@ export type AutocompleteProps<TItem> = {
   getItemIcon?: (item: TItem) => React.ReactNode;
   onSelectedItemChange: (item: UseComboboxStateChange<TItem>) => void;
   sx?: FlexProps["sx"];
+  generateItems?: (text: string) => TItem[];
 };
 
 function Autocomplete<TItem>({
@@ -70,6 +84,7 @@ function Autocomplete<TItem>({
   getItemIcon,
   onSelectedItemChange,
   sx,
+  generateItems,
 }: AutocompleteProps<TItem>) {
   const [inputItems, setInputItems] = useState(items);
 
@@ -106,6 +121,7 @@ function Autocomplete<TItem>({
     getComboboxProps,
     highlightedIndex,
     getItemProps,
+    inputValue,
   } = useCombobox({
     items: inputItems,
     stateReducer,
@@ -114,39 +130,48 @@ function Autocomplete<TItem>({
       if (!inputValue) {
         return;
       }
+      const inputItems = items.filter((item) => {
+        const searchText = getItemSearchText(item);
+        return searchText.toLowerCase().includes(inputValue.toLowerCase());
+      });
       setInputItems(
-        items.filter((item) =>
-          getItemSearchText(item)
-            .toLowerCase()
-            .startsWith(inputValue.toLowerCase())
-        )
+        (generateItems ? generateItems(inputValue) : []).concat(inputItems)
       );
     },
   });
 
   return (
-    <Flex sx={{ flexDirection: "column", ...sx }}>
+    <Flex sx={{ flexDirection: "column", position: "relative", ...sx }}>
       <div {...getComboboxProps()}>
         <Input
           {...getInputProps()}
           placeholder={placeholder}
-          sx={{ bg: "monochrome100", borderColor: "monochrome300" }}
+          sx={{ bg: "monochrome100", width: 400, borderColor: "monochrome300" }}
         />
       </div>
       <AutocompleteList {...getMenuProps()} sx={menuStyles}>
-        {isOpen &&
-          inputItems.map((item, index) => (
-            <AutocompleteResult
-              style={
-                highlightedIndex === index ? { backgroundColor: "#bde4ff" } : {}
-              }
-              key={`${item}${index}`}
-              icon={getItemIcon ? getItemIcon(item) : null}
-              {...getItemProps({ item, index })}
-            >
-              {getItemSearchText(item)}
+        {isOpen ? (
+          inputItems.length > 0 ? (
+            inputItems.map((item, index) => (
+              <AutocompleteResult
+                style={
+                  highlightedIndex === index
+                    ? { backgroundColor: "#bde4ff" }
+                    : {}
+                }
+                key={`${item}${index}`}
+                icon={getItemIcon ? getItemIcon(item) : null}
+                {...getItemProps({ item, index })}
+              >
+                {getItemSearchText(item)}
+              </AutocompleteResult>
+            ))
+          ) : (
+            <AutocompleteResult>
+              <Trans key="autocomplete.no-result">No results</Trans>
             </AutocompleteResult>
-          ))}
+          )
+        ) : null}
       </AutocompleteList>
     </Flex>
   );

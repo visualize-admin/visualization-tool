@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { markdown, ReactSpecimen } from "catalog";
 import { ConfiguratorStateProvider } from "../configurator";
-import { DatasetResult } from "../configurator/components/dataset-search";
+import { DatasetResult } from "../configurator/components/dataset-browse";
 import { DataCubePublicationStatus } from "../graphql/query-hooks";
 import { states } from "./fixtures";
 

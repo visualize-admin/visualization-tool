@@ -12,7 +12,14 @@ import {
   getCubes,
   getSparqlEditorUrl,
 } from "../rdf/queries";
-import { loadOrganizations, loadThemes } from "../rdf/query-cube-metadata";
+import {
+  loadOrganizations,
+  loadSubthemes,
+  loadThemes,
+  queryDatasetCountByOrganization,
+  queryDatasetCountBySubTheme,
+  queryDatasetCountByTheme,
+} from "../rdf/query-cube-metadata";
 import truthy from "../utils/truthy";
 import {
   DataCubeResolvers,
@@ -118,8 +125,27 @@ const Query: QueryResolvers = {
   themes: async (_, { locale }: { locale: string }) => {
     return (await loadThemes({ locale })).filter(truthy);
   },
+  subthemes: async (
+    _,
+    { locale, parentIri }: { locale: string; parentIri: string }
+  ) => {
+    return (await loadSubthemes({ locale, parentIri })).filter(truthy);
+  },
   organizations: async (_, { locale }: { locale: string }) => {
     return (await loadOrganizations({ locale })).filter(truthy);
+  },
+  datasetcount: async (_, { organization, theme }) => {
+    const byOrg = await queryDatasetCountByOrganization({
+      theme: theme || undefined,
+    });
+    const byTheme = await queryDatasetCountByTheme({
+      organization: organization || undefined,
+    });
+    const bySubTheme = await queryDatasetCountBySubTheme({
+      theme: theme || undefined,
+      organization: organization || undefined,
+    });
+    return [...byOrg, ...byTheme, ...bySubTheme];
   },
 };
 
@@ -235,6 +261,7 @@ export const resolvers: Resolvers = {
   Query,
   DataCube,
   DataCubeTheme: {
+    // Loads theme with dataloader if we need the label
     label: async (parent, _, { loaders }) => {
       if (!parent.label) {
         const resolvedTheme = await loaders.themes.load(parent.iri);

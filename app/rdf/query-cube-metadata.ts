@@ -1,4 +1,4 @@
-import { SELECT } from "@tpluscode/sparql-builder";
+import { SELECT, sparql } from "@tpluscode/sparql-builder";
 
 import { sparqlClient } from "./sparql-client";
 import { schema, dcat, dcterms } from "../../app/rdf/namespace";
@@ -95,12 +95,8 @@ export const queryDatasetCountByOrganization = async ({
 }) => {
   const baseQuery = SELECT`(count(?iri) as ?count) ?creator`.WHERE`
     ?iri ${dcterms.creator} ?creator.
-    ${theme ? `?iri <${dcat.theme.value}> <${theme}>.` : ``}
-    ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ?iri ${
-      schema.creativeWorkStatus
-    } <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> 
-    FILTER NOT EXISTS {?iri schema:expires ?expiryDate }
+    ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
+    ${makeVisualizeDatasetFilter()}
   `.build();
   const query = `${baseQuery} GROUP BY ?creator`;
   const results = await sparqlClient.query.select(query, {
@@ -114,6 +110,14 @@ export const queryDatasetCountByOrganization = async ({
   });
 };
 
+const makeVisualizeDatasetFilter = () => {
+  return sparql`
+    ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
+    ?iri ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
+    FILTER NOT EXISTS {?iri ${schema.expires} ?expiryDate }
+  `;
+};
+
 export const queryDatasetCountByTheme = async ({
   organization,
 }: {
@@ -121,29 +125,72 @@ export const queryDatasetCountByTheme = async ({
 }) => {
   const baseQuery = SELECT`(count(?iri) as ?count) ?theme`.WHERE`
     ?iri ${dcat.theme} ?theme.
-    ${
-      organization
-        ? ` 
-      ?iri <${dcterms.creator.value}> <${organization}>.`
-        : ``
-    }
-    ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ?iri ${
-      schema.creativeWorkStatus
-    } <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
+    ${organization ? sparql`?iri ${dcterms.creator} <${organization}>.` : ``}
     ?theme ${
       schema.inDefinedTermSet
     } <https://register.ld.admin.ch/opendataswiss/category>.
-    FILTER NOT EXISTS {?iri schema:expires ?expiryDate }
+    ${makeVisualizeDatasetFilter()}
   `.build();
   const query = `${baseQuery} GROUP BY ?theme`;
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
   });
+  return results
+    .map((r) => {
+      return {
+        count: parseInt(r.count.value, 10),
+        iri: r.theme?.value,
+      };
+    })
+    .filter((r) => r.iri);
+};
+
+export const queryDatasetCountBySubTheme = async ({
+  organization,
+  theme,
+}: {
+  organization?: string;
+  theme?: string;
+}) => {
+  const baseQuery = SELECT`(count(?iri) as ?count) ?subtheme`.WHERE`
+    ?iri ${schema.about} ?subtheme.
+    ${organization ? sparql`?iri ${dcterms.creator} <${organization}>.` : ``}
+    ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
+    ?iri ${schema.about} ?subtheme. 
+    ${makeVisualizeDatasetFilter()}
+  `.build();
+  const query = `${baseQuery} GROUP BY ?subtheme`;
+  const results = await sparqlClient.query.select(query, {
+    operation: "postUrlencoded",
+  });
+  return results
+    .map((r) => {
+      return {
+        count: parseInt(r.count.value, 10),
+        iri: r.subtheme?.value,
+      };
+    })
+    .filter((r) => r.iri);
+};
+
+export const loadSubthemes = async ({
+  parentIri,
+  locale,
+}: {
+  parentIri: string;
+  locale: string;
+}) => {
+  const query = SELECT`?iri ?label`.WHERE`
+    ?iri ${schema.inDefinedTermSet} <${parentIri}>;
+    ${makeLocalesFilter("?iri", schema.name, "?label", locale)}
+  `.build();
+  const results = await sparqlClient.query.select(query, {
+    operation: "postUrlencoded",
+  });
   return results.map((r) => {
     return {
-      count: parseInt(r.count.value, 10),
-      iri: r.theme.value,
+      iri: r.iri.value,
+      label: r.label.value,
     };
   });
 };

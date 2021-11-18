@@ -165,9 +165,15 @@ ${(
     <ReactSpecimen span={2}>
       <>
         <SearchAutocomplete
-          onSelectedItemChange={({ selectedItem }) =>
-            alert(`You chose ${selectedItem?.label} (${selectedItem?.iri})`)
-          }
+          onSelectedItemChange={({ selectedItem }) => {
+            if (selectedItem?.__typename !== "FreeSearchItem") {
+              alert(
+                `You chose an organisation/theme : ${selectedItem?.label} (${selectedItem?.iri})`
+              );
+            } else {
+              alert(`You free searched: ${selectedItem?.text}`);
+            }
+          }}
         />
       </>
     </ReactSpecimen>

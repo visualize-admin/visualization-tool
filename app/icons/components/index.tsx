@@ -13,6 +13,7 @@ import { default as CaretLeft } from "./IcCaretLeft";
 import { default as CaretRight } from "./IcCaretRight";
 import { default as CaretUp } from "./IcCaretUp";
 import { default as Cart } from "./IcCart";
+import { default as Categories } from "./IcCategories";
 import { default as ChartArea } from "./IcChartArea";
 import { default as ChartBar } from "./IcChartBar";
 import { default as ChartColumn } from "./IcChartColumn";
@@ -72,6 +73,7 @@ import { default as MobileLandscape } from "./IcMobileLandscape";
 import { default as MobilePortrait } from "./IcMobilePortrait";
 import { default as More } from "./IcMore";
 import { default as Next } from "./IcNext";
+import { default as Organisations } from "./IcOrganisations";
 import { default as Origin } from "./IcOrigin";
 import { default as Pause } from "./IcPause";
 import { default as Pdf } from "./IcPdf";
@@ -138,6 +140,7 @@ export const Icons = {
   caretRight: CaretRight,
   caretUp: CaretUp,
   cart: Cart,
+  categories: Categories,
   chartArea: ChartArea,
   chartBar: ChartBar,
   chartColumn: ChartColumn,
@@ -197,6 +200,7 @@ export const Icons = {
   mobilePortrait: MobilePortrait,
   more: More,
   next: Next,
+  organisations: Organisations,
   origin: Origin,
   pause: Pause,
   pdf: Pdf,

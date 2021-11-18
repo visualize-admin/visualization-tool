@@ -5,13 +5,12 @@ const Stack = ({
   children,
   direction,
   spacing,
-  boxProps,
+  ...boxProps
 }: {
   children: React.ReactNode;
   direction?: "row" | "column";
   spacing?: number;
-  boxProps?: BoxProps;
-}) => {
+} & BoxProps) => {
   return (
     <Box
       {...boxProps}
@@ -22,6 +21,7 @@ const Stack = ({
         "& > * + *:not(html)": {
           [direction === "row" ? "ml" : "mt"]: spacing,
         },
+        ...boxProps.sx,
       }}
     >
       {children}

@@ -6,8 +6,8 @@ import { Trans } from "@lingui/macro";
 import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
-import DebugPanel from "../../components/DebugPanel";
-import LinkButton from "./LinkButton";
+import DebugPanel from "../../components/debug-panel";
+import LinkButton from "./link-button";
 
 export interface Preview {
   iri: string;

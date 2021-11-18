@@ -92,6 +92,12 @@ export type DataCubeTheme = {
   label?: Maybe<Scalars['String']>;
 };
 
+export type DatasetCount = {
+  __typename?: 'DatasetCount';
+  iri: Scalars['String'];
+  count: Scalars['Int'];
+};
+
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
@@ -151,7 +157,9 @@ export type Query = {
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
   themes: Array<DataCubeTheme>;
+  subthemes: Array<DataCubeTheme>;
   organizations: Array<DataCubeOrganization>;
+  datasetcount?: Maybe<Array<DatasetCount>>;
 };
 
 
@@ -176,8 +184,21 @@ export type QueryThemesArgs = {
 };
 
 
+export type QuerySubthemesArgs = {
+  locale: Scalars['String'];
+  parentIri: Scalars['String'];
+};
+
+
 export type QueryOrganizationsArgs = {
   locale: Scalars['String'];
+};
+
+
+export type QueryDatasetcountArgs = {
+  theme?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']>;
+  subtheme?: Maybe<Scalars['String']>;
 };
 
 
@@ -279,6 +300,7 @@ export type ResolversTypes = ResolversObject<{
   DataCubeResultOrder: DataCubeResultOrder;
   DataCubeSearchFilter: DataCubeSearchFilter;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
+  DatasetCount: ResolverTypeWrapper<DatasetCount>;
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
@@ -304,6 +326,7 @@ export type ResolversParentTypes = ResolversObject<{
   Float: Scalars['Float'];
   DataCubeSearchFilter: DataCubeSearchFilter;
   DataCubeTheme: DataCubeTheme;
+  DatasetCount: DatasetCount;
   Dimension: ResolvedDimension;
   Boolean: Scalars['Boolean'];
   DimensionValue: Scalars['DimensionValue'];
@@ -356,6 +379,12 @@ export type DataCubeResultResolvers<ContextType = any, ParentType extends Resolv
 export type DataCubeThemeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataCubeTheme'] = ResolversParentTypes['DataCubeTheme']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type DatasetCountResolvers<ContextType = any, ParentType extends ResolversParentTypes['DatasetCount'] = ResolversParentTypes['DatasetCount']> = ResolversObject<{
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -423,7 +452,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'iri' | 'latest'>>;
   dataCubes?: Resolver<Array<ResolversTypes['DataCubeResult']>, ParentType, ContextType, RequireFields<QueryDataCubesArgs, never>>;
   themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QueryThemesArgs, 'locale'>>;
+  subthemes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QuerySubthemesArgs, 'locale' | 'parentIri'>>;
   organizations?: Resolver<Array<ResolversTypes['DataCubeOrganization']>, ParentType, ContextType, RequireFields<QueryOrganizationsArgs, 'locale'>>;
+  datasetcount?: Resolver<Maybe<Array<ResolversTypes['DatasetCount']>>, ParentType, ContextType, RequireFields<QueryDatasetcountArgs, never>>;
 }>;
 
 export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RawObservation'], any> {
@@ -447,6 +478,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DataCubeOrganization?: DataCubeOrganizationResolvers<ContextType>;
   DataCubeResult?: DataCubeResultResolvers<ContextType>;
   DataCubeTheme?: DataCubeThemeResolvers<ContextType>;
+  DatasetCount?: DatasetCountResolvers<ContextType>;
   Dimension?: DimensionResolvers<ContextType>;
   DimensionValue?: GraphQLScalarType;
   Filters?: GraphQLScalarType;

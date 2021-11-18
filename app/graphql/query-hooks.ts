@@ -87,6 +87,12 @@ export type DataCubeTheme = {
   label?: Maybe<Scalars['String']>;
 };
 
+export type DatasetCount = {
+  __typename: 'DatasetCount';
+  iri: Scalars['String'];
+  count: Scalars['Int'];
+};
+
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
@@ -146,7 +152,9 @@ export type Query = {
   dataCubeByIri?: Maybe<DataCube>;
   dataCubes: Array<DataCubeResult>;
   themes: Array<DataCubeTheme>;
+  subthemes: Array<DataCubeTheme>;
   organizations: Array<DataCubeOrganization>;
+  datasetcount?: Maybe<Array<DatasetCount>>;
 };
 
 
@@ -171,8 +179,21 @@ export type QueryThemesArgs = {
 };
 
 
+export type QuerySubthemesArgs = {
+  locale: Scalars['String'];
+  parentIri: Scalars['String'];
+};
+
+
 export type QueryOrganizationsArgs = {
   locale: Scalars['String'];
+};
+
+
+export type QueryDatasetcountArgs = {
+  theme?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']>;
+  subtheme?: Maybe<Scalars['String']>;
 };
 
 
@@ -260,7 +281,7 @@ export type DataCubeMetadataQueryVariables = Exact<{
 }>;
 
 
-export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus }> };
+export type DataCubeMetadataQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publisher?: Maybe<string>, version?: Maybe<string>, contactName?: Maybe<string>, contactEmail?: Maybe<string>, landingPage?: Maybe<string>, expires?: Maybe<string>, datePublished?: Maybe<string>, publicationStatus: DataCubePublicationStatus, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> }> };
 
 export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -361,6 +382,23 @@ export type OrganizationsQueryVariables = Exact<{
 
 export type OrganizationsQuery = { __typename: 'Query', organizations: Array<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }> };
 
+export type SubthemesQueryVariables = Exact<{
+  locale: Scalars['String'];
+  parentIri: Scalars['String'];
+}>;
+
+
+export type SubthemesQuery = { __typename: 'Query', subthemes: Array<{ __typename: 'DataCubeTheme', label?: Maybe<string>, iri: string }> };
+
+export type DatasetCountQueryVariables = Exact<{
+  theme?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']>;
+  subtheme?: Maybe<Scalars['String']>;
+}>;
+
+
+export type DatasetCountQuery = { __typename: 'Query', datasetcount?: Maybe<Array<{ __typename: 'DatasetCount', count: number, iri: string }>> };
+
 export const DimensionMetaDataFragmentDoc = gql`
     fragment dimensionMetaData on Dimension {
   iri
@@ -455,6 +493,14 @@ export const DataCubeMetadataDocument = gql`
     expires
     datePublished
     publicationStatus
+    themes {
+      iri
+      label
+    }
+    creator {
+      iri
+      label
+    }
   }
 }
     `;
@@ -557,4 +603,28 @@ export const OrganizationsDocument = gql`
 
 export function useOrganizationsQuery(options: Omit<Urql.UseQueryArgs<OrganizationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<OrganizationsQuery>({ query: OrganizationsDocument, ...options });
+};
+export const SubthemesDocument = gql`
+    query Subthemes($locale: String!, $parentIri: String!) {
+  subthemes(locale: $locale, parentIri: $parentIri) {
+    label
+    iri
+  }
+}
+    `;
+
+export function useSubthemesQuery(options: Omit<Urql.UseQueryArgs<SubthemesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SubthemesQuery>({ query: SubthemesDocument, ...options });
+};
+export const DatasetCountDocument = gql`
+    query DatasetCount($theme: String, $organization: String, $subtheme: String) {
+  datasetcount(theme: $theme, organization: $organization, subtheme: $subtheme) {
+    count
+    iri
+  }
+}
+    `;
+
+export function useDatasetCountQuery(options: Omit<Urql.UseQueryArgs<DatasetCountQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DatasetCountQuery>({ query: DatasetCountDocument, ...options });
 };
