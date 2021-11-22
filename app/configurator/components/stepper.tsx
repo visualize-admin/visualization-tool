@@ -60,7 +60,6 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
                     ? "past"
                     : "future"
                 }
-                dispatch={dispatch}
               />
               {i < steps.length - 1 && (
                 // Connection line
@@ -82,21 +81,21 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
         <ActionBar dataSetIri={dataSetIri} />
       </Flex>
     );
-  }, [state, dataSetIri, dispatch]);
+  }, [state, dataSetIri]);
 };
 
 export const Step = ({
   stepState,
   stepNumber,
   status,
-  dispatch,
 }: {
   stepState: StepState;
   stepNumber: number;
   status: StepStatus;
-  dispatch?: Dispatch<ConfiguratorStateAction>;
 }) => {
   const theme = useTheme();
+  const [{ dataSet }, dispatch] = useConfiguratorState();
+
   const onClick = useCallback(() => {
     if (status === "past" && dispatch) {
       dispatch({
@@ -150,7 +149,12 @@ export const Step = ({
   );
 
   return stepState === "SELECTING_DATASET" ? (
-    <NextLink href="/create/new" passHref>
+    <NextLink
+      href={
+        dataSet ? `/browse/dataset/${encodeURIComponent(dataSet)}` : `/browse`
+      }
+      passHref
+    >
       <Button
         as="a"
         variant="reset"
