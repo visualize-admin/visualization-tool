@@ -453,12 +453,12 @@ msgid "controls.select.chart.type"
 msgstr "Diagrammtyp"
 
 #: app/configurator/components/chart-type-selector.tsx:165
-msgid "controls.select.chart.type.experimental"
-msgstr "Experimentelle Features"
+#~ msgid "controls.select.chart.type.experimental"
+#~ msgstr "Experimentelle Features"
 
 #: app/configurator/components/chart-type-selector.tsx:170
-msgid "controls.select.chart.type.experimental.description"
-msgstr "Vorschau von zukünftigen Features mit limitierten Daten auf einer separaten Seite."
+#~ msgid "controls.select.chart.type.experimental.description"
+#~ msgstr "Vorschau von zukünftigen Features mit limitierten Daten auf einer separaten Seite."
 
 #: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"

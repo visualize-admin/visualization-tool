@@ -453,12 +453,12 @@ msgid "controls.select.chart.type"
 msgstr "Type de graphique"
 
 #: app/configurator/components/chart-type-selector.tsx:165
-msgid "controls.select.chart.type.experimental"
-msgstr "Fonctionnalités expérimentales"
+#~ msgid "controls.select.chart.type.experimental"
+#~ msgstr "Fonctionnalités expérimentales"
 
 #: app/configurator/components/chart-type-selector.tsx:170
-msgid "controls.select.chart.type.experimental.description"
-msgstr "Voir le prototype de la carte avec un nombre limité de jeu de données (lien vers une nouvelle page)."
+#~ msgid "controls.select.chart.type.experimental.description"
+#~ msgstr "Voir le prototype de la carte avec un nombre limité de jeu de données (lien vers une nouvelle page)."
 
 #: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"
