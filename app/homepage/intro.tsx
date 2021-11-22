@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Text } from "theme-ui";
 import React, { ReactNode, useCallback } from "react";
 import { useRouter } from "next/router";
-import { select, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 
 import { default as IconAreaChart } from "../icons/components/IcChartArea";
 import { default as IconBarChart } from "../icons/components/IcChartBar";

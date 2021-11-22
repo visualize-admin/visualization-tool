@@ -1,6 +1,5 @@
 import useSyncInteractiveFilters from "./use-sync-interactive-filters";
 import fixture from "../../test/__fixtures/dev/4YL1p4QTFQS4.json";
-import { renderHook } from "@testing-library/react-hooks";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
@@ -9,7 +8,6 @@ import { fireEvent, render } from "@testing-library/react";
 import { ChartConfig } from "../../configurator";
 import { useState } from "react";
 import { merge } from "lodash";
-import { act } from "react-dom/test-utils";
 
 const chartConfig = {
   ...fixture.data.chartConfig,

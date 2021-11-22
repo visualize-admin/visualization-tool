@@ -3,7 +3,7 @@ import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { sparqlClient } from "./sparql-client";
 import { schema, dcat, dcterms } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
-import { keyBy, mapValues } from "lodash";
+import { keyBy } from "lodash";
 import { makeLocalesFilter } from "./query-labels";
 
 type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;

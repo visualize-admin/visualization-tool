@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Text, Flex, Button } from "theme-ui";
+import { Box, Text, Flex } from "theme-ui";
 import { HintRed, Loading } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";

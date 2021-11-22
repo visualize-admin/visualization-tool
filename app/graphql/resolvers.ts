@@ -1,8 +1,6 @@
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { keyBy, merge } from "lodash";
-import { resolve } from "path";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,

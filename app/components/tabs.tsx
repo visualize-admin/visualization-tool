@@ -1,4 +1,4 @@
-import { Box, Button } from "@theme-ui/components";
+import { Button } from "@theme-ui/components";
 import React, { useContext, useMemo, useState } from "react";
 
 type TabsState = {

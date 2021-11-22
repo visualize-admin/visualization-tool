@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
-import { Dispatch, Fragment, ReactNode, useCallback, useMemo } from "react";
+import { Fragment, ReactNode, useCallback, useMemo } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
-import { ConfiguratorStateAction, useConfiguratorState } from "..";
+import { useConfiguratorState } from "..";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
 import { ActionBar } from "./action-bar";

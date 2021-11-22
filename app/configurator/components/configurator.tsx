@@ -1,5 +1,4 @@
 import React from "react";
-import { Box, BoxOwnProps, BoxProps, Link, LinkProps } from "theme-ui";
 import { useConfiguratorState } from "..";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPreview } from "../../components/chart-preview";
