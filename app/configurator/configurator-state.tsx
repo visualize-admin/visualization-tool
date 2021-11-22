@@ -1035,7 +1035,7 @@ const ConfiguratorStateProviderInternal = ({
               getLocalStorageKey(newChartId),
               JSON.stringify(state)
             );
-            push(`/create/${newChartId}`);
+            replace(`/create/${newChartId}`);
           } else {
             // Store current state in localstorage
             window.localStorage.setItem(
