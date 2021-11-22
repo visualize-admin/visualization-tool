@@ -8,10 +8,15 @@ import {
 } from "topojson-client";
 import { Select } from "../../components/form";
 import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { MapFields, PaletteType } from "../../configurator";
+import { ChartConfig, MapFields, PaletteType } from "../../configurator";
 import { ControlSection } from "../../configurator/components/chart-controls/section";
 import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import {
+  DimensionMetaDataFragment,
+  useDataCubeObservationsQuery,
+} from "../../graphql/query-hooks";
+import { useLocale } from "../../src";
+import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
@@ -41,9 +46,29 @@ type DataState =
       ds: Observation[];
     };
 
-export const ChartMapVisualization = () => {
+export const ChartMapVisualization = ({
+  dataSetIri,
+  chartConfig,
+  queryFilters,
+  customShapes,
+}: {
+  dataSetIri: string;
+  chartConfig: ChartConfig;
+  queryFilters: QueryFilters;
+  customShapes: GeoJSON.FeatureCollection;
+}) => {
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
   const [dataset, loadDataset] = useState<DataState>({ state: "fetching" });
+
+  const locale = useLocale();
+  const [{ data: observations }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: dataSetIri,
+      measures: [chartConfig.fields.y.componentIri],
+      filters: queryFilters,
+    },
+  });
 
   useEffect(() => {
     const loadGeoData = async () => {
@@ -66,13 +91,14 @@ export const ChartMapVisualization = () => {
           cantonMesh,
           cantonCentroids,
           lakes,
+          customShapes,
         });
       } catch (e) {
         setGeoData({ state: "error" });
       }
     };
     loadGeoData();
-  }, []);
+  }, [customShapes]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -136,6 +162,7 @@ export type ActiveLayer = {
   relief: boolean;
   lakes: boolean;
   areaLayer: boolean;
+  customLayer: boolean;
   symbolLayer: boolean;
 };
 export const ChartMapPrototype = ({
@@ -155,6 +182,7 @@ export const ChartMapPrototype = ({
     relief: true,
     lakes: true,
     areaLayer: false,
+    customLayer: false,
     symbolLayer: false,
   });
   const [activeControl, setActiveControl] = useState<Control>("baseLayer");
@@ -272,7 +300,7 @@ export const ChartMapPrototype = ({
       <Box>
         <HintBlue iconName="hintWarning">
           <Trans id="chart.map.warning.prototype">
-            This is a prototype, don't use in production!
+            This is a prototype, do not use in production!
           </Trans>
         </HintBlue>
         <Box

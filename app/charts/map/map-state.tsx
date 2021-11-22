@@ -37,6 +37,7 @@ export type GeoData = {
   cantonCentroids: { id: number; coordinates: [number, number] }[];
   cantonMesh: GeoJSON.MultiLineString;
   lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
+  customShapes: GeoJSON.FeatureCollection | GeoJSON.Feature;
 };
 export interface MapState {
   chartType: "map";
@@ -69,6 +70,7 @@ export interface MapState {
     symbolColorScale: (x: number) => string;
   };
 }
+
 const getColorScale = ({
   paletteType,
   palette,
@@ -115,6 +117,7 @@ const getColorScale = ({
         .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]]);
   }
 };
+
 const useMapState = ({
   data,
   features,
@@ -143,6 +146,7 @@ const useMapState = ({
       d ? `${d[fields.areaLayer.label.componentIri]}` : "",
     [fields.areaLayer.label.componentIri]
   );
+
   const getRadius = useCallback(
     (d: Observation): number | null => {
       const v = d[fields.symbolLayer.componentIri];
@@ -157,10 +161,12 @@ const useMapState = ({
     measures
       .find((m) => m.iri === fields["areaLayer"].componentIri)
       ?.label.split("_")[1] || "";
+
   const symbolMeasureLabel =
     measures
       .find((m) => m.iri === fields["symbolLayer"].componentIri)
       ?.label.split("_")[1] || "";
+
   const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
     number,
     number
@@ -174,6 +180,7 @@ const useMapState = ({
     dataDomain,
     nbClass,
   });
+
   const getColor = (v: number | undefined) => {
     if (v === undefined) {
       return [0, 0, 0];

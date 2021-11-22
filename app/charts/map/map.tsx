@@ -261,6 +261,24 @@ export const MapComponent = () => {
             getLineColor={[255, 255, 255]}
           />
         )}
+        {
+          <GeoJsonLayer
+            id="customShapes"
+            data={features.customShapes}
+            pickable={false}
+            stroked={true}
+            filled={true}
+            extruded={false}
+            lineWidthMinPixels={0.5}
+            lineWidthMaxPixels={1}
+            getLineWidth={100}
+            getFillColor={(d: GeoJSON.Feature): string =>
+              d.properties?.color || [255, 255, 255]
+            }
+            getLineColor={[255, 255, 255]}
+          />
+        }
+
         {showSymbolLayer && (
           <ScatterplotLayer
             id="cantons-centroids"
