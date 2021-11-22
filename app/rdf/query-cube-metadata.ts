@@ -114,7 +114,8 @@ const makeVisualizeDatasetFilter = () => {
     ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
     ?iri ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
     FILTER NOT EXISTS {?iri ${schema.expires} ?expiryDate }
-  `;
+    FILTER NOT EXISTS {?iri ${schema.validThrough} ?validThrough }
+    `;
 };
 
 export const queryDatasetCountByTheme = async ({
