@@ -421,7 +421,7 @@ msgstr "Valeurs manquantes"
 
 #: app/configurator/components/chart-options-selector.tsx:516
 msgid "controls.section.imputation.explanation"
-msgstr "En raison de la nature du type de graphique sélectionné, certaines valeurs manquantes ont été introduites. Décidez de la logique d'imputation ou passez à un autre type de graphique."
+msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doivent être remplies. Décidez de la logique d'imputation ou choisissez un autre type de graphique."
 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:63
 msgid "controls.section.interactive.filters"

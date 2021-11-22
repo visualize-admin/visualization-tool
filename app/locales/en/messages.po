@@ -421,7 +421,7 @@ msgstr "Missing values"
 
 #: app/configurator/components/chart-options-selector.tsx:516
 msgid "controls.section.imputation.explanation"
-msgstr "Due to the nature of the selected chart type, some missing values have been introduced. Decide on the imputation logic or switch to another chart type."
+msgstr "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type."
 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:63
 msgid "controls.section.interactive.filters"

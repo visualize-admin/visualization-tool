@@ -421,7 +421,7 @@ msgstr "Fehlende Werte"
 
 #: app/configurator/components/chart-options-selector.tsx:516
 msgid "controls.section.imputation.explanation"
-msgstr "Aufgrund der Natur des ausgewählten Diagrammtyps wurden einige fehlende Werte eingefügt. Entscheiden Sie sich für die Imputationslogik oder wechseln Sie zu einem anderen Diagrammtyp."
+msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen werden. Entscheiden Sie sich für die Imputationslogik oder wechseln Sie zu einem anderen Diagrammtyp."
 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:63
 msgid "controls.section.interactive.filters"
