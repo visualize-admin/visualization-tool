@@ -27,7 +27,7 @@ const Page = () => {
           </Text>
           <Actions>
             <ReloadButton>Rafraîchir</ReloadButton>&nbsp;ou&nbsp;
-            <HomeLink locale="fr">aller à la page d'accueil</HomeLink>.
+            <HomeLink locale="fr">aller à la page d&apos;accueil</HomeLink>.
           </Actions>
         </ErrorPageHint>
 

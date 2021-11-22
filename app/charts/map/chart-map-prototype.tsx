@@ -272,7 +272,7 @@ export const ChartMapPrototype = ({
       <Box>
         <HintBlue iconName="hintWarning">
           <Trans id="chart.map.warning.prototype">
-            This is a prototype, don't use in production!
+            This is a prototype, dont use in production!
           </Trans>
         </HintBlue>
         <Box

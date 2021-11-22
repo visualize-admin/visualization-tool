@@ -245,7 +245,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
           />
           <Text as="div" variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.AEM">
-              Embed Code for AEM "External Application":{" "}
+              Embed Code for AEM &quot;External Application&quot;:{" "}
             </Trans>
           </Text>
 

@@ -47,18 +47,16 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
     throw Error("Please wrap TableContent in TableContentProvider");
   }
 
-  const {
-    headerGroups,
-    tableColumnsMeta,
-    customSortCount,
-    totalColumnsWidth,
-  } = ctx;
+  const { headerGroups, tableColumnsMeta, customSortCount, totalColumnsWidth } =
+    ctx;
 
   return (
     <>
       <Box sx={{ position: "sticky", top: 0, zIndex: 1 }}>
         {headerGroups.map((headerGroup) => {
           return (
+            // getHeaderGroupProps() returns props with key
+            // eslint-disable-next-line react/jsx-key
             <Box {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column, i) => {
                 const { columnComponentType } = tableColumnsMeta[column.id];
@@ -67,6 +65,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                 const isCustomSorted = column.sortedIndex < customSortCount;
 
                 return (
+                  // eslint-disable-next-line react/jsx-key
                   <Box
                     sx={{
                       m: 0,
