@@ -601,7 +601,7 @@ msgstr "Suche anzeigen"
 msgid "controls.title"
 msgstr "Titel hinzufügen<<<<<<< HEAD"
 
-#: app/configurator/components/select-dataset-step.tsx:103
+#: app/configurator/components/select-dataset-step.tsx:102
 msgid "dataset-preview.back-to-results"
 msgstr "Zurück zu den Ergebnissen"
 
@@ -812,19 +812,19 @@ msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt ha
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:226
+#: app/configurator/components/stepper.tsx:225
 msgid "step.annotate"
 msgstr "Beschreiben"
 
-#: app/configurator/components/stepper.tsx:205
+#: app/configurator/components/stepper.tsx:204
 msgid "step.dataset"
 msgstr "Datensatz"
 
-#: app/configurator/components/stepper.tsx:212
+#: app/configurator/components/stepper.tsx:211
 msgid "step.visualization.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/components/stepper.tsx:219
+#: app/configurator/components/stepper.tsx:218
 msgid "step.visualize"
 msgstr "Visualisieren"
 

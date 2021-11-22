@@ -601,7 +601,7 @@ msgstr "Afficher le champ de recherche"
 msgid "controls.title"
 msgstr "Titre"
 
-#: app/configurator/components/select-dataset-step.tsx:103
+#: app/configurator/components/select-dataset-step.tsx:102
 msgid "dataset-preview.back-to-results"
 msgstr "Revenir aux résultats"
 
@@ -812,19 +812,19 @@ msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:226
+#: app/configurator/components/stepper.tsx:225
 msgid "step.annotate"
 msgstr "Annoter"
 
-#: app/configurator/components/stepper.tsx:205
+#: app/configurator/components/stepper.tsx:204
 msgid "step.dataset"
 msgstr "Données"
 
-#: app/configurator/components/stepper.tsx:212
+#: app/configurator/components/stepper.tsx:211
 msgid "step.visualization.type"
 msgstr "Type de graphique"
 
-#: app/configurator/components/stepper.tsx:219
+#: app/configurator/components/stepper.tsx:218
 msgid "step.visualize"
 msgstr "Visualiser"
 
