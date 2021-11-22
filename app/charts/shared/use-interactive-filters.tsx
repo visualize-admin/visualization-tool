@@ -1,7 +1,6 @@
 import { useImmerReducer } from "use-immer";
 import { createContext, Dispatch, ReactNode, useContext } from "react";
 import { FilterValueSingle } from "../../configurator";
-import { FIELD_VALUE_NONE } from "../../configurator/constants";
 
 export type InteractiveFiltersState = {
   categories: { [x: string]: boolean };

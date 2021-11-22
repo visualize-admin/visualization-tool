@@ -2,13 +2,13 @@
 // TypeScript helpers
 
 /** Fix this type, preferably before accepting the PR */
-type $FixMe = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+type $FixMe = any;
 
 /** This `any` is intentional => never has to be fixed */
-type $IntentionalAny = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+type $IntentionalAny = any;
 
 /** TS cannot express the proper type atm */
-type $Unexpressable = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+type $Unexpressable = any;
 
 // -----------------------------------------------------------------------------
 // MDX stuff

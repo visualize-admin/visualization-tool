@@ -11,7 +11,6 @@ import { useLocale } from "../../locales/use-locale";
 import { FieldProps, useChartTypeSelectorField } from "../config-form";
 import { SectionTitle } from "./chart-controls/section";
 import { getFieldLabel, getIconName } from "./ui-helpers";
-import Link from "next/link";
 import { useTheme } from "../../themes";
 
 export const ChartTypeSelectionButton = ({

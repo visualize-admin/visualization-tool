@@ -1,9 +1,7 @@
-import { sparql } from "@tpluscode/rdf-string";
 import { SELECT } from "@tpluscode/sparql-builder";
 import { groups } from "d3";
-import { NamedNode, Term } from "rdf-js";
+import { Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
-import { getQueryLocales } from "./parse";
 import { sparqlClient } from "./sparql-client";
 import * as ns from "./namespace";
 

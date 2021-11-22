@@ -41,6 +41,10 @@ msgstr "Organisationen"
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
+#: app/configurator/components/dataset-preview.tsx:54
+msgid "browse.dataset.create-visualization"
+msgstr "Erstellen Sie die Visualisierung von Dataset"
+
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
 msgstr "Diese Visualisierung kopieren"
@@ -597,7 +601,7 @@ msgstr "Suche anzeigen"
 msgid "controls.title"
 msgstr "Titel hinzufügen<<<<<<< HEAD"
 
-#: app/configurator/components/select-dataset-step.tsx:103
+#: app/configurator/components/select-dataset-step.tsx:102
 msgid "dataset-preview.back-to-results"
 msgstr "Zurück zu den Ergebnissen"
 
@@ -667,7 +671,7 @@ msgstr "Sortieren nach"
 msgid "dataset.tag.draft"
 msgstr "Luftzug<<<<<<< HEAD"
 
-#: app/configurator/components/dataset-preview.tsx:101
+#: app/configurator/components/dataset-preview.tsx:103
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
 
@@ -808,19 +812,19 @@ msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt ha
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:221
+#: app/configurator/components/stepper.tsx:225
 msgid "step.annotate"
 msgstr "Beschreiben"
 
-#: app/configurator/components/stepper.tsx:200
+#: app/configurator/components/stepper.tsx:204
 msgid "step.dataset"
 msgstr "Datensatz"
 
-#: app/configurator/components/stepper.tsx:207
+#: app/configurator/components/stepper.tsx:211
 msgid "step.visualization.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/components/stepper.tsx:214
+#: app/configurator/components/stepper.tsx:218
 msgid "step.visualize"
 msgstr "Visualisieren"
 

@@ -14,7 +14,6 @@ import { ChartContainer, ChartSvg } from "../charts/shared/containers";
 import { Tooltip } from "../charts/shared/interaction/tooltip";
 import {
   InteractiveLegendColor,
-  LegendColor,
 } from "../charts/shared/legend-color";
 import { InteractionVoronoi } from "../charts/shared/overlay-voronoi";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";

@@ -1,6 +1,6 @@
 // @ts-ignore
 import { build, completionHandler } from "@cozy/cli-tree";
-import { Client, OperationResult } from "urql";
+import { Client } from "urql";
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import {
   DataCubeMetadataDocument,

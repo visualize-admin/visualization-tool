@@ -31,7 +31,6 @@ import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
 import truthy from "../utils/truthy";
 import {
-  DataCubeOrganization,
   DataCubeSearchFilter,
   DataCubeTheme,
 } from "../graphql/query-hooks";

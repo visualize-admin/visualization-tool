@@ -3,7 +3,7 @@ import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { sparqlClient } from "./sparql-client";
 import { schema, dcat, dcterms } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
-import { keyBy, mapValues } from "lodash";
+import { keyBy } from "lodash";
 import { makeLocalesFilter } from "./query-labels";
 
 type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;
@@ -93,12 +93,11 @@ export const queryDatasetCountByOrganization = async ({
 }: {
   theme?: string;
 }) => {
-  const baseQuery = SELECT`(count(?iri) as ?count) ?creator`.WHERE`
+  const query = SELECT`(count(?iri) as ?count) ?creator`.WHERE`
     ?iri ${dcterms.creator} ?creator.
     ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
     ${makeVisualizeDatasetFilter()}
-  `.build();
-  const query = `${baseQuery} GROUP BY ?creator`;
+  `.GROUP().BY`?creator`.build();
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
   });
@@ -115,7 +114,8 @@ const makeVisualizeDatasetFilter = () => {
     ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
     ?iri ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
     FILTER NOT EXISTS {?iri ${schema.expires} ?expiryDate }
-  `;
+    FILTER NOT EXISTS {?iri ${schema.validThrough} ?validThrough }
+    `;
 };
 
 export const queryDatasetCountByTheme = async ({
@@ -123,15 +123,14 @@ export const queryDatasetCountByTheme = async ({
 }: {
   organization?: string;
 }) => {
-  const baseQuery = SELECT`(count(?iri) as ?count) ?theme`.WHERE`
+  const query = SELECT`(count(?iri) as ?count) ?theme`.WHERE`
     ?iri ${dcat.theme} ?theme.
     ${organization ? sparql`?iri ${dcterms.creator} <${organization}>.` : ``}
     ?theme ${
       schema.inDefinedTermSet
     } <https://register.ld.admin.ch/opendataswiss/category>.
     ${makeVisualizeDatasetFilter()}
-  `.build();
-  const query = `${baseQuery} GROUP BY ?theme`;
+  `.GROUP().BY`?theme`.build();
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
   });

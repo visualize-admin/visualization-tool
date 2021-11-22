@@ -131,7 +131,7 @@ const DatasetTags = ({
   cube: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
 }) => {
   return (
-    <Stack spacing={1}>
+    <Stack spacing={1} direction="row">
       {[cube.creator, ...cube.themes].filter(truthy).map((t) => (
         <NextLink
           key={t.iri}

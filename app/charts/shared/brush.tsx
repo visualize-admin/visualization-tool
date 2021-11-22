@@ -262,26 +262,18 @@ export const BrushTime = () => {
 
   // This effect allows "snapping" to actual data points
   // after brush is ended and interactive-filters state is updated
+  const closestFromStr = closestFrom?.toString(); // Local variables to prevent eslint-plugin-react-hooks bug
+  const closestToStr = closestTo?.toString(); // leading to eslint crashing on this file
   useEffect(() => {
     const g = select(ref.current);
     if (closestFrom && closestTo && brushedIsEnded) {
       const coord = [brushWidthScale(closestFrom), brushWidthScale(closestTo)];
-      (g.transition() as Transition<
-        SVGGElement,
-        unknown,
-        null,
-        undefined
-      >).call(brush.move, coord);
-
+      (
+        g.transition() as Transition<SVGGElement, unknown, null, undefined>
+      ).call(brush.move, coord);
       updateBrushEndedStatus(false);
     }
-  }, [
-    brushWidthScale,
-    brushedIsEnded,
-    dispatch,
-    closestFrom?.toString(),
-    closestTo?.toString(),
-  ]);
+  }, [brushWidthScale, brushedIsEnded, dispatch, closestFromStr, closestToStr]);
 
   // This effect resets brush defaults to editor values
   // without transition
