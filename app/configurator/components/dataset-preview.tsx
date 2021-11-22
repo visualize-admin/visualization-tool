@@ -51,7 +51,9 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             sx={{ ml: 6, whiteSpace: "nowrap", flexShrink: 0 }}
             href={`/create/new?cube=${dataCubeByIri.iri}`}
           >
-            Create visualization from dataset
+            <Trans id="browse.dataset.create-visualization">
+              Create visualization from dataset
+            </Trans>
           </LinkButton>
         </Flex>
         <Box

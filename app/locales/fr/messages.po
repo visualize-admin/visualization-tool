@@ -41,6 +41,10 @@ msgstr "Organisations"
 msgid "browse-panel.themes"
 msgstr "Catégories"
 
+#: app/configurator/components/dataset-preview.tsx:54
+msgid "browse.dataset.create-visualization"
+msgstr "Créer une visualisation"
+
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
 msgstr "Copier cette visualisation"
@@ -667,7 +671,7 @@ msgstr "Trier par"
 msgid "dataset.tag.draft"
 msgstr "Brouillon"
 
-#: app/configurator/components/dataset-preview.tsx:101
+#: app/configurator/components/dataset-preview.tsx:103
 msgid "datatable.showing.first.rows"
 msgstr "Seules les 10 premières lignes sont affichées"
 
@@ -808,19 +812,19 @@ msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:221
+#: app/configurator/components/stepper.tsx:226
 msgid "step.annotate"
 msgstr "Annoter"
 
-#: app/configurator/components/stepper.tsx:200
+#: app/configurator/components/stepper.tsx:205
 msgid "step.dataset"
 msgstr "Données"
 
-#: app/configurator/components/stepper.tsx:207
+#: app/configurator/components/stepper.tsx:212
 msgid "step.visualization.type"
 msgstr "Type de graphique"
 
-#: app/configurator/components/stepper.tsx:214
+#: app/configurator/components/stepper.tsx:219
 msgid "step.visualize"
 msgstr "Visualiser"
 

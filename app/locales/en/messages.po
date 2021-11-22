@@ -41,6 +41,10 @@ msgstr "Organizations"
 msgid "browse-panel.themes"
 msgstr "Themes"
 
+#: app/configurator/components/dataset-preview.tsx:54
+msgid "browse.dataset.create-visualization"
+msgstr "Create visualization from dataset"
+
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
 msgstr "Copy This Visualization"
@@ -667,7 +671,7 @@ msgstr "Sort by"
 msgid "dataset.tag.draft"
 msgstr "Draft"
 
-#: app/configurator/components/dataset-preview.tsx:101
+#: app/configurator/components/dataset-preview.tsx:103
 msgid "datatable.showing.first.rows"
 msgstr "Showing first 10 rows"
 
@@ -808,19 +812,19 @@ msgstr "Here is a visualization I created using visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:221
+#: app/configurator/components/stepper.tsx:226
 msgid "step.annotate"
 msgstr "Annotate"
 
-#: app/configurator/components/stepper.tsx:200
+#: app/configurator/components/stepper.tsx:205
 msgid "step.dataset"
 msgstr "Dataset"
 
-#: app/configurator/components/stepper.tsx:207
+#: app/configurator/components/stepper.tsx:212
 msgid "step.visualization.type"
 msgstr "Chart Type"
 
-#: app/configurator/components/stepper.tsx:214
+#: app/configurator/components/stepper.tsx:219
 msgid "step.visualize"
 msgstr "Visualize"
 
