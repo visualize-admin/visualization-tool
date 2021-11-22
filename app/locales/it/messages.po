@@ -421,7 +421,7 @@ msgstr "Valori mancanti"
 
 #: app/configurator/components/chart-options-selector.tsx:516
 msgid "controls.section.imputation.explanation"
-msgstr "A causa della natura del tipo di grafico selezionato, sono stati introdotti alcuni valori mancanti. Decidere la logica di imputazione o passare a un altro tipo di grafico."
+msgstr "Per questo tipo di grafico, i valori di sostituzione devono essere assegnati ai valori mancanti. Decidi la logica di imputazione o passa a un altro tipo di grafico."
 
 #: app/configurator/interactive-filters/interactive-filters-configurator.tsx:63
 msgid "controls.section.interactive.filters"

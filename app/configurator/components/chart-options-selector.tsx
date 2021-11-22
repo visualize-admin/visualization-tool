@@ -514,8 +514,8 @@ const ChartImputationType = ({
         {!disabled && (
           <Box mb={5}>
             <Trans id="controls.section.imputation.explanation">
-              Due to the nature of the selected chart type, some missing values
-              have been introduced. Decide on the imputation logic or switch to
+              For this chart type, replacement values should be assigned to
+              missing values. Decide on the imputation logic or switch to
               another chart type.
             </Trans>
           </Box>
