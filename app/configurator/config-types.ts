@@ -444,13 +444,6 @@ const PaletteType = t.union([
 ]);
 export type PaletteType = t.TypeOf<typeof PaletteType>;
 
-const MapBaseLayer = t.type({
-  componentIri: t.string, // FIXME: we don't need this
-  relief: t.boolean,
-  lakes: t.boolean,
-});
-export type MapBaseLayer = t.TypeOf<typeof MapBaseLayer>;
-
 const MapAreaLayer = t.type({
   show: t.boolean,
   label: GenericField,
@@ -467,12 +460,16 @@ const MapSymbolLayer = t.type({
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
+const MapSettings = t.type({
+  showRelief: t.boolean,
+  showLakes: t.boolean,
+});
+export type MapSettings = t.TypeOf<typeof MapSettings>;
 const MapFields = t.type({
-  baseLayer: MapBaseLayer,
-  areaLayer: MapAreaLayer,
-  symbolLayer: MapSymbolLayer,
   x: GenericField,
   y: GenericField,
+  areaLayer: MapAreaLayer,
+  symbolLayer: MapSymbolLayer,
   segment: GenericField,
 });
 
@@ -482,6 +479,7 @@ const MapConfig = t.type(
     interactiveFiltersConfig: InteractiveFiltersConfig,
     filters: Filters,
     fields: MapFields,
+    settings: MapSettings,
   },
   "MapConfig"
 );

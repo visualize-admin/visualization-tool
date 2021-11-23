@@ -263,11 +263,6 @@ export const getInitialConfig = ({
           },
         },
         fields: {
-          baseLayer: {
-            componentIri: dimensions[0].iri,
-            relief: true,
-            lakes: true,
-          },
           areaLayer: {
             componentIri: measures[0].iri,
             show: false,
@@ -288,6 +283,10 @@ export const getInitialConfig = ({
           segment: {
             componentIri: dimensions[0].iri,
           },
+        },
+        settings: {
+          showRelief: true,
+          showLakes: true,
         },
       };
 

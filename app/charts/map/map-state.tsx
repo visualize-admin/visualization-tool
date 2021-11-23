@@ -21,8 +21,8 @@ import {
   getSingleHueSequentialPalette,
 } from "../../configurator/components/ui-helpers";
 import {
-  MapBaseLayer,
   MapFields,
+  MapSettings,
   PaletteType,
 } from "../../configurator/config-types";
 import { Observation } from "../../domain/data";
@@ -44,7 +44,8 @@ export interface MapState {
   data: Observation[];
   features: GeoData;
   getFeatureLabel: (d: Observation | undefined) => string;
-  baseLayer: MapBaseLayer;
+  showRelief: boolean;
+  showLakes: boolean;
   areaLayer: {
     showAreaLayer: boolean;
     areaMeasureLabel: string;
@@ -124,12 +125,14 @@ const useMapState = ({
   dimensions,
   measures,
   interactiveFiltersConfig,
+  settings,
 }: Pick<
   ChartProps,
   "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
 > & {
   features: GeoData;
   fields: MapFields;
+  settings: MapSettings;
 }): MapState => {
   const width = useWidth();
 
@@ -220,7 +223,8 @@ const useMapState = ({
     features,
     bounds,
     getFeatureLabel,
-    baseLayer: fields["baseLayer"],
+    showRelief: settings.showRelief,
+    showLakes: settings.showLakes,
     areaLayer: {
       areaMeasureLabel,
       showAreaLayer: fields.areaLayer.show,
@@ -249,17 +253,24 @@ const MapChartProvider = ({
   dimensions,
   measures,
   interactiveFiltersConfig,
+  settings,
   children,
 }: Pick<
   ChartProps,
   "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & { features: GeoData; children: ReactNode; fields: MapFields }) => {
+> & {
+  features: GeoData;
+  children: ReactNode;
+  fields: MapFields;
+  settings: MapSettings;
+}) => {
   const state = useMapState({
     data,
     features,
     fields,
     dimensions,
     measures,
+    settings,
     interactiveFiltersConfig,
   });
   return (
@@ -274,14 +285,15 @@ export const MapChart = ({
   dimensions,
   measures,
   interactiveFiltersConfig,
+  settings,
   children,
 }: Pick<
   ChartProps,
   "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
 > & {
   features: GeoData;
-
   fields: MapFields;
+  settings: MapSettings;
   children: ReactNode;
 }) => {
   return (
@@ -293,6 +305,7 @@ export const MapChart = ({
           fields={fields}
           dimensions={dimensions}
           measures={measures}
+          settings={settings}
           interactiveFiltersConfig={interactiveFiltersConfig}
         >
           {children}

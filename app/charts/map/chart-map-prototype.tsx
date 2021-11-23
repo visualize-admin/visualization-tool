@@ -1,30 +1,30 @@
-import { t, Trans } from "@lingui/macro";
 import { geoCentroid } from "d3";
 import React, { memo, useEffect, useMemo, useState } from "react";
-import { Box, Flex } from "theme-ui";
+import { Box } from "theme-ui";
 import {
   feature as topojsonFeature,
   mesh as topojsonMesh,
 } from "topojson-client";
-import { Select } from "../../components/form";
-import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
+import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
 import {
   InteractiveFiltersConfig,
   MapConfig,
   MapFields,
+  MapSettings,
   PaletteType,
 } from "../../configurator";
-import { ControlSection } from "../../configurator/components/chart-controls/section";
 import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import {
+  DimensionMetaDataFragment,
+  useDataCubeObservationsQuery,
+} from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
 import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
 import { GeoData, MapChart } from "./map-state";
 import { MapTooltip } from "./map-tooltip";
-import { Tab } from "./prototype-components";
-import { PrototypeRightControls } from "./prototype-right-controls";
 
 type GeoDataState =
   | {
@@ -34,18 +34,6 @@ type GeoDataState =
       state: "error";
     }
   | (GeoData & { state: "loaded" });
-
-type DataState =
-  | {
-      state: "fetching";
-    }
-  | {
-      state: "error";
-    }
-  | {
-      state: "loaded";
-      ds: Observation[];
-    };
 
 export const ChartMapVisualization = ({
   dataSetIri,
@@ -57,7 +45,16 @@ export const ChartMapVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
-  const [dataset, loadDataset] = useState<DataState>({ state: "fetching" });
+
+  const locale = useLocale();
+  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
+    variables: {
+      locale,
+      iri: dataSetIri,
+      measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+      filters: queryFilters,
+    },
+  });
 
   useEffect(() => {
     const loadGeoData = async () => {
@@ -74,6 +71,7 @@ export const ChartMapVisualization = ({
             coordinates: geoCentroid(c),
           })
         );
+
         setGeoData({
           state: "loaded",
           cantons,
@@ -85,65 +83,29 @@ export const ChartMapVisualization = ({
         setGeoData({ state: "error" });
       }
     };
+
     loadGeoData();
   }, []);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const res = await fetch(`/map-data/tidy/holzernte.json`);
-        const ds = await res.json();
-
-        loadDataset({
-          state: "loaded",
-          ds,
-        });
-      } catch (e) {
-        loadDataset({ state: "error" });
-      }
-    };
-    loadData();
-  }, []);
-
-  if (geoData.state === "fetching" || dataset.state === "fetching") {
-    return <LoadingOverlay />;
-  } else if (geoData.state === "error" || dataset.state === "error") {
-    return <NoDataHint />;
-  } else {
-    const dimensions = Object.keys(dataset.ds[0])
-      .filter((d) => d.startsWith("D_"))
-      .map((d) => ({
-        __typename: "NominalDimension",
-        iri: d,
-        label: d,
-        dimensionValues: [...new Set(dataset.ds.map((datum) => datum[d]))],
-      })) as Array<DimensionMetaDataFragment & { dimensionValues: string[] }>;
-    const measures = Object.keys(dataset.ds[0])
-      .filter((d) => d.startsWith("M_"))
-      .map((d) => ({
-        __typename: "Measure",
-        iri: d,
-        label: d,
-      })) as DimensionMetaDataFragment[];
-    const attributes = Object.keys(dataset.ds[0])
-      .filter((d) => d.startsWith("A_"))
-      .map((d) => ({
-        __typename: "NominalDimension",
-        iri: d,
-        label: d,
-      })) as DimensionMetaDataFragment[];
+  if (data?.dataCubeByIri && geoData.state === "loaded") {
+    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
 
     return (
       <ChartMapPrototype
-        dataset={dataset.ds}
+        observations={observations.data}
         features={geoData}
         dimensions={dimensions}
         measures={measures}
         interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-        // Additional props (prototype only)
-        attributes={attributes}
+        settings={chartConfig.settings}
       />
     );
+  } else if (geoData.state === "fetching" || fetching) {
+    return <LoadingOverlay />;
+  } else if (geoData.state === "error" || error) {
+    return <NoDataHint />;
+  } else {
+    return <Loading />;
   }
 };
 
@@ -155,20 +117,19 @@ export type ActiveLayer = {
   symbolLayer: boolean;
 };
 export const ChartMapPrototype = ({
-  dataset,
+  observations,
   features,
   dimensions,
   measures,
   interactiveFiltersConfig,
-  // Additional props (prototype only)
-  attributes,
+  settings,
 }: {
-  dataset: Observation[];
+  observations: Observation[];
   features: GeoData;
-  dimensions: Array<DimensionMetaDataFragment & { dimensionValues: string[] }>;
+  dimensions: DimensionMetaDataFragment[];
   measures: DimensionMetaDataFragment[];
   interactiveFiltersConfig: InteractiveFiltersConfig;
-  attributes: DimensionMetaDataFragment[];
+  settings: MapSettings;
 }) => {
   const [activeLayers, setActiveLayers] = useState<ActiveLayer>({
     relief: true,
@@ -184,7 +145,7 @@ export const ChartMapPrototype = ({
   const [symbolMeasure, setSymbolMeasure] = useState(measures[0].iri);
   const [filters, setFilters] = useState<{ [x: string]: string }>(
     dimensions.reduce(
-      (obj, dim, i) => ({ ...obj, [dim.iri]: dim.dimensionValues[0] }),
+      (obj, dim, i) => ({ ...obj, [dim.iri]: dim.values[0] }),
       {}
     )
   );
@@ -204,12 +165,13 @@ export const ChartMapPrototype = ({
     const filterfunctions = Object.keys(filters).map(
       (filterKey) => (x: Observation) => x[filterKey] === filters[filterKey]
     );
-    return filterfunctions.reduce((d, f) => d.filter(f), dataset);
-  }, [dataset, filters]);
+
+    return filterfunctions.reduce((d, f) => d.filter(f), observations);
+  }, [observations, filters]);
 
   return (
     <>
-      <Box
+      {/* <Box
         sx={{
           bg: "monochrome100",
           borderRight: "1px solid",
@@ -273,9 +235,9 @@ export const ChartMapPrototype = ({
                     name={dim.label}
                     value={filters[dim.iri]}
                     disabled={false}
-                    options={dim.dimensionValues.map((value) => ({
+                    options={dim.values.map(({ value, label }) => ({
                       value,
-                      label: value,
+                      label,
                     }))}
                     onChange={(e) =>
                       updateFilters(dim.iri, e.currentTarget.value)
@@ -286,59 +248,48 @@ export const ChartMapPrototype = ({
             </Flex>
           </Box>
         </ControlSection>
-      </Box>
-
-      <Box>
-        <HintBlue iconName="hintWarning">
-          <Trans id="chart.map.warning.prototype">
-            This is a prototype, dont use in production!
-          </Trans>
-        </HintBlue>
-        <Box
-          sx={{
-            m: 4,
-            bg: "#FFFFFF",
-            border: "1px solid",
-            borderColor: "monochrome400",
-          }}
-        >
-          {dimensions && measures && data && (
-            <ChartMap
-              observations={data}
-              features={features}
-              fields={{
-                baseLayer: {
-                  componentIri: "",
-                  relief: activeLayers.relief,
-                  lakes: activeLayers.lakes,
-                },
-                areaLayer: {
-                  componentIri: measure,
-                  show: activeLayers["areaLayer"],
-                  label: { componentIri: attributes[0].iri },
-                  palette,
-                  nbClass,
-                  paletteType,
-                },
-                symbolLayer: {
-                  show: activeLayers["symbolLayer"],
-                  componentIri: symbolMeasure,
-                },
-                x: { componentIri: "a" },
-                y: { componentIri: "b" },
-                segment: { componentIri: "c" },
-              }}
-              dimensions={dimensions}
-              measures={measures}
-              interactiveFiltersConfig={interactiveFiltersConfig}
-              // Additional props (prototype only)
-              measure={measure.split("_")[1]}
-            />
-          )}
-        </Box>
-      </Box>
+      </Box> */}
 
       <Box
+        sx={{
+          m: 4,
+          bg: "#FFFFFF",
+          border: "1px solid",
+          borderColor: "monochrome400",
+        }}
+      >
+        {dimensions && measures && data && (
+          <ChartMap
+            observations={data}
+            features={features}
+            fields={{
+              areaLayer: {
+                componentIri: measure,
+                show: activeLayers["areaLayer"],
+                label: { componentIri: "" },
+                palette,
+                nbClass,
+                paletteType,
+              },
+              symbolLayer: {
+                show: activeLayers["symbolLayer"],
+                componentIri: symbolMeasure,
+              },
+              x: { componentIri: "a" },
+              y: { componentIri: "b" },
+              segment: { componentIri: "c" },
+            }}
+            dimensions={dimensions}
+            measures={measures}
+            interactiveFiltersConfig={interactiveFiltersConfig}
+            settings={settings}
+            // Additional props (prototype only)
+            measure={measure.split("_")[1]}
+          />
+        )}
+      </Box>
+
+      {/* <Box
         sx={{
           bg: "monochrome100",
           borderLeft: "1px solid",
@@ -361,7 +312,7 @@ export const ChartMapPrototype = ({
           symbolMeasure={symbolMeasure}
           setSymbolMeasure={setSymbolMeasure}
         />
-      </Box>
+      </Box> */}
     </>
   );
 };
@@ -374,6 +325,7 @@ export const ChartMap = memo(
     dimensions,
     measures,
     interactiveFiltersConfig,
+    settings,
     measure,
   }: {
     features: GeoData;
@@ -383,6 +335,7 @@ export const ChartMap = memo(
     interactiveFiltersConfig: InteractiveFiltersConfig;
     // Additional props (prototype only)
     fields: MapFields;
+    settings: MapSettings;
     measure: string;
   }) => {
     return (
@@ -393,6 +346,7 @@ export const ChartMap = memo(
         dimensions={dimensions}
         measures={measures}
         interactiveFiltersConfig={interactiveFiltersConfig}
+        settings={settings}
       >
         <ChartContainer>
           <MapComponent />

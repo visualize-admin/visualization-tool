@@ -8,6 +8,7 @@ import {
   ImputationType,
   imputationTypes,
   isAreaConfig,
+  isMapConfig,
   isTableConfig,
   SortingType,
   useConfiguratorState,
@@ -29,6 +30,7 @@ import {
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { useLocale } from "../../locales/use-locale";
+import { MapSettings } from "../map/map-chart-options";
 import { TableColumnOptions } from "../table/table-chart-options";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
@@ -88,6 +90,9 @@ export const ChartOptionsSelector = ({
         {state.activeField ? (
           isTableConfig(state.chartConfig) ? (
             <TableColumnOptions state={state} metaData={meta} />
+          ) : isMapConfig(state.chartConfig) &&
+            state.activeField === "settings" ? (
+            <MapSettings />
           ) : (
             <ActiveFieldSwitch
               state={state}
@@ -174,6 +179,7 @@ const EncodingOptionsPanel = ({
       id: "controls.select.dimension",
       message: "Select a dimension",
     }),
+    settings: t({ id: "controls.settings", message: "Settings" }),
   };
 
   useEffect(() => {

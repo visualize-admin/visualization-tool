@@ -87,7 +87,8 @@ const constrainZoom = (
 export const MapComponent = () => {
   const {
     data,
-    baseLayer,
+    showRelief,
+    showLakes,
     features,
     areaLayer: { showAreaLayer, getColor, getValue },
     symbolLayer: { showSymbolLayer, radiusScale, getRadius },
@@ -150,7 +151,7 @@ export const MapComponent = () => {
         onResize={onResize}
         controller={{ type: MapController }}
       >
-        {baseLayer.relief && (
+        {showRelief && (
           <TileLayer
             getTileData={({ z, x, y }: TileData) =>
               `https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/${z}/${x}/${y}.png`
@@ -246,7 +247,7 @@ export const MapComponent = () => {
           </>
         )}
 
-        {baseLayer.lakes && (
+        {showLakes && (
           <GeoJsonLayer
             id="lakes"
             data={features.lakes}

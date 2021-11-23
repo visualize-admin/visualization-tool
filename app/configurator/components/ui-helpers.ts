@@ -396,6 +396,10 @@ const fieldLabels = {
     id: "controls.column.grouped",
     message: "Grouped",
   }),
+  "controls.map.settings": defineMessage({
+    id: "controls.map.settings",
+    message: "Base layers",
+  }),
   "controls.sorting.sortBy": defineMessage({
     id: "controls.sorting.sortBy",
     message: "Sort by",
@@ -526,6 +530,8 @@ export function getFieldLabel(field: string): string {
     case "pie.segment":
     case "segment":
       return i18n._(fieldLabels["controls.color"]);
+    case "map.settings":
+      return i18n._(fieldLabels["controls.map.settings"]);
     case "title":
       return i18n._(fieldLabels["controls.title"]);
     case "description":
