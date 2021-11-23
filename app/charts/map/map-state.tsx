@@ -63,8 +63,8 @@ export interface MapState {
       | ScaleThreshold<number, string>;
   };
   symbolLayer: {
-    symbolMeasureLabel: string;
     showSymbolLayer: boolean;
+    symbolMeasureLabel: string;
     radiusScale: ScalePower<number, number>;
     getRadius: (d: Observation) => number | null;
     symbolColorScale: (x: number) => string;

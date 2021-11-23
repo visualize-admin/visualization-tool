@@ -273,15 +273,7 @@ export const getInitialConfig = ({
           },
           symbolLayer: {
             show: false,
-            componentIri: measures[0].iri,
-          },
-          // FIXME: unused fields
-          x: { componentIri: dimensions[0].iri },
-          y: {
-            componentIri: measures[0].iri,
-          },
-          segment: {
-            componentIri: dimensions[0].iri,
+            componentIri: "",
           },
         },
         settings: {

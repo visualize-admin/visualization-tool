@@ -10,7 +10,7 @@ import {
 } from "react";
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
-import { ImputationType, isAreaConfig, isColumnConfig } from ".";
+import { ImputationType, isAreaConfig, isColumnConfig, isMapConfig } from ".";
 import { fetchChartConfig, saveChartConfig } from "../api";
 import {
   getFieldComponentIris,
@@ -547,7 +547,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ];
         if (!f) {
           // The field was not defined before
-          if (action.value.field === "segment") {
+          if (
+            action.value.field === "segment" &&
+            !isMapConfig(draft.chartConfig) // maps don't use segments
+          ) {
             const component = action.value.dataSetMetadata.dimensions.find(
               (dim) => dim.iri === action.value.componentIri
             );

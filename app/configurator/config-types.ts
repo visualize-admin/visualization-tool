@@ -466,11 +466,8 @@ const MapSettings = t.type({
 });
 export type MapSettings = t.TypeOf<typeof MapSettings>;
 const MapFields = t.type({
-  x: GenericField,
-  y: GenericField,
   areaLayer: MapAreaLayer,
   symbolLayer: MapSymbolLayer,
-  segment: GenericField,
 });
 
 const MapConfig = t.type(

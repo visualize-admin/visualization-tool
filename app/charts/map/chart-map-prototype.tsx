@@ -51,7 +51,10 @@ export const ChartMapVisualization = ({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+      measures: [
+        chartConfig.fields.areaLayer.componentIri,
+        chartConfig.fields.symbolLayer?.componentIri,
+      ], // FIXME: Other fields may also be measures
       filters: queryFilters,
     },
   });
@@ -275,9 +278,6 @@ export const ChartMapPrototype = ({
                 show: activeLayers["symbolLayer"],
                 componentIri: symbolMeasure,
               },
-              x: { componentIri: "a" },
-              y: { componentIri: "b" },
-              segment: { componentIri: "c" },
             }}
             dimensions={dimensions}
             measures={measures}
