@@ -18,6 +18,7 @@ export const enabledChartTypes: ChartType[] = [
   "scatterplot",
   "pie",
   "table",
+  "map",
 ];
 
 /**
@@ -307,11 +308,12 @@ export const getPossibleChartType = ({
 
   const hasZeroQ = measures.length === 0;
   const hasMultipleQ = measures.length > 1;
+  const hasGeo = dimensions.some((dim) => dim.__typename === "GeoDimension");
   const hasTime = dimensions.some(
     (dim) => dim.__typename === "TemporalDimension"
   );
 
-  // const geoBased: ChartType[] = ["map"];
+  const geoBased: ChartType[] = ["map"];
   const catBased: ChartType[] = ["bar", "column", "pie", "table"];
   const multipleQ: ChartType[] = ["scatterplot"];
   const timeBased: ChartType[] = ["line", "area"];
@@ -319,18 +321,22 @@ export const getPossibleChartType = ({
   let possibles: ChartType[] = [];
   if (hasZeroQ) {
     possibles = ["table"];
-  } else if (hasMultipleQ && hasTime) {
-    possibles = [...multipleQ, ...timeBased, ...catBased];
-  } else if (hasMultipleQ && !hasTime) {
-    possibles = [...multipleQ, ...catBased];
-  } else if (!hasMultipleQ && hasTime) {
-    possibles = [...catBased, ...timeBased];
-  } else if (!hasMultipleQ && !hasTime) {
-    possibles = [...catBased];
   } else {
-    // Tables should always be possible
-    possibles = ["table"];
+    possibles.push(...catBased);
+
+    if (hasMultipleQ) {
+      possibles.push(...multipleQ);
+    }
+
+    if (hasTime) {
+      possibles.push(...timeBased);
+    }
+
+    if (hasGeo) {
+      possibles.push(...geoBased);
+    }
   }
+
   return enabledChartTypes.filter((type) => possibles.includes(type));
 };
 

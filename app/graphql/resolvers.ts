@@ -289,12 +289,9 @@ export const resolvers: Resolvers = {
     __resolveType({ data: { dataKind, scaleType, dataType } }) {
       if (dataKind === "Time") {
         return "TemporalDimension";
+      } else if (dataKind === "GeoShape") {
+        return "GeoDimension";
       }
-
-      // TODO: GeoDimension
-      // if (dataKind === "https://schema.org/GeoShape") {
-      // return "GeoDimension"
-      // }
 
       return "NominalDimension";
     },
@@ -309,6 +306,9 @@ export const resolvers: Resolvers = {
     ...dimensionResolvers,
     timeUnit: ({ data: { timeUnit } }: ResolvedDimension) => timeUnit!,
     timeFormat: ({ data: { timeFormat } }: ResolvedDimension) => timeFormat!,
+  },
+  GeoDimension: {
+    ...dimensionResolvers,
   },
   Measure: {
     ...dimensionResolvers,

@@ -52,6 +52,15 @@ interface Dimension {
   values: [DimensionValue!]!
 }
 
+type GeoDimension implements Dimension {
+  iri: String!
+  label: String!
+  unit: String
+  scaleType: String
+  isKeyDimension: Boolean!
+  values: [DimensionValue!]!
+}
+
 type NominalDimension implements Dimension {
   iri: String!
   label: String!

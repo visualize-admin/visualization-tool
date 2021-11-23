@@ -5,6 +5,7 @@ import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 import { ChartColumnsVisualization } from "../charts/column/chart-column";
 import { ChartLinesVisualization } from "../charts/line/chart-lines";
+import { ChartMapVisualization } from "../charts/map/chart-map-prototype";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
@@ -18,6 +19,7 @@ import {
   isBarConfig,
   isColumnConfig,
   isLineConfig,
+  isMapConfig,
   isPieConfig,
   isScatterPlotConfig,
   isTableConfig,
@@ -213,6 +215,13 @@ const Chart = ({
         <ChartTableVisualization
           dataSetIri={dataSet}
           chartConfig={chartConfig}
+        />
+      )}
+      {isMapConfig(chartConfig) && (
+        <ChartMapVisualization
+          dataSetIri={dataSet}
+          chartConfig={chartConfig}
+          queryFilters={queryFilters}
         />
       )}
     </>
