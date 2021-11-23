@@ -1,28 +1,30 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
 import { mapValues, pickBy, sortBy } from "lodash";
+import Link from "next/link";
+import { Router, useRouter } from "next/router";
+import qs from "qs";
 import React, {
   useCallback,
+  useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
-  useContext,
-  useEffect,
 } from "react";
 import {
   Box,
   Button,
+  Card,
   Flex,
-  Text,
   FlexProps,
   Link as ThemeUILink,
   LinkProps as ThemeUILinkProps,
-  Card,
+  Text,
 } from "theme-ui";
-import { Router, useRouter } from "next/router";
-
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
+import Stack from "../../components/Stack";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -35,18 +37,15 @@ import {
   useThemesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
-import { useLocale } from "../../locales/use-locale";
-import Stack from "../../components/Stack";
-import { useFormatDate } from "./ui-helpers";
-import Tag from "./Tag";
-import Link from "next/link";
-import { BrowseParams } from "../../pages/browse";
+import SvgIcCategories from "../../icons/components/IcCategories";
 import SvgIcClose from "../../icons/components/IcClose";
 import SvgIcOrganisations from "../../icons/components/IcOrganisations";
-import SvgIcCategories from "../../icons/components/IcCategories";
+import { useLocale } from "../../locales/use-locale";
+import { BrowseParams } from "../../pages/browse";
 import isAttrEqual from "../../utils/is-attr-equal";
+import Tag from "./Tag";
+import { useFormatDate } from "./ui-helpers";
 import useDatasetCount from "./use-dataset-count";
-import qs from "qs";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -425,6 +424,7 @@ const NavItem = ({
   count?: number;
   active: boolean;
   theme: typeof defaultNavItemTheme;
+  /** Level is there to differentiate between organizations and organization subtopics */
   level?: number;
 } & ThemeUILinkProps) => {
   const path = useMemo(() => {

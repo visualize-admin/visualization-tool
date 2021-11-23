@@ -1,21 +1,21 @@
 /* eslint-disable import/no-anonymous-default-export */
+import { MDXProvider } from "@mdx-js/react";
 import {
-  Catalog,
-  ConfigPageOrGroup,
-  ImageSpecimen,
   AudioSpecimen,
+  Catalog,
   CodeSpecimen,
-  ColorSpecimen,
   ColorPaletteSpecimen,
-  HtmlSpecimen,
+  ColorSpecimen,
+  ConfigPageOrGroup,
+  DownloadSpecimen,
   HintSpecimen,
+  HtmlSpecimen,
+  ImageSpecimen,
+  Markdown,
+  Page,
   TableSpecimen,
   TypeSpecimen,
-  DownloadSpecimen,
-  Page,
-  Markdown,
 } from "catalog";
-import { MDXProvider } from "@mdx-js/react";
 import { useEffect, useState } from "react";
 
 const pages: ConfigPageOrGroup[] = [
@@ -129,9 +129,9 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/controls.docs"),
       },
       {
-        path: "/components/dataset-search",
-        title: "Datasets Search",
-        content: require("../docs/dataset-search.docs"),
+        path: "/components/dataset-browse",
+        title: "Datasets Browsing",
+        content: require("../docs/dataset-browse.docs"),
       },
       {
         path: "/components/footer",
