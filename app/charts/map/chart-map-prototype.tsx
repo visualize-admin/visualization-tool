@@ -54,7 +54,7 @@ export const ChartMapVisualization = ({
       measures: [
         chartConfig.fields.areaLayer.componentIri,
         chartConfig.fields.symbolLayer?.componentIri,
-      ], // FIXME: Other fields may also be measures
+      ],
       filters: queryFilters,
     },
   });

@@ -26,6 +26,7 @@ import {
   PaletteType,
 } from "../../configurator/config-types";
 import { Observation } from "../../domain/data";
+import { useOptionalNumericVariable } from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -137,30 +138,13 @@ const useMapState = ({
   const width = useWidth();
 
   const { palette, nbClass, paletteType } = fields["areaLayer"];
-  const getValue = useCallback(
-    (d: Observation): number | null => {
-      const v = d[fields.areaLayer.componentIri];
-      return v !== null && v !== "..." // FIXME: && v !== "..." -> only used for the prototype and mock data
-        ? +v
-        : null;
-    },
-    [fields.areaLayer.componentIri]
-  );
-
+  const getValue = useOptionalNumericVariable(fields.areaLayer.componentIri);
   const getFeatureLabel = useCallback(
     (d: Observation | undefined): string =>
       d ? `${d[fields.areaLayer.label.componentIri]}` : "",
     [fields.areaLayer.label.componentIri]
   );
-  const getRadius = useCallback(
-    (d: Observation): number | null => {
-      const v = d[fields.symbolLayer.componentIri];
-      return v !== null && v !== "..." // FIXME: && v !== "..." -> only used for the prototype and mock data
-        ? +v
-        : null;
-    },
-    [fields.symbolLayer.componentIri]
-  );
+  const getRadius = useOptionalNumericVariable(fields.symbolLayer.componentIri);
 
   const areaMeasureLabel =
     measures
@@ -188,8 +172,10 @@ const useMapState = ({
     if (v === undefined) {
       return [0, 0, 0];
     }
+
     const c = colorScale && colorScale(v);
     const rgb = c && color(`${c}`)?.rgb();
+
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 

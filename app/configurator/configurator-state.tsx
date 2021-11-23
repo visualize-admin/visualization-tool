@@ -547,10 +547,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         ];
         if (!f) {
           // The field was not defined before
-          if (
-            action.value.field === "segment" &&
-            !isMapConfig(draft.chartConfig) // maps don't use segments
-          ) {
+          if (action.value.field === "segment") {
             const component = action.value.dataSetMetadata.dimensions.find(
               (dim) => dim.iri === action.value.componentIri
             );
@@ -564,16 +561,19 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             // (no "stacked" for scatterplots for instance)
             // Filter for table to make TS happy :/
             // if (draft.chartConfig.chartType !== "table") {
-            draft.chartConfig.fields.segment = {
-              componentIri: action.value.componentIri,
-              palette: "category10",
-              type: "stacked",
-              sorting: {
-                sortingType: "byDimensionLabel",
-                sortingOrder: "asc",
-              },
-              colorMapping: colorMapping,
-            };
+            if (!isMapConfig(draft.chartConfig)) {
+              // maps don't use segments
+              draft.chartConfig.fields.segment = {
+                componentIri: action.value.componentIri,
+                palette: "category10",
+                type: "stacked",
+                sorting: {
+                  sortingType: "byDimensionLabel",
+                  sortingOrder: "asc",
+                },
+                colorMapping: colorMapping,
+              };
+            }
 
             // Remove this component from the interactive filter, if it is there
             if (draft.chartConfig.interactiveFiltersConfig) {

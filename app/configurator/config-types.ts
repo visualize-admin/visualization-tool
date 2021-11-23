@@ -445,9 +445,9 @@ const PaletteType = t.union([
 export type PaletteType = t.TypeOf<typeof PaletteType>;
 
 const MapAreaLayer = t.type({
+  componentIri: t.string,
   show: t.boolean,
   label: GenericField,
-  componentIri: t.string,
   palette: t.string,
   paletteType: PaletteType,
   nbClass: t.number,
@@ -455,8 +455,8 @@ const MapAreaLayer = t.type({
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
-  show: t.boolean,
   componentIri: t.string,
+  show: t.boolean,
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 

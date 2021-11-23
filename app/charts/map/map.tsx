@@ -5,7 +5,6 @@ import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import React, { useCallback, useState } from "react";
 import { Box, Button } from "theme-ui";
-import { Observation } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
@@ -19,6 +18,7 @@ type TileData = {
   bbox: { west: number; north: number; east: number; south: number };
   signal: { aborted: boolean };
 };
+
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
@@ -113,6 +113,7 @@ export const MapComponent = () => {
     },
     [setViewState]
   );
+
   const zoomIn = () => {
     const newViewState = {
       ...viewState,
@@ -120,6 +121,7 @@ export const MapComponent = () => {
     };
     setViewState(constrainZoom(newViewState, CH_BBOX));
   };
+
   const zoomOut = () => {
     const newViewState = {
       ...viewState,
@@ -142,8 +144,8 @@ export const MapComponent = () => {
           flexDirection: "column",
         }}
       >
-        <ZoomButton label="+" iconName="add" handleClick={zoomIn} />
-        <ZoomButton label="-" iconName="minus" handleClick={zoomOut} />
+        <ZoomButton iconName="add" handleClick={zoomIn} />
+        <ZoomButton iconName="minus" handleClick={zoomOut} />
       </Box>
       <DeckGL
         viewState={viewState}
@@ -175,6 +177,7 @@ export const MapComponent = () => {
             }}
           />
         )}
+
         {/* <MVTLayer
           data="https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf"
           getLineColor={[192, 192, 192]}
@@ -193,7 +196,8 @@ export const MapComponent = () => {
               extruded={false}
               autoHighlight={true}
               getFillColor={(d: $FixMe) => {
-                const obs = data.find((x: Observation) => x.id === d.id);
+                const obs = data.find((x) => x.id === d.id);
+
                 return obs
                   ? getColor(getValue(obs) ?? undefined)
                   : [204, 204, 204, 100];
@@ -206,7 +210,7 @@ export const MapComponent = () => {
                       interaction: {
                         visible: true,
                         mouse: { x, y },
-                        d: data.find((x: Observation) => x.id === object.id),
+                        d: data.find((x) => x.id === object.id),
                       },
                     },
                   });
@@ -225,7 +229,8 @@ export const MapComponent = () => {
               fillPatternAtlas="/static/sprite/sprite.png"
               fillPatternMapping="/static/sprite/pattern.json"
               getFillPattern={(d: $FixMe) => {
-                const obs = data.find((x: Observation) => x.id === d.id);
+                const obs = data.find((x) => x.id === d.id);
+
                 return obs && getValue(obs) === null ? "hatch" : "fill";
               }}
               getFillPatternScale={150}
@@ -277,11 +282,12 @@ export const MapComponent = () => {
             lineWidthMinPixels={1}
             getPosition={(d: $FixMe) => d.coordinates}
             getRadius={(d: $FixMe) => {
-              const obs = data.find((x: Observation) => x.id === d.id);
+              const obs = data.find((x) => x.id === d.id);
+
               return obs ? radiusScale(getRadius(obs) ?? 0) : 0;
             }}
-            getFillColor={(d: $FixMe) => [0, 102, 153]}
-            getLineColor={(d: $FixMe) => [255, 255, 255]}
+            getFillColor={[0, 102, 153]}
+            getLineColor={[255, 255, 255]}
             onHover={({ x, y, object }: HoverObject) => {
               if (object && object.id) {
                 dispatch({
@@ -290,7 +296,7 @@ export const MapComponent = () => {
                     interaction: {
                       visible: true,
                       mouse: { x, y },
-                      d: data.find((x: Observation) => x.id === object.id),
+                      d: data.find((x) => x.id === object.id),
                     },
                   },
                 });
@@ -309,11 +315,9 @@ export const MapComponent = () => {
 };
 
 const ZoomButton = ({
-  label,
   iconName,
   handleClick,
 }: {
-  label: string;
   iconName: IconName;
   handleClick: () => void;
 }) => (

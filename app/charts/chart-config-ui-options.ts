@@ -235,7 +235,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "settings",
         optional: true,
-        values: ["GeoDimension"], // FIXME: currently not used anywhere
+        values: ["Attribute"], // FIXME: currently not used anywhere
         filters: false,
       },
       {

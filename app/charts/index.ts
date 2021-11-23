@@ -272,8 +272,8 @@ export const getInitialConfig = ({
             paletteType: "continuous",
           },
           symbolLayer: {
-            show: false,
             componentIri: "",
+            show: false,
           },
         },
         settings: {
