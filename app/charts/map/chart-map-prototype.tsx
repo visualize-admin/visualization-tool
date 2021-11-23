@@ -8,10 +8,16 @@ import {
 } from "topojson-client";
 import { Select } from "../../components/form";
 import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
-import { MapFields, PaletteType } from "../../configurator";
+import {
+  InteractiveFiltersConfig,
+  MapConfig,
+  MapFields,
+  PaletteType,
+} from "../../configurator";
 import { ControlSection } from "../../configurator/components/chart-controls/section";
 import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
@@ -41,7 +47,15 @@ type DataState =
       ds: Observation[];
     };
 
-export const ChartMapVisualization = () => {
+export const ChartMapVisualization = ({
+  dataSetIri,
+  chartConfig,
+  queryFilters,
+}: {
+  dataSetIri: string;
+  chartConfig: MapConfig;
+  queryFilters: QueryFilters;
+}) => {
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
   const [dataset, loadDataset] = useState<DataState>({ state: "fetching" });
 
@@ -125,6 +139,8 @@ export const ChartMapVisualization = () => {
         features={geoData}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
+        // Additional props (prototype only)
         attributes={attributes}
       />
     );
@@ -143,12 +159,15 @@ export const ChartMapPrototype = ({
   features,
   dimensions,
   measures,
+  interactiveFiltersConfig,
+  // Additional props (prototype only)
   attributes,
 }: {
   dataset: Observation[];
   features: GeoData;
   dimensions: Array<DimensionMetaDataFragment & { dimensionValues: string[] }>;
   measures: DimensionMetaDataFragment[];
+  interactiveFiltersConfig: InteractiveFiltersConfig;
   attributes: DimensionMetaDataFragment[];
 }) => {
   const [activeLayers, setActiveLayers] = useState<ActiveLayer>({
@@ -311,6 +330,7 @@ export const ChartMapPrototype = ({
               }}
               dimensions={dimensions}
               measures={measures}
+              interactiveFiltersConfig={interactiveFiltersConfig}
               // Additional props (prototype only)
               measure={measure.split("_")[1]}
             />
@@ -350,15 +370,17 @@ export const ChartMap = memo(
   ({
     observations,
     features,
+    fields,
     dimensions,
     measures,
-    fields,
+    interactiveFiltersConfig,
     measure,
   }: {
     features: GeoData;
     observations: Observation[];
     dimensions: DimensionMetaDataFragment[];
     measures: DimensionMetaDataFragment[];
+    interactiveFiltersConfig: InteractiveFiltersConfig;
     // Additional props (prototype only)
     fields: MapFields;
     measure: string;
@@ -370,6 +392,7 @@ export const ChartMap = memo(
         fields={fields}
         dimensions={dimensions}
         measures={measures}
+        interactiveFiltersConfig={interactiveFiltersConfig}
       >
         <ChartContainer>
           <MapComponent />
