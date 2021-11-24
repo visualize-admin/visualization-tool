@@ -155,7 +155,10 @@ export const useOptionalNumericVariable = (
 export const useStringVariable = (
   key: string
 ): ((d: Observation) => string) => {
-  const getVariable = useCallback((d: Observation) => `${d[key]}`, [key]);
+  const getVariable = useCallback(
+    (d: Observation) => (d[key] !== null ? `${d[key]}` : ""),
+    [key]
+  );
 
   return getVariable;
 };
@@ -293,10 +296,10 @@ const getBaseWideData = ({
   ) => Array<{ [key: string]: number }>;
 }): Array<Observation> => {
   const wideData = [];
-  const dataGroupedByXEntries = [...dataGroupedByX.entries()];
+  const sortedDataGroupedByXEntries = [...dataGroupedByX.entries()].sort();
 
   for (let i = 0; i < dataGroupedByX.size; i++) {
-    const [date, values] = dataGroupedByXEntries[i];
+    const [date, values] = sortedDataGroupedByXEntries[i];
 
     const observation: Observation = Object.assign(
       {

@@ -102,13 +102,13 @@ const useLinesState = ({
     [data, getX]
   );
 
-  const sortedDataGroupedByX = useMemo(
+  const dataGroupedByX = useMemo(
     () => group(sortedData, getGroups),
     [sortedData, getGroups]
   );
 
   const allDataWide = getWideData({
-    dataGroupedByX: sortedDataGroupedByX,
+    dataGroupedByX,
     xKey,
     getY,
     getSegment,
