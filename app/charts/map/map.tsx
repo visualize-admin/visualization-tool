@@ -267,6 +267,23 @@ export const MapComponent = () => {
             getLineColor={[255, 255, 255]}
           />
         )}
+
+        {showAreaLayer && (
+          <GeoJsonLayer
+            id="areas"
+            data={features.areaLayer}
+            pickable={false}
+            stroked={true}
+            filled={true}
+            extruded={false}
+            lineWidthMinPixels={0.5}
+            lineWidthMaxPixels={1}
+            getLineWidth={100}
+            getFillColor={[200, 200, 200]}
+            getLineColor={[255, 255, 255]}
+          />
+        )}
+
         {showSymbolLayer && (
           <ScatterplotLayer
             id="cantons-centroids"

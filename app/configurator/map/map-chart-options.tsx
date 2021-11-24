@@ -16,6 +16,14 @@ export const MapSettings = memo(() => {
       <ControlSectionContent side="right">
         <ChartOptionCheckboxField
           label={t({
+            id: "fields.areaLayer.show",
+            message: "Show areaLayer",
+          })}
+          field={null}
+          path="fields.areaLayer.show"
+        />
+        <ChartOptionCheckboxField
+          label={t({
             id: "controls.mapSettings.showRelief",
             message: "Show relief",
           })}

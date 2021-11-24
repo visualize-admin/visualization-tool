@@ -38,6 +38,7 @@ export type GeoData = {
   cantonCentroids: { id: number; coordinates: [number, number] }[];
   cantonMesh: GeoJSON.MultiLineString;
   lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
+  areaLayer?: GeoJSON.FeatureCollection | GeoJSON.Feature | undefined;
 };
 export interface MapState {
   chartType: "map";
