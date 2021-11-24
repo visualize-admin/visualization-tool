@@ -451,18 +451,10 @@ msgstr "Tri du tableau"
 msgid "controls.section.tableoptions"
 msgstr "Options du tableau"
 
-#: app/configurator/components/chart-type-selector.tsx:132
-#: app/configurator/components/chart-type-selector.tsx:135
+#: app/configurator/components/chart-type-selector.tsx:131
+#: app/configurator/components/chart-type-selector.tsx:134
 msgid "controls.select.chart.type"
 msgstr "Type de graphique"
-
-#: app/configurator/components/chart-type-selector.tsx:165
-#~ msgid "controls.select.chart.type.experimental"
-#~ msgstr "Fonctionnalités expérimentales"
-
-#: app/configurator/components/chart-type-selector.tsx:170
-#~ msgid "controls.select.chart.type.experimental.description"
-#~ msgstr "Voir le prototype de la carte avec un nombre limité de jeu de données (lien vers une nouvelle page)."
 
 #: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"
@@ -711,7 +703,7 @@ msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intég
 msgid "hint.loading.data"
 msgstr "Chargement des données..."
 
-#: app/configurator/components/chart-type-selector.tsx:140
+#: app/configurator/components/chart-type-selector.tsx:139
 msgid "hint.no.visualization.with.dataset"
 msgstr "Aucune visualisation ne peut être créée avec le jeu de données sélectionné."
 
@@ -751,13 +743,13 @@ msgstr "Masquer les filtres"
 msgid "interactive.data.filters.show"
 msgstr "Afficher les filtres"
 
-#: app/homepage/intro.tsx:102
-msgid "intro.browse.categories"
-msgstr "Parcourir les catégories"
-
 #: app/homepage/intro.tsx:121
 msgid "intro.browse.organizations"
 msgstr "Parcourir les organisations"
+
+#: app/homepage/intro.tsx:102
+msgid "intro.browse.themes"
+msgstr "Parcourir les catégories"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125
