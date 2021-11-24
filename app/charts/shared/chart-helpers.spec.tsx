@@ -1,9 +1,11 @@
-import { prepareQueryFilters } from "./chart-helpers";
-import line1Fixture from "../../test/__fixtures/prod/line-1.json";
-import { LineConfig } from "../../configurator";
-import { InteractiveFiltersState } from "./use-interactive-filters";
+import { InternMap } from "d3-array";
 import { merge } from "lodash";
+import { LineConfig } from "../../configurator";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
+import { Observation } from "../../domain/data";
+import line1Fixture from "../../test/__fixtures/prod/line-1.json";
+import { getWideData, prepareQueryFilters } from "./chart-helpers";
+import { InteractiveFiltersState } from "./use-interactive-filters";
 
 const makeCubeNsGetters = (cubeIri: string) => ({
   col: (col: string) => `${cubeIri}/dimension/${col}`,
@@ -102,5 +104,27 @@ describe("useQueryFilters", () => {
       })
     );
     expect(queryFilters[col("3")]).toBeUndefined();
+  });
+});
+
+describe("getWideData", () => {
+  const exampleMap: InternMap<string, Observation[]> = new Map();
+  exampleMap.set("2021-01-02", [{ segment: "abc", value: 1 }]);
+  exampleMap.set("2015-03-03", [{ segment: "abc", value: 10 }]);
+  exampleMap.set("2028-12-12", [{ segment: "abc", value: 12 }]);
+
+  it("should return sorted data", () => {
+    const wideData = getWideData({
+      dataGroupedByX: exampleMap,
+      xKey: "date",
+      getY: (d: Observation) => Number(d["value"]),
+      getSegment: (d: Observation) => String(d["segment"]),
+    });
+
+    expect(wideData.map((d) => d["date"])).toEqual([
+      "2015-03-03",
+      "2021-01-02",
+      "2028-12-12",
+    ]);
   });
 });
