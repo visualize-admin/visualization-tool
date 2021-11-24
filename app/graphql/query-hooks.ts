@@ -18,6 +18,15 @@ export type Scalars = {
   RawObservation: any;
 };
 
+export type CategoricalDimension = Dimension & {
+  __typename: 'CategoricalDimension';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  isKeyDimension: Scalars['Boolean'];
+  isOrdinal: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+};
+
 export type DataCube = {
   __typename: 'DataCube';
   iri: Scalars['String'];
@@ -96,32 +105,37 @@ export type DatasetCount = {
 export type Dimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
-  unit?: Maybe<Scalars['String']>;
-  scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
 };
 
 
+
+export type GeoPointDimension = Dimension & {
+  __typename: 'GeoPointDimension';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  isKeyDimension: Scalars['Boolean'];
+  isOrdinal: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+};
+
+export type GeoShapeDimension = Dimension & {
+  __typename: 'GeoShapeDimension';
+  iri: Scalars['String'];
+  label: Scalars['String'];
+  isKeyDimension: Scalars['Boolean'];
+  isOrdinal: Scalars['Boolean'];
+  values: Array<Scalars['DimensionValue']>;
+};
 
 export type Measure = Dimension & {
   __typename: 'Measure';
   iri: Scalars['String'];
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
-  scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
-};
-
-export type NominalDimension = Dimension & {
-  __typename: 'NominalDimension';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-  unit?: Maybe<Scalars['String']>;
-  scaleType?: Maybe<Scalars['String']>;
-  isKeyDimension: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
+  min: Scalars['Float'];
+  max: Scalars['Float'];
 };
 
 
@@ -135,16 +149,6 @@ export type ObservationsQuery = {
   sparql: Scalars['String'];
   /** The generated SPARQL query URL of the current query to run a query on the endpoint's editor directly */
   sparqlEditorUrl?: Maybe<Scalars['String']>;
-};
-
-export type OrdinalDimension = Dimension & {
-  __typename: 'OrdinalDimension';
-  iri: Scalars['String'];
-  label: Scalars['String'];
-  unit?: Maybe<Scalars['String']>;
-  scaleType?: Maybe<Scalars['String']>;
-  isKeyDimension: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
 };
 
 export type Query = {
@@ -203,10 +207,9 @@ export type TemporalDimension = Dimension & {
   label: Scalars['String'];
   timeUnit: TimeUnit;
   timeFormat: Scalars['String'];
-  unit?: Maybe<Scalars['String']>;
-  scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
+  from: Scalars['String'];
+  to: Scalars['String'];
 };
 
 export enum TimeUnit {
@@ -230,15 +233,17 @@ export type DataCubesQueryVariables = Exact<{
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
-type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
+type DimensionMetaData_CategoricalDimension_Fragment = { __typename: 'CategoricalDimension', isOrdinal: boolean, values: Array<any>, iri: string, label: string, isKeyDimension: boolean };
 
-type DimensionMetaData_NominalDimension_Fragment = { __typename: 'NominalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
+type DimensionMetaData_GeoPointDimension_Fragment = { __typename: 'GeoPointDimension', iri: string, label: string, isKeyDimension: boolean };
 
-type DimensionMetaData_OrdinalDimension_Fragment = { __typename: 'OrdinalDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
+type DimensionMetaData_GeoShapeDimension_Fragment = { __typename: 'GeoShapeDimension', iri: string, label: string, isKeyDimension: boolean };
 
-type DimensionMetaData_TemporalDimension_Fragment = { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
+type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', unit?: Maybe<string>, min: number, max: number, iri: string, label: string, isKeyDimension: boolean };
 
-export type DimensionMetaDataFragment = DimensionMetaData_Measure_Fragment | DimensionMetaData_NominalDimension_Fragment | DimensionMetaData_OrdinalDimension_Fragment | DimensionMetaData_TemporalDimension_Fragment;
+type DimensionMetaData_TemporalDimension_Fragment = { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string, from: string, to: string, iri: string, label: string, isKeyDimension: boolean };
+
+export type DimensionMetaDataFragment = DimensionMetaData_CategoricalDimension_Fragment | DimensionMetaData_GeoPointDimension_Fragment | DimensionMetaData_GeoShapeDimension_Fragment | DimensionMetaData_Measure_Fragment | DimensionMetaData_TemporalDimension_Fragment;
 
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
@@ -248,14 +253,17 @@ export type DataCubePreviewQueryVariables = Exact<{
 
 
 export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, dimensions: Array<(
+      { __typename: 'CategoricalDimension' }
+      & DimensionMetaData_CategoricalDimension_Fragment
+    ) | (
+      { __typename: 'GeoPointDimension' }
+      & DimensionMetaData_GeoPointDimension_Fragment
+    ) | (
+      { __typename: 'GeoShapeDimension' }
+      & DimensionMetaData_GeoShapeDimension_Fragment
+    ) | (
       { __typename: 'Measure' }
       & DimensionMetaData_Measure_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionMetaData_NominalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionMetaData_OrdinalDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetaData_TemporalDimension_Fragment
@@ -291,14 +299,17 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
 
 
 export type DataCubeMetadataWithComponentValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, publisher?: Maybe<string>, dimensions: Array<(
+      { __typename: 'CategoricalDimension' }
+      & DimensionMetaData_CategoricalDimension_Fragment
+    ) | (
+      { __typename: 'GeoPointDimension' }
+      & DimensionMetaData_GeoPointDimension_Fragment
+    ) | (
+      { __typename: 'GeoShapeDimension' }
+      & DimensionMetaData_GeoShapeDimension_Fragment
+    ) | (
       { __typename: 'Measure' }
       & DimensionMetaData_Measure_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionMetaData_NominalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionMetaData_OrdinalDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetaData_TemporalDimension_Fragment
@@ -316,14 +327,17 @@ export type DimensionValuesQueryVariables = Exact<{
 
 
 export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<(
+      { __typename: 'CategoricalDimension' }
+      & DimensionMetaData_CategoricalDimension_Fragment
+    ) | (
+      { __typename: 'GeoPointDimension' }
+      & DimensionMetaData_GeoPointDimension_Fragment
+    ) | (
+      { __typename: 'GeoShapeDimension' }
+      & DimensionMetaData_GeoShapeDimension_Fragment
+    ) | (
       { __typename: 'Measure' }
       & DimensionMetaData_Measure_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionMetaData_NominalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionMetaData_OrdinalDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetaData_TemporalDimension_Fragment
@@ -337,7 +351,7 @@ export type TemporalDimensionValuesQueryVariables = Exact<{
 }>;
 
 
-export type TemporalDimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'Measure' } | { __typename: 'NominalDimension' } | { __typename: 'OrdinalDimension' } | (
+export type TemporalDimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'CategoricalDimension' } | { __typename: 'GeoPointDimension' } | { __typename: 'GeoShapeDimension' } | { __typename: 'Measure' } | (
       { __typename: 'TemporalDimension', timeUnit: TimeUnit, timeFormat: string }
       & DimensionMetaData_TemporalDimension_Fragment
     )> }> };
@@ -352,14 +366,17 @@ export type DataCubeObservationsQueryVariables = Exact<{
 
 
 export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, dimensions: Array<(
+      { __typename: 'CategoricalDimension' }
+      & DimensionMetaData_CategoricalDimension_Fragment
+    ) | (
+      { __typename: 'GeoPointDimension' }
+      & DimensionMetaData_GeoPointDimension_Fragment
+    ) | (
+      { __typename: 'GeoShapeDimension' }
+      & DimensionMetaData_GeoShapeDimension_Fragment
+    ) | (
       { __typename: 'Measure' }
       & DimensionMetaData_Measure_Fragment
-    ) | (
-      { __typename: 'NominalDimension' }
-      & DimensionMetaData_NominalDimension_Fragment
-    ) | (
-      { __typename: 'OrdinalDimension' }
-      & DimensionMetaData_OrdinalDimension_Fragment
     ) | (
       { __typename: 'TemporalDimension' }
       & DimensionMetaData_TemporalDimension_Fragment
@@ -404,11 +421,20 @@ export const DimensionMetaDataFragmentDoc = gql`
   iri
   label
   isKeyDimension
-  values
-  unit
+  ... on CategoricalDimension {
+    isOrdinal
+    values
+  }
+  ... on Measure {
+    unit
+    min
+    max
+  }
   ... on TemporalDimension {
     timeUnit
     timeFormat
+    from
+    to
   }
 }
     `;

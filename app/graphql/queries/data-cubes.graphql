@@ -36,11 +36,20 @@ fragment dimensionMetaData on Dimension {
   iri
   label
   isKeyDimension
-  values
-  unit
+  ... on CategoricalDimension {
+    isOrdinal
+    values
+  }
+  ... on Measure {
+    unit
+    min
+    max
+  }
   ... on TemporalDimension {
     timeUnit
     timeFormat
+    from
+    to
   }
 }
 

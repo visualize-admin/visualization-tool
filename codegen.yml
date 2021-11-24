@@ -30,6 +30,5 @@ generates:
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"
         Measure: "./shared-types#ResolvedMeasure"
         Dimension: "./shared-types#ResolvedDimension"
-        NominalDimension: "./shared-types#ResolvedDimension"
-        OrdinalDimension: "./shared-types#ResolvedDimension"
+        CategoricalDimension: "./shared-types#ResolvedDimension"
         TemporalDimension: "./shared-types#ResolvedDimension"

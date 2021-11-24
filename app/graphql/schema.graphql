@@ -46,27 +46,30 @@ type DataCube {
 interface Dimension {
   iri: String!
   label: String!
-  unit: String
-  scaleType: String
   isKeyDimension: Boolean!
+}
+
+type CategoricalDimension implements Dimension {
+  iri: String!
+  label: String!
+  isKeyDimension: Boolean!
+  isOrdinal: Boolean!
   values: [DimensionValue!]!
 }
 
-type NominalDimension implements Dimension {
+type GeoShapeDimension implements Dimension {
   iri: String!
   label: String!
-  unit: String
-  scaleType: String
   isKeyDimension: Boolean!
+  isOrdinal: Boolean!
   values: [DimensionValue!]!
 }
 
-type OrdinalDimension implements Dimension {
+type GeoPointDimension implements Dimension {
   iri: String!
   label: String!
-  unit: String
-  scaleType: String
   isKeyDimension: Boolean!
+  isOrdinal: Boolean!
   values: [DimensionValue!]!
 }
 
@@ -85,19 +88,18 @@ type TemporalDimension implements Dimension {
   label: String!
   timeUnit: TimeUnit!
   timeFormat: String!
-  unit: String
-  scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  from: String!
+  to: String!
 }
 
 type Measure implements Dimension {
   iri: String!
   label: String!
   unit: String
-  scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  min: Float!
+  max: Float!
 }
 
 type DataCubeResult {
