@@ -25,6 +25,7 @@ generates:
         DimensionValue: "../domain/data#DimensionValue"
         RawObservation: "../domain/data#RawObservation"
         Filters: "../configurator#Filters"
+        GeoShape: "../domain/data#GeoShape"
       mappers:
         DataCube: "./shared-types#ResolvedDataCube"
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"

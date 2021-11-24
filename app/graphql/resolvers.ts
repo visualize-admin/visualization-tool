@@ -18,6 +18,7 @@ import {
   queryDatasetCountBySubTheme,
   queryDatasetCountByTheme,
 } from "../rdf/query-cube-metadata";
+import { loadGeoShapes } from "../rdf/query-geoshapes";
 import truthy from "../utils/truthy";
 import {
   DataCubeResolvers,
@@ -309,6 +310,8 @@ export const resolvers: Resolvers = {
   },
   GeoDimension: {
     ...dimensionResolvers,
+    geoShapes: async (dimension: ResolvedDimension) =>
+      await loadGeoShapes({ dimension: dimension.dimension }),
   },
   Measure: {
     ...dimensionResolvers,

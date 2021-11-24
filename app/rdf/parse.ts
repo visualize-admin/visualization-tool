@@ -181,13 +181,16 @@ export const parseCubeDimension = ({
       hasUndefinedValues,
       dataType: dataType?.value,
       name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
-      dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
-        ? "Time"
-        : dataKindTerm?.equals(ns.schema.GeoCoordinates)
-        ? "GeoCoordinates"
-        : dataKindTerm?.equals(ns.schema.GeoShape)
-        ? "GeoShape"
-        : undefined,
+      dataKind:
+        dim.path?.value! === "https://environment.ld.admin.ch/foen/nfi/prodreg"
+          ? "GeoShape"
+          : dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
+          ? "Time"
+          : dataKindTerm?.equals(ns.schema.GeoCoordinates)
+          ? "GeoCoordinates"
+          : dataKindTerm?.equals(ns.schema.GeoShape)
+          ? "GeoShape"
+          : undefined,
       timeUnit: timeUnits.get(timeUnitTerm?.value ?? ""),
       timeFormat: timeFormats.get(dataType?.value ?? ""),
       scaleType: scaleTypeTerm?.equals(ns.qudt.NominalScale)

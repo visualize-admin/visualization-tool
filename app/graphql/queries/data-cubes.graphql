@@ -42,6 +42,9 @@ fragment dimensionMetaData on Dimension {
     timeUnit
     timeFormat
   }
+  ... on GeoDimension {
+    geoShapes
+  }
 }
 
 query DataCubePreview($iri: String!, $locale: String!, $latest: Boolean) {
