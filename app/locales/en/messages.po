@@ -451,18 +451,10 @@ msgstr "Table Sorting"
 msgid "controls.section.tableoptions"
 msgstr "Table Options"
 
-#: app/configurator/components/chart-type-selector.tsx:132
-#: app/configurator/components/chart-type-selector.tsx:135
+#: app/configurator/components/chart-type-selector.tsx:131
+#: app/configurator/components/chart-type-selector.tsx:134
 msgid "controls.select.chart.type"
 msgstr "Chart Type"
-
-#: app/configurator/components/chart-type-selector.tsx:165
-#~ msgid "controls.select.chart.type.experimental"
-#~ msgstr "Experimental Features"
-
-#: app/configurator/components/chart-type-selector.tsx:170
-#~ msgid "controls.select.chart.type.experimental.description"
-#~ msgstr "Preview upcoming features with a limited subset of data on a separate page."
 
 #: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"
@@ -711,7 +703,7 @@ msgstr "You can share this visualization by copying the URL or by embedding it o
 msgid "hint.loading.data"
 msgstr "Loading data..."
 
-#: app/configurator/components/chart-type-selector.tsx:140
+#: app/configurator/components/chart-type-selector.tsx:139
 msgid "hint.no.visualization.with.dataset"
 msgstr "No visualization can be created with the selected dataset."
 
@@ -751,13 +743,13 @@ msgstr "Hide Filters"
 msgid "interactive.data.filters.show"
 msgstr "Show Filters"
 
-#: app/homepage/intro.tsx:102
-msgid "intro.browse.categories"
-msgstr "Browse categories"
-
 #: app/homepage/intro.tsx:121
 msgid "intro.browse.organizations"
 msgstr "Browse organizations"
+
+#: app/homepage/intro.tsx:102
+msgid "intro.browse.themes"
+msgstr "Browse themes"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125

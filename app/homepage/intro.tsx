@@ -99,7 +99,7 @@ const BrowsingSection = () => {
             <Box as="span" mr={1}>
               <SvgIcCategories width={20} height={16} />
             </Box>
-            <Trans id="intro.browse.categories">Browse categories</Trans>
+            <Trans id="intro.browse.themes">Browse categories</Trans>
           </Button>
         </Link>
         <Link passHref href="/browse">

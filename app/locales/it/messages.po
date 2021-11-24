@@ -451,18 +451,10 @@ msgstr "Ordinamento della tabella"
 msgid "controls.section.tableoptions"
 msgstr "Opzioni della tabella"
 
-#: app/configurator/components/chart-type-selector.tsx:132
-#: app/configurator/components/chart-type-selector.tsx:135
+#: app/configurator/components/chart-type-selector.tsx:131
+#: app/configurator/components/chart-type-selector.tsx:134
 msgid "controls.select.chart.type"
 msgstr "Tipo di grafico"
-
-#: app/configurator/components/chart-type-selector.tsx:165
-#~ msgid "controls.select.chart.type.experimental"
-#~ msgstr "Funzionalità in sperimentazione"
-
-#: app/configurator/components/chart-type-selector.tsx:170
-#~ msgid "controls.select.chart.type.experimental.description"
-#~ msgstr "Guarda il prototipo della mappa con un numero limitato di dati (link ad una nuova pagina)."
 
 #: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"
@@ -711,7 +703,7 @@ msgstr "È possibile condividere questa visualizzazione copiando l'URL o incorpo
 msgid "hint.loading.data"
 msgstr "Caricamento dei dati..."
 
-#: app/configurator/components/chart-type-selector.tsx:140
+#: app/configurator/components/chart-type-selector.tsx:139
 msgid "hint.no.visualization.with.dataset"
 msgstr "Nessuna visualizzazione può essere creata con il dataset selezionato."
 
@@ -751,13 +743,13 @@ msgstr "Nascondi i filtri"
 msgid "interactive.data.filters.show"
 msgstr "Mostra i filtri"
 
-#: app/homepage/intro.tsx:102
-msgid "intro.browse.categories"
-msgstr "Sfoglia i temi"
-
 #: app/homepage/intro.tsx:121
 msgid "intro.browse.organizations"
 msgstr "Sfoglia le organizzazioni"
+
+#: app/homepage/intro.tsx:102
+msgid "intro.browse.themes"
+msgstr "Sfoglia i temi"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125
