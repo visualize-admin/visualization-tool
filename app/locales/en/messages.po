@@ -294,11 +294,11 @@ msgstr "None"
 msgid "controls.dimensionvalue.none"
 msgstr "No Filter"
 
-#: app/configurator/components/filters.tsx:89
+#: app/configurator/components/filters.tsx:60
 msgid "controls.filter.select.all"
 msgstr "Select all"
 
-#: app/configurator/components/filters.tsx:98
+#: app/configurator/components/filters.tsx:69
 msgid "controls.filter.select.none"
 msgstr "Select none"
 
@@ -601,7 +601,7 @@ msgstr "Back to the list"
 msgid "dataset.hasImputedValues"
 msgstr "Some data in this dataset is missing and has been interpolated to fill the gaps."
 
-#: app/configurator/components/dataset-browse.tsx:292
+#: app/configurator/components/dataset-browse.tsx:291
 msgid "dataset.includeDrafts"
 msgstr "Include draft datasets"
 
@@ -625,15 +625,15 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:260
+#: app/configurator/components/dataset-browse.tsx:259
 msgid "dataset.order.newest"
 msgstr "Newest"
 
-#: app/configurator/components/dataset-browse.tsx:252
+#: app/configurator/components/dataset-browse.tsx:251
 msgid "dataset.order.relevance"
 msgstr "Relevance"
 
-#: app/configurator/components/dataset-browse.tsx:256
+#: app/configurator/components/dataset-browse.tsx:255
 msgid "dataset.order.title"
 msgstr "Title"
 
@@ -647,15 +647,15 @@ msgstr "Careful, this dataset is only a draft.<0/><1>Don't use for reporting!</1
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for reporting!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:316
+#: app/configurator/components/dataset-browse.tsx:315
 msgid "dataset.results"
 msgstr "{0, plural, zero {No results} one {# result} other {# results}}"
 
-#: app/configurator/components/dataset-browse.tsx:264
+#: app/configurator/components/dataset-browse.tsx:263
 msgid "dataset.search.label"
 msgstr "Search datasets"
 
-#: app/configurator/components/dataset-browse.tsx:336
+#: app/configurator/components/dataset-browse.tsx:335
 msgid "dataset.sortby"
 msgstr "Sort by"
 

@@ -294,11 +294,11 @@ msgstr "Aucune"
 msgid "controls.dimensionvalue.none"
 msgstr "Aucune filtre"
 
-#: app/configurator/components/filters.tsx:89
+#: app/configurator/components/filters.tsx:60
 msgid "controls.filter.select.all"
 msgstr "Tout sélectionner"
 
-#: app/configurator/components/filters.tsx:98
+#: app/configurator/components/filters.tsx:69
 msgid "controls.filter.select.none"
 msgstr "Tout déselectionner"
 
@@ -601,7 +601,7 @@ msgstr "Revenir aux résultats"
 msgid "dataset.hasImputedValues"
 msgstr "Certaines données de cet ensemble de données sont manquantes et ont été interpolées pour combler les lacunes."
 
-#: app/configurator/components/dataset-browse.tsx:292
+#: app/configurator/components/dataset-browse.tsx:291
 msgid "dataset.includeDrafts"
 msgstr "Inclure les brouillons"
 
@@ -625,15 +625,15 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:260
+#: app/configurator/components/dataset-browse.tsx:259
 msgid "dataset.order.newest"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:252
+#: app/configurator/components/dataset-browse.tsx:251
 msgid "dataset.order.relevance"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:256
+#: app/configurator/components/dataset-browse.tsx:255
 msgid "dataset.order.title"
 msgstr ""
 
@@ -647,15 +647,15 @@ msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'util
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:316
+#: app/configurator/components/dataset-browse.tsx:315
 msgid "dataset.results"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:264
+#: app/configurator/components/dataset-browse.tsx:263
 msgid "dataset.search.label"
 msgstr "Chercher"
 
-#: app/configurator/components/dataset-browse.tsx:336
+#: app/configurator/components/dataset-browse.tsx:335
 msgid "dataset.sortby"
 msgstr "Trier par"
 

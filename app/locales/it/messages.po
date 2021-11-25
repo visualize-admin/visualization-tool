@@ -294,11 +294,11 @@ msgstr "Nessuno"
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
-#: app/configurator/components/filters.tsx:89
+#: app/configurator/components/filters.tsx:60
 msgid "controls.filter.select.all"
 msgstr "Seleziona tutti"
 
-#: app/configurator/components/filters.tsx:98
+#: app/configurator/components/filters.tsx:69
 msgid "controls.filter.select.none"
 msgstr "Deseleziona tutto"
 
@@ -601,7 +601,7 @@ msgstr "Torna ai risultati"
 msgid "dataset.hasImputedValues"
 msgstr "In questo set di dati mancano alcuni dati. Questi sono stati interpolati per colmare le lacune.."
 
-#: app/configurator/components/dataset-browse.tsx:292
+#: app/configurator/components/dataset-browse.tsx:291
 msgid "dataset.includeDrafts"
 msgstr "Includere le bozze"
 
@@ -625,15 +625,15 @@ msgstr "Fonte"
 msgid "dataset.metadata.version"
 msgstr "versione"
 
-#: app/configurator/components/dataset-browse.tsx:260
+#: app/configurator/components/dataset-browse.tsx:259
 msgid "dataset.order.newest"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:252
+#: app/configurator/components/dataset-browse.tsx:251
 msgid "dataset.order.relevance"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:256
+#: app/configurator/components/dataset-browse.tsx:255
 msgid "dataset.order.title"
 msgstr ""
 
@@ -647,15 +647,15 @@ msgstr "Attenzione, questo set di dati è una bozza.<0/><1>Non utilizzare questo
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attenzione, questo set di dati è scaduto.<0/><1>Non utilizzare questo grafico per un rapporto!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:316
+#: app/configurator/components/dataset-browse.tsx:315
 msgid "dataset.results"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:264
+#: app/configurator/components/dataset-browse.tsx:263
 msgid "dataset.search.label"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:336
+#: app/configurator/components/dataset-browse.tsx:335
 msgid "dataset.sortby"
 msgstr ""
 
