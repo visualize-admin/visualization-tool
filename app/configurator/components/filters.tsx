@@ -1,7 +1,6 @@
 import { Trans } from "@lingui/macro";
-import get from "lodash/get";
 import { useCallback, useMemo } from "react";
-import { Box, Button } from "theme-ui";
+import { Box, Button, Flex } from "theme-ui";
 import { getFilterValue, useConfiguratorState } from "..";
 import { Loading } from "../../components/hint";
 import {
@@ -10,7 +9,11 @@ import {
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval-brush";
-import { MultiFilterField, SingleFilterField } from "./field";
+import {
+  MultiFilterFieldCheckbox,
+  MultiFilterFieldColorPicker,
+  SingleFilterField,
+} from "./field";
 import {
   getTimeInterval,
   useTimeFormatLocale,
@@ -118,6 +121,17 @@ export const DimensionValuesMultiFilter = ({
     ? "NONE_SELECTED"
     : "SOME_SELECTED";
 
+  const isFieldChecked = useCallback(
+    (dv: $FixMe) => {
+      return selectionState === "ALL_SELECTED"
+        ? true
+        : selectionState === "SOME_SELECTED"
+        ? !!isFilterActive.has(dv.value)
+        : undefined;
+    },
+    [selectionState, isFilterActive]
+  );
+
   if (data?.dataCubeByIri?.dimensionByIri) {
     return (
       <>
@@ -128,31 +142,36 @@ export const DimensionValuesMultiFilter = ({
 
         {sortedDimensionValues.map((dv) => {
           if (state.state === "CONFIGURING_CHART") {
-            const path = colorConfigPath ? `${colorConfigPath}.` : "";
-
-            const color = get(
-              state,
-              `chartConfig.fields["${state.activeField}"].${path}colorMapping["${dv.value}"]`
-            );
-
             return (
-              <MultiFilterField
-                key={dv.value}
-                dimensionIri={dimensionIri}
-                label={dv.label}
-                value={dv.value}
-                allValues={dimension?.values.map((d) => d.value) ?? []}
-                checked={
-                  selectionState === "ALL_SELECTED"
-                    ? true
-                    : selectionState === "SOME_SELECTED"
-                    ? !!isFilterActive.has(dv.value)
-                    : undefined
-                }
-                checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
-                color={color}
-                colorConfigPath={colorConfigPath}
-              />
+              <Flex
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                  height: "2rem",
+                }}
+              >
+                <Box sx={{ maxWidth: "82%" }}>
+                  <MultiFilterFieldCheckbox
+                    key={dv.value}
+                    dimensionIri={dimensionIri}
+                    label={dv.label}
+                    value={dv.value}
+                    allValues={dimension?.values.map((d) => d.value) ?? []}
+                    checked={isFieldChecked(dv)}
+                    checkAction={
+                      selectionState === "NONE_SELECTED" ? "SET" : "ADD"
+                    }
+                    colorConfigPath={colorConfigPath}
+                  />
+                </Box>
+                <MultiFilterFieldColorPicker
+                  dimensionIri={dimensionIri}
+                  value={dv.value}
+                  checked={isFieldChecked(dv)}
+                  colorConfigPath={colorConfigPath}
+                />
+              </Flex>
             );
           } else {
             return null;
