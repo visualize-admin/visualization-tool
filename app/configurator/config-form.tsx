@@ -4,6 +4,7 @@ import {
   InputHTMLAttributes,
   SyntheticEvent,
   useCallback,
+  useMemo,
 } from "react";
 import { SelectProps } from "theme-ui";
 import { getFieldComponentIri } from "../charts";
@@ -112,6 +113,28 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
     // checked,
     onChange,
   };
+};
+
+export const useDimensionSelection = (dimensionIri: string) => {
+  const [state, dispatch] = useConfiguratorState();
+
+  const selectAll = useCallback(() => {
+    dispatch({
+      type: "CHART_CONFIG_FILTER_RESET_MULTI",
+      value: {
+        dimensionIri,
+      },
+    });
+  }, [dispatch, dimensionIri]);
+
+  const selectNone = useCallback(() => {
+    dispatch({
+      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI",
+      value: { dimensionIri },
+    });
+  }, [dispatch, dimensionIri]);
+
+  return useMemo(() => ({ selectAll, selectNone }), [selectAll, selectNone]);
 };
 
 export const useChartOptionRadioField = ({
@@ -339,6 +362,47 @@ export const useSingleFilterField = ({
     checked,
     onChange,
   };
+};
+
+export const useMultiFilterCheckboxes = (
+  dimensionIri: string,
+  value: string,
+  allValues: string[],
+  checkAction: string,
+  onChangeProp?: () => void
+) => {
+  const [, dispatch] = useConfiguratorState();
+
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.currentTarget.checked) {
+        dispatch({
+          type:
+            checkAction === "ADD"
+              ? "CHART_CONFIG_FILTER_ADD_MULTI"
+              : "CHART_CONFIG_FILTER_SET_MULTI",
+          value: {
+            dimensionIri,
+            value,
+            allValues,
+          },
+        });
+      } else {
+        dispatch({
+          type: "CHART_CONFIG_FILTER_REMOVE_MULTI",
+          value: {
+            dimensionIri,
+            value,
+            allValues,
+          },
+        });
+      }
+      onChangeProp?.();
+    },
+    [dispatch, dimensionIri, allValues, value, onChangeProp, checkAction]
+  );
+
+  return { onChange };
 };
 
 export const useMetaField = ({
