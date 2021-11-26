@@ -20,6 +20,7 @@ import { IconName } from "../../icons";
 import {
   useChartOptionBooleanField,
   useChartOptionSelectField,
+  useMultiFilterCheckboxes,
   useSingleFilterSelect,
 } from "../config-form";
 import { FIELD_VALUE_NONE } from "../constants";
@@ -386,7 +387,7 @@ export const MultiFilterFieldCheckbox = ({
   disabled,
   allValues,
   checked,
-  onChange,
+  onChange: onChangeProp,
   checkAction,
   colorConfigPath,
 }: {
@@ -400,36 +401,13 @@ export const MultiFilterFieldCheckbox = ({
   checkAction: "ADD" | "SET";
   colorConfigPath?: string;
 }) => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const onFieldChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    (e) => {
-      if (e.currentTarget.checked) {
-        dispatch({
-          type:
-            checkAction === "ADD"
-              ? "CHART_CONFIG_FILTER_ADD_MULTI"
-              : "CHART_CONFIG_FILTER_SET_MULTI",
-          value: {
-            dimensionIri,
-            value,
-            allValues,
-          },
-        });
-      } else {
-        dispatch({
-          type: "CHART_CONFIG_FILTER_REMOVE_MULTI",
-          value: {
-            dimensionIri,
-            value,
-            allValues,
-          },
-        });
-      }
-      // Call onChange prop
-      onChange?.();
-    },
-    [dispatch, dimensionIri, allValues, value, onChange, checkAction]
+  const [state] = useConfiguratorState();
+  const { onChange: onFieldChange } = useMultiFilterCheckboxes(
+    dimensionIri,
+    value,
+    allValues,
+    checkAction,
+    onChangeProp
   );
 
   if (state.state !== "CONFIGURING_CHART") {
@@ -453,6 +431,7 @@ export const MultiFilterFieldCheckbox = ({
     />
   );
 };
+
 export const SingleFilterField = ({
   dimensionIri,
   label,

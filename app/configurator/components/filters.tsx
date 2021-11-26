@@ -1,7 +1,11 @@
 import { Trans } from "@lingui/macro";
 import { useCallback, useMemo } from "react";
 import { Box, Button, Flex } from "theme-ui";
-import { getFilterValue, useConfiguratorState } from "..";
+import {
+  getFilterValue,
+  useConfiguratorState,
+  useDimensionSelection,
+} from "..";
 import { Loading } from "../../components/hint";
 import {
   useDimensionValuesQuery,
@@ -21,28 +25,6 @@ import {
 } from "./ui-helpers";
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
-
-const useDimensionSelection = (dimensionIri: string) => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const selectAll = useCallback(() => {
-    dispatch({
-      type: "CHART_CONFIG_FILTER_RESET_MULTI",
-      value: {
-        dimensionIri,
-      },
-    });
-  }, [dispatch, dimensionIri]);
-
-  const selectNone = useCallback(() => {
-    dispatch({
-      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI",
-      value: { dimensionIri },
-    });
-  }, [dispatch, dimensionIri]);
-
-  return useMemo(() => ({ selectAll, selectNone }), [selectAll, selectNone]);
-};
 
 const SelectionControls = ({
   dimensionIri,
