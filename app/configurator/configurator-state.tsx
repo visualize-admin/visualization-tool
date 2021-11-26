@@ -128,16 +128,12 @@ export type ConfiguratorStateAction =
       value: { dimensionIri: string; value: string };
     }
   | {
-      type: "CHART_CONFIG_FILTER_SET_MULTI";
-      value: { dimensionIri: string; value: string; allValues: string[] };
-    }
-  | {
       type: "CHART_CONFIG_FILTER_ADD_MULTI";
-      value: { dimensionIri: string; value: string; allValues: string[] };
+      value: { dimensionIri: string; values: string[]; allValues: string[] };
     }
   | {
       type: "CHART_CONFIG_FILTER_REMOVE_MULTI";
-      value: { dimensionIri: string; value: string; allValues: string[] };
+      value: { dimensionIri: string; values: string[]; allValues: string[] };
     }
   | {
       type: "CHART_CONFIG_FILTER_SET_RANGE";
@@ -770,22 +766,18 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_CONFIG_FILTER_SET_MULTI":
-      if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, value } = action.value;
-        draft.chartConfig.filters[dimensionIri] = {
-          type: "multi",
-          values: { [value]: true },
-        };
-      }
-      return draft;
-
     case "CHART_CONFIG_FILTER_ADD_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, value, allValues } = action.value;
+        const { dimensionIri, values, allValues } = action.value;
         const f = draft.chartConfig.filters[dimensionIri];
+        const valuesUpdate = Object.fromEntries(
+          values.map((v: string) => [v, true as true])
+        );
         if (f && f.type === "multi") {
-          f.values = { ...f.values, [value]: true };
+          f.values = {
+            ...f.values,
+            ...valuesUpdate,
+          };
           // If all values are selected, we remove the filter again!
           if (allValues.every((v) => v in f.values)) {
             delete draft.chartConfig.filters[dimensionIri];
@@ -793,7 +785,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         } else {
           draft.chartConfig.filters[dimensionIri] = {
             type: "multi",
-            values: { [value]: true },
+            values: valuesUpdate,
           };
         }
       }
@@ -801,17 +793,20 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_CONFIG_FILTER_REMOVE_MULTI":
       if (draft.state === "CONFIGURING_CHART") {
-        const { dimensionIri, value, allValues } = action.value;
+        const { dimensionIri, values, allValues } = action.value;
         const f = draft.chartConfig.filters[dimensionIri];
 
         if (f && f.type === "multi" && Object.keys(f.values).length > 0) {
           // If there are existing object keys, we just remove the current one
-          delete f.values[value];
+          for (let v of values) {
+            delete f.values[v];
+          }
         } else {
           // Otherwise we set the filters to all values minus the current one
-          const values = allValues.reduce<FilterValueMultiValues>(
+          const updatedValues = allValues.reduce<FilterValueMultiValues>(
             (_values, v) => {
-              if (v !== value) {
+              // Efficient until values has a lot of values...
+              if (values.indexOf(v) === -1) {
                 _values[v] = true;
               }
               return _values;
@@ -820,7 +815,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           );
           draft.chartConfig.filters[dimensionIri] = {
             type: "multi",
-            values,
+            values: updatedValues,
           };
         }
       }
