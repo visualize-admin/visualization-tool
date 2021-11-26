@@ -4,7 +4,6 @@ import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { Flex } from "theme-ui";
 import {
-  ChartConfig,
   Option,
   useActiveFieldField,
   useChartFieldField,
@@ -18,9 +17,11 @@ import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import {
+  isMultiFilterFieldChecked,
   useChartOptionBooleanField,
   useChartOptionSelectField,
   useMultiFilterCheckboxes,
+  useMultiFilterContext,
   useSingleFilterSelect,
 } from "../config-form";
 import { FIELD_VALUE_NONE } from "../constants";
@@ -295,31 +296,15 @@ export const MetaInputField = ({
   return <Input label={label} {...field} disabled={disabled} />;
 };
 
-const isMultiFilterFieldChecked = (
-  chartConfig: ChartConfig,
+const useMultiFilterColorPicker = (
+  value: string,
   dimensionIri: string,
-  value: string
+  colorConfigPath?: string
 ) => {
-  const filter = chartConfig.filters[dimensionIri];
-  const fieldChecked =
-    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
-  return fieldChecked;
-};
-
-export const MultiFilterFieldColorPicker = ({
-  colorConfigPath,
-  value,
-  dimensionIri,
-  checked,
-}: {
-  colorConfigPath?: string;
-  value: string;
-  dimensionIri: string;
-  checked?: boolean;
-}) => {
   const [configuratorState, dispatch] = useConfiguratorState();
+  const { isFilterActive, selectionState } = useMultiFilterContext();
   const { activeField } = configuratorState;
-  const updateColor = useCallback(
+  const onChange = useCallback(
     (color: string) => {
       if (activeField) {
         dispatch({
@@ -362,7 +347,7 @@ export const MultiFilterFieldColorPicker = ({
     );
   }, [chartConfig, colorConfigPath, activeField]);
 
-  const fieldChecked =
+  const checkedState =
     configuratorState.state === "CONFIGURING_CHART"
       ? isMultiFilterFieldChecked(
           configuratorState.chartConfig,
@@ -371,11 +356,43 @@ export const MultiFilterFieldColorPicker = ({
         )
       : null;
 
-  return color && (checked ?? fieldChecked) ? (
+  return useMemo(
+    () => ({
+      color,
+      palette,
+      onChange,
+      checked:
+        selectionState === "ALL_SELECTED"
+          ? true
+          : selectionState === "SOME_SELECTED"
+          ? !!isFilterActive.has(value)
+          : undefined && checkedState,
+    }),
+    [color, palette, onChange, checkedState, isFilterActive, value]
+  );
+};
+
+export const MultiFilterFieldColorPicker = ({
+  colorConfigPath,
+  value,
+  dimensionIri,
+}: {
+  colorConfigPath?: string;
+  value: string;
+  dimensionIri: string;
+  checked?: boolean;
+}) => {
+  const { color, checked, palette, onChange } = useMultiFilterColorPicker(
+    value,
+    dimensionIri,
+    colorConfigPath
+  );
+
+  return color && checked ? (
     <ColorPickerMenu
       colors={palette}
       selectedColor={color}
-      onChange={updateColor}
+      onChange={onChange}
     />
   ) : null;
 };
@@ -385,40 +402,24 @@ export const MultiFilterFieldCheckbox = ({
   label,
   value,
   disabled,
-  allValues,
-  checked,
   onChange: onChangeProp,
-  checkAction,
-  colorConfigPath,
 }: {
   dimensionIri: string;
   label: string;
   value: string;
-  allValues: string[];
   disabled?: boolean;
-  checked?: boolean;
   onChange?: () => void;
-  checkAction: "ADD" | "SET";
-  colorConfigPath?: string;
 }) => {
   const [state] = useConfiguratorState();
-  const { onChange: onFieldChange } = useMultiFilterCheckboxes(
+  const { onChange: onFieldChange, checked } = useMultiFilterCheckboxes(
     dimensionIri,
     value,
-    allValues,
-    checkAction,
     onChangeProp
   );
 
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
-
-  const fieldChecked = isMultiFilterFieldChecked(
-    state.chartConfig,
-    dimensionIri,
-    value
-  );
 
   return (
     <Checkbox
@@ -427,7 +428,7 @@ export const MultiFilterFieldCheckbox = ({
       label={label}
       disabled={disabled}
       onChange={onFieldChange}
-      checked={checked ?? fieldChecked}
+      checked={checked}
     />
   );
 };
