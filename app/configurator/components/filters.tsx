@@ -3,8 +3,10 @@ import { useCallback, useMemo } from "react";
 import { Box, Button, Flex } from "theme-ui";
 import {
   getFilterValue,
+  MultiFilterContextProvider,
   useConfiguratorState,
   useDimensionSelection,
+  useMultiFilterContext,
 } from "..";
 import { Loading } from "../../components/hint";
 import {
@@ -24,16 +26,9 @@ import {
   useTimeFormatUnit,
 } from "./ui-helpers";
 
-type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
-
-const SelectionControls = ({
-  dimensionIri,
-  selectionState,
-}: {
-  dimensionIri: string;
-  selectionState: SelectionState;
-}) => {
+const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
+  const { selectionState } = useMultiFilterContext();
   return (
     <Box color="monochrome500">
       <Button
@@ -82,75 +77,32 @@ export const DimensionValuesMultiFilter = ({
       : [];
   }, [dimension?.values, locale]);
 
-  const activeFilter = dimension ? getFilterValue(state, dimension.iri) : null;
-  const isFilterActive: Set<string> = useMemo(() => {
-    if (!dimension) {
-      return new Set();
-    }
-    const activeKeys = activeFilter
-      ? activeFilter.type === "single"
-        ? [String(activeFilter.value)]
-        : activeFilter.type === "multi"
-        ? Object.keys(activeFilter.values)
-        : []
-      : [];
-    return new Set(activeKeys);
-  }, [dimension, activeFilter]);
-
-  const selectionState: SelectionState = !activeFilter
-    ? "ALL_SELECTED"
-    : isFilterActive.size === 0
-    ? "NONE_SELECTED"
-    : "SOME_SELECTED";
-
-  const isFieldChecked = useCallback(
-    (dv: $FixMe) => {
-      return selectionState === "ALL_SELECTED"
-        ? true
-        : selectionState === "SOME_SELECTED"
-        ? !!isFilterActive.has(dv.value)
-        : undefined;
-    },
-    [selectionState, isFilterActive]
-  );
-
   if (data?.dataCubeByIri?.dimensionByIri) {
     return (
-      <>
-        <SelectionControls
-          dimensionIri={dimensionIri}
-          selectionState={selectionState}
-        />
-
+      <MultiFilterContextProvider dimensionData={dimension}>
+        <SelectionControls dimensionIri={dimensionIri} />
         {sortedDimensionValues.map((dv) => {
           if (state.state === "CONFIGURING_CHART") {
             return (
               <Flex
+                key={dv.value}
                 sx={{
                   justifyContent: "space-between",
                   alignItems: "center",
-                  mb: 2,
+                  mb: 1,
                   height: "2rem",
                 }}
               >
                 <Box sx={{ maxWidth: "82%" }}>
                   <MultiFilterFieldCheckbox
-                    key={dv.value}
                     dimensionIri={dimensionIri}
                     label={dv.label}
                     value={dv.value}
-                    allValues={dimension?.values.map((d) => d.value) ?? []}
-                    checked={isFieldChecked(dv)}
-                    checkAction={
-                      selectionState === "NONE_SELECTED" ? "SET" : "ADD"
-                    }
-                    colorConfigPath={colorConfigPath}
                   />
                 </Box>
                 <MultiFilterFieldColorPicker
                   dimensionIri={dimensionIri}
                   value={dv.value}
-                  checked={isFieldChecked(dv)}
                   colorConfigPath={colorConfigPath}
                 />
               </Flex>
@@ -159,7 +111,7 @@ export const DimensionValuesMultiFilter = ({
             return null;
           }
         })}
-      </>
+      </MultiFilterContextProvider>
     );
   } else {
     return <Loading />;

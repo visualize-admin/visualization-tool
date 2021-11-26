@@ -1,16 +1,18 @@
 import get from "lodash/get";
-import {
+import React, {
   ChangeEvent,
   InputHTMLAttributes,
   SyntheticEvent,
   useCallback,
+  useContext,
   useMemo,
 } from "react";
 import { SelectProps } from "theme-ui";
 import { getFieldComponentIri } from "../charts";
+import { DimensionValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
-import { ChartType } from "./config-types";
-import { useConfiguratorState } from "./configurator-state";
+import { ChartConfig, ChartType } from "./config-types";
+import { getFilterValue, useConfiguratorState } from "./configurator-state";
 import { FIELD_VALUE_NONE } from "./constants";
 
 // interface FieldProps {
@@ -364,14 +366,102 @@ export const useSingleFilterField = ({
   };
 };
 
+export const isMultiFilterFieldChecked = (
+  chartConfig: ChartConfig,
+  dimensionIri: string,
+  value: string
+) => {
+  const filter = chartConfig.filters[dimensionIri];
+  const fieldChecked =
+    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
+  return fieldChecked;
+};
+
+type CheckActionType = "SET" | "ADD";
+
+export type MultiFilterSelectionState =
+  | "SOME_SELECTED"
+  | "NONE_SELECTED"
+  | "ALL_SELECTED";
+
+const MultiFilterContext = React.createContext({
+  isFilterActive: new Set() as Set<string>,
+  checkAction: "SET" as CheckActionType, // TODO fix, use imported type
+  allValues: [] as string[],
+  selectionState: "NONE_SELECTED" as MultiFilterSelectionState,
+});
+
+export const useMultiFilterContext = () => {
+  return useContext(MultiFilterContext);
+};
+
+export const MultiFilterContextProvider = ({
+  dimensionData,
+  children,
+}: {
+  dimensionData: NonNullable<
+    DimensionValuesQuery["dataCubeByIri"]
+  >["dimensionByIri"];
+  children: React.ReactNode;
+}) => {
+  const [state] = useConfiguratorState();
+
+  const activeFilter = dimensionData
+    ? getFilterValue(state, dimensionData.iri)
+    : null;
+
+  const isFilterActive: Set<string> = useMemo(() => {
+    if (!dimensionData) {
+      return new Set();
+    }
+    const activeKeys = activeFilter
+      ? activeFilter.type === "single"
+        ? [String(activeFilter.value)]
+        : activeFilter.type === "multi"
+        ? Object.keys(activeFilter.values)
+        : []
+      : [];
+    return new Set(activeKeys);
+  }, [dimensionData, activeFilter]);
+
+  const selectionState: MultiFilterSelectionState = !activeFilter
+    ? "ALL_SELECTED"
+    : isFilterActive.size === 0
+    ? "NONE_SELECTED"
+    : "SOME_SELECTED";
+
+  const checkAction =
+    selectionState === "NONE_SELECTED" ? "SET" : ("ADD" as CheckActionType);
+
+  const allValues = useMemo(() => {
+    return dimensionData?.values.map((d) => d.value) ?? [];
+  }, [dimensionData?.values]);
+
+  const ctx = useMemo(
+    () => ({
+      checkAction,
+      allValues,
+      isFilterActive,
+      selectionState,
+    }),
+    [checkAction, allValues, isFilterActive, selectionState]
+  );
+
+  return (
+    <MultiFilterContext.Provider value={ctx}>
+      {children}
+    </MultiFilterContext.Provider>
+  );
+};
+
 export const useMultiFilterCheckboxes = (
   dimensionIri: string,
   value: string,
-  allValues: string[],
-  checkAction: string,
   onChangeProp?: () => void
 ) => {
-  const [, dispatch] = useConfiguratorState();
+  const [state, dispatch] = useConfiguratorState();
+  const { checkAction, allValues, isFilterActive, selectionState } =
+    useMultiFilterContext();
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -402,7 +492,20 @@ export const useMultiFilterCheckboxes = (
     [dispatch, dimensionIri, allValues, value, onChangeProp, checkAction]
   );
 
-  return { onChange };
+  const checkedState =
+    state.state === "CONFIGURING_CHART"
+      ? isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value)
+      : false;
+
+  return {
+    onChange,
+    checked:
+      selectionState === "ALL_SELECTED"
+        ? true
+        : selectionState === "SOME_SELECTED"
+        ? !!isFilterActive.has(value)
+        : undefined && checkedState,
+  };
 };
 
 export const useMetaField = ({
