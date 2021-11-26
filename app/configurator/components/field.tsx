@@ -2,8 +2,9 @@ import { t } from "@lingui/macro";
 import { TimeLocaleObject } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
-import { Box, Flex } from "theme-ui";
+import { Flex } from "theme-ui";
 import {
+  ChartConfig,
   Option,
   useActiveFieldField,
   useChartFieldField,
@@ -318,24 +319,23 @@ const isMultiFilterFieldChecked = (
 export const MultiFilterFieldColorPicker = ({
   colorConfigPath,
   value,
-  color,
   dimensionIri,
   checked,
 }: {
   colorConfigPath?: string;
   value: string;
-  color?: string;
   dimensionIri: string;
   checked?: boolean;
 }) => {
-  const [state, dispatch] = useConfiguratorState();
+  const [configuratorState, dispatch] = useConfiguratorState();
+  const { activeField } = configuratorState;
   const updateColor = useCallback(
     (color: string) => {
-      if (state.activeField) {
+      if (activeField) {
         dispatch({
           type: "CHART_COLOR_CHANGED",
           value: {
-            field: state.activeField,
+            field: activeField,
             colorConfigPath,
             color,
             value,
@@ -344,36 +344,53 @@ export const MultiFilterFieldColorPicker = ({
       }
     },
 
-    [colorConfigPath, dispatch, state.activeField, value]
+    [colorConfigPath, dispatch, activeField, value]
   );
 
-  if (state.state !== "CONFIGURING_CHART") {
-    return null;
-  }
+  const path = colorConfigPath ? `${colorConfigPath}.` : "";
+  const chartConfig =
+    configuratorState.state === "CONFIGURING_CHART"
+      ? configuratorState.chartConfig
+      : null;
 
-  const fieldChecked = isMultiFilterFieldChecked(
-    state.chartConfig,
-    dimensionIri,
-    value
-  );
+  const color = chartConfig
+    ? get(
+        chartConfig,
+        `fields["${activeField}"].${path}colorMapping["${value}"]`
+      )
+    : null;
+
+  const palette = useMemo(() => {
+    if (!chartConfig) {
+      return [];
+    }
+    return getPalette(
+      get(
+        chartConfig,
+        `fields["${activeField}"].${colorConfigPath ?? ""}.palette`
+      )
+    );
+  }, [chartConfig, colorConfigPath, activeField]);
+
+  const fieldChecked =
+    configuratorState.state === "CONFIGURING_CHART"
+      ? isMultiFilterFieldChecked(
+          configuratorState.chartConfig,
+          dimensionIri,
+          value
+        )
+      : null;
 
   return color && (checked ?? fieldChecked) ? (
     <ColorPickerMenu
-      colors={getPalette(
-        get(
-          state,
-          `chartConfig.fields["${state.activeField}"].${
-            colorConfigPath ?? ""
-          }.palette`
-        )
-      )}
+      colors={palette}
       selectedColor={color}
-      onChange={(c) => updateColor(c)}
+      onChange={updateColor}
     />
   ) : null;
 };
 
-export const MultiFilterField = ({
+export const MultiFilterFieldCheckbox = ({
   dimensionIri,
   label,
   value,
@@ -382,7 +399,6 @@ export const MultiFilterField = ({
   checked,
   onChange,
   checkAction,
-  color,
   colorConfigPath,
 }: {
   dimensionIri: string;
@@ -393,7 +409,6 @@ export const MultiFilterField = ({
   checked?: boolean;
   onChange?: () => void;
   checkAction: "ADD" | "SET";
-  color?: string;
   colorConfigPath?: string;
 }) => {
   const [state, dispatch] = useConfiguratorState();
@@ -439,32 +454,14 @@ export const MultiFilterField = ({
   );
 
   return (
-    <Flex
-      sx={{
-        justifyContent: "space-between",
-        alignItems: "center",
-        mb: 2,
-        height: "2rem",
-      }}
-    >
-      <Box sx={{ maxWidth: "82%" }}>
-        <Checkbox
-          name={dimensionIri}
-          value={value}
-          label={label}
-          disabled={disabled}
-          onChange={onFieldChange}
-          checked={checked ?? fieldChecked}
-        />
-      </Box>
-      <MultiFilterFieldColorPicker
-        dimensionIri={dimensionIri}
-        value={value}
-        color={color}
-        checked={checked}
-        colorConfigPath={colorConfigPath}
-      />
-    </Flex>
+    <Checkbox
+      name={dimensionIri}
+      value={value}
+      label={label}
+      disabled={disabled}
+      onChange={onFieldChange}
+      checked={checked ?? fieldChecked}
+    />
   );
 };
 export const SingleFilterField = ({
