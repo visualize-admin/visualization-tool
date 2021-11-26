@@ -304,6 +304,62 @@ export const MetaInputField = ({
   return <Input label={label} {...field} disabled={disabled} />;
 };
 
+export const MultiFilterFieldColorPicker = ({
+  colorConfigPath,
+  value,
+  color,
+  dimensionIri,
+  checked,
+}: {
+  colorConfigPath?: string;
+  value: string;
+  color?: string;
+  dimensionIri: string;
+  checked?: boolean;
+}) => {
+  const [state, dispatch] = useConfiguratorState();
+  const updateColor = useCallback(
+    (color: string) => {
+      if (state.activeField) {
+        dispatch({
+          type: "CHART_COLOR_CHANGED",
+          value: {
+            field: state.activeField,
+            colorConfigPath,
+            color,
+            value,
+          },
+        });
+      }
+    },
+
+    [colorConfigPath, dispatch, state.activeField, value]
+  );
+
+  if (state.state !== "CONFIGURING_CHART") {
+    return null;
+  }
+
+  const filter = state.chartConfig.filters[dimensionIri];
+  const fieldChecked =
+    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
+
+  return color && (checked ?? fieldChecked) ? (
+    <ColorPickerMenu
+      colors={getPalette(
+        get(
+          state,
+          `chartConfig.fields["${state.activeField}"].${
+            colorConfigPath ?? ""
+          }.palette`
+        )
+      )}
+      selectedColor={color}
+      onChange={(c) => updateColor(c)}
+    />
+  ) : null;
+};
+
 export const MultiFilterField = ({
   dimensionIri,
   label,
@@ -359,23 +415,6 @@ export const MultiFilterField = ({
     [dispatch, dimensionIri, allValues, value, onChange, checkAction]
   );
 
-  const updateColor = useCallback(
-    (color: string) => {
-      if (state.activeField) {
-        dispatch({
-          type: "CHART_COLOR_CHANGED",
-          value: {
-            field: state.activeField,
-            colorConfigPath,
-            color,
-            value,
-          },
-        });
-      }
-    },
-    [colorConfigPath, dispatch, state.activeField, value]
-  );
-
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
@@ -403,20 +442,13 @@ export const MultiFilterField = ({
           checked={checked ?? fieldChecked}
         />
       </Box>
-      {color && (checked ?? fieldChecked) && (
-        <ColorPickerMenu
-          colors={getPalette(
-            get(
-              state,
-              `chartConfig.fields["${state.activeField}"].${
-                colorConfigPath ?? ""
-              }.palette`
-            )
-          )}
-          selectedColor={color}
-          onChange={(c) => updateColor(c)}
-        />
-      )}
+      <MultiFilterFieldColorPicker
+        dimensionIri={dimensionIri}
+        value={value}
+        color={color}
+        checked={checked}
+        colorConfigPath={colorConfigPath}
+      />
     </Flex>
   );
 };
