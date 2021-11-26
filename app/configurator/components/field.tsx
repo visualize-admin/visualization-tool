@@ -368,7 +368,15 @@ const useMultiFilterColorPicker = (
           ? !!isFilterActive.has(value)
           : undefined && checkedState,
     }),
-    [color, palette, onChange, checkedState, isFilterActive, value]
+    [
+      color,
+      palette,
+      onChange,
+      selectionState,
+      isFilterActive,
+      value,
+      checkedState,
+    ]
   );
 };
 

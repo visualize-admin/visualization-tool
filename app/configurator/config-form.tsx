@@ -150,8 +150,8 @@ export const useChartOptionRadioField = ({
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
-  const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    (e) => {
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
@@ -386,7 +386,6 @@ export type MultiFilterSelectionState =
 
 const MultiFilterContext = React.createContext({
   isFilterActive: new Set() as Set<string>,
-  checkAction: "SET" as CheckActionType, // TODO fix, use imported type
   allValues: [] as string[],
   selectionState: "NONE_SELECTED" as MultiFilterSelectionState,
 });
@@ -460,20 +459,16 @@ export const useMultiFilterCheckboxes = (
   onChangeProp?: () => void
 ) => {
   const [state, dispatch] = useConfiguratorState();
-  const { checkAction, allValues, isFilterActive, selectionState } =
-    useMultiFilterContext();
+  const { allValues, isFilterActive, selectionState } = useMultiFilterContext();
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       if (e.currentTarget.checked) {
         dispatch({
-          type:
-            checkAction === "ADD"
-              ? "CHART_CONFIG_FILTER_ADD_MULTI"
-              : "CHART_CONFIG_FILTER_SET_MULTI",
+          type: "CHART_CONFIG_FILTER_ADD_MULTI",
           value: {
             dimensionIri,
-            value,
+            values: [value],
             allValues,
           },
         });
@@ -482,14 +477,14 @@ export const useMultiFilterCheckboxes = (
           type: "CHART_CONFIG_FILTER_REMOVE_MULTI",
           value: {
             dimensionIri,
-            value,
+            values: [value],
             allValues,
           },
         });
       }
       onChangeProp?.();
     },
-    [dispatch, dimensionIri, allValues, value, onChangeProp, checkAction]
+    [dispatch, dimensionIri, allValues, value, onChangeProp]
   );
 
   const checkedState =
