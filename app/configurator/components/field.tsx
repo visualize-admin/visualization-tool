@@ -304,6 +304,17 @@ export const MetaInputField = ({
   return <Input label={label} {...field} disabled={disabled} />;
 };
 
+const isMultiFilterFieldChecked = (
+  chartConfig: ChartConfig,
+  dimensionIri: string,
+  value: string
+) => {
+  const filter = chartConfig.filters[dimensionIri];
+  const fieldChecked =
+    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
+  return fieldChecked;
+};
+
 export const MultiFilterFieldColorPicker = ({
   colorConfigPath,
   value,
@@ -340,9 +351,11 @@ export const MultiFilterFieldColorPicker = ({
     return null;
   }
 
-  const filter = state.chartConfig.filters[dimensionIri];
-  const fieldChecked =
-    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
+  const fieldChecked = isMultiFilterFieldChecked(
+    state.chartConfig,
+    dimensionIri,
+    value
+  );
 
   return color && (checked ?? fieldChecked) ? (
     <ColorPickerMenu
@@ -419,9 +432,11 @@ export const MultiFilterField = ({
     return null;
   }
 
-  const filter = state.chartConfig.filters[dimensionIri];
-  const fieldChecked =
-    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
+  const fieldChecked = isMultiFilterFieldChecked(
+    state.chartConfig,
+    dimensionIri,
+    value
+  );
 
   return (
     <Flex
