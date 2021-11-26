@@ -39,7 +39,7 @@ msgstr "Organizations"
 
 #: app/configurator/components/dataset-browse.tsx:640
 msgid "browse-panel.themes"
-msgstr "Themes"
+msgstr "Categories"
 
 #: app/configurator/components/dataset-preview.tsx:54
 msgid "browse.dataset.create-visualization"
@@ -749,7 +749,7 @@ msgstr "Browse organizations"
 
 #: app/homepage/intro.tsx:102
 msgid "intro.browse.themes"
-msgstr "Browse themes"
+msgstr "Browse categories"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125
