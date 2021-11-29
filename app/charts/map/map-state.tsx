@@ -26,7 +26,10 @@ import {
   PaletteType,
 } from "../../configurator/config-types";
 import { Observation } from "../../domain/data";
-import { useOptionalNumericVariable } from "../shared/chart-helpers";
+import {
+  useOptionalNumericVariable,
+  useStringVariable,
+} from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
@@ -51,7 +54,8 @@ export interface MapState {
   areaLayer: {
     showAreaLayer: boolean;
     areaMeasureLabel: string;
-    getColor: (x: number | undefined) => number[];
+    getLabel: (d: Observation) => string;
+    getColor: (x: number | null) => number[];
     getValue: (d: Observation) => number | null;
     paletteType: PaletteType;
     palette: string;
@@ -137,9 +141,10 @@ const useMapState = ({
   settings: MapSettings;
 }): MapState => {
   const width = useWidth();
-
   const { palette, nbClass, paletteType } = fields["areaLayer"];
-  const getValue = useOptionalNumericVariable(fields.areaLayer.componentIri);
+
+  const getLabel = useStringVariable(fields.areaLayer.componentIri);
+  const getValue = useOptionalNumericVariable(fields.areaLayer.measureIri);
   const getFeatureLabel = useCallback(
     (d: Observation | undefined): string =>
       d ? `${d[fields.areaLayer.label.componentIri]}` : "",
@@ -149,7 +154,7 @@ const useMapState = ({
 
   const areaMeasureLabel =
     measures
-      .find((m) => m.iri === fields["areaLayer"].componentIri)
+      .find((m) => m.iri === fields["areaLayer"].measureIri)
       ?.label.split("_")[1] || "";
   const symbolMeasureLabel =
     measures
@@ -169,8 +174,8 @@ const useMapState = ({
     nbClass,
   });
 
-  const getColor = (v: number | undefined) => {
-    if (v === undefined) {
+  const getColor = (v: number | null) => {
+    if (v === null) {
       return [0, 0, 0];
     }
 
@@ -215,6 +220,7 @@ const useMapState = ({
     areaLayer: {
       areaMeasureLabel,
       showAreaLayer: fields.areaLayer.show,
+      getLabel,
       getColor,
       getValue,
       paletteType,

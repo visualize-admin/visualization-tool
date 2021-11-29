@@ -1,6 +1,5 @@
 import { geoCentroid } from "d3";
 import React, { memo, useEffect, useMemo, useState } from "react";
-import WKT from "terraformer-wkt-parser";
 import { Box } from "theme-ui";
 import {
   feature as topojsonFeature,
@@ -14,7 +13,7 @@ import {
   MapSettings,
   PaletteType,
 } from "../../configurator";
-import { Observation } from "../../domain/data";
+import { GeoShape, Observation } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
   GeoDimension,
@@ -36,6 +35,15 @@ type GeoDataState =
       state: "error";
     }
   | (GeoData & { state: "loaded" });
+
+export interface GeoShapeFeature {
+  type: "Feature";
+  properties: {
+    iri: string;
+    label: string;
+  };
+  geometry: GeoJSON.Geometry;
+}
 
 export const ChartMapVisualization = ({
   dataSetIri,
@@ -68,13 +76,17 @@ export const ChartMapVisualization = ({
     if (geoDimension) {
       return {
         type: "FeatureCollection",
-        features: geoDimension.geoShapes.map((d) => ({
-          type: "Feature",
-          properties: {
-            iri: d.iri,
-          },
-          geometry: WKT.parse(d.wktString),
-        })),
+        features: geoDimension.geoShapes.map(
+          (d: GeoShape) =>
+            ({
+              type: "Feature",
+              properties: {
+                iri: d.iri,
+                label: d.label,
+              },
+              geometry: d.geometry,
+            } as GeoShapeFeature)
+        ),
       } as GeoJSON.FeatureCollection;
     }
   }, [geoDimension]);
@@ -187,15 +199,6 @@ export const ChartMapPrototype = ({
     setFilters({ ...filters, ...{ [filterKey]: filterValue } });
   };
 
-  // Apply filters to data used on the map
-  const data = useMemo(() => {
-    const filterfunctions = Object.keys(filters).map(
-      (filterKey) => (x: Observation) => x[filterKey] === filters[filterKey]
-    );
-
-    return filterfunctions.reduce((d, f) => d.filter(f), observations);
-  }, [observations, filters]);
-
   return (
     <Box
       sx={{
@@ -205,9 +208,9 @@ export const ChartMapPrototype = ({
         borderColor: "monochrome400",
       }}
     >
-      {dimensions && measures && data && (
+      {dimensions && measures && (
         <ChartMap
-          observations={data}
+          observations={observations}
           features={features}
           fields={fields}
           dimensions={dimensions}

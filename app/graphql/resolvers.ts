@@ -1,6 +1,7 @@
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
+import { parse as parseWKT } from "wellknown";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
@@ -310,8 +311,15 @@ export const resolvers: Resolvers = {
   },
   GeoDimension: {
     ...dimensionResolvers,
-    geoShapes: async (dimension: ResolvedDimension) =>
-      await loadGeoShapes({ dimension: dimension.dimension }),
+    geoShapes: async ({ dimension, locale }) => {
+      const geoShapes = await loadGeoShapes({ dimension, locale });
+
+      return geoShapes.map((d) => ({
+        iri: d.iri,
+        label: d.label,
+        geometry: parseWKT(d.wktString),
+      }));
+    },
   },
   Measure: {
     ...dimensionResolvers,

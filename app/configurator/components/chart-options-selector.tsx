@@ -30,7 +30,7 @@ import {
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { useLocale } from "../../locales/use-locale";
-import { MapSettings } from "../map/map-chart-options";
+import { MapColumnOptions } from "../map/map-chart-options";
 import { TableColumnOptions } from "../table/table-chart-options";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
@@ -90,9 +90,8 @@ export const ChartOptionsSelector = ({
         {state.activeField ? (
           isTableConfig(state.chartConfig) ? (
             <TableColumnOptions state={state} metaData={meta} />
-          ) : isMapConfig(state.chartConfig) &&
-            state.activeField === "settings" ? (
-            <MapSettings />
+          ) : isMapConfig(state.chartConfig) ? (
+            <MapColumnOptions state={state} metaData={meta} />
           ) : (
             <ActiveFieldSwitch
               state={state}

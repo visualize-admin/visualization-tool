@@ -8,6 +8,7 @@ import { Box, Button } from "theme-ui";
 import { Icon, IconName } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
+import { GeoShapeFeature } from "./chart-map-prototype";
 import { MapState } from "./map-state";
 
 type TileData = {
@@ -90,7 +91,7 @@ export const MapComponent = () => {
     showRelief,
     showLakes,
     features,
-    areaLayer: { showAreaLayer, getColor, getValue },
+    areaLayer: { showAreaLayer, getLabel, getColor, getValue },
     symbolLayer: { showSymbolLayer, radiusScale, getRadius },
   } = useChartState() as MapState;
   const [, dispatch] = useInteraction();
@@ -198,9 +199,7 @@ export const MapComponent = () => {
               getFillColor={(d: $FixMe) => {
                 const obs = data.find((x) => x.id === d.id);
 
-                return obs
-                  ? getColor(getValue(obs) ?? undefined)
-                  : [204, 204, 204, 100];
+                return obs ? getColor(getValue(obs)) : [204, 204, 204, 100];
               }}
               onHover={({ x, y, object }: HoverObject) => {
                 if (object && object.id) {
@@ -252,6 +251,32 @@ export const MapComponent = () => {
           </>
         )}
 
+        {showAreaLayer && (
+          <GeoJsonLayer
+            id="areas"
+            data={features.areaLayer}
+            pickable={false}
+            stroked={true}
+            filled={true}
+            extruded={false}
+            lineWidthMinPixels={0.5}
+            lineWidthMaxPixels={1}
+            getLineWidth={100}
+            getFillColor={(d: GeoShapeFeature) => {
+              const entry = data.find(
+                (o) => getLabel(o) === d.properties.label
+              );
+
+              if (entry) {
+                return getColor(getValue(entry));
+              }
+
+              return [200, 200, 200];
+            }}
+            getLineColor={[255, 255, 255]}
+          />
+        )}
+
         {showLakes && (
           <GeoJsonLayer
             id="lakes"
@@ -264,22 +289,6 @@ export const MapComponent = () => {
             lineWidthMaxPixels={1}
             getLineWidth={100}
             getFillColor={[102, 175, 233]}
-            getLineColor={[255, 255, 255]}
-          />
-        )}
-
-        {showAreaLayer && (
-          <GeoJsonLayer
-            id="areas"
-            data={features.areaLayer}
-            pickable={false}
-            stroked={true}
-            filled={true}
-            extruded={false}
-            lineWidthMinPixels={0.5}
-            lineWidthMaxPixels={1}
-            getLineWidth={100}
-            getFillColor={[200, 200, 200]}
             getLineColor={[255, 255, 255]}
           />
         )}

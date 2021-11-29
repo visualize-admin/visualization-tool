@@ -18,7 +18,10 @@ import {
   parseObservationValue,
 } from "../domain/data";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
+import { DataCubeSearchFilter, DataCubeTheme } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
+import isAttrEqual from "../utils/is-attr-equal";
+import truthy from "../utils/truthy";
 import * as ns from "./namespace";
 import {
   getQueryLocales,
@@ -27,14 +30,8 @@ import {
   parseCubeDimension,
 } from "./parse";
 import { loadResourceLabels } from "./query-labels";
-import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
-import truthy from "../utils/truthy";
-import {
-  DataCubeSearchFilter,
-  DataCubeTheme,
-} from "../graphql/query-hooks";
-import isAttrEqual from "../utils/is-attr-equal";
+import { loadUnitLabels } from "./query-unit-labels";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -266,6 +263,14 @@ export const getCubeDimensionValues = async ({
     return [
       { value: min, label: `${min}` },
       { value: max, label: `${max}` },
+    ];
+  } else if (
+    dimension.path?.value ===
+    "https://environment.ld.admin.ch/foen/nfi/forestArea"
+  ) {
+    return [
+      { value: 0, label: "0" },
+      { value: 0, label: "0" },
     ];
   }
 

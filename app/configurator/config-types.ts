@@ -446,6 +446,7 @@ export type PaletteType = t.TypeOf<typeof PaletteType>;
 
 const MapAreaLayer = t.type({
   componentIri: t.string,
+  measureIri: t.string,
   show: t.boolean,
   label: GenericField,
   palette: t.string,

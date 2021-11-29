@@ -264,7 +264,10 @@ export const getInitialConfig = ({
         },
         fields: {
           areaLayer: {
-            componentIri: measures[0].iri,
+            componentIri:
+              dimensions.find((d) => d.__typename === "GeoDimension")?.iri ||
+              "",
+            measureIri: measures[0].iri,
             show: false,
             label: { componentIri: dimensions[0].iri },
             palette: "oranges",
