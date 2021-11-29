@@ -10,8 +10,13 @@ import { MapState } from "./map-state";
 export const MapTooltip = () => {
   const [{ interaction }] = useInteraction();
   const {
-    getFeatureLabel,
-    areaLayer: { showAreaLayer, areaMeasureLabel, getValue, colorScale },
+    areaLayer: {
+      showAreaLayer,
+      areaMeasureLabel,
+      getLabel,
+      getValue,
+      colorScale,
+    },
     symbolLayer: {
       showSymbolLayer,
       symbolMeasureLabel,
@@ -21,6 +26,7 @@ export const MapTooltip = () => {
   } = useChartState() as MapState;
 
   const formatNumber = useFormatNumber();
+
   return (
     <>
       {interaction.mouse && interaction.d && (
@@ -32,7 +38,7 @@ export const MapTooltip = () => {
         >
           <Box sx={{ minWidth: 200 }}>
             <Text as="div" variant="meta" sx={{ fontWeight: "bold" }}>
-              {getFeatureLabel(interaction.d)}
+              {getLabel(interaction.d)}
             </Text>
             <Grid
               sx={{

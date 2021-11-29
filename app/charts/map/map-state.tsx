@@ -14,7 +14,7 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
-import { ReactNode, useCallback } from "react";
+import { ReactNode } from "react";
 import { ckmeans } from "simple-statistics";
 import {
   getColorInterpolator,
@@ -48,7 +48,6 @@ export interface MapState {
   bounds: Bounds;
   data: Observation[];
   features: GeoData;
-  getFeatureLabel: (d: Observation | undefined) => string;
   showRelief: boolean;
   showLakes: boolean;
   areaLayer: {
@@ -145,21 +144,13 @@ const useMapState = ({
 
   const getLabel = useStringVariable(fields.areaLayer.componentIri);
   const getValue = useOptionalNumericVariable(fields.areaLayer.measureIri);
-  const getFeatureLabel = useCallback(
-    (d: Observation | undefined): string =>
-      d ? `${d[fields.areaLayer.label.componentIri]}` : "",
-    [fields.areaLayer.label.componentIri]
-  );
   const getRadius = useOptionalNumericVariable(fields.symbolLayer.componentIri);
 
   const areaMeasureLabel =
-    measures
-      .find((m) => m.iri === fields["areaLayer"].measureIri)
-      ?.label.split("_")[1] || "";
+    measures.find((m) => m.iri === fields["areaLayer"].measureIri)?.label || "";
   const symbolMeasureLabel =
-    measures
-      .find((m) => m.iri === fields["symbolLayer"].componentIri)
-      ?.label.split("_")[1] || "";
+    measures.find((m) => m.iri === fields["symbolLayer"].componentIri)?.label ||
+    "";
   const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
     number,
     number
@@ -214,7 +205,6 @@ const useMapState = ({
     data,
     features,
     bounds,
-    getFeatureLabel,
     showRelief: settings.showRelief,
     showLakes: settings.showLakes,
     areaLayer: {

@@ -201,24 +201,6 @@ export const MapComponent = () => {
 
                 return obs ? getColor(getValue(obs)) : [204, 204, 204, 100];
               }}
-              onHover={({ x, y, object }: HoverObject) => {
-                if (object && object.id) {
-                  dispatch({
-                    type: "INTERACTION_UPDATE",
-                    value: {
-                      interaction: {
-                        visible: true,
-                        mouse: { x, y },
-                        d: data.find((x) => x.id === object.id),
-                      },
-                    },
-                  });
-                } else {
-                  dispatch({
-                    type: "INTERACTION_HIDE",
-                  });
-                }
-              }}
               extensions={[new FillStyleExtension({ pattern: true })]}
               highlightColor={[0, 0, 0, 50]}
               getRadius={100}
@@ -255,12 +237,40 @@ export const MapComponent = () => {
           <GeoJsonLayer
             id="areas"
             data={features.areaLayer}
-            pickable={false}
+            pickable={true}
             stroked={true}
             filled={true}
             extruded={false}
             lineWidthMinPixels={0.5}
             lineWidthMaxPixels={1}
+            onHover={({
+              x,
+              y,
+              object,
+            }: {
+              x: number;
+              y: number;
+              object: GeoShapeFeature;
+            }) => {
+              if (object) {
+                dispatch({
+                  type: "INTERACTION_UPDATE",
+                  value: {
+                    interaction: {
+                      visible: true,
+                      mouse: { x, y },
+                      d: data.find(
+                        (d) => getLabel(d) === object.properties.label
+                      ),
+                    },
+                  },
+                });
+              } else {
+                dispatch({
+                  type: "INTERACTION_HIDE",
+                });
+              }
+            }}
             getLineWidth={100}
             getFillColor={(d: GeoShapeFeature) => {
               const entry = data.find(

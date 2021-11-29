@@ -448,7 +448,7 @@ const MapAreaLayer = t.type({
   componentIri: t.string,
   measureIri: t.string,
   show: t.boolean,
-  label: GenericField,
+  label: GenericField, // TODO: is it still needed?
   palette: t.string,
   paletteType: PaletteType,
   nbClass: t.number,
