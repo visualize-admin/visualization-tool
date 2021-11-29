@@ -134,11 +134,11 @@ export const ColorPickerMenu = (props: Props) => {
         sx={{
           "> button": {
             bg: "monochrome100",
-            borderRadius: "default",
+            borderRadius: 4,
+            overflow: "hidden",
             borderWidth: 1,
-            borderStyle: "solid",
-            borderColor: "monochrome500",
-            p: 1,
+            border: 0,
+            p: 0,
           },
           "> button:hover": {
             borderColor,
@@ -157,8 +157,8 @@ export const ColorPickerMenu = (props: Props) => {
             <Box
               sx={{
                 bg: props.selectedColor,
-                width: ["1rem", "1.5rem", "2rem"],
-                height: ["0.75rem", "1.125rem", "1.5rem"],
+                width: "1rem",
+                height: "1rem",
               }}
             ></Box>
           </Box>
