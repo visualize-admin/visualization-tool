@@ -374,20 +374,13 @@ export const isMultiFilterFieldChecked = (
   const filter = chartConfig.filters[dimensionIri];
   const fieldChecked =
     filter?.type === "multi" ? filter.values?.[value] ?? false : false;
-  return fieldChecked;
+
+  return fieldChecked || !filter;
 };
 
-type CheckActionType = "SET" | "ADD";
-
-export type MultiFilterSelectionState =
-  | "SOME_SELECTED"
-  | "NONE_SELECTED"
-  | "ALL_SELECTED";
-
 const MultiFilterContext = React.createContext({
-  isFilterActive: new Set() as Set<string>,
+  activeKeys: new Set() as Set<string>,
   allValues: [] as string[],
-  selectionState: "NONE_SELECTED" as MultiFilterSelectionState,
 });
 
 export const useMultiFilterContext = () => {
@@ -409,7 +402,11 @@ export const MultiFilterContextProvider = ({
     ? getFilterValue(state, dimensionData.iri)
     : null;
 
-  const isFilterActive: Set<string> = useMemo(() => {
+  const allValues = useMemo(() => {
+    return dimensionData?.values.map((d) => d.value) ?? [];
+  }, [dimensionData?.values]);
+
+  const activeKeys: Set<string> = useMemo(() => {
     if (!dimensionData) {
       return new Set();
     }
@@ -419,31 +416,16 @@ export const MultiFilterContextProvider = ({
         : activeFilter.type === "multi"
         ? Object.keys(activeFilter.values)
         : []
-      : [];
+      : allValues;
     return new Set(activeKeys);
-  }, [dimensionData, activeFilter]);
-
-  const selectionState: MultiFilterSelectionState = !activeFilter
-    ? "ALL_SELECTED"
-    : isFilterActive.size === 0
-    ? "NONE_SELECTED"
-    : "SOME_SELECTED";
-
-  const checkAction =
-    selectionState === "NONE_SELECTED" ? "SET" : ("ADD" as CheckActionType);
-
-  const allValues = useMemo(() => {
-    return dimensionData?.values.map((d) => d.value) ?? [];
-  }, [dimensionData?.values]);
+  }, [dimensionData, activeFilter, allValues]);
 
   const ctx = useMemo(
     () => ({
-      checkAction,
       allValues,
-      isFilterActive,
-      selectionState,
+      activeKeys,
     }),
-    [checkAction, allValues, isFilterActive, selectionState]
+    [allValues, activeKeys]
   );
 
   return (
@@ -459,7 +441,7 @@ export const useMultiFilterCheckboxes = (
   onChangeProp?: () => void
 ) => {
   const [state, dispatch] = useConfiguratorState();
-  const { allValues, isFilterActive, selectionState } = useMultiFilterContext();
+  const { allValues } = useMultiFilterContext();
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -487,19 +469,14 @@ export const useMultiFilterCheckboxes = (
     [dispatch, dimensionIri, allValues, value, onChangeProp]
   );
 
-  const checkedState =
+  const isChecked =
     state.state === "CONFIGURING_CHART"
       ? isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value)
       : false;
 
   return {
     onChange,
-    checked:
-      selectionState === "ALL_SELECTED"
-        ? true
-        : selectionState === "SOME_SELECTED"
-        ? !!isFilterActive.has(value)
-        : undefined && checkedState,
+    checked: isChecked,
   };
 };
 
