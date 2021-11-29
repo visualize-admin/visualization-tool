@@ -43,7 +43,7 @@ msgstr "Kategorien"
 
 #: app/configurator/components/dataset-preview.tsx:54
 msgid "browse.dataset.create-visualization"
-msgstr "Erstellen Sie die Visualisierung von Dataset"
+msgstr "Visualisierung erstellen"
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
@@ -595,7 +595,7 @@ msgstr "Titel hinzufügen"
 
 #: app/configurator/components/select-dataset-step.tsx:102
 msgid "dataset-preview.back-to-results"
-msgstr "Zurück zu den Ergebnissen"
+msgstr "Zurück zu den Datensätzen"
 
 #: app/components/chart-published.tsx:80
 msgid "dataset.hasImputedValues"
