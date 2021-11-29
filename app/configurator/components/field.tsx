@@ -21,7 +21,6 @@ import {
   useChartOptionBooleanField,
   useChartOptionSelectField,
   useMultiFilterCheckboxes,
-  useMultiFilterContext,
   useSingleFilterSelect,
 } from "../config-form";
 import { FIELD_VALUE_NONE } from "../constants";
@@ -302,7 +301,6 @@ const useMultiFilterColorPicker = (
   colorConfigPath?: string
 ) => {
   const [configuratorState, dispatch] = useConfiguratorState();
-  const { isFilterActive, selectionState } = useMultiFilterContext();
   const { activeField } = configuratorState;
   const onChange = useCallback(
     (color: string) => {
@@ -361,22 +359,9 @@ const useMultiFilterColorPicker = (
       color,
       palette,
       onChange,
-      checked:
-        selectionState === "ALL_SELECTED"
-          ? true
-          : selectionState === "SOME_SELECTED"
-          ? !!isFilterActive.has(value)
-          : undefined && checkedState,
+      checked: checkedState,
     }),
-    [
-      color,
-      palette,
-      onChange,
-      selectionState,
-      isFilterActive,
-      value,
-      checkedState,
-    ]
+    [color, palette, onChange, checkedState]
   );
 };
 

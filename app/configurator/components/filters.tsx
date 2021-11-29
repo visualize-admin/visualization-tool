@@ -28,14 +28,15 @@ import {
 
 const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
-  const { selectionState } = useMultiFilterContext();
+  const { activeKeys, allValues } = useMultiFilterContext();
+
   return (
     <Box color="monochrome500">
       <Button
         onClick={selectAll}
         variant="inline"
         sx={{ mr: 2, mb: 4 }}
-        disabled={selectionState === "ALL_SELECTED"}
+        disabled={activeKeys.size === allValues.length}
       >
         <Trans id="controls.filter.select.all">Select all</Trans>
       </Button>
@@ -44,7 +45,7 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
         onClick={selectNone}
         variant="inline"
         sx={{ ml: 2, mb: 4 }}
-        disabled={selectionState === "NONE_SELECTED"}
+        disabled={activeKeys.size === 0}
       >
         <Trans id="controls.filter.select.none">Select none</Trans>
       </Button>
