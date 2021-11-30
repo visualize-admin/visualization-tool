@@ -28,7 +28,7 @@ export async function loadGeoShapes({
     const batched = groups(dimension.in, (_, i) => Math.floor(i / BATCH_SIZE));
     const results = await Promise.all(
       batched.map(async ([, values]) => {
-        const query = SELECT`?geoShapeIri ?WKT ?label`.WHERE`
+        const query = SELECT`?geoShapeIri ?label ?WKT`.WHERE`
         values ?geoShapeIri {
             ${values}
         }

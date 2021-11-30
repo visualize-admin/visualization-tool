@@ -264,14 +264,6 @@ export const getCubeDimensionValues = async ({
       { value: min, label: `${min}` },
       { value: max, label: `${max}` },
     ];
-  } else if (
-    dimension.path?.value ===
-    "https://environment.ld.admin.ch/foen/nfi/forestArea"
-  ) {
-    return [
-      { value: 0, label: "0" },
-      { value: 0, label: "0" },
-    ];
   }
 
   return await getCubeDimensionValuesWithLabels({
