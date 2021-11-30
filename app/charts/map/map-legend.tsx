@@ -1,18 +1,17 @@
 import {
   axisBottom,
   interpolateOranges,
-  min,
   max,
+  min,
   range,
   ScaleLinear,
   scaleLinear,
-  select,
-  Selection,
-  ScaleThreshold,
   ScaleQuantile,
   ScaleQuantize,
+  ScaleThreshold,
+  select,
+  Selection,
 } from "d3";
-
 import * as React from "react";
 import { useEffect, useRef } from "react";
 import { Box, Flex, Text } from "theme-ui";
@@ -21,6 +20,7 @@ import {
   useFormatInteger,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { useChartTheme } from "../shared/use-chart-theme";
 import { useInteraction } from "../shared/use-interaction";
@@ -86,7 +86,7 @@ const CircleLegend = () => {
   const { axisLabelColor, legendFontSize } = useChartTheme();
   const {
     data,
-    getFeatureLabel,
+    areaLayer: { getLabel },
     symbolLayer: { getRadius, radiusScale, symbolColorScale },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
@@ -122,8 +122,8 @@ const CircleLegend = () => {
       >
         {radiusScale.domain().map((d) => {
           // FIXME: Potentially a performance problem if a lot of data
-          const thisFeatureLabel = getFeatureLabel(
-            data.find((x) => getRadius(x) === d)
+          const thisFeatureLabel = getLabel(
+            data.find((x) => getRadius(x) === d) as Observation
           );
 
           return (
@@ -197,7 +197,7 @@ const CircleLegend = () => {
               textAnchor="start"
               fontSize={legendFontSize}
             >
-              {formatNumber(getRadius(d) ?? NaN)} ({getFeatureLabel(d)})
+              {formatNumber(getRadius(d) ?? NaN)} ({getLabel(d)})
             </text>
           </g>
         )}
@@ -208,12 +208,8 @@ const CircleLegend = () => {
 
 const JenksColorLegend = () => {
   const legendAxisRef = useRef<SVGGElement>(null);
-  const {
-    axisLabelColor,
-    labelColor,
-    fontFamily,
-    legendFontSize,
-  } = useChartTheme();
+  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+    useChartTheme();
   const {
     areaLayer: { dataDomain, colorScale },
   } = useChartState() as MapState;
@@ -305,12 +301,8 @@ const JenksColorLegend = () => {
 };
 const QuantileColorLegend = () => {
   const legendAxisRef = useRef<SVGGElement>(null);
-  const {
-    axisLabelColor,
-    labelColor,
-    fontFamily,
-    legendFontSize,
-  } = useChartTheme();
+  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+    useChartTheme();
   const {
     areaLayer: { dataDomain, colorScale },
   } = useChartState() as MapState;
@@ -401,12 +393,8 @@ const QuantileColorLegend = () => {
 
 const QuantizeColorLegend = () => {
   const legendAxisRef = useRef<SVGGElement>(null);
-  const {
-    axisLabelColor,
-    labelColor,
-    fontFamily,
-    legendFontSize,
-  } = useChartTheme();
+  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+    useChartTheme();
   const {
     areaLayer: { dataDomain, colorScale },
   } = useChartState() as MapState;
@@ -493,10 +481,10 @@ const ContinuousColorLegend = () => {
 
   const legendWidth = Math.min(width, WIDTH);
   const margins = {
-    top: 6,
+    top: 0,
     right: 4,
     bottom: 14,
-    left: 4,
+    left: 0,
   };
   const scale = scaleLinear().domain(dataDomain).range([0, legendWidth]);
 

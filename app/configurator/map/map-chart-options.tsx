@@ -117,10 +117,33 @@ export const AreaLayerSettings = memo(
               id="areaLayer.componentIri"
               label="Select a measure"
               field={activeField}
-              path="fields.areaLayer.measureIri"
+              path="measureIri"
               options={metaData.measures.map((d) => ({
                 value: d.iri,
                 label: d.label,
+              }))}
+              disabled={!chartConfig.fields.areaLayer.show}
+            ></ChartOptionSelectField>
+          </ControlSectionContent>
+        </ControlSection>
+        <ControlSection>
+          <SectionTitle iconName={"settings"}>Color palette</SectionTitle>
+          <ControlSectionContent side="right">
+            <ChartOptionSelectField
+              id="areaLayer.palette"
+              label="Select a color palette"
+              field={activeField}
+              path="palette"
+              options={[
+                "oranges",
+                "reds",
+                "purples",
+                "greens",
+                "blues",
+                "greys",
+              ].map((d) => ({
+                value: d,
+                label: d,
               }))}
               disabled={!chartConfig.fields.areaLayer.show}
             ></ChartOptionSelectField>

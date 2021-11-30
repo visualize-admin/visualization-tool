@@ -11,7 +11,6 @@ import {
   MapConfig,
   MapFields,
   MapSettings,
-  PaletteType,
 } from "../../configurator";
 import { GeoShape, Observation } from "../../domain/data";
 import {
@@ -170,35 +169,6 @@ export const ChartMapPrototype = ({
   interactiveFiltersConfig: InteractiveFiltersConfig;
   settings: MapSettings;
 }) => {
-  const [activeLayers, setActiveLayers] = useState<ActiveLayer>({
-    relief: true,
-    lakes: true,
-    areaLayer: false,
-    symbolLayer: false,
-  });
-  const [activeControl, setActiveControl] = useState<Control>("baseLayer");
-  const [palette, setPalette] = useState("oranges");
-  const [nbClass, setNbClass] = useState(5);
-  const [paletteType, setPaletteType] = useState<PaletteType>("continuous");
-  const [measure, setMeasure] = useState(measures[0].iri);
-  const [symbolMeasure, setSymbolMeasure] = useState(measures[0].iri);
-  const [filters, setFilters] = useState<{ [x: string]: string }>(
-    dimensions.reduce(
-      (obj, dim, i) => ({ ...obj, [dim.iri]: dim.values[0] }),
-      {}
-    )
-  );
-
-  const updateActiveLayers = (layerKey: keyof ActiveLayer) => {
-    setActiveLayers({
-      ...activeLayers,
-      ...{ [layerKey]: !activeLayers[layerKey] },
-    });
-  };
-  const updateFilters = (filterKey: string, filterValue: string) => {
-    setFilters({ ...filters, ...{ [filterKey]: filterValue } });
-  };
-
   return (
     <Box
       sx={{

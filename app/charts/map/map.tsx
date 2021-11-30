@@ -272,6 +272,7 @@ export const MapComponent = () => {
               }
             }}
             getLineWidth={100}
+            updateTriggers={{ getFillColor: getColor }}
             getFillColor={(d: GeoShapeFeature) => {
               const entry = data.find(
                 (o) => getLabel(o) === d.properties.label
