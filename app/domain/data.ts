@@ -19,6 +19,12 @@ export type GeoShape = {
   geometry: GeoJSONGeometry;
 };
 
+export type GeoPoint = {
+  iri: string;
+  label: string;
+  coordinates: [number, number];
+};
+
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 const parseRDFLiteral = (value: Literal): ObservationValue => {
   const v = value.value;

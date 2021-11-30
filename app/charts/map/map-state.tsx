@@ -25,7 +25,7 @@ import {
   MapSettings,
   PaletteType,
 } from "../../configurator/config-types";
-import { Observation } from "../../domain/data";
+import { GeoPoint, Observation } from "../../domain/data";
 import {
   useOptionalNumericVariable,
   useStringVariable,
@@ -42,6 +42,7 @@ export type GeoData = {
   cantonMesh: GeoJSON.MultiLineString;
   lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
   areaLayer?: GeoJSON.FeatureCollection | GeoJSON.Feature | undefined;
+  symbolLayer?: Array<GeoPoint>;
 };
 export interface MapState {
   chartType: "map";

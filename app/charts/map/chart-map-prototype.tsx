@@ -90,6 +90,14 @@ export const ChartMapVisualization = ({
     }
   }, [geoDimension]);
 
+  const symbolLayer = useMemo(() => {
+    return areaLayer?.features.map((d) => ({
+      coordinates: geoCentroid(d),
+      iri: d.properties!.iri,
+      label: d.properties!.label,
+    }));
+  }, [areaLayer]);
+
   useEffect(() => {
     const loadGeoData = async () => {
       try {
@@ -127,7 +135,7 @@ export const ChartMapVisualization = ({
     return (
       <ChartMapPrototype
         observations={observations.data}
-        features={{ ...geoData, areaLayer }}
+        features={{ ...geoData, areaLayer, symbolLayer }}
         fields={chartConfig.fields}
         dimensions={dimensions}
         measures={measures}

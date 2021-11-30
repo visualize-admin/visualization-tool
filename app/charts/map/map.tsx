@@ -1,10 +1,10 @@
-import { HoverObject, MapController, WebMercatorViewport } from "@deck.gl/core";
-import { FillStyleExtension } from "@deck.gl/extensions";
+import { MapController, WebMercatorViewport } from "@deck.gl/core";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import React, { useCallback, useState } from "react";
 import { Box, Button } from "theme-ui";
+import { GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
@@ -186,7 +186,7 @@ export const MapComponent = () => {
           lineWidthMinPixels={1}
         /> */}
 
-        {showAreaLayer && (
+        {/* {showAreaLayer && (
           <>
             <GeoJsonLayer
               id="cantons"
@@ -231,7 +231,7 @@ export const MapComponent = () => {
               getLineColor={[255, 255, 255]}
             />
           </>
-        )}
+        )} */}
 
         {showAreaLayer && (
           <GeoJsonLayer
@@ -275,7 +275,7 @@ export const MapComponent = () => {
             updateTriggers={{ getFillColor: getColor }}
             getFillColor={(d: GeoShapeFeature) => {
               const entry = data.find(
-                (o) => getLabel(o) === d.properties.label
+                (o) => getLabel(o) === d.properties.label // FIXME?
               );
 
               if (entry) {
@@ -306,8 +306,8 @@ export const MapComponent = () => {
 
         {showSymbolLayer && (
           <ScatterplotLayer
-            id="cantons-centroids"
-            data={features.cantonCentroids}
+            id="symbols"
+            data={features.symbolLayer}
             pickable={true}
             opacity={0.7}
             stroked={false}
@@ -317,23 +317,31 @@ export const MapComponent = () => {
             radiusMinPixels={radiusScale.range()[0]}
             radiusMaxPixels={radiusScale.range()[1]}
             lineWidthMinPixels={1}
-            getPosition={(d: $FixMe) => d.coordinates}
-            getRadius={(d: $FixMe) => {
-              const obs = data.find((x) => x.id === d.id);
+            getPosition={(d: GeoPoint) => d.coordinates}
+            getRadius={(d: GeoPoint) => {
+              const obs = data.find((x) => getLabel(x) === d.label); // FIXME?
 
               return obs ? radiusScale(getRadius(obs) ?? 0) : 0;
             }}
             getFillColor={[0, 102, 153]}
             getLineColor={[255, 255, 255]}
-            onHover={({ x, y, object }: HoverObject) => {
-              if (object && object.id) {
+            onHover={({
+              x,
+              y,
+              object,
+            }: {
+              x: number;
+              y: number;
+              object: GeoPoint;
+            }) => {
+              if (object) {
                 dispatch({
                   type: "INTERACTION_UPDATE",
                   value: {
                     interaction: {
                       visible: true,
                       mouse: { x, y },
-                      d: data.find((x) => x.id === object.id),
+                      d: data.find((d) => getLabel(d) === object.label), // FIXME?
                     },
                   },
                 });

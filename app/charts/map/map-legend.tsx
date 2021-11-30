@@ -75,6 +75,7 @@ export const MapLegend = () => {
     </Flex>
   );
 };
+
 const CircleLegend = () => {
   const width = useWidth();
   const [
@@ -128,7 +129,7 @@ const CircleLegend = () => {
 
           return (
             <>
-              {d !== 0 && (
+              {d !== 0 && ( // FIXME: 0 also should be shown
                 <g
                   transform={`translate(0, ${
                     radiusScale(maxRadius) - radiusScale(d)

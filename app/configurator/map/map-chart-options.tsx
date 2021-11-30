@@ -35,6 +35,14 @@ export const MapColumnOptions = ({
           metaData={metaData}
         />
       );
+    case "symbolLayer":
+      return (
+        <SymbolLayerSettings
+          activeField={activeField}
+          chartConfig={chartConfig}
+          metaData={metaData}
+        ></SymbolLayerSettings>
+      );
     default:
       return null;
   }
@@ -191,6 +199,54 @@ export const AreaLayerSettings = memo(
                 label: String(d),
               }))}
               disabled={!chartConfig.fields.areaLayer.show}
+            ></ChartOptionSelectField>
+          </ControlSectionContent>
+        </ControlSection>
+      </>
+    );
+  }
+);
+
+export const SymbolLayerSettings = memo(
+  ({
+    activeField,
+    chartConfig,
+    metaData,
+  }: {
+    activeField: string;
+    chartConfig: MapConfig;
+    metaData: DataCubeMetadata;
+  }) => {
+    return (
+      <>
+        <ControlSection>
+          <SectionTitle iconName={"settings"}>
+            <Trans id="controls.section.mapSettings">Map Settings</Trans>
+          </SectionTitle>
+          <ControlSectionContent side="right">
+            <ChartOptionCheckboxField
+              label={t({
+                id: "fields.symbolLayer.show",
+                message: "Show layer",
+              })}
+              field={"symbolLayer"}
+              path="show"
+            />
+          </ControlSectionContent>
+        </ControlSection>
+        <ControlSection>
+          <SectionTitle iconName={"settings"}>Measure</SectionTitle>
+          <ControlSectionContent side="right">
+            <ChartOptionSelectField
+              id="symbolLayer.iri"
+              label="Select a measure"
+              field={activeField}
+              path="componentIri"
+              options={metaData.measures.map((d) => ({
+                value: d.iri,
+                label: d.label,
+              }))}
+              disabled={!chartConfig.fields.symbolLayer.show}
             ></ChartOptionSelectField>
           </ControlSectionContent>
         </ControlSection>
