@@ -1,5 +1,4 @@
 scalar Observation
-scalar DimensionValue
 scalar RawObservation
 scalar Filters
 
@@ -43,6 +42,27 @@ type DataCube {
   themes: [DataCubeTheme!]!
 }
 
+type CategoricalValue {
+  value: String!
+  label: String!
+  position: Int
+}
+
+type GeoShapeValue {
+  value: String!
+  label: String!
+  position: Int
+  shape: String!
+}
+
+type GeoPointValue {
+  value: String!
+  label: String!
+  position: Int
+  lon: Float!
+  lat: Float!
+}
+
 interface Dimension {
   iri: String!
   label: String!
@@ -54,7 +74,7 @@ type CategoricalDimension implements Dimension {
   label: String!
   isKeyDimension: Boolean!
   isOrdinal: Boolean!
-  values: [DimensionValue!]!
+  values: [CategoricalValue!]!
 }
 
 type GeoShapeDimension implements Dimension {
@@ -62,7 +82,7 @@ type GeoShapeDimension implements Dimension {
   label: String!
   isKeyDimension: Boolean!
   isOrdinal: Boolean!
-  values: [DimensionValue!]!
+  values: [CategoricalValue!]!
 }
 
 type GeoPointDimension implements Dimension {
@@ -70,7 +90,7 @@ type GeoPointDimension implements Dimension {
   label: String!
   isKeyDimension: Boolean!
   isOrdinal: Boolean!
-  values: [DimensionValue!]!
+  values: [CategoricalValue!]!
 }
 
 enum TimeUnit {

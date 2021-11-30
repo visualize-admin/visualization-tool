@@ -22,7 +22,6 @@ generates:
       scalars:
         Observation: "../domain/data#Observation"
         ObservationValue: "../domain/data#ObservationValue"
-        DimensionValue: "../domain/data#DimensionValue"
         RawObservation: "../domain/data#RawObservation"
         Filters: "../configurator#Filters"
       mappers:

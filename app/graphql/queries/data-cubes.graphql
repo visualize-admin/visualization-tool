@@ -38,7 +38,11 @@ fragment dimensionMetaData on Dimension {
   isKeyDimension
   ... on CategoricalDimension {
     isOrdinal
-    values
+    values {
+      value
+      label
+      position
+    }
   }
   ... on Measure {
     unit

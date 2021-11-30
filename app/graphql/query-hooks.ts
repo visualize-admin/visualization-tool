@@ -12,7 +12,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  DimensionValue: any;
   Filters: any;
   Observation: any;
   RawObservation: any;
@@ -24,7 +23,14 @@ export type CategoricalDimension = Dimension & {
   label: Scalars['String'];
   isKeyDimension: Scalars['Boolean'];
   isOrdinal: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
+  values: Array<CategoricalValue>;
+};
+
+export type CategoricalValue = {
+  __typename: 'CategoricalValue';
+  value: Scalars['String'];
+  label: Scalars['String'];
+  position?: Maybe<Scalars['Int']>;
 };
 
 export type DataCube = {
@@ -109,14 +115,22 @@ export type Dimension = {
 };
 
 
-
 export type GeoPointDimension = Dimension & {
   __typename: 'GeoPointDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
   isKeyDimension: Scalars['Boolean'];
   isOrdinal: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
+  values: Array<CategoricalValue>;
+};
+
+export type GeoPointValue = {
+  __typename: 'GeoPointValue';
+  value: Scalars['String'];
+  label: Scalars['String'];
+  position?: Maybe<Scalars['Int']>;
+  lon: Scalars['Float'];
+  lat: Scalars['Float'];
 };
 
 export type GeoShapeDimension = Dimension & {
@@ -125,7 +139,15 @@ export type GeoShapeDimension = Dimension & {
   label: Scalars['String'];
   isKeyDimension: Scalars['Boolean'];
   isOrdinal: Scalars['Boolean'];
-  values: Array<Scalars['DimensionValue']>;
+  values: Array<CategoricalValue>;
+};
+
+export type GeoShapeValue = {
+  __typename: 'GeoShapeValue';
+  value: Scalars['String'];
+  label: Scalars['String'];
+  position?: Maybe<Scalars['Int']>;
+  shape: Scalars['String'];
 };
 
 export type Measure = Dimension & {
@@ -233,7 +255,7 @@ export type DataCubesQueryVariables = Exact<{
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
-type DimensionMetaData_CategoricalDimension_Fragment = { __typename: 'CategoricalDimension', isOrdinal: boolean, values: Array<any>, iri: string, label: string, isKeyDimension: boolean };
+type DimensionMetaData_CategoricalDimension_Fragment = { __typename: 'CategoricalDimension', isOrdinal: boolean, iri: string, label: string, isKeyDimension: boolean, values: Array<{ __typename: 'CategoricalValue', value: string, label: string, position?: Maybe<number> }> };
 
 type DimensionMetaData_GeoPointDimension_Fragment = { __typename: 'GeoPointDimension', iri: string, label: string, isKeyDimension: boolean };
 
@@ -423,7 +445,11 @@ export const DimensionMetaDataFragmentDoc = gql`
   isKeyDimension
   ... on CategoricalDimension {
     isOrdinal
-    values
+    values {
+      value
+      label
+      position
+    }
   }
   ... on Measure {
     unit
