@@ -1,23 +1,24 @@
+import { Trans } from "@lingui/macro";
+import NextLink from "next/link";
+import { Router, useRouter } from "next/router";
+import qs from "qs";
 import React, { useMemo } from "react";
 import { Box, Link, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
-import NextLink from "next/link";
 import { DataSetHint } from "../../components/hint";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
 import { useConfiguratorState, useLocale } from "../../src";
-import { DataSetMetadata } from "./dataset-metadata";
-import { DataSetPreview } from "./dataset-preview";
 import {
+  BrowseStateProvider,
+  DatasetResults,
+  getBrowseParamsFromQuery,
   SearchDatasetBox,
   SearchFilters,
-  DatasetResults,
-  BrowseStateProvider,
   useBrowseContext,
-  getFilterParamsFromQuery,
 } from "./dataset-browse";
+import { DataSetMetadata } from "./dataset-metadata";
+import { DataSetPreview } from "./dataset-preview";
 import { PanelLayout, PanelLeftWrapper, PanelMiddleWrapper } from "./layout";
-import { Trans } from "@lingui/macro";
-import { Router, useRouter } from "next/router";
 
 const softJSONParse = (v: string) => {
   try {
@@ -27,13 +28,13 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const formatBackLink = (query: Router["query"]) => {
+const formatBackLink = (query: Router["query"]): string => {
   const backParameters = softJSONParse(query.previous as string);
   if (!backParameters) {
     return "/browse";
   }
-  const { type, iri, subtype, subiri } =
-    getFilterParamsFromQuery(backParameters);
+  const { type, iri, subtype, subiri, ...queryParams } =
+    getBrowseParamsFromQuery(backParameters);
 
   const typePart =
     type && iri
@@ -43,17 +44,19 @@ const formatBackLink = (query: Router["query"]) => {
     subtype && subiri
       ? `${encodeURIComponent(subtype)}/${encodeURIComponent(subiri)}`
       : undefined;
-  return ["/browse", typePart, subtypePart].filter(Boolean).join("/");
+
+  const pathname = ["/browse", typePart, subtypePart].filter(Boolean).join("/");
+  return `${pathname}?${qs.stringify(queryParams)}`;
 };
 
 export const SelectDatasetStepContent = () => {
   const locale = useLocale();
 
   const browseState = useBrowseContext();
-  const { query, order, includeDrafts, filters, dataset } = browseState;
+  const { search, order, includeDrafts, filters, dataset } = browseState;
 
   const [configState] = useConfiguratorState();
-  const [debouncedQuery] = useDebounce(query, 150, {
+  const [debouncedQuery] = useDebounce(search, 150, {
     leading: true,
   });
   const router = useRouter();
