@@ -268,7 +268,7 @@ export const getInitialConfig = ({
               dimensions.find((d) => d.__typename === "GeoDimension")?.iri ||
               "",
             measureIri: measures[0].iri,
-            show: false,
+            show: true,
             label: { componentIri: dimensions[0].iri },
             palette: "oranges",
             nbClass: 5,

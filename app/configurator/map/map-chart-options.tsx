@@ -1,6 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import React, { memo } from "react";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "..";
+import { FieldSetLegend } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
 import {
   ControlSection,
@@ -9,6 +10,7 @@ import {
 } from "../components/chart-controls/section";
 import {
   ChartOptionCheckboxField,
+  ChartOptionRadioField,
   ChartOptionSelectField,
 } from "../components/field";
 
@@ -86,7 +88,7 @@ export const AreaLayerSettings = memo(
             <ChartOptionCheckboxField
               label={t({
                 id: "fields.areaLayer.show",
-                message: "Show areaLayer",
+                message: "Show layer",
               })}
               field={"areaLayer"}
               path="show"
@@ -114,7 +116,7 @@ export const AreaLayerSettings = memo(
           <SectionTitle iconName={"settings"}>Measure</SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionSelectField
-              id="areaLayer.componentIri"
+              id="areaLayer.measureIri"
               label="Select a measure"
               field={activeField}
               path="measureIri"
@@ -127,11 +129,11 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName={"settings"}>Color palette</SectionTitle>
+          <SectionTitle iconName={"segments"}>Color scale</SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionSelectField
               id="areaLayer.palette"
-              label="Select a color palette"
+              label="Palette"
               field={activeField}
               path="palette"
               options={[
@@ -144,6 +146,49 @@ export const AreaLayerSettings = memo(
               ].map((d) => ({
                 value: d,
                 label: d,
+              }))}
+              disabled={!chartConfig.fields.areaLayer.show}
+            ></ChartOptionSelectField>
+          </ControlSectionContent>
+          <ControlSectionContent side="right">
+            <FieldSetLegend legendTitle={"Continuous"}></FieldSetLegend>
+            <ChartOptionRadioField
+              label="Linear interpolation"
+              field={activeField}
+              path="paletteType"
+              value={"continuous"}
+              disabled={!chartConfig.fields.areaLayer.show}
+            ></ChartOptionRadioField>
+            <FieldSetLegend legendTitle={"Discrete"}></FieldSetLegend>
+            <ChartOptionRadioField
+              label="Quantize (equal intervals)"
+              field={activeField}
+              path="paletteType"
+              value={"discrete"}
+              disabled={!chartConfig.fields.areaLayer.show}
+            ></ChartOptionRadioField>
+            <ChartOptionRadioField
+              label="Quantiles (equal distribution of values)"
+              field={activeField}
+              path="paletteType"
+              value={"quantile"}
+              disabled={!chartConfig.fields.areaLayer.show}
+            ></ChartOptionRadioField>
+            <ChartOptionRadioField
+              label="Jenks (natural breaks)"
+              field={activeField}
+              path="paletteType"
+              value={"jenks"}
+              disabled={!chartConfig.fields.areaLayer.show}
+            ></ChartOptionRadioField>
+            <ChartOptionSelectField
+              id="areaLayer.nbClass"
+              label="Number of classes"
+              field={activeField}
+              path="nbClass"
+              options={Array.from({ length: 7 }, (_, i) => 3 + i).map((d) => ({
+                value: d,
+                label: String(d),
               }))}
               disabled={!chartConfig.fields.areaLayer.show}
             ></ChartOptionSelectField>
