@@ -45,6 +45,10 @@ msgstr "Categorie"
 msgid "browse.dataset.create-visualization"
 msgstr "Crea una visualizzazione"
 
+#: app/configurator/components/select-dataset-step.tsx:128
+msgid "browse.datasets.all-datasets"
+msgstr "Tutti i set di dati"
+
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
 msgstr "Copia questa visualizzazione"
@@ -744,12 +748,12 @@ msgid "interactive.data.filters.show"
 msgstr "Mostra i filtri"
 
 #: app/homepage/intro.tsx:121
-msgid "intro.browse.organizations"
-msgstr "Sfoglia le organizzazioni"
+#~ msgid "intro.browse.organizations"
+#~ msgstr "Sfoglia le organizzazioni"
 
 #: app/homepage/intro.tsx:102
-msgid "intro.browse.themes"
-msgstr "Sfoglia i categorie"
+#~ msgid "intro.browse.themes"
+#~ msgstr "Sfoglia i categorie"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125

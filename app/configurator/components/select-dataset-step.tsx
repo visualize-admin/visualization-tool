@@ -119,16 +119,14 @@ export const SelectDatasetStepContent = () => {
       >
         <Box sx={{ maxWidth: 900 }}>
           <Text variant="heading1" sx={{ mb: 4 }}>
-            {dataset
-              ? null
-              : filters.length > 0
-              ? filters
-                  .filter((f) => f.__typename !== "DataCubeAbout")
-                  .map((f) =>
-                    f.__typename !== "DataCubeAbout" ? f.label : null
-                  )
-                  .join(", ")
-              : "Swiss Open Government Data"}
+            {dataset ? null : filters.length > 0 ? (
+              filters
+                .filter((f) => f.__typename !== "DataCubeAbout")
+                .map((f) => (f.__typename !== "DataCubeAbout" ? f.label : null))
+                .join(", ")
+            ) : (
+              <Trans id="browse.datasets.all-datasets">All datasets</Trans>
+            )}
           </Text>
           {dataset ? null : (
             <Box mb={4}>
