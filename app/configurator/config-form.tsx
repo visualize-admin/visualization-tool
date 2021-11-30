@@ -470,9 +470,8 @@ export const useMultiFilterCheckboxes = (
   );
 
   const isChecked =
-    state.state === "CONFIGURING_CHART"
-      ? isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value)
-      : false;
+    state.state === "CONFIGURING_CHART" &&
+    isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value);
 
   return {
     onChange,
