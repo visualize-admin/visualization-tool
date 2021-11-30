@@ -67,8 +67,8 @@ export const ChartConfigurator = ({
                   <DataFilterSelectTime
                     dimensionIri={dimension.iri}
                     label={dimension.label}
-                    from={dimension.values[0].value}
-                    to={dimension.values[1].value}
+                    from={dimension.from}
+                    to={dimension.to}
                     timeUnit={dimension.timeUnit}
                     timeFormat={dimension.timeFormat}
                     disabled={false}
@@ -91,8 +91,8 @@ export const ChartConfigurator = ({
                   <DataFilterSelectTime
                     dimensionIri={dimension.iri}
                     label={dimension.label}
-                    from={dimension.values[0].value}
-                    to={dimension.values[1].value}
+                    from={dimension.from}
+                    to={dimension.from}
                     timeUnit={dimension.timeUnit}
                     timeFormat={dimension.timeFormat}
                     disabled={false}

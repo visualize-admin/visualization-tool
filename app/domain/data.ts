@@ -90,11 +90,7 @@ export const getTimeDimensions = (dimensions: DimensionMetaDataFragment[]) =>
  */
 export const getCategoricalDimensions = (
   dimensions: DimensionMetaDataFragment[]
-) =>
-  dimensions.filter(
-    (d) =>
-      d.__typename === "NominalDimension" || d.__typename === "OrdinalDimension"
-  );
+) => dimensions.filter((d) => d.__typename === "CategoricalDimension");
 
 export const getDimensionsByDimensionType = ({
   dimensionTypes,

@@ -296,13 +296,10 @@ export const resolvers: Resolvers = {
       // return "GeoDimension"
       // }
 
-      return "NominalDimension";
+      return "CategoricalDimension";
     },
   },
-  NominalDimension: {
-    ...dimensionResolvers,
-  },
-  OrdinalDimension: {
+  CategoricalDimension: {
     ...dimensionResolvers,
   },
   TemporalDimension: {

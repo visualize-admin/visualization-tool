@@ -108,8 +108,7 @@ describe("applyDimensionToFilters", () => {
       { value: "E.coli", label: "E.coli" },
       { value: "Enterokokken", label: "Enterokokken" },
     ],
-    unit: null,
-    __typename: "NominalDimension",
+    __typename: "CategoricalDimension",
   } as DimensionMetaDataFragment;
 
   const optionalDimension = {
@@ -120,8 +119,7 @@ describe("applyDimensionToFilters", () => {
       { value: "E.coli", label: "E.coli" },
       { value: "Enterokokken", label: "Enterokokken" },
     ],
-    unit: null,
-    __typename: "NominalDimension",
+    __typename: "CategoricalDimension",
   } as DimensionMetaDataFragment;
 
   describe("applyNonTableDimensionToFilters", () => {
