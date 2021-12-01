@@ -6,7 +6,6 @@ import { Router, useRouter } from "next/router";
 import React, {
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -53,65 +52,12 @@ export type DataCubeAbout = {
 
 export type BrowseFilter = DataCubeTheme | DataCubeOrganization | DataCubeAbout;
 
-export const useBrowseState = () => {
-  const [search, setSearch] = useState<string>("");
-  const [dataset, setDataset] = useState<string>();
-  const [order, setOrder] = useState<DataCubeResultOrder>(
-    DataCubeResultOrder.TitleAsc
-  );
-  const previousOrderRef = useRef<DataCubeResultOrder>(
-    DataCubeResultOrder.TitleAsc
-  );
-  const [filters, setFilters] = useState<BrowseFilter[]>([]);
-  const [includeDrafts, setIncludeDrafts] = useState<boolean>(false);
-
-  return useMemo(
-    () => ({
-      includeDrafts,
-      setIncludeDrafts,
-      onReset: () => {
-        setSearch("");
-        setOrder(previousOrderRef.current);
-      },
-      onResetFilters: () => {
-        setFilters([]);
-      },
-      onTypeSearch: (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.currentTarget.value);
-        if (search === "" && e.currentTarget.value !== "") {
-          previousOrderRef.current = order;
-          setOrder(DataCubeResultOrder.Score);
-        }
-        if (search !== "" && e.currentTarget.value === "") {
-          setOrder(previousOrderRef.current);
-        }
-      },
-      search,
-      order,
-      onSetOrder: (order: DataCubeResultOrder) => {
-        previousOrderRef.current = order;
-        setOrder(order);
-      },
-      filters,
-      setFilters,
-      setSearch,
-      setOrder,
-      dataset,
-      setDataset,
-    }),
-    [filters, includeDrafts, order, search, dataset, setDataset, setOrder]
-  );
-};
-
-export type BrowseState = ReturnType<typeof useBrowseState>;
-const BrowseContext = React.createContext<BrowseState | undefined>(undefined);
-
 /** Builds the state search filters from query params */
 export const getFiltersFromParams = (
   params: BrowseParams,
   context: {
-    themes: ThemesQuery["themes"];
-    organizations: OrganizationsQuery["organizations"];
+    themes?: ThemesQuery["themes"];
+    organizations?: OrganizationsQuery["organizations"];
   }
 ) => {
   const filters: BrowseFilter[] = [];
@@ -153,6 +99,7 @@ export const getBrowseParamsFromQuery = (query: Router["query"]) => {
       "includeDrafts",
       "order",
       "search",
+      "dataset",
     ]),
     (v) => (Array.isArray(v) ? v[0] : v)
   );
@@ -168,6 +115,118 @@ export const getBrowseParamsFromQuery = (query: Router["query"]) => {
   );
 };
 
+export const buildURLFromBrowseState = (browseState: BrowseParams) => {
+  const { type, iri, subtype, subiri, ...queryParams } = browseState;
+
+  const typePart =
+    type && iri
+      ? `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`
+      : undefined;
+  const subtypePart =
+    subtype && subiri
+      ? `${encodeURIComponent(subtype)}/${encodeURIComponent(subiri)}`
+      : undefined;
+
+  const pathname = ["/browse", typePart, subtypePart].filter(Boolean).join("/");
+  return {
+    pathname,
+    query: queryParams,
+  } as React.ComponentProps<typeof Link>["href"];
+};
+
+export const useBrowseState = () => {
+  const router = useRouter();
+  const locale = useLocale();
+  const [{ data: themeData }] = useThemesQuery({
+    variables: { locale },
+  });
+  const [{ data: orgData }] = useOrganizationsQuery({
+    variables: { locale },
+  });
+
+  const setParam = useCallback(
+    (param: keyof BrowseParams, newValue: string | boolean) => {
+      const state = getBrowseParamsFromQuery(router.query);
+      const newState = { ...state, [param]: newValue } as BrowseParams;
+      router.replace(buildURLFromBrowseState(newState));
+    },
+    [router]
+  );
+
+  const browseParams = getBrowseParamsFromQuery(router.query);
+  const { search, type, order, iri, includeDrafts } = browseParams;
+  const dataset = type === "dataset" ? iri : null;
+  const filters = getFiltersFromParams(browseParams, {
+    themes: themeData?.themes,
+    organizations: orgData?.organizations,
+  });
+
+  const setSearch = useCallback(
+    (v: string) => setParam("search", v),
+    [setParam]
+  );
+  const setIncludeDrafts = useCallback(
+    (v: boolean) => setParam("includeDrafts", v),
+    [setParam]
+  );
+  const setOrder = useCallback((v: string) => setParam("order", v), [setParam]);
+  const setDataset = useCallback(
+    (v: string) => setParam("dataset", v),
+    [setParam]
+  );
+
+  const previousOrderRef = useRef<DataCubeResultOrder>(
+    DataCubeResultOrder.TitleAsc
+  );
+
+  return useMemo(
+    () => ({
+      includeDrafts,
+      setIncludeDrafts,
+      onReset: () => {
+        setParam("search", "");
+        setOrder(previousOrderRef.current);
+      },
+      onTypeSearch: (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.currentTarget.value);
+        if (search === "" && e.currentTarget.value !== "") {
+          previousOrderRef.current = order;
+          setOrder(DataCubeResultOrder.Score);
+        }
+        if (search !== "" && e.currentTarget.value === "") {
+          setOrder(previousOrderRef.current);
+        }
+      },
+      search,
+      order,
+      onSetOrder: (order: DataCubeResultOrder) => {
+        previousOrderRef.current = order;
+        setOrder(order);
+      },
+      setSearch,
+      setOrder,
+      dataset,
+      setDataset,
+      filters,
+    }),
+    [
+      includeDrafts,
+      setIncludeDrafts,
+      search,
+      order,
+      setSearch,
+      setOrder,
+      dataset,
+      setDataset,
+      filters,
+      setParam,
+    ]
+  );
+};
+
+export type BrowseState = ReturnType<typeof useBrowseState>;
+const BrowseContext = React.createContext<BrowseState | undefined>(undefined);
+
 /**
  * Provides browse context to children below
  * Responsible for connecting the router to the browsing state
@@ -178,66 +237,6 @@ export const BrowseStateProvider = ({
   children: React.ReactNode;
 }) => {
   const browseState = useBrowseState();
-  const { setFilters, setDataset, setSearch, setOrder, setIncludeDrafts } =
-    browseState;
-  const locale = useLocale();
-  const [{ data: themeData }] = useThemesQuery({
-    variables: { locale },
-  });
-  const [{ data: orgData }] = useOrganizationsQuery({
-    variables: { locale },
-  });
-
-  const router = useRouter();
-  const { search } = router.query;
-
-  const params = useMemo(
-    () => getBrowseParamsFromQuery(router.query),
-    [router.query]
-  );
-
-  // Connects browseState to router params
-  useEffect(() => {
-    if (!params || !themeData?.themes || !orgData?.organizations) {
-      return;
-    }
-
-    const filters = getFiltersFromParams(params, {
-      themes: themeData?.themes,
-      organizations: orgData?.organizations,
-    });
-    if (filters) {
-      setFilters(filters);
-    }
-
-    if (params?.type === "dataset" && params?.iri) {
-      setDataset(params?.iri);
-    } else {
-      setDataset(undefined);
-    }
-
-    if (params?.search) {
-      setSearch(params.search);
-    }
-
-    if (params?.order) {
-      setOrder(params.order);
-    }
-
-    if (params?.includeDrafts) {
-      setIncludeDrafts(params.includeDrafts);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params, themeData, orgData]);
-
-  useEffect(() => {
-    if (!search || search.length === 0) {
-      return;
-    }
-    const searchStr = Array.isArray(search) ? search[0] : search;
-    setSearch(searchStr);
-  }, [search, setSearch]);
   return (
     <BrowseContext.Provider value={browseState}>
       {children}
@@ -296,8 +295,8 @@ export const SearchDatasetBox = ({
   const isSearching = search !== "";
 
   const onToggleIncludeDrafts = useCallback(() => {
-    setIncludeDrafts((d: boolean) => !d);
-  }, [setIncludeDrafts]);
+    setIncludeDrafts(!includeDrafts);
+  }, [includeDrafts, setIncludeDrafts]);
 
   return (
     <Box>

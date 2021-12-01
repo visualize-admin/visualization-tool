@@ -9,8 +9,8 @@ import { useDataCubesQuery } from "../../graphql/query-hooks";
 import { useConfiguratorState, useLocale } from "../../src";
 import {
   BrowseStateProvider,
+  buildURLFromBrowseState,
   DatasetResults,
-  getBrowseParamsFromQuery,
   SearchDatasetBox,
   SearchFilters,
   useBrowseContext,
@@ -34,23 +34,7 @@ const formatBackLink = (
   if (!backParameters) {
     return "/browse";
   }
-  const { type, iri, subtype, subiri, ...queryParams } =
-    getBrowseParamsFromQuery(backParameters);
-
-  const typePart =
-    type && iri
-      ? `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`
-      : undefined;
-  const subtypePart =
-    subtype && subiri
-      ? `${encodeURIComponent(subtype)}/${encodeURIComponent(subiri)}`
-      : undefined;
-
-  const pathname = ["/browse", typePart, subtypePart].filter(Boolean).join("/");
-  return {
-    pathname,
-    query: queryParams,
-  };
+  return buildURLFromBrowseState(backParameters);
 };
 
 export const SelectDatasetStepContent = () => {
