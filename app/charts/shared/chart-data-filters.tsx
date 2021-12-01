@@ -273,6 +273,7 @@ const DataFilterTemporalDimension = ({
       value={value}
       timeFormat={timeFormat}
       formatLocale={formatLocale}
+      isOptional={!isKeyDimension}
       onChange={onChange}
     />
   );
