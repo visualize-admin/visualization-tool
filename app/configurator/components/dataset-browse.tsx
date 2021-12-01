@@ -3,7 +3,6 @@ import { Plural, t, Trans } from "@lingui/macro";
 import { mapValues, pick, pickBy, sortBy } from "lodash";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
-import qs from "qs";
 import React, {
   useCallback,
   useContext,
@@ -859,17 +858,20 @@ export const DatasetResult = ({
   const browseState = useBrowseContext();
   const { search, includeDrafts, order } = browseState;
   const filterParams = useMemo(() => {
-    return qs.stringify({
+    return {
       previous: JSON.stringify({
         ...getBrowseParamsFromQuery(router.query),
         search,
         includeDrafts,
         order,
       }),
-    });
+    };
   }, [router.query, search, includeDrafts, order]);
   const handleClick = useCallback(() => {
-    router.push(`/browse/dataset/${encodeURIComponent(iri)}?${filterParams}`);
+    router.push({
+      pathname: `/browse/dataset/${encodeURIComponent(iri)}`,
+      query: filterParams,
+    });
   }, [router, iri, filterParams]);
   return (
     <Card

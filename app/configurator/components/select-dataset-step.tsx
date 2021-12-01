@@ -1,7 +1,6 @@
 import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import qs from "qs";
 import React, { useMemo } from "react";
 import { Box, Link, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
@@ -28,7 +27,9 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const formatBackLink = (query: Router["query"]): string => {
+const formatBackLink = (
+  query: Router["query"]
+): React.ComponentProps<typeof NextLink>["href"] => {
   const backParameters = softJSONParse(query.previous as string);
   if (!backParameters) {
     return "/browse";
@@ -46,7 +47,10 @@ const formatBackLink = (query: Router["query"]): string => {
       : undefined;
 
   const pathname = ["/browse", typePart, subtypePart].filter(Boolean).join("/");
-  return `${pathname}?${qs.stringify(queryParams)}`;
+  return {
+    pathname,
+    query: queryParams,
+  };
 };
 
 export const SelectDatasetStepContent = () => {
@@ -100,7 +104,7 @@ export const SelectDatasetStepContent = () => {
         {dataset ? (
           <>
             <Box mb={4} px={4}>
-              <NextLink passHref href={`${backLink}`}>
+              <NextLink passHref href={backLink}>
                 <Link variant="inline">
                   <Trans id="dataset-preview.back-to-results">
                     Back to the list
