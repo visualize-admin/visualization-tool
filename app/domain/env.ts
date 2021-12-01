@@ -20,7 +20,10 @@ export const PUBLIC_URL = (
   ""
 ).replace(/\/$/, "");
 
-export const SPARQL_ENDPOINT = "https://int.lindas.admin.ch/query";
+export const SPARQL_ENDPOINT =
+  clientEnv?.SPARQL_ENDPOINT ??
+  process.env.SPARQL_ENDPOINT ??
+  "https://int.lindas.admin.ch/query";
 export const SPARQL_GEO_ENDPOINT = "https://geo.ld.admin.ch/query";
 
 export const SPARQL_EDITOR =
