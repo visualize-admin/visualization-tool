@@ -10,7 +10,12 @@ import {
 } from "react";
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
-import { ImputationType, isAreaConfig, isColumnConfig, isMapConfig } from ".";
+import {
+  ImputationType,
+  isAreaConfig,
+  isColumnConfig,
+  isSegmentInConfig,
+} from ".";
 import { fetchChartConfig, saveChartConfig } from "../api";
 import {
   getFieldComponentIris,
@@ -559,10 +564,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               });
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
-            // Filter for table to make TS happy :/
-            // if (draft.chartConfig.chartType !== "table") {
-            if (!isMapConfig(draft.chartConfig)) {
-              // maps don't use segments
+            if (isSegmentInConfig(draft.chartConfig)) {
               draft.chartConfig.fields.segment = {
                 componentIri: action.value.componentIri,
                 palette: "category10",

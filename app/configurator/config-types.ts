@@ -572,6 +572,19 @@ export const isMapConfig = (
   return chartConfig.chartType === "map";
 };
 
+export const isSegmentInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is
+  | AreaConfig
+  | BarConfig
+  | ColumnConfig
+  | LineConfig
+  | ScatterPlotConfig
+  | PieConfig
+  | TableConfig => {
+  return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
+};
+
 const Config = t.type(
   {
     dataSet: t.string,
