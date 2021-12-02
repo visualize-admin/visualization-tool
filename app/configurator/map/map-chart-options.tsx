@@ -14,6 +14,14 @@ import {
   ChartOptionSelectField,
 } from "../components/field";
 
+const NUMBER_OF_CLASSES_OPTIONS = Array.from(
+  { length: 7 },
+  (_, i) => i + 3
+).map((d) => ({
+  value: d,
+  label: `${d}`,
+}));
+
 export const MapColumnOptions = ({
   state,
   metaData,
@@ -194,10 +202,7 @@ export const AreaLayerSettings = memo(
               label="Number of classes"
               field={activeField}
               path="nbClass"
-              options={Array.from({ length: 7 }, (_, i) => 3 + i).map((d) => ({
-                value: d,
-                label: String(d),
-              }))}
+              options={NUMBER_OF_CLASSES_OPTIONS}
               disabled={!chartConfig.fields.areaLayer.show}
             ></ChartOptionSelectField>
           </ControlSectionContent>
