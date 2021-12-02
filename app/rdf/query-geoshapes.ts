@@ -1,68 +1,71 @@
 import { SELECT } from "@tpluscode/sparql-builder";
 import { groups } from "d3";
-import { CubeDimension } from "rdf-cube-view-query";
-import ParsingClient from "sparql-http-client/ParsingClient";
 import { SPARQL_GEO_ENDPOINT } from "../domain/env";
 import * as ns from "./namespace";
 import { sparqlClient } from "./sparql-client";
 
 const BATCH_SIZE = 500;
+export interface RawGeoShape {
+  iri: string;
+  label: string;
+  wktString: string;
+}
 
 /**
- * Load WKT coords for a list of IDs (e.g. dimension values)
+ * Creates a WKT geo shapes loader.
  *
- * @param dimensionIri geoDimension IRI
- * @param client SparqlClient
+ * @param dimensionValues IRIs of geo dimension values
  */
-export async function loadGeoShapes({
-  dimension,
-  locale,
-  client = sparqlClient,
-}: {
-  dimension: CubeDimension;
-  locale: string;
-  client?: ParsingClient;
-}): Promise<{ iri: string; label: string; wktString: string }[]> {
-  if (dimension.in) {
-    // We query in batches because we might run into "413 – Error: Payload Too Large"
-    const batched = groups(dimension.in, (_, i) => Math.floor(i / BATCH_SIZE));
-    const results = await Promise.all(
-      batched.map(async ([, values]) => {
-        const query = SELECT`?geoShapeIri ?label ?WKT`.WHERE`
-        values ?geoShapeIri {
-            ${values}
-        }
+export const createGeoShapesLoader =
+  ({ locale }: { locale: string }) =>
+  async (dimensionValues?: readonly string[]): Promise<RawGeoShape[][]> => {
+    if (dimensionValues) {
+      // We query in batches because we might run into "413 – Error: Payload Too Large"
+      const batched = groups(dimensionValues.flat(), (_, i) =>
+        Math.floor(i / BATCH_SIZE)
+      );
 
-        ?geoShapeIri
-          ${ns.geo.hasGeometry} ?geometry ;
-          ${ns.schema.name} ?label .
+      const results = await Promise.all(
+        batched.map(async ([, values]) => {
+          const query = SELECT`?geoShapeIri ?label ?WKT`.WHERE`
+          values ?geoShapeIri {
+              ${values}
+          }
+  
+          ?geoShapeIri
+            ${ns.geo.hasGeometry} ?geometry ;
+            ${ns.schema.name} ?label .
+  
+          SERVICE <${SPARQL_GEO_ENDPOINT}> {
+            ?geometry ${ns.geo.asWKT} ?WKT
+          }
+  
+          FILTER(LANG(?label) = '${locale}')
+        `;
 
-        SERVICE <${SPARQL_GEO_ENDPOINT}> {
-          ?geometry ${ns.geo.asWKT} ?WKT
-        }
+          let result: any[] = [];
+          try {
+            result = await query.execute(sparqlClient.query, {
+              operation: "postUrlencoded",
+            });
+          } catch (e) {
+            console.error(e);
+          }
 
-        FILTER(LANG(?label) = '${locale}')
-      `;
+          return result.map((d) => ({
+            iri: d.geoShapeIri.value,
+            label: d.label?.value,
+            wktString: d.WKT.value,
+          }));
+        })
+      );
 
-        let result: any[] = [];
-        try {
-          result = await query.execute(client.query, {
-            operation: "postUrlencoded",
-          });
-        } catch (e) {
-          console.error(e);
-        }
+      return results;
+    } else {
+      return [];
+    }
+  };
 
-        return result.map((d) => ({
-          iri: d.geoShapeIri.value,
-          label: d.label?.value,
-          wktString: d.WKT.value,
-        }));
-      })
-    );
-
-    return results.flat();
-  } else {
-    return [];
-  }
-}
+export const loadGeoShapes = ({ locale }: { locale: string }) => {
+  return createGeoShapesLoader({ locale })();
+};

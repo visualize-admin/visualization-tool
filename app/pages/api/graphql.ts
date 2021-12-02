@@ -10,6 +10,7 @@ import {
   createOrganizationLoader,
   createThemeLoader,
 } from "../../rdf/query-cube-metadata";
+import { createGeoShapesLoader } from "../../rdf/query-geoshapes";
 
 const cors = configureCors();
 
@@ -22,6 +23,9 @@ const server = new ApolloServer({
   },
   context: ({ req }) => ({
     loaders: {
+      geoShapes: new DataLoader(
+        createGeoShapesLoader({ locale: req.headers["accept-language"] })
+      ),
       themes: new DataLoader(
         createThemeLoader({ locale: req.headers["accept-language"] })
       ),

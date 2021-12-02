@@ -20,7 +20,7 @@ import {
   queryDatasetCountBySubTheme,
   queryDatasetCountByTheme,
 } from "../rdf/query-cube-metadata";
-import { loadGeoShapes } from "../rdf/query-geoshapes";
+import { RawGeoShape } from "../rdf/query-geoshapes";
 import truthy from "../utils/truthy";
 import {
   DataCubeResolvers,
@@ -312,9 +312,9 @@ export const resolvers: Resolvers = {
   },
   GeoDimension: {
     ...dimensionResolvers,
-    geoShapes: async ({ dimension, locale }) => {
-      const rawShapes = await loadGeoShapes({ dimension, locale });
-      const features = rawShapes.map((d) => ({
+    geoShapes: async ({ dimension }, _, { loaders }) => {
+      const resolvedGeoShapes = await loaders.geoShapes.load(dimension.in);
+      const features = resolvedGeoShapes.map((d: RawGeoShape) => ({
         type: "Feature",
         properties: {
           iri: d.iri,
