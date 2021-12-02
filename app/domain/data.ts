@@ -101,6 +101,12 @@ export const isTemporalDimension = (
   return dimension.__typename === "TemporalDimension";
 };
 
+export const isMeasureDimension = (
+  dimension: DimensionFieldsFragment
+): dimension is MeasureFieldsFragment => {
+  return dimension.__typename === "Measure";
+};
+
 /**
  * @fixme use metadata to filter time dimension!
  */

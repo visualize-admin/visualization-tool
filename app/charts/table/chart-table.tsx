@@ -10,7 +10,8 @@ import { TableConfig } from "../../configurator";
 import { isNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -74,8 +75,8 @@ const ChartTable = memo(function ChartTable({
   chartConfig,
 }: {
   observations: Observation[];
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionFieldsFragment[];
+  measures: MeasureFieldsFragment[];
   chartConfig: TableConfig;
 }) {
   return (

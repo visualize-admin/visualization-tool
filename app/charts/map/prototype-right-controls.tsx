@@ -4,7 +4,7 @@ import { Box } from "theme-ui";
 import { Checkbox, Radio, Select } from "../../components/form";
 import { PaletteType } from "../../configurator";
 import { ControlSection } from "../../configurator/components/chart-controls/section";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import { MeasureFieldsFragment } from "../../graphql/query-hooks";
 import { ActiveLayer, Control } from "./chart-map-prototype";
 import { Label } from "./prototype-components";
 
@@ -27,7 +27,7 @@ export const PrototypeRightControls = ({
   activeControl: Control;
   activeLayers: ActiveLayer;
   updateActiveLayers: (x: keyof ActiveLayer) => void;
-  measures: DimensionMetaDataFragment[];
+  measures: MeasureFieldsFragment[];
   measure: string;
   setMeasure: (x: string) => void;
   palette: string;

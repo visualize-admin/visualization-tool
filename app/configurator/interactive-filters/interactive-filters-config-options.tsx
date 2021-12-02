@@ -6,7 +6,7 @@ import { getFieldComponentIri, getFieldComponentIris } from "../../charts";
 import { Checkbox } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
-  DimensionMetaDataFragment,
+  DimensionFieldsFragment,
   TimeUnit,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
@@ -162,7 +162,9 @@ const InteractiveTimeFilterOptions = ({
     const timeExtent = hardFiltersValues
       ? extent(Object.keys(hardFiltersValues), (d) => parseDate(d.toString()))
       : timeDimension
-      ? extent(timeDimension?.values, (d) => parseDate(d.value.toString()))
+      ? extent([timeDimension?.from, timeDimension?.to], (d) =>
+          parseDate(d.value.toString())
+        )
       : undefined;
 
     return (
@@ -220,7 +222,7 @@ const InteractiveDataFiltersToggle = ({
   path: "dataFilters";
   defaultChecked?: boolean;
   disabled?: boolean;
-  dimensions: DimensionMetaDataFragment[];
+  dimensions: DimensionFieldsFragment[];
 }) => {
   const fieldProps = useInteractiveDataFiltersToggle({
     path,

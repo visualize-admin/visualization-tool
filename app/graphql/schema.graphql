@@ -51,38 +51,38 @@ type CategoricalValue {
 interface IDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean
+  isKeyDimension: Boolean!
 }
 
 interface ICategoricalDimension implements IDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean
-  hasOrder: Boolean
+  isKeyDimension: Boolean!
+  hasOrder: Boolean!
   values: [CategoricalValue!]!
 }
 
 type CategoricalDimension implements IDimension & ICategoricalDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean
-  hasOrder: Boolean
+  isKeyDimension: Boolean!
+  hasOrder: Boolean!
   values: [CategoricalValue!]!
 }
 
 type GeoShapeDimension implements IDimension & ICategoricalDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean
-  hasOrder: Boolean
+  isKeyDimension: Boolean!
+  hasOrder: Boolean!
   values: [CategoricalValue!]!
 }
 
 type GeoPointDimension implements IDimension & ICategoricalDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean
-  hasOrder: Boolean
+  isKeyDimension: Boolean!
+  hasOrder: Boolean!
   values: [CategoricalValue!]!
 }
 
@@ -101,7 +101,7 @@ type TemporalDimension implements IDimension {
   label: String!
   timeUnit: TimeUnit!
   timeFormat: String!
-  isKeyDimension: Boolean
+  isKeyDimension: Boolean!
   from: String!
   to: String!
 }
@@ -110,7 +110,7 @@ type Measure implements IDimension {
   iri: String!
   label: String!
   unit: String
-  isKeyDimension: Boolean
+  isKeyDimension: Boolean!
   min: Float!
   max: Float!
 }

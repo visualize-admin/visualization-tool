@@ -16,7 +16,8 @@ import {
 } from "../../configurator";
 import { Observation } from "../../domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -93,8 +94,8 @@ export const ChartPie = memo(
     interactiveFiltersConfig,
   }: {
     observations: Observation[];
-    dimensions: DimensionMetaDataFragment[];
-    measures: DimensionMetaDataFragment[];
+    dimensions: DimensionFieldsFragment[];
+    measures: MeasureFieldsFragment[];
     fields: PieFields;
     interactiveFiltersConfig: InteractiveFiltersConfig;
   }) => {

@@ -21,8 +21,8 @@ export type CategoricalDimension = IDimension & ICategoricalDimension & {
   __typename: 'CategoricalDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
-  isKeyDimension?: Maybe<Scalars['Boolean']>;
-  hasOrder?: Maybe<Scalars['Boolean']>;
+  isKeyDimension: Scalars['Boolean'];
+  hasOrder: Scalars['Boolean'];
   values: Array<CategoricalValue>;
 };
 
@@ -113,8 +113,8 @@ export type GeoPointDimension = IDimension & ICategoricalDimension & {
   __typename: 'GeoPointDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
-  isKeyDimension?: Maybe<Scalars['Boolean']>;
-  hasOrder?: Maybe<Scalars['Boolean']>;
+  isKeyDimension: Scalars['Boolean'];
+  hasOrder: Scalars['Boolean'];
   values: Array<CategoricalValue>;
 };
 
@@ -122,23 +122,23 @@ export type GeoShapeDimension = IDimension & ICategoricalDimension & {
   __typename: 'GeoShapeDimension';
   iri: Scalars['String'];
   label: Scalars['String'];
-  isKeyDimension?: Maybe<Scalars['Boolean']>;
-  hasOrder?: Maybe<Scalars['Boolean']>;
+  isKeyDimension: Scalars['Boolean'];
+  hasOrder: Scalars['Boolean'];
   values: Array<CategoricalValue>;
 };
 
 export type ICategoricalDimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
-  isKeyDimension?: Maybe<Scalars['Boolean']>;
-  hasOrder?: Maybe<Scalars['Boolean']>;
+  isKeyDimension: Scalars['Boolean'];
+  hasOrder: Scalars['Boolean'];
   values: Array<CategoricalValue>;
 };
 
 export type IDimension = {
   iri: Scalars['String'];
   label: Scalars['String'];
-  isKeyDimension?: Maybe<Scalars['Boolean']>;
+  isKeyDimension: Scalars['Boolean'];
 };
 
 export type Measure = IDimension & {
@@ -146,7 +146,7 @@ export type Measure = IDimension & {
   iri: Scalars['String'];
   label: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
-  isKeyDimension?: Maybe<Scalars['Boolean']>;
+  isKeyDimension: Scalars['Boolean'];
   min: Scalars['Float'];
   max: Scalars['Float'];
 };
@@ -220,7 +220,7 @@ export type TemporalDimension = IDimension & {
   label: Scalars['String'];
   timeUnit: TimeUnit;
   timeFormat: Scalars['String'];
-  isKeyDimension?: Maybe<Scalars['Boolean']>;
+  isKeyDimension: Scalars['Boolean'];
   from: Scalars['String'];
   to: Scalars['String'];
 };
@@ -247,43 +247,43 @@ export type DataCubesQueryVariables = Exact<{
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
 type DimensionFields_CategoricalDimension_Fragment = (
-  { __typename: 'CategoricalDimension', iri: string, label: string, isKeyDimension?: Maybe<boolean> }
+  { __typename: 'CategoricalDimension', iri: string, label: string, isKeyDimension: boolean }
   & CategoricalFields_CategoricalDimension_Fragment
 );
 
 type DimensionFields_GeoPointDimension_Fragment = (
-  { __typename: 'GeoPointDimension', iri: string, label: string, isKeyDimension?: Maybe<boolean> }
+  { __typename: 'GeoPointDimension', iri: string, label: string, isKeyDimension: boolean }
   & CategoricalFields_GeoPointDimension_Fragment
 );
 
 type DimensionFields_GeoShapeDimension_Fragment = (
-  { __typename: 'GeoShapeDimension', iri: string, label: string, isKeyDimension?: Maybe<boolean> }
+  { __typename: 'GeoShapeDimension', iri: string, label: string, isKeyDimension: boolean }
   & CategoricalFields_GeoShapeDimension_Fragment
 );
 
 type DimensionFields_Measure_Fragment = (
-  { __typename: 'Measure', iri: string, label: string, isKeyDimension?: Maybe<boolean> }
+  { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean }
   & MeasureFieldsFragment
 );
 
 type DimensionFields_TemporalDimension_Fragment = (
-  { __typename: 'TemporalDimension', iri: string, label: string, isKeyDimension?: Maybe<boolean> }
+  { __typename: 'TemporalDimension', iri: string, label: string, isKeyDimension: boolean }
   & TemporalFieldsFragment
 );
 
 export type DimensionFieldsFragment = DimensionFields_CategoricalDimension_Fragment | DimensionFields_GeoPointDimension_Fragment | DimensionFields_GeoShapeDimension_Fragment | DimensionFields_Measure_Fragment | DimensionFields_TemporalDimension_Fragment;
 
-type CategoricalFields_CategoricalDimension_Fragment = { __typename: 'CategoricalDimension', iri: string, label: string, isKeyDimension?: Maybe<boolean>, hasOrder?: Maybe<boolean>, values: Array<{ __typename: 'CategoricalValue', value: string, label: string, position?: Maybe<number> }> };
+type CategoricalFields_CategoricalDimension_Fragment = { __typename: 'CategoricalDimension', iri: string, label: string, isKeyDimension: boolean, hasOrder: boolean, values: Array<{ __typename: 'CategoricalValue', value: string, label: string, position?: Maybe<number> }> };
 
-type CategoricalFields_GeoPointDimension_Fragment = { __typename: 'GeoPointDimension', iri: string, label: string, isKeyDimension?: Maybe<boolean>, hasOrder?: Maybe<boolean>, values: Array<{ __typename: 'CategoricalValue', value: string, label: string, position?: Maybe<number> }> };
+type CategoricalFields_GeoPointDimension_Fragment = { __typename: 'GeoPointDimension', iri: string, label: string, isKeyDimension: boolean, hasOrder: boolean, values: Array<{ __typename: 'CategoricalValue', value: string, label: string, position?: Maybe<number> }> };
 
-type CategoricalFields_GeoShapeDimension_Fragment = { __typename: 'GeoShapeDimension', iri: string, label: string, isKeyDimension?: Maybe<boolean>, hasOrder?: Maybe<boolean>, values: Array<{ __typename: 'CategoricalValue', value: string, label: string, position?: Maybe<number> }> };
+type CategoricalFields_GeoShapeDimension_Fragment = { __typename: 'GeoShapeDimension', iri: string, label: string, isKeyDimension: boolean, hasOrder: boolean, values: Array<{ __typename: 'CategoricalValue', value: string, label: string, position?: Maybe<number> }> };
 
 export type CategoricalFieldsFragment = CategoricalFields_CategoricalDimension_Fragment | CategoricalFields_GeoPointDimension_Fragment | CategoricalFields_GeoShapeDimension_Fragment;
 
-export type TemporalFieldsFragment = { __typename: 'TemporalDimension', iri: string, label: string, isKeyDimension?: Maybe<boolean>, timeUnit: TimeUnit, timeFormat: string, from: string, to: string };
+export type TemporalFieldsFragment = { __typename: 'TemporalDimension', iri: string, label: string, isKeyDimension: boolean, timeUnit: TimeUnit, timeFormat: string, from: string, to: string };
 
-export type MeasureFieldsFragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension?: Maybe<boolean>, unit?: Maybe<string>, min: number, max: number };
+export type MeasureFieldsFragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, unit?: Maybe<string>, min: number, max: number };
 
 export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];

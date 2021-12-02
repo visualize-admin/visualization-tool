@@ -10,8 +10,11 @@ import {
 } from "../../configurator";
 import { parseDate } from "../../configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
-import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import { isMeasureDimension, Observation } from "../../domain/data";
+import {
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
+} from "../../graphql/query-hooks";
 import {
   imputeTemporalLinearSeries,
   interpolateZerosValue,
@@ -320,9 +323,9 @@ const SlugRe = /\W+/g;
 export const getSlugifiedIri = (iri: string) => iri.replace(SlugRe, "_");
 
 export const getLabelWithUnit = (
-  dimension: DimensionMetaDataFragment
+  dimension: DimensionFieldsFragment
 ): string => {
-  return dimension.unit
+  return isMeasureDimension(dimension) && dimension.unit
     ? `${dimension.label} (${dimension.unit})`
     : dimension.label;
 };

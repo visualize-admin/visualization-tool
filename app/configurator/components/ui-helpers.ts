@@ -42,7 +42,7 @@ import {
 import { TimeLocaleObject, timeParse } from "d3-time-format";
 import { memoize } from "lodash";
 import { useMemo } from "react";
-import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
+import { DimensionFieldsFragment, TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import {
   getD3FormatLocale,
@@ -762,7 +762,7 @@ export const mapColorsToComponentValuesIris = ({
   component,
 }: {
   palette: string;
-  component: DimensionMetaDataFragment;
+  component: DimensionFieldsFragment;
 }) => {
   if (!("values" in component)) {
     return {};

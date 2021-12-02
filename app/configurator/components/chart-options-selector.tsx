@@ -24,7 +24,7 @@ import { FieldSetLegend, Radio, Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import { getDimensionsByDimensionType } from "../../domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -160,7 +160,7 @@ const EncodingOptionsPanel = ({
   state: ConfiguratorStateConfiguringChart;
   field: string;
   chartType: ChartType;
-  component: DimensionMetaDataFragment | undefined;
+  component: DimensionFieldsFragment | undefined;
   metaData: DataCubeMetadata;
   imputationNeeded: boolean;
 }) => {
@@ -240,7 +240,7 @@ const EncodingOptionsPanel = ({
       </ControlSection>
       {/* Only nominal dimensions are sortable!
           Temporal and Ordinal dimensions already have a defined order. */}
-      {encoding.sorting && component?.__typename === "NominalDimension" && (
+      {encoding.sorting && component?.__typename === "CategoricalDimension" && (
         <ChartFieldSorting
           state={state}
           disabled={!component}

@@ -11,14 +11,14 @@ import {
   mapColorsToComponentValuesIris,
   sequentialPalettes,
 } from "../ui-helpers";
-import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
+import { DimensionFieldsFragment } from "../../../graphql/query-hooks";
 import { Icon } from "../../../icons";
 
 type Props = {
   field: string;
   disabled?: boolean;
   colorConfigPath?: string;
-  component: DimensionMetaDataFragment | undefined;
+  component: DimensionFieldsFragment | undefined;
 };
 
 export const ColorPalette = ({
@@ -200,7 +200,7 @@ const ColorPaletteReset = ({
 }: {
   field: string;
   colorConfigPath?: string;
-  component: DimensionMetaDataFragment;
+  component: DimensionFieldsFragment;
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const [, dispatch] = useConfiguratorState();
