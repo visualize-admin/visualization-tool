@@ -313,7 +313,7 @@ export const resolvers: Resolvers = {
   GeoDimension: {
     ...dimensionResolvers,
     geoShapes: async ({ dimension }, _, { loaders }) => {
-      const resolvedGeoShapes = await loaders.geoShapes.load(dimension.in);
+      const resolvedGeoShapes = await loaders.geoShapes.loadMany(dimension.in);
       const features = resolvedGeoShapes.map((d: RawGeoShape) => ({
         type: "Feature",
         properties: {

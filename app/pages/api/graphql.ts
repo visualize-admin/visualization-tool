@@ -12,6 +12,8 @@ import {
 } from "../../rdf/query-cube-metadata";
 import { createGeoShapesLoader } from "../../rdf/query-geoshapes";
 
+const MAX_BATCH_SIZE = 500;
+
 const cors = configureCors();
 
 const server = new ApolloServer({
@@ -24,7 +26,8 @@ const server = new ApolloServer({
   context: ({ req }) => ({
     loaders: {
       geoShapes: new DataLoader(
-        createGeoShapesLoader({ locale: req.headers["accept-language"] })
+        createGeoShapesLoader({ locale: req.headers["accept-language"] }),
+        { maxBatchSize: MAX_BATCH_SIZE }
       ),
       themes: new DataLoader(
         createThemeLoader({ locale: req.headers["accept-language"] })
