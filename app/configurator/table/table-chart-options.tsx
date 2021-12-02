@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import get from "lodash/get";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { Checkbox } from "../../components/form";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import { DimensionFieldsFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { ColorPalette } from "../components/chart-controls/color-palette";
 import {
@@ -163,8 +163,9 @@ export const TableColumnOptions = ({
   const { isGroup, isHidden } = chartConfig.fields[activeField];
 
   const columnStyleOptions =
-    component.__typename === "NominalDimension" ||
-    component.__typename === "OrdinalDimension" ||
+    component.__typename === "CategoricalDimension" ||
+    component.__typename === "GeoShapeDimension" ||
+    component.__typename === "GeoPointDimension" ||
     component.__typename === "TemporalDimension"
       ? [
           {
@@ -257,7 +258,7 @@ export const TableColumnOptions = ({
                       palette: getDefaultCategoricalPalette().value,
                       colorMapping: mapColorsToComponentValuesIris({
                         palette: getDefaultCategoricalPalette().value,
-                        component: component as DimensionMetaDataFragment,
+                        component: component as DimensionFieldsFragment,
                       }),
                     };
                   case "heatmap":
@@ -289,13 +290,14 @@ export const TableColumnOptions = ({
             <ColumnStyleSubOptions
               chartConfig={chartConfig}
               activeField={activeField}
-              component={component as DimensionMetaDataFragment}
+              component={component as DimensionFieldsFragment}
             />
           </ControlSectionContent>
         </ControlSection>
       )}
-      {component.__typename === "NominalDimension" ||
-      component.__typename === "OrdinalDimension" ? (
+      {component.__typename === "CategoricalDimension" ||
+      component.__typename === "GeoShapeDimension" ||
+      component.__typename === "GeoPointDimension" ? (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
@@ -360,7 +362,7 @@ const ColumnStyleSubOptions = ({
 }: {
   chartConfig: TableConfig;
   activeField: string;
-  component: DimensionMetaDataFragment;
+  component: DimensionFieldsFragment;
 }) => {
   const type = chartConfig.fields[activeField].columnStyle.type;
   return (

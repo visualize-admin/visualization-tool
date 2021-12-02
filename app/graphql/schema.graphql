@@ -1,5 +1,4 @@
 scalar Observation
-scalar DimensionValue
 scalar RawObservation
 scalar Filters
 
@@ -37,37 +36,54 @@ type DataCube {
     measures: [String!]
     filters: Filters
   ): ObservationsQuery!
-  dimensions: [Dimension!]!
-  dimensionByIri(iri: String!): Dimension
+  dimensions: [IDimension!]!
+  dimensionByIri(iri: String!): IDimension
   measures: [Measure!]!
   themes: [DataCubeTheme!]!
 }
 
-interface Dimension {
-  iri: String!
+type CategoricalValue {
+  value: String!
   label: String!
-  unit: String
-  scaleType: String
-  isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  position: Int
 }
 
-type NominalDimension implements Dimension {
+interface IDimension {
   iri: String!
   label: String!
-  unit: String
-  scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
 }
 
-type OrdinalDimension implements Dimension {
+interface ICategoricalDimension implements IDimension {
   iri: String!
   label: String!
-  unit: String
-  scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  hasOrder: Boolean!
+  values: [CategoricalValue!]!
+}
+
+type CategoricalDimension implements IDimension & ICategoricalDimension {
+  iri: String!
+  label: String!
+  isKeyDimension: Boolean!
+  hasOrder: Boolean!
+  values: [CategoricalValue!]!
+}
+
+type GeoShapeDimension implements IDimension & ICategoricalDimension {
+  iri: String!
+  label: String!
+  isKeyDimension: Boolean!
+  hasOrder: Boolean!
+  values: [CategoricalValue!]!
+}
+
+type GeoPointDimension implements IDimension & ICategoricalDimension {
+  iri: String!
+  label: String!
+  isKeyDimension: Boolean!
+  hasOrder: Boolean!
+  values: [CategoricalValue!]!
 }
 
 enum TimeUnit {
@@ -80,24 +96,23 @@ enum TimeUnit {
   Second
 }
 
-type TemporalDimension implements Dimension {
+type TemporalDimension implements IDimension {
   iri: String!
   label: String!
   timeUnit: TimeUnit!
   timeFormat: String!
-  unit: String
-  scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  from: String!
+  to: String!
 }
 
-type Measure implements Dimension {
+type Measure implements IDimension {
   iri: String!
   label: String!
   unit: String
-  scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  min: Float!
+  max: Float!
 }
 
 type DataCubeResult {

@@ -1,6 +1,6 @@
 import { Client } from "@urql/core";
 import * as api from "../api";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import { DimensionFieldsFragment } from "../graphql/query-hooks";
 import bathingWaterMetadata from "../test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
 import { data as fakeVizFixture } from "../test/__fixtures/prod/line-1.json";
 import {
@@ -108,9 +108,8 @@ describe("applyDimensionToFilters", () => {
       { value: "E.coli", label: "E.coli" },
       { value: "Enterokokken", label: "Enterokokken" },
     ],
-    unit: null,
-    __typename: "NominalDimension",
-  } as DimensionMetaDataFragment;
+    __typename: "CategoricalDimension",
+  } as DimensionFieldsFragment;
 
   const optionalDimension = {
     iri: "https://environment.ld.admin.ch/foen/ubd0104/parametertype",
@@ -120,9 +119,8 @@ describe("applyDimensionToFilters", () => {
       { value: "E.coli", label: "E.coli" },
       { value: "Enterokokken", label: "Enterokokken" },
     ],
-    unit: null,
-    __typename: "NominalDimension",
-  } as DimensionMetaDataFragment;
+    __typename: "CategoricalDimension",
+  } as DimensionFieldsFragment;
 
   describe("applyNonTableDimensionToFilters", () => {
     it("should remove single value filter when a keyDimension is used as a field", () => {

@@ -22,7 +22,6 @@ generates:
       scalars:
         Observation: "../domain/data#Observation"
         ObservationValue: "../domain/data#ObservationValue"
-        DimensionValue: "../domain/data#DimensionValue"
         RawObservation: "../domain/data#RawObservation"
         Filters: "../configurator#Filters"
       mappers:
@@ -30,6 +29,5 @@ generates:
         ObservationsQuery: "./shared-types#ResolvedObservationsQuery"
         Measure: "./shared-types#ResolvedMeasure"
         Dimension: "./shared-types#ResolvedDimension"
-        NominalDimension: "./shared-types#ResolvedDimension"
-        OrdinalDimension: "./shared-types#ResolvedDimension"
+        CategoricalDimension: "./shared-types#ResolvedDimension"
         TemporalDimension: "./shared-types#ResolvedDimension"

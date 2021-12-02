@@ -27,8 +27,7 @@ import {
   getPalette,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import { isCategoricalDimension, Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
 import {
@@ -205,9 +204,9 @@ const useColumnsStackedState = ({
   // Scales
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+  const segmentDimension = dimensions
+    .filter(isCategoricalDimension)
+    .find((d) => d.iri === fields.segment?.componentIri);
 
   if (fields.segment && segmentDimension && fields.segment.colorMapping) {
     const orderedSegmentLabelsAndColors = segments.map((segment) => {

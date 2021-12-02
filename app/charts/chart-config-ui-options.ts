@@ -9,10 +9,10 @@ import { imputationTypes } from "../configurator/config-types";
 // This should match graphQL Schema
 export type DimensionType =
   | "TemporalDimension"
-  | "NominalDimension"
-  | "OrdinalDimension"
-  | "Measure"
-  | "Attribute";
+  | "CategoricalDimension"
+  | "GeoShapeDimension"
+  | "GeoPointDimension"
+  | "Measure";
 
 export type EncodingField = "x" | "y" | "segment";
 export type EncodingOption =
@@ -70,7 +70,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "x",
         optional: false,
-        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        values: [
+          "TemporalDimension",
+          "CategoricalDimension",
+          "GeoShapeDimension",
+          "GeoPointDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
@@ -80,7 +85,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "CategoricalDimension",
+          "GeoShapeDimension",
+          "GeoPointDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -100,7 +109,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
-        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        values: [
+          "TemporalDimension",
+          "CategoricalDimension",
+          "GeoShapeDimension",
+          "GeoPointDimension",
+        ],
         filters: true,
       },
       {
@@ -112,7 +126,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "CategoricalDimension",
+          "GeoShapeDimension",
+          "GeoPointDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -139,7 +157,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "CategoricalDimension",
+          "GeoShapeDimension",
+          "GeoPointDimension",
+        ],
         filters: true,
         // sorting: [
         //   { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
@@ -164,7 +186,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "CategoricalDimension",
+          "GeoShapeDimension",
+          "GeoPointDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -191,7 +217,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "CategoricalDimension",
+          "GeoShapeDimension",
+          "GeoPointDimension",
+        ],
         filters: true,
         options: [{ field: "color", values: ["palette"] }],
       },
@@ -210,7 +240,11 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: false,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "CategoricalDimension",
+          "GeoShapeDimension",
+          "GeoPointDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },

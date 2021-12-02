@@ -2,7 +2,8 @@ import { Box } from "theme-ui";
 
 import { Observation } from "../../domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
   useDataCubePreviewObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -12,7 +13,7 @@ import {
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 
-type Header = DimensionMetaDataFragment;
+type Header = DimensionFieldsFragment | MeasureFieldsFragment;
 
 const PreviewTable = ({
   title,
@@ -47,22 +48,26 @@ const PreviewTable = ({
             borderBottomStyle: "solid",
           }}
         >
-          {headers.map(({ iri, label, unit, __typename }) => {
+          {headers.map((dimension) => {
+            const isMeasure = dimension.__typename === "Measure";
+            const unit =
+              dimension.__typename === "Measure" ? dimension.unit : undefined;
+
             return (
               <Box
                 as="th"
                 role="columnheader"
-                key={iri}
+                key={dimension.iri}
                 // @ts-expect-error `scope` is valid on th, but not on div
                 scope="col"
                 sx={{
-                  textAlign: __typename === "Measure" ? "right" : "left",
+                  textAlign: isMeasure ? "right" : "left",
                   px: 2,
                   py: 3,
                   minWidth: 128,
                 }}
               >
-                {unit ? `${label} (${unit})` : label}
+                {unit ? `${dimension.label} (${unit})` : dimension.label}
               </Box>
             );
           })}

@@ -11,7 +11,10 @@ import { HintBlue, LoadingOverlay, NoDataHint } from "../../components/hint";
 import { MapFields, PaletteType } from "../../configurator";
 import { ControlSection } from "../../configurator/components/chart-controls/section";
 import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import {
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
+} from "../../graphql/query-hooks";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
@@ -99,25 +102,25 @@ export const ChartMapVisualization = () => {
     const dimensions = Object.keys(dataset.ds[0])
       .filter((d) => d.startsWith("D_"))
       .map((d) => ({
-        __typename: "NominalDimension",
+        __typename: "CategoricalDimension",
         iri: d,
         label: d,
         dimensionValues: [...new Set(dataset.ds.map((datum) => datum[d]))],
-      })) as Array<DimensionMetaDataFragment & { dimensionValues: string[] }>;
+      })) as Array<DimensionFieldsFragment & { dimensionValues: string[] }>;
     const measures = Object.keys(dataset.ds[0])
       .filter((d) => d.startsWith("M_"))
       .map((d) => ({
         __typename: "Measure",
         iri: d,
         label: d,
-      })) as DimensionMetaDataFragment[];
+      })) as MeasureFieldsFragment[];
     const attributes = Object.keys(dataset.ds[0])
       .filter((d) => d.startsWith("A_"))
       .map((d) => ({
-        __typename: "NominalDimension",
+        __typename: "CategoricalDimension",
         iri: d,
         label: d,
-      })) as DimensionMetaDataFragment[];
+      })) as DimensionFieldsFragment[];
 
     return (
       <ChartMapPrototype
@@ -147,9 +150,9 @@ export const ChartMapPrototype = ({
 }: {
   dataset: Observation[];
   features: GeoData;
-  dimensions: Array<DimensionMetaDataFragment & { dimensionValues: string[] }>;
-  measures: DimensionMetaDataFragment[];
-  attributes: DimensionMetaDataFragment[];
+  dimensions: Array<DimensionFieldsFragment & { dimensionValues: string[] }>;
+  measures: MeasureFieldsFragment[];
+  attributes: DimensionFieldsFragment[];
 }) => {
   const [activeLayers, setActiveLayers] = useState<ActiveLayer>({
     relief: true,
@@ -357,8 +360,8 @@ export const ChartMap = memo(
   }: {
     features: GeoData;
     observations: Observation[];
-    dimensions: DimensionMetaDataFragment[];
-    measures: DimensionMetaDataFragment[];
+    dimensions: DimensionFieldsFragment[];
+    measures: MeasureFieldsFragment[];
     // Additional props (prototype only)
     fields: MapFields;
     measure: string;

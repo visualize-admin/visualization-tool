@@ -1,5 +1,9 @@
 import { ColumnFields, ConfiguratorState, TableConfig } from "../configurator";
-import { DimensionMetaDataFragment, TimeUnit } from "../graphql/query-hooks";
+import {
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
+  TimeUnit,
+} from "../graphql/query-hooks";
 
 export const states: ConfiguratorState[] = [
   {
@@ -110,7 +114,7 @@ export const fields: ColumnFields = {
   },
 };
 
-export const dimensions: DimensionMetaDataFragment[] = [
+export const dimensions: DimensionFieldsFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/0",
     label: "Jahr",
@@ -118,96 +122,106 @@ export const dimensions: DimensionMetaDataFragment[] = [
     timeUnit: TimeUnit.Year,
     timeFormat: "%Y",
     isKeyDimension: true,
-    values: [
-      { value: "2000", label: "2000" },
-      { value: "2020", label: "2020" },
-    ],
+    from: "2000",
+    to: "2020",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/1",
     label: "Kanton",
-    __typename: "NominalDimension",
+    __typename: "CategoricalDimension",
     isKeyDimension: true,
+    isOrdinal: false,
     values: [],
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/dimension/2",
     label: "Forstzone",
-    __typename: "NominalDimension",
+    __typename: "CategoricalDimension",
     isKeyDimension: false,
+    isOrdinal: false,
     values: [],
   },
 ];
-export const measures: DimensionMetaDataFragment[] = [
+export const measures: MeasureFieldsFragment[] = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/0",
     label: "Investitionen: Einnahmen - Total",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/1",
     label: "Investitionen: Einnahmen aus Beiträgen Bund und Kantone",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/2",
     label: "Investitionen: Einnahmen aus Beiträgen von Gemeinden und Dritten",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/3",
     label: "Investitionen: übrige Einnahmen",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/4",
     label: "Investitionen - Total",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/5",
     label: "Investitionen für Wirtschaftsgebäude",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/6",
     label: "Investitionen für Maschinen",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/7",
     label: "Übrige Ausgaben für Investitionen",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/8",
     label: "Investitionen für Erschliessungsanlagen",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703030000_124/measure/9",
     label: "Netto-Investitionen",
     __typename: "Measure",
     isKeyDimension: false,
-    values: [],
+    min: 0,
+    max: 9999,
   },
 ];
 
@@ -522,7 +536,7 @@ export const tableDimensions = [
         __typename: "DimensionValue",
       },
     ],
-    __typename: "NominalDimension",
+    __typename: "CategoricalDimension",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
@@ -691,7 +705,7 @@ export const tableDimensions = [
         __typename: "DimensionValue",
       },
     ],
-    __typename: "NominalDimension",
+    __typename: "CategoricalDimension",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/3",
@@ -734,7 +748,7 @@ export const tableDimensions = [
         __typename: "DimensionValue",
       },
     ],
-    __typename: "NominalDimension",
+    __typename: "CategoricalDimension",
   },
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/4",
@@ -801,7 +815,7 @@ export const tableDimensions = [
         __typename: "DimensionValue",
       },
     ],
-    __typename: "NominalDimension",
+    __typename: "CategoricalDimension",
   },
 ];
 export const tableConfig: TableConfig = {
@@ -813,7 +827,7 @@ export const tableConfig: TableConfig = {
     {
       componentIri:
         "http://environment.ld.admin.ch/foen/px/0703010000_105/dimension/2",
-      componentType: "NominalDimension",
+      componentType: "CategoricalDimension",
       sortingOrder: "desc",
     },
     {
@@ -830,7 +844,7 @@ export const tableConfig: TableConfig = {
       index: 1,
       isGroup: false,
       isHidden: false,
-      componentType: "NominalDimension",
+      componentType: "CategoricalDimension",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -844,7 +858,7 @@ export const tableConfig: TableConfig = {
       index: 7,
       isGroup: false,
       isHidden: false,
-      componentType: "NominalDimension",
+      componentType: "CategoricalDimension",
       columnStyle: {
         type: "category",
         palette: "set3",
@@ -871,7 +885,7 @@ export const tableConfig: TableConfig = {
       index: 3,
       isGroup: false,
       isHidden: false,
-      componentType: "NominalDimension",
+      componentType: "CategoricalDimension",
       columnStyle: {
         type: "text",
         textStyle: "bold",
@@ -885,7 +899,7 @@ export const tableConfig: TableConfig = {
       index: 4,
       isGroup: false,
       isHidden: false,
-      componentType: "NominalDimension",
+      componentType: "CategoricalDimension",
       columnStyle: {
         type: "text",
         textStyle: "regular",
@@ -899,7 +913,7 @@ export const tableConfig: TableConfig = {
       index: 5,
       isGroup: false,
       isHidden: false,
-      componentType: "NominalDimension",
+      componentType: "CategoricalDimension",
       columnStyle: {
         type: "text",
         textStyle: "regular",

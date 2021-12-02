@@ -32,16 +32,45 @@ query DataCubes(
   }
 }
 
-fragment dimensionMetaData on Dimension {
+fragment dimensionFields on IDimension {
   iri
   label
   isKeyDimension
-  values
-  unit
-  ... on TemporalDimension {
-    timeUnit
-    timeFormat
+
+  ...categoricalFields
+  ...temporalFields
+  ...measureFields
+}
+
+fragment categoricalFields on ICategoricalDimension {
+  iri
+  label
+  isKeyDimension
+  hasOrder
+  values {
+    value
+    label
+    position
   }
+}
+
+fragment temporalFields on TemporalDimension {
+  iri
+  label
+  isKeyDimension
+  timeUnit
+  timeFormat
+  from
+  to
+}
+
+fragment measureFields on Measure {
+  iri
+  label
+  isKeyDimension
+  unit
+  min
+  max
 }
 
 query DataCubePreview($iri: String!, $locale: String!, $latest: Boolean) {
@@ -51,10 +80,10 @@ query DataCubePreview($iri: String!, $locale: String!, $latest: Boolean) {
     description
     publicationStatus
     dimensions {
-      ...dimensionMetaData
+      ...dimensionFields
     }
     measures {
-      ...dimensionMetaData
+      ...measureFields
     }
   }
 }
@@ -107,10 +136,10 @@ query DataCubeMetadataWithComponentValues(
     title
     publisher
     dimensions {
-      ...dimensionMetaData
+      ...dimensionFields
     }
     measures {
-      ...dimensionMetaData
+      ...dimensionFields
     }
   }
 }
@@ -123,7 +152,7 @@ query DimensionValues(
 ) {
   dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
-      ...dimensionMetaData
+      ...dimensionFields
     }
   }
 }
@@ -137,7 +166,7 @@ query TemporalDimensionValues(
   dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ... on TemporalDimension {
-        ...dimensionMetaData
+        ...dimensionFields
         timeUnit
         timeFormat
       }
@@ -157,10 +186,10 @@ query DataCubeObservations(
     title
     description
     dimensions {
-      ...dimensionMetaData
+      ...dimensionFields
     }
     measures {
-      ...dimensionMetaData
+      ...dimensionFields
     }
     observations(measures: $measures, filters: $filters) {
       data

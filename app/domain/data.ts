@@ -1,5 +1,10 @@
 import { Literal, NamedNode } from "rdf-js";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import {
+  CategoricalFieldsFragment,
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
+  TemporalFieldsFragment,
+} from "../graphql/query-hooks";
 import { DimensionType } from "../charts/chart-config-ui-options";
 
 export type RawObservationValue = Literal | NamedNode;
@@ -8,7 +13,11 @@ export type RawObservation = Record<string, RawObservationValue>;
 
 export type ObservationValue = string | number | null;
 
-export type DimensionValue = { value: string | number; label: string };
+export type DimensionValue = {
+  value: string | number;
+  label: string;
+  position?: number;
+};
 
 export type Observation = Record<string, ObservationValue>;
 
@@ -76,21 +85,39 @@ export const parseObservationValue = ({
   return value.value;
 };
 
+export const isCategoricalDimension = (
+  dimension: DimensionFieldsFragment
+): dimension is CategoricalFieldsFragment => {
+  return (
+    dimension.__typename === "CategoricalDimension" ||
+    dimension.__typename === "GeoShapeDimension" ||
+    dimension.__typename === "GeoPointDimension"
+  );
+};
+
+export const isTemporalDimension = (
+  dimension: DimensionFieldsFragment
+): dimension is TemporalFieldsFragment => {
+  return dimension.__typename === "TemporalDimension";
+};
+
+export const isMeasureDimension = (
+  dimension: DimensionFieldsFragment
+): dimension is MeasureFieldsFragment => {
+  return dimension.__typename === "Measure";
+};
+
 /**
  * @fixme use metadata to filter time dimension!
  */
-export const getTimeDimensions = (dimensions: DimensionMetaDataFragment[]) =>
-  dimensions.filter((d) => d.__typename === "TemporalDimension");
+export const getTimeDimensions = (dimensions: DimensionFieldsFragment[]) =>
+  dimensions.filter(isTemporalDimension);
 /**
  * @fixme use metadata to filter categorical dimension!
  */
 export const getCategoricalDimensions = (
-  dimensions: DimensionMetaDataFragment[]
-) =>
-  dimensions.filter(
-    (d) =>
-      d.__typename === "NominalDimension" || d.__typename === "OrdinalDimension"
-  );
+  dimensions: DimensionFieldsFragment[]
+) => dimensions.filter(isCategoricalDimension);
 
 export const getDimensionsByDimensionType = ({
   dimensionTypes,
@@ -98,8 +125,8 @@ export const getDimensionsByDimensionType = ({
   measures,
 }: {
   dimensionTypes: DimensionType[];
-  dimensions: DimensionMetaDataFragment[];
-  measures: DimensionMetaDataFragment[];
+  dimensions: DimensionFieldsFragment[];
+  measures: MeasureFieldsFragment[];
 }) =>
   [...measures, ...dimensions].filter((component) =>
     dimensionTypes.includes(component.__typename)

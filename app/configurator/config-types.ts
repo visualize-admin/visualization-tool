@@ -7,8 +7,9 @@ const ComponentType = t.union([
   t.literal("Attribute"),
   t.literal("Measure"),
   t.literal("TemporalDimension"),
-  t.literal("NominalDimension"),
-  t.literal("OrdinalDimension"),
+  t.literal("CategoricalDimension"),
+  t.literal("GeoShapeDimension"),
+  t.literal("GeoPointDimension"),
 ]);
 
 export type ComponentType = t.TypeOf<typeof ComponentType>;

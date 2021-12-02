@@ -3,7 +3,10 @@ import { Box } from "theme-ui";
 import { memo, useMemo } from "react";
 import { ChartFields } from "../../configurator";
 import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import {
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
+} from "../../graphql/query-hooks";
 
 export const A11yTable = memo(
   ({
@@ -14,8 +17,8 @@ export const A11yTable = memo(
     observations,
   }: {
     title: string;
-    dimensions: DimensionMetaDataFragment[];
-    measures: DimensionMetaDataFragment[];
+    dimensions: DimensionFieldsFragment[];
+    measures: MeasureFieldsFragment[];
     fields: ChartFields;
     observations: Observation[];
   }) => {

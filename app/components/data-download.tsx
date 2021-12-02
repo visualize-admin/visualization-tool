@@ -7,7 +7,8 @@ import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig, ChartFields, isTableConfig } from "../configurator";
 import { Observation } from "../domain/data";
 import {
-  DimensionMetaDataFragment,
+  DimensionFieldsFragment,
+  MeasureFieldsFragment,
   useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
@@ -92,8 +93,8 @@ const DataDownloadInner = memo(
   }: {
     title: string;
     observations: Observation[];
-    dimensions: DimensionMetaDataFragment[];
-    measures: DimensionMetaDataFragment[];
+    dimensions: DimensionFieldsFragment[];
+    measures: MeasureFieldsFragment[];
     fields: ChartFields;
   }) => {
     const forCsvData = useMemo(() => {

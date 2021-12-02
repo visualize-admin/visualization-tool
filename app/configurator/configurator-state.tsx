@@ -22,7 +22,7 @@ import {
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
-  DimensionMetaDataFragment,
+  DimensionFieldsFragment,
 } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { createChartId } from "../lib/create-chart-id";
@@ -247,7 +247,7 @@ export const applyTableDimensionToFilters = ({
   isGrouped,
 }: {
   filters: Filters;
-  dimension: DimensionMetaDataFragment;
+  dimension: DimensionFieldsFragment;
   isHidden: boolean;
   isGrouped: boolean;
 }) => {
@@ -298,7 +298,7 @@ export const applyNonTableDimensionToFilters = ({
   isField,
 }: {
   filters: Filters;
-  dimension: DimensionMetaDataFragment;
+  dimension: DimensionFieldsFragment;
   isField: boolean;
 }) => {
   const currentFilter = filters[dimension.iri];
