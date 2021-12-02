@@ -60,8 +60,10 @@ const SelectChartTypeStep = () => {
   return (
     <>
       <PanelLeftWrapper>
-        <DatasetSelector state={state} />
-        <ChartTypeSelector state={state} />
+        <Stack spacing={2} direction="column">
+          <DatasetSelector state={state} />
+          <ChartTypeSelector state={state} />
+        </Stack>
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanel>

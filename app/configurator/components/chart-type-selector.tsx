@@ -8,10 +8,10 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
+import { useTheme } from "../../themes";
 import { FieldProps, useChartTypeSelectorField } from "../config-form";
 import { SectionTitle } from "./chart-controls/section";
 import { getFieldLabel, getIconName } from "./ui-helpers";
-import { useTheme } from "../../themes";
 
 export const ChartTypeSelectionButton = ({
   label,
@@ -33,7 +33,6 @@ export const ChartTypeSelectionButton = ({
       sx={{
         width: "86px",
         height: "86px",
-        mt: 4,
         borderRadius: "default",
 
         backgroundColor: checked ? "primary" : "monochrome100",
