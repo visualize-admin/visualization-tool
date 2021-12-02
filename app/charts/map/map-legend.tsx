@@ -26,7 +26,8 @@ import { useInteraction } from "../shared/use-interaction";
 import { useWidth } from "../shared/use-width";
 import { MapState } from "./map-state";
 
-const WIDTH = 256;
+const WIDTH = 204;
+const HEIGHT = 25;
 const COLOR_RAMP_HEIGHT = 10;
 
 export const MapLegend = () => {
@@ -476,47 +477,33 @@ const ContinuousColorLegend = () => {
   } = useChartState() as MapState;
   const { legendLabelColor, labelFontSize, fontFamily } = useChartTheme();
   const formatNumber = useFormatNumber();
-  const width = useWidth();
-
-  const legendWidth = Math.min(width, WIDTH);
-  const margins = {
-    top: 0,
-    right: 4,
-    bottom: 14,
-    left: 0,
+  const chartWidth = useWidth();
+  const width = Math.min(chartWidth, WIDTH);
+  const labelMargins = {
+    top: 15 + COLOR_RAMP_HEIGHT,
+    right: 5,
+    left: 5,
   };
-  const scale = scaleLinear().domain(dataDomain).range([0, legendWidth]);
+  const scale = scaleLinear().domain(dataDomain).range([0, width]);
 
   return (
-    <svg
-      width={legendWidth + margins.left + margins.right}
-      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
-    >
-      <g transform={`translate(${margins.left}, ${0})`}>
+    <svg width={width} height={HEIGHT}>
+      <g>
         <DataPointIndicator scale={scale} />
       </g>
-      <g transform={`translate(${margins.left}, ${margins.top})`}>
-        <foreignObject
-          x={0}
-          y={0}
-          width={legendWidth}
-          height={COLOR_RAMP_HEIGHT}
-        >
+      <g>
+        <foreignObject x={0} y={0} width={width} height={COLOR_RAMP_HEIGHT}>
           <ColorRamp
             colorInterpolator={getColorInterpolator(palette)}
-            nbClass={legendWidth}
-            width={legendWidth}
+            nbClass={width}
+            width={width}
             height={COLOR_RAMP_HEIGHT}
           />
         </foreignObject>
       </g>
-      <g
-        transform={`translate(${margins.left}, ${
-          COLOR_RAMP_HEIGHT + margins.top + margins.bottom
-        })`}
-      >
+      <g transform={`translate(${labelMargins.left}, ${labelMargins.top})`}>
         <text
-          x={0}
+          x={-labelMargins.left}
           y={0}
           textAnchor="start"
           fontSize={labelFontSize}
@@ -526,7 +513,7 @@ const ContinuousColorLegend = () => {
           {formatNumber(dataDomain[0])}
         </text>
         <text
-          x={legendWidth}
+          x={width - labelMargins.right}
           y={0}
           textAnchor="end"
           fontSize={labelFontSize}
@@ -539,6 +526,7 @@ const ContinuousColorLegend = () => {
     </svg>
   );
 };
+
 const DataPointIndicator = ({
   scale,
 }: {
