@@ -12,7 +12,7 @@ import {
   MapFields,
   MapSettings,
 } from "../../configurator";
-import { GeoShape, Observation } from "../../domain/data";
+import { GeoShapes, Observation } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
   GeoDimension,
@@ -73,25 +73,20 @@ export const ChartMapVisualization = ({
 
   const areaLayer = useMemo(() => {
     if (geoDimension) {
+      const geoShapes = geoDimension.geoShapes as GeoShapes;
+
       return {
-        type: "FeatureCollection",
-        features: geoDimension.geoShapes.map(
-          (d: GeoShape) =>
-            ({
-              type: "Feature",
-              properties: {
-                iri: d.iri,
-                label: d.label,
-              },
-              geometry: d.geometry,
-            } as GeoShapeFeature)
-        ),
-      } as GeoJSON.FeatureCollection;
+        shapes: topojsonFeature(
+          geoShapes,
+          geoShapes.objects.shapes
+        ) as GeoJSON.FeatureCollection,
+        mesh: topojsonMesh(geoShapes, geoShapes.objects.shapes as any),
+      };
     }
   }, [geoDimension]);
 
   const symbolLayer = useMemo(() => {
-    return areaLayer?.features.map((d) => ({
+    return areaLayer?.shapes.features.map((d) => ({
       coordinates: geoCentroid(d),
       iri: d.properties!.iri,
       label: d.properties!.label,
@@ -104,21 +99,10 @@ export const ChartMapVisualization = ({
         const res = await fetch(`/topojson/ch-2020.json`);
         const topo = await res.json();
 
-        const cantons = topojsonFeature(topo, topo.objects.cantons);
-        const cantonMesh = topojsonMesh(topo, topo.objects.cantons);
         const lakes = topojsonFeature(topo, topo.objects.lakes);
-        const cantonCentroids = (cantons as $FixMe).features.map(
-          (c: $FixMe) => ({
-            id: c.id,
-            coordinates: geoCentroid(c),
-          })
-        );
 
         setGeoData({
           state: "loaded",
-          cantons,
-          cantonMesh,
-          cantonCentroids,
           lakes,
         });
       } catch (e) {

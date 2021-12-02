@@ -35,13 +35,11 @@ import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 
 export type GeoData = {
-  cantons: GeoJSON.FeatureCollection | GeoJSON.Feature;
-  municipalities?: GeoJSON.FeatureCollection | GeoJSON.Feature;
-  municipalityMesh?: GeoJSON.MultiLineString;
-  cantonCentroids: { id: number; coordinates: [number, number] }[];
-  cantonMesh: GeoJSON.MultiLineString;
   lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
-  areaLayer?: GeoJSON.FeatureCollection | GeoJSON.Feature | undefined;
+  areaLayer?: {
+    shapes: GeoJSON.FeatureCollection | GeoJSON.Feature;
+    mesh: GeoJSON.MultiLineString;
+  };
   symbolLayer?: Array<GeoPoint>;
 };
 export interface MapState {

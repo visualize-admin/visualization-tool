@@ -14,7 +14,7 @@ export type Scalars = {
   Float: number;
   DimensionValue: any;
   Filters: any;
-  GeoShape: any;
+  GeoShapes: any;
   Observation: any;
   RawObservation: any;
 };
@@ -113,7 +113,7 @@ export type GeoDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoShapes: Array<Scalars['GeoShape']>;
+  geoShapes: Scalars['GeoShapes'];
 };
 
 
@@ -243,7 +243,7 @@ export type DataCubesQueryVariables = Exact<{
 
 export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typename: 'DataCubeResult', highlightedTitle?: Maybe<string>, highlightedDescription?: Maybe<string>, dataCube: { __typename: 'DataCube', iri: string, title: string, description?: Maybe<string>, publicationStatus: DataCubePublicationStatus, datePublished?: Maybe<string>, creator?: Maybe<{ __typename: 'DataCubeOrganization', iri: string, label?: Maybe<string> }>, themes: Array<{ __typename: 'DataCubeTheme', iri: string, label?: Maybe<string> }> } }> };
 
-type DimensionMetaData_GeoDimension_Fragment = { __typename: 'GeoDimension', geoShapes: Array<any>, iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
+type DimensionMetaData_GeoDimension_Fragment = { __typename: 'GeoDimension', geoShapes: any, iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
 type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 

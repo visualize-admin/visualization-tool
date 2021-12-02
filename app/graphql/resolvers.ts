@@ -1,6 +1,7 @@
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
+import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
 import { parseLocaleString } from "../locales/locales";
 import {
@@ -312,13 +313,22 @@ export const resolvers: Resolvers = {
   GeoDimension: {
     ...dimensionResolvers,
     geoShapes: async ({ dimension, locale }) => {
-      const geoShapes = await loadGeoShapes({ dimension, locale });
-
-      return geoShapes.map((d) => ({
-        iri: d.iri,
-        label: d.label,
+      const rawShapes = await loadGeoShapes({ dimension, locale });
+      const features = rawShapes.map((d) => ({
+        type: "Feature",
+        properties: {
+          iri: d.iri,
+          label: d.label,
+        },
         geometry: parseWKT(d.wktString),
       }));
+
+      return topology({
+        shapes: {
+          type: "FeatureCollection",
+          features,
+        } as GeoJSON.FeatureCollection,
+      });
     },
   },
   Measure: {

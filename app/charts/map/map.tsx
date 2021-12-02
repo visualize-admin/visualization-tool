@@ -186,40 +186,63 @@ export const MapComponent = () => {
           lineWidthMinPixels={1}
         /> */}
 
-        {/* {showAreaLayer && (
+        {showAreaLayer && (
           <>
             <GeoJsonLayer
-              id="cantons"
-              data={features.cantons}
+              id="shapes"
+              data={features.areaLayer?.shapes}
               pickable={true}
               stroked={true}
               filled={true}
               extruded={false}
-              autoHighlight={true}
-              getFillColor={(d: $FixMe) => {
-                const obs = data.find((x) => x.id === d.id);
-
-                return obs ? getColor(getValue(obs)) : [204, 204, 204, 100];
+              lineWidthMinPixels={0.5}
+              lineWidthMaxPixels={1}
+              onHover={({
+                x,
+                y,
+                object,
+              }: {
+                x: number;
+                y: number;
+                object: GeoShapeFeature;
+              }) => {
+                if (object) {
+                  dispatch({
+                    type: "INTERACTION_UPDATE",
+                    value: {
+                      interaction: {
+                        visible: true,
+                        mouse: { x, y },
+                        d: data.find(
+                          (d) => getLabel(d) === object.properties.label
+                        ),
+                      },
+                    },
+                  });
+                } else {
+                  dispatch({
+                    type: "INTERACTION_HIDE",
+                  });
+                }
               }}
-              extensions={[new FillStyleExtension({ pattern: true })]}
-              highlightColor={[0, 0, 0, 50]}
-              getRadius={100}
-              getLineWidth={1}
-              updateTriggers={{ getFillColor: getColor, getFillPattern: data }}
-              fillPatternMask={true}
-              fillPatternAtlas="/static/sprite/sprite.png"
-              fillPatternMapping="/static/sprite/pattern.json"
-              getFillPattern={(d: $FixMe) => {
-                const obs = data.find((x) => x.id === d.id);
+              getLineWidth={100}
+              updateTriggers={{ getFillColor: getColor }}
+              getFillColor={(d: GeoShapeFeature) => {
+                const entry = data.find(
+                  (o) => getLabel(o) === d.properties.label // FIXME?
+                );
 
-                return obs && getValue(obs) === null ? "hatch" : "fill";
+                if (entry) {
+                  return getColor(getValue(entry));
+                }
+
+                return [200, 200, 200];
               }}
-              getFillPatternScale={150}
-              getFillPatternOffset={[0, 0]}
+              getLineColor={[255, 255, 255]}
             />
             <GeoJsonLayer
-              id="cantons-mesh"
-              data={features.cantonMesh}
+              id="shapes-mesh"
+              data={features.areaLayer?.mesh}
               pickable={false}
               stroked={true}
               filled={false}
@@ -231,61 +254,6 @@ export const MapComponent = () => {
               getLineColor={[255, 255, 255]}
             />
           </>
-        )} */}
-
-        {showAreaLayer && (
-          <GeoJsonLayer
-            id="areas"
-            data={features.areaLayer}
-            pickable={true}
-            stroked={true}
-            filled={true}
-            extruded={false}
-            lineWidthMinPixels={0.5}
-            lineWidthMaxPixels={1}
-            onHover={({
-              x,
-              y,
-              object,
-            }: {
-              x: number;
-              y: number;
-              object: GeoShapeFeature;
-            }) => {
-              if (object) {
-                dispatch({
-                  type: "INTERACTION_UPDATE",
-                  value: {
-                    interaction: {
-                      visible: true,
-                      mouse: { x, y },
-                      d: data.find(
-                        (d) => getLabel(d) === object.properties.label
-                      ),
-                    },
-                  },
-                });
-              } else {
-                dispatch({
-                  type: "INTERACTION_HIDE",
-                });
-              }
-            }}
-            getLineWidth={100}
-            updateTriggers={{ getFillColor: getColor }}
-            getFillColor={(d: GeoShapeFeature) => {
-              const entry = data.find(
-                (o) => getLabel(o) === d.properties.label // FIXME?
-              );
-
-              if (entry) {
-                return getColor(getValue(entry));
-              }
-
-              return [200, 200, 200];
-            }}
-            getLineColor={[255, 255, 255]}
-          />
         )}
 
         {showLakes && (

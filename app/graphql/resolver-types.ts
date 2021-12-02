@@ -1,6 +1,5 @@
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
-import { GeoShape } from '../domain/data';
 import { Observation } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
@@ -20,7 +19,7 @@ export type Scalars = {
   Float: number;
   DimensionValue: DimensionValue;
   Filters: Filters;
-  GeoShape: GeoShape;
+  GeoShapes: any;
   Observation: Observation;
   RawObservation: RawObservation;
 };
@@ -119,7 +118,7 @@ export type GeoDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoShapes: Array<Scalars['GeoShape']>;
+  geoShapes: Scalars['GeoShapes'];
 };
 
 
@@ -320,7 +319,7 @@ export type ResolversTypes = ResolversObject<{
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
   GeoDimension: ResolverTypeWrapper<ResolvedDimension>;
-  GeoShape: ResolverTypeWrapper<Scalars['GeoShape']>;
+  GeoShapes: ResolverTypeWrapper<Scalars['GeoShapes']>;
   Measure: ResolverTypeWrapper<ResolvedMeasure>;
   NominalDimension: ResolverTypeWrapper<ResolvedDimension>;
   Observation: ResolverTypeWrapper<Scalars['Observation']>;
@@ -348,7 +347,7 @@ export type ResolversParentTypes = ResolversObject<{
   DimensionValue: Scalars['DimensionValue'];
   Filters: Scalars['Filters'];
   GeoDimension: ResolvedDimension;
-  GeoShape: Scalars['GeoShape'];
+  GeoShapes: Scalars['GeoShapes'];
   Measure: ResolvedMeasure;
   NominalDimension: ResolvedDimension;
   Observation: Scalars['Observation'];
@@ -431,12 +430,12 @@ export type GeoDimensionResolvers<ContextType = any, ParentType extends Resolver
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType>;
-  geoShapes?: Resolver<Array<ResolversTypes['GeoShape']>, ParentType, ContextType>;
+  geoShapes?: Resolver<ResolversTypes['GeoShapes'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export interface GeoShapeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['GeoShape'], any> {
-  name: 'GeoShape';
+export interface GeoShapesScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['GeoShapes'], any> {
+  name: 'GeoShapes';
 }
 
 export type MeasureResolvers<ContextType = any, ParentType extends ResolversParentTypes['Measure'] = ResolversParentTypes['Measure']> = ResolversObject<{
@@ -516,7 +515,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DimensionValue?: GraphQLScalarType;
   Filters?: GraphQLScalarType;
   GeoDimension?: GeoDimensionResolvers<ContextType>;
-  GeoShape?: GraphQLScalarType;
+  GeoShapes?: GraphQLScalarType;
   Measure?: MeasureResolvers<ContextType>;
   NominalDimension?: NominalDimensionResolvers<ContextType>;
   Observation?: GraphQLScalarType;

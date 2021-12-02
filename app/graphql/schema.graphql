@@ -2,7 +2,7 @@ scalar Observation
 scalar DimensionValue
 scalar RawObservation
 scalar Filters
-scalar GeoShape
+scalar GeoShapes
 
 type ObservationsQuery {
   "Observations with their values parsed to native JS types"
@@ -60,7 +60,7 @@ type GeoDimension implements Dimension {
   scaleType: String
   isKeyDimension: Boolean!
   values: [DimensionValue!]!
-  geoShapes: [GeoShape!]!
+  geoShapes: GeoShapes!
 }
 
 type NominalDimension implements Dimension {

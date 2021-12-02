@@ -1,5 +1,4 @@
 import { Literal, NamedNode } from "rdf-js";
-import { GeoJSONGeometry } from "wellknown";
 import { DimensionType } from "../charts/chart-config-ui-options";
 import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 
@@ -13,11 +12,7 @@ export type DimensionValue = { value: string | number; label: string };
 
 export type Observation = Record<string, ObservationValue>;
 
-export type GeoShape = {
-  iri: string;
-  label: string;
-  geometry: GeoJSONGeometry;
-};
+export type GeoShapes = TopoJSON.Topology;
 
 export type GeoPoint = {
   iri: string;

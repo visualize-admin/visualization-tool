@@ -1,6 +1,6 @@
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode } from "rdf-js";
-import { GeoShape, Observation } from "../domain/data";
+import { GeoShapes, Observation } from "../domain/data";
 import {
   DataCubeOrganization,
   DataCubePublicationStatus,
@@ -52,7 +52,7 @@ export type ResolvedDimension = {
     timeUnit?: TimeUnit;
     timeFormat?: string;
     scaleType?: "Nominal" | "Ordinal" | "Ratio" | "Interval";
-    geoShapes?: GeoShape[];
+    geoShapes?: GeoShapes;
     name: string;
   };
 
