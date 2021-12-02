@@ -148,7 +148,9 @@ export const useBrowseState = () => {
     (param: keyof BrowseParams, newValue: string | boolean) => {
       const state = getBrowseParamsFromQuery(router.query);
       const newState = { ...state, [param]: newValue } as BrowseParams;
-      router.replace(buildURLFromBrowseState(newState));
+      router.replace(buildURLFromBrowseState(newState), undefined, {
+        shallow: true,
+      });
     },
     [router]
   );
@@ -867,10 +869,14 @@ export const DatasetResult = ({
     };
   }, [router.query, search, includeDrafts, order]);
   const handleClick = useCallback(() => {
-    router.push({
-      pathname: `/browse/dataset/${encodeURIComponent(iri)}`,
-      query: filterParams,
-    });
+    router.push(
+      {
+        pathname: `/browse/dataset/${encodeURIComponent(iri)}`,
+        query: filterParams,
+      },
+      undefined,
+      { shallow: true }
+    );
   }, [router, iri, filterParams]);
   return (
     <Card
