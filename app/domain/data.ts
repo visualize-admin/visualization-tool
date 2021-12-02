@@ -15,9 +15,12 @@ export type Observation = Record<string, ObservationValue>;
 export type GeoShapes = TopoJSON.Topology;
 
 export type GeoPoint = {
-  iri: string;
-  label: string;
   coordinates: [number, number];
+  properties: {
+    iri: string;
+    label: string;
+    observation: Observation;
+  };
 };
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";

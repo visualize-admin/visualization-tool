@@ -14,7 +14,7 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 import {
   getColorInterpolator,
@@ -145,11 +145,18 @@ const useMapState = ({
   const getValue = useOptionalNumericVariable(fields.areaLayer.measureIri);
   const getRadius = useOptionalNumericVariable(fields.symbolLayer.componentIri);
 
-  const areaMeasureLabel =
-    measures.find((m) => m.iri === fields["areaLayer"].measureIri)?.label || "";
-  const symbolMeasureLabel =
-    measures.find((m) => m.iri === fields["symbolLayer"].componentIri)?.label ||
-    "";
+  const areaMeasureLabel = useMemo(
+    () =>
+      measures.find((m) => m.iri === fields["areaLayer"].measureIri)?.label ||
+      "",
+    [fields, measures]
+  );
+  const symbolMeasureLabel = useMemo(
+    () =>
+      measures.find((m) => m.iri === fields["symbolLayer"].componentIri)
+        ?.label || "",
+    [fields, measures]
+  );
   const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
     number,
     number

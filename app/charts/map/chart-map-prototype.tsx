@@ -40,6 +40,7 @@ export interface GeoShapeFeature {
   properties: {
     iri: string;
     label: string;
+    observation: Observation;
   };
   geometry: GeoJSON.Geometry;
 }
@@ -61,37 +62,64 @@ export const ChartMapVisualization = ({
       iri: dataSetIri,
       measures: [
         chartConfig.fields.areaLayer.componentIri,
-        chartConfig.fields.symbolLayer?.componentIri,
+        chartConfig.fields.symbolLayer.componentIri,
       ],
       filters: queryFilters,
     },
   });
 
   const geoDimension = data?.dataCubeByIri?.dimensions.find(
-    (d) => d.__typename === "GeoDimension"
-  ) as GeoDimension | undefined;
+    (d) => d.iri === chartConfig.fields.areaLayer.componentIri
+  ) as GeoDimension;
 
   const areaLayer = useMemo(() => {
     if (geoDimension) {
       const geoShapes = geoDimension.geoShapes as GeoShapes;
+      const shapes = topojsonFeature(
+        geoShapes,
+        geoShapes.objects.shapes
+      ) as GeoJSON.FeatureCollection<
+        GeoJSON.GeometryObject,
+        GeoShapeFeature["properties"]
+      >;
+
+      shapes.features.forEach((d) => {
+        // Should we match by labels?
+        d.properties.observation = data?.dataCubeByIri?.observations.data.find(
+          (o) =>
+            o[chartConfig.fields.areaLayer.componentIri] === d.properties!.label
+        );
+      });
 
       return {
-        shapes: topojsonFeature(
-          geoShapes,
-          geoShapes.objects.shapes
-        ) as GeoJSON.FeatureCollection,
+        shapes,
         mesh: topojsonMesh(geoShapes, geoShapes.objects.shapes as any),
       };
     }
-  }, [geoDimension]);
+  }, [
+    geoDimension,
+    chartConfig.fields.areaLayer.componentIri,
+    data?.dataCubeByIri?.observations.data,
+  ]);
 
   const symbolLayer = useMemo(() => {
     return areaLayer?.shapes.features.map((d) => ({
       coordinates: geoCentroid(d),
-      iri: d.properties!.iri,
-      label: d.properties!.label,
+      properties: {
+        iri: d.properties!.iri,
+        label: d.properties!.label,
+        // Should we match by labels?
+        observation: data?.dataCubeByIri?.observations.data.find(
+          (o) =>
+            o[chartConfig.fields.areaLayer.componentIri] === d.properties!.label
+        ),
+      },
     }));
-  }, [areaLayer]);
+  }, [
+    areaLayer,
+    chartConfig.fields.areaLayer.componentIri,
+    data?.dataCubeByIri?.observations.data,
+  ]);
 
   useEffect(() => {
     const loadGeoData = async () => {

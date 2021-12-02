@@ -213,9 +213,7 @@ export const MapComponent = () => {
                       interaction: {
                         visible: true,
                         mouse: { x, y },
-                        d: data.find(
-                          (d) => getLabel(d) === object.properties.label
-                        ),
+                        d: object.properties.observation,
                       },
                     },
                   });
@@ -227,17 +225,9 @@ export const MapComponent = () => {
               }}
               getLineWidth={100}
               updateTriggers={{ getFillColor: getColor }}
-              getFillColor={(d: GeoShapeFeature) => {
-                const entry = data.find(
-                  (o) => getLabel(o) === d.properties.label // FIXME?
-                );
-
-                if (entry) {
-                  return getColor(getValue(entry));
-                }
-
-                return [200, 200, 200];
-              }}
+              getFillColor={(d: GeoShapeFeature) =>
+                getColor(getValue(d.properties.observation))
+              }
               getLineColor={[255, 255, 255]}
             />
             <GeoJsonLayer
@@ -286,11 +276,9 @@ export const MapComponent = () => {
             radiusMaxPixels={radiusScale.range()[1]}
             lineWidthMinPixels={1}
             getPosition={(d: GeoPoint) => d.coordinates}
-            getRadius={(d: GeoPoint) => {
-              const obs = data.find((x) => getLabel(x) === d.label); // FIXME?
-
-              return obs ? radiusScale(getRadius(obs) ?? 0) : 0;
-            }}
+            getRadius={(d: GeoPoint) =>
+              radiusScale(getRadius(d.properties.observation) ?? 0)
+            }
             getFillColor={[0, 102, 153]}
             getLineColor={[255, 255, 255]}
             onHover={({
@@ -309,7 +297,7 @@ export const MapComponent = () => {
                     interaction: {
                       visible: true,
                       mouse: { x, y },
-                      d: data.find((d) => getLabel(d) === object.label), // FIXME?
+                      d: object.properties.observation,
                     },
                   },
                 });
