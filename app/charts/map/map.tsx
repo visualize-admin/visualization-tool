@@ -226,7 +226,11 @@ export const MapComponent = () => {
               getLineWidth={100}
               updateTriggers={{ getFillColor: getColor }}
               getFillColor={(d: GeoShapeFeature) =>
-                getColor(getValue(d.properties.observation))
+                getColor(
+                  d.properties.observation
+                    ? getValue(d.properties.observation)
+                    : null
+                )
               }
               getLineColor={[255, 255, 255]}
             />
@@ -277,7 +281,9 @@ export const MapComponent = () => {
             lineWidthMinPixels={1}
             getPosition={(d: GeoPoint) => d.coordinates}
             getRadius={(d: GeoPoint) =>
-              radiusScale(getRadius(d.properties.observation) ?? 0)
+              d.properties.observation
+                ? radiusScale(getRadius(d.properties.observation) as number)
+                : 0
             }
             getFillColor={[0, 102, 153]}
             getLineColor={[255, 255, 255]}
