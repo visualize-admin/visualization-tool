@@ -12,7 +12,7 @@ export type BrowseParams = {
   topic?: string;
   search?: string;
   order?: string;
-  includeDrafts?: string;
+  includeDrafts?: boolean;
   dataset?: string;
 };
 

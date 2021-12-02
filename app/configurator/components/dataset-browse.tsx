@@ -111,7 +111,7 @@ export const getBrowseParamsFromQuery = (query: Router["query"]) => {
         ? JSON.parse(values.includeDrafts)
         : false,
     },
-    Boolean
+    (x) => x !== undefined
   );
 };
 
@@ -144,10 +144,10 @@ export const useBrowseState = () => {
     variables: { locale },
   });
 
-  const setParam = useCallback(
-    (param: keyof BrowseParams, newValue: string | boolean) => {
+  const setParams = useCallback(
+    (params: BrowseParams) => {
       const state = getBrowseParamsFromQuery(router.query);
-      const newState = { ...state, [param]: newValue } as BrowseParams;
+      const newState = { ...state, ...params } as BrowseParams;
       router.replace(buildURLFromBrowseState(newState), undefined, {
         shallow: true,
       });
@@ -164,17 +164,20 @@ export const useBrowseState = () => {
   });
 
   const setSearch = useCallback(
-    (v: string) => setParam("search", v),
-    [setParam]
+    (v: string) => setParams({ search: v }),
+    [setParams]
   );
   const setIncludeDrafts = useCallback(
-    (v: boolean) => setParam("includeDrafts", v),
-    [setParam]
+    (v: boolean) => setParams({ includeDrafts: v }),
+    [setParams]
   );
-  const setOrder = useCallback((v: string) => setParam("order", v), [setParam]);
+  const setOrder = useCallback(
+    (v: string) => setParams({ order: v }),
+    [setParams]
+  );
   const setDataset = useCallback(
-    (v: string) => setParam("dataset", v),
-    [setParam]
+    (v: string) => setParams({ dataset: v }),
+    [setParams]
   );
 
   const previousOrderRef = useRef<DataCubeResultOrder>(
@@ -186,18 +189,17 @@ export const useBrowseState = () => {
       includeDrafts,
       setIncludeDrafts,
       onReset: () => {
-        setParam("search", "");
-        setOrder(previousOrderRef.current);
+        setParams({ search: "", order: previousOrderRef.current });
       },
       onTypeSearch: (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.currentTarget.value);
-        if (search === "" && e.currentTarget.value !== "") {
-          previousOrderRef.current = order;
-          setOrder(DataCubeResultOrder.Score);
-        }
-        if (search !== "" && e.currentTarget.value === "") {
-          setOrder(previousOrderRef.current);
-        }
+        const newSearch = e.currentTarget.value;
+        setParams({
+          search: newSearch,
+          order:
+            search === ""
+              ? DataCubeResultOrder.Score
+              : previousOrderRef.current,
+        });
       },
       search,
       order,
@@ -221,7 +223,7 @@ export const useBrowseState = () => {
       dataset,
       setDataset,
       filters,
-      setParam,
+      setParams,
     ]
   );
 };
@@ -306,12 +308,12 @@ export const SearchDatasetBox = ({
         <SearchField
           id="datasetSearch"
           label={searchLabel}
-          value={search}
+          value={search || ""}
           onChange={onTypeSearch}
           onReset={onReset}
           placeholder={searchLabel}
           onFocus={() => setShowDraftCheckbox(true)}
-        ></SearchField>
+        />
       </Box>
 
       {showDraftCheckbox && (
