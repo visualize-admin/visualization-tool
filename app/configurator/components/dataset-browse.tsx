@@ -858,16 +858,14 @@ export const DatasetResult = ({
 
   const browseState = useBrowseContext();
   const { search, includeDrafts, order } = browseState;
+  const browseParams = useMemo(() => {
+    return getBrowseParamsFromQuery(router.query);
+  }, [router]);
   const filterParams = useMemo(() => {
     return {
-      previous: JSON.stringify({
-        ...getBrowseParamsFromQuery(router.query),
-        search,
-        includeDrafts,
-        order,
-      }),
+      previous: JSON.stringify(browseParams),
     };
-  }, [router.query, search, includeDrafts, order]);
+  }, [browseParams]);
   const handleClick = useCallback(() => {
     router.push(
       {
