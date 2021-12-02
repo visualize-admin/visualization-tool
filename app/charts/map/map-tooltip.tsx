@@ -21,7 +21,7 @@ export const MapTooltip = () => {
       showSymbolLayer,
       symbolMeasureLabel,
       getRadius,
-      symbolColorScale,
+      color: symbolColor,
     },
   } = useChartState() as MapState;
 
@@ -95,7 +95,7 @@ export const MapTooltip = () => {
                     style={{
                       background:
                         typeof getValue(interaction.d) === "number"
-                          ? symbolColorScale(getValue(interaction.d) as number)
+                          ? symbolColor
                           : "transparent",
                     }}
                   >

@@ -2,10 +2,11 @@ import { MapController, WebMercatorViewport } from "@deck.gl/core";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Box, Button } from "theme-ui";
 import { GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
+import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { GeoShapeFeature } from "./chart-map-prototype";
@@ -91,8 +92,13 @@ export const MapComponent = () => {
     showRelief,
     showLakes,
     features,
-    areaLayer: { showAreaLayer, getLabel, getColor, getValue },
-    symbolLayer: { showSymbolLayer, radiusScale, getRadius },
+    areaLayer: { showAreaLayer, getColor, getValue },
+    symbolLayer: {
+      color: symbolColor,
+      showSymbolLayer,
+      radiusScale,
+      getRadius,
+    },
   } = useChartState() as MapState;
   const [, dispatch] = useInteraction();
 
@@ -130,6 +136,11 @@ export const MapComponent = () => {
     };
     setViewState(constrainZoom(newViewState, CH_BBOX));
   };
+
+  const symbolColorRgbArray = useMemo(
+    () => convertHexToRgbArray(symbolColor),
+    [symbolColor]
+  );
 
   return (
     <Box>
@@ -285,7 +296,7 @@ export const MapComponent = () => {
                 ? radiusScale(getRadius(d.properties.observation) as number)
                 : 0
             }
-            getFillColor={[0, 102, 153]}
+            getFillColor={symbolColorRgbArray}
             getLineColor={[255, 255, 255]}
             onHover={({
               x,

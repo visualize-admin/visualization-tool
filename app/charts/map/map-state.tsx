@@ -67,11 +67,11 @@ export interface MapState {
       | ScaleThreshold<number, string>;
   };
   symbolLayer: {
+    color: string;
     showSymbolLayer: boolean;
     symbolMeasureLabel: string;
     radiusScale: ScalePower<number, number>;
     getRadius: (d: Observation) => number | null;
-    symbolColorScale: (x: number) => string;
   };
 }
 
@@ -187,7 +187,6 @@ const useMapState = ({
   const radiusScale = scaleSqrt()
     .domain(radiusExtent as [number, number])
     .range(radiusRange);
-  const symbolColorScale = (x: number) => "#006699";
 
   // Dimensions
   const margins = {
@@ -226,11 +225,11 @@ const useMapState = ({
       colorScale,
     },
     symbolLayer: {
+      color: fields.symbolLayer.color,
       symbolMeasureLabel,
       showSymbolLayer: fields.symbolLayer.show,
       radiusScale,
       getRadius,
-      symbolColorScale,
     },
   };
 };

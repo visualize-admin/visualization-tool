@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "..";
 import { FieldSetLegend } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -12,6 +12,7 @@ import {
   ChartOptionCheckboxField,
   ChartOptionRadioField,
   ChartOptionSelectField,
+  ColorPickerField,
 } from "../components/field";
 
 const NUMBER_OF_CLASSES_OPTIONS = Array.from(
@@ -222,6 +223,11 @@ export const SymbolLayerSettings = memo(
     chartConfig: MapConfig;
     metaData: DataCubeMetadata;
   }) => {
+    const isDisabled = useMemo(
+      () => !chartConfig.fields.symbolLayer.show,
+      [chartConfig.fields.symbolLayer.show]
+    );
+
     return (
       <>
         <ControlSection>
@@ -253,6 +259,17 @@ export const SymbolLayerSettings = memo(
               }))}
               disabled={!chartConfig.fields.symbolLayer.show}
             ></ChartOptionSelectField>
+          </ControlSectionContent>
+        </ControlSection>
+        <ControlSection>
+          <SectionTitle iconName={"settings"}>Color</SectionTitle>
+          <ControlSectionContent side="right">
+            <ColorPickerField
+              label="Select a color"
+              field={activeField}
+              path="color"
+              disabled={!chartConfig.fields.symbolLayer.show}
+            ></ColorPickerField>
           </ControlSectionContent>
         </ControlSection>
       </>

@@ -276,6 +276,7 @@ export const getInitialConfig = ({
           },
           symbolLayer: {
             componentIri: measures[0].iri,
+            color: "#1f77b4",
             show: false,
           },
         },

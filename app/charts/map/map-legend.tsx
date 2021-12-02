@@ -87,7 +87,7 @@ const CircleLegend = () => {
   const {
     data,
     areaLayer: { getLabel },
-    symbolLayer: { getRadius, radiusScale, symbolColorScale },
+    symbolLayer: { getRadius, radiusScale, color },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
 
@@ -106,9 +106,7 @@ const CircleLegend = () => {
     d && typeof getRadius(d) === "number" ? getRadius(d) : undefined;
 
   const hoveredColor =
-    d && typeof getRadius(d) === "number"
-      ? symbolColorScale(getRadius(d) as number)
-      : undefined;
+    d && typeof getRadius(d) === "number" ? color : undefined;
 
   return (
     <svg
