@@ -1,5 +1,5 @@
-import NProgress from "nprogress";
 import { useRouter } from "next/router";
+import NProgress from "nprogress";
 import { useEffect } from "react";
 
 /**
@@ -13,7 +13,15 @@ export const useNProgress = () => {
 
   useEffect(() => {
     NProgress.configure({ showSpinner: false });
-    const startProgress = () => NProgress.start();
+    const startProgress = (
+      _routeName: string,
+      options?: { shallow: boolean }
+    ) => {
+      if (options?.shallow) {
+        return;
+      }
+      NProgress.start();
+    };
     const stopProgress = () => NProgress.done();
 
     routerEvents.on("routeChangeStart", startProgress);
