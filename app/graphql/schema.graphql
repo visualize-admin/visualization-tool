@@ -36,8 +36,8 @@ type DataCube {
     measures: [String!]
     filters: Filters
   ): ObservationsQuery!
-  dimensions: [Dimension!]!
-  dimensionByIri(iri: String!): Dimension
+  dimensions: [IDimension!]!
+  dimensionByIri(iri: String!): IDimension
   measures: [Measure!]!
   themes: [DataCubeTheme!]!
 }
@@ -48,48 +48,41 @@ type CategoricalValue {
   position: Int
 }
 
-type GeoShapeValue {
-  value: String!
-  label: String!
-  position: Int
-  shape: String!
-}
-
-type GeoPointValue {
-  value: String!
-  label: String!
-  position: Int
-  lon: Float!
-  lat: Float!
-}
-
-interface Dimension {
+interface IDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean!
+  isKeyDimension: Boolean
 }
 
-type CategoricalDimension implements Dimension {
+interface ICategoricalDimension implements IDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean!
-  isOrdinal: Boolean!
+  isKeyDimension: Boolean
+  hasOrder: Boolean
   values: [CategoricalValue!]!
 }
 
-type GeoShapeDimension implements Dimension {
+type CategoricalDimension implements IDimension & ICategoricalDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean!
-  isOrdinal: Boolean!
+  isKeyDimension: Boolean
+  hasOrder: Boolean
   values: [CategoricalValue!]!
 }
 
-type GeoPointDimension implements Dimension {
+type GeoShapeDimension implements IDimension & ICategoricalDimension {
   iri: String!
   label: String!
-  isKeyDimension: Boolean!
-  isOrdinal: Boolean!
+  isKeyDimension: Boolean
+  hasOrder: Boolean
+  values: [CategoricalValue!]!
+}
+
+type GeoPointDimension implements IDimension & ICategoricalDimension {
+  iri: String!
+  label: String!
+  isKeyDimension: Boolean
+  hasOrder: Boolean
   values: [CategoricalValue!]!
 }
 
@@ -103,21 +96,21 @@ enum TimeUnit {
   Second
 }
 
-type TemporalDimension implements Dimension {
+type TemporalDimension implements IDimension {
   iri: String!
   label: String!
   timeUnit: TimeUnit!
   timeFormat: String!
-  isKeyDimension: Boolean!
+  isKeyDimension: Boolean
   from: String!
   to: String!
 }
 
-type Measure implements Dimension {
+type Measure implements IDimension {
   iri: String!
   label: String!
   unit: String
-  isKeyDimension: Boolean!
+  isKeyDimension: Boolean
   min: Float!
   max: Float!
 }
