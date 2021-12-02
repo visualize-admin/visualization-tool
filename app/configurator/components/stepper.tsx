@@ -1,5 +1,4 @@
 import { Trans } from "@lingui/macro";
-import NextLink from "next/link";
 import { Fragment, ReactNode, useCallback, useMemo } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
 import { useConfiguratorState } from "..";
@@ -8,18 +7,13 @@ import { useTheme } from "../../themes";
 import { ActionBar } from "./action-bar";
 
 export type StepStatus = "past" | "current" | "future";
-type StepState =
-  | "SELECTING_DATASET"
-  | "SELECTING_CHART_TYPE"
-  | "CONFIGURING_CHART"
-  | "DESCRIBING_CHART";
 
-const steps: Array<StepState> = [
-  "SELECTING_DATASET",
+const steps = [
   "SELECTING_CHART_TYPE",
   "CONFIGURING_CHART",
   "DESCRIBING_CHART",
-];
+] as const;
+type StepState = typeof steps[number];
 
 export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
   const [{ state }, dispatch] = useConfiguratorState();
@@ -148,30 +142,7 @@ export const Step = ({
     </>
   );
 
-  return stepState === "SELECTING_DATASET" ? (
-    <NextLink
-      href={
-        dataSet ? `/browse/dataset/${encodeURIComponent(dataSet)}` : `/browse`
-      }
-      passHref
-    >
-      <Button
-        as="a"
-        variant="reset"
-        sx={{
-          appearance: "none",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          cursor: status === "past" ? "pointer" : undefined,
-        }}
-        disabled={status !== "past"}
-      >
-        {content}
-      </Button>
-    </NextLink>
-  ) : (
+  return (
     <Button
       variant="reset"
       sx={{
@@ -198,13 +169,6 @@ export const StepLabel = ({
   highlight: boolean;
 }) => {
   switch (stepState) {
-    case "SELECTING_DATASET":
-      return (
-        <StepLabelText
-          label={<Trans id="step.dataset">Dataset</Trans>}
-          highlight={highlight}
-        />
-      );
     case "SELECTING_CHART_TYPE":
       return (
         <StepLabelText
@@ -227,6 +191,7 @@ export const StepLabel = ({
         />
       );
   }
+  return null;
 };
 
 const StepLabelText = ({

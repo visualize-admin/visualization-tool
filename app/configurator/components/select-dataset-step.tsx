@@ -84,7 +84,7 @@ export const SelectDatasetStepContent = () => {
         pt: 3,
       }}
     >
-      <PanelLeftWrapper raised={false} sx={{ mt: 50 }}>
+      <PanelLeftWrapper raised={false} sx={{ mt: 50, bg: "transparent" }}>
         {dataset ? (
           <>
             <Box mb={4} px={4}>
