@@ -20,7 +20,6 @@ import {
   useFormatInteger,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { useChartTheme } from "../shared/use-chart-theme";
 import { useInteraction } from "../shared/use-interaction";
@@ -123,49 +122,50 @@ const CircleLegend = () => {
       >
         {radiusScale.domain().map((d) => {
           // FIXME: Potentially a performance problem if a lot of data
-          const thisFeatureLabel = getLabel(
-            data.find((x) => getRadius(x) === d) as Observation
-          );
+          const observation = data.find((x) => getRadius(x) === d);
+          const thisFeatureLabel = observation ? getLabel(observation) : "";
 
           return (
-            <>
-              {d !== 0 && ( // FIXME: 0 also should be shown
-                <g
-                  transform={`translate(0, ${
-                    radiusScale(maxRadius) - radiusScale(d)
-                  })`}
-                >
-                  <circle
-                    cx={0}
-                    cy={0}
-                    r={radiusScale(d)}
-                    fill="none"
-                    stroke={axisLabelColor}
-                  />
-                  {!visible && (
-                    <>
-                      <line
-                        x1={0}
-                        y1={-radiusScale(d)}
-                        x2={radiusScale(maxRadius) + 4}
-                        y2={-radiusScale(d)}
-                        stroke={axisLabelColor}
-                      />
-                      <text
-                        x={radiusScale(maxRadius) + 6}
-                        y={-radiusScale(d)}
-                        dy={5}
-                        fill={axisLabelColor}
-                        textAnchor="start"
-                        fontSize={legendFontSize}
-                      >
-                        {formatNumber(d)} ({thisFeatureLabel})
-                      </text>
-                    </>
-                  )}
-                </g>
-              )}
-            </>
+            observation && (
+              <>
+                {
+                  <g
+                    transform={`translate(0, ${
+                      radiusScale(maxRadius) - radiusScale(d)
+                    })`}
+                  >
+                    <circle
+                      cx={0}
+                      cy={0}
+                      r={radiusScale(d)}
+                      fill="none"
+                      stroke={axisLabelColor}
+                    />
+                    {!visible && (
+                      <>
+                        <line
+                          x1={0}
+                          y1={-radiusScale(d)}
+                          x2={radiusScale(maxRadius) + 4}
+                          y2={-radiusScale(d)}
+                          stroke={axisLabelColor}
+                        />
+                        <text
+                          x={radiusScale(maxRadius) + 6}
+                          y={-radiusScale(d)}
+                          dy={5}
+                          fill={axisLabelColor}
+                          textAnchor="start"
+                          fontSize={legendFontSize}
+                        >
+                          {formatNumber(d)} ({thisFeatureLabel})
+                        </text>
+                      </>
+                    )}
+                  </g>
+                }
+              </>
+            )
           );
         })}
         {/* Hovered data point indicator */}

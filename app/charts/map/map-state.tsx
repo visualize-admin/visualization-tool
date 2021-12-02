@@ -173,7 +173,7 @@ const useMapState = ({
 
   const getColor = (v: number | null) => {
     if (v === null) {
-      return [0, 0, 0];
+      return [0, 0, 0, 255 * 0.1];
     }
 
     const c = colorScale && colorScale(v);
