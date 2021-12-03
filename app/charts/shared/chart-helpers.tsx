@@ -1,5 +1,5 @@
 import { group, InternMap, sum } from "d3";
-import { omitBy } from "lodash";
+import { flowRight, omitBy } from "lodash";
 import { useCallback, useMemo } from "react";
 import {
   ChartConfig,
@@ -12,6 +12,7 @@ import { parseDate } from "../../configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
 import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import truthy from "../../utils/truthy";
 import {
   imputeTemporalLinearSeries,
   interpolateZerosValue,
@@ -65,6 +66,8 @@ export const useQueryFilters = ({
   );
 };
 
+type ValuePredicate = (v: any) => boolean;
+
 // Prepare data used in charts.
 // Different than the full dataset because
 // interactive filters may be applied (legend + brush)
@@ -87,48 +90,31 @@ export const usePreparedData = ({
   const { categories } = interactiveFilters;
   const activeInteractiveFilters = Object.keys(categories);
 
-  const preparedData = useMemo(() => {
-    if (!timeFilterActive && !legendFilterActive) {
-      return sortedData;
-    } else if (timeFilterActive && !legendFilterActive && getX) {
-      return from && to
-        ? sortedData.filter(
-            (d) =>
-              from &&
-              to &&
-              getX(d).getTime() >= from.getTime() &&
-              getX(d).getTime() <= to.getTime()
-          )
-        : sortedData;
-    } else if (!timeFilterActive && legendFilterActive && getSegment) {
-      return sortedData.filter(
-        (d) => !activeInteractiveFilters.includes(getSegment(d))
-      );
-    } else if (timeFilterActive && legendFilterActive && getX && getSegment) {
-      return from && to && activeInteractiveFilters
-        ? sortedData
-            .filter(
-              (d) =>
-                from &&
-                to &&
-                getX(d).getTime() >= from.getTime() &&
-                getX(d).getTime() <= to.getTime()
-            )
-            .filter((d) => !activeInteractiveFilters.includes(getSegment(d)))
-        : sortedData;
-    } else {
-      return sortedData;
-    }
+  const allFilters = useMemo(() => {
+    const timeFilter: ValuePredicate | null =
+      getX && from && to && timeFilterActive
+        ? (d: any) =>
+            getX(d).getTime() >= from.getTime() &&
+            getX(d).getTime() <= to.getTime()
+        : null;
+    const legendFilter: ValuePredicate | null =
+      legendFilterActive && getSegment
+        ? (d: any) => !activeInteractiveFilters.includes(getSegment(d))
+        : null;
+    return flowRight.apply(null, [legendFilter, timeFilter].filter(truthy));
   }, [
     activeInteractiveFilters,
     from,
     getSegment,
     getX,
     legendFilterActive,
-    sortedData,
     timeFilterActive,
     to,
   ]);
+
+  const preparedData = useMemo(() => {
+    return sortedData.filter(allFilters);
+  }, [allFilters, sortedData]);
   return preparedData;
 };
 
