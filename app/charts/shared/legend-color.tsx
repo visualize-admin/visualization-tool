@@ -15,11 +15,7 @@ import { useInteractiveFilters } from "./use-interactive-filters";
 
 type LegendSymbol = "square" | "line" | "circle";
 
-export const InteractiveLegendColor = ({
-  symbol,
-}: {
-  symbol: LegendSymbol;
-}) => {
+export const InteractiveLegendColor = () => {
   const [state, dispatch] = useInteractiveFilters();
   const { categories } = state;
   const activeInteractiveFilters = Object.keys(categories);
