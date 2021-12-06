@@ -21,6 +21,7 @@ import {
   useChartOptionBooleanField,
   useChartOptionSelectField,
   useMultiFilterCheckboxes,
+  useMultiFilterContext,
   useSingleFilterSelect,
 } from "../config-form";
 import { FIELD_VALUE_NONE } from "../constants";
@@ -306,12 +307,9 @@ export const MetaInputField = ({
   return <Input label={label} {...field} disabled={disabled} />;
 };
 
-const useMultiFilterColorPicker = (
-  value: string,
-  dimensionIri: string,
-  colorConfigPath?: string
-) => {
+const useMultiFilterColorPicker = (value: string) => {
   const [configuratorState, dispatch] = useConfiguratorState();
+  const { dimensionIri, colorConfigPath } = useMultiFilterContext();
   const { activeField } = configuratorState;
   const onChange = useCallback(
     (color: string) => {
@@ -357,7 +355,7 @@ const useMultiFilterColorPicker = (
   }, [chartConfig, colorConfigPath, activeField]);
 
   const checkedState =
-    configuratorState.state === "CONFIGURING_CHART"
+    configuratorState.state === "CONFIGURING_CHART" && dimensionIri
       ? isMultiFilterFieldChecked(
           configuratorState.chartConfig,
           dimensionIri,
@@ -376,21 +374,9 @@ const useMultiFilterColorPicker = (
   );
 };
 
-export const MultiFilterFieldColorPicker = ({
-  colorConfigPath,
-  value,
-  dimensionIri,
-}: {
-  colorConfigPath?: string;
-  value: string;
-  dimensionIri: string;
-  checked?: boolean;
-}) => {
-  const { color, checked, palette, onChange } = useMultiFilterColorPicker(
-    value,
-    dimensionIri,
-    colorConfigPath
-  );
+export const MultiFilterFieldColorPicker = ({ value }: { value: string }) => {
+  const { color, checked, palette, onChange } =
+    useMultiFilterColorPicker(value);
 
   return color && checked ? (
     <ColorPickerMenu
@@ -402,24 +388,22 @@ export const MultiFilterFieldColorPicker = ({
 };
 
 export const MultiFilterFieldCheckbox = ({
-  dimensionIri,
   label,
   value,
   disabled,
   onChange: onChangeProp,
 }: {
-  dimensionIri: string;
   label: string;
   value: string;
   disabled?: boolean;
   onChange?: () => void;
 }) => {
   const [state] = useConfiguratorState();
-  const { onChange: onFieldChange, checked } = useMultiFilterCheckboxes(
+  const {
+    onChange: onFieldChange,
+    checked,
     dimensionIri,
-    value,
-    onChangeProp
-  );
+  } = useMultiFilterCheckboxes(value, onChangeProp);
 
   if (state.state !== "CONFIGURING_CHART") {
     return null;

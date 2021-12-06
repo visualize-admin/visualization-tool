@@ -166,7 +166,11 @@ export const DimensionValuesMultiFilter = ({
 
   if (data?.dataCubeByIri?.dimensionByIri) {
     return (
-      <MultiFilterContextProvider dimensionData={dimensionData}>
+      <MultiFilterContextProvider
+        dimensionData={dimensionData}
+        dimensionIri={dimensionIri}
+        colorConfigPath={colorConfigPath}
+      >
         <SelectionControls dimensionIri={dimensionIri} />
         {tree ? renderDimensionTree(tree) : null}
       </MultiFilterContextProvider>

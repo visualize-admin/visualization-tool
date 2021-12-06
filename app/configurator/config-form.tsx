@@ -381,6 +381,8 @@ export const isMultiFilterFieldChecked = (
 const MultiFilterContext = React.createContext({
   activeKeys: new Set() as Set<string>,
   allValues: [] as string[],
+  dimensionIri: undefined as string | undefined,
+  colorConfigPath: undefined as string | undefined,
 });
 
 export const useMultiFilterContext = () => {
@@ -388,13 +390,17 @@ export const useMultiFilterContext = () => {
 };
 
 export const MultiFilterContextProvider = ({
+  dimensionIri,
+  colorConfigPath,
   dimensionData,
   children,
 }: {
+  dimensionIri: string;
   dimensionData: NonNullable<
     DimensionValuesQuery["dataCubeByIri"]
   >["dimensionByIri"];
   children: React.ReactNode;
+  colorConfigPath?: string;
 }) => {
   const [state] = useConfiguratorState();
 
@@ -424,8 +430,10 @@ export const MultiFilterContextProvider = ({
     () => ({
       allValues,
       activeKeys,
+      dimensionIri,
+      colorConfigPath,
     }),
-    [allValues, activeKeys]
+    [allValues, activeKeys, dimensionIri, colorConfigPath]
   );
 
   return (
@@ -436,15 +444,17 @@ export const MultiFilterContextProvider = ({
 };
 
 export const useMultiFilterCheckboxes = (
-  dimensionIri: string,
   value: string,
   onChangeProp?: () => void
 ) => {
   const [state, dispatch] = useConfiguratorState();
-  const { allValues } = useMultiFilterContext();
+  const { allValues, dimensionIri } = useMultiFilterContext();
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      if (!dimensionIri) {
+        return;
+      }
       if (e.currentTarget.checked) {
         dispatch({
           type: "CHART_CONFIG_FILTER_ADD_MULTI",
@@ -470,12 +480,14 @@ export const useMultiFilterCheckboxes = (
   );
 
   const isChecked =
-    state.state === "CONFIGURING_CHART" &&
-    isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value);
+    state.state === "CONFIGURING_CHART" && dimensionIri
+      ? isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value)
+      : false;
 
   return {
     onChange,
     checked: isChecked,
+    dimensionIri,
   };
 };
 
