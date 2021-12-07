@@ -151,7 +151,7 @@ export const Examples = ({
           chartConfig={{
             fields: {
               x: {
-                componentIri: "http://www.w3.org/2006/time#year",
+                componentIri: "http://www.w3.org/2006/time#Year",
               },
               y: {
                 componentIri: "http://schema.org/amount",
