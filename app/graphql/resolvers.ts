@@ -11,6 +11,9 @@ import {
   GeoProperties,
   GeoShapes,
 } from "../domain/data";
+
+import Fuse from "fuse.js";
+import { keyBy } from "lodash";
 import { parseLocaleString } from "../locales/locales";
 import { Loaders } from "../pages/api/graphql";
 import {
@@ -32,6 +35,7 @@ import {
 } from "../rdf/query-cube-metadata";
 import { unversionObservation } from "../rdf/query-dimension-values";
 import { RawGeoShape } from "../rdf/query-geo-shapes";
+import { wrap } from "../utils/search";
 import truthy from "../utils/truthy";
 import { ObservationFilter } from "./query-hooks";
 import {
@@ -40,7 +44,66 @@ import {
   QueryResolvers,
   Resolvers,
 } from "./resolver-types";
-import { ResolvedDimension } from "./shared-types";
+import { ResolvedDataCube, ResolvedDimension } from "./shared-types";
+
+const search = (
+  cubesByIri: Record<string, ResolvedDataCube>,
+  cubesData: ResolvedDataCube["data"][],
+  query: string
+) => {
+  const index = new Fuse(cubesData, {
+    includeScore: true,
+    includeMatches: true,
+    findAllMatches: false,
+    minMatchCharLength: 3,
+    ignoreLocation: true,
+    keys: [
+      {
+        name: "title",
+        weight: 2,
+      },
+      "description",
+    ],
+  });
+
+  const results = index.search(query);
+
+  return results
+    .filter((r) => (r.score as number) < 0.25)
+    .map((result) => {
+      const { item, score, matches: rawMatches } = result;
+      const matches = rawMatches?.map((m) => {
+        const perfectMatchIndex = m.indices.findIndex(([start, end]) => {
+          const part = m.value?.substring(start, end + 1).toLowerCase();
+          return part === query.toLowerCase();
+        });
+        if (perfectMatchIndex > -1) {
+          return { ...m, indices: [m.indices[perfectMatchIndex]] };
+        }
+        return m;
+      });
+      const titleMatch = matches?.find((m) => m.key === "title");
+      const descriptionMatch = matches?.find((m) => m.key === "description");
+
+      const highlightedTitle = highlightMatch(titleMatch);
+      const highlightedDescription = highlightMatch(descriptionMatch);
+      return {
+        dataCube: cubesByIri[item.iri],
+        score,
+        highlightedDescription,
+        highlightedTitle,
+      };
+    });
+};
+
+const highlightMatch = (match?: Fuse.FuseResultMatch) => {
+  return match?.value
+    ? wrap(match.value, match.indices, {
+        tagOpen: "<strong>",
+        tagClose: "</strong>",
+      })
+    : "";
+};
 
 export const Query: QueryResolvers = {
   possibleFilters: async (_, { iri, filters }) => {
@@ -90,66 +153,10 @@ export const Query: QueryResolvers = {
     });
 
     const dataCubeCandidates = cubes.map(({ data }) => data);
+    const cubesByIri = keyBy(cubes, (c) => c.data.iri);
 
     if (query) {
-      /**
-       * This uses https://github.com/jeancroy/fuzz-aldrin-plus which is a re-implementation of the Atom editor file picker algorithm
-       *
-       * Alternatives:
-       * - https://github.com/kentcdodds/match-sorter looks nice, but does not support highlighting results.
-       * - https://fusejs.io/ tried out but result matching is a bit too random (order of letters seems to be ignored). Whole-word matches don't support highlighting and scoring for some reason.
-       */
-
-      const titleResults = fuzzaldrin.filter(dataCubeCandidates, `${query}`, {
-        key: "title",
-      });
-
-      const descriptionResults = fuzzaldrin.filter(
-        dataCubeCandidates,
-        `${query}`,
-        { key: "description" }
-      );
-
-      const results = Array.from(
-        new Set([...titleResults, ...descriptionResults])
-      );
-
-      if (order == null || order === DataCubeResultOrder.Score) {
-        results.sort((a, b) => {
-          return (
-            fuzzaldrin.score(b.title, query) +
-            fuzzaldrin.score(b.description, query) * 0.5 -
-            (fuzzaldrin.score(a.title, query) +
-              fuzzaldrin.score(a.description, query) * 0.5)
-          );
-        });
-      } else if (order === DataCubeResultOrder.TitleAsc) {
-        results.sort((a, b) =>
-          a.title.localeCompare(b.title, locale ?? undefined)
-        );
-      } else if (order === DataCubeResultOrder.CreatedDesc) {
-        results.sort((a, b) => descending(a.datePublished, b.datePublished));
-      }
-
-      return results.map((result) => {
-        const cube = cubes.find((c) => c.data.iri === result.iri)!;
-        return {
-          dataCube: cube,
-          highlightedTitle: result.title
-            ? fuzzaldrin.wrap(result.title, query, {
-                wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
-              })
-            : "",
-          highlightedDescription: result.description
-            ? fuzzaldrin.wrap(result.description, query, {
-                wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
-              })
-            : "",
-          score:
-            fuzzaldrin.score(result.title, query) +
-            fuzzaldrin.score(result.description, query) * 0.5,
-        };
-      });
+      return search(cubesByIri, dataCubeCandidates, query);
     }
 
     if (order === DataCubeResultOrder.TitleAsc) {
@@ -163,7 +170,7 @@ export const Query: QueryResolvers = {
     }
 
     return dataCubeCandidates.map(({ iri }) => {
-      const cube = cubes.find((c) => c.data.iri === iri)!;
+      const cube = cubesByIri[iri];
       return { dataCube: cube };
     });
   },

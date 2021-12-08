@@ -48,6 +48,7 @@
     "file-saver": "^2.0.2",
     "flexsearch": "^0.6.32",
     "fp-ts": "^2.8.2",
+    "fuse.js": "^6.4.6",
     "fuzzaldrin-plus": "^0.6.0",
     "global-agent": "^2.1.12",
     "graphql": "^15.5.1",
