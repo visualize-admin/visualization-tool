@@ -333,6 +333,10 @@ export const resolvers: Resolvers = {
         return "GeoShapesDimension";
       }
 
+      if (scaleType === "Ordinal") {
+        return "OrdinalDimension";
+      }
+
       return "NominalDimension";
     },
   },
