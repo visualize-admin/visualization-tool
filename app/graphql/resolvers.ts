@@ -1,6 +1,5 @@
 import { ascending, descending } from "d3";
 import DataLoader from "dataloader";
-import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
@@ -13,7 +12,8 @@ import {
 } from "../domain/data";
 
 import Fuse from "fuse.js";
-import { keyBy } from "lodash";
+import { flatten, keyBy } from "lodash";
+import lunr from "lunr";
 import { parseLocaleString } from "../locales/locales";
 import { Loaders } from "../pages/api/graphql";
 import {
@@ -46,7 +46,7 @@ import {
 } from "./resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "./shared-types";
 
-const search = (
+const searchWithFuse = (
   cubesByIri: Record<string, ResolvedDataCube>,
   cubesData: ResolvedDataCube["data"][],
   query: string
@@ -94,6 +94,48 @@ const search = (
         highlightedTitle,
       };
     });
+};
+
+const searchWithLunr = (
+  cubesByIri: Record<string, ResolvedDataCube>,
+  cubesData: ResolvedDataCube["data"][],
+  query: string
+) => {
+  var idx = lunr(function () {
+    const self = this;
+    self.ref("iri");
+    self.field("title", { boost: 2 });
+    self.field("description");
+    self.metadataWhitelist = ["position"];
+
+    cubesData.forEach(function (doc) {
+      self.add(doc);
+    }, this);
+  });
+
+  const results = idx.search(query);
+  return results.map((result) => {
+    const cube = cubesByIri[result.ref];
+    const titleMatchPositions = flatten(
+      Object.values(result.matchData.metadata)
+        .filter((o) => o.title)
+        .map((o) => o.title.position)
+    ).map(([start, length]) => [start, start + length - 1] as [number, number]);
+    const descriptionMatchPositions = flatten(
+      Object.values(result.matchData.metadata)
+        .filter((o) => o.description)
+        .map((o) => o.description.position)
+    ).map(([start, length]) => [start, start + length - 1] as [number, number]);
+    const highlightedTitle = highlightMatch({
+      value: cube.data.title,
+      indices: titleMatchPositions,
+    });
+    const highlightedDescription = highlightMatch({
+      value: cube.data.description,
+      indices: descriptionMatchPositions,
+    });
+    return { dataCube: cube, highlightedTitle, highlightedDescription };
+  });
 };
 
 const highlightMatch = (match?: Fuse.FuseResultMatch) => {
@@ -156,7 +198,7 @@ export const Query: QueryResolvers = {
     const cubesByIri = keyBy(cubes, (c) => c.data.iri);
 
     if (query) {
-      return search(cubesByIri, dataCubeCandidates, query);
+      return searchWithLunr(cubesByIri, dataCubeCandidates, query);
     }
 
     if (order === DataCubeResultOrder.TitleAsc) {
