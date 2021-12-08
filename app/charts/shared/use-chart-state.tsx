@@ -42,7 +42,7 @@ export const useChartState = () => {
   const ctx = useContext(ChartContext);
   if (ctx === undefined) {
     throw Error(
-      "You need to wrap your component in <ChartStateProvider /> to useChartState()"
+      "You need to wrap your component in <ChartContext.Provider /> to useChartState()"
     );
   }
   return ctx;

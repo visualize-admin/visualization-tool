@@ -346,7 +346,9 @@ const useColumnsStackedState = ({
       const xRef = xScale(getX(datum)) as number;
       const xOffset = xScale.bandwidth() / 2;
 
-      const tooltipValues = preparedData.filter((j) => getX(j) === getX(datum));
+      const tooltipValues = preparedDataGroupedByX.get(
+        getX(datum)
+      ) as Observation[];
 
       const sortedTooltipValues = sortByIndex({
         data: tooltipValues,
@@ -359,9 +361,7 @@ const useColumnsStackedState = ({
         (sum) => (d: Observation) =>
           (sum += getY(d) ?? 0)
       )(0);
-      const cumulativeRulerItemValues = [
-        ...sortedTooltipValues.map(cumulativeSum),
-      ];
+      const cumulativeRulerItemValues = sortedTooltipValues.map(cumulativeSum);
 
       const yRef = yScale(
         Math.max(
@@ -411,7 +411,7 @@ const useColumnsStackedState = ({
           color: colors(getSegment(datum)) as string,
         },
         values: sortedTooltipValues.map((td) => ({
-          label: getSegment(td),
+          label: `${getSegment(td)}`,
           value: yMeasure.unit
             ? `${formatNumber(getY(td))} ${yMeasure.unit}`
             : formatNumber(getY(td)),
@@ -428,7 +428,7 @@ const useColumnsStackedState = ({
       getSegment,
       getX,
       getY,
-      preparedData,
+      preparedDataGroupedByX,
       segments,
       xScale,
       yMeasure.unit,
