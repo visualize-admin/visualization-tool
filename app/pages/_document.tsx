@@ -5,15 +5,8 @@ import Document, {
   NextScript,
   DocumentContext,
 } from "next/document";
+import { GA_TRACKING_ID } from "../domain/env";
 import { parseLocaleString } from "../locales/locales";
-
-const clientEnv = {
-  GA_TRACKING_ID: process.env.GA_TRACKING_ID,
-  SPARQL_EDITOR: process.env.SPARQL_EDITOR,
-  SPARQL_ENDPOINT: process.env.SPARQL_ENDPOINT,
-  PUBLIC_URL: process.env.PUBLIC_URL,
-  GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT,
-};
 
 class MyDocument extends Document<{ locale: string }> {
   static async getInitialProps(ctx: DocumentContext) {
@@ -40,20 +33,16 @@ class MyDocument extends Document<{ locale: string }> {
         lang={this.props.locale}
       >
         <Head>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window.__clientEnv__=${JSON.stringify(clientEnv)}`,
-            }}
-          />
-          {clientEnv.GA_TRACKING_ID && (
+          <script src="/api/client-env"></script>
+          {GA_TRACKING_ID && (
             <>
               <script
                 async
-                src={`https://www.googletagmanager.com/gtag/js?id=${clientEnv.GA_TRACKING_ID}`}
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
               />
               <script
                 dangerouslySetInnerHTML={{
-                  __html: `window.dataLayer = window.dataLayer || [];function gtag() {window.dataLayer.push(arguments);};gtag("js", new Date());gtag("config", "${clientEnv.GA_TRACKING_ID}", {anonymize_ip:true});`,
+                  __html: `window.dataLayer = window.dataLayer || [];function gtag() {window.dataLayer.push(arguments);};gtag("js", new Date());gtag("config", "${GA_TRACKING_ID}", {anonymize_ip:true});`,
                 }}
               ></script>
             </>
