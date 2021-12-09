@@ -603,7 +603,7 @@ msgstr "Zurück zu den Datensätzen"
 
 #: app/configurator/components/configurator.tsx:43
 msgid "dataset-selector.choose-another-dataset"
-msgstr "Wählen Sie ein anderes Datensatz"
+msgstr "Wählen Sie einen anderen Datensatz"
 
 #: app/components/chart-published.tsx:80
 msgid "dataset.hasImputedValues"
