@@ -99,7 +99,7 @@ const searchWithFuse = (
 const searchWithLunr = (
   cubesByIri: Record<string, ResolvedDataCube>,
   cubesData: ResolvedDataCube["data"][],
-  query: string
+  searchTerm: string
 ) => {
   var idx = lunr(function () {
     const self = this;
@@ -113,7 +113,21 @@ const searchWithLunr = (
     }, this);
   });
 
-  const results = idx.search(query);
+  const results = idx.query((q) => {
+    // exact matches should have the highest boost
+    q.term(searchTerm, { boost: 100 });
+
+    // prefix matches should be boosted slightly
+    q.term(searchTerm, {
+      boost: 10,
+      usePipeline: false,
+      wildcard: lunr.Query.wildcard.TRAILING,
+    });
+
+    // finally, try a fuzzy search, without any boost
+    q.term(searchTerm, { boost: 1, usePipeline: false, editDistance: 1 });
+  });
+
   return results.map((result) => {
     const cube = cubesByIri[result.ref];
     const titleMatchPositions = flatten(
