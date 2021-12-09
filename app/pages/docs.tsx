@@ -103,6 +103,11 @@ const pages: ConfigPageOrGroup[] = [
         title: "Scatterplot",
         content: require("../docs/scatterplot.docs"),
       },
+      {
+        path: "/charts/cube-update",
+        title: "Cube update",
+        content: require("../docs/cube-update-constraints.mdx"),
+      },
     ],
   },
   {
