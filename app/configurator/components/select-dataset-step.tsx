@@ -84,19 +84,23 @@ export const SelectDatasetStepContent = () => {
         pt: 3,
       }}
     >
-      <PanelLeftWrapper raised={false} sx={{ mt: 50, bg: "transparent" }}>
+      <PanelLeftWrapper
+        raised={false}
+        sx={{ mt: "2.25rem", bg: "transparent" }}
+      >
         {dataset ? (
           <>
-            <Box mb={4} px={4}>
+            <Box px={4}>
               <NextLink passHref href={backLink}>
-                <Link variant="inline">
+                <Link variant="primary">
+                  ←{" "}
                   <Trans id="dataset-preview.back-to-results">
                     Back to the list
                   </Trans>
                 </Link>
               </NextLink>
             </Box>
-            <DataSetMetadata dataSetIri={dataset} />
+            <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
           </>
         ) : (
           <SearchFilters />

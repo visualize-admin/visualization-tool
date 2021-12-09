@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { Box, Link } from "theme-ui";
+import { Box, BoxProps, Link } from "theme-ui";
 import { Loading } from "../../components/hint";
 import Stack from "../../components/Stack";
 import { useFormatDate } from "../../configurator/components/ui-helpers";
@@ -12,7 +12,11 @@ import {
 import { useLocale } from "../../locales/use-locale";
 import truthy from "../../utils/truthy";
 import Tag from "./Tag";
-export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
+
+export const DataSetMetadata = ({
+  dataSetIri,
+  ...boxProps
+}: { dataSetIri: string } & BoxProps) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
   const [{ data }] = useDataCubeMetadataQuery({
@@ -24,7 +28,7 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   }
 
   return (
-    <Box sx={{ m: 4 }}>
+    <Box {...boxProps} sx={{ mx: 4, ...boxProps.sx }}>
       {cube.publisher && (
         <>
           <DatasetMetadataTitle>
