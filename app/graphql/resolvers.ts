@@ -96,6 +96,53 @@ const searchWithFuse = (
     });
 };
 
+/**
+ * This pipeline emits "anti-virus" as "antivirus" and "anti" "virus"
+ * This is to recognize BAFU acronyms that have an hyphen like "MGM-U"
+ *
+ * @see https://github.com/olivernn/lunr.js/issues/296
+ */
+const hyphenator = function (token: lunr.Token) {
+  // if there are no hyphens then skip this logic
+  if (!token.toString().includes("-")) return token;
+
+  // split the token by hyphens, returning a clone of the original token with the split
+  // e.g. 'anti-virus' -> 'anti', 'virus'
+  const tokens = token
+    .toString()
+    .split("-")
+    .filter((x) => x !== "")
+    .map(function (s) {
+      return token.clone(function () {
+        return s;
+      });
+    });
+
+  // clone the token and replace any hyphens
+  // e.g. 'anti-virus' -> 'antivirus'
+  tokens.push(
+    token.clone(function (s) {
+      return s.replace("-", "");
+    })
+  );
+
+  // finally push the original token into the list
+  // 'anti-virus' -> 'anti-virus'
+  tokens.push(token);
+
+  // send the tokens on to the next step of the pipeline
+  return tokens;
+};
+
+lunr.tokenizer.separator = /\s+/;
+
+lunr.Pipeline.registerFunction(hyphenator, "hyphenator");
+
+var customHiphenatorPipeline = function (builder: lunr.Builder) {
+  builder.pipeline.before(lunr.stemmer, hyphenator);
+  builder.searchPipeline.before(lunr.stemmer, hyphenator);
+};
+
 const searchWithLunr = (
   cubesByIri: Record<string, ResolvedDataCube>,
   cubesData: ResolvedDataCube["data"][],
@@ -103,6 +150,7 @@ const searchWithLunr = (
 ) => {
   var idx = lunr(function () {
     const self = this;
+    self.use(customHiphenatorPipeline);
     self.ref("iri");
     self.field("title", { boost: 2 });
     self.field("description");
