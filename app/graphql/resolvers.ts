@@ -106,6 +106,8 @@ const searchWithLunr = (
     self.ref("iri");
     self.field("title", { boost: 2 });
     self.field("description");
+    self.field("publisher");
+
     self.metadataWhitelist = ["position"];
 
     cubesData.forEach(function (doc) {
