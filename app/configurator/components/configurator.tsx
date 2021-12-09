@@ -39,7 +39,7 @@ const DatasetSelector = ({ state }: { state: ConfiguratorState }) => {
           <div>{metaData.dataCubeByIri?.title}</div>
           <div>
             <NextLink href="/browse" passHref>
-              <Link sx={{ fontSize: 3 }}>
+              <Link variant="primary" sx={{ fontSize: 3 }}>
                 <Trans id="dataset-selector.choose-another-dataset">
                   Choose another dataset
                 </Trans>
