@@ -1,6 +1,6 @@
 // import { sparql } from "@tpluscode/rdf-string";
 // import { descending } from "d3";
-import { descending, index, rollup } from "d3";
+import { descending, group, index, rollup } from "d3";
 import {
   Cube,
   CubeDimension,
@@ -18,7 +18,10 @@ import {
   parseObservationValue,
 } from "../domain/data";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
+import { DataCubeSearchFilter, DataCubeTheme } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
+import isAttrEqual from "../utils/is-attr-equal";
+import truthy from "../utils/truthy";
 import * as ns from "./namespace";
 import {
   getQueryLocales,
@@ -26,15 +29,10 @@ import {
   parseCube,
   parseCubeDimension,
 } from "./parse";
+import { loadDimensionValues } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
-import { loadUnitLabels } from "./query-unit-labels";
 import { loadUnversionedResources } from "./query-sameas";
-import truthy from "../utils/truthy";
-import {
-  DataCubeSearchFilter,
-  DataCubeTheme,
-} from "../graphql/query-hooks";
-import isAttrEqual from "../utils/is-attr-equal";
+import { loadUnitLabels } from "./query-unit-labels";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
@@ -323,18 +321,37 @@ const getCubeDimensionValuesWithLabels = async ({
   cube: Cube;
   locale: string;
 }): Promise<DimensionValue[]> => {
-  const dimensionValueNamedNodes = (dimension.in?.filter(
-    (v) => v.termType === "NamedNode"
-  ) ?? []) as NamedNode[];
+  const load = async () => {
+    const loaders = [
+      () => dimension.in || [],
+      () =>
+        loadDimensionValues({
+          datasetIri: cube.term,
+          dimensionIri: dimension.path,
+        }),
+    ];
 
-  const dimensionValueLiterals = (dimension.in?.filter(
-    (v) => v.termType === "Literal"
-  ) ?? []) as Literal[];
+    for (const loader of loaders) {
+      const dimensionValues = await loader();
 
-  if (
-    dimensionValueNamedNodes.length > 0 &&
-    dimensionValueLiterals.length > 0
-  ) {
+      if (dimensionValues.length) {
+        const grouped = group(dimensionValues, (d) => d.termType);
+
+        const namedNodes = (grouped.get("NamedNode") || []) as Array<NamedNode>;
+        const literals = (grouped.get("Literal") || []) as Array<Literal>;
+
+        if (namedNodes?.length || literals?.length) {
+          return { namedNodes, literals };
+        }
+      }
+    }
+
+    return { namedNodes: [], literals: [] };
+  };
+
+  const { namedNodes, literals } = await load();
+
+  if (namedNodes.length > 0 && literals.length > 0) {
     console.warn(
       `WARNING: dimension with mixed literals and named nodes <${dimension.path?.value}>`
     );
@@ -345,13 +362,12 @@ const getCubeDimensionValuesWithLabels = async ({
     // console.log(dimensionValueLiterals);
   }
 
-  if (
-    dimensionValueNamedNodes.length === 0 &&
-    dimensionValueLiterals.length === 0
-  ) {
+  if (namedNodes.length === 0 && literals.length === 0) {
     console.warn(
       `WARNING: dimension with NO values <${dimension.path?.value}>`
     );
+
+    return [];
   }
 
   /**
@@ -359,11 +375,11 @@ const getCubeDimensionValuesWithLabels = async ({
    * so cubes can be upgraded to newer versions without the filters breaking.
    */
 
-  if (dimensionValueNamedNodes.length > 0) {
+  if (namedNodes.length > 0) {
     const [labels, unversioned] = await Promise.all([
-      loadResourceLabels({ ids: dimensionValueNamedNodes, locale }),
+      loadResourceLabels({ ids: namedNodes, locale }),
       dimensionIsVersioned(dimension)
-        ? loadUnversionedResources({ ids: dimensionValueNamedNodes })
+        ? loadUnversionedResources({ ids: namedNodes })
         : [],
     ]);
 
@@ -379,16 +395,14 @@ const getCubeDimensionValuesWithLabels = async ({
       })
     );
 
-    // console.log(unversioned);
-
-    return dimensionValueNamedNodes.map((iri) => {
+    return namedNodes.map((iri) => {
       return {
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelLookup.get(iri.value) ?? "",
       };
     });
-  } else if (dimensionValueLiterals.length > 0) {
-    return dimensionValueLiterals.map((v) => {
+  } else if (literals.length > 0) {
+    return literals.map((v) => {
       return ns.cube.Undefined.equals(v.datatype)
         ? {
             value: DIMENSION_VALUE_UNDEFINED, // We use a known string here because actual null does not work as value in UI inputs.
