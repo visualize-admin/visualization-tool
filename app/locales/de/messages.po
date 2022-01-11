@@ -33,17 +33,21 @@ msgstr "[ Ohne Beschreibung ]"
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
-#: app/configurator/components/dataset-browse.tsx:683
+#: app/configurator/components/dataset-browse.tsx:714
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
 
-#: app/configurator/components/dataset-browse.tsx:640
+#: app/configurator/components/dataset-browse.tsx:671
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
 #: app/configurator/components/dataset-preview.tsx:54
 msgid "browse.dataset.create-visualization"
-msgstr "Erstellen Sie die Visualisierung von Dataset"
+msgstr "Visualisierung erstellen"
+
+#: app/configurator/components/select-dataset-step.tsx:119
+msgid "browse.datasets.all-datasets"
+msgstr "Alle Datensätze"
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
@@ -74,15 +78,15 @@ msgstr "Kopiert!"
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
-#: app/configurator/components/action-bar.tsx:46
+#: app/configurator/components/action-bar.tsx:45
 msgid "button.next"
 msgstr "Weiter"
 
-#: app/configurator/components/action-bar.tsx:41
+#: app/configurator/components/action-bar.tsx:40
 msgid "button.previous"
 msgstr "Zurück"
 
-#: app/configurator/components/action-bar.tsx:44
+#: app/configurator/components/action-bar.tsx:43
 msgid "button.publish"
 msgstr "Veröffentlichen"
 
@@ -180,7 +184,7 @@ msgstr "Kompakte Ansicht"
 
 #: app/charts/table/table.tsx:335
 msgid "chart.table.number.of.lines"
-msgstr "Anzahl Zeilen<<<<<<< HEAD"
+msgstr "Anzahl Zeilen"
 
 #: app/configurator/table/table-chart-options.tsx:190
 msgid "columnStyle.bar"
@@ -217,7 +221,7 @@ msgstr "Horizontale Achse"
 
 #: app/configurator/components/ui-helpers.ts:381
 msgid "controls.axis.vertical"
-msgstr "Vertikale Achse<<<<<<< HEAD"
+msgstr "Vertikale Achse"
 
 #: app/configurator/components/ui-helpers.ts:463
 msgid "controls.chart.type.area"
@@ -284,7 +288,7 @@ msgstr "gestapelt"
 msgid "controls.description"
 msgstr "Beschreibung hinzufügen"
 
-#: app/configurator/components/field.tsx:503
+#: app/configurator/components/field.tsx:514
 msgid "controls.dimension.none"
 msgstr "Keine"
 
@@ -294,11 +298,11 @@ msgstr "Keine"
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
 
-#: app/configurator/components/filters.tsx:89
+#: app/configurator/components/filters.tsx:60
 msgid "controls.filter.select.all"
 msgstr "Alle auswählen"
 
-#: app/configurator/components/filters.tsx:98
+#: app/configurator/components/filters.tsx:69
 msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
 
@@ -352,7 +356,7 @@ msgstr "Keine Zeitdimension verfügbar!"
 
 #: app/configurator/interactive-filters/interactive-filters-config-options.tsx:173
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
-msgstr "Zeitfilter anzeigen<<<<<<< HEAD"
+msgstr "Zeitfilter anzeigen"
 
 #: app/configurator/components/ui-helpers.ts:483
 msgid "controls.language.english"
@@ -400,7 +404,7 @@ msgstr "Diagramm-Einstellungen"
 
 #: app/configurator/table/table-chart-configurator.tsx:122
 msgid "controls.section.columns"
-msgstr "Spalten<<<<<<< HEAD"
+msgstr "Spalten"
 
 #: app/configurator/table/table-chart-options.tsx:234
 msgid "controls.section.columnstyle"
@@ -412,7 +416,7 @@ msgstr "Filter"
 
 #: app/configurator/components/chart-annotator.tsx:23
 msgid "controls.section.description"
-msgstr "Titel & Beschreibung<<<<<<< HEAD"
+msgstr "Titel & Beschreibung"
 
 #: app/configurator/components/chart-options-selector.tsx:268
 #: app/configurator/components/chart-options-selector.tsx:272
@@ -449,7 +453,7 @@ msgstr ""
 
 #: app/configurator/components/chart-options-selector.tsx:404
 msgid "controls.section.sorting"
-msgstr "Sortieren<<<<<<< HEAD"
+msgstr "Sortieren"
 
 #: app/configurator/table/table-chart-options.tsx:469
 msgid "controls.section.tableSettings"
@@ -468,17 +472,9 @@ msgstr "Tabellenoptionen"
 msgid "controls.select.chart.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/components/chart-type-selector.tsx:165
-#~ msgid "controls.select.chart.type.experimental"
-#~ msgstr "Experimentelle Features"
-
-#: app/configurator/components/chart-type-selector.tsx:170
-#~ msgid "controls.select.chart.type.experimental.description"
-#~ msgstr "Vorschau von zukünftigen Features mit limitierten Daten auf einer separaten Seite."
-
-#: app/configurator/components/chart-options-selector.tsx:314
+#: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"
-msgstr "Spaltenstil<<<<<<< HEAD"
+msgstr "Spaltenstil"
 
 #: app/configurator/table/table-chart-options.tsx:239
 msgid "controls.select.columnStyle"
@@ -523,7 +519,7 @@ msgstr "Messwert auswählen"
 
 #: app/configurator/components/field.tsx:82
 #: app/configurator/components/field.tsx:140
-#: app/configurator/components/field.tsx:508
+#: app/configurator/components/field.tsx:519
 msgid "controls.select.optional"
 msgstr "optional"
 
@@ -591,7 +587,7 @@ msgstr "Wählen Sie eine Dimension aus …"
 #: app/configurator/components/ui-helpers.ts:399
 #: app/configurator/table/table-chart-sorting-options.tsx:305
 msgid "controls.sorting.sortBy"
-msgstr "Sortieren nach<<<<<<< HEAD"
+msgstr "Sortieren nach"
 
 #: app/configurator/table/table-chart-options.tsx:211
 msgid "controls.table.column.group"
@@ -607,7 +603,7 @@ msgstr "Einstellungen"
 
 #: app/configurator/table/table-chart-configurator.tsx:107
 msgid "controls.table.sorting"
-msgstr "Sortierung<<<<<<< HEAD"
+msgstr "Sortierung"
 
 #: app/configurator/table/table-chart-options.tsx:473
 msgid "controls.tableSettings.showSearch"
@@ -615,17 +611,21 @@ msgstr "Suche anzeigen"
 
 #: app/configurator/components/ui-helpers.ts:386
 msgid "controls.title"
-msgstr "Titel hinzufügen<<<<<<< HEAD"
+msgstr "Titel hinzufügen"
 
-#: app/configurator/components/select-dataset-step.tsx:102
+#: app/configurator/components/select-dataset-step.tsx:93
 msgid "dataset-preview.back-to-results"
-msgstr "Zurück zu den Ergebnissen"
+msgstr "Zurück zu den Datensätzen"
+
+#: app/configurator/components/configurator.tsx:43
+msgid "dataset-selector.choose-another-dataset"
+msgstr "Wählen Sie einen anderen Datensatz"
 
 #: app/components/chart-published.tsx:81
 msgid "dataset.hasImputedValues"
 msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die Lücken zu füllen."
 
-#: app/configurator/components/dataset-browse.tsx:292
+#: app/configurator/components/dataset-browse.tsx:322
 msgid "dataset.includeDrafts"
 msgstr "Entwürfe einschließen"
 
@@ -649,17 +649,17 @@ msgstr "Quelle"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:260
+#: app/configurator/components/dataset-browse.tsx:290
 msgid "dataset.order.newest"
 msgstr "Neueste"
 
-#: app/configurator/components/dataset-browse.tsx:252
+#: app/configurator/components/dataset-browse.tsx:282
 msgid "dataset.order.relevance"
 msgstr "Relevanz"
 
-#: app/configurator/components/dataset-browse.tsx:256
+#: app/configurator/components/dataset-browse.tsx:286
 msgid "dataset.order.title"
-msgstr "Titel<<<<<<< HEAD"
+msgstr "Titel"
 
 #: app/components/chart-preview.tsx:58
 #: app/components/chart-published.tsx:59
@@ -671,21 +671,21 @@ msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik ni
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
-#: app/configurator/components/dataset-browse.tsx:316
+#: app/configurator/components/dataset-browse.tsx:346
 msgid "dataset.results"
 msgstr "Ergebnisse"
 
-#: app/configurator/components/dataset-browse.tsx:264
+#: app/configurator/components/dataset-browse.tsx:294
 msgid "dataset.search.label"
 msgstr "Suchen"
 
-#: app/configurator/components/dataset-browse.tsx:336
+#: app/configurator/components/dataset-browse.tsx:366
 msgid "dataset.sortby"
 msgstr "Sortieren nach"
 
-#: app/configurator/components/dataset-browse.tsx:862
+#: app/configurator/components/dataset-browse.tsx:905
 msgid "dataset.tag.draft"
-msgstr "Luftzug<<<<<<< HEAD"
+msgstr "Luftzug"
 
 #: app/configurator/components/dataset-preview.tsx:103
 msgid "datatable.showing.first.rows"
@@ -767,13 +767,13 @@ msgstr "Filter ausblenden"
 msgid "interactive.data.filters.show"
 msgstr "Filter anzeigen"
 
-#: app/homepage/intro.tsx:102
-msgid "intro.browse.categories"
-msgstr "Themen durchsuchen"
-
 #: app/homepage/intro.tsx:121
-msgid "intro.browse.organizations"
-msgstr "Organisationen durchsuchen"
+#~ msgid "intro.browse.organizations"
+#~ msgstr "Organisationen durchsuchen"
+
+#: app/homepage/intro.tsx:102
+#~ msgid "intro.browse.themes"
+#~ msgstr "Kategorien durchsuchen"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125
@@ -828,19 +828,19 @@ msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt ha
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:225
+#: app/configurator/components/stepper.tsx:189
 msgid "step.annotate"
 msgstr "Beschreiben"
 
 #: app/configurator/components/stepper.tsx:204
-msgid "step.dataset"
-msgstr "Datensatz"
+#~ msgid "step.dataset"
+#~ msgstr "Datensatz"
 
-#: app/configurator/components/stepper.tsx:211
+#: app/configurator/components/stepper.tsx:175
 msgid "step.visualization.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/components/stepper.tsx:218
+#: app/configurator/components/stepper.tsx:182
 msgid "step.visualize"
 msgstr "Visualisieren"
 

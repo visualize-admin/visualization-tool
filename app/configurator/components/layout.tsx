@@ -19,7 +19,7 @@ export const PanelLeftWrapper = ({
       sx={{
         overflowX: "hidden",
         overflowY: "auto",
-        bgColor: "blue",
+        bg: "monochrome100",
         boxShadow: raised ? "rightSide" : undefined,
         borderRightColor: raised ? "monochrome500" : undefined,
         borderRightWidth: raised ? "1px" : undefined,

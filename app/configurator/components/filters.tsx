@@ -19,20 +19,8 @@ import {
 
 type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
 
-export const DimensionValuesMultiFilter = ({
-  dataSetIri,
-  dimensionIri,
-  colorConfigPath,
-}: {
-  dataSetIri: string;
-  dimensionIri: string;
-  colorConfigPath?: string;
-}) => {
-  const locale = useLocale();
+const useDimensionSelection = (dimensionIri: string) => {
   const [state, dispatch] = useConfiguratorState();
-  const [{ data }] = useDimensionValuesQuery({
-    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
-  });
 
   const selectAll = useCallback(() => {
     dispatch({
@@ -50,6 +38,55 @@ export const DimensionValuesMultiFilter = ({
     });
   }, [dispatch, dimensionIri]);
 
+  return useMemo(() => ({ selectAll, selectNone }), [selectAll, selectNone]);
+};
+
+const SelectionControls = ({
+  dimensionIri,
+  selectionState,
+}: {
+  dimensionIri: string;
+  selectionState: SelectionState;
+}) => {
+  const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
+  return (
+    <Box color="monochrome500">
+      <Button
+        onClick={selectAll}
+        variant="inline"
+        sx={{ mr: 2, mb: 4 }}
+        disabled={selectionState === "ALL_SELECTED"}
+      >
+        <Trans id="controls.filter.select.all">Select all</Trans>
+      </Button>
+      ·
+      <Button
+        onClick={selectNone}
+        variant="inline"
+        sx={{ ml: 2, mb: 4 }}
+        disabled={selectionState === "NONE_SELECTED"}
+      >
+        <Trans id="controls.filter.select.none">Select none</Trans>
+      </Button>
+    </Box>
+  );
+};
+
+export const DimensionValuesMultiFilter = ({
+  dataSetIri,
+  dimensionIri,
+  colorConfigPath,
+}: {
+  dataSetIri: string;
+  dimensionIri: string;
+  colorConfigPath?: string;
+}) => {
+  const locale = useLocale();
+  const [state] = useConfiguratorState();
+  const [{ data }] = useDimensionValuesQuery({
+    variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
+  });
+
   const dimension = data?.dataCubeByIri?.dimensionByIri;
 
   const sortedDimensionValues = useMemo(() => {
@@ -60,44 +97,34 @@ export const DimensionValuesMultiFilter = ({
       : [];
   }, [dimension?.values, locale]);
 
-  if (data?.dataCubeByIri?.dimensionByIri) {
-    const dimension = data?.dataCubeByIri?.dimensionByIri;
-    const activeFilter = getFilterValue(state, dimension.iri);
-    const activeFilterValues = activeFilter
+  const activeFilter = dimension ? getFilterValue(state, dimension.iri) : null;
+  const isFilterActive: Set<string> = useMemo(() => {
+    if (!dimension) {
+      return new Set();
+    }
+    const activeKeys = activeFilter
       ? activeFilter.type === "single"
         ? [String(activeFilter.value)]
         : activeFilter.type === "multi"
         ? Object.keys(activeFilter.values)
         : []
       : [];
+    return new Set(activeKeys);
+  }, [dimension, activeFilter]);
 
-    const selectionState: SelectionState = !activeFilter
-      ? "ALL_SELECTED"
-      : activeFilterValues.length === 0
-      ? "NONE_SELECTED"
-      : "SOME_SELECTED";
+  const selectionState: SelectionState = !activeFilter
+    ? "ALL_SELECTED"
+    : isFilterActive.size === 0
+    ? "NONE_SELECTED"
+    : "SOME_SELECTED";
 
+  if (data?.dataCubeByIri?.dimensionByIri) {
     return (
       <>
-        <Box color="monochrome500">
-          <Button
-            onClick={selectAll}
-            variant="inline"
-            sx={{ mr: 2, mb: 4 }}
-            disabled={selectionState === "ALL_SELECTED"}
-          >
-            <Trans id="controls.filter.select.all">Select all</Trans>
-          </Button>
-          ·
-          <Button
-            onClick={selectNone}
-            variant="inline"
-            sx={{ ml: 2, mb: 4 }}
-            disabled={selectionState === "NONE_SELECTED"}
-          >
-            <Trans id="controls.filter.select.none">Select none</Trans>
-          </Button>
-        </Box>
+        <SelectionControls
+          dimensionIri={dimensionIri}
+          selectionState={selectionState}
+        />
 
         {sortedDimensionValues.map((dv) => {
           if (state.state === "CONFIGURING_CHART") {
@@ -114,12 +141,12 @@ export const DimensionValuesMultiFilter = ({
                 dimensionIri={dimensionIri}
                 label={dv.label}
                 value={dv.value}
-                allValues={dimension.values.map((d) => d.value)}
+                allValues={dimension?.values.map((d) => d.value) ?? []}
                 checked={
                   selectionState === "ALL_SELECTED"
                     ? true
                     : selectionState === "SOME_SELECTED"
-                    ? activeFilterValues.includes(dv.value)
+                    ? !!isFilterActive.has(dv.value)
                     : undefined
                 }
                 checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}

@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
-import React, { ReactNode } from "react";
-import { Box, Link } from "theme-ui";
 import NextLink from "next/link";
+import React, { ReactNode } from "react";
+import { Box, BoxProps, Link } from "theme-ui";
 import { Loading } from "../../components/hint";
 import Stack from "../../components/Stack";
 import { useFormatDate } from "../../configurator/components/ui-helpers";
@@ -10,9 +10,13 @@ import {
   useDataCubeMetadataQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-import Tag from "./Tag";
 import truthy from "../../utils/truthy";
-export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
+import Tag from "./Tag";
+
+export const DataSetMetadata = ({
+  dataSetIri,
+  ...boxProps
+}: { dataSetIri: string } & BoxProps) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
   const [{ data }] = useDataCubeMetadataQuery({
@@ -24,7 +28,7 @@ export const DataSetMetadata = ({ dataSetIri }: { dataSetIri: string }) => {
   }
 
   return (
-    <Box sx={{ m: 4 }}>
+    <Box {...boxProps} sx={{ mx: 4, ...boxProps.sx }}>
       {cube.publisher && (
         <>
           <DatasetMetadataTitle>
@@ -131,7 +135,7 @@ const DatasetTags = ({
   cube: NonNullable<DataCubeMetadataQuery["dataCubeByIri"]>;
 }) => {
   return (
-    <Stack spacing={1} direction="row">
+    <Stack spacing={1} direction="column">
       {[cube.creator, ...cube.themes].filter(truthy).map((t) => (
         <NextLink
           key={t.iri}
@@ -140,7 +144,18 @@ const DatasetTags = ({
           }/${encodeURIComponent(t.iri)}`}
           passHref
         >
-          <Tag as="a" type={t.__typename}>
+          <Tag
+            as="a"
+            type={t.__typename}
+            title={t.label || undefined}
+            sx={{
+              maxWidth: "100%",
+              display: "block",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+            }}
+          >
             {t.label}
           </Tag>
         </NextLink>

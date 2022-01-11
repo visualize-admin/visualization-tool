@@ -1,28 +1,19 @@
+import NextLink from "next/link";
+import React, { ReactNode } from "react";
 import { Box, Button, Text } from "theme-ui";
-import React, { ReactNode, useCallback } from "react";
-import { useRouter } from "next/router";
-import { Trans } from "@lingui/macro";
-
+import { HintRed } from "../components/hint";
 import { default as IconAreaChart } from "../icons/components/IcChartArea";
 import { default as IconBarChart } from "../icons/components/IcChartBar";
 import { default as IconColumnChart } from "../icons/components/IcChartColumn";
-import { default as IconFilter } from "../icons/components/IcFilter";
 import { default as IconLineChart } from "../icons/components/IcChartLine";
 import { default as IconPieChart } from "../icons/components/IcChartPie";
 import { default as IconScatterplot } from "../icons/components/IcChartScatterplot";
+import { default as IconFilter } from "../icons/components/IcFilter";
 import { default as IconSegment } from "../icons/components/IcSegments";
 import { default as IconTable } from "../icons/components/IcTable";
 import { default as IconText } from "../icons/components/IcText";
 import { default as IconX } from "../icons/components/IcXAxis";
 import { default as IconY } from "../icons/components/IcYAxis";
-import { HintRed } from "../components/hint";
-import SearchAutocomplete, {
-  SearchAutocompleteItem,
-} from "../components/search-autocomplete";
-import Stack from "../components/Stack";
-import Link from "next/link";
-import SvgIcCategories from "../icons/components/IcCategories";
-import SvgIcOrganisations from "../icons/components/IcOrganisations";
 
 const ICONS = [
   { Icon: IconX, color: "#375172" },
@@ -38,93 +29,6 @@ const ICONS = [
   { Icon: IconText, color: "#32B8DF" },
   { Icon: IconBarChart, color: "#008F85" },
 ];
-
-const BrowsingSection = () => {
-  const router = useRouter();
-  const handleSelectAutocompleteItem = useCallback(
-    ({ selectedItem }: { selectedItem?: SearchAutocompleteItem | null }) => {
-      if (!selectedItem) {
-        return;
-      }
-      let path: string;
-      switch (selectedItem.__typename) {
-        case "DataCubeOrganization":
-          path = `/browse/organization/${encodeURIComponent(selectedItem.iri)}`;
-          break;
-        case "DataCubeTheme":
-          path = `/browse/theme/${encodeURIComponent(selectedItem.iri)}`;
-          break;
-        case "FreeSearchItem":
-          path = `/browse?search=${encodeURIComponent(selectedItem.text)}`;
-          break;
-      }
-      router.push(path);
-    },
-    [router]
-  );
-
-  return (
-    <Stack
-      direction="column"
-      spacing={2}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        flexDirection: "column",
-        width: "100%",
-      }}
-    >
-      <SearchAutocomplete
-        placeholder="Search datasets..."
-        onSelectedItemChange={handleSelectAutocompleteItem}
-      />
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{ width: "100%", display: "flex", justifyContent: "center" }}
-      >
-        <Link passHref href="/browse">
-          <Button
-            as="a"
-            sx={{
-              display: "flex",
-              bg: "categoryLight",
-              color: "category",
-              "&:hover": {
-                bg: "categoryLight",
-                boxShadow: "primary",
-              },
-            }}
-          >
-            <Box as="span" mr={1}>
-              <SvgIcCategories width={20} height={16} />
-            </Box>
-            <Trans id="intro.browse.categories">Browse categories</Trans>
-          </Button>
-        </Link>
-        <Link passHref href="/browse">
-          <Button
-            as="a"
-            sx={{
-              display: "flex",
-              bg: "organizationLight",
-              color: "organization",
-              "&:hover": {
-                bg: "organizationLight",
-                boxShadow: "primary",
-              },
-            }}
-          >
-            <Box as="span" mr={1}>
-              <SvgIcOrganisations width={20} height={20} />
-            </Box>
-            <Trans id="intro.browse.organizations">Browse organizations</Trans>
-          </Button>
-        </Link>
-      </Stack>
-    </Stack>
-  );
-};
 
 export const Intro = ({
   hint,
@@ -207,11 +111,16 @@ export const Intro = ({
             p: 4,
             gridArea: "t",
             maxWidth: "64rem",
+            textAlign: "center",
           }}
         >
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
-          <BrowsingSection />
+          <NextLink href="/browse" passHref>
+            <Button as="a" variant="primary">
+              {buttonLabel}
+            </Button>
+          </NextLink>
         </Box>
       </Box>
     </>

@@ -29,6 +29,7 @@ import {
   parseCube,
   parseCubeDimension,
 } from "./parse";
+import { loadDimensionValues } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
 import { loadUnversionedResources } from "./query-sameas";
 import { loadUnitLabels } from "./query-unit-labels";
@@ -311,6 +312,14 @@ const groupLabelsPerValue = ({
 const dimensionIsVersioned = (dimension: CubeDimension) =>
   dimension.out(ns.schema.version)?.value ? true : false;
 
+const filterCubeDimensionValuesByTermType = ({
+  values,
+  termType,
+}: {
+  values: (Literal | NamedNode)[] | undefined;
+  termType: "Literal" | "NamedNode";
+}) => values?.filter((d) => d.termType === termType) ?? [];
+
 const getCubeDimensionValuesWithLabels = async ({
   dimension,
   cube,
@@ -320,13 +329,14 @@ const getCubeDimensionValuesWithLabels = async ({
   cube: Cube;
   locale: string;
 }): Promise<DimensionValue[]> => {
-  const dimensionValueNamedNodes = (dimension.in?.filter(
-    (v) => v.termType === "NamedNode"
-  ) ?? []) as NamedNode[];
-
-  const dimensionValueLiterals = (dimension.in?.filter(
-    (v) => v.termType === "Literal"
-  ) ?? []) as Literal[];
+  let dimensionValueNamedNodes = filterCubeDimensionValuesByTermType({
+    values: dimension.in,
+    termType: "NamedNode",
+  }) as NamedNode[];
+  let dimensionValueLiterals = filterCubeDimensionValuesByTermType({
+    values: dimension.in,
+    termType: "Literal",
+  }) as Literal[];
 
   if (
     dimensionValueNamedNodes.length > 0 &&
@@ -346,9 +356,29 @@ const getCubeDimensionValuesWithLabels = async ({
     dimensionValueNamedNodes.length === 0 &&
     dimensionValueLiterals.length === 0
   ) {
-    console.warn(
-      `WARNING: dimension with NO values <${dimension.path?.value}>`
-    );
+    const resolvedDimensionValues = await loadDimensionValues({
+      datasetIri: cube.term,
+      dimensionIri: dimension.path,
+    });
+
+    if (resolvedDimensionValues.length) {
+      const unpackedDimensionValues = resolvedDimensionValues.map(
+        (d) => d.value
+      );
+
+      dimensionValueNamedNodes = filterCubeDimensionValuesByTermType({
+        values: unpackedDimensionValues,
+        termType: "NamedNode",
+      }) as NamedNode[];
+      dimensionValueLiterals = filterCubeDimensionValuesByTermType({
+        values: unpackedDimensionValues,
+        termType: "Literal",
+      }) as Literal[];
+    } else {
+      console.warn(
+        `WARNING: dimension with NO values <${dimension.path?.value}>`
+      );
+    }
   }
 
   /**

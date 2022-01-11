@@ -1,23 +1,23 @@
+import { Trans } from "@lingui/macro";
+import NextLink from "next/link";
+import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { Box, Link, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
-import NextLink from "next/link";
 import { DataSetHint } from "../../components/hint";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
 import { useConfiguratorState, useLocale } from "../../src";
-import { DataSetMetadata } from "./dataset-metadata";
-import { DataSetPreview } from "./dataset-preview";
 import {
+  BrowseStateProvider,
+  buildURLFromBrowseState,
+  DatasetResults,
   SearchDatasetBox,
   SearchFilters,
-  DatasetResults,
-  BrowseStateProvider,
   useBrowseContext,
-  getFilterParamsFromQuery,
 } from "./dataset-browse";
+import { DataSetMetadata } from "./dataset-metadata";
+import { DataSetPreview } from "./dataset-preview";
 import { PanelLayout, PanelLeftWrapper, PanelMiddleWrapper } from "./layout";
-import { Trans } from "@lingui/macro";
-import { Router, useRouter } from "next/router";
 
 const softJSONParse = (v: string) => {
   try {
@@ -27,33 +27,24 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const formatBackLink = (query: Router["query"]) => {
+const formatBackLink = (
+  query: Router["query"]
+): React.ComponentProps<typeof NextLink>["href"] => {
   const backParameters = softJSONParse(query.previous as string);
   if (!backParameters) {
     return "/browse";
   }
-  const { type, iri, subtype, subiri } =
-    getFilterParamsFromQuery(backParameters);
-
-  const typePart =
-    type && iri
-      ? `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`
-      : undefined;
-  const subtypePart =
-    subtype && subiri
-      ? `${encodeURIComponent(subtype)}/${encodeURIComponent(subiri)}`
-      : undefined;
-  return ["/browse", typePart, subtypePart].filter(Boolean).join("/");
+  return buildURLFromBrowseState(backParameters);
 };
 
 export const SelectDatasetStepContent = () => {
   const locale = useLocale();
 
   const browseState = useBrowseContext();
-  const { query, order, includeDrafts, filters, dataset } = browseState;
+  const { search, order, includeDrafts, filters, dataset } = browseState;
 
   const [configState] = useConfiguratorState();
-  const [debouncedQuery] = useDebounce(query, 150, {
+  const [debouncedQuery] = useDebounce(search, 150, {
     leading: true,
   });
   const router = useRouter();
@@ -93,19 +84,23 @@ export const SelectDatasetStepContent = () => {
         pt: 3,
       }}
     >
-      <PanelLeftWrapper raised={false} sx={{ mt: 50 }}>
+      <PanelLeftWrapper
+        raised={false}
+        sx={{ mt: "2.25rem", bg: "transparent" }}
+      >
         {dataset ? (
           <>
-            <Box mb={4} px={4}>
-              <NextLink passHref href={`${backLink}`}>
-                <Link variant="inline">
+            <Box px={4}>
+              <NextLink passHref href={backLink}>
+                <Link variant="primary">
+                  ←{" "}
                   <Trans id="dataset-preview.back-to-results">
                     Back to the list
                   </Trans>
                 </Link>
               </NextLink>
             </Box>
-            <DataSetMetadata dataSetIri={dataset} />
+            <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
           </>
         ) : (
           <SearchFilters />
@@ -119,16 +114,14 @@ export const SelectDatasetStepContent = () => {
       >
         <Box sx={{ maxWidth: 900 }}>
           <Text variant="heading1" sx={{ mb: 4 }}>
-            {dataset
-              ? null
-              : filters.length > 0
-              ? filters
-                  .filter((f) => f.__typename !== "DataCubeAbout")
-                  .map((f) =>
-                    f.__typename !== "DataCubeAbout" ? f.label : null
-                  )
-                  .join(", ")
-              : "Swiss Open Government Data"}
+            {dataset ? null : filters.length > 0 ? (
+              filters
+                .filter((f) => f.__typename !== "DataCubeAbout")
+                .map((f) => (f.__typename !== "DataCubeAbout" ? f.label : null))
+                .join(", ")
+            ) : (
+              <Trans id="browse.datasets.all-datasets">All datasets</Trans>
+            )}
           </Text>
           {dataset ? null : (
             <Box mb={4}>

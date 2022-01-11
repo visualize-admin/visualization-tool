@@ -33,17 +33,21 @@ msgstr "[ No Description ]"
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
 
-#: app/configurator/components/dataset-browse.tsx:683
+#: app/configurator/components/dataset-browse.tsx:714
 msgid "browse-panel.organizations"
 msgstr "Organizations"
 
-#: app/configurator/components/dataset-browse.tsx:640
+#: app/configurator/components/dataset-browse.tsx:671
 msgid "browse-panel.themes"
-msgstr "Themes"
+msgstr "Categories"
 
 #: app/configurator/components/dataset-preview.tsx:54
 msgid "browse.dataset.create-visualization"
-msgstr "Create visualization from dataset"
+msgstr "Create visualization"
+
+#: app/configurator/components/select-dataset-step.tsx:119
+msgid "browse.datasets.all-datasets"
+msgstr "All Datasets"
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
@@ -74,15 +78,15 @@ msgstr "Copied!"
 msgid "button.new.visualization"
 msgstr "Create New Visualization"
 
-#: app/configurator/components/action-bar.tsx:46
+#: app/configurator/components/action-bar.tsx:45
 msgid "button.next"
 msgstr "Next"
 
-#: app/configurator/components/action-bar.tsx:41
+#: app/configurator/components/action-bar.tsx:40
 msgid "button.previous"
 msgstr "Previous"
 
-#: app/configurator/components/action-bar.tsx:44
+#: app/configurator/components/action-bar.tsx:43
 msgid "button.publish"
 msgstr "Publish"
 
@@ -284,7 +288,7 @@ msgstr "Stacked"
 msgid "controls.description"
 msgstr "Description"
 
-#: app/configurator/components/field.tsx:503
+#: app/configurator/components/field.tsx:514
 msgid "controls.dimension.none"
 msgstr "None"
 
@@ -294,11 +298,11 @@ msgstr "None"
 msgid "controls.dimensionvalue.none"
 msgstr "No Filter"
 
-#: app/configurator/components/filters.tsx:89
+#: app/configurator/components/filters.tsx:60
 msgid "controls.filter.select.all"
 msgstr "Select all"
 
-#: app/configurator/components/filters.tsx:98
+#: app/configurator/components/filters.tsx:69
 msgid "controls.filter.select.none"
 msgstr "Select none"
 
@@ -468,15 +472,7 @@ msgstr "Table Options"
 msgid "controls.select.chart.type"
 msgstr "Chart Type"
 
-#: app/configurator/components/chart-type-selector.tsx:165
-#~ msgid "controls.select.chart.type.experimental"
-#~ msgstr "Experimental Features"
-
-#: app/configurator/components/chart-type-selector.tsx:170
-#~ msgid "controls.select.chart.type.experimental.description"
-#~ msgstr "Preview upcoming features with a limited subset of data on a separate page."
-
-#: app/configurator/components/chart-options-selector.tsx:314
+#: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"
 msgstr "Column layout"
 
@@ -523,7 +519,7 @@ msgstr "Select a measure"
 
 #: app/configurator/components/field.tsx:82
 #: app/configurator/components/field.tsx:140
-#: app/configurator/components/field.tsx:508
+#: app/configurator/components/field.tsx:519
 msgid "controls.select.optional"
 msgstr "optional"
 
@@ -617,15 +613,19 @@ msgstr "Show search field"
 msgid "controls.title"
 msgstr "Title"
 
-#: app/configurator/components/select-dataset-step.tsx:102
+#: app/configurator/components/select-dataset-step.tsx:93
 msgid "dataset-preview.back-to-results"
-msgstr "Back to the list"
+msgstr "Back to the datasets"
+
+#: app/configurator/components/configurator.tsx:43
+msgid "dataset-selector.choose-another-dataset"
+msgstr "Choose another dataset"
 
 #: app/components/chart-published.tsx:81
 msgid "dataset.hasImputedValues"
 msgstr "Some data in this dataset is missing and has been interpolated to fill the gaps."
 
-#: app/configurator/components/dataset-browse.tsx:292
+#: app/configurator/components/dataset-browse.tsx:322
 msgid "dataset.includeDrafts"
 msgstr "Include draft datasets"
 
@@ -649,15 +649,15 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:260
+#: app/configurator/components/dataset-browse.tsx:290
 msgid "dataset.order.newest"
 msgstr "Newest"
 
-#: app/configurator/components/dataset-browse.tsx:252
+#: app/configurator/components/dataset-browse.tsx:282
 msgid "dataset.order.relevance"
 msgstr "Relevance"
 
-#: app/configurator/components/dataset-browse.tsx:256
+#: app/configurator/components/dataset-browse.tsx:286
 msgid "dataset.order.title"
 msgstr "Title"
 
@@ -671,19 +671,19 @@ msgstr "Careful, this dataset is only a draft.<0/><1>Don't use for reporting!</1
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for reporting!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:316
+#: app/configurator/components/dataset-browse.tsx:346
 msgid "dataset.results"
 msgstr "{0, plural, zero {No results} one {# result} other {# results}}"
 
-#: app/configurator/components/dataset-browse.tsx:264
+#: app/configurator/components/dataset-browse.tsx:294
 msgid "dataset.search.label"
 msgstr "Search datasets"
 
-#: app/configurator/components/dataset-browse.tsx:336
+#: app/configurator/components/dataset-browse.tsx:366
 msgid "dataset.sortby"
 msgstr "Sort by"
 
-#: app/configurator/components/dataset-browse.tsx:862
+#: app/configurator/components/dataset-browse.tsx:905
 msgid "dataset.tag.draft"
 msgstr "Draft"
 
@@ -767,13 +767,13 @@ msgstr "Hide Filters"
 msgid "interactive.data.filters.show"
 msgstr "Show Filters"
 
-#: app/homepage/intro.tsx:102
-msgid "intro.browse.categories"
-msgstr "Browse categories"
-
 #: app/homepage/intro.tsx:121
-msgid "intro.browse.organizations"
-msgstr "Browse organizations"
+#~ msgid "intro.browse.organizations"
+#~ msgstr "Browse organizations"
+
+#: app/homepage/intro.tsx:102
+#~ msgid "intro.browse.themes"
+#~ msgstr "Browse categories"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125
@@ -828,19 +828,19 @@ msgstr "Here is a visualization I created using visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:225
+#: app/configurator/components/stepper.tsx:189
 msgid "step.annotate"
 msgstr "Annotate"
 
 #: app/configurator/components/stepper.tsx:204
-msgid "step.dataset"
-msgstr "Dataset"
+#~ msgid "step.dataset"
+#~ msgstr "Dataset"
 
-#: app/configurator/components/stepper.tsx:211
+#: app/configurator/components/stepper.tsx:175
 msgid "step.visualization.type"
 msgstr "Chart Type"
 
-#: app/configurator/components/stepper.tsx:218
+#: app/configurator/components/stepper.tsx:182
 msgid "step.visualize"
 msgstr "Visualize"
 

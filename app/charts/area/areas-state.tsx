@@ -121,7 +121,7 @@ const useAreasState = ({
     [data, getX]
   );
 
-  const sortedDataGroupedByX = useMemo(
+  const dataGroupedByX = useMemo(
     () => group(data, getGroups),
     [data, getGroups]
   );
@@ -129,12 +129,12 @@ const useAreasState = ({
   const allDataWide = useMemo(
     () =>
       getWideData({
-        dataGroupedByX: sortedDataGroupedByX,
+        dataGroupedByX,
         xKey,
         getY,
         getSegment,
       }),
-    [sortedDataGroupedByX, xKey, getY, getSegment]
+    [dataGroupedByX, xKey, getY, getSegment]
   );
 
   // Data for chart

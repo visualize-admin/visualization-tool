@@ -133,13 +133,13 @@ export const Examples = ({
         reverse
       >
         <ChartPublished
-          dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/3/"
+          dataSet="https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/"
           meta={{
             title: {
-              de: "Entwicklung der Staatsrechnungen nach Ämtern",
-              en: "Evolution of state accounts by office",
-              fr: "Evolution des comptes d'état par office",
-              it: "Evoluzione dei conti dello stato per ufficio",
+              de: "Verteilung der Ausgaben und Einnahmen nach Ämtern",
+              en: "Distribution of expenses and income by office",
+              fr: "Répartition des dépenses et recettes par office",
+              it: "Ripartizione delle spese e delle entrate per ufficio",
             },
             description: {
               de: "",
@@ -164,9 +164,9 @@ export const Examples = ({
                   sortingOrder: "asc",
                 },
                 colorMapping: {
-                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/3/OperationCharacter/OC1":
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC1":
                     "#1f77b4",
-                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/3/OperationCharacter/OC2":
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/OperationCharacter/OC2":
                     "#ff7f0e",
                 },
                 componentIri:
@@ -177,7 +177,7 @@ export const Examples = ({
               "https://culture.ld.admin.ch/sfa/StateAccounts_Office/office": {
                 type: "single",
                 value:
-                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/3/Office/O7",
+                  "https://culture.ld.admin.ch/sfa/StateAccounts_Office/Office/O7",
               },
             },
             chartType: "area",

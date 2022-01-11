@@ -11,4 +11,6 @@ node_modules
 /app/dist
 .now
 
+.env*.local
+
 __diff_output__

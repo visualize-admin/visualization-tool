@@ -1,5 +1,4 @@
 import { Trans } from "@lingui/macro";
-import NextLink from "next/link";
 import { ReactNode, useCallback } from "react";
 import { Button, Flex } from "theme-ui";
 import {
@@ -55,27 +54,12 @@ export const ActionBar = ({ dataSetIri }: { dataSetIri?: string }) => {
         alignItems: "center",
       }}
     >
-      {state.state === "SELECTING_DATASET" ? (
-        <>
-          <NextButton
-            label={nextLabel}
-            onClick={goNext}
-            disabled={nextDisabled}
-          />
-        </>
-      ) : state.state === "SELECTING_CHART_TYPE" ? (
-        <>
-          <NextLink href="/create/new" passHref>
-            <Button as="a" variant="inline" sx={{ mr: 4 }}>
-              {previousLabel}
-            </Button>
-          </NextLink>
-          <NextButton
-            label={nextLabel}
-            onClick={goNext}
-            disabled={nextDisabled}
-          />
-        </>
+      {state.state === "SELECTING_CHART_TYPE" ? (
+        <NextButton
+          label={nextLabel}
+          onClick={goNext}
+          disabled={nextDisabled}
+        />
       ) : (
         <>
           <Button

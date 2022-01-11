@@ -10,6 +10,10 @@ export type BrowseParams = {
   iri?: string;
   subiri?: string;
   topic?: string;
+  search?: string;
+  order?: string;
+  includeDrafts?: boolean;
+  dataset?: string;
 };
 
 // Generic component for all browse subpages

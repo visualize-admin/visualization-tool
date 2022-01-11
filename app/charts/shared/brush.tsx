@@ -56,6 +56,11 @@ export const BrushTime = () => {
 
   brushWidthScale.range([0, brushWidth]);
 
+  const [minBrushDomainValue, maxBrushDomainValue] = useMemo(
+    () => brushWidthScale.domain().map((d) => d.getTime()),
+    [brushWidthScale]
+  );
+
   const updateBrushStatus = (event: $FixMe) => {
     const selection = event.selection;
     if (!event.sourceEvent || !selection) {
@@ -279,16 +284,19 @@ export const BrushTime = () => {
   // without transition
   useEffect(() => {
     const g = select(ref.current);
-
+    // Happens when transitioning from e.g. '2010-2020' to '1990-2000';
+    // the selection is then changed to the full extent
+    const identical = closestFrom.getTime() === closestTo.getTime();
     const defaultSelection = [
-      brushWidthScale(closestFrom),
-      brushWidthScale(closestTo),
+      brushWidthScale(identical ? minBrushDomainValue : closestFrom),
+      brushWidthScale(identical ? maxBrushDomainValue : closestTo),
     ];
+
     (g as Selection<SVGGElement, unknown, null, undefined>).call(
       brush.move,
       defaultSelection
     );
-  }, [closestFrom.toString(), closestTo.toString()]);
+  }, [minBrushDomainValue, maxBrushDomainValue]);
 
   // This effect makes the brush responsive
   useEffect(() => {

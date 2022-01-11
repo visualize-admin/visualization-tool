@@ -193,6 +193,7 @@ export const DataFilterSelectTime = ({
       value={fieldProps.value}
       timeFormat={timeFormat}
       formatLocale={formatLocale}
+      isOptional={isOptional}
       onChange={fieldProps.onChange}
     />
   );
@@ -204,6 +205,7 @@ export const TimeInput = ({
   value,
   timeFormat,
   formatLocale,
+  isOptional,
   onChange,
 }: {
   id: string;
@@ -211,6 +213,7 @@ export const TimeInput = ({
   value: string | undefined;
   timeFormat: string;
   formatLocale: TimeLocaleObject;
+  isOptional: boolean | undefined;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const [inputValue, setInputValue] = useState(
@@ -225,16 +228,24 @@ export const TimeInput = ({
   const onInputChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
       setInputValue(e.currentTarget.value);
-      const parsed = parseDateValue(e.currentTarget.value);
-      if (
-        (parsed !== null &&
-          formatDateValue(parsed) === e.currentTarget.value) ||
-        e.currentTarget.value === ""
-      ) {
-        onChange(e);
+
+      if (e.currentTarget.value === "") {
+        if (isOptional) {
+          onChange(e);
+        } else {
+          setInputValue(value);
+        }
+      } else {
+        const parsed = parseDateValue(e.currentTarget.value);
+        const isValidDate =
+          parsed !== null && formatDateValue(parsed) === e.currentTarget.value;
+
+        if (isValidDate) {
+          onChange(e);
+        }
       }
     },
-    [formatDateValue, onChange, parseDateValue]
+    [formatDateValue, onChange, parseDateValue, value, isOptional]
   );
 
   return (

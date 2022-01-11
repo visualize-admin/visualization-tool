@@ -33,17 +33,21 @@ msgstr "[ Pas de description ]"
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
-#: app/configurator/components/dataset-browse.tsx:683
+#: app/configurator/components/dataset-browse.tsx:714
 msgid "browse-panel.organizations"
 msgstr "Organisations"
 
-#: app/configurator/components/dataset-browse.tsx:640
+#: app/configurator/components/dataset-browse.tsx:671
 msgid "browse-panel.themes"
 msgstr "Catégories"
 
 #: app/configurator/components/dataset-preview.tsx:54
 msgid "browse.dataset.create-visualization"
 msgstr "Créer une visualisation"
+
+#: app/configurator/components/select-dataset-step.tsx:119
+msgid "browse.datasets.all-datasets"
+msgstr "Tout les jeux de données"
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
@@ -74,15 +78,15 @@ msgstr "Copié!"
 msgid "button.new.visualization"
 msgstr "Créer une nouvelle visualisation"
 
-#: app/configurator/components/action-bar.tsx:46
+#: app/configurator/components/action-bar.tsx:45
 msgid "button.next"
 msgstr "Suivant"
 
-#: app/configurator/components/action-bar.tsx:41
+#: app/configurator/components/action-bar.tsx:40
 msgid "button.previous"
 msgstr "Précédent"
 
-#: app/configurator/components/action-bar.tsx:44
+#: app/configurator/components/action-bar.tsx:43
 msgid "button.publish"
 msgstr "Publier"
 
@@ -284,7 +288,7 @@ msgstr "empilées"
 msgid "controls.description"
 msgstr "Description"
 
-#: app/configurator/components/field.tsx:503
+#: app/configurator/components/field.tsx:514
 msgid "controls.dimension.none"
 msgstr "Aucune"
 
@@ -294,11 +298,11 @@ msgstr "Aucune"
 msgid "controls.dimensionvalue.none"
 msgstr "Aucune filtre"
 
-#: app/configurator/components/filters.tsx:89
+#: app/configurator/components/filters.tsx:60
 msgid "controls.filter.select.all"
 msgstr "Tout sélectionner"
 
-#: app/configurator/components/filters.tsx:98
+#: app/configurator/components/filters.tsx:69
 msgid "controls.filter.select.none"
 msgstr "Tout déselectionner"
 
@@ -468,15 +472,7 @@ msgstr "Options du tableau"
 msgid "controls.select.chart.type"
 msgstr "Type de graphique"
 
-#: app/configurator/components/chart-type-selector.tsx:165
-#~ msgid "controls.select.chart.type.experimental"
-#~ msgstr "Fonctionnalités expérimentales"
-
-#: app/configurator/components/chart-type-selector.tsx:170
-#~ msgid "controls.select.chart.type.experimental.description"
-#~ msgstr "Voir le prototype de la carte avec un nombre limité de jeu de données (lien vers une nouvelle page)."
-
-#: app/configurator/components/chart-options-selector.tsx:314
+#: app/configurator/components/chart-options-selector.tsx:308
 msgid "controls.select.column.layout"
 msgstr "Mise en forme de la colonne"
 
@@ -523,7 +519,7 @@ msgstr "Sélectionner une variable"
 
 #: app/configurator/components/field.tsx:82
 #: app/configurator/components/field.tsx:140
-#: app/configurator/components/field.tsx:508
+#: app/configurator/components/field.tsx:519
 msgid "controls.select.optional"
 msgstr "optionnel"
 
@@ -617,15 +613,19 @@ msgstr "Afficher le champ de recherche"
 msgid "controls.title"
 msgstr "Titre"
 
-#: app/configurator/components/select-dataset-step.tsx:102
+#: app/configurator/components/select-dataset-step.tsx:93
 msgid "dataset-preview.back-to-results"
-msgstr "Revenir aux résultats"
+msgstr "Revenir aux jeux de données"
+
+#: app/configurator/components/configurator.tsx:43
+msgid "dataset-selector.choose-another-dataset"
+msgstr "Choisir un autre jeu de données"
 
 #: app/components/chart-published.tsx:81
 msgid "dataset.hasImputedValues"
 msgstr "Certaines données de cet ensemble de données sont manquantes et ont été interpolées pour combler les lacunes."
 
-#: app/configurator/components/dataset-browse.tsx:292
+#: app/configurator/components/dataset-browse.tsx:322
 msgid "dataset.includeDrafts"
 msgstr "Inclure les brouillons"
 
@@ -649,15 +649,15 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:260
+#: app/configurator/components/dataset-browse.tsx:290
 msgid "dataset.order.newest"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:252
+#: app/configurator/components/dataset-browse.tsx:282
 msgid "dataset.order.relevance"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:256
+#: app/configurator/components/dataset-browse.tsx:286
 msgid "dataset.order.title"
 msgstr ""
 
@@ -671,19 +671,19 @@ msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'util
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:316
+#: app/configurator/components/dataset-browse.tsx:346
 msgid "dataset.results"
 msgstr ""
 
-#: app/configurator/components/dataset-browse.tsx:264
+#: app/configurator/components/dataset-browse.tsx:294
 msgid "dataset.search.label"
 msgstr "Chercher"
 
-#: app/configurator/components/dataset-browse.tsx:336
+#: app/configurator/components/dataset-browse.tsx:366
 msgid "dataset.sortby"
 msgstr "Trier par"
 
-#: app/configurator/components/dataset-browse.tsx:862
+#: app/configurator/components/dataset-browse.tsx:905
 msgid "dataset.tag.draft"
 msgstr "Brouillon"
 
@@ -767,13 +767,13 @@ msgstr "Masquer les filtres"
 msgid "interactive.data.filters.show"
 msgstr "Afficher les filtres"
 
-#: app/homepage/intro.tsx:102
-msgid "intro.browse.categories"
-msgstr "Parcourir les catégories"
-
 #: app/homepage/intro.tsx:121
-msgid "intro.browse.organizations"
-msgstr "Parcourir les organisations"
+#~ msgid "intro.browse.organizations"
+#~ msgstr "Parcourir les organisations"
+
+#: app/homepage/intro.tsx:102
+#~ msgid "intro.browse.themes"
+#~ msgstr "Parcourir les catégories"
 
 #: app/components/header.tsx:106
 #: app/components/header.tsx:125
@@ -828,19 +828,19 @@ msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:225
+#: app/configurator/components/stepper.tsx:189
 msgid "step.annotate"
 msgstr "Annoter"
 
 #: app/configurator/components/stepper.tsx:204
-msgid "step.dataset"
-msgstr "Données"
+#~ msgid "step.dataset"
+#~ msgstr "Données"
 
-#: app/configurator/components/stepper.tsx:211
+#: app/configurator/components/stepper.tsx:175
 msgid "step.visualization.type"
 msgstr "Type de graphique"
 
-#: app/configurator/components/stepper.tsx:218
+#: app/configurator/components/stepper.tsx:182
 msgid "step.visualize"
 msgstr "Visualiser"
 
