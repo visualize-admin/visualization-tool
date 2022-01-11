@@ -11,7 +11,8 @@ export type DimensionType =
   | "TemporalDimension"
   | "NominalDimension"
   | "OrdinalDimension"
-  | "GeoDimension"
+  | "GeoCoordinatesDimension"
+  | "GeoShapesDimension"
   | "Measure"
   | "Attribute";
 

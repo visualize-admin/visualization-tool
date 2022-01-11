@@ -38,12 +38,15 @@ fragment dimensionMetaData on Dimension {
   isKeyDimension
   values
   unit
+  ... on GeoCoordinatesDimension {
+    geoCoordinates
+  }
+  ... on GeoShapesDimension {
+    geoShapes
+  }
   ... on TemporalDimension {
     timeUnit
     timeFormat
-  }
-  ... on GeoDimension {
-    geoShapes
   }
 }
 

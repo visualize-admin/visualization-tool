@@ -9,7 +9,8 @@ const ComponentType = t.union([
   t.literal("TemporalDimension"),
   t.literal("NominalDimension"),
   t.literal("OrdinalDimension"),
-  t.literal("GeoDimension"),
+  t.literal("GeoCoordinatesDimension"),
+  t.literal("GeoShapesDimension"),
 ]);
 
 export type ComponentType = t.TypeOf<typeof ComponentType>;

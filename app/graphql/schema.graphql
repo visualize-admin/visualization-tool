@@ -2,6 +2,7 @@ scalar Observation
 scalar DimensionValue
 scalar RawObservation
 scalar Filters
+scalar GeoCoordinates
 scalar GeoShapes
 
 type ObservationsQuery {
@@ -53,7 +54,17 @@ interface Dimension {
   values: [DimensionValue!]!
 }
 
-type GeoDimension implements Dimension {
+type GeoCoordinatesDimension implements Dimension {
+  iri: String!
+  label: String!
+  unit: String
+  scaleType: String
+  isKeyDimension: Boolean!
+  values: [DimensionValue!]!
+  geoCoordinates: GeoCoordinates!
+}
+
+type GeoShapesDimension implements Dimension {
   iri: String!
   label: String!
   unit: String

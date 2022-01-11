@@ -15,7 +15,7 @@ import {
 import { GeoShapes, Observation } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
-  GeoDimension,
+  GeoShapesDimension,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
@@ -68,13 +68,13 @@ export const ChartMapVisualization = ({
     },
   });
 
-  const geoDimension = data?.dataCubeByIri?.dimensions.find(
+  const geoShapesDimension = data?.dataCubeByIri?.dimensions.find(
     (d) => d.iri === chartConfig.fields.areaLayer.componentIri
-  ) as GeoDimension;
+  ) as GeoShapesDimension;
 
   const areaLayer = useMemo(() => {
-    if (geoDimension) {
-      const geoShapes = geoDimension.geoShapes as GeoShapes;
+    if (geoShapesDimension) {
+      const geoShapes = geoShapesDimension.geoShapes as GeoShapes;
       const shapes = topojsonFeature(
         geoShapes,
         geoShapes.objects.shapes
@@ -97,7 +97,7 @@ export const ChartMapVisualization = ({
       };
     }
   }, [
-    geoDimension,
+    geoShapesDimension,
     chartConfig.fields.areaLayer.componentIri,
     data?.dataCubeByIri?.observations.data,
   ]);

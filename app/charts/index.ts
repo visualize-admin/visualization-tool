@@ -265,8 +265,8 @@ export const getInitialConfig = ({
         fields: {
           areaLayer: {
             componentIri:
-              dimensions.find((d) => d.__typename === "GeoDimension")?.iri ||
-              "",
+              dimensions.find((d) => d.__typename === "GeoShapesDimension")
+                ?.iri || "",
             measureIri: measures[0].iri,
             show: true,
             label: { componentIri: dimensions[0].iri },
@@ -275,7 +275,7 @@ export const getInitialConfig = ({
             paletteType: "continuous",
           },
           symbolLayer: {
-            componentIri: measures[0].iri,
+            componentIri: measures[0].iri, // GeoCoordinatesDimension?
             color: "#1f77b4",
             show: false,
           },
@@ -303,7 +303,9 @@ export const getPossibleChartType = ({
 
   const hasZeroQ = measures.length === 0;
   const hasMultipleQ = measures.length > 1;
-  const hasGeo = dimensions.some((dim) => dim.__typename === "GeoDimension");
+  const hasGeo = dimensions.some(
+    (dim) => dim.__typename === "GeoShapesDimension"
+  );
   const hasTime = dimensions.some(
     (dim) => dim.__typename === "TemporalDimension"
   );

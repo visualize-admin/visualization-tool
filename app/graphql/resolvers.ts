@@ -20,7 +20,7 @@ import {
   queryDatasetCountBySubTheme,
   queryDatasetCountByTheme,
 } from "../rdf/query-cube-metadata";
-import { RawGeoShape } from "../rdf/query-geoshapes";
+import { RawGeoShape } from "../rdf/query-geo-shapes";
 import truthy from "../utils/truthy";
 import {
   DataCubeResolvers,
@@ -292,8 +292,10 @@ export const resolvers: Resolvers = {
     __resolveType({ data: { dataKind, scaleType, dataType } }) {
       if (dataKind === "Time") {
         return "TemporalDimension";
+      } else if (dataKind === "GeoCoordinates") {
+        return "GeoCoordinatesDimension";
       } else if (dataKind === "GeoShape") {
-        return "GeoDimension";
+        return "GeoShapesDimension";
       }
 
       return "NominalDimension";
@@ -310,18 +312,30 @@ export const resolvers: Resolvers = {
     timeUnit: ({ data: { timeUnit } }: ResolvedDimension) => timeUnit!,
     timeFormat: ({ data: { timeFormat } }: ResolvedDimension) => timeFormat!,
   },
-  GeoDimension: {
+  GeoCoordinatesDimension: {
+    ...dimensionResolvers,
+    geoCoordinates: async ({ dimension }, _, { loaders }) => {
+      const resolvedGeoCoordinates = await loaders.geoCoordinates.loadMany(
+        dimension.in
+      );
+
+      return resolvedGeoCoordinates;
+    },
+  },
+  GeoShapesDimension: {
     ...dimensionResolvers,
     geoShapes: async ({ dimension }, _, { loaders }) => {
       const resolvedGeoShapes = await loaders.geoShapes.loadMany(dimension.in);
-      const features = resolvedGeoShapes.map((d: RawGeoShape) => ({
-        type: "Feature",
-        properties: {
-          iri: d.iri,
-          label: d.label,
-        },
-        geometry: parseWKT(d.wktString),
-      }));
+      const features = resolvedGeoShapes
+        .filter((d: RawGeoShape) => d.wktString !== undefined)
+        .map((d: RawGeoShape) => ({
+          type: "Feature",
+          properties: {
+            iri: d.iri,
+            label: d.label,
+          },
+          geometry: parseWKT(d.wktString as string),
+        }));
 
       return topology({
         shapes: {

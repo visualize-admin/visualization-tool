@@ -123,7 +123,7 @@ export const AreaLayerSettings = memo(
               field={activeField}
               path="fields.areaLayer.componentIri"
               options={metaData.dimensions
-                .filter((d) => d.__typename === "GeoDimension")
+                .filter((d) => d.__typename === "GeoShapesDimension")
                 .map((d) => ({ value: d.iri, label: d.label }))}
               disabled={!chartConfig.fields.areaLayer.show}
             ></ChartOptionSelectField>
