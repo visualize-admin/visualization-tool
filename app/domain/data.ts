@@ -14,6 +14,13 @@ export type Observation = Record<string, ObservationValue>;
 
 export type GeoShapes = TopoJSON.Topology;
 
+export type GeoCoordinates = {
+  iri: string;
+  label: string;
+  latitude: number;
+  longitude: number;
+};
+
 export type GeoPoint = {
   coordinates: [number, number];
   properties: {

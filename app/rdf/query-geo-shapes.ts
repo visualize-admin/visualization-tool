@@ -21,12 +21,12 @@ export const createGeoShapesLoader =
     dimensionValues?: readonly (Literal | NamedNode)[]
   ): Promise<RawGeoShape[]> => {
     if (dimensionValues) {
-      const query = SELECT`?geoShapeIri ?label ?WKT`.WHERE`
-        VALUES ?geoShapeIri {
+      const query = SELECT`?iri ?label ?WKT`.WHERE`
+        VALUES ?iri {
           ${dimensionValues}
         }
 
-        ?geoShapeIri
+        ?iri
           ${ns.schema.name} ?label ;
           ${ns.geo.hasGeometry} ?geometry .
 
@@ -47,7 +47,7 @@ export const createGeoShapesLoader =
       }
 
       const parsedResult = result.map((d) => ({
-        iri: d.geoShapeIri.value,
+        iri: d.iri.value,
         label: d.label.value,
         wktString: d.WKT?.value,
       }));

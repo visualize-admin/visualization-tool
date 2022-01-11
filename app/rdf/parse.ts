@@ -179,6 +179,7 @@ export const parseCubeDimension = ({
       isKeyDimension,
       isMeasureDimension,
       hasUndefinedValues,
+      unit: dimensionUnit,
       dataType: dataType?.value,
       name: dim.out(ns.schema.name, outOpts).value ?? dim.path?.value!,
       dataKind: dataKindTerm?.equals(ns.time.GeneralDateTimeDescription)
@@ -199,7 +200,6 @@ export const parseCubeDimension = ({
         : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
         ? "Interval"
         : undefined,
-      unit: dimensionUnit,
     },
   };
 };

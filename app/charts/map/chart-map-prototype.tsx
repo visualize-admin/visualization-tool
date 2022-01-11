@@ -126,13 +126,9 @@ export const ChartMapVisualization = ({
       try {
         const res = await fetch(`/topojson/ch-2020.json`);
         const topo = await res.json();
-
         const lakes = topojsonFeature(topo, topo.objects.lakes);
 
-        setGeoData({
-          state: "loaded",
-          lakes,
-        });
+        setGeoData({ state: "loaded", lakes });
       } catch (e) {
         setGeoData({ state: "error" });
       }

@@ -309,24 +309,24 @@ export const resolvers: Resolvers = {
   },
   TemporalDimension: {
     ...dimensionResolvers,
-    timeUnit: ({ data: { timeUnit } }: ResolvedDimension) => timeUnit!,
-    timeFormat: ({ data: { timeFormat } }: ResolvedDimension) => timeFormat!,
+    timeUnit: ({ data: { timeUnit } }) => timeUnit!,
+    timeFormat: ({ data: { timeFormat } }) => timeFormat!,
   },
   GeoCoordinatesDimension: {
     ...dimensionResolvers,
-    geoCoordinates: async ({ dimension }, _, { loaders }) => {
-      const resolvedGeoCoordinates = await loaders.geoCoordinates.loadMany(
-        dimension.in
+    geoCoordinates: async (parent, _, { loaders }) => {
+      const resolved = await loaders.geoCoordinates.loadMany(
+        parent.dimension.in
       );
 
-      return resolvedGeoCoordinates;
+      return resolved;
     },
   },
   GeoShapesDimension: {
     ...dimensionResolvers,
     geoShapes: async ({ dimension }, _, { loaders }) => {
-      const resolvedGeoShapes = await loaders.geoShapes.loadMany(dimension.in);
-      const features = resolvedGeoShapes
+      const resolved = await loaders.geoShapes.loadMany(dimension.in);
+      const features = resolved
         .filter((d: RawGeoShape) => d.wktString !== undefined)
         .map((d: RawGeoShape) => ({
           type: "Feature",

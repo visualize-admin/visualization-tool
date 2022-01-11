@@ -1,4 +1,5 @@
 import { SELECT } from "@tpluscode/sparql-builder";
+import { Literal, NamedNode } from "rdf-js";
 import * as ns from "./namespace";
 import { sparqlClient } from "./sparql-client";
 
@@ -16,24 +17,19 @@ export interface RawGeoCoordinates {
  */
 export const createGeoCoordinatesLoader =
   ({ locale }: { locale: string }) =>
-  async (dimensionValues?: readonly string[]): Promise<RawGeoCoordinates[]> => {
+  async (
+    dimensionValues?: readonly (Literal | NamedNode)[]
+  ): Promise<RawGeoCoordinates[]> => {
     if (dimensionValues) {
-      const query = SELECT`?geoCoordinateIri ?label ?latitude ?longitude`.WHERE`
-        VALUES ?geoCoordinateIri {
+      const query = SELECT`?iri ?label ?latitude ?longitude`.WHERE`
+        VALUES ?iri {
           ${dimensionValues}
         }
 
-        OPTIONAL {
-          ?geoCoordinateIri ${ns.schema.name} ?label
-        }
-
-        OPTIONAL {
-          ?geoCoordinateIri ${ns.schema.latitude} ?latitude
-        }
-
-        OPTIONAL {
-          ?geoCoordinateIri ${ns.schema.longitude} ?longitude
-        }
+        ?iri
+          ${ns.schema.name} ?label ;
+          ${ns.schema.latitude} ?latitude ;
+          ${ns.schema.longitude} ?longitude .
 
         FILTER(LANG(?label) = '${locale}')
       `;
@@ -48,7 +44,7 @@ export const createGeoCoordinatesLoader =
       }
 
       return result.map((d) => ({
-        iri: d.geoCoordinateIri.value,
+        iri: d.iri.value,
         label: d.label.value,
         latitude: d.latitude,
         longitude: d.longitude,
