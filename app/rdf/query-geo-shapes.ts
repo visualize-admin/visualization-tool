@@ -1,4 +1,5 @@
 import { SELECT } from "@tpluscode/sparql-builder";
+import { Literal, NamedNode } from "rdf-js";
 import { SPARQL_GEO_ENDPOINT } from "../domain/env";
 import * as ns from "./namespace";
 import { sparqlClient } from "./sparql-client";
@@ -16,25 +17,21 @@ export interface RawGeoShape {
  */
 export const createGeoShapesLoader =
   ({ locale }: { locale: string }) =>
-  async (dimensionValues?: readonly string[]): Promise<RawGeoShape[]> => {
+  async (
+    dimensionValues?: readonly (Literal | NamedNode)[]
+  ): Promise<RawGeoShape[]> => {
     if (dimensionValues) {
       const query = SELECT`?geoShapeIri ?label ?WKT`.WHERE`
         VALUES ?geoShapeIri {
           ${dimensionValues}
         }
 
-        OPTIONAL {
-          ?geoShapeIri ${ns.schema.name} ?label
-        }
+        ?geoShapeIri
+          ${ns.schema.name} ?label ;
+          ${ns.geo.hasGeometry} ?geometry .
 
-        OPTIONAL {
-          ?geoShapeIri ${ns.geo.hasGeometry} ?geometry
-        }
-
-        OPTIONAL {
-          SERVICE <${SPARQL_GEO_ENDPOINT}> {
-            ?geometry ${ns.geo.asWKT} ?WKT
-          }
+        SERVICE <${SPARQL_GEO_ENDPOINT}> {
+          ?geometry ${ns.geo.asWKT} ?WKT
         }
 
         FILTER(LANG(?label) = '${locale}')
@@ -49,10 +46,16 @@ export const createGeoShapesLoader =
         console.error(e);
       }
 
-      return result.map((d) => ({
+      const parsedResult = result.map((d) => ({
         iri: d.geoShapeIri.value,
         label: d.label.value,
         wktString: d.WKT?.value,
+      }));
+
+      return dimensionValues.map((d) => ({
+        iri: d.value,
+        label: parsedResult.find((p) => p.iri === d.value)?.label,
+        wktString: parsedResult.find((p) => p.iri === d.value)?.wktString,
       }));
     } else {
       return [];
