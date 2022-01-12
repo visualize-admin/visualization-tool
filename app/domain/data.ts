@@ -110,6 +110,19 @@ export const getCategoricalDimensions = (
       d.__typename === "NominalDimension" || d.__typename === "OrdinalDimension"
   );
 
+export const getGeoCoordinatesDimensions = (
+  dimensions: DimensionMetaDataFragment[]
+) => dimensions.filter((d) => d.__typename === "GeoCoordinatesDimension");
+
+export const getGeoShapesDimensions = (
+  dimensions: DimensionMetaDataFragment[]
+) => dimensions.filter((d) => d.__typename === "GeoShapesDimension");
+
+export const getGeoDimensions = (dimensions: DimensionMetaDataFragment[]) =>
+  dimensions.filter((d) =>
+    ["GeoCoordinatesDimension", "GeoShapesDimension"].includes(d.__typename)
+  );
+
 export const getDimensionsByDimensionType = ({
   dimensionTypes,
   dimensions,
