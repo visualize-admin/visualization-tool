@@ -6,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
 import { runMiddleware } from "../../lib/run-middleware";
+import { createCubeDimensionValuesLoader } from "../../rdf/queries";
 import {
   createOrganizationLoader,
   createThemeLoader,
@@ -22,6 +23,9 @@ const server = new ApolloServer({
   },
   context: ({ req }) => ({
     loaders: {
+      dimensionValues: new DataLoader(createCubeDimensionValuesLoader(), {
+        cacheKeyFn: (dim) => dim.dimension.path?.value,
+      }),
       themes: new DataLoader(
         createThemeLoader({ locale: req.headers["accept-language"] })
       ),
