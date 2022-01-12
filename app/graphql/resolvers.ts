@@ -3,11 +3,11 @@ import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
+import { DimensionValue } from "../domain/data";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
   getCubeDimensions,
-  getCubeDimensionValues,
   getCubeObservations,
   getCubes,
   getSparqlEditorUrl,
@@ -245,8 +245,10 @@ const dimensionResolvers = {
     isKeyDimension,
   unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
   scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
-  values: async (dimension: ResolvedDimension) => {
-    const values = await getCubeDimensionValues(dimension);
+  values: async (parent: ResolvedDimension, _: {}, { loaders }: any) => {
+    const values: Array<DimensionValue> = await loaders.dimensionValues.load(
+      parent
+    );
     // TODO min max are now just `values` with 2 elements. Handle properly!
     return values.sort((a, b) =>
       ascending(a.value ?? undefined, b.value ?? undefined)
@@ -324,9 +326,11 @@ export const resolvers: Resolvers = {
   },
   GeoShapesDimension: {
     ...dimensionResolvers,
-    geoShapes: async ({ dimension }, _, { loaders }) => {
-      const resolved = await loaders.geoShapes.loadMany(dimension.in);
-      const features = resolved
+    geoShapes: async (parent, _, { loaders }) => {
+      const dimensionValues: Array<DimensionValue> =
+        await loaders.dimensionValues.load(parent);
+      const resolvedShapes = await loaders.geoShapes.loadMany(dimensionValues);
+      const features = resolvedShapes
         .filter((d: RawGeoShape) => d.wktString !== undefined)
         .map((d: RawGeoShape) => ({
           type: "Feature",

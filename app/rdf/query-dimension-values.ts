@@ -16,22 +16,22 @@ export async function loadDimensionValues({
 }: {
   datasetIri: Term | undefined;
   dimensionIri: Term | undefined;
-}): Promise<DimensionValue[]> {
+}): Promise<Array<Literal | NamedNode>> {
   const query = SELECT.DISTINCT`?value`.WHERE`
     ${datasetIri} ${cube.observationSet} ?observationSet .
     ?observationSet ${cube.observation} ?observation .
     ?observation ${dimensionIri} ?value .
   `;
 
-  let result: DimensionValue[] = [];
+  let result: Array<DimensionValue> = [];
 
   try {
     result = (await query.execute(sparqlClient.query, {
       operation: "postUrlencoded",
-    })) as unknown as DimensionValue[];
+    })) as unknown as Array<DimensionValue>;
   } catch {
     console.warn(`Failed to fetch dimension values for ${datasetIri}.`);
   } finally {
-    return result;
+    return result.map((d) => d.value);
   }
 }
