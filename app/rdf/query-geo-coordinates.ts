@@ -1,5 +1,7 @@
 import { SELECT } from "@tpluscode/sparql-builder";
+import { ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
+import { dimensionIsVersioned } from "./queries";
 import { sparqlClient } from "./sparql-client";
 
 export interface RawGeoCoordinates {
@@ -11,43 +13,49 @@ export interface RawGeoCoordinates {
 
 /**
  * Creates a GeoCoordinates loader.
- *
- * @param dimensionValues IRIs of a GeoCoordinates dimension's values
  */
+const loadGeoCoordinates = async (dimension: ResolvedDimension) => {
+  const isVersioned = dimensionIsVersioned(dimension.dimension);
+
+  const query = SELECT.DISTINCT`?dimension ?label ?latitude ?longitude`.WHERE`
+    ${dimension.cube.term} ${ns.cube.observationSet} ?observationSet .
+    ?observationSet ${ns.cube.observation} ?observation .
+    ?observation ${dimension.dimension.path} ${
+    isVersioned
+      ? `?dimension_versioned . ?dimension_versioned schema:sameAs ?dimension ;`
+      : `?dimension`
+  }
+      ${ns.schema.name} ?label ;
+      ${ns.schema.latitude} ?latitude ;
+      ${ns.schema.longitude} ?longitude .
+  `;
+
+  let result: any[] = [];
+
+  try {
+    result = await query.execute(sparqlClient.query, {
+      operation: "postUrlencoded",
+    });
+  } catch (e) {
+    console.error(e);
+  }
+
+  return result.map((d) => ({
+    iri: d.dimension.value,
+    label: d.label.value,
+    latitude: d.latitude.value,
+    longitude: d.longitude.value,
+  }));
+};
+
 export const createGeoCoordinatesLoader =
-  ({ locale }: { locale: string }) =>
-  async (dimensionIris?: readonly string[]): Promise<RawGeoCoordinates[]> => {
-    if (dimensionIris) {
-      const query = SELECT`?iri ?label ?latitude ?longitude`.WHERE`
-        VALUES ?iri {
-          ${dimensionIris.map((d) => `<${d}>`)}
-        }
+  () => async (dimensions: readonly ResolvedDimension[]) => {
+    const result: RawGeoCoordinates[][] = [];
 
-        ?iri
-          ${ns.schema.name} ?label ;
-          ${ns.schema.latitude} ?latitude ;
-          ${ns.schema.longitude} ?longitude .
-
-        FILTER(LANG(?label) = '${locale}')
-      `;
-
-      let result: any[] = [];
-
-      try {
-        result = await query.execute(sparqlClient.query, {
-          operation: "postUrlencoded",
-        });
-      } catch (e) {
-        console.error(e);
-      }
-
-      return result.map((d) => ({
-        iri: d.iri.value,
-        label: d.label.value,
-        latitude: d.latitude,
-        longitude: d.longitude,
-      }));
-    } else {
-      return [];
+    for (const dimension of dimensions) {
+      const geoCoordinates = await loadGeoCoordinates(dimension);
+      result.push(geoCoordinates);
     }
+
+    return result;
   };

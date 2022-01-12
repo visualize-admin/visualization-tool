@@ -316,21 +316,17 @@ export const resolvers: Resolvers = {
   },
   GeoCoordinatesDimension: {
     ...dimensionResolvers,
-    geoCoordinates: async (parent, _, { loaders }) => {
-      const dimensionValues: Array<DimensionValue> =
-        await loaders.dimensionValues.load(parent);
-      const resolved = await loaders.geoCoordinates.loadMany(
-        dimensionValues.map((d) => d.value)
-      );
+    geoCoordinates: async (dimension, _, { loaders }) => {
+      const resolved = await loaders.geoCoordinates.load(dimension);
 
       return resolved;
     },
   },
   GeoShapesDimension: {
     ...dimensionResolvers,
-    geoShapes: async (parent, _, { loaders }) => {
+    geoShapes: async (dimension, _, { loaders }) => {
       const dimensionValues: Array<DimensionValue> =
-        await loaders.dimensionValues.load(parent);
+        await loaders.dimensionValues.load(dimension);
       const resolvedShapes = await loaders.geoShapes.loadMany(
         dimensionValues.map((d) => d.value)
       );

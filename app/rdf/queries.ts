@@ -321,7 +321,7 @@ const groupLabelsPerValue = ({
   return [...grouped.values()];
 };
 
-const dimensionIsVersioned = (dimension: CubeDimension) =>
+export const dimensionIsVersioned = (dimension: CubeDimension) =>
   dimension.out(ns.schema.version)?.value ? true : false;
 
 const getCubeDimensionValuesWithLabels = async ({
