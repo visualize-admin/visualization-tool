@@ -1,5 +1,4 @@
 import { SELECT } from "@tpluscode/sparql-builder";
-import { Literal, NamedNode } from "rdf-js";
 import { SPARQL_GEO_ENDPOINT } from "../domain/env";
 import * as ns from "./namespace";
 import { sparqlClient } from "./sparql-client";
@@ -17,13 +16,11 @@ export interface RawGeoShape {
  */
 export const createGeoShapesLoader =
   ({ locale }: { locale: string }) =>
-  async (
-    dimensionValues?: readonly (Literal | NamedNode)[]
-  ): Promise<RawGeoShape[]> => {
-    if (dimensionValues) {
+  async (dimensionIris?: readonly string[]): Promise<RawGeoShape[]> => {
+    if (dimensionIris) {
       const query = SELECT`?iri ?label ?WKT`.WHERE`
         VALUES ?iri {
-          ${dimensionValues}
+          ${dimensionIris.map((d) => `<${d}>`)}
         }
 
         ?iri
@@ -38,6 +35,7 @@ export const createGeoShapesLoader =
       `;
 
       let result: any[] = [];
+
       try {
         result = await query.execute(sparqlClient.query, {
           operation: "postUrlencoded",
@@ -52,10 +50,10 @@ export const createGeoShapesLoader =
         wktString: d.WKT?.value,
       }));
 
-      return dimensionValues.map((d) => ({
-        iri: d.value,
-        label: parsedResult.find((p) => p.iri === d.value)?.label,
-        wktString: parsedResult.find((p) => p.iri === d.value)?.wktString,
+      return dimensionIris.map((iri) => ({
+        iri,
+        label: parsedResult.find((d) => d.iri === iri)?.label,
+        wktString: parsedResult.find((d) => d.iri === iri)?.wktString,
       }));
     } else {
       return [];

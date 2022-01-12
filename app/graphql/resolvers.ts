@@ -317,8 +317,10 @@ export const resolvers: Resolvers = {
   GeoCoordinatesDimension: {
     ...dimensionResolvers,
     geoCoordinates: async (parent, _, { loaders }) => {
+      const dimensionValues: Array<DimensionValue> =
+        await loaders.dimensionValues.load(parent);
       const resolved = await loaders.geoCoordinates.loadMany(
-        parent.dimension.in
+        dimensionValues.map((d) => d.value)
       );
 
       return resolved;
@@ -329,7 +331,9 @@ export const resolvers: Resolvers = {
     geoShapes: async (parent, _, { loaders }) => {
       const dimensionValues: Array<DimensionValue> =
         await loaders.dimensionValues.load(parent);
-      const resolvedShapes = await loaders.geoShapes.loadMany(dimensionValues);
+      const resolvedShapes = await loaders.geoShapes.loadMany(
+        dimensionValues.map((d) => d.value)
+      );
       const features = resolvedShapes
         .filter((d: RawGeoShape) => d.wktString !== undefined)
         .map((d: RawGeoShape) => ({
