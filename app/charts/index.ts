@@ -254,6 +254,7 @@ export const getInitialConfig = ({
       };
     case "map":
       const geoShapesDimensions = getGeoShapesDimensions(dimensions);
+      const geoCoordinatesDimensions = getGeoCoordinatesDimensions(dimensions);
 
       return {
         chartType,
@@ -282,12 +283,12 @@ export const getInitialConfig = ({
           },
           symbolLayer: {
             componentIri:
-              getGeoCoordinatesDimensions(dimensions)[0]?.iri ||
+              geoCoordinatesDimensions[0]?.iri ||
               geoShapesDimensions[0]?.iri ||
               "",
             measureIri: measures[0].iri,
             color: "#1f77b4",
-            show: false,
+            show: geoShapesDimensions.length === 0 ? true : false,
           },
         },
         settings: {

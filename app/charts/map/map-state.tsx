@@ -143,7 +143,7 @@ const useMapState = ({
 
   const getLabel = useStringVariable(fields.areaLayer.componentIri);
   const getValue = useOptionalNumericVariable(fields.areaLayer.measureIri);
-  const getRadius = useOptionalNumericVariable(fields.symbolLayer.componentIri);
+  const getRadius = useOptionalNumericVariable(fields.symbolLayer.measureIri);
 
   const areaMeasureLabel = useMemo(
     () =>
@@ -153,8 +153,8 @@ const useMapState = ({
   );
   const symbolMeasureLabel = useMemo(
     () =>
-      measures.find((m) => m.iri === fields["symbolLayer"].componentIri)
-        ?.label || "",
+      measures.find((m) => m.iri === fields["symbolLayer"].measureIri)?.label ||
+      "",
     [fields, measures]
   );
   const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [

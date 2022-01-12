@@ -9,7 +9,7 @@ import { Icon, IconName } from "../../icons";
 import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
-import { GeoShapeFeature } from "./chart-map-prototype";
+import { ShapeFeature } from "./chart-map-prototype";
 import { MapState } from "./map-state";
 
 type TileData = {
@@ -215,7 +215,7 @@ export const MapComponent = () => {
               }: {
                 x: number;
                 y: number;
-                object: GeoShapeFeature;
+                object: ShapeFeature;
               }) => {
                 if (object) {
                   dispatch({
@@ -236,7 +236,7 @@ export const MapComponent = () => {
               }}
               getLineWidth={100}
               updateTriggers={{ getFillColor: getColor }}
-              getFillColor={(d: GeoShapeFeature) =>
+              getFillColor={(d: ShapeFeature) =>
                 getColor(
                   d.properties.observation
                     ? getValue(d.properties.observation)

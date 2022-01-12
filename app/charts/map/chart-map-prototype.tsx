@@ -12,13 +12,21 @@ import {
   MapFields,
   MapSettings,
 } from "../../configurator";
-import { GeoShapes, Observation } from "../../domain/data";
+import {
+  GeoPoint,
+  GeoShapes,
+  getGeoCoordinatesDimensions,
+  getGeoShapesDimensions,
+  Observation,
+} from "../../domain/data";
 import {
   DimensionMetaDataFragment,
+  GeoCoordinatesDimension,
   GeoShapesDimension,
   useDataCubeObservationsQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
+import { RawGeoCoordinates } from "../../rdf/query-geo-coordinates";
 import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
@@ -35,7 +43,7 @@ type GeoDataState =
     }
   | (GeoData & { state: "loaded" });
 
-export interface GeoShapeFeature {
+export interface ShapeFeature {
   type: "Feature";
   properties: {
     iri: string;
@@ -56,70 +64,90 @@ export const ChartMapVisualization = ({
 }) => {
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
   const locale = useLocale();
+
+  const areaLayerComponentIri = chartConfig.fields.areaLayer.componentIri;
+  const symbolLayerComponentIri = chartConfig.fields.symbolLayer.componentIri;
+
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [
-        chartConfig.fields.areaLayer.componentIri,
-        chartConfig.fields.symbolLayer.componentIri,
-      ],
+      measures: [areaLayerComponentIri, symbolLayerComponentIri],
       filters: queryFilters,
     },
   });
+  const dimensions = data?.dataCubeByIri?.dimensions;
+  const observations = data?.dataCubeByIri?.observations.data;
 
-  const geoShapesDimension = data?.dataCubeByIri?.dimensions.find(
-    (d) => d.iri === chartConfig.fields.areaLayer.componentIri
-  ) as GeoShapesDimension;
+  const areaLayerDimension = dimensions?.find(
+    (d) => d.iri === areaLayerComponentIri
+  ) as GeoShapesDimension | undefined;
 
   const areaLayer = useMemo(() => {
-    if (geoShapesDimension) {
-      const geoShapes = geoShapesDimension.geoShapes as GeoShapes;
-      const shapes = topojsonFeature(
-        geoShapes,
-        geoShapes.objects.shapes
+    if (areaLayerDimension) {
+      const rawShapes = areaLayerDimension.geoShapes as GeoShapes;
+      const topojsonShapes = topojsonFeature(
+        rawShapes,
+        rawShapes.objects.shapes
       ) as GeoJSON.FeatureCollection<
         GeoJSON.GeometryObject,
-        GeoShapeFeature["properties"]
+        ShapeFeature["properties"]
       >;
 
-      shapes.features.forEach((d) => {
+      topojsonShapes.features.forEach((d) => {
         // Should we match by labels?
-        d.properties.observation = data?.dataCubeByIri?.observations.data.find(
-          (o) =>
-            o[chartConfig.fields.areaLayer.componentIri] === d.properties!.label
+        d.properties.observation = observations?.find(
+          (o) => o[areaLayerComponentIri] === d.properties.label
         );
       });
 
       return {
-        shapes,
-        mesh: topojsonMesh(geoShapes, geoShapes.objects.shapes as any),
+        shapes: topojsonShapes,
+        mesh: topojsonMesh(rawShapes, rawShapes.objects.shapes as any),
       };
     }
-  }, [
-    geoShapesDimension,
-    chartConfig.fields.areaLayer.componentIri,
-    data?.dataCubeByIri?.observations.data,
-  ]);
+  }, [areaLayerComponentIri, areaLayerDimension, observations]);
 
   const symbolLayer = useMemo(() => {
-    return areaLayer?.shapes.features.map((d) => ({
-      coordinates: geoCentroid(d),
-      properties: {
-        iri: d.properties!.iri,
-        label: d.properties!.label,
-        // Should we match by labels?
-        observation: data?.dataCubeByIri?.observations.data.find(
-          (o) =>
-            o[chartConfig.fields.areaLayer.componentIri] === d.properties!.label
-        ),
-      },
-    }));
-  }, [
-    areaLayer,
-    chartConfig.fields.areaLayer.componentIri,
-    data?.dataCubeByIri?.observations.data,
-  ]);
+    if (dimensions) {
+      const geoCoordinatesDimensions = getGeoCoordinatesDimensions(dimensions);
+
+      if (geoCoordinatesDimensions.length) {
+        const geoCoordinatesDimension = dimensions.find(
+          (d) => d.iri === symbolLayerComponentIri
+        ) as GeoCoordinatesDimension | undefined;
+
+        if (geoCoordinatesDimension) {
+          return (
+            geoCoordinatesDimension.geoCoordinates as RawGeoCoordinates[]
+          ).map(
+            (d) =>
+              ({
+                coordinates: [+d.longitude!, +d.latitude!],
+                properties: {
+                  iri: d.iri,
+                  label: d.label,
+                  observation: observations?.find(
+                    (o) => o[symbolLayerComponentIri] === d.label
+                  ),
+                },
+              } as GeoPoint)
+          );
+        }
+      } else {
+        const geoShapesDimensions = getGeoShapesDimensions(dimensions);
+
+        if (geoShapesDimensions.length && areaLayer) {
+          return areaLayer.shapes.features.map((d) => ({
+            ...d,
+            coordinates: geoCentroid(d),
+          }));
+        } else {
+          return;
+        }
+      }
+    }
+  }, [areaLayer, dimensions, observations, symbolLayerComponentIri]);
 
   useEffect(() => {
     const loadGeoData = async () => {
@@ -138,7 +166,7 @@ export const ChartMapVisualization = ({
   }, []);
 
   if (data?.dataCubeByIri && geoData.state === "loaded") {
-    const { title, dimensions, measures, observations } = data?.dataCubeByIri;
+    const { dimensions, measures, observations } = data?.dataCubeByIri;
 
     return (
       <ChartMapPrototype
