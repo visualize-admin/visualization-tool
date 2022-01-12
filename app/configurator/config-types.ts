@@ -458,6 +458,7 @@ export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
   componentIri: t.string,
+  measureIri: t.string,
   color: t.string,
   show: t.boolean,
 });

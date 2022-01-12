@@ -5,7 +5,13 @@ import {
   TableColumn,
 } from "../configurator";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
-import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
+import {
+  getCategoricalDimensions,
+  getGeoCoordinatesDimensions,
+  getGeoDimensions,
+  getGeoShapesDimensions,
+  getTimeDimensions,
+} from "../domain/data";
 import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
@@ -247,6 +253,8 @@ export const getInitialConfig = ({
         ),
       };
     case "map":
+      const geoShapesDimensions = getGeoShapesDimensions(dimensions);
+
       return {
         chartType,
         filters: {},
@@ -264,18 +272,20 @@ export const getInitialConfig = ({
         },
         fields: {
           areaLayer: {
-            componentIri:
-              dimensions.find((d) => d.__typename === "GeoShapesDimension")
-                ?.iri || "",
+            componentIri: geoShapesDimensions[0]?.iri || "",
             measureIri: measures[0].iri,
-            show: true,
+            show: geoShapesDimensions.length > 0,
             label: { componentIri: dimensions[0].iri },
             palette: "oranges",
             nbClass: 5,
             paletteType: "continuous",
           },
           symbolLayer: {
-            componentIri: measures[0].iri, // GeoCoordinatesDimension?
+            componentIri:
+              getGeoCoordinatesDimensions(dimensions)[0]?.iri ||
+              geoShapesDimensions[0]?.iri ||
+              "",
+            measureIri: measures[0].iri,
             color: "#1f77b4",
             show: false,
           },
@@ -303,12 +313,8 @@ export const getPossibleChartType = ({
 
   const hasZeroQ = measures.length === 0;
   const hasMultipleQ = measures.length > 1;
-  const hasGeo = dimensions.some(
-    (dim) => dim.__typename === "GeoShapesDimension"
-  );
-  const hasTime = dimensions.some(
-    (dim) => dim.__typename === "TemporalDimension"
-  );
+  const hasGeo = getGeoDimensions(dimensions).length > 0;
+  const hasTime = getTimeDimensions(dimensions).length > 0;
 
   const geoBased: ChartType[] = ["map"];
   const catBased: ChartType[] = ["bar", "column", "pie", "table"];
