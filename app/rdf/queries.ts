@@ -237,6 +237,18 @@ export const getCubeDimensions = async ({
   }
 };
 
+export const createCubeDimensionValuesLoader =
+  () => async (dimensions: readonly ResolvedDimension[]) => {
+    const result: DimensionValue[][] = [];
+
+    for (const dimension of dimensions) {
+      const dimensionValues = await getCubeDimensionValues(dimension);
+      result.push(dimensionValues);
+    }
+
+    return result;
+  };
+
 export const getCubeDimensionValues = async ({
   dimension,
   cube,

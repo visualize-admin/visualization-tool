@@ -1,11 +1,11 @@
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
+import { DimensionValue } from "../domain/data";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
   getCubeDimensions,
-  getCubeDimensionValues,
   getCubeObservations,
   getCubes,
   getSparqlEditorUrl,
@@ -242,8 +242,10 @@ const dimensionResolvers = {
     isKeyDimension,
   unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
   scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
-  values: async (dimension: ResolvedDimension) => {
-    const values = await getCubeDimensionValues(dimension);
+  values: async (parent: ResolvedDimension, _: {}, { loaders }: any) => {
+    const values: Array<DimensionValue> = await loaders.dimensionValues.load(
+      parent
+    );
     // TODO min max are now just `values` with 2 elements. Handle properly!
     return values.sort((a, b) =>
       ascending(a.value ?? undefined, b.value ?? undefined)
