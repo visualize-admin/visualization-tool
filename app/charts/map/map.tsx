@@ -197,11 +197,9 @@ export const MapComponent = () => {
               data={features.areaLayer?.shapes}
               pickable={true}
               autoHighlight={true}
-              stroked={true}
+              stroked={false}
               filled={true}
               extruded={false}
-              lineWidthMinPixels={0.5}
-              lineWidthMaxPixels={1}
               onHover={({
                 x,
                 y,
@@ -228,12 +226,10 @@ export const MapComponent = () => {
                   });
                 }
               }}
-              getLineWidth={100}
               updateTriggers={{ getFillColor: getColor }}
               getFillColor={({ properties: { observation } }: ShapeFeature) =>
                 getColor(observation ? getValue(observation) : null)
               }
-              getLineColor={[255, 255, 255]}
             />
             <GeoJsonLayer
               id="shapes-mesh"
@@ -243,7 +239,7 @@ export const MapComponent = () => {
               filled={false}
               extruded={false}
               lineWidthMinPixels={1}
-              lineWidthMaxPixels={3}
+              lineWidthMaxPixels={2}
               getLineWidth={100}
               lineMiterLimit={1}
               getLineColor={[255, 255, 255]}
