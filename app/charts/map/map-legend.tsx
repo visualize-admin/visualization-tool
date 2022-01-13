@@ -122,55 +122,55 @@ const CircleLegend = () => {
           margins.top + radiusScale(maxRadius)
         })`}
       >
-        {symbolDataDomain.map((d) => {
+        {symbolDataDomain.map((d, i) => {
           // FIXME: Potentially a performance problem if a lot of data
           const observation = data.find((x) => getSymbolValue(x) === d);
           const thisFeatureLabel = observation
             ? getSymbolLabel(observation)
             : "";
 
-          return (
-            observation && (
-              <>
-                {
-                  <g
-                    transform={`translate(0, ${
-                      radiusScale(maxRadius) - radiusScale(d)
-                    })`}
-                  >
-                    <circle
-                      cx={0}
-                      cy={0}
-                      r={radiusScale(d)}
-                      fill="none"
-                      stroke={axisLabelColor}
-                    />
-                    {!visible && (
-                      <>
-                        <line
-                          x1={0}
-                          y1={-radiusScale(d)}
-                          x2={radiusScale(maxRadius) + 4}
-                          y2={-radiusScale(d)}
-                          stroke={axisLabelColor}
-                        />
-                        <text
-                          x={radiusScale(maxRadius) + 6}
-                          y={-radiusScale(d)}
-                          dy={5}
-                          fill={axisLabelColor}
-                          textAnchor="start"
-                          fontSize={legendFontSize}
-                        >
-                          {formatNumber(d)} ({thisFeatureLabel})
-                        </text>
-                      </>
-                    )}
-                  </g>
-                }
-              </>
-            )
-          );
+          return i == 0 && visible
+            ? null
+            : observation && (
+                <>
+                  {
+                    <g
+                      transform={`translate(0, ${
+                        radiusScale(maxRadius) - radiusScale(d)
+                      })`}
+                    >
+                      <circle
+                        cx={0}
+                        cy={0}
+                        r={radiusScale(d)}
+                        fill="none"
+                        stroke={axisLabelColor}
+                      />
+                      {!visible && (
+                        <>
+                          <line
+                            x1={0}
+                            y1={-radiusScale(d)}
+                            x2={radiusScale(maxRadius) + 4}
+                            y2={-radiusScale(d)}
+                            stroke={axisLabelColor}
+                          />
+                          <text
+                            x={radiusScale(maxRadius) + 6}
+                            y={-radiusScale(d)}
+                            dy={5}
+                            fill={axisLabelColor}
+                            textAnchor="start"
+                            fontSize={legendFontSize}
+                          >
+                            {formatNumber(d)} ({thisFeatureLabel})
+                          </text>
+                        </>
+                      )}
+                    </g>
+                  }
+                </>
+              );
         })}
         {/* Hovered data point indicator */}
         {d && visible && hoveredRadius !== undefined && hoveredRadius !== null && (
