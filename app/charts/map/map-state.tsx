@@ -50,32 +50,32 @@ export interface MapState {
   features: GeoData;
   showRelief: boolean;
   showLakes: boolean;
-  sameAreaAndSymbolComponentIri: boolean;
+  identicalLayerComponentIris: boolean;
   areaLayer: {
-    showAreaLayer: boolean;
-    areaMeasureLabel: string;
-    getAreaLabel: (d: Observation) => string;
+    show: boolean;
+    measureLabel: string;
+    getLabel: (d: Observation) => string;
+    getValue: (d: Observation) => number | null;
     getColor: (x: number | null) => number[];
-    getAreaValue: (d: Observation) => number | null;
-    paletteType: PaletteType;
-    palette: string;
-    nbClass: number;
-    areaDataDomain: [number, number];
     colorScale:
       | ScaleSequential<string>
       | ScaleQuantize<string>
       | ScaleQuantile<string>
       | ScaleLinear<string, string>
       | ScaleThreshold<number, string>;
+    paletteType: PaletteType;
+    palette: string;
+    nbClass: number;
+    dataDomain: [number, number];
   };
   symbolLayer: {
+    show: boolean;
+    measureLabel: string;
+    getLabel: (d: Observation) => string;
+    getValue: (d: Observation) => number | null;
     color: string;
-    showSymbolLayer: boolean;
-    symbolMeasureLabel: string;
-    getSymbolLabel: (d: Observation) => string;
     radiusScale: ScalePower<number, number>;
-    getSymbolValue: (d: Observation) => number | null;
-    symbolDataDomain: [number, number];
+    dataDomain: [number, number];
   };
 }
 
@@ -152,7 +152,7 @@ const useMapState = ({
     fields.symbolLayer.measureIri
   );
 
-  const sameAreaAndSymbolComponentIri =
+  const identicalLayerComponentIris =
     fields.areaLayer.componentIri === fields.symbolLayer.componentIri;
 
   const areaMeasureLabel = useMemo(
@@ -186,7 +186,7 @@ const useMapState = ({
     nbClass,
   });
 
-  const getColor = (v: number | null) => {
+  const getAreaColor = (v: number | null) => {
     if (v === null) {
       return [0, 0, 0, 255 * 0.1];
     }
@@ -225,27 +225,27 @@ const useMapState = ({
     bounds,
     showRelief: settings.showRelief,
     showLakes: settings.showLakes,
-    sameAreaAndSymbolComponentIri,
+    identicalLayerComponentIris,
     areaLayer: {
-      areaMeasureLabel,
-      showAreaLayer: fields.areaLayer.show,
-      getAreaLabel,
-      getColor,
-      getAreaValue,
+      show: fields.areaLayer.show,
+      measureLabel: areaMeasureLabel,
+      getLabel: getAreaLabel,
+      getValue: getAreaValue,
+      getColor: getAreaColor,
+      colorScale,
       paletteType,
       palette,
       nbClass: nbClass,
-      areaDataDomain,
-      colorScale,
+      dataDomain: areaDataDomain,
     },
     symbolLayer: {
       color: fields.symbolLayer.color,
-      symbolMeasureLabel,
-      showSymbolLayer: fields.symbolLayer.show,
-      getSymbolLabel,
+      measureLabel: symbolMeasureLabel,
+      show: fields.symbolLayer.show,
+      getLabel: getSymbolLabel,
       radiusScale,
-      getSymbolValue,
-      symbolDataDomain,
+      getValue: getSymbolValue,
+      dataDomain: symbolDataDomain,
     },
   };
 };

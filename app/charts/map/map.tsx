@@ -93,14 +93,9 @@ export const MapComponent = () => {
     showRelief,
     showLakes,
     features,
-    sameAreaAndSymbolComponentIri,
-    areaLayer: { showAreaLayer, getColor, getAreaValue },
-    symbolLayer: {
-      color: symbolColor,
-      showSymbolLayer,
-      radiusScale,
-      getSymbolValue,
-    },
+    identicalLayerComponentIris,
+    areaLayer,
+    symbolLayer,
   } = useChartState() as MapState;
   const [, dispatchInteraction] = useInteraction();
   const [, dispatchMapTooltip] = useMapTooltip();
@@ -141,8 +136,8 @@ export const MapComponent = () => {
   };
 
   const symbolColorRgbArray = useMemo(
-    () => convertHexToRgbArray(symbolColor),
-    [symbolColor]
+    () => convertHexToRgbArray(symbolLayer.color),
+    [symbolLayer.color]
   );
 
   return (
@@ -193,7 +188,7 @@ export const MapComponent = () => {
           />
         )}
 
-        {showAreaLayer && (
+        {areaLayer.show && (
           <>
             <GeoJsonLayer
               id="shapes"
@@ -234,9 +229,13 @@ export const MapComponent = () => {
                   });
                 }
               }}
-              updateTriggers={{ getFillColor: [getAreaValue, getColor] }}
+              updateTriggers={{
+                getFillColor: [areaLayer.getValue, areaLayer.getColor],
+              }}
               getFillColor={({ properties: { observation } }: ShapeFeature) =>
-                getColor(observation ? getAreaValue(observation) : null)
+                areaLayer.getColor(
+                  observation ? areaLayer.getValue(observation) : null
+                )
               }
             />
             <GeoJsonLayer
@@ -271,23 +270,25 @@ export const MapComponent = () => {
           />
         )}
 
-        {showSymbolLayer && (
+        {symbolLayer.show && (
           <ScatterplotLayer
             id="symbols"
             data={features.symbolLayer}
-            pickable={sameAreaAndSymbolComponentIri ? !showAreaLayer : true}
+            pickable={identicalLayerComponentIris ? !areaLayer.show : true}
             autoHighlight={true}
             opacity={0.7}
             stroked={false}
             filled={true}
             radiusUnits={"pixels"}
-            radiusMinPixels={radiusScale.range()[0]}
-            radiusMaxPixels={radiusScale.range()[1]}
+            radiusMinPixels={symbolLayer.radiusScale.range()[0]}
+            radiusMaxPixels={symbolLayer.radiusScale.range()[1]}
             lineWidthMinPixels={1}
             getPosition={({ coordinates }: GeoPoint) => coordinates}
             getRadius={({ properties: { observation } }: GeoPoint) =>
               observation
-                ? radiusScale(getSymbolValue(observation) as number)
+                ? symbolLayer.radiusScale(
+                    symbolLayer.getValue(observation) as number
+                  )
                 : 0
             }
             getFillColor={symbolColorRgbArray}
@@ -323,7 +324,9 @@ export const MapComponent = () => {
                 });
               }
             }}
-            updateTriggers={{ getRadius: [data, getSymbolValue] }}
+            updateTriggers={{
+              getRadius: [data, symbolLayer.getValue, symbolLayer.radiusScale],
+            }}
           />
         )}
       </DeckGL>
