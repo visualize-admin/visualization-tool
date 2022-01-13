@@ -164,14 +164,14 @@ export const MapComponent = () => {
         onViewStateChange={onViewStateChange}
         onResize={onResize}
         controller={{ type: MapController }}
+        getCursor={() => "default"}
       >
         {showRelief && (
           <TileLayer
             getTileData={({ z, x, y }: TileData) =>
               `https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/${z}/${x}/${y}.png`
             }
-            pickable={true}
-            highlightColor={[60, 60, 60, 40]}
+            pickable={false}
             minZoom={2}
             maxZoom={16}
             tileSize={256}
@@ -190,19 +190,13 @@ export const MapComponent = () => {
           />
         )}
 
-        {/* <MVTLayer
-          data="https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf"
-          getLineColor={[192, 192, 192]}
-          getFillColor={[140, 170, 180, 0.1]}
-          lineWidthMinPixels={1}
-        /> */}
-
         {showAreaLayer && (
           <>
             <GeoJsonLayer
               id="shapes"
               data={features.areaLayer?.shapes}
               pickable={true}
+              autoHighlight={true}
               stroked={true}
               filled={true}
               extruded={false}
@@ -236,12 +230,8 @@ export const MapComponent = () => {
               }}
               getLineWidth={100}
               updateTriggers={{ getFillColor: getColor }}
-              getFillColor={(d: ShapeFeature) =>
-                getColor(
-                  d.properties.observation
-                    ? getValue(d.properties.observation)
-                    : null
-                )
+              getFillColor={({ properties: { observation } }: ShapeFeature) =>
+                getColor(observation ? getValue(observation) : null)
               }
               getLineColor={[255, 255, 255]}
             />
@@ -252,9 +242,9 @@ export const MapComponent = () => {
               stroked={true}
               filled={false}
               extruded={false}
-              lineWidthMinPixels={1.2}
-              lineWidthMaxPixels={3.6}
-              getLineWidth={200}
+              lineWidthMinPixels={1}
+              lineWidthMaxPixels={3}
+              getLineWidth={100}
               lineMiterLimit={1}
               getLineColor={[255, 255, 255]}
             />
@@ -282,19 +272,17 @@ export const MapComponent = () => {
             id="symbols"
             data={features.symbolLayer}
             pickable={true}
+            autoHighlight={true}
             opacity={0.7}
             stroked={false}
             filled={true}
-            radiusScale={1}
             radiusUnits={"pixels"}
             radiusMinPixels={radiusScale.range()[0]}
             radiusMaxPixels={radiusScale.range()[1]}
             lineWidthMinPixels={1}
-            getPosition={(d: GeoPoint) => d.coordinates}
-            getRadius={(d: GeoPoint) =>
-              d.properties.observation
-                ? radiusScale(getRadius(d.properties.observation) as number)
-                : 0
+            getPosition={({ coordinates }: GeoPoint) => coordinates}
+            getRadius={({ properties: { observation } }: GeoPoint) =>
+              observation ? radiusScale(getRadius(observation) as number) : 0
             }
             getFillColor={symbolColorRgbArray}
             getLineColor={[255, 255, 255]}
