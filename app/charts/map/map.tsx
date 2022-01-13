@@ -11,6 +11,7 @@ import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { ShapeFeature } from "./chart-map-prototype";
 import { MapState } from "./map-state";
+import { useMapTooltip } from "./map-tooltip";
 
 type TileData = {
   z: number;
@@ -100,7 +101,8 @@ export const MapComponent = () => {
       getRadius,
     },
   } = useChartState() as MapState;
-  const [, dispatch] = useInteraction();
+  const [, dispatchInteraction] = useInteraction();
+  const [mapTooltipState, dispatchMapTooltip] = useMapTooltip();
 
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
@@ -210,7 +212,12 @@ export const MapComponent = () => {
                 object: ShapeFeature;
               }) => {
                 if (object) {
-                  dispatch({
+                  dispatchMapTooltip({
+                    type: "SET_HOVER_OBJECT_TYPE",
+                    value: "area",
+                  });
+
+                  dispatchInteraction({
                     type: "INTERACTION_UPDATE",
                     value: {
                       interaction: {
@@ -221,7 +228,7 @@ export const MapComponent = () => {
                     },
                   });
                 } else {
-                  dispatch({
+                  dispatchInteraction({
                     type: "INTERACTION_HIDE",
                   });
                 }
@@ -292,7 +299,12 @@ export const MapComponent = () => {
               object: GeoPoint;
             }) => {
               if (object) {
-                dispatch({
+                dispatchMapTooltip({
+                  type: "SET_HOVER_OBJECT_TYPE",
+                  value: "symbol",
+                });
+
+                dispatchInteraction({
                   type: "INTERACTION_UPDATE",
                   value: {
                     interaction: {
@@ -303,7 +315,7 @@ export const MapComponent = () => {
                   },
                 });
               } else {
-                dispatch({
+                dispatchInteraction({
                   type: "INTERACTION_HIDE",
                 });
               }

@@ -34,6 +34,7 @@ import {
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
+import { MapTooltipProvider } from "./map-tooltip";
 
 export type GeoData = {
   lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
@@ -288,17 +289,19 @@ export const MapChart = ({
   return (
     <Observer>
       <InteractionProvider>
-        <MapChartProvider
-          data={data}
-          features={features}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          settings={settings}
-          interactiveFiltersConfig={interactiveFiltersConfig}
-        >
-          {children}
-        </MapChartProvider>
+        <MapTooltipProvider>
+          <MapChartProvider
+            data={data}
+            features={features}
+            fields={fields}
+            dimensions={dimensions}
+            measures={measures}
+            settings={settings}
+            interactiveFiltersConfig={interactiveFiltersConfig}
+          >
+            {children}
+          </MapChartProvider>
+        </MapTooltipProvider>
       </InteractionProvider>
     </Observer>
   );

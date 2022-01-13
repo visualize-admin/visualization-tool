@@ -1,11 +1,78 @@
 import { hcl } from "d3";
 import * as React from "react";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  Reducer,
+  useContext,
+  useReducer,
+} from "react";
 import { Box, Grid, Text } from "theme-ui";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 import { TooltipBox } from "../shared/interaction/tooltip-box";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { MapState } from "./map-state";
+
+type HoverObjectType = "area" | "symbol";
+
+type MapTooltipStateAction = {
+  type: "SET_HOVER_OBJECT_TYPE";
+  value: HoverObjectType;
+};
+
+interface MapTooltipState {
+  hoverObjectType: HoverObjectType;
+}
+
+const MAP_TOOLTIP_INITIAL_STATE: MapTooltipState = {
+  hoverObjectType: "area",
+};
+
+const MapTooltipStateReducer = (
+  state: MapTooltipState,
+  action: MapTooltipStateAction
+) => {
+  switch (action.type) {
+    case "SET_HOVER_OBJECT_TYPE":
+      return {
+        ...state,
+        hoverObjectType: action.value,
+      };
+
+    default:
+      throw new Error();
+  }
+};
+
+const MapTooltipStateContext = createContext<
+  [MapTooltipState, Dispatch<MapTooltipStateAction>] | undefined
+>(undefined);
+
+export const useMapTooltip = () => {
+  const ctx = useContext(MapTooltipStateContext);
+
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <MapTooltipProvider /> to useMapTooltip()"
+    );
+  }
+
+  return ctx;
+};
+
+export const MapTooltipProvider = ({ children }: { children: ReactNode }) => {
+  const [state, dispatch] = useReducer<
+    Reducer<MapTooltipState, MapTooltipStateAction>
+  >(MapTooltipStateReducer, MAP_TOOLTIP_INITIAL_STATE);
+
+  return (
+    <MapTooltipStateContext.Provider value={[state, dispatch]}>
+      {children}
+    </MapTooltipStateContext.Provider>
+  );
+};
 
 export const MapTooltip = () => {
   const [{ interaction }] = useInteraction();
@@ -24,7 +91,6 @@ export const MapTooltip = () => {
       color: symbolColor,
     },
   } = useChartState() as MapState;
-
   const formatNumber = useFormatNumber();
 
   return (
