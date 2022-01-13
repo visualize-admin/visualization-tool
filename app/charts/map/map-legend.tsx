@@ -25,6 +25,7 @@ import { useChartTheme } from "../shared/use-chart-theme";
 import { useInteraction } from "../shared/use-interaction";
 import { useWidth } from "../shared/use-width";
 import { MapState } from "./map-state";
+import { useMapTooltip } from "./map-tooltip";
 
 const WIDTH = 204;
 const HEIGHT = 25;
@@ -52,13 +53,9 @@ export const MapLegend = () => {
               {areaMeasureLabel}
             </Text>
           )}
-
           {paletteType === "continuous" && <ContinuousColorLegend />}
-
           {paletteType === "discrete" && <QuantizeColorLegend />}
-
           {paletteType === "quantile" && <QuantileColorLegend />}
-
           {paletteType === "jenks" && <JenksColorLegend />}
         </Box>
       )}
@@ -83,12 +80,19 @@ const CircleLegend = () => {
       interaction: { d, visible },
     },
   ] = useInteraction();
+  const [{ hoverObjectType }] = useMapTooltip();
 
   const { axisLabelColor, legendFontSize } = useChartTheme();
   const {
     data,
-    areaLayer: { getLabel },
-    symbolLayer: { getRadius, radiusScale, color },
+    areaLayer: { getAreaLabel },
+    symbolLayer: {
+      getSymbolLabel,
+      getSymbolValue,
+      radiusScale,
+      color,
+      symbolDataDomain,
+    },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
 
@@ -104,10 +108,10 @@ const CircleLegend = () => {
   const [, maxRadius] = radiusScale.domain();
 
   const hoveredRadius =
-    d && typeof getRadius(d) === "number" ? getRadius(d) : undefined;
+    d && typeof getSymbolValue(d) === "number" ? getSymbolValue(d) : undefined;
 
   const hoveredColor =
-    d && typeof getRadius(d) === "number" ? color : undefined;
+    d && typeof getSymbolValue(d) === "number" ? color : undefined;
 
   return (
     <svg
@@ -119,10 +123,14 @@ const CircleLegend = () => {
           margins.top + radiusScale(maxRadius)
         })`}
       >
-        {radiusScale.domain().map((d) => {
+        {symbolDataDomain.map((d) => {
           // FIXME: Potentially a performance problem if a lot of data
-          const observation = data.find((x) => getRadius(x) === d);
-          const thisFeatureLabel = observation ? getLabel(observation) : "";
+          const observation = data.find((x) => getSymbolValue(x) === d);
+          const thisFeatureLabel = observation
+            ? hoverObjectType === "area"
+              ? getAreaLabel(observation)
+              : getSymbolLabel(observation)
+            : "";
 
           return (
             observation && (
@@ -168,7 +176,7 @@ const CircleLegend = () => {
           );
         })}
         {/* Hovered data point indicator */}
-        {d && visible && hoveredRadius && (
+        {d && visible && hoveredRadius !== undefined && hoveredRadius !== null && (
           <g
             transform={`translate(0, ${
               radiusScale(maxRadius) - radiusScale(hoveredRadius)
@@ -197,7 +205,9 @@ const CircleLegend = () => {
               textAnchor="start"
               fontSize={legendFontSize}
             >
-              {formatNumber(getRadius(d) ?? NaN)} ({getLabel(d)})
+              {formatNumber(getSymbolValue(d) ?? NaN)} (
+              {hoverObjectType === "area" ? getAreaLabel(d) : getSymbolLabel(d)}
+              )
             </text>
           </g>
         )}
@@ -211,7 +221,7 @@ const JenksColorLegend = () => {
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
   const {
-    areaLayer: { dataDomain, colorScale },
+    areaLayer: { areaDataDomain, colorScale },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
   const width = useWidth();
@@ -230,16 +240,16 @@ const JenksColorLegend = () => {
   const thresholdsScale = scaleLinear()
     .domain(range(colorScale.range().length + 1))
     .range([
-      min(dataDomain, (d) => d) || 0,
+      min(areaDataDomain, (d) => d) || 0,
       ...thresholds,
-      max(dataDomain, (d) => d) || 100,
+      max(areaDataDomain, (d) => d) || 100,
     ]);
 
   // From threshold value to pixel value
   const scale = scaleLinear()
     .domain([
-      min(dataDomain, (d) => d) || 0,
-      max(dataDomain, (d) => d) || 10000,
+      min(areaDataDomain, (d) => d) || 0,
+      max(areaDataDomain, (d) => d) || 10000,
     ])
     .range([0, legendWidth]);
 
@@ -304,7 +314,7 @@ const QuantileColorLegend = () => {
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
   const {
-    areaLayer: { dataDomain, colorScale },
+    areaLayer: { areaDataDomain, colorScale },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
   const width = useWidth();
@@ -323,16 +333,16 @@ const QuantileColorLegend = () => {
   const thresholdsScale = scaleLinear()
     .domain(range(colorScale.range().length + 1))
     .range([
-      min(dataDomain, (d) => d),
+      min(areaDataDomain, (d) => d),
       ...thresholds,
-      max(dataDomain, (d) => d),
+      max(areaDataDomain, (d) => d),
     ]);
 
   // From threshold value to pixel value
   const scale = scaleLinear()
     .domain([
-      min(dataDomain, (d) => d) || 0,
-      max(dataDomain, (d) => d) || 10000,
+      min(areaDataDomain, (d) => d) || 0,
+      max(areaDataDomain, (d) => d) || 10000,
     ])
     .range([0, legendWidth]);
 
@@ -396,7 +406,7 @@ const QuantizeColorLegend = () => {
   const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
     useChartTheme();
   const {
-    areaLayer: { dataDomain, colorScale },
+    areaLayer: { areaDataDomain, colorScale },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
   const width = useWidth();
@@ -413,7 +423,7 @@ const QuantizeColorLegend = () => {
     .domain([0, colorScale.range().length])
     .range([0, legendWidth]);
 
-  const scale = scaleLinear().domain(dataDomain).range([0, legendWidth]);
+  const scale = scaleLinear().domain(areaDataDomain).range([0, legendWidth]);
 
   // @ts-ignore
   const thresholds = colorScale.thresholds ? colorScale.thresholds() : [];
@@ -473,7 +483,7 @@ const QuantizeColorLegend = () => {
 
 const ContinuousColorLegend = () => {
   const {
-    areaLayer: { palette, dataDomain },
+    areaLayer: { palette, areaDataDomain },
   } = useChartState() as MapState;
   const { legendLabelColor, labelFontSize, fontFamily } = useChartTheme();
   const formatNumber = useFormatNumber();
@@ -484,7 +494,7 @@ const ContinuousColorLegend = () => {
     right: 5,
     left: 5,
   };
-  const scale = scaleLinear().domain(dataDomain).range([0, width]);
+  const scale = scaleLinear().domain(areaDataDomain).range([0, width]);
 
   return (
     <svg width={width} height={HEIGHT}>
@@ -510,7 +520,7 @@ const ContinuousColorLegend = () => {
           fontFamily={fontFamily}
           fill={legendLabelColor}
         >
-          {formatNumber(dataDomain[0])}
+          {formatNumber(areaDataDomain[0])}
         </text>
         <text
           x={width - labelMargins.right}
@@ -520,7 +530,7 @@ const ContinuousColorLegend = () => {
           fontFamily={fontFamily}
           fill={legendLabelColor}
         >
-          {formatNumber(dataDomain[1])}
+          {formatNumber(areaDataDomain[1])}
         </text>
       </g>
     </svg>
@@ -534,25 +544,26 @@ const DataPointIndicator = ({
 }) => {
   const [state] = useInteraction();
   const {
-    areaLayer: { getValue },
+    areaLayer: { getAreaValue },
   } = useChartState() as MapState;
   const { labelColor } = useChartTheme();
   return (
     <>
       {state.interaction.d &&
         state.interaction.visible &&
-        !isNaN(getValue(state.interaction.d) ?? NaN) && (
+        !isNaN(getAreaValue(state.interaction.d) ?? NaN) && (
           <polygon
             fill={labelColor}
             points="-4,0 4,0 0,5"
             transform={`translate(${scale(
-              getValue(state.interaction.d) ?? 0
+              getAreaValue(state.interaction.d) ?? 0
             )}, 0)`}
           />
         )}
     </>
   );
 };
+
 const ColorRamp = ({
   colorInterpolator = interpolateOranges,
   nbClass,

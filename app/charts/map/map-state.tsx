@@ -1,7 +1,6 @@
 import {
   color,
   extent,
-  max,
   ScaleLinear,
   scaleLinear,
   ScalePower,
@@ -51,16 +50,17 @@ export interface MapState {
   features: GeoData;
   showRelief: boolean;
   showLakes: boolean;
+  sameAreaAndSymbolComponentIri: boolean;
   areaLayer: {
     showAreaLayer: boolean;
     areaMeasureLabel: string;
-    getLabel: (d: Observation) => string;
+    getAreaLabel: (d: Observation) => string;
     getColor: (x: number | null) => number[];
-    getValue: (d: Observation) => number | null;
+    getAreaValue: (d: Observation) => number | null;
     paletteType: PaletteType;
     palette: string;
     nbClass: number;
-    dataDomain: [number, number];
+    areaDataDomain: [number, number];
     colorScale:
       | ScaleSequential<string>
       | ScaleQuantize<string>
@@ -72,8 +72,10 @@ export interface MapState {
     color: string;
     showSymbolLayer: boolean;
     symbolMeasureLabel: string;
+    getSymbolLabel: (d: Observation) => string;
     radiusScale: ScalePower<number, number>;
-    getRadius: (d: Observation) => number | null;
+    getSymbolValue: (d: Observation) => number | null;
+    symbolDataDomain: [number, number];
   };
 }
 
@@ -143,9 +145,15 @@ const useMapState = ({
   const width = useWidth();
   const { palette, nbClass, paletteType } = fields["areaLayer"];
 
-  const getLabel = useStringVariable(fields.areaLayer.componentIri);
-  const getValue = useOptionalNumericVariable(fields.areaLayer.measureIri);
-  const getRadius = useOptionalNumericVariable(fields.symbolLayer.measureIri);
+  const getAreaLabel = useStringVariable(fields.areaLayer.componentIri);
+  const getSymbolLabel = useStringVariable(fields.symbolLayer.componentIri);
+  const getAreaValue = useOptionalNumericVariable(fields.areaLayer.measureIri);
+  const getSymbolValue = useOptionalNumericVariable(
+    fields.symbolLayer.measureIri
+  );
+
+  const sameAreaAndSymbolComponentIri =
+    fields.areaLayer.componentIri === fields.symbolLayer.componentIri;
 
   const areaMeasureLabel = useMemo(
     () =>
@@ -159,17 +167,22 @@ const useMapState = ({
       "",
     [fields, measures]
   );
-  const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
+
+  const areaDataDomain = (extent(data, (d) => getAreaValue(d)) || [0, 100]) as [
     number,
     number
   ];
 
+  const symbolDataDomain = (extent(data, (d) => getSymbolValue(d)) || [
+    0, 100,
+  ]) as [number, number];
+
   const colorScale = getColorScale({
     paletteType,
     palette,
-    getValue,
+    getValue: getAreaValue,
     data,
-    dataDomain,
+    dataDomain: areaDataDomain,
     nbClass,
   });
 
@@ -184,11 +197,9 @@ const useMapState = ({
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
-  const radiusExtent = [0, max(data, (d) => getRadius(d))];
-  const radiusRange = radiusExtent[0] === 0 ? [0, 23] : [0, 23];
-  const radiusScale = scaleSqrt()
-    .domain(radiusExtent as [number, number])
-    .range(radiusRange);
+  const radiusExtent: [number, number] = [0, symbolDataDomain[1]];
+  const radiusRange = [0, 24];
+  const radiusScale = scaleSqrt().domain(radiusExtent).range(radiusRange);
 
   // Dimensions
   const margins = {
@@ -214,24 +225,27 @@ const useMapState = ({
     bounds,
     showRelief: settings.showRelief,
     showLakes: settings.showLakes,
+    sameAreaAndSymbolComponentIri,
     areaLayer: {
       areaMeasureLabel,
       showAreaLayer: fields.areaLayer.show,
-      getLabel,
+      getAreaLabel,
       getColor,
-      getValue,
+      getAreaValue,
       paletteType,
       palette,
       nbClass: nbClass,
-      dataDomain,
+      areaDataDomain,
       colorScale,
     },
     symbolLayer: {
       color: fields.symbolLayer.color,
       symbolMeasureLabel,
       showSymbolLayer: fields.symbolLayer.show,
+      getSymbolLabel,
       radiusScale,
-      getRadius,
+      getSymbolValue,
+      symbolDataDomain,
     },
   };
 };

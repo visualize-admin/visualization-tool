@@ -93,16 +93,17 @@ export const MapComponent = () => {
     showRelief,
     showLakes,
     features,
-    areaLayer: { showAreaLayer, getColor, getValue },
+    sameAreaAndSymbolComponentIri,
+    areaLayer: { showAreaLayer, getColor, getAreaValue },
     symbolLayer: {
       color: symbolColor,
       showSymbolLayer,
       radiusScale,
-      getRadius,
+      getSymbolValue,
     },
   } = useChartState() as MapState;
   const [, dispatchInteraction] = useInteraction();
-  const [mapTooltipState, dispatchMapTooltip] = useMapTooltip();
+  const [, dispatchMapTooltip] = useMapTooltip();
 
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
@@ -233,9 +234,9 @@ export const MapComponent = () => {
                   });
                 }
               }}
-              updateTriggers={{ getFillColor: getColor }}
+              updateTriggers={{ getFillColor: [getAreaValue, getColor] }}
               getFillColor={({ properties: { observation } }: ShapeFeature) =>
-                getColor(observation ? getValue(observation) : null)
+                getColor(observation ? getAreaValue(observation) : null)
               }
             />
             <GeoJsonLayer
@@ -274,7 +275,7 @@ export const MapComponent = () => {
           <ScatterplotLayer
             id="symbols"
             data={features.symbolLayer}
-            pickable={true}
+            pickable={sameAreaAndSymbolComponentIri ? !showAreaLayer : true}
             autoHighlight={true}
             opacity={0.7}
             stroked={false}
@@ -285,7 +286,9 @@ export const MapComponent = () => {
             lineWidthMinPixels={1}
             getPosition={({ coordinates }: GeoPoint) => coordinates}
             getRadius={({ properties: { observation } }: GeoPoint) =>
-              observation ? radiusScale(getRadius(observation) as number) : 0
+              observation
+                ? radiusScale(getSymbolValue(observation) as number)
+                : 0
             }
             getFillColor={symbolColorRgbArray}
             getLineColor={[255, 255, 255]}
@@ -320,7 +323,7 @@ export const MapComponent = () => {
                 });
               }
             }}
-            updateTriggers={{ getRadius: [data, getRadius] }}
+            updateTriggers={{ getRadius: [data, getSymbolValue] }}
           />
         )}
       </DeckGL>

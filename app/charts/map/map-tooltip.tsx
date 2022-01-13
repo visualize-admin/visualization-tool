@@ -75,19 +75,22 @@ export const MapTooltipProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const MapTooltip = () => {
+  const [state] = useMapTooltip();
   const [{ interaction }] = useInteraction();
   const {
+    sameAreaAndSymbolComponentIri,
     areaLayer: {
       showAreaLayer,
       areaMeasureLabel,
-      getLabel,
-      getValue,
+      getAreaLabel,
+      getAreaValue,
       colorScale,
     },
     symbolLayer: {
       showSymbolLayer,
       symbolMeasureLabel,
-      getRadius,
+      getSymbolLabel,
+      getSymbolValue,
       color: symbolColor,
     },
   } = useChartState() as MapState;
@@ -104,7 +107,9 @@ export const MapTooltip = () => {
         >
           <Box sx={{ minWidth: 200 }}>
             <Text as="div" variant="meta" sx={{ fontWeight: "bold" }}>
-              {getLabel(interaction.d)}
+              {state.hoverObjectType === "area"
+                ? getAreaLabel(interaction.d)
+                : getSymbolLabel(interaction.d)}
             </Text>
             <Grid
               sx={{
@@ -115,64 +120,145 @@ export const MapTooltip = () => {
                 alignItems: "center",
               }}
             >
-              {showAreaLayer && getValue(interaction.d) !== null && (
+              {sameAreaAndSymbolComponentIri ? (
                 <>
-                  <Text as="div" variant="meta">
-                    {areaMeasureLabel}
-                  </Text>
-                  <Box
-                    sx={{
-                      borderRadius: "circle",
-                      px: 2,
-                      display: "inline-block",
-                      textAlign: "center",
-                    }}
-                    style={{
-                      background:
-                        getValue(interaction.d) !== null
-                          ? colorScale(getValue(interaction.d) as number)
-                          : "transparent",
-                      color:
-                        getValue(interaction.d) !== null &&
-                        hcl(colorScale(getValue(interaction.d) as number)).l <
-                          55
-                          ? "#fff"
-                          : "#000",
-                    }}
-                  >
-                    <Text as="div" variant="meta">
-                      {formatNumber(getValue(interaction.d))}
-                    </Text>
-                  </Box>
+                  {showAreaLayer && getAreaValue(interaction.d) !== null && (
+                    <>
+                      <Text as="div" variant="meta">
+                        {areaMeasureLabel}
+                      </Text>
+                      <Box
+                        sx={{
+                          borderRadius: "circle",
+                          px: 2,
+                          display: "inline-block",
+                          textAlign: "center",
+                        }}
+                        style={{
+                          background:
+                            getAreaValue(interaction.d) !== null
+                              ? colorScale(
+                                  getAreaValue(interaction.d) as number
+                                )
+                              : "transparent",
+                          color:
+                            getAreaValue(interaction.d) !== null &&
+                            hcl(
+                              colorScale(getAreaValue(interaction.d) as number)
+                            ).l < 55
+                              ? "#fff"
+                              : "#000",
+                        }}
+                      >
+                        <Text as="div" variant="meta">
+                          {formatNumber(getAreaValue(interaction.d))}
+                        </Text>
+                      </Box>
+                    </>
+                  )}
+
+                  {showSymbolLayer && getSymbolValue(interaction.d) !== null && (
+                    <>
+                      <Text as="div" variant="meta">
+                        {symbolMeasureLabel}
+                      </Text>
+                      <Box
+                        sx={{
+                          borderRadius: "circle",
+                          px: 2,
+                          display: "inline-block",
+                          textAlign: "center",
+                        }}
+                        style={{
+                          background:
+                            typeof getSymbolValue(interaction.d) === "number"
+                              ? symbolColor
+                              : "transparent",
+                        }}
+                      >
+                        <Text
+                          as="div"
+                          variant="meta"
+                          sx={{ color: "monochrome100" }}
+                        >
+                          {formatNumber(getSymbolValue(interaction.d))}
+                        </Text>
+                      </Box>
+                    </>
+                  )}
                 </>
-              )}
-              {showSymbolLayer && getRadius(interaction.d) !== null && (
+              ) : (
                 <>
-                  <Text as="div" variant="meta">
-                    {symbolMeasureLabel}
-                  </Text>
-                  <Box
-                    sx={{
-                      borderRadius: "circle",
-                      px: 2,
-                      display: "inline-block",
-                      textAlign: "center",
-                    }}
-                    style={{
-                      background:
-                        typeof getValue(interaction.d) === "number"
-                          ? symbolColor
-                          : "transparent",
-                    }}
-                  >
-                    <Text
-                      as="div"
-                      variant="meta"
-                      sx={{ color: "monochrome100" }}
-                    >
-                      {formatNumber(getRadius(interaction.d))}
-                    </Text>
-                  </Box>
+                  {state.hoverObjectType === "area" &&
+                    showAreaLayer &&
+                    getAreaValue(interaction.d) !== null && (
+                      <>
+                        <Text as="div" variant="meta">
+                          {areaMeasureLabel}
+                        </Text>
+                        <Box
+                          sx={{
+                            borderRadius: "circle",
+                            px: 2,
+                            display: "inline-block",
+                            textAlign: "center",
+                          }}
+                          style={{
+                            background:
+                              getAreaValue(interaction.d) !== null
+                                ? colorScale(
+                                    getAreaValue(interaction.d) as number
+                                  )
+                                : "transparent",
+                            color:
+                              getAreaValue(interaction.d) !== null &&
+                              hcl(
+                                colorScale(
+                                  getAreaValue(interaction.d) as number
+                                )
+                              ).l < 55
+                                ? "#fff"
+                                : "#000",
+                          }}
+                        >
+                          <Text as="div" variant="meta">
+                            {formatNumber(getAreaValue(interaction.d))}
+                          </Text>
+                        </Box>
+                      </>
+                    )}
+
+                  {state.hoverObjectType === "symbol" &&
+                    showSymbolLayer &&
+                    getSymbolValue(interaction.d) !== null && (
+                      <>
+                        <Text as="div" variant="meta">
+                          {symbolMeasureLabel}
+                        </Text>
+                        <Box
+                          sx={{
+                            borderRadius: "circle",
+                            px: 2,
+                            display: "inline-block",
+                            textAlign: "center",
+                          }}
+                          style={{
+                            background:
+                              typeof getSymbolValue(interaction.d) === "number"
+                                ? symbolColor
+                                : "transparent",
+                          }}
+                        >
+                          <Text
+                            as="div"
+                            variant="meta"
+                            sx={{ color: "monochrome100" }}
+                          >
+                            {formatNumber(getSymbolValue(interaction.d))}
+                          </Text>
+                        </Box>
+                      </>
+                    )}
                 </>
               )}
             </Grid>
