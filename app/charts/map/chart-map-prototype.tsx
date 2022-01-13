@@ -5,7 +5,7 @@ import {
   feature as topojsonFeature,
   mesh as topojsonMesh,
 } from "topojson-client";
-import { Loading, LoadingOverlay, NoDataHint } from "../../components/hint";
+import { Loading, LoadingDataError, NoDataHint } from "../../components/hint";
 import {
   InteractiveFiltersConfig,
   MapConfig,
@@ -180,11 +180,11 @@ export const ChartMapVisualization = ({
       />
     );
   } else if (geoData.state === "fetching" || fetching) {
-    return <LoadingOverlay />;
-  } else if (geoData.state === "error" || error) {
-    return <NoDataHint />;
-  } else {
     return <Loading />;
+  } else if (geoData.state === "error" || error) {
+    return <LoadingDataError />;
+  } else {
+    return <NoDataHint />;
   }
 };
 
