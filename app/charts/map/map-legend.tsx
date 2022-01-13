@@ -85,7 +85,6 @@ const CircleLegend = () => {
   const { axisLabelColor, legendFontSize } = useChartTheme();
   const {
     data,
-    areaLayer: { getAreaLabel },
     symbolLayer: {
       getSymbolLabel,
       getSymbolValue,
@@ -127,9 +126,7 @@ const CircleLegend = () => {
           // FIXME: Potentially a performance problem if a lot of data
           const observation = data.find((x) => getSymbolValue(x) === d);
           const thisFeatureLabel = observation
-            ? hoverObjectType === "area"
-              ? getAreaLabel(observation)
-              : getSymbolLabel(observation)
+            ? getSymbolLabel(observation)
             : "";
 
           return (
@@ -205,9 +202,7 @@ const CircleLegend = () => {
               textAnchor="start"
               fontSize={legendFontSize}
             >
-              {formatNumber(getSymbolValue(d) ?? NaN)} (
-              {hoverObjectType === "area" ? getAreaLabel(d) : getSymbolLabel(d)}
-              )
+              {formatNumber(getSymbolValue(d) ?? NaN)} ({getSymbolLabel(d)})
             </text>
           </g>
         )}
