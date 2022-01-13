@@ -1,6 +1,7 @@
 import {
   color,
   extent,
+  max,
   ScaleLinear,
   scaleLinear,
   ScalePower,
@@ -182,7 +183,7 @@ const useMapState = ({
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
-  const radiusExtent = extent(data, (d) => getRadius(d));
+  const radiusExtent = [0, max(data, (d) => getRadius(d))];
   const radiusRange = radiusExtent[0] === 0 ? [0, 23] : [0, 23];
   const radiusScale = scaleSqrt()
     .domain(radiusExtent as [number, number])
