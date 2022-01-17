@@ -394,7 +394,7 @@ export const MultiFilterFieldCheckbox = ({
   onChange: onChangeProp,
 }: {
   label: string;
-  value: string;
+  value: string | string[];
   disabled?: boolean;
   onChange?: () => void;
 }) => {
@@ -403,7 +403,10 @@ export const MultiFilterFieldCheckbox = ({
     onChange: onFieldChange,
     checked,
     dimensionIri,
-  } = useMultiFilterCheckboxes(value, onChangeProp);
+  } = useMultiFilterCheckboxes(
+    Array.isArray(value) ? value : [value],
+    onChangeProp
+  );
 
   if (state.state !== "CONFIGURING_CHART") {
     return null;

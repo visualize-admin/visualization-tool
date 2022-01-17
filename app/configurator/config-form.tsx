@@ -1,3 +1,4 @@
+import { some } from "lodash";
 import get from "lodash/get";
 import React, {
   ChangeEvent,
@@ -444,7 +445,7 @@ export const MultiFilterContextProvider = ({
 };
 
 export const useMultiFilterCheckboxes = (
-  value: string,
+  values: string[],
   onChangeProp?: () => void
 ) => {
   const [state, dispatch] = useConfiguratorState();
@@ -460,7 +461,7 @@ export const useMultiFilterCheckboxes = (
           type: "CHART_CONFIG_FILTER_ADD_MULTI",
           value: {
             dimensionIri,
-            values: [value],
+            values,
             allValues,
           },
         });
@@ -469,19 +470,21 @@ export const useMultiFilterCheckboxes = (
           type: "CHART_CONFIG_FILTER_REMOVE_MULTI",
           value: {
             dimensionIri,
-            values: [value],
+            values,
             allValues,
           },
         });
       }
       onChangeProp?.();
     },
-    [dispatch, dimensionIri, allValues, value, onChangeProp]
+    [dispatch, dimensionIri, allValues, values, onChangeProp]
   );
 
   const isChecked =
     state.state === "CONFIGURING_CHART" && dimensionIri
-      ? isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value)
+      ? some(values, (value) =>
+          isMultiFilterFieldChecked(state.chartConfig, dimensionIri, value)
+        )
       : false;
 
   return {
