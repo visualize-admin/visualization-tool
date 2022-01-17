@@ -30,9 +30,12 @@ const server = new ApolloServer({
       dimensionValues: new DataLoader(createCubeDimensionValuesLoader(), {
         cacheKeyFn: (dim) => dim.dimension.path?.value,
       }),
-      geoCoordinates: new DataLoader(createGeoCoordinatesLoader(), {
-        maxBatchSize: MAX_BATCH_SIZE,
-      }),
+      geoCoordinates: new DataLoader(
+        createGeoCoordinatesLoader({ locale: req.headers["accept-language"] }),
+        {
+          maxBatchSize: MAX_BATCH_SIZE,
+        }
+      ),
       geoShapes: new DataLoader(
         createGeoShapesLoader({ locale: req.headers["accept-language"] }),
         { maxBatchSize: MAX_BATCH_SIZE }

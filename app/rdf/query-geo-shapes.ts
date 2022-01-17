@@ -23,15 +23,20 @@ export const createGeoShapesLoader =
           ${dimensionIris.map((d) => `<${d}>`)}
         }
 
-        ?iri
-          ${ns.schema.name} ?label ;
-          ${ns.geo.hasGeometry} ?geometry .
+        ?iri ${ns.geo.hasGeometry} ?geometry .
+
+        OPTIONAL {
+          ?iri ${ns.schema.name} ?label .
+          FILTER(LANG(?label) = '${locale}')
+        }
+
+        OPTIONAL {
+          ?iri ${ns.schema.name} ?label .
+        }
 
         SERVICE <${SPARQL_GEO_ENDPOINT}> {
           ?geometry ${ns.geo.asWKT} ?WKT
         }
-
-        FILTER(LANG(?label) = '${locale}')
       `;
 
       let result: any[] = [];
