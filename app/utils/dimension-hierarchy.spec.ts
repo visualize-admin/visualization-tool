@@ -5,9 +5,9 @@ import {
   DimensionValuesDocument,
   DimensionValuesQueryVariables,
 } from "../graphql/query-hooks";
-import { default as observationsFixture } from "../test/__fixtures/prod/bathingsite-observations.json";
-import { default as monitoringProgramValuesFixture } from "../test/__fixtures/prod/ubd0104_monitoringprogramm.json";
-import { default as bathingSiteValuesFixture } from "../test/__fixtures/prod/ubd0104_station.json";
+import { default as observationsFixture } from "../test/__fixtures/api/bathingsite-observations.json";
+import { default as monitoringProgramValuesFixture } from "../test/__fixtures/api/ubd0104_monitoringprogramm.json";
+import { default as bathingSiteValuesFixture } from "../test/__fixtures/api/ubd0104_station.json";
 import {
   DimensionHierarchy,
   fetchDimensionValuesTree,
