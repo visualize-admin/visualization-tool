@@ -128,56 +128,43 @@ const createHierarchy = ({
   narrowerValues: NarrowerValue[];
 }) => {
   const go = ({
-    hierarchy,
+    tree,
     level = 1,
-    currentLevelIris,
-    allIris,
-    narrowerValues,
+    iris,
   }: {
-    hierarchy: HierarchyLevel[];
+    tree: HierarchyLevel[];
     level?: number;
-    currentLevelIris: string[];
-    allIris: readonly string[];
-    narrowerValues: NarrowerValue[];
+    iris: string[];
   }): HierarchyLevel[] => {
-    if (!hierarchy.length) {
-      hierarchy.push(...currentLevelIris.map((d) => ({ iri: d, level })));
+    if (!tree.length) {
+      tree.push(...iris.map((d) => ({ iri: d, level })));
     }
 
-    if (hierarchy.length === allIris.length) {
-      return hierarchy;
+    if (tree.length === dimensionIris.length) {
+      return tree;
     }
 
-    const nextLevelValues: HierarchyLevel[] = [];
+    const parentValues = [] as HierarchyLevel[];
+    let parentIris = [] as string[];
 
-    for (const iri of currentLevelIris) {
-      const nextInHierarchy = narrowerValues.find((d) => d.narrower === iri);
-      const nextLevelIris = nextLevelValues.map((d) => d.iri);
+    for (const iri of iris) {
+      const parent = narrowerValues.find((d) => d.narrower === iri);
+      parentIris = parentValues.map((d) => d.iri);
 
-      if (nextInHierarchy && !nextLevelIris.includes(nextInHierarchy.iri)) {
-        nextLevelValues.push({ iri: nextInHierarchy.iri, level: level + 1 });
+      if (parent && !parentIris.includes(parent.iri)) {
+        parentValues.push({ iri: parent.iri, level: level + 1 });
       }
     }
 
-    if (nextLevelValues.length) {
-      hierarchy.push(...nextLevelValues);
+    if (parentValues.length) {
+      tree.push(...parentValues);
     }
 
-    return go({
-      hierarchy,
-      level: level + 1,
-      currentLevelIris: nextLevelValues.map((d) => d.iri),
-      allIris,
-      narrowerValues,
-    });
+    return go({ tree, level: level + 1, iris: parentIris });
   };
 
   return go({
-    hierarchy: [],
-    currentLevelIris: narrowerValues
-      .filter((d) => !d.narrower)
-      .map((d) => d.iri),
-    allIris: dimensionIris,
-    narrowerValues,
+    tree: [],
+    iris: narrowerValues.filter((d) => !d.narrower).map((d) => d.iri),
   });
 };
