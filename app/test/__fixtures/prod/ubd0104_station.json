@@ -1,0 +1,1111 @@
+{
+  "operation": {
+    "key": 3284430354,
+    "query": {
+      "kind": "Document",
+      "definitions": [
+        {
+          "kind": "OperationDefinition",
+          "operation": "query",
+          "name": {
+            "kind": "Name",
+            "value": "DimensionValues"
+          },
+          "variableDefinitions": [
+            {
+              "kind": "VariableDefinition",
+              "variable": {
+                "kind": "Variable",
+                "name": {
+                  "kind": "Name",
+                  "value": "dataCubeIri"
+                }
+              },
+              "type": {
+                "kind": "NonNullType",
+                "type": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "String"
+                  }
+                }
+              },
+              "directives": []
+            },
+            {
+              "kind": "VariableDefinition",
+              "variable": {
+                "kind": "Variable",
+                "name": {
+                  "kind": "Name",
+                  "value": "dimensionIri"
+                }
+              },
+              "type": {
+                "kind": "NonNullType",
+                "type": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "String"
+                  }
+                }
+              },
+              "directives": []
+            },
+            {
+              "kind": "VariableDefinition",
+              "variable": {
+                "kind": "Variable",
+                "name": {
+                  "kind": "Name",
+                  "value": "locale"
+                }
+              },
+              "type": {
+                "kind": "NonNullType",
+                "type": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "String"
+                  }
+                }
+              },
+              "directives": []
+            },
+            {
+              "kind": "VariableDefinition",
+              "variable": {
+                "kind": "Variable",
+                "name": {
+                  "kind": "Name",
+                  "value": "latest"
+                }
+              },
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "Boolean"
+                }
+              },
+              "directives": []
+            }
+          ],
+          "directives": [],
+          "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [
+              {
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "dataCubeByIri"
+                },
+                "arguments": [
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "iri"
+                    },
+                    "value": {
+                      "kind": "Variable",
+                      "name": {
+                        "kind": "Name",
+                        "value": "dataCubeIri"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "locale"
+                    },
+                    "value": {
+                      "kind": "Variable",
+                      "name": {
+                        "kind": "Name",
+                        "value": "locale"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "latest"
+                    },
+                    "value": {
+                      "kind": "Variable",
+                      "name": {
+                        "kind": "Name",
+                        "value": "latest"
+                      }
+                    }
+                  }
+                ],
+                "directives": [],
+                "selectionSet": {
+                  "kind": "SelectionSet",
+                  "selections": [
+                    {
+                      "kind": "Field",
+                      "name": {
+                        "kind": "Name",
+                        "value": "dimensionByIri"
+                      },
+                      "arguments": [
+                        {
+                          "kind": "Argument",
+                          "name": {
+                            "kind": "Name",
+                            "value": "iri"
+                          },
+                          "value": {
+                            "kind": "Variable",
+                            "name": {
+                              "kind": "Name",
+                              "value": "dimensionIri"
+                            }
+                          }
+                        }
+                      ],
+                      "directives": [],
+                      "selectionSet": {
+                        "kind": "SelectionSet",
+                        "selections": [
+                          {
+                            "kind": "FragmentSpread",
+                            "name": {
+                              "kind": "Name",
+                              "value": "dimensionMetaData"
+                            },
+                            "directives": []
+                          },
+                          {
+                            "kind": "Field",
+                            "name": {
+                              "kind": "Name",
+                              "value": "__typename"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "kind": "Field",
+                      "name": {
+                        "kind": "Name",
+                        "value": "__typename"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "kind": "FragmentDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "dimensionMetaData"
+          },
+          "typeCondition": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Dimension"
+            }
+          },
+          "directives": [],
+          "selectionSet": {
+            "kind": "SelectionSet",
+            "selections": [
+              {
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "iri"
+                },
+                "arguments": [],
+                "directives": []
+              },
+              {
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "label"
+                },
+                "arguments": [],
+                "directives": []
+              },
+              {
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "isKeyDimension"
+                },
+                "arguments": [],
+                "directives": []
+              },
+              {
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "values"
+                },
+                "arguments": [],
+                "directives": []
+              },
+              {
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "unit"
+                },
+                "arguments": [],
+                "directives": []
+              },
+              {
+                "kind": "InlineFragment",
+                "typeCondition": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "TemporalDimension"
+                  }
+                },
+                "directives": [],
+                "selectionSet": {
+                  "kind": "SelectionSet",
+                  "selections": [
+                    {
+                      "kind": "Field",
+                      "name": {
+                        "kind": "Name",
+                        "value": "timeUnit"
+                      },
+                      "arguments": [],
+                      "directives": []
+                    },
+                    {
+                      "kind": "Field",
+                      "name": {
+                        "kind": "Name",
+                        "value": "timeFormat"
+                      },
+                      "arguments": [],
+                      "directives": []
+                    },
+                    {
+                      "kind": "Field",
+                      "name": {
+                        "kind": "Name",
+                        "value": "__typename"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "loc": {
+        "start": 0,
+        "end": 428
+      }
+    },
+    "variables": {
+      "locale": "en",
+      "dimensionIri": "https://environment.ld.admin.ch/foen/ubd0104/station",
+      "dataCubeIri": "https://environment.ld.admin.ch/foen/ubd0104/4/"
+    },
+    "kind": "query",
+    "context": {
+      "url": "http://localhost:3000/api/graphql",
+      "preferGetMethod": false,
+      "suspense": false,
+      "requestPolicy": "cache-first",
+      "meta": {
+        "cacheOutcome": "miss"
+      }
+    }
+  },
+  "data": {
+    "dataCubeByIri": {
+      "dimensionByIri": {
+        "iri": "https://environment.ld.admin.ch/foen/ubd0104/station",
+        "label": "Bathing site",
+        "isKeyDimension": true,
+        "values": [
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH10001",
+            "label": "Plage de Gumefens"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH10004",
+            "label": "Gemeinde Strandbad"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH10007",
+            "label": "Plage de Portalban"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH10009",
+            "label": "Nouvelle plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH1013",
+            "label": "Strandbad Maur"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH1016",
+            "label": "Strandbad Uster"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH1029",
+            "label": "Strandbad Baumen"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH1050",
+            "label": "Strandbad Küsnacht"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH1058",
+            "label": "Seebad Lattenberg"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH1061",
+            "label": "Strandbad Bürger"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH1065",
+            "label": "Strandbad Reitliau"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH11005",
+            "label": "Solothurn"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH14013",
+            "label": "Schaffhausen Rheinbad Rhybadi"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH14015",
+            "label": "Stein am Rhein Strandbad Niderfeld"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH17003",
+            "label": "Strandbad Rorschach, Bodensee"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH17028",
+            "label": "Strandbad Stampf, Zürichsee"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH17041",
+            "label": "Badestrand Lago Mio"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH19004",
+            "label": "Vor Badi"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH19006",
+            "label": "Badi Tennwil"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH19007",
+            "label": "Seerose"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH20004",
+            "label": "Schwimmbad Arbon"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH20006",
+            "label": "Strandbad Güttingen"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH20009",
+            "label": "Schwimmbad Hörnli"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH20013",
+            "label": "Schwimmbad Romanshorn"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH20025",
+            "label": "Rodenbrunen"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH20035",
+            "label": "Seebad"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH20041",
+            "label": "Standbad Steckborn"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21001",
+            "label": "Laghetto di Astano"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21002",
+            "label": "Lido comunale Agno"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21003",
+            "label": "Campeggio La Palma"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21004",
+            "label": "Campeggio Molinazzo"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21006",
+            "label": "Bagno pubblico Agno"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21007",
+            "label": "Lido Càsoro"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21009",
+            "label": "Albergo Zappa"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21011",
+            "label": "Ristorante Lido Capolago"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21012",
+            "label": "Bagno Spiaggia Caslano"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21013",
+            "label": "Foce Magliasina"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21014",
+            "label": "Albergo Elvezia al Lago"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21015",
+            "label": "Albergo Villa Castagnola"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21016",
+            "label": "Bagno Pubblico Riva Caccia"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21018",
+            "label": "Hotel Lido Seegarten"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21019",
+            "label": "Lido Bagno Spiaggia Lugano"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21020",
+            "label": "Lido San Domenico"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21021",
+            "label": "Spiaggia delle Cantine"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21022",
+            "label": "Ostello della Gioventù"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21023",
+            "label": "Bagno spiaggia Magliaso"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21025",
+            "label": "Evangelisches Zentrum"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21026",
+            "label": "Stiftung Zuercher Ferienkolonien"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21027",
+            "label": "Lido Comunale Maroggia"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21028",
+            "label": "Campeggio Paradiso"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21029",
+            "label": "Campeggio Monte Generoso"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21031",
+            "label": "Lido Comunale Melano"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21033",
+            "label": "Albergo Battello"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21034",
+            "label": "Albergo Del Lago"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21035",
+            "label": "Albergo Riviera"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21036",
+            "label": "Lido Comunale Melide"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21040",
+            "label": "Hotel Ristorante Arbostora"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21042",
+            "label": "Lido Ristorante al Porto"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21043",
+            "label": "Campeggio Touring Club"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21046",
+            "label": "Lido Comunale Conca d'Oro"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21047",
+            "label": "Albergo Tresa Bay"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21048",
+            "label": "Lido Comunale Riva S. Vitale"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21049",
+            "label": "Swiss Diamond Hotel"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21050",
+            "label": "Albergo Ascolago"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21051",
+            "label": "Albergo Castello del Sole"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21052",
+            "label": "Albergo Collinetta"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21053",
+            "label": "Albergo Eden Roc"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21054",
+            "label": "Bagno pubblico Ascona"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21055",
+            "label": "Casa Moscia"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21056",
+            "label": "Lido Patriziale Ascona"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21058",
+            "label": "Hotel Yachtsport Resort"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21059",
+            "label": "Lido comunale Brissago"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21060",
+            "label": "Villa Caesar"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21061",
+            "label": "Bagno Pubblico Caviano"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21062",
+            "label": "Bagno Pubblico Riale di Gerra"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21063",
+            "label": "Bagno Pubblico Scimiana"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21064",
+            "label": "Bagno Pubblico Locarno"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21065",
+            "label": "Campeggio Delta"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21066",
+            "label": "Lido comunale Locarno"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21067",
+            "label": "Bagno pubblico Magadino"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21069",
+            "label": "Albergo La Rocca"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21070",
+            "label": "Bagno Spiaggia Crodolo"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21072",
+            "label": "Bagno pubblico San Nazzaro"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21073",
+            "label": "Spiaggia pubblica Ranzo"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21074",
+            "label": "Campeggio Campofelice"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21075",
+            "label": "Campeggio Lago Maggiore"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21076",
+            "label": "Campeggio Lido Mappo"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21077",
+            "label": "Campeggio Miralago"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21078",
+            "label": "Campeggio Rivabella"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21079",
+            "label": "Campeggio Tamaro"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21080",
+            "label": "Bagno pubblico Tenero"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21081",
+            "label": "Centro Sportivo Tenero"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21082",
+            "label": "Lido comunale Tenero"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21083",
+            "label": "Albergo Viralago"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21084",
+            "label": "Bagno pubblico Vira Gambarogno"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21085",
+            "label": "Casa Vignascia"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21086",
+            "label": "Lido comunale Bissone"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21087",
+            "label": "Villa Patria"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21088",
+            "label": "Spiaggetta di Arbedo"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21090",
+            "label": "Sotto il ponte"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21092",
+            "label": "Zona dighetta"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21093",
+            "label": "Pozzo Tegna"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21094",
+            "label": "Meriggio"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21095",
+            "label": "Spiaggia libera-Foce Cassarate"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21096",
+            "label": "Spiaggia libera-Osteria la Riva"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21097",
+            "label": "Spiaggia libera-Ristorante Giardino Lago"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21098",
+            "label": "Zona Visletto"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21099",
+            "label": "Zona Coop"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21100",
+            "label": "Zona Loderio Grotti"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21101",
+            "label": "Zona cascata Piumogna"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH21102",
+            "label": "Pozzo Osogna"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22006",
+            "label": "La Pichette"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22008",
+            "label": "Corseaux"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22009",
+            "label": "La Crottaz"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22011",
+            "label": "Bain des Dames"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22016",
+            "label": "Gland/La Falaise"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22022",
+            "label": "La Maladaire"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22023",
+            "label": "Bellerive"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22024",
+            "label": "Le Flon"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22025",
+            "label": "Le Parc Bourget"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22026",
+            "label": "La Vaudaire"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22029",
+            "label": "Curtinaux"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22034",
+            "label": "Le Pierrier"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22035",
+            "label": "Le Basset"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22038",
+            "label": "Camping"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22040",
+            "label": "Les Trois Jetées"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22045",
+            "label": "Centre"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22051",
+            "label": "A.B.C."
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22054",
+            "label": "Coulet"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22056",
+            "label": "Le Laviau"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22058",
+            "label": "Dorigny"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22061",
+            "label": "Centre nautique et balnéaire"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22062",
+            "label": "Parc de l'Arabie"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22063",
+            "label": "Chillon"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22064",
+            "label": "Les Marines"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22065",
+            "label": "Chaufour"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22067",
+            "label": "Le Pont"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22071",
+            "label": "Bellevue"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22075",
+            "label": "Camping VD 8"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22076",
+            "label": "Chevroux"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22080",
+            "label": "Cudrefin"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22082",
+            "label": "Corcelettes - les Pins"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22088",
+            "label": "Clendy"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22092",
+            "label": "Le Port"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH22093",
+            "label": "Avenches"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24001",
+            "label": "Aare Marzili"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH24002",
+            "label": "Aare Lorraine"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25001",
+            "label": "Hermance plage côté embouchure"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25002",
+            "label": "Hermance plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25003",
+            "label": "Anière plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25004",
+            "label": "Anière aval débarcadère"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25005",
+            "label": "Corsier port"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25007",
+            "label": "Savonnière aval"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25008",
+            "label": "Parc de la Nymphe"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25009",
+            "label": "Port-Bleu"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25010",
+            "label": "Bellerive débarcadère"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25011",
+            "label": "Pointe à la Bise"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25012",
+            "label": "Belotte"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25014",
+            "label": "Aval Tour Carrée"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25015",
+            "label": "Port-Tunnel"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25016",
+            "label": "Genève-plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25017",
+            "label": "Baby-plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25018",
+            "label": "Bains des Pâquis"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25019",
+            "label": "ONU plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25020",
+            "label": "Reposoir"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25021",
+            "label": "Chambésy plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25022",
+            "label": "Vengeron (aval)"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25023",
+            "label": "Vengeron (centre)"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25024",
+            "label": "Bellevue Port Gitana"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25025",
+            "label": "Bains de Saugy"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25026",
+            "label": "Creux-de-Genthod"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25027",
+            "label": "La Bécassine"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25029",
+            "label": "Versoix plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25030",
+            "label": "Céligny plage"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25031",
+            "label": "Rhône pont Sous-Terre RG"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25033",
+            "label": "Perle du lac"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25034",
+            "label": "Rhône Pont-sous-Terre RD"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25035",
+            "label": "Etang de la Plaine"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH25036",
+            "label": "Plage des Eaux-Vives"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH3001",
+            "label": "Strandbad-Lido, Weggis"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH3004",
+            "label": "Ufschötti, Luzern"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH4010",
+            "label": "Badeplatz Mississippi (Ufer 1)"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH5002",
+            "label": "Lido Brunnen, SZ/02"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH6001",
+            "label": "Badeplatz Alpnachstad"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH7005",
+            "label": "Buochs Strandbad"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH9001",
+            "label": "Strandbad Seeliken"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH9002",
+            "label": "Strandbad Brüggli"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH9003",
+            "label": "Camping Unterägeri"
+          },
+          {
+            "value": "https://environment.ld.admin.ch/foen/ubd0104/Station/CH9004",
+            "label": "Strandbad Lido"
+          }
+        ],
+        "unit": null,
+        "__typename": "NominalDimension"
+      },
+      "__typename": "DataCube"
+    }
+  },
+  "hasNext": false
+}

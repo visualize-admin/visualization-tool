@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
-import { useCallback, useMemo } from "react";
-import { Box, Button, Flex } from "theme-ui";
+import React, { useCallback, useMemo } from "react";
+import { Box, Button, Flex, Text } from "theme-ui";
 import {
   getFilterValue,
   MultiFilterContextProvider,
@@ -9,12 +9,18 @@ import {
   useMultiFilterContext,
 } from "..";
 import { Loading } from "../../components/hint";
+import Stack from "../../components/Stack";
 import {
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
+import {
+  HierarchyValue,
+  useHierarchicalDimensionValuesQuery,
+} from "../../utils/dimension-hierarchy";
 import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval-brush";
+import { Accordion, AccordionContent, AccordionSummary } from "./Accordion";
 import {
   MultiFilterFieldCheckbox,
   MultiFilterFieldColorPicker,
@@ -44,12 +50,93 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
       <Button
         onClick={selectNone}
         variant="inline"
-        sx={{ ml: 2, mb: 4 }}
+        sx={{ ml: 2, mr: 2, mb: 4 }}
         disabled={activeKeys.size === 0}
       >
         <Trans id="controls.filter.select.none">Select none</Trans>
       </Button>
+      ·
+      <Text
+        color="monochrome700"
+        sx={{ px: 2, fontSize: 3, display: "inline" }}
+        as="span"
+      >
+        <Trans id="controls.filter.nb-elements">
+          {activeKeys.size} of {allValues.length}
+        </Trans>
+      </Text>
     </Box>
+  );
+};
+
+const renderDimensionTree = (tree: HierarchyValue[], depth = 0) => {
+  return (
+    <>
+      {tree.map((tv) => {
+        return (
+          <Accordion key={tv.value} initialExpanded>
+            <Stack spacing={0.5}>
+              {tv.children && tv.children.length > 0 ? (
+                <AccordionSummary>
+                  <MultiFilterFieldCheckbox
+                    label={tv.label}
+                    value={tv.children.map((c) => c.value)}
+                  />
+                  <MultiFilterFieldColorPicker value={tv.value} />
+                </AccordionSummary>
+              ) : (
+                <Flex
+                  key={tv.value}
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <MultiFilterFieldCheckbox
+                      label={tv.label}
+                      value={tv.value}
+                    />
+                  </Box>
+                  <Box sx={{ flexShrink: 0 }}>
+                    <MultiFilterFieldColorPicker value={tv.value} />
+                  </Box>
+                </Flex>
+              )}
+            </Stack>
+            <AccordionContent>
+              <Stack spacing={0.5} ml={5}>
+                {tv.children.map((dv) => {
+                  if (dv.children.length > 0) {
+                    // Render tree recursively
+                    return renderDimensionTree(dv.children, depth + 1);
+                  }
+                  return (
+                    <Flex
+                      key={dv.value}
+                      sx={{
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box sx={{ flexGrow: 1 }}>
+                        <MultiFilterFieldCheckbox
+                          label={dv.label}
+                          value={dv.value}
+                        />
+                      </Box>
+                      <Box sx={{ flexShrink: 0 }}>
+                        <MultiFilterFieldColorPicker value={dv.value} />
+                      </Box>
+                    </Flex>
+                  );
+                })}
+              </Stack>
+            </AccordionContent>
+          </Accordion>
+        );
+      })}
+    </>
   );
 };
 
@@ -64,54 +151,24 @@ export const DimensionValuesMultiFilter = ({
 }) => {
   const locale = useLocale();
   const [state] = useConfiguratorState();
+
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
-  const dimension = data?.dataCubeByIri?.dimensionByIri;
+  const tree = useHierarchicalDimensionValuesQuery({
+    dimensionIri,
+    locale,
+    dataSetIri,
+  });
 
-  const sortedDimensionValues = useMemo(() => {
-    return dimension?.values
-      ? [...dimension.values].sort((a, b) =>
-          a.label.localeCompare(b.label, locale)
-        )
-      : [];
-  }, [dimension?.values, locale]);
+  const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
   if (data?.dataCubeByIri?.dimensionByIri) {
     return (
-      <MultiFilterContextProvider dimensionData={dimension}>
+      <MultiFilterContextProvider dimensionData={dimensionData}>
         <SelectionControls dimensionIri={dimensionIri} />
-        {sortedDimensionValues.map((dv) => {
-          if (state.state === "CONFIGURING_CHART") {
-            return (
-              <Flex
-                key={dv.value}
-                sx={{
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 1,
-                  height: "2rem",
-                }}
-              >
-                <Box sx={{ maxWidth: "82%" }}>
-                  <MultiFilterFieldCheckbox
-                    dimensionIri={dimensionIri}
-                    label={dv.label}
-                    value={dv.value}
-                  />
-                </Box>
-                <MultiFilterFieldColorPicker
-                  dimensionIri={dimensionIri}
-                  value={dv.value}
-                  colorConfigPath={colorConfigPath}
-                />
-              </Flex>
-            );
-          } else {
-            return null;
-          }
-        })}
+        {tree ? renderDimensionTree(tree) : null}
       </MultiFilterContextProvider>
     );
   } else {
