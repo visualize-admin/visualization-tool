@@ -6,14 +6,8 @@ import {
   mesh as topojsonMesh,
 } from "topojson-client";
 import { Loading, LoadingDataError, NoDataHint } from "../../components/hint";
+import { MapConfig, MapFields, MapSettings } from "../../configurator";
 import {
-  InteractiveFiltersConfig,
-  MapConfig,
-  MapFields,
-  MapSettings,
-} from "../../configurator";
-import {
-  GeoPoint,
   GeoShapes,
   getGeoCoordinatesDimensions,
   getGeoShapesDimensions,
@@ -35,12 +29,8 @@ import { GeoData, MapChart } from "./map-state";
 import { MapTooltip } from "./map-tooltip";
 
 type GeoDataState =
-  | {
-      state: "fetching";
-    }
-  | {
-      state: "error";
-    }
+  | { state: "fetching" }
+  | { state: "error" }
   | (GeoData & { state: "loaded" });
 
 export interface ShapeFeature {
@@ -65,48 +55,55 @@ export const ChartMapVisualization = ({
   const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
   const locale = useLocale();
 
-  const areaLayerComponentIri = chartConfig.fields.areaLayer.componentIri;
-  const symbolLayerComponentIri = chartConfig.fields.symbolLayer.componentIri;
+  const areaGeoDimensionIri = chartConfig.fields.areaLayer.componentIri;
+  const symbolGeoDimensionIri = chartConfig.fields.symbolLayer.componentIri;
 
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [areaLayerComponentIri, symbolLayerComponentIri],
+      measures: [areaGeoDimensionIri, symbolGeoDimensionIri],
       filters: queryFilters,
     },
   });
   const dimensions = data?.dataCubeByIri?.dimensions;
+  const measures = data?.dataCubeByIri?.measures;
   const observations = data?.dataCubeByIri?.observations.data;
 
-  const areaLayerDimension = dimensions?.find(
-    (d) => d.iri === areaLayerComponentIri
-  ) as GeoShapesDimension | undefined;
-
   const areaLayer = useMemo(() => {
-    if (areaLayerDimension) {
-      const rawShapes = areaLayerDimension.geoShapes as GeoShapes;
-      const topojsonShapes = topojsonFeature(
-        rawShapes,
-        rawShapes.objects.shapes
-      ) as GeoJSON.FeatureCollection<
-        GeoJSON.GeometryObject,
-        ShapeFeature["properties"]
-      >;
+    if (dimensions) {
+      const geoShapesDimensions = getGeoShapesDimensions(dimensions);
 
-      topojsonShapes.features.forEach((d) => {
-        // Should we match by labels?
-        d.properties.observation = observations?.find(
-          (o) => o[areaLayerComponentIri] === d.properties.label
-        );
-      });
+      if (geoShapesDimensions.length) {
+        const areaGeoDimension = dimensions?.find(
+          (d) => d.iri === areaGeoDimensionIri
+        ) as GeoShapesDimension | undefined;
 
-      return {
-        shapes: topojsonShapes,
-        mesh: topojsonMesh(rawShapes, rawShapes.objects.shapes as any),
-      };
+        if (areaGeoDimension) {
+          const rawShapes = areaGeoDimension.geoShapes as GeoShapes;
+          const topojsonShapes = topojsonFeature(
+            rawShapes,
+            rawShapes.objects.shapes
+          ) as GeoJSON.FeatureCollection<
+            GeoJSON.GeometryObject,
+            ShapeFeature["properties"]
+          >;
+
+          topojsonShapes.features.forEach((d) => {
+            // Should we match by labels?
+            d.properties.observation = observations?.find(
+              (o) => o[areaGeoDimensionIri] === d.properties.label
+            );
+          });
+
+          return {
+            shapes: topojsonShapes,
+            mesh: topojsonMesh(rawShapes, rawShapes.objects.shapes as any),
+          };
+        }
+      }
     }
-  }, [areaLayerComponentIri, areaLayerDimension, observations]);
+  }, [areaGeoDimensionIri, dimensions, observations]);
 
   const symbolLayer = useMemo(() => {
     if (dimensions) {
@@ -114,25 +111,22 @@ export const ChartMapVisualization = ({
 
       if (geoCoordinatesDimensions.length) {
         const geoCoordinatesDimension = dimensions.find(
-          (d) => d.iri === symbolLayerComponentIri
+          (d) => d.iri === symbolGeoDimensionIri
         ) as GeoCoordinatesDimension | undefined;
 
         if (geoCoordinatesDimension) {
           return (
             geoCoordinatesDimension.geoCoordinates as RawGeoCoordinates[]
-          ).map(
-            (d) =>
-              ({
-                coordinates: [+d.longitude!, +d.latitude!],
-                properties: {
-                  iri: d.iri,
-                  label: d.label,
-                  observation: observations?.find(
-                    (o) => o[symbolLayerComponentIri] === d.label
-                  ),
-                },
-              } as GeoPoint)
-          );
+          ).map((d) => ({
+            coordinates: [d.longitude, d.latitude] as [number, number],
+            properties: {
+              iri: d.iri,
+              label: d.label,
+              observation: observations?.find(
+                (o) => o[symbolGeoDimensionIri] === d.label
+              ),
+            },
+          }));
         }
       } else {
         const geoShapesDimensions = getGeoShapesDimensions(dimensions);
@@ -142,15 +136,13 @@ export const ChartMapVisualization = ({
             ...d,
             coordinates: geoCentroid(d),
           }));
-        } else {
-          return;
         }
       }
     }
-  }, [areaLayer, dimensions, observations, symbolLayerComponentIri]);
+  }, [areaLayer, dimensions, observations, symbolGeoDimensionIri]);
 
   useEffect(() => {
-    const loadGeoData = async () => {
+    const loadLakes = async () => {
       try {
         const res = await fetch(`/topojson/ch-2020.json`);
         const topo = await res.json();
@@ -162,20 +154,16 @@ export const ChartMapVisualization = ({
       }
     };
 
-    loadGeoData();
+    loadLakes();
   }, []);
 
-  if (data?.dataCubeByIri && geoData.state === "loaded") {
-    const { dimensions, measures, observations } = data?.dataCubeByIri;
-
+  if (measures && observations && geoData.state === "loaded") {
     return (
       <ChartMapPrototype
-        observations={observations.data}
+        observations={observations}
         features={{ ...geoData, areaLayer, symbolLayer }}
         fields={chartConfig.fields}
-        dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
         settings={chartConfig.settings}
       />
     );
@@ -188,51 +176,35 @@ export const ChartMapVisualization = ({
   }
 };
 
-export type Control = "baseLayer" | "areaLayer" | "symbolLayer";
-export type ActiveLayer = {
-  relief: boolean;
-  lakes: boolean;
-  areaLayer: boolean;
-  symbolLayer: boolean;
-};
-
 export const ChartMapPrototype = ({
   observations,
   features,
   fields,
-  dimensions,
   measures,
-  interactiveFiltersConfig,
   settings,
 }: {
   observations: Observation[];
   features: GeoData;
   fields: MapFields;
-  dimensions: DimensionMetaDataFragment[];
   measures: DimensionMetaDataFragment[];
-  interactiveFiltersConfig: InteractiveFiltersConfig;
   settings: MapSettings;
 }) => {
   return (
     <Box
       sx={{
         m: 4,
-        bg: "#FFFFFF",
+        bg: "#fff",
         border: "1px solid",
         borderColor: "monochrome400",
       }}
     >
-      {dimensions && measures && (
-        <ChartMap
-          observations={observations}
-          features={features}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          interactiveFiltersConfig={interactiveFiltersConfig}
-          settings={settings}
-        />
-      )}
+      <ChartMap
+        observations={observations}
+        features={features}
+        fields={fields}
+        measures={measures}
+        settings={settings}
+      />
     </Box>
   );
 };
@@ -242,16 +214,12 @@ export const ChartMap = memo(
     observations,
     features,
     fields,
-    dimensions,
     measures,
-    interactiveFiltersConfig,
     settings,
   }: {
     features: GeoData;
     observations: Observation[];
-    dimensions: DimensionMetaDataFragment[];
     measures: DimensionMetaDataFragment[];
-    interactiveFiltersConfig: InteractiveFiltersConfig;
     fields: MapFields;
     settings: MapSettings;
   }) => {
@@ -260,9 +228,7 @@ export const ChartMap = memo(
         data={observations}
         features={features}
         fields={fields}
-        dimensions={dimensions}
         measures={measures}
-        interactiveFiltersConfig={interactiveFiltersConfig}
         settings={settings}
       >
         <ChartContainer>

@@ -62,8 +62,8 @@ export const createGeoCoordinatesLoader =
         fetchedGeoCoordinates.map((d) => ({
           iri: d.dimension.value,
           label: d.label.value,
-          latitude: d.latitude.value,
-          longitude: d.longitude.value,
+          latitude: +d.latitude.value,
+          longitude: +d.longitude.value,
         }))
       );
     }

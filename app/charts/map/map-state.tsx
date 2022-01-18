@@ -43,6 +43,7 @@ export type GeoData = {
   };
   symbolLayer?: Array<GeoPoint>;
 };
+
 export interface MapState {
   chartType: "map";
   bounds: Bounds;
@@ -130,54 +131,44 @@ const useMapState = ({
   data,
   features,
   fields,
-  dimensions,
   measures,
-  interactiveFiltersConfig,
   settings,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   features: GeoData;
   fields: MapFields;
   settings: MapSettings;
 }): MapState => {
   const width = useWidth();
-  const { palette, nbClass, paletteType } = fields["areaLayer"];
+  const { areaLayer, symbolLayer } = fields;
+  const { palette, nbClass, paletteType } = areaLayer;
 
-  const getAreaLabel = useStringVariable(fields.areaLayer.componentIri);
-  const getSymbolLabel = useStringVariable(fields.symbolLayer.componentIri);
-  const getAreaValue = useOptionalNumericVariable(fields.areaLayer.measureIri);
-  const getSymbolValue = useOptionalNumericVariable(
-    fields.symbolLayer.measureIri
-  );
+  const getAreaLabel = useStringVariable(areaLayer.componentIri);
+  const getSymbolLabel = useStringVariable(symbolLayer.componentIri);
+
+  const getAreaValue = useOptionalNumericVariable(areaLayer.measureIri);
+  const getSymbolValue = useOptionalNumericVariable(symbolLayer.measureIri);
 
   const identicalLayerComponentIris =
-    fields.areaLayer.componentIri === fields.symbolLayer.componentIri;
+    areaLayer.componentIri === symbolLayer.componentIri;
 
   const areaMeasureLabel = useMemo(
-    () =>
-      measures.find((m) => m.iri === fields["areaLayer"].measureIri)?.label ||
-      "",
-    [fields, measures]
+    () => measures.find((m) => m.iri === areaLayer.measureIri)?.label || "",
+    [areaLayer.measureIri, measures]
   );
   const symbolMeasureLabel = useMemo(
-    () =>
-      measures.find((m) => m.iri === fields["symbolLayer"].measureIri)?.label ||
-      "",
-    [fields, measures]
+    () => measures.find((m) => m.iri === symbolLayer.measureIri)?.label || "",
+    [symbolLayer.measureIri, measures]
   );
 
   const areaDataDomain = (extent(data, (d) => getAreaValue(d)) || [0, 100]) as [
     number,
     number
   ];
-
   const symbolDataDomain = (extent(data, (d) => getSymbolValue(d)) || [
     0, 100,
   ]) as [number, number];
 
-  const colorScale = getColorScale({
+  const areaColorScale = getColorScale({
     paletteType,
     palette,
     getValue: getAreaValue,
@@ -191,15 +182,15 @@ const useMapState = ({
       return [0, 0, 0, 255 * 0.1];
     }
 
-    const c = colorScale && colorScale(v);
+    const c = areaColorScale && areaColorScale(v);
     const rgb = c && color(`${c}`)?.rgb();
 
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
-  const radiusExtent: [number, number] = [0, symbolDataDomain[1]];
+  const radiusDomain = [0, symbolDataDomain[1]];
   const radiusRange = [0, 24];
-  const radiusScale = scaleSqrt().domain(radiusExtent).range(radiusRange);
+  const radiusScale = scaleSqrt().domain(radiusDomain).range(radiusRange);
 
   // Dimensions
   const margins = {
@@ -232,7 +223,7 @@ const useMapState = ({
       getLabel: getAreaLabel,
       getValue: getAreaValue,
       getColor: getAreaColor,
-      colorScale,
+      colorScale: areaColorScale,
       paletteType,
       palette,
       nbClass: nbClass,
@@ -254,15 +245,10 @@ const MapChartProvider = ({
   data,
   features,
   fields,
-  dimensions,
   measures,
-  interactiveFiltersConfig,
   settings,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   features: GeoData;
   children: ReactNode;
   fields: MapFields;
@@ -272,10 +258,8 @@ const MapChartProvider = ({
     data,
     features,
     fields,
-    dimensions,
     measures,
     settings,
-    interactiveFiltersConfig,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -286,15 +270,10 @@ export const MapChart = ({
   data,
   features,
   fields,
-  dimensions,
   measures,
-  interactiveFiltersConfig,
   settings,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
+}: Pick<ChartProps, "data" | "measures"> & {
   features: GeoData;
   fields: MapFields;
   settings: MapSettings;
@@ -308,10 +287,8 @@ export const MapChart = ({
             data={data}
             features={features}
             fields={fields}
-            dimensions={dimensions}
             measures={measures}
             settings={settings}
-            interactiveFiltersConfig={interactiveFiltersConfig}
           >
             {children}
           </MapChartProvider>
