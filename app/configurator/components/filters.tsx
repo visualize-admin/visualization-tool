@@ -150,21 +150,21 @@ export const DimensionValuesMultiFilter = ({
   colorConfigPath?: string;
 }) => {
   const locale = useLocale();
-  const [state] = useConfiguratorState();
 
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
-  const tree = useHierarchicalDimensionValuesQuery({
-    dimensionIri,
-    locale,
-    dataSetIri,
-  });
+  const { data: tree, fetching: fetchingHierarchy } =
+    useHierarchicalDimensionValuesQuery({
+      dimensionIri,
+      locale,
+      dataSetIri,
+    });
 
   const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
-  if (data?.dataCubeByIri?.dimensionByIri) {
+  if (data?.dataCubeByIri?.dimensionByIri && !fetchingHierarchy) {
     return (
       <MultiFilterContextProvider
         dimensionData={dimensionData}

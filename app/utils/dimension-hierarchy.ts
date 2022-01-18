@@ -210,21 +210,33 @@ export const useHierarchicalDimensionValuesQuery = ({
 }) => {
   const client = useClient();
 
-  const [tree, setTree] = useState<HierarchyValue[]>();
+  const [result, setResult] = useState<{
+    data?: HierarchyValue[];
+    fetching: boolean;
+    error?: unknown;
+  }>({
+    data: undefined,
+    fetching: true,
+    error: undefined,
+  });
 
   useEffect(() => {
     const run = async () => {
-      const tree = await fetchDimensionValuesTree({
-        dataSetIri,
-        dimensionIri,
-        hierarchy,
-        client,
-        locale,
-      });
-      setTree(tree);
+      try {
+        const tree = await fetchDimensionValuesTree({
+          dataSetIri,
+          dimensionIri,
+          hierarchy,
+          client,
+          locale,
+        });
+        setResult({ data: tree, fetching: false, error: undefined });
+      } catch (error) {
+        setResult({ data: undefined, fetching: false, error });
+      }
     };
     run();
-  }, [dataSetIri, dimensionIri]);
+  }, [dataSetIri, dimensionIri, locale, client]);
 
-  return tree;
+  return result;
 };
