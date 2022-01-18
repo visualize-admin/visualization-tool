@@ -9,6 +9,7 @@ export {
   rdfs,
   schema,
   sh,
+  skos,
   time,
   vcard,
   xsd,

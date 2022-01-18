@@ -337,6 +337,7 @@ export const resolvers: Resolvers = {
           properties: {
             iri: d.iri,
             label: d.label,
+            level: d.level,
           },
           geometry: parseWKT(d.wktString as string),
         }));
