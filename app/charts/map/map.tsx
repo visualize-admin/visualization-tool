@@ -89,7 +89,6 @@ const constrainZoom = (
 
 export const MapComponent = () => {
   const {
-    data,
     showRelief,
     showLakes,
     features,
@@ -138,6 +137,16 @@ export const MapComponent = () => {
   const symbolColorRgbArray = useMemo(
     () => convertHexToRgbArray(symbolLayer.color),
     [symbolLayer.color]
+  );
+
+  const shapes = useMemo(
+    () => ({
+      ...features.areaLayer?.shapes,
+      features: (features.areaLayer?.shapes as any)?.features.filter(
+        (d: any) => d.properties.hierarchyLevel === areaLayer.hierarchyLevel
+      ),
+    }),
+    [areaLayer.hierarchyLevel, features.areaLayer?.shapes]
   );
 
   return (
@@ -192,7 +201,7 @@ export const MapComponent = () => {
           <>
             <GeoJsonLayer
               id="shapes"
-              data={features.areaLayer?.shapes}
+              data={shapes}
               pickable={true}
               autoHighlight={true}
               stroked={false}
@@ -325,7 +334,11 @@ export const MapComponent = () => {
               }
             }}
             updateTriggers={{
-              getRadius: [data, symbolLayer.getValue, symbolLayer.radiusScale],
+              getRadius: [
+                symbolLayer.data,
+                symbolLayer.getValue,
+                symbolLayer.radiusScale,
+              ],
             }}
           />
         )}

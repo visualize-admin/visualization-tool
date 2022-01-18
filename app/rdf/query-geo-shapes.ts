@@ -107,7 +107,7 @@ export const createGeoShapesLoader =
     }
   };
 
-interface HierarchyLevel {
+export interface HierarchyLevel {
   iri: string;
   level: number;
 }
@@ -125,7 +125,7 @@ const createHierarchy = ({
   narrowerValues,
 }: {
   dimensionIris: readonly string[];
-  narrowerValues: { iri: string; narrower: string | undefined }[];
+  narrowerValues: NarrowerValue[];
 }) => {
   const go = ({
     hierarchy,
@@ -138,8 +138,8 @@ const createHierarchy = ({
     level?: number;
     currentLevelIris: string[];
     allIris: readonly string[];
-    narrowerValues: { iri: string; narrower: string | undefined }[];
-  }): { iri: string; level: number }[] => {
+    narrowerValues: NarrowerValue[];
+  }): HierarchyLevel[] => {
     if (!hierarchy.length) {
       hierarchy.push(...currentLevelIris.map((d) => ({ iri: d, level })));
     }

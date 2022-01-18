@@ -81,8 +81,8 @@ const CircleLegend = () => {
   const [{ interaction }] = useInteraction();
   const { axisLabelColor, legendFontSize } = useChartTheme();
   const {
-    data,
     symbolLayer: {
+      data,
       color: symbolColor,
       dataDomain,
       getLabel,

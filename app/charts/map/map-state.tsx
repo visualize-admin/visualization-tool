@@ -14,7 +14,7 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 import {
   getColorInterpolator,
@@ -25,7 +25,7 @@ import {
   MapSettings,
   PaletteType,
 } from "../../configurator/config-types";
-import { GeoPoint, Observation } from "../../domain/data";
+import { GeoPoint, isGeoShapesDimension, Observation } from "../../domain/data";
 import {
   useOptionalNumericVariable,
   useStringVariable,
@@ -47,12 +47,13 @@ export type GeoData = {
 export interface MapState {
   chartType: "map";
   bounds: Bounds;
-  data: Observation[];
   features: GeoData;
   showRelief: boolean;
   showLakes: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
+    data: Observation[];
+    hierarchyLevel: number;
     show: boolean;
     measureLabel: string;
     getLabel: (d: Observation) => string;
@@ -70,6 +71,8 @@ export interface MapState {
     dataDomain: [number, number];
   };
   symbolLayer: {
+    data: Observation[];
+    hierarchyLevel: number;
     show: boolean;
     measureLabel: string;
     getLabel: (d: Observation) => string;
@@ -132,8 +135,9 @@ const useMapState = ({
   features,
   fields,
   measures,
+  dimensions,
   settings,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   fields: MapFields;
   settings: MapSettings;
@@ -148,6 +152,61 @@ const useMapState = ({
   const getAreaValue = useOptionalNumericVariable(areaLayer.measureIri);
   const getSymbolValue = useOptionalNumericVariable(symbolLayer.measureIri);
 
+  const getDataByHierarchy = useCallback(
+    ({
+      geoDimensionIri,
+      hierarchyLevel,
+      getLabel,
+    }: {
+      geoDimensionIri: string;
+      hierarchyLevel: number;
+      getLabel: (d: Observation) => string;
+    }) => {
+      const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
+
+      if (isGeoShapesDimension(dimension)) {
+        const hierarchyLabels = dimension.geoShapes.hierarchy
+          .filter((d: any) => d.level === hierarchyLevel)
+          .map((d: any) => d.label);
+
+        return data.filter((d) => hierarchyLabels.includes(getLabel(d)));
+      }
+
+      return data;
+    },
+    [data, dimensions]
+  );
+
+  const areaData = useMemo(
+    () =>
+      getDataByHierarchy({
+        geoDimensionIri: areaLayer.componentIri,
+        hierarchyLevel: +areaLayer.hierarchyLevel,
+        getLabel: getAreaLabel,
+      }),
+    [
+      areaLayer.componentIri,
+      areaLayer.hierarchyLevel,
+      getAreaLabel,
+      getDataByHierarchy,
+    ]
+  );
+
+  const symbolData = useMemo(
+    () =>
+      getDataByHierarchy({
+        geoDimensionIri: symbolLayer.componentIri,
+        hierarchyLevel: +symbolLayer.hierarchyLevel,
+        getLabel: getSymbolLabel,
+      }),
+    [
+      symbolLayer.componentIri,
+      symbolLayer.hierarchyLevel,
+      getSymbolLabel,
+      getDataByHierarchy,
+    ]
+  );
+
   const identicalLayerComponentIris =
     areaLayer.componentIri === symbolLayer.componentIri;
 
@@ -160,11 +219,10 @@ const useMapState = ({
     [symbolLayer.measureIri, measures]
   );
 
-  const areaDataDomain = (extent(data, (d) => getAreaValue(d)) || [0, 100]) as [
-    number,
-    number
-  ];
-  const symbolDataDomain = (extent(data, (d) => getSymbolValue(d)) || [
+  const areaDataDomain = (extent(areaData, (d) => getAreaValue(d)) || [
+    0, 100,
+  ]) as [number, number];
+  const symbolDataDomain = (extent(symbolData, (d) => getSymbolValue(d)) || [
     0, 100,
   ]) as [number, number];
 
@@ -172,7 +230,7 @@ const useMapState = ({
     paletteType,
     palette,
     getValue: getAreaValue,
-    data,
+    data: areaData,
     dataDomain: areaDataDomain,
     nbClass,
   });
@@ -211,13 +269,14 @@ const useMapState = ({
 
   return {
     chartType: "map",
-    data,
     features,
     bounds,
     showRelief: settings.showRelief,
     showLakes: settings.showLakes,
     identicalLayerComponentIris,
     areaLayer: {
+      data: areaData,
+      hierarchyLevel: +areaLayer.hierarchyLevel,
       show: fields.areaLayer.show,
       measureLabel: areaMeasureLabel,
       getLabel: getAreaLabel,
@@ -230,6 +289,8 @@ const useMapState = ({
       dataDomain: areaDataDomain,
     },
     symbolLayer: {
+      data: symbolData,
+      hierarchyLevel: +symbolLayer.hierarchyLevel,
       color: fields.symbolLayer.color,
       measureLabel: symbolMeasureLabel,
       show: fields.symbolLayer.show,
@@ -246,9 +307,10 @@ const MapChartProvider = ({
   features,
   fields,
   measures,
+  dimensions,
   settings,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   children: ReactNode;
   fields: MapFields;
@@ -259,6 +321,7 @@ const MapChartProvider = ({
     features,
     fields,
     measures,
+    dimensions,
     settings,
   });
   return (
@@ -271,9 +334,10 @@ export const MapChart = ({
   features,
   fields,
   measures,
+  dimensions,
   settings,
   children,
-}: Pick<ChartProps, "data" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   fields: MapFields;
   settings: MapSettings;
@@ -288,6 +352,7 @@ export const MapChart = ({
             features={features}
             fields={fields}
             measures={measures}
+            dimensions={dimensions}
             settings={settings}
           >
             {children}

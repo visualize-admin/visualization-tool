@@ -275,6 +275,7 @@ export const getInitialConfig = ({
           areaLayer: {
             componentIri: geoShapesDimensions[0]?.iri || "",
             measureIri: measures[0].iri,
+            hierarchyLevel: 1,
             show: geoShapesDimensions.length > 0,
             label: { componentIri: dimensions[0].iri },
             palette: "oranges",
@@ -287,6 +288,7 @@ export const getInitialConfig = ({
               geoShapesDimensions[0]?.iri ||
               "",
             measureIri: measures[0].iri,
+            hierarchyLevel: 1,
             color: "#1f77b4",
             show: geoShapesDimensions.length === 0 ? true : false,
           },

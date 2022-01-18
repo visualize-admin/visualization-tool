@@ -316,38 +316,43 @@ export const resolvers: Resolvers = {
   },
   GeoCoordinatesDimension: {
     ...dimensionResolvers,
-    geoCoordinates: async (dimension, _, { loaders }) => {
-      const resolved = await loaders.geoCoordinates.load(dimension);
-
-      return resolved;
+    geoCoordinates: async (parent, _, { loaders }) => {
+      return await loaders.geoCoordinates.load(parent);
     },
   },
   GeoShapesDimension: {
     ...dimensionResolvers,
-    geoShapes: async (dimension, _, { loaders }) => {
-      const dimensionValues: Array<DimensionValue> =
-        await loaders.dimensionValues.load(dimension);
-      const resolvedShapes = await loaders.geoShapes.loadMany(
-        dimensionValues.map((d) => d.value)
+    geoShapes: async (parent, _, { loaders }) => {
+      const dimValues = await loaders.dimensionValues.load(parent);
+      const dimIris: DimensionValue[] = dimValues.map(
+        (d: DimensionValue) => d.value
       );
-      const features = resolvedShapes
-        .filter((d: RawGeoShape) => d.wktString !== undefined)
-        .map((d: RawGeoShape) => ({
+      const shapes: RawGeoShape[] = await loaders.geoShapes.loadMany(dimIris);
+      const geoJSONFeatures = shapes
+        .filter((d) => d.wktString !== undefined)
+        .map((d) => ({
           type: "Feature",
           properties: {
             iri: d.iri,
             label: d.label,
             level: d.level,
           },
-          geometry: parseWKT(d.wktString as string),
+          geometry: parseWKT(d.wktString!),
         }));
 
-      return topology({
-        shapes: {
-          type: "FeatureCollection",
-          features,
-        } as GeoJSON.FeatureCollection,
-      });
+      return {
+        topology: topology({
+          shapes: {
+            type: "FeatureCollection",
+            features: geoJSONFeatures,
+          } as GeoJSON.FeatureCollection,
+        }),
+        hierarchy: shapes.map((d) => ({
+          iri: d.iri,
+          label: d.label,
+          level: d.level,
+        })),
+      };
     },
   },
   Measure: {

@@ -4,7 +4,7 @@ import * as ns from "./namespace";
 import { dimensionIsVersioned } from "./queries";
 import { sparqlClient } from "./sparql-client";
 
-export interface RawGeoCoordinates {
+export interface GeoCoordinates {
   iri: string;
   label: string;
   latitude?: number;
@@ -17,7 +17,7 @@ export interface RawGeoCoordinates {
 export const createGeoCoordinatesLoader =
   ({ locale }: { locale: string }) =>
   async (dimensions: readonly ResolvedDimension[]) => {
-    const result: RawGeoCoordinates[][] = [];
+    const result: GeoCoordinates[][] = [];
 
     for (const dimension of dimensions) {
       const isVersioned = dimensionIsVersioned(dimension.dimension);

@@ -1,6 +1,10 @@
 import { Literal, NamedNode } from "rdf-js";
 import { DimensionType } from "../charts/chart-config-ui-options";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import {
+  DimensionMetaDataFragment,
+  GeoCoordinatesDimension,
+  GeoShapesDimension,
+} from "../graphql/query-hooks";
 
 export type RawObservationValue = Literal | NamedNode;
 
@@ -135,3 +139,15 @@ export const getDimensionsByDimensionType = ({
   [...measures, ...dimensions].filter((component) =>
     dimensionTypes.includes(component.__typename)
   );
+
+export const isGeoCoordinatesDimension = (
+  dimension?: DimensionMetaDataFragment
+): dimension is GeoCoordinatesDimension => {
+  return dimension?.__typename === "GeoCoordinatesDimension";
+};
+
+export const isGeoShapesDimension = (
+  dimension?: DimensionMetaDataFragment
+): dimension is GeoShapesDimension => {
+  return dimension?.__typename === "GeoShapesDimension";
+};

@@ -448,6 +448,7 @@ export type PaletteType = t.TypeOf<typeof PaletteType>;
 const MapAreaLayer = t.type({
   componentIri: t.string,
   measureIri: t.string,
+  hierarchyLevel: t.number,
   show: t.boolean,
   label: GenericField, // TODO: is it still needed?
   palette: t.string,
@@ -459,6 +460,7 @@ export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 const MapSymbolLayer = t.type({
   componentIri: t.string,
   measureIri: t.string,
+  hierarchyLevel: t.number,
   color: t.string,
   show: t.boolean,
 });
