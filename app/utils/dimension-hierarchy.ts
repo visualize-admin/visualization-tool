@@ -186,18 +186,31 @@ export const fetchDimensionValuesTree = async ({
   return tree;
 };
 
-const hierarchy = [
-  {
-    dimensionIri:
-      "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm",
-    children: [
-      {
-        dimensionIri: "https://environment.ld.admin.ch/foen/ubd0104/station",
-        children: [],
-      },
-    ],
-  },
-] as DimensionHierarchy[];
+const isHierarchyEnabled = () => {
+  try {
+    return window.location.search.includes("bathingsitehierarchy");
+  } catch {
+    return false;
+  }
+};
+
+const hierarchy = (
+  isHierarchyEnabled()
+    ? [
+        {
+          dimensionIri:
+            "https://environment.ld.admin.ch/foen/ubd0104/monitoringprogramm",
+          children: [
+            {
+              dimensionIri:
+                "https://environment.ld.admin.ch/foen/ubd0104/station",
+              children: [],
+            },
+          ],
+        },
+      ]
+    : []
+) as DimensionHierarchy[];
 
 export const useHierarchicalDimensionValuesQuery = ({
   dimensionIri,
