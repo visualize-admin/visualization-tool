@@ -126,7 +126,8 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
 };
 
 export const ColorPickerMenu = (props: Props) => {
-  const borderColor = d3Color(props.selectedColor)?.darker().toString();
+  const { selectedColor } = props;
+  const borderColor = d3Color(selectedColor)?.darker().toString();
 
   return (
     <Menu>
@@ -134,11 +135,11 @@ export const ColorPickerMenu = (props: Props) => {
         sx={{
           "> button": {
             bg: "monochrome100",
-            borderRadius: "default",
+            borderRadius: 4,
+            overflow: "hidden",
             borderWidth: 1,
-            borderStyle: "solid",
-            borderColor: "monochrome500",
-            p: 1,
+            border: 0,
+            p: 0,
           },
           "> button:hover": {
             borderColor,
@@ -156,9 +157,9 @@ export const ColorPickerMenu = (props: Props) => {
           <Box aria-hidden>
             <Box
               sx={{
-                bg: props.selectedColor,
-                width: ["1rem", "1.5rem", "2rem"],
-                height: ["0.75rem", "1.125rem", "1.5rem"],
+                bg: selectedColor,
+                width: "1rem",
+                height: "1rem",
               }}
             ></Box>
           </Box>

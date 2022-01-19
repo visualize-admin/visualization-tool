@@ -2,7 +2,7 @@ import { t } from "@lingui/macro";
 import { TimeLocaleObject } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
-import { Box, Flex } from "theme-ui";
+import { Flex } from "theme-ui";
 import {
   Option,
   useActiveFieldField,
@@ -17,8 +17,11 @@ import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
 import {
+  isMultiFilterFieldChecked,
   useChartOptionBooleanField,
   useChartOptionSelectField,
+  useMultiFilterCheckboxes,
+  useMultiFilterContext,
   useSingleFilterSelect,
 } from "../config-form";
 import { FIELD_VALUE_NONE } from "../constants";
@@ -304,68 +307,17 @@ export const MetaInputField = ({
   return <Input label={label} {...field} disabled={disabled} />;
 };
 
-export const MultiFilterField = ({
-  dimensionIri,
-  label,
-  value,
-  disabled,
-  allValues,
-  checked,
-  onChange,
-  checkAction,
-  color,
-  colorConfigPath,
-}: {
-  dimensionIri: string;
-  label: string;
-  value: string;
-  allValues: string[];
-  disabled?: boolean;
-  checked?: boolean;
-  onChange?: () => void;
-  checkAction: "ADD" | "SET";
-  color?: string;
-  colorConfigPath?: string;
-}) => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const onFieldChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
-    (e) => {
-      if (e.currentTarget.checked) {
-        dispatch({
-          type:
-            checkAction === "ADD"
-              ? "CHART_CONFIG_FILTER_ADD_MULTI"
-              : "CHART_CONFIG_FILTER_SET_MULTI",
-          value: {
-            dimensionIri,
-            value,
-            allValues,
-          },
-        });
-      } else {
-        dispatch({
-          type: "CHART_CONFIG_FILTER_REMOVE_MULTI",
-          value: {
-            dimensionIri,
-            value,
-            allValues,
-          },
-        });
-      }
-      // Call onChange prop
-      onChange?.();
-    },
-    [dispatch, dimensionIri, allValues, value, onChange, checkAction]
-  );
-
-  const updateColor = useCallback(
+const useMultiFilterColorPicker = (value: string) => {
+  const [configuratorState, dispatch] = useConfiguratorState();
+  const { dimensionIri, colorConfigPath } = useMultiFilterContext();
+  const { activeField } = configuratorState;
+  const onChange = useCallback(
     (color: string) => {
-      if (state.activeField) {
+      if (activeField) {
         dispatch({
           type: "CHART_COLOR_CHANGED",
           value: {
-            field: state.activeField,
+            field: activeField,
             colorConfigPath,
             color,
             value,
@@ -373,53 +325,105 @@ export const MultiFilterField = ({
         });
       }
     },
-    [colorConfigPath, dispatch, state.activeField, value]
+
+    [colorConfigPath, dispatch, activeField, value]
+  );
+
+  const path = colorConfigPath ? `${colorConfigPath}.` : "";
+  const chartConfig =
+    configuratorState.state === "CONFIGURING_CHART"
+      ? configuratorState.chartConfig
+      : null;
+
+  const color = chartConfig
+    ? get(
+        chartConfig,
+        `fields["${activeField}"].${path}colorMapping["${value}"]`
+      )
+    : null;
+
+  const palette = useMemo(() => {
+    if (!chartConfig) {
+      return [];
+    }
+    return getPalette(
+      get(
+        chartConfig,
+        `fields["${activeField}"].${colorConfigPath ?? ""}.palette`
+      )
+    );
+  }, [chartConfig, colorConfigPath, activeField]);
+
+  const checkedState =
+    configuratorState.state === "CONFIGURING_CHART" && dimensionIri
+      ? isMultiFilterFieldChecked(
+          configuratorState.chartConfig,
+          dimensionIri,
+          value
+        )
+      : null;
+
+  return useMemo(
+    () => ({
+      color,
+      palette,
+      onChange,
+      checked: checkedState,
+    }),
+    [color, palette, onChange, checkedState]
+  );
+};
+
+export const MultiFilterFieldColorPicker = ({ value }: { value: string }) => {
+  const { color, checked, palette, onChange } =
+    useMultiFilterColorPicker(value);
+
+  return color && checked ? (
+    <ColorPickerMenu
+      colors={palette}
+      selectedColor={color}
+      onChange={onChange}
+    />
+  ) : null;
+};
+
+export const MultiFilterFieldCheckbox = ({
+  label,
+  value,
+  disabled,
+  onChange: onChangeProp,
+}: {
+  label: string;
+  value: string | string[];
+  disabled?: boolean;
+  onChange?: () => void;
+}) => {
+  const [state] = useConfiguratorState();
+  const {
+    onChange: onFieldChange,
+    checked,
+    dimensionIri,
+  } = useMultiFilterCheckboxes(
+    Array.isArray(value) ? value : [value],
+    onChangeProp
   );
 
   if (state.state !== "CONFIGURING_CHART") {
     return null;
   }
 
-  const filter = state.chartConfig.filters[dimensionIri];
-  const fieldChecked =
-    filter?.type === "multi" ? filter.values?.[value] ?? false : false;
-
   return (
-    <Flex
-      sx={{
-        justifyContent: "space-between",
-        alignItems: "center",
-        mb: 2,
-        height: "2rem",
-      }}
-    >
-      <Box sx={{ maxWidth: "82%" }}>
-        <Checkbox
-          name={dimensionIri}
-          value={value}
-          label={label}
-          disabled={disabled}
-          onChange={onFieldChange}
-          checked={checked ?? fieldChecked}
-        />
-      </Box>
-      {color && (checked ?? fieldChecked) && (
-        <ColorPickerMenu
-          colors={getPalette(
-            get(
-              state,
-              `chartConfig.fields["${state.activeField}"].${
-                colorConfigPath ?? ""
-              }.palette`
-            )
-          )}
-          selectedColor={color}
-          onChange={(c) => updateColor(c)}
-        />
-      )}
-    </Flex>
+    <Checkbox
+      name={dimensionIri}
+      value={value}
+      label={label}
+      disabled={disabled}
+      onChange={onFieldChange}
+      checked={checked}
+    />
   );
 };
+
 export const SingleFilterField = ({
   dimensionIri,
   label,

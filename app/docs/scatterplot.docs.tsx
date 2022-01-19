@@ -54,7 +54,7 @@ ${(
           <Tooltip type="single" />
         </ChartContainer>
         {scatterplotFields.segment && (
-          <InteractiveLegendColor symbol="circle" />
+          <InteractiveLegendColor />
         )}
       </ScatterplotChart>
     </InteractiveFiltersProvider>

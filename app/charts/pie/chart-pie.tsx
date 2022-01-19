@@ -114,7 +114,7 @@ export const ChartPie = memo(
           <Tooltip type="single" />
         </ChartContainer>
         {fields.segment && interactiveFiltersConfig?.legend.active === true ? (
-          <InteractiveLegendColor symbol="line" />
+          <InteractiveLegendColor />
         ) : fields.segment ? (
           <LegendColor symbol="line" />
         ) : null}{" "}

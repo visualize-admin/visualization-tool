@@ -48,7 +48,7 @@ ${(
         <Tooltip type={fields.segment ? "multiple" : "single"} /> */}
         </ChartContainer>
 
-        {fields.segment && <InteractiveLegendColor symbol="line" />}
+        {fields.segment && <InteractiveLegendColor />}
       </LineChart>
     </InteractiveFiltersProvider>
   </ReactSpecimen>

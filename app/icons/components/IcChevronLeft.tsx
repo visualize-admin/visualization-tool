@@ -1,13 +1,19 @@
 import * as React from "react";
+import { Box, BoxOwnProps } from "theme-ui";
 
-function SvgIcChevronLeft(props: React.SVGProps<SVGSVGElement>) {
+function SvgIcChevronLeft(
+  props: React.SVGProps<SVGSVGElement> & { sx?: BoxOwnProps["sx"] }
+) {
   return (
-    <svg
+    /** @ts-ignore */
+    <Box
+      as="svg"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       width="1em"
       height="1em"
       {...props}
+      sx={props.sx}
     >
       <g fill="none" fillRule="evenodd">
         <path d="M0 0h24v24H0z" />
@@ -16,7 +22,7 @@ function SvgIcChevronLeft(props: React.SVGProps<SVGSVGElement>) {
           d="M9.707 12L15 6.5 13.5 5 7 12l6.5 7 1.5-1.5z"
         />
       </g>
-    </svg>
+    </Box>
   );
 }
 
