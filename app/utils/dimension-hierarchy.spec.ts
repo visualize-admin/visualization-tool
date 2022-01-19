@@ -1,17 +1,11 @@
-import { DocumentNode } from "graphql";
-import { Client } from "urql";
 import {
-  DataCubeObservationsDocument,
-  DimensionValuesDocument,
-  DimensionValuesQueryVariables,
+  DataCubeObservationsQuery,
 } from "../graphql/query-hooks";
 import { default as observationsFixture } from "../test/__fixtures/api/bathingsite-observations.json";
-import { default as monitoringProgramValuesFixture } from "../test/__fixtures/api/ubd0104_monitoringprogramm.json";
-import { default as bathingSiteValuesFixture } from "../test/__fixtures/api/ubd0104_station.json";
 import {
   DimensionHierarchy,
-  fetchDimensionValuesTree,
   getHierarchyDimensionPath,
+  makeDimensionValuesTree,
 } from "./dimension-hierarchy";
 
 const MONITOR_PROGRAM_IRI =
@@ -62,38 +56,11 @@ describe("fetchHierarchy", () => {
     ] as DimensionHierarchy[];
     const dataSetIri = "https://environment.ld.admin.ch/foen/ubd0104/4/";
     const dimensionIri = BATHING_SITE_IRI;
-    const client = {
-      query: (doc: DocumentNode, vars: DimensionValuesQueryVariables) => ({
-        toPromise: () => {
-          if (doc === DimensionValuesDocument) {
-            console.log(vars);
-            if (vars.dimensionIri === MONITOR_PROGRAM_IRI) {
-              return monitoringProgramValuesFixture;
-            } else if (vars.dimensionIri === BATHING_SITE_IRI) {
-              return bathingSiteValuesFixture;
-            } else {
-              throw new Error(
-                `No dimension values fixture for ${vars.dimensionIri}`
-              );
-            }
-          } else if (doc === DataCubeObservationsDocument) {
-            return observationsFixture;
-          }
-          console.warn(
-            "Unsupported query document during tests, please see mocked client::query method",
-            doc
-          );
-          throw new Error("Unsupported doc in tests");
-        },
-      }),
-    } as unknown as Client;
     const locale = "en";
-    const tree = await fetchDimensionValuesTree({
-      dataSetIri,
+    const tree = makeDimensionValuesTree({
       dimensionIri,
       hierarchy,
-      client,
-      locale,
+      dataCubeData: observationsFixture.data.dataCubeByIri as NonNullable<DataCubeObservationsQuery['dataCubeByIri']>,
       sorters: {
         [MONITOR_PROGRAM_IRI]: ({ value }) => value,
         [BATHING_SITE_IRI]: ({ label }) => label,

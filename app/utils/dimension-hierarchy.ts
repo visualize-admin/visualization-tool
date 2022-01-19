@@ -1,13 +1,33 @@
 import { ascending } from "d3";
-import { useEffect, useState } from "react";
-import { Client, useClient } from "urql";
-import { DataCubeObservationsDocument } from "../graphql/query-hooks";
+import { useMemo } from "react";
+import { useClient } from "urql";
+import {
+  DataCubeObservationsQuery,
+  useDataCubeObservationsQuery,
+} from "../graphql/query-hooks";
 
 export type DimensionHierarchy = {
   dimensionIri: string;
   children: DimensionHierarchy[];
 };
 
+export type HierarchyValue = {
+  depth: number;
+  children: HierarchyValue[];
+  dimensionIri: string;
+  value: string; // iri
+  label: string;
+};
+
+/**
+ * Returns all the parents and the child dimension as an array
+ * given a hierarchy
+ *
+ * In the case of the bathing site hierarchy where monitoring programs
+ * are parents of bathing sites, given the dimensinoIri of bathingSite
+ * and the hierarchy coming from the dataset, we would get
+ * [MONITORING_PROGRAM_IRI, BATHING_SITE_IRI].
+ */
 export const getHierarchyDimensionPath = (
   dimensionIri: string,
   hierarchy: DimensionHierarchy[]
@@ -34,14 +54,39 @@ export const getHierarchyDimensionPath = (
   return helper(dimensionIri, hierarchy, []) || [dimensionIri];
 };
 
-export type HierarchyValue = {
-  depth: number;
-  children: HierarchyValue[];
-  dimensionIri: string;
-  value: string; // iri
-  label: string;
-};
-
+/**
+ * Given a dimension hierarchy (containing for example monitoring program > bathing site),
+ * and observations, this method would infer from the observations the label
+ * hierarchy.
+ *
+ * @example
+ * Observations:
+ *
+ * MONITORING PROGRAM | BATHING_SITE      | VALUE
+ * -------------------+-------------------+-------
+ * Baqua_be           | Aare Lorraine     |   1
+ * Baqua_be           | Aare Marzil       |   2
+ * Baqua_fr           | Plage Portalban   |   3
+ *
+ * Hierarchy: [{
+ *  dimensionIri: 'Monitoring program',
+ *  children: {
+ *    dimensionIri: 'Bathing site', children: []
+ *  }
+ *  }]
+ *
+ * This method would return a tree similar to
+ *
+ * Baqua_be
+ *    Aare Lorraine
+ *    Aare Marzil
+ * Baqua_fr
+ *    Plage de portalban
+ *
+ * An important point here is that it works on the labels of the observations.
+ * Further work has to be done (in addValuesToTree) to attach values iri to
+ * the labels.
+ */
 export const inferLabelsTree = (
   dimensionIri: string,
   hierarchy: DimensionHierarchy[],
@@ -80,7 +125,7 @@ export const inferLabelsTree = (
       children: Array.from(childLabels).map((l) => makeItem(depth + 1, l)),
       label,
 
-      // Value is replaced later
+      // Value is replaced later in addValuesToTree
       value: "UNKNOWN",
     };
   };
@@ -89,8 +134,9 @@ export const inferLabelsTree = (
 };
 
 /**
+ * Will recursively add the values iri to the label tree.
  *
- * @param tree G
+ * @param tree
  * @param valuesByLabels
  */
 const addValuesToTree = (
@@ -115,6 +161,7 @@ type TreeSorters = Record<
 const defaultSorter = ({ value, label }: { value?: string; label?: string }) =>
   label || value;
 
+/** Recursively sorts tree children  */
 export const sortTree = (tree: HierarchyValue[], sorters?: TreeSorters) => {
   const dimensionIri = tree[0].dimensionIri;
   const sorter = sorters?.[dimensionIri] || defaultSorter;
@@ -133,38 +180,21 @@ type ObservationsDimension = {
   values: { value: string; label: string }[];
 };
 
-export const fetchDimensionValuesTree = async ({
-  dataSetIri,
+export const makeDimensionValuesTree = ({
+  dataCubeData,
   dimensionIri,
   hierarchy,
-  client,
-  locale,
   sorters,
 }: {
-  dataSetIri: string;
   dimensionIri: string;
+  dataCubeData: NonNullable<DataCubeObservationsQuery["dataCubeByIri"]>;
   hierarchy: DimensionHierarchy[];
-  client: Client;
-  locale: string;
   sorters?: TreeSorters;
 }) => {
-  const path = getHierarchyDimensionPath(dimensionIri, hierarchy);
-
-  const observationsResponse = await client
-    .query(DataCubeObservationsDocument, {
-      iri: dataSetIri,
-      locale,
-      measures: path,
-    })
-    .toPromise();
   const {
-    data: {
-      dataCubeByIri: {
-        observations: { data: observationsData },
-        dimensions,
-      },
-    },
-  } = observationsResponse;
+    observations: { data: observationsData },
+    dimensions,
+  } = dataCubeData;
 
   const tree = inferLabelsTree(dimensionIri, hierarchy, observationsData);
   const valuesByLabels = Object.fromEntries(
@@ -223,33 +253,33 @@ export const useHierarchicalDimensionValuesQuery = ({
 }) => {
   const client = useClient();
 
-  const [result, setResult] = useState<{
-    data?: HierarchyValue[];
-    fetching: boolean;
-    error?: unknown;
-  }>({
-    data: undefined,
-    fetching: true,
-    error: undefined,
+  const path = useMemo(
+    () => getHierarchyDimensionPath(dimensionIri, hierarchy),
+    [dimensionIri]
+  );
+
+  const [{ data: datacubeResponse, fetching }] = useDataCubeObservationsQuery({
+    variables: {
+      iri: dataSetIri,
+      locale,
+      measures: path,
+    },
   });
 
-  useEffect(() => {
-    const run = async () => {
-      try {
-        const tree = await fetchDimensionValuesTree({
-          dataSetIri,
-          dimensionIri,
-          hierarchy,
-          client,
-          locale,
-        });
-        setResult({ data: tree, fetching: false, error: undefined });
-      } catch (error) {
-        setResult({ data: undefined, fetching: false, error });
-      }
-    };
-    run();
-  }, [dataSetIri, dimensionIri, locale, client]);
+  const result = useMemo(() => {
+    if (fetching || !datacubeResponse || !datacubeResponse.dataCubeByIri) {
+      return { data: undefined, fetching };
+    } else {
+      const tree = makeDimensionValuesTree({
+        dataCubeData: datacubeResponse.dataCubeByIri,
+        dimensionIri,
+        hierarchy,
+      });
+      return {
+        data: tree,
+      };
+    }
+  }, [fetching, datacubeResponse, dataSetIri, dimensionIri, client, locale]);
 
   return result;
 };
