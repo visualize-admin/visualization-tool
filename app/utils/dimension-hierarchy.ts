@@ -218,7 +218,7 @@ export const makeDimensionValuesTree = ({
 
 const isHierarchyEnabled = () => {
   try {
-    return window.location.search.includes("bathingsitehierarchy");
+    return window.location.search.includes("hierarchies");
   } catch {
     return false;
   }
@@ -235,6 +235,17 @@ const hierarchy = (
               dimensionIri:
                 "https://environment.ld.admin.ch/foen/ubd0104/station",
               children: [],
+            },
+          ],
+        },
+        {
+          dimensionIri:
+            "https://environment.ld.admin.ch/foen/red_lists_test_reimport2/phylum",
+          children: [
+            {
+              dimensionIri:
+                "https://environment.ld.admin.ch/foen/red_lists_test_reimport2/artengruppe",
+              children: []
             },
           ],
         },
