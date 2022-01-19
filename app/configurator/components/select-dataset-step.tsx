@@ -113,16 +113,41 @@ export const SelectDatasetStepContent = () => {
         }}
       >
         <Box sx={{ maxWidth: 900 }}>
-          <Text variant="heading1" sx={{ mb: 4 }}>
-            {dataset ? null : filters.length > 0 ? (
-              filters
-                .filter((f) => f.__typename !== "DataCubeAbout")
-                .map((f) => (f.__typename !== "DataCubeAbout" ? f.label : null))
-                .join(", ")
-            ) : (
-              <Trans id="browse.datasets.all-datasets">All datasets</Trans>
-            )}
-          </Text>
+          {dataset ? null : filters.length > 0 ? (
+            filters
+              .filter((f) => f.__typename !== "DataCubeAbout")
+              .map((f) => (f.__typename !== "DataCubeAbout" ? f.label : null))
+              .join(", ")
+          ) : (
+            <>
+              <Text
+                variant="heading1"
+                color="monochrome800"
+                mb={4}
+                sx={{ display: "block" }}
+              >
+                <Trans id="browse.datasets.all-datasets">All datasets</Trans>
+              </Text>
+              <Text
+                variant="paragraph1"
+                color="monochrome800"
+                sx={{
+                  mb: 4,
+                  maxWidth: 800,
+                  fontWeight:"light",
+                  display: "block",
+                }}
+              >
+                <Trans id="browse.datasets.description">
+                  Explore datasets provided by the LINDAS Linked Data Service by
+                  either filtering by categories or organisations or search
+                  directly for specific keywords. Click on a dataset to see more
+                  detailed information and start creating your own
+                  visualizations.
+                </Trans>
+              </Text>
+            </>
+          )}
           {dataset ? null : (
             <Box mb={4}>
               <SearchDatasetBox browseState={browseState} searchResult={data} />

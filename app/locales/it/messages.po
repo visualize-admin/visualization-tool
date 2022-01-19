@@ -45,9 +45,13 @@ msgstr "Categorie"
 msgid "browse.dataset.create-visualization"
 msgstr "Crea una visualizzazione"
 
-#: app/configurator/components/select-dataset-step.tsx:123
+#: app/configurator/components/select-dataset-step.tsx:129
 msgid "browse.datasets.all-datasets"
 msgstr "Tutti i set di dati"
+
+#: app/configurator/components/select-dataset-step.tsx:141
+msgid "browse.datasets.description"
+msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando per categorie o organizzazioni oppure cercando direttamente per parole chiave specifiche. Clicca su un set di dati per vedere informazioni più dettagliate e iniziare a creare le tue visualizzazioni."
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
