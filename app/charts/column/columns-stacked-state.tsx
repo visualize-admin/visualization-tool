@@ -411,7 +411,7 @@ const useColumnsStackedState = ({
           color: colors(getSegment(datum)) as string,
         },
         values: sortedTooltipValues.map((td) => ({
-          label: `${getSegment(td)}`,
+          label: getSegment(td),
           value: yMeasure.unit
             ? `${formatNumber(getY(td))} ${yMeasure.unit}`
             : formatNumber(getY(td)),

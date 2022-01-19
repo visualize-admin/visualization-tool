@@ -93,13 +93,13 @@ export const usePreparedData = ({
   const allFilters = useMemo(() => {
     const timeFilter: ValuePredicate | null =
       getX && from && to && timeFilterActive
-        ? (d: any) =>
+        ? (d: Observation) =>
             getX(d).getTime() >= from.getTime() &&
             getX(d).getTime() <= to.getTime()
         : null;
     const legendFilter: ValuePredicate | null =
       legendFilterActive && getSegment
-        ? (d: any) => !activeInteractiveFilters.includes(getSegment(d))
+        ? (d: Observation) => !activeInteractiveFilters.includes(getSegment(d))
         : null;
     return flowRight.apply(null, [legendFilter, timeFilter].filter(truthy));
   }, [
