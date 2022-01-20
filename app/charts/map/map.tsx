@@ -4,12 +4,11 @@ import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import React, { useCallback, useMemo, useState } from "react";
 import { Box, Button } from "theme-ui";
-import { GeoPoint } from "../../domain/data";
+import { GeoFeature, GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
 import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
-import { ShapeFeature } from "./chart-map";
 import { MapState } from "./map-state";
 import { useMapTooltip } from "./map-tooltip";
 
@@ -214,7 +213,7 @@ export const MapComponent = () => {
               }: {
                 x: number;
                 y: number;
-                object: ShapeFeature;
+                object: GeoFeature;
               }) => {
                 if (object) {
                   dispatchMapTooltip({
@@ -241,7 +240,7 @@ export const MapComponent = () => {
               updateTriggers={{
                 getFillColor: [areaLayer.getValue, areaLayer.getColor],
               }}
-              getFillColor={({ properties: { observation } }: ShapeFeature) =>
+              getFillColor={({ properties: { observation } }: GeoFeature) =>
                 areaLayer.getColor(
                   observation ? areaLayer.getValue(observation) : null
                 )
@@ -282,7 +281,7 @@ export const MapComponent = () => {
         {symbolLayer.show && (
           <ScatterplotLayer
             id="symbols"
-            data={features.symbolLayer}
+            data={features.symbolLayer?.points}
             pickable={identicalLayerComponentIris ? !areaLayer.show : true}
             autoHighlight={true}
             opacity={0.7}

@@ -2,7 +2,11 @@ import { t, Trans } from "@lingui/macro";
 import React, { memo, useMemo } from "react";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "..";
 import { FieldSetLegend } from "../../components/form";
-import { getGeoDimensions, getGeoShapesDimensions } from "../../domain/data";
+import {
+  GeoShapes,
+  getGeoDimensions,
+  getGeoShapesDimensions,
+} from "../../domain/data";
 import { GeoShapesDimension } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { HierarchyLevel } from "../../rdf/query-geo-shapes";
@@ -102,9 +106,10 @@ export const AreaLayerSettings = memo(
       () => getGeoShapesDimensions(metaData.dimensions),
       [metaData.dimensions]
     );
-    const geoShapesDimension = geoShapesDimensions.find(
+    const dimension = geoShapesDimensions.find(
       (d) => d.iri === chartConfig.fields.areaLayer.componentIri
     ) as GeoShapesDimension;
+
     const disabled = useMemo(
       () => !chartConfig.fields.areaLayer.show,
       [chartConfig.fields.areaLayer.show]
@@ -158,7 +163,7 @@ export const AreaLayerSettings = memo(
               path="hierarchyLevel"
               options={[
                 ...new Set(
-                  geoShapesDimension.geoShapes.hierarchy.map(
+                  (dimension?.geoShapes as GeoShapes)?.hierarchy.map(
                     (d: HierarchyLevel) => d.level
                   )
                 ),

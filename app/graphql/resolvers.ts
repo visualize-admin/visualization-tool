@@ -3,7 +3,12 @@ import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
-import { DimensionValue } from "../domain/data";
+import {
+  DimensionValue,
+  GeoFeature,
+  GeoProperties,
+  GeoShapes,
+} from "../domain/data";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
@@ -323,13 +328,18 @@ export const resolvers: Resolvers = {
   GeoShapesDimension: {
     ...dimensionResolvers,
     geoShapes: async (parent, _, { loaders }) => {
-      const dimValues = await loaders.dimensionValues.load(parent);
-      const dimIris: DimensionValue[] = dimValues.map(
-        (d: DimensionValue) => d.value
-      );
-      const shapes: RawGeoShape[] = await loaders.geoShapes.loadMany(dimIris);
+      const dimValues = (await loaders.dimensionValues.load(
+        parent
+      )) as DimensionValue[];
+      const dimIris = dimValues.map((d) => `${d.value}`) as string[];
+      const shapes = (await loaders.geoShapes.loadMany(
+        dimIris
+      )) as RawGeoShape[];
       const geoJSONFeatures = shapes
-        .filter((d) => d.wktString !== undefined)
+        .filter(
+          (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
+            d.wktString !== undefined
+        )
         .map((d) => ({
           type: "Feature",
           properties: {
@@ -337,22 +347,24 @@ export const resolvers: Resolvers = {
             label: d.label,
             level: d.level,
           },
-          geometry: parseWKT(d.wktString!),
-        }));
+          geometry: parseWKT(d.wktString),
+        })) as GeoFeature[];
 
-      return {
+      const resolved: GeoShapes = {
         topology: topology({
           shapes: {
             type: "FeatureCollection",
             features: geoJSONFeatures,
-          } as GeoJSON.FeatureCollection,
-        }),
+          } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
+        }) as GeoShapes["topology"],
         hierarchy: shapes.map((d) => ({
           iri: d.iri,
           label: d.label,
           level: d.level,
         })),
       };
+
+      return resolved;
     },
   },
   Measure: {

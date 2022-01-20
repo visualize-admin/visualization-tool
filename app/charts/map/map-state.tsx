@@ -25,7 +25,12 @@ import {
   MapSettings,
   PaletteType,
 } from "../../configurator/config-types";
-import { GeoPoint, isGeoShapesDimension, Observation } from "../../domain/data";
+import {
+  GeoData,
+  GeoShapes,
+  isGeoShapesDimension,
+  Observation,
+} from "../../domain/data";
 import {
   useOptionalNumericVariable,
   useStringVariable,
@@ -34,15 +39,6 @@ import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
 import { MapTooltipProvider } from "./map-tooltip";
-
-export type GeoData = {
-  lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
-  areaLayer?: {
-    shapes: GeoJSON.FeatureCollection | GeoJSON.Feature;
-    mesh: GeoJSON.MultiLineString;
-  };
-  symbolLayer?: Array<GeoPoint>;
-};
 
 export interface MapState {
   chartType: "map";
@@ -165,9 +161,9 @@ const useMapState = ({
       const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
 
       if (isGeoShapesDimension(dimension)) {
-        const hierarchyLabels = dimension.geoShapes.hierarchy
-          .filter((d: any) => d.level === hierarchyLevel)
-          .map((d: any) => d.label);
+        const hierarchyLabels = (dimension.geoShapes as GeoShapes).hierarchy
+          .filter((d) => d.level === hierarchyLevel)
+          .map((d) => d.label);
 
         return data.filter((d) => hierarchyLabels.includes(getLabel(d)));
       }
@@ -250,21 +246,17 @@ const useMapState = ({
   const radiusRange = [0, 24];
   const radiusScale = scaleSqrt().domain(radiusDomain).range(radiusRange);
 
-  // Dimensions
-  const margins = {
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * 0.5;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
+    height: width * 0.5,
+    margins: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
+    chartWidth: width,
+    chartHeight: width * 0.5,
   };
 
   return {

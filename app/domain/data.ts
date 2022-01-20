@@ -5,6 +5,7 @@ import {
   GeoCoordinatesDimension,
   GeoShapesDimension,
 } from "../graphql/query-hooks";
+import { HierarchyLevel } from "../rdf/query-geo-shapes";
 
 export type RawObservationValue = Literal | NamedNode;
 
@@ -16,22 +17,45 @@ export type DimensionValue = { value: string | number; label: string };
 
 export type Observation = Record<string, ObservationValue>;
 
-export type GeoShapes = TopoJSON.Topology;
-
-export type GeoCoordinates = {
+export type GeoProperties = {
   iri: string;
   label: string;
-  latitude: number;
-  longitude: number;
+  hierarchyLevel?: number;
+  observation?: Observation;
+};
+
+export type GeoShapes = {
+  topology: TopoJSON.Topology<TopoJSON.Objects<GeoProperties>>;
+  hierarchy: HierarchyLevel[];
+};
+
+export type GeoFeature = {
+  type: "Feature";
+  properties: GeoProperties;
+  geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+};
+
+export type AreaLayer = {
+  shapes: GeoJSON.FeatureCollection<
+    GeoJSON.MultiPolygon | GeoJSON.Polygon,
+    GeoProperties
+  >;
+  mesh: GeoJSON.MultiLineString;
 };
 
 export type GeoPoint = {
   coordinates: [number, number];
-  properties: {
-    iri: string;
-    label: string;
-    observation: Observation;
-  };
+  properties: GeoProperties;
+};
+
+export type SymbolLayer = {
+  points: GeoPoint[];
+};
+
+export type GeoData = {
+  lakes: GeoJSON.FeatureCollection;
+  areaLayer?: AreaLayer;
+  symbolLayer?: SymbolLayer;
 };
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";

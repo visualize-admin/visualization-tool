@@ -8,9 +8,15 @@ import {
 import { Loading, LoadingDataError, NoDataHint } from "../../components/hint";
 import { MapConfig, MapFields, MapSettings } from "../../configurator";
 import {
+  AreaLayer,
+  GeoData,
+  GeoFeature,
+  GeoPoint,
+  GeoShapes,
   isGeoCoordinatesDimension,
   isGeoShapesDimension,
   Observation,
+  SymbolLayer,
 } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
@@ -22,24 +28,13 @@ import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
-import { GeoData, MapChart } from "./map-state";
+import { MapChart } from "./map-state";
 import { MapTooltip } from "./map-tooltip";
 
 type GeoDataState =
   | { state: "fetching" }
   | { state: "error" }
   | (GeoData & { state: "loaded" });
-
-export interface ShapeFeature {
-  type: "Feature";
-  properties: {
-    iri: string;
-    label: string;
-    hierarchyLevel: number;
-    observation: Observation;
-  };
-  geometry: GeoJSON.Geometry;
-}
 
 export const ChartMapVisualization = ({
   dataSetIri,
@@ -66,27 +61,31 @@ export const ChartMapVisualization = ({
   });
   const dimensions = data?.dataCubeByIri?.dimensions;
   const measures = data?.dataCubeByIri?.measures;
-  const observations = data?.dataCubeByIri?.observations.data;
+  const observations = data?.dataCubeByIri?.observations.data as
+    | Observation[]
+    | undefined;
 
-  const areaLayer = useMemo(() => {
+  const areaLayer: AreaLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === areaDimensionIri);
 
     if (isGeoShapesDimension(dimension)) {
-      const { hierarchy, topology } = dimension.geoShapes;
+      const { hierarchy, topology } = dimension.geoShapes as GeoShapes;
 
       const topojson = topojsonFeature(
         topology,
         topology.objects.shapes
-      ) as any;
+      ) as AreaLayer["shapes"];
 
-      topojson.features.forEach((d: any) => {
+      topojson.features.forEach((d: GeoFeature) => {
         // Should we match by labels?
-        d.properties.observation = observations?.find(
-          (o: any) => o[areaDimensionIri] === d.properties.label
+        const observation = observations?.find(
+          (o) => o[areaDimensionIri] === d.properties.label
         );
-        d.properties.hierarchyLevel = hierarchy.find(
-          (h: any) => h.iri === d.properties.iri
-        )!.level;
+        const hierarchyLevel = hierarchy.find(
+          (h) => h.iri === d.properties.iri
+        )?.level;
+
+        d.properties = { ...d.properties, observation, hierarchyLevel };
       });
 
       return {
@@ -96,26 +95,33 @@ export const ChartMapVisualization = ({
     }
   }, [areaDimensionIri, dimensions, observations]);
 
-  const symbolLayer = useMemo(() => {
+  const symbolLayer: SymbolLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === symbolDimensionIri);
 
     if (isGeoCoordinatesDimension(dimension)) {
-      return (dimension.geoCoordinates as GeoCoordinates[]).map((d) => ({
-        coordinates: [d.longitude, d.latitude],
-        properties: {
-          iri: d.iri,
-          label: d.label,
-          observation: observations?.find(
-            (o) => o[symbolDimensionIri] === d.label
-          ),
-        },
-      }));
+      const points = (dimension.geoCoordinates as GeoCoordinates[]).map(
+        (d) =>
+          ({
+            coordinates: [d.longitude, d.latitude],
+            properties: {
+              iri: d.iri,
+              label: d.label,
+              observation: observations?.find(
+                (o) => o[symbolDimensionIri] === d.label
+              ),
+            },
+          } as GeoPoint)
+      );
+
+      return { points };
     } else {
       if (areaLayer) {
-        return areaLayer.shapes.features.map((d: any) => ({
+        const points = areaLayer.shapes.features.map((d) => ({
           ...d,
           coordinates: geoCentroid(d),
         }));
+
+        return { points };
       }
     }
   }, [areaLayer, dimensions, observations, symbolDimensionIri]);
@@ -125,7 +131,10 @@ export const ChartMapVisualization = ({
       try {
         const res = await fetch(`/topojson/ch-2020.json`);
         const topo = await res.json();
-        const lakes = topojsonFeature(topo, topo.objects.lakes);
+        const lakes = topojsonFeature(
+          topo,
+          topo.objects.lakes
+        ) as any as GeoJSON.FeatureCollection;
 
         setGeoData({ state: "loaded", lakes });
       } catch (e) {

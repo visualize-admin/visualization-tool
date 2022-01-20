@@ -7,8 +7,8 @@ import { sparqlClient } from "./sparql-client";
 export interface GeoCoordinates {
   iri: string;
   label: string;
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
 }
 
 /**
