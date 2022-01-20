@@ -23,7 +23,7 @@ export const PUBLIC_URL = (
 export const SPARQL_ENDPOINT =
   clientEnv?.SPARQL_ENDPOINT ??
   process.env.SPARQL_ENDPOINT ??
-  "https://lindas.admin.ch/query";
+  "https://int.lindas.admin.ch/query";
 
 export const SPARQL_GEO_ENDPOINT =
   clientEnv?.SPARQL_GEO_ENDPOINT ??
