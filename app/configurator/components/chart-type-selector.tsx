@@ -118,11 +118,7 @@ export const ChartTypeSelector = ({
 
   if (data?.dataCubeByIri) {
     const metaData = data.dataCubeByIri;
-
-    const possibleChartTypes = getPossibleChartType({
-      chartTypes: enabledChartTypes,
-      meta: metaData,
-    });
+    const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
       <Box as="fieldset">
