@@ -43,6 +43,13 @@ export interface BarsState {
   colors: ScaleOrdinal<string, string>;
 }
 
+const MARGINS = {
+  top: 50,
+  right: 40,
+  bottom: BOTTOM_MARGIN_OFFSET,
+  left: LEFT_MARGIN_OFFSET,
+};
+
 const useBarsState = ({
   data,
   fields,
@@ -74,36 +81,32 @@ const useBarsState = ({
     segments
   );
 
-  // x
-  const minValue = Math.min(mkNumber(min(sortedData, (d) => getX(d))), 0);
-  const maxValue = max(sortedData, (d) => getX(d));
-  const xScale = scaleLinear()
-    .domain([mkNumber(minValue), mkNumber(maxValue)])
-    .nice();
+  // scales and bounds
+  const { xScale, bounds, yScale } = useMemo(() => {
+    const minValue = Math.min(mkNumber(min(sortedData, (d) => getX(d))), 0);
+    const maxValue = max(sortedData, (d) => getX(d));
+    const xScale = scaleLinear()
+      .domain([mkNumber(minValue), mkNumber(maxValue)])
+      .nice();
+    const bandDomain = [...new Set(sortedData.map((d) => getY(d)))];
 
-  // y
-  const bandDomain = [...new Set(sortedData.map((d) => getY(d)))];
+    const chartHeight = bandDomain.length * (BAR_HEIGHT + BAR_SPACE_ON_TOP);
+    const yScale = scaleBand<string>()
+      .domain(bandDomain)
+      .range([0, chartHeight]);
+    const chartWidth = width - MARGINS.left - MARGINS.right;
+    const bounds = {
+      width,
+      height: chartHeight + MARGINS.top + MARGINS.bottom,
+      margins: MARGINS,
+      chartWidth,
+      chartHeight,
+    };
 
-  const chartHeight = bandDomain.length * (BAR_HEIGHT + BAR_SPACE_ON_TOP);
-  const yScale = scaleBand<string>().domain(bandDomain).range([0, chartHeight]);
+    xScale.range([0, chartWidth]);
 
-  const margins = {
-    top: 50,
-    right: 40,
-    bottom: BOTTOM_MARGIN_OFFSET,
-    left: LEFT_MARGIN_OFFSET,
-  };
-
-  const chartWidth = width - margins.left - margins.right;
-
-  const bounds = {
-    width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
-  };
-  xScale.range([0, chartWidth]);
+    return { xScale, yScale, bounds };
+  }, [getX, getY, sortedData, width]);
 
   return {
     chartType: "bar",

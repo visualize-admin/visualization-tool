@@ -1,0 +1,24 @@
+Hierarchical values along the same dimension
+    Drill down with Pie chart
+        Going inside a value to see child values (= same hierarchical across same dimension)
+    Drill down with table
+        Going inside a value to see child values (= same hierarchical across same dimension)
+Hierarchical values along different dimension
+    Hierarchical filters
+    Is switch between child / parent permitted ?
+Hierarchical dimension as dimension
+    Idea: Select hierarchical dimension as dimension being encoded
+        Existing UI elements are used
+        If a combination of dimensions can be used as hierarchy it is displayed in the relevant filters
+Interactive filters
+    Select a tree
+
+    Support for using a hierarchical dimension as encoded-dimension
+    = monitoring programme + bathing site are encoded as color
+    -> show tree of values
+    -> ability to filter the tree
+if hierarchical dimension is encoded
+    abilility to drill down and up
+ 
+
+

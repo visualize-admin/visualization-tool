@@ -21,7 +21,8 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import React, { ReactNode, useMemo } from "react";
+import { keyBy } from "lodash";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
@@ -94,7 +95,6 @@ const useColumnsStackedState = ({
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
-
   const [interactiveFilters] = useInteractiveFilters();
 
   const xDimension = dimensions.find((d) => d.iri === fields.x.componentIri);
@@ -175,65 +175,77 @@ const useColumnsStackedState = ({
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
-  const segmentsOrderedByName = Array.from(
-    new Set(sortedData.map((d) => getSegment(d)))
-  ).sort((a, b) =>
-    segmentSortingOrder === "asc"
-      ? a.localeCompare(b, locale)
-      : b.localeCompare(a, locale)
-  );
-
-  const segmentsOrderedByTotalValue = [
-    ...rollup(
-      sortedData,
-      (v) => sum(v, (x) => getY(x)),
-      (x) => getSegment(x)
-    ),
-  ]
-    .sort((a, b) =>
+  const segments = useMemo(() => {
+    const segmentsOrderedByName = Array.from(
+      new Set(sortedData.map((d) => getSegment(d)))
+    ).sort((a, b) =>
       segmentSortingOrder === "asc"
-        ? ascending(a[1], b[1])
-        : descending(a[1], b[1])
-    )
-    .map((d) => d[0]);
+        ? a.localeCompare(b, locale)
+        : b.localeCompare(a, locale)
+    );
 
-  const segments =
-    segmentSortingType === "byDimensionLabel"
+    const segmentsOrderedByTotalValue = [
+      ...rollup(
+        sortedData,
+        (v) => sum(v, (x) => getY(x)),
+        (x) => getSegment(x)
+      ),
+    ]
+      .sort((a, b) =>
+        segmentSortingOrder === "asc"
+          ? ascending(a[1], b[1])
+          : descending(a[1], b[1])
+      )
+      .map((d) => d[0]);
+    return segmentSortingType === "byDimensionLabel"
       ? segmentsOrderedByName
       : segmentsOrderedByTotalValue;
+  }, [
+    sortedData,
+    segmentSortingType,
+    getSegment,
+    segmentSortingOrder,
+    locale,
+    getY,
+  ]);
+
+  const segmentValuesByLabel = useMemo(() => {
+    const segmentDimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+    return keyBy(segmentDimension.values, (x) => x.label);
+  }, [dimensions, fields.segment?.componentIri]);
 
   // Scales
-  // Map ordered segments to colors
-  const colors = scaleOrdinal<string, string>();
-  const segmentDimension = dimensions.find(
-    (d) => d.iri === fields.segment?.componentIri
-  ) as DimensionMetaDataFragment; // FIXME: define this type properly in the query
+  // Map ordered segments labels to colors
+  const colors = useMemo(() => {
+    const colors = scaleOrdinal<string, string>();
 
-  if (fields.segment && segmentDimension && fields.segment.colorMapping) {
-    const orderedSegmentLabelsAndColors = segments.map((segment) => {
-      // FIXME: Labels in observations can differ from dimension values because the latter can be concatenated to only appear once per value
-      // See https://github.com/visualize-admin/visualization-tool/issues/97
-      const dvIri = segmentDimension.values.find((s: $FixMe) => {
-        return s.label === segment;
-      })?.value;
+    if (fields.segment && segmentValuesByLabel && fields.segment.colorMapping) {
+      const orderedSegmentLabelsAndColors = segments.map((segment) => {
+        // FIXME: Labels in observations can differ from dimension values because the latter can be concatenated to only appear once per value
+        // See https://github.com/visualize-admin/visualization-tool/issues/97
+        const dvIri = segmentValuesByLabel[segment]?.value;
 
-      // There is no way to gracefully recover here :(
-      if (!dvIri) {
-        throw Error(`Can't find color for '${segment}'.`);
-      }
+        // There is no way to gracefully recover here :(
+        if (!dvIri) {
+          throw Error(`Can't find color for '${segment}'.`);
+        }
 
-      return {
-        label: segment,
-        color: fields.segment?.colorMapping![dvIri] || "#006699",
-      };
-    });
+        return {
+          label: segment,
+          color: fields.segment?.colorMapping![dvIri] || "#006699",
+        };
+      });
 
-    colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
-    colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
-  } else {
-    colors.domain(segments);
-    colors.range(getPalette(fields.segment?.palette));
-  }
+      colors.domain(orderedSegmentLabelsAndColors.map((s) => s.label));
+      colors.range(orderedSegmentLabelsAndColors.map((s) => s.color));
+    } else {
+      colors.domain(segments);
+      colors.range(getPalette(fields.segment?.palette));
+    }
+    return colors;
+  }, [fields.segment, segmentValuesByLabel, segments]);
 
   // x
   const bandDomain = [...new Set(preparedData.map((d) => getX(d) as string))];
@@ -329,83 +341,100 @@ const useColumnsStackedState = ({
   yScale.range([chartHeight, 0]);
 
   // Tooltips
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
-    const xRef = xScale(getX(datum)) as number;
-    const xOffset = xScale.bandwidth() / 2;
+  const getAnnotationInfo = useCallback(
+    (datum: Observation): TooltipInfo => {
+      const xRef = xScale(getX(datum)) as number;
+      const xOffset = xScale.bandwidth() / 2;
 
-    const tooltipValues = preparedData.filter((j) => getX(j) === getX(datum));
+      const tooltipValues = preparedDataGroupedByX.get(
+        getX(datum)
+      ) as Observation[];
 
-    const sortedTooltipValues = sortByIndex({
-      data: tooltipValues,
-      order: segments,
-      getCategory: getSegment,
-      sortOrder: "asc",
-    });
+      const sortedTooltipValues = sortByIndex({
+        data: tooltipValues,
+        order: segments,
+        getCategory: getSegment,
+        sortOrder: "asc",
+      });
 
-    const cumulativeSum = (
-      (sum) => (d: Observation) =>
-        (sum += getY(d) ?? 0)
-    )(0);
-    const cumulativeRulerItemValues = [
-      ...sortedTooltipValues.map(cumulativeSum),
-    ];
+      const cumulativeSum = (
+        (sum) => (d: Observation) =>
+          (sum += getY(d) ?? 0)
+      )(0);
+      const cumulativeRulerItemValues = sortedTooltipValues.map(cumulativeSum);
 
-    const yRef = yScale(
-      Math.max(
-        cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1],
-        0
-      )
-    );
-    const yAnchor = yRef;
-    const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
+      const yRef = yScale(
+        Math.max(
+          cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1],
+          0
+        )
+      );
+      const yAnchor = yRef;
+      const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
 
-    const getXPlacement = () => {
-      if (yPlacement === "top") {
-        return xRef < chartWidth * 0.33
-          ? "right"
-          : xRef > chartWidth * 0.66
-          ? "left"
-          : "center";
-      } else {
-        return xRef < chartWidth * 0.5 ? "right" : "left";
-      }
-    };
-    const xPlacement = getXPlacement();
+      const getXPlacement = () => {
+        if (yPlacement === "top") {
+          return xRef < chartWidth * 0.33
+            ? "right"
+            : xRef > chartWidth * 0.66
+            ? "left"
+            : "center";
+        } else {
+          return xRef < chartWidth * 0.5 ? "right" : "left";
+        }
+      };
+      const xPlacement = getXPlacement();
 
-    const getXAnchor = () => {
-      if (yPlacement === "top") {
-        return xPlacement === "right"
-          ? xRef
-          : xPlacement === "center"
-          ? xRef + xOffset
-          : xRef + xOffset * 2;
-      } else {
-        return xPlacement === "right" ? xRef + xOffset * 2 : xRef;
-      }
-    };
-    const xAnchor = getXAnchor();
+      const getXAnchor = () => {
+        if (yPlacement === "top") {
+          return xPlacement === "right"
+            ? xRef
+            : xPlacement === "center"
+            ? xRef + xOffset
+            : xRef + xOffset * 2;
+        } else {
+          return xPlacement === "right" ? xRef + xOffset * 2 : xRef;
+        }
+      };
+      const xAnchor = getXAnchor();
 
-    return {
-      xAnchor,
-      yAnchor,
-      placement: { x: xPlacement, y: yPlacement },
-      xValue: getX(datum),
-      datum: {
-        label: fields.segment && getSegment(datum),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
-        color: colors(getSegment(datum)) as string,
-      },
-      values: sortedTooltipValues.map((td) => ({
-        label: getSegment(td),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-          : formatNumber(getY(td)),
-        color: colors(getSegment(td)) as string,
-      })),
-    };
-  };
+      return {
+        xAnchor,
+        yAnchor,
+        placement: { x: xPlacement, y: yPlacement },
+        xValue: getX(datum),
+        datum: {
+          label: fields.segment && getSegment(datum),
+          value: yMeasure.unit
+            ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
+            : formatNumber(getY(datum)),
+          color: colors(getSegment(datum)) as string,
+        },
+        values: sortedTooltipValues.map((td) => ({
+          label: getSegment(td),
+          value: yMeasure.unit
+            ? `${formatNumber(getY(td))} ${yMeasure.unit}`
+            : formatNumber(getY(td)),
+          color: colors(getSegment(td)) as string,
+        })),
+      };
+    },
+    [
+      chartHeight,
+      chartWidth,
+      colors,
+      fields.segment,
+      formatNumber,
+      getSegment,
+      getX,
+      getY,
+      preparedDataGroupedByX,
+      segments,
+      xScale,
+      yMeasure.unit,
+      yScale,
+    ]
+  );
 
   return {
     chartType: "column",

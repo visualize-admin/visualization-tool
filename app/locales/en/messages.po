@@ -259,7 +259,7 @@ msgstr "Table"
 msgid "controls.color"
 msgstr "Color"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:42
+#: app/configurator/components/chart-controls/control-tab.tsx:41
 msgid "controls.color.add"
 msgstr "Add ..."
 
@@ -272,7 +272,7 @@ msgstr "Color palette"
 msgid "controls.color.palette.reset"
 msgstr "Reset color palette"
 
-#: app/configurator/components/chart-controls/color-picker.tsx:157
+#: app/configurator/components/chart-controls/color-picker.tsx:155
 msgid "controls.colorpicker.open"
 msgstr "Open Color Picker"
 
@@ -288,21 +288,25 @@ msgstr "Stacked"
 msgid "controls.description"
 msgstr "Description"
 
-#: app/configurator/components/field.tsx:519
+#: app/configurator/components/field.tsx:518
 msgid "controls.dimension.none"
 msgstr "None"
 
 #: app/charts/shared/chart-data-filters.tsx:194
-#: app/configurator/components/field.tsx:77
-#: app/configurator/components/field.tsx:135
+#: app/configurator/components/field.tsx:80
+#: app/configurator/components/field.tsx:138
 msgid "controls.dimensionvalue.none"
 msgstr "No Filter"
 
-#: app/configurator/components/filters.tsx:60
+#: app/configurator/components/filters.tsx:64
+msgid "controls.filter.nb-elements"
+msgstr "{0} of {1}"
+
+#: app/configurator/components/filters.tsx:47
 msgid "controls.filter.select.all"
 msgstr "Select all"
 
-#: app/configurator/components/filters.tsx:69
+#: app/configurator/components/filters.tsx:56
 msgid "controls.filter.select.none"
 msgstr "Select none"
 
@@ -322,19 +326,19 @@ msgstr "Select an annotation field to modify its content."
 msgid "controls.imputation"
 msgstr "Imputation type"
 
-#: app/configurator/components/chart-options-selector.tsx:488
-#: app/configurator/components/ui-helpers.ts:459
+#: app/configurator/components/chart-options-selector.tsx:476
+#: app/configurator/components/ui-helpers.ts:447
 msgid "controls.imputation.type.linear"
 msgstr "Linear interpolation"
 
+#: app/configurator/components/chart-options-selector.tsx:469
 #: app/configurator/components/chart-options-selector.tsx:481
-#: app/configurator/components/chart-options-selector.tsx:493
-#: app/configurator/components/ui-helpers.ts:451
+#: app/configurator/components/ui-helpers.ts:439
 msgid "controls.imputation.type.none"
 msgstr "-"
 
-#: app/configurator/components/chart-options-selector.tsx:483
-#: app/configurator/components/ui-helpers.ts:455
+#: app/configurator/components/chart-options-selector.tsx:471
+#: app/configurator/components/ui-helpers.ts:443
 msgid "controls.imputation.type.zeros"
 msgstr "Zeros"
 
@@ -434,8 +438,8 @@ msgstr "Filters"
 msgid "controls.section.description"
 msgstr "Title & Description"
 
-#: app/configurator/components/chart-options-selector.tsx:273
-#: app/configurator/components/chart-options-selector.tsx:277
+#: app/configurator/components/chart-options-selector.tsx:261
+#: app/configurator/components/chart-options-selector.tsx:265
 #: app/configurator/table/table-chart-options.tsx:301
 #: app/configurator/table/table-chart-options.tsx:305
 #: app/configurator/table/table-chart-options.tsx:325
@@ -447,11 +451,11 @@ msgstr "Filter"
 msgid "controls.section.groups"
 msgstr "Groups"
 
-#: app/configurator/components/chart-options-selector.tsx:522
+#: app/configurator/components/chart-options-selector.tsx:510
 msgid "controls.section.imputation"
 msgstr "Missing values"
 
-#: app/configurator/components/chart-options-selector.tsx:527
+#: app/configurator/components/chart-options-selector.tsx:515
 msgid "controls.section.imputation.explanation"
 msgstr "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type."
 
@@ -463,11 +467,7 @@ msgstr "Interactive Filters"
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Data Filters"
 
-#: app/configurator/map/map-chart-options.tsx:65
-msgid "controls.section.mapSettings"
-msgstr "Map Settings"
-
-#: app/configurator/components/chart-options-selector.tsx:409
+#: app/configurator/components/chart-options-selector.tsx:397
 msgid "controls.section.sorting"
 msgstr "Sort"
 
@@ -492,7 +492,7 @@ msgstr "Table Options"
 msgid "controls.select.chart.type"
 msgstr "Chart Type"
 
-#: app/configurator/components/chart-options-selector.tsx:319
+#: app/configurator/components/chart-options-selector.tsx:307
 msgid "controls.select.column.layout"
 msgstr "Column layout"
 
@@ -528,20 +528,18 @@ msgstr "Text Color"
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Text Style"
 
-#: app/configurator/components/chart-options-selector.tsx:175
-#: app/configurator/components/chart-options-selector.tsx:185
+#: app/configurator/components/chart-options-selector.tsx:170
+#: app/configurator/components/chart-options-selector.tsx:172
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:176
-#: app/configurator/components/chart-options-selector.tsx:177
-#: app/configurator/components/chart-options-selector.tsx:181
+#: app/configurator/components/chart-options-selector.tsx:171
 msgid "controls.select.measure"
 msgstr "Select a measure"
 
-#: app/configurator/components/field.tsx:82
-#: app/configurator/components/field.tsx:140
-#: app/configurator/components/field.tsx:524
+#: app/configurator/components/field.tsx:85
+#: app/configurator/components/field.tsx:143
+#: app/configurator/components/field.tsx:523
 msgid "controls.select.optional"
 msgstr "optional"
 
@@ -553,8 +551,8 @@ msgstr "Settings"
 msgid "controls.sorting.addDimension"
 msgstr "Add dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:360
-#: app/configurator/components/chart-options-selector.tsx:366
+#: app/configurator/components/chart-options-selector.tsx:348
+#: app/configurator/components/chart-options-selector.tsx:354
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
@@ -566,7 +564,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx:362
+#: app/configurator/components/chart-options-selector.tsx:350
 msgid "controls.sorting.byMeasure"
 msgstr "Measure"
 
@@ -578,7 +576,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx:364
+#: app/configurator/components/chart-options-selector.tsx:352
 msgid "controls.sorting.byTotalSize"
 msgstr "Total size"
 
@@ -874,6 +872,6 @@ msgstr "Chart Type"
 msgid "step.visualize"
 msgstr "Visualize"
 
-#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx:96
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx:80
 msgid "table.column.no"
 msgstr "Column {0}"

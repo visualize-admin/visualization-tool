@@ -47,22 +47,6 @@ export const TabDropZone = ({
                 sx={{ p: 0, minHeight: 60, position: "relative" }}
                 ref={innerRef}
               >
-                {/* <Box
-                  sx={{
-                    height: 48,
-                    borderColor: "monochrome300",
-                    borderWidth: 2,
-                    borderStyle: "dashed",
-                    position: "absolute",
-                    right: 0,
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    m: 2,
-                  }}
-                >
-                  &nbsp;
-                </Box> */}
                 {items.map(({ componentIri, index, isHidden }, i) => {
                   return (
                     <Draggable
@@ -81,10 +65,10 @@ export const TabDropZone = ({
                               position: "relative",
                             }}
                             {...draggableProps}
-                            // {...dragHandleProps}
                             style={{
                               ...draggableProps.style,
                             }}
+                            {...dragHandleProps}
                           >
                             <DraggableTabField
                               key={componentIri}
@@ -115,7 +99,6 @@ export const TabDropZone = ({
                                   color: "secondaryHover",
                                 },
                               }}
-                              {...dragHandleProps}
                             >
                               <Icon name="dragndrop" />
                             </Box>
@@ -166,6 +149,6 @@ const DraggableTabField = ({
       isDragging={isDragging}
       disabled={disabled}
       iconName={iconName}
-    ></DraggableTab>
+    />
   );
 };

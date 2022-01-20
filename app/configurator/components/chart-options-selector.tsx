@@ -84,7 +84,6 @@ export const ChartOptionsSelector = ({
           // we need these overflow parameters to allow iOS scrolling
           overflowX: "hidden",
           overflowY: "auto",
-          mb: 7,
         }}
       >
         {state.activeField ? (

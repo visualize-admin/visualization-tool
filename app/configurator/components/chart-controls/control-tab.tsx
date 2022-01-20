@@ -1,11 +1,10 @@
 import { Trans } from "@lingui/macro";
+import { ReactNode } from "react";
 import { Box, Button, Flex, Text } from "theme-ui";
-
 import { FieldProps } from "../..";
-import { getFieldLabel, getIconName } from "../ui-helpers";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { Icon, IconName } from "../../../icons";
-import { ReactNode } from "react";
+import { getFieldLabel, getIconName } from "../ui-helpers";
 
 export const ControlTab = ({
   component,
@@ -143,6 +142,7 @@ export const ControlTabButton = ({
   children: ReactNode;
 }) => (
   <Button
+    as="div"
     variant="reset"
     value={value}
     role="tab"

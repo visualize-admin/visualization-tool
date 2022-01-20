@@ -1,61 +1,48 @@
 import { Trans } from "@lingui/macro";
-import get from "lodash/get";
-import { useCallback, useMemo } from "react";
-import { Box, Button } from "theme-ui";
-import { getFilterValue, useConfiguratorState } from "..";
+import React, { useCallback, useMemo } from "react";
+import { Box, Button, Flex, Text } from "theme-ui";
+import {
+  getFilterValue,
+  MultiFilterContextProvider,
+  useConfiguratorState,
+  useDimensionSelection,
+  useMultiFilterContext,
+} from "..";
 import { Loading } from "../../components/hint";
+import Stack from "../../components/Stack";
 import {
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
+import {
+  HierarchyValue,
+  useHierarchicalDimensionValuesQuery,
+} from "../../utils/dimension-hierarchy";
 import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval-brush";
-import { MultiFilterField, SingleFilterField } from "./field";
+import { Accordion, AccordionContent, AccordionSummary } from "./Accordion";
+import {
+  MultiFilterFieldCheckbox,
+  MultiFilterFieldColorPicker,
+  SingleFilterField,
+} from "./field";
 import {
   getTimeInterval,
   useTimeFormatLocale,
   useTimeFormatUnit,
 } from "./ui-helpers";
 
-type SelectionState = "SOME_SELECTED" | "NONE_SELECTED" | "ALL_SELECTED";
-
-const useDimensionSelection = (dimensionIri: string) => {
-  const [state, dispatch] = useConfiguratorState();
-
-  const selectAll = useCallback(() => {
-    dispatch({
-      type: "CHART_CONFIG_FILTER_RESET_MULTI",
-      value: {
-        dimensionIri,
-      },
-    });
-  }, [dispatch, dimensionIri]);
-
-  const selectNone = useCallback(() => {
-    dispatch({
-      type: "CHART_CONFIG_FILTER_SET_NONE_MULTI",
-      value: { dimensionIri },
-    });
-  }, [dispatch, dimensionIri]);
-
-  return useMemo(() => ({ selectAll, selectNone }), [selectAll, selectNone]);
-};
-
-const SelectionControls = ({
-  dimensionIri,
-  selectionState,
-}: {
-  dimensionIri: string;
-  selectionState: SelectionState;
-}) => {
+const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
+  const { activeKeys, allValues } = useMultiFilterContext();
+
   return (
     <Box color="monochrome500">
       <Button
         onClick={selectAll}
         variant="inline"
         sx={{ mr: 2, mb: 4 }}
-        disabled={selectionState === "ALL_SELECTED"}
+        disabled={activeKeys.size === allValues.length}
       >
         <Trans id="controls.filter.select.all">Select all</Trans>
       </Button>
@@ -63,12 +50,93 @@ const SelectionControls = ({
       <Button
         onClick={selectNone}
         variant="inline"
-        sx={{ ml: 2, mb: 4 }}
-        disabled={selectionState === "NONE_SELECTED"}
+        sx={{ ml: 2, mr: 2, mb: 4 }}
+        disabled={activeKeys.size === 0}
       >
         <Trans id="controls.filter.select.none">Select none</Trans>
       </Button>
+      ·
+      <Text
+        color="monochrome700"
+        sx={{ px: 2, fontSize: 3, display: "inline" }}
+        as="span"
+      >
+        <Trans id="controls.filter.nb-elements">
+          {activeKeys.size} of {allValues.length}
+        </Trans>
+      </Text>
     </Box>
+  );
+};
+
+const renderDimensionTree = (tree: HierarchyValue[], depth = 0) => {
+  return (
+    <>
+      {tree.map((tv) => {
+        return (
+          <Accordion key={tv.value} initialExpanded>
+            <Stack spacing={0.5}>
+              {tv.children && tv.children.length > 0 ? (
+                <AccordionSummary>
+                  <MultiFilterFieldCheckbox
+                    label={tv.label}
+                    value={tv.children.map((c) => c.value)}
+                  />
+                  <MultiFilterFieldColorPicker value={tv.value} />
+                </AccordionSummary>
+              ) : (
+                <Flex
+                  key={tv.value}
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <MultiFilterFieldCheckbox
+                      label={tv.label}
+                      value={tv.value}
+                    />
+                  </Box>
+                  <Box sx={{ flexShrink: 0 }}>
+                    <MultiFilterFieldColorPicker value={tv.value} />
+                  </Box>
+                </Flex>
+              )}
+            </Stack>
+            <AccordionContent>
+              <Stack spacing={0.5} ml={5}>
+                {tv.children.map((dv) => {
+                  if (dv.children.length > 0) {
+                    // Render tree recursively
+                    return renderDimensionTree(dv.children, depth + 1);
+                  }
+                  return (
+                    <Flex
+                      key={dv.value}
+                      sx={{
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box sx={{ flexGrow: 1 }}>
+                        <MultiFilterFieldCheckbox
+                          label={dv.label}
+                          value={dv.value}
+                        />
+                      </Box>
+                      <Box sx={{ flexShrink: 0 }}>
+                        <MultiFilterFieldColorPicker value={dv.value} />
+                      </Box>
+                    </Flex>
+                  );
+                })}
+              </Stack>
+            </AccordionContent>
+          </Accordion>
+        );
+      })}
+    </>
   );
 };
 
@@ -82,83 +150,30 @@ export const DimensionValuesMultiFilter = ({
   colorConfigPath?: string;
 }) => {
   const locale = useLocale();
-  const [state] = useConfiguratorState();
+
   const [{ data }] = useDimensionValuesQuery({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
-  const dimension = data?.dataCubeByIri?.dimensionByIri;
+  const { data: tree, fetching: fetchingHierarchy } =
+    useHierarchicalDimensionValuesQuery({
+      dimensionIri,
+      locale,
+      dataSetIri,
+    });
 
-  const sortedDimensionValues = useMemo(() => {
-    return dimension?.values
-      ? [...dimension.values].sort((a, b) =>
-          a.label.localeCompare(b.label, locale)
-        )
-      : [];
-  }, [dimension?.values, locale]);
+  const dimensionData = data?.dataCubeByIri?.dimensionByIri;
 
-  const activeFilter = dimension ? getFilterValue(state, dimension.iri) : null;
-  const isFilterActive: Set<string> = useMemo(() => {
-    if (!dimension) {
-      return new Set();
-    }
-    const activeKeys = activeFilter
-      ? activeFilter.type === "single"
-        ? [String(activeFilter.value)]
-        : activeFilter.type === "multi"
-        ? Object.keys(activeFilter.values)
-        : []
-      : [];
-    return new Set(activeKeys);
-  }, [dimension, activeFilter]);
-
-  const selectionState: SelectionState = !activeFilter
-    ? "ALL_SELECTED"
-    : isFilterActive.size === 0
-    ? "NONE_SELECTED"
-    : "SOME_SELECTED";
-
-  if (data?.dataCubeByIri?.dimensionByIri) {
+  if (data?.dataCubeByIri?.dimensionByIri && !fetchingHierarchy) {
     return (
-      <>
-        <SelectionControls
-          dimensionIri={dimensionIri}
-          selectionState={selectionState}
-        />
-
-        {sortedDimensionValues.map((dv) => {
-          if (state.state === "CONFIGURING_CHART") {
-            const path = colorConfigPath ? `${colorConfigPath}.` : "";
-
-            const color = get(
-              state,
-              `chartConfig.fields["${state.activeField}"].${path}colorMapping["${dv.value}"]`
-            );
-
-            return (
-              <MultiFilterField
-                key={dv.value}
-                dimensionIri={dimensionIri}
-                label={dv.label}
-                value={dv.value}
-                allValues={dimension?.values.map((d) => d.value) ?? []}
-                checked={
-                  selectionState === "ALL_SELECTED"
-                    ? true
-                    : selectionState === "SOME_SELECTED"
-                    ? !!isFilterActive.has(dv.value)
-                    : undefined
-                }
-                checkAction={selectionState === "NONE_SELECTED" ? "SET" : "ADD"}
-                color={color}
-                colorConfigPath={colorConfigPath}
-              />
-            );
-          } else {
-            return null;
-          }
-        })}
-      </>
+      <MultiFilterContextProvider
+        dimensionData={dimensionData}
+        dimensionIri={dimensionIri}
+        colorConfigPath={colorConfigPath}
+      >
+        <SelectionControls dimensionIri={dimensionIri} />
+        {tree ? renderDimensionTree(tree) : null}
+      </MultiFilterContextProvider>
     );
   } else {
     return <Loading />;
