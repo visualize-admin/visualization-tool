@@ -9,7 +9,7 @@ import { Icon, IconName } from "../../icons";
 import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
-import { ShapeFeature } from "./chart-map-prototype";
+import { ShapeFeature } from "./chart-map";
 import { MapState } from "./map-state";
 import { useMapTooltip } from "./map-tooltip";
 
