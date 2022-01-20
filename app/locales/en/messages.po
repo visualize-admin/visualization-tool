@@ -45,9 +45,13 @@ msgstr "Categories"
 msgid "browse.dataset.create-visualization"
 msgstr "Create visualization"
 
-#: app/configurator/components/select-dataset-step.tsx:123
+#: app/configurator/components/select-dataset-step.tsx:129
 msgid "browse.datasets.all-datasets"
 msgstr "All Datasets"
+
+#: app/configurator/components/select-dataset-step.tsx:141
+msgid "browse.datasets.description"
+msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"

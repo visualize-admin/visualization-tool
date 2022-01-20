@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Link, Text } from "theme-ui";
+import { Box, Button, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { DataSetHint } from "../../components/hint";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
@@ -10,6 +10,7 @@ import { useConfiguratorState, useLocale } from "../../src";
 import {
   BrowseStateProvider,
   buildURLFromBrowseState,
+  DataCubeAbout,
   DatasetResults,
   SearchDatasetBox,
   SearchFilters,
@@ -86,18 +87,18 @@ export const SelectDatasetStepContent = () => {
     >
       <PanelLeftWrapper
         raised={false}
-        sx={{ mt: "2.25rem", bg: "transparent" }}
+        sx={{ pt: "1.25rem", bg: "transparent" }}
       >
         {dataset ? (
           <>
             <Box px={4}>
               <NextLink passHref href={backLink}>
-                <Link variant="primary">
+                <Button variant="secondary">
                   ←{" "}
                   <Trans id="dataset-preview.back-to-results">
                     Back to the list
                   </Trans>
-                </Link>
+                </Button>
               </NextLink>
             </Box>
             <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
@@ -113,16 +114,44 @@ export const SelectDatasetStepContent = () => {
         }}
       >
         <Box sx={{ maxWidth: 900 }}>
-          <Text variant="heading1" sx={{ mb: 4 }}>
-            {dataset ? null : filters.length > 0 ? (
-              filters
-                .filter((f) => f.__typename !== "DataCubeAbout")
-                .map((f) => (f.__typename !== "DataCubeAbout" ? f.label : null))
-                .join(", ")
-            ) : (
-              <Trans id="browse.datasets.all-datasets">All datasets</Trans>
-            )}
-          </Text>
+          {dataset ? null : filters.length > 0 ? (
+            filters
+              .filter(
+                (f): f is Exclude<typeof f, DataCubeAbout> =>
+                  f.__typename !== "DataCubeAbout"
+              )
+              .map((f) => f.label)
+              .join(", ")
+          ) : (
+            <>
+              <Text
+                variant="heading1"
+                color="monochrome800"
+                mb={4}
+                sx={{ display: "block" }}
+              >
+                <Trans id="browse.datasets.all-datasets">All datasets</Trans>
+              </Text>
+              <Text
+                variant="paragraph1"
+                color="monochrome800"
+                sx={{
+                  mb: 4,
+                  maxWidth: 800,
+                  fontWeight: "light",
+                  display: "block",
+                }}
+              >
+                <Trans id="browse.datasets.description">
+                  Explore datasets provided by the LINDAS Linked Data Service by
+                  either filtering by categories or organisations or search
+                  directly for specific keywords. Click on a dataset to see more
+                  detailed information and start creating your own
+                  visualizations.
+                </Trans>
+              </Text>
+            </>
+          )}
           {dataset ? null : (
             <Box mb={4}>
               <SearchDatasetBox browseState={browseState} searchResult={data} />
