@@ -33,7 +33,7 @@ const server = new ApolloServer({
       geoCoordinates: new DataLoader(
         createGeoCoordinatesLoader({ locale: req.headers["accept-language"] }),
         {
-          maxBatchSize: MAX_BATCH_SIZE,
+          maxBatchSize: MAX_BATCH_SIZE * 0.5,
         }
       ),
       geoShapes: new DataLoader(
