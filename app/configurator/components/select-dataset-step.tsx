@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Link, Text } from "theme-ui";
+import { Box, Button, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
 import { DataSetHint } from "../../components/hint";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
@@ -86,18 +86,18 @@ export const SelectDatasetStepContent = () => {
     >
       <PanelLeftWrapper
         raised={false}
-        sx={{ mt: "2.25rem", bg: "transparent" }}
+        sx={{ pt: "1.25rem", bg: "transparent" }}
       >
         {dataset ? (
           <>
             <Box px={4}>
               <NextLink passHref href={backLink}>
-                <Link variant="primary">
+                <Button variant="secondary">
                   ←{" "}
                   <Trans id="dataset-preview.back-to-results">
                     Back to the list
                   </Trans>
-                </Link>
+                </Button>
               </NextLink>
             </Box>
             <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
