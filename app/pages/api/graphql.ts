@@ -18,6 +18,33 @@ const MAX_BATCH_SIZE = 500;
 
 const cors = configureCors();
 
+const makeLoaders = (req: any) => {
+  return {
+    dimensionValues: new DataLoader(createCubeDimensionValuesLoader(), {
+      cacheKeyFn: (dim) => dim.dimension.path?.value,
+    }),
+    filteredDimensionValues: new Map<string, DataLoader<unknown, unknown>>(),
+    geoCoordinates: new DataLoader(
+      createGeoCoordinatesLoader({ locale: req.headers["accept-language"] }),
+      {
+        maxBatchSize: MAX_BATCH_SIZE * 0.5,
+      }
+    ),
+    geoShapes: new DataLoader(
+      createGeoShapesLoader({ locale: req.headers["accept-language"] }),
+      { maxBatchSize: MAX_BATCH_SIZE }
+    ),
+    themes: new DataLoader(
+      createThemeLoader({ locale: req.headers["accept-language"] })
+    ),
+    organizations: new DataLoader(
+      createOrganizationLoader({ locale: req.headers["accept-language"] })
+    ),
+  } as const;
+};
+
+export type Loaders = ReturnType<typeof makeLoaders>;
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -26,27 +53,7 @@ const server = new ApolloServer({
     return err;
   },
   context: ({ req }) => ({
-    loaders: {
-      dimensionValues: new DataLoader(createCubeDimensionValuesLoader(), {
-        cacheKeyFn: (dim) => dim.dimension.path?.value,
-      }),
-      geoCoordinates: new DataLoader(
-        createGeoCoordinatesLoader({ locale: req.headers["accept-language"] }),
-        {
-          maxBatchSize: MAX_BATCH_SIZE * 0.5,
-        }
-      ),
-      geoShapes: new DataLoader(
-        createGeoShapesLoader({ locale: req.headers["accept-language"] }),
-        { maxBatchSize: MAX_BATCH_SIZE }
-      ),
-      themes: new DataLoader(
-        createThemeLoader({ locale: req.headers["accept-language"] })
-      ),
-      organizations: new DataLoader(
-        createOrganizationLoader({ locale: req.headers["accept-language"] })
-      ),
-    },
+    loaders: makeLoaders(req),
   }),
   // Enable playground in production
   introspection: true,

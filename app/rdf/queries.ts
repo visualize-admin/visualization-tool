@@ -197,9 +197,11 @@ export const getCube = async ({
 export const getCubeDimensions = async ({
   cube,
   locale,
+  filters,
 }: {
   cube: Cube;
   locale: string;
+  filters?: Filters | null;
 }): Promise<ResolvedDimension[]> => {
   try {
     const dimensions = cube.dimensions.filter(
@@ -238,23 +240,21 @@ export const getCubeDimensions = async ({
 };
 
 export const createCubeDimensionValuesLoader =
-  () => async (dimensions: readonly ResolvedDimension[]) => {
+  (filters?: Filters) => async (dimensions: readonly ResolvedDimension[]) => {
     const result: DimensionValue[][] = [];
 
     for (const dimension of dimensions) {
-      const dimensionValues = await getCubeDimensionValues(dimension);
+      const dimensionValues = await getCubeDimensionValues(dimension, filters);
       result.push(dimensionValues);
     }
 
     return result;
   };
 
-export const getCubeDimensionValues = async ({
-  dimension,
-  cube,
-  locale,
-  data,
-}: ResolvedDimension): Promise<DimensionValue[]> => {
+export const getCubeDimensionValues = async (
+  { dimension, cube, locale, data }: ResolvedDimension,
+  filters?: Filters
+): Promise<DimensionValue[]> => {
   if (data.dataKind === "Time") {
     // return interpolateTimeValues({
     //   dataType: data.dataType,
@@ -267,8 +267,8 @@ export const getCubeDimensionValues = async ({
   }
 
   if (
-    dimension.minInclusive !== undefined &&
-    dimension.maxInclusive !== undefined
+    typeof dimension.minInclusive !== "undefined" &&
+    typeof dimension.maxInclusive !== "undefined"
   ) {
     const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
     const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;
@@ -283,6 +283,7 @@ export const getCubeDimensionValues = async ({
     dimension,
     cube,
     locale,
+    filters,
   });
 };
 
@@ -328,20 +329,26 @@ const getCubeDimensionValuesWithLabels = async ({
   dimension,
   cube,
   locale,
+  filters,
 }: {
   dimension: CubeDimension;
   cube: Cube;
   locale: string;
+  filters?: Filters;
 }): Promise<DimensionValue[]> => {
   const load = async () => {
     const loaders = [
-      () => dimension.in || [],
+      !filters ? () => dimension.in || [] : undefined,
       () =>
-        loadDimensionValues({
-          datasetIri: cube.term,
-          dimensionIri: dimension.path,
-        }),
-    ];
+        loadDimensionValues(
+          {
+            datasetIri: cube.term,
+            dimension,
+            cube,
+          },
+          filters
+        ),
+    ].filter(truthy);
 
     for (const loader of loaders) {
       const dimensionValues = await loader();

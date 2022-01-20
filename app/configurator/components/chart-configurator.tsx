@@ -62,7 +62,11 @@ export const ChartConfigurator = ({
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: { iri: state.dataSet, locale },
+    variables: {
+      iri: state.dataSet,
+      locale,
+      filters: state.chartConfig.filters,
+    },
   });
 
   if (data?.dataCubeByIri) {
