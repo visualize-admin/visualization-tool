@@ -1,3 +1,4 @@
+import { groupBy } from "lodash";
 import {
   ChartConfig,
   ChartType,
@@ -7,9 +8,7 @@ import {
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
 import {
   getCategoricalDimensions,
-  getGeoCoordinatesDimensions,
   getGeoDimensions,
-  getGeoShapesDimensions,
   getTimeDimensions,
 } from "../domain/data";
 import { DimensionMetaDataFragment } from "../graphql/query-hooks";
@@ -253,8 +252,10 @@ export const getInitialConfig = ({
         ),
       };
     case "map":
-      const geoShapesDimensions = getGeoShapesDimensions(dimensions);
-      const geoCoordinatesDimensions = getGeoCoordinatesDimensions(dimensions);
+      const {
+        GeoShapesDimension: geoShapes = [],
+        GeoCoordinatesDimension: geoCoordinates = [],
+      } = groupBy(getGeoDimensions(dimensions), (d) => d.__typename);
 
       return {
         chartType,
@@ -273,8 +274,8 @@ export const getInitialConfig = ({
         },
         fields: {
           areaLayer: {
-            show: geoShapesDimensions.length > 0,
-            componentIri: geoShapesDimensions[0]?.iri || "",
+            show: geoShapes.length > 0,
+            componentIri: geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
             hierarchyLevel: 1,
             palette: "oranges",
@@ -282,11 +283,8 @@ export const getInitialConfig = ({
             paletteType: "continuous",
           },
           symbolLayer: {
-            show: geoShapesDimensions.length === 0,
-            componentIri:
-              geoCoordinatesDimensions[0]?.iri ||
-              geoShapesDimensions[0]?.iri ||
-              "",
+            show: geoShapes.length === 0,
+            componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
             hierarchyLevel: 1,
             color: "#1f77b4",

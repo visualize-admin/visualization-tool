@@ -59,6 +59,7 @@ export const ChartMapVisualization = ({
       filters: queryFilters,
     },
   });
+
   const dimensions = data?.dataCubeByIri?.dimensions;
   const measures = data?.dataCubeByIri?.measures;
   const observations = data?.dataCubeByIri?.observations.data as
