@@ -273,16 +273,16 @@ export const getInitialConfig = ({
         },
         fields: {
           areaLayer: {
+            show: geoShapesDimensions.length > 0,
             componentIri: geoShapesDimensions[0]?.iri || "",
             measureIri: measures[0].iri,
             hierarchyLevel: 1,
-            show: geoShapesDimensions.length > 0,
-            label: { componentIri: dimensions[0].iri },
             palette: "oranges",
             nbClass: 5,
             paletteType: "continuous",
           },
           symbolLayer: {
+            show: geoShapesDimensions.length === 0,
             componentIri:
               geoCoordinatesDimensions[0]?.iri ||
               geoShapesDimensions[0]?.iri ||
@@ -290,7 +290,6 @@ export const getInitialConfig = ({
             measureIri: measures[0].iri,
             hierarchyLevel: 1,
             color: "#1f77b4",
-            show: geoShapesDimensions.length === 0 ? true : false,
           },
         },
         settings: {
@@ -306,10 +305,8 @@ export const getInitialConfig = ({
 };
 
 export const getPossibleChartType = ({
-  chartTypes = enabledChartTypes,
   meta,
 }: {
-  chartTypes?: ChartType[];
   meta: DataCubeMetadata;
 }): ChartType[] => {
   const { measures, dimensions } = meta;
