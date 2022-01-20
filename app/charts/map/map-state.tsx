@@ -181,7 +181,7 @@ const useMapState = ({
     () =>
       getDataByHierarchy({
         geoDimensionIri: areaLayer.componentIri,
-        hierarchyLevel: +areaLayer.hierarchyLevel,
+        hierarchyLevel: areaLayer.hierarchyLevel,
         getLabel: getAreaLabel,
       }),
     [
@@ -196,7 +196,7 @@ const useMapState = ({
     () =>
       getDataByHierarchy({
         geoDimensionIri: symbolLayer.componentIri,
-        hierarchyLevel: +symbolLayer.hierarchyLevel,
+        hierarchyLevel: symbolLayer.hierarchyLevel,
         getLabel: getSymbolLabel,
       }),
     [
@@ -276,7 +276,7 @@ const useMapState = ({
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,
-      hierarchyLevel: +areaLayer.hierarchyLevel,
+      hierarchyLevel: areaLayer.hierarchyLevel,
       show: fields.areaLayer.show,
       measureLabel: areaMeasureLabel,
       getLabel: getAreaLabel,
@@ -290,7 +290,7 @@ const useMapState = ({
     },
     symbolLayer: {
       data: symbolData,
-      hierarchyLevel: +symbolLayer.hierarchyLevel,
+      hierarchyLevel: symbolLayer.hierarchyLevel,
       color: fields.symbolLayer.color,
       measureLabel: symbolMeasureLabel,
       show: fields.symbolLayer.show,

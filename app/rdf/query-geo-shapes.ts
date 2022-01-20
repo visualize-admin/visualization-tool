@@ -163,8 +163,9 @@ const createHierarchy = ({
     return go({ tree, level: level + 1, iris: parentIris });
   };
 
-  return go({
-    tree: [],
-    iris: narrowerValues.filter((d) => !d.narrower).map((d) => d.iri),
-  });
+  const lowestLevelIris = narrowerValues
+    .filter((d) => !d.narrower)
+    .map((d) => d.iri);
+
+  return go({ tree: [], iris: lowestLevelIris });
 };

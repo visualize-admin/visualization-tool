@@ -149,11 +149,11 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="chartMap">Hierarchy level</SectionTitle>
+          <SectionTitle iconName="list">Hierarchy level</SectionTitle>
           <ControlSectionContent side="right">
-            <ChartOptionSelectField
+            <ChartOptionSelectField<number>
               id="areaLayer.hierarchyLevel"
-              label="Select a hierarchy level"
+              label="Select a hierarchy level (1 - lowest)"
               field={activeField}
               path="hierarchyLevel"
               options={[
@@ -162,7 +162,8 @@ export const AreaLayerSettings = memo(
                     (d: HierarchyLevel) => d.level
                   )
                 ),
-              ].map((d) => ({ value: d, label: String(d) }))}
+              ].map((d) => ({ value: d, label: `${d}` }))}
+              getValue={(d) => +d}
               disabled={disabled}
             ></ChartOptionSelectField>
           </ControlSectionContent>
