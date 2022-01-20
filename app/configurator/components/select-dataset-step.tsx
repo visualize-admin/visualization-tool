@@ -10,6 +10,7 @@ import { useConfiguratorState, useLocale } from "../../src";
 import {
   BrowseStateProvider,
   buildURLFromBrowseState,
+  DataCubeAbout,
   DatasetResults,
   SearchDatasetBox,
   SearchFilters,
@@ -115,8 +116,11 @@ export const SelectDatasetStepContent = () => {
         <Box sx={{ maxWidth: 900 }}>
           {dataset ? null : filters.length > 0 ? (
             filters
-              .filter((f) => f.__typename !== "DataCubeAbout")
-              .map((f) => (f.__typename !== "DataCubeAbout" ? f.label : null))
+              .filter(
+                (f): f is Exclude<typeof f, DataCubeAbout> =>
+                  f.__typename !== "DataCubeAbout"
+              )
+              .map((f) => f.label)
               .join(", ")
           ) : (
             <>
@@ -134,7 +138,7 @@ export const SelectDatasetStepContent = () => {
                 sx={{
                   mb: 4,
                   maxWidth: 800,
-                  fontWeight:"light",
+                  fontWeight: "light",
                   display: "block",
                 }}
               >
