@@ -1,7 +1,18 @@
 import { Trans } from "@lingui/macro";
+import { sortBy } from "lodash";
 import * as React from "react";
+import { useCallback } from "react";
 import { Box } from "theme-ui";
-import { ChartConfig, ConfiguratorStateConfiguringChart } from "..";
+import {
+  ChartConfig,
+  ConfiguratorStateConfiguringChart,
+  useConfiguratorState,
+} from "..";
+
+import {
+  ensureFilterValuesCorrect,
+  moveFilterField,
+} from "../configurator-state";
 import { getFieldComponentIris } from "../../charts";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
@@ -22,17 +33,46 @@ import {
 const DataFilterSelectGeneric = ({
   dimension,
   index,
+  onMove,
 }: {
   dimension: DataCubeMetadata["dimensions"][number];
   isOptional?: boolean;
   index: number;
+  onMove: (n: number) => void;
 }) => {
+  const controls = (
+    <>
+      <button
+        style={{
+          background: "transparent",
+          cursor: "pointer",
+          color: "#666",
+          border: "transparent",
+        }}
+        onClick={() => onMove(-1)}
+      >
+        ▲
+      </button>
+      <button
+        style={{
+          background: "transparent",
+          cursor: "pointer",
+          color: "#666",
+          border: "transparent",
+        }}
+        onClick={() => onMove(1)}
+      >
+        ▼
+      </button>
+    </>
+  );
   return (
     <Box sx={{ px: 2, mb: 2 }}>
       {dimension.__typename === "TemporalDimension" ? (
         <DataFilterSelectTime
           dimensionIri={dimension.iri}
           label={`${index + 1}. ${dimension.label}`}
+          controls={controls}
           from={dimension.values[0].value}
           to={dimension.values[1].value}
           timeUnit={dimension.timeUnit}
@@ -45,6 +85,7 @@ const DataFilterSelectGeneric = ({
         <DataFilterSelect
           dimensionIri={dimension.iri}
           label={`${index + 1}. ${dimension.label}`}
+          controls={controls}
           options={dimension.values}
           disabled={false}
           id={`select-single-filter-${index}`}
@@ -61,20 +102,78 @@ export const ChartConfigurator = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
-    variables: {
+  const [, dispatch] = useConfiguratorState();
+  const variables = React.useMemo(
+    () => ({
+      date: new Date(),
       iri: state.dataSet,
       locale,
       filters: state.chartConfig.filters,
+    }),
+    [state, locale]
+  );
+  const [{ data, fetching }, executeQuery] =
+    useDataCubeMetadataWithComponentValuesQuery({
+      variables: variables,
+    });
+  const metaData = data?.dataCubeByIri;
+
+  const handleMove = useCallback(
+    (dimensionIri: string, delta: number) => {
+      if (!metaData) {
+        return;
+      }
+
+      const chartConfig = moveFilterField(state.chartConfig, {
+        dimensionIri,
+        delta,
+      });
+
+      dispatch({
+        type: "CHART_CONFIG_REPLACED",
+        value: {
+          chartConfig,
+          dataSetMetadata: metaData,
+        },
+      });
     },
-  });
+    [dispatch, metaData, state.chartConfig]
+  );
+
+  React.useEffect(() => {
+    executeQuery({
+      requestPolicy: "network-only",
+      variables,
+    });
+  }, [variables, executeQuery]);
+
+  React.useEffect(() => {
+    if (!metaData || !data || !data.dataCubeByIri) {
+      return;
+    }
+    // Make sure that the filters are in line with the values
+    const chartConfig = ensureFilterValuesCorrect(state.chartConfig, {
+      dimensions: data.dataCubeByIri.dimensions,
+    });
+
+    dispatch({
+      type: "CHART_CONFIG_REPLACED",
+      value: {
+        chartConfig,
+        dataSetMetadata: metaData,
+      },
+    });
+  }, [data, dispatch, metaData, state.chartConfig]);
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
-    const filterDimensions = data?.dataCubeByIri.dimensions
-      .filter((dim) => !mappedIris.has(dim.iri))
-      .sort((a, b) => (a.isKeyDimension ? 0 : 1));
-
+    const keysOrder = Object.fromEntries(
+      Object.keys(state.chartConfig.filters).map((k, i) => [k, i])
+    );
+    const filterDimensions = sortBy(
+      data?.dataCubeByIri.dimensions.filter((dim) => !mappedIris.has(dim.iri)),
+      [(x) => keysOrder[x.iri] ?? Infinity]
+    );
     return (
       <>
         <ControlSection>
@@ -96,6 +195,7 @@ export const ChartConfigurator = ({
         <ControlSection>
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>
+            {fetching ? "..." : ""}
           </SectionTitle>
           <ControlSectionContent side="left" aria-labelledby="controls-data">
             {filterDimensions.map((dimension, i) => (
@@ -103,6 +203,7 @@ export const ChartConfigurator = ({
                 key={dimension.iri}
                 dimension={dimension}
                 index={i}
+                onMove={(n) => handleMove(dimension.iri, n)}
               />
             ))}
           </ControlSectionContent>

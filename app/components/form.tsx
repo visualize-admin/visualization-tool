@@ -157,12 +157,14 @@ export const Select = ({
   options,
   onChange,
   sortOptions = true,
+  controls,
 }: {
   id: string;
   options: Option[];
   label?: ReactNode;
   disabled?: boolean;
   sortOptions?: boolean;
+  controls?: React.ReactNode;
 } & SelectProps) => {
   const locale = useLocale();
   const sortedOptions = useMemo(() => {
@@ -181,6 +183,7 @@ export const Select = ({
       {label && (
         <Label htmlFor={id} disabled={disabled} smaller>
           {label}
+          {controls}
         </Label>
       )}
       <TUISelect

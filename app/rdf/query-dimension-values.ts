@@ -81,11 +81,13 @@ export async function loadDimensionValues(
 ): Promise<Array<Literal | NamedNode>> {
   const dimensionIri = dimension.path;
 
-  let filterList = filters ? Object.entries(filters) : [];
-  filterList = filterList.slice(
+  let allFiltersList = filters ? Object.entries(filters) : [];
+  const filterList = allFiltersList.slice(
     0,
-    filterList.findIndex(([iri]) => iri == dimensionIri?.value) + 1
+    allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
   );
+
+  console.log("filters for ", dimensionIri?.value, allFiltersList, filterList);
 
   let query = SELECT.DISTINCT`?value`.WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .

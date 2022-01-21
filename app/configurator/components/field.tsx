@@ -67,6 +67,7 @@ export const DataFilterSelect = ({
   id,
   disabled,
   isOptional,
+  controls,
 }: {
   dimensionIri: string;
   label: string;
@@ -74,6 +75,7 @@ export const DataFilterSelect = ({
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
+  controls: React.ReactNode;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
@@ -106,6 +108,7 @@ export const DataFilterSelect = ({
       label={isOptional ? `${label} (${optionalLabel})` : label}
       disabled={disabled}
       options={allOptions}
+      controls={controls}
       {...fieldProps}
     ></Select>
   );
@@ -121,6 +124,7 @@ export const DataFilterSelectTime = ({
   id,
   disabled,
   isOptional,
+  controls,
 }: {
   dimensionIri: string;
   label: string;
@@ -131,6 +135,7 @@ export const DataFilterSelectTime = ({
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
+  controls?: React.ReactNode;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
   const formatLocale = useTimeFormatLocale();
@@ -184,6 +189,7 @@ export const DataFilterSelectTime = ({
         disabled={disabled}
         options={allOptions}
         sortOptions={false}
+        controls={controls}
         {...fieldProps}
       ></Select>
     );
