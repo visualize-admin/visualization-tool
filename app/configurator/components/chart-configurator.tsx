@@ -19,6 +19,42 @@ import {
   DataFilterSelectTime,
 } from "./field";
 
+const DataFilterSelectGeneric = ({
+  dimension,
+  index,
+}: {
+  dimension: DataCubeMetadata["dimensions"][number];
+  isOptional?: boolean;
+  index: number;
+}) => {
+  return (
+    <Box sx={{ px: 2, mb: 2 }}>
+      {dimension.__typename === "TemporalDimension" ? (
+        <DataFilterSelectTime
+          dimensionIri={dimension.iri}
+          label={`${index + 1}. ${dimension.label}`}
+          from={dimension.values[0].value}
+          to={dimension.values[1].value}
+          timeUnit={dimension.timeUnit}
+          timeFormat={dimension.timeFormat}
+          disabled={false}
+          id={`select-single-filter-${index}`}
+          isOptional={!dimension.isKeyDimension}
+        />
+      ) : (
+        <DataFilterSelect
+          dimensionIri={dimension.iri}
+          label={`${index + 1}. ${dimension.label}`}
+          options={dimension.values}
+          disabled={false}
+          id={`select-single-filter-${index}`}
+          isOptional={!dimension.isKeyDimension}
+        />
+      )}
+    </Box>
+  );
+};
+
 export const ChartConfigurator = ({
   state,
 }: {
@@ -31,12 +67,9 @@ export const ChartConfigurator = ({
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
-    const requiredFilterDimensions = data?.dataCubeByIri.dimensions.filter(
-      (dim) => !mappedIris.has(dim.iri) && dim.isKeyDimension
-    );
-    const optionalFilterDimensions = data?.dataCubeByIri.dimensions.filter(
-      (dim) => !mappedIris.has(dim.iri) && !dim.isKeyDimension
-    );
+    const filterDimensions = data?.dataCubeByIri.dimensions
+      .filter((dim) => !mappedIris.has(dim.iri))
+      .sort((a, b) => (a.isKeyDimension ? 0 : 1));
 
     return (
       <>
@@ -61,55 +94,12 @@ export const ChartConfigurator = ({
             <Trans id="controls.section.data.filters">Filters</Trans>
           </SectionTitle>
           <ControlSectionContent side="left" aria-labelledby="controls-data">
-            {requiredFilterDimensions.map((dimension, i) => (
-              <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
-                {dimension.__typename === "TemporalDimension" ? (
-                  <DataFilterSelectTime
-                    dimensionIri={dimension.iri}
-                    label={dimension.label}
-                    from={dimension.values[0].value}
-                    to={dimension.values[1].value}
-                    timeUnit={dimension.timeUnit}
-                    timeFormat={dimension.timeFormat}
-                    disabled={false}
-                    id={`select-single-filter-${i}`}
-                  />
-                ) : (
-                  <DataFilterSelect
-                    dimensionIri={dimension.iri}
-                    label={dimension.label}
-                    options={dimension.values}
-                    disabled={false}
-                    id={`select-single-filter-${i}`}
-                  />
-                )}
-              </Box>
-            ))}
-            {optionalFilterDimensions.map((dimension, i) => (
-              <Box sx={{ px: 2, mb: 2 }} key={dimension.iri}>
-                {dimension.__typename === "TemporalDimension" ? (
-                  <DataFilterSelectTime
-                    dimensionIri={dimension.iri}
-                    label={dimension.label}
-                    from={dimension.values[0].value}
-                    to={dimension.values[1].value}
-                    timeUnit={dimension.timeUnit}
-                    timeFormat={dimension.timeFormat}
-                    disabled={false}
-                    isOptional
-                    id={`select-single-filter-${i}`}
-                  />
-                ) : (
-                  <DataFilterSelect
-                    dimensionIri={dimension.iri}
-                    label={dimension.label}
-                    options={dimension.values}
-                    disabled={false}
-                    isOptional
-                    id={`select-single-filter-${i}`}
-                  />
-                )}
-              </Box>
+            {filterDimensions.map((dimension, i) => (
+              <DataFilterSelectGeneric
+                key={dimension.iri}
+                dimension={dimension}
+                index={i}
+              />
             ))}
           </ControlSectionContent>
         </ControlSection>
