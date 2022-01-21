@@ -1,23 +1,22 @@
-import "core-js/features/array/flat-map";
 import { I18nProvider } from "@lingui/react";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
 import "@reach/menu-button/styles.css";
+import "core-js/features/array/flat-map";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "theme-ui";
 import { ContentMDXProvider } from "../components/content-mdx-provider";
-import { analyticsPageView } from "../lib/googleAnalytics";
 import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
-import { LocaleProvider } from "../locales/use-locale";
+import { analyticsPageView } from "../lib/googleAnalytics";
+import "../lib/nprogress.css";
 import { useNProgress } from "../lib/use-nprogress";
 import { i18n, parseLocaleString } from "../locales/locales";
+import { LocaleProvider } from "../locales/use-locale";
 import * as defaultTheme from "../themes/federal";
 import { loadTheme, ThemeModule } from "../themes/index";
-
-import "../lib/nprogress.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   const {
@@ -36,10 +35,6 @@ export default function App({ Component, pageProps }: AppProps) {
   if (i18n.locale !== locale) {
     i18n.activate(locale);
   }
-
-  useEffect(() => {
-    document.querySelector("html")?.setAttribute("lang", locale);
-  }, [locale]);
 
   // Load custom theme
   const __theme = query.__theme ? query.__theme.toString() : undefined;
