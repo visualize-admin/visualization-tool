@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "theme-ui";
+import { Box, BoxProps, Flex, Text } from "theme-ui";
 
 import { ElementType, forwardRef, ReactNode } from "react";
 import { Icon, IconName } from "../../../icons";
@@ -10,8 +10,9 @@ export const ControlSection = forwardRef<
     role?: string;
     children: ReactNode;
     isHighlighted?: boolean;
+    sx?: BoxProps["sx"];
   }
->(({ role, children, isHighlighted }, ref) => {
+>(({ role, children, isHighlighted, sx }, ref) => {
   return (
     <Box
       ref={ref}
@@ -27,6 +28,7 @@ export const ControlSection = forwardRef<
         "&:first-of-type": {
           borderTopWidth: 0,
         },
+        ...sx,
       }}
     >
       {children}

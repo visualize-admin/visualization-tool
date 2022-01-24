@@ -192,7 +192,7 @@ export const ChartConfigurator = ({
           </ControlSectionContent>
         </ControlSection>
 
-        <ControlSection>
+        <ControlSection sx={{ flexGrow: 1 }}>
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>
             {fetching ? "..." : ""}

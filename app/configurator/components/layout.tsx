@@ -25,6 +25,10 @@ export const PanelLeftWrapper = ({
         borderRightWidth: raised ? "1px" : undefined,
         borderRightStyle: raised ? "solid" : undefined,
         gridArea: "left",
+        flexGrow: 1,
+        display: "flex",
+        height: "100%",
+        flexDirection: "column",
         ...sx,
       }}
     >
