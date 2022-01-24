@@ -1,4 +1,4 @@
-import { SELECT } from "@tpluscode/sparql-builder";
+import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { ResolvedDimension } from "../graphql/shared-types";
 import * as ns from "./namespace";
 import { dimensionIsVersioned } from "./queries";
@@ -28,7 +28,9 @@ export const createGeoCoordinatesLoader =
         ?observationSet ${ns.cube.observation} ?observation .
         ?observation ${dimension.dimension.path} ${
         isVersioned
-          ? `?dimension_versioned . ?dimension_versioned ${ns.schema.sameAs} ?dimension ;`
+          ? `?dimension_versioned . ?dimension_versioned ${sparql`${ns.schema.sameAs}`.toString(
+              { prologue: false }
+            )} ?dimension ;`
           : `?dimension`
       }
           ${ns.schema.latitude} ?latitude ;
