@@ -34,11 +34,13 @@ const DataFilterSelectGeneric = ({
   dimension,
   index,
   onMove,
+  disabled,
 }: {
   dimension: DataCubeMetadata["dimensions"][number];
   isOptional?: boolean;
   index: number;
   onMove: (n: number) => void;
+  disabled?: boolean;
 }) => {
   const controls = (
     <>
@@ -77,7 +79,7 @@ const DataFilterSelectGeneric = ({
           to={dimension.values[1].value}
           timeUnit={dimension.timeUnit}
           timeFormat={dimension.timeFormat}
-          disabled={false}
+          disabled={disabled}
           id={`select-single-filter-${index}`}
           isOptional={!dimension.isKeyDimension}
         />
@@ -87,7 +89,7 @@ const DataFilterSelectGeneric = ({
           label={`${index + 1}. ${dimension.label}`}
           controls={controls}
           options={dimension.values}
-          disabled={false}
+          disabled={disabled}
           id={`select-single-filter-${index}`}
           isOptional={!dimension.isKeyDimension}
         />
@@ -204,6 +206,7 @@ export const ChartConfigurator = ({
                 dimension={dimension}
                 index={i}
                 onMove={(n) => handleMove(dimension.iri, n)}
+                disabled={fetching}
               />
             ))}
           </ControlSectionContent>
