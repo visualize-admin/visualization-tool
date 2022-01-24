@@ -5,7 +5,6 @@ import {
   GeoCoordinatesDimension,
   GeoShapesDimension,
 } from "../graphql/query-hooks";
-import { HierarchyLevel } from "../rdf/query-geo-shapes";
 
 export type RawObservationValue = Literal | NamedNode;
 
@@ -20,13 +19,12 @@ export type Observation = Record<string, ObservationValue>;
 export type GeoProperties = {
   iri: string;
   label: string;
-  hierarchyLevel?: number;
-  observation?: Observation;
+  hierarchyLevel: number;
+  observation: Observation;
 };
 
 export type GeoShapes = {
   topology: TopoJSON.Topology<TopoJSON.Objects<GeoProperties>>;
-  hierarchy: HierarchyLevel[];
 };
 
 export type GeoFeature = {

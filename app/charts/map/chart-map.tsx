@@ -69,8 +69,8 @@ export const ChartMapVisualization = ({
   const areaLayer: AreaLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === areaDimensionIri);
 
-    if (isGeoShapesDimension(dimension)) {
-      const { hierarchy, topology } = dimension.geoShapes as GeoShapes;
+    if (isGeoShapesDimension(dimension) && observations) {
+      const { topology } = dimension.geoShapes as GeoShapes;
 
       const topojson = topojsonFeature(
         topology,
@@ -79,14 +79,11 @@ export const ChartMapVisualization = ({
 
       topojson.features.forEach((d: GeoFeature) => {
         // Should we match by labels?
-        const observation = observations?.find(
+        const observation = observations.find(
           (o) => o[areaDimensionIri] === d.properties.label
-        );
-        const hierarchyLevel = hierarchy.find(
-          (h) => h.iri === d.properties.iri
-        )?.level;
+        )!;
 
-        d.properties = { ...d.properties, observation, hierarchyLevel };
+        d.properties = { ...d.properties, observation };
       });
 
       return {

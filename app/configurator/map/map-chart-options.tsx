@@ -3,13 +3,12 @@ import React, { memo, useMemo } from "react";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "..";
 import { FieldSetLegend } from "../../components/form";
 import {
-  GeoShapes,
+  GeoFeature,
   getGeoDimensions,
   getGeoShapesDimensions,
 } from "../../domain/data";
 import { GeoShapesDimension } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
-import { HierarchyLevel } from "../../rdf/query-geo-shapes";
 import {
   ControlSection,
   ControlSectionContent,
@@ -122,11 +121,12 @@ export const AreaLayerSettings = memo(
       () =>
         [
           ...new Set(
-            (dimension?.geoShapes as GeoShapes)?.hierarchy.map(
-              (d: HierarchyLevel) => d.level
-            )
+            (
+              (dimension?.geoShapes as any)?.topology?.objects?.shapes
+                ?.geometries as GeoFeature[]
+            )?.map((d) => d.properties.hierarchyLevel)
           ),
-        ].map((d) => ({ value: d, label: `${d}` })),
+        ]?.map((d) => ({ value: d, label: `${d}` })),
       [dimension?.geoShapes]
     );
 

@@ -27,7 +27,7 @@ import {
 } from "../../configurator/config-types";
 import {
   GeoData,
-  GeoShapes,
+  GeoFeature,
   isGeoShapesDimension,
   Observation,
 } from "../../domain/data";
@@ -148,7 +148,7 @@ const useMapState = ({
   const getAreaValue = useOptionalNumericVariable(areaLayer.measureIri);
   const getSymbolValue = useOptionalNumericVariable(symbolLayer.measureIri);
 
-  const getDataByHierarchy = useCallback(
+  const getDataByHierarchyLevel = useCallback(
     ({
       geoDimensionIri,
       hierarchyLevel,
@@ -160,10 +160,14 @@ const useMapState = ({
     }) => {
       const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
 
+      // Right now hierarchies are only created for geoShapes
       if (isGeoShapesDimension(dimension)) {
-        const hierarchyLabels = (dimension.geoShapes as GeoShapes).hierarchy
-          .filter((d) => d.level === hierarchyLevel)
-          .map((d) => d.label);
+        const hierarchyLabels = (
+          (dimension.geoShapes as any).topology.objects.shapes
+            .geometries as GeoFeature[]
+        )
+          .filter((d) => d.properties.hierarchyLevel === hierarchyLevel)
+          .map((d) => d.properties.label);
 
         return data.filter((d) => hierarchyLabels.includes(getLabel(d)));
       }
@@ -175,7 +179,7 @@ const useMapState = ({
 
   const areaData = useMemo(
     () =>
-      getDataByHierarchy({
+      getDataByHierarchyLevel({
         geoDimensionIri: areaLayer.componentIri,
         hierarchyLevel: areaLayer.hierarchyLevel,
         getLabel: getAreaLabel,
@@ -184,13 +188,13 @@ const useMapState = ({
       areaLayer.componentIri,
       areaLayer.hierarchyLevel,
       getAreaLabel,
-      getDataByHierarchy,
+      getDataByHierarchyLevel,
     ]
   );
 
   const symbolData = useMemo(
     () =>
-      getDataByHierarchy({
+      getDataByHierarchyLevel({
         geoDimensionIri: symbolLayer.componentIri,
         hierarchyLevel: symbolLayer.hierarchyLevel,
         getLabel: getSymbolLabel,
@@ -199,7 +203,7 @@ const useMapState = ({
       symbolLayer.componentIri,
       symbolLayer.hierarchyLevel,
       getSymbolLabel,
-      getDataByHierarchy,
+      getDataByHierarchyLevel,
     ]
   );
 

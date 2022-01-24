@@ -345,7 +345,8 @@ export const resolvers: Resolvers = {
           properties: {
             iri: d.iri,
             label: d.label,
-            level: d.level,
+            hierarchyLevel: d.level,
+            observation: {},
           },
           geometry: parseWKT(d.wktString),
         })) as GeoFeature[];
@@ -357,11 +358,6 @@ export const resolvers: Resolvers = {
             features: geoJSONFeatures,
           } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
         }) as GeoShapes["topology"],
-        hierarchy: shapes.map((d) => ({
-          iri: d.iri,
-          label: d.label,
-          level: d.level,
-        })),
       };
 
       return resolved;

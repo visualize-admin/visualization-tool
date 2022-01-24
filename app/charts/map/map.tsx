@@ -141,8 +141,9 @@ export const MapComponent = () => {
   const shapes = useMemo(
     () => ({
       ...features.areaLayer?.shapes,
-      features: (features.areaLayer?.shapes as any)?.features.filter(
-        (d: any) => d.properties.hierarchyLevel === areaLayer.hierarchyLevel
+      features: features.areaLayer?.shapes?.features.filter(
+        ({ properties: { hierarchyLevel } }: GeoFeature) =>
+          hierarchyLevel === areaLayer.hierarchyLevel
       ),
     }),
     [areaLayer.hierarchyLevel, features.areaLayer?.shapes]
@@ -241,9 +242,7 @@ export const MapComponent = () => {
                 getFillColor: [areaLayer.getValue, areaLayer.getColor],
               }}
               getFillColor={({ properties: { observation } }: GeoFeature) =>
-                areaLayer.getColor(
-                  observation ? areaLayer.getValue(observation) : null
-                )
+                areaLayer.getColor(areaLayer.getValue(observation))
               }
             />
             <GeoJsonLayer
