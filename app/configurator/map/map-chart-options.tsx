@@ -106,14 +106,40 @@ export const AreaLayerSettings = memo(
       () => getGeoShapesDimensions(metaData.dimensions),
       [metaData.dimensions]
     );
+    const geoShapesDimensionsOptions = useMemo(
+      () =>
+        geoShapesDimensions.map((d) => ({
+          value: d.iri,
+          label: d.label,
+        })),
+      [geoShapesDimensions]
+    );
     const dimension = geoShapesDimensions.find(
       (d) => d.iri === chartConfig.fields.areaLayer.componentIri
     ) as GeoShapesDimension;
 
-    const disabled = useMemo(
-      () => !chartConfig.fields.areaLayer.show,
-      [chartConfig.fields.areaLayer.show]
+    const hierarchyLevelOptions = useMemo(
+      () =>
+        [
+          ...new Set(
+            (dimension?.geoShapes as GeoShapes)?.hierarchy.map(
+              (d: HierarchyLevel) => d.level
+            )
+          ),
+        ].map((d) => ({ value: d, label: `${d}` })),
+      [dimension?.geoShapes]
     );
+
+    const measuresOptions = useMemo(
+      () =>
+        metaData.measures.map((d) => ({
+          value: d.iri,
+          label: d.label,
+        })),
+      [metaData.measures]
+    );
+
+    const disabled = !chartConfig.fields.areaLayer.show;
 
     return (
       <>
@@ -145,10 +171,7 @@ export const AreaLayerSettings = memo(
               label="Select a dimension"
               field={activeField}
               path="componentIri"
-              options={geoShapesDimensions.map((d) => ({
-                value: d.iri,
-                label: d.label,
-              }))}
+              options={geoShapesDimensionsOptions}
               disabled={disabled}
             ></ChartOptionSelectField>
           </ControlSectionContent>
@@ -161,13 +184,7 @@ export const AreaLayerSettings = memo(
               label="Select a hierarchy level (1 - lowest)"
               field={activeField}
               path="hierarchyLevel"
-              options={[
-                ...new Set(
-                  (dimension?.geoShapes as GeoShapes)?.hierarchy.map(
-                    (d: HierarchyLevel) => d.level
-                  )
-                ),
-              ].map((d) => ({ value: d, label: `${d}` }))}
+              options={hierarchyLevelOptions}
               getValue={(d) => +d}
               disabled={disabled}
             ></ChartOptionSelectField>
@@ -181,10 +198,7 @@ export const AreaLayerSettings = memo(
               label="Select a measure"
               field={activeField}
               path="measureIri"
-              options={metaData.measures.map((d) => ({
-                value: d.iri,
-                label: d.label,
-              }))}
+              options={measuresOptions}
               disabled={disabled}
             ></ChartOptionSelectField>
           </ControlSectionContent>
@@ -271,10 +285,25 @@ export const SymbolLayerSettings = memo(
       () => getGeoDimensions(metaData.dimensions),
       [metaData.dimensions]
     );
-    const disabled = useMemo(
-      () => !chartConfig.fields.symbolLayer.show,
-      [chartConfig.fields.symbolLayer.show]
+    const geoDimensionsOptions = useMemo(
+      () =>
+        geoDimensions.map((d) => ({
+          value: d.iri,
+          label: d.label,
+        })),
+      [geoDimensions]
     );
+
+    const measuresOptions = useMemo(
+      () =>
+        metaData.measures.map((d) => ({
+          value: d.iri,
+          label: d.label,
+        })),
+      [metaData.measures]
+    );
+
+    const disabled = !chartConfig.fields.symbolLayer.show;
 
     return (
       <>
@@ -306,10 +335,7 @@ export const SymbolLayerSettings = memo(
               label="Select a dimension"
               field={activeField}
               path="componentIri"
-              options={geoDimensions.map((d) => ({
-                value: d.iri,
-                label: d.label,
-              }))}
+              options={geoDimensionsOptions}
               disabled={disabled}
             ></ChartOptionSelectField>
           </ControlSectionContent>
@@ -322,10 +348,7 @@ export const SymbolLayerSettings = memo(
               label="Select a measure"
               field={activeField}
               path="measureIri"
-              options={metaData.measures.map((d) => ({
-                value: d.iri,
-                label: d.label,
-              }))}
+              options={measuresOptions}
               disabled={disabled}
             ></ChartOptionSelectField>
           </ControlSectionContent>
