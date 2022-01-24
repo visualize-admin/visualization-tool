@@ -1,6 +1,7 @@
 import {
   axisBottom,
   interpolateOranges,
+  NumberValue,
   range,
   ScaleLinear,
   scaleLinear,
@@ -11,13 +12,14 @@ import {
   Selection,
 } from "d3";
 import * as React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Box, Flex, Text } from "theme-ui";
 import {
   getColorInterpolator,
   useFormatInteger,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { useChartTheme } from "../shared/use-chart-theme";
 import { useInteraction } from "../shared/use-interaction";
@@ -30,6 +32,42 @@ const COLOR_RAMP_HEIGHT = 10;
 const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
 
 const useLegendWidth = () => Math.min(useWidth(), MAX_WIDTH);
+
+const makeAxis = (
+  g: Selection<SVGGElement, unknown, null, undefined>,
+  {
+    axisLabelColor,
+    fontFamily,
+    formatNumber,
+    labelColor,
+    legendFontSize,
+    scale,
+    thresholds,
+  }: {
+    axisLabelColor: string;
+    fontFamily: string;
+    formatNumber: (x: NumberValue | undefined | null) => string;
+    labelColor: string;
+    legendFontSize: number;
+    scale: ScaleLinear<number, number, number>;
+    thresholds: number[];
+  }
+) => {
+  g.call(
+    axisBottom(scale)
+      .tickValues(thresholds)
+      .tickSizeInner(-COLOR_RAMP_HEIGHT)
+      .tickFormat(formatNumber)
+  );
+  g.select("path.domain").remove();
+  g.selectAll(".tick line").attr("stroke", axisLabelColor);
+  g.selectAll(".tick text")
+    .attr("font-size", legendFontSize)
+    .attr("font-family", fontFamily)
+    .attr("fill", labelColor)
+    .attr("transform", "rotate(45)")
+    .attr("text-anchor", "start");
+};
 
 export const MapLegend = () => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
@@ -92,15 +130,18 @@ const CircleLegend = () => {
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
 
-  const value =
-    interaction.d && typeof getValue(interaction.d) === "number"
-      ? getValue(interaction.d)
-      : undefined;
+  const maybeValue = interaction.d && getValue(interaction.d);
+  const value = typeof maybeValue === "number" ? maybeValue : undefined;
 
-  const radius = value ? radiusScale(value) : undefined;
+  const radius = value && radiusScale(value);
   const maxRadius = radiusScale.range()[1];
 
   const color = value ? symbolColor : undefined;
+
+  const domainObservations = useMemo(
+    () => dataDomain.map((d) => data.find((x) => getValue(x) === d)),
+    [data, dataDomain, getValue]
+  ) as [Observation, Observation];
 
   return (
     <svg width={width} height={HEIGHT}>
@@ -111,55 +152,54 @@ const CircleLegend = () => {
       >
         {dataDomain.map((d, i) => {
           // FIXME: Potentially a performance problem if a lot of data
-          const observation = data.find((x) => getValue(x) === d);
-          const label = observation ? getLabel(observation) : "";
+          const observation = domainObservations[i];
+          const label = getLabel(observation);
           const radius = radiusScale(d);
 
-          return i == 0 && interaction.visible
-            ? null
-            : observation && (
-                <>
-                  {
-                    <g transform={`translate(0, ${maxRadius - radius})`}>
-                      <circle
-                        cx={0}
-                        cy={0}
-                        r={radius}
-                        fill="none"
-                        stroke={axisLabelColor}
-                      />
-                      {!interaction.visible && (
-                        <>
-                          <line
-                            x1={0}
-                            y1={-radius}
-                            x2={maxRadius + 4}
-                            y2={-radius}
-                            stroke={axisLabelColor}
-                          />
-                          <text
-                            x={maxRadius + 6}
-                            y={-radius}
-                            dy={5}
-                            fill={axisLabelColor}
-                            textAnchor="start"
-                            fontSize={legendFontSize}
-                          >
-                            {formatNumber(d)} ({label})
-                          </text>
-                        </>
-                      )}
-                    </g>
-                  }
-                </>
-              );
+          return (
+            observation && (
+              <>
+                {
+                  <g transform={`translate(0, ${maxRadius - radius})`}>
+                    <circle
+                      cx={0}
+                      cy={0}
+                      r={radius}
+                      fill="none"
+                      stroke={axisLabelColor}
+                    />
+                    {!interaction.visible && (
+                      <>
+                        <line
+                          x1={0}
+                          y1={-radius}
+                          x2={maxRadius + 4}
+                          y2={-radius}
+                          stroke={axisLabelColor}
+                        />
+                        <text
+                          x={maxRadius + 6}
+                          y={-radius}
+                          dy={5}
+                          fill={axisLabelColor}
+                          textAnchor="start"
+                          fontSize={legendFontSize}
+                        >
+                          {formatNumber(d)} ({label})
+                        </text>
+                      </>
+                    )}
+                  </g>
+                }
+              </>
+            )
+          );
         })}
 
         {/* Hovered data point indicator */}
         {interaction.d &&
           interaction.visible &&
           value !== undefined &&
-          value !== null &&
           radius !== undefined && (
             <g transform={`translate(0, ${maxRadius - radius})`}>
               <circle
@@ -185,8 +225,7 @@ const CircleLegend = () => {
                 textAnchor="start"
                 fontSize={legendFontSize}
               >
-                {formatNumber(getValue(interaction.d) ?? NaN)} (
-                {getLabel(interaction.d)})
+                {formatNumber(value)} ({getLabel(interaction.d)})
               </text>
             </g>
           )}
@@ -205,7 +244,10 @@ const JenksColorLegend = () => {
     areaLayer: { dataDomain, colorScale },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
-  const thresholds = colorScale.domain ? colorScale.domain() : [];
+  const thresholds = useMemo(
+    () => (colorScale.domain ? colorScale.domain() : []),
+    [colorScale]
+  );
 
   const [min, max] = dataDomain;
 
@@ -219,26 +261,29 @@ const JenksColorLegend = () => {
     .domain([min || 0, max || 10000])
     .range([MARGIN.left, width - MARGIN.right]);
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const tickValues = thresholds.splice(0, thresholds.length - 1);
+  const tickValues = thresholds.splice(0, thresholds.length - 1);
 
-    g.call(
-      axisBottom(scale)
-        .tickValues(tickValues)
-        .tickSizeInner(-COLOR_RAMP_HEIGHT)
-        .tickFormat(formatNumber)
-    );
-    g.select("path.domain").remove();
-    g.selectAll(".tick line").attr("stroke", axisLabelColor);
-    g.selectAll(".tick text")
-      .attr("font-size", legendFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor)
-      .attr("transform", "rotate(45)")
-      .attr("text-anchor", "start");
-  };
-
-  useEffect(() => (select(legendAxisRef.current) as any).call(mkAxis));
+  useEffect(
+    () =>
+      makeAxis(select(legendAxisRef.current) as any, {
+        axisLabelColor,
+        fontFamily,
+        formatNumber,
+        labelColor,
+        legendFontSize,
+        scale,
+        thresholds: tickValues,
+      }),
+    [
+      axisLabelColor,
+      fontFamily,
+      formatNumber,
+      labelColor,
+      legendFontSize,
+      scale,
+      tickValues,
+    ]
+  );
 
   return (
     <svg width={width} height={HEIGHT}>
@@ -279,8 +324,11 @@ const QuantileColorLegend = () => {
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
 
-  // @ts-ignore
-  const thresholds = colorScale.quantiles ? colorScale.quantiles() : [];
+  const thresholds = useMemo(
+    // @ts-ignore
+    () => (colorScale.quantiles ? colorScale.quantiles() : []),
+    [colorScale]
+  );
 
   const [min, max] = dataDomain;
 
@@ -294,24 +342,27 @@ const QuantileColorLegend = () => {
     .domain([min || 0, max || 10000])
     .range([MARGIN.left, width - MARGIN.right]);
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.call(
-      axisBottom(scale)
-        .tickValues(thresholds)
-        .tickSizeInner(-COLOR_RAMP_HEIGHT)
-        .tickFormat(formatNumber)
-    );
-    g.select("path.domain").remove();
-    g.selectAll(".tick line").attr("stroke", axisLabelColor);
-    g.selectAll(".tick text")
-      .attr("font-size", legendFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor)
-      .attr("transform", "rotate(45)")
-      .attr("text-anchor", "start");
-  };
-
-  useEffect(() => (select(legendAxisRef.current) as any).call(mkAxis));
+  useEffect(
+    () =>
+      makeAxis(select(legendAxisRef.current) as any, {
+        axisLabelColor,
+        fontFamily,
+        formatNumber,
+        labelColor,
+        legendFontSize,
+        scale,
+        thresholds,
+      }),
+    [
+      axisLabelColor,
+      fontFamily,
+      formatNumber,
+      labelColor,
+      legendFontSize,
+      scale,
+      thresholds,
+    ]
+  );
 
   return (
     <svg width={width} height={HEIGHT}>
@@ -360,27 +411,33 @@ const QuantizeColorLegend = () => {
     .domain(dataDomain)
     .range([MARGIN.left, width - MARGIN.right]);
 
-  // @ts-ignore
-  const thresholds = colorScale.thresholds ? colorScale.thresholds() : [];
+  const thresholds = useMemo(
+    // @ts-ignore
+    () => (colorScale.thresholds ? colorScale.thresholds() : []),
+    [colorScale]
+  );
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.call(
-      axisBottom(scale)
-        .tickValues(thresholds)
-        .tickSizeInner(-COLOR_RAMP_HEIGHT)
-        .tickFormat(formatNumber)
-    );
-    g.select("path.domain").remove();
-    g.selectAll(".tick line").attr("stroke", axisLabelColor);
-    g.selectAll(".tick text")
-      .attr("font-size", legendFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor)
-      .attr("transform", "rotate(45)")
-      .attr("text-anchor", "start");
-  };
-
-  useEffect(() => (select(legendAxisRef.current) as any).call(mkAxis));
+  useEffect(
+    () =>
+      makeAxis(select(legendAxisRef.current) as any, {
+        axisLabelColor,
+        fontFamily,
+        formatNumber,
+        labelColor,
+        legendFontSize,
+        scale,
+        thresholds,
+      }),
+    [
+      axisLabelColor,
+      fontFamily,
+      formatNumber,
+      labelColor,
+      legendFontSize,
+      scale,
+      thresholds,
+    ]
+  );
 
   return (
     <svg width={width} height={HEIGHT}>
