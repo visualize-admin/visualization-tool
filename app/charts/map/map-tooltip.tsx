@@ -4,9 +4,9 @@ import {
   createContext,
   Dispatch,
   ReactNode,
-  Reducer,
   useContext,
-  useReducer,
+  useMemo,
+  useState,
 } from "react";
 import { Box, Grid, Text } from "theme-ui";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
@@ -17,37 +17,8 @@ import { MapState } from "./map-state";
 
 type HoverObjectType = "area" | "symbol";
 
-type MapTooltipStateAction = {
-  type: "SET_HOVER_OBJECT_TYPE";
-  value: HoverObjectType;
-};
-
-interface MapTooltipState {
-  hoverObjectType: HoverObjectType;
-}
-
-const MAP_TOOLTIP_INITIAL_STATE: MapTooltipState = {
-  hoverObjectType: "area",
-};
-
-const MapTooltipStateReducer = (
-  state: MapTooltipState,
-  action: MapTooltipStateAction
-) => {
-  switch (action.type) {
-    case "SET_HOVER_OBJECT_TYPE":
-      return {
-        ...state,
-        hoverObjectType: action.value,
-      };
-
-    default:
-      throw new Error();
-  }
-};
-
 const MapTooltipStateContext = createContext<
-  [MapTooltipState, Dispatch<MapTooltipStateAction>] | undefined
+  [HoverObjectType, Dispatch<HoverObjectType>] | undefined
 >(undefined);
 
 export const useMapTooltip = () => {
@@ -63,9 +34,7 @@ export const useMapTooltip = () => {
 };
 
 export const MapTooltipProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer<
-    Reducer<MapTooltipState, MapTooltipStateAction>
-  >(MapTooltipStateReducer, MAP_TOOLTIP_INITIAL_STATE);
+  const [state, dispatch] = useState<HoverObjectType>("area");
 
   return (
     <MapTooltipStateContext.Provider value={[state, dispatch]}>
@@ -75,11 +44,26 @@ export const MapTooltipProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const MapTooltip = () => {
-  const [{ hoverObjectType }] = useMapTooltip();
+  const [hoverObjectType] = useMapTooltip();
   const [{ interaction }] = useInteraction();
   const { identicalLayerComponentIris, areaLayer, symbolLayer } =
     useChartState() as MapState;
+
   const formatNumber = useFormatNumber();
+  const areaLayerValue = useMemo(() => {
+    if (interaction.d) {
+      return areaLayer.getValue(interaction.d);
+    } else {
+      return null;
+    }
+  }, [areaLayer, interaction.d]);
+  const symbolLayerValue = useMemo(() => {
+    if (interaction.d) {
+      return symbolLayer.getValue(interaction.d);
+    } else {
+      return null;
+    }
+  }, [symbolLayer, interaction.d]);
 
   return (
     <>
@@ -107,83 +91,65 @@ export const MapTooltip = () => {
             >
               {
                 <>
-                  {((identicalLayerComponentIris &&
-                    areaLayer.show &&
-                    areaLayer.getValue(interaction.d) !== null) ||
-                    (hoverObjectType === "area" &&
-                      areaLayer.show &&
-                      areaLayer.getValue(interaction.d) !== null)) && (
-                    <>
-                      <Text as="div" variant="meta">
-                        {areaLayer.measureLabel}
-                      </Text>
-                      <Box
-                        sx={{
-                          borderRadius: "circle",
-                          px: 2,
-                          display: "inline-block",
-                          textAlign: "center",
-                        }}
-                        style={{
-                          background:
-                            areaLayer.getValue(interaction.d) !== null
-                              ? areaLayer.colorScale(
-                                  areaLayer.getValue(interaction.d) as number
-                                )
-                              : "transparent",
-                          color:
-                            areaLayer.getValue(interaction.d) !== null &&
-                            hcl(
-                              areaLayer.colorScale(
-                                areaLayer.getValue(interaction.d) as number
-                              )
-                            ).l < 55
-                              ? "#fff"
-                              : "#000",
-                        }}
-                      >
+                  {areaLayer.show &&
+                    areaLayerValue !== null &&
+                    (identicalLayerComponentIris ||
+                      hoverObjectType === "area") && (
+                      <>
                         <Text as="div" variant="meta">
-                          {formatNumber(areaLayer.getValue(interaction.d))}
+                          {areaLayer.measureLabel}
                         </Text>
-                      </Box>
-                    </>
-                  )}
-
-                  {((identicalLayerComponentIris &&
-                    symbolLayer.show &&
-                    symbolLayer.getValue(interaction.d) !== null) ||
-                    (hoverObjectType === "symbol" &&
-                      symbolLayer.show &&
-                      symbolLayer.getValue(interaction.d) !== null)) && (
-                    <>
-                      <Text as="div" variant="meta">
-                        {symbolLayer.measureLabel}
-                      </Text>
-                      <Box
-                        sx={{
-                          borderRadius: "circle",
-                          px: 2,
-                          display: "inline-block",
-                          textAlign: "center",
-                        }}
-                        style={{
-                          background:
-                            typeof symbolLayer.getValue(interaction.d) ===
-                            "number"
-                              ? symbolLayer.color
-                              : "transparent",
-                        }}
-                      >
-                        <Text
-                          as="div"
-                          variant="meta"
-                          sx={{ color: "monochrome100" }}
+                        <Box
+                          sx={{
+                            borderRadius: "circle",
+                            px: 2,
+                            display: "inline-block",
+                            textAlign: "center",
+                          }}
+                          style={{
+                            background: areaLayer.colorScale(areaLayerValue),
+                            color:
+                              hcl(areaLayer.colorScale(areaLayerValue)).l < 55
+                                ? "#fff"
+                                : "#000",
+                          }}
                         >
-                          {formatNumber(symbolLayer.getValue(interaction.d))}
+                          <Text as="div" variant="meta">
+                            {formatNumber(areaLayerValue)}
+                          </Text>
+                        </Box>
+                      </>
+                    )}
+
+                  {symbolLayer.show &&
+                    symbolLayerValue !== null &&
+                    (identicalLayerComponentIris ||
+                      hoverObjectType === "symbol") && (
+                      <>
+                        <Text as="div" variant="meta">
+                          {symbolLayer.measureLabel}
                         </Text>
-                      </Box>
-                    </>
-                  )}
+                        <Box
+                          sx={{
+                            borderRadius: "circle",
+                            px: 2,
+                            display: "inline-block",
+                            textAlign: "center",
+                          }}
+                          style={{
+                            background: symbolLayer.color,
+                          }}
+                        >
+                          <Text
+                            as="div"
+                            variant="meta"
+                            sx={{ color: "monochrome100" }}
+                          >
+                            {formatNumber(symbolLayerValue)}
+                          </Text>
+                        </Box>
+                      </>
+                    )}
                 </>
               }
             </Grid>

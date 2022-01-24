@@ -96,7 +96,7 @@ export const MapComponent = () => {
     symbolLayer,
   } = useChartState() as MapState;
   const [, dispatchInteraction] = useInteraction();
-  const [, dispatchMapTooltip] = useMapTooltip();
+  const [, setMapTooltipType] = useMapTooltip();
 
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
@@ -217,11 +217,7 @@ export const MapComponent = () => {
                 object: GeoFeature;
               }) => {
                 if (object) {
-                  dispatchMapTooltip({
-                    type: "SET_HOVER_OBJECT_TYPE",
-                    value: "area",
-                  });
-
+                  setMapTooltipType("area");
                   dispatchInteraction({
                     type: "INTERACTION_UPDATE",
                     value: {
@@ -314,11 +310,7 @@ export const MapComponent = () => {
               object: GeoPoint;
             }) => {
               if (object) {
-                dispatchMapTooltip({
-                  type: "SET_HOVER_OBJECT_TYPE",
-                  value: "symbol",
-                });
-
+                setMapTooltipType("symbol");
                 dispatchInteraction({
                   type: "INTERACTION_UPDATE",
                   value: {

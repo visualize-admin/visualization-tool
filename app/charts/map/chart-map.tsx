@@ -81,7 +81,7 @@ export const ChartMapVisualization = ({
         // Should we match by labels?
         const observation = observations.find(
           (o) => o[areaDimensionIri] === d.properties.label
-        )!;
+        );
 
         d.properties = { ...d.properties, observation };
       });
