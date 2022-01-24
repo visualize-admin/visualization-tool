@@ -181,7 +181,7 @@ export const useBrowseState = () => {
   );
 
   const previousOrderRef = useRef<DataCubeResultOrder>(
-    DataCubeResultOrder.TitleAsc
+    DataCubeResultOrder.Score
   );
 
   return useMemo(
