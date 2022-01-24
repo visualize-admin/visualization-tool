@@ -113,6 +113,64 @@ export const MapLegend = () => {
   );
 };
 
+interface CircleProps {
+  value: string;
+  label: string;
+  fill?: string;
+  stroke: string;
+  radius: number;
+  maxRadius: number;
+  fontSize: number;
+  showLine?: boolean;
+}
+
+const Circle = (props: CircleProps) => {
+  const {
+    value,
+    label,
+    fill,
+    stroke,
+    radius,
+    maxRadius,
+    fontSize,
+    showLine = true,
+  } = props;
+
+  return (
+    <g transform={`translate(0, ${maxRadius - radius})`}>
+      <circle
+        cx={0}
+        cy={0}
+        r={radius}
+        fill={fill}
+        stroke={stroke}
+        fillOpacity={0.1}
+      />
+      {showLine && (
+        <>
+          <line
+            x1={0}
+            y1={-radius}
+            x2={maxRadius + 4}
+            y2={-radius}
+            stroke={stroke}
+          />
+          <text
+            x={maxRadius + 6}
+            y={-radius}
+            dy={5}
+            fill={stroke}
+            textAnchor="start"
+            fontSize={fontSize}
+          >
+            {value} {label}
+          </text>
+        </>
+      )}
+    </g>
+  );
+};
+
 const CircleLegend = () => {
   const width = useLegendWidth();
 
@@ -151,7 +209,6 @@ const CircleLegend = () => {
         })`}
       >
         {dataDomain.map((d, i) => {
-          // FIXME: Potentially a performance problem if a lot of data
           const observation = domainObservations[i];
           const label = getLabel(observation);
           const radius = radiusScale(d);
@@ -160,36 +217,16 @@ const CircleLegend = () => {
             observation && (
               <>
                 {
-                  <g transform={`translate(0, ${maxRadius - radius})`}>
-                    <circle
-                      cx={0}
-                      cy={0}
-                      r={radius}
-                      fill="none"
-                      stroke={axisLabelColor}
-                    />
-                    {!interaction.visible && (
-                      <>
-                        <line
-                          x1={0}
-                          y1={-radius}
-                          x2={maxRadius + 4}
-                          y2={-radius}
-                          stroke={axisLabelColor}
-                        />
-                        <text
-                          x={maxRadius + 6}
-                          y={-radius}
-                          dy={5}
-                          fill={axisLabelColor}
-                          textAnchor="start"
-                          fontSize={legendFontSize}
-                        >
-                          {formatNumber(d)} ({label})
-                        </text>
-                      </>
-                    )}
-                  </g>
+                  <Circle
+                    value={formatNumber(d)}
+                    label={label}
+                    fill="none"
+                    stroke={axisLabelColor}
+                    radius={radius}
+                    maxRadius={maxRadius}
+                    fontSize={legendFontSize}
+                    showLine={!interaction.visible}
+                  />
                 }
               </>
             )
@@ -201,33 +238,15 @@ const CircleLegend = () => {
           interaction.visible &&
           value !== undefined &&
           radius !== undefined && (
-            <g transform={`translate(0, ${maxRadius - radius})`}>
-              <circle
-                cx={0}
-                cy={0}
-                r={radius}
-                fill={color}
-                stroke={color}
-                fillOpacity={0.1}
-              />
-              <line
-                x1={0}
-                y1={-radius}
-                x2={maxRadius + 4}
-                y2={-radius}
-                stroke={color}
-              />
-              <text
-                x={maxRadius + 6}
-                y={-radius}
-                dy={5}
-                fill={color}
-                textAnchor="start"
-                fontSize={legendFontSize}
-              >
-                {formatNumber(value)} ({getLabel(interaction.d)})
-              </text>
-            </g>
+            <Circle
+              value={formatNumber(value)}
+              label={getLabel(interaction.d)}
+              fill={color}
+              stroke={axisLabelColor}
+              radius={radius}
+              maxRadius={maxRadius}
+              fontSize={legendFontSize}
+            />
           )}
       </g>
     </svg>
