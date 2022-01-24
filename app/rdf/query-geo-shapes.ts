@@ -1,4 +1,5 @@
 import { SELECT } from "@tpluscode/sparql-builder";
+import { groupBy } from "lodash";
 import { SPARQL_GEO_ENDPOINT } from "../domain/env";
 import * as ns from "./namespace";
 import { sparqlClient } from "./sparql-client";
@@ -24,51 +25,79 @@ export const createGeoShapesLoader =
   ({ locale }: { locale: string }) =>
   async (dimensionIris?: readonly string[]): Promise<RawGeoShape[]> => {
     if (dimensionIris) {
-      const shapesQuery = SELECT`?iri ?label ?WKT`.WHERE`
-        VALUES ?iri {
-          ${dimensionIris.map((d) => `<${d}>`)}
-        }
+      const preparedDimensionIris = dimensionIris.map((d) => `<${d}>`);
 
-        ?iri ${ns.geo.hasGeometry} ?geometry .
+      const labelsQuery = SELECT`?iri ?label`.WHERE`
+      VALUES ?iri {
+        ${preparedDimensionIris}
+      }
 
-        OPTIONAL {
-          ?iri ${ns.schema.name} ?label .
-          FILTER(LANG(?label) = '${locale}')
-        }
+      OPTIONAL {
+        ?iri ${ns.schema.name} ?label .
+        FILTER(LANG(?label) = '${locale}')
+      }
 
-        OPTIONAL {
-          ?iri ${ns.schema.name} ?label .
-        }
+      OPTIONAL {
+        ?iri ${ns.schema.name} ?label .
+      }
+    `;
 
-        SERVICE <${SPARQL_GEO_ENDPOINT}> {
-          ?geometry ${ns.geo.asWKT} ?WKT
-        }
-      `;
-
-      let shapes: any[] = [];
+      let labels: any[] = [];
 
       try {
-        shapes = await shapesQuery.execute(sparqlClient.query, {
+        labels = await labelsQuery.execute(sparqlClient.query, {
           operation: "postUrlencoded",
         });
       } catch (e) {
         console.error(e);
       }
 
-      const parsedShapes = shapes.map((d) => ({
-        iri: d.iri.value,
-        label: d.label.value,
-        wktString: d.WKT.value,
-      }));
+      const groupedLabels = groupBy(
+        labels.map((d) => ({
+          iri: d.iri.value,
+          label: d.label.value,
+        })),
+        (d) => d.iri
+      );
+
+      const wktQuery = SELECT`?iri ?WKT`.WHERE`
+        VALUES ?iri {
+          ${preparedDimensionIris}
+        }
+
+        ?iri ${ns.geo.hasGeometry} ?geometry .
+
+        SERVICE <${SPARQL_GEO_ENDPOINT}> {
+          ?geometry ${ns.geo.asWKT} ?WKT
+        }
+      `;
+
+      let wktStrings: any[] = [];
+
+      try {
+        wktStrings = await wktQuery.execute(sparqlClient.query, {
+          operation: "postUrlencoded",
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      const groupedWktStrings = groupBy(
+        wktStrings.map((d) => ({
+          iri: d.iri.value,
+          wktString: d.WKT.value,
+        })),
+        (d) => d.iri
+      );
 
       const narrowerQuery = SELECT`?iri ?narrower`.WHERE`
         VALUES ?iri {
-          ${dimensionIris.map((d) => `<${d}>`)}
+          ${preparedDimensionIris}
         }
 
         OPTIONAL {
           ?iri ${ns.skos.narrower} ?narrower .
-          FILTER(?narrower IN (${dimensionIris.map((d) => `<${d}>`).join(",")}))
+          FILTER(?narrower IN (${preparedDimensionIris.join(",")}))
         }
     `;
 
@@ -87,21 +116,23 @@ export const createGeoShapesLoader =
         narrower: d.narrower?.value,
       }));
 
-      const hierarchy = createHierarchy({
-        dimensionIris,
-        narrowerValues: parsedNarrowerValues,
-      });
+      const groupedHierarchy = groupBy(
+        createHierarchy({
+          dimensionIris,
+          narrowerValues: parsedNarrowerValues,
+        }),
+        (d) => d.iri
+      );
 
-      return dimensionIris.map((iri) => {
-        const shape = parsedShapes.find((d) => d.iri === iri);
+      const result = dimensionIris.map((iri) => ({
+        iri,
+        label: groupedLabels[iri][0].label || iri,
+        level: groupedHierarchy[iri][0].level,
+        // there might be iris without shapes
+        wktString: groupedWktStrings[iri]?.[0].wktString,
+      }));
 
-        return {
-          iri,
-          label: shape?.label || iri,
-          level: hierarchy.find((d) => d.iri === iri)?.level!,
-          wktString: shape?.wktString,
-        };
-      });
+      return result;
     } else {
       return [];
     }
@@ -151,12 +182,14 @@ const createHierarchy = ({
     const parentValues = [] as RawHierarchyLevel[];
     let parentIris = [] as string[];
 
+    const groupedNarrower = groupBy(narrowerValues, (d) => d.narrower);
+
     for (const iri of iris) {
-      const parent = narrowerValues.find((d) => d.narrower === iri);
+      const parent = groupedNarrower[iri];
       parentIris = parentValues.map((d) => d.iri);
 
-      if (parent && !parentIris.includes(parent.iri)) {
-        parentValues.push({ iri: parent.iri, level: level + 1 });
+      if (parent && !parentIris.includes(parent[0].iri)) {
+        parentValues.push({ iri: parent[0].iri, level: level + 1 });
       }
     }
 
