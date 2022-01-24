@@ -20,7 +20,7 @@ export type GeoProperties = {
   iri: string;
   label: string;
   hierarchyLevel: number;
-  observation: Observation;
+  observation?: Observation;
 };
 
 export type GeoShapes = {

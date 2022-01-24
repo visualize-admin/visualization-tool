@@ -241,8 +241,12 @@ export const MapComponent = () => {
               updateTriggers={{
                 getFillColor: [areaLayer.getValue, areaLayer.getColor],
               }}
-              getFillColor={({ properties: { observation } }: GeoFeature) =>
-                areaLayer.getColor(areaLayer.getValue(observation))
+              getFillColor={(d: GeoFeature) =>
+                d.properties.observation
+                  ? areaLayer.getColor(
+                      areaLayer.getValue(d.properties.observation)
+                    )
+                  : null
               }
             />
             <GeoJsonLayer
