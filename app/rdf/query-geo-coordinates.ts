@@ -28,7 +28,7 @@ export const createGeoCoordinatesLoader =
         ?observationSet ${ns.cube.observation} ?observation .
         ?observation ${dimension.dimension.path} ${
         isVersioned
-          ? `?dimension_versioned . ?dimension_versioned schema:sameAs ?dimension ;`
+          ? `?dimension_versioned . ?dimension_versioned ${ns.schema.sameAs} ?dimension ;`
           : `?dimension`
       }
           ${ns.schema.latitude} ?latitude ;
