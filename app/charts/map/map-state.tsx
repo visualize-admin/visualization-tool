@@ -14,61 +14,71 @@ import {
   ScaleThreshold,
   scaleThreshold,
 } from "d3";
-import { ReactNode, useCallback } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 import {
   getColorInterpolator,
   getSingleHueSequentialPalette,
 } from "../../configurator/components/ui-helpers";
 import {
-  MapBaseLayer,
   MapFields,
+  MapSettings,
   PaletteType,
 } from "../../configurator/config-types";
-import { Observation } from "../../domain/data";
+import {
+  GeoData,
+  GeoFeature,
+  isGeoShapesDimension,
+  Observation,
+} from "../../domain/data";
+import {
+  useOptionalNumericVariable,
+  useStringVariable,
+} from "../shared/chart-helpers";
 import { ChartContext, ChartProps } from "../shared/use-chart-state";
 import { InteractionProvider } from "../shared/use-interaction";
 import { Bounds, Observer, useWidth } from "../shared/use-width";
+import { MapTooltipProvider } from "./map-tooltip";
 
-export type GeoData = {
-  cantons: GeoJSON.FeatureCollection | GeoJSON.Feature;
-  municipalities?: GeoJSON.FeatureCollection | GeoJSON.Feature;
-  municipalityMesh?: GeoJSON.MultiLineString;
-  cantonCentroids: { id: number; coordinates: [number, number] }[];
-  cantonMesh: GeoJSON.MultiLineString;
-  lakes: GeoJSON.FeatureCollection | GeoJSON.Feature;
-};
 export interface MapState {
   chartType: "map";
   bounds: Bounds;
-  data: Observation[];
   features: GeoData;
-  getFeatureLabel: (d: Observation | undefined) => string;
-  baseLayer: MapBaseLayer;
+  showRelief: boolean;
+  showLakes: boolean;
+  identicalLayerComponentIris: boolean;
   areaLayer: {
-    showAreaLayer: boolean;
-    areaMeasureLabel: string;
-    getColor: (x: number | undefined) => number[];
+    data: Observation[];
+    hierarchyLevel: number;
+    show: boolean;
+    measureLabel: string;
+    getLabel: (d: Observation) => string;
     getValue: (d: Observation) => number | null;
-    paletteType: PaletteType;
-    palette: string;
-    nbClass: number;
-    dataDomain: [number, number];
+    getColor: (x: number | null) => number[];
     colorScale:
       | ScaleSequential<string>
       | ScaleQuantize<string>
       | ScaleQuantile<string>
       | ScaleLinear<string, string>
       | ScaleThreshold<number, string>;
+    paletteType: PaletteType;
+    palette: string;
+    nbClass: number;
+    dataDomain: [number, number];
   };
   symbolLayer: {
-    symbolMeasureLabel: string;
-    showSymbolLayer: boolean;
+    data: Observation[];
+    hierarchyLevel: number;
+    show: boolean;
+    measureLabel: string;
+    getLabel: (d: Observation) => string;
+    getValue: (d: Observation) => number | null;
+    color: string;
     radiusScale: ScalePower<number, number>;
-    getRadius: (d: Observation) => number | null;
-    symbolColorScale: (x: number) => string;
+    dataDomain: [number, number];
   };
 }
+
 const getColorScale = ({
   paletteType,
   palette,
@@ -115,122 +125,175 @@ const getColorScale = ({
         .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]]);
   }
 };
+
 const useMapState = ({
   data,
   features,
   fields,
-  dimensions,
   measures,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+  dimensions,
+  settings,
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   fields: MapFields;
+  settings: MapSettings;
 }): MapState => {
   const width = useWidth();
+  const { areaLayer, symbolLayer } = fields;
+  const { palette, nbClass, paletteType } = areaLayer;
 
-  const { palette, nbClass, paletteType } = fields["areaLayer"];
-  const getValue = useCallback(
-    (d: Observation): number | null => {
-      const v = d[fields.areaLayer.componentIri];
-      return v !== null && v !== "..." // FIXME: && v !== "..." -> only used for the prototype and mock data
-        ? +v
-        : null;
+  const getAreaLabel = useStringVariable(areaLayer.componentIri);
+  const getSymbolLabel = useStringVariable(symbolLayer.componentIri);
+
+  const getAreaValue = useOptionalNumericVariable(areaLayer.measureIri);
+  const getSymbolValue = useOptionalNumericVariable(symbolLayer.measureIri);
+
+  const getDataByHierarchyLevel = useCallback(
+    ({
+      geoDimensionIri,
+      hierarchyLevel,
+      getLabel,
+    }: {
+      geoDimensionIri: string;
+      hierarchyLevel: number;
+      getLabel: (d: Observation) => string;
+    }) => {
+      const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
+
+      // Right now hierarchies are only created for geoShapes
+      if (isGeoShapesDimension(dimension)) {
+        const hierarchyLabels = (
+          (dimension.geoShapes as any).topology.objects.shapes
+            .geometries as GeoFeature[]
+        )
+          .filter((d) => d.properties.hierarchyLevel === hierarchyLevel)
+          .map((d) => d.properties.label);
+
+        return data.filter((d) => hierarchyLabels.includes(getLabel(d)));
+      }
+
+      return data;
     },
-    [fields.areaLayer.componentIri]
+    [data, dimensions]
   );
 
-  const getFeatureLabel = useCallback(
-    (d: Observation | undefined): string =>
-      d ? `${d[fields.areaLayer.label.componentIri]}` : "",
-    [fields.areaLayer.label.componentIri]
-  );
-  const getRadius = useCallback(
-    (d: Observation): number | null => {
-      const v = d[fields.symbolLayer.componentIri];
-      return v !== null && v !== "..." // FIXME: && v !== "..." -> only used for the prototype and mock data
-        ? +v
-        : null;
-    },
-    [fields.symbolLayer.componentIri]
+  const areaData = useMemo(
+    () =>
+      getDataByHierarchyLevel({
+        geoDimensionIri: areaLayer.componentIri,
+        hierarchyLevel: areaLayer.hierarchyLevel,
+        getLabel: getAreaLabel,
+      }),
+    [
+      areaLayer.componentIri,
+      areaLayer.hierarchyLevel,
+      getAreaLabel,
+      getDataByHierarchyLevel,
+    ]
   );
 
-  const areaMeasureLabel =
-    measures
-      .find((m) => m.iri === fields["areaLayer"].componentIri)
-      ?.label.split("_")[1] || "";
-  const symbolMeasureLabel =
-    measures
-      .find((m) => m.iri === fields["symbolLayer"].componentIri)
-      ?.label.split("_")[1] || "";
-  const dataDomain = (extent(data, (d) => getValue(d)) || [0, 100]) as [
-    number,
-    number
-  ];
+  const symbolData = useMemo(
+    () =>
+      getDataByHierarchyLevel({
+        geoDimensionIri: symbolLayer.componentIri,
+        hierarchyLevel: symbolLayer.hierarchyLevel,
+        getLabel: getSymbolLabel,
+      }),
+    [
+      symbolLayer.componentIri,
+      symbolLayer.hierarchyLevel,
+      getSymbolLabel,
+      getDataByHierarchyLevel,
+    ]
+  );
 
-  const colorScale = getColorScale({
+  const identicalLayerComponentIris =
+    areaLayer.componentIri === symbolLayer.componentIri;
+
+  const areaMeasureLabel = useMemo(
+    () => measures.find((m) => m.iri === areaLayer.measureIri)?.label || "",
+    [areaLayer.measureIri, measures]
+  );
+  const symbolMeasureLabel = useMemo(
+    () => measures.find((m) => m.iri === symbolLayer.measureIri)?.label || "",
+    [symbolLayer.measureIri, measures]
+  );
+
+  const areaDataDomain = (extent(areaData, (d) => getAreaValue(d)) || [
+    0, 100,
+  ]) as [number, number];
+  const symbolDataDomain = (extent(symbolData, (d) => getSymbolValue(d)) || [
+    0, 100,
+  ]) as [number, number];
+
+  const areaColorScale = getColorScale({
     paletteType,
     palette,
-    getValue,
-    data,
-    dataDomain,
+    getValue: getAreaValue,
+    data: areaData,
+    dataDomain: areaDataDomain,
     nbClass,
   });
-  const getColor = (v: number | undefined) => {
-    if (v === undefined) {
-      return [0, 0, 0];
+
+  const getAreaColor = (v: number | null) => {
+    if (v === null) {
+      return [0, 0, 0, 255 * 0.1];
     }
-    const c = colorScale && colorScale(v);
+
+    const c = areaColorScale && areaColorScale(v);
     const rgb = c && color(`${c}`)?.rgb();
+
     return rgb ? [rgb.r, rgb.g, rgb.b] : [0, 0, 0];
   };
 
-  const radiusExtent = extent(data, (d) => getRadius(d));
-  const radiusRange = radiusExtent[0] === 0 ? [0, 23] : [0, 23];
-  const radiusScale = scaleSqrt()
-    .domain(radiusExtent as [number, number])
-    .range(radiusRange);
-  const symbolColorScale = (x: number) => "#006699";
+  const radiusDomain = [0, symbolDataDomain[1]];
+  const radiusRange = [0, 24];
+  const radiusScale = scaleSqrt().domain(radiusDomain).range(radiusRange);
 
-  // Dimensions
-  const margins = {
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  };
-  const chartWidth = width - margins.left - margins.right;
-  const chartHeight = chartWidth * 0.5;
   const bounds = {
     width,
-    height: chartHeight + margins.top + margins.bottom,
-    margins,
-    chartWidth,
-    chartHeight,
+    height: width * 0.5,
+    margins: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
+    chartWidth: width,
+    chartHeight: width * 0.5,
   };
 
   return {
     chartType: "map",
-    data,
     features,
     bounds,
-    getFeatureLabel,
-    baseLayer: fields["baseLayer"],
+    showRelief: settings.showRelief,
+    showLakes: settings.showLakes,
+    identicalLayerComponentIris,
     areaLayer: {
-      areaMeasureLabel,
-      showAreaLayer: fields.areaLayer.show,
-      getColor,
-      getValue,
+      data: areaData,
+      hierarchyLevel: areaLayer.hierarchyLevel,
+      show: fields.areaLayer.show,
+      measureLabel: areaMeasureLabel,
+      getLabel: getAreaLabel,
+      getValue: getAreaValue,
+      getColor: getAreaColor,
+      colorScale: areaColorScale,
       paletteType,
       palette,
       nbClass: nbClass,
-      dataDomain,
-      colorScale,
+      dataDomain: areaDataDomain,
     },
     symbolLayer: {
-      symbolMeasureLabel,
-      showSymbolLayer: fields.symbolLayer.show,
+      data: symbolData,
+      hierarchyLevel: symbolLayer.hierarchyLevel,
+      color: fields.symbolLayer.color,
+      measureLabel: symbolMeasureLabel,
+      show: fields.symbolLayer.show,
+      getLabel: getSymbolLabel,
       radiusScale,
-      getRadius,
-      symbolColorScale,
+      getValue: getSymbolValue,
+      dataDomain: symbolDataDomain,
     },
   };
 };
@@ -239,19 +302,23 @@ const MapChartProvider = ({
   data,
   features,
   fields,
-  dimensions,
   measures,
+  dimensions,
+  settings,
   children,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" // "interactiveFiltersConfig"
-> & { features: GeoData; children: ReactNode; fields: MapFields }) => {
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
+  features: GeoData;
+  children: ReactNode;
+  fields: MapFields;
+  settings: MapSettings;
+}) => {
   const state = useMapState({
     data,
     features,
     fields,
-    dimensions,
     measures,
+    dimensions,
+    settings,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -262,28 +329,31 @@ export const MapChart = ({
   data,
   features,
   fields,
-  dimensions,
   measures,
+  dimensions,
+  settings,
   children,
-}: Pick<ChartProps, "data" | "dimensions" | "measures"> & {
+}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
-
   fields: MapFields;
+  settings: MapSettings;
   children: ReactNode;
 }) => {
   return (
     <Observer>
       <InteractionProvider>
-        <MapChartProvider
-          data={data}
-          features={features}
-          fields={fields}
-          dimensions={dimensions}
-          measures={measures}
-          // interactiveFiltersConfig={interactiveFiltersConfig}
-        >
-          {children}
-        </MapChartProvider>
+        <MapTooltipProvider>
+          <MapChartProvider
+            data={data}
+            features={features}
+            fields={fields}
+            measures={measures}
+            dimensions={dimensions}
+            settings={settings}
+          >
+            {children}
+          </MapChartProvider>
+        </MapTooltipProvider>
       </InteractionProvider>
     </Observer>
   );

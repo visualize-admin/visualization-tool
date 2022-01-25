@@ -1,3 +1,4 @@
+import { groupBy } from "lodash";
 import {
   ChartConfig,
   ChartType,
@@ -5,7 +6,11 @@ import {
   TableColumn,
 } from "../configurator";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
-import { getCategoricalDimensions, getTimeDimensions } from "../domain/data";
+import {
+  getCategoricalDimensions,
+  getGeoDimensions,
+  getTimeDimensions,
+} from "../domain/data";
 import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { unreachableError } from "../lib/unreachable";
@@ -18,6 +23,7 @@ export const enabledChartTypes: ChartType[] = [
   "scatterplot",
   "pie",
   "table",
+  "map",
 ];
 
 /**
@@ -246,6 +252,11 @@ export const getInitialConfig = ({
         ),
       };
     case "map":
+      const {
+        GeoShapesDimension: geoShapes = [],
+        GeoCoordinatesDimension: geoCoordinates = [],
+      } = groupBy(getGeoDimensions(dimensions), (d) => d.__typename);
+
       return {
         chartType,
         filters: {},
@@ -262,31 +273,26 @@ export const getInitialConfig = ({
           },
         },
         fields: {
-          baseLayer: {
-            componentIri: dimensions[0].iri,
-            relief: true,
-            lakes: true,
-          },
           areaLayer: {
-            componentIri: measures[0].iri,
-            show: false,
-            label: { componentIri: dimensions[0].iri },
+            show: geoShapes.length > 0,
+            componentIri: geoShapes[0]?.iri || "",
+            measureIri: measures[0].iri,
+            hierarchyLevel: 1,
             palette: "oranges",
             nbClass: 5,
             paletteType: "continuous",
           },
           symbolLayer: {
-            show: false,
-            componentIri: measures[0].iri,
+            show: geoShapes.length === 0,
+            componentIri: geoCoordinates[0]?.iri || geoShapes[0]?.iri || "",
+            measureIri: measures[0].iri,
+            hierarchyLevel: 1,
+            color: "#1f77b4",
           },
-          // FIXME: unused fields
-          x: { componentIri: dimensions[0].iri },
-          y: {
-            componentIri: measures[0].iri,
-          },
-          segment: {
-            componentIri: dimensions[0].iri,
-          },
+        },
+        settings: {
+          showRelief: true,
+          showLakes: true,
         },
       };
 
@@ -297,21 +303,18 @@ export const getInitialConfig = ({
 };
 
 export const getPossibleChartType = ({
-  chartTypes = enabledChartTypes,
   meta,
 }: {
-  chartTypes?: ChartType[];
   meta: DataCubeMetadata;
 }): ChartType[] => {
   const { measures, dimensions } = meta;
 
   const hasZeroQ = measures.length === 0;
   const hasMultipleQ = measures.length > 1;
-  const hasTime = dimensions.some(
-    (dim) => dim.__typename === "TemporalDimension"
-  );
+  const hasGeo = getGeoDimensions(dimensions).length > 0;
+  const hasTime = getTimeDimensions(dimensions).length > 0;
 
-  // const geoBased: ChartType[] = ["map"];
+  const geoBased: ChartType[] = ["map"];
   const catBased: ChartType[] = ["bar", "column", "pie", "table"];
   const multipleQ: ChartType[] = ["scatterplot"];
   const timeBased: ChartType[] = ["line", "area"];
@@ -319,18 +322,22 @@ export const getPossibleChartType = ({
   let possibles: ChartType[] = [];
   if (hasZeroQ) {
     possibles = ["table"];
-  } else if (hasMultipleQ && hasTime) {
-    possibles = [...multipleQ, ...timeBased, ...catBased];
-  } else if (hasMultipleQ && !hasTime) {
-    possibles = [...multipleQ, ...catBased];
-  } else if (!hasMultipleQ && hasTime) {
-    possibles = [...catBased, ...timeBased];
-  } else if (!hasMultipleQ && !hasTime) {
-    possibles = [...catBased];
   } else {
-    // Tables should always be possible
-    possibles = ["table"];
+    possibles.push(...catBased);
+
+    if (hasMultipleQ) {
+      possibles.push(...multipleQ);
+    }
+
+    if (hasTime) {
+      possibles.push(...timeBased);
+    }
+
+    if (hasGeo) {
+      possibles.push(...geoBased);
+    }
   }
+
   return enabledChartTypes.filter((type) => possibles.includes(type));
 };
 

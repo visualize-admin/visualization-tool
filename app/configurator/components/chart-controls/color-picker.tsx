@@ -43,6 +43,7 @@ type Props = {
   selectedColor: string;
   colors: readonly string[];
   onChange?: (color: string) => void;
+  disabled?: boolean;
 };
 
 export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
@@ -148,9 +149,11 @@ export const ColorPickerMenu = (props: Props) => {
           "> button[aria-expanded]": {
             borderColor: "primaryActive",
           },
+          opacity: props.disabled ? 0.5 : 1,
+          pointerEvents: props.disabled ? "none" : "auto",
         }}
       >
-        <MenuButton className="menu-button">
+        <MenuButton className="menu-button" disabled={props.disabled}>
           <VisuallyHidden>
             <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
           </VisuallyHidden>

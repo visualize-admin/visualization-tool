@@ -25,11 +25,11 @@ msgstr "Kein ergebnis"
 msgid "Search “{0}”"
 msgstr "Suche “{0}”"
 
-#: app/components/chart-preview.tsx:95
+#: app/components/chart-preview.tsx:97
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/chart-preview.tsx:79
+#: app/components/chart-preview.tsx:81
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
@@ -99,88 +99,88 @@ msgid "button.share"
 msgstr "Teilen"
 
 #: app/charts/map/chart-map-prototype.tsx:246
-msgid "chart.map.control.data.filters"
-msgstr "Datenfilter"
+#~ msgid "chart.map.control.data.filters"
+#~ msgstr "Datenfilter"
 
 #: app/charts/map/chart-map-prototype.tsx:203
-msgid "chart.map.control.layers"
-msgstr "Ebenen"
+#~ msgid "chart.map.control.layers"
+#~ msgstr "Ebenen"
 
 #: app/charts/map/chart-map-prototype.tsx:222
-msgid "chart.map.layers.area"
-msgstr "Flächen"
+#~ msgid "chart.map.layers.area"
+#~ msgstr "Flächen"
 
 #: app/charts/map/prototype-right-controls.tsx:76
-msgid "chart.map.layers.area.add.data"
-msgstr "Flächen anzeigen"
+#~ msgid "chart.map.layers.area.add.data"
+#~ msgstr "Flächen anzeigen"
 
 #: app/charts/map/prototype-right-controls.tsx:110
-msgid "chart.map.layers.area.color.palette"
-msgstr "Farbpalette"
+#~ msgid "chart.map.layers.area.color.palette"
+#~ msgstr "Farbpalette"
 
 #: app/charts/map/prototype-right-controls.tsx:133
-msgid "chart.map.layers.area.discretization.continuous"
-msgstr "Kontinuierlich"
+#~ msgid "chart.map.layers.area.discretization.continuous"
+#~ msgstr "Kontinuierlich"
 
 #: app/charts/map/prototype-right-controls.tsx:153
-msgid "chart.map.layers.area.discretization.discrete"
-msgstr "Diskret"
+#~ msgid "chart.map.layers.area.discretization.discrete"
+#~ msgstr "Diskret"
 
 #: app/charts/map/prototype-right-controls.tsx:186
-msgid "chart.map.layers.area.discretization.jenks"
-msgstr "Jenks (Natural Breaks)"
+#~ msgid "chart.map.layers.area.discretization.jenks"
+#~ msgstr "Jenks (Natural Breaks)"
 
 #: app/charts/map/prototype-right-controls.tsx:140
-msgid "chart.map.layers.area.discretization.linear"
-msgstr "Linear"
+#~ msgid "chart.map.layers.area.discretization.linear"
+#~ msgstr "Linear"
 
 #: app/charts/map/prototype-right-controls.tsx:199
-msgid "chart.map.layers.area.discretization.number.class"
-msgstr "Anzahl Klassen"
+#~ msgid "chart.map.layers.area.discretization.number.class"
+#~ msgstr "Anzahl Klassen"
 
 #: app/charts/map/prototype-right-controls.tsx:173
-msgid "chart.map.layers.area.discretization.quantiles"
-msgstr "Quantile (gleiche Anzahl Werte)"
+#~ msgid "chart.map.layers.area.discretization.quantiles"
+#~ msgstr "Quantile (gleiche Anzahl Werte)"
 
 #: app/charts/map/prototype-right-controls.tsx:160
-msgid "chart.map.layers.area.discretization.quantize"
-msgstr "Quantisierung (gleiche Wertebereiche)"
+#~ msgid "chart.map.layers.area.discretization.quantize"
+#~ msgstr "Quantisierung (gleiche Wertebereiche)"
 
 #: app/charts/map/prototype-right-controls.tsx:91
-msgid "chart.map.layers.area.select.measure"
-msgstr "Messwert auswählen"
+#~ msgid "chart.map.layers.area.select.measure"
+#~ msgstr "Messwert auswählen"
 
 #: app/charts/map/chart-map-prototype.tsx:210
-msgid "chart.map.layers.base"
-msgstr "Basis-Ebene"
+#~ msgid "chart.map.layers.base"
+#~ msgstr "Basis-Ebene"
 
 #: app/charts/map/prototype-right-controls.tsx:59
-msgid "chart.map.layers.base.lakes"
-msgstr "Seen"
+#~ msgid "chart.map.layers.base.lakes"
+#~ msgstr "Seen"
 
 #: app/charts/map/prototype-right-controls.tsx:48
-msgid "chart.map.layers.base.relief"
-msgstr "Relief"
+#~ msgid "chart.map.layers.base.relief"
+#~ msgstr "Relief"
 
 #: app/charts/map/prototype-right-controls.tsx:263
-msgid "chart.map.layers.no.selected"
-msgstr "Wählen Sie einen Layer zum Bearbeiten aus."
+#~ msgid "chart.map.layers.no.selected"
+#~ msgstr "Wählen Sie einen Layer zum Bearbeiten aus."
 
 #: app/charts/map/chart-map-prototype.tsx:234
-msgid "chart.map.layers.symbol"
-msgstr "Symbole"
+#~ msgid "chart.map.layers.symbol"
+#~ msgstr "Symbole"
 
 #: app/charts/map/prototype-right-controls.tsx:228
-msgid "chart.map.layers.symbol.add.symbols"
-msgstr "Proportionale Symbole anzeigen"
+#~ msgid "chart.map.layers.symbol.add.symbols"
+#~ msgstr "Proportionale Symbole anzeigen"
 
 #: app/charts/map/prototype-right-controls.tsx:243
-msgid "chart.map.layers.symbol.select.measure"
-msgstr "Messwert auswählen"
+#~ msgid "chart.map.layers.symbol.select.measure"
+#~ msgstr "Messwert auswählen"
 
 #: app/charts/map/chart-map-prototype.tsx:274
-msgid "chart.map.warning.prototype"
-msgstr "Diese Karte ist ein Prototyp und kann nicht publiziert werden."
+#~ msgid "chart.map.warning.prototype"
+#~ msgstr "Diese Karte ist ein Prototyp und kann nicht publiziert werden."
 
 #: app/charts/table/table.tsx:260
 msgid "chart.published.toggle.mobile.view"
@@ -227,35 +227,35 @@ msgstr "Horizontale Achse"
 msgid "controls.axis.vertical"
 msgstr "Vertikale Achse"
 
-#: app/configurator/components/ui-helpers.ts:463
+#: app/configurator/components/ui-helpers.ts:475
 msgid "controls.chart.type.area"
 msgstr "Flächen"
 
-#: app/configurator/components/ui-helpers.ts:455
+#: app/configurator/components/ui-helpers.ts:467
 msgid "controls.chart.type.bar"
 msgstr "Balken"
 
-#: app/configurator/components/ui-helpers.ts:451
+#: app/configurator/components/ui-helpers.ts:463
 msgid "controls.chart.type.column"
 msgstr "Säulen"
 
-#: app/configurator/components/ui-helpers.ts:459
+#: app/configurator/components/ui-helpers.ts:471
 msgid "controls.chart.type.line"
 msgstr "Linien"
 
-#: app/configurator/components/ui-helpers.ts:479
+#: app/configurator/components/ui-helpers.ts:491
 msgid "controls.chart.type.map"
 msgstr "Karte"
 
-#: app/configurator/components/ui-helpers.ts:471
+#: app/configurator/components/ui-helpers.ts:483
 msgid "controls.chart.type.pie"
 msgstr "Kreis"
 
-#: app/configurator/components/ui-helpers.ts:467
+#: app/configurator/components/ui-helpers.ts:479
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/configurator/components/ui-helpers.ts:475
+#: app/configurator/components/ui-helpers.ts:487
 msgid "controls.chart.type.table"
 msgstr "Tabelle"
 
@@ -326,7 +326,7 @@ msgstr "Bitte eine Designoption oder Datendimension auswählen, um diese zu bear
 msgid "controls.hint.describing.chart"
 msgstr "Bitte ein Beschreibungsfeld auswählen, um dieses zu bearbeiten."
 
-#: app/configurator/components/ui-helpers.ts:435
+#: app/configurator/components/ui-helpers.ts:447
 msgid "controls.imputation"
 msgstr "Imputationstyp"
 
@@ -366,21 +366,41 @@ msgstr "Keine Zeitdimension verfügbar!"
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Zeitfilter anzeigen"
 
-#: app/configurator/components/ui-helpers.ts:483
+#: app/configurator/components/ui-helpers.ts:495
 msgid "controls.language.english"
 msgstr "Englisch"
 
-#: app/configurator/components/ui-helpers.ts:491
+#: app/configurator/components/ui-helpers.ts:503
 msgid "controls.language.french"
 msgstr "Französisch"
 
-#: app/configurator/components/ui-helpers.ts:487
+#: app/configurator/components/ui-helpers.ts:499
 msgid "controls.language.german"
 msgstr "Deutsch"
 
-#: app/configurator/components/ui-helpers.ts:495
+#: app/configurator/components/ui-helpers.ts:507
 msgid "controls.language.italian"
 msgstr "Italienisch"
+
+#: app/configurator/components/ui-helpers.ts:403
+msgid "controls.map.layer.area"
+msgstr ""
+
+#: app/configurator/components/ui-helpers.ts:407
+msgid "controls.map.layer.symbol"
+msgstr ""
+
+#: app/configurator/components/ui-helpers.ts:399
+msgid "controls.map.settings"
+msgstr ""
+
+#: app/configurator/map/map-chart-options.tsx:77
+msgid "controls.mapSettings.showLakes"
+msgstr ""
+
+#: app/configurator/map/map-chart-options.tsx:69
+msgid "controls.mapSettings.showRelief"
+msgstr ""
 
 #: app/configurator/components/ui-helpers.ts:377
 msgid "controls.measure"
@@ -397,6 +417,10 @@ msgstr "Aus"
 #: app/components/form.tsx:358
 msgid "controls.search.clear"
 msgstr "Suche zurücksetzen"
+
+#: app/configurator/map/map-chart-options.tsx:112
+msgid "controls.section.areaLayerSettings"
+msgstr ""
 
 #: app/configurator/components/chart-configurator.tsx:45
 msgid "controls.section.chart.options"
@@ -450,6 +474,10 @@ msgstr "Datenfilter"
 #: app/configurator/components/chart-options-selector.tsx:397
 msgid "controls.section.sorting"
 msgstr "Sortieren"
+
+#: app/configurator/map/map-chart-options.tsx:253
+msgid "controls.section.symbolLayerSettings"
+msgstr ""
 
 #: app/configurator/table/table-chart-options.tsx:469
 msgid "controls.section.tableSettings"
@@ -519,6 +547,10 @@ msgstr "Messwert auswählen"
 msgid "controls.select.optional"
 msgstr "optional"
 
+#: app/configurator/components/chart-options-selector.tsx:189
+msgid "controls.settings"
+msgstr ""
+
 #: app/configurator/table/table-chart-sorting-options.tsx:234
 msgid "controls.sorting.addDimension"
 msgstr "Dimension hinzufügen"
@@ -528,11 +560,11 @@ msgstr "Dimension hinzufügen"
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
-#: app/configurator/components/ui-helpers.ts:403
+#: app/configurator/components/ui-helpers.ts:415
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/configurator/components/ui-helpers.ts:407
+#: app/configurator/components/ui-helpers.ts:419
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
@@ -540,11 +572,11 @@ msgstr "Z → A"
 msgid "controls.sorting.byMeasure"
 msgstr "Messwert"
 
-#: app/configurator/components/ui-helpers.ts:427
+#: app/configurator/components/ui-helpers.ts:439
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/configurator/components/ui-helpers.ts:431
+#: app/configurator/components/ui-helpers.ts:443
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
@@ -552,19 +584,19 @@ msgstr "9 → 1"
 msgid "controls.sorting.byTotalSize"
 msgstr "Gesamtgrösse"
 
-#: app/configurator/components/ui-helpers.ts:411
+#: app/configurator/components/ui-helpers.ts:423
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Kleinste zuerst"
 
-#: app/configurator/components/ui-helpers.ts:423
+#: app/configurator/components/ui-helpers.ts:435
 msgid "controls.sorting.byTotalSize.largestBottom"
 msgstr "Grösste unten"
 
-#: app/configurator/components/ui-helpers.ts:415
+#: app/configurator/components/ui-helpers.ts:427
 msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Grösste zuerst"
 
-#: app/configurator/components/ui-helpers.ts:419
+#: app/configurator/components/ui-helpers.ts:431
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Kleinste unten"
 
@@ -576,7 +608,7 @@ msgstr "Sortierung entfernen"
 msgid "controls.sorting.selectDimension"
 msgstr "Wählen Sie eine Dimension aus …"
 
-#: app/configurator/components/ui-helpers.ts:399
+#: app/configurator/components/ui-helpers.ts:411
 #: app/configurator/table/table-chart-sorting-options.tsx:305
 msgid "controls.sorting.sortBy"
 msgstr "Sortieren nach"
@@ -613,7 +645,7 @@ msgstr "Zurück zu den Datensätzen"
 msgid "dataset-selector.choose-another-dataset"
 msgstr "Wählen Sie einen anderen Datensatz"
 
-#: app/components/chart-published.tsx:80
+#: app/components/chart-published.tsx:81
 msgid "dataset.hasImputedValues"
 msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die Lücken zu füllen."
 
@@ -653,13 +685,13 @@ msgstr "Relevanz"
 msgid "dataset.order.title"
 msgstr "Titel"
 
-#: app/components/chart-preview.tsx:56
-#: app/components/chart-published.tsx:58
+#: app/components/chart-preview.tsx:58
+#: app/components/chart-published.tsx:59
 #: app/configurator/components/dataset-preview.tsx:36
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
-#: app/components/chart-published.tsx:69
+#: app/components/chart-published.tsx:70
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
@@ -682,6 +714,14 @@ msgstr "Luftzug"
 #: app/configurator/components/dataset-preview.tsx:103
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
+
+#: app/configurator/map/map-chart-options.tsx:118
+msgid "fields.areaLayer.show"
+msgstr ""
+
+#: app/configurator/map/map-chart-options.tsx:259
+msgid "fields.symbolLayer.show"
+msgstr ""
 
 #: app/components/footer.tsx:66
 msgid "footer.institution.name"

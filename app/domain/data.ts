@@ -1,6 +1,10 @@
 import { Literal, NamedNode } from "rdf-js";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
 import { DimensionType } from "../charts/chart-config-ui-options";
+import {
+  DimensionMetaDataFragment,
+  GeoCoordinatesDimension,
+  GeoShapesDimension,
+} from "../graphql/query-hooks";
 
 export type RawObservationValue = Literal | NamedNode;
 
@@ -11,6 +15,46 @@ export type ObservationValue = string | number | null;
 export type DimensionValue = { value: string | number; label: string };
 
 export type Observation = Record<string, ObservationValue>;
+
+export type GeoProperties = {
+  iri: string;
+  label: string;
+  hierarchyLevel: number;
+  observation?: Observation;
+};
+
+export type GeoShapes = {
+  topology: TopoJSON.Topology<TopoJSON.Objects<GeoProperties>>;
+};
+
+export type GeoFeature = {
+  type: "Feature";
+  properties: GeoProperties;
+  geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+};
+
+export type AreaLayer = {
+  shapes: GeoJSON.FeatureCollection<
+    GeoJSON.MultiPolygon | GeoJSON.Polygon,
+    GeoProperties
+  >;
+  mesh: GeoJSON.MultiLineString;
+};
+
+export type GeoPoint = {
+  coordinates: [number, number];
+  properties: GeoProperties;
+};
+
+export type SymbolLayer = {
+  points: GeoPoint[];
+};
+
+export type GeoData = {
+  lakes: GeoJSON.FeatureCollection;
+  areaLayer?: AreaLayer;
+  symbolLayer?: SymbolLayer;
+};
 
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 const parseRDFLiteral = (value: Literal): ObservationValue => {
@@ -92,6 +136,19 @@ export const getCategoricalDimensions = (
       d.__typename === "NominalDimension" || d.__typename === "OrdinalDimension"
   );
 
+export const getGeoCoordinatesDimensions = (
+  dimensions: DimensionMetaDataFragment[]
+) => dimensions.filter((d) => d.__typename === "GeoCoordinatesDimension");
+
+export const getGeoShapesDimensions = (
+  dimensions: DimensionMetaDataFragment[]
+) => dimensions.filter((d) => d.__typename === "GeoShapesDimension");
+
+export const getGeoDimensions = (dimensions: DimensionMetaDataFragment[]) =>
+  dimensions.filter((d) =>
+    ["GeoCoordinatesDimension", "GeoShapesDimension"].includes(d.__typename)
+  );
+
 export const getDimensionsByDimensionType = ({
   dimensionTypes,
   dimensions,
@@ -104,3 +161,15 @@ export const getDimensionsByDimensionType = ({
   [...measures, ...dimensions].filter((component) =>
     dimensionTypes.includes(component.__typename)
   );
+
+export const isGeoCoordinatesDimension = (
+  dimension?: DimensionMetaDataFragment
+): dimension is GeoCoordinatesDimension => {
+  return dimension?.__typename === "GeoCoordinatesDimension";
+};
+
+export const isGeoShapesDimension = (
+  dimension?: DimensionMetaDataFragment
+): dimension is GeoShapesDimension => {
+  return dimension?.__typename === "GeoShapesDimension";
+};

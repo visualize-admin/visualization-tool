@@ -1,5 +1,9 @@
-import { useEffect } from "react";
-import { ChartConfig, FilterValueSingle } from "../../configurator";
+import { useEffect, useMemo } from "react";
+import {
+  ChartConfig,
+  FilterValueSingle,
+  isSegmentInConfig,
+} from "../../configurator";
 import { parseDate } from "../../configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
 import useFilterChanges from "../../configurator/use-filter-changes";
@@ -81,13 +85,19 @@ const useSyncInteractiveFilters = (chartConfig: ChartConfig) => {
     }
   }, [changes, dispatch]);
 
+  // Maybe it should be more generic?
+  const interactiveCategoriesResetTrigger = useMemo(
+    () => (isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null),
+    [chartConfig]
+  );
+
   // Interactive legend
   // Reset categories to avoid categories with the same
   // name to persist as filters across different dimensions
   // i.e. Jura as forest zone != Jura as canton.
   useEffect(
     () => dispatch({ type: "RESET_INTERACTIVE_CATEGORIES" }),
-    [dispatch, chartConfig.fields.segment]
+    [dispatch, interactiveCategoriesResetTrigger]
   );
 };
 

@@ -1,7 +1,14 @@
 import { ascending, descending } from "d3";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
-import { DimensionValue } from "../domain/data";
+import { topology } from "topojson-server";
+import { parse as parseWKT } from "wellknown";
+import {
+  DimensionValue,
+  GeoFeature,
+  GeoProperties,
+  GeoShapes,
+} from "../domain/data";
 import { parseLocaleString } from "../locales/locales";
 import {
   getCube,
@@ -18,6 +25,7 @@ import {
   queryDatasetCountBySubTheme,
   queryDatasetCountByTheme,
 } from "../rdf/query-cube-metadata";
+import { RawGeoShape } from "../rdf/query-geo-shapes";
 import truthy from "../utils/truthy";
 import {
   DataCubeResolvers,
@@ -291,12 +299,11 @@ export const resolvers: Resolvers = {
     __resolveType({ data: { dataKind, scaleType, dataType } }) {
       if (dataKind === "Time") {
         return "TemporalDimension";
+      } else if (dataKind === "GeoCoordinates") {
+        return "GeoCoordinatesDimension";
+      } else if (dataKind === "GeoShape") {
+        return "GeoShapesDimension";
       }
-
-      // TODO: GeoDimension
-      // if (dataKind === "https://schema.org/GeoShape") {
-      // return "GeoDimension"
-      // }
 
       return "NominalDimension";
     },
@@ -309,8 +316,51 @@ export const resolvers: Resolvers = {
   },
   TemporalDimension: {
     ...dimensionResolvers,
-    timeUnit: ({ data: { timeUnit } }: ResolvedDimension) => timeUnit!,
-    timeFormat: ({ data: { timeFormat } }: ResolvedDimension) => timeFormat!,
+    timeUnit: ({ data: { timeUnit } }) => timeUnit!,
+    timeFormat: ({ data: { timeFormat } }) => timeFormat!,
+  },
+  GeoCoordinatesDimension: {
+    ...dimensionResolvers,
+    geoCoordinates: async (parent, _, { loaders }) => {
+      return await loaders.geoCoordinates.load(parent);
+    },
+  },
+  GeoShapesDimension: {
+    ...dimensionResolvers,
+    geoShapes: async (parent, _, { loaders }) => {
+      const dimValues = (await loaders.dimensionValues.load(
+        parent
+      )) as DimensionValue[];
+      const dimIris = dimValues.map((d) => `${d.value}`) as string[];
+      const shapes = (await loaders.geoShapes.loadMany(
+        dimIris
+      )) as RawGeoShape[];
+      const geoJSONFeatures = shapes
+        .filter(
+          (d): d is Exclude<RawGeoShape, "wktString"> & { wktString: string } =>
+            d.wktString !== undefined
+        )
+        .map((d) => ({
+          type: "Feature",
+          properties: {
+            iri: d.iri,
+            label: d.label,
+            hierarchyLevel: d.level,
+          },
+          geometry: parseWKT(d.wktString),
+        })) as GeoFeature[];
+
+      const resolved: GeoShapes = {
+        topology: topology({
+          shapes: {
+            type: "FeatureCollection",
+            features: geoJSONFeatures,
+          } as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoProperties>,
+        }) as GeoShapes["topology"],
+      };
+
+      return resolved;
+    },
   },
   Measure: {
     ...dimensionResolvers,

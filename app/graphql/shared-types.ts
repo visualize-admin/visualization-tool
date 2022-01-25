@@ -2,9 +2,9 @@ import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { Literal, NamedNode } from "rdf-js";
 import { Observation } from "../domain/data";
 import {
-  DataCubeTheme,
   DataCubeOrganization,
   DataCubePublicationStatus,
+  DataCubeTheme,
   TimeUnit,
 } from "./resolver-types";
 
@@ -48,11 +48,11 @@ export type ResolvedDimension = {
     hasUndefinedValues: boolean;
     unit?: string;
     dataType?: string;
+    name: string;
     dataKind?: "Time" | "GeoCoordinates" | "GeoShape";
     timeUnit?: TimeUnit;
     timeFormat?: string;
     scaleType?: "Nominal" | "Ordinal" | "Ratio" | "Interval";
-    name: string;
   };
 
   // dimension: RDF.Dimension;

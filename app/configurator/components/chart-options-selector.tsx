@@ -8,6 +8,7 @@ import {
   ImputationType,
   imputationTypes,
   isAreaConfig,
+  isMapConfig,
   isTableConfig,
   SortingType,
   useConfiguratorState,
@@ -29,6 +30,7 @@ import {
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { useLocale } from "../../locales/use-locale";
+import { MapColumnOptions } from "../map/map-chart-options";
 import { TableColumnOptions } from "../table/table-chart-options";
 import { ColorPalette } from "./chart-controls/color-palette";
 import {
@@ -87,6 +89,8 @@ export const ChartOptionsSelector = ({
         {state.activeField ? (
           isTableConfig(state.chartConfig) ? (
             <TableColumnOptions state={state} metaData={meta} />
+          ) : isMapConfig(state.chartConfig) ? (
+            <MapColumnOptions state={state} metaData={meta} />
           ) : (
             <ActiveFieldSwitch
               state={state}
@@ -169,10 +173,19 @@ const EncodingOptionsPanel = ({
   const getFieldLabelHint = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
+    areaLayer: t({
+      id: "controls.select.measure",
+      message: "Select a measure",
+    }),
+    symbolLayer: t({
+      id: "controls.select.measure",
+      message: "Select a measure",
+    }),
     segment: t({
       id: "controls.select.dimension",
       message: "Select a dimension",
     }),
+    settings: t({ id: "controls.settings", message: "Settings" }),
   };
 
   useEffect(() => {
@@ -182,13 +195,11 @@ const EncodingOptionsPanel = ({
   }, [field]);
 
   const { fields } = state.chartConfig;
-
-  type AnyField = "y";
   const otherFields = Object.keys(fields).filter(
-    (f) => fields[f as AnyField].hasOwnProperty("componentIri") && field !== f
+    (f) => (fields as any)[f].hasOwnProperty("componentIri") && field !== f
   );
   const otherFieldsIris = otherFields.map(
-    (f) => fields[f as AnyField].componentIri
+    (f) => (fields as any)[f].componentIri
   );
 
   return (

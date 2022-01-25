@@ -447,10 +447,12 @@ export const ColorPickerField = ({
   field,
   path,
   label,
+  disabled,
 }: {
   field: string;
   path: string;
   label: ReactNode;
+  disabled?: boolean;
 }) => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -483,11 +485,14 @@ export const ColorPickerField = ({
         width: "100%",
       }}
     >
-      <Label htmlFor="xyz">{label}</Label>
+      <Label htmlFor="xyz" disabled={disabled}>
+        {label}
+      </Label>
       <ColorPickerMenu
         colors={getPalette()}
         selectedColor={color}
         onChange={(c) => updateColor(c)}
+        disabled={disabled}
       />
     </Flex>
   );

@@ -1,15 +1,16 @@
-import { HoverObject, MapController, WebMercatorViewport } from "@deck.gl/core";
-import { FillStyleExtension } from "@deck.gl/extensions";
+import { MapController, WebMercatorViewport } from "@deck.gl/core";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Box, Button } from "theme-ui";
-import { Observation } from "../../domain/data";
+import { GeoFeature, GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
+import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { MapState } from "./map-state";
+import { useMapTooltip } from "./map-tooltip";
 
 type TileData = {
   z: number;
@@ -19,6 +20,7 @@ type TileData = {
   bbox: { west: number; north: number; east: number; south: number };
   signal: { aborted: boolean };
 };
+
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
@@ -86,13 +88,15 @@ const constrainZoom = (
 
 export const MapComponent = () => {
   const {
-    data,
-    baseLayer,
+    showRelief,
+    showLakes,
     features,
-    areaLayer: { showAreaLayer, getColor, getValue },
-    symbolLayer: { showSymbolLayer, radiusScale, getRadius },
+    identicalLayerComponentIris,
+    areaLayer,
+    symbolLayer,
   } = useChartState() as MapState;
-  const [, dispatch] = useInteraction();
+  const [, dispatchInteraction] = useInteraction();
+  const [, setMapTooltipType] = useMapTooltip();
 
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
@@ -112,6 +116,7 @@ export const MapComponent = () => {
     },
     [setViewState]
   );
+
   const zoomIn = () => {
     const newViewState = {
       ...viewState,
@@ -119,6 +124,7 @@ export const MapComponent = () => {
     };
     setViewState(constrainZoom(newViewState, CH_BBOX));
   };
+
   const zoomOut = () => {
     const newViewState = {
       ...viewState,
@@ -126,6 +132,22 @@ export const MapComponent = () => {
     };
     setViewState(constrainZoom(newViewState, CH_BBOX));
   };
+
+  const symbolColorRgbArray = useMemo(
+    () => convertHexToRgbArray(symbolLayer.color),
+    [symbolLayer.color]
+  );
+
+  const shapes = useMemo(
+    () => ({
+      ...features.areaLayer?.shapes,
+      features: features.areaLayer?.shapes?.features.filter(
+        ({ properties: { hierarchyLevel } }: GeoFeature) =>
+          hierarchyLevel === areaLayer.hierarchyLevel
+      ),
+    }),
+    [areaLayer.hierarchyLevel, features.areaLayer?.shapes]
+  );
 
   return (
     <Box>
@@ -141,22 +163,22 @@ export const MapComponent = () => {
           flexDirection: "column",
         }}
       >
-        <ZoomButton label="+" iconName="add" handleClick={zoomIn} />
-        <ZoomButton label="-" iconName="minus" handleClick={zoomOut} />
+        <ZoomButton iconName="add" handleClick={zoomIn} />
+        <ZoomButton iconName="minus" handleClick={zoomOut} />
       </Box>
       <DeckGL
         viewState={viewState}
         onViewStateChange={onViewStateChange}
         onResize={onResize}
         controller={{ type: MapController }}
+        getCursor={() => "default"}
       >
-        {baseLayer.relief && (
+        {showRelief && (
           <TileLayer
             getTileData={({ z, x, y }: TileData) =>
               `https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/${z}/${x}/${y}.png`
             }
-            pickable={true}
-            highlightColor={[60, 60, 60, 40]}
+            pickable={false}
             minZoom={2}
             maxZoom={16}
             tileSize={256}
@@ -174,79 +196,72 @@ export const MapComponent = () => {
             }}
           />
         )}
-        {/* <MVTLayer
-          data="https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf"
-          getLineColor={[192, 192, 192]}
-          getFillColor={[140, 170, 180, 0.1]}
-          lineWidthMinPixels={1}
-        /> */}
 
-        {showAreaLayer && (
+        {areaLayer.show && (
           <>
             <GeoJsonLayer
-              id="cantons"
-              data={features.cantons}
+              id="shapes"
+              data={shapes}
               pickable={true}
-              stroked={true}
+              autoHighlight={true}
+              stroked={false}
               filled={true}
               extruded={false}
-              autoHighlight={true}
-              getFillColor={(d: $FixMe) => {
-                const obs = data.find((x: Observation) => x.id === d.id);
-                return obs
-                  ? getColor(getValue(obs) ?? undefined)
-                  : [204, 204, 204, 100];
-              }}
-              onHover={({ x, y, object }: HoverObject) => {
-                if (object && object.id) {
-                  dispatch({
+              onHover={({
+                x,
+                y,
+                object,
+              }: {
+                x: number;
+                y: number;
+                object: GeoFeature;
+              }) => {
+                if (object) {
+                  setMapTooltipType("area");
+                  dispatchInteraction({
                     type: "INTERACTION_UPDATE",
                     value: {
                       interaction: {
                         visible: true,
                         mouse: { x, y },
-                        d: data.find((x: Observation) => x.id === object.id),
+                        d: object.properties.observation,
                       },
                     },
                   });
                 } else {
-                  dispatch({
+                  dispatchInteraction({
                     type: "INTERACTION_HIDE",
                   });
                 }
               }}
-              extensions={[new FillStyleExtension({ pattern: true })]}
-              highlightColor={[0, 0, 0, 50]}
-              getRadius={100}
-              getLineWidth={1}
-              updateTriggers={{ getFillColor: getColor, getFillPattern: data }}
-              fillPatternMask={true}
-              fillPatternAtlas="/static/sprite/sprite.png"
-              fillPatternMapping="/static/sprite/pattern.json"
-              getFillPattern={(d: $FixMe) => {
-                const obs = data.find((x: Observation) => x.id === d.id);
-                return obs && getValue(obs) === null ? "hatch" : "fill";
+              updateTriggers={{
+                getFillColor: [areaLayer.getValue, areaLayer.getColor],
               }}
-              getFillPatternScale={150}
-              getFillPatternOffset={[0, 0]}
+              getFillColor={(d: GeoFeature) =>
+                d.properties.observation
+                  ? areaLayer.getColor(
+                      areaLayer.getValue(d.properties.observation)
+                    )
+                  : null
+              }
             />
             <GeoJsonLayer
-              id="cantons-mesh"
-              data={features.cantonMesh}
+              id="shapes-mesh"
+              data={features.areaLayer?.mesh}
               pickable={false}
               stroked={true}
               filled={false}
               extruded={false}
-              lineWidthMinPixels={1.2}
-              lineWidthMaxPixels={3.6}
-              getLineWidth={200}
+              lineWidthMinPixels={1}
+              lineWidthMaxPixels={2}
+              getLineWidth={100}
               lineMiterLimit={1}
               getLineColor={[255, 255, 255]}
             />
           </>
         )}
 
-        {baseLayer.lakes && (
+        {showLakes && (
           <GeoJsonLayer
             id="lakes"
             data={features.lakes}
@@ -261,45 +276,64 @@ export const MapComponent = () => {
             getLineColor={[255, 255, 255]}
           />
         )}
-        {showSymbolLayer && (
+
+        {symbolLayer.show && (
           <ScatterplotLayer
-            id="cantons-centroids"
-            data={features.cantonCentroids}
-            pickable={true}
+            id="symbols"
+            data={features.symbolLayer?.points}
+            pickable={identicalLayerComponentIris ? !areaLayer.show : true}
+            autoHighlight={true}
             opacity={0.7}
             stroked={false}
             filled={true}
-            radiusScale={1}
             radiusUnits={"pixels"}
-            radiusMinPixels={radiusScale.range()[0]}
-            radiusMaxPixels={radiusScale.range()[1]}
+            radiusMinPixels={symbolLayer.radiusScale.range()[0]}
+            radiusMaxPixels={symbolLayer.radiusScale.range()[1]}
             lineWidthMinPixels={1}
-            getPosition={(d: $FixMe) => d.coordinates}
-            getRadius={(d: $FixMe) => {
-              const obs = data.find((x: Observation) => x.id === d.id);
-              return obs ? radiusScale(getRadius(obs) ?? 0) : 0;
-            }}
-            getFillColor={(d: $FixMe) => [0, 102, 153]}
-            getLineColor={(d: $FixMe) => [255, 255, 255]}
-            onHover={({ x, y, object }: HoverObject) => {
-              if (object && object.id) {
-                dispatch({
+            getPosition={({ coordinates }: GeoPoint) => coordinates}
+            getRadius={({ properties: { observation } }: GeoPoint) =>
+              observation
+                ? symbolLayer.radiusScale(
+                    symbolLayer.getValue(observation) as number
+                  )
+                : 0
+            }
+            getFillColor={symbolColorRgbArray}
+            getLineColor={[255, 255, 255]}
+            onHover={({
+              x,
+              y,
+              object,
+            }: {
+              x: number;
+              y: number;
+              object: GeoPoint;
+            }) => {
+              if (object) {
+                setMapTooltipType("symbol");
+                dispatchInteraction({
                   type: "INTERACTION_UPDATE",
                   value: {
                     interaction: {
                       visible: true,
                       mouse: { x, y },
-                      d: data.find((x: Observation) => x.id === object.id),
+                      d: object.properties.observation,
                     },
                   },
                 });
               } else {
-                dispatch({
+                dispatchInteraction({
                   type: "INTERACTION_HIDE",
                 });
               }
             }}
-            updateTriggers={{ getRadius: [data, getRadius] }}
+            updateTriggers={{
+              getRadius: [
+                symbolLayer.data,
+                symbolLayer.getValue,
+                symbolLayer.radiusScale,
+              ],
+            }}
           />
         )}
       </DeckGL>
@@ -308,11 +342,9 @@ export const MapComponent = () => {
 };
 
 const ZoomButton = ({
-  label,
   iconName,
   handleClick,
 }: {
-  label: string;
   iconName: IconName;
   handleClick: () => void;
 }) => (

@@ -1,8 +1,10 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
+import { Box } from "theme-ui";
 import { ChartConfig, ConfiguratorStateConfiguringChart } from "..";
-import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { getFieldComponentIris } from "../../charts";
+import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
+import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { useLocale } from "../../locales/use-locale";
@@ -12,12 +14,10 @@ import {
   SectionTitle,
 } from "./chart-controls/section";
 import {
-  DataFilterSelect,
   ControlTabField,
+  DataFilterSelect,
   DataFilterSelectTime,
 } from "./field";
-import { Loading } from "../../components/hint";
-import { Box } from "theme-ui";
 
 export const ChartConfigurator = ({
   state,
@@ -127,11 +127,10 @@ const ChartFields = ({
   chartConfig: ChartConfig;
   metaData: DataCubeMetadata;
 }) => {
+  const { chartType } = chartConfig;
   const { dimensions, measures } = metaData;
-
   const components = [...dimensions, ...measures];
 
-  const { chartType } = chartConfig;
   return (
     <>
       {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
@@ -143,8 +142,7 @@ const ChartFields = ({
             component={components.find(
               (d) =>
                 d.iri ===
-                chartConfig.fields[encodingField as "y" | "segment"]
-                  ?.componentIri
+                (chartConfig.fields as any)[encodingField]?.componentIri
             )}
             value={encoding.field}
             labelId={`${chartConfig.chartType}.${encoding.field}`}

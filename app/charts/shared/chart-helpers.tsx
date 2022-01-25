@@ -160,15 +160,18 @@ export const useTemporalVariable = (
   return getVariable;
 };
 
+const getSegment =
+  (segmentKey: string | undefined) =>
+  (d: Observation): string =>
+    segmentKey ? `${d[segmentKey]}` : "segment";
+
 export const useSegment = (
   segmentKey: string | undefined
 ): ((d: Observation) => string) => {
-  const getSegment = useCallback(
-    (d: Observation): string => (segmentKey ? `${d[segmentKey]}` : "segment"),
+  return useCallback(
+    (d: Observation) => getSegment(segmentKey)(d),
     [segmentKey]
   );
-
-  return getSegment;
 };
 
 // Stacking helpers.
@@ -333,17 +336,22 @@ export const useImputationNeeded = ({
   chartConfig: ChartConfig;
   data?: Array<Observation>;
 }): boolean => {
-  const getSegment = useSegment(chartConfig.fields.segment?.componentIri);
   const imputationNeeded = useMemo(() => {
     if (isAreaConfig(chartConfig) && data) {
       return checkForMissingValuesInSegments(
         group(data, (d) => d[chartConfig.fields.x.componentIri] as string),
-        [...new Set(data.map((d) => getSegment(d)))]
+        [
+          ...new Set(
+            data.map((d) =>
+              getSegment(chartConfig.fields.segment?.componentIri)(d)
+            )
+          ),
+        ]
       );
     } else {
       return false;
     }
-  }, [chartConfig, data, getSegment]);
+  }, [chartConfig, data]);
 
   return imputationNeeded;
 };

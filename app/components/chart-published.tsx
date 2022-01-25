@@ -6,6 +6,7 @@ import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 import { ChartColumnsVisualization } from "../charts/column/chart-column";
 import { ChartLinesVisualization } from "../charts/line/chart-lines";
+import { ChartMapVisualization } from "../charts/map/chart-map";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
@@ -144,6 +145,7 @@ const ChartWithInteractiveFilters = ({
     if (presetFrom && presetTo) {
       dispatch({ type: "ADD_TIME_FILTER", value: [presetFrom, presetTo] });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, presetFromStr, presetToStr]);
 
   return (
@@ -193,7 +195,7 @@ const getChart = ({
     case "table":
       return <ChartTableVisualization {...props} chartConfig={chartConfig} />;
     case "map":
-      return null;
+      return <ChartMapVisualization {...props} chartConfig={chartConfig} />;
     default:
       const _exhaustiveCheck: never = chartConfig;
       return _exhaustiveCheck;

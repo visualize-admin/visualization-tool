@@ -3,14 +3,16 @@ import namespace from "@rdfjs/namespace";
 export {
   dcat,
   dcterms,
+  geo,
   qudt,
   rdf,
   rdfs,
   schema,
-  vcard,
-  time,
-  xsd,
   sh,
+  skos,
+  time,
+  vcard,
+  xsd,
 } from "@tpluscode/rdf-ns-builders";
 
 export const classifications = namespace(

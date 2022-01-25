@@ -11,6 +11,10 @@ import {
   createOrganizationLoader,
   createThemeLoader,
 } from "../../rdf/query-cube-metadata";
+import { createGeoCoordinatesLoader } from "../../rdf/query-geo-coordinates";
+import { createGeoShapesLoader } from "../../rdf/query-geo-shapes";
+
+const MAX_BATCH_SIZE = 500;
 
 const cors = configureCors();
 
@@ -26,6 +30,16 @@ const server = new ApolloServer({
       dimensionValues: new DataLoader(createCubeDimensionValuesLoader(), {
         cacheKeyFn: (dim) => dim.dimension.path?.value,
       }),
+      geoCoordinates: new DataLoader(
+        createGeoCoordinatesLoader({ locale: req.headers["accept-language"] }),
+        {
+          maxBatchSize: MAX_BATCH_SIZE * 0.5,
+        }
+      ),
+      geoShapes: new DataLoader(
+        createGeoShapesLoader({ locale: req.headers["accept-language"] }),
+        { maxBatchSize: MAX_BATCH_SIZE }
+      ),
       themes: new DataLoader(
         createThemeLoader({ locale: req.headers["accept-language"] })
       ),

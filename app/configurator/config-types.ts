@@ -9,6 +9,8 @@ const ComponentType = t.union([
   t.literal("TemporalDimension"),
   t.literal("NominalDimension"),
   t.literal("OrdinalDimension"),
+  t.literal("GeoCoordinatesDimension"),
+  t.literal("GeoShapesDimension"),
 ]);
 
 export type ComponentType = t.TypeOf<typeof ComponentType>;
@@ -443,17 +445,11 @@ const PaletteType = t.union([
 ]);
 export type PaletteType = t.TypeOf<typeof PaletteType>;
 
-const MapBaseLayer = t.type({
-  componentIri: t.string, // FIXME: we don't need this
-  relief: t.boolean,
-  lakes: t.boolean,
-});
-export type MapBaseLayer = t.TypeOf<typeof MapBaseLayer>;
-
 const MapAreaLayer = t.type({
-  show: t.boolean,
-  label: GenericField,
   componentIri: t.string,
+  measureIri: t.string,
+  hierarchyLevel: t.number,
+  show: t.boolean,
   palette: t.string,
   paletteType: PaletteType,
   nbClass: t.number,
@@ -461,18 +457,22 @@ const MapAreaLayer = t.type({
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
-  show: t.boolean,
   componentIri: t.string,
+  measureIri: t.string,
+  hierarchyLevel: t.number,
+  color: t.string,
+  show: t.boolean,
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
+const MapSettings = t.type({
+  showRelief: t.boolean,
+  showLakes: t.boolean,
+});
+export type MapSettings = t.TypeOf<typeof MapSettings>;
 const MapFields = t.type({
-  baseLayer: MapBaseLayer,
   areaLayer: MapAreaLayer,
   symbolLayer: MapSymbolLayer,
-  x: GenericField,
-  y: GenericField,
-  segment: GenericField,
 });
 
 const MapConfig = t.type(
@@ -481,6 +481,7 @@ const MapConfig = t.type(
     interactiveFiltersConfig: InteractiveFiltersConfig,
     filters: Filters,
     fields: MapFields,
+    settings: MapSettings,
   },
   "MapConfig"
 );
@@ -573,6 +574,19 @@ export const isMapConfig = (
   chartConfig: ChartConfig
 ): chartConfig is MapConfig => {
   return chartConfig.chartType === "map";
+};
+
+export const isSegmentInConfig = (
+  chartConfig: ChartConfig
+): chartConfig is
+  | AreaConfig
+  | BarConfig
+  | ColumnConfig
+  | LineConfig
+  | ScatterPlotConfig
+  | PieConfig
+  | TableConfig => {
+  return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
 const Config = t.type(

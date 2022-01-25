@@ -11,10 +11,14 @@ export type DimensionType =
   | "TemporalDimension"
   | "NominalDimension"
   | "OrdinalDimension"
+  | "GeoCoordinatesDimension"
+  | "GeoShapesDimension"
   | "Measure"
   | "Attribute";
 
-export type EncodingField = "x" | "y" | "segment";
+export type BaseEncodingField = "x" | "y" | "segment" | "settings";
+export type GeoEncodingField = "areaLayer" | "symbolLayer";
+export type EncodingField = BaseEncodingField | GeoEncodingField;
 export type EncodingOption =
   | "chartSubType"
   | "sorting"
@@ -228,7 +232,26 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
   },
   map: {
     chartType: "map",
-    encodings: [],
+    encodings: [
+      {
+        field: "settings",
+        optional: true,
+        values: ["Attribute"], // FIXME: currently not used anywhere
+        filters: false,
+      },
+      {
+        field: "areaLayer",
+        optional: false,
+        values: ["Measure"],
+        filters: false,
+      },
+      {
+        field: "symbolLayer",
+        optional: true,
+        values: ["Measure"],
+        filters: false,
+      },
+    ],
     interactiveFilters: [],
   },
 };

@@ -10,7 +10,12 @@ import {
 } from "react";
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
-import { ImputationType, isAreaConfig, isColumnConfig } from ".";
+import {
+  ImputationType,
+  isAreaConfig,
+  isColumnConfig,
+  isSegmentInConfig,
+} from ".";
 import { fetchChartConfig, saveChartConfig } from "../api";
 import {
   getFieldComponentIris,
@@ -555,18 +560,18 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               });
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
-            // Filter for table to make TS happy :/
-            // if (draft.chartConfig.chartType !== "table") {
-            draft.chartConfig.fields.segment = {
-              componentIri: action.value.componentIri,
-              palette: "category10",
-              type: "stacked",
-              sorting: {
-                sortingType: "byDimensionLabel",
-                sortingOrder: "asc",
-              },
-              colorMapping: colorMapping,
-            };
+            if (isSegmentInConfig(draft.chartConfig)) {
+              draft.chartConfig.fields.segment = {
+                componentIri: action.value.componentIri,
+                palette: "category10",
+                type: "stacked",
+                sorting: {
+                  sortingType: "byDimensionLabel",
+                  sortingOrder: "asc",
+                },
+                colorMapping: colorMapping,
+              };
+            }
 
             // Remove this component from the interactive filter, if it is there
             if (draft.chartConfig.interactiveFiltersConfig) {

@@ -76,9 +76,11 @@
     "sparql-http-client": "^2.2.2",
     "theme-ui": "^0.10.0",
     "topojson-client": "^3.1.0",
+    "topojson-server": "^3.0.1",
     "urql": "^2.0.5",
     "use-debounce": "^7.0.0",
-    "use-immer": "^0.5.1"
+    "use-immer": "^0.5.1",
+    "wellknown": "^0.5.0"
   },
   "peerDependencies": {
     "@babel/runtime": "^7.8.4",
@@ -122,6 +124,8 @@
     "@types/react-table": "^7.0.25",
     "@types/react-window": "^1.8.2",
     "@types/sparql-http-client": "^2.2.5",
+    "@types/topojson-server": "^3.0.1",
+    "@types/wellknown": "^0.5.1",
     "babel-core": "^7.0.0-bridge.0",
     "jest": "^27.3.0",
     "react-inspector": "^5.1.1",

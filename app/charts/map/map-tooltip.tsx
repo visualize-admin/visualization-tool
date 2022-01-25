@@ -1,5 +1,13 @@
 import { hcl } from "d3";
 import * as React from "react";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { Box, Grid, Text } from "theme-ui";
 import { useFormatNumber } from "../../configurator/components/ui-helpers";
 import { TooltipBox } from "../shared/interaction/tooltip-box";
@@ -7,20 +15,56 @@ import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { MapState } from "./map-state";
 
+type HoverObjectType = "area" | "symbol";
+
+const MapTooltipStateContext = createContext<
+  [HoverObjectType, Dispatch<HoverObjectType>] | undefined
+>(undefined);
+
+export const useMapTooltip = () => {
+  const ctx = useContext(MapTooltipStateContext);
+
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <MapTooltipProvider /> to useMapTooltip()"
+    );
+  }
+
+  return ctx;
+};
+
+export const MapTooltipProvider = ({ children }: { children: ReactNode }) => {
+  const [state, dispatch] = useState<HoverObjectType>("area");
+
+  return (
+    <MapTooltipStateContext.Provider value={[state, dispatch]}>
+      {children}
+    </MapTooltipStateContext.Provider>
+  );
+};
+
 export const MapTooltip = () => {
+  const [hoverObjectType] = useMapTooltip();
   const [{ interaction }] = useInteraction();
-  const {
-    getFeatureLabel,
-    areaLayer: { showAreaLayer, areaMeasureLabel, getValue, colorScale },
-    symbolLayer: {
-      showSymbolLayer,
-      symbolMeasureLabel,
-      getRadius,
-      symbolColorScale,
-    },
-  } = useChartState() as MapState;
+  const { identicalLayerComponentIris, areaLayer, symbolLayer } =
+    useChartState() as MapState;
 
   const formatNumber = useFormatNumber();
+  const areaLayerValue = useMemo(() => {
+    if (interaction.d) {
+      return areaLayer.getValue(interaction.d);
+    } else {
+      return null;
+    }
+  }, [areaLayer, interaction.d]);
+  const symbolLayerValue = useMemo(() => {
+    if (interaction.d) {
+      return symbolLayer.getValue(interaction.d);
+    } else {
+      return null;
+    }
+  }, [symbolLayer, interaction.d]);
+
   return (
     <>
       {interaction.mouse && interaction.d && (
@@ -32,7 +76,9 @@ export const MapTooltip = () => {
         >
           <Box sx={{ minWidth: 200 }}>
             <Text as="div" variant="meta" sx={{ fontWeight: "bold" }}>
-              {getFeatureLabel(interaction.d)}
+              {hoverObjectType === "area"
+                ? areaLayer.getLabel(interaction.d)
+                : symbolLayer.getLabel(interaction.d)}
             </Text>
             <Grid
               sx={{
@@ -43,66 +89,69 @@ export const MapTooltip = () => {
                 alignItems: "center",
               }}
             >
-              {showAreaLayer && getValue(interaction.d) !== null && (
+              {
                 <>
-                  <Text as="div" variant="meta">
-                    {areaMeasureLabel}
-                  </Text>
-                  <Box
-                    sx={{
-                      borderRadius: "circle",
-                      px: 2,
-                      display: "inline-block",
-                      textAlign: "center",
-                    }}
-                    style={{
-                      background:
-                        getValue(interaction.d) !== null
-                          ? colorScale(getValue(interaction.d) as number)
-                          : "transparent",
-                      color:
-                        getValue(interaction.d) !== null &&
-                        hcl(colorScale(getValue(interaction.d) as number)).l <
-                          55
-                          ? "#fff"
-                          : "#000",
-                    }}
-                  >
-                    <Text as="div" variant="meta">
-                      {formatNumber(getValue(interaction.d))}
-                    </Text>
-                  </Box>
+                  {areaLayer.show &&
+                    areaLayerValue !== null &&
+                    (identicalLayerComponentIris ||
+                      hoverObjectType === "area") && (
+                      <>
+                        <Text as="div" variant="meta">
+                          {areaLayer.measureLabel}
+                        </Text>
+                        <Box
+                          sx={{
+                            borderRadius: "circle",
+                            px: 2,
+                            display: "inline-block",
+                            textAlign: "center",
+                          }}
+                          style={{
+                            background: areaLayer.colorScale(areaLayerValue),
+                            color:
+                              hcl(areaLayer.colorScale(areaLayerValue)).l < 55
+                                ? "#fff"
+                                : "#000",
+                          }}
+                        >
+                          <Text as="div" variant="meta">
+                            {formatNumber(areaLayerValue)}
+                          </Text>
+                        </Box>
+                      </>
+                    )}
+
+                  {symbolLayer.show &&
+                    symbolLayerValue !== null &&
+                    (identicalLayerComponentIris ||
+                      hoverObjectType === "symbol") && (
+                      <>
+                        <Text as="div" variant="meta">
+                          {symbolLayer.measureLabel}
+                        </Text>
+                        <Box
+                          sx={{
+                            borderRadius: "circle",
+                            px: 2,
+                            display: "inline-block",
+                            textAlign: "center",
+                          }}
+                          style={{
+                            background: symbolLayer.color,
+                          }}
+                        >
+                          <Text
+                            as="div"
+                            variant="meta"
+                            sx={{ color: "monochrome100" }}
+                          >
+                            {formatNumber(symbolLayerValue)}
+                          </Text>
+                        </Box>
+                      </>
+                    )}
                 </>
-              )}
-              {showSymbolLayer && getRadius(interaction.d) !== null && (
-                <>
-                  <Text as="div" variant="meta">
-                    {symbolMeasureLabel}
-                  </Text>
-                  <Box
-                    sx={{
-                      borderRadius: "circle",
-                      px: 2,
-                      display: "inline-block",
-                      textAlign: "center",
-                    }}
-                    style={{
-                      background:
-                        typeof getValue(interaction.d) === "number"
-                          ? symbolColorScale(getValue(interaction.d) as number)
-                          : "transparent",
-                    }}
-                  >
-                    <Text
-                      as="div"
-                      variant="meta"
-                      sx={{ color: "monochrome100" }}
-                    >
-                      {formatNumber(getRadius(interaction.d))}
-                    </Text>
-                  </Box>
-                </>
-              )}
+              }
             </Grid>
           </Box>
         </TooltipBox>

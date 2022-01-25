@@ -1,40 +1,76 @@
 import {
   axisBottom,
   interpolateOranges,
-  min,
-  max,
+  NumberValue,
   range,
   ScaleLinear,
   scaleLinear,
-  select,
-  Selection,
-  ScaleThreshold,
   ScaleQuantile,
   ScaleQuantize,
+  ScaleThreshold,
+  select,
+  Selection,
 } from "d3";
-
 import * as React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Box, Flex, Text } from "theme-ui";
 import {
   getColorInterpolator,
   useFormatInteger,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
 import { useChartTheme } from "../shared/use-chart-theme";
 import { useInteraction } from "../shared/use-interaction";
 import { useWidth } from "../shared/use-width";
 import { MapState } from "./map-state";
 
-const WIDTH = 256;
+const MAX_WIDTH = 204;
+const HEIGHT = 80;
 const COLOR_RAMP_HEIGHT = 10;
+const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
+
+const useLegendWidth = () => Math.min(useWidth(), MAX_WIDTH);
+
+const makeAxis = (
+  g: Selection<SVGGElement, unknown, null, undefined>,
+  {
+    axisLabelColor,
+    fontFamily,
+    formatNumber,
+    labelColor,
+    legendFontSize,
+    scale,
+    thresholds,
+  }: {
+    axisLabelColor: string;
+    fontFamily: string;
+    formatNumber: (x: NumberValue | undefined | null) => string;
+    labelColor: string;
+    legendFontSize: number;
+    scale: ScaleLinear<number, number, number>;
+    thresholds: number[];
+  }
+) => {
+  g.call(
+    axisBottom(scale)
+      .tickValues(thresholds)
+      .tickSizeInner(-COLOR_RAMP_HEIGHT)
+      .tickFormat(formatNumber)
+  );
+  g.select("path.domain").remove();
+  g.selectAll(".tick line").attr("stroke", axisLabelColor);
+  g.selectAll(".tick text")
+    .attr("font-size", legendFontSize)
+    .attr("font-family", fontFamily)
+    .attr("fill", labelColor)
+    .attr("transform", "rotate(45)")
+    .attr("text-anchor", "start");
+};
 
 export const MapLegend = () => {
-  const {
-    areaLayer: { areaMeasureLabel, showAreaLayer, paletteType },
-    symbolLayer: { symbolMeasureLabel, showSymbolLayer },
-  } = useChartState() as MapState;
+  const { areaLayer, symbolLayer } = useChartState() as MapState;
 
   return (
     <Flex
@@ -45,28 +81,29 @@ export const MapLegend = () => {
         flexWrap: "wrap",
       }}
     >
-      {showAreaLayer && (
+      {areaLayer.show && (
         <Box sx={{ p: 4 }}>
-          {areaMeasureLabel && (
-            <Text as="div" variant="meta">
-              {areaMeasureLabel}
+          {areaLayer.measureLabel && (
+            <Text
+              as="div"
+              variant="meta"
+              sx={{ marginLeft: `${MARGIN.left}px` }}
+            >
+              {areaLayer.measureLabel}
             </Text>
           )}
-
-          {paletteType === "continuous" && <ContinuousColorLegend />}
-
-          {paletteType === "discrete" && <QuantizeColorLegend />}
-
-          {paletteType === "quantile" && <QuantileColorLegend />}
-
-          {paletteType === "jenks" && <JenksColorLegend />}
+          {areaLayer.paletteType === "continuous" && <ContinuousColorLegend />}
+          {areaLayer.paletteType === "discrete" && <QuantizeColorLegend />}
+          {areaLayer.paletteType === "quantile" && <QuantileColorLegend />}
+          {areaLayer.paletteType === "jenks" && <JenksColorLegend />}
         </Box>
       )}
-      {showSymbolLayer && (
+
+      {symbolLayer.show && (
         <Box sx={{ p: 4 }}>
-          {symbolMeasureLabel && (
+          {symbolLayer.measureLabel && (
             <Text as="div" variant="meta">
-              {symbolMeasureLabel}
+              {symbolLayer.measureLabel}
             </Text>
           )}
           <CircleLegend />
@@ -75,211 +112,204 @@ export const MapLegend = () => {
     </Flex>
   );
 };
-const CircleLegend = () => {
-  const width = useWidth();
-  const [
-    {
-      interaction: { d, visible },
-    },
-  ] = useInteraction();
 
+interface CircleProps {
+  value: string;
+  label: string;
+  fill?: string;
+  stroke: string;
+  radius: number;
+  maxRadius: number;
+  fontSize: number;
+  showLine?: boolean;
+}
+
+const Circle = (props: CircleProps) => {
+  const {
+    value,
+    label,
+    fill,
+    stroke,
+    radius,
+    maxRadius,
+    fontSize,
+    showLine = true,
+  } = props;
+
+  return (
+    <g transform={`translate(0, ${maxRadius - radius})`}>
+      <circle
+        cx={0}
+        cy={0}
+        r={radius}
+        fill={fill}
+        stroke={stroke}
+        fillOpacity={0.1}
+      />
+      {showLine && (
+        <>
+          <line
+            x1={0}
+            y1={-radius}
+            x2={maxRadius + 4}
+            y2={-radius}
+            stroke={stroke}
+          />
+          <text
+            x={maxRadius + 6}
+            y={-radius}
+            dy={5}
+            fill={stroke}
+            textAnchor="start"
+            fontSize={fontSize}
+          >
+            {value} {label}
+          </text>
+        </>
+      )}
+    </g>
+  );
+};
+
+const CircleLegend = () => {
+  const width = useLegendWidth();
+
+  const [{ interaction }] = useInteraction();
   const { axisLabelColor, legendFontSize } = useChartTheme();
   const {
-    data,
-    getFeatureLabel,
-    symbolLayer: { getRadius, radiusScale, symbolColorScale },
+    symbolLayer: {
+      data,
+      color: symbolColor,
+      dataDomain,
+      getLabel,
+      getValue,
+      radiusScale,
+    },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
 
-  const legendWidth = Math.min(width, WIDTH);
-  const margins = {
-    top: 6,
-    right: 4,
-    bottom: 4,
-    left: 4,
-  };
-  const height = 60;
+  const maybeValue = interaction.d && getValue(interaction.d);
+  const value = typeof maybeValue === "number" ? maybeValue : undefined;
 
-  const [, maxRadius] = radiusScale.domain();
+  const radius = value && radiusScale(value);
+  const maxRadius = radiusScale.range()[1];
 
-  const hoveredRadius =
-    d && typeof getRadius(d) === "number" ? getRadius(d) : undefined;
+  const color = value ? symbolColor : undefined;
 
-  const hoveredColor =
-    d && typeof getRadius(d) === "number"
-      ? symbolColorScale(getRadius(d) as number)
-      : undefined;
+  const domainObservations = useMemo(
+    () => dataDomain.map((d) => data.find((x) => getValue(x) === d)),
+    [data, dataDomain, getValue]
+  ) as [Observation, Observation];
 
   return (
-    <svg
-      width={legendWidth + margins.left + margins.right}
-      height={height + margins.top + margins.bottom}
-    >
+    <svg width={width} height={HEIGHT}>
       <g
-        transform={`translate(${margins.left + radiusScale(maxRadius)}, ${
-          margins.top + radiusScale(maxRadius)
+        transform={`translate(${MARGIN.left + maxRadius}, ${
+          MARGIN.top + maxRadius
         })`}
       >
-        {radiusScale.domain().map((d) => {
-          // FIXME: Potentially a performance problem if a lot of data
-          const thisFeatureLabel = getFeatureLabel(
-            data.find((x) => getRadius(x) === d)
-          );
+        {dataDomain.map((d, i) => {
+          const observation = domainObservations[i];
+          const label = getLabel(observation);
+          const radius = radiusScale(d);
 
           return (
-            <>
-              {d !== 0 && (
-                <g
-                  transform={`translate(0, ${
-                    radiusScale(maxRadius) - radiusScale(d)
-                  })`}
-                >
-                  <circle
-                    cx={0}
-                    cy={0}
-                    r={radiusScale(d)}
+            observation && (
+              <>
+                {
+                  <Circle
+                    value={formatNumber(d)}
+                    label={label}
                     fill="none"
                     stroke={axisLabelColor}
+                    radius={radius}
+                    maxRadius={maxRadius}
+                    fontSize={legendFontSize}
+                    showLine={!interaction.visible}
                   />
-                  {!visible && (
-                    <>
-                      <line
-                        x1={0}
-                        y1={-radiusScale(d)}
-                        x2={radiusScale(maxRadius) + 4}
-                        y2={-radiusScale(d)}
-                        stroke={axisLabelColor}
-                      />
-                      <text
-                        x={radiusScale(maxRadius) + 6}
-                        y={-radiusScale(d)}
-                        dy={5}
-                        fill={axisLabelColor}
-                        textAnchor="start"
-                        fontSize={legendFontSize}
-                      >
-                        {formatNumber(d)} ({thisFeatureLabel})
-                      </text>
-                    </>
-                  )}
-                </g>
-              )}
-            </>
+                }
+              </>
+            )
           );
         })}
+
         {/* Hovered data point indicator */}
-        {d && visible && hoveredRadius && (
-          <g
-            transform={`translate(0, ${
-              radiusScale(maxRadius) - radiusScale(hoveredRadius)
-            })`}
-          >
-            <circle
-              cx={0}
-              cy={0}
-              r={radiusScale(hoveredRadius)}
-              fill={hoveredColor}
-              stroke={hoveredColor}
-              fillOpacity={0.1}
-            />
-            <line
-              x1={0}
-              y1={-radiusScale(hoveredRadius)}
-              x2={radiusScale(maxRadius) + 4}
-              y2={-radiusScale(hoveredRadius)}
-              stroke={hoveredColor}
-            />
-            <text
-              x={radiusScale(maxRadius) + 6}
-              y={-radiusScale(hoveredRadius)}
-              dy={5}
-              fill={hoveredColor}
-              textAnchor="start"
+        {interaction.d &&
+          interaction.visible &&
+          value !== undefined &&
+          radius !== undefined && (
+            <Circle
+              value={formatNumber(value)}
+              label={getLabel(interaction.d)}
+              fill={color}
+              stroke={axisLabelColor}
+              radius={radius}
+              maxRadius={maxRadius}
               fontSize={legendFontSize}
-            >
-              {formatNumber(getRadius(d) ?? NaN)} ({getFeatureLabel(d)})
-            </text>
-          </g>
-        )}
+            />
+          )}
       </g>
     </svg>
   );
 };
 
 const JenksColorLegend = () => {
+  const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
-  const {
-    axisLabelColor,
-    labelColor,
-    fontFamily,
-    legendFontSize,
-  } = useChartTheme();
+
+  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+    useChartTheme();
   const {
     areaLayer: { dataDomain, colorScale },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
-  const width = useWidth();
+  const thresholds = useMemo(
+    () => (colorScale.domain ? colorScale.domain() : []),
+    [colorScale]
+  );
 
-  const legendWidth = Math.min(width, WIDTH);
-  const margins = {
-    top: 6,
-    right: 4,
-    bottom: 64,
-    left: 4,
-  };
-
-  const thresholds = colorScale.domain ? colorScale.domain() : [];
+  const [min, max] = dataDomain;
 
   // From color index to threshold value
   const thresholdsScale = scaleLinear()
     .domain(range(colorScale.range().length + 1))
-    .range([
-      min(dataDomain, (d) => d) || 0,
-      ...thresholds,
-      max(dataDomain, (d) => d) || 100,
-    ]);
+    .range([min || 0, ...thresholds, max || 100]);
 
   // From threshold value to pixel value
   const scale = scaleLinear()
-    .domain([
-      min(dataDomain, (d) => d) || 0,
-      max(dataDomain, (d) => d) || 10000,
-    ])
-    .range([0, legendWidth]);
+    .domain([min || 0, max || 10000])
+    .range([MARGIN.left, width - MARGIN.right]);
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    const tickValues = thresholds.splice(0, thresholds.length - 1);
+  const tickValues = thresholds.splice(0, thresholds.length - 1);
 
-    g.call(
-      axisBottom(scale)
-        .tickValues(tickValues)
-        .tickSizeInner(-COLOR_RAMP_HEIGHT - 2)
-        .tickFormat(formatNumber)
-    );
-    g.select("path.domain").remove();
-    g.selectAll(".tick line").attr("stroke", axisLabelColor);
-    g.selectAll(".tick text")
-      .attr("font-size", legendFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor)
-      .attr("transform", "rotate(45)")
-      .attr("text-anchor", "start");
-  };
-
-  useEffect(() => {
-    const g = select(legendAxisRef.current);
-    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
-  });
+  useEffect(
+    () =>
+      makeAxis(select(legendAxisRef.current) as any, {
+        axisLabelColor,
+        fontFamily,
+        formatNumber,
+        labelColor,
+        legendFontSize,
+        scale,
+        thresholds: tickValues,
+      }),
+    [
+      axisLabelColor,
+      fontFamily,
+      formatNumber,
+      labelColor,
+      legendFontSize,
+      scale,
+      tickValues,
+    ]
+  );
 
   return (
-    <svg
-      width={legendWidth + margins.left + margins.right}
-      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
-    >
-      <g transform={`translate(${margins.left}, ${0})`}>
+    <svg width={width} height={HEIGHT}>
+      <g>
         <DataPointIndicator scale={scale} />
       </g>
-      <g transform={`translate(${margins.left}, ${margins.top})`}>
+      <g transform={`translate(0, ${MARGIN.top})`}>
         {(colorScale as ScaleThreshold<number, string>).range().map((c, i) => {
           return (
             <rect
@@ -288,7 +318,7 @@ const JenksColorLegend = () => {
               y={0}
               width={scale(thresholdsScale(i + 1)) - scale(thresholdsScale(i))}
               height={COLOR_RAMP_HEIGHT}
-              fill={`${c}`}
+              fill={c}
             />
           );
         })}
@@ -296,85 +326,69 @@ const JenksColorLegend = () => {
       <g
         ref={legendAxisRef}
         key="legend-axis"
-        transform={`translate(${margins.left}, ${
-          COLOR_RAMP_HEIGHT + margins.top + 2
-        })`}
+        transform={`translate(0, ${COLOR_RAMP_HEIGHT + MARGIN.top})`}
       />
     </svg>
   );
 };
+
 const QuantileColorLegend = () => {
+  const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
-  const {
-    axisLabelColor,
-    labelColor,
-    fontFamily,
-    legendFontSize,
-  } = useChartTheme();
+
+  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+    useChartTheme();
   const {
     areaLayer: { dataDomain, colorScale },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
-  const width = useWidth();
 
-  const legendWidth = Math.min(width, WIDTH);
-  const margins = {
-    top: 6,
-    right: 4,
-    bottom: 64,
-    left: 4,
-  };
-  // @ts-ignore
-  const thresholds = colorScale.quantiles ? colorScale.quantiles() : [];
+  const thresholds = useMemo(
+    // @ts-ignore
+    () => (colorScale.quantiles ? colorScale.quantiles() : []),
+    [colorScale]
+  );
+
+  const [min, max] = dataDomain;
 
   // From color index to threshold value
   const thresholdsScale = scaleLinear()
     .domain(range(colorScale.range().length + 1))
-    .range([
-      min(dataDomain, (d) => d),
-      ...thresholds,
-      max(dataDomain, (d) => d),
-    ]);
+    .range([min, ...thresholds, max]);
 
   // From threshold value to pixel value
   const scale = scaleLinear()
-    .domain([
-      min(dataDomain, (d) => d) || 0,
-      max(dataDomain, (d) => d) || 10000,
-    ])
-    .range([0, legendWidth]);
+    .domain([min || 0, max || 10000])
+    .range([MARGIN.left, width - MARGIN.right]);
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.call(
-      axisBottom(scale)
-        .tickValues(thresholds)
-        .tickSizeInner(-COLOR_RAMP_HEIGHT - 2)
-        .tickFormat(formatNumber)
-    );
-    g.select("path.domain").remove();
-    g.selectAll(".tick line").attr("stroke", axisLabelColor);
-    g.selectAll(".tick text")
-      .attr("font-size", legendFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor)
-      .attr("transform", "rotate(45)")
-      .attr("text-anchor", "start");
-  };
-
-  useEffect(() => {
-    const g = select(legendAxisRef.current);
-    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
-  });
+  useEffect(
+    () =>
+      makeAxis(select(legendAxisRef.current) as any, {
+        axisLabelColor,
+        fontFamily,
+        formatNumber,
+        labelColor,
+        legendFontSize,
+        scale,
+        thresholds,
+      }),
+    [
+      axisLabelColor,
+      fontFamily,
+      formatNumber,
+      labelColor,
+      legendFontSize,
+      scale,
+      thresholds,
+    ]
+  );
 
   return (
-    <svg
-      width={legendWidth + margins.left + margins.right}
-      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
-    >
-      <g transform={`translate(${margins.left}, ${0})`}>
+    <svg width={width} height={HEIGHT}>
+      <g>
         <DataPointIndicator scale={scale} />
       </g>
-      <g transform={`translate(${margins.left}, ${margins.top})`}>
+      <g transform={`translate(0, ${MARGIN.top})`}>
         {(colorScale as ScaleQuantile<string>).range().map((c, i) => {
           return (
             <rect
@@ -383,7 +397,7 @@ const QuantileColorLegend = () => {
               y={0}
               width={scale(thresholdsScale(i + 1)) - scale(thresholdsScale(i))}
               height={COLOR_RAMP_HEIGHT}
-              fill={`${c}`}
+              fill={c}
             />
           );
         })}
@@ -391,167 +405,135 @@ const QuantileColorLegend = () => {
       <g
         ref={legendAxisRef}
         key="legend-axis"
-        transform={`translate(${margins.left}, ${
-          COLOR_RAMP_HEIGHT + margins.top + 2
-        })`}
+        transform={`translate(0, ${COLOR_RAMP_HEIGHT + MARGIN.top})`}
       />
     </svg>
   );
 };
 
 const QuantizeColorLegend = () => {
+  const width = useLegendWidth();
   const legendAxisRef = useRef<SVGGElement>(null);
-  const {
-    axisLabelColor,
-    labelColor,
-    fontFamily,
-    legendFontSize,
-  } = useChartTheme();
+
+  const { axisLabelColor, labelColor, fontFamily, legendFontSize } =
+    useChartTheme();
   const {
     areaLayer: { dataDomain, colorScale },
   } = useChartState() as MapState;
   const formatNumber = useFormatInteger();
-  const width = useWidth();
-
-  const legendWidth = Math.min(width, WIDTH);
-  const margins = {
-    top: 6,
-    right: 4,
-    bottom: 64,
-    left: 4,
-  };
 
   const classesScale = scaleLinear()
     .domain([0, colorScale.range().length])
-    .range([0, legendWidth]);
+    .range([MARGIN.left, width - MARGIN.right]);
 
-  const scale = scaleLinear().domain(dataDomain).range([0, legendWidth]);
+  const scale = scaleLinear()
+    .domain(dataDomain)
+    .range([MARGIN.left, width - MARGIN.right]);
 
-  // @ts-ignore
-  const thresholds = colorScale.thresholds ? colorScale.thresholds() : [];
+  const thresholds = useMemo(
+    // @ts-ignore
+    () => (colorScale.thresholds ? colorScale.thresholds() : []),
+    [colorScale]
+  );
 
-  const mkAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
-    g.call(
-      axisBottom(scale)
-        .tickValues(thresholds)
-        .tickSizeInner(-COLOR_RAMP_HEIGHT - 2)
-        .tickFormat(formatNumber)
-    );
-    g.select("path.domain").remove();
-    g.selectAll(".tick line").attr("stroke", axisLabelColor);
-    g.selectAll(".tick text")
-      .attr("font-size", legendFontSize)
-      .attr("font-family", fontFamily)
-      .attr("fill", labelColor)
-      .attr("transform", "rotate(45)")
-      .attr("text-anchor", "start");
-  };
-
-  useEffect(() => {
-    const g = select(legendAxisRef.current);
-    mkAxis(g as Selection<SVGGElement, unknown, null, undefined>);
-  });
+  useEffect(
+    () =>
+      makeAxis(select(legendAxisRef.current) as any, {
+        axisLabelColor,
+        fontFamily,
+        formatNumber,
+        labelColor,
+        legendFontSize,
+        scale,
+        thresholds,
+      }),
+    [
+      axisLabelColor,
+      fontFamily,
+      formatNumber,
+      labelColor,
+      legendFontSize,
+      scale,
+      thresholds,
+    ]
+  );
 
   return (
-    <svg
-      width={legendWidth + margins.left + margins.right}
-      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
-    >
-      <g transform={`translate(${margins.left}, ${0})`}>
+    <svg width={width} height={HEIGHT}>
+      <g>
         <DataPointIndicator scale={scale} />
       </g>
-      <g transform={`translate(${margins.left}, ${margins.top})`}>
+      <g transform={`translate(0, ${MARGIN.top})`}>
         {(colorScale as ScaleQuantize<string>).range().map((c, i) => (
           <rect
             key={i}
             x={classesScale(i)}
-            y={0}
-            width={legendWidth / colorScale.range().length}
+            width={
+              (width - MARGIN.left - MARGIN.right) / colorScale.range().length
+            }
             height={COLOR_RAMP_HEIGHT}
-            fill={`${c}`}
+            fill={c}
           />
         ))}
       </g>
       <g
         ref={legendAxisRef}
         key="legend-axis"
-        transform={`translate(${margins.left}, ${
-          COLOR_RAMP_HEIGHT + margins.top + 2
-        })`}
+        transform={`translate(0, ${COLOR_RAMP_HEIGHT + MARGIN.top})`}
       />
     </svg>
   );
 };
 
 const ContinuousColorLegend = () => {
+  const width = useLegendWidth();
+
   const {
     areaLayer: { palette, dataDomain },
   } = useChartState() as MapState;
   const { legendLabelColor, labelFontSize, fontFamily } = useChartTheme();
   const formatNumber = useFormatNumber();
-  const width = useWidth();
-
-  const legendWidth = Math.min(width, WIDTH);
-  const margins = {
-    top: 6,
-    right: 4,
-    bottom: 14,
-    left: 4,
-  };
-  const scale = scaleLinear().domain(dataDomain).range([0, legendWidth]);
+  const scale = scaleLinear()
+    .domain(dataDomain)
+    .range([MARGIN.left, width - MARGIN.right]);
 
   return (
-    <svg
-      width={legendWidth + margins.left + margins.right}
-      height={COLOR_RAMP_HEIGHT + margins.top + margins.bottom}
-    >
-      <g transform={`translate(${margins.left}, ${0})`}>
+    <svg width={width} height={HEIGHT}>
+      <g>
         <DataPointIndicator scale={scale} />
       </g>
-      <g transform={`translate(${margins.left}, ${margins.top})`}>
-        <foreignObject
-          x={0}
-          y={0}
-          width={legendWidth}
-          height={COLOR_RAMP_HEIGHT}
-        >
-          <ColorRamp
-            colorInterpolator={getColorInterpolator(palette)}
-            nbClass={legendWidth}
-            width={legendWidth}
-            height={COLOR_RAMP_HEIGHT}
-          />
-        </foreignObject>
-      </g>
-      <g
-        transform={`translate(${margins.left}, ${
-          COLOR_RAMP_HEIGHT + margins.top + margins.bottom
-        })`}
+      <foreignObject
+        x={MARGIN.left}
+        y={1} // needed to align with other legends, not sure why
+        width={width - MARGIN.left - MARGIN.right}
+        height={COLOR_RAMP_HEIGHT}
       >
-        <text
-          x={0}
-          y={0}
-          textAnchor="start"
-          fontSize={labelFontSize}
-          fontFamily={fontFamily}
-          fill={legendLabelColor}
-        >
+        <ColorRamp
+          width={width - MARGIN.left - MARGIN.right}
+          height={COLOR_RAMP_HEIGHT}
+          colorInterpolator={getColorInterpolator(palette)}
+          nbClass={width}
+        />
+      </foreignObject>
+      <g
+        transform={`translate(${MARGIN.left}, ${
+          MARGIN.top + COLOR_RAMP_HEIGHT + 14
+        })`}
+        fontFamily={fontFamily}
+        fontSize={labelFontSize}
+        fill={legendLabelColor}
+      >
+        <text textAnchor="start" fontSize={labelFontSize}>
           {formatNumber(dataDomain[0])}
         </text>
-        <text
-          x={legendWidth}
-          y={0}
-          textAnchor="end"
-          fontSize={labelFontSize}
-          fontFamily={fontFamily}
-          fill={legendLabelColor}
-        >
+        <text x={width - MARGIN.right - MARGIN.left} textAnchor="end">
           {formatNumber(dataDomain[1])}
         </text>
       </g>
     </svg>
   );
 };
+
 const DataPointIndicator = ({
   scale,
 }: {
@@ -562,6 +544,7 @@ const DataPointIndicator = ({
     areaLayer: { getValue },
   } = useChartState() as MapState;
   const { labelColor } = useChartTheme();
+
   return (
     <>
       {state.interaction.d &&
@@ -569,7 +552,7 @@ const DataPointIndicator = ({
         !isNaN(getValue(state.interaction.d) ?? NaN) && (
           <polygon
             fill={labelColor}
-            points="-4,0 4,0 0,5"
+            points="-4,0 4,0 0,4"
             transform={`translate(${scale(
               getValue(state.interaction.d) ?? 0
             )}, 0)`}
@@ -578,6 +561,7 @@ const DataPointIndicator = ({
     </>
   );
 };
+
 const ColorRamp = ({
   colorInterpolator = interpolateOranges,
   nbClass,
@@ -594,6 +578,7 @@ const ColorRamp = ({
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas && canvas.getContext("2d");
+
     if (canvas && context) {
       context.clearRect(0, 0, width, height);
       canvas.style.imageRendering = "-moz-crisp-edges";
@@ -606,5 +591,5 @@ const ColorRamp = ({
     }
   });
 
-  return <canvas ref={canvasRef} />;
+  return <canvas ref={canvasRef} width={width} height={height} />;
 };
