@@ -465,11 +465,11 @@ const MapSymbolLayer = t.type({
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
-const MapSettings = t.type({
+const BaseLayer = t.type({
   showRelief: t.boolean,
   showLakes: t.boolean,
 });
-export type MapSettings = t.TypeOf<typeof MapSettings>;
+export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 const MapFields = t.type({
   areaLayer: MapAreaLayer,
   symbolLayer: MapSymbolLayer,
@@ -481,7 +481,7 @@ const MapConfig = t.type(
     interactiveFiltersConfig: InteractiveFiltersConfig,
     filters: Filters,
     fields: MapFields,
-    settings: MapSettings,
+    baseLayer: BaseLayer,
   },
   "MapConfig"
 );

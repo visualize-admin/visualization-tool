@@ -16,8 +16,8 @@ export type DimensionType =
   | "Measure"
   | "Attribute";
 
-export type BaseEncodingField = "x" | "y" | "segment" | "settings";
-export type GeoEncodingField = "areaLayer" | "symbolLayer";
+export type BaseEncodingField = "x" | "y" | "segment";
+export type GeoEncodingField = "baseLayer" | "areaLayer" | "symbolLayer";
 export type EncodingField = BaseEncodingField | GeoEncodingField;
 export type EncodingOption =
   | "chartSubType"
@@ -234,9 +234,9 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
     chartType: "map",
     encodings: [
       {
-        field: "settings",
+        field: "baseLayer",
         optional: true,
-        values: ["Attribute"], // FIXME: currently not used anywhere
+        values: [],
         filters: false,
       },
       {

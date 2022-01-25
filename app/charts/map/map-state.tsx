@@ -21,8 +21,8 @@ import {
   getSingleHueSequentialPalette,
 } from "../../configurator/components/ui-helpers";
 import {
+  BaseLayer,
   MapFields,
-  MapSettings,
   PaletteType,
 } from "../../configurator/config-types";
 import {
@@ -132,11 +132,11 @@ const useMapState = ({
   fields,
   measures,
   dimensions,
-  settings,
+  baseLayer,
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   fields: MapFields;
-  settings: MapSettings;
+  baseLayer: BaseLayer;
 }): MapState => {
   const width = useWidth();
   const { areaLayer, symbolLayer } = fields;
@@ -267,8 +267,8 @@ const useMapState = ({
     chartType: "map",
     features,
     bounds,
-    showRelief: settings.showRelief,
-    showLakes: settings.showLakes,
+    showRelief: baseLayer.showRelief,
+    showLakes: baseLayer.showLakes,
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,
@@ -304,13 +304,13 @@ const MapChartProvider = ({
   fields,
   measures,
   dimensions,
-  settings,
+  baseLayer,
   children,
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   children: ReactNode;
   fields: MapFields;
-  settings: MapSettings;
+  baseLayer: BaseLayer;
 }) => {
   const state = useMapState({
     data,
@@ -318,7 +318,7 @@ const MapChartProvider = ({
     fields,
     measures,
     dimensions,
-    settings,
+    baseLayer,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -331,12 +331,12 @@ export const MapChart = ({
   fields,
   measures,
   dimensions,
-  settings,
+  baseLayer,
   children,
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   fields: MapFields;
-  settings: MapSettings;
+  baseLayer: BaseLayer;
   children: ReactNode;
 }) => {
   return (
@@ -349,7 +349,7 @@ export const MapChart = ({
             fields={fields}
             measures={measures}
             dimensions={dimensions}
-            settings={settings}
+            baseLayer={baseLayer}
           >
             {children}
           </MapChartProvider>
