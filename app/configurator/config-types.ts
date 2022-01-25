@@ -436,24 +436,46 @@ const TableConfig = t.type(
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
-// FIXME: These MapFields types are only placeholders for the map prototype
-const PaletteType = t.union([
+const ColorScaleType = t.union([
   t.literal("continuous"),
   t.literal("discrete"),
+]);
+export type ColorScaleType = t.TypeOf<typeof ColorScaleType>;
+
+const ColorScaleInterpolationType = t.union([
+  t.literal("linear"),
+  t.literal("quantize"),
   t.literal("quantile"),
   t.literal("jenks"),
 ]);
-export type PaletteType = t.TypeOf<typeof PaletteType>;
+export type ColorScaleInterpolationType = t.TypeOf<
+  typeof ColorScaleInterpolationType
+>;
 
-const MapAreaLayer = t.type({
-  componentIri: t.string,
-  measureIri: t.string,
-  hierarchyLevel: t.number,
-  show: t.boolean,
-  palette: t.string,
-  paletteType: PaletteType,
-  nbClass: t.number,
-});
+const MapAreaLayer = t.intersection([
+  t.type({
+    componentIri: t.string,
+    measureIri: t.string,
+    hierarchyLevel: t.number,
+    show: t.boolean,
+    palette: t.string,
+    nbClass: t.number,
+  }),
+  t.union([
+    t.type({
+      colorScaleType: t.literal("continuous"),
+      colorScaleInterpolationType: t.literal("linear"),
+    }),
+    t.type({
+      colorScaleType: t.literal("discrete"),
+      colorScaleInterpolationType: t.union([
+        t.literal("quantize"),
+        t.literal("quantile"),
+        t.literal("jenks"),
+      ]),
+    }),
+  ]),
+]);
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({

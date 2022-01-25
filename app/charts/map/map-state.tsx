@@ -22,8 +22,8 @@ import {
 } from "../../configurator/components/ui-helpers";
 import {
   BaseLayer,
+  ColorScaleInterpolationType,
   MapFields,
-  PaletteType,
 } from "../../configurator/config-types";
 import {
   GeoData,
@@ -61,7 +61,7 @@ export interface MapState {
       | ScaleQuantile<string>
       | ScaleLinear<string, string>
       | ScaleThreshold<number, string>;
-    paletteType: PaletteType;
+    colorScaleInterpolationType: ColorScaleInterpolationType;
     palette: string;
     nbClass: number;
     dataDomain: [number, number];
@@ -80,14 +80,14 @@ export interface MapState {
 }
 
 const getColorScale = ({
-  paletteType,
+  scaleInterpolationType,
   palette,
   getValue,
   data,
   dataDomain,
   nbClass,
 }: {
-  paletteType: PaletteType;
+  scaleInterpolationType: ColorScaleInterpolationType;
   palette: string;
   getValue: (x: Observation) => number | null;
   data: Observation[];
@@ -99,10 +99,10 @@ const getColorScale = ({
     nbClass: 9,
   });
 
-  switch (paletteType) {
-    case "continuous":
+  switch (scaleInterpolationType) {
+    case "linear":
       return scaleSequential(getColorInterpolator(palette)).domain(dataDomain);
-    case "discrete":
+    case "quantize":
       return scaleQuantize<string>()
         .domain(dataDomain)
         .range(getSingleHueSequentialPalette({ palette, nbClass }));
@@ -140,7 +140,6 @@ const useMapState = ({
 }): MapState => {
   const width = useWidth();
   const { areaLayer, symbolLayer } = fields;
-  const { palette, nbClass, paletteType } = areaLayer;
 
   const getAreaLabel = useStringVariable(areaLayer.componentIri);
   const getSymbolLabel = useStringVariable(symbolLayer.componentIri);
@@ -227,12 +226,12 @@ const useMapState = ({
   ]) as [number, number];
 
   const areaColorScale = getColorScale({
-    paletteType,
-    palette,
+    scaleInterpolationType: areaLayer.colorScaleInterpolationType,
+    palette: areaLayer.palette,
     getValue: getAreaValue,
     data: areaData,
     dataDomain: areaDataDomain,
-    nbClass,
+    nbClass: areaLayer.nbClass,
   });
 
   const getAreaColor = (v: number | null) => {
@@ -279,9 +278,9 @@ const useMapState = ({
       getValue: getAreaValue,
       getColor: getAreaColor,
       colorScale: areaColorScale,
-      paletteType,
-      palette,
-      nbClass: nbClass,
+      colorScaleInterpolationType: areaLayer.colorScaleInterpolationType,
+      palette: areaLayer.palette,
+      nbClass: areaLayer.nbClass,
       dataDomain: areaDataDomain,
     },
     symbolLayer: {

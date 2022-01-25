@@ -278,9 +278,10 @@ export const getInitialConfig = ({
             componentIri: geoShapes[0]?.iri || "",
             measureIri: measures[0].iri,
             hierarchyLevel: 1,
+            colorScaleType: "continuous",
+            colorScaleInterpolationType: "linear",
             palette: "oranges",
             nbClass: 5,
-            paletteType: "continuous",
           },
           symbolLayer: {
             show: geoShapes.length === 0,

@@ -14,6 +14,7 @@ import {
   ImputationType,
   isAreaConfig,
   isColumnConfig,
+  isMapConfig,
   isSegmentInConfig,
 } from ".";
 import { fetchChartConfig, saveChartConfig } from "../api";
@@ -673,7 +674,22 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.value,
           Object
         );
+
+        if (
+          isMapConfig(draft.chartConfig) &&
+          action.value.field === "areaLayer" &&
+          action.value.path === "colorScaleType"
+        ) {
+          const path = `chartConfig.fields.areaLayer.colorScaleInterpolationType`;
+
+          if (action.value.value === "continuous") {
+            setWith(draft, path, "linear", Object);
+          } else if (action.value.value === "discrete") {
+            setWith(draft, path, "jenks", Object);
+          }
+        }
       }
+
       return draft;
 
     case "CHART_PALETTE_CHANGED":

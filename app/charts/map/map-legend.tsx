@@ -92,10 +92,18 @@ export const MapLegend = () => {
               {areaLayer.measureLabel}
             </Text>
           )}
-          {areaLayer.paletteType === "continuous" && <ContinuousColorLegend />}
-          {areaLayer.paletteType === "discrete" && <QuantizeColorLegend />}
-          {areaLayer.paletteType === "quantile" && <QuantileColorLegend />}
-          {areaLayer.paletteType === "jenks" && <JenksColorLegend />}
+          {areaLayer.colorScaleInterpolationType === "linear" && (
+            <ContinuousColorLegend />
+          )}
+          {areaLayer.colorScaleInterpolationType === "quantize" && (
+            <QuantizeColorLegend />
+          )}
+          {areaLayer.colorScaleInterpolationType === "quantile" && (
+            <QuantileColorLegend />
+          )}
+          {areaLayer.colorScaleInterpolationType === "jenks" && (
+            <JenksColorLegend />
+          )}
         </Box>
       )}
 
