@@ -1,5 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import React, { memo, useMemo } from "react";
+import { Flex } from "theme-ui";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "..";
 import { FieldSetLegend } from "../../components/form";
 import {
@@ -20,14 +21,6 @@ import {
   ChartOptionSelectField,
   ColorPickerField,
 } from "../components/field";
-
-const NUMBER_OF_CLASSES_OPTIONS = Array.from(
-  { length: 7 },
-  (_, i) => i + 3
-).map((d) => ({
-  value: d,
-  label: `${d}`,
-}));
 
 export const MapColumnOptions = ({
   state,
@@ -139,6 +132,18 @@ export const AreaLayerSettings = memo(
       [metaData.measures]
     );
 
+    const numberOfGeoShapes = (dimension.geoShapes as any).topology.objects
+      .shapes.geometries.length as number;
+
+    const numberOfColorScaleClasses = useMemo(
+      () =>
+        Array.from(
+          { length: Math.min(7, Math.max(0, numberOfGeoShapes - 2)) },
+          (_, i) => i + 3
+        ).map((d) => ({ value: d, label: `${d}` })),
+      [numberOfGeoShapes]
+    );
+
     const disabled = !chartConfig.fields.areaLayer.show;
 
     return (
@@ -171,7 +176,7 @@ export const AreaLayerSettings = memo(
               path="componentIri"
               options={geoShapesDimensionsOptions}
               disabled={disabled}
-            ></ChartOptionSelectField>
+            />
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
@@ -185,7 +190,7 @@ export const AreaLayerSettings = memo(
               options={hierarchyLevelOptions}
               getValue={(d) => +d}
               disabled={disabled}
-            ></ChartOptionSelectField>
+            />
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
@@ -198,7 +203,7 @@ export const AreaLayerSettings = memo(
               path="measureIri"
               options={measuresOptions}
               disabled={disabled}
-            ></ChartOptionSelectField>
+            />
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
@@ -221,47 +226,65 @@ export const AreaLayerSettings = memo(
                 label: d,
               }))}
               disabled={disabled}
-            ></ChartOptionSelectField>
+            />
           </ControlSectionContent>
           <ControlSectionContent side="right">
-            <FieldSetLegend legendTitle="Continuous"></FieldSetLegend>
-            <ChartOptionRadioField
-              label="Linear interpolation"
-              field={activeField}
-              path="paletteType"
-              value="continuous"
-              disabled={disabled}
-            ></ChartOptionRadioField>
-            <FieldSetLegend legendTitle="Discrete"></FieldSetLegend>
-            <ChartOptionRadioField
-              label="Quantize (equal intervals)"
-              field={activeField}
-              path="paletteType"
-              value="discrete"
-              disabled={disabled}
-            ></ChartOptionRadioField>
-            <ChartOptionRadioField
-              label="Quantiles (equal distribution of values)"
-              field={activeField}
-              path="paletteType"
-              value="quantile"
-              disabled={disabled}
-            ></ChartOptionRadioField>
-            <ChartOptionRadioField
-              label="Jenks (natural breaks)"
-              field={activeField}
-              path="paletteType"
-              value="jenks"
-              disabled={disabled}
-            ></ChartOptionRadioField>
-            <ChartOptionSelectField
-              id="areaLayer.nbClass"
-              label="Number of classes"
-              field={activeField}
-              path="nbClass"
-              options={NUMBER_OF_CLASSES_OPTIONS}
-              disabled={disabled}
-            ></ChartOptionSelectField>
+            <FieldSetLegend legendTitle="Scale type" />
+            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+              <ChartOptionRadioField
+                label="Continuous"
+                field={activeField}
+                path="colorScaleType"
+                value="continuous"
+                disabled={disabled}
+              />
+
+              {/* Limit the number of clusters to min. 3 */}
+              {numberOfGeoShapes >= 3 && (
+                <ChartOptionRadioField
+                  label="Discrete"
+                  field={activeField}
+                  path="colorScaleType"
+                  value="discrete"
+                  disabled={disabled}
+                />
+              )}
+            </Flex>
+            {chartConfig.fields.areaLayer.colorScaleType === "discrete" &&
+              numberOfGeoShapes >= 3 && (
+                <>
+                  <FieldSetLegend legendTitle="Interpolation" />
+                  <ChartOptionSelectField
+                    id="areaLayer.colorScaleInterpolationType"
+                    label={null}
+                    field={activeField}
+                    path="colorScaleInterpolationType"
+                    options={[
+                      {
+                        label: "Quantize (equal intervals)",
+                        value: "quantize",
+                      },
+                      {
+                        label: "Quantiles (equal distribution of values)",
+                        value: "quantile",
+                      },
+                      {
+                        label: "Jenks (natural breaks)",
+                        value: "jenks",
+                      },
+                    ]}
+                    disabled={disabled}
+                  />
+                  <ChartOptionSelectField
+                    id="areaLayer.nbClass"
+                    label="Number of classes"
+                    field={activeField}
+                    path="nbClass"
+                    options={numberOfColorScaleClasses}
+                    disabled={disabled}
+                  />
+                </>
+              )}
           </ControlSectionContent>
         </ControlSection>
       </>
@@ -333,7 +356,7 @@ export const SymbolLayerSettings = memo(
               path="componentIri"
               options={geoDimensionsOptions}
               disabled={disabled}
-            ></ChartOptionSelectField>
+            />
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
@@ -346,7 +369,7 @@ export const SymbolLayerSettings = memo(
               path="measureIri"
               options={measuresOptions}
               disabled={disabled}
-            ></ChartOptionSelectField>
+            />
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
@@ -357,7 +380,7 @@ export const SymbolLayerSettings = memo(
               field={activeField}
               path="color"
               disabled={disabled}
-            ></ColorPickerField>
+            />
           </ControlSectionContent>
         </ControlSection>
       </>
