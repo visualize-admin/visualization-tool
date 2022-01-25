@@ -151,7 +151,6 @@ export const Checkbox = ({
 export const Select = ({
   label,
   id,
-  name,
   value,
   disabled,
   options,
@@ -222,9 +221,7 @@ export const Select = ({
 export const MiniSelect = ({
   label,
   id,
-  name,
   value,
-  disabled,
   options,
   onChange,
 }: {

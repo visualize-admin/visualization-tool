@@ -82,12 +82,13 @@ export async function loadDimensionValues(
   const dimensionIri = dimension.path;
 
   let allFiltersList = filters ? Object.entries(filters) : [];
+
+  // Conside filters before the current filter to fetch the values for
+  // the current filter
   const filterList = allFiltersList.slice(
     0,
     allFiltersList.findIndex(([iri]) => iri == dimensionIri?.value)
   );
-
-  console.log("filters for ", dimensionIri?.value, allFiltersList, filterList);
 
   let query = SELECT.DISTINCT`?value`.WHERE`
     ${datasetIri} ${cubeNs.observationSet} ?observationSet .
@@ -129,7 +130,6 @@ export async function loadDimensionValues(
   `;
 
   let result: Array<DimensionValue> = [];
-  console.log(query.build());
 
   try {
     result = (await query.execute(sparqlClient.query, {
