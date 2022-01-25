@@ -8,17 +8,16 @@ import {
   ConfiguratorStateConfiguringChart,
   useConfiguratorState,
 } from "..";
-
-import {
-  ensureFilterValuesCorrect,
-  moveFilterField,
-} from "../configurator-state";
 import { getFieldComponentIris } from "../../charts";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { useLocale } from "../../locales/use-locale";
+import {
+  ensureFilterValuesCorrect,
+  moveFilterField,
+} from "../configurator-state";
 import {
   ControlSection,
   ControlSectionContent,
@@ -27,6 +26,7 @@ import {
 import {
   ControlTabField,
   DataFilterSelect,
+  DataFilterSelectDay,
   DataFilterSelectTime,
 } from "./field";
 
@@ -70,7 +70,8 @@ const DataFilterSelectGeneric = ({
   );
   return (
     <Box sx={{ px: 2, mb: 2 }}>
-      {dimension.__typename === "TemporalDimension" ? (
+      {dimension.__typename === "TemporalDimension" &&
+      dimension.timeUnit !== "Day" ? (
         <DataFilterSelectTime
           dimensionIri={dimension.iri}
           label={`${index + 1}. ${dimension.label}`}
@@ -83,7 +84,21 @@ const DataFilterSelectGeneric = ({
           id={`select-single-filter-${index}`}
           isOptional={!dimension.isKeyDimension}
         />
-      ) : (
+      ) : null}
+      {dimension.__typename === "TemporalDimension" &&
+      dimension.timeUnit === "Day" &&
+      dimension.values ? (
+        <DataFilterSelectDay
+          dimensionIri={dimension.iri}
+          label={`${index + 1}. ${dimension.label}`}
+          controls={controls}
+          options={dimension.values}
+          disabled={disabled}
+          id={`select-single-filter-${index}`}
+          isOptional={!dimension.isKeyDimension}
+        />
+      ) : null}
+      {dimension.__typename !== "TemporalDimension" ? (
         <DataFilterSelect
           dimensionIri={dimension.iri}
           label={`${index + 1}. ${dimension.label}`}
@@ -93,7 +108,7 @@ const DataFilterSelectGeneric = ({
           id={`select-single-filter-${index}`}
           isOptional={!dimension.isKeyDimension}
         />
-      )}
+      ) : null}
     </Box>
   );
 };
@@ -126,9 +141,13 @@ export const ChartConfigurator = ({
         return;
       }
 
+      const dimension = data?.dataCubeByIri?.dimensions.find(
+        (d) => d.iri === dimensionIri
+      );
       const chartConfig = moveFilterField(state.chartConfig, {
         dimensionIri,
         delta,
+        possibleValues: dimension ? dimension.values : [],
       });
 
       dispatch({
@@ -139,7 +158,7 @@ export const ChartConfigurator = ({
         },
       });
     },
-    [dispatch, metaData, state.chartConfig]
+    [data?.dataCubeByIri?.dimensions, dispatch, metaData, state.chartConfig]
   );
 
   React.useEffect(() => {

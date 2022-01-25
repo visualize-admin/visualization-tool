@@ -18,6 +18,11 @@ import { LocaleProvider } from "../locales/use-locale";
 import * as defaultTheme from "../themes/federal";
 import { loadTheme, ThemeModule } from "../themes/index";
 
+// Those styles are imported here since custom styles should be imported
+// in _app in Next.js applications
+import "react-day-picker/lib/style.css";
+import "../components/react-day-picker-custom-styles.css";
+
 export default function App({ Component, pageProps }: AppProps) {
   const {
     query,

@@ -24,7 +24,7 @@ export const ControlSection = forwardRef<
         overflowX: "hidden",
         overflowY: "auto",
         backgroundColor: isHighlighted ? "primaryLight" : "monochrome100",
-
+        flexShrink: 0,
         "&:first-of-type": {
           borderTopWidth: 0,
         },

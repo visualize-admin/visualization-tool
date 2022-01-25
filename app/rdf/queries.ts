@@ -255,20 +255,10 @@ export const getCubeDimensionValues = async (
   { dimension, cube, locale, data }: ResolvedDimension,
   filters?: Filters
 ): Promise<DimensionValue[]> => {
-  if (data.dataKind === "Time") {
-    // return interpolateTimeValues({
-    //   dataType: data.dataType,
-    //   timeUnit: data.timeUnit,
-    //   min: dimension.minInclusive?.value,
-    //   max: dimension.maxInclusive.value,
-    // }).map((v) => {
-    //   return { value: v, label: v };
-    // });
-  }
-
   if (
     typeof dimension.minInclusive !== "undefined" &&
-    typeof dimension.maxInclusive !== "undefined"
+    typeof dimension.maxInclusive !== "undefined" &&
+    data.timeUnit !== "Day"
   ) {
     const min = parseObservationValue({ value: dimension.minInclusive }) ?? 0;
     const max = parseObservationValue({ value: dimension.maxInclusive }) ?? 0;

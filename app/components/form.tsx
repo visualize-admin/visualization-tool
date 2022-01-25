@@ -11,11 +11,16 @@ import {
   Select as TUISelect,
   SelectProps,
 } from "theme-ui";
-import { ReactNode, useMemo } from "react";
+import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 import { FieldProps, Option } from "../configurator";
 import { Icon } from "../icons";
 import { useId } from "@reach/auto-id";
 import { useLocale } from "../locales/use-locale";
+import { DayPickerInputProps, DayPickerProps } from "react-day-picker";
+import DayPickerInput from "react-day-picker/DayPickerInput";
+import "react-day-picker/lib/style.css";
+import { useTimeFormatUnit } from "../configurator/components/ui-helpers";
+import { TimeUnit } from "../graphql/query-hooks";
 
 export const Label = ({
   label,
@@ -291,6 +296,90 @@ export const Input = ({
     />
   </Box>
 );
+
+export const DayPickerField = ({
+  label,
+  name,
+  value,
+  onChange,
+  disabled,
+  controls,
+  ...props
+}: {
+  name: string;
+  value: Date;
+  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  controls?: ReactNode;
+  label?: string | ReactNode;
+  disabled?: boolean;
+} & Omit<DayPickerInputProps, "onChange">) => {
+  const handleDayClick = useCallback(
+    (day: Date) => {
+      const ev = {
+        currentTarget: {
+          value: day.toISOString().slice(0, 10),
+        },
+      } as ChangeEvent<HTMLSelectElement>;
+      onChange(ev);
+    },
+    [onChange]
+  );
+  const formatDateAuto = useTimeFormatUnit();
+  const inputProps = useMemo(() => {
+    return {
+      name,
+      formatDate: formatDateAuto,
+      value: formatDateAuto(value, TimeUnit.Day),
+      disabled,
+      style: {
+        padding: "0.625rem 0.75rem",
+        color: disabled ? "monochrome300" : "monochrome700",
+        fontSize: "1rem",
+        minHeight: "1.5rem",
+        display: "block",
+        borderRadius: "0.25rem",
+        width: "100%",
+        border: "1px solid var(--theme-ui-colors-monochrome500)",
+
+        // @ts-ignore
+        ...props.inputProps?.style,
+      },
+      ...props.inputProps,
+    } as DayPickerInputProps;
+  }, [name, formatDateAuto, value, disabled, props.inputProps]);
+
+  const dayPickerProps = useMemo(() => {
+    return {
+      onDayClick: handleDayClick,
+      ...props.dayPickerProps,
+    } as DayPickerProps;
+  }, [handleDayClick, props.dayPickerProps]);
+
+  return (
+    <Box
+      sx={{
+        color: disabled ? "monochrome300" : "monochrome700",
+        fontSize: 4,
+        pb: 2,
+      }}
+    >
+      {label && name && (
+        <Label htmlFor={name} smaller disabled={disabled}>
+          {label}
+          {controls}
+        </Label>
+      )}
+      <DayPickerInput
+        value={value}
+        style={{ width: "100%", color: "inherit" }}
+        {...props}
+        inputProps={inputProps}
+        dayPickerProps={dayPickerProps}
+      />
+      {/* <DayPicker selectedDays={new Date()} /> */}
+    </Box>
+  );
+};
 
 export const SearchField = ({
   id,

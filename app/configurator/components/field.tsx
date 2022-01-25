@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { TimeLocaleObject } from "d3";
+import { extent, TimeLocaleObject } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { Flex } from "theme-ui";
@@ -12,7 +12,14 @@ import {
   useMetaField,
   useSingleFilterField,
 } from "..";
-import { Checkbox, Input, Label, Radio, Select } from "../../components/form";
+import {
+  Checkbox,
+  Input,
+  Label,
+  Radio,
+  Select,
+  DayPickerField,
+} from "../../components/form";
 import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
@@ -33,6 +40,8 @@ import {
   getTimeIntervalWithProps,
   useTimeFormatLocale,
 } from "./ui-helpers";
+import "react-day-picker/lib/style.css";
+import parse from "date-fns/parse";
 
 export const ControlTabField = ({
   component,
@@ -114,6 +123,93 @@ export const DataFilterSelect = ({
   );
 };
 
+export const DataFilterSelectDay = ({
+  dimensionIri,
+  label,
+  options,
+  id,
+  disabled,
+  isOptional,
+  controls,
+}: {
+  dimensionIri: string;
+  label: string;
+  options: Option[];
+  id: string;
+  disabled?: boolean;
+  isOptional?: boolean;
+  controls: React.ReactNode;
+}) => {
+  const fieldProps = useSingleFilterSelect({ dimensionIri });
+
+  const noneLabel = t({
+    id: "controls.dimensionvalue.none",
+    message: `No Filter`,
+  });
+
+  const optionalLabel = t({
+    id: "controls.select.optional",
+    message: `optional`,
+  });
+
+  const allOptions = useMemo(() => {
+    return isOptional
+      ? [
+          {
+            value: FIELD_VALUE_NONE,
+            label: noneLabel,
+            isNoneValue: true,
+          },
+          ...options,
+        ]
+      : options;
+  }, [isOptional, options, noneLabel]);
+
+  const allOptionsSet = useMemo(() => {
+    return new Set(
+      allOptions.map((x) => new Date(x.value).toISOString().slice(0, 10))
+    );
+  }, [allOptions]);
+  const isDisabled = useCallback(
+    (date: Date) => {
+      return !allOptionsSet.has(date.toISOString().slice(0, 10));
+    },
+    [allOptionsSet]
+  );
+
+  const dateValue = useMemo(() => {
+    return fieldProps.value ? parse(fieldProps.value) : new Date();
+  }, [fieldProps.value]);
+
+  const [fromMonth, toMonth] = useMemo(() => {
+    const [min, max] = extent(Array.from(allOptionsSet));
+    if (!min || !max) {
+      return [];
+    }
+    return [new Date(min), new Date(max)] as const;
+  }, [allOptionsSet]);
+
+  return (
+    <DayPickerField
+      label={isOptional ? `${label} (${optionalLabel})` : label}
+      disabled={disabled}
+      controls={controls}
+      onChange={fieldProps.onChange}
+      name={dimensionIri}
+      value={dateValue}
+      inputProps={{
+        id,
+        disabled,
+      }}
+      dayPickerProps={{
+        fromMonth,
+        toMonth,
+        disabledDays: isDisabled,
+      }}
+    />
+  );
+};
+
 export const DataFilterSelectTime = ({
   dimensionIri,
   label,
@@ -191,13 +287,14 @@ export const DataFilterSelectTime = ({
         sortOptions={false}
         controls={controls}
         {...fieldProps}
-      ></Select>
+      />
     );
   }
 
   return (
     <TimeInput
       id={id}
+      controls={controls}
       label={fullLabel}
       value={fieldProps.value}
       timeFormat={timeFormat}
@@ -214,6 +311,7 @@ export const TimeInput = ({
   value,
   timeFormat,
   formatLocale,
+  controls,
   isOptional,
   onChange,
 }: {
@@ -222,6 +320,7 @@ export const TimeInput = ({
   value: string | undefined;
   timeFormat: string;
   formatLocale: TimeLocaleObject;
+  controls?: React.ReactNode;
   isOptional: boolean | undefined;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
