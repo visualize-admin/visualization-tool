@@ -2,6 +2,12 @@ import { Trans } from "@lingui/macro";
 import { sortBy } from "lodash";
 import * as React from "react";
 import { useCallback } from "react";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
 import { Box, Spinner } from "theme-ui";
 import {
   ChartConfig,
@@ -13,6 +19,7 @@ import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
+import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
 import {
   ensureFilterValuesCorrect,
@@ -69,7 +76,7 @@ const DataFilterSelectGeneric = ({
     </>
   );
   return (
-    <Box sx={{ px: 2, mb: 2 }}>
+    <Box sx={{ px: 2, mb: 2, flexGrow: 1 }}>
       {dimension.__typename === "TemporalDimension" &&
       dimension.timeUnit !== "Day" ? (
         <DataFilterSelectTime
@@ -195,6 +202,20 @@ export const ChartConfigurator = ({
       data?.dataCubeByIri.dimensions.filter((dim) => !mappedIris.has(dim.iri)),
       [(x) => keysOrder[x.iri] ?? Infinity]
     );
+
+    const handleDragEnd: OnDragEndResponder = (result) => {
+      const sourceIndex = result.source?.index;
+      const destinationIndex = result.destination?.index;
+      if (
+        typeof sourceIndex !== "number" ||
+        typeof destinationIndex !== "number" ||
+        result.source === result.destination
+      ) {
+        return;
+      }
+      const delta = destinationIndex - sourceIndex;
+      handleMove(result.draggableId, delta);
+    };
     return (
       <>
         <ControlSection>
@@ -212,7 +233,6 @@ export const ChartConfigurator = ({
             />
           </ControlSectionContent>
         </ControlSection>
-
         <ControlSection sx={{ flexGrow: 1 }}>
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
@@ -220,16 +240,51 @@ export const ChartConfigurator = ({
               <Spinner size={12} sx={{ display: "inline-block" }} />
             ) : null}
           </SectionTitle>
+
           <ControlSectionContent side="left" aria-labelledby="controls-data">
-            {filterDimensions.map((dimension, i) => (
-              <DataFilterSelectGeneric
-                key={dimension.iri}
-                dimension={dimension}
-                index={i}
-                onMove={(n) => handleMove(dimension.iri, n)}
-                disabled={fetching}
-              />
-            ))}
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="filters">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {filterDimensions.map((dimension, i) => (
+                      <Draggable
+                        draggableId={dimension.iri}
+                        index={i}
+                        key={dimension.iri}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.dragHandleProps}
+                            {...provided.draggableProps}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "stretch",
+                              }}
+                            >
+                              <DataFilterSelectGeneric
+                                key={dimension.iri}
+                                dimension={dimension}
+                                index={i}
+                                onMove={(n) => handleMove(dimension.iri, n)}
+                                disabled={fetching}
+                              />
+                              <Icon
+                                name="dragndrop"
+                                style={{ flexShrink: 0 }}
+                              />
+                            </Box>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           </ControlSectionContent>
         </ControlSection>
       </>

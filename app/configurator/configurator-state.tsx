@@ -233,7 +233,10 @@ export const ensureFilterValuesCorrect = produce(
 
 export const moveFilterField = produce(
   (chartConfig: ChartConfig, { dimensionIri, delta, possibleValues }) => {
-    const keys = Object.keys(chartConfig.filters);
+    // Use getOwnPropertyNames instead of keys since the spec ensures that
+    // the order of the keys received is in insertion order
+    // https://262.ecma-international.org/6.0/#sec-ordinary-object-internal-methods-and-internal-slots-ownpropertykeys
+    const keys = Object.getOwnPropertyNames(chartConfig.filters);
     const fieldIndex = Object.keys(chartConfig.filters).indexOf(dimensionIri);
     if (fieldIndex === 0 && delta === -1) {
       return;
