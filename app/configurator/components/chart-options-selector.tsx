@@ -173,6 +173,7 @@ const EncodingOptionsPanel = ({
   const getFieldLabelHint = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
+    baseLayer: t({ id: "controls.map.baseLayer", message: "Base layer" }),
     areaLayer: t({
       id: "controls.select.measure",
       message: "Select a measure",
@@ -185,7 +186,6 @@ const EncodingOptionsPanel = ({
       id: "controls.select.dimension",
       message: "Select a dimension",
     }),
-    settings: t({ id: "controls.settings", message: "Settings" }),
   };
 
   useEffect(() => {

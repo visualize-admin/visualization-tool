@@ -40,7 +40,7 @@ export const MapColumnOptions = ({
   const { activeField } = state;
 
   switch (activeField) {
-    case "settings":
+    case "baseLayer":
       return <BaseLayersSettings />;
     case "areaLayer":
       return (
@@ -66,25 +66,25 @@ export const MapColumnOptions = ({
 export const BaseLayersSettings = memo(() => {
   return (
     <ControlSection>
-      <SectionTitle iconName={"settings"}>
-        <Trans id="controls.section.mapSettings">Map Settings</Trans>
+      <SectionTitle iconName="mapMaptype">
+        <Trans id="controls.section.baseLayer">Settings</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">
         <ChartOptionCheckboxField
           label={t({
-            id: "controls.mapSettings.showRelief",
+            id: "controls.baseLayer.showRelief",
             message: "Show relief",
           })}
           field={null}
-          path="settings.showRelief"
+          path="baseLayer.showRelief"
         />
         <ChartOptionCheckboxField
           label={t({
-            id: "controls.mapSettings.showLakes",
+            id: "controls.baseLayer.showLakes",
             message: "Show lakes",
           })}
           field={null}
-          path="settings.showLakes"
+          path="baseLayer.showLakes"
         />
       </ControlSectionContent>
     </ControlSection>
@@ -145,9 +145,7 @@ export const AreaLayerSettings = memo(
       <>
         <ControlSection>
           <SectionTitle iconName="settings">
-            <Trans id="controls.section.areaLayerSettings">
-              Area layer settings
-            </Trans>
+            <Trans id="controls.section.areaLayer">Settings</Trans>
           </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionCheckboxField
@@ -162,7 +160,7 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="chartMap">
+          <SectionTitle iconName="mapRegions">
             Geographical dimension
           </SectionTitle>
           <ControlSectionContent side="right">
@@ -309,9 +307,7 @@ export const SymbolLayerSettings = memo(
       <>
         <ControlSection>
           <SectionTitle iconName="settings">
-            <Trans id="controls.section.symbolLayerSettings">
-              Symbol layer settings
-            </Trans>
+            <Trans id="controls.section.symbolLayer">Settings</Trans>
           </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionCheckboxField

@@ -6,7 +6,7 @@ import {
   mesh as topojsonMesh,
 } from "topojson-client";
 import { Loading, LoadingDataError, NoDataHint } from "../../components/hint";
-import { MapConfig, MapFields, MapSettings } from "../../configurator";
+import { BaseLayer, MapConfig, MapFields } from "../../configurator";
 import {
   AreaLayer,
   GeoData,
@@ -151,7 +151,7 @@ export const ChartMapVisualization = ({
         fields={chartConfig.fields}
         measures={measures}
         dimensions={dimensions}
-        settings={chartConfig.settings}
+        baseLayer={chartConfig.baseLayer}
       />
     );
   } else if (geoData.state === "fetching" || fetching) {
@@ -169,14 +169,14 @@ export const ChartMapPrototype = ({
   fields,
   measures,
   dimensions,
-  settings,
+  baseLayer,
 }: {
   observations: Observation[];
   features: GeoData;
   fields: MapFields;
   measures: DimensionMetaDataFragment[];
   dimensions: DimensionMetaDataFragment[];
-  settings: MapSettings;
+  baseLayer: BaseLayer;
 }) => {
   return (
     <Box
@@ -193,7 +193,7 @@ export const ChartMapPrototype = ({
         fields={fields}
         measures={measures}
         dimensions={dimensions}
-        settings={settings}
+        baseLayer={baseLayer}
       />
     </Box>
   );
@@ -206,14 +206,14 @@ export const ChartMap = memo(
     fields,
     measures,
     dimensions,
-    settings,
+    baseLayer,
   }: {
     features: GeoData;
     observations: Observation[];
     measures: DimensionMetaDataFragment[];
     dimensions: DimensionMetaDataFragment[];
     fields: MapFields;
-    settings: MapSettings;
+    baseLayer: BaseLayer;
   }) => {
     return (
       <MapChart
@@ -222,7 +222,7 @@ export const ChartMap = memo(
         fields={fields}
         measures={measures}
         dimensions={dimensions}
-        settings={settings}
+        baseLayer={baseLayer}
       >
         <ChartContainer>
           <MapComponent />

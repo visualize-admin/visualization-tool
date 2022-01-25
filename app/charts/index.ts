@@ -290,7 +290,7 @@ export const getInitialConfig = ({
             color: "#1f77b4",
           },
         },
-        settings: {
+        baseLayer: {
           showRelief: true,
           showLakes: true,
         },
