@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { extent, TimeLocaleObject } from "d3";
+import { extent, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { Flex } from "theme-ui";
@@ -41,7 +41,6 @@ import {
   useTimeFormatLocale,
 } from "./ui-helpers";
 import "react-day-picker/lib/style.css";
-import parse from "date-fns/parse";
 
 export const ControlTabField = ({
   component,
@@ -178,7 +177,9 @@ export const DataFilterSelectDay = ({
   );
 
   const dateValue = useMemo(() => {
-    return fieldProps.value ? parse(fieldProps.value) : new Date();
+    const parseDate = timeParse("%Y-%m-%d");
+    const parsed = fieldProps.value ? parseDate(fieldProps.value) : undefined;
+    return parsed || new Date();
   }, [fieldProps.value]);
 
   const [fromMonth, toMonth] = useMemo(() => {
