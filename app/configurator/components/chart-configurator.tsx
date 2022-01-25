@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { sortBy } from "lodash";
 import * as React from "react";
 import { useCallback } from "react";
-import { Box } from "theme-ui";
+import { Box, Spinner } from "theme-ui";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -215,8 +215,10 @@ export const ChartConfigurator = ({
 
         <ControlSection sx={{ flexGrow: 1 }}>
           <SectionTitle titleId="controls-data">
-            <Trans id="controls.section.data.filters">Filters</Trans>
-            {fetching ? "..." : ""}
+            <Trans id="controls.section.data.filters">Filters</Trans>{" "}
+            {fetching ? (
+              <Spinner size={12} sx={{ display: "inline-block" }} />
+            ) : null}
           </SectionTitle>
           <ControlSectionContent side="left" aria-labelledby="controls-data">
             {filterDimensions.map((dimension, i) => (
