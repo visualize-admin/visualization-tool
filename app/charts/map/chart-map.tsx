@@ -179,14 +179,7 @@ export const ChartMapPrototype = ({
   settings: MapSettings;
 }) => {
   return (
-    <Box
-      sx={{
-        m: 4,
-        bg: "#fff",
-        border: "1px solid",
-        borderColor: "monochrome400",
-      }}
-    >
+    <Box sx={{ m: 4, bg: "#fff" }}>
       <ChartMap
         observations={observations}
         features={features}
