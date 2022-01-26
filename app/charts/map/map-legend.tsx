@@ -520,7 +520,7 @@ const ContinuousColorLegend = () => {
           width={width - MARGIN.left - MARGIN.right}
           height={COLOR_RAMP_HEIGHT}
           colorInterpolator={getColorInterpolator(palette)}
-          nbClass={width}
+          nbClass={width - MARGIN.left - MARGIN.right}
         />
       </foreignObject>
       <g

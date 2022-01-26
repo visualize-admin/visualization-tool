@@ -96,22 +96,24 @@ const getColorScale = ({
   dataDomain: [number, number];
   nbClass: number;
 }) => {
-  const paletteDomain = getSingleHueSequentialPalette({
-    palette,
-    nbClass: 9,
-  });
+  const interpolator = getColorInterpolator(palette);
+  const getDiscreteRange = () => {
+    return Array.from({ length: nbClass }, (_, i) =>
+      interpolator(i / (nbClass - 1))
+    );
+  };
 
   switch (scaleInterpolationType) {
     case "linear":
-      return scaleSequential(getColorInterpolator(palette)).domain(dataDomain);
+      return scaleSequential(interpolator).domain(dataDomain);
     case "quantize":
       return scaleQuantize<string>()
         .domain(dataDomain)
-        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+        .range(getDiscreteRange());
     case "quantile":
       return scaleQuantile<string>()
         .domain(data.map((d) => getValue(d)))
-        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+        .range(getDiscreteRange());
     case "jenks":
       const ckMeansThresholds = ckmeans(
         data.map((d) => getValue(d) ?? NaN),
@@ -120,8 +122,13 @@ const getColorScale = ({
 
       return scaleThreshold<number, string>()
         .domain(ckMeansThresholds)
-        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+        .range(getDiscreteRange());
     default:
+      const paletteDomain = getSingleHueSequentialPalette({
+        palette,
+        nbClass: 9,
+      });
+
       return scaleLinear<string>()
         .domain(dataDomain)
         .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]]);
