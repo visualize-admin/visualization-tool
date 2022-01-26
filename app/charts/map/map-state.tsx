@@ -23,7 +23,9 @@ import {
 import {
   BaseLayer,
   ColorScaleInterpolationType,
+  DivergingPaletteType,
   MapFields,
+  SequentialPaletteType,
 } from "../../configurator/config-types";
 import {
   GeoData,
@@ -62,7 +64,7 @@ export interface MapState {
       | ScaleLinear<string, string>
       | ScaleThreshold<number, string>;
     colorScaleInterpolationType: ColorScaleInterpolationType;
-    palette: string;
+    palette: DivergingPaletteType | SequentialPaletteType;
     nbClass: number;
     dataDomain: [number, number];
   };
@@ -88,7 +90,7 @@ const getColorScale = ({
   nbClass,
 }: {
   scaleInterpolationType: ColorScaleInterpolationType;
-  palette: string;
+  palette: DivergingPaletteType | SequentialPaletteType;
   getValue: (x: Observation) => number | null;
   data: Observation[];
   dataDomain: [number, number];

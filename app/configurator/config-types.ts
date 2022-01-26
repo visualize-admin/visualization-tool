@@ -436,6 +436,26 @@ const TableConfig = t.type(
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
+const DivergingPaletteType = t.union([
+  t.literal("BrBG"),
+  t.literal("PRGn"),
+  t.literal("PiYG"),
+  t.literal("PuOr"),
+]);
+
+export type DivergingPaletteType = t.TypeOf<typeof DivergingPaletteType>;
+
+const SequentialPaletteType = t.union([
+  t.literal("blues"),
+  t.literal("greens"),
+  t.literal("greys"),
+  t.literal("oranges"),
+  t.literal("purples"),
+  t.literal("reds"),
+]);
+
+export type SequentialPaletteType = t.TypeOf<typeof SequentialPaletteType>;
+
 const ColorScaleType = t.union([
   t.literal("continuous"),
   t.literal("discrete"),
@@ -458,7 +478,7 @@ const MapAreaLayer = t.intersection([
     measureIri: t.string,
     hierarchyLevel: t.number,
     show: t.boolean,
-    palette: t.string,
+    palette: t.union([DivergingPaletteType, SequentialPaletteType]),
     nbClass: t.number,
   }),
   t.union([
