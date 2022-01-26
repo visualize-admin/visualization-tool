@@ -242,7 +242,7 @@ export const MapComponent = () => {
                   ? areaLayer.getColor(
                       areaLayer.getValue(d.properties.observation)
                     )
-                  : null
+                  : [33, 33, 33, 33]
               }
             />
             <GeoJsonLayer
