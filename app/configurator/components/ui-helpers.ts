@@ -792,7 +792,7 @@ export const divergingSteppedPalettes = divergingPaletteKeys.map((d) => ({
   colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
 })) as {
   label: string;
-  value: string;
+  value: DivergingPaletteType;
   colors: ReadonlyArray<string>;
 }[];
 

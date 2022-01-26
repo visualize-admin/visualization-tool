@@ -359,6 +359,42 @@ const PieConfig = t.type(
 export type PieFields = t.TypeOf<typeof PieFields>;
 export type PieConfig = t.TypeOf<typeof PieConfig>;
 
+const DivergingPaletteType = t.union([
+  t.literal("BrBG"),
+  t.literal("PRGn"),
+  t.literal("PiYG"),
+  t.literal("PuOr"),
+]);
+
+export type DivergingPaletteType = t.TypeOf<typeof DivergingPaletteType>;
+
+const SequentialPaletteType = t.union([
+  t.literal("blues"),
+  t.literal("greens"),
+  t.literal("greys"),
+  t.literal("oranges"),
+  t.literal("purples"),
+  t.literal("reds"),
+]);
+
+export type SequentialPaletteType = t.TypeOf<typeof SequentialPaletteType>;
+
+const ColorScaleType = t.union([
+  t.literal("continuous"),
+  t.literal("discrete"),
+]);
+export type ColorScaleType = t.TypeOf<typeof ColorScaleType>;
+
+const ColorScaleInterpolationType = t.union([
+  t.literal("linear"),
+  t.literal("quantize"),
+  t.literal("quantile"),
+  t.literal("jenks"),
+]);
+export type ColorScaleInterpolationType = t.TypeOf<
+  typeof ColorScaleInterpolationType
+>;
+
 const ColumnTextStyle = t.union([t.literal("regular"), t.literal("bold")]);
 
 const ColumnStyleText = t.type({
@@ -376,7 +412,7 @@ const ColumnStyleCategory = t.type({
 const ColumnStyleHeatmap = t.type({
   type: t.literal("heatmap"),
   textStyle: ColumnTextStyle,
-  palette: t.string,
+  palette: DivergingPaletteType,
 });
 const ColumnStyleBar = t.type({
   type: t.literal("bar"),
@@ -435,42 +471,6 @@ const TableConfig = t.type(
 );
 export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
-
-const DivergingPaletteType = t.union([
-  t.literal("BrBG"),
-  t.literal("PRGn"),
-  t.literal("PiYG"),
-  t.literal("PuOr"),
-]);
-
-export type DivergingPaletteType = t.TypeOf<typeof DivergingPaletteType>;
-
-const SequentialPaletteType = t.union([
-  t.literal("blues"),
-  t.literal("greens"),
-  t.literal("greys"),
-  t.literal("oranges"),
-  t.literal("purples"),
-  t.literal("reds"),
-]);
-
-export type SequentialPaletteType = t.TypeOf<typeof SequentialPaletteType>;
-
-const ColorScaleType = t.union([
-  t.literal("continuous"),
-  t.literal("discrete"),
-]);
-export type ColorScaleType = t.TypeOf<typeof ColorScaleType>;
-
-const ColorScaleInterpolationType = t.union([
-  t.literal("linear"),
-  t.literal("quantize"),
-  t.literal("quantile"),
-  t.literal("jenks"),
-]);
-export type ColorScaleInterpolationType = t.TypeOf<
-  typeof ColorScaleInterpolationType
->;
 
 const MapAreaLayer = t.intersection([
   t.type({
