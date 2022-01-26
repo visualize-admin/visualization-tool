@@ -154,10 +154,14 @@ export const ChartConfigurator = ({
   const [, dispatch] = useConfiguratorState();
   const variables = React.useMemo(
     () => ({
-      date: new Date(),
       iri: state.dataSet,
       locale,
       filters: state.chartConfig.filters,
+      // This is important for urql not to think that filters
+      // are the same  while the order of the keys has changed.
+      // If this is not present, we'll have outdated dimension
+      // values after we change the filter order
+      date: new Date(),
     }),
     [state, locale]
   );
