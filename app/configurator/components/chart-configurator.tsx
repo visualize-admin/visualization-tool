@@ -1,4 +1,6 @@
 import { Trans } from "@lingui/macro";
+import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
+import VisuallyHidden from "@reach/visually-hidden";
 import { sortBy } from "lodash";
 import * as React from "react";
 import { useCallback } from "react";
@@ -8,7 +10,7 @@ import {
   Draggable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Spinner } from "theme-ui";
+import { Box, Button, Spinner } from "theme-ui";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -17,7 +19,10 @@ import {
 import { getFieldComponentIris } from "../../charts";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
+import {
+  DataCubeMetadataWithComponentValuesQuery,
+  useDataCubeMetadataWithComponentValuesQuery,
+} from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
@@ -25,6 +30,7 @@ import {
   ensureFilterValuesCorrect,
   moveFilterField,
 } from "../configurator-state";
+import { FIELD_VALUE_NONE } from "../constants";
 import {
   ControlSection,
   ControlSectionContent,
@@ -41,37 +47,30 @@ const DataFilterSelectGeneric = ({
   dimension,
   index,
   disabled,
+  onRemove,
 }: {
   dimension: DataCubeMetadata["dimensions"][number];
   isOptional?: boolean;
   index: number;
   disabled?: boolean;
+  onRemove: () => void;
 }) => {
-  const controls = (
-    <>
-      <button
-        style={{
-          background: "transparent",
-          cursor: "pointer",
-          color: "#666",
-          border: "transparent",
-        }}
-        onClick={() => onMove(-1)}
+  const controls = dimension.isKeyDimension ? null : (
+    <Box sx={{ flexGrow: 1 }}>
+      <Button
+        className="buttons"
+        sx={{ ml: 2 }}
+        variant="inline"
+        onClick={onRemove}
       >
-        ▲
-      </button>
-      <button
-        style={{
-          background: "transparent",
-          cursor: "pointer",
-          color: "#666",
-          border: "transparent",
-        }}
-        onClick={() => onMove(1)}
-      >
-        ▼
-      </button>
-    </>
+        <Icon
+          name="trash"
+          style={{ fontSize: "small !important" }}
+          width="16"
+          height="16"
+        />
+      </Button>
+    </Box>
   );
   return (
     <Box sx={{ px: 2, mb: 2, flexGrow: 1 }}>
@@ -228,8 +227,13 @@ export const ChartConfigurator = ({
       Object.keys(state.chartConfig.filters).map((k, i) => [k, i])
     );
     const filterDimensions = sortBy(
-      data?.dataCubeByIri.dimensions.filter((dim) => !mappedIris.has(dim.iri)),
+      data?.dataCubeByIri.dimensions.filter(
+        (dim) => !mappedIris.has(dim.iri) && keysOrder[dim.iri] !== undefined
+      ),
       [(x) => keysOrder[x.iri] ?? Infinity]
+    );
+    const addableDimensions = data?.dataCubeByIri.dimensions.filter(
+      (dim) => !mappedIris.has(dim.iri) && keysOrder[dim.iri] === undefined
     );
 
     const handleDragEnd: OnDragEndResponder = (result) => {
@@ -245,6 +249,39 @@ export const ChartConfigurator = ({
       const delta = destinationIndex - sourceIndex;
       handleMove(result.draggableId, delta);
     };
+
+    const handleAddDimensionFilter = (
+      dimension: NonNullable<
+        NonNullable<
+          DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+        >["dimensions"]
+      >[number]
+    ) => {
+      dispatch({
+        type: "CHART_CONFIG_FILTER_SET_SINGLE",
+        value: {
+          dimensionIri: dimension.iri,
+          value: dimension.values[0],
+        },
+      });
+    };
+
+    const handleRemoveDimensionFilter = (
+      dimension: NonNullable<
+        NonNullable<
+          DataCubeMetadataWithComponentValuesQuery["dataCubeByIri"]
+        >["dimensions"]
+      >[number]
+    ) => {
+      dispatch({
+        type: "CHART_CONFIG_FILTER_SET_SINGLE",
+        value: {
+          dimensionIri: dimension.iri,
+          value: FIELD_VALUE_NONE,
+        },
+      });
+    };
+
     return (
       <>
         <ControlSection>
@@ -307,6 +344,9 @@ export const ChartConfigurator = ({
                                 dimension={dimension}
                                 index={i}
                                 disabled={fetching}
+                                onRemove={() =>
+                                  handleRemoveDimensionFilter(dimension)
+                                }
                               />
                               <Box
                                 sx={{
@@ -336,6 +376,37 @@ export const ChartConfigurator = ({
                 )}
               </Droppable>
             </DragDropContext>
+            <Box
+              sx={{
+                pl: 2,
+                "& .menu-button": {
+                  background: "transparent",
+                  border: 0,
+                  padding: 0,
+                },
+              }}
+            >
+              <Menu>
+                <MenuButton className="menu-button">
+                  <VisuallyHidden>
+                    <Trans id="controls.dimension-picker.open">
+                      Open dimension picker
+                    </Trans>
+                  </VisuallyHidden>
+                  <Button variant="primary">Add dimension</Button>
+                </MenuButton>
+                <MenuList>
+                  {addableDimensions.map((dim) => (
+                    <MenuItem
+                      onSelect={() => handleAddDimensionFilter(dim)}
+                      key={dim.iri}
+                    >
+                      {dim.label}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+            </Box>
           </ControlSectionContent>
         </ControlSection>
       </>

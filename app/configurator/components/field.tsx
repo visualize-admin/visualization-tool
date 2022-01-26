@@ -83,7 +83,7 @@ export const DataFilterSelect = ({
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
-  controls: React.ReactNode;
+  controls?: React.ReactNode;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
@@ -137,7 +137,7 @@ export const DataFilterSelectDay = ({
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
-  controls: React.ReactNode;
+  controls?: React.ReactNode;
 }) => {
   const fieldProps = useSingleFilterSelect({ dimensionIri });
 
