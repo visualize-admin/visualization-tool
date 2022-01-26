@@ -74,7 +74,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "x",
         optional: false,
-        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        values: [
+          "TemporalDimension",
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
@@ -84,7 +90,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -104,7 +115,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "y",
         optional: false,
-        values: ["TemporalDimension", "NominalDimension", "OrdinalDimension"],
+        values: [
+          "TemporalDimension",
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
         filters: true,
       },
       {
@@ -116,7 +133,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -143,7 +165,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
         filters: true,
         // sorting: [
         //   { sortingType: "byTotalSize", sortingOrder: ["asc", "desc"] },
@@ -168,7 +195,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byDimensionLabel", sortingOrder: ["asc", "desc"] },
@@ -195,7 +227,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: true,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
         filters: true,
         options: [{ field: "color", values: ["palette"] }],
       },
@@ -214,7 +251,12 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       {
         field: "segment",
         optional: false,
-        values: ["NominalDimension", "OrdinalDimension"],
+        values: [
+          "NominalDimension",
+          "OrdinalDimension",
+          "GeoCoordinatesDimension",
+          "GeoShapesDimension",
+        ],
         filters: true,
         sorting: [
           { sortingType: "byMeasure", sortingOrder: ["asc", "desc"] },
