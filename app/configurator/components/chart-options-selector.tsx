@@ -202,6 +202,17 @@ const EncodingOptionsPanel = ({
     (f) => (fields as any)[f].componentIri
   );
 
+  const options = useMemo(() => {
+    return getDimensionsByDimensionType({
+      dimensionTypes: encoding.values,
+      dimensions,
+      measures,
+    }).map((dimension) => ({
+      value: dimension.iri,
+      label: dimension.label,
+      disabled: otherFieldsIris.includes(dimension.iri),
+    }));
+  }, [dimensions, encoding.values, measures, otherFieldsIris]);
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -220,15 +231,7 @@ const EncodingOptionsPanel = ({
             field={encoding.field}
             label={getFieldLabelHint[encoding.field]}
             optional={encoding.optional}
-            options={getDimensionsByDimensionType({
-              dimensionTypes: encoding.values,
-              dimensions,
-              measures,
-            }).map((dimension) => ({
-              value: dimension.iri,
-              label: dimension.label,
-              disabled: otherFieldsIris.includes(dimension.iri),
-            }))}
+            options={options}
             dataSetMetadata={metaData}
           />
           {encoding.options && (
