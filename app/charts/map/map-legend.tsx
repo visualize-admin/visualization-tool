@@ -1,6 +1,5 @@
 import {
   axisBottom,
-  interpolateOranges,
   NumberValue,
   range,
   ScaleLinear,
@@ -14,6 +13,7 @@ import {
 import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { Box, Flex, Text } from "theme-ui";
+import { ColorRamp } from "../../configurator/components/chart-controls/color-ramp";
 import {
   getColorInterpolator,
   useFormatInteger,
@@ -568,36 +568,4 @@ const DataPointIndicator = ({
         )}
     </>
   );
-};
-
-const ColorRamp = ({
-  colorInterpolator = interpolateOranges,
-  nbClass,
-  width,
-  height,
-}: {
-  colorInterpolator: (t: number) => string;
-  nbClass: number;
-  width: number;
-  height: number;
-}) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas && canvas.getContext("2d");
-
-    if (canvas && context) {
-      context.clearRect(0, 0, width, height);
-      canvas.style.imageRendering = "-moz-crisp-edges";
-      canvas.style.imageRendering = "pixelated";
-
-      for (let i = 0; i < nbClass; ++i) {
-        context.fillStyle = colorInterpolator(i / (nbClass - 1));
-        context.fillRect(i, 0, 1, height);
-      }
-    }
-  });
-
-  return <canvas ref={canvasRef} width={width} height={height} />;
 };
