@@ -10,6 +10,7 @@ import {
 } from "../../domain/data";
 import { GeoShapesDimension } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
+import { ColorRampField } from "../components/chart-controls/color-ramp";
 import {
   ControlSection,
   ControlSectionContent,
@@ -144,6 +145,10 @@ export const AreaLayerSettings = memo(
       [numberOfGeoShapes]
     );
 
+    const currentNumberOfColorScaleClasses =
+      chartConfig.fields.areaLayer.nbClass;
+    const currentColorScaleType = chartConfig.fields.areaLayer.colorScaleType;
+
     const disabled = !chartConfig.fields.areaLayer.show;
 
     return (
@@ -209,26 +214,6 @@ export const AreaLayerSettings = memo(
         <ControlSection>
           <SectionTitle iconName="segments">Color scale</SectionTitle>
           <ControlSectionContent side="right">
-            <ChartOptionSelectField
-              id="areaLayer.palette"
-              label="Palette"
-              field={activeField}
-              path="palette"
-              options={[
-                "oranges",
-                "reds",
-                "purples",
-                "greens",
-                "blues",
-                "greys",
-              ].map((d) => ({
-                value: d,
-                label: d,
-              }))}
-              disabled={disabled}
-            />
-          </ControlSectionContent>
-          <ControlSectionContent side="right">
             <FieldSetLegend legendTitle="Scale type" />
             <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
               <ChartOptionRadioField
@@ -250,6 +235,17 @@ export const AreaLayerSettings = memo(
                 />
               )}
             </Flex>
+
+            <ColorRampField
+              field={activeField}
+              path="palette"
+              nbClass={
+                currentColorScaleType === "discrete"
+                  ? currentNumberOfColorScaleClasses
+                  : undefined
+              }
+            />
+
             {chartConfig.fields.areaLayer.colorScaleType === "discrete" &&
               numberOfGeoShapes >= 3 && (
                 <>
