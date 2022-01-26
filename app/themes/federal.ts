@@ -370,6 +370,12 @@ export const theme: Theme = {
         color: "monochrome500",
       },
     },
+    arrow: {
+      variant: "buttons.inline",
+      fontSize: "0.5em",
+      padding: "0 0.25rem",
+      lineHeight: "0.5rem",
+    },
   },
   links: {
     initial: {

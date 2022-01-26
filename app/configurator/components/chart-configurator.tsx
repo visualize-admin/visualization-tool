@@ -40,13 +40,11 @@ import {
 const DataFilterSelectGeneric = ({
   dimension,
   index,
-  onMove,
   disabled,
 }: {
   dimension: DataCubeMetadata["dimensions"][number];
   isOptional?: boolean;
   index: number;
-  onMove: (n: number) => void;
   disabled?: boolean;
 }) => {
   const controls = (
@@ -117,6 +115,33 @@ const DataFilterSelectGeneric = ({
         />
       ) : null}
     </Box>
+  );
+};
+
+const MoveAndDragButtons = ({
+  onClickUp,
+  onClickDown,
+  className,
+}: {
+  onClickUp: () => void;
+  onClickDown: () => void;
+  className?: string;
+}) => {
+  return (
+    <>
+      <Button className={className} variant="arrow" onClick={onClickUp}>
+        ▲
+      </Button>
+      <Icon
+        className={className}
+        color="#ddd"
+        name="dragndrop2"
+        style={{ flexShrink: 0, cursor: "move" }}
+      />
+      <Button className={className} variant="arrow" onClick={onClickDown}>
+        ▼
+      </Button>
+    </>
   );
 };
 
@@ -262,19 +287,41 @@ export const ChartConfigurator = ({
                               sx={{
                                 display: "flex",
                                 justifyContent: "stretch",
+                                "& .buttons": {
+                                  transition:
+                                    "color 0.125s ease, opacity 0.125s ease-out",
+                                  opacity: 0.25,
+                                  color: "secondaryActive",
+                                },
+                                ".buttons:hover": {
+                                  opacity: 1,
+                                },
                               }}
                             >
                               <DataFilterSelectGeneric
                                 key={dimension.iri}
                                 dimension={dimension}
                                 index={i}
-                                onMove={(n) => handleMove(dimension.iri, n)}
                                 disabled={fetching}
                               />
-                              <Icon
-                                name="dragndrop"
-                                style={{ flexShrink: 0 }}
-                              />
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                  pt: 5,
+                                }}
+                              >
+                                <MoveAndDragButtons
+                                  className="buttons"
+                                  onClickUp={() =>
+                                    handleMove(dimension.iri, -1)
+                                  }
+                                  onClickDown={() =>
+                                    handleMove(dimension.iri, 1)
+                                  }
+                                />
+                              </Box>
                             </Box>
                           </div>
                         )}
