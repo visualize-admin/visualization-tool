@@ -1,6 +1,5 @@
 import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
-import VisuallyHidden from "@reach/visually-hidden";
 import { sortBy } from "lodash";
 import * as React from "react";
 import { useCallback } from "react";
@@ -375,7 +374,17 @@ export const ChartConfigurator = ({
               >
                 <Menu>
                   <MenuButton className="menu-button">
-                    <Button variant="primary">Add dimension</Button>
+                    <Button
+                      variant="primary"
+                      sx={{
+                        display: "flex",
+                        minWidth: "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Trans>Add filter</Trans>
+                      <Icon name="add" height={18} />
+                    </Button>
                   </MenuButton>
                   <MenuList>
                     {addableDimensions.map((dim) => (

@@ -22,6 +22,7 @@ import { loadTheme, ThemeModule } from "../themes/index";
 // in _app in Next.js applications
 import "react-day-picker/lib/style.css";
 import "../components/react-day-picker-custom-styles.css";
+import "../components/reach-ui-custom-styles.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   const {
