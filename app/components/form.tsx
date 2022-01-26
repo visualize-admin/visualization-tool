@@ -331,6 +331,7 @@ export const DayPickerField = ({
       formatDate: formatDateAuto,
       value: formatDateAuto(value, TimeUnit.Day),
       disabled,
+      ...props.inputProps,
       style: {
         padding: "0.625rem 0.75rem",
         color: disabled ? "monochrome300" : "monochrome700",
@@ -344,7 +345,6 @@ export const DayPickerField = ({
         // @ts-ignore
         ...props.inputProps?.style,
       },
-      ...props.inputProps,
     } as DayPickerInputProps;
   }, [name, formatDateAuto, value, disabled, props.inputProps]);
 
