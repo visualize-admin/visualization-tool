@@ -1,18 +1,18 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Flex, Text } from "theme-ui";
 import { useSelect } from "downshift";
 import get from "lodash/get";
 import { useCallback } from "react";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "../..";
 import { Label } from "../../../components/form";
-import {
-  categoricalPalettes,
-  getPalette,
-  mapColorsToComponentValuesIris,
-  sequentialPalettes,
-} from "../ui-helpers";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { Icon } from "../../../icons";
+import {
+  categoricalPalettes,
+  divergingSteppedPalettes,
+  getPalette,
+  mapColorsToComponentValuesIris,
+} from "../ui-helpers";
 
 type Props = {
   field: string;
@@ -31,7 +31,7 @@ export const ColorPalette = ({
 
   const palettes =
     component?.__typename === "Measure"
-      ? sequentialPalettes
+      ? divergingSteppedPalettes
       : categoricalPalettes;
 
   const currentPaletteName = get(
