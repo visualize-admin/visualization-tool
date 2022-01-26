@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
 import VisuallyHidden from "@reach/visually-hidden";
 import { sortBy } from "lodash";
@@ -42,6 +42,7 @@ import {
   DataFilterSelectDay,
   DataFilterSelectTime,
 } from "./field";
+import MoveDragButtons from "./move-drag-buttons";
 
 const DataFilterSelectGeneric = ({
   dimension,
@@ -114,43 +115,6 @@ const DataFilterSelectGeneric = ({
         />
       ) : null}
     </Box>
-  );
-};
-
-const MoveAndDragButtons = ({
-  onClickUp,
-  onClickDown,
-  className,
-}: {
-  onClickUp: () => void;
-  onClickDown: () => void;
-  className?: string;
-}) => {
-  return (
-    <>
-      <Button
-        className={className}
-        variant="arrow"
-        onClick={onClickUp}
-        sx={{ mb: -1 }}
-      >
-        <Icon name="caretUp" height="16" />
-      </Button>
-      <Icon
-        className={className}
-        color="#ddd"
-        name="dragndrop2"
-        style={{ flexShrink: 0, cursor: "move" }}
-      />
-      <Button
-        className={className}
-        variant="arrow"
-        onClick={onClickDown}
-        sx={{ mt: -1 }}
-      >
-        <Icon name="caretDown" height="16" />
-      </Button>
-    </>
   );
 };
 
@@ -367,7 +331,18 @@ export const ChartConfigurator = ({
                                   pb: 3,
                                 }}
                               >
-                                <MoveAndDragButtons
+                                <MoveDragButtons
+                                  moveUpButtonProps={{
+                                    title: t({ id: "Move filter up" }),
+                                  }}
+                                  moveDownButtonProps={{
+                                    title: t({ id: "Move filter down" }),
+                                  }}
+                                  dragButtonProps={{
+                                    title: t({
+                                      id: "Drag filters to reorganize",
+                                    }),
+                                  }}
                                   className="buttons"
                                   onClickUp={() =>
                                     handleMove(dimension.iri, -1)
@@ -400,11 +375,6 @@ export const ChartConfigurator = ({
               >
                 <Menu>
                   <MenuButton className="menu-button">
-                    <VisuallyHidden>
-                      <Trans id="controls.dimension-picker.open">
-                        Open dimension picker
-                      </Trans>
-                    </VisuallyHidden>
                     <Button variant="primary">Add dimension</Button>
                   </MenuButton>
                   <MenuList>
