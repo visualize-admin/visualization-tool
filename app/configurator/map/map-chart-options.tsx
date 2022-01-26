@@ -271,13 +271,14 @@ export const AreaLayerSettings = memo(
                     ]}
                     disabled={disabled}
                   />
-                  <ChartOptionSelectField
+                  <ChartOptionSelectField<number>
                     id="areaLayer.nbClass"
                     label="Number of classes"
                     field={activeField}
                     path="nbClass"
                     options={numberOfColorScaleClasses}
                     disabled={disabled}
+                    getValue={(d) => +d}
                   />
                 </>
               )}
