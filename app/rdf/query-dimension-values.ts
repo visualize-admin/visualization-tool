@@ -1,4 +1,4 @@
-import { SELECT } from "@tpluscode/sparql-builder";
+import { SELECT, sparql } from "@tpluscode/sparql-builder";
 import { Literal, NamedNode, Term } from "rdf-js";
 import { Filters } from "../configurator";
 import { cube as cubeNs } from "./namespace";
@@ -96,26 +96,25 @@ export async function loadDimensionValues(
     ?observation ${dimensionIri} ?value .
     ${
       filters
-        ? filterList
-            .map(([iri, value], idx) => {
-              const filterDimension = cube.dimensions.find(
-                (d) => d.path?.value === iri
-              );
-              if (
-                !filterDimension ||
-                value.type === "range" ||
-                dimensionIri?.value === iri
-              ) {
-                return "";
-              }
-              const versioned = filterDimension
-                ? dimensionIsVersioned(filterDimension)
-                : false;
-              return `${
-                versioned
-                  ? `?dimension${idx} <http://schema.org/sameAs> ?dimension_unversioned${idx}.`
-                  : ""
-              }
+        ? filterList.map(([iri, value], idx) => {
+            const filterDimension = cube.dimensions.find(
+              (d) => d.path?.value === iri
+            );
+            if (
+              !filterDimension ||
+              value.type === "range" ||
+              dimensionIri?.value === iri
+            ) {
+              return "";
+            }
+            const versioned = filterDimension
+              ? dimensionIsVersioned(filterDimension)
+              : false;
+            return sparql`${
+              versioned
+                ? sparql`?dimension${idx} ${ns.schema.sameAs} ?dimension_unversioned${idx}.`
+                : ""
+            }
             ?observation <${iri}> ?dimension${idx}.
             ${formatFilterIntoSparqlFilter(
               value,
@@ -123,8 +122,7 @@ export async function loadDimensionValues(
               versioned,
               idx
             )}`;
-            })
-            .join("\n")
+          })
         : ""
     }
   `;
