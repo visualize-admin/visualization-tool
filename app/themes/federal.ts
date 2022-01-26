@@ -372,9 +372,8 @@ export const theme: Theme = {
     },
     arrow: {
       variant: "buttons.inline",
-      fontSize: "0.5em",
       padding: "0 0.25rem",
-      lineHeight: "0.5rem",
+      lineHeight: "0.25rem",
     },
   },
   links: {

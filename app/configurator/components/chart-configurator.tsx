@@ -128,8 +128,13 @@ const MoveAndDragButtons = ({
 }) => {
   return (
     <>
-      <Button className={className} variant="arrow" onClick={onClickUp}>
-        ▲
+      <Button
+        className={className}
+        variant="arrow"
+        onClick={onClickUp}
+        sx={{ mb: -1 }}
+      >
+        <Icon name="caretUp" height="16" />
       </Button>
       <Icon
         className={className}
@@ -137,8 +142,13 @@ const MoveAndDragButtons = ({
         name="dragndrop2"
         style={{ flexShrink: 0, cursor: "move" }}
       />
-      <Button className={className} variant="arrow" onClick={onClickDown}>
-        ▼
+      <Button
+        className={className}
+        variant="arrow"
+        onClick={onClickDown}
+        sx={{ mt: -1 }}
+      >
+        <Icon name="caretDown" height="16" />
       </Button>
     </>
   );
@@ -353,7 +363,8 @@ export const ChartConfigurator = ({
                                   display: "flex",
                                   flexDirection: "column",
                                   alignItems: "center",
-                                  pt: 5,
+                                  justifyContent: "flex-end",
+                                  pb: 3,
                                 }}
                               >
                                 <MoveAndDragButtons
@@ -376,37 +387,39 @@ export const ChartConfigurator = ({
                 )}
               </Droppable>
             </DragDropContext>
-            <Box
-              sx={{
-                pl: 2,
-                "& .menu-button": {
-                  background: "transparent",
-                  border: 0,
-                  padding: 0,
-                },
-              }}
-            >
-              <Menu>
-                <MenuButton className="menu-button">
-                  <VisuallyHidden>
-                    <Trans id="controls.dimension-picker.open">
-                      Open dimension picker
-                    </Trans>
-                  </VisuallyHidden>
-                  <Button variant="primary">Add dimension</Button>
-                </MenuButton>
-                <MenuList>
-                  {addableDimensions.map((dim) => (
-                    <MenuItem
-                      onSelect={() => handleAddDimensionFilter(dim)}
-                      key={dim.iri}
-                    >
-                      {dim.label}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-            </Box>
+            {addableDimensions.length > 0 ? (
+              <Box
+                sx={{
+                  pl: 2,
+                  "& .menu-button": {
+                    background: "transparent",
+                    border: 0,
+                    padding: 0,
+                  },
+                }}
+              >
+                <Menu>
+                  <MenuButton className="menu-button">
+                    <VisuallyHidden>
+                      <Trans id="controls.dimension-picker.open">
+                        Open dimension picker
+                      </Trans>
+                    </VisuallyHidden>
+                    <Button variant="primary">Add dimension</Button>
+                  </MenuButton>
+                  <MenuList>
+                    {addableDimensions.map((dim) => (
+                      <MenuItem
+                        onSelect={() => handleAddDimensionFilter(dim)}
+                        key={dim.iri}
+                      >
+                        {dim.label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+              </Box>
+            ) : null}
           </ControlSectionContent>
         </ControlSection>
       </>
