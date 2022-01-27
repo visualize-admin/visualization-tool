@@ -41,7 +41,6 @@ import { default as Download } from "./IcDownload";
 import { default as DragHandle } from "./IcDragHandle";
 import { default as Drag } from "./IcDrag";
 import { default as Dragndrop } from "./IcDragndrop";
-import { default as Dragndrop2 } from "./IcDragndrop2";
 import { default as Edit } from "./IcEdit";
 import { default as Embed } from "./IcEmbed";
 import { default as Excel } from "./IcExcel";
@@ -169,7 +168,6 @@ export const Icons = {
   dragHandle: DragHandle,
   drag: Drag,
   dragndrop: Dragndrop,
-  dragndrop2: Dragndrop2,
   edit: Edit,
   embed: Embed,
   excel: Excel,
