@@ -718,7 +718,7 @@ msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für 
 
 #: app/configurator/components/dataset-browse.tsx:346
 msgid "dataset.results"
-msgstr "Ergebnisse"
+msgstr "{0, plural, zero {Keine Ergebnisse} one {# Ergebnis} other {# Ergebnisse}}"
 
 #: app/configurator/components/dataset-browse.tsx:294
 msgid "dataset.search.label"
