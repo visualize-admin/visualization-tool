@@ -133,8 +133,11 @@ export const AreaLayerSettings = memo(
       [metaData.measures]
     );
 
-    const numberOfGeoShapes = (dimension.geoShapes as any).topology.objects
-      .shapes.geometries.length as number;
+    const numberOfGeoShapes = (
+      dimension
+        ? (dimension.geoShapes as any).topology.objects.shapes.geometries.length
+        : 0
+    ) as number;
 
     const numberOfColorScaleClasses = useMemo(
       () =>
