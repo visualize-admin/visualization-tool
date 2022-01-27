@@ -13,19 +13,23 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/configurator/components/chart-configurator.tsx:385
+msgid "Add filter"
+msgstr ""
+
 #: app/components/search-autocomplete.tsx:69
 msgid "Browse {0}"
 msgstr "Parcourir {0}"
 
-#: app/configurator/components/chart-configurator.tsx:337
+#: app/configurator/components/chart-configurator.tsx:341
 msgid "Drag filters to reorganize"
 msgstr "Faites glisser les filtres pour les réorganiser"
 
-#: app/configurator/components/chart-configurator.tsx:334
+#: app/configurator/components/chart-configurator.tsx:338
 msgid "Move filter down"
 msgstr "Déplacer le filtre vers le bas"
 
-#: app/configurator/components/chart-configurator.tsx:331
+#: app/configurator/components/chart-configurator.tsx:335
 msgid "Move filter up"
 msgstr "Déplacer le filtre vers le haut"
 
@@ -138,9 +142,9 @@ msgstr "Partager"
 #~ msgid "chart.map.layers.area.discretization.discrete"
 #~ msgstr "Discrète"
 
-#: app/charts/map/prototype-right-controls.tsx:186
-#~ msgid "chart.map.layers.area.discretization.jenks"
-#~ msgstr "Jenks (intervalles naturels)"
+#: app/configurator/map/map-chart-options.tsx:278
+msgid "chart.map.layers.area.discretization.jenks"
+msgstr "Jenks (intervalles naturels)"
 
 #: app/charts/map/prototype-right-controls.tsx:140
 #~ msgid "chart.map.layers.area.discretization.linear"
@@ -150,13 +154,13 @@ msgstr "Partager"
 #~ msgid "chart.map.layers.area.discretization.number.class"
 #~ msgstr "Nombre de classes"
 
-#: app/charts/map/prototype-right-controls.tsx:173
-#~ msgid "chart.map.layers.area.discretization.quantiles"
-#~ msgstr "Quantiles (distribution homogène des valeurs)"
+#: app/configurator/map/map-chart-options.tsx:271
+msgid "chart.map.layers.area.discretization.quantiles"
+msgstr "Quantiles (distribution homogène des valeurs)"
 
-#: app/charts/map/prototype-right-controls.tsx:160
-#~ msgid "chart.map.layers.area.discretization.quantize"
-#~ msgstr "Intervalles égaux"
+#: app/configurator/map/map-chart-options.tsx:264
+msgid "chart.map.layers.area.discretization.quantize"
+msgstr "Intervalles égaux"
 
 #: app/charts/map/prototype-right-controls.tsx:91
 #~ msgid "chart.map.layers.area.select.measure"
@@ -239,11 +243,11 @@ msgstr "Axe horizontal"
 msgid "controls.axis.vertical"
 msgstr "Axe vertical"
 
-#: app/configurator/map/map-chart-options.tsx:76
+#: app/configurator/map/map-chart-options.tsx:71
 msgid "controls.baseLayer.showLakes"
 msgstr ""
 
-#: app/configurator/map/map-chart-options.tsx:68
+#: app/configurator/map/map-chart-options.tsx:63
 msgid "controls.baseLayer.showRelief"
 msgstr ""
 
@@ -288,20 +292,20 @@ msgid "controls.color.add"
 msgstr "Ajouter…"
 
 #: app/configurator/components/chart-controls/color-palette.tsx:78
-#: app/configurator/components/chart-controls/color-ramp.tsx:106
+#: app/configurator/components/chart-controls/color-ramp.tsx:124
 msgid "controls.color.palette"
 msgstr "Couleurs"
 
-#: app/configurator/components/chart-controls/color-ramp.tsx:147
+#: app/configurator/components/chart-controls/color-ramp.tsx:146
 msgid "controls.color.palette.diverging"
 msgstr "Divergent"
 
-#: app/configurator/components/chart-controls/color-palette.tsx:257
-#: app/configurator/components/chart-controls/color-palette.tsx:263
+#: app/configurator/components/chart-controls/color-palette.tsx:237
+#: app/configurator/components/chart-controls/color-palette.tsx:243
 msgid "controls.color.palette.reset"
 msgstr "Réinitialiser la palette de couleurs"
 
-#: app/configurator/components/chart-controls/color-ramp.tsx:161
+#: app/configurator/components/chart-controls/color-ramp.tsx:159
 msgid "controls.color.palette.sequential"
 msgstr "Séquentielle"
 
@@ -361,18 +365,18 @@ msgid "controls.imputation"
 msgstr "Type d'imputation"
 
 #: app/configurator/components/chart-options-selector.tsx:490
-#: app/configurator/components/ui-helpers.ts:465
+#: app/configurator/components/ui-helpers.ts:473
 msgid "controls.imputation.type.linear"
 msgstr "Interpolation linéaire"
 
 #: app/configurator/components/chart-options-selector.tsx:483
 #: app/configurator/components/chart-options-selector.tsx:495
-#: app/configurator/components/ui-helpers.ts:457
+#: app/configurator/components/ui-helpers.ts:465
 msgid "controls.imputation.type.none"
 msgstr "-"
 
 #: app/configurator/components/chart-options-selector.tsx:485
-#: app/configurator/components/ui-helpers.ts:461
+#: app/configurator/components/ui-helpers.ts:469
 msgid "controls.imputation.type.zeros"
 msgstr "Zéros"
 
@@ -441,15 +445,15 @@ msgstr "Inactif"
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
-#: app/configurator/map/map-chart-options.tsx:158
+#: app/configurator/map/map-chart-options.tsx:162
 msgid "controls.section.areaLayer"
 msgstr ""
 
-#: app/configurator/map/map-chart-options.tsx:64
+#: app/configurator/map/map-chart-options.tsx:59
 msgid "controls.section.baseLayer"
 msgstr ""
 
-#: app/configurator/components/chart-configurator.tsx:258
+#: app/configurator/components/chart-configurator.tsx:262
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"
 
@@ -461,7 +465,7 @@ msgstr "Colonnes"
 msgid "controls.section.columnstyle"
 msgstr "Style de la colonne"
 
-#: app/configurator/components/chart-configurator.tsx:273
+#: app/configurator/components/chart-configurator.tsx:277
 msgid "controls.section.data.filters"
 msgstr "Filtres"
 
@@ -498,11 +502,16 @@ msgstr "Filtres interactifs"
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Filtres de données"
 
+#: app/configurator/map/map-chart-options.tsx:154
+#: app/configurator/map/map-chart-options.tsx:341
+msgid "controls.section.map.noGeoDimensions"
+msgstr "Dans cet ensemble de données, il n'y a pas de dimensions géographiques à afficher!"
+
 #: app/configurator/components/chart-options-selector.tsx:411
 msgid "controls.section.sorting"
 msgstr "Trier"
 
-#: app/configurator/map/map-chart-options.tsx:329
+#: app/configurator/map/map-chart-options.tsx:349
 msgid "controls.section.symbolLayer"
 msgstr ""
 
@@ -745,11 +754,11 @@ msgstr "Brouillon"
 msgid "datatable.showing.first.rows"
 msgstr "Seules les 10 premières lignes sont affichées"
 
-#: app/configurator/map/map-chart-options.tsx:162
+#: app/configurator/map/map-chart-options.tsx:166
 msgid "fields.areaLayer.show"
 msgstr ""
 
-#: app/configurator/map/map-chart-options.tsx:333
+#: app/configurator/map/map-chart-options.tsx:353
 msgid "fields.symbolLayer.show"
 msgstr ""
 
@@ -761,11 +770,11 @@ msgstr "Office fédéral de l'environnement OFEV"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/fr/home.html"
 
-#: app/components/hint.tsx:197
+#: app/components/hint.tsx:199
 msgid "hint.chartunexpected.message"
 msgstr ""
 
-#: app/components/hint.tsx:194
+#: app/components/hint.tsx:196
 msgid "hint.chartunexpected.title"
 msgstr ""
 
@@ -773,11 +782,11 @@ msgstr ""
 msgid "hint.create.your.own.chart"
 msgstr "Créez votre propre visualisation à partir de celle-ci en la copiant, ou bien créez une nouvelle visualisation avec les données ouvertes de l'administration publique suisse."
 
-#: app/components/hint.tsx:171
+#: app/components/hint.tsx:173
 msgid "hint.dataloadingerror.message"
 msgstr "Les données n'ont pas pu être téléchargées."
 
-#: app/components/hint.tsx:168
+#: app/components/hint.tsx:170
 msgid "hint.dataloadingerror.title"
 msgstr "Problème de téléchargement des données"
 
@@ -793,7 +802,7 @@ msgstr "Chargement des données..."
 msgid "hint.no.visualization.with.dataset"
 msgstr "Aucune visualisation ne peut être créée avec le jeu de données sélectionné."
 
-#: app/components/hint.tsx:146
+#: app/components/hint.tsx:148
 msgid "hint.nodata.message"
 msgstr "Veuillez essayer avec une autre combinaison de filtres."
 
@@ -801,15 +810,15 @@ msgstr "Veuillez essayer avec une autre combinaison de filtres."
 msgid "hint.nodata.title"
 msgstr "Il n'y a pas de données correspondant aux filtres sélectionnés"
 
-#: app/components/hint.tsx:223
+#: app/components/hint.tsx:225
 msgid "hint.only.negative.data.message"
 msgstr "Ce type de graphique ne permet pas de représenter des données négatives."
 
-#: app/components/hint.tsx:220
+#: app/components/hint.tsx:222
 msgid "hint.only.negative.data.title"
 msgstr "Valeurs négatives"
 
-#: app/components/hint.tsx:248
+#: app/components/hint.tsx:250
 msgid "hint.publication.success"
 msgstr "Votre visualisation est à présent publiée. Partagez-là en copiant l'URL ou en utilisant les options d'intégration."
 

@@ -13,19 +13,23 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/configurator/components/chart-configurator.tsx:385
+msgid "Add filter"
+msgstr ""
+
 #: app/components/search-autocomplete.tsx:69
 msgid "Browse {0}"
 msgstr "{0} durchsuchen"
 
-#: app/configurator/components/chart-configurator.tsx:337
+#: app/configurator/components/chart-configurator.tsx:341
 msgid "Drag filters to reorganize"
 msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
 
-#: app/configurator/components/chart-configurator.tsx:334
+#: app/configurator/components/chart-configurator.tsx:338
 msgid "Move filter down"
 msgstr "Filter nach unten verschieben"
 
-#: app/configurator/components/chart-configurator.tsx:331
+#: app/configurator/components/chart-configurator.tsx:335
 msgid "Move filter up"
 msgstr "Filter nach oben verschieben"
 
@@ -138,9 +142,9 @@ msgstr "Teilen"
 #~ msgid "chart.map.layers.area.discretization.discrete"
 #~ msgstr "Diskret"
 
-#: app/charts/map/prototype-right-controls.tsx:186
-#~ msgid "chart.map.layers.area.discretization.jenks"
-#~ msgstr "Jenks (Natural Breaks)"
+#: app/configurator/map/map-chart-options.tsx:278
+msgid "chart.map.layers.area.discretization.jenks"
+msgstr "Jenks (Natural Breaks)"
 
 #: app/charts/map/prototype-right-controls.tsx:140
 #~ msgid "chart.map.layers.area.discretization.linear"
@@ -150,13 +154,13 @@ msgstr "Teilen"
 #~ msgid "chart.map.layers.area.discretization.number.class"
 #~ msgstr "Anzahl Klassen"
 
-#: app/charts/map/prototype-right-controls.tsx:173
-#~ msgid "chart.map.layers.area.discretization.quantiles"
-#~ msgstr "Quantile (gleiche Anzahl Werte)"
+#: app/configurator/map/map-chart-options.tsx:271
+msgid "chart.map.layers.area.discretization.quantiles"
+msgstr "Quantile (gleiche Anzahl Werte)"
 
-#: app/charts/map/prototype-right-controls.tsx:160
-#~ msgid "chart.map.layers.area.discretization.quantize"
-#~ msgstr "Quantisierung (gleiche Wertebereiche)"
+#: app/configurator/map/map-chart-options.tsx:264
+msgid "chart.map.layers.area.discretization.quantize"
+msgstr "Quantisierung (gleiche Wertebereiche)"
 
 #: app/charts/map/prototype-right-controls.tsx:91
 #~ msgid "chart.map.layers.area.select.measure"
@@ -239,11 +243,11 @@ msgstr "Horizontale Achse"
 msgid "controls.axis.vertical"
 msgstr "Vertikale Achse"
 
-#: app/configurator/map/map-chart-options.tsx:76
+#: app/configurator/map/map-chart-options.tsx:71
 msgid "controls.baseLayer.showLakes"
 msgstr ""
 
-#: app/configurator/map/map-chart-options.tsx:68
+#: app/configurator/map/map-chart-options.tsx:63
 msgid "controls.baseLayer.showRelief"
 msgstr ""
 
@@ -288,20 +292,20 @@ msgid "controls.color.add"
 msgstr "Hinzufügen …"
 
 #: app/configurator/components/chart-controls/color-palette.tsx:78
-#: app/configurator/components/chart-controls/color-ramp.tsx:106
+#: app/configurator/components/chart-controls/color-ramp.tsx:124
 msgid "controls.color.palette"
 msgstr "Farbpalette"
 
-#: app/configurator/components/chart-controls/color-ramp.tsx:147
+#: app/configurator/components/chart-controls/color-ramp.tsx:146
 msgid "controls.color.palette.diverging"
 msgstr "Divergierend"
 
-#: app/configurator/components/chart-controls/color-palette.tsx:257
-#: app/configurator/components/chart-controls/color-palette.tsx:263
+#: app/configurator/components/chart-controls/color-palette.tsx:237
+#: app/configurator/components/chart-controls/color-palette.tsx:243
 msgid "controls.color.palette.reset"
 msgstr "Farbpalette zurücksetzen"
 
-#: app/configurator/components/chart-controls/color-ramp.tsx:161
+#: app/configurator/components/chart-controls/color-ramp.tsx:159
 msgid "controls.color.palette.sequential"
 msgstr "Sequentiell"
 
@@ -361,18 +365,18 @@ msgid "controls.imputation"
 msgstr "Imputationstyp"
 
 #: app/configurator/components/chart-options-selector.tsx:490
-#: app/configurator/components/ui-helpers.ts:465
+#: app/configurator/components/ui-helpers.ts:473
 msgid "controls.imputation.type.linear"
 msgstr "Lineare Interpolation"
 
 #: app/configurator/components/chart-options-selector.tsx:483
 #: app/configurator/components/chart-options-selector.tsx:495
-#: app/configurator/components/ui-helpers.ts:457
+#: app/configurator/components/ui-helpers.ts:465
 msgid "controls.imputation.type.none"
 msgstr "-"
 
 #: app/configurator/components/chart-options-selector.tsx:485
-#: app/configurator/components/ui-helpers.ts:461
+#: app/configurator/components/ui-helpers.ts:469
 msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
 
@@ -441,15 +445,15 @@ msgstr "Aus"
 msgid "controls.search.clear"
 msgstr "Suche zurücksetzen"
 
-#: app/configurator/map/map-chart-options.tsx:158
+#: app/configurator/map/map-chart-options.tsx:162
 msgid "controls.section.areaLayer"
 msgstr ""
 
-#: app/configurator/map/map-chart-options.tsx:64
+#: app/configurator/map/map-chart-options.tsx:59
 msgid "controls.section.baseLayer"
 msgstr ""
 
-#: app/configurator/components/chart-configurator.tsx:258
+#: app/configurator/components/chart-configurator.tsx:262
 msgid "controls.section.chart.options"
 msgstr "Diagramm-Einstellungen"
 
@@ -461,7 +465,7 @@ msgstr "Spalten"
 msgid "controls.section.columnstyle"
 msgstr "Spaltenstil"
 
-#: app/configurator/components/chart-configurator.tsx:273
+#: app/configurator/components/chart-configurator.tsx:277
 msgid "controls.section.data.filters"
 msgstr "Filter"
 
@@ -498,11 +502,16 @@ msgstr "Interaktive Filter hinzufügen"
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Datenfilter"
 
+#: app/configurator/map/map-chart-options.tsx:154
+#: app/configurator/map/map-chart-options.tsx:341
+msgid "controls.section.map.noGeoDimensions"
+msgstr "In diesem Datenset können keine geografischen Dimensionen angezeigt werden!"
+
 #: app/configurator/components/chart-options-selector.tsx:411
 msgid "controls.section.sorting"
 msgstr "Sortieren"
 
-#: app/configurator/map/map-chart-options.tsx:329
+#: app/configurator/map/map-chart-options.tsx:349
 msgid "controls.section.symbolLayer"
 msgstr ""
 
@@ -745,11 +754,11 @@ msgstr "Luftzug"
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
 
-#: app/configurator/map/map-chart-options.tsx:162
+#: app/configurator/map/map-chart-options.tsx:166
 msgid "fields.areaLayer.show"
 msgstr ""
 
-#: app/configurator/map/map-chart-options.tsx:333
+#: app/configurator/map/map-chart-options.tsx:353
 msgid "fields.symbolLayer.show"
 msgstr ""
 
@@ -761,11 +770,11 @@ msgstr "Bundesamt für Umwelt BAFU"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/de/home.html"
 
-#: app/components/hint.tsx:197
+#: app/components/hint.tsx:199
 msgid "hint.chartunexpected.message"
 msgstr ""
 
-#: app/components/hint.tsx:194
+#: app/components/hint.tsx:196
 msgid "hint.chartunexpected.title"
 msgstr ""
 
@@ -773,11 +782,11 @@ msgstr ""
 msgid "hint.create.your.own.chart"
 msgstr "Sie können diese Visualisierung kopieren oder mit Schweizer Open Government Data eine neue Visualisierung erstellen."
 
-#: app/components/hint.tsx:171
+#: app/components/hint.tsx:173
 msgid "hint.dataloadingerror.message"
 msgstr "Die Daten konnten nicht geladen werden."
 
-#: app/components/hint.tsx:168
+#: app/components/hint.tsx:170
 msgid "hint.dataloadingerror.title"
 msgstr "Daten-Ladefehler"
 
@@ -793,7 +802,7 @@ msgstr "Lade Daten …"
 msgid "hint.no.visualization.with.dataset"
 msgstr "Mit dem ausgewählten Datensatz kann keine Visualisierung erstellt werden."
 
-#: app/components/hint.tsx:146
+#: app/components/hint.tsx:148
 msgid "hint.nodata.message"
 msgstr "Bitte versuchen Sie es mit einer anderen Filterkombination."
 
@@ -801,15 +810,15 @@ msgstr "Bitte versuchen Sie es mit einer anderen Filterkombination."
 msgid "hint.nodata.title"
 msgstr "Keine Daten für die aktuelle Filterauswahl"
 
-#: app/components/hint.tsx:223
+#: app/components/hint.tsx:225
 msgid "hint.only.negative.data.message"
 msgstr "Negative Datenwerte können mit diesem Diagrammtyp nicht dargestellt werden."
 
-#: app/components/hint.tsx:220
+#: app/components/hint.tsx:222
 msgid "hint.only.negative.data.title"
 msgstr "Negative Werte"
 
-#: app/components/hint.tsx:248
+#: app/components/hint.tsx:250
 msgid "hint.publication.success"
 msgstr "Die Visualisierung ist jetzt veröffentlicht. Sie können sie teilen oder einbetten, indem Sie die URL kopieren oder das Menü unten verwenden."
 
