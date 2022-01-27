@@ -207,7 +207,7 @@ const CircleLegend = () => {
   const domainObservations = useMemo(
     () => dataDomain.map((d) => data.find((x) => getValue(x) === d)),
     [data, dataDomain, getValue]
-  ) as [Observation, Observation];
+  ) as [Observation | undefined, Observation | undefined];
 
   return (
     <svg width={width} height={HEIGHT}>
@@ -218,27 +218,24 @@ const CircleLegend = () => {
       >
         {dataDomain.map((d, i) => {
           const observation = domainObservations[i];
-          const label = getLabel(observation);
-          const radius = radiusScale(d);
 
-          return (
-            observation && (
-              <>
-                {
-                  <Circle
-                    value={formatNumber(d)}
-                    label={label}
-                    fill="none"
-                    stroke={axisLabelColor}
-                    radius={radius}
-                    maxRadius={maxRadius}
-                    fontSize={legendFontSize}
-                    showLine={!interaction.visible}
-                  />
-                }
-              </>
-            )
-          );
+          if (observation) {
+            const label = getLabel(observation);
+            const radius = radiusScale(d);
+
+            return (
+              <Circle
+                value={formatNumber(d)}
+                label={label}
+                fill="none"
+                stroke={axisLabelColor}
+                radius={radius}
+                maxRadius={maxRadius}
+                fontSize={legendFontSize}
+                showLine={!interaction.visible}
+              />
+            );
+          }
         })}
 
         {/* Hovered data point indicator */}

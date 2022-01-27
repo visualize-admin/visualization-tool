@@ -392,6 +392,11 @@ export const theme: Theme = {
         bg: "muted",
       },
     },
+    arrow: {
+      variant: "buttons.inline",
+      padding: "0 0.25rem",
+      lineHeight: "0.25rem",
+    },
   },
   links: {
     initial: {

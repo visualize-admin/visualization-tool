@@ -1,0 +1,28 @@
+.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+  background-color: var(--theme-ui-colors-primary);
+}
+
+.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):hover {
+  background-color: var(--theme-ui-colors-primary);
+  cursor: pointer;
+}
+
+.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):hover {
+  background-color: var(--theme-ui-colors-primaryLight);
+  cursor: pointer;
+}
+
+.DayPicker-Caption > div {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.DayPicker-Weekday {
+  color: var(--theme-ui-colors-monochrome700);
+  font-size: 0.75rem;
+}
+
+.DayPickerInput > input[disabled] {
+  color: var(--theme-ui-colors-monochrome300);
+}

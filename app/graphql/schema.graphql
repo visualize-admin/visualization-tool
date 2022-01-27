@@ -51,7 +51,7 @@ interface Dimension {
   unit: String
   scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  values(filters: Filters): [DimensionValue!]!
 }
 
 type GeoCoordinatesDimension implements Dimension {
@@ -60,7 +60,7 @@ type GeoCoordinatesDimension implements Dimension {
   unit: String
   scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  values(filters: Filters): [DimensionValue!]!
   geoCoordinates: GeoCoordinates!
 }
 
@@ -70,7 +70,7 @@ type GeoShapesDimension implements Dimension {
   unit: String
   scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  values(filters: Filters): [DimensionValue!]!
   geoShapes: GeoShapes!
 }
 
@@ -80,7 +80,7 @@ type NominalDimension implements Dimension {
   unit: String
   scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  values(filters: Filters): [DimensionValue!]!
 }
 
 type OrdinalDimension implements Dimension {
@@ -89,7 +89,7 @@ type OrdinalDimension implements Dimension {
   unit: String
   scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  values(filters: Filters): [DimensionValue!]!
 }
 
 enum TimeUnit {
@@ -110,7 +110,7 @@ type TemporalDimension implements Dimension {
   unit: String
   scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  values(filters: Filters): [DimensionValue!]!
 }
 
 type Measure implements Dimension {
@@ -119,7 +119,7 @@ type Measure implements Dimension {
   unit: String
   scaleType: String
   isKeyDimension: Boolean!
-  values: [DimensionValue!]!
+  values(filters: Filters): [DimensionValue!]!
 }
 
 type DataCubeResult {
@@ -158,7 +158,12 @@ type DatasetCount {
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
-  dataCubeByIri(locale: String, iri: String!, latest: Boolean = true): DataCube
+  dataCubeByIri(
+    locale: String
+    iri: String!
+    latest: Boolean = true
+    filters: Filters
+  ): DataCube
   dataCubes(
     locale: String
     query: String

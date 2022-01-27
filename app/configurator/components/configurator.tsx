@@ -82,7 +82,14 @@ const ConfigureChartStep = () => {
   }
   return (
     <>
-      <PanelLeftWrapper>
+      <PanelLeftWrapper
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          height: "100%",
+          flexDirection: "column",
+        }}
+      >
         {state.chartConfig.chartType === "table" ? (
           <ChartConfiguratorTable state={state} />
         ) : (

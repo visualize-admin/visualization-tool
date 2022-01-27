@@ -1,4 +1,5 @@
 import produce from "immer";
+import { mapValues } from "lodash";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
 import {
@@ -203,6 +204,68 @@ export const getFilterValue = (
     ? state.chartConfig.filters[dimensionIri]
     : undefined;
 };
+
+export const ensureFilterValuesCorrect = produce(
+  (
+    chartConfig: ChartConfig,
+    { dimensions }: { dimensions: DataCubeMetadata["dimensions"] }
+  ) => {
+    let dirty = false;
+    const newFilters = mapValues(chartConfig.filters, (f, dimensionIri) => {
+      if (f.type !== "single") {
+        return f;
+      }
+      const values = dimensions.find((dim) => dim.iri === dimensionIri)?.values;
+      if (!values || values.length === 0) {
+        return f;
+      }
+      if (values.find((v) => v.value === f.value)) {
+        return f;
+      }
+      dirty = true;
+      f.value = values[0].value;
+      return f;
+    });
+    if (dirty) {
+      chartConfig.filters = newFilters;
+    }
+  }
+);
+
+export const moveFilterField = produce(
+  (chartConfig: ChartConfig, { dimensionIri, delta, possibleValues }) => {
+    // Use getOwnPropertyNames instead of keys since the spec ensures that
+    // the order of the keys received is in insertion order
+    // https://262.ecma-international.org/6.0/#sec-ordinary-object-internal-methods-and-internal-slots-ownpropertykeys
+    const keys = Object.getOwnPropertyNames(chartConfig.filters);
+    const fieldIndex = Object.keys(chartConfig.filters).indexOf(dimensionIri);
+    if (fieldIndex === 0 && delta === -1) {
+      return;
+    }
+    if (fieldIndex === keys.length - 1 && delta === 1) {
+      return;
+    }
+    if (fieldIndex === -1 && delta !== -1) {
+      return;
+    }
+    const replacedIndex =
+      fieldIndex === -1 ? keys.length - 1 : fieldIndex + delta;
+    const replaced =
+      fieldIndex === -1 ? keys[replacedIndex] : keys[replacedIndex];
+    keys[replacedIndex] = dimensionIri;
+    if (fieldIndex === -1) {
+      keys.push(replaced);
+    } else {
+      keys[fieldIndex] = replaced;
+    }
+    chartConfig.filters = Object.fromEntries(
+      keys.map((k) => [
+        k,
+        chartConfig.filters[k] || { type: "single", value: possibleValues[0] },
+      ])
+    );
+  }
+);
 
 const deriveFiltersFromFields = produce(
   (chartConfig: ChartConfig, { dimensions }: DataCubeMetadata) => {

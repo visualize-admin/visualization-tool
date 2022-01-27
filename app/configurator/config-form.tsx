@@ -291,14 +291,16 @@ export const useSingleFilterSelect = ({
   dimensionIri,
 }: {
   dimensionIri: string;
-}): {
-  value: string | undefined;
-  onChange: (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
-} => {
+}) => {
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<
-    (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void
+    (
+      e: Pick<
+        ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+        "currentTarget"
+      >
+    ) => void
   >(
     (e) => {
       dispatch({
