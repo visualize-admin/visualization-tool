@@ -767,6 +767,16 @@ export const getColorInterpolator = (
   }
 };
 
+type Palette<T> = {
+  label: string;
+  value: T;
+  interpolator: (t: number) => string;
+};
+
+type SteppedPalette<T> = Omit<Palette<T>, "interpolator"> & {
+  colors: ReadonlyArray<string>;
+};
+
 const steppedPaletteSteps = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
 
 const divergingPaletteKeys = [
@@ -780,21 +790,13 @@ export const divergingPalettes = divergingPaletteKeys.map((d) => ({
   label: d,
   value: d,
   interpolator: getColorInterpolator(d),
-})) as {
-  label: string;
-  value: DivergingPaletteType;
-  interpolator: (t: number) => string;
-}[];
+})) as Palette<DivergingPaletteType>[];
 
 export const divergingSteppedPalettes = divergingPaletteKeys.map((d) => ({
   label: d,
   value: d,
   colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
-})) as {
-  label: string;
-  value: DivergingPaletteType;
-  colors: ReadonlyArray<string>;
-}[];
+})) as SteppedPalette<DivergingPaletteType>[];
 
 export const getDefaultDivergingSteppedPalette = () =>
   divergingSteppedPalettes[0];
@@ -812,21 +814,13 @@ export const sequentialPalettes = sequentialPaletteKeys.map((d) => ({
   label: d,
   value: d,
   interpolator: getColorInterpolator(d),
-})) as {
-  label: string;
-  value: SequentialPaletteType;
-  interpolator: (t: number) => string;
-}[];
+})) as Palette<SequentialPaletteType>[];
 
 export const sequentialSteppedPalettes = sequentialPaletteKeys.map((d) => ({
   label: d,
   value: d,
   colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
-})) as {
-  label: string;
-  value: SequentialPaletteType;
-  colors: ReadonlyArray<string>;
-}[];
+})) as SteppedPalette<SequentialPaletteType>[];
 
 export const mapColorsToComponentValuesIris = ({
   palette,
