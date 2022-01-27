@@ -31,23 +31,25 @@ const ICONS = [
 ];
 
 export const Intro = ({
-  hint,
+  warningHint,
   title,
   teaser,
   buttonLabel,
 }: {
-  hint: string;
+  warningHint?: string;
   title: string;
   teaser: string;
   buttonLabel: string;
 }) => {
   return (
     <>
-      <Box sx={{ maxWidth: "64rem", m: "0 auto" }}>
-        <Box sx={{ mx: 4, mt: 6 }}>
-          <HintRed iconName="hintWarning">{hint}</HintRed>
+      {warningHint && (
+        <Box sx={{ maxWidth: "64rem", m: "0 auto" }}>
+          <Box sx={{ mx: 4, mt: 6 }}>
+            <HintRed iconName="hintWarning">{warningHint}</HintRed>
+          </Box>
         </Box>
-      </Box>
+      )}
       <Box
         sx={{
           pb: [7, 8],
