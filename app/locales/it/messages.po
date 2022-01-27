@@ -17,6 +17,18 @@ msgstr ""
 msgid "Browse {0}"
 msgstr "Sfoglia {0}"
 
+#: app/configurator/components/chart-configurator.tsx:337
+msgid "Drag filters to reorganize"
+msgstr "Trascina i filtri per riorganizzarli"
+
+#: app/configurator/components/chart-configurator.tsx:334
+msgid "Move filter down"
+msgstr "Sposta il filtro in basso"
+
+#: app/configurator/components/chart-configurator.tsx:331
+msgid "Move filter up"
+msgstr "Sposta il filtro in alto"
+
 #: app/components/autocomplete.tsx:171
 msgid "No results"
 msgstr "Nessun risultato"
@@ -300,13 +312,14 @@ msgstr "impilate"
 msgid "controls.description"
 msgstr "Descrizione"
 
-#: app/configurator/components/field.tsx:523
+#: app/configurator/components/field.tsx:629
 msgid "controls.dimension.none"
 msgstr "Nessuno"
 
 #: app/charts/shared/chart-data-filters.tsx:194
-#: app/configurator/components/field.tsx:80
-#: app/configurator/components/field.tsx:138
+#: app/configurator/components/field.tsx:90
+#: app/configurator/components/field.tsx:144
+#: app/configurator/components/field.tsx:240
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
@@ -415,7 +428,7 @@ msgstr "Attivo"
 msgid "controls.option.isNotActive"
 msgstr "Inattivo"
 
-#: app/components/form.tsx:358
+#: app/components/form.tsx:447
 msgid "controls.search.clear"
 msgstr "Cancella la ricerca"
 
@@ -427,7 +440,7 @@ msgstr ""
 msgid "controls.section.baseLayer"
 msgstr ""
 
-#: app/configurator/components/chart-configurator.tsx:45
+#: app/configurator/components/chart-configurator.tsx:258
 msgid "controls.section.chart.options"
 msgstr "Opzioni del grafico"
 
@@ -439,7 +452,7 @@ msgstr "Colonne"
 msgid "controls.section.columnstyle"
 msgstr "Stile della colonna"
 
-#: app/configurator/components/chart-configurator.tsx:61
+#: app/configurator/components/chart-configurator.tsx:273
 msgid "controls.section.data.filters"
 msgstr "Filtri"
 
@@ -548,9 +561,10 @@ msgstr "Seleziona una dimensione"
 msgid "controls.select.measure"
 msgstr "Seleziona una misura"
 
-#: app/configurator/components/field.tsx:85
-#: app/configurator/components/field.tsx:143
-#: app/configurator/components/field.tsx:528
+#: app/configurator/components/field.tsx:95
+#: app/configurator/components/field.tsx:149
+#: app/configurator/components/field.tsx:245
+#: app/configurator/components/field.tsx:634
 msgid "controls.select.optional"
 msgstr "facoltativo"
 
@@ -738,11 +752,11 @@ msgstr "Ufficio federale dell'ambiente UFAM"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/it/home.html"
 
-#: app/components/hint.tsx:199
+#: app/components/hint.tsx:197
 msgid "hint.chartunexpected.message"
 msgstr ""
 
-#: app/components/hint.tsx:196
+#: app/components/hint.tsx:194
 msgid "hint.chartunexpected.title"
 msgstr ""
 
@@ -750,11 +764,11 @@ msgstr ""
 msgid "hint.create.your.own.chart"
 msgstr "Crea la tua versione di questa visualizzazione copiandola, oppure inizia da zero e crea una nuova visualizzazione utilizzando i dati aperti dell’amministrazione pubblica svizzera."
 
-#: app/components/hint.tsx:173
+#: app/components/hint.tsx:171
 msgid "hint.dataloadingerror.message"
 msgstr "I dati non possono essere caricati."
 
-#: app/components/hint.tsx:170
+#: app/components/hint.tsx:168
 msgid "hint.dataloadingerror.title"
 msgstr "Problema di caricamento dei dati"
 
@@ -770,7 +784,7 @@ msgstr "Caricamento dei dati..."
 msgid "hint.no.visualization.with.dataset"
 msgstr "Nessuna visualizzazione può essere creata con il dataset selezionato."
 
-#: app/components/hint.tsx:148
+#: app/components/hint.tsx:146
 msgid "hint.nodata.message"
 msgstr "Prova con un'altra combinazione di filtri."
 
@@ -778,15 +792,15 @@ msgstr "Prova con un'altra combinazione di filtri."
 msgid "hint.nodata.title"
 msgstr "Non ci sono dati corrispondenti ai filtri selezionati"
 
-#: app/components/hint.tsx:225
+#: app/components/hint.tsx:223
 msgid "hint.only.negative.data.message"
 msgstr "Dati con valori negativi non possono essere visualizzati con questo tipo di grafico."
 
-#: app/components/hint.tsx:222
+#: app/components/hint.tsx:220
 msgid "hint.only.negative.data.title"
 msgstr "Valori negativi"
 
-#: app/components/hint.tsx:250
+#: app/components/hint.tsx:248
 msgid "hint.publication.success"
 msgstr "La tua visualizzazione è ora pubblicata. Condividila copiando l'URL o utilizzando le opzioni di incorporamento."
 

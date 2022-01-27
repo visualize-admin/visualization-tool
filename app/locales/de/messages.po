@@ -17,6 +17,18 @@ msgstr ""
 msgid "Browse {0}"
 msgstr "{0} durchsuchen"
 
+#: app/configurator/components/chart-configurator.tsx:337
+msgid "Drag filters to reorganize"
+msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
+
+#: app/configurator/components/chart-configurator.tsx:334
+msgid "Move filter down"
+msgstr "Filter nach unten verschieben"
+
+#: app/configurator/components/chart-configurator.tsx:331
+msgid "Move filter up"
+msgstr "Filter nach oben verschieben"
+
 #: app/components/autocomplete.tsx:171
 msgid "No results"
 msgstr "Kein ergebnis"
@@ -286,7 +298,7 @@ msgstr "Farbpalette zurücksetzen"
 
 #: app/configurator/components/chart-controls/color-picker.tsx:158
 msgid "controls.colorpicker.open"
-msgstr "Farbwähler öffnen"
+msgstr "Farbauswahl öffnen"
 
 #: app/configurator/components/ui-helpers.ts:401
 msgid "controls.column.grouped"
@@ -300,13 +312,14 @@ msgstr "gestapelt"
 msgid "controls.description"
 msgstr "Beschreibung hinzufügen"
 
-#: app/configurator/components/field.tsx:523
+#: app/configurator/components/field.tsx:629
 msgid "controls.dimension.none"
 msgstr "Keine"
 
 #: app/charts/shared/chart-data-filters.tsx:194
-#: app/configurator/components/field.tsx:80
-#: app/configurator/components/field.tsx:138
+#: app/configurator/components/field.tsx:90
+#: app/configurator/components/field.tsx:144
+#: app/configurator/components/field.tsx:240
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
 
@@ -415,7 +428,7 @@ msgstr "Ein"
 msgid "controls.option.isNotActive"
 msgstr "Aus"
 
-#: app/components/form.tsx:358
+#: app/components/form.tsx:447
 msgid "controls.search.clear"
 msgstr "Suche zurücksetzen"
 
@@ -427,7 +440,7 @@ msgstr ""
 msgid "controls.section.baseLayer"
 msgstr ""
 
-#: app/configurator/components/chart-configurator.tsx:45
+#: app/configurator/components/chart-configurator.tsx:258
 msgid "controls.section.chart.options"
 msgstr "Diagramm-Einstellungen"
 
@@ -439,7 +452,7 @@ msgstr "Spalten"
 msgid "controls.section.columnstyle"
 msgstr "Spaltenstil"
 
-#: app/configurator/components/chart-configurator.tsx:61
+#: app/configurator/components/chart-configurator.tsx:273
 msgid "controls.section.data.filters"
 msgstr "Filter"
 
@@ -548,9 +561,10 @@ msgstr "Dimension auswählen"
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/configurator/components/field.tsx:85
-#: app/configurator/components/field.tsx:143
-#: app/configurator/components/field.tsx:528
+#: app/configurator/components/field.tsx:95
+#: app/configurator/components/field.tsx:149
+#: app/configurator/components/field.tsx:245
+#: app/configurator/components/field.tsx:634
 msgid "controls.select.optional"
 msgstr "optional"
 
@@ -704,7 +718,7 @@ msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für 
 
 #: app/configurator/components/dataset-browse.tsx:346
 msgid "dataset.results"
-msgstr "Ergebnisse"
+msgstr "{0, plural, zero {Keine Ergebnisse} one {# Ergebnis} other {# Ergebnisse}}"
 
 #: app/configurator/components/dataset-browse.tsx:294
 msgid "dataset.search.label"
@@ -738,11 +752,11 @@ msgstr "Bundesamt für Umwelt BAFU"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/de/home.html"
 
-#: app/components/hint.tsx:199
+#: app/components/hint.tsx:197
 msgid "hint.chartunexpected.message"
 msgstr ""
 
-#: app/components/hint.tsx:196
+#: app/components/hint.tsx:194
 msgid "hint.chartunexpected.title"
 msgstr ""
 
@@ -750,11 +764,11 @@ msgstr ""
 msgid "hint.create.your.own.chart"
 msgstr "Sie können diese Visualisierung kopieren oder mit Schweizer Open Government Data eine neue Visualisierung erstellen."
 
-#: app/components/hint.tsx:173
+#: app/components/hint.tsx:171
 msgid "hint.dataloadingerror.message"
 msgstr "Die Daten konnten nicht geladen werden."
 
-#: app/components/hint.tsx:170
+#: app/components/hint.tsx:168
 msgid "hint.dataloadingerror.title"
 msgstr "Daten-Ladefehler"
 
@@ -770,7 +784,7 @@ msgstr "Lade Daten …"
 msgid "hint.no.visualization.with.dataset"
 msgstr "Mit dem ausgewählten Datensatz kann keine Visualisierung erstellt werden."
 
-#: app/components/hint.tsx:148
+#: app/components/hint.tsx:146
 msgid "hint.nodata.message"
 msgstr "Bitte versuchen Sie es mit einer anderen Filterkombination."
 
@@ -778,15 +792,15 @@ msgstr "Bitte versuchen Sie es mit einer anderen Filterkombination."
 msgid "hint.nodata.title"
 msgstr "Keine Daten für die aktuelle Filterauswahl"
 
-#: app/components/hint.tsx:225
+#: app/components/hint.tsx:223
 msgid "hint.only.negative.data.message"
 msgstr "Negative Datenwerte können mit diesem Diagrammtyp nicht dargestellt werden."
 
-#: app/components/hint.tsx:222
+#: app/components/hint.tsx:220
 msgid "hint.only.negative.data.title"
 msgstr "Negative Werte"
 
-#: app/components/hint.tsx:250
+#: app/components/hint.tsx:248
 msgid "hint.publication.success"
 msgstr "Die Visualisierung ist jetzt veröffentlicht. Sie können sie teilen oder einbetten, indem Sie die URL kopieren oder das Menü unten verwenden."
 
