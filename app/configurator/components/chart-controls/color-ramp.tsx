@@ -115,34 +115,14 @@ export const ColorRampField = ({
   });
 
   return (
-    <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "unset" }}>
+    <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
       <Label disabled={disabled} smaller {...getLabelProps()}>
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Button
+        variant="selectColorPicker"
         {...getToggleButtonProps()}
-        sx={{
-          color: "monochrome700",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          bg: "monochrome100",
-          p: 1,
-          height: "40px",
-          borderWidth: "1px",
-          borderStyle: "solid",
-          borderColor: "monochrome500",
-          ":hover": {
-            bg: "monochrome100",
-          },
-          ":active": {
-            bg: "monochrome100",
-          },
-          ":disabled": {
-            cursor: "initial",
-            bg: "muted",
-          },
-        }}
+        sx={{ cursor: "pointer" }}
       >
         {state.state === "CONFIGURING_CHART" && (
           <>
