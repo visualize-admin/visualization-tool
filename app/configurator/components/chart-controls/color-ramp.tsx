@@ -10,7 +10,8 @@ import {
 } from "../..";
 import { Label } from "../../../components/form";
 import { Icon } from "../../../icons";
-import { divergingPalettes, sequentialPalettes } from "../ui-helpers";
+import { sequentialPalettes } from "../ui-helpers";
+
 // Adapted from https://observablehq.com/@mbostock/color-ramp
 
 type ColorRampProps = {
@@ -72,7 +73,10 @@ export const ColorRampField = ({
   const [state, dispatch] = useConfiguratorState();
 
   const { palettes, defaultPalette } = useMemo(() => {
-    const palettes = [...divergingPalettes, ...sequentialPalettes];
+    const palettes = [
+      // ...divergingPalettes,
+      ...sequentialPalettes,
+    ];
     const defaultPalette = sequentialPalettes.find(
       (d) => d.value === "oranges"
     );
@@ -142,7 +146,7 @@ export const ColorRampField = ({
       <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
         {isOpen && (
           <>
-            <Text as="div" variant="meta" sx={{ p: 1 }}>
+            {/* <Text as="div" variant="meta" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.diverging">Diverging</Trans>
             </Text>
             {divergingPalettes.map((d, i) => (
@@ -153,7 +157,7 @@ export const ColorRampField = ({
                 highlighted={i === highlightedIndex}
                 nbClass={nbClass}
               />
-            ))}
+            ))} */}
 
             <Text as="div" variant="meta" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.sequential">Sequential</Trans>
@@ -164,9 +168,12 @@ export const ColorRampField = ({
                 palette={d}
                 itemProps={getItemProps({
                   item: d,
-                  index: i + divergingPalettes.length,
+                  index: i, // + divergingPalettes.length,
                 })}
-                highlighted={i + divergingPalettes.length === highlightedIndex}
+                highlighted={
+                  // i + divergingPalettes.length === highlightedIndex
+                  i === highlightedIndex
+                }
                 nbClass={nbClass}
               />
             ))}
