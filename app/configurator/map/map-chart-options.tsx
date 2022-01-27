@@ -38,16 +38,11 @@ export const MapColumnOptions = ({
       return <BaseLayersSettings />;
     case "areaLayer":
       return (
-        <AreaLayerSettings
-          activeField={activeField}
-          chartConfig={chartConfig}
-          metaData={metaData}
-        />
+        <AreaLayerSettings chartConfig={chartConfig} metaData={metaData} />
       );
     case "symbolLayer":
       return (
         <SymbolLayerSettings
-          activeField={activeField}
           chartConfig={chartConfig}
           metaData={metaData}
         ></SymbolLayerSettings>
@@ -87,14 +82,13 @@ export const BaseLayersSettings = memo(() => {
 
 export const AreaLayerSettings = memo(
   ({
-    activeField,
     chartConfig,
     metaData,
   }: {
-    activeField: string;
     chartConfig: MapConfig;
     metaData: DataCubeMetadata;
   }) => {
+    const activeField = "areaLayer";
     const geoShapesDimensions = useMemo(
       () => getGeoShapesDimensions(metaData.dimensions),
       [metaData.dimensions]
@@ -304,14 +298,13 @@ export const AreaLayerSettings = memo(
 
 export const SymbolLayerSettings = memo(
   ({
-    activeField,
     chartConfig,
     metaData,
   }: {
-    activeField: string;
     chartConfig: MapConfig;
     metaData: DataCubeMetadata;
   }) => {
+    const activeField = "symbolLayer";
     const geoDimensions = useMemo(
       () => getGeoDimensions(metaData.dimensions),
       [metaData.dimensions]
