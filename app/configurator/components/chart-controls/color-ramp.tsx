@@ -18,6 +18,7 @@ type ColorRampProps = {
   nbClass?: number;
   width?: number;
   height?: number;
+  disabled?: boolean;
 };
 
 export const ColorRamp = ({
@@ -25,6 +26,7 @@ export const ColorRamp = ({
   nbClass = 512,
   width = 148,
   height = 28,
+  disabled = false,
 }: ColorRampProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -37,6 +39,7 @@ export const ColorRamp = ({
       canvas.style.imageRendering = "-moz-crisp-edges";
       canvas.style.imageRendering = "pixelated";
       canvas.style.borderRadius = "2px";
+      canvas.style.opacity = disabled ? "0.5" : "1";
 
       const [widthPerClass, numberOfSteps] =
         nbClass > width ? [1, width] : [width / nbClass, nbClass];
@@ -46,7 +49,7 @@ export const ColorRamp = ({
         context.fillRect(widthPerClass * i, 0, widthPerClass, height);
       }
     }
-  }, [colorInterpolator, height, width, nbClass]);
+  }, [colorInterpolator, nbClass, width, height, disabled]);
 
   return <canvas ref={canvasRef} width={width} height={height} />;
 };
@@ -59,6 +62,7 @@ type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
 export const ColorRampField = ({
   field,
   path,
+  disabled,
   nbClass,
 }: ColorRampFieldProps) => {
   const [state, dispatch] = useConfiguratorState();
@@ -101,8 +105,8 @@ export const ColorRampField = ({
   });
 
   return (
-    <Box pb={2}>
-      <Label smaller {...getLabelProps()}>
+    <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "unset" }}>
+      <Label disabled={disabled} smaller {...getLabelProps()}>
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Button
@@ -135,6 +139,7 @@ export const ColorRampField = ({
             <ColorRamp
               colorInterpolator={currentPalette.interpolator}
               nbClass={nbClass}
+              disabled={disabled}
             />
             <Icon name="unfold" />
           </>

@@ -247,6 +247,7 @@ export const AreaLayerSettings = memo(
                   ? currentNumberOfColorScaleClasses
                   : undefined
               }
+              disabled={disabled}
             />
 
             {chartConfig.fields.areaLayer.colorScaleType === "discrete" &&
