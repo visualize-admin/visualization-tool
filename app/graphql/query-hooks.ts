@@ -105,6 +105,11 @@ export type Dimension = {
 };
 
 
+export type DimensionValuesArgs = {
+  filters?: Maybe<Scalars['Filters']>;
+};
+
+
 
 
 export type GeoCoordinatesDimension = Dimension & {
@@ -119,6 +124,11 @@ export type GeoCoordinatesDimension = Dimension & {
 };
 
 
+export type GeoCoordinatesDimensionValuesArgs = {
+  filters?: Maybe<Scalars['Filters']>;
+};
+
+
 export type GeoShapesDimension = Dimension & {
   __typename: 'GeoShapesDimension';
   iri: Scalars['String'];
@@ -128,6 +138,11 @@ export type GeoShapesDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   geoShapes: Scalars['GeoShapes'];
+};
+
+
+export type GeoShapesDimensionValuesArgs = {
+  filters?: Maybe<Scalars['Filters']>;
 };
 
 export type Measure = Dimension & {
@@ -140,6 +155,11 @@ export type Measure = Dimension & {
   values: Array<Scalars['DimensionValue']>;
 };
 
+
+export type MeasureValuesArgs = {
+  filters?: Maybe<Scalars['Filters']>;
+};
+
 export type NominalDimension = Dimension & {
   __typename: 'NominalDimension';
   iri: Scalars['String'];
@@ -148,6 +168,11 @@ export type NominalDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
+};
+
+
+export type NominalDimensionValuesArgs = {
+  filters?: Maybe<Scalars['Filters']>;
 };
 
 
@@ -173,6 +198,11 @@ export type OrdinalDimension = Dimension & {
   values: Array<Scalars['DimensionValue']>;
 };
 
+
+export type OrdinalDimensionValuesArgs = {
+  filters?: Maybe<Scalars['Filters']>;
+};
+
 export type Query = {
   __typename: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
@@ -188,6 +218,7 @@ export type QueryDataCubeByIriArgs = {
   locale?: Maybe<Scalars['String']>;
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
 };
 
 
@@ -235,6 +266,11 @@ export type TemporalDimension = Dimension & {
   values: Array<Scalars['DimensionValue']>;
 };
 
+
+export type TemporalDimensionValuesArgs = {
+  filters?: Maybe<Scalars['Filters']>;
+};
+
 export enum TimeUnit {
   Year = 'Year',
   Month = 'Month',
@@ -274,6 +310,7 @@ export type DataCubePreviewQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
 }>;
 
 
@@ -323,6 +360,7 @@ export type DataCubeMetadataWithComponentValuesQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
 }>;
 
 
@@ -354,6 +392,7 @@ export type DimensionValuesQueryVariables = Exact<{
   dimensionIri: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
 }>;
 
 
@@ -382,6 +421,7 @@ export type TemporalDimensionValuesQueryVariables = Exact<{
   dimensionIri: Scalars['String'];
   locale: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
+  filters?: Maybe<Scalars['Filters']>;
 }>;
 
 
@@ -458,7 +498,7 @@ export const DimensionMetaDataFragmentDoc = gql`
   iri
   label
   isKeyDimension
-  values
+  values(filters: $filters)
   unit
   ... on GeoCoordinatesDimension {
     geoCoordinates
@@ -506,7 +546,7 @@ export function useDataCubesQuery(options: Omit<Urql.UseQueryArgs<DataCubesQuery
   return Urql.useQuery<DataCubesQuery>({ query: DataCubesDocument, ...options });
 };
 export const DataCubePreviewDocument = gql`
-    query DataCubePreview($iri: String!, $locale: String!, $latest: Boolean) {
+    query DataCubePreview($iri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
@@ -569,7 +609,7 @@ export function useDataCubeMetadataQuery(options: Omit<Urql.UseQueryArgs<DataCub
   return Urql.useQuery<DataCubeMetadataQuery>({ query: DataCubeMetadataDocument, ...options });
 };
 export const DataCubeMetadataWithComponentValuesDocument = gql`
-    query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!, $latest: Boolean) {
+    query DataCubeMetadataWithComponentValues($iri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
@@ -588,7 +628,7 @@ export function useDataCubeMetadataWithComponentValuesQuery(options: Omit<Urql.U
   return Urql.useQuery<DataCubeMetadataWithComponentValuesQuery>({ query: DataCubeMetadataWithComponentValuesDocument, ...options });
 };
 export const DimensionValuesDocument = gql`
-    query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean) {
+    query DimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
   dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ...dimensionMetaData
@@ -601,7 +641,7 @@ export function useDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<Dimensio
   return Urql.useQuery<DimensionValuesQuery>({ query: DimensionValuesDocument, ...options });
 };
 export const TemporalDimensionValuesDocument = gql`
-    query TemporalDimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean) {
+    query TemporalDimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
   dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ... on TemporalDimension {

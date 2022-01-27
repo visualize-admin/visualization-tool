@@ -245,7 +245,7 @@ const hierarchy = (
             {
               dimensionIri:
                 "https://environment.ld.admin.ch/foen/red_lists_test_reimport2/artengruppe",
-              children: []
+              children: [],
             },
           ],
         },
@@ -290,7 +290,7 @@ export const useHierarchicalDimensionValuesQuery = ({
         data: tree,
       };
     }
-  }, [fetching, datacubeResponse, dataSetIri, dimensionIri, client, locale]);
+  }, [fetching, datacubeResponse, dimensionIri]);
 
   return result;
 };

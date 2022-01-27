@@ -17,6 +17,18 @@ msgstr ""
 msgid "Browse {0}"
 msgstr "Parcourir {0}"
 
+#: app/configurator/components/chart-configurator.tsx:337
+msgid "Drag filters to reorganize"
+msgstr "Faites glisser les filtres pour les réorganiser"
+
+#: app/configurator/components/chart-configurator.tsx:334
+msgid "Move filter down"
+msgstr "Déplacer le filtre vers le bas"
+
+#: app/configurator/components/chart-configurator.tsx:331
+msgid "Move filter up"
+msgstr "Déplacer le filtre vers le haut"
+
 #: app/components/autocomplete.tsx:171
 msgid "No results"
 msgstr "Aucun résultat"
@@ -300,13 +312,14 @@ msgstr "empilées"
 msgid "controls.description"
 msgstr "Description"
 
-#: app/configurator/components/field.tsx:523
+#: app/configurator/components/field.tsx:629
 msgid "controls.dimension.none"
 msgstr "Aucune"
 
 #: app/charts/shared/chart-data-filters.tsx:194
-#: app/configurator/components/field.tsx:80
-#: app/configurator/components/field.tsx:138
+#: app/configurator/components/field.tsx:90
+#: app/configurator/components/field.tsx:144
+#: app/configurator/components/field.tsx:240
 msgid "controls.dimensionvalue.none"
 msgstr "Aucune filtre"
 
@@ -338,18 +351,18 @@ msgstr "Sélectionnez une des annotations proposées pour la modifier."
 msgid "controls.imputation"
 msgstr "Type d'imputation"
 
-#: app/configurator/components/chart-options-selector.tsx:487
+#: app/configurator/components/chart-options-selector.tsx:490
 #: app/configurator/components/ui-helpers.ts:465
 msgid "controls.imputation.type.linear"
 msgstr "Interpolation linéaire"
 
-#: app/configurator/components/chart-options-selector.tsx:480
-#: app/configurator/components/chart-options-selector.tsx:492
+#: app/configurator/components/chart-options-selector.tsx:483
+#: app/configurator/components/chart-options-selector.tsx:495
 #: app/configurator/components/ui-helpers.ts:457
 msgid "controls.imputation.type.none"
 msgstr "-"
 
-#: app/configurator/components/chart-options-selector.tsx:482
+#: app/configurator/components/chart-options-selector.tsx:485
 #: app/configurator/components/ui-helpers.ts:461
 msgid "controls.imputation.type.zeros"
 msgstr "Zéros"
@@ -415,7 +428,7 @@ msgstr "Actif"
 msgid "controls.option.isNotActive"
 msgstr "Inactif"
 
-#: app/components/form.tsx:358
+#: app/components/form.tsx:447
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
@@ -427,7 +440,7 @@ msgstr ""
 msgid "controls.section.baseLayer"
 msgstr ""
 
-#: app/configurator/components/chart-configurator.tsx:45
+#: app/configurator/components/chart-configurator.tsx:258
 msgid "controls.section.chart.options"
 msgstr "Paramètres graphiques"
 
@@ -439,7 +452,7 @@ msgstr "Colonnes"
 msgid "controls.section.columnstyle"
 msgstr "Style de la colonne"
 
-#: app/configurator/components/chart-configurator.tsx:61
+#: app/configurator/components/chart-configurator.tsx:273
 msgid "controls.section.data.filters"
 msgstr "Filtres"
 
@@ -447,8 +460,8 @@ msgstr "Filtres"
 msgid "controls.section.description"
 msgstr "Titre & description"
 
-#: app/configurator/components/chart-options-selector.tsx:272
-#: app/configurator/components/chart-options-selector.tsx:276
+#: app/configurator/components/chart-options-selector.tsx:275
+#: app/configurator/components/chart-options-selector.tsx:279
 #: app/configurator/table/table-chart-options.tsx:301
 #: app/configurator/table/table-chart-options.tsx:305
 #: app/configurator/table/table-chart-options.tsx:325
@@ -460,11 +473,11 @@ msgstr "Filtre"
 msgid "controls.section.groups"
 msgstr "Groupes"
 
-#: app/configurator/components/chart-options-selector.tsx:521
+#: app/configurator/components/chart-options-selector.tsx:524
 msgid "controls.section.imputation"
 msgstr "Valeurs manquantes"
 
-#: app/configurator/components/chart-options-selector.tsx:526
+#: app/configurator/components/chart-options-selector.tsx:529
 msgid "controls.section.imputation.explanation"
 msgstr "En raison du type de graphique sélectionné, les valeurs manquantes doivent être remplies. Décidez de la logique d'imputation ou choisissez un autre type de graphique."
 
@@ -476,7 +489,7 @@ msgstr "Filtres interactifs"
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Filtres de données"
 
-#: app/configurator/components/chart-options-selector.tsx:408
+#: app/configurator/components/chart-options-selector.tsx:411
 msgid "controls.section.sorting"
 msgstr "Trier"
 
@@ -501,7 +514,7 @@ msgstr "Options du tableau"
 msgid "controls.select.chart.type"
 msgstr "Type de graphique"
 
-#: app/configurator/components/chart-options-selector.tsx:318
+#: app/configurator/components/chart-options-selector.tsx:321
 msgid "controls.select.column.layout"
 msgstr "Mise en forme de la colonne"
 
@@ -548,9 +561,10 @@ msgstr "Sélectionner une dimension"
 msgid "controls.select.measure"
 msgstr "Sélectionner une variable"
 
-#: app/configurator/components/field.tsx:85
-#: app/configurator/components/field.tsx:143
-#: app/configurator/components/field.tsx:528
+#: app/configurator/components/field.tsx:95
+#: app/configurator/components/field.tsx:149
+#: app/configurator/components/field.tsx:245
+#: app/configurator/components/field.tsx:634
 msgid "controls.select.optional"
 msgstr "optionnel"
 
@@ -562,8 +576,8 @@ msgstr "optionnel"
 msgid "controls.sorting.addDimension"
 msgstr "Ajouter une dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:359
-#: app/configurator/components/chart-options-selector.tsx:365
+#: app/configurator/components/chart-options-selector.tsx:362
+#: app/configurator/components/chart-options-selector.tsx:368
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Nom"
 
@@ -575,7 +589,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx:361
+#: app/configurator/components/chart-options-selector.tsx:364
 msgid "controls.sorting.byMeasure"
 msgstr "Mesure"
 
@@ -587,7 +601,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx:363
+#: app/configurator/components/chart-options-selector.tsx:366
 msgid "controls.sorting.byTotalSize"
 msgstr "Taille totale"
 
@@ -738,11 +752,11 @@ msgstr "Office fédéral de l'environnement OFEV"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/fr/home.html"
 
-#: app/components/hint.tsx:189
+#: app/components/hint.tsx:197
 msgid "hint.chartunexpected.message"
 msgstr ""
 
-#: app/components/hint.tsx:186
+#: app/components/hint.tsx:194
 msgid "hint.chartunexpected.title"
 msgstr ""
 
@@ -750,11 +764,11 @@ msgstr ""
 msgid "hint.create.your.own.chart"
 msgstr "Créez votre propre visualisation à partir de celle-ci en la copiant, ou bien créez une nouvelle visualisation avec les données ouvertes de l'administration publique suisse."
 
-#: app/components/hint.tsx:163
+#: app/components/hint.tsx:171
 msgid "hint.dataloadingerror.message"
 msgstr "Les données n'ont pas pu être téléchargées."
 
-#: app/components/hint.tsx:160
+#: app/components/hint.tsx:168
 msgid "hint.dataloadingerror.title"
 msgstr "Problème de téléchargement des données"
 
@@ -762,7 +776,7 @@ msgstr "Problème de téléchargement des données"
 msgid "hint.how.to.share"
 msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intégrant sur votre site Web. Vous pouvez également créer une toute nouvelle visualisation, ou bien copier et modifier la visualisation ci-dessus."
 
-#: app/components/hint.tsx:73
+#: app/components/hint.tsx:81
 msgid "hint.loading.data"
 msgstr "Chargement des données..."
 
@@ -770,31 +784,31 @@ msgstr "Chargement des données..."
 msgid "hint.no.visualization.with.dataset"
 msgstr "Aucune visualisation ne peut être créée avec le jeu de données sélectionné."
 
-#: app/components/hint.tsx:138
+#: app/components/hint.tsx:146
 msgid "hint.nodata.message"
 msgstr "Il n'y a pas de données correspondant aux filtres sélectionnés."
 
-#: app/components/hint.tsx:135
+#: app/components/hint.tsx:143
 msgid "hint.nodata.title"
 msgstr "Aucune donnée"
 
-#: app/components/hint.tsx:215
+#: app/components/hint.tsx:223
 msgid "hint.only.negative.data.message"
 msgstr "Ce type de graphique ne permet pas de représenter des données négatives."
 
-#: app/components/hint.tsx:212
+#: app/components/hint.tsx:220
 msgid "hint.only.negative.data.title"
 msgstr "Valeurs négatives"
 
-#: app/components/hint.tsx:240
+#: app/components/hint.tsx:248
 msgid "hint.publication.success"
 msgstr "Votre visualisation est à présent publiée. Partagez-là en copiant l'URL ou en utilisant les options d'intégration."
 
-#: app/components/hint.tsx:109
+#: app/components/hint.tsx:117
 msgid "hint.select.dataset"
 msgstr "Sélectionner un jeu de données"
 
-#: app/components/hint.tsx:112
+#: app/components/hint.tsx:120
 msgid "hint.select.dataset.to.preview"
 msgstr "Sélectionner un jeu de données pour prévisualiser sa structure et son contenu."
 

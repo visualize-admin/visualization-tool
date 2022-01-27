@@ -1,4 +1,5 @@
 import { ascending, descending } from "d3";
+import DataLoader from "dataloader";
 import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
@@ -9,8 +10,11 @@ import {
   GeoProperties,
   GeoShapes,
 } from "../domain/data";
+import { Filters } from "../configurator";
 import { parseLocaleString } from "../locales/locales";
+import { Loaders } from "../pages/api/graphql";
 import {
+  createCubeDimensionValuesLoader,
   getCube,
   getCubeDimensions,
   getCubeObservations,
@@ -243,23 +247,47 @@ const DataCube: DataCubeResolvers = {
   },
 };
 
-const dimensionResolvers = {
+const getDimensionValuesLoader = (
+  loaders: Loaders,
+  filters?: Filters | null
+): DataLoader<any, any> => {
+  let loader: typeof loaders.dimensionValues | undefined;
+  const filterKey = filters ? JSON.stringify(filters) : undefined;
+  if (filterKey && filters) {
+    let existingLoader = loaders.filteredDimensionValues.get(filterKey);
+    if (!existingLoader) {
+      loader = new DataLoader(createCubeDimensionValuesLoader(filters));
+      loaders.filteredDimensionValues.set(filterKey, loader);
+      return loader;
+    } else {
+      return existingLoader;
+    }
+  } else {
+    return loaders.dimensionValues;
+  }
+};
+
+const mkDimensionResolvers = (debugName: string) => ({
   iri: ({ data: { iri } }: ResolvedDimension) => iri,
   label: ({ data: { name } }: ResolvedDimension) => name,
   isKeyDimension: ({ data: { isKeyDimension } }: ResolvedDimension) =>
     isKeyDimension,
   unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
   scaleType: ({ data: { scaleType } }: ResolvedDimension) => scaleType ?? null,
-  values: async (parent: ResolvedDimension, _: {}, { loaders }: any) => {
-    const values: Array<DimensionValue> = await loaders.dimensionValues.load(
-      parent
-    );
+  values: async (
+    parent: ResolvedDimension,
+    { filters }: { filters?: Filters | null },
+    { loaders }: { loaders: Loaders }
+  ) => {
+    // Different loader if we have filters or not
+    const loader = getDimensionValuesLoader(loaders, filters);
+    const values: Array<DimensionValue> = await loader.load(parent);
     // TODO min max are now just `values` with 2 elements. Handle properly!
     return values.sort((a, b) =>
       ascending(a.value ?? undefined, b.value ?? undefined)
     );
   },
-};
+});
 
 export const resolvers: Resolvers = {
   Filters: GraphQLJSONObject,
@@ -309,24 +337,24 @@ export const resolvers: Resolvers = {
     },
   },
   NominalDimension: {
-    ...dimensionResolvers,
+    ...mkDimensionResolvers("nominal"),
   },
   OrdinalDimension: {
-    ...dimensionResolvers,
+    ...mkDimensionResolvers("ordinal"),
   },
   TemporalDimension: {
-    ...dimensionResolvers,
+    ...mkDimensionResolvers("temporal"),
     timeUnit: ({ data: { timeUnit } }) => timeUnit!,
     timeFormat: ({ data: { timeFormat } }) => timeFormat!,
   },
   GeoCoordinatesDimension: {
-    ...dimensionResolvers,
+    ...mkDimensionResolvers("geocoordinates"),
     geoCoordinates: async (parent, _, { loaders }) => {
       return await loaders.geoCoordinates.load(parent);
     },
   },
   GeoShapesDimension: {
-    ...dimensionResolvers,
+    ...mkDimensionResolvers("geoshapes"),
     geoShapes: async (parent, _, { loaders }) => {
       const dimValues = (await loaders.dimensionValues.load(
         parent
@@ -363,6 +391,6 @@ export const resolvers: Resolvers = {
     },
   },
   Measure: {
-    ...dimensionResolvers,
+    ...mkDimensionResolvers("measure"),
   },
 };

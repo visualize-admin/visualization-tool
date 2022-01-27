@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, BoxProps, Flex, Text } from "theme-ui";
 import { Icon, IconName } from "../icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
@@ -45,6 +45,20 @@ const spin = keyframes`
   100% { transform: rotate(0deg) }
 `;
 
+const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
+  return (
+    <Box
+      {...props}
+      sx={{
+        animation: `1s linear infinite ${spin}`,
+        ...props.sx,
+      }}
+    >
+      <Icon name="loading" size={size} />
+    </Box>
+  );
+};
+
 export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
   <Flex
     sx={{
@@ -62,13 +76,7 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
       animation: `0s linear ${delayMs}ms forwards ${delayedShow}`,
     }}
   >
-    <Box
-      sx={{
-        animation: `1s linear infinite ${spin}`,
-      }}
-    >
-      <Icon name="loading" size={48} />
-    </Box>
+    <Spinner />
     <Text as="div" variant="heading4">
       <Trans id="hint.loading.data">Loading data…</Trans>
     </Text>
