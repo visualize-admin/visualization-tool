@@ -67,10 +67,14 @@ export const ColorRampField = ({
 }: ColorRampFieldProps) => {
   const [state, dispatch] = useConfiguratorState();
 
-  const palettes = useMemo(
-    () => [...divergingPalettes, ...sequentialPalettes],
-    []
-  );
+  const { palettes, defaultPalette } = useMemo(() => {
+    const palettes = [...divergingPalettes, ...sequentialPalettes];
+    const defaultPalette = sequentialPalettes.find(
+      (d) => d.value === "oranges"
+    );
+
+    return { palettes, defaultPalette };
+  }, []);
 
   const currentPaletteName = get(
     state,
@@ -78,7 +82,8 @@ export const ColorRampField = ({
   ) as DivergingPaletteType | SequentialPaletteType;
 
   const currentPalette =
-    palettes.find((d) => d.value === currentPaletteName) || palettes[0];
+    palettes.find((d) => d.value === currentPaletteName) ||
+    sequentialPalettes[0];
 
   const {
     isOpen,
@@ -89,7 +94,7 @@ export const ColorRampField = ({
     getItemProps,
   } = useSelect({
     items: palettes,
-    defaultSelectedItem: palettes.find((d) => d.value === "oranges"),
+    defaultSelectedItem: defaultPalette,
     onSelectedItemChange: ({ selectedItem }) => {
       if (selectedItem) {
         dispatch({
