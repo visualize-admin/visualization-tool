@@ -338,18 +338,18 @@ msgstr "Select an annotation field to modify its content."
 msgid "controls.imputation"
 msgstr "Imputation type"
 
-#: app/configurator/components/chart-options-selector.tsx:487
+#: app/configurator/components/chart-options-selector.tsx:490
 #: app/configurator/components/ui-helpers.ts:465
 msgid "controls.imputation.type.linear"
 msgstr "Linear interpolation"
 
-#: app/configurator/components/chart-options-selector.tsx:480
-#: app/configurator/components/chart-options-selector.tsx:492
+#: app/configurator/components/chart-options-selector.tsx:483
+#: app/configurator/components/chart-options-selector.tsx:495
 #: app/configurator/components/ui-helpers.ts:457
 msgid "controls.imputation.type.none"
 msgstr "-"
 
-#: app/configurator/components/chart-options-selector.tsx:482
+#: app/configurator/components/chart-options-selector.tsx:485
 #: app/configurator/components/ui-helpers.ts:461
 msgid "controls.imputation.type.zeros"
 msgstr "Zeros"
@@ -447,8 +447,8 @@ msgstr "Filters"
 msgid "controls.section.description"
 msgstr "Title & Description"
 
-#: app/configurator/components/chart-options-selector.tsx:272
-#: app/configurator/components/chart-options-selector.tsx:276
+#: app/configurator/components/chart-options-selector.tsx:275
+#: app/configurator/components/chart-options-selector.tsx:279
 #: app/configurator/table/table-chart-options.tsx:301
 #: app/configurator/table/table-chart-options.tsx:305
 #: app/configurator/table/table-chart-options.tsx:325
@@ -460,11 +460,11 @@ msgstr "Filter"
 msgid "controls.section.groups"
 msgstr "Groups"
 
-#: app/configurator/components/chart-options-selector.tsx:521
+#: app/configurator/components/chart-options-selector.tsx:524
 msgid "controls.section.imputation"
 msgstr "Missing values"
 
-#: app/configurator/components/chart-options-selector.tsx:526
+#: app/configurator/components/chart-options-selector.tsx:529
 msgid "controls.section.imputation.explanation"
 msgstr "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type."
 
@@ -476,7 +476,7 @@ msgstr "Interactive Filters"
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Data Filters"
 
-#: app/configurator/components/chart-options-selector.tsx:408
+#: app/configurator/components/chart-options-selector.tsx:411
 msgid "controls.section.sorting"
 msgstr "Sort"
 
@@ -501,7 +501,7 @@ msgstr "Table Options"
 msgid "controls.select.chart.type"
 msgstr "Chart Type"
 
-#: app/configurator/components/chart-options-selector.tsx:318
+#: app/configurator/components/chart-options-selector.tsx:321
 msgid "controls.select.column.layout"
 msgstr "Column layout"
 
@@ -562,8 +562,8 @@ msgstr "optional"
 msgid "controls.sorting.addDimension"
 msgstr "Add dimension"
 
-#: app/configurator/components/chart-options-selector.tsx:359
-#: app/configurator/components/chart-options-selector.tsx:365
+#: app/configurator/components/chart-options-selector.tsx:362
+#: app/configurator/components/chart-options-selector.tsx:368
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
@@ -575,7 +575,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx:361
+#: app/configurator/components/chart-options-selector.tsx:364
 msgid "controls.sorting.byMeasure"
 msgstr "Measure"
 
@@ -587,7 +587,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx:363
+#: app/configurator/components/chart-options-selector.tsx:366
 msgid "controls.sorting.byTotalSize"
 msgstr "Total size"
 
@@ -738,11 +738,11 @@ msgstr "Federal Office for the Environment FOEN"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/en/home.html"
 
-#: app/components/hint.tsx:189
+#: app/components/hint.tsx:199
 msgid "hint.chartunexpected.message"
 msgstr "An unexpected error occurred while displaying this chart."
 
-#: app/components/hint.tsx:186
+#: app/components/hint.tsx:196
 msgid "hint.chartunexpected.title"
 msgstr "Unexpected error"
 
@@ -750,11 +750,11 @@ msgstr "Unexpected error"
 msgid "hint.create.your.own.chart"
 msgstr "Create your own version of this visualization by copying it, or start from scratch and make a new visualization using Swiss Open Government Data."
 
-#: app/components/hint.tsx:163
+#: app/components/hint.tsx:173
 msgid "hint.dataloadingerror.message"
 msgstr "The data could not be loaded."
 
-#: app/components/hint.tsx:160
+#: app/components/hint.tsx:170
 msgid "hint.dataloadingerror.title"
 msgstr "Data loading error"
 
@@ -762,7 +762,7 @@ msgstr "Data loading error"
 msgid "hint.how.to.share"
 msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
 
-#: app/components/hint.tsx:73
+#: app/components/hint.tsx:81
 msgid "hint.loading.data"
 msgstr "Loading data..."
 
@@ -770,31 +770,31 @@ msgstr "Loading data..."
 msgid "hint.no.visualization.with.dataset"
 msgstr "No visualization can be created with the selected dataset."
 
-#: app/components/hint.tsx:138
+#: app/components/hint.tsx:148
 msgid "hint.nodata.message"
-msgstr "No data for your filter selection."
+msgstr "Please try with another combination of filters."
 
-#: app/components/hint.tsx:135
+#: app/components/hint.tsx:143
 msgid "hint.nodata.title"
-msgstr "No data"
+msgstr "No data available for current filter selection"
 
-#: app/components/hint.tsx:215
+#: app/components/hint.tsx:225
 msgid "hint.only.negative.data.message"
 msgstr "Negative data values cannot be displayed with this chart type."
 
-#: app/components/hint.tsx:212
+#: app/components/hint.tsx:222
 msgid "hint.only.negative.data.title"
 msgstr "Negative Values"
 
-#: app/components/hint.tsx:240
+#: app/components/hint.tsx:250
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. Share it by copying the URL or use the Embed menu below."
 
-#: app/components/hint.tsx:109
+#: app/components/hint.tsx:117
 msgid "hint.select.dataset"
 msgstr "Select a dataset"
 
-#: app/components/hint.tsx:112
+#: app/components/hint.tsx:120
 msgid "hint.select.dataset.to.preview"
 msgstr "Select a dataset to preview its structure and content."
 
