@@ -135,7 +135,7 @@ export const AreaLayerSettings = memo(
 
     const numberOfGeoShapes = (
       dimension
-        ? (dimension.geoShapes as any).topology.objects.shapes.geometries.length
+        ? dimension.geoShapes.topology.objects.shapes.geometries.length
         : 0
     ) as number;
 
@@ -261,15 +261,24 @@ export const AreaLayerSettings = memo(
                     path="colorScaleInterpolationType"
                     options={[
                       {
-                        label: "Quantize (equal intervals)",
+                        label: t({
+                          id: "chart.map.layers.area.discretization.quantize",
+                          message: "Quantize (equal intervals)",
+                        }),
                         value: "quantize",
                       },
                       {
-                        label: "Quantiles (equal distribution of values)",
+                        label: t({
+                          id: "chart.map.layers.area.discretization.quantiles",
+                          message: "Quantiles (equal distribution of values)",
+                        }),
                         value: "quantile",
                       },
                       {
-                        label: "Jenks (natural breaks)",
+                        label: t({
+                          id: "chart.map.layers.area.discretization.jenks",
+                          message: "Jenks (natural breaks)",
+                        }),
                         value: "jenks",
                       },
                     ]}
