@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { useSelect } from "downshift";
 import { get } from "lodash";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Box, Button, Text } from "theme-ui";
 import {
   DivergingPaletteType,
@@ -85,17 +85,8 @@ export const ColorRampField = ({
     palettes.find((d) => d.value === currentPaletteName) ||
     sequentialPalettes[0];
 
-  const {
-    isOpen,
-    getToggleButtonProps,
-    getLabelProps,
-    getMenuProps,
-    highlightedIndex,
-    getItemProps,
-  } = useSelect({
-    items: palettes,
-    defaultSelectedItem: defaultPalette,
-    onSelectedItemChange: ({ selectedItem }) => {
+  const onSelectedItemChange = useCallback(
+    ({ selectedItem }) => {
       if (selectedItem) {
         dispatch({
           type: "CHART_OPTION_CHANGED",
@@ -107,6 +98,20 @@ export const ColorRampField = ({
         });
       }
     },
+    [dispatch, field, path]
+  );
+
+  const {
+    isOpen,
+    getToggleButtonProps,
+    getLabelProps,
+    getMenuProps,
+    highlightedIndex,
+    getItemProps,
+  } = useSelect({
+    items: palettes,
+    defaultSelectedItem: defaultPalette,
+    onSelectedItemChange,
   });
 
   return (
@@ -160,13 +165,12 @@ export const ColorRampField = ({
               <PaletteRamp
                 key={`diverging-${i}`}
                 palette={d}
-                backgroundColor={
-                  i === highlightedIndex ? "monochrome200" : "monochrome100"
-                }
                 itemProps={getItemProps({ item: d, index: i })}
+                highlighted={i === highlightedIndex}
                 nbClass={nbClass}
               />
             ))}
+
             <Text as="div" variant="meta" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.sequential">Sequential</Trans>
             </Text>
@@ -174,15 +178,11 @@ export const ColorRampField = ({
               <PaletteRamp
                 key={`sequential-${i}`}
                 palette={d}
-                backgroundColor={
-                  i + divergingPalettes.length === highlightedIndex
-                    ? "monochrome200"
-                    : "monochrome100"
-                }
                 itemProps={getItemProps({
                   item: d,
                   index: i + divergingPalettes.length,
                 })}
+                highlighted={i + divergingPalettes.length === highlightedIndex}
                 nbClass={nbClass}
               />
             ))}
@@ -199,11 +199,12 @@ const PaletteRamp = (props: {
     value: DivergingPaletteType | SequentialPaletteType;
     interpolator: (t: number) => string;
   };
-  backgroundColor: string;
   itemProps: any;
+  highlighted?: boolean;
   nbClass?: number;
 }) => {
-  const { palette, backgroundColor, nbClass, itemProps } = props;
+  const { palette, itemProps, highlighted, nbClass } = props;
+  const backgroundColor = highlighted ? "monochrome200" : "monochrome100";
 
   return (
     <Box sx={{ p: 1, cursor: "pointer", backgroundColor }}>
