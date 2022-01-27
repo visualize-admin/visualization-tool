@@ -231,55 +231,55 @@ msgstr "Regular"
 msgid "controls..interactiveFilters.time.defaultSettings"
 msgstr "Default Settings"
 
-#: app/configurator/components/ui-helpers.ts:379
+#: app/configurator/components/ui-helpers.ts:387
 msgid "controls.axis.horizontal"
 msgstr "Horizontal Axis"
 
-#: app/configurator/components/ui-helpers.ts:387
+#: app/configurator/components/ui-helpers.ts:395
 msgid "controls.axis.vertical"
 msgstr "Vertical Axis"
 
-#: app/configurator/map/map-chart-options.tsx:82
+#: app/configurator/map/map-chart-options.tsx:76
 msgid "controls.baseLayer.showLakes"
 msgstr "Show lakes"
 
-#: app/configurator/map/map-chart-options.tsx:74
+#: app/configurator/map/map-chart-options.tsx:68
 msgid "controls.baseLayer.showRelief"
 msgstr "Show relief"
 
-#: app/configurator/components/ui-helpers.ts:481
+#: app/configurator/components/ui-helpers.ts:489
 msgid "controls.chart.type.area"
 msgstr "Areas"
 
-#: app/configurator/components/ui-helpers.ts:473
+#: app/configurator/components/ui-helpers.ts:481
 msgid "controls.chart.type.bar"
 msgstr "Bars"
 
-#: app/configurator/components/ui-helpers.ts:469
+#: app/configurator/components/ui-helpers.ts:477
 msgid "controls.chart.type.column"
 msgstr "Columns"
 
-#: app/configurator/components/ui-helpers.ts:477
+#: app/configurator/components/ui-helpers.ts:485
 msgid "controls.chart.type.line"
 msgstr "Lines"
 
-#: app/configurator/components/ui-helpers.ts:497
+#: app/configurator/components/ui-helpers.ts:505
 msgid "controls.chart.type.map"
 msgstr "Map"
 
-#: app/configurator/components/ui-helpers.ts:489
+#: app/configurator/components/ui-helpers.ts:497
 msgid "controls.chart.type.pie"
 msgstr "Pie"
 
-#: app/configurator/components/ui-helpers.ts:485
+#: app/configurator/components/ui-helpers.ts:493
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/configurator/components/ui-helpers.ts:493
+#: app/configurator/components/ui-helpers.ts:501
 msgid "controls.chart.type.table"
 msgstr "Table"
 
-#: app/configurator/components/ui-helpers.ts:391
+#: app/configurator/components/ui-helpers.ts:399
 msgid "controls.color"
 msgstr "Color"
 
@@ -288,27 +288,36 @@ msgid "controls.color.add"
 msgstr "Add ..."
 
 #: app/configurator/components/chart-controls/color-palette.tsx:78
+#: app/configurator/components/chart-controls/color-ramp.tsx:106
 msgid "controls.color.palette"
 msgstr "Color palette"
+
+#: app/configurator/components/chart-controls/color-ramp.tsx:147
+msgid "controls.color.palette.diverging"
+msgstr "Diverging"
 
 #: app/configurator/components/chart-controls/color-palette.tsx:257
 #: app/configurator/components/chart-controls/color-palette.tsx:263
 msgid "controls.color.palette.reset"
 msgstr "Reset color palette"
 
+#: app/configurator/components/chart-controls/color-ramp.tsx:161
+msgid "controls.color.palette.sequential"
+msgstr "Sequential"
+
 #: app/configurator/components/chart-controls/color-picker.tsx:158
 msgid "controls.colorpicker.open"
 msgstr "Open Color Picker"
 
-#: app/configurator/components/ui-helpers.ts:401
+#: app/configurator/components/ui-helpers.ts:409
 msgid "controls.column.grouped"
 msgstr "Grouped"
 
-#: app/configurator/components/ui-helpers.ts:397
+#: app/configurator/components/ui-helpers.ts:405
 msgid "controls.column.stacked"
 msgstr "Stacked"
 
-#: app/configurator/components/ui-helpers.ts:393
+#: app/configurator/components/ui-helpers.ts:401
 msgid "controls.description"
 msgstr "Description"
 
@@ -347,7 +356,7 @@ msgstr "Select a design element or a data dimension to modify its options."
 msgid "controls.hint.describing.chart"
 msgstr "Select an annotation field to modify its content."
 
-#: app/configurator/components/ui-helpers.ts:453
+#: app/configurator/components/ui-helpers.ts:461
 msgid "controls.imputation"
 msgstr "Imputation type"
 
@@ -387,36 +396,36 @@ msgstr "There is no time dimension!"
 msgid "controls.interactiveFilters.time.toggleTimeFilter"
 msgstr "Show time filter"
 
-#: app/configurator/components/ui-helpers.ts:501
+#: app/configurator/components/ui-helpers.ts:509
 msgid "controls.language.english"
 msgstr "English"
 
-#: app/configurator/components/ui-helpers.ts:509
+#: app/configurator/components/ui-helpers.ts:517
 msgid "controls.language.french"
 msgstr "French"
 
-#: app/configurator/components/ui-helpers.ts:505
+#: app/configurator/components/ui-helpers.ts:513
 msgid "controls.language.german"
 msgstr "German"
 
-#: app/configurator/components/ui-helpers.ts:513
+#: app/configurator/components/ui-helpers.ts:521
 msgid "controls.language.italian"
 msgstr "Italian"
 
-#: app/configurator/components/ui-helpers.ts:409
+#: app/configurator/components/ui-helpers.ts:417
 msgid "controls.map.areaLayer"
 msgstr "Area layer"
 
 #: app/configurator/components/chart-options-selector.tsx:176
-#: app/configurator/components/ui-helpers.ts:405
+#: app/configurator/components/ui-helpers.ts:413
 msgid "controls.map.baseLayer"
 msgstr "Base layer"
 
-#: app/configurator/components/ui-helpers.ts:413
+#: app/configurator/components/ui-helpers.ts:421
 msgid "controls.map.symbolLayer"
 msgstr "Symbol layer"
 
-#: app/configurator/components/ui-helpers.ts:383
+#: app/configurator/components/ui-helpers.ts:391
 msgid "controls.measure"
 msgstr "Measure"
 
@@ -432,11 +441,11 @@ msgstr "Off"
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
-#: app/configurator/map/map-chart-options.tsx:148
+#: app/configurator/map/map-chart-options.tsx:158
 msgid "controls.section.areaLayer"
 msgstr "Settings"
 
-#: app/configurator/map/map-chart-options.tsx:70
+#: app/configurator/map/map-chart-options.tsx:64
 msgid "controls.section.baseLayer"
 msgstr "Settings"
 
@@ -493,7 +502,7 @@ msgstr "Data Filters"
 msgid "controls.section.sorting"
 msgstr "Sort"
 
-#: app/configurator/map/map-chart-options.tsx:310
+#: app/configurator/map/map-chart-options.tsx:329
 msgid "controls.section.symbolLayer"
 msgstr "Settings"
 
@@ -581,11 +590,11 @@ msgstr "Add dimension"
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
-#: app/configurator/components/ui-helpers.ts:421
+#: app/configurator/components/ui-helpers.ts:429
 msgid "controls.sorting.byDimensionLabel.ascending"
 msgstr "A → Z"
 
-#: app/configurator/components/ui-helpers.ts:425
+#: app/configurator/components/ui-helpers.ts:433
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
@@ -593,11 +602,11 @@ msgstr "Z → A"
 msgid "controls.sorting.byMeasure"
 msgstr "Measure"
 
-#: app/configurator/components/ui-helpers.ts:445
+#: app/configurator/components/ui-helpers.ts:453
 msgid "controls.sorting.byMeasure.ascending"
 msgstr "1 → 9"
 
-#: app/configurator/components/ui-helpers.ts:449
+#: app/configurator/components/ui-helpers.ts:457
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
@@ -605,19 +614,19 @@ msgstr "9 → 1"
 msgid "controls.sorting.byTotalSize"
 msgstr "Total size"
 
-#: app/configurator/components/ui-helpers.ts:429
+#: app/configurator/components/ui-helpers.ts:437
 msgid "controls.sorting.byTotalSize.ascending"
 msgstr "Largest last"
 
-#: app/configurator/components/ui-helpers.ts:441
+#: app/configurator/components/ui-helpers.ts:449
 msgid "controls.sorting.byTotalSize.largestBottom"
 msgstr "Largest bottom"
 
-#: app/configurator/components/ui-helpers.ts:433
+#: app/configurator/components/ui-helpers.ts:441
 msgid "controls.sorting.byTotalSize.largestFirst"
 msgstr "Largest first"
 
-#: app/configurator/components/ui-helpers.ts:437
+#: app/configurator/components/ui-helpers.ts:445
 msgid "controls.sorting.byTotalSize.largestTop"
 msgstr "Largest top"
 
@@ -629,7 +638,7 @@ msgstr "Remove sorting dimension"
 msgid "controls.sorting.selectDimension"
 msgstr "Select a dimension …"
 
-#: app/configurator/components/ui-helpers.ts:417
+#: app/configurator/components/ui-helpers.ts:425
 #: app/configurator/table/table-chart-sorting-options.tsx:305
 msgid "controls.sorting.sortBy"
 msgstr "Sort by"
@@ -654,7 +663,7 @@ msgstr "Sorting"
 msgid "controls.tableSettings.showSearch"
 msgstr "Show search field"
 
-#: app/configurator/components/ui-helpers.ts:392
+#: app/configurator/components/ui-helpers.ts:400
 msgid "controls.title"
 msgstr "Title"
 
@@ -736,11 +745,11 @@ msgstr "Draft"
 msgid "datatable.showing.first.rows"
 msgstr "Showing first 10 rows"
 
-#: app/configurator/map/map-chart-options.tsx:152
+#: app/configurator/map/map-chart-options.tsx:162
 msgid "fields.areaLayer.show"
 msgstr "Show layer"
 
-#: app/configurator/map/map-chart-options.tsx:314
+#: app/configurator/map/map-chart-options.tsx:333
 msgid "fields.symbolLayer.show"
 msgstr "Show layer"
 

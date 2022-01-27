@@ -370,6 +370,28 @@ export const theme: Theme = {
         color: "monochrome500",
       },
     },
+    selectColorPicker: {
+      color: "monochrome700",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      bg: "monochrome100",
+      p: 1,
+      height: "40px",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "monochrome500",
+      ":hover": {
+        bg: "monochrome100",
+      },
+      ":active": {
+        bg: "monochrome100",
+      },
+      ":disabled": {
+        cursor: "initial",
+        bg: "muted",
+      },
+    },
     arrow: {
       variant: "buttons.inline",
       padding: "0 0.25rem",

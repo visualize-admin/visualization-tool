@@ -23,7 +23,7 @@ import {
 } from "../components/filters";
 import {
   getDefaultCategoricalPalette,
-  getDefaultSequentialPalette,
+  getDefaultDivergingSteppedPalette,
   getIconName,
   mapColorsToComponentValuesIris,
 } from "../components/ui-helpers";
@@ -264,7 +264,7 @@ export const TableColumnOptions = ({
                     return {
                       type: "heatmap",
                       textStyle: "regular",
-                      palette: getDefaultSequentialPalette().value,
+                      palette: getDefaultDivergingSteppedPalette().value,
                     };
                   case "bar":
                     return {

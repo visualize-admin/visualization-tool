@@ -17,6 +17,7 @@ import {
   scaleOrdinal,
   schemeAccent,
   schemeBlues,
+  schemeBrBG,
   schemeCategory10,
   schemeDark2,
   schemeGreens,
@@ -25,6 +26,8 @@ import {
   schemePaired,
   schemePastel1,
   schemePastel2,
+  schemePiYG,
+  schemePuOr,
   schemePurples,
   schemeReds,
   schemeSet1,
@@ -49,7 +52,12 @@ import {
   getD3TimeFormatLocale,
 } from "../../locales/locales";
 import { useLocale } from "../../locales/use-locale";
-import { TableColumn, TableFields } from "../config-types";
+import {
+  DivergingPaletteType,
+  SequentialPaletteType,
+  TableColumn,
+  TableFields,
+} from "../config-types";
 
 // FIXME: We should cover more time format
 const parseSecond = timeParse("%Y-%m-%dT%H:%M:%S");
@@ -644,6 +652,7 @@ export function getFieldLabel(field: string): string {
   }
 }
 
+// Colors
 export const getPalette = (palette?: string): ReadonlyArray<string> => {
   switch (palette) {
     case "accent":
@@ -671,33 +680,65 @@ export const getPalette = (palette?: string): ReadonlyArray<string> => {
       return schemeCategory10;
   }
 };
+
 export const getSingleHueSequentialPalette = ({
   nbClass = 5,
   palette,
 }: {
   nbClass: number;
-  palette?: string;
+  palette?: DivergingPaletteType | SequentialPaletteType;
 }): ReadonlyArray<string> => {
   switch (palette) {
+    case "BrBG":
+      return schemeBrBG[nbClass];
+    case "PRGn":
+      return schemePiYG[nbClass];
+    case "PiYG":
+      return schemePiYG[nbClass];
+    case "PuOr":
+      return schemePuOr[nbClass];
     case "blues":
       return schemeBlues[nbClass];
     case "greens":
       return schemeGreens[nbClass];
-    case "oranges":
-      return schemeOranges[nbClass];
     case "greys":
       return schemeGreys[nbClass];
-    case "reds":
-      return schemeReds[nbClass];
+    case "oranges":
+      return schemeOranges[nbClass];
     case "purples":
       return schemePurples[nbClass];
+    case "reds":
+      return schemeReds[nbClass];
 
     default:
       return schemeOranges[nbClass];
   }
 };
+
+export const categoricalPalettes: Array<{
+  label: string;
+  value: string;
+  colors: ReadonlyArray<string>;
+}> = [
+  {
+    label: "category10",
+    value: "category10",
+    colors: getPalette("category10"),
+  },
+  { label: "accent", value: "accent", colors: getPalette("accent") },
+  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
+  { label: "paired", value: "paired", colors: getPalette("paired") },
+  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
+  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
+  { label: "set1", value: "set1", colors: getPalette("set1") },
+  { label: "set2", value: "set2", colors: getPalette("set2") },
+  { label: "set3", value: "set3", colors: getPalette("set3") },
+];
+
+export const getDefaultCategoricalPalette = () => categoricalPalettes[0];
+
 export const getColorInterpolator = (
-  palette?: string
+  palette?: SequentialPaletteType | DivergingPaletteType
 ): ((t: number) => string) => {
   switch (palette) {
     case "BrBG":
@@ -726,60 +767,60 @@ export const getColorInterpolator = (
   }
 };
 
-export const categoricalPalettes: Array<{
+type Palette<T> = {
   label: string;
-  value: string;
+  value: T;
+  interpolator: (t: number) => string;
+};
+
+type SteppedPalette<T> = Omit<Palette<T>, "interpolator"> & {
   colors: ReadonlyArray<string>;
-}> = [
-  {
-    label: "category10",
-    value: "category10",
-    colors: getPalette("category10"),
-  },
-  { label: "accent", value: "accent", colors: getPalette("accent") },
-  { label: "dark2", value: "dark2", colors: getPalette("dark2") },
-  { label: "paired", value: "paired", colors: getPalette("paired") },
-  { label: "pastel1", value: "pastel1", colors: getPalette("pastel1") },
-  { label: "pastel2", value: "pastel2", colors: getPalette("pastel2") },
-  { label: "set1", value: "set1", colors: getPalette("set1") },
-  { label: "set2", value: "set2", colors: getPalette("set2") },
-  { label: "set3", value: "set3", colors: getPalette("set3") },
-];
+};
 
-export const getDefaultCategoricalPalette = () => categoricalPalettes[0];
+const steppedPaletteSteps = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
 
-const sequentialPaletteSteps = [
-  0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1,
-];
-// Diverging color palettes
-export const sequentialPalettes: Array<{
-  label: string;
-  value: string;
-  colors: ReadonlyArray<string>;
-}> = [
-  {
-    label: "BrBG",
-    value: "BrBG",
-    colors: sequentialPaletteSteps.map((d) => getColorInterpolator("BrBG")(d)),
-  },
-  {
-    label: "PRGn",
-    value: "PRGn",
-    colors: sequentialPaletteSteps.map((d) => getColorInterpolator("PRGn")(d)),
-  },
-  {
-    label: "PiYG",
-    value: "PiYG",
-    colors: sequentialPaletteSteps.map((d) => getColorInterpolator("PiYG")(d)),
-  },
-  {
-    label: "PuOr",
-    value: "PuOr",
-    colors: sequentialPaletteSteps.map((d) => getColorInterpolator("PuOr")(d)),
-  },
-];
+const divergingPaletteKeys = [
+  "BrBG",
+  "PRGn",
+  "PiYG",
+  "PuOr",
+] as DivergingPaletteType[];
 
-export const getDefaultSequentialPalette = () => sequentialPalettes[0];
+export const divergingPalettes = divergingPaletteKeys.map((d) => ({
+  label: d,
+  value: d,
+  interpolator: getColorInterpolator(d),
+})) as Palette<DivergingPaletteType>[];
+
+export const divergingSteppedPalettes = divergingPaletteKeys.map((d) => ({
+  label: d,
+  value: d,
+  colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
+})) as SteppedPalette<DivergingPaletteType>[];
+
+export const getDefaultDivergingSteppedPalette = () =>
+  divergingSteppedPalettes[0];
+
+const sequentialPaletteKeys = [
+  "blues",
+  "greens",
+  "greys",
+  "oranges",
+  "purples",
+  "reds",
+] as SequentialPaletteType[];
+
+export const sequentialPalettes = sequentialPaletteKeys.map((d) => ({
+  label: d,
+  value: d,
+  interpolator: getColorInterpolator(d),
+})) as Palette<SequentialPaletteType>[];
+
+export const sequentialSteppedPalettes = sequentialPaletteKeys.map((d) => ({
+  label: d,
+  value: d,
+  colors: steppedPaletteSteps.map((s) => getColorInterpolator(d)(s)),
+})) as SteppedPalette<SequentialPaletteType>[];
 
 export const mapColorsToComponentValuesIris = ({
   palette,

@@ -1,18 +1,18 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Flex, Text } from "theme-ui";
 import { useSelect } from "downshift";
 import get from "lodash/get";
 import { useCallback } from "react";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "../..";
 import { Label } from "../../../components/form";
-import {
-  categoricalPalettes,
-  getPalette,
-  mapColorsToComponentValuesIris,
-  sequentialPalettes,
-} from "../ui-helpers";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { Icon } from "../../../icons";
+import {
+  categoricalPalettes,
+  divergingSteppedPalettes,
+  getPalette,
+  mapColorsToComponentValuesIris,
+} from "../ui-helpers";
 
 type Props = {
   field: string;
@@ -31,7 +31,7 @@ export const ColorPalette = ({
 
   const palettes =
     component?.__typename === "Measure"
-      ? sequentialPalettes
+      ? divergingSteppedPalettes
       : categoricalPalettes;
 
   const currentPaletteName = get(
@@ -73,34 +73,14 @@ export const ColorPalette = ({
   });
 
   return (
-    <Box mt={2} sx={{ pointerEvents: disabled ? "none" : "unset" }}>
+    <Box mt={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
       <Label disabled={disabled} smaller {...getLabelProps()}>
         <Trans id="controls.color.palette">Color Palette</Trans>
       </Label>
       <Button
+        variant="selectColorPicker"
         {...getToggleButtonProps()}
-        sx={{
-          color: "monochrome700",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          bg: "monochrome100",
-          p: 1,
-          height: "40px",
-          borderWidth: "1px",
-          borderStyle: "solid",
-          borderColor: "monochrome500",
-          ":hover": {
-            bg: "monochrome100",
-          },
-          ":active": {
-            bg: "monochrome100",
-          },
-          ":disabled": {
-            cursor: "initial",
-            bg: "muted",
-          },
-        }}
+        sx={{ cursor: "pointer" }}
       >
         {state.state === "CONFIGURING_CHART" && (
           <Flex>

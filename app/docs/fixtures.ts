@@ -930,7 +930,7 @@ export const tableConfig: TableConfig = {
       componentType: "Measure",
       columnStyle: {
         type: "heatmap",
-        palette: "oranges",
+        palette: "BrBG",
         textStyle: "regular",
       },
     },
@@ -985,7 +985,7 @@ export const tableConfig: TableConfig = {
       isGroup: false,
       isHidden: false,
       componentType: "Measure",
-      columnStyle: { type: "heatmap", palette: "turbo", textStyle: "regular" },
+      columnStyle: { type: "heatmap", palette: "PRGn", textStyle: "regular" },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/6": {
       componentIri:
@@ -997,7 +997,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "heatmap",
         textStyle: "regular",
-        palette: "cividis",
+        palette: "PiYG",
       },
     },
     "http://environment.ld.admin.ch/foen/px/0703010000_105/measure/7": {

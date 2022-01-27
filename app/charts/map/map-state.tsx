@@ -22,8 +22,10 @@ import {
 } from "../../configurator/components/ui-helpers";
 import {
   BaseLayer,
+  ColorScaleInterpolationType,
+  DivergingPaletteType,
   MapFields,
-  PaletteType,
+  SequentialPaletteType,
 } from "../../configurator/config-types";
 import {
   GeoData,
@@ -61,8 +63,8 @@ export interface MapState {
       | ScaleQuantile<string>
       | ScaleLinear<string, string>
       | ScaleThreshold<number, string>;
-    paletteType: PaletteType;
-    palette: string;
+    colorScaleInterpolationType: ColorScaleInterpolationType;
+    palette: DivergingPaletteType | SequentialPaletteType;
     nbClass: number;
     dataDomain: [number, number];
   };
@@ -80,36 +82,38 @@ export interface MapState {
 }
 
 const getColorScale = ({
-  paletteType,
+  scaleInterpolationType,
   palette,
   getValue,
   data,
   dataDomain,
   nbClass,
 }: {
-  paletteType: PaletteType;
-  palette: string;
+  scaleInterpolationType: ColorScaleInterpolationType;
+  palette: DivergingPaletteType | SequentialPaletteType;
   getValue: (x: Observation) => number | null;
   data: Observation[];
   dataDomain: [number, number];
   nbClass: number;
 }) => {
-  const paletteDomain = getSingleHueSequentialPalette({
-    palette,
-    nbClass: 9,
-  });
+  const interpolator = getColorInterpolator(palette);
+  const getDiscreteRange = () => {
+    return Array.from({ length: nbClass }, (_, i) =>
+      interpolator(i / (nbClass - 1))
+    );
+  };
 
-  switch (paletteType) {
-    case "continuous":
-      return scaleSequential(getColorInterpolator(palette)).domain(dataDomain);
-    case "discrete":
+  switch (scaleInterpolationType) {
+    case "linear":
+      return scaleSequential(interpolator).domain(dataDomain);
+    case "quantize":
       return scaleQuantize<string>()
         .domain(dataDomain)
-        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+        .range(getDiscreteRange());
     case "quantile":
       return scaleQuantile<string>()
         .domain(data.map((d) => getValue(d)))
-        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+        .range(getDiscreteRange());
     case "jenks":
       const ckMeansThresholds = ckmeans(
         data.map((d) => getValue(d) ?? NaN),
@@ -118,8 +122,13 @@ const getColorScale = ({
 
       return scaleThreshold<number, string>()
         .domain(ckMeansThresholds)
-        .range(getSingleHueSequentialPalette({ palette, nbClass }));
+        .range(getDiscreteRange());
     default:
+      const paletteDomain = getSingleHueSequentialPalette({
+        palette,
+        nbClass: 9,
+      });
+
       return scaleLinear<string>()
         .domain(dataDomain)
         .range([paletteDomain[0], paletteDomain[paletteDomain.length - 1]]);
@@ -140,7 +149,6 @@ const useMapState = ({
 }): MapState => {
   const width = useWidth();
   const { areaLayer, symbolLayer } = fields;
-  const { palette, nbClass, paletteType } = areaLayer;
 
   const getAreaLabel = useStringVariable(areaLayer.componentIri);
   const getSymbolLabel = useStringVariable(symbolLayer.componentIri);
@@ -227,12 +235,12 @@ const useMapState = ({
   ]) as [number, number];
 
   const areaColorScale = getColorScale({
-    paletteType,
-    palette,
+    scaleInterpolationType: areaLayer.colorScaleInterpolationType,
+    palette: areaLayer.palette,
     getValue: getAreaValue,
     data: areaData,
     dataDomain: areaDataDomain,
-    nbClass,
+    nbClass: areaLayer.nbClass,
   });
 
   const getAreaColor = (v: number | null) => {
@@ -279,9 +287,9 @@ const useMapState = ({
       getValue: getAreaValue,
       getColor: getAreaColor,
       colorScale: areaColorScale,
-      paletteType,
-      palette,
-      nbClass: nbClass,
+      colorScaleInterpolationType: areaLayer.colorScaleInterpolationType,
+      palette: areaLayer.palette,
+      nbClass: areaLayer.nbClass,
       dataDomain: areaDataDomain,
     },
     symbolLayer: {
