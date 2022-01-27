@@ -59,7 +59,7 @@ msgstr "Créer une visualisation"
 
 #: app/configurator/components/select-dataset-step.tsx:133
 msgid "browse.datasets.all-datasets"
-msgstr "Tout les jeux de données"
+msgstr "Tous les jeux de données"
 
 #: app/configurator/components/select-dataset-step.tsx:145
 msgid "browse.datasets.description"
@@ -705,15 +705,15 @@ msgstr "Version"
 
 #: app/configurator/components/dataset-browse.tsx:290
 msgid "dataset.order.newest"
-msgstr ""
+msgstr "Plus récent en premier"
 
 #: app/configurator/components/dataset-browse.tsx:282
 msgid "dataset.order.relevance"
-msgstr ""
+msgstr "Pertinence"
 
 #: app/configurator/components/dataset-browse.tsx:286
 msgid "dataset.order.title"
-msgstr ""
+msgstr "Titre"
 
 #: app/components/chart-preview.tsx:58
 #: app/components/chart-published.tsx:59

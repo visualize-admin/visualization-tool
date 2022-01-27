@@ -705,15 +705,15 @@ msgstr "versione"
 
 #: app/configurator/components/dataset-browse.tsx:290
 msgid "dataset.order.newest"
-msgstr ""
+msgstr "Più recente"
 
 #: app/configurator/components/dataset-browse.tsx:282
 msgid "dataset.order.relevance"
-msgstr ""
+msgstr "Rilevanza"
 
 #: app/configurator/components/dataset-browse.tsx:286
 msgid "dataset.order.title"
-msgstr ""
+msgstr "Titolo"
 
 #: app/components/chart-preview.tsx:58
 #: app/components/chart-published.tsx:59
@@ -727,19 +727,19 @@ msgstr "Attenzione, questo set di dati è scaduto.<0/><1>Non utilizzare questo g
 
 #: app/configurator/components/dataset-browse.tsx:346
 msgid "dataset.results"
-msgstr ""
+msgstr "Risultate"
 
 #: app/configurator/components/dataset-browse.tsx:294
 msgid "dataset.search.label"
-msgstr ""
+msgstr "Cerca"
 
 #: app/configurator/components/dataset-browse.tsx:366
 msgid "dataset.sortby"
-msgstr ""
+msgstr "Ordina per"
 
 #: app/configurator/components/dataset-browse.tsx:905
 msgid "dataset.tag.draft"
-msgstr ""
+msgstr "Bozza"
 
 #: app/configurator/components/dataset-preview.tsx:103
 msgid "datatable.showing.first.rows"
