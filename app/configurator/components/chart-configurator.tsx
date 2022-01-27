@@ -73,7 +73,7 @@ const DataFilterSelectGeneric = ({
     </Box>
   );
   return (
-    <Box sx={{ px: 2, mb: 2, flexGrow: 1 }}>
+    <Box sx={{ pl: 2, mb: 2, flexGrow: 1 }}>
       {dimension.__typename === "TemporalDimension" &&
       dimension.timeUnit !== "Day" ? (
         <DataFilterSelectTime
@@ -327,6 +327,8 @@ export const ChartConfigurator = ({
                                   flexDirection: "column",
                                   alignItems: "center",
                                   justifyContent: "flex-end",
+                                  flexGrow: 0,
+                                  flexShrink: 0,
                                   pb: 3,
                                 }}
                               >
