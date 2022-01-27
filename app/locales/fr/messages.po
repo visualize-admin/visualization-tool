@@ -786,11 +786,11 @@ msgstr "Aucune visualisation ne peut être créée avec le jeu de données séle
 
 #: app/components/hint.tsx:146
 msgid "hint.nodata.message"
-msgstr "Il n'y a pas de données correspondant aux filtres sélectionnés."
+msgstr "Veuillez essayer avec une autre combinaison de filtres."
 
 #: app/components/hint.tsx:143
 msgid "hint.nodata.title"
-msgstr "Aucune donnée"
+msgstr "Il n'y a pas de données correspondant aux filtres sélectionnés"
 
 #: app/components/hint.tsx:223
 msgid "hint.only.negative.data.message"

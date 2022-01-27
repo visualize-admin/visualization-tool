@@ -140,11 +140,13 @@ export const NoDataHint = () => (
   >
     <Icon name="warning" size={64} />
     <Text as="h5" variant="heading2" sx={{ my: 3 }}>
-      <Trans id="hint.nodata.title">No data</Trans>
+      <Trans id="hint.nodata.title">
+        No data available for current filter selection
+      </Trans>
     </Text>
     <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.nodata.message">
-        No data was returned with the current filters.
+        Please try with another combination of filters.
       </Trans>
     </Text>
   </Flex>

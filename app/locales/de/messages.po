@@ -786,11 +786,11 @@ msgstr "Mit dem ausgewählten Datensatz kann keine Visualisierung erstellt werde
 
 #: app/components/hint.tsx:146
 msgid "hint.nodata.message"
-msgstr "Keine Daten für die aktuelle Filterauswahl."
+msgstr "Bitte versuchen Sie es mit einer anderen Filterkombination."
 
 #: app/components/hint.tsx:143
 msgid "hint.nodata.title"
-msgstr "Keine Daten"
+msgstr "Keine Daten für die aktuelle Filterauswahl"
 
 #: app/components/hint.tsx:223
 msgid "hint.only.negative.data.message"

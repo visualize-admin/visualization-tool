@@ -786,11 +786,11 @@ msgstr "Nessuna visualizzazione può essere creata con il dataset selezionato."
 
 #: app/components/hint.tsx:146
 msgid "hint.nodata.message"
-msgstr "Non ci sono dati corrispondenti ai filtri selezionati."
+msgstr "Prova con un'altra combinazione di filtri."
 
 #: app/components/hint.tsx:143
 msgid "hint.nodata.title"
-msgstr "Nessun dato"
+msgstr "Non ci sono dati corrispondenti ai filtri selezionati"
 
 #: app/components/hint.tsx:223
 msgid "hint.only.negative.data.message"

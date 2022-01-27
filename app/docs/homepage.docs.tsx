@@ -13,7 +13,6 @@ ${(
   <ReactSpecimen>
     <Box>
       <Intro
-        hint="This tool is still in the test phase. Datasets will be updated and added periodically, created visualizations are deleted frequently."
         title="Visualize Swiss Open Government Data"
         teaser="Create and embed visualizations from any dataset provided by the LINDAS Linked Data Service."
         buttonLabel="Create a visualization"
@@ -46,7 +45,6 @@ ${(
 import { Contribute, Examples, Intro, Tutorial } from "../homepage";
 
 <Intro
-  hint="This tool is still in the test phase. Datasets will be updated and added periodically, created visualizations are deleted frequently."
   title="Visualize Swiss Open Government Data"
   teaser="Create and embed visualizations from any dataset provided by the LINDAS Linked Data Service."
   buttonLabel="Create a visualization"
