@@ -21,7 +21,7 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
-import { keyBy } from "lodash";
+import { keyBy, sortBy } from "lodash";
 import React, { ReactNode, useCallback, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
@@ -32,6 +32,7 @@ import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
+import { makeOrdinalDimensionSorter } from "../../utils/sorting-values";
 import {
   getLabelWithUnit,
   getWideData,
@@ -183,6 +184,20 @@ const useColumnsStackedState = ({
           : b.localeCompare(a, locale)
       );
 
+    const dimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    );
+    const getSegmentsOrderedByPosition = () => {
+      const segments = Array.from(
+        new Set(sortedData.map((d) => getSegment(d)))
+      );
+      if (!dimension) {
+        return segments;
+      }
+      const sorter = makeOrdinalDimensionSorter(dimension);
+      return sortBy(segments, sorter);
+    };
+
     const getSegmentsOrderedByTotalValue = () =>
       [
         ...rollup(
@@ -197,15 +212,22 @@ const useColumnsStackedState = ({
             : descending(a[1], b[1])
         )
         .map((d) => d[0]);
+
+    if (dimension?.__typename === "OrdinalDimension") {
+      return getSegmentsOrderedByPosition();
+    }
+
     return segmentSortingType === "byDimensionLabel"
       ? getSegmentsOrderedByName()
       : getSegmentsOrderedByTotalValue();
   }, [
-    sortedData,
+    dimensions,
     segmentSortingType,
+    sortedData,
     getSegment,
     segmentSortingOrder,
     locale,
+    fields.segment?.componentIri,
     getY,
   ]);
 
