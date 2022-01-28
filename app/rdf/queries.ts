@@ -364,11 +364,6 @@ const getCubeDimensionValuesWithLabels = async ({
     console.warn(
       `WARNING: dimension with mixed literals and named nodes <${dimension.path?.value}>`
     );
-
-    // console.log(`Named:`);
-    // console.log(dimensionValueNamedNodes);
-    // console.log(`Literal:`);
-    // console.log(dimensionValueLiterals);
   }
 
   if (namedNodes.length === 0 && literals.length === 0) {
@@ -383,7 +378,6 @@ const getCubeDimensionValuesWithLabels = async ({
    * If the dimension is versioned, we're loading the "unversioned" values to store in the config,
    * so cubes can be upgraded to newer versions without the filters breaking.
    */
-
   if (namedNodes.length > 0) {
     const [labels, unversioned] = await Promise.all([
       loadResourceLabels({ ids: namedNodes, locale }),
