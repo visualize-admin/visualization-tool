@@ -1,6 +1,4 @@
-// import { sparql } from "@tpluscode/rdf-string";
-// import { descending } from "d3";
-import { descending, group, index, rollup } from "d3";
+import { descending, group, index } from "d3";
 import {
   Cube,
   CubeDimension,
@@ -279,41 +277,6 @@ export const getCubeDimensionValues = async (
   });
 };
 
-// const getTemporalDimensionValues = ({
-//   dimension,
-//   min,
-//   max,
-// }: ResolvedDimension) => {
-
-// };
-
-type ValueWithLabel = { value: string; label: string };
-
-const groupLabelsPerValue = ({
-  values,
-  locale,
-}: {
-  values: ValueWithLabel[];
-  locale: string;
-}): ValueWithLabel[] => {
-  const grouped = rollup(
-    values,
-    (vals) => {
-      const label = vals
-        .map((v) => v.label)
-        .sort((a, b) => a.localeCompare(b, locale))
-        .join(" / ");
-      return {
-        value: vals[0].value,
-        label: label,
-      };
-    },
-    (d) => d.value
-  );
-
-  return [...grouped.values()];
-};
-
 export const dimensionIsVersioned = (dimension: CubeDimension) =>
   dimension.out(ns.schema.version)?.value ? true : false;
 
@@ -458,8 +421,6 @@ export const getCubeObservations = async ({
   let observationFilters = filters
     ? buildFilters({ cube, view: cubeView, filters, locale })
     : [];
-
-  // let observationFilters = [];
 
   /**
    * Add labels to named dimensions
