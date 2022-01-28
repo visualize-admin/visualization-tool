@@ -173,8 +173,10 @@ const useLinesState = ({
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // segments
-  const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
-    ascending(a, b)
+  const segments = useMemo(
+    () =>
+      [...new Set(sortedData.map(getSegment))].sort((a, b) => ascending(a, b)),
+    [getSegment, sortedData]
   );
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
