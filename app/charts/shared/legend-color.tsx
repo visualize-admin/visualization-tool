@@ -10,7 +10,7 @@ import { ColumnsState } from "../column/columns-state";
 import { LinesState } from "../line/lines-state";
 import { PieState } from "../pie/pie-state";
 import { ScatterplotState } from "../scatterplot/scatterplot-state";
-import { useChartState } from "./use-chart-state";
+import { ColorsChartState, useChartState } from "./use-chart-state";
 import { useInteractiveFilters } from "./use-interactive-filters";
 
 type LegendSymbol = "square" | "line" | "circle";
@@ -73,16 +73,7 @@ export const LegendColor = memo(function LegendColor({
 }: {
   symbol: LegendSymbol;
 }) {
-  const { colors } = useChartState() as
-    | BarsState
-    | GroupedBarsState
-    | ColumnsState
-    | StackedColumnsState
-    | GroupedColumnsState
-    | LinesState
-    | AreasState
-    | ScatterplotState
-    | PieState;
+  const { colors } = useChartState() as ColorsChartState;
 
   return (
     <Flex
