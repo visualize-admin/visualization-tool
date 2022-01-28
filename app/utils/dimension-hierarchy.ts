@@ -1,4 +1,5 @@
 import { ascending } from "d3";
+import flowRight from "lodash/flowRight";
 import { useMemo } from "react";
 import {
   DataCubeObservationsQuery,
@@ -286,7 +287,10 @@ export const useHierarchicalDimensionValuesQuery = ({
         dataCubeData.dimensions.map((dim) => [
           dim.iri,
           dim.__typename === "OrdinalDimension"
-            ? makeOrdinalDimensionSorter(dim)
+            ? flowRight(
+                makeOrdinalDimensionSorter(dim),
+                ({ label }: { label?: string }) => label
+              )
             : defaultSorter,
         ])
       );

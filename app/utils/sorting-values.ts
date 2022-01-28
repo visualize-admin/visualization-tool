@@ -16,8 +16,7 @@ export const makeOrdinalDimensionSorter = (
   const positionsByLabel = new Map<string, number | undefined>(
     dimension.values.map((v) => [v.label, v.position])
   );
-  return ({ label }: { label?: string }) =>
-    label ? positionsByLabel.get(label) ?? -1 : -1;
+  return (label?: string) => (label ? positionsByLabel.get(label) ?? -1 : -1);
 };
 
 interface Value {
