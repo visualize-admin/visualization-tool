@@ -76,7 +76,10 @@ const useBarsState = ({
   }, [data, getX, getY, sortingType, sortingOrder]);
 
   // segments
-  const segments = [...new Set(sortedData.map((d) => getSegment(d)))];
+  const segments = useMemo(
+    () => [...new Set(sortedData.map((d) => getSegment(d)))],
+    [getSegment, sortedData]
+  );
   const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
     segments
   );
