@@ -176,30 +176,30 @@ const useColumnsStackedState = ({
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
   const segments = useMemo(() => {
-    const segmentsOrderedByName = Array.from(
-      new Set(sortedData.map((d) => getSegment(d)))
-    ).sort((a, b) =>
-      segmentSortingOrder === "asc"
-        ? a.localeCompare(b, locale)
-        : b.localeCompare(a, locale)
-    );
-
-    const segmentsOrderedByTotalValue = [
-      ...rollup(
-        sortedData,
-        (v) => sum(v, (x) => getY(x)),
-        (x) => getSegment(x)
-      ),
-    ]
-      .sort((a, b) =>
+    const getSegmentsOrderedByName = () =>
+      Array.from(new Set(sortedData.map((d) => getSegment(d)))).sort((a, b) =>
         segmentSortingOrder === "asc"
-          ? ascending(a[1], b[1])
-          : descending(a[1], b[1])
-      )
-      .map((d) => d[0]);
+          ? a.localeCompare(b, locale)
+          : b.localeCompare(a, locale)
+      );
+
+    const getSegmentsOrderedByTotalValue = () =>
+      [
+        ...rollup(
+          sortedData,
+          (v) => sum(v, (x) => getY(x)),
+          (x) => getSegment(x)
+        ),
+      ]
+        .sort((a, b) =>
+          segmentSortingOrder === "asc"
+            ? ascending(a[1], b[1])
+            : descending(a[1], b[1])
+        )
+        .map((d) => d[0]);
     return segmentSortingType === "byDimensionLabel"
-      ? segmentsOrderedByName
-      : segmentsOrderedByTotalValue;
+      ? getSegmentsOrderedByName()
+      : getSegmentsOrderedByTotalValue();
   }, [
     sortedData,
     segmentSortingType,
