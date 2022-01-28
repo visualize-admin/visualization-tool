@@ -19,6 +19,7 @@ import {
   HierarchyValue,
   useHierarchicalDimensionValuesQuery,
 } from "../../utils/dimension-hierarchy";
+import { valueComparator } from "../../utils/sorting-values";
 import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval-brush";
 import { Accordion, AccordionContent, AccordionSummary } from "./Accordion";
 import {
@@ -274,9 +275,7 @@ export const DimensionValuesSingleFilter = ({
 
   const sortedDimensionValues = useMemo(() => {
     return dimension?.values
-      ? [...dimension.values].sort((a, b) =>
-          a.label.localeCompare(b.label, locale)
-        )
+      ? [...dimension.values].sort(valueComparator(locale))
       : [];
   }, [dimension?.values, locale]);
 

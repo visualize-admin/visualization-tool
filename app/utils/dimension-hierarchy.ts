@@ -1,10 +1,10 @@
 import { ascending } from "d3";
 import { useMemo } from "react";
-import { useClient } from "urql";
 import {
   DataCubeObservationsQuery,
   useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
+import { defaultSorter, makeOrdinalDimensionSorter } from "./sorting-values";
 
 export type DimensionHierarchy = {
   dimensionIri: string;
@@ -155,11 +155,14 @@ const addValuesToTree = (
 
 type TreeSorters = Record<
   string,
-  ({ value, label }: { value?: string; label?: string }) => string | undefined
+  ({
+    value,
+    label,
+  }: {
+    value?: string;
+    label?: string;
+  }) => string | number | undefined
 >;
-
-const defaultSorter = ({ value, label }: { value?: string; label?: string }) =>
-  label || value;
 
 /** Recursively sorts tree children  */
 export const sortTree = (tree: HierarchyValue[], sorters?: TreeSorters) => {
@@ -210,7 +213,6 @@ export const makeDimensionValuesTree = ({
   );
 
   addValuesToTree(tree, valuesByLabels);
-
   sortTree(tree, sorters);
 
   return tree;
@@ -262,8 +264,6 @@ export const useHierarchicalDimensionValuesQuery = ({
   locale: string;
   dataSetIri: string;
 }) => {
-  const client = useClient();
-
   const path = useMemo(
     () => getHierarchyDimensionPath(dimensionIri, hierarchy),
     [dimensionIri]
@@ -281,10 +281,20 @@ export const useHierarchicalDimensionValuesQuery = ({
     if (fetching || !datacubeResponse || !datacubeResponse.dataCubeByIri) {
       return { data: undefined, fetching };
     } else {
+      const dataCubeData = datacubeResponse.dataCubeByIri;
+      const sorters = Object.fromEntries(
+        dataCubeData.dimensions.map((dim) => [
+          dim.iri,
+          dim.__typename === "OrdinalDimension"
+            ? makeOrdinalDimensionSorter(dim)
+            : defaultSorter,
+        ])
+      );
       const tree = makeDimensionValuesTree({
-        dataCubeData: datacubeResponse.dataCubeByIri,
+        dataCubeData,
         dimensionIri,
         hierarchy,
+        sorters,
       });
       return {
         data: tree,
