@@ -25,12 +25,14 @@ import truthy from "../utils/truthy";
 import * as ns from "./namespace";
 import {
   getQueryLocales,
+  getScaleType,
   isCubePublished,
   parseCube,
   parseCubeDimension,
 } from "./parse";
 import { loadDimensionValues } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
+import { loadResourcePositions } from "./query-positions";
 import { loadUnversionedResources } from "./query-sameas";
 import { loadUnitLabels } from "./query-unit-labels";
 
@@ -379,27 +381,31 @@ const getCubeDimensionValuesWithLabels = async ({
    * so cubes can be upgraded to newer versions without the filters breaking.
    */
   if (namedNodes.length > 0) {
-    const [labels, unversioned] = await Promise.all([
+    const scaleType = getScaleType(dimension);
+    const [labels, positions, unversioned] = await Promise.all([
       loadResourceLabels({ ids: namedNodes, locale }),
+      scaleType === "Ordinal" ? loadResourcePositions({ ids: namedNodes }) : [],
       dimensionIsVersioned(dimension)
         ? loadUnversionedResources({ ids: namedNodes })
         : [],
     ]);
 
     const labelLookup = new Map(
-      labels.map(({ iri, label }) => {
-        return [iri.value, label?.value];
-      })
+      labels.map(({ iri, label }) => [iri.value, label?.value])
+    );
+
+    const positionsLookup = new Map(
+      positions.map(({ iri, position }) => [iri.value, position?.value])
     );
 
     const unversionedLookup = new Map(
-      unversioned.map(({ iri, sameAs }) => {
-        return [iri.value, sameAs?.value];
-      })
+      unversioned.map(({ iri, sameAs }) => [iri.value, sameAs?.value])
     );
 
     return namedNodes.map((iri) => {
+      const pos = positionsLookup.get(iri.value);
       return {
+        position: pos !== undefined ? parseInt(pos, 10) : undefined,
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelLookup.get(iri.value) ?? "",
       };
