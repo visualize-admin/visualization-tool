@@ -13,6 +13,7 @@ import {
   scaleTime,
   ScaleTime,
 } from "d3";
+import { sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
@@ -23,6 +24,7 @@ import {
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
 import { TimeUnit } from "../../graphql/query-hooks";
+import { makeOrdinalDimensionSorter } from "../../utils/sorting-values";
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
@@ -184,10 +186,21 @@ const useColumnsState = ({
   yScale.range([chartHeight, 0]);
 
   // segments
-  const segments = Array.from(new Set(sortedData.map((d) => getSegment(d))));
-  const colors = scaleOrdinal(getPalette(fields.segment?.palette)).domain(
-    segments
-  );
+  const segments = useMemo(() => {
+    return Array.from(new Set(sortedData.map(getSegment)));
+  }, [getSegment, sortedData]);
+  const sortedSegments = useMemo(() => {
+    const rawSegments = getPalette(fields.segment?.palette);
+    const segmentDimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    );
+    const sorter =
+      segmentDimension?.__typename === "OrdinalDimension"
+        ? makeOrdinalDimensionSorter(segmentDimension)
+        : null;
+    return sorter ? sortBy(rawSegments, sorter) : rawSegments;
+  }, [fields.segment?.palette, fields.segment?.componentIri, dimensions]);
+  const colors = scaleOrdinal(sortedSegments).domain(segments);
 
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
