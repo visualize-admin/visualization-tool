@@ -11,6 +11,7 @@ import {
   ScaleTime,
   scaleTime,
 } from "d3";
+import { sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { LineFields } from "../../configurator";
 import {
@@ -22,6 +23,7 @@ import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useTheme } from "../../themes";
+import { makeOrdinalDimensionSorter } from "../../utils/sorting-values";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
@@ -173,11 +175,20 @@ const useLinesState = ({
   const yAxisLabel = getLabelWithUnit(yMeasure);
 
   // segments
-  const segments = useMemo(
-    () =>
-      [...new Set(sortedData.map(getSegment))].sort((a, b) => ascending(a, b)),
-    [getSegment, sortedData]
-  );
+  const segments = useMemo(() => {
+    const segments = [...new Set(sortedData.map(getSegment))].sort((a, b) =>
+      ascending(a, b)
+    );
+    const dimension = dimensions.find(
+      (d) => d.iri === fields?.segment?.componentIri
+    );
+    if (dimension?.__typename === "OrdinalDimension") {
+      const sorter = makeOrdinalDimensionSorter(dimension);
+      return sortBy(segments, sorter);
+    }
+    return segments;
+  }, [dimensions, fields?.segment?.componentIri, getSegment, sortedData]);
+
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();
   const segmentDimension = dimensions.find(
