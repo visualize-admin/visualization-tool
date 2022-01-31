@@ -5,14 +5,15 @@ import * as React from "react";
 import { useCallback } from "react";
 import {
   DragDropContext,
-  Droppable,
   Draggable,
+  Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 import { Box, Button, Spinner } from "theme-ui";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
+  isMapConfig,
   useConfiguratorState,
 } from "..";
 import { getFieldComponentIris } from "../../charts";
@@ -40,6 +41,7 @@ import {
   DataFilterSelect,
   DataFilterSelectDay,
   DataFilterSelectTime,
+  OnOffControlTabField,
 } from "./field";
 import MoveDragButtons from "./move-drag-buttons";
 
@@ -424,15 +426,23 @@ const ChartFields = ({
   return (
     <>
       {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
-        const encodingField = encoding.field;
-
-        return (
+        return isMapConfig(chartConfig) && encoding.field === "baseLayer" ? (
+          <OnOffControlTabField
+            value={encoding.field}
+            icon="baseLayer"
+            label={<Trans id="controls.map.baseLayer">Base Layer</Trans>}
+            active={
+              chartConfig.baseLayer.showLakes ||
+              chartConfig.baseLayer.showRelief
+            }
+          />
+        ) : (
           <ControlTabField
             key={encoding.field}
             component={components.find(
               (d) =>
                 d.iri ===
-                (chartConfig.fields as any)[encodingField]?.componentIri
+                (chartConfig.fields as any)[encoding.field]?.componentIri
             )}
             value={encoding.field}
             labelId={`${chartConfig.chartType}.${encoding.field}`}
