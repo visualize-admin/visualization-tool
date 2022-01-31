@@ -1,9 +1,16 @@
+import { devtoolsExchange } from "@urql/devtools";
 import { ReactNode, useCallback } from "react";
-import { createClient, Provider } from "urql";
+import { createClient, defaultExchanges, Provider } from "urql";
 import { GRAPHQL_ENDPOINT } from "../domain/env";
 import { useLocale } from "../src";
 
-const client = createClient({ url: GRAPHQL_ENDPOINT });
+const client = createClient({
+  url: GRAPHQL_ENDPOINT,
+  exchanges:
+    process.env.NODE_ENV === "development"
+      ? [devtoolsExchange, ...defaultExchanges]
+      : [...defaultExchanges],
+});
 
 export const GraphqlProvider = ({ children }: { children: ReactNode }) => {
   const locale = useLocale();

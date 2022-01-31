@@ -127,6 +127,7 @@
     "@types/sparql-http-client": "^2.2.5",
     "@types/topojson-server": "^3.0.1",
     "@types/wellknown": "^0.5.1",
+    "@urql/devtools": "^2.0.3",
     "babel-core": "^7.0.0-bridge.0",
     "jest": "^27.3.0",
     "react-inspector": "^5.1.1",
