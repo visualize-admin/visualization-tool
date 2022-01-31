@@ -56,12 +56,12 @@ export const BaseLayersSettings = memo(() => {
   return (
     <ControlSection>
       <SectionTitle iconName="mapMaptype">
-        <Trans id="controls.section.baseLayer">Settings</Trans>
+        <Trans id="chart.map.settings">Settings</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">
         <ChartOptionCheckboxField
           label={t({
-            id: "controls.baseLayer.showRelief",
+            id: "chart.map.layers.base.show.relief",
             message: "Show relief",
           })}
           field={null}
@@ -69,7 +69,7 @@ export const BaseLayersSettings = memo(() => {
         />
         <ChartOptionCheckboxField
           label={t({
-            id: "controls.baseLayer.showLakes",
+            id: "chart.map.layers.base.show.lakes",
             message: "Show lakes",
           })}
           field={null}
@@ -152,12 +152,12 @@ export const AreaLayerSettings = memo(
       <>
         <ControlSection>
           <SectionTitle iconName="settings">
-            <Trans id="controls.section.areaLayer">Settings</Trans>
+            <Trans id="chart.map.settings">Settings</Trans>
           </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionCheckboxField
               label={t({
-                id: "fields.areaLayer.show",
+                id: "chart.map.layers.show",
                 message: "Show layer",
               })}
               field="areaLayer"
@@ -168,12 +168,18 @@ export const AreaLayerSettings = memo(
         </ControlSection>
         <ControlSection>
           <SectionTitle iconName="mapRegions">
-            Geographical dimension
+            {t({
+              id: "controls.dimension.geographical",
+              message: "Geographical dimension",
+            })}
           </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionSelectField
               id="areaLayer.componentIri"
-              label="Select a dimension"
+              label={t({
+                id: "controls.select.dimension",
+                message: "Select a dimension",
+              })}
               field={activeField}
               path="componentIri"
               options={geoShapesDimensionsOptions}
@@ -182,11 +188,16 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="list">Hierarchy level</SectionTitle>
+          <SectionTitle iconName="list">
+            {t({ id: "controls.hierarchy", message: "Hierarchy level" })}
+          </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionSelectField<number>
               id="areaLayer.hierarchyLevel"
-              label="Select a hierarchy level (1 - lowest)"
+              label={t({
+                id: "controls.hierarchy.select",
+                message: "Select a hierarchy level",
+              })}
               field={activeField}
               path="hierarchyLevel"
               options={hierarchyLevelOptions}
@@ -196,11 +207,16 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="chartBar">Measure</SectionTitle>
+          <SectionTitle iconName="chartBar">
+            {t({ id: "controls.measure", message: "Measure" })}
+          </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionSelectField
               id="areaLayer.measureIri"
-              label="Select a measure"
+              label={t({
+                id: "controls.select.measure",
+                message: "Select a measure",
+              })}
               field={activeField}
               path="measureIri"
               options={measuresOptions}
@@ -209,12 +225,22 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="segments">Color scale</SectionTitle>
+          <SectionTitle iconName="segments">
+            {t({ id: "controls.color", message: "Color" })}
+          </SectionTitle>
           <ControlSectionContent side="right">
-            <FieldSetLegend legendTitle="Scale type" />
+            <FieldSetLegend
+              legendTitle={t({
+                id: "controls.scale.type",
+                message: "Scale type",
+              })}
+            />
             <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
               <ChartOptionRadioField
-                label="Continuous"
+                label={t({
+                  id: "chart.map.layers.area.discretization.continuous",
+                  message: "Continuous",
+                })}
                 field={activeField}
                 path="colorScaleType"
                 value="continuous"
@@ -224,7 +250,10 @@ export const AreaLayerSettings = memo(
               {/* Limit the number of clusters to min. 3 */}
               {numberOfGeoShapes >= 3 && (
                 <ChartOptionRadioField
-                  label="Discrete"
+                  label={t({
+                    id: "chart.map.layers.area.discretization.discrete",
+                    message: "Discrete",
+                  })}
                   field={activeField}
                   path="colorScaleType"
                   value="discrete"
@@ -333,12 +362,12 @@ export const SymbolLayerSettings = memo(
       <>
         <ControlSection>
           <SectionTitle iconName="settings">
-            <Trans id="controls.section.symbolLayer">Settings</Trans>
+            <Trans id="chart.map.settings">Settings</Trans>
           </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionCheckboxField
               label={t({
-                id: "fields.symbolLayer.show",
+                id: "chart.map.layers.show",
                 message: "Show layer",
               })}
               field="symbolLayer"
@@ -349,12 +378,18 @@ export const SymbolLayerSettings = memo(
         </ControlSection>
         <ControlSection>
           <SectionTitle iconName="mapSymbols">
-            Geographical dimension
+            {t({
+              id: "controls.dimension.geographical",
+              message: "Geographical dimension",
+            })}
           </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionSelectField
               id="symbolLayer.componentIri"
-              label="Select a dimension"
+              label={t({
+                id: "controls.select.dimension",
+                message: "Select a dimension",
+              })}
               field={activeField}
               path="componentIri"
               options={geoDimensionsOptions}
@@ -363,11 +398,16 @@ export const SymbolLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="chartBar">Measure</SectionTitle>
+          <SectionTitle iconName="chartBar">
+            {t({ id: "controls.measure", message: "Measure" })}
+          </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionSelectField
               id="symbolLayer.measureIri"
-              label="Select a measure"
+              label={t({
+                id: "controls.select.measure",
+                message: "Select a measure",
+              })}
               field={activeField}
               path="measureIri"
               options={measuresOptions}
@@ -376,7 +416,9 @@ export const SymbolLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="segments">Color</SectionTitle>
+          <SectionTitle iconName="segments">
+            {t({ id: "controls.color", message: "Color" })}
+          </SectionTitle>
           <ControlSectionContent side="right">
             <ColorPickerField
               label="Select a color"

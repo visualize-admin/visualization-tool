@@ -430,7 +430,7 @@ const ChartFields = ({
           <OnOffControlTabField
             value={encoding.field}
             icon="baseLayer"
-            label={<Trans id="controls.map.baseLayer">Base Layer</Trans>}
+            label={<Trans id="chart.map.layers.base">Base Layer</Trans>}
             active={
               chartConfig.baseLayer.showLakes ||
               chartConfig.baseLayer.showRelief

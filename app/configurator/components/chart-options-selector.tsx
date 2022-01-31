@@ -173,7 +173,7 @@ const EncodingOptionsPanel = ({
   const getFieldLabelHint = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
-    baseLayer: t({ id: "controls.map.baseLayer", message: "Base layer" }),
+    baseLayer: t({ id: "chart.map.layers.base", message: "Base Layer" }),
     areaLayer: t({
       id: "controls.select.measure",
       message: "Select a measure",
