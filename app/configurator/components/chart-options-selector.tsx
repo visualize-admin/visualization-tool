@@ -57,6 +57,11 @@ export const ChartOptionsSelector = ({
         ? Object.values(state.chartConfig.fields).flatMap((f) =>
             f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
           )
+        : isMapConfig(state.chartConfig)
+        ? [
+            state.chartConfig.fields.areaLayer.measureIri,
+            state.chartConfig.fields.symbolLayer.measureIri,
+          ]
         : [],
     [state.chartConfig]
   );
