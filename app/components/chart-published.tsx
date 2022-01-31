@@ -2,21 +2,12 @@ import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { useEffect } from "react";
 import { Box, Flex, Text } from "theme-ui";
-import { ChartAreasVisualization } from "../charts/area/chart-area";
-import { ChartBarsVisualization } from "../charts/bar/chart-bar";
-import { ChartColumnsVisualization } from "../charts/column/chart-column";
-import { ChartLinesVisualization } from "../charts/line/chart-lines";
-import { ChartMapVisualization } from "../charts/map/chart-map";
-import { ChartPieVisualization } from "../charts/pie/chart-pie";
-import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
-import { QueryFilters, useQueryFilters } from "../charts/shared/chart-helpers";
 import { isUsingImputation } from "../charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../charts/shared/use-interactive-filters";
-import { ChartTableVisualization } from "../charts/table/chart-table";
 import { ChartConfig, Meta } from "../configurator";
 import { parseDate } from "../configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
@@ -24,6 +15,7 @@ import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFootnotes } from "./chart-footnotes";
+import GenericChart from "./common-chart";
 import { HintBlue, HintRed } from "./hint";
 
 export const ChartPublished = ({
@@ -164,59 +156,7 @@ const ChartWithInteractiveFilters = ({
           chartConfig={chartConfig}
         />
       )}
-      <Chart dataSet={dataSet} chartConfig={chartConfig} />
+      <GenericChart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>
   );
-};
-
-const getChart = ({
-  chartConfig,
-  ...props
-}: {
-  dataSetIri: string;
-  chartConfig: ChartConfig;
-  queryFilters: QueryFilters;
-}) => {
-  switch (chartConfig.chartType) {
-    case "column":
-      return <ChartColumnsVisualization {...props} chartConfig={chartConfig} />;
-    case "bar":
-      return <ChartBarsVisualization {...props} chartConfig={chartConfig} />;
-    case "line":
-      return <ChartLinesVisualization {...props} chartConfig={chartConfig} />;
-    case "area":
-      return <ChartAreasVisualization {...props} chartConfig={chartConfig} />;
-    case "scatterplot":
-      return (
-        <ChartScatterplotVisualization {...props} chartConfig={chartConfig} />
-      );
-    case "pie":
-      return <ChartPieVisualization {...props} chartConfig={chartConfig} />;
-    case "table":
-      return <ChartTableVisualization {...props} chartConfig={chartConfig} />;
-    case "map":
-      return <ChartMapVisualization {...props} chartConfig={chartConfig} />;
-    default:
-      const _exhaustiveCheck: never = chartConfig;
-      return _exhaustiveCheck;
-  }
-};
-
-const Chart = ({
-  dataSet,
-  chartConfig,
-}: {
-  dataSet: string;
-  chartConfig: ChartConfig;
-}) => {
-  // Combine filters from config + interactive filters
-  const queryFilters = useQueryFilters({
-    chartConfig,
-  });
-
-  return getChart({
-    dataSetIri: dataSet,
-    chartConfig,
-    queryFilters,
-  });
 };

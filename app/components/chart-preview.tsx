@@ -1,36 +1,18 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { Box, Flex, Text } from "theme-ui";
-import { ChartAreasVisualization } from "../charts/area/chart-area";
-import { ChartBarsVisualization } from "../charts/bar/chart-bar";
-import { ChartColumnsVisualization } from "../charts/column/chart-column";
-import { ChartLinesVisualization } from "../charts/line/chart-lines";
-import { ChartMapVisualization } from "../charts/map/chart-map";
-import { ChartPieVisualization } from "../charts/pie/chart-pie";
-import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "../charts/shared/use-sync-interactive-filters";
-import { ChartTableVisualization } from "../charts/table/chart-table";
-import {
-  ChartConfig,
-  isAreaConfig,
-  isBarConfig,
-  isColumnConfig,
-  isLineConfig,
-  isMapConfig,
-  isPieConfig,
-  isScatterPlotConfig,
-  isTableConfig,
-  useConfiguratorState,
-} from "../configurator";
+import { ChartConfig, useConfiguratorState } from "../configurator";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFiltersList } from "./chart-filters-list";
 import { ChartFootnotes } from "./chart-footnotes";
+import GenericChart from "./common-chart";
 import DebugPanel from "./debug-panel";
 import { HintRed } from "./hint";
 
@@ -166,64 +148,11 @@ const Chart = ({
     chartConfig,
   });
 
-  return (
-    <>
-      {/* CHARTS */}
-      {isColumnConfig(chartConfig) && (
-        <ChartColumnsVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {isBarConfig(chartConfig) && (
-        <ChartBarsVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {isLineConfig(chartConfig) && (
-        <ChartLinesVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {isAreaConfig(chartConfig) && (
-        <ChartAreasVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {isScatterPlotConfig(chartConfig) && (
-        <ChartScatterplotVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {isPieConfig(chartConfig) && (
-        <ChartPieVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-      {isTableConfig(chartConfig) && (
-        <ChartTableVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-        />
-      )}
-      {isMapConfig(chartConfig) && (
-        <ChartMapVisualization
-          dataSetIri={dataSet}
-          chartConfig={chartConfig}
-          queryFilters={queryFilters}
-        />
-      )}
-    </>
-  );
+  const props = {
+    dataSet,
+    chartConfig: chartConfig,
+    queryFilters: queryFilters,
+  };
+
+  return <GenericChart {...props} />;
 };

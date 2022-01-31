@@ -16,6 +16,7 @@ import {
   ScaleTime,
   sum,
 } from "d3";
+import { sortBy } from "lodash";
 import React, { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
@@ -26,6 +27,7 @@ import {
 import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { useLocale } from "../../locales/use-locale";
+import { makeOrdinalDimensionSorter } from "../../utils/sorting-values";
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
@@ -143,32 +145,58 @@ const useGroupedColumnsState = ({
   // segments
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
-  const segmentsOrderedByName = Array.from(
-    new Set(sortedData.map((d) => getSegment(d)))
-  ).sort((a, b) =>
-    segmentSortingOrder === "asc"
-      ? a.localeCompare(b, locale)
-      : b.localeCompare(a, locale)
-  );
 
-  const segmentsOrderedByTotalValue = [
-    ...rollup(
-      sortedData,
-      (v) => sum(v, (x) => getY(x)),
-      (x) => getSegment(x)
-    ),
-  ]
-    .sort((a, b) =>
-      segmentSortingOrder === "asc"
-        ? ascending(a[1], b[1])
-        : descending(a[1], b[1])
-    )
-    .map((d) => d[0]);
+  const segments = useMemo(() => {
+    const getSegmentsOrderedByName = () =>
+      Array.from(new Set(sortedData.map((d) => getSegment(d)))).sort((a, b) =>
+        segmentSortingOrder === "asc"
+          ? a.localeCompare(b, locale)
+          : b.localeCompare(a, locale)
+      );
 
-  const segments =
-    segmentSortingType === "byDimensionLabel"
-      ? segmentsOrderedByName
-      : segmentsOrderedByTotalValue;
+    const dimension = dimensions.find(
+      (d) => d.iri === fields.segment?.componentIri
+    );
+
+    const getSegmentsOrderedByPosition = () => {
+      const segments = Array.from(
+        new Set(sortedData.map((d) => getSegment(d)))
+      );
+      if (!dimension) {
+        return segments;
+      }
+      const sorter = makeOrdinalDimensionSorter(dimension);
+      return sortBy(segments, sorter);
+    };
+
+    const getSegmentsOrderedByTotalValue = () =>
+      [
+        ...rollup(
+          sortedData,
+          (v) => sum(v, (x) => getY(x)),
+          (x) => getSegment(x)
+        ),
+      ]
+        .sort((a, b) =>
+          segmentSortingOrder === "asc"
+            ? ascending(a[1], b[1])
+            : descending(a[1], b[1])
+        )
+        .map((d) => d[0]);
+    if (dimension?.__typename === "OrdinalDimension") {
+      return getSegmentsOrderedByPosition();
+    }
+    return segmentSortingType === "byDimensionLabel"
+      ? getSegmentsOrderedByName()
+      : getSegmentsOrderedByTotalValue();
+  }, [
+    getSegment,
+    getY,
+    locale,
+    segmentSortingOrder,
+    segmentSortingType,
+    sortedData,
+  ]);
 
   // Map ordered segments to colors
   const colors = scaleOrdinal<string, string>();

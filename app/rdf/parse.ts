@@ -96,6 +96,21 @@ const timeFormats = new Map<string, string>([
   [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
 ]);
 
+export const getScaleType = (
+  dim: CubeDimension
+): ResolvedDimension["data"]["scaleType"] => {
+  const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
+  return scaleTypeTerm?.equals(ns.qudt.NominalScale)
+    ? "Nominal"
+    : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
+    ? "Ordinal"
+    : scaleTypeTerm?.equals(ns.qudt.RatioScale)
+    ? "Ratio"
+    : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
+    ? "Interval"
+    : undefined;
+};
+
 export const parseCubeDimension = ({
   dim,
   cube,
@@ -113,7 +128,6 @@ export const parseCubeDimension = ({
   const timeUnitTerm = dim
     .out(ns.cube`meta/dataKind`)
     .out(ns.time.unitType).term;
-  const scaleTypeTerm = dim.out(ns.qudt.scaleType).term;
 
   let dataType = dim.datatype;
   let hasUndefinedValues = false;
@@ -191,15 +205,7 @@ export const parseCubeDimension = ({
         : undefined,
       timeUnit: timeUnits.get(timeUnitTerm?.value ?? ""),
       timeFormat: timeFormats.get(dataType?.value ?? ""),
-      scaleType: scaleTypeTerm?.equals(ns.qudt.NominalScale)
-        ? "Nominal"
-        : scaleTypeTerm?.equals(ns.qudt.OrdinalScale)
-        ? "Ordinal"
-        : scaleTypeTerm?.equals(ns.qudt.RatioScale)
-        ? "Ratio"
-        : scaleTypeTerm?.equals(ns.qudt.IntervalScale)
-        ? "Interval"
-        : undefined,
+      scaleType: getScaleType(dim),
     },
   };
 };

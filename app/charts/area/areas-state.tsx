@@ -18,6 +18,7 @@ import {
   stackOrderReverse,
   sum,
 } from "d3";
+import { sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { AreaFields } from "../../configurator";
 import {
@@ -29,6 +30,7 @@ import { Observation } from "../../domain/data";
 import { sortByIndex } from "../../lib/array";
 import { estimateTextWidth } from "../../lib/estimate-text-width";
 import { useLocale } from "../../locales/use-locale";
+import { makeOrdinalDimensionSorter } from "../../utils/sorting-values";
 import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
 import {
   getLabelWithUnit,
@@ -184,32 +186,57 @@ const useAreasState = ({
   const segmentSortingType = fields.segment?.sorting?.sortingType;
   const segmentSortingOrder = fields.segment?.sorting?.sortingOrder;
 
-  const segmentsOrderedByName = Array.from(
-    new Set(sortedData.map((d) => getSegment(d)))
-  ).sort((a, b) =>
-    segmentSortingOrder === "asc"
-      ? a.localeCompare(b, locale)
-      : b.localeCompare(a, locale)
-  );
+  const segments = useMemo(() => {
+    const getSegmentsOrderedByName = () =>
+      Array.from(new Set(sortedData.map((d) => getSegment(d)))).sort((a, b) =>
+        segmentSortingOrder === "asc"
+          ? a.localeCompare(b, locale)
+          : b.localeCompare(a, locale)
+      );
 
-  const segmentsOrderedByTotalValue = [
-    ...rollup(
-      sortedData,
-      (v) => sum(v, (x) => getY(x)),
-      (x) => getSegment(x)
-    ),
-  ]
-    .sort((a, b) =>
-      segmentSortingOrder === "asc"
-        ? ascending(a[1], b[1])
-        : descending(a[1], b[1])
-    )
-    .map((d) => d[0]);
+    const getSegmentsOrderedByTotalValue = () =>
+      [
+        ...rollup(
+          sortedData,
+          (v) => sum(v, (x) => getY(x)),
+          (x) => getSegment(x)
+        ),
+      ]
+        .sort((a, b) =>
+          segmentSortingOrder === "asc"
+            ? ascending(a[1], b[1])
+            : descending(a[1], b[1])
+        )
+        .map((d) => d[0]);
 
-  const segments =
-    segmentSortingType === "byDimensionLabel"
-      ? segmentsOrderedByName
-      : segmentsOrderedByTotalValue;
+    const getSegmentsOrderedByPosition = () => {
+      const segments = Array.from(
+        new Set(sortedData.map((d) => getSegment(d)))
+      );
+      const sorter = dimension ? makeOrdinalDimensionSorter(dimension) : null;
+      return sorter ? sortBy(segments, sorter) : segments;
+    };
+
+    const dimension = dimensions.find(
+      (dim) => dim.iri === fields.segment?.componentIri
+    );
+    if (dimension?.__typename === "OrdinalDimension") {
+      return getSegmentsOrderedByPosition();
+    }
+
+    return segmentSortingType === "byDimensionLabel"
+      ? getSegmentsOrderedByName()
+      : getSegmentsOrderedByTotalValue();
+  }, [
+    dimensions,
+    fields.segment?.componentIri,
+    getSegment,
+    getY,
+    locale,
+    segmentSortingOrder,
+    segmentSortingType,
+    sortedData,
+  ]);
 
   // Stack order
   const stackOrder =

@@ -284,7 +284,10 @@ const mkDimensionResolvers = (debugName: string) => ({
     const values: Array<DimensionValue> = await loader.load(parent);
     // TODO min max are now just `values` with 2 elements. Handle properly!
     return values.sort((a, b) =>
-      ascending(a.value ?? undefined, b.value ?? undefined)
+      ascending(
+        a.position ?? a.value ?? undefined,
+        b.position ?? b.value ?? undefined
+      )
     );
   },
 });
@@ -331,6 +334,10 @@ export const resolvers: Resolvers = {
         return "GeoCoordinatesDimension";
       } else if (dataKind === "GeoShape") {
         return "GeoShapesDimension";
+      }
+
+      if (scaleType === "Ordinal") {
+        return "OrdinalDimension";
       }
 
       return "NominalDimension";

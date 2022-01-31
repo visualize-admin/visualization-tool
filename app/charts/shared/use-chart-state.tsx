@@ -36,6 +36,11 @@ export type ChartState =
   | MapState
   | undefined;
 
+type Has<T extends unknown, R extends string> = T extends { [k in R]: any }
+  ? T
+  : never;
+
+export type ColorsChartState = Has<ChartState, "colors">;
 export const ChartContext = createContext<ChartState>(undefined);
 
 export const useChartState = () => {

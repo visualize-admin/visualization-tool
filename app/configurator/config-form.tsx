@@ -23,6 +23,7 @@ import { FIELD_VALUE_NONE } from "./constants";
 export type Option = {
   value: string | $FixMe;
   label: string | $FixMe;
+  position?: number;
   isNoneValue?: boolean;
   disabled?: boolean;
 };

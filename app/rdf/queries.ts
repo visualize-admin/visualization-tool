@@ -1,6 +1,4 @@
-// import { sparql } from "@tpluscode/rdf-string";
-// import { descending } from "d3";
-import { descending, group, index, rollup } from "d3";
+import { descending, group, index } from "d3";
 import {
   Cube,
   CubeDimension,
@@ -25,12 +23,14 @@ import truthy from "../utils/truthy";
 import * as ns from "./namespace";
 import {
   getQueryLocales,
+  getScaleType,
   isCubePublished,
   parseCube,
   parseCubeDimension,
 } from "./parse";
 import { loadDimensionValues } from "./query-dimension-values";
 import { loadResourceLabels } from "./query-labels";
+import { loadResourcePositions } from "./query-positions";
 import { loadUnversionedResources } from "./query-sameas";
 import { loadUnitLabels } from "./query-unit-labels";
 
@@ -277,41 +277,6 @@ export const getCubeDimensionValues = async (
   });
 };
 
-// const getTemporalDimensionValues = ({
-//   dimension,
-//   min,
-//   max,
-// }: ResolvedDimension) => {
-
-// };
-
-type ValueWithLabel = { value: string; label: string };
-
-const groupLabelsPerValue = ({
-  values,
-  locale,
-}: {
-  values: ValueWithLabel[];
-  locale: string;
-}): ValueWithLabel[] => {
-  const grouped = rollup(
-    values,
-    (vals) => {
-      const label = vals
-        .map((v) => v.label)
-        .sort((a, b) => a.localeCompare(b, locale))
-        .join(" / ");
-      return {
-        value: vals[0].value,
-        label: label,
-      };
-    },
-    (d) => d.value
-  );
-
-  return [...grouped.values()];
-};
-
 export const dimensionIsVersioned = (dimension: CubeDimension) =>
   dimension.out(ns.schema.version)?.value ? true : false;
 
@@ -364,11 +329,6 @@ const getCubeDimensionValuesWithLabels = async ({
     console.warn(
       `WARNING: dimension with mixed literals and named nodes <${dimension.path?.value}>`
     );
-
-    // console.log(`Named:`);
-    // console.log(dimensionValueNamedNodes);
-    // console.log(`Literal:`);
-    // console.log(dimensionValueLiterals);
   }
 
   if (namedNodes.length === 0 && literals.length === 0) {
@@ -383,29 +343,32 @@ const getCubeDimensionValuesWithLabels = async ({
    * If the dimension is versioned, we're loading the "unversioned" values to store in the config,
    * so cubes can be upgraded to newer versions without the filters breaking.
    */
-
   if (namedNodes.length > 0) {
-    const [labels, unversioned] = await Promise.all([
+    const scaleType = getScaleType(dimension);
+    const [labels, positions, unversioned] = await Promise.all([
       loadResourceLabels({ ids: namedNodes, locale }),
+      scaleType === "Ordinal" ? loadResourcePositions({ ids: namedNodes }) : [],
       dimensionIsVersioned(dimension)
         ? loadUnversionedResources({ ids: namedNodes })
         : [],
     ]);
 
     const labelLookup = new Map(
-      labels.map(({ iri, label }) => {
-        return [iri.value, label?.value];
-      })
+      labels.map(({ iri, label }) => [iri.value, label?.value])
+    );
+
+    const positionsLookup = new Map(
+      positions.map(({ iri, position }) => [iri.value, position?.value])
     );
 
     const unversionedLookup = new Map(
-      unversioned.map(({ iri, sameAs }) => {
-        return [iri.value, sameAs?.value];
-      })
+      unversioned.map(({ iri, sameAs }) => [iri.value, sameAs?.value])
     );
 
     return namedNodes.map((iri) => {
+      const pos = positionsLookup.get(iri.value);
       return {
+        position: pos !== undefined ? parseInt(pos, 10) : undefined,
         value: unversionedLookup.get(iri.value) ?? iri.value,
         label: labelLookup.get(iri.value) ?? "",
       };
@@ -458,8 +421,6 @@ export const getCubeObservations = async ({
   let observationFilters = filters
     ? buildFilters({ cube, view: cubeView, filters, locale })
     : [];
-
-  // let observationFilters = [];
 
   /**
    * Add labels to named dimensions

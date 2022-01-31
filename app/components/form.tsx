@@ -176,7 +176,13 @@ export const Select = ({
     const restOptions = options.filter((o) => !o.isNoneValue);
 
     if (sortOptions) {
-      restOptions.sort((a, b) => a.label.localeCompare(b.label, locale));
+      restOptions.sort((a, b) => {
+        if (a.position !== undefined && b.position !== undefined) {
+          return a.position < b.position;
+        } else {
+          return a.label.localeCompare(b.label, locale);
+        }
+      });
     }
 
     return [...noneOptions, ...restOptions];
