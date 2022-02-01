@@ -15,7 +15,7 @@ msgstr ""
 
 #: app/configurator/components/chart-configurator.tsx:385
 msgid "Add filter"
-msgstr ""
+msgstr "Filter hinzufügen"
 
 #: app/components/search-autocomplete.tsx:69
 msgid "Browse {0}"
