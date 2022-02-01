@@ -189,7 +189,7 @@ msgstr "Symboles"
 #~ msgid "chart.map.settings"
 #~ msgstr "Paramètres"
 
-#: app/configurator/map/map-chart-options.tsx:452
+#: app/configurator/map/map-chart-options.tsx:455
 msgid "chart.map.warning.noGeoDimensions"
 msgstr "Dans cet ensemble de données, il n'y a pas de dimensions géographiques à afficher!"
 
@@ -301,6 +301,10 @@ msgstr "Réinitialiser la palette de couleurs"
 #: app/configurator/components/chart-controls/color-ramp.tsx:163
 msgid "controls.color.palette.sequential"
 msgstr "Séquentielle"
+
+#: app/configurator/map/map-chart-options.tsx:437
+msgid "controls.color.select"
+msgstr "Couleur sélectionner"
 
 #: app/configurator/components/chart-controls/color-picker.tsx:158
 msgid "controls.colorpicker.open"

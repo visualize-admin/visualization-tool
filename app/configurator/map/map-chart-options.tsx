@@ -434,7 +434,10 @@ export const SymbolLayerSettings = memo(
           </SectionTitle>
           <ControlSectionContent side="right">
             <ColorPickerField
-              label="Select a color"
+              label={t({
+                id: "controls.color.select",
+                message: "Select a color",
+              })}
               field={activeField}
               path="color"
               disabled={isHidden}
