@@ -38,9 +38,6 @@ fragment dimensionMetaData on Dimension {
   isKeyDimension
   values(filters: $filters)
   unit
-  ... on GeoCoordinatesDimension {
-    geoCoordinates
-  }
   ... on GeoShapesDimension {
     geoShapes
   }
@@ -137,6 +134,26 @@ query DimensionValues(
   dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ...dimensionMetaData
+    }
+  }
+}
+
+query GeoCoordinatesByDimensionIri(
+  $dataCubeIri: String!
+  $dimensionIri: String!
+  $latest: Boolean
+  $locale: String!
+) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
+    dimensionByIri(iri: $dimensionIri) {
+      ... on GeoCoordinatesDimension {
+        geoCoordinates {
+          iri
+          label
+          latitude
+          longitude
+        }
+      }
     }
   }
 }

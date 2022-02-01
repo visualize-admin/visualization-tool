@@ -21,9 +21,9 @@ import {
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
+  useGeoCoordinatesByDimensionIriQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-import { GeoCoordinates } from "../../rdf/query-geo-coordinates";
 import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer } from "../shared/containers";
 import { MapComponent } from "./map";
@@ -69,6 +69,21 @@ export const ChartMapVisualization = ({
     | Observation[]
     | undefined;
 
+  const [{ data: fetchedGeoCoordinates }] =
+    useGeoCoordinatesByDimensionIriQuery({
+      variables: {
+        dataCubeIri: dataSetIri,
+        locale,
+        dimensionIri: symbolDimensionIri,
+      },
+    });
+
+  const geoCoordinates =
+    fetchedGeoCoordinates?.dataCubeByIri?.dimensionByIri?.__typename ===
+    "GeoCoordinatesDimension"
+      ? fetchedGeoCoordinates.dataCubeByIri.dimensionByIri.geoCoordinates
+      : null;
+
   const areaLayer: AreaLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === areaDimensionIri);
 
@@ -99,8 +114,8 @@ export const ChartMapVisualization = ({
   const symbolLayer: SymbolLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === symbolDimensionIri);
 
-    if (isGeoCoordinatesDimension(dimension)) {
-      const points = (dimension.geoCoordinates as GeoCoordinates[]).map(
+    if (isGeoCoordinatesDimension(dimension) && geoCoordinates) {
+      const points = geoCoordinates.map(
         (d) =>
           ({
             coordinates: [d.longitude, d.latitude],
@@ -125,7 +140,7 @@ export const ChartMapVisualization = ({
         return { points };
       }
     }
-  }, [areaLayer, dimensions, observations, symbolDimensionIri]);
+  }, [areaLayer, dimensions, observations, symbolDimensionIri, geoCoordinates]);
 
   useEffect(() => {
     const loadLakes = async () => {
