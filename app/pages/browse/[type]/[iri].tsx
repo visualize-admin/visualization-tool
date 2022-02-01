@@ -4,6 +4,10 @@ import { queryLatestPublishedCubeFromUnversionedIri } from "../../../rdf/query-c
 import { defaultLocale } from "../../../src";
 export default GenericBrowse;
 
+/**
+ * Heuristic to check if a dataset IRI is versioned.
+ * Versioned iris look like https://blabla/<number/
+ */
 const isDatasetIriVersioned = (iri: string) => {
   return iri.match(/\/\d+\/$/) !== null;
 };
