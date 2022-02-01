@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import React from "react";
 import { AppLayout } from "../../components/layout";
 import { SelectDatasetStep } from "../../configurator/components/select-dataset-step";
@@ -18,7 +17,6 @@ export type BrowseParams = {
 
 // Generic component for all browse subpages
 export const GenericBrowse = () => {
-  const router = useRouter();
   return (
     <AppLayout>
       <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
