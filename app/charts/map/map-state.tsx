@@ -118,7 +118,7 @@ const getColorScale = ({
     case "jenks":
       const ckMeansThresholds = ckmeans(
         data.map((d) => getValue(d) ?? NaN),
-        nbClass
+        Math.min(nbClass, data.length)
       ).map((v) => v.pop() || 0);
 
       return scaleThreshold<number, string>()

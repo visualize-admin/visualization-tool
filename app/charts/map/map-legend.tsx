@@ -71,10 +71,15 @@ const makeAxis = (
 
 export const MapLegend = () => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
+  const showAreaLegend =
+    areaLayer.show &&
+    areaLayer.data.length >= 3 &&
+    (areaLayer.colorScaleInterpolationType === "linear" ||
+      areaLayer.colorScale.range().length >= 3);
 
   return (
     <Flex sx={{ minHeight: 100, flexWrap: "wrap" }}>
-      {areaLayer.show && (
+      {showAreaLegend && (
         <Box sx={{ p: 4 }}>
           {areaLayer.measureLabel && (
             <Text
