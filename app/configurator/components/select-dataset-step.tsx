@@ -4,7 +4,6 @@ import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { Box, Button, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
-import { DataSetHint } from "../../components/hint";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
 import { useConfiguratorState, useLocale } from "../../src";
 import {

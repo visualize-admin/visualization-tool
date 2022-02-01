@@ -98,32 +98,6 @@ export const LoadingOverlay = () => (
   </Box>
 );
 
-export const DataSetHint = () => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100%",
-      color: "hint",
-      margin: "auto",
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    <Icon name="dataset" size={64} />
-    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
-      <Trans id="hint.select.dataset">Select a dataset</Trans>
-    </Text>
-    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-      <Trans id="hint.select.dataset.to.preview">
-        Click on a dataset in the left column to preview its structure and
-        content.
-      </Trans>
-    </Text>
-  </Flex>
-);
 export const NoDataHint = () => (
   <Flex
     sx={{
