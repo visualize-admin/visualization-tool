@@ -8,6 +8,8 @@ declare module "@deck.gl/core" {
   export class FlyToInterpolator {}
   export class WebMercatorViewport {
     constructor(viewState: $FixMe);
+    width: number;
+    height: number;
     project(lonlat: [number, number]): [number, number];
     unproject(xy: [number, number]): [number, number];
     fitBounds(
