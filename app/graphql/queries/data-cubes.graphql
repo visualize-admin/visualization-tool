@@ -38,9 +38,6 @@ fragment dimensionMetaData on Dimension {
   isKeyDimension
   values(filters: $filters)
   unit
-  ... on GeoShapesDimension {
-    geoShapes
-  }
   ... on TemporalDimension {
     timeUnit
     timeFormat
@@ -141,8 +138,8 @@ query DimensionValues(
 query GeoCoordinatesByDimensionIri(
   $dataCubeIri: String!
   $dimensionIri: String!
-  $latest: Boolean
   $locale: String!
+  $latest: Boolean
 ) {
   dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
@@ -153,6 +150,21 @@ query GeoCoordinatesByDimensionIri(
           latitude
           longitude
         }
+      }
+    }
+  }
+}
+
+query GeoShapesByDimensionIri(
+  $dataCubeIri: String!
+  $dimensionIri: String!
+  $locale: String!
+  $latest: Boolean
+) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
+    dimensionByIri(iri: $dimensionIri) {
+      ... on GeoShapesDimension {
+        geoShapes
       }
     }
   }

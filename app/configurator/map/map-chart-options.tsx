@@ -8,8 +8,9 @@ import {
   getGeoDimensions,
   getGeoShapesDimensions,
 } from "../../domain/data";
-import { GeoShapesDimension } from "../../graphql/query-hooks";
+import { useGeoShapesByDimensionIriQuery } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
+import { useLocale } from "../../src";
 import { ColorRampField } from "../components/chart-controls/color-ramp";
 import {
   ControlSection,
@@ -88,6 +89,7 @@ export const AreaLayerSettings = memo(
     chartConfig: MapConfig;
     metaData: DataCubeMetadata;
   }) => {
+    const locale = useLocale();
     const activeField = "areaLayer";
     const geoShapesDimensions = useMemo(
       () => getGeoShapesDimensions(metaData.dimensions),
@@ -101,21 +103,31 @@ export const AreaLayerSettings = memo(
         })),
       [geoShapesDimensions]
     );
-    const dimension = geoShapesDimensions.find(
-      (d) => d.iri === chartConfig.fields.areaLayer.componentIri
-    ) as GeoShapesDimension;
+
+    const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
+      variables: {
+        dataCubeIri: metaData.iri,
+        dimensionIri: chartConfig.fields.areaLayer.componentIri,
+        locale,
+      },
+    });
+
+    const geoShapes =
+      fetchedGeoShapes?.dataCubeByIri?.dimensionByIri?.__typename ===
+      "GeoShapesDimension"
+        ? (fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes as any)
+        : undefined;
 
     const hierarchyLevelOptions = useMemo(
       () =>
         [
           ...new Set(
             (
-              (dimension?.geoShapes as any)?.topology?.objects?.shapes
-                ?.geometries as GeoFeature[]
+              geoShapes?.topology?.objects?.shapes?.geometries as GeoFeature[]
             )?.map((d) => d.properties.hierarchyLevel)
           ),
         ]?.map((d) => ({ value: d, label: `${d}` })),
-      [dimension?.geoShapes]
+      [geoShapes]
     );
 
     const measuresOptions = useMemo(
@@ -127,11 +139,8 @@ export const AreaLayerSettings = memo(
       [metaData.measures]
     );
 
-    const numberOfGeoShapes = (
-      dimension
-        ? dimension.geoShapes.topology.objects.shapes.geometries.length
-        : 0
-    ) as number;
+    const numberOfGeoShapes = (geoShapes?.topology?.objects?.shapes?.geometries
+      ?.length || 0) as number;
 
     const numberOfColorScaleClasses = useMemo(
       () =>

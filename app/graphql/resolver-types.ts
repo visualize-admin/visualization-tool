@@ -148,7 +148,7 @@ export type GeoShapesDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoShapes: Scalars['GeoShapes'];
+  geoShapes?: Maybe<Scalars['GeoShapes']>;
 };
 
 
@@ -512,7 +512,7 @@ export type GeoShapesDimensionResolvers<ContextType = any, ParentType extends Re
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoShapesDimensionValuesArgs, never>>;
-  geoShapes?: Resolver<ResolversTypes['GeoShapes'], ParentType, ContextType>;
+  geoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

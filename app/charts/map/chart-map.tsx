@@ -22,6 +22,7 @@ import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
   useGeoCoordinatesByDimensionIriQuery,
+  useGeoShapesByDimensionIriQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { QueryFilters } from "../shared/chart-helpers";
@@ -73,8 +74,8 @@ export const ChartMapVisualization = ({
     useGeoCoordinatesByDimensionIriQuery({
       variables: {
         dataCubeIri: dataSetIri,
-        locale,
         dimensionIri: symbolDimensionIri,
+        locale,
       },
     });
 
@@ -82,13 +83,27 @@ export const ChartMapVisualization = ({
     fetchedGeoCoordinates?.dataCubeByIri?.dimensionByIri?.__typename ===
     "GeoCoordinatesDimension"
       ? fetchedGeoCoordinates.dataCubeByIri.dimensionByIri.geoCoordinates
-      : null;
+      : undefined;
+
+  const [{ data: fetchedGeoShapes }] = useGeoShapesByDimensionIriQuery({
+    variables: {
+      dataCubeIri: dataSetIri,
+      dimensionIri: areaDimensionIri,
+      locale,
+    },
+  });
+
+  const geoShapes =
+    fetchedGeoShapes?.dataCubeByIri?.dimensionByIri?.__typename ===
+    "GeoShapesDimension"
+      ? (fetchedGeoShapes.dataCubeByIri.dimensionByIri.geoShapes as GeoShapes)
+      : undefined;
 
   const areaLayer: AreaLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === areaDimensionIri);
 
-    if (isGeoShapesDimension(dimension) && observations) {
-      const { topology } = dimension.geoShapes as GeoShapes;
+    if (isGeoShapesDimension(dimension) && geoShapes && observations) {
+      const { topology } = geoShapes;
 
       const topojson = topojsonFeature(
         topology,
@@ -109,12 +124,16 @@ export const ChartMapVisualization = ({
         mesh: topojsonMesh(topology, topology.objects.shapes),
       };
     }
-  }, [areaDimensionIri, dimensions, observations]);
+  }, [areaDimensionIri, dimensions, observations, geoShapes]);
 
   const symbolLayer: SymbolLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === symbolDimensionIri);
 
-    if (isGeoCoordinatesDimension(dimension) && geoCoordinates) {
+    if (
+      isGeoCoordinatesDimension(dimension) &&
+      geoCoordinates &&
+      observations
+    ) {
       const points = geoCoordinates.map(
         (d) =>
           ({
@@ -122,7 +141,7 @@ export const ChartMapVisualization = ({
             properties: {
               iri: d.iri,
               label: d.label,
-              observation: observations?.find(
+              observation: observations.find(
                 (o) => o[symbolDimensionIri] === d.label
               ),
             },
@@ -170,6 +189,7 @@ export const ChartMapVisualization = ({
         measures={measures}
         dimensions={dimensions}
         baseLayer={chartConfig.baseLayer}
+        geoShapes={geoShapes}
       />
     );
   } else if (geoData.state === "fetching" || fetching) {
@@ -188,6 +208,7 @@ export const ChartMapPrototype = ({
   measures,
   dimensions,
   baseLayer,
+  geoShapes,
 }: {
   observations: Observation[];
   features: GeoData;
@@ -195,6 +216,7 @@ export const ChartMapPrototype = ({
   measures: DimensionMetaDataFragment[];
   dimensions: DimensionMetaDataFragment[];
   baseLayer: BaseLayer;
+  geoShapes?: GeoShapes;
 }) => {
   return (
     <Box sx={{ m: 4, bg: "#fff" }}>
@@ -205,6 +227,7 @@ export const ChartMapPrototype = ({
         measures={measures}
         dimensions={dimensions}
         baseLayer={baseLayer}
+        geoShapes={geoShapes}
       />
     </Box>
   );
@@ -218,6 +241,7 @@ export const ChartMap = memo(
     measures,
     dimensions,
     baseLayer,
+    geoShapes,
   }: {
     features: GeoData;
     observations: Observation[];
@@ -225,6 +249,7 @@ export const ChartMap = memo(
     dimensions: DimensionMetaDataFragment[];
     fields: MapFields;
     baseLayer: BaseLayer;
+    geoShapes?: GeoShapes;
   }) => {
     return (
       <MapChart
@@ -234,6 +259,7 @@ export const ChartMap = memo(
         measures={measures}
         dimensions={dimensions}
         baseLayer={baseLayer}
+        geoShapes={geoShapes}
       >
         <ChartContainer>
           <MapComponent />

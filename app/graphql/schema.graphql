@@ -77,7 +77,7 @@ type GeoShapesDimension implements Dimension {
   scaleType: String
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
-  geoShapes: GeoShapes!
+  geoShapes: GeoShapes
 }
 
 type NominalDimension implements Dimension {

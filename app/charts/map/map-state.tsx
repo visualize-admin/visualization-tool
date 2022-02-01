@@ -30,6 +30,7 @@ import {
 import {
   GeoData,
   GeoFeature,
+  GeoShapes,
   isGeoShapesDimension,
   Observation,
 } from "../../domain/data";
@@ -142,10 +143,12 @@ const useMapState = ({
   measures,
   dimensions,
   baseLayer,
+  geoShapes,
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   fields: MapFields;
   baseLayer: BaseLayer;
+  geoShapes?: GeoShapes;
 }): MapState => {
   const width = useWidth();
   const { areaLayer, symbolLayer } = fields;
@@ -169,10 +172,9 @@ const useMapState = ({
       const dimension = dimensions.find((d) => d.iri === geoDimensionIri);
 
       // Right now hierarchies are only created for geoShapes
-      if (isGeoShapesDimension(dimension)) {
+      if (isGeoShapesDimension(dimension) && geoShapes) {
         const hierarchyLabels = (
-          (dimension.geoShapes as any).topology.objects.shapes
-            .geometries as GeoFeature[]
+          (geoShapes as any).topology.objects.shapes.geometries as GeoFeature[]
         )
           .filter((d) => d.properties.hierarchyLevel === hierarchyLevel)
           .map((d) => d.properties.label);
@@ -182,7 +184,7 @@ const useMapState = ({
 
       return data;
     },
-    [data, dimensions]
+    [data, dimensions, geoShapes]
   );
 
   const areaData = useMemo(
@@ -313,12 +315,14 @@ const MapChartProvider = ({
   measures,
   dimensions,
   baseLayer,
+  geoShapes,
   children,
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   children: ReactNode;
   fields: MapFields;
   baseLayer: BaseLayer;
+  geoShapes?: GeoShapes;
 }) => {
   const state = useMapState({
     data,
@@ -327,6 +331,7 @@ const MapChartProvider = ({
     measures,
     dimensions,
     baseLayer,
+    geoShapes,
   });
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
@@ -340,11 +345,13 @@ export const MapChart = ({
   measures,
   dimensions,
   baseLayer,
+  geoShapes,
   children,
 }: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
   features: GeoData;
   fields: MapFields;
   baseLayer: BaseLayer;
+  geoShapes?: GeoShapes;
   children: ReactNode;
 }) => {
   return (
@@ -357,6 +364,7 @@ export const MapChart = ({
             fields={fields}
             measures={measures}
             dimensions={dimensions}
+            geoShapes={geoShapes}
             baseLayer={baseLayer}
           >
             {children}

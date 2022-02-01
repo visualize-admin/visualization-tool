@@ -143,7 +143,7 @@ export type GeoShapesDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
-  geoShapes: Scalars['GeoShapes'];
+  geoShapes?: Maybe<Scalars['GeoShapes']>;
 };
 
 
@@ -300,7 +300,7 @@ export type DataCubesQuery = { __typename: 'Query', dataCubes: Array<{ __typenam
 
 type DimensionMetaData_GeoCoordinatesDimension_Fragment = { __typename: 'GeoCoordinatesDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
-type DimensionMetaData_GeoShapesDimension_Fragment = { __typename: 'GeoShapesDimension', geoShapes: any, iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
+type DimensionMetaData_GeoShapesDimension_Fragment = { __typename: 'GeoShapesDimension', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
 type DimensionMetaData_Measure_Fragment = { __typename: 'Measure', iri: string, label: string, isKeyDimension: boolean, values: Array<any>, unit?: Maybe<string> };
 
@@ -425,12 +425,22 @@ export type DimensionValuesQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
 export type GeoCoordinatesByDimensionIriQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
   dimensionIri: Scalars['String'];
-  latest?: Maybe<Scalars['Boolean']>;
   locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
 }>;
 
 
 export type GeoCoordinatesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension', geoCoordinates?: Maybe<Array<{ __typename: 'GeoCoordinates', iri: string, label: string, latitude: number, longitude: number }>> } | { __typename: 'GeoShapesDimension' } | { __typename: 'Measure' } | { __typename: 'NominalDimension' } | { __typename: 'OrdinalDimension' } | { __typename: 'TemporalDimension' }> }> };
+
+export type GeoShapesByDimensionIriQueryVariables = Exact<{
+  dataCubeIri: Scalars['String'];
+  dimensionIri: Scalars['String'];
+  locale: Scalars['String'];
+  latest?: Maybe<Scalars['Boolean']>;
+}>;
+
+
+export type GeoShapesByDimensionIriQuery = { __typename: 'Query', dataCubeByIri?: Maybe<{ __typename: 'DataCube', dimensionByIri?: Maybe<{ __typename: 'GeoCoordinatesDimension' } | { __typename: 'GeoShapesDimension', geoShapes?: Maybe<any> } | { __typename: 'Measure' } | { __typename: 'NominalDimension' } | { __typename: 'OrdinalDimension' } | { __typename: 'TemporalDimension' }> }> };
 
 export type TemporalDimensionValuesQueryVariables = Exact<{
   dataCubeIri: Scalars['String'];
@@ -516,9 +526,6 @@ export const DimensionMetaDataFragmentDoc = gql`
   isKeyDimension
   values(filters: $filters)
   unit
-  ... on GeoShapesDimension {
-    geoShapes
-  }
   ... on TemporalDimension {
     timeUnit
     timeFormat
@@ -654,7 +661,7 @@ export function useDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<Dimensio
   return Urql.useQuery<DimensionValuesQuery>({ query: DimensionValuesDocument, ...options });
 };
 export const GeoCoordinatesByDimensionIriDocument = gql`
-    query GeoCoordinatesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $latest: Boolean, $locale: String!) {
+    query GeoCoordinatesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean) {
   dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
     dimensionByIri(iri: $dimensionIri) {
       ... on GeoCoordinatesDimension {
@@ -672,6 +679,21 @@ export const GeoCoordinatesByDimensionIriDocument = gql`
 
 export function useGeoCoordinatesByDimensionIriQuery(options: Omit<Urql.UseQueryArgs<GeoCoordinatesByDimensionIriQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GeoCoordinatesByDimensionIriQuery>({ query: GeoCoordinatesByDimensionIriDocument, ...options });
+};
+export const GeoShapesByDimensionIriDocument = gql`
+    query GeoShapesByDimensionIri($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean) {
+  dataCubeByIri(iri: $dataCubeIri, locale: $locale, latest: $latest) {
+    dimensionByIri(iri: $dimensionIri) {
+      ... on GeoShapesDimension {
+        geoShapes
+      }
+    }
+  }
+}
+    `;
+
+export function useGeoShapesByDimensionIriQuery(options: Omit<Urql.UseQueryArgs<GeoShapesByDimensionIriQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GeoShapesByDimensionIriQuery>({ query: GeoShapesByDimensionIriDocument, ...options });
 };
 export const TemporalDimensionValuesDocument = gql`
     query TemporalDimensionValues($dataCubeIri: String!, $dimensionIri: String!, $locale: String!, $latest: Boolean, $filters: Filters) {
