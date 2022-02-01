@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Box, Text, Flex } from "theme-ui";
-import { HintRed, Loading } from "../../components/hint";
+import { HintRed, Loading, LoadingDataError } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
 import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
@@ -15,7 +15,7 @@ export interface Preview {
 }
 export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
-  const [{ data: metaData }] = useDataCubePreviewQuery({
+  const [{ data: metaData, fetching, error }] = useDataCubePreviewQuery({
     variables: { iri: dataSetIri, locale },
   });
 
@@ -108,7 +108,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         </Box>
       </Flex>
     );
-  } else {
+  } else if (fetching) {
     return (
       <Flex
         sx={{
@@ -119,6 +119,19 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         }}
       >
         <Loading />
+      </Flex>
+    );
+  } else {
+    return (
+      <Flex
+        sx={{
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flexGrow: 1,
+          p: 5,
+        }}
+      >
+        <LoadingDataError message={error?.message} />
       </Flex>
     );
   }

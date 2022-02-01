@@ -151,7 +151,7 @@ export const NoDataHint = () => (
     </Text>
   </Flex>
 );
-export const LoadingDataError = () => (
+export const LoadingDataError = ({ message }: { message?: string }) => (
   <Flex
     sx={{
       width: "100%",
@@ -169,11 +169,18 @@ export const LoadingDataError = () => (
     <Text as="h5" variant="heading2" sx={{ my: 3 }}>
       <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
     </Text>
-    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-      <Trans id="hint.dataloadingerror.message">
-        The data could not be loaded.
-      </Trans>
-    </Text>
+    <Box sx={{ "& > * + *:not([data-no-margin])": { marginTop: 2 } }}>
+      <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+        <Trans id="hint.dataloadingerror.message">
+          The data could not be loaded.
+        </Trans>
+      </Text>
+      {message ? (
+        <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+          {message}
+        </Text>
+      ) : null}
+    </Box>
   </Flex>
 );
 

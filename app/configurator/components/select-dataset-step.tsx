@@ -157,15 +157,11 @@ export const SelectDatasetStepContent = () => {
               <SearchDatasetBox browseState={browseState} searchResult={data} />
             </Box>
           )}
-          {dataset || !data ? (
+          {dataset ? (
             <>
-              {dataset ? (
-                <Box>
-                  <DataSetPreview dataSetIri={dataset} />
-                </Box>
-              ) : (
-                <DataSetHint />
-              )}
+              <Box>
+                <DataSetPreview dataSetIri={dataset} />
+              </Box>
             </>
           ) : (
             <DatasetResults fetching={fetching} data={data} />
