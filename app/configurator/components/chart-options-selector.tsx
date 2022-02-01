@@ -178,19 +178,12 @@ const EncodingOptionsPanel = ({
   const getFieldLabelHint = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
-    baseLayer: t({ id: "chart.map.layers.base", message: "Base Layer" }),
-    areaLayer: t({
-      id: "controls.select.measure",
-      message: "Select a measure",
-    }),
-    symbolLayer: t({
-      id: "controls.select.measure",
-      message: "Select a measure",
-    }),
-    segment: t({
-      id: "controls.select.dimension",
-      message: "Select a dimension",
-    }),
+    // FIXME: encoding types, so we don't need these there (chart options are
+    // handled in a separate file)
+    baseLayer: "",
+    areaLayer: "",
+    symbolLayer: "",
+    segment: "",
   };
 
   useEffect(() => {

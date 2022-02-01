@@ -57,7 +57,7 @@ export const BaseLayersSettings = memo(() => {
   return (
     <ControlSection>
       <SectionTitle iconName="mapMaptype">
-        <Trans id="chart.map.settings">Settings</Trans>
+        <Trans id="chart.map.layers.base">Base Layer</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">
         <ChartOptionCheckboxField
@@ -160,8 +160,8 @@ export const AreaLayerSettings = memo(
     return (
       <>
         <ControlSection>
-          <SectionTitle iconName="settings">
-            <Trans id="chart.map.settings">Settings</Trans>
+          <SectionTitle iconName="mapRegions">
+            <Trans id="chart.map.layers.area">Areas</Trans>
           </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionCheckboxField
@@ -176,7 +176,7 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="mapRegions">
+          <SectionTitle iconName="chartMap">
             {t({
               id: "controls.dimension.geographical",
               message: "Geographical dimension",
@@ -370,8 +370,8 @@ export const SymbolLayerSettings = memo(
     return (
       <>
         <ControlSection>
-          <SectionTitle iconName="settings">
-            <Trans id="chart.map.settings">Settings</Trans>
+          <SectionTitle iconName="mapSymbols">
+            <Trans id="chart.map.layers.symbol">Symbols</Trans>
           </SectionTitle>
           <ControlSectionContent side="right">
             <ChartOptionCheckboxField
@@ -386,7 +386,7 @@ export const SymbolLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="mapSymbols">
+          <SectionTitle iconName="chartMap">
             {t({
               id: "controls.dimension.geographical",
               message: "Geographical dimension",
