@@ -237,13 +237,19 @@ export const MapComponent = () => {
               updateTriggers={{
                 getFillColor: [areaLayer.getValue, areaLayer.getColor],
               }}
-              getFillColor={(d: GeoFeature) =>
-                d.properties.observation
-                  ? areaLayer.getColor(
-                      areaLayer.getValue(d.properties.observation)
-                    )
-                  : [33, 33, 33, 33]
-              }
+              getFillColor={(d: GeoFeature) => {
+                const { observation } = d.properties;
+
+                if (observation) {
+                  const value = areaLayer.getValue(observation);
+
+                  if (value) {
+                    return areaLayer.getColor(value);
+                  }
+                }
+
+                return [222, 222, 222, 255];
+              }}
             />
             <GeoJsonLayer
               id="shapes-mesh"
