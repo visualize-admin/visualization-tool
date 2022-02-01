@@ -4,7 +4,6 @@ import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { Box, Button, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
-import { DataSetHint } from "../../components/hint";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
 import { useConfiguratorState, useLocale } from "../../src";
 import {
@@ -157,15 +156,11 @@ export const SelectDatasetStepContent = () => {
               <SearchDatasetBox browseState={browseState} searchResult={data} />
             </Box>
           )}
-          {dataset || !data ? (
+          {dataset ? (
             <>
-              {dataset ? (
-                <Box>
-                  <DataSetPreview dataSetIri={dataset} />
-                </Box>
-              ) : (
-                <DataSetHint />
-              )}
+              <Box>
+                <DataSetPreview dataSetIri={dataset} />
+              </Box>
             </>
           ) : (
             <DatasetResults fetching={fetching} data={data} />

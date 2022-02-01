@@ -2,7 +2,6 @@ import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
 import { Box, BoxProps, Link } from "theme-ui";
-import { Loading } from "../../components/hint";
 import Stack from "../../components/Stack";
 import { useFormatDate } from "../../configurator/components/ui-helpers";
 import {
@@ -19,12 +18,14 @@ export const DataSetMetadata = ({
 }: { dataSetIri: string } & BoxProps) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
-  const [{ data }] = useDataCubeMetadataQuery({
+  const [{ data, fetching, error }] = useDataCubeMetadataQuery({
     variables: { iri: dataSetIri, locale },
   });
   const cube = data?.dataCubeByIri;
-  if (!cube) {
-    return <Loading />;
+  if (fetching || error || !cube) {
+    // The error and loading are managed by the component
+    // displayed in the middle panel
+    return null;
   }
 
   return (
