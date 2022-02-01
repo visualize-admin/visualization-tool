@@ -304,7 +304,7 @@ msgstr "Sequenziale"
 
 #: app/configurator/map/map-chart-options.tsx:437
 msgid "controls.color.select"
-msgstr ""
+msgstr "Seleziona un colore"
 
 #: app/configurator/components/chart-controls/color-picker.tsx:158
 msgid "controls.colorpicker.open"
