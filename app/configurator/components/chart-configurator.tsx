@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
 import { sortBy } from "lodash";
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -135,7 +135,7 @@ export const ChartConfigurator = ({
       // are the same  while the order of the keys has changed.
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order
-      date: new Date(),
+      filterKeys: Object.keys(state.chartConfig.filters).join(", "),
     }),
     [state, locale]
   );
@@ -171,14 +171,13 @@ export const ChartConfigurator = ({
     [data?.dataCubeByIri?.dimensions, dispatch, metaData, state.chartConfig]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     executeQuery({
-      requestPolicy: "network-only",
       variables,
     });
   }, [variables, executeQuery]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!metaData || !data || !data.dataCubeByIri) {
       return;
     }
