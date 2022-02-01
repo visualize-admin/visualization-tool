@@ -13,23 +13,23 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:389
+#: app/configurator/components/chart-configurator.tsx:388
 msgid "Add filter"
-msgstr ""
+msgstr "Aggiungi filtro"
 
 #: app/components/search-autocomplete.tsx:69
 msgid "Browse {0}"
 msgstr "Sfoglia {0}"
 
-#: app/configurator/components/chart-configurator.tsx:345
+#: app/configurator/components/chart-configurator.tsx:344
 msgid "Drag filters to reorganize"
 msgstr "Trascina i filtri per riorganizzarli"
 
-#: app/configurator/components/chart-configurator.tsx:342
+#: app/configurator/components/chart-configurator.tsx:341
 msgid "Move filter down"
 msgstr "Sposta il filtro in basso"
 
-#: app/configurator/components/chart-configurator.tsx:339
+#: app/configurator/components/chart-configurator.tsx:338
 msgid "Move filter up"
 msgstr "Sposta il filtro in alto"
 
@@ -73,11 +73,11 @@ msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando p
 msgid "button.copy.visualization"
 msgstr "Copia questa visualizzazione"
 
-#: app/components/data-download.tsx:122
+#: app/components/data-download.tsx:137
 msgid "button.download.data"
 msgstr "Scarica i dati"
 
-#: app/components/data-download.tsx:71
+#: app/components/data-download.tsx:86
 msgid "button.download.runsparqlquery"
 msgstr "Esegui query SPARQL"
 
@@ -115,6 +115,7 @@ msgid "button.share"
 msgstr "Condividi"
 
 #: app/configurator/components/ui-helpers.ts:417
+#: app/configurator/map/map-chart-options.tsx:167
 msgid "chart.map.layers.area"
 msgstr "Aree"
 
@@ -122,15 +123,15 @@ msgstr "Aree"
 #~ msgid "chart.map.layers.area.color.palette"
 #~ msgstr "Palette di colore"
 
-#: app/configurator/map/map-chart-options.tsx:237
+#: app/configurator/map/map-chart-options.tsx:251
 msgid "chart.map.layers.area.discretization.continuous"
 msgstr "Continuo"
 
-#: app/configurator/map/map-chart-options.tsx:250
+#: app/configurator/map/map-chart-options.tsx:264
 msgid "chart.map.layers.area.discretization.discrete"
 msgstr "Discreto"
 
-#: app/configurator/map/map-chart-options.tsx:298
+#: app/configurator/map/map-chart-options.tsx:312
 msgid "chart.map.layers.area.discretization.jenks"
 msgstr "Jenks (interruzioni naturali)"
 
@@ -142,25 +143,25 @@ msgstr "Jenks (interruzioni naturali)"
 #~ msgid "chart.map.layers.area.discretization.number.class"
 #~ msgstr "Numero di classi"
 
-#: app/configurator/map/map-chart-options.tsx:291
+#: app/configurator/map/map-chart-options.tsx:305
 msgid "chart.map.layers.area.discretization.quantiles"
 msgstr "Quantili (distribuzione omogenea dei valori)"
 
-#: app/configurator/map/map-chart-options.tsx:284
+#: app/configurator/map/map-chart-options.tsx:298
 msgid "chart.map.layers.area.discretization.quantize"
 msgstr "Intervalli uguali"
 
-#: app/configurator/components/chart-configurator.tsx:433
-#: app/configurator/components/chart-options-selector.tsx:176
+#: app/configurator/components/chart-configurator.tsx:432
 #: app/configurator/components/ui-helpers.ts:413
+#: app/configurator/map/map-chart-options.tsx:60
 msgid "chart.map.layers.base"
 msgstr "Livello di base"
 
-#: app/configurator/map/map-chart-options.tsx:71
+#: app/configurator/map/map-chart-options.tsx:72
 msgid "chart.map.layers.base.show.lakes"
 msgstr "Mostra i laghi"
 
-#: app/configurator/map/map-chart-options.tsx:63
+#: app/configurator/map/map-chart-options.tsx:64
 msgid "chart.map.layers.base.show.relief"
 msgstr "Mostra il rilievo"
 
@@ -168,12 +169,13 @@ msgstr "Mostra il rilievo"
 #~ msgid "chart.map.layers.no.selected"
 #~ msgstr "Seleziona un livello da editare nel pannello di sinistra."
 
-#: app/configurator/map/map-chart-options.tsx:159
-#: app/configurator/map/map-chart-options.tsx:366
+#: app/configurator/map/map-chart-options.tsx:171
+#: app/configurator/map/map-chart-options.tsx:383
 msgid "chart.map.layers.show"
 msgstr "Mostra il livello"
 
 #: app/configurator/components/ui-helpers.ts:421
+#: app/configurator/map/map-chart-options.tsx:379
 msgid "chart.map.layers.symbol"
 msgstr "Simboli"
 
@@ -184,8 +186,12 @@ msgstr "Simboli"
 #: app/configurator/map/map-chart-options.tsx:59
 #: app/configurator/map/map-chart-options.tsx:155
 #: app/configurator/map/map-chart-options.tsx:362
-msgid "chart.map.settings"
-msgstr "Opzioni"
+#~ msgid "chart.map.settings"
+#~ msgstr "Opzioni"
+
+#: app/configurator/map/map-chart-options.tsx:452
+msgid "chart.map.warning.noGeoDimensions"
+msgstr "In questo set di dati non ci sono dimensioni geografiche da mostrare!"
 
 #: app/charts/map/chart-map-prototype.tsx:274
 #~ msgid "chart.map.warning.prototype"
@@ -269,8 +275,8 @@ msgid "controls.chart.type.table"
 msgstr "Tabella"
 
 #: app/configurator/components/ui-helpers.ts:399
-#: app/configurator/map/map-chart-options.tsx:226
-#: app/configurator/map/map-chart-options.tsx:418
+#: app/configurator/map/map-chart-options.tsx:240
+#: app/configurator/map/map-chart-options.tsx:433
 msgid "controls.color"
 msgstr "Colore"
 
@@ -312,7 +318,8 @@ msgstr "impilate"
 msgid "controls.description"
 msgstr "Descrizione"
 
-#: app/configurator/map/map-chart-options.tsx:378
+#: app/configurator/map/map-chart-options.tsx:182
+#: app/configurator/map/map-chart-options.tsx:394
 msgid "controls.dimension.geographical"
 msgstr "Dimensione geografica"
 
@@ -343,11 +350,11 @@ msgstr "Deseleziona tutto"
 msgid "controls.filters.time.range"
 msgstr "intervallo di tempo"
 
-#: app/configurator/map/map-chart-options.tsx:189
+#: app/configurator/map/map-chart-options.tsx:203
 msgid "controls.hierarchy"
 msgstr "Livello gerarchico"
 
-#: app/configurator/map/map-chart-options.tsx:194
+#: app/configurator/map/map-chart-options.tsx:208
 msgid "controls.hierarchy.select"
 msgstr "Selezionare un livello gerarchico"
 
@@ -363,18 +370,18 @@ msgstr "Seleziona una delle annotazioni proposte per modificarla."
 msgid "controls.imputation"
 msgstr "Tipo di imputazione"
 
-#: app/configurator/components/chart-options-selector.tsx:490
+#: app/configurator/components/chart-options-selector.tsx:488
 #: app/configurator/components/ui-helpers.ts:473
 msgid "controls.imputation.type.linear"
 msgstr "Interpolazione lineare"
 
-#: app/configurator/components/chart-options-selector.tsx:483
-#: app/configurator/components/chart-options-selector.tsx:495
+#: app/configurator/components/chart-options-selector.tsx:481
+#: app/configurator/components/chart-options-selector.tsx:493
 #: app/configurator/components/ui-helpers.ts:465
 msgid "controls.imputation.type.none"
 msgstr "-"
 
-#: app/configurator/components/chart-options-selector.tsx:485
+#: app/configurator/components/chart-options-selector.tsx:483
 #: app/configurator/components/ui-helpers.ts:469
 msgid "controls.imputation.type.zeros"
 msgstr "Zeri"
@@ -416,8 +423,8 @@ msgid "controls.language.italian"
 msgstr "Italiano"
 
 #: app/configurator/components/ui-helpers.ts:391
-#: app/configurator/map/map-chart-options.tsx:208
-#: app/configurator/map/map-chart-options.tsx:400
+#: app/configurator/map/map-chart-options.tsx:222
+#: app/configurator/map/map-chart-options.tsx:415
 msgid "controls.measure"
 msgstr "Misura"
 
@@ -429,15 +436,15 @@ msgstr "Attivo"
 msgid "controls.option.isNotActive"
 msgstr "Inattivo"
 
-#: app/configurator/map/map-chart-options.tsx:230
+#: app/configurator/map/map-chart-options.tsx:244
 msgid "controls.scale.type"
 msgstr "Tipo di scala"
 
-#: app/components/form.tsx:453
+#: app/components/form.tsx:461
 msgid "controls.search.clear"
 msgstr "Cancella la ricerca"
 
-#: app/configurator/components/chart-configurator.tsx:264
+#: app/configurator/components/chart-configurator.tsx:263
 msgid "controls.section.chart.options"
 msgstr "Opzioni del grafico"
 
@@ -449,7 +456,7 @@ msgstr "Colonne"
 msgid "controls.section.columnstyle"
 msgstr "Stile della colonna"
 
-#: app/configurator/components/chart-configurator.tsx:279
+#: app/configurator/components/chart-configurator.tsx:278
 msgid "controls.section.data.filters"
 msgstr "Filtri"
 
@@ -457,8 +464,8 @@ msgstr "Filtri"
 msgid "controls.section.description"
 msgstr "Titolo e descrizione"
 
-#: app/configurator/components/chart-options-selector.tsx:275
-#: app/configurator/components/chart-options-selector.tsx:279
+#: app/configurator/components/chart-options-selector.tsx:273
+#: app/configurator/components/chart-options-selector.tsx:277
 #: app/configurator/table/table-chart-options.tsx:301
 #: app/configurator/table/table-chart-options.tsx:305
 #: app/configurator/table/table-chart-options.tsx:325
@@ -470,11 +477,11 @@ msgstr "Filtro"
 msgid "controls.section.groups"
 msgstr "Gruppi"
 
-#: app/configurator/components/chart-options-selector.tsx:524
+#: app/configurator/components/chart-options-selector.tsx:522
 msgid "controls.section.imputation"
 msgstr "Valori mancanti"
 
-#: app/configurator/components/chart-options-selector.tsx:529
+#: app/configurator/components/chart-options-selector.tsx:527
 msgid "controls.section.imputation.explanation"
 msgstr "Per questo tipo di grafico, i valori di sostituzione devono essere assegnati ai valori mancanti. Decidi la logica di imputazione o passa a un altro tipo di grafico."
 
@@ -486,7 +493,7 @@ msgstr "Filtri interattivi"
 msgid "controls.section.interactiveFilters.dataFilters"
 msgstr "Filtri di dati"
 
-#: app/configurator/components/chart-options-selector.tsx:411
+#: app/configurator/components/chart-options-selector.tsx:409
 msgid "controls.section.sorting"
 msgstr "Ordina"
 
@@ -507,7 +514,7 @@ msgstr "Opzioni della tabella"
 msgid "controls.select.chart.type"
 msgstr "Tipo di grafico"
 
-#: app/configurator/components/chart-options-selector.tsx:321
+#: app/configurator/components/chart-options-selector.tsx:319
 msgid "controls.select.column.layout"
 msgstr "Layout a colonne"
 
@@ -543,18 +550,15 @@ msgstr "Colore del testo"
 msgid "controls.select.columnStyle.textStyle"
 msgstr "Stile del testo"
 
-#: app/configurator/components/chart-options-selector.tsx:174
-#: app/configurator/components/chart-options-selector.tsx:185
-#: app/configurator/map/map-chart-options.tsx:176
-#: app/configurator/map/map-chart-options.tsx:387
+#: app/configurator/components/chart-options-selector.tsx:179
+#: app/configurator/map/map-chart-options.tsx:190
+#: app/configurator/map/map-chart-options.tsx:402
 msgid "controls.select.dimension"
 msgstr "Seleziona una dimensione"
 
-#: app/configurator/components/chart-options-selector.tsx:175
-#: app/configurator/components/chart-options-selector.tsx:177
-#: app/configurator/components/chart-options-selector.tsx:181
-#: app/configurator/map/map-chart-options.tsx:213
-#: app/configurator/map/map-chart-options.tsx:405
+#: app/configurator/components/chart-options-selector.tsx:180
+#: app/configurator/map/map-chart-options.tsx:227
+#: app/configurator/map/map-chart-options.tsx:420
 msgid "controls.select.measure"
 msgstr "Seleziona una misura"
 
@@ -569,8 +573,8 @@ msgstr "facoltativo"
 msgid "controls.sorting.addDimension"
 msgstr "Aggiungi una dimensione"
 
-#: app/configurator/components/chart-options-selector.tsx:362
-#: app/configurator/components/chart-options-selector.tsx:368
+#: app/configurator/components/chart-options-selector.tsx:360
+#: app/configurator/components/chart-options-selector.tsx:366
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Nome"
 
@@ -582,7 +586,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx:364
+#: app/configurator/components/chart-options-selector.tsx:362
 msgid "controls.sorting.byMeasure"
 msgstr "Misura"
 
@@ -594,7 +598,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx:366
+#: app/configurator/components/chart-options-selector.tsx:364
 msgid "controls.sorting.byTotalSize"
 msgstr "Grandezza totale"
 

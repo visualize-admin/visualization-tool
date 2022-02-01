@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import React, { memo, useMemo } from "react";
-import { Flex } from "theme-ui";
+import { Box, Flex } from "theme-ui";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "..";
 import { FieldSetLegend } from "../../components/form";
 import {
@@ -155,9 +155,12 @@ export const AreaLayerSettings = memo(
       chartConfig.fields.areaLayer.nbClass;
     const currentColorScaleType = chartConfig.fields.areaLayer.colorScaleType;
 
-    const disabled = !chartConfig.fields.areaLayer.show;
+    const isAvailable = geoShapesDimensions.length > 0;
+    const isHidden = !chartConfig.fields.areaLayer.show;
 
-    return (
+    return !isAvailable ? (
+      <NoGeoDimensionsWarning />
+    ) : (
       <>
         <ControlSection>
           <SectionTitle iconName="mapRegions">
@@ -171,7 +174,6 @@ export const AreaLayerSettings = memo(
               })}
               field="areaLayer"
               path="show"
-              disabled={geoShapesDimensions.length === 0}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -192,7 +194,7 @@ export const AreaLayerSettings = memo(
               field={activeField}
               path="componentIri"
               options={geoShapesDimensionsOptions}
-              disabled={disabled}
+              disabled={isHidden}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -211,7 +213,7 @@ export const AreaLayerSettings = memo(
               path="hierarchyLevel"
               options={hierarchyLevelOptions}
               getValue={(d) => +d}
-              disabled={disabled}
+              disabled={isHidden}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -229,7 +231,7 @@ export const AreaLayerSettings = memo(
               field={activeField}
               path="measureIri"
               options={measuresOptions}
-              disabled={disabled}
+              disabled={isHidden}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -253,7 +255,7 @@ export const AreaLayerSettings = memo(
                 field={activeField}
                 path="colorScaleType"
                 value="continuous"
-                disabled={disabled}
+                disabled={isHidden}
               />
 
               {/* Limit the number of clusters to min. 3 */}
@@ -266,7 +268,7 @@ export const AreaLayerSettings = memo(
                   field={activeField}
                   path="colorScaleType"
                   value="discrete"
-                  disabled={disabled}
+                  disabled={isHidden}
                 />
               )}
             </Flex>
@@ -279,7 +281,7 @@ export const AreaLayerSettings = memo(
                   ? currentNumberOfColorScaleClasses
                   : undefined
               }
-              disabled={disabled}
+              disabled={isHidden}
             />
 
             {chartConfig.fields.areaLayer.colorScaleType === "discrete" &&
@@ -314,7 +316,7 @@ export const AreaLayerSettings = memo(
                         value: "jenks",
                       },
                     ]}
-                    disabled={disabled}
+                    disabled={isHidden}
                   />
                   <ChartOptionSelectField<number>
                     id="areaLayer.nbClass"
@@ -322,8 +324,8 @@ export const AreaLayerSettings = memo(
                     field={activeField}
                     path="nbClass"
                     options={numberOfColorScaleClasses}
-                    disabled={disabled}
                     getValue={(d) => +d}
+                    disabled={isHidden}
                   />
                 </>
               )}
@@ -365,9 +367,12 @@ export const SymbolLayerSettings = memo(
       [metaData.measures]
     );
 
-    const disabled = !chartConfig.fields.symbolLayer.show;
+    const isAvailable = geoDimensions.length > 0;
+    const isHidden = !chartConfig.fields.symbolLayer.show;
 
-    return (
+    return !isAvailable ? (
+      <NoGeoDimensionsWarning />
+    ) : (
       <>
         <ControlSection>
           <SectionTitle iconName="mapSymbols">
@@ -381,7 +386,6 @@ export const SymbolLayerSettings = memo(
               })}
               field="symbolLayer"
               path="show"
-              disabled={geoDimensions.length === 0}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -402,7 +406,7 @@ export const SymbolLayerSettings = memo(
               field={activeField}
               path="componentIri"
               options={geoDimensionsOptions}
-              disabled={disabled}
+              disabled={isHidden}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -420,7 +424,7 @@ export const SymbolLayerSettings = memo(
               field={activeField}
               path="measureIri"
               options={measuresOptions}
-              disabled={disabled}
+              disabled={isHidden}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -433,7 +437,7 @@ export const SymbolLayerSettings = memo(
               label="Select a color"
               field={activeField}
               path="color"
-              disabled={disabled}
+              disabled={isHidden}
             />
           </ControlSectionContent>
         </ControlSection>
@@ -441,3 +445,13 @@ export const SymbolLayerSettings = memo(
     );
   }
 );
+
+const NoGeoDimensionsWarning = () => {
+  return (
+    <Box sx={{ my: 3, py: 3, px: 5, width: "80%" }}>
+      <Trans id="chart.map.warning.noGeoDimensions">
+        In this dataset there are no geographical dimensions to display.
+      </Trans>
+    </Box>
+  );
+};
