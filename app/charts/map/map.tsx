@@ -181,7 +181,7 @@ export const MapComponent = () => {
             pickable={false}
             minZoom={2}
             maxZoom={16}
-            tileSize={256}
+            maxCacheSize={512}
             renderSubLayers={(props: { tile: TileData; data: $FixMe }) => {
               const {
                 bbox: { west, south, east, north },
