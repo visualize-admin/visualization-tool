@@ -5,6 +5,7 @@ import { schema, dcat, dcterms } from "../../app/rdf/namespace";
 import { DataCubeOrganization, DataCubeTheme } from "../graphql/query-hooks";
 import { keyBy } from "lodash";
 import { makeLocalesFilter } from "./query-labels";
+import * as RDF from "@rdfjs/data-model";
 
 type RawDataCubeTheme = Omit<DataCubeTheme, "__typename">;
 type RawDataCubeOrganization = Omit<DataCubeOrganization, "__typename">;
@@ -170,6 +171,27 @@ export const queryDatasetCountBySubTheme = async ({
       };
     })
     .filter((r) => r.iri);
+};
+
+export const queryLatestPublishedCubeFromUnversionedIri = async (
+  unversionedIri: string
+) => {
+  const iri = RDF.variable("iri");
+  const query = SELECT`${iri}`.WHERE`
+    <${unversionedIri}> ${schema.hasPart} ${iri}.
+    ${makeVisualizeDatasetFilter()}
+  `
+    .ORDER()
+    .BY(iri, true);
+  const results = await sparqlClient.query.select(query.build(), {
+    operation: "postUrlencoded",
+  });
+  if (results.length !== 1) {
+    return;
+  }
+  return {
+    iri: results[0].iri.value,
+  };
 };
 
 export const loadSubthemes = async ({
