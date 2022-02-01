@@ -2,17 +2,18 @@ import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
 import { sortBy } from "lodash";
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   DragDropContext,
-  Droppable,
   Draggable,
+  Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 import { Box, Button, Spinner } from "theme-ui";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
+  isMapConfig,
   useConfiguratorState,
 } from "..";
 import { getFieldComponentIris } from "../../charts";
@@ -40,6 +41,7 @@ import {
   DataFilterSelect,
   DataFilterSelectDay,
   DataFilterSelectTime,
+  OnOffControlTabField,
 } from "./field";
 import MoveDragButtons from "./move-drag-buttons";
 
@@ -133,7 +135,7 @@ export const ChartConfigurator = ({
       // are the same  while the order of the keys has changed.
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order
-      date: new Date(),
+      filterKeys: Object.keys(state.chartConfig.filters).join(", "),
     }),
     [state, locale]
   );
@@ -169,14 +171,13 @@ export const ChartConfigurator = ({
     [data?.dataCubeByIri?.dimensions, dispatch, metaData, state.chartConfig]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     executeQuery({
-      requestPolicy: "network-only",
       variables,
     });
   }, [variables, executeQuery]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!metaData || !data || !data.dataCubeByIri) {
       return;
     }
@@ -424,15 +425,23 @@ const ChartFields = ({
   return (
     <>
       {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
-        const encodingField = encoding.field;
-
-        return (
+        return isMapConfig(chartConfig) && encoding.field === "baseLayer" ? (
+          <OnOffControlTabField
+            value={encoding.field}
+            icon="baseLayer"
+            label={<Trans id="chart.map.layers.base">Base Layer</Trans>}
+            active={
+              chartConfig.baseLayer.showLakes ||
+              chartConfig.baseLayer.showRelief
+            }
+          />
+        ) : (
           <ControlTabField
             key={encoding.field}
             component={components.find(
               (d) =>
                 d.iri ===
-                (chartConfig.fields as any)[encodingField]?.componentIri
+                (chartConfig.fields as any)[encoding.field]?.componentIri
             )}
             value={encoding.field}
             labelId={`${chartConfig.chartType}.${encoding.field}`}

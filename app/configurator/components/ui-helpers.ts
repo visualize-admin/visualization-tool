@@ -410,17 +410,17 @@ const fieldLabels = {
     id: "controls.column.grouped",
     message: "Grouped",
   }),
-  "controls.map.baseLayer": defineMessage({
-    id: "controls.map.baseLayer",
-    message: "Base layer",
+  "chart.map.layers.base": defineMessage({
+    id: "chart.map.layers.base",
+    message: "Base Layer",
   }),
-  "controls.map.areaLayer": defineMessage({
-    id: "controls.map.areaLayer",
-    message: "Area layer",
+  "chart.map.layers.area": defineMessage({
+    id: "chart.map.layers.area",
+    message: "Areas",
   }),
-  "controls.map.symbolLayer": defineMessage({
-    id: "controls.map.symbolLayer",
-    message: "Symbol layer",
+  "chart.map.layers.symbol": defineMessage({
+    id: "chart.map.layers.symbol",
+    message: "Symbols",
   }),
   "controls.sorting.sortBy": defineMessage({
     id: "controls.sorting.sortBy",
@@ -553,11 +553,11 @@ export function getFieldLabel(field: string): string {
     case "segment":
       return i18n._(fieldLabels["controls.color"]);
     case "map.baseLayer":
-      return i18n._(fieldLabels["controls.map.baseLayer"]);
+      return i18n._(fieldLabels["chart.map.layers.base"]);
     case "map.areaLayer":
-      return i18n._(fieldLabels["controls.map.areaLayer"]);
+      return i18n._(fieldLabels["chart.map.layers.area"]);
     case "map.symbolLayer":
-      return i18n._(fieldLabels["controls.map.symbolLayer"]);
+      return i18n._(fieldLabels["chart.map.layers.symbol"]);
     case "title":
       return i18n._(fieldLabels["controls.title"]);
     case "description":

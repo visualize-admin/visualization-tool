@@ -277,7 +277,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [
       {
         field: "baseLayer",
-        optional: true,
+        optional: false,
         values: [],
         filters: false,
       },
@@ -289,7 +289,7 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
       },
       {
         field: "symbolLayer",
-        optional: true,
+        optional: false,
         values: ["Measure"],
         filters: false,
       },

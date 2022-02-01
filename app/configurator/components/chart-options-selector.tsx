@@ -57,6 +57,11 @@ export const ChartOptionsSelector = ({
         ? Object.values(state.chartConfig.fields).flatMap((f) =>
             f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
           )
+        : isMapConfig(state.chartConfig)
+        ? [
+            state.chartConfig.fields.areaLayer.measureIri,
+            state.chartConfig.fields.symbolLayer.measureIri,
+          ]
         : [],
     [state.chartConfig]
   );
@@ -173,19 +178,12 @@ const EncodingOptionsPanel = ({
   const getFieldLabelHint = {
     x: t({ id: "controls.select.dimension", message: "Select a dimension" }),
     y: t({ id: "controls.select.measure", message: "Select a measure" }),
-    baseLayer: t({ id: "controls.map.baseLayer", message: "Base layer" }),
-    areaLayer: t({
-      id: "controls.select.measure",
-      message: "Select a measure",
-    }),
-    symbolLayer: t({
-      id: "controls.select.measure",
-      message: "Select a measure",
-    }),
-    segment: t({
-      id: "controls.select.dimension",
-      message: "Select a dimension",
-    }),
+    // FIXME: encoding types, so we don't need these there (chart options are
+    // handled in a separate file)
+    baseLayer: "",
+    areaLayer: "",
+    symbolLayer: "",
+    segment: "",
   };
 
   useEffect(() => {

@@ -73,14 +73,7 @@ export const MapLegend = () => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
 
   return (
-    <Flex
-      sx={{
-        minHeight: 100,
-        borderTop: "1px solid",
-        borderTopColor: "monochrome200",
-        flexWrap: "wrap",
-      }}
-    >
+    <Flex sx={{ minHeight: 100, flexWrap: "wrap" }}>
       {areaLayer.show && (
         <Box sx={{ p: 4 }}>
           {areaLayer.measureLabel && (

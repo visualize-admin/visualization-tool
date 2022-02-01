@@ -1,22 +1,17 @@
 import { Trans } from "@lingui/macro";
 import get from "lodash/get";
 import { ReactNode, useCallback } from "react";
-import { Box } from "theme-ui";
 import { getFieldComponentIri } from "../../charts";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
-import {
-  ControlTabButton,
-  ControlTabButtonInner,
-} from "../components/chart-controls/control-tab";
+import { OnOffControlTab } from "../components/chart-controls/control-tab";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
 } from "../components/chart-controls/section";
-import { getIconName } from "../components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "../config-types";
 import { useConfiguratorState } from "../configurator-state";
 
@@ -47,12 +42,14 @@ export const InteractiveFiltersConfigurator = ({
     );
 
     // Can chart type have these filter options?
-    const canFilterLegend = chartConfigOptionsUISpec[
-      state.chartConfig.chartType
-    ].interactiveFilters.includes("legend");
-    const canFilterTime = chartConfigOptionsUISpec[
-      state.chartConfig.chartType
-    ].interactiveFilters.includes("time");
+    const canFilterLegend =
+      chartConfigOptionsUISpec[
+        state.chartConfig.chartType
+      ].interactiveFilters.includes("legend");
+    const canFilterTime =
+      chartConfigOptionsUISpec[
+        state.chartConfig.chartType
+      ].interactiveFilters.includes("time");
     const canFilterData = Object.keys(state.chartConfig.filters).length > 0;
     return (
       <ControlSection
@@ -123,8 +120,7 @@ const InteractiveFilterTabField = ({
   }, [dispatch, value]);
 
   const checked = state.activeField === value;
-
-  const optionActive =
+  const active =
     state.state === "DESCRIBING_CHART"
       ? get(
           state,
@@ -134,22 +130,13 @@ const InteractiveFilterTabField = ({
       : "";
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        borderRadius: "default",
-        my: "2px",
-      }}
-    >
-      <ControlTabButton checked={checked} value={`${value}`} onClick={onClick}>
-        <ControlTabButtonInner
-          iconName={getIconName(icon)}
-          lowerLabel={label}
-          checked={checked}
-          isActive={optionActive}
-          showIsActive
-        />
-      </ControlTabButton>
-    </Box>
+    <OnOffControlTab
+      value={`${value}`}
+      label={label}
+      icon={icon}
+      checked={checked}
+      active={active}
+      onClick={onClick}
+    />
   );
 };

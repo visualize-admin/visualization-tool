@@ -2,6 +2,7 @@ import { t } from "@lingui/macro";
 import { extent, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
+import "react-day-picker/lib/style.css";
 import { Flex } from "theme-ui";
 import {
   Option,
@@ -14,11 +15,11 @@ import {
 } from "..";
 import {
   Checkbox,
+  DayPickerField,
   Input,
   Label,
   Radio,
   Select,
-  DayPickerField,
 } from "../../components/form";
 import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -33,14 +34,17 @@ import {
 } from "../config-form";
 import { FIELD_VALUE_NONE } from "../constants";
 import { ColorPickerMenu } from "./chart-controls/color-picker";
-import { AnnotatorTab, ControlTab } from "./chart-controls/control-tab";
+import {
+  AnnotatorTab,
+  ControlTab,
+  OnOffControlTab,
+} from "./chart-controls/control-tab";
 import {
   getPalette,
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
   useTimeFormatLocale,
 } from "./ui-helpers";
-import "react-day-picker/lib/style.css";
 
 export const ControlTabField = ({
   component,
@@ -65,6 +69,33 @@ export const ControlTabField = ({
       checked={field.checked}
       onClick={field.onClick}
     ></ControlTab>
+  );
+};
+
+export const OnOffControlTabField = ({
+  value,
+  label,
+  icon,
+  active,
+}: {
+  value: string;
+  label: ReactNode;
+  icon: string;
+  active?: boolean;
+}) => {
+  const { checked, onClick } = useActiveFieldField({
+    value,
+  });
+
+  return (
+    <OnOffControlTab
+      value={value}
+      label={label}
+      icon={icon}
+      checked={checked}
+      active={active}
+      onClick={onClick}
+    />
   );
 };
 
@@ -198,6 +229,7 @@ export const DataFilterSelectDay = ({
       onChange={fieldProps.onChange}
       name={dimensionIri}
       value={dateValue}
+      isDayDisabled={isDisabled}
       inputProps={{
         id,
         disabled,
@@ -205,7 +237,6 @@ export const DataFilterSelectDay = ({
       dayPickerProps={{
         fromMonth,
         toMonth,
-        disabledDays: isDisabled,
       }}
     />
   );
@@ -754,3 +785,5 @@ export const ChartOptionSelectField = <ValueType extends {} = string>({
     ></Select>
   );
 };
+
+export const OnOffTabField = () => {};

@@ -1,18 +1,19 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { ControlList } from "../configurator/components/chart-controls/list";
-import {
-  ControlSection,
-  SectionTitle,
-} from "../configurator/components/chart-controls/section";
+import { useState } from "react";
+import { Box } from "theme-ui";
 import { Checkbox, Input, Radio, Select } from "../components/form";
 import {
   ColorPicker,
   ColorPickerMenu,
 } from "../configurator/components/chart-controls/color-picker";
-import { getPalette } from "../configurator/components/ui-helpers";
-import { useState } from "react";
-import { Box } from "theme-ui";
+import { OnOffControlTab } from "../configurator/components/chart-controls/control-tab";
+import { ControlList } from "../configurator/components/chart-controls/list";
+import {
+  ControlSection,
+  SectionTitle,
+} from "../configurator/components/chart-controls/section";
 import { ChartTypeSelectionButton } from "../configurator/components/chart-type-selector";
+import { getPalette } from "../configurator/components/ui-helpers";
 
 // const vegaPalettes: Array<{ id: vega.ColorScheme; values: Array<string> }> = [
 //   { id: "category10", values: vega.scheme("category10") },
@@ -53,6 +54,22 @@ const ControlsDoc = () => {
         onClick={(e) => {
           console.log(e.currentTarget.value);
         }}
+      />
+    </ReactSpecimen>
+  )}
+
+## OnOffControlTab
+OnOffControlTab (and OnOffControlTabField) are elements which are supposed to be used on the left panel in the app as category "switches"
+(like for BaseLayer in case of maps or InteractiveFilters for... interactive filters). They display either "on" or "off" to indicate component state.
+
+
+  ${(
+    <ReactSpecimen span={2}>
+      <OnOffControlTab
+        value="Test"
+        label={<span>Test</span>}
+        icon="settings"
+        onClick={() => {}}
       />
     </ReactSpecimen>
   )}

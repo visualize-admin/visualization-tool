@@ -49,6 +49,42 @@ export const ControlTab = ({
   );
 };
 
+export const OnOffControlTab = ({
+  value,
+  label,
+  icon,
+  checked,
+  active,
+  onClick,
+}: {
+  value: string;
+  label: ReactNode;
+  icon: string;
+  checked?: boolean;
+  active?: boolean;
+  onClick: (x: string) => void;
+}) => {
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        borderRadius: "default",
+        my: "2px",
+      }}
+    >
+      <ControlTabButton checked={checked} value={value} onClick={onClick}>
+        <ControlTabButtonInner
+          iconName={getIconName(icon)}
+          lowerLabel={label}
+          checked={checked}
+          isActive={active}
+          showIsActive
+        />
+      </ControlTabButton>
+    </Box>
+  );
+};
+
 export const AnnotatorTab = ({
   value,
   checked,
