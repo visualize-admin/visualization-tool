@@ -82,7 +82,8 @@ module.exports = withPreconstruct(
             }
           }
         }
-
+        
+        config.resolve.extensions.push(dev ? '.dev.ts' : '.prod.ts')
         // For some reason these need to be ignored for serverless target
         config.plugins.push(new IgnorePlugin(/^(pg-native|vue)$/));
 
