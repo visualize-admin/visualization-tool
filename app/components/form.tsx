@@ -1,5 +1,10 @@
 import { Trans } from "@lingui/macro";
+import { useId } from "@reach/auto-id";
 import VisuallyHidden from "@reach/visually-hidden";
+import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
+import { DayPickerInputProps, DayPickerProps } from "react-day-picker";
+import DayPickerInput from "react-day-picker/DayPickerInput";
+import "react-day-picker/lib/style.css";
 import {
   Box,
   Button,
@@ -11,16 +16,11 @@ import {
   Select as TUISelect,
   SelectProps,
 } from "theme-ui";
-import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 import { FieldProps, Option } from "../configurator";
-import { Icon } from "../icons";
-import { useId } from "@reach/auto-id";
-import { useLocale } from "../locales/use-locale";
-import { DayPickerInputProps, DayPickerProps } from "react-day-picker";
-import DayPickerInput from "react-day-picker/DayPickerInput";
-import "react-day-picker/lib/style.css";
 import { useTimeFormatUnit } from "../configurator/components/ui-helpers";
 import { TimeUnit } from "../graphql/query-hooks";
+import { Icon } from "../icons";
+import { useLocale } from "../locales/use-locale";
 
 export const Label = ({
   label,
@@ -307,6 +307,7 @@ export const DayPickerField = ({
   label,
   name,
   value,
+  isDayDisabled,
   onChange,
   disabled,
   controls,
@@ -314,21 +315,27 @@ export const DayPickerField = ({
 }: {
   name: string;
   value: Date;
+  isDayDisabled: (day: Date) => boolean;
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   controls?: ReactNode;
   label?: string | ReactNode;
   disabled?: boolean;
-} & Omit<DayPickerInputProps, "onChange">) => {
+} & Omit<DayPickerInputProps, "onChange" | "disabledDays">) => {
   const handleDayClick = useCallback(
     (day: Date) => {
-      const ev = {
-        currentTarget: {
-          value: day.toISOString().slice(0, 10),
-        },
-      } as ChangeEvent<HTMLSelectElement>;
-      onChange(ev);
+      const isDisabled = isDayDisabled(day);
+
+      if (!isDisabled) {
+        const ev = {
+          currentTarget: {
+            value: day.toISOString().slice(0, 10),
+          },
+        } as ChangeEvent<HTMLSelectElement>;
+
+        onChange(ev);
+      }
     },
-    [onChange]
+    [isDayDisabled, onChange]
   );
   const formatDateAuto = useTimeFormatUnit();
   const inputProps = useMemo(() => {
@@ -357,9 +364,10 @@ export const DayPickerField = ({
   const dayPickerProps = useMemo(() => {
     return {
       onDayClick: handleDayClick,
+      disabledDays: isDayDisabled,
       ...props.dayPickerProps,
     } as DayPickerProps;
-  }, [handleDayClick, props.dayPickerProps]);
+  }, [handleDayClick, isDayDisabled, props.dayPickerProps]);
 
   return (
     <Box

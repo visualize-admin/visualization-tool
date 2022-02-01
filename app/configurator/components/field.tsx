@@ -229,6 +229,7 @@ export const DataFilterSelectDay = ({
       onChange={fieldProps.onChange}
       name={dimensionIri}
       value={dateValue}
+      isDayDisabled={isDisabled}
       inputProps={{
         id,
         disabled,
@@ -236,7 +237,6 @@ export const DataFilterSelectDay = ({
       dayPickerProps={{
         fromMonth,
         toMonth,
-        disabledDays: isDisabled,
       }}
     />
   );
