@@ -294,6 +294,7 @@ export const getInitialConfig = ({
         baseLayer: {
           showRelief: true,
           showLakes: true,
+          showRivers: false,
         },
       };
 

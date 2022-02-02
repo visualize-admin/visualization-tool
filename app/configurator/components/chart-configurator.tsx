@@ -432,7 +432,8 @@ const ChartFields = ({
             label={<Trans id="chart.map.layers.base">Base Layer</Trans>}
             active={
               chartConfig.baseLayer.showLakes ||
-              chartConfig.baseLayer.showRelief
+              chartConfig.baseLayer.showRelief ||
+              chartConfig.baseLayer.showRivers
             }
           />
         ) : (

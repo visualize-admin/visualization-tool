@@ -21,12 +21,15 @@ type TileData = {
   signal: { aborted: boolean };
 };
 
+const MIN_ZOOM = 2;
+const MAX_ZOOM = 16;
+
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
   zoom: 5,
-  maxZoom: 16,
-  minZoom: 2,
+  minZoom: MIN_ZOOM,
+  maxZoom: MAX_ZOOM,
   pitch: 0,
   bearing: 0,
 };
@@ -91,10 +94,38 @@ const constrainZoom = (
   }
 };
 
+const getTileLayerProps = (props: { id: string; dataUrl: string }) => {
+  const { id, dataUrl } = props;
+
+  return {
+    id,
+    data: dataUrl,
+    pickable: false,
+    minZoom: MIN_ZOOM,
+    maxZoom: MAX_ZOOM,
+    maxCacheSize: 512,
+    tileSize: 256,
+    renderSubLayers: (props: { tile: TileData; data: $FixMe }) => {
+      const {
+        bbox: { west, south, east, north },
+      } = props.tile;
+
+      return [
+        new BitmapLayer(props, {
+          data: null,
+          image: props.data,
+          bounds: [west, south, east, north],
+        }),
+      ];
+    },
+  };
+};
+
 export const MapComponent = () => {
   const {
     showRelief,
     showLakes,
+    showRivers,
     features,
     identicalLayerComponentIris,
     areaLayer,
@@ -143,6 +174,26 @@ export const MapComponent = () => {
     [symbolLayer.color]
   );
 
+  const reliefTileProps = useMemo(
+    () =>
+      getTileLayerProps({
+        id: "relief",
+        dataUrl:
+          "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/{z}/{x}/{y}.png",
+      }),
+    []
+  );
+
+  const riverTileProps = useMemo(
+    () =>
+      getTileLayerProps({
+        id: "rivers",
+        dataUrl:
+          "https://wmts100.geo.admin.ch/1.0.0/ch.bafu.vec25-gewaessernetz_2000/default/current/3857/{z}/{x}/{y}.png",
+      }),
+    []
+  );
+
   const shapes = useMemo(
     () => ({
       ...features.areaLayer?.shapes,
@@ -178,29 +229,9 @@ export const MapComponent = () => {
         controller={{ type: MapController }}
         getCursor={() => "default"}
       >
-        {showRelief && (
-          <TileLayer
-            getTileData={({ z, x, y }: TileData) =>
-              `https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/${z}/${x}/${y}.png`
-            }
-            pickable={false}
-            minZoom={2}
-            maxZoom={16}
-            maxCacheSize={512}
-            renderSubLayers={(props: { tile: TileData; data: $FixMe }) => {
-              const {
-                bbox: { west, south, east, north },
-              } = props.tile;
-              return [
-                new BitmapLayer(props, {
-                  data: null,
-                  image: props.data,
-                  bounds: [west, south, east, north],
-                }),
-              ];
-            }}
-          />
-        )}
+        {showRelief && <TileLayer {...reliefTileProps} />}
+
+        {showRivers && <TileLayer {...riverTileProps} />}
 
         {areaLayer.show && (
           <>

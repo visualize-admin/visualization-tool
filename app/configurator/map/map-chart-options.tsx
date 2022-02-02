@@ -76,6 +76,14 @@ export const BaseLayersSettings = memo(() => {
           field={null}
           path="baseLayer.showLakes"
         />
+        <ChartOptionCheckboxField
+          label={t({
+            id: "chart.map.layers.base.show.rivers",
+            message: "Show rivers",
+          })}
+          field={null}
+          path="baseLayer.showRivers"
+        />
       </ControlSectionContent>
     </ControlSection>
   );

@@ -49,6 +49,7 @@ export interface MapState {
   features: GeoData;
   showRelief: boolean;
   showLakes: boolean;
+  showRivers: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
     data: Observation[];
@@ -279,6 +280,7 @@ const useMapState = ({
     bounds,
     showRelief: baseLayer.showRelief,
     showLakes: baseLayer.showLakes,
+    showRivers: baseLayer.showRivers,
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,
