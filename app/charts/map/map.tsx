@@ -279,7 +279,7 @@ export const MapComponent = () => {
                 if (observation) {
                   const value = areaLayer.getValue(observation);
 
-                  if (value) {
+                  if (value !== null) {
                     return areaLayer.getColor(value);
                   }
                 }
