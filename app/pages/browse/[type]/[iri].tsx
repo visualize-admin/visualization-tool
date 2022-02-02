@@ -9,7 +9,7 @@ export default GenericBrowse;
  * Versioned iris look like https://blabla/<number/
  */
 const isDatasetIriVersioned = (iri: string) => {
-  return iri.match(/\/\d+\/$/) !== null;
+  return iri.match(/\/\d+\/?$/) !== null;
 };
 
 const getServerSideProps: GetServerSideProps = async function (ctx) {
