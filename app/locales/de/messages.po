@@ -158,8 +158,8 @@ msgid "chart.map.layers.base"
 msgstr "Basis-Ebene"
 
 #: app/configurator/map/map-chart-options.tsx:72
-msgid "chart.map.layers.base.show.lakes"
-msgstr "Seen anzeigen"
+msgid "chart.map.layers.base.show.water"
+msgstr "Wasser anzeigen"
 
 #: app/configurator/map/map-chart-options.tsx:64
 msgid "chart.map.layers.base.show.relief"

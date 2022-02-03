@@ -158,8 +158,8 @@ msgid "chart.map.layers.base"
 msgstr "Livello di base"
 
 #: app/configurator/map/map-chart-options.tsx:72
-msgid "chart.map.layers.base.show.lakes"
-msgstr "Mostra i laghi"
+msgid "chart.map.layers.base.show.water"
+msgstr "Mostra l'acqua"
 
 #: app/configurator/map/map-chart-options.tsx:64
 msgid "chart.map.layers.base.show.relief"
