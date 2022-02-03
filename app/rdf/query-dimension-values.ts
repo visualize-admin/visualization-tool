@@ -45,15 +45,20 @@ const formatFilterIntoSparqlFilter = (
   index: number
 ) => {
   const suffix = versioned ? "_unversioned" : "";
+  const dimensionVar = `?dimension${suffix}${index}`;
+  // We do not keep the language information inside the filter so for now
+  // we only filter on the value
+  const leftSide =
+    dimension?.datatype?.value === ns.rdf.langString.value
+      ? `str(${dimensionVar})`
+      : dimensionVar;
   if (filter.type === "single") {
-    return `FILTER ( (?dimension${suffix}${index} = ${formatFilterValue(
+    return `FILTER ( (${leftSide} = ${formatFilterValue(
       filter.value,
       dimension
     )}) )`;
   } else if (filter.type === "multi") {
-    return `FILTER ( (?dimension${suffix}${index} in (${Object.keys(
-      filter.values
-    )
+    return `FILTER ( (${leftSide} in (${Object.keys(filter.values)
       .map((x) => formatFilterValue(x, dimension))
       .join(",")}) ) )`;
   } else {
