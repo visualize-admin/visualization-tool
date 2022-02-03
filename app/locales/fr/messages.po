@@ -61,11 +61,11 @@ msgstr "Catégories"
 msgid "browse.dataset.create-visualization"
 msgstr "Créer une visualisation"
 
-#: app/configurator/components/select-dataset-step.tsx:133
+#: app/configurator/components/select-dataset-step.tsx:132
 msgid "browse.datasets.all-datasets"
 msgstr "Tous les jeux de données"
 
-#: app/configurator/components/select-dataset-step.tsx:145
+#: app/configurator/components/select-dataset-step.tsx:144
 msgid "browse.datasets.description"
 msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par catégories ou organisations, ou en recherchant par mots-clés. Cliquez sur un ensemble de données pour afficher des informations plus détaillées et commencer à créer vos propres visualisations. "
 
@@ -157,13 +157,13 @@ msgstr "Intervalles égaux"
 msgid "chart.map.layers.base"
 msgstr "Couche de base"
 
-#: app/configurator/map/map-chart-options.tsx:72
-msgid "chart.map.layers.base.show.water"
-msgstr "Afficher de l'eau"
-
 #: app/configurator/map/map-chart-options.tsx:64
 msgid "chart.map.layers.base.show.relief"
 msgstr "Afficher le relief"
+
+#: app/configurator/map/map-chart-options.tsx:72
+msgid "chart.map.layers.base.show.water"
+msgstr "Montrer les lacs et les rivières"
 
 #: app/charts/map/prototype-right-controls.tsx:263
 #~ msgid "chart.map.layers.no.selected"
@@ -659,7 +659,7 @@ msgstr "Afficher le champ de recherche"
 msgid "controls.title"
 msgstr "Titre"
 
-#: app/configurator/components/select-dataset-step.tsx:98
+#: app/configurator/components/select-dataset-step.tsx:97
 msgid "dataset-preview.back-to-results"
 msgstr "Revenir aux jeux de données"
 
@@ -675,23 +675,23 @@ msgstr "Certaines données de cet ensemble de données sont manquantes et ont é
 msgid "dataset.includeDrafts"
 msgstr "Inclure les brouillons"
 
-#: app/configurator/components/dataset-metadata.tsx:49
+#: app/configurator/components/dataset-metadata.tsx:50
 msgid "dataset.metadata.date.created"
 msgstr "Date de création"
 
-#: app/configurator/components/dataset-metadata.tsx:61
+#: app/configurator/components/dataset-metadata.tsx:62
 msgid "dataset.metadata.email"
 msgstr "Points de contact"
 
-#: app/configurator/components/dataset-metadata.tsx:75
+#: app/configurator/components/dataset-metadata.tsx:76
 msgid "dataset.metadata.landingPage"
 msgstr "Informations complémentaires"
 
-#: app/configurator/components/dataset-metadata.tsx:35
+#: app/configurator/components/dataset-metadata.tsx:36
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/configurator/components/dataset-metadata.tsx:56
+#: app/configurator/components/dataset-metadata.tsx:57
 msgid "dataset.metadata.version"
 msgstr "Version"
 
@@ -745,11 +745,11 @@ msgstr "Office fédéral de l'environnement OFEV"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/fr/home.html"
 
-#: app/components/hint.tsx:199
+#: app/components/hint.tsx:180
 msgid "hint.chartunexpected.message"
 msgstr ""
 
-#: app/components/hint.tsx:196
+#: app/components/hint.tsx:177
 msgid "hint.chartunexpected.title"
 msgstr ""
 
@@ -757,11 +757,11 @@ msgstr ""
 msgid "hint.create.your.own.chart"
 msgstr "Créez votre propre visualisation à partir de celle-ci en la copiant, ou bien créez une nouvelle visualisation avec les données ouvertes de l'administration publique suisse."
 
-#: app/components/hint.tsx:173
+#: app/components/hint.tsx:148
 msgid "hint.dataloadingerror.message"
 msgstr "Les données n'ont pas pu être téléchargées."
 
-#: app/components/hint.tsx:170
+#: app/components/hint.tsx:144
 msgid "hint.dataloadingerror.title"
 msgstr "Problème de téléchargement des données"
 
@@ -777,33 +777,33 @@ msgstr "Chargement des données..."
 msgid "hint.no.visualization.with.dataset"
 msgstr "Aucune visualisation ne peut être créée avec le jeu de données sélectionné."
 
-#: app/components/hint.tsx:148
+#: app/components/hint.tsx:122
 msgid "hint.nodata.message"
 msgstr "Veuillez essayer avec une autre combinaison de filtres."
 
-#: app/components/hint.tsx:143
+#: app/components/hint.tsx:117
 msgid "hint.nodata.title"
 msgstr "Il n'y a pas de données correspondant aux filtres sélectionnés"
 
-#: app/components/hint.tsx:225
+#: app/components/hint.tsx:206
 msgid "hint.only.negative.data.message"
 msgstr "Ce type de graphique ne permet pas de représenter des données négatives."
 
-#: app/components/hint.tsx:222
+#: app/components/hint.tsx:203
 msgid "hint.only.negative.data.title"
 msgstr "Valeurs négatives"
 
-#: app/components/hint.tsx:250
+#: app/components/hint.tsx:231
 msgid "hint.publication.success"
 msgstr "Votre visualisation est à présent publiée. Partagez-là en copiant l'URL ou en utilisant les options d'intégration."
 
 #: app/components/hint.tsx:117
-msgid "hint.select.dataset"
-msgstr "Sélectionner un jeu de données"
+#~ msgid "hint.select.dataset"
+#~ msgstr "Sélectionner un jeu de données"
 
 #: app/components/hint.tsx:120
-msgid "hint.select.dataset.to.preview"
-msgstr "Sélectionner un jeu de données pour prévisualiser sa structure et son contenu."
+#~ msgid "hint.select.dataset.to.preview"
+#~ msgstr "Sélectionner un jeu de données pour prévisualiser sa structure et son contenu."
 
 #: app/charts/shared/chart-data-filters.tsx:67
 msgid "interactive.data.filters.hide"
