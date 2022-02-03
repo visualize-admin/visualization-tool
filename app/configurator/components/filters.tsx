@@ -228,7 +228,7 @@ export const TimeFilter = ({
     const formatDateValue = formatLocale.format(timeFormat);
 
     const from = parse(dimension.values[0].value);
-    const to = parse(dimension.values[1].value);
+    const to = parse(dimension.values[dimension.values.length - 1].value);
 
     if (!from || !to) {
       return null;
