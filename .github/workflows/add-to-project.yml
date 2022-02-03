@@ -1,17 +1,17 @@
 name: Add PR to project
 on:
-  pull_request:
+  issues:
     types:
-      - ready_for_review
+      - opened
 jobs:
   track_pr:
     runs-on: ubuntu-latest
     steps:
       - name: Get project data
         env:
-          GITHUB_TOKEN: ${{ secrets.YOUR_TOKEN }}
-          ORGANIZATION: YOUR_ORGANIZATION
-          PROJECT_NUMBER: YOUR_PROJECT_NUMBER
+          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
+          ORGANIZATION: visualize-admin
+          PROJECT_NUMBER: 1
         run: |
           gh api graphql -f query='
             query($org: String!, $number: Int!) {
@@ -34,19 +34,19 @@ jobs:
           echo 'STATUS_FIELD_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id' project_data.json) >> $GITHUB_ENV
           echo 'TODO_OPTION_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id' project_data.json) >> $GITHUB_ENV
 
-      - name: Add PR to project
+      - name: Add issue to project
         env:
-          GITHUB_TOKEN: ${{ secrets.YOUR_TOKEN }}
-          PR_ID: ${{ github.event.pull_request.node_id }}
+          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
+          ISSUE_ID: ${{ github.event.issue.node_id }}
         run: |
           item_id="$( gh api graphql -f query='
-            mutation($project:ID!, $pr:ID!) {
-              addProjectNextItem(input: {projectId: $project, contentId: $pr}) {
+            mutation($project:ID!, $issue:ID!) {
+              addProjectNextItem(input: {projectId: $project, contentId: $issue}) {
                 projectNextItem {
                   id
                 }
               }
-            }' -f project=$PROJECT_ID -f pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
+            }' -f project=$PROJECT_ID -f issue=$ISSUE_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
 
           echo 'ITEM_ID='$item_id >> $GITHUB_ENV
 
@@ -55,7 +55,7 @@ jobs:
 
       - name: Set fields
         env:
-          GITHUB_TOKEN: ${{ secrets.YOUR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
         run: |
           gh api graphql -f query='
             mutation (
