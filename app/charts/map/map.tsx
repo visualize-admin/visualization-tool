@@ -292,9 +292,6 @@ export const MapComponent = () => {
               ? [148, 198, 240]
               : [148, 198, 240, 0];
           }}
-          getLineWidth={10}
-          lineWidthMinPixels={0.4}
-          lineWidthMaxPixels={3}
           updateTriggers={{
             getFillColor: [showWater],
           }}
