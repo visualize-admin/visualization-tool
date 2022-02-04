@@ -1,4 +1,4 @@
-name: Add PR to project
+name: Add issue to project
 on:
   issues:
     types:
@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Get project data
         env:
-          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADD_ISSUE_TO_PROJECT_ACTION_GITHUB_PERSONAL_TOKEN }}
           ORGANIZATION: visualize-admin
           PROJECT_NUMBER: 1
         run: |
@@ -36,7 +36,7 @@ jobs:
 
       - name: Add issue to project
         env:
-          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADD_ISSUE_TO_PROJECT_ACTION_GITHUB_PERSONAL_TOKEN }}
           ISSUE_ID: ${{ github.event.issue.node_id }}
         run: |
           item_id="$( gh api graphql -f query='
@@ -55,7 +55,7 @@ jobs:
 
       - name: Set fields
         env:
-          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADD_ISSUE_TO_PROJECT_ACTION_GITHUB_PERSONAL_TOKEN }}
         run: |
           gh api graphql -f query='
             mutation (
