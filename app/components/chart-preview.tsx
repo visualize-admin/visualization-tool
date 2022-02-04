@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import Head from "next/head";
 import * as React from "react";
 import { Box, Flex, Text } from "theme-ui";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
@@ -65,6 +66,14 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                   state.meta.title[locale]
                 )}
               </Text>
+              <Head>
+                <title key="title">
+                  {state.meta.title[locale] === ""
+                    ? metaData?.dataCubeByIri?.title
+                    : state.meta.title[locale]}{" "}
+                  - visualize.admin.ch
+                </title>
+              </Head>
               <Text
                 variant="paragraph1"
                 sx={{
