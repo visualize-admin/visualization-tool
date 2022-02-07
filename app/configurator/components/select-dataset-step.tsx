@@ -104,7 +104,7 @@ export const SelectDatasetStepContent = () => {
             <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
           </>
         ) : (
-          <SearchFilters />
+          <SearchFilters data={data} />
         )}
       </PanelLeftWrapper>
       <PanelMiddleWrapper
