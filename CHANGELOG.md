@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.3.0] - 2022-02-07
+
+### Maps
+
+It is now possible to use maps as a new visualization type. Quantities can be encoded
+as a scatterplot on the map. Datasets which have a shared dimension containing
+geo coordinates can be charted on a map.
+
+#294 #289 #292 #286 #240 #293 #301 #302
+
+### Cascading filters
+
+Now the left panel filters are cascading filters: values chosen for above filters will be taken into account for below filters. Also, optional filters are not shown at first but can be added via a menu.
+
+#271
+
+### Misc
+
+- Banner and icons have been removed on the homepage #297
+- Ordinal dimensions values are now sorted in various places (legend, right filters, tooltips) #262
+- Dataset loading errors have been improved #304
+- 🐛 By default, search results are sorted by relevance #273
+- A small description text is shown while browsing all datasets #268
+- Drag and drop is available on all the row, not only on the icon for table chart groups #265
+- _beta_ Hierarchical filters are available behind a flag on the "red list" dataset #233
+- 🐛 Links from openswissdata should work correctly #303 #314
+
 ## [0.6.0] - 2020-05-25
 
 ### Added
