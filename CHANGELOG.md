@@ -23,7 +23,7 @@ geo coordinates can be charted on a map.
 
 Now the left panel filters are cascading filters: values chosen for above filters will be taken into account for below filters. Also, optional filters are not shown at first but can be added via a menu.
 
-#271](https://github.com/visualize-admin/visualization-tool/pull/271)
+[#271](https://github.com/visualize-admin/visualization-tool/pull/271)
 
 ### Misc
 
