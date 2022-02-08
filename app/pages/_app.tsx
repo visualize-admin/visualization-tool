@@ -77,7 +77,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>visualize.admin.ch</title>
+        <title key="title">visualize.admin.ch</title>
         <meta property="og:type" content="website" />
         <meta property="og:title" content={"visualize.admin.ch"} />
         <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />

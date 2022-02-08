@@ -1,4 +1,4 @@
-name: Add PR to project
+name: Add issue to project
 on:
   issues:
     types:
@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Get project data
         env:
-          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADD_ISSUE_TO_PROJECT_ACTION_GITHUB_PERSONAL_TOKEN }}
           ORGANIZATION: visualize-admin
           PROJECT_NUMBER: 1
         run: |
@@ -32,11 +32,11 @@ jobs:
           echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' project_data.json) >> $GITHUB_ENV
           echo 'DATE_FIELD_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Date posted") | .id' project_data.json) >> $GITHUB_ENV
           echo 'STATUS_FIELD_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id' project_data.json) >> $GITHUB_ENV
-          echo 'TODO_OPTION_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id' project_data.json) >> $GITHUB_ENV
+          echo 'INBOX_OPTION_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Inbox") |.id' project_data.json) >> $GITHUB_ENV
 
       - name: Add issue to project
         env:
-          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADD_ISSUE_TO_PROJECT_ACTION_GITHUB_PERSONAL_TOKEN }}
           ISSUE_ID: ${{ github.event.issue.node_id }}
         run: |
           item_id="$( gh api graphql -f query='
@@ -55,7 +55,7 @@ jobs:
 
       - name: Set fields
         env:
-          GITHUB_TOKEN: ${{ secrets.ADD_PR_TO_PROJECT_WORKFLOW_GITHUB_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADD_ISSUE_TO_PROJECT_ACTION_GITHUB_PERSONAL_TOKEN }}
         run: |
           gh api graphql -f query='
             mutation (
@@ -86,4 +86,4 @@ jobs:
                   id
                 }
               }
-            }' -f project=$PROJECT_ID -f item=$ITEM_ID -f status_field=$STATUS_FIELD_ID -f status_value=${{ env.TODO_OPTION_ID }} -f date_field=$DATE_FIELD_ID -f date_value=$DATE --silent
+            }' -f project=$PROJECT_ID -f item=$ITEM_ID -f status_field=$STATUS_FIELD_ID -f status_value=${{ env.INBOX_OPTION_ID }} -f date_field=$DATE_FIELD_ID -f date_value=$DATE --silent

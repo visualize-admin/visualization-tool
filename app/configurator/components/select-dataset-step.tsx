@@ -1,4 +1,5 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
+import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
@@ -103,7 +104,7 @@ export const SelectDatasetStepContent = () => {
             <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
           </>
         ) : (
-          <SearchFilters />
+          <SearchFilters data={data} />
         )}
       </PanelLeftWrapper>
       <PanelMiddleWrapper
@@ -171,9 +172,26 @@ export const SelectDatasetStepContent = () => {
   );
 };
 
+const PageTitle = () => {
+  const { search, filters } = useBrowseContext();
+  return (
+    <Head>
+      <title key="title">
+        {search
+          ? `"${search}"`
+          : filters?.length > 0 && filters[0].__typename !== "DataCubeAbout"
+          ? filters[0].label
+          : t({ id: "browse.datasets.all-datasets" })}{" "}
+        - visualize.admin.ch
+      </title>
+    </Head>
+  );
+};
+
 export const SelectDatasetStep = () => {
   return (
     <BrowseStateProvider>
+      <PageTitle />
       <SelectDatasetStepContent />
     </BrowseStateProvider>
   );

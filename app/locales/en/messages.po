@@ -63,7 +63,7 @@ msgstr "Create visualization"
 
 #: app/configurator/components/select-dataset-step.tsx:132
 msgid "browse.datasets.all-datasets"
-msgstr "All Datasets"
+msgstr "All datasets"
 
 #: app/configurator/components/select-dataset-step.tsx:144
 msgid "browse.datasets.description"

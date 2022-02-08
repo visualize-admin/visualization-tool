@@ -8,6 +8,7 @@ import { useLocale } from "../../locales/use-locale";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import DebugPanel from "../../components/debug-panel";
 import LinkButton from "./link-button";
+import Head from "next/head";
 
 export interface Preview {
   iri: string;
@@ -44,6 +45,11 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         <Flex
           sx={{ alignItems: "center", justifyContent: "space-between", mb: 6 }}
         >
+          <Head>
+            <title key="title">
+              {dataCubeByIri.title} - visualize.admin.ch
+            </title>
+          </Head>
           <Text as="div" variant="heading1">
             {dataCubeByIri.title}
           </Text>
