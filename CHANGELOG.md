@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Page have improved titles now, depending on where you are on the application. Helpful when you have
   multiple tabs with visualize.admin or when you bookmark things. [#331](https://github.com/visualize-admin/visualization-tool/pull/331)
 - Theme and organization navigation counts take into account the search field now. [#329](https://github.com/visualize-admin/visualization-tool/pull/329)
+- Fix selection of optional date filter [#332](https://github.com/visualize-admin/visualization-tool/pull/332)
 
 ## [3.3.0] - 2022-02-07
 

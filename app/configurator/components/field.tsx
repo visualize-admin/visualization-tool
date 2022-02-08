@@ -24,6 +24,7 @@ import {
 import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { IconName } from "../../icons";
+import truthy from "../../utils/truthy";
 import {
   isMultiFilterFieldChecked,
   useChartOptionBooleanField,
@@ -197,7 +198,17 @@ export const DataFilterSelectDay = ({
 
   const allOptionsSet = useMemo(() => {
     return new Set(
-      allOptions.map((x) => new Date(x.value).toISOString().slice(0, 10))
+      allOptions
+        .filter((x) => x.value !== FIELD_VALUE_NONE)
+        .map((x) => {
+          try {
+            return new Date(x.value).toISOString().slice(0, 10);
+          } catch (e) {
+            console.warn(`Bad value ${x.value}`);
+            return;
+          }
+        })
+        .filter(truthy)
     );
   }, [allOptions]);
   const isDisabled = useCallback(
