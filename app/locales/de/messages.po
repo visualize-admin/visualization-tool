@@ -23,7 +23,7 @@ msgstr "{0} durchsuchen"
 
 #: app/configurator/components/chart-configurator.tsx:344
 msgid "Drag filters to reorganize"
-msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
+msgstr "Ziehen sie die Filter per Drag & Drop, um sie neu zu organisieren"
 
 #: app/configurator/components/chart-configurator.tsx:341
 msgid "Move filter down"
