@@ -111,7 +111,7 @@ export const getScaleType = (
     : undefined;
 };
 
-const parseDimensionDatatype = (dim: CubeDimension) => {
+export const parseDimensionDatatype = (dim: CubeDimension) => {
   let dataType = dim.datatype;
   let hasUndefinedValues = false;
 
