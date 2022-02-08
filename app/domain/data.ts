@@ -55,7 +55,6 @@ export type SymbolLayer = {
 };
 
 export type GeoData = {
-  lakes: GeoJSON.FeatureCollection;
   areaLayer?: AreaLayer;
   symbolLayer?: SymbolLayer;
 };

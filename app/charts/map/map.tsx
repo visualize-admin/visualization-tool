@@ -1,5 +1,5 @@
 import { MapController, WebMercatorViewport } from "@deck.gl/core";
-import { TileLayer } from "@deck.gl/geo-layers";
+import { MVTLayer, TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import React, { useCallback, useMemo, useState } from "react";
@@ -21,12 +21,15 @@ type TileData = {
   signal: { aborted: boolean };
 };
 
+const MIN_ZOOM = 3;
+const MAX_ZOOM = 13;
+
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
   zoom: 5,
-  maxZoom: 16,
-  minZoom: 2,
+  minZoom: MIN_ZOOM,
+  maxZoom: MAX_ZOOM,
   pitch: 0,
   bearing: 0,
 };
@@ -94,7 +97,7 @@ const constrainZoom = (
 export const MapComponent = () => {
   const {
     showRelief,
-    showLakes,
+    showWater,
     features,
     identicalLayerComponentIris,
     areaLayer,
@@ -172,6 +175,7 @@ export const MapComponent = () => {
         <ZoomButton iconName="minus" handleClick={zoomOut} />
       </Box>
       <DeckGL
+        mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         viewState={viewState}
         onViewStateChange={onViewStateChange}
         onResize={onResize}
@@ -180,17 +184,17 @@ export const MapComponent = () => {
       >
         {showRelief && (
           <TileLayer
-            getTileData={({ z, x, y }: TileData) =>
-              `https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/${z}/${x}/${y}.png`
-            }
+            id="relief"
+            data="https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/{z}/{x}/{y}.png"
+            tileSize={256}
             pickable={false}
-            minZoom={2}
-            maxZoom={16}
-            maxCacheSize={512}
+            minZoom={MIN_ZOOM}
+            maxZoom={MAX_ZOOM}
             renderSubLayers={(props: { tile: TileData; data: $FixMe }) => {
               const {
                 bbox: { west, south, east, north },
               } = props.tile;
+
               return [
                 new BitmapLayer(props, {
                   data: null,
@@ -248,7 +252,7 @@ export const MapComponent = () => {
                 if (observation) {
                   const value = areaLayer.getValue(observation);
 
-                  if (value) {
+                  if (value !== null) {
                     return areaLayer.getColor(value);
                   }
                 }
@@ -272,21 +276,26 @@ export const MapComponent = () => {
           </>
         )}
 
-        {showLakes && (
-          <GeoJsonLayer
-            id="lakes"
-            data={features.lakes}
-            pickable={false}
-            stroked={true}
-            filled={true}
-            extruded={false}
-            lineWidthMinPixels={0.5}
-            lineWidthMaxPixels={1}
-            getLineWidth={100}
-            getFillColor={[102, 175, 233]}
-            getLineColor={[255, 255, 255]}
-          />
-        )}
+        <MVTLayer
+          id="water"
+          data={[
+            "https://vectortiles0.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
+            "https://vectortiles1.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
+            "https://vectortiles2.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
+            "https://vectortiles3.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
+            "https://vectortiles4.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
+          ]}
+          tileSize={256}
+          getLineColor={[255, 255, 255, 0]}
+          getFillColor={(d: any) => {
+            return showWater && d.properties.layerName === "water"
+              ? [148, 198, 240]
+              : [148, 198, 240, 0];
+          }}
+          updateTriggers={{
+            getFillColor: [showWater],
+          }}
+        />
 
         {symbolLayer.show && (
           <ScatterplotLayer

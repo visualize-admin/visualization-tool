@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Features
+
 - Page have improved titles now, depending on where you are on the application. Helpful when you have
   multiple tabs with visualize.admin or when you bookmark things. [#331](https://github.com/visualize-admin/visualization-tool/pull/331)
 - Theme and organization navigation counts take into account the search field now. [#329](https://github.com/visualize-admin/visualization-tool/pull/329)
+- Added rivers and lakes through vector layer [#309](https://github.com/visualize-admin/visualization-tool/pull/309)
+
+### Bugs
+
 - Fix selection of optional date filter [#332](https://github.com/visualize-admin/visualization-tool/pull/332)
+- Fix discrete color scales with less than 3 observations [#309](https://github.com/visualize-admin/visualization-tool/pull/309)]
 
 ## [3.3.0] - 2022-02-07
 

@@ -48,7 +48,7 @@ export interface MapState {
   bounds: Bounds;
   features: GeoData;
   showRelief: boolean;
-  showLakes: boolean;
+  showWater: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
     data: Observation[];
@@ -118,7 +118,7 @@ const getColorScale = ({
     case "jenks":
       const ckMeansThresholds = ckmeans(
         data.map((d) => getValue(d) ?? NaN),
-        nbClass
+        Math.min(nbClass, data.length)
       ).map((v) => v.pop() || 0);
 
       return scaleThreshold<number, string>()
@@ -278,7 +278,7 @@ const useMapState = ({
     features,
     bounds,
     showRelief: baseLayer.showRelief,
-    showLakes: baseLayer.showLakes,
+    showWater: baseLayer.showWater,
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,

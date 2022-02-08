@@ -1,5 +1,5 @@
 import { geoCentroid } from "d3";
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useMemo } from "react";
 import { Box } from "theme-ui";
 import {
   feature as topojsonFeature,
@@ -32,11 +32,6 @@ import { MapLegend } from "./map-legend";
 import { MapChart } from "./map-state";
 import { MapTooltip } from "./map-tooltip";
 
-type GeoDataState =
-  | { state: "fetching" }
-  | { state: "error" }
-  | (GeoData & { state: "loaded" });
-
 export const ChartMapVisualization = ({
   dataSetIri,
   chartConfig,
@@ -46,7 +41,6 @@ export const ChartMapVisualization = ({
   chartConfig: MapConfig;
   queryFilters: QueryFilters;
 }) => {
-  const [geoData, setGeoData] = useState<GeoDataState>({ state: "fetching" });
   const locale = useLocale();
 
   const areaDimensionIri = chartConfig.fields.areaLayer.componentIri;
@@ -161,30 +155,11 @@ export const ChartMapVisualization = ({
     }
   }, [areaLayer, dimensions, observations, symbolDimensionIri, geoCoordinates]);
 
-  useEffect(() => {
-    const loadLakes = async () => {
-      try {
-        const res = await fetch(`/topojson/ch-2020.json`);
-        const topo = await res.json();
-        const lakes = topojsonFeature(
-          topo,
-          topo.objects.lakes
-        ) as any as GeoJSON.FeatureCollection;
-
-        setGeoData({ state: "loaded", lakes });
-      } catch (e) {
-        setGeoData({ state: "error" });
-      }
-    };
-
-    loadLakes();
-  }, []);
-
-  if (measures && dimensions && observations && geoData.state === "loaded") {
+  if (measures && dimensions && observations) {
     return (
       <ChartMapPrototype
         observations={observations}
-        features={{ ...geoData, areaLayer, symbolLayer }}
+        features={{ areaLayer, symbolLayer }}
         fields={chartConfig.fields}
         measures={measures}
         dimensions={dimensions}
@@ -192,9 +167,9 @@ export const ChartMapVisualization = ({
         geoShapes={geoShapes}
       />
     );
-  } else if (geoData.state === "fetching" || fetching) {
+  } else if (fetching) {
     return <Loading />;
-  } else if (geoData.state === "error" || error) {
+  } else if (error) {
     return <LoadingDataError />;
   } else {
     return <NoDataHint />;
