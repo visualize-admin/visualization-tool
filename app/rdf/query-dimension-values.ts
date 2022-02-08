@@ -105,11 +105,12 @@ export async function loadDimensionValues(
             const filterDimension = cube.dimensions.find(
               (d) => d.path?.value === iri
             );
-            if (
-              !filterDimension ||
-              value.type === "range" ||
-              dimensionIri?.value === iri
-            ) {
+            if (!filterDimension || dimensionIri?.value === iri) {
+              return "";
+            }
+
+            if (value.type === "range") {
+              console.log("Ignoring filter range for iri", iri);
               return "";
             }
             const versioned = filterDimension
