@@ -4,12 +4,12 @@ import { markdown, ReactSpecimen } from "catalog";
 export default () => markdown`
 > Buttons are used to trigger an event after a user interaction.
 
-There are four basic styles that are styles defined in \`rebass\`'s \`variants\`:
+There are four basic styles that are styles defined in \`theme-ui\`'s \`variants\`:
 
 - \`primary\`
 - \`secondary\`
 - \`success\`
-- \`outline\`
+- \`inline\`
 
 
   ${(
@@ -34,6 +34,21 @@ There are four basic styles that are styles defined in \`rebass\`'s \`variants\`
   ${(
     <ReactSpecimen span={2}>
       <Button variant="outline">Outline button</Button>
+    </ReactSpecimen>
+  )}
+  ${(
+    <ReactSpecimen span={2}>
+      <Button variant="inline">Inline button</Button>
+    </ReactSpecimen>
+  )}
+  ${(
+    <ReactSpecimen span={2}>
+      <Button variant="inline-bold">Bold inline button</Button>
+    </ReactSpecimen>
+  )}
+  ${(
+    <ReactSpecimen span={2}>
+      <Button variant="primary-small">Primary small button</Button>
     </ReactSpecimen>
   )}
 
