@@ -69,8 +69,8 @@ const VisualizationPage = (props: PageProps) => {
         {/* og:url is set in _app.tsx */}
       </Head>
       <ContentLayout>
-        <Box px={4} bg="muted" mb="auto">
-          <Box sx={{ pt: 4, maxWidth: "105rem", margin: "auto" }}>
+        <Box px={4} bg="muted" mb="auto" mx="auto">
+          <Box sx={{ pt: 4, maxWidth: "80rem", margin: "auto" }}>
             {publishSuccess && <Success />}
 
             <ChartPanel>

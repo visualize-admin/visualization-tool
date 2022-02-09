@@ -121,6 +121,7 @@ export const theme: Theme = {
   radii: {
     default: 3,
     bigger: 4,
+    xl: 25,
     circle: 99999,
   },
   shadows: {
