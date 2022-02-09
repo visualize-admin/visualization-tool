@@ -41,31 +41,32 @@ msgstr "Kein ergebnis"
 msgid "Search “{0}”"
 msgstr "Suche “{0}”"
 
-#: app/components/chart-preview.tsx:79
+#: app/components/chart-preview.tsx:88
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/chart-preview.tsx:63
+#: app/components/chart-preview.tsx:64
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
-#: app/configurator/components/dataset-browse.tsx:714
+#: app/configurator/components/dataset-browse.tsx:735
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
 
-#: app/configurator/components/dataset-browse.tsx:671
+#: app/configurator/components/dataset-browse.tsx:692
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
-#: app/configurator/components/dataset-preview.tsx:54
+#: app/configurator/components/dataset-preview.tsx:60
 msgid "browse.dataset.create-visualization"
 msgstr "Visualisierung erstellen"
 
-#: app/configurator/components/select-dataset-step.tsx:132
+#: app/configurator/components/select-dataset-step.tsx:133
+#: app/configurator/components/select-dataset-step.tsx:184
 msgid "browse.datasets.all-datasets"
 msgstr "Alle Datensätze"
 
-#: app/configurator/components/select-dataset-step.tsx:144
+#: app/configurator/components/select-dataset-step.tsx:145
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
@@ -102,7 +103,7 @@ msgstr "Kopiert!"
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
-#: app/configurator/components/action-bar.tsx:45
+#: app/configurator/components/stepper.tsx:48
 msgid "button.next"
 msgstr "Weiter"
 
@@ -110,7 +111,7 @@ msgstr "Weiter"
 #~ msgid "button.previous"
 #~ msgstr "Zurück"
 
-#: app/configurator/components/action-bar.tsx:43
+#: app/configurator/components/stepper.tsx:46
 msgid "button.publish"
 msgstr "Veröffentlichen"
 
@@ -331,14 +332,14 @@ msgstr "Beschreibung hinzufügen"
 msgid "controls.dimension.geographical"
 msgstr "Geografische Dimension"
 
-#: app/configurator/components/field.tsx:660
+#: app/configurator/components/field.tsx:671
 msgid "controls.dimension.none"
 msgstr "Keine"
 
 #: app/charts/shared/chart-data-filters.tsx:194
-#: app/configurator/components/field.tsx:121
-#: app/configurator/components/field.tsx:175
-#: app/configurator/components/field.tsx:271
+#: app/configurator/components/field.tsx:122
+#: app/configurator/components/field.tsx:176
+#: app/configurator/components/field.tsx:282
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
 
@@ -570,10 +571,10 @@ msgstr "Dimension auswählen"
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/configurator/components/field.tsx:126
-#: app/configurator/components/field.tsx:180
-#: app/configurator/components/field.tsx:276
-#: app/configurator/components/field.tsx:665
+#: app/configurator/components/field.tsx:127
+#: app/configurator/components/field.tsx:181
+#: app/configurator/components/field.tsx:287
+#: app/configurator/components/field.tsx:676
 msgid "controls.select.optional"
 msgstr "optional"
 
@@ -663,7 +664,7 @@ msgstr "Suche anzeigen"
 msgid "controls.title"
 msgstr "Titel hinzufügen"
 
-#: app/configurator/components/select-dataset-step.tsx:97
+#: app/configurator/components/select-dataset-step.tsx:98
 msgid "dataset-preview.back-to-results"
 msgstr "Zurück zu den Datensätzen"
 
@@ -675,7 +676,7 @@ msgstr "Wählen Sie einen anderen Datensatz"
 msgid "dataset.hasImputedValues"
 msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die Lücken zu füllen."
 
-#: app/configurator/components/dataset-browse.tsx:322
+#: app/configurator/components/dataset-browse.tsx:323
 msgid "dataset.includeDrafts"
 msgstr "Entwürfe einschließen"
 
@@ -699,21 +700,21 @@ msgstr "Quelle"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:290
+#: app/configurator/components/dataset-browse.tsx:291
 msgid "dataset.order.newest"
 msgstr "Neueste"
 
-#: app/configurator/components/dataset-browse.tsx:282
+#: app/configurator/components/dataset-browse.tsx:283
 msgid "dataset.order.relevance"
 msgstr "Relevanz"
 
-#: app/configurator/components/dataset-browse.tsx:286
+#: app/configurator/components/dataset-browse.tsx:287
 msgid "dataset.order.title"
 msgstr "Titel"
 
-#: app/components/chart-preview.tsx:40
+#: app/components/chart-preview.tsx:41
 #: app/components/chart-published.tsx:51
-#: app/configurator/components/dataset-preview.tsx:36
+#: app/configurator/components/dataset-preview.tsx:37
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
@@ -721,23 +722,23 @@ msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik ni
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
-#: app/configurator/components/dataset-browse.tsx:346
+#: app/configurator/components/dataset-browse.tsx:347
 msgid "dataset.results"
 msgstr "{0, plural, zero {Keine Ergebnisse} one {# Ergebnis} other {# Ergebnisse}}"
 
-#: app/configurator/components/dataset-browse.tsx:294
+#: app/configurator/components/dataset-browse.tsx:295
 msgid "dataset.search.label"
 msgstr "Suchen"
 
-#: app/configurator/components/dataset-browse.tsx:366
+#: app/configurator/components/dataset-browse.tsx:367
 msgid "dataset.sortby"
 msgstr "Sortieren nach"
 
-#: app/configurator/components/dataset-browse.tsx:905
+#: app/configurator/components/dataset-browse.tsx:926
 msgid "dataset.tag.draft"
 msgstr "Luftzug"
 
-#: app/configurator/components/dataset-preview.tsx:103
+#: app/configurator/components/dataset-preview.tsx:109
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
 
@@ -825,8 +826,8 @@ msgstr "Filter anzeigen"
 #~ msgid "intro.browse.themes"
 #~ msgstr "Kategorien durchsuchen"
 
-#: app/components/header.tsx:106
-#: app/components/header.tsx:125
+#: app/components/header.tsx:147
+#: app/components/header.tsx:166
 msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
@@ -878,7 +879,7 @@ msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt ha
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:189
+#: app/configurator/components/stepper.tsx:198
 msgid "step.annotate"
 msgstr "Beschreiben"
 
@@ -886,11 +887,11 @@ msgstr "Beschreiben"
 #~ msgid "step.dataset"
 #~ msgstr "Datensatz"
 
-#: app/configurator/components/stepper.tsx:175
+#: app/configurator/components/stepper.tsx:177
 msgid "step.visualization.type"
 msgstr "Diagrammtyp"
 
-#: app/configurator/components/stepper.tsx:182
+#: app/configurator/components/stepper.tsx:187
 msgid "step.visualize"
 msgstr "Visualisieren"
 
