@@ -17,6 +17,7 @@ import {
   TypeSpecimen,
 } from "catalog";
 import { useEffect, useState } from "react";
+import { i18n, I18nProvider, parseLocaleString } from "../src";
 
 const pages: ConfigPageOrGroup[] = [
   { path: "/", title: "Introduction", content: require("../docs/index.mdx") },
@@ -117,11 +118,6 @@ const pages: ConfigPageOrGroup[] = [
         path: "/components/intro",
         title: "Introduction",
         content: require("../docs/components"),
-      },
-      {
-        path: "/components/action-bar",
-        title: "Action Bar",
-        content: require("../docs/action-bar.docs"),
       },
       {
         path: "/components/button",
@@ -241,27 +237,31 @@ const mdxComponents = {
 
 export default () => {
   const [mounted, setMounted] = useState(false);
+  const locale = parseLocaleString("en");
+  i18n.activate(locale);
   useEffect(() => {
     setMounted(true);
   }, []);
 
   return mounted ? (
     <MDXProvider components={mdxComponents}>
-      <Catalog
-        title="Visualization Tool"
-        pages={pages}
-        theme={{
-          brandColor: "#333",
-          sidebarColorText: "#333",
-          navBarTextColor: "#333",
-          sidebarColorHeading: "#333",
-          pageHeadingTextColor: "#fff",
-          linkColor: "rgb(255,95,85)",
-          sidebarColorTextActive: "rgb(255,95,85)",
-          background: "#F5F5F5",
-          pageHeadingBackground: "#156896",
-        }}
-      />
+      <I18nProvider i18n={i18n}>
+        <Catalog
+          title="Visualization Tool"
+          pages={pages}
+          theme={{
+            brandColor: "#333",
+            sidebarColorText: "#333",
+            navBarTextColor: "#333",
+            sidebarColorHeading: "#333",
+            pageHeadingTextColor: "#fff",
+            linkColor: "rgb(255,95,85)",
+            sidebarColorTextActive: "rgb(255,95,85)",
+            background: "#F5F5F5",
+            pageHeadingBackground: "#156896",
+          }}
+        />
+      </I18nProvider>
     </MDXProvider>
   ) : null;
 };
