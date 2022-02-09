@@ -1,11 +1,12 @@
 import { Trans } from "@lingui/macro";
-import React, { ReactNode, useCallback } from "react";
+import React, { ReactNode, useCallback, useEffect } from "react";
 import { Button, ButtonProps, Flex, Text } from "theme-ui";
 import {
   useConfiguratorState,
   canTransitionToNextStep,
   canTransitionToPreviousStep,
 } from "..";
+import { useHeaderProgress } from "../../components/header";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import SvgIcChevronLeft from "../../icons/components/IcChevronLeft";
 import SvgIcChevronRight from "../../icons/components/IcChevronRight";
@@ -48,6 +49,26 @@ export const StepperDumb = ({
     );
 
   const currentStepIndex = steps.indexOf(state.state as $IntentionalAny);
+  const { value: progress, setValue: setProgress } = useHeaderProgress();
+  useEffect(() => {
+    const run = async () => {
+      if (
+        (currentStepIndex === 0 || currentStepIndex === -1) &&
+        progress === 100
+      ) {
+        setProgress(0);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      setProgress(
+        Math.round(((currentStepIndex + 1) / (steps.length + 1)) * 100)
+      );
+    };
+    run();
+    return () => {
+      setProgress(100);
+    };
+  }, [currentStepIndex, setProgress, progress]);
+
   return (
     <Flex
       sx={{

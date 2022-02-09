@@ -3,11 +3,52 @@ import { Trans } from "@lingui/macro";
 import { Box, Flex, Text } from "theme-ui";
 import { LanguageMenu } from "./language-menu";
 import NextLink from "next/link";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
-const HeaderBorder = () => {
+const DEFAULT_HEADER_PROGRESS = 100;
+
+export const useHeaderProgressContext = () => {
+  const [value, setValue] = useState(DEFAULT_HEADER_PROGRESS);
+  return useMemo(() => ({ value, setValue }), [value, setValue]);
+};
+
+export const useHeaderProgress = () => useContext(HeaderProgressContext);
+
+const HeaderProgressContext = React.createContext({
+  value: DEFAULT_HEADER_PROGRESS,
+  setValue: (() => undefined) as Dispatch<SetStateAction<number>>,
+});
+
+export const HeaderProgressProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const headerProgress = useHeaderProgressContext();
+  return (
+    <HeaderProgressContext.Provider value={headerProgress}>
+      {children}
+    </HeaderProgressContext.Provider>
+  );
+};
+
+export const HeaderBorder = () => {
+  const { value: progress } = useHeaderProgress();
   return (
     <Box
       sx={{
+        transform: `scaleX(${progress / 100})`,
+        transformOrigin: "0 0",
+        transition:
+          progress === 0 ? "opacity 0.1s ease" : "transform 0.3s ease",
+        width: `100%`,
+        opacity: progress === 0 ? 0 : 1,
         borderBottomWidth: "4px",
         borderBottomStyle: "solid",
         borderBottomColor: "brand",

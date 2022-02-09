@@ -1,8 +1,9 @@
 import { markdown, ReactSpecimen } from "catalog";
+import { HeaderBorder, HeaderProgressProvider } from "../components/header";
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
-  ConfiguratorStateSelectingDataSet,
+  ConfiguratorStateSelectingChartType,
 } from "../configurator";
 import { StepperDumb } from "../configurator/components/stepper";
 import { DataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
@@ -20,17 +21,20 @@ Selecting dataset step
 
 ${(
   <ReactSpecimen>
-    <StepperDumb
-      goPrevious={() => {}}
-      goNext={() => {}}
-      data={mockData}
-      state={
-        {
-          state: "SELECTING_DATASET",
-          dataSet: "https://fake-dataset-iri",
-        } as ConfiguratorStateSelectingDataSet
-      }
-    />
+    <HeaderProgressProvider>
+      <HeaderBorder />
+      <StepperDumb
+        goPrevious={() => {}}
+        goNext={() => {}}
+        data={mockData}
+        state={
+          {
+            state: "SELECTING_CHART_TYPE",
+            dataSet: "https://fake-dataset-iri",
+          } as ConfiguratorStateSelectingChartType
+        }
+      />
+    </HeaderProgressProvider>
   </ReactSpecimen>
 )}
 
@@ -39,14 +43,17 @@ Configuring step
 
 ${(
   <ReactSpecimen>
-    <StepperDumb
-      goPrevious={() => {}}
-      goNext={() => {}}
-      data={mockData}
-      state={
-        { state: "CONFIGURING_CHART" } as ConfiguratorStateConfiguringChart
-      }
-    />
+    <HeaderProgressProvider>
+      <HeaderBorder />
+      <StepperDumb
+        goPrevious={() => {}}
+        goNext={() => {}}
+        data={mockData}
+        state={
+          { state: "CONFIGURING_CHART" } as ConfiguratorStateConfiguringChart
+        }
+      />
+    </HeaderProgressProvider>
   </ReactSpecimen>
 )}
 
@@ -54,14 +61,17 @@ Describing step
 
   ${(
     <ReactSpecimen>
-      <StepperDumb
-        goPrevious={() => {}}
-        goNext={() => {}}
-        data={mockData}
-        state={
-          { state: "DESCRIBING_CHART" } as ConfiguratorStateDescribingChart
-        }
-      />
+      <HeaderProgressProvider>
+        <HeaderBorder />
+        <StepperDumb
+          goPrevious={() => {}}
+          goNext={() => {}}
+          data={mockData}
+          state={
+            { state: "DESCRIBING_CHART" } as ConfiguratorStateDescribingChart
+          }
+        />
+      </HeaderProgressProvider>
     </ReactSpecimen>
   )}
 
