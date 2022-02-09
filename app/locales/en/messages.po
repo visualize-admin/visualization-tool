@@ -107,10 +107,6 @@ msgstr "Create New Visualization"
 msgid "button.next"
 msgstr "Next"
 
-#: app/configurator/components/action-bar.tsx:40
-#~ msgid "button.previous"
-#~ msgstr "Previous"
-
 #: app/configurator/components/stepper.tsx:46
 msgid "button.publish"
 msgstr "Publish this visualization"
@@ -124,10 +120,6 @@ msgstr "Share"
 msgid "chart.map.layers.area"
 msgstr "Areas"
 
-#: app/charts/map/prototype-right-controls.tsx:110
-#~ msgid "chart.map.layers.area.color.palette"
-#~ msgstr "Color palette"
-
 #: app/configurator/map/map-chart-options.tsx:251
 msgid "chart.map.layers.area.discretization.continuous"
 msgstr "Continuous"
@@ -139,14 +131,6 @@ msgstr "Discrete"
 #: app/configurator/map/map-chart-options.tsx:312
 msgid "chart.map.layers.area.discretization.jenks"
 msgstr "Jenks (natural breaks)"
-
-#: app/charts/map/prototype-right-controls.tsx:140
-#~ msgid "chart.map.layers.area.discretization.linear"
-#~ msgstr "Linear interpolation"
-
-#: app/charts/map/prototype-right-controls.tsx:199
-#~ msgid "chart.map.layers.area.discretization.number.class"
-#~ msgstr "Number of classes"
 
 #: app/configurator/map/map-chart-options.tsx:305
 msgid "chart.map.layers.area.discretization.quantiles"
@@ -170,10 +154,6 @@ msgstr "Show relief"
 msgid "chart.map.layers.base.show.water"
 msgstr "Show water"
 
-#: app/charts/map/prototype-right-controls.tsx:263
-#~ msgid "chart.map.layers.no.selected"
-#~ msgstr "Select a layer to edit in the left panel."
-
 #: app/configurator/map/map-chart-options.tsx:171
 #: app/configurator/map/map-chart-options.tsx:383
 msgid "chart.map.layers.show"
@@ -184,23 +164,9 @@ msgstr "Show layer"
 msgid "chart.map.layers.symbol"
 msgstr "Symbols"
 
-#: app/charts/map/prototype-right-controls.tsx:228
-#~ msgid "chart.map.layers.symbol.add.symbols"
-#~ msgstr "Show proportional symbols"
-
-#: app/configurator/map/map-chart-options.tsx:59
-#: app/configurator/map/map-chart-options.tsx:155
-#: app/configurator/map/map-chart-options.tsx:362
-#~ msgid "chart.map.settings"
-#~ msgstr "Settings"
-
 #: app/configurator/map/map-chart-options.tsx:455
 msgid "chart.map.warning.noGeoDimensions"
 msgstr "In this dataset there are no geographical dimensions to display."
-
-#: app/charts/map/chart-map-prototype.tsx:274
-#~ msgid "chart.map.warning.prototype"
-#~ msgstr "This map is a prototype and can't be published."
 
 #: app/charts/table/table.tsx:260
 msgid "chart.published.toggle.mobile.view"
@@ -802,13 +768,6 @@ msgstr "Negative Values"
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. Share it by copying the URL or use the Embed menu below."
 
-#: app/components/hint.tsx:117
-#~ msgid "hint.select.dataset"
-#~ msgstr "Select a dataset"
-
-#: app/components/hint.tsx:120
-#~ msgid "hint.select.dataset.to.preview"
-#~ msgstr "Select a dataset to preview its structure and content."
 
 #: app/charts/shared/chart-data-filters.tsx:67
 msgid "interactive.data.filters.hide"
@@ -818,13 +777,6 @@ msgstr "Hide Filters"
 msgid "interactive.data.filters.show"
 msgstr "Show Filters"
 
-#: app/homepage/intro.tsx:121
-#~ msgid "intro.browse.organizations"
-#~ msgstr "Browse organizations"
-
-#: app/homepage/intro.tsx:102
-#~ msgid "intro.browse.themes"
-#~ msgstr "Browse categories"
 
 #: app/components/header.tsx:147
 #: app/components/header.tsx:166
@@ -882,10 +834,6 @@ msgstr "visualize.admin.ch"
 #: app/configurator/components/stepper.tsx:198
 msgid "step.annotate"
 msgstr "Before publishing, add a title and description to your chart, and choose which elements should be interactive."
-
-#: app/configurator/components/stepper.tsx:204
-#~ msgid "step.dataset"
-#~ msgstr "Dataset"
 
 #: app/configurator/components/stepper.tsx:177
 msgid "step.visualization.type"

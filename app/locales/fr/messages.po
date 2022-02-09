@@ -107,10 +107,6 @@ msgstr "Créer une nouvelle visualisation"
 msgid "button.next"
 msgstr "Suivant"
 
-#: app/configurator/components/action-bar.tsx:40
-#~ msgid "button.previous"
-#~ msgstr "Précédent"
-
 #: app/configurator/components/stepper.tsx:46
 msgid "button.publish"
 msgstr "Publier"
@@ -124,10 +120,6 @@ msgstr "Partager"
 msgid "chart.map.layers.area"
 msgstr "Zones"
 
-#: app/charts/map/prototype-right-controls.tsx:110
-#~ msgid "chart.map.layers.area.color.palette"
-#~ msgstr "Palette de couleurs"
-
 #: app/configurator/map/map-chart-options.tsx:251
 msgid "chart.map.layers.area.discretization.continuous"
 msgstr "Continue"
@@ -139,14 +131,6 @@ msgstr "Discrète"
 #: app/configurator/map/map-chart-options.tsx:312
 msgid "chart.map.layers.area.discretization.jenks"
 msgstr "Jenks (intervalles naturels)"
-
-#: app/charts/map/prototype-right-controls.tsx:140
-#~ msgid "chart.map.layers.area.discretization.linear"
-#~ msgstr "Interpolation linéaire"
-
-#: app/charts/map/prototype-right-controls.tsx:199
-#~ msgid "chart.map.layers.area.discretization.number.class"
-#~ msgstr "Nombre de classes"
 
 #: app/configurator/map/map-chart-options.tsx:305
 msgid "chart.map.layers.area.discretization.quantiles"
@@ -170,10 +154,6 @@ msgstr "Afficher le relief"
 msgid "chart.map.layers.base.show.water"
 msgstr "Montrer les lacs et les rivières"
 
-#: app/charts/map/prototype-right-controls.tsx:263
-#~ msgid "chart.map.layers.no.selected"
-#~ msgstr "Sélectionner une couche à modifier dans le panneau de gauche."
-
 #: app/configurator/map/map-chart-options.tsx:171
 #: app/configurator/map/map-chart-options.tsx:383
 msgid "chart.map.layers.show"
@@ -184,23 +164,9 @@ msgstr "Afficher la couche"
 msgid "chart.map.layers.symbol"
 msgstr "Symboles"
 
-#: app/charts/map/prototype-right-controls.tsx:228
-#~ msgid "chart.map.layers.symbol.add.symbols"
-#~ msgstr "Ajouter des cercles proportionnels"
-
-#: app/configurator/map/map-chart-options.tsx:59
-#: app/configurator/map/map-chart-options.tsx:155
-#: app/configurator/map/map-chart-options.tsx:362
-#~ msgid "chart.map.settings"
-#~ msgstr "Paramètres"
-
 #: app/configurator/map/map-chart-options.tsx:455
 msgid "chart.map.warning.noGeoDimensions"
 msgstr "Dans cet ensemble de données, il n'y a pas de dimensions géographiques à afficher!"
-
-#: app/charts/map/chart-map-prototype.tsx:274
-#~ msgid "chart.map.warning.prototype"
-#~ msgstr "Il s'agit d'un prototype, il n'est pas encore possible de publier des cartes."
 
 #: app/charts/table/table.tsx:260
 msgid "chart.published.toggle.mobile.view"
@@ -293,10 +259,6 @@ msgstr "Ajouter…"
 #: app/configurator/components/chart-controls/color-ramp.tsx:128
 msgid "controls.color.palette"
 msgstr "Couleurs"
-
-#: app/configurator/components/chart-controls/color-ramp.tsx:147
-#~ msgid "controls.color.palette.diverging"
-#~ msgstr "Divergent"
 
 #: app/configurator/components/chart-controls/color-palette.tsx:237
 #: app/configurator/components/chart-controls/color-palette.tsx:243
@@ -802,14 +764,6 @@ msgstr "Valeurs négatives"
 msgid "hint.publication.success"
 msgstr "Votre visualisation est à présent publiée. Partagez-là en copiant l'URL ou en utilisant les options d'intégration."
 
-#: app/components/hint.tsx:117
-#~ msgid "hint.select.dataset"
-#~ msgstr "Sélectionner un jeu de données"
-
-#: app/components/hint.tsx:120
-#~ msgid "hint.select.dataset.to.preview"
-#~ msgstr "Sélectionner un jeu de données pour prévisualiser sa structure et son contenu."
-
 #: app/charts/shared/chart-data-filters.tsx:67
 msgid "interactive.data.filters.hide"
 msgstr "Masquer les filtres"
@@ -817,14 +771,6 @@ msgstr "Masquer les filtres"
 #: app/charts/shared/chart-data-filters.tsx:65
 msgid "interactive.data.filters.show"
 msgstr "Afficher les filtres"
-
-#: app/homepage/intro.tsx:121
-#~ msgid "intro.browse.organizations"
-#~ msgstr "Parcourir les organisations"
-
-#: app/homepage/intro.tsx:102
-#~ msgid "intro.browse.themes"
-#~ msgstr "Parcourir les catégories"
 
 #: app/components/header.tsx:147
 #: app/components/header.tsx:166
@@ -882,10 +828,6 @@ msgstr "visualize.admin.ch"
 #: app/configurator/components/stepper.tsx:198
 msgid "step.annotate"
 msgstr "Annoter"
-
-#: app/configurator/components/stepper.tsx:204
-#~ msgid "step.dataset"
-#~ msgstr "Données"
 
 #: app/configurator/components/stepper.tsx:177
 msgid "step.visualization.type"
