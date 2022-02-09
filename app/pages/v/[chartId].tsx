@@ -13,6 +13,8 @@ import { getConfig } from "../../db/config";
 import { Config } from "../../configurator";
 import { useLocale } from "../../locales/use-locale";
 import NextLink from "next/link";
+import Stack from "../../components/Stack";
+
 type PageProps =
   | {
       status: "notfound";
@@ -80,13 +82,13 @@ const VisualizationPage = (props: PageProps) => {
               />
             </ChartPanel>
 
-            <PublishActions configKey={key} />
+            <PublishActions configKey={key} sx={{ mt: 5, mb: 5 }} />
 
             <Text
               as="div"
               variant="heading3"
               mt={3}
-              mb={5}
+              mb={4}
               sx={{
                 color: "monochrome800",
                 fontSize: 5,
@@ -109,19 +111,25 @@ const VisualizationPage = (props: PageProps) => {
               )}
             </Text>
 
-            <NextLink href="/create/new" passHref>
-              <Button as="a" variant="primary" sx={{ mb: 4 }}>
-                <Trans id="button.new.visualization">New Visualization</Trans>
-              </Button>
-            </NextLink>
-            <NextLink
-              href={{ pathname: "/create/new", query: { from: key } }}
-              passHref
-            >
-              <Button as="a" variant="outline" sx={{ mb: 4, ml: [0, 4] }}>
-                <Trans id="button.copy.visualization">Copy Visualization</Trans>
-              </Button>
-            </NextLink>
+            <Stack direction={["column", "row"]} spacing={2}>
+              <NextLink href="/create/new" passHref>
+                <Button as="a" variant="secondary">
+                  <Trans id="button.new.visualization">
+                    Create a new visualization
+                  </Trans>
+                </Button>
+              </NextLink>
+              <NextLink
+                href={{ pathname: "/create/new", query: { from: key } }}
+                passHref
+              >
+                <Button as="a" variant="secondary">
+                  <Trans id="button.copy.visualization">
+                    Copy and edit this visualization
+                  </Trans>
+                </Button>
+              </NextLink>
+            </Stack>
           </Box>
         </Box>
       </ContentLayout>

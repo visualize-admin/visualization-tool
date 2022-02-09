@@ -76,7 +76,7 @@ msgstr "Back"
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
-msgstr "Copy This Visualization"
+msgstr "Copy and edit this visualization"
 
 #: app/components/data-download.tsx:137
 msgid "button.download.data"
