@@ -4,6 +4,18 @@ import { Box, Flex, Text } from "theme-ui";
 import { LanguageMenu } from "./language-menu";
 import NextLink from "next/link";
 
+const HeaderBorder = () => {
+  return (
+    <Box
+      sx={{
+        borderBottomWidth: "4px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "brand",
+      }}
+    />
+  );
+};
+
 export const Header = ({
   pageType = "app",
   contentId,
@@ -12,45 +24,43 @@ export const Header = ({
   contentId?: string;
 }) => {
   return (
-    <Flex
-      as="header"
-      sx={
-        pageType === "content"
-          ? {
-              px: [0, 4, 4],
-              pt: [0, 3, 3],
-              pb: [0, 5, 5],
-              borderBottomWidth: "4px",
-              borderBottomStyle: "solid",
-              borderBottomColor: "brand",
-              bg: "monochrome100",
-              color: "monochrome700",
-              flexDirection: ["column", "row"],
-            }
-          : {
-              px: [0, 4, 4],
-              pt: [0, 3, 3],
-              pb: [0, 5, 5],
-              borderBottomWidth: "4px",
-              borderBottomStyle: "solid",
-              borderBottomColor: "brand",
-              bg: "monochrome100",
-              color: "monochrome700",
-              flexDirection: ["column", "row"],
-              // Needs to be "fixed" to prevent
-              // iOS full-page scrolling
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100%",
-              overflowY: "hidden",
-              zIndex: 13,
-            }
-      }
-    >
-      <LanguageMenu contentId={contentId} />
-      <Logo />
-    </Flex>
+    <div>
+      <Flex
+        as="header"
+        sx={
+          pageType === "content"
+            ? {
+                px: [0, 4, 4],
+                pt: [0, 3, 3],
+                pb: [0, 5, 5],
+
+                bg: "monochrome100",
+                color: "monochrome700",
+                flexDirection: ["column", "row"],
+              }
+            : {
+                px: [0, 4, 4],
+                pt: [0, 3, 3],
+                pb: [0, 5, 5],
+                bg: "monochrome100",
+                color: "monochrome700",
+                flexDirection: ["column", "row"],
+                // Needs to be "fixed" to prevent
+                // iOS full-page scrolling
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                overflowY: "hidden",
+                zIndex: 13,
+              }
+        }
+      >
+        <LanguageMenu contentId={contentId} />
+        <Logo />
+      </Flex>
+      <HeaderBorder />
+    </div>
   );
 };
 
