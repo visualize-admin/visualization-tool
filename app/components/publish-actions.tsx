@@ -28,7 +28,7 @@ export const PublishActions = ({
   sx,
 }: {
   configKey: string;
-  sx: FlexOwnProps["sx"];
+  sx?: FlexOwnProps["sx"];
 }) => {
   const locale = useLocale();
 
