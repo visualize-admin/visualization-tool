@@ -69,6 +69,10 @@ msgstr "Tutti i set di dati"
 msgid "browse.datasets.description"
 msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando per categorie o organizzazioni oppure cercando direttamente per parole chiave specifiche. Clicca su un set di dati per vedere informazioni più dettagliate e iniziare a creare le tue visualizzazioni."
 
+#: app/configurator/components/stepper.tsx:43
+msgid "button.back"
+msgstr "Torna indietro"
+
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
 msgstr "Copia questa visualizzazione"
@@ -103,8 +107,8 @@ msgid "button.next"
 msgstr "Successivo"
 
 #: app/configurator/components/action-bar.tsx:40
-msgid "button.previous"
-msgstr "Precedente"
+#~ msgid "button.previous"
+#~ msgstr "Precedente"
 
 #: app/configurator/components/action-bar.tsx:43
 msgid "button.publish"

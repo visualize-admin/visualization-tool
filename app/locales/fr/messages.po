@@ -69,6 +69,10 @@ msgstr "Tous les jeux de données"
 msgid "browse.datasets.description"
 msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par catégories ou organisations, ou en recherchant par mots-clés. Cliquez sur un ensemble de données pour afficher des informations plus détaillées et commencer à créer vos propres visualisations. "
 
+#: app/configurator/components/stepper.tsx:43
+msgid "button.back"
+msgstr "Précédent"
+
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
 msgstr "Copier cette visualisation"
@@ -103,8 +107,8 @@ msgid "button.next"
 msgstr "Suivant"
 
 #: app/configurator/components/action-bar.tsx:40
-msgid "button.previous"
-msgstr "Précédent"
+#~ msgid "button.previous"
+#~ msgstr "Précédent"
 
 #: app/configurator/components/action-bar.tsx:43
 msgid "button.publish"

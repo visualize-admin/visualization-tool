@@ -69,6 +69,10 @@ msgstr "Alle Datensätze"
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
+#: app/configurator/components/stepper.tsx:43
+msgid "button.back"
+msgstr "Zurück"
+
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
 msgstr "Diese Visualisierung kopieren"
@@ -103,8 +107,8 @@ msgid "button.next"
 msgstr "Weiter"
 
 #: app/configurator/components/action-bar.tsx:40
-msgid "button.previous"
-msgstr "Zurück"
+#~ msgid "button.previous"
+#~ msgstr "Zurück"
 
 #: app/configurator/components/action-bar.tsx:43
 msgid "button.publish"

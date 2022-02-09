@@ -1,25 +1,70 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Step } from "../configurator/components/stepper";
+import {
+  ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
+  ConfiguratorStateSelectingDataSet,
+} from "../configurator";
+import { StepperDumb } from "../configurator/components/stepper";
+import { DataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+
+const mockData = {
+  __typename: "Query",
+  dataCubeByIri: { dimensions: [{}] },
+} as DataCubeMetadataWithComponentValuesQuery;
 
 export default () => markdown`
 > The "stepper" is used to guide users through the steps of creating a visualization.
 
 
+Selecting dataset step
+
+${(
+  <ReactSpecimen>
+    <StepperDumb
+      goPrevious={() => {}}
+      goNext={() => {}}
+      data={mockData}
+      state={
+        {
+          state: "SELECTING_DATASET",
+          dataSet: "https://fake-dataset-iri",
+        } as ConfiguratorStateSelectingDataSet
+      }
+    />
+  </ReactSpecimen>
+)}
+
+
+Configuring step
+
+${(
+  <ReactSpecimen>
+    <StepperDumb
+      goPrevious={() => {}}
+      goNext={() => {}}
+      data={mockData}
+      state={
+        { state: "CONFIGURING_CHART" } as ConfiguratorStateConfiguringChart
+      }
+    />
+  </ReactSpecimen>
+)}
+
+Describing step
+
   ${(
-    <ReactSpecimen span={1}>
-      <Step stepNumber={1} stepState="CONFIGURING_CHART" status="past" />
+    <ReactSpecimen>
+      <StepperDumb
+        goPrevious={() => {}}
+        goNext={() => {}}
+        data={mockData}
+        state={
+          { state: "DESCRIBING_CHART" } as ConfiguratorStateDescribingChart
+        }
+      />
     </ReactSpecimen>
   )}
-  ${(
-    <ReactSpecimen span={1}>
-      <Step stepNumber={3} stepState="CONFIGURING_CHART" status="current" />
-    </ReactSpecimen>
-  )}
-  ${(
-    <ReactSpecimen span={1}>
-      <Step stepNumber={4} stepState="CONFIGURING_CHART" status="future" />
-    </ReactSpecimen>
-  )}
+
 
   ## How to use
 
