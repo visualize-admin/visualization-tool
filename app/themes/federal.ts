@@ -50,8 +50,9 @@ export const theme: Theme = {
     secondaryActive: "#454545",
     secondaryDisabled: "#a6a6a6",
 
-    secondaryButton: "#d8e8ef",
-    secondaryButtonHover: "#CCDFE7",
+    secondaryButton: "#757575",
+    secondaryButtonText: "white",
+    secondaryButtonHover: "#646464",
 
     success: "#3c763d",
     successHover: "#3c763d",
@@ -323,7 +324,7 @@ export const theme: Theme = {
     secondary: {
       variant: "buttons.primary",
       bg: "secondaryButton",
-      color: "primary",
+      color: "secondaryButtonText",
       ":hover": {
         bg: "secondaryButtonHover",
       },
