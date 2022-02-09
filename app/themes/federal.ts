@@ -257,18 +257,34 @@ export const theme: Theme = {
       background: "transparent",
       border: "none",
     },
-    primary: {
-      bg: "primary",
-      color: "monochrome100",
-      borderRadius: "default",
-      width: ["100%", "auto"],
-      minWidth: "160px",
+    base: {
       px: 4,
       py: 3,
       fontFamily: "body",
       fontSize: 4,
+      borderRadius: "default",
       transition: "background-color .2s",
       cursor: "pointer",
+      display: "inline-flex",
+      alignItems: "center",
+      flexGrow: 0,
+      justifyContent: "center",
+      "& > svg": {
+        width: 22,
+        mt: -1,
+        mb: -1,
+      },
+      "& > svg:first-child": {
+        marginRight: 2,
+      },
+      "& > svg:last-child": {
+        marginLeft: 2,
+      },
+    },
+    primary: {
+      variant: "buttons.base",
+      bg: "primary",
+      color: "monochrome100",
       ":hover": {
         bg: "primaryHover",
       },
@@ -281,15 +297,22 @@ export const theme: Theme = {
       },
     },
     "primary-small": {
-      variant: "buttons.primary",
+      variant: "buttons.base",
       fontSize: 3,
       fontWeight: "normal",
       py: 2,
-      m: 0,
       minWidth: "auto",
+      "& > svg:first-child": {
+        width: "auto",
+        marginRight: 1,
+      },
+      "& > svg:last-child": {
+        width: "auto",
+        marginLeft: 1,
+      },
     },
     success: {
-      variant: "buttons.primary",
+      variant: "buttons.base",
       bg: "successBase",
       ":hover": {
         bg: "successHover",
@@ -303,7 +326,7 @@ export const theme: Theme = {
       },
     },
     outline: {
-      variant: "buttons.primary",
+      variant: "buttons.base",
       color: "primary",
       bg: "monochrome100",
       border: "1px",
@@ -337,11 +360,10 @@ export const theme: Theme = {
       },
     },
     inverted: {
+      variant: "buttons.base",
       bg: "monochrome100",
       color: "monochrome800",
       borderRadius: "default",
-      width: ["100%", "auto"],
-      minWidth: 160,
       px: 4,
       py: 3,
       fontFamily: "body",
@@ -361,6 +383,7 @@ export const theme: Theme = {
       },
     },
     inline: {
+      variant: "buttons.base",
       background: "transparent",
       color: "primary",
       fontFamily: "body",
@@ -378,8 +401,17 @@ export const theme: Theme = {
         cursor: "initial",
         color: "monochrome500",
       },
+      "& > svg:first-child": {
+        width: "auto",
+        marginRight: 1,
+      },
+      "& > svg:last-child": {
+        width: "auto",
+        marginLeft: 1,
+      },
     },
     "inline-bold": {
+      variant: "buttons.base",
       background: "transparent",
       color: "monochrome800",
       fontFamily: "body",
@@ -396,6 +428,14 @@ export const theme: Theme = {
       ":disabled": {
         cursor: "initial",
         color: "monochrome500",
+      },
+      "& > svg:first-child": {
+        width: "auto",
+        marginRight: 1,
+      },
+      "& > svg:last-child": {
+        width: "auto",
+        marginLeft: 1,
       },
     },
     selectColorPicker: {

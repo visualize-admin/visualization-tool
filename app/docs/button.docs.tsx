@@ -1,5 +1,8 @@
 import { Button } from "theme-ui";
 import { markdown, ReactSpecimen } from "catalog";
+import { Icon } from "../icons";
+import SvgIcChevronRight from "../icons/components/IcChevronRight";
+import SvgIcChevronLeft from "../icons/components/IcChevronLeft";
 
 export default () => markdown`
 > Buttons are used to trigger an event after a user interaction.
@@ -7,14 +10,19 @@ export default () => markdown`
 There are four basic styles that are styles defined in \`theme-ui\`'s \`variants\`:
 
 - \`primary\`
+- \`primary-small\`
 - \`secondary\`
 - \`success\`
 - \`inline\`
+- \`inline-bold\`
 
 
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="primary">Primary button</Button>
+      <Button variant="primary">
+        <Icon name="linkExternal" />
+        <span>Primary button</span>
+      </Button>
     </ReactSpecimen>
   )}
 
@@ -38,17 +46,26 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="inline">Inline button</Button>
+      <Button variant="inline">
+        <SvgIcChevronLeft />
+        <span>Inline button</span>
+      </Button>
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="inline-bold">Bold inline button</Button>
+      <Button variant="inline-bold">
+        <SvgIcChevronLeft />
+        Bold inline button
+      </Button>
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="primary-small">Primary small button</Button>
+      <Button variant="primary-small">
+        <span>Publish this dataset</span>
+        <SvgIcChevronRight />
+      </Button>
     </ReactSpecimen>
   )}
 
@@ -56,6 +73,8 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
 
 ~~~
 import { Button } from "theme-ui"
+import SvgIcChevronRight from "../icons/components/IcChevronRight";
+import SvgIcChevronLeft from "../icons/components/IcChevronLeft";
 
 <Button variant="primary">
   Primary button

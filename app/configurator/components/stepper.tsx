@@ -230,21 +230,7 @@ const NavButton = ({
   onClick: () => void;
   disabled: boolean;
 } & ButtonProps) => (
-  <Button
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      "& > svg:last-child": {
-        marginLeft: 1,
-      },
-      "& > svg:first-child": {
-        marginRight: 1,
-      },
-    }}
-    onClick={onClick}
-    disabled={disabled}
-    {...props}
-  >
+  <Button onClick={onClick} disabled={disabled} {...props}>
     {label}
   </Button>
 );
