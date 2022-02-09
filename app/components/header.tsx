@@ -24,43 +24,37 @@ export const Header = ({
   contentId?: string;
 }) => {
   return (
-    <div>
+    <Box
+      sx={
+        pageType == "content"
+          ? undefined
+          : {
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              overflowY: "hidden",
+              zIndex: 13,
+            }
+      }
+    >
       <Flex
         as="header"
-        sx={
-          pageType === "content"
-            ? {
-                px: [0, 4, 4],
-                pt: [0, 3, 3],
-                pb: [0, 5, 5],
+        sx={{
+          px: [0, 4, 4],
+          pt: [0, 3, 3],
+          pb: [0, 5, 5],
 
-                bg: "monochrome100",
-                color: "monochrome700",
-                flexDirection: ["column", "row"],
-              }
-            : {
-                px: [0, 4, 4],
-                pt: [0, 3, 3],
-                pb: [0, 5, 5],
-                bg: "monochrome100",
-                color: "monochrome700",
-                flexDirection: ["column", "row"],
-                // Needs to be "fixed" to prevent
-                // iOS full-page scrolling
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                overflowY: "hidden",
-                zIndex: 13,
-              }
-        }
+          bg: "monochrome100",
+          color: "monochrome700",
+          flexDirection: ["column", "row"],
+        }}
       >
         <LanguageMenu contentId={contentId} />
         <Logo />
       </Flex>
       <HeaderBorder />
-    </div>
+    </Box>
   );
 };
 
