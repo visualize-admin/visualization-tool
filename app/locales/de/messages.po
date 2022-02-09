@@ -35,7 +35,7 @@ msgstr "Filter nach oben verschieben"
 
 #: app/components/autocomplete.tsx:171
 msgid "No results"
-msgstr "Kein ergebnis"
+msgstr "Kein Ergebnis"
 
 #: app/components/search-autocomplete.tsx:71
 msgid "Search “{0}”"
@@ -59,7 +59,7 @@ msgstr "Kategorien"
 
 #: app/configurator/components/dataset-preview.tsx:54
 msgid "browse.dataset.create-visualization"
-msgstr "Visualisierung erstellen"
+msgstr "Visualisierung von diesem Datensatz erstellen"
 
 #: app/configurator/components/select-dataset-step.tsx:133
 msgid "browse.datasets.all-datasets"
@@ -71,7 +71,7 @@ msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datens�
 
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
-msgstr "Diese Visualisierung kopieren"
+msgstr "Diese Visualisierung kopieren und editieren"
 
 #: app/components/data-download.tsx:137
 msgid "button.download.data"
@@ -108,7 +108,7 @@ msgstr "Zurück"
 
 #: app/configurator/components/action-bar.tsx:43
 msgid "button.publish"
-msgstr "Veröffentlichen"
+msgstr "Diese Visualisierung veröffentlichen"
 
 #: app/components/publish-actions.tsx:129
 msgid "button.share"
@@ -167,12 +167,12 @@ msgstr "Relief anzeigen"
 
 #: app/charts/map/prototype-right-controls.tsx:263
 #~ msgid "chart.map.layers.no.selected"
-#~ msgstr "Wählen Sie einen Layer zum Bearbeiten aus."
+#~ msgstr "Wählen Sie eine Ebene zum Bearbeiten aus."
 
 #: app/configurator/map/map-chart-options.tsx:171
 #: app/configurator/map/map-chart-options.tsx:383
 msgid "chart.map.layers.show"
-msgstr "Layer anzeigen"
+msgstr "Ebene anzeigen"
 
 #: app/configurator/components/ui-helpers.ts:421
 #: app/configurator/map/map-chart-options.tsx:379
@@ -215,7 +215,7 @@ msgstr "Kategorien"
 
 #: app/configurator/table/table-chart-options.tsx:186
 msgid "columnStyle.heatmap"
-msgstr "Wärmebildkarte"
+msgstr "Heatmap"
 
 #: app/configurator/table/table-chart-options.tsx:172
 #: app/configurator/table/table-chart-options.tsx:182
@@ -312,11 +312,11 @@ msgstr "Farbauswahl öffnen"
 
 #: app/configurator/components/ui-helpers.ts:409
 msgid "controls.column.grouped"
-msgstr "gruppiert"
+msgstr "Gruppiert"
 
 #: app/configurator/components/ui-helpers.ts:405
 msgid "controls.column.stacked"
-msgstr "gestapelt"
+msgstr "Gestapelt"
 
 #: app/configurator/components/ui-helpers.ts:401
 msgid "controls.description"
@@ -356,11 +356,11 @@ msgstr "Zeitspanne"
 
 #: app/configurator/map/map-chart-options.tsx:203
 msgid "controls.hierarchy"
-msgstr "Hierarchieebene"
+msgstr "Hierarchie-Ebene"
 
 #: app/configurator/map/map-chart-options.tsx:208
 msgid "controls.hierarchy.select"
-msgstr "Hierarchieebene auswählen"
+msgstr "Hierarchie-Ebene auswählen"
 
 #: app/configurator/components/empty-right-panel.tsx:23
 msgid "controls.hint.configuring.chart"
@@ -755,7 +755,7 @@ msgstr ""
 
 #: app/pages/v/[chartId].tsx:104
 msgid "hint.create.your.own.chart"
-msgstr "Sie können diese Visualisierung kopieren oder mit Schweizer Open Government Data eine neue Visualisierung erstellen."
+msgstr "Kopieren Sie diese Visualisierung oder erstellen Sie eine neue Visualisierung mit Swiss Open Government Data."
 
 #: app/components/hint.tsx:173
 msgid "hint.dataloadingerror.message"
