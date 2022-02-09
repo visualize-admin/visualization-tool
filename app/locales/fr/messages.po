@@ -827,15 +827,15 @@ msgstr "visualize.admin.ch"
 
 #: app/configurator/components/stepper.tsx:198
 msgid "step.annotate"
-msgstr "Annoter"
+msgstr "Avant de publier, ajoutez un titre et une description à votre tableau et choisissez quels éléments doivent être interactifs."
 
 #: app/configurator/components/stepper.tsx:177
 msgid "step.visualization.type"
-msgstr "Type de graphique"
+msgstr "Sélectionnez le type de graphique souhaité pour votre jeu de données."
 
 #: app/configurator/components/stepper.tsx:187
 msgid "step.visualize"
-msgstr "Visualiser"
+msgstr "Personnalisez votre visualisation en utilisant les options de filtrage et de segmentation des couleurs dans les barres latérales."
 
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx:80
 msgid "table.column.no"
