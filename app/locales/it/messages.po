@@ -59,7 +59,7 @@ msgstr "Categorie"
 
 #: app/configurator/components/dataset-preview.tsx:60
 msgid "browse.dataset.create-visualization"
-msgstr "Crea una visualizzazione"
+msgstr "Iniziare una visualizzazione"
 
 #: app/configurator/components/select-dataset-step.tsx:133
 #: app/configurator/components/select-dataset-step.tsx:184
@@ -109,7 +109,7 @@ msgstr "Successivo"
 
 #: app/configurator/components/stepper.tsx:46
 msgid "button.publish"
-msgstr "Pubblica"
+msgstr "Pubblica questa visualizzazione"
 
 #: app/components/publish-actions.tsx:129
 msgid "button.share"
@@ -722,7 +722,7 @@ msgstr ""
 
 #: app/pages/v/[chartId].tsx:104
 msgid "hint.create.your.own.chart"
-msgstr "Crea la tua versione di questa visualizzazione copiandola, oppure inizia da zero e crea una nuova visualizzazione utilizzando i dati aperti dell’amministrazione pubblica svizzera."
+msgstr "Copia questa visualizzazione o crea una nuova visualizzazione usando «dati aperti» dell’amministrazione pubblica svizzera"
 
 #: app/components/hint.tsx:148
 msgid "hint.dataloadingerror.message"
