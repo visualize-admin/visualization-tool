@@ -3,6 +3,59 @@ import { Trans } from "@lingui/macro";
 import { Box, Flex, Text } from "theme-ui";
 import { LanguageMenu } from "./language-menu";
 import NextLink from "next/link";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+
+const DEFAULT_HEADER_PROGRESS = 100;
+
+export const useHeaderProgressContext = () => {
+  const [value, setValue] = useState(DEFAULT_HEADER_PROGRESS);
+  return useMemo(() => ({ value, setValue }), [value, setValue]);
+};
+
+export const useHeaderProgress = () => useContext(HeaderProgressContext);
+
+const HeaderProgressContext = React.createContext({
+  value: DEFAULT_HEADER_PROGRESS,
+  setValue: (() => undefined) as Dispatch<SetStateAction<number>>,
+});
+
+export const HeaderProgressProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const headerProgress = useHeaderProgressContext();
+  return (
+    <HeaderProgressContext.Provider value={headerProgress}>
+      {children}
+    </HeaderProgressContext.Provider>
+  );
+};
+
+export const HeaderBorder = () => {
+  const { value: progress } = useHeaderProgress();
+  return (
+    <Box
+      sx={{
+        transform: `scaleX(${progress / 100})`,
+        transformOrigin: "0 0",
+        transition:
+          progress === 0 ? "opacity 0.1s ease" : "transform 0.3s ease",
+        width: `100%`,
+        opacity: progress === 0 ? 0 : 1,
+        borderBottomWidth: "4px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "brand",
+      }}
+    />
+  );
+};
 
 export const Header = ({
   pageType = "app",
@@ -12,33 +65,11 @@ export const Header = ({
   contentId?: string;
 }) => {
   return (
-    <Flex
-      as="header"
+    <Box
       sx={
-        pageType === "content"
-          ? {
-              px: [0, 4, 4],
-              pt: [0, 3, 3],
-              pb: [0, 5, 5],
-              borderBottomWidth: "4px",
-              borderBottomStyle: "solid",
-              borderBottomColor: "brand",
-              bg: "monochrome100",
-              color: "monochrome700",
-              flexDirection: ["column", "row"],
-            }
+        pageType == "content"
+          ? undefined
           : {
-              px: [0, 4, 4],
-              pt: [0, 3, 3],
-              pb: [0, 5, 5],
-              borderBottomWidth: "4px",
-              borderBottomStyle: "solid",
-              borderBottomColor: "brand",
-              bg: "monochrome100",
-              color: "monochrome700",
-              flexDirection: ["column", "row"],
-              // Needs to be "fixed" to prevent
-              // iOS full-page scrolling
               position: "fixed",
               top: 0,
               left: 0,
@@ -48,9 +79,23 @@ export const Header = ({
             }
       }
     >
-      <LanguageMenu contentId={contentId} />
-      <Logo />
-    </Flex>
+      <Flex
+        as="header"
+        sx={{
+          px: [0, 4, 4],
+          pt: [0, 3, 3],
+          pb: [0, 5, 5],
+
+          bg: "monochrome100",
+          color: "monochrome700",
+          flexDirection: ["column", "row"],
+        }}
+      >
+        <LanguageMenu contentId={contentId} />
+        <Logo />
+      </Flex>
+      <HeaderBorder />
+    </Box>
   );
 };
 

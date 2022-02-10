@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   multiple tabs with visualize.admin or when you bookmark things. [#331](https://github.com/visualize-admin/visualization-tool/pull/331)
 - Theme and organization navigation counts take into account the search field now. [#329](https://github.com/visualize-admin/visualization-tool/pull/329)
 - Added rivers and lakes through vector layer [#309](https://github.com/visualize-admin/visualization-tool/pull/309)
+- Improved chart editing navigation [#337](https://github.com/visualize-admin/visualization-tool/pull/337)
+- Improved chart publish action buttons [#337](https://github.com/visualize-admin/visualization-tool/pull/337)
 
 ### Bugs
 

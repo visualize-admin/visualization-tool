@@ -1,18 +1,11 @@
-import { Trans } from "@lingui/macro";
-import NextLink from "next/link";
 import React from "react";
-import { Link } from "theme-ui";
-import { ConfiguratorState, useConfiguratorState } from "..";
+import { useConfiguratorState } from "..";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPreview } from "../../components/chart-preview";
-import Stack from "../../components/Stack";
-import { useDataCubeMetadataQuery } from "../../graphql/query-hooks";
-import { useLocale } from "../../src";
 import { ChartConfiguratorTable } from "../table/table-chart-configurator";
 import { ChartAnnotationsSelector } from "./chart-annotations-selector";
 import { ChartAnnotator } from "./chart-annotator";
 import { ChartConfigurator } from "./chart-configurator";
-import { SectionTitle } from "./chart-controls/section";
 import { ChartOptionsSelector } from "./chart-options-selector";
 import { ChartTypeSelector } from "./chart-type-selector";
 import {
@@ -25,33 +18,6 @@ import {
 import { SelectDatasetStep } from "./select-dataset-step";
 import { Stepper } from "./stepper";
 
-const DatasetSelector = ({ state }: { state: ConfiguratorState }) => {
-  const locale = useLocale();
-  const [{ data: metaData }] = useDataCubeMetadataQuery({
-    variables: { iri: state.dataSet || "", locale },
-    pause: !state.dataSet,
-  });
-  return (
-    <div>
-      <SectionTitle>Dataset</SectionTitle>
-      {metaData ? (
-        <Stack direction="column" mx={4} spacing={2}>
-          <div>{metaData.dataCubeByIri?.title}</div>
-          <div>
-            <NextLink href="/browse" passHref>
-              <Link variant="primary" sx={{ fontSize: 3 }}>
-                <Trans id="dataset-selector.choose-another-dataset">
-                  Choose another dataset
-                </Trans>
-              </Link>
-            </NextLink>
-          </div>
-        </Stack>
-      ) : null}
-    </div>
-  );
-};
-
 const SelectChartTypeStep = () => {
   const [state] = useConfiguratorState();
   if (state.state !== "SELECTING_CHART_TYPE") {
@@ -60,10 +26,7 @@ const SelectChartTypeStep = () => {
   return (
     <>
       <PanelLeftWrapper>
-        <Stack spacing={2} direction="column">
-          <DatasetSelector state={state} />
-          <ChartTypeSelector state={state} />
-        </Stack>
+        <ChartTypeSelector state={state} />
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
         <ChartPanel>

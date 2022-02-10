@@ -11,6 +11,8 @@ export const ChartPanel = ({
     sx={{
       bg: "monochrome100",
       boxShadow: "primary",
+      borderRadius: "xl",
+      overflow: "hidden",
       width: "auto",
       minHeight: [150, 300, 500],
       borderWidth: "1px",

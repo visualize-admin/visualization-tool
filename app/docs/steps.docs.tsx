@@ -1,25 +1,80 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Step } from "../configurator/components/stepper";
+import { HeaderBorder, HeaderProgressProvider } from "../components/header";
+import {
+  ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
+  ConfiguratorStateSelectingChartType,
+} from "../configurator";
+import { StepperDumb } from "../configurator/components/stepper";
+import { DataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+
+const mockData = {
+  __typename: "Query",
+  dataCubeByIri: { dimensions: [{}] },
+} as DataCubeMetadataWithComponentValuesQuery;
 
 export default () => markdown`
 > The "stepper" is used to guide users through the steps of creating a visualization.
 
 
+Selecting dataset step
+
+${(
+  <ReactSpecimen>
+    <HeaderProgressProvider>
+      <HeaderBorder />
+      <StepperDumb
+        goPrevious={() => {}}
+        goNext={() => {}}
+        data={mockData}
+        state={
+          {
+            state: "SELECTING_CHART_TYPE",
+            dataSet: "https://fake-dataset-iri",
+          } as ConfiguratorStateSelectingChartType
+        }
+      />
+    </HeaderProgressProvider>
+  </ReactSpecimen>
+)}
+
+
+Configuring step
+
+${(
+  <ReactSpecimen>
+    <HeaderProgressProvider>
+      <HeaderBorder />
+      <StepperDumb
+        goPrevious={() => {}}
+        goNext={() => {}}
+        data={mockData}
+        state={
+          { state: "CONFIGURING_CHART" } as ConfiguratorStateConfiguringChart
+        }
+      />
+    </HeaderProgressProvider>
+  </ReactSpecimen>
+)}
+
+Describing step
+
   ${(
-    <ReactSpecimen span={1}>
-      <Step stepNumber={1} stepState="CONFIGURING_CHART" status="past" />
+    <ReactSpecimen>
+      <HeaderProgressProvider>
+        <HeaderBorder />
+        <StepperDumb
+          goPrevious={() => {}}
+          goNext={() => {}}
+          data={mockData}
+          state={
+            { state: "DESCRIBING_CHART" } as ConfiguratorStateDescribingChart
+          }
+        />
+      </HeaderProgressProvider>
     </ReactSpecimen>
   )}
-  ${(
-    <ReactSpecimen span={1}>
-      <Step stepNumber={3} stepState="CONFIGURING_CHART" status="current" />
-    </ReactSpecimen>
-  )}
-  ${(
-    <ReactSpecimen span={1}>
-      <Step stepNumber={4} stepState="CONFIGURING_CHART" status="future" />
-    </ReactSpecimen>
-  )}
+
 
   ## How to use
 

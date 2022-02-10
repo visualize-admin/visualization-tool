@@ -50,8 +50,9 @@ export const theme: Theme = {
     secondaryActive: "#454545",
     secondaryDisabled: "#a6a6a6",
 
-    secondaryButton: "#d8e8ef",
-    secondaryButtonHover: "#CCDFE7",
+    secondaryButton: "#757575",
+    secondaryButtonText: "white",
+    secondaryButtonHover: "#646464",
 
     success: "#3c763d",
     successHover: "#3c763d",
@@ -120,6 +121,7 @@ export const theme: Theme = {
   radii: {
     default: 3,
     bigger: 4,
+    xl: 25,
     circle: 99999,
   },
   shadows: {
@@ -256,18 +258,34 @@ export const theme: Theme = {
       background: "transparent",
       border: "none",
     },
-    primary: {
-      bg: "primary",
-      color: "monochrome100",
-      borderRadius: "default",
-      width: ["100%", "auto"],
-      minWidth: "160px",
+    base: {
       px: 4,
       py: 3,
       fontFamily: "body",
       fontSize: 4,
+      borderRadius: "default",
       transition: "background-color .2s",
       cursor: "pointer",
+      display: "inline-flex",
+      alignItems: "center",
+      flexGrow: 0,
+      justifyContent: "center",
+      "& > svg": {
+        width: 22,
+        mt: -1,
+        mb: -1,
+      },
+      "& > svg:first-child": {
+        marginRight: 2,
+      },
+      "& > svg:last-child": {
+        marginLeft: 2,
+      },
+    },
+    primary: {
+      variant: "buttons.base",
+      bg: "primary",
+      color: "monochrome100",
       ":hover": {
         bg: "primaryHover",
       },
@@ -279,8 +297,23 @@ export const theme: Theme = {
         bg: "primaryDisabled",
       },
     },
+    "primary-small": {
+      variant: "buttons.base",
+      fontSize: 3,
+      fontWeight: "normal",
+      py: 2,
+      minWidth: "auto",
+      "& > svg:first-child": {
+        width: "auto",
+        marginRight: 1,
+      },
+      "& > svg:last-child": {
+        width: "auto",
+        marginLeft: 1,
+      },
+    },
     success: {
-      variant: "buttons.primary",
+      variant: "buttons.base",
       bg: "successBase",
       ":hover": {
         bg: "successHover",
@@ -294,7 +327,7 @@ export const theme: Theme = {
       },
     },
     outline: {
-      variant: "buttons.primary",
+      variant: "buttons.base",
       color: "primary",
       bg: "monochrome100",
       border: "1px",
@@ -315,7 +348,7 @@ export const theme: Theme = {
     secondary: {
       variant: "buttons.primary",
       bg: "secondaryButton",
-      color: "primary",
+      color: "secondaryButtonText",
       ":hover": {
         bg: "secondaryButtonHover",
       },
@@ -328,11 +361,10 @@ export const theme: Theme = {
       },
     },
     inverted: {
+      variant: "buttons.base",
       bg: "monochrome100",
       color: "monochrome800",
       borderRadius: "default",
-      width: ["100%", "auto"],
-      minWidth: 160,
       px: 4,
       py: 3,
       fontFamily: "body",
@@ -352,6 +384,7 @@ export const theme: Theme = {
       },
     },
     inline: {
+      variant: "buttons.base",
       background: "transparent",
       color: "primary",
       fontFamily: "body",
@@ -368,6 +401,42 @@ export const theme: Theme = {
       ":disabled": {
         cursor: "initial",
         color: "monochrome500",
+      },
+      "& > svg:first-child": {
+        width: "auto",
+        marginRight: 1,
+      },
+      "& > svg:last-child": {
+        width: "auto",
+        marginLeft: 1,
+      },
+    },
+    "inline-bold": {
+      variant: "buttons.base",
+      background: "transparent",
+      color: "monochrome800",
+      fontFamily: "body",
+      lineHeight: [1, 2, 2],
+      fontWeight: "bold",
+      fontSize: [3, 3, 3],
+      border: "none",
+      cursor: "pointer",
+      m: 0,
+      p: 0,
+      ":hover": {
+        color: "primaryHover",
+      },
+      ":disabled": {
+        cursor: "initial",
+        color: "monochrome500",
+      },
+      "& > svg:first-child": {
+        width: "auto",
+        marginRight: 1,
+      },
+      "& > svg:last-child": {
+        width: "auto",
+        marginLeft: 1,
       },
     },
     selectColorPicker: {
