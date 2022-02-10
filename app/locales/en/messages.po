@@ -59,7 +59,7 @@ msgstr "Categories"
 
 #: app/configurator/components/dataset-preview.tsx:60
 msgid "browse.dataset.create-visualization"
-msgstr "Create visualization"
+msgstr "Start a visualization"
 
 #: app/configurator/components/select-dataset-step.tsx:133
 #: app/configurator/components/select-dataset-step.tsx:184
@@ -726,7 +726,7 @@ msgstr "Unexpected error"
 
 #: app/pages/v/[chartId].tsx:104
 msgid "hint.create.your.own.chart"
-msgstr "Create your own version of this visualization by copying it, or start from scratch and make a new visualization using Swiss Open Government Data."
+msgstr "Copy this visualization or make a new visualization using Swiss Open Government Data."
 
 #: app/components/hint.tsx:148
 msgid "hint.dataloadingerror.message"
