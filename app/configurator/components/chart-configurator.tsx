@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
-import { sortBy } from "lodash";
+import { isEqual, sortBy } from "lodash";
 import * as React from "react";
 import { useCallback, useEffect } from "react";
 import {
@@ -10,6 +10,7 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 import { Box, Button, Spinner } from "theme-ui";
+import { CombinedError, useClient } from "urql";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -21,15 +22,14 @@ import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
 import {
   DataCubeMetadataWithComponentValuesQuery,
+  PossibleFiltersDocument,
+  PossibleFiltersQuery,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import {
-  ensureFilterValuesCorrect,
-  moveFilterField,
-} from "../configurator-state";
+import { setFilters, moveFilterField } from "../configurator-state";
 import { FIELD_VALUE_NONE } from "../constants";
 import {
   ControlSection,
@@ -177,23 +177,52 @@ export const ChartConfigurator = ({
     });
   }, [variables, executeQuery]);
 
+  const client = useClient();
+
   useEffect(() => {
-    if (!metaData || !data || !data.dataCubeByIri) {
+    if (!metaData) {
       return;
     }
-    // Make sure that the filters are in line with the values
-    const chartConfig = ensureFilterValuesCorrect(state.chartConfig, {
-      dimensions: data.dataCubeByIri.dimensions,
-    });
 
-    dispatch({
-      type: "CHART_CONFIG_REPLACED",
-      value: {
-        chartConfig,
-        dataSetMetadata: metaData,
-      },
-    });
-  }, [data, dispatch, metaData, state.chartConfig]);
+    const run = async () => {
+      const {
+        data,
+        error,
+      }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
+        .query(PossibleFiltersDocument, {
+          iri: state.dataSet,
+          filters: state.chartConfig.filters,
+        })
+        .toPromise();
+      if (error || !data) {
+        console.warn("Could not fetch possible filters", error);
+        return;
+      }
+
+      const filters = Object.fromEntries(
+        data.possibleFilters.map((x) => [
+          x.iri,
+          { type: x.type, value: x.value },
+        ])
+      );
+      const chartConfig = setFilters(
+        state.chartConfig,
+        filters as ChartConfig["filters"]
+      );
+
+      if (!isEqual(chartConfig.filters, state.chartConfig.filters)) {
+        dispatch({
+          type: "CHART_CONFIG_REPLACED",
+          value: {
+            chartConfig,
+            dataSetMetadata: metaData,
+          },
+        });
+      }
+    };
+
+    run();
+  }, [client, dispatch, metaData, state.chartConfig, state.dataSet]);
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);

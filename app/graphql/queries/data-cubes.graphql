@@ -212,6 +212,14 @@ query DataCubeObservations(
   }
 }
 
+query PossibleFilters($iri: String!, $filters: Filters!) {
+  possibleFilters(iri: $iri, filters: $filters) {
+    iri
+    type
+    value
+  }
+}
+
 query Themes($locale: String!) {
   themes(locale: $locale) {
     iri

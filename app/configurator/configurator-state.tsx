@@ -205,6 +205,12 @@ export const getFilterValue = (
     : undefined;
 };
 
+export const setFilters = produce(
+  (chartConfig: ChartConfig, newFilters: ChartConfig["filters"]) => {
+    chartConfig.filters = newFilters;
+  }
+);
+
 export const ensureFilterValuesCorrect = produce(
   (
     chartConfig: ChartConfig,

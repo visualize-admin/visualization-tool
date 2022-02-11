@@ -7,6 +7,7 @@ import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { dimensionIsVersioned } from "./queries";
 import * as ns from "./namespace";
 import { parseDimensionDatatype } from "./parse";
+import { keyBy, mapValues } from "lodash";
 
 interface DimensionValue {
   value: Literal | NamedNode<string>;
@@ -56,6 +57,46 @@ const formatFilterIntoSparqlFilter = (
   }
 };
 
+export async function unversionObservation({
+  cube,
+  observation,
+}: {
+  datasetIri: string;
+  cube: Cube;
+  observation: Record<string, string | number | undefined | null>;
+}) {
+  const dimensionsByPath = keyBy(
+    cube.dimensions,
+    (x) => x.path?.value
+  ) as Record<string, CubeDimension>;
+  console.log(dimensionsByPath);
+  const versionedDimensions = Object.keys(observation).filter((x) =>
+    dimensionIsVersioned(dimensionsByPath[x])
+  );
+  let query = SELECT.DISTINCT`?versioned ?unversioned`.WHERE`
+    VALUES (?versioned) {
+      ${versionedDimensions.map((x) => `(<${observation[x]}>)\n`)}
+    }
+    ?versioned ${ns.schema.sameAs} ?unversioned.
+  `;
+
+  console.log(query.build());
+
+  const result = (await query.execute(sparqlClient.query, {
+    operation: "postUrlencoded",
+  })) as unknown as Array<{
+    versioned: NamedNode<string>;
+    unversioned: NamedNode<string>;
+  }>;
+
+  const unversionedIndex = result.reduce((prev, item) => {
+    prev[item.versioned.value] = item.unversioned.value;
+    return prev;
+  }, {} as Record<string, string>);
+
+  return mapValues(observation, (v) => (v ? unversionedIndex[v] || v : v));
+}
+
 /**
  * Load dimension values.
  *
@@ -78,7 +119,7 @@ export async function loadDimensionValues(
 
   let allFiltersList = filters ? Object.entries(filters) : [];
 
-  // Conside filters before the current filter to fetch the values for
+  // Consider filters before the current filter to fetch the values for
   // the current filter
   const filterList = allFiltersList.slice(
     0,

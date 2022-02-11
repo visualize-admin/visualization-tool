@@ -1,6 +1,7 @@
 import { DimensionValue } from '../domain/data';
 import { Filters } from '../configurator';
 import { Observation } from '../domain/data';
+import { ObservationValue } from '../domain/data';
 import { RawObservation } from '../domain/data';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { ResolvedDataCube, ResolvedObservationsQuery, ResolvedMeasure, ResolvedDimension } from './shared-types';
@@ -21,6 +22,7 @@ export type Scalars = {
   Filters: Filters;
   GeoShapes: any;
   Observation: Observation;
+  ObservationValue: ObservationValue;
   RawObservation: RawObservation;
 };
 
@@ -187,6 +189,14 @@ export type NominalDimensionValuesArgs = {
 };
 
 
+export type ObservationFilter = {
+  __typename?: 'ObservationFilter';
+  type: Scalars['String'];
+  value?: Maybe<Scalars['ObservationValue']>;
+  iri: Scalars['String'];
+};
+
+
 export type ObservationsQuery = {
   __typename?: 'ObservationsQuery';
   /** Observations with their values parsed to native JS types */
@@ -217,6 +227,7 @@ export type OrdinalDimensionValuesArgs = {
 export type Query = {
   __typename?: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
+  possibleFilters: Array<ObservationFilter>;
   dataCubes: Array<DataCubeResult>;
   themes: Array<DataCubeTheme>;
   subthemes: Array<DataCubeTheme>;
@@ -230,6 +241,12 @@ export type QueryDataCubeByIriArgs = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type QueryPossibleFiltersArgs = {
+  iri: Scalars['String'];
+  filters: Scalars['Filters'];
 };
 
 
@@ -380,6 +397,8 @@ export type ResolversTypes = ResolversObject<{
   Measure: ResolverTypeWrapper<ResolvedMeasure>;
   NominalDimension: ResolverTypeWrapper<ResolvedDimension>;
   Observation: ResolverTypeWrapper<Scalars['Observation']>;
+  ObservationFilter: ResolverTypeWrapper<ObservationFilter>;
+  ObservationValue: ResolverTypeWrapper<Scalars['ObservationValue']>;
   ObservationsQuery: ResolverTypeWrapper<ResolvedObservationsQuery>;
   OrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
   Query: ResolverTypeWrapper<{}>;
@@ -410,6 +429,8 @@ export type ResolversParentTypes = ResolversObject<{
   Measure: ResolvedMeasure;
   NominalDimension: ResolvedDimension;
   Observation: Scalars['Observation'];
+  ObservationFilter: ObservationFilter;
+  ObservationValue: Scalars['ObservationValue'];
   ObservationsQuery: ResolvedObservationsQuery;
   OrdinalDimension: ResolvedDimension;
   Query: {};
@@ -540,6 +561,17 @@ export interface ObservationScalarConfig extends GraphQLScalarTypeConfig<Resolve
   name: 'Observation';
 }
 
+export type ObservationFilterResolvers<ContextType = any, ParentType extends ResolversParentTypes['ObservationFilter'] = ResolversParentTypes['ObservationFilter']> = ResolversObject<{
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  value?: Resolver<Maybe<ResolversTypes['ObservationValue']>, ParentType, ContextType>;
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export interface ObservationValueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObservationValue'], any> {
+  name: 'ObservationValue';
+}
+
 export type ObservationsQueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ObservationsQuery'] = ResolversParentTypes['ObservationsQuery']> = ResolversObject<{
   data?: Resolver<Array<ResolversTypes['Observation']>, ParentType, ContextType>;
   rawData?: Resolver<Array<ResolversTypes['RawObservation']>, ParentType, ContextType>;
@@ -560,6 +592,7 @@ export type OrdinalDimensionResolvers<ContextType = any, ParentType extends Reso
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'iri' | 'latest'>>;
+  possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'filters'>>;
   dataCubes?: Resolver<Array<ResolversTypes['DataCubeResult']>, ParentType, ContextType, RequireFields<QueryDataCubesArgs, never>>;
   themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QueryThemesArgs, 'locale'>>;
   subthemes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QuerySubthemesArgs, 'locale' | 'parentIri'>>;
@@ -599,6 +632,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Measure?: MeasureResolvers<ContextType>;
   NominalDimension?: NominalDimensionResolvers<ContextType>;
   Observation?: GraphQLScalarType;
+  ObservationFilter?: ObservationFilterResolvers<ContextType>;
+  ObservationValue?: GraphQLScalarType;
   ObservationsQuery?: ObservationsQueryResolvers<ContextType>;
   OrdinalDimension?: OrdinalDimensionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
