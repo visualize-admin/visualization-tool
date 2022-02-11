@@ -75,7 +75,7 @@ const DataFilterSelectGeneric = ({
     </Box>
   );
   return (
-    <Box sx={{ pl: 2, mb: 2, flexGrow: 1 }}>
+    <Box sx={{ pl: 2, flexGrow: 1 }}>
       {dimension.__typename === "TemporalDimension" &&
       dimension.timeUnit !== "Day" ? (
         <DataFilterSelectTime
@@ -314,7 +314,11 @@ export const ChartConfigurator = ({
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="filters">
                 {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <Box
+                    {...provided.droppableProps}
+                    sx={{ "& > * + *": { mt: 3 }, mb: 4 }}
+                    ref={provided.innerRef}
+                  >
                     {filterDimensions.map((dimension, i) => (
                       <Draggable
                         draggableId={dimension.iri}
@@ -359,7 +363,7 @@ export const ChartConfigurator = ({
                                   justifyContent: "flex-end",
                                   flexGrow: 0,
                                   flexShrink: 0,
-                                  pb: 3,
+                                  pb: 1,
                                 }}
                               >
                                 <MoveDragButtons
@@ -389,7 +393,7 @@ export const ChartConfigurator = ({
                       </Draggable>
                     ))}
                     {provided.placeholder}
-                  </div>
+                  </Box>
                 )}
               </Droppable>
             </DragDropContext>

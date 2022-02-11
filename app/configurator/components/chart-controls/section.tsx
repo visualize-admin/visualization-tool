@@ -42,19 +42,21 @@ export const ControlSectionContent = ({
   role,
   ariaLabelledBy,
   children,
+  sx,
 }: {
   side: "left" | "right";
   as?: ElementType;
   role?: string;
   ariaLabelledBy?: string;
   children: ReactNode;
+  sx?: BoxProps["sx"];
 }) => {
   return (
     <Box
       as={as}
       role={role}
       aria-labelledby={ariaLabelledBy}
-      sx={{ px: side === "left" ? 2 : 4, pb: 4 }}
+      sx={{ px: side === "left" ? 2 : 4, pb: 4, ...sx }}
     >
       {children}
     </Box>

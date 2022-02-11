@@ -189,7 +189,7 @@ export const Select = ({
   }, [options, locale, sortOptions]);
 
   return (
-    <Box sx={{ color: "monochrome700", pb: 2 }}>
+    <Box sx={{ color: "monochrome700" }}>
       {label && (
         <Label htmlFor={id} disabled={disabled} smaller>
           {label}
