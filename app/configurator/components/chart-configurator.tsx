@@ -119,6 +119,52 @@ const DataFilterSelectGeneric = ({
   );
 };
 
+const useEnsurePossibleFilters = ({
+  state,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+}) => {
+  const [, dispatch] = useConfiguratorState();
+
+  const client = useClient();
+
+  useEffect(() => {
+    const run = async () => {
+      const {
+        data,
+        error,
+      }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
+        .query(PossibleFiltersDocument, {
+          iri: state.dataSet,
+          filters: state.chartConfig.filters,
+        })
+        .toPromise();
+      if (error || !data) {
+        console.warn("Could not fetch possible filters", error);
+        return;
+      }
+
+      const filters = Object.fromEntries(
+        data.possibleFilters.map((x) => [
+          x.iri,
+          { type: x.type, value: x.value },
+        ])
+      ) as ChartConfig["filters"];
+
+      if (!isEqual(filters, state.chartConfig.filters)) {
+        dispatch({
+          type: "CHART_CONFIG_FILTERS_UPDATE",
+          value: {
+            filters,
+          },
+        });
+      }
+    };
+
+    run();
+  }, [client, dispatch, state.chartConfig, state.dataSet]);
+};
+
 export const ChartConfigurator = ({
   state,
 }: {
@@ -177,43 +223,7 @@ export const ChartConfigurator = ({
     });
   }, [variables, executeQuery]);
 
-  const client = useClient();
-
-  useEffect(() => {
-    const run = async () => {
-      const {
-        data,
-        error,
-      }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
-        .query(PossibleFiltersDocument, {
-          iri: state.dataSet,
-          filters: state.chartConfig.filters,
-        })
-        .toPromise();
-      if (error || !data) {
-        console.warn("Could not fetch possible filters", error);
-        return;
-      }
-
-      const filters = Object.fromEntries(
-        data.possibleFilters.map((x) => [
-          x.iri,
-          { type: x.type, value: x.value },
-        ])
-      ) as ChartConfig["filters"];
-
-      if (!isEqual(filters, state.chartConfig.filters)) {
-        dispatch({
-          type: "CHART_CONFIG_FILTERS_UPDATE",
-          value: {
-            filters,
-          },
-        });
-      }
-    };
-
-    run();
-  }, [client, dispatch, state.chartConfig, state.dataSet]);
+  useEnsurePossibleFilters({ state });
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
