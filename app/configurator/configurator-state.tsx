@@ -939,7 +939,10 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTERS_UPDATE":
-      if (draft.state === "CONFIGURING_CHART") {
+      if (
+        draft.state === "CONFIGURING_CHART" ||
+        draft.state === "SELECTING_CHART_TYPE"
+      ) {
         const { filters } = action.value;
         draft.chartConfig.filters = filters;
       }

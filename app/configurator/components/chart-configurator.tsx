@@ -1,8 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
 import { isEqual, sortBy } from "lodash";
-import * as React from "react";
-import { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -14,6 +13,7 @@ import { CombinedError, useClient } from "urql";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateSelectingChartType,
   isMapConfig,
   useConfiguratorState,
 } from "..";
@@ -119,17 +119,26 @@ const DataFilterSelectGeneric = ({
   );
 };
 
-const useEnsurePossibleFilters = ({
+/**
+ * This runs every time the state changes and it ensures that the selected filters
+ * return at least 1 observation. Otherwise filters are reloaded.
+ */
+export const useEnsurePossibleFilters = ({
   state,
 }: {
-  state: ConfiguratorStateConfiguringChart;
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateSelectingChartType;
 }) => {
   const [, dispatch] = useConfiguratorState();
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState<Error>();
 
   const client = useClient();
 
   useEffect(() => {
     const run = async () => {
+      setFetching(true);
       const {
         data,
         error,
@@ -140,9 +149,12 @@ const useEnsurePossibleFilters = ({
         })
         .toPromise();
       if (error || !data) {
+        setError(error);
         console.warn("Could not fetch possible filters", error);
         return;
       }
+      setError(undefined);
+      setFetching(false);
 
       const filters = Object.fromEntries(
         data.possibleFilters.map((x) => [
@@ -163,6 +175,7 @@ const useEnsurePossibleFilters = ({
 
     run();
   }, [client, dispatch, state.chartConfig, state.dataSet]);
+  return { error, fetching };
 };
 
 export const ChartConfigurator = ({
@@ -185,7 +198,7 @@ export const ChartConfigurator = ({
     }),
     [state, locale]
   );
-  const [{ data, fetching }, executeQuery] =
+  const [{ data, fetching: dataFetching }, executeQuery] =
     useDataCubeMetadataWithComponentValuesQuery({
       variables: variables,
     });
@@ -223,7 +236,10 @@ export const ChartConfigurator = ({
     });
   }, [variables, executeQuery]);
 
-  useEnsurePossibleFilters({ state });
+  const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
+    state,
+  });
+  const fetching = possibleFiltersFetching || dataFetching;
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
@@ -307,7 +323,7 @@ export const ChartConfigurator = ({
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
-              <Spinner size={12} sx={{ display: "inline-block" }} />
+              <Spinner size={12} sx={{ display: "inline-block", ml: 1 }} />
             ) : null}
           </SectionTitle>
 
