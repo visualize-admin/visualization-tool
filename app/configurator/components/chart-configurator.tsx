@@ -29,7 +29,7 @@ import {
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import { setFilters, moveFilterField } from "../configurator-state";
+import { moveFilterField } from "../configurator-state";
 import { FIELD_VALUE_NONE } from "../constants";
 import {
   ControlSection,
@@ -180,10 +180,6 @@ export const ChartConfigurator = ({
   const client = useClient();
 
   useEffect(() => {
-    if (!metaData) {
-      return;
-    }
-
     const run = async () => {
       const {
         data,
@@ -204,25 +200,20 @@ export const ChartConfigurator = ({
           x.iri,
           { type: x.type, value: x.value },
         ])
-      );
-      const chartConfig = setFilters(
-        state.chartConfig,
-        filters as ChartConfig["filters"]
-      );
+      ) as ChartConfig["filters"];
 
-      if (!isEqual(chartConfig.filters, state.chartConfig.filters)) {
+      if (!isEqual(filters, state.chartConfig.filters)) {
         dispatch({
-          type: "CHART_CONFIG_REPLACED",
+          type: "CHART_CONFIG_FILTERS_UPDATE",
           value: {
-            chartConfig,
-            dataSetMetadata: metaData,
+            filters,
           },
         });
       }
     };
 
     run();
-  }, [client, dispatch, metaData, state.chartConfig, state.dataSet]);
+  }, [client, dispatch, state.chartConfig, state.dataSet]);
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);

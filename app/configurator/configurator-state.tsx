@@ -135,6 +135,10 @@ export type ConfiguratorStateAction =
       value: { dimensionIri: string; value: string };
     }
   | {
+      type: "CHART_CONFIG_FILTERS_UPDATE";
+      value: { filters: Filters };
+    }
+  | {
       type: "CHART_CONFIG_FILTER_ADD_MULTI";
       value: { dimensionIri: string; values: string[]; allValues: string[] };
     }
@@ -204,12 +208,6 @@ export const getFilterValue = (
     ? state.chartConfig.filters[dimensionIri]
     : undefined;
 };
-
-export const setFilters = produce(
-  (chartConfig: ChartConfig, newFilters: ChartConfig["filters"]) => {
-    chartConfig.filters = newFilters;
-  }
-);
 
 export const ensureFilterValuesCorrect = produce(
   (
@@ -937,6 +935,13 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           from,
           to,
         };
+      }
+      return draft;
+
+    case "CHART_CONFIG_FILTERS_UPDATE":
+      if (draft.state === "CONFIGURING_CHART") {
+        const { filters } = action.value;
+        draft.chartConfig.filters = filters;
       }
       return draft;
 
