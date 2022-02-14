@@ -69,7 +69,6 @@ export async function unversionObservation({
     cube.dimensions,
     (x) => x.path?.value
   ) as Record<string, CubeDimension>;
-  console.log(dimensionsByPath);
   const versionedDimensions = Object.keys(observation).filter((x) =>
     dimensionIsVersioned(dimensionsByPath[x])
   );
@@ -79,8 +78,6 @@ export async function unversionObservation({
     }
     ?versioned ${ns.schema.sameAs} ?unversioned.
   `;
-
-  console.log(query.build());
 
   const result = (await query.execute(sparqlClient.query, {
     operation: "postUrlencoded",

@@ -403,7 +403,7 @@ export const getCubeObservations = async ({
   filters?: Filters;
   /** Limit on the number of observations returned */
   limit?: number;
-  /** Returns URIs instead of labels for NamedNodes  */
+  /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
 }): Promise<{
   query: string;
