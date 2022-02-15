@@ -6,20 +6,13 @@ import { StaticMap } from "react-map-gl";
 import { Box, Button } from "theme-ui";
 import { GeoFeature, GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
+import { useLocale } from "../../src";
 import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
+import { getBaseLayerStyle } from "./get-base-layer-style";
 import { MapState } from "./map-state";
 import { useMapTooltip } from "./map-tooltip";
-
-type TileData = {
-  z: number;
-  x: number;
-  y: number;
-  url: string;
-  bbox: { west: number; north: number; east: number; south: number };
-  signal: { aborted: boolean };
-};
 
 const MIN_ZOOM = 3;
 const MAX_ZOOM = 13;
@@ -102,6 +95,8 @@ export const MapComponent = () => {
     areaLayer,
     symbolLayer,
   } = useChartState() as MapState;
+  const locale = useLocale();
+
   const [, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
@@ -156,6 +151,8 @@ export const MapComponent = () => {
     [areaLayer.hierarchyLevel, features.areaLayer?.shapes]
   );
 
+  const baseLayerStyle = useMemo(() => getBaseLayerStyle({ locale }), [locale]);
+
   return (
     <Box>
       <Box
@@ -172,7 +169,6 @@ export const MapComponent = () => {
         <ZoomButton iconName="minus" handleClick={zoomOut} />
       </Box>
       <DeckGL
-        mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         viewState={viewState}
         onViewStateChange={onViewStateChange}
         onResize={onResize}
@@ -180,7 +176,7 @@ export const MapComponent = () => {
         getCursor={() => "default"}
       >
         {showBaseLayer && (
-          <StaticMap mapStyle="https://vectortiles.geo.admin.ch/styles/ch.swisstopo.leichte-basiskarte.vt/style.json" />
+          <StaticMap mapStyle={baseLayerStyle} preventStyleDiffing={true} />
         )}
 
         {areaLayer.show && (
