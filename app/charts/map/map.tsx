@@ -176,7 +176,7 @@ export const MapComponent = () => {
         getCursor={() => "default"}
       >
         {showBaseLayer && (
-          <StaticMap mapStyle={baseLayerStyle} preventStyleDiffing={true} />
+          <StaticMap mapStyle={baseLayerStyle} />
         )}
 
         {areaLayer.show && (
