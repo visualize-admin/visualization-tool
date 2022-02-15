@@ -150,7 +150,7 @@ export const DataFilterSelect = ({
       options={allOptions}
       controls={controls}
       {...fieldProps}
-    ></Select>
+    />
   );
 };
 

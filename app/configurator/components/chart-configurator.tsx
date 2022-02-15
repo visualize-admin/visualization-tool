@@ -277,12 +277,12 @@ export const ChartConfigurator = ({
         >["dimensions"]
       >[number]
     ) => {
-      const filterValue = dimension.values.find((v) => v !== FIELD_VALUE_NONE);
+      const filterValue = dimension.values[0];
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
           dimensionIri: dimension.iri,
-          value: filterValue,
+          value: filterValue.value,
         },
       });
     };
