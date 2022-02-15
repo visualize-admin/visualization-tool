@@ -96,8 +96,7 @@ const constrainZoom = (
 
 export const MapComponent = () => {
   const {
-    showRelief,
-    showWater,
+    showBaseLayer,
     features,
     identicalLayerComponentIris,
     areaLayer,
@@ -163,10 +162,8 @@ export const MapComponent = () => {
         sx={{
           zIndex: 13,
           position: "absolute",
-          bottom: 0,
-          right: 0,
-          mb: 3,
-          mr: 3,
+          bottom: 55,
+          right: 15,
           display: "flex",
           flexDirection: "column",
         }}
@@ -182,7 +179,7 @@ export const MapComponent = () => {
         controller={{ type: MapController }}
         getCursor={() => "default"}
       >
-        {showRelief && (
+        {showBaseLayer && (
           <StaticMap mapStyle="https://vectortiles.geo.admin.ch/styles/ch.swisstopo.leichte-basiskarte.vt/style.json" />
         )}
 

@@ -47,8 +47,7 @@ export interface MapState {
   chartType: "map";
   bounds: Bounds;
   features: GeoData;
-  showRelief: boolean;
-  showWater: boolean;
+  showBaseLayer: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
     data: Observation[];
@@ -277,8 +276,7 @@ const useMapState = ({
     chartType: "map",
     features,
     bounds,
-    showRelief: baseLayer.showRelief,
-    showWater: baseLayer.showWater,
+    showBaseLayer: baseLayer.show,
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,

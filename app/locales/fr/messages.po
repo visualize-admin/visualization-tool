@@ -115,7 +115,7 @@ msgid "button.share"
 msgstr "Partager"
 
 #: app/configurator/components/ui-helpers.ts:417
-#: app/configurator/map/map-chart-options.tsx:167
+#: app/configurator/map/map-chart-options.tsx:159
 msgid "chart.map.layers.area"
 msgstr "Zones"
 
@@ -123,15 +123,15 @@ msgstr "Zones"
 #~ msgid "chart.map.layers.area.color.palette"
 #~ msgstr "Palette de couleurs"
 
-#: app/configurator/map/map-chart-options.tsx:251
+#: app/configurator/map/map-chart-options.tsx:243
 msgid "chart.map.layers.area.discretization.continuous"
 msgstr "Continue"
 
-#: app/configurator/map/map-chart-options.tsx:264
+#: app/configurator/map/map-chart-options.tsx:256
 msgid "chart.map.layers.area.discretization.discrete"
 msgstr "Discrète"
 
-#: app/configurator/map/map-chart-options.tsx:312
+#: app/configurator/map/map-chart-options.tsx:304
 msgid "chart.map.layers.area.discretization.jenks"
 msgstr "Jenks (intervalles naturels)"
 
@@ -143,11 +143,11 @@ msgstr "Jenks (intervalles naturels)"
 #~ msgid "chart.map.layers.area.discretization.number.class"
 #~ msgstr "Nombre de classes"
 
-#: app/configurator/map/map-chart-options.tsx:305
+#: app/configurator/map/map-chart-options.tsx:297
 msgid "chart.map.layers.area.discretization.quantiles"
 msgstr "Quantiles (distribution homogène des valeurs)"
 
-#: app/configurator/map/map-chart-options.tsx:298
+#: app/configurator/map/map-chart-options.tsx:290
 msgid "chart.map.layers.area.discretization.quantize"
 msgstr "Intervalles égaux"
 
@@ -158,24 +158,20 @@ msgid "chart.map.layers.base"
 msgstr "Couche de base"
 
 #: app/configurator/map/map-chart-options.tsx:64
-msgid "chart.map.layers.base.show.relief"
-msgstr "Afficher le relief"
-
-#: app/configurator/map/map-chart-options.tsx:72
-msgid "chart.map.layers.base.show.water"
-msgstr "Montrer les lacs et les rivières"
+msgid "chart.map.layers.base.show"
+msgstr "Afficher"
 
 #: app/charts/map/prototype-right-controls.tsx:263
 #~ msgid "chart.map.layers.no.selected"
 #~ msgstr "Sélectionner une couche à modifier dans le panneau de gauche."
 
-#: app/configurator/map/map-chart-options.tsx:171
-#: app/configurator/map/map-chart-options.tsx:383
+#: app/configurator/map/map-chart-options.tsx:163
+#: app/configurator/map/map-chart-options.tsx:375
 msgid "chart.map.layers.show"
 msgstr "Afficher la couche"
 
 #: app/configurator/components/ui-helpers.ts:421
-#: app/configurator/map/map-chart-options.tsx:379
+#: app/configurator/map/map-chart-options.tsx:371
 msgid "chart.map.layers.symbol"
 msgstr "Symboles"
 
@@ -189,7 +185,7 @@ msgstr "Symboles"
 #~ msgid "chart.map.settings"
 #~ msgstr "Paramètres"
 
-#: app/configurator/map/map-chart-options.tsx:455
+#: app/configurator/map/map-chart-options.tsx:447
 msgid "chart.map.warning.noGeoDimensions"
 msgstr "Dans cet ensemble de données, il n'y a pas de dimensions géographiques à afficher!"
 
@@ -275,8 +271,8 @@ msgid "controls.chart.type.table"
 msgstr "Tableau"
 
 #: app/configurator/components/ui-helpers.ts:399
-#: app/configurator/map/map-chart-options.tsx:240
-#: app/configurator/map/map-chart-options.tsx:433
+#: app/configurator/map/map-chart-options.tsx:232
+#: app/configurator/map/map-chart-options.tsx:425
 msgid "controls.color"
 msgstr "Couleur"
 
@@ -302,7 +298,7 @@ msgstr "Réinitialiser la palette de couleurs"
 msgid "controls.color.palette.sequential"
 msgstr "Séquentielle"
 
-#: app/configurator/map/map-chart-options.tsx:437
+#: app/configurator/map/map-chart-options.tsx:429
 msgid "controls.color.select"
 msgstr "Sélectionner une couleur"
 
@@ -322,8 +318,8 @@ msgstr "empilées"
 msgid "controls.description"
 msgstr "Description"
 
-#: app/configurator/map/map-chart-options.tsx:182
-#: app/configurator/map/map-chart-options.tsx:394
+#: app/configurator/map/map-chart-options.tsx:174
+#: app/configurator/map/map-chart-options.tsx:386
 msgid "controls.dimension.geographical"
 msgstr "Dimension géographique"
 
@@ -354,11 +350,11 @@ msgstr "Tout déselectionner"
 msgid "controls.filters.time.range"
 msgstr "Intervalle de temps"
 
-#: app/configurator/map/map-chart-options.tsx:203
+#: app/configurator/map/map-chart-options.tsx:195
 msgid "controls.hierarchy"
 msgstr "Niveau hiérarchique"
 
-#: app/configurator/map/map-chart-options.tsx:208
+#: app/configurator/map/map-chart-options.tsx:200
 msgid "controls.hierarchy.select"
 msgstr "Sélectionner le niveau hiérarchique"
 
@@ -427,8 +423,8 @@ msgid "controls.language.italian"
 msgstr "Italien"
 
 #: app/configurator/components/ui-helpers.ts:391
-#: app/configurator/map/map-chart-options.tsx:222
-#: app/configurator/map/map-chart-options.tsx:415
+#: app/configurator/map/map-chart-options.tsx:214
+#: app/configurator/map/map-chart-options.tsx:407
 msgid "controls.measure"
 msgstr "Variable mesurée"
 
@@ -440,7 +436,7 @@ msgstr "Actif"
 msgid "controls.option.isNotActive"
 msgstr "Inactif"
 
-#: app/configurator/map/map-chart-options.tsx:244
+#: app/configurator/map/map-chart-options.tsx:236
 msgid "controls.scale.type"
 msgstr "Type d'échelle"
 
@@ -555,14 +551,14 @@ msgid "controls.select.columnStyle.textStyle"
 msgstr "Style du texte"
 
 #: app/configurator/components/chart-options-selector.tsx:179
-#: app/configurator/map/map-chart-options.tsx:190
-#: app/configurator/map/map-chart-options.tsx:402
+#: app/configurator/map/map-chart-options.tsx:182
+#: app/configurator/map/map-chart-options.tsx:394
 msgid "controls.select.dimension"
 msgstr "Sélectionner une dimension"
 
 #: app/configurator/components/chart-options-selector.tsx:180
-#: app/configurator/map/map-chart-options.tsx:227
-#: app/configurator/map/map-chart-options.tsx:420
+#: app/configurator/map/map-chart-options.tsx:219
+#: app/configurator/map/map-chart-options.tsx:412
 msgid "controls.select.measure"
 msgstr "Sélectionner une variable"
 
