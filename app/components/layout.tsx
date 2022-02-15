@@ -1,19 +1,21 @@
 import { Flex } from "theme-ui";
 import { ReactNode } from "react";
 import { Footer } from "./footer";
-import { Header } from "./header";
+import { Header, HeaderProgressProvider } from "./header";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-    <Header pageType="app" />
-    <Flex
-      as="main"
-      role="main"
-      sx={{ flex: 1, flexDirection: "column" }}
-      bg="muted"
-    >
-      {children}
-    </Flex>
+    <HeaderProgressProvider>
+      <Header pageType="app" />
+      <Flex
+        as="main"
+        role="main"
+        sx={{ flex: 1, flexDirection: "column" }}
+        bg="muted"
+      >
+        {children}
+      </Flex>
+    </HeaderProgressProvider>
   </Flex>
 );
 

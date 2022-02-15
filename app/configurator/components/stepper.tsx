@@ -1,10 +1,16 @@
 import { Trans } from "@lingui/macro";
-import { Fragment, ReactNode, useCallback, useMemo } from "react";
-import { Box, Button, Flex, Text } from "theme-ui";
-import { useConfiguratorState } from "..";
-import { Icon } from "../../icons";
-import { useTheme } from "../../themes";
-import { ActionBar } from "./action-bar";
+import React, { ReactNode, useCallback, useEffect } from "react";
+import { Button, ButtonProps, Flex, Text } from "theme-ui";
+import {
+  useConfiguratorState,
+  canTransitionToNextStep,
+  canTransitionToPreviousStep,
+} from "..";
+import { useHeaderProgress } from "../../components/header";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
+import SvgIcChevronLeft from "../../icons/components/IcChevronLeft";
+import SvgIcChevronRight from "../../icons/components/IcChevronRight";
+import { useLocale } from "../../src";
 
 export type StepStatus = "past" | "current" | "future";
 
@@ -15,218 +21,216 @@ const steps = [
 ] as const;
 type StepState = typeof steps[number];
 
-export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
-  const [{ state }, dispatch] = useConfiguratorState();
-
-  return useMemo(() => {
-    const currentStepIndex = steps.indexOf(state as $IntentionalAny);
-    return (
-      <Flex
-        sx={{
-          justifyContent: ["flex-start", "flex-start", "center"],
-          alignItems: "center",
-          position: "relative",
-          py: 2,
-          bg: "monochrome100",
-          borderBottomWidth: "1px",
-          borderBottomStyle: "solid",
-          borderBottomColor: "monochrome500",
-          overflow: "hidden",
-        }}
-      >
-        {/* Stepper container */}
-        <Flex
-          sx={{
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {steps.map((step, i) => (
-            <Fragment key={step}>
-              <Step
-                stepNumber={i + 1}
-                stepState={step}
-                status={
-                  currentStepIndex === i
-                    ? "current"
-                    : currentStepIndex > i || state === "PUBLISHING"
-                    ? "past"
-                    : "future"
-                }
-              />
-              {i < steps.length - 1 && (
-                // Connection line
-                <Box
-                  sx={{
-                    width: "4rem",
-                    height: 0,
-                    borderBottomWidth: "1px",
-                    borderBottomStyle: "solid",
-                    borderBottomColor: "monochrome400",
-                    mb: "3px",
-                  }}
-                />
-              )}
-            </Fragment>
-          ))}
-        </Flex>
-
-        <ActionBar dataSetIri={dataSetIri} />
-      </Flex>
-    );
-  }, [state, dataSetIri]);
-};
-
-export const Step = ({
-  stepState,
-  stepNumber,
-  status,
+export const StepperDumb = ({
+  goPrevious,
+  goNext,
+  state,
+  data,
 }: {
-  stepState: StepState;
-  stepNumber: number;
-  status: StepStatus;
+  goPrevious: () => void;
+  goNext: () => void;
+  state: ReturnType<typeof useConfiguratorState>[0];
+  data: ReturnType<
+    typeof useDataCubeMetadataWithComponentValuesQuery
+  >[0]["data"];
 }) => {
-  const theme = useTheme();
-  const [{ dataSet }, dispatch] = useConfiguratorState();
+  const nextDisabled =
+    !canTransitionToNextStep(state, data?.dataCubeByIri) ||
+    state.state === "PUBLISHING";
+  const previousDisabled =
+    !canTransitionToPreviousStep(state) || state.state === "PUBLISHING";
 
-  const onClick = useCallback(() => {
-    if (status === "past" && dispatch) {
-      dispatch({
-        type: "STEP_PREVIOUS",
-        to: stepState,
-      });
-    }
-  }, [status, stepState, dispatch]);
+  const previousLabel = <Trans id="button.back">Back</Trans>;
+  const nextLabel =
+    state.state === "DESCRIBING_CHART" || state.state === "PUBLISHING" ? (
+      <Trans id="button.publish">Publish this visualization</Trans>
+    ) : (
+      <Trans id="button.next">Next</Trans>
+    );
 
-  const content = (
-    <>
+  const currentStepIndex = steps.indexOf(state.state as $IntentionalAny);
+  const { value: progress, setValue: setProgress } = useHeaderProgress();
+  useEffect(() => {
+    const run = async () => {
+      if (
+        (currentStepIndex === 0 || currentStepIndex === -1) &&
+        progress === 100
+      ) {
+        setProgress(0);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      setProgress(
+        Math.round(((currentStepIndex + 1) / (steps.length + 1)) * 100)
+      );
+    };
+    run();
+    return () => {
+      setProgress(100);
+    };
+  }, [currentStepIndex, setProgress, progress]);
+
+  return (
+    <Flex
+      sx={{
+        justifyContent: ["flex-start", "flex-start", "center"],
+        alignItems: "center",
+        position: "relative",
+
+        bg: "monochrome100",
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid",
+        borderBottomColor: "monochrome500",
+        overflow: "hidden",
+      }}
+    >
+      {/* Stepper container */}
       <Flex
         sx={{
-          bg: "monochrome100",
-          zIndex: 5,
+          width: "100%",
           justifyContent: "center",
           alignItems: "center",
           px: 2,
+          py: 3,
+          minHeight: 56,
         }}
       >
-        {/* Icon */}
-        <Flex
-          sx={{
-            width: "20px",
-            height: "20px",
-            borderRadius: "circle",
-            fontSize: 3,
-            fontFamily: "body",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "monochrome100",
+        <Flex sx={{ minWidth: 200, justifyContent: "flex-start" }}>
+          <NavButton
+            label={
+              <>
+                <SvgIcChevronLeft />
+                {previousLabel}
+              </>
+            }
+            onClick={goPrevious}
+            disabled={previousDisabled}
+            variant="inline-bold"
+          />
+        </Flex>
 
-            bg:
-              status === "past"
-                ? "monochrome700"
-                : status === "current"
-                ? "brand"
-                : "monochrome600",
-          }}
+        <Flex
+          sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}
         >
-          {status === "past" ? (
-            <Icon name="check" size={20} color={theme.colors.monochrome100} />
-          ) : (
-            stepNumber
-          )}
+          <CallToAction stepState={steps[currentStepIndex]} />
+        </Flex>
+        <Flex sx={{ minWidth: 200, justifyContent: "flex-end" }}>
+          <NavButton
+            label={
+              <>
+                {nextLabel}{" "}
+                {state.state === "DESCRIBING_CHART" ? null : (
+                  <SvgIcChevronRight />
+                )}
+              </>
+            }
+            onClick={goNext}
+            disabled={nextDisabled}
+            variant={
+              state.state === "DESCRIBING_CHART"
+                ? "primary-small"
+                : "inline-bold"
+            }
+          />
         </Flex>
       </Flex>
-
-      <StepLabel stepState={stepState} highlight={status === "current"} />
-    </>
-  );
-
-  return (
-    <Button
-      variant="reset"
-      sx={{
-        appearance: "none",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        cursor: status === "past" ? "pointer" : undefined,
-      }}
-      disabled={status !== "past"}
-      onClick={onClick}
-    >
-      {content}
-    </Button>
+    </Flex>
   );
 };
 
-export const StepLabel = ({
-  stepState,
-  highlight,
-}: {
-  stepState: StepState;
-  highlight: boolean;
-}) => {
+export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
+  const [state, dispatch] = useConfiguratorState();
+  const locale = useLocale();
+  const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: { iri: dataSetIri ?? "", locale },
+  });
+  const goNext = useCallback(() => {
+    if (data?.dataCubeByIri) {
+      dispatch({
+        type: "STEP_NEXT",
+        dataSetMetadata: data?.dataCubeByIri,
+      });
+    }
+  }, [data, dispatch]);
+
+  const goPrevious = useCallback(() => {
+    dispatch({
+      type: "STEP_PREVIOUS",
+    });
+  }, [dispatch]);
+
+  return (
+    <StepperDumb
+      state={state}
+      goPrevious={goPrevious}
+      goNext={goNext}
+      data={data}
+    />
+  );
+};
+
+export const CallToAction = ({ stepState }: { stepState: StepState }) => {
   switch (stepState) {
     case "SELECTING_CHART_TYPE":
       return (
-        <StepLabelText
-          label={<Trans id="step.visualization.type">Visualization Type</Trans>}
-          highlight={highlight}
+        <CallToActionText
+          label={
+            <Trans id="step.visualization.type">
+              Select the desired chart type for your dataset.
+            </Trans>
+          }
         />
       );
     case "CONFIGURING_CHART":
       return (
-        <StepLabelText
-          label={<Trans id="step.visualize">Visualize</Trans>}
-          highlight={highlight}
+        <CallToActionText
+          label={
+            <Trans id="step.visualize">
+              Customize your visualization by using the filter and color
+              segmentation options in the sidebars.
+            </Trans>
+          }
         />
       );
     case "DESCRIBING_CHART":
       return (
-        <StepLabelText
-          label={<Trans id="step.annotate">Annotate</Trans>}
-          highlight={highlight}
+        <CallToActionText
+          label={
+            <Trans id="step.annotate">
+              Before publishing, add a title and description to your chart, and
+              choose which elements should be interactive.
+            </Trans>
+          }
         />
       );
   }
   return null;
 };
 
-const StepLabelText = ({
-  highlight,
-  label,
-}: {
-  highlight: boolean;
-  label: ReactNode;
-}) => {
+const CallToActionText = ({ label }: { label: ReactNode }) => {
   return (
-    <>
-      {/* Add background colored bold label underneath the actual
-    label, to avoid changing container's size when the text becomes bold. */}
-      <Text
-        sx={{
-          fontWeight: "bold",
-          color: "monochrome000",
-          position: "relative",
-        }}
-        variant="paragraph2"
-      >
-        {label}
-        <Text
-          sx={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            color: highlight ? "monochrome800" : "monochrome700",
-            fontWeight: highlight ? "bold" : "regular",
-          }}
-          variant="paragraph2"
-        >
-          {label}
-        </Text>
-      </Text>
-    </>
+    <Text
+      sx={{
+        color: "monochrome700",
+        fontWeight: "regular",
+      }}
+      variant="paragraph2"
+    >
+      {label}
+    </Text>
   );
 };
+
+const NavButton = ({
+  label,
+  onClick,
+  disabled,
+  ...props
+}: {
+  label: string | ReactNode;
+  onClick: () => void;
+  disabled: boolean;
+} & ButtonProps) => (
+  <Button onClick={onClick} disabled={disabled} {...props}>
+    {label}
+  </Button>
+);

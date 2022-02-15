@@ -111,24 +111,7 @@ export const getScaleType = (
     : undefined;
 };
 
-export const parseCubeDimension = ({
-  dim,
-  cube,
-  locale,
-  units,
-}: {
-  dim: CubeDimension;
-  cube: Cube;
-  locale: string;
-  units?: Map<string, { iri: Term; label?: Term }>;
-}): ResolvedDimension => {
-  const outOpts = { language: getQueryLocales(locale) };
-
-  const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(ns.rdf.type).term;
-  const timeUnitTerm = dim
-    .out(ns.cube`meta/dataKind`)
-    .out(ns.time.unitType).term;
-
+export const parseDimensionDatatype = (dim: CubeDimension) => {
   let dataType = dim.datatype;
   let hasUndefinedValues = false;
 
@@ -157,6 +140,29 @@ export const parseCubeDimension = ({
       dataType = definedDataTypes[0];
     }
   }
+
+  return { dataType, hasUndefinedValues };
+};
+
+export const parseCubeDimension = ({
+  dim,
+  cube,
+  locale,
+  units,
+}: {
+  dim: CubeDimension;
+  cube: Cube;
+  locale: string;
+  units?: Map<string, { iri: Term; label?: Term }>;
+}): ResolvedDimension => {
+  const outOpts = { language: getQueryLocales(locale) };
+
+  const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(ns.rdf.type).term;
+  const timeUnitTerm = dim
+    .out(ns.cube`meta/dataKind`)
+    .out(ns.time.unitType).term;
+
+  const { dataType, hasUndefinedValues } = parseDimensionDatatype(dim);
 
   const isLiteral = dataType ? true : false;
 

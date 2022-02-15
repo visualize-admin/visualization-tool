@@ -41,6 +41,7 @@ import SvgIcOrganisations from "../../icons/components/IcOrganisations";
 import { useLocale } from "../../locales/use-locale";
 import { BrowseParams } from "../../pages/browse";
 import isAttrEqual from "../../utils/is-attr-equal";
+import truthy from "../../utils/truthy";
 import Tag from "./Tag";
 import { useFormatDate } from "./ui-helpers";
 import useDatasetCount from "./use-dataset-count";
@@ -634,9 +635,9 @@ export const NavSectionTitle = ({
   );
 };
 
-export const SearchFilters = () => {
+export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
   const locale = useLocale();
-  const { filters } = useBrowseContext();
+  const { filters, search } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
@@ -644,7 +645,27 @@ export const SearchFilters = () => {
     variables: { locale },
   });
 
-  const counts = useDatasetCount(filters);
+  const allCounts = useDatasetCount(filters);
+  const resultsCounts = useMemo(() => {
+    if (!data?.dataCubes) {
+      return {};
+    } else {
+      const res = {} as Record<string, number>;
+      for (const cube of data.dataCubes) {
+        const countables = [
+          ...cube.dataCube.themes,
+          cube.dataCube.creator,
+        ].filter(truthy);
+        for (const item of countables) {
+          res[item.iri] = res[item.iri] || 0;
+          res[item.iri] += 1;
+        }
+      }
+      return res;
+    }
+  }, [data]);
+
+  const counts = search && search != "" ? resultsCounts : allCounts;
 
   const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(

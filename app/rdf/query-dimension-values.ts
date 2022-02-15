@@ -6,35 +6,25 @@ import { sparqlClient } from "./sparql-client";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { dimensionIsVersioned } from "./queries";
 import * as ns from "./namespace";
+import { parseDimensionDatatype } from "./parse";
 
 interface DimensionValue {
   value: Literal | NamedNode<string>;
 }
 
 /**
- * Formats a filter value into the right format given
- * the datatype of the dimension
- *
- * Seems a bit fragile, we should find a way to directly add the ^^xsd
- * given the datatype instead of handling everycase
+ * Formats a filter value into the right format, string literal
+ * for dimensions with a datatype, and named node for shared
+ * dimensions.
  */
 const formatFilterValue = (
   value: string | number,
-  dimension: CubeDimension
+  dataType?: NamedNode<string>
 ) => {
-  if (!dimension.datatype) {
+  if (!dataType) {
     return `<${value}>`;
   } else {
-    // Seems fragile
-    if (dimension.datatype.value === ns.xsd.gYear.value) {
-      return `"${value}"^^xsd:gYear`;
-    } else if (dimension.datatype.value === ns.xsd.date.value) {
-      return `"${value}"^^xsd:date`;
-    } else if (dimension.datatype.value === ns.xsd.dateTime.value) {
-      return `"${value}"^^xsd:dateTime`;
-    } else {
-      return `"${value}"`;
-    }
+    return `"${value}"`;
   }
 };
 
@@ -46,20 +36,20 @@ const formatFilterIntoSparqlFilter = (
 ) => {
   const suffix = versioned ? "_unversioned" : "";
   const dimensionVar = `?dimension${suffix}${index}`;
-  // We do not keep the language information inside the filter so for now
-  // we only filter on the value
-  const leftSide =
-    dimension?.datatype?.value === ns.rdf.langString.value
-      ? `str(${dimensionVar})`
-      : dimensionVar;
+  const { dataType } = parseDimensionDatatype(dimension);
+
+  // Shared dimensions have no dataType and the filter for values will be
+  // done with a named node ?dimension1 = <value>, whereas for literal dimensions,
+  // we use the str function to match on the string value of the value
+  // (discarding the type information), since the type information is
+  // not stored in the chart config filters
+  const leftSide = dataType ? `str(${dimensionVar})` : dimensionVar;
   if (filter.type === "single") {
-    return `FILTER ( (${leftSide} = ${formatFilterValue(
-      filter.value,
-      dimension
-    )}) )`;
+    const rightSide = formatFilterValue(filter.value, dataType);
+    return `FILTER ( (${leftSide} = ${rightSide}) )`;
   } else if (filter.type === "multi") {
     return `FILTER ( (${leftSide} in (${Object.keys(filter.values)
-      .map((x) => formatFilterValue(x, dimension))
+      .map((x) => formatFilterValue(x, dataType))
       .join(",")}) ) )`;
   } else {
     return "";
@@ -105,11 +95,12 @@ export async function loadDimensionValues(
             const filterDimension = cube.dimensions.find(
               (d) => d.path?.value === iri
             );
-            if (
-              !filterDimension ||
-              value.type === "range" ||
-              dimensionIri?.value === iri
-            ) {
+            if (!filterDimension || dimensionIri?.value === iri) {
+              return "";
+            }
+
+            if (value.type === "range") {
+              console.log("Ignoring filter range for iri", iri);
               return "";
             }
             const versioned = filterDimension

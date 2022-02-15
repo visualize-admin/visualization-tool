@@ -1,5 +1,14 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Button, Flex, Input, Link, Text } from "theme-ui";
+import {
+  Box,
+  Button,
+  ButtonProps,
+  Flex,
+  FlexOwnProps,
+  Input,
+  Link,
+  Text,
+} from "theme-ui";
 import * as clipboard from "clipboard-polyfill/text";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
 import {
@@ -8,31 +17,35 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Icon, IconName } from "../icons";
+import { Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
 import { IconLink } from "./links";
 import { useI18n } from "../lib/use-i18n";
+import Stack from "./Stack";
 
-export const PublishActions = ({ configKey }: { configKey: string }) => {
+export const PublishActions = ({
+  configKey,
+  sx,
+}: {
+  configKey: string;
+  sx?: FlexOwnProps["sx"];
+}) => {
   const locale = useLocale();
 
   return (
-    <Flex sx={{ flexDirection: ["column", "row"] }}>
-      {/* <ImageDownload /> */}
+    <Stack direction={["column", "row"]} spacing={2} sx={sx}>
       <Share configKey={configKey} locale={locale} />
       <Embed configKey={configKey} locale={locale}></Embed>
-    </Flex>
+    </Stack>
   );
 };
 
 const PopUp = ({
-  triggerLabel,
-  triggerIconName,
   children,
+  renderTrigger,
 }: {
-  triggerLabel: string | ReactNode;
-  triggerIconName: IconName;
   children: ReactNode;
+  renderTrigger: (toggleProps: ButtonProps) => React.ReactNode;
 }) => {
   const [menuIsOpen, toggle] = useState(false);
   const handleOuterClick = () => {
@@ -75,44 +88,10 @@ const PopUp = ({
       isOpen={menuIsOpen}
     >
       {({ getToggleButtonProps, getMenuProps, isOpen }) => (
-        <div style={{ position: "relative" }}>
-          <Button
-            variant="reset"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              color: isOpen ? "primaryActive" : "primary",
-              bg: "transparent",
-              border: "none",
-              borderRadius: "default",
-              mr: 4,
-              mt: [2, 4],
-              pr: 2,
-              pl: 0,
-              py: [2, 3],
-              fontFamily: "body",
-              fontSize: [3, 3, 3],
-              transition: "background-color .2s",
-              cursor: "pointer",
-              ":hover": {
-                color: "primaryHover",
-              },
-              ":active": {
-                color: "primaryActive",
-              },
-              ":disabled": {
-                cursor: "initial",
-                color: "primaryDisabled",
-              },
-            }}
-            {...getToggleButtonProps()}
-          >
-            <Icon name={triggerIconName}></Icon>
-            <Text ml={3}>{triggerLabel}</Text>
-          </Button>
-
-          <div {...getMenuProps()}>{isOpen ? children : null}</div>
-        </div>
+        <span style={{ position: "relative" }}>
+          {renderTrigger(getToggleButtonProps())}
+          <span {...getMenuProps()}>{isOpen ? children : null}</span>
+        </span>
       )}
     </Downshift>
   );
@@ -126,8 +105,16 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
   }, [configKey, locale]);
   return (
     <PopUp
-      triggerLabel={<Trans id="button.share">Share</Trans>}
-      triggerIconName="linkExternal"
+      renderTrigger={(props) => {
+        return (
+          <Button {...props}>
+            <Icon name="linkExternal" />
+            <Text>
+              <Trans id="button.share">Share</Trans>
+            </Text>
+          </Button>
+        );
+      }}
     >
       <>
         <PublishActionOverlay />
@@ -230,8 +217,14 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
 
   return (
     <PopUp
-      triggerLabel={<Trans id="button.embed">Embed</Trans>}
-      triggerIconName="embed"
+      renderTrigger={(toggleProps) => (
+        <Button variant="primary" {...toggleProps}>
+          <Icon name="embed" />
+          <Text>
+            <Trans id="button.embed">Embed</Trans>
+          </Text>
+        </Button>
+      )}
     >
       <>
         <PublishActionOverlay />
@@ -345,23 +338,6 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
   );
 };
 
-// export const ImageDownload = () => {
-//   const handleClick = () => {
-//     console.log("download image");
-//   };
-//   return (
-//     <Button disabled variant="publishAction" onClick={handleClick}>
-//       <Icon name="image"></Icon>
-//       <Text ml={3}>
-//         <Trans id="button.download.image">Download Image</Trans>
-//       </Text>
-//     </Button>
-//   );
-// };
-
-// Presentational Components
-
-// Modal
 const PublishActionModal = ({ children }: { children: ReactNode }) => (
   <Box
     sx={{

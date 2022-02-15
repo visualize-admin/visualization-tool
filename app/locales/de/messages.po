@@ -35,43 +35,48 @@ msgstr "Filter nach oben verschieben"
 
 #: app/components/autocomplete.tsx:171
 msgid "No results"
-msgstr "Kein ergebnis"
+msgstr "Kein Ergebnis"
 
 #: app/components/search-autocomplete.tsx:71
 msgid "Search “{0}”"
 msgstr "Suche “{0}”"
 
-#: app/components/chart-preview.tsx:79
+#: app/components/chart-preview.tsx:88
 msgid "annotation.add.description"
 msgstr "[ Ohne Beschreibung ]"
 
-#: app/components/chart-preview.tsx:63
+#: app/components/chart-preview.tsx:64
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
-#: app/configurator/components/dataset-browse.tsx:714
+#: app/configurator/components/dataset-browse.tsx:735
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
 
-#: app/configurator/components/dataset-browse.tsx:671
+#: app/configurator/components/dataset-browse.tsx:692
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
-#: app/configurator/components/dataset-preview.tsx:54
+#: app/configurator/components/dataset-preview.tsx:60
 msgid "browse.dataset.create-visualization"
-msgstr "Visualisierung erstellen"
+msgstr "Visualisierung von diesem Datensatz erstellen"
 
-#: app/configurator/components/select-dataset-step.tsx:132
+#: app/configurator/components/select-dataset-step.tsx:133
+#: app/configurator/components/select-dataset-step.tsx:184
 msgid "browse.datasets.all-datasets"
 msgstr "Alle Datensätze"
 
-#: app/configurator/components/select-dataset-step.tsx:144
+#: app/configurator/components/select-dataset-step.tsx:145
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
+#: app/configurator/components/stepper.tsx:43
+msgid "button.back"
+msgstr "Zurück"
+
 #: app/pages/v/[chartId].tsx:122
 msgid "button.copy.visualization"
-msgstr "Diese Visualisierung kopieren"
+msgstr "Diese Visualisierung kopieren und editieren"
 
 #: app/components/data-download.tsx:137
 msgid "button.download.data"
@@ -98,17 +103,13 @@ msgstr "Kopiert!"
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
-#: app/configurator/components/action-bar.tsx:45
+#: app/configurator/components/stepper.tsx:48
 msgid "button.next"
 msgstr "Weiter"
 
-#: app/configurator/components/action-bar.tsx:40
-msgid "button.previous"
-msgstr "Zurück"
-
-#: app/configurator/components/action-bar.tsx:43
+#: app/configurator/components/stepper.tsx:46
 msgid "button.publish"
-msgstr "Veröffentlichen"
+msgstr "Diese Visualisierung veröffentlichen"
 
 #: app/components/publish-actions.tsx:129
 msgid "button.share"
@@ -119,11 +120,7 @@ msgstr "Teilen"
 msgid "chart.map.layers.area"
 msgstr "Flächen"
 
-#: app/charts/map/prototype-right-controls.tsx:110
-#~ msgid "chart.map.layers.area.color.palette"
-#~ msgstr "Farbpalette"
-
-#: app/configurator/map/map-chart-options.tsx:243
+#: app/configurator/map/map-chart-options.tsx:251
 msgid "chart.map.layers.area.discretization.continuous"
 msgstr "Kontinuierlich"
 
@@ -135,15 +132,7 @@ msgstr "Diskret"
 msgid "chart.map.layers.area.discretization.jenks"
 msgstr "Jenks (Natural Breaks)"
 
-#: app/charts/map/prototype-right-controls.tsx:140
-#~ msgid "chart.map.layers.area.discretization.linear"
-#~ msgstr "Linear"
-
-#: app/charts/map/prototype-right-controls.tsx:199
-#~ msgid "chart.map.layers.area.discretization.number.class"
-#~ msgstr "Anzahl Klassen"
-
-#: app/configurator/map/map-chart-options.tsx:297
+#: app/configurator/map/map-chart-options.tsx:305
 msgid "chart.map.layers.area.discretization.quantiles"
 msgstr "Quantile (gleiche Anzahl Werte)"
 
@@ -161,37 +150,19 @@ msgstr "Basis-Ebene"
 msgid "chart.map.layers.base.show"
 msgstr "Anzeigen"
 
-#: app/charts/map/prototype-right-controls.tsx:263
-#~ msgid "chart.map.layers.no.selected"
-#~ msgstr "Wählen Sie einen Layer zum Bearbeiten aus."
-
-#: app/configurator/map/map-chart-options.tsx:163
-#: app/configurator/map/map-chart-options.tsx:375
+#: app/configurator/map/map-chart-options.tsx:171
+#: app/configurator/map/map-chart-options.tsx:383
 msgid "chart.map.layers.show"
-msgstr "Layer anzeigen"
+msgstr "Ebene anzeigen"
 
 #: app/configurator/components/ui-helpers.ts:421
 #: app/configurator/map/map-chart-options.tsx:371
 msgid "chart.map.layers.symbol"
 msgstr "Symbole"
 
-#: app/charts/map/prototype-right-controls.tsx:228
-#~ msgid "chart.map.layers.symbol.add.symbols"
-#~ msgstr "Proportionale Symbole anzeigen"
-
-#: app/configurator/map/map-chart-options.tsx:59
-#: app/configurator/map/map-chart-options.tsx:155
-#: app/configurator/map/map-chart-options.tsx:362
-#~ msgid "chart.map.settings"
-#~ msgstr "Einstellungen"
-
-#: app/configurator/map/map-chart-options.tsx:447
+#: app/configurator/map/map-chart-options.tsx:455
 msgid "chart.map.warning.noGeoDimensions"
 msgstr "In diesem Datenset können keine geografischen Dimensionen angezeigt werden."
-
-#: app/charts/map/chart-map-prototype.tsx:274
-#~ msgid "chart.map.warning.prototype"
-#~ msgstr "Diese Karte ist ein Prototyp und kann nicht publiziert werden."
 
 #: app/charts/table/table.tsx:260
 msgid "chart.published.toggle.mobile.view"
@@ -211,7 +182,7 @@ msgstr "Kategorien"
 
 #: app/configurator/table/table-chart-options.tsx:186
 msgid "columnStyle.heatmap"
-msgstr "Wärmebildkarte"
+msgstr "Heatmap"
 
 #: app/configurator/table/table-chart-options.tsx:172
 #: app/configurator/table/table-chart-options.tsx:182
@@ -285,10 +256,6 @@ msgstr "Hinzufügen …"
 msgid "controls.color.palette"
 msgstr "Farbpalette"
 
-#: app/configurator/components/chart-controls/color-ramp.tsx:147
-#~ msgid "controls.color.palette.diverging"
-#~ msgstr "Divergierend"
-
 #: app/configurator/components/chart-controls/color-palette.tsx:237
 #: app/configurator/components/chart-controls/color-palette.tsx:243
 msgid "controls.color.palette.reset"
@@ -308,11 +275,11 @@ msgstr "Farbauswahl öffnen"
 
 #: app/configurator/components/ui-helpers.ts:409
 msgid "controls.column.grouped"
-msgstr "gruppiert"
+msgstr "Gruppiert"
 
 #: app/configurator/components/ui-helpers.ts:405
 msgid "controls.column.stacked"
-msgstr "gestapelt"
+msgstr "Gestapelt"
 
 #: app/configurator/components/ui-helpers.ts:401
 msgid "controls.description"
@@ -323,14 +290,14 @@ msgstr "Beschreibung hinzufügen"
 msgid "controls.dimension.geographical"
 msgstr "Geografische Dimension"
 
-#: app/configurator/components/field.tsx:660
+#: app/configurator/components/field.tsx:671
 msgid "controls.dimension.none"
 msgstr "Keine"
 
 #: app/charts/shared/chart-data-filters.tsx:194
-#: app/configurator/components/field.tsx:121
-#: app/configurator/components/field.tsx:175
-#: app/configurator/components/field.tsx:271
+#: app/configurator/components/field.tsx:122
+#: app/configurator/components/field.tsx:176
+#: app/configurator/components/field.tsx:282
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
 
@@ -352,11 +319,11 @@ msgstr "Zeitspanne"
 
 #: app/configurator/map/map-chart-options.tsx:195
 msgid "controls.hierarchy"
-msgstr "Hierarchieebene"
+msgstr "Hierarchie-Ebene"
 
 #: app/configurator/map/map-chart-options.tsx:200
 msgid "controls.hierarchy.select"
-msgstr "Hierarchieebene auswählen"
+msgstr "Hierarchie-Ebene auswählen"
 
 #: app/configurator/components/empty-right-panel.tsx:23
 msgid "controls.hint.configuring.chart"
@@ -562,10 +529,10 @@ msgstr "Dimension auswählen"
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/configurator/components/field.tsx:126
-#: app/configurator/components/field.tsx:180
-#: app/configurator/components/field.tsx:276
-#: app/configurator/components/field.tsx:665
+#: app/configurator/components/field.tsx:127
+#: app/configurator/components/field.tsx:181
+#: app/configurator/components/field.tsx:287
+#: app/configurator/components/field.tsx:676
 msgid "controls.select.optional"
 msgstr "optional"
 
@@ -655,7 +622,7 @@ msgstr "Suche anzeigen"
 msgid "controls.title"
 msgstr "Titel hinzufügen"
 
-#: app/configurator/components/select-dataset-step.tsx:97
+#: app/configurator/components/select-dataset-step.tsx:98
 msgid "dataset-preview.back-to-results"
 msgstr "Zurück zu den Datensätzen"
 
@@ -667,7 +634,7 @@ msgstr "Wählen Sie einen anderen Datensatz"
 msgid "dataset.hasImputedValues"
 msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die Lücken zu füllen."
 
-#: app/configurator/components/dataset-browse.tsx:322
+#: app/configurator/components/dataset-browse.tsx:323
 msgid "dataset.includeDrafts"
 msgstr "Entwürfe einschließen"
 
@@ -691,21 +658,21 @@ msgstr "Quelle"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:290
+#: app/configurator/components/dataset-browse.tsx:291
 msgid "dataset.order.newest"
 msgstr "Neueste"
 
-#: app/configurator/components/dataset-browse.tsx:282
+#: app/configurator/components/dataset-browse.tsx:283
 msgid "dataset.order.relevance"
 msgstr "Relevanz"
 
-#: app/configurator/components/dataset-browse.tsx:286
+#: app/configurator/components/dataset-browse.tsx:287
 msgid "dataset.order.title"
 msgstr "Titel"
 
-#: app/components/chart-preview.tsx:40
+#: app/components/chart-preview.tsx:41
 #: app/components/chart-published.tsx:51
-#: app/configurator/components/dataset-preview.tsx:36
+#: app/configurator/components/dataset-preview.tsx:37
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
@@ -713,23 +680,23 @@ msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik ni
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
-#: app/configurator/components/dataset-browse.tsx:346
+#: app/configurator/components/dataset-browse.tsx:347
 msgid "dataset.results"
 msgstr "{0, plural, zero {Keine Ergebnisse} one {# Ergebnis} other {# Ergebnisse}}"
 
-#: app/configurator/components/dataset-browse.tsx:294
+#: app/configurator/components/dataset-browse.tsx:295
 msgid "dataset.search.label"
 msgstr "Suchen"
 
-#: app/configurator/components/dataset-browse.tsx:366
+#: app/configurator/components/dataset-browse.tsx:367
 msgid "dataset.sortby"
 msgstr "Sortieren nach"
 
-#: app/configurator/components/dataset-browse.tsx:905
+#: app/configurator/components/dataset-browse.tsx:926
 msgid "dataset.tag.draft"
 msgstr "Luftzug"
 
-#: app/configurator/components/dataset-preview.tsx:103
+#: app/configurator/components/dataset-preview.tsx:109
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
 
@@ -751,7 +718,7 @@ msgstr ""
 
 #: app/pages/v/[chartId].tsx:104
 msgid "hint.create.your.own.chart"
-msgstr "Sie können diese Visualisierung kopieren oder mit Schweizer Open Government Data eine neue Visualisierung erstellen."
+msgstr "Kopieren Sie diese Visualisierung oder erstellen Sie eine neue Visualisierung mit Swiss Open Government Data."
 
 #: app/components/hint.tsx:148
 msgid "hint.dataloadingerror.message"
@@ -793,14 +760,6 @@ msgstr "Negative Werte"
 msgid "hint.publication.success"
 msgstr "Die Visualisierung ist jetzt veröffentlicht. Sie können sie teilen oder einbetten, indem Sie die URL kopieren oder das Menü unten verwenden."
 
-#: app/components/hint.tsx:117
-#~ msgid "hint.select.dataset"
-#~ msgstr "Datensatz auswählen"
-
-#: app/components/hint.tsx:120
-#~ msgid "hint.select.dataset.to.preview"
-#~ msgstr "Bitte Datensatz auswählen, um eine Vorschau anzuzeigen."
-
 #: app/charts/shared/chart-data-filters.tsx:67
 msgid "interactive.data.filters.hide"
 msgstr "Filter ausblenden"
@@ -809,16 +768,8 @@ msgstr "Filter ausblenden"
 msgid "interactive.data.filters.show"
 msgstr "Filter anzeigen"
 
-#: app/homepage/intro.tsx:121
-#~ msgid "intro.browse.organizations"
-#~ msgstr "Organisationen durchsuchen"
-
-#: app/homepage/intro.tsx:102
-#~ msgid "intro.browse.themes"
-#~ msgstr "Kategorien durchsuchen"
-
-#: app/components/header.tsx:106
-#: app/components/header.tsx:125
+#: app/components/header.tsx:147
+#: app/components/header.tsx:166
 msgid "logo.swiss.confederation"
 msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
@@ -870,21 +821,17 @@ msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt ha
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/stepper.tsx:189
+#: app/configurator/components/stepper.tsx:198
 msgid "step.annotate"
-msgstr "Beschreiben"
+msgstr "Bevor Sie Veröffentlichen, fügen Sie Ihrem Diagramm einen Titel und eine Beschreibung hinzu, und wählen Sie, welche Elemente interaktiv sein sollen."
 
-#: app/configurator/components/stepper.tsx:204
-#~ msgid "step.dataset"
-#~ msgstr "Datensatz"
-
-#: app/configurator/components/stepper.tsx:175
+#: app/configurator/components/stepper.tsx:177
 msgid "step.visualization.type"
-msgstr "Diagrammtyp"
+msgstr "Wählen Sie den gewünschten Diagrammtypen für Ihren Datensatz aus."
 
-#: app/configurator/components/stepper.tsx:182
+#: app/configurator/components/stepper.tsx:187
 msgid "step.visualize"
-msgstr "Visualisieren"
+msgstr "Passen Sie Ihre Visualisierung an, indem Sie die Filter- und Farbsegmentierungsoptionen in den Seitenleisten verwenden."
 
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx:80
 msgid "table.column.no"

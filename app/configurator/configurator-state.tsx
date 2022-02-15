@@ -965,7 +965,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
   }
 };
 
-const ConfiguratorStateContext = createContext<
+export const ConfiguratorStateContext = createContext<
   [ConfiguratorState, Dispatch<ConfiguratorStateAction>] | undefined
 >(undefined);
 

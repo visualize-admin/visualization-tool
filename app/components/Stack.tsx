@@ -1,6 +1,8 @@
 import React from "react";
 import { Box, BoxProps } from "theme-ui";
 
+type DirectionType = "row" | "column";
+
 const Stack = ({
   children,
   direction,
@@ -8,9 +10,10 @@ const Stack = ({
   ...boxProps
 }: {
   children: React.ReactNode;
-  direction?: "row" | "column";
+  direction?: DirectionType | DirectionType[];
   spacing?: number;
 } & BoxProps) => {
+  const directions = Array.isArray(direction) ? direction : [direction];
   return (
     <Box
       {...boxProps}
@@ -19,7 +22,8 @@ const Stack = ({
         // otherwise Text nodes have margin: 0 and it has higher
         // specificity due to CSS order
         "& > * + *:not(html)": {
-          [direction === "row" ? "ml" : "mt"]: spacing,
+          ml: directions.map((d) => (d === "row" ? spacing : 0)),
+          mt: directions.map((d) => (d !== "row" ? spacing : 0)),
         },
         ...boxProps.sx,
       }}
