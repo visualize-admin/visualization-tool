@@ -13,10 +13,10 @@ export type Scalars = {
   Int: number;
   Float: number;
   DimensionValue: any;
+  FilterValue: any;
   Filters: any;
   GeoShapes: any;
   Observation: any;
-  ObservationValue: any;
   RawObservation: any;
 };
 
@@ -111,6 +111,7 @@ export type DimensionValuesArgs = {
 
 
 
+
 export type GeoCoordinates = {
   __typename: 'GeoCoordinates';
   iri: Scalars['String'];
@@ -186,10 +187,9 @@ export type NominalDimensionValuesArgs = {
 export type ObservationFilter = {
   __typename: 'ObservationFilter';
   type: Scalars['String'];
-  value?: Maybe<Scalars['ObservationValue']>;
+  value?: Maybe<Scalars['FilterValue']>;
   iri: Scalars['String'];
 };
-
 
 export type ObservationsQuery = {
   __typename: 'ObservationsQuery';

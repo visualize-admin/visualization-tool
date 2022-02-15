@@ -1,6 +1,6 @@
 scalar Observation
 scalar DimensionValue
-scalar ObservationValue
+scalar FilterValue
 scalar RawObservation
 scalar Filters
 scalar GeoShapes
@@ -73,7 +73,7 @@ type GeoCoordinatesDimension implements Dimension {
 
 type ObservationFilter {
   type: String!
-  value: ObservationValue
+  value: FilterValue
   iri: String!
 }
 
