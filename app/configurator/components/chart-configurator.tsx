@@ -342,6 +342,7 @@ export const ChartConfigurator = ({
                   >
                     {filterDimensions.map((dimension, i) => (
                       <Draggable
+                        isDragDisabled={fetching}
                         draggableId={dimension.iri}
                         index={i}
                         key={dimension.iri}
@@ -362,9 +363,11 @@ export const ChartConfigurator = ({
                                   opacity: 0.25,
                                   color: "secondaryActive",
                                 },
-                                ".buttons:hover": {
-                                  opacity: 1,
-                                },
+                                ".buttons:hover": fetching
+                                  ? {}
+                                  : {
+                                      opacity: 1,
+                                    },
                               }}
                             >
                               <DataFilterSelectGeneric
