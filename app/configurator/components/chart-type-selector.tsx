@@ -131,7 +131,10 @@ export const ChartTypeSelector = ({
         <SectionTitle>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
           {possibleFiltersFetching ? (
-            <Spinner size={12} sx={{ display: "inline-block", ml: 1 }} />
+            <Spinner
+              size={12}
+              sx={{ color: "hint", display: "inline-block", ml: 1 }}
+            />
           ) : null}
         </SectionTitle>
 

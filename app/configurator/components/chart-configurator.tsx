@@ -277,11 +277,12 @@ export const ChartConfigurator = ({
         >["dimensions"]
       >[number]
     ) => {
+      const filterValue = dimension.values.find((v) => v !== FIELD_VALUE_NONE);
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
           dimensionIri: dimension.iri,
-          value: dimension.values[0],
+          value: filterValue,
         },
       });
     };
@@ -323,7 +324,10 @@ export const ChartConfigurator = ({
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
-              <Spinner size={12} sx={{ display: "inline-block", ml: 1 }} />
+              <Spinner
+                size={12}
+                sx={{ color: "hint", display: "inline-block", ml: 1 }}
+              />
             ) : null}
           </SectionTitle>
 
