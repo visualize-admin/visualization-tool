@@ -1,12 +1,17 @@
 import { Locale } from "../../locales/locales";
 
+const BORDER_COLOR = {
+  lowZoom: "hsl(0, 0%, 50%)",
+  highZoom: "hsl(0, 0%, 75%)",
+};
+
 interface Props {
   locale: Locale;
 }
 
 export const getBaseLayerStyle = (props: Props) => {
   const { locale } = props;
-  const translatedTextField = `{name:${locale === "en" ? "latin" : locale}}`;
+  const languageTag = `name:${locale === "en" ? "latin" : locale}`;
 
   return {
     version: 8,
@@ -1289,8 +1294,8 @@ export const getBaseLayerStyle = (props: Props) => {
           "line-blur": 1,
           "line-color": {
             stops: [
-              [6, "hsl(0, 0%, 50%)"],
-              [9, "hsl(0, 0%, 75%)"],
+              [6, BORDER_COLOR.lowZoom],
+              [9, BORDER_COLOR.highZoom],
             ],
           },
           "line-opacity": {
@@ -4002,7 +4007,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "symbol-spacing": 350,
           "symbol-z-order": "auto",
           "text-allow-overlap": false,
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Italic"],
           "text-ignore-placement": false,
           "text-keep-upright": true,
@@ -4036,7 +4041,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "symbol-spacing": 650,
           "symbol-z-order": "auto",
           "text-allow-overlap": false,
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Italic"],
           "text-ignore-placement": false,
           "text-keep-upright": true,
@@ -4115,7 +4120,7 @@ export const getBaseLayerStyle = (props: Props) => {
           ],
           "symbol-z-order": "auto",
           "text-anchor": "center",
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Condensed Regular"],
           "text-keep-upright": true,
           "text-letter-spacing": 0.1,
@@ -4329,7 +4334,7 @@ export const getBaseLayerStyle = (props: Props) => {
           },
           "symbol-z-order": "auto",
           "text-allow-overlap": false,
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Italic"],
           "text-ignore-placement": false,
           "text-keep-upright": true,
@@ -4368,7 +4373,7 @@ export const getBaseLayerStyle = (props: Props) => {
           },
           "symbol-z-order": "auto",
           "text-allow-overlap": false,
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Italic"],
           "text-ignore-placement": false,
           "text-keep-upright": true,
@@ -4482,7 +4487,7 @@ export const getBaseLayerStyle = (props: Props) => {
             "left",
             "center",
           ],
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Regular"],
           "text-justify": "left",
           "text-max-width": 10,
@@ -4665,7 +4670,7 @@ export const getBaseLayerStyle = (props: Props) => {
               "center",
             ],
           ],
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Regular"],
           "text-justify": "left",
           "text-letter-spacing": ["match", ["get", "class"], ["park"], 0.05, 0],
@@ -4838,7 +4843,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "text-anchor": "center",
           "text-field": [
             "format",
-            translatedTextField,
+            ["get", languageTag],
             {},
             "\n",
             {},
@@ -4948,7 +4953,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "text-anchor": "bottom-left",
           "text-field": [
             "format",
-            translatedTextField,
+            ["get", languageTag],
             {},
             "\n",
             {},
@@ -5054,7 +5059,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "text-anchor": "bottom-left",
           "text-field": [
             "format",
-            translatedTextField,
+            ["get", languageTag],
             {},
             "\n",
             {},
@@ -5158,7 +5163,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "text-anchor": "bottom-left",
           "text-field": [
             "format",
-            translatedTextField,
+            ["get", languageTag],
             {},
             "\n",
             {},
@@ -5268,7 +5273,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "symbol-sort-key": ["to-number", ["get", "rank"]],
           "symbol-z-order": ["literal", "auto"],
           "text-anchor": "center",
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Medium"],
           "text-justify": "auto",
           "text-letter-spacing": 0.025,
@@ -5354,7 +5359,7 @@ export const getBaseLayerStyle = (props: Props) => {
             "bottom-left",
             "center",
           ],
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Regular"],
           "text-justify": "left",
           "text-max-width": 10,
@@ -5413,7 +5418,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "symbol-sort-key": ["to-number", ["get", "rank"]],
           "symbol-z-order": ["literal", "auto"],
           "text-anchor": ["literal", "bottom-left"],
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Medium"],
           "text-justify": "auto",
           "text-letter-spacing": 0.025,
@@ -5506,7 +5511,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "symbol-sort-key": ["to-number", ["get", "rank"]],
           "symbol-z-order": ["literal", "auto"],
           "text-anchor": ["literal", "bottom-left"],
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Medium"],
           "text-justify": "auto",
           "text-letter-spacing": 0.025,
@@ -5569,7 +5574,7 @@ export const getBaseLayerStyle = (props: Props) => {
           ],
           "icon-size": ["interpolate", ["linear"], ["zoom"], 11, 0.7, 14, 1],
           "text-anchor": "left",
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Regular"],
           "text-justify": "center",
           "text-offset": [
@@ -5645,7 +5650,7 @@ export const getBaseLayerStyle = (props: Props) => {
           },
           "symbol-z-order": "auto",
           "text-allow-overlap": false,
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Italic"],
           "text-ignore-placement": false,
           "text-keep-upright": true,
@@ -5691,7 +5696,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "symbol-sort-key": ["to-number", ["get", "rank"]],
           "symbol-z-order": ["literal", "auto"],
           "text-anchor": ["literal", "bottom-left"],
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Bold"],
           "text-justify": "auto",
           "text-letter-spacing": 0.025,
@@ -5740,7 +5745,7 @@ export const getBaseLayerStyle = (props: Props) => {
         ],
         layout: {
           "symbol-z-order": ["literal", "auto"],
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Regular"],
           "text-padding": ["interpolate", ["linear"], ["zoom"], 10, 2, 14, 10],
           "text-size": [
@@ -5778,7 +5783,7 @@ export const getBaseLayerStyle = (props: Props) => {
           },
           "symbol-z-order": "auto",
           "text-allow-overlap": false,
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Regular"],
           "text-ignore-placement": false,
           "text-keep-upright": true,
@@ -5822,7 +5827,7 @@ export const getBaseLayerStyle = (props: Props) => {
           "symbol-sort-key": ["to-number", ["get", "rank"]],
           "symbol-z-order": ["literal", "auto"],
           "text-anchor": "bottom-left",
-          "text-field": translatedTextField,
+          "text-field": ["get", languageTag],
           "text-font": ["Frutiger Neue Condensed Bold"],
           "text-justify": "auto",
           "text-letter-spacing": 0.025,
@@ -5869,7 +5874,7 @@ export const getBaseLayerStyle = (props: Props) => {
         maxzoom: 7,
         filter: ["all", ["in", "class", "country"], ["in", "iso_a2", "CH"]],
         layout: {
-          "text-field": translatedTextField,
+          "text-field": `{${languageTag}}`,
           "text-font": ["Frutiger Neue Condensed Regular"],
           "text-letter-spacing": 0.12,
           "text-max-width": 10,
