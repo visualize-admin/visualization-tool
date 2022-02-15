@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added rivers and lakes through vector layer [#309](https://github.com/visualize-admin/visualization-tool/pull/309)
 - Improved chart editing navigation [#337](https://github.com/visualize-admin/visualization-tool/pull/337)
 - Improved chart publish action buttons [#337](https://github.com/visualize-admin/visualization-tool/pull/337)
-- Improve cascading filters selection to ensure data is shown after filter selection [#343](https://github.com/visualize-admin/visualization-tool/pull/343)
+- Improved cascading filters selection to ensure data is shown after filter selection [#343](https://github.com/visualize-admin/visualization-tool/pull/343)
+- Improved initial filter selection to ensure data is shown on the selecting chart type step [#327](https://github.com/visualize-admin/visualization-tool/pull/327)
 
 ### Bugs
 
