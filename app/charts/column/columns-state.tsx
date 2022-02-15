@@ -59,6 +59,7 @@ export interface ColumnsState {
   xEntireScale: ScaleTime<number, number>;
   xScaleInteraction: ScaleBand<string>;
   getY: (d: Observation) => number | null;
+  getYError: null | ((d: Observation) => [number, number]);
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -102,7 +103,22 @@ const useColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const errorIri = useMemo(() => {
+    const yMeasure = measures.find((m) => m.iri === fields.y.componentIri);
+    return yMeasure?.related?.errorIri;
+  }, [fields.y.componentIri, measures]);
   const getSegment = useSegment(fields.segment?.componentIri);
+  const getYError = errorIri
+    ? (d: Observation) => {
+        const y = getY(d) as number;
+        const error =
+          d[errorIri] !== null ? parseFloat(d[errorIri] as string) : null;
+        return (error === null ? [y, y] : [y - error, y + error]) as [
+          number,
+          number
+        ];
+      }
+    : null;
 
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
@@ -271,6 +287,7 @@ const useColumnsState = ({
     timeUnit,
     xScaleInteraction,
     getY,
+    getYError,
     yScale,
     getSegment,
     yAxisLabel,
