@@ -85,7 +85,7 @@ const constrainZoom = (
       ...viewState,
       transitionDuration: 0,
       transitionInterpolator: null,
-      zoom: Math.max(zoom, fitted.zoom),
+      zoom: Math.min(MAX_ZOOM, Math.max(zoom, fitted.zoom)),
       longitude: p[0],
       latitude: p[1],
     };
