@@ -1,25 +1,18 @@
 import { MapController, WebMercatorViewport } from "@deck.gl/core";
-import { MVTLayer, TileLayer } from "@deck.gl/geo-layers";
-import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
+import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import React, { useCallback, useMemo, useState } from "react";
+import { StaticMap } from "react-map-gl";
 import { Box, Button } from "theme-ui";
 import { GeoFeature, GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
+import { useLocale } from "../../src";
 import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
+import { getBaseLayerStyle } from "./get-base-layer-style";
 import { MapState } from "./map-state";
 import { useMapTooltip } from "./map-tooltip";
-
-type TileData = {
-  z: number;
-  x: number;
-  y: number;
-  url: string;
-  bbox: { west: number; north: number; east: number; south: number };
-  signal: { aborted: boolean };
-};
 
 const MIN_ZOOM = 3;
 const MAX_ZOOM = 13;
@@ -96,13 +89,14 @@ const constrainZoom = (
 
 export const MapComponent = () => {
   const {
-    showRelief,
-    showWater,
+    showBaseLayer,
     features,
     identicalLayerComponentIris,
     areaLayer,
     symbolLayer,
   } = useChartState() as MapState;
+  const locale = useLocale();
+
   const [, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
@@ -157,16 +151,16 @@ export const MapComponent = () => {
     [areaLayer.hierarchyLevel, features.areaLayer?.shapes]
   );
 
+  const baseLayerStyle = useMemo(() => getBaseLayerStyle({ locale }), [locale]);
+
   return (
     <Box>
       <Box
         sx={{
           zIndex: 13,
           position: "absolute",
-          bottom: 0,
-          right: 0,
-          mb: 3,
-          mr: 3,
+          bottom: 55,
+          right: 15,
           display: "flex",
           flexDirection: "column",
         }}
@@ -175,36 +169,13 @@ export const MapComponent = () => {
         <ZoomButton iconName="minus" handleClick={zoomOut} />
       </Box>
       <DeckGL
-        mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         viewState={viewState}
         onViewStateChange={onViewStateChange}
         onResize={onResize}
         controller={{ type: MapController }}
         getCursor={() => "default"}
       >
-        {showRelief && (
-          <TileLayer
-            id="relief"
-            data="https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/3857/{z}/{x}/{y}.png"
-            tileSize={256}
-            pickable={false}
-            minZoom={MIN_ZOOM}
-            maxZoom={MAX_ZOOM}
-            renderSubLayers={(props: { tile: TileData; data: $FixMe }) => {
-              const {
-                bbox: { west, south, east, north },
-              } = props.tile;
-
-              return [
-                new BitmapLayer(props, {
-                  data: null,
-                  image: props.data,
-                  bounds: [west, south, east, north],
-                }),
-              ];
-            }}
-          />
-        )}
+        {showBaseLayer && <StaticMap mapStyle={baseLayerStyle} />}
 
         {areaLayer.show && (
           <>
@@ -275,27 +246,6 @@ export const MapComponent = () => {
             />
           </>
         )}
-
-        <MVTLayer
-          id="water"
-          data={[
-            "https://vectortiles0.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
-            "https://vectortiles1.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
-            "https://vectortiles2.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
-            "https://vectortiles3.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
-            "https://vectortiles4.geo.admin.ch/tiles/ch.swisstopo.leichte-basiskarte.vt/v1.0.0/{z}/{x}/{y}.pbf",
-          ]}
-          tileSize={256}
-          getLineColor={[255, 255, 255, 0]}
-          getFillColor={(d: any) => {
-            return showWater && d.properties.layerName === "water"
-              ? [148, 198, 240]
-              : [148, 198, 240, 0];
-          }}
-          updateTriggers={{
-            getFillColor: [showWater],
-          }}
-        />
 
         {symbolLayer.show && (
           <ScatterplotLayer

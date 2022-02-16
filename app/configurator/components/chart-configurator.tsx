@@ -487,10 +487,7 @@ const ChartFields = ({
             value={encoding.field}
             icon="baseLayer"
             label={<Trans id="chart.map.layers.base">Base Layer</Trans>}
-            active={
-              chartConfig.baseLayer.showRelief ||
-              chartConfig.baseLayer.showWater
-            }
+            active={chartConfig.baseLayer.show}
           />
         ) : (
           <ControlTabField
