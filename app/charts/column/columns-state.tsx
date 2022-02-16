@@ -103,16 +103,23 @@ const useColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const errorIri = useMemo(() => {
-    const yMeasure = measures.find((m) => m.iri === fields.y.componentIri);
-    return yMeasure?.related?.errorIri;
-  }, [fields.y.componentIri, measures]);
+  const errorMeasure = useMemo(() => {
+    return [...measures, ...dimensions].find((m) => {
+      return m.related?.some(
+        (r) => r.type === "StandardError" && r.iri === fields.y.componentIri
+      );
+    });
+  }, [dimensions, fields.y.componentIri, measures]);
   const getSegment = useSegment(fields.segment?.componentIri);
-  const getYError = errorIri
+  const getYError = errorMeasure
     ? (d: Observation) => {
         const y = getY(d) as number;
-        const error =
+        const errorIri = errorMeasure.iri;
+        let error =
           d[errorIri] !== null ? parseFloat(d[errorIri] as string) : null;
+        if (errorMeasure.unit === "%" && error !== null) {
+          error = (error * y) / 100;
+        }
         return (error === null ? [y, y] : [y - error, y + error]) as [
           number,
           number
