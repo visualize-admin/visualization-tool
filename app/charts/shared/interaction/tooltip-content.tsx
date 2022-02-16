@@ -1,4 +1,3 @@
-import { Trans } from "@lingui/macro";
 import { Box, Text } from "theme-ui";
 import { LegendItem } from "../legend-color";
 import { TooltipValue } from "./tooltip";
@@ -27,43 +26,11 @@ export const TooltipSingle = ({
           {segment}
         </Text>
       )}
-      {yError && yValue ? (
-        <>
-          <table width="100%">
-            <tr>
-              <td>
-                <Text as="div" variant="meta" color="hint">
-                  <Trans id="tooltip.average">Average:</Trans>
-                </Text>
-              </td>
-              <td align="right">
-                <Text as="div" variant="meta">
-                  {yValue}
-                </Text>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Text as="div" variant="meta" color="hint">
-                  <Trans id="tooltip.error">Error:</Trans>
-                </Text>
-              </td>
-              <td align="right">
-                <Text as="div" variant="meta">
-                  {yError}
-                </Text>
-              </td>
-            </tr>
-          </table>
-        </>
-      ) : (
-        <>
-          {yValue && (
-            <Text as="div" variant="meta">
-              {yValue}
-            </Text>
-          )}
-        </>
+      {yValue && (
+        <Text as="div" variant="meta">
+          {yValue}
+          {yError ? <> ± {yError}</> : null}
+        </Text>
       )}
     </Box>
   );

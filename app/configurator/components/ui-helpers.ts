@@ -310,18 +310,32 @@ export const formatNumberWithUnit = (
   return `${formatter(nb)}${unit ? ` ${unit}` : ""}`;
 };
 
-export const useError = (
-  measures: ChartProps["measures"],
-  dimensions: ChartProps["dimensions"],
-  valueGetter: (d: Observation) => number | null,
-  valueIri: string
-) => {
+export const useErrorMeasure = (chartState: ChartProps, valueIri: string) => {
+  const { measures, dimensions } = chartState;
   return useMemo(() => {
-    const errorMeasure = [...measures, ...dimensions].find((m) => {
+    return [...measures, ...dimensions].find((m) => {
       return m.related?.some(
         (r) => r.type === "StandardError" && r.iri === valueIri
       );
     });
+  }, [dimensions, measures, valueIri]);
+};
+
+export const useErrorVariable = (errorMeasure?: DimensionMetaDataFragment) => {
+  return useMemo(() => {
+    return errorMeasure
+      ? (d: Observation) => {
+          return d[errorMeasure.iri];
+        }
+      : null;
+  }, [errorMeasure]);
+};
+
+export const useErrorRange = (
+  errorMeasure: DimensionMetaDataFragment | undefined,
+  valueGetter: (d: Observation) => number | null
+) => {
+  return useMemo(() => {
     return errorMeasure
       ? (d: Observation) => {
           const v = valueGetter(d) as number;
@@ -337,7 +351,7 @@ export const useError = (
           ];
         }
       : null;
-  }, [measures, dimensions, valueIri, valueGetter]);
+  }, [errorMeasure, valueGetter]);
 };
 
 export const useFormatNumber = () => {

@@ -22,7 +22,8 @@ import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   mkNumber,
-  useError,
+  useErrorMeasure,
+  useErrorRange,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
@@ -74,20 +75,23 @@ export interface GroupedColumnsState {
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
-const useGroupedColumnsState = ({
-  data,
-  fields,
-  dimensions,
-  measures,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: ColumnFields;
-  aspectRatio: number;
-}): GroupedColumnsState => {
+const useGroupedColumnsState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: ColumnFields;
+    aspectRatio: number;
+  }
+): GroupedColumnsState => {
+  const {
+    data,
+    fields,
+    dimensions,
+    measures,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
@@ -105,12 +109,8 @@ const useGroupedColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getYErrorRange = useError(
-    measures,
-    dimensions,
-    getY,
-    fields.y.componentIri
-  );
+  const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
+  const getYErrorRange = useErrorRange(errorMeasure, getY);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   // Sort

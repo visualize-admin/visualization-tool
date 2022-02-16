@@ -17,11 +17,12 @@ import { sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
-  formatError,
   formatNumberWithUnit,
   getPalette,
   mkNumber,
-  useError,
+  useErrorMeasure,
+  useErrorRange,
+  useErrorVariable,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
@@ -71,20 +72,23 @@ export interface ColumnsState {
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
-const useColumnsState = ({
-  data,
-  fields,
-  measures,
-  dimensions,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
-  fields: ColumnFields;
-  aspectRatio: number;
-}): ColumnsState => {
+const useColumnsState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
+  > & {
+    fields: ColumnFields;
+    aspectRatio: number;
+  }
+): ColumnsState => {
+  const {
+    data,
+    fields,
+    measures,
+    dimensions,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
@@ -106,12 +110,9 @@ const useColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getYErrorRange = useError(
-    measures,
-    dimensions,
-    getY,
-    fields.y.componentIri
-  );
+  const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
+  const getYErrorRange = useErrorRange(errorMeasure, getY);
+  const getYError = useErrorVariable(errorMeasure);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   const sortingType = fields.x.sorting?.sortingType;
@@ -161,7 +162,6 @@ const useColumnsState = ({
     ) ?? 0,
     0
   );
-  const entireMaxValue = max(sortedData, getY) as number;
 
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
@@ -273,8 +273,8 @@ const useColumnsState = ({
       datum: {
         label: fields.segment?.componentIri && getSegment(datum),
         value: `${yValueFormatter(getY(datum))}`,
-        error: getYErrorRange
-          ? ` ${formatError(getYErrorRange(datum), yValueFormatter)}`
+        error: getYError
+          ? `${getYError(datum)}${errorMeasure?.unit ?? ""}`
           : undefined,
         color: colors(getSegment(datum)) as string,
       },
