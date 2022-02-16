@@ -27,7 +27,10 @@ import { BrushTime } from "../shared/brush";
 import { ChartContainer, ChartSvg } from "../shared/containers";
 import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
-import { ColumnsGrouped } from "./columns-grouped";
+import {
+  ColumnsGrouped,
+  ErrorWhiskers as ErrorWhiskersGrouped,
+} from "./columns-grouped";
 import { GroupedColumnChart } from "./columns-grouped-state";
 import { Columns, ErrorWhiskers } from "./columns-simple";
 import { ColumnsStacked } from "./columns-stacked";
@@ -144,6 +147,7 @@ export const ChartColumns = memo(
                 <AxisHeightLinear />
                 <AxisWidthBand />
                 <ColumnsGrouped />
+                <ErrorWhiskersGrouped />
                 <AxisWidthBandDomain />
                 <InteractionColumns />
                 {interactiveFiltersConfig?.time.active && <BrushTime />}

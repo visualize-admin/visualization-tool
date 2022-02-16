@@ -22,6 +22,7 @@ import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   mkNumber,
+  useError,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
@@ -63,6 +64,7 @@ export interface GroupedColumnsState {
   xScaleIn: ScaleBand<string>;
   xEntireScale: ScaleTime<number, number>;
   getY: (d: Observation) => number | null;
+  getYError: ((d: Observation) => [number, number]) | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -103,6 +105,7 @@ const useGroupedColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const getYError = useError(measures, dimensions, getY, fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   // Sort
@@ -190,6 +193,8 @@ const useGroupedColumnsState = ({
       ? getSegmentsOrderedByName()
       : getSegmentsOrderedByTotalValue();
   }, [
+    dimensions,
+    fields.segment?.componentIri,
     getSegment,
     getY,
     locale,
@@ -386,6 +391,7 @@ const useGroupedColumnsState = ({
     xScaleIn,
     xEntireScale,
     getY,
+    getYError,
     yScale,
     getSegment,
     yAxisLabel,
