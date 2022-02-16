@@ -45,6 +45,8 @@ import {
 import { TimeLocaleObject, timeParse } from "d3-time-format";
 import { memoize } from "lodash";
 import { useMemo } from "react";
+import { ChartProps } from "../../charts/shared/use-chart-state";
+import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
 import { IconName } from "../../icons";
 import {
@@ -290,7 +292,53 @@ export const getTimeIntervalFormattedSelectOptions = ({
   });
 };
 
-// export const formatNumber = (x: number): string => format(",.2~f")(x);
+export const formatError = (
+  error: [number, number],
+  formatNumber: (n: number) => string
+) => {
+  return `[${formatNumber(error[0])}, ${formatNumber(error[1])}]`;
+};
+
+export const formatNumberWithUnit = (
+  nb: number | null,
+  formatter: (n: number) => string,
+  unit?: string | null
+) => {
+  if (nb === null) {
+    return "";
+  }
+  return `${formatter(nb)}${unit ? ` ${unit}` : ""}`;
+};
+
+export const useError = (
+  measures: ChartProps["measures"],
+  dimensions: ChartProps["dimensions"],
+  valueGetter: (d: Observation) => number | null,
+  valueIri: string
+) => {
+  return useMemo(() => {
+    const errorMeasure = [...measures, ...dimensions].find((m) => {
+      return m.related?.some(
+        (r) => r.type === "StandardError" && r.iri === valueIri
+      );
+    });
+    return errorMeasure
+      ? (d: Observation) => {
+          const v = valueGetter(d) as number;
+          const errorIri = errorMeasure.iri;
+          let error =
+            d[errorIri] !== null ? parseFloat(d[errorIri] as string) : null;
+          if (errorMeasure.unit === "%" && error !== null) {
+            error = (error * v) / 100;
+          }
+          return (error === null ? [v, v] : [v - error, v + error]) as [
+            number,
+            number
+          ];
+        }
+      : null;
+  }, [measures, dimensions, valueIri, valueGetter]);
+};
 
 export const useFormatNumber = () => {
   const locale = useLocale();
@@ -301,11 +349,12 @@ export const useFormatNumber = () => {
       if (x === null || x === undefined) {
         return "–";
       }
-      return formatter(x);
+      return `${formatter(x)}`;
     };
   }, [locale]);
   return formatter;
 };
+
 export const useFormatInteger = () => {
   const locale = useLocale();
   const formatter = useMemo(() => {

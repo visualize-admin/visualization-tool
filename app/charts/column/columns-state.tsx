@@ -17,8 +17,11 @@ import { sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
+  formatError,
+  formatNumberWithUnit,
   getPalette,
   mkNumber,
+  useError,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
@@ -103,29 +106,8 @@ const useColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const errorMeasure = useMemo(() => {
-    return [...measures, ...dimensions].find((m) => {
-      return m.related?.some(
-        (r) => r.type === "StandardError" && r.iri === fields.y.componentIri
-      );
-    });
-  }, [dimensions, fields.y.componentIri, measures]);
+  const getYError = useError(measures, dimensions, getY, fields.y.componentIri);
   const getSegment = useSegment(fields.segment?.componentIri);
-  const getYError = errorMeasure
-    ? (d: Observation) => {
-        const y = getY(d) as number;
-        const errorIri = errorMeasure.iri;
-        let error =
-          d[errorIri] !== null ? parseFloat(d[errorIri] as string) : null;
-        if (errorMeasure.unit === "%" && error !== null) {
-          error = (error * y) / 100;
-        }
-        return (error === null ? [y, y] : [y - error, y + error]) as [
-          number,
-          number
-        ];
-      }
-    : null;
 
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
@@ -262,6 +244,9 @@ const useColumnsState = ({
     };
     const xAnchor = getXAnchor();
 
+    const yValueFormatter = (value: number | null) =>
+      formatNumberWithUnit(value, formatNumber, yMeasure.unit);
+
     return {
       xAnchor,
       yAnchor,
@@ -272,9 +257,10 @@ const useColumnsState = ({
           : getX(datum),
       datum: {
         label: fields.segment?.componentIri && getSegment(datum),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: `${yValueFormatter(getY(datum))}`,
+        error: getYError
+          ? ` ${formatError(getYError(datum), yValueFormatter)}`
+          : undefined,
         color: colors(getSegment(datum)) as string,
       },
       values: undefined,
