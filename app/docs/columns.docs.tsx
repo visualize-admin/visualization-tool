@@ -109,10 +109,6 @@ const columnMeasures = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
     label: "Anzahl Waldeigentümer",
-    related: {
-      errorIri:
-        "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/16",
-    },
     __typename: "Measure",
   },
   {
@@ -183,6 +179,18 @@ const columnMeasures = [
   {
     iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/15",
     label: "Übrige Sortimente in m3",
+    __typename: "Measure",
+  },
+  {
+    iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/16",
+    label: "Standard Error",
+    related: [
+      {
+        __typename: "RelatedDimension",
+        type: "StandardError",
+        iri: "http://environment.ld.admin.ch/foen/px/0703010000_103/measure/1",
+      },
+    ],
     __typename: "Measure",
   },
 ] as DimensionMetaDataFragment[];
