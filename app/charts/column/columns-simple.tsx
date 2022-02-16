@@ -7,10 +7,10 @@ import { Column } from "./rendering-utils";
 export const ErrorWhiskers = () => {
   const state = useChartState() as ColumnsState;
 
-  const { getX, getYError, preparedData, yScale, xScale } = state;
+  const { getX, getYErrorRange, preparedData, yScale, xScale } = state;
   const { margins } = state.bounds;
 
-  if (!getYError) {
+  if (!getYErrorRange) {
     return null;
   }
 
@@ -20,7 +20,7 @@ export const ErrorWhiskers = () => {
         const x0 = xScale(getX(d)) as number;
         const bandwidth = xScale.bandwidth();
         const barwidth = Math.min(bandwidth, 15);
-        const [y1, y2] = getYError(d);
+        const [y1, y2] = getYErrorRange(d);
         return (
           <VerticalWhisker
             key={i}

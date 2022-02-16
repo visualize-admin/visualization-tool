@@ -4,10 +4,17 @@ import { GroupedColumnsState } from "./columns-grouped-state";
 import { Column } from "./rendering-utils";
 
 export const ErrorWhiskers = () => {
-  const { bounds, xScale, xScaleIn, getYError, yScale, getSegment, grouped } =
-    useChartState() as GroupedColumnsState;
+  const {
+    bounds,
+    xScale,
+    xScaleIn,
+    getYErrorRange,
+    yScale,
+    getSegment,
+    grouped,
+  } = useChartState() as GroupedColumnsState;
   const { margins } = bounds;
-  if (!getYError) {
+  if (!getYErrorRange) {
     return null;
   }
 
@@ -19,7 +26,7 @@ export const ErrorWhiskers = () => {
             const x0 = xScaleIn(getSegment(d)) as number;
             const bandwidth = xScaleIn.bandwidth();
             const barwidth = Math.min(bandwidth, 15);
-            const [y1, y2] = getYError(d);
+            const [y1, y2] = getYErrorRange(d);
             return (
               <VerticalWhisker
                 key={i}

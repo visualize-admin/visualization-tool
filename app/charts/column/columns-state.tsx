@@ -62,7 +62,7 @@ export interface ColumnsState {
   xEntireScale: ScaleTime<number, number>;
   xScaleInteraction: ScaleBand<string>;
   getY: (d: Observation) => number | null;
-  getYError: null | ((d: Observation) => [number, number]);
+  getYErrorRange: null | ((d: Observation) => [number, number]);
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -106,7 +106,12 @@ const useColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const getYError = useError(measures, dimensions, getY, fields.y.componentIri);
+  const getYErrorRange = useError(
+    measures,
+    dimensions,
+    getY,
+    fields.y.componentIri
+  );
   const getSegment = useSegment(fields.segment?.componentIri);
 
   const sortingType = fields.x.sorting?.sortingType;
@@ -258,8 +263,8 @@ const useColumnsState = ({
       datum: {
         label: fields.segment?.componentIri && getSegment(datum),
         value: `${yValueFormatter(getY(datum))}`,
-        error: getYError
-          ? ` ${formatError(getYError(datum), yValueFormatter)}`
+        error: getYErrorRange
+          ? ` ${formatError(getYErrorRange(datum), yValueFormatter)}`
           : undefined,
         color: colors(getSegment(datum)) as string,
       },
@@ -280,7 +285,7 @@ const useColumnsState = ({
     timeUnit,
     xScaleInteraction,
     getY,
-    getYError,
+    getYErrorRange,
     yScale,
     getSegment,
     yAxisLabel,
