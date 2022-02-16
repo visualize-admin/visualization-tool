@@ -28,7 +28,7 @@ export const VerticalWhisker = memo(
           stroke="none"
         />
         <rect
-          x={x + width / 2}
+          x={x + width / 2 - 1}
           y={y2}
           width={2}
           height={y1 - y2}
@@ -62,7 +62,7 @@ export const ErrorWhiskers = () => {
       {preparedData.map((d, i) => {
         const x0 = xScale(getX(d)) as number;
         const bandwidth = xScale.bandwidth();
-        const barwidth = bandwidth / 4;
+        const barwidth = Math.min(bandwidth, 15);
         const [y1, y2] = getYError(d);
         return (
           <VerticalWhisker
