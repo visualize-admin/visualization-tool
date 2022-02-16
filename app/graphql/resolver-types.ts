@@ -107,6 +107,7 @@ export type Dimension = {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
 };
 
 
@@ -134,6 +135,7 @@ export type GeoCoordinatesDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   geoCoordinates?: Maybe<Array<GeoCoordinates>>;
+  related?: Maybe<Array<RelatedDimension>>;
 };
 
 
@@ -151,6 +153,7 @@ export type GeoShapesDimension = Dimension & {
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
   geoShapes?: Maybe<Scalars['GeoShapes']>;
+  related?: Maybe<Array<RelatedDimension>>;
 };
 
 
@@ -166,6 +169,7 @@ export type Measure = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
 };
 
 
@@ -181,6 +185,7 @@ export type NominalDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
 };
 
 
@@ -216,6 +221,7 @@ export type OrdinalDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
 };
 
 
@@ -281,6 +287,12 @@ export type QueryDatasetcountArgs = {
 };
 
 
+export type RelatedDimension = {
+  __typename?: 'RelatedDimension';
+  type: Scalars['String'];
+  iri: Scalars['String'];
+};
+
 export type TemporalDimension = Dimension & {
   __typename?: 'TemporalDimension';
   iri: Scalars['String'];
@@ -291,6 +303,7 @@ export type TemporalDimension = Dimension & {
   scaleType?: Maybe<Scalars['String']>;
   isKeyDimension: Scalars['Boolean'];
   values: Array<Scalars['DimensionValue']>;
+  related?: Maybe<Array<RelatedDimension>>;
 };
 
 
@@ -402,6 +415,7 @@ export type ResolversTypes = ResolversObject<{
   OrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
   Query: ResolverTypeWrapper<{}>;
   RawObservation: ResolverTypeWrapper<Scalars['RawObservation']>;
+  RelatedDimension: ResolverTypeWrapper<RelatedDimension>;
   TemporalDimension: ResolverTypeWrapper<ResolvedDimension>;
   TimeUnit: TimeUnit;
 }>;
@@ -434,6 +448,7 @@ export type ResolversParentTypes = ResolversObject<{
   OrdinalDimension: ResolvedDimension;
   Query: {};
   RawObservation: Scalars['RawObservation'];
+  RelatedDimension: RelatedDimension;
   TemporalDimension: ResolvedDimension;
 }>;
 
@@ -492,6 +507,7 @@ export type DimensionResolvers<ContextType = any, ParentType extends ResolversPa
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<DimensionValuesArgs, never>>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
 }>;
 
 export interface DimensionValueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DimensionValue'], any> {
@@ -522,6 +538,7 @@ export type GeoCoordinatesDimensionResolvers<ContextType = any, ParentType exten
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoCoordinatesDimensionValuesArgs, never>>;
   geoCoordinates?: Resolver<Maybe<Array<ResolversTypes['GeoCoordinates']>>, ParentType, ContextType>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -537,6 +554,7 @@ export type GeoShapesDimensionResolvers<ContextType = any, ParentType extends Re
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<GeoShapesDimensionValuesArgs, never>>;
   geoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -547,6 +565,7 @@ export type MeasureResolvers<ContextType = any, ParentType extends ResolversPare
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<MeasureValuesArgs, never>>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -557,6 +576,7 @@ export type NominalDimensionResolvers<ContextType = any, ParentType extends Reso
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<NominalDimensionValuesArgs, never>>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -586,6 +606,7 @@ export type OrdinalDimensionResolvers<ContextType = any, ParentType extends Reso
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<OrdinalDimensionValuesArgs, never>>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -603,6 +624,12 @@ export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<Reso
   name: 'RawObservation';
 }
 
+export type RelatedDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['RelatedDimension'] = ResolversParentTypes['RelatedDimension']> = ResolversObject<{
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type TemporalDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TemporalDimension'] = ResolversParentTypes['TemporalDimension']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -612,6 +639,7 @@ export type TemporalDimensionResolvers<ContextType = any, ParentType extends Res
   scaleType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isKeyDimension?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   values?: Resolver<Array<ResolversTypes['DimensionValue']>, ParentType, ContextType, RequireFields<TemporalDimensionValuesArgs, never>>;
+  related?: Resolver<Maybe<Array<ResolversTypes['RelatedDimension']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -637,6 +665,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   OrdinalDimension?: OrdinalDimensionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RawObservation?: GraphQLScalarType;
+  RelatedDimension?: RelatedDimensionResolvers<ContextType>;
   TemporalDimension?: TemporalDimensionResolvers<ContextType>;
 }>;
 

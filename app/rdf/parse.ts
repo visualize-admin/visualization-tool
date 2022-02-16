@@ -10,6 +10,7 @@ import {
   timeWeek,
   timeYear,
 } from "d3";
+import { string } from "fp-ts";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
@@ -144,6 +145,36 @@ export const parseDimensionDatatype = (dim: CubeDimension) => {
   return { dataType, hasUndefinedValues };
 };
 
+type RelationType = "StandardError";
+
+const sparqlRelationToVisualizeRelation = {
+  "https://cube.link/relation/StandardError": "StandardError",
+} as Record<string, RelationType>;
+
+export const parseRelatedDimensions = (dim: CubeDimension) => {
+  const relatedDimensionNodes = dim.out(ns.cube`meta/dimensionRelation`);
+
+  const res = relatedDimensionNodes
+    .map((n) => {
+      const rawType = n.out(ns.rdf("type")).value;
+      const type = rawType
+        ? sparqlRelationToVisualizeRelation[rawType]
+        : undefined;
+      const iri = n.out(ns.cube`meta/relatesTo`)?.value;
+      if (!iri || !type) {
+        return null;
+      }
+
+      return {
+        type: type,
+        iri,
+      };
+    })
+    .filter(truthy);
+
+  return res;
+};
+
 export const parseCubeDimension = ({
   dim,
   cube,
@@ -158,6 +189,8 @@ export const parseCubeDimension = ({
   const outOpts = { language: getQueryLocales(locale) };
 
   const dataKindTerm = dim.out(ns.cube`meta/dataKind`).out(ns.rdf.type).term;
+  const related = parseRelatedDimensions(dim);
+
   const timeUnitTerm = dim
     .out(ns.cube`meta/dataKind`)
     .out(ns.time.unitType).term;
@@ -194,6 +227,7 @@ export const parseCubeDimension = ({
 
     data: {
       iri: dim.path?.value!,
+      related,
       isLiteral,
       isNumerical,
       isKeyDimension,
