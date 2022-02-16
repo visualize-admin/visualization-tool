@@ -1,5 +1,6 @@
 scalar Observation
 scalar DimensionValue
+scalar FilterValue
 scalar RawObservation
 scalar Filters
 scalar GeoShapes
@@ -68,6 +69,12 @@ type GeoCoordinatesDimension implements Dimension {
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   geoCoordinates: [GeoCoordinates!]
+}
+
+type ObservationFilter {
+  type: String!
+  value: FilterValue
+  iri: String!
 }
 
 type GeoShapesDimension implements Dimension {
@@ -170,6 +177,7 @@ type Query {
     latest: Boolean = true
     filters: Filters
   ): DataCube
+  possibleFilters(iri: String!, filters: Filters!): [ObservationFilter!]!
   dataCubes(
     locale: String
     query: String

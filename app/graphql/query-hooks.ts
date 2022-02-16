@@ -13,6 +13,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   DimensionValue: any;
+  FilterValue: any;
   Filters: any;
   GeoShapes: any;
   Observation: any;
@@ -110,6 +111,7 @@ export type DimensionValuesArgs = {
 
 
 
+
 export type GeoCoordinates = {
   __typename: 'GeoCoordinates';
   iri: Scalars['String'];
@@ -182,6 +184,13 @@ export type NominalDimensionValuesArgs = {
 };
 
 
+export type ObservationFilter = {
+  __typename: 'ObservationFilter';
+  type: Scalars['String'];
+  value?: Maybe<Scalars['FilterValue']>;
+  iri: Scalars['String'];
+};
+
 export type ObservationsQuery = {
   __typename: 'ObservationsQuery';
   /** Observations with their values parsed to native JS types */
@@ -212,6 +221,7 @@ export type OrdinalDimensionValuesArgs = {
 export type Query = {
   __typename: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
+  possibleFilters: Array<ObservationFilter>;
   dataCubes: Array<DataCubeResult>;
   themes: Array<DataCubeTheme>;
   subthemes: Array<DataCubeTheme>;
@@ -225,6 +235,12 @@ export type QueryDataCubeByIriArgs = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type QueryPossibleFiltersArgs = {
+  iri: Scalars['String'];
+  filters: Scalars['Filters'];
 };
 
 
@@ -488,6 +504,14 @@ export type DataCubeObservationsQuery = { __typename: 'Query', dataCubeByIri?: M
       & DimensionMetaData_Measure_Fragment
     )>, observations: { __typename: 'ObservationsQuery', data: Array<any>, sparqlEditorUrl?: Maybe<string> } }> };
 
+export type PossibleFiltersQueryVariables = Exact<{
+  iri: Scalars['String'];
+  filters: Scalars['Filters'];
+}>;
+
+
+export type PossibleFiltersQuery = { __typename: 'Query', possibleFilters: Array<{ __typename: 'ObservationFilter', iri: string, type: string, value?: Maybe<any> }> };
+
 export type ThemesQueryVariables = Exact<{
   locale: Scalars['String'];
 }>;
@@ -734,6 +758,19 @@ export const DataCubeObservationsDocument = gql`
 
 export function useDataCubeObservationsQuery(options: Omit<Urql.UseQueryArgs<DataCubeObservationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DataCubeObservationsQuery>({ query: DataCubeObservationsDocument, ...options });
+};
+export const PossibleFiltersDocument = gql`
+    query PossibleFilters($iri: String!, $filters: Filters!) {
+  possibleFilters(iri: $iri, filters: $filters) {
+    iri
+    type
+    value
+  }
+}
+    `;
+
+export function usePossibleFiltersQuery(options: Omit<Urql.UseQueryArgs<PossibleFiltersQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PossibleFiltersQuery>({ query: PossibleFiltersDocument, ...options });
 };
 export const ThemesDocument = gql`
     query Themes($locale: String!) {

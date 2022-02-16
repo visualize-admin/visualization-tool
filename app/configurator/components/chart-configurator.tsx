@@ -1,8 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
-import { sortBy } from "lodash";
-import * as React from "react";
-import { useCallback, useEffect } from "react";
+import { isEqual, sortBy } from "lodash";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -10,9 +9,11 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 import { Box, Button, Spinner } from "theme-ui";
+import { CombinedError, useClient } from "urql";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateSelectingChartType,
   isMapConfig,
   useConfiguratorState,
 } from "..";
@@ -21,15 +22,14 @@ import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
 import {
   DataCubeMetadataWithComponentValuesQuery,
+  PossibleFiltersDocument,
+  PossibleFiltersQuery,
   useDataCubeMetadataWithComponentValuesQuery,
 } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import {
-  ensureFilterValuesCorrect,
-  moveFilterField,
-} from "../configurator-state";
+import { moveFilterField } from "../configurator-state";
 import { FIELD_VALUE_NONE } from "../constants";
 import {
   ControlSection,
@@ -75,7 +75,7 @@ const DataFilterSelectGeneric = ({
     </Box>
   );
   return (
-    <Box sx={{ pl: 2, mb: 2, flexGrow: 1 }}>
+    <Box sx={{ pl: 2, flexGrow: 1 }}>
       {dimension.__typename === "TemporalDimension" &&
       dimension.timeUnit !== "Day" ? (
         <DataFilterSelectTime
@@ -119,6 +119,65 @@ const DataFilterSelectGeneric = ({
   );
 };
 
+/**
+ * This runs every time the state changes and it ensures that the selected filters
+ * return at least 1 observation. Otherwise filters are reloaded.
+ */
+export const useEnsurePossibleFilters = ({
+  state,
+}: {
+  state:
+    | ConfiguratorStateConfiguringChart
+    | ConfiguratorStateSelectingChartType;
+}) => {
+  const [, dispatch] = useConfiguratorState();
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState<Error>();
+
+  const client = useClient();
+
+  useEffect(() => {
+    const run = async () => {
+      setFetching(true);
+      const {
+        data,
+        error,
+      }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
+        .query(PossibleFiltersDocument, {
+          iri: state.dataSet,
+          filters: state.chartConfig.filters,
+        })
+        .toPromise();
+      if (error || !data) {
+        setError(error);
+        console.warn("Could not fetch possible filters", error);
+        return;
+      }
+      setError(undefined);
+      setFetching(false);
+
+      const filters = Object.fromEntries(
+        data.possibleFilters.map((x) => [
+          x.iri,
+          { type: x.type, value: x.value },
+        ])
+      ) as ChartConfig["filters"];
+
+      if (!isEqual(filters, state.chartConfig.filters)) {
+        dispatch({
+          type: "CHART_CONFIG_FILTERS_UPDATE",
+          value: {
+            filters,
+          },
+        });
+      }
+    };
+
+    run();
+  }, [client, dispatch, state.chartConfig, state.dataSet]);
+  return { error, fetching };
+};
+
 export const ChartConfigurator = ({
   state,
 }: {
@@ -139,7 +198,7 @@ export const ChartConfigurator = ({
     }),
     [state, locale]
   );
-  const [{ data, fetching }, executeQuery] =
+  const [{ data, fetching: dataFetching }, executeQuery] =
     useDataCubeMetadataWithComponentValuesQuery({
       variables: variables,
     });
@@ -177,23 +236,10 @@ export const ChartConfigurator = ({
     });
   }, [variables, executeQuery]);
 
-  useEffect(() => {
-    if (!metaData || !data || !data.dataCubeByIri) {
-      return;
-    }
-    // Make sure that the filters are in line with the values
-    const chartConfig = ensureFilterValuesCorrect(state.chartConfig, {
-      dimensions: data.dataCubeByIri.dimensions,
-    });
-
-    dispatch({
-      type: "CHART_CONFIG_REPLACED",
-      value: {
-        chartConfig,
-        dataSetMetadata: metaData,
-      },
-    });
-  }, [data, dispatch, metaData, state.chartConfig]);
+  const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
+    state,
+  });
+  const fetching = possibleFiltersFetching || dataFetching;
 
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
@@ -231,11 +277,12 @@ export const ChartConfigurator = ({
         >["dimensions"]
       >[number]
     ) => {
+      const filterValue = dimension.values[0];
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
           dimensionIri: dimension.iri,
-          value: dimension.values[0],
+          value: filterValue.value,
         },
       });
     };
@@ -277,7 +324,10 @@ export const ChartConfigurator = ({
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
-              <Spinner size={12} sx={{ display: "inline-block" }} />
+              <Spinner
+                size={12}
+                sx={{ color: "hint", display: "inline-block", ml: 1 }}
+              />
             ) : null}
           </SectionTitle>
 
@@ -285,9 +335,14 @@ export const ChartConfigurator = ({
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="filters">
                 {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <Box
+                    {...provided.droppableProps}
+                    sx={{ "& > * + *": { mt: 3 }, mb: 4 }}
+                    ref={provided.innerRef}
+                  >
                     {filterDimensions.map((dimension, i) => (
                       <Draggable
+                        isDragDisabled={fetching}
                         draggableId={dimension.iri}
                         index={i}
                         key={dimension.iri}
@@ -308,9 +363,11 @@ export const ChartConfigurator = ({
                                   opacity: 0.25,
                                   color: "secondaryActive",
                                 },
-                                ".buttons:hover": {
-                                  opacity: 1,
-                                },
+                                ".buttons:hover": fetching
+                                  ? {}
+                                  : {
+                                      opacity: 1,
+                                    },
                               }}
                             >
                               <DataFilterSelectGeneric
@@ -330,7 +387,7 @@ export const ChartConfigurator = ({
                                   justifyContent: "flex-end",
                                   flexGrow: 0,
                                   flexShrink: 0,
-                                  pb: 3,
+                                  pb: 1,
                                 }}
                               >
                                 <MoveDragButtons
@@ -360,7 +417,7 @@ export const ChartConfigurator = ({
                       </Draggable>
                     ))}
                     {provided.placeholder}
-                  </div>
+                  </Box>
                 )}
               </Droppable>
             </DragDropContext>

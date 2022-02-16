@@ -15,6 +15,7 @@ import { parseLocaleString } from "../locales/locales";
 import { Loaders } from "../pages/api/graphql";
 import {
   createCubeDimensionValuesLoader,
+  createSource,
   getCube,
   getCubeDimensions,
   getCubeObservations,
@@ -38,8 +39,48 @@ import {
   Resolvers,
 } from "./resolver-types";
 import { ResolvedDimension } from "./shared-types";
+import { ObservationFilter } from "./query-hooks";
+import { unversionObservation } from "../rdf/query-dimension-values";
 
 const Query: QueryResolvers = {
+  possibleFilters: async (_, { iri, filters }) => {
+    const source = createSource();
+
+    const cube = await source.cube(iri);
+    if (!cube) {
+      return [];
+    }
+
+    const nbFilters = Object.keys(filters).length;
+    for (let i = nbFilters; i > 0; i--) {
+      const queryFilters = Object.fromEntries(
+        Object.entries(filters).slice(0, i + 1)
+      );
+      const { observations: obs } = await getCubeObservations({
+        cube,
+        locale: "en",
+        filters: queryFilters,
+        limit: 1,
+        raw: true,
+      });
+      if (obs.length === 0) {
+        continue;
+      }
+      const unversioned = await unversionObservation({
+        datasetIri: iri,
+        observation: obs[0],
+        cube: cube,
+      });
+      const ret = Object.keys(filters).map((f) => ({
+        iri: f,
+        type: "single",
+        // TODO figure out why I need to do the as here
+        value: unversioned[f] as ObservationFilter["value"],
+      }));
+      return ret;
+    }
+    return [];
+  },
   dataCubes: async (_, { locale, query, order, includeDrafts, filters }) => {
     const cubes = await getCubes({
       locale: parseLocaleString(locale),

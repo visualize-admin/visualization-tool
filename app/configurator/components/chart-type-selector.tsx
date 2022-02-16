@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { SyntheticEvent } from "react";
-import { Box, Button, Grid, Text } from "theme-ui";
+import { Box, Button, Grid, Spinner, Text } from "theme-ui";
 import { ConfiguratorStateSelectingChartType } from "..";
 import { enabledChartTypes, getPossibleChartType } from "../../charts";
 import { Hint, Loading } from "../../components/hint";
@@ -8,10 +8,10 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import { useTheme } from "../../themes";
 import { FieldProps, useChartTypeSelectorField } from "../config-form";
 import { SectionTitle } from "./chart-controls/section";
 import { getFieldLabel, getIconName } from "./ui-helpers";
+import { useEnsurePossibleFilters } from "./chart-configurator";
 
 export const ChartTypeSelectionButton = ({
   label,
@@ -110,10 +110,13 @@ export const ChartTypeSelector = ({
 }: {
   state: ConfiguratorStateSelectingChartType;
 }) => {
-  const theme = useTheme();
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
     variables: { iri: state.dataSet, locale },
+  });
+
+  const { fetching: possibleFiltersFetching } = useEnsurePossibleFilters({
+    state,
   });
 
   if (data?.dataCubeByIri) {
@@ -127,6 +130,12 @@ export const ChartTypeSelector = ({
         </legend>
         <SectionTitle>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
+          {possibleFiltersFetching ? (
+            <Spinner
+              size={12}
+              sx={{ color: "hint", display: "inline-block", ml: 1 }}
+            />
+          ) : null}
         </SectionTitle>
 
         {!possibleChartTypes ? (

@@ -39,7 +39,7 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 
-const createSource = () =>
+export const createSource = () =>
   new Source({
     endpointUrl: SPARQL_ENDPOINT,
     queryOperation: "postUrlencoded",
@@ -395,11 +395,16 @@ export const getCubeObservations = async ({
   locale,
   filters,
   limit,
+  raw,
 }: {
   cube: Cube;
   locale: string;
+  /** Observations filters that should be considered */
   filters?: Filters;
+  /** Limit on the number of observations returned */
   limit?: number;
+  /** Returns IRIs instead of labels for NamedNodes  */
+  raw?: boolean;
 }): Promise<{
   query: string;
   observations: Observation[];
@@ -438,6 +443,9 @@ export const getCubeObservations = async ({
   lookupSource.ptr.addOut(ns.cubeView.graph, rdf.defaultGraph());
 
   for (const dimension of namedDimensions) {
+    if (raw) {
+      continue;
+    }
     const labelDimension = cubeView.createDimension({
       source: lookupSource,
       path: ns.schema.name,
@@ -477,8 +485,7 @@ export const getCubeObservations = async ({
   }
 
   const observationsRaw = await observationsView.observations();
-
-  const observations = observationsRaw.map((obs) => {
+  const observations = observationsRaw.map((obs, i) => {
     return Object.fromEntries(
       cubeDimensions.map((d) => {
         const label = obs[labelDimensionIri(d.data.iri)]?.value;
@@ -489,9 +496,10 @@ export const getCubeObservations = async ({
             ? null
             : obs[d.data.iri]?.value;
 
+        const rawValue = parseObservationValue({ value: obs[d.data.iri] });
         return [
           d.data.iri,
-          label ?? value ?? null,
+          raw ? rawValue : label ?? value ?? null,
           // v !== undefined ? parseObservationValue({ value: v }) : null,
         ];
       })

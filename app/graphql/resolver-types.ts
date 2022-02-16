@@ -18,6 +18,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   DimensionValue: DimensionValue;
+  FilterValue: any;
   Filters: Filters;
   GeoShapes: any;
   Observation: Observation;
@@ -115,6 +116,7 @@ export type DimensionValuesArgs = {
 
 
 
+
 export type GeoCoordinates = {
   __typename?: 'GeoCoordinates';
   iri: Scalars['String'];
@@ -187,6 +189,13 @@ export type NominalDimensionValuesArgs = {
 };
 
 
+export type ObservationFilter = {
+  __typename?: 'ObservationFilter';
+  type: Scalars['String'];
+  value?: Maybe<Scalars['FilterValue']>;
+  iri: Scalars['String'];
+};
+
 export type ObservationsQuery = {
   __typename?: 'ObservationsQuery';
   /** Observations with their values parsed to native JS types */
@@ -217,6 +226,7 @@ export type OrdinalDimensionValuesArgs = {
 export type Query = {
   __typename?: 'Query';
   dataCubeByIri?: Maybe<DataCube>;
+  possibleFilters: Array<ObservationFilter>;
   dataCubes: Array<DataCubeResult>;
   themes: Array<DataCubeTheme>;
   subthemes: Array<DataCubeTheme>;
@@ -230,6 +240,12 @@ export type QueryDataCubeByIriArgs = {
   iri: Scalars['String'];
   latest?: Maybe<Scalars['Boolean']>;
   filters?: Maybe<Scalars['Filters']>;
+};
+
+
+export type QueryPossibleFiltersArgs = {
+  iri: Scalars['String'];
+  filters: Scalars['Filters'];
 };
 
 
@@ -372,6 +388,7 @@ export type ResolversTypes = ResolversObject<{
   Dimension: ResolverTypeWrapper<ResolvedDimension>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
+  FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
   Filters: ResolverTypeWrapper<Scalars['Filters']>;
   GeoCoordinates: ResolverTypeWrapper<GeoCoordinates>;
   GeoCoordinatesDimension: ResolverTypeWrapper<ResolvedDimension>;
@@ -380,6 +397,7 @@ export type ResolversTypes = ResolversObject<{
   Measure: ResolverTypeWrapper<ResolvedMeasure>;
   NominalDimension: ResolverTypeWrapper<ResolvedDimension>;
   Observation: ResolverTypeWrapper<Scalars['Observation']>;
+  ObservationFilter: ResolverTypeWrapper<ObservationFilter>;
   ObservationsQuery: ResolverTypeWrapper<ResolvedObservationsQuery>;
   OrdinalDimension: ResolverTypeWrapper<ResolvedDimension>;
   Query: ResolverTypeWrapper<{}>;
@@ -402,6 +420,7 @@ export type ResolversParentTypes = ResolversObject<{
   Dimension: ResolvedDimension;
   Boolean: Scalars['Boolean'];
   DimensionValue: Scalars['DimensionValue'];
+  FilterValue: Scalars['FilterValue'];
   Filters: Scalars['Filters'];
   GeoCoordinates: GeoCoordinates;
   GeoCoordinatesDimension: ResolvedDimension;
@@ -410,6 +429,7 @@ export type ResolversParentTypes = ResolversObject<{
   Measure: ResolvedMeasure;
   NominalDimension: ResolvedDimension;
   Observation: Scalars['Observation'];
+  ObservationFilter: ObservationFilter;
   ObservationsQuery: ResolvedObservationsQuery;
   OrdinalDimension: ResolvedDimension;
   Query: {};
@@ -478,6 +498,10 @@ export interface DimensionValueScalarConfig extends GraphQLScalarTypeConfig<Reso
   name: 'DimensionValue';
 }
 
+export interface FilterValueScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['FilterValue'], any> {
+  name: 'FilterValue';
+}
+
 export interface FiltersScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Filters'], any> {
   name: 'Filters';
 }
@@ -540,6 +564,13 @@ export interface ObservationScalarConfig extends GraphQLScalarTypeConfig<Resolve
   name: 'Observation';
 }
 
+export type ObservationFilterResolvers<ContextType = any, ParentType extends ResolversParentTypes['ObservationFilter'] = ResolversParentTypes['ObservationFilter']> = ResolversObject<{
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  value?: Resolver<Maybe<ResolversTypes['FilterValue']>, ParentType, ContextType>;
+  iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type ObservationsQueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ObservationsQuery'] = ResolversParentTypes['ObservationsQuery']> = ResolversObject<{
   data?: Resolver<Array<ResolversTypes['Observation']>, ParentType, ContextType>;
   rawData?: Resolver<Array<ResolversTypes['RawObservation']>, ParentType, ContextType>;
@@ -560,6 +591,7 @@ export type OrdinalDimensionResolvers<ContextType = any, ParentType extends Reso
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   dataCubeByIri?: Resolver<Maybe<ResolversTypes['DataCube']>, ParentType, ContextType, RequireFields<QueryDataCubeByIriArgs, 'iri' | 'latest'>>;
+  possibleFilters?: Resolver<Array<ResolversTypes['ObservationFilter']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'iri' | 'filters'>>;
   dataCubes?: Resolver<Array<ResolversTypes['DataCubeResult']>, ParentType, ContextType, RequireFields<QueryDataCubesArgs, never>>;
   themes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QueryThemesArgs, 'locale'>>;
   subthemes?: Resolver<Array<ResolversTypes['DataCubeTheme']>, ParentType, ContextType, RequireFields<QuerySubthemesArgs, 'locale' | 'parentIri'>>;
@@ -591,6 +623,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DatasetCount?: DatasetCountResolvers<ContextType>;
   Dimension?: DimensionResolvers<ContextType>;
   DimensionValue?: GraphQLScalarType;
+  FilterValue?: GraphQLScalarType;
   Filters?: GraphQLScalarType;
   GeoCoordinates?: GeoCoordinatesResolvers<ContextType>;
   GeoCoordinatesDimension?: GeoCoordinatesDimensionResolvers<ContextType>;
@@ -599,6 +632,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Measure?: MeasureResolvers<ContextType>;
   NominalDimension?: NominalDimensionResolvers<ContextType>;
   Observation?: GraphQLScalarType;
+  ObservationFilter?: ObservationFilterResolvers<ContextType>;
   ObservationsQuery?: ObservationsQueryResolvers<ContextType>;
   OrdinalDimension?: OrdinalDimensionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
