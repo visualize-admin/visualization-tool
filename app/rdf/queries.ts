@@ -197,11 +197,9 @@ export const getCube = async ({
 export const getCubeDimensions = async ({
   cube,
   locale,
-  filters,
 }: {
   cube: Cube;
   locale: string;
-  filters?: Filters | null;
 }): Promise<ResolvedDimension[]> => {
   try {
     const dimensions = cube.dimensions.filter(
