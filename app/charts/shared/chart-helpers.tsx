@@ -118,47 +118,23 @@ export const usePreparedData = ({
   return preparedData;
 };
 
+export const makeUseParsedVariable =
+  <T extends unknown>(parser: (d: Observation[string]) => T) =>
+  (key: string) => {
+    return useCallback((d: Observation) => parser(d[key]), [key]);
+  };
+
 // retrieving variables
-export const useNumericVariable = (
-  key: string
-): ((d: Observation) => number) => {
-  const getVariable = useCallback((d: Observation) => Number(d[key]), [key]);
-
-  return getVariable;
-};
-
-export const useOptionalNumericVariable = (
-  key: string
-): ((d: Observation) => number | null) => {
-  const getVariable = useCallback(
-    (d: Observation) => (d[key] !== null ? Number(d[key]) : null),
-    [key]
-  );
-
-  return getVariable;
-};
-
-export const useStringVariable = (
-  key: string
-): ((d: Observation) => string) => {
-  const getVariable = useCallback(
-    (d: Observation) => (d[key] !== null ? `${d[key]}` : ""),
-    [key]
-  );
-
-  return getVariable;
-};
-
-export const useTemporalVariable = (
-  key: string
-): ((d: Observation) => Date) => {
-  const getVariable = useCallback(
-    (d: Observation) => parseDate(`${d[key]}`),
-    [key]
-  );
-
-  return getVariable;
-};
+export const useNumericVariable = makeUseParsedVariable((x) => Number(x));
+export const useOptionalNumericVariable = makeUseParsedVariable((x) =>
+  x !== null ? Number(x) : null
+);
+export const useStringVariable = makeUseParsedVariable((x) =>
+  x !== null ? `${x}` : ""
+);
+export const useTemporalVariable = makeUseParsedVariable((x) =>
+  parseDate(`${x}`)
+);
 
 const getSegment =
   (segmentKey: string | undefined) =>

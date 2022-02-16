@@ -38,6 +38,10 @@ fragment dimensionMetaData on Dimension {
   isKeyDimension
   values(filters: $filters)
   unit
+  related {
+    iri
+    type
+  }
   ... on TemporalDimension {
     timeUnit
     timeFormat
