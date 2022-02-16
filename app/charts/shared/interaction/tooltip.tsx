@@ -26,6 +26,7 @@ export interface TooltipValue {
   hide?: boolean;
   label?: string;
   value: string;
+  error?: string;
   color: string;
   yPos?: number;
 }
@@ -50,15 +51,8 @@ const TooltipInner = ({
 }) => {
   const { bounds, getAnnotationInfo } = useChartState() as LinesState;
   const { margins } = bounds;
-  const {
-    xAnchor,
-    yAnchor,
-    placement,
-    xValue,
-    tooltipContent,
-    datum,
-    values,
-  } = getAnnotationInfo(d);
+  const { xAnchor, yAnchor, placement, xValue, tooltipContent, datum, values } =
+    getAnnotationInfo(d);
 
   return (
     <TooltipBox
@@ -76,6 +70,7 @@ const TooltipInner = ({
           xValue={xValue}
           segment={datum.label}
           yValue={datum.value}
+          yError={datum.error}
         />
       )}
     </TooltipBox>
