@@ -149,8 +149,18 @@ const useColumnsState = ({
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // y
-  const minValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
-  const maxValue = Math.max(max(preparedData, (d) => getY(d)) ?? 0, 0);
+  const minValue = Math.min(
+    min(preparedData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+    ) ?? 0,
+    0
+  );
+  const maxValue = Math.max(
+    max(preparedData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+    ) ?? 0,
+    0
+  );
   const entireMaxValue = max(sortedData, getY) as number;
 
   const yScale = scaleLinear()

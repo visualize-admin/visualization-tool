@@ -253,8 +253,20 @@ const useGroupedColumnsState = ({
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // y
-  const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
-  const maxValue = Math.max(max(preparedData, (d) => getY(d)) as number, 0);
+  const minValue = Math.min(
+    mkNumber(
+      min(preparedData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[0] : getY(d) || 0
+      )
+    ),
+    0
+  );
+  const maxValue = Math.max(
+    max(preparedData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[1] : getY(d) || 0
+    ) as number,
+    0
+  );
 
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
