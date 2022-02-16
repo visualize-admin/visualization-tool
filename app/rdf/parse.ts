@@ -10,7 +10,6 @@ import {
   timeWeek,
   timeYear,
 } from "d3";
-import { string } from "fp-ts";
 import { Cube, CubeDimension } from "rdf-cube-view-query";
 import { NamedNode, Term } from "rdf-js";
 import { DataCubePublicationStatus, TimeUnit } from "../graphql/resolver-types";
