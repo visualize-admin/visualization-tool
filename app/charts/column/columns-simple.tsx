@@ -1,57 +1,14 @@
-import { memo } from "react";
 import { useTheme } from "../../themes";
 import { useChartState } from "../shared/use-chart-state";
+import { VerticalWhisker } from "../whiskers";
 import { ColumnsState } from "./columns-state";
 import { Column } from "./rendering-utils";
 
-export const VerticalWhisker = memo(
-  ({
-    x,
-    y1,
-    y2,
-    width,
-  }: {
-    x: number;
-    y1: number;
-    y2: number;
-    width: number;
-    color?: string;
-  }) => {
-    return (
-      <>
-        <rect
-          x={x}
-          y={y1}
-          width={width}
-          height={2}
-          fill={"black"}
-          stroke="none"
-        />
-        <rect
-          x={x + width / 2 - 1}
-          y={y2}
-          width={2}
-          height={y1 - y2}
-          fill={"black"}
-          stroke="none"
-        />
-        <rect
-          x={x}
-          y={y2}
-          width={width}
-          height={2}
-          fill={"black"}
-          stroke="none"
-        />
-      </>
-    );
-  }
-);
-
 export const ErrorWhiskers = () => {
-  const { preparedData, bounds, getX, xScale, getY, getYError, yScale } =
-    useChartState() as ColumnsState;
-  const { margins } = bounds;
+  const state = useChartState() as ColumnsState;
+
+  const { getX, getYError, preparedData, yScale, xScale } = state;
+  const { margins } = state.bounds;
 
   if (!getYError) {
     return null;
