@@ -38,6 +38,10 @@ fragment dimensionMetaData on Dimension {
   isKeyDimension
   values(filters: $filters)
   unit
+  related {
+    iri
+    type
+  }
   ... on TemporalDimension {
     timeUnit
     timeFormat
@@ -209,6 +213,14 @@ query DataCubeObservations(
       data
       sparqlEditorUrl
     }
+  }
+}
+
+query PossibleFilters($iri: String!, $filters: Filters!) {
+  possibleFilters(iri: $iri, filters: $filters) {
+    iri
+    type
+    value
   }
 }
 

@@ -67,7 +67,15 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
         )}
       </Box>
       <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
-        Configurator State
+        Configurator State{" "}
+        <Link
+          variant="inline"
+          onClick={() => {
+            console.log(configuratorState);
+          }}
+        >
+          (dump to console)
+        </Link>
       </Box>
       <Box sx={{ p: 5 }}>
         <Inspector expandLevel={3} data={configuratorState} />

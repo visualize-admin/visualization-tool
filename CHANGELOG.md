@@ -12,9 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Page have improved titles now, depending on where you are on the application. Helpful when you have
   multiple tabs with visualize.admin or when you bookmark things. [#331](https://github.com/visualize-admin/visualization-tool/pull/331)
 - Theme and organization navigation counts take into account the search field now. [#329](https://github.com/visualize-admin/visualization-tool/pull/329)
-- Added rivers and lakes through vector layer [#309](https://github.com/visualize-admin/visualization-tool/pull/309)
+- Implemented a new base layer which makes use of vector tiles [#351](https://github.com/visualize-admin/visualization-tool/pull/351)
 - Improved chart editing navigation [#337](https://github.com/visualize-admin/visualization-tool/pull/337)
 - Improved chart publish action buttons [#337](https://github.com/visualize-admin/visualization-tool/pull/337)
+- Improved cascading filters selection to ensure data is shown after filter selection [#343](https://github.com/visualize-admin/visualization-tool/pull/343)
+- Improved initial filter selection to ensure data is shown on the selecting chart type step [#327](https://github.com/visualize-admin/visualization-tool/pull/327)
 
 ### Bugs
 
@@ -25,9 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Maps
 
-It is now possible to use maps as a new visualization type. Quantities can be encoded
-as a scatterplot on the map. Datasets which have a shared dimension containing
-geo coordinates can be charted on a map.
+It is now possible to use maps as a new visualization type. Quantities can be encoded as a scatterplot on the map. Datasets which have GeoShapes or GeoCoordinates dimensions can be charted on a map.
 
 [#294](https://github.com/visualize-admin/visualization-tool/pull/294) [#289](https://github.com/visualize-admin/visualization-tool/pull/289) [#292](https://github.com/visualize-admin/visualization-tool/pull/292) [#286](https://github.com/visualize-admin/visualization-tool/pull/286) [#240](https://github.com/visualize-admin/visualization-tool/pull/240) [#293](https://github.com/visualize-admin/visualization-tool/pull/293) [#301](https://github.com/visualize-admin/visualization-tool/pull/301) [#302](https://github.com/visualize-admin/visualization-tool/pull/302)
 

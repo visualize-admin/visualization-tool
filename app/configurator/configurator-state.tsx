@@ -135,6 +135,10 @@ export type ConfiguratorStateAction =
       value: { dimensionIri: string; value: string };
     }
   | {
+      type: "CHART_CONFIG_FILTERS_UPDATE";
+      value: { filters: Filters };
+    }
+  | {
       type: "CHART_CONFIG_FILTER_ADD_MULTI";
       value: { dimensionIri: string; values: string[]; allValues: string[] };
     }
@@ -931,6 +935,16 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           from,
           to,
         };
+      }
+      return draft;
+
+    case "CHART_CONFIG_FILTERS_UPDATE":
+      if (
+        draft.state === "CONFIGURING_CHART" ||
+        draft.state === "SELECTING_CHART_TYPE"
+      ) {
+        const { filters } = action.value;
+        draft.chartConfig.filters = filters;
       }
       return draft;
 

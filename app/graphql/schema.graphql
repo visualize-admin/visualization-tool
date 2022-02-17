@@ -1,5 +1,6 @@
 scalar Observation
 scalar DimensionValue
+scalar FilterValue
 scalar RawObservation
 scalar Filters
 scalar GeoShapes
@@ -44,6 +45,11 @@ type DataCube {
   themes: [DataCubeTheme!]!
 }
 
+type RelatedDimension {
+  type: String!
+  iri: String!
+}
+
 interface Dimension {
   iri: String!
   label: String!
@@ -51,6 +57,7 @@ interface Dimension {
   scaleType: String
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
+  related: [RelatedDimension!]
 }
 
 type GeoCoordinates {
@@ -68,6 +75,13 @@ type GeoCoordinatesDimension implements Dimension {
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   geoCoordinates: [GeoCoordinates!]
+  related: [RelatedDimension!]
+}
+
+type ObservationFilter {
+  type: String!
+  value: FilterValue
+  iri: String!
 }
 
 type GeoShapesDimension implements Dimension {
@@ -78,6 +92,7 @@ type GeoShapesDimension implements Dimension {
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   geoShapes: GeoShapes
+  related: [RelatedDimension!]
 }
 
 type NominalDimension implements Dimension {
@@ -87,6 +102,7 @@ type NominalDimension implements Dimension {
   scaleType: String
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
+  related: [RelatedDimension!]
 }
 
 type OrdinalDimension implements Dimension {
@@ -96,6 +112,7 @@ type OrdinalDimension implements Dimension {
   scaleType: String
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
+  related: [RelatedDimension!]
 }
 
 enum TimeUnit {
@@ -117,6 +134,7 @@ type TemporalDimension implements Dimension {
   scaleType: String
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
+  related: [RelatedDimension!]
 }
 
 type Measure implements Dimension {
@@ -126,6 +144,7 @@ type Measure implements Dimension {
   scaleType: String
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
+  related: [RelatedDimension!]
 }
 
 type DataCubeResult {
@@ -170,6 +189,7 @@ type Query {
     latest: Boolean = true
     filters: Filters
   ): DataCube
+  possibleFilters(iri: String!, filters: Filters!): [ObservationFilter!]!
   dataCubes(
     locale: String
     query: String

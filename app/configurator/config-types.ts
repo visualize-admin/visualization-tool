@@ -508,8 +508,7 @@ const MapSymbolLayer = t.type({
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseLayer = t.type({
-  showRelief: t.boolean,
-  showWater: t.boolean,
+  show: t.boolean,
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 const MapFields = t.type({

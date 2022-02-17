@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/macro";
-import React, { ReactNode, useCallback, useEffect } from "react";
+import { useRouter } from "next/router";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Button, ButtonProps, Flex, Text } from "theme-ui";
 import {
   useConfiguratorState,
@@ -11,6 +12,7 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query
 import SvgIcChevronLeft from "../../icons/components/IcChevronLeft";
 import SvgIcChevronRight from "../../icons/components/IcChevronRight";
 import { useLocale } from "../../src";
+import { formatBackLink } from "./select-dataset-step";
 
 export type StepStatus = "past" | "current" | "future";
 
@@ -152,11 +154,20 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
     }
   }, [data, dispatch]);
 
+  const router = useRouter();
+  const backLink = useMemo(() => {
+    return formatBackLink(router.query);
+  }, [router.query]);
+
   const goPrevious = useCallback(() => {
-    dispatch({
-      type: "STEP_PREVIOUS",
-    });
-  }, [dispatch]);
+    if (state.state === "SELECTING_CHART_TYPE") {
+      router.push(backLink);
+    } else {
+      dispatch({
+        type: "STEP_PREVIOUS",
+      });
+    }
+  }, [backLink, dispatch, router, state.state]);
 
   return (
     <StepperDumb

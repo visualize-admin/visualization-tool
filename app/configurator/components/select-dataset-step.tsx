@@ -28,7 +28,7 @@ const softJSONParse = (v: string) => {
   }
 };
 
-const formatBackLink = (
+export const formatBackLink = (
   query: Router["query"]
 ): React.ComponentProps<typeof NextLink>["href"] => {
   const backParameters = softJSONParse(query.previous as string);
