@@ -13,12 +13,16 @@ import {
   scaleTime,
   ScaleTime,
 } from "d3";
-import { sortBy } from "lodash";
+import { get, sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   mkNumber,
+  useErrorMeasure,
+  useErrorRange,
+  useErrorVariable,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
@@ -59,29 +63,33 @@ export interface ColumnsState {
   xEntireScale: ScaleTime<number, number>;
   xScaleInteraction: ScaleBand<string>;
   getY: (d: Observation) => number | null;
-  getYError: null | ((d: Observation) => [number, number]);
+  getYErrorRange: null | ((d: Observation) => [number, number]);
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
   getAnnotationInfo: (d: Observation) => TooltipInfo;
+  showStandardError: boolean;
 }
 
-const useColumnsState = ({
-  data,
-  fields,
-  measures,
-  dimensions,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
-  fields: ColumnFields;
-  aspectRatio: number;
-}): ColumnsState => {
+const useColumnsState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
+  > & {
+    fields: ColumnFields;
+    aspectRatio: number;
+  }
+): ColumnsState => {
+  const {
+    data,
+    fields,
+    measures,
+    dimensions,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
@@ -103,29 +111,11 @@ const useColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
-  const errorMeasure = useMemo(() => {
-    return [...measures, ...dimensions].find((m) => {
-      return m.related?.some(
-        (r) => r.type === "StandardError" && r.iri === fields.y.componentIri
-      );
-    });
-  }, [dimensions, fields.y.componentIri, measures]);
+  const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
+  const getYErrorRange = useErrorRange(errorMeasure, getY);
+  const getYError = useErrorVariable(errorMeasure);
   const getSegment = useSegment(fields.segment?.componentIri);
-  const getYError = errorMeasure
-    ? (d: Observation) => {
-        const y = getY(d) as number;
-        const errorIri = errorMeasure.iri;
-        let error =
-          d[errorIri] !== null ? parseFloat(d[errorIri] as string) : null;
-        if (errorMeasure.unit === "%" && error !== null) {
-          error = (error * y) / 100;
-        }
-        return (error === null ? [y, y] : [y - error, y + error]) as [
-          number,
-          number
-        ];
-      }
-    : null;
+  const showStandardError = get(fields, ["y", "showStandardError"], true);
 
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
@@ -162,9 +152,18 @@ const useColumnsState = ({
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // y
-  const minValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
-  const maxValue = Math.max(max(preparedData, (d) => getY(d)) ?? 0, 0);
-  const entireMaxValue = max(sortedData, getY) as number;
+  const minValue = Math.min(
+    min(preparedData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+    ) ?? 0,
+    0
+  );
+  const maxValue = Math.max(
+    max(preparedData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+    ) ?? 0,
+    0
+  );
 
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
@@ -262,6 +261,9 @@ const useColumnsState = ({
     };
     const xAnchor = getXAnchor();
 
+    const yValueFormatter = (value: number | null) =>
+      formatNumberWithUnit(value, formatNumber, yMeasure.unit);
+
     return {
       xAnchor,
       yAnchor,
@@ -272,9 +274,10 @@ const useColumnsState = ({
           : getX(datum),
       datum: {
         label: fields.segment?.componentIri && getSegment(datum),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: `${yValueFormatter(getY(datum))}`,
+        error: getYError
+          ? `${getYError(datum)}${errorMeasure?.unit ?? ""}`
+          : undefined,
         color: colors(getSegment(datum)) as string,
       },
       values: undefined,
@@ -294,13 +297,14 @@ const useColumnsState = ({
     timeUnit,
     xScaleInteraction,
     getY,
-    getYError,
+    getYErrorRange,
     yScale,
     getSegment,
     yAxisLabel,
     segments,
     colors,
     getAnnotationInfo,
+    showStandardError,
   };
 };
 

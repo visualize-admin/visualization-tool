@@ -4,6 +4,8 @@ import {
   DimensionMetaDataFragment,
   GeoCoordinatesDimension,
   GeoShapesDimension,
+  NominalDimension,
+  OrdinalDimension,
 } from "../graphql/query-hooks";
 
 export type RawObservationValue = Literal | NamedNode;
@@ -128,16 +130,28 @@ export const parseObservationValue = ({
  */
 export const getTimeDimensions = (dimensions: DimensionMetaDataFragment[]) =>
   dimensions.filter((d) => d.__typename === "TemporalDimension");
+
+export const isCategoricalDimension = (
+  d: DimensionMetaDataFragment
+): d is NominalDimension | OrdinalDimension => {
+  return isNominalDimension(d) || isOrdinalDimension(d);
+};
+
+export const canDimensionBeMultiFiltered = (d: DimensionMetaDataFragment) => {
+  return (
+    isNominalDimension(d) ||
+    isOrdinalDimension(d) ||
+    isGeoCoordinatesDimension(d) ||
+    isGeoShapesDimension(d)
+  );
+};
+
 /**
  * @fixme use metadata to filter categorical dimension!
  */
 export const getCategoricalDimensions = (
   dimensions: DimensionMetaDataFragment[]
-) =>
-  dimensions.filter(
-    (d) =>
-      d.__typename === "NominalDimension" || d.__typename === "OrdinalDimension"
-  );
+) => dimensions.filter(isCategoricalDimension);
 
 export const getGeoCoordinatesDimensions = (
   dimensions: DimensionMetaDataFragment[]
@@ -164,6 +178,18 @@ export const getDimensionsByDimensionType = ({
   [...measures, ...dimensions].filter((component) =>
     dimensionTypes.includes(component.__typename)
   );
+
+export const isNominalDimension = (
+  dimension?: DimensionMetaDataFragment
+): dimension is GeoCoordinatesDimension => {
+  return dimension?.__typename === "GeoCoordinatesDimension";
+};
+
+export const isOrdinalDimension = (
+  dimension?: DimensionMetaDataFragment
+): dimension is GeoCoordinatesDimension => {
+  return dimension?.__typename === "GeoCoordinatesDimension";
+};
 
 export const isGeoCoordinatesDimension = (
   dimension?: DimensionMetaDataFragment

@@ -37,6 +37,7 @@ import {
 import { useConfiguratorState } from "../configurator-state";
 import { TableSortingOptions } from "./table-chart-sorting-options";
 import { updateIsGroup, updateIsHidden } from "./table-config-state";
+import { canDimensionBeMultiFiltered } from "../../domain/data";
 
 const useTableColumnGroupHiddenField = ({
   path,
@@ -294,8 +295,7 @@ export const TableColumnOptions = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      {component.__typename === "NominalDimension" ||
-      component.__typename === "OrdinalDimension" ? (
+      {canDimensionBeMultiFiltered(component) ? (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
