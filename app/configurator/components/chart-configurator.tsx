@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
-import { isEqual, sortBy } from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import { isEqual, pickBy, sortBy } from "lodash";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -119,6 +119,13 @@ const DataFilterSelectGeneric = ({
   );
 };
 
+const orderedIsEqual = (
+  obj1: Record<string, unknown>,
+  obj2: Record<string, unknown>
+) => {
+  return isEqual(Object.keys(obj1), Object.keys(obj2)) && isEqual(obj1, obj2);
+};
+
 /**
  * This runs every time the state changes and it ensures that the selected filters
  * return at least 1 observation. Otherwise filters are reloaded.
@@ -133,11 +140,35 @@ export const useEnsurePossibleFilters = ({
   const [, dispatch] = useConfiguratorState();
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<Error>();
-
+  const lastFilters = useRef<ChartConfig["filters"]>();
   const client = useClient();
 
   useEffect(() => {
     const run = async () => {
+      const mappedIris = new Set(
+        Object.values(state.chartConfig.fields).map(
+          (fieldValue) => fieldValue.componentIri
+        )
+      );
+      const unmappedFilters = pickBy(
+        state.chartConfig.filters,
+        (value, iri) => {
+          return !mappedIris.has(iri);
+        }
+      );
+
+      const mappedFilters = pickBy(state.chartConfig.filters, (value, iri) => {
+        return mappedIris.has(iri);
+      });
+
+      if (
+        lastFilters.current &&
+        orderedIsEqual(lastFilters.current, unmappedFilters)
+      ) {
+        return;
+      }
+      lastFilters.current = unmappedFilters;
+
       setFetching(true);
       const {
         data,
@@ -145,7 +176,7 @@ export const useEnsurePossibleFilters = ({
       }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
         .query(PossibleFiltersDocument, {
           iri: state.dataSet,
-          filters: state.chartConfig.filters,
+          filters: unmappedFilters,
         })
         .toPromise();
       if (error || !data) {
@@ -156,12 +187,15 @@ export const useEnsurePossibleFilters = ({
       setError(undefined);
       setFetching(false);
 
-      const filters = Object.fromEntries(
-        data.possibleFilters.map((x) => [
-          x.iri,
-          { type: x.type, value: x.value },
-        ])
-      ) as ChartConfig["filters"];
+      const filters = Object.assign(
+        Object.fromEntries(
+          data.possibleFilters.map((x) => [
+            x.iri,
+            { type: x.type, value: x.value },
+          ])
+        ) as ChartConfig["filters"],
+        mappedFilters
+      );
 
       if (!isEqual(filters, state.chartConfig.filters)) {
         dispatch({
@@ -174,7 +208,14 @@ export const useEnsurePossibleFilters = ({
     };
 
     run();
-  }, [client, dispatch, state.chartConfig, state.dataSet]);
+  }, [
+    client,
+    dispatch,
+    state,
+    state.chartConfig.fields,
+    state.chartConfig.filters,
+    state.dataSet,
+  ]);
   return { error, fetching };
 };
 
