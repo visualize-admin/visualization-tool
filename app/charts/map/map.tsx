@@ -175,7 +175,9 @@ export const MapComponent = () => {
         controller={{ type: MapController }}
         getCursor={() => "default"}
       >
-        {showBaseLayer && <StaticMap mapStyle={baseLayerStyle} />}
+        {showBaseLayer && (
+          <StaticMap mapStyle={baseLayerStyle} attributionControl={false} />
+        )}
 
         {areaLayer.show && (
           <>
