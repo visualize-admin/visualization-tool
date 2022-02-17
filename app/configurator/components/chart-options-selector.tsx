@@ -1,4 +1,5 @@
 import { t, Trans } from "@lingui/macro";
+import { keyBy } from "lodash";
 import get from "lodash/get";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Box, Flex } from "theme-ui";
@@ -211,6 +212,11 @@ const EncodingOptionsPanel = ({
       disabled: otherFieldsIris.includes(dimension.iri),
     }));
   }, [dimensions, encoding.values, measures, otherFieldsIris]);
+
+  const optionsByField = useMemo(
+    () => keyBy(encoding.options, (enc) => enc.field),
+    [encoding]
+  );
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -240,7 +246,7 @@ const EncodingOptionsPanel = ({
               chartType={chartType}
             />
           )}
-          {encoding.options?.map((e) => e.field).includes("color") && (
+          {optionsByField["color"] && (
             <ColorPalette
               disabled={!component}
               field={field}
@@ -260,14 +266,10 @@ const EncodingOptionsPanel = ({
           // chartType={chartType}
         />
       )}
-      {encoding.options?.map((e) => e.field.includes("imputationType")) &&
-        isAreaConfig(state.chartConfig) && (
-          <ChartImputationType
-            state={state}
-            disabled={!imputationNeeded}
-          ></ChartImputationType>
-        )}
-      {encoding.filters && (
+      {optionsByField["imputationType"] && isAreaConfig(state.chartConfig) && (
+        <ChartImputationType state={state} disabled={!imputationNeeded} />
+      )}
+      {encoding.filters && component && (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
