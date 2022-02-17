@@ -2,7 +2,6 @@ import { MapController, WebMercatorViewport } from "@deck.gl/core";
 import { MVTLayer, TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
-import { extent, geoBounds } from "d3";
 import React, {
   useCallback,
   useEffect,
@@ -11,16 +10,12 @@ import React, {
   useState,
 } from "react";
 import { Box, Button } from "theme-ui";
-import {
-  AreaLayer,
-  GeoFeature,
-  GeoPoint,
-  SymbolLayer,
-} from "../../domain/data";
+import { GeoFeature, GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
 import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
+import { getBBox } from "./helpers";
 import { MapState } from "./map-state";
 import { useMapTooltip } from "./map-tooltip";
 
@@ -131,54 +126,6 @@ export const MapComponent = () => {
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const hasSetInitialZoom = useRef<boolean>();
 
-  const getBBox = useCallback(
-    (shapes?: AreaLayer["shapes"], symbols?: SymbolLayer["points"]) => {
-      let shapesBbox: BBox | undefined;
-      let symbolsBbox: BBox | undefined;
-
-      if (shapes) {
-        shapesBbox = geoBounds(shapes);
-      }
-
-      if (symbols) {
-        const visiblePoints = symbols.filter(
-          (d) => d.properties.observation !== undefined
-        );
-        const [minLng, maxLng] = extent(visiblePoints, (d) => d.coordinates[0]);
-        const [minLat, maxLat] = extent(visiblePoints, (d) => d.coordinates[1]);
-
-        symbolsBbox = [
-          [minLng, minLat],
-          [maxLng, maxLat],
-        ] as BBox;
-      }
-
-      if (shapesBbox !== undefined) {
-        if (symbolsBbox !== undefined) {
-          const [minLng, maxLng] = [
-            Math.min(shapesBbox[0][0], symbolsBbox[0][0]),
-            Math.max(shapesBbox[1][0], symbolsBbox[1][0]),
-          ];
-          const [minLat, maxLat] = [
-            Math.min(shapesBbox[0][1], symbolsBbox[0][1]),
-            Math.max(shapesBbox[1][1], symbolsBbox[1][1]),
-          ];
-          const bbox = [
-            [minLng, minLat],
-            [maxLng, maxLat],
-          ] as BBox;
-
-          return bbox;
-        } else {
-          return shapesBbox;
-        }
-      } else {
-        return symbolsBbox;
-      }
-    },
-    []
-  );
-
   const setInitialZoom = useCallback(() => {
     if (hasSetInitialZoom.current) {
       return;
@@ -199,7 +146,6 @@ export const MapComponent = () => {
     features.symbolLayer?.points,
     areaLayer,
     symbolLayer,
-    getBBox,
   ]);
 
   useEffect(() => {
