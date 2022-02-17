@@ -173,20 +173,15 @@ const useMapState = ({
 
       // Right now hierarchies are only created for geoShapes
       if (isGeoShapesDimension(dimension) && geoShapes) {
-        const dimensionLabels = dimension.values.map((d) => d.label);
         const hierarchyLabels = (
           (geoShapes as any).topology.objects.shapes.geometries as GeoFeature[]
         )
           .filter((d) => d.properties.hierarchyLevel === hierarchyLevel)
           .map((d) => d.properties.label);
 
-        return data
-          .filter((d) => dimensionLabels.includes(getLabel(d)))
-          .filter((d) => hierarchyLabels.includes(getLabel(d)));
+        return data.filter((d) => hierarchyLabels.includes(getLabel(d)));
       } else if (isGeoCoordinatesDimension(dimension)) {
-        const dimensionLabels = dimension.values.map((d) => d.label);
-
-        return data.filter((d) => dimensionLabels.includes(getLabel(d)));
+        return data;
       }
 
       return data;
