@@ -192,6 +192,8 @@ export const MapComponent = () => {
   );
 
   const baseLayerStyle = useMemo(() => getBaseLayerStyle({ locale }), [locale]);
+  const featuresLoaded =
+    features.areaLayer !== undefined || features.symbolLayer !== undefined;
 
   return (
     <Box>
@@ -208,9 +210,7 @@ export const MapComponent = () => {
         <ZoomButton iconName="add" handleClick={zoomIn} />
         <ZoomButton iconName="minus" handleClick={zoomOut} />
       </Box>
-      {(areaLayer.data.length > 0
-        ? shapes.features !== undefined
-        : features.symbolLayer?.points.length !== undefined) && (
+      {featuresLoaded && (
         <DeckGL
           viewState={viewState}
           onViewStateChange={onViewStateChange}
