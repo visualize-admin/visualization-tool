@@ -18,13 +18,16 @@ export const getBBox = (
     const visiblePoints = symbols.filter(
       (d) => d.properties.observation !== undefined
     );
-    const [minLng, maxLng] = extent(visiblePoints, (d) => d.coordinates[0]);
-    const [minLat, maxLat] = extent(visiblePoints, (d) => d.coordinates[1]);
 
-    symbolsBbox = [
-      [minLng, minLat],
-      [maxLng, maxLat],
-    ] as BBox;
+    if (visiblePoints.length > 0) {
+      const [minLng, maxLng] = extent(visiblePoints, (d) => d.coordinates[0]);
+      const [minLat, maxLat] = extent(visiblePoints, (d) => d.coordinates[1]);
+
+      symbolsBbox = [
+        [minLng, minLat],
+        [maxLng, maxLat],
+      ] as BBox;
+    }
   }
 
   if (shapesBbox !== undefined) {
