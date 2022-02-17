@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 import { ChartFields, InteractiveFiltersConfig } from "../../configurator";
 import { Observation } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+import { Has } from "../../lib/has";
 import { AreasState } from "../area/areas-state";
 import { GroupedBarsState } from "../bar/bars-grouped-state";
 import { BarsState } from "../bar/bars-state";
@@ -35,10 +36,6 @@ export type ChartState =
   | TableChartState
   | MapState
   | undefined;
-
-type Has<T extends unknown, R extends string> = T extends { [k in R]: any }
-  ? T
-  : never;
 
 export type ColorsChartState = Has<ChartState, "colors">;
 export const ChartContext = createContext<ChartState>(undefined);
