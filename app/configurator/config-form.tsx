@@ -13,7 +13,11 @@ import { getFieldComponentIri } from "../charts";
 import { DimensionValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
 import { ChartConfig, ChartType } from "./config-types";
-import { getFilterValue, useConfiguratorState } from "./configurator-state";
+import {
+  getChartOptionBooleanField,
+  getFilterValue,
+  useConfiguratorState,
+} from "./configurator-state";
 import { FIELD_VALUE_NONE } from "./constants";
 
 // interface FieldProps {
@@ -182,9 +186,11 @@ export const useChartOptionRadioField = ({
 export const useChartOptionBooleanField = ({
   path,
   field,
+  defaultValue = "",
 }: {
   path: string;
   field: string | null;
+  defaultValue: boolean | string;
 }): FieldProps => {
   const [state, dispatch] = useConfiguratorState();
 
@@ -203,14 +209,8 @@ export const useChartOptionBooleanField = ({
   );
   const stateValue =
     state.state === "CONFIGURING_CHART"
-      ? get(
-          state,
-          field === null
-            ? `chartConfig.${path}`
-            : `chartConfig.fields["${field}"].${path}`,
-          ""
-        )
-      : "";
+      ? getChartOptionBooleanField(state, field, path, defaultValue)
+      : defaultValue;
   const checked = stateValue ? stateValue : false;
 
   return {
