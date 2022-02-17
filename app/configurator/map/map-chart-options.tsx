@@ -23,6 +23,7 @@ import {
   ChartOptionSelectField,
   ColorPickerField,
 } from "../components/field";
+import { DimensionValuesMultiFilter } from "../components/filters";
 
 export const MapColumnOptions = ({
   state,
@@ -331,6 +332,18 @@ export const AreaLayerSettings = memo(
               )}
           </ControlSectionContent>
         </ControlSection>
+        {!isHidden && (
+          <ControlSection>
+            <SectionTitle iconName="segments">Filter</SectionTitle>
+            <ControlSectionContent side="right">
+              <DimensionValuesMultiFilter
+                key={chartConfig.fields.areaLayer.componentIri}
+                dimensionIri={chartConfig.fields.areaLayer.componentIri}
+                dataSetIri={metaData.iri}
+              />
+            </ControlSectionContent>
+          </ControlSection>
+        )}
       </>
     );
   }
@@ -441,6 +454,16 @@ export const SymbolLayerSettings = memo(
               field={activeField}
               path="color"
               disabled={isHidden}
+            />
+          </ControlSectionContent>
+        </ControlSection>
+        <ControlSection>
+          <SectionTitle iconName="segments">Filter</SectionTitle>
+          <ControlSectionContent side="right">
+            <DimensionValuesMultiFilter
+              key={chartConfig.fields.symbolLayer.componentIri}
+              dimensionIri={chartConfig.fields.symbolLayer.componentIri}
+              dataSetIri={metaData.iri}
             />
           </ControlSectionContent>
         </ControlSection>
