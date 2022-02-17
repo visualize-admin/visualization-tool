@@ -155,7 +155,18 @@ export const ChartMapVisualization = ({
     }
   }, [areaLayer, dimensions, observations, symbolDimensionIri, geoCoordinates]);
 
-  if (measures && dimensions && observations) {
+  const areaLayerPrepared =
+    areaDimensionIri !== "" ? areaLayer !== undefined : true;
+  const symbolLayerPrepared =
+    symbolDimensionIri !== "" ? symbolLayer !== undefined : true;
+
+  if (
+    measures &&
+    dimensions &&
+    observations &&
+    areaLayerPrepared &&
+    symbolLayerPrepared
+  ) {
     return (
       <ChartMapPrototype
         observations={observations}
@@ -167,7 +178,7 @@ export const ChartMapVisualization = ({
         geoShapes={geoShapes}
       />
     );
-  } else if (fetching) {
+  } else if (fetching || !areaLayerPrepared || !symbolLayerPrepared) {
     return <Loading />;
   } else if (error) {
     return <LoadingDataError />;
