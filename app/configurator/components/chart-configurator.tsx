@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
-import { isEqual, pickBy, sortBy } from "lodash";
+import { isEqual, sortBy } from "lodash";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   DragDropContext,
@@ -15,7 +15,6 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateSelectingChartType,
   isMapConfig,
-  useConfiguratorState,
 } from "..";
 import { getFieldComponentIris } from "../../charts";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
@@ -29,7 +28,11 @@ import {
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import { moveFilterField } from "../configurator-state";
+import {
+  getFiltersByMappingStatus,
+  moveFilterField,
+  useConfiguratorState,
+} from "../configurator-state";
 import { FIELD_VALUE_NONE } from "../constants";
 import {
   ControlSection,
@@ -145,22 +148,11 @@ export const useEnsurePossibleFilters = ({
 
   useEffect(() => {
     const run = async () => {
-      const mappedIris = new Set(
-        Object.values(state.chartConfig.fields).map(
-          (fieldValue) => fieldValue.componentIri
-        )
-      );
-      const unmappedFilters = pickBy(
-        state.chartConfig.filters,
-        (value, iri) => {
-          return !mappedIris.has(iri);
-        }
-      );
-
-      const mappedFilters = pickBy(state.chartConfig.filters, (value, iri) => {
-        return mappedIris.has(iri);
-      });
-
+      const { mapped: mappedFilters, unmapped: unmappedFilters } =
+        getFiltersByMappingStatus(
+          state.chartConfig.fields,
+          state.chartConfig.filters
+        );
       if (
         lastFilters.current &&
         orderedIsEqual(lastFilters.current, unmappedFilters)
@@ -226,13 +218,10 @@ export const ChartConfigurator = ({
 }) => {
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState();
-
+  const { fields, filters } = state.chartConfig;
   const unmappedFilters = React.useMemo(() => {
-    const mappedIris = new Set(
-      Object.values(state.chartConfig.fields).map((x) => x.componentIri)
-    );
-    return pickBy(state.chartConfig.filters, (v, iri) => !mappedIris.has(iri));
-  }, [state.chartConfig.filters, state.chartConfig.fields]);
+    return getFiltersByMappingStatus(fields, filters).unmapped;
+  }, [fields, filters]);
 
   const variables = React.useMemo(
     () => ({

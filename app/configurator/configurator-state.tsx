@@ -1,5 +1,5 @@
 import produce from "immer";
-import { mapValues } from "lodash";
+import { mapValues, pickBy } from "lodash";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
 import {
@@ -12,6 +12,8 @@ import {
 import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 import {
+  ConfiguratorStateConfiguringChart,
+  ConfiguratorStateSelectingChartType,
   ImputationType,
   isAreaConfig,
   isColumnConfig,
@@ -567,6 +569,18 @@ export const canTransitionToPreviousStep = (
 ): boolean => {
   // All states are interchangeable in terms of validity
   return true;
+};
+
+export const getFiltersByMappingStatus = (
+  fields: ConfiguratorStateConfiguringChart["chartConfig"]["fields"],
+  filters: ConfiguratorStateConfiguringChart["chartConfig"]["filters"]
+) => {
+  const mappedIris = new Set(
+    Object.values(fields).map((fieldValue) => fieldValue.componentIri)
+  );
+  const unmapped = pickBy(filters, (value, iri) => !mappedIris.has(iri));
+  const mapped = pickBy(filters, (value, iri) => mappedIris.has(iri));
+  return { unmapped, mapped };
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
