@@ -12,9 +12,10 @@ export const ErrorWhiskers = () => {
     yScale,
     getSegment,
     grouped,
+    showStandardError,
   } = useChartState() as GroupedColumnsState;
   const { margins } = bounds;
-  if (!getYErrorRange) {
+  if (!getYErrorRange || !showStandardError) {
     return null;
   }
 

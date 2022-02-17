@@ -13,7 +13,7 @@ import {
   scaleTime,
   ScaleTime,
 } from "d3";
-import { sortBy } from "lodash";
+import { get, sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
@@ -70,6 +70,7 @@ export interface ColumnsState {
   colors: ScaleOrdinal<string, string>;
   yAxisLabel: string;
   getAnnotationInfo: (d: Observation) => TooltipInfo;
+  showStandardError: boolean;
 }
 
 const useColumnsState = (
@@ -114,6 +115,7 @@ const useColumnsState = (
   const getYErrorRange = useErrorRange(errorMeasure, getY);
   const getYError = useErrorVariable(errorMeasure);
   const getSegment = useSegment(fields.segment?.componentIri);
+  const showStandardError = get(fields, ["y", "showStandardError"], true);
 
   const sortingType = fields.x.sorting?.sortingType;
   const sortingOrder = fields.x.sorting?.sortingOrder;
@@ -302,6 +304,7 @@ const useColumnsState = (
     segments,
     colors,
     getAnnotationInfo,
+    showStandardError,
   };
 };
 

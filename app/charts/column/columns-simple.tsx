@@ -6,11 +6,17 @@ import { Column } from "./rendering-utils";
 
 export const ErrorWhiskers = () => {
   const state = useChartState() as ColumnsState;
-
-  const { getX, getYErrorRange, preparedData, yScale, xScale } = state;
+  const {
+    getX,
+    getYErrorRange,
+    preparedData,
+    yScale,
+    xScale,
+    showStandardError,
+  } = state;
   const { margins } = state.bounds;
 
-  if (!getYErrorRange) {
+  if (!getYErrorRange || !showStandardError) {
     return null;
   }
 

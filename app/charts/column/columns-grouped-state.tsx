@@ -16,7 +16,7 @@ import {
   ScaleTime,
   sum,
 } from "d3";
-import { sortBy } from "lodash";
+import { get, sortBy } from "lodash";
 import React, { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
@@ -73,6 +73,7 @@ export interface GroupedColumnsState {
   yAxisLabel: string;
   grouped: [string, Observation[]][];
   getAnnotationInfo: (d: Observation) => TooltipInfo;
+  showStandardError: boolean;
 }
 
 const useGroupedColumnsState = (
@@ -112,6 +113,8 @@ const useGroupedColumnsState = (
   const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
   const getYErrorRange = useErrorRange(errorMeasure, getY);
   const getSegment = useSegment(fields.segment?.componentIri);
+
+  const showStandardError = get(fields, ["y", "showStandardError"], true);
 
   // Sort
   const xSortingType = fields.x.sorting?.sortingType;
@@ -417,6 +420,7 @@ const useGroupedColumnsState = (
     grouped,
     getAnnotationInfo,
     xIsTime,
+    showStandardError,
   };
 };
 

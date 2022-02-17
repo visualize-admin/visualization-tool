@@ -40,7 +40,11 @@ import {
   SectionTitle,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
-import { ChartFieldField, ChartOptionRadioField } from "./field";
+import {
+  ChartFieldField,
+  ChartOptionRadioField,
+  ChartOptionCheckboxField,
+} from "./field";
 import { DimensionValuesMultiFilter, TimeFilter } from "./filters";
 import { getFieldLabel, getIconName } from "./ui-helpers";
 
@@ -265,6 +269,23 @@ const EncodingOptionsPanel = ({
           encodingSortingOptions={encoding.sorting}
           // chartType={chartType}
         />
+      )}
+      {optionsByField["showStandardError"] && (
+        <ControlSection>
+          <SectionTitle iconName="eye">
+            <Trans id="controls.section.additional-information">
+              Show additional information
+            </Trans>
+          </SectionTitle>
+          <ControlSectionContent side="right" as="fieldset">
+            <ChartOptionCheckboxField
+              path="showStandardError"
+              field={encoding.field}
+              defaultValue={true}
+              label={t({ id: "controls.section.show-standard-error" })}
+            />
+          </ControlSectionContent>
+        </ControlSection>
       )}
       {optionsByField["imputationType"] && isAreaConfig(state.chartConfig) && (
         <ChartImputationType state={state} disabled={!imputationNeeded} />
