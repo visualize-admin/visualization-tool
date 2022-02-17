@@ -17,8 +17,12 @@ import { sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
+  formatNumberWithUnit,
   getPalette,
   mkNumber,
+  useErrorMeasure,
+  useErrorRange,
+  useErrorVariable,
   useFormatNumber,
   useTimeFormatUnit,
 } from "../../configurator/components/ui-helpers";
@@ -59,6 +63,7 @@ export interface ColumnsState {
   xEntireScale: ScaleTime<number, number>;
   xScaleInteraction: ScaleBand<string>;
   getY: (d: Observation) => number | null;
+  getYErrorRange: null | ((d: Observation) => [number, number]);
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -67,20 +72,23 @@ export interface ColumnsState {
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
-const useColumnsState = ({
-  data,
-  fields,
-  measures,
-  dimensions,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
-> & {
-  fields: ColumnFields;
-  aspectRatio: number;
-}): ColumnsState => {
+const useColumnsState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "measures" | "dimensions" | "interactiveFiltersConfig"
+  > & {
+    fields: ColumnFields;
+    aspectRatio: number;
+  }
+): ColumnsState => {
+  const {
+    data,
+    fields,
+    measures,
+    dimensions,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const width = useWidth();
   const formatNumber = useFormatNumber();
   const timeFormatUnit = useTimeFormatUnit();
@@ -102,6 +110,9 @@ const useColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
+  const getYErrorRange = useErrorRange(errorMeasure, getY);
+  const getYError = useErrorVariable(errorMeasure);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   const sortingType = fields.x.sorting?.sortingType;
@@ -139,9 +150,18 @@ const useColumnsState = ({
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // y
-  const minValue = Math.min(min(preparedData, (d) => getY(d)) ?? 0, 0);
-  const maxValue = Math.max(max(preparedData, (d) => getY(d)) ?? 0, 0);
-  const entireMaxValue = max(sortedData, getY) as number;
+  const minValue = Math.min(
+    min(preparedData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
+    ) ?? 0,
+    0
+  );
+  const maxValue = Math.max(
+    max(preparedData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[1] : getY(d)
+    ) ?? 0,
+    0
+  );
 
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
@@ -239,6 +259,9 @@ const useColumnsState = ({
     };
     const xAnchor = getXAnchor();
 
+    const yValueFormatter = (value: number | null) =>
+      formatNumberWithUnit(value, formatNumber, yMeasure.unit);
+
     return {
       xAnchor,
       yAnchor,
@@ -249,9 +272,10 @@ const useColumnsState = ({
           : getX(datum),
       datum: {
         label: fields.segment?.componentIri && getSegment(datum),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(datum))} ${yMeasure.unit}`
-          : formatNumber(getY(datum)),
+        value: `${yValueFormatter(getY(datum))}`,
+        error: getYError
+          ? `${getYError(datum)}${errorMeasure?.unit ?? ""}`
+          : undefined,
         color: colors(getSegment(datum)) as string,
       },
       values: undefined,
@@ -271,6 +295,7 @@ const useColumnsState = ({
     timeUnit,
     xScaleInteraction,
     getY,
+    getYErrorRange,
     yScale,
     getSegment,
     yAxisLabel,

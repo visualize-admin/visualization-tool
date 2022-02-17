@@ -1,7 +1,39 @@
 import { useTheme } from "../../themes";
 import { useChartState } from "../shared/use-chart-state";
+import { VerticalWhisker } from "../whiskers";
 import { ColumnsState } from "./columns-state";
 import { Column } from "./rendering-utils";
+
+export const ErrorWhiskers = () => {
+  const state = useChartState() as ColumnsState;
+
+  const { getX, getYErrorRange, preparedData, yScale, xScale } = state;
+  const { margins } = state.bounds;
+
+  if (!getYErrorRange) {
+    return null;
+  }
+
+  return (
+    <g transform={`translate(${margins.left} ${margins.top})`}>
+      {preparedData.map((d, i) => {
+        const x0 = xScale(getX(d)) as number;
+        const bandwidth = xScale.bandwidth();
+        const barwidth = Math.min(bandwidth, 15);
+        const [y1, y2] = getYErrorRange(d);
+        return (
+          <VerticalWhisker
+            key={i}
+            x={x0 + bandwidth / 2 - barwidth / 2}
+            width={barwidth}
+            y1={yScale(y1)}
+            y2={yScale(y2)}
+          />
+        );
+      })}
+    </g>
+  );
+};
 
 export const Columns = () => {
   const { preparedData, bounds, getX, xScale, getY, yScale } =

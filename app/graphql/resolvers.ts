@@ -311,6 +311,7 @@ const getDimensionValuesLoader = (
 const mkDimensionResolvers = (debugName: string) => ({
   iri: ({ data: { iri } }: ResolvedDimension) => iri,
   label: ({ data: { name } }: ResolvedDimension) => name,
+  related: ({ data: { related } }: ResolvedDimension) => related,
   isKeyDimension: ({ data: { isKeyDimension } }: ResolvedDimension) =>
     isKeyDimension,
   unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,

@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
 import { isEqual, sortBy } from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -15,7 +15,6 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateSelectingChartType,
   isMapConfig,
-  useConfiguratorState,
 } from "..";
 import { getFieldComponentIris } from "../../charts";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
@@ -29,7 +28,11 @@ import {
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
-import { moveFilterField } from "../configurator-state";
+import {
+  getFiltersByMappingStatus,
+  moveFilterField,
+  useConfiguratorState,
+} from "../configurator-state";
 import { FIELD_VALUE_NONE } from "../constants";
 import {
   ControlSection,
@@ -119,6 +122,13 @@ const DataFilterSelectGeneric = ({
   );
 };
 
+const orderedIsEqual = (
+  obj1: Record<string, unknown>,
+  obj2: Record<string, unknown>
+) => {
+  return isEqual(Object.keys(obj1), Object.keys(obj2)) && isEqual(obj1, obj2);
+};
+
 /**
  * This runs every time the state changes and it ensures that the selected filters
  * return at least 1 observation. Otherwise filters are reloaded.
@@ -133,11 +143,24 @@ export const useEnsurePossibleFilters = ({
   const [, dispatch] = useConfiguratorState();
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<Error>();
-
+  const lastFilters = useRef<ChartConfig["filters"]>();
   const client = useClient();
 
   useEffect(() => {
     const run = async () => {
+      const { mapped: mappedFilters, unmapped: unmappedFilters } =
+        getFiltersByMappingStatus(
+          state.chartConfig.fields,
+          state.chartConfig.filters
+        );
+      if (
+        lastFilters.current &&
+        orderedIsEqual(lastFilters.current, unmappedFilters)
+      ) {
+        return;
+      }
+      lastFilters.current = unmappedFilters;
+
       setFetching(true);
       const {
         data,
@@ -145,7 +168,7 @@ export const useEnsurePossibleFilters = ({
       }: { data?: PossibleFiltersQuery; error?: CombinedError } = await client
         .query(PossibleFiltersDocument, {
           iri: state.dataSet,
-          filters: state.chartConfig.filters,
+          filters: unmappedFilters,
         })
         .toPromise();
       if (error || !data) {
@@ -156,12 +179,15 @@ export const useEnsurePossibleFilters = ({
       setError(undefined);
       setFetching(false);
 
-      const filters = Object.fromEntries(
-        data.possibleFilters.map((x) => [
-          x.iri,
-          { type: x.type, value: x.value },
-        ])
-      ) as ChartConfig["filters"];
+      const filters = Object.assign(
+        Object.fromEntries(
+          data.possibleFilters.map((x) => [
+            x.iri,
+            { type: x.type, value: x.value },
+          ])
+        ) as ChartConfig["filters"],
+        mappedFilters
+      );
 
       if (!isEqual(filters, state.chartConfig.filters)) {
         dispatch({
@@ -174,7 +200,14 @@ export const useEnsurePossibleFilters = ({
     };
 
     run();
-  }, [client, dispatch, state.chartConfig, state.dataSet]);
+  }, [
+    client,
+    dispatch,
+    state,
+    state.chartConfig.fields,
+    state.chartConfig.filters,
+    state.dataSet,
+  ]);
   return { error, fetching };
 };
 
@@ -185,18 +218,23 @@ export const ChartConfigurator = ({
 }) => {
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState();
+  const { fields, filters } = state.chartConfig;
+  const unmappedFilters = React.useMemo(() => {
+    return getFiltersByMappingStatus(fields, filters).unmapped;
+  }, [fields, filters]);
+
   const variables = React.useMemo(
     () => ({
       iri: state.dataSet,
       locale,
-      filters: state.chartConfig.filters,
+      filters: unmappedFilters,
       // This is important for urql not to think that filters
       // are the same  while the order of the keys has changed.
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order
-      filterKeys: Object.keys(state.chartConfig.filters).join(", "),
+      filterKeys: Object.keys(unmappedFilters).join(", "),
     }),
-    [state, locale]
+    [state.dataSet, locale, unmappedFilters]
   );
   const [{ data, fetching: dataFetching }, executeQuery] =
     useDataCubeMetadataWithComponentValuesQuery({
@@ -487,10 +525,7 @@ const ChartFields = ({
             value={encoding.field}
             icon="baseLayer"
             label={<Trans id="chart.map.layers.base">Base Layer</Trans>}
-            active={
-              chartConfig.baseLayer.showRelief ||
-              chartConfig.baseLayer.showWater
-            }
+            active={chartConfig.baseLayer.show}
           />
         ) : (
           <ControlTabField

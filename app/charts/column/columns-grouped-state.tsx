@@ -22,6 +22,8 @@ import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
 import {
   getPalette,
   mkNumber,
+  useErrorMeasure,
+  useErrorRange,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
@@ -63,6 +65,7 @@ export interface GroupedColumnsState {
   xScaleIn: ScaleBand<string>;
   xEntireScale: ScaleTime<number, number>;
   getY: (d: Observation) => number | null;
+  getYErrorRange: ((d: Observation) => [number, number]) | null;
   yScale: ScaleLinear<number, number>;
   getSegment: (d: Observation) => string;
   segments: string[];
@@ -72,20 +75,23 @@ export interface GroupedColumnsState {
   getAnnotationInfo: (d: Observation) => TooltipInfo;
 }
 
-const useGroupedColumnsState = ({
-  data,
-  fields,
-  dimensions,
-  measures,
-  interactiveFiltersConfig,
-  aspectRatio,
-}: Pick<
-  ChartProps,
-  "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
-> & {
-  fields: ColumnFields;
-  aspectRatio: number;
-}): GroupedColumnsState => {
+const useGroupedColumnsState = (
+  chartProps: Pick<
+    ChartProps,
+    "data" | "dimensions" | "measures" | "interactiveFiltersConfig"
+  > & {
+    fields: ColumnFields;
+    aspectRatio: number;
+  }
+): GroupedColumnsState => {
+  const {
+    data,
+    fields,
+    dimensions,
+    measures,
+    interactiveFiltersConfig,
+    aspectRatio,
+  } = chartProps;
   const locale = useLocale();
   const width = useWidth();
   const formatNumber = useFormatNumber();
@@ -103,6 +109,8 @@ const useGroupedColumnsState = ({
   const getX = useStringVariable(fields.x.componentIri);
   const getXAsDate = useTemporalVariable(fields.x.componentIri);
   const getY = useOptionalNumericVariable(fields.y.componentIri);
+  const errorMeasure = useErrorMeasure(chartProps, fields.y.componentIri);
+  const getYErrorRange = useErrorRange(errorMeasure, getY);
   const getSegment = useSegment(fields.segment?.componentIri);
 
   // Sort
@@ -190,6 +198,8 @@ const useGroupedColumnsState = ({
       ? getSegmentsOrderedByName()
       : getSegmentsOrderedByTotalValue();
   }, [
+    dimensions,
+    fields.segment?.componentIri,
     getSegment,
     getY,
     locale,
@@ -243,8 +253,20 @@ const useGroupedColumnsState = ({
   const xEntireScale = scaleTime().domain(xEntireDomainAsTime);
 
   // y
-  const minValue = Math.min(mkNumber(min(preparedData, (d) => getY(d))), 0);
-  const maxValue = Math.max(max(preparedData, (d) => getY(d)) as number, 0);
+  const minValue = Math.min(
+    mkNumber(
+      min(preparedData, (d) =>
+        getYErrorRange ? getYErrorRange(d)[0] : getY(d) || 0
+      )
+    ),
+    0
+  );
+  const maxValue = Math.max(
+    max(preparedData, (d) =>
+      getYErrorRange ? getYErrorRange(d)[1] : getY(d) || 0
+    ) as number,
+    0
+  );
 
   const yScale = scaleLinear()
     .domain([mkNumber(minValue), mkNumber(maxValue)])
@@ -386,6 +408,7 @@ const useGroupedColumnsState = ({
     xScaleIn,
     xEntireScale,
     getY,
+    getYErrorRange,
     yScale,
     getSegment,
     yAxisLabel,

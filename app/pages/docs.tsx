@@ -90,9 +90,9 @@ const pages: ConfigPageOrGroup[] = [
         content: require("../docs/annotations.docs"),
       },
       {
-        path: "/charts/data-table",
-        title: "Data Table",
-        content: require("../docs/data-table.docs"),
+        path: "/charts/columns-chart",
+        title: "Columns",
+        content: require("../docs/columns.docs"),
       },
       {
         path: "/charts/line-chart",
@@ -103,6 +103,11 @@ const pages: ConfigPageOrGroup[] = [
         path: "/charts/scatterplot",
         title: "Scatterplot",
         content: require("../docs/scatterplot.docs"),
+      },
+      {
+        path: "/charts/data-table",
+        title: "Table",
+        content: require("../docs/data-table.docs"),
       },
       {
         path: "/charts/cube-update",

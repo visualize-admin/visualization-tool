@@ -43,3 +43,7 @@ declare module "@deck.gl/react" {
   export const DeckGL: $FixMe;
   export default DeckGL;
 }
+
+declare module "@deck.gl/carto" {
+  export const BASEMAP: $FixMe;
+}

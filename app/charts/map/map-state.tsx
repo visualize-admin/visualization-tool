@@ -48,8 +48,7 @@ export interface MapState {
   chartType: "map";
   bounds: Bounds;
   features: GeoData;
-  showRelief: boolean;
-  showWater: boolean;
+  showBaseLayer: boolean;
   identicalLayerComponentIris: boolean;
   areaLayer: {
     data: Observation[];
@@ -197,11 +196,13 @@ const useMapState = ({
 
   const areaData = useMemo(
     () =>
-      getDataByHierarchyLevel({
-        geoDimensionIri: areaLayer.componentIri,
-        hierarchyLevel: areaLayer.hierarchyLevel,
-        getLabel: getAreaLabel,
-      }),
+      areaLayer.componentIri !== ""
+        ? getDataByHierarchyLevel({
+            geoDimensionIri: areaLayer.componentIri,
+            hierarchyLevel: areaLayer.hierarchyLevel,
+            getLabel: getAreaLabel,
+          })
+        : [],
     [
       areaLayer.componentIri,
       areaLayer.hierarchyLevel,
@@ -212,11 +213,13 @@ const useMapState = ({
 
   const symbolData = useMemo(
     () =>
-      getDataByHierarchyLevel({
-        geoDimensionIri: symbolLayer.componentIri,
-        hierarchyLevel: symbolLayer.hierarchyLevel,
-        getLabel: getSymbolLabel,
-      }),
+      symbolLayer.componentIri !== ""
+        ? getDataByHierarchyLevel({
+            geoDimensionIri: symbolLayer.componentIri,
+            hierarchyLevel: symbolLayer.hierarchyLevel,
+            getLabel: getSymbolLabel,
+          })
+        : [],
     [
       symbolLayer.componentIri,
       symbolLayer.hierarchyLevel,
@@ -285,8 +288,7 @@ const useMapState = ({
     chartType: "map",
     features,
     bounds,
-    showRelief: baseLayer.showRelief,
-    showWater: baseLayer.showWater,
+    showBaseLayer: baseLayer.show,
     identicalLayerComponentIris,
     areaLayer: {
       data: areaData,
