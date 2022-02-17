@@ -7,10 +7,12 @@ export const TooltipSingle = ({
   xValue,
   segment,
   yValue,
+  yError,
 }: {
   xValue?: string;
   segment?: string;
   yValue?: string;
+  yError?: string;
 }) => {
   return (
     <Box>
@@ -27,6 +29,7 @@ export const TooltipSingle = ({
       {yValue && (
         <Text as="div" variant="meta">
           {yValue}
+          {yError ? <> ± {yError}</> : null}
         </Text>
       )}
     </Box>
