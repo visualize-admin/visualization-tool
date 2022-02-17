@@ -97,12 +97,27 @@ export const ChartMapVisualization = ({
     const dimension = dimensions?.find((d) => d.iri === areaDimensionIri);
 
     if (isGeoShapesDimension(dimension) && geoShapes && observations) {
-      const { topology } = geoShapes;
+      const activeFilters = chartConfig.filters[areaDimensionIri];
+      const activeFiltersIris = activeFilters
+        ? activeFilters.type === "single"
+          ? [activeFilters.value]
+          : activeFilters.type === "multi"
+          ? Object.keys(activeFilters.values)
+          : undefined
+        : undefined;
 
+      const { topology } = geoShapes;
       const topojson = topojsonFeature(
         topology,
         topology.objects.shapes
       ) as AreaLayer["shapes"];
+
+      // Completely hide unselected shapes (so they don't affect the legend, etc)
+      if (activeFiltersIris) {
+        topojson.features = topojson.features.filter((d) =>
+          activeFiltersIris.includes(d.properties.iri)
+        );
+      }
 
       topojson.features.forEach((d: GeoFeature) => {
         // Should we match by labels?
@@ -118,7 +133,13 @@ export const ChartMapVisualization = ({
         mesh: topojsonMesh(topology, topology.objects.shapes),
       };
     }
-  }, [areaDimensionIri, dimensions, observations, geoShapes]);
+  }, [
+    areaDimensionIri,
+    dimensions,
+    chartConfig.filters,
+    observations,
+    geoShapes,
+  ]);
 
   const symbolLayer: SymbolLayer | undefined = useMemo(() => {
     const dimension = dimensions?.find((d) => d.iri === symbolDimensionIri);
@@ -175,7 +196,6 @@ export const ChartMapVisualization = ({
         measures={measures}
         dimensions={dimensions}
         baseLayer={chartConfig.baseLayer}
-        geoShapes={geoShapes}
       />
     );
   } else if (fetching || !areaLayerPrepared || !symbolLayerPrepared) {
@@ -194,7 +214,6 @@ export const ChartMapPrototype = ({
   measures,
   dimensions,
   baseLayer,
-  geoShapes,
 }: {
   observations: Observation[];
   features: GeoData;
@@ -202,7 +221,6 @@ export const ChartMapPrototype = ({
   measures: DimensionMetaDataFragment[];
   dimensions: DimensionMetaDataFragment[];
   baseLayer: BaseLayer;
-  geoShapes?: GeoShapes;
 }) => {
   return (
     <Box sx={{ m: 4, bg: "#fff" }}>
@@ -213,7 +231,6 @@ export const ChartMapPrototype = ({
         measures={measures}
         dimensions={dimensions}
         baseLayer={baseLayer}
-        geoShapes={geoShapes}
       />
     </Box>
   );
@@ -227,7 +244,6 @@ export const ChartMap = memo(
     measures,
     dimensions,
     baseLayer,
-    geoShapes,
   }: {
     features: GeoData;
     observations: Observation[];
@@ -235,7 +251,6 @@ export const ChartMap = memo(
     dimensions: DimensionMetaDataFragment[];
     fields: MapFields;
     baseLayer: BaseLayer;
-    geoShapes?: GeoShapes;
   }) => {
     return (
       <MapChart
@@ -245,7 +260,6 @@ export const ChartMap = memo(
         measures={measures}
         dimensions={dimensions}
         baseLayer={baseLayer}
-        geoShapes={geoShapes}
       >
         <ChartContainer>
           <MapComponent />
