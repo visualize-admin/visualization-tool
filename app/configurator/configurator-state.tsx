@@ -13,7 +13,6 @@ import { Client, useClient } from "urql";
 import { Reducer, useImmerReducer } from "use-immer";
 import {
   ConfiguratorStateConfiguringChart,
-  ConfiguratorStateSelectingChartType,
   ImputationType,
   isAreaConfig,
   isColumnConfig,
