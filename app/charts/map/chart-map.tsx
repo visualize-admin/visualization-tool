@@ -185,7 +185,6 @@ export const ChartMapVisualization = ({
         measures={measures}
         dimensions={dimensions}
         baseLayer={chartConfig.baseLayer}
-        geoShapes={geoShapes}
       />
     );
   } else if (fetching) {
@@ -204,7 +203,6 @@ export const ChartMapPrototype = ({
   measures,
   dimensions,
   baseLayer,
-  geoShapes,
 }: {
   observations: Observation[];
   features: GeoData;
@@ -212,7 +210,6 @@ export const ChartMapPrototype = ({
   measures: DimensionMetaDataFragment[];
   dimensions: DimensionMetaDataFragment[];
   baseLayer: BaseLayer;
-  geoShapes?: GeoShapes;
 }) => {
   return (
     <Box sx={{ m: 4, bg: "#fff" }}>
@@ -223,7 +220,6 @@ export const ChartMapPrototype = ({
         measures={measures}
         dimensions={dimensions}
         baseLayer={baseLayer}
-        geoShapes={geoShapes}
       />
     </Box>
   );
@@ -237,7 +233,6 @@ export const ChartMap = memo(
     measures,
     dimensions,
     baseLayer,
-    geoShapes,
   }: {
     features: GeoData;
     observations: Observation[];
@@ -245,7 +240,6 @@ export const ChartMap = memo(
     dimensions: DimensionMetaDataFragment[];
     fields: MapFields;
     baseLayer: BaseLayer;
-    geoShapes?: GeoShapes;
   }) => {
     return (
       <MapChart
@@ -255,7 +249,6 @@ export const ChartMap = memo(
         measures={measures}
         dimensions={dimensions}
         baseLayer={baseLayer}
-        geoShapes={geoShapes}
       >
         <ChartContainer>
           <MapComponent />
