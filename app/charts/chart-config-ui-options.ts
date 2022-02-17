@@ -23,13 +23,17 @@ export type EncodingOption =
   | "chartSubType"
   | "sorting"
   | "color"
-  | "imputationType";
+  | "imputationType"
+  | "showStandardError";
 
 export type EncodingOptions =
   | undefined
   | {
       field: EncodingOption;
-      values: string[] | { field: string; values?: string | string[] }[];
+      values:
+        | string[]
+        | boolean[]
+        | { field: string; values?: string | string[] }[];
     }[];
 export type EncodingSortingOption = {
   sortingType: "byDimensionLabel" | "byTotalSize" | "byMeasure";
@@ -70,7 +74,13 @@ export const chartConfigOptionsUISpec: ChartSpecs = {
   column: {
     chartType: "column",
     encodings: [
-      { field: "y", optional: false, values: ["Measure"], filters: false },
+      {
+        field: "y",
+        optional: false,
+        values: ["Measure"],
+        filters: false,
+        options: [{ field: "showStandardError", values: [true, false] }],
+      },
       {
         field: "x",
         optional: false,

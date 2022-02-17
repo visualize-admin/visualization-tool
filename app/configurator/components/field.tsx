@@ -736,18 +736,19 @@ export const ChartOptionCheckboxField = ({
   label,
   field,
   path,
-  defaultChecked,
+  defaultValue = false,
   disabled = false,
 }: {
   label: string;
   field: string | null;
   path: string;
-  defaultChecked?: boolean;
+  defaultValue?: boolean;
   disabled?: boolean;
 }) => {
   const fieldProps = useChartOptionBooleanField({
     field,
     path,
+    defaultValue,
   });
 
   return (
@@ -755,7 +756,7 @@ export const ChartOptionCheckboxField = ({
       disabled={disabled}
       label={label}
       {...fieldProps}
-      checked={fieldProps.checked ?? defaultChecked}
+      checked={fieldProps.checked ?? defaultValue}
     ></Checkbox>
   );
 };

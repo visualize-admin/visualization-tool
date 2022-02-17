@@ -1,4 +1,5 @@
 import { t, Trans } from "@lingui/macro";
+import { keyBy } from "lodash";
 import get from "lodash/get";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Box, Flex } from "theme-ui";
@@ -39,7 +40,11 @@ import {
   SectionTitle,
 } from "./chart-controls/section";
 import { EmptyRightPanel } from "./empty-right-panel";
-import { ChartFieldField, ChartOptionRadioField } from "./field";
+import {
+  ChartFieldField,
+  ChartOptionRadioField,
+  ChartOptionCheckboxField,
+} from "./field";
 import { DimensionValuesMultiFilter, TimeFilter } from "./filters";
 import { getFieldLabel, getIconName } from "./ui-helpers";
 
@@ -138,7 +143,8 @@ const ActiveFieldSwitch = ({
     activeField
   );
 
-  const component = [...metaData.dimensions].find(
+  const allDimensions = [...metaData.dimensions, ...metaData.measures];
+  const component = allDimensions.find(
     (d) => d.iri === activeFieldComponentIri
   );
 
@@ -211,6 +217,20 @@ const EncodingOptionsPanel = ({
       disabled: otherFieldsIris.includes(dimension.iri),
     }));
   }, [dimensions, encoding.values, measures, otherFieldsIris]);
+
+  const hasStandardError = useMemo(() => {
+    return [...measures, ...dimensions].find((m) =>
+      m.related?.some(
+        (r) => r.type === "StandardError" && r.iri === component?.iri
+      )
+    );
+  }, [dimensions, measures, component]);
+
+  const optionsByField = useMemo(
+    () => keyBy(encoding.options, (enc) => enc.field),
+    [encoding]
+  );
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -240,7 +260,7 @@ const EncodingOptionsPanel = ({
               chartType={chartType}
             />
           )}
-          {encoding.options?.map((e) => e.field).includes("color") && (
+          {optionsByField["color"] && (
             <ColorPalette
               disabled={!component}
               field={field}
@@ -260,14 +280,27 @@ const EncodingOptionsPanel = ({
           // chartType={chartType}
         />
       )}
-      {encoding.options?.map((e) => e.field.includes("imputationType")) &&
-        isAreaConfig(state.chartConfig) && (
-          <ChartImputationType
-            state={state}
-            disabled={!imputationNeeded}
-          ></ChartImputationType>
-        )}
-      {encoding.filters && (
+      {optionsByField["showStandardError"] && hasStandardError && (
+        <ControlSection>
+          <SectionTitle iconName="eye">
+            <Trans id="controls.section.additional-information">
+              Show additional information
+            </Trans>
+          </SectionTitle>
+          <ControlSectionContent side="right" as="fieldset">
+            <ChartOptionCheckboxField
+              path="showStandardError"
+              field={encoding.field}
+              defaultValue={true}
+              label={t({ id: "controls.section.show-standard-error" })}
+            />
+          </ControlSectionContent>
+        </ControlSection>
+      )}
+      {optionsByField["imputationType"] && isAreaConfig(state.chartConfig) && (
+        <ChartImputationType state={state} disabled={!imputationNeeded} />
+      )}
+      {encoding.filters && component && (
         <ControlSection>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>

@@ -1,5 +1,5 @@
 import produce from "immer";
-import { mapValues, pickBy } from "lodash";
+import { mapValues, pickBy, get } from "lodash";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
 import {
@@ -580,6 +580,21 @@ export const getFiltersByMappingStatus = (
   const unmapped = pickBy(filters, (value, iri) => !mappedIris.has(iri));
   const mapped = pickBy(filters, (value, iri) => mappedIris.has(iri));
   return { unmapped, mapped };
+};
+
+export const getChartOptionBooleanField = (
+  state: ConfiguratorStateConfiguringChart,
+  field: string | null,
+  path: string,
+  defaultValue: string | boolean = ""
+) => {
+  return get(
+    state,
+    field === null
+      ? `chartConfig.${path}`
+      : `chartConfig.fields["${field}"].${path}`,
+    defaultValue
+  );
 };
 
 const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
@@ -1186,7 +1201,7 @@ const ConfiguratorStateProviderInternal = ({
     } catch (e) {
       console.error(e);
     }
-  }, [state, dispatch, chartId, push, asPath, locale, query.from]);
+  }, [state, dispatch, chartId, push, asPath, locale, query.from, replace]);
 
   return (
     <ConfiguratorStateContext.Provider value={stateAndDispatch}>
