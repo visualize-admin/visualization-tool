@@ -226,18 +226,26 @@ export const ChartConfigurator = ({
 }) => {
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState();
+
+  const unmappedFilters = React.useMemo(() => {
+    const mappedIris = new Set(
+      Object.values(state.chartConfig.fields).map((x) => x.componentIri)
+    );
+    return pickBy(state.chartConfig.filters, (v, iri) => !mappedIris.has(iri));
+  }, [state.chartConfig.filters, state.chartConfig.fields]);
+
   const variables = React.useMemo(
     () => ({
       iri: state.dataSet,
       locale,
-      filters: state.chartConfig.filters,
+      filters: unmappedFilters,
       // This is important for urql not to think that filters
       // are the same  while the order of the keys has changed.
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order
-      filterKeys: Object.keys(state.chartConfig.filters).join(", "),
+      filterKeys: Object.keys(unmappedFilters).join(", "),
     }),
-    [state, locale]
+    [state.dataSet, locale, unmappedFilters]
   );
   const [{ data, fetching: dataFetching }, executeQuery] =
     useDataCubeMetadataWithComponentValuesQuery({
