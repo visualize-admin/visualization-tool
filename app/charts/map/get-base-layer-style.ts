@@ -4,6 +4,7 @@ const BORDER_COLOR = {
   lowZoom: "hsl(0, 0%, 50%)",
   highZoom: "hsl(0, 0%, 75%)",
 };
+const COUNTRY_LABEL_COLOR = "rgba(0, 0, 0, 0.9)";
 
 interface Props {
   locale: Locale;
@@ -5883,7 +5884,7 @@ export const getBaseLayerStyle = (props: Props) => {
           visibility: "visible",
         },
         paint: {
-          "text-color": "rgba(145, 70, 145, 0.9)",
+          "text-color": COUNTRY_LABEL_COLOR,
           "text-halo-blur": 1,
           "text-halo-color": "rgba(255, 255, 255, 0.8)",
           "text-halo-width": 1,
