@@ -167,6 +167,9 @@ type TreeSorters = Record<
 
 /** Recursively sorts tree children  */
 export const sortTree = (tree: HierarchyValue[], sorters?: TreeSorters) => {
+  if (!tree.length) {
+    return;
+  }
   const dimensionIri = tree[0].dimensionIri;
   const sorter = sorters?.[dimensionIri] || defaultSorter;
   if (dimensionIri && sorter) {
