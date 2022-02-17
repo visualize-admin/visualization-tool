@@ -143,7 +143,8 @@ const ActiveFieldSwitch = ({
     activeField
   );
 
-  const component = [...metaData.dimensions].find(
+  const allDimensions = [...metaData.dimensions, ...metaData.measures];
+  const component = allDimensions.find(
     (d) => d.iri === activeFieldComponentIri
   );
 
@@ -217,10 +218,19 @@ const EncodingOptionsPanel = ({
     }));
   }, [dimensions, encoding.values, measures, otherFieldsIris]);
 
+  const hasStandardError = useMemo(() => {
+    return [...measures, ...dimensions].find((m) =>
+      m.related?.some(
+        (r) => r.type === "StandardError" && r.iri === component?.iri
+      )
+    );
+  }, [dimensions, measures, component]);
+
   const optionsByField = useMemo(
     () => keyBy(encoding.options, (enc) => enc.field),
     [encoding]
   );
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -270,7 +280,7 @@ const EncodingOptionsPanel = ({
           // chartType={chartType}
         />
       )}
-      {optionsByField["showStandardError"] && (
+      {optionsByField["showStandardError"] && hasStandardError && (
         <ControlSection>
           <SectionTitle iconName="eye">
             <Trans id="controls.section.additional-information">
