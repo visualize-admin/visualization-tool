@@ -188,11 +188,13 @@ const useMapState = ({
 
   const areaData = useMemo(
     () =>
-      getDataByHierarchyLevel({
-        geoDimensionIri: areaLayer.componentIri,
-        hierarchyLevel: areaLayer.hierarchyLevel,
-        getLabel: getAreaLabel,
-      }),
+      areaLayer.componentIri !== ""
+        ? getDataByHierarchyLevel({
+            geoDimensionIri: areaLayer.componentIri,
+            hierarchyLevel: areaLayer.hierarchyLevel,
+            getLabel: getAreaLabel,
+          })
+        : [],
     [
       areaLayer.componentIri,
       areaLayer.hierarchyLevel,
@@ -203,11 +205,13 @@ const useMapState = ({
 
   const symbolData = useMemo(
     () =>
-      getDataByHierarchyLevel({
-        geoDimensionIri: symbolLayer.componentIri,
-        hierarchyLevel: symbolLayer.hierarchyLevel,
-        getLabel: getSymbolLabel,
-      }),
+      symbolLayer.componentIri !== ""
+        ? getDataByHierarchyLevel({
+            geoDimensionIri: symbolLayer.componentIri,
+            hierarchyLevel: symbolLayer.hierarchyLevel,
+            getLabel: getSymbolLabel,
+          })
+        : [],
     [
       symbolLayer.componentIri,
       symbolLayer.hierarchyLevel,
