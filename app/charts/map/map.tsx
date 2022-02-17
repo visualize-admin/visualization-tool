@@ -3,9 +3,20 @@ import { MVTLayer, TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
 import { extent, geoBounds } from "d3";
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Box, Button } from "theme-ui";
-import { GeoFeature, GeoPoint } from "../../domain/data";
+import {
+  AreaLayer,
+  GeoFeature,
+  GeoPoint,
+  SymbolLayer,
+} from "../../domain/data";
 import { Icon, IconName } from "../../icons";
 import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
@@ -117,37 +128,87 @@ export const MapComponent = () => {
     }
   }, []);
 
-  const zoomToShapes = useCallback(() => {
-    if (features.areaLayer?.shapes) {
-      const bbox = geoBounds(features.areaLayer.shapes);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const hasSetInitialZoom = useRef<boolean>();
 
+  const getBBox = useCallback(
+    (shapes?: AreaLayer["shapes"], symbols?: SymbolLayer["points"]) => {
+      let shapesBbox: BBox | undefined;
+      let symbolsBbox: BBox | undefined;
+
+      if (shapes) {
+        shapesBbox = geoBounds(shapes);
+      }
+
+      if (symbols) {
+        const visiblePoints = symbols.filter(
+          (d) => d.properties.observation !== undefined
+        );
+        const [minLng, maxLng] = extent(visiblePoints, (d) => d.coordinates[0]);
+        const [minLat, maxLat] = extent(visiblePoints, (d) => d.coordinates[1]);
+
+        symbolsBbox = [
+          [minLng, minLat],
+          [maxLng, maxLat],
+        ] as BBox;
+      }
+
+      if (shapesBbox !== undefined) {
+        if (symbolsBbox !== undefined) {
+          const [minLng, maxLng] = [
+            Math.min(shapesBbox[0][0], symbolsBbox[0][0]),
+            Math.max(shapesBbox[1][0], symbolsBbox[1][0]),
+          ];
+          const [minLat, maxLat] = [
+            Math.min(shapesBbox[0][1], symbolsBbox[0][1]),
+            Math.max(shapesBbox[1][1], symbolsBbox[1][1]),
+          ];
+          const bbox = [
+            [minLng, minLat],
+            [maxLng, maxLat],
+          ] as BBox;
+
+          return bbox;
+        } else {
+          return shapesBbox;
+        }
+      } else {
+        return symbolsBbox;
+      }
+    },
+    []
+  );
+
+  const setInitialZoom = useCallback(() => {
+    if (hasSetInitialZoom.current) {
+      return;
+    }
+
+    const bbox = getBBox(
+      areaLayer.show ? features.areaLayer?.shapes : undefined,
+      symbolLayer.show ? features.symbolLayer?.points : undefined
+    );
+    if (bbox) {
       setViewState(constrainZoom(viewState, bbox, { padding: 48 }));
     }
-  }, [viewState, features.areaLayer?.shapes]);
 
-  const zoomToSymbols = useCallback(() => {
-    if (features.symbolLayer?.points) {
-      const visiblePoints = features.symbolLayer.points.filter(
-        (d) => d.properties.observation !== undefined
-      );
-      const [minLng, maxLng] = extent(visiblePoints, (d) => d.coordinates[0]);
-      const [minLat, maxLat] = extent(visiblePoints, (d) => d.coordinates[1]);
-      const bbox = [
-        [minLng, minLat],
-        [maxLng, maxLat],
-      ] as [[number, number], [number, number]];
+    hasSetInitialZoom.current = true;
+  }, [
+    viewState,
+    features.areaLayer?.shapes,
+    features.symbolLayer?.points,
+    areaLayer,
+    symbolLayer,
+    getBBox,
+  ]);
 
-      setViewState(constrainZoom(viewState, bbox, { padding: 48 }));
+  useEffect(() => {
+    if (!isMapLoaded) {
+      return;
     }
-  }, [viewState, features.symbolLayer?.points]);
 
-  const initialZoom = useCallback(() => {
-    if (areaLayer.show) {
-      zoomToShapes();
-    } else if (symbolLayer.show) {
-      zoomToSymbols();
-    }
-  }, [areaLayer.show, symbolLayer.show, zoomToShapes, zoomToSymbols]);
+    setInitialZoom();
+  }, [isMapLoaded, setInitialZoom]);
 
   const onResize = useCallback(
     ({ width, height }) => {
@@ -208,15 +269,14 @@ export const MapComponent = () => {
         <ZoomButton iconName="minus" handleClick={zoomOut} />
       </Box>
       {
-        // Shapes are being loaded asynchronously, so we wait until they are loaded.
-        // This is not the case for symbols, so we load the map immediately for them.
-        (areaLayer.data.length ? shapes : true) && (
+        // Show the map when shapes & points are loaded.
+        (areaLayer.data.length ? shapes : features.symbolLayer?.points) && (
           <DeckGL
             mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
             viewState={viewState}
             onViewStateChange={onViewStateChange}
             onResize={onResize}
-            onLoad={initialZoom}
+            onLoad={() => setIsMapLoaded(true)}
             controller={{ type: MapController }}
             getCursor={() => "default"}
           >
