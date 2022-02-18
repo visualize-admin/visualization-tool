@@ -5741,53 +5741,78 @@ const mergeLayers = (layers: Layer[], overrides: Layer[]) => {
 export const getBaseLayerStyle = (props: Props) => {
   const { locale } = props;
   const languageTag = `name:${locale === "en" ? "latin" : locale}`;
+  const textOpacity = 0;
   const style = {
     ...baseStyle,
     layers: mergeLayers(baseStyle.layers, [
       {
         id: "waterway_point_label",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
       {
         id: "waterway_line_label",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
       {
         id: "transportation_label",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
       {
         id: "road_number",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
       {
         id: "area_name_glacier_line_label",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
       {
         id: "poi_rank3",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "poi_rank2",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "peaks_other",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": [
             "format",
@@ -5802,6 +5827,9 @@ export const getBaseLayerStyle = (props: Props) => {
       },
       {
         id: "peaks_rank3+",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": [
             "format",
@@ -5816,6 +5844,9 @@ export const getBaseLayerStyle = (props: Props) => {
       },
       {
         id: "peaks_rank2",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": [
             "format",
@@ -5830,6 +5861,9 @@ export const getBaseLayerStyle = (props: Props) => {
       },
       {
         id: "peaks_rank1",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": [
             "format",
@@ -5844,78 +5878,113 @@ export const getBaseLayerStyle = (props: Props) => {
       },
       {
         id: "place_other",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "poi_rank1",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "place_hamlet_isolated_dwelling",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "place_village",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "place_village",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "aerodrome_label",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "water_name_line_label",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
       {
         id: "place_town",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "park_label",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
       {
         id: "area_name_massif_label",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
       {
-        id: "place_country",
+        id: "place_city",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": ["get", languageTag],
         },
       },
       {
         id: "place_country",
+        paint: {
+          "text-opacity": textOpacity,
+        },
         layout: {
           "text-field": `{${languageTag}}`,
         },
       },
     ]),
   };
-  console.log(style);
   return style;
 };
