@@ -5970,6 +5970,7 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "place_city",
         paint: {
           "text-opacity": textOpacity,
+          "icon-opacity": 0,
         },
         layout: {
           "text-field": ["get", languageTag],
