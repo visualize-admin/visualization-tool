@@ -1,4 +1,5 @@
 import { descending, group, index } from "d3";
+import { Maybe } from "graphql-tools";
 import {
   Cube,
   CubeDimension,
@@ -14,6 +15,7 @@ import {
   DimensionValue,
   Observation,
   parseObservationValue,
+  shouldValuesBeLoadedForResolvedDimension,
 } from "../domain/data";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
 import { DataCubeSearchFilter, DataCubeTheme } from "../graphql/query-hooks";
@@ -250,9 +252,10 @@ export const createCubeDimensionValuesLoader =
   };
 
 export const getCubeDimensionValues = async (
-  { dimension, cube, locale, data }: ResolvedDimension,
+  rdimension: ResolvedDimension,
   filters?: Filters
 ): Promise<DimensionValue[]> => {
+  const { dimension, cube, locale, data } = rdimension;
   if (
     typeof dimension.minInclusive !== "undefined" &&
     typeof dimension.maxInclusive !== "undefined" &&
@@ -265,6 +268,10 @@ export const getCubeDimensionValues = async (
       { value: min, label: `${min}` },
       { value: max, label: `${max}` },
     ];
+  }
+
+  if (!shouldValuesBeLoadedForResolvedDimension(rdimension)) {
+    return [];
   }
 
   return await getCubeDimensionValuesWithLabels({
@@ -394,6 +401,7 @@ export const getCubeObservations = async ({
   filters,
   limit,
   raw,
+  dimensions,
 }: {
   cube: Cube;
   locale: string;
@@ -403,6 +411,7 @@ export const getCubeObservations = async ({
   limit?: number;
   /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
+  dimensions: Maybe<string[]> | undefined;
 }): Promise<{
   query: string;
   observations: Observation[];
@@ -417,7 +426,8 @@ export const getCubeObservations = async ({
         cd.path &&
         ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
           cd.path.value ?? ""
-        )
+        ) &&
+        (dimensions ? dimensions.includes(cd.path.value) : true)
     )
   );
 
@@ -428,7 +438,10 @@ export const getCubeObservations = async ({
   /**
    * Add labels to named dimensions
    */
-  const cubeDimensions = await getCubeDimensions({ cube, locale });
+  const allCubeDimensions = await getCubeDimensions({ cube, locale });
+  const cubeDimensions = allCubeDimensions.filter((d) =>
+    dimensions ? dimensions.includes(d.data.iri) : true
+  );
 
   // Find dimensions which are NOT literal
   const namedDimensions = cubeDimensions.filter(

@@ -4,12 +4,7 @@ import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
 import { Box, Button, Link } from "theme-ui";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
-import {
-  ChartConfig,
-  ChartFields,
-  isMapConfig,
-  isTableConfig,
-} from "../configurator";
+import { ChartConfig, ChartFields } from "../configurator";
 import { Observation } from "../domain/data";
 import {
   DimensionMetaDataFragment,
@@ -30,24 +25,7 @@ export const DataDownload = memo(
     chartConfig: ChartConfig;
   }) => {
     const locale = useLocale();
-    const measures = useMemo(
-      () =>
-        "y" in chartConfig.fields
-          ? [chartConfig.fields.y.componentIri]
-          : isTableConfig(chartConfig)
-          ? Object.values(chartConfig.fields).flatMap((f) =>
-              f.componentType === "Measure" && !f.isHidden
-                ? [f.componentIri]
-                : []
-            )
-          : isMapConfig(chartConfig)
-          ? [
-              chartConfig.fields.areaLayer.measureIri,
-              chartConfig.fields.symbolLayer.measureIri,
-            ]
-          : [],
-      [chartConfig]
-    );
+
     const filters = useQueryFilters({
       chartConfig,
     });
@@ -56,7 +34,7 @@ export const DataDownload = memo(
       variables: {
         locale,
         iri: dataSetIri,
-        measures, // FIXME: Other fields may also be measures
+        dimensions: null, // FIXME: Other fields may also be measures
         filters,
       },
     });
