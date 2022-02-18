@@ -123,7 +123,7 @@ export const DataSetPreviewTable = ({
     variables: {
       iri: dataSetIri,
       locale,
-      measures: measures.map((m) => m.iri),
+      dimensions: null,
     },
   });
 

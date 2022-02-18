@@ -62,6 +62,7 @@ const Query: QueryResolvers = {
         filters: queryFilters,
         limit: 1,
         raw: true,
+        dimensions: null,
       });
       if (obs.length === 0) {
         continue;
@@ -240,12 +241,13 @@ const DataCube: DataCubeResolvers = {
 
     return dimension ?? null;
   },
-  observations: async ({ cube, locale }, { limit, filters, measures }) => {
+  observations: async ({ cube, locale }, { limit, filters, dimensions }) => {
     const { query, observations, observationsRaw } = await getCubeObservations({
       cube,
       locale,
       filters: filters ?? undefined,
       limit: limit ?? undefined,
+      dimensions,
     });
 
     // const constructedFilters = filters

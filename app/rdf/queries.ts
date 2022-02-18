@@ -394,6 +394,7 @@ export const getCubeObservations = async ({
   filters,
   limit,
   raw,
+  dimensions,
 }: {
   cube: Cube;
   locale: string;
@@ -403,6 +404,7 @@ export const getCubeObservations = async ({
   limit?: number;
   /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
+  dimensions: Maybe<string[]> | undefined;
 }): Promise<{
   query: string;
   observations: Observation[];
@@ -417,7 +419,8 @@ export const getCubeObservations = async ({
         cd.path &&
         ![ns.rdf.type.value, ns.cube.observedBy.value].includes(
           cd.path.value ?? ""
-        )
+        ) &&
+        (dimensions ? dimensions.includes(cd.path.value) : true)
     )
   );
 
@@ -428,7 +431,10 @@ export const getCubeObservations = async ({
   /**
    * Add labels to named dimensions
    */
-  const cubeDimensions = await getCubeDimensions({ cube, locale });
+  const allCubeDimensions = await getCubeDimensions({ cube, locale });
+  const cubeDimensions = allCubeDimensions.filter((d) =>
+    dimensions ? dimensions.includes(d.data.iri) : true
+  );
 
   // Find dimensions which are NOT literal
   const namedDimensions = cubeDimensions.filter(

@@ -44,7 +44,7 @@ export type DataCube = {
 
 export type DataCubeObservationsArgs = {
   limit?: Maybe<Scalars['Int']>;
-  measures?: Maybe<Array<Scalars['String']>>;
+  dimensions?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
 
@@ -375,7 +375,7 @@ export type DataCubePreviewQuery = { __typename: 'Query', dataCubeByIri?: Maybe<
 export type DataCubePreviewObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
-  measures: Array<Scalars['String']> | Scalars['String'];
+  dimensions?: Maybe<Array<Scalars['String']> | Scalars['String']>;
   latest?: Maybe<Scalars['Boolean']>;
 }>;
 
@@ -488,7 +488,7 @@ export type TemporalDimensionValuesQuery = { __typename: 'Query', dataCubeByIri?
 export type DataCubeObservationsQueryVariables = Exact<{
   iri: Scalars['String'];
   locale: Scalars['String'];
-  measures: Array<Scalars['String']> | Scalars['String'];
+  dimensions?: Maybe<Array<Scalars['String']> | Scalars['String']>;
   filters?: Maybe<Scalars['Filters']>;
   latest?: Maybe<Scalars['Boolean']>;
 }>;
@@ -627,9 +627,9 @@ export function useDataCubePreviewQuery(options: Omit<Urql.UseQueryArgs<DataCube
   return Urql.useQuery<DataCubePreviewQuery>({ query: DataCubePreviewDocument, ...options });
 };
 export const DataCubePreviewObservationsDocument = gql`
-    query DataCubePreviewObservations($iri: String!, $locale: String!, $measures: [String!]!, $latest: Boolean) {
+    query DataCubePreviewObservations($iri: String!, $locale: String!, $dimensions: [String!], $latest: Boolean) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
-    observations(limit: 10, measures: $measures) {
+    observations(limit: 10, dimensions: $dimensions) {
       data
       sparql
     }
@@ -754,7 +754,7 @@ export function useTemporalDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<
   return Urql.useQuery<TemporalDimensionValuesQuery>({ query: TemporalDimensionValuesDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
-    query DataCubeObservations($iri: String!, $locale: String!, $measures: [String!]!, $filters: Filters, $latest: Boolean) {
+    query DataCubeObservations($iri: String!, $locale: String!, $dimensions: [String!], $filters: Filters, $latest: Boolean) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
@@ -765,7 +765,7 @@ export const DataCubeObservationsDocument = gql`
     measures {
       ...dimensionMetaData
     }
-    observations(measures: $measures, filters: $filters) {
+    observations(dimensions: $dimensions, filters: $filters) {
       data
       sparqlEditorUrl
     }

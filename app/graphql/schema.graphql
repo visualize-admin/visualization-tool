@@ -36,7 +36,7 @@ type DataCube {
   publicationStatus: DataCubePublicationStatus!
   observations(
     limit: Int
-    measures: [String!]
+    dimensions: [String!]
     filters: Filters
   ): ObservationsQuery!
   dimensions: [Dimension!]!

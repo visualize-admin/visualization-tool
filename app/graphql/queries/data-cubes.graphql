@@ -71,11 +71,11 @@ query DataCubePreview(
 query DataCubePreviewObservations(
   $iri: String!
   $locale: String!
-  $measures: [String!]!
+  $dimensions: [String!]
   $latest: Boolean
 ) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
-    observations(limit: 10, measures: $measures) {
+    observations(limit: 10, dimensions: $dimensions) {
       data
       sparql
     }
@@ -195,7 +195,7 @@ query TemporalDimensionValues(
 query DataCubeObservations(
   $iri: String!
   $locale: String!
-  $measures: [String!]!
+  $dimensions: [String!]
   $filters: Filters
   $latest: Boolean
 ) {
@@ -209,7 +209,7 @@ query DataCubeObservations(
     measures {
       ...dimensionMetaData
     }
-    observations(measures: $measures, filters: $filters) {
+    observations(dimensions: $dimensions, filters: $filters) {
       data
       sparqlEditorUrl
     }

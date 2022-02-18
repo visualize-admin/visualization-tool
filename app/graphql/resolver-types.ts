@@ -49,7 +49,7 @@ export type DataCube = {
 
 export type DataCubeObservationsArgs = {
   limit?: Maybe<Scalars['Int']>;
-  measures?: Maybe<Array<Scalars['String']>>;
+  dimensions?: Maybe<Array<Scalars['String']>>;
   filters?: Maybe<Scalars['Filters']>;
 };
 
