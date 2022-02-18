@@ -1,5 +1,5 @@
 import { group, InternMap, sum } from "d3";
-import { flowRight, omitBy } from "lodash";
+import { omitBy, overEvery } from "lodash";
 import { useCallback, useMemo } from "react";
 import {
   ChartConfig,
@@ -101,7 +101,7 @@ export const usePreparedData = ({
       legendFilterActive && getSegment
         ? (d: Observation) => !activeInteractiveFilters.includes(getSegment(d))
         : null;
-    return flowRight.apply(null, [legendFilter, timeFilter].filter(truthy));
+    return overEvery([legendFilter, timeFilter].filter(truthy));
   }, [
     activeInteractiveFilters,
     from,
