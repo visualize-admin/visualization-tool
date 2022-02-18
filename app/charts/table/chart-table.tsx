@@ -26,17 +26,11 @@ export const ChartTableVisualization = ({
 }) => {
   const locale = useLocale();
 
-  const measures = Object.keys(chartConfig.fields).filter(
-    (key) =>
-      chartConfig.fields[key].componentType === "Measure" &&
-      !chartConfig.fields[key].isHidden
-  );
-
   const [{ data, fetching, error }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
-      measures,
+      dimensions: null,
       filters: chartConfig.filters,
     },
   });

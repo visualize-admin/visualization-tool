@@ -45,7 +45,7 @@ export const ChartAreasVisualization = ({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [chartConfig.fields.y.componentIri], // FIXME: Other fields may also be measures
+      dimensions: null, // FIXME: Try to load less dimensions
       filters: queryFilters,
     },
   });

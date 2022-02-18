@@ -7,6 +7,7 @@ import {
   NominalDimension,
   OrdinalDimension,
 } from "../graphql/query-hooks";
+import { ResolvedDimension } from "../graphql/shared-types";
 
 export type RawObservationValue = Literal | NamedNode;
 
@@ -201,4 +202,16 @@ export const isGeoShapesDimension = (
   dimension?: DimensionMetaDataFragment
 ): dimension is GeoShapesDimension => {
   return dimension?.__typename === "GeoShapesDimension";
+};
+
+export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
+  return dim.data?.related.some((x) => x.type === "StandardError");
+};
+
+export const shouldValuesBeLoadedForResolvedDimension = (
+  dim: ResolvedDimension
+) => {
+  return !(
+    dim.data.isMeasureDimension || isStandardErrorResolvedDimension(dim)
+  );
 };

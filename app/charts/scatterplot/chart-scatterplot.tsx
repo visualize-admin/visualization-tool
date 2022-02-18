@@ -50,10 +50,7 @@ export const ChartScatterplotVisualization = ({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [
-        chartConfig.fields.x.componentIri,
-        chartConfig.fields.y.componentIri,
-      ], // FIXME: Other fields may also be measures
+      dimensions: null, // FIXME: Other fields may also be measures
       filters: queryFilters,
     },
   });

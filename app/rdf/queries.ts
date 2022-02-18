@@ -1,4 +1,5 @@
 import { descending, group, index } from "d3";
+import { Maybe } from "graphql-tools";
 import {
   Cube,
   CubeDimension,
@@ -14,6 +15,7 @@ import {
   DimensionValue,
   Observation,
   parseObservationValue,
+  shouldValuesBeLoadedForResolvedDimension,
 } from "../domain/data";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
 import { DataCubeSearchFilter, DataCubeTheme } from "../graphql/query-hooks";
@@ -250,9 +252,10 @@ export const createCubeDimensionValuesLoader =
   };
 
 export const getCubeDimensionValues = async (
-  { dimension, cube, locale, data }: ResolvedDimension,
+  rdimension: ResolvedDimension,
   filters?: Filters
 ): Promise<DimensionValue[]> => {
+  const { dimension, cube, locale, data } = rdimension;
   if (
     typeof dimension.minInclusive !== "undefined" &&
     typeof dimension.maxInclusive !== "undefined" &&
@@ -265,6 +268,10 @@ export const getCubeDimensionValues = async (
       { value: min, label: `${min}` },
       { value: max, label: `${max}` },
     ];
+  }
+
+  if (!shouldValuesBeLoadedForResolvedDimension(rdimension)) {
+    return [];
   }
 
   return await getCubeDimensionValuesWithLabels({

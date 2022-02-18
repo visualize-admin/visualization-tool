@@ -277,7 +277,7 @@ export const useHierarchicalDimensionValuesQuery = ({
     variables: {
       iri: dataSetIri,
       locale,
-      measures: path,
+      dimensions: path,
     },
   });
 

@@ -43,7 +43,7 @@ export const ChartBarsVisualization = ({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [chartConfig.fields.x.componentIri], // FIXME: Other fields may also be measures
+      dimensions: null, // FIXME: Try to load less dimensions
       filters: queryFilters,
     },
   });

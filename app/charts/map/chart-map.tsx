@@ -50,10 +50,7 @@ export const ChartMapVisualization = ({
     variables: {
       locale,
       iri: dataSetIri,
-      measures: [
-        chartConfig.fields.areaLayer.measureIri,
-        chartConfig.fields.symbolLayer.measureIri,
-      ],
+      dimensions: null, // FIXME: Try to load less dimensions
       filters: queryFilters,
     },
   });

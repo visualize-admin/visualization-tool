@@ -75,7 +75,7 @@ export const ChartOptionsSelector = ({
     variables: {
       locale,
       iri: state.dataSet,
-      measures,
+      dimensions: null,
       filters: state.chartConfig.filters,
     },
   });
