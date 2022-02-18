@@ -9,14 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
+#### Navigation
+
 - Page have improved titles now, depending on where you are on the application. Helpful when you have
   multiple tabs with visualize.admin or when you bookmark things. [#331](https://github.com/visualize-admin/visualization-tool/pull/331)
 - Theme and organization navigation counts take into account the search field now. [#329](https://github.com/visualize-admin/visualization-tool/pull/329)
-- Implemented a new base layer which makes use of vector tiles [#351](https://github.com/visualize-admin/visualization-tool/pull/351)
 - Improved chart editing navigation [#337](https://github.com/visualize-admin/visualization-tool/pull/337)
 - Improved chart publish action buttons [#337](https://github.com/visualize-admin/visualization-tool/pull/337)
+
+#### Maps
+
+- Implemented a new base layer which makes use of vector tiles [#351](https://github.com/visualize-admin/visualization-tool/pull/351)
+
+#### Filters
+
 - Improved cascading filters selection to ensure data is shown after filter selection [#343](https://github.com/visualize-admin/visualization-tool/pull/343)
 - Improved initial filter selection to ensure data is shown on the selecting chart type step [#327](https://github.com/visualize-admin/visualization-tool/pull/327)
+
+#### Standard error
+
+- Standard errors are displayed automatically for column chart and grouped column chart. [#352](https://github.com/visualize-admin/visualization-tool/pull/352) [#356](https://github.com/visualize-admin/visualization-tool/pull/356)
+- Tooltip for simple column chart contain the standard error. [#366](https://github.com/visualize-admin/visualization-tool/pull/366)
 
 ### Bugs
 
