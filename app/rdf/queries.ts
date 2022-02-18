@@ -84,8 +84,8 @@ const getLatestCube = async (cube: Cube): Promise<Cube> => {
   if (newerCubes.length > 0) {
     newerCubes.sort((a, b) =>
       descending(
-        a.out(ns.schema.version)?.value,
-        b.out(ns.schema.version)?.value
+        +a.out(ns.schema.version)?.value!,
+        +b.out(ns.schema.version)?.value!
       )
     );
 
