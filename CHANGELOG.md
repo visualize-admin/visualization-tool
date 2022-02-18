@@ -38,7 +38,7 @@ Nothing yet.
 ### Bugs
 
 - Fix selection of optional date filter [#332](https://github.com/visualize-admin/visualization-tool/pull/332)
-- Fix discrete color scales with less than 3 observations [#309](https://github.com/visualize-admin/visualization-tool/pull/309)]
+- Fix discrete color scales with less than 3 observations [#309](https://github.com/visualize-admin/visualization-tool/pull/309)
 
 ## [3.3.0] - 2022-02-07
 
