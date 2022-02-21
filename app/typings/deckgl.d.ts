@@ -1,4 +1,5 @@
 declare module "@deck.gl/core" {
+  export class Controller {}
   export class MapController {}
   export class HoverObject {
     x: number;
@@ -46,4 +47,8 @@ declare module "@deck.gl/react" {
 
 declare module "@deck.gl/carto" {
   export const BASEMAP: $FixMe;
+}
+
+declare module "@deck.gl/mapbox" {
+  export const MapboxLayer: $FixMe;
 }

@@ -5742,7 +5742,7 @@ export const getBaseLayerStyle = (props: Props) => {
   const { locale } = props;
   const languageTag = `name:${locale === "en" ? "latin" : locale}`;
   const textOpacity = 1;
-  const textLayersVisibility = "none";
+  const textLayersVisibility = "visible";
   const style = {
     ...baseStyle,
     layers: mergeLayers(baseStyle.layers, [
