@@ -204,5 +204,6 @@ type Query {
     theme: String
     organization: String
     subtheme: String
+    includeDrafts: Boolean
   ): [DatasetCount!]
 }

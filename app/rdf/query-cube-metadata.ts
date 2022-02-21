@@ -91,13 +91,15 @@ export const loadOrganizations = ({ locale }: { locale: string }) => {
 
 export const queryDatasetCountByOrganization = async ({
   theme,
+  includeDrafts,
 }: {
   theme?: string;
+  includeDrafts?: boolean;
 }) => {
   const query = SELECT`(count(?iri) as ?count) ?creator`.WHERE`
     ?iri ${dcterms.creator} ?creator.
     ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
-    ${makeVisualizeDatasetFilter()}
+    ${makeVisualizeDatasetFilter({ includeDrafts })}
   `.GROUP().BY`?creator`.build();
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
@@ -112,10 +114,15 @@ export const queryDatasetCountByOrganization = async ({
     .filter((r) => r.iri);
 };
 
-const makeVisualizeDatasetFilter = () => {
+const makeVisualizeDatasetFilter = (options?: { includeDrafts?: boolean }) => {
+  const includeDrafts = options?.includeDrafts || false;
   return sparql`
     ?iri ${schema.workExample} <https://ld.admin.ch/application/visualize>.
-    ?iri ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.
+    ${
+      includeDrafts
+        ? ""
+        : sparql`?iri ${schema.creativeWorkStatus} <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published>.`
+    }
     FILTER NOT EXISTS {?iri ${schema.expires} ?expiryDate }
     FILTER NOT EXISTS {?iri ${schema.validThrough} ?validThrough }
     `;
@@ -123,8 +130,10 @@ const makeVisualizeDatasetFilter = () => {
 
 export const queryDatasetCountByTheme = async ({
   organization,
+  includeDrafts,
 }: {
   organization?: string;
+  includeDrafts?: boolean;
 }) => {
   const query = SELECT`(count(?iri) as ?count) ?theme`.WHERE`
     ?iri ${dcat.theme} ?theme.
@@ -132,7 +141,7 @@ export const queryDatasetCountByTheme = async ({
     ?theme ${
       schema.inDefinedTermSet
     } <https://register.ld.admin.ch/opendataswiss/category>.
-    ${makeVisualizeDatasetFilter()}
+    ${makeVisualizeDatasetFilter({ includeDrafts })}
   `.GROUP().BY`?theme`.build();
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
@@ -150,16 +159,18 @@ export const queryDatasetCountByTheme = async ({
 export const queryDatasetCountBySubTheme = async ({
   organization,
   theme,
+  includeDrafts,
 }: {
   organization?: string;
   theme?: string;
+  includeDrafts?: boolean;
 }) => {
   const baseQuery = SELECT`(count(?iri) as ?count) ?subtheme`.WHERE`
     ?iri ${schema.about} ?subtheme.
     ${organization ? sparql`?iri ${dcterms.creator} <${organization}>.` : ``}
     ${theme ? sparql`?iri ${dcat.theme} <${theme}>.` : ``}
     ?iri ${schema.about} ?subtheme. 
-    ${makeVisualizeDatasetFilter()}
+    ${makeVisualizeDatasetFilter({ includeDrafts })}
   `.build();
   const query = `${baseQuery} GROUP BY ?subtheme`;
   const results = await sparqlClient.query.select(query, {

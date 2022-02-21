@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import {
   BrowseFilter,
   DataCubeAbout,
+  useBrowseContext,
 } from "../configurator/components/dataset-browse";
 import { useOrganizationsQuery, useThemesQuery } from "../graphql/query-hooks";
 import SvgIcCategories from "../icons/components/IcCategories";
@@ -51,7 +52,8 @@ const SearchAutocomplete = (
   >
 ) => {
   const locale = useLocale();
-  const counts = useDatasetCount([]);
+  const { includeDrafts } = useBrowseContext();
+  const counts = useDatasetCount([], includeDrafts);
   const [{ data: allThemes }] = useThemesQuery({ variables: { locale } });
   const [{ data: allOrgs }] = useOrganizationsQuery({ variables: { locale } });
   const allItems = useMemo(

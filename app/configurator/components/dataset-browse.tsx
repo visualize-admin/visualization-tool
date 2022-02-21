@@ -637,7 +637,7 @@ export const NavSectionTitle = ({
 
 export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
   const locale = useLocale();
-  const { filters, search } = useBrowseContext();
+  const { filters, search, includeDrafts } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
@@ -645,7 +645,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     variables: { locale },
   });
 
-  const allCounts = useDatasetCount(filters);
+  const allCounts = useDatasetCount(filters, includeDrafts);
   const resultsCounts = useMemo(() => {
     if (!data?.dataCubes) {
       return {};
