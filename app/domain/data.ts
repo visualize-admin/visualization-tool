@@ -208,6 +208,10 @@ export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
   return dim.data?.related.some((x) => x.type === "StandardError");
 };
 
+export const isStandardErrorDimension = (dim: DimensionMetaDataFragment) => {
+  return dim?.related?.some((r) => r.type === "StandardError");
+};
+
 export const shouldValuesBeLoadedForResolvedDimension = (
   dim: ResolvedDimension
 ) => {
