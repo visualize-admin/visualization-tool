@@ -451,13 +451,15 @@ export const SymbolLayerSettings = memo(
         </ControlSection>
         <ControlSection>
           <SectionTitle iconName="segments">Filter</SectionTitle>
-          <ControlSectionContent side="right">
-            <DimensionValuesMultiFilter
-              key={chartConfig.fields.symbolLayer.componentIri}
-              dimensionIri={chartConfig.fields.symbolLayer.componentIri}
-              dataSetIri={metaData.iri}
-            />
-          </ControlSectionContent>
+          {!isHidden && (
+            <ControlSectionContent side="right">
+              <DimensionValuesMultiFilter
+                key={chartConfig.fields.symbolLayer.componentIri}
+                dimensionIri={chartConfig.fields.symbolLayer.componentIri}
+                dataSetIri={metaData.iri}
+              />
+            </ControlSectionContent>
+          )}
         </ControlSection>
       </>
     );

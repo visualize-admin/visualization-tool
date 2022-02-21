@@ -5,7 +5,12 @@ import {
   feature as topojsonFeature,
   mesh as topojsonMesh,
 } from "topojson-client";
-import { Loading, LoadingDataError, NoDataHint } from "../../components/hint";
+import {
+  Loading,
+  LoadingDataError,
+  LoadingGeoDimensionsError,
+  NoDataHint,
+} from "../../components/hint";
 import { BaseLayer, MapConfig, MapFields } from "../../configurator";
 import {
   AreaLayer,
@@ -178,12 +183,17 @@ export const ChartMapVisualization = ({
   const symbolLayerPrepared =
     symbolDimensionIri !== "" ? symbolLayer !== undefined : true;
 
+  const areasOrSymbolsLoaded =
+    (areaLayerPrepared && areaLayer?.shapes.features.length) ||
+    (symbolLayerPrepared && symbolLayer?.points.length);
+
   if (
     measures &&
     dimensions &&
     observations &&
     areaLayerPrepared &&
-    symbolLayerPrepared
+    symbolLayerPrepared &&
+    areasOrSymbolsLoaded
   ) {
     return (
       <ChartMapPrototype
@@ -199,6 +209,8 @@ export const ChartMapVisualization = ({
     return <Loading />;
   } else if (error) {
     return <LoadingDataError />;
+  } else if (!areasOrSymbolsLoaded) {
+    return <LoadingGeoDimensionsError />;
   } else {
     return <NoDataHint />;
   }
