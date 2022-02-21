@@ -102,12 +102,14 @@ export const queryDatasetCountByOrganization = async ({
   const results = await sparqlClient.query.select(query, {
     operation: "postUrlencoded",
   });
-  return results.map((r) => {
-    return {
-      count: parseInt(r.count.value, 10),
-      iri: r.creator.value,
-    };
-  });
+  return results
+    .map((r) => {
+      return {
+        count: parseInt(r.count.value, 10),
+        iri: r.creator?.value,
+      };
+    })
+    .filter((r) => r.iri);
 };
 
 const makeVisualizeDatasetFilter = () => {
