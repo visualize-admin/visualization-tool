@@ -1,6 +1,6 @@
-import { Locale } from "../../locales/locales";
-import merge from "lodash/merge";
 import { keyBy } from "lodash";
+import merge from "lodash/merge";
+import { Locale } from "../../locales/locales";
 
 const BORDER_COLOR = {
   lowZoom: "hsl(0, 0%, 50%)",
@@ -5741,7 +5741,8 @@ const mergeLayers = (layers: Layer[], overrides: Layer[]) => {
 export const getBaseLayerStyle = (props: Props) => {
   const { locale } = props;
   const languageTag = `name:${locale === "en" ? "latin" : locale}`;
-  const textOpacity = 0;
+  const textOpacity = 1;
+  const textLayersVisibility = "none";
   const style = {
     ...baseStyle,
     layers: mergeLayers(baseStyle.layers, [
@@ -5752,6 +5753,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5761,6 +5763,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5770,6 +5773,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5779,6 +5783,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5788,6 +5793,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5797,6 +5803,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5806,6 +5813,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5823,6 +5831,7 @@ export const getBaseLayerStyle = (props: Props) => {
             ["get", "ele"],
             { "font-scale": 0.75 },
           ],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5840,6 +5849,7 @@ export const getBaseLayerStyle = (props: Props) => {
             ["get", "ele"],
             { "font-scale": 0.75 },
           ],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5857,6 +5867,7 @@ export const getBaseLayerStyle = (props: Props) => {
             ["get", "ele"],
             { "font-scale": 0.75 },
           ],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5874,6 +5885,7 @@ export const getBaseLayerStyle = (props: Props) => {
             ["get", "ele"],
             { "font-scale": 0.75 },
           ],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5883,6 +5895,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5892,6 +5905,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5901,6 +5915,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5910,6 +5925,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5919,6 +5935,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5928,6 +5945,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5937,6 +5955,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5946,6 +5965,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5955,6 +5975,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5964,6 +5985,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5974,6 +5996,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": ["get", languageTag],
+          visibility: textLayersVisibility,
         },
       },
       {
@@ -5983,6 +6006,7 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
+          visibility: textLayersVisibility,
         },
       },
     ]),
