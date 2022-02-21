@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
-import { isEqual, sortBy } from "lodash";
+import { isEmpty, isEqual, sortBy } from "lodash";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   DragDropContext,
@@ -189,7 +189,7 @@ export const useEnsurePossibleFilters = ({
         mappedFilters
       );
 
-      if (!isEqual(filters, state.chartConfig.filters)) {
+      if (!isEqual(filters, state.chartConfig.filters) && !isEmpty(filters)) {
         dispatch({
           type: "CHART_CONFIG_FILTERS_UPDATE",
           value: {
