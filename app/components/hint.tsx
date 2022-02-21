@@ -158,6 +158,37 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
   </Flex>
 );
 
+export const LoadingGeoDimensionsError = () => (
+  <Flex
+    sx={{
+      width: "100%",
+      height: "100%",
+      color: "hint",
+      margin: "auto",
+      textAlign: "center",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      flexGrow: 1,
+    }}
+  >
+    <Icon name="hintWarning" size={64} />
+    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
+      <Trans id="hint.coordinatesloadingerror.title">
+        Coordinates loading error
+      </Trans>
+    </Text>
+    <Box sx={{ "& > * + *:not([data-no-margin])": { marginTop: 2 } }}>
+      <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+        <Trans id="hint.coordinatesloadingerror.message">
+          There was a problem with loading the coordinates from geographical
+          dimensions.
+        </Trans>
+      </Text>
+    </Box>
+  </Flex>
+);
+
 export const ChartUnexpectedError = () => (
   <Flex
     sx={{
