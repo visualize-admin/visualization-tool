@@ -186,16 +186,19 @@ const Query: QueryResolvers = {
   organizations: async (_, { locale }: { locale: string }) => {
     return (await loadOrganizations({ locale })).filter(truthy);
   },
-  datasetcount: async (_, { organization, theme }) => {
+  datasetcount: async (_, { organization, theme, includeDrafts }) => {
     const byOrg = await queryDatasetCountByOrganization({
       theme: theme || undefined,
+      includeDrafts: includeDrafts ?? undefined,
     });
     const byTheme = await queryDatasetCountByTheme({
       organization: organization || undefined,
+      includeDrafts: includeDrafts ?? undefined,
     });
     const bySubTheme = await queryDatasetCountBySubTheme({
       theme: theme || undefined,
       organization: organization || undefined,
+      includeDrafts: includeDrafts ?? undefined,
     });
     return [...byOrg, ...byTheme, ...bySubTheme];
   },

@@ -284,6 +284,7 @@ export type QueryDatasetcountArgs = {
   theme?: Maybe<Scalars['String']>;
   organization?: Maybe<Scalars['String']>;
   subtheme?: Maybe<Scalars['String']>;
+  includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 
 

@@ -279,6 +279,7 @@ export type QueryDatasetcountArgs = {
   theme?: Maybe<Scalars['String']>;
   organization?: Maybe<Scalars['String']>;
   subtheme?: Maybe<Scalars['String']>;
+  includeDrafts?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -551,6 +552,7 @@ export type DatasetCountQueryVariables = Exact<{
   theme?: Maybe<Scalars['String']>;
   organization?: Maybe<Scalars['String']>;
   subtheme?: Maybe<Scalars['String']>;
+  includeDrafts?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -826,8 +828,13 @@ export function useSubthemesQuery(options: Omit<Urql.UseQueryArgs<SubthemesQuery
   return Urql.useQuery<SubthemesQuery>({ query: SubthemesDocument, ...options });
 };
 export const DatasetCountDocument = gql`
-    query DatasetCount($theme: String, $organization: String, $subtheme: String) {
-  datasetcount(theme: $theme, organization: $organization, subtheme: $subtheme) {
+    query DatasetCount($theme: String, $organization: String, $subtheme: String, $includeDrafts: Boolean) {
+  datasetcount(
+    theme: $theme
+    organization: $organization
+    subtheme: $subtheme
+    includeDrafts: $includeDrafts
+  ) {
     count
     iri
   }

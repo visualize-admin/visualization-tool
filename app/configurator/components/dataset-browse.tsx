@@ -3,6 +3,7 @@ import { Plural, t, Trans } from "@lingui/macro";
 import { mapValues, pick, pickBy, sortBy } from "lodash";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
+import { stringify } from "qs";
 import React, {
   useCallback,
   useContext,
@@ -459,7 +460,19 @@ const NavItem = ({
   /** Level is there to differentiate between organizations and organization subtopics */
   level?: number;
 } & ThemeUILinkProps) => {
+  const { includeDrafts, search } = useBrowseContext();
+
   const path = useMemo(() => {
+    const extraURLParams = stringify(
+      pickBy(
+        {
+          includeDrafts,
+          search,
+          topic: level === 2 ? next.iri : undefined,
+        },
+        Boolean
+      )
+    );
     const newFilters = [...filters].filter((f) =>
       level === 1 ? f.__typename !== next.__typename : true
     );
@@ -467,17 +480,26 @@ const NavItem = ({
       newFilters.push(next);
     }
     return (
-      "/browse/" +
-      newFilters.map(encodeFilter).join("/") +
-      (level === 2 ? `?topic=${encodeURIComponent(next.iri)}` : "")
+      "/browse/" + newFilters.map(encodeFilter).join("/") + `?${extraURLParams}`
     );
-  }, [filters, next, level]);
+  }, [includeDrafts, search, level, next, filters]);
 
   const removeFilterPath = useMemo(() => {
+    const extraURLParams = stringify(
+      pickBy(
+        {
+          includeDrafts,
+          search,
+        },
+        Boolean
+      )
+    );
     const nextIndex = filters.findIndex((f) => f.iri === next.iri);
     const newFilters = nextIndex === 0 ? [] : filters.slice(0, 1);
-    return "/browse/" + newFilters.map(encodeFilter).join("/");
-  }, [filters, next]);
+    return (
+      "/browse/" + newFilters.map(encodeFilter).join("/") + `?${extraURLParams}`
+    );
+  }, [includeDrafts, search, filters, next.iri]);
 
   const removeFilterButton = (
     <Link href={removeFilterPath} passHref>
@@ -564,6 +586,7 @@ export const Subthemes = ({
   filters: BrowseFilter[];
   counts: ReturnType<typeof useDatasetCount>;
 }) => {
+  const { includeDrafts } = useBrowseContext();
   const termsetIri = organizationIriToTermsetParentIri[organization.iri];
   const locale = useLocale();
   const [{ data: subthemes }] = useSubthemesQuery({
@@ -637,7 +660,7 @@ export const NavSectionTitle = ({
 
 export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
   const locale = useLocale();
-  const { filters, search } = useBrowseContext();
+  const { filters, search, includeDrafts } = useBrowseContext();
   const [{ data: allThemes }] = useThemesQuery({
     variables: { locale },
   });
@@ -645,7 +668,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     variables: { locale },
   });
 
-  const allCounts = useDatasetCount(filters);
+  const allCounts = useDatasetCount(filters, includeDrafts);
   const resultsCounts = useMemo(() => {
     if (!data?.dataCubes) {
       return {};
@@ -878,9 +901,6 @@ export const DatasetResult = ({
   } = dataCube;
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
-
-  const browseState = useBrowseContext();
-  const { search, includeDrafts, order } = browseState;
   const browseParams = useMemo(() => {
     return getBrowseParamsFromQuery(router.query);
   }, [router]);
