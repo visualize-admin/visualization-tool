@@ -726,7 +726,7 @@ msgstr ""
 
 #: app/components/hint.tsx:183
 msgid "hint.coordinatesloadingerror.message"
-msgstr "Es gab ein Problem beim Laden der Koordinaten aus den geografischen Dimensionen. Später erneut versuchen."
+msgstr "Es gab ein Problem beim Laden der Koordinaten aus den geografischen Dimensionen. Bitte später erneut versuchen."
 
 #: app/components/hint.tsx:177
 msgid "hint.coordinatesloadingerror.title"
