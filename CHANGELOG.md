@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.4.2] - 2022-02-21
+
+* Hide all elements related to labels, not only text by @bprusinowski in https://github.com/visualize-admin/visualization-tool/pull/387
+* Do not set automatically empty filters by @ptbrowne in https://github.com/visualize-admin/visualization-tool/pull/384
+* Do not show standard error in possible filters by @ptbrowne in https://github.com/visualize-admin/visualization-tool/pull/395
+* Fix search and drafts count by @ptbrowne in https://github.com/visualize-admin/visualization-tool/pull/396
+* Map improvements by @bprusinowski in https://github.com/visualize-admin/visualization-tool/pull/397
+
 ## [3.4.0] - 2022-02-18
 
 ### Features
