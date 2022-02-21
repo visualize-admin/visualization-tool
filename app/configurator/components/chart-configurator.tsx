@@ -19,6 +19,7 @@ import {
 import { getFieldComponentIris } from "../../charts";
 import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
 import { Loading } from "../../components/hint";
+import { isStandardErrorDimension } from "../../domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
   PossibleFiltersDocument,
@@ -291,7 +292,10 @@ export const ChartConfigurator = ({
       [(x) => keysOrder[x.iri] ?? Infinity]
     );
     const addableDimensions = data?.dataCubeByIri.dimensions.filter(
-      (dim) => !mappedIris.has(dim.iri) && keysOrder[dim.iri] === undefined
+      (dim) =>
+        !mappedIris.has(dim.iri) &&
+        keysOrder[dim.iri] === undefined &&
+        !isStandardErrorDimension(dim)
     );
 
     const handleDragEnd: OnDragEndResponder = (result) => {
