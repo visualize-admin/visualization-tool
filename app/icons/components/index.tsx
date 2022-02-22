@@ -29,6 +29,7 @@ import { default as ChevronUp } from "./IcChevronUp";
 import { default as Circle } from "./IcCircle";
 import { default as Clear } from "./IcClear";
 import { default as Close } from "./IcClose";
+import { default as Color } from "./IcColor";
 import { default as Column } from "./IcColumn";
 import { default as Copy } from "./IcCopy";
 import { default as Cursor } from "./IcCursor";
@@ -38,8 +39,8 @@ import { default as DatasetSuccess } from "./IcDatasetSuccess";
 import { default as Description } from "./IcDescription";
 import { default as Desktop } from "./IcDesktop";
 import { default as Download } from "./IcDownload";
-import { default as DragHandle } from "./IcDragHandle";
 import { default as Drag } from "./IcDrag";
+import { default as DragHandle } from "./IcDragHandle";
 import { default as Dragndrop } from "./IcDragndrop";
 import { default as Edit } from "./IcEdit";
 import { default as Embed } from "./IcEmbed";
@@ -58,8 +59,8 @@ import { default as Image } from "./IcImage";
 import { default as Info } from "./IcInfo";
 import { default as Laptop } from "./IcLaptop";
 import { default as LeftAligned } from "./IcLeftAligned";
-import { default as LinkExternal } from "./IcLinkExternal";
 import { default as Link } from "./IcLink";
+import { default as LinkExternal } from "./IcLinkExternal";
 import { default as List } from "./IcList";
 import { default as Loading } from "./IcLoading";
 import { default as Mail } from "./IcMail";
@@ -123,7 +124,7 @@ import { default as Word } from "./IcWord";
 import { default as XAxis } from "./IcXAxis";
 import { default as YAxis } from "./IcYAxis";
 import { default as ZoomIn } from "./IcZoomIn";
-  
+
 export const Icons = {
   add: Add,
   annotationArea: AnnotationArea,
@@ -156,6 +157,7 @@ export const Icons = {
   circle: Circle,
   clear: Clear,
   close: Close,
+  color: Color,
   column: Column,
   copy: Copy,
   cursor: Cursor,
@@ -253,4 +255,3 @@ export const Icons = {
 };
 
 export type IconName = keyof typeof Icons;
-  

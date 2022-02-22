@@ -229,7 +229,7 @@ export const AreaLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="segments">
+          <SectionTitle iconName="color">
             {t({ id: "controls.color", message: "Color" })}
           </SectionTitle>
           <ControlSectionContent side="right">
@@ -434,7 +434,7 @@ export const SymbolLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="segments">
+          <SectionTitle iconName="color">
             {t({ id: "controls.color", message: "Color" })}
           </SectionTitle>
           <ControlSectionContent side="right">
