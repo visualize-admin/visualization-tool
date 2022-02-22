@@ -21,6 +21,7 @@ import { Icon } from "../icons";
 import { useI18n } from "../lib/use-i18n";
 import { useLocale } from "../locales/use-locale";
 import { IconLink } from "./links";
+import Stack from "./Stack";
 
 export const PublishActions = ({
   configKey,
@@ -32,10 +33,10 @@ export const PublishActions = ({
   const locale = useLocale();
 
   return (
-    <Flex sx={{ flexWrap: "wrap", gap: 2, ...sx }}>
+    <Stack direction="row" spacing={2} sx={sx}>
       <Share configKey={configKey} locale={locale} />
       <Embed configKey={configKey} locale={locale}></Embed>
-    </Flex>
+    </Stack>
   );
 };
 

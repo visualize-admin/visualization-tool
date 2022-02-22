@@ -4,12 +4,13 @@ import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Text } from "theme-ui";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPublished } from "../../components/chart-published";
 import { Success } from "../../components/hint";
 import { ContentLayout } from "../../components/layout";
 import { PublishActions } from "../../components/publish-actions";
+import Stack from "../../components/Stack";
 import { Config } from "../../configurator";
 import { getConfig } from "../../db/config";
 import { useLocale } from "../../locales/use-locale";
@@ -110,7 +111,7 @@ const VisualizationPage = (props: PageProps) => {
               )}
             </Text>
 
-            <Flex sx={{ flexWrap: "wrap", gap: 2 }}>
+            <Stack direction="row" spacing={2}>
               <NextLink href="/create/new" passHref>
                 <Button as="a" variant="secondary">
                   <Trans id="button.new.visualization">
@@ -128,7 +129,7 @@ const VisualizationPage = (props: PageProps) => {
                   </Trans>
                 </Button>
               </NextLink>
-            </Flex>
+            </Stack>
           </Box>
         </Box>
       </ContentLayout>
