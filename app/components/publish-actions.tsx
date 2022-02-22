@@ -1,4 +1,12 @@
 import { t, Trans } from "@lingui/macro";
+import * as clipboard from "clipboard-polyfill/text";
+import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
+import {
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 import {
   Box,
   Button,
@@ -9,19 +17,10 @@ import {
   Link,
   Text,
 } from "theme-ui";
-import * as clipboard from "clipboard-polyfill/text";
-import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
-import {
-  MouseEvent as ReactMouseEvent,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
 import { Icon } from "../icons";
+import { useI18n } from "../lib/use-i18n";
 import { useLocale } from "../locales/use-locale";
 import { IconLink } from "./links";
-import { useI18n } from "../lib/use-i18n";
-import Stack from "./Stack";
 
 export const PublishActions = ({
   configKey,
@@ -33,10 +32,10 @@ export const PublishActions = ({
   const locale = useLocale();
 
   return (
-    <Stack direction={["column", "row"]} spacing={2} sx={sx}>
+    <Flex sx={{ flexWrap: "wrap", gap: 2, ...sx }}>
       <Share configKey={configKey} locale={locale} />
       <Embed configKey={configKey} locale={locale}></Embed>
-    </Stack>
+    </Flex>
   );
 };
 

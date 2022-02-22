@@ -1,19 +1,18 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Text } from "theme-ui";
 import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 import Head from "next/head";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { Box, Button, Flex, Text } from "theme-ui";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPublished } from "../../components/chart-published";
 import { Success } from "../../components/hint";
 import { ContentLayout } from "../../components/layout";
 import { PublishActions } from "../../components/publish-actions";
-import { getConfig } from "../../db/config";
 import { Config } from "../../configurator";
+import { getConfig } from "../../db/config";
 import { useLocale } from "../../locales/use-locale";
-import NextLink from "next/link";
-import Stack from "../../components/Stack";
 
 type PageProps =
   | {
@@ -111,7 +110,7 @@ const VisualizationPage = (props: PageProps) => {
               )}
             </Text>
 
-            <Stack direction={["column", "row"]} spacing={2}>
+            <Flex sx={{ flexWrap: "wrap", gap: 2 }}>
               <NextLink href="/create/new" passHref>
                 <Button as="a" variant="secondary">
                   <Trans id="button.new.visualization">
@@ -129,7 +128,7 @@ const VisualizationPage = (props: PageProps) => {
                   </Trans>
                 </Button>
               </NextLink>
-            </Stack>
+            </Flex>
           </Box>
         </Box>
       </ContentLayout>
