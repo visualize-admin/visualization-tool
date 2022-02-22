@@ -2,6 +2,8 @@ import { t, Trans } from "@lingui/macro";
 import get from "lodash/get";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { Checkbox } from "../../components/form";
+import Stack from "../../components/Stack";
+import { canDimensionBeMultiFiltered } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { ColorPalette } from "../components/chart-controls/color-palette";
@@ -37,7 +39,6 @@ import {
 import { useConfiguratorState } from "../configurator-state";
 import { TableSortingOptions } from "./table-chart-sorting-options";
 import { updateIsGroup, updateIsHidden } from "./table-config-state";
-import { canDimensionBeMultiFiltered } from "../../domain/data";
 
 const useTableColumnGroupHiddenField = ({
   path,
@@ -231,67 +232,69 @@ export const TableColumnOptions = ({
       </ControlSection>
       {(isGroup || !isHidden) && (
         <ControlSection>
-          <SectionTitle iconName={"formatting"}>
+          <SectionTitle iconName="formatting">
             <Trans id="controls.section.columnstyle">Column Style</Trans>
           </SectionTitle>
           <ControlSectionContent side="right">
-            <ChartOptionSelectField<ColumnStyle>
-              id={"columnStyle"}
-              label={t({
-                id: "controls.select.columnStyle",
-                message: "Column Style",
-              })}
-              options={columnStyleOptions}
-              getValue={(type) => {
-                switch (type) {
-                  case "text":
-                    return {
-                      type: "text",
-                      textStyle: "regular",
-                      textColor: "#333",
-                      columnColor: "#fff",
-                    };
-                  case "category":
-                    return {
-                      type: "category",
-                      textStyle: "regular",
-                      palette: getDefaultCategoricalPalette().value,
-                      colorMapping: mapColorsToComponentValuesIris({
+            <Stack spacing={2}>
+              <ChartOptionSelectField<ColumnStyle>
+                id="columnStyle"
+                label={t({
+                  id: "controls.select.columnStyle",
+                  message: "Column Style",
+                })}
+                options={columnStyleOptions}
+                getValue={(type) => {
+                  switch (type) {
+                    case "text":
+                      return {
+                        type: "text",
+                        textStyle: "regular",
+                        textColor: "#333",
+                        columnColor: "#fff",
+                      };
+                    case "category":
+                      return {
+                        type: "category",
+                        textStyle: "regular",
                         palette: getDefaultCategoricalPalette().value,
-                        component: component as DimensionMetaDataFragment,
-                      }),
-                    };
-                  case "heatmap":
-                    return {
-                      type: "heatmap",
-                      textStyle: "regular",
-                      palette: getDefaultDivergingSteppedPalette().value,
-                    };
-                  case "bar":
-                    return {
-                      type: "bar",
-                      textStyle: "regular",
-                      barColorPositive:
-                        getDefaultCategoricalPalette().colors[0],
-                      barColorNegative:
-                        getDefaultCategoricalPalette().colors[1],
-                      barColorBackground: "#ccc",
-                      barShowBackground: false,
-                    };
-                  default:
-                    return undefined;
-                }
-              }}
-              getKey={(d) => d.type}
-              field={activeField}
-              path="columnStyle"
-            />
+                        colorMapping: mapColorsToComponentValuesIris({
+                          palette: getDefaultCategoricalPalette().value,
+                          component: component as DimensionMetaDataFragment,
+                        }),
+                      };
+                    case "heatmap":
+                      return {
+                        type: "heatmap",
+                        textStyle: "regular",
+                        palette: getDefaultDivergingSteppedPalette().value,
+                      };
+                    case "bar":
+                      return {
+                        type: "bar",
+                        textStyle: "regular",
+                        barColorPositive:
+                          getDefaultCategoricalPalette().colors[0],
+                        barColorNegative:
+                          getDefaultCategoricalPalette().colors[1],
+                        barColorBackground: "#ccc",
+                        barShowBackground: false,
+                      };
+                    default:
+                      return undefined;
+                  }
+                }}
+                getKey={(d) => d.type}
+                field={activeField}
+                path="columnStyle"
+              />
 
-            <ColumnStyleSubOptions
-              chartConfig={chartConfig}
-              activeField={activeField}
-              component={component as DimensionMetaDataFragment}
-            />
+              <ColumnStyleSubOptions
+                chartConfig={chartConfig}
+                activeField={activeField}
+                component={component as DimensionMetaDataFragment}
+              />
+            </Stack>
           </ControlSectionContent>
         </ControlSection>
       )}
@@ -465,7 +468,7 @@ const ColumnStyleSubOptions = ({
 const TableSettings = () => {
   return (
     <ControlSection>
-      <SectionTitle iconName={"settings"}>
+      <SectionTitle iconName="settings">
         <Trans id="controls.section.tableSettings">Table Settings</Trans>
       </SectionTitle>
       <ControlSectionContent side="right">
