@@ -115,13 +115,20 @@ export const SelectDatasetStepContent = () => {
       >
         <Box sx={{ maxWidth: 900 }}>
           {dataset ? null : filters.length > 0 ? (
-            filters
-              .filter(
-                (f): f is Exclude<typeof f, DataCubeAbout> =>
-                  f.__typename !== "DataCubeAbout"
-              )
-              .map((f) => f.label)
-              .join(", ")
+            <Text
+              variant="heading1"
+              color="monochrome800"
+              mb={4}
+              sx={{ display: "block" }}
+            >
+              {filters
+                .filter(
+                  (f): f is Exclude<typeof f, DataCubeAbout> =>
+                    f.__typename !== "DataCubeAbout"
+                )
+                .map((f) => f.label)
+                .join(", ")}
+            </Text>
           ) : (
             <>
               <Text
