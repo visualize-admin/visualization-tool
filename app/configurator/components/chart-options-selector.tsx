@@ -24,7 +24,10 @@ import {
 import { useImputationNeeded } from "../../charts/shared/chart-helpers";
 import { FieldSetLegend, Radio, Select } from "../../components/form";
 import { Loading } from "../../components/hint";
-import { getDimensionsByDimensionType } from "../../domain/data";
+import {
+  getDimensionsByDimensionType,
+  isStandardErrorDimension,
+} from "../../domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
@@ -214,7 +217,9 @@ const EncodingOptionsPanel = ({
     }).map((dimension) => ({
       value: dimension.iri,
       label: dimension.label,
-      disabled: otherFieldsIris.includes(dimension.iri),
+      disabled:
+        otherFieldsIris.includes(dimension.iri) ||
+        isStandardErrorDimension(dimension),
     }));
   }, [dimensions, encoding.values, measures, otherFieldsIris]);
 
