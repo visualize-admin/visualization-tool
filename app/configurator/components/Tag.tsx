@@ -22,7 +22,6 @@ const Tag = ({
       {...props}
       sx={{
         bg: type === "DataCubeTheme" ? "successLight" : "primaryLight",
-        mt: 2,
         px: 2,
         width: "fit-content",
         borderRadius: "default",
