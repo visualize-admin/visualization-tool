@@ -42,7 +42,7 @@ import { ResolvedDimension } from "./shared-types";
 import { ObservationFilter } from "./query-hooks";
 import { unversionObservation } from "../rdf/query-dimension-values";
 
-const Query: QueryResolvers = {
+export const Query: QueryResolvers = {
   possibleFilters: async (_, { iri, filters }) => {
     const source = createSource();
 
@@ -54,7 +54,7 @@ const Query: QueryResolvers = {
     const nbFilters = Object.keys(filters).length;
     for (let i = nbFilters; i > 0; i--) {
       const queryFilters = Object.fromEntries(
-        Object.entries(filters).slice(0, i + 1)
+        Object.entries(filters).slice(0, i)
       );
       const { observations: obs } = await getCubeObservations({
         cube,
