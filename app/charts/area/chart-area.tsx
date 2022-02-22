@@ -1,11 +1,6 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useMemo } from "react";
 import { Box } from "theme-ui";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "../../components/hint";
+import { Loading, LoadingOverlay } from "../../components/hint";
 import {
   AreaConfig,
   AreaFields,
@@ -24,6 +19,7 @@ import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
 import { BrushTime } from "../shared/brush";
 import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "../shared/containers";
+import { ChartErrorWrapper, useChartError } from "../shared/errors";
 import { Ruler } from "../shared/interaction/ruler";
 import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
@@ -41,44 +37,59 @@ export const ChartAreasVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
-    variables: {
-      locale,
-      iri: dataSetIri,
-      dimensions: null, // FIXME: Try to load less dimensions
-      filters: queryFilters,
-    },
-  });
+  const { setChartError } = useChartError();
+  const [{ data, fetching, error: dataLoadingError }] =
+    useDataCubeObservationsQuery({
+      variables: {
+        locale,
+        iri: dataSetIri,
+        dimensions: null, // FIXME: Try to load less dimensions
+        filters: queryFilters,
+      },
+    });
 
   const observations = data?.dataCubeByIri?.observations.data;
+  const observationsPresent = useMemo(
+    () =>
+      observations
+        ? observations.length > 0 && observations.map((d) => d.y).some(isNumber)
+        : false,
+    [observations]
+  );
+
+  useEffect(() => {
+    if (!fetching) {
+      if (dataLoadingError) {
+        setChartError("dataLoading");
+      } else if (!observationsPresent) {
+        setChartError("noData");
+      }
+    }
+  }, [fetching, dataLoadingError, observationsPresent, setChartError]);
 
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-    return observations.data.length > 0 ? (
-      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-        <A11yTable
-          title={title}
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-        />
-        <ChartAreas
-          observations={observations.data}
-          dimensions={dimensions}
-          measures={measures}
-          fields={chartConfig.fields}
-          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-        />
-        {fetching && <LoadingOverlay />}
-      </Box>
-    ) : (
-      <NoDataHint />
+    return (
+      <ChartErrorWrapper>
+        <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
+          <A11yTable
+            title={title}
+            observations={observations.data}
+            dimensions={dimensions}
+            measures={measures}
+            fields={chartConfig.fields}
+          />
+          <ChartAreas
+            observations={observations.data}
+            dimensions={dimensions}
+            measures={measures}
+            fields={chartConfig.fields}
+            interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
+          />
+          {fetching && <LoadingOverlay />}
+        </Box>
+      </ChartErrorWrapper>
     );
-  } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
-    return <NoDataHint />;
-  } else if (error) {
-    return <LoadingDataError />;
   } else {
     return <Loading />;
   }

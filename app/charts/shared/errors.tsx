@@ -6,24 +6,36 @@ import {
   useContext,
   useState,
 } from "react";
+import { LoadingDataError, NoDataHint } from "../../components/hint";
 
-type ErrorType = "none" | "dataLoading";
+type ErrorType = "none" | "dataLoading" | "noData";
 
 const ChartErrorContext = createContext<{
-  error: ErrorType;
-  setError: Dispatch<SetStateAction<ErrorType>>;
-}>({ error: "none", setError: () => undefined });
+  chartError: ErrorType;
+  setChartError: Dispatch<SetStateAction<ErrorType>>;
+}>({ chartError: "none", setChartError: () => undefined });
 
 export const ChartErrorProvider = ({ children }: { children: ReactNode }) => {
-  const [error, setError] = useState<ErrorType>("none");
-
+  const [chartError, setChartError] = useState<ErrorType>("none");
   return (
-    <ChartErrorContext.Provider value={{ error, setError }}>
-      {error === "none" ? children : <div>{error}</div>}
+    <ChartErrorContext.Provider value={{ chartError, setChartError }}>
+      {children}
     </ChartErrorContext.Provider>
   );
 };
 
-export const useChartErrorContext = () => {
+export const useChartError = () => {
   return useContext(ChartErrorContext);
+};
+
+export const ChartErrorWrapper = ({ children }: { children: ReactNode }) => {
+  const { chartError } = useChartError();
+  switch (chartError) {
+    case "none":
+      return <>{children}</>;
+    case "dataLoading":
+      return <LoadingDataError />;
+    case "noData":
+      return <NoDataHint />;
+  }
 };

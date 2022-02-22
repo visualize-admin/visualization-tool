@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ChartAreasVisualization } from "../charts/area/chart-area";
 import { ChartBarsVisualization } from "../charts/bar/chart-bar";
 import { ChartColumnsVisualization } from "../charts/column/chart-column";
@@ -5,9 +6,10 @@ import { ChartLinesVisualization } from "../charts/line/chart-lines";
 import { ChartMapVisualization } from "../charts/map/chart-map";
 import { ChartPieVisualization } from "../charts/pie/chart-pie";
 import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
+import { useChartError } from "../charts/shared/errors";
 import { ChartTableVisualization } from "../charts/table/chart-table";
 import { ChartConfig } from "../configurator";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 const GenericChart = ({
   dataSet,
@@ -16,6 +18,7 @@ const GenericChart = ({
   dataSet: string;
   chartConfig: ChartConfig;
 }) => {
+  const { setChartError } = useChartError();
   // Combine filters from config + interactive filters
   const queryFilters = useQueryFilters({
     chartConfig,
@@ -26,6 +29,12 @@ const GenericChart = ({
     chartConfig,
     queryFilters,
   };
+
+  // Remove any chart errors on chart switch
+  useEffect(
+    () => setChartError("none"),
+    [chartConfig.chartType, setChartError]
+  );
 
   switch (chartConfig.chartType) {
     case "column":
