@@ -4,6 +4,7 @@ import * as React from "react";
 import { Box, Flex, Text } from "theme-ui";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
+import { ChartErrorProvider } from "../charts/shared/errors";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "../charts/shared/use-sync-interactive-filters";
 import { ChartConfig, useConfiguratorState } from "../configurator";
@@ -140,7 +141,9 @@ const ChartWithInteractiveFilters = ({
           <ChartFiltersList dataSetIri={dataSet} chartConfig={chartConfig} />
         </Flex>
       )}
-      <Chart dataSet={dataSet} chartConfig={chartConfig} />
+      <ChartErrorProvider>
+        <Chart dataSet={dataSet} chartConfig={chartConfig} />
+      </ChartErrorProvider>
     </Flex>
   );
 };
