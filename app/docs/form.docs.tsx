@@ -11,6 +11,7 @@ import {
   Switch,
 } from "../components/form";
 import SearchAutocomplete from "../components/search-autocomplete";
+import { BrowseStateProvider } from "../configurator/components/dataset-browse";
 
 const SwitchExample = () => {
   const [checked, toggle] = useState(false);
@@ -163,7 +164,7 @@ ${(
 
   ${(
     <ReactSpecimen span={2}>
-      <>
+      <BrowseStateProvider>
         <SearchAutocomplete
           onSelectedItemChange={({ selectedItem }) => {
             if (selectedItem?.__typename !== "FreeSearchItem") {
@@ -175,7 +176,7 @@ ${(
             }
           }}
         />
-      </>
+      </BrowseStateProvider>
     </ReactSpecimen>
   )}
 

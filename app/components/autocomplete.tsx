@@ -16,6 +16,7 @@ const menuStyles = {
   top: "3rem",
   left: 0,
   right: 0,
+  zIndex: 100,
 };
 
 const AutocompleteList = React.forwardRef<HTMLDivElement>(
