@@ -326,7 +326,7 @@ export const AreaLayerSettings = memo(
         </ControlSection>
         {!isHidden && (
           <ControlSection>
-            <SectionTitle iconName="segments">Filter</SectionTitle>
+            <SectionTitle iconName="filter">Filter</SectionTitle>
             <ControlSectionContent side="right">
               <DimensionValuesMultiFilter
                 key={chartConfig.fields.areaLayer.componentIri}
@@ -450,7 +450,7 @@ export const SymbolLayerSettings = memo(
           </ControlSectionContent>
         </ControlSection>
         <ControlSection>
-          <SectionTitle iconName="segments">Filter</SectionTitle>
+          <SectionTitle iconName="filter">Filter</SectionTitle>
           {!isHidden && (
             <ControlSectionContent side="right">
               <DimensionValuesMultiFilter
