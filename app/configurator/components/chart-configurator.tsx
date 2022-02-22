@@ -170,6 +170,7 @@ export const useEnsurePossibleFilters = ({
         .query(PossibleFiltersDocument, {
           iri: state.dataSet,
           filters: unmappedFilters,
+          filterKey: Object.keys(unmappedFilters).join(", "),
         })
         .toPromise();
       if (error || !data) {
