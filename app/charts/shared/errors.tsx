@@ -8,15 +8,15 @@ import {
 } from "react";
 import { LoadingDataError, NoDataHint } from "../../components/hint";
 
-type ErrorType = "none" | "dataLoading" | "noData";
+export type ChartErrorType = "none" | "dataLoading" | "noData";
 
 const ChartErrorContext = createContext<{
-  chartError: ErrorType;
-  setChartError: Dispatch<SetStateAction<ErrorType>>;
+  chartError: ChartErrorType;
+  setChartError: Dispatch<SetStateAction<ChartErrorType>>;
 }>({ chartError: "none", setChartError: () => undefined });
 
 export const ChartErrorProvider = ({ children }: { children: ReactNode }) => {
-  const [chartError, setChartError] = useState<ErrorType>("none");
+  const [chartError, setChartError] = useState<ChartErrorType>("none");
   return (
     <ChartErrorContext.Provider value={{ chartError, setChartError }}>
       {children}
