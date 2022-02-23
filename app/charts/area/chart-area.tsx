@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo } from "react";
+import React, { memo } from "react";
 import { Box } from "theme-ui";
 import { Loading, LoadingOverlay } from "../../components/hint";
 import {
@@ -6,12 +6,8 @@ import {
   AreaFields,
   InteractiveFiltersConfig,
 } from "../../configurator";
-import { isNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import {
-  DimensionMetaDataFragment,
-  useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
 import { AxisHeightLinear } from "../shared/axis-height-linear";
@@ -19,11 +15,11 @@ import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
 import { BrushTime } from "../shared/brush";
 import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "../shared/containers";
-import { useChartError } from "../shared/errors";
 import { Ruler } from "../shared/interaction/ruler";
 import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { InteractionHorizontal } from "../shared/overlay-horizontal";
+import { useChartData } from "../shared/use-chart-data";
 import { Areas } from "./areas";
 import { AreaChart } from "./areas-state";
 
@@ -37,35 +33,11 @@ export const ChartAreasVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
-  const { setChartError } = useChartError();
-  const [{ data, fetching, error: dataLoadingError }] =
-    useDataCubeObservationsQuery({
-      variables: {
-        locale,
-        iri: dataSetIri,
-        dimensions: null, // FIXME: Try to load less dimensions
-        filters: queryFilters,
-      },
-    });
-
-  const observations = data?.dataCubeByIri?.observations.data;
-  const observationsPresent = useMemo(
-    () =>
-      observations
-        ? observations.length > 0 && observations.map((d) => d.y).some(isNumber)
-        : false,
-    [observations]
-  );
-
-  useEffect(() => {
-    if (!fetching) {
-      if (dataLoadingError) {
-        setChartError("dataLoading");
-      } else if (!observationsPresent) {
-        setChartError("noData");
-      }
-    }
-  }, [fetching, dataLoadingError, observationsPresent, setChartError]);
+  const { data, fetching } = useChartData({
+    locale,
+    iri: dataSetIri,
+    filters: queryFilters,
+  });
 
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;

@@ -2,9 +2,7 @@ import React, { memo } from "react";
 import { Box } from "theme-ui";
 import {
   Loading,
-  LoadingDataError,
   LoadingOverlay,
-  NoDataHint,
   OnlyNegativeDataHint,
 } from "../../components/hint";
 import {
@@ -15,15 +13,13 @@ import {
   PieFields,
 } from "../../configurator";
 import { Observation } from "../../domain/data";
-import {
-  DimensionMetaDataFragment,
-  useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
 import { ChartContainer, ChartSvg } from "../shared/containers";
 import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
+import { useChartData } from "../shared/use-chart-data";
 import { Pie } from "./pie";
 import { PieChart } from "./pie-state";
 
@@ -37,14 +33,10 @@ export const ChartPieVisualization = ({
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
-    variables: {
-      locale,
-      iri: dataSetIri,
-      dimensions: null,
-      filters: queryFilters,
-    },
+  const { data, fetching } = useChartData({
+    locale,
+    iri: dataSetIri,
+    filters: queryFilters,
   });
 
   if (data?.dataCubeByIri) {
@@ -54,7 +46,7 @@ export const ChartPieVisualization = ({
       (d) => d[chartConfig.fields.y.componentIri] > 0
     );
 
-    return notAllNegative && observations.data.length > 0 ? (
+    return notAllNegative ? (
       <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
         <A11yTable
           title={title}
@@ -72,13 +64,9 @@ export const ChartPieVisualization = ({
         />
         {fetching && <LoadingOverlay />}
       </Box>
-    ) : !notAllNegative && observations.data.length > 0 ? (
-      <OnlyNegativeDataHint />
     ) : (
-      <NoDataHint />
+      <OnlyNegativeDataHint />
     );
-  } else if (error) {
-    return <LoadingDataError />;
   } else {
     return <Loading />;
   }

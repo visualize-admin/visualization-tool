@@ -5,12 +5,7 @@ import {
   feature as topojsonFeature,
   mesh as topojsonMesh,
 } from "topojson-client";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingGeoDimensionsError,
-  NoDataHint,
-} from "../../components/hint";
+import { Loading, LoadingGeoDimensionsError } from "../../components/hint";
 import { BaseLayer, MapConfig, MapFields } from "../../configurator";
 import {
   AreaLayer,
@@ -25,13 +20,13 @@ import {
 } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
-  useDataCubeObservationsQuery,
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
 } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer } from "../shared/containers";
+import { useChartData } from "../shared/use-chart-data";
 import { MapComponent } from "./map";
 import { MapLegend } from "./map-legend";
 import { MapChart } from "./map-state";
@@ -47,18 +42,14 @@ export const ChartMapVisualization = ({
   queryFilters: QueryFilters;
 }) => {
   const locale = useLocale();
+  const { data, fetching } = useChartData({
+    locale,
+    iri: dataSetIri,
+    filters: queryFilters,
+  });
 
   const areaDimensionIri = chartConfig.fields.areaLayer.componentIri;
   const symbolDimensionIri = chartConfig.fields.symbolLayer.componentIri;
-
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
-    variables: {
-      locale,
-      iri: dataSetIri,
-      dimensions: null, // FIXME: Try to load less dimensions
-      filters: queryFilters,
-    },
-  });
 
   const dimensions = data?.dataCubeByIri?.dimensions;
   const measures = data?.dataCubeByIri?.measures;
@@ -207,12 +198,8 @@ export const ChartMapVisualization = ({
     );
   } else if (fetching || !areaLayerPrepared || !symbolLayerPrepared) {
     return <Loading />;
-  } else if (error) {
-    return <LoadingDataError />;
   } else if (!areasOrSymbolsLoaded) {
     return <LoadingGeoDimensionsError />;
-  } else {
-    return <NoDataHint />;
   }
 };
 

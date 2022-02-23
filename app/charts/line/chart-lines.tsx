@@ -1,11 +1,6 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "../../components/hint";
+import { Loading, LoadingOverlay } from "../../components/hint";
 import {
   Filters,
   FilterValueSingle,
@@ -13,12 +8,8 @@ import {
   LineConfig,
   LineFields,
 } from "../../configurator";
-import { isNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import {
-  DimensionMetaDataFragment,
-  useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
 import { AxisHeightLinear } from "../shared/axis-height-linear";
@@ -30,6 +21,7 @@ import { Ruler } from "../shared/interaction/ruler";
 import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { InteractionHorizontal } from "../shared/overlay-horizontal";
+import { useChartData } from "../shared/use-chart-data";
 import { Lines } from "./lines";
 import { LineChart } from "./lines-state";
 
@@ -43,22 +35,15 @@ export const ChartLinesVisualization = ({
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
-    variables: {
-      locale,
-      iri: dataSetIri,
-      dimensions: null, // FIXME: Try to load less dimensions
-      filters: queryFilters,
-    },
+  const { data, fetching } = useChartData({
+    locale,
+    iri: dataSetIri,
+    filters: queryFilters,
   });
-
-  const observations = data?.dataCubeByIri?.observations.data;
 
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-
-    return observations.data.length > 0 ? (
+    return (
       <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
         <A11yTable
           title={title}
@@ -76,13 +61,7 @@ export const ChartLinesVisualization = ({
         />
         {fetching && <LoadingOverlay />}
       </Box>
-    ) : (
-      <NoDataHint />
     );
-  } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
-    return <NoDataHint />;
-  } else if (error) {
-    return <LoadingDataError />;
   } else {
     return <Loading />;
   }

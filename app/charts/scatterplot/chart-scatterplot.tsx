@@ -1,11 +1,6 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "../../components/hint";
+import { Loading, LoadingOverlay } from "../../components/hint";
 import {
   Filters,
   FilterValueSingle,
@@ -13,12 +8,8 @@ import {
   ScatterPlotConfig,
   ScatterPlotFields,
 } from "../../configurator";
-import { isNumber } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";
-import {
-  DimensionMetaDataFragment,
-  useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
 import {
@@ -33,6 +24,7 @@ import { ChartContainer, ChartSvg } from "../shared/containers";
 import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
 import { InteractionVoronoi } from "../shared/overlay-voronoi";
+import { useChartData } from "../shared/use-chart-data";
 import { Scatterplot } from "./scatterplot-simple";
 import { ScatterplotChart } from "./scatterplot-state";
 
@@ -46,20 +38,15 @@ export const ChartScatterplotVisualization = ({
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
-    variables: {
-      locale,
-      iri: dataSetIri,
-      dimensions: null, // FIXME: Other fields may also be measures
-      filters: queryFilters,
-    },
+  const { data, fetching } = useChartData({
+    locale,
+    iri: dataSetIri,
+    filters: queryFilters,
   });
-
-  const observations = data?.dataCubeByIri?.observations.data;
 
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-    return observations.data.length > 0 ? (
+    return (
       <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
         <A11yTable
           title={title}
@@ -77,17 +64,7 @@ export const ChartScatterplotVisualization = ({
         />
         {fetching && <LoadingOverlay />}
       </Box>
-    ) : (
-      <NoDataHint />
     );
-  } else if (
-    (observations &&
-      !observations.map((obs: $FixMe) => obs.x).some(isNumber)) ||
-    (observations && !observations.map((obs: $FixMe) => obs.y).some(isNumber))
-  ) {
-    return <NoDataHint />;
-  } else if (error) {
-    return <LoadingDataError />;
   } else {
     return <Loading />;
   }

@@ -1,33 +1,25 @@
 import React, { memo } from "react";
 import { Box } from "theme-ui";
+import { Loading, LoadingOverlay } from "../../components/hint";
 import {
-  Filters,
   BarConfig,
   BarFields,
-  InteractiveFiltersConfig,
+  Filters,
   FilterValueSingle,
+  InteractiveFiltersConfig,
 } from "../../configurator";
 import { Observation } from "../../domain/data";
-import { isNumber } from "../../configurator/components/ui-helpers";
-import {
-  DimensionMetaDataFragment,
-  useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { A11yTable } from "../shared/a11y-table";
 import { AxisWidthLinear } from "../shared/axis-width-linear";
+import { ChartContainer, ChartSvg } from "../shared/containers";
+import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
+import { useChartData } from "../shared/use-chart-data";
 import { BarsGrouped } from "./bars-grouped";
 import { GroupedBarsChart } from "./bars-grouped-state";
 import { Bars } from "./bars-simple";
 import { BarChart } from "./bars-state";
-import { ChartContainer, ChartSvg } from "../shared/containers";
-import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
-import {
-  Loading,
-  LoadingDataError,
-  LoadingOverlay,
-  NoDataHint,
-} from "../../components/hint";
 
 export const ChartBarsVisualization = ({
   dataSetIri,
@@ -39,20 +31,15 @@ export const ChartBarsVisualization = ({
   queryFilters: Filters | FilterValueSingle;
 }) => {
   const locale = useLocale();
-  const [{ data, fetching, error }] = useDataCubeObservationsQuery({
-    variables: {
-      locale,
-      iri: dataSetIri,
-      dimensions: null, // FIXME: Try to load less dimensions
-      filters: queryFilters,
-    },
+  const { data, fetching } = useChartData({
+    locale,
+    iri: dataSetIri,
+    filters: queryFilters,
   });
-
-  const observations = data?.dataCubeByIri?.observations.data;
 
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-    return observations.data.length > 0 ? (
+    return (
       <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
         <A11yTable
           title={title}
@@ -70,13 +57,7 @@ export const ChartBarsVisualization = ({
         />
         {fetching && <LoadingOverlay />}
       </Box>
-    ) : (
-      <NoDataHint />
     );
-  } else if (observations && !observations.map((obs) => obs.y).some(isNumber)) {
-    return <NoDataHint />;
-  } else if (error) {
-    return <LoadingDataError />;
   } else {
     return <Loading />;
   }
