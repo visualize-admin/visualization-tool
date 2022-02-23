@@ -4,7 +4,10 @@ import { Box, Link, Text } from "theme-ui";
 import { useInteractiveFilters } from "../charts/shared/use-interactive-filters";
 import { useConfiguratorState } from "../configurator";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
+import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { Icon } from "../icons";
+import { useLocale } from "../src";
+import Stack from "./Stack";
 
 const DebugInteractiveFilters = () => {
   const [interactiveFiltersState] = useInteractiveFilters();
@@ -20,6 +23,27 @@ const DebugInteractiveFilters = () => {
   );
 };
 
+const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
+  const locale = useLocale();
+  const [{ data: metadata }] = useDataCubeMetadataWithComponentValuesQuery({
+    variables: {
+      iri: datasetIri,
+      locale: locale,
+    },
+  });
+  return metadata ? (
+    <Stack direction="row" spacing={2}>
+      <Icon name="column" display="inline" size={16} />
+      <Text variant="paragraph2">Dimensions</Text>
+      <Inspector
+        data={Object.fromEntries(
+          metadata?.dataCubeByIri?.dimensions.map((d) => [d.label, d]) || []
+        )}
+      />
+    </Stack>
+  ) : null;
+};
+
 const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
   return (
@@ -27,7 +51,7 @@ const DebugConfigurator = () => {
       <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
         Cube Tools
       </Box>
-      <Box sx={{ p: 5 }}>
+      <Stack spacing={2} sx={{ p: 5 }}>
         {configuratorState.dataSet ? (
           <Link
             variant="primary"
@@ -57,7 +81,7 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
             )}&requestMethod=POST`}
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ display: "flex", alignItems: "center", mt: 3 }}
+            sx={{ display: "flex", alignItems: "center" }}
           >
             <Icon name="linkExternal" size={16} />
             <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
@@ -65,7 +89,10 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
             </Text>
           </Link>
         )}
-      </Box>
+        {configuratorState.dataSet ? (
+          <CubeMetadata datasetIri={configuratorState.dataSet} />
+        ) : null}
+      </Stack>
       <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
         Configurator State{" "}
         <Link
