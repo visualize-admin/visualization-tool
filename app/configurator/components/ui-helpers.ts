@@ -304,13 +304,16 @@ export const formatNumberWithUnit = (
   formatter: (n: number) => string,
   unit?: string | null
 ) => {
-  if (nb === null) {
-    return "";
+  if (nb === null || nb === undefined) {
+    return "-";
   }
   return `${formatter(nb)}${unit ? ` ${unit}` : ""}`;
 };
 
-export const useErrorMeasure = (chartState: ChartProps, valueIri: string) => {
+export const useErrorMeasure = (
+  chartState: Pick<ChartProps, "measures" | "dimensions">,
+  valueIri: string
+) => {
   const { measures, dimensions } = chartState;
   return useMemo(() => {
     return [...measures, ...dimensions].find((m) => {

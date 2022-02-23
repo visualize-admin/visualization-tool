@@ -11,7 +11,10 @@ export const getBBox = (
   let symbolsBbox: BBox | undefined;
 
   if (shapes) {
-    shapesBbox = geoBounds(shapes);
+    const _shapesBbox = geoBounds(shapes);
+    if (!_shapesBbox.flat().some(isNaN)) {
+      shapesBbox = geoBounds(shapes);
+    }
   }
 
   if (symbols) {

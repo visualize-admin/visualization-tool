@@ -184,7 +184,9 @@ export const ChartMapVisualization = ({
     symbolDimensionIri !== "" ? symbolLayer !== undefined : true;
 
   const areasOrSymbolsLoaded =
-    (areaLayerPrepared && areaLayer?.shapes.features.length) ||
+    (areaLayerPrepared &&
+      // check if original, unfiltered number of shapes is bigger than 0
+      (geoShapes?.topology?.objects?.shapes as any)?.geometries?.length) ||
     (symbolLayerPrepared && symbolLayer?.points.length);
 
   if (
