@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
+
 ## Unreleased
+
+Nothing yet.
+
+## [3.4.4] - 2022-02-23
 
 - Show unit and standard error inside map tooltip
 - Prevent geo coordinates display error when all shapes on a map are deselected
