@@ -64,6 +64,12 @@ export const MapTooltip = () => {
       return null;
     }
   }, [symbolLayer, interaction.d]);
+  const showAreaValue =
+    areaLayer.show &&
+    (identicalLayerComponentIris || hoverObjectType === "area");
+  const showSymbolValue =
+    symbolLayer.show &&
+    (identicalLayerComponentIris || hoverObjectType === "symbol");
 
   return (
     <>
@@ -91,65 +97,64 @@ export const MapTooltip = () => {
             >
               {
                 <>
-                  {areaLayer.show &&
-                    areaLayerValue !== null &&
-                    (identicalLayerComponentIris ||
-                      hoverObjectType === "area") && (
-                      <>
-                        <Text as="div" variant="meta">
-                          {areaLayer.measureLabel}
-                        </Text>
-                        <Box
-                          sx={{
-                            borderRadius: "circle",
-                            px: 2,
-                            display: "inline-block",
-                            textAlign: "center",
-                          }}
-                          style={{
-                            background: areaLayer.colorScale(areaLayerValue),
-                            color:
-                              hcl(areaLayer.colorScale(areaLayerValue)).l < 55
+                  {showAreaValue && (
+                    <>
+                      <Text as="div" variant="meta">
+                        {areaLayer.measureLabel}
+                      </Text>
+                      <Box
+                        sx={{
+                          borderRadius: "circle",
+                          px: 2,
+                          display: "inline-block",
+                          textAlign: "center",
+                        }}
+                        style={{
+                          background:
+                            areaLayerValue !== null
+                              ? areaLayer.colorScale(areaLayerValue)
+                              : "rgb(222, 222, 222)",
+                          color:
+                            areaLayerValue !== null
+                              ? hcl(areaLayer.colorScale(areaLayerValue)).l < 55
                                 ? "#fff"
-                                : "#000",
-                          }}
-                        >
-                          <Text as="div" variant="meta">
-                            {formatNumber(areaLayerValue)}
-                          </Text>
-                        </Box>
-                      </>
-                    )}
-
-                  {symbolLayer.show &&
-                    symbolLayerValue !== null &&
-                    (identicalLayerComponentIris ||
-                      hoverObjectType === "symbol") && (
-                      <>
+                                : "#000"
+                              : "#000",
+                        }}
+                      >
                         <Text as="div" variant="meta">
-                          {symbolLayer.measureLabel}
+                          {formatNumber(areaLayerValue)}
                         </Text>
-                        <Box
-                          sx={{
-                            borderRadius: "circle",
-                            px: 2,
-                            display: "inline-block",
-                            textAlign: "center",
-                          }}
-                          style={{
-                            background: symbolLayer.color,
-                          }}
+                      </Box>
+                    </>
+                  )}
+
+                  {showSymbolValue && (
+                    <>
+                      <Text as="div" variant="meta">
+                        {symbolLayer.measureLabel}
+                      </Text>
+                      <Box
+                        sx={{
+                          borderRadius: "circle",
+                          px: 2,
+                          display: "inline-block",
+                          textAlign: "center",
+                        }}
+                        style={{
+                          background: symbolLayer.color,
+                        }}
+                      >
+                        <Text
+                          as="div"
+                          variant="meta"
+                          sx={{ color: "monochrome100" }}
                         >
-                          <Text
-                            as="div"
-                            variant="meta"
-                            sx={{ color: "monochrome100" }}
-                          >
-                            {formatNumber(symbolLayerValue)}
-                          </Text>
-                        </Box>
-                      </>
-                    )}
+                          {formatNumber(symbolLayerValue)}
+                        </Text>
+                      </Box>
+                    </>
+                  )}
                 </>
               }
             </Grid>
