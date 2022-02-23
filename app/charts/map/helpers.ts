@@ -13,7 +13,7 @@ export const getBBox = (
   if (shapes) {
     const _shapesBbox = geoBounds(shapes);
     if (!_shapesBbox.flat().some(isNaN)) {
-      shapesBbox = geoBounds(shapes);
+      shapesBbox = _shapesBbox;
     }
   }
 
