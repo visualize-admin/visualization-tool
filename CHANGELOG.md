@@ -9,7 +9,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Switch to a global vector tile service for the maps
 
 ## [3.4.4] - 2022-02-23
 
