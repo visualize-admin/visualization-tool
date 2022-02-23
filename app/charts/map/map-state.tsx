@@ -17,8 +17,12 @@ import {
 import { ReactNode, useCallback, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 import {
+  formatNumberWithUnit,
   getColorInterpolator,
   getSingleHueSequentialPalette,
+  useErrorMeasure,
+  useErrorVariable,
+  useFormatNumber,
 } from "../../configurator/components/ui-helpers";
 import {
   BaseLayer,
@@ -27,7 +31,14 @@ import {
   MapFields,
   SequentialPaletteType,
 } from "../../configurator/config-types";
-import { GeoData, isGeoShapesDimension, Observation } from "../../domain/data";
+import {
+  findRelatedErrorDimension,
+  GeoData,
+  isGeoShapesDimension,
+  Observation,
+  ObservationValue,
+} from "../../domain/data";
+import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import {
   useOptionalNumericVariable,
   useStringVariable,
@@ -50,6 +61,10 @@ export interface MapState {
     measureLabel: string;
     getLabel: (d: Observation) => string;
     getValue: (d: Observation) => number | null;
+    measureDimension?: DimensionMetaDataFragment;
+    errorDimension?: DimensionMetaDataFragment;
+    getFormattedError: null | ((d: Observation) => string);
+    // getError: null | ((d: Observation) => [number, number]);
     getColor: (x: number | null) => number[];
     colorScale:
       | ScaleSequential<string>
@@ -69,6 +84,11 @@ export interface MapState {
     measureLabel: string;
     getLabel: (d: Observation) => string;
     getValue: (d: Observation) => number | null;
+    errorDimension?: DimensionMetaDataFragment;
+    measureDimension?: DimensionMetaDataFragment;
+    getFormattedError: null | ((d: Observation) => string);
+    // getErrorRange: null | ((d: Observation) => [number, number]);
+    // getError: null | ((d: Observation) => [number, number]);
     color: string;
     radiusScale: ScalePower<number, number>;
     dataDomain: [number, number];
@@ -129,26 +149,76 @@ const getColorScale = ({
   }
 };
 
-const useMapState = ({
-  data,
-  features,
-  fields,
-  measures,
-  dimensions,
-  baseLayer,
-}: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
-  features: GeoData;
-  fields: MapFields;
-  baseLayer: BaseLayer;
-}): MapState => {
+const makeErrorFormatter = (
+  getter: ((d: Observation) => ObservationValue) | null,
+  formatter: (n: number) => string,
+  unit?: string | null
+) => {
+  if (!getter) {
+    return null;
+  } else {
+    return (d: Observation) => {
+      const error = getter(d);
+      return formatNumberWithUnit(error as number, formatter, unit);
+    };
+  }
+};
+
+const useMapState = (
+  chartProps: Pick<ChartProps, "data" | "measures" | "dimensions"> & {
+    features: GeoData;
+    fields: MapFields;
+    baseLayer: BaseLayer;
+  }
+): MapState => {
   const width = useWidth();
+  const { data, features, fields, measures, dimensions, baseLayer } =
+    chartProps;
   const { areaLayer, symbolLayer } = fields;
 
   const getAreaLabel = useStringVariable(areaLayer.componentIri);
   const getSymbolLabel = useStringVariable(symbolLayer.componentIri);
 
+  const areaMeasureDimension = useMemo(
+    () => measures.find((x) => x.iri === areaLayer.measureIri),
+    [measures, areaLayer]
+  );
+  const areaErrorDimension = useMemo(
+    () => findRelatedErrorDimension(areaLayer.measureIri, dimensions),
+    [dimensions, areaLayer]
+  );
+  const symbolMeasureDimension = useMemo(
+    () => measures.find((x) => x.iri === symbolLayer.measureIri),
+    [measures, symbolLayer]
+  );
+  const symbolErrorDimension = useMemo(
+    () => findRelatedErrorDimension(symbolLayer.measureIri, dimensions),
+    [dimensions, symbolLayer]
+  );
+
   const getAreaValue = useOptionalNumericVariable(areaLayer.measureIri);
+
+  const areaErrorMeasure = useErrorMeasure(chartProps, areaLayer.measureIri);
+  const getAreaError = useErrorVariable(areaErrorMeasure);
+  const formatNumber = useFormatNumber();
+  const getAreaFormattedError = useMemo(
+    () =>
+      makeErrorFormatter(getAreaError, formatNumber, areaErrorDimension?.unit),
+    [areaErrorDimension?.unit, formatNumber, getAreaError]
+  );
+
   const getSymbolValue = useOptionalNumericVariable(symbolLayer.measureIri);
+  const symbolErrorMeasure = useErrorMeasure(chartProps, areaLayer.measureIri);
+  const getSymbolError = useErrorVariable(symbolErrorMeasure);
+  const getSymbolFormattedError = useMemo(
+    () =>
+      makeErrorFormatter(
+        getSymbolError,
+        formatNumber,
+        symbolErrorDimension?.unit
+      ),
+    [symbolErrorDimension?.unit, formatNumber, getSymbolError]
+  );
 
   const getDataByHierarchyLevel = useCallback(
     ({
@@ -280,8 +350,11 @@ const useMapState = ({
       hierarchyLevel: areaLayer.hierarchyLevel,
       show: fields.areaLayer.show,
       measureLabel: areaMeasureLabel,
+      measureDimension: areaMeasureDimension,
+      errorDimension: areaErrorDimension,
       getLabel: getAreaLabel,
       getValue: getAreaValue,
+      getFormattedError: getAreaFormattedError,
       getColor: getAreaColor,
       colorScale: areaColorScale,
       colorScaleInterpolationType: areaLayer.colorScaleInterpolationType,
@@ -294,10 +367,13 @@ const useMapState = ({
       hierarchyLevel: symbolLayer.hierarchyLevel,
       color: fields.symbolLayer.color,
       measureLabel: symbolMeasureLabel,
+      measureDimension: symbolMeasureDimension,
+      errorDimension: symbolErrorDimension,
       show: fields.symbolLayer.show,
       getLabel: getSymbolLabel,
       radiusScale,
       getValue: getSymbolValue,
+      getFormattedError: getSymbolFormattedError,
       dataDomain: symbolDataDomain,
     },
   };

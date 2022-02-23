@@ -9,7 +9,10 @@ import {
   useState,
 } from "react";
 import { Box, Grid, Text } from "theme-ui";
-import { useFormatNumber } from "../../configurator/components/ui-helpers";
+import {
+  formatNumberWithUnit,
+  useFormatNumber,
+} from "../../configurator/components/ui-helpers";
 import { TooltipBox } from "../shared/interaction/tooltip-box";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
@@ -123,7 +126,18 @@ export const MapTooltip = () => {
                         }}
                       >
                         <Text as="div" variant="meta">
-                          {formatNumber(areaLayerValue)}
+                          <Text as="div" variant="meta">
+                            {formatNumberWithUnit(
+                              areaLayerValue,
+                              formatNumber,
+                              areaLayer?.measureDimension?.unit
+                            )}
+                            {areaLayer.getFormattedError
+                              ? ` ± ${areaLayer?.getFormattedError?.(
+                                  interaction.d
+                                )}`
+                              : null}
+                          </Text>
                         </Text>
                       </Box>
                     </>
@@ -145,12 +159,17 @@ export const MapTooltip = () => {
                           background: symbolLayer.color,
                         }}
                       >
-                        <Text
-                          as="div"
-                          variant="meta"
-                          sx={{ color: "monochrome100" }}
-                        >
-                          {formatNumber(symbolLayerValue)}
+                        <Text as="div" variant="meta">
+                          {formatNumberWithUnit(
+                            symbolLayerValue,
+                            formatNumber,
+                            symbolLayer?.measureDimension?.unit
+                          )}
+                          {symbolLayer.getFormattedError
+                            ? ` ± ${symbolLayer?.getFormattedError?.(
+                                interaction.d
+                              )}`
+                            : null}
                         </Text>
                       </Box>
                     </>

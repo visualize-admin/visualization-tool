@@ -212,6 +212,15 @@ export const isStandardErrorDimension = (dim: DimensionMetaDataFragment) => {
   return dim?.related?.some((r) => r.type === "StandardError");
 };
 
+export const findRelatedErrorDimension = (
+  dimIri: string,
+  dimensions: DimensionMetaDataFragment[]
+) => {
+  return dimensions.find((x) =>
+    x.related?.some((r) => r.iri === dimIri && r.type === "StandardError")
+  );
+};
+
 export const shouldValuesBeLoadedForResolvedDimension = (
   dim: ResolvedDimension
 ) => {
