@@ -17,7 +17,7 @@ import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { getBaseLayerStyle } from "./get-base-layer-style";
-import { getBBox } from "./helpers";
+import { BBox, getBBox } from "./helpers";
 import { MapAttribution } from "./map-attribution";
 import { MapState } from "./map-state";
 import { useMapTooltip } from "./map-tooltip";
@@ -33,13 +33,6 @@ const INITIAL_VIEW_STATE = {
   pitch: 0,
   bearing: 0,
 };
-
-type BBox = [[number, number], [number, number]];
-
-const CH_BBOX: BBox = [
-  [6.02260949059, 45.7769477403],
-  [10.4427014502, 47.8308275417],
-];
 
 /**
  * Constrain the viewState to always _contain_ the supplied bbox.
