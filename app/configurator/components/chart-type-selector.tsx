@@ -3,15 +3,16 @@ import React, { SyntheticEvent } from "react";
 import { Box, Button, Grid, Spinner, Text } from "theme-ui";
 import { ConfiguratorStateSelectingChartType } from "..";
 import { enabledChartTypes, getPossibleChartType } from "../../charts";
+import { useChartError } from "../../charts/shared/errors";
 import { Hint, Loading } from "../../components/hint";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
 import { FieldProps, useChartTypeSelectorField } from "../config-form";
+import { useEnsurePossibleFilters } from "./chart-configurator";
 import { SectionTitle } from "./chart-controls/section";
 import { getFieldLabel, getIconName } from "./ui-helpers";
-import { useEnsurePossibleFilters } from "./chart-configurator";
 
 export const ChartTypeSelectionButton = ({
   label,
@@ -91,6 +92,7 @@ const ChartTypeSelectorField = ({
   metaData: DataCubeMetadata;
   disabled?: boolean;
 }) => {
+  const { setChartError } = useChartError();
   const field = useChartTypeSelectorField({
     value,
     metaData,
@@ -101,6 +103,10 @@ const ChartTypeSelectorField = ({
       disabled={disabled}
       label={label}
       {...field}
+      onClick={(e) => {
+        setChartError("none");
+        field.onClick(e);
+      }}
     ></ChartTypeSelectionButton>
   );
 };

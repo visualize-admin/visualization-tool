@@ -1,5 +1,5 @@
 import produce from "immer";
-import { mapValues, pickBy, get } from "lodash";
+import { get, mapValues, pickBy } from "lodash";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
 import {
@@ -27,6 +27,7 @@ import {
   getInitialConfig,
   getPossibleChartType,
 } from "../charts";
+import { ChartErrorProvider } from "../charts/shared/errors";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
@@ -1223,14 +1224,16 @@ export const ConfiguratorStateProvider = ({
 }) => {
   // Ensure that the state is reset by using the `chartId` as `key`
   return (
-    <ConfiguratorStateProviderInternal
-      key={chartId}
-      chartId={chartId}
-      initialState={initialState}
-      allowDefaultRedirect={allowDefaultRedirect}
-    >
-      {children}
-    </ConfiguratorStateProviderInternal>
+    <ChartErrorProvider>
+      <ConfiguratorStateProviderInternal
+        key={chartId}
+        chartId={chartId}
+        initialState={initialState}
+        allowDefaultRedirect={allowDefaultRedirect}
+      >
+        {children}
+      </ConfiguratorStateProviderInternal>
+    </ChartErrorProvider>
   );
 };
 

@@ -3,7 +3,6 @@ import * as React from "react";
 import { useEffect } from "react";
 import { Box, Flex, Text } from "theme-ui";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
-import { ChartErrorProvider } from "../charts/shared/errors";
 import { isUsingImputation } from "../charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
@@ -157,9 +156,7 @@ const ChartWithInteractiveFilters = ({
           chartConfig={chartConfig}
         />
       )}
-      <ChartErrorProvider>
-        <GenericChart dataSet={dataSet} chartConfig={chartConfig} />
-      </ChartErrorProvider>
+      <GenericChart dataSet={dataSet} chartConfig={chartConfig} />
     </Flex>
   );
 };

@@ -19,7 +19,7 @@ import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
 import { BrushTime } from "../shared/brush";
 import { QueryFilters } from "../shared/chart-helpers";
 import { ChartContainer, ChartSvg } from "../shared/containers";
-import { ChartErrorWrapper, useChartError } from "../shared/errors";
+import { useChartError } from "../shared/errors";
 import { Ruler } from "../shared/interaction/ruler";
 import { Tooltip } from "../shared/interaction/tooltip";
 import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
@@ -70,25 +70,23 @@ export const ChartAreasVisualization = ({
   if (data?.dataCubeByIri) {
     const { title, dimensions, measures, observations } = data?.dataCubeByIri;
     return (
-      <ChartErrorWrapper>
-        <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
-          <A11yTable
-            title={title}
-            observations={observations.data}
-            dimensions={dimensions}
-            measures={measures}
-            fields={chartConfig.fields}
-          />
-          <ChartAreas
-            observations={observations.data}
-            dimensions={dimensions}
-            measures={measures}
-            fields={chartConfig.fields}
-            interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
-          />
-          {fetching && <LoadingOverlay />}
-        </Box>
-      </ChartErrorWrapper>
+      <Box data-chart-loaded={!fetching} sx={{ position: "relative" }}>
+        <A11yTable
+          title={title}
+          observations={observations.data}
+          dimensions={dimensions}
+          measures={measures}
+          fields={chartConfig.fields}
+        />
+        <ChartAreas
+          observations={observations.data}
+          dimensions={dimensions}
+          measures={measures}
+          fields={chartConfig.fields}
+          interactiveFiltersConfig={chartConfig.interactiveFiltersConfig}
+        />
+        {fetching && <LoadingOverlay />}
+      </Box>
     );
   } else {
     return <Loading />;
