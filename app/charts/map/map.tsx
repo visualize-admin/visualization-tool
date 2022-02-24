@@ -17,30 +17,22 @@ import { convertHexToRgbArray } from "../shared/colors";
 import { useChartState } from "../shared/use-chart-state";
 import { useInteraction } from "../shared/use-interaction";
 import { getBaseLayerStyle } from "./get-base-layer-style";
-import { getBBox } from "./helpers";
+import { BBox, getBBox } from "./helpers";
 import { MapAttribution } from "./map-attribution";
 import { MapState } from "./map-state";
 import { useMapTooltip } from "./map-tooltip";
 
-const MIN_ZOOM = 3;
 const MAX_ZOOM = 13;
 
 const INITIAL_VIEW_STATE = {
   latitude: 46.8182,
   longitude: 8.2275,
   zoom: 5,
-  minZoom: MIN_ZOOM,
+  minZoom: 1,
   maxZoom: MAX_ZOOM,
   pitch: 0,
   bearing: 0,
 };
-
-type BBox = [[number, number], [number, number]];
-
-const CH_BBOX: BBox = [
-  [6.02260949059, 45.7769477403],
-  [10.4427014502, 47.8308275417],
-];
 
 /**
  * Constrain the viewState to always _contain_ the supplied bbox.
@@ -110,13 +102,10 @@ export const MapComponent = () => {
 
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
-  const onViewStateChange = useCallback(({ viewState, interactionState }) => {
-    if (interactionState.inTransition) {
-      setViewState(viewState);
-    } else {
-      setViewState(constrainZoom(viewState, CH_BBOX));
-    }
-  }, []);
+  const onViewStateChange = useCallback(
+    ({ viewState }) => setViewState(viewState),
+    []
+  );
 
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const hasSetInitialZoom = useRef<boolean>();
@@ -153,9 +142,7 @@ export const MapComponent = () => {
 
   const onResize = useCallback(
     ({ width, height }) => {
-      setViewState((viewState) =>
-        constrainZoom({ ...viewState, width, height }, CH_BBOX)
-      );
+      setViewState((viewState) => ({ ...viewState, width, height }));
     },
     [setViewState]
   );
@@ -165,7 +152,7 @@ export const MapComponent = () => {
       ...viewState,
       zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
     };
-    setViewState(constrainZoom(newViewState, CH_BBOX));
+    setViewState(newViewState);
   };
 
   const zoomOut = () => {
@@ -173,7 +160,7 @@ export const MapComponent = () => {
       ...viewState,
       zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
     };
-    setViewState(constrainZoom(newViewState, CH_BBOX));
+    setViewState(newViewState);
   };
 
   const symbolColorRgbArray = useMemo(

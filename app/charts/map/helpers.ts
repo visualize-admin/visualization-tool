@@ -1,7 +1,7 @@
 import { extent, geoBounds } from "d3";
 import { AreaLayer, SymbolLayer } from "../../domain/data";
 
-type BBox = [[number, number], [number, number]];
+export type BBox = [[number, number], [number, number]];
 
 export const getBBox = (
   shapes?: AreaLayer["shapes"],
@@ -13,7 +13,7 @@ export const getBBox = (
   if (shapes) {
     const _shapesBbox = geoBounds(shapes);
     if (!_shapesBbox.flat().some(isNaN)) {
-      shapesBbox = geoBounds(shapes);
+      shapesBbox = _shapesBbox;
     }
   }
 
