@@ -51,28 +51,30 @@ export const MapTooltip = () => {
   const [{ interaction }] = useInteraction();
   const { identicalLayerComponentIris, areaLayer, symbolLayer } =
     useChartState() as MapState;
+  const { getFormattedError: formatAreaError } = areaLayer;
+  const { getFormattedError: formatSymbolError } = symbolLayer;
 
   const formatNumber = useFormatNumber();
-  const areaLayerValue = useMemo(() => {
-    if (interaction.d) {
-      return areaLayer.getValue(interaction.d);
-    } else {
-      return null;
-    }
-  }, [areaLayer, interaction.d]);
-  const symbolLayerValue = useMemo(() => {
-    if (interaction.d) {
-      return symbolLayer.getValue(interaction.d);
-    } else {
-      return null;
-    }
-  }, [symbolLayer, interaction.d]);
+  const areaValue = useMemo(
+    () =>
+      interaction.d !== undefined ? areaLayer.getValue(interaction.d) : null,
+    [areaLayer, interaction.d]
+  );
+  const symbolValue = useMemo(
+    () =>
+      interaction.d !== undefined ? symbolLayer.getValue(interaction.d) : null,
+    [symbolLayer, interaction.d]
+  );
   const showAreaValue =
     areaLayer.show &&
     (identicalLayerComponentIris || hoverObjectType === "area");
   const showSymbolValue =
     symbolLayer.show &&
     (identicalLayerComponentIris || hoverObjectType === "symbol");
+  const areaColor = useMemo(
+    () => (areaValue !== null ? areaLayer.colorScale(areaValue) : null),
+    [areaValue, areaLayer]
+  );
 
   return (
     <>
@@ -101,80 +103,45 @@ export const MapTooltip = () => {
               {
                 <>
                   {showAreaValue && (
-                    <>
-                      <Text as="div" variant="meta">
-                        {areaLayer.measureLabel}
-                      </Text>
-                      <Box
-                        sx={{
-                          borderRadius: "circle",
-                          px: 2,
-                          display: "inline-block",
-                          textAlign: "center",
-                        }}
-                        style={{
-                          background:
-                            areaLayerValue !== null
-                              ? areaLayer.colorScale(areaLayerValue)
-                              : "rgb(222, 222, 222)",
-                          color:
-                            areaLayerValue !== null
-                              ? hcl(areaLayer.colorScale(areaLayerValue)).l < 55
-                                ? "#fff"
-                                : "#000"
-                              : "#000",
-                        }}
-                      >
-                        <Text as="div" variant="meta">
-                          <Text as="div" variant="meta">
-                            {formatNumberWithUnit(
-                              areaLayerValue,
-                              formatNumber,
-                              areaLayer?.measureDimension?.unit
-                            )}
-                            {areaLayer.getFormattedError
-                              ? ` ± ${areaLayer?.getFormattedError?.(
-                                  interaction.d
-                                )}`
-                              : null}
-                          </Text>
-                        </Text>
-                      </Box>
-                    </>
+                    <TooltipRow
+                      title={areaLayer.measureLabel}
+                      background={areaColor || "#dedede"}
+                      color={
+                        areaColor
+                          ? hcl(areaColor).l < 55
+                            ? "#fff"
+                            : "#000"
+                          : "#000"
+                      }
+                      value={formatNumberWithUnit(
+                        areaValue,
+                        formatNumber,
+                        areaLayer?.measureDimension?.unit
+                      )}
+                      error={
+                        formatAreaError
+                          ? ` ± ${formatAreaError(interaction.d)}`
+                          : null
+                      }
+                    />
                   )}
 
                   {showSymbolValue && (
-                    <>
-                      <Text as="div" variant="meta">
-                        {symbolLayer.measureLabel}
-                      </Text>
-                      <Box
-                        sx={{
-                          borderRadius: "circle",
-                          px: 2,
-                          display: "inline-block",
-                          textAlign: "center",
-                        }}
-                        style={{
-                          background: symbolLayer.color,
-                          color:
-                            hcl(symbolLayer.color).l < 55 ? "#fff" : "#000",
-                        }}
-                      >
-                        <Text as="div" variant="meta">
-                          {formatNumberWithUnit(
-                            symbolLayerValue,
-                            formatNumber,
-                            symbolLayer?.measureDimension?.unit
-                          )}
-                          {symbolLayer.getFormattedError
-                            ? ` ± ${symbolLayer?.getFormattedError?.(
-                                interaction.d
-                              )}`
-                            : null}
-                        </Text>
-                      </Box>
-                    </>
+                    <TooltipRow
+                      title={symbolLayer.measureLabel}
+                      background={symbolLayer.color}
+                      color={hcl(symbolLayer.color).l < 55 ? "#fff" : "#000"}
+                      value={formatNumberWithUnit(
+                        symbolValue,
+                        formatNumber,
+                        symbolLayer?.measureDimension?.unit
+                      )}
+                      error={
+                        formatSymbolError
+                          ? ` ± ${formatSymbolError(interaction.d)}`
+                          : null
+                      }
+                    />
                   )}
                 </>
               }
@@ -182,6 +149,39 @@ export const MapTooltip = () => {
           </Box>
         </TooltipBox>
       )}
+    </>
+  );
+};
+
+interface TooltipRowProps {
+  title: string;
+  background: string;
+  color: string;
+  value: string;
+  error: string | null;
+}
+
+const TooltipRow = (props: TooltipRowProps) => {
+  const { title, background, color, value, error } = props;
+  return (
+    <>
+      <Text as="div" variant="meta">
+        {title}
+      </Text>
+      <Box
+        sx={{
+          borderRadius: "circle",
+          px: 2,
+          display: "inline-block",
+          textAlign: "center",
+        }}
+        style={{ background, color }}
+      >
+        <Text as="div" variant="meta">
+          {value}
+          {error}
+        </Text>
+      </Box>
     </>
   );
 };
