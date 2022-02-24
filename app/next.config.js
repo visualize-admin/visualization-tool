@@ -30,7 +30,8 @@ module.exports = withPreconstruct(
       },
 
       env: {
-        VECTOR_TILE_BASE_URL: process.env.VECTOR_TILE_BASE_URL,
+        NEXT_PUBLIC_VECTOR_TILE_BASE_URL:
+          process.env.NEXT_PUBLIC_VECTOR_TILE_BASE_URL,
       },
 
       headers: async () => {
