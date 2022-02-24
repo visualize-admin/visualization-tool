@@ -56,7 +56,6 @@ export const DataDownload = memo(
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
               <Link
                 variant="inline"
-                sx={{ mt: 2 }}
                 href={observations.sparqlEditorUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -138,7 +137,6 @@ export const DownloadButton = ({
       fontSize: [1, 2, 2],
       border: "none",
       cursor: "pointer",
-      // mt: 2,
       p: 0,
       ":disabled": {
         cursor: "initial",
