@@ -29,11 +29,6 @@ module.exports = withPreconstruct(
         defaultLocale,
       },
 
-      env: {
-        NEXT_PUBLIC_VECTOR_TILE_BASE_URL:
-          process.env.NEXT_PUBLIC_VECTOR_TILE_BASE_URL,
-      },
-
       headers: async () => {
         let headers = [];
 

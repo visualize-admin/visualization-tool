@@ -1,8 +1,7 @@
 import { keyBy } from "lodash";
 import merge from "lodash/merge";
+import { BASE_VECTOR_TILE_URL } from "../../domain/env";
 import { Locale } from "../../locales/locales";
-
-const BASE_VECTOR_TILE_URL = process.env.NEXT_PUBLIC_BASE_VECTOR_TILE_URL;
 
 const baseStyle = {
   version: 8,
