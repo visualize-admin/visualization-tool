@@ -12,6 +12,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Switch to a global vector tile service for the maps
 - Do not allow numerical dimensions in the options fields
 - Fix wrong contrast for text and background color in tooltip for symbols (maps)
+- Improve placement of tooltips and fix tooltips being cut
 
 ## [3.4.4] - 2022-02-23
 
