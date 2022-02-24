@@ -26,6 +26,7 @@ import { FieldSetLegend, Radio, Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
   getDimensionsByDimensionType,
+  isNumericalDimension,
   isStandardErrorDimension,
 } from "../../domain/data";
 import {
@@ -45,8 +46,8 @@ import {
 import { EmptyRightPanel } from "./empty-right-panel";
 import {
   ChartFieldField,
-  ChartOptionRadioField,
   ChartOptionCheckboxField,
+  ChartOptionRadioField,
 } from "./field";
 import { DimensionValuesMultiFilter, TimeFilter } from "./filters";
 import { getFieldLabel, getIconName } from "./ui-helpers";
@@ -89,7 +90,14 @@ export const ChartOptionsSelector = ({
   });
 
   if (data?.dataCubeByIri) {
-    const meta = data.dataCubeByIri;
+    const meta = {
+      ...data.dataCubeByIri,
+      dimensions: [
+        ...data.dataCubeByIri.dimensions.filter(
+          (d) => !isNumericalDimension(d)
+        ),
+      ],
+    };
 
     return (
       <Box
