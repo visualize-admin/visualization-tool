@@ -92,6 +92,7 @@ export const ChartOptionsSelector = ({
     const meta = {
       ...data.dataCubeByIri,
       dimensions: [
+        // There are no fields that make use of numeric dimensions at the moment.
         ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
       ],
     };
