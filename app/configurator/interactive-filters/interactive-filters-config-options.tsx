@@ -251,14 +251,14 @@ const InteractiveDataFilterOptions = ({
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
 
     // Dimensions that are not encoded in the visualization
-    // excluding temporal dimensions
-    const unMappedDimensionsWithoutTemporalDimensions =
-      data?.dataCubeByIri.dimensions.filter(
-        (dim) =>
-          !mappedIris.has(dim.iri) &&
-          (dim.__typename !== "TemporalDimension" ||
-            dim.timeUnit === TimeUnit.Year)
-      );
+    // excluding temporal and numerical dimensions
+    const configurableDimensions = data?.dataCubeByIri.dimensions.filter(
+      (dim) =>
+        !mappedIris.has(dim.iri) &&
+        (dim.__typename !== "TemporalDimension" ||
+          dim.timeUnit === TimeUnit.Year) &&
+        !dim.isNumerical
+    );
 
     return (
       <>
@@ -270,10 +270,10 @@ const InteractiveDataFilterOptions = ({
           path="dataFilters"
           defaultChecked={false}
           disabled={false}
-          dimensions={unMappedDimensionsWithoutTemporalDimensions}
+          dimensions={configurableDimensions}
         ></InteractiveDataFiltersToggle>
         <Box sx={{ my: 3 }}>
-          {unMappedDimensionsWithoutTemporalDimensions.map((d, i) => (
+          {configurableDimensions.map((d, i) => (
             <InteractiveDataFilterOptionsCheckbox
               key={i}
               label={d.label}

@@ -45,8 +45,8 @@ import {
 import { EmptyRightPanel } from "./empty-right-panel";
 import {
   ChartFieldField,
-  ChartOptionRadioField,
   ChartOptionCheckboxField,
+  ChartOptionRadioField,
 } from "./field";
 import { DimensionValuesMultiFilter, TimeFilter } from "./filters";
 import { getFieldLabel, getIconName } from "./ui-helpers";
@@ -89,7 +89,13 @@ export const ChartOptionsSelector = ({
   });
 
   if (data?.dataCubeByIri) {
-    const meta = data.dataCubeByIri;
+    const meta = {
+      ...data.dataCubeByIri,
+      dimensions: [
+        // There are no fields that make use of numeric dimensions at the moment.
+        ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
+      ],
+    };
 
     return (
       <Box

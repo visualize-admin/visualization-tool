@@ -55,6 +55,7 @@ interface Dimension {
   label: String!
   unit: String
   scaleType: String
+  isNumerical: Boolean!
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
@@ -72,6 +73,7 @@ type GeoCoordinatesDimension implements Dimension {
   label: String!
   unit: String
   scaleType: String
+  isNumerical: Boolean!
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   geoCoordinates: [GeoCoordinates!]
@@ -89,6 +91,7 @@ type GeoShapesDimension implements Dimension {
   label: String!
   unit: String
   scaleType: String
+  isNumerical: Boolean!
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   geoShapes: GeoShapes
@@ -100,6 +103,7 @@ type NominalDimension implements Dimension {
   label: String!
   unit: String
   scaleType: String
+  isNumerical: Boolean!
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
@@ -110,6 +114,7 @@ type OrdinalDimension implements Dimension {
   label: String!
   unit: String
   scaleType: String
+  isNumerical: Boolean!
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
@@ -132,6 +137,7 @@ type TemporalDimension implements Dimension {
   timeFormat: String!
   unit: String
   scaleType: String
+  isNumerical: Boolean!
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
@@ -142,6 +148,7 @@ type Measure implements Dimension {
   label: String!
   unit: String
   scaleType: String
+  isNumerical: Boolean!
   isKeyDimension: Boolean!
   values(filters: Filters): [DimensionValue!]!
   related: [RelatedDimension!]
