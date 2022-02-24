@@ -5,6 +5,7 @@ import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
 import { DataDownload } from "./data-download";
+import Stack from "./Stack";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -46,14 +47,13 @@ export const ChartFootnotes = ({
           )}
         </Text>
 
-        <Box sx={{ mt: 2 }}>
+        <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
           <DataDownload dataSetIri={dataSetIri} chartConfig={chartConfig} />
           {configKey && shareUrl && (
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
               <Link
                 variant="inline"
-                sx={{ mt: 2 }}
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -64,7 +64,7 @@ export const ChartFootnotes = ({
               </Link>
             </>
           )}
-        </Box>
+        </Stack>
       </Box>
     );
   } else {
