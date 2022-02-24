@@ -10,6 +10,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Switch to a global vector tile service for the maps
+- Do not allow numerical dimensions in the options fields
 
 ## [3.4.4] - 2022-02-23
 
