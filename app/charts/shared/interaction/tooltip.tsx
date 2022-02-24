@@ -53,14 +53,8 @@ const TooltipInner = ({
   const { margins } = bounds;
   const { xAnchor, yAnchor, placement, xValue, tooltipContent, datum, values } =
     getAnnotationInfo(d);
-
   return (
-    <TooltipBox
-      x={xAnchor}
-      y={mouse && values && values.length > 1 ? mouse.y : yAnchor}
-      placement={placement}
-      margins={margins}
-    >
+    <TooltipBox x={xAnchor} y={yAnchor} placement={placement} margins={margins}>
       {tooltipContent ? (
         tooltipContent
       ) : type === "multiple" && values ? (

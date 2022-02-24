@@ -348,16 +348,11 @@ const useAreasState = ({
       ...sortedTooltipValues.map(cumulativeSum),
     ];
 
-    const yAnchor = yScale(
-      Math.max(
-        cumulativeRulerItemValues[cumulativeRulerItemValues.length - 1],
-        0
-      )
-    );
+    const yAnchor = 0;
 
-    const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
+    const xPlacement = "center";
 
-    const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
+    const yPlacement = "top";
 
     return {
       xAnchor,
