@@ -1,4 +1,10 @@
-import { ReactNode } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Box } from "theme-ui";
 import { Margins } from "../use-width";
 import {
@@ -9,6 +15,8 @@ import {
   Yplacement,
 } from "./tooltip";
 import { useTheme } from "../../../themes";
+import ReactDOM from "react-dom";
+import { throttle } from "lodash";
 
 export interface TooltipBoxProps {
   x: number | undefined;
@@ -17,6 +25,45 @@ export interface TooltipBoxProps {
   margins: Margins;
   children: ReactNode;
 }
+
+const Portal = ({ children }: { children: React.ReactNode }) => {
+  return ReactDOM.createPortal(children, document.body);
+};
+
+const useScroll = () => {
+  const [state, setState] = useState([0, 0]);
+  useEffect(() => {
+    const handleScroll = throttle(() => {
+      setState([window.scrollX, window.scrollY]);
+    }, 16);
+    document.scrollingElement?.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => {
+      document.scrollingElement?.removeEventListener("scroll", handleScroll);
+    };
+  });
+  return state;
+};
+
+const usePosition = () => {
+  const [bcr, setBcr] = useState<[number, number]>();
+  const [bcrX, bcrY] = bcr || [0, 0];
+  const handleRef = useCallback(
+    (node) => {
+      if (bcr || !node) {
+        return;
+      }
+      const nbcr = node.getBoundingClientRect();
+      setBcr([nbcr.left, nbcr.top]);
+    },
+    [bcr]
+  );
+  const [scrollX, scrollY] = useScroll();
+  const box = useMemo(() => {
+    return { left: bcrX + scrollX, top: bcrY + scrollY };
+  }, [bcrX, bcrY, scrollX, scrollY]);
+  return [box, handleRef] as const;
+};
 
 export const TooltipBox = ({
   x,
@@ -27,51 +74,58 @@ export const TooltipBox = ({
 }: TooltipBoxProps) => {
   const triangle = mkTriangle(placement);
   const theme = useTheme();
-  return (
-    <Box
-      style={{
-        zIndex: 2,
-        position: "absolute",
-        left: x! + margins.left,
-        top: mxYOffset(y!, placement) + margins.top,
-        pointerEvents: "none",
-        transform: mkTranslation(placement),
-      }}
-    >
-      <Box
-        sx={{
-          width: "fit-content",
-          padding: 3,
-          whiteSpace: "nowrap",
-          pointerEvents: "none",
-          backgroundColor: "monochrome100",
-          borderRadius: "default",
-          filter: `drop-shadow(${theme.shadows?.tooltip})`,
 
-          "&::before": {
-            content: "''",
-            display: "block",
+  const [pos, posRef] = usePosition();
+  return (
+    <>
+      <div ref={posRef} />
+      <Portal>
+        <Box
+          style={{
+            zIndex: 10,
             position: "absolute",
+            left: x! + margins.left + pos.left,
+            top: mxYOffset(y!, placement) + margins.top + pos.top,
             pointerEvents: "none",
-            zIndex: -1,
-            width: 0,
-            height: 0,
-            borderStyle: "solid",
-            top: triangle.top,
-            right: triangle.right,
-            bottom: triangle.bottom,
-            left: triangle.left,
-            borderWidth: triangle.borderWidth,
-            borderTopColor: triangle.borderTopColor,
-            borderRightColor: triangle.borderRightColor,
-            borderBottomColor: triangle.borderBottomColor,
-            borderLeftColor: triangle.borderLeftColor,
-          },
-        }}
-      >
-        {children}
-      </Box>
-    </Box>
+            transform: mkTranslation(placement),
+          }}
+        >
+          <Box
+            sx={{
+              width: "fit-content",
+              padding: 3,
+              whiteSpace: "nowrap",
+              pointerEvents: "none",
+              backgroundColor: "monochrome100",
+              borderRadius: "default",
+              filter: `drop-shadow(${theme.shadows?.tooltip})`,
+
+              "&::before": {
+                content: "''",
+                display: "block",
+                position: "absolute",
+                pointerEvents: "none",
+                zIndex: -1,
+                width: 0,
+                height: 0,
+                borderStyle: "solid",
+                top: triangle.top,
+                right: triangle.right,
+                bottom: triangle.bottom,
+                left: triangle.left,
+                borderWidth: triangle.borderWidth,
+                borderTopColor: triangle.borderTopColor,
+                borderRightColor: triangle.borderRightColor,
+                borderBottomColor: triangle.borderBottomColor,
+                borderLeftColor: triangle.borderLeftColor,
+              },
+            }}
+          >
+            {children}
+          </Box>
+        </Box>
+      </Portal>
+    </>
   );
 };
 

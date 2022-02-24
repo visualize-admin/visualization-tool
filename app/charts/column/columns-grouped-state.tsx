@@ -350,11 +350,13 @@ const useGroupedColumnsState = (
     const yPlacement = "top";
 
     const getXPlacement = () => {
-      return xRef < chartWidth * 0.33
-        ? "right"
-        : xRef > chartWidth * 0.66
-        ? "left"
-        : "center";
+      if (xRef + xOffset * 2 > 0.75 * chartWidth) {
+        return "left";
+      } else if (xRef < 0.25 * chartWidth) {
+        return "right";
+      } else {
+        return "center";
+      }
     };
     const xPlacement = getXPlacement();
 
