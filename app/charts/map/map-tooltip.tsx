@@ -157,6 +157,8 @@ export const MapTooltip = () => {
                         }}
                         style={{
                           background: symbolLayer.color,
+                          color:
+                            hcl(symbolLayer.color).l < 55 ? "#fff" : "#000",
                         }}
                       >
                         <Text as="div" variant="meta">
