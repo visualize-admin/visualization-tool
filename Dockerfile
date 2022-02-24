@@ -3,8 +3,10 @@ FROM node:12
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# build with `docker build --build-arg COMMIT=$(git rev-parse HEAD)`
+# build with `docker build --build-arg COMMIT=$(git rev-parse HEAD)` &
+# --build-arg VECTOR_TILE_URL=$(url of the vector service)
 ARG COMMIT
+ARG VECTOR_TILE_URL
 
 # Build app
 COPY package.json yarn.lock ./
@@ -14,6 +16,7 @@ RUN yarn install --frozen-lockfile
 ENV NODE_ENV production
 ENV NODE_OPTIONS=--max_old_space_size=2048
 ENV NEXT_PUBLIC_COMMIT=$COMMIT
+ENV NEXT_PUBLIC_BASE_VECTOR_TILE_URL=$VECTOR_TILE_URL
 ENV PORT 3000
 
 COPY ./ ./
