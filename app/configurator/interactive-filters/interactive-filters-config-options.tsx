@@ -5,7 +5,6 @@ import { Box } from "theme-ui";
 import { getFieldComponentIri, getFieldComponentIris } from "../../charts";
 import { Checkbox } from "../../components/form";
 import { Loading } from "../../components/hint";
-import { isNumericalDimension } from "../../domain/data";
 import {
   DimensionMetaDataFragment,
   TimeUnit,
@@ -252,15 +251,14 @@ const InteractiveDataFilterOptions = ({
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
 
     // Dimensions that are not encoded in the visualization
-    // excluding temporal dimensions
-    const unMappedDimensionsWithoutTemporalAndNumericalDimensions =
-      data?.dataCubeByIri.dimensions.filter(
-        (dim) =>
-          !mappedIris.has(dim.iri) &&
-          (dim.__typename !== "TemporalDimension" ||
-            dim.timeUnit === TimeUnit.Year) &&
-          !isNumericalDimension(dim)
-      );
+    // excluding temporal and numerical dimensions
+    const configurableDimensions = data?.dataCubeByIri.dimensions.filter(
+      (dim) =>
+        !mappedIris.has(dim.iri) &&
+        (dim.__typename !== "TemporalDimension" ||
+          dim.timeUnit === TimeUnit.Year) &&
+        !dim.isNumerical
+    );
 
     return (
       <>
@@ -272,21 +270,19 @@ const InteractiveDataFilterOptions = ({
           path="dataFilters"
           defaultChecked={false}
           disabled={false}
-          dimensions={unMappedDimensionsWithoutTemporalAndNumericalDimensions}
+          dimensions={configurableDimensions}
         ></InteractiveDataFiltersToggle>
         <Box sx={{ my: 3 }}>
-          {unMappedDimensionsWithoutTemporalAndNumericalDimensions.map(
-            (d, i) => (
-              <InteractiveDataFilterOptionsCheckbox
-                key={i}
-                label={d.label}
-                value={d.iri}
-                disabled={
-                  !chartConfig.interactiveFiltersConfig?.dataFilters.active
-                }
-              />
-            )
-          )}
+          {configurableDimensions.map((d, i) => (
+            <InteractiveDataFilterOptionsCheckbox
+              key={i}
+              label={d.label}
+              value={d.iri}
+              disabled={
+                !chartConfig.interactiveFiltersConfig?.dataFilters.active
+              }
+            />
+          ))}
         </Box>
       </>
     );

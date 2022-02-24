@@ -204,10 +204,6 @@ export const isGeoShapesDimension = (
   return dimension?.__typename === "GeoShapesDimension";
 };
 
-export const isNumericalDimension = (dimension: DimensionMetaDataFragment) => {
-  return dimension.isNumerical;
-};
-
 export const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {
   return dim.data?.related.some((x) => x.type === "StandardError");
 };

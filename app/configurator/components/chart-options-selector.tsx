@@ -26,7 +26,6 @@ import { FieldSetLegend, Radio, Select } from "../../components/form";
 import { Loading } from "../../components/hint";
 import {
   getDimensionsByDimensionType,
-  isNumericalDimension,
   isStandardErrorDimension,
 } from "../../domain/data";
 import {
@@ -93,9 +92,7 @@ export const ChartOptionsSelector = ({
     const meta = {
       ...data.dataCubeByIri,
       dimensions: [
-        ...data.dataCubeByIri.dimensions.filter(
-          (d) => !isNumericalDimension(d)
-        ),
+        ...data.dataCubeByIri.dimensions.filter((d) => !d.isNumerical),
       ],
     };
 
