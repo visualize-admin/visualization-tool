@@ -153,13 +153,13 @@ export const MapTooltip = () => {
   );
 };
 
-interface TooltipRowProps {
+type TooltipRowProps = {
   title: string;
   background: string;
   color: string;
   value: string;
   error: string | null;
-}
+};
 
 const TooltipRow = (props: TooltipRowProps) => {
   const { title, background, color, value, error } = props;
