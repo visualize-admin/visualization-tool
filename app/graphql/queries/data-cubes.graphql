@@ -35,6 +35,7 @@ query DataCubes(
 fragment dimensionMetaData on Dimension {
   iri
   label
+  isNumerical
   isKeyDimension
   values(filters: $filters)
   unit

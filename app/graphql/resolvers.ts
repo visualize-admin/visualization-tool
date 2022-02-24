@@ -4,13 +4,13 @@ import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
+import { Filters } from "../configurator";
 import {
   DimensionValue,
   GeoFeature,
   GeoProperties,
   GeoShapes,
 } from "../domain/data";
-import { Filters } from "../configurator";
 import { parseLocaleString } from "../locales/locales";
 import { Loaders } from "../pages/api/graphql";
 import {
@@ -30,8 +30,10 @@ import {
   queryDatasetCountBySubTheme,
   queryDatasetCountByTheme,
 } from "../rdf/query-cube-metadata";
+import { unversionObservation } from "../rdf/query-dimension-values";
 import { RawGeoShape } from "../rdf/query-geo-shapes";
 import truthy from "../utils/truthy";
+import { ObservationFilter } from "./query-hooks";
 import {
   DataCubeResolvers,
   DataCubeResultOrder,
@@ -39,8 +41,6 @@ import {
   Resolvers,
 } from "./resolver-types";
 import { ResolvedDimension } from "./shared-types";
-import { ObservationFilter } from "./query-hooks";
-import { unversionObservation } from "../rdf/query-dimension-values";
 
 export const Query: QueryResolvers = {
   possibleFilters: async (_, { iri, filters }) => {
@@ -317,6 +317,7 @@ const mkDimensionResolvers = (debugName: string) => ({
   iri: ({ data: { iri } }: ResolvedDimension) => iri,
   label: ({ data: { name } }: ResolvedDimension) => name,
   related: ({ data: { related } }: ResolvedDimension) => related,
+  isNumerical: ({ data: { isNumerical } }: ResolvedDimension) => isNumerical,
   isKeyDimension: ({ data: { isKeyDimension } }: ResolvedDimension) =>
     isKeyDimension,
   unit: ({ data: { unit } }: ResolvedDimension) => unit ?? null,
