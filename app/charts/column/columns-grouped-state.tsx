@@ -347,33 +347,25 @@ const useGroupedColumnsState = (
       sortOrder: "asc",
     });
 
-    const yPlacement = yAnchor < chartHeight * 0.33 ? "middle" : "top";
+    const yPlacement = "top";
 
     const getXPlacement = () => {
-      if (yPlacement === "top") {
-        return xRef < chartWidth * 0.33
-          ? "right"
-          : xRef > chartWidth * 0.66
-          ? "left"
-          : "center";
+      if (xRef + xOffset * 2 > 0.75 * chartWidth) {
+        return "left";
+      } else if (xRef < 0.25 * chartWidth) {
+        return "right";
       } else {
-        // yPlacement === "middle"
-        return xRef < chartWidth * 0.5 ? "right" : "left";
+        return "center";
       }
     };
     const xPlacement = getXPlacement();
 
     const getXAnchor = () => {
-      if (yPlacement === "top") {
-        return xPlacement === "right"
-          ? xRef
-          : xPlacement === "center"
-          ? xRef + xOffset
-          : xRef + xOffset * 2;
-      } else {
-        // yPlacement === "middle"
-        return xPlacement === "right" ? xRef + xOffset * 2 : xRef;
-      }
+      return xPlacement === "right"
+        ? xRef
+        : xPlacement === "center"
+        ? xRef + xOffset
+        : xRef + xOffset * 2;
     };
     const xAnchor = getXAnchor();
 

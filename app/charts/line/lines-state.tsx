@@ -258,9 +258,9 @@ const useLinesState = ({
       sortOrder: "asc",
     });
 
-    const xPlacement = xAnchor < chartWidth * 0.5 ? "right" : "left";
+    const xPlacement = "center";
 
-    const yPlacement = "middle";
+    const yPlacement = "top";
 
     return {
       xAnchor,
