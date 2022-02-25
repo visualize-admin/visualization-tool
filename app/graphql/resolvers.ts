@@ -22,7 +22,7 @@ import {
   getCube,
   getCubeDimensions,
   getCubeObservations,
-  getCubes,
+  getCubes as rawGetCubes,
   getSparqlEditorUrl,
 } from "../rdf/queries";
 import {
@@ -45,6 +45,14 @@ import {
   Resolvers,
 } from "./resolver-types";
 import { ResolvedDataCube, ResolvedDimension } from "./shared-types";
+
+const CUBES_CACHE_TTL = 60 * 1000;
+
+const getCubes = cachedWithTTL(
+  rawGetCubes,
+  ({ filters, includeDrafts }) => JSON.stringify({ filters, includeDrafts }),
+  CUBES_CACHE_TTL
+);
 
 const searchWithFuse = (
   cubesByIri: Record<string, ResolvedDataCube>,
