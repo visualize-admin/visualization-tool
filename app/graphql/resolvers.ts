@@ -11,10 +11,8 @@ import {
   GeoShapes,
 } from "../domain/data";
 
-import Fuse from "fuse.js";
-import { flatten, keyBy } from "lodash";
-import lunr from "lunr";
-import { parseLocaleString } from "../locales/locales";
+import { keyBy } from "lodash";
+import { defaultLocale, parseLocaleString } from "../locales/locales";
 import { Loaders } from "../pages/api/graphql";
 import {
   createCubeDimensionValuesLoader,
@@ -35,7 +33,6 @@ import {
 } from "../rdf/query-cube-metadata";
 import { unversionObservation } from "../rdf/query-dimension-values";
 import { RawGeoShape } from "../rdf/query-geo-shapes";
-import { wrap } from "../utils/search";
 import truthy from "../utils/truthy";
 import { ObservationFilter } from "./query-hooks";
 import {
@@ -44,7 +41,9 @@ import {
   QueryResolvers,
   Resolvers,
 } from "./resolver-types";
-import { ResolvedDataCube, ResolvedDimension } from "./shared-types";
+import { ResolvedDimension } from "./shared-types";
+import cachedWithTTL from "../utils/cached-with-ttl";
+import { searchCubes } from "../utils/search";
 
 const CUBES_CACHE_TTL = 60 * 1000;
 
@@ -53,121 +52,6 @@ const getCubes = cachedWithTTL(
   ({ filters, includeDrafts }) => JSON.stringify({ filters, includeDrafts }),
   CUBES_CACHE_TTL
 );
-
-/**
- * This pipeline emits "anti-virus" as "antivirus" and "anti" "virus"
- * This is to recognize BAFU acronyms that have an hyphen like "MGM-U"
- *
- * @see https://github.com/olivernn/lunr.js/issues/296
- */
-const hyphenator = function (token: lunr.Token) {
-  // if there are no hyphens then skip this logic
-  if (!token.toString().includes("-")) return token;
-
-  // split the token by hyphens, returning a clone of the original token with the split
-  // e.g. 'anti-virus' -> 'anti', 'virus'
-  const tokens = token
-    .toString()
-    .split("-")
-    .filter((x) => x !== "")
-    .map(function (s) {
-      return token.clone(function () {
-        return s;
-      });
-    });
-
-  // clone the token and replace any hyphens
-  // e.g. 'anti-virus' -> 'antivirus'
-  tokens.push(
-    token.clone(function (s) {
-      return s.replace("-", "");
-    })
-  );
-
-  // finally push the original token into the list
-  // 'anti-virus' -> 'anti-virus'
-  tokens.push(token);
-
-  // send the tokens on to the next step of the pipeline
-  return tokens;
-};
-
-lunr.tokenizer.separator = /\s+/;
-
-lunr.Pipeline.registerFunction(hyphenator, "hyphenator");
-
-var customHiphenatorPipeline = function (builder: lunr.Builder) {
-  builder.pipeline.before(lunr.stemmer, hyphenator);
-  builder.searchPipeline.before(lunr.stemmer, hyphenator);
-};
-
-const searchWithLunr = (
-  cubesByIri: Record<string, ResolvedDataCube>,
-  cubesData: ResolvedDataCube["data"][],
-  searchTerm: string
-) => {
-  var idx = lunr(function () {
-    const self = this;
-    self.use(customHiphenatorPipeline);
-    self.ref("iri");
-    self.field("title", { boost: 2 });
-    self.field("description");
-    self.field("publisher");
-
-    self.metadataWhitelist = ["position"];
-
-    cubesData.forEach(function (doc) {
-      self.add(doc);
-    }, this);
-  });
-
-  const results = idx.query((q) => {
-    // exact matches should have the highest boost
-    q.term(searchTerm, { boost: 100 });
-
-    // prefix matches should be boosted slightly
-    q.term(searchTerm, {
-      boost: 10,
-      usePipeline: false,
-      wildcard: lunr.Query.wildcard.TRAILING,
-    });
-
-    // finally, try a fuzzy search, without any boost
-    q.term(searchTerm, { boost: 1, usePipeline: false, editDistance: 1 });
-  });
-
-  return results.map((result) => {
-    const cube = cubesByIri[result.ref];
-    const titleMatchPositions = flatten(
-      Object.values(result.matchData.metadata)
-        .filter((o) => o.title)
-        .map((o) => o.title.position)
-    ).map(([start, length]) => [start, start + length - 1] as [number, number]);
-    const descriptionMatchPositions = flatten(
-      Object.values(result.matchData.metadata)
-        .filter((o) => o.description)
-        .map((o) => o.description.position)
-    ).map(([start, length]) => [start, start + length - 1] as [number, number]);
-    const highlightedTitle = highlightMatch({
-      value: cube.data.title,
-      indices: titleMatchPositions,
-    });
-    const highlightedDescription = highlightMatch({
-      value: cube.data.description,
-      indices: descriptionMatchPositions,
-    });
-    return { dataCube: cube, highlightedTitle, highlightedDescription };
-  });
-};
-
-const highlightMatch = (match?: Fuse.FuseResultMatch) => {
-  return match?.value
-    ? wrap(match.value, match.indices, {
-        tagOpen: "<strong>",
-        tagClose: "</strong>",
-      })
-    : "";
-};
 
 export const Query: QueryResolvers = {
   possibleFilters: async (_, { iri, filters }) => {
@@ -209,6 +93,7 @@ export const Query: QueryResolvers = {
     }
     return [];
   },
+
   dataCubes: async (_, { locale, query, order, includeDrafts, filters }) => {
     const cubes = await getCubes({
       locale: parseLocaleString(locale),
@@ -220,7 +105,19 @@ export const Query: QueryResolvers = {
     const cubesByIri = keyBy(cubes, (c) => c.data.iri);
 
     if (query) {
-      return searchWithLunr(cubesByIri, dataCubeCandidates, query);
+      const themes = (
+        await loadThemes({ locale: locale || defaultLocale })
+      ).filter(truthy);
+
+      const themeIndex = keyBy(themes, (t) => t.iri);
+      const cubesWithResolvedTheme = dataCubeCandidates.map((c) => ({
+        ...c,
+        themes: c.themes?.map((t) => ({
+          ...t,
+          label: themeIndex[t.iri]?.label,
+        })),
+      }));
+      return searchCubes(cubesByIri, cubesWithResolvedTheme, query);
     }
 
     if (order === DataCubeResultOrder.TitleAsc) {
@@ -238,6 +135,7 @@ export const Query: QueryResolvers = {
       return { dataCube: cube };
     });
   },
+
   dataCubeByIri: async (_, { iri, locale, latest }) => {
     return getCube({
       iri,
