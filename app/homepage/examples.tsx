@@ -32,95 +32,91 @@ export const Examples = ({
       <HomepageSection>{headline}</HomepageSection>
       <Example headline={example1Headline} description={example1Description}>
         <ChartPublished
-          dataSet="https://environment.ld.admin.ch/foen/ubd0037/2/"
+          dataSet="https://environment.ld.admin.ch/foen/ubd003701/1"
           meta={{
             title: {
               de: "Lärmbelastung durch Verkehr",
+              en: "Traffic noise pollution",
               fr: "Exposition au bruit du trafic",
               it: "Esposizione al rumore del traffico",
-              en: "Traffic noise pollution",
             },
             description: {
               de: "",
+              en: "",
               fr: "",
               it: "",
-              en: "",
             },
           }}
           chartConfig={{
-            chartType: "column",
             fields: {
               x: {
-                componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0037/verkehrsart",
                 sorting: {
                   sortingType: "byMeasure",
                   sortingOrder: "desc",
                 },
+                componentIri:
+                  "https://environment.ld.admin.ch/foen/ubd003701/verkehrsart",
               },
               y: {
                 componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0037/wert",
+                  "https://environment.ld.admin.ch/foen/ubd003701/wert",
               },
               segment: {
-                componentIri:
-                  "https://environment.ld.admin.ch/foen/ubd0037/periode",
-                palette: "category10",
                 type: "grouped",
+                palette: "category10",
                 sorting: {
-                  sortingType: "byDimensionLabel",
+                  sortingType: "byTotalSize",
                   sortingOrder: "asc",
                 },
                 colorMapping: {
-                  "https://environment.ld.admin.ch/foen/ubd0037/periode/D":
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode/D":
                     "#ff7f0e",
-                  "https://environment.ld.admin.ch/foen/ubd0037/periode/N":
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode/N":
                     "#1f77b4",
                 },
+                componentIri:
+                  "https://environment.ld.admin.ch/foen/ubd003701/periode",
               },
             },
+            filters: {
+              "https://environment.ld.admin.ch/foen/ubd003701/beurteilung": {
+                type: "single",
+                value:
+                  "https://environment.ld.admin.ch/foen/ubd003701/beurteilung/%3EIGWLSV",
+              },
+              "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype": {
+                type: "single",
+                value:
+                  "https://environment.ld.admin.ch/foen/ubd003701/gemeindeTyp/CH",
+              },
+              "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit":
+                {
+                  type: "single",
+                  value:
+                    "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteEinheit/Pers",
+                },
+            },
+            chartType: "column",
             interactiveFiltersConfig: {
+              time: {
+                active: false,
+                presets: {
+                  to: "",
+                  from: "",
+                  type: "range",
+                },
+                componentIri: "",
+              },
               legend: {
                 active: false,
                 componentIri: "",
               },
-              time: {
-                active: false,
-                componentIri: "",
-                presets: {
-                  type: "range",
-                  from: "",
-                  to: "",
-                },
-              },
               dataFilters: {
                 active: true,
                 componentIris: [
-                  "https://environment.ld.admin.ch/foen/ubd0037/gemeindetype",
-                  "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteeinheit",
+                  "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype",
+                  "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit",
                 ],
-              },
-            },
-            filters: {
-              "https://environment.ld.admin.ch/foen/ubd0037/referenzjahr": {
-                type: "single",
-                value: "2015",
-              },
-              "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteeinheit":
-                {
-                  type: "single",
-                  value:
-                    "https://environment.ld.admin.ch/foen/ubd0037/laermbelasteteEinheit/Pers",
-                },
-              "https://environment.ld.admin.ch/foen/ubd0037/gemeindetype": {
-                type: "single",
-                value:
-                  "https://environment.ld.admin.ch/foen/ubd0037/gemeindeTyp/CH",
-              },
-              "https://environment.ld.admin.ch/foen/ubd0037/beurteilung": {
-                type: "single",
-                value:
-                  "https://environment.ld.admin.ch/foen/ubd0037/beurteilung/%3EIGWLSV",
               },
             },
           }}
