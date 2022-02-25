@@ -109,7 +109,6 @@ export const searchCubes = (
         keywords,
         creator: doc.creator?.label,
       });
-      console.log({ themes, keywords, creator: doc.creator?.label });
     }, this);
   });
 

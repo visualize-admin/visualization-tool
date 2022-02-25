@@ -124,16 +124,26 @@ export const Query: QueryResolvers = {
       const themes = (
         await loadThemes({ locale: locale || defaultLocale })
       ).filter(truthy);
+      const organizations = (
+        await loadOrganizations({ locale: locale || defaultLocale })
+      ).filter(truthy);
 
       const themeIndex = keyBy(themes, (t) => t.iri);
-      const cubesWithResolvedTheme = dataCubeCandidates.map((c) => ({
+      const organizationIndex = keyBy(organizations, (o) => o.iri);
+      const fullCube = dataCubeCandidates.map((c) => ({
         ...c,
+        creator: c.creator?.iri
+          ? {
+              ...c.creator,
+              label: organizationIndex[c.creator.iri]?.label || "",
+            }
+          : c.creator,
         themes: c.themes?.map((t) => ({
           ...t,
           label: themeIndex[t.iri]?.label,
         })),
       }));
-      const candidates = searchCubes(cubesByIri, cubesWithResolvedTheme, query);
+      const candidates = searchCubes(cubesByIri, fullCube, query);
       sortResults(candidates, (x) => x.dataCube.data);
       return candidates;
     } else {
