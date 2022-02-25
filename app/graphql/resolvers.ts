@@ -49,7 +49,8 @@ const CUBES_CACHE_TTL = 60 * 1000;
 
 const getCubes = cachedWithTTL(
   rawGetCubes,
-  ({ filters, includeDrafts }) => JSON.stringify({ filters, includeDrafts }),
+  ({ filters, includeDrafts, locale }) =>
+    JSON.stringify({ filters, includeDrafts, locale }),
   CUBES_CACHE_TTL
 );
 
