@@ -104,6 +104,21 @@ export const Query: QueryResolvers = {
     const dataCubeCandidates = cubes.map(({ data }) => data);
     const cubesByIri = keyBy(cubes, (c) => c.data.iri);
 
+    const sortResults = <T extends unknown[]>(
+      results: T,
+      getter: (d: T[number]) => typeof dataCubeCandidates[number]
+    ) => {
+      if (order === DataCubeResultOrder.TitleAsc) {
+        results.sort((a: any, b: any) =>
+          getter(a).title.localeCompare(getter(b).title, locale ?? undefined)
+        );
+      } else if (order === DataCubeResultOrder.CreatedDesc) {
+        results.sort((a: any, b: any) =>
+          descending(getter(a).datePublished, getter(b).datePublished)
+        );
+      }
+    };
+
     if (query) {
       const themes = (
         await loadThemes({ locale: locale || defaultLocale })
@@ -117,23 +132,17 @@ export const Query: QueryResolvers = {
           label: themeIndex[t.iri]?.label,
         })),
       }));
-      return searchCubes(cubesByIri, cubesWithResolvedTheme, query);
-    }
+      const candidates = searchCubes(cubesByIri, cubesWithResolvedTheme, query);
+      sortResults(candidates, (x) => x.dataCube.data);
+      return candidates;
+    } else {
+      sortResults(dataCubeCandidates, (x) => x);
 
-    if (order === DataCubeResultOrder.TitleAsc) {
-      dataCubeCandidates.sort((a, b) =>
-        a.title.localeCompare(b.title, locale ?? undefined)
-      );
-    } else if (order === DataCubeResultOrder.CreatedDesc) {
-      dataCubeCandidates.sort((a, b) =>
-        descending(a.datePublished, b.datePublished)
-      );
+      return dataCubeCandidates.map(({ iri }) => {
+        const cube = cubesByIri[iri];
+        return { dataCube: cube };
+      });
     }
-
-    return dataCubeCandidates.map(({ iri }) => {
-      const cube = cubesByIri[iri];
-      return { dataCube: cube };
-    });
   },
 
   dataCubeByIri: async (_, { iri, locale, latest }) => {
