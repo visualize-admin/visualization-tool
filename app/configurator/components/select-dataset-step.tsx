@@ -45,7 +45,7 @@ export const SelectDatasetStepContent = () => {
   const { search, order, includeDrafts, filters, dataset } = browseState;
 
   const [configState] = useConfiguratorState();
-  const [debouncedQuery] = useDebounce(search, 150, {
+  const [debouncedQuery] = useDebounce(search, 500, {
     leading: true,
   });
   const router = useRouter();
