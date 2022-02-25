@@ -131,12 +131,10 @@ export const getCubes = async ({
   includeDrafts,
   locale,
   filters,
-  themesIndex,
 }: {
   includeDrafts: boolean;
   locale: string;
   filters?: DataCubeSearchFilter[];
-  themesIndex?: Record<string, DataCubeTheme>;
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();
 

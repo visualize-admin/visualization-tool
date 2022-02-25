@@ -54,56 +54,6 @@ const getCubes = cachedWithTTL(
   CUBES_CACHE_TTL
 );
 
-const searchWithFuse = (
-  cubesByIri: Record<string, ResolvedDataCube>,
-  cubesData: ResolvedDataCube["data"][],
-  query: string
-) => {
-  const index = new Fuse(cubesData, {
-    includeScore: true,
-    includeMatches: true,
-    findAllMatches: false,
-    minMatchCharLength: 3,
-    ignoreLocation: true,
-    keys: [
-      {
-        name: "title",
-        weight: 2,
-      },
-      "description",
-    ],
-  });
-
-  const results = index.search(query);
-
-  return results
-    .filter((r) => (r.score as number) < 0.25)
-    .map((result) => {
-      const { item, score, matches: rawMatches } = result;
-      const matches = rawMatches?.map((m) => {
-        const perfectMatchIndex = m.indices.findIndex(([start, end]) => {
-          const part = m.value?.substring(start, end + 1).toLowerCase();
-          return part === query.toLowerCase();
-        });
-        if (perfectMatchIndex > -1) {
-          return { ...m, indices: [m.indices[perfectMatchIndex]] };
-        }
-        return m;
-      });
-      const titleMatch = matches?.find((m) => m.key === "title");
-      const descriptionMatch = matches?.find((m) => m.key === "description");
-
-      const highlightedTitle = highlightMatch(titleMatch);
-      const highlightedDescription = highlightMatch(descriptionMatch);
-      return {
-        dataCube: cubesByIri[item.iri],
-        score,
-        highlightedDescription,
-        highlightedTitle,
-      };
-    });
-};
-
 /**
  * This pipeline emits "anti-virus" as "antivirus" and "anti" "virus"
  * This is to recognize BAFU acronyms that have an hyphen like "MGM-U"
