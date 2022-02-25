@@ -702,7 +702,7 @@ msgstr "Sortieren nach"
 
 #: app/configurator/components/dataset-browse.tsx:926
 msgid "dataset.tag.draft"
-msgstr "Luftzug"
+msgstr "Entwurf"
 
 #: app/configurator/components/dataset-preview.tsx:109
 msgid "datatable.showing.first.rows"
