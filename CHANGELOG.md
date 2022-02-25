@@ -7,12 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## Unreleased
+## [3.4.5] - 2022-02-25
 
 - Switch to a global vector tile service for the maps
 - Do not allow numerical dimensions in the options fields
 - Fix wrong contrast for text and background color in tooltip for symbols (maps)
 - Improve placement of tooltips and fix tooltips being cut
+- Change example on homepage
 
 ## [3.4.4] - 2022-02-23
 
