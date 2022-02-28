@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
+
+## [3.4.7] - 2022-02-18
+
+- Search improvements by @ptbrowne in #256
+
 ## [3.4.5] - 2022-02-25
 
 - Switch to a global vector tile service for the maps
