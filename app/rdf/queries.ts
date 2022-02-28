@@ -18,7 +18,7 @@ import {
   shouldValuesBeLoadedForResolvedDimension,
 } from "../domain/data";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
-import { DataCubeSearchFilter, DataCubeTheme } from "../graphql/query-hooks";
+import { DataCubeSearchFilter } from "../graphql/query-hooks";
 import { ResolvedDataCube, ResolvedDimension } from "../graphql/shared-types";
 import isAttrEqual from "../utils/is-attr-equal";
 import truthy from "../utils/truthy";
@@ -131,12 +131,10 @@ export const getCubes = async ({
   includeDrafts,
   locale,
   filters,
-  themesIndex,
 }: {
   includeDrafts: boolean;
   locale: string;
   filters?: DataCubeSearchFilter[];
-  themesIndex?: Record<string, DataCubeTheme>;
 }): Promise<ResolvedDataCube[]> => {
   const source = createSource();
 

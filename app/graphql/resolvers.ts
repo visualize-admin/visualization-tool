@@ -1,6 +1,5 @@
 import { ascending, descending } from "d3";
 import DataLoader from "dataloader";
-import fuzzaldrin from "fuzzaldrin-plus";
 import { GraphQLJSONObject } from "graphql-type-json";
 import { topology } from "topojson-server";
 import { parse as parseWKT } from "wellknown";
@@ -11,7 +10,9 @@ import {
   GeoProperties,
   GeoShapes,
 } from "../domain/data";
-import { parseLocaleString } from "../locales/locales";
+
+import { keyBy } from "lodash";
+import { defaultLocale, parseLocaleString } from "../locales/locales";
 import { Loaders } from "../pages/api/graphql";
 import {
   createCubeDimensionValuesLoader,
@@ -19,7 +20,7 @@ import {
   getCube,
   getCubeDimensions,
   getCubeObservations,
-  getCubes,
+  getCubes as rawGetCubes,
   getSparqlEditorUrl,
 } from "../rdf/queries";
 import {
@@ -40,7 +41,63 @@ import {
   QueryResolvers,
   Resolvers,
 } from "./resolver-types";
-import { ResolvedDimension } from "./shared-types";
+import { ResolvedDataCube, ResolvedDimension } from "./shared-types";
+import cachedWithTTL from "../utils/cached-with-ttl";
+import {
+  makeCubeIndex as makeCubeIndexRaw,
+  searchCubes,
+} from "../utils/search";
+
+const CUBES_CACHE_TTL = 60 * 1000;
+
+const getCubes = cachedWithTTL(
+  rawGetCubes,
+  ({ filters, includeDrafts, locale }) =>
+    JSON.stringify({ filters, includeDrafts, locale }),
+  CUBES_CACHE_TTL
+);
+
+const makeCubeIndex = cachedWithTTL(
+  async ({ filters, includeDrafts, locale }) => {
+    const cubes = await getCubes({
+      locale: parseLocaleString(locale),
+      includeDrafts: includeDrafts ? true : false,
+      filters: filters ? filters : undefined,
+    });
+    const cubesByIri = keyBy(cubes, (c) => c.data.iri);
+
+    const dataCubeCandidates = cubes.map(({ data }) => data);
+    const themes = (
+      await loadThemes({ locale: locale || defaultLocale })
+    ).filter(truthy);
+    const organizations = (
+      await loadOrganizations({ locale: locale || defaultLocale })
+    ).filter(truthy);
+
+    const themeIndex = keyBy(themes, (t) => t.iri);
+    const organizationIndex = keyBy(organizations, (o) => o.iri);
+    const fullCubes = dataCubeCandidates.map((c) => ({
+      ...c,
+      creator: c.creator?.iri
+        ? {
+            ...c.creator,
+            label: organizationIndex[c.creator.iri]?.label || "",
+          }
+        : c.creator,
+      themes: c.themes?.map((t) => ({
+        ...t,
+        label: themeIndex[t.iri]?.label,
+      })),
+    }));
+    return {
+      index: makeCubeIndexRaw(fullCubes),
+      cubesByIri,
+    };
+  },
+  ({ filters, includeDrafts, locale }) =>
+    JSON.stringify({ filters, includeDrafts, locale }),
+  CUBES_CACHE_TTL
+);
 
 export const Query: QueryResolvers = {
   possibleFilters: async (_, { iri, filters }) => {
@@ -82,91 +139,51 @@ export const Query: QueryResolvers = {
     }
     return [];
   },
+
   dataCubes: async (_, { locale, query, order, includeDrafts, filters }) => {
-    const cubes = await getCubes({
-      locale: parseLocaleString(locale),
-      includeDrafts: includeDrafts ? true : false,
-      filters: filters ? filters : undefined,
-    });
-
-    const dataCubeCandidates = cubes.map(({ data }) => data);
-
-    if (query) {
-      /**
-       * This uses https://github.com/jeancroy/fuzz-aldrin-plus which is a re-implementation of the Atom editor file picker algorithm
-       *
-       * Alternatives:
-       * - https://github.com/kentcdodds/match-sorter looks nice, but does not support highlighting results.
-       * - https://fusejs.io/ tried out but result matching is a bit too random (order of letters seems to be ignored). Whole-word matches don't support highlighting and scoring for some reason.
-       */
-
-      const titleResults = fuzzaldrin.filter(dataCubeCandidates, `${query}`, {
-        key: "title",
-      });
-
-      const descriptionResults = fuzzaldrin.filter(
-        dataCubeCandidates,
-        `${query}`,
-        { key: "description" }
-      );
-
-      const results = Array.from(
-        new Set([...titleResults, ...descriptionResults])
-      );
-
-      if (order == null || order === DataCubeResultOrder.Score) {
-        results.sort((a, b) => {
-          return (
-            fuzzaldrin.score(b.title, query) +
-            fuzzaldrin.score(b.description, query) * 0.5 -
-            (fuzzaldrin.score(a.title, query) +
-              fuzzaldrin.score(a.description, query) * 0.5)
-          );
-        });
-      } else if (order === DataCubeResultOrder.TitleAsc) {
-        results.sort((a, b) =>
-          a.title.localeCompare(b.title, locale ?? undefined)
+    const sortResults = <T extends unknown[]>(
+      results: T,
+      getter: (d: T[number]) => ResolvedDataCube["data"]
+    ) => {
+      if (order === DataCubeResultOrder.TitleAsc) {
+        results.sort((a: any, b: any) =>
+          getter(a).title.localeCompare(getter(b).title, locale ?? undefined)
         );
       } else if (order === DataCubeResultOrder.CreatedDesc) {
-        results.sort((a, b) => descending(a.datePublished, b.datePublished));
+        results.sort((a: any, b: any) =>
+          descending(getter(a).datePublished, getter(b).datePublished)
+        );
       }
+    };
 
-      return results.map((result) => {
-        const cube = cubes.find((c) => c.data.iri === result.iri)!;
-        return {
-          dataCube: cube,
-          highlightedTitle: result.title
-            ? fuzzaldrin.wrap(result.title, query, {
-                wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
-              })
-            : "",
-          highlightedDescription: result.description
-            ? fuzzaldrin.wrap(result.description, query, {
-                wrap: { tagOpen: "<strong>", tagClose: "</strong>" },
-              })
-            : "",
-          score:
-            fuzzaldrin.score(result.title, query) +
-            fuzzaldrin.score(result.description, query) * 0.5,
-        };
+    if (query) {
+      const { index: cubesIndex, cubesByIri } = await makeCubeIndex({
+        locale,
+        query,
+        order,
+        includeDrafts,
+        filters,
+      });
+      const candidates = searchCubes(cubesIndex, query, cubesByIri);
+      sortResults(candidates, (x) => x.dataCube.data);
+      return candidates;
+    } else {
+      const cubes = await getCubes({
+        locale: parseLocaleString(locale),
+        includeDrafts: includeDrafts ? true : false,
+        filters: filters ? filters : undefined,
+      });
+
+      const dataCubeCandidates = cubes.map(({ data }) => data);
+      const cubesByIri = keyBy(cubes, (c) => c.data.iri);
+      sortResults(dataCubeCandidates, (x) => x);
+      return dataCubeCandidates.map(({ iri }) => {
+        const cube = cubesByIri[iri];
+        return { dataCube: cube };
       });
     }
-
-    if (order === DataCubeResultOrder.TitleAsc) {
-      dataCubeCandidates.sort((a, b) =>
-        a.title.localeCompare(b.title, locale ?? undefined)
-      );
-    } else if (order === DataCubeResultOrder.CreatedDesc) {
-      dataCubeCandidates.sort((a, b) =>
-        descending(a.datePublished, b.datePublished)
-      );
-    }
-
-    return dataCubeCandidates.map(({ iri }) => {
-      const cube = cubes.find((c) => c.data.iri === iri)!;
-      return { dataCube: cube };
-    });
   },
+
   dataCubeByIri: async (_, { iri, locale, latest }) => {
     return getCube({
       iri,
