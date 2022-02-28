@@ -83,11 +83,7 @@ const highlightMatch = (match?: {
     : "";
 };
 
-export const searchCubes = (
-  cubesByIri: Record<string, ResolvedDataCube>,
-  cubesData: ResolvedDataCube["data"][],
-  searchTerm: string
-) => {
+export const makeCubeIndex = (cubesData: ResolvedDataCube["data"][]) => {
   var idx = lunr(function () {
     const self = this;
     self.use(customHiphenatorPipeline);
@@ -112,7 +108,14 @@ export const searchCubes = (
       });
     }, this);
   });
+  return idx;
+};
 
+export const searchCubes = (
+  idx: lunr.Index,
+  searchTerm: string,
+  cubesByIri: Record<string, ResolvedDataCube>
+) => {
   const results = idx.query((q) => {
     // exact matches should have the highest boost
     // without the split, query with spaces do not work

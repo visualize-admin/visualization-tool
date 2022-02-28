@@ -41,14 +41,59 @@ import {
   QueryResolvers,
   Resolvers,
 } from "./resolver-types";
-import { ResolvedDimension } from "./shared-types";
+import { ResolvedDataCube, ResolvedDimension } from "./shared-types";
 import cachedWithTTL from "../utils/cached-with-ttl";
-import { searchCubes } from "../utils/search";
+import {
+  makeCubeIndex as makeCubeIndexRaw,
+  searchCubes,
+} from "../utils/search";
 
 const CUBES_CACHE_TTL = 60 * 1000;
 
 const getCubes = cachedWithTTL(
   rawGetCubes,
+  ({ filters, includeDrafts, locale }) =>
+    JSON.stringify({ filters, includeDrafts, locale }),
+  CUBES_CACHE_TTL
+);
+
+const makeCubeIndex = cachedWithTTL(
+  async ({ filters, includeDrafts, locale }) => {
+    const cubes = await getCubes({
+      locale: parseLocaleString(locale),
+      includeDrafts: includeDrafts ? true : false,
+      filters: filters ? filters : undefined,
+    });
+    const cubesByIri = keyBy(cubes, (c) => c.data.iri);
+
+    const dataCubeCandidates = cubes.map(({ data }) => data);
+    const themes = (
+      await loadThemes({ locale: locale || defaultLocale })
+    ).filter(truthy);
+    const organizations = (
+      await loadOrganizations({ locale: locale || defaultLocale })
+    ).filter(truthy);
+
+    const themeIndex = keyBy(themes, (t) => t.iri);
+    const organizationIndex = keyBy(organizations, (o) => o.iri);
+    const fullCubes = dataCubeCandidates.map((c) => ({
+      ...c,
+      creator: c.creator?.iri
+        ? {
+            ...c.creator,
+            label: organizationIndex[c.creator.iri]?.label || "",
+          }
+        : c.creator,
+      themes: c.themes?.map((t) => ({
+        ...t,
+        label: themeIndex[t.iri]?.label,
+      })),
+    }));
+    return {
+      index: makeCubeIndexRaw(fullCubes),
+      cubesByIri,
+    };
+  },
   ({ filters, includeDrafts, locale }) =>
     JSON.stringify({ filters, includeDrafts, locale }),
   CUBES_CACHE_TTL
@@ -96,18 +141,9 @@ export const Query: QueryResolvers = {
   },
 
   dataCubes: async (_, { locale, query, order, includeDrafts, filters }) => {
-    const cubes = await getCubes({
-      locale: parseLocaleString(locale),
-      includeDrafts: includeDrafts ? true : false,
-      filters: filters ? filters : undefined,
-    });
-
-    const dataCubeCandidates = cubes.map(({ data }) => data);
-    const cubesByIri = keyBy(cubes, (c) => c.data.iri);
-
     const sortResults = <T extends unknown[]>(
       results: T,
-      getter: (d: T[number]) => typeof dataCubeCandidates[number]
+      getter: (d: T[number]) => ResolvedDataCube["data"]
     ) => {
       if (order === DataCubeResultOrder.TitleAsc) {
         results.sort((a: any, b: any) =>
@@ -121,34 +157,26 @@ export const Query: QueryResolvers = {
     };
 
     if (query) {
-      const themes = (
-        await loadThemes({ locale: locale || defaultLocale })
-      ).filter(truthy);
-      const organizations = (
-        await loadOrganizations({ locale: locale || defaultLocale })
-      ).filter(truthy);
-
-      const themeIndex = keyBy(themes, (t) => t.iri);
-      const organizationIndex = keyBy(organizations, (o) => o.iri);
-      const fullCube = dataCubeCandidates.map((c) => ({
-        ...c,
-        creator: c.creator?.iri
-          ? {
-              ...c.creator,
-              label: organizationIndex[c.creator.iri]?.label || "",
-            }
-          : c.creator,
-        themes: c.themes?.map((t) => ({
-          ...t,
-          label: themeIndex[t.iri]?.label,
-        })),
-      }));
-      const candidates = searchCubes(cubesByIri, fullCube, query);
+      const { index: cubesIndex, cubesByIri } = await makeCubeIndex({
+        locale,
+        query,
+        order,
+        includeDrafts,
+        filters,
+      });
+      const candidates = searchCubes(cubesIndex, query, cubesByIri);
       sortResults(candidates, (x) => x.dataCube.data);
       return candidates;
     } else {
-      sortResults(dataCubeCandidates, (x) => x);
+      const cubes = await getCubes({
+        locale: parseLocaleString(locale),
+        includeDrafts: includeDrafts ? true : false,
+        filters: filters ? filters : undefined,
+      });
 
+      const dataCubeCandidates = cubes.map(({ data }) => data);
+      const cubesByIri = keyBy(cubes, (c) => c.data.iri);
+      sortResults(dataCubeCandidates, (x) => x);
       return dataCubeCandidates.map(({ iri }) => {
         const cube = cubesByIri[iri];
         return { dataCube: cube };
