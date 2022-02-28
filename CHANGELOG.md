@@ -10,7 +10,10 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## [3.4.7] - 2022-02-18
 
-- Search improvements by @ptbrowne in #256
+- Search has been improved https://github.com/visualize-admin/visualization-tool/pull/256
+  - Better support for acronyms
+  - Less fuzzy search
+  - Ability to search inside creator, themes, keywords 
 
 ## [3.4.5] - 2022-02-25
 
