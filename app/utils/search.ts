@@ -1,5 +1,3 @@
-import Fuse from "fuse.js";
-
 import { flatten } from "lodash";
 import lunr from "lunr";
 import { ResolvedDataCube } from "../graphql/shared-types";
@@ -73,7 +71,10 @@ var customHiphenatorPipeline = function (builder: lunr.Builder) {
   builder.searchPipeline.before(lunr.stemmer, hyphenator);
 };
 
-const highlightMatch = (match?: Fuse.FuseResultMatch) => {
+const highlightMatch = (match?: {
+  value?: string;
+  indices: [number, number][];
+}) => {
   return match?.value
     ? wrap(match.value, match.indices, {
         tagOpen: "<strong>",
