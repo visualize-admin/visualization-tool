@@ -9,9 +9,9 @@ import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
 import { useLocale } from "../../locales/use-locale";
 import { FieldProps, useChartTypeSelectorField } from "../config-form";
+import { useEnsurePossibleFilters } from "./chart-configurator";
 import { SectionTitle } from "./chart-controls/section";
 import { getFieldLabel, getIconName } from "./ui-helpers";
-import { useEnsurePossibleFilters } from "./chart-configurator";
 
 export const ChartTypeSelectionButton = ({
   label,
@@ -30,6 +30,7 @@ export const ChartTypeSelectionButton = ({
       tabIndex={0}
       value={value}
       onClick={onClick}
+      disabled={disabled}
       sx={{
         width: "86px",
         height: "86px",
