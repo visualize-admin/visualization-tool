@@ -1,0 +1,517 @@
+[
+  {
+    "iri": "https://environment.ld.admin.ch/foen/ub001/14/",
+    "identifier": "ub001",
+    "title": "Traffic noise pollution",
+    "description": "Percentage of the population, flats and buildings exposed to road, rail and air traffic noise during the day and night. The data is based on area-wide model calculations (sonBASE).",
+    "version": "14",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-05-24",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
+        "label": "Territory and environment"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
+      "label": "Federal Office for the Environment FOEN"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/ub001",
+    "contactPoint": {
+      "name": "Abteilung Lärm und NIS",
+      "email": "noise@bafu.admin.ch"
+    },
+    "publisher": "BAFU",
+    "landingPage": "https://www.bafu.admin.ch/bafu/de/home/themen/laerm/fachinformationen/laermbelastung/stand-der-laermbelastung-in-der-schweiz.html",
+    "keywords": [
+      "Lärmbelastung, Lärm, Umweltmonitoring, Lärmdatenbank sonBASE, Strassenverkehrslärm, Eisenbahnlärm, Fluglärm, belastete Personen"
+    ]
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/palmer-penguins/14/",
+    "identifier": "palmer-penguins",
+    "title": "Palmer Penguins",
+    "description": "The goal of palmerpenguins is to provide a great dataset for data exploration & visualization, as an alternative to iris.",
+    "version": "14",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-10-13",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/education",
+        "label": "Education and science"
+      }
+    ],
+    "versionHistory": "https://environment.ld.admin.ch/foen/palmer-penguins",
+    "contactPoint": {
+      "name": "Jeremy Stucki",
+      "email": "jeremy@interactivethings.com"
+    },
+    "landingPage": "https://observablehq.com/d/5ae1afc7dfa96432",
+    "keywords": []
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/Peaks-BR-AK/4/",
+    "identifier": "[NO IDENTIFIER]",
+    "title": "Peaks Bundesratsgeschäfte",
+    "description": "Beschreibung",
+    "version": "4",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-06-04",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/administration",
+        "label": "Administration"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
+      "label": "Swiss Federal Archives SFA"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/Peaks-BR-AK",
+    "contactPoint": {
+      "name": "info@bar.admin.ch",
+      "email": "info@bar.admin.ch"
+    },
+    "publisher": "BK",
+    "landingPage": "bar.admin.ch",
+    "keywords": []
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/Peaks-BR-AK-WY/5/",
+    "identifier": "Peaks-BR-AK-WY",
+    "title": "Peaks Bundesratsgeschäfte (J+W)",
+    "description": "Beschreibung",
+    "version": "5",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-06-04",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/administration",
+        "label": "Administration"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
+      "label": "Swiss Federal Archives SFA"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/Peaks-BR-AK-WY",
+    "contactPoint": {
+      "name": "info@bar.admin.ch",
+      "email": "info@bar.admin.ch"
+    },
+    "publisher": "BK",
+    "landingPage": "bar.admin.ch",
+    "keywords": []
+  },
+  {
+    "iri": "https://culture.ld.admin.ch/sfa/StateAccounts_Function/8/",
+    "identifier": "StateAccounts_Function",
+    "title": "State accounts - Function",
+    "description": "In the state financial statements, the Federal Council details the receipts of the federal administration for the previous year and accounts for its expenditure.  The Federal Finance Administration (FFA) consolidates the annual financial statements of the departments and, based on them, compiles the report on the state financial statements. The statements are adopted by the Federal Council and forwarded in printed form to Parliament for approval.  The Federal Council also lays the budget for the following year before the Federal Assembly. This is also prepared by the FFA. By this means, Parliament approves the planned expenses and total expenditure of the Confederation and takes note of the estimate of income and receipts.  Further information and the most recent state financial statements can be found on the FFA website: https://www.efv.admin.ch/efv/en/home.html.",
+    "version": "8",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-06-08",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/administration",
+        "label": "Administration"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+        "label": "Statistical basis"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/finances",
+        "label": "Finances"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
+      "label": "Swiss Federal Archives SFA"
+    },
+    "versionHistory": "https://culture.ld.admin.ch/sfa/StateAccounts_Function",
+    "contactPoint": {
+      "name": "Schweizerisches Bundesarchiv",
+      "email": "bundesarchiv@bar.admin.ch"
+    },
+    "publisher": "Schweizerisches Bundesarchiv",
+    "landingPage": "https://www.bar.admin.ch/bar/de/home/recherche/suchen/suchmaschinen-portale/amtsdruckschriften.html",
+    "keywords": []
+  },
+  {
+    "iri": "https://culture.ld.admin.ch/sfa/StateAccounts_Category/15/",
+    "identifier": "StateAccounts_Category",
+    "title": "State accounts - Category",
+    "description": "In the state financial statements, the Federal Council details the receipts of the federal administration for the previous year and accounts for its expenditure.  The Federal Finance Administration (FFA) consolidates the annual financial statements of the departments and, based on them, compiles the report on the state financial statements. The statements are adopted by the Federal Council and forwarded in printed form to Parliament for approval.  The Federal Council also lays the budget for the following year before the Federal Assembly. This is also prepared by the FFA. By this means, Parliament approves the planned expenses and total expenditure of the Confederation and takes note of the estimate of income and receipts.  Further information and the most recent state financial statements can be found on the FFA website: https://www.efv.admin.ch/efv/en/home.html.",
+    "version": "15",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-06-08",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/administration",
+        "label": "Administration"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+        "label": "Statistical basis"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/finances",
+        "label": "Finances"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
+      "label": "Swiss Federal Archives SFA"
+    },
+    "versionHistory": "https://culture.ld.admin.ch/sfa/StateAccounts_Category",
+    "contactPoint": {
+      "name": "Schweizerisches Bundesarchiv",
+      "email": "bundesarchiv@bar.admin.ch"
+    },
+    "publisher": "BAR",
+    "landingPage": "https://www.bar.admin.ch/bar/de/home/recherche/suchen/suchmaschinen-portale/amtsdruckschriften.html",
+    "keywords": []
+  },
+  {
+    "iri": "https://culture.ld.admin.ch/sfa/StateAccounts_Domain/15/",
+    "identifier": "StateAccounts_Domain",
+    "title": "State accounts - Domain",
+    "description": "In the state financial statements, the Federal Council details the receipts of the federal administration for the previous year and accounts for its expenditure.  The Federal Finance Administration (FFA) consolidates the annual financial statements of the departments and, based on them, compiles the report on the state financial statements. The statements are adopted by the Federal Council and forwarded in printed form to Parliament for approval.  The Federal Council also lays the budget for the following year before the Federal Assembly. This is also prepared by the FFA. By this means, Parliament approves the planned expenses and total expenditure of the Confederation and takes note of the estimate of income and receipts.  Further information and the most recent state financial statements can be found on the FFA website: https://www.efv.admin.ch/efv/en/home.html.",
+    "version": "15",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-06-03",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/administration",
+        "label": "Administration"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+        "label": "Statistical basis"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/finances",
+        "label": "Finances"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
+      "label": "Swiss Federal Archives SFA"
+    },
+    "versionHistory": "https://culture.ld.admin.ch/sfa/StateAccounts_Domain",
+    "contactPoint": {
+      "name": "Schweizerisches Bundesarchiv",
+      "email": "bundesarchiv@bar.admin.ch"
+    },
+    "publisher": "Schweizerisches Bundesarchiv",
+    "landingPage": "https://www.bar.admin.ch/bar/de/home/recherche/suchen/suchmaschinen-portale/amtsdruckschriften.html",
+    "keywords": []
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/ubd0104/5/",
+    "identifier": "ubd0104",
+    "title": "Bathing water quality",
+    "description": "The assessment of bathing waters is made on the basis of hygienic quality using E.coli and intestinal enterococci. They provide indications on the effectiveness of water protection measures and in particular the extent to which waste water treatment plants are fulfilling their function.",
+    "version": "5",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-10-14",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
+        "label": "Territory and environment"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
+      "label": "Federal Office for the Environment FOEN"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/ubd0104",
+    "contactPoint": {
+      "name": "Païvi Rinta, Sektion Hydr. Grundlagen Gewässerzustand",
+      "email": "baqua@bafu.admin.ch"
+    },
+    "publisher": "bafu",
+    "landingPage": "https://www.bafu.admin.ch/bafu/de/home/themen/wasser/fachinformationen/zustand-der-gewaesser/zustand-der-fliessgewaesser/wasserqualitaet-der-fliessgewaesser/badegewaesserqualitaet.html",
+    "keywords": []
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/ubd0066/5/",
+    "identifier": "ubd0066",
+    "title": "Heavy Metal Soil Contamination",
+    "description": "The measurement data are the surveyed mean values of heavy metal concentrations recorded in the top 20 cm of the soil in around 100 permanent monitoring sites operated by the Swiss National Soil Monitoring Network (NABO).",
+    "version": "5",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-10-13",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
+        "label": "Territory and environment"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/agriculture",
+        "label": "Agriculture, forestry"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
+      "label": "Federal Office for the Environment FOEN"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/ubd0066",
+    "contactPoint": {
+      "name": "Nationale Bodenbeobachtung NABO",
+      "email": "nabo@bafu.admin.ch"
+    },
+    "publisher": "Bundesamt für Umwelt ",
+    "landingPage": "https://www.bafu.admin.ch/bafu/de/home/themen/boden/publikationen-studien/publikationen/bodenbeobachtung-nabo-1985-2009.html",
+    "keywords": []
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/ubd0037/5/",
+    "identifier": "ubd0037",
+    "title": "Traffic noise pollution",
+    "description": "Percentage of the population, flats and buildings exposed to road, rail and air traffic noise during the day and night. The data is based on area-wide model calculations (sonBASE).",
+    "version": "5",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-10-12",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
+        "label": "Territory and environment"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
+      "label": "Federal Office for the Environment FOEN"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/ubd0037",
+    "contactPoint": {
+      "name": "Abteilung Lärm und NIS",
+      "email": "noise@bafu.admin.ch"
+    },
+    "publisher": "BAFU",
+    "landingPage": "https://www.bafu.admin.ch/bafu/de/home/themen/laerm/fachinformationen/laermbelastung/stand-der-laermbelastung-in-der-schweiz.html",
+    "keywords": [
+      "Lärmbelastung, Lärm, Umweltmonitoring, Datenbank sonBASE, Strassenverkehrslärm, Eisenbahnlärm, Fluglärm, belastete Personen",
+      "Pollution sonore, bruit, surveillance de l'environnement, base de données sonBASE, bruit du trafic routier, bruit du trafic ferroviaire, bruit du trafic aérien, personnes exposées",
+      "Noise pollution, noise, environmental monitoring, sonBASE database, road traffic noise, rail traffic noise, air traffic noise, exposed persons",
+      "rumore, monitoraggio ambientale, database sonBASE, rumore del traffico stradale, rumore del traffico ferroviario, rumore del traffico aereo, persone esposte"
+    ]
+  },
+  {
+    "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd10_energieforschungsstatistik_ch/6/",
+    "identifier": "bfe_ogd10_energieforschungsstatistik_ch",
+    "title": "Energieforschungsstatistik (EFstat) gemäss Schweizer Klassifikation",
+    "description": "Das BFE erstellt jährlich die EFstat des Bundes, die Auskunft über die Aufwendungen der mit öffentlichen Mitteln finanzierten Energieforschung sowie eine detaillierte Zusammenstellung der Geldflüsse gibt. Die Angaben sind gemäss der IEA-Klassifizierung zusammengestellt. Die Angaben beruhen auf den Datenbanken des Bundes sowie ergänzend der Deklaration der fördernden Stellen.",
+    "version": "6",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-10-14",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+        "label": "Statistical basis"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
+        "label": "Energy"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/education",
+        "label": "Education and science"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
+      "label": "Swiss Federal Office of Energy SFOE"
+    },
+    "versionHistory": "https://energy.ld.admin.ch/sfoe/bfe_ogd10_energieforschungsstatistik_ch",
+    "contactPoint": {
+      "name": "OGD Fachstelle",
+      "email": "ogd@bfe.admin.ch"
+    },
+    "publisher": "foa",
+    "landingPage": "http://www.bfe.admin.ch/ogd10",
+    "keywords": []
+  },
+  {
+    "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd10_energieforschungsstatistik_iea/1/",
+    "identifier": "[NO IDENTIFIER]",
+    "title": "Energieforschungsstatistik (EFstat) gemäss Klassifikation der Internationalen Energieagentur",
+    "description": "Das BFE erstellt jährlich die EFstat des Bundes, die Auskunft über die Aufwendungen der mit öffentlichen Mitteln finanzierten Energieforschung sowie eine detaillierte Zusammenstellung der Geldflüsse gibt. Die Angaben sind gemäss der IEA-Klassifizierung zusammengestellt. Die Angaben beruhen auf den Datenbanken des Bundes sowie ergänzend der Deklaration der fördernden Stellen.",
+    "version": "1",
+    "publicationStatus": "PUBLISHED",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+        "label": "Statistical basis"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
+        "label": "Energy"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/education",
+        "label": "Education and science"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
+      "label": "Swiss Federal Office of Energy SFOE"
+    },
+    "versionHistory": "https://energy.ld.admin.ch/sfoe/bfe_ogd10_energieforschungsstatistik_iea",
+    "contactPoint": {
+      "name": "OGD Fachstelle",
+      "email": "ogd@bfe.admin.ch"
+    },
+    "landingPage": "http://www.bfe.admin.ch/ogd10",
+    "keywords": []
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/test_ogd10/3",
+    "identifier": "[NO IDENTIFIER]",
+    "title": "Test Agregationen - Energieforschungsstatistik (EFstat) gemäss Klassifikation der IE",
+    "description": "Das BFE erstellt jährlich die EFstat des Bundes, die Auskunft über die Aufwendungen der mit öffentlichen Mitteln finanzierten Energieforschung sowie eine detaillierte Zusammenstellung der Geldflüsse gibt. Die Angaben sind gemäss der IEA-Klassifizierung zusammengestellt. Die Angaben beruhen auf den Datenbanken des Bundes sowie ergänzend der Deklaration der fördernden Stellen.",
+    "version": "3",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2022-01-28",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+        "label": "Statistical basis"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
+        "label": "Energy"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/education",
+        "label": "Education and science"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
+      "label": "Swiss Federal Office of Energy SFOE"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/test_ogd10",
+    "contactPoint": {
+      "name": "OGD Fachstelle",
+      "email": "ogd@bfe.admin.ch"
+    },
+    "landingPage": "http://www.bfe.admin.ch/ogd10",
+    "keywords": []
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/UBD003002/2",
+    "identifier": "UBD003002",
+    "title": "Red Lists (latest survey)",
+    "description": "Red lists are scientific expert reports that assess the degree of threat to native species. In Switzerland, these lists are drawn up by specialists commissioned by the FOEN. They exist for 33 species groups.",
+    "version": "2",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2022-02-15",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
+        "label": "Territory and environment"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
+      "label": "Federal Office for the Environment FOEN"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/UBD003002",
+    "contactPoint": {
+      "name": "Abteilung Biodiversität und Landschaft",
+      "email": "aoel@bafu.admin.ch"
+    },
+    "publisher": "Bundesamt für Umwelt BAFU",
+    "landingPage": "https://www.bafu.admin.ch/bafu/de/home/themen/biodiversitaet/fachinformationen/zustand-der-biodiversitaet-in-der-schweiz/zustand-der-artenvielfalt-in-der-schweiz.html",
+    "keywords": []
+  },
+  {
+    "iri": "https://culture.ld.admin.ch/sfa/StateAccounts_Office/10",
+    "identifier": "StateAccounts_Office",
+    "title": "State accounts - Office",
+    "description": "In the state financial statements, the Federal Council details the receipts of the federal administration for the previous year and accounts for its expenditure.  The Federal Finance Administration (FFA) consolidates the annual financial statements of the departments and, based on them, compiles the report on the state financial statements. The statements are adopted by the Federal Council and forwarded in printed form to Parliament for approval.  The Federal Council also lays the budget for the following year before the Federal Assembly. This is also prepared by the FFA. By this means, Parliament approves the planned expenses and total expenditure of the Confederation and takes note of the estimate of income and receipts.  Further information and the most recent state financial statements can be found on the FFA website: https://www.efv.admin.ch/efv/en/home.html.",
+    "version": "10",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2021-06-08",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/administration",
+        "label": "Administration"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
+        "label": "Statistical basis"
+      },
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/finances",
+        "label": "Finances"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/schweizerisches-bundesarchiv-bar",
+      "label": "Swiss Federal Archives SFA"
+    },
+    "versionHistory": "https://culture.ld.admin.ch/sfa/StateAccounts_Office",
+    "contactPoint": {
+      "name": "Schweizerisches Bundesarchiv",
+      "email": "bundesarchiv@bar.admin.ch"
+    },
+    "publisher": "Schweizerisches Bundesarchiv",
+    "landingPage": "https://www.bar.admin.ch/bar/de/home/recherche/suchen/suchmaschinen-portale/amtsdruckschriften.html",
+    "keywords": []
+  },
+  {
+    "iri": "https://environment.ld.admin.ch/foen/ubd003001/8",
+    "identifier": "ubd003001",
+    "title": "Red List (latest survey, with %)",
+    "description": "Red lists are scientific expert reports that assess the degree of threat to native species. In Switzerland, these lists are drawn up by specialists commissioned by the FOEN. They exist for 33 species groups.",
+    "version": "8",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2022-02-22",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
+        "label": "Territory and environment"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-umwelt-bafu",
+      "label": "Federal Office for the Environment FOEN"
+    },
+    "versionHistory": "https://environment.ld.admin.ch/foen/ubd003001",
+    "contactPoint": {
+      "name": "Abteilung Biodiversität und Landschaft",
+      "email": "aoel@bafu.admin.ch"
+    },
+    "landingPage": "https://www.bafu.admin.ch/bafu/de/home/themen/biodiversitaet/zustand/biodiversitaet--monitoringprogramme/rote-listen.html",
+    "keywords": []
+  },
+  {
+    "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/3",
+    "identifier": "bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+    "title": "Einmalvergütung für Photovoltaikanlagen",
+    "description": "Seit 2014 werden Photovoltaikanlagen mit einer Einmalvergütung (EIV) gefördert. Dabei wird abhängig von der Leistung, der Anlagenkategorie und dem Inbetriebnahmedatum ein einmaliger Beitrag an die Anlagenbetreiber ausbezahlt. Hier finden Sie pro Kanton und Auszahlungsjahr einen Überblick über die Anzahl geförderter EIV-Anlagen, die installierte Leistung in Kilowatt (kW) sowie den ausbezahlten EIV-Förderbeitrag. Die dargestellten Daten entsprechen nicht vollständig der offiziellen Statistik der erneuerbaren Energien durch das BFE. Da der Abbau der Wartelisten zeitverzögert stattfindet, können Abweichungen entstehen.",
+    "version": "3",
+    "publicationStatus": "PUBLISHED",
+    "datePublished": "2022-02-28",
+    "themes": [
+      {
+        "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
+        "label": "Energy"
+      }
+    ],
+    "creator": {
+      "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
+      "label": "Swiss Federal Office of Energy SFOE"
+    },
+    "versionHistory": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
+    "contactPoint": {
+      "name": "Bundesamt für Energie BFE",
+      "email": "ogd@bfe.admin.ch"
+    },
+    "keywords": []
+  }
+]
