@@ -113,13 +113,17 @@ export const makeCubeIndex = (cubesData: ResolvedDataCube["data"][]) => {
 
 export const searchCubes = (
   idx: lunr.Index,
-  searchTerm: string,
+  rawSearchTerm: string,
   cubesByIri: Record<string, ResolvedDataCube>
 ) => {
+  const searchTerm = rawSearchTerm.trim().toLowerCase();
   const results = idx.query((q) => {
     // exact matches should have the highest boost
     // without the split, query with spaces do not work
-    q.term(searchTerm.split(" "), { boost: 100 });
+    q.term(
+      searchTerm.split(" ").filter((x) => x.length > 0),
+      { boost: 100 }
+    );
 
     // prefix matches should be boosted slightly
     q.term(searchTerm, {
