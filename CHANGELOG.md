@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 You can also check the [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
+## Unreleased
+
+- Search improvements (handles trailing space and casing)
 
 ## [3.4.7] - 2022-02-18
 
