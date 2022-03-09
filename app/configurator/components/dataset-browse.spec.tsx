@@ -1,5 +1,5 @@
 import { DataCubeOrganization, DataCubeTheme } from "../../graphql/query-hooks";
-import { BrowseParams } from "../../pages/browse";
+import { BrowseParams } from "../../browser/dataset-browser";
 import { getFiltersFromParams } from "./dataset-browse";
 
 const ctx = {

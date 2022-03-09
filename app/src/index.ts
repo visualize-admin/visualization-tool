@@ -8,6 +8,7 @@ export {
   ConfiguratorStateProvider,
   useConfiguratorState,
 } from "../configurator";
+export { DatasetBrowser } from "../browser";
 export { LocaleProvider, useLocale } from "../locales/use-locale";
 export {
   i18n,

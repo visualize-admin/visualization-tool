@@ -1,9 +1,8 @@
-import { GenericBrowse } from "../index";
 import { GetServerSideProps } from "next";
 import { queryLatestPublishedCubeFromUnversionedIri } from "../../../rdf/query-cube-metadata";
 import { defaultLocale } from "../../../src";
-export default GenericBrowse;
-
+import { DatasetBrowser } from "../../../browser";
+export default DatasetBrowser;
 /**
  * Heuristic to check if a dataset IRI is versioned.
  * Versioned iris look like https://blabla/<number/
