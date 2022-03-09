@@ -1,6 +1,6 @@
 {
   "name": "@interactivethings/visualize-app",
-  "version": "3.4.9",
+  "version": "3.4.10-beta.2",
   "publishConfig": {
     "access": "public"
   },
@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn workspace @visualize-admin/visualization-tool run build"
+    "build": "yarn workspace @visualize-admin/visualization-tool run build:npm"
   },
   "dependencies": {
     "@babel/standalone": "^7.11.6",
