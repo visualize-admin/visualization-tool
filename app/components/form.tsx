@@ -4,7 +4,6 @@ import VisuallyHidden from "@reach/visually-hidden";
 import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 import { DayPickerInputProps, DayPickerProps } from "react-day-picker";
 import DayPickerInput from "react-day-picker/DayPickerInput";
-import "react-day-picker/lib/style.css";
 import {
   Box,
   Button,
