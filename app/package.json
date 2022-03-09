@@ -1,6 +1,6 @@
 {
   "name": "@interactivethings/visualize-app",
-  "version": "0.5.0",
+  "version": "3.4.9",
   "publishConfig": {
     "access": "public"
   },
@@ -21,7 +21,9 @@
     "@deck.gl/layers": "8.6.7",
     "@deck.gl/mesh-layers": "8.6.7",
     "@deck.gl/react": "8.6.7",
+    "@emotion/react": "11.4.0",
     "@juggle/resize-observer": "^3.2.0",
+    "@lingui/core": "3.10.4",
     "@lingui/react": "^3.2.3",
     "@mdx-js/react": "^1.6.22",
     "@next/bundle-analyzer": "^11.0.1",
@@ -44,6 +46,8 @@
     "core-js": "^3.15.1",
     "cors": "^2.8.5",
     "d3": "^6.7.0",
+    "d3-format": "2.0.0",
+    "d3-time-format": "3.0.0",
     "dataloader": "^2.0.0",
     "downshift": "^6.0.6",
     "file-saver": "^2.0.2",
@@ -61,6 +65,7 @@
     "isomorphic-unfetch": "^3.0.0",
     "lodash": "^4.17.20",
     "lunr": "^2.3.9",
+    "make-plural": "6.2.2",
     "maplibre-gl": "^2.1.6",
     "micro-cors": "^0.1.1",
     "nanoid": "^3.1.12",

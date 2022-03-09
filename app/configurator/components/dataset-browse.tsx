@@ -40,7 +40,7 @@ import SvgIcCategories from "../../icons/components/IcCategories";
 import SvgIcClose from "../../icons/components/IcClose";
 import SvgIcOrganisations from "../../icons/components/IcOrganisations";
 import { useLocale } from "../../locales/use-locale";
-import { BrowseParams } from "../../pages/browse";
+import { BrowseParams } from "../../browser/dataset-browser";
 import isAttrEqual from "../../utils/is-attr-equal";
 import truthy from "../../utils/truthy";
 import Tag from "./Tag";

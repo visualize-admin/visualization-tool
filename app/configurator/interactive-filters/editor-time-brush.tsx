@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
 import { bisector, brushX, scaleTime, select, Selection } from "d3";
-import "d3-transition";
 import React, { useCallback, useEffect, useRef } from "react";
 import { Flex, Box, Text } from "theme-ui";
 import { Label } from "../../components/form";

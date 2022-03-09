@@ -4,7 +4,6 @@ import VisuallyHidden from "@reach/visually-hidden";
 import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 import { DayPickerInputProps, DayPickerProps } from "react-day-picker";
 import DayPickerInput from "react-day-picker/DayPickerInput";
-import "react-day-picker/lib/style.css";
 import {
   Box,
   Button,
@@ -485,7 +484,7 @@ export const FieldSetLegend = ({
       fontWeight: "regular",
       fontSize: [1, 2, 2],
       mb: 1,
-      color: "monochrome600",
+      color: "monochrome800",
     }}
     as="legend"
   >

@@ -1,2 +1,3 @@
-import { GenericBrowse } from "./index";
-export default GenericBrowse;
+import { DatasetBrowser } from "../../browser";
+
+export default DatasetBrowser;

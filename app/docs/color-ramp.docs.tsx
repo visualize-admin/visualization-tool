@@ -1,5 +1,5 @@
 import { markdown } from "catalog";
-import { interpolateBrBG, interpolateOranges } from "d3-scale-chromatic";
+import { interpolateBrBG, interpolateOranges } from "d3";
 import { Box } from "theme-ui";
 import { ColorRamp } from "../configurator/components/chart-controls/color-ramp";
 

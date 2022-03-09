@@ -6,6 +6,7 @@ node_modules
 /app/locales/_build
 /app/locales/**/*.js
 /app/locales/**/*.mjs
+/app/locales/**/*.ts
 /app/public/dist/**/*.js
 /packages/**/dist
 /app/dist

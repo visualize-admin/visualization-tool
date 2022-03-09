@@ -41,8 +41,9 @@ import {
   timeSecond,
   timeWeek,
   timeYear,
+  TimeLocaleObject,
+  timeParse,
 } from "d3";
-import { TimeLocaleObject, timeParse } from "d3-time-format";
 import { memoize } from "lodash";
 import { useMemo } from "react";
 import { ChartProps } from "../../charts/shared/use-chart-state";

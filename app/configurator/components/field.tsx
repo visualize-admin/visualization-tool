@@ -2,7 +2,6 @@ import { t } from "@lingui/macro";
 import { extent, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
-import "react-day-picker/lib/style.css";
 import { Flex } from "theme-ui";
 import {
   Option,

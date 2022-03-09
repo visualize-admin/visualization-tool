@@ -6,7 +6,6 @@ import {
   select,
   Selection,
 } from "d3";
-import "d3-transition";
 import React, { useCallback, useEffect, useRef } from "react";
 import { Box, Flex, Text } from "theme-ui";
 import { Label } from "../../components/form";
