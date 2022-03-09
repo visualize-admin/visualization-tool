@@ -1,5 +1,4 @@
 import { bisector, brushX, select, Selection, Transition } from "d3";
-import "d3-transition";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
 import { Observation } from "../../domain/data";

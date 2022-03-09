@@ -1,4 +1,4 @@
-import { InternMap } from "d3-array";
+import { InternMap } from "d3";
 import { merge } from "lodash";
 import { LineConfig } from "../../configurator";
 import { FIELD_VALUE_NONE } from "../../configurator/constants";
