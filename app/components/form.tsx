@@ -484,7 +484,7 @@ export const FieldSetLegend = ({
       fontWeight: "regular",
       fontSize: [1, 2, 2],
       mb: 1,
-      color: "monochrome600",
+      color: "monochrome800",
     }}
     as="legend"
   >
