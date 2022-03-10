@@ -1,6 +1,6 @@
 {
   "name": "@interactivethings/visualize-app",
-  "version": "3.4.10-beta.2",
+  "version": "3.4.10-beta.3",
   "publishConfig": {
     "access": "public"
   },
