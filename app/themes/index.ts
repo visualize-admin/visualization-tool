@@ -61,3 +61,5 @@ export const loadTheme = async (theme: string = "federal") => {
 };
 
 export const useTheme = () => useThemeUI().theme as unknown as Theme;
+
+export { default as withTheme } from "./withTheme";

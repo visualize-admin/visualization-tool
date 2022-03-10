@@ -80,3 +80,5 @@ const d3FormatLocales: { [locale: string]: FormatLocaleObject } = {
 
 export const getD3FormatLocale = (locale: string): FormatLocaleObject =>
   d3FormatLocales.de;
+
+export { default as withI18n } from "./withI18n";

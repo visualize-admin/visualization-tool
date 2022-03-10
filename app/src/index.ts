@@ -2,17 +2,19 @@
  * Entry point for app package
  */
 
-export { I18nProvider } from "@lingui/react";
+import { Configurator as ConfiguratorRaw } from "../configurator";
 export {
-  Configurator,
   ConfiguratorStateProvider,
   useConfiguratorState,
 } from "../configurator";
-export { DatasetBrowser } from "../browser";
+import { DatasetBrowser as DatasetBrowserRaw } from "../browser";
 export { LocaleProvider, useLocale } from "../locales/use-locale";
-export {
-  i18n,
-  defaultLocale,
-  locales,
-  parseLocaleString,
-} from "../locales/locales";
+export { defaultLocale, locales, parseLocaleString } from "../locales/locales";
+import { withI18n } from "../locales/locales";
+import { withTheme } from "../themes";
+import { flowRight } from "lodash";
+
+const enhance = flowRight(withI18n, withTheme);
+
+export const DatasetBrowser = enhance(DatasetBrowserRaw);
+export const Configurator = enhance(ConfiguratorRaw);
