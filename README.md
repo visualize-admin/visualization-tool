@@ -129,3 +129,23 @@ services:
     ports:
       - "5432:5432"
 ```
+
+### Embedded visualize
+
+![npm-badge](https://img.shields.io/npm/v/@interactivethings/visualize-app?label=%40interactive-things%2Fvisualize-app)
+
+Visualize can be embedded inside another application. It is deployed as an
+npm package from the `app/` directory.
+[Preconstruct] is used to build the package and make sure that correct dependencies are declared. It is configured from
+
+- `<root>/package.json` specifying that apps needs to be built as a package
+- `<root>/app/package.json` specifying the entrypoint for app (`app/index.ts`)
+
+The entrypoint for apps exports the dataset browser and the configurator
+wrapped in their theme and i18n providers: this way the hosting app does
+not have to do it.
+
+⚠️ For now, the hosting app should have the same @lingui/react, and
+@theme-ui versions as visualize.app.
+
+[preconstruct]: https://preconstruct.tools/
