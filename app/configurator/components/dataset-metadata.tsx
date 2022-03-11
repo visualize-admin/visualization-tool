@@ -11,11 +11,15 @@ import {
 import { useLocale } from "../../locales/use-locale";
 import truthy from "../../utils/truthy";
 import Tag from "./Tag";
+import { MotionBox, smoothPresenceProps } from "./presence";
 
 export const DataSetMetadata = ({
   dataSetIri,
-  ...boxProps
-}: { dataSetIri: string } & BoxProps) => {
+  sx,
+}: {
+  dataSetIri: string;
+  sx: BoxProps["sx"];
+}) => {
   const locale = useLocale();
   const formatDate = useFormatDate();
   const [{ data, fetching, error }] = useDataCubeMetadataQuery({
@@ -29,7 +33,11 @@ export const DataSetMetadata = ({
   }
 
   return (
-    <Box {...boxProps} sx={{ mx: 4, ...boxProps.sx }}>
+    <MotionBox
+      sx={{ mx: 4, ...sx }}
+      key="dataset-metadata"
+      {...smoothPresenceProps}
+    >
       {cube.publisher && (
         <>
           <DatasetMetadataTitle>
@@ -86,7 +94,7 @@ export const DataSetMetadata = ({
         )}
       </DatasetMetadataBody>
       <DatasetTags cube={cube} />
-    </Box>
+    </MotionBox>
   );
 };
 

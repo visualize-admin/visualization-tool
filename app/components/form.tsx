@@ -430,7 +430,7 @@ export const SearchField = ({
   onFocus?: () => void;
   onBlur?: () => void;
   inputRef?: React.Ref<HTMLInputElement>;
-  sx: BoxProps["sx"];
+  sx?: BoxProps["sx"];
 } & FieldProps) => {
   return (
     <Box

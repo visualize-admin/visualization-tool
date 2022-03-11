@@ -14,13 +14,13 @@ import React, {
 import {
   Box,
   Button,
-  Card,
   Flex,
   FlexProps,
   Link as ThemeUILink,
   LinkProps as ThemeUILinkProps,
   Text,
 } from "theme-ui";
+import { AnimatePresence } from "framer-motion";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
 import Stack from "../../components/Stack";
@@ -46,6 +46,7 @@ import truthy from "../../utils/truthy";
 import Tag from "./Tag";
 import { useFormatDate } from "./ui-helpers";
 import useDatasetCount from "./use-dataset-count";
+import { smoothPresenceProps, MotionBox, MotionCard } from "./presence";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -553,7 +554,8 @@ const NavItem = ({
       </NavChip>
     ) : null;
   return (
-    <Box
+    <MotionBox
+      {...smoothPresenceProps}
       sx={{
         mb: 1,
         pl: 4,
@@ -591,7 +593,7 @@ const NavItem = ({
           {countChip}
         </>
       )}
-    </Box>
+    </MotionBox>
   );
 };
 
@@ -951,7 +953,8 @@ export const DatasetResult = ({
     );
   }, [router, iri, filterParams]);
   return (
-    <Card
+    <MotionCard
+      {...smoothPresenceProps}
       variant="reset"
       onClick={handleClick}
       sx={{
@@ -1048,7 +1051,7 @@ export const DatasetResult = ({
           ) : null}
         </Stack>
       </Stack>
-    </Card>
+    </MotionCard>
   );
 };
 
