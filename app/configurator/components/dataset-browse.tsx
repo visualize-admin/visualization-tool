@@ -702,99 +702,107 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     ];
   }, [allThemes, allOrgs]);
 
-  const themeNav = (
-    <div>
-      <NavSectionTitle
-        theme={{ bg: "categoryLight", borderColor: "category" }}
-        sx={{ mb: "block" }}
-      >
-        <Box as="span" color="category" mr={2}>
-          <SvgIcCategories width={24} height={24} />
-        </Box>
-        <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-          <Trans id="browse-panel.themes">Themes</Trans>
-        </Text>
-      </NavSectionTitle>
-      <Box>
-        {allThemesAlpha
-          ? allThemesAlpha.map((theme) => {
-              if (!theme.label) {
-                return null;
-              }
-              if (!counts[theme.iri]) {
-                return null;
-              }
-              if (themeFilter && themeFilter !== theme) {
-                return null;
-              }
-              return (
-                <NavItem
-                  active={themeFilter === theme}
-                  filters={filters}
-                  key={theme.iri}
-                  next={theme}
-                  count={counts[theme.iri]}
-                  theme={themeNavItemTheme}
-                >
-                  {theme.label}
-                </NavItem>
-              );
-            })
-          : null}
-      </Box>
-    </div>
-  );
+  const displayedThemes = allThemesAlpha?.filter((theme) => {
+    if (!theme.label) {
+      return false;
+    }
+    if (!counts[theme.iri]) {
+      return false;
+    }
+    if (themeFilter && themeFilter !== theme) {
+      return false;
+    }
+    return true;
+  });
 
-  const orgNav = (
-    <div>
-      <NavSectionTitle
-        theme={{ bg: "organizationLight", borderColor: "organization" }}
-        sx={{ mb: 2 }}
-      >
-        <Box as="span" color="organization" mr={2}>
-          <SvgIcOrganisations width={24} height={24} />
-        </Box>
-        <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-          <Trans id="browse-panel.organizations">Organizations</Trans>
-        </Text>
-      </NavSectionTitle>
-      <Box>
-        {allOrgsAlpha
-          ? allOrgsAlpha.map((org) => {
-              if (!org.label) {
-                return null;
-              }
-              if (!counts[org.iri] && orgFilter !== org) {
-                return null;
-              }
-              if (orgFilter && orgFilter !== org) {
-                return null;
-              }
-              return (
-                <NavItem
-                  key={org.iri}
-                  filters={filters}
-                  active={orgFilter === org}
-                  next={org}
-                  count={counts[org.iri]}
-                  theme={organizationNavItemTheme}
-                >
-                  {org.label}
-                </NavItem>
-              );
-            })
-          : null}
-        {orgFilter && filters[0] === orgFilter ? (
-          <Subthemes
-            organization={orgFilter}
-            filters={filters}
-            counts={counts}
-          />
-        ) : null}
-      </Box>
-    </div>
-  );
+  const displayedOrgs = allOrgsAlpha?.filter((org) => {
+    if (!org.label) {
+      return false;
+    }
+    if (!counts[org.iri] && orgFilter !== org) {
+      return false;
+    }
+    if (orgFilter && orgFilter !== org) {
+      return false;
+    }
+    return true;
+  });
 
+  const themeNav =
+    displayedThemes && displayedThemes.length > 0 ? (
+      <div>
+        <NavSectionTitle
+          theme={{ bg: "categoryLight", borderColor: "category" }}
+          sx={{ mb: "block" }}
+        >
+          <Box as="span" color="category" mr={2}>
+            <SvgIcCategories width={24} height={24} />
+          </Box>
+          <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+            <Trans id="browse-panel.themes">Themes</Trans>
+          </Text>
+        </NavSectionTitle>
+        <Box>
+          {displayedThemes.map((theme) => {
+            return (
+              <NavItem
+                active={themeFilter === theme}
+                filters={filters}
+                key={theme.iri}
+                next={theme}
+                count={counts[theme.iri]}
+                theme={themeNavItemTheme}
+              >
+                {theme.label}
+              </NavItem>
+            );
+          })}
+        </Box>
+      </div>
+    ) : null;
+
+  const orgNav =
+    displayedOrgs && displayedOrgs.length > 0 ? (
+      <div>
+        {
+          <NavSectionTitle
+            theme={{ bg: "organizationLight", borderColor: "organization" }}
+            sx={{ mb: 2 }}
+          >
+            <Box as="span" color="organization" mr={2}>
+              <SvgIcOrganisations width={24} height={24} />
+            </Box>
+            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+              <Trans id="browse-panel.organizations">Organizations</Trans>
+            </Text>
+          </NavSectionTitle>
+        }
+        <AnimatePresence>
+          {displayedOrgs.map((org) => {
+            return (
+              <NavItem
+                key={org.iri}
+                filters={filters}
+                active={orgFilter === org}
+                next={org}
+                count={counts[org.iri]}
+                theme={organizationNavItemTheme}
+              >
+                {org.label}
+              </NavItem>
+            );
+          })}
+
+          {orgFilter && filters[0] === orgFilter ? (
+            <Subthemes
+              organization={orgFilter}
+              filters={filters}
+              counts={counts}
+            />
+          ) : null}
+        </AnimatePresence>
+      </div>
+    ) : null;
   let navs = [themeNav, orgNav];
   if (filters[0]?.__typename === "DataCubeTheme") {
     navs = [themeNav, orgNav];
