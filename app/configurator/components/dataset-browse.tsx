@@ -193,8 +193,7 @@ export const useBrowseState = () => {
       onReset: () => {
         setParams({ search: "", order: previousOrderRef.current });
       },
-      onTypeSearch: (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newSearch = e.currentTarget.value;
+      onSubmitSearch: (newSearch: string) => {
         setParams({
           search: newSearch,
           order:
@@ -271,7 +270,7 @@ export const SearchDatasetBox = ({
 
   const {
     search,
-    onTypeSearch,
+    onSubmitSearch,
     onReset,
     includeDrafts,
     setIncludeDrafts,
@@ -298,24 +297,52 @@ export const SearchDatasetBox = ({
     message: `Search datasets`,
   });
 
+  const placeholderLabel = t({
+    id: "dataset.search.placeholder",
+    message: `Name, description, organization, theme, keyword`,
+  });
+
   const isSearching = search !== "";
 
   const onToggleIncludeDrafts = useCallback(() => {
     setIncludeDrafts(!includeDrafts);
   }, [includeDrafts, setIncludeDrafts]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    if (ev.key === "Enter" && inputRef.current) {
+      onSubmitSearch(inputRef.current.value);
+    }
+  };
+
+  const handleClickSubmit = () => {
+    if (!inputRef.current) {
+      return;
+    }
+    onSubmitSearch(inputRef.current.value);
+  };
+
   return (
     <Box>
-      <Box sx={{ pt: 4 }}>
+      <Box sx={{ pt: 4, display: "flex", width: "100%" }}>
         <SearchField
+          inputRef={inputRef}
           id="datasetSearch"
           label={searchLabel}
-          value={search || ""}
-          onChange={onTypeSearch}
+          defaultValue={search || ""}
+          onKeyPress={handleKeyPress}
           onReset={onReset}
-          placeholder={searchLabel}
+          placeholder={placeholderLabel}
           onFocus={() => setShowDraftCheckbox(true)}
+          sx={{ flexGrow: 1 }}
         />
+        <Button
+          onClick={handleClickSubmit}
+          variant="small"
+          sx={{ flexShrink: 0, ml: 1, py: 0 }}
+        >
+          {searchLabel}
+        </Button>
       </Box>
 
       {showDraftCheckbox && (

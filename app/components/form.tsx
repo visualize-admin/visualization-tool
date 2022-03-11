@@ -398,23 +398,31 @@ export const SearchField = ({
   id,
   label,
   value,
+  defaultValue,
   placeholder,
-  onChange,
+  onKeyPress,
   onReset,
   onFocus,
   onBlur,
+  sx,
+  inputRef,
 }: {
   id: string;
   label?: string | ReactNode;
   disabled?: boolean;
-  value?: string;
+  defaultValue?: string;
   placeholder?: string;
+  onKeyPress?: (ev: React.KeyboardEvent<HTMLInputElement>) => void;
   onReset?: () => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  inputRef?: React.Ref<HTMLInputElement>;
+  sx: BoxProps["sx"];
 } & FieldProps) => {
   return (
-    <Box sx={{ color: "monochrome700", fontSize: 4, position: "relative" }}>
+    <Box
+      sx={{ color: "monochrome700", fontSize: 4, position: "relative", ...sx }}
+    >
       {label && id && (
         <label htmlFor={id}>
           <VisuallyHidden>{label}</VisuallyHidden>
@@ -435,11 +443,12 @@ export const SearchField = ({
         }}
         id={id}
         value={value}
-        onChange={onChange}
+        onKeyPress={onKeyPress}
         placeholder={placeholder}
         onFocus={onFocus}
         onBlur={onBlur}
         autoComplete="off"
+        ref={inputRef}
       />
       {value && value !== "" && onReset && (
         <Box
