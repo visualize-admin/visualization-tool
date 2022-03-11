@@ -345,22 +345,6 @@ export const SearchDatasetBox = ({
         </Button>
       </Box>
 
-      {showDraftCheckbox && (
-        <Box sx={{ pt: 4 }}>
-          <Checkbox
-            label={t({
-              id: "dataset.includeDrafts",
-              message: "Include draft datasets",
-            })}
-            name={"dataset-include-drafts"}
-            value={"dataset-include-drafts"}
-            checked={includeDrafts}
-            disabled={false}
-            onChange={onToggleIncludeDrafts}
-          />
-        </Box>
-      )}
-
       <Flex sx={{ py: 2, justifyContent: "space-between" }}>
         <Text
           color="secondary"
@@ -382,7 +366,19 @@ export const SearchDatasetBox = ({
           )}
         </Text>
 
-        <Flex>
+        <Flex sx={{ alignItems: "center" }}>
+          <Checkbox
+            label={t({
+              id: "dataset.includeDrafts",
+              message: "Include draft datasets",
+            })}
+            name={"dataset-include-drafts"}
+            value={"dataset-include-drafts"}
+            checked={includeDrafts}
+            disabled={false}
+            onChange={onToggleIncludeDrafts}
+            smaller
+          />
           <label htmlFor="datasetSort">
             <Text
               color="secondary"
@@ -403,7 +399,7 @@ export const SearchDatasetBox = ({
             onChange={(e) => {
               onSetOrder(e.currentTarget.value as DataCubeResultOrder);
             }}
-          ></MiniSelect>
+          />
         </Flex>
       </Flex>
     </Box>

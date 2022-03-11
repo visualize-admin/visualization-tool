@@ -6,6 +6,7 @@ import { DayPickerInputProps, DayPickerProps } from "react-day-picker";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import {
   Box,
+  BoxProps,
   Button,
   Checkbox as TUICheckbox,
   Flex,
@@ -36,13 +37,11 @@ export const Label = ({
 }) => (
   <TUILabel
     htmlFor={htmlFor}
-    mb={1}
     sx={{
       cursor: "pointer",
       width: "auto",
       color: disabled ? "monochrome500" : "monochrome700",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
-      pb: smaller ? 1 : 0,
       mr: 4,
       display: "flex",
       alignItems: "center",
@@ -56,7 +55,7 @@ export const Label = ({
             textAlign: "left",
             fontFamily: "body",
             pr: 1,
-            fontSize: [3],
+            fontSize: smaller ? [2, 2, 2] : [3, 3, 3],
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
             display: "-webkit-box",
@@ -120,11 +119,25 @@ export const Checkbox = ({
   disabled,
   onChange,
   color,
-}: { label: string; disabled?: boolean; color?: string } & FieldProps) => (
-  <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
+  smaller,
+}: {
+  label: string;
+  disabled?: boolean;
+  color?: string;
+  smaller?: boolean;
+} & FieldProps) => (
+  <Label
+    label={label}
+    htmlFor={`${name}-${label}`}
+    disabled={disabled}
+    smaller={smaller}
+  >
     <TUICheckbox
       data-name="checkbox-component"
       sx={{
+        width: smaller ? 16 : undefined,
+        height: smaller ? 16 : undefined,
+        mr: smaller ? 1 : undefined,
         color:
           checked && !disabled
             ? "primary"
