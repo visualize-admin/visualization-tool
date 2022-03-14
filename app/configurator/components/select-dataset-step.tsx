@@ -183,7 +183,7 @@ export const SelectDatasetStepContent = () => {
                     </Text>
                   </>
                 )}
-                <Box mb={4} key="search-box">
+                <Box mb={1} key="search-box">
                   <SearchDatasetBox
                     browseState={browseState}
                     searchResult={data}

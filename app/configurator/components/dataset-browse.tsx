@@ -346,7 +346,7 @@ export const SearchDatasetBox = ({
         </Button>
       </Box>
 
-      <Flex sx={{ py: 2, justifyContent: "space-between" }}>
+      <Flex sx={{ mt: 5, justifyContent: "space-between" }}>
         <Text
           color="secondary"
           sx={{
