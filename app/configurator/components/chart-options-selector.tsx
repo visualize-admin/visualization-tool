@@ -1,8 +1,9 @@
+import Flex from "../../components/flex";
 import { t, Trans } from "@lingui/macro";
 import { keyBy } from "lodash";
 import get from "lodash/get";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Box, Flex } from "@mui/material";
+import { Box } from "@mui/material";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
@@ -298,7 +299,7 @@ const EncodingOptionsPanel = ({
               Show additional information
             </Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" as="fieldset">
+          <ControlSectionContent side="right" component="fieldset">
             <ChartOptionCheckboxField
               path="showStandardError"
               field={encoding.field}
@@ -316,7 +317,7 @@ const EncodingOptionsPanel = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" as="fieldset">
+          <ControlSectionContent side="right" component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
@@ -357,7 +358,7 @@ const ChartFieldOptions = ({
     <>
       {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
         chartType === "column" && (
-          <Box as="fieldset" mt={2}>
+          <Box component="fieldset" mt={2}>
             <FieldSetLegend
               legendTitle={
                 <Trans id="controls.select.column.layout">Column layout</Trans>
@@ -452,7 +453,7 @@ const ChartFieldSorting = ({
       <SectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
-      <ControlSectionContent side="right" as="fieldset">
+      <ControlSectionContent side="right" component="fieldset">
         <Box>
           <Select
             id="sort-by"
@@ -565,7 +566,7 @@ const ChartImputationType = ({
       <SectionTitle disabled={disabled} iconName="info">
         <Trans id="controls.section.imputation">Missing values</Trans>
       </SectionTitle>
-      <ControlSectionContent side="right" as="fieldset">
+      <ControlSectionContent side="right" component="fieldset">
         {!disabled && (
           <Box mb={5}>
             <Trans id="controls.section.imputation.explanation">

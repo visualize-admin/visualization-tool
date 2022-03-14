@@ -1,8 +1,8 @@
+import Flex from "../../components/flex";
 import { t } from "@lingui/macro";
 import { extent, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
-import { Flex } from "@mui/material";
 import {
   Option,
   useActiveFieldField,

@@ -1,5 +1,5 @@
+import Flex, { FlexProps } from "../components/flex";
 import React from "react";
-import { Flex, FlexProps } from "@mui/material";
 
 type DirectionType = "row" | "column";
 

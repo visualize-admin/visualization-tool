@@ -1,4 +1,5 @@
-import { Box, Flex, Link, Text } from "@mui/material";
+import Flex from "../components/flex";
+import { Box, Link, Typography } from "@mui/material";
 import * as React from "react";
 
 export const Contribute = ({
@@ -27,7 +28,7 @@ export const Contribute = ({
             >
               {headline}
             </Typography>
-            <Typography as="div" variant="paragraph1">
+            <Typography component="div" variant="paragraph1">
               {description}
             </Typography>
           </Box>

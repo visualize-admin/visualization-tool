@@ -1,7 +1,8 @@
+import Flex from "../components/flex";
 import { Trans } from "@lingui/macro";
 import Head from "next/head";
 import * as React from "react";
-import { Box, Flex, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";

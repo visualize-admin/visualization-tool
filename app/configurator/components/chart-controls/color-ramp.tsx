@@ -146,7 +146,7 @@ export const ColorRampField = ({
       <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
         {isOpen && (
           <>
-            {/* <Typography as="div" variant="meta" sx={{ p: 1 }}>
+            {/* <Typography component="div" variant="meta" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.diverging">Diverging</Trans>
             </Typography>
             {divergingPalettes.map((d, i) => (
@@ -159,7 +159,7 @@ export const ColorRampField = ({
               />
             ))} */}
 
-            <Typography as="div" variant="meta" sx={{ p: 1 }}>
+            <Typography component="div" variant="meta" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.sequential">Sequential</Trans>
             </Typography>
             {sequentialPalettes.map((d, i) => (

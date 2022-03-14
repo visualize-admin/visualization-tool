@@ -43,7 +43,7 @@ export const Intro = ({
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <NextLink href="/browse" passHref>
-            <Button as="a" variant="primary">
+            <Button component="a" variant="primary">
               {buttonLabel}
             </Button>
           </NextLink>
@@ -55,7 +55,7 @@ export const Intro = ({
 
 export const Title = ({ children }: { children: ReactNode }) => (
   <Typography
-    as="h1"
+    component="h1"
     sx={{
       color: "monochrome800",
       textAlign: "center",

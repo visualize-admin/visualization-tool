@@ -12,7 +12,7 @@ const ButtonLink = ({
 } & ButtonProps) => {
   return (
     <Link href={href} passHref>
-      <Button as="a" {...buttonProps}>
+      <Button component="a" {...buttonProps}>
         {children}
       </Button>
     </Link>

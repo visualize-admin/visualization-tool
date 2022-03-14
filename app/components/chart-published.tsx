@@ -1,7 +1,8 @@
+import Flex from "../components/flex";
 import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { useEffect } from "react";
-import { Box, Flex, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { isUsingImputation } from "../charts/shared/imputation";
 import {
@@ -78,12 +79,12 @@ export const ChartPublished = ({
           </Box>
         )}
         {meta.title[locale] !== "" && (
-          <Typography as="div" variant="heading2" mb={2}>
+          <Typography component="div" variant="heading2" mb={2}>
             {meta.title[locale]}
           </Typography>
         )}
         {meta.description[locale] && (
-          <Typography as="div" variant="paragraph1" mb={2}>
+          <Typography component="div" variant="paragraph1" mb={2}>
             {meta.description[locale]}
           </Typography>
         )}

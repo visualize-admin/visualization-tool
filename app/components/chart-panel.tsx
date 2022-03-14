@@ -1,4 +1,5 @@
-import { BoxProps, Flex } from "@mui/material";
+import Flex from "../components/flex";
+import { BoxProps } from "@mui/material";
 
 import { ReactNode } from "react";
 

@@ -1,6 +1,7 @@
+import Flex from "./flex";
 import { Trans } from "@lingui/macro";
 
-import { Box, Flex, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { LanguageMenu } from "./language-menu";
 import NextLink from "next/link";
 import React, {
@@ -80,7 +81,7 @@ export const Header = ({
       }
     >
       <Flex
-        as="header"
+        component="header"
         sx={{
           px: [0, 4, 4],
           pt: [0, 3, 3],
@@ -103,7 +104,7 @@ export const Logo = () => {
   return (
     <NextLink href="/" passHref>
       <Flex
-        as="a"
+        component="a"
         sx={{
           order: [2, 1],
           alignItems: ["center", "flex-start"],
@@ -134,7 +135,7 @@ export const Logo = () => {
           <LogoDesktop />
         </Box>
         <Typography
-          as="h1"
+          component="h1"
           variant="lead"
           sx={{ pl: [0, 6], textDecoration: "none", color: "monochrome800" }}
         >

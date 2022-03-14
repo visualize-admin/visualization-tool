@@ -11,7 +11,7 @@ export const EmptyRightPanel = ({
 }: {
   state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
 }) => (
-  <Typography as="div" variant="paragraph1" sx={{ m: 4 }}>
+  <Typography component="div" variant="paragraph1" sx={{ m: 4 }}>
     {getRightPanelHint(state.state)}
   </Typography>
 );

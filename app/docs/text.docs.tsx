@@ -18,7 +18,7 @@ Example of a heading \`h1\` with the style \`heading1\`.
 ~~~
 import { Text } from "@mui/material"
 
-<Typography  variant="heading1" as="h1" >
+<Typography  variant="heading1" component="h1" >
  Heading 1
 </Typography>
 ~~~
@@ -32,7 +32,7 @@ ${(
       return {
         Variant: `\`${key}\``,
         Sample: (
-          <Typography variant={key} as="h1">
+          <Typography variant={key} component="h1">
             The quick brown fox...
           </Typography>
         ),

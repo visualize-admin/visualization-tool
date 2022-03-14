@@ -1,4 +1,5 @@
-import { Box, Flex } from "@mui/material";
+import Flex from "../../components/flex";;
+import { Box } from "@mui/material";
 import * as React from "react";
 import { Row } from "react-table";
 import { Observation } from "../../domain/data";
@@ -37,7 +38,7 @@ export const GroupHeader = ({
                 }}
               >
                 <Box
-                  as="span"
+                  component="span"
                   sx={{ width: 24, mr: 0, color: "monochrome600" }}
                 >
                   <Icon
@@ -54,7 +55,7 @@ export const GroupHeader = ({
                   </Tag>
                 ) : (
                   <Box
-                    as="span"
+                    component="span"
                     sx={{
                       color: hcl(bg).l < 55 ? "monochrome100" : "monochrome900",
                       fontWeight: "bold",

@@ -1,5 +1,6 @@
+import Flex from "./flex";
 import { t, Trans } from "@lingui/macro";
-import { Box, Flex, Link, Text } from "@mui/material";
+import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
 import contentRoutes from "../content-routes.json";
@@ -38,7 +39,7 @@ export const Footer = () => {
 
   return (
     <Flex
-      as="footer"
+      component="footer"
       sx={{
         flexDirection: ["column", "row"],
         justifyContent: ["flex-start", "space-between"],

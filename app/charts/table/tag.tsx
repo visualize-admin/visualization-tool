@@ -13,7 +13,7 @@ export const Tag = ({
   children: ReactNode;
 }) => (
   <Box
-    as="span"
+    component="span"
     sx={{
       bg: tagColor,
       color: hcl(tagColor).l < 55 ? "#fff" : "#000",

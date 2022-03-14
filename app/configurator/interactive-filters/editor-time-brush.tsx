@@ -1,7 +1,8 @@
+import Flex from "../../components/flex";;
 import { Trans } from "@lingui/macro";
 import { bisector, brushX, scaleTime, select, Selection } from "d3";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Flex, Box, Text } from "@mui/material";
+import { Box, Text } from "@mui/material";
 import { Label } from "../../components/form";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
@@ -175,7 +176,7 @@ export const EditorBrush = ({
         )}
       </Box>
       <Flex sx={{ justifyContent: "space-between" }}>
-        <Typography as="div" variant="meta">
+        <Typography component="div" variant="meta">
           {chartConfig &&
             chartConfig.interactiveFiltersConfig?.time.presets.from &&
             formatDateAuto(
@@ -186,7 +187,7 @@ export const EditorBrush = ({
               )
             )}
         </Typography>
-        <Typography as="div" variant="meta">
+        <Typography component="div" variant="meta">
           {chartConfig &&
             chartConfig.interactiveFiltersConfig?.time.presets.to &&
             formatDateAuto(

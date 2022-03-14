@@ -125,7 +125,7 @@ export const ChartTypeSelector = ({
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <Box as="fieldset">
+      <Box component="fieldset">
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>

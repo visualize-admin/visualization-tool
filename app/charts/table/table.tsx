@@ -1,3 +1,4 @@
+import Flex from "../../components/flex";;
 import { Trans } from "@lingui/macro";
 import FlexSearch from "flexsearch";
 import { forwardRef, useCallback, useMemo, useState } from "react";
@@ -9,7 +10,7 @@ import {
   useTable,
 } from "react-table";
 import { FixedSizeList, VariableSizeList } from "react-window";
-import { Box, Flex, Text } from "@mui/material";
+import { Box, Text } from "@mui/material";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
@@ -188,7 +189,7 @@ export const Table = () => {
                 return (
                   <Flex
                     key={i}
-                    as="dl"
+                    component="dl"
                     sx={{
                       color: "monochrome800",
                       fontSize: 2,
@@ -199,13 +200,13 @@ export const Table = () => {
                     }}
                   >
                     <Box
-                      as="dt"
+                      component="dt"
                       sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
                     >
                       {cell.column.Header}
                     </Box>
                     <Box
-                      as="dd"
+                      component="dd"
                       sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
                     >
                       <DDContent

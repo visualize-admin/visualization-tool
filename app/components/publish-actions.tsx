@@ -1,3 +1,4 @@
+import Flex from "./flex";
 import { t, Trans } from "@lingui/macro";
 import * as clipboard from "clipboard-polyfill/text";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
@@ -7,16 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Flex,
-  FlexOwnProps,
-  Input,
-  Link,
-  Text,
-} from "@mui/material";
+import { Box, Button, ButtonProps, FlexOwnProps, Input, Link, Text } from "@mui/material";
 import { Icon } from "../icons";
 import { useI18n } from "../lib/use-i18n";
 import { useLocale } from "../locales/use-locale";
@@ -129,7 +121,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               alignItems: "center",
             }}
           >
-            <Typography as="div" variant="paragraph1" color="monochrome700">
+            <Typography component="div" variant="paragraph1" color="monochrome700">
               <Trans id="publication.popup.share">Share</Trans>:
             </Typography>
             <Flex color="primary">
@@ -176,7 +168,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             </Flex>
           </Flex>
           <Box mt={2}>
-            <Typography as="div" variant="paragraph1" color="monochrome700">
+            <Typography component="div" variant="paragraph1" color="monochrome700">
               <Trans id="publication.share.chart.url">Chart URL: </Trans>
             </Typography>
             <Box my={1} sx={{ color: "primary" }}>
@@ -229,14 +221,14 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       <>
         <PublishActionOverlay />
         <PublishActionModal>
-          <Typography as="div" variant="paragraph1" color="monochrome700" mt={2}>
+          <Typography component="div" variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
           </Typography>
 
           <CopyToClipboardTextInput
             iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
-          <Typography as="div" variant="paragraph1" color="monochrome700" mt={2}>
+          <Typography component="div" variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.AEM">
               Embed Code for AEM &quot;External Application&quot;:{" "}
             </Trans>

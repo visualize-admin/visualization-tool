@@ -27,7 +27,7 @@ const PreviewTable = ({
   const formatDateAuto = useFormatFullDateAuto();
   return (
     <Box
-      as="table"
+      component="table"
       sx={{
         minWidth: "100%",
         borderCollapse: "collapse",
@@ -36,7 +36,7 @@ const PreviewTable = ({
       <caption style={{ display: "none" }}>{title}</caption>
       <tbody>
         <Box
-          as="tr"
+          component="tr"
           sx={{
             fontFamily: "body",
             fontSize: [3],
@@ -50,7 +50,7 @@ const PreviewTable = ({
           {headers.map(({ iri, label, unit, __typename }) => {
             return (
               <Box
-                as="th"
+                component="th"
                 role="columnheader"
                 key={iri}
                 // @ts-expect-error `scope` is valid on th, but not on div
@@ -70,7 +70,7 @@ const PreviewTable = ({
         {observations.map((obs, i) => {
           return (
             <Box
-              as="tr"
+              component="tr"
               sx={{
                 fontFamily: "body",
                 fontSize: [3],
@@ -84,7 +84,7 @@ const PreviewTable = ({
               {headers.map(({ iri, label, __typename }) => (
                 <Box
                   key={iri}
-                  as="td"
+                  component="td"
                   sx={{
                     textAlign: __typename === "Measure" ? "right" : "left",
                     px: 2,

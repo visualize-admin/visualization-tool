@@ -27,7 +27,7 @@ const MoveDragButtons = ({
       >
         <Icon name="caretUp" height="16" />
       </Button>
-      <Box as="span" sx={{ cursor: "move" }} {...dragButtonProps}>
+      <Box component="span" sx={{ cursor: "move" }} {...dragButtonProps}>
         <Icon className={className} name="dragndrop" />
       </Box>
       <Button

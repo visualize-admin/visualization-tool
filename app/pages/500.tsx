@@ -12,7 +12,7 @@ const Page = () => {
     <ContentLayout>
       <Box sx={{ bg: "muted", my: "auto" }}>
         <ErrorPageHint>
-          <Typography as="div" variant="heading2" sx={{ my: 3 }}>
+          <Typography component="div" variant="heading2" sx={{ my: 3 }}>
             Ein Fehler ist aufgetreten.{" "}
           </Typography>
           <Actions>
@@ -22,7 +22,7 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Typography as="div" variant="heading2" sx={{ my: 3 }}>
+          <Typography component="div" variant="heading2" sx={{ my: 3 }}>
             Une erreur est survenue.{" "}
           </Typography>
           <Actions>
@@ -32,7 +32,7 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Typography as="div" variant="heading2" sx={{ my: 3 }}>
+          <Typography component="div" variant="heading2" sx={{ my: 3 }}>
             Si è verificato un errore.{" "}
           </Typography>
           <Actions>
@@ -42,7 +42,7 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Typography as="div" variant="heading2" sx={{ my: 3 }}>
+          <Typography component="div" variant="heading2" sx={{ my: 3 }}>
             An error occurred.{" "}
           </Typography>
           <Actions>

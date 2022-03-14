@@ -527,7 +527,7 @@ const NavItem = ({
   const removeFilterButton = (
     <Link href={removeFilterPath} passHref>
       <Button
-        as="a"
+        component="a"
         sx={{
           bg: level === 1 ? theme.activeBg : "transparent",
           color: level === 1 ? theme.activeTextColor : theme.activeBg,
@@ -759,7 +759,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
           theme={{ bg: "categoryLight", borderColor: "category" }}
           sx={{ mb: "block" }}
         >
-          <Box as="span" color="category" mr={2}>
+          <Box component="span" color="category" mr={2}>
             <SvgIcCategories width={24} height={24} />
           </Box>
           <Typography variant="paragraph2" sx={{ fontWeight: "bold" }}>
@@ -793,7 +793,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
             theme={{ bg: "organizationLight", borderColor: "organization" }}
             sx={{ mb: 2 }}
           >
-            <Box as="span" color="organization" mr={2}>
+            <Box component="span" color="organization" mr={2}>
               <SvgIcOrganisations width={24} height={24} />
             </Box>
             <Typography variant="paragraph2" sx={{ fontWeight: "bold" }}>
@@ -980,10 +980,10 @@ export const DatasetResult = ({
             </Tag>
           )}
         </Flex>
-        <Typography as="div" variant="paragraph1" pb={1}>
+        <Typography component="div" variant="paragraph1" pb={1}>
           {highlightedTitle ? (
             <Box
-              as="span"
+              component="span"
               sx={{ "& > strong": { bg: "primaryLight" } }}
               dangerouslySetInnerHTML={{ __html: highlightedTitle }}
             />
@@ -1005,7 +1005,7 @@ export const DatasetResult = ({
         >
           {highlightedDescription ? (
             <Box
-              as="span"
+              component="span"
               sx={{ "& > strong": { bg: "primaryLight" } }}
               dangerouslySetInnerHTML={{ __html: highlightedDescription }}
             />

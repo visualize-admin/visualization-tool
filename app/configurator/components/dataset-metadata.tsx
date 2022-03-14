@@ -154,7 +154,7 @@ const DatasetTags = ({
           passHref
         >
           <Tag
-            as="a"
+            component="a"
             type={t.__typename}
             title={t.label || undefined}
             sx={{

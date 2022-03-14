@@ -5,9 +5,8 @@ import Flex from "./flex";
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
     <HeaderProgressProvider>
-      <Header pageType="app" />
       <Flex
-        as="main"
+        component="main"
         role="main"
         sx={{ flex: 1, flexDirection: "column" }}
         bg="muted"
@@ -35,7 +34,7 @@ export const ContentLayout = ({
     >
       <Header pageType="content" contentId={contentId} />
       <Flex
-        as="main"
+        component="main"
         role="main"
         sx={{
           flexDirection: "column",
@@ -67,7 +66,7 @@ export const StaticContentLayout = ({
     >
       <Header pageType="content" contentId={contentId} />
       <Flex
-        as="main"
+        component="main"
         role="main"
         sx={{
           flexDirection: "column",

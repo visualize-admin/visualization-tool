@@ -3,7 +3,7 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Button, Text } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useDebounce } from "use-debounce";
 import { AnimatePresence } from "framer-motion";
 import { useDataCubesQuery } from "../../graphql/query-hooks";

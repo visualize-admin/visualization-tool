@@ -1,8 +1,9 @@
+import Flex from "../../../components/flex";
 import { Trans } from "@lingui/macro";
 import { useSelect } from "downshift";
 import get from "lodash/get";
 import { useCallback } from "react";
-import { Box, Button, Flex, Text } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "../..";
 import { Label } from "../../../components/form";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
@@ -105,7 +106,7 @@ export const ColorPalette = ({
                     : "monochrome100",
               }}
             >
-              <Typography as="div" variant="meta">
+              <Typography component="div" variant="meta">
                 {palette.label}
               </Typography>
               <Box

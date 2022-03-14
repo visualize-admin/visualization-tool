@@ -14,7 +14,7 @@ export const PanelLeftWrapper = ({
 }) => {
   return (
     <Box
-      as="section"
+      component="section"
       data-name="panel-left"
       sx={{
         overflowX: "hidden",
@@ -46,7 +46,7 @@ export const PanelRightWrapper = ({
 }) => {
   return (
     <Box
-      as="section"
+      component="section"
       data-name="panel-right"
       sx={{
         bg: "mutedColored",
@@ -107,7 +107,7 @@ export const PanelHeader = ({
   const { sx } = boxProps;
   return (
     <Box
-      as="section"
+      component="section"
       role="navigation"
       {...boxProps}
       sx={{ gridArea: "header", ...sx }}
@@ -126,7 +126,7 @@ export const PanelMiddleWrapper = ({
 }) => {
   return (
     <Box
-      as="section"
+      component="section"
       data-name="panel-middle"
       sx={{
         overflowX: "hidden",

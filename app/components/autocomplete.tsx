@@ -6,7 +6,8 @@ import {
   UseComboboxStateChange,
 } from "downshift";
 import { useState } from "react";
-import { Box, BoxProps, Flex, FlexProps, Input } from "@theme-ui/components";
+import { Box, BoxProps, Input } from "@mui/material";
+import { Flex, FlexProps } from './flex'
 import { Trans } from "@lingui/macro";
 
 const menuStyles = {
@@ -24,7 +25,7 @@ const AutocompleteList = React.forwardRef<HTMLDivElement>(
     return (
       <Box
         ref={ref}
-        as="ul"
+        component="ul"
         {...boxProps}
         sx={{
           pl: 0,
@@ -52,7 +53,7 @@ const AutocompleteResult = React.forwardRef<
   return (
     <Flex
       ref={ref}
-      as="li"
+      component="li"
       {...boxProps}
       sx={{
         cursor: "pointer",

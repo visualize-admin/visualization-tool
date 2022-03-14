@@ -1,8 +1,9 @@
+import Flex from "./flex";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { ReactNode } from "react";
-import { Flex, Link, Text } from "@mui/material";
+import { Link, Text } from "@mui/material";
 import { Locale } from "../locales/locales";
 
 export const ErrorPageHint = ({ children }: { children: ReactNode }) => (

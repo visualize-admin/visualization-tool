@@ -1,4 +1,5 @@
-import { Box, BoxProps, Flex, Text } from "@mui/material";
+import Flex from "../../../components/flex";
+import { Box, BoxProps, Typography } from "@mui/material";
 
 import { ElementType, forwardRef, ReactNode } from "react";
 import { Icon, IconName } from "../../../icons";
@@ -79,7 +80,7 @@ export const SectionTitle = ({
   const theme = useTheme();
   return (
     <Flex
-      as="h2"
+      component="h2"
       id={titleId}
       sx={{
         p: 4,
@@ -100,7 +101,7 @@ export const SectionTitle = ({
         ></Icon>
       )}
       <Typography
-        as="div"
+        component="div"
         variant="table"
         sx={{ fontWeight: "bold", ml: iconName ? 2 : 0 }}
       >

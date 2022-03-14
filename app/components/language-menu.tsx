@@ -1,7 +1,8 @@
+import Flex from "./flex";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-import { Box, Flex, Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import contentRoutes from "../content-routes.json";
 import localeConfig from "../locales/locales.json";
 import { useLocale } from "../locales/use-locale";
@@ -31,7 +32,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
 
   return (
     <Flex
-      as="ul"
+      component="ul"
       sx={{
         listStyle: "none",
         p: [2, 0],
@@ -78,7 +79,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         );
 
         return (
-          <Box as="li" key={locale} sx={{ ml: 1, p: 0 }}>
+          <Box component="li" key={locale} sx={{ ml: 1, p: 0 }}>
             {alternate ? (
               <NextLink href={alternate.path} passHref locale={false}>
                 {linkEl}

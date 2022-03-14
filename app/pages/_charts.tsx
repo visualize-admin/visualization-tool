@@ -1,6 +1,7 @@
+import Flex from "../../components/flex";;
 import { NextPage } from "next";
 import NextLink from "next/link";
-import { Box, Flex, Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import { ChartPanel } from "../components/chart-panel";
 import { ChartPublished } from "../components/chart-published";
 import { ContentLayout } from "../components/layout";

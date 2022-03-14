@@ -1,6 +1,7 @@
+import Flex from "../../components/flex";;
 import { markdown, ReactSpecimen } from "catalog";
 import { ReactNode } from "react";
-import { Box, Flex } from "@mui/material";
+import { Box } from "@mui/material";
 import { TooltipBox } from "../charts/shared/interaction/tooltip-box";
 import {
   TooltipMultiple,

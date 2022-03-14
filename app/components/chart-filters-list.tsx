@@ -57,15 +57,15 @@ export const ChartFiltersList = ({
     return (
       <>
         {namedFilters.length > 0 && (
-          <Typography as="div" variant="paragraph2" sx={{ color: "monochrome800" }}>
+          <Typography component="div" variant="paragraph2" sx={{ color: "monochrome800" }}>
             {namedFilters.map(({ dimension, value }, i) => (
               <Fragment key={dimension.iri}>
-                <Box as="span">
+                <Box component="span">
                   {dimension.label}
                   {": "}
                 </Box>
 
-                <Box as="span" sx={{ fontWeight: "bold" }}>
+                <Box component="span" sx={{ fontWeight: "bold" }}>
                   {value && value.label}
                 </Box>
                 {i < namedFilters.length - 1 && ", "}

@@ -1,4 +1,5 @@
-import { Box, Flex, Text } from "@mui/material";
+import Flex from "../components/flex";
+import { Box, Typography } from "@mui/material";
 import { ReactNode } from "react";
 import { Icon } from "../icons";
 import { HomepageSection } from "./generic";
@@ -54,7 +55,7 @@ export const Tutorial = ({
 
 const HomepageTutorialStep = ({ children }: { children: ReactNode }) => (
   <Typography
-    as="div"
+    component="div"
     sx={{
       fontSize: 5,
       fontFamily: "body",

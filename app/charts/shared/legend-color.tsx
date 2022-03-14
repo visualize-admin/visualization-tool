@@ -1,5 +1,5 @@
+import Flex from "../../components/flex";
 import React, { memo } from "react";
-import { Flex } from "@mui/material";
 import { Checkbox } from "../../components/form";
 import { AreasState } from "../area/areas-state";
 import { GroupedBarsState } from "../bar/bars-grouped-state";

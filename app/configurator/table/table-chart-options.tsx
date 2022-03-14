@@ -303,7 +303,7 @@ export const TableColumnOptions = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" as="fieldset">
+          <ControlSectionContent side="right" component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
@@ -327,7 +327,7 @@ export const TableColumnOptions = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" as="fieldset">
+          <ControlSectionContent side="right" component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>

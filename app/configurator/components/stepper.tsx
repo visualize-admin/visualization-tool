@@ -1,7 +1,8 @@
+import Flex from "../../components/flex";
 import { Trans } from "@lingui/macro";
 import { useRouter } from "next/router";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
-import { Button, ButtonProps, Flex, Text } from "@mui/material";
+import { Button, ButtonProps, Typography } from "@mui/material";
 import {
   useConfiguratorState,
   canTransitionToNextStep,

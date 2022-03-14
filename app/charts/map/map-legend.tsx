@@ -1,3 +1,4 @@
+import Flex from "../../components/flex";
 import {
   axisBottom,
   NumberValue,
@@ -12,7 +13,7 @@ import {
 } from "d3";
 import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
-import { Box, Flex, Text } from "@mui/material";
+import { Box, Text } from "@mui/material";
 import { ColorRamp } from "../../configurator/components/chart-controls/color-ramp";
 import {
   getColorInterpolator,
@@ -83,7 +84,7 @@ export const MapLegend = () => {
         <Box sx={{ p: 4 }}>
           {areaLayer.measureLabel && (
             <Typography
-              as="div"
+              component="div"
               variant="meta"
               sx={{ marginLeft: `${MARGIN.left}px` }}
             >
@@ -108,7 +109,7 @@ export const MapLegend = () => {
       {symbolLayer.show && (
         <Box sx={{ p: 4 }}>
           {symbolLayer.measureLabel && (
-            <Typography as="div" variant="meta">
+            <Typography component="div" variant="meta">
               {symbolLayer.measureLabel}
             </Typography>
           )}

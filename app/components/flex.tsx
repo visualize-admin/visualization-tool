@@ -5,6 +5,6 @@ const Flex = (props: BoxProps) => {
   return <Box display="flex" {...props} />;
 };
 
-export const FlexProps = BoxProps;
+export type FlexProps = BoxProps;
 
 export default Flex;

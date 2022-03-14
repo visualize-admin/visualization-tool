@@ -32,15 +32,15 @@ export const ChartFootnotes = ({
 
     return (
       <Box sx={{ mt: 2 }}>
-        <Typography as="div" variant="meta" color="monochrome600">
+        <Typography component="div" variant="meta" color="monochrome600">
           <Trans id="metadata.dataset">Dataset</Trans>: {dataCubeByIri.title}
         </Typography>
 
-        <Typography as="div" variant="meta" color="monochrome600">
+        <Typography component="div" variant="meta" color="monochrome600">
           <Trans id="metadata.source">Source</Trans>:{" "}
           {dataCubeByIri.publisher && (
             <Box
-              as="span"
+              component="span"
               sx={{ "> a": { color: "monochrome600" } }}
               dangerouslySetInnerHTML={{ __html: dataCubeByIri.publisher }}
             ></Box>

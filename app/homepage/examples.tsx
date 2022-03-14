@@ -1,5 +1,6 @@
+import Flex from "../components/flex";
 import { ReactNode } from "react";
-import { Box, Flex, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ChartPublished } from "../components/chart-published";
 import { HomepageSection } from "./generic";
 
@@ -241,7 +242,7 @@ const Example = ({
       }}
     >
       <Typography
-        as="h3"
+        component="h3"
         sx={{
           fontSize: [5, 5, 6],
           lineHeight: 1.5,
@@ -253,7 +254,7 @@ const Example = ({
         {headline}
       </Typography>
       <Typography
-        as="p"
+        component="p"
         sx={{
           fontSize: 4,
           lineHeight: 1.5,

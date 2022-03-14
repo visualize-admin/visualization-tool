@@ -17,17 +17,17 @@ export const TooltipSingle = ({
   return (
     <Box>
       {xValue && (
-        <Typography as="div" variant="meta" sx={{ fontWeight: "bold" }}>
+        <Typography component="div" variant="meta" sx={{ fontWeight: "bold" }}>
           {xValue}
         </Typography>
       )}
       {segment && (
-        <Typography as="div" variant="meta">
+        <Typography component="div" variant="meta">
           {segment}
         </Typography>
       )}
       {yValue && (
-        <Typography as="div" variant="meta">
+        <Typography component="div" variant="meta">
           {yValue}
           {yError ? <> ± {yError}</> : null}
         </Typography>
@@ -46,7 +46,7 @@ export const TooltipMultiple = ({
   return (
     <Box>
       {xValue && (
-        <Typography as="div" variant="meta" sx={{ fontWeight: "bold" }}>
+        <Typography component="div" variant="meta" sx={{ fontWeight: "bold" }}>
           {xValue}
         </Typography>
       )}
@@ -75,17 +75,17 @@ export const TooltipScatterplot = ({
   return (
     <Box>
       {firstLine && (
-        <Typography as="div" variant="meta" sx={{ fontWeight: "bold" }}>
+        <Typography component="div" variant="meta" sx={{ fontWeight: "bold" }}>
           {firstLine}
         </Typography>
       )}
       {secondLine && (
-        <Typography as="div" variant="meta">
+        <Typography component="div" variant="meta">
           {secondLine}
         </Typography>
       )}
       {thirdLine && (
-        <Typography as="div" variant="meta">
+        <Typography component="div" variant="meta">
           {thirdLine}
         </Typography>
       )}

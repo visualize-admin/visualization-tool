@@ -85,7 +85,7 @@ const VisualizationPage = (props: PageProps) => {
             <PublishActions configKey={key} sx={{ mt: 5, mb: 5 }} />
 
             <Typography
-              as="div"
+              component="div"
               variant="heading3"
               mt={3}
               mb={4}
@@ -113,7 +113,7 @@ const VisualizationPage = (props: PageProps) => {
 
             <Stack direction="row" spacing={2}>
               <NextLink href="/create/new" passHref>
-                <Button as="a" variant="secondary">
+                <Button component="a" variant="secondary">
                   <Trans id="button.new.visualization">
                     Create a new visualization
                   </Trans>
@@ -123,7 +123,7 @@ const VisualizationPage = (props: PageProps) => {
                 href={{ pathname: "/create/new", query: { from: key } }}
                 passHref
               >
-                <Button as="a" variant="secondary">
+                <Button component="a" variant="secondary">
                   <Trans id="button.copy.visualization">
                     Copy and edit this visualization
                   </Trans>

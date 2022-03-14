@@ -1,4 +1,5 @@
-import { Box, Flex, Text } from "@mui/material";
+import Flex from "../../components/flex";
+import { Box, Typography } from "@mui/material";
 import { hcl } from "d3";
 import * as React from "react";
 import { Cell, Row } from "react-table";
@@ -29,7 +30,7 @@ export const RowMobile = ({
           return (
             <Flex
               key={i}
-              as="dl"
+              component="dl"
               sx={{
                 color: "monochrome800",
                 fontSize: 2,
@@ -47,11 +48,14 @@ export const RowMobile = ({
                 },
               }}
             >
-              <Box as="dt" sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}>
+              <Box
+                component="dt"
+                sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
+              >
                 {cell.column.Header}
               </Box>
               <Box
-                as="dd"
+                component="dd"
                 sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
               >
                 <DDContent
@@ -117,7 +121,7 @@ export const DDContent = ({
     case "text":
       return (
         <Box
-          as="div"
+          component="div"
           sx={{
             width: "100%",
             color: textColor,
@@ -215,7 +219,7 @@ export const DDContent = ({
     default:
       return (
         <Box
-          as="span"
+          component="span"
           sx={{
             color: textColor,
             fontWeight: textStyle,

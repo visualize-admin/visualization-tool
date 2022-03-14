@@ -1,6 +1,7 @@
+import Flex from "../../components/flex";
 import { Trans } from "@lingui/macro";
 import React, { useCallback, useMemo } from "react";
-import { Box, Button, Flex, Text } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import {
   getFilterValue,
   MultiFilterContextProvider,
@@ -60,7 +61,7 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
       <Typography
         color="monochrome700"
         sx={{ px: 2, fontSize: 3, display: "inline" }}
-        as="span"
+        component="span"
       >
         <Trans id="controls.filter.nb-elements">
           {activeKeys.size} of {allValues.length}

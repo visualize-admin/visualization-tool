@@ -510,7 +510,7 @@ export const FieldSetLegend = ({
       mb: 1,
       color: "monochrome800",
     }}
-    as="legend"
+    component="legend"
   >
     {legendTitle}
   </Box>
@@ -591,7 +591,7 @@ export const Switch = ({
         ></Box>
 
         <Box
-          as="span"
+          component="span"
           sx={{
             fontSize: 2,
             ml: "32px",

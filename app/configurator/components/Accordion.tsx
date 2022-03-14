@@ -1,5 +1,6 @@
+import Flex, { FlexProps } from "../../components/flex";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Box, BoxProps, Flex, FlexProps } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 import SvgIcChevronLeft from "../../icons/components/IcChevronLeft";
 
 const AccordionArrow = ({
@@ -7,7 +8,7 @@ const AccordionArrow = ({
   ...boxProps
 }: { expanded?: boolean } & BoxProps) => {
   return (
-    <Box as="span" mr={2} sx={{}} {...boxProps}>
+    <Box component="span" mr={2} sx={{}} {...boxProps}>
       <SvgIcChevronLeft
         sx={{
           transition: "transform 0.5s ease",

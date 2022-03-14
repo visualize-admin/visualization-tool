@@ -1,3 +1,4 @@
+import Flex from "../../components/flex";;
 import { Trans } from "@lingui/macro";
 import {
   brushX,
@@ -7,7 +8,7 @@ import {
   Selection,
 } from "d3";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Box, Flex, Text } from "@mui/material";
+import { Box, Text } from "@mui/material";
 import { Label } from "../../components/form";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
@@ -147,10 +148,10 @@ export const EditorIntervalBrush = ({
         )}
       </Box>
       <Flex sx={{ justifyContent: "space-between" }}>
-        <Typography as="div" variant="meta">
+        <Typography component="div" variant="meta">
           {formatDateAuto(timeExtent[0])}
         </Typography>
-        <Typography as="div" variant="meta">
+        <Typography component="div" variant="meta">
           {formatDateAuto(timeExtent[1])}
         </Typography>
       </Flex>

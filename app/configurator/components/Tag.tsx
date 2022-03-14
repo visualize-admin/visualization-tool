@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Text, TextProps } from "@mui/material";
+import { Typography, TypographyProps } from "@mui/material";
 import {
   DataCubeOrganization,
   DataCubeTheme,

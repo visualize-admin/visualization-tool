@@ -1,6 +1,7 @@
+import Flex from "../../../components/flex";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
-import { Box, Button, Flex, Text } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { FieldProps } from "../..";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { Icon, IconName } from "../../../icons";
@@ -178,7 +179,7 @@ export const ControlTabButton = ({
   children: ReactNode;
 }) => (
   <Button
-    as="div"
+    component="div"
     variant="reset"
     value={value}
     role="tab"

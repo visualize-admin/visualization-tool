@@ -1,5 +1,6 @@
+import Flex from "../../components/flex";
 import * as React from "react";
-import { Box, Text, Flex } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { HintRed, Loading, LoadingDataError } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
@@ -50,7 +51,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               {dataCubeByIri.title} - visualize.admin.ch
             </title>
           </Head>
-          <Typography as="div" variant="heading1">
+          <Typography component="div" variant="heading1">
             {dataCubeByIri.title}
           </Typography>
           <LinkButton
@@ -72,7 +73,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           }}
         >
           <Typography
-            as="div"
+            component="div"
             variant="paragraph1"
             sx={{ mb: 4, color: "monochrome700" }}
           >

@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 export const HomepageSection = ({ children }: { children: ReactNode }) => (
   <Typography
-    as="h2"
+    component="h2"
     sx={{
       fontFamily: "body",
       lineHeight: [7, 8, 8],
