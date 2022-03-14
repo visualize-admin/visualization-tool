@@ -65,7 +65,7 @@ const DebugConfigurator = () => {
             sx={{ display: "flex", alignItems: "center" }}
           >
             <Icon name="linkExternal" size={16} />
-            <Typography sx={{ ml: 2, fontSize: 3 }} variant="body">
+            <Typography sx={{ ml: 2, fontSize: "0.875rem" }} variant="body">
               Open in Cube Viewer
             </Typography>
           </Link>
@@ -84,7 +84,7 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
             sx={{ display: "flex", alignItems: "center" }}
           >
             <Icon name="linkExternal" size={16} />
-            <Typography sx={{ ml: 2, fontSize: 3 }} variant="body">
+            <Typography sx={{ ml: 2, fontSize: "0.875rem" }} variant="body">
               Cube Metadata Query
             </Typography>
           </Link>

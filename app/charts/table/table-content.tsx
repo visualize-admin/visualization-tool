@@ -77,7 +77,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                       borderBottom: "1px solid",
                       borderBottomColor: "monochrome700",
                       fontWeight: "bold",
-                      fontSize: 3,
+                      fontSize: "0.875rem",
                       bg: "monochrome100",
                       color: "grey.700",
                     }}

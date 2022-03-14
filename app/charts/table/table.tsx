@@ -192,7 +192,7 @@ export const Table = () => {
                     component="dl"
                     sx={{
                       color: "grey.800",
-                      fontSize: 2,
+                      fontSize: "0.75rem",
                       width: "100%",
                       height: MOBILE_ROW_HEIGHT,
                       justifyContent: "space-between",
@@ -275,7 +275,7 @@ export const Table = () => {
             position: "relative",
             bg: "monochrome100",
             mb: 4,
-            fontSize: 3,
+            fontSize: "0.875rem",
           }}
         >
           <VariableSizeList
@@ -295,7 +295,7 @@ export const Table = () => {
             position: "relative",
             bg: "monochrome100",
             mb: 4,
-            fontSize: 3,
+            fontSize: "0.875rem",
           }}
           {...getTableProps({ style: { minWidth: "100%" } })}
         >

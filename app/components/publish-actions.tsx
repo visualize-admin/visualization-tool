@@ -267,7 +267,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           color: "grey.700",
           px: 2,
 
-          fontSize: 4,
+          fontSize: "1rem",
           minWidth: 160,
           overflowX: "auto",
           borderTopLeftRadius: "default",
@@ -391,7 +391,7 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
       borderRadius: "default",
       color: "grey.100",
 
-      fontSize: 1,
+      fontSize: "0.625rem",
       textAlign: "center",
       whiteSpace: "nowrap",
 

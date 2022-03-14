@@ -62,7 +62,7 @@ export const Title = ({ children }: { children: ReactNode }) => (
 
       lineHeight: 1.2,
       fontWeight: "bold",
-      fontSize: [8, "3.5rem", "3.5rem"],
+      fontSize: ["2.5rem", '"undefined"', '"undefined"'],
       mb: 4,
     }}
   >
@@ -74,7 +74,7 @@ export const Teaser = ({ children }: { children: ReactNode }) => (
     <Typography
       variant="body1"
       sx={{
-        fontSize: [4, 4, 4],
+        fontSize: ["1rem", "1rem", "1rem"],
         textAlign: "center",
         color: "grey.700",
       }}

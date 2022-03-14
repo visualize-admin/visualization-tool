@@ -327,5 +327,5 @@ export const Dot = () => (
   />
 );
 const TooltipContent = ({ children }: { children: ReactNode }) => (
-  <Box sx={{ fontSize: 3 }}>{children}</Box>
+  <Box sx={{ fontSize: "0.875rem" }}>{children}</Box>
 );

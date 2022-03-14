@@ -256,7 +256,7 @@ const Example = ({
       <Typography
         component="p"
         sx={{
-          fontSize: 4,
+          fontSize: "1rem",
           lineHeight: 1.5,
 
           mt: 4,

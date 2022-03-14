@@ -52,7 +52,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
             hrefLang={locale}
             sx={{
               variant: "text.paragraph2",
-              fontSize: 3,
+              fontSize: "0.875rem",
               lineHeight: 3,
               p: 1,
               textTransform: "uppercase",

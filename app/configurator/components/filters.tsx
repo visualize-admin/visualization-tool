@@ -60,7 +60,7 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
       ·
       <Typography
         color="monochrome700"
-        sx={{ px: 2, fontSize: 3, display: "inline" }}
+        sx={{ px: 2, fontSize: "0.875rem", display: "inline" }}
         component="span"
       >
         <Trans id="controls.filter.nb-elements">

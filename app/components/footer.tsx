@@ -114,7 +114,7 @@ export const Footer = () => {
               px: [4, 3],
               py: [3, 4],
               color: "secondary",
-              fontSize: 3,
+              fontSize: "0.875rem",
             }}
           >
             <Version />
@@ -157,7 +157,7 @@ const FooterLink = ({
       px: [0, 3],
       py: [0, 4],
       color: "primary",
-      fontSize: 3,
+      fontSize: "0.875rem",
 
       textDecoration: "none",
       cursor: "pointer",
@@ -189,7 +189,7 @@ const FooterLinkBottom = forwardRef<
         px: [4, 3],
         py: [3, 4],
         color: "primary",
-        fontSize: 3,
+        fontSize: "0.875rem",
 
         borderLeftWidth: ["1px", 0],
         borderLeftStyle: "solid",

@@ -71,7 +71,7 @@ const PreviewTable = ({
             <Box
               component="tr"
               sx={{
-                fontSize: [3],
+                fontSize: ["0.875rem"],
                 color: "grey.800",
                 borderBottomColor: "monochrome400",
                 borderBottomWidth: "1px",

@@ -33,7 +33,7 @@ export const RowMobile = ({
               component="dl"
               sx={{
                 color: "grey.800",
-                fontSize: 2,
+                fontSize: "0.75rem",
                 width: "100%",
                 justifyContent: "space-between",
                 alignItems: "center",

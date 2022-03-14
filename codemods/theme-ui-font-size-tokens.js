@@ -29,12 +29,17 @@ export default function transformer(file, api) {
     .forEach((path) => {
       const node = path.node;
       for (let prop of node.value.expression.properties) {
-        if (prop.key.name === "fontSize") {
+        if (prop.key && prop.key.name === "fontSize") {
           const value = prop.value;
           if (value.type === "ArrayExpression") {
             for (let e of value.elements) {
+              if (typeof e.value !== "number") {
+                continue;
+              }
               e.value = `"${themeUIFontSizes[e.value]}"`;
             }
+          } else if (value.type === "NumericLiteral") {
+            prop.value = `"${themeUIFontSizes[value.value]}"`;
           }
         }
       }

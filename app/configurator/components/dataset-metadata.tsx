@@ -103,7 +103,7 @@ const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
     sx={{
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
-      fontSize: [1, 2, 2],
+      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       color: "grey.600",
     }}
   >
@@ -115,7 +115,7 @@ const DatasetMetadataBody = ({ children }: { children: ReactNode }) => (
     sx={{
       lineHeight: [4, 5, 5],
       fontWeight: "regular",
-      fontSize: [3, 4, 4],
+      fontSize: ["0.875rem", "1rem", "1rem"],
       color: "grey.900",
       mb: 3,
     }}

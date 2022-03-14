@@ -109,7 +109,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             color: "grey.700",
             borderColor: "monochrome500",
             bg: "monochrome100",
-            fontSize: 3,
+            fontSize: "0.875rem",
             ":focus": { outline: "none", borderColor: "primary" },
           }}
           maxLength={7}
