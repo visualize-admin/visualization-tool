@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { Box, BoxProps, Link } from "@mui/material";
+import { Box, BoxProps, Link, Typography } from "@mui/material";
 import Stack from "../../components/Stack";
 import { useFormatDate } from "../../configurator/components/ui-helpers";
 import {
@@ -99,7 +99,8 @@ export const DataSetMetadata = ({
 };
 
 const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
-  <Box
+  <Typography
+    variant="caption"
     sx={{
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
@@ -108,10 +109,11 @@ const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
     }}
   >
     {children}
-  </Box>
+  </Typography>
 );
 const DatasetMetadataBody = ({ children }: { children: ReactNode }) => (
-  <Box
+  <Typography
+    variant="body1"
     sx={{
       lineHeight: [4, 5, 5],
       fontWeight: "regular",
@@ -121,7 +123,7 @@ const DatasetMetadataBody = ({ children }: { children: ReactNode }) => (
     }}
   >
     {children}
-  </Box>
+  </Typography>
 );
 
 const DatasetMetadataLink = ({
