@@ -102,7 +102,7 @@ export const SectionTitle = ({
       )}
       <Typography
         component="div"
-        variant="table"
+        variant="h5"
         sx={{ fontWeight: "bold", ml: iconName ? 2 : 0 }}
       >
         {children}
