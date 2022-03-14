@@ -51,7 +51,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               {dataCubeByIri.title} - visualize.admin.ch
             </title>
           </Head>
-          <Typography component="div" variant="heading1">
+          <Typography component="div" variant="h1">
             {dataCubeByIri.title}
           </Typography>
           <LinkButton
@@ -74,14 +74,14 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         >
           <Typography
             component="div"
-            variant="paragraph1"
+            variant="body1"
             sx={{ mb: 4, color: "monochrome700" }}
           >
             {dataCubeByIri.description}
           </Typography>
 
           <Box
-            variant="heading3"
+            variant="h3"
             sx={{
               flexGrow: 1,
               width: "100%",

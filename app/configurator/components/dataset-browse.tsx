@@ -980,7 +980,7 @@ export const DatasetResult = ({
             </Tag>
           )}
         </Flex>
-        <Typography component="div" variant="paragraph1" pb={1}>
+        <Typography component="div" variant="body1" pb={1}>
           {highlightedTitle ? (
             <Box
               component="span"

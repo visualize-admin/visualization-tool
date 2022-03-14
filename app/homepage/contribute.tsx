@@ -28,7 +28,7 @@ export const Contribute = ({
             >
               {headline}
             </Typography>
-            <Typography component="div" variant="paragraph1">
+            <Typography component="div" variant="body1">
               {description}
             </Typography>
           </Box>

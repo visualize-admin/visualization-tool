@@ -97,7 +97,7 @@ const TableSortingOptionItem = ({
     >
       <Box sx={{ pr: 2 }}>
         <Typography
-          variant="paragraph1"
+          variant="body1"
           sx={{
             color: "monochrome800",
             lineHeight: [1, 1, 1],

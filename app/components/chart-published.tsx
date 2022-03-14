@@ -79,12 +79,12 @@ export const ChartPublished = ({
           </Box>
         )}
         {meta.title[locale] !== "" && (
-          <Typography component="div" variant="heading2" mb={2}>
+          <Typography component="div" variant="h2" mb={2}>
             {meta.title[locale]}
           </Typography>
         )}
         {meta.description[locale] && (
-          <Typography component="div" variant="paragraph1" mb={2}>
+          <Typography component="div" variant="body1" mb={2}>
             {meta.description[locale]}
           </Typography>
         )}

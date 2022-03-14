@@ -10,7 +10,7 @@ const Page = () => (
   <ContentLayout>
     <Box sx={{ bg: "muted", my: "auto" }}>
       <ErrorPageHint>
-        <Typography component="div" variant="heading2" sx={{ my: 3 }}>
+        <Typography component="div" variant="h2" sx={{ my: 3 }}>
           Diese Seite wurde nicht gefunden.
         </Typography>
         <Actions>
@@ -18,7 +18,7 @@ const Page = () => (
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Typography component="div" variant="heading2" sx={{ my: 3 }}>
+        <Typography component="div" variant="h2" sx={{ my: 3 }}>
           Cette page est introuvable.
         </Typography>
         <Actions>
@@ -26,7 +26,7 @@ const Page = () => (
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Typography component="div" variant="heading2" sx={{ my: 3 }}>
+        <Typography component="div" variant="h2" sx={{ my: 3 }}>
           Questa pagina non è stata trovata.
         </Typography>
         <Actions>
@@ -34,7 +34,7 @@ const Page = () => (
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Typography component="div" variant="heading2" sx={{ my: 3 }}>
+        <Typography component="div" variant="h2" sx={{ my: 3 }}>
           This page could not be found.
         </Typography>
         <Actions>

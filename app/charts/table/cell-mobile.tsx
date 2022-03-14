@@ -80,7 +80,7 @@ export const RowMobile = ({
           <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
           <Typography
             as={headingLevel}
-            variant="paragraph1"
+            variant="body1"
             sx={{ color: "monochrome900" }}
             {...row.getToggleRowExpandedProps()}
           >

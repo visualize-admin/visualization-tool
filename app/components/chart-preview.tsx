@@ -54,7 +54,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           <>
             <>
               <Typography
-                variant="heading2"
+                variant="h2"
                 sx={{
                   mb: 2,
                   color:
@@ -76,7 +76,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 </title>
               </Head>
               <Typography
-                variant="paragraph1"
+                variant="body1"
                 sx={{
                   mb: 2,
                   color:

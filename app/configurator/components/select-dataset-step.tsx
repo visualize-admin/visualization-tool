@@ -137,7 +137,7 @@ export const SelectDatasetStepContent = () => {
                 {filters.length > 0 ? (
                   <Typography
                     key="filters"
-                    variant="heading1"
+                    variant="h1"
                     color="monochrome800"
                     mb={4}
                     sx={{ display: "block" }}
@@ -154,7 +154,7 @@ export const SelectDatasetStepContent = () => {
                   <>
                     <Typography
                       key="all-datasets"
-                      variant="heading1"
+                      variant="h1"
                       color="monochrome800"
                       mb={4}
                       sx={{ display: "block" }}
@@ -164,7 +164,7 @@ export const SelectDatasetStepContent = () => {
                       </Trans>
                     </Typography>
                     <Typography
-                      variant="paragraph1"
+                      variant="body1"
                       color="monochrome800"
                       sx={{
                         mb: 4,

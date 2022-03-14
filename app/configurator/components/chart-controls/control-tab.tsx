@@ -266,7 +266,7 @@ export const ControlTabButtonInner = ({
           </Typography>
         )}
         <Typography
-          variant="paragraph1"
+          variant="body1"
           sx={{
             color: optional && !checked ? "monochrome600" : "monochrome800",
             lineHeight: [1, 1, 1],

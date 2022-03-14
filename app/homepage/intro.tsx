@@ -72,7 +72,7 @@ export const Title = ({ children }: { children: ReactNode }) => (
 export const Teaser = ({ children }: { children: ReactNode }) => (
   <Box sx={{ mb: [6, 5] }}>
     <Typography
-      variant="paragraph1"
+      variant="body1"
       sx={{
         fontSize: [4, 4, 4],
         textAlign: "center",

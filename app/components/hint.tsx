@@ -78,7 +78,7 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
     }}
   >
     <Spinner />
-    <Typography component="div" variant="heading4">
+    <Typography component="div" variant="h4">
       <Trans id="hint.loading.data">Loading data…</Trans>
     </Typography>
   </Flex>
@@ -114,7 +114,7 @@ export const NoDataHint = () => (
     }}
   >
     <Icon name="warning" size={64} />
-    <Typography component="h5" variant="heading2" sx={{ my: 3 }}>
+    <Typography component="h5" variant="h2" sx={{ my: 3 }}>
       <Trans id="hint.nodata.title">
         No data available for current filter selection
       </Trans>
@@ -141,7 +141,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
     }}
   >
     <Icon name="hintWarning" size={64} />
-    <Typography component="h5" variant="heading2" sx={{ my: 3 }}>
+    <Typography component="h5" variant="h2" sx={{ my: 3 }}>
       <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
     </Typography>
     <Box sx={{ "& > * + *:not([data-no-margin])": { marginTop: 2 } }}>
@@ -178,7 +178,7 @@ export const LoadingGeoDimensionsError = () => (
     }}
   >
     <Icon name="hintWarning" size={64} />
-    <Typography component="h5" variant="heading2" sx={{ my: 3 }}>
+    <Typography component="h5" variant="h2" sx={{ my: 3 }}>
       <Trans id="hint.coordinatesloadingerror.title">
         Coordinates loading error
       </Trans>
@@ -209,7 +209,7 @@ export const ChartUnexpectedError = () => (
     }}
   >
     <Icon name="hintWarning" size={64} />
-    <Typography component="h5" variant="heading2" sx={{ my: 3 }}>
+    <Typography component="h5" variant="h2" sx={{ my: 3 }}>
       <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
     </Typography>
     <Typography component="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
@@ -235,7 +235,7 @@ export const OnlyNegativeDataHint = () => (
     }}
   >
     <Icon name="datasetError" size={64} />
-    <Typography component="h5" variant="heading2" sx={{ my: 3 }}>
+    <Typography component="h5" variant="h2" sx={{ my: 3 }}>
       <Trans id="hint.only.negative.data.title">Negative Values</Trans>
     </Typography>
     <Typography component="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
@@ -265,7 +265,7 @@ export const Success = () => (
     </Box>
     <Typography
       component="p"
-      variant="paragraph1"
+      variant="body1"
       sx={{ textAlign: "left", ml: 4 }}
     >
       <Trans id="hint.publication.success">
@@ -301,7 +301,7 @@ export const HintBlue = ({
     </Box>
     <Typography
       component="p"
-      variant="paragraph1"
+      variant="body1"
       sx={{ textAlign: "left", ml: 4 }}
     >
       {children}
@@ -336,7 +336,7 @@ export const HintRed = ({
     </Box>
     <Typography
       component="p"
-      variant="paragraph1"
+      variant="body1"
       sx={{ textAlign: "left", ml: 4 }}
     >
       {children}

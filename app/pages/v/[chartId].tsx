@@ -86,7 +86,7 @@ const VisualizationPage = (props: PageProps) => {
 
             <Typography
               component="div"
-              variant="heading3"
+              variant="h3"
               mt={3}
               mb={4}
               sx={{
