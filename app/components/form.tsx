@@ -17,6 +17,7 @@ import {
   SelectProps,
 } from "theme-ui";
 import { FieldProps, Option } from "../configurator";
+import { useBrowseContext } from "../configurator/components/dataset-browse";
 import { useTimeFormatUnit } from "../configurator/components/ui-helpers";
 import { TimeUnit } from "../graphql/query-hooks";
 import { Icon } from "../icons";
@@ -432,6 +433,7 @@ export const SearchField = ({
   inputRef?: React.Ref<HTMLInputElement>;
   sx?: BoxProps["sx"];
 } & FieldProps) => {
+  const { search } = useBrowseContext();
   return (
     <Box
       sx={{ color: "monochrome700", fontSize: 4, position: "relative", ...sx }}
@@ -463,7 +465,7 @@ export const SearchField = ({
         autoComplete="off"
         ref={inputRef}
       />
-      {value && value !== "" && onReset && (
+      {onReset && search && search !== "" && (
         <Box
           sx={{
             position: "absolute",
