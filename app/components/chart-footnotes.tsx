@@ -32,11 +32,11 @@ export const ChartFootnotes = ({
 
     return (
       <Box sx={{ mt: 2 }}>
-        <Typography component="div" variant="meta" color="monochrome600">
+        <Typography component="div" variant="caption" color="grey.600">
           <Trans id="metadata.dataset">Dataset</Trans>: {dataCubeByIri.title}
         </Typography>
 
-        <Typography component="div" variant="meta" color="monochrome600">
+        <Typography component="div" variant="caption" color="grey.600">
           <Trans id="metadata.source">Source</Trans>:{" "}
           {dataCubeByIri.publisher && (
             <Box

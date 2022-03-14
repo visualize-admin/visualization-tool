@@ -106,7 +106,7 @@ export const ColorPalette = ({
                     : "monochrome100",
               }}
             >
-              <Typography component="div" variant="meta">
+              <Typography component="div" variant="caption">
                 {palette.label}
               </Typography>
               <Box

@@ -225,7 +225,7 @@ const CallToActionText = ({ label }: { label: ReactNode }) => {
         color: "grey.700",
         fontWeight: "regular",
       }}
-      variant="paragraph2"
+      variant="body2"
     >
       {label}
     </Typography>

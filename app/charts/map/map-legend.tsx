@@ -85,7 +85,7 @@ export const MapLegend = () => {
           {areaLayer.measureLabel && (
             <Typography
               component="div"
-              variant="meta"
+              variant="caption"
               sx={{ marginLeft: `${MARGIN.left}px` }}
             >
               {areaLayer.measureLabel}
@@ -109,7 +109,7 @@ export const MapLegend = () => {
       {symbolLayer.show && (
         <Box sx={{ p: 4 }}>
           {symbolLayer.measureLabel && (
-            <Typography component="div" variant="meta">
+            <Typography component="div" variant="caption">
               {symbolLayer.measureLabel}
             </Typography>
           )}

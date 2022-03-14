@@ -86,7 +86,7 @@ export const MapTooltip = () => {
           margins={{ bottom: 0, left: 0, right: 0, top: 0 }}
         >
           <Box sx={{ minWidth: 200 }}>
-            <Typography component="div" variant="meta" sx={{ fontWeight: "bold" }}>
+            <Typography component="div" variant="caption" sx={{ fontWeight: "bold" }}>
               {hoverObjectType === "area"
                 ? areaLayer.getLabel(interaction.d)
                 : symbolLayer.getLabel(interaction.d)}
@@ -165,7 +165,7 @@ const TooltipRow = (props: TooltipRowProps) => {
   const { title, background, color, value, error } = props;
   return (
     <>
-      <Typography component="div" variant="meta">
+      <Typography component="div" variant="caption">
         {title}
       </Typography>
       <Box
@@ -177,7 +177,7 @@ const TooltipRow = (props: TooltipRowProps) => {
         }}
         style={{ background, color }}
       >
-        <Typography component="div" variant="meta">
+        <Typography component="div" variant="caption">
           {value}
           {error}
         </Typography>

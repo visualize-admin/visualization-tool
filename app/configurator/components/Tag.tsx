@@ -18,7 +18,7 @@ const Tag = ({
   const { sx } = props;
   return (
     <Typography
-      variant="paragraph2"
+      variant="body2"
       {...props}
       sx={{
         bg: type === "DataCubeTheme" ? "successLight" : "primaryLight",

@@ -34,7 +34,7 @@ const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
   return metadata ? (
     <Stack direction="row" spacing={2}>
       <Icon name="column" display="inline" size={16} />
-      <Typography variant="paragraph2">Dimensions</Typography>
+      <Typography variant="body2">Dimensions</Typography>
       <Inspector
         data={Object.fromEntries(
           metadata?.dataCubeByIri?.dimensions.map((d) => [d.label, d]) || []
@@ -132,7 +132,7 @@ const DebugPanel = ({
         borderWidth: 1,
       }}
     >
-      <Box component="h3" variant="text.heading3" sx={{ p: 5, color: "warning" }}>
+      <Box component="h3" variant="h3" sx={{ p: 5, color: "warning" }}>
         🚧 Debug Panel 🚧
       </Box>
       {configurator ? <DebugConfigurator /> : null}

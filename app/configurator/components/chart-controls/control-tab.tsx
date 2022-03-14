@@ -259,7 +259,7 @@ export const ControlTabButtonInner = ({
       <Flex sx={{ flexDirection: "column", alignItems: "flex-start", mx: 3 }}>
         {upperLabel && (
           <Typography
-            variant="meta"
+            variant="caption"
             sx={{ color: "grey.600", lineHeight: [1, 1, 1] }}
           >
             {upperLabel}

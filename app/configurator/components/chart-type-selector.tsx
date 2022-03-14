@@ -64,7 +64,7 @@ export const ChartTypeSelectionButton = ({
     >
       <Icon size={48} name={getIconName(label)} />
       <Typography
-        variant="paragraph2"
+        variant="body2"
         sx={{
           color: disabled
             ? "monochrome600"

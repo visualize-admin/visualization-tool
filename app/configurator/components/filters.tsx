@@ -39,7 +39,7 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   const { activeKeys, allValues } = useMultiFilterContext();
 
   return (
-    <Box color="monochrome500">
+    <Box color="grey.500">
       <Button
         onClick={selectAll}
         variant="inline"
@@ -59,7 +59,7 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
       </Button>
       ·
       <Typography
-        color="monochrome700"
+        color="grey.700"
         sx={{ px: 2, fontSize: "0.875rem", display: "inline" }}
         component="span"
       >

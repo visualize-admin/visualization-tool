@@ -176,7 +176,7 @@ export const EditorBrush = ({
         )}
       </Box>
       <Flex sx={{ justifyContent: "space-between" }}>
-        <Typography component="div" variant="meta">
+        <Typography component="div" variant="caption">
           {chartConfig &&
             chartConfig.interactiveFiltersConfig?.time.presets.from &&
             formatDateAuto(
@@ -187,7 +187,7 @@ export const EditorBrush = ({
               )
             )}
         </Typography>
-        <Typography component="div" variant="meta">
+        <Typography component="div" variant="caption">
           {chartConfig &&
             chartConfig.interactiveFiltersConfig?.time.presets.to &&
             formatDateAuto(

@@ -119,7 +119,7 @@ export const NoDataHint = () => (
         No data available for current filter selection
       </Trans>
     </Typography>
-    <Typography component="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+    <Typography component="p" variant="body2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.nodata.message">
         Please try with another combination of filters.
       </Trans>
@@ -145,7 +145,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
       <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
     </Typography>
     <Box sx={{ "& > * + *:not([data-no-margin])": { marginTop: 2 } }}>
-      <Typography component="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+      <Typography component="p" variant="body2" sx={{ maxWidth: "40rem" }}>
         <Trans id="hint.dataloadingerror.message">
           The data could not be loaded.
         </Trans>
@@ -153,7 +153,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
       {message ? (
         <Typography
           component="p"
-          variant="paragraph2"
+          variant="body2"
           sx={{ maxWidth: "40rem" }}
         >
           {message}
@@ -184,7 +184,7 @@ export const LoadingGeoDimensionsError = () => (
       </Trans>
     </Typography>
     <Box sx={{ "& > * + *:not([data-no-margin])": { marginTop: 2 } }}>
-      <Typography component="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+      <Typography component="p" variant="body2" sx={{ maxWidth: "40rem" }}>
         <Trans id="hint.coordinatesloadingerror.message">
           There was a problem with loading the coordinates from geographical
           dimensions.
@@ -212,7 +212,7 @@ export const ChartUnexpectedError = () => (
     <Typography component="h5" variant="h2" sx={{ my: 3 }}>
       <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
     </Typography>
-    <Typography component="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+    <Typography component="p" variant="body2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.chartunexpected.message">
         An unexpected error occurred while displaying this chart.
       </Trans>
@@ -238,7 +238,7 @@ export const OnlyNegativeDataHint = () => (
     <Typography component="h5" variant="h2" sx={{ my: 3 }}>
       <Trans id="hint.only.negative.data.title">Negative Values</Trans>
     </Typography>
-    <Typography component="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
+    <Typography component="p" variant="body2" sx={{ maxWidth: "40rem" }}>
       <Trans id="hint.only.negative.data.message">
         Negative data values cannot be displayed with this chart type.
       </Trans>

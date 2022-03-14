@@ -969,7 +969,7 @@ export const DatasetResult = ({
     >
       <Stack spacing={2}>
         <Flex sx={{ justifyContent: "space-between" }}>
-          <Typography variant="paragraph2" color="monochrome600">
+          <Typography variant="paragraph2" color="grey.600">
             {datePublished ? <DateFormat date={datePublished} /> : null}
           </Typography>
           {isDraft && (

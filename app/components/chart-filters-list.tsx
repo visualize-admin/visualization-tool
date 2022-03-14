@@ -57,7 +57,7 @@ export const ChartFiltersList = ({
     return (
       <>
         {namedFilters.length > 0 && (
-          <Typography component="div" variant="paragraph2" sx={{ color: "grey.800" }}>
+          <Typography component="div" variant="body2" sx={{ color: "grey.800" }}>
             {namedFilters.map(({ dimension, value }, i) => (
               <Fragment key={dimension.iri}>
                 <Box component="span">
