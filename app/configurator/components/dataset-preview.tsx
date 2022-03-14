@@ -75,7 +75,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           <Typography
             component="div"
             variant="body1"
-            sx={{ mb: 4, color: "monochrome700" }}
+            sx={{ mb: 4, color: "grey.700" }}
           >
             {dataCubeByIri.description}
           </Typography>
@@ -101,7 +101,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             variant="table"
             sx={{
               mt: 4,
-              color: "monochrome600",
+              color: "grey.600",
               width: "100%",
               textAlign: "center",
               fontWeight: "light",

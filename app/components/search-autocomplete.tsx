@@ -29,7 +29,7 @@ const getItemIcon = (item: SearchAutocompleteItem) => {
     );
   } else if (item.__typename === "FreeSearchItem") {
     return (
-      <Box component="span" sx={{ color: "monochrome500" }}>
+      <Box component="span" sx={{ color: "grey.500" }}>
         <SvgIcText height={24} width={24} />
       </Box>
     );

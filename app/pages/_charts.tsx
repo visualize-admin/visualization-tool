@@ -61,7 +61,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                           p: 5,
                           ":disabled": {
                             cursor: "initial",
-                            color: "monochrome500",
+                            color: "grey.500",
                           },
                         }}
                       >

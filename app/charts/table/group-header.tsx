@@ -39,7 +39,7 @@ export const GroupHeader = ({
               >
                 <Box
                   component="span"
-                  sx={{ width: 24, mr: 0, color: "monochrome600" }}
+                  sx={{ width: 24, mr: 0, color: "grey.600" }}
                 >
                   <Icon
                     name={row.isExpanded ? "chevronDown" : "chevronRight"}

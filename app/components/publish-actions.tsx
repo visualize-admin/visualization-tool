@@ -264,7 +264,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
     <Flex sx={{ alignItems: "stretch", height: 48 }} mt={1} mb={2}>
       <Input
         sx={{
-          color: "monochrome700",
+          color: "grey.700",
           px: 2,
           fontFamily: "body",
           fontSize: 4,
@@ -292,7 +292,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
         onMouseLeave={handleMouseLeave}
         onClick={(e) => handleClick(e, iFrameCode)}
         sx={{
-          color: "monochrome600",
+          color: "grey.600",
           bg: "monochrome200",
           position: "relative",
 
@@ -310,15 +310,15 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
 
           ":hover": {
             bg: "monochrome300",
-            color: "monochrome700",
+            color: "grey.700",
           },
           ":active": {
             bg: "monochrome400",
-            color: "monochrome800",
+            color: "grey.800",
           },
           ":disabled": {
             cursor: "initial",
-            color: "monochrome300",
+            color: "grey.300",
           },
         }}
       >
@@ -389,7 +389,7 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
 
       bg: "monochrome700",
       borderRadius: "default",
-      color: "monochrome100",
+      color: "grey.100",
 
       fontSize: 1,
       textAlign: "center",

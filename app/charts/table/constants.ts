@@ -9,7 +9,7 @@ export const TABLE_STYLES: ThemeUICSSObject = {
   tableLayout: "fixed",
 
   fontSize: 3,
-  color: "monochrome700",
+  color: "grey.700",
 
   th: {},
 

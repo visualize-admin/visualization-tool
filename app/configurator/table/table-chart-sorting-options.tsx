@@ -99,7 +99,7 @@ const TableSortingOptionItem = ({
         <Typography
           variant="body1"
           sx={{
-            color: "monochrome800",
+            color: "grey.800",
             lineHeight: [1, 1, 1],
             textAlign: "left",
             mb: 3,

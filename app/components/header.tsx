@@ -88,7 +88,7 @@ export const Header = ({
           pb: [0, 5, 5],
 
           bg: "monochrome100",
-          color: "monochrome700",
+          color: "grey.700",
           flexDirection: ["column", "row"],
         }}
       >
@@ -110,7 +110,7 @@ export const Logo = () => {
           alignItems: ["center", "flex-start"],
           cursor: "pointer",
           textDecoration: "none",
-          color: "monochrome900",
+          color: "grey.900",
         }}
       >
         <Box
@@ -129,7 +129,7 @@ export const Logo = () => {
             borderRightWidth: "1px",
             borderRightStyle: "solid",
             borderRightColor: "monochrome300",
-            color: "monochrome900",
+            color: "grey.900",
           }}
         >
           <LogoDesktop />
@@ -137,7 +137,7 @@ export const Logo = () => {
         <Typography
           component="h1"
           variant="lead"
-          sx={{ pl: [0, 6], textDecoration: "none", color: "monochrome800" }}
+          sx={{ pl: [0, 6], textDecoration: "none", color: "grey.800" }}
         >
           visualize.admin.ch
         </Typography>

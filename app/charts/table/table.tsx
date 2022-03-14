@@ -191,7 +191,7 @@ export const Table = () => {
                     key={i}
                     component="dl"
                     sx={{
-                      color: "monochrome800",
+                      color: "grey.800",
                       fontSize: 2,
                       width: "100%",
                       height: MOBILE_ROW_HEIGHT,
@@ -223,7 +223,7 @@ export const Table = () => {
                 sx={{
                   height: rowHeight,
 
-                  color: "monochrome600",
+                  color: "grey.600",
                   // py: 2,
                   ml: `${row.depth * 12}px`,
                 }}
@@ -330,7 +330,7 @@ export const Table = () => {
           display: "flex",
           justifyContent: "flex-end",
           mb: 5,
-          color: "monochrome600",
+          color: "grey.600",
         }}
       >
         <Trans id="chart.table.number.of.lines">Total number of rows:</Trans>{" "}

@@ -79,7 +79,7 @@ export const RulerContent = ({
           transform: "translateX(-50%)",
           px: 1,
           fontSize: 3,
-          color: "monochrome800",
+          color: "grey.800",
         }}
       >
         {xValue}

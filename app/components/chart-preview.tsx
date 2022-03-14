@@ -30,7 +30,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         flexDirection: "column",
         justifyContent: "space-between",
         flexGrow: 1,
-        color: "monochrome800",
+        color: "grey.800",
         p: 5,
       }}
     >

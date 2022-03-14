@@ -90,7 +90,7 @@ const VisualizationPage = (props: PageProps) => {
               mt={3}
               mb={4}
               sx={{
-                color: "monochrome800",
+                color: "grey.800",
                 fontSize: 5,
                 fontFamily: "body",
                 fontWeight: "regular",

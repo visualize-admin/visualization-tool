@@ -27,7 +27,7 @@ export const Examples = ({
         maxWidth: 1024,
         margin: [0, 0, "0 auto"],
         p: 4,
-        color: "monochrome800",
+        color: "grey.800",
       }}
     >
       <HomepageSection>{headline}</HomepageSection>

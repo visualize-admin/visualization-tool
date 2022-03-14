@@ -958,7 +958,7 @@ export const DatasetResult = ({
       onClick={handleClick}
       sx={{
         position: "relative",
-        color: "monochrome700",
+        color: "grey.700",
         cursor: "pointer",
         textAlign: "left",
         py: 4,

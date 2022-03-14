@@ -9,7 +9,7 @@ export const HomepageSection = ({ children }: { children: ReactNode }) => (
       lineHeight: [7, 8, 8],
       fontWeight: "light",
       fontSize: [6, 7, 7],
-      color: "monochrome800",
+      color: "grey.800",
       mb: 6,
       textAlign: "center",
     }}

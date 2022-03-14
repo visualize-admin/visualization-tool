@@ -39,7 +39,7 @@ export const ChartPublished = ({
       p={5}
       sx={{
         flexGrow: 1,
-        color: "monochrome800",
+        color: "grey.800",
         flexDirection: "column",
         justifyContent: "space-between",
       }}

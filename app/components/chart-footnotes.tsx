@@ -41,7 +41,7 @@ export const ChartFootnotes = ({
           {dataCubeByIri.publisher && (
             <Box
               component="span"
-              sx={{ "> a": { color: "monochrome600" } }}
+              sx={{ "> a": { color: "grey.600" } }}
               dangerouslySetInnerHTML={{ __html: dataCubeByIri.publisher }}
             ></Box>
           )}

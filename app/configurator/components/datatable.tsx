@@ -41,7 +41,7 @@ const PreviewTable = ({
             fontFamily: "body",
             fontSize: [3],
             verticalAlign: "baseline",
-            color: "monochrome700",
+            color: "grey.700",
             borderBottomColor: "monochrome700",
             borderBottomWidth: "1px",
             borderBottomStyle: "solid",
@@ -74,7 +74,7 @@ const PreviewTable = ({
               sx={{
                 fontFamily: "body",
                 fontSize: [3],
-                color: "monochrome800",
+                color: "grey.800",
                 borderBottomColor: "monochrome400",
                 borderBottomWidth: "1px",
                 borderBottomStyle: "solid",

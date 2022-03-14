@@ -25,7 +25,7 @@ const Tag = ({
         px: 2,
         width: "fit-content",
         borderRadius: "default",
-        color: "monochrome700",
+        color: "grey.700",
         textDecoration: "none",
         "&:hover": {
           boxShadow: "primary",

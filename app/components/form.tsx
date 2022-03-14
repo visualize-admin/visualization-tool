@@ -202,7 +202,7 @@ export const Select = ({
   }, [options, locale, sortOptions]);
 
   return (
-    <Box sx={{ color: "monochrome700" }}>
+    <Box sx={{ color: "grey.700" }}>
       {label && (
         <Label htmlFor={id} disabled={disabled} smaller>
           {label}
@@ -254,7 +254,7 @@ export const MiniSelect = ({
   label?: ReactNode;
   disabled?: boolean;
 } & SelectProps) => (
-  <Box sx={{ color: "monochrome800" }}>
+  <Box sx={{ color: "grey.800" }}>
     {label && (
       <Label htmlFor={id} smaller>
         {label}
@@ -300,7 +300,7 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "monochrome700", fontSize: 4, pb: 2 }}>
+  <Box sx={{ color: "grey.700", fontSize: 4, pb: 2 }}>
     {label && name && (
       <Label htmlFor={name} smaller>
         {label}
@@ -436,7 +436,7 @@ export const SearchField = ({
   const { search } = useBrowseContext();
   return (
     <Box
-      sx={{ color: "monochrome700", fontSize: 4, position: "relative", ...sx }}
+      sx={{ color: "grey.700", fontSize: 4, position: "relative", ...sx }}
     >
       {label && id && (
         <label htmlFor={id}>
@@ -508,7 +508,7 @@ export const FieldSetLegend = ({
       fontWeight: "regular",
       fontSize: [1, 2, 2],
       mb: 1,
-      color: "monochrome800",
+      color: "grey.800",
     }}
     component="legend"
   >
@@ -595,7 +595,7 @@ export const Switch = ({
           sx={{
             fontSize: 2,
             ml: "32px",
-            color: "monochrome700",
+            color: "grey.700",
             cursor: disabled ? "default" : "pointer",
             pointerEvents: disabled ? "none" : "unset",
           }}

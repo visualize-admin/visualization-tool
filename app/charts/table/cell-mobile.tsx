@@ -32,7 +32,7 @@ export const RowMobile = ({
               key={i}
               component="dl"
               sx={{
-                color: "monochrome800",
+                color: "grey.800",
                 fontSize: 2,
                 width: "100%",
                 justifyContent: "space-between",
@@ -72,7 +72,7 @@ export const RowMobile = ({
           sx={{
             borderTop: "1px solid",
             borderTopColor: "monochrome400",
-            color: "monochrome600",
+            color: "grey.600",
             py: 2,
             ml: `${row.depth * 12}px`,
           }}
@@ -81,7 +81,7 @@ export const RowMobile = ({
           <Typography
             as={headingLevel}
             variant="body1"
-            sx={{ color: "monochrome900" }}
+            sx={{ color: "grey.900" }}
             {...row.getToggleRowExpandedProps()}
           >
             {`${row.groupByVal}`}

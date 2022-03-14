@@ -222,7 +222,7 @@ const CallToActionText = ({ label }: { label: ReactNode }) => {
   return (
     <Typography
       sx={{
-        color: "monochrome700",
+        color: "grey.700",
         fontWeight: "regular",
       }}
       variant="paragraph2"

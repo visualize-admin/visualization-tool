@@ -14,7 +14,7 @@ export const Contribute = ({
   buttonUrl: string;
 }) => {
   return (
-    <Box sx={{ bg: "primary", color: "monochrome100" }}>
+    <Box sx={{ bg: "primary", color: "grey.100" }}>
       <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
         <Flex sx={{ flexDirection: ["column", "row"], px: 4, py: [6, 6, 7] }}>
           <Box sx={{ width: ["100%", "100%", "70%"], mb: [6, 6, 0] }}>

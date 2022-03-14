@@ -6,7 +6,7 @@
  *
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
-import { createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 
 /**
  * Theme conforming to the Swiss Federal CD guidelines
@@ -269,7 +269,7 @@ export const theme = createTheme();
 //   primary: {
 //     variant: "buttons.base",
 //     bg: "primary",
-//     color: "monochrome100",
+//     color: "grey.100",
 //     ":hover": {
 //       bg: "primaryHover",
 //     },
@@ -347,7 +347,7 @@ export const theme = createTheme();
 //   inverted: {
 //     variant: "buttons.base",
 //     bg: "monochrome100",
-//     color: "monochrome800",
+//     color: "grey.800",
 //     borderRadius: "default",
 //     px: 4,
 //     py: 3,
@@ -363,7 +363,7 @@ export const theme = createTheme();
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       color: "monochrome600",
+//       color: "grey.600",
 //       bg: "monochrome300",
 //     },
 //   },
@@ -384,7 +384,7 @@ export const theme = createTheme();
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       color: "monochrome500",
+//       color: "grey.500",
 //     },
 //     "& > svg:first-child": {
 //       width: "auto",
@@ -398,7 +398,7 @@ export const theme = createTheme();
 //   "inline-bold": {
 //     variant: "buttons.base",
 //     background: "transparent",
-//     color: "monochrome800",
+//     color: "grey.800",
 //     fontFamily: "body",
 //     lineHeight: [1, 2, 2],
 //     fontWeight: "bold",
@@ -412,7 +412,7 @@ export const theme = createTheme();
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       color: "monochrome500",
+//       color: "grey.500",
 //     },
 //     "& > svg:first-child": {
 //       width: "auto",
@@ -424,7 +424,7 @@ export const theme = createTheme();
 //     },
 //   },
 //   selectColorPicker: {
-//     color: "monochrome700",
+//     color: "grey.700",
 //     display: "flex",
 //     justifyContent: "space-between",
 //     alignItems: "center",

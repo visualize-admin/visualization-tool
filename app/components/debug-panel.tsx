@@ -13,7 +13,7 @@ const DebugInteractiveFilters = () => {
   const [interactiveFiltersState] = useInteractiveFilters();
   return (
     <>
-      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "grey.700" }}>
         Interactive Filters State
       </Box>
       <Box sx={{ p: 5 }}>
@@ -48,7 +48,7 @@ const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
   return (
     <>
-      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "grey.700" }}>
         Cube Tools
       </Box>
       <Stack spacing={2} sx={{ p: 5 }}>
@@ -93,7 +93,7 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
           <CubeMetadata datasetIri={configuratorState.dataSet} />
         ) : null}
       </Stack>
-      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "grey.700" }}>
         Configurator State{" "}
         <Link
           variant="inline"

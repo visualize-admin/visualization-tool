@@ -106,7 +106,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
       <Box sx={{ position: "relative" }}>
         <Input
           sx={{
-            color: "monochrome700",
+            color: "grey.700",
             borderColor: "monochrome500",
             bg: "monochrome100",
             fontSize: 3,

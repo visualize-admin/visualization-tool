@@ -140,7 +140,7 @@ export const DownloadButton = ({
       p: 0,
       ":disabled": {
         cursor: "initial",
-        color: "monochrome500",
+        color: "grey.500",
       },
       "&:hover": {
         textDecoration: "underline",

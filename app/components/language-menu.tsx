@@ -57,7 +57,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
               p: 1,
               textTransform: "uppercase",
               textDecoration: "none",
-              color: "monochrome700",
+              color: "grey.700",
               bg:
                 locale === currentLocale
                   ? ["monochrome500", "monochrome300"]

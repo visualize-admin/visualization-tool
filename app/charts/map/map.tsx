@@ -368,7 +368,7 @@ const ZoomButton = ({
       borderRadius: "default",
       border: "1px solid",
       borderColor: "monochrome500",
-      color: "monochrome700",
+      color: "grey.700",
       bg: "monochrome100",
       padding: 0,
       display: "flex",

@@ -79,7 +79,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                       fontWeight: "bold",
                       fontSize: 3,
                       bg: "monochrome100",
-                      color: "monochrome700",
+                      color: "grey.700",
                     }}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
                   >

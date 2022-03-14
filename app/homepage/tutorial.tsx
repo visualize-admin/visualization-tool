@@ -20,7 +20,7 @@ export const Tutorial = ({
 }) => {
   return (
     <Box
-      sx={{ maxWidth: 1024, m: "0 auto", color: "monochrome800", px: 4, pb: 7 }}
+      sx={{ maxWidth: 1024, m: "0 auto", color: "grey.800", px: 4, pb: 7 }}
     >
       <HomepageSection>{headline}</HomepageSection>
       <Flex
@@ -56,9 +56,8 @@ export const Tutorial = ({
 const HomepageTutorialStep = ({ children }: { children: ReactNode }) => (
   <Typography
     component="div"
+    variant="body1"
     sx={{
-      fontSize: 5,
-      fontFamily: "body",
       mt: 4,
       mb: 2,
     }}

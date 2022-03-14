@@ -189,7 +189,7 @@ export const ControlTabButton = ({
     onClick={() => onClick(value)}
     sx={{
       bg: checked ? "mutedDarker" : "monochrome100",
-      color: "monochrome700",
+      color: "grey.700",
       borderColor: "primary",
       borderRadius: "default",
       width: "100%",
@@ -260,7 +260,7 @@ export const ControlTabButtonInner = ({
         {upperLabel && (
           <Typography
             variant="meta"
-            sx={{ color: "monochrome600", lineHeight: [1, 1, 1] }}
+            sx={{ color: "grey.600", lineHeight: [1, 1, 1] }}
           >
             {upperLabel}
           </Typography>

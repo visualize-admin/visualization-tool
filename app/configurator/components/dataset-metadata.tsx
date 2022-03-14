@@ -45,7 +45,7 @@ export const DataSetMetadata = ({
           </DatasetMetadataTitle>
           <DatasetMetadataBody>
             <Box
-              sx={{ "> a": { color: "monochrome900" } }}
+              sx={{ "> a": { color: "grey.900" } }}
               dangerouslySetInnerHTML={{
                 __html: cube.publisher,
               }}
@@ -105,7 +105,7 @@ const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2],
-      color: "monochrome600",
+      color: "grey.600",
     }}
   >
     {children}
@@ -118,7 +118,7 @@ const DatasetMetadataBody = ({ children }: { children: ReactNode }) => (
       lineHeight: [4, 5, 5],
       fontWeight: "regular",
       fontSize: [3, 4, 4],
-      color: "monochrome900",
+      color: "grey.900",
       mb: 3,
     }}
   >

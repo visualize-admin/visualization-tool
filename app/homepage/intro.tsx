@@ -57,7 +57,7 @@ export const Title = ({ children }: { children: ReactNode }) => (
   <Typography
     component="h1"
     sx={{
-      color: "monochrome800",
+      color: "grey.800",
       textAlign: "center",
       fontFamily: "body",
       lineHeight: 1.2,
@@ -76,7 +76,7 @@ export const Teaser = ({ children }: { children: ReactNode }) => (
       sx={{
         fontSize: [4, 4, 4],
         textAlign: "center",
-        color: "monochrome700",
+        color: "grey.700",
       }}
     >
       {children}
