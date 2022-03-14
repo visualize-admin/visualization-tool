@@ -102,7 +102,7 @@ const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
   <Typography
     variant="caption"
     sx={{
-      lineHeight: [1, 2, 2],
+      lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       color: "grey.600",
@@ -115,7 +115,7 @@ const DatasetMetadataBody = ({ children }: { children: ReactNode }) => (
   <Typography
     variant="body1"
     sx={{
-      lineHeight: [4, 5, 5],
+      lineHeight: ["1.375rem", "1.5rem", "1.5rem"],
       fontWeight: "regular",
       fontSize: ["0.875rem", "1rem", "1rem"],
       color: "grey.900",

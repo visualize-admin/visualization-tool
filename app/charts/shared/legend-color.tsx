@@ -110,7 +110,7 @@ export const LegendItem = ({
       alignItems: "center",
       pl: 2,
 
-      lineHeight: [1, 2, 2],
+      lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       color: "grey.700",

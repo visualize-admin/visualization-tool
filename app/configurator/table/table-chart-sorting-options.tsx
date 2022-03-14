@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";;
+import Flex from "../../components/flex";
 import { t, Trans } from "@lingui/macro";
 import VisuallyHidden from "@reach/visually-hidden";
 import React, { ChangeEvent, useCallback } from "react";
@@ -100,7 +100,7 @@ const TableSortingOptionItem = ({
           variant="body1"
           sx={{
             color: "grey.800",
-            lineHeight: [1, 1, 1],
+            lineHeight: ["1rem", "1rem", "1rem"],
             textAlign: "left",
             mb: 3,
           }}

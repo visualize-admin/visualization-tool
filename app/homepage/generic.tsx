@@ -5,7 +5,7 @@ export const HomepageSection = ({ children }: { children: ReactNode }) => (
   <Typography
     component="h2"
     sx={{
-      lineHeight: [7, 8, 8],
+      lineHeight: ["2.250rem", "3rem", "3rem"],
       fontWeight: "light",
       fontSize: ["1.5rem", "2rem", "2rem"],
       color: "grey.800",

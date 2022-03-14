@@ -307,7 +307,11 @@ export const Input = ({
       </Label>
     )}
     <TUIInput
-      sx={{ borderColor: "monochrome500", backgroundColor: "grey.100", height: "40px" }}
+      sx={{
+        borderColor: "monochrome500",
+        backgroundColor: "grey.100",
+        height: "40px",
+      }}
       id={name}
       name={name}
       value={value}
@@ -501,7 +505,7 @@ export const FieldSetLegend = ({
 }) => (
   <Box
     sx={{
-      lineHeight: [1, 2, 2],
+      lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: [1, 2, 2],
       mb: 1,

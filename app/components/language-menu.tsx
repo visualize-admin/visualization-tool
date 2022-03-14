@@ -25,9 +25,11 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
 
   const alternates =
     contentId && contentId in contentRoutes
-      ? (contentRoutes as {
-          [k: string]: { [k: string]: { title: string; path: string } };
-        })[contentId]
+      ? (
+          contentRoutes as {
+            [k: string]: { [k: string]: { title: string; path: string } };
+          }
+        )[contentId]
       : undefined;
 
   return (
@@ -53,7 +55,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
             sx={{
               variant: "text.paragraph2",
               fontSize: "0.875rem",
-              lineHeight: 3,
+              lineHeight: "1.25rem",
               p: 1,
               textTransform: "uppercase",
               textDecoration: "none",

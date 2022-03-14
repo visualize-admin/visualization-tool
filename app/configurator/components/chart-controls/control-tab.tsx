@@ -260,7 +260,7 @@ export const ControlTabButtonInner = ({
         {upperLabel && (
           <Typography
             variant="caption"
-            sx={{ color: "grey.600", lineHeight: [1, 1, 1] }}
+            sx={{ color: "grey.600", lineHeight: ["1rem", "1rem", "1rem"] }}
           >
             {upperLabel}
           </Typography>
@@ -269,7 +269,7 @@ export const ControlTabButtonInner = ({
           variant="body1"
           sx={{
             color: optional && !checked ? "monochrome600" : "monochrome800",
-            lineHeight: [1, 1, 1],
+            lineHeight: ["1rem", "1rem", "1rem"],
             textAlign: "left",
           }}
         >

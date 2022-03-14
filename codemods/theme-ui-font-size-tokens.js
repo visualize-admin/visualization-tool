@@ -18,6 +18,21 @@ const themeUIFontSizes = [
   "4.5rem",
   "5.5rem",
 ];
+
+const themeUILineHeights = [
+  "0rem",
+  "1rem",
+  "1.125rem",
+  "1.25rem",
+  "1.375rem",
+  "1.5rem",
+  "1.750rem",
+  "2.250rem",
+  "3rem",
+  "4rem",
+  "4.5rem",
+];
+
 export default function transformer(file, api) {
   const j = api.jscodeshift;
 
@@ -29,17 +44,29 @@ export default function transformer(file, api) {
     .forEach((path) => {
       const node = path.node;
       for (let prop of node.value.expression.properties) {
-        if (prop.key && prop.key.name === "fontSize") {
+        let replacements;
+        if (prop.key && prop.key.name === "lineHeight") {
+          replacements = themeUILineHeights;
+        } else if (prop.key && prop.key.name === "fontSize") {
+          replacements = themeUIFontSizes;
+        }
+        if (replacements) {
           const value = prop.value;
           if (value.type === "ArrayExpression") {
             for (let e of value.elements) {
               if (typeof e.value !== "number") {
                 continue;
               }
-              e.value = `"${themeUIFontSizes[e.value]}"`;
+              if (!replacements[e.value]) {
+                continue;
+              }
+              e.value = `"${replacements[e.value]}"`;
             }
           } else if (value.type === "NumericLiteral") {
-            prop.value = `"${themeUIFontSizes[value.value]}"`;
+            if (!replacements[value.value]) {
+              continue;
+            }
+            prop.value = `"${replacements[value.value]}"`;
           }
         }
       }
