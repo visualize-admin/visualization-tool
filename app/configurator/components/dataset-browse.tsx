@@ -340,7 +340,7 @@ export const SearchDatasetBox = ({
         <Button
           onClick={handleClickSubmit}
           variant="small"
-          sx={{ flexShrink: 0, ml: 1, py: 0 }}
+          sx={{ flexShrink: 0, ml: 1, py: 0, cursor: "pointer" }}
         >
           {searchLabel}
         </Button>
