@@ -48,7 +48,17 @@ export const ChartFootnotes = ({
         </Text>
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
-          <DataDownload dataSetIri={dataSetIri} chartConfig={chartConfig} />
+          <DataDownload
+            dataSetIri={dataSetIri}
+            chartConfig={chartConfig}
+            type="visible"
+          />
+          <Box sx={{ display: "inline", mx: 1 }}>·</Box>
+          <DataDownload
+            dataSetIri={dataSetIri}
+            chartConfig={chartConfig}
+            type="full"
+          />
           {configKey && shareUrl && (
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>

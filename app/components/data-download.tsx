@@ -4,7 +4,7 @@ import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
 import { Box, Button, Link } from "theme-ui";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
-import { ChartConfig, ChartFields } from "../configurator";
+import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
 import {
   DimensionMetaDataFragment,
@@ -12,36 +12,31 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
 
-export interface ChartFieldsWithLabel {
-  [x: string]: string;
-}
+type DataDownloadType = "visible" | "full";
 
 export const DataDownload = memo(
   ({
     dataSetIri,
     chartConfig,
+    type,
   }: {
     dataSetIri: string;
     chartConfig: ChartConfig;
+    type: DataDownloadType;
   }) => {
     const locale = useLocale();
-
-    const filters = useQueryFilters({
-      chartConfig,
-    });
-
+    const filters = useQueryFilters({ chartConfig });
     const [{ data }] = useDataCubeObservationsQuery({
       variables: {
         locale,
         iri: dataSetIri,
         dimensions: null, // FIXME: Other fields may also be measures
-        filters,
+        filters: type === "visible" ? filters : null,
       },
     });
 
     if (data?.dataCubeByIri) {
       const { title, dimensions, measures, observations } = data?.dataCubeByIri;
-
       return (
         <>
           <DataDownloadInner
@@ -49,21 +44,12 @@ export const DataDownload = memo(
             observations={observations.data}
             dimensions={dimensions}
             measures={measures}
-            fields={chartConfig.fields}
+            type={type}
           />
           {observations.sparqlEditorUrl && (
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
-              <Link
-                variant="inline"
-                href={observations.sparqlEditorUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Trans id="button.download.runsparqlquery">
-                  Run SPARQL query
-                </Trans>
-              </Link>
+              <RunSparqlQuery url={observations.sparqlEditorUrl} type={type} />
             </>
           )}
         </>
@@ -80,20 +66,19 @@ const DataDownloadInner = memo(
     observations,
     dimensions,
     measures,
-    fields,
+    type,
   }: {
     title: string;
     observations: Observation[];
     dimensions: DimensionMetaDataFragment[];
     measures: DimensionMetaDataFragment[];
-    fields: ChartFields;
+    type: DataDownloadType;
   }) => {
     const forCsvData = useMemo(() => {
       const columns = [...dimensions, ...measures];
       return observations.map((obs) => {
         return Object.keys(obs).reduce((acc, key) => {
           const col = columns.find((d) => d.iri === key);
-
           return col
             ? {
                 ...acc,
@@ -103,19 +88,44 @@ const DataDownloadInner = memo(
         }, {});
       });
     }, [dimensions, measures, observations]);
-
     const csvData = csvFormat(forCsvData);
-
     const blob = new Blob([csvData], {
       type: "text/plain;charset=utf-8",
     });
+
     return (
       <DownloadButton onClick={() => saveAs(blob, `${title}.csv`)}>
-        <Trans id="button.download.data">Download data</Trans>
+        {type === "visible" ? (
+          <Trans id="button.download.data.visible">Download visible data</Trans>
+        ) : (
+          <Trans id="button.download.data.all">Download all data</Trans>
+        )}
       </DownloadButton>
     );
   }
 );
+
+const RunSparqlQuery = ({
+  url,
+  type,
+}: {
+  url: string;
+  type: DataDownloadType;
+}) => {
+  return (
+    <Link variant="inline" href={url} target="_blank" rel="noopener noreferrer">
+      {type === "visible" ? (
+        <Trans id="button.download.runsparqlquery.visible">
+          Run SPARQL query (visible)
+        </Trans>
+      ) : (
+        <Trans id="button.download.runsparqlquery.all">
+          Run SPARQL query (all)
+        </Trans>
+      )}
+    </Link>
+  );
+};
 
 export const DownloadButton = ({
   onClick,
