@@ -349,7 +349,6 @@ export const SearchDatasetBox = ({
         <Typography
           color="secondary"
           sx={{
-            fontFamily: "body",
             fontSize: ["0.75rem", "0.75rem", "0.75rem"],
             lineHeight: "24px",
           }}
@@ -383,7 +382,6 @@ export const SearchDatasetBox = ({
             <Typography
               color="secondary"
               sx={{
-                fontFamily: "body",
                 fontSize: ["0.625rem", "0.75rem", "0.75rem"],
                 lineHeight: "24px",
               }}

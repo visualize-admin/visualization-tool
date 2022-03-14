@@ -22,7 +22,7 @@ export const Contribute = ({
               sx={{
                 fontSize: ["1.5rem", "1.5rem", "2rem"],
                 lineHeight: 1.25,
-                fontFamily: "body",
+
                 mb: 3,
               }}
             >

@@ -38,7 +38,6 @@ const PreviewTable = ({
         <Box
           component="tr"
           sx={{
-            fontFamily: "body",
             fontSize: ["0.875rem"],
             verticalAlign: "baseline",
             color: "grey.700",
@@ -72,7 +71,6 @@ const PreviewTable = ({
             <Box
               component="tr"
               sx={{
-                fontFamily: "body",
                 fontSize: [3],
                 color: "grey.800",
                 borderBottomColor: "monochrome400",

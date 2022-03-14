@@ -266,7 +266,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
         sx={{
           color: "grey.700",
           px: 2,
-          fontFamily: "body",
+
           fontSize: 4,
           minWidth: 160,
           overflowX: "auto",

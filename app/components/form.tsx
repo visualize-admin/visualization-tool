@@ -54,7 +54,7 @@ export const Label = ({
         sx={
           {
             textAlign: "left",
-            fontFamily: "body",
+
             pr: 1,
             fontSize: smaller ? [2, 2, 2] : [3, 3, 3],
             WebkitLineClamp: 2,
@@ -264,7 +264,7 @@ export const MiniSelect = ({
       sx={{
         borderColor: "transparent",
         fontSize: [1, 2, 2],
-        fontFamily: "body",
+
         bg: "transparent",
         py: 0,
         pl: 1,
@@ -503,7 +503,6 @@ export const FieldSetLegend = ({
 }) => (
   <Box
     sx={{
-      fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2],

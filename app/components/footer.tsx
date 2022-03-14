@@ -115,7 +115,6 @@ export const Footer = () => {
               py: [3, 4],
               color: "secondary",
               fontSize: 3,
-              fontFamily: "body",
             }}
           >
             <Version />
@@ -159,7 +158,7 @@ const FooterLink = ({
       py: [0, 4],
       color: "primary",
       fontSize: 3,
-      fontFamily: "body",
+
       textDecoration: "none",
       cursor: "pointer",
       ":hover": {
@@ -191,7 +190,7 @@ const FooterLinkBottom = forwardRef<
         py: [3, 4],
         color: "primary",
         fontSize: 3,
-        fontFamily: "body",
+
         borderLeftWidth: ["1px", 0],
         borderLeftStyle: "solid",
         borderLeftColor: "monochrome500",

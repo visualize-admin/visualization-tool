@@ -246,7 +246,7 @@ const Example = ({
         sx={{
           fontSize: ["1.125rem", "1.125rem", "1.5rem"],
           lineHeight: 1.5,
-          fontFamily: "body",
+
           fontWeight: "bold",
           mb: [2, 2, 4],
         }}
@@ -258,7 +258,7 @@ const Example = ({
         sx={{
           fontSize: 4,
           lineHeight: 1.5,
-          fontFamily: "body",
+
           mt: 4,
           mb: [2, 2, 0],
         }}

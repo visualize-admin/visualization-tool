@@ -109,7 +109,7 @@ export const LegendItem = ({
       justifyContent: "flex-start",
       alignItems: "center",
       pl: 2,
-      fontFamily: "body",
+
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],

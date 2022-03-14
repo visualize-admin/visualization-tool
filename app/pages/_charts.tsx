@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";;
+import Flex from "../../components/flex";
 import { NextPage } from "next";
 import NextLink from "next/link";
 import { Box, Link } from "@mui/material";
@@ -51,7 +51,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                           background: "transparent",
                           color: "primary",
                           textAlign: "left",
-                          fontFamily: "body",
+
                           lineHeight: [1, 2, 2],
                           fontWeight: "regular",
                           fontSize: [1, 2, 2],

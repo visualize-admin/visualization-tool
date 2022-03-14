@@ -101,7 +101,6 @@ export const DataSetMetadata = ({
 const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
   <Box
     sx={{
-      fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2],
@@ -114,7 +113,6 @@ const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
 const DatasetMetadataBody = ({ children }: { children: ReactNode }) => (
   <Box
     sx={{
-      fontFamily: "body",
       lineHeight: [4, 5, 5],
       fontWeight: "regular",
       fontSize: [3, 4, 4],

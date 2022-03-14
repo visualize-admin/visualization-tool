@@ -196,7 +196,7 @@ export const ControlTabButton = ({
       minWidth: 160,
       px: 2,
       py: 3,
-      fontFamily: "body",
+
       fontSize: ["0.875rem", "0.875rem", "0.875rem"],
       transition: "background-color .2s",
       cursor: "pointer",
