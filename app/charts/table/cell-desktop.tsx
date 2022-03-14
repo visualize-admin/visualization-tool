@@ -45,7 +45,7 @@ export const CellDesktop = ({
             justifyContent:
               columnComponentType === "Measure" ? "flex-end" : "flex-start",
             color: textColor,
-            bg: columnColor,
+            backgroundColor: columnColor,
             fontWeight: textStyle,
             px: 3,
           }}
@@ -83,7 +83,7 @@ export const CellDesktop = ({
               : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
               ? "#fff"
               : "#000",
-            bg: isNull
+            backgroundColor: isNull
               ? "monochrome100"
               : colorScale
               ? colorScale(cell.value)
@@ -116,7 +116,7 @@ export const CellDesktop = ({
                 width: widthScale.range()[1],
                 height: 18,
                 position: "relative",
-                bg: barShowBackground ? barColorBackground : "monochrome100",
+                backgroundColor: barShowBackground ? barColorBackground : "monochrome100",
               }}
             >
               <Box
@@ -126,7 +126,7 @@ export const CellDesktop = ({
                   left: getBarLeftOffset(cell.value, widthScale),
                   width: getBarWidth(cell.value, widthScale),
                   height: 18,
-                  bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                  backgroundColor: cell.value > 0 ? barColorPositive : barColorNegative,
                 }}
               />
               <Box
@@ -139,7 +139,7 @@ export const CellDesktop = ({
                       : getBarLeftOffset(cell.value, widthScale),
                   width: "1px",
                   height: 22,
-                  bg: "monochrome700",
+                  backgroundColor: "grey.700",
                 }}
               />
             </Box>
@@ -154,7 +154,7 @@ export const CellDesktop = ({
             justifyContent:
               columnComponentType === "Measure" ? "flex-end" : "flex-start",
             color: textColor,
-            bg: columnColor,
+            backgroundColor: columnColor,
             textAlign: columnComponentType === "Measure" ? "right" : "left",
             fontWeight: textStyle,
             px: 3,

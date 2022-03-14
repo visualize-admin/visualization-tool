@@ -78,7 +78,7 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                       borderBottomColor: "monochrome700",
                       fontWeight: "bold",
                       fontSize: "0.875rem",
-                      bg: "monochrome100",
+                      backgroundColor: "grey.100",
                       color: "grey.700",
                     }}
                     {...column.getHeaderProps(column.getSortByToggleProps())}

@@ -45,7 +45,7 @@ export const HomeLink = ({
   <NextLink href={`/`} locale={locale} passHref>
     <Link
       sx={{
-        bg: "transparent",
+        backgroundColor: "transparent",
         color: "primary",
         textDecoration: "underline",
         cursor: "pointer",
@@ -62,7 +62,7 @@ export const ReloadButton = ({ children }: { children: ReactNode }) => {
     <Typography
       onClick={() => router.reload()}
       sx={{
-        bg: "transparent",
+        backgroundColor: "transparent",
         color: "primary",
         textDecoration: "underline",
         cursor: "pointer",

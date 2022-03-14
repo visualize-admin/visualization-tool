@@ -123,7 +123,7 @@ export const LegendItem = ({
         width: ".5rem",
         height: symbol === "square" || symbol === "circle" ? `.5rem` : 2,
         borderRadius: symbol === "circle" ? "50%" : 0,
-        bg: color,
+        backgroundColor: color,
       },
     }}
   >

@@ -311,7 +311,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
         onClick={(e) => handleClick(e, iFrameCode)}
         sx={{
           color: "grey.600",
-          bg: "monochrome200",
+          backgroundColor: "grey.200",
           position: "relative",
 
           borderTopRightRadius: "default",
@@ -327,11 +327,11 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           cursor: "pointer",
 
           ":hover": {
-            bg: "monochrome300",
+            backgroundColor: "grey.300",
             color: "grey.700",
           },
           ":active": {
-            bg: "monochrome400",
+            backgroundColor: "grey.400",
             color: "grey.800",
           },
           ":disabled": {
@@ -358,7 +358,7 @@ const PublishActionModal = ({ children }: { children: ReactNode }) => (
       zIndex: 12,
       py: 2,
       px: 4,
-      bg: "monochrome100",
+      backgroundColor: "grey.100",
       boxShadow: "primary",
       borderRadius: "default",
 
@@ -384,7 +384,7 @@ const PublishActionOverlay = () => (
     sx={{
       zIndex: 10,
       display: ["block", "none"],
-      bg: "monochrome900",
+      backgroundColor: "grey.900",
       opacity: 0.25,
       width: "100vw",
       height: "100vh",
@@ -405,7 +405,7 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
       left: "50%",
       transform: "translate3d(-50%, 0, 0)",
 
-      bg: "monochrome700",
+      backgroundColor: "grey.700",
       borderRadius: "default",
       color: "grey.100",
 

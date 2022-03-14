@@ -15,7 +15,7 @@ export const Tag = ({
   <Box
     component="span"
     sx={{
-      bg: tagColor,
+      backgroundColor: tagColor,
       color: hcl(tagColor).l < 55 ? "#fff" : "#000",
       borderRadius: "15px",
       px: 2,

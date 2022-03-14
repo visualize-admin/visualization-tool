@@ -29,7 +29,7 @@ export const ContentLayout = ({
       sx={{
         minHeight: "100vh",
         flexDirection: "column",
-        bg: contentId === "home" ? "monochrome100" : "muted",
+        backgroundColor: contentId === "home" ? "monochrome100" : "muted",
       }}
     >
       <Header pageType="content" contentId={contentId} />
@@ -61,7 +61,7 @@ export const StaticContentLayout = ({
       sx={{
         minHeight: "100vh",
         flexDirection: "column",
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
       }}
     >
       <Header pageType="content" contentId={contentId} />

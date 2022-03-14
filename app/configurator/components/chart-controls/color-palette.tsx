@@ -92,7 +92,7 @@ export const ColorPalette = ({
         )}
         <Icon name="unfold" />
       </Button>
-      <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
+      <Box {...getMenuProps()} sx={{ backgroundColor: "grey.100" }}>
         {isOpen &&
           palettes.map((palette, index) => (
             <Box
@@ -152,7 +152,7 @@ const ColorSquare = ({
 }) => (
   <Box
     sx={{
-      bg: disabled ? "monochrome300" : color,
+      backgroundColor: disabled ? "monochrome300" : color,
       display: "inline-block",
       margin: 0,
       padding: 0,

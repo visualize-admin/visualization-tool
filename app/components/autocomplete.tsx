@@ -32,7 +32,7 @@ const AutocompleteList = React.forwardRef<HTMLDivElement>(
           width: "100%",
           listStyleType: "none",
           ...boxProps.sx,
-          bg: "monochrome100",
+          backgroundColor: "grey.100",
           boxShadow: "primary",
           borderRadius: 10,
           overflow: "hidden",
@@ -148,7 +148,7 @@ function Autocomplete<TItem>({
         <Input
           {...getInputProps()}
           placeholder={placeholder}
-          sx={{ bg: "monochrome100", width: 400, borderColor: "monochrome300" }}
+          sx={{ backgroundColor: "grey.100", width: 400, borderColor: "monochrome300" }}
         />
       </div>
       <AutocompleteList {...getMenuProps()} sx={menuStyles}>

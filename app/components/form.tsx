@@ -213,7 +213,7 @@ export const Select = ({
         sx={{
           borderColor: "monochrome500",
           fontSize: 4,
-          bg: "monochrome100",
+          backgroundColor: "grey.100",
           pt: 2,
           pb: 2,
           pl: 2,
@@ -265,7 +265,7 @@ export const MiniSelect = ({
         borderColor: "transparent",
         fontSize: [1, 2, 2],
 
-        bg: "transparent",
+        backgroundColor: "transparent",
         py: 0,
         pl: 1,
         pr: 4,
@@ -307,7 +307,7 @@ export const Input = ({
       </Label>
     )}
     <TUIInput
-      sx={{ borderColor: "monochrome500", bg: "monochrome100", height: "40px" }}
+      sx={{ borderColor: "monochrome500", backgroundColor: "grey.100", height: "40px" }}
       id={name}
       name={name}
       value={value}
@@ -450,7 +450,7 @@ export const SearchField = ({
       <TUIInput
         sx={{
           borderColor: "monochrome500",
-          bg: "monochrome100",
+          backgroundColor: "grey.100",
           px: 6,
           ":focus": { outline: "none", borderColor: "primary" },
         }}
@@ -483,7 +483,7 @@ export const SearchField = ({
             </VisuallyHidden>
             <Box
               aria-hidden="true"
-              sx={{ borderRadius: "circle", bg: "monochrome600" }}
+              sx={{ borderRadius: "circle", backgroundColor: "grey.600" }}
             >
               <Icon name="clear" size={16} />
             </Box>
@@ -561,7 +561,7 @@ export const Switch = ({
             left: 0,
             right: 0,
             bottom: 0,
-            bg: checked ? "primary" : "monochrome100",
+            backgroundColor: checked ? "primary" : "monochrome100",
             borderRadius: "12px",
             border: "1px solid",
             borderColor: checked ? "primary" : "monochrome500",
@@ -575,7 +575,7 @@ export const Switch = ({
               width: "12px",
               left: checked ? "calc(100% - 1px)" : "1px",
               bottom: "1px",
-              bg: checked
+              backgroundColor: checked
                 ? "monochrome100"
                 : disabled
                 ? "monochrome500"

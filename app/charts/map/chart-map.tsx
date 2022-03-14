@@ -234,7 +234,7 @@ export const ChartMapPrototype = ({
   baseLayer: BaseLayer;
 }) => {
   return (
-    <Box sx={{ m: 4, bg: "#fff" }}>
+    <Box sx={{ m: 4, backgroundColor: "#fff" }}>
       <ChartMap
         observations={observations}
         features={features}

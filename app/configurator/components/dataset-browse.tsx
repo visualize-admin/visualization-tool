@@ -435,7 +435,7 @@ const NavChip = ({
 }: {
   children: React.ReactNode;
   color: string;
-  bg: string;
+  backgroundColor: string;
 }) => {
   return (
     <Flex
@@ -446,7 +446,7 @@ const NavChip = ({
         alignItems: "center",
         borderRadius: 4,
         color: color,
-        bg: bg,
+        backgroundColor: bg,
         fontSize: "small",
       }}
     >
@@ -527,7 +527,7 @@ const NavItem = ({
       <Button
         component="a"
         sx={{
-          bg: level === 1 ? theme.activeBg : "transparent",
+          backgroundColor: level === 1 ? theme.activeBg : "transparent",
           color: level === 1 ? theme.activeTextColor : theme.activeBg,
           minWidth: "16px",
           minHeight: "16px",
@@ -563,7 +563,7 @@ const NavItem = ({
         borderRadius: 4,
         width: "100%",
         display: "flex",
-        bg: active && level === 1 ? theme.activeBg : "transparent",
+        backgroundColor: active && level === 1 ? theme.activeBg : "transparent",
         transition: "background 0.1s ease",
         "&:hover": {
           background: active ? undefined : "rgba(0, 0, 0, 0.05)",
@@ -577,7 +577,7 @@ const NavItem = ({
     >
       {active ? (
         <>
-          <Typography variant="paragraph2">{children}</Typography>
+          <Typography variant="body2">{children}</Typography>
           {level === 1 ? removeFilterButton : countChip}
         </>
       ) : (
@@ -648,7 +648,7 @@ export const Subthemes = ({
 };
 
 type NavSectionTitleTheme = {
-  bg: string;
+  backgroundColor: string;
   borderColor: string;
 };
 
@@ -669,7 +669,7 @@ export const NavSectionTitle = ({
         cursor: "pointer",
         // border: "1px solid",
         // borderColor: theme.borderColor,
-        bg: theme.bg,
+        backgroundColor: theme.bg,
         borderRadius: 4,
         height: "2.5rem",
         mb: 2,
@@ -754,13 +754,13 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     displayedThemes && displayedThemes.length > 0 ? (
       <div>
         <NavSectionTitle
-          theme={{ bg: "categoryLight", borderColor: "category" }}
+          theme={{ backgroundColor: "categoryLight", borderColor: "category" }}
           sx={{ mb: "block" }}
         >
           <Box component="span" color="category" mr={2}>
             <SvgIcCategories width={24} height={24} />
           </Box>
-          <Typography variant="paragraph2" sx={{ fontWeight: "bold" }}>
+          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
             <Trans id="browse-panel.themes">Themes</Trans>
           </Typography>
         </NavSectionTitle>
@@ -788,13 +788,13 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       <div>
         {
           <NavSectionTitle
-            theme={{ bg: "organizationLight", borderColor: "organization" }}
+            theme={{ backgroundColor: "organizationLight", borderColor: "organization" }}
             sx={{ mb: 2 }}
           >
             <Box component="span" color="organization" mr={2}>
               <SvgIcOrganisations width={24} height={24} />
             </Box>
-            <Typography variant="paragraph2" sx={{ fontWeight: "bold" }}>
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
               <Trans id="browse-panel.organizations">Organizations</Trans>
             </Typography>
           </NavSectionTitle>
@@ -963,13 +963,13 @@ export const DatasetResult = ({
         px: 5,
         borderRadius: 10,
         boxShadow: "primary",
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
         mb: 3,
       }}
     >
       <Stack spacing={2}>
         <Flex sx={{ justifyContent: "space-between" }}>
-          <Typography variant="paragraph2" color="grey.600">
+          <Typography variant="body2" color="grey.600">
             {datePublished ? <DateFormat date={datePublished} /> : null}
           </Typography>
           {isDraft && (
@@ -982,7 +982,7 @@ export const DatasetResult = ({
           {highlightedTitle ? (
             <Box
               component="span"
-              sx={{ "& > strong": { bg: "primaryLight" } }}
+              sx={{ "& > strong": { backgroundColor: "primaryLight" } }}
               dangerouslySetInnerHTML={{ __html: highlightedTitle }}
             />
           ) : (
@@ -990,7 +990,7 @@ export const DatasetResult = ({
           )}
         </Typography>
         <Typography
-          variant="paragraph2"
+          variant="body2"
           sx={
             {
               WebkitLineClamp: 2,
@@ -1004,7 +1004,7 @@ export const DatasetResult = ({
           {highlightedDescription ? (
             <Box
               component="span"
-              sx={{ "& > strong": { bg: "primaryLight" } }}
+              sx={{ "& > strong": { backgroundColor: "primaryLight" } }}
               dangerouslySetInnerHTML={{ __html: highlightedDescription }}
             />
           ) : (

@@ -19,7 +19,7 @@ export const PanelLeftWrapper = ({
       sx={{
         overflowX: "hidden",
         overflowY: "auto",
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
         boxShadow: raised ? "rightSide" : undefined,
         borderRightColor: raised ? "monochrome500" : undefined,
         borderRightWidth: raised ? "1px" : undefined,
@@ -49,7 +49,7 @@ export const PanelRightWrapper = ({
       component="section"
       data-name="panel-right"
       sx={{
-        bg: "mutedColored",
+        backgroundColor: "mutedColored",
         overflowX: "hidden",
         overflowY: "auto",
         boxShadow: "leftSide",

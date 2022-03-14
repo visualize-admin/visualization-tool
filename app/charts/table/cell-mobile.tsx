@@ -152,7 +152,7 @@ export const DDContent = ({
               : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
               ? "#fff"
               : "#000",
-            bg: isNull
+            backgroundColor: isNull
               ? "monochrome100"
               : colorScale
               ? colorScale(cell.value)
@@ -185,7 +185,7 @@ export const DDContent = ({
                 width: chartWidth / 2,
                 height: 14,
                 position: "relative",
-                bg: barShowBackground ? barColorBackground : "monochrome100",
+                backgroundColor: barShowBackground ? barColorBackground : "monochrome100",
               }}
             >
               <Box
@@ -195,7 +195,7 @@ export const DDContent = ({
                   left: getBarLeftOffset(cell.value, widthScale),
                   width: getBarWidth(cell.value, widthScale),
                   height: 14,
-                  bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                  backgroundColor: cell.value > 0 ? barColorPositive : barColorNegative,
                 }}
               />
               <Box
@@ -208,7 +208,7 @@ export const DDContent = ({
                       : getBarLeftOffset(cell.value, widthScale),
                   width: "1px",
                   height: 18,
-                  bg: "monochrome700",
+                  backgroundColor: "grey.700",
                 }}
               />
             </Box>

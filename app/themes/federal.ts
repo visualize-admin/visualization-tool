@@ -11,7 +11,13 @@ import { createTheme } from "@mui/material/styles";
 /**
  * Theme conforming to the Swiss Federal CD guidelines
  */
-export const theme = createTheme();
+export const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#006699",
+    },
+  },
+});
 // breakpoints: ["48em", "62em", "75em"],
 // space: [
 //   "0",
@@ -211,7 +217,7 @@ export const theme = createTheme();
 //         url("/static/fonts/FrutigerNeueW02-It.woff") format("woff")`,
 //       },
 //     ],
-//     bg: "monochrome100",
+//     backgroundColor: "grey.100",
 //     margin: 0,
 //     padding: 0,
 //     fontFamily:
@@ -268,17 +274,17 @@ export const theme = createTheme();
 //   },
 //   primary: {
 //     variant: "buttons.base",
-//     bg: "primary",
+//     backgroundColor: "primary.main",
 //     color: "grey.100",
 //     ":hover": {
-//       bg: "primaryHover",
+//       backgroundColor: "primaryHover",
 //     },
 //     ":active": {
-//       bg: "primaryHover",
+//       backgroundColor: "primaryHover",
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       bg: "primaryDisabled",
+//       backgroundColor: "primaryDisabled",
 //     },
 //   },
 //   "primary-small": {
@@ -298,40 +304,40 @@ export const theme = createTheme();
 //   },
 //   success: {
 //     variant: "buttons.base",
-//     bg: "successBase",
+//     backgroundColor: "successBase",
 //     ":hover": {
-//       bg: "successHover",
+//       backgroundColor: "successHover",
 //     },
 //     ":active": {
-//       bg: "successHover",
+//       backgroundColor: "successHover",
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       bg: "successDisabled",
+//       backgroundColor: "successDisabled",
 //     },
 //   },
 //   outline: {
 //     variant: "buttons.base",
 //     color: "primary",
-//     bg: "monochrome100",
+//     backgroundColor: "grey.100",
 //     border: "1px",
 //     borderWidth: "1px",
 //     borderStyle: "solid",
 //     borderColor: "primary",
 //     ":hover": {
-//       bg: "muted",
+//       backgroundColor: "muted",
 //     },
 //     ":active": {
-//       bg: "muted",
+//       backgroundColor: "muted",
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       bg: "muted",
+//       backgroundColor: "muted",
 //     },
 //   },
 //   secondary: {
 //     variant: "buttons.primary",
-//     bg: "secondaryButton",
+//     backgroundColor: "secondaryButton",
 //     color: "secondaryButtonText",
 //     ":hover": {
 //       bg: "secondaryButtonHover",
@@ -438,11 +444,11 @@ export const theme = createTheme();
 //       bg: "monochrome100",
 //     },
 //     ":active": {
-//       bg: "monochrome100",
+//       backgroundColor: "grey.100",
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       bg: "muted",
+//       backgroundColor: "muted",
 //     },
 //   },
 //   arrow: {

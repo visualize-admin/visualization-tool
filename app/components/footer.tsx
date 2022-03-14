@@ -44,7 +44,7 @@ export const Footer = () => {
         flexDirection: ["column", "row"],
         justifyContent: ["flex-start", "space-between"],
         alignItems: ["flex-start", "center"],
-        bg: "monochrome200",
+        backgroundColor: "grey.200",
         borderTopWidth: "1px",
         borderTopStyle: "solid",
         borderTopColor: "monochrome100",

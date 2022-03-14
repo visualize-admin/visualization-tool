@@ -21,7 +21,7 @@ const AccordionArrow = ({
 
 const defaultTheme = {
   borderColor: "monochrome400",
-  bg: "transparent",
+  backgroundColor: "transparent",
 };
 
 const AccordionContext = React.createContext<{
@@ -79,7 +79,7 @@ Accordion.defaultProps = {
 
 type AccordionTheme = {
   borderColor: string;
-  bg: string;
+  backgroundColor: string;
 };
 
 export const AccordionSummary = ({
@@ -103,7 +103,7 @@ export const AccordionSummary = ({
         cursor: "pointer",
         // border: "1px solid",
         // borderColor: theme.borderColor,
-        bg: theme.bg,
+        backgroundColor: theme.bg,
         borderRadius: 4,
         height: "2.5rem",
       }}

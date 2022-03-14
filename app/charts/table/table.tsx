@@ -273,7 +273,7 @@ export const Table = () => {
           sx={{
             width: "100%",
             position: "relative",
-            bg: "monochrome100",
+            backgroundColor: "grey.100",
             mb: 4,
             fontSize: "0.875rem",
           }}
@@ -293,7 +293,7 @@ export const Table = () => {
         <Box
           sx={{
             position: "relative",
-            bg: "monochrome100",
+            backgroundColor: "grey.100",
             mb: 4,
             fontSize: "0.875rem",
           }}
@@ -325,7 +325,7 @@ export const Table = () => {
 
       {/* Number of lines */}
       <Typography
-        variant="paragraph2"
+        variant="body2"
         sx={{
           display: "flex",
           justifyContent: "flex-end",

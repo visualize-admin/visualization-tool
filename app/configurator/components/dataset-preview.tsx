@@ -67,7 +67,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           sx={{
             boxShadow: "primary",
             borderRadius: 20,
-            bg: "monochrome100",
+            backgroundColor: "grey.100",
             py: 6,
             px: 5,
           }}

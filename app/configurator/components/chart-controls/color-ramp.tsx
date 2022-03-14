@@ -143,7 +143,7 @@ export const ColorRampField = ({
           </>
         )}
       </Button>
-      <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
+      <Box {...getMenuProps()} sx={{ backgroundColor: "grey.100" }}>
         {isOpen && (
           <>
             {/* <Typography component="div" variant="caption" sx={{ p: 1 }}>

@@ -87,7 +87,7 @@ export const Header = ({
           pt: [0, 3, 3],
           pb: [0, 5, 5],
 
-          bg: "monochrome100",
+          backgroundColor: "grey.100",
           color: "grey.700",
           flexDirection: ["column", "row"],
         }}

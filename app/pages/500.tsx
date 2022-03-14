@@ -10,7 +10,7 @@ import { ContentLayout } from "../components/layout";
 const Page = () => {
   return (
     <ContentLayout>
-      <Box sx={{ bg: "muted", my: "auto" }}>
+      <Box sx={{ backgroundColor: "muted", my: "auto" }}>
         <ErrorPageHint>
           <Typography component="div" variant="h2" sx={{ my: 3 }}>
             Ein Fehler ist aufgetreten.{" "}

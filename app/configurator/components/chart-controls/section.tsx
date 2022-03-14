@@ -84,7 +84,7 @@ export const SectionTitle = ({
       id={titleId}
       sx={{
         p: 4,
-        bg: "transparent",
+        backgroundColor: "transparent",
         appearance: "none",
         width: "100%",
         border: "none",

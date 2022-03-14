@@ -79,7 +79,7 @@ export const StepperDumb = ({
         alignItems: "center",
         position: "relative",
 
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
         borderBottomColor: "monochrome500",

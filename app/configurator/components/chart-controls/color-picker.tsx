@@ -24,7 +24,7 @@ const Swatch = ({
       sx={{
         width: "1.5rem",
         height: "1.5rem",
-        bg: color,
+        backgroundColor: color,
         borderWidth: 1,
         borderStyle: "solid",
         borderColor: "transparent",
@@ -78,7 +78,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
     <Box
       sx={{
         width: 160,
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
         borderRadius: "default",
         boxShadow: "tooltip",
         p: 3,
@@ -108,7 +108,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
           sx={{
             color: "grey.700",
             borderColor: "monochrome500",
-            bg: "monochrome100",
+            backgroundColor: "grey.100",
             fontSize: "0.875rem",
             ":focus": { outline: "none", borderColor: "primary" },
           }}
@@ -135,7 +135,7 @@ export const ColorPickerMenu = (props: Props) => {
       <Box
         sx={{
           "> button": {
-            bg: "monochrome100",
+            backgroundColor: "grey.100",
             borderRadius: 4,
             overflow: "hidden",
             borderWidth: 1,
@@ -160,7 +160,7 @@ export const ColorPickerMenu = (props: Props) => {
           <Box aria-hidden>
             <Box
               sx={{
-                bg: selectedColor,
+                backgroundColor: selectedColor,
                 width: "1rem",
                 height: "1rem",
               }}

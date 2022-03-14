@@ -22,7 +22,7 @@ export default () => markdown`
             width: 800,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "monochrome100",
+            backgroundColor: "grey.100",
           }}
         >
           <DatasetResult

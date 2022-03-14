@@ -10,7 +10,7 @@ export const ChartPanel = ({
   <Flex
     {...boxProps}
     sx={{
-      bg: "monochrome100",
+      backgroundColor: "grey.100",
       boxShadow: "primary",
       borderRadius: "xl",
       overflow: "hidden",

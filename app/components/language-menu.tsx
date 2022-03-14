@@ -38,7 +38,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         p: [2, 0],
         ml: [0, "auto"],
         width: ["100%", "auto"],
-        bg: ["monochrome300", "transparent"],
+        backgroundColor: ["monochrome300", "transparent"],
         order: [1, 2],
         justifyContent: "flex-end",
       }}

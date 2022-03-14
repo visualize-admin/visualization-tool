@@ -85,7 +85,7 @@ const TableSortingOptionItem = ({
   return component ? (
     <Box
       sx={{
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
         py: 4,
         pl: 4,
         pr: 6,
