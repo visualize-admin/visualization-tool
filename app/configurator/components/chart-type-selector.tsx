@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { SyntheticEvent } from "react";
-import { Box, Button, Grid, Spinner, Typography } from "@mui/material";
+import { Box, Button, Grid, CircularProgress, Typography } from "@mui/material";
 import { ConfiguratorStateSelectingChartType } from "..";
 import { enabledChartTypes, getPossibleChartType } from "../../charts";
 import { Hint, Loading } from "../../components/hint";
@@ -132,7 +132,7 @@ export const ChartTypeSelector = ({
         <SectionTitle>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
           {possibleFiltersFetching ? (
-            <Spinner
+            <CircularProgress
               size={12}
               sx={{ color: "hint", display: "inline-block", ml: 1 }}
             />
