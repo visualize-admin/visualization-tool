@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";;
+import Flex from "../../components/flex";
 import { Trans } from "@lingui/macro";
 import FlexSearch from "flexsearch";
 import { forwardRef, useCallback, useMemo, useState } from "react";

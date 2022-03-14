@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";;
+import Flex from "../../components/flex";
 import { markdown, ReactSpecimen } from "catalog";
 import { ReactNode } from "react";
 import { Box } from "@mui/material";

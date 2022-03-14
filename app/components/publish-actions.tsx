@@ -8,7 +8,15 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Box, Button, ButtonProps, FlexOwnProps, Input, Link, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonProps,
+  FlexOwnProps,
+  Input,
+  Link,
+  Typography,
+} from "@mui/material";
 import { Icon } from "../icons";
 import { useI18n } from "../lib/use-i18n";
 import { useLocale } from "../locales/use-locale";
@@ -221,14 +229,24 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       <>
         <PublishActionOverlay />
         <PublishActionModal>
-          <Typography component="div" variant="body1" color="monochrome700" mt={2}>
+          <Typography
+            component="div"
+            variant="body1"
+            color="monochrome700"
+            mt={2}
+          >
             <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
           </Typography>
 
           <CopyToClipboardTextInput
             iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
-          <Typography component="div" variant="body1" color="monochrome700" mt={2}>
+          <Typography
+            component="div"
+            variant="body1"
+            color="monochrome700"
+            mt={2}
+          >
             <Trans id="publication.embed.AEM">
               Embed Code for AEM &quot;External Application&quot;:{" "}
             </Trans>

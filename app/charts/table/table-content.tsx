@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";;
+import Flex from "../../components/flex";
 import { Box } from "@mui/material";
 import * as React from "react";
 import { HeaderGroup } from "react-table";

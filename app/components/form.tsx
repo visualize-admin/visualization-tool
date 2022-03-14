@@ -435,9 +435,7 @@ export const SearchField = ({
 } & FieldProps) => {
   const { search } = useBrowseContext();
   return (
-    <Box
-      sx={{ color: "grey.700", fontSize: 4, position: "relative", ...sx }}
-    >
+    <Box sx={{ color: "grey.700", fontSize: 4, position: "relative", ...sx }}>
       {label && id && (
         <label htmlFor={id}>
           <VisuallyHidden>{label}</VisuallyHidden>
