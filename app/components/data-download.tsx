@@ -134,7 +134,7 @@ export const DownloadButton = ({
       fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
-      fontSize: [1, 2, 2],
+      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       border: "none",
       cursor: "pointer",
       p: 0,

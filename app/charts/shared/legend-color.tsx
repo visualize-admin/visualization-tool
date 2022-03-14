@@ -112,7 +112,7 @@ export const LegendItem = ({
       fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
-      fontSize: [1, 2, 2],
+      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       color: "grey.700",
 
       "&::before": {

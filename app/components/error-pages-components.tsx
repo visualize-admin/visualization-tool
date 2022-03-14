@@ -24,7 +24,15 @@ export const ErrorPageHint = ({ children }: { children: ReactNode }) => (
 );
 
 export const Actions = ({ children }: { children: ReactNode }) => (
-  <Flex sx={{ mb: 6, fontSize: [4, 5, 5], display: "inline" }}>{children}</Flex>
+  <Flex
+    sx={{
+      mb: 6,
+      fontSize: ["1rem", "1.125rem", "1.125rem"],
+      display: "inline",
+    }}
+  >
+    {children}
+  </Flex>
 );
 
 export const HomeLink = ({

@@ -244,7 +244,7 @@ const Example = ({
       <Typography
         component="h3"
         sx={{
-          fontSize: [5, 5, 6],
+          fontSize: ["1.125rem", "1.125rem", "1.5rem"],
           lineHeight: 1.5,
           fontFamily: "body",
           fontWeight: "bold",

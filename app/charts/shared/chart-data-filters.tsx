@@ -56,7 +56,7 @@ export const ChartDataFilters = ({
                 variant="inline"
                 sx={{
                   display: "flex",
-                  fontSize: [2, 2, 2],
+                  fontSize: ["0.75rem", "0.75rem", "0.75rem"],
                   alignItems: "center",
                   minWidth: "fit-content",
                 }}

@@ -20,7 +20,7 @@ export const Contribute = ({
           <Box sx={{ width: ["100%", "100%", "70%"], mb: [6, 6, 0] }}>
             <Typography
               sx={{
-                fontSize: [6, 6, 7],
+                fontSize: ["1.5rem", "1.5rem", "2rem"],
                 lineHeight: 1.25,
                 fontFamily: "body",
                 mb: 3,

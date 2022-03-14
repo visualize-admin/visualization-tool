@@ -71,7 +71,7 @@ export const ChartTypeSelectionButton = ({
             : checked
             ? "monochrome100"
             : "monochrome700",
-          fontSize: [2, 2, 2],
+          fontSize: ["0.75rem", "0.75rem", "0.75rem"],
         }}
       >
         {getFieldLabel(label)}

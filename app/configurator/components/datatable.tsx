@@ -39,7 +39,7 @@ const PreviewTable = ({
           component="tr"
           sx={{
             fontFamily: "body",
-            fontSize: [3],
+            fontSize: ["0.875rem"],
             verticalAlign: "baseline",
             color: "grey.700",
             borderBottomColor: "monochrome700",
