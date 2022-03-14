@@ -10,7 +10,7 @@ import {
   useTable,
 } from "react-table";
 import { FixedSizeList, VariableSizeList } from "react-window";
-import { Box, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";

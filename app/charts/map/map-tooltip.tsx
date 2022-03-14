@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Box, Grid, Text } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import {
   formatNumberWithUnit,
   useFormatNumber,

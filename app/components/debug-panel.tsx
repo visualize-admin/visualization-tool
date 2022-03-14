@@ -1,6 +1,6 @@
 import React from "react";
 import { Inspector } from "react-inspector";
-import { Box, Link, Text } from "@mui/material";
+import { Box, Link, Typography } from "@mui/material";
 import { useInteractiveFilters } from "../charts/shared/use-interactive-filters";
 import { useConfiguratorState } from "../configurator";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";

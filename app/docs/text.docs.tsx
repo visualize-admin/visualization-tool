@@ -1,5 +1,5 @@
 import { markdown, TableSpecimen } from "catalog";
-import { Text } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useTheme } from "../themes/index";
 const pixelSize = 16;
 

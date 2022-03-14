@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Box, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { useTimeFormatUnit } from "../configurator/components/ui-helpers";

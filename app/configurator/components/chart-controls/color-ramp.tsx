@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { useSelect } from "downshift";
 import { get } from "lodash";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Box, Button, Text } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import {
   DivergingPaletteType,
   SequentialPaletteType,

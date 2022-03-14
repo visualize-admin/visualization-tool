@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Box, Button, ButtonProps, FlexOwnProps, Input, Link, Text } from "@mui/material";
+import { Box, Button, ButtonProps, FlexOwnProps, Input, Link, Typography } from "@mui/material";
 import { Icon } from "../icons";
 import { useI18n } from "../lib/use-i18n";
 import { useLocale } from "../locales/use-locale";

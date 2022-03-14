@@ -4,7 +4,7 @@ import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Button, Text } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPublished } from "../../components/chart-published";
 import { Success } from "../../components/hint";

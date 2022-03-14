@@ -8,7 +8,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, Text } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Radio, Select } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";

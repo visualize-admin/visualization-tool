@@ -1,4 +1,4 @@
-import { Box, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import {
   Actions,
   ErrorPageHint,

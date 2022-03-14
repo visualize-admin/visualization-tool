@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { useEffect, useState } from "react";
-import { Box, Link, Text } from "@mui/material";
+import { Box, Link, Typography } from "@mui/material";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";

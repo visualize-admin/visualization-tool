@@ -1,4 +1,4 @@
-import { Text } from "@mui/material";
+import { Typography } from "@mui/material";
 import { ReactNode } from "react";
 
 export const HomepageSection = ({ children }: { children: ReactNode }) => (

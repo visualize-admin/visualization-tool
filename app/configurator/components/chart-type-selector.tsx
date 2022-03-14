@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { SyntheticEvent } from "react";
-import { Box, Button, Grid, Spinner, Text } from "@mui/material";
+import { Box, Button, Grid, Spinner, Typography } from "@mui/material";
 import { ConfiguratorStateSelectingChartType } from "..";
 import { enabledChartTypes, getPossibleChartType } from "../../charts";
 import { Hint, Loading } from "../../components/hint";

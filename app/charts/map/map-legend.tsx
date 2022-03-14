@@ -13,7 +13,7 @@ import {
 } from "d3";
 import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
-import { Box, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ColorRamp } from "../../configurator/components/chart-controls/color-ramp";
 import {
   getColorInterpolator,

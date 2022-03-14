@@ -2,7 +2,7 @@ import Flex from "../../components/flex";;
 import { Trans } from "@lingui/macro";
 import { bisector, brushX, scaleTime, select, Selection } from "d3";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Box, Text } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Label } from "../../components/form";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
