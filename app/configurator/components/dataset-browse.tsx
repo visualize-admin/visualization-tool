@@ -198,8 +198,8 @@ export const useBrowseState = () => {
         setParams({
           search: newSearch,
           order:
-            search === ""
-              ? DataCubeResultOrder.Score
+            newSearch === ""
+              ? DataCubeResultOrder.TitleAsc
               : previousOrderRef.current,
         });
       },
