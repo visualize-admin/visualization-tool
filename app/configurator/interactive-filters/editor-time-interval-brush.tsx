@@ -7,7 +7,7 @@ import {
   Selection,
 } from "d3";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { Label } from "../../components/form";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
@@ -147,12 +147,12 @@ export const EditorIntervalBrush = ({
         )}
       </Box>
       <Flex sx={{ justifyContent: "space-between" }}>
-        <Text as="div" variant="meta">
+        <Typography as="div" variant="meta">
           {formatDateAuto(timeExtent[0])}
-        </Text>
-        <Text as="div" variant="meta">
+        </Typography>
+        <Typography as="div" variant="meta">
           {formatDateAuto(timeExtent[1])}
-        </Text>
+        </Typography>
       </Flex>
     </Box>
   );

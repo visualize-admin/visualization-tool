@@ -2,7 +2,7 @@ import { t } from "@lingui/macro";
 import { extent, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
-import { Flex } from "theme-ui";
+import { Flex } from "@mui/material";
 import {
   Option,
   useActiveFieldField,

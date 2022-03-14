@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Box, Text } from "theme-ui";
+import { Box, Text } from "@mui/material";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { useTimeFormatUnit } from "../configurator/components/ui-helpers";
@@ -57,7 +57,7 @@ export const ChartFiltersList = ({
     return (
       <>
         {namedFilters.length > 0 && (
-          <Text as="div" variant="paragraph2" sx={{ color: "monochrome800" }}>
+          <Typography as="div" variant="paragraph2" sx={{ color: "monochrome800" }}>
             {namedFilters.map(({ dimension, value }, i) => (
               <Fragment key={dimension.iri}>
                 <Box as="span">
@@ -71,7 +71,7 @@ export const ChartFiltersList = ({
                 {i < namedFilters.length - 1 && ", "}
               </Fragment>
             ))}
-          </Text>
+          </Typography>
         )}
       </>
     );

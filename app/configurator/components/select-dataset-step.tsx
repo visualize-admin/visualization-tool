@@ -3,7 +3,7 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Button, Text } from "theme-ui";
+import { Box, Button, Text } from "@mui/material";
 import { useDebounce } from "use-debounce";
 import { AnimatePresence } from "framer-motion";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
@@ -135,7 +135,7 @@ export const SelectDatasetStepContent = () => {
             ) : (
               <MotionBox {...navPresenceProps}>
                 {filters.length > 0 ? (
-                  <Text
+                  <Typography
                     key="filters"
                     variant="heading1"
                     color="monochrome800"
@@ -149,10 +149,10 @@ export const SelectDatasetStepContent = () => {
                       )
                       .map((f) => f.label)
                       .join(", ")}
-                  </Text>
+                  </Typography>
                 ) : (
                   <>
-                    <Text
+                    <Typography
                       key="all-datasets"
                       variant="heading1"
                       color="monochrome800"
@@ -162,8 +162,8 @@ export const SelectDatasetStepContent = () => {
                       <Trans id="browse.datasets.all-datasets">
                         All datasets
                       </Trans>
-                    </Text>
-                    <Text
+                    </Typography>
+                    <Typography
                       variant="paragraph1"
                       color="monochrome800"
                       sx={{
@@ -180,7 +180,7 @@ export const SelectDatasetStepContent = () => {
                         Click on a dataset to see more detailed information and
                         start creating your own visualizations.
                       </Trans>
-                    </Text>
+                    </Typography>
                   </>
                 )}
                 <Box mb={1} key="search-box">

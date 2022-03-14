@@ -1,4 +1,4 @@
-import { Box, BoxProps, Button, ButtonProps } from "theme-ui";
+import { Box, BoxProps, Button, ButtonProps } from "@mui/material";
 import { Icon } from "../../icons";
 
 const MoveDragButtons = ({

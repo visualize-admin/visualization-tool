@@ -1,6 +1,6 @@
 import { markdown, ReactSpecimen } from "catalog";
 import { useState } from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { Checkbox, Input, Radio, Select } from "../components/form";
 import {
   ColorPicker,

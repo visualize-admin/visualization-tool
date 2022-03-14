@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import Head from "next/head";
 import * as React from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
@@ -52,7 +52,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           state.state === "PUBLISHING") && (
           <>
             <>
-              <Text
+              <Typography
                 variant="heading2"
                 sx={{
                   mb: 2,
@@ -65,7 +65,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 ) : (
                   state.meta.title[locale]
                 )}
-              </Text>
+              </Typography>
               <Head>
                 <title key="title">
                   {state.meta.title[locale] === ""
@@ -74,7 +74,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                   - visualize.admin.ch
                 </title>
               </Head>
-              <Text
+              <Typography
                 variant="paragraph1"
                 sx={{
                   mb: 2,
@@ -89,7 +89,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 ) : (
                   state.meta.description[locale]
                 )}
-              </Text>
+              </Typography>
             </>
             <InteractiveFiltersProvider>
               <ChartWithInteractiveFilters

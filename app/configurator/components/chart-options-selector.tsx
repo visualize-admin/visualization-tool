@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { keyBy } from "lodash";
 import get from "lodash/get";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Box, Flex } from "theme-ui";
+import { Box, Flex } from "@mui/material";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,

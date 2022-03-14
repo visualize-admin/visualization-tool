@@ -9,13 +9,13 @@ import {
   BoxProps,
   Button,
   Checkbox as TUICheckbox,
-  Flex,
   Input as TUIInput,
-  Label as TUILabel,
+  InputLabel as TUILabel,
   Radio as TUIRadio,
   Select as TUISelect,
   SelectProps,
-} from "theme-ui";
+} from "@mui/material";
+import Flex from "./flex";
 import { FieldProps, Option } from "../configurator";
 import { useBrowseContext } from "../configurator/components/dataset-browse";
 import { useTimeFormatUnit } from "../configurator/components/ui-helpers";

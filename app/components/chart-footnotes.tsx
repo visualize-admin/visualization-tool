@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { useEffect, useState } from "react";
-import { Box, Link, Text } from "theme-ui";
+import { Box, Link, Text } from "@mui/material";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
@@ -32,11 +32,11 @@ export const ChartFootnotes = ({
 
     return (
       <Box sx={{ mt: 2 }}>
-        <Text as="div" variant="meta" color="monochrome600">
+        <Typography as="div" variant="meta" color="monochrome600">
           <Trans id="metadata.dataset">Dataset</Trans>: {dataCubeByIri.title}
-        </Text>
+        </Typography>
 
-        <Text as="div" variant="meta" color="monochrome600">
+        <Typography as="div" variant="meta" color="monochrome600">
           <Trans id="metadata.source">Source</Trans>:{" "}
           {dataCubeByIri.publisher && (
             <Box
@@ -45,7 +45,7 @@ export const ChartFootnotes = ({
               dangerouslySetInnerHTML={{ __html: dataCubeByIri.publisher }}
             ></Box>
           )}
-        </Text>
+        </Typography>
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
           <DataDownload dataSetIri={dataSetIri} chartConfig={chartConfig} />

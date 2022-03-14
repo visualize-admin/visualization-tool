@@ -1,6 +1,6 @@
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { Box, Button, Text } from "theme-ui";
+import { Box, Button, Text } from "@mui/material";
 import { HintRed } from "../components/hint";
 
 export const Intro = ({
@@ -54,7 +54,7 @@ export const Intro = ({
 };
 
 export const Title = ({ children }: { children: ReactNode }) => (
-  <Text
+  <Typography
     as="h1"
     sx={{
       color: "monochrome800",
@@ -67,11 +67,11 @@ export const Title = ({ children }: { children: ReactNode }) => (
     }}
   >
     {children}
-  </Text>
+  </Typography>
 );
 export const Teaser = ({ children }: { children: ReactNode }) => (
   <Box sx={{ mb: [6, 5] }}>
-    <Text
+    <Typography
       variant="paragraph1"
       sx={{
         fontSize: [4, 4, 4],
@@ -80,6 +80,6 @@ export const Teaser = ({ children }: { children: ReactNode }) => (
       }}
     >
       {children}
-    </Text>
+    </Typography>
   </Box>
 );

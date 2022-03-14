@@ -14,12 +14,11 @@ import React, {
 import {
   Box,
   Button,
-  Flex,
-  FlexProps,
   Link as ThemeUILink,
   LinkProps as ThemeUILinkProps,
-  Text,
-} from "theme-ui";
+  Typography,
+} from "@mui/material";
+import Flex, { FlexProps } from "../../components/flex";
 import { AnimatePresence } from "framer-motion";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
@@ -347,7 +346,7 @@ export const SearchDatasetBox = ({
       </Box>
 
       <Flex sx={{ mt: 5, justifyContent: "space-between" }}>
-        <Text
+        <Typography
           color="secondary"
           sx={{
             fontFamily: "body",
@@ -365,7 +364,7 @@ export const SearchDatasetBox = ({
               other="# results"
             />
           )}
-        </Text>
+        </Typography>
 
         <Flex sx={{ alignItems: "center" }}>
           <Checkbox
@@ -381,7 +380,7 @@ export const SearchDatasetBox = ({
             smaller
           />
           <label htmlFor="datasetSort">
-            <Text
+            <Typography
               color="secondary"
               sx={{
                 fontFamily: "body",
@@ -390,7 +389,7 @@ export const SearchDatasetBox = ({
               }}
             >
               <Trans id="dataset.sortby">Sort by</Trans>
-            </Text>
+            </Typography>
           </label>
 
           <MiniSelect
@@ -580,7 +579,7 @@ const NavItem = ({
     >
       {active ? (
         <>
-          <Text variant="paragraph2">{children}</Text>
+          <Typography variant="paragraph2">{children}</Typography>
           {level === 1 ? removeFilterButton : countChip}
         </>
       ) : (
@@ -763,9 +762,9 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
           <Box as="span" color="category" mr={2}>
             <SvgIcCategories width={24} height={24} />
           </Box>
-          <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+          <Typography variant="paragraph2" sx={{ fontWeight: "bold" }}>
             <Trans id="browse-panel.themes">Themes</Trans>
-          </Text>
+          </Typography>
         </NavSectionTitle>
         <Box>
           {displayedThemes.map((theme) => {
@@ -797,9 +796,9 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
             <Box as="span" color="organization" mr={2}>
               <SvgIcOrganisations width={24} height={24} />
             </Box>
-            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+            <Typography variant="paragraph2" sx={{ fontWeight: "bold" }}>
               <Trans id="browse-panel.organizations">Organizations</Trans>
-            </Text>
+            </Typography>
           </NavSectionTitle>
         }
         <AnimatePresence>
@@ -972,16 +971,16 @@ export const DatasetResult = ({
     >
       <Stack spacing={2}>
         <Flex sx={{ justifyContent: "space-between" }}>
-          <Text variant="paragraph2" color="monochrome600">
+          <Typography variant="paragraph2" color="monochrome600">
             {datePublished ? <DateFormat date={datePublished} /> : null}
-          </Text>
+          </Typography>
           {isDraft && (
             <Tag type="draft">
               <Trans id="dataset.tag.draft">Draft</Trans>
             </Tag>
           )}
         </Flex>
-        <Text as="div" variant="paragraph1" pb={1}>
+        <Typography as="div" variant="paragraph1" pb={1}>
           {highlightedTitle ? (
             <Box
               as="span"
@@ -991,8 +990,8 @@ export const DatasetResult = ({
           ) : (
             title
           )}
-        </Text>
-        <Text
+        </Typography>
+        <Typography
           variant="paragraph2"
           sx={
             {
@@ -1013,7 +1012,7 @@ export const DatasetResult = ({
           ) : (
             description
           )}
-        </Text>
+        </Typography>
         <Stack spacing={1} direction="row">
           {themes && showTags
             ? sortBy(themes, (t) => t.label).map((t) => (

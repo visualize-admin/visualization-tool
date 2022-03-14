@@ -1,4 +1,4 @@
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { useInteraction } from "../use-interaction";
 import { useChartState } from "../use-chart-state";
 import { LinesState } from "../../line/lines-state";

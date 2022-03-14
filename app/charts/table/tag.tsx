@@ -1,4 +1,4 @@
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { hcl } from "d3";
 import * as React from "react";
 import { ReactNode } from "react";

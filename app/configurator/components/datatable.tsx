@@ -1,4 +1,4 @@
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 
 import { Observation } from "../../domain/data";
 import {

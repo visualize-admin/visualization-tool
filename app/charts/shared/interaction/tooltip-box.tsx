@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { Margins } from "../use-width";
 import {
   TRIANGLE_SIZE,

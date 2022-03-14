@@ -8,7 +8,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, Spinner } from "theme-ui";
+import { Box, Button, Spinner } from "@mui/material";
 import { CombinedError, useClient } from "urql";
 import {
   ChartConfig,

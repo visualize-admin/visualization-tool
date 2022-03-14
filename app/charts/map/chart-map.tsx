@@ -1,6 +1,6 @@
 import { geoCentroid } from "d3";
 import React, { memo, useMemo } from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import {
   feature as topojsonFeature,
   mesh as topojsonMesh,

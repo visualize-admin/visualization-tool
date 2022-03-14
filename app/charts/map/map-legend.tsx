@@ -12,7 +12,7 @@ import {
 } from "d3";
 import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { ColorRamp } from "../../configurator/components/chart-controls/color-ramp";
 import {
   getColorInterpolator,
@@ -82,13 +82,13 @@ export const MapLegend = () => {
       {showAreaLegend && (
         <Box sx={{ p: 4 }}>
           {areaLayer.measureLabel && (
-            <Text
+            <Typography
               as="div"
               variant="meta"
               sx={{ marginLeft: `${MARGIN.left}px` }}
             >
               {areaLayer.measureLabel}
-            </Text>
+            </Typography>
           )}
           {areaLayer.colorScaleInterpolationType === "linear" && (
             <ContinuousColorLegend />
@@ -108,9 +108,9 @@ export const MapLegend = () => {
       {symbolLayer.show && (
         <Box sx={{ p: 4 }}>
           {symbolLayer.measureLabel && (
-            <Text as="div" variant="meta">
+            <Typography as="div" variant="meta">
               {symbolLayer.measureLabel}
-            </Text>
+            </Typography>
           )}
           <CircleLegend />
         </Box>

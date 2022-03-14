@@ -1,4 +1,4 @@
-import { BoxProps, Flex } from "theme-ui";
+import { BoxProps, Flex } from "@mui/material";
 
 import { ReactNode } from "react";
 

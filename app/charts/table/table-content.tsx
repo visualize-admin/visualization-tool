@@ -1,4 +1,4 @@
-import { Box, Flex } from "theme-ui";
+import { Box, Flex } from "@mui/material";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
 import { Observation } from "../../domain/data";

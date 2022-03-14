@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { extent } from "d3";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { getFieldComponentIri, getFieldComponentIris } from "../../charts";
 import { Checkbox } from "../../components/form";
 import { Loading } from "../../components/hint";

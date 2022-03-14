@@ -7,7 +7,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Flex, Text } from "@mui/material";
 import { Radio, Select } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
@@ -95,7 +95,7 @@ const TableSortingOptionItem = ({
       }}
     >
       <Box sx={{ pr: 2 }}>
-        <Text
+        <Typography
           variant="paragraph1"
           sx={{
             color: "monochrome800",
@@ -109,7 +109,7 @@ const TableSortingOptionItem = ({
             metaData={metaData}
             chartConfig={chartConfig}
           />
-        </Text>
+        </Typography>
         <Flex sx={{ mt: 2, mb: -1, width: "100%", alignItems: "flex-start" }}>
           <Radio
             name={`${componentIri}-sortingOrder`}

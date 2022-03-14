@@ -1,4 +1,4 @@
-import { Theme as ThemeUITheme, ThemeStyles, useThemeUI } from "theme-ui";
+import { Theme as ThemeUITheme, ThemeStyles, useThemeUI } from "@mui/material";
 
 /**
  * Adapted/refined from the [Theme UI Theme Specification](https://theme-ui.com/theme-spec)

@@ -1,4 +1,4 @@
-import { Box, Text } from "theme-ui";
+import { Box, Text } from "@mui/material";
 import { LegendItem } from "../legend-color";
 import { TooltipValue } from "./tooltip";
 
@@ -17,20 +17,20 @@ export const TooltipSingle = ({
   return (
     <Box>
       {xValue && (
-        <Text as="div" variant="meta" sx={{ fontWeight: "bold" }}>
+        <Typography as="div" variant="meta" sx={{ fontWeight: "bold" }}>
           {xValue}
-        </Text>
+        </Typography>
       )}
       {segment && (
-        <Text as="div" variant="meta">
+        <Typography as="div" variant="meta">
           {segment}
-        </Text>
+        </Typography>
       )}
       {yValue && (
-        <Text as="div" variant="meta">
+        <Typography as="div" variant="meta">
           {yValue}
           {yError ? <> ± {yError}</> : null}
-        </Text>
+        </Typography>
       )}
     </Box>
   );
@@ -46,9 +46,9 @@ export const TooltipMultiple = ({
   return (
     <Box>
       {xValue && (
-        <Text as="div" variant="meta" sx={{ fontWeight: "bold" }}>
+        <Typography as="div" variant="meta" sx={{ fontWeight: "bold" }}>
           {xValue}
-        </Text>
+        </Typography>
       )}
       {segmentValues.map((segment, i) => (
         <LegendItem
@@ -75,19 +75,19 @@ export const TooltipScatterplot = ({
   return (
     <Box>
       {firstLine && (
-        <Text as="div" variant="meta" sx={{ fontWeight: "bold" }}>
+        <Typography as="div" variant="meta" sx={{ fontWeight: "bold" }}>
           {firstLine}
-        </Text>
+        </Typography>
       )}
       {secondLine && (
-        <Text as="div" variant="meta">
+        <Typography as="div" variant="meta">
           {secondLine}
-        </Text>
+        </Typography>
       )}
       {thirdLine && (
-        <Text as="div" variant="meta">
+        <Typography as="div" variant="meta">
           {thirdLine}
-        </Text>
+        </Typography>
       )}
     </Box>
   );

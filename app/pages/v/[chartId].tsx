@@ -4,7 +4,7 @@ import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Button, Text } from "theme-ui";
+import { Box, Button, Text } from "@mui/material";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPublished } from "../../components/chart-published";
 import { Success } from "../../components/hint";
@@ -84,7 +84,7 @@ const VisualizationPage = (props: PageProps) => {
 
             <PublishActions configKey={key} sx={{ mt: 5, mb: 5 }} />
 
-            <Text
+            <Typography
               as="div"
               variant="heading3"
               mt={3}
@@ -109,7 +109,7 @@ const VisualizationPage = (props: PageProps) => {
                   federal data.
                 </Trans>
               )}
-            </Text>
+            </Typography>
 
             <Stack direction="row" spacing={2}>
               <NextLink href="/create/new" passHref>

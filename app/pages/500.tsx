@@ -1,4 +1,4 @@
-import { Box, Text } from "theme-ui";
+import { Box, Text } from "@mui/material";
 import {
   Actions,
   ErrorPageHint,
@@ -12,9 +12,9 @@ const Page = () => {
     <ContentLayout>
       <Box sx={{ bg: "muted", my: "auto" }}>
         <ErrorPageHint>
-          <Text as="div" variant="heading2" sx={{ my: 3 }}>
+          <Typography as="div" variant="heading2" sx={{ my: 3 }}>
             Ein Fehler ist aufgetreten.{" "}
-          </Text>
+          </Typography>
           <Actions>
             <ReloadButton>Seite aktualisieren</ReloadButton>&nbsp;oder&nbsp;
             <HomeLink locale="de">zur Startseite navigieren</HomeLink>.
@@ -22,9 +22,9 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Text as="div" variant="heading2" sx={{ my: 3 }}>
+          <Typography as="div" variant="heading2" sx={{ my: 3 }}>
             Une erreur est survenue.{" "}
-          </Text>
+          </Typography>
           <Actions>
             <ReloadButton>Rafraîchir</ReloadButton>&nbsp;ou&nbsp;
             <HomeLink locale="fr">aller à la page d&apos;accueil</HomeLink>.
@@ -32,9 +32,9 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Text as="div" variant="heading2" sx={{ my: 3 }}>
+          <Typography as="div" variant="heading2" sx={{ my: 3 }}>
             Si è verificato un errore.{" "}
-          </Text>
+          </Typography>
           <Actions>
             <ReloadButton>Ricarica la pagina</ReloadButton>&nbsp;o&nbsp;
             <HomeLink locale="it">torna alla homepage</HomeLink>.
@@ -42,9 +42,9 @@ const Page = () => {
         </ErrorPageHint>
 
         <ErrorPageHint>
-          <Text as="div" variant="heading2" sx={{ my: 3 }}>
+          <Typography as="div" variant="heading2" sx={{ my: 3 }}>
             An error occurred.{" "}
-          </Text>
+          </Typography>
           <Actions>
             <ReloadButton>Reload the page</ReloadButton>&nbsp;or&nbsp;
             <HomeLink locale="en">go back to Homepage</HomeLink>.

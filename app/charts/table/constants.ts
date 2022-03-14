@@ -1,4 +1,4 @@
-import { ThemeUICSSObject } from "theme-ui";
+import { ThemeUICSSObject } from "@mui/material";
 
 export const TABLE_HEIGHT = 600;
 export const BAR_CELL_PADDING = 12;

@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { Box, BoxProps, Link } from "theme-ui";
+import { Box, BoxProps, Link } from "@mui/material";
 import Stack from "../../components/Stack";
 import { useFormatDate } from "../../configurator/components/ui-helpers";
 import {

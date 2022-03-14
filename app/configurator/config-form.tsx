@@ -8,7 +8,7 @@ import React, {
   useContext,
   useMemo,
 } from "react";
-import { SelectProps } from "theme-ui";
+import { SelectProps } from "@mui/material";
 import { getFieldComponentIri } from "../charts";
 import { DimensionValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";

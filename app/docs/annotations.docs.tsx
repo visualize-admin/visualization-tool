@@ -1,6 +1,6 @@
 import { markdown, ReactSpecimen } from "catalog";
 import { ReactNode } from "react";
-import { Box, Flex } from "theme-ui";
+import { Box, Flex } from "@mui/material";
 import { TooltipBox } from "../charts/shared/interaction/tooltip-box";
 import {
   TooltipMultiple,

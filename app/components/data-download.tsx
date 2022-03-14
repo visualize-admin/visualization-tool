@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { csvFormat } from "d3";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
-import { Box, Button, Link } from "theme-ui";
+import { Box, Button, Link } from "@mui/material";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig, ChartFields } from "../configurator";
 import { Observation } from "../domain/data";

@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Flex, Text } from "@mui/material";
 import { FieldProps } from "../..";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { Icon, IconName } from "../../../icons";
@@ -257,14 +257,14 @@ export const ControlTabButtonInner = ({
 
       <Flex sx={{ flexDirection: "column", alignItems: "flex-start", mx: 3 }}>
         {upperLabel && (
-          <Text
+          <Typography
             variant="meta"
             sx={{ color: "monochrome600", lineHeight: [1, 1, 1] }}
           >
             {upperLabel}
-          </Text>
+          </Typography>
         )}
-        <Text
+        <Typography
           variant="paragraph1"
           sx={{
             color: optional && !checked ? "monochrome600" : "monochrome800",
@@ -273,7 +273,7 @@ export const ControlTabButtonInner = ({
           }}
         >
           {lowerLabel}
-        </Text>
+        </Typography>
       </Flex>
     </Flex>
     {showIsActive && isActive === false ? (

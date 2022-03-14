@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 import { StaticMap } from "react-map-gl";
-import { Box, Button } from "theme-ui";
+import { Box, Button } from "@mui/material";
 import { GeoFeature, GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
 import { useLocale } from "../../src";

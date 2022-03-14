@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { useRouter } from "next/router";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
-import { Button, ButtonProps, Flex, Text } from "theme-ui";
+import { Button, ButtonProps, Flex, Text } from "@mui/material";
 import {
   useConfiguratorState,
   canTransitionToNextStep,
@@ -219,7 +219,7 @@ export const CallToAction = ({ stepState }: { stepState: StepState }) => {
 
 const CallToActionText = ({ label }: { label: ReactNode }) => {
   return (
-    <Text
+    <Typography
       sx={{
         color: "monochrome700",
         fontWeight: "regular",
@@ -227,7 +227,7 @@ const CallToActionText = ({ label }: { label: ReactNode }) => {
       variant="paragraph2"
     >
       {label}
-    </Text>
+    </Typography>
   );
 };
 

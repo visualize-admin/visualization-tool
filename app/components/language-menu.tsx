@@ -1,7 +1,7 @@
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-import { Box, Flex, Link } from "theme-ui";
+import { Box, Flex, Link } from "@mui/material";
 import contentRoutes from "../content-routes.json";
 import localeConfig from "../locales/locales.json";
 import { useLocale } from "../locales/use-locale";

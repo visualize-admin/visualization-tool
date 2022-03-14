@@ -1,6 +1,6 @@
 import React from "react";
 import { Inspector } from "react-inspector";
-import { Box, Link, Text } from "theme-ui";
+import { Box, Link, Text } from "@mui/material";
 import { useInteractiveFilters } from "../charts/shared/use-interactive-filters";
 import { useConfiguratorState } from "../configurator";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
@@ -34,7 +34,7 @@ const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
   return metadata ? (
     <Stack direction="row" spacing={2}>
       <Icon name="column" display="inline" size={16} />
-      <Text variant="paragraph2">Dimensions</Text>
+      <Typography variant="paragraph2">Dimensions</Typography>
       <Inspector
         data={Object.fromEntries(
           metadata?.dataCubeByIri?.dimensions.map((d) => [d.label, d]) || []
@@ -65,12 +65,12 @@ const DebugConfigurator = () => {
             sx={{ display: "flex", alignItems: "center" }}
           >
             <Icon name="linkExternal" size={16} />
-            <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
+            <Typography sx={{ ml: 2, fontSize: 3 }} variant="body">
               Open in Cube Viewer
-            </Text>
+            </Typography>
           </Link>
         ) : (
-          <Text variant="body">Please select a dataset first</Text>
+          <Typography variant="body">Please select a dataset first</Typography>
         )}
         {SPARQL_EDITOR && (
           <Link
@@ -84,9 +84,9 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
             sx={{ display: "flex", alignItems: "center" }}
           >
             <Icon name="linkExternal" size={16} />
-            <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
+            <Typography sx={{ ml: 2, fontSize: 3 }} variant="body">
               Cube Metadata Query
-            </Text>
+            </Typography>
           </Link>
         )}
         {configuratorState.dataSet ? (

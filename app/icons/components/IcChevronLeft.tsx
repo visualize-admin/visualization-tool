@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, BoxOwnProps } from "theme-ui";
+import { Box, BoxOwnProps } from "@mui/material";
 
 function SvgIcChevronLeft(
   props: React.SVGProps<SVGSVGElement> & { sx?: BoxOwnProps["sx"] }

@@ -9,7 +9,7 @@ import {
   useTable,
 } from "react-table";
 import { FixedSizeList, VariableSizeList } from "react-window";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
@@ -323,7 +323,7 @@ export const Table = () => {
       )}
 
       {/* Number of lines */}
-      <Text
+      <Typography
         variant="paragraph2"
         sx={{
           display: "flex",
@@ -334,7 +334,7 @@ export const Table = () => {
       >
         <Trans id="chart.table.number.of.lines">Total number of rows:</Trans>{" "}
         {filteredData.length}
-      </Text>
+      </Typography>
     </>
   );
 };

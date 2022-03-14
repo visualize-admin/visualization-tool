@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { useSelect } from "downshift";
 import { get } from "lodash";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Box, Button, Text } from "theme-ui";
+import { Box, Button, Text } from "@mui/material";
 import {
   DivergingPaletteType,
   SequentialPaletteType,
@@ -146,9 +146,9 @@ export const ColorRampField = ({
       <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
         {isOpen && (
           <>
-            {/* <Text as="div" variant="meta" sx={{ p: 1 }}>
+            {/* <Typography as="div" variant="meta" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.diverging">Diverging</Trans>
-            </Text>
+            </Typography>
             {divergingPalettes.map((d, i) => (
               <PaletteRamp
                 key={`diverging-${i}`}
@@ -159,9 +159,9 @@ export const ColorRampField = ({
               />
             ))} */}
 
-            <Text as="div" variant="meta" sx={{ p: 1 }}>
+            <Typography as="div" variant="meta" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.sequential">Sequential</Trans>
-            </Text>
+            </Typography>
             {sequentialPalettes.map((d, i) => (
               <PaletteRamp
                 key={`sequential-${i}`}

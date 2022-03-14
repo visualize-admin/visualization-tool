@@ -16,7 +16,7 @@ import {
   Input,
   Link,
   Text,
-} from "theme-ui";
+} from "@mui/material";
 import { Icon } from "../icons";
 import { useI18n } from "../lib/use-i18n";
 import { useLocale } from "../locales/use-locale";
@@ -109,9 +109,9 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
         return (
           <Button {...props}>
             <Icon name="linkExternal" />
-            <Text>
+            <Typography>
               <Trans id="button.share">Share</Trans>
-            </Text>
+            </Typography>
           </Button>
         );
       }}
@@ -129,9 +129,9 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               alignItems: "center",
             }}
           >
-            <Text as="div" variant="paragraph1" color="monochrome700">
+            <Typography as="div" variant="paragraph1" color="monochrome700">
               <Trans id="publication.popup.share">Share</Trans>:
-            </Text>
+            </Typography>
             <Flex color="primary">
               <IconLink
                 iconName="facebook"
@@ -176,9 +176,9 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             </Flex>
           </Flex>
           <Box mt={2}>
-            <Text as="div" variant="paragraph1" color="monochrome700">
+            <Typography as="div" variant="paragraph1" color="monochrome700">
               <Trans id="publication.share.chart.url">Chart URL: </Trans>
-            </Text>
+            </Typography>
             <Box my={1} sx={{ color: "primary" }}>
               <Link
                 href={shareUrl}
@@ -220,27 +220,27 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       renderTrigger={(toggleProps) => (
         <Button variant="primary" {...toggleProps}>
           <Icon name="embed" />
-          <Text>
+          <Typography>
             <Trans id="button.embed">Embed</Trans>
-          </Text>
+          </Typography>
         </Button>
       )}
     >
       <>
         <PublishActionOverlay />
         <PublishActionModal>
-          <Text as="div" variant="paragraph1" color="monochrome700" mt={2}>
+          <Typography as="div" variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
-          </Text>
+          </Typography>
 
           <CopyToClipboardTextInput
             iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
-          <Text as="div" variant="paragraph1" color="monochrome700" mt={2}>
+          <Typography as="div" variant="paragraph1" color="monochrome700" mt={2}>
             <Trans id="publication.embed.AEM">
               Embed Code for AEM &quot;External Application&quot;:{" "}
             </Trans>
-          </Text>
+          </Typography>
 
           <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
         </PublishActionModal>

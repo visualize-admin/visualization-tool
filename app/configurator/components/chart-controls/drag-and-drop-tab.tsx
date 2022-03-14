@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../../graphql/types";
 import { Icon } from "../../../icons";

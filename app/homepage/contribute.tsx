@@ -1,4 +1,4 @@
-import { Box, Flex, Link, Text } from "theme-ui";
+import { Box, Flex, Link, Text } from "@mui/material";
 import * as React from "react";
 
 export const Contribute = ({
@@ -17,7 +17,7 @@ export const Contribute = ({
       <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
         <Flex sx={{ flexDirection: ["column", "row"], px: 4, py: [6, 6, 7] }}>
           <Box sx={{ width: ["100%", "100%", "70%"], mb: [6, 6, 0] }}>
-            <Text
+            <Typography
               sx={{
                 fontSize: [6, 6, 7],
                 lineHeight: 1.25,
@@ -26,10 +26,10 @@ export const Contribute = ({
               }}
             >
               {headline}
-            </Text>
-            <Text as="div" variant="paragraph1">
+            </Typography>
+            <Typography as="div" variant="paragraph1">
               {description}
-            </Text>
+            </Typography>
           </Box>
           <Flex
             sx={{

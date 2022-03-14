@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import * as React from "react";
-import { Box, Button, Flex } from "theme-ui";
+import { Box, Button, Flex } from "@mui/material";
 import { ChartFiltersList } from "../../components/chart-filters-list";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { ChartPublished } from "../components/chart-published";
 import { HomepageSection } from "./generic";
 
@@ -240,7 +240,7 @@ const Example = ({
         mr: reverse ? 0 : [0, 0, 8],
       }}
     >
-      <Text
+      <Typography
         as="h3"
         sx={{
           fontSize: [5, 5, 6],
@@ -251,8 +251,8 @@ const Example = ({
         }}
       >
         {headline}
-      </Text>
-      <Text
+      </Typography>
+      <Typography
         as="p"
         sx={{
           fontSize: 4,
@@ -263,7 +263,7 @@ const Example = ({
         }}
       >
         {description}
-      </Text>
+      </Typography>
     </Box>
     <Box
       sx={{

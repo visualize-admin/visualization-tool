@@ -1,4 +1,4 @@
-import { Box, Text } from "theme-ui";
+import { Box, Text } from "@mui/material";
 import {
   Actions,
   ErrorPageHint,
@@ -10,33 +10,33 @@ const Page = () => (
   <ContentLayout>
     <Box sx={{ bg: "muted", my: "auto" }}>
       <ErrorPageHint>
-        <Text as="div" variant="heading2" sx={{ my: 3 }}>
+        <Typography as="div" variant="heading2" sx={{ my: 3 }}>
           Diese Seite wurde nicht gefunden.
-        </Text>
+        </Typography>
         <Actions>
           <HomeLink locale="de">Zurück zur Startseite</HomeLink>
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Text as="div" variant="heading2" sx={{ my: 3 }}>
+        <Typography as="div" variant="heading2" sx={{ my: 3 }}>
           Cette page est introuvable.
-        </Text>
+        </Typography>
         <Actions>
           <HomeLink locale="fr">Retour à la page d&apos;accueil</HomeLink>
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Text as="div" variant="heading2" sx={{ my: 3 }}>
+        <Typography as="div" variant="heading2" sx={{ my: 3 }}>
           Questa pagina non è stata trovata.
-        </Text>
+        </Typography>
         <Actions>
           <HomeLink locale="it">Torna alla homepage</HomeLink>
         </Actions>
       </ErrorPageHint>
       <ErrorPageHint>
-        <Text as="div" variant="heading2" sx={{ my: 3 }}>
+        <Typography as="div" variant="heading2" sx={{ my: 3 }}>
           This page could not be found.
-        </Text>
+        </Typography>
         <Actions>
           <HomeLink locale="en">Back to Homepage</HomeLink>
         </Actions>

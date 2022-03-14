@@ -1,4 +1,4 @@
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { ReactNode } from "react";
 
 export const ControlList = ({ children }: { children: ReactNode }) => {

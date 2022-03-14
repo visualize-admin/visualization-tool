@@ -1,4 +1,4 @@
-import { Box, Flex } from "theme-ui";
+import { Box, Flex } from "@mui/material";
 import { hcl, ScaleLinear } from "d3";
 import * as React from "react";
 import { Cell } from "react-table";

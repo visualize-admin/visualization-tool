@@ -6,7 +6,7 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { ThemeProvider } from "theme-ui";
+import { ThemeProvider } from "@mui/material";
 import { ContentMDXProvider } from "../components/content-mdx-provider";
 import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";

@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, Text } from "theme-ui";
+import { Box, BoxProps, Flex, Text } from "@mui/material";
 
 import { ElementType, forwardRef, ReactNode } from "react";
 import { Icon, IconName } from "../../../icons";
@@ -99,13 +99,13 @@ export const SectionTitle = ({
           name={iconName}
         ></Icon>
       )}
-      <Text
+      <Typography
         as="div"
         variant="table"
         sx={{ fontWeight: "bold", ml: iconName ? 2 : 0 }}
       >
         {children}
-      </Text>
+      </Typography>
     </Flex>
   );
 };

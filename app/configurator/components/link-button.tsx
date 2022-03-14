@@ -1,6 +1,6 @@
 import Link, { LinkProps } from "next/link";
 import React from "react";
-import { Button, ButtonProps } from "theme-ui";
+import { Button, ButtonProps } from "@mui/material";
 
 const ButtonLink = ({
   children,

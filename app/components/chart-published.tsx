@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
 import { useEffect } from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { isUsingImputation } from "../charts/shared/imputation";
 import {
@@ -78,14 +78,14 @@ export const ChartPublished = ({
           </Box>
         )}
         {meta.title[locale] !== "" && (
-          <Text as="div" variant="heading2" mb={2}>
+          <Typography as="div" variant="heading2" mb={2}>
             {meta.title[locale]}
-          </Text>
+          </Typography>
         )}
         {meta.description[locale] && (
-          <Text as="div" variant="paragraph1" mb={2}>
+          <Typography as="div" variant="paragraph1" mb={2}>
             {meta.description[locale]}
-          </Text>
+          </Typography>
         )}
         <InteractiveFiltersProvider>
           <ChartWithInteractiveFilters

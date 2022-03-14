@@ -1,4 +1,4 @@
-import { Button } from "theme-ui";
+import { Button } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 import { Icon } from "../icons";
 import SvgIcChevronRight from "../icons/components/IcChevronRight";
@@ -72,7 +72,7 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
   ## How to use
 
 ~~~
-import { Button } from "theme-ui"
+import { Button } from "@mui/material"
 import SvgIcChevronRight from "../icons/components/IcChevronRight";
 import SvgIcChevronLeft from "../icons/components/IcChevronLeft";
 

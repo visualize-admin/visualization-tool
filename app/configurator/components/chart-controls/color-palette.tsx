@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { useSelect } from "downshift";
 import get from "lodash/get";
 import { useCallback } from "react";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Flex, Text } from "@mui/material";
 import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "../..";
 import { Label } from "../../../components/form";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
@@ -105,9 +105,9 @@ export const ColorPalette = ({
                     : "monochrome100",
               }}
             >
-              <Text as="div" variant="meta">
+              <Typography as="div" variant="meta">
                 {palette.label}
-              </Text>
+              </Typography>
               <Box
                 sx={{
                   backgroundColor:

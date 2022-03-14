@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Text, TextProps } from "theme-ui";
+import { Text, TextProps } from "@mui/material";
 import {
   DataCubeOrganization,
   DataCubeTheme,
@@ -17,7 +17,7 @@ const Tag = ({
 }: { children: ReactNode; type: TagType } & TextProps) => {
   const { sx } = props;
   return (
-    <Text
+    <Typography
       variant="paragraph2"
       {...props}
       sx={{
@@ -34,7 +34,7 @@ const Tag = ({
       }}
     >
       {children}
-    </Text>
+    </Typography>
   );
 };
 

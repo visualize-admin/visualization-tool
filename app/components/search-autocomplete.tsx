@@ -9,7 +9,7 @@ import SvgIcCategories from "../icons/components/IcCategories";
 import SvgIcOrganisations from "../icons/components/IcOrganisations";
 import { useLocale } from "../src";
 import Autocomplete, { AutocompleteProps } from "./autocomplete";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import useDatasetCount from "../configurator/components/use-dataset-count";
 import { t } from "@lingui/macro";
 import SvgIcText from "../icons/components/IcText";

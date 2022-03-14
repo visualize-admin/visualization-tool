@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { Observation } from "../../../domain/data";
 import { LinesState } from "../../line/lines-state";
 import { useChartState } from "../use-chart-state";

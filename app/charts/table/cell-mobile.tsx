@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { hcl } from "d3";
 import * as React from "react";
 import { Cell, Row } from "react-table";
@@ -74,14 +74,14 @@ export const RowMobile = ({
           }}
         >
           <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
-          <Text
+          <Typography
             as={headingLevel}
             variant="paragraph1"
             sx={{ color: "monochrome900" }}
             {...row.getToggleRowExpandedProps()}
           >
             {`${row.groupByVal}`}
-          </Text>
+          </Typography>
         </Flex>
       )}
     </Box>

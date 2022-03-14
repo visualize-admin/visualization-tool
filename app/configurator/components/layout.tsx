@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, BoxProps, ThemeUIStyleObject } from "theme-ui";
+import { Box, BoxProps, ThemeUIStyleObject } from "@mui/material";
 
 const commonPanelStyles = {};
 

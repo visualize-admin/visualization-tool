@@ -1,5 +1,5 @@
 import { markdown, TableSpecimen } from "catalog";
-import { Text } from "theme-ui";
+import { Text } from "@mui/material";
 import { useTheme } from "../themes/index";
 const pixelSize = 16;
 
@@ -8,7 +8,7 @@ export default () => {
 
   return markdown`
 
-> Text elements are based on \`rebass\` \`<Text />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
+> Text elements are based on \`rebass\` \`<Typography />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
 
 ## Accessibility
 
@@ -16,11 +16,11 @@ The variants only refer to styles, they don't generate HTML semantics. For acces
 
 Example of a heading \`h1\` with the style \`heading1\`.
 ~~~
-import { Text } from "theme-ui"
+import { Text } from "@mui/material"
 
-<Text  variant="heading1" as="h1" >
+<Typography  variant="heading1" as="h1" >
  Heading 1
-</Text>
+</Typography>
 ~~~
 
 ## Variants
@@ -32,9 +32,9 @@ ${(
       return {
         Variant: `\`${key}\``,
         Sample: (
-          <Text variant={key} as="h1">
+          <Typography variant={key} as="h1">
             The quick brown fox...
-          </Text>
+          </Typography>
         ),
         // "font-sizes": textStyle.fontSize.map(fs => theme.fontSizes[fs])
       };

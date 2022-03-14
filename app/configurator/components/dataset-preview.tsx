@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Text, Flex } from "theme-ui";
+import { Box, Text, Flex } from "@mui/material";
 import { HintRed, Loading, LoadingDataError } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
@@ -50,9 +50,9 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               {dataCubeByIri.title} - visualize.admin.ch
             </title>
           </Head>
-          <Text as="div" variant="heading1">
+          <Typography as="div" variant="heading1">
             {dataCubeByIri.title}
-          </Text>
+          </Typography>
           <LinkButton
             sx={{ ml: 6, whiteSpace: "nowrap", flexShrink: 0 }}
             href={`/create/new?cube=${dataCubeByIri.iri}`}
@@ -71,13 +71,13 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             px: 5,
           }}
         >
-          <Text
+          <Typography
             as="div"
             variant="paragraph1"
             sx={{ mb: 4, color: "monochrome700" }}
           >
             {dataCubeByIri.description}
-          </Text>
+          </Typography>
 
           <Box
             variant="heading3"
@@ -96,7 +96,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               measures={dataCubeByIri.measures}
             />
           </Box>
-          <Text
+          <Typography
             variant="table"
             sx={{
               mt: 4,
@@ -109,7 +109,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             <Trans id="datatable.showing.first.rows">
               Showing first 10 rows
             </Trans>
-          </Text>
+          </Typography>
           <DebugPanel configurator={true} />
         </Box>
       </Flex>

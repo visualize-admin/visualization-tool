@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { SyntheticEvent } from "react";
-import { Box, Button, Grid, Spinner, Text } from "theme-ui";
+import { Box, Button, Grid, Spinner, Text } from "@mui/material";
 import { ConfiguratorStateSelectingChartType } from "..";
 import { enabledChartTypes, getPossibleChartType } from "../../charts";
 import { Hint, Loading } from "../../components/hint";
@@ -63,7 +63,7 @@ export const ChartTypeSelectionButton = ({
       }}
     >
       <Icon size={48} name={getIconName(label)} />
-      <Text
+      <Typography
         variant="paragraph2"
         sx={{
           color: disabled
@@ -75,7 +75,7 @@ export const ChartTypeSelectionButton = ({
         }}
       >
         {getFieldLabel(label)}
-      </Text>
+      </Typography>
     </Button>
   );
 };

@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { LanguageMenu } from "./language-menu";
 import NextLink from "next/link";
 import React, {
@@ -133,13 +133,13 @@ export const Logo = () => {
         >
           <LogoDesktop />
         </Box>
-        <Text
+        <Typography
           as="h1"
           variant="lead"
           sx={{ pl: [0, 6], textDecoration: "none", color: "monochrome800" }}
         >
           visualize.admin.ch
-        </Text>
+        </Typography>
       </Flex>
     </NextLink>
   );

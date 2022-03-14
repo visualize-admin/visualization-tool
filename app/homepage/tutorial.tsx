@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Flex, Text } from "@mui/material";
 import { ReactNode } from "react";
 import { Icon } from "../icons";
 import { HomepageSection } from "./generic";
@@ -53,7 +53,7 @@ export const Tutorial = ({
 };
 
 const HomepageTutorialStep = ({ children }: { children: ReactNode }) => (
-  <Text
+  <Typography
     as="div"
     sx={{
       fontSize: 5,
@@ -63,7 +63,7 @@ const HomepageTutorialStep = ({ children }: { children: ReactNode }) => (
     }}
   >
     {children}
-  </Text>
+  </Typography>
 );
 
 const Arrow = () => (

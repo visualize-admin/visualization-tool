@@ -1,8 +1,8 @@
-import { Text } from "theme-ui";
+import { Text } from "@mui/material";
 import { ReactNode } from "react";
 
 export const HomepageSection = ({ children }: { children: ReactNode }) => (
-  <Text
+  <Typography
     as="h2"
     sx={{
       fontFamily: "body",
@@ -15,5 +15,5 @@ export const HomepageSection = ({ children }: { children: ReactNode }) => (
     }}
   >
     {children}
-  </Text>
+  </Typography>
 );

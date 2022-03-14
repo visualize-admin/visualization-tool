@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Box, BoxProps, Flex, FlexProps } from "theme-ui";
+import { Box, BoxProps, Flex, FlexProps } from "@mui/material";
 import SvgIcChevronLeft from "../../icons/components/IcChevronLeft";
 
 const AccordionArrow = ({
