@@ -19,7 +19,7 @@ const createResponsiveVariant = (spec: Record<string, any>) => {
     const fontSize = Array.isArray(spec.fontSize)
       ? spec.fontSize[i]
       : spec.fontSize;
-    res.push(theme.breakpoints.down(breakpoints[i]), {
+    res.push(theme.breakpoints.up(breakpoints[i]), {
       fontSize,
       lineHeight,
     });
@@ -57,37 +57,31 @@ export const theme = createTheme({
     //   fontSize: [8, 9, 9],
     // },
     h1: createResponsiveVariant({
-      fontFamily: "body",
       lineHeight: [7, 8, 8],
       fontWeight: "bold",
       fontSize: [6, 7, 7],
     }),
     h2: createResponsiveVariant({
-      fontFamily: "body",
       lineHeight: [6, 7, 7],
       fontWeight: "regular",
       fontSize: [5, 6, 6],
     }),
     h3: createResponsiveVariant({
-      fontFamily: "body",
       lineHeight: [5, 6, 6],
       fontWeight: "bold",
       fontSize: [4, 5, 5],
     }),
-    // lead: {
-    //   fontFamily: "body",
-    //   lineHeight: [4, 5, 5],
-    //   fontWeight: "bold",
-    //   fontSize: [3, 4, 4],
-    // },
+    h4: createResponsiveVariant({
+      lineHeight: [4, 5, 5],
+      fontWeight: "bold",
+      fontSize: [3, 4, 4],
+    }),
     body1: createResponsiveVariant({
-      fontFamily: "body",
       lineHeight: [4, 5, 5],
       fontWeight: "regular",
       fontSize: [3, 4, 4],
     }),
     body2: createResponsiveVariant({
-      fontFamily: "body",
       lineHeight: [2, 4, 3],
       fontWeight: "regular",
       fontSize: [2, 3, 3],
@@ -99,7 +93,6 @@ export const theme = createTheme({
     //   fontSize: [2, 3, 3],
     // },
     caption: createResponsiveVariant({
-      fontFamily: "body",
       lineHeight: [1, 2, 2],
       fontWeight: "regular",
       fontSize: [1, 2, 2],
