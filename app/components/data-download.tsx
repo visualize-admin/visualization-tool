@@ -1,8 +1,10 @@
 import { Trans } from "@lingui/macro";
 import { csvFormat } from "d3";
 import { saveAs } from "file-saver";
+import { keyBy } from "lodash";
 import { memo, ReactNode, useMemo } from "react";
 import { Box, Button, Link } from "theme-ui";
+import * as XLSX from "xlsx";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
@@ -12,17 +14,20 @@ import {
 } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
 
-type DataDownloadType = "visible" | "full";
+type DataDownloadExtent = "visible" | "all";
+type DataDownloadFileFormat = "csv" | "xlsx";
 
 export const DataDownload = memo(
   ({
     dataSetIri,
     chartConfig,
-    type,
+    extent,
+    fileFormat,
   }: {
     dataSetIri: string;
     chartConfig: ChartConfig;
-    type: DataDownloadType;
+    extent: DataDownloadExtent;
+    fileFormat: DataDownloadFileFormat;
   }) => {
     const locale = useLocale();
     const filters = useQueryFilters({ chartConfig });
@@ -31,7 +36,7 @@ export const DataDownload = memo(
         locale,
         iri: dataSetIri,
         dimensions: null, // FIXME: Other fields may also be measures
-        filters: type === "visible" ? filters : null,
+        filters: extent === "visible" ? filters : null,
       },
     });
 
@@ -44,12 +49,16 @@ export const DataDownload = memo(
             observations={observations.data}
             dimensions={dimensions}
             measures={measures}
-            type={type}
+            extent={extent}
+            fileFormat={fileFormat}
           />
           {observations.sparqlEditorUrl && (
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
-              <RunSparqlQuery url={observations.sparqlEditorUrl} type={type} />
+              <RunSparqlQuery
+                url={observations.sparqlEditorUrl}
+                extent={extent}
+              />
             </>
           )}
         </>
@@ -66,36 +75,50 @@ const DataDownloadInner = memo(
     observations,
     dimensions,
     measures,
-    type,
+    extent,
+    fileFormat,
   }: {
     title: string;
     observations: Observation[];
     dimensions: DimensionMetaDataFragment[];
     measures: DimensionMetaDataFragment[];
-    type: DataDownloadType;
+    extent: DataDownloadExtent;
+    fileFormat: DataDownloadFileFormat;
   }) => {
-    const forCsvData = useMemo(() => {
-      const columns = [...dimensions, ...measures];
-      return observations.map((obs) => {
-        return Object.keys(obs).reduce((acc, key) => {
-          const col = columns.find((d) => d.iri === key);
+    const data = useMemo(() => {
+      const columns = keyBy([...dimensions, ...measures], (d) => d.iri);
+      return observations.map((obs) =>
+        Object.keys(obs).reduce((acc, key) => {
+          const col = columns[key];
           return col
             ? {
                 ...acc,
                 ...{ [col.label]: obs[key] },
               }
             : acc;
-        }, {});
-      });
+        }, {})
+      );
     }, [dimensions, measures, observations]);
-    const csvData = csvFormat(forCsvData);
-    const blob = new Blob([csvData], {
-      type: "text/plain;charset=utf-8",
-    });
+
+    const onClick: () => void = useMemo(() => {
+      switch (fileFormat) {
+        case "csv":
+          const csvData = csvFormat(data);
+          const blob = new Blob([csvData], {
+            type: "text/plain;charset=utf-8",
+          });
+          return () => saveAs(blob, `${title}.csv`);
+        case "xlsx":
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.json_to_sheet(data);
+          XLSX.utils.book_append_sheet(workbook, worksheet, "data");
+          return () => XLSX.writeFile(workbook, `${title}.xlsx`);
+      }
+    }, [data, fileFormat, title]);
 
     return (
-      <DownloadButton onClick={() => saveAs(blob, `${title}.csv`)}>
-        {type === "visible" ? (
+      <DownloadButton onClick={onClick}>
+        {extent === "visible" ? (
           <Trans id="button.download.data.visible">Download visible data</Trans>
         ) : (
           <Trans id="button.download.data.all">Download all data</Trans>
@@ -107,14 +130,14 @@ const DataDownloadInner = memo(
 
 const RunSparqlQuery = ({
   url,
-  type,
+  extent,
 }: {
   url: string;
-  type: DataDownloadType;
+  extent: DataDownloadExtent;
 }) => {
   return (
     <Link variant="inline" href={url} target="_blank" rel="noopener noreferrer">
-      {type === "visible" ? (
+      {extent === "visible" ? (
         <Trans id="button.download.runsparqlquery.visible">
           Run SPARQL query (visible)
         </Trans>

@@ -51,13 +51,15 @@ export const ChartFootnotes = ({
           <DataDownload
             dataSetIri={dataSetIri}
             chartConfig={chartConfig}
-            type="visible"
+            extent="visible"
+            fileFormat="csv"
           />
           <Box sx={{ display: "inline", mx: 1 }}>·</Box>
           <DataDownload
             dataSetIri={dataSetIri}
             chartConfig={chartConfig}
-            type="full"
+            extent="all"
+            fileFormat="csv"
           />
           {configKey && shareUrl && (
             <>
