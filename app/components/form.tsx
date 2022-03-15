@@ -6,6 +6,7 @@ import { DayPickerInputProps, DayPickerProps } from "react-day-picker";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import {
   Box,
+  BoxProps,
   Button,
   Checkbox as TUICheckbox,
   Flex,
@@ -16,6 +17,7 @@ import {
   SelectProps,
 } from "theme-ui";
 import { FieldProps, Option } from "../configurator";
+import { useBrowseContext } from "../configurator/components/dataset-browse";
 import { useTimeFormatUnit } from "../configurator/components/ui-helpers";
 import { TimeUnit } from "../graphql/query-hooks";
 import { Icon } from "../icons";
@@ -36,13 +38,11 @@ export const Label = ({
 }) => (
   <TUILabel
     htmlFor={htmlFor}
-    mb={1}
     sx={{
       cursor: "pointer",
       width: "auto",
       color: disabled ? "monochrome500" : "monochrome700",
-      fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
-      pb: smaller ? 1 : 0,
+      fontSize: smaller ? 2 : 4,
       mr: 4,
       display: "flex",
       alignItems: "center",
@@ -56,7 +56,7 @@ export const Label = ({
             textAlign: "left",
             fontFamily: "body",
             pr: 1,
-            fontSize: [3],
+            fontSize: smaller ? 2 : 3,
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
             display: "-webkit-box",
@@ -120,11 +120,25 @@ export const Checkbox = ({
   disabled,
   onChange,
   color,
-}: { label: string; disabled?: boolean; color?: string } & FieldProps) => (
-  <Label label={label} htmlFor={`${name}-${label}`} disabled={disabled}>
+  smaller,
+}: {
+  label: string;
+  disabled?: boolean;
+  color?: string;
+  smaller?: boolean;
+} & FieldProps) => (
+  <Label
+    label={label}
+    htmlFor={`${name}-${label}`}
+    disabled={disabled}
+    smaller={smaller}
+  >
     <TUICheckbox
       data-name="checkbox-component"
       sx={{
+        width: smaller ? 16 : undefined,
+        height: smaller ? 16 : undefined,
+        mr: smaller ? 1 : undefined,
         color:
           checked && !disabled
             ? "primary"
@@ -398,23 +412,32 @@ export const SearchField = ({
   id,
   label,
   value,
+  defaultValue,
   placeholder,
-  onChange,
+  onKeyPress,
   onReset,
   onFocus,
   onBlur,
+  sx,
+  inputRef,
 }: {
   id: string;
   label?: string | ReactNode;
   disabled?: boolean;
-  value?: string;
+  defaultValue?: string;
   placeholder?: string;
+  onKeyPress?: (ev: React.KeyboardEvent<HTMLInputElement>) => void;
   onReset?: () => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  inputRef?: React.Ref<HTMLInputElement>;
+  sx?: BoxProps["sx"];
 } & FieldProps) => {
+  const { search } = useBrowseContext();
   return (
-    <Box sx={{ color: "monochrome700", fontSize: 4, position: "relative" }}>
+    <Box
+      sx={{ color: "monochrome700", fontSize: 4, position: "relative", ...sx }}
+    >
       {label && id && (
         <label htmlFor={id}>
           <VisuallyHidden>{label}</VisuallyHidden>
@@ -435,13 +458,14 @@ export const SearchField = ({
         }}
         id={id}
         value={value}
-        onChange={onChange}
+        onKeyPress={onKeyPress}
         placeholder={placeholder}
         onFocus={onFocus}
         onBlur={onBlur}
         autoComplete="off"
+        ref={inputRef}
       />
-      {value && value !== "" && onReset && (
+      {onReset && search && search !== "" && (
         <Box
           sx={{
             position: "absolute",
