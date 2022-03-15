@@ -100,7 +100,7 @@ export const SelectDatasetStepContent = () => {
               custom={dataset}
             >
               <NextLink passHref href={backLink}>
-                <Button variant="secondary">
+                <Button variant="contained" color="secondary">
                   ←{" "}
                   <Trans id="dataset-preview.back-to-results">
                     Back to the list

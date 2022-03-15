@@ -53,7 +53,7 @@ export const ChartDataFilters = ({
 
             {dataFiltersConfig.active && (
               <Button
-                variant="inline"
+                variant="text"
                 sx={{
                   display: "flex",
                   fontSize: ["0.75rem", "0.75rem", "0.75rem"],

@@ -232,7 +232,7 @@ const ColorPaletteReset = ({
       <Button
         disabled={same}
         onClick={resetColorPalette}
-        variant="inline"
+        variant="text"
         sx={{ mt: 2, mb: 3 }}
       >
         <Trans id="controls.color.palette.reset">Reset color palette</Trans>
@@ -240,7 +240,7 @@ const ColorPaletteReset = ({
     );
   } else {
     return (
-      <Button disabled={true} variant="inline" sx={{ mt: 2, mb: 3 }}>
+      <Button disabled={true} variant="text" sx={{ mt: 2, mb: 3 }}>
         <Trans id="controls.color.palette.reset">Reset color palette</Trans>
       </Button>
     );

@@ -22,7 +22,7 @@ export const Tab = ({
 
   return (
     <Button
-      variant="small"
+      variant="contained"
       onClick={() => requestChangeTab(value)}
       sx={{
         ml: 2,
@@ -33,6 +33,8 @@ export const Tab = ({
         color: value === currentTab ? "primary" : "black",
         fontSize: "small",
       }}
+      color="primary"
+      size="small"
     >
       {children}
     </Button>

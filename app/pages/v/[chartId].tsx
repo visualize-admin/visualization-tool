@@ -113,7 +113,7 @@ const VisualizationPage = (props: PageProps) => {
 
             <Stack direction="row" spacing={2}>
               <NextLink href="/create/new" passHref>
-                <Button component="a" variant="secondary">
+                <Button component="a" variant="contained" color="secondary">
                   <Trans id="button.new.visualization">
                     Create a new visualization
                   </Trans>
@@ -123,7 +123,7 @@ const VisualizationPage = (props: PageProps) => {
                 href={{ pathname: "/create/new", query: { from: key } }}
                 passHref
               >
-                <Button component="a" variant="secondary">
+                <Button component="a" variant="contained" color="secondary">
                   <Trans id="button.copy.visualization">
                     Copy and edit this visualization
                   </Trans>

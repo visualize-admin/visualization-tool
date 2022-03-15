@@ -66,7 +66,7 @@ const DataFilterSelectGeneric = ({
       <Button
         className="buttons"
         sx={{ ml: 2 }}
-        variant="inline"
+        variant="text"
         onClick={onRemove}
       >
         <Icon
@@ -478,12 +478,13 @@ export const ChartConfigurator = ({
                 <Menu>
                   <MenuButton className="menu-button">
                     <Button
-                      variant="primary"
+                      variant="contained"
                       sx={{
                         display: "flex",
                         minWidth: "auto",
                         justifyContent: "center",
                       }}
+                      color="primary"
                     >
                       <Trans>Add filter</Trans>
                       <Icon name="add" height={18} />

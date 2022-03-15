@@ -42,7 +42,7 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
     <Box color="grey.500">
       <Button
         onClick={selectAll}
-        variant="inline"
+        variant="text"
         sx={{ mr: 2, mb: 4 }}
         disabled={activeKeys.size === allValues.length}
       >
@@ -51,7 +51,7 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
       ·
       <Button
         onClick={selectNone}
-        variant="inline"
+        variant="text"
         sx={{ ml: 2, mr: 2, mb: 4 }}
         disabled={activeKeys.size === 0}
       >

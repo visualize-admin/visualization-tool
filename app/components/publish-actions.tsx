@@ -218,7 +218,7 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   return (
     <PopUp
       renderTrigger={(toggleProps) => (
-        <Button variant="primary" {...toggleProps}>
+        <Button variant="contained" color="primary" {...toggleProps}>
           <Icon name="embed" />
           <Typography>
             <Trans id="button.embed">Embed</Trans>
@@ -229,24 +229,14 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
       <>
         <PublishActionOverlay />
         <PublishActionModal>
-          <Typography
-            component="div"
-            variant="body1"
-            color="grey.700"
-            mt={2}
-          >
+          <Typography component="div" variant="body1" color="grey.700" mt={2}>
             <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
           </Typography>
 
           <CopyToClipboardTextInput
             iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
-          <Typography
-            component="div"
-            variant="body1"
-            color="grey.700"
-            mt={2}
-          >
+          <Typography component="div" variant="body1" color="grey.700" mt={2}>
             <Trans id="publication.embed.AEM">
               Embed Code for AEM &quot;External Application&quot;:{" "}
             </Trans>

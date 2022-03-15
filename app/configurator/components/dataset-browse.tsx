@@ -338,8 +338,10 @@ export const SearchDatasetBox = ({
         />
         <Button
           onClick={handleClickSubmit}
-          variant="small"
+          variant="contained"
           sx={{ flexShrink: 0, ml: 1, py: 0, cursor: "pointer" }}
+          color="primary"
+          size="small"
         >
           {searchLabel}
         </Button>
@@ -788,7 +790,10 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       <div>
         {
           <NavSectionTitle
-            theme={{ backgroundColor: "organizationLight", borderColor: "organization" }}
+            theme={{
+              backgroundColor: "organizationLight",
+              borderColor: "organization",
+            }}
             sx={{ mb: 2 }}
           >
             <Box component="span" color="organization" mr={2}>
