@@ -8,11 +8,11 @@ import {
   Box,
   BoxProps,
   Button,
-  Checkbox as TUICheckbox,
-  Input as TUIInput,
-  InputLabel as TUILabel,
-  Radio as TUIRadio,
-  Select as TUISelect,
+  Checkbox as MUICheckbox,
+  Input as MUIInput,
+  InputLabel as MUILabel,
+  Radio as MUIRadio,
+  Select as MUISelect,
   SelectProps,
 } from "@mui/material";
 import Flex from "./flex";
@@ -36,7 +36,7 @@ export const Label = ({
   smaller?: boolean;
   children: ReactNode;
 }) => (
-  <TUILabel
+  <MUILabel
     htmlFor={htmlFor}
     sx={{
       cursor: "pointer",
@@ -68,7 +68,7 @@ export const Label = ({
         {label}
       </Box>
     )}
-  </TUILabel>
+  </MUILabel>
 );
 
 export const Radio = ({
@@ -82,7 +82,7 @@ export const Radio = ({
   return (
     <Box mb={2}>
       <Label label={label} htmlFor={`${name}-${value}`} disabled={disabled}>
-        <TUIRadio
+        <MUIRadio
           name={name}
           id={`${name}-${value}`}
           value={value}
@@ -133,7 +133,7 @@ export const Checkbox = ({
     disabled={disabled}
     smaller={smaller}
   >
-    <TUICheckbox
+    <MUICheckbox
       data-name="checkbox-component"
       sx={{
         width: smaller ? 16 : undefined,
@@ -209,7 +209,7 @@ export const Select = ({
           {controls}
         </Label>
       )}
-      <TUISelect
+      <MUISelect
         sx={{
           borderColor: "grey.500",
           fontSize: "1rem",
@@ -237,7 +237,7 @@ export const Select = ({
             {opt.label}
           </option>
         ))}
-      </TUISelect>
+      </MUISelect>
     </Box>
   );
 };
@@ -260,7 +260,7 @@ export const MiniSelect = ({
         {label}
       </Label>
     )}
-    <TUISelect
+    <MUISelect
       sx={{
         borderColor: "transparent",
         fontSize: ["0.625rem", "0.75rem", "0.75rem"],
@@ -285,7 +285,7 @@ export const MiniSelect = ({
           {opt.label}
         </option>
       ))}
-    </TUISelect>
+    </MUISelect>
   </Box>
 );
 
@@ -306,7 +306,7 @@ export const Input = ({
         {label}
       </Label>
     )}
-    <TUIInput
+    <MUIInput
       sx={{
         borderColor: "grey.500",
         backgroundColor: "grey.100",
@@ -451,7 +451,7 @@ export const SearchField = ({
       >
         <Icon name="search" size={16} />
       </Box>
-      <TUIInput
+      <MUIInput
         sx={{
           borderColor: "grey.500",
           backgroundColor: "grey.100",
@@ -538,11 +538,11 @@ export const Switch = ({
         alignItems: "center",
       }}
     >
-      <TUILabel
+      <MUILabel
         htmlFor={genId}
         sx={{ ":active div:after": { width: disabled ? "12px" : "16px" } }}
       >
-        <TUICheckbox
+        <MUICheckbox
           id={genId}
           name={name}
           checked={checked}
@@ -603,7 +603,7 @@ export const Switch = ({
         >
           {label}
         </Box>
-      </TUILabel>
+      </MUILabel>
     </Flex>
   );
 };
