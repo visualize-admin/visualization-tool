@@ -42,7 +42,7 @@ export const Label = ({
       cursor: "pointer",
       width: "auto",
       color: disabled ? "grey.500" : "grey.700",
-      fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
+      fontSize: smaller ? "0.75rem" : "1rem",
       mr: 4,
       display: "flex",
       alignItems: "center",
@@ -439,7 +439,9 @@ export const SearchField = ({
 } & FieldProps) => {
   const { search } = useBrowseContext();
   return (
-    <Box sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}>
+    <Box
+      sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}
+    >
       {label && id && (
         <label htmlFor={id}>
           <VisuallyHidden>{label}</VisuallyHidden>
