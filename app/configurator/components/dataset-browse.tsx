@@ -957,8 +957,8 @@ export const DatasetResult = ({
   return (
     <MotionCard
       {...smoothPresenceProps}
-      variant="reset"
       onClick={handleClick}
+      elevation={1}
       sx={{
         position: "relative",
         color: "grey.700",
