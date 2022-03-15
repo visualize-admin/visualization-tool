@@ -13,9 +13,9 @@ const DebugInteractiveFilters = () => {
   const [interactiveFiltersState] = useInteractiveFilters();
   return (
     <>
-      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "grey.700" }}>
+      <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
         Interactive Filters State
-      </Box>
+      </Typography>
       <Box sx={{ p: 5 }}>
         <Inspector expandLevel={3} data={interactiveFiltersState} />
       </Box>
@@ -48,9 +48,9 @@ const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
   return (
     <>
-      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "grey.700" }}>
+      <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
         Cube Tools
-      </Box>
+      </Typography>
       <Stack spacing={2} sx={{ p: 5 }}>
         {configuratorState.dataSet ? (
           <Link
@@ -65,12 +65,12 @@ const DebugConfigurator = () => {
             sx={{ display: "flex", alignItems: "center" }}
           >
             <Icon name="linkExternal" size={16} />
-            <Typography sx={{ ml: 2, fontSize: "0.875rem" }} variant="body">
+            <Typography sx={{ ml: 2, fontSize: "0.875rem" }} variant="body1">
               Open in Cube Viewer
             </Typography>
           </Link>
         ) : (
-          <Typography variant="body">Please select a dataset first</Typography>
+          <Typography variant="body1">Please select a dataset first</Typography>
         )}
         {SPARQL_EDITOR && (
           <Link
@@ -84,7 +84,7 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
             sx={{ display: "flex", alignItems: "center" }}
           >
             <Icon name="linkExternal" size={16} />
-            <Typography sx={{ ml: 2, fontSize: "0.875rem" }} variant="body">
+            <Typography sx={{ ml: 2, fontSize: "0.875rem" }} variant="body1">
               Cube Metadata Query
             </Typography>
           </Link>
@@ -93,17 +93,17 @@ DESCRIBE <${configuratorState.dataSet ?? ""}>`
           <CubeMetadata datasetIri={configuratorState.dataSet} />
         ) : null}
       </Stack>
-      <Box component="h3" variant="text.lead" sx={{ px: 5, color: "grey.700" }}>
+      <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
         Configurator State{" "}
-        <Link
-          variant="inline"
-          onClick={() => {
-            console.log(configuratorState);
-          }}
-        >
-          (dump to console)
-        </Link>
-      </Box>
+      </Typography>
+      <Link
+        variant="inline"
+        onClick={() => {
+          console.log(configuratorState);
+        }}
+      >
+        (dump to console)
+      </Link>
       <Box sx={{ p: 5 }}>
         <Inspector expandLevel={3} data={configuratorState} />
       </Box>
