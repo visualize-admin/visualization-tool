@@ -62,7 +62,7 @@ export const RulerContent = ({
           position: "absolute",
           borderWidth: 0.5,
           borderStyle: "solid",
-          borderColor: "monochrome.200",
+          borderColor: "grey.200",
           pointerEvents: "none",
           transform: "translateX(-50%)",
         }}

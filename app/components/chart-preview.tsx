@@ -58,7 +58,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 sx={{
                   mb: 2,
                   color:
-                    state.meta.title[locale] === "" ? "monochrome500" : "text",
+                    state.meta.title[locale] === "" ? "grey.500" : "text",
                 }}
               >
                 {state.meta.title[locale] === "" ? (
@@ -81,7 +81,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                   mb: 2,
                   color:
                     state.meta.description[locale] === ""
-                      ? "monochrome500"
+                      ? "grey.500"
                       : "text",
                 }}
               >

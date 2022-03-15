@@ -19,6 +19,6 @@ export const TABLE_STYLES: ThemeUICSSObject = {
     pr: 3,
     pl: 3,
     borderBottom: "1px solid",
-    borderBottomColor: "monochrome400",
+    borderBottomColor: "grey.400",
   },
 };

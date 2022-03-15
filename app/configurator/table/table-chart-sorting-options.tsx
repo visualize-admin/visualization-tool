@@ -90,7 +90,7 @@ const TableSortingOptionItem = ({
         pl: 4,
         pr: 6,
 
-        borderTopColor: "monochrome500",
+        borderTopColor: "grey.500",
         borderTopStyle: "solid",
         borderTopWidth: 1,
       }}
@@ -423,7 +423,7 @@ export const TableSortingOptions = ({
                   sx={{
                     py: 4,
                     px: 4,
-                    borderTopColor: "monochrome500",
+                    borderTopColor: "grey.500",
                     borderTopStyle: "solid",
                     borderTopWidth: 1,
                   }}

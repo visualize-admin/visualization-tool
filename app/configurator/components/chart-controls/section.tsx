@@ -19,12 +19,12 @@ export const ControlSection = forwardRef<
       ref={ref}
       role={role}
       sx={{
-        borderTopColor: "monochrome500",
+        borderTopColor: "grey.500",
         borderTopWidth: "1px",
         borderTopStyle: "solid",
         overflowX: "hidden",
         overflowY: "auto",
-        backgroundColor: isHighlighted ? "primaryLight" : "monochrome100",
+        backgroundColor: isHighlighted ? "primaryLight" : "grey.100",
         flexShrink: 0,
         "&:first-of-type": {
           borderTopWidth: 0,
@@ -89,7 +89,7 @@ export const SectionTitle = ({
         width: "100%",
         border: "none",
         justifyContent: "flex-start",
-        color: disabled ? "monochrome600" : color ?? "monochrome800",
+        color: disabled ? "grey.600" : color ?? "grey.800",
       }}
     >
       {iconName && (

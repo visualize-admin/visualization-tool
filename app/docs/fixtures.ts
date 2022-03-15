@@ -847,7 +847,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "text",
         textStyle: "regular",
-        textColor: "monochrome700",
+        textColor: "grey.700",
         columnColor: "#fff",
       },
     },
@@ -902,7 +902,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "text",
         textStyle: "regular",
-        textColor: "monochrome700",
+        textColor: "grey.700",
         columnColor: "pink",
       },
     },
@@ -916,7 +916,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "text",
         textStyle: "regular",
-        textColor: "monochrome700",
+        textColor: "grey.700",
         columnColor: "#fff",
       },
     },
@@ -930,7 +930,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "text",
         textStyle: "regular",
-        textColor: "monochrome700",
+        textColor: "grey.700",
         columnColor: "#fff",
       },
     },
@@ -957,7 +957,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "text",
         textStyle: "regular",
-        textColor: "monochrome700",
+        textColor: "grey.700",
         columnColor: "#fff",
       },
     },
@@ -971,7 +971,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "text",
         textStyle: "regular",
-        textColor: "monochrome700",
+        textColor: "grey.700",
         columnColor: "#fff",
       },
     },
@@ -1023,7 +1023,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "text",
         textStyle: "regular",
-        textColor: "monochrome700",
+        textColor: "grey.700",
         columnColor: "#fff",
       },
     },
@@ -1037,7 +1037,7 @@ export const tableConfig: TableConfig = {
       columnStyle: {
         type: "text",
         textStyle: "regular",
-        textColor: "monochrome700",
+        textColor: "grey.700",
         columnColor: "#fff",
       },
     },

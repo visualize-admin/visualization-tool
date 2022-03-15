@@ -195,7 +195,7 @@ const PaletteRamp = (props: {
   nbClass?: number;
 }) => {
   const { palette, itemProps, highlighted, nbClass } = props;
-  const backgroundColor = highlighted ? "monochrome200" : "monochrome100";
+  const backgroundColor = highlighted ? "grey.200" : "grey.100";
 
   return (
     <Box sx={{ p: 1, cursor: "pointer", backgroundColor }}>

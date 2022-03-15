@@ -128,7 +128,7 @@ export const Logo = () => {
             pr: 6,
             borderRightWidth: "1px",
             borderRightStyle: "solid",
-            borderRightColor: "monochrome300",
+            borderRightColor: "grey.300",
             color: "grey.900",
           }}
         >

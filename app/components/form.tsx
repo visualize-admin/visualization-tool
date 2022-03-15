@@ -41,7 +41,7 @@ export const Label = ({
     sx={{
       cursor: "pointer",
       width: "auto",
-      color: disabled ? "monochrome500" : "monochrome700",
+      color: disabled ? "grey.500" : "grey.700",
       fontSize: smaller ? [2, 2, 2] : [4, 4, 4],
       mr: 4,
       display: "flex",
@@ -96,14 +96,14 @@ export const Radio = ({
                 ? "primary"
                 : checked && disabled
                 ? "primaryDisabled"
-                : "monochrome500",
+                : "grey.500",
             "> *": {
               fill:
                 checked && !disabled
                   ? "primary"
                   : checked && disabled
                   ? "primaryDisabled"
-                  : "monochrome500",
+                  : "grey.500",
             },
           }}
         />
@@ -144,7 +144,7 @@ export const Checkbox = ({
             ? "primary"
             : checked && disabled
             ? "primaryDisabled"
-            : "monochrome500",
+            : "grey.500",
         "> *": {
           fill:
             color && checked
@@ -153,7 +153,7 @@ export const Checkbox = ({
               ? "primary"
               : checked && disabled
               ? "primaryDisabled"
-              : "monochrome500",
+              : "grey.500",
         },
       }}
       id={`${name}-${label}`}
@@ -211,15 +211,15 @@ export const Select = ({
       )}
       <TUISelect
         sx={{
-          borderColor: "monochrome500",
           fontSize: 4,
+          borderColor: "grey.500",
           backgroundColor: "grey.100",
           pt: 2,
           pb: 2,
           pl: 2,
           pr: 5,
           height: "40px",
-          color: disabled ? "monochrome500" : "monochrome700",
+          color: disabled ? "grey.500" : "grey.700",
           textOverflow: "ellipsis",
         }}
         id={id}
@@ -308,7 +308,7 @@ export const Input = ({
     )}
     <TUIInput
       sx={{
-        borderColor: "monochrome500",
+        borderColor: "grey.500",
         backgroundColor: "grey.100",
         height: "40px",
       }}
@@ -364,13 +364,13 @@ export const DayPickerField = ({
       ...props.inputProps,
       style: {
         padding: "0.625rem 0.75rem",
-        color: disabled ? "monochrome300" : "monochrome700",
+        color: disabled ? "grey.300" : "grey.700",
         fontSize: "1rem",
         minHeight: "1.5rem",
         display: "block",
         borderRadius: "0.25rem",
         width: "100%",
-        border: "1px solid var(--theme-ui-colors-monochrome500)",
+        border: "1px solid var(--theme-ui-colors-grey.500)",
 
         // @ts-ignore
         ...props.inputProps?.style,
@@ -389,8 +389,8 @@ export const DayPickerField = ({
   return (
     <Box
       sx={{
-        color: disabled ? "monochrome300" : "monochrome700",
         fontSize: 4,
+        color: disabled ? "grey.300" : "grey.700",
         pb: 2,
       }}
     >
@@ -453,7 +453,7 @@ export const SearchField = ({
       </Box>
       <TUIInput
         sx={{
-          borderColor: "monochrome500",
+          borderColor: "grey.500",
           backgroundColor: "grey.100",
           px: 6,
           ":focus": { outline: "none", borderColor: "primary" },
@@ -565,10 +565,10 @@ export const Switch = ({
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: checked ? "primary" : "monochrome100",
+            backgroundColor: checked ? "primary" : "grey.100",
             borderRadius: "12px",
             border: "1px solid",
-            borderColor: checked ? "primary" : "monochrome500",
+            borderColor: checked ? "primary" : "grey.500",
 
             transition: "300ms",
 
@@ -580,10 +580,10 @@ export const Switch = ({
               left: checked ? "calc(100% - 1px)" : "1px",
               bottom: "1px",
               backgroundColor: checked
-                ? "monochrome100"
+                ? "grey.100"
                 : disabled
-                ? "monochrome500"
-                : "monochrome600",
+                ? "grey.500"
+                : "grey.600",
               borderRadius: "12px",
               transition: "300ms",
               transform: checked ? "translateX(-100%)" : "unset",

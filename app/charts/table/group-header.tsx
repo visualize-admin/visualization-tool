@@ -57,7 +57,7 @@ export const GroupHeader = ({
                   <Box
                     component="span"
                     sx={{
-                      color: hcl(bg).l < 55 ? "monochrome100" : "monochrome900",
+                      color: hcl(bg).l < 55 ? "grey.100" : "grey.900",
                       fontWeight: "bold",
                       textAlign: "left",
                     }}
@@ -77,20 +77,20 @@ export const GroupHeader = ({
 const getGroupLevelBackgroundColor = (x: number) => {
   switch (x) {
     case 0:
-      return "monochrome100";
+      return "grey.100";
     case 1:
-      return "monochrome100";
+      return "grey.100";
     case 2:
-      return "monochrome200";
+      return "grey.200";
     case 3:
-      return "monochrome300";
+      return "grey.300";
     case 4:
-      return "monochrome400";
+      return "grey.400";
     case 5:
-      return "monochrome500";
+      return "grey.500";
     case 6:
-      return "monochrome600";
+      return "grey.600";
     default:
-      return "monochrome100";
+      return "grey.100";
   }
 };

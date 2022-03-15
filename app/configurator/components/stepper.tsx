@@ -82,7 +82,7 @@ export const StepperDumb = ({
         backgroundColor: "grey.100",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
-        borderBottomColor: "monochrome500",
+        borderBottomColor: "grey.500",
         overflow: "hidden",
       }}
     >

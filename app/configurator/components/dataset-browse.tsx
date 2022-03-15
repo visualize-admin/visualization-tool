@@ -410,8 +410,8 @@ const defaultNavItemTheme = {
   activeTextColor: "white",
   activeBg: "primary",
   textColor: "initial",
-  countColor: "monochrome800",
-  countBg: "monochrome300",
+  countColor: "grey.800",
+  countBg: "grey.300",
 };
 
 const themeNavItemTheme = {

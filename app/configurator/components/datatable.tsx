@@ -41,7 +41,7 @@ const PreviewTable = ({
             fontSize: ["0.875rem"],
             verticalAlign: "baseline",
             color: "grey.700",
-            borderBottomColor: "monochrome700",
+            borderBottomColor: "grey.700",
             borderBottomWidth: "1px",
             borderBottomStyle: "solid",
           }}
@@ -73,7 +73,7 @@ const PreviewTable = ({
               sx={{
                 fontSize: ["0.875rem"],
                 color: "grey.800",
-                borderBottomColor: "monochrome400",
+                borderBottomColor: "grey.400",
                 borderBottomWidth: "1px",
                 borderBottomStyle: "solid",
               }}

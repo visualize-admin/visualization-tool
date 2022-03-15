@@ -20,7 +20,7 @@ const AccordionArrow = ({
 };
 
 const defaultTheme = {
-  borderColor: "monochrome400",
+  borderColor: "grey.400",
   backgroundColor: "transparent",
 };
 

@@ -84,10 +84,10 @@ export const CellDesktop = ({
               ? "#fff"
               : "#000",
             backgroundColor: isNull
-              ? "monochrome100"
+              ? "grey.100"
               : colorScale
               ? colorScale(cell.value)
-              : "monochrome100",
+              : "grey.100",
             textAlign: "right",
             fontWeight: textStyle,
             px: 3,
@@ -116,7 +116,7 @@ export const CellDesktop = ({
                 width: widthScale.range()[1],
                 height: 18,
                 position: "relative",
-                backgroundColor: barShowBackground ? barColorBackground : "monochrome100",
+                backgroundColor: barShowBackground ? barColorBackground : "grey.100",
               }}
             >
               <Box

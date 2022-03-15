@@ -19,10 +19,10 @@
 }
 
 .DayPicker-Weekday {
-  color: var(--theme-ui-colors-monochrome700);
+  color: var(--theme-ui-colors-grey.700);
   font-size: 0.75rem;
 }
 
 .DayPickerInput > input[disabled] {
-  color: var(--theme-ui-colors-monochrome300);
+  color: var(--theme-ui-colors-grey.300);
 }

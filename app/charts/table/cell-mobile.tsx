@@ -43,7 +43,7 @@ export const RowMobile = ({
                 },
                 "&:last-of-type": {
                   borderBottom: "1px solid",
-                  borderBottomColor: "monochrome400",
+                  borderBottomColor: "grey.400",
                   pb: 3,
                 },
               }}
@@ -71,7 +71,7 @@ export const RowMobile = ({
         <Flex
           sx={{
             borderTop: "1px solid",
-            borderTopColor: "monochrome400",
+            borderTopColor: "grey.400",
             color: "grey.600",
             py: 2,
             ml: `${row.depth * 12}px`,
@@ -153,10 +153,10 @@ export const DDContent = ({
               ? "#fff"
               : "#000",
             backgroundColor: isNull
-              ? "monochrome100"
+              ? "grey.100"
               : colorScale
               ? colorScale(cell.value)
-              : "monochrome100",
+              : "grey.100",
             fontWeight: textStyle,
             px: 1,
             width: "fit-content",
@@ -185,7 +185,7 @@ export const DDContent = ({
                 width: chartWidth / 2,
                 height: 14,
                 position: "relative",
-                backgroundColor: barShowBackground ? barColorBackground : "monochrome100",
+                backgroundColor: barShowBackground ? barColorBackground : "grey.100",
               }}
             >
               <Box

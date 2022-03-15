@@ -18,7 +18,7 @@ export const ChartPanel = ({
       minHeight: [150, 300, 500],
       borderWidth: "1px",
       borderStyle: "solid",
-      borderColor: "monochrome300",
+      borderColor: "grey.300",
       ...boxProps.sx,
     }}
   >

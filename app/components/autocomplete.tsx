@@ -148,7 +148,7 @@ function Autocomplete<TItem>({
         <Input
           {...getInputProps()}
           placeholder={placeholder}
-          sx={{ backgroundColor: "grey.100", width: 400, borderColor: "monochrome300" }}
+          sx={{ backgroundColor: "grey.100", width: 400, borderColor: "grey.300" }}
         />
       </div>
       <AutocompleteList {...getMenuProps()} sx={menuStyles}>

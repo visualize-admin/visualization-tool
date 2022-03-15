@@ -107,7 +107,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
         <Input
           sx={{
             color: "grey.700",
-            borderColor: "monochrome500",
+            borderColor: "grey.500",
             backgroundColor: "grey.100",
             fontSize: "0.875rem",
             ":focus": { outline: "none", borderColor: "primary" },

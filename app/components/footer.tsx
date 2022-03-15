@@ -47,7 +47,7 @@ export const Footer = () => {
         backgroundColor: "grey.200",
         borderTopWidth: "1px",
         borderTopStyle: "solid",
-        borderTopColor: "monochrome100",
+        borderTopColor: "grey.100",
       }}
     >
       <Box
@@ -55,7 +55,7 @@ export const Footer = () => {
           width: ["100%", "auto"],
           px: [4, 0],
           py: 5,
-          color: ["monochrome900", "monochrome700"],
+          color: ["grey.900", "grey.700"],
         }}
       >
         <FooterLink
@@ -95,8 +95,8 @@ export const Footer = () => {
             borderBottomWidth: "1px",
             borderTopStyle: "solid",
             borderBottomStyle: "solid",
-            borderTopColor: "monochrome500",
-            borderBottomColor: "monochrome500",
+            borderTopColor: "grey.500",
+            borderBottomColor: "grey.500",
           }}
         >
           <Logo />
@@ -193,7 +193,7 @@ const FooterLinkBottom = forwardRef<
 
         borderLeftWidth: ["1px", 0],
         borderLeftStyle: "solid",
-        borderLeftColor: "monochrome500",
+        borderLeftColor: "grey.500",
         textDecoration: "none",
         cursor: "pointer",
         ":hover": {

@@ -124,7 +124,7 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               height: 48,
               borderBottomWidth: "1px",
               borderBottomStyle: "solid",
-              borderBottomColor: "monochrome500",
+              borderBottomColor: "grey.500",
               justifyContent: "space-between",
               alignItems: "center",
             }}
@@ -284,7 +284,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           borderBottomRightRadius: 0,
           borderWidth: "1px",
           borderStyle: "solid",
-          borderColor: "monochrome500",
+          borderColor: "grey.500",
         }}
         type="text"
         value={iFrameCode}
@@ -311,7 +311,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
 
           borderWidth: "1px",
           borderStyle: "solid",
-          borderColor: "monochrome500",
+          borderColor: "grey.500",
           borderLeft: "none",
 
           cursor: "pointer",
@@ -362,7 +362,7 @@ const PublishActionModal = ({ children }: { children: ReactNode }) => (
         // maxWidth: 340,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "monochrome500",
+        borderColor: "grey.500",
       },
     }}
   >
@@ -418,7 +418,7 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
         width: 0,
         height: 0,
         border: "0.5rem solid transparent",
-        borderTopColor: "monochrome700",
+        borderTopColor: "grey.700",
         left: "50%",
         top: "100%",
         zIndex: -1,

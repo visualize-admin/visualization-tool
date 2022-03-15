@@ -271,7 +271,7 @@ const Example = ({
         order: reverse ? 1 : 2,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "monochrome300",
+        borderColor: "grey.300",
         boxShadow: "primary",
         width: ["100%", "100%", "50%"],
         mt: 2,

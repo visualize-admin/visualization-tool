@@ -132,7 +132,7 @@ export const Table = () => {
           {...row.getRowProps({
             style: { ...style, minWidth: "100%" },
           })}
-          sx={{ borderBottom: "1px solid", borderBottomColor: "monochrome400" }}
+          sx={{ borderBottom: "1px solid", borderBottomColor: "grey.400" }}
         >
           {row.subRows.length === 0 ? (
             row.cells.map((cell, i) => {
@@ -174,10 +174,10 @@ export const Table = () => {
           <Box
             sx={{
               borderBottom: "1px solid",
-              borderBottomColor: "monochrome400",
+              borderBottomColor: "grey.400",
               "&:first-of-type": {
                 borderTop: "1px solid",
-                borderTopColor: "monochrome400",
+                borderTopColor: "grey.400",
               },
             }}
             {...row.getRowProps({

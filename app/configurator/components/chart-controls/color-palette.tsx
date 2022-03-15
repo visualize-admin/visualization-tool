@@ -102,8 +102,8 @@ export const ColorPalette = ({
                 cursor: "pointer",
                 backgroundColor:
                   highlightedIndex === index
-                    ? "monochrome200"
-                    : "monochrome100",
+                    ? "grey.200"
+                    : "grey.100",
               }}
             >
               <Typography component="div" variant="caption">
@@ -113,8 +113,8 @@ export const ColorPalette = ({
                 sx={{
                   backgroundColor:
                     highlightedIndex === index
-                      ? "monochrome200"
-                      : "monochrome100",
+                      ? "grey.200"
+                      : "grey.100",
                 }}
                 {...getItemProps({ item: palette, index })}
               >
@@ -152,13 +152,13 @@ const ColorSquare = ({
 }) => (
   <Box
     sx={{
-      backgroundColor: disabled ? "monochrome300" : color,
+      backgroundColor: disabled ? "grey.300" : color,
       display: "inline-block",
       margin: 0,
       padding: 0,
       width: 16,
       height: 28,
-      borderColor: "monochrome100",
+      borderColor: "grey.100",
       borderWidth: "1px",
       borderStyle: "solid",
       "&:first-of-type": {

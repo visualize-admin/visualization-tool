@@ -36,11 +36,11 @@ export const ChartTypeSelectionButton = ({
         height: "86px",
         borderRadius: "default",
 
-        backgroundColor: checked ? "primary" : "monochrome100",
+        backgroundColor: checked ? "primary" : "grey.100",
         color: checked
           ? "mutedColored"
           : disabled
-          ? "monochrome500"
+          ? "grey.500"
           : "primary",
 
         display: "flex",
@@ -67,10 +67,10 @@ export const ChartTypeSelectionButton = ({
         variant="body2"
         sx={{
           color: disabled
-            ? "monochrome600"
+            ? "grey.600"
             : checked
-            ? "monochrome100"
-            : "monochrome700",
+            ? "grey.100"
+            : "grey.700",
           fontSize: ["0.75rem", "0.75rem", "0.75rem"],
         }}
       >

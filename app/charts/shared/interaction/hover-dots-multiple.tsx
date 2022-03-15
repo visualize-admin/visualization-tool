@@ -37,7 +37,7 @@ const HoverDots = ({ d }: { d: Observation }) => {
                   borderRadius: "50%",
                   borderStyle: "solid",
                   borderWidth: 1,
-                  borderColor: "monochrome100",
+                  borderColor: "grey.100",
                   transform: "translate3d(-50%, -50%, 0)",
                   pointerEvents: "none",
                 }}

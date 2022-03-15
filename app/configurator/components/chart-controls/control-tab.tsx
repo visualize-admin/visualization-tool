@@ -188,7 +188,7 @@ export const ControlTabButton = ({
     id={`tab-${value}`}
     onClick={() => onClick(value)}
     sx={{
-      backgroundColor: checked ? "mutedDarker" : "monochrome100",
+      backgroundColor: checked ? "mutedDarker" : "grey.100",
       color: "grey.700",
       borderColor: "primary",
       borderRadius: "default",
@@ -244,13 +244,13 @@ export const ControlTabButtonInner = ({
           borderRadius: "bigger",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: checked ? "primary" : "monochrome100",
+          backgroundColor: checked ? "primary" : "grey.100",
           color:
             optional && !checked
-              ? "monochrome500"
+              ? "grey.500"
               : checked
-              ? "monochrome100"
-              : "monochrome700",
+              ? "grey.100"
+              : "grey.700",
         }}
       >
         <Icon size={24} name={iconName} />
@@ -268,7 +268,7 @@ export const ControlTabButtonInner = ({
         <Typography
           variant="body1"
           sx={{
-            color: optional && !checked ? "monochrome600" : "monochrome800",
+            color: optional && !checked ? "grey.600" : "grey.800",
             lineHeight: ["1rem", "1rem", "1rem"],
             textAlign: "left",
           }}
