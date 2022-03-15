@@ -1,10 +1,8 @@
 import { Trans } from "@lingui/macro";
-import { csvFormat } from "d3";
 import { saveAs } from "file-saver";
 import { keyBy } from "lodash";
-import { memo, ReactNode, useMemo } from "react";
+import { memo, ReactNode, useCallback, useMemo } from "react";
 import { Box, Button, Link } from "theme-ui";
-import * as XLSX from "xlsx";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
@@ -15,7 +13,7 @@ import {
 import { useLocale } from "../locales/use-locale";
 
 type DataDownloadExtent = "visible" | "all";
-type DataDownloadFileFormat = "csv" | "xlsx";
+export type DataDownloadFileFormat = "csv" | "xlsx";
 
 export const DataDownload = memo(
   ({
@@ -85,8 +83,10 @@ const DataDownloadInner = memo(
     extent: DataDownloadExtent;
     fileFormat: DataDownloadFileFormat;
   }) => {
+    const columns = useMemo(() => {
+      return keyBy([...dimensions, ...measures], (d) => d.iri);
+    }, [dimensions, measures]);
     const data = useMemo(() => {
-      const columns = keyBy([...dimensions, ...measures], (d) => d.iri);
       return observations.map((obs) =>
         Object.keys(obs).reduce((acc, key) => {
           const col = columns[key];
@@ -98,26 +98,26 @@ const DataDownloadInner = memo(
             : acc;
         }, {})
       );
-    }, [dimensions, measures, observations]);
+    }, [columns, observations]);
 
-    const onClick: () => void = useMemo(() => {
-      switch (fileFormat) {
-        case "csv":
-          const csvData = csvFormat(data);
-          const blob = new Blob([csvData], {
-            type: "text/plain;charset=utf-8",
-          });
-          return () => saveAs(blob, `${title}.csv`);
-        case "xlsx":
-          const workbook = XLSX.utils.book_new();
-          const worksheet = XLSX.utils.json_to_sheet(data);
-          XLSX.utils.book_append_sheet(workbook, worksheet, "data");
-          return () => XLSX.writeFile(workbook, `${title}.xlsx`);
-      }
-    }, [data, fileFormat, title]);
+    const downloadData = useCallback(() => {
+      fetch("/api/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          columnKeys: Object.keys(columns).map((d) => columns[d].label),
+          data,
+          fileFormat,
+        }),
+      }).then((res) =>
+        res.blob().then((blob) => saveAs(blob, `${title}.${fileFormat}`))
+      );
+    }, [columns, data, fileFormat, title]);
 
     return (
-      <DownloadButton onClick={onClick}>
+      <DownloadButton onClick={() => downloadData()}>
         {extent === "visible" ? (
           <Trans id="button.download.data.visible">Download visible data</Trans>
         ) : (
