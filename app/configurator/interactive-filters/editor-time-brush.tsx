@@ -103,13 +103,13 @@ export const EditorBrush = ({
     const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
         .attr("pointer-events", disabled && "none")
-        .attr("fill", theme.colors.monochrome300)
+        .attr("fill", theme.palette.grey[300])
         .attr("fill-opacity", 0.9);
       g.select(".selection")
         .attr("pointer-events", disabled && "none")
         .attr(
           "fill",
-          disabled ? theme.colors.monochrome500 : theme.colors.primary
+          disabled ? theme.palette.grey[500] : theme.colors.primary
         )
         .attr("fill-opacity", 1)
         .attr("stroke", "none");
@@ -117,7 +117,7 @@ export const EditorBrush = ({
         .attr("pointer-events", disabled && "none")
         .attr(
           "fill",
-          disabled ? theme.colors.monochrome500 : theme.colors.primary
+          disabled ? theme.palette.grey[500] : theme.colors.primary
         )
         .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
         .style("width", `${HANDLE_HEIGHT}px`)
@@ -140,8 +140,8 @@ export const EditorBrush = ({
   }, [
     brush,
     disabled,
-    theme.colors.monochrome300,
-    theme.colors.monochrome500,
+    theme.palette.grey[300],
+    theme.palette.grey[500],
     theme.colors.primary,
   ]);
 

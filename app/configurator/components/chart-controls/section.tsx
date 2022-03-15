@@ -95,7 +95,7 @@ export const SectionTitle = ({
       {iconName && (
         <Icon
           color={
-            disabled ? theme.colors.monochrome600 : theme.colors.monochrome700
+            disabled ? theme.palette.grey[600] : theme.palette.grey[700]
           }
           name={iconName}
         ></Icon>
