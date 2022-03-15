@@ -14,7 +14,7 @@ const Tag = ({
   children,
   type,
   ...props
-}: { children: ReactNode; type: TagType } & TextProps) => {
+}: { children: ReactNode; type: TagType } & TypographyProps) => {
   const { sx } = props;
   return (
     <Typography
