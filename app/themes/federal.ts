@@ -6,7 +6,26 @@
  *
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
-import { createTheme } from "@mui/material/styles";
+import { Breakpoint, createTheme } from "@mui/material/styles";
+import { omit } from "lodash";
+
+const breakpoints = ["xs", "sm", "md"] as Breakpoint[];
+const createResponsiveVariant = (spec: Record<string, any>) => {
+  const res = omit(spec, ["lineHeight", "fontSize"]);
+  for (let i = 0; i < spec.fontSize; i++) {
+    const lineHeight = Array.isArray(spec.lineHeight)
+      ? spec.lineHeight[i]
+      : spec.lineHeight;
+    const fontSize = Array.isArray(spec.fontSize)
+      ? spec.fontSize[i]
+      : spec.fontSize;
+    res.push(theme.breakpoints.down(breakpoints[i]), {
+      fontSize,
+      lineHeight,
+    });
+  }
+  return res;
+};
 
 /**
  * Theme conforming to the Swiss Federal CD guidelines
@@ -16,6 +35,75 @@ export const theme = createTheme({
     primary: {
       main: "#006699",
     },
+    grey: {
+      100: "#FFFFFF",
+      200: "#F5F5F5",
+      300: "#E5E5E5",
+      400: "#D5D5D5",
+      500: "#CCCCCC",
+      600: "#757575",
+      700: "#454545",
+      800: "#333333",
+      900: "#000000",
+    },
+  },
+  typography: {
+    fontFamily:
+      "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+    // giga: {
+    //   fontFamily: "body",
+    //   lineHeight: [9, 10, 10],
+    //   fontWeight: "light",
+    //   fontSize: [8, 9, 9],
+    // },
+    h1: createResponsiveVariant({
+      fontFamily: "body",
+      lineHeight: [7, 8, 8],
+      fontWeight: "bold",
+      fontSize: [6, 7, 7],
+    }),
+    h2: createResponsiveVariant({
+      fontFamily: "body",
+      lineHeight: [6, 7, 7],
+      fontWeight: "regular",
+      fontSize: [5, 6, 6],
+    }),
+    h3: createResponsiveVariant({
+      fontFamily: "body",
+      lineHeight: [5, 6, 6],
+      fontWeight: "bold",
+      fontSize: [4, 5, 5],
+    }),
+    // lead: {
+    //   fontFamily: "body",
+    //   lineHeight: [4, 5, 5],
+    //   fontWeight: "bold",
+    //   fontSize: [3, 4, 4],
+    // },
+    body1: createResponsiveVariant({
+      fontFamily: "body",
+      lineHeight: [4, 5, 5],
+      fontWeight: "regular",
+      fontSize: [3, 4, 4],
+    }),
+    body2: createResponsiveVariant({
+      fontFamily: "body",
+      lineHeight: [2, 4, 3],
+      fontWeight: "regular",
+      fontSize: [2, 3, 3],
+    }),
+    // table: {
+    //   fontFamily: "body",
+    //   lineHeight: [2, 4, 4],
+    //   fontWeight: "regular",
+    //   fontSize: [2, 3, 3],
+    // },
+    caption: createResponsiveVariant({
+      fontFamily: "body",
+      lineHeight: [1, 2, 2],
+      fontWeight: "regular",
+      fontSize: [1, 2, 2],
+    }),
   },
 });
 // breakpoints: ["48em", "62em", "75em"],
@@ -34,15 +122,7 @@ export const theme = createTheme({
 //   text: "#000000",
 //   background: "#FFFFFF",
 //   brand: "#DC0018",
-//   monochrome100: "#FFFFFF",
-//   monochrome200: "#F5F5F5",
-//   monochrome300: "#E5E5E5",
-//   monochrome400: "#D5D5D5",
-//   monochrome500: "#CCCCCC",
-//   monochrome600: "#757575",
-//   monochrome700: "#454545",
-//   monochrome800: "#333333",
-//   monochrome900: "#000000",
+
 //   primary: "#006699",
 //   primaryHover: "#004B70",
 //   primaryActive: "#00334D",
@@ -76,10 +156,7 @@ export const theme = createTheme({
 //   category: "#3c763d",
 //   categoryLight: "#DFF0D8", // same as successLight
 // },
-// fonts: {
-//   body: "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-//   monospace: "Menlo, monospace",
-// },
+
 // fontSizes: [
 //   "0rem",
 //   "0.625rem",
@@ -127,60 +204,7 @@ export const theme = createTheme({
 //   tooltip: "0 2px 8px rgba(0, 0, 0, 0.25)",
 // },
 // text: {
-//   giga: {
-//     fontFamily: "body",
-//     lineHeight: [9, 10, 10],
-//     fontWeight: "light",
-//     fontSize: [8, 9, 9],
-//   },
-//   heading1: {
-//     fontFamily: "body",
-//     lineHeight: [7, 8, 8],
-//     fontWeight: "bold",
-//     fontSize: [6, 7, 7],
-//   },
-//   heading2: {
-//     fontFamily: "body",
-//     lineHeight: [6, 7, 7],
-//     fontWeight: "regular",
-//     fontSize: [5, 6, 6],
-//   },
-//   heading3: {
-//     fontFamily: "body",
-//     lineHeight: [5, 6, 6],
-//     fontWeight: "bold",
-//     fontSize: [4, 5, 5],
-//   },
-//   lead: {
-//     fontFamily: "body",
-//     lineHeight: [4, 5, 5],
-//     fontWeight: "bold",
-//     fontSize: [3, 4, 4],
-//   },
-//   paragraph1: {
-//     fontFamily: "body",
-//     lineHeight: [4, 5, 5],
-//     fontWeight: "regular",
-//     fontSize: [3, 4, 4],
-//   },
-//   paragraph2: {
-//     fontFamily: "body",
-//     lineHeight: [2, 4, 3],
-//     fontWeight: "regular",
-//     fontSize: [2, 3, 3],
-//   },
-//   table: {
-//     fontFamily: "body",
-//     lineHeight: [2, 4, 4],
-//     fontWeight: "regular",
-//     fontSize: [2, 3, 3],
-//   },
-//   meta: {
-//     fontFamily: "body",
-//     lineHeight: [1, 2, 2],
-//     fontWeight: "regular",
-//     fontSize: [1, 2, 2],
-//   },
+
 // },
 // styles: {
 //   // Overwrite default browser styles.
