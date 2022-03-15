@@ -79,18 +79,19 @@ export const theme = createTheme({
   breakpoints: {
     values: { xs: 768, sm: 992, md: 1200, lg: 1280, xl: 1360 },
   },
+  spacing: [
+    "0",
+    "0.25rem",
+    "0.5rem",
+    "0.75rem",
+    "1rem",
+    "1.5rem",
+    "2rem",
+    "4rem",
+    "4.5rem",
+  ],
 });
-// space: [
-//   "0",
-//   "0.25rem",
-//   "0.5rem",
-//   "0.75rem",
-//   "1rem",
-//   "1.5rem",
-//   "2rem",
-//   "4rem",
-//   "4.5rem",
-// ],
+
 // colors: {
 //   text: "#000000",
 //   background: "#FFFFFF",
