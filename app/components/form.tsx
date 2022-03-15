@@ -211,8 +211,8 @@ export const Select = ({
       )}
       <TUISelect
         sx={{
-          fontSize: 4,
           borderColor: "grey.500",
+          fontSize: "1rem",
           backgroundColor: "grey.100",
           pt: 2,
           pb: 2,
@@ -263,7 +263,7 @@ export const MiniSelect = ({
     <TUISelect
       sx={{
         borderColor: "transparent",
-        fontSize: [1, 2, 2],
+        fontSize: ["0.625rem", "0.75rem", "0.75rem"],
 
         backgroundColor: "transparent",
         py: 0,
@@ -300,7 +300,7 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "grey.700", fontSize: 4, pb: 2 }}>
+  <Box sx={{ color: "grey.700", fontSize: "1rem", pb: 2 }}>
     {label && name && (
       <Label htmlFor={name} smaller>
         {label}
@@ -389,8 +389,8 @@ export const DayPickerField = ({
   return (
     <Box
       sx={{
-        fontSize: 4,
         color: disabled ? "grey.300" : "grey.700",
+        fontSize: "1rem",
         pb: 2,
       }}
     >
@@ -439,7 +439,7 @@ export const SearchField = ({
 } & FieldProps) => {
   const { search } = useBrowseContext();
   return (
-    <Box sx={{ color: "grey.700", fontSize: 4, position: "relative", ...sx }}>
+    <Box sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}>
       {label && id && (
         <label htmlFor={id}>
           <VisuallyHidden>{label}</VisuallyHidden>
@@ -507,7 +507,7 @@ export const FieldSetLegend = ({
     sx={{
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
-      fontSize: [1, 2, 2],
+      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
       mb: 1,
       color: "grey.800",
     }}
@@ -594,7 +594,7 @@ export const Switch = ({
         <Box
           component="span"
           sx={{
-            fontSize: 2,
+            fontSize: "0.75rem",
             ml: "32px",
             color: "grey.700",
             cursor: disabled ? "default" : "pointer",
