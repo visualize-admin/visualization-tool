@@ -255,7 +255,7 @@ const useTableState = ({
 
               return {
                 label: dvLabel,
-                color: colorMapping![colorMappingIri] || theme.colors.primary,
+                color: colorMapping![colorMappingIri] || theme.palette.primary.main,
               };
             }
           );
@@ -339,7 +339,7 @@ const useTableState = ({
           };
         }
       }, {}),
-    [data, dimensions, fields, formatNumber, theme.colors.primary]
+    [data, dimensions, fields, formatNumber, theme.palette.primary.main]
   );
 
   return {

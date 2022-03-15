@@ -80,7 +80,7 @@ export const EditorIntervalBrush = ({
         .attr("pointer-events", disabled && "none")
         .attr(
           "fill",
-          disabled ? theme.palette.grey[500] : theme.colors.primary
+          disabled ? theme.palette.grey[500] : theme.palette.primary.main
         )
         .attr("fill-opacity", 1)
         .attr("stroke", "none");
@@ -88,7 +88,7 @@ export const EditorIntervalBrush = ({
         .attr("pointer-events", disabled && "none")
         .attr(
           "fill",
-          disabled ? theme.palette.grey[500] : theme.colors.primary
+          disabled ? theme.palette.grey[500] : theme.palette.primary.main
         )
         .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
         .style("width", `${HANDLE_HEIGHT}px`)
@@ -113,7 +113,7 @@ export const EditorIntervalBrush = ({
     disabled,
     theme.palette.grey[300],
     theme.palette.grey[500],
-    theme.colors.primary,
+    theme.palette.primary.main,
   ]);
 
   // Set default selection to full extent

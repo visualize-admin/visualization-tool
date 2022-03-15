@@ -61,8 +61,8 @@ export const Columns = () => {
             height={Math.abs(yScale(y) - yScale(0))}
             color={
               (getY(d) ?? NaN) <= 0
-                ? theme.colors.secondary
-                : theme.colors.primary
+                ? theme.palette.secondary.main
+                : theme.palette.primary.main
             }
           />
         );
