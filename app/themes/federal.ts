@@ -38,7 +38,13 @@ const themeUILineHeights = [
   "4rem",
   "4.5rem",
 ];
-const createResponsiveVariant = (theme: Theme, spec: Record<string, any>) => {
+const themeUIFontWeights = {
+  light: 300,
+  regular: 400,
+  heading: 700,
+  bold: 700,
+};
+const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
   const res = omit(spec, ["lineHeight", "fontSize"]);
   for (let i = 0; i < spec.fontSize.length; i++) {
     const lineHeight = Array.isArray(spec.lineHeight)
@@ -47,12 +53,19 @@ const createResponsiveVariant = (theme: Theme, spec: Record<string, any>) => {
     const fontSize = Array.isArray(spec.fontSize)
       ? spec.fontSize[i]
       : spec.fontSize;
-    res[theme.breakpoints.down(breakpoints[i])] = {
+    if (i === 0) {
+      res.fontSize = themeUIFontSizes[fontSize];
+      res.lineHeight = themeUILineHeights[lineHeight];
+    }
+    res[theme.breakpoints.up(breakpoints[i])] = {
       fontSize: themeUIFontSizes[fontSize],
       lineHeight: themeUILineHeights[lineHeight],
     };
   }
   console.log(res);
+  res.fontWeight =
+    themeUIFontWeights[res.fontWeight as keyof typeof themeUIFontWeights] ||
+    res.fontWeight;
   return res;
 };
 
