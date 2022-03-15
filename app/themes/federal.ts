@@ -6,24 +6,53 @@
  *
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
-import { Breakpoint, createTheme } from "@mui/material/styles";
-import { omit } from "lodash";
+import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
+import { omit, merge } from "lodash";
 
 const breakpoints = ["xs", "sm", "md"] as Breakpoint[];
-const createResponsiveVariant = (spec: Record<string, any>) => {
+const themeUIFontSizes = [
+  "0rem",
+  "0.625rem",
+  "0.75rem",
+  "0.875rem",
+  "1rem",
+  "1.125rem",
+  "1.5rem",
+  "2rem",
+  "2.5rem",
+  "3rem",
+  "4.5rem",
+  "5.5rem",
+];
+
+const themeUILineHeights = [
+  "0rem",
+  "1rem",
+  "1.125rem",
+  "1.25rem",
+  "1.375rem",
+  "1.5rem",
+  "1.750rem",
+  "2.250rem",
+  "3rem",
+  "4rem",
+  "4.5rem",
+];
+const createResponsiveVariant = (theme: Theme, spec: Record<string, any>) => {
   const res = omit(spec, ["lineHeight", "fontSize"]);
-  for (let i = 0; i < spec.fontSize; i++) {
+  for (let i = 0; i < spec.fontSize.length; i++) {
     const lineHeight = Array.isArray(spec.lineHeight)
       ? spec.lineHeight[i]
       : spec.lineHeight;
     const fontSize = Array.isArray(spec.fontSize)
       ? spec.fontSize[i]
       : spec.fontSize;
-    res.push(theme.breakpoints.up(breakpoints[i]), {
-      fontSize,
-      lineHeight,
-    });
+    res[theme.breakpoints.down(breakpoints[i])] = {
+      fontSize: themeUIFontSizes[fontSize],
+      lineHeight: themeUILineHeights[lineHeight],
+    };
   }
+  console.log(res);
   return res;
 };
 
@@ -47,59 +76,10 @@ export const theme = createTheme({
       900: "#000000",
     },
   },
-  typography: {
-    fontFamily:
-      "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-    // giga: {
-    //   fontFamily: "body",
-    //   lineHeight: [9, 10, 10],
-    //   fontWeight: "light",
-    //   fontSize: [8, 9, 9],
-    // },
-    h1: createResponsiveVariant({
-      lineHeight: [7, 8, 8],
-      fontWeight: "bold",
-      fontSize: [6, 7, 7],
-    }),
-    h2: createResponsiveVariant({
-      lineHeight: [6, 7, 7],
-      fontWeight: "regular",
-      fontSize: [5, 6, 6],
-    }),
-    h3: createResponsiveVariant({
-      lineHeight: [5, 6, 6],
-      fontWeight: "bold",
-      fontSize: [4, 5, 5],
-    }),
-    h4: createResponsiveVariant({
-      lineHeight: [4, 5, 5],
-      fontWeight: "bold",
-      fontSize: [3, 4, 4],
-    }),
-    body1: createResponsiveVariant({
-      lineHeight: [4, 5, 5],
-      fontWeight: "regular",
-      fontSize: [3, 4, 4],
-    }),
-    body2: createResponsiveVariant({
-      lineHeight: [2, 4, 3],
-      fontWeight: "regular",
-      fontSize: [2, 3, 3],
-    }),
-    // table: {
-    //   fontFamily: "body",
-    //   lineHeight: [2, 4, 4],
-    //   fontWeight: "regular",
-    //   fontSize: [2, 3, 3],
-    // },
-    caption: createResponsiveVariant({
-      lineHeight: [1, 2, 2],
-      fontWeight: "regular",
-      fontSize: [1, 2, 2],
-    }),
+  breakpoints: {
+    values: { xs: 768, sm: 992, md: 1200, lg: 1280, xl: 1360 },
   },
 });
-// breakpoints: ["48em", "62em", "75em"],
 // space: [
 //   "0",
 //   "0.25rem",
@@ -204,60 +184,7 @@ export const theme = createTheme({
 //   root: {
 //     // "root" applies to "body"
 //     // @ts-ignore
-//     "@font-face": [
-//       {
-//         fontFamily: "FrutigerNeue",
-//         fontStyle: "normal",
-//         fontWeight: 700,
-//         src: `url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
-//         url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff")`,
-//       },
-//       {
-//         fontFamily: "FrutigerNeue",
-//         fontStyle: "normal",
-//         fontWeight: 400,
-//         src: `url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
-//         url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff")`,
-//       },
-//       {
-//         fontFamily: "FrutigerNeue",
-//         fontStyle: "normal",
-//         fontWeight: 300,
-//         src: `url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
-//         url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff")`,
-//       },
-//       {
-//         fontFamily: "FrutigerNeue",
-//         fontStyle: "italic",
-//         fontWeight: 400,
-//         src: `url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
-//         url("/static/fonts/FrutigerNeueW02-It.woff") format("woff")`,
-//       },
-//     ],
-//     backgroundColor: "grey.100",
-//     margin: 0,
-//     padding: 0,
-//     fontFamily:
-//       "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-//     // Hack around type error for vendor prefixed rules
-//     ...{
-//       // Use momentum-based scrolling on iOS devices
-//       WebkitOverflowScrolling: "touch",
-//       // Auto-hide scrollbars in Edge
-//       msOverflowStyle: "-ms-autohiding-scrollbar",
-//     },
-//     svg: {
-//       display: "block",
-//     },
-//     "*:focus": {
-//       outline: "3px solid #333333",
-//     },
-//     fieldset: {
-//       border: 0,
-//       padding: "0.01em 0 0 0",
-//       margin: 0,
-//       minWidth: 0,
-//     },
+
 //   },
 // },
 // buttons: {
@@ -509,6 +436,127 @@ export const theme = createTheme({
 // },
 // };
 
+theme.typography = merge(theme.typography, {
+  fontFamily:
+    "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+  // giga: {
+  //   fontFamily: "body",
+  //   lineHeight: [9, 10, 10],
+  //   fontWeight: "light",
+  //   fontSize: [8, 9, 9],
+  // },
+  h1: createResponsiveVariant(theme, {
+    lineHeight: [7, 8, 8],
+    fontWeight: "bold",
+    fontSize: [6, 7, 7],
+  }),
+  h2: createResponsiveVariant(theme, {
+    lineHeight: [6, 7, 7],
+    fontWeight: "regular",
+    fontSize: [5, 6, 6],
+  }),
+  h3: createResponsiveVariant(theme, {
+    lineHeight: [5, 6, 6],
+    fontWeight: "bold",
+    fontSize: [4, 5, 5],
+  }),
+  h4: createResponsiveVariant(theme, {
+    lineHeight: [4, 5, 5],
+    fontWeight: "bold",
+    fontSize: [3, 4, 4],
+  }),
+  body1: createResponsiveVariant(theme, {
+    lineHeight: [4, 5, 5],
+    fontWeight: "regular",
+    fontSize: [3, 4, 4],
+  }),
+  body2: createResponsiveVariant(theme, {
+    lineHeight: [2, 4, 3],
+    fontWeight: "regular",
+    fontSize: [2, 3, 3],
+  }),
+  // table: {
+  //   fontFamily: "body",
+  //   lineHeight: [2, 4, 4],
+  //   fontWeight: "regular",
+  //   fontSize: [2, 3, 3],
+  // },
+  caption: createResponsiveVariant(theme, {
+    lineHeight: [1, 2, 2],
+    fontWeight: "regular",
+    fontSize: [1, 2, 2],
+  }),
+});
+
+theme.components = {
+  MuiCard: {
+    styleOverrides: {
+      root: {
+        backgroundColor: "red",
+      },
+    },
+  },
+  MuiCssBaseline: {
+    styleOverrides: {
+      backgroundColor: "red",
+      margin: 0,
+      padding: 0,
+      fontFamily:
+        "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+      // Hack around type error for vendor prefixed rules
+      ...{
+        // Use momentum-based scrolling on iOS devices
+        WebkitOverflowScrolling: "touch",
+        // Auto-hide scrollbars in Edge
+        msOverflowStyle: "-ms-autohiding-scrollbar",
+      },
+      svg: {
+        display: "block",
+      },
+      "*:focus": {
+        outline: "3px solid #333333",
+      },
+      fieldset: {
+        border: 0,
+        padding: "0.01em 0 0 0",
+        margin: 0,
+        minWidth: 0,
+      },
+      "@font-face": [
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 700,
+          src: `url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 400,
+          src: `url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "normal",
+          fontWeight: 300,
+          src: `url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff")`,
+        },
+        {
+          fontFamily: "FrutigerNeue",
+          fontStyle: "italic",
+          fontWeight: 400,
+          src: `url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
+          url("/static/fonts/FrutigerNeueW02-It.woff") format("woff")`,
+        },
+      ],
+    },
+  },
+};
+
+console.log(theme.typography);
 /**
  * Load these fonts early using <link rel="preload" />
  * Use WOFF2 fonts if possible!

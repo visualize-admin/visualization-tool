@@ -1,3 +1,4 @@
+import { CssBaseline } from "@mui/material";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 import { GA_TRACKING_ID } from "../domain/env";
 
@@ -22,6 +23,7 @@ class MyDocument extends Document {
           )}
         </Head>
         <body>
+          <CssBaseline />
           <Main />
           <script noModule src="/static/ie-check.js"></script>
           <NextScript />
