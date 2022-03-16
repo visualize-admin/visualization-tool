@@ -171,7 +171,7 @@ const TooltipRow = (props: TooltipRowProps) => {
       </Typography>
       <Box
         sx={{
-          borderRadius: "circle",
+          borderRadius: "50%",
           px: 2,
           display: "inline-block",
           textAlign: "center",

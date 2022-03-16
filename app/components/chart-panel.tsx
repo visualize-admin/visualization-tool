@@ -12,7 +12,7 @@ export const ChartPanel = ({
     sx={{
       backgroundColor: "grey.100",
       boxShadow: "primary",
-      borderRadius: "xl",
+      borderRadius: 12,
       overflow: "hidden",
       width: "auto",
       minHeight: [150, 300, 500],

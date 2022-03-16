@@ -97,7 +97,7 @@ export const TooltipBox = ({
               whiteSpace: "nowrap",
               pointerEvents: "none",
               backgroundColor: "grey.100",
-              borderRadius: "default",
+              borderRadius: 1,
               filter: `drop-shadow(${theme.shadows?.tooltip})`,
 
               "&::before": {

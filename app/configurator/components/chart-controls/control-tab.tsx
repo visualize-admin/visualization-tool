@@ -23,7 +23,7 @@ export const ControlTab = ({
     <Box
       sx={{
         width: "100%",
-        borderRadius: "default",
+        borderRadius: 1.5,
         my: "2px",
       }}
     >
@@ -69,7 +69,7 @@ export const OnOffControlTab = ({
     <Box
       sx={{
         width: "100%",
-        borderRadius: "default",
+        borderRadius: 1.5,
         my: "2px",
       }}
     >
@@ -103,7 +103,7 @@ export const AnnotatorTab = ({
     <Box
       sx={{
         width: "100%",
-        borderRadius: "default",
+        borderRadius: 1.5,
         my: "2px",
       }}
     >
@@ -145,7 +145,7 @@ export const DraggableTab = ({
       sx={{
         boxShadow: isDragging ? "tooltip" : undefined,
         width: "100%",
-        borderRadius: "default",
+        borderRadius: 1.5,
         my: "2px",
       }}
     >
@@ -191,7 +191,7 @@ export const ControlTabButton = ({
       backgroundColor: checked ? "mutedDarker" : "grey.100",
       color: "grey.700",
       borderColor: "primary",
-      borderRadius: "default",
+      borderRadius: 1.5,
       width: "100%",
       minWidth: 160,
       px: 2,
@@ -241,7 +241,7 @@ export const ControlTabButtonInner = ({
           width: 32,
           height: 32,
           minWidth: 32,
-          borderRadius: "bigger",
+          borderRadius: 2,
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: checked ? "primary" : "grey.100",

@@ -251,7 +251,7 @@ export const Success = () => (
     sx={{
       width: "auto",
       height: "auto",
-      borderRadius: "bigger",
+      borderRadius: 2,
       mb: 4,
       p: 4,
       backgroundColor: "successLight",

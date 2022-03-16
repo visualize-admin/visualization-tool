@@ -350,7 +350,7 @@ const PublishActionModal = ({ children }: { children: ReactNode }) => (
       px: 4,
       backgroundColor: "grey.100",
       boxShadow: "primary",
-      borderRadius: "default",
+      borderRadius: 1.5,
 
       "@media screen and (min-width: 62em)": {
         mt: 2,
@@ -396,7 +396,7 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
       transform: "translate3d(-50%, 0, 0)",
 
       backgroundColor: "grey.700",
-      borderRadius: "default",
+      borderRadius: 1.5,
       color: "grey.100",
 
       fontSize: "0.625rem",

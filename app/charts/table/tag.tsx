@@ -17,7 +17,7 @@ export const Tag = ({
     sx={{
       backgroundColor: tagColor,
       color: hcl(tagColor).l < 55 ? "#fff" : "#000",
-      borderRadius: "15px",
+      borderRadius: 8,
       px: 2,
       py: small ? "0.125rem" : 1,
       my: small ? 0 : 1,

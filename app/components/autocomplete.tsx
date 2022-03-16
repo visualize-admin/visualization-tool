@@ -34,7 +34,7 @@ const AutocompleteList = React.forwardRef<HTMLDivElement>(
           ...boxProps.sx,
           backgroundColor: "grey.100",
           boxShadow: "primary",
-          borderRadius: 10,
+          borderRadius: 5,
           overflow: "hidden",
         }}
       >

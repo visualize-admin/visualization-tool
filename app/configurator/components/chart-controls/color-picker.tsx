@@ -28,7 +28,7 @@ const Swatch = ({
         borderWidth: 1,
         borderStyle: "solid",
         borderColor: "transparent",
-        borderRadius: "default",
+        borderRadius: 1.5,
         p: 0,
         cursor: "pointer",
         ":hover": { borderColor },
@@ -79,7 +79,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
       sx={{
         width: 160,
         backgroundColor: "grey.100",
-        borderRadius: "default",
+        borderRadius: 1.5,
         boxShadow: "tooltip",
         p: 3,
       }}
@@ -137,7 +137,7 @@ export const ColorPickerMenu = (props: Props) => {
         sx={{
           "> button": {
             backgroundColor: "grey.100",
-            borderRadius: 4,
+            borderRadius: 2,
             overflow: "hidden",
             borderWidth: 1,
             border: 0,

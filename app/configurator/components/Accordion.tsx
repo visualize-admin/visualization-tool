@@ -104,7 +104,7 @@ export const AccordionSummary = ({
         // border: "1px solid",
         // borderColor: theme.borderColor,
         backgroundColor: theme.bg,
-        borderRadius: 4,
+        borderRadius: 2,
         height: "2.5rem",
       }}
     >
