@@ -2,8 +2,8 @@ import { Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuPopover } from "@reach/menu-button";
 import VisuallyHidden from "@reach/visually-hidden";
 import { color as d3Color } from "d3";
-import { MouseEventHandler, useCallback, useState } from "react";
-import { Box, Grid, Input } from "@mui/material";
+import React, { MouseEventHandler, useCallback, useState } from "react";
+import { Box, Input } from "@mui/material";
 
 const Swatch = ({
   color,
@@ -113,9 +113,11 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             fontSize: "0.875rem",
             ":focus": { outline: "none", borderColor: "primary" },
           }}
-          maxLength={7}
+          inputProps={{
+            maxLength: 7,
+          }}
           value={`#${inputColorValue.replace(/^#/, "")}`}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             selectColor(e.currentTarget.value);
           }}
           onBlur={(e) => {

@@ -16,7 +16,6 @@ import {
   Button,
   Link as MUILink,
   LinkProps as MUILinkProps,
-  Paper,
   Typography,
 } from "@mui/material";
 import Flex, { FlexProps } from "../../components/flex";
@@ -397,7 +396,7 @@ export const SearchDatasetBox = ({
             id="datasetSort"
             value={order}
             options={isSearching ? options : options.slice(1)}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               onSetOrder(e.currentTarget.value as DataCubeResultOrder);
             }}
           />
