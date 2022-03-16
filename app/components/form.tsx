@@ -257,6 +257,9 @@ export const MiniSelect = ({
           borderColor: "primary.main",
         },
       }}
+      native
+      size="small"
+      variant="standard"
       id={id}
       name={id}
       onChange={onChange}
