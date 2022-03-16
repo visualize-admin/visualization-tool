@@ -23,7 +23,6 @@ class MyDocument extends Document {
           )}
         </Head>
         <body>
-          <CssBaseline />
           <Main />
           <script noModule src="/static/ie-check.js"></script>
           <NextScript />

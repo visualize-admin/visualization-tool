@@ -99,15 +99,13 @@ export const StepperDumb = ({
       >
         <Flex sx={{ minWidth: 200, justifyContent: "flex-start" }}>
           <NavButton
-            label={
-              <>
-                <SvgIcChevronLeft />
-                {previousLabel}
-              </>
-            }
+            startIcon={<SvgIcChevronLeft />}
+            label={previousLabel}
             onClick={goPrevious}
             disabled={previousDisabled}
-            variant="inline-bold"
+            variant="text"
+            size="small"
+            color="inherit"
           />
         </Flex>
 
@@ -118,21 +116,14 @@ export const StepperDumb = ({
         </Flex>
         <Flex sx={{ minWidth: 200, justifyContent: "flex-end" }}>
           <NavButton
-            label={
-              <>
-                {nextLabel}{" "}
-                {state.state === "DESCRIBING_CHART" ? null : (
-                  <SvgIcChevronRight />
-                )}
-              </>
+            label={nextLabel}
+            endIcon={
+              state.state === "DESCRIBING_CHART" ? null : <SvgIcChevronRight />
             }
             onClick={goNext}
             disabled={nextDisabled}
-            variant={
-              state.state === "DESCRIBING_CHART"
-                ? "primary-small"
-                : "inline-bold"
-            }
+            variant={state.state === "DESCRIBING_CHART" ? "contained" : "text"}
+            color={state.state === "DESCRIBING_CHART" ? "primary" : "inherit"}
           />
         </Flex>
       </Flex>

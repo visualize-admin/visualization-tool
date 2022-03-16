@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { csvFormat } from "d3";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useMemo } from "react";
-import { Box, Button, Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig, ChartFields } from "../configurator";
 import { Observation } from "../domain/data";
@@ -55,7 +55,6 @@ export const DataDownload = memo(
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
               <Link
-                variant="inline"
                 href={observations.sparqlEditorUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -124,30 +123,7 @@ export const DownloadButton = ({
   onClick?: () => void;
   children: ReactNode;
 }) => (
-  <Button
-    variant="reset"
-    sx={{
-      display: "inline",
-      background: "transparent",
-      color: "primary",
-      textAlign: "left",
-
-      lineHeight: ["1rem", "1.125rem", "1.125rem"],
-      fontWeight: "regular",
-      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      border: "none",
-      cursor: "pointer",
-      p: 0,
-      ":disabled": {
-        cursor: "initial",
-        color: "grey.500",
-      },
-      "&:hover": {
-        textDecoration: "underline",
-      },
-    }}
-    onClick={onClick}
-  >
+  <Link component="button" color="inherit" onClick={onClick}>
     {children}
-  </Button>
+  </Link>
 );

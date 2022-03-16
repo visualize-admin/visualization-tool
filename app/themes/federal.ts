@@ -8,6 +8,7 @@
  */
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import { omit, merge } from "lodash";
+import shadows from "./shadows";
 
 const breakpoints = ["xs", "sm", "md"] as Breakpoint[];
 const themeUIFontSizes = [
@@ -56,13 +57,15 @@ const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
     if (i === 0) {
       res.fontSize = themeUIFontSizes[fontSize];
       res.lineHeight = themeUILineHeights[lineHeight];
+      if (!res.lineHeight) {
+        debugger;
+      }
     }
     res[theme.breakpoints.down(breakpoints[i])] = {
       fontSize: themeUIFontSizes[i],
       lineHeight: themeUILineHeights[i],
     };
   }
-  console.log(res);
   res.fontWeight =
     themeUIFontWeights[res.fontWeight as keyof typeof themeUIFontWeights] ||
     res.fontWeight;
@@ -75,7 +78,39 @@ const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
 export const theme = createTheme({
   palette: {
     primary: {
+      light: "#d8e8ef",
       main: "#006699",
+    },
+    secondary: {
+      main: "#757575",
+    },
+    success: {
+      main: "#3c763d",
+      light: "#DFF0D8",
+      hover: "#3c763d",
+      active: "#3c763d",
+      disabled: "#DFF0D8",
+    },
+    muted: {
+      main: "#F5F5F5",
+      colored: "#F9FAFB",
+      dark: "#F2F7F9",
+    },
+    alert: {
+      main: "#DC0018",
+      light: "#ffe6e1",
+    },
+    warning: {
+      main: "#8a6d3b",
+      light: "#fffab2",
+    },
+    organization: {
+      main: "#006699",
+      light: "#d8e8ef", // same as primaryLight
+    },
+    category: {
+      main: "#3c763d",
+      light: "#DFF0D8", // same as successLight
     },
     grey: {
       100: "#FFFFFF",
@@ -103,6 +138,25 @@ export const theme = createTheme({
     "4rem",
     "4.5rem",
   ],
+  shape: {
+    borderRadius: 2,
+  },
+  shadows: shadows,
+
+  typography: {
+    fontFamily: [
+      "FrutigerNeue",
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Helvetica",
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+  },
 });
 
 // colors: {
@@ -114,7 +168,7 @@ export const theme = createTheme({
 //   primaryHover: "#004B70",
 //   primaryActive: "#00334D",
 //   primaryDisabled: "#599cbd",
-//   primaryLight: "#d8e8ef",
+//   primaryLight: "#",
 //   secondary: "#757575",
 //   secondaryHover: "#616161",
 //   secondaryActive: "#454545",
@@ -123,113 +177,12 @@ export const theme = createTheme({
 //   secondaryButtonText: "white",
 //   secondaryButtonHover: "#646464",
 //   success: "#3c763d",
-//   successHover: "#3c763d",
-//   successActive: "#3c763d",
-//   successDisabled: "#DFF0D8",
-//   successLight: "#DFF0D8",
-//   muted: "#F5F5F5",
-//   mutedColored: "#F9FAFB",
-//   mutedDarker: "#F2F7F9",
 //   focus: "#333333",
 //   error: "#FF5555",
 //   hint: "#757575",
 //   missing: "#EFEFEF",
-//   alert: "#DC0018",
-//   alertLight: "#ffe6e1",
-//   warning: "#8a6d3b",
-//   warningLight: "#fffab2",
-//   organization: "#006699",
-//   organizationLight: "#d8e8ef", // same as primaryLight
-//   category: "#3c763d",
-//   categoryLight: "#DFF0D8", // same as successLight
 // },
 
-// fontSizes: [
-//   "0rem",
-//   "0.625rem",
-//   "0.75rem",
-//   "0.875rem",
-//   "1rem",
-//   "1.125rem",
-//   "1.5rem",
-//   "2rem",
-//   "2.5rem",
-//   "3rem",
-//   "4.5rem",
-//   "5.5rem",
-// ],
-// fontWeights: {
-//   light: 300,
-//   regular: 400,
-//   heading: 700,
-//   bold: 700,
-// },
-// // FIXME: should it be relative values? 1.5, etc.
-// lineHeights: [
-//   "0rem",
-//   "1rem",
-//   "1.125rem",
-//   "1.25rem",
-//   "1.375rem",
-//   "1.5rem",
-//   "1.750rem",
-//   "2.250rem",
-//   "3rem",
-//   "4rem",
-//   "4.5rem",
-// ],
-// radii: {
-//   default: 3,
-//   bigger: 4,
-//   xl: 25,
-//   circle: 99999,
-// },
-// shadows: {
-//   primary: "0 3px 5px 0 rgba(0,0,0,0.10)",
-//   rightSide: "2px 0 4px 0 rgba(0,0,0,0.05)",
-//   leftSide: "-2px 0 2px 0 rgba(0,0,0,0.05)",
-//   tooltip: "0 2px 8px rgba(0, 0, 0, 0.25)",
-// },
-// text: {
-
-// },
-// styles: {
-//   // Overwrite default browser styles.
-//   root: {
-//     // "root" applies to "body"
-//     // @ts-ignore
-
-//   },
-// },
-// buttons: {
-//   reset: {
-//     background: "transparent",
-//     border: "none",
-//   },
-//   base: {
-//     px: 4,
-//     py: 3,
-//     fontFamily: "body",
-//     fontSize: 4,
-//     borderRadius: "default",
-//     transition: "background-color .2s",
-//     cursor: "pointer",
-//     display: "inline-flex",
-//     alignItems: "center",
-//     flexGrow: 0,
-//     justifyContent: "center",
-//     "& > svg": {
-//       width: 22,
-//       mt: -1,
-//       mb: -1,
-//     },
-//     "& > svg:first-child": {
-//       marginRight: 2,
-//     },
-//     "& > svg:last-child": {
-//       marginLeft: 2,
-//     },
-//   },
 //   primary: {
 //     variant: "buttons.base",
 //     backgroundColor: "primary.main",
@@ -450,16 +403,27 @@ export const theme = createTheme({
 // },
 // };
 
+// theme.components.MuiButton = {
+//   ...theme.components?.MuiButton,
+//   styleOverrides: {
+//     root: {
+
+//     },
+//   },
+// buttons: {
+//   reset: {
+//     background: "transparent",
+//     border: "none",
+//   },
+//   base: {
+
+//   },
+// };
+
 theme.typography = merge(theme.typography, {
-  fontFamily:
-    "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-  // giga: {
-  //   fontFamily: "body",
-  //   lineHeight: [9, 10, 10],
-  //   fontWeight: "light",
-  //   fontSize: [8, 9, 9],
-  // },
-  h1: createResponsiveVariant(theme, {
+  link: {
+    textDecoration: "none",
+  },
   h1: createTypographyVariant(theme, {
     lineHeight: [7, 8, 8],
     fontWeight: "bold",
@@ -479,6 +443,11 @@ theme.typography = merge(theme.typography, {
     lineHeight: [4, 5, 5],
     fontWeight: "bold",
     fontSize: [3, 4, 4],
+  }),
+  h5: createTypographyVariant(theme, {
+    lineHeight: [3, 4, 4],
+    fontWeight: "bold",
+    fontSize: [2, 3, 3],
   }),
   body1: createTypographyVariant(theme, {
     lineHeight: [4, 5, 5],
@@ -504,17 +473,102 @@ theme.typography = merge(theme.typography, {
 });
 
 theme.components = {
-  MuiCard: {
+  MuiLink: {
+    defaultProps: {
+      underline: "none",
+      color: "inherit",
+    },
+    styleOverrides: {},
+  },
+  MuiInputLabel: {
     styleOverrides: {
       root: {
+        textAlign: "left",
+        pr: 1,
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        display: "-webkit-box",
+        overflow: "hidden",
+        fontSize: themeUIFontSizes[3],
+      },
+      sizeSmall: {
+        fontSize: themeUIFontSizes[2],
       },
     },
   },
+  MuiButton: {
+    defaultProps: {
+      variant: "contained",
+      color: "primary",
+    },
     styleOverrides: {
+      root: {
+        padding: `${theme.spacing(4)}px ${theme.spacing(3)}px`,
+        alignItems: "center",
+        justifyContent: "flex-start",
+        letterSpacing: "0 !important",
+        fontFamily: theme.typography.fontFamily,
+        fontSize: themeUIFontSizes[4],
+        borderRadius: 3,
+        transition: "background-color .2s",
+        cursor: "pointer",
+        display: "inline-flex",
+        flexGrow: 0,
+        "& > svg": {
+          width: 22,
+          marginTop: -1,
+          marginBottom: -1,
+        },
+        "& > svg:first-child": {
+          marginRight: 2,
+        },
+        "& > svg:last-child": {
+          marginLeft: 2,
+        },
+        textTransform: "none",
+        fontWeight: 400,
+        boxShadow: "none",
       },
+      containedPrimary: {
+        "&:hover": {
+          boxShadow: "none",
+        },
       },
+      containedSecondary: {
+        "&:hover": {
+          boxShadow: "none",
+        },
       },
+    },
+  },
+  MuiButtonBase: {
+    defaultProps: {
+      // The props to apply
+      disableRipple: true, // No more ripple, on the whole application 💣!
+    },
+    styleOverrides: {
+      root: {
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
       },
+    },
+  },
+  MuiInput: {
+    defaultProps: {
+      disableUnderline: true,
+    },
+    styleOverrides: {
+      root: {
+        backgroundColor: theme.palette.grey[100],
+        border: "1px solid",
+        borderColor: theme.palette.grey[500],
+        padding: "0 6px",
+      },
+      focused: {
+        borderColor: theme.palette.primary.main,
+      },
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: {
       margin: 0,

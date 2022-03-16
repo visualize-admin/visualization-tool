@@ -8,8 +8,7 @@ export const AppLayout = ({ children }: { children?: ReactNode }) => (
       <Flex
         component="main"
         role="main"
-        sx={{ flex: 1, flexDirection: "column" }}
-        bg="muted"
+        sx={{ flex: 1, flexDirection: "column", backgroundColor: "muted.main" }}
       >
         {children}
       </Flex>

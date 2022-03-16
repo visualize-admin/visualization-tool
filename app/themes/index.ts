@@ -4,6 +4,22 @@ export interface ThemeModule {
   preloadFonts?: string[];
 }
 
+declare module "@mui/material" {
+  interface Theme {
+    dashed: true;
+  }
+}
+
+declare module "@mui/material" {
+  interface PaletteColorOptions {
+    light?: string;
+    main: string;
+    hover?: string;
+    active?: string;
+    disabled?: string;
+  }
+}
+
 export const loadTheme = async (theme: string = "federal") => {
   let themeModule: ThemeModule;
   try {

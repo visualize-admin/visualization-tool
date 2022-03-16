@@ -14,8 +14,9 @@ import React, {
 import {
   Box,
   Button,
-  Link as ThemeUILink,
-  LinkProps as ThemeUILinkProps,
+  Link as MUILink,
+  LinkProps as MUILinkProps,
+  Paper,
   Typography,
 } from "@mui/material";
 import Flex, { FlexProps } from "../../components/flex";
@@ -408,26 +409,26 @@ export const SearchDatasetBox = ({
 
 const defaultNavItemTheme = {
   activeTextColor: "white",
-  activeBg: "primary",
-  textColor: "initial",
+  activeBg: "primary.main",
+  textColor: "text.primary",
   countColor: "grey.800",
   countBg: "grey.300",
 };
 
 const themeNavItemTheme = {
-  activeBg: "category",
+  activeBg: "category.main",
   activeTextColor: "white",
-  textColor: "initial",
-  countColor: "category",
-  countBg: "categoryLight",
+  textColor: "text.primary",
+  countColor: "category.main",
+  countBg: "category.light",
 };
 
 const organizationNavItemTheme = {
-  activeBg: "organization",
+  activeBg: "organization.main",
   activeTextColor: "white",
-  textColor: "initial",
-  countColor: "organization",
-  countBg: "organizationLight",
+  textColor: "text.primary",
+  countColor: "organization.main",
+  countBg: "organization.light",
 };
 
 const NavChip = ({
@@ -446,7 +447,7 @@ const NavChip = ({
         height: 20,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 4,
+        borderRadius: 2,
         color: color,
         backgroundColor: bg,
         fontSize: "small",
@@ -482,7 +483,7 @@ const NavItem = ({
   theme: typeof defaultNavItemTheme;
   /** Level is there to differentiate between organizations and organization subtopics */
   level?: number;
-} & ThemeUILinkProps) => {
+} & MUILinkProps) => {
   const { includeDrafts, search } = useBrowseContext();
 
   const path = useMemo(() => {
@@ -562,7 +563,7 @@ const NavItem = ({
         py: 1,
         justifyContent: "space-between",
         alignItems: "center",
-        borderRadius: 4,
+        borderRadius: 2,
         width: "100%",
         display: "flex",
         backgroundColor: active && level === 1 ? theme.activeBg : "transparent",
@@ -585,9 +586,9 @@ const NavItem = ({
       ) : (
         <>
           <Link href={path} passHref>
-            <ThemeUILink variant="initial" sx={{ flexGrow: 1 }}>
+            <MUILink sx={{ flexGrow: 1 }} fontSize="small">
               {children}&nbsp;&nbsp;
-            </ThemeUILink>
+            </MUILink>
           </Link>
           {countChip}
         </>
@@ -671,8 +672,8 @@ export const NavSectionTitle = ({
         cursor: "pointer",
         // border: "1px solid",
         // borderColor: theme.borderColor,
-        backgroundColor: theme.bg,
-        borderRadius: 4,
+        backgroundColor: theme.backgroundColor,
+        borderRadius: 2,
         height: "2.5rem",
         mb: 2,
       }}
@@ -756,10 +757,13 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     displayedThemes && displayedThemes.length > 0 ? (
       <div>
         <NavSectionTitle
-          theme={{ backgroundColor: "categoryLight", borderColor: "category" }}
+          theme={{
+            backgroundColor: "category.light",
+            borderColor: "category.main",
+          }}
           sx={{ mb: "block" }}
         >
-          <Box component="span" color="category" mr={2}>
+          <Box component="span" color="category.main" mr={2}>
             <SvgIcCategories width={24} height={24} />
           </Box>
           <Typography variant="body2" sx={{ fontWeight: "bold" }}>
@@ -791,12 +795,12 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         {
           <NavSectionTitle
             theme={{
-              backgroundColor: "organizationLight",
-              borderColor: "organization",
+              backgroundColor: "organization.light",
+              borderColor: "organization.main",
             }}
             sx={{ mb: 2 }}
           >
-            <Box component="span" color="organization" mr={2}>
+            <Box component="span" color="organization.main" mr={2}>
               <SvgIcOrganisations width={24} height={24} />
             </Box>
             <Typography variant="body2" sx={{ fontWeight: "bold" }}>
@@ -967,7 +971,7 @@ export const DatasetResult = ({
         py: 4,
         px: 5,
         borderRadius: 10,
-        boxShadow: "primary",
+        boxShadow: 3,
         backgroundColor: "grey.100",
         mb: 3,
       }}
@@ -987,7 +991,7 @@ export const DatasetResult = ({
           {highlightedTitle ? (
             <Box
               component="span"
-              sx={{ "& > strong": { backgroundColor: "primaryLight" } }}
+              sx={{ "& > strong": { backgroundColor: "primary.light" } }}
               dangerouslySetInnerHTML={{ __html: highlightedTitle }}
             />
           ) : (
@@ -1024,14 +1028,14 @@ export const DatasetResult = ({
                   passHref
                   href={`/browse/theme/${encodeURIComponent(t.iri)}`}
                 >
-                  <ThemeUILink
-                    variant="initial"
+                  <MUILink
+                    color="inherit"
                     // The whole card is a link too, so we have to stop propagating the
                     // event, otherwise we go first to <tag> page then to <result> page
                     onClick={(ev) => ev.stopPropagation()}
                   >
                     <Tag type={t.__typename}>{t.label}</Tag>
-                  </ThemeUILink>
+                  </MUILink>
                 </Link>
               ))
             : null}
@@ -1041,14 +1045,14 @@ export const DatasetResult = ({
               passHref
               href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
             >
-              <ThemeUILink
-                variant="initial"
+              <MUILink
+                color="inherit"
                 // The whole card is a link too, so we have to stop propagating the
                 // event, otherwise we go first to <tag> page then to <result> page
                 onClick={(ev) => ev.stopPropagation()}
               >
                 <Tag type={creator.__typename}>{creator.label}</Tag>
-              </ThemeUILink>
+              </MUILink>
             </Link>
           ) : null}
         </Stack>

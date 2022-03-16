@@ -10,7 +10,7 @@ import {
   Button,
   Checkbox as MUICheckbox,
   Input as MUIInput,
-  InputLabel as MUILabel,
+  InputLabel,
   Radio as MUIRadio,
   Select as MUISelect,
   SelectProps,
@@ -36,39 +36,21 @@ export const Label = ({
   smaller?: boolean;
   children: ReactNode;
 }) => (
-  <MUILabel
+  <InputLabel
     htmlFor={htmlFor}
+    size={smaller ? "small" : undefined}
     sx={{
       cursor: "pointer",
       width: "auto",
       color: disabled ? "grey.500" : "grey.700",
-      fontSize: smaller ? "0.75rem" : "1rem",
       mr: 4,
       display: "flex",
       alignItems: "center",
     }}
   >
     {children}
-    {label && (
-      <Box
-        sx={
-          {
-            textAlign: "left",
-
-            pr: 1,
-            fontSize: smaller ? [2, 2, 2] : [3, 3, 3],
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            display: "-webkit-box",
-            overflow: "hidden",
-          } as $IntentionalAny
-        }
-        title={label}
-      >
-        {label}
-      </Box>
-    )}
-  </MUILabel>
+    {label && <Box title={label}>{label}</Box>}
+  </InputLabel>
 );
 
 export const Radio = ({
@@ -141,18 +123,18 @@ export const Checkbox = ({
         mr: smaller ? 1 : undefined,
         color:
           checked && !disabled
-            ? "primary"
+            ? "primary.main"
             : checked && disabled
-            ? "primaryDisabled"
+            ? "primary.disabled"
             : "grey.500",
         "> *": {
           fill:
             color && checked
               ? color
               : checked && !disabled
-              ? "primary"
+              ? "primary.main"
               : checked && disabled
-              ? "primaryDisabled"
+              ? "primary.disabled"
               : "grey.500",
         },
       }}
@@ -447,19 +429,8 @@ export const SearchField = ({
           <VisuallyHidden>{label}</VisuallyHidden>
         </label>
       )}
-      <Box
-        aria-hidden="true"
-        sx={{ position: "absolute", top: "50%", mt: "-8px", ml: 2 }}
-      >
-        <Icon name="search" size={16} />
-      </Box>
       <MUIInput
-        sx={{
-          borderColor: "grey.500",
-          backgroundColor: "grey.100",
-          px: 6,
-          ":focus": { outline: "none", borderColor: "primary" },
-        }}
+        startAdornment={<Icon name="search" size={16} />}
         id={id}
         value={value}
         onKeyPress={onKeyPress}
@@ -540,7 +511,7 @@ export const Switch = ({
         alignItems: "center",
       }}
     >
-      <MUILabel
+      <InputLabel
         htmlFor={genId}
         sx={{ ":active div:after": { width: disabled ? "12px" : "16px" } }}
       >
@@ -605,7 +576,7 @@ export const Switch = ({
         >
           {label}
         </Box>
-      </MUILabel>
+      </InputLabel>
     </Flex>
   );
 };

@@ -7,7 +7,7 @@ import {
 } from "downshift";
 import { useState } from "react";
 import { Box, BoxProps, Input } from "@mui/material";
-import { Flex, FlexProps } from './flex'
+import { Flex, FlexProps } from "./flex";
 import { Trans } from "@lingui/macro";
 
 const menuStyles = {
@@ -148,7 +148,11 @@ function Autocomplete<TItem>({
         <Input
           {...getInputProps()}
           placeholder={placeholder}
-          sx={{ backgroundColor: "grey.100", width: 400, borderColor: "grey.300" }}
+          sx={{
+            backgroundColor: "grey.100",
+            width: 400,
+            borderColor: "grey.300",
+          }}
         />
       </div>
       <AutocompleteList {...getMenuProps()} sx={menuStyles}>

@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Typography, TypographyProps } from "@mui/material";
+import { Typography, TypographyProps, styled } from "@mui/material";
 import {
   DataCubeOrganization,
   DataCubeTheme,
@@ -10,6 +10,10 @@ type TagType =
   | DataCubeTheme["__typename"]
   | DataCubeOrganization["__typename"];
 
+const TagTypography = styled(Typography)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+}));
+
 const Tag = ({
   children,
   type,
@@ -17,16 +21,16 @@ const Tag = ({
 }: { children: ReactNode; type: TagType } & TypographyProps) => {
   const { sx } = props;
   return (
-    <Typography
+    <TagTypography
       variant="body2"
       {...props}
       sx={{
-        backgroundColor: type === "DataCubeTheme" ? "successLight" : "primaryLight",
+        backgroundColor:
+          type === "DataCubeTheme" ? "success.light" : "primary.light",
         px: 2,
         width: "fit-content",
-        borderRadius: "default",
+        borderRadius: 1.5,
         color: "grey.700",
-        textDecoration: "none",
         "&:hover": {
           boxShadow: "primary",
         },
@@ -34,7 +38,7 @@ const Tag = ({
       }}
     >
       {children}
-    </Typography>
+    </TagTypography>
   );
 };
 

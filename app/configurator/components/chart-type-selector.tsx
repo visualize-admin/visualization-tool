@@ -1,6 +1,13 @@
 import { Trans } from "@lingui/macro";
 import React, { SyntheticEvent } from "react";
-import { Box, Button, Grid, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  CircularProgress,
+  Typography,
+  ButtonBase,
+} from "@mui/material";
 import { ConfiguratorStateSelectingChartType } from "..";
 import { enabledChartTypes, getPossibleChartType } from "../../charts";
 import { Hint, Loading } from "../../components/hint";
@@ -25,8 +32,7 @@ export const ChartTypeSelectionButton = ({
   onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
 } & FieldProps) => {
   return (
-    <Button
-      variant="reset"
+    <ButtonBase
       tabIndex={0}
       value={value}
       onClick={onClick}
@@ -34,14 +40,14 @@ export const ChartTypeSelectionButton = ({
       sx={{
         width: "86px",
         height: "86px",
-        borderRadius: "default",
+        borderRadius: 1.5,
 
-        backgroundColor: checked ? "primary" : "grey.100",
+        backgroundColor: checked ? "primary.main" : "grey.100",
         color: checked
-          ? "mutedColored"
+          ? "muted.colored"
           : disabled
           ? "grey.500"
-          : "primary",
+          : "primary.main",
 
         display: "flex",
         flexDirection: "column",
@@ -66,17 +72,13 @@ export const ChartTypeSelectionButton = ({
       <Typography
         variant="body2"
         sx={{
-          color: disabled
-            ? "grey.600"
-            : checked
-            ? "grey.100"
-            : "grey.700",
+          color: disabled ? "grey.600" : checked ? "grey.100" : "grey.700",
           fontSize: ["0.75rem", "0.75rem", "0.75rem"],
         }}
       >
         {getFieldLabel(label)}
       </Typography>
-    </Button>
+    </ButtonBase>
   );
 };
 
@@ -133,6 +135,7 @@ export const ChartTypeSelector = ({
           <Trans id="controls.select.chart.type">Chart Type</Trans>
           {possibleFiltersFetching ? (
             <CircularProgress
+              color="primary"
               size={12}
               sx={{ color: "hint", display: "inline-block", ml: 1 }}
             />

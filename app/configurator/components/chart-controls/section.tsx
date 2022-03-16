@@ -1,4 +1,3 @@
-import Flex from "../../../components/flex";
 import { Box, BoxProps, Typography } from "@mui/material";
 
 import { ElementType, forwardRef, ReactNode } from "react";
@@ -39,14 +38,14 @@ export const ControlSection = forwardRef<
 
 export const ControlSectionContent = ({
   side,
-  as,
+  component,
   role,
   ariaLabelledBy,
   children,
   sx,
 }: {
   side: "left" | "right";
-  as?: ElementType;
+  component?: ElementType;
   role?: string;
   ariaLabelledBy?: string;
   children: ReactNode;
@@ -54,7 +53,7 @@ export const ControlSectionContent = ({
 }) => {
   return (
     <Box
-      as={as}
+      component={component}
       role={role}
       aria-labelledby={ariaLabelledBy}
       sx={{ px: side === "left" ? 2 : 4, pb: 4, ...sx }}
@@ -79,13 +78,11 @@ export const SectionTitle = ({
 }) => {
   const theme = useTheme();
   return (
-    <Flex
-      component="h2"
+    <Typography
+      variant="h5"
       id={titleId}
       sx={{
         p: 4,
-        backgroundColor: "transparent",
-        appearance: "none",
         width: "100%",
         border: "none",
         justifyContent: "flex-start",
@@ -93,20 +90,14 @@ export const SectionTitle = ({
       }}
     >
       {iconName && (
-        <Icon
-          color={
-            disabled ? theme.palette.grey[600] : theme.palette.grey[700]
-          }
-          name={iconName}
-        ></Icon>
+        <Box mr={2}>
+          <Icon
+            color={disabled ? theme.palette.grey[600] : theme.palette.grey[700]}
+            name={iconName}
+          ></Icon>
+        </Box>
       )}
-      <Typography
-        component="div"
-        variant="h5"
-        sx={{ fontWeight: "bold", ml: iconName ? 2 : 0 }}
-      >
-        {children}
-      </Typography>
-    </Flex>
+      {children}
+    </Typography>
   );
 };

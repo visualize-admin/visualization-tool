@@ -151,11 +151,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
         </Trans>
       </Typography>
       {message ? (
-        <Typography
-          component="p"
-          variant="body2"
-          sx={{ maxWidth: "40rem" }}
-        >
+        <Typography component="p" variant="body2" sx={{ maxWidth: "40rem" }}>
           {message}
         </Typography>
       ) : null}
@@ -263,11 +259,7 @@ export const Success = () => (
     <Box sx={{ width: 64, pr: 4, flexShrink: 0 }}>
       <Icon name="datasetSuccess" size={64} />
     </Box>
-    <Typography
-      component="p"
-      variant="body1"
-      sx={{ textAlign: "left", ml: 4 }}
-    >
+    <Typography component="p" variant="body1" sx={{ textAlign: "left", ml: 4 }}>
       <Trans id="hint.publication.success">
         Your visualization is now published. You can share and embed it using
         the URL or the options below.
@@ -299,11 +291,7 @@ export const HintBlue = ({
     <Box sx={{ width: iconSize, pr: 4 }}>
       <Icon name={iconName} size={iconSize} />
     </Box>
-    <Typography
-      component="p"
-      variant="body1"
-      sx={{ textAlign: "left", ml: 4 }}
-    >
+    <Typography component="p" variant="body1" sx={{ textAlign: "left", ml: 4 }}>
       {children}
     </Typography>
   </Flex>
@@ -334,11 +322,7 @@ export const HintRed = ({
     <Box sx={{ width: iconSize, pr: 4 }}>
       <Icon name={iconName} size={iconSize} />
     </Box>
-    <Typography
-      component="p"
-      variant="body1"
-      sx={{ textAlign: "left", ml: 4 }}
-    >
+    <Typography component="p" variant="body1" sx={{ textAlign: "left", ml: 4 }}>
       {children}
     </Typography>
   </Flex>

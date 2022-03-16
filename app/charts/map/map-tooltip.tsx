@@ -86,7 +86,11 @@ export const MapTooltip = () => {
           margins={{ bottom: 0, left: 0, right: 0, top: 0 }}
         >
           <Box sx={{ minWidth: 200 }}>
-            <Typography component="div" variant="caption" sx={{ fontWeight: "bold" }}>
+            <Typography
+              component="div"
+              variant="caption"
+              sx={{ fontWeight: "bold" }}
+            >
               {hoverObjectType === "area"
                 ? areaLayer.getLabel(interaction.d)
                 : symbolLayer.getLabel(interaction.d)}

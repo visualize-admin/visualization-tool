@@ -1,6 +1,6 @@
 import Flex from "../../components/flex";
 import * as React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import { HintRed, Loading, LoadingDataError } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
@@ -63,11 +63,9 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             </Trans>
           </LinkButton>
         </Flex>
-        <Box
+        <Paper
           sx={{
-            boxShadow: "primary",
-            borderRadius: 20,
-            backgroundColor: "grey.100",
+            borderRadius: 10,
             py: 6,
             px: 5,
           }}
@@ -81,7 +79,6 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           </Typography>
 
           <Box
-            variant="h3"
             sx={{
               flexGrow: 1,
               width: "100%",
@@ -98,7 +95,6 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             />
           </Box>
           <Typography
-            variant="table"
             sx={{
               mt: 4,
               color: "grey.600",
@@ -112,7 +108,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
             </Trans>
           </Typography>
           <DebugPanel configurator={true} />
-        </Box>
+        </Paper>
       </Flex>
     );
   } else if (fetching) {
