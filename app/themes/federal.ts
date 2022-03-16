@@ -506,36 +506,19 @@ theme.components = {
   MuiCard: {
     styleOverrides: {
       root: {
-        backgroundColor: "red",
       },
     },
   },
+    styleOverrides: {
+      },
+      },
+      },
+      },
   MuiCssBaseline: {
     styleOverrides: {
-      backgroundColor: "red",
       margin: 0,
       padding: 0,
-      fontFamily:
-        "FrutigerNeue, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-      // Hack around type error for vendor prefixed rules
-      ...{
-        // Use momentum-based scrolling on iOS devices
-        WebkitOverflowScrolling: "touch",
-        // Auto-hide scrollbars in Edge
-        msOverflowStyle: "-ms-autohiding-scrollbar",
-      },
-      svg: {
-        display: "block",
-      },
-      "*:focus": {
-        outline: "3px solid #333333",
-      },
-      fieldset: {
-        border: 0,
-        padding: "0.01em 0 0 0",
-        margin: 0,
-        minWidth: 0,
-      },
+      fontFamily: theme.typography.fontFamily,
       "@font-face": [
         {
           fontFamily: "FrutigerNeue",
@@ -566,6 +549,25 @@ theme.components = {
           url("/static/fonts/FrutigerNeueW02-It.woff") format("woff")`,
         },
       ],
+      // Hack around type error for vendor prefixed rules
+      ...{
+        // Use momentum-based scrolling on iOS devices
+        WebkitOverflowScrolling: "touch",
+        // Auto-hide scrollbars in Edge
+        msOverflowStyle: "-ms-autohiding-scrollbar",
+      },
+      svg: {
+        display: "block",
+      },
+      "*:focus": {
+        outline: "3px solid #333333",
+      },
+      fieldset: {
+        border: 0,
+        padding: "0.01em 0 0 0",
+        margin: 0,
+        minWidth: 0,
+      },
     },
   },
 };
