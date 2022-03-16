@@ -146,7 +146,7 @@ const TableSortingOptionItem = ({
             <Box
               aria-hidden="true"
               sx={{
-                color: "secondaryDisabled",
+                color: "secondary.disabled",
                 ":hover": { color: "secondary" },
               }}
             >
@@ -401,10 +401,10 @@ export const TableSortingOptions = ({
                                   right: 2,
                                   marginTop: -12,
                                   color: isDragging
-                                    ? "secondaryActive"
-                                    : "secondaryDisabled",
+                                    ? "secondary.active"
+                                    : "secondary.disabled",
                                   ":hover": {
-                                    color: "secondaryHover",
+                                    color: "secondary.hover",
                                   },
                                 }}
                                 {...dragHandleProps}

@@ -61,10 +61,10 @@ export const ChartTypeSelectionButton = ({
 
         ":hover": {
           backgroundColor: disabled
-            ? "mutedColored"
+            ? "muted.colored"
             : checked
             ? "primary"
-            : "mutedDarker",
+            : "muted.darker",
         },
       }}
     >

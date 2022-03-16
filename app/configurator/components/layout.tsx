@@ -49,7 +49,7 @@ export const PanelRightWrapper = ({
       component="section"
       data-name="panel-right"
       sx={{
-        backgroundColor: "mutedColored",
+        backgroundColor: "muted.colored",
         overflowX: "hidden",
         overflowY: "auto",
         boxShadow: "leftSide",
@@ -74,7 +74,7 @@ export const PanelLayout = ({
   const { sx } = boxProps;
   return (
     <Box
-      bg="muted"
+      bg="muted.main"
       {...boxProps}
       sx={{
         display: "grid",

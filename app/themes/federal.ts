@@ -80,9 +80,15 @@ export const theme = createTheme({
     primary: {
       light: "#d8e8ef",
       main: "#006699",
+      hover: "#004B70",
+      active: "#00334D",
+      disabled: "#599cbd",
     },
     secondary: {
       main: "#757575",
+      hover: "#616161",
+      active: "#454545",
+      disabled: "#a6a6a6",
     },
     success: {
       main: "#3c763d",
@@ -95,6 +101,9 @@ export const theme = createTheme({
       main: "#F5F5F5",
       colored: "#F9FAFB",
       dark: "#F2F7F9",
+    },
+    brand: {
+      main: "#DC0018",
     },
     alert: {
       main: "#DC0018",
@@ -162,17 +171,9 @@ export const theme = createTheme({
 // colors: {
 //   text: "#000000",
 //   background: "#FFFFFF",
-//   brand: "#DC0018",
 
-//   primary: "#006699",
-//   primaryHover: "#004B70",
-//   primaryActive: "#00334D",
-//   primaryDisabled: "#599cbd",
-//   primaryLight: "#",
 //   secondary: "#757575",
-//   secondaryHover: "#616161",
-//   secondaryActive: "#454545",
-//   secondaryDisabled: "#a6a6a6",
+
 //   secondaryButton: "#757575",
 //   secondaryButtonText: "white",
 //   secondaryButtonHover: "#646464",
@@ -188,14 +189,14 @@ export const theme = createTheme({
 //     backgroundColor: "primary.main",
 //     color: "grey.100",
 //     ":hover": {
-//       backgroundColor: "primaryHover",
+//       backgroundColor: "primary.hover",
 //     },
 //     ":active": {
-//       backgroundColor: "primaryHover",
+//       backgroundColor: "primary.hover",
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       backgroundColor: "primaryDisabled",
+//       backgroundColor: "primary.disabled",
 //     },
 //   },
 //   "primary-small": {
@@ -236,14 +237,14 @@ export const theme = createTheme({
 //     borderStyle: "solid",
 //     borderColor: "primary",
 //     ":hover": {
-//       backgroundColor: "muted",
+//       backgroundColor: "muted.main",
 //     },
 //     ":active": {
-//       backgroundColor: "muted",
+//       backgroundColor: "muted.main",
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       backgroundColor: "muted",
+//       backgroundColor: "muted.main",
 //     },
 //   },
 //   secondary: {
@@ -258,7 +259,7 @@ export const theme = createTheme({
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       bg: "secondaryDisabled",
+//       bg: "secondary.disabled",
 //     },
 //   },
 //   inverted: {
@@ -297,7 +298,7 @@ export const theme = createTheme({
 //     m: 0,
 //     p: 0,
 //     ":hover": {
-//       color: "primaryHover",
+//       color: "primary.hover",
 //     },
 //     ":disabled": {
 //       cursor: "initial",
@@ -325,7 +326,7 @@ export const theme = createTheme({
 //     m: 0,
 //     p: 0,
 //     ":hover": {
-//       color: "primaryHover",
+//       color: "primary.hover",
 //     },
 //     ":disabled": {
 //       cursor: "initial",
@@ -359,7 +360,7 @@ export const theme = createTheme({
 //     },
 //     ":disabled": {
 //       cursor: "initial",
-//       backgroundColor: "muted",
+//       backgroundColor: "muted.main",
 //     },
 //   },
 //   arrow: {

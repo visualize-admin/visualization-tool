@@ -93,10 +93,10 @@ export const TabDropZone = ({
                                 right: 3,
                                 marginTop: -12,
                                 color: isDragging
-                                  ? "secondaryActive"
-                                  : "secondaryDisabled",
+                                  ? "secondary.active"
+                                  : "secondary.disabled",
                                 ":hover": {
-                                  color: "secondaryHover",
+                                  color: "secondary.hover",
                                 },
                               }}
                             >

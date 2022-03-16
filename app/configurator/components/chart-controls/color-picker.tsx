@@ -148,7 +148,7 @@ export const ColorPickerMenu = (props: Props) => {
             cursor: "pointer",
           },
           "> button[aria-expanded]": {
-            borderColor: "primaryActive",
+            borderColor: "primary.active",
           },
           opacity: props.disabled ? 0.5 : 1,
           pointerEvents: props.disabled ? "none" : "auto",

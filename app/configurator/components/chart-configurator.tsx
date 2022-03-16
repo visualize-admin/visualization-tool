@@ -404,7 +404,7 @@ export const ChartConfigurator = ({
                                   transition:
                                     "color 0.125s ease, opacity 0.125s ease-out",
                                   opacity: 0.25,
-                                  color: "secondaryActive",
+                                  color: "secondary.active",
                                 },
                                 ".buttons:hover": fetching
                                   ? {}

@@ -68,11 +68,11 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
                 color: "primary",
               },
               ":active": {
-                color: "primaryActive",
+                color: "primary.active",
               },
               ":disabled": {
                 cursor: "initial",
-                color: "primaryDisabled",
+                color: "primary.disabled",
               },
             }}
           >

@@ -17,6 +17,15 @@ declare module "@mui/material" {
     hover?: string;
     active?: string;
     disabled?: string;
+    colored?: string;
+    dark?: string;
+  }
+
+  interface PaletteOptions {
+    muted: PaletteColorOptions;
+    alert: PaletteColorOptions;
+    organization: PaletteColorOptions;
+    category: PaletteColorOptions;
   }
 }
 

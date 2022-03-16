@@ -52,7 +52,7 @@ export const HeaderBorder = () => {
         opacity: progress === 0 ? 0 : 1,
         borderBottomWidth: "4px",
         borderBottomStyle: "solid",
-        borderBottomColor: "brand",
+        borderBottomColor: "brand.main",
       }}
     />
   );

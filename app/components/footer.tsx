@@ -156,20 +156,20 @@ const FooterLink = ({
       width: ["100%", "auto"],
       px: [0, 3],
       py: [0, 4],
-      color: "primary",
+      color: "primary.main",
       fontSize: "0.875rem",
 
       textDecoration: "none",
       cursor: "pointer",
       ":hover": {
-        color: "primaryHover",
+        color: "primary.hover",
       },
       ":active": {
-        color: "primaryHover",
+        color: "primary.hover",
       },
       ":disabled": {
         cursor: "initial",
-        color: "primaryDisabled",
+        color: "primary.disabled",
       },
     }}
   >
@@ -197,14 +197,14 @@ const FooterLinkBottom = forwardRef<
         textDecoration: "none",
         cursor: "pointer",
         ":hover": {
-          color: "primaryHover",
+          color: "primary.hover",
         },
         ":active": {
-          color: "primaryHover",
+          color: "primary.hover",
         },
         ":disabled": {
           cursor: "initial",
-          color: "primaryDisabled",
+          color: "primary.disabled",
         },
       }}
     >

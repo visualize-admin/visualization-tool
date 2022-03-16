@@ -77,14 +77,14 @@ export const Radio = ({
               checked && !disabled
                 ? "primary"
                 : checked && disabled
-                ? "primaryDisabled"
+                ? "primary.disabled"
                 : "grey.500",
             "> *": {
               fill:
                 checked && !disabled
                   ? "primary"
                   : checked && disabled
-                  ? "primaryDisabled"
+                  ? "primary.disabled"
                   : "grey.500",
             },
           }}
@@ -254,7 +254,7 @@ export const MiniSelect = ({
         mr: 1, // Fix for Chrome which cuts of the label otherwise
         ":focus": {
           outline: "none",
-          borderColor: "primary",
+          borderColor: "primary.main",
         },
       }}
       id={id}
