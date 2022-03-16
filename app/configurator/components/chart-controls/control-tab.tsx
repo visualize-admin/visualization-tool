@@ -188,7 +188,7 @@ export const ControlTabButton = ({
     id={`tab-${value}`}
     onClick={() => onClick(value)}
     sx={{
-      backgroundColor: checked ? "muted.darker" : "grey.100",
+      backgroundColor: checked ? "muted.dark" : "grey.100",
       color: "grey.700",
       borderColor: "primary",
       borderRadius: 1.5,
@@ -201,10 +201,10 @@ export const ControlTabButton = ({
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        backgroundColor: "muted.darker",
+        backgroundColor: "muted.dark",
       },
       ":active": {
-        backgroundColor: "muted.darker",
+        backgroundColor: "muted.dark",
       },
       ":disabled": {
         cursor: "initial",

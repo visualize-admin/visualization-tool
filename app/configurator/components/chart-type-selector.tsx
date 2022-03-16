@@ -64,7 +64,7 @@ export const ChartTypeSelectionButton = ({
             ? "muted.colored"
             : checked
             ? "primary"
-            : "muted.darker",
+            : "muted.dark",
         },
       }}
     >
