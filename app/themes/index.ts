@@ -27,6 +27,10 @@ declare module "@mui/material" {
     organization: PaletteColorOptions;
     category: PaletteColorOptions;
   }
+
+  interface TypographyPropsVariantOverrides {
+    lead: true;
+  }
 }
 
 export const loadTheme = async (theme: string = "federal") => {
