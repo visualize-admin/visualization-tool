@@ -1,3 +1,5 @@
+import { Shadows } from "@mui/material/styles/shadows";
+
 const shadowKeyUmbraOpacity = 0;
 const shadowKeyPenumbraOpacity = 0.1;
 const shadowAmbientShadowOpacity = 0;
@@ -37,6 +39,6 @@ const shadows = [
   createShadow(0, 10, 14, -6, 0, 22, 35, 3, 0, 8, 42, 7),
   createShadow(0, 11, 14, -7, 0, 23, 36, 3, 0, 9, 44, 8),
   createShadow(0, 11, 15, -7, 0, 24, 38, 3, 0, 9, 46, 8),
-];
+] as Shadows;
 
 export default shadows;
