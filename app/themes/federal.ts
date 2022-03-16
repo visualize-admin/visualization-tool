@@ -57,9 +57,9 @@ const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
       res.fontSize = themeUIFontSizes[fontSize];
       res.lineHeight = themeUILineHeights[lineHeight];
     }
-    res[theme.breakpoints.up(breakpoints[i])] = {
-      fontSize: themeUIFontSizes[fontSize],
-      lineHeight: themeUILineHeights[lineHeight],
+    res[theme.breakpoints.down(breakpoints[i])] = {
+      fontSize: themeUIFontSizes[i],
+      lineHeight: themeUILineHeights[i],
     };
   }
   console.log(res);
@@ -460,31 +460,32 @@ theme.typography = merge(theme.typography, {
   //   fontSize: [8, 9, 9],
   // },
   h1: createResponsiveVariant(theme, {
+  h1: createTypographyVariant(theme, {
     lineHeight: [7, 8, 8],
     fontWeight: "bold",
     fontSize: [6, 7, 7],
   }),
-  h2: createResponsiveVariant(theme, {
+  h2: createTypographyVariant(theme, {
     lineHeight: [6, 7, 7],
     fontWeight: "regular",
     fontSize: [5, 6, 6],
   }),
-  h3: createResponsiveVariant(theme, {
+  h3: createTypographyVariant(theme, {
     lineHeight: [5, 6, 6],
     fontWeight: "bold",
     fontSize: [4, 5, 5],
   }),
-  h4: createResponsiveVariant(theme, {
+  h4: createTypographyVariant(theme, {
     lineHeight: [4, 5, 5],
     fontWeight: "bold",
     fontSize: [3, 4, 4],
   }),
-  body1: createResponsiveVariant(theme, {
+  body1: createTypographyVariant(theme, {
     lineHeight: [4, 5, 5],
     fontWeight: "regular",
     fontSize: [3, 4, 4],
   }),
-  body2: createResponsiveVariant(theme, {
+  body2: createTypographyVariant(theme, {
     lineHeight: [2, 4, 3],
     fontWeight: "regular",
     fontSize: [2, 3, 3],
@@ -495,7 +496,7 @@ theme.typography = merge(theme.typography, {
   //   fontWeight: "regular",
   //   fontSize: [2, 3, 3],
   // },
-  caption: createResponsiveVariant(theme, {
+  caption: createTypographyVariant(theme, {
     lineHeight: [1, 2, 2],
     fontWeight: "regular",
     fontSize: [1, 2, 2],
