@@ -91,7 +91,8 @@ export const MapTooltip = () => {
                 ? areaLayer.getLabel(interaction.d)
                 : symbolLayer.getLabel(interaction.d)}
             </Typography>
-            <Grid
+            <Box
+              display="grid"
               sx={{
                 mt: 1,
                 width: "100%",
@@ -145,7 +146,7 @@ export const MapTooltip = () => {
                   )}
                 </>
               }
-            </Grid>
+            </Box>
           </Box>
         </TooltipBox>
       )}

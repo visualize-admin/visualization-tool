@@ -84,7 +84,8 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
         p: 3,
       }}
     >
-      <Grid
+      <Box
+        display="grid"
         sx={{
           // width: 120,
           gridTemplateColumns: "repeat(auto-fill, minmax(1.5rem, 1fr))",
@@ -102,7 +103,7 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             }}
           />
         ))}
-      </Grid>
+      </Box>
       <Box sx={{ position: "relative" }}>
         <Input
           sx={{

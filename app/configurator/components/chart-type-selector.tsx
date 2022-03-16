@@ -146,7 +146,8 @@ export const ChartTypeSelector = ({
             </Trans>
           </Hint>
         ) : (
-          <Grid
+          <Box
+            display="grid"
             sx={{
               gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
               mx: 4,
@@ -161,7 +162,7 @@ export const ChartTypeSelector = ({
                 disabled={!possibleChartTypes.includes(d)}
               />
             ))}
-          </Grid>
+          </Box>
         )}
       </Box>
     );
