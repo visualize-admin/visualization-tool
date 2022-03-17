@@ -169,11 +169,11 @@ export const SelectDatasetStepContent = () => {
                     </Typography>
                     <Typography
                       variant="body1"
+                      fontWeight={400}
                       color="grey.800"
                       sx={{
                         mb: 4,
                         maxWidth: 800,
-                        fontWeight: "light",
                         display: "block",
                       }}
                     >
