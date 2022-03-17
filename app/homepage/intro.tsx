@@ -60,9 +60,9 @@ export const Title = ({ children }: { children: ReactNode }) => (
       color: "grey.800",
       textAlign: "center",
 
-      lineHeight: 1.2,
+      lineHeight: [1.2, 1.2, 1.2],
       fontWeight: "bold",
-      fontSize: ["2.5rem", '"undefined"', '"undefined"'],
+      fontSize: ["2.5rem", "3.5rem", "3.5rem"],
       mb: 4,
     }}
   >
