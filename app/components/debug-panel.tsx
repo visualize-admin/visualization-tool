@@ -131,7 +131,7 @@ const DebugPanel = ({
         ml: -5,
         mr: -5,
         mb: -5,
-        backgroundColor: "background",
+        backgroundColor: "background.main",
         // boxShadow: "primary",
         borderTopStyle: "solid",
         borderColor: "grey.500",

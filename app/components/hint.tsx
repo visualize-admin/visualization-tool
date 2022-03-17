@@ -131,7 +131,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
     sx={{
       width: "100%",
       height: "100%",
-      color: "hint",
+      color: "hint.main",
       margin: "auto",
       textAlign: "center",
       flexDirection: "column",

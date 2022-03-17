@@ -433,7 +433,7 @@ const organizationNavItemTheme = {
 const NavChip = ({
   children,
   color,
-  bg,
+  backgroundColor,
 }: {
   children: React.ReactNode;
   color: string;
@@ -448,8 +448,8 @@ const NavChip = ({
         alignItems: "center",
         borderRadius: 2,
         color: color,
-        backgroundColor: bg,
         fontSize: "small",
+        backgroundColor: backgroundColor,
       }}
     >
       {children}
@@ -548,7 +548,7 @@ const NavItem = ({
   );
   const countChip =
     count !== undefined ? (
-      <NavChip color={theme.countColor} bg={theme.countBg}>
+      <NavChip color={theme.countColor} backgroundColor={theme.countBg}>
         {count}
       </NavChip>
     ) : null;

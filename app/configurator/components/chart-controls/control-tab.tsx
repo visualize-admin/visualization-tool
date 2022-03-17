@@ -244,7 +244,7 @@ export const ControlTabButtonInner = ({
           borderRadius: 2,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: checked ? "primary" : "grey.100",
+          backgroundColor: checked ? "primary.main" : "grey.100",
           color:
             optional && !checked
               ? "grey.500"

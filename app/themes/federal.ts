@@ -105,6 +105,9 @@ export const theme = createTheme({
     brand: {
       main: "#DC0018",
     },
+    hint: {
+      main: "#757575",
+    },
     alert: {
       main: "#DC0018",
       light: "#ffe6e1",
@@ -171,16 +174,12 @@ export const theme = createTheme({
 // colors: {
 //   text: "#000000",
 //   background: "#FFFFFF",
-
-//   secondary: "#757575",
-
 //   secondaryButton: "#757575",
 //   secondaryButtonText: "white",
 //   secondaryButtonHover: "#646464",
 //   success: "#3c763d",
 //   focus: "#333333",
 //   error: "#FF5555",
-//   hint: "#757575",
 //   missing: "#EFEFEF",
 // },
 

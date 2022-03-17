@@ -137,7 +137,7 @@ export const ChartTypeSelector = ({
             <CircularProgress
               color="primary"
               size={12}
-              sx={{ color: "hint", display: "inline-block", ml: 1 }}
+              sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
             />
           ) : null}
         </SectionTitle>

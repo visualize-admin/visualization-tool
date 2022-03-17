@@ -26,6 +26,8 @@ declare module "@mui/material" {
     alert: PaletteColorOptions;
     organization: PaletteColorOptions;
     category: PaletteColorOptions;
+    brand: PaletteColorOptions;
+    hint: PaletteColorOptions;
   }
 
   interface TypographyPropsVariantOverrides {
