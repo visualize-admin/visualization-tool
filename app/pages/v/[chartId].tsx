@@ -111,7 +111,7 @@ const VisualizationPage = (props: PageProps) => {
               )}
             </Typography>
 
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={2} sx={{ mb: 5 }}>
               <NextLink href="/create/new" passHref>
                 <Button component="a" variant="contained" color="secondary">
                   <Trans id="button.new.visualization">

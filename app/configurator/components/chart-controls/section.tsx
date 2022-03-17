@@ -1,4 +1,4 @@
-import { Box, BoxProps, Typography } from "@mui/material";
+import { Box, BoxProps, Typography, TypographyProps } from "@mui/material";
 
 import { ElementType, forwardRef, ReactNode } from "react";
 import { Icon, IconName } from "../../../icons";
@@ -69,12 +69,14 @@ export const SectionTitle = ({
   titleId,
   disabled,
   children,
+  sx,
 }: {
   color?: string;
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
   children: ReactNode;
+  sx?: TypographyProps["sx"];
 }) => {
   const theme = useTheme();
   return (
@@ -82,21 +84,22 @@ export const SectionTitle = ({
       variant="h5"
       id={titleId}
       sx={{
-        p: 4,
+        padding: `${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(
+          2
+        )} ${theme.spacing(4)}`,
+        display: "flex",
+        alignItems: "center",
         width: "100%",
         border: "none",
         justifyContent: "flex-start",
         color: disabled ? "grey.600" : color ?? "grey.800",
+        "& > svg:first-of-type": {
+          marginRight: theme.spacing(2),
+        },
+        ...sx,
       }}
     >
-      {iconName && (
-        <Box mr={2}>
-          <Icon
-            color={disabled ? theme.palette.grey[600] : theme.palette.grey[700]}
-            name={iconName}
-          ></Icon>
-        </Box>
-      )}
+      {iconName ? <Icon name={iconName} /> : null}
       {children}
     </Typography>
   );

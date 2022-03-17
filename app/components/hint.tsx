@@ -138,6 +138,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
       justifyContent: "center",
       alignItems: "center",
       flexGrow: 1,
+      my: 6,
     }}
   >
     <Icon name="hintWarning" size={64} />

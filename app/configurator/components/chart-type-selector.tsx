@@ -131,7 +131,7 @@ export const ChartTypeSelector = ({
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
-        <SectionTitle>
+        <SectionTitle sx={{ mb: 1 }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
           {possibleFiltersFetching ? (
             <CircularProgress

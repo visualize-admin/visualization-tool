@@ -93,7 +93,6 @@ export const StepperDumb = ({
           justifyContent: "center",
           alignItems: "center",
           px: 2,
-          py: 3,
           minHeight: 56,
         }}
       >

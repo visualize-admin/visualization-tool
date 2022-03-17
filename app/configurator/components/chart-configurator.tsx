@@ -430,7 +430,8 @@ export const ChartConfigurator = ({
                                   justifyContent: "flex-end",
                                   flexGrow: 0,
                                   flexShrink: 0,
-                                  pb: 1,
+                                  mb: -1,
+                                  ml: 2,
                                 }}
                               >
                                 <MoveDragButtons

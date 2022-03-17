@@ -358,13 +358,13 @@ const ChartFieldOptions = ({
     <>
       {encodingOptions?.map((e) => e.field).includes("chartSubType") &&
         chartType === "column" && (
-          <Box component="fieldset" mt={2}>
+          <Box component="fieldset" mt={4}>
             <FieldSetLegend
               legendTitle={
                 <Trans id="controls.select.column.layout">Column layout</Trans>
               }
             />
-            <Flex sx={{ justifyContent: "flex-start" }} mt={1}>
+            <Flex sx={{ justifyContent: "flex-start" }}>
               <ChartOptionRadioField
                 label={getFieldLabel("stacked")}
                 field={field}
