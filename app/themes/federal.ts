@@ -39,31 +39,29 @@ const themeUILineHeights = [
   "4rem",
   "4.5rem",
 ];
+
 const themeUIFontWeights = {
   light: 300,
-  regular: 400,
+  regular: 500,
   heading: 700,
   bold: 700,
 };
+
 const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
   const res = omit(spec, ["lineHeight", "fontSize"]);
   for (let i = 0; i < spec.fontSize.length; i++) {
-    const lineHeight = Array.isArray(spec.lineHeight)
+    const lineHeightIndex = Array.isArray(spec.lineHeight)
       ? spec.lineHeight[i]
       : spec.lineHeight;
-    const fontSize = Array.isArray(spec.fontSize)
+    const fontSizeIndex = Array.isArray(spec.fontSize)
       ? spec.fontSize[i]
       : spec.fontSize;
     if (i === 0) {
-      res.fontSize = themeUIFontSizes[fontSize];
-      res.lineHeight = themeUILineHeights[lineHeight];
-      if (!res.lineHeight) {
-        debugger;
-      }
+      res.fontSize = themeUIFontSizes[fontSizeIndex];
     }
-    res[theme.breakpoints.down(breakpoints[i])] = {
-      fontSize: themeUIFontSizes[i],
-      lineHeight: themeUILineHeights[i],
+    res[theme.breakpoints.up(breakpoints[i])] = {
+      fontSize: themeUIFontSizes[fontSizeIndex],
+      lineHeight: themeUILineHeights[lineHeightIndex],
     };
   }
   res.fontWeight =
@@ -84,6 +82,7 @@ export const theme = createTheme({
       active: "#00334D",
       disabled: "#599cbd",
     },
+    divider: "#CCCCCC",
     secondary: {
       main: "#757575",
       hover: "#616161",
@@ -535,9 +534,6 @@ theme.components = {
         padding: `${theme.spacing(4)}px ${theme.spacing(3)}px`,
         alignItems: "center",
         justifyContent: "flex-start",
-        letterSpacing: "0 !important",
-        fontFamily: theme.typography.fontFamily,
-        fontSize: themeUIFontSizes[4],
         borderRadius: 3,
         transition: "background-color .2s",
         cursor: "pointer",
@@ -555,7 +551,6 @@ theme.components = {
           marginLeft: 2,
         },
         textTransform: "none",
-        fontWeight: 400,
         boxShadow: "none",
       },
       containedPrimary: {
@@ -566,6 +561,25 @@ theme.components = {
       containedSecondary: {
         "&:hover": {
           boxShadow: "none",
+        },
+      },
+      textSizeSmall: {
+        fontWeight: "bold",
+        fontSize: "0.875rem",
+        paddingTop: 0,
+        paddingBottom: 0,
+
+        ":hover": {
+          backgroundColor: "transparent",
+          color: theme.palette.primary.dark,
+        },
+      },
+      startIcon: {
+        "&$iconSizeSmall": {
+          marginRight: 4,
+        },
+        "&$endIcon": {
+          marginLeft: 4,
         },
       },
     },
@@ -594,7 +608,7 @@ theme.components = {
         padding: "0 6px",
       },
       focused: {
-        borderColor: theme.palette.primary.main,
+        outline: "3px solid #333333",
       },
     },
   },
@@ -612,6 +626,15 @@ theme.components = {
       },
       checked: {},
 
+      // "> *": {
+      //   fill:
+      //     color && checked
+      //       ? color
+      //       : checked && !disabled
+      //       ? "primary.main"
+      //       : checked && disabled
+      //       ? "primary.disabled"
+      //       : "grey.500",
     },
   },
   MuiCssBaseline: {
@@ -671,8 +694,6 @@ theme.components = {
     },
   },
 };
-
-console.log(theme.typography);
 /**
  * Load these fonts early using <link rel="preload" />
  * Use WOFF2 fonts if possible!
