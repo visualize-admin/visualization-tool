@@ -461,6 +461,16 @@ theme.components = {
     },
     styleOverrides: {},
   },
+  MuiInputBase: {
+    styleOverrides: {
+      root: {
+        borderRadius: (theme.shape.borderRadius as number) * 1.5,
+      },
+      adornedStart: {
+        input: { paddingLeft: 4 },
+      },
+    },
+  },
   MuiInputLabel: {
     styleOverrides: {
       root: {
