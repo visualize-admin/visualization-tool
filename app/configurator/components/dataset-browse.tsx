@@ -979,7 +979,12 @@ export const DatasetResult = ({
     >
       <Stack spacing={2}>
         <Flex sx={{ justifyContent: "space-between" }}>
-          <Typography variant="body2" color="grey.600">
+          <Typography
+            variant="body2"
+            color="grey.600"
+            fontWeight={500}
+            gutterBottom={false}
+          >
             {datePublished ? <DateFormat date={datePublished} /> : null}
           </Typography>
           {isDraft && (
@@ -1001,9 +1006,12 @@ export const DatasetResult = ({
         </Typography>
         <Typography
           variant="body2"
+          color="grey.600"
           sx={
             {
               WebkitLineClamp: 2,
+              mb: 2,
+              lineHeight: 1.57,
               WebkitBoxOrient: "vertical",
               display: "-webkit-box",
               overflow: "hidden",
