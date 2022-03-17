@@ -1,13 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { SyntheticEvent } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  CircularProgress,
-  Typography,
-  ButtonBase,
-} from "@mui/material";
+import { Box, CircularProgress, Typography, ButtonBase } from "@mui/material";
 import { ConfiguratorStateSelectingChartType } from "..";
 import { enabledChartTypes, getPossibleChartType } from "../../charts";
 import { Hint, Loading } from "../../components/hint";
@@ -153,6 +146,7 @@ export const ChartTypeSelector = ({
             display="grid"
             sx={{
               gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+              gridGap: "0.75rem",
               mx: 4,
             }}
           >

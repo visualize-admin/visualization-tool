@@ -179,9 +179,6 @@ export const ControlTabButton = ({
   children: ReactNode;
 }) => (
   <Button
-    component="div"
-    variant="reset"
-    value={value}
     role="tab"
     aria-selected={checked}
     aria-controls={`filter-panel-${value}`}
@@ -196,6 +193,7 @@ export const ControlTabButton = ({
       minWidth: 160,
       px: 2,
       py: 3,
+      fontWeight: "normal",
 
       fontSize: ["0.875rem", "0.875rem", "0.875rem"],
       transition: "background-color .2s",
@@ -234,7 +232,13 @@ export const ControlTabButtonInner = ({
   isActive?: boolean;
   showIsActive?: boolean;
 }) => (
-  <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
+  <Flex
+    sx={{
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexGrow: 1,
+    }}
+  >
     <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
       <Flex
         sx={{
@@ -256,7 +260,14 @@ export const ControlTabButtonInner = ({
         <Icon size={24} name={iconName} />
       </Flex>
 
-      <Flex sx={{ flexDirection: "column", alignItems: "flex-start", mx: 3 }}>
+      <Flex
+        sx={{
+          flexDirection: "column",
+          alignItems: "flex-start",
+          mx: 3,
+          flexGrow: 1,
+        }}
+      >
         {upperLabel && (
           <Typography
             variant="caption"
