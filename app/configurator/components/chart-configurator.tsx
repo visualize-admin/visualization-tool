@@ -8,7 +8,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, Spinner } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { CombinedError, useClient } from "urql";
 import {
   ChartConfig,
@@ -367,9 +367,9 @@ export const ChartConfigurator = ({
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
-              <Spinner
+              <CircularProgress
                 size={12}
-                sx={{ color: "hint", display: "inline-block", ml: 1 }}
+                sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
               />
             ) : null}
           </SectionTitle>
