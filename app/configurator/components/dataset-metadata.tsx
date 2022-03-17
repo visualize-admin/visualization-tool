@@ -12,6 +12,7 @@ import { useLocale } from "../../locales/use-locale";
 import truthy from "../../utils/truthy";
 import Tag from "./Tag";
 import { MotionBox, smoothPresenceProps } from "./presence";
+import { Link as MUILink } from "@mui/material";
 
 export const DataSetMetadata = ({
   dataSetIri,
@@ -133,7 +134,13 @@ const DatasetMetadataLink = ({
   href: string;
   label: string;
 }) => (
-  <Link color="primary" href={href} target="_blank" rel="noopener noreferrer">
+  <Link
+    underline="hover"
+    color="primary"
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
     {label}
   </Link>
 );

@@ -123,7 +123,7 @@ export const DownloadButton = ({
   onClick?: () => void;
   children: ReactNode;
 }) => (
-  <Link component="button" color="inherit" onClick={onClick}>
+  <Link component="button" color="primary" underline="hover" onClick={onClick}>
     {children}
   </Link>
 );

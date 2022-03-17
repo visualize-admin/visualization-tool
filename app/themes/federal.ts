@@ -454,7 +454,7 @@ theme.typography = merge(theme.typography, {
 theme.components = {
   MuiLink: {
     defaultProps: {
-      underline: "none",
+      underline: "hover",
       color: "inherit",
     },
     styleOverrides: {},

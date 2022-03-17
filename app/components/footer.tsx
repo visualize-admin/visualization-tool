@@ -15,7 +15,7 @@ const Version = () => {
       <>
         (
         <Link
-          variant="primary"
+          color="primary"
           href={`${BUILD_GITHUB_REPO}/commit/${BUILD_COMMIT}`}
         >
           {BUILD_COMMIT.substr(0, 7)}
@@ -185,10 +185,10 @@ const FooterLinkBottom = forwardRef<
     <Link
       ref={ref}
       {...props}
+      color="primary"
       sx={{
         px: [4, 3],
         py: [3, 4],
-        color: "primary",
         fontSize: "0.875rem",
 
         borderLeftWidth: ["1px", 0],
