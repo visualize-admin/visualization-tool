@@ -334,6 +334,7 @@ export const DayPickerField = ({
     [isDayDisabled, onChange]
   );
   const formatDateAuto = useTimeFormatUnit();
+  const theme = useTheme();
   const inputProps = useMemo(() => {
     return {
       name,
@@ -349,13 +350,13 @@ export const DayPickerField = ({
         display: "block",
         borderRadius: "0.25rem",
         width: "100%",
-        border: "1px solid var(--theme-ui-colors-grey.500)",
+        border: `1px solid ${theme.palette.divider}`,
 
         // @ts-ignore
         ...props.inputProps?.style,
       },
     } as DayPickerInputProps;
-  }, [name, formatDateAuto, value, disabled, props.inputProps]);
+  }, [name, formatDateAuto, value, disabled, props.inputProps, theme]);
 
   const dayPickerProps = useMemo(() => {
     return {
