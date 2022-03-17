@@ -581,13 +581,15 @@ const NavItem = ({
     >
       {active ? (
         <>
-          <Typography variant="body2">{children}</Typography>
+          <Typography variant="body2" sx={{ fontSize: 12 }}>
+            {children}
+          </Typography>
           {level === 1 ? removeFilterButton : countChip}
         </>
       ) : (
         <>
           <Link href={path} passHref>
-            <MUILink sx={{ flexGrow: 1 }} fontSize="small">
+            <MUILink sx={{ flexGrow: 1 }} underline="none" fontSize="small">
               {children}&nbsp;&nbsp;
             </MUILink>
           </Link>
