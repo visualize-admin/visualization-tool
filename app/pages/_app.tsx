@@ -86,7 +86,7 @@ export default function App({ Component, pageProps }: AppProps) {
             key={src}
             rel="preload"
             href={src}
-            component="font"
+            as="font"
             crossOrigin="anonymous"
           />
         ))}
