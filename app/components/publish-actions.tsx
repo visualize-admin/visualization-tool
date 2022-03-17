@@ -10,9 +10,9 @@ import {
 } from "react";
 import {
   Box,
+  BoxProps,
   Button,
   ButtonProps,
-  FlexOwnProps,
   Input,
   Link,
   Typography,
@@ -28,7 +28,7 @@ export const PublishActions = ({
   sx,
 }: {
   configKey: string;
-  sx?: FlexOwnProps["sx"];
+  sx?: BoxProps["sx"];
 }) => {
   const locale = useLocale();
 
@@ -107,11 +107,12 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
     <PopUp
       renderTrigger={(props) => {
         return (
-          <Button {...props}>
-            <Icon name="linkExternal" />
-            <Typography>
-              <Trans id="button.share">Share</Trans>
-            </Typography>
+          <Button
+            {...props}
+            size="large"
+            startIcon={<Icon name="linkExternal" />}
+          >
+            <Trans id="button.share">Share</Trans>
           </Button>
         );
       }}
@@ -218,11 +219,14 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   return (
     <PopUp
       renderTrigger={(toggleProps) => (
-        <Button variant="contained" color="primary" {...toggleProps}>
-          <Icon name="embed" />
-          <Typography>
-            <Trans id="button.embed">Embed</Trans>
-          </Typography>
+        <Button
+          startIcon={<Icon name="embed" />}
+          size="large"
+          variant="contained"
+          color="primary"
+          {...toggleProps}
+        >
+          <Trans id="button.embed">Embed</Trans>
         </Button>
       )}
     >
@@ -292,7 +296,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
       ></Input>
 
       <Button
-        variant="reset"
+        variant="text"
         onMouseOver={() => toggleTooltip(true)}
         onMouseUp={() =>
           updateTooltipContent(<Trans id="button.hint.copied">copied!</Trans>)
