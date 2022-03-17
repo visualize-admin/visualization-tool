@@ -43,7 +43,12 @@ export const Intro = ({
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <NextLink href="/browse" passHref>
-            <Button component="a" variant="contained" color="primary">
+            <Button
+              size="large"
+              component="a"
+              variant="contained"
+              color="primary"
+            >
               {buttonLabel}
             </Button>
           </NextLink>
