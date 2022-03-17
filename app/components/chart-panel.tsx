@@ -11,14 +11,11 @@ export const ChartPanel = ({
     {...boxProps}
     sx={{
       backgroundColor: "grey.100",
-      boxShadow: "primary",
+      boxShadow: 6,
       borderRadius: 12,
       overflow: "hidden",
       width: "auto",
       minHeight: [150, 300, 500],
-      borderWidth: "1px",
-      borderStyle: "solid",
-      borderColor: "grey.300",
       ...boxProps.sx,
     }}
   >
