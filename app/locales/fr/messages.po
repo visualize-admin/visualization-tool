@@ -738,7 +738,7 @@ msgstr "Erreur de chargement des coordonnées"
 
 #: app/pages/v/[chartId].tsx:106
 msgid "hint.create.your.own.chart"
-msgstr "Copiez cette visualisation ou créez une nouvelle visualisation à partir des données ouvertes de l’administration publique suisse"
+msgstr "Copiez cette visualisation ou créez une nouvelle visualisation à partir des données ouvertes de l’administration publique suisse."
 
 #: app/components/hint.tsx:148
 msgid "hint.dataloadingerror.message"
