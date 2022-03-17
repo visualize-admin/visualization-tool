@@ -1,6 +1,6 @@
 import React from "react";
 import { Inspector } from "react-inspector";
-import { Box, Link, Typography } from "@mui/material";
+import { Box, Button, Link, Typography } from "@mui/material";
 import { useInteractiveFilters } from "../charts/shared/use-interactive-filters";
 import { useConfiguratorState } from "../configurator";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
@@ -51,10 +51,13 @@ const DebugConfigurator = () => {
       <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
         Cube Tools
       </Typography>
-      <Stack spacing={2} sx={{ p: 5 }}>
+      <Stack spacing={2} sx={{ pl: 5, py: 3 }}>
         {configuratorState.dataSet ? (
-          <Link
-            variant="primary"
+          <Button
+            component="a"
+            color="primary"
+            variant="text"
+            size="small"
             href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
               SPARQL_ENDPOINT
             )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
@@ -62,48 +65,51 @@ const DebugConfigurator = () => {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ display: "flex", alignItems: "center" }}
+            startIcon={<Icon name="linkExternal" size={16} />}
           >
-            <Icon name="linkExternal" size={16} />
-            <Typography sx={{ ml: 2, fontSize: "0.875rem" }} variant="body1">
-              Open in Cube Viewer
-            </Typography>
-          </Link>
+            <Typography variant="body2">Open in Cube Viewer</Typography>
+          </Button>
         ) : (
           <Typography variant="body1">Please select a dataset first</Typography>
         )}
         {SPARQL_EDITOR && (
-          <Link
-            variant="primary"
+          <Button
+            component="a"
+            color="primary"
+            variant="text"
+            size="small"
             href={`${SPARQL_EDITOR}#query=${encodeURIComponent(
               `#pragma describe.strategy cbd
 DESCRIBE <${configuratorState.dataSet ?? ""}>`
             )}&requestMethod=POST`}
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ display: "flex", alignItems: "center" }}
+            startIcon={<Icon name="linkExternal" size={16} />}
           >
-            <Icon name="linkExternal" size={16} />
-            <Typography sx={{ ml: 2, fontSize: "0.875rem" }} variant="body1">
-              Cube Metadata Query
-            </Typography>
-          </Link>
+            <Typography variant="body2">Cube Metadata Query</Typography>
+          </Button>
         )}
         {configuratorState.dataSet ? (
           <CubeMetadata datasetIri={configuratorState.dataSet} />
         ) : null}
       </Stack>
-      <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
-        Configurator State{" "}
-      </Typography>
-      <Link
-        variant="inline"
-        onClick={() => {
-          console.log(configuratorState);
-        }}
+      <Typography
+        component="h3"
+        variant="h4"
+        sx={{ px: 5, display: "flex", alignItems: "center", color: "grey.700" }}
       >
-        (dump to console)
-      </Link>
+        Configurator State{" "}
+        <Button
+          component="span"
+          variant="text"
+          size="small"
+          onClick={() => {
+            console.log(configuratorState);
+          }}
+        >
+          (dump to console)
+        </Button>
+      </Typography>
       <Box sx={{ p: 5 }}>
         <Inspector expandLevel={3} data={configuratorState} />
       </Box>
@@ -132,9 +138,13 @@ const DebugPanel = ({
         borderWidth: 1,
       }}
     >
-      <Box component="h3" variant="h3" sx={{ p: 5, color: "warning" }}>
+      <Typography
+        component="h3"
+        variant="h3"
+        sx={{ p: 5, color: "warning.main" }}
+      >
         🚧 Debug Panel 🚧
-      </Box>
+      </Typography>
       {configurator ? <DebugConfigurator /> : null}
       {interactiveFilters ? <DebugInteractiveFilters /> : null}
     </Box>
