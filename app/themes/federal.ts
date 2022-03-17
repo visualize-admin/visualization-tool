@@ -677,36 +677,6 @@ theme.components = {
       margin: 0,
       padding: 0,
       fontFamily: theme.typography.fontFamily,
-      "@font-face": [
-        {
-          fontFamily: "FrutigerNeue",
-          fontStyle: "normal",
-          fontWeight: 700,
-          src: `url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2"),
-          url("/static/fonts/FrutigerNeueW02-Bd.woff") format("woff")`,
-        },
-        {
-          fontFamily: "FrutigerNeue",
-          fontStyle: "normal",
-          fontWeight: 400,
-          src: `url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2"),
-          url("/static/fonts/FrutigerNeueW02-Regular.woff") format("woff")`,
-        },
-        {
-          fontFamily: "FrutigerNeue",
-          fontStyle: "normal",
-          fontWeight: 300,
-          src: `url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2"),
-          url("/static/fonts/FrutigerNeueW02-Light.woff") format("woff")`,
-        },
-        {
-          fontFamily: "FrutigerNeue",
-          fontStyle: "italic",
-          fontWeight: 400,
-          src: `url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2"),
-          url("/static/fonts/FrutigerNeueW02-It.woff") format("woff")`,
-        },
-      ],
       // Hack around type error for vendor prefixed rules
       ...{
         // Use momentum-based scrolling on iOS devices
@@ -726,6 +696,38 @@ theme.components = {
         margin: 0,
         minWidth: 0,
       },
+      fallbacks: [
+        [
+          {
+            fontFamily: "FrutigerNeue",
+            fontDisplay: "swap",
+            fontStyle: "normal",
+            fontWeight: 700,
+            src: `local('Frutiger LT Com') url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff")`,
+          },
+          {
+            fontFamily: "FrutigerNeue",
+            fontDisplay: "swap",
+            fontStyle: "normal",
+            fontWeight: 400,
+            src: `local('Frutiger LT Com') url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff")`,
+          },
+          {
+            fontFamily: "FrutigerNeue",
+            fontDisplay: "swap",
+            fontStyle: "normal",
+            fontWeight: 300,
+            src: `local('Frutiger LT Com') url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff")`,
+          },
+          {
+            fontFamily: "FrutigerNeue",
+            fontDisplay: "swap",
+            fontStyle: "italic",
+            fontWeight: 400,
+            src: `local('Frutiger LT Com') url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff")`,
+          },
+        ].map((x) => ({ "@font-face": x })),
+      ],
     },
   },
 };
@@ -737,4 +739,5 @@ export const preloadFonts = [
   "/static/fonts/FrutigerNeueW02-Bd.woff2",
   "/static/fonts/FrutigerNeueW02-Regular.woff2",
   "/static/fonts/FrutigerNeueW02-Light.woff2",
+  "/static/fonts/FrutigerNeueW02-It.woff2",
 ];
