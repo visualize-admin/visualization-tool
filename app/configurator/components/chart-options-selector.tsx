@@ -468,7 +468,7 @@ const ChartFieldSorting = ({
             disabled={disabled}
             onChange={(e) => {
               updateSortingOption({
-                sortingType: e.currentTarget
+                sortingType: e.target
                   .value as EncodingSortingOption["sortingType"],
                 sortingOrder: activeSortingOrder,
               });
@@ -587,7 +587,7 @@ const ChartImputationType = ({
             value={activeImputationType}
             disabled={disabled}
             onChange={(e) => {
-              updateImputationType(e.currentTarget.value as ImputationType);
+              updateImputationType(e.target.value as ImputationType);
             }}
           />
         </Box>

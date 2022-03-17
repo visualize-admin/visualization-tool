@@ -8,7 +8,7 @@ import React, {
   useContext,
   useMemo,
 } from "react";
-import { SelectProps } from "@mui/material";
+import { SelectChangeEvent, SelectProps } from "@mui/material";
 import { getFieldComponentIri } from "../charts";
 import { DimensionValuesQuery } from "../graphql/query-hooks";
 import { DataCubeMetadata } from "../graphql/types";
@@ -48,15 +48,15 @@ export const useChartFieldField = ({
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
 
-  const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
+  const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
     (e) =>
-      e.currentTarget.value !== FIELD_VALUE_NONE
+      e.target.value !== FIELD_VALUE_NONE
         ? dispatch({
             type: "CHART_FIELD_CHANGED",
             value: {
               field,
               dataSetMetadata,
-              componentIri: e.currentTarget.value,
+              componentIri: e.target.value as string,
             },
           })
         : dispatch({
@@ -95,16 +95,15 @@ export const useChartOptionSelectField = <ValueType extends {} = string>({
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
 
-  const onChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
+  const onChange = useCallback<(e: SelectChangeEvent<unknown>) => void>(
     (e) => {
+      const value = e.target.value as string;
       dispatch({
         type: "CHART_OPTION_CHANGED",
         value: {
           field,
           path,
-          value: getValue
-            ? getValue(e.currentTarget.value)
-            : e.currentTarget.value,
+          value: getValue ? getValue(value) : value,
         },
       });
     },
@@ -296,22 +295,16 @@ export const useSingleFilterSelect = ({
   const [state, dispatch] = useConfiguratorState();
 
   const onChange = useCallback<
-    (
-      e: Pick<
-        ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-        "currentTarget"
-      >
-    ) => void
+    (e: Pick<SelectChangeEvent<unknown>, "target">) => void
   >(
     (e) => {
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
         value: {
           dimensionIri,
-          value:
-            e.currentTarget.value === ""
-              ? FIELD_VALUE_NONE
-              : e.currentTarget.value,
+          value: (e.target.value === ""
+            ? FIELD_VALUE_NONE
+            : e.target.value) as string,
         },
       });
     },

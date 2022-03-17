@@ -396,8 +396,8 @@ export const SearchDatasetBox = ({
             id="datasetSort"
             value={order}
             options={isSearching ? options : options.slice(1)}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              onSetOrder(e.currentTarget.value as DataCubeResultOrder);
+            onChange={(e) => {
+              onSetOrder(e.target.value as DataCubeResultOrder);
             }}
           />
         </Flex>
