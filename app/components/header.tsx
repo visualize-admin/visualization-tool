@@ -85,7 +85,7 @@ export const Header = ({
         sx={{
           px: [0, 4, 4],
           pt: [0, 3, 3],
-          pb: [0, 5, 5],
+          minHeight: 92,
 
           backgroundColor: "grey.100",
           color: "grey.700",
