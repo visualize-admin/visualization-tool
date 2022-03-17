@@ -630,6 +630,13 @@ theme.components = {
       },
     },
   },
+  MuiOutlinedInput: {
+    styleOverrides: {
+      root: {
+        borderRadius: (theme.shape.borderRadius as number) * 1.5,
+      },
+    },
+  },
   MuiCheckbox: {
     styleOverrides: {
       root: {
