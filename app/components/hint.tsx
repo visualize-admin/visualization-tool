@@ -78,7 +78,7 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
     }}
   >
     <Spinner />
-    <Typography component="div" variant="h4">
+    <Typography component="div" variant="body1">
       <Trans id="hint.loading.data">Loading data…</Trans>
     </Typography>
   </Flex>
