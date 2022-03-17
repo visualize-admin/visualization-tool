@@ -22,6 +22,8 @@ import { default as ChartMap } from "./IcChartMap";
 import { default as ChartPie } from "./IcChartPie";
 import { default as ChartScatterplot } from "./IcChartScatterplot";
 import { default as Check } from "./IcCheck";
+import { default as CheckboxActive } from "./IcCheckboxActive";
+import { default as CheckboxDefault } from "./IcCheckboxDefault";
 import { default as ChevronDown } from "./IcChevronDown";
 import { default as ChevronLeft } from "./IcChevronLeft";
 import { default as ChevronRight } from "./IcChevronRight";
@@ -150,6 +152,8 @@ export const Icons = {
   chartPie: ChartPie,
   chartScatterplot: ChartScatterplot,
   check: Check,
+  checkboxActive: CheckboxActive,
+  checkboxDefault: CheckboxDefault,
   chevronDown: ChevronDown,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,

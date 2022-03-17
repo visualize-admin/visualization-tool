@@ -8,6 +8,7 @@
  */
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import { omit, merge } from "lodash";
+import { Icon } from "../icons";
 import shadows from "./shadows";
 
 const breakpoints = ["xs", "sm", "md"] as Breakpoint[];
@@ -541,6 +542,10 @@ theme.components = {
     },
   },
   MuiCheckbox: {
+    defaultProps: {
+      checkedIcon: <Icon name="checkboxActive" size={20} />,
+      icon: <Icon name="checkboxDefault" size={20} />,
+    },
     styleOverrides: {
       root: {
         padding: 4,
