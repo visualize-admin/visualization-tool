@@ -530,15 +530,33 @@ theme.components = {
       color: "primary",
     },
     styleOverrides: {
+      sizeMedium: {
+        fontSize: 14,
+        lineHeight: "24px",
+        minHeight: 40,
+      },
+      sizeLarge: {
+        fontSize: "1rem",
+        paddingLeft: theme.spacing(4),
+        paddingRight: theme.spacing(4),
+        minHeight: 44,
+
+        ".MuiButton-startIcon > :nth-of-type(1)": {
+          width: 20,
+          height: 20,
+        },
+      },
       root: {
         padding: `${theme.spacing(4)}px ${theme.spacing(3)}px`,
         alignItems: "center",
+        lineHeight: 1.25,
         justifyContent: "flex-start",
         borderRadius: 3,
         transition: "background-color .2s",
         cursor: "pointer",
         display: "inline-flex",
         flexGrow: 0,
+
         "& > svg": {
           width: 22,
           marginTop: -1,
