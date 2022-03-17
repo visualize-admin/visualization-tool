@@ -7,7 +7,7 @@ import SvgIcChevronLeft from "../icons/components/IcChevronLeft";
 export default () => markdown`
 > Buttons are used to trigger an event after a user interaction.
 
-There are four basic styles that are styles defined in \`theme-ui\`'s \`variants\`:
+Here are the variants defined in the theme:
 
 - \`primary\`
 - \`primary-small\`
@@ -15,6 +15,7 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
 - \`success\`
 - \`inline\`
 - \`inline-bold\`
+- \`inverted\`
 
 
   ${(
@@ -74,6 +75,17 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
         endIcon={<SvgIcChevronRight />}
       >
         Publish this dataset
+      </Button>
+    </ReactSpecimen>
+  )}
+  ${(
+    <ReactSpecimen span={2}>
+      <Button
+        variant="inverted"
+        color="primary"
+        endIcon={<SvgIcChevronRight />}
+      >
+        Learn more
       </Button>
     </ReactSpecimen>
   )}

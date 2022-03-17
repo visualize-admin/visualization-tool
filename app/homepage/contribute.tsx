@@ -1,5 +1,5 @@
 import Flex from "../components/flex";
-import { Box, Link, Typography } from "@mui/material";
+import { Box, Button, Link, Typography } from "@mui/material";
 import * as React from "react";
 
 export const Contribute = ({
@@ -39,19 +39,22 @@ export const Contribute = ({
               width: ["100%", "50%", "30%"],
             }}
           >
-            <Link
+            <Button
+              component={Link}
               href={buttonUrl}
               target="_blank"
+              variant="inverted"
               rel="noopener noreferrer"
               sx={{
                 flexGrow: [1, 0, 0],
                 textDecoration: "none",
                 textAlign: "center",
+                bgcolor: (theme) => theme.palette.primary.contrastText,
+                color: (theme) => theme.palette.primary.main,
               }}
-              variant="buttons.inverted"
             >
               {buttonLabel}
-            </Link>
+            </Button>
           </Flex>
         </Flex>
       </Box>

@@ -6,7 +6,7 @@
  *
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
-import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
+import { Breakpoint, createTheme, darken, Theme } from "@mui/material/styles";
 import { omit, merge } from "lodash";
 import { Icon } from "../icons";
 import shadows from "./shadows";
@@ -267,29 +267,6 @@ export const theme = createTheme({
 //       bg: "secondary.disabled",
 //     },
 //   },
-//   inverted: {
-//     variant: "buttons.base",
-//     bg: "monochrome100",
-//     color: "grey.800",
-//     borderRadius: "default",
-//     px: 4,
-//     py: 3,
-//     fontFamily: "body",
-//     fontSize: 4,
-//     transition: "background-color .2s",
-//     cursor: "pointer",
-//     ":hover": {
-//       bg: "monochrome300",
-//     },
-//     ":active": {
-//       bg: "monochrome400",
-//     },
-//     ":disabled": {
-//       cursor: "initial",
-//       color: "grey.600",
-//       bg: "monochrome300",
-//     },
-//   },
 
 theme.typography = merge(theme.typography, {
   link: {
@@ -431,6 +408,24 @@ theme.components = {
           },
           ":disabled": {
             color: "grey.500",
+          },
+        },
+      },
+      {
+        props: { variant: "inverted" },
+        style: {
+          backgroundColor: theme.palette.primary.contrastText,
+          color: theme.palette.primary.main,
+          ":hover": {
+            backgroundColor: theme.palette.grey[300],
+          },
+          ":active": {
+            bg: theme.palette.grey[400],
+          },
+          ":disabled": {
+            cursor: "initial",
+            color: theme.palette.grey[600],
+            bg: theme.palette.grey[300],
           },
         },
       },
