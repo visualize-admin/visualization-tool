@@ -64,8 +64,9 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           </Button>
         </Flex>
         <Paper
+          elevation={5}
           sx={{
-            borderRadius: 10,
+            borderRadius: 8,
             py: 6,
             px: 5,
           }}
