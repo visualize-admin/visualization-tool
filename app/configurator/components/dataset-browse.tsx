@@ -442,14 +442,14 @@ const NavChip = ({
   return (
     <Flex
       sx={{
-        width: 20,
+        minWidth: 20,
         height: 20,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 2,
         color: color,
-        fontSize: "small",
         backgroundColor: backgroundColor,
+        typography: "tag",
       }}
     >
       {children}

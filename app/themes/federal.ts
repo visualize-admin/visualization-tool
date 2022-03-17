@@ -437,6 +437,10 @@ theme.typography = merge(theme.typography, {
     fontWeight: "bold",
     fontSize: [3, 4, 4],
   }),
+  tag: createTypographyVariant(theme, {
+    lineHeight: 1.25,
+    fontSize: [2, 2, 2],
+  }),
   // table: {
   //   fontFamily: "body",
   //   lineHeight: [2, 4, 4],
