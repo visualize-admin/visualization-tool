@@ -310,7 +310,7 @@ export const HintRed = ({
     sx={{
       width: "auto",
       height: "auto",
-      borderRadius: "bigger",
+      borderRadius: 2,
       margin: "auto",
       p: 4,
       backgroundColor: "alert.light",
