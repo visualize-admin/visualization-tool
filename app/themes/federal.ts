@@ -505,6 +505,26 @@ theme.components = {
           },
         },
       },
+      {
+        props: { variant: "inline" },
+        style: {
+          backgroundColor: "transparent",
+          ":hover": {
+            backgroundColor: "transparent",
+          },
+          fontSize: theme.typography.body2.fontSize,
+          padding: 0,
+          margin: 0,
+          minHeight: "1rem",
+          color: theme.palette.primary.main,
+          ":active": {
+            backgroundColor: "grey.100",
+          },
+          ":disabled": {
+            color: "grey.500",
+          },
+        },
+      },
     ],
     defaultProps: {
       variant: "contained",
