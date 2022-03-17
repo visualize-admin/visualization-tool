@@ -28,40 +28,32 @@ import { Text } from "@mui/material"
 ${(
   <TableSpecimen
     span={6}
-    rows={Object.entries(theme.text as $FixMe).map(([key, textStyle], i) => {
+    rows={[
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "lead",
+      "body1",
+      "body2",
+      "caption",
+      "tag",
+    ].map((variant, i) => {
       return {
-        Variant: `\`${key}\``,
+        Variant: `\`${variant}\``,
         Sample: (
-          <Typography variant={key} component="h1">
+          <Typography
+            variant={
+              variant as React.ComponentProps<typeof Typography>["variant"]
+            }
+          >
             The quick brown fox...
           </Typography>
         ),
-        // "font-sizes": textStyle.fontSize.map(fs => theme.fontSizes[fs])
       };
     })}
-  ></TableSpecimen>
-)}
-
-## Reference
-The font size and line height values currently in use in the application are listed here.
-${(
-  <TableSpecimen
-    span={3}
-    rows={theme.fontSizes.map((d: $FixMe, i: number) => ({
-      index: i,
-      "font-size (rem)": d,
-      "font-size (px)": `${+(d as string).split("rem")[0] * pixelSize}px`,
-    }))}
-  ></TableSpecimen>
-)}
-${(
-  <TableSpecimen
-    span={3}
-    rows={theme.lineHeights.map((d: $FixMe, i: number) => ({
-      index: i,
-      "line-height (rem)": d,
-      "line-height (px)": `${+(d as string).split("rem")[0] * pixelSize}px`,
-    }))}
   ></TableSpecimen>
 )}
 `;
