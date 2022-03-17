@@ -39,28 +39,33 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   const { activeKeys, allValues } = useMultiFilterContext();
 
   return (
-    <Box color="grey.500">
+    <Box color="grey.500" mb={4}>
       <Button
         onClick={selectAll}
-        variant="text"
-        sx={{ mr: 2, mb: 4 }}
+        variant="inline"
+        color="primary"
+        sx={{ typography: "body2", py: 1 }}
         disabled={activeKeys.size === allValues.length}
       >
         <Trans id="controls.filter.select.all">Select all</Trans>
       </Button>
-      ·
+      <Box component="span" mx={1}>
+        ·
+      </Box>
       <Button
         onClick={selectNone}
-        variant="text"
-        sx={{ ml: 2, mr: 2, mb: 4 }}
+        variant="inline"
+        color="primary"
+        sx={{ typography: "body2" }}
         disabled={activeKeys.size === 0}
       >
         <Trans id="controls.filter.select.none">Select none</Trans>
       </Button>
-      ·
+      <br />
       <Typography
+        variant="body2"
         color="grey.700"
-        sx={{ px: 2, fontSize: "0.875rem", display: "inline" }}
+        sx={{ display: "inline" }}
         component="span"
       >
         <Trans id="controls.filter.nb-elements">
