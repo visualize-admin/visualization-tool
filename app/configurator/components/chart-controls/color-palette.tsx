@@ -101,9 +101,7 @@ export const ColorPalette = ({
                 p: 1,
                 cursor: "pointer",
                 backgroundColor:
-                  highlightedIndex === index
-                    ? "grey.200"
-                    : "grey.100",
+                  highlightedIndex === index ? "grey.200" : "grey.100",
               }}
             >
               <Typography component="div" variant="caption">
@@ -112,9 +110,7 @@ export const ColorPalette = ({
               <Box
                 sx={{
                   backgroundColor:
-                    highlightedIndex === index
-                      ? "grey.200"
-                      : "grey.100",
+                    highlightedIndex === index ? "grey.200" : "grey.100",
                 }}
                 {...getItemProps({ item: palette, index })}
               >
@@ -233,7 +229,7 @@ const ColorPaletteReset = ({
         disabled={same}
         onClick={resetColorPalette}
         variant="text"
-        sx={{ mt: 2, mb: 3 }}
+        sx={{ mt: 0, mb: 3, px: 1 }}
       >
         <Trans id="controls.color.palette.reset">Reset color palette</Trans>
       </Button>

@@ -31,6 +31,10 @@ declare module "@mui/material" {
   interface TypographyPropsVariantOverrides {
     lead: true;
   }
+
+  interface ButtonPropsVariantOverrides {
+    selectColorPicker: true;
+  }
 }
 
 export const loadTheme = async (theme: string = "federal") => {
