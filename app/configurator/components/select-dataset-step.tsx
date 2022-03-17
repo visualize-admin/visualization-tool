@@ -21,6 +21,7 @@ import { DataSetMetadata } from "./dataset-metadata";
 import { DataSetPreview } from "./dataset-preview";
 import { PanelLayout, PanelLeftWrapper, PanelMiddleWrapper } from "./layout";
 import { MotionBox, navPresenceProps } from "./presence";
+import { Icon } from "../../icons";
 
 const softJSONParse = (v: string) => {
   try {
@@ -100,8 +101,11 @@ export const SelectDatasetStepContent = () => {
               custom={dataset}
             >
               <NextLink passHref href={backLink}>
-                <Button variant="contained" color="secondary">
-                  ←{" "}
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<Icon name="chevronLeft" size={12} />}
+                >
                   <Trans id="dataset-preview.back-to-results">
                     Back to the list
                   </Trans>
