@@ -1,14 +1,14 @@
 import Flex from "../../components/flex";
 import { t, Trans } from "@lingui/macro";
 import VisuallyHidden from "@reach/visually-hidden";
-import React, { ChangeEvent, useCallback } from "react";
+import React, { useCallback } from "react";
 import {
   DragDropContext,
   Draggable,
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import { Radio, Select } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
@@ -127,7 +127,7 @@ const TableSortingOptionItem = ({
             label={getFieldLabel(`sorting.${sortingType}.desc`)}
           />
           <Button
-            variant="reset"
+            variant="text"
             sx={{
               p: 0,
               cursor: "pointer",
@@ -169,8 +169,8 @@ const AddTableSortingOption = ({
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) => {
-      const { value } = e.currentTarget;
+    (e: SelectChangeEvent<unknown>) => {
+      const { value } = e.target;
 
       const component =
         metaData.dimensions.find(({ iri }) => iri === value) ??
@@ -253,8 +253,8 @@ const ChangeTableSortingOption = ({
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) => {
-      const { value } = e.currentTarget;
+    (e: SelectChangeEvent<unknown>) => {
+      const { value } = e.target;
 
       const component =
         metaData.dimensions.find(({ iri }) => iri === value) ??

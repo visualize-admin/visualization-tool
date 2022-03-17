@@ -52,7 +52,6 @@ const PreviewTable = ({
                 component="th"
                 role="columnheader"
                 key={iri}
-                // @ts-expect-error `scope` is valid on th, but not on div
                 scope="col"
                 sx={{
                   textAlign: __typename === "Measure" ? "right" : "left",

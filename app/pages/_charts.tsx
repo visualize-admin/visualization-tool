@@ -1,7 +1,7 @@
-import Flex from "../../components/flex";
 import { NextPage } from "next";
 import NextLink from "next/link";
 import { Box, Link } from "@mui/material";
+import Flex from "../components/flex";
 import { ChartPanel } from "../components/chart-panel";
 import { ChartPublished } from "../components/chart-published";
 import { ContentLayout } from "../components/layout";
@@ -29,7 +29,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
   return (
     <>
       <ContentLayout>
-        <Box px={4} bg="muted.main" mb="auto">
+        <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto">
           <Flex sx={{ pt: 4, flexWrap: "wrap" }}>
             {configs.map(({ key, data: { dataSet, chartConfig, meta } }) => {
               return (

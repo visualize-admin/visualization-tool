@@ -45,7 +45,7 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="outline">Outline button</Button>
+      <Button variant="outlined">Outlined button</Button>
     </ReactSpecimen>
   )}
   ${(

@@ -16,6 +16,7 @@ import {
   Select as MUISelect,
   SelectProps,
   Typography,
+  useTheme,
 } from "@mui/material";
 import Flex from "./flex";
 import { FieldProps, Option } from "../configurator";

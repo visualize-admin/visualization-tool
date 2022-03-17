@@ -79,7 +79,7 @@ export const RowMobile = ({
         >
           <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
           <Typography
-            as={headingLevel}
+            component={headingLevel}
             variant="body1"
             sx={{ color: "grey.900" }}
             {...row.getToggleRowExpandedProps()}
@@ -185,7 +185,9 @@ export const DDContent = ({
                 width: chartWidth / 2,
                 height: 14,
                 position: "relative",
-                backgroundColor: barShowBackground ? barColorBackground : "grey.100",
+                backgroundColor: barShowBackground
+                  ? barColorBackground
+                  : "grey.100",
               }}
             >
               <Box
@@ -195,7 +197,8 @@ export const DDContent = ({
                   left: getBarLeftOffset(cell.value, widthScale),
                   width: getBarWidth(cell.value, widthScale),
                   height: 14,
-                  backgroundColor: cell.value > 0 ? barColorPositive : barColorNegative,
+                  backgroundColor:
+                    cell.value > 0 ? barColorPositive : barColorNegative,
                 }}
               />
               <Box

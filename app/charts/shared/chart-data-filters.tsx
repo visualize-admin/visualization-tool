@@ -1,7 +1,7 @@
 import Flex from "../../components/flex";
 import { t, Trans } from "@lingui/macro";
 import * as React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, SelectChangeEvent } from "@mui/material";
 import { ChartFiltersList } from "../../components/chart-filters-list";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
@@ -118,12 +118,10 @@ const DataFilter = ({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
-  const setDataFilter = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
+  const setDataFilter = (e: SelectChangeEvent<unknown>) => {
     dispatch({
       type: "UPDATE_DATA_FILTER",
-      value: { dimensionIri, dimensionValueIri: e.currentTarget.value },
+      value: { dimensionIri, dimensionValueIri: e.target.value as string },
     });
   };
 
@@ -190,7 +188,7 @@ const DataFilterBaseDimension = ({
   label: string;
   options: Array<{ label: string; value: string }>;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (e: SelectChangeEvent<unknown>) => void;
 }) => {
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -235,9 +233,7 @@ const DataFilterTemporalDimension = ({
   timeUnit: TimeUnit;
   timeFormat: string;
   value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => void;
+  onChange: (e: SelectChangeEvent<unknown>) => void;
 }) => {
   const formatLocale = useTimeFormatLocale();
   const timeIntervalWithProps = React.useMemo(

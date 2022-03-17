@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Box, BoxOwnProps } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 
 function SvgIcChevronLeft(
-  props: React.SVGProps<SVGSVGElement> & { sx?: BoxOwnProps["sx"] }
+  props: React.SVGProps<SVGSVGElement> & { sx?: BoxProps["sx"] }
 ) {
   return (
     /** @ts-ignore */

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, BoxProps, ThemeUIStyleObject } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 
 const commonPanelStyles = {};
 
@@ -74,9 +74,9 @@ export const PanelLayout = ({
   const { sx } = boxProps;
   return (
     <Box
-      bg="muted.main"
       {...boxProps}
       sx={{
+        backgroundColor: "muted.main",
         display: "grid",
         gridTemplateColumns:
           "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
@@ -122,7 +122,7 @@ export const PanelMiddleWrapper = ({
   sx,
 }: {
   children: React.ReactNode;
-  sx?: ThemeUIStyleObject;
+  sx?: BoxProps["sx"];
 }) => {
   return (
     <Box
