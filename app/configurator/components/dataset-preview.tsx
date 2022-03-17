@@ -1,6 +1,6 @@
 import Flex from "../../components/flex";
 import * as React from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { HintRed, Loading, LoadingDataError } from "../../components/hint";
 import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
@@ -8,7 +8,6 @@ import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
 import { useLocale } from "../../locales/use-locale";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import DebugPanel from "../../components/debug-panel";
-import LinkButton from "./link-button";
 import Head from "next/head";
 
 export interface Preview {
@@ -54,14 +53,15 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           <Typography component="div" variant="h1">
             {dataCubeByIri.title}
           </Typography>
-          <LinkButton
+          <Button
+            component="a"
             sx={{ ml: 6, whiteSpace: "nowrap", flexShrink: 0 }}
             href={`/create/new?cube=${dataCubeByIri.iri}`}
           >
             <Trans id="browse.dataset.create-visualization">
               Create visualization from dataset
             </Trans>
-          </LinkButton>
+          </Button>
         </Flex>
         <Paper
           sx={{
