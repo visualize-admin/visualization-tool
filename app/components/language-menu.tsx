@@ -2,7 +2,7 @@ import Flex from "./flex";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-import { Box, Link } from "@mui/material";
+import { Box } from "@mui/material";
 import contentRoutes from "../content-routes.json";
 import localeConfig from "../locales/locales.json";
 import { useLocale } from "../locales/use-locale";
@@ -50,18 +50,19 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         const alternate = alternates?.[locale];
 
         const linkEl = (
-          <Link
+          <Box
+            component="a"
             rel="alternate"
             hrefLang={locale}
             sx={{
-              variant: "text.paragraph2",
+              typography: "body2",
               fontSize: "0.875rem",
               lineHeight: "1.25rem",
               p: 1,
               textTransform: "uppercase",
               textDecoration: "none",
               color: "grey.700",
-              bg:
+              backgroundColor:
                 locale === currentLocale
                   ? ["grey.500", "grey.300"]
                   : "transparent",
@@ -78,7 +79,7 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
             }}
           >
             {locale}
-          </Link>
+          </Box>
         );
 
         return (
