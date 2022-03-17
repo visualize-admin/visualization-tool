@@ -154,12 +154,15 @@ const DatasetTags = ({
           passHref
         >
           <Tag
-            component="a"
+            component={MUILink}
+            /*
+            // @ts-ignore */
+            underline="none"
             type={t.__typename}
             title={t.label || undefined}
             sx={{
               maxWidth: "100%",
-              display: "block",
+              display: "flex",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
               overflow: "hidden",
