@@ -58,6 +58,10 @@ export const DataDownload = memo(
                 href={observations.sparqlEditorUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                typography="body2"
+                color="primary"
+                underline="hover"
+                fontWeight="normal"
               >
                 <Trans id="button.download.runsparqlquery">
                   Run SPARQL query
