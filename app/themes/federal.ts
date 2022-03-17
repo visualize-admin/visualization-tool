@@ -461,16 +461,6 @@ theme.components = {
     },
     styleOverrides: {},
   },
-  MuiInputBase: {
-    styleOverrides: {
-      root: {
-        borderRadius: (theme.shape.borderRadius as number) * 1.5,
-      },
-      adornedStart: {
-        input: { paddingLeft: 4 },
-      },
-    },
-  },
   MuiInputLabel: {
     styleOverrides: {
       root: {
@@ -624,6 +614,15 @@ theme.components = {
       },
     },
   },
+  MuiInputBase: {
+    styleOverrides: {
+      adornedStart: {
+        "> svg:first-of-type": {
+          margin: "0 0.5rem",
+        },
+      },
+    },
+  },
   MuiInput: {
     defaultProps: {
       disableUnderline: true,
@@ -632,8 +631,10 @@ theme.components = {
       root: {
         backgroundColor: theme.palette.grey[100],
         border: "1px solid",
-        borderColor: theme.palette.grey[500],
+        borderColor: theme.palette.divider,
+        borderRadius: (theme.shape.borderRadius as number) * 2,
         padding: "0 6px",
+        minHeight: 48,
       },
       focused: {
         outline: "3px solid #333333",

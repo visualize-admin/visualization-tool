@@ -342,7 +342,7 @@ export const SearchDatasetBox = ({
           variant="contained"
           sx={{ flexShrink: 0, ml: 1, py: 0, cursor: "pointer" }}
           color="primary"
-          size="small"
+          size="large"
         >
           {searchLabel}
         </Button>
