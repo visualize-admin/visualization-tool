@@ -14,6 +14,7 @@ import React, {
 import {
   Box,
   Button,
+  ButtonBase,
   Link as MUILink,
   LinkProps as MUILinkProps,
   Typography,
@@ -373,8 +374,8 @@ export const SearchDatasetBox = ({
               id: "dataset.includeDrafts",
               message: "Include draft datasets",
             })}
-            name={"dataset-include-drafts"}
-            value={"dataset-include-drafts"}
+            name="dataset-include-drafts"
+            value="dataset-include-drafts"
             checked={includeDrafts}
             disabled={false}
             onChange={onToggleIncludeDrafts}
@@ -526,15 +527,16 @@ const NavItem = ({
 
   const removeFilterButton = (
     <Link href={removeFilterPath} passHref>
-      <Button
+      <ButtonBase
         component="a"
         sx={{
           backgroundColor: level === 1 ? theme.activeBg : "transparent",
           color: level === 1 ? theme.activeTextColor : theme.activeBg,
           minWidth: "16px",
           minHeight: "16px",
-          display: "block",
           height: "auto",
+          alignItems: "center",
+          display: "flex",
           width: "auto",
           padding: 0,
           "&:hover": {
@@ -543,7 +545,7 @@ const NavItem = ({
         }}
       >
         <SvgIcClose width={24} height={24} />
-      </Button>
+      </ButtonBase>
     </Link>
   );
   const countChip =

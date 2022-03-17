@@ -62,7 +62,7 @@ const DataFilterSelectGeneric = ({
   onRemove: () => void;
 }) => {
   const controls = dimension.isKeyDimension ? null : (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ display: "flex", flexGrow: 1 }}>
       <Button
         className="buttons"
         sx={{ ml: 2 }}

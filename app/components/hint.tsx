@@ -48,7 +48,7 @@ const spin = keyframes`
 
 const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
   return (
-    <Box
+    <Flex
       {...props}
       sx={{
         animation: `1s linear infinite ${spin}`,
@@ -56,7 +56,7 @@ const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
       }}
     >
       <Icon name="loading" size={size} />
-    </Box>
+    </Flex>
   );
 };
 
