@@ -722,6 +722,7 @@ export const ChartOptionRadioField = ({
 
   return (
     <Radio
+      size="small"
       disabled={disabled}
       label={label}
       {...fieldProps}

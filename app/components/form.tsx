@@ -7,13 +7,15 @@ import DayPickerInput from "react-day-picker/DayPickerInput";
 import {
   Box,
   BoxProps,
-  Button,
+  ButtonBase,
   Checkbox as MUICheckbox,
+  FormControlLabel,
   Input as MUIInput,
   InputLabel,
   Radio as MUIRadio,
   Select as MUISelect,
   SelectProps,
+  Typography,
 } from "@mui/material";
 import Flex from "./flex";
 import { FieldProps, Option } from "../configurator";
@@ -36,21 +38,20 @@ export const Label = ({
   smaller?: boolean;
   children: ReactNode;
 }) => (
-  <InputLabel
+  <Typography
+    component="label"
     htmlFor={htmlFor}
-    size={smaller ? "small" : undefined}
-    sx={{
-      cursor: "pointer",
-      width: "auto",
-      color: disabled ? "grey.500" : "grey.700",
-      mr: 4,
-      display: "flex",
-      alignItems: "center",
-    }}
+    variant={smaller ? "caption" : "body1"}
+    display="flex"
+    sx={{ mb: 2 }}
   >
     {children}
-    {label && <Box title={label}>{label}</Box>}
-  </InputLabel>
+    {label && (
+      <Box sx={{ mb: 1 }} title={label}>
+        {label}
+      </Box>
+    )}
+  </Typography>
 );
 
 export const Radio = ({
@@ -62,8 +63,15 @@ export const Radio = ({
   onChange,
 }: { label: string; disabled?: boolean } & FieldProps) => {
   return (
-    <Box mb={2}>
-      <Label label={label} htmlFor={`${name}-${value}`} disabled={disabled}>
+    <FormControlLabel
+      label={label}
+      htmlFor={`${name}-${value}`}
+      componentsProps={{
+        typography: {
+          variant: "body2",
+        },
+      }}
+      control={
         <MUIRadio
           name={name}
           id={`${name}-${value}`}
@@ -71,7 +79,7 @@ export const Radio = ({
           onChange={onChange}
           checked={checked}
           disabled={disabled}
-          size={20}
+          size="small"
           sx={{
             color:
               checked && !disabled
@@ -89,8 +97,9 @@ export const Radio = ({
             },
           }}
         />
-      </Label>
-    </Box>
+      }
+      disabled={disabled}
+    />
   );
 };
 
@@ -109,43 +118,31 @@ export const Checkbox = ({
   color?: string;
   smaller?: boolean;
 } & FieldProps) => (
-  <Label
+  <FormControlLabel
     label={label}
     htmlFor={`${name}-${label}`}
     disabled={disabled}
-    smaller={smaller}
-  >
-    <MUICheckbox
-      data-name="checkbox-component"
-      sx={{
-        width: smaller ? 16 : undefined,
-        height: smaller ? 16 : undefined,
-        mr: smaller ? 1 : undefined,
-        color:
-          checked && !disabled
-            ? "primary.main"
-            : checked && disabled
-            ? "primary.disabled"
-            : "grey.500",
-        "> *": {
-          fill:
-            color && checked
-              ? color
-              : checked && !disabled
-              ? "primary.main"
-              : checked && disabled
-              ? "primary.disabled"
-              : "grey.500",
-        },
-      }}
-      id={`${name}-${label}`}
-      name={name}
-      value={value}
-      checked={checked}
-      disabled={disabled}
-      onChange={onChange}
-    />
-  </Label>
+    sx={{ display: "flex" }}
+    componentsProps={{
+      typography: {
+        variant: smaller ? "caption" : "body2",
+        color: "grey.800",
+      },
+    }}
+    control={
+      <MUICheckbox
+        data-name="checkbox-component"
+        size={smaller ? "small" : "medium"}
+        id={`${name}-${label}`}
+        name={name}
+        value={value}
+        checked={checked}
+        disabled={disabled}
+        onChange={onChange}
+        sx={{ mr: smaller ? 0 : 1 }}
+      />
+    }
+  />
 );
 
 export const Select = ({
@@ -192,17 +189,15 @@ export const Select = ({
         </Label>
       )}
       <MUISelect
+        native
         sx={{
           borderColor: "grey.500",
-          fontSize: "1rem",
           backgroundColor: "grey.100",
-          pt: 2,
-          pb: 2,
-          pl: 2,
-          pr: 5,
+          pl: 0,
           height: "40px",
           color: disabled ? "grey.500" : "grey.700",
           textOverflow: "ellipsis",
+          width: "100%",
         }}
         id={id}
         name={id}
@@ -442,34 +437,23 @@ export const SearchField = ({
         onBlur={onBlur}
         autoComplete="off"
         ref={inputRef}
+        sx={{ width: "100%", input: { borderRadius: 2 } }}
+        endAdornment={
+          onReset && search && search !== "" ? (
+            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={onReset}>
+              <VisuallyHidden>
+                <Trans id="controls.search.clear">Clear search field</Trans>
+              </VisuallyHidden>
+              <Box
+                aria-hidden="true"
+                sx={{ borderRadius: "50%", backgroundColor: "grey.600" }}
+              >
+                <Icon name="clear" size={16} />
+              </Box>
+            </ButtonBase>
+          ) : null
+        }
       />
-      {onReset && search && search !== "" && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            right: 0,
-            mt: "-8px",
-            mr: 2,
-          }}
-        >
-          <Button
-            variant="reset"
-            sx={{ p: 0, cursor: "pointer" }}
-            onClick={onReset}
-          >
-            <VisuallyHidden>
-              <Trans id="controls.search.clear">Clear search field</Trans>
-            </VisuallyHidden>
-            <Box
-              aria-hidden="true"
-              sx={{ borderRadius: "circle", backgroundColor: "grey.600" }}
-            >
-              <Icon name="clear" size={16} />
-            </Box>
-          </Button>
-        </Box>
-      )}
     </Box>
   );
 };
@@ -479,18 +463,19 @@ export const FieldSetLegend = ({
 }: {
   legendTitle: string | ReactNode;
 }) => (
-  <Box
+  <Typography
+    variant="caption"
     sx={{
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      mb: 1,
-      color: "grey.800",
+      color: "grey.700",
+      pl: 0,
     }}
     component="legend"
   >
     {legendTitle}
-  </Box>
+  </Typography>
 );
 
 export const Switch = ({

@@ -575,6 +575,22 @@ theme.components = {
       },
     },
   },
+  MuiCheckbox: {
+    styleOverrides: {
+      root: {
+        padding: 4,
+        color: "primary.main",
+      },
+      disabled: {
+        color: "grey.500",
+        "&$checked": {
+          color: "primary.disabled",
+        },
+      },
+      checked: {},
+
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: {
       margin: 0,
