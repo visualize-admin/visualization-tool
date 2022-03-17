@@ -97,15 +97,16 @@ export const StepperDumb = ({
         }}
       >
         <Flex sx={{ minWidth: 200, justifyContent: "flex-start" }}>
-          <NavButton
+          <Button
             startIcon={<SvgIcChevronLeft />}
-            label={previousLabel}
             onClick={goPrevious}
             disabled={previousDisabled}
             variant="text"
             size="small"
             color="inherit"
-          />
+          >
+            {previousLabel}
+          </Button>
         </Flex>
 
         <Flex
@@ -114,8 +115,7 @@ export const StepperDumb = ({
           <CallToAction stepState={steps[currentStepIndex]} />
         </Flex>
         <Flex sx={{ minWidth: 200, justifyContent: "flex-end" }}>
-          <NavButton
-            label={nextLabel}
+          <Button
             endIcon={
               state.state === "DESCRIBING_CHART" ? null : <SvgIcChevronRight />
             }
@@ -123,7 +123,10 @@ export const StepperDumb = ({
             disabled={nextDisabled}
             variant={state.state === "DESCRIBING_CHART" ? "contained" : "text"}
             color={state.state === "DESCRIBING_CHART" ? "primary" : "inherit"}
-          />
+            size="small"
+          >
+            {nextLabel}
+          </Button>
         </Flex>
       </Flex>
     </Flex>
@@ -221,18 +224,3 @@ const CallToActionText = ({ label }: { label: ReactNode }) => {
     </Typography>
   );
 };
-
-const NavButton = ({
-  label,
-  onClick,
-  disabled,
-  ...props
-}: {
-  label: string | ReactNode;
-  onClick: () => void;
-  disabled: boolean;
-} & ButtonProps) => (
-  <Button onClick={onClick} disabled={disabled} {...props}>
-    {label}
-  </Button>
-);
