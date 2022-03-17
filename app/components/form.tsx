@@ -28,7 +28,6 @@ import { useLocale } from "../locales/use-locale";
 export const Label = ({
   label,
   htmlFor,
-  disabled,
   smaller = false,
   children,
 }: {
