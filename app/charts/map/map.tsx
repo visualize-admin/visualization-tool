@@ -361,7 +361,7 @@ const ZoomButton = ({
   handleClick: () => void;
 }) => (
   <Button
-    variant="reset"
+    variant="text"
     sx={{
       width: 32,
       height: 32,
