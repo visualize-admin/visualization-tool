@@ -19,8 +19,11 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
 
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="contained" color="primary">
-        <Icon name="linkExternal" />
+      <Button
+        startIcon={<Icon name="linkExternal" />}
+        variant="contained"
+        color="primary"
+      >
         <span>Primary button</span>
       </Button>
     </ReactSpecimen>
@@ -50,25 +53,27 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="text">
-        <SvgIcChevronLeft />
+      <Button startIcon={<SvgIcChevronLeft />} variant="text">
         <span>Inline button</span>
       </Button>
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="text">
-        <SvgIcChevronLeft />
+      <Button size="small" startIcon={<SvgIcChevronLeft />} variant="text">
         Bold inline button
       </Button>
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="contained" color="primary" size="small">
-        <span>Publish this dataset</span>
-        <SvgIcChevronRight />
+      <Button
+        variant="contained"
+        color="primary"
+        size="small"
+        endIcon={<SvgIcChevronRight />}
+      >
+        Publish this dataset
       </Button>
     </ReactSpecimen>
   )}
