@@ -6,7 +6,7 @@
  *
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
-import { Breakpoint, createTheme, darken, Theme } from "@mui/material/styles";
+import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import { omit, merge } from "lodash";
 import { Icon } from "../icons";
 import shadows from "./shadows";
@@ -178,95 +178,6 @@ export const theme = createTheme({
     ].join(","),
   },
 });
-
-// colors: {
-//   text: "#000000",
-//   background: "#FFFFFF",
-//   secondaryButton: "#757575",
-//   secondaryButtonText: "white",
-//   secondaryButtonHover: "#646464",
-//   focus: "#333333",
-//   missing: "#EFEFEF",
-// },
-
-//   primary: {
-//     variant: "buttons.base",
-//     backgroundColor: "primary.main",
-//     color: "grey.100",
-//     ":hover": {
-//       backgroundColor: "primary.hover",
-//     },
-//     ":active": {
-//       backgroundColor: "primary.hover",
-//     },
-//     ":disabled": {
-//       cursor: "initial",
-//       backgroundColor: "primary.disabled",
-//     },
-//   },
-//   "primary-small": {
-//     variant: "buttons.base",
-//     fontSize: 3,
-//     fontWeight: "normal",
-//     py: 2,
-//     minWidth: "auto",
-//     "& > svg:first-child": {
-//       width: "auto",
-//       marginRight: 1,
-//     },
-//     "& > svg:last-child": {
-//       width: "auto",
-//       marginLeft: 1,
-//     },
-//   },
-//   success: {
-//     variant: "buttons.base",
-//     backgroundColor: "successBase",
-//     ":hover": {
-//       backgroundColor: "successHover",
-//     },
-//     ":active": {
-//       backgroundColor: "successHover",
-//     },
-//     ":disabled": {
-//       cursor: "initial",
-//       backgroundColor: "successDisabled",
-//     },
-//   },
-//   outline: {
-//     variant: "buttons.base",
-//     color: "primary",
-//     backgroundColor: "grey.100",
-//     border: "1px",
-//     borderWidth: "1px",
-//     borderStyle: "solid",
-//     borderColor: "primary",
-//     ":hover": {
-//       backgroundColor: "muted.main",
-//     },
-//     ":active": {
-//       backgroundColor: "muted.main",
-//     },
-//     ":disabled": {
-//       cursor: "initial",
-//       backgroundColor: "muted.main",
-//     },
-//   },
-//   secondary: {
-//     variant: "buttons.primary",
-//     backgroundColor: "secondaryButton",
-//     color: "secondaryButtonText",
-//     ":hover": {
-//       bg: "secondaryButtonHover",
-//     },
-//     ":active": {
-//       bg: "secondaryButtonHover",
-//     },
-//     ":disabled": {
-//       cursor: "initial",
-//       bg: "secondary.disabled",
-//     },
-//   },
 
 theme.typography = merge(theme.typography, {
   link: {
@@ -603,16 +514,6 @@ theme.components = {
         },
       },
       checked: {},
-
-      // "> *": {
-      //   fill:
-      //     color && checked
-      //       ? color
-      //       : checked && !disabled
-      //       ? "primary.main"
-      //       : checked && disabled
-      //       ? "primary.disabled"
-      //       : "grey.500",
     },
   },
   MuiCssBaseline: {
