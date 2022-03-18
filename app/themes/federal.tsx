@@ -324,11 +324,6 @@ theme.typography = merge(theme.typography, {
     fontWeight: "regular",
     fontSize: [2, 3, 3],
   }),
-  lead: createTypographyVariant(theme, {
-    lineHeight: [4, 5, 5],
-    fontWeight: "bold",
-    fontSize: [3, 4, 4],
-  }),
   tag: createTypographyVariant(theme, {
     lineHeight: 1.25,
     fontSize: [2, 2, 2],

@@ -136,8 +136,8 @@ export const Logo = () => {
         </Box>
         <Typography
           component="h1"
-          variant="lead"
-          sx={{ pl: [0, 6], textDecoration: "none", color: "grey.800" }}
+          variant="h4"
+          sx={{ pl: [0, 6], color: "grey.800" }}
         >
           visualize.admin.ch
         </Typography>

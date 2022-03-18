@@ -31,7 +31,6 @@ declare module "@mui/material" {
   }
 
   interface TypographyPropsVariantOverrides {
-    lead: true;
     tag: true;
   }
 
