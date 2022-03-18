@@ -440,6 +440,14 @@ theme.components = {
       color: "primary",
     },
     styleOverrides: {
+      sizeSmall: {
+        ".MuiButton-startIcon": {
+          marginRight: 4,
+        },
+        ".MuiButton-endIcon": {
+          marginLeft: 4,
+        },
+      },
       sizeMedium: {
         fontSize: 14,
         lineHeight: "24px",
