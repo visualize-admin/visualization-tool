@@ -10,7 +10,7 @@ import { ChartPublished } from "../../components/chart-published";
 import { Success } from "../../components/hint";
 import { ContentLayout } from "../../components/layout";
 import { PublishActions } from "../../components/publish-actions";
-import Stack from "../../components/Stack";
+import { Stack } from '@mui/material'
 import { Config } from "../../configurator";
 import { getConfig } from "../../db/config";
 import { useLocale } from "../../locales/use-locale";

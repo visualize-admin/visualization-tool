@@ -21,7 +21,7 @@ import { Icon } from "../icons";
 import { useI18n } from "../lib/use-i18n";
 import { useLocale } from "../locales/use-locale";
 import { IconLink } from "./links";
-import Stack from "./Stack";
+import { Stack } from '@mui/material'
 
 export const PublishActions = ({
   configKey,

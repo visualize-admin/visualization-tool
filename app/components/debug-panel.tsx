@@ -7,7 +7,7 @@ import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { Icon } from "../icons";
 import { useLocale } from "../src";
-import Stack from "./Stack";
+import { Stack } from '@mui/material'
 
 const DebugInteractiveFilters = () => {
   const [interactiveFiltersState] = useInteractiveFilters();

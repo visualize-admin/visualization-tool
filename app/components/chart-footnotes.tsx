@@ -5,7 +5,7 @@ import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
 import { DataDownload } from "./data-download";
-import Stack from "./Stack";
+import { Stack } from "@mui/material";
 
 export const ChartFootnotes = ({
   dataSetIri,

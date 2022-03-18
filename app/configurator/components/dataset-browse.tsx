@@ -23,7 +23,7 @@ import Flex, { FlexProps } from "../../components/flex";
 import { AnimatePresence } from "framer-motion";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
-import Stack from "../../components/Stack";
+import { Stack } from '@mui/material'
 import {
   DataCubeOrganization,
   DataCubeResultOrder,

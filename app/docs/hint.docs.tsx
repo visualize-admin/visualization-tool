@@ -8,7 +8,7 @@ import {
   LoadingDataError,
 } from "../components/hint";
 import { markdown, ReactSpecimen } from "catalog";
-import Stack from "../components/Stack";
+import { Stack } from '@mui/material'
 
 export default () => markdown`
 

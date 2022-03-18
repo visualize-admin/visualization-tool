@@ -1,5 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
-import Stack from "../components/Stack";
+import { Stack } from '@mui/material'
 import Tag from "../configurator/components/Tag";
 
 export default () => {

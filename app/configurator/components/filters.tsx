@@ -10,7 +10,7 @@ import {
   useMultiFilterContext,
 } from "..";
 import { Loading } from "../../components/hint";
-import Stack from "../../components/Stack";
+import { Stack } from '@mui/material'
 import {
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
