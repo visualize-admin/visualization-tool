@@ -36,7 +36,7 @@ const Tag = ({
   const { sx } = props;
   return (
     <TagTypography
-      variant="tag"
+      variant="caption"
       {...props}
       sx={{
         backgroundColor:
