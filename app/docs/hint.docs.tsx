@@ -1,5 +1,14 @@
-import { Loading, Error, Success } from "../components/hint";
+import {
+  Loading,
+  Error,
+  Success,
+  OnlyNegativeDataHint,
+  ChartUnexpectedError,
+  LoadingGeoDimensionsError,
+  LoadingDataError,
+} from "../components/hint";
 import { markdown, ReactSpecimen } from "catalog";
+import Stack from "../components/Stack";
 
 export default () => markdown`
 
@@ -28,6 +37,19 @@ ${(
 ${(
   <ReactSpecimen>
     <Success />
+  </ReactSpecimen>
+)}
+
+## Specific errors
+
+${(
+  <ReactSpecimen>
+    <Stack spacing={2}>
+      <OnlyNegativeDataHint />
+      <ChartUnexpectedError />
+      <LoadingGeoDimensionsError />
+      <LoadingDataError message="The cube does not exist." />
+    </Stack>
   </ReactSpecimen>
 )}
 

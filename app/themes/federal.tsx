@@ -116,6 +116,14 @@ export const theme = createTheme({
       main: "#8a6d3b",
       light: "#fffab2",
     },
+    info: {
+      main: "#31708f",
+      light: "#d9edf7",
+    },
+    error: {
+      main: "#a82824",
+      light: "#f2dede",
+    },
     organization: {
       main: "#006699",
       light: "#d8e8ef", // same as primaryLight
@@ -177,9 +185,7 @@ export const theme = createTheme({
 //   secondaryButton: "#757575",
 //   secondaryButtonText: "white",
 //   secondaryButtonHover: "#646464",
-//   success: "#3c763d",
 //   focus: "#333333",
-//   error: "#FF5555",
 //   missing: "#EFEFEF",
 // },
 
@@ -339,6 +345,22 @@ theme.typography = merge(theme.typography, {
     fontWeight: "regular",
     fontSize: [1, 2, 2],
   }),
+});
+
+const makeStandardAlertVariant = ({
+  severity,
+}: {
+  severity: "info" | "warning" | "success" | "error";
+}) => ({
+  "&": {
+    backgroundColor: theme.palette[severity].light,
+  },
+  "& > .MuiAlert-message": {
+    color: theme.palette[severity].main,
+  },
+  "& > .MuiAlert-icon": {
+    color: theme.palette[severity].main,
+  },
 });
 
 theme.components = {
@@ -534,6 +556,31 @@ theme.components = {
       root: {
         borderRadius: (theme.shape.borderRadius as number) * 1.5,
       },
+    },
+  },
+  MuiAlertTitle: {
+    styleOverrides: {
+      root: {
+        fontWeight: "bold",
+      },
+    },
+  },
+  MuiAlert: {
+    styleOverrides: {
+      root: {
+        "& > .MuiAlert-message": {
+          justifyContent: "center",
+          display: "flex",
+          flexDirection: "column",
+          fontSize: `1rem`,
+        },
+      },
+      standardSuccess: makeStandardAlertVariant({
+        severity: "success",
+      }),
+      standardError: makeStandardAlertVariant({ severity: "error" }),
+      standardWarning: makeStandardAlertVariant({ severity: "warning" }),
+      standardInfo: makeStandardAlertVariant({ severity: "info" }),
     },
   },
   MuiCheckbox: {

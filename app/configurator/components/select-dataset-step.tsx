@@ -85,13 +85,10 @@ export const SelectDatasetStepContent = () => {
         // FIXME replace 96px with actual header size
         marginTop: "96px",
         height: "auto",
-        pt: 3,
+        pt: "55px",
       }}
     >
-      <PanelLeftWrapper
-        raised={false}
-        sx={{ pt: "1rem", backgroundColor: "transparent" }}
-      >
+      <PanelLeftWrapper raised={false} sx={{ backgroundColor: "transparent" }}>
         <AnimatePresence exitBeforeEnter>
           {dataset ? (
             <MotionBox
@@ -126,7 +123,7 @@ export const SelectDatasetStepContent = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper
         sx={{
-          mt: 5,
+          pt: 0,
           pl: 6,
           gridColumnStart: "middle",
           gridColumnEnd: "right",
