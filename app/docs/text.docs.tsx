@@ -34,8 +34,6 @@ ${(
       "h3",
       "h4",
       "h5",
-      "h6",
-      "lead",
       "body1",
       "body2",
       "caption",
