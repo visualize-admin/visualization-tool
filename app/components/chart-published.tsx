@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { Box, Link, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { isUsingImputation } from "../charts/shared/imputation";
 import {
@@ -17,6 +17,10 @@ import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFootnotes } from "./chart-footnotes";
+import {
+  ChartTablePreviewProvider,
+  useChartTablePreview,
+} from "./chart-table-preview";
 import GenericChart from "./common-chart";
 import { HintBlue, HintRed } from "./hint";
 
@@ -31,11 +35,34 @@ export const ChartPublished = ({
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
+  return (
+    <ChartTablePreviewProvider>
+      <ChartPublishedInner
+        dataSet={dataSet}
+        meta={meta}
+        chartConfig={chartConfig}
+        configKey={configKey}
+      />
+    </ChartTablePreviewProvider>
+  );
+};
+
+export const ChartPublishedInner = ({
+  dataSet,
+  meta,
+  chartConfig,
+  configKey,
+}: {
+  dataSet: string;
+  meta: Meta;
+  chartConfig: ChartConfig;
+  configKey: string;
+}) => {
   const locale = useLocale();
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: { iri: dataSet, locale },
   });
-  const [isTable, setIsTable] = useState(false);
+  const [isTablePreview] = useChartTablePreview();
 
   return (
     <Flex
@@ -92,7 +119,7 @@ export const ChartPublished = ({
           </Typography>
         )}
         <InteractiveFiltersProvider>
-          {isTable ? (
+          {isTablePreview ? (
             <DataSetTable dataSetIri={dataSet} chartConfig={chartConfig} />
           ) : (
             <ChartWithInteractiveFilters
@@ -107,9 +134,6 @@ export const ChartPublished = ({
               configKey={configKey}
             />
           )}
-          <Link component="button" onClick={() => setIsTable(!isTable)}>
-            Switch component type
-          </Link>
         </InteractiveFiltersProvider>
       </ChartErrorBoundary>
     </Flex>

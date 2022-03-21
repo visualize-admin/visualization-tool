@@ -1,8 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { Box, Link, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Head from "next/head";
 import * as React from "react";
-import { useState } from "react";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
@@ -16,17 +15,29 @@ import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFiltersList } from "./chart-filters-list";
 import { ChartFootnotes } from "./chart-footnotes";
+import {
+  ChartTablePreviewProvider,
+  useChartTablePreview,
+} from "./chart-table-preview";
 import GenericChart from "./common-chart";
 import DebugPanel from "./debug-panel";
 import { HintRed } from "./hint";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
+  return (
+    <ChartTablePreviewProvider>
+      <ChartPreviewInner dataSetIri={dataSetIri} />
+    </ChartTablePreviewProvider>
+  );
+};
+
+export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
   const locale = useLocale();
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: { iri: dataSetIri, locale },
   });
-  const [isTable, setIsTable] = useState(false);
+  const [isTablePreview] = useChartTablePreview();
 
   return (
     <Flex
@@ -95,7 +106,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               </Typography>
             </>
             <InteractiveFiltersProvider>
-              {isTable ? (
+              {isTablePreview ? (
                 <DataSetTable
                   dataSetIri={dataSetIri}
                   chartConfig={state.chartConfig}
@@ -112,9 +123,6 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                   chartConfig={state.chartConfig}
                 />
               )}
-              <Link component="button" onClick={() => setIsTable(!isTable)}>
-                Switch component type
-              </Link>
               <DebugPanel configurator={true} interactiveFilters={true} />
             </InteractiveFiltersProvider>
           </>
