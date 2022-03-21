@@ -1,4 +1,10 @@
-import { Box } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 
 import { Observation } from "../../domain/data";
 import {
@@ -14,7 +20,7 @@ import {
 
 type Header = DimensionMetaDataFragment;
 
-const PreviewTable = ({
+export const PreviewTable = ({
   title,
   headers,
   observations,
@@ -26,67 +32,37 @@ const PreviewTable = ({
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
   return (
-    <Box
-      component="table"
-      sx={{
-        minWidth: "100%",
-        borderCollapse: "collapse",
-      }}
-    >
+    <Table>
       <caption style={{ display: "none" }}>{title}</caption>
-      <tbody>
-        <Box
-          component="tr"
-          sx={{
-            fontSize: ["0.875rem"],
-            verticalAlign: "baseline",
-            color: "grey.700",
-            borderBottomColor: "grey.700",
-            borderBottomWidth: "1px",
-            borderBottomStyle: "solid",
-          }}
-        >
+      <TableHead>
+        <TableRow>
           {headers.map(({ iri, label, unit, __typename }) => {
             return (
-              <Box
+              <TableCell
+                headers=""
                 component="th"
                 role="columnheader"
                 key={iri}
-                scope="col"
                 sx={{
                   textAlign: __typename === "Measure" ? "right" : "left",
-                  px: 2,
-                  py: 3,
-                  minWidth: 128,
                 }}
               >
                 {unit ? `${label} (${unit})` : label}
-              </Box>
+              </TableCell>
             );
           })}
-        </Box>
+        </TableRow>
+      </TableHead>
+      <TableBody>
         {observations.map((obs, i) => {
           return (
-            <Box
-              component="tr"
-              sx={{
-                fontSize: ["0.875rem"],
-                color: "grey.800",
-                borderBottomColor: "grey.400",
-                borderBottomWidth: "1px",
-                borderBottomStyle: "solid",
-              }}
-              key={i}
-            >
+            <TableRow key={i}>
               {headers.map(({ iri, label, __typename }) => (
-                <Box
+                <TableCell
                   key={iri}
                   component="td"
                   sx={{
                     textAlign: __typename === "Measure" ? "right" : "left",
-                    px: 2,
-                    py: 3,
-                    minWidth: 128,
                   }}
                 >
                   {__typename === "Measure"
@@ -94,13 +70,13 @@ const PreviewTable = ({
                     : __typename === "TemporalDimension"
                     ? formatDateAuto(obs[iri] as string)
                     : obs[iri]}
-                </Box>
+                </TableCell>
               ))}
-            </Box>
+            </TableRow>
           );
         })}
-      </tbody>
-    </Box>
+      </TableBody>
+    </Table>
   );
 };
 

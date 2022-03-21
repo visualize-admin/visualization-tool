@@ -516,6 +516,40 @@ theme.components = {
       checked: {},
     },
   },
+  MuiTable: {
+    styleOverrides: {
+      root: {
+        fontSize: "0.875rem",
+      },
+    },
+  },
+  MuiTableRow: {
+    styleOverrides: {
+      root: {
+        verticalAlign: "baseline",
+      },
+    },
+  },
+  MuiTableCell: {
+    styleOverrides: {
+      root: {
+        padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
+        minWidth: 128,
+        borderBottomWidth: "1px",
+        borderBottomStyle: "solid",
+      },
+      body: {
+        color: "grey.800",
+        fontWeight: "normal",
+        borderBottomColor: theme.palette.grey[400],
+      },
+      head: {
+        color: "grey.700",
+        fontweight: "bold",
+        borderBottomColor: theme.palette.grey[700],
+      },
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: {
       margin: 0,
