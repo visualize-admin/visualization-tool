@@ -855,12 +855,10 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       role="search"
       key={filters.length}
     >
-      <Stack>
-        {/* Theme tree */}
-        <Stack spacing={5}>
-          {navs[0]}
-          {navs[1]}
-        </Stack>
+      {/* Theme tree */}
+      <Stack spacing={5}>
+        {navs[0]}
+        {navs[1]}
       </Stack>
     </Flex>
   );
