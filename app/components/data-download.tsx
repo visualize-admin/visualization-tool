@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { saveAs } from "file-saver";
 import { memo, ReactNode, useCallback, useMemo } from "react";
-import { Box, Button, Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import { keyBy } from "lodash";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
