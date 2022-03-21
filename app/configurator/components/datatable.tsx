@@ -1,22 +1,25 @@
 import {
+  Box,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
 } from "@mui/material";
-
-import { Observation } from "../../domain/data";
-import {
-  DimensionMetaDataFragment,
-  useDataCubePreviewObservationsQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
+import { useQueryFilters } from "../../charts/shared/chart-helpers";
 import { Loading } from "../../components/hint";
 import {
   useFormatFullDateAuto,
   useFormatNumber,
 } from "../../configurator/components/ui-helpers";
+import { Observation } from "../../domain/data";
+import {
+  DimensionMetaDataFragment,
+  useDataCubeObservationsQuery,
+  useDataCubePreviewObservationsQuery,
+} from "../../graphql/query-hooks";
+import { useLocale } from "../../locales/use-locale";
+import { ChartConfig } from "../config-types";
 
 type Header = DimensionMetaDataFragment;
 
@@ -34,7 +37,7 @@ export const PreviewTable = ({
   return (
     <Table>
       <caption style={{ display: "none" }}>{title}</caption>
-      <TableHead>
+      <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
         <TableRow>
           {headers.map(({ iri, label, unit, __typename }) => {
             return (
@@ -108,6 +111,44 @@ export const DataSetPreviewTable = ({
         headers={headers}
         observations={data.dataCubeByIri.observations.data}
       />
+    );
+  } else {
+    return <Loading />;
+  }
+};
+
+export const DataSetTable = ({
+  dataSetIri,
+  chartConfig,
+}: {
+  dataSetIri: string;
+  chartConfig: ChartConfig;
+}) => {
+  const locale = useLocale();
+  const filters = useQueryFilters({ chartConfig });
+  const [{ data, fetching }] = useDataCubeObservationsQuery({
+    variables: {
+      iri: dataSetIri,
+      locale,
+      dimensions: null,
+      filters,
+    },
+  });
+
+  if (!fetching && data?.dataCubeByIri) {
+    const headers = [
+      ...data.dataCubeByIri.dimensions,
+      ...data.dataCubeByIri.measures,
+    ];
+
+    return (
+      <Box sx={{ maxHeight: "600px", overflow: "scroll" }}>
+        <PreviewTable
+          title={data.dataCubeByIri.title}
+          headers={headers}
+          observations={data.dataCubeByIri.observations.data}
+        />
+      </Box>
     );
   } else {
     return <Loading />;

@@ -1,13 +1,15 @@
-import Flex from "../components/flex";
 import { Trans } from "@lingui/macro";
+import { Box, Link, Typography } from "@mui/material";
 import Head from "next/head";
 import * as React from "react";
-import { Box, Typography } from "@mui/material";
+import { useState } from "react";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "../charts/shared/use-sync-interactive-filters";
+import Flex from "../components/flex";
 import { ChartConfig, useConfiguratorState } from "../configurator";
+import { DataSetTable } from "../configurator/components/datatable";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
@@ -24,6 +26,8 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: { iri: dataSetIri, locale },
   });
+  const [isTable, setIsTable] = useState(false);
+
   return (
     <Flex
       sx={{
@@ -57,8 +61,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 variant="h2"
                 sx={{
                   mb: 2,
-                  color:
-                    state.meta.title[locale] === "" ? "grey.500" : "text",
+                  color: state.meta.title[locale] === "" ? "grey.500" : "text",
                 }}
               >
                 {state.meta.title[locale] === "" ? (
@@ -80,9 +83,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 sx={{
                   mb: 2,
                   color:
-                    state.meta.description[locale] === ""
-                      ? "grey.500"
-                      : "text",
+                    state.meta.description[locale] === "" ? "grey.500" : "text",
                 }}
               >
                 {state.meta.description[locale] === "" ? (
@@ -93,16 +94,26 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               </Typography>
             </>
             <InteractiveFiltersProvider>
-              <ChartWithInteractiveFilters
-                dataSet={state.dataSet}
-                chartConfig={state.chartConfig}
-              />
+              {isTable ? (
+                <DataSetTable
+                  dataSetIri={dataSetIri}
+                  chartConfig={state.chartConfig}
+                />
+              ) : (
+                <ChartWithInteractiveFilters
+                  dataSet={state.dataSet}
+                  chartConfig={state.chartConfig}
+                />
+              )}
               {state.chartConfig && (
                 <ChartFootnotes
                   dataSetIri={dataSetIri}
                   chartConfig={state.chartConfig}
                 />
               )}
+              <Link component="button" onClick={() => setIsTable(!isTable)}>
+                Switch component type
+              </Link>
               <DebugPanel configurator={true} interactiveFilters={true} />
             </InteractiveFiltersProvider>
           </>
