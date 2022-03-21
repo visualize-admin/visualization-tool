@@ -1,15 +1,16 @@
-import Flex from "../components/flex";
 import { Trans } from "@lingui/macro";
+import { Box, Link, Typography } from "@mui/material";
 import * as React from "react";
-import { useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { isUsingImputation } from "../charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../charts/shared/use-interactive-filters";
+import Flex from "../components/flex";
 import { ChartConfig, Meta } from "../configurator";
+import { DataSetTable } from "../configurator/components/datatable";
 import { parseDate } from "../configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
@@ -34,6 +35,8 @@ export const ChartPublished = ({
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: { iri: dataSet, locale },
   });
+  const [isTable, setIsTable] = useState(false);
+
   return (
     <Flex
       p={5}
@@ -89,10 +92,14 @@ export const ChartPublished = ({
           </Typography>
         )}
         <InteractiveFiltersProvider>
-          <ChartWithInteractiveFilters
-            dataSet={dataSet}
-            chartConfig={chartConfig}
-          />
+          {isTable ? (
+            <DataSetTable dataSetIri={dataSet} chartConfig={chartConfig} />
+          ) : (
+            <ChartWithInteractiveFilters
+              dataSet={dataSet}
+              chartConfig={chartConfig}
+            />
+          )}
           {chartConfig && (
             <ChartFootnotes
               dataSetIri={dataSet}
@@ -100,6 +107,9 @@ export const ChartPublished = ({
               configKey={configKey}
             />
           )}
+          <Link component="button" onClick={() => setIsTable(!isTable)}>
+            Switch component type
+          </Link>
         </InteractiveFiltersProvider>
       </ChartErrorBoundary>
     </Flex>

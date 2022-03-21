@@ -102,7 +102,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 />
               ) : (
                 <ChartWithInteractiveFilters
-                  dataSet={state.dataSet}
+                  dataSet={dataSetIri}
                   chartConfig={state.chartConfig}
                 />
               )}
