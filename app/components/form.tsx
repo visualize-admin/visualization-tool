@@ -437,7 +437,7 @@ export const SearchField = ({
         onFocus={onFocus}
         onBlur={onBlur}
         autoComplete="off"
-        ref={inputRef}
+        inputRef={inputRef}
         sx={{ width: "100%", input: { borderRadius: 2 } }}
         endAdornment={
           onReset && search && search !== "" ? (
