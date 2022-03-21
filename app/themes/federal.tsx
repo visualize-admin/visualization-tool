@@ -530,6 +530,13 @@ theme.components = {
       },
     },
   },
+  MuiNativeSelect: {
+    styleOverrides: {
+      root: {
+        paddingTop: "0.25rem",
+      },
+    },
+  },
   MuiSwitch: {
     styleOverrides: {
       root: {
