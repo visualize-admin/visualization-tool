@@ -1,9 +1,8 @@
 import { ComponentProps } from "react";
-
-import { Icons, IconName } from "./components";
+import { ChartType } from "../configurator";
+import { IconName, Icons } from "./components";
 
 export { Icons } from "./components";
-
 export type { IconName } from "./components";
 
 export const Icon = ({
@@ -24,4 +23,25 @@ export const Icon = ({
   }
 
   return <IconComponent width={size} height={size} color={color} {...props} />;
+};
+
+export const getChartIcon = (chartType: ChartType): IconName => {
+  switch (chartType) {
+    case "area":
+      return "chartArea";
+    case "bar":
+      return "chartBar";
+    case "column":
+      return "chartColumn";
+    case "line":
+      return "chartLine";
+    case "map":
+      return "chartMap";
+    case "pie":
+      return "chartPie";
+    case "scatterplot":
+      return "chartScatterplot";
+    case "table":
+      return "table";
+  }
 };

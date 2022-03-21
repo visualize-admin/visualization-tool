@@ -1,11 +1,12 @@
 import { Trans } from "@lingui/macro";
+import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Box, Link, Typography } from "@mui/material";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+import { getChartIcon, Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
+import { useChartTablePreview } from "./chart-table-preview";
 import { DataDownload } from "./data-download";
-import { Stack } from "@mui/material";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -18,6 +19,7 @@ export const ChartFootnotes = ({
 }) => {
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
+  const [isChartTablePreview, setIsChartTablePreview] = useChartTablePreview();
 
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
@@ -49,6 +51,28 @@ export const ChartFootnotes = ({
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
           <DataDownload dataSetIri={dataSetIri} chartConfig={chartConfig} />
+          {chartConfig.chartType !== "table" && (
+            <>
+              <Box sx={{ display: "inline", mx: 1 }}>·</Box>
+              <Button
+                component="a"
+                color="primary"
+                variant="text"
+                size="small"
+                startIcon={
+                  <Icon
+                    name={
+                      isChartTablePreview
+                        ? getChartIcon(chartConfig.chartType)
+                        : "table"
+                    }
+                    size={16}
+                  />
+                }
+                onClick={() => setIsChartTablePreview(!isChartTablePreview)}
+              />
+            </>
+          )}
           {configKey && shareUrl && (
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
