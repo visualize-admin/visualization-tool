@@ -631,9 +631,7 @@ export const ColorPickerField = ({
         width: "100%",
       }}
     >
-      <Label htmlFor="xyz" disabled={disabled}>
-        {label}
-      </Label>
+      <Label htmlFor="xyz">{label}</Label>
       <ColorPickerMenu
         colors={getPalette()}
         selectedColor={color}

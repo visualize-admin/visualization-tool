@@ -50,7 +50,19 @@ export const ChartFootnotes = ({
         </Typography>
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
-          <DataDownload dataSetIri={dataSetIri} chartConfig={chartConfig} />
+          <DataDownload
+            dataSetIri={dataSetIri}
+            chartConfig={chartConfig}
+            extent="visible"
+            fileFormat="csv"
+          />
+          <Box sx={{ display: "inline", mx: 1 }}>·</Box>
+          <DataDownload
+            dataSetIri={dataSetIri}
+            chartConfig={chartConfig}
+            extent="all"
+            fileFormat="csv"
+          />
           {chartConfig.chartType !== "table" && (
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
