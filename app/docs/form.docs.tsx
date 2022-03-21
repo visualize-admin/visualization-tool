@@ -58,7 +58,7 @@ ${(
   ## Checkbox
 
   ${(
-    <ReactSpecimen span={2}>
+    <ReactSpecimen span={1}>
       <Checkbox
         label={"Zürich"}
         name={"Zürich"}
@@ -69,8 +69,10 @@ ${(
     </ReactSpecimen>
   )}
 
+
+
   ${(
-    <ReactSpecimen span={2}>
+    <ReactSpecimen span={1}>
       <Checkbox
         label={"Zürich"}
         name={"Zürich"}
@@ -80,6 +82,18 @@ ${(
       />
     </ReactSpecimen>
   )}
+
+  ${["teal", "royalblue", "orange"].map((c) => (
+    <ReactSpecimen key={c} span={1}>
+      <Checkbox
+        label={`${c} checkbox`}
+        name={`${c} checkbox`}
+        value={`${c} checkbox`}
+        color={c}
+        onChange={() => {}}
+      />
+    </ReactSpecimen>
+  ))}
 
 ## Switch
 

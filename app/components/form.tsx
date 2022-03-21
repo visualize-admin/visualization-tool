@@ -139,7 +139,7 @@ export const Checkbox = ({
         checked={checked}
         disabled={disabled}
         onChange={onChange}
-        sx={{ mr: smaller ? 0 : 1 }}
+        sx={{ mr: smaller ? 0 : 1, svg: { color }, input: { color } }}
       />
     }
   />
