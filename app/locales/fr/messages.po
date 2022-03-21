@@ -49,11 +49,11 @@ msgstr "[ Pas de description ]"
 msgid "annotation.add.title"
 msgstr "[ Pas de titre ]"
 
-#: app/configurator/components/dataset-browse.tsx:758
+#: app/configurator/components/dataset-browse.tsx:801
 msgid "browse-panel.organizations"
 msgstr "Organisations"
 
-#: app/configurator/components/dataset-browse.tsx:715
+#: app/configurator/components/dataset-browse.tsx:767
 msgid "browse-panel.themes"
 msgstr "Catégories"
 
@@ -61,12 +61,12 @@ msgstr "Catégories"
 msgid "browse.dataset.create-visualization"
 msgstr "Démarrer une visualisation"
 
-#: app/configurator/components/select-dataset-step.tsx:140
-#: app/configurator/components/select-dataset-step.tsx:191
+#: app/configurator/components/select-dataset-step.tsx:145
+#: app/configurator/components/select-dataset-step.tsx:198
 msgid "browse.datasets.all-datasets"
 msgstr "Tous les jeux de données"
 
-#: app/configurator/components/select-dataset-step.tsx:152
+#: app/configurator/components/select-dataset-step.tsx:157
 msgid "browse.datasets.description"
 msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par catégories ou organisations, ou en recherchant par mots-clés. Cliquez sur un ensemble de données pour afficher des informations plus détaillées et commencer à créer vos propres visualisations. "
 
@@ -423,7 +423,7 @@ msgstr "Inactif"
 msgid "controls.scale.type"
 msgstr "Type d'échelle"
 
-#: app/components/form.tsx:460
+#: app/components/form.tsx:482
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
@@ -646,7 +646,7 @@ msgstr "Afficher le champ de recherche"
 msgid "controls.title"
 msgstr "Titre"
 
-#: app/configurator/components/select-dataset-step.tsx:98
+#: app/configurator/components/select-dataset-step.tsx:100
 msgid "dataset-preview.back-to-results"
 msgstr "Revenir aux jeux de données"
 
@@ -658,27 +658,27 @@ msgstr "Revenir aux jeux de données"
 msgid "dataset.hasImputedValues"
 msgstr "Certaines données de cet ensemble de données sont manquantes et ont été interpolées pour combler les lacunes."
 
-#: app/configurator/components/dataset-browse.tsx:324
+#: app/configurator/components/dataset-browse.tsx:372
 msgid "dataset.includeDrafts"
 msgstr "Inclure les brouillons"
 
-#: app/configurator/components/dataset-metadata.tsx:50
+#: app/configurator/components/dataset-metadata.tsx:58
 msgid "dataset.metadata.date.created"
 msgstr "Date de création"
 
-#: app/configurator/components/dataset-metadata.tsx:62
+#: app/configurator/components/dataset-metadata.tsx:70
 msgid "dataset.metadata.email"
 msgstr "Points de contact"
 
-#: app/configurator/components/dataset-metadata.tsx:76
+#: app/configurator/components/dataset-metadata.tsx:84
 msgid "dataset.metadata.landingPage"
 msgstr "Informations complémentaires"
 
-#: app/configurator/components/dataset-metadata.tsx:36
+#: app/configurator/components/dataset-metadata.tsx:44
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/configurator/components/dataset-metadata.tsx:57
+#: app/configurator/components/dataset-metadata.tsx:65
 msgid "dataset.metadata.version"
 msgstr "Version"
 
@@ -704,7 +704,7 @@ msgstr "Attention, ce jeu de données est à l'état d'ébauche.<0/><1>Ne l'util
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attention, ce jeu de données est expiré.<0/><1>Ne l'utilisez pas pour une publication!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:348
+#: app/configurator/components/dataset-browse.tsx:360
 msgid "dataset.results"
 msgstr ""
 
@@ -712,11 +712,15 @@ msgstr ""
 msgid "dataset.search.label"
 msgstr "Chercher"
 
-#: app/configurator/components/dataset-browse.tsx:368
+#: app/configurator/components/dataset-browse.tsx:301
+msgid "dataset.search.placeholder"
+msgstr "Nom, description, organisation, catégorie, mots clés..."
+
+#: app/configurator/components/dataset-browse.tsx:392
 msgid "dataset.sortby"
 msgstr "Trier par"
 
-#: app/configurator/components/dataset-browse.tsx:946
+#: app/configurator/components/dataset-browse.tsx:980
 msgid "dataset.tag.draft"
 msgstr "Brouillon"
 

@@ -5,6 +5,7 @@ import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { Box, Button, Text } from "theme-ui";
 import { useDebounce } from "use-debounce";
+import { AnimatePresence } from "framer-motion";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
 import { useConfiguratorState, useLocale } from "../../src";
 import {
@@ -19,6 +20,7 @@ import {
 import { DataSetMetadata } from "./dataset-metadata";
 import { DataSetPreview } from "./dataset-preview";
 import { PanelLayout, PanelLeftWrapper, PanelMiddleWrapper } from "./layout";
+import { MotionBox, navPresenceProps } from "./presence";
 
 const softJSONParse = (v: string) => {
   try {
@@ -89,9 +91,14 @@ export const SelectDatasetStepContent = () => {
         raised={false}
         sx={{ pt: "1.25rem", bg: "transparent" }}
       >
-        {dataset ? (
-          <>
-            <Box px={4}>
+        <AnimatePresence exitBeforeEnter>
+          {dataset ? (
+            <MotionBox
+              {...navPresenceProps}
+              px={4}
+              key="dataset-metadata"
+              custom={dataset}
+            >
               <NextLink passHref href={backLink}>
                 <Button variant="secondary">
                   ←{" "}
@@ -100,12 +107,18 @@ export const SelectDatasetStepContent = () => {
                   </Trans>
                 </Button>
               </NextLink>
-            </Box>
-            <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
-          </>
-        ) : (
-          <SearchFilters data={data} />
-        )}
+              <DataSetMetadata sx={{ mt: "3rem" }} dataSetIri={dataset} />
+            </MotionBox>
+          ) : (
+            <MotionBox
+              key="search-filters"
+              {...navPresenceProps}
+              custom={false}
+            >
+              <SearchFilters data={data} />
+            </MotionBox>
+          )}
+        </AnimatePresence>
       </PanelLeftWrapper>
       <PanelMiddleWrapper
         sx={{
@@ -114,65 +127,72 @@ export const SelectDatasetStepContent = () => {
         }}
       >
         <Box sx={{ maxWidth: 900 }}>
-          {dataset ? null : filters.length > 0 ? (
-            <Text
-              variant="heading1"
-              color="monochrome800"
-              mb={4}
-              sx={{ display: "block" }}
-            >
-              {filters
-                .filter(
-                  (f): f is Exclude<typeof f, DataCubeAbout> =>
-                    f.__typename !== "DataCubeAbout"
-                )
-                .map((f) => f.label)
-                .join(", ")}
-            </Text>
-          ) : (
-            <>
-              <Text
-                variant="heading1"
-                color="monochrome800"
-                mb={4}
-                sx={{ display: "block" }}
-              >
-                <Trans id="browse.datasets.all-datasets">All datasets</Trans>
-              </Text>
-              <Text
-                variant="paragraph1"
-                color="monochrome800"
-                sx={{
-                  mb: 4,
-                  maxWidth: 800,
-                  fontWeight: "light",
-                  display: "block",
-                }}
-              >
-                <Trans id="browse.datasets.description">
-                  Explore datasets provided by the LINDAS Linked Data Service by
-                  either filtering by categories or organisations or search
-                  directly for specific keywords. Click on a dataset to see more
-                  detailed information and start creating your own
-                  visualizations.
-                </Trans>
-              </Text>
-            </>
-          )}
-          {dataset ? null : (
-            <Box mb={4}>
-              <SearchDatasetBox browseState={browseState} searchResult={data} />
-            </Box>
-          )}
-          {dataset ? (
-            <>
-              <Box>
+          <AnimatePresence exitBeforeEnter>
+            {dataset ? (
+              <MotionBox {...navPresenceProps} key="preview">
                 <DataSetPreview dataSetIri={dataset} />
-              </Box>
-            </>
-          ) : (
-            <DatasetResults fetching={fetching} data={data} />
-          )}
+              </MotionBox>
+            ) : (
+              <MotionBox {...navPresenceProps}>
+                {filters.length > 0 ? (
+                  <Text
+                    key="filters"
+                    variant="heading1"
+                    color="monochrome800"
+                    mb={4}
+                    sx={{ display: "block" }}
+                  >
+                    {filters
+                      .filter(
+                        (f): f is Exclude<typeof f, DataCubeAbout> =>
+                          f.__typename !== "DataCubeAbout"
+                      )
+                      .map((f) => f.label)
+                      .join(", ")}
+                  </Text>
+                ) : (
+                  <>
+                    <Text
+                      key="all-datasets"
+                      variant="heading1"
+                      color="monochrome800"
+                      mb={4}
+                      sx={{ display: "block" }}
+                    >
+                      <Trans id="browse.datasets.all-datasets">
+                        All datasets
+                      </Trans>
+                    </Text>
+                    <Text
+                      variant="paragraph1"
+                      color="monochrome800"
+                      sx={{
+                        mb: 4,
+                        maxWidth: 800,
+                        fontWeight: "light",
+                        display: "block",
+                      }}
+                    >
+                      <Trans id="browse.datasets.description">
+                        Explore datasets provided by the LINDAS Linked Data
+                        Service by either filtering by categories or
+                        organisations or search directly for specific keywords.
+                        Click on a dataset to see more detailed information and
+                        start creating your own visualizations.
+                      </Trans>
+                    </Text>
+                  </>
+                )}
+                <Box mb={1} key="search-box">
+                  <SearchDatasetBox
+                    browseState={browseState}
+                    searchResult={data}
+                  />
+                </Box>
+                <DatasetResults key="results" fetching={fetching} data={data} />
+              </MotionBox>
+            )}
+          </AnimatePresence>
         </Box>
       </PanelMiddleWrapper>
     </PanelLayout>

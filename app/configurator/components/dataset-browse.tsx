@@ -14,13 +14,13 @@ import React, {
 import {
   Box,
   Button,
-  Card,
   Flex,
   FlexProps,
   Link as ThemeUILink,
   LinkProps as ThemeUILinkProps,
   Text,
 } from "theme-ui";
+import { AnimatePresence } from "framer-motion";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
 import Stack from "../../components/Stack";
@@ -46,6 +46,7 @@ import truthy from "../../utils/truthy";
 import Tag from "./Tag";
 import { useFormatDate } from "./ui-helpers";
 import useDatasetCount from "./use-dataset-count";
+import { smoothPresenceProps, MotionBox, MotionCard } from "./presence";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -193,13 +194,12 @@ export const useBrowseState = () => {
       onReset: () => {
         setParams({ search: "", order: previousOrderRef.current });
       },
-      onTypeSearch: (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newSearch = e.currentTarget.value;
+      onSubmitSearch: (newSearch: string) => {
         setParams({
           search: newSearch,
           order:
-            search === ""
-              ? DataCubeResultOrder.Score
+            newSearch === ""
+              ? DataCubeResultOrder.TitleAsc
               : previousOrderRef.current,
         });
       },
@@ -271,7 +271,7 @@ export const SearchDatasetBox = ({
 
   const {
     search,
-    onTypeSearch,
+    onSubmitSearch,
     onReset,
     includeDrafts,
     setIncludeDrafts,
@@ -298,43 +298,55 @@ export const SearchDatasetBox = ({
     message: `Search datasets`,
   });
 
+  const placeholderLabel = t({
+    id: "dataset.search.placeholder",
+    message: `Name, description, organization, theme, keyword`,
+  });
+
   const isSearching = search !== "";
 
   const onToggleIncludeDrafts = useCallback(() => {
     setIncludeDrafts(!includeDrafts);
   }, [includeDrafts, setIncludeDrafts]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    if (ev.key === "Enter" && inputRef.current) {
+      onSubmitSearch(inputRef.current.value);
+    }
+  };
+
+  const handleClickSubmit = () => {
+    if (!inputRef.current) {
+      return;
+    }
+    onSubmitSearch(inputRef.current.value);
+  };
+
   return (
     <Box>
-      <Box sx={{ pt: 4 }}>
+      <Box sx={{ pt: 4, display: "flex", width: "100%" }}>
         <SearchField
+          inputRef={inputRef}
           id="datasetSearch"
           label={searchLabel}
-          value={search || ""}
-          onChange={onTypeSearch}
+          defaultValue={search || ""}
+          onKeyPress={handleKeyPress}
           onReset={onReset}
-          placeholder={searchLabel}
+          placeholder={placeholderLabel}
           onFocus={() => setShowDraftCheckbox(true)}
+          sx={{ flexGrow: 1 }}
         />
+        <Button
+          onClick={handleClickSubmit}
+          variant="small"
+          sx={{ flexShrink: 0, ml: 1, py: 0, cursor: "pointer" }}
+        >
+          {searchLabel}
+        </Button>
       </Box>
 
-      {showDraftCheckbox && (
-        <Box sx={{ pt: 4 }}>
-          <Checkbox
-            label={t({
-              id: "dataset.includeDrafts",
-              message: "Include draft datasets",
-            })}
-            name={"dataset-include-drafts"}
-            value={"dataset-include-drafts"}
-            checked={includeDrafts}
-            disabled={false}
-            onChange={onToggleIncludeDrafts}
-          />
-        </Box>
-      )}
-
-      <Flex sx={{ py: 2, justifyContent: "space-between" }}>
+      <Flex sx={{ mt: 5, justifyContent: "space-between" }}>
         <Text
           color="secondary"
           sx={{
@@ -355,7 +367,19 @@ export const SearchDatasetBox = ({
           )}
         </Text>
 
-        <Flex>
+        <Flex sx={{ alignItems: "center" }}>
+          <Checkbox
+            label={t({
+              id: "dataset.includeDrafts",
+              message: "Include draft datasets",
+            })}
+            name={"dataset-include-drafts"}
+            value={"dataset-include-drafts"}
+            checked={includeDrafts}
+            disabled={false}
+            onChange={onToggleIncludeDrafts}
+            smaller
+          />
           <label htmlFor="datasetSort">
             <Text
               color="secondary"
@@ -376,7 +400,7 @@ export const SearchDatasetBox = ({
             onChange={(e) => {
               onSetOrder(e.currentTarget.value as DataCubeResultOrder);
             }}
-          ></MiniSelect>
+          />
         </Flex>
       </Flex>
     </Box>
@@ -530,7 +554,8 @@ const NavItem = ({
       </NavChip>
     ) : null;
   return (
-    <Box
+    <MotionBox
+      {...smoothPresenceProps}
       sx={{
         mb: 1,
         pl: 4,
@@ -568,7 +593,7 @@ const NavItem = ({
           {countChip}
         </>
       )}
-    </Box>
+    </MotionBox>
   );
 };
 
@@ -702,99 +727,107 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     ];
   }, [allThemes, allOrgs]);
 
-  const themeNav = (
-    <div>
-      <NavSectionTitle
-        theme={{ bg: "categoryLight", borderColor: "category" }}
-        sx={{ mb: "block" }}
-      >
-        <Box as="span" color="category" mr={2}>
-          <SvgIcCategories width={24} height={24} />
-        </Box>
-        <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-          <Trans id="browse-panel.themes">Themes</Trans>
-        </Text>
-      </NavSectionTitle>
-      <Box>
-        {allThemesAlpha
-          ? allThemesAlpha.map((theme) => {
-              if (!theme.label) {
-                return null;
-              }
-              if (!counts[theme.iri]) {
-                return null;
-              }
-              if (themeFilter && themeFilter !== theme) {
-                return null;
-              }
-              return (
-                <NavItem
-                  active={themeFilter === theme}
-                  filters={filters}
-                  key={theme.iri}
-                  next={theme}
-                  count={counts[theme.iri]}
-                  theme={themeNavItemTheme}
-                >
-                  {theme.label}
-                </NavItem>
-              );
-            })
-          : null}
-      </Box>
-    </div>
-  );
+  const displayedThemes = allThemesAlpha?.filter((theme) => {
+    if (!theme.label) {
+      return false;
+    }
+    if (!counts[theme.iri]) {
+      return false;
+    }
+    if (themeFilter && themeFilter !== theme) {
+      return false;
+    }
+    return true;
+  });
 
-  const orgNav = (
-    <div>
-      <NavSectionTitle
-        theme={{ bg: "organizationLight", borderColor: "organization" }}
-        sx={{ mb: 2 }}
-      >
-        <Box as="span" color="organization" mr={2}>
-          <SvgIcOrganisations width={24} height={24} />
-        </Box>
-        <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
-          <Trans id="browse-panel.organizations">Organizations</Trans>
-        </Text>
-      </NavSectionTitle>
-      <Box>
-        {allOrgsAlpha
-          ? allOrgsAlpha.map((org) => {
-              if (!org.label) {
-                return null;
-              }
-              if (!counts[org.iri] && orgFilter !== org) {
-                return null;
-              }
-              if (orgFilter && orgFilter !== org) {
-                return null;
-              }
-              return (
-                <NavItem
-                  key={org.iri}
-                  filters={filters}
-                  active={orgFilter === org}
-                  next={org}
-                  count={counts[org.iri]}
-                  theme={organizationNavItemTheme}
-                >
-                  {org.label}
-                </NavItem>
-              );
-            })
-          : null}
-        {orgFilter && filters[0] === orgFilter ? (
-          <Subthemes
-            organization={orgFilter}
-            filters={filters}
-            counts={counts}
-          />
-        ) : null}
-      </Box>
-    </div>
-  );
+  const displayedOrgs = allOrgsAlpha?.filter((org) => {
+    if (!org.label) {
+      return false;
+    }
+    if (!counts[org.iri] && orgFilter !== org) {
+      return false;
+    }
+    if (orgFilter && orgFilter !== org) {
+      return false;
+    }
+    return true;
+  });
 
+  const themeNav =
+    displayedThemes && displayedThemes.length > 0 ? (
+      <div>
+        <NavSectionTitle
+          theme={{ bg: "categoryLight", borderColor: "category" }}
+          sx={{ mb: "block" }}
+        >
+          <Box as="span" color="category" mr={2}>
+            <SvgIcCategories width={24} height={24} />
+          </Box>
+          <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+            <Trans id="browse-panel.themes">Themes</Trans>
+          </Text>
+        </NavSectionTitle>
+        <Box>
+          {displayedThemes.map((theme) => {
+            return (
+              <NavItem
+                active={themeFilter === theme}
+                filters={filters}
+                key={theme.iri}
+                next={theme}
+                count={counts[theme.iri]}
+                theme={themeNavItemTheme}
+              >
+                {theme.label}
+              </NavItem>
+            );
+          })}
+        </Box>
+      </div>
+    ) : null;
+
+  const orgNav =
+    displayedOrgs && displayedOrgs.length > 0 ? (
+      <div>
+        {
+          <NavSectionTitle
+            theme={{ bg: "organizationLight", borderColor: "organization" }}
+            sx={{ mb: 2 }}
+          >
+            <Box as="span" color="organization" mr={2}>
+              <SvgIcOrganisations width={24} height={24} />
+            </Box>
+            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+              <Trans id="browse-panel.organizations">Organizations</Trans>
+            </Text>
+          </NavSectionTitle>
+        }
+        <AnimatePresence>
+          {displayedOrgs.map((org) => {
+            return (
+              <NavItem
+                key={org.iri}
+                filters={filters}
+                active={orgFilter === org}
+                next={org}
+                count={counts[org.iri]}
+                theme={organizationNavItemTheme}
+              >
+                {org.label}
+              </NavItem>
+            );
+          })}
+
+          {orgFilter && filters[0] === orgFilter ? (
+            <Subthemes
+              organization={orgFilter}
+              filters={filters}
+              counts={counts}
+            />
+          ) : null}
+        </AnimatePresence>
+      </div>
+    ) : null;
   let navs = [themeNav, orgNav];
   if (filters[0]?.__typename === "DataCubeTheme") {
     navs = [themeNav, orgNav];
@@ -920,7 +953,8 @@ export const DatasetResult = ({
     );
   }, [router, iri, filterParams]);
   return (
-    <Card
+    <MotionCard
+      {...smoothPresenceProps}
       variant="reset"
       onClick={handleClick}
       sx={{
@@ -1017,7 +1051,7 @@ export const DatasetResult = ({
           ) : null}
         </Stack>
       </Stack>
-    </Card>
+    </MotionCard>
   );
 };
 

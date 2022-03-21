@@ -49,11 +49,11 @@ msgstr "[ No Description ]"
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
 
-#: app/configurator/components/dataset-browse.tsx:758
+#: app/configurator/components/dataset-browse.tsx:801
 msgid "browse-panel.organizations"
 msgstr "Organizations"
 
-#: app/configurator/components/dataset-browse.tsx:715
+#: app/configurator/components/dataset-browse.tsx:767
 msgid "browse-panel.themes"
 msgstr "Categories"
 
@@ -61,12 +61,12 @@ msgstr "Categories"
 msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
-#: app/configurator/components/select-dataset-step.tsx:140
-#: app/configurator/components/select-dataset-step.tsx:191
+#: app/configurator/components/select-dataset-step.tsx:145
+#: app/configurator/components/select-dataset-step.tsx:198
 msgid "browse.datasets.all-datasets"
 msgstr "All datasets"
 
-#: app/configurator/components/select-dataset-step.tsx:152
+#: app/configurator/components/select-dataset-step.tsx:157
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
@@ -427,7 +427,7 @@ msgstr "Off"
 msgid "controls.scale.type"
 msgstr "Scale type"
 
-#: app/components/form.tsx:460
+#: app/components/form.tsx:482
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
@@ -650,7 +650,7 @@ msgstr "Show search field"
 msgid "controls.title"
 msgstr "Title"
 
-#: app/configurator/components/select-dataset-step.tsx:98
+#: app/configurator/components/select-dataset-step.tsx:100
 msgid "dataset-preview.back-to-results"
 msgstr "Back to the datasets"
 
@@ -662,27 +662,27 @@ msgstr "Back to the datasets"
 msgid "dataset.hasImputedValues"
 msgstr "Some data in this dataset is missing and has been interpolated to fill the gaps."
 
-#: app/configurator/components/dataset-browse.tsx:324
+#: app/configurator/components/dataset-browse.tsx:372
 msgid "dataset.includeDrafts"
 msgstr "Include draft datasets"
 
-#: app/configurator/components/dataset-metadata.tsx:50
+#: app/configurator/components/dataset-metadata.tsx:58
 msgid "dataset.metadata.date.created"
 msgstr "Date created"
 
-#: app/configurator/components/dataset-metadata.tsx:62
+#: app/configurator/components/dataset-metadata.tsx:70
 msgid "dataset.metadata.email"
 msgstr "Contact points"
 
-#: app/configurator/components/dataset-metadata.tsx:76
+#: app/configurator/components/dataset-metadata.tsx:84
 msgid "dataset.metadata.landingPage"
 msgstr "Further information"
 
-#: app/configurator/components/dataset-metadata.tsx:36
+#: app/configurator/components/dataset-metadata.tsx:44
 msgid "dataset.metadata.source"
 msgstr "Source"
 
-#: app/configurator/components/dataset-metadata.tsx:57
+#: app/configurator/components/dataset-metadata.tsx:65
 msgid "dataset.metadata.version"
 msgstr "Version"
 
@@ -708,7 +708,7 @@ msgstr "Careful, this dataset is only a draft.<0/><1>Don't use for reporting!</1
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for reporting!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:348
+#: app/configurator/components/dataset-browse.tsx:360
 msgid "dataset.results"
 msgstr "{0, plural, zero {No results} one {# result} other {# results}}"
 
@@ -716,11 +716,15 @@ msgstr "{0, plural, zero {No results} one {# result} other {# results}}"
 msgid "dataset.search.label"
 msgstr "Search datasets"
 
-#: app/configurator/components/dataset-browse.tsx:368
+#: app/configurator/components/dataset-browse.tsx:301
+msgid "dataset.search.placeholder"
+msgstr "Name, description, organization, theme, keyword"
+
+#: app/configurator/components/dataset-browse.tsx:392
 msgid "dataset.sortby"
 msgstr "Sort by"
 
-#: app/configurator/components/dataset-browse.tsx:946
+#: app/configurator/components/dataset-browse.tsx:980
 msgid "dataset.tag.draft"
 msgstr "Draft"
 

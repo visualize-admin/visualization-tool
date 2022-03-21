@@ -49,11 +49,11 @@ msgstr "[ Nessuna descrizione ]"
 msgid "annotation.add.title"
 msgstr "[ Nessun titolo ]"
 
-#: app/configurator/components/dataset-browse.tsx:758
+#: app/configurator/components/dataset-browse.tsx:801
 msgid "browse-panel.organizations"
 msgstr "Organizzazioni"
 
-#: app/configurator/components/dataset-browse.tsx:715
+#: app/configurator/components/dataset-browse.tsx:767
 msgid "browse-panel.themes"
 msgstr "Categorie"
 
@@ -61,12 +61,12 @@ msgstr "Categorie"
 msgid "browse.dataset.create-visualization"
 msgstr "Iniziare una visualizzazione"
 
-#: app/configurator/components/select-dataset-step.tsx:140
-#: app/configurator/components/select-dataset-step.tsx:191
+#: app/configurator/components/select-dataset-step.tsx:145
+#: app/configurator/components/select-dataset-step.tsx:198
 msgid "browse.datasets.all-datasets"
 msgstr "Tutti i set di dati"
 
-#: app/configurator/components/select-dataset-step.tsx:152
+#: app/configurator/components/select-dataset-step.tsx:157
 msgid "browse.datasets.description"
 msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando per categorie o organizzazioni oppure cercando direttamente per parole chiave specifiche. Clicca su un set di dati per vedere informazioni più dettagliate e iniziare a creare le tue visualizzazioni."
 
@@ -423,7 +423,7 @@ msgstr "Inattivo"
 msgid "controls.scale.type"
 msgstr "Tipo di scala"
 
-#: app/components/form.tsx:460
+#: app/components/form.tsx:482
 msgid "controls.search.clear"
 msgstr "Cancella la ricerca"
 
@@ -646,7 +646,7 @@ msgstr "Mostra il campo di ricerca"
 msgid "controls.title"
 msgstr "Titolo"
 
-#: app/configurator/components/select-dataset-step.tsx:98
+#: app/configurator/components/select-dataset-step.tsx:100
 msgid "dataset-preview.back-to-results"
 msgstr "Torna ai set di dati"
 
@@ -658,27 +658,27 @@ msgstr "Torna ai set di dati"
 msgid "dataset.hasImputedValues"
 msgstr "In questo set di dati mancano alcuni dati. Questi sono stati interpolati per colmare le lacune.."
 
-#: app/configurator/components/dataset-browse.tsx:324
+#: app/configurator/components/dataset-browse.tsx:372
 msgid "dataset.includeDrafts"
 msgstr "Includere le bozze"
 
-#: app/configurator/components/dataset-metadata.tsx:50
+#: app/configurator/components/dataset-metadata.tsx:58
 msgid "dataset.metadata.date.created"
 msgstr "Data di creazione"
 
-#: app/configurator/components/dataset-metadata.tsx:62
+#: app/configurator/components/dataset-metadata.tsx:70
 msgid "dataset.metadata.email"
 msgstr "Punti di contatto"
 
-#: app/configurator/components/dataset-metadata.tsx:76
+#: app/configurator/components/dataset-metadata.tsx:84
 msgid "dataset.metadata.landingPage"
 msgstr "Addizionali informazioni"
 
-#: app/configurator/components/dataset-metadata.tsx:36
+#: app/configurator/components/dataset-metadata.tsx:44
 msgid "dataset.metadata.source"
 msgstr "Fonte"
 
-#: app/configurator/components/dataset-metadata.tsx:57
+#: app/configurator/components/dataset-metadata.tsx:65
 msgid "dataset.metadata.version"
 msgstr "versione"
 
@@ -704,7 +704,7 @@ msgstr "Attenzione, questo set di dati è una bozza.<0/><1>Non utilizzare questo
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Attenzione, questo set di dati è scaduto.<0/><1>Non utilizzare questo grafico per un rapporto!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:348
+#: app/configurator/components/dataset-browse.tsx:360
 msgid "dataset.results"
 msgstr "Risultate"
 
@@ -712,11 +712,15 @@ msgstr "Risultate"
 msgid "dataset.search.label"
 msgstr "Cerca"
 
-#: app/configurator/components/dataset-browse.tsx:368
+#: app/configurator/components/dataset-browse.tsx:301
+msgid "dataset.search.placeholder"
+msgstr ""
+
+#: app/configurator/components/dataset-browse.tsx:392
 msgid "dataset.sortby"
 msgstr "Ordina per"
 
-#: app/configurator/components/dataset-browse.tsx:946
+#: app/configurator/components/dataset-browse.tsx:980
 msgid "dataset.tag.draft"
 msgstr "Bozza"
 
