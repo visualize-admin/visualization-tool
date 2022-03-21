@@ -9,6 +9,7 @@ import { useLocale } from "../../locales/use-locale";
 import { DataCubePublicationStatus } from "../../graphql/resolver-types";
 import DebugPanel from "../../components/debug-panel";
 import Head from "next/head";
+import Link from "next/link";
 
 export interface Preview {
   iri: string;
@@ -53,15 +54,16 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           <Typography component="div" variant="h1" sx={{ color: "grey.800" }}>
             {dataCubeByIri.title}
           </Typography>
-          <Button
-            component="a"
-            sx={{ ml: 6, whiteSpace: "nowrap", flexShrink: 0 }}
-            href={`/create/new?cube=${dataCubeByIri.iri}`}
-          >
-            <Trans id="browse.dataset.create-visualization">
-              Create visualization from dataset
-            </Trans>
-          </Button>
+          <Link passHref href={`/create/new?cube=${dataCubeByIri.iri}`}>
+            <Button
+              component="a"
+              sx={{ ml: 6, whiteSpace: "nowrap", flexShrink: 0 }}
+            >
+              <Trans id="browse.dataset.create-visualization">
+                Create visualization from dataset
+              </Trans>
+            </Button>
+          </Link>
         </Flex>
         <Paper
           elevation={5}
