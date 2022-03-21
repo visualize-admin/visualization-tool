@@ -34,7 +34,6 @@ export const Label = ({
 }: {
   label?: string;
   htmlFor: string;
-  disabled?: boolean;
   smaller?: boolean;
   children: ReactNode;
 }) => (
@@ -183,7 +182,7 @@ export const Select = ({
   return (
     <Box sx={{ color: "grey.700" }}>
       {label && (
-        <Label htmlFor={id} disabled={disabled} smaller>
+        <Label htmlFor={id} smaller>
           {label}
           {controls}
         </Label>
@@ -376,7 +375,7 @@ export const DayPickerField = ({
       }}
     >
       {label && name && (
-        <Label htmlFor={name} smaller disabled={disabled}>
+        <Label htmlFor={name} smaller>
           {label}
           {controls}
         </Label>

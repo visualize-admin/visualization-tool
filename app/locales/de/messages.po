@@ -78,13 +78,29 @@ msgstr "Zurück"
 msgid "button.copy.visualization"
 msgstr "Diese Visualisierung kopieren und editieren"
 
-#: app/components/data-download.tsx:114
-msgid "button.download.data"
-msgstr "Daten herunterladen"
+#: app/components/data-download.tsx:115
+#~ msgid "button.download.data"
+#~ msgstr "Daten herunterladen"
 
-#: app/components/data-download.tsx:63
-msgid "button.download.runsparqlquery"
-msgstr "SPARQL-Abfrage ausführen"
+#: app/components/data-download.tsx:101
+msgid "button.download.data.all"
+msgstr "Alle Daten herunterladen"
+
+#: app/components/data-download.tsx:99
+msgid "button.download.data.visible"
+msgstr "Sichtbare Daten herunterladen"
+
+#: app/components/data-download.tsx:64
+#~ msgid "button.download.runsparqlquery"
+#~ msgstr "SPARQL-Abfrage ausführen"
+
+#: app/components/data-download.tsx:122
+msgid "button.download.runsparqlquery.all"
+msgstr "SPARQL-Abfrage ausführen (alle)"
+
+#: app/components/data-download.tsx:118
+msgid "button.download.runsparqlquery.visible"
+msgstr "SPARQL-Abfrage ausführen (sichtbare)"
 
 #: app/components/publish-actions.tsx:224
 msgid "button.embed"
@@ -797,7 +813,7 @@ msgstr "Logo der Schweizerischen Eidgenossenschaft"
 msgid "metadata.dataset"
 msgstr "Datensatz"
 
-#: app/components/chart-footnotes.tsx:61
+#: app/components/chart-footnotes.tsx:71
 msgid "metadata.link.created.with.visualize"
 msgstr "Erstellt mit visualize.admin.ch"
 
