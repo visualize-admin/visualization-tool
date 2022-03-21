@@ -88,7 +88,10 @@ export const SelectDatasetStepContent = () => {
         pt: "55px",
       }}
     >
-      <PanelLeftWrapper raised={false} sx={{ backgroundColor: "transparent" }}>
+      <PanelLeftWrapper
+        raised={false}
+        sx={{ backgroundColor: "transparent", paddingTop: 0 }}
+      >
         <AnimatePresence exitBeforeEnter>
           {dataset ? (
             <MotionBox

@@ -23,7 +23,7 @@ import Flex, { FlexProps } from "../../components/flex";
 import { AnimatePresence } from "framer-motion";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
-import { Stack } from '@mui/material'
+import { Stack } from "@mui/material";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -851,7 +851,7 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         height: "100%",
       }}
       px={4}
-      pt="2rem"
+      pt="0.75rem"
       role="search"
       key={filters.length}
     >
