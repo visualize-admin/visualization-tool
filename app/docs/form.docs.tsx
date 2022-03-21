@@ -13,8 +13,8 @@ import {
 import SearchAutocomplete from "../components/search-autocomplete";
 import { BrowseStateProvider } from "../configurator/components/dataset-browse";
 
-const SwitchExample = () => {
-  const [checked, toggle] = useState(false);
+const SwitchExample = ({ initialChecked }: { initialChecked?: boolean }) => {
+  const [checked, toggle] = useState(initialChecked || false);
 
   return (
     <Switch
@@ -58,7 +58,7 @@ ${(
   ## Checkbox
 
   ${(
-    <ReactSpecimen span={2}>
+    <ReactSpecimen span={1}>
       <Checkbox
         label={"Zürich"}
         name={"Zürich"}
@@ -69,8 +69,10 @@ ${(
     </ReactSpecimen>
   )}
 
+
+
   ${(
-    <ReactSpecimen span={2}>
+    <ReactSpecimen span={1}>
       <Checkbox
         label={"Zürich"}
         name={"Zürich"}
@@ -81,6 +83,18 @@ ${(
     </ReactSpecimen>
   )}
 
+  ${["teal", "royalblue", "orange"].map((c) => (
+    <ReactSpecimen key={c} span={1}>
+      <Checkbox
+        label={`${c} checkbox`}
+        name={`${c} checkbox`}
+        value={`${c} checkbox`}
+        color={c}
+        onChange={() => {}}
+      />
+    </ReactSpecimen>
+  ))}
+
 ## Switch
 
   ${(
@@ -88,6 +102,13 @@ ${(
       <SwitchExample />
     </ReactSpecimen>
   )}
+
+  ${(
+    <ReactSpecimen span={2}>
+      <SwitchExample initialChecked />
+    </ReactSpecimen>
+  )}
+
 
   ${(
     <ReactSpecimen span={2}>
@@ -144,18 +165,22 @@ ${(
 
     ${(
       <ReactSpecimen span={2}>
-        <SearchField id="search-ex-1" label="Title einfügen" />
+        <BrowseStateProvider>
+          <SearchField id="search-ex-1" label="Title einfügen" />
+        </BrowseStateProvider>
       </ReactSpecimen>
     )}
 
     ${(
       <ReactSpecimen span={2}>
-        <SearchField
-          id="search-ex-2"
-          label="Tier"
-          value="Affe"
-          onReset={() => alert("reset search")}
-        />
+        <BrowseStateProvider>
+          <SearchField
+            id="search-ex-2"
+            label="Tier"
+            value="Affe"
+            onReset={() => alert("reset search")}
+          />
+        </BrowseStateProvider>
       </ReactSpecimen>
     )}
 

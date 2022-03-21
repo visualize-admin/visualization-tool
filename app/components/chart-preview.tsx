@@ -36,6 +36,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         flexGrow: 1,
         color: "grey.800",
         p: 5,
+        width: "100%",
       }}
     >
       <ChartErrorBoundary resetKeys={[state]}>

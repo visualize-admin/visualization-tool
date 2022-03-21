@@ -11,9 +11,9 @@ import {
   Checkbox as MUICheckbox,
   FormControlLabel,
   Input as MUIInput,
-  InputLabel,
   Radio as MUIRadio,
   Select as MUISelect,
+  Switch as MUISwitch,
   SelectProps,
   Typography,
   useTheme,
@@ -139,7 +139,7 @@ export const Checkbox = ({
         checked={checked}
         disabled={disabled}
         onChange={onChange}
-        sx={{ mr: smaller ? 0 : 1 }}
+        sx={{ mr: smaller ? 0 : 1, svg: { color }, input: { color } }}
       />
     }
   />
@@ -437,7 +437,7 @@ export const SearchField = ({
         onFocus={onFocus}
         onBlur={onBlur}
         autoComplete="off"
-        ref={inputRef}
+        inputRef={inputRef}
         sx={{ width: "100%", input: { borderRadius: 2 } }}
         endAdornment={
           onReset && search && search !== "" ? (
@@ -447,9 +447,9 @@ export const SearchField = ({
               </VisuallyHidden>
               <Box
                 aria-hidden="true"
-                sx={{ borderRadius: "50%", backgroundColor: "grey.600" }}
+                sx={{ borderRadius: "50%", color: "grey.600", mr: "0.25rem" }}
               >
-                <Icon name="clear" size={16} />
+                <Icon name="close" size={16} />
               </Box>
             </ButtonBase>
           ) : null
@@ -488,7 +488,7 @@ export const Switch = ({
   onChange,
 }: {
   id?: string;
-  label: React.ReactNode;
+  label: React.ComponentProps<typeof FormControlLabel>["label"];
   disabled?: boolean;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
@@ -500,72 +500,26 @@ export const Switch = ({
         alignItems: "center",
       }}
     >
-      <InputLabel
+      <FormControlLabel
         htmlFor={genId}
-        sx={{ ":active div:after": { width: disabled ? "12px" : "16px" } }}
-      >
-        <MUICheckbox
-          id={genId}
-          name={name}
-          checked={checked}
-          disabled={disabled}
-          onChange={onChange}
-          sx={{
-            opacity: 0,
-            width: 0,
-            height: 0,
-          }}
-        />
-        <Box
-          aria-hidden
-          sx={{
-            position: "absolute",
-            cursor: disabled ? "default" : "pointer",
-            pointerEvents: disabled ? "none" : "unset",
-            width: "32px",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: checked ? "primary" : "grey.100",
-            borderRadius: "12px",
-            border: "1px solid",
-            borderColor: checked ? "primary" : "grey.500",
-
-            transition: "300ms",
-
-            ":after": {
-              position: "absolute",
-              content: "''",
-              height: "12px",
-              width: "12px",
-              left: checked ? "calc(100% - 1px)" : "1px",
-              bottom: "1px",
-              backgroundColor: checked
-                ? "grey.100"
-                : disabled
-                ? "grey.500"
-                : "grey.600",
-              borderRadius: "12px",
-              transition: "300ms",
-              transform: checked ? "translateX(-100%)" : "unset",
-            },
-          }}
-        ></Box>
-
-        <Box
-          component="span"
-          sx={{
-            fontSize: "0.75rem",
-            ml: "32px",
-            color: "grey.700",
-            cursor: disabled ? "default" : "pointer",
-            pointerEvents: disabled ? "none" : "unset",
-          }}
-        >
-          {label}
-        </Box>
-      </InputLabel>
+        label={label}
+        componentsProps={{
+          typography: {
+            variant: "body2",
+            color: "grey.800",
+          },
+        }}
+        sx={{ fontSize: "0.875rem" }}
+        control={
+          <MUISwitch
+            id={genId}
+            name={name}
+            checked={checked}
+            disabled={disabled}
+            onChange={onChange}
+          />
+        }
+      />
     </Flex>
   );
 };

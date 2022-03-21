@@ -89,9 +89,10 @@ export const TabDropZone = ({
                                 width: 24,
                                 height: 24,
                                 position: "absolute",
-                                top: "50%",
+                                top: 0,
+                                bottom: 0,
                                 right: 3,
-                                marginTop: -12,
+                                margin: "auto",
                                 color: isDragging
                                   ? "secondary.active"
                                   : "secondary.disabled",

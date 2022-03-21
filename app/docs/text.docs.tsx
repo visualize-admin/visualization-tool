@@ -8,7 +8,7 @@ export default () => {
 
   return markdown`
 
-> Text elements are based on \`rebass\` \`<Typography />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
+> Text elements are based on \`MUI\` \`<Typography />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
 
 ## Accessibility
 
