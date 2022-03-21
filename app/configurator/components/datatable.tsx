@@ -38,11 +38,10 @@ export const PreviewTable = ({
     <Table>
       <caption style={{ display: "none" }}>{title}</caption>
       <TableHead sx={{ position: "sticky", top: 0, background: "white" }}>
-        <TableRow>
+        <TableRow sx={{ borderBottom: "none" }}>
           {headers.map(({ iri, label, unit, __typename }) => {
             return (
               <TableCell
-                headers=""
                 component="th"
                 role="columnheader"
                 key={iri}
@@ -55,12 +54,13 @@ export const PreviewTable = ({
             );
           })}
         </TableRow>
+        <BackgroundRow nCells={headers.length} />
       </TableHead>
       <TableBody>
         {observations.map((obs, i) => {
           return (
             <TableRow key={i}>
-              {headers.map(({ iri, label, __typename }) => (
+              {headers.map(({ iri, __typename }) => (
                 <TableCell
                   key={iri}
                   component="td"
@@ -80,6 +80,17 @@ export const PreviewTable = ({
         })}
       </TableBody>
     </Table>
+  );
+};
+
+const BackgroundRow = ({ nCells }: { nCells: number }) => {
+  return (
+    <TableRow sx={{ padding: 0, background: "black" }}>
+      <TableCell
+        colSpan={nCells}
+        sx={{ height: "1px", padding: 0, borderBottom: "none" }}
+      ></TableCell>
+    </TableRow>
   );
 };
 
