@@ -447,9 +447,9 @@ export const SearchField = ({
               </VisuallyHidden>
               <Box
                 aria-hidden="true"
-                sx={{ borderRadius: "50%", backgroundColor: "grey.600" }}
+                sx={{ borderRadius: "50%", color: "grey.600", mr: "0.25rem" }}
               >
-                <Icon name="clear" size={16} />
+                <Icon name="close" size={16} />
               </Box>
             </ButtonBase>
           ) : null
