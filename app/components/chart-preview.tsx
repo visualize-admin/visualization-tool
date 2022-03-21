@@ -32,6 +32,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         flexGrow: 1,
         color: "grey.800",
         p: 5,
+        width: "100%",
       }}
     >
       <ChartErrorBoundary resetKeys={[state]}>
@@ -57,8 +58,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 variant="h2"
                 sx={{
                   mb: 2,
-                  color:
-                    state.meta.title[locale] === "" ? "grey.500" : "text",
+                  color: state.meta.title[locale] === "" ? "grey.500" : "text",
                 }}
               >
                 {state.meta.title[locale] === "" ? (
@@ -80,9 +80,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 sx={{
                   mb: 2,
                   color:
-                    state.meta.description[locale] === ""
-                      ? "grey.500"
-                      : "text",
+                    state.meta.description[locale] === "" ? "grey.500" : "text",
                 }}
               >
                 {state.meta.description[locale] === "" ? (
