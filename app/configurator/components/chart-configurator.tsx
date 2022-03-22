@@ -11,6 +11,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  IconButton,
   Menu,
   MenuItem,
 } from "@mui/material";
@@ -69,19 +70,14 @@ const DataFilterSelectGeneric = ({
 }) => {
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
-      <Button
-        className="buttons"
-        sx={{ ml: 2 }}
-        variant="text"
+      <IconButton
+        disabled={disabled}
+        sx={{ ml: 2, p: 0 }}
         onClick={onRemove}
+        size="small"
       >
-        <Icon
-          name="trash"
-          style={{ fontSize: "small !important" }}
-          width="16"
-          height="16"
-        />
-      </Button>
+        <Icon name="trash" width="16" height="16" />
+      </IconButton>
     </Box>
   );
   return (
