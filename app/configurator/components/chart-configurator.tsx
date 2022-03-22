@@ -1,5 +1,4 @@
 import { t, Trans } from "@lingui/macro";
-import { Menu, MenuButton, MenuItem, MenuList } from "@reach/menu-button";
 import { isEmpty, isEqual, sortBy } from "lodash";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -8,7 +7,13 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { CombinedError, useClient } from "urql";
 import {
   ChartConfig,
@@ -48,6 +53,7 @@ import {
   OnOffControlTabField,
 } from "./field";
 import MoveDragButtons from "./move-drag-buttons";
+import useDisclosure from "./use-disclosure";
 
 const DataFilterSelectGeneric = ({
   dimension,
@@ -281,6 +287,12 @@ export const ChartConfigurator = ({
   });
   const fetching = possibleFiltersFetching || dataFetching;
 
+  const {
+    isOpen: isFilterMenuOpen,
+    open: openFilterMenu,
+    close: closeFilterMenu,
+  } = useDisclosure();
+  const filterMenuButtonRef = useRef(null);
   if (data?.dataCubeByIri) {
     const mappedIris = getFieldComponentIris(state.chartConfig.fields);
     const keysOrder = Object.fromEntries(
@@ -320,6 +332,7 @@ export const ChartConfigurator = ({
         >["dimensions"]
       >[number]
     ) => {
+      closeFilterMenu();
       const filterValue = dimension.values[0];
       dispatch({
         type: "CHART_CONFIG_FILTER_SET_SINGLE",
@@ -476,31 +489,33 @@ export const ChartConfigurator = ({
                   },
                 }}
               >
-                <Menu>
-                  <MenuButton className="menu-button">
-                    <Button
-                      variant="contained"
-                      sx={{
-                        display: "flex",
-                        minWidth: "auto",
-                        justifyContent: "center",
-                      }}
-                      color="primary"
+                <Button
+                  ref={filterMenuButtonRef}
+                  onClick={openFilterMenu}
+                  variant="contained"
+                  sx={{
+                    display: "flex",
+                    minWidth: "auto",
+                    justifyContent: "center",
+                  }}
+                  color="primary"
+                >
+                  <Trans>Add filter</Trans>
+                  <Icon name="add" height={18} />
+                </Button>
+                <Menu
+                  anchorEl={filterMenuButtonRef.current}
+                  open={isFilterMenuOpen}
+                  onClose={closeFilterMenu}
+                >
+                  {addableDimensions.map((dim) => (
+                    <MenuItem
+                      onClick={() => handleAddDimensionFilter(dim)}
+                      key={dim.iri}
                     >
-                      <Trans>Add filter</Trans>
-                      <Icon name="add" height={18} />
-                    </Button>
-                  </MenuButton>
-                  <MenuList>
-                    {addableDimensions.map((dim) => (
-                      <MenuItem
-                        onSelect={() => handleAddDimensionFilter(dim)}
-                        key={dim.iri}
-                      >
-                        {dim.label}
-                      </MenuItem>
-                    ))}
-                  </MenuList>
+                      {dim.label}
+                    </MenuItem>
+                  ))}
                 </Menu>
               </Box>
             ) : null}

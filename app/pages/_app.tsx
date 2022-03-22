@@ -1,7 +1,6 @@
 import { I18nProvider } from "@lingui/react";
 
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
-import "@reach/menu-button/styles.css";
 import "core-js/features/array/flat-map";
 import { AppProps } from "next/app";
 import Head from "next/head";
@@ -18,9 +17,6 @@ import { i18n, parseLocaleString } from "../locales/locales";
 import { LocaleProvider } from "../locales/use-locale";
 import * as defaultTheme from "../themes/federal";
 import { loadTheme, ThemeModule } from "../themes/index";
-// Those styles are imported here since custom styles should be imported
-// in _app in Next.js applications
-import "../components/reach-ui-custom-styles.css";
 import AsyncLocalizationProvider from "../utils/l10n-provider";
 
 export default function App({ Component, pageProps }: AppProps) {
