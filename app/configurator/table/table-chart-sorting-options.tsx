@@ -1,6 +1,5 @@
 import Flex from "../../components/flex";
 import { t, Trans } from "@lingui/macro";
-import VisuallyHidden from "@reach/visually-hidden";
 import React, { useCallback } from "react";
 import {
   DragDropContext,
@@ -9,6 +8,7 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
+import VisuallyHidden from "../../components/visually-hidden";
 import { Radio, Select } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
