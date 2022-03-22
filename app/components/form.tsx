@@ -2,8 +2,7 @@ import { Trans } from "@lingui/macro";
 import { useId } from "@reach/auto-id";
 import VisuallyHidden from "@reach/visually-hidden";
 import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
-import { DayPickerInputProps, DayPickerProps } from "react-day-picker";
-import DayPickerInput from "react-day-picker/DayPickerInput";
+
 import {
   Box,
   BoxProps,
@@ -16,15 +15,15 @@ import {
   Switch as MUISwitch,
   SelectProps,
   Typography,
-  useTheme,
+  TextField,
 } from "@mui/material";
 import Flex from "./flex";
 import { FieldProps, Option } from "../configurator";
 import { useBrowseContext } from "../configurator/components/dataset-browse";
-import { useTimeFormatUnit } from "../configurator/components/ui-helpers";
-import { TimeUnit } from "../graphql/query-hooks";
 import { Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
+import { DatePicker, DatePickerProps } from "@mui/lab";
+import { timeFormat } from "d3-time-format";
 
 export const Label = ({
   label,
@@ -299,6 +298,8 @@ export const Input = ({
   </Box>
 );
 
+const formatDate = timeFormat("%Y-%m-%d");
+
 export const DayPickerField = ({
   label,
   name,
@@ -316,62 +317,41 @@ export const DayPickerField = ({
   controls?: ReactNode;
   label?: string | ReactNode;
   disabled?: boolean;
-} & Omit<DayPickerInputProps, "onChange" | "disabledDays">) => {
-  const handleDayClick = useCallback(
-    (day: Date) => {
-      const isDisabled = isDayDisabled(day);
-
-      if (!isDisabled) {
-        const ev = {
-          currentTarget: {
-            value: day.toISOString().slice(0, 10),
-          },
-        } as ChangeEvent<HTMLSelectElement>;
-
-        onChange(ev);
+} & Omit<
+  DatePickerProps<Date>,
+  | "onChange"
+  | "value"
+  | "shouldDisableDate"
+  | "onChange"
+  | "inputFormat"
+  | "renderInput"
+>) => {
+  const handleChange = useCallback(
+    (day: Date | null) => {
+      if (!day) {
+        return;
       }
+      const isDisabled = isDayDisabled(day);
+      if (isDisabled) {
+        return;
+      }
+
+      const ev = {
+        target: {
+          value: formatDate(day),
+        },
+      } as ChangeEvent<HTMLSelectElement>;
+
+      onChange(ev);
     },
     [isDayDisabled, onChange]
   );
-  const formatDateAuto = useTimeFormatUnit();
-  const theme = useTheme();
-  const inputProps = useMemo(() => {
-    return {
-      name,
-      formatDate: formatDateAuto,
-      value: formatDateAuto(value, TimeUnit.Day),
-      disabled,
-      ...props.inputProps,
-      style: {
-        padding: "0.625rem 0.75rem",
-        color: disabled ? "grey.300" : "grey.700",
-        fontSize: "1rem",
-        minHeight: "1.5rem",
-        display: "block",
-        borderRadius: "0.25rem",
-        width: "100%",
-        border: `1px solid ${theme.palette.divider}`,
-
-        // @ts-ignore
-        ...props.inputProps?.style,
-      },
-    } as DayPickerInputProps;
-  }, [name, formatDateAuto, value, disabled, props.inputProps, theme]);
-
-  const dayPickerProps = useMemo(() => {
-    return {
-      onDayClick: handleDayClick,
-      disabledDays: isDayDisabled,
-      ...props.dayPickerProps,
-    } as DayPickerProps;
-  }, [handleDayClick, isDayDisabled, props.dayPickerProps]);
 
   return (
     <Box
       sx={{
         color: disabled ? "grey.300" : "grey.700",
         fontSize: "1rem",
-        pb: 2,
       }}
     >
       {label && name && (
@@ -380,14 +360,19 @@ export const DayPickerField = ({
           {controls}
         </Label>
       )}
-      <DayPickerInput
-        value={value}
-        style={{ width: "100%", color: "inherit" }}
+      <DatePicker<Date>
         {...props}
-        inputProps={inputProps}
-        dayPickerProps={dayPickerProps}
+        inputFormat="dd.MM.yyyy"
+        views={["day"]}
+        value={value}
+        shouldDisableDate={isDayDisabled}
+        onChange={handleChange}
+        onYearChange={handleChange}
+        renderInput={(params) => (
+          <TextField hiddenLabel size="small" {...params} />
+        )}
+        disabled={disabled}
       />
-      {/* <DayPicker selectedDays={new Date()} /> */}
     </Box>
   );
 };

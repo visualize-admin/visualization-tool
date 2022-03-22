@@ -1,4 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
+import { DatePicker, PickersDay } from "@mui/lab";
+import { TextField } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 import React, { useState } from "react";
 import {
@@ -204,6 +206,36 @@ ${(
       </BrowseStateProvider>
     </ReactSpecimen>
   )}
+
+  ## Date picker
+
+    ${(
+      <ReactSpecimen>
+        <DatePicker
+          views={["year", "month"]}
+          inputFormat="dd/MM/yyyy"
+          componentsProps={{}}
+          value={new Date(1991, 10, 20)}
+          onChange={() => {}}
+          renderDay={(date, selectedDates, pickersDayProps) => {
+            return (
+              <PickersDay
+                {...pickersDayProps}
+                disabled={new Date(date).getDate() % 2 === 1}
+              />
+            );
+          }}
+          renderInput={(params) => (
+            <TextField
+              // InputLabelProps={{ sx: { display: "none" } }}
+              hiddenLabel
+              size="small"
+              {...params}
+            />
+          )}
+        />
+      </ReactSpecimen>
+    )}
 
   # For developers
 

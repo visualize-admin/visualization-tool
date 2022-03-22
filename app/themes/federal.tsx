@@ -531,6 +531,30 @@ theme.components = {
       checked: {},
     },
   },
+  MuiCalendarPicker: {
+    styleOverrides: {
+      root: {
+        maxHeight: "330px",
+        "& > :nth-child(2) > div > :nth-child(2)": {
+          minHeight: 230,
+        },
+      },
+    },
+  },
+  MuiPickersDay: {
+    styleOverrides: {
+      root: {
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      selected: {
+        color: "white",
+        "&.Mui-disabled": {
+          color: "rgba(255, 255, 255, 0.5)",
+        },
+      },
+    },
+  },
   MuiTable: {
     styleOverrides: {
       root: {
@@ -549,6 +573,9 @@ theme.components = {
     styleOverrides: {
       root: {
         paddingTop: "0.25rem",
+      },
+      outlined: {
+        paddingLeft: "0.5rem",
       },
     },
   },
