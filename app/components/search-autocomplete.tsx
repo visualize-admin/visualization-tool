@@ -9,7 +9,7 @@ import SvgIcCategories from "../icons/components/IcCategories";
 import SvgIcOrganisations from "../icons/components/IcOrganisations";
 import { useLocale } from "../src";
 import Autocomplete, { AutocompleteProps } from "./autocomplete";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import useDatasetCount from "../configurator/components/use-dataset-count";
 import { t } from "@lingui/macro";
 import SvgIcText from "../icons/components/IcText";
@@ -17,19 +17,19 @@ import SvgIcText from "../icons/components/IcText";
 const getItemIcon = (item: SearchAutocompleteItem) => {
   if (item.__typename === "DataCubeTheme") {
     return (
-      <Box as="span" sx={{ color: "categoryGreen" }}>
+      <Box component="span" sx={{ color: "categoryGreen" }}>
         <SvgIcOrganisations height={24} width={24} />
       </Box>
     );
   } else if (item.__typename === "DataCubeOrganization") {
     return (
-      <Box as="span" sx={{ color: "organizationBlue" }}>
+      <Box component="span" sx={{ color: "organizationBlue" }}>
         <SvgIcCategories height={24} width={24} />
       </Box>
     );
   } else if (item.__typename === "FreeSearchItem") {
     return (
-      <Box as="span" sx={{ color: "monochrome500" }}>
+      <Box component="span" sx={{ color: "grey.500" }}>
         <SvgIcText height={24} width={24} />
       </Box>
     );

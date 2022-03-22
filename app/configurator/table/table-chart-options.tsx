@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import get from "lodash/get";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { Checkbox } from "../../components/form";
-import Stack from "../../components/Stack";
+import { Stack } from '@mui/material'
 import { canDimensionBeMultiFiltered } from "../../domain/data";
 import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../graphql/types";
@@ -303,7 +303,7 @@ export const TableColumnOptions = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" as="fieldset">
+          <ControlSectionContent side="right" component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
@@ -327,7 +327,7 @@ export const TableColumnOptions = ({
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
           </SectionTitle>
-          <ControlSectionContent side="right" as="fieldset">
+          <ControlSectionContent side="right" component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>

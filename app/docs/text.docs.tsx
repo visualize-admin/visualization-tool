@@ -1,5 +1,5 @@
 import { markdown, TableSpecimen } from "catalog";
-import { Text } from "theme-ui";
+import { Typography } from "@mui/material";
 import { useTheme } from "../themes/index";
 const pixelSize = 16;
 
@@ -8,7 +8,7 @@ export default () => {
 
   return markdown`
 
-> Text elements are based on \`rebass\` \`<Text />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
+> Text elements are based on \`MUI\` \`<Typography />\` component, with the variants described in the table below. The variant definitions implement the responsive typographic scale defined in [Typography](/typography).
 
 ## Accessibility
 
@@ -16,11 +16,11 @@ The variants only refer to styles, they don't generate HTML semantics. For acces
 
 Example of a heading \`h1\` with the style \`heading1\`.
 ~~~
-import { Text } from "theme-ui"
+import { Text } from "@mui/material"
 
-<Text  variant="heading1" as="h1" >
+<Typography  variant="h1" component="h1" >
  Heading 1
-</Text>
+</Typography>
 ~~~
 
 ## Variants
@@ -28,40 +28,30 @@ import { Text } from "theme-ui"
 ${(
   <TableSpecimen
     span={6}
-    rows={Object.entries(theme.text as $FixMe).map(([key, textStyle], i) => {
+    rows={[
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "body1",
+      "body2",
+      "caption",
+      "tag",
+    ].map((variant, i) => {
       return {
-        Variant: `\`${key}\``,
+        Variant: `\`${variant}\``,
         Sample: (
-          <Text variant={key} as="h1">
+          <Typography
+            variant={
+              variant as React.ComponentProps<typeof Typography>["variant"]
+            }
+          >
             The quick brown fox...
-          </Text>
+          </Typography>
         ),
-        // "font-sizes": textStyle.fontSize.map(fs => theme.fontSizes[fs])
       };
     })}
-  ></TableSpecimen>
-)}
-
-## Reference
-The font size and line height values currently in use in the application are listed here.
-${(
-  <TableSpecimen
-    span={3}
-    rows={theme.fontSizes.map((d: $FixMe, i: number) => ({
-      index: i,
-      "font-size (rem)": d,
-      "font-size (px)": `${+(d as string).split("rem")[0] * pixelSize}px`,
-    }))}
-  ></TableSpecimen>
-)}
-${(
-  <TableSpecimen
-    span={3}
-    rows={theme.lineHeights.map((d: $FixMe, i: number) => ({
-      index: i,
-      "line-height (rem)": d,
-      "line-height (px)": `${+(d as string).split("rem")[0] * pixelSize}px`,
-    }))}
   ></TableSpecimen>
 )}
 `;

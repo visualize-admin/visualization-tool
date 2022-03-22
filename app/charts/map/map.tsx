@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 import { StaticMap } from "react-map-gl";
-import { Box, Button } from "theme-ui";
+import { Box, Button } from "@mui/material";
 import { GeoFeature, GeoPoint } from "../../domain/data";
 import { Icon, IconName } from "../../icons";
 import { useLocale } from "../../src";
@@ -361,15 +361,15 @@ const ZoomButton = ({
   handleClick: () => void;
 }) => (
   <Button
-    variant="reset"
+    variant="text"
     sx={{
       width: 32,
       height: 32,
-      borderRadius: "default",
+      borderRadius: 1,
       border: "1px solid",
-      borderColor: "monochrome500",
-      color: "monochrome700",
-      bg: "monochrome100",
+      borderColor: "grey.500",
+      color: "grey.700",
+      backgroundColor: "grey.100",
       padding: 0,
       display: "flex",
       justifyContent: "center",

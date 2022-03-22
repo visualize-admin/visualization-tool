@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { Observation } from "../../../domain/data";
 import { LinesState } from "../../line/lines-state";
 import { Margins } from "../use-width";
@@ -62,7 +62,7 @@ export const RulerContent = ({
           position: "absolute",
           borderWidth: 0.5,
           borderStyle: "solid",
-          borderColor: "monochrome.200",
+          borderColor: "grey.200",
           pointerEvents: "none",
           transform: "translateX(-50%)",
         }}
@@ -75,11 +75,11 @@ export const RulerContent = ({
         sx={{
           position: "absolute",
           fontWeight: "bold",
-          bg: "monochrome100",
+          backgroundColor: "grey.100",
           transform: "translateX(-50%)",
           px: 1,
-          fontSize: 3,
-          color: "monochrome800",
+          fontSize: "0.875rem",
+          color: "grey.800",
         }}
       >
         {xValue}

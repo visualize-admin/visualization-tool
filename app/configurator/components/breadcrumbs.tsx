@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { Box, BoxProps } from "@theme-ui/components";
+import { Box, BoxProps } from "@mui/material";
 import React from "react";
 
 const Breadcrumbs = ({

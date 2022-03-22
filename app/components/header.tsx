@@ -1,6 +1,7 @@
+import Flex from "./flex";
 import { Trans } from "@lingui/macro";
 
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Typography } from "@mui/material";
 import { LanguageMenu } from "./language-menu";
 import NextLink from "next/link";
 import React, {
@@ -51,7 +52,7 @@ export const HeaderBorder = () => {
         opacity: progress === 0 ? 0 : 1,
         borderBottomWidth: "4px",
         borderBottomStyle: "solid",
-        borderBottomColor: "brand",
+        borderBottomColor: "brand.main",
       }}
     />
   );
@@ -80,14 +81,14 @@ export const Header = ({
       }
     >
       <Flex
-        as="header"
+        component="header"
         sx={{
           px: [0, 4, 4],
           pt: [0, 3, 3],
-          pb: [0, 5, 5],
+          minHeight: 92,
 
-          bg: "monochrome100",
-          color: "monochrome700",
+          backgroundColor: "grey.100",
+          color: "grey.700",
           flexDirection: ["column", "row"],
         }}
       >
@@ -103,13 +104,13 @@ export const Logo = () => {
   return (
     <NextLink href="/" passHref>
       <Flex
-        as="a"
+        component="a"
         sx={{
           order: [2, 1],
           alignItems: ["center", "flex-start"],
           cursor: "pointer",
           textDecoration: "none",
-          color: "monochrome900",
+          color: "grey.900",
         }}
       >
         <Box
@@ -127,19 +128,19 @@ export const Logo = () => {
             pr: 6,
             borderRightWidth: "1px",
             borderRightStyle: "solid",
-            borderRightColor: "monochrome300",
-            color: "monochrome900",
+            borderRightColor: "grey.300",
+            color: "grey.900",
           }}
         >
           <LogoDesktop />
         </Box>
-        <Text
-          as="h1"
-          variant="lead"
-          sx={{ pl: [0, 6], textDecoration: "none", color: "monochrome800" }}
+        <Typography
+          component="h1"
+          variant="h4"
+          sx={{ pl: [0, 6], color: "grey.800" }}
         >
           visualize.admin.ch
-        </Text>
+        </Typography>
       </Flex>
     </NextLink>
   );

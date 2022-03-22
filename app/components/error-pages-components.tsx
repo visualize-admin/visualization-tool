@@ -1,8 +1,9 @@
+import Flex from "./flex";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { ReactNode } from "react";
-import { Flex, Link, Text } from "theme-ui";
+import { Link, Typography } from "@mui/material";
 import { Locale } from "../locales/locales";
 
 export const ErrorPageHint = ({ children }: { children: ReactNode }) => (
@@ -23,7 +24,15 @@ export const ErrorPageHint = ({ children }: { children: ReactNode }) => (
 );
 
 export const Actions = ({ children }: { children: ReactNode }) => (
-  <Flex sx={{ mb: 6, fontSize: [4, 5, 5], display: "inline" }}>{children}</Flex>
+  <Flex
+    sx={{
+      mb: 6,
+      fontSize: ["1rem", "1.125rem", "1.125rem"],
+      display: "inline",
+    }}
+  >
+    {children}
+  </Flex>
 );
 
 export const HomeLink = ({
@@ -36,7 +45,7 @@ export const HomeLink = ({
   <NextLink href={`/`} locale={locale} passHref>
     <Link
       sx={{
-        bg: "transparent",
+        backgroundColor: "transparent",
         color: "primary",
         textDecoration: "underline",
         cursor: "pointer",
@@ -50,16 +59,16 @@ export const HomeLink = ({
 export const ReloadButton = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   return (
-    <Text
+    <Typography
       onClick={() => router.reload()}
       sx={{
-        bg: "transparent",
+        backgroundColor: "transparent",
         color: "primary",
         textDecoration: "underline",
         cursor: "pointer",
       }}
     >
       {children}
-    </Text>
+    </Typography>
   );
 };

@@ -1,5 +1,14 @@
-import { Loading, Error, Success } from "../components/hint";
+import {
+  Loading,
+  Error,
+  Success,
+  OnlyNegativeDataHint,
+  ChartUnexpectedError,
+  LoadingGeoDimensionsError,
+  LoadingDataError,
+} from "../components/hint";
 import { markdown, ReactSpecimen } from "catalog";
+import { Stack } from '@mui/material'
 
 export default () => markdown`
 
@@ -31,13 +40,26 @@ ${(
   </ReactSpecimen>
 )}
 
+## Specific errors
+
+${(
+  <ReactSpecimen>
+    <Stack spacing={2}>
+      <OnlyNegativeDataHint />
+      <ChartUnexpectedError />
+      <LoadingGeoDimensionsError />
+      <LoadingDataError message="The cube does not exist." />
+    </Stack>
+  </ReactSpecimen>
+)}
+
 ## How to use
 
 
 Hints are variants of the \`Box\` components. As a convenience, they are also available as components with semantic names.
 
 ~~~
-import { Box } from "theme-ui"
+import { Box } from "@mui/material"
 
 <Box variant="error">
   An error occurred!

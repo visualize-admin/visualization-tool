@@ -1,8 +1,9 @@
+import Flex from "../../../components/flex";
 import { Trans } from "@lingui/macro";
 import { useSelect } from "downshift";
 import get from "lodash/get";
 import { useCallback } from "react";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Typography } from "@mui/material";
 import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "../..";
 import { Label } from "../../../components/form";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
@@ -91,7 +92,7 @@ export const ColorPalette = ({
         )}
         <Icon name="unfold" />
       </Button>
-      <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
+      <Box {...getMenuProps()} sx={{ backgroundColor: "grey.100" }}>
         {isOpen &&
           palettes.map((palette, index) => (
             <Box
@@ -100,20 +101,16 @@ export const ColorPalette = ({
                 p: 1,
                 cursor: "pointer",
                 backgroundColor:
-                  highlightedIndex === index
-                    ? "monochrome200"
-                    : "monochrome100",
+                  highlightedIndex === index ? "grey.200" : "grey.100",
               }}
             >
-              <Text as="div" variant="meta">
+              <Typography component="div" variant="caption">
                 {palette.label}
-              </Text>
+              </Typography>
               <Box
                 sx={{
                   backgroundColor:
-                    highlightedIndex === index
-                      ? "monochrome200"
-                      : "monochrome100",
+                    highlightedIndex === index ? "grey.200" : "grey.100",
                 }}
                 {...getItemProps({ item: palette, index })}
               >
@@ -151,13 +148,13 @@ const ColorSquare = ({
 }) => (
   <Box
     sx={{
-      bg: disabled ? "monochrome300" : color,
+      backgroundColor: disabled ? "grey.300" : color,
       display: "inline-block",
       margin: 0,
       padding: 0,
       width: 16,
       height: 28,
-      borderColor: "monochrome100",
+      borderColor: "grey.100",
       borderWidth: "1px",
       borderStyle: "solid",
       "&:first-of-type": {
@@ -231,15 +228,15 @@ const ColorPaletteReset = ({
       <Button
         disabled={same}
         onClick={resetColorPalette}
-        variant="inline"
-        sx={{ mt: 2, mb: 3 }}
+        variant="text"
+        sx={{ mt: 0, mb: 3, px: 1 }}
       >
         <Trans id="controls.color.palette.reset">Reset color palette</Trans>
       </Button>
     );
   } else {
     return (
-      <Button disabled={true} variant="inline" sx={{ mt: 2, mb: 3 }}>
+      <Button disabled={true} variant="text" sx={{ mt: 2, mb: 3 }}>
         <Trans id="controls.color.palette.reset">Reset color palette</Trans>
       </Button>
     );

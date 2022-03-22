@@ -1,4 +1,5 @@
-import { Box, Flex, Text } from "theme-ui";
+import Flex from "../components/flex";
+import { Box, Typography } from "@mui/material";
 import { ReactNode } from "react";
 import { Icon } from "../icons";
 import { HomepageSection } from "./generic";
@@ -19,7 +20,7 @@ export const Tutorial = ({
 }) => {
   return (
     <Box
-      sx={{ maxWidth: 1024, m: "0 auto", color: "monochrome800", px: 4, pb: 7 }}
+      sx={{ maxWidth: 1024, m: "0 auto", color: "grey.800", px: 4, pb: 7 }}
     >
       <HomepageSection>{headline}</HomepageSection>
       <Flex
@@ -53,17 +54,16 @@ export const Tutorial = ({
 };
 
 const HomepageTutorialStep = ({ children }: { children: ReactNode }) => (
-  <Text
-    as="div"
+  <Typography
+    component="div"
+    variant="body1"
     sx={{
-      fontSize: 5,
-      fontFamily: "body",
       mt: 4,
       mb: 2,
     }}
   >
     {children}
-  </Text>
+  </Typography>
 );
 
 const Arrow = () => (

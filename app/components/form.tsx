@@ -7,15 +7,18 @@ import DayPickerInput from "react-day-picker/DayPickerInput";
 import {
   Box,
   BoxProps,
-  Button,
-  Checkbox as TUICheckbox,
-  Flex,
-  Input as TUIInput,
-  Label as TUILabel,
-  Radio as TUIRadio,
-  Select as TUISelect,
+  ButtonBase,
+  Checkbox as MUICheckbox,
+  FormControlLabel,
+  Input as MUIInput,
+  Radio as MUIRadio,
+  Select as MUISelect,
+  Switch as MUISwitch,
   SelectProps,
-} from "theme-ui";
+  Typography,
+  useTheme,
+} from "@mui/material";
+import Flex from "./flex";
 import { FieldProps, Option } from "../configurator";
 import { useBrowseContext } from "../configurator/components/dataset-browse";
 import { useTimeFormatUnit } from "../configurator/components/ui-helpers";
@@ -26,49 +29,28 @@ import { useLocale } from "../locales/use-locale";
 export const Label = ({
   label,
   htmlFor,
-  disabled,
   smaller = false,
   children,
 }: {
   label?: string;
   htmlFor: string;
-  disabled?: boolean;
   smaller?: boolean;
   children: ReactNode;
 }) => (
-  <TUILabel
+  <Typography
+    component="label"
     htmlFor={htmlFor}
-    sx={{
-      cursor: "pointer",
-      width: "auto",
-      color: disabled ? "monochrome500" : "monochrome700",
-      fontSize: smaller ? 2 : 4,
-      mr: 4,
-      display: "flex",
-      alignItems: "center",
-    }}
+    variant={smaller ? "caption" : "body1"}
+    display="flex"
+    sx={{ mb: 2 }}
   >
     {children}
     {label && (
-      <Box
-        sx={
-          {
-            textAlign: "left",
-            fontFamily: "body",
-            pr: 1,
-            fontSize: smaller ? 2 : 3,
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            display: "-webkit-box",
-            overflow: "hidden",
-          } as $IntentionalAny
-        }
-        title={label}
-      >
+      <Box sx={{ mb: 1 }} title={label}>
         {label}
       </Box>
     )}
-  </TUILabel>
+  </Typography>
 );
 
 export const Radio = ({
@@ -80,35 +62,43 @@ export const Radio = ({
   onChange,
 }: { label: string; disabled?: boolean } & FieldProps) => {
   return (
-    <Box mb={2}>
-      <Label label={label} htmlFor={`${name}-${value}`} disabled={disabled}>
-        <TUIRadio
+    <FormControlLabel
+      label={label}
+      htmlFor={`${name}-${value}`}
+      componentsProps={{
+        typography: {
+          variant: "body2",
+        },
+      }}
+      control={
+        <MUIRadio
           name={name}
           id={`${name}-${value}`}
           value={value}
           onChange={onChange}
           checked={checked}
           disabled={disabled}
-          size={20}
+          size="small"
           sx={{
             color:
               checked && !disabled
                 ? "primary"
                 : checked && disabled
-                ? "primaryDisabled"
-                : "monochrome500",
+                ? "primary.disabled"
+                : "grey.500",
             "> *": {
               fill:
                 checked && !disabled
                   ? "primary"
                   : checked && disabled
-                  ? "primaryDisabled"
-                  : "monochrome500",
+                  ? "primary.disabled"
+                  : "grey.500",
             },
           }}
         />
-      </Label>
-    </Box>
+      }
+      disabled={disabled}
+    />
   );
 };
 
@@ -127,43 +117,31 @@ export const Checkbox = ({
   color?: string;
   smaller?: boolean;
 } & FieldProps) => (
-  <Label
+  <FormControlLabel
     label={label}
     htmlFor={`${name}-${label}`}
     disabled={disabled}
-    smaller={smaller}
-  >
-    <TUICheckbox
-      data-name="checkbox-component"
-      sx={{
-        width: smaller ? 16 : undefined,
-        height: smaller ? 16 : undefined,
-        mr: smaller ? 1 : undefined,
-        color:
-          checked && !disabled
-            ? "primary"
-            : checked && disabled
-            ? "primaryDisabled"
-            : "monochrome500",
-        "> *": {
-          fill:
-            color && checked
-              ? color
-              : checked && !disabled
-              ? "primary"
-              : checked && disabled
-              ? "primaryDisabled"
-              : "monochrome500",
-        },
-      }}
-      id={`${name}-${label}`}
-      name={name}
-      value={value}
-      checked={checked}
-      disabled={disabled}
-      onChange={onChange}
-    />
-  </Label>
+    sx={{ display: "flex" }}
+    componentsProps={{
+      typography: {
+        variant: smaller ? "caption" : "body2",
+        color: "grey.800",
+      },
+    }}
+    control={
+      <MUICheckbox
+        data-name="checkbox-component"
+        size={smaller ? "small" : "medium"}
+        id={`${name}-${label}`}
+        name={name}
+        value={value}
+        checked={checked}
+        disabled={disabled}
+        onChange={onChange}
+        sx={{ mr: smaller ? 0 : 1, svg: { color }, input: { color } }}
+      />
+    }
+  />
 );
 
 export const Select = ({
@@ -202,25 +180,23 @@ export const Select = ({
   }, [options, locale, sortOptions]);
 
   return (
-    <Box sx={{ color: "monochrome700" }}>
+    <Box sx={{ color: "grey.700" }}>
       {label && (
-        <Label htmlFor={id} disabled={disabled} smaller>
+        <Label htmlFor={id} smaller>
           {label}
           {controls}
         </Label>
       )}
-      <TUISelect
+      <MUISelect
+        native
         sx={{
-          borderColor: "monochrome500",
-          fontSize: 4,
-          bg: "monochrome100",
-          pt: 2,
-          pb: 2,
-          pl: 2,
-          pr: 5,
+          borderColor: "grey.500",
+          backgroundColor: "grey.100",
+          pl: 0,
           height: "40px",
-          color: disabled ? "monochrome500" : "monochrome700",
+          color: disabled ? "grey.500" : "grey.700",
           textOverflow: "ellipsis",
+          width: "100%",
         }}
         id={id}
         name={id}
@@ -237,7 +213,7 @@ export const Select = ({
             {opt.label}
           </option>
         ))}
-      </TUISelect>
+      </MUISelect>
     </Box>
   );
 };
@@ -254,27 +230,30 @@ export const MiniSelect = ({
   label?: ReactNode;
   disabled?: boolean;
 } & SelectProps) => (
-  <Box sx={{ color: "monochrome800" }}>
+  <Box sx={{ color: "grey.800" }}>
     {label && (
       <Label htmlFor={id} smaller>
         {label}
       </Label>
     )}
-    <TUISelect
+    <MUISelect
       sx={{
         borderColor: "transparent",
-        fontSize: [1, 2, 2],
-        fontFamily: "body",
-        bg: "transparent",
+        fontSize: ["0.625rem", "0.75rem", "0.75rem"],
+
+        backgroundColor: "transparent",
         py: 0,
         pl: 1,
         pr: 4,
         mr: 1, // Fix for Chrome which cuts of the label otherwise
         ":focus": {
           outline: "none",
-          borderColor: "primary",
+          borderColor: "primary.main",
         },
       }}
+      native
+      size="small"
+      variant="standard"
       id={id}
       name={id}
       onChange={onChange}
@@ -285,7 +264,7 @@ export const MiniSelect = ({
           {opt.label}
         </option>
       ))}
-    </TUISelect>
+    </MUISelect>
   </Box>
 );
 
@@ -300,14 +279,18 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "monochrome700", fontSize: 4, pb: 2 }}>
+  <Box sx={{ color: "grey.700", fontSize: "1rem", pb: 2 }}>
     {label && name && (
       <Label htmlFor={name} smaller>
         {label}
       </Label>
     )}
-    <TUIInput
-      sx={{ borderColor: "monochrome500", bg: "monochrome100", height: "40px" }}
+    <MUIInput
+      sx={{
+        borderColor: "grey.500",
+        backgroundColor: "grey.100",
+        height: "40px",
+      }}
       id={name}
       name={name}
       value={value}
@@ -351,6 +334,7 @@ export const DayPickerField = ({
     [isDayDisabled, onChange]
   );
   const formatDateAuto = useTimeFormatUnit();
+  const theme = useTheme();
   const inputProps = useMemo(() => {
     return {
       name,
@@ -360,19 +344,19 @@ export const DayPickerField = ({
       ...props.inputProps,
       style: {
         padding: "0.625rem 0.75rem",
-        color: disabled ? "monochrome300" : "monochrome700",
+        color: disabled ? "grey.300" : "grey.700",
         fontSize: "1rem",
         minHeight: "1.5rem",
         display: "block",
         borderRadius: "0.25rem",
         width: "100%",
-        border: "1px solid var(--theme-ui-colors-monochrome500)",
+        border: `1px solid ${theme.palette.divider}`,
 
         // @ts-ignore
         ...props.inputProps?.style,
       },
     } as DayPickerInputProps;
-  }, [name, formatDateAuto, value, disabled, props.inputProps]);
+  }, [name, formatDateAuto, value, disabled, props.inputProps, theme]);
 
   const dayPickerProps = useMemo(() => {
     return {
@@ -385,13 +369,13 @@ export const DayPickerField = ({
   return (
     <Box
       sx={{
-        color: disabled ? "monochrome300" : "monochrome700",
-        fontSize: 4,
+        color: disabled ? "grey.300" : "grey.700",
+        fontSize: "1rem",
         pb: 2,
       }}
     >
       {label && name && (
-        <Label htmlFor={name} smaller disabled={disabled}>
+        <Label htmlFor={name} smaller>
           {label}
           {controls}
         </Label>
@@ -436,26 +420,15 @@ export const SearchField = ({
   const { search } = useBrowseContext();
   return (
     <Box
-      sx={{ color: "monochrome700", fontSize: 4, position: "relative", ...sx }}
+      sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}
     >
       {label && id && (
         <label htmlFor={id}>
           <VisuallyHidden>{label}</VisuallyHidden>
         </label>
       )}
-      <Box
-        aria-hidden="true"
-        sx={{ position: "absolute", top: "50%", mt: "-8px", ml: 2 }}
-      >
-        <Icon name="search" size={16} />
-      </Box>
-      <TUIInput
-        sx={{
-          borderColor: "monochrome500",
-          bg: "monochrome100",
-          px: 6,
-          ":focus": { outline: "none", borderColor: "primary" },
-        }}
+      <MUIInput
+        startAdornment={<Icon name="search" size={16} />}
         id={id}
         value={value}
         onKeyPress={onKeyPress}
@@ -463,35 +436,24 @@ export const SearchField = ({
         onFocus={onFocus}
         onBlur={onBlur}
         autoComplete="off"
-        ref={inputRef}
+        inputRef={inputRef}
+        sx={{ width: "100%", input: { borderRadius: 2 } }}
+        endAdornment={
+          onReset && search && search !== "" ? (
+            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={onReset}>
+              <VisuallyHidden>
+                <Trans id="controls.search.clear">Clear search field</Trans>
+              </VisuallyHidden>
+              <Box
+                aria-hidden="true"
+                sx={{ borderRadius: "50%", color: "grey.600", mr: "0.25rem" }}
+              >
+                <Icon name="close" size={16} />
+              </Box>
+            </ButtonBase>
+          ) : null
+        }
       />
-      {onReset && search && search !== "" && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            right: 0,
-            mt: "-8px",
-            mr: 2,
-          }}
-        >
-          <Button
-            variant="reset"
-            sx={{ p: 0, cursor: "pointer" }}
-            onClick={onReset}
-          >
-            <VisuallyHidden>
-              <Trans id="controls.search.clear">Clear search field</Trans>
-            </VisuallyHidden>
-            <Box
-              aria-hidden="true"
-              sx={{ borderRadius: "circle", bg: "monochrome600" }}
-            >
-              <Icon name="clear" size={16} />
-            </Box>
-          </Button>
-        </Box>
-      )}
     </Box>
   );
 };
@@ -501,19 +463,19 @@ export const FieldSetLegend = ({
 }: {
   legendTitle: string | ReactNode;
 }) => (
-  <Box
+  <Typography
+    variant="caption"
     sx={{
-      fontFamily: "body",
-      lineHeight: [1, 2, 2],
+      lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
-      fontSize: [1, 2, 2],
-      mb: 1,
-      color: "monochrome800",
+      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
+      color: "grey.700",
+      pl: 0,
     }}
-    as="legend"
+    component="legend"
   >
     {legendTitle}
-  </Box>
+  </Typography>
 );
 
 export const Switch = ({
@@ -525,7 +487,7 @@ export const Switch = ({
   onChange,
 }: {
   id?: string;
-  label: React.ReactNode;
+  label: React.ComponentProps<typeof FormControlLabel>["label"];
   disabled?: boolean;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
@@ -537,72 +499,26 @@ export const Switch = ({
         alignItems: "center",
       }}
     >
-      <TUILabel
+      <FormControlLabel
         htmlFor={genId}
-        sx={{ ":active div:after": { width: disabled ? "12px" : "16px" } }}
-      >
-        <TUICheckbox
-          id={genId}
-          name={name}
-          checked={checked}
-          disabled={disabled}
-          onChange={onChange}
-          sx={{
-            opacity: 0,
-            width: 0,
-            height: 0,
-          }}
-        />
-        <Box
-          aria-hidden
-          sx={{
-            position: "absolute",
-            cursor: disabled ? "default" : "pointer",
-            pointerEvents: disabled ? "none" : "unset",
-            width: "32px",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            bg: checked ? "primary" : "monochrome100",
-            borderRadius: "12px",
-            border: "1px solid",
-            borderColor: checked ? "primary" : "monochrome500",
-
-            transition: "300ms",
-
-            ":after": {
-              position: "absolute",
-              content: "''",
-              height: "12px",
-              width: "12px",
-              left: checked ? "calc(100% - 1px)" : "1px",
-              bottom: "1px",
-              bg: checked
-                ? "monochrome100"
-                : disabled
-                ? "monochrome500"
-                : "monochrome600",
-              borderRadius: "12px",
-              transition: "300ms",
-              transform: checked ? "translateX(-100%)" : "unset",
-            },
-          }}
-        ></Box>
-
-        <Box
-          as="span"
-          sx={{
-            fontSize: 2,
-            ml: "32px",
-            color: "monochrome700",
-            cursor: disabled ? "default" : "pointer",
-            pointerEvents: disabled ? "none" : "unset",
-          }}
-        >
-          {label}
-        </Box>
-      </TUILabel>
+        label={label}
+        componentsProps={{
+          typography: {
+            variant: "body2",
+            color: "grey.800",
+          },
+        }}
+        sx={{ fontSize: "0.875rem" }}
+        control={
+          <MUISwitch
+            id={genId}
+            name={name}
+            checked={checked}
+            disabled={disabled}
+            onChange={onChange}
+          />
+        }
+      />
     </Flex>
   );
 };

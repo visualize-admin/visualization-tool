@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Text, TextProps } from "theme-ui";
+import { Typography, TypographyProps, styled, BoxProps } from "@mui/material";
 import {
   DataCubeOrganization,
   DataCubeTheme,
@@ -10,31 +10,42 @@ type TagType =
   | DataCubeTheme["__typename"]
   | DataCubeOrganization["__typename"];
 
+const TagTypography = styled(Typography)(({ theme }) => ({
+  borderRadius: (theme.shape.borderRadius as number) * 1.5,
+  paddingLeft: theme.spacing(2),
+  paddingRight: theme.spacing(2),
+  minHeight: 24,
+  display: "inline-flex",
+  alignItems: "center",
+  width: "fit-content",
+  color: "grey.700",
+  boxShadow: "0 0 0 rgba(0, 0, 0, 0)",
+  transition: "box-shadow ease 0.125s",
+  "&:hover": {
+    boxShadow: theme.shadows[2],
+  },
+}));
+
 const Tag = ({
   children,
   type,
   ...props
-}: { children: ReactNode; type: TagType } & TextProps) => {
+}: { children: ReactNode; type: TagType } & TypographyProps & {
+    component?: BoxProps["component"];
+  }) => {
   const { sx } = props;
   return (
-    <Text
-      variant="paragraph2"
+    <TagTypography
+      variant="caption"
       {...props}
       sx={{
-        bg: type === "DataCubeTheme" ? "successLight" : "primaryLight",
-        px: 2,
-        width: "fit-content",
-        borderRadius: "default",
-        color: "monochrome700",
-        textDecoration: "none",
-        "&:hover": {
-          boxShadow: "primary",
-        },
+        backgroundColor:
+          type === "DataCubeTheme" ? "success.light" : "primary.light",
         ...sx,
       }}
     >
       {children}
-    </Text>
+    </TagTypography>
   );
 };
 

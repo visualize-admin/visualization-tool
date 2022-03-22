@@ -1,21 +1,21 @@
 import React from "react";
 import { Inspector } from "react-inspector";
-import { Box, Link, Text } from "theme-ui";
+import { Box, Button, Typography } from "@mui/material";
 import { useInteractiveFilters } from "../charts/shared/use-interactive-filters";
 import { useConfiguratorState } from "../configurator";
 import { SPARQL_EDITOR, SPARQL_ENDPOINT } from "../domain/env";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { Icon } from "../icons";
 import { useLocale } from "../src";
-import Stack from "./Stack";
+import { Stack } from '@mui/material'
 
 const DebugInteractiveFilters = () => {
   const [interactiveFiltersState] = useInteractiveFilters();
   return (
     <>
-      <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+      <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
         Interactive Filters State
-      </Box>
+      </Typography>
       <Box sx={{ p: 5 }}>
         <Inspector expandLevel={3} data={interactiveFiltersState} />
       </Box>
@@ -34,7 +34,7 @@ const CubeMetadata = ({ datasetIri }: { datasetIri: string }) => {
   return metadata ? (
     <Stack direction="row" spacing={2}>
       <Icon name="column" display="inline" size={16} />
-      <Text variant="paragraph2">Dimensions</Text>
+      <Typography variant="body2">Dimensions</Typography>
       <Inspector
         data={Object.fromEntries(
           metadata?.dataCubeByIri?.dimensions.map((d) => [d.label, d]) || []
@@ -48,13 +48,16 @@ const DebugConfigurator = () => {
   const [configuratorState] = useConfiguratorState();
   return (
     <>
-      <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+      <Typography component="h3" variant="h4" sx={{ px: 5, color: "grey.700" }}>
         Cube Tools
-      </Box>
-      <Stack spacing={2} sx={{ p: 5 }}>
+      </Typography>
+      <Stack spacing={2} sx={{ pl: 5, py: 3 }}>
         {configuratorState.dataSet ? (
-          <Link
-            variant="primary"
+          <Button
+            component="a"
+            color="primary"
+            variant="text"
+            size="small"
             href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
               SPARQL_ENDPOINT
             )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
@@ -62,48 +65,51 @@ const DebugConfigurator = () => {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ display: "flex", alignItems: "center" }}
+            startIcon={<Icon name="linkExternal" size={16} />}
           >
-            <Icon name="linkExternal" size={16} />
-            <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
-              Open in Cube Viewer
-            </Text>
-          </Link>
+            <Typography variant="body2">Open in Cube Viewer</Typography>
+          </Button>
         ) : (
-          <Text variant="body">Please select a dataset first</Text>
+          <Typography variant="body1">Please select a dataset first</Typography>
         )}
         {SPARQL_EDITOR && (
-          <Link
-            variant="primary"
+          <Button
+            component="a"
+            color="primary"
+            variant="text"
+            size="small"
             href={`${SPARQL_EDITOR}#query=${encodeURIComponent(
               `#pragma describe.strategy cbd
 DESCRIBE <${configuratorState.dataSet ?? ""}>`
             )}&requestMethod=POST`}
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ display: "flex", alignItems: "center" }}
+            startIcon={<Icon name="linkExternal" size={16} />}
           >
-            <Icon name="linkExternal" size={16} />
-            <Text sx={{ ml: 2, fontSize: 3 }} variant="body">
-              Cube Metadata Query
-            </Text>
-          </Link>
+            <Typography variant="body2">Cube Metadata Query</Typography>
+          </Button>
         )}
         {configuratorState.dataSet ? (
           <CubeMetadata datasetIri={configuratorState.dataSet} />
         ) : null}
       </Stack>
-      <Box as="h3" variant="text.lead" sx={{ px: 5, color: "monochrome700" }}>
+      <Typography
+        component="h3"
+        variant="h4"
+        sx={{ px: 5, display: "flex", alignItems: "center", color: "grey.700" }}
+      >
         Configurator State{" "}
-        <Link
-          variant="inline"
+        <Button
+          component="span"
+          variant="text"
+          size="small"
           onClick={() => {
             console.log(configuratorState);
           }}
         >
           (dump to console)
-        </Link>
-      </Box>
+        </Button>
+      </Typography>
       <Box sx={{ p: 5 }}>
         <Inspector expandLevel={3} data={configuratorState} />
       </Box>
@@ -125,16 +131,20 @@ const DebugPanel = ({
         ml: -5,
         mr: -5,
         mb: -5,
-        bg: "background",
+        backgroundColor: "background.main",
         // boxShadow: "primary",
         borderTopStyle: "solid",
-        borderColor: "monochrome500",
+        borderColor: "grey.500",
         borderWidth: 1,
       }}
     >
-      <Box as="h3" variant="text.heading3" sx={{ p: 5, color: "warning" }}>
+      <Typography
+        component="h3"
+        variant="h3"
+        sx={{ p: 5, color: "warning.main" }}
+      >
         🚧 Debug Panel 🚧
-      </Box>
+      </Typography>
       {configurator ? <DebugConfigurator /> : null}
       {interactiveFilters ? <DebugInteractiveFilters /> : null}
     </Box>

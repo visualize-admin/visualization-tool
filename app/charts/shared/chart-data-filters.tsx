@@ -1,6 +1,7 @@
+import Flex from "../../components/flex";
 import { t, Trans } from "@lingui/macro";
 import * as React from "react";
-import { Box, Button, Flex } from "theme-ui";
+import { Box, Button, SelectChangeEvent } from "@mui/material";
 import { ChartFiltersList } from "../../components/chart-filters-list";
 import { Select } from "../../components/form";
 import { Loading } from "../../components/hint";
@@ -52,10 +53,10 @@ export const ChartDataFilters = ({
 
             {dataFiltersConfig.active && (
               <Button
-                variant="inline"
+                variant="text"
                 sx={{
                   display: "flex",
-                  fontSize: [2, 2, 2],
+                  fontSize: ["0.75rem", "0.75rem", "0.75rem"],
                   alignItems: "center",
                   minWidth: "fit-content",
                 }}
@@ -117,12 +118,10 @@ const DataFilter = ({
     variables: { dimensionIri, locale, dataCubeIri: dataSetIri },
   });
 
-  const setDataFilter = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
+  const setDataFilter = (e: SelectChangeEvent<unknown>) => {
     dispatch({
       type: "UPDATE_DATA_FILTER",
-      value: { dimensionIri, dimensionValueIri: e.currentTarget.value },
+      value: { dimensionIri, dimensionValueIri: e.target.value as string },
     });
   };
 
@@ -189,7 +188,7 @@ const DataFilterBaseDimension = ({
   label: string;
   options: Array<{ label: string; value: string }>;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (e: SelectChangeEvent<unknown>) => void;
 }) => {
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -234,9 +233,7 @@ const DataFilterTemporalDimension = ({
   timeUnit: TimeUnit;
   timeFormat: string;
   value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => void;
+  onChange: (e: SelectChangeEvent<unknown>) => void;
 }) => {
   const formatLocale = useTimeFormatLocale();
   const timeIntervalWithProps = React.useMemo(

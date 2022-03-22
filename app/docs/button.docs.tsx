@@ -1,4 +1,4 @@
-import { Button } from "theme-ui";
+import { Button } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 import { Icon } from "../icons";
 import SvgIcChevronRight from "../icons/components/IcChevronRight";
@@ -7,7 +7,7 @@ import SvgIcChevronLeft from "../icons/components/IcChevronLeft";
 export default () => markdown`
 > Buttons are used to trigger an event after a user interaction.
 
-There are four basic styles that are styles defined in \`theme-ui\`'s \`variants\`:
+Here are the variants defined in the theme:
 
 - \`primary\`
 - \`primary-small\`
@@ -15,12 +15,16 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
 - \`success\`
 - \`inline\`
 - \`inline-bold\`
+- \`inverted\`
 
 
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="primary">
-        <Icon name="linkExternal" />
+      <Button
+        startIcon={<Icon name="linkExternal" />}
+        variant="contained"
+        color="primary"
+      >
         <span>Primary button</span>
       </Button>
     </ReactSpecimen>
@@ -29,42 +33,59 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
 
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="secondary">Secondary button</Button>
+      <Button variant="contained" color="secondary">
+        Secondary button
+      </Button>
     </ReactSpecimen>
   )}
 
 
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="success">Success button</Button>
+      <Button variant="contained" color="success">
+        Success button
+      </Button>
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="outline">Outline button</Button>
+      <Button variant="outlined">Outlined button</Button>
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="inline">
-        <SvgIcChevronLeft />
+      <Button startIcon={<SvgIcChevronLeft />} variant="text">
         <span>Inline button</span>
       </Button>
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="inline-bold">
-        <SvgIcChevronLeft />
+      <Button size="small" startIcon={<SvgIcChevronLeft />} variant="text">
         Bold inline button
       </Button>
     </ReactSpecimen>
   )}
   ${(
     <ReactSpecimen span={2}>
-      <Button variant="primary-small">
-        <span>Publish this dataset</span>
-        <SvgIcChevronRight />
+      <Button
+        variant="contained"
+        color="primary"
+        size="small"
+        endIcon={<SvgIcChevronRight />}
+      >
+        Publish this dataset
+      </Button>
+    </ReactSpecimen>
+  )}
+  ${(
+    <ReactSpecimen span={2}>
+      <Button
+        variant="inverted"
+        color="primary"
+        endIcon={<SvgIcChevronRight />}
+      >
+        Learn more
       </Button>
     </ReactSpecimen>
   )}
@@ -72,7 +93,7 @@ There are four basic styles that are styles defined in \`theme-ui\`'s \`variants
   ## How to use
 
 ~~~
-import { Button } from "theme-ui"
+import { Button } from "@mui/material"
 import SvgIcChevronRight from "../icons/components/IcChevronRight";
 import SvgIcChevronLeft from "../icons/components/IcChevronLeft";
 

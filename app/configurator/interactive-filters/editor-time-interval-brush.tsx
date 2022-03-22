@@ -1,3 +1,4 @@
+import Flex from "../../components/flex";;
 import { Trans } from "@lingui/macro";
 import {
   brushX,
@@ -7,7 +8,7 @@ import {
   Selection,
 } from "d3";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Typography } from "@mui/material";
 import { Label } from "../../components/form";
 import { useResizeObserver } from "../../lib/use-resize-observer";
 import { useTheme } from "../../themes";
@@ -73,13 +74,13 @@ export const EditorIntervalBrush = ({
     const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
       g.select(".overlay")
         .attr("pointer-events", disabled && "none")
-        .attr("fill", theme.colors.monochrome300)
+        .attr("fill", theme.palette.grey[300])
         .attr("fill-opacity", 0.9);
       g.select(".selection")
         .attr("pointer-events", disabled && "none")
         .attr(
           "fill",
-          disabled ? theme.colors.monochrome500 : theme.colors.primary
+          disabled ? theme.palette.grey[500] : theme.palette.primary.main
         )
         .attr("fill-opacity", 1)
         .attr("stroke", "none");
@@ -87,7 +88,7 @@ export const EditorIntervalBrush = ({
         .attr("pointer-events", disabled && "none")
         .attr(
           "fill",
-          disabled ? theme.colors.monochrome500 : theme.colors.primary
+          disabled ? theme.palette.grey[500] : theme.palette.primary.main
         )
         .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
         .style("width", `${HANDLE_HEIGHT}px`)
@@ -110,9 +111,9 @@ export const EditorIntervalBrush = ({
   }, [
     brush,
     disabled,
-    theme.colors.monochrome300,
-    theme.colors.monochrome500,
-    theme.colors.primary,
+    theme.palette.grey[300],
+    theme.palette.grey[500],
+    theme.palette.primary.main,
   ]);
 
   // Set default selection to full extent
@@ -147,12 +148,12 @@ export const EditorIntervalBrush = ({
         )}
       </Box>
       <Flex sx={{ justifyContent: "space-between" }}>
-        <Text as="div" variant="meta">
+        <Typography component="div" variant="caption">
           {formatDateAuto(timeExtent[0])}
-        </Text>
-        <Text as="div" variant="meta">
+        </Typography>
+        <Typography component="div" variant="caption">
           {formatDateAuto(timeExtent[1])}
-        </Text>
+        </Typography>
       </Flex>
     </Box>
   );

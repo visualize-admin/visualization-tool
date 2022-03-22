@@ -1,5 +1,6 @@
+import Flex, { FlexProps } from "../../components/flex";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Box, BoxProps, Flex, FlexProps } from "theme-ui";
+import { Box, BoxProps } from "@mui/material";
 import SvgIcChevronLeft from "../../icons/components/IcChevronLeft";
 
 const AccordionArrow = ({
@@ -7,7 +8,7 @@ const AccordionArrow = ({
   ...boxProps
 }: { expanded?: boolean } & BoxProps) => {
   return (
-    <Box as="span" mr={2} sx={{}} {...boxProps}>
+    <Box component="span" mr={2} sx={{}} {...boxProps}>
       <SvgIcChevronLeft
         sx={{
           transition: "transform 0.5s ease",
@@ -19,8 +20,8 @@ const AccordionArrow = ({
 };
 
 const defaultTheme = {
-  borderColor: "monochrome400",
-  bg: "transparent",
+  borderColor: "grey.400",
+  backgroundColor: "transparent",
 };
 
 const AccordionContext = React.createContext<{
@@ -78,7 +79,7 @@ Accordion.defaultProps = {
 
 type AccordionTheme = {
   borderColor: string;
-  bg: string;
+  backgroundColor: string;
 };
 
 export const AccordionSummary = ({
@@ -102,8 +103,8 @@ export const AccordionSummary = ({
         cursor: "pointer",
         // border: "1px solid",
         // borderColor: theme.borderColor,
-        bg: theme.bg,
-        borderRadius: 4,
+        backgroundColor: theme.backgroundColor,
+        borderRadius: 2,
         height: "2.5rem",
       }}
     >

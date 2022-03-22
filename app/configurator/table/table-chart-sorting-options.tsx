@@ -1,13 +1,14 @@
+import Flex from "../../components/flex";
 import { t, Trans } from "@lingui/macro";
 import VisuallyHidden from "@reach/visually-hidden";
-import React, { ChangeEvent, useCallback } from "react";
+import React, { useCallback } from "react";
 import {
   DragDropContext,
   Draggable,
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import { Radio, Select } from "../../components/form";
 import { DataCubeMetadata } from "../../graphql/types";
 import { Icon } from "../../icons";
@@ -84,22 +85,22 @@ const TableSortingOptionItem = ({
   return component ? (
     <Box
       sx={{
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
         py: 4,
         pl: 4,
         pr: 6,
 
-        borderTopColor: "monochrome500",
+        borderTopColor: "grey.500",
         borderTopStyle: "solid",
         borderTopWidth: 1,
       }}
     >
       <Box sx={{ pr: 2 }}>
-        <Text
-          variant="paragraph1"
+        <Typography
+          variant="body1"
           sx={{
-            color: "monochrome800",
-            lineHeight: [1, 1, 1],
+            color: "grey.800",
+            lineHeight: ["1rem", "1rem", "1rem"],
             textAlign: "left",
             mb: 3,
           }}
@@ -109,7 +110,7 @@ const TableSortingOptionItem = ({
             metaData={metaData}
             chartConfig={chartConfig}
           />
-        </Text>
+        </Typography>
         <Flex sx={{ mt: 2, mb: -1, width: "100%", alignItems: "flex-start" }}>
           <Radio
             name={`${componentIri}-sortingOrder`}
@@ -126,7 +127,7 @@ const TableSortingOptionItem = ({
             label={getFieldLabel(`sorting.${sortingType}.desc`)}
           />
           <Button
-            variant="reset"
+            variant="text"
             sx={{
               p: 0,
               cursor: "pointer",
@@ -145,7 +146,7 @@ const TableSortingOptionItem = ({
             <Box
               aria-hidden="true"
               sx={{
-                color: "secondaryDisabled",
+                color: "secondary.disabled",
                 ":hover": { color: "secondary" },
               }}
             >
@@ -168,8 +169,8 @@ const AddTableSortingOption = ({
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) => {
-      const { value } = e.currentTarget;
+    (e: SelectChangeEvent<unknown>) => {
+      const { value } = e.target;
 
       const component =
         metaData.dimensions.find(({ iri }) => iri === value) ??
@@ -252,8 +253,8 @@ const ChangeTableSortingOption = ({
   const [, dispatch] = useConfiguratorState();
 
   const onChange = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) => {
-      const { value } = e.currentTarget;
+    (e: SelectChangeEvent<unknown>) => {
+      const { value } = e.target;
 
       const component =
         metaData.dimensions.find(({ iri }) => iri === value) ??
@@ -400,10 +401,10 @@ export const TableSortingOptions = ({
                                   right: 2,
                                   marginTop: -12,
                                   color: isDragging
-                                    ? "secondaryActive"
-                                    : "secondaryDisabled",
+                                    ? "secondary.active"
+                                    : "secondary.disabled",
                                   ":hover": {
-                                    color: "secondaryHover",
+                                    color: "secondary.hover",
                                   },
                                 }}
                                 {...dragHandleProps}
@@ -422,7 +423,7 @@ export const TableSortingOptions = ({
                   sx={{
                     py: 4,
                     px: 4,
-                    borderTopColor: "monochrome500",
+                    borderTopColor: "grey.500",
                     borderTopStyle: "solid",
                     borderTopWidth: 1,
                   }}

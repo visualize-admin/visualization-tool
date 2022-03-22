@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Grid } from "theme-ui";
+import { Box } from "@mui/material";
 import { Icon } from "../../icons";
 
 const ATTRIBUTION = "© Data: MapTiler, OpenStreetMap contributors, Swisstopo";
@@ -20,7 +20,8 @@ export const MapAttribution = (props: Props) => {
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
-      <Grid
+      <Box
+        display="grid"
         sx={{
           gridTemplateColumns: `1fr ${ICON_SIZE}px`,
           gridGap: 1,
@@ -29,7 +30,7 @@ export const MapAttribution = (props: Props) => {
       >
         {<span>{isExpanded ? ATTRIBUTION : ""}</span>}
         <Icon name="info" size={ICON_SIZE} />
-      </Grid>
+      </Box>
     </MapAttributionBox>
   );
 };

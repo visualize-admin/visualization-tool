@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/macro";
 import { saveAs } from "file-saver";
-import { keyBy } from "lodash";
 import { memo, ReactNode, useCallback, useMemo } from "react";
-import { Box, Button, Link } from "theme-ui";
+import { Box, Link } from "@mui/material";
+import { keyBy } from "lodash";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
@@ -136,7 +136,14 @@ const RunSparqlQuery = ({
   extent: DataDownloadExtent;
 }) => {
   return (
-    <Link variant="inline" href={url} target="_blank" rel="noopener noreferrer">
+    <Link
+      component="button"
+      color="primary"
+      underline="hover"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {extent === "visible" ? (
         <Trans id="button.download.runsparqlquery.visible">
           Run SPARQL query (visible)
@@ -157,30 +164,7 @@ export const DownloadButton = ({
   onClick?: () => void;
   children: ReactNode;
 }) => (
-  <Button
-    variant="reset"
-    sx={{
-      display: "inline",
-      background: "transparent",
-      color: "primary",
-      textAlign: "left",
-      fontFamily: "body",
-      lineHeight: [1, 2, 2],
-      fontWeight: "regular",
-      fontSize: [1, 2, 2],
-      border: "none",
-      cursor: "pointer",
-      p: 0,
-      ":disabled": {
-        cursor: "initial",
-        color: "monochrome500",
-      },
-      "&:hover": {
-        textDecoration: "underline",
-      },
-    }}
-    onClick={onClick}
-  >
+  <Link component="button" color="primary" underline="hover" onClick={onClick}>
     {children}
-  </Button>
+  </Link>
 );

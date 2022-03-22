@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, BoxProps, ThemeUIStyleObject } from "theme-ui";
+import { Box, BoxProps } from "@mui/material";
 
 const commonPanelStyles = {};
 
@@ -14,14 +14,14 @@ export const PanelLeftWrapper = ({
 }) => {
   return (
     <Box
-      as="section"
+      component="section"
       data-name="panel-left"
       sx={{
         overflowX: "hidden",
         overflowY: "auto",
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
         boxShadow: raised ? "rightSide" : undefined,
-        borderRightColor: raised ? "monochrome500" : undefined,
+        borderRightColor: raised ? "grey.500" : undefined,
         borderRightWidth: raised ? "1px" : undefined,
         borderRightStyle: raised ? "solid" : undefined,
         gridArea: "left",
@@ -46,14 +46,14 @@ export const PanelRightWrapper = ({
 }) => {
   return (
     <Box
-      as="section"
+      component="section"
       data-name="panel-right"
       sx={{
-        bg: "mutedColored",
+        backgroundColor: "muted.colored",
         overflowX: "hidden",
         overflowY: "auto",
         boxShadow: "leftSide",
-        borderLeftColor: "monochrome500",
+        borderLeftColor: "grey.500",
         borderLeftWidth: "1px",
         borderLeftStyle: "solid",
         gridArea: "right",
@@ -74,9 +74,9 @@ export const PanelLayout = ({
   const { sx } = boxProps;
   return (
     <Box
-      bg="muted"
       {...boxProps}
       sx={{
+        backgroundColor: "muted.main",
         display: "grid",
         gridTemplateColumns:
           "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
@@ -107,7 +107,7 @@ export const PanelHeader = ({
   const { sx } = boxProps;
   return (
     <Box
-      as="section"
+      component="section"
       role="navigation"
       {...boxProps}
       sx={{ gridArea: "header", ...sx }}
@@ -122,11 +122,11 @@ export const PanelMiddleWrapper = ({
   sx,
 }: {
   children: React.ReactNode;
-  sx?: ThemeUIStyleObject;
+  sx?: BoxProps["sx"];
 }) => {
   return (
     <Box
-      as="section"
+      component="section"
       data-name="panel-middle"
       sx={{
         overflowX: "hidden",

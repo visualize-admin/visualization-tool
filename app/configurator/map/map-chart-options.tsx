@@ -1,6 +1,7 @@
+import Flex from "../../components/flex";;
 import { t, Trans } from "@lingui/macro";
 import React, { memo, useMemo } from "react";
-import { Box, Flex } from "theme-ui";
+import { Box } from "@mui/material";
 import { ConfiguratorStateConfiguringChart, MapConfig } from "..";
 import { FieldSetLegend } from "../../components/form";
 import {

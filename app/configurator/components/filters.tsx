@@ -1,6 +1,7 @@
+import Flex from "../../components/flex";
 import { Trans } from "@lingui/macro";
 import React, { useCallback, useMemo } from "react";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Typography } from "@mui/material";
 import {
   getFilterValue,
   MultiFilterContextProvider,
@@ -9,7 +10,7 @@ import {
   useMultiFilterContext,
 } from "..";
 import { Loading } from "../../components/hint";
-import Stack from "../../components/Stack";
+import { Stack } from '@mui/material'
 import {
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
@@ -38,34 +39,39 @@ const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   const { activeKeys, allValues } = useMultiFilterContext();
 
   return (
-    <Box color="monochrome500">
+    <Box color="grey.500" mb={4}>
       <Button
         onClick={selectAll}
         variant="inline"
-        sx={{ mr: 2, mb: 4 }}
+        color="primary"
+        sx={{ typography: "body2", py: 1 }}
         disabled={activeKeys.size === allValues.length}
       >
         <Trans id="controls.filter.select.all">Select all</Trans>
       </Button>
-      ·
+      <Box component="span" mx={1}>
+        ·
+      </Box>
       <Button
         onClick={selectNone}
         variant="inline"
-        sx={{ ml: 2, mr: 2, mb: 4 }}
+        color="primary"
+        sx={{ typography: "body2" }}
         disabled={activeKeys.size === 0}
       >
         <Trans id="controls.filter.select.none">Select none</Trans>
       </Button>
-      ·
-      <Text
-        color="monochrome700"
-        sx={{ px: 2, fontSize: 3, display: "inline" }}
-        as="span"
+      <br />
+      <Typography
+        variant="body2"
+        color="grey.700"
+        sx={{ display: "inline" }}
+        component="span"
       >
         <Trans id="controls.filter.nb-elements">
           {activeKeys.size} of {allValues.length}
         </Trans>
-      </Text>
+      </Typography>
     </Box>
   );
 };

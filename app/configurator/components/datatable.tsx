@@ -1,4 +1,10 @@
-import { Box } from "theme-ui";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 
 import { Observation } from "../../domain/data";
 import {
@@ -14,7 +20,7 @@ import {
 
 type Header = DimensionMetaDataFragment;
 
-const PreviewTable = ({
+export const PreviewTable = ({
   title,
   headers,
   observations,
@@ -26,70 +32,37 @@ const PreviewTable = ({
   const formatNumber = useFormatNumber();
   const formatDateAuto = useFormatFullDateAuto();
   return (
-    <Box
-      as="table"
-      sx={{
-        minWidth: "100%",
-        borderCollapse: "collapse",
-      }}
-    >
+    <Table>
       <caption style={{ display: "none" }}>{title}</caption>
-      <tbody>
-        <Box
-          as="tr"
-          sx={{
-            fontFamily: "body",
-            fontSize: [3],
-            verticalAlign: "baseline",
-            color: "monochrome700",
-            borderBottomColor: "monochrome700",
-            borderBottomWidth: "1px",
-            borderBottomStyle: "solid",
-          }}
-        >
+      <TableHead>
+        <TableRow>
           {headers.map(({ iri, label, unit, __typename }) => {
             return (
-              <Box
-                as="th"
+              <TableCell
+                headers=""
+                component="th"
                 role="columnheader"
                 key={iri}
-                // @ts-expect-error `scope` is valid on th, but not on div
-                scope="col"
                 sx={{
                   textAlign: __typename === "Measure" ? "right" : "left",
-                  px: 2,
-                  py: 3,
-                  minWidth: 128,
                 }}
               >
                 {unit ? `${label} (${unit})` : label}
-              </Box>
+              </TableCell>
             );
           })}
-        </Box>
+        </TableRow>
+      </TableHead>
+      <TableBody>
         {observations.map((obs, i) => {
           return (
-            <Box
-              as="tr"
-              sx={{
-                fontFamily: "body",
-                fontSize: [3],
-                color: "monochrome800",
-                borderBottomColor: "monochrome400",
-                borderBottomWidth: "1px",
-                borderBottomStyle: "solid",
-              }}
-              key={i}
-            >
+            <TableRow key={i}>
               {headers.map(({ iri, label, __typename }) => (
-                <Box
+                <TableCell
                   key={iri}
-                  as="td"
+                  component="td"
                   sx={{
                     textAlign: __typename === "Measure" ? "right" : "left",
-                    px: 2,
-                    py: 3,
-                    minWidth: 128,
                   }}
                 >
                   {__typename === "Measure"
@@ -97,13 +70,13 @@ const PreviewTable = ({
                     : __typename === "TemporalDimension"
                     ? formatDateAuto(obs[iri] as string)
                     : obs[iri]}
-                </Box>
+                </TableCell>
               ))}
-            </Box>
+            </TableRow>
           );
         })}
-      </tbody>
-    </Box>
+      </TableBody>
+    </Table>
   );
 };
 

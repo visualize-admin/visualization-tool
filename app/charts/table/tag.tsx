@@ -1,4 +1,4 @@
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { hcl } from "d3";
 import * as React from "react";
 import { ReactNode } from "react";
@@ -13,11 +13,11 @@ export const Tag = ({
   children: ReactNode;
 }) => (
   <Box
-    as="span"
+    component="span"
     sx={{
-      bg: tagColor,
+      backgroundColor: tagColor,
       color: hcl(tagColor).l < 55 ? "#fff" : "#000",
-      borderRadius: "15px",
+      borderRadius: 8,
       px: 2,
       py: small ? "0.125rem" : 1,
       my: small ? 0 : 1,

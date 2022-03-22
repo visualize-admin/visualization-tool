@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { useSelect } from "downshift";
 import { get } from "lodash";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Box, Button, Text } from "theme-ui";
+import { Box, Button, Typography } from "@mui/material";
 import {
   DivergingPaletteType,
   SequentialPaletteType,
@@ -143,12 +143,12 @@ export const ColorRampField = ({
           </>
         )}
       </Button>
-      <Box {...getMenuProps()} sx={{ bg: "monochrome100" }}>
+      <Box {...getMenuProps()} sx={{ backgroundColor: "grey.100" }}>
         {isOpen && (
           <>
-            {/* <Text as="div" variant="meta" sx={{ p: 1 }}>
+            {/* <Typography component="div" variant="caption" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.diverging">Diverging</Trans>
-            </Text>
+            </Typography>
             {divergingPalettes.map((d, i) => (
               <PaletteRamp
                 key={`diverging-${i}`}
@@ -159,9 +159,9 @@ export const ColorRampField = ({
               />
             ))} */}
 
-            <Text as="div" variant="meta" sx={{ p: 1 }}>
+            <Typography component="div" variant="caption" sx={{ p: 1 }}>
               <Trans id="controls.color.palette.sequential">Sequential</Trans>
-            </Text>
+            </Typography>
             {sequentialPalettes.map((d, i) => (
               <PaletteRamp
                 key={`sequential-${i}`}
@@ -195,7 +195,7 @@ const PaletteRamp = (props: {
   nbClass?: number;
 }) => {
   const { palette, itemProps, highlighted, nbClass } = props;
-  const backgroundColor = highlighted ? "monochrome200" : "monochrome100";
+  const backgroundColor = highlighted ? "grey.200" : "grey.100";
 
   return (
     <Box sx={{ p: 1, cursor: "pointer", backgroundColor }}>

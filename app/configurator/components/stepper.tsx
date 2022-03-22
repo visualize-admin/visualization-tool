@@ -1,7 +1,8 @@
+import Flex from "../../components/flex";
 import { Trans } from "@lingui/macro";
 import { useRouter } from "next/router";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
-import { Button, ButtonProps, Flex, Text } from "theme-ui";
+import { Button, Typography } from "@mui/material";
 import {
   useConfiguratorState,
   canTransitionToNextStep,
@@ -78,10 +79,10 @@ export const StepperDumb = ({
         alignItems: "center",
         position: "relative",
 
-        bg: "monochrome100",
+        backgroundColor: "grey.100",
         borderBottomWidth: "1px",
         borderBottomStyle: "solid",
-        borderBottomColor: "monochrome500",
+        borderBottomColor: "grey.500",
         overflow: "hidden",
       }}
     >
@@ -92,22 +93,20 @@ export const StepperDumb = ({
           justifyContent: "center",
           alignItems: "center",
           px: 2,
-          py: 3,
           minHeight: 56,
         }}
       >
         <Flex sx={{ minWidth: 200, justifyContent: "flex-start" }}>
-          <NavButton
-            label={
-              <>
-                <SvgIcChevronLeft />
-                {previousLabel}
-              </>
-            }
+          <Button
+            startIcon={<SvgIcChevronLeft />}
             onClick={goPrevious}
             disabled={previousDisabled}
-            variant="inline-bold"
-          />
+            variant="text"
+            size="small"
+            color="inherit"
+          >
+            {previousLabel}
+          </Button>
         </Flex>
 
         <Flex
@@ -116,23 +115,18 @@ export const StepperDumb = ({
           <CallToAction stepState={steps[currentStepIndex]} />
         </Flex>
         <Flex sx={{ minWidth: 200, justifyContent: "flex-end" }}>
-          <NavButton
-            label={
-              <>
-                {nextLabel}{" "}
-                {state.state === "DESCRIBING_CHART" ? null : (
-                  <SvgIcChevronRight />
-                )}
-              </>
+          <Button
+            endIcon={
+              state.state === "DESCRIBING_CHART" ? null : <SvgIcChevronRight />
             }
             onClick={goNext}
             disabled={nextDisabled}
-            variant={
-              state.state === "DESCRIBING_CHART"
-                ? "primary-small"
-                : "inline-bold"
-            }
-          />
+            variant={state.state === "DESCRIBING_CHART" ? "contained" : "text"}
+            color={state.state === "DESCRIBING_CHART" ? "primary" : "inherit"}
+            size="small"
+          >
+            {nextLabel}
+          </Button>
         </Flex>
       </Flex>
     </Flex>
@@ -219,29 +213,14 @@ export const CallToAction = ({ stepState }: { stepState: StepState }) => {
 
 const CallToActionText = ({ label }: { label: ReactNode }) => {
   return (
-    <Text
+    <Typography
       sx={{
-        color: "monochrome700",
+        color: "grey.700",
         fontWeight: "regular",
       }}
-      variant="paragraph2"
+      variant="body2"
     >
       {label}
-    </Text>
+    </Typography>
   );
 };
-
-const NavButton = ({
-  label,
-  onClick,
-  disabled,
-  ...props
-}: {
-  label: string | ReactNode;
-  onClick: () => void;
-  disabled: boolean;
-} & ButtonProps) => (
-  <Button onClick={onClick} disabled={disabled} {...props}>
-    {label}
-  </Button>
-);

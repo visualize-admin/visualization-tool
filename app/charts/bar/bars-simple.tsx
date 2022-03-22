@@ -44,7 +44,7 @@ export const Bars = () => {
               y={BAR_SPACE_ON_TOP - BAR_AXIS_OFFSET}
               height={BAR_HEIGHT}
               color={
-                getX(d) <= 0 ? theme.colors.secondary : theme.colors.primary
+                getX(d) <= 0 ? theme.palette.secondary.main : theme.palette.primary.main
               }
             />
           </g>

@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/macro";
 import React, { SyntheticEvent } from "react";
-import { Box, Button, Grid, Spinner, Text } from "theme-ui";
+import { Box, CircularProgress, Typography, ButtonBase } from "@mui/material";
 import { ConfiguratorStateSelectingChartType } from "..";
 import { enabledChartTypes, getPossibleChartType } from "../../charts";
 import { Hint, Loading } from "../../components/hint";
@@ -25,8 +25,7 @@ export const ChartTypeSelectionButton = ({
   onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
 } & FieldProps) => {
   return (
-    <Button
-      variant="reset"
+    <ButtonBase
       tabIndex={0}
       value={value}
       onClick={onClick}
@@ -34,14 +33,14 @@ export const ChartTypeSelectionButton = ({
       sx={{
         width: "86px",
         height: "86px",
-        borderRadius: "default",
+        borderRadius: 1.5,
 
-        backgroundColor: checked ? "primary" : "monochrome100",
+        backgroundColor: checked ? "primary.main" : "grey.100",
         color: checked
-          ? "mutedColored"
+          ? "muted.colored"
           : disabled
-          ? "monochrome500"
-          : "primary",
+          ? "grey.500"
+          : "primary.main",
 
         display: "flex",
         flexDirection: "column",
@@ -55,28 +54,24 @@ export const ChartTypeSelectionButton = ({
 
         ":hover": {
           backgroundColor: disabled
-            ? "mutedColored"
+            ? "muted.colored"
             : checked
             ? "primary"
-            : "mutedDarker",
+            : "muted.dark",
         },
       }}
     >
       <Icon size={48} name={getIconName(label)} />
-      <Text
-        variant="paragraph2"
+      <Typography
+        variant="body2"
         sx={{
-          color: disabled
-            ? "monochrome600"
-            : checked
-            ? "monochrome100"
-            : "monochrome700",
-          fontSize: [2, 2, 2],
+          color: disabled ? "grey.600" : checked ? "grey.100" : "grey.700",
+          fontSize: ["0.75rem", "0.75rem", "0.75rem"],
         }}
       >
         {getFieldLabel(label)}
-      </Text>
-    </Button>
+      </Typography>
+    </ButtonBase>
   );
 };
 
@@ -125,16 +120,17 @@ export const ChartTypeSelector = ({
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <Box as="fieldset">
+      <Box component="fieldset">
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
-        <SectionTitle>
+        <SectionTitle sx={{ mb: 1 }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
           {possibleFiltersFetching ? (
-            <Spinner
+            <CircularProgress
+              color="primary"
               size={12}
-              sx={{ color: "hint", display: "inline-block", ml: 1 }}
+              sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
             />
           ) : null}
         </SectionTitle>
@@ -146,9 +142,11 @@ export const ChartTypeSelector = ({
             </Trans>
           </Hint>
         ) : (
-          <Grid
+          <Box
+            display="grid"
             sx={{
               gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+              gridGap: "0.75rem",
               mx: 4,
             }}
           >
@@ -161,7 +159,7 @@ export const ChartTypeSelector = ({
                 disabled={!possibleChartTypes.includes(d)}
               />
             ))}
-          </Grid>
+          </Box>
         )}
       </Box>
     );

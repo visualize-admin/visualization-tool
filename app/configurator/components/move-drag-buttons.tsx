@@ -1,5 +1,13 @@
-import { Box, BoxProps, Button, ButtonProps } from "theme-ui";
+import { Box, BoxProps, ButtonProps, styled } from "@mui/material";
 import { Icon } from "../../icons";
+
+const ArrowButton = styled("button", { label: "ArrowButton" })({
+  margin: 0,
+  padding: 0,
+  border: 0,
+  display: "flex",
+  backgroundColor: "transparent",
+});
 
 const MoveDragButtons = ({
   onClickUp,
@@ -18,27 +26,32 @@ const MoveDragButtons = ({
 }) => {
   return (
     <>
-      <Button
+      <ArrowButton
+        variant="text"
         className={className}
-        variant="arrow"
         onClick={onClickUp}
         sx={{ mb: -1 }}
         {...moveUpButtonProps}
       >
         <Icon name="caretUp" height="16" />
-      </Button>
-      <Box as="span" sx={{ cursor: "move" }} {...dragButtonProps}>
+      </ArrowButton>
+      <Box
+        display="flex"
+        component="span"
+        sx={{ cursor: "move" }}
+        {...dragButtonProps}
+      >
         <Icon className={className} name="dragndrop" />
       </Box>
-      <Button
+      <ArrowButton
+        variant="text"
         className={className}
-        variant="arrow"
         onClick={onClickDown}
         sx={{ mt: -1 }}
         {...moveDownButtonProps}
       >
         <Icon name="caretDown" height="16" />
-      </Button>
+      </ArrowButton>
     </>
   );
 };

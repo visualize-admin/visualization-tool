@@ -1,4 +1,5 @@
-import { Box, Flex, Link, Text } from "theme-ui";
+import Flex from "../components/flex";
+import { Box, Button, Link, Typography } from "@mui/material";
 import * as React from "react";
 
 export const Contribute = ({
@@ -13,23 +14,23 @@ export const Contribute = ({
   buttonUrl: string;
 }) => {
   return (
-    <Box sx={{ bg: "primary", color: "monochrome100" }}>
+    <Box sx={{ backgroundColor: "primary.main", color: "grey.100" }}>
       <Box sx={{ maxWidth: 1024, margin: "0 auto" }}>
         <Flex sx={{ flexDirection: ["column", "row"], px: 4, py: [6, 6, 7] }}>
           <Box sx={{ width: ["100%", "100%", "70%"], mb: [6, 6, 0] }}>
-            <Text
+            <Typography
               sx={{
-                fontSize: [6, 6, 7],
+                fontSize: ["1.5rem", "1.5rem", "2rem"],
                 lineHeight: 1.25,
-                fontFamily: "body",
+
                 mb: 3,
               }}
             >
               {headline}
-            </Text>
-            <Text as="div" variant="paragraph1">
+            </Typography>
+            <Typography component="div" variant="body1">
               {description}
-            </Text>
+            </Typography>
           </Box>
           <Flex
             sx={{
@@ -38,19 +39,22 @@ export const Contribute = ({
               width: ["100%", "50%", "30%"],
             }}
           >
-            <Link
+            <Button
+              component={Link}
               href={buttonUrl}
               target="_blank"
+              variant="inverted"
               rel="noopener noreferrer"
               sx={{
                 flexGrow: [1, 0, 0],
                 textDecoration: "none",
                 textAlign: "center",
+                bgcolor: (theme) => theme.palette.primary.contrastText,
+                color: (theme) => theme.palette.primary.main,
               }}
-              variant="buttons.inverted"
             >
               {buttonLabel}
-            </Link>
+            </Button>
           </Flex>
         </Flex>
       </Box>

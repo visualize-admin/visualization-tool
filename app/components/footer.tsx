@@ -1,5 +1,6 @@
+import Flex from "./flex";
 import { t, Trans } from "@lingui/macro";
-import { Box, Flex, Link, Text } from "theme-ui";
+import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
 import contentRoutes from "../content-routes.json";
@@ -14,7 +15,7 @@ const Version = () => {
       <>
         (
         <Link
-          variant="primary"
+          color="primary"
           href={`${BUILD_GITHUB_REPO}/commit/${BUILD_COMMIT}`}
         >
           {BUILD_COMMIT.substr(0, 7)}
@@ -38,15 +39,15 @@ export const Footer = () => {
 
   return (
     <Flex
-      as="footer"
+      component="footer"
       sx={{
         flexDirection: ["column", "row"],
         justifyContent: ["flex-start", "space-between"],
         alignItems: ["flex-start", "center"],
-        bg: "monochrome200",
+        backgroundColor: "grey.200",
         borderTopWidth: "1px",
         borderTopStyle: "solid",
-        borderTopColor: "monochrome100",
+        borderTopColor: "grey.100",
       }}
     >
       <Box
@@ -54,7 +55,7 @@ export const Footer = () => {
           width: ["100%", "auto"],
           px: [4, 0],
           py: 5,
-          color: ["monochrome900", "monochrome700"],
+          color: ["grey.900", "grey.700"],
         }}
       >
         <FooterLink
@@ -94,8 +95,8 @@ export const Footer = () => {
             borderBottomWidth: "1px",
             borderTopStyle: "solid",
             borderBottomStyle: "solid",
-            borderTopColor: "monochrome500",
-            borderBottomColor: "monochrome500",
+            borderTopColor: "grey.500",
+            borderBottomColor: "grey.500",
           }}
         >
           <Logo />
@@ -108,17 +109,16 @@ export const Footer = () => {
             width: ["100%", "auto"],
           }}
         >
-          <Text
+          <Typography
             sx={{
               px: [4, 3],
               py: [3, 4],
               color: "secondary",
-              fontSize: 3,
-              fontFamily: "body",
+              fontSize: "0.875rem",
             }}
           >
             <Version />
-          </Text>
+          </Typography>
           <NextLink
             href={contentRoutes.legal[locale].path}
             passHref
@@ -156,20 +156,20 @@ const FooterLink = ({
       width: ["100%", "auto"],
       px: [0, 3],
       py: [0, 4],
-      color: "primary",
-      fontSize: 3,
-      fontFamily: "body",
+      color: "primary.main",
+      fontSize: "0.875rem",
+
       textDecoration: "none",
       cursor: "pointer",
       ":hover": {
-        color: "primaryHover",
+        color: "primary.hover",
       },
       ":active": {
-        color: "primaryHover",
+        color: "primary.hover",
       },
       ":disabled": {
         cursor: "initial",
-        color: "primaryDisabled",
+        color: "primary.disabled",
       },
     }}
   >
@@ -185,26 +185,26 @@ const FooterLinkBottom = forwardRef<
     <Link
       ref={ref}
       {...props}
+      color="primary"
       sx={{
         px: [4, 3],
         py: [3, 4],
-        color: "primary",
-        fontSize: 3,
-        fontFamily: "body",
+        fontSize: "0.875rem",
+
         borderLeftWidth: ["1px", 0],
         borderLeftStyle: "solid",
-        borderLeftColor: "monochrome500",
+        borderLeftColor: "grey.500",
         textDecoration: "none",
         cursor: "pointer",
         ":hover": {
-          color: "primaryHover",
+          color: "primary.hover",
         },
         ":active": {
-          color: "primaryHover",
+          color: "primary.hover",
         },
         ":disabled": {
           cursor: "initial",
-          color: "primaryDisabled",
+          color: "primary.disabled",
         },
       }}
     >

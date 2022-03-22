@@ -1,13 +1,13 @@
 import * as React from "react";
-import { Box, BoxOwnProps } from "theme-ui";
+import { Box, BoxProps } from "@mui/material";
 
 function SvgIcChevronLeft(
-  props: React.SVGProps<SVGSVGElement> & { sx?: BoxOwnProps["sx"] }
+  props: React.SVGProps<SVGSVGElement> & { sx?: BoxProps["sx"] }
 ) {
   return (
     /** @ts-ignore */
     <Box
-      as="svg"
+      component="svg"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       width="1em"

@@ -1,4 +1,4 @@
-import { Box, Card } from "theme-ui";
+import { Box, Card } from "@mui/material";
 import { motion } from "framer-motion";
 
 export const MotionBox = motion(Box);

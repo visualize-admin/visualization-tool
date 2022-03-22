@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Box, Grid, Text } from "theme-ui";
+import { Box, Typography } from "@mui/material";
 import {
   formatNumberWithUnit,
   useFormatNumber,
@@ -86,12 +86,17 @@ export const MapTooltip = () => {
           margins={{ bottom: 0, left: 0, right: 0, top: 0 }}
         >
           <Box sx={{ minWidth: 200 }}>
-            <Text as="div" variant="meta" sx={{ fontWeight: "bold" }}>
+            <Typography
+              component="div"
+              variant="caption"
+              sx={{ fontWeight: "bold" }}
+            >
               {hoverObjectType === "area"
                 ? areaLayer.getLabel(interaction.d)
                 : symbolLayer.getLabel(interaction.d)}
-            </Text>
-            <Grid
+            </Typography>
+            <Box
+              display="grid"
               sx={{
                 mt: 1,
                 width: "100%",
@@ -145,7 +150,7 @@ export const MapTooltip = () => {
                   )}
                 </>
               }
-            </Grid>
+            </Box>
           </Box>
         </TooltipBox>
       )}
@@ -165,22 +170,22 @@ const TooltipRow = (props: TooltipRowProps) => {
   const { title, background, color, value, error } = props;
   return (
     <>
-      <Text as="div" variant="meta">
+      <Typography component="div" variant="caption">
         {title}
-      </Text>
+      </Typography>
       <Box
         sx={{
-          borderRadius: "circle",
+          borderRadius: 9999,
           px: 2,
           display: "inline-block",
           textAlign: "center",
         }}
         style={{ background, color }}
       >
-        <Text as="div" variant="meta">
+        <Typography component="div" variant="caption">
           {value}
           {error}
-        </Text>
+        </Typography>
       </Box>
     </>
   );

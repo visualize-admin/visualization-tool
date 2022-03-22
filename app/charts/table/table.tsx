@@ -1,3 +1,4 @@
+import Flex from "../../components/flex";
 import { Trans } from "@lingui/macro";
 import FlexSearch from "flexsearch";
 import { forwardRef, useCallback, useMemo, useState } from "react";
@@ -9,7 +10,7 @@ import {
   useTable,
 } from "react-table";
 import { FixedSizeList, VariableSizeList } from "react-window";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Typography } from "@mui/material";
 import { Input, Switch } from "../../components/form";
 import { Observation } from "../../domain/data";
 import { useChartState } from "../shared/use-chart-state";
@@ -131,7 +132,7 @@ export const Table = () => {
           {...row.getRowProps({
             style: { ...style, minWidth: "100%" },
           })}
-          sx={{ borderBottom: "1px solid", borderBottomColor: "monochrome400" }}
+          sx={{ borderBottom: "1px solid", borderBottomColor: "grey.400" }}
         >
           {row.subRows.length === 0 ? (
             row.cells.map((cell, i) => {
@@ -173,10 +174,10 @@ export const Table = () => {
           <Box
             sx={{
               borderBottom: "1px solid",
-              borderBottomColor: "monochrome400",
+              borderBottomColor: "grey.400",
               "&:first-of-type": {
                 borderTop: "1px solid",
-                borderTopColor: "monochrome400",
+                borderTopColor: "grey.400",
               },
             }}
             {...row.getRowProps({
@@ -188,10 +189,10 @@ export const Table = () => {
                 return (
                   <Flex
                     key={i}
-                    as="dl"
+                    component="dl"
                     sx={{
-                      color: "monochrome800",
-                      fontSize: 2,
+                      color: "grey.800",
+                      fontSize: "0.75rem",
                       width: "100%",
                       height: MOBILE_ROW_HEIGHT,
                       justifyContent: "space-between",
@@ -199,13 +200,13 @@ export const Table = () => {
                     }}
                   >
                     <Box
-                      as="dt"
+                      component="dt"
                       sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
                     >
                       {cell.column.Header}
                     </Box>
                     <Box
-                      as="dd"
+                      component="dd"
                       sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
                     >
                       <DDContent
@@ -222,7 +223,7 @@ export const Table = () => {
                 sx={{
                   height: rowHeight,
 
-                  color: "monochrome600",
+                  color: "grey.600",
                   // py: 2,
                   ml: `${row.depth * 12}px`,
                 }}
@@ -272,9 +273,9 @@ export const Table = () => {
           sx={{
             width: "100%",
             position: "relative",
-            bg: "monochrome100",
+            backgroundColor: "grey.100",
             mb: 4,
-            fontSize: 3,
+            fontSize: "0.875rem",
           }}
         >
           <VariableSizeList
@@ -292,9 +293,9 @@ export const Table = () => {
         <Box
           sx={{
             position: "relative",
-            bg: "monochrome100",
+            backgroundColor: "grey.100",
             mb: 4,
-            fontSize: 3,
+            fontSize: "0.875rem",
           }}
           {...getTableProps({ style: { minWidth: "100%" } })}
         >
@@ -323,18 +324,18 @@ export const Table = () => {
       )}
 
       {/* Number of lines */}
-      <Text
-        variant="paragraph2"
+      <Typography
+        variant="body2"
         sx={{
           display: "flex",
           justifyContent: "flex-end",
           mb: 5,
-          color: "monochrome600",
+          color: "grey.600",
         }}
       >
         <Trans id="chart.table.number.of.lines">Total number of rows:</Trans>{" "}
         {filteredData.length}
-      </Text>
+      </Typography>
     </>
   );
 };

@@ -1,6 +1,6 @@
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { Box, Button, Text } from "theme-ui";
+import { Box, Button, Typography } from "@mui/material";
 import { HintRed } from "../components/hint";
 
 export const Intro = ({
@@ -43,7 +43,12 @@ export const Intro = ({
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <NextLink href="/browse" passHref>
-            <Button as="a" variant="primary">
+            <Button
+              size="large"
+              component="a"
+              variant="contained"
+              color="primary"
+            >
               {buttonLabel}
             </Button>
           </NextLink>
@@ -54,32 +59,32 @@ export const Intro = ({
 };
 
 export const Title = ({ children }: { children: ReactNode }) => (
-  <Text
-    as="h1"
+  <Typography
+    component="h1"
     sx={{
-      color: "monochrome800",
+      color: "grey.800",
       textAlign: "center",
-      fontFamily: "body",
-      lineHeight: 1.2,
+
+      lineHeight: [1.2, 1.2, 1.2],
       fontWeight: "bold",
-      fontSize: [8, "3.5rem", "3.5rem"],
+      fontSize: ["2.5rem", "3.5rem", "3.5rem"],
       mb: 4,
     }}
   >
     {children}
-  </Text>
+  </Typography>
 );
 export const Teaser = ({ children }: { children: ReactNode }) => (
   <Box sx={{ mb: [6, 5] }}>
-    <Text
-      variant="paragraph1"
+    <Typography
+      variant="body1"
       sx={{
-        fontSize: [4, 4, 4],
+        fontSize: ["1rem", "1rem", "1rem"],
         textAlign: "center",
-        color: "monochrome700",
+        color: "grey.700",
       }}
     >
       {children}
-    </Text>
+    </Typography>
   </Box>
 );

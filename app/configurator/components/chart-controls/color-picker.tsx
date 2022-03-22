@@ -2,8 +2,8 @@ import { Trans } from "@lingui/macro";
 import { Menu, MenuButton, MenuPopover } from "@reach/menu-button";
 import VisuallyHidden from "@reach/visually-hidden";
 import { color as d3Color } from "d3";
-import { MouseEventHandler, useCallback, useState } from "react";
-import { Box, Grid, Input } from "theme-ui";
+import React, { MouseEventHandler, useCallback, useState } from "react";
+import { Box, Input } from "@mui/material";
 
 const Swatch = ({
   color,
@@ -24,11 +24,11 @@ const Swatch = ({
       sx={{
         width: "1.5rem",
         height: "1.5rem",
-        bg: color,
+        backgroundColor: color,
         borderWidth: 1,
         borderStyle: "solid",
         borderColor: "transparent",
-        borderRadius: "default",
+        borderRadius: 1.5,
         p: 0,
         cursor: "pointer",
         ":hover": { borderColor },
@@ -78,13 +78,14 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
     <Box
       sx={{
         width: 160,
-        bg: "monochrome100",
-        borderRadius: "default",
+        backgroundColor: "grey.100",
+        borderRadius: 1.5,
         boxShadow: "tooltip",
         p: 3,
       }}
     >
-      <Grid
+      <Box
+        display="grid"
         sx={{
           // width: 120,
           gridTemplateColumns: "repeat(auto-fill, minmax(1.5rem, 1fr))",
@@ -102,19 +103,21 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
             }}
           />
         ))}
-      </Grid>
+      </Box>
       <Box sx={{ position: "relative" }}>
         <Input
           sx={{
-            color: "monochrome700",
-            borderColor: "monochrome500",
-            bg: "monochrome100",
-            fontSize: 3,
+            color: "grey.700",
+            borderColor: "grey.500",
+            backgroundColor: "grey.100",
+            fontSize: "0.875rem",
             ":focus": { outline: "none", borderColor: "primary" },
           }}
-          maxLength={7}
+          inputProps={{
+            maxLength: 7,
+          }}
           value={`#${inputColorValue.replace(/^#/, "")}`}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             selectColor(e.currentTarget.value);
           }}
           onBlur={(e) => {
@@ -135,8 +138,8 @@ export const ColorPickerMenu = (props: Props) => {
       <Box
         sx={{
           "> button": {
-            bg: "monochrome100",
-            borderRadius: 4,
+            backgroundColor: "grey.100",
+            borderRadius: 2,
             overflow: "hidden",
             borderWidth: 1,
             border: 0,
@@ -147,7 +150,7 @@ export const ColorPickerMenu = (props: Props) => {
             cursor: "pointer",
           },
           "> button[aria-expanded]": {
-            borderColor: "primaryActive",
+            borderColor: "primary.active",
           },
           opacity: props.disabled ? 0.5 : 1,
           pointerEvents: props.disabled ? "none" : "auto",
@@ -160,7 +163,7 @@ export const ColorPickerMenu = (props: Props) => {
           <Box aria-hidden>
             <Box
               sx={{
-                bg: selectedColor,
+                backgroundColor: selectedColor,
                 width: "1rem",
                 height: "1rem",
               }}

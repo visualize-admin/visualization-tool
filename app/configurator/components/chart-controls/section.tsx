@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, Text } from "theme-ui";
+import { Box, BoxProps, Typography, TypographyProps } from "@mui/material";
 
 import { ElementType, forwardRef, ReactNode } from "react";
 import { Icon, IconName } from "../../../icons";
@@ -18,12 +18,12 @@ export const ControlSection = forwardRef<
       ref={ref}
       role={role}
       sx={{
-        borderTopColor: "monochrome500",
+        borderTopColor: "grey.500",
         borderTopWidth: "1px",
         borderTopStyle: "solid",
         overflowX: "hidden",
         overflowY: "auto",
-        backgroundColor: isHighlighted ? "primaryLight" : "monochrome100",
+        backgroundColor: isHighlighted ? "primaryLight" : "grey.100",
         flexShrink: 0,
         "&:first-of-type": {
           borderTopWidth: 0,
@@ -38,14 +38,14 @@ export const ControlSection = forwardRef<
 
 export const ControlSectionContent = ({
   side,
-  as,
+  component,
   role,
   ariaLabelledBy,
   children,
   sx,
 }: {
   side: "left" | "right";
-  as?: ElementType;
+  component?: ElementType;
   role?: string;
   ariaLabelledBy?: string;
   children: ReactNode;
@@ -53,7 +53,7 @@ export const ControlSectionContent = ({
 }) => {
   return (
     <Box
-      as={as}
+      component={component}
       role={role}
       aria-labelledby={ariaLabelledBy}
       sx={{ px: side === "left" ? 2 : 4, pb: 4, ...sx }}
@@ -69,43 +69,38 @@ export const SectionTitle = ({
   titleId,
   disabled,
   children,
+  sx,
 }: {
   color?: string;
   iconName?: IconName;
   titleId?: string;
   disabled?: boolean;
   children: ReactNode;
+  sx?: TypographyProps["sx"];
 }) => {
   const theme = useTheme();
   return (
-    <Flex
-      as="h2"
+    <Typography
+      variant="h5"
       id={titleId}
       sx={{
-        p: 4,
-        bg: "transparent",
-        appearance: "none",
+        padding: `${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(
+          2
+        )} ${theme.spacing(4)}`,
+        display: "flex",
+        alignItems: "center",
         width: "100%",
         border: "none",
         justifyContent: "flex-start",
-        color: disabled ? "monochrome600" : color ?? "monochrome800",
+        color: disabled ? "grey.600" : color ?? "grey.800",
+        "& > svg:first-of-type": {
+          marginRight: theme.spacing(2),
+        },
+        ...sx,
       }}
     >
-      {iconName && (
-        <Icon
-          color={
-            disabled ? theme.colors.monochrome600 : theme.colors.monochrome700
-          }
-          name={iconName}
-        ></Icon>
-      )}
-      <Text
-        as="div"
-        variant="table"
-        sx={{ fontWeight: "bold", ml: iconName ? 2 : 0 }}
-      >
-        {children}
-      </Text>
-    </Flex>
+      {iconName ? <Icon name={iconName} /> : null}
+      {children}
+    </Typography>
   );
 };

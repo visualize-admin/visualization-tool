@@ -6,7 +6,7 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { ThemeProvider } from "theme-ui";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ContentMDXProvider } from "../components/content-mdx-provider";
 import { PUBLIC_URL } from "../domain/env";
 import { GraphqlProvider } from "../graphql/context";
@@ -91,11 +91,13 @@ export default function App({ Component, pageProps }: AppProps) {
           />
         ))}
       </Head>
+
       <LocaleProvider value={locale}>
         <I18nProvider i18n={i18n}>
           <GraphqlProvider>
             <ThemeProvider theme={themeModule.theme}>
               <ContentMDXProvider>
+                <CssBaseline />
                 <Component {...pageProps} />
               </ContentMDXProvider>
             </ThemeProvider>

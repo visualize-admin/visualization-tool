@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { ConfiguratorStateDescribingChart } from "..";
 import { locales } from "../../locales/locales";
 import { useLocale } from "../../locales/use-locale";

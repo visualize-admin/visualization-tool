@@ -1,11 +1,11 @@
 import { Trans } from "@lingui/macro";
 import { useEffect, useState } from "react";
-import { Box, Link, Text } from "theme-ui";
+import { Box, Link, Typography } from "@mui/material";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
 import { DataDownload } from "./data-download";
-import Stack from "./Stack";
+import { Stack } from "@mui/material";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -32,20 +32,20 @@ export const ChartFootnotes = ({
 
     return (
       <Box sx={{ mt: 2 }}>
-        <Text as="div" variant="meta" color="monochrome600">
+        <Typography component="div" variant="caption" color="grey.600">
           <Trans id="metadata.dataset">Dataset</Trans>: {dataCubeByIri.title}
-        </Text>
+        </Typography>
 
-        <Text as="div" variant="meta" color="monochrome600">
+        <Typography component="div" variant="caption" color="grey.600">
           <Trans id="metadata.source">Source</Trans>:{" "}
           {dataCubeByIri.publisher && (
             <Box
-              as="span"
-              sx={{ "> a": { color: "monochrome600" } }}
+              component="span"
+              sx={{ "> a": { color: "grey.600" } }}
               dangerouslySetInnerHTML={{ __html: dataCubeByIri.publisher }}
             ></Box>
           )}
-        </Text>
+        </Typography>
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
           <DataDownload
@@ -65,7 +65,8 @@ export const ChartFootnotes = ({
             <>
               <Box sx={{ display: "inline", mx: 1 }}>·</Box>
               <Link
-                variant="inline"
+                sx={{ typography: "body2" }}
+                color="primary"
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"

@@ -1,3 +1,4 @@
+import Flex from "./flex";
 import { t, Trans } from "@lingui/macro";
 import * as clipboard from "clipboard-polyfill/text";
 import Downshift, { DownshiftState, StateChangeOptions } from "downshift";
@@ -9,26 +10,25 @@ import {
 } from "react";
 import {
   Box,
+  BoxProps,
   Button,
   ButtonProps,
-  Flex,
-  FlexOwnProps,
   Input,
   Link,
-  Text,
-} from "theme-ui";
+  Typography,
+} from "@mui/material";
 import { Icon } from "../icons";
 import { useI18n } from "../lib/use-i18n";
 import { useLocale } from "../locales/use-locale";
 import { IconLink } from "./links";
-import Stack from "./Stack";
+import { Stack } from '@mui/material'
 
 export const PublishActions = ({
   configKey,
   sx,
 }: {
   configKey: string;
-  sx?: FlexOwnProps["sx"];
+  sx?: BoxProps["sx"];
 }) => {
   const locale = useLocale();
 
@@ -107,11 +107,12 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
     <PopUp
       renderTrigger={(props) => {
         return (
-          <Button {...props}>
-            <Icon name="linkExternal" />
-            <Text>
-              <Trans id="button.share">Share</Trans>
-            </Text>
+          <Button
+            {...props}
+            size="large"
+            startIcon={<Icon name="linkExternal" />}
+          >
+            <Trans id="button.share">Share</Trans>
           </Button>
         );
       }}
@@ -124,14 +125,14 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
               height: 48,
               borderBottomWidth: "1px",
               borderBottomStyle: "solid",
-              borderBottomColor: "monochrome500",
+              borderBottomColor: "grey.500",
               justifyContent: "space-between",
               alignItems: "center",
             }}
           >
-            <Text as="div" variant="paragraph1" color="monochrome700">
+            <Typography component="div" variant="body1" color="grey.700">
               <Trans id="publication.popup.share">Share</Trans>:
-            </Text>
+            </Typography>
             <Flex color="primary">
               <IconLink
                 iconName="facebook"
@@ -176,9 +177,9 @@ export const Share = ({ configKey, locale }: EmbedShareProps) => {
             </Flex>
           </Flex>
           <Box mt={2}>
-            <Text as="div" variant="paragraph1" color="monochrome700">
+            <Typography component="div" variant="body1" color="grey.700">
               <Trans id="publication.share.chart.url">Chart URL: </Trans>
-            </Text>
+            </Typography>
             <Box my={1} sx={{ color: "primary" }}>
               <Link
                 href={shareUrl}
@@ -218,29 +219,32 @@ export const Embed = ({ configKey, locale }: EmbedShareProps) => {
   return (
     <PopUp
       renderTrigger={(toggleProps) => (
-        <Button variant="primary" {...toggleProps}>
-          <Icon name="embed" />
-          <Text>
-            <Trans id="button.embed">Embed</Trans>
-          </Text>
+        <Button
+          startIcon={<Icon name="embed" />}
+          size="large"
+          variant="contained"
+          color="primary"
+          {...toggleProps}
+        >
+          <Trans id="button.embed">Embed</Trans>
         </Button>
       )}
     >
       <>
         <PublishActionOverlay />
         <PublishActionModal>
-          <Text as="div" variant="paragraph1" color="monochrome700" mt={2}>
+          <Typography component="div" variant="body1" color="grey.700" mt={2}>
             <Trans id="publication.embed.iframe">Iframe Embed Code: </Trans>
-          </Text>
+          </Typography>
 
           <CopyToClipboardTextInput
             iFrameCode={`<iframe src="${embedIframeUrl}" style="border:0px #ffffff none;" name="visualize.admin.ch" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>`}
           />
-          <Text as="div" variant="paragraph1" color="monochrome700" mt={2}>
+          <Typography component="div" variant="body1" color="grey.700" mt={2}>
             <Trans id="publication.embed.AEM">
               Embed Code for AEM &quot;External Application&quot;:{" "}
             </Trans>
-          </Text>
+          </Typography>
 
           <CopyToClipboardTextInput iFrameCode={embedAEMUrl} />
         </PublishActionModal>
@@ -272,10 +276,10 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
     <Flex sx={{ alignItems: "stretch", height: 48 }} mt={1} mb={2}>
       <Input
         sx={{
-          color: "monochrome700",
+          color: "grey.700",
           px: 2,
-          fontFamily: "body",
-          fontSize: 4,
+
+          fontSize: "1rem",
           minWidth: 160,
           overflowX: "auto",
           borderTopLeftRadius: "default",
@@ -284,7 +288,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
           borderBottomRightRadius: 0,
           borderWidth: "1px",
           borderStyle: "solid",
-          borderColor: "monochrome500",
+          borderColor: "grey.500",
         }}
         type="text"
         value={iFrameCode}
@@ -292,7 +296,7 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
       ></Input>
 
       <Button
-        variant="reset"
+        variant="text"
         onMouseOver={() => toggleTooltip(true)}
         onMouseUp={() =>
           updateTooltipContent(<Trans id="button.hint.copied">copied!</Trans>)
@@ -300,8 +304,8 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
         onMouseLeave={handleMouseLeave}
         onClick={(e) => handleClick(e, iFrameCode)}
         sx={{
-          color: "monochrome600",
-          bg: "monochrome200",
+          color: "grey.600",
+          backgroundColor: "grey.200",
           position: "relative",
 
           borderTopRightRadius: "default",
@@ -311,22 +315,22 @@ const CopyToClipboardTextInput = ({ iFrameCode }: { iFrameCode: string }) => {
 
           borderWidth: "1px",
           borderStyle: "solid",
-          borderColor: "monochrome500",
+          borderColor: "grey.500",
           borderLeft: "none",
 
           cursor: "pointer",
 
           ":hover": {
-            bg: "monochrome300",
-            color: "monochrome700",
+            backgroundColor: "grey.300",
+            color: "grey.700",
           },
           ":active": {
-            bg: "monochrome400",
-            color: "monochrome800",
+            backgroundColor: "grey.400",
+            color: "grey.800",
           },
           ":disabled": {
             cursor: "initial",
-            color: "monochrome300",
+            color: "grey.300",
           },
         }}
       >
@@ -348,9 +352,9 @@ const PublishActionModal = ({ children }: { children: ReactNode }) => (
       zIndex: 12,
       py: 2,
       px: 4,
-      bg: "monochrome100",
+      backgroundColor: "grey.100",
       boxShadow: "primary",
-      borderRadius: "default",
+      borderRadius: 1.5,
 
       "@media screen and (min-width: 62em)": {
         mt: 2,
@@ -362,7 +366,7 @@ const PublishActionModal = ({ children }: { children: ReactNode }) => (
         // maxWidth: 340,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "monochrome500",
+        borderColor: "grey.500",
       },
     }}
   >
@@ -374,7 +378,7 @@ const PublishActionOverlay = () => (
     sx={{
       zIndex: 10,
       display: ["block", "none"],
-      bg: "monochrome900",
+      backgroundColor: "grey.900",
       opacity: 0.25,
       width: "100vw",
       height: "100vh",
@@ -395,11 +399,11 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
       left: "50%",
       transform: "translate3d(-50%, 0, 0)",
 
-      bg: "monochrome700",
-      borderRadius: "default",
-      color: "monochrome100",
+      backgroundColor: "grey.700",
+      borderRadius: 1.5,
+      color: "grey.100",
 
-      fontSize: 1,
+      fontSize: "0.625rem",
       textAlign: "center",
       whiteSpace: "nowrap",
 
@@ -418,7 +422,7 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => (
         width: 0,
         height: 0,
         border: "0.5rem solid transparent",
-        borderTopColor: "monochrome700",
+        borderTopColor: "grey.700",
         left: "50%",
         top: "100%",
         zIndex: -1,

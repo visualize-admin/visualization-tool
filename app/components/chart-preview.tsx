@@ -1,7 +1,8 @@
+import Flex from "../components/flex";
 import { Trans } from "@lingui/macro";
 import Head from "next/head";
 import * as React from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Typography } from "@mui/material";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
@@ -29,8 +30,9 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
         flexDirection: "column",
         justifyContent: "space-between",
         flexGrow: 1,
-        color: "monochrome800",
+        color: "grey.800",
         p: 5,
+        width: "100%",
       }}
     >
       <ChartErrorBoundary resetKeys={[state]}>
@@ -52,12 +54,11 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
           state.state === "PUBLISHING") && (
           <>
             <>
-              <Text
-                variant="heading2"
+              <Typography
+                variant="h2"
                 sx={{
                   mb: 2,
-                  color:
-                    state.meta.title[locale] === "" ? "monochrome500" : "text",
+                  color: state.meta.title[locale] === "" ? "grey.500" : "text",
                 }}
               >
                 {state.meta.title[locale] === "" ? (
@@ -65,7 +66,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 ) : (
                   state.meta.title[locale]
                 )}
-              </Text>
+              </Typography>
               <Head>
                 <title key="title">
                   {state.meta.title[locale] === ""
@@ -74,14 +75,12 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                   - visualize.admin.ch
                 </title>
               </Head>
-              <Text
-                variant="paragraph1"
+              <Typography
+                variant="body1"
                 sx={{
                   mb: 2,
                   color:
-                    state.meta.description[locale] === ""
-                      ? "monochrome500"
-                      : "text",
+                    state.meta.description[locale] === "" ? "grey.500" : "text",
                 }}
               >
                 {state.meta.description[locale] === "" ? (
@@ -89,7 +88,7 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 ) : (
                   state.meta.description[locale]
                 )}
-              </Text>
+              </Typography>
             </>
             <InteractiveFiltersProvider>
               <ChartWithInteractiveFilters

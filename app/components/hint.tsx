@@ -1,7 +1,8 @@
+import Flex from "./flex";
 import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
-import { Box, BoxProps, Flex, Text } from "theme-ui";
+import { Alert, AlertTitle, Box, BoxProps, Typography } from "@mui/material";
 import { Icon, IconName } from "../icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
@@ -47,7 +48,7 @@ const spin = keyframes`
 
 const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
   return (
-    <Box
+    <Flex
       {...props}
       sx={{
         animation: `1s linear infinite ${spin}`,
@@ -55,7 +56,7 @@ const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
       }}
     >
       <Icon name="loading" size={size} />
-    </Box>
+    </Flex>
   );
 };
 
@@ -64,7 +65,7 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
     sx={{
       width: "100%",
       height: "100%",
-      color: "hint",
+      color: "hint.main",
       margin: "auto",
       textAlign: "center",
       flexDirection: "column",
@@ -77,9 +78,9 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => (
     }}
   >
     <Spinner />
-    <Text as="div" variant="heading4">
+    <Typography component="div" variant="body1">
       <Trans id="hint.loading.data">Loading data…</Trans>
-    </Text>
+    </Typography>
   </Flex>
 );
 
@@ -87,7 +88,7 @@ export const LoadingOverlay = () => (
   <Box
     sx={{
       position: "absolute",
-      bg: "monochrome100",
+      backgroundColor: "grey.100",
       top: 0,
       left: 0,
       width: "100%",
@@ -99,172 +100,72 @@ export const LoadingOverlay = () => (
 );
 
 export const NoDataHint = () => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100%",
-      color: "hint",
-      margin: "auto",
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    <Icon name="warning" size={64} />
-    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
+  <Alert severity="info" icon={<Icon name="warning" size={64} />}>
+    <AlertTitle>
       <Trans id="hint.nodata.title">
         No data available for current filter selection
       </Trans>
-    </Text>
-    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-      <Trans id="hint.nodata.message">
-        Please try with another combination of filters.
-      </Trans>
-    </Text>
-  </Flex>
+    </AlertTitle>
+    <Trans id="hint.nodata.message">
+      Please try with another combination of filters.
+    </Trans>
+  </Alert>
 );
 export const LoadingDataError = ({ message }: { message?: string }) => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100%",
-      color: "hint",
-      margin: "auto",
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    <Icon name="hintWarning" size={64} />
-    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
+  <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
+    <AlertTitle>
       <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
-    </Text>
-    <Box sx={{ "& > * + *:not([data-no-margin])": { marginTop: 2 } }}>
-      <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-        <Trans id="hint.dataloadingerror.message">
-          The data could not be loaded.
-        </Trans>
-      </Text>
-      {message ? (
-        <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-          {message}
-        </Text>
-      ) : null}
-    </Box>
-  </Flex>
+    </AlertTitle>
+    <Trans id="hint.dataloadingerror.message">
+      The data could not be loaded.
+    </Trans>
+    {message ? message : null}
+  </Alert>
 );
 
 export const LoadingGeoDimensionsError = () => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100%",
-      color: "hint",
-      margin: "auto",
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    <Icon name="hintWarning" size={64} />
-    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
+  <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
+    <AlertTitle>
       <Trans id="hint.coordinatesloadingerror.title">
         Coordinates loading error
       </Trans>
-    </Text>
-    <Box sx={{ "& > * + *:not([data-no-margin])": { marginTop: 2 } }}>
-      <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-        <Trans id="hint.coordinatesloadingerror.message">
-          There was a problem with loading the coordinates from geographical
-          dimensions.
-        </Trans>
-      </Text>
-    </Box>
-  </Flex>
+    </AlertTitle>
+    <Trans id="hint.coordinatesloadingerror.message">
+      There was a problem with loading the coordinates from geographical
+      dimensions.
+    </Trans>
+  </Alert>
 );
 
 export const ChartUnexpectedError = () => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100%",
-      color: "hint",
-      margin: "auto",
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    <Icon name="hintWarning" size={64} />
-    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
+  <Alert severity="info" icon={<Icon name="hintWarning" size={64} />}>
+    <AlertTitle>
       <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
-    </Text>
-    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-      <Trans id="hint.chartunexpected.message">
-        An unexpected error occurred while displaying this chart.
-      </Trans>
-    </Text>
-  </Flex>
+    </AlertTitle>
+    <Trans id="hint.chartunexpected.message">
+      An unexpected error occurred while displaying this chart.
+    </Trans>
+  </Alert>
 );
 
 export const OnlyNegativeDataHint = () => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100%",
-      color: "hint",
-      margin: "auto",
-      textAlign: "center",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      flexGrow: 1,
-    }}
-  >
-    <Icon name="datasetError" size={64} />
-    <Text as="h5" variant="heading2" sx={{ my: 3 }}>
+  <Alert severity="warning" icon={<Icon name="datasetError" size={64} />}>
+    <AlertTitle>
       <Trans id="hint.only.negative.data.title">Negative Values</Trans>
-    </Text>
-    <Text as="p" variant="paragraph2" sx={{ maxWidth: "40rem" }}>
-      <Trans id="hint.only.negative.data.message">
-        Negative data values cannot be displayed with this chart type.
-      </Trans>
-    </Text>
-  </Flex>
+    </AlertTitle>
+    <Trans id="hint.only.negative.data.message">
+      Negative data values cannot be displayed with this chart type.
+    </Trans>
+  </Alert>
 );
 
 export const Success = () => (
-  <Flex
-    sx={{
-      width: "auto",
-      height: "auto",
-      borderRadius: "bigger",
-      mb: 4,
-      p: 4,
-      bg: "successLight",
-      color: "success",
-      justifyContent: "flex-start",
-      alignItems: "center",
-    }}
-  >
-    <Box sx={{ width: 64, pr: 4, flexShrink: 0 }}>
-      <Icon name="datasetSuccess" size={64} />
-    </Box>
-    <Text as="p" variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
-      <Trans id="hint.publication.success">
-        Your visualization is now published. You can share and embed it using
-        the URL or the options below.
-      </Trans>
-    </Text>
-  </Flex>
+  <Alert severity="success" icon={<Icon name="datasetSuccess" size={64} />}>
+    <Trans id="hint.publication.success">
+      Your visualization is now published. You can share and embed it using the
+      URL or the options below.
+    </Trans>
+  </Alert>
 );
 export const HintBlue = ({
   iconName,
@@ -275,25 +176,9 @@ export const HintBlue = ({
   children: ReactNode;
   iconSize?: number;
 }) => (
-  <Flex
-    sx={{
-      width: "auto",
-      height: "auto",
-      p: 4,
-      bg: "primaryLight",
-      color: "primary",
-      textAlign: "center",
-      justifyContent: "flex-start",
-      alignItems: ["flex-start", "center"],
-    }}
-  >
-    <Box sx={{ width: iconSize, pr: 4 }}>
-      <Icon name={iconName} size={iconSize} />
-    </Box>
-    <Text as="p" variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
-      {children}
-    </Text>
-  </Flex>
+  <Alert severity="info" icon={<Icon name={iconName} />}>
+    {children}
+  </Alert>
 );
 export const HintRed = ({
   iconName,
@@ -304,25 +189,7 @@ export const HintRed = ({
   children: ReactNode;
   iconSize?: number;
 }) => (
-  <Flex
-    sx={{
-      width: "auto",
-      height: "auto",
-      borderRadius: "bigger",
-      margin: "auto",
-      p: 4,
-      bg: "alertLight",
-      color: "alert",
-      textAlign: "center",
-      justifyContent: "flex-start",
-      alignItems: ["flex-start", "center"],
-    }}
-  >
-    <Box sx={{ width: iconSize, pr: 4 }}>
-      <Icon name={iconName} size={iconSize} />
-    </Box>
-    <Text as="p" variant="paragraph1" sx={{ textAlign: "left", ml: 4 }}>
-      {children}
-    </Text>
-  </Flex>
+  <Alert severity="error" icon={<Icon name={iconName} size={iconSize} />}>
+    {children}
+  </Alert>
 );

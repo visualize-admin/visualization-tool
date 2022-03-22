@@ -8,7 +8,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
-import { Box, Button, Spinner } from "theme-ui";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { CombinedError, useClient } from "urql";
 import {
   ChartConfig,
@@ -62,11 +62,11 @@ const DataFilterSelectGeneric = ({
   onRemove: () => void;
 }) => {
   const controls = dimension.isKeyDimension ? null : (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ display: "flex", flexGrow: 1 }}>
       <Button
         className="buttons"
         sx={{ ml: 2 }}
-        variant="inline"
+        variant="text"
         onClick={onRemove}
       >
         <Icon
@@ -367,9 +367,9 @@ export const ChartConfigurator = ({
           <SectionTitle titleId="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
-              <Spinner
+              <CircularProgress
                 size={12}
-                sx={{ color: "hint", display: "inline-block", ml: 1 }}
+                sx={{ color: "hint.main", display: "inline-block", ml: 1 }}
               />
             ) : null}
           </SectionTitle>
@@ -404,7 +404,7 @@ export const ChartConfigurator = ({
                                   transition:
                                     "color 0.125s ease, opacity 0.125s ease-out",
                                   opacity: 0.25,
-                                  color: "secondaryActive",
+                                  color: "secondary.active",
                                 },
                                 ".buttons:hover": fetching
                                   ? {}
@@ -430,7 +430,8 @@ export const ChartConfigurator = ({
                                   justifyContent: "flex-end",
                                   flexGrow: 0,
                                   flexShrink: 0,
-                                  pb: 1,
+                                  mb: -1,
+                                  ml: 2,
                                 }}
                               >
                                 <MoveDragButtons
@@ -478,12 +479,13 @@ export const ChartConfigurator = ({
                 <Menu>
                   <MenuButton className="menu-button">
                     <Button
-                      variant="primary"
+                      variant="contained"
                       sx={{
                         display: "flex",
                         minWidth: "auto",
                         justifyContent: "center",
                       }}
+                      color="primary"
                     >
                       <Trans>Add filter</Trans>
                       <Icon name="add" height={18} />

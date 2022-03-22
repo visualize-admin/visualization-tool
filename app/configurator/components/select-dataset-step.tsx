@@ -3,7 +3,7 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
 import React, { useMemo } from "react";
-import { Box, Button, Text } from "theme-ui";
+import { Box, Button, Typography } from "@mui/material";
 import { useDebounce } from "use-debounce";
 import { AnimatePresence } from "framer-motion";
 import { useDataCubesQuery } from "../../graphql/query-hooks";
@@ -21,6 +21,7 @@ import { DataSetMetadata } from "./dataset-metadata";
 import { DataSetPreview } from "./dataset-preview";
 import { PanelLayout, PanelLeftWrapper, PanelMiddleWrapper } from "./layout";
 import { MotionBox, navPresenceProps } from "./presence";
+import { Icon } from "../../icons";
 
 const softJSONParse = (v: string) => {
   try {
@@ -84,12 +85,12 @@ export const SelectDatasetStepContent = () => {
         // FIXME replace 96px with actual header size
         marginTop: "96px",
         height: "auto",
-        pt: 3,
+        pt: "55px",
       }}
     >
       <PanelLeftWrapper
         raised={false}
-        sx={{ pt: "1.25rem", bg: "transparent" }}
+        sx={{ backgroundColor: "transparent", paddingTop: 0 }}
       >
         <AnimatePresence exitBeforeEnter>
           {dataset ? (
@@ -100,8 +101,11 @@ export const SelectDatasetStepContent = () => {
               custom={dataset}
             >
               <NextLink passHref href={backLink}>
-                <Button variant="secondary">
-                  ←{" "}
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<Icon name="chevronLeft" size={12} />}
+                >
                   <Trans id="dataset-preview.back-to-results">
                     Back to the list
                   </Trans>
@@ -122,6 +126,8 @@ export const SelectDatasetStepContent = () => {
       </PanelLeftWrapper>
       <PanelMiddleWrapper
         sx={{
+          pt: 0,
+          pl: 6,
           gridColumnStart: "middle",
           gridColumnEnd: "right",
         }}
@@ -135,10 +141,10 @@ export const SelectDatasetStepContent = () => {
             ) : (
               <MotionBox {...navPresenceProps}>
                 {filters.length > 0 ? (
-                  <Text
+                  <Typography
                     key="filters"
-                    variant="heading1"
-                    color="monochrome800"
+                    variant="h1"
+                    color="grey.800"
                     mb={4}
                     sx={{ display: "block" }}
                   >
@@ -149,27 +155,27 @@ export const SelectDatasetStepContent = () => {
                       )
                       .map((f) => f.label)
                       .join(", ")}
-                  </Text>
+                  </Typography>
                 ) : (
                   <>
-                    <Text
+                    <Typography
                       key="all-datasets"
-                      variant="heading1"
-                      color="monochrome800"
+                      variant="h1"
+                      color="grey.800"
                       mb={4}
                       sx={{ display: "block" }}
                     >
                       <Trans id="browse.datasets.all-datasets">
                         All datasets
                       </Trans>
-                    </Text>
-                    <Text
-                      variant="paragraph1"
-                      color="monochrome800"
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      fontWeight={400}
+                      color="grey.800"
                       sx={{
                         mb: 4,
                         maxWidth: 800,
-                        fontWeight: "light",
                         display: "block",
                       }}
                     >
@@ -180,7 +186,7 @@ export const SelectDatasetStepContent = () => {
                         Click on a dataset to see more detailed information and
                         start creating your own visualizations.
                       </Trans>
-                    </Text>
+                    </Typography>
                   </>
                 )}
                 <Box mb={1} key="search-box">

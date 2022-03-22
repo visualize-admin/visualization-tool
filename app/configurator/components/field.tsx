@@ -1,8 +1,8 @@
+import Flex from "../../components/flex";
 import { t } from "@lingui/macro";
 import { extent, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
-import { Flex } from "theme-ui";
 import {
   Option,
   useActiveFieldField,
@@ -631,9 +631,7 @@ export const ColorPickerField = ({
         width: "100%",
       }}
     >
-      <Label htmlFor="xyz" disabled={disabled}>
-        {label}
-      </Label>
+      <Label htmlFor="xyz">{label}</Label>
       <ColorPickerMenu
         colors={getPalette()}
         selectedColor={color}

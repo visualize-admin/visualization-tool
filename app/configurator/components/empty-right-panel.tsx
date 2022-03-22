@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Text } from "theme-ui";
+import { Typography } from "@mui/material";
 import { ReactNode } from "react";
 import {
   ConfiguratorStateConfiguringChart,
@@ -11,9 +11,9 @@ export const EmptyRightPanel = ({
 }: {
   state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
 }) => (
-  <Text as="div" variant="paragraph1" sx={{ m: 4 }}>
+  <Typography component="div" variant="body1" sx={{ m: 4 }}>
     {getRightPanelHint(state.state)}
-  </Text>
+  </Typography>
 );
 
 const getRightPanelHint = (state: string): ReactNode => {

@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { DataCubeMetadata } from "../../../graphql/types";
 import { Icon } from "../../../icons";
@@ -89,14 +89,15 @@ export const TabDropZone = ({
                                 width: 24,
                                 height: 24,
                                 position: "absolute",
-                                top: "50%",
+                                top: 0,
+                                bottom: 0,
                                 right: 3,
-                                marginTop: -12,
+                                margin: "auto",
                                 color: isDragging
-                                  ? "secondaryActive"
-                                  : "secondaryDisabled",
+                                  ? "secondary.active"
+                                  : "secondary.disabled",
                                 ":hover": {
-                                  color: "secondaryHover",
+                                  color: "secondary.hover",
                                 },
                               }}
                             >

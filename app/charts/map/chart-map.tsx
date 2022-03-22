@@ -1,6 +1,6 @@
 import { geoCentroid } from "d3";
 import React, { memo, useMemo } from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import {
   feature as topojsonFeature,
   mesh as topojsonMesh,
@@ -234,7 +234,7 @@ export const ChartMapPrototype = ({
   baseLayer: BaseLayer;
 }) => {
   return (
-    <Box sx={{ m: 4, bg: "#fff" }}>
+    <Box sx={{ m: 4, backgroundColor: "#fff" }}>
       <ChartMap
         observations={observations}
         features={features}

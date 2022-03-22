@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import NextLink from "next/link";
-import { Box, Flex, Link } from "theme-ui";
+import { Box, Link } from "@mui/material";
+import Flex from "../components/flex";
 import { ChartPanel } from "../components/chart-panel";
 import { ChartPublished } from "../components/chart-published";
 import { ContentLayout } from "../components/layout";
@@ -28,7 +29,7 @@ const Page: NextPage<PageProps> = ({ configs }) => {
   return (
     <>
       <ContentLayout>
-        <Box px={4} bg="muted" mb="auto">
+        <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto">
           <Flex sx={{ pt: 4, flexWrap: "wrap" }}>
             {configs.map(({ key, data: { dataSet, chartConfig, meta } }) => {
               return (
@@ -50,17 +51,17 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                           background: "transparent",
                           color: "primary",
                           textAlign: "left",
-                          fontFamily: "body",
-                          lineHeight: [1, 2, 2],
+
+                          lineHeight: ["1rem", "1.125rem", "1.125rem"],
                           fontWeight: "regular",
-                          fontSize: [1, 2, 2],
+                          fontSize: ["0.625rem", "0.75rem", "0.75rem"],
                           border: "none",
                           cursor: "pointer",
                           mt: 2,
                           p: 5,
                           ":disabled": {
                             cursor: "initial",
-                            color: "monochrome500",
+                            color: "grey.500",
                           },
                         }}
                       >

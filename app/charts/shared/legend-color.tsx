@@ -1,5 +1,5 @@
+import Flex from "../../components/flex";
 import React, { memo } from "react";
-import { Flex } from "theme-ui";
 import { Checkbox } from "../../components/form";
 import { AreasState } from "../area/areas-state";
 import { GroupedBarsState } from "../bar/bars-grouped-state";
@@ -109,11 +109,11 @@ export const LegendItem = ({
       justifyContent: "flex-start",
       alignItems: "center",
       pl: 2,
-      fontFamily: "body",
-      lineHeight: [1, 2, 2],
+
+      lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
-      fontSize: [1, 2, 2],
-      color: "monochrome700",
+      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
+      color: "grey.700",
 
       "&::before": {
         content: "''",
@@ -123,7 +123,7 @@ export const LegendItem = ({
         width: ".5rem",
         height: symbol === "square" || symbol === "circle" ? `.5rem` : 2,
         borderRadius: symbol === "circle" ? "50%" : 0,
-        bg: color,
+        backgroundColor: color,
       },
     }}
   >

@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/macro";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { Box, BoxProps, Link } from "theme-ui";
-import Stack from "../../components/Stack";
+import { Box, BoxProps, Link, Typography } from "@mui/material";
+import { Stack } from '@mui/material'
 import { useFormatDate } from "../../configurator/components/ui-helpers";
 import {
   DataCubeMetadataQuery,
@@ -12,6 +12,7 @@ import { useLocale } from "../../locales/use-locale";
 import truthy from "../../utils/truthy";
 import Tag from "./Tag";
 import { MotionBox, smoothPresenceProps } from "./presence";
+import { Link as MUILink } from "@mui/material";
 
 export const DataSetMetadata = ({
   dataSetIri,
@@ -45,7 +46,7 @@ export const DataSetMetadata = ({
           </DatasetMetadataTitle>
           <DatasetMetadataBody>
             <Box
-              sx={{ "> a": { color: "monochrome900" } }}
+              sx={{ "> a": { color: "grey.900" } }}
               dangerouslySetInnerHTML={{
                 __html: cube.publisher,
               }}
@@ -99,31 +100,31 @@ export const DataSetMetadata = ({
 };
 
 const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
-  <Box
+  <Typography
+    variant="caption"
     sx={{
-      fontFamily: "body",
-      lineHeight: [1, 2, 2],
-      fontWeight: "regular",
-      fontSize: [1, 2, 2],
-      color: "monochrome600",
+      lineHeight: ["1rem", "1.125rem", "1.125rem"],
+      fontWeight: "bold",
+      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
+      color: "grey.700",
     }}
   >
     {children}
-  </Box>
+  </Typography>
 );
 const DatasetMetadataBody = ({ children }: { children: ReactNode }) => (
-  <Box
+  <Typography
+    variant="body2"
     sx={{
-      fontFamily: "body",
-      lineHeight: [4, 5, 5],
+      lineHeight: ["1.375rem", "1.5rem", "1.5rem"],
       fontWeight: "regular",
-      fontSize: [3, 4, 4],
-      color: "monochrome900",
+      fontSize: ["0.875rem", "0.875rem", "0.875rem"],
+      color: "grey.900",
       mb: 3,
     }}
   >
     {children}
-  </Box>
+  </Typography>
 );
 
 const DatasetMetadataLink = ({
@@ -133,7 +134,13 @@ const DatasetMetadataLink = ({
   href: string;
   label: string;
 }) => (
-  <Link variant="primary" href={href} target="_blank" rel="noopener noreferrer">
+  <Link
+    underline="hover"
+    color="primary"
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
     {label}
   </Link>
 );
@@ -154,12 +161,15 @@ const DatasetTags = ({
           passHref
         >
           <Tag
-            as="a"
+            component={MUILink}
+            /*
+            // @ts-ignore */
+            underline="none"
             type={t.__typename}
             title={t.label || undefined}
             sx={{
               maxWidth: "100%",
-              display: "block",
+              display: "flex",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
               overflow: "hidden",

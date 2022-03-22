@@ -14,16 +14,16 @@ import React, {
 import {
   Box,
   Button,
-  Flex,
-  FlexProps,
-  Link as ThemeUILink,
-  LinkProps as ThemeUILinkProps,
-  Text,
-} from "theme-ui";
+  ButtonBase,
+  Link as MUILink,
+  LinkProps as MUILinkProps,
+  Typography,
+} from "@mui/material";
+import Flex, { FlexProps } from "../../components/flex";
 import { AnimatePresence } from "framer-motion";
 import { Checkbox, MiniSelect, SearchField } from "../../components/form";
 import { Loading } from "../../components/hint";
-import Stack from "../../components/Stack";
+import { Stack } from "@mui/material";
 import {
   DataCubeOrganization,
   DataCubeResultOrder,
@@ -339,19 +339,20 @@ export const SearchDatasetBox = ({
         />
         <Button
           onClick={handleClickSubmit}
-          variant="small"
+          variant="contained"
           sx={{ flexShrink: 0, ml: 1, py: 0, cursor: "pointer" }}
+          color="primary"
+          size="large"
         >
           {searchLabel}
         </Button>
       </Box>
 
       <Flex sx={{ mt: 5, justifyContent: "space-between" }}>
-        <Text
+        <Typography
           color="secondary"
           sx={{
-            fontFamily: "body",
-            fontSize: [2, 2, 2],
+            fontSize: ["0.75rem", "0.75rem", "0.75rem"],
             lineHeight: "24px",
           }}
           aria-live="polite"
@@ -365,7 +366,7 @@ export const SearchDatasetBox = ({
               other="# results"
             />
           )}
-        </Text>
+        </Typography>
 
         <Flex sx={{ alignItems: "center" }}>
           <Checkbox
@@ -373,24 +374,23 @@ export const SearchDatasetBox = ({
               id: "dataset.includeDrafts",
               message: "Include draft datasets",
             })}
-            name={"dataset-include-drafts"}
-            value={"dataset-include-drafts"}
+            name="dataset-include-drafts"
+            value="dataset-include-drafts"
             checked={includeDrafts}
             disabled={false}
             onChange={onToggleIncludeDrafts}
             smaller
           />
           <label htmlFor="datasetSort">
-            <Text
+            <Typography
               color="secondary"
               sx={{
-                fontFamily: "body",
-                fontSize: [1, 2, 2],
+                fontSize: ["0.625rem", "0.75rem", "0.75rem"],
                 lineHeight: "24px",
               }}
             >
               <Trans id="dataset.sortby">Sort by</Trans>
-            </Text>
+            </Typography>
           </label>
 
           <MiniSelect
@@ -398,7 +398,7 @@ export const SearchDatasetBox = ({
             value={order}
             options={isSearching ? options : options.slice(1)}
             onChange={(e) => {
-              onSetOrder(e.currentTarget.value as DataCubeResultOrder);
+              onSetOrder(e.target.value as DataCubeResultOrder);
             }}
           />
         </Flex>
@@ -409,48 +409,48 @@ export const SearchDatasetBox = ({
 
 const defaultNavItemTheme = {
   activeTextColor: "white",
-  activeBg: "primary",
-  textColor: "initial",
-  countColor: "monochrome800",
-  countBg: "monochrome300",
+  activeBg: "primary.main",
+  textColor: "text.primary",
+  countColor: "grey.800",
+  countBg: "grey.300",
 };
 
 const themeNavItemTheme = {
-  activeBg: "category",
+  activeBg: "category.main",
   activeTextColor: "white",
-  textColor: "initial",
-  countColor: "category",
-  countBg: "categoryLight",
+  textColor: "text.primary",
+  countColor: "category.main",
+  countBg: "category.light",
 };
 
 const organizationNavItemTheme = {
-  activeBg: "organization",
+  activeBg: "organization.main",
   activeTextColor: "white",
-  textColor: "initial",
-  countColor: "organization",
-  countBg: "organizationLight",
+  textColor: "text.primary",
+  countColor: "organization.main",
+  countBg: "organization.light",
 };
 
 const NavChip = ({
   children,
   color,
-  bg,
+  backgroundColor,
 }: {
   children: React.ReactNode;
   color: string;
-  bg: string;
+  backgroundColor: string;
 }) => {
   return (
     <Flex
       sx={{
-        width: 20,
+        minWidth: 20,
         height: 20,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 4,
+        borderRadius: 2,
         color: color,
-        bg: bg,
-        fontSize: "small",
+        backgroundColor: backgroundColor,
+        typography: "tag",
       }}
     >
       {children}
@@ -483,7 +483,7 @@ const NavItem = ({
   theme: typeof defaultNavItemTheme;
   /** Level is there to differentiate between organizations and organization subtopics */
   level?: number;
-} & ThemeUILinkProps) => {
+} & MUILinkProps) => {
   const { includeDrafts, search } = useBrowseContext();
 
   const path = useMemo(() => {
@@ -527,15 +527,16 @@ const NavItem = ({
 
   const removeFilterButton = (
     <Link href={removeFilterPath} passHref>
-      <Button
-        as="a"
+      <ButtonBase
+        component="a"
         sx={{
-          bg: level === 1 ? theme.activeBg : "transparent",
+          backgroundColor: level === 1 ? theme.activeBg : "transparent",
           color: level === 1 ? theme.activeTextColor : theme.activeBg,
           minWidth: "16px",
           minHeight: "16px",
-          display: "block",
           height: "auto",
+          alignItems: "center",
+          display: "flex",
           width: "auto",
           padding: 0,
           "&:hover": {
@@ -544,12 +545,12 @@ const NavItem = ({
         }}
       >
         <SvgIcClose width={24} height={24} />
-      </Button>
+      </ButtonBase>
     </Link>
   );
   const countChip =
     count !== undefined ? (
-      <NavChip color={theme.countColor} bg={theme.countBg}>
+      <NavChip color={theme.countColor} backgroundColor={theme.countBg}>
         {count}
       </NavChip>
     ) : null;
@@ -563,10 +564,10 @@ const NavItem = ({
         py: 1,
         justifyContent: "space-between",
         alignItems: "center",
-        borderRadius: 4,
+        borderRadius: 2,
         width: "100%",
         display: "flex",
-        bg: active && level === 1 ? theme.activeBg : "transparent",
+        backgroundColor: active && level === 1 ? theme.activeBg : "transparent",
         transition: "background 0.1s ease",
         "&:hover": {
           background: active ? undefined : "rgba(0, 0, 0, 0.05)",
@@ -580,15 +581,17 @@ const NavItem = ({
     >
       {active ? (
         <>
-          <Text variant="paragraph2">{children}</Text>
+          <Typography variant="body2" sx={{ fontSize: 12 }}>
+            {children}
+          </Typography>
           {level === 1 ? removeFilterButton : countChip}
         </>
       ) : (
         <>
           <Link href={path} passHref>
-            <ThemeUILink variant="initial" sx={{ flexGrow: 1 }}>
+            <MUILink sx={{ flexGrow: 1 }} underline="none" fontSize="small">
               {children}&nbsp;&nbsp;
-            </ThemeUILink>
+            </MUILink>
           </Link>
           {countChip}
         </>
@@ -651,7 +654,7 @@ export const Subthemes = ({
 };
 
 type NavSectionTitleTheme = {
-  bg: string;
+  backgroundColor: string;
   borderColor: string;
 };
 
@@ -672,8 +675,8 @@ export const NavSectionTitle = ({
         cursor: "pointer",
         // border: "1px solid",
         // borderColor: theme.borderColor,
-        bg: theme.bg,
-        borderRadius: 4,
+        backgroundColor: theme.backgroundColor,
+        borderRadius: 2,
         height: "2.5rem",
         mb: 2,
       }}
@@ -757,15 +760,18 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
     displayedThemes && displayedThemes.length > 0 ? (
       <div>
         <NavSectionTitle
-          theme={{ bg: "categoryLight", borderColor: "category" }}
+          theme={{
+            backgroundColor: "category.light",
+            borderColor: "category.main",
+          }}
           sx={{ mb: "block" }}
         >
-          <Box as="span" color="category" mr={2}>
+          <Box component="span" color="category.main" mr={2}>
             <SvgIcCategories width={24} height={24} />
           </Box>
-          <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
             <Trans id="browse-panel.themes">Themes</Trans>
-          </Text>
+          </Typography>
         </NavSectionTitle>
         <Box>
           {displayedThemes.map((theme) => {
@@ -791,15 +797,18 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       <div>
         {
           <NavSectionTitle
-            theme={{ bg: "organizationLight", borderColor: "organization" }}
+            theme={{
+              backgroundColor: "organization.light",
+              borderColor: "organization.main",
+            }}
             sx={{ mb: 2 }}
           >
-            <Box as="span" color="organization" mr={2}>
+            <Box component="span" color="organization.main" mr={2}>
               <SvgIcOrganisations width={24} height={24} />
             </Box>
-            <Text variant="paragraph2" sx={{ fontWeight: "bold" }}>
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
               <Trans id="browse-panel.organizations">Organizations</Trans>
-            </Text>
+            </Typography>
           </NavSectionTitle>
         }
         <AnimatePresence>
@@ -842,16 +851,14 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
         height: "100%",
       }}
       px={4}
-      pt="2rem"
+      pt="0.75rem"
       role="search"
       key={filters.length}
     >
-      <Stack>
-        {/* Theme tree */}
-        <Stack spacing={5}>
-          {navs[0]}
-          {navs[1]}
-        </Stack>
+      {/* Theme tree */}
+      <Stack spacing={5}>
+        {navs[0]}
+        {navs[1]}
       </Stack>
     </Flex>
   );
@@ -955,48 +962,56 @@ export const DatasetResult = ({
   return (
     <MotionCard
       {...smoothPresenceProps}
-      variant="reset"
       onClick={handleClick}
+      elevation={1}
       sx={{
         position: "relative",
-        color: "monochrome700",
+        color: "grey.700",
         cursor: "pointer",
         textAlign: "left",
         py: 4,
         px: 5,
         borderRadius: 10,
-        boxShadow: "primary",
-        bg: "monochrome100",
+        boxShadow: 3,
+        backgroundColor: "grey.100",
         mb: 3,
       }}
     >
       <Stack spacing={2}>
         <Flex sx={{ justifyContent: "space-between" }}>
-          <Text variant="paragraph2" color="monochrome600">
+          <Typography
+            variant="body2"
+            color="grey.600"
+            fontWeight={500}
+            gutterBottom={false}
+          >
             {datePublished ? <DateFormat date={datePublished} /> : null}
-          </Text>
+          </Typography>
           {isDraft && (
             <Tag type="draft">
               <Trans id="dataset.tag.draft">Draft</Trans>
             </Tag>
           )}
         </Flex>
-        <Text as="div" variant="paragraph1" pb={1}>
+        <Typography component="div" variant="body1">
           {highlightedTitle ? (
             <Box
-              as="span"
-              sx={{ "& > strong": { bg: "primaryLight" } }}
+              component="span"
+              sx={{ "& > strong": { backgroundColor: "primary.light" } }}
               dangerouslySetInnerHTML={{ __html: highlightedTitle }}
             />
           ) : (
             title
           )}
-        </Text>
-        <Text
-          variant="paragraph2"
+        </Typography>
+        <Typography
+          variant="body2"
+          color="grey.600"
           sx={
             {
               WebkitLineClamp: 2,
+              mb: 2,
+              lineHeight: 1.57,
               WebkitBoxOrient: "vertical",
               display: "-webkit-box",
               overflow: "hidden",
@@ -1006,14 +1021,14 @@ export const DatasetResult = ({
         >
           {highlightedDescription ? (
             <Box
-              as="span"
-              sx={{ "& > strong": { bg: "primaryLight" } }}
+              component="span"
+              sx={{ "& > strong": { backgroundColor: "primaryLight" } }}
               dangerouslySetInnerHTML={{ __html: highlightedDescription }}
             />
           ) : (
             description
           )}
-        </Text>
+        </Typography>
         <Stack spacing={1} direction="row">
           {themes && showTags
             ? sortBy(themes, (t) => t.label).map((t) => (
@@ -1022,14 +1037,14 @@ export const DatasetResult = ({
                   passHref
                   href={`/browse/theme/${encodeURIComponent(t.iri)}`}
                 >
-                  <ThemeUILink
-                    variant="initial"
+                  <MUILink
+                    color="inherit"
                     // The whole card is a link too, so we have to stop propagating the
                     // event, otherwise we go first to <tag> page then to <result> page
                     onClick={(ev) => ev.stopPropagation()}
                   >
                     <Tag type={t.__typename}>{t.label}</Tag>
-                  </ThemeUILink>
+                  </MUILink>
                 </Link>
               ))
             : null}
@@ -1039,14 +1054,14 @@ export const DatasetResult = ({
               passHref
               href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
             >
-              <ThemeUILink
-                variant="initial"
+              <MUILink
+                color="inherit"
                 // The whole card is a link too, so we have to stop propagating the
                 // event, otherwise we go first to <tag> page then to <result> page
                 onClick={(ev) => ev.stopPropagation()}
               >
                 <Tag type={creator.__typename}>{creator.label}</Tag>
-              </ThemeUILink>
+              </MUILink>
             </Link>
           ) : null}
         </Stack>

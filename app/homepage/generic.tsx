@@ -1,19 +1,18 @@
-import { Text } from "theme-ui";
+import { Typography } from "@mui/material";
 import { ReactNode } from "react";
 
 export const HomepageSection = ({ children }: { children: ReactNode }) => (
-  <Text
-    as="h2"
+  <Typography
+    component="h2"
     sx={{
-      fontFamily: "body",
-      lineHeight: [7, 8, 8],
+      lineHeight: ["2.250rem", "3rem", "3rem"],
       fontWeight: "light",
-      fontSize: [6, 7, 7],
-      color: "monochrome800",
+      fontSize: ["1.5rem", "2rem", "2rem"],
+      color: "grey.800",
       mb: 6,
       textAlign: "center",
     }}
   >
     {children}
-  </Text>
+  </Typography>
 );

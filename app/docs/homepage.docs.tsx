@@ -1,4 +1,4 @@
-import { Box } from "@theme-ui/components";
+import { Box } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 import { Contribute, Examples, Intro, Tutorial } from "../homepage";
 

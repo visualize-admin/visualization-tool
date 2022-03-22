@@ -1,5 +1,6 @@
+import Flex from "../components/flex";
 import { ReactNode } from "react";
-import { Box, Flex, Text } from "theme-ui";
+import { Box, Typography } from "@mui/material";
 import { ChartPublished } from "../components/chart-published";
 import { HomepageSection } from "./generic";
 
@@ -26,7 +27,7 @@ export const Examples = ({
         maxWidth: 1024,
         margin: [0, 0, "0 auto"],
         p: 4,
-        color: "monochrome800",
+        color: "grey.800",
       }}
     >
       <HomepageSection>{headline}</HomepageSection>
@@ -240,37 +241,37 @@ const Example = ({
         mr: reverse ? 0 : [0, 0, 8],
       }}
     >
-      <Text
-        as="h3"
+      <Typography
+        component="h3"
         sx={{
-          fontSize: [5, 5, 6],
+          fontSize: ["1.125rem", "1.125rem", "1.5rem"],
           lineHeight: 1.5,
-          fontFamily: "body",
+
           fontWeight: "bold",
           mb: [2, 2, 4],
         }}
       >
         {headline}
-      </Text>
-      <Text
-        as="p"
+      </Typography>
+      <Typography
+        component="p"
         sx={{
-          fontSize: 4,
+          fontSize: "1rem",
           lineHeight: 1.5,
-          fontFamily: "body",
+
           mt: 4,
           mb: [2, 2, 0],
         }}
       >
         {description}
-      </Text>
+      </Typography>
     </Box>
     <Box
       sx={{
         order: reverse ? 1 : 2,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "monochrome300",
+        borderColor: "grey.300",
         boxShadow: "primary",
         width: ["100%", "100%", "50%"],
         mt: 2,

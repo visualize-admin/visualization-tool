@@ -4,13 +4,13 @@ import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Button, Text } from "theme-ui";
+import { Box, Button, Typography } from "@mui/material";
 import { ChartPanel } from "../../components/chart-panel";
 import { ChartPublished } from "../../components/chart-published";
 import { Success } from "../../components/hint";
 import { ContentLayout } from "../../components/layout";
 import { PublishActions } from "../../components/publish-actions";
-import Stack from "../../components/Stack";
+import { Stack } from '@mui/material'
 import { Config } from "../../configurator";
 import { getConfig } from "../../db/config";
 import { useLocale } from "../../locales/use-locale";
@@ -69,8 +69,8 @@ const VisualizationPage = (props: PageProps) => {
         {/* og:url is set in _app.tsx */}
       </Head>
       <ContentLayout>
-        <Box px={4} bg="muted" mb="auto" mx="auto">
-          <Box sx={{ pt: 4, maxWidth: "80rem", margin: "auto" }}>
+        <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto" mx="auto">
+          <Box sx={{ pt: 4, maxWidth: "50rem", margin: "auto" }}>
             {publishSuccess && <Success />}
 
             <ChartPanel>
@@ -84,15 +84,15 @@ const VisualizationPage = (props: PageProps) => {
 
             <PublishActions configKey={key} sx={{ mt: 5, mb: 5 }} />
 
-            <Text
-              as="div"
-              variant="heading3"
+            <Typography
+              component="div"
+              variant="h3"
               mt={3}
               mb={4}
               sx={{
-                color: "monochrome800",
-                fontSize: 5,
-                fontFamily: "body",
+                color: "grey.800",
+                fontSize: "1.125rem",
+
                 fontWeight: "regular",
               }}
             >
@@ -109,11 +109,16 @@ const VisualizationPage = (props: PageProps) => {
                   federal data.
                 </Trans>
               )}
-            </Text>
+            </Typography>
 
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={2} sx={{ mb: 5 }}>
               <NextLink href="/create/new" passHref>
-                <Button as="a" variant="secondary">
+                <Button
+                  component="a"
+                  size="large"
+                  variant="contained"
+                  color="secondary"
+                >
                   <Trans id="button.new.visualization">
                     Create a new visualization
                   </Trans>
@@ -123,7 +128,12 @@ const VisualizationPage = (props: PageProps) => {
                 href={{ pathname: "/create/new", query: { from: key } }}
                 passHref
               >
-                <Button as="a" variant="secondary">
+                <Button
+                  component="a"
+                  size="large"
+                  variant="contained"
+                  color="secondary"
+                >
                   <Trans id="button.copy.visualization">
                     Copy and edit this visualization
                   </Trans>

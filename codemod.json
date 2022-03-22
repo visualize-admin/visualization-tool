@@ -1,0 +1,7 @@
+{
+  "module": {
+    "from": "@mui/material",
+    "to": "myflex"
+  },
+  "specifiers": ["Flex"]
+}

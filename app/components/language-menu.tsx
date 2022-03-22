@@ -1,7 +1,8 @@
+import Flex from "./flex";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-import { Box, Flex, Link } from "theme-ui";
+import { Box } from "@mui/material";
 import contentRoutes from "../content-routes.json";
 import localeConfig from "../locales/locales.json";
 import { useLocale } from "../locales/use-locale";
@@ -24,20 +25,23 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
 
   const alternates =
     contentId && contentId in contentRoutes
-      ? (contentRoutes as {
-          [k: string]: { [k: string]: { title: string; path: string } };
-        })[contentId]
+      ? (
+          contentRoutes as {
+            [k: string]: { [k: string]: { title: string; path: string } };
+          }
+        )[contentId]
       : undefined;
 
   return (
     <Flex
-      as="ul"
+      component="ul"
       sx={{
         listStyle: "none",
-        p: [2, 0],
+        p: [0, 0],
+        my: 0,
         ml: [0, "auto"],
         width: ["100%", "auto"],
-        bg: ["monochrome300", "transparent"],
+        backgroundColor: ["grey.300", "transparent"],
         order: [1, 2],
         justifyContent: "flex-end",
       }}
@@ -46,39 +50,40 @@ export const LanguageMenu = ({ contentId }: { contentId?: string }) => {
         const alternate = alternates?.[locale];
 
         const linkEl = (
-          <Link
+          <Box
+            component="a"
             rel="alternate"
             hrefLang={locale}
             sx={{
-              variant: "text.paragraph2",
-              fontSize: 3,
-              lineHeight: 3,
+              typography: "body2",
+              fontSize: "0.875rem",
+              lineHeight: "1.25rem",
               p: 1,
               textTransform: "uppercase",
               textDecoration: "none",
-              color: "monochrome700",
-              bg:
+              color: "grey.700",
+              backgroundColor:
                 locale === currentLocale
-                  ? ["monochrome500", "monochrome300"]
+                  ? ["grey.500", "grey.300"]
                   : "transparent",
               ":hover": {
                 color: "primary",
               },
               ":active": {
-                color: "primaryActive",
+                color: "primary.active",
               },
               ":disabled": {
                 cursor: "initial",
-                color: "primaryDisabled",
+                color: "primary.disabled",
               },
             }}
           >
             {locale}
-          </Link>
+          </Box>
         );
 
         return (
-          <Box as="li" key={locale} sx={{ ml: 1, p: 0 }}>
+          <Box component="li" key={locale} sx={{ ml: 1, p: 0 }}>
             {alternate ? (
               <NextLink href={alternate.path} passHref locale={false}>
                 {linkEl}

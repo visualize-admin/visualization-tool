@@ -1,6 +1,7 @@
+import Flex from "../components/flex";
 import { markdown, ReactSpecimen } from "catalog";
 import { ReactNode } from "react";
-import { Box, Flex } from "theme-ui";
+import { Box } from "@mui/material";
 import { TooltipBox } from "../charts/shared/interaction/tooltip-box";
 import {
   TooltipMultiple,
@@ -326,5 +327,5 @@ export const Dot = () => (
   />
 );
 const TooltipContent = ({ children }: { children: ReactNode }) => (
-  <Box sx={{ fontSize: 3 }}>{children}</Box>
+  <Box sx={{ fontSize: "0.875rem" }}>{children}</Box>
 );

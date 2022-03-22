@@ -1,6 +1,7 @@
+import Flex from "../../../components/flex";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
-import { Box, Button, Flex, Text } from "theme-ui";
+import { Box, Button, Typography } from "@mui/material";
 import { FieldProps } from "../..";
 import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
 import { Icon, IconName } from "../../../icons";
@@ -22,7 +23,7 @@ export const ControlTab = ({
     <Box
       sx={{
         width: "100%",
-        borderRadius: "default",
+        borderRadius: 1.5,
         my: "2px",
       }}
     >
@@ -68,7 +69,7 @@ export const OnOffControlTab = ({
     <Box
       sx={{
         width: "100%",
-        borderRadius: "default",
+        borderRadius: 1.5,
         my: "2px",
       }}
     >
@@ -102,7 +103,7 @@ export const AnnotatorTab = ({
     <Box
       sx={{
         width: "100%",
-        borderRadius: "default",
+        borderRadius: 1.5,
         my: "2px",
       }}
     >
@@ -144,7 +145,7 @@ export const DraggableTab = ({
       sx={{
         boxShadow: isDragging ? "tooltip" : undefined,
         width: "100%",
-        borderRadius: "default",
+        borderRadius: 1.5,
         my: "2px",
       }}
     >
@@ -178,36 +179,34 @@ export const ControlTabButton = ({
   children: ReactNode;
 }) => (
   <Button
-    as="div"
-    variant="reset"
-    value={value}
     role="tab"
     aria-selected={checked}
     aria-controls={`filter-panel-${value}`}
     id={`tab-${value}`}
     onClick={() => onClick(value)}
     sx={{
-      bg: checked ? "mutedDarker" : "monochrome100",
-      color: "monochrome700",
+      backgroundColor: checked ? "muted.dark" : "grey.100",
+      color: "grey.700",
       borderColor: "primary",
-      borderRadius: "default",
+      borderRadius: 1.5,
       width: "100%",
       minWidth: 160,
       px: 2,
       py: 3,
-      fontFamily: "body",
-      fontSize: [3, 3, 3],
+      fontWeight: "normal",
+
+      fontSize: ["0.875rem", "0.875rem", "0.875rem"],
       transition: "background-color .2s",
       cursor: "pointer",
       ":hover": {
-        bg: "mutedDarker",
+        backgroundColor: "muted.dark",
       },
       ":active": {
-        bg: "mutedDarker",
+        backgroundColor: "muted.dark",
       },
       ":disabled": {
         cursor: "initial",
-        bg: "muted",
+        backgroundColor: "muted.main",
       },
     }}
   >
@@ -233,47 +232,60 @@ export const ControlTabButtonInner = ({
   isActive?: boolean;
   showIsActive?: boolean;
 }) => (
-  <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
+  <Flex
+    sx={{
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexGrow: 1,
+    }}
+  >
     <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
       <Flex
         sx={{
           width: 32,
           height: 32,
           minWidth: 32,
-          borderRadius: "bigger",
+          borderRadius: 2,
           justifyContent: "center",
           alignItems: "center",
-          bg: checked ? "primary" : "monochrome100",
+          backgroundColor: checked ? "primary.main" : "grey.100",
           color:
             optional && !checked
-              ? "monochrome500"
+              ? "grey.500"
               : checked
-              ? "monochrome100"
-              : "monochrome700",
+              ? "grey.100"
+              : "grey.700",
         }}
       >
         <Icon size={24} name={iconName} />
       </Flex>
 
-      <Flex sx={{ flexDirection: "column", alignItems: "flex-start", mx: 3 }}>
+      <Flex
+        sx={{
+          flexDirection: "column",
+          alignItems: "flex-start",
+          mx: 3,
+          flexGrow: 1,
+        }}
+      >
         {upperLabel && (
-          <Text
-            variant="meta"
-            sx={{ color: "monochrome600", lineHeight: [1, 1, 1] }}
+          <Typography
+            variant="caption"
+            sx={{ color: "grey.600", lineHeight: ["1rem", "1rem", "1rem"] }}
           >
             {upperLabel}
-          </Text>
+          </Typography>
         )}
-        <Text
-          variant="paragraph1"
+        <Typography
+          variant="body1"
           sx={{
-            color: optional && !checked ? "monochrome600" : "monochrome800",
-            lineHeight: [1, 1, 1],
+            color: optional && !checked ? "grey.600" : "grey.800",
+            lineHeight: ["1rem", "1rem", "1rem"],
             textAlign: "left",
           }}
         >
           {lowerLabel}
-        </Text>
+        </Typography>
       </Flex>
     </Flex>
     {showIsActive && isActive === false ? (

@@ -1,4 +1,5 @@
-import { Box, Flex } from "theme-ui";
+import Flex from "../../components/flex";
+import { Box } from "@mui/material";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
 import { Observation } from "../../domain/data";
@@ -72,13 +73,13 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                       py: 2,
                       px: 3,
                       borderTop: "1px solid",
-                      borderTopColor: "monochrome700",
+                      borderTopColor: "grey.700",
                       borderBottom: "1px solid",
-                      borderBottomColor: "monochrome700",
+                      borderBottomColor: "grey.700",
                       fontWeight: "bold",
-                      fontSize: 3,
-                      bg: "monochrome100",
-                      color: "monochrome700",
+                      fontSize: "0.875rem",
+                      backgroundColor: "grey.100",
+                      color: "grey.700",
                     }}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
                   >

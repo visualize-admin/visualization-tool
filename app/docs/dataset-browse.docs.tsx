@@ -1,4 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
+import { Box } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 import { ConfiguratorStateProvider } from "../configurator";
 import { DatasetResult } from "../configurator/components/dataset-browse";
@@ -16,13 +17,14 @@ export default () => markdown`
       initialState={states[0]}
       allowDefaultRedirect={false}
     >
-      <ReactSpecimen span={2}>
-        <div
-          style={{
+      <ReactSpecimen>
+        <Box
+          sx={{
             width: 800,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "monochrome100",
+            p: 5,
+            backgroundColor: "muted.main",
           }}
         >
           <DatasetResult
@@ -55,7 +57,7 @@ export default () => markdown`
               publicationStatus: "PUBLISHED" as DataCubePublicationStatus,
             }}
           />
-        </div>
+        </Box>
       </ReactSpecimen>
     </ConfiguratorStateProvider>
   )}

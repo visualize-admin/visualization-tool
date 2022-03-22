@@ -1,4 +1,5 @@
-import { Box, Flex, Text } from "theme-ui";
+import Flex from "../../components/flex";
+import { Box, Typography } from "@mui/material";
 import { hcl } from "d3";
 import * as React from "react";
 import { Cell, Row } from "react-table";
@@ -29,10 +30,10 @@ export const RowMobile = ({
           return (
             <Flex
               key={i}
-              as="dl"
+              component="dl"
               sx={{
-                color: "monochrome800",
-                fontSize: 2,
+                color: "grey.800",
+                fontSize: "0.75rem",
                 width: "100%",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -42,16 +43,19 @@ export const RowMobile = ({
                 },
                 "&:last-of-type": {
                   borderBottom: "1px solid",
-                  borderBottomColor: "monochrome400",
+                  borderBottomColor: "grey.400",
                   pb: 3,
                 },
               }}
             >
-              <Box as="dt" sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}>
+              <Box
+                component="dt"
+                sx={{ flex: "1 1 100%", fontWeight: "bold", mr: 2 }}
+              >
                 {cell.column.Header}
               </Box>
               <Box
-                as="dd"
+                component="dd"
                 sx={{ flex: "1 1 100%", ml: 2, position: "relative" }}
               >
                 <DDContent
@@ -67,21 +71,21 @@ export const RowMobile = ({
         <Flex
           sx={{
             borderTop: "1px solid",
-            borderTopColor: "monochrome400",
-            color: "monochrome600",
+            borderTopColor: "grey.400",
+            color: "grey.600",
             py: 2,
             ml: `${row.depth * 12}px`,
           }}
         >
           <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
-          <Text
-            as={headingLevel}
-            variant="paragraph1"
-            sx={{ color: "monochrome900" }}
+          <Typography
+            component={headingLevel}
+            variant="body1"
+            sx={{ color: "grey.900" }}
             {...row.getToggleRowExpandedProps()}
           >
             {`${row.groupByVal}`}
-          </Text>
+          </Typography>
         </Flex>
       )}
     </Box>
@@ -117,7 +121,7 @@ export const DDContent = ({
     case "text":
       return (
         <Box
-          as="div"
+          component="div"
           sx={{
             width: "100%",
             color: textColor,
@@ -148,11 +152,11 @@ export const DDContent = ({
               : hcl(colorScale ? colorScale(cell.value) : textColor).l < 55
               ? "#fff"
               : "#000",
-            bg: isNull
-              ? "monochrome100"
+            backgroundColor: isNull
+              ? "grey.100"
               : colorScale
               ? colorScale(cell.value)
-              : "monochrome100",
+              : "grey.100",
             fontWeight: textStyle,
             px: 1,
             width: "fit-content",
@@ -181,7 +185,9 @@ export const DDContent = ({
                 width: chartWidth / 2,
                 height: 14,
                 position: "relative",
-                bg: barShowBackground ? barColorBackground : "monochrome100",
+                backgroundColor: barShowBackground
+                  ? barColorBackground
+                  : "grey.100",
               }}
             >
               <Box
@@ -191,7 +197,8 @@ export const DDContent = ({
                   left: getBarLeftOffset(cell.value, widthScale),
                   width: getBarWidth(cell.value, widthScale),
                   height: 14,
-                  bg: cell.value > 0 ? barColorPositive : barColorNegative,
+                  backgroundColor:
+                    cell.value > 0 ? barColorPositive : barColorNegative,
                 }}
               />
               <Box
@@ -204,7 +211,7 @@ export const DDContent = ({
                       : getBarLeftOffset(cell.value, widthScale),
                   width: "1px",
                   height: 18,
-                  bg: "monochrome700",
+                  backgroundColor: "grey.700",
                 }}
               />
             </Box>
@@ -215,7 +222,7 @@ export const DDContent = ({
     default:
       return (
         <Box
-          as="span"
+          component="span"
           sx={{
             color: textColor,
             fontWeight: textStyle,

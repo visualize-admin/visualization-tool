@@ -1,6 +1,6 @@
 import { markdown, ReactSpecimen } from "catalog";
 import { useState } from "react";
-import { Box } from "theme-ui";
+import { Box } from "@mui/material";
 import { Checkbox, Input, Radio, Select } from "../components/form";
 import {
   ColorPicker,
@@ -177,7 +177,7 @@ ${(
 ${(
   <ReactSpecimen span={2}>
     <>
-      <Box sx={{ p: 4, mb: 2, color: "white", bg: currentColor }}>
+      <Box sx={{ p: 4, mb: 2, color: "white", backgroundColor: currentColor }}>
         Current (valid) color: {currentColor}
       </Box>
       <ColorPicker
@@ -192,7 +192,7 @@ ${(
 ${(
   <ReactSpecimen span={2}>
     <>
-      <Box sx={{ p: 4, mb: 2, color: "white", bg: currentColor }}>
+      <Box sx={{ p: 4, mb: 2, color: "white", backgroundColor: currentColor }}>
         Current (valid) color: {currentColor}
       </Box>
       <ColorPickerMenu
