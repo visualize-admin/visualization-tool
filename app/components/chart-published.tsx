@@ -11,6 +11,7 @@ import {
 import Flex from "../components/flex";
 import { ChartConfig, Meta } from "../configurator";
 import { DataSetTable } from "../configurator/components/datatable";
+import { MotionBox } from "../configurator/components/presence";
 import { parseDate } from "../configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
@@ -65,13 +66,14 @@ export const ChartPublishedInner = ({
   const [isTablePreview] = useChartTablePreview();
 
   return (
-    <Flex
-      p={5}
+    <MotionBox
+      layout
       sx={{
         flexGrow: 1,
-        color: "grey.800",
         flexDirection: "column",
         justifyContent: "space-between",
+        p: 5,
+        color: "grey.800",
       }}
     >
       <ChartErrorBoundary resetKeys={[chartConfig]}>
@@ -136,7 +138,7 @@ export const ChartPublishedInner = ({
           )}
         </InteractiveFiltersProvider>
       </ChartErrorBoundary>
-    </Flex>
+    </MotionBox>
   );
 };
 
