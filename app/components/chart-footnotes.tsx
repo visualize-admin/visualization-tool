@@ -49,7 +49,11 @@ export const ChartFootnotes = ({
           )}
         </Typography>
 
-        <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
+        <Stack
+          direction="row"
+          spacing={0}
+          sx={{ flexWrap: "wrap", mt: 2, alignItems: "center" }}
+        >
           <DataDownload
             dataSetIri={dataSetIri}
             chartConfig={chartConfig}
@@ -71,18 +75,18 @@ export const ChartFootnotes = ({
                 color="primary"
                 variant="text"
                 size="small"
-                startIcon={
-                  <Icon
-                    name={
-                      isChartTablePreview
-                        ? getChartIcon(chartConfig.chartType)
-                        : "table"
-                    }
-                    size={16}
-                  />
-                }
                 onClick={() => setIsChartTablePreview(!isChartTablePreview)}
-              />
+                sx={{ width: "20px", minWidth: 0, padding: 0 }}
+              >
+                <Icon
+                  name={
+                    isChartTablePreview
+                      ? getChartIcon(chartConfig.chartType)
+                      : "table"
+                  }
+                  size={16}
+                />
+              </Button>
             </>
           )}
           {configKey && shareUrl && (
