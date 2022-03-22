@@ -5,7 +5,7 @@ import "core-js/features/array/flat-map";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ContentMDXProvider } from "../components/content-mdx-provider";
 import { PUBLIC_URL } from "../domain/env";
@@ -15,18 +15,11 @@ import "../lib/nprogress.css";
 import { useNProgress } from "../lib/use-nprogress";
 import { i18n, parseLocaleString } from "../locales/locales";
 import { LocaleProvider } from "../locales/use-locale";
-import * as defaultTheme from "../themes/federal";
-import { loadTheme, ThemeModule } from "../themes/index";
+import * as federalTheme from "../themes/federal";
 import AsyncLocalizationProvider from "../utils/l10n-provider";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const {
-    query,
-    events: routerEvents,
-    asPath,
-    locale: routerLocale,
-  } = useRouter();
-  const [themeModule, setThemeModule] = useState<ThemeModule>(defaultTheme);
+  const { events: routerEvents, asPath, locale: routerLocale } = useRouter();
 
   useNProgress();
 
@@ -36,17 +29,6 @@ export default function App({ Component, pageProps }: AppProps) {
   if (i18n.locale !== locale) {
     i18n.activate(locale);
   }
-
-  // Load custom theme
-  const __theme = query.__theme ? query.__theme.toString() : undefined;
-  useEffect(() => {
-    if (__theme) {
-      (async () => {
-        const customTheme = await loadTheme(__theme);
-        setThemeModule(customTheme);
-      })();
-    }
-  }, [__theme]);
 
   // Initialize analytics
   useEffect(() => {
@@ -76,7 +58,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={"visualize.admin.ch"} />
         <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
-        {themeModule.preloadFonts?.map((src) => (
+        {federalTheme.preloadFonts?.map((src) => (
           <link
             key={src}
             rel="preload"
@@ -90,7 +72,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <LocaleProvider value={locale}>
         <I18nProvider i18n={i18n}>
           <GraphqlProvider>
-            <ThemeProvider theme={themeModule.theme}>
+            <ThemeProvider theme={federalTheme.theme}>
               <ContentMDXProvider>
                 <AsyncLocalizationProvider locale={locale}>
                   <CssBaseline />
