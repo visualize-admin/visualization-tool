@@ -15,15 +15,6 @@ import {
 import { ChartTypeSelectionButton } from "../configurator/components/chart-type-selector";
 import { getPalette } from "../configurator/components/ui-helpers";
 
-// const vegaPalettes: Array<{ id: vega.ColorScheme; values: Array<string> }> = [
-//   { id: "category10", values: vega.scheme("category10") },
-//   { id: "accent", values: vega.scheme("accent") },
-//   { id: "pastel1", values: vega.scheme("pastel1") },
-//   { id: "pastel2", values: vega.scheme("pastel2") },
-//   { id: "dark2", values: vega.scheme("dark2") }
-// ];
-
-// const palettes = ["category10", "accent", "pastel1", "pastel2", "dark2"];
 const ControlsDoc = () => {
   const [currentColor, setCurrentColor] = useState(getPalette("accent")[0]);
 
