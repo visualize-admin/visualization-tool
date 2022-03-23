@@ -1,13 +1,14 @@
 import { Workbook } from "exceljs";
 import { NextApiRequest, NextApiResponse } from "next";
-import { DataDownloadFileFormat } from "../../components/data-download";
+import { FileFormat } from "../../components/data-download";
+import { Observation } from "../../domain/data";
 
 export default async function Download(
   req: Omit<NextApiRequest, "body"> & {
     body: {
       columnKeys: string[];
-      data: Record<string, any>[];
-      fileFormat: DataDownloadFileFormat;
+      data: Observation[];
+      fileFormat: FileFormat;
     };
   },
   res: NextApiResponse

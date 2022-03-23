@@ -1,15 +1,16 @@
-import Flex from "../../components/flex";
-import * as React from "react";
-import { Box, Button, Paper, Typography } from "@mui/material";
-import { HintRed, Loading, LoadingDataError } from "../../components/hint";
-import { DataSetPreviewTable } from "./datatable";
 import { Trans } from "@lingui/macro";
-import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { DataCubePublicationStatus } from "../../graphql/resolver-types";
-import DebugPanel from "../../components/debug-panel";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import Head from "next/head";
 import Link from "next/link";
+import * as React from "react";
+import { AllDataDownloadMenu } from "../../components/data-download";
+import DebugPanel from "../../components/debug-panel";
+import Flex from "../../components/flex";
+import { HintRed, Loading, LoadingDataError } from "../../components/hint";
+import { useDataCubePreviewQuery } from "../../graphql/query-hooks";
+import { DataCubePublicationStatus } from "../../graphql/resolver-types";
+import { useLocale } from "../../locales/use-locale";
+import { DataSetPreviewTable } from "./datatable";
 
 export interface Preview {
   iri: string;
@@ -97,19 +98,20 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               measures={dataCubeByIri.measures}
             />
           </Box>
-          <Typography
-            sx={{
-              mt: 4,
-              color: "grey.600",
-              width: "100%",
-              textAlign: "center",
-              fontWeight: "light",
-            }}
-          >
-            <Trans id="datatable.showing.first.rows">
-              Showing first 10 rows
-            </Trans>
-          </Typography>
+          <Flex sx={{ mt: 4, justifyContent: "space-between" }}>
+            <Typography
+              variant="body2"
+              sx={{ color: "grey.600", fontWeight: "light" }}
+            >
+              <Trans id="datatable.showing.first.rows">
+                Showing first 10 rows
+              </Trans>
+            </Typography>
+            <AllDataDownloadMenu
+              dataSetIri={dataSetIri}
+              title={dataCubeByIri.title}
+            />
+          </Flex>
           <DebugPanel configurator={true} />
         </Paper>
       </Flex>
