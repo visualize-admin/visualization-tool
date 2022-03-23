@@ -104,7 +104,7 @@ msgstr "Run SPARQL query (all)"
 
 #: app/components/data-download.tsx:237
 msgid "button.download.runsparqlquery.visible"
-msgstr "Run SPARQL query (visible)"
+msgstr "Run SPARQL query"
 
 #: app/components/publish-actions.tsx:229
 msgid "button.embed"
