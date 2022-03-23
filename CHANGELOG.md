@@ -10,13 +10,15 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 ## Unreleased
 
 - Search improvements (handles trailing space and casing)
+- Data download improvements (new UI with an ability to select XLSX file format)
+- Raw data preview from the chart level
 
 ## [3.4.7] - 2022-02-18
 
 - Search has been improved https://github.com/visualize-admin/visualization-tool/pull/256
   - Better support for acronyms
   - Less fuzzy search
-  - Ability to search inside creator, themes, keywords 
+  - Ability to search inside creator, themes, keywords
 
 ## [3.4.5] - 2022-02-25
 
