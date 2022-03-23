@@ -114,7 +114,7 @@ export const DataDownloadMenu = memo(
           {...bindHover(popupState)}
           sx={{ fontWeight: "regular" }}
         >
-          <Trans id="button.download">Download</Trans>
+          <Trans id="button.download.data">Download data</Trans>
         </Button>
         <HoverMenu
           {...bindMenu(popupState)}

@@ -84,7 +84,7 @@ msgstr "Télécharger"
 
 #: app/components/data-download.tsx:115
 #~ msgid "button.download.data"
-#~ msgstr "Télécharger le jeu de données"
+#~ msgstr "Télécharger des données"
 
 #: app/components/data-download.tsx:181
 msgid "button.download.data.all"

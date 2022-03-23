@@ -84,7 +84,7 @@ msgstr "Scarica"
 
 #: app/components/data-download.tsx:115
 #~ msgid "button.download.data"
-#~ msgstr "Scarica il set di dati"
+#~ msgstr "Scaricare i dati"
 
 #: app/components/data-download.tsx:181
 msgid "button.download.data.all"
