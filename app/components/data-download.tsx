@@ -14,13 +14,14 @@ import {
   usePopupState,
 } from "material-ui-popup-state/hooks";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
-import React, { memo, ReactNode, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
 import { useDataCubeObservationsQuery } from "../graphql/query-hooks";
 import { Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
+import Flex from "./flex";
 
 const EXTENTS = ["visible", "all"] as const;
 type Extent = typeof EXTENTS[number];
@@ -105,12 +106,17 @@ export const DataDownloadMenu = memo(
 
     return (
       <>
-        <DownloadButton
-          icon={<Icon name="download" size={16} />}
+        <Button
+          component="a"
+          variant="text"
+          color="primary"
+          size="small"
+          startIcon={<Icon name="download" size={16} />}
           {...bindHover(popupState)}
+          sx={{ fontWeight: "regular" }}
         >
           <Trans id="button.download">Download</Trans>
-        </DownloadButton>
+        </Button>
         <HoverMenu
           {...bindMenu(popupState)}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
@@ -183,51 +189,29 @@ const DownloadMenuItem = ({
       }}
       sx={{ ...PADDING_PROPS }}
     >
-      <DownloadButton
-        icon={
-          isDownloading ? (
-            <CircularProgress size={16} />
-          ) : (
-            <Icon name="table" size={16} />
-          )
-        }
-      >
-        {extent === "visible" ? (
-          <>
-            <Trans id="button.download.data.visible">Overlooking dataset</Trans>{" "}
-            ({fileFormat.toUpperCase()})
-          </>
+      <Flex sx={{ alignItems: "center", color: "primary.main", gap: 2 }}>
+        {isDownloading ? (
+          <CircularProgress size={16} />
         ) : (
-          <>
-            <Trans id="button.download.data.all">Full dataset</Trans> (
-            {fileFormat.toUpperCase()})
-          </>
+          <Icon name="table" color="primary.main" size={16} />
         )}
-      </DownloadButton>
+        <Typography variant="body2">
+          {extent === "visible" ? (
+            <>
+              <Trans id="button.download.data.visible">
+                Overlooking dataset
+              </Trans>{" "}
+              ({fileFormat.toUpperCase()})
+            </>
+          ) : (
+            <>
+              <Trans id="button.download.data.all">Full dataset</Trans> (
+              {fileFormat.toUpperCase()})
+            </>
+          )}
+        </Typography>
+      </Flex>
     </MenuItem>
-  );
-};
-
-const DownloadButton = ({
-  children,
-  icon,
-  ...props
-}: {
-  children: ReactNode;
-  icon: ReactNode;
-}) => {
-  return (
-    <Button
-      component="a"
-      variant="text"
-      color="primary"
-      size="small"
-      startIcon={icon}
-      {...props}
-      sx={{ fontWeight: "regular", ":hover": { color: "primary.main" } }}
-    >
-      {children}
-    </Button>
   );
 };
 
