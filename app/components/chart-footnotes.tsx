@@ -1,11 +1,10 @@
 import { Trans } from "@lingui/macro";
+import { Box, Link, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Box, Link, Typography } from "@mui/material";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
-import { DataDownload } from "./data-download";
-import { Stack } from "@mui/material";
+import { DataDownloadMenu } from "./data-download";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -48,18 +47,10 @@ export const ChartFootnotes = ({
         </Typography>
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
-          <DataDownload
+          <DataDownloadMenu
+            title={dataCubeByIri.title}
             dataSetIri={dataSetIri}
             chartConfig={chartConfig}
-            extent="visible"
-            fileFormat="csv"
-          />
-          <Box sx={{ display: "inline", mx: 1 }}>·</Box>
-          <DataDownload
-            dataSetIri={dataSetIri}
-            chartConfig={chartConfig}
-            extent="all"
-            fileFormat="csv"
           />
           {configKey && shareUrl && (
             <>
