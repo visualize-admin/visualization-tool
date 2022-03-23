@@ -3,6 +3,8 @@ import {
   Button,
   CircularProgress,
   Link,
+  ListItemIcon,
+  ListItemText,
   MenuItem,
   Typography,
 } from "@mui/material";
@@ -21,7 +23,6 @@ import { Observation } from "../domain/data";
 import { useDataCubeObservationsQuery } from "../graphql/query-hooks";
 import { Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
-import Flex from "./flex";
 
 const EXTENTS = ["visible", "all"] as const;
 type Extent = typeof EXTENTS[number];
@@ -129,7 +130,7 @@ export const DataDownloadMenu = memo(
               borderBottomColor: "grey.500",
             }}
           >
-            Download
+            <Trans id="button.download">Download</Trans>
           </Typography>
           {OPTIONS_TO_RENDER.map((d) => (
             <DownloadMenuItem
@@ -187,30 +188,29 @@ const DownloadMenuItem = ({
         onDownloaded();
         setIsDownloading(false);
       }}
-      sx={{ ...PADDING_PROPS }}
     >
-      <Flex sx={{ alignItems: "center", color: "primary.main", gap: 2 }}>
+      <ListItemIcon sx={{ color: "primary.main" }}>
         {isDownloading ? (
           <CircularProgress size={16} />
         ) : (
-          <Icon name="table" color="primary.main" size={16} />
+          <Icon name="table" size={16} />
         )}
-        <Typography variant="body2">
-          {extent === "visible" ? (
-            <>
-              <Trans id="button.download.data.visible">
-                Overlooking dataset
-              </Trans>{" "}
-              ({fileFormat.toUpperCase()})
-            </>
-          ) : (
-            <>
-              <Trans id="button.download.data.all">Full dataset</Trans> (
-              {fileFormat.toUpperCase()})
-            </>
-          )}
-        </Typography>
-      </Flex>
+      </ListItemIcon>
+      <ListItemText
+        primaryTypographyProps={{ variant: "body2", color: "primary.main" }}
+      >
+        {extent === "visible" ? (
+          <>
+            <Trans id="button.download.data.visible">Overlooking dataset</Trans>{" "}
+            ({fileFormat.toUpperCase()})
+          </>
+        ) : (
+          <>
+            <Trans id="button.download.data.all">Full dataset</Trans> (
+            {fileFormat.toUpperCase()})
+          </>
+        )}
+      </ListItemText>
     </MenuItem>
   );
 };
