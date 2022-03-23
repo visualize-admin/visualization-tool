@@ -637,6 +637,11 @@ theme.components = {
       },
     },
   },
+  MuiCircularProgress: {
+    defaultProps: {
+      size: 16,
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: `
       svg {
