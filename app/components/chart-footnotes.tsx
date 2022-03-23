@@ -6,7 +6,7 @@ import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-ho
 import { getChartIcon, Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
 import { useChartTablePreview } from "./chart-table-preview";
-import { DataDownload } from "./data-download";
+import { AllAndVisibleDataDownloadMenu } from "./data-download";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -49,23 +49,11 @@ export const ChartFootnotes = ({
           )}
         </Typography>
 
-        <Stack
-          direction="row"
-          spacing={0}
-          sx={{ flexWrap: "wrap", mt: 2, alignItems: "center" }}
-        >
-          <DataDownload
+        <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
+          <AllAndVisibleDataDownloadMenu
+            title={dataCubeByIri.title}
             dataSetIri={dataSetIri}
             chartConfig={chartConfig}
-            extent="visible"
-            fileFormat="csv"
-          />
-          <Box sx={{ display: "inline", mx: 1 }}>·</Box>
-          <DataDownload
-            dataSetIri={dataSetIri}
-            chartConfig={chartConfig}
-            extent="all"
-            fileFormat="csv"
           />
           {chartConfig.chartType !== "table" && (
             <>
@@ -91,7 +79,7 @@ export const ChartFootnotes = ({
           )}
           {configKey && shareUrl && (
             <>
-              <Box sx={{ display: "inline", mx: 1 }}>·</Box>
+              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
               <Link
                 sx={{ typography: "body2" }}
                 color="primary"
