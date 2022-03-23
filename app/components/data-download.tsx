@@ -5,8 +5,8 @@ import {
   Link,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
   MenuItem,
-  Typography,
 } from "@mui/material";
 import { saveAs } from "file-saver";
 import { keyBy } from "lodash";
@@ -33,8 +33,6 @@ export type FileFormat = typeof FILE_FORMATS[number];
 const OPTIONS_TO_RENDER = EXTENTS.flatMap((extent) =>
   FILE_FORMATS.map((fileFormat) => ({ extent, fileFormat }))
 );
-
-const PADDING_PROPS = { paddingX: "24px", paddingY: "12px" };
 
 const usePreparedData = ({
   dataSetIri,
@@ -122,16 +120,14 @@ export const DataDownloadMenu = memo(
           {...bindMenu(popupState)}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
           transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+          MenuListProps={{
+            subheader: (
+              <ListSubheader>
+                <Trans id="button.download">Download</Trans>
+              </ListSubheader>
+            ),
+          }}
         >
-          <Typography
-            sx={{
-              ...PADDING_PROPS,
-              borderBottom: "1px solid",
-              borderBottomColor: "grey.500",
-            }}
-          >
-            <Trans id="button.download">Download</Trans>
-          </Typography>
           {OPTIONS_TO_RENDER.map((d) => (
             <DownloadMenuItem
               key={d.extent + d.fileFormat}
@@ -188,8 +184,9 @@ const DownloadMenuItem = ({
         onDownloaded();
         setIsDownloading(false);
       }}
+      sx={{ paddingY: 3 }}
     >
-      <ListItemIcon sx={{ color: "primary.main" }}>
+      <ListItemIcon sx={{ color: "primary.main", minWidth: "24px" }}>
         {isDownloading ? (
           <CircularProgress size={16} />
         ) : (

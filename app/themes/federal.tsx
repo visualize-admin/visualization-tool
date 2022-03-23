@@ -7,7 +7,7 @@
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
-import { omit, merge } from "lodash";
+import { merge, omit } from "lodash";
 import { Icon } from "../icons";
 import shadows from "./shadows";
 
@@ -607,6 +607,16 @@ theme.components = {
         color: "grey.700",
         fontweight: "bold",
         borderBottomColor: theme.palette.grey[700],
+      },
+    },
+  },
+  MuiListSubheader: {
+    styleOverrides: {
+      root: {
+        color: theme.palette.grey[900],
+        fontWeight: "bold",
+        borderBottom: "1px solid",
+        borderBottomColor: theme.palette.grey[500],
       },
     },
   },
