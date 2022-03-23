@@ -6,10 +6,18 @@
  *
  * - `theme` should be a plain object, conforming to the `Theme` type.
  */
+import { Fade, Grow } from "@mui/material";
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import { merge, omit } from "lodash";
 import { Icon } from "../icons";
 import shadows from "./shadows";
+
+const isSafari15 =
+  typeof navigator !== "undefined" && navigator.vendor.indexOf("Apple") >= 0
+    ? navigator.userAgent
+        .match(/Version[/\s]([\d]+)/g)?.[0]
+        ?.split("/")?.[1] === "15"
+    : false;
 
 const breakpoints = ["xs", "sm", "md"] as Breakpoint[];
 const themeUIFontSizes = [
@@ -642,65 +650,71 @@ theme.components = {
       size: 16,
     },
   },
+  MuiPopover: {
+    defaultProps: {
+      TransitionComponent: isSafari15 ? Fade : Grow,
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: `
-      svg {
-        display: block"
-      }
-
-      *:focus: {
-        outline: 3px solid #333333;
-      }
+        svg {
+          display: block"
+        }
   
-      fieldset {
-        border: 0;
-        padding: "0.01em 0 0 0";
-        margin: 0;
-        minWidth: 0;
-      }
-
-      html {
-        margin: 0;
-        padding: 0;
-        font-family: ${theme.typography.fontFamily};
-        -webkit-overflow-scrolling: touch;
-        -ms-overflow-style: -ms-autohiding-scrollbar;
-      }
-
-      @font-face {
-        font-family: "FrutigerNeue";
-        font-display: swap;
-        font-style: normal;
-        font-weight: 700;
-        src: url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2");
-      }
-
-      @font-face {
-        font-family: "FrutigerNeue";
-        font-display: swap;
-        font-style: normal;
-        font-weight: 400;
-        src: url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2");
-      }
-
-      @font-face {
-        font-family: "FrutigerNeue";
-        font-display: swap;
-        font-style: normal;
-        font-weight: 300;
-        src: url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2");
-      }
-      
-      @font-face {
-        font-family: "FrutigerNeue";
-        font-display: swap;
-        font-style: italic;
-        font-weight: 400;
-        src: url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2");
-      }
-      `,
+        *:focus: {
+          outline: 3px solid #333333;
+        }
+    
+        fieldset {
+          border: 0;
+          padding: "0.01em 0 0 0";
+          margin: 0;
+          minWidth: 0;
+        }
+  
+        html {
+          margin: 0;
+          padding: 0;
+          font-family: ${theme.typography.fontFamily};
+          -webkit-overflow-scrolling: touch;
+          -ms-overflow-style: -ms-autohiding-scrollbar;
+        }
+  
+        @font-face {
+          font-family: "FrutigerNeue";
+          font-display: swap;
+          font-style: normal;
+          font-weight: 700;
+          src: url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2");
+        }
+  
+        @font-face {
+          font-family: "FrutigerNeue";
+          font-display: swap;
+          font-style: normal;
+          font-weight: 400;
+          src: url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2");
+        }
+  
+        @font-face {
+          font-family: "FrutigerNeue";
+          font-display: swap;
+          font-style: normal;
+          font-weight: 300;
+          src: url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2");
+        }
+        
+        @font-face {
+          font-family: "FrutigerNeue";
+          font-display: swap;
+          font-style: italic;
+          font-weight: 400;
+          src: url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2");
+        }
+        `,
   },
 };
+
 /**
  * Load these fonts early using <link rel="preload" />
  * Use WOFF2 fonts if possible!
