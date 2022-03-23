@@ -110,7 +110,7 @@ export const DataDownloadMenu = memo(
           variant="text"
           color="primary"
           size="small"
-          startIcon={<Icon name="download" size={16} />}
+          startIcon={<Icon name="download" />}
           {...bindHover(popupState)}
           sx={{ fontWeight: "regular" }}
         >
@@ -186,12 +186,8 @@ const DownloadMenuItem = ({
       }}
       sx={{ paddingY: 3 }}
     >
-      <ListItemIcon sx={{ color: "primary.main", minWidth: "24px" }}>
-        {isDownloading ? (
-          <CircularProgress size={16} />
-        ) : (
-          <Icon name="table" size={16} />
-        )}
+      <ListItemIcon sx={{ color: "primary.main" }}>
+        {isDownloading ? <CircularProgress /> : <Icon name="table" />}
       </ListItemIcon>
       <ListItemText
         primaryTypographyProps={{ variant: "body2", color: "primary.main" }}

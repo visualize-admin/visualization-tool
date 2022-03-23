@@ -415,6 +415,10 @@ theme.components = {
           backgroundColor: "transparent",
           color: theme.palette.primary.dark,
         },
+        "& svg": {
+          width: 16,
+          height: 16,
+        },
       },
       startIcon: {
         "&$iconSizeSmall": {
@@ -435,6 +439,9 @@ theme.components = {
       root: {
         alignItems: "flex-start",
         justifyContent: "flex-start",
+        "& .MuiListItemIcon-root.MuiListItemIcon-root": {
+          minWidth: "24px",
+        },
       },
     },
   },
@@ -617,6 +624,16 @@ theme.components = {
         fontWeight: "bold",
         borderBottom: "1px solid",
         borderBottomColor: theme.palette.grey[500],
+      },
+    },
+  },
+  MuiListItemIcon: {
+    styleOverrides: {
+      root: {
+        "& svg": {
+          width: 16,
+          height: 16,
+        },
       },
     },
   },
