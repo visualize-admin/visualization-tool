@@ -1,6 +1,6 @@
 import Flex from "../../components/flex";
 import { t } from "@lingui/macro";
-import { extent, TimeLocaleObject, timeParse } from "d3";
+import { extent, timeFormat, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import {
@@ -153,6 +153,9 @@ export const DataFilterSelect = ({
   );
 };
 
+const formatDate = timeFormat("%Y-%m-%d");
+const parseDate = timeParse("%Y-%m-%d");
+
 export const DataFilterSelectDay = ({
   dimensionIri,
   label,
@@ -201,7 +204,7 @@ export const DataFilterSelectDay = ({
         .filter((x) => x.value !== FIELD_VALUE_NONE)
         .map((x) => {
           try {
-            return new Date(x.value).toISOString().slice(0, 10);
+            return x.value;
           } catch (e) {
             console.warn(`Bad value ${x.value}`);
             return;
@@ -210,20 +213,20 @@ export const DataFilterSelectDay = ({
         .filter(truthy)
     );
   }, [allOptions]);
+
   const isDisabled = useCallback(
     (date: Date) => {
-      return !allOptionsSet.has(date.toISOString().slice(0, 10));
+      return !allOptionsSet.has(formatDate(date));
     },
     [allOptionsSet]
   );
 
   const dateValue = useMemo(() => {
-    const parseDate = timeParse("%Y-%m-%d");
     const parsed = fieldProps.value ? parseDate(fieldProps.value) : undefined;
     return parsed || new Date();
   }, [fieldProps.value]);
 
-  const [fromMonth, toMonth] = useMemo(() => {
+  const [minDate, maxDate] = useMemo(() => {
     const [min, max] = extent(Array.from(allOptionsSet));
     if (!min || !max) {
       return [];
@@ -240,14 +243,8 @@ export const DataFilterSelectDay = ({
       name={dimensionIri}
       value={dateValue}
       isDayDisabled={isDisabled}
-      inputProps={{
-        id,
-        disabled,
-      }}
-      dayPickerProps={{
-        fromMonth,
-        toMonth,
-      }}
+      minDate={minDate}
+      maxDate={maxDate}
     />
   );
 };

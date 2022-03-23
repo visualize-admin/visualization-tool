@@ -1,4 +1,6 @@
 import { Theme, useTheme } from "@mui/material";
+import type {} from "@mui/lab/themeAugmentation";
+
 export interface ThemeModule {
   theme: Theme;
   preloadFonts?: string[];
