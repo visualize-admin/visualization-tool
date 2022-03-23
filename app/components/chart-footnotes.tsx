@@ -1,9 +1,11 @@
 import { Trans } from "@lingui/macro";
-import { Box, Link, Stack, Typography } from "@mui/material";
+import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+import { getChartIcon, Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
+import { useChartTablePreview } from "./chart-table-preview";
 import { AllAndVisibleDataDownloadMenu } from "./data-download";
 
 export const ChartFootnotes = ({
@@ -17,6 +19,11 @@ export const ChartFootnotes = ({
 }) => {
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
+  const [isChartTablePreview, setIsChartTablePreview] = useChartTablePreview();
+  // Reset back to chart view when switching chart type.
+  useEffect(() => {
+    setIsChartTablePreview(false);
+  }, [setIsChartTablePreview, chartConfig.chartType]);
 
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
@@ -52,6 +59,28 @@ export const ChartFootnotes = ({
             dataSetIri={dataSetIri}
             chartConfig={chartConfig}
           />
+          {chartConfig.chartType !== "table" && (
+            <>
+              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
+              <Button
+                component="a"
+                color="primary"
+                variant="text"
+                size="small"
+                onClick={() => setIsChartTablePreview(!isChartTablePreview)}
+                sx={{ width: "20px", minWidth: 0, padding: 0 }}
+              >
+                <Icon
+                  name={
+                    isChartTablePreview
+                      ? getChartIcon(chartConfig.chartType)
+                      : "table"
+                  }
+                  size={16}
+                />
+              </Button>
+            </>
+          )}
           {configKey && shareUrl && (
             <>
               <Box sx={{ display: "inline", mx: 2 }}>·</Box>

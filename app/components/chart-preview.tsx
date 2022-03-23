@@ -1,29 +1,44 @@
-import Flex from "../components/flex";
 import { Trans } from "@lingui/macro";
+import { Box, Typography } from "@mui/material";
 import Head from "next/head";
 import * as React from "react";
-import { Box, Typography } from "@mui/material";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
 import useSyncInteractiveFilters from "../charts/shared/use-sync-interactive-filters";
+import Flex from "../components/flex";
 import { ChartConfig, useConfiguratorState } from "../configurator";
+import { DataSetTable } from "../configurator/components/datatable";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFiltersList } from "./chart-filters-list";
 import { ChartFootnotes } from "./chart-footnotes";
+import {
+  ChartTablePreviewProvider,
+  useChartTablePreview,
+} from "./chart-table-preview";
 import GenericChart from "./common-chart";
 import DebugPanel from "./debug-panel";
 import { HintRed } from "./hint";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
+  return (
+    <ChartTablePreviewProvider>
+      <ChartPreviewInner dataSetIri={dataSetIri} />
+    </ChartTablePreviewProvider>
+  );
+};
+
+export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
   const [state] = useConfiguratorState();
   const locale = useLocale();
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: { iri: dataSetIri, locale },
   });
+  const [isTablePreview] = useChartTablePreview();
+
   return (
     <Flex
       sx={{
@@ -91,10 +106,17 @@ export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
               </Typography>
             </>
             <InteractiveFiltersProvider>
-              <ChartWithInteractiveFilters
-                dataSet={state.dataSet}
-                chartConfig={state.chartConfig}
-              />
+              {isTablePreview ? (
+                <DataSetTable
+                  dataSetIri={dataSetIri}
+                  chartConfig={state.chartConfig}
+                />
+              ) : (
+                <ChartWithInteractiveFilters
+                  dataSet={dataSetIri}
+                  chartConfig={state.chartConfig}
+                />
+              )}
               {state.chartConfig && (
                 <ChartFootnotes
                   dataSetIri={dataSetIri}

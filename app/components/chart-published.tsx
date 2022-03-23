@@ -1,21 +1,27 @@
-import Flex from "../components/flex";
 import { Trans } from "@lingui/macro";
+import { Box, Typography } from "@mui/material";
 import * as React from "react";
 import { useEffect } from "react";
-import { Box, Typography } from "@mui/material";
 import { ChartDataFilters } from "../charts/shared/chart-data-filters";
 import { isUsingImputation } from "../charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "../charts/shared/use-interactive-filters";
+import Flex from "../components/flex";
 import { ChartConfig, Meta } from "../configurator";
+import { DataSetTable } from "../configurator/components/datatable";
+import { MotionBox } from "../configurator/components/presence";
 import { parseDate } from "../configurator/components/ui-helpers";
 import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
 import { DataCubePublicationStatus } from "../graphql/resolver-types";
 import { useLocale } from "../locales/use-locale";
 import { ChartErrorBoundary } from "./chart-error-boundary";
 import { ChartFootnotes } from "./chart-footnotes";
+import {
+  ChartTablePreviewProvider,
+  useChartTablePreview,
+} from "./chart-table-preview";
 import GenericChart from "./common-chart";
 import { HintBlue, HintRed } from "./hint";
 
@@ -30,18 +36,44 @@ export const ChartPublished = ({
   chartConfig: ChartConfig;
   configKey: string;
 }) => {
+  return (
+    <ChartTablePreviewProvider>
+      <ChartPublishedInner
+        dataSet={dataSet}
+        meta={meta}
+        chartConfig={chartConfig}
+        configKey={configKey}
+      />
+    </ChartTablePreviewProvider>
+  );
+};
+
+export const ChartPublishedInner = ({
+  dataSet,
+  meta,
+  chartConfig,
+  configKey,
+}: {
+  dataSet: string;
+  meta: Meta;
+  chartConfig: ChartConfig;
+  configKey: string;
+}) => {
   const locale = useLocale();
   const [{ data: metaData }] = useDataCubeMetadataQuery({
     variables: { iri: dataSet, locale },
   });
+  const [isTablePreview] = useChartTablePreview();
+
   return (
-    <Flex
-      p={5}
+    <MotionBox
+      layout
       sx={{
         flexGrow: 1,
-        color: "grey.800",
         flexDirection: "column",
         justifyContent: "space-between",
+        p: 5,
+        color: "grey.800",
       }}
     >
       <ChartErrorBoundary resetKeys={[chartConfig]}>
@@ -89,10 +121,14 @@ export const ChartPublished = ({
           </Typography>
         )}
         <InteractiveFiltersProvider>
-          <ChartWithInteractiveFilters
-            dataSet={dataSet}
-            chartConfig={chartConfig}
-          />
+          {isTablePreview ? (
+            <DataSetTable dataSetIri={dataSet} chartConfig={chartConfig} />
+          ) : (
+            <ChartWithInteractiveFilters
+              dataSet={dataSet}
+              chartConfig={chartConfig}
+            />
+          )}
           {chartConfig && (
             <ChartFootnotes
               dataSetIri={dataSet}
@@ -102,7 +138,7 @@ export const ChartPublished = ({
           )}
         </InteractiveFiltersProvider>
       </ChartErrorBoundary>
-    </Flex>
+    </MotionBox>
   );
 };
 
