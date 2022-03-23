@@ -54,7 +54,7 @@ export const ChartFootnotes = ({
           />
           {configKey && shareUrl && (
             <>
-              <Box sx={{ display: "inline", mx: 1 }}>·</Box>
+              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
               <Link
                 sx={{ typography: "body2" }}
                 color="primary"

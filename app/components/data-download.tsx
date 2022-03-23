@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/macro";
 import {
+  Box,
   Button,
   CircularProgress,
-  Link,
   ListItemIcon,
   ListItemText,
   ListSubheader,
@@ -23,6 +23,7 @@ import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
 import {
   DimensionMetaDataFragment,
+  Maybe,
   useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
 import { Icon } from "../icons";
@@ -77,11 +78,13 @@ const usePreparedAllData = ({ dataSetIri }: { dataSetIri: string }) => {
   const { data, columnKeys } = useMemo(() => {
     if (fetchedData?.dataCubeByIri) {
       const { dimensions, measures, observations } = fetchedData.dataCubeByIri;
-      return prepareData({
-        dimensions,
-        measures,
-        observations: observations.data,
-      });
+      return {
+        ...prepareData({
+          dimensions,
+          measures,
+          observations: observations.data,
+        }),
+      };
     } else {
       return { data: [], columnKeys: [] };
     }
@@ -102,20 +105,23 @@ const usePreparedVisibleData = ({
   const [{ data: fetchedData }] = useDataCubeObservationsQuery({
     variables: { locale, iri: dataSetIri, dimensions: null, filters },
   });
-  const { data, columnKeys } = useMemo(() => {
+  const { data, columnKeys, sparqlEditorUrl } = useMemo(() => {
     if (fetchedData?.dataCubeByIri) {
       const { dimensions, measures, observations } = fetchedData.dataCubeByIri;
-      return prepareData({
-        dimensions,
-        measures,
-        observations: observations.data,
-      });
+      return {
+        ...prepareData({
+          dimensions,
+          measures,
+          observations: observations.data,
+        }),
+        sparqlEditorUrl: fetchedData.dataCubeByIri.observations.sparqlEditorUrl,
+      };
     } else {
-      return { data: [], columnKeys: [] };
+      return { data: [], columnKeys: [], sparqlEditorUrl: undefined };
     }
   }, [fetchedData?.dataCubeByIri]);
 
-  return { data, columnKeys };
+  return { data, columnKeys, sparqlEditorUrl };
 };
 
 export const AllAndVisibleDataDownloadMenu = memo(
@@ -144,7 +150,11 @@ export const AllAndVisibleDataDownloadMenu = memo(
     );
 
     return (
-      <DataDownloadInnerMenu title={title} optionsToRender={optionsToRender} />
+      <DataDownloadInnerMenu
+        title={title}
+        optionsToRender={optionsToRender}
+        sparqlEditorUrl={visiblePrepared.sparqlEditorUrl}
+      />
     );
   }
 );
@@ -171,6 +181,7 @@ export const AllDataDownloadMenu = memo(
 const DataDownloadInnerMenu = ({
   title,
   optionsToRender,
+  sparqlEditorUrl,
 }: {
   title: string;
   optionsToRender: {
@@ -179,6 +190,7 @@ const DataDownloadInnerMenu = ({
     columnKeys: string[];
     data: Observation[];
   }[];
+  sparqlEditorUrl?: Maybe<string>;
 }) => {
   const popupState = usePopupState({
     variant: "popover",
@@ -224,6 +236,12 @@ const DataDownloadInnerMenu = ({
           />
         ))}
       </HoverMenu>
+      {sparqlEditorUrl && (
+        <>
+          <Box sx={{ display: "inline", mx: 2 }}>·</Box>
+          <RunSparqlQuery url={sparqlEditorUrl} />
+        </>
+      )}
     </>
   );
 };
@@ -292,25 +310,24 @@ const DownloadMenuItem = ({
   );
 };
 
-const RunSparqlQuery = ({ url, extent }: { url: string; extent: Extent }) => {
+export const RunSparqlQuery = ({ url }: { url: string }) => {
   return (
-    <Link
-      component="button"
-      color="primary"
-      underline="hover"
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {extent === "visible" ? (
-        <Trans id="button.download.runsparqlquery.visible">
-          Run SPARQL query (visible)
-        </Trans>
-      ) : (
-        <Trans id="button.download.runsparqlquery.all">
-          Run SPARQL query (all)
-        </Trans>
-      )}
-    </Link>
+    <>
+      <Button
+        component="a"
+        variant="text"
+        color="primary"
+        size="small"
+        href={url}
+        target="_blank"
+        sx={{ fontWeight: "regular", padding: 0 }}
+      >
+        <Typography variant="body2">
+          <Trans id="button.download.runsparqlquery.visible">
+            Run SPARQL query (visible)
+          </Trans>
+        </Typography>
+      </Button>
+    </>
   );
 };
