@@ -7,6 +7,7 @@ import {
   ListItemText,
   ListSubheader,
   MenuItem,
+  Typography,
 } from "@mui/material";
 import { saveAs } from "file-saver";
 import { keyBy } from "lodash";
@@ -20,7 +21,10 @@ import React, { memo, useCallback, useMemo, useState } from "react";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
-import { useDataCubeObservationsQuery } from "../graphql/query-hooks";
+import {
+  DimensionMetaDataFragment,
+  useDataCubeObservationsQuery,
+} from "../graphql/query-hooks";
 import { Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
 
@@ -34,42 +38,50 @@ const OPTIONS_TO_RENDER = EXTENTS.flatMap((extent) =>
   FILE_FORMATS.map((fileFormat) => ({ extent, fileFormat }))
 );
 
-const usePreparedData = ({
-  dataSetIri,
-  chartConfig,
-  extent,
+const prepareData = ({
+  dimensions,
+  measures,
+  observations,
 }: {
-  dataSetIri: string;
-  chartConfig: ChartConfig;
-  extent: Extent;
+  dimensions: DimensionMetaDataFragment[];
+  measures: DimensionMetaDataFragment[];
+  observations: Observation[];
 }) => {
+  const columns = keyBy([...dimensions, ...measures], (d) => d.iri);
+  const data = observations.map((obs) =>
+    Object.keys(obs).reduce((acc, key) => {
+      const col = columns[key];
+      return col
+        ? {
+            ...acc,
+            ...{ [col.label]: obs[key] },
+          }
+        : acc;
+    }, {})
+  );
+  const columnKeys = Object.keys(columns).map((d) => columns[d].label);
+
+  return { data, columnKeys };
+};
+
+const usePreparedAllData = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
-  const filters = useQueryFilters({ chartConfig });
   const [{ data: fetchedData }] = useDataCubeObservationsQuery({
     variables: {
       locale,
       iri: dataSetIri,
       dimensions: null,
-      filters: extent === "all" ? null : filters,
+      filters: null,
     },
   });
   const { data, columnKeys } = useMemo(() => {
     if (fetchedData?.dataCubeByIri) {
       const { dimensions, measures, observations } = fetchedData.dataCubeByIri;
-      const columns = keyBy([...dimensions, ...measures], (d) => d.iri);
-      const data = observations.data.map((obs) =>
-        Object.keys(obs).reduce((acc, key) => {
-          const col = columns[key];
-          return col
-            ? {
-                ...acc,
-                ...{ [col.label]: obs[key] },
-              }
-            : acc;
-        }, {})
-      );
-      const columnKeys = Object.keys(columns).map((d) => columns[d].label);
-      return { data, columnKeys };
+      return prepareData({
+        dimensions,
+        measures,
+        observations: observations.data,
+      });
     } else {
       return { data: [], columnKeys: [] };
     }
@@ -78,7 +90,35 @@ const usePreparedData = ({
   return { data, columnKeys };
 };
 
-export const DataDownloadMenu = memo(
+const usePreparedVisibleData = ({
+  dataSetIri,
+  chartConfig,
+}: {
+  dataSetIri: string;
+  chartConfig: ChartConfig;
+}) => {
+  const locale = useLocale();
+  const filters = useQueryFilters({ chartConfig });
+  const [{ data: fetchedData }] = useDataCubeObservationsQuery({
+    variables: { locale, iri: dataSetIri, dimensions: null, filters },
+  });
+  const { data, columnKeys } = useMemo(() => {
+    if (fetchedData?.dataCubeByIri) {
+      const { dimensions, measures, observations } = fetchedData.dataCubeByIri;
+      return prepareData({
+        dimensions,
+        measures,
+        observations: observations.data,
+      });
+    } else {
+      return { data: [], columnKeys: [] };
+    }
+  }, [fetchedData?.dataCubeByIri]);
+
+  return { data, columnKeys };
+};
+
+export const AllAndVisibleDataDownloadMenu = memo(
   ({
     dataSetIri,
     title,
@@ -88,61 +128,105 @@ export const DataDownloadMenu = memo(
     title: string;
     chartConfig: ChartConfig;
   }) => {
-    const allPrepared = usePreparedData({
-      dataSetIri,
-      chartConfig,
-      extent: "all",
-    });
-    const visiblePrepared = usePreparedData({
-      dataSetIri,
-      chartConfig,
-      extent: "visible",
-    });
-    const popupState = usePopupState({
-      variant: "popover",
-      popupId: "dataDownloadMenu",
-    });
+    const allPrepared = usePreparedAllData({ dataSetIri });
+    const visiblePrepared = usePreparedVisibleData({ dataSetIri, chartConfig });
+    const optionsToRender = useMemo(
+      () =>
+        OPTIONS_TO_RENDER.map((d) => ({
+          ...d,
+          columnKeys:
+            d.extent === "all"
+              ? allPrepared.columnKeys
+              : visiblePrepared.columnKeys,
+          data: d.extent === "all" ? allPrepared.data : visiblePrepared.data,
+        })),
+      [allPrepared, visiblePrepared]
+    );
 
     return (
-      <>
-        <Button
-          component="a"
-          variant="text"
-          color="primary"
-          size="small"
-          startIcon={<Icon name="download" />}
-          {...bindHover(popupState)}
-          sx={{ fontWeight: "regular" }}
-        >
-          <Trans id="button.download.data">Download data</Trans>
-        </Button>
-        <HoverMenu
-          {...bindMenu(popupState)}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          transformOrigin={{ vertical: "bottom", horizontal: "center" }}
-          MenuListProps={{
-            subheader: (
-              <ListSubheader>
-                <Trans id="button.download">Download</Trans>
-              </ListSubheader>
-            ),
-          }}
-        >
-          {OPTIONS_TO_RENDER.map((d) => (
-            <DownloadMenuItem
-              key={d.extent + d.fileFormat}
-              title={title}
-              extent={d.extent}
-              fileFormat={d.fileFormat}
-              onDownloaded={popupState.close}
-              {...(d.extent === "all" ? allPrepared : visiblePrepared)}
-            />
-          ))}
-        </HoverMenu>
-      </>
+      <DataDownloadInnerMenu title={title} optionsToRender={optionsToRender} />
     );
   }
 );
+
+export const AllDataDownloadMenu = memo(
+  ({ dataSetIri, title }: { dataSetIri: string; title: string }) => {
+    const { columnKeys, data } = usePreparedAllData({ dataSetIri });
+    const optionsToRender = useMemo(
+      () =>
+        OPTIONS_TO_RENDER.filter((d) => d.extent === "all").map((d) => ({
+          ...d,
+          columnKeys,
+          data,
+        })),
+      [data, columnKeys]
+    );
+
+    return (
+      <DataDownloadInnerMenu title={title} optionsToRender={optionsToRender} />
+    );
+  }
+);
+
+const DataDownloadInnerMenu = ({
+  title,
+  optionsToRender,
+}: {
+  title: string;
+  optionsToRender: {
+    extent: Extent;
+    fileFormat: FileFormat;
+    columnKeys: string[];
+    data: Observation[];
+  }[];
+}) => {
+  const popupState = usePopupState({
+    variant: "popover",
+    popupId: "dataDownloadMenu",
+  });
+
+  return (
+    <>
+      <Button
+        component="a"
+        variant="text"
+        color="primary"
+        size="small"
+        startIcon={<Icon name="download" />}
+        {...bindHover(popupState)}
+        sx={{ fontWeight: "regular", padding: 0 }}
+      >
+        <Typography variant="body2">
+          <Trans id="button.download.data">Download data</Trans>
+        </Typography>
+      </Button>
+      <HoverMenu
+        {...bindMenu(popupState)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+        MenuListProps={{
+          subheader: (
+            <ListSubheader>
+              <Trans id="button.download">Download</Trans>
+            </ListSubheader>
+          ),
+        }}
+      >
+        {optionsToRender.map((d) => (
+          <DownloadMenuItem
+            key={d.extent + d.fileFormat}
+            title={title}
+            extent={d.extent}
+            fileFormat={d.fileFormat}
+            columnKeys={d.columnKeys}
+            data={d.data}
+            onDownloaded={popupState.close}
+          />
+        ))}
+      </HoverMenu>
+    </>
+  );
+};
 
 const DownloadMenuItem = ({
   title,

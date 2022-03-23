@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ChartConfig } from "../configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
 import { useLocale } from "../locales/use-locale";
-import { DataDownloadMenu } from "./data-download";
+import { AllAndVisibleDataDownloadMenu } from "./data-download";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -47,7 +47,7 @@ export const ChartFootnotes = ({
         </Typography>
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
-          <DataDownloadMenu
+          <AllAndVisibleDataDownloadMenu
             title={dataCubeByIri.title}
             dataSetIri={dataSetIri}
             chartConfig={chartConfig}
