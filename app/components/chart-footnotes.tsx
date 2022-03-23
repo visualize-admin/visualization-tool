@@ -20,6 +20,10 @@ export const ChartFootnotes = ({
   const locale = useLocale();
   const [shareUrl, setShareUrl] = useState("");
   const [isChartTablePreview, setIsChartTablePreview] = useChartTablePreview();
+  // Reset back to chart view when switching chart type.
+  useEffect(() => {
+    setIsChartTablePreview(false);
+  }, [setIsChartTablePreview, chartConfig.chartType]);
 
   useEffect(() => {
     setShareUrl(`${window.location.origin}/${locale}/v/${configKey}`);
