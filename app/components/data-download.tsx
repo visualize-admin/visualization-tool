@@ -1,5 +1,11 @@
 import { Trans } from "@lingui/macro";
-import { Button, Link, MenuItem, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Link,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import { saveAs } from "file-saver";
 import { keyBy } from "lodash";
 import {
@@ -8,12 +14,12 @@ import {
   usePopupState,
 } from "material-ui-popup-state/hooks";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
-import React, { memo, ReactNode, useCallback, useMemo } from "react";
+import React, { memo, ReactNode, useCallback, useMemo, useState } from "react";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
 import { useDataCubeObservationsQuery } from "../graphql/query-hooks";
-import { Icon, IconName } from "../icons";
+import { Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
 
 const EXTENTS = ["visible", "all"] as const;
@@ -99,7 +105,10 @@ export const DataDownloadMenu = memo(
 
     return (
       <>
-        <DownloadButton iconName="download" {...bindHover(popupState)}>
+        <DownloadButton
+          icon={<Icon name="download" size={16} />}
+          {...bindHover(popupState)}
+        >
           <Trans id="button.download">Download</Trans>
         </DownloadButton>
         <HoverMenu
@@ -122,7 +131,7 @@ export const DataDownloadMenu = memo(
               title={title}
               extent={d.extent}
               fileFormat={d.fileFormat}
-              closeMenu={popupState.close}
+              onDownloaded={popupState.close}
               {...(d.extent === "all" ? allPrepared : visiblePrepared)}
             />
           ))}
@@ -138,15 +147,16 @@ const DownloadMenuItem = ({
   columnKeys,
   extent,
   fileFormat,
-  closeMenu,
+  onDownloaded,
 }: {
   title: string;
   data: Observation[];
   columnKeys: string[];
   extent: Extent;
   fileFormat: FileFormat;
-  closeMenu: () => void;
+  onDownloaded: () => void;
 }) => {
+  const [isDownloading, setIsDownloading] = useState(false);
   const download = useCallback(() => {
     return fetch("/api/download", {
       method: "POST",
@@ -164,43 +174,47 @@ const DownloadMenuItem = ({
   }, [columnKeys, data, fileFormat, title]);
 
   return (
-    <DownloadMenuItemInner onClick={() => download().then(() => closeMenu())}>
-      {extent === "visible" ? (
-        <>
-          <Trans id="button.download.data.visible">Overlooking dataset</Trans> (
-          {fileFormat.toUpperCase()})
-        </>
-      ) : (
-        <>
-          <Trans id="button.download.data.all">Full dataset</Trans> (
-          {fileFormat.toUpperCase()})
-        </>
-      )}
-    </DownloadMenuItemInner>
-  );
-};
-
-const DownloadMenuItemInner = ({
-  children,
-  onClick,
-}: {
-  children: ReactNode;
-  onClick: () => void;
-}) => {
-  return (
-    <MenuItem onClick={onClick} sx={{ ...PADDING_PROPS }}>
-      <DownloadButton iconName="table">{children}</DownloadButton>
+    <MenuItem
+      onClick={async () => {
+        setIsDownloading(true);
+        await download();
+        onDownloaded();
+        setIsDownloading(false);
+      }}
+      sx={{ ...PADDING_PROPS }}
+    >
+      <DownloadButton
+        icon={
+          isDownloading ? (
+            <CircularProgress size={16} />
+          ) : (
+            <Icon name="table" size={16} />
+          )
+        }
+      >
+        {extent === "visible" ? (
+          <>
+            <Trans id="button.download.data.visible">Overlooking dataset</Trans>{" "}
+            ({fileFormat.toUpperCase()})
+          </>
+        ) : (
+          <>
+            <Trans id="button.download.data.all">Full dataset</Trans> (
+            {fileFormat.toUpperCase()})
+          </>
+        )}
+      </DownloadButton>
     </MenuItem>
   );
 };
 
 const DownloadButton = ({
   children,
-  iconName,
+  icon,
   ...props
 }: {
   children: ReactNode;
-  iconName: IconName;
+  icon: ReactNode;
 }) => {
   return (
     <Button
@@ -208,7 +222,7 @@ const DownloadButton = ({
       variant="text"
       color="primary"
       size="small"
-      startIcon={<Icon name={iconName} size={16} />}
+      startIcon={icon}
       {...props}
       sx={{ fontWeight: "regular", ":hover": { color: "primary.main" } }}
     >
