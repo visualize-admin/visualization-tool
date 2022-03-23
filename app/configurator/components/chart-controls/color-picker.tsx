@@ -1,9 +1,10 @@
 import { Trans } from "@lingui/macro";
-import { Menu, MenuButton, MenuPopover } from "@reach/menu-button";
-import VisuallyHidden from "@reach/visually-hidden";
 import { color as d3Color } from "d3";
-import React, { MouseEventHandler, useCallback, useState } from "react";
-import { Box, Input } from "@mui/material";
+import { styled } from "@mui/styles";
+import React, { MouseEventHandler, useCallback, useRef, useState } from "react";
+import { Box, Button, Input, Popover } from "@mui/material";
+import useDisclosure from "../use-disclosure";
+import VisuallyHidden from "../../../components/visually-hidden";
 
 const Swatch = ({
   color,
@@ -129,51 +130,60 @@ export const ColorPicker = ({ selectedColor, colors, onChange }: Props) => {
   );
 };
 
+const ColorPickerButton = styled(Button)({
+  padding: 0,
+  minWidth: "auto",
+  minHeight: "auto",
+});
+
 export const ColorPickerMenu = (props: Props) => {
   const { selectedColor } = props;
   const borderColor = d3Color(selectedColor)?.darker().toString();
-
+  const { isOpen, open, close } = useDisclosure();
+  const buttonRef = useRef(null);
   return (
-    <Menu>
-      <Box
-        sx={{
-          "> button": {
-            backgroundColor: "grey.100",
-            borderRadius: 2,
-            overflow: "hidden",
-            borderWidth: 1,
-            border: 0,
-            p: 0,
-          },
-          "> button:hover": {
-            borderColor,
-            cursor: "pointer",
-          },
-          "> button[aria-expanded]": {
-            borderColor: "primary.active",
-          },
-          opacity: props.disabled ? 0.5 : 1,
-          pointerEvents: props.disabled ? "none" : "auto",
-        }}
+    <Box
+      sx={{
+        "> button": {
+          backgroundColor: "grey.100",
+          borderRadius: 2,
+          overflow: "hidden",
+          borderWidth: 1,
+          border: 0,
+          p: 0,
+        },
+        "> button:hover": {
+          borderColor,
+          cursor: "pointer",
+        },
+        "> button[aria-expanded]": {
+          borderColor: "primary.active",
+        },
+        opacity: props.disabled ? 0.5 : 1,
+        pointerEvents: props.disabled ? "none" : "auto",
+      }}
+    >
+      <ColorPickerButton
+        ref={buttonRef}
+        disabled={props.disabled}
+        onClick={open}
       >
-        <MenuButton className="menu-button" disabled={props.disabled}>
-          <VisuallyHidden>
-            <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
-          </VisuallyHidden>
-          <Box aria-hidden>
-            <Box
-              sx={{
-                backgroundColor: selectedColor,
-                width: "1rem",
-                height: "1rem",
-              }}
-            ></Box>
-          </Box>
-        </MenuButton>
-        <MenuPopover>
-          <ColorPicker {...props} />
-        </MenuPopover>
-      </Box>
-    </Menu>
+        <VisuallyHidden>
+          <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
+        </VisuallyHidden>
+        <Box aria-hidden>
+          <Box
+            sx={{
+              backgroundColor: selectedColor,
+              width: "1rem",
+              height: "1rem",
+            }}
+          ></Box>
+        </Box>
+      </ColorPickerButton>
+      <Popover anchorEl={buttonRef.current} open={isOpen} onClose={close}>
+        <ColorPicker {...props} />
+      </Popover>
+    </Box>
   );
 };
