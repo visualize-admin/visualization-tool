@@ -47,6 +47,7 @@ export const PreviewTable = ({
                 key={iri}
                 sx={{
                   textAlign: __typename === "Measure" ? "right" : "left",
+                  borderBottom: "none",
                 }}
               >
                 {unit ? `${label} (${unit})` : label}

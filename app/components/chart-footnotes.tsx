@@ -57,7 +57,7 @@ export const ChartFootnotes = ({
           />
           {chartConfig.chartType !== "table" && (
             <>
-              <Box sx={{ display: "inline", mx: 1 }}>·</Box>
+              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
               <Button
                 component="a"
                 color="primary"
