@@ -1,5 +1,5 @@
-import React, { memo } from "react";
 import { Box } from "@mui/material";
+import React, { memo } from "react";
 import {
   Loading,
   LoadingDataError,
@@ -116,7 +116,7 @@ export const ChartPie = memo(
         {fields.segment && interactiveFiltersConfig?.legend.active === true ? (
           <InteractiveLegendColor />
         ) : fields.segment ? (
-          <LegendColor symbol="line" />
+          <LegendColor symbol="square" />
         ) : null}{" "}
       </PieChart>
     );
