@@ -14,6 +14,7 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 - Raw data preview from the chart level
 - Fixed parsing of xsd:gYearMonth timeFormat in TemporalDimension
 - Updated date formatting for the Month timeUnit to be more user-friendly
+- Changed pie chart legend symbol from line to square
 
 ## [3.4.7] - 2022-02-18
 
