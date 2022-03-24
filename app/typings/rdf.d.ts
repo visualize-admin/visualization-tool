@@ -85,8 +85,15 @@ declare module "rdf-cube-view-query" {
     out: AnyPointer;
     dimensions: Dimension[];
     dimension(options: { cubeDimension: NamedNode | string }): Dimension | null;
-    observationsQuery(): { query: $FixMe; dimensionMap: Map };
-    async observations(): Promise<Record<string, Literal | NamedNode>[]>;
+    observationsQuery({ disableDistinct }: { disableDistinct?: boolean }): {
+      query: $FixMe;
+      dimensionMap: Map;
+    };
+    async observations({
+      disableDistinct,
+    }: {
+      disableDistinct?: boolean;
+    }): Promise<Record<string, Literal | NamedNode>[]>;
     addDimension(dimension: Dimension): View;
     createDimension(options: $FixMe): Dimension;
   }

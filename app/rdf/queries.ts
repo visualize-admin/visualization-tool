@@ -493,7 +493,14 @@ export const getCubeObservations = async ({
     );
   }
 
-  const observationsRaw = await observationsView.observations();
+  const queryOptions = {
+    disableDistinct: !filters || Object.keys(filters).length === 0,
+  };
+
+  const query = observationsView
+    .observationsQuery(queryOptions)
+    .query.toString();
+  const observationsRaw = await observationsView.observations(queryOptions);
   const observations = observationsRaw.map((obs, i) => {
     return Object.fromEntries(
       cubeDimensions.map((d) => {
@@ -516,7 +523,7 @@ export const getCubeObservations = async ({
   });
 
   const result = {
-    query: observationsView.observationsQuery().query.toString(),
+    query,
     observations,
     observationsRaw,
   };
