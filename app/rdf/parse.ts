@@ -92,6 +92,7 @@ const timeUnits = new Map<string, TimeUnit>([
 
 const timeFormats = new Map<string, string>([
   [ns.xsd.gYear.value, "%Y"],
+  [ns.xsd.gYearMonth.value, "%Y-%m"],
   [ns.xsd.date.value, "%Y-%m-%d"],
   [ns.xsd.dateTime.value, "%Y-%m-%dT%H:%M:%S"],
 ]);
