@@ -36,13 +36,13 @@ import {
   schemeTableau10,
   timeDay,
   timeHour,
+  TimeLocaleObject,
   timeMinute,
   timeMonth,
+  timeParse,
   timeSecond,
   timeWeek,
   timeYear,
-  TimeLocaleObject,
-  timeParse,
 } from "d3";
 import { memoize } from "lodash";
 import { useMemo } from "react";
@@ -179,7 +179,7 @@ const timeIntervals = new Map<TimeUnit, CountableTimeInterval>([
 
 const timeFormats = new Map<TimeUnit, string>([
   [TimeUnit.Year, "%Y"],
-  [TimeUnit.Month, "%d.%m.%Y"],
+  [TimeUnit.Month, "%b %Y"],
   [TimeUnit.Week, "%d.%m.%Y"],
   [TimeUnit.Day, "%d.%m.%Y"],
   [TimeUnit.Hour, "%d.%m.%Y %H:%M"],
