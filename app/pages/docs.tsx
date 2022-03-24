@@ -1,5 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { MDXProvider } from "@mdx-js/react";
+import { CssBaseline } from "@mui/material";
 import {
   AudioSpecimen,
   Catalog,
@@ -261,6 +262,7 @@ export default () => {
   return mounted ? (
     <MDXProvider components={mdxComponents}>
       <I18nProvider i18n={i18n}>
+        <CssBaseline />
         <Catalog
           title="Visualization Tool"
           pages={pages}
