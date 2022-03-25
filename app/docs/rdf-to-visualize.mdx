@@ -121,17 +121,22 @@ A dimension can indicate that it is contains standard error values for another d
 
 #### Possible chart types
 
-With `dataKind` and `scaleType`, we determine the `__typename` of the dimension.
-The \_\_typename is then used to determine possible chart types.
+After parsing, we can determine the type of our dimension. Conditions are checked
+one after the other.
 
-- `isMeasureDimension = true`: **Measure**
-- `dataKind = "Time"`: **Temporal Dimension**
-- `dataKind = "GeoCoordinates"`: **GeoCoordinates Dimension**
-- `dataKind = "GeoShape"`: **GeoShapes Dimension**
-- `scaleType = "Ordinal"`: **Ordinal Dimension**
-- If condition above have not been fullfilled, the dimension is a **Nominal Dimension**
+- **Measure** if `isMeasureDimension = true`, else
+- **Temporal** if `dataKind = "Time"`, else
+- **GeoCoordinates** if `dataKind = "GeoCoordinates"`, else
+- **GeoShapes** if `dataKind = "GeoShape"`, else
+- **Ordinal** if `scaleType = "Ordinal"`, else
+- **Nominal** if none of the above condition have been fullfilled
 
-All chart types can handle **Categorical Dimensions** but for particular chart types the following conditions have to be met:
+We can regroup some of these dimensions, for easier business logic:
+
+- **GeoCoordinates** and **GeoShapes** are **Geo** dimensions.
+- **Ordinal** and **Nominal** are **Categorical** dimensions.
+
+All chart types can handle **Categorical** dimensions but for particular chart types the following conditions have to be met:
 
 <TableSpecimen
   columns={["Chart Type", "Conditions"]}
