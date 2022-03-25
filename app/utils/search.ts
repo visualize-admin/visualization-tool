@@ -89,6 +89,7 @@ export const makeCubeIndex = (cubesData: ResolvedDataCube["data"][]) => {
     self.use(customHiphenatorPipeline);
     self.ref("iri");
     self.field("title", { boost: 2 });
+    self.field("iri", { boost: 2 });
     self.field("description");
     self.field("publisher");
     self.field("themes");
