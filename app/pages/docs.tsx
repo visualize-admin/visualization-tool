@@ -81,9 +81,9 @@ const pages: ConfigPageOrGroup[] = [
     title: "Charts",
     pages: [
       {
-        path: "/charts/types",
-        title: "Types",
-        content: require("../docs/chart-types.mdx"),
+        path: "/charts/rdf-to-visualize",
+        title: "RDF to visualize",
+        content: require("../docs/rdf-to-visualize.mdx"),
       },
       {
         path: "/charts/annotations",
@@ -109,11 +109,6 @@ const pages: ConfigPageOrGroup[] = [
         path: "/charts/data-table",
         title: "Table",
         content: require("../docs/data-table.docs"),
-      },
-      {
-        path: "/charts/cube-update",
-        title: "Cube update",
-        content: require("../docs/cube-update-constraints.mdx"),
       },
     ],
   },
