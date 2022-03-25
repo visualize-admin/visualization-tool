@@ -53,7 +53,7 @@ RDF cube schema specification.
 
 ### Dimensions
 
-#### Type
+#### Key / Measure
 
 Values inside key dimensions must
 _uniquely identify a row_. For this reason, and because visualize does not deal
@@ -61,13 +61,10 @@ with aggregation, key dimensions must either be **encoded** or **part of a filte
 
 | RDF                                  | Visualize                       |
 | :----------------------------------- | :------------------------------ |
-| `?dimension a cube.KeyDimension`     | `dim.isKeyDimension = true`     |
-| `?dimension a cube.MeasureDimension` | `dim.isMeasureDimension = true` |
+| `?dimension a cube:KeyDimension`     | `dim.isKeyDimension = true`     |
+| `?dimension a cube:MeasureDimension` | `dim.isMeasureDimension = true` |
 
 #### Scale type
-
-Used for determinations of which chart is possible. See [chart types](/docs#/charts/types) documentation
-for more information.
 
 | RDF                                            | Visualize                    |
 | :--------------------------------------------- | :--------------------------- |
@@ -76,35 +73,7 @@ for more information.
 | `?dimension qudt:scaleType qudt:RatioScale`    | `dim.scaleType = "Ratio"`    |
 | `?dimension qudt:scaleType qudt:IntervalScale` | `dim.scaleType = "Interval"` |
 
-All chart types can handle **Categorical Dimensions** but for particular chart types the following conditions have to be met:
-
-<TableSpecimen
-  columns={["Chart Type", "Conditions"]}
-  rows={[
-    { "Chart Type": "Table", Conditions: `- None` },
-    { "Chart Type": "Column", Conditions: `- 1 or more **Measure**` },
-    {
-      "Chart Type": "Lines",
-      Conditions: `- 1 or more **Measure**
-- 1 or more **Temporal Dimension**`,
-    },
-    {
-      "Chart Type": "Areas",
-      Conditions: `- 1 or more **Measure**
-- 1 or more **Temporal Dimension**`,
-    },
-    { "Chart Type": "Pie", Conditions: "- 1 or more **Measure**" },
-    { "Chart Type": "Scatterplot", Conditions: "- 2 or more **Measures**" },
-  ]}
-/>
-
-#### Glossary
-
-- **Measure**: Quantitative, numerical dimensions of Ratio/Interval type
-- **Temporal Dimension**: Dimension of Continuous/Interval type that is marked as Temporal and contains Date/DateTime values
-- **Categorical Dimension**: A dimension with categorical values, either Nominal (unordered) or Ordinal.
-
-#### Dimension metadata
+#### Data type
 
 - `isNumerical`
 
@@ -126,11 +95,11 @@ called _Shared dimensions_, and their values will be fetched outside the cube.
 
 #### Data kind
 
-| RDF                                                             | Visualize      |
-| :-------------------------------------------------------------- | :------------- |
-| `?dimension cube:meta/dataKind time:GeneralDateTimeDescription` | Time           |
-| `?dimension cube:meta/dataKind schema:GeoCoordinates`           | GeoCoordinates |
-| `?dimension cube:meta/dataKind schema:GeoShape`                 | GeoShape       |
+| RDF                                                             | Visualize                         |
+| :-------------------------------------------------------------- | :-------------------------------- |
+| `?dimension cube:meta/dataKind time:GeneralDateTimeDescription` | `dim.dataKind = "Time"`           |
+| `?dimension cube:meta/dataKind schema:GeoCoordinates`           | `dim.dataKind = "GeoCoordinates"` |
+| `?dimension cube:meta/dataKind schema:GeoShape`                 | `dim.dataKind = "GeoShape"`       |
 
 ℹ️ Time dimensions can be interactively filtered with a _time range slider_
 
@@ -149,6 +118,41 @@ A dimension can indicate that it is contains standard error values for another d
 | RDF                                                                                                                 | Visualize                                                                                  |
 | :------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------- |
 | `?dim `cube/meta/dimensionRelation` ?relationNode`<br/>`?relationNode a <https://cube.link/relation/StandardError>` | `dimension.related = { type: "StandardError", iri: "https://dimension-containing-values"}` |
+
+#### Possible chart types
+
+With `dataKind` and `scaleType`, we determine the `__typename` of the dimension.
+The \_\_typename is then used to determine possible chart types.
+
+- `isMeasureDimension = true`: **Measure**
+- `dataKind = "Time"`: **Temporal Dimension**
+- `dataKind = "GeoCoordinates"`: **GeoCoordinates Dimension**
+- `dataKind = "GeoShape"`: **GeoShapes Dimension**
+- `scaleType = "Ordinal"`: **Ordinal Dimension**
+- If condition above have not been fullfilled, the dimension is a **Nominal Dimension**
+
+All chart types can handle **Categorical Dimensions** but for particular chart types the following conditions have to be met:
+
+<TableSpecimen
+  columns={["Chart Type", "Conditions"]}
+  rows={[
+    { "Chart Type": "Table", Conditions: `- None` },
+    { "Chart Type": "Column", Conditions: `- 1 or more **Measure**` },
+    {
+      "Chart Type": "Lines",
+      Conditions: `- 1 or more **Measure**
+- 1 or more **Temporal Dimension**`,
+    },
+    {
+      "Chart Type": "Areas",
+      Conditions: `- 1 or more **Measure**
+- 1 or more **Temporal Dimension**`,
+    },
+    { "Chart Type": "Pie", Conditions: "- 1 or more **Measure**" },
+    { "Chart Type": "Scatterplot", Conditions: "- 2 or more **Measures**" },
+    { "Chart Type": "Maps", Conditions: "- 1 or more **Geo dimensions**" },
+  ]}
+/>
 
 ## Update constraints
 
