@@ -499,6 +499,7 @@ export type DataCubeObservationsQueryVariables = Exact<{
   dimensions?: Maybe<Array<Scalars['String']> | Scalars['String']>;
   filters?: Maybe<Scalars['Filters']>;
   latest?: Maybe<Scalars['Boolean']>;
+  limit?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -764,7 +765,7 @@ export function useTemporalDimensionValuesQuery(options: Omit<Urql.UseQueryArgs<
   return Urql.useQuery<TemporalDimensionValuesQuery>({ query: TemporalDimensionValuesDocument, ...options });
 };
 export const DataCubeObservationsDocument = gql`
-    query DataCubeObservations($iri: String!, $locale: String!, $dimensions: [String!], $filters: Filters, $latest: Boolean) {
+    query DataCubeObservations($iri: String!, $locale: String!, $dimensions: [String!], $filters: Filters, $latest: Boolean, $limit: Int) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
     title
@@ -775,7 +776,7 @@ export const DataCubeObservationsDocument = gql`
     measures {
       ...dimensionMetaData
     }
-    observations(dimensions: $dimensions, filters: $filters) {
+    observations(dimensions: $dimensions, filters: $filters, limit: $limit) {
       data
       sparqlEditorUrl
     }
