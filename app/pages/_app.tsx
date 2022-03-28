@@ -73,9 +73,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <I18nProvider i18n={i18n}>
           <GraphqlProvider>
             <ThemeProvider theme={federalTheme.theme}>
+              <CssBaseline />
               <ContentMDXProvider>
                 <AsyncLocalizationProvider locale={locale}>
-                  <CssBaseline />
                   <Component {...pageProps} />
                 </AsyncLocalizationProvider>
               </ContentMDXProvider>
