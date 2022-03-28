@@ -296,8 +296,8 @@ const DownloadMenuItem = ({
       >
         {extent === "visible" ? (
           <>
-            <Trans id="button.download.data.visible">Overlooking dataset</Trans>{" "}
-            ({fileFormat.toUpperCase()})
+            <Trans id="button.download.data.visible">Visible dataset</Trans> (
+            {fileFormat.toUpperCase()})
           </>
         ) : (
           <>
