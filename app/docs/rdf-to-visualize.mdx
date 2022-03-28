@@ -1,0 +1,187 @@
+<style>{`
+  table:not([class]) {
+     margin-top: 1rem;
+     font-size: 0.875rem;
+     cell-spacing: none;
+     border-spacing: 0;
+     border-collapse: collapse;
+  }
+
+  table:not([class]) tr:nth-child(2n) {
+    background: #eee;
+  }
+
+  table:not([class]) td, table:not([class]) th {
+    border-bottom: #ccc 1px solid;
+    margin-top: 0;
+    padding: 0.25rem 0.5rem;
+  }
+
+  table:not([class]) tr {
+    margin-bottom: 0;
+  }
+
+  li > code {
+    font-size: 0.875rem;
+  }
+`}</style>
+
+Visualize fetches and parses RDF cubes. For easier consumption by the charts,
+we transform some of the terms.
+
+Most of the parsing is done in [rdf/parse.ts](https://github.com/visualize-admin/visualization-tool/blob/main/app/rdf/parse.ts), this
+file can serve as a reference. Do not hesitate to [post an issue](https://github.com/visualize-admin/visualization-tool/issues) if you find this
+documentation incomplete.
+
+See also [the RDF cube schema](https://zazuko.github.io/rdf-cube-schema/) for more information on the
+RDF cube schema specification.
+
+### Cube
+
+| RDF                                                                            | Visualize            |
+| :----------------------------------------------------------------------------- | :------------------- |
+| `?cube dcterms:identifier ?value`                                              | `identifier`         |
+| `?cube schema:name ?value`                                                     | `title`              |
+| `?cube schema:description ?value`                                              | `description`        |
+| `?cube schema:version ?value`                                                  | `version`            |
+| `?cube schema:creativeWorkStatus adminVocabulary:CreativeWorkStatus/Published` | `isPublished`        |
+| `?cube schema:datePublished ?value`                                            | `datePublished`      |
+| `?cube dcat:theme ?value`                                                      | `themes`             |
+| `?cube dcterms:creator ?value`                                                 | `creator`            |
+| `?cube dcat:contactPoint ?cp`<br/>`?cp vcard:fn ?value`                        | `contactPoint.name`  |
+| `?cube dcat:contactPoint ?cp`<br/>`?cp vcard:hasEmail ?value`                  | `contactPoint.email` |
+
+### Dimensions
+
+#### Key / Measure
+
+Values inside key dimensions must
+_uniquely identify a row_. For this reason, and because visualize does not deal
+with aggregation, key dimensions must either be **encoded** or **part of a filter**.
+
+| RDF                                  | Visualize                       |
+| :----------------------------------- | :------------------------------ |
+| `?dimension a cube:KeyDimension`     | `dim.isKeyDimension = true`     |
+| `?dimension a cube:MeasureDimension` | `dim.isMeasureDimension = true` |
+
+#### Scale type
+
+| RDF                                            | Visualize                    |
+| :--------------------------------------------- | :--------------------------- |
+| `?dimension qudt:scaleType qudt:NominalScale`  | `dim.scaleType = "Nominal"`  |
+| `?dimension qudt:scaleType qudt:OrdinalScale`  | `dim.scaleType = "Ordinal"`  |
+| `?dimension qudt:scaleType qudt:RatioScale`    | `dim.scaleType = "Ratio"`    |
+| `?dimension qudt:scaleType qudt:IntervalScale` | `dim.scaleType = "Interval"` |
+
+#### Data type
+
+- `isNumerical`
+
+| RDF                                     | Visualize                |
+| :-------------------------------------- | :----------------------- |
+| `?dimension shacl:datatype xsd:int`     | `dim.isNumerical = true` |
+| `?dimension shacl:datatype xsd:integer` | `dim.isNumerical = true` |
+
+ℹ️ At the moment, numerical fields are filtered out of encoding fields options.
+
+- `isLiteral`
+
+| RDF                                | Visualize               |
+| :--------------------------------- | :---------------------- |
+| `?dimension shacl:datatype ?value` | `dim.isLiteral = false` |
+
+`True` when the dimension has no `shacl:datatype`. Non literal dimensions are also
+called _Shared dimensions_, and their values will be fetched outside the cube.
+
+#### Data kind
+
+| RDF                                                             | Visualize                         |
+| :-------------------------------------------------------------- | :-------------------------------- |
+| `?dimension cube:meta/dataKind time:GeneralDateTimeDescription` | `dim.dataKind = "Time"`           |
+| `?dimension cube:meta/dataKind schema:GeoCoordinates`           | `dim.dataKind = "GeoCoordinates"` |
+| `?dimension cube:meta/dataKind schema:GeoShape`                 | `dim.dataKind = "GeoShape"`       |
+
+ℹ️ Time dimensions can be interactively filtered with a _time range slider_
+
+ℹ️ GeoCoordinates dimensions can be shown on a map as _points_
+
+ℹ️ GeoShape dimensions can be shown on a map as _shapes_
+
+#### Related dimensions
+
+##### Standard error
+
+A dimension can indicate that it is contains standard error values for another dimension.
+
+ℹ️ Standard error dimensions are not shown in the left filters.
+
+| RDF                                                                                                                 | Visualize                                                                                  |
+| :------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------- |
+| `?dim `cube/meta/dimensionRelation` ?relationNode`<br/>`?relationNode a <https://cube.link/relation/StandardError>` | `dimension.related = { type: "StandardError", iri: "https://dimension-containing-values"}` |
+
+#### Possible chart types
+
+After parsing, we can determine the type of our dimension. Conditions are checked
+one after the other.
+
+- **Measure** if `isMeasureDimension = true`, else
+- **Temporal** if `dataKind = "Time"`, else
+- **GeoCoordinates** if `dataKind = "GeoCoordinates"`, else
+- **GeoShapes** if `dataKind = "GeoShape"`, else
+- **Ordinal** if `scaleType = "Ordinal"`, else
+- **Nominal** if none of the above condition have been fullfilled
+
+We can regroup some of these dimensions, for easier business logic:
+
+- **GeoCoordinates** and **GeoShapes** are **Geo** dimensions.
+- **Ordinal** and **Nominal** are **Categorical** dimensions.
+
+All chart types can handle **Categorical** dimensions but for particular chart types the following conditions have to be met:
+
+<TableSpecimen
+  columns={["Chart Type", "Conditions"]}
+  rows={[
+    { "Chart Type": "Table", Conditions: `- None` },
+    { "Chart Type": "Column", Conditions: `- 1 or more **Measure**` },
+    {
+      "Chart Type": "Lines",
+      Conditions: `- 1 or more **Measure**
+- 1 or more **Temporal Dimension**`,
+    },
+    {
+      "Chart Type": "Areas",
+      Conditions: `- 1 or more **Measure**
+- 1 or more **Temporal Dimension**`,
+    },
+    { "Chart Type": "Pie", Conditions: "- 1 or more **Measure**" },
+    { "Chart Type": "Scatterplot", Conditions: "- 2 or more **Measures**" },
+    { "Chart Type": "Maps", Conditions: "- 1 or more **Geo dimensions**" },
+  ]}
+/>
+
+## Update constraints
+
+When updating a cube, you have to follow a number of rules to make sure that
+the charts that rely on those cubes will continue to work.
+
+- Structure of a dimension should not be changed, otherwise, if a filter relies on the dimension, it might
+  not work anymore. Here are the properties of a dimension that should not change:
+
+  - `a`: Dimension type
+  - `qudt:unit`: Unit
+  - `qudt:scaleType`: Scale type
+  - `shacl:datatype`: Data type
+  - `meta:dataKind`: Data kind
+
+  Please refer to the [RDF Cube Schema](https://zazuko.github.io/rdf-cube-schema/#properties-0) to
+  learn more about those attributes.
+
+- Similarly, a dimension should not be removed (same reason: if it is used in a chart filter, the filter
+  will not be correct when the dimension is removed)
+- Observations should not be removed, otherwise a chart that shows only those observations via a data filter
+  will not show anything anymore.
+
+If you need to do any of those things, you should create a new cube.
+
+If your cube is in draft, you can ignore those rules as chart owners know that they are
+relying on something that is not finished and that can change.
