@@ -72,6 +72,7 @@ export const Footer = () => {
 
       <Flex
         sx={{
+          width: ["100%", "auto"],
           flexDirection: ["column", "row"],
           alignItems: ["flex-start", "center"],
         }}
@@ -87,7 +88,6 @@ export const Footer = () => {
 
         <Box
           sx={{
-            width: "100vw",
             display: ["block", "none"],
             px: 4,
             py: 5,
@@ -97,6 +97,7 @@ export const Footer = () => {
             borderBottomStyle: "solid",
             borderTopColor: "grey.500",
             borderBottomColor: "grey.500",
+            width: ["100%", "auto"],
           }}
         >
           <Logo />
