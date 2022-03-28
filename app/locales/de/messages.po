@@ -817,13 +817,21 @@ msgstr "Logo der Schweizerischen Eidgenossenschaft"
 msgid "metadata.dataset"
 msgstr "Datensatz"
 
-#: app/components/chart-footnotes.tsx:94
+#: app/components/chart-footnotes.tsx:101
 msgid "metadata.link.created.with.visualize"
 msgstr "Erstellt mit visualize.admin.ch"
 
 #: app/components/chart-footnotes.tsx:46
 msgid "metadata.source"
 msgstr "Quelle"
+
+#: app/components/chart-footnotes.tsx:84
+msgid "metadata.switch.chart"
+msgstr "Zur Diagrammansicht wechseln"
+
+#: app/components/chart-footnotes.tsx:86
+msgid "metadata.switch.table"
+msgstr "Zur Tabellenansicht wechseln"
 
 #: app/components/publish-actions.tsx:244
 msgid "publication.embed.AEM"

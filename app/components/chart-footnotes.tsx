@@ -67,17 +67,30 @@ export const ChartFootnotes = ({
                 color="primary"
                 variant="text"
                 size="small"
+                startIcon={
+                  <Icon
+                    name={
+                      isChartTablePreview
+                        ? getChartIcon(chartConfig.chartType)
+                        : "table"
+                    }
+                    size={16}
+                  />
+                }
                 onClick={() => setIsChartTablePreview(!isChartTablePreview)}
-                sx={{ width: "20px", minWidth: 0, padding: 0 }}
+                sx={{ padding: 0, fontWeight: "regular" }}
               >
-                <Icon
-                  name={
-                    isChartTablePreview
-                      ? getChartIcon(chartConfig.chartType)
-                      : "table"
-                  }
-                  size={16}
-                />
+                <Typography variant="body2">
+                  {isChartTablePreview ? (
+                    <Trans id="metadata.switch.chart">
+                      Switch to chart view
+                    </Trans>
+                  ) : (
+                    <Trans id="metadata.switch.table">
+                      Switch to table view
+                    </Trans>
+                  )}
+                </Typography>
               </Button>
             </>
           )}
