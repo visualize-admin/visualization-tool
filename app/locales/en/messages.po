@@ -78,21 +78,21 @@ msgstr "Back"
 msgid "button.copy.visualization"
 msgstr "Copy and edit this visualization"
 
-#: app/components/data-download.tsx:222
+#: app/components/data-download.tsx:207
 msgid "button.download"
 msgstr "Download"
 
-#: app/components/data-download.tsx:212
+#: app/components/data-download.tsx:197
 msgid "button.download.data"
 msgstr "Download data"
 
-#: app/components/data-download.tsx:304
+#: app/components/data-download.tsx:226
 msgid "button.download.data.all"
 msgstr "Full dataset"
 
-#: app/components/data-download.tsx:299
+#: app/components/data-download.tsx:216
 msgid "button.download.data.visible"
-msgstr "Visible dataset"
+msgstr "Filtered dataset"
 
 #: app/components/data-download.tsx:64
 #~ msgid "button.download.runsparqlquery"
@@ -102,7 +102,7 @@ msgstr "Visible dataset"
 #~ msgid "button.download.runsparqlquery.all"
 #~ msgstr "Run SPARQL query (all)"
 
-#: app/components/data-download.tsx:326
+#: app/components/data-download.tsx:345
 msgid "button.download.runsparqlquery.visible"
 msgstr "Run SPARQL query"
 
@@ -821,7 +821,7 @@ msgstr "Logo of the Swiss Confederation"
 msgid "metadata.dataset"
 msgstr "Dataset"
 
-#: app/components/chart-footnotes.tsx:101
+#: app/components/chart-footnotes.tsx:107
 msgid "metadata.link.created.with.visualize"
 msgstr "Created with visualize.admin.ch"
 
@@ -829,11 +829,11 @@ msgstr "Created with visualize.admin.ch"
 msgid "metadata.source"
 msgstr "Source"
 
-#: app/components/chart-footnotes.tsx:84
+#: app/components/chart-footnotes.tsx:85
 msgid "metadata.switch.chart"
 msgstr "Switch to chart view"
 
-#: app/components/chart-footnotes.tsx:86
+#: app/components/chart-footnotes.tsx:89
 msgid "metadata.switch.table"
 msgstr "Switch to table view"
 

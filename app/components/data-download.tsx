@@ -212,7 +212,9 @@ const DataDownloadInnerMenu = ({
       >
         {visibleDataToRender && (
           <DataDownloadMenuSection
-            subheader={<Trans id="visible">Visible</Trans>}
+            subheader={
+              <Trans id="button.download.data.visible">Filtered dataset</Trans>
+            }
             dataToRender={visibleDataToRender}
             fileName={fileName}
             onDownloaded={() => popupState.close()}
@@ -220,7 +222,9 @@ const DataDownloadInnerMenu = ({
         )}
         {allDataToRender && (
           <DataDownloadMenuSection
-            subheader={<Trans id="all">All</Trans>}
+            subheader={
+              <Trans id="button.download.data.all">Full dataset</Trans>
+            }
             dataToRender={allDataToRender}
             fileName={fileName}
             onDownloaded={() => popupState.close()}
