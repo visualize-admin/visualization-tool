@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  ListItemIcon,
   ListItemText,
   ListSubheader,
   MenuItem,
@@ -17,7 +16,7 @@ import {
   usePopupState,
 } from "material-ui-popup-state/hooks";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, ReactNode, useCallback, useMemo, useState } from "react";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
@@ -28,16 +27,16 @@ import {
 } from "../graphql/query-hooks";
 import { Icon } from "../icons";
 import { useLocale } from "../locales/use-locale";
-
-const EXTENTS = ["visible", "all"] as const;
-type Extent = typeof EXTENTS[number];
+import Flex from "./flex";
 
 const FILE_FORMATS = ["csv", "xlsx"] as const;
 export type FileFormat = typeof FILE_FORMATS[number];
 
-const OPTIONS_TO_RENDER = EXTENTS.flatMap((extent) =>
-  FILE_FORMATS.map((fileFormat) => ({ extent, fileFormat }))
-);
+type PreparedData = {
+  columnKeys: string[];
+  data: Observation[];
+  sparqlEditorUrl: Maybe<string> | undefined;
+};
 
 const prepareData = ({
   dimensions,
@@ -65,7 +64,11 @@ const prepareData = ({
   return { data, columnKeys };
 };
 
-const usePreparedAllData = ({ dataSetIri }: { dataSetIri: string }) => {
+const usePreparedAllData = ({
+  dataSetIri,
+}: {
+  dataSetIri: string;
+}): PreparedData => {
   const locale = useLocale();
   const [{ data: fetchedData }] = useDataCubeObservationsQuery({
     variables: {
@@ -86,11 +89,11 @@ const usePreparedAllData = ({ dataSetIri }: { dataSetIri: string }) => {
         }),
       };
     } else {
-      return { data: [], columnKeys: [] };
+      return { data: [], columnKeys: [], sparqlEditorUrl: undefined };
     }
   }, [fetchedData?.dataCubeByIri]);
 
-  return { data, columnKeys };
+  return { data, columnKeys, sparqlEditorUrl: undefined };
 };
 
 const usePreparedVisibleData = ({
@@ -99,7 +102,7 @@ const usePreparedVisibleData = ({
 }: {
   dataSetIri: string;
   chartConfig: ChartConfig;
-}) => {
+}): PreparedData => {
   const locale = useLocale();
   const filters = useQueryFilters({ chartConfig });
   const [{ data: fetchedData }] = useDataCubeObservationsQuery({
@@ -134,26 +137,18 @@ export const AllAndVisibleDataDownloadMenu = memo(
     title: string;
     chartConfig: ChartConfig;
   }) => {
-    const allPrepared = usePreparedAllData({ dataSetIri });
-    const visiblePrepared = usePreparedVisibleData({ dataSetIri, chartConfig });
-    const optionsToRender = useMemo(
-      () =>
-        OPTIONS_TO_RENDER.map((d) => ({
-          ...d,
-          columnKeys:
-            d.extent === "all"
-              ? allPrepared.columnKeys
-              : visiblePrepared.columnKeys,
-          data: d.extent === "all" ? allPrepared.data : visiblePrepared.data,
-        })),
-      [allPrepared, visiblePrepared]
-    );
+    const preparedAllData = usePreparedAllData({ dataSetIri });
+    const preparedVisibleData = usePreparedVisibleData({
+      dataSetIri,
+      chartConfig,
+    });
 
     return (
       <DataDownloadInnerMenu
-        title={title}
-        optionsToRender={optionsToRender}
-        sparqlEditorUrl={visiblePrepared.sparqlEditorUrl}
+        fileName={title}
+        visibleDataToRender={preparedVisibleData}
+        allDataToRender={preparedAllData}
+        sparqlEditorUrl={preparedVisibleData.sparqlEditorUrl}
       />
     );
   }
@@ -161,35 +156,25 @@ export const AllAndVisibleDataDownloadMenu = memo(
 
 export const AllDataDownloadMenu = memo(
   ({ dataSetIri, title }: { dataSetIri: string; title: string }) => {
-    const { columnKeys, data } = usePreparedAllData({ dataSetIri });
-    const optionsToRender = useMemo(
-      () =>
-        OPTIONS_TO_RENDER.filter((d) => d.extent === "all").map((d) => ({
-          ...d,
-          columnKeys,
-          data,
-        })),
-      [data, columnKeys]
-    );
-
+    const preparedAllData = usePreparedAllData({ dataSetIri });
     return (
-      <DataDownloadInnerMenu title={title} optionsToRender={optionsToRender} />
+      <DataDownloadInnerMenu
+        fileName={title}
+        allDataToRender={preparedAllData}
+      />
     );
   }
 );
 
 const DataDownloadInnerMenu = ({
-  title,
-  optionsToRender,
+  fileName,
+  visibleDataToRender,
+  allDataToRender,
   sparqlEditorUrl,
 }: {
-  title: string;
-  optionsToRender: {
-    extent: Extent;
-    fileFormat: FileFormat;
-    columnKeys: string[];
-    data: Observation[];
-  }[];
+  fileName: string;
+  visibleDataToRender?: PreparedData;
+  allDataToRender: PreparedData;
   sparqlEditorUrl?: Maybe<string>;
 }) => {
   const popupState = usePopupState({
@@ -222,19 +207,25 @@ const DataDownloadInnerMenu = ({
               <Trans id="button.download">Download</Trans>
             </ListSubheader>
           ),
+          sx: { minWidth: "200px" },
         }}
       >
-        {optionsToRender.map((d) => (
-          <DownloadMenuItem
-            key={d.extent + d.fileFormat}
-            title={title}
-            extent={d.extent}
-            fileFormat={d.fileFormat}
-            columnKeys={d.columnKeys}
-            data={d.data}
-            onDownloaded={popupState.close}
+        {visibleDataToRender && (
+          <DataDownloadMenuSection
+            subheader={<Trans id="visible">Visible</Trans>}
+            dataToRender={visibleDataToRender}
+            fileName={fileName}
+            onDownloaded={() => popupState.close()}
           />
-        ))}
+        )}
+        {allDataToRender && (
+          <DataDownloadMenuSection
+            subheader={<Trans id="all">All</Trans>}
+            dataToRender={allDataToRender}
+            fileName={fileName}
+            onDownloaded={() => popupState.close()}
+          />
+        )}
       </HoverMenu>
       {sparqlEditorUrl && (
         <>
@@ -246,18 +237,54 @@ const DataDownloadInnerMenu = ({
   );
 };
 
+const DataDownloadMenuSection = ({
+  subheader,
+  dataToRender,
+  fileName,
+  onDownloaded,
+}: {
+  subheader: ReactNode;
+  dataToRender: PreparedData;
+  fileName: string;
+  onDownloaded: () => void;
+}) => {
+  return (
+    <>
+      <ListSubheader sx={{ mt: 3, lineHeight: 1.2, borderBottom: "none" }}>
+        {subheader}
+      </ListSubheader>
+      <MenuItem
+        sx={{
+          "&:hover": { backgroundColor: "transparent", cursor: "default" },
+        }}
+      >
+        <Flex sx={{ gap: 3 }}>
+          {FILE_FORMATS.map((fileFormat) => (
+            <DownloadMenuItem
+              key={fileFormat}
+              fileName={fileName}
+              fileFormat={fileFormat}
+              columnKeys={dataToRender.columnKeys}
+              data={dataToRender.data}
+              onDownloaded={onDownloaded}
+            />
+          ))}
+        </Flex>
+      </MenuItem>
+    </>
+  );
+};
+
 const DownloadMenuItem = ({
-  title,
+  fileName,
   data,
   columnKeys,
-  extent,
   fileFormat,
   onDownloaded,
 }: {
-  title: string;
+  fileName: string;
   data: Observation[];
   columnKeys: string[];
-  extent: Extent;
   fileFormat: FileFormat;
   onDownloaded: () => void;
 }) => {
@@ -265,48 +292,36 @@ const DownloadMenuItem = ({
   const download = useCallback(() => {
     return fetch("/api/download", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        columnKeys,
-        data,
-        fileFormat,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ columnKeys, data, fileFormat }),
     }).then((res) =>
-      res.blob().then((blob) => saveAs(blob, `${title}.${fileFormat}`))
+      res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
     );
-  }, [columnKeys, data, fileFormat, title]);
+  }, [columnKeys, data, fileFormat, fileName]);
 
   return (
-    <MenuItem
+    <Button
+      variant="text"
+      size="small"
+      endIcon={isDownloading ? <CircularProgress /> : null}
       onClick={async () => {
         setIsDownloading(true);
         await download();
         onDownloaded();
         setIsDownloading(false);
       }}
-      sx={{ paddingY: 3 }}
+      sx={{
+        padding: 0,
+        minWidth: 0,
+        pointerEvents: isDownloading ? "none" : "auto",
+      }}
     >
-      <ListItemIcon sx={{ color: "primary.main" }}>
-        {isDownloading ? <CircularProgress /> : <Icon name="table" />}
-      </ListItemIcon>
       <ListItemText
         primaryTypographyProps={{ variant: "body2", color: "primary.main" }}
       >
-        {extent === "visible" ? (
-          <>
-            <Trans id="button.download.data.visible">Visible dataset</Trans> (
-            {fileFormat.toUpperCase()})
-          </>
-        ) : (
-          <>
-            <Trans id="button.download.data.all">Full dataset</Trans> (
-            {fileFormat.toUpperCase()})
-          </>
-        )}
+        {fileFormat.toUpperCase()}
       </ListItemText>
-    </MenuItem>
+    </Button>
   );
 };
 
