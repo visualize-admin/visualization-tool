@@ -54,6 +54,9 @@ export const ChartDataFilters = ({
             {dataFiltersConfig.active && (
               <Button
                 variant="text"
+                endIcon={
+                  <Icon name={filtersAreHidden ? "add" : "close"} size={15} />
+                }
                 sx={{
                   display: "flex",
                   fontSize: ["0.75rem", "0.75rem", "0.75rem"],
@@ -67,10 +70,6 @@ export const ChartDataFilters = ({
                 ) : (
                   <Trans id="interactive.data.filters.hide">Hide Filters</Trans>
                 )}
-                <Icon
-                  name={filtersAreHidden ? "add" : "close"}
-                  size={15}
-                ></Icon>
               </Button>
             )}
           </Flex>
