@@ -74,6 +74,7 @@ export const ChartPublishedInner = ({
         justifyContent: "space-between",
         p: 5,
         color: "grey.800",
+        overflowX: "scroll",
       }}
     >
       <ChartErrorBoundary resetKeys={[chartConfig]}>
