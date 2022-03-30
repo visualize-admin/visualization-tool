@@ -1,7 +1,7 @@
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
-import { ChartPublished } from "../../components/chart-published";
-import { Config } from "../../configurator";
-import { loadFixtureConfigIds, loadFixtureConfig } from "../../test/utils";
+import { ChartPublished } from "@/components/chart-published";
+import { Config } from "@/configurator";
+import { loadFixtureConfigIds, loadFixtureConfig } from "@/test/utils";
 
 type PageProps = {
   statusCode?: number;

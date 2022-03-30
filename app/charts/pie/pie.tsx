@@ -1,9 +1,9 @@
 import { arc, PieArcDatum } from "d3";
 
-import { Observation } from "../../domain/data";
-import { useChartState } from "../shared/use-chart-state";
-import { useInteraction } from "../shared/use-interaction";
-import { PieState } from "./pie-state";
+import { Observation } from "@/domain/data";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { PieState } from "@/charts/pie/pie-state";
 
 export const Pie = () => {
   const {

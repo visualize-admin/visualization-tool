@@ -1,4 +1,4 @@
-import Flex from "../components/flex";
+import Flex from "@/components/flex";
 import { Box, Button, Link, Typography } from "@mui/material";
 import * as React from "react";
 

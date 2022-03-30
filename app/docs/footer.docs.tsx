@@ -1,5 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Footer } from "../components/footer";
+import { Footer } from "@/components/footer";
 
 export default () => markdown`
 

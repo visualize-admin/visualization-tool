@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
-import { useInteraction } from "../use-interaction";
-import { useChartState } from "../use-chart-state";
-import { LinesState } from "../../line/lines-state";
-import { Observation } from "../../../domain/data";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { LinesState } from "@/charts/line/lines-state";
+import { Observation } from "@/domain/data";
 
 export const HoverDot = () => {
   const [state] = useInteraction();

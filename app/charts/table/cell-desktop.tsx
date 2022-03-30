@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";;
+import Flex from "@/components/flex";;
 import { Box } from "@mui/material";
 import { hcl, ScaleLinear } from "d3";
 import * as React from "react";
@@ -6,11 +6,11 @@ import { Cell } from "react-table";
 import {
   useFormatFullDateAuto,
   useFormatNumber,
-} from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
-import { BAR_CELL_PADDING } from "./constants";
-import { ColumnMeta } from "./table-state";
-import { Tag } from "./tag";
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { BAR_CELL_PADDING } from "@/charts/table/constants";
+import { ColumnMeta } from "@/charts/table/table-state";
+import { Tag } from "@/charts/table/tag";
 
 export const CellDesktop = ({
   cell,

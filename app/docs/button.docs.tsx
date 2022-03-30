@@ -1,8 +1,8 @@
 import { Button } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
-import { Icon } from "../icons";
-import SvgIcChevronRight from "../icons/components/IcChevronRight";
-import SvgIcChevronLeft from "../icons/components/IcChevronLeft";
+import { Icon } from "@/icons";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
+import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 
 export default () => markdown`
 > Buttons are used to trigger an event after a user interaction.

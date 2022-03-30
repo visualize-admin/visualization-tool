@@ -1,5 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { PublishActions } from "../components/publish-actions";
+import { PublishActions } from "@/components/publish-actions";
 
 export default () => markdown`
 > Publish actions is used in the published charts to allow users to share and embed charts in other websites.

@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
 import { keyBy } from "lodash";
 import get from "lodash/get";
@@ -14,43 +14,43 @@ import {
   isTableConfig,
   SortingType,
   useConfiguratorState,
-} from "..";
-import { getFieldComponentIri } from "../../charts";
+} from "@/configurator";
+import { getFieldComponentIri } from "@/charts";
 import {
   chartConfigOptionsUISpec,
   EncodingOptions,
   EncodingSortingOption,
   EncodingSpec,
-} from "../../charts/chart-config-ui-options";
-import { useImputationNeeded } from "../../charts/shared/chart-helpers";
-import { FieldSetLegend, Radio, Select } from "../../components/form";
-import { Loading } from "../../components/hint";
+} from "@/charts/chart-config-ui-options";
+import { useImputationNeeded } from "@/charts/shared/chart-helpers";
+import { FieldSetLegend, Radio, Select } from "@/components/form";
+import { Loading } from "@/components/hint";
 import {
   getDimensionsByDimensionType,
   isStandardErrorDimension,
-} from "../../domain/data";
+} from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
-import { DataCubeMetadata } from "../../graphql/types";
-import { useLocale } from "../../locales/use-locale";
-import { MapColumnOptions } from "../map/map-chart-options";
-import { TableColumnOptions } from "../table/table-chart-options";
-import { ColorPalette } from "./chart-controls/color-palette";
+} from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { useLocale } from "@/locales/use-locale";
+import { MapColumnOptions } from "@/configurator/map/map-chart-options";
+import { TableColumnOptions } from "@/configurator/table/table-chart-options";
+import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "./chart-controls/section";
-import { EmptyRightPanel } from "./empty-right-panel";
+} from "@/configurator/components/chart-controls/section";
+import { EmptyRightPanel } from "@/configurator/components/empty-right-panel";
 import {
   ChartFieldField,
   ChartOptionCheckboxField,
   ChartOptionRadioField,
-} from "./field";
-import { DimensionValuesMultiFilter, TimeFilter } from "./filters";
-import { getFieldLabel, getIconName } from "./ui-helpers";
+} from "@/configurator/components/field";
+import { DimensionValuesMultiFilter, TimeFilter } from "@/configurator/components/filters";
+import { getFieldLabel, getIconName } from "@/configurator/components/ui-helpers";
 
 export const ChartOptionsSelector = ({
   state,

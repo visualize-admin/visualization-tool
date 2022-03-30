@@ -3,8 +3,8 @@ import {
   Actions,
   ErrorPageHint,
   HomeLink,
-} from "../components/error-pages-components";
-import { ContentLayout } from "../components/layout";
+} from "@/components/error-pages-components";
+import { ContentLayout } from "@/components/layout";
 
 const Page = () => (
   <ContentLayout>

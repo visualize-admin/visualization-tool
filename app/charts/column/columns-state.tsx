@@ -15,7 +15,7 @@ import {
 } from "d3";
 import { get, sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
-import { ColumnFields, SortingOrder, SortingType } from "../../configurator";
+import { ColumnFields, SortingOrder, SortingType } from "@/configurator";
 import {
   formatNumberWithUnit,
   getPalette,
@@ -25,10 +25,10 @@ import {
   useErrorVariable,
   useFormatNumber,
   useTimeFormatUnit,
-} from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
-import { TimeUnit } from "../../graphql/query-hooks";
-import { makeOrdinalDimensionSorter } from "../../utils/sorting-values";
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { TimeUnit } from "@/graphql/query-hooks";
+import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
 import {
   getLabelWithUnit,
   useOptionalNumericVariable,
@@ -36,19 +36,19 @@ import {
   useSegment,
   useStringVariable,
   useTemporalVariable,
-} from "../shared/chart-helpers";
-import { TooltipInfo } from "../shared/interaction/tooltip";
-import { useChartPadding } from "../shared/padding";
-import { ChartContext, ChartProps } from "../shared/use-chart-state";
-import { InteractionProvider } from "../shared/use-interaction";
-import { useInteractiveFilters } from "../shared/use-interactive-filters";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
+} from "@/charts/shared/chart-helpers";
+import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { useChartPadding } from "@/charts/shared/padding";
+import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
+import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import {
   BOTTOM_MARGIN_OFFSET,
   LEFT_MARGIN_OFFSET,
   PADDING_INNER,
   PADDING_OUTER,
-} from "./constants";
+} from "@/charts/column/constants";
 
 export interface ColumnsState {
   chartType: "column";

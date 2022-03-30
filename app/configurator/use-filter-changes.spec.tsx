@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react-hooks";
 import { merge } from "lodash";
-import { ChartConfig } from "./config-types";
-import useFilterChanges from "./use-filter-changes";
+import { ChartConfig } from "@/configurator/config-types";
+import useFilterChanges from "@/configurator/use-filter-changes";
 
 describe("use-filter-changes", () => {
   it("should work", () => {

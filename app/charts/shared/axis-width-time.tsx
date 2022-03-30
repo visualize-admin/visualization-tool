@@ -2,11 +2,11 @@ import { axisBottom } from "d3";
 import { select, Selection } from "d3";
 
 import { useEffect, useRef } from "react";
-import { useFormatShortDateAuto } from "../../configurator/components/ui-helpers";
-import { AreasState } from "../area/areas-state";
-import { LinesState } from "../line/lines-state";
-import { useChartState } from "./use-chart-state";
-import { useChartTheme } from "./use-chart-theme";
+import { useFormatShortDateAuto } from "@/configurator/components/ui-helpers";
+import { AreasState } from "@/charts/area/areas-state";
+import { LinesState } from "@/charts/line/lines-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 
 // Approximate the longest date format we're using for
 // Roughly equivalent to estimateTextWidth("99.99.9999", 12);

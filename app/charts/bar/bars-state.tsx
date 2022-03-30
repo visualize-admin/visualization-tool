@@ -11,23 +11,23 @@ import {
   scaleOrdinal,
 } from "d3";
 import { ReactNode, useMemo } from "react";
-import { BarFields, SortingOrder, SortingType } from "../../configurator";
-import { getPalette, mkNumber } from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
+import { BarFields, SortingOrder, SortingType } from "@/configurator";
+import { getPalette, mkNumber } from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
 import {
   useNumericVariable,
   useSegment,
   useStringVariable,
-} from "../shared/chart-helpers";
-import { ChartContext, ChartProps } from "../shared/use-chart-state";
-import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
+} from "@/charts/shared/chart-helpers";
+import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 import {
   BAR_HEIGHT,
   BAR_SPACE_ON_TOP,
   BOTTOM_MARGIN_OFFSET,
   LEFT_MARGIN_OFFSET,
-} from "./constants";
+} from "@/charts/bar/constants";
 
 export interface BarsState {
   chartType: "bar";

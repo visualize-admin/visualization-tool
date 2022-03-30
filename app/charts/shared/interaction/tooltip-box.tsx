@@ -6,15 +6,15 @@ import React, {
   useState,
 } from "react";
 import { Box } from "@mui/material";
-import { Margins } from "../use-width";
+import { Margins } from "@/charts/shared/use-width";
 import {
   TRIANGLE_SIZE,
   TOOLTIP_OFFSET,
   TooltipPlacement,
   Xplacement,
   Yplacement,
-} from "./tooltip";
-import { useTheme } from "../../../themes";
+} from "@/charts/shared/interaction/tooltip";
+import { useTheme } from "@/themes";
 import ReactDOM from "react-dom";
 import { throttle } from "lodash";
 

@@ -1,2 +1,2 @@
-import { DatasetBrowser } from "../../../../../browser";
+import { DatasetBrowser } from "@/browser";
 export default DatasetBrowser;

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import { Footer } from "./footer";
-import { Header, HeaderProgressProvider } from "./header";
-import Flex from "./flex";
+import { Footer } from "@/components/footer";
+import { Header, HeaderProgressProvider } from "@/components/header";
+import Flex from "@/components/flex";
 
 export const AppLayout = ({ children }: { children?: ReactNode }) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>

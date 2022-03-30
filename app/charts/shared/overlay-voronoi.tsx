@@ -1,11 +1,11 @@
 import { Delaunay } from "d3";
 import { pointer } from "d3";
 import { memo, useRef, MouseEvent as ReactMouseEvent } from "react";
-import { AreasState } from "../area/areas-state";
-import { LinesState } from "../line/lines-state";
-import { ScatterplotState } from "../scatterplot/scatterplot-state";
-import { useChartState } from "./use-chart-state";
-import { useInteraction } from "./use-interaction";
+import { AreasState } from "@/charts/area/areas-state";
+import { LinesState } from "@/charts/line/lines-state";
+import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
 
 export const InteractionVoronoi = memo(function InteractionVoronoi({
   debug,

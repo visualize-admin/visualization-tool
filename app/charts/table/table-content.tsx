@@ -1,11 +1,11 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { Box } from "@mui/material";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
-import { Observation } from "../../domain/data";
-import { Icon } from "../../icons";
-import { SORTING_ARROW_WIDTH } from "./constants";
-import { ColumnMeta } from "./table-state";
+import { Observation } from "@/domain/data";
+import { Icon } from "@/icons";
+import { SORTING_ARROW_WIDTH } from "@/charts/table/constants";
+import { ColumnMeta } from "@/charts/table/table-state";
 
 /** Workaround because react-window can't pass props to inner element */
 type TableContentProps = {

@@ -3,7 +3,7 @@ import { Typography, TypographyProps, styled, BoxProps } from "@mui/material";
 import {
   DataCubeOrganization,
   DataCubeTheme,
-} from "../../graphql/resolver-types";
+} from "@/graphql/resolver-types";
 
 type TagType =
   | "draft"

@@ -5,31 +5,31 @@ import {
   LoadingDataError,
   LoadingOverlay,
   NoDataHint,
-} from "../../components/hint";
+} from "@/components/hint";
 import {
   AreaConfig,
   AreaFields,
   InteractiveFiltersConfig,
-} from "../../configurator";
-import { isNumber } from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
+} from "@/configurator";
+import { isNumber } from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { A11yTable } from "../shared/a11y-table";
-import { AxisHeightLinear } from "../shared/axis-height-linear";
-import { AxisTime, AxisTimeDomain } from "../shared/axis-width-time";
-import { BrushTime } from "../shared/brush";
-import { QueryFilters } from "../shared/chart-helpers";
-import { ChartContainer, ChartSvg } from "../shared/containers";
-import { Ruler } from "../shared/interaction/ruler";
-import { Tooltip } from "../shared/interaction/tooltip";
-import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
-import { InteractionHorizontal } from "../shared/overlay-horizontal";
-import { Areas } from "./areas";
-import { AreaChart } from "./areas-state";
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { A11yTable } from "@/charts/shared/a11y-table";
+import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
+import { BrushTime } from "@/charts/shared/brush";
+import { QueryFilters } from "@/charts/shared/chart-helpers";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { Ruler } from "@/charts/shared/interaction/ruler";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
+import { InteractiveLegendColor, LegendColor } from "@/charts/shared/legend-color";
+import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
+import { Areas } from "@/charts/area/areas";
+import { AreaChart } from "@/charts/area/areas-state";
 
 export const ChartAreasVisualization = ({
   dataSetIri,

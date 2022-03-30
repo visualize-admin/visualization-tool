@@ -2,9 +2,9 @@ import { axisLeft } from "d3";
 import { select, Selection } from "d3";
 
 import { useEffect, useRef } from "react";
-import { BarsState } from "../bar/bars-state";
-import { useChartState } from "./use-chart-state";
-import { useChartTheme } from "./use-chart-theme";
+import { BarsState } from "@/charts/bar/bars-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 
 // export const AxisHeightBand = () => {
 //   const ref = useRef<SVGGElement>(null);

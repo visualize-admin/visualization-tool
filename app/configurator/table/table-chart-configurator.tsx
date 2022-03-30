@@ -5,21 +5,21 @@ import {
   OnDragEndResponder,
   OnDragStartResponder,
 } from "react-beautiful-dnd";
-import { ConfiguratorStateConfiguringChart } from "..";
-import { Loading } from "../../components/hint";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { TabDropZone } from "../components/chart-controls/drag-and-drop-tab";
+import { ConfiguratorStateConfiguringChart } from "@/configurator";
+import { Loading } from "@/components/hint";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { TabDropZone } from "@/configurator/components/chart-controls/drag-and-drop-tab";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "../components/chart-controls/section";
-import { AnnotatorTabField } from "../components/field";
-import { useOrderedTableColumns } from "../components/ui-helpers";
-import { TableFields } from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
-import { moveFields } from "./table-config-state";
+} from "@/configurator/components/chart-controls/section";
+import { AnnotatorTabField } from "@/configurator/components/field";
+import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
+import { TableFields } from "@/configurator/config-types";
+import { useConfiguratorState } from "@/configurator/configurator-state";
+import { moveFields } from "@/configurator/table/table-config-state";
 
 export const ChartConfiguratorTable = ({
   state,

@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
 import React, { useCallback, useMemo } from "react";
 import { Box, Button, Typography } from "@mui/material";
@@ -8,31 +8,31 @@ import {
   useConfiguratorState,
   useDimensionSelection,
   useMultiFilterContext,
-} from "..";
-import { Loading } from "../../components/hint";
+} from "@/configurator";
+import { Loading } from "@/components/hint";
 import { Stack } from '@mui/material'
 import {
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
 import {
   HierarchyValue,
   useHierarchicalDimensionValuesQuery,
-} from "../../utils/dimension-hierarchy";
-import { valueComparator } from "../../utils/sorting-values";
-import { EditorIntervalBrush } from "../interactive-filters/editor-time-interval-brush";
-import { Accordion, AccordionContent, AccordionSummary } from "./Accordion";
+} from "@/utils/dimension-hierarchy";
+import { valueComparator } from "@/utils/sorting-values";
+import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
+import { Accordion, AccordionContent, AccordionSummary } from "@/configurator/components/Accordion";
 import {
   MultiFilterFieldCheckbox,
   MultiFilterFieldColorPicker,
   SingleFilterField,
-} from "./field";
+} from "@/configurator/components/field";
 import {
   getTimeInterval,
   useTimeFormatLocale,
   useTimeFormatUnit,
-} from "./ui-helpers";
+} from "@/configurator/components/ui-helpers";
 
 const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);

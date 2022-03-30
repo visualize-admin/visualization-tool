@@ -1,23 +1,23 @@
 import { markdown, ReactSpecimen } from "catalog";
 import * as React from "react";
-import { Scatterplot } from "../charts/scatterplot/scatterplot-simple";
-import { ScatterplotChart } from "../charts/scatterplot/scatterplot-state";
+import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
+import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
-} from "../charts/shared/axis-height-linear";
+} from "@/charts/shared/axis-height-linear";
 import {
   AxisWidthLinear,
   AxisWidthLinearDomain,
-} from "../charts/shared/axis-width-linear";
-import { ChartContainer, ChartSvg } from "../charts/shared/containers";
-import { Tooltip } from "../charts/shared/interaction/tooltip";
+} from "@/charts/shared/axis-width-linear";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import {
   InteractiveLegendColor,
-} from "../charts/shared/legend-color";
-import { InteractionVoronoi } from "../charts/shared/overlay-voronoi";
-import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+} from "@/charts/shared/legend-color";
+import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
+import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
 

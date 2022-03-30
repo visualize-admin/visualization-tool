@@ -11,9 +11,9 @@ import {
   MiniSelect,
   SearchField,
   Switch,
-} from "../components/form";
-import SearchAutocomplete from "../components/search-autocomplete";
-import { BrowseStateProvider } from "../configurator/components/dataset-browse";
+} from "@/components/form";
+import SearchAutocomplete from "@/components/search-autocomplete";
+import { BrowseStateProvider } from "@/configurator/components/dataset-browse";
 
 const SwitchExample = ({ initialChecked }: { initialChecked?: boolean }) => {
   const [checked, toggle] = useState(initialChecked || false);

@@ -6,28 +6,28 @@ import {
   BarFields,
   InteractiveFiltersConfig,
   FilterValueSingle,
-} from "../../configurator";
-import { Observation } from "../../domain/data";
-import { isNumber } from "../../configurator/components/ui-helpers";
+} from "@/configurator";
+import { Observation } from "@/domain/data";
+import { isNumber } from "@/configurator/components/ui-helpers";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { A11yTable } from "../shared/a11y-table";
-import { AxisWidthLinear } from "../shared/axis-width-linear";
-import { BarsGrouped } from "./bars-grouped";
-import { GroupedBarsChart } from "./bars-grouped-state";
-import { Bars } from "./bars-simple";
-import { BarChart } from "./bars-state";
-import { ChartContainer, ChartSvg } from "../shared/containers";
-import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { A11yTable } from "@/charts/shared/a11y-table";
+import { AxisWidthLinear } from "@/charts/shared/axis-width-linear";
+import { BarsGrouped } from "@/charts/bar/bars-grouped";
+import { GroupedBarsChart } from "@/charts/bar/bars-grouped-state";
+import { Bars } from "@/charts/bar/bars-simple";
+import { BarChart } from "@/charts/bar/bars-state";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { InteractiveLegendColor, LegendColor } from "@/charts/shared/legend-color";
 import {
   Loading,
   LoadingDataError,
   LoadingOverlay,
   NoDataHint,
-} from "../../components/hint";
+} from "@/components/hint";
 
 export const ChartBarsVisualization = ({
   dataSetIri,

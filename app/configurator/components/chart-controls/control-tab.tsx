@@ -1,11 +1,11 @@
-import Flex from "../../../components/flex";
+import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
 import { Box, Button, Typography } from "@mui/material";
-import { FieldProps } from "../..";
-import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
-import { Icon, IconName } from "../../../icons";
-import { getFieldLabel, getIconName } from "../ui-helpers";
+import { FieldProps } from "@/configurator";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { Icon, IconName } from "@/icons";
+import { getFieldLabel, getIconName } from "@/configurator/components/ui-helpers";
 
 export const ControlTab = ({
   component,

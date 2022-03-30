@@ -1,9 +1,9 @@
 import { line } from "d3";
 import { Fragment, memo } from "react";
-import { Observation } from "../../domain/data";
-import { useTheme } from "../../themes";
-import { useChartState } from "../shared/use-chart-state";
-import { LinesState } from "./lines-state";
+import { Observation } from "@/domain/data";
+import { useTheme } from "@/themes";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { LinesState } from "@/charts/line/lines-state";
 
 export const Lines = () => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =

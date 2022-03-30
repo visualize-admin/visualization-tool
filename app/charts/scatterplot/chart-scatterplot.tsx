@@ -5,36 +5,36 @@ import {
   LoadingDataError,
   LoadingOverlay,
   NoDataHint,
-} from "../../components/hint";
+} from "@/components/hint";
 import {
   Filters,
   FilterValueSingle,
   InteractiveFiltersConfig,
   ScatterPlotConfig,
   ScatterPlotFields,
-} from "../../configurator";
-import { isNumber } from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
+} from "@/configurator";
+import { isNumber } from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { A11yTable } from "../shared/a11y-table";
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { A11yTable } from "@/charts/shared/a11y-table";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
-} from "../shared/axis-height-linear";
+} from "@/charts/shared/axis-height-linear";
 import {
   AxisWidthLinear,
   AxisWidthLinearDomain,
-} from "../shared/axis-width-linear";
-import { ChartContainer, ChartSvg } from "../shared/containers";
-import { Tooltip } from "../shared/interaction/tooltip";
-import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
-import { InteractionVoronoi } from "../shared/overlay-voronoi";
-import { Scatterplot } from "./scatterplot-simple";
-import { ScatterplotChart } from "./scatterplot-state";
+} from "@/charts/shared/axis-width-linear";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
+import { InteractiveLegendColor, LegendColor } from "@/charts/shared/legend-color";
+import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
+import { Scatterplot } from "@/charts/scatterplot/scatterplot-simple";
+import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 
 export const ChartScatterplotVisualization = ({
   dataSetIri,

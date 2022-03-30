@@ -1,7 +1,7 @@
 import { memo } from "react";
-import { useTheme } from "../../themes";
-import { useChartState } from "../shared/use-chart-state";
-import { ScatterplotState } from "./scatterplot-state";
+import { useTheme } from "@/themes";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 
 export const Scatterplot = () => {
   const {

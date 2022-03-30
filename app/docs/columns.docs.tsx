@@ -1,16 +1,16 @@
 import { markdown, ReactSpecimen } from "catalog";
 import * as React from "react";
-import { Columns, ErrorWhiskers } from "../charts/column/columns-simple";
-import { ColumnChart } from "../charts/column/columns-state";
-import { AxisHeightLinear } from "../charts/shared/axis-height-linear";
+import { Columns, ErrorWhiskers } from "@/charts/column/columns-simple";
+import { ColumnChart } from "@/charts/column/columns-state";
+import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import {
   AxisWidthBand,
   AxisWidthBandDomain,
-} from "../charts/shared/axis-width-band";
-import { ChartContainer, ChartSvg } from "../charts/shared/containers";
-import { Tooltip } from "../charts/shared/interaction/tooltip";
-import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+} from "@/charts/shared/axis-width-band";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
+import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
 

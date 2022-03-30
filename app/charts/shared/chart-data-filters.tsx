@@ -1,22 +1,22 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
 import * as React from "react";
 import { Box, Button, SelectChangeEvent } from "@mui/material";
-import { ChartFiltersList } from "../../components/chart-filters-list";
-import { Select } from "../../components/form";
-import { Loading } from "../../components/hint";
-import { ChartConfig, InteractiveFiltersDataConfig } from "../../configurator";
-import { TimeInput } from "../../configurator/components/field";
+import { ChartFiltersList } from "@/components/chart-filters-list";
+import { Select } from "@/components/form";
+import { Loading } from "@/components/hint";
+import { ChartConfig, InteractiveFiltersDataConfig } from "@/configurator";
+import { TimeInput } from "@/configurator/components/field";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
   useTimeFormatLocale,
-} from "../../configurator/components/ui-helpers";
-import { FIELD_VALUE_NONE } from "../../configurator/constants";
-import { TimeUnit, useDimensionValuesQuery } from "../../graphql/query-hooks";
-import { Icon } from "../../icons";
-import { useLocale } from "../../locales/use-locale";
-import { useInteractiveFilters } from "./use-interactive-filters";
+} from "@/configurator/components/ui-helpers";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { TimeUnit, useDimensionValuesQuery } from "@/graphql/query-hooks";
+import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 
 export const ChartDataFilters = ({
   dataSet,

@@ -8,6 +8,7 @@ module.exports = {
     },
   },
   moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/$1",
     "\\.(css)$": "<rootDir>/test/style-mock.js",
   },
 };

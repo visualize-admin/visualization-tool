@@ -23,30 +23,30 @@ import {
   useErrorMeasure,
   useErrorVariable,
   useFormatNumber,
-} from "../../configurator/components/ui-helpers";
+} from "@/configurator/components/ui-helpers";
 import {
   BaseLayer,
   ColorScaleInterpolationType,
   DivergingPaletteType,
   MapFields,
   SequentialPaletteType,
-} from "../../configurator/config-types";
+} from "@/configurator/config-types";
 import {
   findRelatedErrorDimension,
   GeoData,
   isGeoShapesDimension,
   Observation,
   ObservationValue,
-} from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
+} from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import {
   useOptionalNumericVariable,
   useStringVariable,
-} from "../shared/chart-helpers";
-import { ChartContext, ChartProps } from "../shared/use-chart-state";
-import { InteractionProvider } from "../shared/use-interaction";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { MapTooltipProvider } from "./map-tooltip";
+} from "@/charts/shared/chart-helpers";
+import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { MapTooltipProvider } from "@/charts/map/map-tooltip";
 
 export interface MapState {
   chartType: "map";

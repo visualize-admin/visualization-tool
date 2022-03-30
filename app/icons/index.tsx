@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
-import { ChartType } from "../configurator";
-import { IconName, Icons } from "./components";
+import { ChartType } from "@/configurator";
+import { IconName, Icons } from "@/icons/components";
 
 export { Icons } from "./components";
 export type { IconName } from "./components";
