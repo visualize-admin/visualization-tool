@@ -1,6 +1,6 @@
-import { useChartState } from "../shared/use-chart-state";
-import { StackedColumnsState } from "./columns-stacked-state";
-import { Column } from "./rendering-utils";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
+import { Column } from "@/charts/column/rendering-utils";
 
 export const ColumnsStacked = () => {
   const { bounds, getX, xScale, yScale, colors, series } =

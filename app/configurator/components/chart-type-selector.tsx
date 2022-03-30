@@ -1,17 +1,17 @@
 import { Trans } from "@lingui/macro";
 import React, { SyntheticEvent } from "react";
 import { Box, CircularProgress, Typography, ButtonBase } from "@mui/material";
-import { ConfiguratorStateSelectingChartType } from "..";
-import { enabledChartTypes, getPossibleChartType } from "../../charts";
-import { Hint, Loading } from "../../components/hint";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
-import { DataCubeMetadata } from "../../graphql/types";
-import { Icon } from "../../icons";
-import { useLocale } from "../../locales/use-locale";
-import { FieldProps, useChartTypeSelectorField } from "../config-form";
-import { useEnsurePossibleFilters } from "./chart-configurator";
-import { SectionTitle } from "./chart-controls/section";
-import { getFieldLabel, getIconName } from "./ui-helpers";
+import { ConfiguratorStateSelectingChartType } from "@/configurator";
+import { enabledChartTypes, getPossibleChartType } from "@/charts";
+import { Hint, Loading } from "@/components/hint";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
+import { FieldProps, useChartTypeSelectorField } from "@/configurator/config-form";
+import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
+import { SectionTitle } from "@/configurator/components/chart-controls/section";
+import { getFieldLabel, getIconName } from "@/configurator/components/ui-helpers";
 
 export const ChartTypeSelectionButton = ({
   label,

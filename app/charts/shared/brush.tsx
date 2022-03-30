@@ -1,14 +1,14 @@
 import { bisector, brushX, select, Selection, Transition } from "d3";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFormatFullDateAuto } from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { AreasState } from "../area/areas-state";
-import { ColumnsState } from "../column/columns-state";
-import { LinesState } from "../line/lines-state";
-import { useChartState } from "./use-chart-state";
-import { useChartTheme } from "./use-chart-theme";
-import { useInteractiveFilters } from "./use-interactive-filters";
+import { useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { AreasState } from "@/charts/area/areas-state";
+import { ColumnsState } from "@/charts/column/columns-state";
+import { LinesState } from "@/charts/line/lines-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 
 // Space used in chart states as bottom margin
 export const BRUSH_BOTTOM_SPACE = 100;

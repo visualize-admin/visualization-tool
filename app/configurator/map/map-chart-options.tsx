@@ -1,30 +1,30 @@
-import Flex from "../../components/flex";;
+import Flex from "@/components/flex";;
 import { t, Trans } from "@lingui/macro";
 import React, { memo, useMemo } from "react";
 import { Box } from "@mui/material";
-import { ConfiguratorStateConfiguringChart, MapConfig } from "..";
-import { FieldSetLegend } from "../../components/form";
+import { ConfiguratorStateConfiguringChart, MapConfig } from "@/configurator";
+import { FieldSetLegend } from "@/components/form";
 import {
   GeoFeature,
   getGeoDimensions,
   getGeoShapesDimensions,
-} from "../../domain/data";
-import { useGeoShapesByDimensionIriQuery } from "../../graphql/query-hooks";
-import { DataCubeMetadata } from "../../graphql/types";
-import { useLocale } from "../../src";
-import { ColorRampField } from "../components/chart-controls/color-ramp";
+} from "@/domain/data";
+import { useGeoShapesByDimensionIriQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { useLocale } from "@/src";
+import { ColorRampField } from "@/configurator/components/chart-controls/color-ramp";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "../components/chart-controls/section";
+} from "@/configurator/components/chart-controls/section";
 import {
   ChartOptionCheckboxField,
   ChartOptionRadioField,
   ChartOptionSelectField,
   ColorPickerField,
-} from "../components/field";
-import { DimensionValuesMultiFilter } from "../components/filters";
+} from "@/configurator/components/field";
+import { DimensionValuesMultiFilter } from "@/configurator/components/filters";
 
 export const MapColumnOptions = ({
   state,

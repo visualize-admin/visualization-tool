@@ -7,7 +7,7 @@ import {
 } from "downshift";
 import { useState } from "react";
 import { Box, BoxProps, Input } from "@mui/material";
-import Flex, { FlexProps } from "./flex";
+import Flex, { FlexProps } from "@/components/flex";
 import { Trans } from "@lingui/macro";
 
 const menuStyles = {

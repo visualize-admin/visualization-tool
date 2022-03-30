@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
-} from "..";
+} from "@/configurator";
 
 export const EmptyRightPanel = ({
   state,

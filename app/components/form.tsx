@@ -16,12 +16,12 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import Flex from "./flex";
-import VisuallyHidden from "./visually-hidden";
-import { FieldProps, Option } from "../configurator";
-import { useBrowseContext } from "../configurator/components/dataset-browse";
-import { Icon } from "../icons";
-import { useLocale } from "../locales/use-locale";
+import Flex from "@/components/flex";
+import VisuallyHidden from "@/components/visually-hidden";
+import { FieldProps, Option } from "@/configurator";
+import { useBrowseContext } from "@/configurator/components/dataset-browse";
+import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
 import { DatePicker, DatePickerProps } from "@mui/lab";
 import { timeFormat } from "d3-time-format";
 

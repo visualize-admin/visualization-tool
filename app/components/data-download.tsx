@@ -18,16 +18,16 @@ import {
 } from "material-ui-popup-state/hooks";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
 import React, { memo, useCallback, useMemo, useState } from "react";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
-import { ChartConfig } from "../configurator";
-import { Observation } from "../domain/data";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { ChartConfig } from "@/configurator";
+import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   Maybe,
   useDataCubeObservationsQuery,
-} from "../graphql/query-hooks";
-import { Icon } from "../icons";
-import { useLocale } from "../locales/use-locale";
+} from "@/graphql/query-hooks";
+import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
 
 const EXTENTS = ["visible", "all"] as const;
 type Extent = typeof EXTENTS[number];

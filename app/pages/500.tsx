@@ -4,8 +4,8 @@ import {
   ErrorPageHint,
   HomeLink,
   ReloadButton,
-} from "../components/error-pages-components";
-import { ContentLayout } from "../components/layout";
+} from "@/components/error-pages-components";
+import { ContentLayout } from "@/components/layout";
 
 const Page = () => {
   return (

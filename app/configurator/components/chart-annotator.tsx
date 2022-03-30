@@ -1,14 +1,14 @@
 import { Trans } from "@lingui/macro";
 import * as React from "react";
-import { ConfiguratorStateDescribingChart } from "../config-types";
-import { InteractiveFiltersConfigurator } from "../interactive-filters/interactive-filters-configurator";
+import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
+import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "./chart-controls/section";
-import { AnnotatorTabField } from "./field";
-import { getFieldLabel } from "./ui-helpers";
+} from "@/configurator/components/chart-controls/section";
+import { AnnotatorTabField } from "@/configurator/components/field";
+import { getFieldLabel } from "@/configurator/components/ui-helpers";
 
 export const ChartAnnotator = ({
   state,

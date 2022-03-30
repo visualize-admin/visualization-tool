@@ -21,40 +21,40 @@ import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateSelectingChartType,
   isMapConfig,
-} from "..";
-import { getFieldComponentIris } from "../../charts";
-import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
-import { Loading } from "../../components/hint";
-import { isStandardErrorDimension } from "../../domain/data";
+} from "@/configurator";
+import { getFieldComponentIris } from "@/charts";
+import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { Loading } from "@/components/hint";
+import { isStandardErrorDimension } from "@/domain/data";
 import {
   DataCubeMetadataWithComponentValuesQuery,
   PossibleFiltersDocument,
   PossibleFiltersQuery,
   useDataCubeMetadataWithComponentValuesQuery,
-} from "../../graphql/query-hooks";
-import { DataCubeMetadata } from "../../graphql/types";
-import { Icon } from "../../icons";
-import { useLocale } from "../../locales/use-locale";
+} from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
 import {
   getFiltersByMappingStatus,
   moveFilterField,
   useConfiguratorState,
-} from "../configurator-state";
-import { FIELD_VALUE_NONE } from "../constants";
+} from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "./chart-controls/section";
+} from "@/configurator/components/chart-controls/section";
 import {
   ControlTabField,
   DataFilterSelect,
   DataFilterSelectDay,
   DataFilterSelectTime,
   OnOffControlTabField,
-} from "./field";
-import MoveDragButtons from "./move-drag-buttons";
-import useDisclosure from "./use-disclosure";
+} from "@/configurator/components/field";
+import MoveDragButtons from "@/configurator/components/move-drag-buttons";
+import useDisclosure from "@/configurator/components/use-disclosure";
 
 const DataFilterSelectGeneric = ({
   dimension,

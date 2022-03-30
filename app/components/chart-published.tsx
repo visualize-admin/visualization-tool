@@ -2,28 +2,28 @@ import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
 import * as React from "react";
 import { useEffect } from "react";
-import { ChartDataFilters } from "../charts/shared/chart-data-filters";
-import { isUsingImputation } from "../charts/shared/imputation";
+import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
+import { isUsingImputation } from "@/charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
-} from "../charts/shared/use-interactive-filters";
-import Flex from "../components/flex";
-import { ChartConfig, Meta } from "../configurator";
-import { DataSetTable } from "../configurator/components/datatable";
-import { MotionBox } from "../configurator/components/presence";
-import { parseDate } from "../configurator/components/ui-helpers";
-import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
-import { DataCubePublicationStatus } from "../graphql/resolver-types";
-import { useLocale } from "../locales/use-locale";
-import { ChartErrorBoundary } from "./chart-error-boundary";
-import { ChartFootnotes } from "./chart-footnotes";
+} from "@/charts/shared/use-interactive-filters";
+import Flex from "@/components/flex";
+import { ChartConfig, Meta } from "@/configurator";
+import { DataSetTable } from "@/configurator/components/datatable";
+import { MotionBox } from "@/configurator/components/presence";
+import { parseDate } from "@/configurator/components/ui-helpers";
+import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { useLocale } from "@/locales/use-locale";
+import { ChartErrorBoundary } from "@/components/chart-error-boundary";
+import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
-} from "./chart-table-preview";
-import GenericChart from "./common-chart";
-import { HintBlue, HintRed } from "./hint";
+} from "@/components/chart-table-preview";
+import GenericChart from "@/components/common-chart";
+import { HintBlue, HintRed } from "@/components/hint";
 
 export const ChartPublished = ({
   dataSet,

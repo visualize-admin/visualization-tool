@@ -9,8 +9,8 @@
 import { Fade, Grow } from "@mui/material";
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import { merge, omit } from "lodash";
-import { Icon } from "../icons";
-import shadows from "./shadows";
+import { Icon } from "@/icons";
+import shadows from "@/themes/shadows";
 
 const isSafari15 =
   typeof navigator !== "undefined" && navigator.vendor.indexOf("Apple") >= 0

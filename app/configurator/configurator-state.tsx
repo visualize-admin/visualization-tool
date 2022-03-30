@@ -18,25 +18,25 @@ import {
   isColumnConfig,
   isMapConfig,
   isSegmentInConfig,
-} from ".";
-import { fetchChartConfig, saveChartConfig } from "../api";
+} from "@/configurator";
+import { fetchChartConfig, saveChartConfig } from "@/api";
 import {
   getFieldComponentIris,
   getGroupedFieldIris,
   getHiddenFieldIris,
   getInitialConfig,
   getPossibleChartType,
-} from "../charts";
+} from "@/charts";
 import {
   DataCubeMetadataWithComponentValuesDocument,
   DataCubeMetadataWithComponentValuesQuery,
   DimensionMetaDataFragment,
-} from "../graphql/query-hooks";
-import { DataCubeMetadata } from "../graphql/types";
-import { createChartId } from "../lib/create-chart-id";
-import { unreachableError } from "../lib/unreachable";
-import { useLocale } from "../locales/use-locale";
-import { mapColorsToComponentValuesIris } from "./components/ui-helpers";
+} from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { createChartId } from "@/lib/create-chart-id";
+import { unreachableError } from "@/lib/unreachable";
+import { useLocale } from "@/locales/use-locale";
+import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
   ChartType,
@@ -48,8 +48,8 @@ import {
   FilterValueMultiValues,
   GenericFields,
   InteractiveFiltersConfig,
-} from "./config-types";
-import { FIELD_VALUE_NONE } from "./constants";
+} from "@/configurator/config-types";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }

@@ -1,8 +1,8 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import * as React from "react";
-import { AppLayout } from "../../components/layout";
-import { Configurator, ConfiguratorStateProvider } from "../../configurator";
+import { AppLayout } from "@/components/layout";
+import { Configurator, ConfiguratorStateProvider } from "@/configurator";
 
 type PageProps = {
   locale: string;

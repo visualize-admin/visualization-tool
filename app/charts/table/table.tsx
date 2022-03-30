@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
 import FlexSearch from "flexsearch";
 import { forwardRef, useCallback, useMemo, useState } from "react";
@@ -11,16 +11,16 @@ import {
 } from "react-table";
 import { FixedSizeList, VariableSizeList } from "react-window";
 import { Box, Typography } from "@mui/material";
-import { Input, Switch } from "../../components/form";
-import { Observation } from "../../domain/data";
-import { useChartState } from "../shared/use-chart-state";
-import { CellDesktop } from "./cell-desktop";
-import { DDContent } from "./cell-mobile";
-import { TABLE_HEIGHT } from "./constants";
-import { GroupHeader } from "./group-header";
-import { TableContent, TableContentProvider } from "./table-content";
-import { scrollbarWidth } from "./table-helpers";
-import { TableChartState } from "./table-state";
+import { Input, Switch } from "@/components/form";
+import { Observation } from "@/domain/data";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { CellDesktop } from "@/charts/table/cell-desktop";
+import { DDContent } from "@/charts/table/cell-mobile";
+import { TABLE_HEIGHT } from "@/charts/table/constants";
+import { GroupHeader } from "@/charts/table/group-header";
+import { TableContent, TableContentProvider } from "@/charts/table/table-content";
+import { scrollbarWidth } from "@/charts/table/table-helpers";
+import { TableChartState } from "@/charts/table/table-state";
 
 const MOBILE_VIEW_THRESHOLD = 384;
 

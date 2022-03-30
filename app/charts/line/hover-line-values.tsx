@@ -1,6 +1,6 @@
-import { useChartState } from "../shared/use-chart-state";
-import { useInteraction } from "../shared/use-interaction";
-import { LinesState } from "./lines-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { LinesState } from "@/charts/line/lines-state";
 
 export const HoverLineValues = () => {
   const {

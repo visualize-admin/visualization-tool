@@ -6,26 +6,26 @@ import {
   LoadingOverlay,
   NoDataHint,
   OnlyNegativeDataHint,
-} from "../../components/hint";
+} from "@/components/hint";
 import {
   Filters,
   FilterValueSingle,
   InteractiveFiltersConfig,
   PieConfig,
   PieFields,
-} from "../../configurator";
-import { Observation } from "../../domain/data";
+} from "@/configurator";
+import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { A11yTable } from "../shared/a11y-table";
-import { ChartContainer, ChartSvg } from "../shared/containers";
-import { Tooltip } from "../shared/interaction/tooltip";
-import { InteractiveLegendColor, LegendColor } from "../shared/legend-color";
-import { Pie } from "./pie";
-import { PieChart } from "./pie-state";
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { A11yTable } from "@/charts/shared/a11y-table";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { Tooltip } from "@/charts/shared/interaction/tooltip";
+import { InteractiveLegendColor, LegendColor } from "@/charts/shared/legend-color";
+import { Pie } from "@/charts/pie/pie";
+import { PieChart } from "@/charts/pie/pie-state";
 
 export const ChartPieVisualization = ({
   dataSetIri,

@@ -2,10 +2,10 @@ import { axisBottom } from "d3";
 import { select, Selection } from "d3";
 
 import { useEffect, useRef } from "react";
-import { useTimeFormatUnit } from "../../configurator/components/ui-helpers";
-import { ColumnsState } from "../column/columns-state";
-import { useChartState } from "./use-chart-state";
-import { useChartTheme } from "./use-chart-theme";
+import { useTimeFormatUnit } from "@/configurator/components/ui-helpers";
+import { ColumnsState } from "@/charts/column/columns-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);

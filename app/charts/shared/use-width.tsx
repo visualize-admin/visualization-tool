@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext } from "react";
-import { useResizeObserver } from "../../lib/use-resize-observer";
+import { useResizeObserver } from "@/lib/use-resize-observer";
 
 export interface Margins {
   top: number;

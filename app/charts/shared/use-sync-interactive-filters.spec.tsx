@@ -1,11 +1,11 @@
-import useSyncInteractiveFilters from "./use-sync-interactive-filters";
-import fixture from "../../test/__fixtures/dev/4YL1p4QTFQS4.json";
+import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
+import fixture from "@/test/__fixtures/dev/4YL1p4QTFQS4.json";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
-} from "./use-interactive-filters";
+} from "@/charts/shared/use-interactive-filters";
 import { fireEvent, render } from "@testing-library/react";
-import { ChartConfig } from "../../configurator";
+import { ChartConfig } from "@/configurator";
 import { useState } from "react";
 import { merge } from "lodash";
 

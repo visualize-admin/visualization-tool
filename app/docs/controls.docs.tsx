@@ -1,19 +1,19 @@
 import { markdown, ReactSpecimen } from "catalog";
 import { useState } from "react";
 import { Box } from "@mui/material";
-import { Checkbox, Input, Radio, Select } from "../components/form";
+import { Checkbox, Input, Radio, Select } from "@/components/form";
 import {
   ColorPicker,
   ColorPickerMenu,
-} from "../configurator/components/chart-controls/color-picker";
-import { OnOffControlTab } from "../configurator/components/chart-controls/control-tab";
-import { ControlList } from "../configurator/components/chart-controls/list";
+} from "@/configurator/components/chart-controls/color-picker";
+import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
+import { ControlList } from "@/configurator/components/chart-controls/list";
 import {
   ControlSection,
   SectionTitle,
-} from "../configurator/components/chart-controls/section";
-import { ChartTypeSelectionButton } from "../configurator/components/chart-type-selector";
-import { getPalette } from "../configurator/components/ui-helpers";
+} from "@/configurator/components/chart-controls/section";
+import { ChartTypeSelectionButton } from "@/configurator/components/chart-type-selector";
+import { getPalette } from "@/configurator/components/ui-helpers";
 
 const ControlsDoc = () => {
   const [currentColor, setCurrentColor] = useState(getPalette("accent")[0]);

@@ -10,8 +10,8 @@ import {
   LoadingDataError,
   LoadingGeoDimensionsError,
   NoDataHint,
-} from "../../components/hint";
-import { BaseLayer, MapConfig, MapFields } from "../../configurator";
+} from "@/components/hint";
+import { BaseLayer, MapConfig, MapFields } from "@/configurator";
 import {
   AreaLayer,
   GeoData,
@@ -22,20 +22,20 @@ import {
   isGeoShapesDimension,
   Observation,
   SymbolLayer,
-} from "../../domain/data";
+} from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
   useGeoCoordinatesByDimensionIriQuery,
   useGeoShapesByDimensionIriQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { QueryFilters } from "../shared/chart-helpers";
-import { ChartContainer } from "../shared/containers";
-import { MapComponent } from "./map";
-import { MapLegend } from "./map-legend";
-import { MapChart } from "./map-state";
-import { MapTooltip } from "./map-tooltip";
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { QueryFilters } from "@/charts/shared/chart-helpers";
+import { ChartContainer } from "@/charts/shared/containers";
+import { MapComponent } from "@/charts/map/map";
+import { MapLegend } from "@/charts/map/map-legend";
+import { MapChart } from "@/charts/map/map-state";
+import { MapTooltip } from "@/charts/map/map-tooltip";
 
 export const ChartMapVisualization = ({
   dataSetIri,

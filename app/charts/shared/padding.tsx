@@ -1,9 +1,9 @@
 import { max } from "d3";
 import { useMemo } from "react";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { getTickNumber } from "../shared/axis-height-linear";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
-import { ChartProps } from "./use-chart-state";
+import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { getTickNumber } from "@/charts/shared/axis-height-linear";
+import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
+import { ChartProps } from "@/charts/shared/use-chart-state";
 
 const computeChartPadding = (
   yScale: d3.ScaleLinear<number, number>,

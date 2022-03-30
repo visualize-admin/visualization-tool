@@ -6,7 +6,7 @@ import {
   ChartUnexpectedError,
   LoadingGeoDimensionsError,
   LoadingDataError,
-} from "../components/hint";
+} from "@/components/hint";
 import { markdown, ReactSpecimen } from "catalog";
 import { Stack } from '@mui/material'
 

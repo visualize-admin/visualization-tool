@@ -3,16 +3,16 @@ import {
   BrowseFilter,
   DataCubeAbout,
   useBrowseContext,
-} from "../configurator/components/dataset-browse";
-import { useOrganizationsQuery, useThemesQuery } from "../graphql/query-hooks";
-import SvgIcCategories from "../icons/components/IcCategories";
-import SvgIcOrganisations from "../icons/components/IcOrganisations";
-import { useLocale } from "../src";
-import Autocomplete, { AutocompleteProps } from "./autocomplete";
+} from "@/configurator/components/dataset-browse";
+import { useOrganizationsQuery, useThemesQuery } from "@/graphql/query-hooks";
+import SvgIcCategories from "@/icons/components/IcCategories";
+import SvgIcOrganisations from "@/icons/components/IcOrganisations";
+import { useLocale } from "@/src";
+import Autocomplete, { AutocompleteProps } from "@/components/autocomplete";
 import { Box } from "@mui/material";
-import useDatasetCount from "../configurator/components/use-dataset-count";
+import useDatasetCount from "@/configurator/components/use-dataset-count";
 import { t } from "@lingui/macro";
-import SvgIcText from "../icons/components/IcText";
+import SvgIcText from "@/icons/components/IcText";
 
 const getItemIcon = (item: SearchAutocompleteItem) => {
   if (item.__typename === "DataCubeTheme") {

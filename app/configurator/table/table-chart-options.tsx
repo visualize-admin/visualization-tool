@@ -1,44 +1,44 @@
 import { t, Trans } from "@lingui/macro";
 import get from "lodash/get";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
-import { Checkbox } from "../../components/form";
+import { Checkbox } from "@/components/form";
 import { Stack } from '@mui/material'
-import { canDimensionBeMultiFiltered } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
-import { DataCubeMetadata } from "../../graphql/types";
-import { ColorPalette } from "../components/chart-controls/color-palette";
+import { canDimensionBeMultiFiltered } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "../components/chart-controls/section";
+} from "@/configurator/components/chart-controls/section";
 import {
   ChartOptionCheckboxField,
   ChartOptionSelectField,
   ColorPickerField,
   DataFilterSelectTime,
-} from "../components/field";
+} from "@/configurator/components/field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
   TimeFilter,
-} from "../components/filters";
+} from "@/configurator/components/filters";
 import {
   getDefaultCategoricalPalette,
   getDefaultDivergingSteppedPalette,
   getIconName,
   mapColorsToComponentValuesIris,
-} from "../components/ui-helpers";
-import { FieldProps } from "../config-form";
+} from "@/configurator/components/ui-helpers";
+import { FieldProps } from "@/configurator/config-form";
 import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
   isTableConfig,
   TableConfig,
-} from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
-import { TableSortingOptions } from "./table-chart-sorting-options";
-import { updateIsGroup, updateIsHidden } from "./table-config-state";
+} from "@/configurator/config-types";
+import { useConfiguratorState } from "@/configurator/configurator-state";
+import { TableSortingOptions } from "@/configurator/table/table-chart-sorting-options";
+import { updateIsGroup, updateIsHidden } from "@/configurator/table/table-config-state";
 
 const useTableColumnGroupHiddenField = ({
   path,

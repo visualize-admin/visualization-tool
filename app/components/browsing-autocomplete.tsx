@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { useCallback } from "react";
 import SearchAutocomplete, {
   SearchAutocompleteItem,
-} from "./search-autocomplete";
+} from "@/components/search-autocomplete";
 
 /**
  * Autocomplete to navigate to

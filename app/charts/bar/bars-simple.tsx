@@ -1,8 +1,8 @@
-import { useTheme } from "../../themes";
-import { BAR_AXIS_OFFSET, BAR_HEIGHT, BAR_SPACE_ON_TOP } from "./constants";
-import { useChartState } from "../shared/use-chart-state";
-import { useChartTheme } from "../shared/use-chart-theme";
-import { BarsState } from "./bars-state";
+import { useTheme } from "@/themes";
+import { BAR_AXIS_OFFSET, BAR_HEIGHT, BAR_SPACE_ON_TOP } from "@/charts/bar/constants";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { BarsState } from "@/charts/bar/bars-state";
 import { memo } from "react";
 
 export const Bars = () => {

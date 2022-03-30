@@ -13,18 +13,18 @@ import {
 } from "d3";
 import { sortBy } from "lodash";
 import { ReactNode, useMemo } from "react";
-import { LineFields } from "../../configurator";
+import { LineFields } from "@/configurator";
 import {
   getPalette,
   useFormatNumber,
   useTimeFormatUnit,
-} from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
-import { sortByIndex } from "../../lib/array";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { useTheme } from "../../themes";
-import { makeOrdinalDimensionSorter } from "../../utils/sorting-values";
-import { BRUSH_BOTTOM_SPACE } from "../shared/brush";
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { sortByIndex } from "@/lib/array";
+import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { useTheme } from "@/themes";
+import { makeOrdinalDimensionSorter } from "@/utils/sorting-values";
+import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush";
 import {
   getLabelWithUnit,
   getWideData,
@@ -33,13 +33,13 @@ import {
   useSegment,
   useStringVariable,
   useTemporalVariable,
-} from "../shared/chart-helpers";
-import { TooltipInfo } from "../shared/interaction/tooltip";
-import { ChartContext, ChartProps } from "../shared/use-chart-state";
-import { InteractionProvider } from "../shared/use-interaction";
-import { useInteractiveFilters } from "../shared/use-interactive-filters";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { LEFT_MARGIN_OFFSET } from "./constants";
+} from "@/charts/shared/chart-helpers";
+import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
+import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { LEFT_MARGIN_OFFSET } from "@/charts/line/constants";
 
 export interface LinesState {
   chartType: "line";

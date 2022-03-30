@@ -1,9 +1,9 @@
-import Flex from "./flex";
+import Flex from "@/components/flex";
 import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
 import { Alert, AlertTitle, Box, BoxProps, Typography } from "@mui/material";
-import { Icon, IconName } from "../icons";
+import { Icon, IconName } from "@/icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
   <Flex

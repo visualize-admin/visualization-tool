@@ -1,5 +1,5 @@
 import Document, { Head, Html, Main, NextScript } from "next/document";
-import { GA_TRACKING_ID } from "../domain/env";
+import { GA_TRACKING_ID } from "@/domain/env";
 
 class MyDocument extends Document {
   render() {

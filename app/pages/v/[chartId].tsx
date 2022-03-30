@@ -5,15 +5,15 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { Box, Button, Typography } from "@mui/material";
-import { ChartPanel } from "../../components/chart-panel";
-import { ChartPublished } from "../../components/chart-published";
-import { Success } from "../../components/hint";
-import { ContentLayout } from "../../components/layout";
-import { PublishActions } from "../../components/publish-actions";
+import { ChartPanel } from "@/components/chart-panel";
+import { ChartPublished } from "@/components/chart-published";
+import { Success } from "@/components/hint";
+import { ContentLayout } from "@/components/layout";
+import { PublishActions } from "@/components/publish-actions";
 import { Stack } from '@mui/material'
-import { Config } from "../../configurator";
-import { getConfig } from "../../db/config";
-import { useLocale } from "../../locales/use-locale";
+import { Config } from "@/configurator";
+import { getConfig } from "@/db/config";
+import { useLocale } from "@/locales/use-locale";
 
 type PageProps =
   | {

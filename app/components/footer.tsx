@@ -1,11 +1,11 @@
-import Flex from "./flex";
+import Flex from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
 import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
-import contentRoutes from "../content-routes.json";
-import { useLocale } from "../locales/use-locale";
-import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "../domain/env";
+import contentRoutes from "@/content-routes.json";
+import { useLocale } from "@/locales/use-locale";
+import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "@/domain/env";
 
 const Version = () => {
   let commitLink = null;

@@ -9,16 +9,16 @@ import React, {
   useMemo,
 } from "react";
 import { SelectChangeEvent, SelectProps } from "@mui/material";
-import { getFieldComponentIri } from "../charts";
-import { DimensionValuesQuery } from "../graphql/query-hooks";
-import { DataCubeMetadata } from "../graphql/types";
-import { ChartConfig, ChartType } from "./config-types";
+import { getFieldComponentIri } from "@/charts";
+import { DimensionValuesQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { ChartConfig, ChartType } from "@/configurator/config-types";
 import {
   getChartOptionBooleanField,
   getFilterValue,
   useConfiguratorState,
-} from "./configurator-state";
-import { FIELD_VALUE_NONE } from "./constants";
+} from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]

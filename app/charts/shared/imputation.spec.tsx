@@ -2,7 +2,7 @@ import {
   imputeTemporalLinearSeries,
   interpolateTemporalLinearValue,
   interpolateZerosValue,
-} from "./imputation";
+} from "@/charts/shared/imputation";
 
 describe("imputation", () => {
   const previousValue = 10;

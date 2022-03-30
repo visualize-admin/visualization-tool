@@ -1,5 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import { staticPages } from "../static-pages";
+import { staticPages } from "@/static-pages";
 
 /**
  * TODO: this page can be combined with index.tsx into [[...slug]].tsx,

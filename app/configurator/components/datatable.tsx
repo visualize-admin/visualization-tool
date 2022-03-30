@@ -9,20 +9,20 @@ import {
 } from "@mui/material";
 import { ascending, descending } from "d3";
 import { useMemo, useState } from "react";
-import { useQueryFilters } from "../../charts/shared/chart-helpers";
-import { Loading } from "../../components/hint";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { Loading } from "@/components/hint";
 import {
   useFormatFullDateAuto,
   useFormatNumber,
-} from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
   useDataCubePreviewObservationsQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { ChartConfig } from "../config-types";
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { ChartConfig } from "@/configurator/config-types";
 
 type Header = DimensionMetaDataFragment;
 

@@ -10,17 +10,17 @@ import React, {
 } from "react";
 import { StaticMap } from "react-map-gl";
 import { Box, Button } from "@mui/material";
-import { GeoFeature, GeoPoint } from "../../domain/data";
-import { Icon, IconName } from "../../icons";
-import { useLocale } from "../../src";
-import { convertHexToRgbArray } from "../shared/colors";
-import { useChartState } from "../shared/use-chart-state";
-import { useInteraction } from "../shared/use-interaction";
-import { getBaseLayerStyle } from "./get-base-layer-style";
-import { BBox, getBBox } from "./helpers";
-import { MapAttribution } from "./map-attribution";
-import { MapState } from "./map-state";
-import { useMapTooltip } from "./map-tooltip";
+import { GeoFeature, GeoPoint } from "@/domain/data";
+import { Icon, IconName } from "@/icons";
+import { useLocale } from "@/src";
+import { convertHexToRgbArray } from "@/charts/shared/colors";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { getBaseLayerStyle } from "@/charts/map/get-base-layer-style";
+import { BBox, getBBox } from "@/charts/map/helpers";
+import { MapAttribution } from "@/charts/map/map-attribution";
+import { MapState } from "@/charts/map/map-state";
+import { useMapTooltip } from "@/charts/map/map-tooltip";
 
 const MAX_ZOOM = 13;
 

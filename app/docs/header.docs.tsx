@@ -1,5 +1,5 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { Logo } from "../components/header";
+import { Logo } from "@/components/header";
 
 export default () => markdown`
 

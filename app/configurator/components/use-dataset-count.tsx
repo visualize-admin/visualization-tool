@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { useDatasetCountQuery } from "../../graphql/query-hooks";
-import isAttrEqual from "../../utils/is-attr-equal";
-import { BrowseFilter } from "./dataset-browse";
+import { useDatasetCountQuery } from "@/graphql/query-hooks";
+import isAttrEqual from "@/utils/is-attr-equal";
+import { BrowseFilter } from "@/configurator/components/dataset-browse";
 
 const countListToIndexedCount = (l: { count: number; iri: string }[]) =>
   Object.fromEntries(l.map((o) => [o.iri, o.count]));

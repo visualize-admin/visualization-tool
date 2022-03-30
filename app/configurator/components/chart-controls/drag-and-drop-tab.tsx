@@ -2,14 +2,14 @@ import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { Box } from "@mui/material";
-import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
-import { DataCubeMetadata } from "../../../graphql/types";
-import { Icon } from "../../../icons";
-import { useActiveFieldField } from "../../config-form";
-import { TableColumn } from "../../config-types";
-import { getIconName } from "../ui-helpers";
-import { DraggableTab } from "./control-tab";
-import { ControlSection, ControlSectionContent, SectionTitle } from "./section";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { Icon } from "@/icons";
+import { useActiveFieldField } from "@/configurator/config-form";
+import { TableColumn } from "@/configurator/config-types";
+import { getIconName } from "@/configurator/components/ui-helpers";
+import { DraggableTab } from "@/configurator/components/chart-controls/control-tab";
+import { ControlSection, ControlSectionContent, SectionTitle } from "@/configurator/components/chart-controls/section";
 
 type Props = {
   id: string;

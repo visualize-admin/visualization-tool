@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
 import React, { useCallback } from "react";
 import {
@@ -8,31 +8,31 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
-import VisuallyHidden from "../../components/visually-hidden";
-import { Radio, Select } from "../../components/form";
-import { DataCubeMetadata } from "../../graphql/types";
-import { Icon } from "../../icons";
+import VisuallyHidden from "@/components/visually-hidden";
+import { Radio, Select } from "@/components/form";
+import { DataCubeMetadata } from "@/graphql/types";
+import { Icon } from "@/icons";
 import {
   ControlSection,
   SectionTitle,
-} from "../components/chart-controls/section";
+} from "@/configurator/components/chart-controls/section";
 import {
   getFieldLabel,
   useOrderedTableColumns,
-} from "../components/ui-helpers";
+} from "@/configurator/components/ui-helpers";
 import {
   ConfiguratorStateConfiguringChart,
   TableConfig,
   TableSortingOption,
-} from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
+} from "@/configurator/config-types";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import {
   addSortingOption,
   changeSortingOption,
   changeSortingOptionOrder,
   moveSortingOptions,
   removeSortingOption,
-} from "./table-config-state";
+} from "@/configurator/table/table-config-state";
 
 const TableSortingOptionItem = ({
   componentIri,

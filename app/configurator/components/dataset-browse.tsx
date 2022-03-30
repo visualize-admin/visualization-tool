@@ -19,10 +19,10 @@ import {
   LinkProps as MUILinkProps,
   Typography,
 } from "@mui/material";
-import Flex, { FlexProps } from "../../components/flex";
+import Flex, { FlexProps } from "@/components/flex";
 import { AnimatePresence } from "framer-motion";
-import { Checkbox, MiniSelect, SearchField } from "../../components/form";
-import { Loading } from "../../components/hint";
+import { Checkbox, MiniSelect, SearchField } from "@/components/form";
+import { Loading } from "@/components/hint";
 import { Stack } from "@mui/material";
 import {
   DataCubeOrganization,
@@ -34,19 +34,19 @@ import {
   useOrganizationsQuery,
   useSubthemesQuery,
   useThemesQuery,
-} from "../../graphql/query-hooks";
-import { DataCubePublicationStatus } from "../../graphql/resolver-types";
-import SvgIcCategories from "../../icons/components/IcCategories";
-import SvgIcClose from "../../icons/components/IcClose";
-import SvgIcOrganisations from "../../icons/components/IcOrganisations";
-import { useLocale } from "../../locales/use-locale";
-import { BrowseParams } from "../../browser/dataset-browser";
-import isAttrEqual from "../../utils/is-attr-equal";
-import truthy from "../../utils/truthy";
-import Tag from "./Tag";
-import { useFormatDate } from "./ui-helpers";
-import useDatasetCount from "./use-dataset-count";
-import { smoothPresenceProps, MotionBox, MotionCard } from "./presence";
+} from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import SvgIcCategories from "@/icons/components/IcCategories";
+import SvgIcClose from "@/icons/components/IcClose";
+import SvgIcOrganisations from "@/icons/components/IcOrganisations";
+import { useLocale } from "@/locales/use-locale";
+import { BrowseParams } from "@/browser/dataset-browser";
+import isAttrEqual from "@/utils/is-attr-equal";
+import truthy from "@/utils/truthy";
+import Tag from "@/configurator/components/Tag";
+import { useFormatDate } from "@/configurator/components/ui-helpers";
+import useDatasetCount from "@/configurator/components/use-dataset-count";
+import { smoothPresenceProps, MotionBox, MotionCard } from "@/configurator/components/presence";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
