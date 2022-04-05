@@ -349,10 +349,10 @@ theme.components = {
           marginTop: -1,
           marginBottom: -1,
         },
-        "& > svg:first-child": {
+        "& > svg:first-of-type": {
           marginRight: 2,
         },
-        "& > svg:last-child": {
+        "& > svg:last-of-type": {
           marginLeft: 2,
         },
         textTransform: "none",
