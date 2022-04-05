@@ -345,7 +345,7 @@ export const SearchDatasetBox = ({
           }}
           aria-live="polite"
         >
-          {searchResult && (
+          {searchResult && searchResult.dataCubes.length > 0 && (
             <Plural
               id="dataset.results"
               value={searchResult.dataCubes.length}
@@ -701,8 +701,10 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       return res;
     }
   }, [data]);
+  const total = Object.values(resultsCounts).reduce((acc, n) => acc + n, 0);
 
-  const counts = search && search != "" ? resultsCounts : allCounts;
+  const counts =
+    search && search != "" && total > 0 ? resultsCounts : allCounts;
 
   const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(
@@ -866,6 +868,16 @@ export const DatasetResults = ({
       </Box>
     );
   } else if (!fetching && data) {
+    if (data.dataCubes.length === 0) {
+      return (
+        <Typography
+          variant="h2"
+          sx={{ color: "grey.600", mt: 8, textAlign: "center" }}
+        >
+          <Trans id="No results" />
+        </Typography>
+      );
+    }
     return (
       <>
         {data.dataCubes.map(
