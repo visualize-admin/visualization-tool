@@ -123,7 +123,7 @@ export const StepperDumb = ({
             disabled={nextDisabled}
             variant={state.state === "DESCRIBING_CHART" ? "contained" : "text"}
             color={state.state === "DESCRIBING_CHART" ? "primary" : "inherit"}
-            size="small"
+            size={state.state === "DESCRIBING_CHART" ? "medium" : "small"}
           >
             {nextLabel}
           </Button>
