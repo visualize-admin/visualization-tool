@@ -33,7 +33,7 @@ export const Examples = ({
       <HomepageSection>{headline}</HomepageSection>
       <Example headline={example1Headline} description={example1Description}>
         <ChartPublished
-          dataSet="https://environment.ld.admin.ch/foen/ubd003701/1"
+          dataSet="https://environment.ld.admin.ch/foen/ubd003701/2"
           meta={{
             title: {
               de: "Lärmbelastung durch Verkehr",
