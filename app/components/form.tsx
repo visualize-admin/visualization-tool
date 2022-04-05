@@ -41,7 +41,7 @@ export const Label = ({
     htmlFor={htmlFor}
     variant={smaller ? "caption" : "body1"}
     display="flex"
-    sx={{ mb: 2 }}
+    sx={{ mb: 1, color: "grey.600" }}
   >
     {children}
     {label && (
@@ -454,7 +454,7 @@ export const FieldSetLegend = ({
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      color: "grey.700",
+      color: "grey.600",
       pl: 0,
     }}
     component="legend"
