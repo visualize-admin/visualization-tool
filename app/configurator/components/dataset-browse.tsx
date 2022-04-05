@@ -46,7 +46,11 @@ import truthy from "@/utils/truthy";
 import Tag from "@/configurator/components/Tag";
 import { useFormatDate } from "@/configurator/components/ui-helpers";
 import useDatasetCount from "@/configurator/components/use-dataset-count";
-import { smoothPresenceProps, MotionBox, MotionCard } from "@/configurator/components/presence";
+import {
+  smoothPresenceProps,
+  MotionBox,
+  MotionCard,
+} from "@/configurator/components/presence";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -581,15 +585,13 @@ const NavItem = ({
     >
       {active ? (
         <>
-          <Typography variant="body2" sx={{ fontSize: 12 }}>
-            {children}
-          </Typography>
+          <Typography variant="body2">{children}</Typography>
           {level === 1 ? removeFilterButton : countChip}
         </>
       ) : (
         <>
           <Link href={path} passHref>
-            <MUILink sx={{ flexGrow: 1 }} underline="none" fontSize="small">
+            <MUILink sx={{ flexGrow: 1 }} underline="none" variant="body2">
               {children}&nbsp;&nbsp;
             </MUILink>
           </Link>

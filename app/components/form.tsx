@@ -41,7 +41,7 @@ export const Label = ({
     htmlFor={htmlFor}
     variant={smaller ? "caption" : "body1"}
     display="flex"
-    sx={{ mb: 2 }}
+    sx={{ mb: 1, color: "grey.600" }}
   >
     {children}
     {label && (
@@ -75,7 +75,7 @@ export const Radio = ({
           id={`${name}-${value}`}
           value={value}
           onChange={onChange}
-          checked={checked}
+          checked={!!checked}
           disabled={disabled}
           size="small"
           sx={{
@@ -399,10 +399,16 @@ export const SearchField = ({
   onReset?: () => void;
   onFocus?: () => void;
   onBlur?: () => void;
-  inputRef?: React.Ref<HTMLInputElement>;
+  inputRef?: React.RefObject<HTMLInputElement>;
   sx?: BoxProps["sx"];
 } & FieldProps) => {
   const { search } = useBrowseContext();
+  const handleReset = useCallback(() => {
+    if (inputRef?.current) {
+      inputRef.current.value = "";
+    }
+    onReset?.();
+  }, [inputRef, onReset]);
   return (
     <Box
       sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}
@@ -425,7 +431,7 @@ export const SearchField = ({
         sx={{ width: "100%", input: { borderRadius: 2 } }}
         endAdornment={
           onReset && search && search !== "" ? (
-            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={onReset}>
+            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={handleReset}>
               <VisuallyHidden>
                 <Trans id="controls.search.clear">Clear search field</Trans>
               </VisuallyHidden>
@@ -454,7 +460,7 @@ export const FieldSetLegend = ({
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      color: "grey.700",
+      color: "grey.600",
       pl: 0,
     }}
     component="legend"
