@@ -1184,13 +1184,10 @@ const ConfiguratorStateProviderInternal = ({
                 return;
               }
 
-              await push(
-                {
-                  pathname: `/v/${result.key}`,
-                  query: { publishSuccess: true },
-                },
-                `/v/${result.key}` // Hide publishSuccess=true from URL
-              );
+              await push({
+                pathname: `/v/${result.key}`,
+                query: { publishSuccess: true },
+              });
             } catch (e) {
               console.error(e);
               dispatch({ type: "PUBLISH_FAILED" });

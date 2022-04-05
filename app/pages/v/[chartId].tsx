@@ -14,6 +14,7 @@ import { Stack } from '@mui/material'
 import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { useLocale } from "@/locales/use-locale";
+import { useEffect, useState } from "react";
 
 type PageProps =
   | {
@@ -45,7 +46,19 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
 const VisualizationPage = (props: PageProps) => {
   const locale = useLocale();
-  const { query } = useRouter();
+  const { query, replace } = useRouter();
+
+  // Keep initial value of publishSuccess
+  const [publishSuccess] = useState(() => !!query.publishSuccess);
+
+  useEffect(() => {
+    // Remove publishSuccess from URL so that when reloading of sharing the link
+    // to someone, there is no publishSuccess mention
+    if (query.publishSuccess) {
+      replace({ pathname: window.location.pathname });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (props.status === "notfound") {
     // TODO: display 404 message
@@ -58,7 +71,6 @@ const VisualizationPage = (props: PageProps) => {
       data: { dataSet, meta, chartConfig },
     },
   } = props;
-  const publishSuccess = !!query.publishSuccess;
 
   return (
     <>
@@ -71,7 +83,11 @@ const VisualizationPage = (props: PageProps) => {
       <ContentLayout>
         <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto" mx="auto">
           <Box sx={{ pt: 4, maxWidth: "50rem", margin: "auto" }}>
-            {publishSuccess && <Success />}
+            {publishSuccess && (
+              <Box mt={2} mb={5}>
+                <Success />
+              </Box>
+            )}
 
             <ChartPanel>
               <ChartPublished
