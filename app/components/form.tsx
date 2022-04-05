@@ -278,7 +278,7 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "grey.700", fontSize: "1rem", pb: 2 }}>
+  <Box sx={{ color: "grey.600", fontSize: "1rem", pb: 2 }}>
     {label && name && (
       <Label htmlFor={name} smaller>
         {label}
@@ -288,8 +288,9 @@ export const Input = ({
       sx={{
         borderColor: "grey.500",
         backgroundColor: "grey.100",
-        height: "40px",
+        width: "100%",
       }}
+      size="small"
       id={name}
       name={name}
       value={value}
