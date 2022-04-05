@@ -399,10 +399,16 @@ export const SearchField = ({
   onReset?: () => void;
   onFocus?: () => void;
   onBlur?: () => void;
-  inputRef?: React.Ref<HTMLInputElement>;
+  inputRef?: React.RefObject<HTMLInputElement>;
   sx?: BoxProps["sx"];
 } & FieldProps) => {
   const { search } = useBrowseContext();
+  const handleReset = useCallback(() => {
+    if (inputRef?.current) {
+      inputRef.current.value = "";
+    }
+    onReset?.();
+  }, [inputRef, onReset]);
   return (
     <Box
       sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}
@@ -425,7 +431,7 @@ export const SearchField = ({
         sx={{ width: "100%", input: { borderRadius: 2 } }}
         endAdornment={
           onReset && search && search !== "" ? (
-            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={onReset}>
+            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={handleReset}>
               <VisuallyHidden>
                 <Trans id="controls.search.clear">Clear search field</Trans>
               </VisuallyHidden>
