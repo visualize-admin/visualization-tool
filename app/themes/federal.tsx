@@ -430,6 +430,10 @@ theme.components = {
         padding: "0 6px",
         minHeight: 48,
       },
+      sizeSmall: {
+        height: 40,
+        minHeight: 40,
+      },
       focused: {
         outline: "3px solid #333333",
       },

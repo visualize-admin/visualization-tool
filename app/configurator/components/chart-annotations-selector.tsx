@@ -11,7 +11,10 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { EmptyRightPanel } from "@/configurator/components/empty-right-panel";
 import { MetaInputField } from "@/configurator/components/field";
-import { getFieldLabel, getIconName } from "@/configurator/components/ui-helpers";
+import {
+  getFieldLabel,
+  getIconName,
+} from "@/configurator/components/ui-helpers";
 
 export const ChartAnnotationsSelector = ({
   state,
@@ -56,7 +59,7 @@ export const ChartAnnotationsSelector = ({
                 orderedLocales.map((locale) => (
                   <Box
                     key={`${locale}-${state.activeField!}`}
-                    sx={{ ":not(:first-of-type)": { mt: 3 } }}
+                    sx={{ ":not(:first-of-type)": { mt: 2 } }}
                   >
                     <MetaInputField
                       metaKey={state.activeField!}

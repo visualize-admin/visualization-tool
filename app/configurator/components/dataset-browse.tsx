@@ -13,7 +13,6 @@ import React, {
 } from "react";
 import {
   Box,
-  Button,
   ButtonBase,
   Link as MUILink,
   LinkProps as MUILinkProps,
@@ -320,13 +319,6 @@ export const SearchDatasetBox = ({
     }
   };
 
-  const handleClickSubmit = () => {
-    if (!inputRef.current) {
-      return;
-    }
-    onSubmitSearch(inputRef.current.value);
-  };
-
   return (
     <Box>
       <Box sx={{ pt: 4, display: "flex", width: "100%" }}>
@@ -341,15 +333,6 @@ export const SearchDatasetBox = ({
           onFocus={() => setShowDraftCheckbox(true)}
           sx={{ flexGrow: 1 }}
         />
-        <Button
-          onClick={handleClickSubmit}
-          variant="contained"
-          sx={{ flexShrink: 0, ml: 1, py: 0, cursor: "pointer" }}
-          color="primary"
-          size="large"
-        >
-          {searchLabel}
-        </Button>
       </Box>
 
       <Flex sx={{ mt: 5, justifyContent: "space-between" }}>
@@ -361,7 +344,7 @@ export const SearchDatasetBox = ({
           }}
           aria-live="polite"
         >
-          {searchResult && (
+          {searchResult && searchResult.dataCubes.length > 0 && (
             <Plural
               id="dataset.results"
               value={searchResult.dataCubes.length}
@@ -717,8 +700,10 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       return res;
     }
   }, [data]);
+  const total = Object.values(resultsCounts).reduce((acc, n) => acc + n, 0);
 
-  const counts = search && search != "" ? resultsCounts : allCounts;
+  const counts =
+    search && search != "" && total > 0 ? resultsCounts : allCounts;
 
   const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(
@@ -882,6 +867,16 @@ export const DatasetResults = ({
       </Box>
     );
   } else if (!fetching && data) {
+    if (data.dataCubes.length === 0) {
+      return (
+        <Typography
+          variant="h2"
+          sx={{ color: "grey.600", mt: 8, textAlign: "center" }}
+        >
+          <Trans id="No results" />
+        </Typography>
+      );
+    }
     return (
       <>
         {data.dataCubes.map(
