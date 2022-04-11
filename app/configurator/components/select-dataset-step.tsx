@@ -19,8 +19,15 @@ import {
 } from "@/configurator/components/dataset-browse";
 import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
 import { DataSetPreview } from "@/configurator/components/dataset-preview";
-import { PanelLayout, PanelLeftWrapper, PanelMiddleWrapper } from "@/configurator/components/layout";
-import { MotionBox, navPresenceProps } from "@/configurator/components/presence";
+import {
+  PanelLayout,
+  PanelLeftWrapper,
+  PanelMiddleWrapper,
+} from "@/configurator/components/layout";
+import {
+  MotionBox,
+  navPresenceProps,
+} from "@/configurator/components/presence";
 import { Icon } from "@/icons";
 
 const softJSONParse = (v: string) => {
@@ -56,7 +63,7 @@ export const SelectDatasetStepContent = () => {
     return formatBackLink(router.query);
   }, [router.query]);
   // Use the debounced query value here only!
-  const [{ fetching, data }] = useDataCubesQuery({
+  const [datacubesQuery] = useDataCubesQuery({
     variables: {
       locale,
       query: debouncedQuery,
@@ -119,7 +126,7 @@ export const SelectDatasetStepContent = () => {
               {...navPresenceProps}
               custom={false}
             >
-              <SearchFilters data={data} />
+              <SearchFilters data={datacubesQuery.data} />
             </MotionBox>
           )}
         </AnimatePresence>
@@ -192,10 +199,10 @@ export const SelectDatasetStepContent = () => {
                 <Box mb={1} key="search-box">
                   <SearchDatasetBox
                     browseState={browseState}
-                    searchResult={data}
+                    searchResult={datacubesQuery.data}
                   />
                 </Box>
-                <DatasetResults key="results" fetching={fetching} data={data} />
+                <DatasetResults key="results" query={datacubesQuery} />
               </MotionBox>
             )}
           </AnimatePresence>

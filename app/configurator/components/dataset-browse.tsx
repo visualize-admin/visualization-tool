@@ -21,7 +21,7 @@ import {
 import Flex, { FlexProps } from "@/components/flex";
 import { AnimatePresence } from "framer-motion";
 import { Checkbox, MiniSelect, SearchField } from "@/components/form";
-import { Loading } from "@/components/hint";
+import { LoadingDataError, Loading } from "@/components/hint";
 import { Stack } from "@mui/material";
 import {
   DataCubeOrganization,
@@ -50,6 +50,7 @@ import {
   MotionBox,
   MotionCard,
 } from "@/configurator/components/presence";
+import { UseQueryState } from "urql";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -852,49 +853,55 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
 };
 
 export const DatasetResults = ({
-  fetching,
-  data,
   resultProps,
+  query,
 }: {
-  fetching: boolean;
-  data: DataCubesQuery | undefined;
   resultProps?: Partial<ResultProps>;
+  query: UseQueryState<DataCubesQuery>;
 }) => {
+  const { fetching, data, error } = query;
   if (fetching) {
     return (
       <Box sx={{ alignItems: "center" }}>
         <Loading />
       </Box>
     );
-  } else if (!fetching && data) {
-    if (data.dataCubes.length === 0) {
-      return (
-        <Typography
-          variant="h2"
-          sx={{ color: "grey.600", mt: 8, textAlign: "center" }}
-        >
-          <Trans id="No results" />
-        </Typography>
-      );
-    }
-    return (
-      <>
-        {data.dataCubes.map(
-          ({ dataCube, highlightedTitle, highlightedDescription }) => (
-            <DatasetResult
-              {...resultProps}
-              key={dataCube.iri}
-              dataCube={dataCube}
-              highlightedTitle={highlightedTitle}
-              highlightedDescription={highlightedDescription}
-            />
-          )
-        )}
-      </>
-    );
-  } else {
-    return <Loading />;
   }
+
+  if (error) {
+    return (
+      <LoadingDataError
+        message={error instanceof Error ? error.message : error}
+      />
+    );
+  }
+
+  if ((data && data.dataCubes.length === 0) || !data) {
+    return (
+      <Typography
+        variant="h2"
+        sx={{ color: "grey.600", mt: 8, textAlign: "center" }}
+      >
+        <Trans id="No results" />
+      </Typography>
+    );
+  }
+
+  return (
+    <>
+      {data.dataCubes.map(
+        ({ dataCube, highlightedTitle, highlightedDescription }) => (
+          <DatasetResult
+            {...resultProps}
+            key={dataCube.iri}
+            dataCube={dataCube}
+            highlightedTitle={highlightedTitle}
+            highlightedDescription={highlightedDescription}
+          />
+        )
+      )}
+    </>
+  );
 };
 
 export const DateFormat = ({ date }: { date: string }) => {
