@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: app/configurator/components/chart-configurator.tsx:490
+#: app/configurator/components/chart-configurator.tsx:499
 msgid "Add filter"
 msgstr "Add filter"
 
@@ -21,19 +21,20 @@ msgstr "Add filter"
 msgid "Browse {0}"
 msgstr "Browse {0}"
 
-#: app/configurator/components/chart-configurator.tsx:445
+#: app/configurator/components/chart-configurator.tsx:454
 msgid "Drag filters to reorganize"
 msgstr "Drag filters to reorganize"
 
-#: app/configurator/components/chart-configurator.tsx:442
+#: app/configurator/components/chart-configurator.tsx:451
 msgid "Move filter down"
 msgstr "Move filter down"
 
-#: app/configurator/components/chart-configurator.tsx:439
+#: app/configurator/components/chart-configurator.tsx:448
 msgid "Move filter up"
 msgstr "Move filter up"
 
 #: app/components/autocomplete.tsx:177
+#: app/configurator/components/dataset-browse.tsx:885
 msgid "No results"
 msgstr "No results"
 
@@ -41,32 +42,32 @@ msgstr "No results"
 msgid "Search “{0}”"
 msgstr "Search “{0}”"
 
-#: app/components/chart-preview.tsx:87
+#: app/components/chart-preview.tsx:102
 msgid "annotation.add.description"
 msgstr "[ No Description ]"
 
-#: app/components/chart-preview.tsx:65
+#: app/components/chart-preview.tsx:80
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
 
-#: app/configurator/components/dataset-browse.tsx:810
+#: app/configurator/components/dataset-browse.tsx:798
 msgid "browse-panel.organizations"
 msgstr "Organizations"
 
-#: app/configurator/components/dataset-browse.tsx:773
+#: app/configurator/components/dataset-browse.tsx:761
 msgid "browse-panel.themes"
 msgstr "Categories"
 
-#: app/configurator/components/dataset-preview.tsx:62
+#: app/configurator/components/dataset-preview.tsx:63
 msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
-#: app/configurator/components/select-dataset-step.tsx:168
-#: app/configurator/components/select-dataset-step.tsx:217
+#: app/configurator/components/select-dataset-step.tsx:175
+#: app/configurator/components/select-dataset-step.tsx:224
 msgid "browse.datasets.all-datasets"
 msgstr "All datasets"
 
-#: app/configurator/components/select-dataset-step.tsx:182
+#: app/configurator/components/select-dataset-step.tsx:189
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organisations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
@@ -74,23 +75,23 @@ msgstr "Explore datasets provided by the LINDAS Linked Data Service by either fi
 msgid "button.back"
 msgstr "Back"
 
-#: app/pages/v/[chartId].tsx:137
+#: app/pages/v/[chartId].tsx:153
 msgid "button.copy.visualization"
 msgstr "Copy and edit this visualization"
 
-#: app/components/data-download.tsx:109
+#: app/components/data-download.tsx:222
 msgid "button.download"
 msgstr "Download"
 
-#: app/components/data-download.tsx:115
-#~ msgid "button.download.data"
-#~ msgstr "Download data"
+#: app/components/data-download.tsx:212
+msgid "button.download.data"
+msgstr "Download data"
 
-#: app/components/data-download.tsx:181
+#: app/components/data-download.tsx:304
 msgid "button.download.data.all"
 msgstr "Full dataset"
 
-#: app/components/data-download.tsx:176
+#: app/components/data-download.tsx:299
 msgid "button.download.data.visible"
 msgstr "Overlooking dataset"
 
@@ -99,10 +100,10 @@ msgstr "Overlooking dataset"
 #~ msgstr "Run SPARQL query"
 
 #: app/components/data-download.tsx:241
-msgid "button.download.runsparqlquery.all"
-msgstr "Run SPARQL query (all)"
+#~ msgid "button.download.runsparqlquery.all"
+#~ msgstr "Run SPARQL query (all)"
 
-#: app/components/data-download.tsx:237
+#: app/components/data-download.tsx:326
 msgid "button.download.runsparqlquery.visible"
 msgstr "Run SPARQL query"
 
@@ -119,7 +120,7 @@ msgstr "Click to copy"
 msgid "button.hint.copied"
 msgstr "Copied!"
 
-#: app/pages/v/[chartId].tsx:122
+#: app/pages/v/[chartId].tsx:138
 msgid "button.new.visualization"
 msgstr "Create New Visualization"
 
@@ -160,7 +161,7 @@ msgstr "Quantiles (equal distribution of values)"
 msgid "chart.map.layers.area.discretization.quantize"
 msgstr "Quantize (equal intervals)"
 
-#: app/configurator/components/chart-configurator.tsx:534
+#: app/configurator/components/chart-configurator.tsx:545
 #: app/configurator/components/ui-helpers.ts:480
 #: app/configurator/map/map-chart-options.tsx:62
 msgid "chart.map.layers.base"
@@ -267,7 +268,7 @@ msgstr "Table"
 msgid "controls.color"
 msgstr "Color"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:42
+#: app/configurator/components/chart-controls/control-tab.tsx:45
 msgid "controls.color.add"
 msgstr "Add ..."
 
@@ -293,7 +294,7 @@ msgstr "Sequential"
 msgid "controls.color.select"
 msgstr "Select a color"
 
-#: app/configurator/components/chart-controls/color-picker.tsx:161
+#: app/configurator/components/chart-controls/color-picker.tsx:172
 msgid "controls.colorpicker.open"
 msgstr "Open Color Picker"
 
@@ -314,14 +315,14 @@ msgstr "Description"
 msgid "controls.dimension.geographical"
 msgstr "Geographical dimension"
 
-#: app/configurator/components/field.tsx:667
+#: app/configurator/components/field.tsx:664
 msgid "controls.dimension.none"
 msgstr "None"
 
-#: app/charts/shared/chart-data-filters.tsx:193
+#: app/charts/shared/chart-data-filters.tsx:192
 #: app/configurator/components/field.tsx:121
-#: app/configurator/components/field.tsx:175
-#: app/configurator/components/field.tsx:281
+#: app/configurator/components/field.tsx:178
+#: app/configurator/components/field.tsx:278
 msgid "controls.dimensionvalue.none"
 msgstr "No Filter"
 
@@ -419,11 +420,11 @@ msgstr "Italian"
 msgid "controls.measure"
 msgstr "Measure"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:297
+#: app/configurator/components/chart-controls/control-tab.tsx:299
 msgid "controls.option.isActive"
 msgstr "On"
 
-#: app/configurator/components/chart-controls/control-tab.tsx:293
+#: app/configurator/components/chart-controls/control-tab.tsx:295
 msgid "controls.option.isNotActive"
 msgstr "Off"
 
@@ -431,7 +432,7 @@ msgstr "Off"
 msgid "controls.scale.type"
 msgstr "Scale type"
 
-#: app/components/form.tsx:445
+#: app/components/form.tsx:437
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
@@ -439,7 +440,7 @@ msgstr "Clear search field"
 msgid "controls.section.additional-information"
 msgstr "Additional information"
 
-#: app/configurator/components/chart-configurator.tsx:353
+#: app/configurator/components/chart-configurator.tsx:362
 msgid "controls.section.chart.options"
 msgstr "Chart Options"
 
@@ -451,7 +452,7 @@ msgstr "Columns"
 msgid "controls.section.columnstyle"
 msgstr "Column Style"
 
-#: app/configurator/components/chart-configurator.tsx:368
+#: app/configurator/components/chart-configurator.tsx:377
 msgid "controls.section.data.filters"
 msgstr "Filters"
 
@@ -562,9 +563,9 @@ msgid "controls.select.measure"
 msgstr "Select a measure"
 
 #: app/configurator/components/field.tsx:126
-#: app/configurator/components/field.tsx:180
-#: app/configurator/components/field.tsx:286
-#: app/configurator/components/field.tsx:672
+#: app/configurator/components/field.tsx:183
+#: app/configurator/components/field.tsx:283
+#: app/configurator/components/field.tsx:669
 msgid "controls.select.optional"
 msgstr "optional"
 
@@ -654,7 +655,7 @@ msgstr "Show search field"
 msgid "controls.title"
 msgstr "Title"
 
-#: app/configurator/components/select-dataset-step.tsx:109
+#: app/configurator/components/select-dataset-step.tsx:116
 msgid "dataset-preview.back-to-results"
 msgstr "Back to the datasets"
 
@@ -662,11 +663,11 @@ msgstr "Back to the datasets"
 #~ msgid "dataset-selector.choose-another-dataset"
 #~ msgstr "Choose another dataset"
 
-#: app/components/chart-published.tsx:74
+#: app/components/chart-published.tsx:106
 msgid "dataset.hasImputedValues"
 msgstr "Some data in this dataset is missing and has been interpolated to fill the gaps."
 
-#: app/configurator/components/dataset-browse.tsx:373
+#: app/configurator/components/dataset-browse.tsx:361
 msgid "dataset.includeDrafts"
 msgstr "Include draft datasets"
 
@@ -690,49 +691,49 @@ msgstr "Source"
 msgid "dataset.metadata.version"
 msgstr "Version"
 
-#: app/configurator/components/dataset-browse.tsx:292
+#: app/configurator/components/dataset-browse.tsx:296
 msgid "dataset.order.newest"
 msgstr "Newest"
 
-#: app/configurator/components/dataset-browse.tsx:284
+#: app/configurator/components/dataset-browse.tsx:288
 msgid "dataset.order.relevance"
 msgstr "Relevance"
 
-#: app/configurator/components/dataset-browse.tsx:288
+#: app/configurator/components/dataset-browse.tsx:292
 msgid "dataset.order.title"
 msgstr "Title"
 
-#: app/components/chart-preview.tsx:43
-#: app/components/chart-published.tsx:52
-#: app/configurator/components/dataset-preview.tsx:38
+#: app/components/chart-preview.tsx:58
+#: app/components/chart-published.tsx:84
+#: app/configurator/components/dataset-preview.tsx:39
 msgid "dataset.publicationStatus.draft.warning"
 msgstr "Careful, this dataset is only a draft.<0/><1>Don't use for reporting!</1>"
 
-#: app/components/chart-published.tsx:63
+#: app/components/chart-published.tsx:95
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for reporting!</1>"
 
-#: app/configurator/components/dataset-browse.tsx:361
+#: app/configurator/components/dataset-browse.tsx:349
 msgid "dataset.results"
 msgstr "{0, plural, zero {No results} one {# result} other {# results}}"
 
-#: app/configurator/components/dataset-browse.tsx:296
+#: app/configurator/components/dataset-browse.tsx:300
 msgid "dataset.search.label"
 msgstr "Search datasets"
 
-#: app/configurator/components/dataset-browse.tsx:301
+#: app/configurator/components/dataset-browse.tsx:305
 msgid "dataset.search.placeholder"
 msgstr "Name, description, organization, theme, keyword"
 
-#: app/configurator/components/dataset-browse.tsx:392
+#: app/configurator/components/dataset-browse.tsx:380
 msgid "dataset.sortby"
 msgstr "Sort by"
 
-#: app/configurator/components/dataset-browse.tsx:992
+#: app/configurator/components/dataset-browse.tsx:996
 msgid "dataset.tag.draft"
 msgstr "Draft"
 
-#: app/configurator/components/dataset-preview.tsx:109
+#: app/configurator/components/dataset-preview.tsx:106
 msgid "datatable.showing.first.rows"
 msgstr "Showing first 10 rows"
 
@@ -744,23 +745,27 @@ msgstr "Federal Office for the Environment FOEN"
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/en/home.html"
 
-#: app/components/hint.tsx:145
+#: app/components/footer.tsx:124
+msgid "footer.status"
+msgstr "Status"
+
+#: app/components/hint.tsx:147
 msgid "hint.chartunexpected.message"
 msgstr "An unexpected error occurred while displaying this chart."
 
-#: app/components/hint.tsx:143
+#: app/components/hint.tsx:145
 msgid "hint.chartunexpected.title"
 msgstr "Unexpected error"
 
-#: app/components/hint.tsx:133
+#: app/components/hint.tsx:135
 msgid "hint.coordinatesloadingerror.message"
 msgstr "There was a problem with loading the coordinates from geographical dimensions. Please try again later."
 
-#: app/components/hint.tsx:129
+#: app/components/hint.tsx:131
 msgid "hint.coordinatesloadingerror.title"
 msgstr "Coordinates loading error"
 
-#: app/pages/v/[chartId].tsx:106
+#: app/pages/v/[chartId].tsx:122
 msgid "hint.create.your.own.chart"
 msgstr "Copy this visualization or make a new visualization using Swiss Open Government Data."
 
@@ -772,7 +777,7 @@ msgstr "The data could not be loaded."
 msgid "hint.dataloadingerror.title"
 msgstr "Data loading error"
 
-#: app/pages/v/[chartId].tsx:100
+#: app/pages/v/[chartId].tsx:116
 msgid "hint.how.to.share"
 msgstr "You can share this visualization by copying the URL or by embedding it on your own website. You can also create a new visualization from scratch or start by copying the visualization above."
 
@@ -792,23 +797,23 @@ msgstr "Please try with another combination of filters."
 msgid "hint.nodata.title"
 msgstr "No data available for current filter selection"
 
-#: app/components/hint.tsx:156
+#: app/components/hint.tsx:158
 msgid "hint.only.negative.data.message"
 msgstr "Negative data values cannot be displayed with this chart type."
 
-#: app/components/hint.tsx:154
+#: app/components/hint.tsx:156
 msgid "hint.only.negative.data.title"
 msgstr "Negative Values"
 
-#: app/components/hint.tsx:164
+#: app/components/hint.tsx:166
 msgid "hint.publication.success"
 msgstr "Your visualization is now published. Share it by copying the URL or use the Embed menu below."
 
-#: app/charts/shared/chart-data-filters.tsx:68
+#: app/charts/shared/chart-data-filters.tsx:71
 msgid "interactive.data.filters.hide"
 msgstr "Hide Filters"
 
-#: app/charts/shared/chart-data-filters.tsx:66
+#: app/charts/shared/chart-data-filters.tsx:69
 msgid "interactive.data.filters.show"
 msgstr "Show Filters"
 
@@ -817,15 +822,15 @@ msgstr "Show Filters"
 msgid "logo.swiss.confederation"
 msgstr "Logo of the Swiss Confederation"
 
-#: app/components/chart-footnotes.tsx:35
+#: app/components/chart-footnotes.tsx:42
 msgid "metadata.dataset"
 msgstr "Dataset"
 
-#: app/components/chart-footnotes.tsx:65
+#: app/components/chart-footnotes.tsx:94
 msgid "metadata.link.created.with.visualize"
 msgstr "Created with visualize.admin.ch"
 
-#: app/components/chart-footnotes.tsx:39
+#: app/components/chart-footnotes.tsx:46
 msgid "metadata.source"
 msgstr "Source"
 
