@@ -119,7 +119,9 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
     <Trans id="hint.dataloadingerror.message">
       The data could not be loaded.
     </Trans>
-    {message ? message : null}
+    <pre style={{ marginTop: "0.5rem", marginLeft: "1rem", marginBottom: 0 }}>
+      {message ? message : null}
+    </pre>
   </Alert>
 );
 
