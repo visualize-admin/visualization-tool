@@ -8,7 +8,7 @@ import {
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { Trans } from "@lingui/macro";
-import { Box, Button, Link, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useQueryFilters } from "../charts/shared/chart-helpers";
 
@@ -118,17 +118,22 @@ export const ChartFootnotes = ({
           {configKey && shareUrl && (
             <>
               <Box sx={{ display: "inline", mx: 2 }}>·</Box>
-              <Link
-                sx={{ typography: "caption" }}
+              <Button
+                component="a"
+                variant="text"
                 color="primary"
+                size="small"
+                sx={{ fontWeight: "regular", padding: 0 }}
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Trans id="metadata.link.created.with.visualize">
-                  Created with visualize.admin.ch
-                </Trans>
-              </Link>
+                <Typography variant="caption">
+                  <Trans id="metadata.link.created.with.visualize">
+                    Created with visualize.admin.ch
+                  </Trans>
+                </Typography>
+              </Button>
             </>
           )}
         </Stack>
