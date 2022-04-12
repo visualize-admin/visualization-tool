@@ -1,12 +1,16 @@
 import { useChartTablePreview } from "@/components/chart-table-preview";
-import { AllAndVisibleDataDownloadMenu } from "@/components/data-download";
+import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig } from "@/configurator";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import {
+  useDataCubeMetadataWithComponentValuesQuery,
+  useDataCubeObservationsQuery,
+} from "@/graphql/query-hooks";
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { Trans } from "@lingui/macro";
 import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -33,6 +37,17 @@ export const ChartFootnotes = ({
     variables: { iri: dataSetIri, locale },
   });
 
+  // Data for data download
+  const filters = useQueryFilters({ chartConfig });
+  const [{ data: visibleData }] = useDataCubeObservationsQuery({
+    variables: { locale, iri: dataSetIri, dimensions: null, filters },
+  });
+  const [{ data: allData }] = useDataCubeObservationsQuery({
+    variables: { locale, iri: dataSetIri, dimensions: null, filters: null },
+  });
+  const sparqlEditorUrl =
+    visibleData?.dataCubeByIri?.observations.sparqlEditorUrl;
+
   if (data?.dataCubeByIri) {
     const { dataCubeByIri } = data;
 
@@ -54,10 +69,10 @@ export const ChartFootnotes = ({
         </Typography>
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
-          <AllAndVisibleDataDownloadMenu
+          <DataDownloadMenu
             title={dataCubeByIri.title}
-            dataSetIri={dataSetIri}
-            chartConfig={chartConfig}
+            allData={allData}
+            visibleData={visibleData}
           />
           {chartConfig.chartType !== "table" && (
             <>
@@ -92,6 +107,12 @@ export const ChartFootnotes = ({
                   )}
                 </Typography>
               </Button>
+            </>
+          )}
+          {sparqlEditorUrl !== undefined && (
+            <>
+              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
+              <RunSparqlQuery url={sparqlEditorUrl as string} />
             </>
           )}
           {configKey && shareUrl && (

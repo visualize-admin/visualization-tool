@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
 import {
-  Box,
   Button,
   CircularProgress,
   ListItemText,
@@ -17,16 +16,12 @@ import {
 } from "material-ui-popup-state/hooks";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
 import React, { memo, ReactNode, useCallback, useMemo, useState } from "react";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
-import { ChartConfig } from "../configurator";
 import { Observation } from "../domain/data";
 import {
+  DataCubeObservationsQuery,
   DimensionMetaDataFragment,
-  Maybe,
-  useDataCubeObservationsQuery,
 } from "../graphql/query-hooks";
 import { Icon } from "../icons";
-import { useLocale } from "../locales/use-locale";
 import Flex from "./flex";
 
 const FILE_FORMATS = ["csv", "xlsx"] as const;
@@ -35,7 +30,6 @@ export type FileFormat = typeof FILE_FORMATS[number];
 type PreparedData = {
   columnKeys: string[];
   data: Observation[];
-  sparqlEditorUrl: Maybe<string> | undefined;
 };
 
 const prepareData = ({
@@ -64,105 +58,43 @@ const prepareData = ({
   return { data, columnKeys };
 };
 
-const usePreparedAllData = ({
-  dataSetIri,
-}: {
-  dataSetIri: string;
-}): PreparedData => {
-  const locale = useLocale();
-  const [{ data: fetchedData }] = useDataCubeObservationsQuery({
-    variables: {
-      locale,
-      iri: dataSetIri,
-      dimensions: null,
-      filters: null,
-    },
-  });
-  const { data, columnKeys } = useMemo(() => {
-    if (fetchedData?.dataCubeByIri) {
-      const { dimensions, measures, observations } = fetchedData.dataCubeByIri;
-      return {
-        ...prepareData({
-          dimensions,
-          measures,
-          observations: observations.data,
-        }),
-      };
-    } else {
-      return { data: [], columnKeys: [], sparqlEditorUrl: undefined };
+const usePreparedData = (
+  data: DataCubeObservationsQuery | undefined
+): PreparedData | undefined => {
+  const preparedData = useMemo(() => {
+    if (data?.dataCubeByIri) {
+      const { observations, dimensions, measures } = data.dataCubeByIri;
+      return prepareData({
+        dimensions,
+        measures,
+        observations: observations.data,
+      });
     }
-  }, [fetchedData?.dataCubeByIri]);
+  }, [data?.dataCubeByIri]);
 
-  return { data, columnKeys, sparqlEditorUrl: undefined };
+  return preparedData;
 };
 
-const usePreparedVisibleData = ({
-  dataSetIri,
-  chartConfig,
-}: {
-  dataSetIri: string;
-  chartConfig: ChartConfig;
-}): PreparedData => {
-  const locale = useLocale();
-  const filters = useQueryFilters({ chartConfig });
-  const [{ data: fetchedData }] = useDataCubeObservationsQuery({
-    variables: { locale, iri: dataSetIri, dimensions: null, filters },
-  });
-  const { data, columnKeys, sparqlEditorUrl } = useMemo(() => {
-    if (fetchedData?.dataCubeByIri) {
-      const { dimensions, measures, observations } = fetchedData.dataCubeByIri;
-      return {
-        ...prepareData({
-          dimensions,
-          measures,
-          observations: observations.data,
-        }),
-        sparqlEditorUrl: fetchedData.dataCubeByIri.observations.sparqlEditorUrl,
-      };
-    } else {
-      return { data: [], columnKeys: [], sparqlEditorUrl: undefined };
-    }
-  }, [fetchedData?.dataCubeByIri]);
-
-  return { data, columnKeys, sparqlEditorUrl };
-};
-
-export const AllAndVisibleDataDownloadMenu = memo(
+export const DataDownloadMenu = memo(
   ({
-    dataSetIri,
+    allData,
+    visibleData,
     title,
-    chartConfig,
   }: {
-    dataSetIri: string;
+    allData: DataCubeObservationsQuery | undefined;
+    visibleData?: DataCubeObservationsQuery | undefined;
     title: string;
-    chartConfig: ChartConfig;
   }) => {
-    const preparedAllData = usePreparedAllData({ dataSetIri });
-    const preparedVisibleData = usePreparedVisibleData({
-      dataSetIri,
-      chartConfig,
-    });
+    const preparedAllData = usePreparedData(allData);
+    const preparedVisibleData = usePreparedData(visibleData);
 
-    return (
+    return preparedAllData ? (
       <DataDownloadInnerMenu
         fileName={title}
         visibleDataToRender={preparedVisibleData}
         allDataToRender={preparedAllData}
-        sparqlEditorUrl={preparedVisibleData.sparqlEditorUrl}
       />
-    );
-  }
-);
-
-export const AllDataDownloadMenu = memo(
-  ({ dataSetIri, title }: { dataSetIri: string; title: string }) => {
-    const preparedAllData = usePreparedAllData({ dataSetIri });
-    return (
-      <DataDownloadInnerMenu
-        fileName={title}
-        allDataToRender={preparedAllData}
-      />
-    );
+    ) : null;
   }
 );
 
@@ -170,12 +102,10 @@ const DataDownloadInnerMenu = ({
   fileName,
   visibleDataToRender,
   allDataToRender,
-  sparqlEditorUrl,
 }: {
   fileName: string;
   visibleDataToRender?: PreparedData;
   allDataToRender: PreparedData;
-  sparqlEditorUrl?: Maybe<string>;
 }) => {
   const popupState = usePopupState({
     variant: "popover",
@@ -231,12 +161,6 @@ const DataDownloadInnerMenu = ({
           />
         )}
       </HoverMenu>
-      {sparqlEditorUrl && (
-        <>
-          <Box sx={{ display: "inline", mx: 2 }}>·</Box>
-          <RunSparqlQuery url={sparqlEditorUrl} />
-        </>
-      )}
     </>
   );
 };

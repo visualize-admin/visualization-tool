@@ -1,25 +1,32 @@
+import { DataDownloadMenu } from "@/components/data-download";
+import DebugPanel from "@/components/debug-panel";
+import Flex from "@/components/flex";
+import { HintRed, Loading, LoadingDataError } from "@/components/hint";
+import { DataSetPreviewTable } from "@/configurator/components/datatable";
+import {
+  useDataCubeObservationsQuery,
+  useDataCubePreviewQuery,
+} from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { useLocale } from "@/locales/use-locale";
 import { Trans } from "@lingui/macro";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import Head from "next/head";
 import Link from "next/link";
 import * as React from "react";
-import { AllDataDownloadMenu } from "@/components/data-download";
-import DebugPanel from "@/components/debug-panel";
-import Flex from "@/components/flex";
-import { HintRed, Loading, LoadingDataError } from "@/components/hint";
-import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
-import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { useLocale } from "@/locales/use-locale";
-import { DataSetPreviewTable } from "@/configurator/components/datatable";
 
 export interface Preview {
   iri: string;
   label: string;
 }
+
 export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
   const [{ data: metaData, fetching, error }] = useDataCubePreviewQuery({
     variables: { iri: dataSetIri, locale },
+  });
+  const [{ data: allData }] = useDataCubeObservationsQuery({
+    variables: { locale, iri: dataSetIri, dimensions: null, filters: null },
   });
 
   if (metaData && metaData.dataCubeByIri) {
@@ -107,10 +114,7 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 Showing first 10 rows
               </Trans>
             </Typography>
-            <AllDataDownloadMenu
-              dataSetIri={dataSetIri}
-              title={dataCubeByIri.title}
-            />
+            <DataDownloadMenu title={dataCubeByIri.title} allData={allData} />
           </Flex>
           <DebugPanel configurator={true} />
         </Paper>
