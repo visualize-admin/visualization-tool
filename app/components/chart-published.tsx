@@ -1,21 +1,9 @@
-import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
-import * as React from "react";
-import { useEffect } from "react";
 import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import {
   InteractiveFiltersProvider,
   useInteractiveFilters,
 } from "@/charts/shared/use-interactive-filters";
-import Flex from "@/components/flex";
-import { ChartConfig, Meta } from "@/configurator";
-import { DataSetTable } from "@/configurator/components/datatable";
-import { MotionBox } from "@/configurator/components/presence";
-import { parseDate } from "@/configurator/components/ui-helpers";
-import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
-import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import { useLocale } from "@/locales/use-locale";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -23,7 +11,19 @@ import {
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import GenericChart from "@/components/common-chart";
+import Flex from "@/components/flex";
 import { HintBlue, HintRed } from "@/components/hint";
+import { ChartConfig, Meta } from "@/configurator";
+import { DataSetTable } from "@/configurator/components/datatable";
+import { MotionBox } from "@/configurator/components/presence";
+import { parseDate } from "@/configurator/components/ui-helpers";
+import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { useLocale } from "@/locales/use-locale";
+import { Trans } from "@lingui/macro";
+import { Box, Typography } from "@mui/material";
+import * as React from "react";
+import { useEffect } from "react";
 
 export const ChartPublished = ({
   dataSet,
@@ -69,6 +69,7 @@ export const ChartPublishedInner = ({
     <MotionBox
       layout
       sx={{
+        display: "flex",
         flexGrow: 1,
         flexDirection: "column",
         justifyContent: "space-between",
