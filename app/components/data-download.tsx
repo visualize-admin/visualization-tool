@@ -228,9 +228,15 @@ const DownloadMenuItem = ({
       loading={isDownloading}
       onClick={async () => {
         setIsDownloading(true);
-        await download();
-        onDownloaded();
-        setIsDownloading(false);
+
+        try {
+          await download();
+          onDownloaded();
+        } catch (e) {
+          console.error("Could not download the data!", e);
+        } finally {
+          setIsDownloading(false);
+        }
       }}
       sx={{ padding: 0, minWidth: 0 }}
     >
