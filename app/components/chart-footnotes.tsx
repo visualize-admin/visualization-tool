@@ -93,7 +93,7 @@ export const ChartFootnotes = ({
                   />
                 }
                 onClick={() => setIsChartTablePreview(!isChartTablePreview)}
-                sx={{ padding: 0, fontWeight: "regular" }}
+                sx={{ p: 0 }}
               >
                 <Typography variant="caption">
                   {isChartTablePreview ? (
@@ -123,7 +123,7 @@ export const ChartFootnotes = ({
                 variant="text"
                 color="primary"
                 size="small"
-                sx={{ fontWeight: "regular", padding: 0 }}
+                sx={{ p: 0 }}
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"

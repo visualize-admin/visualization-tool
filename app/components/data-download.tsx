@@ -115,7 +115,7 @@ const DataDownloadInnerMenu = ({
         size="small"
         startIcon={<Icon name="download" />}
         {...bindHover(popupState)}
-        sx={{ fontWeight: "regular", padding: 0 }}
+        sx={{ p: 0 }}
       >
         <Typography variant="caption">
           <Trans id="button.download.data">Download data</Trans>
@@ -238,7 +238,7 @@ const DownloadMenuItem = ({
           setIsDownloading(false);
         }
       }}
-      sx={{ padding: 0, minWidth: 0 }}
+      sx={{ minWidth: 0, p: 0 }}
     >
       {fileFormat.toUpperCase()}
     </LoadingButton>
@@ -255,7 +255,7 @@ export const RunSparqlQuery = ({ url }: { url: string }) => {
         size="small"
         href={url}
         target="_blank"
-        sx={{ fontWeight: "regular", padding: 0 }}
+        sx={{ p: 0 }}
       >
         <Typography variant="caption">
           <Trans id="button.download.runsparqlquery.visible">

@@ -1,19 +1,19 @@
 import Flex from "@/components/flex";
-import { Trans } from "@lingui/macro";
-import { useRouter } from "next/router";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
-import { Button, Typography } from "@mui/material";
+import { useHeaderProgress } from "@/components/header";
 import {
-  useConfiguratorState,
   canTransitionToNextStep,
   canTransitionToPreviousStep,
+  useConfiguratorState,
 } from "@/configurator";
-import { useHeaderProgress } from "@/components/header";
+import { formatBackLink } from "@/configurator/components/select-dataset-step";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
-import { formatBackLink } from "@/configurator/components/select-dataset-step";
+import { Trans } from "@lingui/macro";
+import { Button, Typography } from "@mui/material";
+import { useRouter } from "next/router";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 
 export type StepStatus = "past" | "current" | "future";
 
@@ -104,6 +104,7 @@ export const StepperDumb = ({
             variant="text"
             size="small"
             color="inherit"
+            sx={{ fontWeight: "bold" }}
           >
             {previousLabel}
           </Button>
@@ -124,6 +125,7 @@ export const StepperDumb = ({
             variant={state.state === "DESCRIBING_CHART" ? "contained" : "text"}
             color={state.state === "DESCRIBING_CHART" ? "primary" : "inherit"}
             size={state.state === "DESCRIBING_CHART" ? "medium" : "small"}
+            sx={{ fontWeight: "bold" }}
           >
             {nextLabel}
           </Button>
