@@ -1,12 +1,6 @@
 import { Trans } from "@lingui/macro";
-import {
-  Button,
-  CircularProgress,
-  ListItemText,
-  ListSubheader,
-  MenuItem,
-  Typography,
-} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Button, ListSubheader, MenuItem, Typography } from "@mui/material";
 import { saveAs } from "file-saver";
 import { keyBy } from "lodash";
 import {
@@ -228,28 +222,20 @@ const DownloadMenuItem = ({
   }, [columnKeys, data, fileFormat, fileName]);
 
   return (
-    <Button
+    <LoadingButton
       variant="text"
       size="small"
-      endIcon={isDownloading ? <CircularProgress /> : null}
+      loading={isDownloading}
       onClick={async () => {
         setIsDownloading(true);
         await download();
         onDownloaded();
         setIsDownloading(false);
       }}
-      sx={{
-        padding: 0,
-        minWidth: 0,
-        pointerEvents: isDownloading ? "none" : "auto",
-      }}
+      sx={{ padding: 0, minWidth: 0 }}
     >
-      <ListItemText
-        primaryTypographyProps={{ variant: "body2", color: "primary.main" }}
-      >
-        {fileFormat.toUpperCase()}
-      </ListItemText>
-    </Button>
+      {fileFormat.toUpperCase()}
+    </LoadingButton>
   );
 };
 
