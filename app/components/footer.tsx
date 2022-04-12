@@ -1,4 +1,4 @@
-import Flex from "@/components/flex";
+import Flex, { FlexProps } from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
 import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
@@ -34,7 +34,7 @@ const Version = () => {
   );
 };
 
-export const Footer = () => {
+export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
   const locale = useLocale();
 
   return (
@@ -48,6 +48,7 @@ export const Footer = () => {
         borderTopWidth: "1px",
         borderTopStyle: "solid",
         borderTopColor: "grey.100",
+        ...sx,
       }}
     >
       <Box
@@ -111,11 +112,11 @@ export const Footer = () => {
           }}
         >
           <Typography
+            variant="body2"
             sx={{
               px: [4, 3],
               py: [3, 4],
-              color: "secondary",
-              fontSize: "0.875rem",
+              color: "secondary.main",
             }}
           >
             <Version />
