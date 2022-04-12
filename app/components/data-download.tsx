@@ -193,7 +193,7 @@ const DataDownloadInnerMenu = ({
         {...bindHover(popupState)}
         sx={{ fontWeight: "regular", padding: 0 }}
       >
-        <Typography variant="body2">
+        <Typography variant="caption">
           <Trans id="button.download.data">Download data</Trans>
         </Typography>
       </Button>
@@ -341,7 +341,7 @@ export const RunSparqlQuery = ({ url }: { url: string }) => {
         target="_blank"
         sx={{ fontWeight: "regular", padding: 0 }}
       >
-        <Typography variant="body2">
+        <Typography variant="caption">
           <Trans id="button.download.runsparqlquery.visible">
             Run SPARQL query (visible)
           </Trans>

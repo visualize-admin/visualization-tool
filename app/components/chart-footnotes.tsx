@@ -1,12 +1,12 @@
-import { Trans } from "@lingui/macro";
-import { Box, Button, Link, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useChartTablePreview } from "@/components/chart-table-preview";
+import { AllAndVisibleDataDownloadMenu } from "@/components/data-download";
 import { ChartConfig } from "@/configurator";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { useChartTablePreview } from "@/components/chart-table-preview";
-import { AllAndVisibleDataDownloadMenu } from "@/components/data-download";
+import { Trans } from "@lingui/macro";
+import { Box, Button, Link, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -80,7 +80,7 @@ export const ChartFootnotes = ({
                 onClick={() => setIsChartTablePreview(!isChartTablePreview)}
                 sx={{ padding: 0, fontWeight: "regular" }}
               >
-                <Typography variant="body2">
+                <Typography variant="caption">
                   {isChartTablePreview ? (
                     <Trans id="metadata.switch.chart">
                       Switch to chart view
