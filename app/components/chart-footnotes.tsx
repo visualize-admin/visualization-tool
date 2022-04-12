@@ -119,7 +119,7 @@ export const ChartFootnotes = ({
             <>
               <Box sx={{ display: "inline", mx: 2 }}>·</Box>
               <Link
-                sx={{ typography: "body2" }}
+                sx={{ typography: "caption" }}
                 color="primary"
                 href={shareUrl}
                 target="_blank"
