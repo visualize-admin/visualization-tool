@@ -1,19 +1,18 @@
-import { Trans } from "@lingui/macro";
-import { GetServerSideProps } from "next";
-import ErrorPage from "next/error";
-import Head from "next/head";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import { Box, Button, Typography } from "@mui/material";
 import { ChartPanel } from "@/components/chart-panel";
 import { ChartPublished } from "@/components/chart-published";
 import { Success } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
-import { Stack } from '@mui/material'
 import { Config } from "@/configurator";
 import { getConfig } from "@/db/config";
 import { useLocale } from "@/locales/use-locale";
+import { Trans } from "@lingui/macro";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { GetServerSideProps } from "next";
+import ErrorPage from "next/error";
+import Head from "next/head";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 type PageProps =
@@ -82,7 +81,7 @@ const VisualizationPage = (props: PageProps) => {
       </Head>
       <ContentLayout>
         <Box px={4} sx={{ backgroundColor: "muted.main" }} mb="auto" mx="auto">
-          <Box sx={{ pt: 4, maxWidth: "50rem", margin: "auto" }}>
+          <Box sx={{ pt: 4, width: "50rem", margin: "auto" }}>
             {publishSuccess && (
               <Box mt={2} mb={5}>
                 <Success />
