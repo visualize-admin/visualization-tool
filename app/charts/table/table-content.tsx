@@ -1,9 +1,8 @@
-import Flex from "../../components/flex";
-import { Box } from "@mui/material";
+import { Box, TableSortLabel } from "@mui/material";
 import * as React from "react";
 import { HeaderGroup } from "react-table";
+import Flex from "../../components/flex";
 import { Observation } from "../../domain/data";
-import { Icon } from "../../icons";
 import { SORTING_ARROW_WIDTH } from "./constants";
 import { ColumnMeta } from "./table-state";
 
@@ -93,25 +92,12 @@ export const TableContent = ({ children }: { children: React.ReactNode }) => {
                             : "flex-start",
                       }}
                     >
-                      <Box>{column.render("Header")}</Box>
-                      {isCustomSorted && (
-                        <Box
-                          sx={{
-                            width: SORTING_ARROW_WIDTH,
-                            flexShrink: 0,
-                            mr: "-11px",
-                          }}
-                        >
-                          <Icon
-                            name={
-                              column.isSortedDesc
-                                ? "sortDescending"
-                                : "sortAscending"
-                            }
-                            size={SORTING_ARROW_WIDTH}
-                          />
-                        </Box>
-                      )}
+                      <TableSortLabel
+                        active={isCustomSorted}
+                        direction={column.isSortedDesc ? "desc" : "asc"}
+                      >
+                        <Box>{column.render("Header")}</Box>
+                      </TableSortLabel>
                     </Flex>
                   </Box>
                 );
