@@ -199,6 +199,7 @@ query DataCubeObservations(
   $dimensions: [String!]
   $filters: Filters
   $latest: Boolean
+  $limit: Int
 ) {
   dataCubeByIri(iri: $iri, locale: $locale, latest: $latest) {
     iri
@@ -210,7 +211,7 @@ query DataCubeObservations(
     measures {
       ...dimensionMetaData
     }
-    observations(dimensions: $dimensions, filters: $filters) {
+    observations(dimensions: $dimensions, filters: $filters, limit: $limit) {
       data
       sparqlEditorUrl
     }

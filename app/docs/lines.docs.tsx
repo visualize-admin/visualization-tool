@@ -1,14 +1,14 @@
 import { markdown, ReactSpecimen } from "catalog";
 import * as React from "react";
-import { Lines } from "../charts/line/lines";
-import { LineChart } from "../charts/line/lines-state";
-import { AxisHeightLinear } from "../charts/shared/axis-height-linear";
-import { AxisTime, AxisTimeDomain } from "../charts/shared/axis-width-time";
-import { BrushTime } from "../charts/shared/brush";
-import { ChartContainer, ChartSvg } from "../charts/shared/containers";
-import { InteractiveLegendColor } from "../charts/shared/legend-color";
-import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
-import { DimensionMetaDataFragment } from "../graphql/query-hooks";
+import { Lines } from "@/charts/line/lines";
+import { LineChart } from "@/charts/line/lines-state";
+import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
+import { BrushTime } from "@/charts/shared/brush";
+import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
+import { InteractiveLegendColor } from "@/charts/shared/legend-color";
+import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 
 export const Docs = () => markdown`
 

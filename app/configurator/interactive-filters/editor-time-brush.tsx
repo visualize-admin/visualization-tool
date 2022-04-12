@@ -1,15 +1,15 @@
-import Flex from "../../components/flex";;
+import Flex from "@/components/flex";;
 import { Trans } from "@lingui/macro";
 import { bisector, brushX, scaleTime, select, Selection } from "d3";
 import React, { useCallback, useEffect, useRef } from "react";
 import { Box, Typography } from "@mui/material";
-import { Label } from "../../components/form";
-import { useResizeObserver } from "../../lib/use-resize-observer";
-import { useTheme } from "../../themes";
-import { parseDate, useFormatFullDateAuto } from "../components/ui-helpers";
-import { ConfiguratorStateDescribingChart } from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
-import { updateInteractiveTimeFilter } from "./interactive-filters-config-state";
+import { Label } from "@/components/form";
+import { useResizeObserver } from "@/lib/use-resize-observer";
+import { useTheme } from "@/themes";
+import { parseDate, useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
+import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
+import { useConfiguratorState } from "@/configurator/configurator-state";
+import { updateInteractiveTimeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
 
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;

@@ -1,19 +1,19 @@
 import { createContext, useContext } from "react";
-import { ChartFields, InteractiveFiltersConfig } from "../../configurator";
-import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
-import { Has } from "../../lib/has";
-import { AreasState } from "../area/areas-state";
-import { GroupedBarsState } from "../bar/bars-grouped-state";
-import { BarsState } from "../bar/bars-state";
-import { GroupedColumnsState } from "../column/columns-grouped-state";
-import { StackedColumnsState } from "../column/columns-stacked-state";
-import { ColumnsState } from "../column/columns-state";
-import { LinesState } from "../line/lines-state";
-import { MapState } from "../map/map-state";
-import { PieState } from "../pie/pie-state";
-import { ScatterplotState } from "../scatterplot/scatterplot-state";
-import { TableChartState } from "../table/table-state";
+import { ChartFields, InteractiveFiltersConfig } from "@/configurator";
+import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { Has } from "@/lib/has";
+import { AreasState } from "@/charts/area/areas-state";
+import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
+import { BarsState } from "@/charts/bar/bars-state";
+import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
+import { ColumnsState } from "@/charts/column/columns-state";
+import { LinesState } from "@/charts/line/lines-state";
+import { MapState } from "@/charts/map/map-state";
+import { PieState } from "@/charts/pie/pie-state";
+import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { TableChartState } from "@/charts/table/table-state";
 
 export interface ChartProps {
   data: Observation[];

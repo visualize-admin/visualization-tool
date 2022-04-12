@@ -15,21 +15,21 @@ import {
   ColumnStyleHeatmap,
   ComponentType,
   TableConfig,
-} from "../../configurator";
+} from "@/configurator";
 import {
   getColorInterpolator,
   mkNumber,
   useFormatNumber,
   useOrderedTableColumns,
-} from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { useTheme } from "../../themes";
-import { getLabelWithUnit, getSlugifiedIri } from "../shared/chart-helpers";
-import { ChartContext, ChartProps } from "../shared/use-chart-state";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
-import { BAR_CELL_PADDING, TABLE_HEIGHT } from "./constants";
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { useTheme } from "@/themes";
+import { getLabelWithUnit, getSlugifiedIri } from "@/charts/shared/chart-helpers";
+import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
+import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
 
 export interface ColumnMeta {
   iri: string;

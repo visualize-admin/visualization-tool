@@ -1,8 +1,8 @@
-import Flex from "./flex";
+import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
 
 import { Box, Typography } from "@mui/material";
-import { LanguageMenu } from "./language-menu";
+import { LanguageMenu } from "@/components/language-menu";
 import NextLink from "next/link";
 import React, {
   Dispatch,

@@ -1,12 +1,12 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { ChartConfig } from "../configurator";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
-import { getChartIcon, Icon } from "../icons";
-import { useLocale } from "../locales/use-locale";
-import { useChartTablePreview } from "./chart-table-preview";
-import { AllAndVisibleDataDownloadMenu } from "./data-download";
+import { ChartConfig } from "@/configurator";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { getChartIcon, Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
+import { useChartTablePreview } from "@/components/chart-table-preview";
+import { AllAndVisibleDataDownloadMenu } from "@/components/data-download";
 
 export const ChartFootnotes = ({
   dataSetIri,

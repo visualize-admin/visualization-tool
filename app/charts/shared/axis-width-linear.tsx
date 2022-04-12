@@ -2,12 +2,12 @@ import { axisBottom } from "d3";
 import { select, Selection } from "d3";
 
 import { useEffect, useRef } from "react";
-import { useChartState } from "./use-chart-state";
-import { useChartTheme } from "./use-chart-theme";
-import { ScatterplotState } from "../scatterplot/scatterplot-state";
-import { estimateTextWidth } from "../../lib/estimate-text-width";
-import { useFormatNumber } from "../../configurator/components/ui-helpers";
-import { BarsState } from "../bar/bars-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { estimateTextWidth } from "@/lib/estimate-text-width";
+import { useFormatNumber } from "@/configurator/components/ui-helpers";
+import { BarsState } from "@/charts/bar/bars-state";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();

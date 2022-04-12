@@ -1,5 +1,5 @@
 import { Link as UILink } from "@mui/material";
-import { Icon, IconName } from "../icons";
+import { Icon, IconName } from "@/icons";
 
 export const IconLink = ({
   iconName,

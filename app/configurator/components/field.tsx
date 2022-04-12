@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { t } from "@lingui/macro";
 import { extent, timeFormat, TimeLocaleObject, timeParse } from "d3";
 import get from "lodash/get";
@@ -11,7 +11,7 @@ import {
   useConfiguratorState,
   useMetaField,
   useSingleFilterField,
-} from "..";
+} from "@/configurator";
 import {
   Checkbox,
   DayPickerField,
@@ -19,11 +19,11 @@ import {
   Label,
   Radio,
   Select,
-} from "../../components/form";
-import { DimensionMetaDataFragment, TimeUnit } from "../../graphql/query-hooks";
-import { DataCubeMetadata } from "../../graphql/types";
-import { IconName } from "../../icons";
-import truthy from "../../utils/truthy";
+} from "@/components/form";
+import { DimensionMetaDataFragment, TimeUnit } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { IconName } from "@/icons";
+import truthy from "@/utils/truthy";
 import {
   isMultiFilterFieldChecked,
   useChartOptionBooleanField,
@@ -31,20 +31,20 @@ import {
   useMultiFilterCheckboxes,
   useMultiFilterContext,
   useSingleFilterSelect,
-} from "../config-form";
-import { FIELD_VALUE_NONE } from "../constants";
-import { ColorPickerMenu } from "./chart-controls/color-picker";
+} from "@/configurator/config-form";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { ColorPickerMenu } from "@/configurator/components/chart-controls/color-picker";
 import {
   AnnotatorTab,
   ControlTab,
   OnOffControlTab,
-} from "./chart-controls/control-tab";
+} from "@/configurator/components/chart-controls/control-tab";
 import {
   getPalette,
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
   useTimeFormatLocale,
-} from "./ui-helpers";
+} from "@/configurator/components/ui-helpers";
 
 export const ControlTabField = ({
   component,

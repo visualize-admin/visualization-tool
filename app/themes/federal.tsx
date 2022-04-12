@@ -9,8 +9,8 @@
 import { Fade, Grow } from "@mui/material";
 import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
 import { merge, omit } from "lodash";
-import { Icon } from "../icons";
-import shadows from "./shadows";
+import { Icon } from "@/icons";
+import shadows from "@/themes/shadows";
 
 const isSafari15 =
   typeof navigator !== "undefined" && navigator.vendor.indexOf("Apple") >= 0
@@ -19,63 +19,18 @@ const isSafari15 =
         ?.split("/")?.[1] === "15"
     : false;
 
-const breakpoints = ["xs", "sm", "md"] as Breakpoint[];
-const themeUIFontSizes = [
-  "0rem",
-  "0.625rem",
-  "0.75rem",
-  "0.875rem",
-  "1rem",
-  "1.125rem",
-  "1.5rem",
-  "2rem",
-  "2.5rem",
-  "3rem",
-  "4.5rem",
-  "5.5rem",
-];
-
-const themeUILineHeights = [
-  "0rem",
-  "1rem",
-  "1.125rem",
-  "1.25rem",
-  "1.375rem",
-  "1.5rem",
-  "1.750rem",
-  "2.250rem",
-  "3rem",
-  "4rem",
-  "4.5rem",
-];
-
-const themeUIFontWeights = {
-  light: 300,
-  regular: 400,
-  heading: 700,
-  bold: 700,
-};
+const breakpoints = ["xs", "md"] as Breakpoint[];
 
 const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
   const res = omit(spec, ["lineHeight", "fontSize"]);
   for (let i = 0; i < spec.fontSize.length; i++) {
-    const lineHeightIndex = Array.isArray(spec.lineHeight)
-      ? spec.lineHeight[i]
-      : spec.lineHeight;
-    const fontSizeIndex = Array.isArray(spec.fontSize)
-      ? spec.fontSize[i]
-      : spec.fontSize;
-    if (i === 0) {
-      res.fontSize = themeUIFontSizes[fontSizeIndex];
-    }
+    const lineHeight = `${spec.lineHeight[i]}px`;
+    const fontSize = `${spec.fontSize[i]}px`;
     res[theme.breakpoints.up(breakpoints[i])] = {
-      fontSize: themeUIFontSizes[fontSizeIndex],
-      lineHeight: themeUILineHeights[lineHeightIndex],
+      fontSize,
+      lineHeight,
     };
   }
-  res.fontWeight =
-    themeUIFontWeights[res.fontWeight as keyof typeof themeUIFontWeights] ||
-    res.fontWeight;
   return res;
 };
 
@@ -153,7 +108,7 @@ export const theme = createTheme({
     },
   },
   breakpoints: {
-    values: { xs: 768, sm: 992, md: 1200, lg: 1280, xl: 1360 },
+    values: { xs: 0, sm: 768, md: 992, lg: 1280, xl: 1360 },
   },
   spacing: [
     "0",
@@ -192,43 +147,43 @@ theme.typography = merge(theme.typography, {
     textDecoration: "none",
   },
   h1: createTypographyVariant(theme, {
-    lineHeight: 1.5,
+    fontSize: [24, 32],
+    lineHeight: [36, 48],
     fontWeight: 700,
-    fontSize: [6, 8, 8],
   }),
   h2: createTypographyVariant(theme, {
-    lineHeight: 1.25,
+    fontSize: [18, 24],
+    lineHeight: [28, 36],
     fontWeight: 500,
-    fontSize: [5, 6, 6],
   }),
   h3: createTypographyVariant(theme, {
-    lineHeight: 1.25,
+    fontSize: [16, 18],
+    lineHeight: [28, 36],
     fontWeight: "bold",
-    fontSize: [4, 5, 5],
   }),
   h4: createTypographyVariant(theme, {
-    lineHeight: 1.25,
+    fontSize: [14, 16],
+    lineHeight: [22, 24],
     fontWeight: "bold",
-    fontSize: [3, 4, 4],
   }),
   h5: createTypographyVariant(theme, {
-    lineHeight: 1.25,
+    fontSize: [12, 14],
+    lineHeight: [18, 20],
     fontWeight: "bold",
-    fontSize: [2, 3, 3],
   }),
   body1: createTypographyVariant(theme, {
-    lineHeight: 1.5,
+    fontSize: [14, 16],
+    lineHeight: [22, 24],
     fontWeight: "regular",
-    fontSize: [3, 4, 4],
   }),
   body2: createTypographyVariant(theme, {
-    lineHeight: 1.5,
+    fontSize: [12, 14],
+    lineHeight: [18, 20],
     fontWeight: "regular",
-    fontSize: [2, 3, 3],
   }),
   tag: createTypographyVariant(theme, {
-    lineHeight: 1.25,
-    fontSize: [2, 2, 2],
+    lineHeight: [18, 20],
+    fontSize: [12, 14],
   }),
   // table: {
   //   fontFamily: "body",
@@ -237,9 +192,9 @@ theme.typography = merge(theme.typography, {
   //   fontSize: [2, 3, 3],
   // },
   caption: createTypographyVariant(theme, {
-    lineHeight: [1, 2, 2],
+    fontSize: [10, 12],
+    lineHeight: [16, 18],
     fontWeight: "regular",
-    fontSize: [1, 2, 2],
   }),
 });
 
@@ -276,10 +231,10 @@ theme.components = {
         WebkitBoxOrient: "vertical",
         display: "-webkit-box",
         overflow: "hidden",
-        fontSize: themeUIFontSizes[3],
+        fontSize: "0.875rem",
       },
       sizeSmall: {
-        fontSize: themeUIFontSizes[2],
+        fontSize: "0.75rem",
       },
     },
   },
@@ -394,10 +349,10 @@ theme.components = {
           marginTop: -1,
           marginBottom: -1,
         },
-        "& > svg:first-child": {
+        "& > svg:first-of-type": {
           marginRight: 2,
         },
-        "& > svg:last-child": {
+        "& > svg:last-of-type": {
           marginLeft: 2,
         },
         textTransform: "none",
@@ -474,6 +429,10 @@ theme.components = {
         borderRadius: (theme.shape.borderRadius as number) * 2,
         padding: "0 6px",
         minHeight: 48,
+      },
+      sizeSmall: {
+        height: 40,
+        minHeight: 40,
       },
       focused: {
         outline: "3px solid #333333",

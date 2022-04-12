@@ -7,10 +7,10 @@ import {
   DivergingPaletteType,
   SequentialPaletteType,
   useConfiguratorState,
-} from "../..";
-import { Label } from "../../../components/form";
-import { Icon } from "../../../icons";
-import { sequentialPalettes } from "../ui-helpers";
+} from "@/configurator";
+import { Label } from "@/components/form";
+import { Icon } from "@/icons";
+import { sequentialPalettes } from "@/configurator/components/ui-helpers";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
 

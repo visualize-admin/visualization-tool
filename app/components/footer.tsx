@@ -1,11 +1,11 @@
-import Flex from "./flex";
+import Flex from "@/components/flex";
 import { t, Trans } from "@lingui/macro";
 import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { forwardRef, ReactNode } from "react";
-import contentRoutes from "../content-routes.json";
-import { useLocale } from "../locales/use-locale";
-import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "../domain/env";
+import contentRoutes from "@/content-routes.json";
+import { useLocale } from "@/locales/use-locale";
+import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "@/domain/env";
 
 const Version = () => {
   let commitLink = null;
@@ -72,6 +72,7 @@ export const Footer = () => {
 
       <Flex
         sx={{
+          width: ["100%", "auto"],
           flexDirection: ["column", "row"],
           alignItems: ["flex-start", "center"],
         }}
@@ -87,7 +88,6 @@ export const Footer = () => {
 
         <Box
           sx={{
-            width: "100vw",
             display: ["block", "none"],
             px: 4,
             py: 5,
@@ -97,6 +97,7 @@ export const Footer = () => {
             borderBottomStyle: "solid",
             borderTopColor: "grey.500",
             borderBottomColor: "grey.500",
+            width: ["100%", "auto"],
           }}
         >
           <Logo />
@@ -119,6 +120,9 @@ export const Footer = () => {
           >
             <Version />
           </Typography>
+          <FooterLinkBottom href="https://visualization-tool.status.interactivethings.io/">
+            <Trans id="footer.status">Status</Trans>
+          </FooterLinkBottom>
           <NextLink
             href={contentRoutes.legal[locale].path}
             passHref

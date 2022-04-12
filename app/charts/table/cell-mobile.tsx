@@ -1,15 +1,15 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { Box, Typography } from "@mui/material";
 import { hcl } from "d3";
 import * as React from "react";
 import { Cell, Row } from "react-table";
-import { useFormatNumber } from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
-import { Icon } from "../../icons";
-import { useChartState } from "../shared/use-chart-state";
-import { Tag } from "./tag";
-import { ColumnMeta, TableChartState } from "./table-state";
-import { getBarLeftOffset, getBarWidth } from "./cell-desktop";
+import { useFormatNumber } from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
+import { Icon } from "@/icons";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { Tag } from "@/charts/table/tag";
+import { ColumnMeta, TableChartState } from "@/charts/table/table-state";
+import { getBarLeftOffset, getBarWidth } from "@/charts/table/cell-desktop";
 
 export const RowMobile = ({
   row,

@@ -1,12 +1,12 @@
 import { markdown, ReactSpecimen } from "catalog";
-import { HeaderBorder, HeaderProgressProvider } from "../components/header";
+import { HeaderBorder, HeaderProgressProvider } from "@/components/header";
 import {
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
   ConfiguratorStateSelectingChartType,
-} from "../configurator";
-import { StepperDumb } from "../configurator/components/stepper";
-import { DataCubeMetadataWithComponentValuesQuery } from "../graphql/query-hooks";
+} from "@/configurator";
+import { StepperDumb } from "@/configurator/components/stepper";
+import { DataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 
 const mockData = {
   __typename: "Query",

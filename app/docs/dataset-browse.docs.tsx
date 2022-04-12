@@ -1,10 +1,10 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { Box } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
-import { ConfiguratorStateProvider } from "../configurator";
-import { DatasetResult } from "../configurator/components/dataset-browse";
-import { DataCubePublicationStatus } from "../graphql/query-hooks";
-import { states } from "./fixtures";
+import { ConfiguratorStateProvider } from "@/configurator";
+import { DatasetResult } from "@/configurator/components/dataset-browse";
+import { DataCubePublicationStatus } from "@/graphql/query-hooks";
+import { states } from "@/docs/fixtures";
 
 export default () => markdown`
 

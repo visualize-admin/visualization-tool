@@ -2,26 +2,26 @@ import { Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
 import Head from "next/head";
 import * as React from "react";
-import { ChartDataFilters } from "../charts/shared/chart-data-filters";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
-import { InteractiveFiltersProvider } from "../charts/shared/use-interactive-filters";
-import useSyncInteractiveFilters from "../charts/shared/use-sync-interactive-filters";
-import Flex from "../components/flex";
-import { ChartConfig, useConfiguratorState } from "../configurator";
-import { DataSetTable } from "../configurator/components/datatable";
-import { useDataCubeMetadataQuery } from "../graphql/query-hooks";
-import { DataCubePublicationStatus } from "../graphql/resolver-types";
-import { useLocale } from "../locales/use-locale";
-import { ChartErrorBoundary } from "./chart-error-boundary";
-import { ChartFiltersList } from "./chart-filters-list";
-import { ChartFootnotes } from "./chart-footnotes";
+import { ChartDataFilters } from "@/charts/shared/chart-data-filters";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { InteractiveFiltersProvider } from "@/charts/shared/use-interactive-filters";
+import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
+import Flex from "@/components/flex";
+import { ChartConfig, useConfiguratorState } from "@/configurator";
+import { DataSetTable } from "@/configurator/components/datatable";
+import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import { useLocale } from "@/locales/use-locale";
+import { ChartErrorBoundary } from "@/components/chart-error-boundary";
+import { ChartFiltersList } from "@/components/chart-filters-list";
+import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
   ChartTablePreviewProvider,
   useChartTablePreview,
-} from "./chart-table-preview";
-import GenericChart from "./common-chart";
-import DebugPanel from "./debug-panel";
-import { HintRed } from "./hint";
+} from "@/components/chart-table-preview";
+import GenericChart from "@/components/common-chart";
+import DebugPanel from "@/components/debug-panel";
+import { HintRed } from "@/components/hint";
 
 export const ChartPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   return (

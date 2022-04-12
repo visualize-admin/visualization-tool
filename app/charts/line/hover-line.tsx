@@ -1,9 +1,9 @@
-import { useChartState } from "../shared/use-chart-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
 import { line } from "d3";
-import { Observation } from "../../domain/data";
-import { LinesState } from "./lines-state";
+import { Observation } from "@/domain/data";
+import { LinesState } from "@/charts/line/lines-state";
 
-import { useInteraction } from "../shared/use-interaction";
+import { useInteraction } from "@/charts/shared/use-interaction";
 import { memo } from "react";
 
 export const HoverLine = () => {

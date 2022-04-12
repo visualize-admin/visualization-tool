@@ -31,7 +31,7 @@ export const createGeoCoordinatesLoader =
           ? `?dimension_versioned . ?dimension_versioned ${sparql`${ns.schema.sameAs}`.toString(
               { prologue: false }
             )} ?dimension ;`
-          : `?dimension`
+          : `?dimension . ?dimension`
       }
           ${ns.schema.latitude} ?latitude ;
           ${ns.schema.longitude} ?longitude .

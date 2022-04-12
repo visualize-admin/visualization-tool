@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { useChartState } from "./use-chart-state";
+import { useChartState } from "@/charts/shared/use-chart-state";
 
 export const ChartContainer = ({ children }: { children: ReactNode }) => {
   const { bounds } = useChartState();

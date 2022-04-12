@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Box } from "@mui/material";
-import { Observation } from "../../../domain/data";
-import { LinesState } from "../../line/lines-state";
-import { Margins } from "../use-width";
-import { useChartState } from "../use-chart-state";
-import { useInteraction } from "../use-interaction";
-import { TooltipValue, TooltipPlacement } from "./tooltip";
+import { Observation } from "@/domain/data";
+import { LinesState } from "@/charts/line/lines-state";
+import { Margins } from "@/charts/shared/use-width";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { TooltipValue, TooltipPlacement } from "@/charts/shared/interaction/tooltip";
 
 export const Ruler = () => {
   const [state] = useInteraction();

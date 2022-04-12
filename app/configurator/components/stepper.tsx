@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";
+import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
 import { useRouter } from "next/router";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
@@ -7,13 +7,13 @@ import {
   useConfiguratorState,
   canTransitionToNextStep,
   canTransitionToPreviousStep,
-} from "..";
-import { useHeaderProgress } from "../../components/header";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
-import SvgIcChevronLeft from "../../icons/components/IcChevronLeft";
-import SvgIcChevronRight from "../../icons/components/IcChevronRight";
-import { useLocale } from "../../src";
-import { formatBackLink } from "./select-dataset-step";
+} from "@/configurator";
+import { useHeaderProgress } from "@/components/header";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
+import { useLocale } from "@/src";
+import { formatBackLink } from "@/configurator/components/select-dataset-step";
 
 export type StepStatus = "past" | "current" | "future";
 
@@ -123,7 +123,7 @@ export const StepperDumb = ({
             disabled={nextDisabled}
             variant={state.state === "DESCRIBING_CHART" ? "contained" : "text"}
             color={state.state === "DESCRIBING_CHART" ? "primary" : "inherit"}
-            size="small"
+            size={state.state === "DESCRIBING_CHART" ? "medium" : "small"}
           >
             {nextLabel}
           </Button>

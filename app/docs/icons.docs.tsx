@@ -1,5 +1,5 @@
 import { markdown, TableSpecimen } from "catalog";
-import { Icon, Icons, IconName } from "../icons";
+import { Icon, Icons, IconName } from "@/icons";
 
 export default () => markdown`
 

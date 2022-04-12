@@ -1,19 +1,19 @@
 import { Trans } from "@lingui/macro";
 import get from "lodash/get";
 import { ReactNode, useCallback } from "react";
-import { getFieldComponentIri } from "../../charts";
-import { chartConfigOptionsUISpec } from "../../charts/chart-config-ui-options";
-import { Loading } from "../../components/hint";
-import { useDataCubeMetadataWithComponentValuesQuery } from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { OnOffControlTab } from "../components/chart-controls/control-tab";
+import { getFieldComponentIri } from "@/charts";
+import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
+import { Loading } from "@/components/hint";
+import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { OnOffControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "../components/chart-controls/section";
-import { ConfiguratorStateDescribingChart } from "../config-types";
-import { useConfiguratorState } from "../configurator-state";
+} from "@/configurator/components/chart-controls/section";
+import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 
 export type InteractveFilterType = "legend" | "time" | "dataFilters";
 

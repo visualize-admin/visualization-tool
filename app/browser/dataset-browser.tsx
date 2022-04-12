@@ -1,6 +1,6 @@
-import { AppLayout } from "../components/layout";
-import { SelectDatasetStep } from "../configurator/components/select-dataset-step";
-import { ConfiguratorStateProvider } from "../src";
+import { AppLayout } from "@/components/layout";
+import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
+import { ConfiguratorStateProvider } from "@/src";
 
 export type BrowseParams = {
   type?: "theme" | "organization" | "dataset";

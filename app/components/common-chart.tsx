@@ -1,13 +1,13 @@
-import { ChartAreasVisualization } from "../charts/area/chart-area";
-import { ChartBarsVisualization } from "../charts/bar/chart-bar";
-import { ChartColumnsVisualization } from "../charts/column/chart-column";
-import { ChartLinesVisualization } from "../charts/line/chart-lines";
-import { ChartMapVisualization } from "../charts/map/chart-map";
-import { ChartPieVisualization } from "../charts/pie/chart-pie";
-import { ChartScatterplotVisualization } from "../charts/scatterplot/chart-scatterplot";
-import { ChartTableVisualization } from "../charts/table/chart-table";
-import { ChartConfig } from "../configurator";
-import { useQueryFilters } from "../charts/shared/chart-helpers";
+import { ChartAreasVisualization } from "@/charts/area/chart-area";
+import { ChartBarsVisualization } from "@/charts/bar/chart-bar";
+import { ChartColumnsVisualization } from "@/charts/column/chart-column";
+import { ChartLinesVisualization } from "@/charts/line/chart-lines";
+import { ChartMapVisualization } from "@/charts/map/chart-map";
+import { ChartPieVisualization } from "@/charts/pie/chart-pie";
+import { ChartScatterplotVisualization } from "@/charts/scatterplot/chart-scatterplot";
+import { ChartTableVisualization } from "@/charts/table/chart-table";
+import { ChartConfig } from "@/configurator";
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
 
 const GenericChart = ({
   dataSet,

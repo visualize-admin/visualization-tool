@@ -12,11 +12,11 @@ import { Box, Typography } from "@mui/material";
 import {
   formatNumberWithUnit,
   useFormatNumber,
-} from "../../configurator/components/ui-helpers";
-import { TooltipBox } from "../shared/interaction/tooltip-box";
-import { useChartState } from "../shared/use-chart-state";
-import { useInteraction } from "../shared/use-interaction";
-import { MapState } from "./map-state";
+} from "@/configurator/components/ui-helpers";
+import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { MapState } from "@/charts/map/map-state";
 
 type HoverObjectType = "area" | "symbol";
 

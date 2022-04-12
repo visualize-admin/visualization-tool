@@ -9,22 +9,22 @@ import {
   scaleOrdinal,
 } from "d3";
 import React, { ReactNode, useMemo } from "react";
-import { PieFields, SortingOrder, SortingType } from "../../configurator";
+import { PieFields, SortingOrder, SortingType } from "@/configurator";
 import {
   getPalette,
   useFormatNumber,
-} from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
+} from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
 import {
   useOptionalNumericVariable,
   usePreparedData,
   useSegment,
-} from "../shared/chart-helpers";
-import { TooltipInfo } from "../shared/interaction/tooltip";
-import { ChartContext, ChartProps } from "../shared/use-chart-state";
-import { InteractionProvider } from "../shared/use-interaction";
-import { useInteractiveFilters } from "../shared/use-interactive-filters";
-import { Bounds, Observer, useWidth } from "../shared/use-width";
+} from "@/charts/shared/chart-helpers";
+import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { ChartContext, ChartProps } from "@/charts/shared/use-chart-state";
+import { InteractionProvider } from "@/charts/shared/use-interaction";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
+import { Bounds, Observer, useWidth } from "@/charts/shared/use-width";
 
 const sortData = ({
   data,

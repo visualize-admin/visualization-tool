@@ -1,9 +1,9 @@
-import Flex from "./flex";
+import Flex from "@/components/flex";
 import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
 import { Alert, AlertTitle, Box, BoxProps, Typography } from "@mui/material";
-import { Icon, IconName } from "../icons";
+import { Icon, IconName } from "@/icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
   <Flex
@@ -119,7 +119,9 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
     <Trans id="hint.dataloadingerror.message">
       The data could not be loaded.
     </Trans>
-    {message ? message : null}
+    <pre style={{ marginTop: "0.5rem", marginLeft: "1rem", marginBottom: 0 }}>
+      {message ? message : null}
+    </pre>
   </Alert>
 );
 

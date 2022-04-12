@@ -9,10 +9,17 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
+Nothing yet.
+
+## [3.4.10] - 2022-04-11
+
 - Search improvements (handles trailing space and casing)
 - Data download improvements (new UI with an ability to select XLSX file format)
 - Raw data preview from the chart level
+- Fixed parsing of xsd:gYearMonth timeFormat in TemporalDimension
+- Updated date formatting for the Month timeUnit to be more user-friendly
 - Changed pie chart legend symbol from line to square
+- Migration to MUI
 
 ## [3.4.7] - 2022-02-18
 

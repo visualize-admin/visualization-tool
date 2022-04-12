@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
-import { Contribute, Examples, Intro, Tutorial } from "../homepage";
+import { Contribute, Examples, Intro, Tutorial } from "@/homepage";
 
 export default () => markdown`
 > The Homepage is the main page you see when you enter the Visualize app.

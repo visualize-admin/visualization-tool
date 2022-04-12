@@ -1,22 +1,22 @@
 import React from "react";
-import { useConfiguratorState } from "..";
-import { ChartPanel } from "../../components/chart-panel";
-import { ChartPreview } from "../../components/chart-preview";
-import { ChartConfiguratorTable } from "../table/table-chart-configurator";
-import { ChartAnnotationsSelector } from "./chart-annotations-selector";
-import { ChartAnnotator } from "./chart-annotator";
-import { ChartConfigurator } from "./chart-configurator";
-import { ChartOptionsSelector } from "./chart-options-selector";
-import { ChartTypeSelector } from "./chart-type-selector";
+import { useConfiguratorState } from "@/configurator";
+import { ChartPanel } from "@/components/chart-panel";
+import { ChartPreview } from "@/components/chart-preview";
+import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
+import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
+import { ChartAnnotator } from "@/configurator/components/chart-annotator";
+import { ChartConfigurator } from "@/configurator/components/chart-configurator";
+import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
+import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import {
   PanelHeader,
   PanelLayout,
   PanelLeftWrapper,
   PanelMiddleWrapper,
   PanelRightWrapper,
-} from "./layout";
-import { SelectDatasetStep } from "./select-dataset-step";
-import { Stepper } from "./stepper";
+} from "@/configurator/components/layout";
+import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
+import { Stepper } from "@/configurator/components/stepper";
 
 const SelectChartTypeStep = () => {
   const [state] = useConfiguratorState();

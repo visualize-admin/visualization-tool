@@ -1,12 +1,12 @@
-import Flex from "../../components/flex";;
+import Flex from "@/components/flex";;
 import { Box } from "@mui/material";
 import * as React from "react";
 import { Row } from "react-table";
-import { Observation } from "../../domain/data";
-import { Icon } from "../../icons";
-import { useChartState } from "../shared/use-chart-state";
-import { Tag } from "./tag";
-import { TableChartState } from "./table-state";
+import { Observation } from "@/domain/data";
+import { Icon } from "@/icons";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { Tag } from "@/charts/table/tag";
+import { TableChartState } from "@/charts/table/table-state";
 import { hcl } from "d3";
 
 export const GroupHeader = ({

@@ -1,8 +1,8 @@
-import Flex from "../components/flex";
+import Flex from "@/components/flex";
 import { ReactNode } from "react";
 import { Box, Typography } from "@mui/material";
-import { ChartPublished } from "../components/chart-published";
-import { HomepageSection } from "./generic";
+import { ChartPublished } from "@/components/chart-published";
+import { HomepageSection } from "@/homepage/generic";
 
 export const Examples = ({
   headline,
@@ -33,7 +33,7 @@ export const Examples = ({
       <HomepageSection>{headline}</HomepageSection>
       <Example headline={example1Headline} description={example1Description}>
         <ChartPublished
-          dataSet="https://environment.ld.admin.ch/foen/ubd003701/1"
+          dataSet="https://environment.ld.admin.ch/foen/ubd003701/2"
           meta={{
             title: {
               de: "Lärmbelastung durch Verkehr",
@@ -241,18 +241,7 @@ const Example = ({
         mr: reverse ? 0 : [0, 0, 8],
       }}
     >
-      <Typography
-        component="h3"
-        sx={{
-          fontSize: ["1.125rem", "1.125rem", "1.5rem"],
-          lineHeight: 1.5,
-
-          fontWeight: "bold",
-          mb: [2, 2, 4],
-        }}
-      >
-        {headline}
-      </Typography>
+      <Typography variant="h3">{headline}</Typography>
       <Typography
         component="p"
         sx={{

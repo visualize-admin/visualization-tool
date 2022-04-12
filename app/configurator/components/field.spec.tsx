@@ -1,6 +1,6 @@
 import { fireEvent, render } from "@testing-library/react";
-import { getD3TimeFormatLocale } from "../../locales/locales";
-import { TimeInput } from "./field";
+import { getD3TimeFormatLocale } from "@/locales/locales";
+import { TimeInput } from "@/configurator/components/field";
 
 describe("TimeInput", () => {
   const expectedValue = "2020-05-24";

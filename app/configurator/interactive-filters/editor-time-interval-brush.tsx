@@ -1,4 +1,4 @@
-import Flex from "../../components/flex";;
+import Flex from "@/components/flex";;
 import { Trans } from "@lingui/macro";
 import {
   brushX,
@@ -9,10 +9,10 @@ import {
 } from "d3";
 import React, { useCallback, useEffect, useRef } from "react";
 import { Box, Typography } from "@mui/material";
-import { Label } from "../../components/form";
-import { useResizeObserver } from "../../lib/use-resize-observer";
-import { useTheme } from "../../themes";
-import { useFormatFullDateAuto } from "../components/ui-helpers";
+import { Label } from "@/components/form";
+import { useResizeObserver } from "@/lib/use-resize-observer";
+import { useTheme } from "@/themes";
+import { useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
 
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;

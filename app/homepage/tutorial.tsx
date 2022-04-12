@@ -1,11 +1,11 @@
-import Flex from "../components/flex";
+import Flex from "@/components/flex";
 import { Box, Typography } from "@mui/material";
 import { ReactNode } from "react";
-import { Icon } from "../icons";
-import { HomepageSection } from "./generic";
-import { Step1 } from "./step1";
-import { Step2 } from "./step2";
-import { Step3 } from "./step3";
+import { Icon } from "@/icons";
+import { HomepageSection } from "@/homepage/generic";
+import { Step1 } from "@/homepage/step1";
+import { Step2 } from "@/homepage/step2";
+import { Step3 } from "@/homepage/step3";
 
 export const Tutorial = ({
   headline,

@@ -6,8 +6,8 @@ import React, { useMemo } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useDebounce } from "use-debounce";
 import { AnimatePresence } from "framer-motion";
-import { useDataCubesQuery } from "../../graphql/query-hooks";
-import { useConfiguratorState, useLocale } from "../../src";
+import { useDataCubesQuery } from "@/graphql/query-hooks";
+import { useConfiguratorState, useLocale } from "@/src";
 import {
   BrowseStateProvider,
   buildURLFromBrowseState,
@@ -16,12 +16,19 @@ import {
   SearchDatasetBox,
   SearchFilters,
   useBrowseContext,
-} from "./dataset-browse";
-import { DataSetMetadata } from "./dataset-metadata";
-import { DataSetPreview } from "./dataset-preview";
-import { PanelLayout, PanelLeftWrapper, PanelMiddleWrapper } from "./layout";
-import { MotionBox, navPresenceProps } from "./presence";
-import { Icon } from "../../icons";
+} from "@/configurator/components/dataset-browse";
+import { DataSetMetadata } from "@/configurator/components/dataset-metadata";
+import { DataSetPreview } from "@/configurator/components/dataset-preview";
+import {
+  PanelLayout,
+  PanelLeftWrapper,
+  PanelMiddleWrapper,
+} from "@/configurator/components/layout";
+import {
+  MotionBox,
+  navPresenceProps,
+} from "@/configurator/components/presence";
+import { Icon } from "@/icons";
 
 const softJSONParse = (v: string) => {
   try {
@@ -56,7 +63,7 @@ export const SelectDatasetStepContent = () => {
     return formatBackLink(router.query);
   }, [router.query]);
   // Use the debounced query value here only!
-  const [{ fetching, data }] = useDataCubesQuery({
+  const [datacubesQuery] = useDataCubesQuery({
     variables: {
       locale,
       query: debouncedQuery,
@@ -119,7 +126,7 @@ export const SelectDatasetStepContent = () => {
               {...navPresenceProps}
               custom={false}
             >
-              <SearchFilters data={data} />
+              <SearchFilters data={datacubesQuery.data} />
             </MotionBox>
           )}
         </AnimatePresence>
@@ -192,10 +199,10 @@ export const SelectDatasetStepContent = () => {
                 <Box mb={1} key="search-box">
                   <SearchDatasetBox
                     browseState={browseState}
-                    searchResult={data}
+                    searchResult={datacubesQuery.data}
                   />
                 </Box>
-                <DatasetResults key="results" fetching={fetching} data={data} />
+                <DatasetResults key="results" query={datacubesQuery} />
               </MotionBox>
             )}
           </AnimatePresence>

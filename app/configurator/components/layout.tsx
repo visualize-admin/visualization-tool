@@ -49,7 +49,7 @@ export const PanelRightWrapper = ({
       component="section"
       data-name="panel-right"
       sx={{
-        backgroundColor: "muted.colored",
+        backgroundColor: "white",
         overflowX: "hidden",
         overflowY: "auto",
         boxShadow: "leftSide",

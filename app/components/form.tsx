@@ -16,12 +16,12 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import Flex from "./flex";
-import VisuallyHidden from "./visually-hidden";
-import { FieldProps, Option } from "../configurator";
-import { useBrowseContext } from "../configurator/components/dataset-browse";
-import { Icon } from "../icons";
-import { useLocale } from "../locales/use-locale";
+import Flex from "@/components/flex";
+import VisuallyHidden from "@/components/visually-hidden";
+import { FieldProps, Option } from "@/configurator";
+import { useBrowseContext } from "@/configurator/components/dataset-browse";
+import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
 import { DatePicker, DatePickerProps } from "@mui/lab";
 import { timeFormat } from "d3-time-format";
 
@@ -41,7 +41,7 @@ export const Label = ({
     htmlFor={htmlFor}
     variant={smaller ? "caption" : "body1"}
     display="flex"
-    sx={{ mb: 2 }}
+    sx={{ mb: 1, color: "grey.600" }}
   >
     {children}
     {label && (
@@ -75,7 +75,7 @@ export const Radio = ({
           id={`${name}-${value}`}
           value={value}
           onChange={onChange}
-          checked={checked}
+          checked={!!checked}
           disabled={disabled}
           size="small"
           sx={{
@@ -278,7 +278,7 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
 } & FieldProps) => (
-  <Box sx={{ color: "grey.700", fontSize: "1rem", pb: 2 }}>
+  <Box sx={{ color: "grey.600", fontSize: "1rem", pb: 2 }}>
     {label && name && (
       <Label htmlFor={name} smaller>
         {label}
@@ -288,8 +288,9 @@ export const Input = ({
       sx={{
         borderColor: "grey.500",
         backgroundColor: "grey.100",
-        height: "40px",
+        width: "100%",
       }}
+      size="small"
       id={name}
       name={name}
       value={value}
@@ -399,10 +400,16 @@ export const SearchField = ({
   onReset?: () => void;
   onFocus?: () => void;
   onBlur?: () => void;
-  inputRef?: React.Ref<HTMLInputElement>;
+  inputRef?: React.RefObject<HTMLInputElement>;
   sx?: BoxProps["sx"];
 } & FieldProps) => {
   const { search } = useBrowseContext();
+  const handleReset = useCallback(() => {
+    if (inputRef?.current) {
+      inputRef.current.value = "";
+    }
+    onReset?.();
+  }, [inputRef, onReset]);
   return (
     <Box
       sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}
@@ -425,7 +432,7 @@ export const SearchField = ({
         sx={{ width: "100%", input: { borderRadius: 2 } }}
         endAdornment={
           onReset && search && search !== "" ? (
-            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={onReset}>
+            <ButtonBase sx={{ p: 0, cursor: "pointer" }} onClick={handleReset}>
               <VisuallyHidden>
                 <Trans id="controls.search.clear">Clear search field</Trans>
               </VisuallyHidden>
@@ -454,7 +461,7 @@ export const FieldSetLegend = ({
       lineHeight: ["1rem", "1.125rem", "1.125rem"],
       fontWeight: "regular",
       fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      color: "grey.700",
+      color: "grey.600",
       pl: 0,
     }}
     component="legend"

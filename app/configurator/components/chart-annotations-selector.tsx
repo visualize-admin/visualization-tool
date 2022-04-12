@@ -1,17 +1,20 @@
 import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
-import { ConfiguratorStateDescribingChart } from "..";
-import { locales } from "../../locales/locales";
-import { useLocale } from "../../locales/use-locale";
-import { InteractiveFiltersOptions } from "../interactive-filters/interactive-filters-config-options";
+import { ConfiguratorStateDescribingChart } from "@/configurator";
+import { locales } from "@/locales/locales";
+import { useLocale } from "@/locales/use-locale";
+import { InteractiveFiltersOptions } from "@/configurator/interactive-filters/interactive-filters-config-options";
 import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-} from "./chart-controls/section";
-import { EmptyRightPanel } from "./empty-right-panel";
-import { MetaInputField } from "./field";
-import { getFieldLabel, getIconName } from "./ui-helpers";
+} from "@/configurator/components/chart-controls/section";
+import { EmptyRightPanel } from "@/configurator/components/empty-right-panel";
+import { MetaInputField } from "@/configurator/components/field";
+import {
+  getFieldLabel,
+  getIconName,
+} from "@/configurator/components/ui-helpers";
 
 export const ChartAnnotationsSelector = ({
   state,
@@ -56,7 +59,7 @@ export const ChartAnnotationsSelector = ({
                 orderedLocales.map((locale) => (
                   <Box
                     key={`${locale}-${state.activeField!}`}
-                    sx={{ ":not(:first-of-type)": { mt: 3 } }}
+                    sx={{ ":not(:first-of-type)": { mt: 2 } }}
                   >
                     <MetaInputField
                       metaKey={state.activeField!}

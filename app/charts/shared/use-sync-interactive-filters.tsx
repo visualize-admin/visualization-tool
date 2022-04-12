@@ -3,11 +3,11 @@ import {
   ChartConfig,
   FilterValueSingle,
   isSegmentInConfig,
-} from "../../configurator";
-import { parseDate } from "../../configurator/components/ui-helpers";
-import { FIELD_VALUE_NONE } from "../../configurator/constants";
-import useFilterChanges from "../../configurator/use-filter-changes";
-import { useInteractiveFilters } from "./use-interactive-filters";
+} from "@/configurator";
+import { parseDate } from "@/configurator/components/ui-helpers";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import useFilterChanges from "@/configurator/use-filter-changes";
+import { useInteractiveFilters } from "@/charts/shared/use-interactive-filters";
 
 /**
  * Makes sure interactive filters are in sync with chart config.

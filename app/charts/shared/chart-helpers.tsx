@@ -7,20 +7,20 @@ import {
   FilterValueSingle,
   ImputationType,
   isAreaConfig,
-} from "../../configurator";
-import { parseDate } from "../../configurator/components/ui-helpers";
-import { FIELD_VALUE_NONE } from "../../configurator/constants";
-import { Observation } from "../../domain/data";
-import { DimensionMetaDataFragment } from "../../graphql/query-hooks";
-import truthy from "../../utils/truthy";
+} from "@/configurator";
+import { parseDate } from "@/configurator/components/ui-helpers";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { Observation } from "@/domain/data";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import truthy from "@/utils/truthy";
 import {
   imputeTemporalLinearSeries,
   interpolateZerosValue,
-} from "./imputation";
+} from "@/charts/shared/imputation";
 import {
   InteractiveFiltersState,
   useInteractiveFilters,
-} from "./use-interactive-filters";
+} from "@/charts/shared/use-interactive-filters";
 
 export type QueryFilters = Filters | FilterValueSingle;
 

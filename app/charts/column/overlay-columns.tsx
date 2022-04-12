@@ -1,7 +1,7 @@
-import { Observation } from "../../domain/data";
-import { useChartState } from "../shared/use-chart-state";
-import { useInteraction } from "../shared/use-interaction";
-import { ColumnsState } from "./columns-state";
+import { Observation } from "@/domain/data";
+import { useChartState } from "@/charts/shared/use-chart-state";
+import { useInteraction } from "@/charts/shared/use-interaction";
+import { ColumnsState } from "@/charts/column/columns-state";
 
 export const InteractionColumns = () => {
   const [, dispatch] = useInteraction();

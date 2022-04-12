@@ -13,16 +13,15 @@ import React, {
 } from "react";
 import {
   Box,
-  Button,
   ButtonBase,
   Link as MUILink,
   LinkProps as MUILinkProps,
   Typography,
 } from "@mui/material";
-import Flex, { FlexProps } from "../../components/flex";
+import Flex, { FlexProps } from "@/components/flex";
 import { AnimatePresence } from "framer-motion";
-import { Checkbox, MiniSelect, SearchField } from "../../components/form";
-import { Loading } from "../../components/hint";
+import { Checkbox, MiniSelect, SearchField } from "@/components/form";
+import { LoadingDataError, Loading } from "@/components/hint";
 import { Stack } from "@mui/material";
 import {
   DataCubeOrganization,
@@ -34,19 +33,24 @@ import {
   useOrganizationsQuery,
   useSubthemesQuery,
   useThemesQuery,
-} from "../../graphql/query-hooks";
-import { DataCubePublicationStatus } from "../../graphql/resolver-types";
-import SvgIcCategories from "../../icons/components/IcCategories";
-import SvgIcClose from "../../icons/components/IcClose";
-import SvgIcOrganisations from "../../icons/components/IcOrganisations";
-import { useLocale } from "../../locales/use-locale";
-import { BrowseParams } from "../../browser/dataset-browser";
-import isAttrEqual from "../../utils/is-attr-equal";
-import truthy from "../../utils/truthy";
-import Tag from "./Tag";
-import { useFormatDate } from "./ui-helpers";
-import useDatasetCount from "./use-dataset-count";
-import { smoothPresenceProps, MotionBox, MotionCard } from "./presence";
+} from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import SvgIcCategories from "@/icons/components/IcCategories";
+import SvgIcClose from "@/icons/components/IcClose";
+import SvgIcOrganisations from "@/icons/components/IcOrganisations";
+import { useLocale } from "@/locales/use-locale";
+import { BrowseParams } from "@/browser/dataset-browser";
+import isAttrEqual from "@/utils/is-attr-equal";
+import truthy from "@/utils/truthy";
+import Tag from "@/configurator/components/Tag";
+import { useFormatDate } from "@/configurator/components/ui-helpers";
+import useDatasetCount from "@/configurator/components/use-dataset-count";
+import {
+  smoothPresenceProps,
+  MotionBox,
+  MotionCard,
+} from "@/configurator/components/presence";
+import { UseQueryState } from "urql";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -316,13 +320,6 @@ export const SearchDatasetBox = ({
     }
   };
 
-  const handleClickSubmit = () => {
-    if (!inputRef.current) {
-      return;
-    }
-    onSubmitSearch(inputRef.current.value);
-  };
-
   return (
     <Box>
       <Box sx={{ pt: 4, display: "flex", width: "100%" }}>
@@ -337,15 +334,6 @@ export const SearchDatasetBox = ({
           onFocus={() => setShowDraftCheckbox(true)}
           sx={{ flexGrow: 1 }}
         />
-        <Button
-          onClick={handleClickSubmit}
-          variant="contained"
-          sx={{ flexShrink: 0, ml: 1, py: 0, cursor: "pointer" }}
-          color="primary"
-          size="large"
-        >
-          {searchLabel}
-        </Button>
       </Box>
 
       <Flex sx={{ mt: 5, justifyContent: "space-between" }}>
@@ -357,7 +345,7 @@ export const SearchDatasetBox = ({
           }}
           aria-live="polite"
         >
-          {searchResult && (
+          {searchResult && searchResult.dataCubes.length > 0 && (
             <Plural
               id="dataset.results"
               value={searchResult.dataCubes.length}
@@ -581,15 +569,13 @@ const NavItem = ({
     >
       {active ? (
         <>
-          <Typography variant="body2" sx={{ fontSize: 12 }}>
-            {children}
-          </Typography>
+          <Typography variant="body2">{children}</Typography>
           {level === 1 ? removeFilterButton : countChip}
         </>
       ) : (
         <>
           <Link href={path} passHref>
-            <MUILink sx={{ flexGrow: 1 }} underline="none" fontSize="small">
+            <MUILink sx={{ flexGrow: 1 }} underline="none" variant="body2">
               {children}&nbsp;&nbsp;
             </MUILink>
           </Link>
@@ -715,8 +701,10 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
       return res;
     }
   }, [data]);
+  const total = Object.values(resultsCounts).reduce((acc, n) => acc + n, 0);
 
-  const counts = search && search != "" ? resultsCounts : allCounts;
+  const counts =
+    search && search != "" && total > 0 ? resultsCounts : allCounts;
 
   const themeFilter = filters.find(isAttrEqual("__typename", "DataCubeTheme"));
   const orgFilter = filters.find(
@@ -865,39 +853,55 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
 };
 
 export const DatasetResults = ({
-  fetching,
-  data,
   resultProps,
+  query,
 }: {
-  fetching: boolean;
-  data: DataCubesQuery | undefined;
   resultProps?: Partial<ResultProps>;
+  query: UseQueryState<DataCubesQuery>;
 }) => {
+  const { fetching, data, error } = query;
   if (fetching) {
     return (
       <Box sx={{ alignItems: "center" }}>
         <Loading />
       </Box>
     );
-  } else if (!fetching && data) {
-    return (
-      <>
-        {data.dataCubes.map(
-          ({ dataCube, highlightedTitle, highlightedDescription }) => (
-            <DatasetResult
-              {...resultProps}
-              key={dataCube.iri}
-              dataCube={dataCube}
-              highlightedTitle={highlightedTitle}
-              highlightedDescription={highlightedDescription}
-            />
-          )
-        )}
-      </>
-    );
-  } else {
-    return <Loading />;
   }
+
+  if (error) {
+    return (
+      <LoadingDataError
+        message={error instanceof Error ? error.message : error}
+      />
+    );
+  }
+
+  if ((data && data.dataCubes.length === 0) || !data) {
+    return (
+      <Typography
+        variant="h2"
+        sx={{ color: "grey.600", mt: 8, textAlign: "center" }}
+      >
+        <Trans id="No results" />
+      </Typography>
+    );
+  }
+
+  return (
+    <>
+      {data.dataCubes.map(
+        ({ dataCube, highlightedTitle, highlightedDescription }) => (
+          <DatasetResult
+            {...resultProps}
+            key={dataCube.iri}
+            dataCube={dataCube}
+            highlightedTitle={highlightedTitle}
+            highlightedDescription={highlightedDescription}
+          />
+        )
+      )}
+    </>
+  );
 };
 
 export const DateFormat = ({ date }: { date: string }) => {

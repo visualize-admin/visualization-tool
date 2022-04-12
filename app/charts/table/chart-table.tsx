@@ -5,17 +5,17 @@ import {
   LoadingDataError,
   LoadingOverlay,
   NoDataHint,
-} from "../../components/hint";
-import { TableConfig } from "../../configurator";
-import { isNumber } from "../../configurator/components/ui-helpers";
-import { Observation } from "../../domain/data";
+} from "@/components/hint";
+import { TableConfig } from "@/configurator";
+import { isNumber } from "@/configurator/components/ui-helpers";
+import { Observation } from "@/domain/data";
 import {
   DimensionMetaDataFragment,
   useDataCubeObservationsQuery,
-} from "../../graphql/query-hooks";
-import { useLocale } from "../../locales/use-locale";
-import { Table } from "./table";
-import { TableChart } from "./table-state";
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
+import { Table } from "@/charts/table/table";
+import { TableChart } from "@/charts/table/table-state";
 
 export const ChartTableVisualization = ({
   dataSetIri,

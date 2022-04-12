@@ -1,19 +1,19 @@
-import Flex from "../../../components/flex";
+import Flex from "@/components/flex";
 import { Trans } from "@lingui/macro";
 import { useSelect } from "downshift";
 import get from "lodash/get";
 import { useCallback } from "react";
 import { Box, Button, Typography } from "@mui/material";
-import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "../..";
-import { Label } from "../../../components/form";
-import { DimensionMetaDataFragment } from "../../../graphql/query-hooks";
-import { Icon } from "../../../icons";
+import { ConfiguratorStateConfiguringChart, useConfiguratorState } from "@/configurator";
+import { Label } from "@/components/form";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { Icon } from "@/icons";
 import {
   categoricalPalettes,
   divergingSteppedPalettes,
   getPalette,
   mapColorsToComponentValuesIris,
-} from "../ui-helpers";
+} from "@/configurator/components/ui-helpers";
 
 type Props = {
   field: string;
