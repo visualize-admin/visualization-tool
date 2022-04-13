@@ -1,8 +1,13 @@
 import { QueryFilters } from "@/charts/shared/chart-helpers";
 import { useLocale } from "@/src";
 import { Trans } from "@lingui/macro";
-import { LoadingButton } from "@mui/lab";
-import { Button, ListSubheader, MenuItem, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  ListSubheader,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import { saveAs } from "file-saver";
 import { keyBy } from "lodash";
 import {
@@ -11,7 +16,16 @@ import {
   usePopupState,
 } from "material-ui-popup-state/hooks";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
-import React, { memo, ReactNode, useCallback, useState } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  memo,
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 import { OperationResult, useClient } from "urql";
 import { Observation } from "../domain/data";
 import {
@@ -22,13 +36,45 @@ import {
 import { Icon } from "../icons";
 import Flex from "./flex";
 
+type DataDownloadState = {
+  isDownloading: boolean;
+  error?: string;
+};
+
+const DataDownloadStateContext = createContext<
+  [DataDownloadState, Dispatch<DataDownloadState>] | undefined
+>(undefined);
+
+export const useDataDownloadState = () => {
+  const ctx = useContext(DataDownloadStateContext);
+
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <DataDownloadStateProvider /> to useDataDownloadState()"
+    );
+  }
+
+  return ctx;
+};
+
+export const DataDownloadStateProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const [state, dispatch] = useState<DataDownloadState>({
+    isDownloading: false,
+  });
+
+  return (
+    <DataDownloadStateContext.Provider value={[state, dispatch]}>
+      {children}
+    </DataDownloadStateContext.Provider>
+  );
+};
+
 const FILE_FORMATS = ["csv", "xlsx"] as const;
 export type FileFormat = typeof FILE_FORMATS[number];
-
-type PreparedData = {
-  columnKeys: string[];
-  data: Observation[];
-};
 
 const prepareData = ({
   dimensions,
@@ -56,6 +102,19 @@ const prepareData = ({
   return { data, columnKeys };
 };
 
+const RawMenuItem = ({ children }: PropsWithChildren<{}>) => {
+  return (
+    <MenuItem
+      sx={{
+        "&:hover": { backgroundColor: "transparent", cursor: "default" },
+        whiteSpace: "normal",
+      }}
+    >
+      {children}
+    </MenuItem>
+  );
+};
+
 export const DataDownloadMenu = memo(
   ({
     dataSetIri,
@@ -67,11 +126,13 @@ export const DataDownloadMenu = memo(
     filters?: QueryFilters;
   }) => {
     return (
-      <DataDownloadInnerMenu
-        fileName={title}
-        dataSetIri={dataSetIri}
-        filters={filters}
-      />
+      <DataDownloadStateProvider>
+        <DataDownloadInnerMenu
+          fileName={title}
+          dataSetIri={dataSetIri}
+          filters={filters}
+        />
+      </DataDownloadStateProvider>
     );
   }
 );
@@ -85,6 +146,7 @@ const DataDownloadInnerMenu = ({
   dataSetIri: string;
   filters?: QueryFilters;
 }) => {
+  const [state] = useDataDownloadState();
   const popupState = usePopupState({
     variant: "popover",
     popupId: "dataDownloadMenu",
@@ -97,7 +159,9 @@ const DataDownloadInnerMenu = ({
         variant="text"
         color="primary"
         size="small"
-        startIcon={<Icon name="download" />}
+        startIcon={
+          state.isDownloading ? <CircularProgress /> : <Icon name="download" />
+        }
         {...bindHover(popupState)}
         sx={{ p: 0 }}
       >
@@ -115,7 +179,7 @@ const DataDownloadInnerMenu = ({
               <Trans id="button.download">Download</Trans>
             </ListSubheader>
           ),
-          sx: { minWidth: "200px" },
+          sx: { width: 200 },
         }}
       >
         {filters && (
@@ -126,15 +190,18 @@ const DataDownloadInnerMenu = ({
             fileName={fileName}
             dataSetIri={dataSetIri}
             filters={filters}
-            onDownloaded={() => popupState.close()}
           />
         )}
         <DataDownloadMenuSection
           subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
           fileName={fileName}
           dataSetIri={dataSetIri}
-          onDownloaded={() => popupState.close()}
         />
+        {state.error && (
+          <RawMenuItem>
+            <Typography variant="caption">{state.error}</Typography>
+          </RawMenuItem>
+        )}
       </HoverMenu>
     </>
   );
@@ -145,24 +212,18 @@ const DataDownloadMenuSection = ({
   fileName,
   dataSetIri,
   filters,
-  onDownloaded,
 }: {
   subheader: ReactNode;
   fileName: string;
   dataSetIri: string;
   filters?: QueryFilters;
-  onDownloaded: () => void;
 }) => {
   return (
     <>
       <ListSubheader sx={{ mt: 3, lineHeight: 1.2, borderBottom: "none" }}>
         {subheader}
       </ListSubheader>
-      <MenuItem
-        sx={{
-          "&:hover": { backgroundColor: "transparent", cursor: "default" },
-        }}
-      >
+      <RawMenuItem>
         <Flex sx={{ gap: 3 }}>
           {FILE_FORMATS.map((fileFormat) => (
             <DownloadMenuItem
@@ -171,11 +232,10 @@ const DataDownloadMenuSection = ({
               fileFormat={fileFormat}
               dataSetIri={dataSetIri}
               filters={filters}
-              onDownloaded={onDownloaded}
             />
           ))}
         </Flex>
-      </MenuItem>
+      </RawMenuItem>
     </>
   );
 };
@@ -185,45 +245,53 @@ const DownloadMenuItem = ({
   fileFormat,
   dataSetIri,
   filters,
-  onDownloaded,
 }: {
   fileName: string;
   fileFormat: FileFormat;
   dataSetIri: string;
   filters?: QueryFilters;
-  onDownloaded: () => void;
 }) => {
   const locale = useLocale();
   const urqlClient = useClient();
-  const [isDownloading, setIsDownloading] = useState(false);
-  const download = useCallback(
-    (preparedData: PreparedData) => {
-      const { columnKeys, data } = preparedData;
+  const [state, dispatch] = useDataDownloadState();
 
-      return fetch("/api/download", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          columnKeys,
-          data,
-          fileFormat,
-        }),
-      }).then((res) =>
-        res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
-      );
+  const download = useCallback(
+    (fetchedData: DataCubeObservationsQuery) => {
+      if (fetchedData?.dataCubeByIri) {
+        const { measures, dimensions, observations } =
+          fetchedData.dataCubeByIri;
+        const preparedData = prepareData({
+          dimensions,
+          measures,
+          observations: observations.data,
+        });
+        const { columnKeys, data } = preparedData;
+
+        return fetch("/api/download", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            columnKeys,
+            data,
+            fileFormat,
+          }),
+        }).then((res) =>
+          res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
+        );
+      }
     },
     [fileFormat, fileName]
   );
 
   return (
-    <LoadingButton
+    <Button
       variant="text"
       size="small"
-      loading={isDownloading}
+      disabled={state.isDownloading}
       onClick={async () => {
-        setIsDownloading(true);
+        dispatch({ isDownloading: true });
         urqlClient
           .query(DataCubeObservationsDocument, {
             locale,
@@ -233,31 +301,23 @@ const DownloadMenuItem = ({
           })
           .toPromise()
           .then(async (result: OperationResult<DataCubeObservationsQuery>) => {
-            const { data } = result;
-
-            if (data?.dataCubeByIri) {
-              const { measures, dimensions, observations } = data.dataCubeByIri;
-              const preparedData = prepareData({
-                dimensions,
-                measures,
-                observations: observations.data,
-              });
-
-              await download(preparedData);
+            if (result.data) {
+              await download(result.data);
+            } else if (result.error) {
+              dispatch({ ...state, error: result.error.message });
             }
           })
           .catch((e) => {
             console.error("Could not download the data!", e);
           })
           .finally(() => {
-            setIsDownloading(false);
-            onDownloaded();
+            dispatch({ ...state, isDownloading: false });
           });
       }}
       sx={{ minWidth: 0, p: 0 }}
     >
       {fileFormat.toUpperCase()}
-    </LoadingButton>
+    </Button>
   );
 };
 
