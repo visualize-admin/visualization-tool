@@ -292,27 +292,28 @@ const DownloadMenuItem = ({
       disabled={state.isDownloading}
       onClick={async () => {
         dispatch({ isDownloading: true });
-        urqlClient
-          .query(DataCubeObservationsDocument, {
-            locale,
-            iri: dataSetIri,
-            dimensions: null,
-            filters,
-          })
-          .toPromise()
-          .then(async (result: OperationResult<DataCubeObservationsQuery>) => {
-            if (result.data) {
-              await download(result.data);
-            } else if (result.error) {
-              dispatch({ ...state, error: result.error.message });
-            }
-          })
-          .catch((e) => {
-            console.error("Could not download the data!", e);
-          })
-          .finally(() => {
-            dispatch({ ...state, isDownloading: false });
-          });
+
+        try {
+          const result: OperationResult<DataCubeObservationsQuery> =
+            await urqlClient
+              .query(DataCubeObservationsDocument, {
+                locale,
+                iri: dataSetIri,
+                dimensions: null,
+                filters,
+              })
+              .toPromise();
+
+          if (result.data) {
+            await download(result.data);
+          } else if (result.error) {
+            dispatch({ ...state, error: result.error.message });
+          }
+        } catch (e) {
+          console.error("Could not download the data!", e);
+        } finally {
+          dispatch({ ...state, isDownloading: false });
+        }
       }}
       sx={{ minWidth: 0, p: 0 }}
     >
