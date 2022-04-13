@@ -199,7 +199,9 @@ const DataDownloadInnerMenu = ({
         />
         {state.error && (
           <RawMenuItem>
-            <Typography variant="caption">{state.error}</Typography>
+            <Typography variant="caption" color="error.main">
+              {state.error}
+            </Typography>
           </RawMenuItem>
         )}
       </HoverMenu>
