@@ -194,7 +194,7 @@ export const DataSetTable = ({
     ];
 
     return (
-      <Box sx={{ maxHeight: "600px", overflow: "scroll" }}>
+      <Box sx={{ maxHeight: "600px", overflow: "auto" }}>
         <PreviewTable
           title={data.dataCubeByIri.title}
           headers={headers}
