@@ -1,10 +1,9 @@
+import { QueryFilters } from "@/charts/shared/chart-helpers";
+import { useLocale } from "@/src";
 import { Trans } from "@lingui/macro";
 import {
-  Box,
   Button,
   CircularProgress,
-  ListItemIcon,
-  ListItemText,
   ListSubheader,
   MenuItem,
   Typography,
@@ -17,27 +16,65 @@ import {
   usePopupState,
 } from "material-ui-popup-state/hooks";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
-import React, { memo, useCallback, useMemo, useState } from "react";
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { ChartConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
+import React, {
+  createContext,
+  Dispatch,
+  memo,
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
+import { OperationResult, useClient } from "urql";
+import { Observation } from "../domain/data";
 import {
+  DataCubeObservationsDocument,
+  DataCubeObservationsQuery,
   DimensionMetaDataFragment,
-  Maybe,
-  useDataCubeObservationsQuery,
-} from "@/graphql/query-hooks";
-import { Icon } from "@/icons";
-import { useLocale } from "@/locales/use-locale";
+} from "../graphql/query-hooks";
+import { Icon } from "../icons";
+import Flex from "./flex";
 
-const EXTENTS = ["visible", "all"] as const;
-type Extent = typeof EXTENTS[number];
+type DataDownloadState = {
+  isDownloading: boolean;
+  error?: string;
+};
+
+const DataDownloadStateContext = createContext<
+  [DataDownloadState, Dispatch<DataDownloadState>] | undefined
+>(undefined);
+
+export const useDataDownloadState = () => {
+  const ctx = useContext(DataDownloadStateContext);
+
+  if (ctx === undefined) {
+    throw Error(
+      "You need to wrap your component in <DataDownloadStateProvider /> to useDataDownloadState()"
+    );
+  }
+
+  return ctx;
+};
+
+export const DataDownloadStateProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const [state, dispatch] = useState<DataDownloadState>({
+    isDownloading: false,
+  });
+
+  return (
+    <DataDownloadStateContext.Provider value={[state, dispatch]}>
+      {children}
+    </DataDownloadStateContext.Provider>
+  );
+};
 
 const FILE_FORMATS = ["csv", "xlsx"] as const;
 export type FileFormat = typeof FILE_FORMATS[number];
-
-const OPTIONS_TO_RENDER = EXTENTS.flatMap((extent) =>
-  FILE_FORMATS.map((fileFormat) => ({ extent, fileFormat }))
-);
 
 const prepareData = ({
   dimensions,
@@ -65,133 +102,51 @@ const prepareData = ({
   return { data, columnKeys };
 };
 
-const usePreparedAllData = ({ dataSetIri }: { dataSetIri: string }) => {
-  const locale = useLocale();
-  const [{ data: fetchedData }] = useDataCubeObservationsQuery({
-    variables: {
-      locale,
-      iri: dataSetIri,
-      dimensions: null,
-      filters: null,
-    },
-  });
-  const { data, columnKeys } = useMemo(() => {
-    if (fetchedData?.dataCubeByIri) {
-      const { dimensions, measures, observations } = fetchedData.dataCubeByIri;
-      return {
-        ...prepareData({
-          dimensions,
-          measures,
-          observations: observations.data,
-        }),
-      };
-    } else {
-      return { data: [], columnKeys: [] };
-    }
-  }, [fetchedData?.dataCubeByIri]);
-
-  return { data, columnKeys };
+const RawMenuItem = ({ children }: PropsWithChildren<{}>) => {
+  return (
+    <MenuItem
+      sx={{
+        "&:hover": { backgroundColor: "transparent", cursor: "default" },
+        whiteSpace: "normal",
+      }}
+    >
+      {children}
+    </MenuItem>
+  );
 };
 
-const usePreparedVisibleData = ({
-  dataSetIri,
-  chartConfig,
-}: {
-  dataSetIri: string;
-  chartConfig: ChartConfig;
-}) => {
-  const locale = useLocale();
-  const filters = useQueryFilters({ chartConfig });
-  const [{ data: fetchedData }] = useDataCubeObservationsQuery({
-    variables: { locale, iri: dataSetIri, dimensions: null, filters },
-  });
-  const { data, columnKeys, sparqlEditorUrl } = useMemo(() => {
-    if (fetchedData?.dataCubeByIri) {
-      const { dimensions, measures, observations } = fetchedData.dataCubeByIri;
-      return {
-        ...prepareData({
-          dimensions,
-          measures,
-          observations: observations.data,
-        }),
-        sparqlEditorUrl: fetchedData.dataCubeByIri.observations.sparqlEditorUrl,
-      };
-    } else {
-      return { data: [], columnKeys: [], sparqlEditorUrl: undefined };
-    }
-  }, [fetchedData?.dataCubeByIri]);
-
-  return { data, columnKeys, sparqlEditorUrl };
-};
-
-export const AllAndVisibleDataDownloadMenu = memo(
+export const DataDownloadMenu = memo(
   ({
     dataSetIri,
+    filters,
     title,
-    chartConfig,
   }: {
-    dataSetIri: string;
     title: string;
-    chartConfig: ChartConfig;
+    dataSetIri: string;
+    filters?: QueryFilters;
   }) => {
-    const allPrepared = usePreparedAllData({ dataSetIri });
-    const visiblePrepared = usePreparedVisibleData({ dataSetIri, chartConfig });
-    const optionsToRender = useMemo(
-      () =>
-        OPTIONS_TO_RENDER.map((d) => ({
-          ...d,
-          columnKeys:
-            d.extent === "all"
-              ? allPrepared.columnKeys
-              : visiblePrepared.columnKeys,
-          data: d.extent === "all" ? allPrepared.data : visiblePrepared.data,
-        })),
-      [allPrepared, visiblePrepared]
-    );
-
     return (
-      <DataDownloadInnerMenu
-        title={title}
-        optionsToRender={optionsToRender}
-        sparqlEditorUrl={visiblePrepared.sparqlEditorUrl}
-      />
-    );
-  }
-);
-
-export const AllDataDownloadMenu = memo(
-  ({ dataSetIri, title }: { dataSetIri: string; title: string }) => {
-    const { columnKeys, data } = usePreparedAllData({ dataSetIri });
-    const optionsToRender = useMemo(
-      () =>
-        OPTIONS_TO_RENDER.filter((d) => d.extent === "all").map((d) => ({
-          ...d,
-          columnKeys,
-          data,
-        })),
-      [data, columnKeys]
-    );
-
-    return (
-      <DataDownloadInnerMenu title={title} optionsToRender={optionsToRender} />
+      <DataDownloadStateProvider>
+        <DataDownloadInnerMenu
+          fileName={title}
+          dataSetIri={dataSetIri}
+          filters={filters}
+        />
+      </DataDownloadStateProvider>
     );
   }
 );
 
 const DataDownloadInnerMenu = ({
-  title,
-  optionsToRender,
-  sparqlEditorUrl,
+  fileName,
+  dataSetIri,
+  filters,
 }: {
-  title: string;
-  optionsToRender: {
-    extent: Extent;
-    fileFormat: FileFormat;
-    columnKeys: string[];
-    data: Observation[];
-  }[];
-  sparqlEditorUrl?: Maybe<string>;
+  fileName: string;
+  dataSetIri: string;
+  filters?: QueryFilters;
 }) => {
+  const [state] = useDataDownloadState();
   const popupState = usePopupState({
     variant: "popover",
     popupId: "dataDownloadMenu",
@@ -204,11 +159,13 @@ const DataDownloadInnerMenu = ({
         variant="text"
         color="primary"
         size="small"
-        startIcon={<Icon name="download" />}
+        startIcon={
+          state.isDownloading ? <CircularProgress /> : <Icon name="download" />
+        }
         {...bindHover(popupState)}
-        sx={{ fontWeight: "regular", padding: 0 }}
+        sx={{ p: 0 }}
       >
-        <Typography variant="body2">
+        <Typography variant="caption">
           <Trans id="button.download.data">Download data</Trans>
         </Typography>
       </Button>
@@ -222,91 +179,148 @@ const DataDownloadInnerMenu = ({
               <Trans id="button.download">Download</Trans>
             </ListSubheader>
           ),
+          sx: { width: 200 },
         }}
       >
-        {optionsToRender.map((d) => (
-          <DownloadMenuItem
-            key={d.extent + d.fileFormat}
-            title={title}
-            extent={d.extent}
-            fileFormat={d.fileFormat}
-            columnKeys={d.columnKeys}
-            data={d.data}
-            onDownloaded={popupState.close}
+        {filters && (
+          <DataDownloadMenuSection
+            subheader={
+              <Trans id="button.download.data.visible">Filtered dataset</Trans>
+            }
+            fileName={fileName}
+            dataSetIri={dataSetIri}
+            filters={filters}
           />
-        ))}
+        )}
+        <DataDownloadMenuSection
+          subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
+          fileName={fileName}
+          dataSetIri={dataSetIri}
+        />
+        {state.error && (
+          <RawMenuItem>
+            <Typography variant="caption" color="error.main">
+              {state.error}
+            </Typography>
+          </RawMenuItem>
+        )}
       </HoverMenu>
-      {sparqlEditorUrl && (
-        <>
-          <Box sx={{ display: "inline", mx: 2 }}>·</Box>
-          <RunSparqlQuery url={sparqlEditorUrl} />
-        </>
-      )}
+    </>
+  );
+};
+
+const DataDownloadMenuSection = ({
+  subheader,
+  fileName,
+  dataSetIri,
+  filters,
+}: {
+  subheader: ReactNode;
+  fileName: string;
+  dataSetIri: string;
+  filters?: QueryFilters;
+}) => {
+  return (
+    <>
+      <ListSubheader sx={{ mt: 3, lineHeight: 1.2, borderBottom: "none" }}>
+        {subheader}
+      </ListSubheader>
+      <RawMenuItem>
+        <Flex sx={{ gap: 3 }}>
+          {FILE_FORMATS.map((fileFormat) => (
+            <DownloadMenuItem
+              key={fileFormat}
+              fileName={fileName}
+              fileFormat={fileFormat}
+              dataSetIri={dataSetIri}
+              filters={filters}
+            />
+          ))}
+        </Flex>
+      </RawMenuItem>
     </>
   );
 };
 
 const DownloadMenuItem = ({
-  title,
-  data,
-  columnKeys,
-  extent,
+  fileName,
   fileFormat,
-  onDownloaded,
+  dataSetIri,
+  filters,
 }: {
-  title: string;
-  data: Observation[];
-  columnKeys: string[];
-  extent: Extent;
+  fileName: string;
   fileFormat: FileFormat;
-  onDownloaded: () => void;
+  dataSetIri: string;
+  filters?: QueryFilters;
 }) => {
-  const [isDownloading, setIsDownloading] = useState(false);
-  const download = useCallback(() => {
-    return fetch("/api/download", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        columnKeys,
-        data,
-        fileFormat,
-      }),
-    }).then((res) =>
-      res.blob().then((blob) => saveAs(blob, `${title}.${fileFormat}`))
-    );
-  }, [columnKeys, data, fileFormat, title]);
+  const locale = useLocale();
+  const urqlClient = useClient();
+  const [state, dispatch] = useDataDownloadState();
+
+  const download = useCallback(
+    (fetchedData: DataCubeObservationsQuery) => {
+      if (fetchedData?.dataCubeByIri) {
+        const { measures, dimensions, observations } =
+          fetchedData.dataCubeByIri;
+        const preparedData = prepareData({
+          dimensions,
+          measures,
+          observations: observations.data,
+        });
+        const { columnKeys, data } = preparedData;
+
+        return fetch("/api/download", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            columnKeys,
+            data,
+            fileFormat,
+          }),
+        }).then((res) =>
+          res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
+        );
+      }
+    },
+    [fileFormat, fileName]
+  );
 
   return (
-    <MenuItem
+    <Button
+      variant="text"
+      size="small"
+      disabled={state.isDownloading}
       onClick={async () => {
-        setIsDownloading(true);
-        await download();
-        onDownloaded();
-        setIsDownloading(false);
+        dispatch({ isDownloading: true });
+
+        try {
+          const result: OperationResult<DataCubeObservationsQuery> =
+            await urqlClient
+              .query(DataCubeObservationsDocument, {
+                locale,
+                iri: dataSetIri,
+                dimensions: null,
+                filters,
+              })
+              .toPromise();
+
+          if (result.data) {
+            await download(result.data);
+          } else if (result.error) {
+            dispatch({ ...state, error: result.error.message });
+          }
+        } catch (e) {
+          console.error("Could not download the data!", e);
+        } finally {
+          dispatch({ ...state, isDownloading: false });
+        }
       }}
-      sx={{ paddingY: 3 }}
+      sx={{ minWidth: 0, p: 0 }}
     >
-      <ListItemIcon sx={{ color: "primary.main" }}>
-        {isDownloading ? <CircularProgress /> : <Icon name="table" />}
-      </ListItemIcon>
-      <ListItemText
-        primaryTypographyProps={{ variant: "body2", color: "primary.main" }}
-      >
-        {extent === "visible" ? (
-          <>
-            <Trans id="button.download.data.visible">Overlooking dataset</Trans>{" "}
-            ({fileFormat.toUpperCase()})
-          </>
-        ) : (
-          <>
-            <Trans id="button.download.data.all">Full dataset</Trans> (
-            {fileFormat.toUpperCase()})
-          </>
-        )}
-      </ListItemText>
-    </MenuItem>
+      {fileFormat.toUpperCase()}
+    </Button>
   );
 };
 
@@ -320,9 +334,9 @@ export const RunSparqlQuery = ({ url }: { url: string }) => {
         size="small"
         href={url}
         target="_blank"
-        sx={{ fontWeight: "regular", padding: 0 }}
+        sx={{ p: 0 }}
       >
-        <Typography variant="body2">
+        <Typography variant="caption">
           <Trans id="button.download.runsparqlquery.visible">
             Run SPARQL query (visible)
           </Trans>

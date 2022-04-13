@@ -93,7 +93,7 @@ msgstr "Jeu de données complet"
 
 #: app/components/data-download.tsx:299
 msgid "button.download.data.visible"
-msgstr "Jeu de données visible"
+msgstr "Jeu de données filtrées"
 
 #: app/components/data-download.tsx:64
 #~ msgid "button.download.runsparqlquery"
@@ -829,6 +829,14 @@ msgstr "Créé avec visualize.admin.ch"
 #: app/components/chart-footnotes.tsx:46
 msgid "metadata.source"
 msgstr "Source"
+
+#: app/components/chart-footnotes.tsx:85
+msgid "metadata.switch.chart"
+msgstr "Passer à la vue graphique"
+
+#: app/components/chart-footnotes.tsx:89
+msgid "metadata.switch.table"
+msgstr "Passer à la vue en tableau"
 
 #: app/components/publish-actions.tsx:244
 msgid "publication.embed.AEM"

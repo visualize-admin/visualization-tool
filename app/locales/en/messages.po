@@ -93,7 +93,7 @@ msgstr "Full dataset"
 
 #: app/components/data-download.tsx:299
 msgid "button.download.data.visible"
-msgstr "Overlooking dataset"
+msgstr "Filtered dataset"
 
 #: app/components/data-download.tsx:64
 #~ msgid "button.download.runsparqlquery"
@@ -833,6 +833,14 @@ msgstr "Created with visualize.admin.ch"
 #: app/components/chart-footnotes.tsx:46
 msgid "metadata.source"
 msgstr "Source"
+
+#: app/components/chart-footnotes.tsx:85
+msgid "metadata.switch.chart"
+msgstr "Switch to chart view"
+
+#: app/components/chart-footnotes.tsx:89
+msgid "metadata.switch.table"
+msgstr "Switch to table view"
 
 #: app/components/publish-actions.tsx:244
 msgid "publication.embed.AEM"

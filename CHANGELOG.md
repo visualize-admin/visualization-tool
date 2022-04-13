@@ -9,7 +9,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 ## Unreleased
 
-Nothing yet.
+- Polished data download UI
+- Fixed scrolling of table preview & other smaller UI things in published charts
 
 ## [3.4.10] - 2022-04-11
 

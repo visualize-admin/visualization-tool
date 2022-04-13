@@ -31,7 +31,7 @@ export const Tab = ({
         borderRadius: 0,
         borderColor: value === currentTab ? "primary" : "transparent",
         color: value === currentTab ? "primary" : "black",
-        fontSize: "small",
+        fontWeight: "bold",
       }}
       color="primary"
       size="small"

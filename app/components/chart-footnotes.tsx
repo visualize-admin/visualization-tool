@@ -1,12 +1,16 @@
-import { Trans } from "@lingui/macro";
-import { Box, Button, Link, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useChartTablePreview } from "@/components/chart-table-preview";
+import { DataDownloadMenu, RunSparqlQuery } from "@/components/data-download";
 import { ChartConfig } from "@/configurator";
-import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
+import {
+  useDataCubeMetadataWithComponentValuesQuery,
+  useDataCubeObservationsQuery,
+} from "@/graphql/query-hooks";
 import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { useChartTablePreview } from "@/components/chart-table-preview";
-import { AllAndVisibleDataDownloadMenu } from "@/components/data-download";
+import { Trans } from "@lingui/macro";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useQueryFilters } from "../charts/shared/chart-helpers";
 
 export const ChartFootnotes = ({
   dataSetIri,
@@ -33,6 +37,14 @@ export const ChartFootnotes = ({
     variables: { iri: dataSetIri, locale },
   });
 
+  // Data for data download
+  const filters = useQueryFilters({ chartConfig });
+  const [{ data: visibleData }] = useDataCubeObservationsQuery({
+    variables: { locale, iri: dataSetIri, dimensions: null, filters },
+  });
+  const sparqlEditorUrl =
+    visibleData?.dataCubeByIri?.observations.sparqlEditorUrl;
+
   if (data?.dataCubeByIri) {
     const { dataCubeByIri } = data;
 
@@ -54,10 +66,10 @@ export const ChartFootnotes = ({
         </Typography>
 
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
-          <AllAndVisibleDataDownloadMenu
+          <DataDownloadMenu
             title={dataCubeByIri.title}
             dataSetIri={dataSetIri}
-            chartConfig={chartConfig}
+            filters={filters}
           />
           {chartConfig.chartType !== "table" && (
             <>
@@ -67,34 +79,58 @@ export const ChartFootnotes = ({
                 color="primary"
                 variant="text"
                 size="small"
+                startIcon={
+                  <Icon
+                    name={
+                      isChartTablePreview
+                        ? getChartIcon(chartConfig.chartType)
+                        : "table"
+                    }
+                    size={16}
+                  />
+                }
                 onClick={() => setIsChartTablePreview(!isChartTablePreview)}
-                sx={{ width: "20px", minWidth: 0, padding: 0 }}
+                sx={{ p: 0 }}
               >
-                <Icon
-                  name={
-                    isChartTablePreview
-                      ? getChartIcon(chartConfig.chartType)
-                      : "table"
-                  }
-                  size={16}
-                />
+                <Typography variant="caption">
+                  {isChartTablePreview ? (
+                    <Trans id="metadata.switch.chart">
+                      Switch to chart view
+                    </Trans>
+                  ) : (
+                    <Trans id="metadata.switch.table">
+                      Switch to table view
+                    </Trans>
+                  )}
+                </Typography>
               </Button>
+            </>
+          )}
+          {sparqlEditorUrl !== undefined && (
+            <>
+              <Box sx={{ display: "inline", mx: 2 }}>·</Box>
+              <RunSparqlQuery url={sparqlEditorUrl as string} />
             </>
           )}
           {configKey && shareUrl && (
             <>
               <Box sx={{ display: "inline", mx: 2 }}>·</Box>
-              <Link
-                sx={{ typography: "body2" }}
+              <Button
+                component="a"
+                variant="text"
                 color="primary"
+                size="small"
+                sx={{ p: 0 }}
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Trans id="metadata.link.created.with.visualize">
-                  Created with visualize.admin.ch
-                </Trans>
-              </Link>
+                <Typography variant="caption">
+                  <Trans id="metadata.link.created.with.visualize">
+                    Created with visualize.admin.ch
+                  </Trans>
+                </Typography>
+              </Button>
             </>
           )}
         </Stack>

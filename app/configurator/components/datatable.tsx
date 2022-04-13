@@ -1,3 +1,17 @@
+import { useQueryFilters } from "@/charts/shared/chart-helpers";
+import { Loading } from "@/components/hint";
+import {
+  useFormatFullDateAuto,
+  useFormatNumber,
+} from "@/configurator/components/ui-helpers";
+import { ChartConfig } from "@/configurator/config-types";
+import { Observation } from "@/domain/data";
+import {
+  DimensionMetaDataFragment,
+  useDataCubeObservationsQuery,
+  useDataCubePreviewObservationsQuery,
+} from "@/graphql/query-hooks";
+import { useLocale } from "@/locales/use-locale";
 import {
   Box,
   Table,
@@ -9,20 +23,6 @@ import {
 } from "@mui/material";
 import { ascending, descending } from "d3";
 import { useMemo, useState } from "react";
-import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { Loading } from "@/components/hint";
-import {
-  useFormatFullDateAuto,
-  useFormatNumber,
-} from "@/configurator/components/ui-helpers";
-import { Observation } from "@/domain/data";
-import {
-  DimensionMetaDataFragment,
-  useDataCubeObservationsQuery,
-  useDataCubePreviewObservationsQuery,
-} from "@/graphql/query-hooks";
-import { useLocale } from "@/locales/use-locale";
-import { ChartConfig } from "@/configurator/config-types";
 
 type Header = DimensionMetaDataFragment;
 
@@ -80,6 +80,7 @@ export const PreviewTable = ({
                 sx={{
                   textAlign: header.__typename === "Measure" ? "right" : "left",
                   borderBottom: "none",
+                  whiteSpace: "nowrap",
                 }}
               >
                 <TableSortLabel
