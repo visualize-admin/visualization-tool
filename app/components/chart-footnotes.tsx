@@ -42,9 +42,6 @@ export const ChartFootnotes = ({
   const [{ data: visibleData }] = useDataCubeObservationsQuery({
     variables: { locale, iri: dataSetIri, dimensions: null, filters },
   });
-  const [{ data: allData }] = useDataCubeObservationsQuery({
-    variables: { locale, iri: dataSetIri, dimensions: null, filters: null },
-  });
   const sparqlEditorUrl =
     visibleData?.dataCubeByIri?.observations.sparqlEditorUrl;
 
@@ -71,8 +68,8 @@ export const ChartFootnotes = ({
         <Stack direction="row" spacing={0} sx={{ mt: 2, alignItems: "center" }}>
           <DataDownloadMenu
             title={dataCubeByIri.title}
-            allData={allData}
-            visibleData={visibleData}
+            dataSetIri={dataSetIri}
+            filters={filters}
           />
           {chartConfig.chartType !== "table" && (
             <>

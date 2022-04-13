@@ -1,3 +1,5 @@
+import { QueryFilters } from "@/charts/shared/chart-helpers";
+import { useLocale } from "@/src";
 import { Trans } from "@lingui/macro";
 import { LoadingButton } from "@mui/lab";
 import { Button, ListSubheader, MenuItem, Typography } from "@mui/material";
@@ -9,9 +11,11 @@ import {
   usePopupState,
 } from "material-ui-popup-state/hooks";
 import HoverMenu from "material-ui-popup-state/HoverMenu";
-import React, { memo, ReactNode, useCallback, useMemo, useState } from "react";
+import React, { memo, ReactNode, useCallback, useState } from "react";
+import { OperationResult, useClient } from "urql";
 import { Observation } from "../domain/data";
 import {
+  DataCubeObservationsDocument,
   DataCubeObservationsQuery,
   DimensionMetaDataFragment,
 } from "../graphql/query-hooks";
@@ -52,54 +56,34 @@ const prepareData = ({
   return { data, columnKeys };
 };
 
-const usePreparedData = (
-  data: DataCubeObservationsQuery | undefined
-): PreparedData | undefined => {
-  const preparedData = useMemo(() => {
-    if (data?.dataCubeByIri) {
-      const { observations, dimensions, measures } = data.dataCubeByIri;
-      return prepareData({
-        dimensions,
-        measures,
-        observations: observations.data,
-      });
-    }
-  }, [data?.dataCubeByIri]);
-
-  return preparedData;
-};
-
 export const DataDownloadMenu = memo(
   ({
-    allData,
-    visibleData,
+    dataSetIri,
+    filters,
     title,
   }: {
-    allData: DataCubeObservationsQuery | undefined;
-    visibleData?: DataCubeObservationsQuery | undefined;
     title: string;
+    dataSetIri: string;
+    filters?: QueryFilters;
   }) => {
-    const preparedAllData = usePreparedData(allData);
-    const preparedVisibleData = usePreparedData(visibleData);
-
-    return preparedAllData ? (
+    return (
       <DataDownloadInnerMenu
         fileName={title}
-        visibleDataToRender={preparedVisibleData}
-        allDataToRender={preparedAllData}
+        dataSetIri={dataSetIri}
+        filters={filters}
       />
-    ) : null;
+    );
   }
 );
 
 const DataDownloadInnerMenu = ({
   fileName,
-  visibleDataToRender,
-  allDataToRender,
+  dataSetIri,
+  filters,
 }: {
   fileName: string;
-  visibleDataToRender?: PreparedData;
-  allDataToRender: PreparedData;
+  dataSetIri: string;
+  filters?: QueryFilters;
 }) => {
   const popupState = usePopupState({
     variant: "popover",
@@ -134,26 +118,23 @@ const DataDownloadInnerMenu = ({
           sx: { minWidth: "200px" },
         }}
       >
-        {visibleDataToRender && (
+        {filters && (
           <DataDownloadMenuSection
             subheader={
               <Trans id="button.download.data.visible">Filtered dataset</Trans>
             }
-            dataToRender={visibleDataToRender}
             fileName={fileName}
+            dataSetIri={dataSetIri}
+            filters={filters}
             onDownloaded={() => popupState.close()}
           />
         )}
-        {allDataToRender && (
-          <DataDownloadMenuSection
-            subheader={
-              <Trans id="button.download.data.all">Full dataset</Trans>
-            }
-            dataToRender={allDataToRender}
-            fileName={fileName}
-            onDownloaded={() => popupState.close()}
-          />
-        )}
+        <DataDownloadMenuSection
+          subheader={<Trans id="button.download.data.all">Full dataset</Trans>}
+          fileName={fileName}
+          dataSetIri={dataSetIri}
+          onDownloaded={() => popupState.close()}
+        />
       </HoverMenu>
     </>
   );
@@ -161,13 +142,15 @@ const DataDownloadInnerMenu = ({
 
 const DataDownloadMenuSection = ({
   subheader,
-  dataToRender,
   fileName,
+  dataSetIri,
+  filters,
   onDownloaded,
 }: {
   subheader: ReactNode;
-  dataToRender: PreparedData;
   fileName: string;
+  dataSetIri: string;
+  filters?: QueryFilters;
   onDownloaded: () => void;
 }) => {
   return (
@@ -186,8 +169,8 @@ const DataDownloadMenuSection = ({
               key={fileFormat}
               fileName={fileName}
               fileFormat={fileFormat}
-              columnKeys={dataToRender.columnKeys}
-              data={dataToRender.data}
+              dataSetIri={dataSetIri}
+              filters={filters}
               onDownloaded={onDownloaded}
             />
           ))}
@@ -199,27 +182,40 @@ const DataDownloadMenuSection = ({
 
 const DownloadMenuItem = ({
   fileName,
-  data,
-  columnKeys,
   fileFormat,
+  dataSetIri,
+  filters,
   onDownloaded,
 }: {
   fileName: string;
-  data: Observation[];
-  columnKeys: string[];
   fileFormat: FileFormat;
+  dataSetIri: string;
+  filters?: QueryFilters;
   onDownloaded: () => void;
 }) => {
+  const locale = useLocale();
+  const urqlClient = useClient();
   const [isDownloading, setIsDownloading] = useState(false);
-  const download = useCallback(() => {
-    return fetch("/api/download", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ columnKeys, data, fileFormat }),
-    }).then((res) =>
-      res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
-    );
-  }, [columnKeys, data, fileFormat, fileName]);
+  const download = useCallback(
+    (preparedData: PreparedData) => {
+      const { columnKeys, data } = preparedData;
+
+      return fetch("/api/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          columnKeys,
+          data,
+          fileFormat,
+        }),
+      }).then((res) =>
+        res.blob().then((blob) => saveAs(blob, `${fileName}.${fileFormat}`))
+      );
+    },
+    [fileFormat, fileName]
+  );
 
   return (
     <LoadingButton
@@ -228,15 +224,35 @@ const DownloadMenuItem = ({
       loading={isDownloading}
       onClick={async () => {
         setIsDownloading(true);
+        urqlClient
+          .query(DataCubeObservationsDocument, {
+            locale,
+            iri: dataSetIri,
+            dimensions: null,
+            filters,
+          })
+          .toPromise()
+          .then(async (result: OperationResult<DataCubeObservationsQuery>) => {
+            const { data } = result;
 
-        try {
-          await download();
-          onDownloaded();
-        } catch (e) {
-          console.error("Could not download the data!", e);
-        } finally {
-          setIsDownloading(false);
-        }
+            if (data?.dataCubeByIri) {
+              const { measures, dimensions, observations } = data.dataCubeByIri;
+              const preparedData = prepareData({
+                dimensions,
+                measures,
+                observations: observations.data,
+              });
+
+              await download(preparedData);
+            }
+          })
+          .catch((e) => {
+            console.error("Could not download the data!", e);
+          })
+          .finally(() => {
+            setIsDownloading(false);
+            onDownloaded();
+          });
       }}
       sx={{ minWidth: 0, p: 0 }}
     >

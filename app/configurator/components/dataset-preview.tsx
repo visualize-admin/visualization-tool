@@ -3,10 +3,7 @@ import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSetPreviewTable } from "@/configurator/components/datatable";
-import {
-  useDataCubeObservationsQuery,
-  useDataCubePreviewQuery,
-} from "@/graphql/query-hooks";
+import { useDataCubePreviewQuery } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import { Trans } from "@lingui/macro";
@@ -24,9 +21,6 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
   const locale = useLocale();
   const [{ data: metaData, fetching, error }] = useDataCubePreviewQuery({
     variables: { iri: dataSetIri, locale },
-  });
-  const [{ data: allData }] = useDataCubeObservationsQuery({
-    variables: { locale, iri: dataSetIri, dimensions: null, filters: null },
   });
 
   if (metaData && metaData.dataCubeByIri) {
@@ -114,7 +108,10 @@ export const DataSetPreview = ({ dataSetIri }: { dataSetIri: string }) => {
                 Showing first 10 rows
               </Trans>
             </Typography>
-            <DataDownloadMenu title={dataCubeByIri.title} allData={allData} />
+            <DataDownloadMenu
+              title={dataCubeByIri.title}
+              dataSetIri={dataSetIri}
+            />
           </Flex>
           <DebugPanel configurator={true} />
         </Paper>
