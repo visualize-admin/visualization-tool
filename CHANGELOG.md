@@ -11,6 +11,8 @@ You can also check the [release page](https://github.com/visualize-admin/visuali
 
 - Polished data download UI
 - Fixed scrolling of table preview & other smaller UI things in published charts
+- Only the top 7 nav items are shown in the search nav bar (design alignment), a button is there to display more
+- Added the footer in the search page
 
 ## [3.4.10] - 2022-04-11
 
