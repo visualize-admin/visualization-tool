@@ -1,9 +1,14 @@
+import { getFieldComponentIri } from "@/charts";
+import {
+  chartConfigOptionsUISpec,
+  EncodingOptions,
+  EncodingSortingOption,
+  EncodingSpec,
+} from "@/charts/chart-config-ui-options";
+import { useImputationNeeded } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
-import { t, Trans } from "@lingui/macro";
-import { keyBy } from "lodash";
-import get from "lodash/get";
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Box } from "@mui/material";
+import { FieldSetLegend, Radio, Select } from "@/components/form";
+import { Loading } from "@/components/hint";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
@@ -15,28 +20,6 @@ import {
   SortingType,
   useConfiguratorState,
 } from "@/configurator";
-import { getFieldComponentIri } from "@/charts";
-import {
-  chartConfigOptionsUISpec,
-  EncodingOptions,
-  EncodingSortingOption,
-  EncodingSpec,
-} from "@/charts/chart-config-ui-options";
-import { useImputationNeeded } from "@/charts/shared/chart-helpers";
-import { FieldSetLegend, Radio, Select } from "@/components/form";
-import { Loading } from "@/components/hint";
-import {
-  getDimensionsByDimensionType,
-  isStandardErrorDimension,
-} from "@/domain/data";
-import {
-  DimensionMetaDataFragment,
-  useDataCubeObservationsQuery,
-} from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
-import { useLocale } from "@/locales/use-locale";
-import { MapColumnOptions } from "@/configurator/map/map-chart-options";
-import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import {
   ControlSection,
@@ -49,8 +32,31 @@ import {
   ChartOptionCheckboxField,
   ChartOptionRadioField,
 } from "@/configurator/components/field";
-import { DimensionValuesMultiFilter, TimeFilter } from "@/configurator/components/filters";
-import { getFieldLabel, getIconName } from "@/configurator/components/ui-helpers";
+import {
+  DimensionValuesMultiFilter,
+  TimeFilter,
+} from "@/configurator/components/filters";
+import {
+  getFieldLabel,
+  getIconName,
+} from "@/configurator/components/ui-helpers";
+import { MapColumnOptions } from "@/configurator/map/map-chart-options";
+import { TableColumnOptions } from "@/configurator/table/table-chart-options";
+import {
+  getDimensionsByDimensionType,
+  isStandardErrorDimension,
+} from "@/domain/data";
+import {
+  DimensionMetaDataFragment,
+  useDataCubeObservationsQuery,
+} from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { useLocale } from "@/locales/use-locale";
+import { t, Trans } from "@lingui/macro";
+import { Box } from "@mui/material";
+import { keyBy } from "lodash";
+import get from "lodash/get";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 export const ChartOptionsSelector = ({
   state,
@@ -58,23 +64,6 @@ export const ChartOptionsSelector = ({
   state: ConfiguratorStateConfiguringChart;
 }) => {
   const locale = useLocale();
-  const measures = useMemo(
-    () =>
-      "y" in state.chartConfig.fields
-        ? [state.chartConfig.fields.y.componentIri]
-        : isTableConfig(state.chartConfig)
-        ? Object.values(state.chartConfig.fields).flatMap((f) =>
-            f.componentType === "Measure" && !f.isHidden ? [f.componentIri] : []
-          )
-        : isMapConfig(state.chartConfig)
-        ? [
-            state.chartConfig.fields.areaLayer.measureIri,
-            state.chartConfig.fields.symbolLayer.measureIri,
-          ]
-        : [],
-    [state.chartConfig]
-  );
-
   const [{ data }] = useDataCubeObservationsQuery({
     variables: {
       locale,
