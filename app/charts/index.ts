@@ -1,11 +1,15 @@
 import { get, groupBy } from "lodash";
 import {
+  AreaConfig,
   ChartConfig,
   ChartType,
   ColumnConfig,
   GenericFields,
   InteractiveFiltersConfig,
   LineConfig,
+  MapConfig,
+  PieConfig,
+  ScatterPlotConfig,
   TableColumn,
 } from "../configurator";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
@@ -121,9 +125,7 @@ export const getInitialConfig = ({
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
-          x: {
-            componentIri: getTimeDimensions(dimensions)[0].iri,
-          },
+          x: { componentIri: getTimeDimensions(dimensions)[0].iri },
           y: { componentIri: measures[0].iri },
         },
       };
@@ -133,9 +135,7 @@ export const getInitialConfig = ({
         filters: {},
         interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
-          x: {
-            componentIri: getTimeDimensions(dimensions)[0].iri,
-          },
+          x: { componentIri: getTimeDimensions(dimensions)[0].iri },
           y: { componentIri: measures[0].iri, imputationType: "none" },
         },
       };
@@ -266,6 +266,7 @@ export const getChartConfigAdjustedToChartType = ({
 
   mkChartConfigAdjuster({
     chartAdjustConfig: CHART_ADJUST_CONFIGS[chartType],
+    pathOverrides: PATH_OVERRIDES_CONFIG[chartType],
     oldChartConfig: chartConfig,
     newChartConfig,
     dimensions,
@@ -276,7 +277,6 @@ export const getChartConfigAdjustedToChartType = ({
 };
 
 const CHART_ADJUST_CONFIGS = {
-  area: {},
   bar: {},
   column: {
     fields: {
@@ -284,8 +284,12 @@ const CHART_ADJUST_CONFIGS = {
         componentIri: ({
           oldValue,
           newChartConfig,
+          dimensions,
         }: FieldAdjustParams<ColumnConfig>) => {
-          newChartConfig.fields.x.componentIri = oldValue;
+          // When switching from a scatterplot, x is a measure.
+          if (dimensions.map((d) => d.iri).includes(oldValue)) {
+            newChartConfig.fields.x.componentIri = oldValue;
+          }
         },
       },
       y: {
@@ -326,11 +330,127 @@ const CHART_ADJUST_CONFIGS = {
       },
     },
   },
-  scatterplot: {},
-  pie: {},
+  area: {
+    fields: {
+      x: {
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+          dimensions,
+        }: FieldAdjustParams<AreaConfig>) => {
+          const ok = dimensions
+            .filter((d) => d.__typename === "TemporalDimension")
+            .map((d) => d.iri)
+            .includes(oldValue);
+
+          if (ok) {
+            newChartConfig.fields.x.componentIri = oldValue;
+          }
+        },
+      },
+      y: {
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+        }: FieldAdjustParams<AreaConfig>) => {
+          newChartConfig.fields.y.componentIri = oldValue;
+        },
+      },
+    },
+  },
+  scatterplot: {
+    fields: {
+      // x is not needed, as this is the only chart type with x-axis measures.
+      y: {
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+          measures,
+        }: FieldAdjustParams<ScatterPlotConfig>) => {
+          // If there is only one measure then x & y are already filled correctly.
+          if (measures.length > 1) {
+            if (newChartConfig.fields.x.componentIri !== oldValue) {
+              newChartConfig.fields.y.componentIri = oldValue;
+            }
+          }
+        },
+      },
+    },
+  },
+  pie: {
+    fields: {
+      y: {
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+        }: FieldAdjustParams<PieConfig>) => {
+          newChartConfig.fields.y.componentIri = oldValue;
+        },
+      },
+    },
+  },
   table: {},
-  map: {},
+  map: {
+    fields: {
+      areaLayer: {
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+          dimensions,
+        }: FieldAdjustParams<MapConfig>) => {
+          const ok = dimensions
+            .filter((d) => d.__typename === "GeoShapesDimension")
+            .map((d) => d.iri)
+            .includes(oldValue);
+
+          if (ok) {
+            newChartConfig.fields.areaLayer.componentIri = oldValue;
+          }
+        },
+        measureIri: ({
+          oldValue,
+          newChartConfig,
+        }: FieldAdjustParams<MapConfig>) => {
+          newChartConfig.fields.areaLayer.measureIri = oldValue;
+          newChartConfig.fields.symbolLayer.measureIri = oldValue;
+        },
+      },
+    },
+  },
 };
+
+// Needed to correctly retain filters when switching to maps (and tables?).
+const PATH_OVERRIDES_CONFIG: {
+  [chartType in ChartType]: {
+    [fieldToOverride: string]: string;
+  };
+} = {
+  bar: {},
+  column: {
+    "fields.areaLayer.componentIri": "fields.x.componentIri",
+    "fields.areaLayer.measureIri": "fields.y.componentIri",
+  },
+  line: {
+    "fields.areaLayer.measureIri": "fields.y.componentIri",
+  },
+  area: {
+    "fields.areaLayer.measureIri": "fields.y.componentIri",
+  },
+  scatterplot: {
+    "fields.areaLayer.measureIri": "fields.y.componentIri",
+  },
+  pie: {
+    "fields.areaLayer.componentIri": "fields.x.componentIri",
+    "fields.areaLayer.measureIri": "fields.y.componentIri",
+  },
+  table: {},
+  map: {
+    "fields.x.componentIri": "fields.areaLayer.componentIri",
+    "fields.y.componentIri": "fields.areaLayer.measureIri",
+  },
+};
+type PathOverrides = typeof PATH_OVERRIDES_CONFIG[ChartType];
+
 type FieldAdjustParams<NewChartConfigType> = {
   oldValue: string;
   oldChartConfig: ChartConfig;
@@ -342,12 +462,14 @@ type ChartAdjustConfig = typeof CHART_ADJUST_CONFIGS[ChartType];
 
 const mkChartConfigAdjuster = ({
   chartAdjustConfig,
+  pathOverrides,
   oldChartConfig,
   newChartConfig,
   dimensions,
   measures,
 }: {
   chartAdjustConfig: ChartAdjustConfig;
+  pathOverrides: PathOverrides;
   oldChartConfig: ChartConfig;
   newChartConfig: ChartConfig;
   dimensions: DataCubeMetadata["dimensions"];
@@ -359,7 +481,8 @@ const mkChartConfigAdjuster = ({
 
       if (typeof v !== "object") {
         const adjustField: (params: FieldAdjustParams<ChartConfig>) => void =
-          get(chartAdjustConfig, newPath);
+          get(chartAdjustConfig, newPath) ||
+          get(chartAdjustConfig, pathOverrides[newPath]);
 
         if (adjustField !== undefined) {
           adjustField({
