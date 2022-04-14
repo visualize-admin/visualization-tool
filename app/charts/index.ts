@@ -1,3 +1,4 @@
+import { current } from "immer";
 import { get, groupBy } from "lodash";
 import {
   AreaConfig,
@@ -57,7 +58,7 @@ const findPreferredDimension = (
   return dim;
 };
 
-const INITIAL_INTERACTIVE_FILTERS_CONFIG = {
+const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
   legend: {
     active: false,
     componentIri: "",
@@ -75,7 +76,7 @@ const INITIAL_INTERACTIVE_FILTERS_CONFIG = {
     active: false,
     componentIris: [],
   },
-} as InteractiveFiltersConfig;
+};
 
 export const getInitialConfig = ({
   chartType,
@@ -263,22 +264,29 @@ export const getChartConfigAdjustedToChartType = ({
     dimensions,
     measures,
   });
-
-  mkChartConfigAdjuster({
-    chartAdjustConfig: CHART_ADJUST_CONFIGS[chartType],
+  const adjustChartConfig = mkChartConfigAdjuster({
+    chartAdjustConfig: CHART_ADJUST_CONFIG[chartType],
     pathOverrides: PATH_OVERRIDES_CONFIG[chartType],
     oldChartConfig: chartConfig,
     newChartConfig,
     dimensions,
     measures,
-  })({ path: "", field: chartConfig });
+  });
+
+  adjustChartConfig({ path: "", field: chartConfig });
 
   return newChartConfig;
 };
 
-const CHART_ADJUST_CONFIGS = {
+const CHART_ADJUST_CONFIG = {
   bar: {},
   column: {
+    filters: ({
+      oldValue,
+      newChartConfig,
+    }: FieldAdjustParams<ColumnConfig>) => {
+      newChartConfig.filters = current(oldValue);
+    },
     fields: {
       x: {
         componentIri: ({
@@ -303,6 +311,9 @@ const CHART_ADJUST_CONFIGS = {
     },
   },
   line: {
+    filters: ({ oldValue, newChartConfig }: FieldAdjustParams<LineConfig>) => {
+      newChartConfig.filters = current(oldValue);
+    },
     fields: {
       x: {
         componentIri: ({
@@ -331,6 +342,9 @@ const CHART_ADJUST_CONFIGS = {
     },
   },
   area: {
+    filters: ({ oldValue, newChartConfig }: FieldAdjustParams<AreaConfig>) => {
+      newChartConfig.filters = current(oldValue);
+    },
     fields: {
       x: {
         componentIri: ({
@@ -359,6 +373,12 @@ const CHART_ADJUST_CONFIGS = {
     },
   },
   scatterplot: {
+    filters: ({
+      oldValue,
+      newChartConfig,
+    }: FieldAdjustParams<ScatterPlotConfig>) => {
+      newChartConfig.filters = current(oldValue);
+    },
     fields: {
       // x is not needed, as this is the only chart type with x-axis measures.
       y: {
@@ -378,6 +398,9 @@ const CHART_ADJUST_CONFIGS = {
     },
   },
   pie: {
+    filters: ({ oldValue, newChartConfig }: FieldAdjustParams<PieConfig>) => {
+      newChartConfig.filters = current(oldValue);
+    },
     fields: {
       y: {
         componentIri: ({
@@ -391,6 +414,9 @@ const CHART_ADJUST_CONFIGS = {
   },
   table: {},
   map: {
+    filters: ({ oldValue, newChartConfig }: FieldAdjustParams<MapConfig>) => {
+      newChartConfig.filters = current(oldValue);
+    },
     fields: {
       areaLayer: {
         componentIri: ({
@@ -418,8 +444,9 @@ const CHART_ADJUST_CONFIGS = {
     },
   },
 };
+type ChartAdjustConfig = typeof CHART_ADJUST_CONFIG[ChartType];
 
-// Needed to correctly retain filters when switching to maps (and tables?).
+// Needed to correctly retain chart options when switching to maps (and tables?).
 const PATH_OVERRIDES_CONFIG: {
   [chartType in ChartType]: {
     [fieldToOverride: string]: string;
@@ -452,13 +479,12 @@ const PATH_OVERRIDES_CONFIG: {
 type PathOverrides = typeof PATH_OVERRIDES_CONFIG[ChartType];
 
 type FieldAdjustParams<NewChartConfigType> = {
-  oldValue: string;
+  oldValue: any;
   oldChartConfig: ChartConfig;
   newChartConfig: NewChartConfigType;
   dimensions: DataCubeMetadata["dimensions"];
   measures: DataCubeMetadata["measures"];
 };
-type ChartAdjustConfig = typeof CHART_ADJUST_CONFIGS[ChartType];
 
 const mkChartConfigAdjuster = ({
   chartAdjustConfig,
@@ -479,7 +505,8 @@ const mkChartConfigAdjuster = ({
     for (const [k, v] of Object.entries(field)) {
       const newPath = path !== "" ? `${path}.${k}` : k;
 
-      if (typeof v !== "object") {
+      // For filters we can't reach a primitive level as we need to pass the whole object.
+      if (typeof v !== "object" || k === "filters") {
         const adjustField: (params: FieldAdjustParams<ChartConfig>) => void =
           get(chartAdjustConfig, newPath) ||
           get(chartAdjustConfig, pathOverrides[newPath]);
