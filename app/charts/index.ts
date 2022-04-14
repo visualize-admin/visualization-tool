@@ -281,12 +281,19 @@ const CHART_ADJUST_CONFIGS = {
   column: {
     fields: {
       x: {
-        componentIri: (
-          previousIri: string,
-          oldChartConfig: ChartConfig,
-          newChartConfig: ColumnConfig
-        ) => {
-          newChartConfig.fields.x.componentIri = previousIri;
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+        }: FieldAdjustParams<ColumnConfig>) => {
+          newChartConfig.fields.x.componentIri = oldValue;
+        },
+      },
+      y: {
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+        }: FieldAdjustParams<ColumnConfig>) => {
+          newChartConfig.fields.y.componentIri = oldValue;
         },
       },
     },
@@ -294,20 +301,27 @@ const CHART_ADJUST_CONFIGS = {
   line: {
     fields: {
       x: {
-        componentIri: (
-          previousIri: string,
-          oldChartConfig: ChartConfig,
-          newChartConfig: LineConfig,
-          dimensions: DataCubeMetadata["dimensions"]
-        ) => {
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+          dimensions,
+        }: FieldAdjustParams<LineConfig>) => {
           const ok = dimensions
             .filter((d) => d.__typename === "TemporalDimension")
             .map((d) => d.iri)
-            .includes(previousIri);
+            .includes(oldValue);
 
           if (ok) {
-            newChartConfig.fields.x.componentIri = previousIri;
+            newChartConfig.fields.x.componentIri = oldValue;
           }
+        },
+      },
+      y: {
+        componentIri: ({
+          oldValue,
+          newChartConfig,
+        }: FieldAdjustParams<LineConfig>) => {
+          newChartConfig.fields.y.componentIri = oldValue;
         },
       },
     },
@@ -316,6 +330,13 @@ const CHART_ADJUST_CONFIGS = {
   pie: {},
   table: {},
   map: {},
+};
+type FieldAdjustParams<NewChartConfigType> = {
+  oldValue: string;
+  oldChartConfig: ChartConfig;
+  newChartConfig: NewChartConfigType;
+  dimensions: DataCubeMetadata["dimensions"];
+  measures: DataCubeMetadata["measures"];
 };
 type ChartAdjustConfig = typeof CHART_ADJUST_CONFIGS[ChartType];
 
@@ -337,10 +358,17 @@ const mkChartConfigAdjuster = ({
       const newPath = path !== "" ? `${path}.${k}` : k;
 
       if (typeof v !== "object") {
-        const adjustField = get(chartAdjustConfig, newPath);
+        const adjustField: (params: FieldAdjustParams<ChartConfig>) => void =
+          get(chartAdjustConfig, newPath);
 
         if (adjustField !== undefined) {
-          adjustField(v, oldChartConfig, newChartConfig, dimensions);
+          adjustField({
+            oldValue: v,
+            newChartConfig,
+            oldChartConfig,
+            dimensions,
+            measures,
+          });
         }
       } else {
         go({
