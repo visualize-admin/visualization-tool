@@ -1,9 +1,11 @@
-import { groupBy } from "lodash";
+import { get, groupBy } from "lodash";
 import {
   ChartConfig,
   ChartType,
+  ColumnConfig,
   GenericFields,
   InteractiveFiltersConfig,
+  LineConfig,
   TableColumn,
 } from "../configurator";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
@@ -243,6 +245,113 @@ export const getInitialConfig = ({
     default:
       throw unreachableError(chartType);
   }
+};
+
+export const getChartConfigAdjustedToChartType = ({
+  chartConfig,
+  chartType,
+  dimensions,
+  measures,
+}: {
+  chartConfig: ChartConfig;
+  chartType: ChartType;
+  dimensions: DataCubeMetadata["dimensions"];
+  measures: DataCubeMetadata["measures"];
+}) => {
+  const newChartConfig = getInitialConfig({
+    chartType,
+    dimensions,
+    measures,
+  });
+
+  mkChartConfigAdjuster({
+    chartAdjustConfig: CHART_ADJUST_CONFIGS[chartType],
+    oldChartConfig: chartConfig,
+    newChartConfig,
+    dimensions,
+    measures,
+  })({ path: "", field: chartConfig });
+
+  return newChartConfig;
+};
+
+const CHART_ADJUST_CONFIGS = {
+  area: {},
+  bar: {},
+  column: {
+    fields: {
+      x: {
+        componentIri: (
+          previousIri: string,
+          oldChartConfig: ChartConfig,
+          newChartConfig: ColumnConfig
+        ) => {
+          newChartConfig.fields.x.componentIri = previousIri;
+        },
+      },
+    },
+  },
+  line: {
+    fields: {
+      x: {
+        componentIri: (
+          previousIri: string,
+          oldChartConfig: ChartConfig,
+          newChartConfig: LineConfig,
+          dimensions: DataCubeMetadata["dimensions"]
+        ) => {
+          const ok = dimensions
+            .filter((d) => d.__typename === "TemporalDimension")
+            .map((d) => d.iri)
+            .includes(previousIri);
+
+          if (ok) {
+            newChartConfig.fields.x.componentIri = previousIri;
+          }
+        },
+      },
+    },
+  },
+  scatterplot: {},
+  pie: {},
+  table: {},
+  map: {},
+};
+type ChartAdjustConfig = typeof CHART_ADJUST_CONFIGS[ChartType];
+
+const mkChartConfigAdjuster = ({
+  chartAdjustConfig,
+  oldChartConfig,
+  newChartConfig,
+  dimensions,
+  measures,
+}: {
+  chartAdjustConfig: ChartAdjustConfig;
+  oldChartConfig: ChartConfig;
+  newChartConfig: ChartConfig;
+  dimensions: DataCubeMetadata["dimensions"];
+  measures: DataCubeMetadata["measures"];
+}) => {
+  const go = ({ path, field }: { path: string; field: Object }) => {
+    for (const [k, v] of Object.entries(field)) {
+      const newPath = path !== "" ? `${path}.${k}` : k;
+
+      if (typeof v !== "object") {
+        const adjustField = get(chartAdjustConfig, newPath);
+
+        if (adjustField !== undefined) {
+          adjustField(v, oldChartConfig, newChartConfig, dimensions);
+        }
+      } else {
+        go({
+          path: newPath,
+          field: v,
+        });
+      }
+    }
+  };
+
+  return go;
 };
 
 export const getPossibleChartType = ({

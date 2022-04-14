@@ -1,5 +1,6 @@
 import { fetchChartConfig, saveChartConfig } from "@/api";
 import {
+  getChartConfigAdjustedToChartType,
   getFieldComponentIris,
   getGroupedFieldIris,
   getHiddenFieldIris,
@@ -600,7 +601,8 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         // setWith(draft, action.value.path, action.value.value, Object);
         const { chartType, dataSetMetadata } = action.value;
 
-        draft.chartConfig = getInitialConfig({
+        draft.chartConfig = getChartConfigAdjustedToChartType({
+          chartConfig: draft.chartConfig,
           chartType,
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,
