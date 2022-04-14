@@ -3,6 +3,7 @@ import {
   ChartConfig,
   ChartType,
   GenericFields,
+  InteractiveFiltersConfig,
   TableColumn,
 } from "../configurator";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
@@ -50,6 +51,26 @@ const findPreferredDimension = (
   return dim;
 };
 
+const INITIAL_INTERACTIVE_FILTERS_CONFIG = {
+  legend: {
+    active: false,
+    componentIri: "",
+  },
+  time: {
+    active: false,
+    componentIri: "",
+    presets: {
+      type: "range",
+      from: "",
+      to: "",
+    },
+  },
+  dataFilters: {
+    active: false,
+    componentIris: [],
+  },
+} as InteractiveFiltersConfig;
+
 export const getInitialConfig = ({
   chartType,
   dimensions,
@@ -64,18 +85,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFiltersConfig: {
-          legend: { active: false, componentIri: "" },
-          time: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        },
+        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: { componentIri: measures[0].iri },
           y: {
@@ -91,18 +101,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFiltersConfig: {
-          legend: { active: false, componentIri: "" },
-          time: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        },
+        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: {
             componentIri: findPreferredDimension(
@@ -118,18 +117,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFiltersConfig: {
-          legend: { active: false, componentIri: "" },
-          time: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        },
+        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: {
             componentIri: getTimeDimensions(dimensions)[0].iri,
@@ -137,23 +125,11 @@ export const getInitialConfig = ({
           y: { componentIri: measures[0].iri },
         },
       };
-
     case "area":
       return {
         chartType,
         filters: {},
-        interactiveFiltersConfig: {
-          legend: { active: false, componentIri: "" },
-          time: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        },
+        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: {
             componentIri: getTimeDimensions(dimensions)[0].iri,
@@ -165,18 +141,7 @@ export const getInitialConfig = ({
       return {
         chartType: "scatterplot",
         filters: {},
-        interactiveFiltersConfig: {
-          legend: { active: false, componentIri: "" },
-          time: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        },
+        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           x: { componentIri: measures[0].iri },
           y: {
@@ -197,18 +162,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFiltersConfig: {
-          legend: { active: false, componentIri: "" },
-          time: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        },
+        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           y: { componentIri: measures[0].iri },
           segment: {
@@ -260,18 +214,7 @@ export const getInitialConfig = ({
       return {
         chartType,
         filters: {},
-        interactiveFiltersConfig: {
-          legend: { active: false, componentIri: "" },
-          time: {
-            active: false,
-            componentIri: "",
-            presets: { type: "range", from: "", to: "" },
-          },
-          dataFilters: {
-            active: false,
-            componentIris: [],
-          },
-        },
+        interactiveFiltersConfig: INITIAL_INTERACTIVE_FILTERS_CONFIG,
         fields: {
           areaLayer: {
             show: geoShapes.length > 0,
