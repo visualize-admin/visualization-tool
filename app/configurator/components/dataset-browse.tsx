@@ -1,6 +1,6 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { mapValues, pick, pickBy, sortBy } from "lodash";
+import { mapValues, orderBy, pick, pickBy, sortBy } from "lodash";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import { stringify } from "qs";
@@ -11,8 +11,10 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { motion } from "framer-motion";
 import {
   Box,
+  Button,
   ButtonBase,
   Link as MUILink,
   LinkProps as MUILinkProps,
@@ -48,8 +50,11 @@ import {
   smoothPresenceProps,
   MotionBox,
   MotionCard,
+  accordionPresenceProps,
 } from "@/configurator/components/presence";
 import { UseQueryState } from "urql";
+import useDisclosure from "./use-disclosure";
+import { AnimatePresence } from "framer-motion";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -543,7 +548,7 @@ const NavItem = ({
     ) : null;
   return (
     <MotionBox
-      {...smoothPresenceProps}
+      {...accordionPresenceProps}
       sx={{
         mb: 1,
         pl: 4,
@@ -692,6 +697,13 @@ const NavSection = ({
   counts: Record<string, number>;
   extra?: React.ReactNode;
 }) => {
+  const topItems = useMemo(() => {
+    return sortBy(
+      orderBy(items, (item) => counts[item.iri], "desc").slice(0, 7),
+      (item) => item.label
+    );
+  }, [counts, items]);
+  const { isOpen, open, close } = useDisclosure();
   return (
     <div>
       <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
@@ -702,22 +714,55 @@ const NavSection = ({
           {label}
         </Typography>
       </NavSectionTitle>
-      <Box>
-        {items.map((item) => {
-          return (
-            <NavItem
-              active={currentFilter === item}
-              filters={filters}
-              key={item.iri}
-              next={item}
-              count={counts[item.iri]}
-              theme={navItemTheme}
-            >
-              {item.label}
-            </NavItem>
-          );
-        })}
-      </Box>
+      <motion.div layout>
+        <AnimatePresence>
+          {(isOpen ? items : topItems).map((item) => {
+            return (
+              <NavItem
+                active={currentFilter === item}
+                filters={filters}
+                key={item.iri}
+                next={item}
+                count={counts[item.iri]}
+                theme={navItemTheme}
+              >
+                {item.label}
+              </NavItem>
+            );
+          })}
+        </AnimatePresence>
+        {topItems.length !== items.length ? (
+          <Box textAlign="center">
+            {isOpen ? (
+              <Button
+                variant="text"
+                sx={{
+                  color: navItemTheme.countColor,
+                  "&:hover": { color: navItemTheme.countColor },
+                  fontWeight: "bold",
+                }}
+                color="inherit"
+                onClick={close}
+              >
+                Show less
+              </Button>
+            ) : (
+              <Button
+                variant="text"
+                sx={{
+                  color: navItemTheme.countColor,
+                  "&:hover": { color: navItemTheme.countColor },
+                  fontWeight: "bold",
+                }}
+                color="inherit"
+                onClick={open}
+              >
+                Show all
+              </Button>
+            )}
+          </Box>
+        ) : null}
+      </motion.div>
       {extra}
     </div>
   );
