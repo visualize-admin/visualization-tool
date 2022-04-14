@@ -5,23 +5,17 @@ import {
   canTransitionToPreviousStep,
   useConfiguratorState,
 } from "@/configurator";
-import { formatBackLink } from "@/configurator/components/select-dataset-step";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useLocale } from "@/src";
 import { Trans } from "@lingui/macro";
 import { Button, Typography } from "@mui/material";
-import { useRouter } from "next/router";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import React, { ReactNode, useCallback, useEffect } from "react";
 
 export type StepStatus = "past" | "current" | "future";
 
-const steps = [
-  "SELECTING_CHART_TYPE",
-  "CONFIGURING_CHART",
-  "DESCRIBING_CHART",
-] as const;
+const steps = ["CONFIGURING_CHART", "DESCRIBING_CHART"] as const;
 type StepState = typeof steps[number];
 
 export const StepperDumb = ({
@@ -113,7 +107,9 @@ export const StepperDumb = ({
         <Flex
           sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}
         >
-          <CallToAction stepState={steps[currentStepIndex]} />
+          <CallToAction
+            stepState={steps[currentStepIndex] as StepState | undefined}
+          />
         </Flex>
         <Flex sx={{ minWidth: 200, justifyContent: "flex-end" }}>
           <Button
@@ -150,20 +146,11 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
     }
   }, [data, dispatch]);
 
-  const router = useRouter();
-  const backLink = useMemo(() => {
-    return formatBackLink(router.query);
-  }, [router.query]);
-
   const goPrevious = useCallback(() => {
-    if (state.state === "SELECTING_CHART_TYPE") {
-      router.push(backLink);
-    } else {
-      dispatch({
-        type: "STEP_PREVIOUS",
-      });
-    }
-  }, [backLink, dispatch, router, state.state]);
+    dispatch({
+      type: "STEP_PREVIOUS",
+    });
+  }, [dispatch]);
 
   return (
     <StepperDumb
@@ -175,18 +162,12 @@ export const Stepper = ({ dataSetIri }: { dataSetIri?: string }) => {
   );
 };
 
-export const CallToAction = ({ stepState }: { stepState: StepState }) => {
+export const CallToAction = ({
+  stepState,
+}: {
+  stepState: StepState | undefined;
+}) => {
   switch (stepState) {
-    case "SELECTING_CHART_TYPE":
-      return (
-        <CallToActionText
-          label={
-            <Trans id="step.visualization.type">
-              Select the desired chart type for your dataset.
-            </Trans>
-          }
-        />
-      );
     case "CONFIGURING_CHART":
       return (
         <CallToActionText
@@ -210,6 +191,7 @@ export const CallToAction = ({ stepState }: { stepState: StepState }) => {
         />
       );
   }
+
   return null;
 };
 

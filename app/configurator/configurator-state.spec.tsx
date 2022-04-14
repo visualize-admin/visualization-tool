@@ -1,9 +1,5 @@
-import { Client } from "@urql/core";
-import { ChartConfig } from "@/configurator";
 import * as api from "@/api";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
-import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
+import { ChartConfig } from "@/configurator";
 import {
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
@@ -13,6 +9,10 @@ import {
   initChartStateFromLocalStorage,
   moveFilterField,
 } from "@/configurator/configurator-state";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
+import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
+import { Client } from "@urql/core";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -95,7 +95,7 @@ describe("initChartStateFromCube", () => {
     );
     expect(res).toEqual(
       expect.objectContaining({
-        state: "SELECTING_CHART_TYPE",
+        state: "CONFIGURING_CHART",
       })
     );
   });

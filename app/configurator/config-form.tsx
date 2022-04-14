@@ -1,3 +1,14 @@
+import { getFieldComponentIri } from "@/charts";
+import { ChartConfig, ChartType } from "@/configurator/config-types";
+import {
+  getChartOptionBooleanField,
+  getFilterValue,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { DimensionValuesQuery } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { SelectChangeEvent, SelectProps } from "@mui/material";
 import { some } from "lodash";
 import get from "lodash/get";
 import React, {
@@ -8,17 +19,6 @@ import React, {
   useContext,
   useMemo,
 } from "react";
-import { SelectChangeEvent, SelectProps } from "@mui/material";
-import { getFieldComponentIri } from "@/charts";
-import { DimensionValuesQuery } from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
-import { ChartConfig, ChartType } from "@/configurator/config-types";
-import {
-  getChartOptionBooleanField,
-  getFilterValue,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
 
 // interface FieldProps {
 //   name: HTMLInputElement["name"]
@@ -271,8 +271,7 @@ export const useChartTypeSelectorField = ({
   );
 
   const stateValue =
-    state.state === "CONFIGURING_CHART" ||
-    state.state === "SELECTING_CHART_TYPE"
+    state.state === "CONFIGURING_CHART"
       ? get(state, "chartConfig.chartType")
       : "";
 

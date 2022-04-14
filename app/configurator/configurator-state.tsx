@@ -1,24 +1,3 @@
-import produce from "immer";
-import { mapValues, pickBy, get } from "lodash";
-import setWith from "lodash/setWith";
-import { useRouter } from "next/router";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useContext,
-  useEffect,
-} from "react";
-import { Client, useClient } from "urql";
-import { Reducer, useImmerReducer } from "use-immer";
-import {
-  ConfiguratorStateConfiguringChart,
-  ImputationType,
-  isAreaConfig,
-  isColumnConfig,
-  isMapConfig,
-  isSegmentInConfig,
-} from "@/configurator";
 import { fetchChartConfig, saveChartConfig } from "@/api";
 import {
   getFieldComponentIris,
@@ -28,14 +7,13 @@ import {
   getPossibleChartType,
 } from "@/charts";
 import {
-  DataCubeMetadataWithComponentValuesDocument,
-  DataCubeMetadataWithComponentValuesQuery,
-  DimensionMetaDataFragment,
-} from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
-import { createChartId } from "@/lib/create-chart-id";
-import { unreachableError } from "@/lib/unreachable";
-import { useLocale } from "@/locales/use-locale";
+  ConfiguratorStateConfiguringChart,
+  ImputationType,
+  isAreaConfig,
+  isColumnConfig,
+  isMapConfig,
+  isSegmentInConfig,
+} from "@/configurator";
 import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,
@@ -50,6 +28,28 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import {
+  DataCubeMetadataWithComponentValuesDocument,
+  DataCubeMetadataWithComponentValuesQuery,
+  DimensionMetaDataFragment,
+} from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { createChartId } from "@/lib/create-chart-id";
+import { unreachableError } from "@/lib/unreachable";
+import { useLocale } from "@/locales/use-locale";
+import produce from "immer";
+import { get, mapValues, pickBy } from "lodash";
+import setWith from "lodash/setWith";
+import { useRouter } from "next/router";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  useContext,
+  useEffect,
+} from "react";
+import { Client, useClient } from "urql";
+import { Reducer, useImmerReducer } from "use-immer";
 
 export type ConfiguratorStateAction =
   | { type: "INITIALIZED"; value: ConfiguratorState }
@@ -442,7 +442,7 @@ const transitionStepNext = (
         );
 
         return {
-          state: "SELECTING_CHART_TYPE",
+          state: "CONFIGURING_CHART",
           dataSet: draft.dataSet,
           meta: draft.meta,
           activeField: undefined,
@@ -450,12 +450,6 @@ const transitionStepNext = (
         };
       }
       break;
-    case "SELECTING_CHART_TYPE":
-      return {
-        ...draft,
-        activeField: undefined,
-        state: "CONFIGURING_CHART",
-      };
     case "CONFIGURING_CHART":
       return {
         ...draft,
@@ -492,7 +486,6 @@ export const canTransitionToNextStep = (
   switch (state.state) {
     case "SELECTING_DATASET":
       return state.dataSet !== undefined;
-    case "SELECTING_CHART_TYPE":
     case "CONFIGURING_CHART":
     case "DESCRIBING_CHART":
       // These are all interchangeable in terms of validity
@@ -508,10 +501,8 @@ const getPreviousState = (
   switch (state) {
     case "SELECTING_DATASET":
       return state;
-    case "SELECTING_CHART_TYPE":
-      return "SELECTING_DATASET";
     case "CONFIGURING_CHART":
-      return "SELECTING_CHART_TYPE";
+      return "SELECTING_DATASET";
     case "DESCRIBING_CHART":
       return "CONFIGURING_CHART";
     case "PUBLISHING":
@@ -538,12 +529,6 @@ const transitionStepPrevious = (
         ...draft,
         activeField: undefined,
         chartConfig: undefined,
-        state: stepTo,
-      };
-    case "SELECTING_CHART_TYPE":
-      return {
-        ...draft,
-        activeField: undefined,
         state: stepTo,
       };
     case "CONFIGURING_CHART":
@@ -611,7 +596,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
     case "CHART_TYPE_CHANGED":
-      if (draft.state === "SELECTING_CHART_TYPE") {
+      if (draft.state === "CONFIGURING_CHART") {
         // setWith(draft, action.value.path, action.value.value, Object);
         const { chartType, dataSetMetadata } = action.value;
 
@@ -967,10 +952,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_CONFIG_FILTERS_UPDATE":
-      if (
-        draft.state === "CONFIGURING_CHART" ||
-        draft.state === "SELECTING_CHART_TYPE"
-      ) {
+      if (draft.state === "CONFIGURING_CHART") {
         const { filters } = action.value;
         draft.chartConfig.filters = filters;
       }
@@ -1149,7 +1131,6 @@ const ConfiguratorStateProviderInternal = ({
       switch (state.state) {
         case "CONFIGURING_CHART":
         case "DESCRIBING_CHART":
-        case "SELECTING_CHART_TYPE":
           if (chartId === "new") {
             const newChartId = createChartId();
             window.localStorage.setItem(
