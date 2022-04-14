@@ -423,6 +423,7 @@ export const SearchField = ({
         startAdornment={<Icon name="search" size={16} />}
         id={id}
         value={value}
+        defaultValue={defaultValue}
         onKeyPress={onKeyPress}
         placeholder={placeholder}
         onFocus={onFocus}
