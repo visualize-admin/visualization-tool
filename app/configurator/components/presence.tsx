@@ -13,7 +13,7 @@ export const smoothPresenceProps = {
 export const accordionPresenceProps = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
-  exit: { opacity: 0, height: 0 },
+  exit: { opacity: 0, scaleY: 0 },
 };
 
 export const navPresenceProps = {

@@ -11,7 +11,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { motion } from "framer-motion";
 import {
   Box,
   Button,
@@ -54,7 +53,7 @@ import {
 } from "@/configurator/components/presence";
 import { UseQueryState } from "urql";
 import useDisclosure from "./use-disclosure";
-import { AnimatePresence } from "framer-motion";
+import { Reorder } from "framer-motion";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -714,23 +713,27 @@ const NavSection = ({
           {label}
         </Typography>
       </NavSectionTitle>
-      <motion.div layout>
-        <AnimatePresence>
-          {(isOpen ? items : topItems).map((item) => {
-            return (
+      <Reorder.Group
+        axis="y"
+        as="div"
+        onReorder={() => {}}
+        values={isOpen ? items : topItems}
+      >
+        {(isOpen ? items : topItems).map((item) => {
+          return (
+            <Reorder.Item drag={false} value={item} key={item.iri} as="div">
               <NavItem
                 active={currentFilter === item}
                 filters={filters}
-                key={item.iri}
                 next={item}
                 count={counts[item.iri]}
                 theme={navItemTheme}
               >
                 {item.label}
               </NavItem>
-            );
-          })}
-        </AnimatePresence>
+            </Reorder.Item>
+          );
+        })}
         {topItems.length !== items.length ? (
           <Box textAlign="center">
             {isOpen ? (
@@ -762,7 +765,7 @@ const NavSection = ({
             )}
           </Box>
         ) : null}
-      </motion.div>
+      </Reorder.Group>
       {extra}
     </div>
   );
