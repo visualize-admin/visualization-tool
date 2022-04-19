@@ -3,6 +3,7 @@ import { Hint, Loading } from "@/components/hint";
 import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
 import {
   ControlSection,
+  ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
@@ -144,32 +145,34 @@ export const ChartTypeSelector = ({
           ) : null}
         </SectionTitle>
 
-        {!possibleChartTypes ? (
-          <Hint>
-            <Trans id="hint.no.visualization.with.dataset">
-              No visualization can be created with the selected dataset.
-            </Trans>
-          </Hint>
-        ) : (
-          <Box
-            display="grid"
-            sx={{
-              gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
-              gridGap: "0.75rem",
-              mx: 4,
-            }}
-          >
-            {enabledChartTypes.map((d) => (
-              <ChartTypeSelectorField
-                key={d}
-                label={d}
-                value={d}
-                metaData={metaData}
-                disabled={!possibleChartTypes.includes(d)}
-              />
-            ))}
-          </Box>
-        )}
+        <ControlSectionContent side="left">
+          {!possibleChartTypes ? (
+            <Hint>
+              <Trans id="hint.no.visualization.with.dataset">
+                No visualization can be created with the selected dataset.
+              </Trans>
+            </Hint>
+          ) : (
+            <Box
+              display="grid"
+              sx={{
+                gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+                gridGap: "0.75rem",
+                mx: 4,
+              }}
+            >
+              {enabledChartTypes.map((d) => (
+                <ChartTypeSelectorField
+                  key={d}
+                  label={d}
+                  value={d}
+                  metaData={metaData}
+                  disabled={!possibleChartTypes.includes(d)}
+                />
+              ))}
+            </Box>
+          )}
+        </ControlSectionContent>
       </ControlSection>
     );
   } else {
