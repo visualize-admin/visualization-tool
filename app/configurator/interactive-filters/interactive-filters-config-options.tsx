@@ -26,7 +26,7 @@ import {
   useInteractiveTimeFiltersToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-actions";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import { InteractveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 
 export const InteractiveFiltersOptions = ({
   state,
@@ -345,7 +345,7 @@ const InteractiveFiltersToggle = ({
   disabled = false,
 }: {
   label: string;
-  path: InteractveFilterType;
+  path: InteractiveFilterType;
   defaultChecked?: boolean;
   disabled?: boolean;
 }) => {

@@ -3,7 +3,7 @@ import { ChangeEvent, useCallback } from "react";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
-import { InteractveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
+import { InteractiveFilterType } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   toggleInteractiveDataFilter,
   toggleInteractiveFilter,
@@ -13,7 +13,7 @@ import {
 export const useInteractiveFiltersToggle = ({
   path,
 }: {
-  path: InteractveFilterType;
+  path: InteractiveFilterType;
 }) => {
   const [state, dispatch] = useConfiguratorState();
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
