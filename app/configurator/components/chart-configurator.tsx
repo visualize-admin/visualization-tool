@@ -4,6 +4,7 @@ import { Loading } from "@/components/hint";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
   isMapConfig,
 } from "@/configurator";
 import {
@@ -138,7 +139,7 @@ const orderedIsEqual = (
 export const useEnsurePossibleFilters = ({
   state,
 }: {
-  state: ConfiguratorStateConfiguringChart;
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
 }) => {
   const [, dispatch] = useConfiguratorState();
   const [fetching, setFetching] = useState(false);

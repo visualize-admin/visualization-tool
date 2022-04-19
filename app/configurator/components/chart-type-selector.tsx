@@ -21,7 +21,10 @@ import { useLocale } from "@/locales/use-locale";
 import { Trans } from "@lingui/macro";
 import { Box, ButtonBase, CircularProgress, Typography } from "@mui/material";
 import React, { SyntheticEvent } from "react";
-import { ConfiguratorStateConfiguringChart } from "../config-types";
+import {
+  ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
+} from "../config-types";
 
 export const ChartTypeSelectionButton = ({
   label,
@@ -114,7 +117,7 @@ const ChartTypeSelectorField = ({
 export const ChartTypeSelector = ({
   state,
 }: {
-  state: ConfiguratorStateConfiguringChart;
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({

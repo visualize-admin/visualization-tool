@@ -60,6 +60,7 @@ const DescribeChartStep = () => {
   return (
     <>
       <PanelLeftWrapper>
+        <ChartTypeSelector state={state} />
         <ChartAnnotator state={state} />
       </PanelLeftWrapper>
       <PanelMiddleWrapper>

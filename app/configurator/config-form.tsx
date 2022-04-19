@@ -271,7 +271,7 @@ export const useChartTypeSelectorField = ({
   );
 
   const stateValue =
-    state.state === "CONFIGURING_CHART"
+    state.state === "CONFIGURING_CHART" || state.state === "DESCRIBING_CHART"
       ? get(state, "chartConfig.chartType")
       : "";
 
@@ -279,7 +279,7 @@ export const useChartTypeSelectorField = ({
 
   return {
     name: "chartType",
-    value, // ? value : stateValue,
+    value,
     checked,
     onClick,
   };
