@@ -307,6 +307,12 @@ const CHART_ADJUST_CONFIG = {
           newChartConfig.fields.y.componentIri = oldValue;
         },
       },
+      segment: ({
+        oldValue,
+        newChartConfig,
+      }: FieldAdjustParams<ColumnConfig>) => {
+        newChartConfig.fields.segment = oldValue;
+      },
     },
   },
   line: {
@@ -337,6 +343,12 @@ const CHART_ADJUST_CONFIG = {
         }: FieldAdjustParams<LineConfig>) => {
           newChartConfig.fields.y.componentIri = oldValue;
         },
+      },
+      segment: ({
+        oldValue,
+        newChartConfig,
+      }: FieldAdjustParams<LineConfig>) => {
+        newChartConfig.fields.segment = oldValue;
       },
     },
   },
@@ -369,6 +381,12 @@ const CHART_ADJUST_CONFIG = {
           newChartConfig.fields.y.componentIri = oldValue;
         },
       },
+      segment: ({
+        oldValue,
+        newChartConfig,
+      }: FieldAdjustParams<AreaConfig>) => {
+        newChartConfig.fields.segment = oldValue;
+      },
     },
   },
   scatterplot: {
@@ -394,6 +412,12 @@ const CHART_ADJUST_CONFIG = {
           }
         },
       },
+      segment: ({
+        oldValue,
+        newChartConfig,
+      }: FieldAdjustParams<ScatterPlotConfig>) => {
+        newChartConfig.fields.segment = oldValue;
+      },
     },
   },
   pie: {
@@ -408,6 +432,9 @@ const CHART_ADJUST_CONFIG = {
         }: FieldAdjustParams<PieConfig>) => {
           newChartConfig.fields.y.componentIri = oldValue;
         },
+      },
+      segment: ({ oldValue, newChartConfig }: FieldAdjustParams<PieConfig>) => {
+        newChartConfig.fields.segment = oldValue;
       },
     },
   },
@@ -504,8 +531,9 @@ const mkChartConfigAdjuster = ({
     for (const [k, v] of Object.entries(field)) {
       const newPath = path !== "" ? `${path}.${k}` : k;
 
-      // For filters we can't reach a primitive level as we need to pass the whole object.
-      if (typeof v !== "object" || k === "filters") {
+      // For filters & segments we can't reach a primitive level as we need to
+      // pass the whole object.
+      if (typeof v !== "object" || ["filters", "segment"].includes(k)) {
         const adjustField: (params: FieldAdjustParams<ChartConfig>) => void =
           get(chartAdjustConfig, newPath) ||
           get(chartAdjustConfig, pathOverrides[newPath]);
