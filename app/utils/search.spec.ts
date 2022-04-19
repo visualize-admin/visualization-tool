@@ -60,6 +60,15 @@ describe("search index", () => {
     );
   });
 
+  it("should work with diacritics", () => {
+    expect(searchCubes(index, "Einmalvergütung", cubesByIri).length).toBe(1);
+  });
+
+  it("should work with diacritics", () => {
+    expect(searchCubes(index, "zeitverzögert", cubesByIri).length).toBe(1);
+    expect(searchCubes(index, "öffentlich", cubesByIri).length).toBe(1);
+  });
+
   it("should work with description", () => {
     const cubes = searchCubes(
       index,

@@ -10,6 +10,12 @@ export const smoothPresenceProps = {
   exit: { opacity: 0 },
 };
 
+export const accordionPresenceProps = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0, scaleY: 0 },
+};
+
 export const navPresenceProps = {
   variants: {
     enter: () => ({

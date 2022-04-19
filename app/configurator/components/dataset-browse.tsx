@@ -1,6 +1,6 @@
 import { Maybe } from "@graphql-tools/utils/types";
 import { Plural, t, Trans } from "@lingui/macro";
-import { mapValues, pick, pickBy, sortBy } from "lodash";
+import { mapValues, orderBy, pick, pickBy, sortBy } from "lodash";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
 import { stringify } from "qs";
@@ -13,13 +13,13 @@ import React, {
 } from "react";
 import {
   Box,
+  Button,
   ButtonBase,
   Link as MUILink,
   LinkProps as MUILinkProps,
   Typography,
 } from "@mui/material";
 import Flex, { FlexProps } from "@/components/flex";
-import { AnimatePresence } from "framer-motion";
 import { Checkbox, MiniSelect, SearchField } from "@/components/form";
 import { LoadingDataError, Loading } from "@/components/hint";
 import { Stack } from "@mui/material";
@@ -49,8 +49,11 @@ import {
   smoothPresenceProps,
   MotionBox,
   MotionCard,
+  accordionPresenceProps,
 } from "@/configurator/components/presence";
 import { UseQueryState } from "urql";
+import useDisclosure from "./use-disclosure";
+import { Reorder } from "framer-motion";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -544,7 +547,7 @@ const NavItem = ({
     ) : null;
   return (
     <MotionBox
-      {...smoothPresenceProps}
+      {...accordionPresenceProps}
       sx={{
         mb: 1,
         pl: 4,
@@ -672,6 +675,102 @@ export const NavSectionTitle = ({
   );
 };
 
+const NavSection = ({
+  label,
+  icon,
+  items,
+  theme,
+  navItemTheme,
+  currentFilter,
+  filters,
+  counts,
+  extra,
+}: {
+  label: React.ReactNode;
+  icon: React.ReactNode;
+  items: (DataCubeTheme | DataCubeOrganization)[];
+  theme: { backgroundColor: string; borderColor: string };
+  navItemTheme: typeof themeNavItemTheme;
+  currentFilter?: DataCubeTheme | DataCubeOrganization | null;
+  filters: BrowseFilter[];
+  counts: Record<string, number>;
+  extra?: React.ReactNode;
+}) => {
+  const topItems = useMemo(() => {
+    return sortBy(
+      orderBy(items, (item) => counts[item.iri], "desc").slice(0, 7),
+      (item) => item.label
+    );
+  }, [counts, items]);
+  const { isOpen, open, close } = useDisclosure();
+  return (
+    <div>
+      <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
+        <Box component="span" color="category.main" mr={2}>
+          {icon}
+        </Box>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+          {label}
+        </Typography>
+      </NavSectionTitle>
+      <Reorder.Group
+        axis="y"
+        as="div"
+        onReorder={() => {}}
+        values={isOpen ? items : topItems}
+      >
+        {(isOpen ? items : topItems).map((item) => {
+          return (
+            <Reorder.Item drag={false} value={item} key={item.iri} as="div">
+              <NavItem
+                active={currentFilter === item}
+                filters={filters}
+                next={item}
+                count={counts[item.iri]}
+                theme={navItemTheme}
+              >
+                {item.label}
+              </NavItem>
+            </Reorder.Item>
+          );
+        })}
+        {topItems.length !== items.length ? (
+          <Box textAlign="center">
+            {isOpen ? (
+              <Button
+                variant="text"
+                sx={{
+                  color: navItemTheme.countColor,
+                  "&:hover": { color: navItemTheme.countColor },
+                  fontWeight: "bold",
+                }}
+                color="inherit"
+                onClick={close}
+              >
+                Show less
+              </Button>
+            ) : (
+              <Button
+                variant="text"
+                sx={{
+                  color: navItemTheme.countColor,
+                  "&:hover": { color: navItemTheme.countColor },
+                  fontWeight: "bold",
+                }}
+                color="inherit"
+                onClick={open}
+              >
+                Show all
+              </Button>
+            )}
+          </Box>
+        ) : null}
+      </Reorder.Group>
+      {extra}
+    </div>
+  );
+};
+
 export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
   const locale = useLocale();
   const { filters, search, includeDrafts } = useBrowseContext();
@@ -746,84 +845,46 @@ export const SearchFilters = ({ data }: { data?: DataCubesQuery }) => {
 
   const themeNav =
     displayedThemes && displayedThemes.length > 0 ? (
-      <div>
-        <NavSectionTitle
-          theme={{
-            backgroundColor: "category.light",
-            borderColor: "category.main",
-          }}
-          sx={{ mb: "block" }}
-        >
-          <Box component="span" color="category.main" mr={2}>
-            <SvgIcCategories width={24} height={24} />
-          </Box>
-          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-            <Trans id="browse-panel.themes">Themes</Trans>
-          </Typography>
-        </NavSectionTitle>
-        <Box>
-          {displayedThemes.map((theme) => {
-            return (
-              <NavItem
-                active={themeFilter === theme}
-                filters={filters}
-                key={theme.iri}
-                next={theme}
-                count={counts[theme.iri]}
-                theme={themeNavItemTheme}
-              >
-                {theme.label}
-              </NavItem>
-            );
-          })}
-        </Box>
-      </div>
+      <NavSection
+        items={displayedThemes}
+        theme={{
+          backgroundColor: "category.light",
+          borderColor: "category.main",
+        }}
+        navItemTheme={themeNavItemTheme}
+        currentFilter={themeFilter}
+        counts={counts}
+        filters={filters}
+        icon={<SvgIcCategories width={24} height={24} />}
+        label={<Trans id="browse-panel.themes">Themes</Trans>}
+        extra={null}
+      />
     ) : null;
 
   const orgNav =
     displayedOrgs && displayedOrgs.length > 0 ? (
-      <div>
-        {
-          <NavSectionTitle
-            theme={{
-              backgroundColor: "organization.light",
-              borderColor: "organization.main",
-            }}
-            sx={{ mb: 2 }}
-          >
-            <Box component="span" color="organization.main" mr={2}>
-              <SvgIcOrganisations width={24} height={24} />
-            </Box>
-            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-              <Trans id="browse-panel.organizations">Organizations</Trans>
-            </Typography>
-          </NavSectionTitle>
-        }
-        <AnimatePresence>
-          {displayedOrgs.map((org) => {
-            return (
-              <NavItem
-                key={org.iri}
-                filters={filters}
-                active={orgFilter === org}
-                next={org}
-                count={counts[org.iri]}
-                theme={organizationNavItemTheme}
-              >
-                {org.label}
-              </NavItem>
-            );
-          })}
-
-          {orgFilter && filters[0] === orgFilter ? (
+      <NavSection
+        items={displayedOrgs}
+        theme={{
+          backgroundColor: "organization.light",
+          borderColor: "organization.main",
+        }}
+        navItemTheme={organizationNavItemTheme}
+        currentFilter={orgFilter}
+        counts={counts}
+        filters={filters}
+        icon={<SvgIcOrganisations width={24} height={24} />}
+        label={<Trans id="browse-panel.organizations">Organizations</Trans>}
+        extra={
+          orgFilter && filters[0] === orgFilter ? (
             <Subthemes
               organization={orgFilter}
               filters={filters}
               counts={counts}
             />
-          ) : null}
-        </AnimatePresence>
-      </div>
+          ) : null
+        }
+      />
     ) : null;
   let navs = [themeNav, orgNav];
   if (filters[0]?.__typename === "DataCubeTheme") {
