@@ -38,7 +38,7 @@ import { DataCubeMetadata } from "@/graphql/types";
 import { createChartId } from "@/lib/create-chart-id";
 import { unreachableError } from "@/lib/unreachable";
 import { useLocale } from "@/locales/use-locale";
-import produce from "immer";
+import { current, produce } from "immer";
 import { get, mapValues, pickBy } from "lodash";
 import setWith from "lodash/setWith";
 import { useRouter } from "next/router";
@@ -273,7 +273,7 @@ export const moveFilterField = produce(
   }
 );
 
-const deriveFiltersFromFields = produce(
+export const deriveFiltersFromFields = produce(
   (chartConfig: ChartConfig, { dimensions }: DataCubeMetadata) => {
     const { chartType, fields, filters } = chartConfig;
 
@@ -602,7 +602,7 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const { chartType, dataSetMetadata } = action.value;
 
         draft.chartConfig = getChartConfigAdjustedToChartType({
-          chartConfig: draft.chartConfig,
+          chartConfig: current(draft.chartConfig),
           chartType,
           dimensions: dataSetMetadata.dimensions,
           measures: dataSetMetadata.measures,

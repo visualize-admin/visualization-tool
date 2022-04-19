@@ -1,4 +1,3 @@
-import { current } from "immer";
 import { get, groupBy } from "lodash";
 import {
   AreaConfig,
@@ -285,7 +284,7 @@ const CHART_ADJUST_CONFIG = {
       oldValue,
       newChartConfig,
     }: FieldAdjustParams<ColumnConfig>) => {
-      newChartConfig.filters = current(oldValue);
+      newChartConfig.filters = oldValue;
     },
     fields: {
       x: {
@@ -312,7 +311,7 @@ const CHART_ADJUST_CONFIG = {
   },
   line: {
     filters: ({ oldValue, newChartConfig }: FieldAdjustParams<LineConfig>) => {
-      newChartConfig.filters = current(oldValue);
+      newChartConfig.filters = oldValue;
     },
     fields: {
       x: {
@@ -343,7 +342,7 @@ const CHART_ADJUST_CONFIG = {
   },
   area: {
     filters: ({ oldValue, newChartConfig }: FieldAdjustParams<AreaConfig>) => {
-      newChartConfig.filters = current(oldValue);
+      newChartConfig.filters = oldValue;
     },
     fields: {
       x: {
@@ -377,7 +376,7 @@ const CHART_ADJUST_CONFIG = {
       oldValue,
       newChartConfig,
     }: FieldAdjustParams<ScatterPlotConfig>) => {
-      newChartConfig.filters = current(oldValue);
+      newChartConfig.filters = oldValue;
     },
     fields: {
       // x is not needed, as this is the only chart type with x-axis measures.
@@ -399,7 +398,7 @@ const CHART_ADJUST_CONFIG = {
   },
   pie: {
     filters: ({ oldValue, newChartConfig }: FieldAdjustParams<PieConfig>) => {
-      newChartConfig.filters = current(oldValue);
+      newChartConfig.filters = oldValue;
     },
     fields: {
       y: {
@@ -415,7 +414,7 @@ const CHART_ADJUST_CONFIG = {
   table: {},
   map: {
     filters: ({ oldValue, newChartConfig }: FieldAdjustParams<MapConfig>) => {
-      newChartConfig.filters = current(oldValue);
+      newChartConfig.filters = oldValue;
     },
     fields: {
       areaLayer: {
