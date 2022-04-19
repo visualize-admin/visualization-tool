@@ -32,7 +32,7 @@ export const ChartDataFilters = ({
 
   return (
     <>
-      {dataSet && (
+      {dataSet && componentIris.length > 0 && (
         <Flex sx={{ flexDirection: "column", my: 4 }}>
           <Flex
             sx={{

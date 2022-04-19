@@ -15,7 +15,7 @@ import {
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 
-export type InteractveFilterType = "legend" | "time" | "dataFilters";
+export type InteractiveFilterType = "legend" | "time" | "dataFilters";
 
 export const InteractiveFiltersConfigurator = ({
   state,
@@ -105,7 +105,7 @@ const InteractiveFilterTabField = ({
   icon,
   label,
 }: {
-  value: InteractveFilterType;
+  value: InteractiveFilterType;
   disabled?: boolean;
   icon: string;
   label: ReactNode;

@@ -120,7 +120,7 @@ const useScatterplotState = ({
     const orderedSegmentLabelsAndColors = segments.map((segment) => {
       const dvIri = segmentDimension.values.find(
         (s: $FixMe) => s.label === segment
-      ).value;
+      )?.value;
 
       return {
         label: segment,
