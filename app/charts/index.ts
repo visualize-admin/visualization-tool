@@ -257,7 +257,7 @@ export const getChartConfigAdjustedToChartType = ({
   chartType: ChartType;
   dimensions: DataCubeMetadata["dimensions"];
   measures: DataCubeMetadata["measures"];
-}) => {
+}): ChartConfig => {
   const newChartConfig = getInitialConfig({
     chartType,
     dimensions,
@@ -275,6 +275,161 @@ export const getChartConfigAdjustedToChartType = ({
   adjustChartConfig({ path: "", field: chartConfig });
 
   return newChartConfig;
+};
+
+const INTERACTIVE_FILTERS_ADJUSTORS: {
+  legend: {
+    active: (params: FieldAdjustParams<ChartConfig>) => void;
+    componentIri: (params: FieldAdjustParams<ChartConfig>) => void;
+  };
+  time: {
+    active: (params: FieldAdjustParams<ChartConfig>) => void;
+    componentIri: (params: FieldAdjustParams<ChartConfig>) => void;
+    presets: {
+      type: (params: FieldAdjustParams<ChartConfig>) => void;
+      from: (params: FieldAdjustParams<ChartConfig>) => void;
+      to: (params: FieldAdjustParams<ChartConfig>) => void;
+    };
+  };
+  dataFilters: {
+    active: (params: FieldAdjustParams<ChartConfig>) => void;
+    componentIris: (params: FieldAdjustParams<ChartConfig>) => void;
+  };
+} = {
+  legend: {
+    active: ({ oldValue, newChartConfig }) => {
+      const { interactiveFiltersConfig } = newChartConfig;
+
+      if (interactiveFiltersConfig) {
+        newChartConfig.interactiveFiltersConfig = {
+          ...interactiveFiltersConfig,
+          legend: {
+            ...interactiveFiltersConfig.legend,
+            active: oldValue,
+          },
+        };
+      }
+    },
+    componentIri: ({ oldValue, newChartConfig }) => {
+      const { interactiveFiltersConfig } = newChartConfig;
+
+      if (interactiveFiltersConfig) {
+        newChartConfig.interactiveFiltersConfig = {
+          ...interactiveFiltersConfig,
+          legend: {
+            ...interactiveFiltersConfig.legend,
+            componentIri: oldValue,
+          },
+        };
+      }
+    },
+  },
+  time: {
+    active: ({ oldValue, newChartConfig }) => {
+      const { interactiveFiltersConfig } = newChartConfig;
+
+      if (interactiveFiltersConfig) {
+        newChartConfig.interactiveFiltersConfig = {
+          ...interactiveFiltersConfig,
+          time: {
+            ...interactiveFiltersConfig.time,
+            active: oldValue,
+          },
+        };
+      }
+    },
+    componentIri: ({ oldValue, newChartConfig }) => {
+      const { interactiveFiltersConfig } = newChartConfig;
+
+      if (interactiveFiltersConfig) {
+        newChartConfig.interactiveFiltersConfig = {
+          ...interactiveFiltersConfig,
+          time: {
+            ...interactiveFiltersConfig.time,
+            componentIri: oldValue,
+          },
+        };
+      }
+    },
+    presets: {
+      type: ({ oldValue, newChartConfig }) => {
+        const { interactiveFiltersConfig } = newChartConfig;
+
+        if (interactiveFiltersConfig) {
+          newChartConfig.interactiveFiltersConfig = {
+            ...interactiveFiltersConfig,
+            time: {
+              ...interactiveFiltersConfig.time,
+              presets: {
+                ...interactiveFiltersConfig.time.presets,
+                type: oldValue,
+              },
+            },
+          };
+        }
+      },
+      from: ({ oldValue, newChartConfig }) => {
+        const { interactiveFiltersConfig } = newChartConfig;
+
+        if (interactiveFiltersConfig) {
+          newChartConfig.interactiveFiltersConfig = {
+            ...interactiveFiltersConfig,
+            time: {
+              ...interactiveFiltersConfig.time,
+              presets: {
+                ...interactiveFiltersConfig.time.presets,
+                from: oldValue,
+              },
+            },
+          };
+        }
+      },
+      to: ({ oldValue, newChartConfig }) => {
+        const { interactiveFiltersConfig } = newChartConfig;
+
+        if (interactiveFiltersConfig) {
+          newChartConfig.interactiveFiltersConfig = {
+            ...interactiveFiltersConfig,
+            time: {
+              ...interactiveFiltersConfig.time,
+              presets: {
+                ...interactiveFiltersConfig.time.presets,
+                to: oldValue,
+              },
+            },
+          };
+        }
+      },
+    },
+  },
+  dataFilters: {
+    active: ({ oldValue, newChartConfig }) => {
+      const { interactiveFiltersConfig } = newChartConfig;
+
+      if (interactiveFiltersConfig) {
+        newChartConfig.interactiveFiltersConfig = {
+          ...interactiveFiltersConfig,
+          dataFilters: {
+            ...interactiveFiltersConfig.dataFilters,
+            active: oldValue,
+          },
+        };
+      }
+    },
+    componentIris: ({ oldValue, newChartConfig }) => {
+      const { interactiveFiltersConfig } = newChartConfig;
+
+      if (interactiveFiltersConfig) {
+        newChartConfig.interactiveFiltersConfig = {
+          ...interactiveFiltersConfig,
+          dataFilters: {
+            ...interactiveFiltersConfig.dataFilters,
+            componentIris: oldValue,
+          },
+        };
+      }
+    },
+  },
 };
 
 const CHART_ADJUST_CONFIG = {
@@ -314,6 +469,7 @@ const CHART_ADJUST_CONFIG = {
         newChartConfig.fields.segment = oldValue;
       },
     },
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
   },
   line: {
     filters: ({ oldValue, newChartConfig }: FieldAdjustParams<LineConfig>) => {
@@ -351,6 +507,7 @@ const CHART_ADJUST_CONFIG = {
         newChartConfig.fields.segment = oldValue;
       },
     },
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
   },
   area: {
     filters: ({ oldValue, newChartConfig }: FieldAdjustParams<AreaConfig>) => {
@@ -388,6 +545,7 @@ const CHART_ADJUST_CONFIG = {
         newChartConfig.fields.segment = oldValue;
       },
     },
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
   },
   scatterplot: {
     filters: ({
@@ -419,6 +577,7 @@ const CHART_ADJUST_CONFIG = {
         newChartConfig.fields.segment = oldValue;
       },
     },
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
   },
   pie: {
     filters: ({ oldValue, newChartConfig }: FieldAdjustParams<PieConfig>) => {
@@ -437,6 +596,7 @@ const CHART_ADJUST_CONFIG = {
         newChartConfig.fields.segment = oldValue;
       },
     },
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
   },
   table: {},
   map: {
@@ -468,6 +628,7 @@ const CHART_ADJUST_CONFIG = {
         },
       },
     },
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
   },
 };
 type ChartAdjustConfig = typeof CHART_ADJUST_CONFIG[ChartType];
@@ -533,7 +694,11 @@ const mkChartConfigAdjuster = ({
 
       // For filters & segments we can't reach a primitive level as we need to
       // pass the whole object.
-      if (typeof v !== "object" || ["filters", "segment"].includes(k)) {
+      if (
+        typeof v !== "object" ||
+        ["filters", "segment"].includes(k) ||
+        Array.isArray(v)
+      ) {
         const adjustField: (params: FieldAdjustParams<ChartConfig>) => void =
           get(chartAdjustConfig, newPath) ||
           get(chartAdjustConfig, pathOverrides[newPath]);
