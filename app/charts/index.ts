@@ -238,7 +238,8 @@ export const getInitialConfig = ({
         },
       };
 
-    // This code *should* be unreachable! If it's not, it means we haven't checked all cases (and we should get a TS error).
+    // This code *should* be unreachable! If it's not, it means we haven't checked
+    // all cases (and we should get a TS error).
     default:
       throw unreachableError(chartType);
   }
@@ -261,8 +262,8 @@ export const getChartConfigAdjustedToChartType = ({
     measures,
   });
   const adjustChartConfig = mkChartConfigAdjuster({
-    chartConfigAdjusters: CHART_CONFIGS_ADJUSTERS[chartType],
-    pathOverrides: PATH_OVERRIDES_CONFIG[chartType],
+    adjusters: chartConfigsAdjusters[chartType],
+    pathOverrides: chartConfigsPathOverrides[chartType],
     oldChartConfig: chartConfig,
     newChartConfig,
     dimensions,
@@ -274,7 +275,57 @@ export const getChartConfigAdjustedToChartType = ({
   return newChartConfig;
 };
 
-const INTERACTIVE_FILTERS_ADJUSTERS: InteractiveFiltersAdjusters = {
+const mkChartConfigAdjuster = ({
+  adjusters,
+  pathOverrides,
+  oldChartConfig,
+  newChartConfig,
+  dimensions,
+  measures,
+}: {
+  adjusters: ChartConfigAdjusters;
+  pathOverrides: ChartConfigPathOverrides;
+  oldChartConfig: ChartConfig;
+  newChartConfig: ChartConfig;
+  dimensions: DataCubeMetadata["dimensions"];
+  measures: DataCubeMetadata["measures"];
+}) => {
+  // For filters & segments we can't reach a primitive level as we need to
+  // pass the whole object.
+  const shouldAdjustConfigField = (path: string, configValue: any) =>
+    typeof configValue !== "object" ||
+    Array.isArray(configValue) ||
+    ["filters", "fields.segment", "interactiveFiltersConfig.legend"].includes(
+      path
+    );
+
+  const go = ({ path, field }: { path: string; field: Object }) => {
+    for (const [k, v] of Object.entries(field)) {
+      const newPath = path !== "" ? `${path}.${k}` : k;
+
+      if (v !== undefined) {
+        if (shouldAdjustConfigField(newPath, v)) {
+          const adjustField: FieldAdjuster<ChartConfig, unknown> =
+            get(adjusters, newPath) || get(adjusters, pathOverrides[newPath]);
+
+          adjustField?.({
+            oldValue: v,
+            newChartConfig,
+            oldChartConfig,
+            dimensions,
+            measures,
+          });
+        } else {
+          go({ path: newPath, field: v });
+        }
+      }
+    }
+  };
+
+  return go;
+};
+
+const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
   legend: ({ oldValue, oldChartConfig, newChartConfig }) => {
     const { interactiveFiltersConfig } = newChartConfig;
 
@@ -395,7 +446,7 @@ const INTERACTIVE_FILTERS_ADJUSTERS: InteractiveFiltersAdjusters = {
   },
 };
 
-const CHART_CONFIGS_ADJUSTERS: ChartConfigsAdjusters = {
+const chartConfigsAdjusters: ChartConfigsAdjusters = {
   bar: {},
   column: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -426,7 +477,7 @@ const CHART_CONFIGS_ADJUSTERS: ChartConfigsAdjusters = {
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   line: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -458,7 +509,7 @@ const CHART_CONFIGS_ADJUSTERS: ChartConfigsAdjusters = {
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   area: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -494,7 +545,7 @@ const CHART_CONFIGS_ADJUSTERS: ChartConfigsAdjusters = {
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   scatterplot: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -520,7 +571,7 @@ const CHART_CONFIGS_ADJUSTERS: ChartConfigsAdjusters = {
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   pie: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -544,7 +595,7 @@ const CHART_CONFIGS_ADJUSTERS: ChartConfigsAdjusters = {
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   table: {},
   map: {
@@ -569,13 +620,13 @@ const CHART_CONFIGS_ADJUSTERS: ChartConfigsAdjusters = {
         },
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
+    interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
 };
-type ChartConfigAdjusters = typeof CHART_CONFIGS_ADJUSTERS[ChartType];
+type ChartConfigAdjusters = typeof chartConfigsAdjusters[ChartType];
 
 // Needed to correctly retain chart options when switching to maps (and tables?).
-const PATH_OVERRIDES_CONFIG: {
+const chartConfigsPathOverrides: {
   [chartType in ChartType]: {
     [fieldToOverride: string]: string;
   };
@@ -604,62 +655,9 @@ const PATH_OVERRIDES_CONFIG: {
     "fields.y.componentIri": "fields.areaLayer.measureIri",
   },
 };
-type PathOverrides = typeof PATH_OVERRIDES_CONFIG[ChartType];
+type ChartConfigPathOverrides = typeof chartConfigsPathOverrides[ChartType];
 
-const mkChartConfigAdjuster = ({
-  chartConfigAdjusters,
-  pathOverrides,
-  oldChartConfig,
-  newChartConfig,
-  dimensions,
-  measures,
-}: {
-  chartConfigAdjusters: ChartConfigAdjusters;
-  pathOverrides: PathOverrides;
-  oldChartConfig: ChartConfig;
-  newChartConfig: ChartConfig;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
-}) => {
-  // For filters & segments we can't reach a primitive level as we need to
-  // pass the whole object.
-  const shouldAdjustConfigField = (path: string, configValue: unknown) =>
-    typeof configValue !== "object" ||
-    Array.isArray(configValue) ||
-    ["filters", "fields.segment", "interactiveFiltersConfig.legend"].includes(
-      path
-    );
-
-  const go = ({ path, field }: { path: string; field: Object }) => {
-    for (const [k, v] of Object.entries(field)) {
-      const newPath = path !== "" ? `${path}.${k}` : k;
-
-      if (v !== undefined) {
-        if (shouldAdjustConfigField(newPath, v)) {
-          const adjustField: FieldAdjuster<ChartConfig, unknown> =
-            get(chartConfigAdjusters, newPath) ||
-            get(chartConfigAdjusters, pathOverrides[newPath]);
-
-          adjustField?.({
-            oldValue: v,
-            newChartConfig,
-            oldChartConfig,
-            dimensions,
-            measures,
-          });
-        } else {
-          go({
-            path: newPath,
-            field: v,
-          });
-        }
-      }
-    }
-  };
-
-  return go;
-};
-
+// Helpers
 export const getPossibleChartType = ({
   meta,
 }: {
