@@ -47,3 +47,7 @@ declare module "@deck.gl/react" {
 declare module "@deck.gl/carto" {
   export const BASEMAP: $FixMe;
 }
+
+declare module "@deck.gl/mapbox" {
+  export const MapboxLayer: $FixMe;
+}

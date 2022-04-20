@@ -1,37 +1,63 @@
-import { MapController, WebMercatorViewport } from "@deck.gl/core";
+import { WebMercatorViewport } from "@deck.gl/core";
 import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
-import DeckGL from "@deck.gl/react";
+
+import { MapboxLayer } from "@deck.gl/mapbox";
 import React, {
-  useCallback,
-  useEffect,
   useMemo,
+  useEffect,
   useRef,
   useState,
+  useCallback,
 } from "react";
-import { StaticMap } from "react-map-gl";
+import maplibregl, { LngLatLike, StyleSpecification } from "maplibre-gl";
+
 import { Box, Button } from "@mui/material";
 import { GeoFeature, GeoPoint } from "@/domain/data";
-import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import { convertHexToRgbArray } from "@/charts/shared/colors";
 import { useChartState } from "@/charts/shared/use-chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { getBaseLayerStyle } from "@/charts/map/get-base-layer-style";
+import {
+  emptyStyle,
+  getBaseLayerStyle,
+} from "@/charts/map/get-base-layer-style";
 import { BBox, getBBox } from "@/charts/map/helpers";
-import { MapAttribution } from "@/charts/map/map-attribution";
 import { MapState } from "@/charts/map/map-state";
 import { useMapTooltip } from "@/charts/map/map-tooltip";
+import "maplibre-gl/dist/maplibre-gl.css";
+import Layer from "./layer";
+import ReactMap, { MapRef, ViewState } from "react-map-gl";
+import { Icon, IconName } from "@/icons";
 
-const MAX_ZOOM = 13;
+function getFirstLabelLayerId(style: StyleSpecification) {
+  const layers = style.layers;
+  // Find the index of the first symbol (i.e. label) layer in the map style
+  for (let i = 0; i < layers.length; i++) {
+    if (layers[i].type === "symbol") {
+      return layers[i].id;
+    }
+  }
+  return undefined;
+}
 
-const INITIAL_VIEW_STATE = {
+type MinMaxZoomViewState = Pick<
+  ViewState,
+  "zoom" | "latitude" | "longitude"
+> & {
+  minZoom: number;
+  maxZoom: number;
+  width: number;
+  height: number;
+};
+
+const INITIAL_VIEW_STATE: MinMaxZoomViewState = {
+  minZoom: 1,
+  maxZoom: 13,
   latitude: 46.8182,
   longitude: 8.2275,
   zoom: 5,
-  minZoom: 1,
-  maxZoom: MAX_ZOOM,
-  pitch: 0,
-  bearing: 0,
+  width: 400,
+  height: 400,
 };
 
 /**
@@ -43,7 +69,7 @@ const INITIAL_VIEW_STATE = {
  * @param bbox Bounding box of the feature to be contained
  */
 const constrainZoom = (
-  viewState: $FixMe,
+  viewState: MinMaxZoomViewState,
   bbox: BBox,
   { padding = 24 }: { padding?: number } = {}
 ) => {
@@ -76,9 +102,7 @@ const constrainZoom = (
 
     return {
       ...viewState,
-      transitionDuration: 0,
-      transitionInterpolator: null,
-      zoom: Math.min(MAX_ZOOM, Math.max(zoom, fitted.zoom)),
+      zoom: Math.min(viewState.maxZoom, Math.max(zoom, fitted.zoom)),
       longitude: p[0],
       latitude: p[1],
     };
@@ -86,6 +110,9 @@ const constrainZoom = (
     return viewState;
   }
 };
+
+let globalGeoJsonLayerId = 0;
+let globalScatterplotLayerId = 0;
 
 export const MapComponent = () => {
   const {
@@ -101,16 +128,15 @@ export const MapComponent = () => {
   const [, setMapTooltipType] = useMapTooltip();
 
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
-
   const onViewStateChange = useCallback(
-    ({ viewState }) => setViewState(viewState),
+    ({ viewState }: { viewState: ViewState }) =>
+      setViewState((oldVs) => ({ ...oldVs, ...viewState })),
     []
   );
 
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const hasSetInitialZoom = useRef<boolean>();
 
-  const setInitialZoom = useCallback(() => {
+  useEffect(() => {
     if (hasSetInitialZoom.current) {
       return;
     }
@@ -132,35 +158,30 @@ export const MapComponent = () => {
     symbolLayer,
   ]);
 
-  useEffect(() => {
-    if (!isMapLoaded) {
+  const mapNodeRef = useRef<MapRef | null>(null);
+  const handleRefNode = (mapRef: MapRef) => {
+    if (!mapRef) {
       return;
     }
-
-    setInitialZoom();
-  }, [isMapLoaded, setInitialZoom]);
-
-  const onResize = useCallback(
-    ({ width, height }) => {
-      setViewState((viewState) => ({ ...viewState, width, height }));
-    },
-    [setViewState]
-  );
+    mapNodeRef.current = mapRef;
+  };
 
   const zoomIn = () => {
     const newViewState = {
-      ...viewState,
+      center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.min(viewState.zoom + 1, viewState.maxZoom),
+      duration: 500,
     };
-    setViewState(newViewState);
+    mapNodeRef.current?.flyTo(newViewState);
   };
 
   const zoomOut = () => {
     const newViewState = {
-      ...viewState,
+      center: [viewState.longitude, viewState.latitude] as LngLatLike,
       zoom: Math.max(viewState.zoom - 1, viewState.minZoom),
+      duration: 500,
     };
-    setViewState(newViewState);
+    mapNodeRef.current?.flyTo(newViewState);
   };
 
   const symbolColorRgbArray = useMemo(
@@ -168,23 +189,163 @@ export const MapComponent = () => {
     [symbolLayer.color]
   );
 
-  const shapes = useMemo(
-    () => ({
+  const baseLayerStyle = useMemo(() => getBaseLayerStyle({ locale }), [locale]);
+  const firstLayerLabelId = useMemo(
+    () => getFirstLabelLayerId(baseLayerStyle),
+    [baseLayerStyle]
+  );
+  const mapStyle = showBaseLayer ? baseLayerStyle : emptyStyle;
+
+  const featuresLoaded =
+    features.areaLayer !== undefined || features.symbolLayer !== undefined;
+
+  // const compactMapAttribution = deckRef.current?.deck.width < 600;
+
+  const geoJsonLayerId = useMemo(() => {
+    return globalGeoJsonLayerId++;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [areaLayer.getValue, areaLayer.getColor, mapStyle]);
+  const geoJsonLayer = useMemo(() => {
+    if (!areaLayer.show) {
+      return;
+    }
+    const shapes = {
       ...features.areaLayer?.shapes,
       features: features.areaLayer?.shapes?.features.filter(
         ({ properties: { hierarchyLevel } }: GeoFeature) =>
           hierarchyLevel === areaLayer.hierarchyLevel
       ),
-    }),
-    [areaLayer.hierarchyLevel, features.areaLayer?.shapes]
-  );
+    };
+    const geoJsonLayer = new MapboxLayer({
+      type: GeoJsonLayer,
+      id: "shapes" + geoJsonLayerId,
+      data: shapes,
+      pickable: true,
+      autoHighlight: true,
+      stroked: false,
+      filled: true,
+      extruded: false,
+      onHover: ({
+        x,
+        y,
+        object,
+      }: {
+        x: number;
+        y: number;
+        object: GeoFeature;
+      }) => {
+        if (object) {
+          setMapTooltipType("area");
+          dispatchInteraction({
+            type: "INTERACTION_UPDATE",
+            value: {
+              interaction: {
+                visible: true,
+                mouse: { x, y },
+                d: object.properties.observation,
+              },
+            },
+          });
+        } else {
+          dispatchInteraction({
+            type: "INTERACTION_HIDE",
+          });
+        }
+      },
+      getFillColor: (d: GeoFeature) => {
+        const { observation } = d.properties;
 
-  const baseLayerStyle = useMemo(() => getBaseLayerStyle({ locale }), [locale]);
-  const featuresLoaded =
-    features.areaLayer !== undefined || features.symbolLayer !== undefined;
+        if (observation) {
+          const value = areaLayer.getValue(observation);
 
-  const deckRef = useRef<any>();
-  const compactMapAttribution = deckRef.current?.deck.width < 600;
+          if (value !== null) {
+            return areaLayer.getColor(value);
+          }
+        }
+
+        return [222, 222, 222, 255];
+      },
+    });
+    return geoJsonLayer;
+  }, [
+    areaLayer,
+    dispatchInteraction,
+    features.areaLayer?.shapes,
+    setMapTooltipType,
+    geoJsonLayerId,
+  ]);
+
+  const scatterplotLayerId = useMemo(() => {
+    return globalScatterplotLayerId++;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    symbolLayer.data,
+    symbolLayer.getValue,
+    symbolLayer.radiusScale,
+    mapStyle,
+  ]);
+  const scatterplotLayer = useMemo(() => {
+    if (!symbolLayer.show) {
+      return;
+    }
+    return new MapboxLayer({
+      type: ScatterplotLayer,
+      id: "scatterplot" + scatterplotLayerId,
+      data: features.symbolLayer?.points,
+      pickable: identicalLayerComponentIris ? !areaLayer.show : true,
+      autoHighlight: true,
+      opacity: 0.7,
+      stroked: false,
+      filled: true,
+      radiusUnits: "pixels",
+      radiusMinPixels: symbolLayer.radiusScale.range()[0],
+      radiusMaxPixels: symbolLayer.radiusScale.range()[1],
+      lineWidthMinPixels: 1,
+      getPosition: ({ coordinates }: GeoPoint) => coordinates,
+      getRadius: ({ properties: { observation } }: GeoPoint) =>
+        observation
+          ? symbolLayer.radiusScale(symbolLayer.getValue(observation) as number)
+          : 0,
+      getFillColor: symbolColorRgbArray,
+      getLineColor: [255, 255, 255],
+      onHover: ({
+        x,
+        y,
+        object,
+      }: {
+        x: number;
+        y: number;
+        object: GeoPoint;
+      }) => {
+        if (object) {
+          setMapTooltipType("symbol");
+          dispatchInteraction({
+            type: "INTERACTION_UPDATE",
+            value: {
+              interaction: {
+                visible: true,
+                mouse: { x, y },
+                d: object.properties.observation,
+              },
+            },
+          });
+        } else {
+          dispatchInteraction({
+            type: "INTERACTION_HIDE",
+          });
+        }
+      },
+    });
+  }, [
+    areaLayer.show,
+    dispatchInteraction,
+    features.symbolLayer?.points,
+    identicalLayerComponentIris,
+    scatterplotLayerId,
+    setMapTooltipType,
+    symbolColorRgbArray,
+    symbolLayer,
+  ]);
 
   return (
     <Box>
@@ -203,150 +364,38 @@ export const MapComponent = () => {
       </Box>
       {featuresLoaded && (
         <>
-          <DeckGL
-            ref={deckRef}
-            viewState={viewState}
-            onViewStateChange={onViewStateChange}
-            onResize={onResize}
-            onLoad={() => setIsMapLoaded(true)}
-            controller={{ type: MapController }}
-            getCursor={() => "default"}
+          <ReactMap
+            /* @ts-ignore */
+            mapStyle={mapStyle}
+            mapLib={maplibregl}
+            style={{
+              left: 0,
+              top: 0,
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+            }}
+            {...viewState}
+            onMove={onViewStateChange}
+            ref={handleRefNode}
           >
-            {showBaseLayer && (
-              <StaticMap mapStyle={baseLayerStyle} attributionControl={false} />
-            )}
-
-            {areaLayer.show && (
-              <>
-                <GeoJsonLayer
-                  id="shapes"
-                  data={shapes}
-                  pickable={true}
-                  autoHighlight={true}
-                  stroked={false}
-                  filled={true}
-                  extruded={false}
-                  onHover={({
-                    x,
-                    y,
-                    object,
-                  }: {
-                    x: number;
-                    y: number;
-                    object: GeoFeature;
-                  }) => {
-                    if (object) {
-                      setMapTooltipType("area");
-                      dispatchInteraction({
-                        type: "INTERACTION_UPDATE",
-                        value: {
-                          interaction: {
-                            visible: true,
-                            mouse: { x, y },
-                            d: object.properties.observation,
-                          },
-                        },
-                      });
-                    } else {
-                      dispatchInteraction({
-                        type: "INTERACTION_HIDE",
-                      });
-                    }
-                  }}
-                  updateTriggers={{
-                    getFillColor: [areaLayer.getValue, areaLayer.getColor],
-                  }}
-                  getFillColor={(d: GeoFeature) => {
-                    const { observation } = d.properties;
-
-                    if (observation) {
-                      const value = areaLayer.getValue(observation);
-
-                      if (value !== null) {
-                        return areaLayer.getColor(value);
-                      }
-                    }
-
-                    return [222, 222, 222, 255];
-                  }}
-                />
-                <GeoJsonLayer
-                  id="shapes-mesh"
-                  data={features.areaLayer?.mesh}
-                  pickable={false}
-                  stroked={true}
-                  filled={false}
-                  extruded={false}
-                  lineWidthMinPixels={1}
-                  lineWidthMaxPixels={2}
-                  getLineWidth={100}
-                  lineMiterLimit={1}
-                  getLineColor={[255, 255, 255]}
-                />
-              </>
-            )}
-
-            {symbolLayer.show && (
-              <ScatterplotLayer
-                id="symbols"
-                data={features.symbolLayer?.points}
-                pickable={identicalLayerComponentIris ? !areaLayer.show : true}
-                autoHighlight={true}
-                opacity={0.7}
-                stroked={false}
-                filled={true}
-                radiusUnits={"pixels"}
-                radiusMinPixels={symbolLayer.radiusScale.range()[0]}
-                radiusMaxPixels={symbolLayer.radiusScale.range()[1]}
-                lineWidthMinPixels={1}
-                getPosition={({ coordinates }: GeoPoint) => coordinates}
-                getRadius={({ properties: { observation } }: GeoPoint) =>
-                  observation
-                    ? symbolLayer.radiusScale(
-                        symbolLayer.getValue(observation) as number
-                      )
-                    : 0
-                }
-                getFillColor={symbolColorRgbArray}
-                getLineColor={[255, 255, 255]}
-                onHover={({
-                  x,
-                  y,
-                  object,
-                }: {
-                  x: number;
-                  y: number;
-                  object: GeoPoint;
-                }) => {
-                  if (object) {
-                    setMapTooltipType("symbol");
-                    dispatchInteraction({
-                      type: "INTERACTION_UPDATE",
-                      value: {
-                        interaction: {
-                          visible: true,
-                          mouse: { x, y },
-                          d: object.properties.observation,
-                        },
-                      },
-                    });
-                  } else {
-                    dispatchInteraction({
-                      type: "INTERACTION_HIDE",
-                    });
-                  }
-                }}
-                updateTriggers={{
-                  getRadius: [
-                    symbolLayer.data,
-                    symbolLayer.getValue,
-                    symbolLayer.radiusScale,
-                  ],
-                }}
+            {areaLayer.show ? (
+              <Layer
+                key={geoJsonLayer.id}
+                layer={geoJsonLayer}
+                beforeId={mapStyle === emptyStyle ? undefined : "water_polygon"}
               />
-            )}
-          </DeckGL>
-          <MapAttribution compact={compactMapAttribution} />
+            ) : null}
+            {symbolLayer.show ? (
+              <Layer
+                key={scatterplotLayer.id}
+                layer={scatterplotLayer}
+                beforeId={
+                  mapStyle === emptyStyle ? undefined : firstLayerLabelId
+                }
+              />
+            ) : null}
+          </ReactMap>
         </>
       )}
     </Box>
@@ -361,11 +410,11 @@ const ZoomButton = ({
   handleClick: () => void;
 }) => (
   <Button
-    variant="text"
+    variant="contained"
     sx={{
       width: 32,
       height: 32,
-      borderRadius: 1,
+      borderRadius: 4,
       border: "1px solid",
       borderColor: "grey.500",
       color: "grey.700",
@@ -378,6 +427,9 @@ const ZoomButton = ({
         borderBottomRightRadius: 0,
         borderBottomLeftRadius: 0,
         borderBottom: 0,
+      },
+      "&:hover": {
+        backgroundColor: "grey.200",
       },
       "&:last-of-type": {
         borderTopRightRadius: 0,

@@ -1,7 +1,27 @@
 import { keyBy } from "lodash";
 import merge from "lodash/merge";
+import { MapOptions, StyleSpecification } from "maplibre-gl";
 import { BASE_VECTOR_TILE_URL } from "../../domain/env";
 import { Locale } from "../../locales/locales";
+
+export const emptyStyle = {
+  version: 8,
+  name: "Empty",
+  metadata: {
+    "mapbox:autocomposite": true,
+  },
+  sources: {},
+  glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+  layers: [
+    {
+      id: "background",
+      type: "background",
+      paint: {
+        "background-color": "rgba(0,0,0,0)",
+      },
+    },
+  ],
+} as MapOptions["style"];
 
 const baseStyle = {
   version: 8,
@@ -9720,7 +9740,7 @@ export const getBaseLayerStyle = (props: Props) => {
   };
   const countryTextColor = "rgba(0, 0, 0, 0.9)";
   const textOpacity = 1;
-  const textLayersVisibility = "none";
+  const textLayersVisibility = "visible";
   const style = {
     ...baseStyle,
     layers: mergeLayers(baseStyle.layers, [
@@ -10273,10 +10293,10 @@ export const getBaseLayerStyle = (props: Props) => {
         },
         layout: {
           "text-field": `{${languageTag}}`,
-          visibility: textLayersVisibility,
+          visibility: "none",
         },
       },
     ]),
   };
-  return style;
+  return style as StyleSpecification;
 };
