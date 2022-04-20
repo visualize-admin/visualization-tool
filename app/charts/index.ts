@@ -1,15 +1,12 @@
 import { get, groupBy } from "lodash";
 import {
-  AreaConfig,
   ChartConfig,
+  ChartConfigsAdjusters,
   ChartType,
-  ColumnConfig,
+  FieldAdjuster,
   GenericFields,
+  InteractiveFiltersAdjusters,
   InteractiveFiltersConfig,
-  LineConfig,
-  MapConfig,
-  PieConfig,
-  ScatterPlotConfig,
   TableColumn,
 } from "../configurator";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
@@ -264,7 +261,7 @@ export const getChartConfigAdjustedToChartType = ({
     measures,
   });
   const adjustChartConfig = mkChartConfigAdjuster({
-    chartAdjustConfig: CHART_ADJUST_CONFIG[chartType],
+    chartConfigAdjusters: CHART_CONFIGS_ADJUSTERS[chartType],
     pathOverrides: PATH_OVERRIDES_CONFIG[chartType],
     oldChartConfig: chartConfig,
     newChartConfig,
@@ -277,23 +274,7 @@ export const getChartConfigAdjustedToChartType = ({
   return newChartConfig;
 };
 
-type InteractiveFiltersAdjusters = {
-  legend: (params: FieldAdjustParams<ChartConfig>) => void;
-  time: {
-    active: (params: FieldAdjustParams<ChartConfig>) => void;
-    componentIri: (params: FieldAdjustParams<ChartConfig>) => void;
-    presets: {
-      type: (params: FieldAdjustParams<ChartConfig>) => void;
-      from: (params: FieldAdjustParams<ChartConfig>) => void;
-      to: (params: FieldAdjustParams<ChartConfig>) => void;
-    };
-  };
-  dataFilters: {
-    active: (params: FieldAdjustParams<ChartConfig>) => void;
-    componentIris: (params: FieldAdjustParams<ChartConfig>) => void;
-  };
-};
-const INTERACTIVE_FILTERS_ADJUSTORS: InteractiveFiltersAdjusters = {
+const INTERACTIVE_FILTERS_ADJUSTERS: InteractiveFiltersAdjusters = {
   legend: ({ oldValue, oldChartConfig, newChartConfig }) => {
     const { interactiveFiltersConfig } = newChartConfig;
 
@@ -414,49 +395,7 @@ const INTERACTIVE_FILTERS_ADJUSTORS: InteractiveFiltersAdjusters = {
   },
 };
 
-type BaseChartAdjustConfig<ChartConfigType> = {
-  filters: FieldAdjuster<ChartConfigType>;
-  interactiveFiltersConfig: InteractiveFiltersAdjusters;
-};
-
-type TemporalChartAdjustConfig<
-  ChartConfigType = ColumnConfig | LineConfig | AreaConfig
-> = BaseChartAdjustConfig<ChartConfigType> & {
-  fields: {
-    x: { componentIri: FieldAdjuster<ChartConfigType> };
-    y: { componentIri: FieldAdjuster<ChartConfigType> };
-    segment: FieldAdjuster<ChartConfigType>;
-  };
-};
-
-type NonTemporalChartAdjustConfig<
-  ChartConfigType = PieConfig | ScatterPlotConfig
-> = BaseChartAdjustConfig<ChartConfigType> & {
-  fields: {
-    y: { componentIri: FieldAdjuster<ChartConfigType> };
-    segment: FieldAdjuster<ChartConfigType>;
-  };
-};
-
-type MapChartAdjustConfig = BaseChartAdjustConfig<MapConfig> & {
-  fields: {
-    areaLayer: {
-      componentIri: FieldAdjuster<MapConfig>;
-      measureIri: FieldAdjuster<MapConfig>;
-    };
-  };
-};
-
-const CHART_ADJUST_CONFIG: {
-  bar: {};
-  column: TemporalChartAdjustConfig<ColumnConfig>;
-  line: TemporalChartAdjustConfig<LineConfig>;
-  area: TemporalChartAdjustConfig<AreaConfig>;
-  scatterplot: NonTemporalChartAdjustConfig<ScatterPlotConfig>;
-  pie: NonTemporalChartAdjustConfig<PieConfig>;
-  table: {};
-  map: MapChartAdjustConfig;
-} = {
+const CHART_CONFIGS_ADJUSTERS: ChartConfigsAdjusters = {
   bar: {},
   column: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -476,21 +415,18 @@ const CHART_ADJUST_CONFIG: {
           newChartConfig.fields.y.componentIri = oldValue;
         },
       },
-      segment: ({
-        oldValue,
-        newChartConfig,
-      }: FieldAdjustParams<ColumnConfig>) => {
+      segment: ({ oldValue, newChartConfig }) => {
         newChartConfig.fields.segment = {
-          ...oldValue,
+          ...oldValue!,
           type: "stacked",
-          sorting: oldValue.sorting || {
+          sorting: oldValue!.sorting || {
             sortingOrder: "asc",
             sortingType: "byDimensionLabel",
           },
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
   },
   line: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -516,13 +452,13 @@ const CHART_ADJUST_CONFIG: {
       },
       segment: ({ oldValue, newChartConfig }) => {
         newChartConfig.fields.segment = {
-          componentIri: oldValue.componentIri,
-          palette: oldValue.palette,
-          colorMapping: oldValue.colorMapping,
+          componentIri: oldValue!.componentIri,
+          palette: oldValue!.palette,
+          colorMapping: oldValue!.colorMapping,
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
   },
   area: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -548,17 +484,17 @@ const CHART_ADJUST_CONFIG: {
       },
       segment: ({ oldValue, newChartConfig }) => {
         newChartConfig.fields.segment = {
-          componentIri: oldValue.componentIri,
-          palette: oldValue.palette,
-          colorMapping: oldValue.colorMapping,
-          sorting: oldValue.sorting || {
+          componentIri: oldValue!.componentIri,
+          palette: oldValue!.palette,
+          colorMapping: oldValue!.colorMapping,
+          sorting: oldValue!.sorting || {
             sortingOrder: "asc",
             sortingType: "byDimensionLabel",
           },
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
   },
   scatterplot: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -578,13 +514,13 @@ const CHART_ADJUST_CONFIG: {
       },
       segment: ({ oldValue, newChartConfig }) => {
         newChartConfig.fields.segment = {
-          componentIri: oldValue.componentIri,
-          palette: oldValue.palette,
-          colorMapping: oldValue.colorMapping,
+          componentIri: oldValue!.componentIri,
+          palette: oldValue!.palette,
+          colorMapping: oldValue!.colorMapping,
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
   },
   pie: {
     filters: ({ oldValue, newChartConfig }) => {
@@ -608,7 +544,7 @@ const CHART_ADJUST_CONFIG: {
         };
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
   },
   table: {},
   map: {
@@ -633,20 +569,10 @@ const CHART_ADJUST_CONFIG: {
         },
       },
     },
-    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
+    interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTERS,
   },
 };
-type FieldAdjustParams<NewChartConfigType> = {
-  oldValue: any;
-  oldChartConfig: ChartConfig;
-  newChartConfig: NewChartConfigType;
-  dimensions: DataCubeMetadata["dimensions"];
-  measures: DataCubeMetadata["measures"];
-};
-type FieldAdjuster<NewChartConfigType> = (
-  params: FieldAdjustParams<NewChartConfigType>
-) => void;
-type ChartAdjustConfig = typeof CHART_ADJUST_CONFIG[ChartType];
+type ChartConfigAdjusters = typeof CHART_CONFIGS_ADJUSTERS[ChartType];
 
 // Needed to correctly retain chart options when switching to maps (and tables?).
 const PATH_OVERRIDES_CONFIG: {
@@ -681,14 +607,14 @@ const PATH_OVERRIDES_CONFIG: {
 type PathOverrides = typeof PATH_OVERRIDES_CONFIG[ChartType];
 
 const mkChartConfigAdjuster = ({
-  chartAdjustConfig,
+  chartConfigAdjusters,
   pathOverrides,
   oldChartConfig,
   newChartConfig,
   dimensions,
   measures,
 }: {
-  chartAdjustConfig: ChartAdjustConfig;
+  chartConfigAdjusters: ChartConfigAdjusters;
   pathOverrides: PathOverrides;
   oldChartConfig: ChartConfig;
   newChartConfig: ChartConfig;
@@ -710,9 +636,10 @@ const mkChartConfigAdjuster = ({
 
       if (v !== undefined) {
         if (shouldAdjustConfigField(newPath, v)) {
-          const adjustField: (params: FieldAdjustParams<ChartConfig>) => void =
-            get(chartAdjustConfig, newPath) ||
-            get(chartAdjustConfig, pathOverrides[newPath]);
+          const adjustField: FieldAdjuster<ChartConfig, unknown> =
+            get(chartConfigAdjusters, newPath) ||
+            get(chartConfigAdjusters, pathOverrides[newPath]);
+
           adjustField?.({
             oldValue: v,
             newChartConfig,

@@ -1,4 +1,5 @@
 /* eslint-disable no-redeclare */
+import { DataCubeMetadata } from "@/graphql/types";
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
@@ -310,9 +311,6 @@ const ScatterPlotFields = t.intersection([
       t.partial({
         colorMapping: ColorMapping,
       }),
-      // t.partial({
-      //   interactiveFilterPresets: t.record(t.string, t.string),
-      // }),
     ]),
   }),
 ]);
@@ -628,6 +626,101 @@ export const isSegmentInConfig = (
   | PieConfig
   | TableConfig => {
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
+};
+
+// Chart Config Adjusters
+export type FieldAdjuster<
+  NewChartConfigType extends ChartConfig,
+  OldValueType extends unknown
+> = (params: {
+  oldValue: OldValueType;
+  oldChartConfig: ChartConfig;
+  newChartConfig: NewChartConfigType;
+  dimensions: DataCubeMetadata["dimensions"];
+  measures: DataCubeMetadata["measures"];
+}) => void;
+
+export type InteractiveFiltersAdjusters = {
+  legend: FieldAdjuster<ChartConfig, InteractiveFiltersLegend>;
+  time: {
+    active: FieldAdjuster<ChartConfig, boolean>;
+    componentIri: FieldAdjuster<ChartConfig, string>;
+    presets: {
+      type: FieldAdjuster<ChartConfig, "range">;
+      from: FieldAdjuster<ChartConfig, string>;
+      to: FieldAdjuster<ChartConfig, string>;
+    };
+  };
+  dataFilters: {
+    active: FieldAdjuster<ChartConfig, boolean>;
+    componentIris: FieldAdjuster<ChartConfig, string[]>;
+  };
+};
+
+type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
+  filters: FieldAdjuster<NewChartConfigType, Filters>;
+  interactiveFiltersConfig: InteractiveFiltersAdjusters;
+};
+
+type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<ColumnConfig, string> };
+    y: { componentIri: FieldAdjuster<ColumnConfig, string> };
+    segment: FieldAdjuster<ColumnConfig, ColumnConfig["fields"]["segment"]>;
+  };
+};
+
+type LineAdjusters = BaseAdjusters<LineConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<LineConfig, string> };
+    y: { componentIri: FieldAdjuster<LineConfig, string> };
+    segment: FieldAdjuster<LineConfig, LineConfig["fields"]["segment"]>;
+  };
+};
+
+type AreaAdjusters = BaseAdjusters<AreaConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<AreaConfig, string> };
+    y: { componentIri: FieldAdjuster<AreaConfig, string> };
+    segment: FieldAdjuster<AreaConfig, AreaConfig["fields"]["segment"]>;
+  };
+};
+
+type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
+    fields: {
+      y: { componentIri: FieldAdjuster<ScatterPlotConfig, string> };
+      segment: FieldAdjuster<
+        ScatterPlotConfig,
+        ScatterPlotConfig["fields"]["segment"]
+      >;
+    };
+  };
+
+type PieAdjusters = BaseAdjusters<PieConfig> & {
+  fields: {
+    y: { componentIri: FieldAdjuster<PieConfig, string> };
+    segment: FieldAdjuster<PieConfig, PieConfig["fields"]["segment"]>;
+  };
+};
+
+type MapAdjusters = BaseAdjusters<MapConfig> & {
+  fields: {
+    areaLayer: {
+      componentIri: FieldAdjuster<MapConfig, string>;
+      measureIri: FieldAdjuster<MapConfig, string>;
+    };
+  };
+};
+
+export type ChartConfigsAdjusters = {
+  bar: {};
+  column: ColumnAdjusters;
+  line: LineAdjusters;
+  area: AreaAdjusters;
+  scatterplot: ScatterPlotAdjusters;
+  pie: PieAdjusters;
+  table: {};
+  map: MapAdjusters;
 };
 
 const Config = t.type(
