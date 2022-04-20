@@ -36,7 +36,7 @@ export const enabledChartTypes: ChartType[] = [
  * @param dimensions
  * @param preferredType
  */
-const findPreferredDimension = (
+export const findPreferredDimension = (
   dimensions: DataCubeMetadata["dimensions"],
   preferredType?: DimensionMetaDataFragment["__typename"]
 ) => {

@@ -1,18 +1,35 @@
 import * as api from "@/api";
+import {
+  findPreferredDimension,
+  getChartConfigAdjustedToChartType,
+} from "@/charts";
 import { ChartConfig } from "@/configurator";
 import {
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
+  deriveFiltersFromFields,
   getLocalStorageKey,
   initChartStateFromChart,
   initChartStateFromCube,
   initChartStateFromLocalStorage,
   moveFilterField,
 } from "@/configurator/configurator-state";
+import { getGeoShapesDimensions } from "@/domain/data";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
 import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
+import covid19Metadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-covid19.json";
+import covid19ChartConfig from "@/test/__fixtures/dev/chartConfig-column-covid19.json";
 import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
 import { Client } from "@urql/core";
+import { createDraft, current } from "immer";
+import {
+  ChartType,
+  ColumnConfig,
+  LineConfig,
+  MapConfig,
+  PieConfig,
+} from "./config-types";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -360,5 +377,87 @@ describe("moveField", () => {
       { type: "single", value: "penguins" },
       { type: "single", value: "2020.11.20" },
     ]);
+  });
+});
+
+describe("retainChartConfigWhenSwitchingChartType", () => {
+  const dataSetMetadata = covid19Metadata.data
+    .dataCubeByIri as DataCubeMetadata;
+  let oldConfig: ChartConfig;
+  let newConfig: ChartConfig;
+
+  const deriveNewChartConfig = (
+    oldConfig: ChartConfig,
+    newChartType: ChartType
+  ) => {
+    const newConfig = createDraft(
+      getChartConfigAdjustedToChartType({
+        chartConfig: oldConfig,
+        chartType: newChartType,
+        dimensions: dataSetMetadata.dimensions,
+        measures: dataSetMetadata.measures,
+      })
+    );
+    deriveFiltersFromFields(newConfig, dataSetMetadata);
+
+    return current(newConfig);
+  };
+
+  it("should retain appropriate chart config fields and discard the others", () => {
+    oldConfig = covid19ChartConfig as ColumnConfig;
+    newConfig = deriveNewChartConfig(oldConfig, "pie") as PieConfig;
+
+    // It should retain Y component iri between column and pie chart.
+    expect(newConfig.fields.y.componentIri).toEqual(
+      oldConfig.fields.y.componentIri
+    );
+
+    oldConfig = newConfig;
+    newConfig = deriveNewChartConfig(oldConfig, "column") as ColumnConfig;
+
+    // It should retain segment component iri when switching between charts
+    // that use segment field.
+    expect(newConfig.fields.segment?.componentIri).toEqual(
+      oldConfig.fields.segment.componentIri
+    );
+
+    oldConfig = newConfig;
+    newConfig = deriveNewChartConfig(oldConfig, "map") as MapConfig;
+
+    const expectedMapXComponentIri = getGeoShapesDimensions(
+      dataSetMetadata.dimensions
+    )[0].iri;
+
+    // It should not retain TemporalDimension on the X axis when switching to a
+    // map chart.
+    expect(newConfig.fields.areaLayer.componentIri).toEqual(
+      expectedMapXComponentIri
+    );
+    expect(newConfig.fields.areaLayer.componentIri).not.toEqual(
+      oldConfig.fields.x.componentIri
+    );
+
+    oldConfig = newConfig;
+    newConfig = deriveNewChartConfig(oldConfig, "column") as ColumnConfig;
+
+    // It should retain GeoShapeDimension on the X axis for a column chart.
+    expect(newConfig.fields.x.componentIri).toEqual(
+      oldConfig.fields.areaLayer.componentIri
+    );
+
+    oldConfig = newConfig;
+    newConfig = deriveNewChartConfig(oldConfig, "line") as LineConfig;
+
+    const expectedLineXComponentIri = findPreferredDimension(
+      dataSetMetadata.dimensions,
+      "TemporalDimension"
+    ).iri;
+
+    // It should not retain GeoShapesDimension on the X axis when switching to
+    // a line chart.
+    expect(newConfig.fields.x.componentIri).toEqual(expectedLineXComponentIri);
+    expect(newConfig.fields.x.componentIri).not.toEqual(
+      oldConfig.fields.x.componentIri
+    );
   });
 });
