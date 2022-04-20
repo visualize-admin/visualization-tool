@@ -538,6 +538,7 @@ const ChartFields = ({
       {chartConfigOptionsUISpec[chartType].encodings.map((encoding) => {
         return isMapConfig(chartConfig) && encoding.field === "baseLayer" ? (
           <OnOffControlTabField
+            key={encoding.field}
             value={encoding.field}
             icon="baseLayer"
             label={<Trans id="chart.map.layers.base">Base Layer</Trans>}
