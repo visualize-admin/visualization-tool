@@ -480,7 +480,14 @@ const CHART_ADJUST_CONFIG: {
         oldValue,
         newChartConfig,
       }: FieldAdjustParams<ColumnConfig>) => {
-        newChartConfig.fields.segment = oldValue;
+        newChartConfig.fields.segment = {
+          ...oldValue,
+          type: "stacked",
+          sorting: oldValue.sorting || {
+            sortingOrder: "asc",
+            sortingType: "byDimensionLabel",
+          },
+        };
       },
     },
     interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
@@ -508,7 +515,11 @@ const CHART_ADJUST_CONFIG: {
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = oldValue;
+        newChartConfig.fields.segment = {
+          componentIri: oldValue.componentIri,
+          palette: oldValue.palette,
+          colorMapping: oldValue.colorMapping,
+        };
       },
     },
     interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
@@ -536,7 +547,15 @@ const CHART_ADJUST_CONFIG: {
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = oldValue;
+        newChartConfig.fields.segment = {
+          componentIri: oldValue.componentIri,
+          palette: oldValue.palette,
+          colorMapping: oldValue.colorMapping,
+          sorting: oldValue.sorting || {
+            sortingOrder: "asc",
+            sortingType: "byDimensionLabel",
+          },
+        };
       },
     },
     interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
@@ -558,7 +577,11 @@ const CHART_ADJUST_CONFIG: {
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = oldValue;
+        newChartConfig.fields.segment = {
+          componentIri: oldValue.componentIri,
+          palette: oldValue.palette,
+          colorMapping: oldValue.colorMapping,
+        };
       },
     },
     interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
@@ -574,7 +597,15 @@ const CHART_ADJUST_CONFIG: {
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = oldValue;
+        newChartConfig.fields.segment = {
+          componentIri: oldValue.componentIri,
+          palette: oldValue.palette,
+          colorMapping: oldValue.colorMapping,
+          sorting: oldValue.sorting || {
+            sortingOrder: "asc",
+            sortingType: "byDimensionLabel",
+          },
+        };
       },
     },
     interactiveFiltersConfig: INTERACTIVE_FILTERS_ADJUSTORS,
