@@ -278,10 +278,7 @@ export const getChartConfigAdjustedToChartType = ({
 };
 
 type InteractiveFiltersAdjusters = {
-  legend: {
-    active: (params: FieldAdjustParams<ChartConfig>) => void;
-    componentIri: (params: FieldAdjustParams<ChartConfig>) => void;
-  };
+  legend: (params: FieldAdjustParams<ChartConfig>) => void;
   time: {
     active: (params: FieldAdjustParams<ChartConfig>) => void;
     componentIri: (params: FieldAdjustParams<ChartConfig>) => void;
@@ -297,33 +294,17 @@ type InteractiveFiltersAdjusters = {
   };
 };
 const INTERACTIVE_FILTERS_ADJUSTORS: InteractiveFiltersAdjusters = {
-  legend: {
-    active: ({ oldValue, newChartConfig }) => {
-      const { interactiveFiltersConfig } = newChartConfig;
+  legend: ({ oldValue, oldChartConfig, newChartConfig }) => {
+    const { interactiveFiltersConfig } = newChartConfig;
 
-      if (interactiveFiltersConfig) {
+    if (interactiveFiltersConfig) {
+      if ((oldChartConfig.fields as any).segment !== undefined) {
         newChartConfig.interactiveFiltersConfig = {
           ...interactiveFiltersConfig,
-          legend: {
-            ...interactiveFiltersConfig.legend,
-            active: oldValue,
-          },
+          legend: oldValue,
         };
       }
-    },
-    componentIri: ({ oldValue, newChartConfig }) => {
-      const { interactiveFiltersConfig } = newChartConfig;
-
-      if (interactiveFiltersConfig) {
-        newChartConfig.interactiveFiltersConfig = {
-          ...interactiveFiltersConfig,
-          legend: {
-            ...interactiveFiltersConfig.legend,
-            componentIri: oldValue,
-          },
-        };
-      }
-    },
+    }
   },
   time: {
     active: ({ oldValue, newChartConfig }) => {
@@ -685,31 +666,35 @@ const mkChartConfigAdjuster = ({
 }) => {
   // For filters & segments we can't reach a primitive level as we need to
   // pass the whole object.
-  const shouldAdjustConfigField = (configKey: string, configValue: unknown) =>
+  const shouldAdjustConfigField = (path: string, configValue: unknown) =>
     typeof configValue !== "object" ||
     Array.isArray(configValue) ||
-    ["filters", "segment"].includes(configKey);
+    ["filters", "fields.segment", "interactiveFiltersConfig.legend"].includes(
+      path
+    );
 
   const go = ({ path, field }: { path: string; field: Object }) => {
     for (const [k, v] of Object.entries(field)) {
       const newPath = path !== "" ? `${path}.${k}` : k;
 
-      if (shouldAdjustConfigField(k, v)) {
-        const adjustField: (params: FieldAdjustParams<ChartConfig>) => void =
-          get(chartAdjustConfig, newPath) ||
-          get(chartAdjustConfig, pathOverrides[newPath]);
-        adjustField?.({
-          oldValue: v,
-          newChartConfig,
-          oldChartConfig,
-          dimensions,
-          measures,
-        });
-      } else {
-        go({
-          path: newPath,
-          field: v,
-        });
+      if (v !== undefined) {
+        if (shouldAdjustConfigField(newPath, v)) {
+          const adjustField: (params: FieldAdjustParams<ChartConfig>) => void =
+            get(chartAdjustConfig, newPath) ||
+            get(chartAdjustConfig, pathOverrides[newPath]);
+          adjustField?.({
+            oldValue: v,
+            newChartConfig,
+            oldChartConfig,
+            dimensions,
+            measures,
+          });
+        } else {
+          go({
+            path: newPath,
+            field: v,
+          });
+        }
       }
     }
   };
