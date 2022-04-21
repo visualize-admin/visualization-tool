@@ -77,7 +77,7 @@ export const theme = createTheme({
     },
     warning: {
       main: "#8a6d3b",
-      light: "#fffab2",
+      light: "#FCF0B4",
     },
     info: {
       main: "#31708f",
