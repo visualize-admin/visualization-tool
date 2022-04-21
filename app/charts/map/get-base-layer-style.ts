@@ -10094,6 +10094,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "place_hamlet_isolated_dwelling",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10104,6 +10106,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "omt_place_village",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10114,6 +10118,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "place_village",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10124,6 +10130,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "omt_aerodrome_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10134,6 +10142,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "aerodrome_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10144,6 +10154,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "omt_water_name_line_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
@@ -10154,6 +10166,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "water_name_line_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
@@ -10164,6 +10178,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "omt_place_town",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10174,6 +10190,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "place_town",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10191,6 +10209,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "park_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
@@ -10201,6 +10221,8 @@ export const getBaseLayerStyle = (props: Props) => {
         id: "area_name_massif_label",
         paint: {
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
@@ -10219,6 +10241,8 @@ export const getBaseLayerStyle = (props: Props) => {
         paint: {
           "text-opacity": textOpacity,
           "icon-opacity": 0,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": ["get", languageTag],
@@ -10244,6 +10268,8 @@ export const getBaseLayerStyle = (props: Props) => {
         paint: {
           "text-color": countryTextColor,
           "text-opacity": textOpacity,
+          "text-halo-width": 1,
+          "text-halo-color": "#ffffff",
         },
         layout: {
           "text-field": `{${languageTag}}`,
