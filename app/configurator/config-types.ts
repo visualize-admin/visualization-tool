@@ -158,7 +158,7 @@ const SortingField = t.partial({
       sortingOrder: SortingOrder,
     }),
 });
-export type FieldSorting = t.TypeOf<typeof SortingField>;
+export type SortingField = t.TypeOf<typeof SortingField>;
 
 const ColumnSegmentField = t.intersection([
   GenericSegmentField,

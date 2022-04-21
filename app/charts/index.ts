@@ -590,6 +590,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           componentIri: oldValue.componentIri,
           palette: oldValue.palette,
           colorMapping: oldValue.colorMapping,
+          // Line & ScatterPlot do not have sorting field.
           sorting: (oldValue as any).sorting || {
             sortingOrder: "asc",
             sortingType: "byDimensionLabel",
@@ -599,9 +600,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
-  table: {
-    groups: ({}) => {},
-  },
+  table: {},
   map: {
     filters: ({ oldValue, newChartConfig }) => {
       newChartConfig.filters = oldValue;
