@@ -468,9 +468,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       segment: ({ oldValue, newChartConfig }) => {
         newChartConfig.fields.segment = {
-          ...oldValue!,
+          ...oldValue,
           type: "stacked",
-          sorting: oldValue!.sorting || {
+          // Line & ScatterPlot do not have sorting field.
+          sorting: (oldValue as any).sorting || {
             sortingOrder: "asc",
             sortingType: "byDimensionLabel",
           },
@@ -503,9 +504,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       segment: ({ oldValue, newChartConfig }) => {
         newChartConfig.fields.segment = {
-          componentIri: oldValue!.componentIri,
-          palette: oldValue!.palette,
-          colorMapping: oldValue!.colorMapping,
+          componentIri: oldValue.componentIri,
+          palette: oldValue.palette,
+          colorMapping: oldValue.colorMapping,
         };
       },
     },
@@ -535,10 +536,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       segment: ({ oldValue, newChartConfig }) => {
         newChartConfig.fields.segment = {
-          componentIri: oldValue!.componentIri,
-          palette: oldValue!.palette,
-          colorMapping: oldValue!.colorMapping,
-          sorting: oldValue!.sorting || {
+          componentIri: oldValue.componentIri,
+          palette: oldValue.palette,
+          colorMapping: oldValue.colorMapping,
+          // Line & ScatterPlot do not have sorting field.
+          sorting: (oldValue as any).sorting || {
             sortingOrder: "asc",
             sortingType: "byDimensionLabel",
           },
@@ -565,9 +567,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       segment: ({ oldValue, newChartConfig }) => {
         newChartConfig.fields.segment = {
-          componentIri: oldValue!.componentIri,
-          palette: oldValue!.palette,
-          colorMapping: oldValue!.colorMapping,
+          componentIri: oldValue.componentIri,
+          palette: oldValue.palette,
+          colorMapping: oldValue.colorMapping,
         };
       },
     },
@@ -588,7 +590,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           componentIri: oldValue.componentIri,
           palette: oldValue.palette,
           colorMapping: oldValue.colorMapping,
-          sorting: oldValue.sorting || {
+          sorting: (oldValue as any).sorting || {
             sortingOrder: "asc",
             sortingType: "byDimensionLabel",
           },
@@ -597,7 +599,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
-  table: {},
+  table: {
+    groups: ({}) => {},
+  },
   map: {
     filters: ({ oldValue, newChartConfig }) => {
       newChartConfig.filters = oldValue;

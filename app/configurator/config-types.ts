@@ -139,27 +139,35 @@ export type GenericField = t.TypeOf<typeof GenericField>;
 const GenericFields = t.record(t.string, t.union([GenericField, t.undefined]));
 export type GenericFields = t.TypeOf<typeof GenericFields>;
 
-const SegmentField = t.intersection([
+const GenericSegmentField = t.intersection([
   t.type({
     componentIri: t.string,
   }),
   t.type({
-    type: t.union([t.literal("stacked"), t.literal("grouped")]),
+    palette: t.string,
   }),
-  t.type({ palette: t.string }),
   t.partial({
     colorMapping: ColorMapping,
   }),
-  t.partial({
+]);
+export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
+
+const SortingField = t.partial({
     sorting: t.type({
       sortingType: SortingType,
       sortingOrder: SortingOrder,
     }),
+});
+export type FieldSorting = t.TypeOf<typeof SortingField>;
+
+const ColumnSegmentField = t.intersection([
+  GenericSegmentField,
+  SortingField,
+  t.type({
+    type: t.union([t.literal("stacked"), t.literal("grouped")]),
   }),
 ]);
-
-export type SegmentField = t.TypeOf<typeof SegmentField>;
-export type SegmentFields = Record<string, SegmentField | undefined>;
+export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
 const BarFields = t.intersection([
   t.type({
@@ -168,16 +176,11 @@ const BarFields = t.intersection([
       t.type({
         componentIri: t.string,
       }),
-      t.partial({
-        sorting: t.type({
-          sortingType: SortingType,
-          sortingOrder: SortingOrder,
-        }),
-      }),
+      SortingField,
     ]),
   }),
   t.partial({
-    segment: SegmentField,
+    segment: ColumnSegmentField,
   }),
 ]);
 const BarConfig = t.type(
@@ -198,17 +201,12 @@ const ColumnFields = t.intersection([
       t.type({
         componentIri: t.string,
       }),
-      t.partial({
-        sorting: t.type({
-          sortingType: SortingType,
-          sortingOrder: SortingOrder,
-        }),
-      }),
+      SortingField,
     ]),
     y: GenericField,
   }),
   t.partial({
-    segment: SegmentField,
+    segment: ColumnSegmentField,
   }),
 ]);
 const ColumnConfig = t.type(
@@ -223,21 +221,16 @@ const ColumnConfig = t.type(
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
+const LineSegmentField = GenericSegmentField;
+export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
+
 const LineFields = t.intersection([
   t.type({
     x: GenericField,
     y: GenericField,
   }),
   t.partial({
-    segment: t.intersection([
-      t.type({
-        componentIri: t.string,
-      }),
-      t.type({ palette: t.string }),
-      t.partial({
-        colorMapping: ColorMapping,
-      }),
-    ]),
+    segment: LineSegmentField,
   }),
 ]);
 const LineConfig = t.type(
@@ -251,6 +244,9 @@ const LineConfig = t.type(
 );
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
+
+const AreaSegmentField = t.intersection([GenericSegmentField, SortingField]);
+export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
 const ImputationType = t.union([
   t.literal("none"),
@@ -270,21 +266,7 @@ const AreaFields = t.intersection([
   }),
 
   t.partial({
-    segment: t.intersection([
-      t.type({
-        componentIri: t.string,
-      }),
-      t.type({ palette: t.string }),
-      t.partial({
-        colorMapping: ColorMapping,
-      }),
-      t.partial({
-        sorting: t.type({
-          sortingType: SortingType,
-          sortingOrder: SortingOrder,
-        }),
-      }),
-    ]),
+    segment: AreaSegmentField,
   }),
 ]);
 const AreaConfig = t.type(
@@ -299,19 +281,16 @@ const AreaConfig = t.type(
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
+const ScatterPlotSegmentField = GenericSegmentField;
+export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
+
 const ScatterPlotFields = t.intersection([
   t.type({
     x: GenericField,
     y: GenericField,
   }),
   t.partial({
-    segment: t.intersection([
-      t.type({ componentIri: t.string }),
-      t.type({ palette: t.string }),
-      t.partial({
-        colorMapping: ColorMapping,
-      }),
-    ]),
+    segment: ScatterPlotSegmentField,
   }),
 ]);
 const ScatterPlotConfig = t.type(
@@ -326,24 +305,13 @@ const ScatterPlotConfig = t.type(
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
+const PieSegmentField = t.intersection([GenericSegmentField, SortingField]);
+export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
+
 const PieFields = t.type({
   y: GenericField,
   // FIXME: "segment" should be "x" for consistency
-  segment: t.intersection([
-    t.type({
-      componentIri: t.string,
-      palette: t.string,
-    }),
-    t.partial({
-      colorMapping: ColorMapping,
-    }),
-    t.partial({
-      sorting: t.type({
-        sortingType: SortingType,
-        sortingOrder: SortingOrder,
-      }),
-    }),
-  ]),
+  segment: PieSegmentField,
 });
 const PieConfig = t.type(
   {
@@ -666,7 +634,13 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
   fields: {
     x: { componentIri: FieldAdjuster<ColumnConfig, string> };
     y: { componentIri: FieldAdjuster<ColumnConfig, string> };
-    segment: FieldAdjuster<ColumnConfig, ColumnConfig["fields"]["segment"]>;
+    segment: FieldAdjuster<
+      ColumnConfig,
+      | LineSegmentField
+      | AreaSegmentField
+      | ScatterPlotSegmentField
+      | PieSegmentField
+    >;
   };
 };
 
@@ -674,7 +648,13 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
   fields: {
     x: { componentIri: FieldAdjuster<LineConfig, string> };
     y: { componentIri: FieldAdjuster<LineConfig, string> };
-    segment: FieldAdjuster<LineConfig, LineConfig["fields"]["segment"]>;
+    segment: FieldAdjuster<
+      LineConfig,
+      | ColumnSegmentField
+      | AreaSegmentField
+      | ScatterPlotSegmentField
+      | PieSegmentField
+    >;
   };
 };
 
@@ -682,7 +662,13 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
     x: { componentIri: FieldAdjuster<AreaConfig, string> };
     y: { componentIri: FieldAdjuster<AreaConfig, string> };
-    segment: FieldAdjuster<AreaConfig, AreaConfig["fields"]["segment"]>;
+    segment: FieldAdjuster<
+      AreaConfig,
+      | ColumnSegmentField
+      | LineSegmentField
+      | ScatterPlotSegmentField
+      | PieSegmentField
+    >;
   };
 };
 
@@ -691,7 +677,7 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
       y: { componentIri: FieldAdjuster<ScatterPlotConfig, string> };
       segment: FieldAdjuster<
         ScatterPlotConfig,
-        ScatterPlotConfig["fields"]["segment"]
+      ColumnSegmentField | LineSegmentField | AreaSegmentField | PieSegmentField
       >;
     };
   };
@@ -699,7 +685,13 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
 type PieAdjusters = BaseAdjusters<PieConfig> & {
   fields: {
     y: { componentIri: FieldAdjuster<PieConfig, string> };
-    segment: FieldAdjuster<PieConfig, PieConfig["fields"]["segment"]>;
+    segment: FieldAdjuster<
+      PieConfig,
+      | ColumnSegmentField
+      | LineSegmentField
+      | AreaSegmentField
+      | ScatterPlotSegmentField
+    >;
   };
 };
 
