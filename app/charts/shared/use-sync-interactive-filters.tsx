@@ -3,7 +3,7 @@ import {
   ChartConfig,
   FilterValueSingle,
   isSegmentInConfig,
-} from "@/configurator";
+} from "@/configurator/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import useFilterChanges from "@/configurator/use-filter-changes";

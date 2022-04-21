@@ -14,7 +14,7 @@ import {
   isColumnConfig,
   isMapConfig,
   isSegmentInConfig,
-} from "@/configurator";
+} from "@/configurator/config-types";
 import { mapColorsToComponentValuesIris } from "@/configurator/components/ui-helpers";
 import {
   ChartConfig,

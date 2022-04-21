@@ -4,7 +4,10 @@ import { LineConfig } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import line1Fixture from "@/test/__fixtures/prod/line-1.json";
-import { getWideData, prepareQueryFilters } from "@/charts/shared/chart-helpers";
+import {
+  getWideData,
+  prepareQueryFilters,
+} from "@/charts/shared/chart-helpers";
 import { InteractiveFiltersState } from "@/charts/shared/use-interactive-filters";
 
 const makeCubeNsGetters = (cubeIri: string) => ({

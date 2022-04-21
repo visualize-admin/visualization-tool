@@ -7,7 +7,7 @@ import {
   FilterValueSingle,
   ImputationType,
   isAreaConfig,
-} from "@/configurator";
+} from "@/configurator/config-types";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
