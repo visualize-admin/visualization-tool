@@ -2,7 +2,14 @@ import Flex from "@/components/flex";
 import { keyframes } from "@emotion/react";
 import { Trans } from "@lingui/macro";
 import { ReactNode } from "react";
-import { Alert, AlertTitle, Box, BoxProps, Typography } from "@mui/material";
+import {
+  Alert,
+  AlertProps,
+  AlertTitle,
+  Box,
+  BoxProps,
+  Typography,
+} from "@mui/material";
 import { Icon, IconName } from "@/icons";
 
 export const Error = ({ children }: { children: ReactNode }) => (
@@ -140,7 +147,7 @@ export const LoadingGeoDimensionsError = () => (
 );
 
 export const ChartUnexpectedError = () => (
-  <Alert severity="info" icon={<Icon name="hintWarning" size={64} />}>
+  <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
     <AlertTitle>
       <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
     </AlertTitle>
@@ -169,29 +176,25 @@ export const Success = () => (
     </Trans>
   </Alert>
 );
-export const HintBlue = ({
-  iconName,
-  children,
-  iconSize = 24,
-}: {
-  iconName: IconName;
-  children: ReactNode;
-  iconSize?: number;
-}) => (
-  <Alert severity="info" icon={<Icon name={iconName} />}>
-    {children}
-  </Alert>
-);
-export const HintRed = ({
-  iconName,
-  children,
-  iconSize = 24,
-}: {
-  iconName: IconName;
-  children: ReactNode;
-  iconSize?: number;
-}) => (
-  <Alert severity="error" icon={<Icon name={iconName} size={iconSize} />}>
-    {children}
-  </Alert>
-);
+
+const mkHint = (severity: AlertProps["severity"], displayName: string) => {
+  const Component = ({
+    iconName,
+    children,
+    iconSize = 24,
+  }: {
+    iconName: IconName;
+    children: ReactNode;
+    iconSize?: number;
+  }) => (
+    <Alert severity={severity} icon={<Icon name={iconName} size={iconSize} />}>
+      {children}
+    </Alert>
+  );
+  Component.displayName = displayName;
+  return Component;
+};
+
+export const HintRed = mkHint("error", "HintRed");
+export const HintYellow = mkHint("warning", "HintYellow");
+export const HintBlue = mkHint("info", "HintBlue");

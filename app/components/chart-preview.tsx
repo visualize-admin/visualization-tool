@@ -12,7 +12,7 @@ import {
 import GenericChart from "@/components/common-chart";
 import DebugPanel from "@/components/debug-panel";
 import Flex from "@/components/flex";
-import { HintRed } from "@/components/hint";
+import { HintYellow } from "@/components/hint";
 import { ChartConfig, useConfiguratorState } from "@/configurator";
 import { DataSetTable } from "@/configurator/components/datatable";
 import { useDataCubeMetadataQuery } from "@/graphql/query-hooks";
@@ -54,13 +54,13 @@ export const ChartPreviewInner = ({ dataSetIri }: { dataSetIri: string }) => {
         {metaData?.dataCubeByIri?.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
-            <HintRed iconName="datasetError" iconSize={64}>
+            <HintYellow iconName="datasetError" iconSize={64}>
               <Trans id="dataset.publicationStatus.draft.warning">
                 Careful, this dataset is only a draft.
                 <br />
                 <strong>Don&apos;t use for reporting!</strong>
               </Trans>
-            </HintRed>
+            </HintYellow>
           </Box>
         )}
         {(state.state === "CONFIGURING_CHART" ||
