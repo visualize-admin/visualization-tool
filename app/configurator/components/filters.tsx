@@ -10,7 +10,7 @@ import {
   useMultiFilterContext,
 } from "@/configurator";
 import { Loading } from "@/components/hint";
-import { Stack } from '@mui/material'
+import { Stack } from "@mui/material";
 import {
   useDimensionValuesQuery,
   useTemporalDimensionValuesQuery,
@@ -22,7 +22,11 @@ import {
 } from "@/utils/dimension-hierarchy";
 import { valueComparator } from "@/utils/sorting-values";
 import { EditorIntervalBrush } from "@/configurator/interactive-filters/editor-time-interval-brush";
-import { Accordion, AccordionContent, AccordionSummary } from "@/configurator/components/Accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionSummary,
+} from "@/configurator/components/Accordion";
 import {
   MultiFilterFieldCheckbox,
   MultiFilterFieldColorPicker,
@@ -33,6 +37,7 @@ import {
   useTimeFormatLocale,
   useTimeFormatUnit,
 } from "@/configurator/components/ui-helpers";
+import { ControlSectionSkeleton } from "./chart-controls/section";
 
 const SelectionControls = ({ dimensionIri }: { dimensionIri: string }) => {
   const { selectAll, selectNone } = useDimensionSelection(dimensionIri);
@@ -183,7 +188,7 @@ export const DimensionValuesMultiFilter = ({
       </MultiFilterContextProvider>
     );
   } else {
-    return <Loading />;
+    return <ControlSectionSkeleton sx={{ px: 0 }} />;
   }
 };
 

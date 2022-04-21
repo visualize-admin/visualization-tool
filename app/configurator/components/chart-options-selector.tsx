@@ -8,7 +8,6 @@ import {
 import { useImputationNeeded } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { FieldSetLegend, Radio, Select } from "@/components/form";
-import { Loading } from "@/components/hint";
 import {
   ChartType,
   ConfiguratorStateConfiguringChart,
@@ -24,6 +23,7 @@ import { ColorPalette } from "@/configurator/components/chart-controls/color-pal
 import {
   ControlSection,
   ControlSectionContent,
+  ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { EmptyRightPanel } from "@/configurator/components/empty-right-panel";
@@ -113,7 +113,12 @@ export const ChartOptionsSelector = ({
       </Box>
     );
   } else {
-    return <Loading />;
+    return (
+      <>
+        <ControlSectionSkeleton />
+        <ControlSectionSkeleton />
+      </>
+    );
   }
 };
 
