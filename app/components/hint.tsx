@@ -9,6 +9,7 @@ import {
   Box,
   BoxProps,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { Icon, IconName } from "@/icons";
 
@@ -146,16 +147,29 @@ export const LoadingGeoDimensionsError = () => (
   </Alert>
 );
 
-export const ChartUnexpectedError = () => (
-  <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
-    <AlertTitle>
-      <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
-    </AlertTitle>
-    <Trans id="hint.chartunexpected.message">
-      An unexpected error occurred while displaying this chart.
-    </Trans>
-  </Alert>
-);
+export const ChartUnexpectedError = ({ error }: { error?: Error }) => {
+  const theme = useTheme();
+  return (
+    <Alert severity="error" icon={<Icon name="hintWarning" size={64} />}>
+      <AlertTitle>
+        <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
+      </AlertTitle>
+      <Trans id="hint.chartunexpected.message">
+        An unexpected error occurred while displaying this chart.
+      </Trans>
+      {error ? (
+        <Box
+          component="pre"
+          my={2}
+          mx={2}
+          fontSize={theme.typography.body2.fontSize}
+        >
+          {error.message}
+        </Box>
+      ) : null}
+    </Alert>
+  );
+};
 
 export const OnlyNegativeDataHint = () => (
   <Alert severity="warning" icon={<Icon name="datasetError" size={64} />}>
