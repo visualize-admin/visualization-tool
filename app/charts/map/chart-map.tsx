@@ -199,14 +199,16 @@ export const ChartMapVisualization = ({
     areasOrSymbolsLoaded
   ) {
     return (
-      <ChartMapPrototype
-        observations={observations}
-        features={{ areaLayer, symbolLayer }}
-        fields={chartConfig.fields}
-        measures={measures}
-        dimensions={dimensions}
-        baseLayer={chartConfig.baseLayer}
-      />
+      <Box data-chart-loaded={!fetching} sx={{ m: 4, backgroundColor: "#fff" }}>
+        <ChartMap
+          observations={observations}
+          features={{ areaLayer, symbolLayer }}
+          fields={chartConfig.fields}
+          measures={measures}
+          dimensions={dimensions}
+          baseLayer={chartConfig.baseLayer}
+        />
+      </Box>
     );
   } else if (fetching || !areaLayerPrepared || !symbolLayerPrepared) {
     return <Loading />;
@@ -217,35 +219,6 @@ export const ChartMapVisualization = ({
   } else {
     return <NoDataHint />;
   }
-};
-
-export const ChartMapPrototype = ({
-  observations,
-  features,
-  fields,
-  measures,
-  dimensions,
-  baseLayer,
-}: {
-  observations: Observation[];
-  features: GeoData;
-  fields: MapFields;
-  measures: DimensionMetaDataFragment[];
-  dimensions: DimensionMetaDataFragment[];
-  baseLayer: BaseLayer;
-}) => {
-  return (
-    <Box sx={{ m: 4, backgroundColor: "#fff" }}>
-      <ChartMap
-        observations={observations}
-        features={features}
-        fields={fields}
-        measures={measures}
-        dimensions={dimensions}
-        baseLayer={baseLayer}
-      />
-    </Box>
-  );
 };
 
 export const ChartMap = memo(
