@@ -41,6 +41,7 @@
     "@tpluscode/rdf-ns-builders": "^1.0.0",
     "@tpluscode/rdf-string": "^0.2.24",
     "@tpluscode/sparql-builder": "^0.3.17",
+    "@turf/turf": "^6.5.0",
     "@types/lunr": "^2.3.4",
     "@types/react-inspector": "^4.0.2",
     "@types/topojson-client": "^3.0.0",

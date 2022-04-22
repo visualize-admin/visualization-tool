@@ -28,6 +28,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import Layer from "./layer";
 import ReactMap, { MapRef, ViewState } from "react-map-gl";
 import { Icon, IconName } from "@/icons";
+import { orderBy } from "lodash";
+import { area } from "@turf/turf";
 
 function getFirstLabelLayerId(style: StyleSpecification) {
   const layers = style.layers;
@@ -204,17 +206,30 @@ export const MapComponent = () => {
   const geoJsonLayerId = useMemo(() => {
     return globalGeoJsonLayerId++;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [areaLayer.getValue, areaLayer.getColor, mapStyle]);
+  }, [
+    areaLayer.getValue,
+    areaLayer.hierarchyLevel,
+    areaLayer.getColor,
+    mapStyle,
+  ]);
   const geoJsonLayer = useMemo(() => {
     if (!areaLayer.show) {
       return;
     }
-    const shapes = {
-      ...features.areaLayer?.shapes,
-      features: features.areaLayer?.shapes?.features.filter(
+    // Sort for smaller shapes to be over larger ones, to be able to use tooltip
+    const sortedFeatures = orderBy(
+      features.areaLayer?.shapes?.features.filter(
         ({ properties: { hierarchyLevel } }: GeoFeature) =>
           hierarchyLevel === areaLayer.hierarchyLevel
       ),
+      (feature: GeoFeature) => {
+        return area(feature);
+      },
+      "desc"
+    );
+    const shapes = {
+      ...features.areaLayer?.shapes,
+      features: sortedFeatures,
     };
     const geoJsonLayer = new MapboxLayer({
       type: GeoJsonLayer,
@@ -288,10 +303,18 @@ export const MapComponent = () => {
     if (!symbolLayer.show) {
       return;
     }
+    const getRadius = ({ properties: { observation } }: GeoPoint) =>
+      observation
+        ? symbolLayer.radiusScale(symbolLayer.getValue(observation) as number)
+        : 0;
+    // Sort for smaller points to be over larger ones, to be able to use tooltip
+    const sortedPoints = features.symbolLayer?.points
+      ? orderBy([...features.symbolLayer?.points], getRadius, "desc")
+      : [];
     return new MapboxLayer({
       type: ScatterplotLayer,
       id: "scatterplot" + scatterplotLayerId,
-      data: features.symbolLayer?.points,
+      data: sortedPoints,
       pickable: identicalLayerComponentIris ? !areaLayer.show : true,
       autoHighlight: true,
       opacity: 0.7,
@@ -302,10 +325,7 @@ export const MapComponent = () => {
       radiusMaxPixels: symbolLayer.radiusScale.range()[1],
       lineWidthMinPixels: 1,
       getPosition: ({ coordinates }: GeoPoint) => coordinates,
-      getRadius: ({ properties: { observation } }: GeoPoint) =>
-        observation
-          ? symbolLayer.radiusScale(symbolLayer.getValue(observation) as number)
-          : 0,
+      getRadius,
       getFillColor: symbolColorRgbArray,
       getLineColor: [255, 255, 255],
       onHover: ({
