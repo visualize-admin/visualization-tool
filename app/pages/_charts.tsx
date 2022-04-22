@@ -40,35 +40,19 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                   sx={{ width: ["100%", "50%", "50%", "33.33%"] }}
                 >
                   <ChartPanel>
-                    <ChartPublished
-                      dataSet={dataSet}
-                      chartConfig={chartConfig}
-                      meta={meta}
-                      configKey={key}
-                    />
-                    <NextLink href={`/v/${key}`}>
-                      <Link
-                        sx={{
-                          background: "transparent",
-                          color: "primary",
-                          textAlign: "left",
-
-                          lineHeight: ["1rem", "1.125rem", "1.125rem"],
-                          fontWeight: "regular",
-                          fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-                          border: "none",
-                          cursor: "pointer",
-                          mt: 2,
-                          p: 5,
-                          ":disabled": {
-                            cursor: "initial",
-                            color: "grey.500",
-                          },
-                        }}
-                      >
-                        →
-                      </Link>
-                    </NextLink>
+                    <div>
+                      <Box mt={2} mx={4} mb={0} display="flex">
+                        <NextLink href={`/v/${key}`} passHref>
+                          <Link> {key}</Link>
+                        </NextLink>
+                      </Box>
+                      <ChartPublished
+                        dataSet={dataSet}
+                        chartConfig={chartConfig}
+                        meta={meta}
+                        configKey={key}
+                      />
+                    </div>
                   </ChartPanel>
                 </Box>
               );
