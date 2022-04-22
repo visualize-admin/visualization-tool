@@ -1,0 +1,78 @@
+{
+  "key": "cfNkIaMvN_xL",
+  "data": {
+    "meta": {
+      "title": {
+        "de": "",
+        "en": "Mean bill depth of Chinstrap Penguins",
+        "fr": "",
+        "it": ""
+      },
+      "description": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
+    },
+    "dataSet": "https://environment.ld.admin.ch/foen/palmer-penguins/14/",
+    "chartConfig": {
+      "fields": {
+        "x": {
+          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/billlengthmm"
+        },
+        "y": {
+          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/billdepthmm"
+        },
+        "segment": {
+          "type": "stacked",
+          "palette": "category10",
+          "sorting": {
+            "sortingType": "byDimensionLabel",
+            "sortingOrder": "asc"
+          },
+          "colorMapping": {
+            "NA": "#1f77b4",
+            "male": "#2ca02c",
+            "female": "#ff7f0e"
+          },
+          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/sex"
+        }
+      },
+      "filters": {
+        "https://environment.ld.admin.ch/foen/palmer-penguins/year": {
+          "type": "single",
+          "value": "2008"
+        },
+        "https://environment.ld.admin.ch/foen/palmer-penguins/islands": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Dream"
+        },
+        "https://environment.ld.admin.ch/foen/palmer-penguins/species": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/palmer-penguins/species/Chinstrap"
+        }
+      },
+      "chartType": "scatterplot",
+      "interactiveFiltersConfig": {
+        "time": {
+          "active": false,
+          "presets": {
+            "to": "",
+            "from": "",
+            "type": "range"
+          },
+          "componentIri": ""
+        },
+        "legend": {
+          "active": false,
+          "componentIri": ""
+        },
+        "dataFilters": {
+          "active": false,
+          "componentIris": []
+        }
+      }
+    }
+  }
+}

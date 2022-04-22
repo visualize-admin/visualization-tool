@@ -1,33 +1,74 @@
+import { groupBy } from "lodash";
 import { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 
-import { loadFixtureConfigIds } from "@/test/utils";
+import { loadFixtureConfigs } from "@/test/utils";
 
+type PromiseValue<T> = T extends Promise<infer S> ? S : T;
 type PageProps = {
-  ids: string[];
+  configs: PromiseValue<ReturnType<typeof loadFixtureConfigs>>;
 };
 
 export const getStaticProps: GetStaticProps = async ({ params, locale }) => {
-  const ids = await loadFixtureConfigIds();
+  const configs = await loadFixtureConfigs();
 
   return {
-    props: { locale, ids },
+    props: { locale, configs },
   };
 };
 
-const Page: NextPage<PageProps> = ({ ids }) => {
+const configDescription = {
+  int: (
+    <>
+      Uses <strong>int.lindas.admin.ch</strong>, can be used locally and on{" "}
+      <strong>test.visualize.admin.ch</strong>.
+    </>
+  ),
+  prod: (
+    <>
+      Uses <strong>lindas.admin.ch</strong>, can be used on{" "}
+      <strong>visualize.admin.ch</strong> and{" "}
+      <strong>int.visualize.admin.ch</strong>.
+    </>
+  ),
+};
+
+const Page: NextPage<PageProps> = ({ configs }) => {
+  const byEnv = groupBy(configs, (x) => x.env);
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Test Charts</h1>
-      <ul>
-        {ids.map((id) => (
-          <li key={id}>
-            <Link href={`/__test/${id}`}>
-              <a>{id}</a>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gridGap: "2rem",
+        }}
+      >
+        {(["int", "prod"] as const).map((env) => {
+          const configs = byEnv[env];
+          if (!configs || !configs.length) {
+            return null;
+          }
+          return (
+            <div key={env}>
+              <h2>{env}</h2>
+              <p>{configDescription[env]}</p>
+              <ul>
+                {configs.map(({ name, chartId, slug }) => (
+                  <li key={chartId}>
+                    <Link href={`/__test/${env}/${slug}`}>
+                      <a>{name}</a>
+                    </Link>
+                    <br />
+                    {chartId}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

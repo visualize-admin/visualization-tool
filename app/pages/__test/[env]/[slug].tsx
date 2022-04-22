@@ -2,7 +2,11 @@ import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 
 import { ChartPublished } from "@/components/chart-published";
 import { Config } from "@/configurator";
-import { loadFixtureConfigIds, loadFixtureConfig } from "@/test/utils";
+import {
+  findFixtureConfig,
+  loadFixtureConfig,
+  loadFixtureConfigs,
+} from "@/test/utils";
 
 type PageProps = {
   statusCode?: number;
@@ -14,19 +18,28 @@ type PageProps = {
 };
 
 export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
-  const ids = await loadFixtureConfigIds();
+  const ids = await loadFixtureConfigs();
 
   return {
     fallback: false,
-    paths: ids.flatMap((chartId) => {
-      return locales?.map((locale) => ({ params: { chartId }, locale })) ?? [];
+    paths: ids.flatMap(({ slug, env }) => {
+      return (
+        locales?.map((locale) => ({ params: { env, slug }, locale })) ?? []
+      );
     }),
   };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const config = await loadFixtureConfig(params?.chartId?.toString() ?? "");
-
+  const findOptions = {
+    env: params?.env?.toString() ?? "",
+    slug: params?.slug?.toString() ?? "",
+  };
+  const testConfig = await findFixtureConfig(findOptions);
+  if (!testConfig) {
+    throw new Error(`Could not find testConfig ${JSON.stringify(findOptions)}`);
+  }
+  const config = await loadFixtureConfig(testConfig);
   return {
     props: { config },
   };
