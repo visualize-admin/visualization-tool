@@ -1,51 +1,31 @@
-import { NextPage, GetStaticProps, GetStaticPaths } from "next";
+import { NextPage } from "next";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
-import { Config } from "@/configurator";
-import {
-  findFixtureConfig,
-  loadFixtureConfig,
-  loadFixtureConfigs,
-} from "@/test/utils";
+import { ChartConfig, Meta } from "@/configurator";
 
-type PageProps = {
-  statusCode?: number;
-  config?: {
-    key: string;
-    data: Config;
-  };
-  publishSuccess?: string;
+type DbConfig = {
+  dataSet: string;
+  chartConfig: ChartConfig;
+  meta: Meta;
 };
 
-export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
-  const ids = await loadFixtureConfigs();
+const Page: NextPage = () => {
+  const router = useRouter();
+  const { env, slug } = router.query;
+  const [config, setConfig] = useState<{ key: string; data: DbConfig }>();
 
-  return {
-    fallback: false,
-    paths: ids.flatMap(({ slug, env }) => {
-      return (
-        locales?.map((locale) => ({ params: { env, slug }, locale })) ?? []
-      );
-    }),
-  };
-};
+  useEffect(() => {
+    const run = async () => {
+      const importedConfig = (
+        await import(`../../../test/__fixtures/${env}/${slug}`)
+      ).default;
+      setConfig(importedConfig);
+    };
+    run();
+  }, [env, slug]);
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const findOptions = {
-    env: params?.env?.toString() ?? "",
-    slug: params?.slug?.toString() ?? "",
-  };
-  const testConfig = await findFixtureConfig(findOptions);
-  if (!testConfig) {
-    throw new Error(`Could not find testConfig ${JSON.stringify(findOptions)}`);
-  }
-  const config = await loadFixtureConfig(testConfig);
-  return {
-    props: { config },
-  };
-};
-
-const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
   if (config) {
     const { dataSet, meta, chartConfig } = config.data;
 
@@ -58,8 +38,6 @@ const Page: NextPage<PageProps> = ({ config, statusCode, publishSuccess }) => {
       />
     );
   }
-
-  // Should never happen
   return null;
 };
 
