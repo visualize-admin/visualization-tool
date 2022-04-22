@@ -1,0 +1,84 @@
+{
+  "key": "kIFJgq7Ofhke",
+  "data": {
+    "meta": {
+      "title": {
+        "de": "Lärmbelastung durch Verkehr",
+        "en": "Traffic noise pollution",
+        "fr": "Exposition au bruit du trafic",
+        "it": "Esposizione al rumore del traffico"
+      },
+      "description": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
+    },
+    "dataSet": "https://environment.ld.admin.ch/foen/ubd003701/1",
+    "chartConfig": {
+      "fields": {
+        "x": {
+          "sorting": {
+            "sortingType": "byMeasure",
+            "sortingOrder": "desc"
+          },
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd003701/verkehrsart"
+        },
+        "y": {
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd003701/wert"
+        },
+        "segment": {
+          "type": "grouped",
+          "palette": "category10",
+          "sorting": {
+            "sortingType": "byTotalSize",
+            "sortingOrder": "asc"
+          },
+          "colorMapping": {
+            "https://environment.ld.admin.ch/foen/ubd003701/periode/D": "#1f77b4",
+            "https://environment.ld.admin.ch/foen/ubd003701/periode/N": "#ff7f0e"
+          },
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd003701/periode"
+        }
+      },
+      "filters": {
+        "https://environment.ld.admin.ch/foen/ubd003701/beurteilung": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/ubd003701/beurteilung/%3EIGWLSV"
+        },
+        "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/ubd003701/gemeindeTyp/CH"
+        },
+        "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit": {
+          "type": "single",
+          "value": "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteEinheit/Pers"
+        }
+      },
+      "chartType": "column",
+      "interactiveFiltersConfig": {
+        "time": {
+          "active": false,
+          "presets": {
+            "to": "",
+            "from": "",
+            "type": "range"
+          },
+          "componentIri": ""
+        },
+        "legend": {
+          "active": false,
+          "componentIri": ""
+        },
+        "dataFilters": {
+          "active": true,
+          "componentIris": [
+            "https://environment.ld.admin.ch/foen/ubd003701/gemeindetype",
+            "https://environment.ld.admin.ch/foen/ubd003701/laermbelasteteeinheit"
+          ]
+        }
+      }
+    }
+  }
+}

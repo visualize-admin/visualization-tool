@@ -2,55 +2,30 @@ import { TestConfig } from "@/test/__fixtures/types";
 
 const configs: TestConfig[] = [
   {
-    chartId: "g_Dcz7A82MNj",
-    slug: "column-1",
-    name: "Column 1",
+    chartId: "column-traffic-pollution",
+    slug: "column-traffic-pollution",
+    name: "Column - Traffic pollution ",
   },
   {
-    chartId: "jV7rbOyAYouu",
-    slug: "column-2",
-    name: "Column 2",
+    chartId: "line-waldflasche",
+    slug: "line-waldflasche",
+    name: "Line Waldflasche",
   },
   {
-    chartId: "KXMuXhfWuN5d",
-    slug: "column-3",
-    name: "Column 3",
-  },
-  {
-    chartId: "l8F-tvfGFrwU",
-    slug: "column-4",
-    name: "Column 4",
-  },
-  {
-    chartId: "Qq3UMO9ysHZi",
-    slug: "column-5",
-    name: "Column 5",
-  },
-  {
-    chartId: "v71kJ5n-qKGw",
-    slug: "column-6",
-    name: "Column 6",
-  },
-  {
-    chartId: "wfFzUGgvZVbp",
-    slug: "column-7",
-    name: "Column 7",
-  },
-  {
-    chartId: "5BmzFXXNtE1X",
+    chartId: "line-1",
     slug: "line-1",
-    name: "Line 1",
+    name: "Line 1 ",
   },
-  {
-    chartId: "fN15XWssFC3J",
-    slug: "line-2",
-    name: "Line 2",
-  },
-  {
-    chartId: "o3MTv3YHMdUA",
-    slug: "pie-1",
-    name: "Pie 1",
-  },
+  { chartId: "column-1", slug: "column-1", name: "Column 1" },
+  { chartId: "column-2", slug: "column-2", name: "Column 2" },
+  { chartId: "column-3", slug: "column-3", name: "Column 3" },
+  { chartId: "column-4", slug: "column-4", name: "Column 4" },
+  { chartId: "column-5", slug: "column-5", name: "Column 5" },
+  { chartId: "column-6", slug: "column-6", name: "Column 6" },
+  { chartId: "column-7", slug: "column-7", name: "Column 7" },
+  { chartId: "line-1", slug: "line-1", name: "Line 1" },
+  { chartId: "line-2", slug: "line-2", name: "Line 2" },
+  { chartId: "pie-1", slug: "pie-1", name: "Pie 1" },
 ];
 
 export default configs;
