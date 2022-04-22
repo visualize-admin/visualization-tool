@@ -14,3 +14,11 @@ jobs:
           build: "yarn locales:compile"
           start: "yarn dev -p 3333"
           wait-on: "http://localhost:3333"
+      - name: Archive code coverage results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-artficacts
+          path: |
+            cypress/screenshots
+            cypress/videos
