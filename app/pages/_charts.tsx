@@ -92,15 +92,10 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                 <Box
                   key={key}
                   id={`chart-${key}`}
-                  sx={{ width: ["100%", "50%", "50%", "33.33%"] }}
+                  sx={{ width: ["100%", "50%", "50%", "33.33%"], p: 1 }}
                 >
                   <ChartPanel>
                     <div>
-                      <Box mt={2} mx={4} mb={0} display="flex">
-                        <NextLink href={`/v/${key}`} passHref>
-                          <Link> {key}</Link>
-                        </NextLink>
-                      </Box>
                       <HiddenUntilScrolledTo
                         initialVisible={i < 5}
                         fallback={<div>Loading...</div>}
@@ -112,6 +107,18 @@ const Page: NextPage<PageProps> = ({ configs }) => {
                           configKey={key}
                         />
                       </HiddenUntilScrolledTo>
+                      <Box
+                        mb={2}
+                        mx={4}
+                        mr={6}
+                        textAlign="right"
+                        typography="caption"
+                      >
+                        Id: {key} -{" "}
+                        <NextLink href={`/v/${key}`} passHref>
+                          <Link color="primary">Open</Link>
+                        </NextLink>{" "}
+                      </Box>
                     </div>
                   </ChartPanel>
                 </Box>
