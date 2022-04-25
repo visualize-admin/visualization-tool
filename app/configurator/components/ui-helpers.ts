@@ -645,6 +645,8 @@ export function getFieldLabel(field: string): string {
     case "column..byDimensionLabel.asc":
     case "column.stacked.byDimensionLabel.asc":
     case "column.grouped.byDimensionLabel.asc":
+    case "area..byDimensionLabel.asc":
+    // for existing charts compatibility
     case "area.stacked.byDimensionLabel.asc":
     case "pie..byDimensionLabel.asc":
     case "sorting.byDimensionLabel.asc":
@@ -654,6 +656,8 @@ export function getFieldLabel(field: string): string {
     case "column..byDimensionLabel.desc":
     case "column.stacked.byDimensionLabel.desc":
     case "column.grouped.byDimensionLabel.desc":
+    case "area..byDimensionLabel.desc":
+    // for existing charts compatibility
     case "area.stacked.byDimensionLabel.desc":
     case "pie..byDimensionLabel.desc":
     case "sorting.byDimensionLabel.desc":
@@ -668,9 +672,13 @@ export function getFieldLabel(field: string): string {
     case "bar.stacked.byTotalSize.asc":
     case "bar.grouped.byTotalSize.asc":
       return i18n._(fieldLabels["controls.sorting.byTotalSize.largestFirst"]);
+    case "area..byTotalSize.asc":
+    // for existing charts compatibility
     case "area.stacked.byTotalSize.asc":
     case "column.stacked.byTotalSize.asc":
       return i18n._(fieldLabels["controls.sorting.byTotalSize.largestTop"]);
+    case "area..byTotalSize.desc":
+    // for existing charts compatibility
     case "area.stacked.byTotalSize.desc":
     case "column.stacked.byTotalSize.desc":
       return i18n._(fieldLabels["controls.sorting.byTotalSize.largestBottom"]);

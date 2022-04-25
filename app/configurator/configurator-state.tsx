@@ -644,13 +644,15 @@ const reducer: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
                 palette: "category10",
                 component,
               });
+
             // FIXME: This should be more chart specific
             // (no "stacked" for scatterplots for instance)
             if (isSegmentInConfig(draft.chartConfig)) {
               draft.chartConfig.fields.segment = {
                 componentIri: action.value.componentIri,
                 palette: "category10",
-                type: "stacked",
+                // Type exists only within column charts.
+                ...(isColumnConfig(draft.chartConfig) && { type: "stacked" }),
                 sorting: {
                   sortingType: "byDimensionLabel",
                   sortingOrder: "asc",
