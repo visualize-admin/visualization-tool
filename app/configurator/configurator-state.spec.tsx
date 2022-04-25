@@ -1,8 +1,5 @@
 import * as api from "@/api";
-import {
-  findPreferredDimension,
-  getChartConfigAdjustedToChartType,
-} from "@/charts";
+import { getChartConfigAdjustedToChartType } from "@/charts";
 import { ChartConfig } from "@/configurator";
 import {
   applyNonTableDimensionToFilters,
@@ -14,7 +11,6 @@ import {
   initChartStateFromLocalStorage,
   moveFilterField,
 } from "@/configurator/configurator-state";
-import { getGeoShapesDimensions } from "@/domain/data";
 import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
@@ -23,13 +19,8 @@ import covid19ChartConfig from "@/test/__fixtures/dev/chartConfig-column-covid19
 import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
 import { Client } from "@urql/core";
 import { createDraft, current } from "immer";
-import {
-  ChartType,
-  ColumnConfig,
-  LineConfig,
-  MapConfig,
-  PieConfig,
-} from "./config-types";
+import { get } from "lodash";
+import { ChartType, ColumnConfig } from "./config-types";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -403,61 +394,58 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
     return current(newConfig);
   };
 
+  const testChecks: {
+    newChartType: ChartType;
+    // Old field getter path, new field getter path, expected equality state.
+    checks: [string, string, boolean][];
+  }[] = [
+    {
+      newChartType: "pie",
+      checks: [["fields.y.componentIri", "fields.y.componentIri", true]],
+    },
+    {
+      newChartType: "column",
+      checks: [
+        ["fields.segment.componentIri", "fields.segment.componentIri", true],
+      ],
+    },
+    {
+      newChartType: "map",
+      checks: [
+        ["fields.x.componentIri", "fields.areaLayer.componentIri", false],
+      ],
+    },
+    {
+      newChartType: "column",
+      checks: [
+        ["fields.areaLayer.componentIri", "fields.x.componentIri", true],
+      ],
+    },
+    {
+      newChartType: "line",
+      checks: [["fields.x.componentIri", "fields.x.componentIri", false]],
+    },
+  ];
+
   it("should retain appropriate chart config fields and discard the others", () => {
     oldConfig = covid19ChartConfig as ColumnConfig;
-    newConfig = deriveNewChartConfig(oldConfig, "pie") as PieConfig;
 
-    // It should retain Y component iri between column and pie chart.
-    expect(newConfig.fields.y.componentIri).toEqual(
-      oldConfig.fields.y.componentIri
-    );
+    for (const { newChartType, checks } of testChecks) {
+      newConfig = deriveNewChartConfig(oldConfig, newChartType);
 
-    oldConfig = newConfig;
-    newConfig = deriveNewChartConfig(oldConfig, "column") as ColumnConfig;
+      for (const check of checks) {
+        const [firstField, secondField, equal] = check;
+        const oldField = get(oldConfig, firstField);
+        const newField = get(newConfig, secondField);
 
-    // It should retain segment component iri when switching between charts
-    // that use segment field.
-    expect(newConfig.fields.segment?.componentIri).toEqual(
-      oldConfig.fields.segment.componentIri
-    );
+        if (equal) {
+          expect(oldField).toEqual(newField);
+        } else {
+          expect(oldField).not.toEqual(newField);
+        }
+      }
 
-    oldConfig = newConfig;
-    newConfig = deriveNewChartConfig(oldConfig, "map") as MapConfig;
-
-    const expectedMapXComponentIri = getGeoShapesDimensions(
-      dataSetMetadata.dimensions
-    )[0].iri;
-
-    // It should not retain TemporalDimension on the X axis when switching to a
-    // map chart.
-    expect(newConfig.fields.areaLayer.componentIri).toEqual(
-      expectedMapXComponentIri
-    );
-    expect(newConfig.fields.areaLayer.componentIri).not.toEqual(
-      oldConfig.fields.x.componentIri
-    );
-
-    oldConfig = newConfig;
-    newConfig = deriveNewChartConfig(oldConfig, "column") as ColumnConfig;
-
-    // It should retain GeoShapeDimension on the X axis for a column chart.
-    expect(newConfig.fields.x.componentIri).toEqual(
-      oldConfig.fields.areaLayer.componentIri
-    );
-
-    oldConfig = newConfig;
-    newConfig = deriveNewChartConfig(oldConfig, "line") as LineConfig;
-
-    const expectedLineXComponentIri = findPreferredDimension(
-      dataSetMetadata.dimensions,
-      "TemporalDimension"
-    ).iri;
-
-    // It should not retain GeoShapesDimension on the X axis when switching to
-    // a line chart.
-    expect(newConfig.fields.x.componentIri).toEqual(expectedLineXComponentIri);
-    expect(newConfig.fields.x.componentIri).not.toEqual(
-      oldConfig.fields.x.componentIri
-    );
+      oldConfig = newConfig;
+    }
   });
 });
