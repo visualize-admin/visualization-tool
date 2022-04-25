@@ -1,18 +1,26 @@
-import { Client } from "@urql/core";
-import { ChartConfig } from "@/configurator";
 import * as api from "@/api";
-import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
-import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
-import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
+import { getChartConfigAdjustedToChartType } from "@/charts";
+import { ChartConfig } from "@/configurator";
 import {
   applyNonTableDimensionToFilters,
   applyTableDimensionToFilters,
+  deriveFiltersFromFields,
   getLocalStorageKey,
   initChartStateFromChart,
   initChartStateFromCube,
   initChartStateFromLocalStorage,
   moveFilterField,
 } from "@/configurator/configurator-state";
+import { DimensionMetaDataFragment } from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import bathingWaterMetadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-bathingWater.json";
+import covid19Metadata from "@/test/__fixtures/api/DataCubeMetadataWithComponentValues-covid19.json";
+import covid19ChartConfig from "@/test/__fixtures/dev/chartConfig-column-covid19.json";
+import { data as fakeVizFixture } from "@/test/__fixtures/prod/line-1.json";
+import { Client } from "@urql/core";
+import { createDraft, current } from "immer";
+import { get } from "lodash";
+import { ChartType, ColumnConfig } from "./config-types";
 
 const mockedApi = api as jest.Mocked<typeof api>;
 
@@ -95,7 +103,7 @@ describe("initChartStateFromCube", () => {
     );
     expect(res).toEqual(
       expect.objectContaining({
-        state: "SELECTING_CHART_TYPE",
+        state: "CONFIGURING_CHART",
       })
     );
   });
@@ -360,5 +368,84 @@ describe("moveField", () => {
       { type: "single", value: "penguins" },
       { type: "single", value: "2020.11.20" },
     ]);
+  });
+});
+
+describe("retainChartConfigWhenSwitchingChartType", () => {
+  const dataSetMetadata = covid19Metadata.data
+    .dataCubeByIri as DataCubeMetadata;
+  let oldConfig: ChartConfig;
+  let newConfig: ChartConfig;
+
+  const deriveNewChartConfig = (
+    oldConfig: ChartConfig,
+    newChartType: ChartType
+  ) => {
+    const newConfig = createDraft(
+      getChartConfigAdjustedToChartType({
+        chartConfig: oldConfig,
+        chartType: newChartType,
+        dimensions: dataSetMetadata.dimensions,
+        measures: dataSetMetadata.measures,
+      })
+    );
+    deriveFiltersFromFields(newConfig, dataSetMetadata);
+
+    return current(newConfig);
+  };
+
+  const testChecks: {
+    newChartType: ChartType;
+    // Old field getter path, new field getter path, expected equality state.
+    checks: [string, string, boolean][];
+  }[] = [
+    {
+      newChartType: "pie",
+      checks: [["fields.y.componentIri", "fields.y.componentIri", true]],
+    },
+    {
+      newChartType: "column",
+      checks: [
+        ["fields.segment.componentIri", "fields.segment.componentIri", true],
+      ],
+    },
+    {
+      newChartType: "map",
+      checks: [
+        ["fields.x.componentIri", "fields.areaLayer.componentIri", false],
+      ],
+    },
+    {
+      newChartType: "column",
+      checks: [
+        ["fields.areaLayer.componentIri", "fields.x.componentIri", true],
+      ],
+    },
+    {
+      newChartType: "line",
+      checks: [["fields.x.componentIri", "fields.x.componentIri", false]],
+    },
+  ];
+
+  it("should retain appropriate chart config fields and discard the others", () => {
+    oldConfig = covid19ChartConfig as ColumnConfig;
+
+    for (const { newChartType, checks } of testChecks) {
+      newConfig = deriveNewChartConfig(oldConfig, newChartType);
+
+      for (const check of checks) {
+        const [firstField, secondField, equal] = check;
+        const oldField = get(oldConfig, firstField);
+        const newField = get(newConfig, secondField);
+
+        if (equal) {
+          expect(oldField).toEqual(newField);
+        } else {
+          expect(oldField).not.toEqual(newField);
+        }
+      }
+
+      oldConfig = newConfig;
+    }
   });
 });

@@ -1,8 +1,6 @@
-import React from "react";
-import { useConfiguratorState } from "@/configurator";
 import { ChartPanel } from "@/components/chart-panel";
 import { ChartPreview } from "@/components/chart-preview";
-import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
+import { useConfiguratorState } from "@/configurator";
 import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations-selector";
 import { ChartAnnotator } from "@/configurator/components/chart-annotator";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
@@ -17,26 +15,8 @@ import {
 } from "@/configurator/components/layout";
 import { SelectDatasetStep } from "@/configurator/components/select-dataset-step";
 import { Stepper } from "@/configurator/components/stepper";
-
-const SelectChartTypeStep = () => {
-  const [state] = useConfiguratorState();
-  if (state.state !== "SELECTING_CHART_TYPE") {
-    return null;
-  }
-  return (
-    <>
-      <PanelLeftWrapper>
-        <ChartTypeSelector state={state} />
-      </PanelLeftWrapper>
-      <PanelMiddleWrapper>
-        <ChartPanel>
-          <ChartPreview dataSetIri={state.dataSet} />
-        </ChartPanel>
-      </PanelMiddleWrapper>
-      <PanelRightWrapper />
-    </>
-  );
-};
+import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configurator";
+import React from "react";
 
 const ConfigureChartStep = () => {
   const [state] = useConfiguratorState();
@@ -53,6 +33,7 @@ const ConfigureChartStep = () => {
           flexDirection: "column",
         }}
       >
+        <ChartTypeSelector state={state} />
         {state.chartConfig.chartType === "table" ? (
           <ChartConfiguratorTable state={state} />
         ) : (
@@ -79,6 +60,7 @@ const DescribeChartStep = () => {
   return (
     <>
       <PanelLeftWrapper>
+        <ChartTypeSelector state={state} />
         <ChartAnnotator state={state} />
       </PanelLeftWrapper>
       <PanelMiddleWrapper>
@@ -120,7 +102,6 @@ export const Configurator = () => {
       <PanelHeader>
         <Stepper dataSetIri={state.dataSet} />
       </PanelHeader>
-      {state.state === "SELECTING_CHART_TYPE" ? <SelectChartTypeStep /> : null}
       {state.state === "CONFIGURING_CHART" ? <ConfigureChartStep /> : null}
       {state.state === "DESCRIBING_CHART" ? <DescribeChartStep /> : null}
       {state.state === "PUBLISHING" ? <PublishStep /> : null}

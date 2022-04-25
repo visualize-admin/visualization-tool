@@ -1,4 +1,5 @@
 /* eslint-disable no-redeclare */
+import { DataCubeMetadata } from "@/graphql/types";
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/pipeable";
 import * as t from "io-ts";
@@ -138,27 +139,35 @@ export type GenericField = t.TypeOf<typeof GenericField>;
 const GenericFields = t.record(t.string, t.union([GenericField, t.undefined]));
 export type GenericFields = t.TypeOf<typeof GenericFields>;
 
-const SegmentField = t.intersection([
+const GenericSegmentField = t.intersection([
   t.type({
     componentIri: t.string,
   }),
   t.type({
-    type: t.union([t.literal("stacked"), t.literal("grouped")]),
+    palette: t.string,
   }),
-  t.type({ palette: t.string }),
   t.partial({
     colorMapping: ColorMapping,
   }),
-  t.partial({
-    sorting: t.type({
-      sortingType: SortingType,
-      sortingOrder: SortingOrder,
-    }),
+]);
+export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
+
+const SortingField = t.partial({
+  sorting: t.type({
+    sortingType: SortingType,
+    sortingOrder: SortingOrder,
+  }),
+});
+export type SortingField = t.TypeOf<typeof SortingField>;
+
+const ColumnSegmentField = t.intersection([
+  GenericSegmentField,
+  SortingField,
+  t.type({
+    type: t.union([t.literal("stacked"), t.literal("grouped")]),
   }),
 ]);
-
-export type SegmentField = t.TypeOf<typeof SegmentField>;
-export type SegmentFields = Record<string, SegmentField | undefined>;
+export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
 const BarFields = t.intersection([
   t.type({
@@ -167,16 +176,11 @@ const BarFields = t.intersection([
       t.type({
         componentIri: t.string,
       }),
-      t.partial({
-        sorting: t.type({
-          sortingType: SortingType,
-          sortingOrder: SortingOrder,
-        }),
-      }),
+      SortingField,
     ]),
   }),
   t.partial({
-    segment: SegmentField,
+    segment: ColumnSegmentField,
   }),
 ]);
 const BarConfig = t.type(
@@ -197,17 +201,12 @@ const ColumnFields = t.intersection([
       t.type({
         componentIri: t.string,
       }),
-      t.partial({
-        sorting: t.type({
-          sortingType: SortingType,
-          sortingOrder: SortingOrder,
-        }),
-      }),
+      SortingField,
     ]),
     y: GenericField,
   }),
   t.partial({
-    segment: SegmentField,
+    segment: ColumnSegmentField,
   }),
 ]);
 const ColumnConfig = t.type(
@@ -222,21 +221,16 @@ const ColumnConfig = t.type(
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
+const LineSegmentField = GenericSegmentField;
+export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
+
 const LineFields = t.intersection([
   t.type({
     x: GenericField,
     y: GenericField,
   }),
   t.partial({
-    segment: t.intersection([
-      t.type({
-        componentIri: t.string,
-      }),
-      t.type({ palette: t.string }),
-      t.partial({
-        colorMapping: ColorMapping,
-      }),
-    ]),
+    segment: LineSegmentField,
   }),
 ]);
 const LineConfig = t.type(
@@ -250,6 +244,9 @@ const LineConfig = t.type(
 );
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
+
+const AreaSegmentField = t.intersection([GenericSegmentField, SortingField]);
+export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
 const ImputationType = t.union([
   t.literal("none"),
@@ -269,21 +266,7 @@ const AreaFields = t.intersection([
   }),
 
   t.partial({
-    segment: t.intersection([
-      t.type({
-        componentIri: t.string,
-      }),
-      t.type({ palette: t.string }),
-      t.partial({
-        colorMapping: ColorMapping,
-      }),
-      t.partial({
-        sorting: t.type({
-          sortingType: SortingType,
-          sortingOrder: SortingOrder,
-        }),
-      }),
-    ]),
+    segment: AreaSegmentField,
   }),
 ]);
 const AreaConfig = t.type(
@@ -298,22 +281,16 @@ const AreaConfig = t.type(
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
+const ScatterPlotSegmentField = GenericSegmentField;
+export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
+
 const ScatterPlotFields = t.intersection([
   t.type({
     x: GenericField,
     y: GenericField,
   }),
   t.partial({
-    segment: t.intersection([
-      t.type({ componentIri: t.string }),
-      t.type({ palette: t.string }),
-      t.partial({
-        colorMapping: ColorMapping,
-      }),
-      // t.partial({
-      //   interactiveFilterPresets: t.record(t.string, t.string),
-      // }),
-    ]),
+    segment: ScatterPlotSegmentField,
   }),
 ]);
 const ScatterPlotConfig = t.type(
@@ -328,24 +305,13 @@ const ScatterPlotConfig = t.type(
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
+const PieSegmentField = t.intersection([GenericSegmentField, SortingField]);
+export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
+
 const PieFields = t.type({
   y: GenericField,
   // FIXME: "segment" should be "x" for consistency
-  segment: t.intersection([
-    t.type({
-      componentIri: t.string,
-      palette: t.string,
-    }),
-    t.partial({
-      colorMapping: ColorMapping,
-    }),
-    t.partial({
-      sorting: t.type({
-        sortingType: SortingType,
-        sortingOrder: SortingOrder,
-      }),
-    }),
-  ]),
+  segment: PieSegmentField,
 });
 const PieConfig = t.type(
   {
@@ -630,6 +596,125 @@ export const isSegmentInConfig = (
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
+// Chart Config Adjusters
+export type FieldAdjuster<
+  NewChartConfigType extends ChartConfig,
+  OldValueType extends unknown
+> = (params: {
+  oldValue: OldValueType;
+  oldChartConfig: ChartConfig;
+  newChartConfig: NewChartConfigType;
+  dimensions: DataCubeMetadata["dimensions"];
+  measures: DataCubeMetadata["measures"];
+}) => NewChartConfigType;
+
+export type InteractiveFiltersAdjusters = {
+  legend: FieldAdjuster<ChartConfig, InteractiveFiltersLegend>;
+  time: {
+    active: FieldAdjuster<ChartConfig, boolean>;
+    componentIri: FieldAdjuster<ChartConfig, string>;
+    presets: {
+      type: FieldAdjuster<ChartConfig, "range">;
+      from: FieldAdjuster<ChartConfig, string>;
+      to: FieldAdjuster<ChartConfig, string>;
+    };
+  };
+  dataFilters: {
+    active: FieldAdjuster<ChartConfig, boolean>;
+    componentIris: FieldAdjuster<ChartConfig, string[]>;
+  };
+};
+
+type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
+  filters: FieldAdjuster<NewChartConfigType, Filters>;
+  interactiveFiltersConfig: InteractiveFiltersAdjusters;
+};
+
+type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<ColumnConfig, string> };
+    y: { componentIri: FieldAdjuster<ColumnConfig, string> };
+    segment: FieldAdjuster<
+      ColumnConfig,
+      | LineSegmentField
+      | AreaSegmentField
+      | ScatterPlotSegmentField
+      | PieSegmentField
+    >;
+  };
+};
+
+type LineAdjusters = BaseAdjusters<LineConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<LineConfig, string> };
+    y: { componentIri: FieldAdjuster<LineConfig, string> };
+    segment: FieldAdjuster<
+      LineConfig,
+      | ColumnSegmentField
+      | AreaSegmentField
+      | ScatterPlotSegmentField
+      | PieSegmentField
+    >;
+  };
+};
+
+type AreaAdjusters = BaseAdjusters<AreaConfig> & {
+  fields: {
+    x: { componentIri: FieldAdjuster<AreaConfig, string> };
+    y: { componentIri: FieldAdjuster<AreaConfig, string> };
+    segment: FieldAdjuster<
+      AreaConfig,
+      | ColumnSegmentField
+      | LineSegmentField
+      | ScatterPlotSegmentField
+      | PieSegmentField
+    >;
+  };
+};
+
+type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
+  fields: {
+    y: { componentIri: FieldAdjuster<ScatterPlotConfig, string> };
+    segment: FieldAdjuster<
+      ScatterPlotConfig,
+      ColumnSegmentField | LineSegmentField | AreaSegmentField | PieSegmentField
+    >;
+  };
+};
+
+type PieAdjusters = BaseAdjusters<PieConfig> & {
+  fields: {
+    y: { componentIri: FieldAdjuster<PieConfig, string> };
+    segment: FieldAdjuster<
+      PieConfig,
+      | ColumnSegmentField
+      | LineSegmentField
+      | AreaSegmentField
+      | ScatterPlotSegmentField
+    >;
+  };
+};
+
+type MapAdjusters = BaseAdjusters<MapConfig> & {
+  fields: {
+    areaLayer: {
+      componentIri: FieldAdjuster<MapConfig, string>;
+      measureIri: FieldAdjuster<MapConfig, string>;
+    };
+  };
+};
+
+export type ChartConfigsAdjusters = {
+  bar: {};
+  column: ColumnAdjusters;
+  line: LineAdjusters;
+  area: AreaAdjusters;
+  scatterplot: ScatterPlotAdjusters;
+  pie: PieAdjusters;
+  table: {};
+  map: MapAdjusters;
+};
+
 const Config = t.type(
   {
     dataSet: t.string,
@@ -659,12 +744,6 @@ const ConfiguratorStateSelectingDataSet = t.type({
   dataSet: t.union([t.string, t.undefined]),
   chartConfig: t.undefined,
 });
-const ConfiguratorStateSelectingChartType = t.intersection([
-  t.type({
-    state: t.literal("SELECTING_CHART_TYPE"),
-  }),
-  Config,
-]);
 const ConfiguratorStateConfiguringChart = t.intersection([
   t.type({
     state: t.literal("CONFIGURING_CHART"),
@@ -687,9 +766,6 @@ const ConfiguratorStatePublishing = t.intersection([
 export type ConfiguratorStateSelectingDataSet = t.TypeOf<
   typeof ConfiguratorStateSelectingDataSet
 >;
-export type ConfiguratorStateSelectingChartType = t.TypeOf<
-  typeof ConfiguratorStateSelectingChartType
->;
 export type ConfiguratorStateConfiguringChart = t.TypeOf<
   typeof ConfiguratorStateConfiguringChart
 >;
@@ -702,7 +778,6 @@ export type ConfiguratorStatePublishing = t.TypeOf<
 const ConfiguratorState = t.union([
   ConfiguratorStateInitial,
   ConfiguratorStateSelectingDataSet,
-  ConfiguratorStateSelectingChartType,
   ConfiguratorStateConfiguringChart,
   ConfiguratorStateDescribingChart,
   ConfiguratorStatePublishing,

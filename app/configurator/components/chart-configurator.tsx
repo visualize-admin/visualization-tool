@@ -1,46 +1,12 @@
-import { t, Trans } from "@lingui/macro";
-import { isEmpty, isEqual, sortBy } from "lodash";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  OnDragEndResponder,
-} from "react-beautiful-dnd";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  Menu,
-  MenuItem,
-} from "@mui/material";
-import { CombinedError, useClient } from "urql";
-import {
-  ChartConfig,
-  ConfiguratorStateConfiguringChart,
-  ConfiguratorStateSelectingChartType,
-  isMapConfig,
-} from "@/configurator";
 import { getFieldComponentIris } from "@/charts";
 import { chartConfigOptionsUISpec } from "@/charts/chart-config-ui-options";
 import { Loading } from "@/components/hint";
-import { isStandardErrorDimension } from "@/domain/data";
 import {
-  DataCubeMetadataWithComponentValuesQuery,
-  PossibleFiltersDocument,
-  PossibleFiltersQuery,
-  useDataCubeMetadataWithComponentValuesQuery,
-} from "@/graphql/query-hooks";
-import { DataCubeMetadata } from "@/graphql/types";
-import { Icon } from "@/icons";
-import { useLocale } from "@/locales/use-locale";
-import {
-  getFiltersByMappingStatus,
-  moveFilterField,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
+  ChartConfig,
+  ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
+  isMapConfig,
+} from "@/configurator";
 import {
   ControlSection,
   ControlSectionContent,
@@ -55,6 +21,40 @@ import {
 } from "@/configurator/components/field";
 import MoveDragButtons from "@/configurator/components/move-drag-buttons";
 import useDisclosure from "@/configurator/components/use-disclosure";
+import {
+  getFiltersByMappingStatus,
+  moveFilterField,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { isStandardErrorDimension } from "@/domain/data";
+import {
+  DataCubeMetadataWithComponentValuesQuery,
+  PossibleFiltersDocument,
+  PossibleFiltersQuery,
+  useDataCubeMetadataWithComponentValuesQuery,
+} from "@/graphql/query-hooks";
+import { DataCubeMetadata } from "@/graphql/types";
+import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
+import { t, Trans } from "@lingui/macro";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import { isEmpty, isEqual, sortBy } from "lodash";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
+import { CombinedError, useClient } from "urql";
 
 const DataFilterSelectGeneric = ({
   dimension,
@@ -139,9 +139,7 @@ const orderedIsEqual = (
 export const useEnsurePossibleFilters = ({
   state,
 }: {
-  state:
-    | ConfiguratorStateConfiguringChart
-    | ConfiguratorStateSelectingChartType;
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
 }) => {
   const [, dispatch] = useConfiguratorState();
   const [fetching, setFetching] = useState(false);

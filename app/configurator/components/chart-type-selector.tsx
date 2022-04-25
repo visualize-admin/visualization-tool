@@ -1,17 +1,30 @@
-import { Trans } from "@lingui/macro";
-import React, { SyntheticEvent } from "react";
-import { Box, CircularProgress, Typography, ButtonBase } from "@mui/material";
-import { ConfiguratorStateSelectingChartType } from "@/configurator";
 import { enabledChartTypes, getPossibleChartType } from "@/charts";
 import { Hint, Loading } from "@/components/hint";
+import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
+import {
+  ControlSection,
+  ControlSectionContent,
+  SectionTitle,
+} from "@/configurator/components/chart-controls/section";
+import {
+  getFieldLabel,
+  getIconName,
+} from "@/configurator/components/ui-helpers";
+import {
+  FieldProps,
+  useChartTypeSelectorField,
+} from "@/configurator/config-form";
 import { useDataCubeMetadataWithComponentValuesQuery } from "@/graphql/query-hooks";
 import { DataCubeMetadata } from "@/graphql/types";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
-import { FieldProps, useChartTypeSelectorField } from "@/configurator/config-form";
-import { useEnsurePossibleFilters } from "@/configurator/components/chart-configurator";
-import { SectionTitle } from "@/configurator/components/chart-controls/section";
-import { getFieldLabel, getIconName } from "@/configurator/components/ui-helpers";
+import { Trans } from "@lingui/macro";
+import { Box, ButtonBase, CircularProgress, Typography } from "@mui/material";
+import React, { SyntheticEvent } from "react";
+import {
+  ConfiguratorStateConfiguringChart,
+  ConfiguratorStateDescribingChart,
+} from "../config-types";
 
 export const ChartTypeSelectionButton = ({
   label,
@@ -104,7 +117,7 @@ const ChartTypeSelectorField = ({
 export const ChartTypeSelector = ({
   state,
 }: {
-  state: ConfiguratorStateSelectingChartType;
+  state: ConfiguratorStateConfiguringChart | ConfiguratorStateDescribingChart;
 }) => {
   const locale = useLocale();
   const [{ data }] = useDataCubeMetadataWithComponentValuesQuery({
@@ -120,7 +133,7 @@ export const ChartTypeSelector = ({
     const possibleChartTypes = getPossibleChartType({ meta: metaData });
 
     return (
-      <Box component="fieldset">
+      <ControlSection>
         <legend style={{ display: "none" }}>
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </legend>
@@ -135,33 +148,35 @@ export const ChartTypeSelector = ({
           ) : null}
         </SectionTitle>
 
-        {!possibleChartTypes ? (
-          <Hint>
-            <Trans id="hint.no.visualization.with.dataset">
-              No visualization can be created with the selected dataset.
-            </Trans>
-          </Hint>
-        ) : (
-          <Box
-            display="grid"
-            sx={{
-              gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
-              gridGap: "0.75rem",
-              mx: 4,
-            }}
-          >
-            {enabledChartTypes.map((d) => (
-              <ChartTypeSelectorField
-                key={d}
-                label={d}
-                value={d}
-                metaData={metaData}
-                disabled={!possibleChartTypes.includes(d)}
-              />
-            ))}
-          </Box>
-        )}
-      </Box>
+        <ControlSectionContent side="left">
+          {!possibleChartTypes ? (
+            <Hint>
+              <Trans id="hint.no.visualization.with.dataset">
+                No visualization can be created with the selected dataset.
+              </Trans>
+            </Hint>
+          ) : (
+            <Box
+              display="grid"
+              sx={{
+                gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
+                gridGap: "0.75rem",
+                mx: 4,
+              }}
+            >
+              {enabledChartTypes.map((d) => (
+                <ChartTypeSelectorField
+                  key={d}
+                  label={d}
+                  value={d}
+                  metaData={metaData}
+                  disabled={!possibleChartTypes.includes(d)}
+                />
+              ))}
+            </Box>
+          )}
+        </ControlSectionContent>
+      </ControlSection>
     );
   } else {
     return <Loading />;

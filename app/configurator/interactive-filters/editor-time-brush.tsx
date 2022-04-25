@@ -1,16 +1,18 @@
-import Flex from "@/components/flex";;
-import { Trans } from "@lingui/macro";
-import { bisector, brushX, scaleTime, select, Selection } from "d3";
-import React, { useCallback, useEffect, useRef } from "react";
-import { Box, Typography } from "@mui/material";
+import Flex from "@/components/flex";
 import { Label } from "@/components/form";
-import { useResizeObserver } from "@/lib/use-resize-observer";
-import { useTheme } from "@/themes";
-import { parseDate, useFormatFullDateAuto } from "@/configurator/components/ui-helpers";
+import {
+  parseDate,
+  useFormatFullDateAuto,
+} from "@/configurator/components/ui-helpers";
 import { ConfiguratorStateDescribingChart } from "@/configurator/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { updateInteractiveTimeFilter } from "@/configurator/interactive-filters/interactive-filters-config-state";
-
+import { useResizeObserver } from "@/lib/use-resize-observer";
+import { useTheme } from "@/themes";
+import { Trans } from "@lingui/macro";
+import { Box, Typography } from "@mui/material";
+import { bisector, brushX, scaleTime, select, Selection } from "d3";
+import React, { useCallback, useEffect, useRef } from "react";
 const HANDLE_HEIGHT = 20;
 const BRUSH_HEIGHT = 3;
 const MARGINS = {
@@ -145,9 +147,23 @@ export const EditorBrush = ({
     theme.palette.primary.main,
   ]);
 
-  // Set default selection to full extent
+  // Set default selection to currently selected extent (or full extent if no
+  // extent has been selected yet). Currently selected extent is kept when
+  // switching chart types.
   useEffect(() => {
-    const defaultSelection = timeExtent.map((d) => timeScale(d));
+    let defaultSelection = timeExtent.map((d) => timeScale(d));
+    const { interactiveFiltersConfig } = chartConfig;
+
+    if (interactiveFiltersConfig) {
+      const { from, to } = interactiveFiltersConfig.time.presets;
+
+      if (from && to) {
+        const fromDate = new Date(from);
+        const toDate = new Date(to);
+        defaultSelection = [timeScale(fromDate), timeScale(toDate)];
+      }
+    }
+
     const g = select(brushRef.current);
     (g as Selection<SVGGElement, unknown, null, undefined>).call(
       brush.move,

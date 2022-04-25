@@ -23,7 +23,7 @@ export const states: ConfiguratorState[] = [
     activeField: undefined,
   },
   {
-    state: "SELECTING_CHART_TYPE",
+    state: "CONFIGURING_CHART",
     dataSet: "foo",
     chartConfig: {
       chartType: "column",
