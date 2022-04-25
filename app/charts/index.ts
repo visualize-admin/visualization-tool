@@ -461,7 +461,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           // When switching from a scatterplot, x is a measure.
-          if (dimensions.map((d) => d.iri).includes(oldValue)) {
+          if (dimensions.find((d) => d.iri === oldValue)) {
             newChartConfig.fields.x.componentIri = oldValue;
           }
         },
@@ -492,10 +492,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     fields: {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
-          const ok = dimensions
-            .filter((d) => d.__typename === "TemporalDimension")
-            .map((d) => d.iri)
-            .includes(oldValue);
+          const ok = dimensions.find(
+            (d) => d.__typename === "TemporalDimension" && d.iri === oldValue
+          );
 
           if (ok) {
             newChartConfig.fields.x.componentIri = oldValue;
@@ -524,10 +523,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     fields: {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
-          const ok = dimensions
-            .filter((d) => d.__typename === "TemporalDimension")
-            .map((d) => d.iri)
-            .includes(oldValue);
+          const ok = dimensions.find(
+            (d) => d.__typename === "TemporalDimension" && d.iri === oldValue
+          );
 
           if (ok) {
             newChartConfig.fields.x.componentIri = oldValue;
@@ -613,10 +611,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     fields: {
       areaLayer: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
-          const ok = dimensions
-            .filter((d) => d.__typename === "GeoShapesDimension")
-            .map((d) => d.iri)
-            .includes(oldValue);
+          const ok = dimensions.find(
+            (d) => d.__typename === "GeoShapesDimension" && d.iri === oldValue
+          );
 
           if (ok) {
             newChartConfig.fields.areaLayer.componentIri = oldValue;
