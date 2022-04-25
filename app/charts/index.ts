@@ -297,7 +297,7 @@ const adjustChartConfig = ({
 }) => {
   // For filters & segments we can't reach a primitive level as we need to
   // pass the whole object.
-  const shouldAdjustConfigField = (path: string, configValue: any) =>
+  const isConfigLeaf = (path: string, configValue: any) =>
     typeof configValue !== "object" ||
     Array.isArray(configValue) ||
     ["filters", "fields.segment", "interactiveFiltersConfig.legend"].includes(
@@ -309,7 +309,7 @@ const adjustChartConfig = ({
       const newPath = path !== "" ? `${path}.${k}` : k;
 
       if (v !== undefined) {
-        if (shouldAdjustConfigField(newPath, v)) {
+        if (isConfigLeaf(newPath, v)) {
           const adjustField: FieldAdjuster<ChartConfig, unknown> =
             get(adjusters, newPath) || get(adjusters, pathOverrides[newPath]);
 
