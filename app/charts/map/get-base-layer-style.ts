@@ -9728,10 +9728,11 @@ const mergeLayers = (layers: Layer[], overrides: Layer[]) => {
 
 interface Props {
   locale: Locale;
+  showLabels: boolean;
 }
 
 export const getBaseLayerStyle = (props: Props) => {
-  const { locale } = props;
+  const { locale, showLabels } = props;
   const languageTag = `name:${locale === "en" ? "latin" : locale}`;
   const borderColor = {
     lowZoom: "hsl(0, 0%, 80%)",
@@ -9739,8 +9740,8 @@ export const getBaseLayerStyle = (props: Props) => {
     highZoom: "hsl(0, 0%, 40%)",
   };
   const countryTextColor = "rgba(0, 0, 0, 0.9)";
-  const textOpacity = 1;
-  const textLayersVisibility = "visible";
+  const textOpacity = showLabels ? 1 : 0;
+  const textLayersVisibility = showLabels ? "visible" : "none";
   const style = {
     ...baseStyle,
     layers: mergeLayers(baseStyle.layers, [

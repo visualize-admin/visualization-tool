@@ -191,7 +191,14 @@ export const MapComponent = () => {
     [symbolLayer.color]
   );
 
-  const baseLayerStyle = useMemo(() => getBaseLayerStyle({ locale }), [locale]);
+  const baseLayerStyle = useMemo(
+    () =>
+      getBaseLayerStyle({
+        locale,
+        showLabels: !areaLayer.show,
+      }),
+    [locale, areaLayer.show]
+  );
   const firstLayerLabelId = useMemo(
     () => getFirstLabelLayerId(baseLayerStyle),
     [baseLayerStyle]
