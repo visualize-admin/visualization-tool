@@ -1,10 +1,22 @@
 {
   "extends": "next",
-  "plugins": ["unused-imports"],
+  "plugins": ["unused-imports", "import"],
   "rules": {
     "react/display-name": "off",
     "unused-imports/no-unused-imports-ts": "error",
-    "@next/next/no-html-link-for-pages": ["error", "app/pages/"]
+    "@next/next/no-html-link-for-pages": ["error", "app/pages/"],
+    "import/order": [2, {
+      "alphabetize": { "order": "asc" },
+      "newlines-between": "always",
+      "groups": ["builtin", "external", "internal", "parent", "sibling", "index", "object", "type"],
+      "pathGroups": [
+        {
+          "pattern": "@/**",
+          "group": "internal"
+        }
+      ],
+      "pathGroupsExcludedImportTypes": ["builtin"]
+    }]
   },
   "overrides": [
     {
