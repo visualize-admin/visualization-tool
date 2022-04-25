@@ -29,7 +29,7 @@ import Layer from "./layer";
 import ReactMap, { MapRef, ViewState } from "react-map-gl";
 import { Icon, IconName } from "@/icons";
 import { orderBy } from "lodash";
-import { area } from "@turf/turf";
+import { geoArea } from "d3";
 
 function getFirstLabelLayerId(style: StyleSpecification) {
   const layers = style.layers;
@@ -229,9 +229,7 @@ export const MapComponent = () => {
         ({ properties: { hierarchyLevel } }: GeoFeature) =>
           hierarchyLevel === areaLayer.hierarchyLevel
       ),
-      (feature: GeoFeature) => {
-        return area(feature);
-      },
+      geoArea,
       "desc"
     );
     const shapes = {
