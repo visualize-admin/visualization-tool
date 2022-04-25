@@ -7,6 +7,8 @@ import {
   GenericFields,
   InteractiveFiltersAdjusters,
   InteractiveFiltersConfig,
+  SortingOrder,
+  SortingType,
   TableColumn,
 } from "../configurator";
 import { mapColorsToComponentValuesIris } from "../configurator/components/ui-helpers";
@@ -74,6 +76,14 @@ const INITIAL_INTERACTIVE_FILTERS_CONFIG: InteractiveFiltersConfig = {
   },
 };
 
+const DEFAULT_SORTING: {
+  sortingType: SortingType;
+  sortingOrder: SortingOrder;
+} = {
+  sortingType: "byDimensionLabel",
+  sortingOrder: "asc",
+};
+
 export const getInitialConfig = ({
   chartType,
   dimensions,
@@ -96,7 +106,7 @@ export const getInitialConfig = ({
               dimensions,
               "TemporalDimension"
             ).iri,
-            sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+            sorting: DEFAULT_SORTING,
           },
         },
       };
@@ -111,7 +121,7 @@ export const getInitialConfig = ({
               dimensions,
               "TemporalDimension"
             ).iri,
-            sorting: { sortingType: "byDimensionLabel", sortingOrder: "asc" },
+            sorting: DEFAULT_SORTING,
           },
           y: { componentIri: measures[0].iri },
         },
@@ -476,10 +486,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           ...oldValue,
           type: "stacked",
           // Line & ScatterPlot do not have sorting field.
-          sorting: (oldValue as any).sorting || {
-            sortingOrder: "asc",
-            sortingType: "byDimensionLabel",
-          },
+          sorting: (oldValue as any).sorting || DEFAULT_SORTING,
         };
       },
     },
@@ -543,10 +550,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           palette: oldValue.palette,
           colorMapping: oldValue.colorMapping,
           // Line & ScatterPlot do not have sorting field.
-          sorting: (oldValue as any).sorting || {
-            sortingOrder: "asc",
-            sortingType: "byDimensionLabel",
-          },
+          sorting: (oldValue as any).sorting || DEFAULT_SORTING,
         };
       },
     },
@@ -594,10 +598,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           palette: oldValue.palette,
           colorMapping: oldValue.colorMapping,
           // Line & ScatterPlot do not have sorting field.
-          sorting: (oldValue as any).sorting || {
-            sortingOrder: "asc",
-            sortingType: "byDimensionLabel",
-          },
+          sorting: (oldValue as any).sorting || DEFAULT_SORTING,
         };
       },
     },
