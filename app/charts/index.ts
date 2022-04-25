@@ -261,7 +261,10 @@ export const getChartConfigAdjustedToChartType = ({
     dimensions,
     measures,
   });
-  const adjustChartConfig = mkChartConfigAdjuster({
+
+  adjustChartConfig({
+    path: "",
+    field: chartConfig,
     adjusters: chartConfigsAdjusters[chartType],
     pathOverrides: chartConfigsPathOverrides[chartType],
     oldChartConfig: chartConfig,
@@ -270,12 +273,12 @@ export const getChartConfigAdjustedToChartType = ({
     measures,
   });
 
-  adjustChartConfig({ path: "", field: chartConfig });
-
   return newChartConfig;
 };
 
-const mkChartConfigAdjuster = ({
+const adjustChartConfig = ({
+  path,
+  field,
   adjusters,
   pathOverrides,
   oldChartConfig,
@@ -283,6 +286,8 @@ const mkChartConfigAdjuster = ({
   dimensions,
   measures,
 }: {
+  path: string;
+  field: Object;
   adjusters: ChartConfigAdjusters;
   pathOverrides: ChartConfigPathOverrides;
   oldChartConfig: ChartConfig;
@@ -322,7 +327,7 @@ const mkChartConfigAdjuster = ({
     }
   };
 
-  return go;
+  go({ path, field });
 };
 
 const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
