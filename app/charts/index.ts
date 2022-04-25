@@ -1,3 +1,4 @@
+import produce from "immer";
 import { get, groupBy } from "lodash";
 import {
   ChartConfig,
@@ -266,19 +267,19 @@ export const getChartConfigAdjustedToChartType = ({
   dimensions: DataCubeMetadata["dimensions"];
   measures: DataCubeMetadata["measures"];
 }): ChartConfig => {
-  const newChartConfig = getInitialConfig({
+  const initialConfig = getInitialConfig({
     chartType,
     dimensions,
     measures,
   });
 
-  adjustChartConfig({
+  const newChartConfig = getAdjustedChartConfig({
     path: "",
     field: chartConfig,
     adjusters: chartConfigsAdjusters[chartType],
     pathOverrides: chartConfigsPathOverrides[chartType],
     oldChartConfig: chartConfig,
-    newChartConfig,
+    newChartConfig: initialConfig,
     dimensions,
     measures,
   });
@@ -286,7 +287,7 @@ export const getChartConfigAdjustedToChartType = ({
   return newChartConfig;
 };
 
-const adjustChartConfig = ({
+const getAdjustedChartConfig = ({
   path,
   field,
   adjusters,
@@ -320,143 +321,97 @@ const adjustChartConfig = ({
 
       if (v !== undefined) {
         if (isConfigLeaf(newPath, v)) {
-          const adjustField: FieldAdjuster<ChartConfig, unknown> =
-            get(adjusters, newPath) || get(adjusters, pathOverrides[newPath]);
+          const getChartConfigWithAdjustedField: FieldAdjuster<
+            ChartConfig,
+            unknown
+          > = get(adjusters, newPath) || get(adjusters, pathOverrides[newPath]);
 
-          adjustField?.({
-            oldValue: v,
-            newChartConfig,
-            oldChartConfig,
-            dimensions,
-            measures,
-          });
+          if (getChartConfigWithAdjustedField) {
+            newChartConfig = getChartConfigWithAdjustedField({
+              oldValue: v,
+              newChartConfig,
+              oldChartConfig,
+              dimensions,
+              measures,
+            });
+          }
         } else {
           go({ path: newPath, field: v });
         }
       }
     }
+
+    return newChartConfig;
   };
 
-  go({ path, field });
+  return go({ path, field });
 };
 
 const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
   legend: ({ oldValue, oldChartConfig, newChartConfig }) => {
-    const { interactiveFiltersConfig } = newChartConfig;
-
-    if (interactiveFiltersConfig) {
-      if ((oldChartConfig.fields as any).segment !== undefined) {
-        newChartConfig.interactiveFiltersConfig = {
-          ...interactiveFiltersConfig,
-          legend: oldValue,
-        };
-      }
+    if ((oldChartConfig.fields as any).segment !== undefined) {
+      return produce(newChartConfig, (draft) => {
+        if (draft.interactiveFiltersConfig) {
+          draft.interactiveFiltersConfig.legend = oldValue;
+        }
+      });
     }
+
+    return newChartConfig;
   },
   time: {
     active: ({ oldValue, newChartConfig }) => {
-      const { interactiveFiltersConfig } = newChartConfig;
-
-      if (interactiveFiltersConfig) {
-        newChartConfig.interactiveFiltersConfig = {
-          ...interactiveFiltersConfig,
-          time: {
-            ...interactiveFiltersConfig.time,
-            active: oldValue,
-          },
-        };
-      }
+      return produce(newChartConfig, (draft) => {
+        if (draft.interactiveFiltersConfig) {
+          draft.interactiveFiltersConfig.time.active = oldValue;
+        }
+      });
     },
     componentIri: ({ oldValue, newChartConfig }) => {
-      const { interactiveFiltersConfig } = newChartConfig;
-
-      if (interactiveFiltersConfig) {
-        newChartConfig.interactiveFiltersConfig = {
-          ...interactiveFiltersConfig,
-          time: {
-            ...interactiveFiltersConfig.time,
-            componentIri: oldValue,
-          },
-        };
-      }
+      return produce(newChartConfig, (draft) => {
+        if (draft.interactiveFiltersConfig) {
+          draft.interactiveFiltersConfig.time.componentIri = oldValue;
+        }
+      });
     },
     presets: {
       type: ({ oldValue, newChartConfig }) => {
-        const { interactiveFiltersConfig } = newChartConfig;
-
-        if (interactiveFiltersConfig) {
-          newChartConfig.interactiveFiltersConfig = {
-            ...interactiveFiltersConfig,
-            time: {
-              ...interactiveFiltersConfig.time,
-              presets: {
-                ...interactiveFiltersConfig.time.presets,
-                type: oldValue,
-              },
-            },
-          };
-        }
+        return produce(newChartConfig, (draft) => {
+          if (draft.interactiveFiltersConfig) {
+            draft.interactiveFiltersConfig.time.presets.type = oldValue;
+          }
+        });
       },
       from: ({ oldValue, newChartConfig }) => {
-        const { interactiveFiltersConfig } = newChartConfig;
-
-        if (interactiveFiltersConfig) {
-          newChartConfig.interactiveFiltersConfig = {
-            ...interactiveFiltersConfig,
-            time: {
-              ...interactiveFiltersConfig.time,
-              presets: {
-                ...interactiveFiltersConfig.time.presets,
-                from: oldValue,
-              },
-            },
-          };
-        }
+        return produce(newChartConfig, (draft) => {
+          if (draft.interactiveFiltersConfig) {
+            draft.interactiveFiltersConfig.time.presets.from = oldValue;
+          }
+        });
       },
       to: ({ oldValue, newChartConfig }) => {
-        const { interactiveFiltersConfig } = newChartConfig;
-
-        if (interactiveFiltersConfig) {
-          newChartConfig.interactiveFiltersConfig = {
-            ...interactiveFiltersConfig,
-            time: {
-              ...interactiveFiltersConfig.time,
-              presets: {
-                ...interactiveFiltersConfig.time.presets,
-                to: oldValue,
-              },
-            },
-          };
-        }
+        return produce(newChartConfig, (draft) => {
+          if (draft.interactiveFiltersConfig) {
+            draft.interactiveFiltersConfig.time.presets.to = oldValue;
+          }
+        });
       },
     },
   },
   dataFilters: {
     active: ({ oldValue, newChartConfig }) => {
-      const { interactiveFiltersConfig } = newChartConfig;
-
-      if (interactiveFiltersConfig) {
-        newChartConfig.interactiveFiltersConfig = {
-          ...interactiveFiltersConfig,
-          dataFilters: {
-            ...interactiveFiltersConfig.dataFilters,
-            active: oldValue,
-          },
-        };
-      }
+      return produce(newChartConfig, (draft) => {
+        if (draft.interactiveFiltersConfig) {
+          draft.interactiveFiltersConfig.dataFilters.active = oldValue;
+        }
+      });
     },
     componentIris: ({ oldValue, newChartConfig }) => {
-      const { interactiveFiltersConfig } = newChartConfig;
-
-      if (interactiveFiltersConfig) {
-        newChartConfig.interactiveFiltersConfig = {
-          ...interactiveFiltersConfig,
-          dataFilters: {
-            ...interactiveFiltersConfig.dataFilters,
-            componentIris: oldValue,
-          },
-        };
-      }
+      return produce(newChartConfig, (draft) => {
+        if (draft.interactiveFiltersConfig) {
+          draft.interactiveFiltersConfig.dataFilters.componentIris = oldValue;
+        }
+      });
     },
   },
 };
@@ -465,36 +420,48 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
   bar: {},
   column: {
     filters: ({ oldValue, newChartConfig }) => {
-      newChartConfig.filters = oldValue;
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
     },
     fields: {
       x: {
         componentIri: ({ oldValue, newChartConfig, dimensions }) => {
           // When switching from a scatterplot, x is a measure.
           if (dimensions.find((d) => d.iri === oldValue)) {
-            newChartConfig.fields.x.componentIri = oldValue;
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
           }
+
+          return newChartConfig;
         },
       },
       y: {
         componentIri: ({ oldValue, newChartConfig }) => {
-          newChartConfig.fields.y.componentIri = oldValue;
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.componentIri = oldValue;
+          });
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = {
-          ...oldValue,
-          type: "stacked",
-          // Line & ScatterPlot do not have sorting field.
-          sorting: (oldValue as any).sorting || DEFAULT_SORTING,
-        };
+        return produce(newChartConfig, (draft) => {
+          draft.fields.segment = {
+            ...oldValue,
+            type: "stacked",
+            // Line & ScatterPlot do not have sorting field.
+            sorting: (oldValue as any).sorting || DEFAULT_SORTING,
+          };
+        });
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   line: {
     filters: ({ oldValue, newChartConfig }) => {
-      newChartConfig.filters = oldValue;
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
     },
     fields: {
       x: {
@@ -504,28 +471,38 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           );
 
           if (ok) {
-            newChartConfig.fields.x.componentIri = oldValue;
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
           }
+
+          return newChartConfig;
         },
       },
       y: {
         componentIri: ({ oldValue, newChartConfig }) => {
-          newChartConfig.fields.y.componentIri = oldValue;
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.componentIri = oldValue;
+          });
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = {
-          componentIri: oldValue.componentIri,
-          palette: oldValue.palette,
-          colorMapping: oldValue.colorMapping,
-        };
+        return produce(newChartConfig, (draft) => {
+          draft.fields.segment = {
+            componentIri: oldValue.componentIri,
+            palette: oldValue.palette,
+            colorMapping: oldValue.colorMapping,
+          };
+        });
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   area: {
     filters: ({ oldValue, newChartConfig }) => {
-      newChartConfig.filters = oldValue;
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
     },
     fields: {
       x: {
@@ -535,30 +512,40 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           );
 
           if (ok) {
-            newChartConfig.fields.x.componentIri = oldValue;
+            return produce(newChartConfig, (draft) => {
+              draft.fields.x.componentIri = oldValue;
+            });
           }
+
+          return newChartConfig;
         },
       },
       y: {
         componentIri: ({ oldValue, newChartConfig }) => {
-          newChartConfig.fields.y.componentIri = oldValue;
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.componentIri = oldValue;
+          });
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = {
-          componentIri: oldValue.componentIri,
-          palette: oldValue.palette,
-          colorMapping: oldValue.colorMapping,
-          // Line & ScatterPlot do not have sorting field.
-          sorting: (oldValue as any).sorting || DEFAULT_SORTING,
-        };
+        return produce(newChartConfig, (draft) => {
+          draft.fields.segment = {
+            componentIri: oldValue.componentIri,
+            palette: oldValue.palette,
+            colorMapping: oldValue.colorMapping,
+            // Line & ScatterPlot do not have sorting field.
+            sorting: (oldValue as any).sorting || DEFAULT_SORTING,
+          };
+        });
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   scatterplot: {
     filters: ({ oldValue, newChartConfig }) => {
-      newChartConfig.filters = oldValue;
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
     },
     fields: {
       // x is not needed, as this is the only chart type with x-axis measures.
@@ -567,39 +554,51 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           // If there is only one measure then x & y are already filled correctly.
           if (measures.length > 1) {
             if (newChartConfig.fields.x.componentIri !== oldValue) {
-              newChartConfig.fields.y.componentIri = oldValue;
+              return produce(newChartConfig, (draft) => {
+                draft.fields.y.componentIri = oldValue;
+              });
             }
           }
+
+          return newChartConfig;
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = {
-          componentIri: oldValue.componentIri,
-          palette: oldValue.palette,
-          colorMapping: oldValue.colorMapping,
-        };
+        return produce(newChartConfig, (draft) => {
+          draft.fields.segment = {
+            componentIri: oldValue.componentIri,
+            palette: oldValue.palette,
+            colorMapping: oldValue.colorMapping,
+          };
+        });
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
   },
   pie: {
     filters: ({ oldValue, newChartConfig }) => {
-      newChartConfig.filters = oldValue;
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
     },
     fields: {
       y: {
         componentIri: ({ oldValue, newChartConfig }) => {
-          newChartConfig.fields.y.componentIri = oldValue;
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.componentIri = oldValue;
+          });
         },
       },
       segment: ({ oldValue, newChartConfig }) => {
-        newChartConfig.fields.segment = {
-          componentIri: oldValue.componentIri,
-          palette: oldValue.palette,
-          colorMapping: oldValue.colorMapping,
-          // Line & ScatterPlot do not have sorting field.
-          sorting: (oldValue as any).sorting || DEFAULT_SORTING,
-        };
+        return produce(newChartConfig, (draft) => {
+          draft.fields.segment = {
+            componentIri: oldValue.componentIri,
+            palette: oldValue.palette,
+            colorMapping: oldValue.colorMapping,
+            // Line & ScatterPlot do not have sorting field.
+            sorting: (oldValue as any).sorting || DEFAULT_SORTING,
+          };
+        });
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
@@ -607,7 +606,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
   table: {},
   map: {
     filters: ({ oldValue, newChartConfig }) => {
-      newChartConfig.filters = oldValue;
+      return produce(newChartConfig, (draft) => {
+        draft.filters = oldValue;
+      });
     },
     fields: {
       areaLayer: {
@@ -617,12 +618,18 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           );
 
           if (ok) {
-            newChartConfig.fields.areaLayer.componentIri = oldValue;
+            return produce(newChartConfig, (draft) => {
+              draft.fields.areaLayer.componentIri = oldValue;
+            });
           }
+
+          return newChartConfig;
         },
         measureIri: ({ oldValue, newChartConfig }) => {
-          newChartConfig.fields.areaLayer.measureIri = oldValue;
-          newChartConfig.fields.symbolLayer.measureIri = oldValue;
+          return produce(newChartConfig, (draft) => {
+            draft.fields.areaLayer.measureIri = oldValue;
+            draft.fields.symbolLayer.measureIri = oldValue;
+          });
         },
       },
     },

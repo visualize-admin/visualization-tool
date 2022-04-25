@@ -153,10 +153,10 @@ const GenericSegmentField = t.intersection([
 export type GenericSegmentField = t.TypeOf<typeof GenericSegmentField>;
 
 const SortingField = t.partial({
-    sorting: t.type({
-      sortingType: SortingType,
-      sortingOrder: SortingOrder,
-    }),
+  sorting: t.type({
+    sortingType: SortingType,
+    sortingOrder: SortingOrder,
+  }),
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
 
@@ -606,7 +606,7 @@ export type FieldAdjuster<
   newChartConfig: NewChartConfigType;
   dimensions: DataCubeMetadata["dimensions"];
   measures: DataCubeMetadata["measures"];
-}) => void;
+}) => NewChartConfigType;
 
 export type InteractiveFiltersAdjusters = {
   legend: FieldAdjuster<ChartConfig, InteractiveFiltersLegend>;
@@ -673,14 +673,14 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
 };
 
 type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
-    fields: {
-      y: { componentIri: FieldAdjuster<ScatterPlotConfig, string> };
-      segment: FieldAdjuster<
-        ScatterPlotConfig,
+  fields: {
+    y: { componentIri: FieldAdjuster<ScatterPlotConfig, string> };
+    segment: FieldAdjuster<
+      ScatterPlotConfig,
       ColumnSegmentField | LineSegmentField | AreaSegmentField | PieSegmentField
-      >;
-    };
+    >;
   };
+};
 
 type PieAdjusters = BaseAdjusters<PieConfig> & {
   fields: {
