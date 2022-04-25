@@ -79,7 +79,7 @@ const chartBuilderMockups = [
   return all;
 }, {} as Record<string, { group: string; src: string }[]>);
 
-export default () =>
+const Doc =  () =>
   markdown`
 > The design mockups illustrate an exemplary user flow through the _Visualization Tool_.
 
@@ -183,3 +183,5 @@ description: "[Open full-size image](./${mockup.src})"
   )
   .join("\n")}
   `;
+
+export default Doc

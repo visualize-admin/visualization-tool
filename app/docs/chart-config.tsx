@@ -1,6 +1,6 @@
 import { ImageSpecimen, markdown, TableSpecimen } from "catalog";
 
-export default () => markdown`
+const Doc =  () => markdown`
 
 ## Content
 1. [Chart Configuration Interface](#1-chart-configuration-interface)
@@ -267,3 +267,5 @@ ${(
   />
 )}
 `;
+
+export default Doc;

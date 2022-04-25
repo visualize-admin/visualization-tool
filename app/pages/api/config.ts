@@ -4,7 +4,7 @@ import { createConfig } from "../../db/config";
 /**
  * Endpoint to write configuration to.
  */
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const route = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 
   switch (method) {
@@ -25,3 +25,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 };
+
+export default route
